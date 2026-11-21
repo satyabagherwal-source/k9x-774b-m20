@@ -11847,3 +11847,7 @@
 | `CYCLE-20261121-T1DK` | `2026-11-21T17:05:51.416Z` | `FaridSafi/react-native-gifted-chat` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/faridsafi-react-native-gifted-chat-learnings.md` | Yes (`5e8afa67...`) |
 | `CYCLE-20261121-T3LT` | `2026-11-21T17:05:54.305Z` | `nginx/kubernetes-ingress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9807` | Yes (`79074d3e...`) |
 | `CYCLE-20261121-T9WR` | `2026-11-21T17:06:02.475Z` | `Nanbeige/Nanbeige4.3-33B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nanbeige-nanbeige4.3-33b-learnings.md` | Yes (`9a37fdb9...`) |
+| `CYCLE-20261121-5A8N` | `2026-11-21T17:15:22.775Z` | `briaai/Fibo-2.0-dev` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-briaai-fibo-2.0-dev-learnings.md` | Yes (`0549b3c8...`) |
+| `CYCLE-20261121-5HIA` | `2026-11-21T17:15:32.194Z` | `kubernetes-sigs/aws-load-balancer-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9808` | Yes (`0c090dcd...`) |
+| `CYCLE-20261121-5L59` | `2026-11-21T17:15:36.909Z` | `genkit-ai/genkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9809` | Yes (`a4d68f17...`) |
+| `CYCLE-2026-11-21-PROJ-EVOLVE` | `2026-11-21T17:16:19.019Z` | `genkit-ai-genkit` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-D7B01097` [Domain H] | Yes (`a35c066c...`) |

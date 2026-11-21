@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T17:06:07.777Z",
+  "last_updated": "2026-11-21T17:16:20.513Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-21T15:59:55.405Z",
@@ -953,9 +953,9 @@
       "staged_for_review": 1
     },
     "genkit-ai-genkit-learnings.md": {
-      "processed_at": "2026-11-20T11:41:04.273Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-21T17:16:19.019Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "redisearch-redisearch-learnings.md": {
       "processed_at": "2026-11-20T12:07:30.046Z",
@@ -1368,7 +1368,7 @@
       "staged_for_review": 1
     },
     "kubernetes-sigs-aws-load-balancer-controller-learnings.md": {
-      "processed_at": "2026-11-19T09:17:04.838Z",
+      "processed_at": "2026-11-21T17:15:41.102Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1638,7 +1638,7 @@
       "staged_for_review": 1
     },
     "hf-briaai-fibo-2.0-dev-learnings.md": {
-      "processed_at": "2026-11-17T18:56:27.573Z",
+      "processed_at": "2026-11-21T17:15:40.578Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3668,7 +3668,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2841,
-  "total_canonical_promoted": 449,
-  "total_staged_for_review": 2184
+  "total_dossiers_evaluated": 2844,
+  "total_canonical_promoted": 450,
+  "total_staged_for_review": 2185
 }

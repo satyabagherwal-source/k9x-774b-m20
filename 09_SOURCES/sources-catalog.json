@@ -5973,10 +5973,10 @@
     "repository": "genkit-ai/genkit",
     "platform": "github",
     "sourceUrl": "https://github.com/genkit-ai/genkit",
-    "sourceVersion": "9a7d0b65",
+    "sourceVersion": "e80aaa6b",
     "license": "Apache-2.0",
-    "contentHash": "a03c213c67bb556d3aa7f57a574f433f7354870353b3e4c65a5f5217b8ed26a1",
-    "lastHarvestedAt": "2026-11-20T11:41:01.056Z",
+    "contentHash": "a4d68f17aee9c5245effc289ef795ed27022a128dc2de3b7b8bd7b2a62cc434b",
+    "lastHarvestedAt": "2026-11-21T17:15:36.914Z",
     "learningId": "learn-github-genkit-ai-genkit"
   },
   "guokaigdg-animal-island-ui": {
@@ -6703,10 +6703,10 @@
     "repository": "kubernetes-sigs/aws-load-balancer-controller",
     "platform": "github",
     "sourceUrl": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
-    "sourceVersion": "3f8ab7ff",
+    "sourceVersion": "741e1637",
     "license": "Apache-2.0",
-    "contentHash": "f748fae690d3f3fde83365843af02db789a451902079fb2fc62bbc17537b138e",
-    "lastHarvestedAt": "2026-11-19T09:12:18.270Z",
+    "contentHash": "0c090dcd60d755535bd91b2c53cc6f6170012f3835da344ac4c5b0ba2b9bfc7a",
+    "lastHarvestedAt": "2026-11-21T17:15:32.200Z",
     "learningId": "learn-github-kubernetes-sigs-aws-load-balancer-controller"
   },
   "qdrant-qdrant": {
@@ -10765,8 +10765,8 @@
     "sourceUrl": "https://huggingface.co/briaai/Fibo-2.0-dev",
     "sourceVersion": "hf-briaai-fibo-2.0-dev",
     "license": "Open-Source",
-    "contentHash": "77319363e73a84a12dddc790abb6b0f0a9f21a95f821718ea1e49d6969b4dfb0",
-    "lastHarvestedAt": "2026-11-17T18:56:13.798Z",
+    "contentHash": "0549b3c818c4821c796ca3c668bb4f9dea6875530d53e63c1adaf76d3ff30569",
+    "lastHarvestedAt": "2026-11-21T17:15:22.780Z",
     "learningId": "learn-huggingface-briaai-fibo-2-0-dev"
   },
   "vincentwei1021-video-shotcraft": {

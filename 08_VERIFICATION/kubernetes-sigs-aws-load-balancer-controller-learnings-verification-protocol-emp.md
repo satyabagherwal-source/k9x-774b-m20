@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T09:17:05.072Z",
+  "timestamp": "2026-11-21T17:15:41.286Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-kubernetes-sigs-aws-load-balancer-controller-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [kubernetes-sigs-aws-load-balancer-controller-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T09:17:05.072Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T17:15:41.286Z`  
 > **Learning ID**: `LEARN-EVO-kubernetes-sigs-aws-load-balancer-controller-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kubernetes-sigs-aws-load-balancer-controller-learnings.md`  
 > **Source**: github ([https://github.com/kubernetes-sigs/aws-load-balancer-controller](https://github.com/kubernetes-sigs/aws-load-balancer-controller))  
-> **Source Version**: `3f8ab7ff`  
+> **Source Version**: `741e1637`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T09:12:17.398Z  
+> **Timestamp**: 2026-11-21T17:15:30.837Z  
 > **Learning ID**: `learn-github-kubernetes-sigs-aws-load-balancer-controller`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kubernetes-sigs-aws-load-balancer-controller-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kubernetes-sigs/aws-load-balancer-controller](https://github.com/kubernetes-sigs/aws-load-balancer-controller))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T09:07:14.364Z  
+> **Harvest Timestamp**: 2026-11-21T17:15:30.830Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: A Kubernetes controller for Elastic Load Balancers
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 4344 stars
+- **Stars / Engagement**: 4346 stars
 
 ---
 
@@ -1633,149 +1633,241 @@ func IsLBConfigInUseByGateway(ctx context.Context, lbConfig *elbv2gw.LoadBalance
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3f8ab7ff` (2026-11-19)
-**Commit Message**: Merge pull request #4961 from eliasericsson/feat/helm-cert-manager-private-key
+### Incident Patch 1: `741e1637` (2026-11-20)
+**Commit Message**: Merge pull request #4936 from guydc/feat-ds-tg-listener-rules
 
-feat(helm): add certManager.privateKey and configurable root CA commonName
+Support dual stack routing for NLBs using source IP listener rules
 
-**File**: `helm/aws-load-balancer-controller/README.md` (modified, +2/-0)
+**File**: `docs/guide/service/annotations.md` (modified, +24/-0)
 ```diff
-@@ -273,6 +273,8 @@ The default values set by the application itself can be confirmed [here](https:/
- | `enableCertManager`                                                 | If enabled, cert-manager issues the webhook certificates instead of the helm template, requires cert-manager and it's CRDs to be installed                                                                                                                                                                                                   | `false`                                           |
- | `certManager.duration`                                              | Overrides the default expiry duration for the webhook certificates. defaults to `90d`                                                                                                                                                                                                                                                        | `""`                                              |
- | `certManager.renewBefore`                                           | Overrides the renewal time period duration for the webhook certificates. defaults to `60d`                                                                                                                                                                                                                                                   | `""`                                              |
-+| `certManager.privateKey`                                            | Private key settings (cert-manager `spec.privateKey`, e.g. `{algorithm: ECDSA, size: 256}`) for the root CA and webhook serving certificates. Empty uses cert-manager defaults                                                                                                                                                               | `{}`                                              |
-+| `certManager.rootCert.commonName`                                   | Common name of the self-signed root CA certificate. Set to `""` to omit it; the root then gets the URI SAN `urn:aws-load-balancer-controller:webhook-ca` and keeps `O=aws-load-balancer-controller`                                                                                                                                                                                                              | `ca.webhook.aws-load-balancer-controller`         |
- | `enableEndpointSlices`                                              | If enabled, controller uses k8s EndpointSlices instead of Endpoints for IP targets                                                                                                                                                                                                                                                           | `false`                                           |
- | `enableBackendSecurityGroup`                                        | If enabled, controller uses shared security group for backend traffic                                                                                                                                                                                                                                                                        | `true`                                            |
- | `enableManageBackendSecurityGroupRules`                             | If enabled, controller will manage security group rules                                                                                                                                                                                                                                                                                      | `false`                                           |
-```
-
-**File**: `helm/aws-load-balancer-controller/templates/cert-manager.yaml` (modified, +16/-1)
-```diff
-@@ -24,11 +24,26 @@ spec:
-   duration: {{ .Values.certManager.rootCert.duration | default "43800h0m0s" | quote }}
-   issuerRef:
-     name: {{ template "aws-load-balancer-controller.namePrefix" . }}-selfsigned-issuer
--  commonName: "ca.webhook.aws-load-balancer-controller"
-+  {{- $rootCert := .Values.certManager.rootCert | default dict }}
-+  {{- $commonName := "ca.webhook.aws-load-balancer-controller" }}
-+  {{- if hasKey $rootCert "commonName" }}
-+  {{- $commonName = $rootCert.commonName }}
-+  {{- end }}
-+  {{- with $commonName }}
-+  commonName: {{ . | quote }}
-+  {{- else }}
-+  # cert-manager needs a commonName or at least one SAN.
-+  uris:
-+    - urn:aws-load-balancer-controller:webhook-ca
-+  {{- end }}
-   isCA: true
-   subject:
-     organizations:
-       - aws-load-balancer-controller
-+  {{- with .Values.certManager.privateKey }}
-+  privateKey:
-+    {{- toYaml . | nindent 4 }}
-+  {{- end }}
- ---
- # Create an Issuer that uses the above generated CA certificate to issue certs
- apiVersion: cert-manager.io/v1
-```
-
-**File**: `helm/aws-load-balancer-controller/templates/webhook.yaml` (modified, +4/-0)
-```diff
-@@ -421,6 +421,10 @@ spec:
-     name: {{ template "aws-load-balancer-controller.namePrefix" . }}-root-issuer
-     {{- end }}
-   secretName: {{ template "aws-load-balancer-controller.webhookCertSecret" . }}
-+  {{- with .Values.certManager.privateKey }}
-+  privateKey:
-+    {{- toYaml . | nindent 4 }}
-+  {{- end }}
-   {{- with .Values.certManager -}}
-   {{ if .duration }}
-   duration: {{ .duration | default "8760h0m0s" | quote }}
-```
-
-**File**: `helm/aws-load-balancer-controller/values.yaml` (modified, +10/-0)
-```diff
-@@ -122,9 +122,19 @@ certManager:
-   renewBefore: "720h0m0s"  # 30 days
-   revisionHistoryLimit:
+@@ -30,6 +30,7 @@
+ | [service.beta.kubernetes.io/aws-load-balancer-proxy-protocol](#proxy-protocol-v2)                                    | string                                        |                          | Set to `"*"` to enable                                                                                                                                                                                                                                                                                                                                                                                               |
+ | [service.beta.kubernetes.io/aws-load-balancer-proxy-protocol-per-target-group](#proxy-protocol-v2)                   | string                                        |                          | If specified,configures proxy protocol for the target groups corresponding to the ports mentioned and disables for the rest. For example, if you have services deployed on ports `"80, 443 and 22"`, the annotation value `"80, 443"` will enable proxy protocol for ports 80 and 443 only, and disable for port 22. This annotation is overriden by `"service.beta.kubernetes.io/aws-load-balancer-proxy-protocol"` |
+ | [service.beta.kubernetes.io/aws-load-balancer-ip-address-type](#ip-address-type)                                     | string                                        | ipv4                     | ipv4 \| dualstack                                                                                                                                                                                                                                                                                                                                                                                                    |
++| [service.beta.kubernetes.io/aws-load-balancer-dual-stack-routing](#dual-stack-routing)                         | boolean                                       | false                    | dualstack lb only. Enables per-address-family listener rules to route IPv4 clients to an IPv4 target group and IPv6 clients to an IPv6 target group                                                                                                                                                                                                                                                                  |
+ | [service.beta.kubernetes.io/aws-load-balancer-access-log-enabled](#deprecated-attributes)                            | boolean                                       | false                    | deprecated, in favor of [aws-load-balancer-attributes](#load-balancer-attributes)                                                                                                                                                                                                                                                                                                                                    |
+ | [service.beta.kubernetes.io/aws-load-balancer-access-log-s3-bucket-name](#deprecated-attributes)                     | string                                        |                          | deprecated, in favor of [aws-load-balancer-attributes](#load-balancer-attributes)                                                                                                                                                                                                                                                                                                                                    |
+ | [service.beta.kubernetes.io/aws-load-balancer-access-log-s3-bucket-prefix](#deprecated-attributes)                   | string                                        |                          | deprecated, in favor of [aws-load-balancer-attributes](#load-balancer-attributes)                                                                                                                                                                                                                                                                                                                                    |
+@@ -260,6 +261,29 @@ Traffic Listening can be controlled with following annotations:
+         service.beta.kubernetes.io/aws-load-balancer-ip-address-type: ipv4
+         ```
  
-+  # Private key settings for both the root CA and the webhook serving certificate.
-+  # Same shape as cert-manager's Certificate spec.privateKey. Empty uses cert-manager defaults (RSA 2048).
-+  privateKey: {}
-+  #   algorithm: ECDSA
-+  #   size: 256
++- <a name="dual-stack-routing">`service.beta.kubernetes.io/aws-load-balancer-dual-stack-routing`</a> enables dual-stack routing for a dualstack NLB. When enabled, the controller creates two target groups per listener port — one IPv4 and one IPv6 — and adds a priority-1 listener rule to route IPv4 clients to the IPv4 target group. All other traffic (IPv6) falls through to the default action, which forwards to the IPv6 target group. This preserves the client's source IP address without requiring proxy protocol.
 +
-   # Root CA certificate configuration
-   rootCert:
-     duration: "43800h0m0s"  # 5 years
-+    # Common name of the root CA certificate. Set to "" to omit it: the root then gets the URI SAN
-+    # urn:aws-load-balancer-controller:webhook-ca (cert-manager needs a commonName or a SAN), and
-+    # the subject keeps O=aws-load-balancer-controller.
-+    commonName: "ca.webhook.aws-load-balancer-controller"
++    !!!note
++        - Requires `service.beta.kubernetes.io/aws-l
+```
+
+**File**: `docs/guide/service/nlb.md` (modified, +3/-0)
+```diff
+@@ -157,6 +157,9 @@ service.beta.kubernetes.io/aws-load-balancer-proxy-protocol: "*"
+ !!!note ""
+     If you enable proxy protocol v2, NLB health checks with HTTP/HTTPS only work if the health check port supports proxy protocol v2. Due to this behavior, you shouldn't configure proxy protocol v2 with NLB instance mode and `externalTrafficPolicy` set to `Local`.
  
-   # Optional: custom issuer reference
-   # issuerRef:
++!!!tip ""
++    For dual-stack NLBs, you can preserve client source IP for both IPv4 and IPv6 clients without enabling proxy protocol or changing `externalTrafficPolicy` to `Cluster` by using the [`aws-load-balancer-dual-stack-routing`](./annotations.md#dual-stack-routing) annotation.
++
+ ## Subnet tagging requirements
+ See [Subnet Discovery](../../deploy/subnet_discovery.md) for details on configuring Elastic Load Balancing for public or private placement.
+ 
 ```
 
----
-
-### Incident Patch 2: `554efb20` (2026-11-19)
-**Commit Message**: Merge pull request #4965 from ManvithaP-hub/fix-4964-readiness-probe
-
-fix: add readinessProbe to controller deployment in static manifest
-
-**File**: `config/controller/controller.yaml` (modified, +9/-0)
+**File**: `go.mod` (modified, +5/-5)
 ```diff
-@@ -42,6 +42,15 @@ spec:
-               scheme: HTTP
-             initialDelaySeconds: 30
-             timeoutSeconds: 10
-+          readinessProbe:
-+            failureThreshold: 2
-+            httpGet:
-+              path: /readyz
-+              port: 61779
-+              scheme: HTTP
-+            successThreshold: 1
-+            initialDelaySeconds: 10
-+            timeoutSeconds: 10
-       terminationGracePeriodSeconds: 10
-       priorityClassName: system-cluster-critical
-       serviceAccountName: controller
-\ No newline at end of file
+@@ -3,15 +3,15 @@ module sigs.k8s.io/aws-load-balancer-controller/v3
+ go 1.26.5
+ 
+ require (
+-	github.com/aws/aws-sdk-go-v2 v1.41.12
++	github.com/aws/aws-sdk-go-v2 v1.47.1
+ 	github.com/aws/aws-sdk-go-v2/config v1.32.23
+ 	github.com/aws/aws-sdk-go-v2/credentials v1.19.22
+ 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.18.28
+ 	github.com/aws/aws-sdk-go-v2/service/acm v1.28.4
+ 	github.com/aws/aws-sdk-go-v2/service/appmesh v1.27.7
+ 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.173.0
+ 	github.com/aws/aws-sdk-go-v2/service/ecr v1.30.0
+-	github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2 v1.54.0
++	github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2 v1.63.1
+ 	github.com/aws/aws-sdk-go-v2/service/globalaccelerator v1.26.3
+ 	github.com/aws/aws-sdk-go-v2/service/resourcegroupstaggingapi v1.23.3
+ 	github.com/aws/aws-sdk-go-v2/service/route53 v1.62.1
+@@ -20,7 +20,7 @@ require (
+ 	github.com/aws/aws-sdk-go-v2/service/sts v1.43.2
+ 	github.com/aws/aws-sdk-go-v2/service/wafregional v1.23.3
+ 	github.com/aws/aws-sdk-go-v2/service/wafv2 v1.51.4
+-	github.com/aws/smithy-go v1.27.1
++	github.com/aws/smithy-go v1.28.1
+ 	github.com/evanphx/json-patch v5.9.11+incompatible
+ 	github.com/gavv/httpexpect/v2 v2.9.0
+ 	github.com/go-logr/logr v1.4.3
+@@ -67,8 +67,8 @@ require (
+ 	github.com/ajg/form v1.5.1 // indirect
+ 	github.com/andybalholm/brotli v1.2.7 // indirect
+ 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 // indirect
+-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.28 // indirect
+-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.7.28 // indirect
++	github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.4 // indirect
++	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.4 // indirect
+ 	github.com/aws/aws-sdk-go-v2/internal/v4a v1.4.29 // indirect
+ 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.12 // indirect
+ 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.13.28 // indirect
 ```
 
----
-
-### Incident Patch 3: `59fe651d` (2026-11-18)
-**Commit Message**: fix: add readinessProbe to controller deployment in static manifest
-
-Signed-off-by: Manvitha Potluri <[REDACTED_EMAIL]>
-
-**File**: `config/controller/controller.yaml` (modified, +9/-0)
+**File**: `go.sum` (modified, +10/-10)
 ```diff
-@@ -42,6 +42,15 @@ spec:
-               scheme: HTTP
-             initialDelaySeconds: 30
-             timeoutSeconds: 10
-+          readinessProbe:
-+            failureThreshold: 2
-+            httpGet:
-+              path: /readyz
-+              port: 61779
-+              scheme: HTTP
-+            successThreshold: 1
-+            initialDelaySeconds: 10
-+            timeoutSeconds: 10
-       terminationGracePeriodSeconds: 10
-       priorityClassName: system-cluster-critical
-       serviceAccountName: controller
-\ No newline at end of file
+@@ -30,18 +30,18 @@ github.com/armon/go-socks5 v0.0.0-20160902184237-e75332964ef5 h1:0CwZNZbxp69SHPd
+ github.com/armon/go-socks5 v0.0.0-20160902184237-e75332964ef5/go.mod h1:wHh0iHkYZB8zMSxRWpUBQtwG5a7fFgvEO+odwuTv2gs=
+ github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 h1:DklsrG3dyBCFEj5IhUbnKptjxatkF07cF2ak3yi77so=
+ github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2/go.mod h1:WaHUgvxTVq04UNunO+XhnAqY/wQc+bxr74GqbsZ/Jqw=
+-github.com/aws/aws-sdk-go-v2 v1.41.12 h1:DIKX2c31ekm9RA2D9FBj1EWXx++9AdAqRw+e78Tq2Ck=
+-github.com/aws/aws-sdk-go-v2 v1.41.12/go.mod h1:27+ACypSLljLAEKsCYOmrjKh83vuTRkuAe9Uv/3A4bg=
++github.com/aws/aws-sdk-go-v2 v1.47.1 h1:uOIZnp4PK3ZhKI0dNrJrhTEsLxbpXHTAJlwoS1pvAtw=
++github.com/aws/aws-sdk-go-v2 v1.47.1/go.mod h1:bttEH6JqnUL8LepvDVfdrds/fZ5bCIxzpe3abyUrhDU=
+ github.com/aws/aws-sdk-go-v2/config v1.32.23 h1:PYDobtcsJXK6bQe9I8RQk6s19Bz3xa3xRU08Hy1Em3Y=
+ github.com/aws/aws-sdk-go-v2/config v1.32.23/go.mod h1:QID4dqUQVgEOYPKsPWd1sNWCCR2c5g7o3jeEtIXPOZU=
+ github.com/aws/aws-sdk-go-v2/credentials v1.19.22 h1:SHfH6wyPsEgG7fVsi5rQxWEt7tuIcN2PGhb1mTFv6tE=
+ github.com/aws/aws-sdk-go-v2/credentials v1.19.22/go.mod h1:54nO8lKD4aQPOntM/VTWjnR+DYzTwx0YkSMZMhAgewQ=
+ github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.18.28 h1:b+kcDejJrXc30zU/w8Tc9klISwaO5wh+6T0sMBdDoHM=
+ github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.18.28/go.mod h1:LnI62O9GnSv6GcuLXxOYqlq0C8EmxMcgnF6m7LdYuOY=
+-github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.28 h1:Xf2j7NdVcUKomlZ4iihOP4AZ3Fzlr8h4yKpXeP+OFPg=
+-github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.28/go.mod h1:O8cDo1dW63jU7ki//kRe1z+tLGcpnD1jrouitsQddDw=
+-github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.7.28 h1:KqIfN9kpkKkcBqBbNpNGTIrXO6ExTUvFKvXkC+YAzVo=
+-github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.7.28/go.mod h1:uxtQiKvLtNS4iXVsH2McVD/ls8FKN/uUhe1hGxPjrw0=
++github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.4 h1:CLq4+8UHCI+ZZYl/EuJxXovaIVN2xeeT8JV+dsApQ5E=
++github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.4/go.mod h1:Wv4q5sAM04xAMkoOedxLx2inVf6K5FdxYp+A61L+q/0=
++github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.4 h1:dD4MR81I7YkpEBRk6UP9rocC2QnT3qVuXwzlYTtfGEs=
++github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.4/go.mod h1:EcXV1kAFd5XwSkDHlj94gnF3q5CkJyYiIJfH8N0VmrE=
+ github.com/aws/aws-sdk-go-v2/internal/v4a v1.4.29 h1:VkE9FuzTQVjBBrnj4+oCdxCLFIz7aqLYKUCjtvxVcOs=
+ github.com/aws/aws-sdk-go-v2/internal/v4a v1.4.29/go.mod h1:H32Z2Qth9b+9LqjyBsCnozMQ8H2N7YBUDVXwbs0iggg=
+ github.com/aws/aws-sdk-go-v2/service/acm v1.28.4 h1:wiW1Y6/1lysA0eJZRq0I53YYKuV9MNAzL15z2eZRlEE=
+@@ -52,8 +52,8 @@ github.com/aws/aws-sdk-go-v2/service/ec2 v1.173.0 h1:ta62lid9JkIpKZtZZXSj6rP2AqY
+ github.com/aws/aws-sdk-go-v2/service/ec2 v1.173.0/go.mod h1:o6QDjdVKpP5EF0dp/VlvqckzuSDATr1rLdHt3A5m0YY=
+ github.com/aws/aws-sdk-go-v2/service/ecr v1.30.0 h1:WsWG+jupMFNpMCF3g4y1jVWbXKBsG1DyTs2tM48yuJE=
+ github.com/aws/aws-sdk-go-v2/service/ecr v1.30.0/go.mod h1:WadVIk+UrTvWuAsCp6BKGX4i2snurpz8mPWhJQnS7Dg=
+-github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2 v1.54.0 h1:7Aa/utljEengXYcL+29baOrd6eRtP0JoX3UJwYNA83Y=
+-github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2 v1.54.0/go.mod h1:DpGMmFhQwV/HH9zugLT5Ovf9HMKdQ+6ejfJybqEC9i4=
++github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2 v1.63.1 h1:EEnFRsc58n3vgAM53KfNN8bKQedMWVYINZwZbtnnoMU=
++github.com/aws/aws-sdk-go-v2/service/elasticloadbalancingv2 v1.63.1/go.mod h1:6fHHZMaRnR4CQno5I1DlMBNk0uGJ5P95w3E2HXcoZDw=
+ github.com/aws/aws-sdk-go-v2/service/globalaccelerator v1.26.3 h1:G8qcrur/MG4c7Wu+LMtpAPUSzmmaOa4ssHgYtefeJoo=
+ github.com/aws/aws-sdk-go-v2/service/globalaccelerator v1.26.3/go.mod h1:SJbyMV7JHSdKF1V0femihek4k7t2u5quWKiHzG8pihc=
+ github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.12 h1:ZD2+BSw9vFsNlKYIasSNt3uDbjqqXIBcM13UJv/Lx2k=
+@@ -80,8 +80,8 @@ github.com/aws/aws-sdk-go-v2/service/wafregional v1.23.3 h1:7dr6En0/6KRFoz8VmnYk
+ github.com/aws/aws-sdk-go-v2/service/wafregional v1.23.3/go.mod h1:24TtlRsv4LKAE3VnRJQhpatr8cpX0yj8NSzg8/lxOCw=
+ github.com/aws/aws-sdk-go-v2/service/wafv2 v1.51.4 h1:1khBA5uryBRJoCb4G2iR5RT06BkfPEjjDCHAiRb8P3Q=
+ github.com/aws/aws-sdk-go-v2/service/wafv2 v1.51.4/go.mod h1:QpFImaPGKNwa+MiZ+oo6LbV1PVQBapc0CnrAMRScoxM=
+-github.com/aws/smithy-go v1.27.1 h1:4T340VFndXtADGF52gYa1POyL7s9E4Z1OeZ1hCscIw8=
+-github.com/aws/smithy-go v1.27.1/go.mod h1:YE2RhdIuDbA5E5bTdciG9KrW3+TiEONeUWCqxX9i1Fc=
++github.com/aws/smithy-go v1.28.1 h1:R/nXH00c8qcfCzQVELtRw+eLQWtzv+VAIEFJ1/xxXlQ=
++github.com/aws/smithy-go v1.28.1/go.mod h1:YE2RhdIuDbA5E5bTdciG9KrW3+TiEONeUWCqxX9i1Fc=
+ github.com/beorn7/perks v1.0.1 h1:VlbKKnNfV8bJzeqoa4cOKqO6bYr3WgKZxO8Z16+hsOM=
+ github.com/beorn7/perks v1.0.1/go.mod h1:G2ZrVWU2WbWT9wwq4/hrbKbnv/1ERSJQ0ibhJ6rlkpw=
+ github.com/blang/semver/v4 v4.0.0 h1:1PFHFE6yCCTv8C1TeyNNarDzntLi7wMI5i/pzqYIsAM=
+```
+
+**File**: `pkg/annotations/constants.go` (modified, +1/-0)
+```diff
+@@ -133,6 +133,7 @@ const (
+ 	SvcLBSuffixEnableTCPUDPListener                      = "aws-load-balancer-enable-tcp-udp-listener"
+ 	SvcLBSuffixDisableNLBSG                              = "aws-load-balancer-disable-nlb-sg"
+ 	SvcLBSuffixQUICEnabledPorts                          = "aws-load-balancer-quic-enabled-ports"
++	SvcLBSuffixDualStackRouting                          = "aws-load-balancer-dual-stack-routing"
+ )
+ 
+ const (
+```
+
+**File**: `pkg/deploy/elbv2/listener_utils.go` (modified, +5/-1)
+```diff
+@@ -251,9 +251,13 @@ func buildSDKQueryStringConditionConfig(modelCfg elbv2model.QueryStringCondition
+ }
+ 
+ func buildSDKSourceIpConditionConfig(modelCfg elbv2model.SourceIPConditionConfig) *elbv2types.SourceIpConditionConfig {
+-	return &elbv2types.SourceIpConditionConfig{
++	sdkObj := &elbv2types.SourceIpConditionConfig{
+ 		Values: modelCfg.Values,
+ 	}
++	if modelCfg.IpAddressType != nil {
++		sdkObj.IpAddressType = elbv2types.SourceIpAddressTypeEnum(string(*modelCfg.IpAddressType))
++	}
++	return sdkObj
+ }
+ 
+ func buildSDKTransforms(modelTransforms []elbv2model.Transform) []elbv2types.RuleTransform {
+```
+
+**File**: `pkg/deploy/elbv2/listener_utils_test.go` (modified, +35/-0)
+```diff
+@@ -50,6 +50,41 @@ func Test_isListenerNotFoundError(t *testing.T) {
+ 	}
+ }
+ 
++func Test_buildSDKSourceIpConditionConfig(t *testing.T) {
++	tests := []struct {
++		name     string
++		modelCfg elbv2model.SourceIPConditionConfig
++		want     *elbv2types.SourceIpConditionConfig
++	}{
++		{
++			name:     "ALB CIDR values only",
++			modelCfg: elbv2model.SourceIPConditionConfig{Values: []string{"10.0.0.0/8", "192.168.0.0/16"}},
++			want:     &elbv2types.SourceIpConditionConfig{Values: []string{"10.0.0.0/8", "192.168.0.0/16"}},
++		},
++		{
++			name:     "NLB IpAddressType ipv4",
++			modelCfg: elbv2model.SourceIPConditionConfig{IpAddressType: (*elbv2model.SourceIPAddressType)(awssdk.String("ipv4"))},
++			want:     &elbv2types.SourceIpConditionConfig{IpAddressType: elbv2types.SourceIpAddressTypeEnum("ipv4")},
++		},
++		{
++			name:     "NLB IpAddressType ipv6",
++			modelCfg: elbv2model.SourceIPConditionConfig{IpAddressType: (*elbv2model.SourceIPAddressType)(awssdk.String("ipv6"))},
++			want:     &elbv2types.SourceIpConditionConfig{IpAddressType: elbv2types.SourceIpAddressTypeEnum("ipv6")},
++		},
++		{
++			name:     "empty config",
++			modelCfg: elbv2model.SourceIPConditionConfig{},
++			want:     &elbv2types.SourceIpConditionConfig{},
++		},
++	}
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			got := buildSDKSourceIpConditionConfig(tt.modelCfg)
++			assert.Equal(t, tt.want, got)
++		})
++	}
++}
++
+ func Test_buildSDKJwtValidationConfig(t *testing.T) {
+ 	type args struct {
+ 		jwtValidationConfig elbv2model.JwtValidationConfig
+```
+
+**File**: `pkg/model/elbv2/listener_rule.go` (modified, +13/-2)
+```diff
+@@ -107,10 +107,21 @@ type QueryStringConditionConfig struct {
+ 	Values []QueryStringKeyValuePair `json:"values"`
+ }
+ 
++type SourceIPAddressType string
++
++const (
++	SourceIPAddressTypeIPv4 SourceIPAddressType = "ipv4"
++	SourceIPAddressTypeIPv6 SourceIPAddressType = "ipv6"
++)
++
+ // Information about a source IP condition.
+ type SourceIPConditionConfig struct {
+-	// One or more source IP addresses, in CIDR format.
+-	Values []string `json:"values"`
++	// One or more source IP addresses, in CIDR format. Used for ALB.
++	// +optional
++	Values []string `json:"values,omitempty"`
++	// The IP address type for NLB source-ip conditions.
++	// +optional
++	IpAddressType *SourceIPAddressType `json:"ipAddressType,omitempty"`
+ }
+ 
+ // Information about a condition for a rule.
 ```
 
 #### Recent Merged Pull Requests:
@@ -1804,22 +1896,25 @@ Signed-off-by: Manvitha Potluri <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in README.md
+## X. Empirical Invariant Guard in annotations.md
 
 **RULE**:
-When implementing operations in `helm/aws-load-balancer-controller/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kubernetes-sigs/aws-load-balancer-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/guide/service/annotations.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kubernetes-sigs/aws-load-balancer-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3f8ab7ff`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `741e1637`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `helm/aws-load-balancer-controller/README.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/guide/service/annotations.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-| `certManager.privateKey`                                            | Private key settings (cert-manager `spec.privateKey`, e.g. `{algorithm: ECDSA, size: 256}`) for the root CA and webhook serving certificates. Empty uses cert-manager defaults                                                                                                                                                               | `{}`                                              |
-| `certManager.rootCert.commonName`                                   | Common name of the self-signed root CA certificate. Set to `""` to omit it; the root then gets the URI SAN `urn:aws-load-balancer-controller:webhook-ca` and keeps `O=aws-load-balancer-controller`                                                                                                                                                                                                              | `ca.webhook.aws-load-balancer-controller`         |
+| [service.beta.kubernetes.io/aws-load-balancer-dual-stack-routing](#dual-stack-routing)                         | boolean                                       | false                    | dualstack lb only. Enables per-address-family listener rules to route IPv4 clients to an IPv4 target group and IPv6 clients to an IPv6 target group                                                                                                                                                                                                                                                                  |
+- <a name="dual-stack-routing">`service.beta.kubernetes.io/aws-load-balancer-dual-stack-routing`</a> enables dual-stack routing for a dualstack NLB. When enabled, the controller creates two target groups per listener port — one IPv4 and one IPv6 — and adds a priority-1 listener rule to route IPv4 clients to the IPv4 target group. All other traffic (IPv6) falls through to the default action, which forwards to the IPv6 target group. This preserves the client's source IP address without requiring proxy protocol.
+
+    !!!note
+        - Requires `service.beta.kubernetes.io/aws-l
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1829,7 +1924,7 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3f8ab7ff` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `741e1637` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T17:06:07.480Z",
-  "total_records": 2262,
+  "last_updated": "2026-11-21T17:16:20.052Z",
+  "total_records": 2263,
   "domains": {
     "A": {
       "total": 17,
@@ -1439,7 +1439,7 @@
       ]
     },
     "H": {
-      "total": 537,
+      "total": 538,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1977,7 +1977,8 @@
         "DOM-H-D52613BE",
         "domain_intelligence-technical-construction-intelligence-linkerd-linkerd2-core-invariants",
         "domain_intelligence-technical-construction-intelligence-linkerd-linkerd2-learnings-core-invariants",
-        "DOM-H-1565C815"
+        "DOM-H-1565C815",
+        "DOM-H-D7B01097"
       ]
     },
     "I": {
@@ -18132,8 +18133,8 @@
       "title": "Technical Construction Intelligence: genkit-ai/genkit Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-genkit-ai-genkit-technical-construction-intelligence-genkit-ai-genkit-core-invar.md",
       "repository": "genkit-ai/genkit",
-      "content_hash": "f17c52b7571a7dc198aaf75562a825e309c30833755e9bf587a0d9a32826dcfe",
-      "created_at": "2026-11-20T11:41:01.366Z"
+      "content_hash": "6b27fdd04ad03a026fa6dd1b6fa2301e871dae77fba76c8ead68073c524553fd",
+      "created_at": "2026-11-21T17:15:37.468Z"
     },
     "domain_intelligence-quality-verification-intelligence-automattic-harper-learnings-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-automattic-harper-learnings-core-invariants",
@@ -28732,8 +28733,8 @@
       "title": "Research & Knowledge Intelligence: briaai/Fibo-2.0-dev Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-briaai-fibo-2-0-dev-research-knowledge-intelligence-briaai-fibo-2-0-dev-core-.md",
       "repository": "briaai/Fibo-2.0-dev",
-      "content_hash": "56eaec8693bb32e5f89c994e5399400246fbd595bab36a194a371bb690bdc1a7",
-      "created_at": "2026-11-17T18:56:13.974Z"
+      "content_hash": "5068f2b15a7bcc4bddaf6bb0afe58bbe7c30d195239b8f95e77843d9189241cf",
+      "created_at": "2026-11-21T17:15:23.027Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-briaai-fibo-2-0-dev-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-briaai-fibo-2-0-dev-learnings-core-invariants",
@@ -28741,8 +28742,8 @@
       "title": "Research & Knowledge Intelligence: hf-briaai-fibo-2.0-dev-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-briaai-fibo-2-0-dev-learnings-research-knowledge-intelligence-hf-briaai-fibo-.md",
       "repository": "hf-briaai-fibo-2.0-dev-learnings",
-      "content_hash": "2c157409ac29dfb72ff25d1622e04d5e350a1420c8913a3bb7fc4cc643d23623",
-      "created_at": "2026-11-17T18:56:27.750Z"
+      "content_hash": "1a9596c24ca1f14e073a03625f806c5282f9d1280647d3231c11c3456e31d610",
+      "created_at": "2026-11-21T17:15:40.839Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xhtoken-spark-x2-6-4b-gguf-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xhtoken-spark-x2-6-4b-gguf-core-invariants",
@@ -30996,8 +30997,8 @@
       "title": "Architecture Intelligence: kubernetes-sigs/aws-load-balancer-controller Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kubernetes-sigs-aws-load-balancer-controller-architecture-intelligence-kubernete.md",
       "repository": "kubernetes-sigs/aws-load-balancer-controller",
-      "content_hash": "bb5e3e90548c8d5405844b4b67823cc83783a98a6aff8ab032eb4955b5d1704f",
-      "created_at": "2026-11-19T09:12:18.726Z"
+      "content_hash": "a30d9decb8e0a5bfd51283cfbc9aaa7c10f621eb764e7a2b91d38259554e2c32",
+      "created_at": "2026-11-21T17:15:32.717Z"
     },
     "domain_intelligence-quality-verification-intelligence-cross-encoder-ms-marco-minilm-l6-v2-core-invar": {
       "record_id": "domain_intelligence-quality-verification-intelligence-cross-encoder-ms-marco-minilm-l6-v2-core-invar",
@@ -31100,8 +31101,8 @@
       "title": "Architecture Intelligence: kubernetes-sigs-aws-load-balancer-controller-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kubernetes-sigs-aws-load-balancer-controller-learnings-architecture-intelligence.md",
       "repository": "kubernetes-sigs-aws-load-balancer-controller-learnings",
-      "content_hash": "ef9be54f3c50f776a35cd64371db516add9b5f8f8d56aa3b49bab7442562bb79",
-      "created_at": "2026-11-19T09:17:05.396Z"
+      "content_hash": "cb0f2f81af6760f8355f6170e6f4f9c8411a0c71e7ea44310ba50219aafc3968",
+      "created_at": "2026-11-21T17:15:41.687Z"
     },
     "domain_intelligence-content-information-intelligence-projectcontour-contour-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-projectcontour-contour-core-invariants",
@@ -32942,8 +32943,8 @@
       "title": "Technical Construction Intelligence: genkit-ai-genkit-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-genkit-ai-genkit-learnings-technical-construction-intelligence-genkit-ai-genkit-.md",
       "repository": "genkit-ai-genkit-learnings",
-      "content_hash": "ad422a9ec3dfa86cec86e996986f059ec020594272a50a2bbd67487651570e83",
-      "created_at": "2026-11-20T11:41:04.790Z"
+      "content_hash": "301a92ac1a49a0af402a5b71410f1627cf5838ce3dd49f29d71726e44257a550",
+      "created_at": "2026-11-21T17:16:20.052Z"
     },
     "domain_intelligence-technical-construction-intelligence-onejs-one-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-onejs-one-core-invariants",
@@ -37952,6 +37953,54 @@
       "repository": "hf-nanbeige-nanbeige4.3-33b-learnings",
       "content_hash": "02a83bea7458b6d983152b714b58869b7497fdbf571dc540d52d133f04627842",
       "created_at": "2026-11-21T17:06:06.384Z"
+    },
+    "DOM-H-D7B01097": {
+      "record_id": "DOM-H-D7B01097",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "H",
+          "id": "technical_construction",
+          "name": "Technical Construction Intelligence"
+        },
+        {
+          "letter": "K",
+          "id": "quality_verification",
+          "name": "Quality & Verification Intelligence"
+        }
+      ],
+      "title": "genkit-tools): add trajectory span-parser helpers and test span builders",
+      "content": "When implementing operations in `genkit-tools/common/src/utils/trajectory/span-parser.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in genkit-ai/genkit. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "a35c066ce67dbf508995ac0c9b82b25b6d33816d5c95f67834511ffad6539c19",
+      "summary": "Prevents defects observed in production commit `e80aaa6b`: genkit-tools): add trajectory span-parser helpers and test span builders. Unvalid -> When implementing operations in `genkit-tools/common/src/utils/trajectory/span-parser.ts`, engineers MUST enforce rigorous boundary validati",
+      "provenance": {
+        "source_uri": "project://genkit-ai-genkit/genkit-ai-genkit-learnings.md",
+        "source_version": "e80aaa6b",
+        "observed_at": "2026-11-21T17:15:35.610Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (genkit-ai-genkit)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of genkit-ai-genkit"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "H",
+          "K"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-21T17:16:18.972Z"
     }
   }
 }

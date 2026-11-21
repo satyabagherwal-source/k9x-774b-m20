@@ -11880,3 +11880,7 @@ Every entry in this ledger must capture:
 | `learn-github-faridsafi-react-native-gifted-chat` | `https://github.com/FaridSafi/react-native-gifted-chat` | `a512f0f5` | Multi-dimensional audit evidence | 2026-11-21T17:05:51.421Z |
 | `learn-github-nginx-kubernetes-ingress` | `https://github.com/nginx/kubernetes-ingress` | `7ba55784` | Multi-dimensional audit evidence | 2026-11-21T17:05:54.309Z |
 | `learn-huggingface-nanbeige-nanbeige4-3-33b` | `https://huggingface.co/Nanbeige/Nanbeige4.3-33B` | `hf-nanbeig` | Multi-dimensional audit evidence | 2026-11-21T17:06:02.480Z |
+| `learn-huggingface-briaai-fibo-2-0-dev` | `https://huggingface.co/briaai/Fibo-2.0-dev` | `hf-briaai-` | Multi-dimensional audit evidence | 2026-11-21T17:15:22.780Z |
+| `learn-github-kubernetes-sigs-aws-load-balancer-controller` | `https://github.com/kubernetes-sigs/aws-load-balancer-controller` | `741e1637` | Multi-dimensional audit evidence | 2026-11-21T17:15:32.200Z |
+| `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `e80aaa6b` | Multi-dimensional audit evidence | 2026-11-21T17:15:36.914Z |
+| `learn-dom-h-d7b01097` | `project://genkit-ai-genkit` | `e80aaa6b` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md` | 2026-11-21T17:16:19.019Z |

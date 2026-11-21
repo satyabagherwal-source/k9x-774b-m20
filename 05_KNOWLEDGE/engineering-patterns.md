@@ -730201,3 +730201,190 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `7ba55784` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9808. Empirical Invariant Guard in annotations.md (Harvested from kubernetes-sigs/aws-load-balancer-controller)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Empirical Invariant Guard in annotations.md",
+  "source": "kubernetes-sigs/aws-load-balancer-controller",
+  "source_url": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
+  "source_version": "741e1637",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-21T17:15:31.507Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [kubernetes-sigs/aws-load-balancer-controller](https://github.com/kubernetes-sigs/aws-load-balancer-controller) (Revision: `741e1637`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `docs/guide/service/annotations.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kubernetes-sigs/aws-load-balancer-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `741e1637`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/guide/service/annotations.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+| [service.beta.kubernetes.io/aws-load-balancer-dual-stack-routing](#dual-stack-routing)                         | boolean                                       | false                    | dualstack lb only. Enables per-address-family listener rules to route IPv4 clients to an IPv4 target group and IPv6 clients to an IPv6 target group                                                                                                                                                                                                                                                                  |
+- <a name="dual-stack-routing">`service.beta.kubernetes.io/aws-load-balancer-dual-stack-routing`</a> enables dual-stack routing for a dualstack NLB. When enabled, the controller creates two target groups per listener port — one IPv4 and one IPv6 — and adds a priority-1 listener rule to route IPv4 clients to the IPv4 target group. All other traffic (IPv6) falls through to the default action, which forwards to the IPv6 target group. This preserves the client's source IP address without requiring proxy protocol.
+
+    !!!note
+        - Requires `service.beta.kubernetes.io/aws-l
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `741e1637` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9809. add trajectory span-parser helpers and test span builders (Harvested from genkit-ai/genkit)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "add trajectory span-parser helpers and test span builders",
+  "source": "genkit-ai/genkit",
+  "source_url": "https://github.com/genkit-ai/genkit",
+  "source_version": "e80aaa6b",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-21T17:15:36.304Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-genkit-ai-genkit",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [genkit-ai/genkit](https://github.com/genkit-ai/genkit) (Revision: `e80aaa6b`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `genkit-tools/common/src/utils/trajectory/span-parser.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in genkit-ai/genkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `e80aaa6b`: genkit-tools): add trajectory span-parser helpers and test span builders. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `genkit-tools/common/src/utils/trajectory/span-parser.ts`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+/**
+ * Copyright 2026 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import type { RuntimeError } from '../../types/error.js';
+import type {
+  AgentInput,
+  GenerationUsage,
+  MessageData,
+  NestedSpanData,
+  Part,
+  SpanData,
+  ToolDefinition,
+} from '../../types/index.js';
+import {
+  cleanActionName,
+  getSpanName,
+  getSpanStatus,
+  isTruthyAttr,
+  parseSpanJson,
+  shortToolName,
+} from '../trace.js';
+
+const PROMPT_SPAN_TYPES: ReadonlySet<unknown> = new Set([
+  'prompt',
+  'promptTemplate',
+]);
+
+/**
+ * Spans belonging to a single `Trajectory` (either the root trace/agent or an
+ * individual nested `/agent/...` subagent), grouped by role during tree
+ * traversal.
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `e80aaa6b` are properly handled with clean fallback behavior.

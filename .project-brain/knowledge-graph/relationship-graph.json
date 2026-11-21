@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-21T15:49:47.996Z",
+  "updated_at": "2026-11-21T17:16:19.016Z",
   "statistics": {
-    "total_nodes": 447,
-    "total_edges": 192,
+    "total_nodes": 448,
+    "total_edges": 193,
     "domain_distribution": {
       "D": 279,
       "M": 1,
-      "H": 72,
+      "H": 73,
       "J": 22,
       "K": 28,
       "L": 8,
@@ -21,7 +21,7 @@
     },
     "relation_distribution": {
       "CONSTRAINED_BY_ARCHITECTURE": 190,
-      "VERIFIED_BY_TEST": 1,
+      "VERIFIED_BY_TEST": 2,
       "STYLED_BY_DESIGN": 1
     }
   },
@@ -9988,6 +9988,29 @@
       ],
       "created_at": "2026-11-21T15:49:47.996Z",
       "updated_at": "2026-11-21T15:49:47.996Z"
+    },
+    "DOM-H-D7B01097": {
+      "id": "DOM-H-D7B01097",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "genkit-tools): add trajectory span-parser helpers and test span builders",
+      "summary": "Prevents defects observed in production commit `e80aaa6b`: genkit-tools): add trajectory span-parser helpers and test span builders. Unvalid -> When implementing operations in `genkit-tools/common/src/utils/trajectory/span-parser.ts`, engineers MUST enforce rigorous boundary validati",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://genkit-ai-genkit/genkit-ai-genkit-learnings.md",
+        "source_version": "e80aaa6b",
+        "observed_at": "2026-11-21T17:15:35.610Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (genkit-ai-genkit)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence",
+        "K"
+      ],
+      "created_at": "2026-11-21T17:16:19.015Z",
+      "updated_at": "2026-11-21T17:16:19.015Z"
     }
   },
   "edges": [
@@ -11910,6 +11933,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-9397456A [D] with Domain G",
       "created_at": "2026-11-21T02:13:39.561Z"
+    },
+    {
+      "id": "EDGE-A00E2166F7A5",
+      "sourceId": "DOM-H-D7B01097",
+      "targetId": "NODE-K-domain-bridge-k",
+      "relationType": "VERIFIED_BY_TEST",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-H-D7B01097 [H] with Domain K",
+      "created_at": "2026-11-21T17:16:19.015Z"
     }
   ]
 }

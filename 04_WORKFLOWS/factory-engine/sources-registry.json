@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-21T17:06:05.349Z",
-    "lastVerified": "2026-11-21T17:06:05.349Z",
+    "lastChecked": "2026-11-21T17:15:40.408Z",
+    "lastVerified": "2026-11-21T17:15:40.408Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -171,12 +171,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dathere-qsv": {
-    "name": "dathere/qsv",
+    "name": "qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-21T16:18:58.450Z",
-    "lastVerified": "2026-11-21T16:18:58.450Z",
+    "lastChecked": "2026-11-21T17:15:34.573Z",
+    "lastVerified": "2026-11-21T17:15:34.573Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -185,7 +185,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "ef2aebe1"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -505,22 +506,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "kubernetes-sigs-aws-load-balancer-controller": {
-    "name": "aws-load-balancer-controller",
+    "name": "kubernetes-sigs/aws-load-balancer-controller",
     "officialUrl": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-20T13:40:11.440Z",
-    "lastVerified": "2026-11-20T13:40:11.440Z",
+    "lastChecked": "2026-11-21T17:15:30.830Z",
+    "lastVerified": "2026-11-21T17:15:30.830Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
-    "contentHash": "f748fae690d3f3fde83365843af02db789a451902079fb2fc62bbc17537b138e",
+    "contentHash": "0c090dcd60d755535bd91b2c53cc6f6170012f3835da344ac4c5b0ba2b9bfc7a",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "3f8ab7ff"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "nolabs-ai-nono": {
     "name": "nono",
@@ -2144,8 +2144,8 @@
     "officialUrl": "https://github.com/tailscale/tailscale",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-21T07:41:59.891Z",
-    "lastVerified": "2026-11-21T07:41:59.891Z",
+    "lastChecked": "2026-11-21T17:15:29.476Z",
+    "lastVerified": "2026-11-21T17:15:29.476Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tailscale-tailscale",
@@ -2201,9 +2201,9 @@
   "danilowoz-react-content-loader": {
     "name": "react-content-loader",
     "officialUrl": "https://github.com/danilowoz/react-content-loader",
-    "lastChecked": "2026-11-18T13:46:54.062Z",
+    "lastChecked": "2026-11-21T17:15:24.526Z",
     "revisionIdentifier": "c8a6b6c6",
-    "lastVerified": "2026-11-18T13:46:54.062Z"
+    "lastVerified": "2026-11-21T17:15:24.526Z"
   },
   "chaos-mesh-chaos-mesh": {
     "name": "chaos-mesh/chaos-mesh",
@@ -2671,9 +2671,9 @@
   "sharkdp-hyperfine": {
     "name": "hyperfine",
     "officialUrl": "https://github.com/sharkdp/hyperfine",
-    "lastChecked": "2026-11-20T02:38:45.311Z",
+    "lastChecked": "2026-11-21T17:15:19.438Z",
     "revisionIdentifier": "c5161524",
-    "lastVerified": "2026-11-20T02:38:45.311Z"
+    "lastVerified": "2026-11-21T17:15:19.438Z"
   },
   "hf-deepseek-ai-deepseek-v4.1-flash": {
     "name": "deepseek-ai/DeepSeek-V4.1-Flash",
@@ -6729,14 +6729,14 @@
     "officialUrl": "https://github.com/genkit-ai/genkit",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-20T11:40:58.121Z",
-    "lastVerified": "2026-11-20T11:40:58.121Z",
+    "lastChecked": "2026-11-21T17:15:35.603Z",
+    "lastVerified": "2026-11-21T17:15:35.603Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-genkit-ai-genkit",
-    "contentHash": "a03c213c67bb556d3aa7f57a574f433f7354870353b3e4c65a5f5217b8ed26a1",
+    "contentHash": "a4d68f17aee9c5245effc289ef795ed27022a128dc2de3b7b8bd7b2a62cc434b",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -12550,6 +12550,23 @@
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-nanbeige-nanbeige4-3-33b",
     "contentHash": "9a37fdb9bead07da7aabc5e3d81c65c006878bdba17e4f7cda5e5b414ca83382",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-briaai-fibo-2.0-dev": {
+    "name": "briaai/Fibo-2.0-dev",
+    "officialUrl": "https://huggingface.co/briaai/Fibo-2.0-dev",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-21T17:15:21.956Z",
+    "lastVerified": "2026-11-21T17:15:21.956Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-briaai-fibo-2-0-dev",
+    "contentHash": "0549b3c818c4821c796ca3c668bb4f9dea6875530d53e63c1adaf76d3ff30569",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

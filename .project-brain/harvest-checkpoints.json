@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-21T17:06:02.488Z",
+  "last_updated": "2026-11-21T17:15:36.926Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9081,14 +9081,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-genkit-ai-genkit",
-      "content_hash": "a03c213c67bb556d3aa7f57a574f433f7354870353b3e4c65a5f5217b8ed26a1",
-      "verified_at": "2026-11-20T11:41:01.063Z",
+      "content_hash": "a4d68f17aee9c5245effc289ef795ed27022a128dc2de3b7b8bd7b2a62cc434b",
+      "verified_at": "2026-11-21T17:15:36.925Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T11:41:01.063Z"
+      "last_updated": "2026-11-21T17:15:36.925Z"
     },
     "guokaigdg/animal-island-ui": {
       "repository": "guokaigdg/animal-island-ui",
@@ -10116,14 +10116,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
-      "content_hash": "f748fae690d3f3fde83365843af02db789a451902079fb2fc62bbc17537b138e",
-      "verified_at": "2026-11-19T09:12:18.280Z",
+      "content_hash": "0c090dcd60d755535bd91b2c53cc6f6170012f3835da344ac4c5b0ba2b9bfc7a",
+      "verified_at": "2026-11-21T17:15:32.210Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T09:12:18.280Z"
+      "last_updated": "2026-11-21T17:15:32.210Z"
     },
     "qdrant/qdrant": {
       "repository": "qdrant/qdrant",
@@ -16176,14 +16176,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-briaai-fibo-2-0-dev",
-      "content_hash": "77319363e73a84a12dddc790abb6b0f0a9f21a95f821718ea1e49d6969b4dfb0",
-      "verified_at": "2026-11-17T18:56:13.805Z",
+      "content_hash": "0549b3c818c4821c796ca3c668bb4f9dea6875530d53e63c1adaf76d3ff30569",
+      "verified_at": "2026-11-21T17:15:22.791Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T18:56:13.805Z"
+      "last_updated": "2026-11-21T17:15:22.791Z"
     },
     "Vincentwei1021/video-shotcraft": {
       "repository": "Vincentwei1021/video-shotcraft",

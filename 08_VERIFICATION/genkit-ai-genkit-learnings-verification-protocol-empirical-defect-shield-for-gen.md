@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T11:41:04.576Z",
+  "timestamp": "2026-11-21T17:16:19.640Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-genkit-ai-genkit-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [genkit-ai-genkit-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T11:41:04.576Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T17:16:19.640Z`  
 > **Learning ID**: `LEARN-EVO-genkit-ai-genkit-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md`  
 > **Source**: github ([https://github.com/genkit-ai/genkit](https://github.com/genkit-ai/genkit))  
-> **Source Version**: `9a7d0b65`  
+> **Source Version**: `e80aaa6b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T11:41:00.221Z  
+> **Timestamp**: 2026-11-21T17:15:35.610Z  
 > **Learning ID**: `learn-github-genkit-ai-genkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/genkit-ai/genkit](https://github.com/genkit-ai/genkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T11:40:58.121Z  
+> **Harvest Timestamp**: 2026-11-21T17:15:35.603Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Open-source framework for building agentic apps in JavaScript, Go, Dart, and Python, built and used in production by Google
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 6605 stars
+- **Stars / Engagement**: 6611 stars
 
 ---
 
@@ -1980,998 +1980,910 @@ export function setUserSettings(s: Record<string, string | boolean | number>) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9a7d0b65` (2026-11-19)
-**Commit Message**: fix(js/plugins/google-genai): send tool_choice none/auto as string in Interactions (#7269)
+### Incident Patch 1: `e80aaa6b` (2026-11-20)
+**Commit Message**: feat(genkit-tools): add trajectory span-parser helpers and test span builders (#7226)
 
-**File**: `js/plugins/google-genai/src/common/interaction-converters.ts` (modified, +18/-15)
+**File**: `genkit-tools/common/src/utils/trajectory/span-parser.ts` (added, +288/-0)
 ```diff
-@@ -383,30 +383,33 @@ export function selectInteractionInput(
-  * Converts `functionCallingConfig` (or, without it, the request's
-  * `toolChoice`) to the Interactions `generation_config.tool_choice`.
-  * Returns `undefined` when neither sets anything.
-+ *
-+ * The server only accepts `allowed_tools` with mode `any` or `validated`
-+ * (`{"allowed_tools": {"mode": "none"}}` is a 400 "allowed_tools mode must
-+ * be either ANY or VALIDATED."), so every other mode is sent as a plain
-+ * string. `allowedFunctionNames` without `ANY` or `VALIDATED` can't be
-+ * expressed and is dropped via `warnDropped`.
-  */
- export function toInteractionToolChoice(
-   functionCallingConfig?: { mode?: string; allowedFunctionNames?: string[] },
--  toolChoice?: string
--): InteractionToolChoiceConfig | undefined {
-+  toolChoice?: string,
-+  warnDropped?: (field: string) => void
-+): string | InteractionToolChoiceConfig | undefined {
-   if (functionCallingConfig) {
-     const mode = functionCallingConfig.mode?.toLowerCase();
-     const validMode = mode && mode !== 'mode_unspecified' ? mode : undefined;
--    if (!validMode && !functionCallingConfig.allowedFunctionNames?.length) {
--      return undefined;
-+    const names = functionCallingConfig.allowedFunctionNames;
-+    const hasNames = !!names?.length;
-+    if (hasNames && (validMode === 'any' || validMode === 'validated')) {
-+      return { allowed_tools: { mode: validMode, tools: names } };
-     }
--    return {
--      allowed_tools: {
--        ...(validMode ? { mode: validMode } : {}),
--        ...(functionCallingConfig.allowedFunctionNames
--          ? { tools: functionCallingConfig.allowedFunctionNames }
--          : {}),
--      },
--    };
-+    if (hasNames) {
-+      warnDropped?.('functionCallingConfig.allowedFunctionNames');
-+    }
-+    return validMode;
-   }
-   if (toolChoice) {
--    return {
--      allowed_tools: { mode: toolChoice === 'required' ? 'any' : toolChoice },
--    };
-+    return toolChoice === 'required' ? 'any' : toolChoice;
-   }
-   return undefined;
- }
-```
-
-**File**: `js/plugins/google-genai/src/common/utils.ts` (modified, +2/-0)
-```diff
-@@ -921,6 +921,8 @@ export function isStringArray(values: unknown[]): values is string[] {
- const DROPPED_CONFIG_FIELD_HINTS: Record<string, string> = {
-   'thinkingConfig.thinkingBudget':
-     " Use thinkingConfig.thinkingLevel ('LOW' | 'MEDIUM' | 'HIGH') instead.",
-+  'functionCallingConfig.allowedFunctionNames':
-+    " It only applies with mode 'ANY' or 'VALIDATED'.",
- };
- 
- /** `model:field` pairs that have already been warned about. */
-```
-
-**File**: `js/plugins/google-genai/src/googleai/gemini.ts` (modified, +2/-1)
-```diff
-@@ -1301,7 +1301,8 @@ export function defineModel(
-       if (useInteractions) {
-         const toolChoice = toInteractionToolChoice(
-           functionCallingConfig,
--          request.toolChoice
-+          request.toolChoice,
-+          (field) => warnDroppedConfigField(modelVersion, field)
-         );
-         if (toolChoice) {
-           interactionGenerationConfig.tool_choice = toolChoice;
-```
-
-**File**: `js/plugins/google-genai/src/vertexai/gemini.ts` (modified, +2/-1)
-```diff
-@@ -1269,7 +1269,8 @@ async function generateWithInteractions(params: {
-   );
-   const toolChoice = toInteractionToolChoice(
-     functionCallingConfig,
--    request.toolChoice
-+    request.toolChoice,
-+    warnDropped
-   );
-   if (toolChoice) {
-     generationConfig.tool_choice = toolChoice;
-```
-
-**File**: `js/plugins/google-genai/tests/common/interaction-converters_test.ts` (modified, +66/-0)
-```diff
-@@ -39,6 +39,7 @@ import {
-   toInteractionSpeechConfig,
-   toInteractionSteps,
-   toInteractionTool,
-+  toInteractionToolChoice,
-   toInteractionVideoResponseFormat,
-   withBasicUsageStats,
- } from '../../src/common/interaction-converters.js';
-@@ -1308,6 +1309,71 @@ describe('Interaction Converters', () => {
-     });
-   });
- 
-+  describe('toInteractionToolChoice', () => {
-+    // The server only accepts allowed_tools with mode any or validated (400
-+    // "allowed_tools mode must be either ANY or VALIDATED." otherwise).
-+    it('sends a request toolChoice as a plain string', () => {
-+      assert.strictEqual(toInteractionToolChoice(undefined, 'required'), 'any');
-+      assert.strictEqual(toInteractionToolChoice(undefined, 'none'), 'none');
-+      assert.strictEqual(toInteractionToolChoice(undefined, 'auto'), 'auto');
-+      assert.strictEqual(toInteractionToolChoice(), undefined);
-+    });
-+
-+    it('sends a functionCallingConfig mode without names as a plain string', () => {
-+      for (const mode of ['AUTO', 'NONE', 'ANY', 'VALIDATED']) {
-+        assert.strictEqual(
-+          toInteractionToolChoice({ mode }),
-+          mode.toLowerCase()
-+        );
-+      }
-+      assert.strictEqual(
-+        toInteractionToolChoice({ mode: 'MODE_UNSPECIFIED' }),
-+        undefined
-+      );
-+    });
-+
-+    it('uses allowed_tools for names with ANY or VALIDATED', () => {
-+      assert.deepStrictEqual(
-+        toInteractionToolChoice({
-+          mode: 'ANY',
-+          allowedFunctionNames: ['getWeather'],
-+        }),
-+        { allowed_tools: { mode: 'any', tools: ['getWeather'] } }
-+      );
-+      assert.deepStrictEqual(
-+        toInteractionToolChoice({
-+          mode: 'VALIDATED',
-+          allowedFunctionNames: ['getWeather'],
-+        }),
-+        { allowed_tools: { mode: 'validated', tools: ['getWeather'] } }
-+      );
-+    });
-+
-+    it('drops names without ANY or VALIDATED', () => {
-+      const dropped: string[] = [];
-+      assert.strictEqual(
-+        toInteractionToolChoice(
-+          { mode: 'AUTO', allowedFunctionNames: ['getWeather'] },
-+          undefined,
-+          (field) => dropped.push(field)
-+        ),
-+        'auto'
-+      );
-+      assert.strictEqual(
-+        toInteractionToolChoice(
-+          { allowedFunctionNames: ['getWeather'] },
-+          undefined,
-+          (field) => dropped.push(field)
-+        ),
-+        undefined
-+      );
-+      assert.deepStrictEqual(dropped, [
-+        'functionCallingConfig.allowedFunctionNames',
-+        'functionCallingConfig.allowedFunctionNames',
-+      ]);
-+    });
-+  });
-+
-   describe('toInteractionGoogleSearch', () => {
-     it('should handle boolean true config', () => {
-       const result = toInteractionGoogleSearch(true);
-```
-
-**File**: `js/plugins/google-genai/tests/googleai/gemini_test.ts` (modified, +60/-13)
-```diff
-@@ -583,30 +583,77 @@ describe('Google AI Gemini', () => {
-         const apiRequest: CreateInteractionRequest = JSON.parse(
-           fetchStub.lastCall.args[1].body
-         );
--        assert.deepStrictEqual(apiRequest.generation_config?.tool_choice, {
--          allowed_tools: {
--            mode: 'any',
--          },
--        });
-+        assert.strictEqual(apiRequest.generation_config?.tool_choice, 'any');
-       });
- 
--      it('constructs generation_config.tool_choice for toolChoice none (Interactions API)', async () => {
-+      // The server rejects {allowed_tools: {mode: 'none' | 'auto'}} with a 400
-+      // ("allowed_tools mode must be either ANY or VALIDATED."), so plain
-+      // modes are sent as strings.
-+      for (const toolChoice of ['none', 'auto'] as const) {
-+        it(`sends toolChoice ${toolChoice} as a plain string (Interactions API)`, async () => {
-+          const model = defineModel(
-+            'gemini-flash-latest',
-+            defaultPluginOptions
-+          );
-+          mockFetchResponse(defaultApiResponse);
-+          await model.run({ ...minimalRequest, toolChoice });
-+
-+          const apiRequest: CreateInteractionRequest = JSON.parse(
-+            fetchStub.lastCall.args[1].body
-+          );
-+          assert.strictEqual(
-+            apiRequest.generation_config?.tool_choice,
-+            toolChoice
-+          );
-+        });
-+      }
-+
-+      it('sends functionCallingConfig mode without names as a plain string (Interactions API)', async () => {
-         const model = defineModel('gemini-flash-latest', defaultPluginOptions);
-         mockFetchResponse(defaultApiResponse);
--        const request: GenerateRequest<typeof GeminiConfigSchema> = {
-+        await model.run({
-           ...minimalRequest,
--          toolChoice: 'none',
--        };
--        await model.run(request);
-+          config: { functionCallingConfig: { mode: 'NONE' } },
-+        });
- 
-         const apiRequest: CreateInteractionRequest = JSON.parse(
-           fetchStub.lastCall.args[1].body
-         );
--        assert.deepStrictEqual(apiRequest.generation_config?.tool_choice, {
--          allowed_tools: {
--            mode: 'none',
-+        assert.strictEqual(apiRequest.generation_config?.tool_choice, 'none');
-+      });
-+
-+      it('drops allowedFunctionNames without ANY with a warning (Interactions API)', async () => {
-+        const warnStub = sinon.stub(logger, 'warn');
-+        // Its own model name: the warning is logged once per model and field.
-+        const model = defineModel(
-+          'gemini-allowed-names-auto',
-+          defaultPluginOptions
-+        );
-+        mockFetchResponse(defaultApiResponse);
-+        await model.run({
-+          ...minimalRequest,
-+          config: {
-+            functionCallingConfig: {
-+              mode: 'AUTO',
-+              allowedFunctionNames: ['myFunc'],
-+            },
-           },
-         });
-+
-+        const apiRequest: CreateInteractionRequest = JSON.parse(
-+          fetchStub.lastCall.args[1].body
-+        );
-+        assert.strictEqual(apiRequest.generation_config?.tool_choice, 'auto');
-+        assert.ok(
-+          warnStub
-+            .getCalls()
-+            .some((c) =>
-+              String(c.args[0]).includes(
-+                "functionCallingConfig.allowedFunctionNames is not supported by 'gemini-allowed-names-auto' and was ignored. It only applies with mode 'ANY' or 'VALIDATED'."
-+              )
-+            ),
-+          'expected a warning about allowedFunctionNames'
-+        );
-       });
- 
-       it('sends responseModalities as response_format entries (Interactions API)', async () => {
-```
-
-**File**: `js/plugins/google-genai/tests/vertexai/gemini_test.ts` (modified, +46/-1)
-```diff
-@@ -1202,10 +1202,55 @@ describe('Vertex AI Gemini', () => {
-           max_output_tokens: 100,
-           thinking_level: 'low',
-           thinking_summaries: 'auto',
--          tool_choice: { allowed_tools: { mode: 'any' } },
-+          tool_choice: 'any',
-         });
-       });
- 
-+      // The platform rejects {allowed_tools: {mode: 'none' | 'auto'}} with a
-+      // 400, as the Gemini API does: plain modes are sent as strings.
-+      it('sends toolChoice none as a plain string', async () => {
-+        mockFetchResponse(interactionResponse);
-+        const model = defineModel(interactionsModel, clientOptions);
-+        await model.run({ ...minimalRequest, toolChoice: 'none' });
-+        assert.strictEqual(
-+          lastRequestBody().generation_config.tool_choice,
-+          'none'
-+        );
-+      });
-+
-+      it('drops allowedFunctionNames without ANY with a warning', async () => {
-+        const warnStub = sinon.stub(logger, 'warn');
-+        mockFetchResponse(interactionResponse);
-+        // Its own model name: the warning is logged once per model and field.
-+        const model = defineModel(
-+          `gemini-allowed-names-${clientOptions.kind}`,
-+          clientOptions
-+        );
-+        await model.run({
-+          ...minimalRequest,
-+          config: {
-+            functionCallingConfig: {
-+              mode: 'AUTO',
-+              allowedFunctionNames: ['getWeather'],
-+            },
-+          },
-+        });
-+        assert.strictEqual(
-+          lastRequestBody().generation_config.tool_choice,
-+          'auto'
-+        );
-+        assert.ok(
-+          warnStub
-+            .getCalls()
-+            .some((c) =>
-+              String(c.args[0]).includes(
-+                'functionCallingConfig.allowedFunctionNames is not supported'
-+              )
-+            ),
-+          'expected a warning about allowedFunctionNames'
-+        );
-+      });
-+
-       it('sends an empty schema for JSON output without a schema', async () => {
-         // Without a schema the server answers in prose (seen live on the
-         // Gemini API).
-```
-
-**File**: `js/testapps/basic-gemini/src/index-vertexai.ts` (modified, +46/-0)
-```diff
-@@ -754,6 +754,52 @@ ai.defineFlow(
-   }
- );
- 
-+// Tool choice: `required` makes the model call a tool, `none` makes it
-+// answer without one, `auto` (the default without toolChoice) lets it
-+// decide. returnToolRequests returns the tool calls instead of running
-+// them, so the output shows what the model asked for.
-+ai.defineFlow(
-+  {
-+    name: 'tool-choice',
-+    inputSchema: z.enum(['required', 'auto', 'none']).default('required'),
-+  },
-+  async (toolChoice) => {
-+    const response = await ai.generate({
-+      model: vertexAI.model('gemini-3.8-flash'),
-+      prompt: "What's the weather in Paris, France?",
-+      tools: [getWeather],
-+      toolChoice,
-+      returnToolRequests: true,
-+    });
-+    return {
-+      toolRequests: response.toolRequests.map((p) => p.toolRequest),
-+      text: response.text,
-+    };
-+  }
-+);
-+
-+// Only some tools allowed: functionCallingConfig with mode ANY and
-+// allowedFunctionNames. The model would start with getWeather; only
-+// celsiusToFahrenheit is allowed, so it calls that one.
-+// allowedFunctionNames only applies with mode ANY or VALIDATED: with
-+// another mode it's ignored with a warning.
-+ai.defineFlow('tool-choice-allowed-function-names', async () => {
-+  const response = await ai.generate({
-+    model: vertexAI.model('gemini-3.8-flash'),
-+    prompt:
-+      "What's the weather in Paris, France? Convert the temperature to Fahrenheit.",
-+    tools: [getWeather, celsiusToFahrenheit],
-+    config: {
-+      functionCallingConfig: {
-+        mode: 'ANY',
-+        allowedFunctionNames: ['celsiusToFahrenheit'],
-+      },
-+    },
-+    returnToolRequests: true,
-+  });
-+  return response.toolRequests.map((p) => p.toolRequest);
-+});
-+
- // Tool calling with structured output
- ai.defineFlow(
-   {
-```
-
----
-
-### Incident Patch 2: `c841c516` (2026-11-19)
-**Commit Message**: refactor(go/plugins/a2ui)!: carry A2UI messages under the spec's `messages` key (#7092)
-
-**File**: `go/plugins/a2ui/exp/README.md` (modified, +5/-4)
-```diff
-@@ -21,10 +21,11 @@ renders incrementally.
- ## Design principle: one representation
- 
- A2UI rides on its own part channel: a Genkit **data part** carrying the mime type
--`application/a2ui+json` whose `data` is an object `{ "envelopes": [...] }`
--wrapping an array of A2UI envelope messages. This maps 1:1 onto the A2A binding
--of the A2UI spec, so the same envelopes are byte-compatible with the JS plugin
--and the `@a2ui/*` renderers.
-+`application/a2ui+json` whose `data` is the spec's `{ "messages": [...] }`
-+payload wrapper around an array of A2UI envelope messages. This maps 1:1 onto
-+the A2A binding of the A2UI spec, so the same envelopes are byte-compatible with
-+the JS and Dart plugins and the `@a2ui/*` renderers. Parts written by earlier
-+versions use `{ "envelopes": [...] }`; they are still read.
- 
- ## Usage
- 
-```
-
-**File**: `go/plugins/a2ui/exp/part.go` (modified, +43/-12)
-```diff
-@@ -18,38 +18,70 @@ package exp
- 
- import "github.com/firebase/genkit/go/ai"
- 
--// newPart builds the canonical "a2ui part": a Genkit data part whose Data is an
--// object {"envelopes": [...]} wrapping the array of A2UI envelopes, tagged with
--// A2UIMimeType. The array is wrapped in an object (rather than being the Data
--// value directly) so the payload is a map-shaped object on every runtime — some
--// (e.g. Dart) expect a data part's data to be an object, not a bare array.
-+// newPart builds the canonical "a2ui part": a Genkit data part whose Data is the
-+// A2UI spec's {"messages": [...]} payload wrapper around the array of A2UI
-+// envelopes, tagged with A2UIMimeType. The spec puts the list directly in data,
-+// but a data part's data must be an object on every runtime (Dart expects a
-+// map), so the list sits under the spec's own wrapper key.
- func newPart(envelopes []Envelope) *ai.Part {
- 	// Store as []any so it round-trips through JSON identically to a decoded
- 	// payload (encoding/json decodes arrays into []any).
- 	arr := make([]any, len(envelopes))
- 	for i, e := range envelopes {
- 		arr[i] = e
- 	}
--	p := ai.NewDataPart(map[string]any{"envelopes": arr})
-+	p := ai.NewDataPart(map[string]any{"messages": arr})
- 	p.Metadata = map[string]any{"mimeType": A2UIMimeType}
- 	return p
- }
- 
- // IsPart reports whether p is an a2ui data part (mime application/a2ui+json
--// carrying an "envelopes" array).
-+// carrying a "messages" array, or "envelopes" for a part written before the
-+// rename).
- func IsPart(p *ai.Part) bool {
- 	if p == nil || !p.IsData() || p.Metadata == nil {
- 		return false
- 	}
- 	if mt, _ := p.Metadata["mimeType"].(string); mt != A2UIMimeType {
- 		return false
- 	}
-+	_, ok := messagesOf(p)
-+	return ok
-+}
-+
-+// messagesOf returns the message list in an a2ui part's data: "messages", or
-+// "envelopes" for a part written before the rename, still read so persisted
-+// sessions replay.
-+func messagesOf(p *ai.Part) ([]any, bool) {
- 	data, ok := p.Data.(map[string]any)
- 	if !ok {
--		return false
-+		return nil, false
- 	}
--	_, ok = data["envelopes"]
--	return ok
-+	for _, key := range []string{"messages", "envelopes"} {
-+		v := data[key]
-+		if v == nil {
-+			continue
-+		}
-+		switch list := v.(type) {
-+		case []any:
-+			if list == nil {
-+				continue
-+			}
-+			return list, true
-+		case []Envelope:
-+			if list == nil {
-+				continue
-+			}
-+			out := make([]any, len(list))
-+			for i, e := range list {
-+				out[i] = e
-+			}
-+			return out, true
-+		default:
-+			return nil, false
-+		}
-+	}
-+	return nil, false
- }
- 
- // EnvelopesFromParts extracts all A2UI envelopes carried by the given parts.
-@@ -61,8 +93,7 @@ func EnvelopesFromParts(parts []*ai.Part) []Envelope {
- 		if !IsPart(p) {
- 			continue
- 		}
--		data, _ := p.Data.(map[string]any)
--		raw, _ := data["envelopes"].([]any)
-+		raw, _ := messagesOf(p)
- 		for _, e := range raw {
- 			if env, ok := e.(map[string]any); ok {
- 				out = append(out, env)
-```
-
-**File**: `go/plugins/a2ui/exp/part_test.go` (modified, +143/-1)
-```diff
-@@ -48,7 +48,7 @@ func TestNewPartWireShape(t *testing.T) {
- 	if err != nil {
- 		t.Fatal(err)
- 	}
--	want := `{"data":{"envelopes":[{"createSurface":{"surfaceId":"s1"}}]},"metadata":{"mimeType":"application/a2ui+json"}}`
-+	want := `{"data":{"messages":[{"createSurface":{"surfaceId":"s1"}}]},"metadata":{"mimeType":"application/a2ui+json"}}`
- 	if string(b) != want {
- 		t.Errorf("wire shape = %s\nwant       = %s", string(b), want)
- 	}
-@@ -97,3 +97,145 @@ func TestEnvelopesFromPartsRoundTrip(t *testing.T) {
- 		t.Errorf("action name = %v, want submit", action["name"])
- 	}
- }
-+
-+func TestEnvelopesFromPartsLegacyKey(t *testing.T) {
-+	// Parts written before the rename to "messages" must keep replaying.
-+	p := ai.NewDataPart(map[string]any{
-+		"envelopes": []any{map[string]any{"deleteSurface": map[string]any{"surfaceId": "s1"}}},
-+	})
-+	p.Metadata = map[string]any{"mimeType": A2UIMimeType}
-+	if !IsPart(p) {
-+		t.Fatal("legacy part not recognized by IsPart")
-+	}
-+	if envs := EnvelopesFromParts([]*ai.Part{p}); len(envs) != 1 {
-+		t.Fatalf("got %d envelopes, want 1", len(envs))
-+	}
-+}
-+
-+func TestNewPartNilSliceWireShape(t *testing.T) {
-+	p := newPart(nil)
-+	if !IsPart(p) {
-+		t.Fatal("newPart(nil) must pass IsPart")
-+	}
-+	b, err := json.Marshal(p)
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	want := `{"data":{"messages":[]},"metadata":{"mimeType":"application/a2ui+json"}}`
-+	if string(b) != want {
-+		t.Errorf("wire shape = %s\nwant       = %s", string(b), want)
-+	}
-+}
-+
-+func TestIsPartAndMessagesPrecedence(t *testing.T) {
-+	createEnv := Envelope{"createSurface": map[string]any{"surfaceId": "s1"}}
-+	deleteEnv := Envelope{"deleteSurface": map[string]any{"surfaceId": "s1"}}
-+	var typedNilAny []any
-+	var typedNilEnv []Envelope
-+
-+	makePart := func(data map[string]any) *ai.Part {
-+		p := ai.NewDataPart(data)
-+		p.Metadata = map[string]any{"mimeType": A2UIMimeType}
-+		return p
-+	}
-+
-+	tests := []struct {
-+		name      string
-+		part      *ai.Part
-+		wantValid bool
-+		wantCount int
-+		wantFirst string
-+	}{
-+		{
-+			name:      "non-list messages rejected",
-+			part:      makePart(map[string]any{"messages": "oops"}),
-+			wantValid: false,
-+		},
-+		{
-+			name:      "non-list legacy envelopes rejected",
-+			part:      makePart(map[string]any{"envelopes": map[string]any{}}),
-+			wantValid: false,
-+		},
-+		{
-+			name:      "non-nil non-list messages alongside valid envelopes rejected",
-+			part:      makePart(map[string]any{"messages": "oops", "envelopes": []any{createEnv}}),
-+			wantValid: false,
-+		},
-+		{
-+			name:      "messages wins over envelopes when both non-empty",
-+			part:      makePart(map[string]any{"messages": []any{createEnv}, "envelopes": []any{deleteEnv}}),
-+			wantValid: true,
-+			wantCount: 1,
-+			wantFirst: "createSurface",
-+		},
-+		{
-+			name:      "empty non-nil messages wins over envelopes",
-+			part:      makePart(map[string]any{"messages": []any{}, "envelopes": []any{deleteEnv}}),
-+			wantValid: true,
-+			wantCount: 0,
-+		},
-+		{
-+			name:      "untyped nil messages falls back to envelopes",
-+			part:      makePart(map[string]any{"messages": nil, "envelopes": []any{deleteEnv}}),
-+			wantValid: true,
-+			wantCount: 1,
-+			wantFirst: "deleteSurface",
-+		},
-+		{
-+			name:      "typed nil []any messages falls back to envelopes",
-+			part:      makePart(map[string]any{"messages": typedNilAny, "envelopes": []any{deleteEnv}}),
-+			wantValid: true,
-+			wantCount: 1,
-+			wantFirst: "deleteSurface",
-+		},
-+		{
-+			name:      "typed nil []Envelope messages alone rejected",
-+			part:      makePart(map[string]any{"messages": typedNilEnv}),
-+			wantValid: false,
-+		},
-+		{
-+			name:      "in-process []Envelope accepted under messages",
-+			part:      makePart(map[string]any{"messages": []Envelope{createEnv}}),
-+			wantValid: true,
-+			wantCount: 1,
-+			wantFirst: "createSurface",
-+		},
-+		{
-+			name:      "in-process []Envelope accepted under envelopes",
-+			part:      makePart(map[string]any{"envelopes": []Envelope{deleteEnv}}),
-+			wantValid: true,
-+			wantCount: 1,
-+			wantFirst: "deleteSurface",
-+		},
-+	}
-+
-+	for _, tc := range tests {
-+		t.Run(tc.name, func(t *testing.T) {
-+			if got := IsPart(tc.part); got != tc.wantValid {
-+				t.Fatalf("IsPart = %v, want %v", got, tc.wantValid)
-+			}
-+			envs := EnvelopesFromParts([]*ai.Part{tc.part})
-+			if len(envs) != tc.wantCount {
-+				t.Fatalf("len(EnvelopesFromParts) = %d, want %d", len(envs), tc.wantCount)
-+			}
-+			if tc.wantFirst != "" {
-+				if _, ok := envs[0][tc.wantFirst]; !ok {
-+					t.Errorf("first envelope = %v, missing %q", envs[0], tc.wantFirst)
-+				}
-+			}
-+		})
-+	}
-+
-+	// JSON wire payload with explicit `"messages": null` alongside `"envelopes"`.
-+	var fromJSON ai.Part
-+	rawJSON := `{"data":{"messages":null,"envelopes":[{"deleteSurface":{"surfaceId":"s1"}}]},"metadata":{"mimeType":"application/a2ui+json"}}`
-+	if err := json.Unmarshal([]byte(rawJSON), &fromJSON); err != nil {
-+		t.Fatal(err)
-+	}
-+	if !IsPart(&fromJSON) {
-+		t.Fatal("JSON messages:null + envelopes
-```
-
----
-
-### Incident Patch 3: `9ee3569e` (2026-11-19)
-**Commit Message**: refactor(js/plugins/a2ui)!: carry A2UI messages under the spec's `messages` key (#7091)
-
-**File**: `js/plugins/a2ui/README.md` (modified, +4/-3)
-```diff
-@@ -293,9 +293,10 @@ emitted a2ui parts.
- ### One representation
- 
- A2UI rides on its own part channel: a Genkit `data` part carrying the mime type
--`application/a2ui+json` whose `data` is an object `{ envelopes }` wrapping an
--array of A2UI envelope messages. This maps 1:1 onto the A2A binding of the A2UI
--spec, so an A2A or MCP binding can drop in later for free.
-+`application/a2ui+json` whose `data` is the spec's `{ messages }` payload
-+wrapper around an array of A2UI envelope messages. This maps 1:1 onto the A2A
-+binding of the A2UI spec, so an A2A or MCP binding can drop in later for free.
-+Parts written by earlier versions use `{ envelopes }`; they are still read.
- 
- - A **mixed** turn is a message whose content is `[textPart, a2uiPart, …]`.
- - A **pure-surface** turn is the special case with no text parts.
-```
-
-**File**: `js/plugins/a2ui/src/client.ts` (modified, +6/-1)
-```diff
-@@ -29,7 +29,12 @@ import { remoteAgent } from 'genkit/beta/client';
- import { a2uiEnvelopesFromParts, a2uiPart } from './part.js';
- import type { A2uiClientAction, A2uiServerEnvelope } from './types.js';
- 
--export { a2uiEnvelopesFromParts, a2uiPart, isA2uiPart } from './part.js';
-+export {
-+  a2uiEnvelopesFromParts,
-+  a2uiPart,
-+  a2uiPartMessages,
-+  isA2uiPart,
-+} from './part.js';
- export {
-   A2UI_MIME_TYPE,
-   A2UI_VERSION,
-```
-
-**File**: `js/plugins/a2ui/src/index.ts` (modified, +6/-1)
-```diff
-@@ -42,7 +42,12 @@ export {
-   type A2uiParserOptions,
-   type ParseResult,
- } from './parser.js';
--export { a2uiEnvelopesFromParts, a2uiPart, isA2uiPart } from './part.js';
-+export {
-+  a2uiEnvelopesFromParts,
-+  a2uiPart,
-+  a2uiPartMessages,
-+  isA2uiPart,
-+} from './part.js';
- export {
-   A2UI_MIME_TYPE,
-   A2UI_VERSION,
-```
-
-**File**: `js/plugins/a2ui/src/middleware.ts` (modified, +2/-2)
-```diff
-@@ -51,7 +51,7 @@ import {
- } from './catalog.js';
- import { resolveCatalog } from './loader.js';
- import { A2uiStreamParser, type ParseResult } from './parser.js';
--import { a2uiPart, isA2uiPart } from './part.js';
-+import { a2uiPart, a2uiPartMessages, isA2uiPart } from './part.js';
- import {
-   A2UI_VERSION,
-   SUPPORTED_VERSIONS,
-@@ -422,7 +422,7 @@ function sanitizeInboundA2ui(req: GenerateRequest): GenerateRequest {
-     for (const part of message.content) {
-       if (isA2uiPart(part)) {
-         msgChanged = true;
--        const text = summarizeA2uiPart(part.data.envelopes);
-+        const text = summarizeA2uiPart(a2uiPartMessages(part));
-         if (text) content.push({ text });
-       } else {
-         content.push(part as Part);
-```
-
-**File**: `js/plugins/a2ui/src/part.ts` (modified, +22/-9)
-```diff
-@@ -16,8 +16,8 @@
- 
- /**
-  * Helpers for working with the canonical "a2ui part" - a Genkit `data` part
-- * whose `data` is an object `{ envelopes }` wrapping an array of A2UI envelopes,
-- * tagged with {@link A2UI_MIME_TYPE}.
-+ * whose `data` is `{ messages }` wrapping an array of A2UI envelopes, tagged
-+ * with {@link A2UI_MIME_TYPE}.
-  *
-  * These helpers operate on plain part-shaped objects (no Genkit runtime import),
-  * so they are safe to use on both the server and the browser. To pull envelopes
-@@ -49,25 +49,38 @@ interface PartLike {
- /** Builds an a2ui data part wrapping the given envelopes. */
- export function a2uiPart(envelopes: A2uiEnvelope[]): A2uiPart {
-   return {
--    data: { envelopes },
-+    data: { messages: envelopes },
-     metadata: { mimeType: A2UI_MIME_TYPE },
-   };
- }
- 
+@@ -0,0 +1,288 @@
 +/**
-+ * The message list in an a2ui part's `data`: `messages`, or `envelopes` for a
-+ * part written before the rename (still read so persisted sessions replay).
-+ */
-+function messagesOf(data: unknown): unknown[] | undefined {
-+  if (!data || typeof data !== 'object') return undefined;
-+  const d = data as { messages?: unknown; envelopes?: unknown };
-+  const list = d.messages ?? d.envelopes;
-+  return Array.isArray(list) ? list : undefined;
-+}
-+
- /** Type guard: is this part an a2ui data part? */
- export function isA2uiPart(part: unknown): part is A2uiPart {
-   const p = part as PartLike | null | undefined;
--  const data = p?.data as { envelopes?: unknown } | undefined;
-   return (
-     !!p &&
-     typeof p === 'object' &&
--    !!data &&
--    typeof data === 'object' &&
--    Array.isArray(data.envelopes) &&
--    (p as PartLike).metadata?.mimeType === A2UI_MIME_TYPE
-+    messagesOf(p.data) !== undefined &&
-+    p.metadata?.mimeType === A2UI_MIME_TYPE
-   );
- }
- 
-+/** The envelopes an a2ui part carries, whichever key it was written with. */
-+export function a2uiPartMessages(part: A2uiPart): A2uiEnvelope[] {
-+  return (messagesOf(part?.data) as A2uiEnvelope[] | undefined) ?? [];
-+}
-+
- /**
-  * Extracts all A2UI envelopes carried by the given `parts`.
-  *
-@@ -99,7 +112,7 @@ export function a2uiEnvelopesFromParts(
-   const out: A2uiServerEnvelope[] = [];
-   for (const part of parts) {
-     if (!isA2uiPart(part)) continue;
--    for (const env of part.data.envelopes) {
-+    for (const env of a2uiPartMessages(part)) {
-       // Keep only server-to-client surface envelopes. This is a positive check,
-       // so inbound action envelopes (a user action echoed in history) and any
-       // null / non-object / array / arbitrary-object garbage from malformed
-```
-
-**File**: `js/plugins/a2ui/src/types.ts` (modified, +10/-8)
-```diff
-@@ -150,17 +150,19 @@ export type A2uiServerEnvelope =
- export type A2uiEnvelope = A2uiServerEnvelope | ActionEnvelope;
- 
- /**
-- * The canonical "a2ui part": a Genkit `data` part whose `data` is an object
-- * `{ envelopes }` wrapping the array of A2UI envelopes, and whose
-- * `metadata.mimeType` is {@link A2UI_MIME_TYPE}.
-+ * The canonical "a2ui part": a Genkit `data` part whose `data` is the A2UI
-+ * spec's `{ messages }` payload wrapper around the array of A2UI envelopes, and
-+ * whose `metadata.mimeType` is {@link A2UI_MIME_TYPE}.
-  *
-- * The array is wrapped in an object (rather than being the `data` value
-- * directly) so the payload is a `Map<String, dynamic>`-shaped object on every
-- * runtime — some (e.g. Dart) expect a data part's `data` to be an object, not a
-- * bare array.
-+ * The A2UI extension spec puts the message list directly in `data`, but a
-+ * Genkit data part's `data` must be an object on every runtime (Dart expects a
-+ * map), so the list sits under the spec's own `messages` wrapper.
++ * Copyright 2026 Google LLC
 + *
-+ * Parts written before the rename carry `{ envelopes }` instead; they are still
-+ * read (see {@link a2uiPartMessages}) so persisted sessions replay.
-  */
- export interface A2uiPart {
--  data: { envelopes: A2uiEnvelope[] };
-+  data: { messages: A2uiEnvelope[] } | { envelopes: A2uiEnvelope[] };
-   metadata: {
-     mimeType: typeof A2UI_MIME_TYPE;
-     [key: string]: unknown;
-```
-
-**File**: `js/plugins/a2ui/tests/client_test.ts` (modified, +8/-4)
-```diff
-@@ -16,8 +16,11 @@
- 
- import assert from 'node:assert';
- import { describe, it } from 'node:test';
--import { actionToMessage } from '../src/client.js';
--import { isA2uiPart } from '../src/part.js';
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++import type { RuntimeError } from '../../types/error.js';
++import type {
++  AgentInput,
++  GenerationUsage,
++  MessageData,
++  NestedSpanData,
++  Part,
++  SpanData,
++  ToolDefinition,
++} from '../../types/index.js';
 +import {
-+  a2uiPartMessages,
-+  actionToMessage,
-+  isA2uiPart,
-+} from '../src/client.js';
- import { A2UI_MIME_TYPE, type A2uiClientAction } from '../src/types.js';
- 
- function makeAction(
-@@ -52,9 +55,10 @@ describe('actionToMessage', () => {
-       A2UI_MIME_TYPE
-     );
-     assert.deepStrictEqual(
--      (dataPart as { data: { envelopes: unknown[] } }).data,
--      { envelopes: [{ action }] }
-+      (dataPart as { data: { messages: unknown[] } }).data,
-+      { messages: [{ action }] }
-     );
-+    assert.deepStrictEqual(a2uiPartMessages(dataPart), [{ action }]);
-   });
- 
-   it('includes the context in the summary when present', () => {
++  cleanActionName,
++  getSpanName,
++  getSpanStatus,
++  isTruthyAttr,
++  parseSpanJson,
++  shortToolName,
++} from '../trace.js';
++
++const PROMPT_SPAN_TYPES: ReadonlySet<unknown> = new Set([
++  'prompt',
++  'promptTemplate',
++]);
++
++/**
++ * Spans belonging to a single `Trajectory` (either the root trace/agent or an
++ * individual nested `/agent/...` subagent), grouped by role during tree
++ * traversal. Traversal stops at nested `/agent/...` boundaries so child
++ * subagents are extracted into their own `Trajectory` entries.
++ */
++export interface TrajectorySpans {
++  /** Maps each `spanId` in this trajectory to its parent span for ancestor/turn lookups. */
++  parentMap: Map<string, NestedSpanData>;
++  /** Model execution spans (`model` / `background-model`) in this trajectory. */
++  modelSpans: NestedSpanData[];
++  /** Tool execution spans (`tool` / `tool.v2`) in this trajectory. */
++  toolSpans: NestedSpanData[];
++  /** All spans belonging to this trajectory in traversal order. */
++  scopeSpans: NestedSpanData[];
++}
++
++/** Parsed structure of a model span's `genkit:input` JSON attribute. */
++export interface ParsedModelInput {
++  tools?: Partial<ToolDefinition>[];
++  messages?: MessageData[];
++}
++
++/** Parsed structure of a span's `genkit:input` JSON attribute. */
++export type ParsedSpanInput = ParsedModelInput | AgentInput;
++
++/** Parsed structure of a span's `genkit:output` JSON attribute. */
++export interface ParsedSpanOutput {
++  message?: MessageData;
++  finishReason?: string;
++  finishMessage?: string;
++  usage?: GenerationUsage;
++  candidates?: Array<{
++    message?: MessageData;
++    finishReason?: string;
++    usage?: GenerationUsage;
++  }>;
++  error?: RuntimeError;
++}
++
++/** Normalized output extracted from a model execution span. */
++export interface ModelOutputData {
++  message?: MessageData;
++  finishReason?: string;
++  usage?: GenerationUsage;
++  error?: RuntimeError;
++}
++
++/** Parses a span JSON attribute and narrows it to a non-null, non-array object. */
++export function parseSpanObject<T extends object>(val: unknown): T | undefined {
++  const parsed = parseSpanJson<T>(val);
++  return parsed && typeof parsed === 'object' && !Array.isArray(parsed)
++    ? (parsed as T)
++    : undefined;
++}
++
++/**
++ * Returns true if neither side specifies a conflicting tool call reference ID,
++ * preventing name-based fallbacks from pairing mismatched parallel calls.
++ */
++export function hasCompatibleRef(
++  reqRef?: string,
++  candidateRef?: string
++): boolean {
++  return !reqRef || !candidateRef || reqRef === candidateRef;
++}
++
++/**
++ * Removes and returns the first item matching `reqRef` by exact ref, or falling back
++ * to a compatible ref with matching short tool name.
++ */
++export function takeMatchingByRefOrName<T>(
++  items: T[],
++  reqRef: string | undefined,
++  reqShortName: string,
++  getRef: (item: T) => string | undefined,
++  getName: (item: T) => string
++): T | undefined {
++  let idx = reqRef ? items.findIndex((item) => getRef(item) === reqRef) : -1;
++  if (idx < 0) {
++    idx = items.findIndex(
++      (item) =>
++        hasCompatibleRef(reqRef, getRef(item)) &&
++        shortToolName(getName(item)) === reqShortName
++    );
++  }
++  return idx >= 0 ? items.splice(idx, 1)[0] : undefined;
++}
++
++/** Resolves the 0-based `turnIndex` and enclosing `runTurn-<N>` span for a span. */
++export function getTurnContext(
++  span: NestedSpanData,
++  parentMap: ReadonlyMap<string, NestedSpanData>
++): { turnIndex: number; turnSpan?: NestedSpanData } {
++  let curr: NestedSpanData | undefined = span;
++  const visited = new Set<string>();
++  while (curr) {
++    if (visited.has(curr.spanId)) {
++      break;
++    }
++    visited.add(curr.spanId);
++    const match = /^runTurn-(\d+)$/.exec(cleanActionName(getSpanName(curr)));
++    if (match) {
++      return {
++        turnIndex: Math.max(0, Number.parseInt(match[1], 10) - 1),
++        turnSpan: curr,
++      };
++    }
++    curr = parentMap.get(curr.spanId);
++  }
++  return { turnIndex: 0, turnSpan: undefined };
++}
++
++function toRuntimeError(err: {
++  status?: unknown;
++  message: string;
++  details?: unknown;
++}): RuntimeError {
++
 ```
 
-**File**: `js/plugins/a2ui/tests/middleware_test.ts` (modified, +54/-6)
+**File**: `genkit-tools/common/tests/utils/trajectory/mock_data.ts` (added, +264/-0)
 ```diff
-@@ -300,7 +300,7 @@ describe('a2ui() middleware', () => {
-               { text: 'clicked:' },
-               {
-                 data: {
--                  envelopes: [
-+                  messages: [
-                     {
-                       action: {
-                         name: 'refresh',
-@@ -332,6 +332,54 @@ describe('a2ui() middleware', () => {
-     assert.match(joined, /Tokyo/);
-   });
- 
-+  it('still sanitizes legacy inbound a2ui parts written with `envelopes`', async () => {
-+    const mw = modelHook({});
-+    let seen:
-+      | { messages: Array<{ role: string; content: Array<{ text?: string }> }> }
-+      | undefined;
-+    await mw(
+@@ -0,0 +1,264 @@
++/**
++ * Copyright 2026 Google LLC
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++import type {
++  GenerationUsage,
++  MessageData,
++  SpanData,
++  ToolDefinition,
++} from '../../../src/types/index.js';
++import { makeSpan, makeTrace } from '../trace.js';
++
++export { makeSpan, makeTrace };
++
++type SpanOverrides = Partial<Omit<SpanData, 'attributes'>> & {
++  attributes?: Record<string, unknown>;
++};
++
++function stringifyIfDefined(val: unknown): Record<string, string> {
++  return val !== undefined ? { value: JSON.stringify(val) } : {};
++}
++
++/** Options for {@link makeAgentSpan}. */
++export interface MakeAgentSpanOptions extends SpanOverrides {
++  name?: string;
++  sessionId?: string;
++  input?: unknown;
++  output?: unknown;
++}
++
++/** Builds an `/agent/<name>` SpanData with serialized `genkit:input` / `genkit:output` attributes. */
++export function makeAgentSpan(options: MakeAgentSpanOptions = {}): SpanData {
++  const {
++    name = 'weatherAgent',
++    sessionId,
++    input,
++    output,
++    attributes,
++    ...rest
++  } = options;
++  const cleanName = name.replace(/^\/agent\//, '');
++  const inAttr = stringifyIfDefined(input);
++  const outAttr = stringifyIfDefined(output);
++
++  return makeSpan({
++    spanId: 'root-agent',
++    startTime: 100,
++    endTime: 500,
++    ...rest,
++    displayName:
++      rest.displayName ??
++      (name.startsWith('/agent/') ? name : `/agent/${cleanName}`),
++    attributes: {
++      'genkit:type': 'action',
++      'genkit:metadata:subtype': 'agent',
++      'genkit:name': cleanName,
++      ...(sessionId ? { 'genkit:metadata:agent:sessionId': sessionId } : {}),
++      ...(inAttr.value !== undefined ? { 'genkit:input': inAttr.value } : {}),
++      ...(outAttr.value !== undefined
++        ? { 'genkit:output': outAttr.value }
++        : {}),
++      ...attributes,
++    },
++  });
++}
++
++/** Options for {@link makeTurnSpan}. */
++export interface MakeTurnSpanOptions extends SpanOverrides {
++  turn?: number;
++  input?: unknown;
++  output?: unknown;
++}
++
++/** Builds a `runTurn-<N>` flowStep SpanData with serialized `genkit:input` / `genkit:output` attributes. */
++export function makeTurnSpan(options: MakeTurnSpanOptions = {}): SpanData {
++  const { turn = 1, input, output, attributes, ...rest } = options;
++  const inAttr = stringifyIfDefined(input);
++  const outAttr = stringifyIfDefined(output);
++
++  return makeSpan({
++    spanId: `turn-${turn}`,
++    parentSpanId: 'root-agent',
++    startTime: 105,
++    endTime: 495,
++    ...rest,
++    displayName: rest.displayName ?? `runTurn-${turn}`,
++    attributes: {
++      'genkit:type': 'flowStep',
++      ...(inAttr.value !== undefined ? { 'genkit:input': inAttr.value } : {}),
++      ...(outAttr.value !== undefined
++        ? { 'genkit:output': outAttr.value }
++        : {}),
++      ...attributes,
++    },
++  });
++}
++
++/** Options for {@link makeModelSpan}. */
++export interface MakeModelSpanOptions extends SpanOverrides {
++  model?: string;
++  messages?: Array<
++    | MessageData
++    | { role: string; content: unknown; metadata?: Record<string, unknown> }
++  >;
++  tools?: Partial<ToolDefinition>[];
++  input?: unknown;
++  outputMessage?: MessageData;
++  finishReason?: string;
++  usage?: GenerationUsage;
++  outputError?: { message: string; details?: { stack?: string } };
++  candidates?: unknown[];
++  output?: unknown;
++}
++
++/** Builds a `/model/<model>` SpanData hiding `genkit:input` / `genkit:output` JSON serialization. */
++export function makeModelSpan(options: MakeModelSpanOptions = {}): SpanData {
++  const {
++    model = 'googleai/gemini-2.5-pro',
++    messages,
++    tools,
++    input,
++    outputMessage,
++    finishReason,
++    usage,
++    outputError,
++    candidates,
++    output,
++    attributes,
++    ...rest
++  } = options;
++  const cleanModel = model.replace(/^\/model\//, '');
++
++  const resolvedInput =
++    input !== undefined
++      ? input
++      : messages !== undefined || tools !== undefined
++        ? {
++            ...(messages !== undefined ? { messages } : {}),
++            ...(tools !== undefined ? { tools } : {}),
++          }
++        : undefined;
++
++  const hasStructuredOutput =
++    outputMessage !== undefined ||
++    finishReason !== undefined ||
++    usage !== undefined ||
++    outputError !== undefined ||
++    candidates !== undefined;
++  const resolvedOutput =
++    output !== undefined
++      ? output
++      : hasStructuredOutput
++        ? {
++            ...(outputMessage !== undefined 
+```
+
+**File**: `genkit-tools/common/tests/utils/trajectory/span-parser_test.ts` (added, +307/-0)
+```diff
+@@ -0,0 +1,307 @@
++/**
++ * Copyright 2026 Google LLC
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++import { describe, expect, it } from 'vitest';
++import type { NestedSpanData } from '../../../src/types/index.js';
++import {
++  aggregateUsage,
++  extractTextFromParts,
++  getModelOutputData,
++  getTurnContext,
++  hasCompatibleRef,
++  isExcludedFromTrajectory,
++  isExplicitHistoryMessage,
++  messageSignature,
++  normalizeParts,
++  takeMatchingByRefOrName,
++} from '../../../src/utils/trajectory/span-parser.js';
++import { makeModelSpan, makeSpan, makeTurnSpan } from './mock_data.js';
++
++describe('trajectory span-parser helpers', () => {
++  describe('hasCompatibleRef', () => {
++    it.each([
 +      {
-+        messages: [
++        name: 'matching refs',
++        reqRef: 'ref-1',
++        candidateRef: 'ref-1',
++        expected: true,
++      },
++      {
++        name: 'missing candidate ref',
++        reqRef: 'ref-1',
++        candidateRef: undefined,
++        expected: true,
++      },
++      {
++        name: 'conflicting refs',
++        reqRef: 'ref-1',
++        candidateRef: 'ref-2',
++        expected: false,
++      },
++    ])('returns $expected for $name', ({ reqRef, candidateRef, expected }) => {
++      expect(hasCompatibleRef(reqRef, candidateRef)).toBe(expected);
++    });
++  });
++
++  describe('takeMatchingByRefOrName', () => {
++    const makeItems = () => [
++      { ref: 'ref-a', name: '/tool/search' },
++      { ref: 'ref-b', name: '/tool/search' },
++      { ref: undefined, name: '/tool.v2/mcp/lookup' },
++    ];
++
++    it('matches by exact ref', () => {
++      expect(
++        takeMatchingByRefOrName(
++          makeItems(),
++          'ref-b',
++          'search',
++          (i) => i.ref,
++          (i) => i.name
++        )?.ref
++      ).toBe('ref-b');
++    });
++
++    it('returns undefined on conflicting refs instead of falling back to name', () => {
++      expect(
++        takeMatchingByRefOrName(
++          makeItems(),
++          'ref-missing',
++          'search',
++          (i) => i.ref,
++          (i) => i.name
++        )
++      ).toBeUndefined();
++    });
++
++    it('falls back to short tool name when candidate ref is undefined', () => {
++      expect(
++        takeMatchingByRefOrName(
++          makeItems(),
++          'ref-c',
++          'lookup',
++          (i) => i.ref,
++          (i) => i.name
++        )?.name
++      ).toBe('/tool.v2/mcp/lookup');
++    });
++  });
++
++  describe('getTurnContext', () => {
++    it('resolves 0-based turnIndex and turnSpan from enclosing runTurn-<N>', () => {
++      const turn2 = makeTurnSpan({ turn: 2 }) as NestedSpanData;
++      const model = makeModelSpan({
++        parentSpanId: turn2.spanId,
++      }) as NestedSpanData;
++      const parentMap = new Map<string, NestedSpanData>([
++        [model.spanId, turn2],
++      ]);
++
++      expect(getTurnContext(model, parentMap)).toEqual({
++        turnIndex: 1,
++        turnSpan: turn2,
++      });
++    });
++
++    it('defaults to turnIndex 0 when no runTurn-<N> ancestor exists', () => {
++      const model = makeModelSpan() as NestedSpanData;
++
++      expect(getTurnContext(model, new Map())).toEqual({
++        turnIndex: 0,
++        turnSpan: undefined,
++      });
++    });
++
++    it('terminates safely on cyclic parentMap links', () => {
++      const cycleA = makeSpan({ spanId: 'cyc-a' }) as NestedSpanData;
++      const cycleB = makeSpan({ spanId: 'cyc-b' }) as NestedSpanData;
++      const cyclicParents = new Map<string, NestedSpanData>([
++        ['cyc-a', cycleB],
++        ['cyc-b', cycleA],
++      ]);
++
++      expect(getTurnContext(cycleA, cyclicParents)).toEqual({
++        turnIndex: 0,
++        turnSpan: undefined,
++      });
++    });
++  });
++
++  describe('getModelOutputData', () => {
++    it('falls back to candidates[0] for message, finishReason, and usage', () => {
++      const legacySpan = makeModelSpan({
++        candidates: [
 +          {
-+            role: 'user',
-+            content: [
-+              { text: 'clicked:' },
-+              {
-+                data: {
-+                  envelopes: [
-+                    {
-+                      action: {
-+                        name: 'refresh',
-+                        surfaceId: 's1',
-+                        sourceComponentId: 'btn',
-+                        timestamp: 't',
-+                        context: { city: 'Tokyo' },
-+                      },
-+                    },
-+                  ],
-+                },
-+                metadata: { mimeType: 'application/a2ui+json' },
-+              },
-+            ],
++            message: { role: 'model', content: [{ text: 'Truncated' }] },
++            finishReason: 'length',
++            usage: { inputTokens: 10, outputTokens: 5 },
 +          },
 +        ],
-+      },
-+      undefined,
-+      async (r: {
-+        messages: Array<{ role: string; content: Array<{ text?: string }> }>;
-+      }) => {
-+        seen = r;
-+        return { message: { role: 'model', content: [] } };
-+      }
++      });
++
++      expect(getModelOutputData(legacySpan)).toEqual({
++        message: { role: 'model', content: [{ text: 'Truncated' }] },
++        finishReason: 'length',
++        usage: { inputTokens: 10, outputTokens: 5 },
++        error: undefined,
++      });
++    });
++
++    it('extracts structured RuntimeError from genkit:output.error', () => {
++      const structuredErrSpan = makeMo
+```
+
+---
+
+### Incident Patch 2: `426cc62b` (2026-11-20)
+**Commit Message**: feat(genkit-tools): add trace span tree pruning and inspection helpers (#7225)
+
+**File**: `genkit-tools/common/src/utils/trace.ts` (modified, +181/-6)
+```diff
+@@ -14,10 +14,51 @@
+  * limitations under the License.
+  */
+ 
+-import type { NestedSpanData, TraceData } from '../types/index.js';
++import type { NestedSpanData, SpanData, TraceData } from '../types/index.js';
++
++/** Options for {@link stackTraceSpans}. */
++export interface StackTraceSpansOptions {
++  /**
++   * Optional predicate to exclude spans (along with their entire descendant
++   * subtrees) when building the span tree.
++   */
++  exclude?: (span: NestedSpanData) => boolean;
++}
++
++/**
++ * Sorts spans chronologically by `startTime`, breaking ties deterministically by `spanId`.
++ */
++export function sortSpansChronologically(spans: SpanData[]): void {
++  spans.sort(
++    (a, b) => a.startTime - b.startTime || a.spanId.localeCompare(b.spanId)
++  );
++}
++
++/** Checks whether a span attribute value represents boolean `true` or `'true'`. */
++export function isTruthyAttr(val: unknown): boolean {
++  return (
++    val === true || (typeof val === 'string' && val.toLowerCase() === 'true')
++  );
++}
++
++function pruneSpanSubtree(
++  node: NestedSpanData,
++  exclude: (span: NestedSpanData) => boolean
++): NestedSpanData | undefined {
++  if (exclude(node)) return undefined;
++  if (node.spans?.length) {
++    node.spans = node.spans.filter((child) =>
++      Boolean(pruneSpanSubtree(child, exclude))
 +    );
-+    const userMsg = seen?.messages.find((m) => m.role === 'user');
-+    assert.ok(userMsg);
-+    assert.ok(!userMsg.content.some((p) => isA2uiPart(p)));
-+    const joined = userMsg.content.map((p) => p.text ?? '').join(' ');
-+    assert.match(joined, /UI action "refresh"/);
-+    assert.match(joined, /Tokyo/);
++  }
++  return node;
++}
+ 
+ /** Transforms flat spans from the trace data into a tree of spans. */
+-export function stackTraceSpans(trace: TraceData): NestedSpanData | undefined {
++export function stackTraceSpans(
++  trace: TraceData,
++  options?: StackTraceSpansOptions
++): NestedSpanData | undefined {
+   if (!trace.spans || Object.keys(trace.spans).length === 0) return undefined;
+   let rootSpan: NestedSpanData | undefined = undefined;
+ 
+@@ -46,14 +87,16 @@ export function stackTraceSpans(trace: TraceData): NestedSpanData | undefined {
+ 
+   // Sort children by start times for each span.
+   treeSpans.forEach((span) => {
+-    span.spans?.sort((a, b) => a.startTime - b.startTime);
++    if (span.spans) sortSpansChronologically(span.spans);
+   });
+ 
+-  return rootSpan;
++  return rootSpan && options?.exclude
++    ? pruneSpanSubtree(rootSpan, options.exclude)
++    : rootSpan;
+ }
+ 
+ /** Extracts the display type/subtype of a span. */
+-export function getSpanType(span: NestedSpanData): string {
++export function getSpanType(span: SpanData): string {
+   const attrs = span.attributes || {};
+   const kind = span.spanKind;
+   let kindStr = 'span';
+@@ -71,7 +114,7 @@ export function getSpanType(span: NestedSpanData): string {
+ }
+ 
+ /** Extracts the status icon ('✔', '✖', or '') of a span. */
+-export function getSpanStatus(span: NestedSpanData): string {
++export function getSpanStatus(span: SpanData): string {
+   const attrs = span.attributes || {};
+   const state = attrs['genkit:state'] as string;
+   if (state) {
+@@ -83,3 +126,135 @@ export function getSpanStatus(span: NestedSpanData): string {
+   if (span.status?.code === 2) return '✖';
+   return '';
+ }
++
++/**
++ * Safely parses a JSON string attribute from a span, returning the value as-is
++ * if already parsed, or the raw `string` when `JSON.parse` fails (e.g. plain-text
++ * tool inputs/outputs). Callers expecting an object should narrow `typeof parsed === 'object'`.
++ */
++export function parseSpanJson<T = unknown>(
++  val: unknown
++): T | string | undefined {
++  if (val === undefined || val === null) return undefined;
++  if (typeof val === 'string') {
++    const trimmed = val.trim();
++    if (!trimmed) return undefined;
++    try {
++      return JSON.parse(trimmed) as T;
++    } catch {
++      return val;
++    }
++  }
++  return val as T;
++}
++
++/** Returns a span's `displayName` or `genkit:name` attribute. */
++export function getSpanName(span: SpanData): string {
++  return (
++    span.displayName ||
++    (span.attributes?.['genkit:name'] as string | undefined) ||
++    ''
++  );
++}
++
++function hasSpanTypeOrSubtype(span: SpanData, target: string): boolean {
++  const attrs = span.attributes;
++  return (
++    attrs?.['genkit:metadata:subtype'] === target ||
++    attrs?.['genkit:type'] === target
++  );
++}
++
++/** Checks whether a span represents an agent boundary. */
++export function isAgentSpan(span: SpanData): boolean {
++  return (
++    hasSpanTypeOrSubtype(span, 'agent') ||
++    getSpanName(span).startsWith('/agent/')
++  );
++}
++
++/** Checks whether a span represents a model execution. */
++export function isModelSpan(span: SpanData): boolean {
++  const name = getSpanName(span);
++  return (
++    hasSpanTypeOrSubtype(span, 'model') ||
++    hasSpanTypeOrSubtype(span, 'background-model') ||
++    name.startsWith('/model/') ||
++    name.startsWith('/background-model/')
++  );
++}
++
++/** Checks whether a span represents a tool execution. */
++export function isToolSpan(span: SpanData): boolean {
++  const name = getSpanName(span);
++  return (
++    hasSpanTypeOrSubtype(span, 'tool') ||
++    hasSpanTypeOrSubtype(span, 'tool.v2') ||
++    name.startsWith('/tool/') ||
++    name.startsWith('/tool.v2/')
++  );
+```
+
+**File**: `genkit-tools/common/tests/utils/trace.ts` (modified, +51/-0)
+```diff
+@@ -191,3 +191,54 @@ export class MockTrace {
+     return this;
+   }
+ }
++
++/** Builds a minimal valid SpanData for unit tests with optional field overrides. */
++export function makeSpan(overrides: Partial<SpanData> = {}): SpanData {
++  const spanId = overrides.spanId ?? 'span-1';
++  return {
++    traceId: 'trace-1',
++    spanId,
++    startTime: 100,
++    endTime: 200,
++    attributes: {},
++    instrumentationLibrary: { name: 'genkit-tracer', version: 'v1' },
++    spanKind: 'INTERNAL',
++    status: { code: 0 },
++    ...overrides,
++    displayName: overrides.displayName ?? spanId,
++  };
++}
++
++/**
++ * Builds a TraceData record auto-keyed by each span's `spanId`.
++ * Infers `startTime` and `endTime` bounds from `spans` when not explicitly overridden.
++ */
++export function makeTrace(
++  spans: SpanData[],
++  overrides: Partial<TraceData> = {}
++): TraceData {
++  const traceId = overrides.traceId ?? spans[0]?.traceId ?? 'trace-1';
++  const keyedSpans: Record<string, SpanData> = {};
++  let minStart = Number.POSITIVE_INFINITY;
++  let maxEnd = 0;
++
++  for (const span of spans) {
++    keyedSpans[span.spanId] = overrides.traceId
++      ? { ...span, traceId }
++      : { ...span };
++    if (span.startTime < minStart) minStart = span.startTime;
++    if (span.endTime > maxEnd) maxEnd = span.endTime;
++  }
++
++  return {
++    traceId,
++    ...(spans.length > 0
++      ? {
++          startTime: Number.isFinite(minStart) ? minStart : 0,
++          endTime: maxEnd,
++        }
++      : {}),
++    ...overrides,
++    spans: overrides.spans ? { ...keyedSpans, ...overrides.spans } : keyedSpans,
++  };
++}
+```
+
+**File**: `genkit-tools/common/tests/utils/trace_test.ts` (modified, +350/-49)
+```diff
+@@ -15,67 +15,368 @@
+  */
+ 
+ import { describe, expect, it } from 'vitest';
+-import type { TraceData } from '../../src/types/index.js';
+-import { getSpanStatus, stackTraceSpans } from '../../src/utils/index.js';
+-import { BASE_FLOW_SPAN_ID, MockTrace } from './trace.js';
+-
+-const TEST_TRACE: TraceData = {
+-  traceId: '7c273c22b219d077c6731a10d46b7d40',
+-  startTime: 1714059149480,
+-  endTime: 1714059149485.578,
+-  displayName: 'multiSteps',
+-  spans: {},
+-};
++import {
++  cleanActionName,
++  extractSessionIdFromTrace,
++  getSpanName,
++  getSpanStatus,
++  getSpanType,
++  isAgentSpan,
++  isModelSpan,
++  isToolSpan,
++  isTruthyAttr,
++  parseSpanJson,
++  shortToolName,
++  stackTraceSpans,
++} from '../../src/utils/index.js';
++import { BASE_FLOW_SPAN_ID, MockTrace, makeSpan, makeTrace } from './trace.js';
++
++const PRUNE_BASELINE_TRACE = makeTrace([
++  makeSpan({
++    spanId: 'agent',
++    displayName: '/agent/main',
++    startTime: 105,
++  }),
++  makeSpan({ spanId: 'kept', parentSpanId: 'agent', startTime: 110 }),
++  makeSpan({
++    spanId: 'excluded-branch',
++    parentSpanId: 'agent',
++    startTime: 115,
++    attributes: { skipMe: true },
++  }),
++  makeSpan({
++    spanId: 'excluded-leaf',
++    parentSpanId: 'excluded-branch',
++    startTime: 116,
++  }),
++]);
+ 
+ describe('trace utils', () => {
+-  it('returns root span', async () => {
+-    const trace = new MockTrace('My input', 'My output')
+-      .addSpan({
+-        stepName: 'retrieverStep',
+-        spanType: 'action',
+-      })
+-      .addSpan({
+-        stepName: 'llmStep',
+-        spanType: 'action',
+-      })
+-      .getTrace();
+-
+-    const span = stackTraceSpans(trace);
+-
+-    expect(span).toBeDefined();
+-    expect(span!.spanId).toEqual(BASE_FLOW_SPAN_ID);
+-    expect(span?.spans?.length).toBe(2);
+-  });
++  describe('stackTraceSpans', () => {
++    it('returns root span and nests children from flat trace spans', () => {
++      const trace = new MockTrace('My input', 'My output')
++        .addSpan({ stepName: 'retrieverStep', spanType: 'action' })
++        .addSpan({ stepName: 'llmStep', spanType: 'action' })
++        .getTrace();
++
++      const span = stackTraceSpans(trace);
++
++      expect(span?.spanId).toEqual(BASE_FLOW_SPAN_ID);
++      expect(span?.spans).toHaveLength(2);
++    });
++
++    it('returns undefined if no spans', () => {
++      expect(stackTraceSpans(makeTrace([]))).toBeUndefined();
++    });
++
++    it('falls back to orphan span as root when parentSpanId is missing from trace', () => {
++      const trace = makeTrace(
++        [
++          makeSpan({
++            spanId: 'orphan',
++            parentSpanId: 'missing-parent',
++            startTime: 100,
++          }),
++          makeSpan({
++            spanId: 'child',
++            parentSpanId: 'orphan',
++            startTime: 110,
++          }),
++        ],
++        { traceId: 'trace-orphan' }
++      );
++
++      const root = stackTraceSpans(trace);
++
++      expect(root?.spanId).toBe('orphan');
++      expect(root?.spans?.map((s) => s.spanId)).toEqual(['child']);
++    });
++
++    it('sorts sibling spans chronologically by startTime', () => {
++      const trace = makeTrace([
++        makeSpan({ spanId: 'agent', startTime: 100 }),
++        makeSpan({
++          spanId: 'child-late',
++          parentSpanId: 'agent',
++          startTime: 130,
++        }),
++        makeSpan({
++          spanId: 'child-early',
++          parentSpanId: 'agent',
++          startTime: 110,
++        }),
++        makeSpan({
++          spanId: 'child-mid',
++          parentSpanId: 'agent',
++          startTime: 120,
++        }),
++      ]);
++
++      expect(stackTraceSpans(trace)?.spans?.map((s) => s.spanId)).toEqual([
++        'child-early',
++        'child-mid',
++        'child-late',
++      ]);
++    });
+ 
+-  it('returns undefined if no spans', async () => {
+-    const span = stackTraceSpans(TEST_TRACE);
++    it('breaks timestamp ties by spanId when sorting sibling spans', () => {
++      const trace = makeTrace([
++        makeSpan({ spanId: 'agent', startTime: 100 }),
++        makeSpan({ spanId: 'child-b', parentSpanId: 'agent', startTime: 110 }),
++        makeSpan({ spanId: 'child-a', parentSpanId: 'agent', startTime: 110 }),
++      ]);
+ 
+-    expect(span).toBeUndefined();
++      expect(stackTraceSpans(trace)?.spans?.map((s) => s.spanId)).toEqual([
++        'child-a',
++        'child-b',
++      ]);
++    });
++
++    it('prunes excluded spans and their descendant subtrees', () => {
++      const root = stackTraceSpans(PRUNE_BASELINE_TRACE, {
++        exclude: (s) => Boolean(s.attributes?.['skipMe']),
++      });
++
++      expect(root?.spanId).toBe('agent');
++      expect(root?.spans?.map((s) => s.spanId)).toEqual(['kept']);
++    });
++
++    it('returns undefined when the root span itself is excluded', () => {
++      expect(
++        stackTraceSpans(PRUNE_BASELINE_TRACE, {
++          exclude: (s) => s.spanId === 'agent',
++        })
++      ).toBeUndefined();
++    });
 +  });
 +
-   it('replays a prior assistant surface as a fenced a2ui block, not a sentinel', async () => {
-     const mw = modelHook({});
-     let seen: any;
-@@ -344,7 +392,7 @@ describe('a2ui() middleware', () => {
-               { text: 'Here you go:' },
-               {
-                 data: {
--                  envelopes: [
-+                  messages: [
-                     {
-                       createSurface: {
-                         surfaceId: 's1',
-@@ -420,7 +468,7 @@ describe('a2ui() middleware', () => {
-             role: 'model',
-             content: [
-               {
--                data: { envelopes: [] },
-+                data: { messages: [] },
-                 metadata: { mimeType: 'application/a2ui+json' },
-               },
-             ],
-@@ -462,7 +510,7 @@ describe('a2ui() middleware', () => {
-             content: [
-               {
-                 data: {
--                  envelopes: [
-+                  messages: [
-                     {
-                       createSurface: {
-                         surfaceId: 's1',
-@@ -488,7 +536,7 @@ describe('a2ui() middleware', () => {
-             content: [
-               {
-                 data: {
--                  envelopes: [{ action: { name: 'refresh', surfaceId: 's1' } }],
-+                  messages: [{ action: { name: 'refresh', surfaceId: 's1' } }],
-                 },
-                 metadata: { mimeType: 'application/a2ui+json' },
-               },
-@@ -553,7 +601,7 @@ describe('a2ui() middleware', () => {
-             content: [
-               {
-                 data: {
--                  envelopes: [
-+                  messages: [
-                     {
-                       createSurface: {
-                         surfaceId: 's1',
++  describe('getSpanType', () => {
++    it.each([
 ```
 
 #### Recent Merged Pull Requests:
@@ -3000,62 +2912,74 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. js/plugins/google-genai): send tool_choice none/auto as string in Interactions
+## X. genkit-tools): add trajectory span-parser helpers and test span builders
 
 **RULE**:
-When implementing operations in `js/plugins/google-genai/src/common/interaction-converters.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in genkit-ai/genkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `genkit-tools/common/src/utils/trajectory/span-parser.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in genkit-ai/genkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9a7d0b65`: js/plugins/google-genai): send tool_choice none/auto as string in Interactions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e80aaa6b`: genkit-tools): add trajectory span-parser helpers and test span builders. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `js/plugins/google-genai/src/common/interaction-converters.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `genkit-tools/common/src/utils/trajectory/span-parser.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
+/**
+ * Copyright 2026 Google LLC
  *
- * The server only accepts `allowed_tools` with mode `any` or `validated`
- * (`{"allowed_tools": {"mode": "none"}}` is a 400 "allowed_tools mode must
- * be either ANY or VALIDATED."), so every other mode is sent as a plain
- * string. `allowedFunctionNames` without `ANY` or `VALIDATED` can't be
- * expressed and is dropped via `warnDropped`.
-  toolChoice?: string,
-  warnDropped?: (field: string) => void
-): string | InteractionToolChoiceConfig | undefined {
-    const names = functionCallingConfig.allowedFunctionNames;
-    const hasNames = !!names?.length;
-    if (hasNames && (validMode === 'any' || validMode === 'validated')) {
-      return { allowed_tools: { mode: validMode, tools: names } };
-    if (hasNames) {
-      warnDropped?.('functionCallingConfig.allowedFunctionNames');
-    }
-    return validMode;
-    return toolChoice === 'required' ? 'any' : toolChoice;
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import type { RuntimeError } from '../../types/error.js';
+import type {
+  AgentInput,
+  GenerationUsage,
+  MessageData,
+  NestedSpanData,
+  Part,
+  SpanData,
+  ToolDefinition,
+} from '../../types/index.js';
+import {
+  cleanActionName,
+  getSpanName,
+  getSpanStatus,
+  isTruthyAttr,
+  parseSpanJson,
+  shortToolName,
+} from '../trace.js';
+
+const PROMPT_SPAN_TYPES: ReadonlySet<unknown> = new Set([
+  'prompt',
+  'promptTemplate',
+]);
+
+/**
+ * Spans belonging to a single `Trajectory` (either the root trace/agent or an
+ * individual nested `/agent/...` subagent), grouped by role during tree
+ * traversal.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-  toolChoice?: string
-): InteractionToolChoiceConfig | undefined {
-    if (!validMode && !functionCallingConfig.allowedFunctionNames?.length) {
-      return undefined;
-    return {
-      allowed_tools: {
-        ...(validMode ? { mode: validMode } : {}),
-        ...(functionCallingConfig.allowedFunctionNames
-          ? { tools: functionCallingConfig.allowedFunctionNames }
-          : {}),
-      },
-    };
-    return {
-      allowed_tools: { mode: toolChoice === 'required' ? 'any' : toolChoice },
-    };
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9a7d0b65` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e80aaa6b` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

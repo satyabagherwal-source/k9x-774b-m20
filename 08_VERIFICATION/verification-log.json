@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261119-ARD6",
-    "timestamp": "2026-11-19T14:28:20.106Z",
-    "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
-    "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized",
-    "contentHash": "55aec4fda4864a4799534e3adb1b2ab83a91e614f4274da00891be394d850c45",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-AZKZ",
-    "timestamp": "2026-11-19T14:28:30.755Z",
-    "repository": "nats-io/nats-server",
-    "learningId": "learn-github-nats-io-nats-server",
-    "contentHash": "f487025058c214a6460c1739bdf95d1d9ab6a34f36987b0d125a5e54c0339515",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-B3EH",
-    "timestamp": "2026-11-19T14:28:35.705Z",
-    "repository": "clockworklabs/SpacetimeDB",
-    "learningId": "learn-github-clockworklabs-spacetimedb",
-    "contentHash": "a9b49bb71bc88a016146086e5324855f7dab9c9621b467f03f4909a299cfb0b4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261119-B4WK",
     "timestamp": "2026-11-19T14:28:37.652Z",
     "repository": "NucleoidAI/Nucleoid",
@@ -7492,6 +7447,51 @@
     "contentHash": "9a37fdb9bead07da7aabc5e3d81c65c006878bdba17e4f7cda5e5b414ca83382",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-5A8N",
+    "timestamp": "2026-11-21T17:15:22.775Z",
+    "repository": "briaai/Fibo-2.0-dev",
+    "learningId": "learn-huggingface-briaai-fibo-2-0-dev",
+    "contentHash": "0549b3c818c4821c796ca3c668bb4f9dea6875530d53e63c1adaf76d3ff30569",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-5HIA",
+    "timestamp": "2026-11-21T17:15:32.194Z",
+    "repository": "kubernetes-sigs/aws-load-balancer-controller",
+    "learningId": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
+    "contentHash": "0c090dcd60d755535bd91b2c53cc6f6170012f3835da344ac4c5b0ba2b9bfc7a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-5L59",
+    "timestamp": "2026-11-21T17:15:36.909Z",
+    "repository": "genkit-ai/genkit",
+    "learningId": "learn-github-genkit-ai-genkit",
+    "contentHash": "a4d68f17aee9c5245effc289ef795ed27022a128dc2de3b7b8bd7b2a62cc434b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T17:06:02.485Z",
-  "total_cycles_completed": 11276,
-  "total_learnings_persisted": 11276,
-  "total_rules_promoted": 10611,
+  "last_updated": "2026-11-21T17:15:36.921Z",
+  "total_cycles_completed": 11279,
+  "total_learnings_persisted": 11279,
+  "total_rules_promoted": 10613,
   "history": [
-    {
-      "timestamp": "2026-11-20T21:25:44.301Z",
-      "repository": "iPlug2/iPlug2",
-      "learningId": "learn-github-iplug2-iplug2",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T21:25:45.185Z",
-      "repository": "RDFLib/rdflib",
-      "learningId": "learn-github-rdflib-rdflib",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T21:25:48.463Z",
-      "repository": "dalance/procs",
-      "learningId": "learn-github-dalance-procs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-20T21:38:58.036Z",
       "repository": "beclab/Olares",
@@ -1403,6 +1382,27 @@
       "repository": "Nanbeige/Nanbeige4.3-33B",
       "learningId": "learn-huggingface-nanbeige-nanbeige4-3-33b",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T17:15:22.787Z",
+      "repository": "briaai/Fibo-2.0-dev",
+      "learningId": "learn-huggingface-briaai-fibo-2-0-dev",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T17:15:32.206Z",
+      "repository": "kubernetes-sigs/aws-load-balancer-controller",
+      "learningId": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T17:15:36.921Z",
+      "repository": "genkit-ai/genkit",
+      "learningId": "learn-github-genkit-ai-genkit",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
