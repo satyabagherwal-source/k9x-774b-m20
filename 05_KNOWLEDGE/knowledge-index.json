@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T17:42:06.888Z",
-  "total_verified_learnings": 9061,
+  "last_updated": "2026-11-21T17:50:11.149Z",
+  "total_verified_learnings": 9062,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23183,
+  "total_items": 23195,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112449,10 +112449,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-duckdb-duckdb-architecture-intelligence-duckdb-duckdb-core-invariants.md",
       "title": "Architecture Intelligence: duckdb/duckdb Core Invariants",
       "repository": "duckdb/duckdb",
-      "source_version": "522f213e",
-      "content_hash": "24d9a4be95d4a5477fc8ff63a1c6f591c875842d839ec91b4ba8827d689d4f59",
+      "source_version": "87d96b77",
+      "content_hash": "db5a8cc73c414c3dd43b735df5942109df74248f142bc69cc843c68d73459006",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T12:50:28.413Z"
+      "persisted_at": "2026-11-21T17:50:04.634Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-duckdb-duckdb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-duckdb-duckdb",
@@ -112461,10 +112461,10 @@
       "relative_path": "08_VERIFICATION/duckdb-duckdb-verification-protocol-empirical-defect-shield-for-duckdb-duckdb.md",
       "title": "Verification Protocol: Empirical Defect Shield for duckdb/duckdb",
       "repository": "duckdb/duckdb",
-      "source_version": "522f213e",
-      "content_hash": "ae646c68c5cdb0962f973b35113e65135802c9cea7cf7a54671975af5de848f0",
+      "source_version": "87d96b77",
+      "content_hash": "48bcd474dbd2676f5eff296d827bd946e33efc0396a61e281c9d1ccd78d42d30",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T12:50:28.563Z"
+      "persisted_at": "2026-11-21T17:50:04.800Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-wan-2-2-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-wan-2-2-learnings-core-invariants",
@@ -219041,8 +219041,8 @@
       "slug": "openreplay-openreplay",
       "platform": "github",
       "source_url": "https://github.com/openreplay/openreplay",
-      "source_version": "42a68706",
-      "content_hash": "4df3d9e83e998cf6fd75d74eeb97e0f8ead113403aac0da4f7ac17102dadedca",
+      "source_version": "fc6d0e45",
+      "content_hash": "bb82497f94a9281706806b3a5d75b36f0d1729a7a06372e201ea667d0f5f9549",
       "dossier_path": "07_PROJECT_LEARNING/openreplay-openreplay-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/openreplay-openreplay-learnings.md",
       "promoted_rules": [
@@ -219060,6 +219060,11 @@
           "number": 9240,
           "title": "Increment frontend chart version to v1.28.13",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9814,
+          "title": "bump nginx-ingress to 5.8-alpine",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -219067,7 +219072,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T14:15:51.127Z",
+      "verified_at": "2026-11-21T17:49:56.466Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -219109,10 +219114,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-openreplay-openreplay-technical-construction-intelligence-openreplay-openreplay-.md",
       "title": "Technical Construction Intelligence: openreplay/openreplay Core Invariants",
       "repository": "openreplay/openreplay",
-      "source_version": "42a68706",
-      "content_hash": "29a2995ed1d99f0270658268c3a19741b329478d02bbac728665905574ff33fb",
+      "source_version": "fc6d0e45",
+      "content_hash": "1bcb547f01349f7b99ac533df4aa4f55436df5dd3601371b0710036da4a0b615",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T14:15:51.653Z"
+      "persisted_at": "2026-11-21T17:49:57.030Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-openreplay-openreplay": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-openreplay-openreplay",
@@ -219121,10 +219126,10 @@
       "relative_path": "08_VERIFICATION/openreplay-openreplay-verification-protocol-empirical-defect-shield-for-openrepl.md",
       "title": "Verification Protocol: Empirical Defect Shield for openreplay/openreplay",
       "repository": "openreplay/openreplay",
-      "source_version": "42a68706",
-      "content_hash": "7932612e17ea05c6e239e685e52e55710efaa671f04240bdf03eef871812706c",
+      "source_version": "fc6d0e45",
+      "content_hash": "63a4c30862e9092aa2d0924e93adbca12fdae5deabb1eeddf1476d89bb8cfab4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T14:15:51.795Z"
+      "persisted_at": "2026-11-21T17:49:57.196Z"
     },
     "learn-github-crate-crate": {
       "learning_id": "learn-github-crate-crate",
@@ -219285,9 +219290,9 @@
       "title": "Technical Construction Intelligence: openreplay-openreplay-learnings Core Invariants",
       "repository": "openreplay-openreplay-learnings",
       "source_version": "HEAD",
-      "content_hash": "801d0f22ca789d86b7677f100b34fab8b7e9a8050fc2651482750d5d673d3170",
+      "content_hash": "9227910ed687ccc98dd36944d59a943b87c24e66ac17a74dd431e7655de41b27",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T14:16:03.525Z"
+      "persisted_at": "2026-11-21T17:50:10.962Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-openreplay-openreplay-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-openreplay-openreplay-learning",
@@ -219297,9 +219302,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for openreplay-openreplay-learnings",
       "repository": "openreplay-openreplay-learnings",
       "source_version": "HEAD",
-      "content_hash": "1f67f502676deef9145b729ab62ca67495c74c41d8936909827a20b56dd1592a",
+      "content_hash": "f0d7aa911b4deb03361c014e8fe3463a6155eb302f815bce0e186c4551134c78",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T14:16:03.675Z"
+      "persisted_at": "2026-11-21T17:50:11.149Z"
     },
     "learn-huggingface-meta-llama-meta-llama-3-8b": {
       "learning_id": "learn-huggingface-meta-llama-meta-llama-3-8b",
@@ -238832,8 +238837,8 @@
       "slug": "duckdb-duckdb",
       "platform": "github",
       "source_url": "https://github.com/duckdb/duckdb",
-      "source_version": "522f213e",
-      "content_hash": "eb529b2976ebb20ce838d5abbae88425507097f63b57f26cd067c9aa983b383c",
+      "source_version": "87d96b77",
+      "content_hash": "f18cc8e24aeb8ee4d7287bd633e71fb5976cda559fc2ff257978bc96e8be311a",
       "dossier_path": "07_PROJECT_LEARNING/duckdb-duckdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/duckdb-duckdb-learnings.md",
       "promoted_rules": [
@@ -238856,6 +238861,11 @@
           "number": 9570,
           "title": "min/max for INTERVAL type",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9816,
+          "title": "Ignore run-to-run plan cost variation in the plan-cost regression runner",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -238863,7 +238873,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T12:50:27.852Z",
+      "verified_at": "2026-11-21T17:50:04.056Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -243724,8 +243734,8 @@
       "slug": "1jehuang-jcode",
       "platform": "github",
       "source_url": "https://github.com/1jehuang/jcode",
-      "source_version": "90595b24",
-      "content_hash": "30d3e1860ecd607709e31066a9f83f90ed8acbbf8d3a69b7b53e772c219c842f",
+      "source_version": "b33d94f0",
+      "content_hash": "90c2f4a4054d5ad260687dc1b8e5352a49c0d38733a35585eb339df16f9f65b9",
       "dossier_path": "07_PROJECT_LEARNING/1jehuang-jcode-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/1jehuang-jcode-learnings.md",
       "promoted_rules": [
@@ -243748,6 +243758,11 @@
           "number": 9504,
           "title": "Integrate recorder quiet-window guard with explicit retry and stale speech clean",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9813,
+          "title": "Render trusted Jarvis requests as speech, with structured detail and original pa",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -243755,7 +243770,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T03:13:07.597Z",
+      "verified_at": "2026-11-21T17:49:50.478Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -243809,10 +243824,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/1jehuang-jcode-agent-contract-1jehuang-jcode-autonomous-specialist-persona.md",
       "title": "Agent Contract: 1jehuang/jcode Autonomous Specialist Persona",
       "repository": "1jehuang/jcode",
-      "source_version": "90595b24",
-      "content_hash": "da192b0682a08fd7e5b893e4c8d5a7aba35f440bb4521a4f82aa7ad43402904d",
+      "source_version": "b33d94f0",
+      "content_hash": "96a5e356f8f71e5405364091ad30fdf2fc0622c295fdec27d2ef9befb34ca967",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T03:13:08.546Z"
+      "persisted_at": "2026-11-21T17:49:51.243Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-1jehuang-jcode": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-1jehuang-jcode",
@@ -243821,10 +243836,10 @@
       "relative_path": "08_VERIFICATION/1jehuang-jcode-verification-protocol-empirical-defect-shield-for-1jehuang-jcode.md",
       "title": "Verification Protocol: Empirical Defect Shield for 1jehuang/jcode",
       "repository": "1jehuang/jcode",
-      "source_version": "90595b24",
-      "content_hash": "34472c825e5d3cf066f094e5af9aea3c5438c5e6682a2a70c13308b8dc54da1c",
+      "source_version": "b33d94f0",
+      "content_hash": "313c50bcf7b2e1650f2a9f54c8d3dcd7bb2c35e2d2ace12816e54b4b1c77bf95",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T03:13:08.722Z"
+      "persisted_at": "2026-11-21T17:49:51.379Z"
     },
     "candidate_directive-update-all-go-dependencies-main": {
       "item_id": "candidate_directive-update-all-go-dependencies-main",
@@ -243909,9 +243924,9 @@
       "title": "Agent Contract: 1jehuang-jcode-learnings Autonomous Specialist Persona",
       "repository": "1jehuang-jcode-learnings",
       "source_version": "HEAD",
-      "content_hash": "8b383fb4d0fbb3116b6148570251bb3bc1f2d979fa8233a6d460d78a36e07671",
+      "content_hash": "908085708054e5a0f6d4220c1fa954d61de539a19d9a9054cc74cecaf363258f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T03:13:18.480Z"
+      "persisted_at": "2026-11-21T17:50:08.226Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-1jehuang-jcode-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-1jehuang-jcode-learnings",
@@ -243921,9 +243936,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for 1jehuang-jcode-learnings",
       "repository": "1jehuang-jcode-learnings",
       "source_version": "HEAD",
-      "content_hash": "b213af5bec10c985f9ac45332248cc0262456a60da08f8dcfc9df9bf7b13ff14",
+      "content_hash": "7959be99e9fa0b851120711906e5e9ca665b27e5f2f66be684529e73e90993dc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T03:13:18.652Z"
+      "persisted_at": "2026-11-21T17:50:08.369Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-openmoss-team-moss-image-sft-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-openmoss-team-moss-image-sft-learnings-core-i",
@@ -279065,7 +279080,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/FastVideo/FastH3-Omni-Comfy",
       "source_version": "hf-fastvideo-fasth3-omni-comfy",
-      "content_hash": "a4b51ce810d6495c86a12ca00a0cb2406ab2ddce1a5471b7a7c05a6793c89d41",
+      "content_hash": "702ce0bda670fe18299d9499ee7d755fdf54bd3289b5b5e963a83398acba1466",
       "dossier_path": "07_PROJECT_LEARNING/hf-fastvideo-fasth3-omni-comfy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-fastvideo-fasth3-omni-comfy-learnings.md",
       "promoted_rules": [],
@@ -279074,7 +279089,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T19:19:32.969Z",
+      "verified_at": "2026-11-21T17:49:48.867Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -279091,9 +279106,9 @@
       "title": "Research & Knowledge Intelligence: FastVideo/FastH3-Omni-Comfy Core Invariants",
       "repository": "FastVideo/FastH3-Omni-Comfy",
       "source_version": "hf-fastvideo-fasth3-omni-comfy",
-      "content_hash": "ed254f23b0b6cec1030a20d080cb17ae7492ac157d82062c9f0d8e780011952d",
+      "content_hash": "c52816db1e45c4b84761a80430ba57f8852bcc81535836012a37b9d884fae4c7",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T19:19:33.291Z"
+      "persisted_at": "2026-11-21T17:49:49.314Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-fastvideo-fasth3-omni-comfy-learnings-core-in": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-fastvideo-fasth3-omni-comfy-learnings-core-in",
@@ -279103,9 +279118,9 @@
       "title": "Research & Knowledge Intelligence: hf-fastvideo-fasth3-omni-comfy-learnings Core Invariants",
       "repository": "hf-fastvideo-fasth3-omni-comfy-learnings",
       "source_version": "HEAD",
-      "content_hash": "b68ca945b1a012ba377365a2302d21ed935a9fbf75b56aeffb36cbe70f942db9",
+      "content_hash": "f3e09a84ba81c5e08c050d39ed6bda6a22030bfdf5c50161d12dc65d6b5f3bbe",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T19:19:54.002Z"
+      "persisted_at": "2026-11-21T17:50:08.738Z"
     },
     "learn-huggingface-baidu-unlimited-ocr-2": {
       "learning_id": "learn-huggingface-baidu-unlimited-ocr-2",
@@ -285493,10 +285508,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-1jehuang-jcode-architecture-intelligence-1jehuang-jcode-core-invariants.md",
       "title": "Architecture Intelligence: 1jehuang/jcode Core Invariants",
       "repository": "1jehuang/jcode",
-      "source_version": "90595b24",
-      "content_hash": "0b29bc5c515bfed617096958fc5457dcb67879121aa9b97f0384844db80db6cc",
+      "source_version": "b33d94f0",
+      "content_hash": "dbd6f23a6258efeddf40a30c145d93a41fa94357c495de925749c4ed1938bccb",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T03:13:08.345Z"
+      "persisted_at": "2026-11-21T17:49:51.083Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-1jehuang-jcode": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-1jehuang-jcode",
@@ -285518,9 +285533,9 @@
       "title": "Architecture Intelligence: 1jehuang-jcode-learnings Core Invariants",
       "repository": "1jehuang-jcode-learnings",
       "source_version": "HEAD",
-      "content_hash": "3f5116e969e6eba3a2b2f88594e57c436292e129833eb5f0117cdf3862eeeea6",
+      "content_hash": "21154dbce82c362856a8724c894255e08205f2cb53d260da849b5a3d9e86be8c",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T03:13:18.260Z"
+      "persisted_at": "2026-11-21T17:50:08.046Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-1jehuang-jcode-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-1jehuang-jcode-learnings",
@@ -315041,6 +315056,179 @@
       "content_hash": "acdc6c6405757a5ca5dd262830440449a0500e8781f1a236295daef41d145ffb",
       "domain_letter": "G",
       "persisted_at": "2026-11-21T17:42:05.260Z"
+    },
+    "rule-9813": {
+      "learning_id": "rule-9813",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9813,
+      "title": "Render trusted Jarvis requests as speech, with structured detail and original pa",
+      "source_url": "https://github.com/1jehuang/jcode",
+      "source_version": "b33d94f0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T17:49:50.478Z"
+    },
+    "candidate_directive-render-trusted-jarvis-requests-as-speech-with-structured-detail-and-original-pa": {
+      "item_id": "candidate_directive-render-trusted-jarvis-requests-as-speech-with-structured-detail-and-original-pa",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-DZ46-render-trusted-jarvis-requests-as-speech-with-structured-detail-and-original-pa.md",
+      "title": "Render trusted Jarvis requests as speech, with structured detail and original pa",
+      "repository": "1jehuang-jcode-learnings",
+      "source_version": "HEAD",
+      "content_hash": "54c742cce7512e73ce237582f8041e3ef7e814d6d67ab4a4b336b5cc759a2de2",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T17:50:07.882Z"
+    },
+    "rule-9814": {
+      "learning_id": "rule-9814",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9814,
+      "title": "bump nginx-ingress to 5.8-alpine",
+      "source_url": "https://github.com/openreplay/openreplay",
+      "source_version": "fc6d0e45",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T17:49:56.466Z"
+    },
+    "candidate_directive-bump-nginx-ingress-to-5-8-alpine": {
+      "item_id": "candidate_directive-bump-nginx-ingress-to-5-8-alpine",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-DQMH-bump-nginx-ingress-to-5-8-alpine.md",
+      "title": "bump nginx-ingress to 5.8-alpine",
+      "repository": "openreplay/openreplay",
+      "source_version": "fc6d0e45",
+      "content_hash": "1a85610893430cfc333b9f3e7a4e82588c629f6b6460d622c3a4bfa40cf3f61d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T17:49:56.874Z"
+    },
+    "learn-github-kube-rs-kube": {
+      "learning_id": "learn-github-kube-rs-kube",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "kube-rs/kube",
+      "repository": "kube-rs/kube",
+      "slug": "kube-rs-kube",
+      "platform": "github",
+      "source_url": "https://github.com/kube-rs/kube",
+      "source_version": "6f9fddb2",
+      "content_hash": "55c73f6a61c28307863d62968ebb3411dca660e7936cc8ac37e124ab5eaf544c",
+      "dossier_path": "07_PROJECT_LEARNING/kube-rs-kube-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/kube-rs-kube-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 9815,
+          "title": "Update axum-server requirement from 0.8.0 to 0.9.2",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-21T17:49:58.165Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-9815": {
+      "learning_id": "rule-9815",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9815,
+      "title": "Update axum-server requirement from 0.8.0 to 0.9.2",
+      "source_url": "https://github.com/kube-rs/kube",
+      "source_version": "6f9fddb2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T17:49:58.165Z"
+    },
+    "candidate_directive-update-axum-server-requirement-from-0-8-0-to-0-9-2": {
+      "item_id": "candidate_directive-update-axum-server-requirement-from-0-8-0-to-0-9-2",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-DRY7-update-axum-server-requirement-from-0-8-0-to-0-9-2.md",
+      "title": "Update axum-server requirement from 0.8.0 to 0.9.2",
+      "repository": "kube-rs/kube",
+      "source_version": "6f9fddb2",
+      "content_hash": "3eeac8a444c60ff7b3ea8458965e04af67397078346d5fb52c0a86723aa2c09a",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-21T17:49:58.595Z"
+    },
+    "domain_intelligence-content-information-intelligence-kube-rs-kube-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-kube-rs-kube-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-kube-rs-kube-content-information-intelligence-kube-rs-kube-core-invariants.md",
+      "title": "Content & Information Intelligence: kube-rs/kube Core Invariants",
+      "repository": "kube-rs/kube",
+      "source_version": "6f9fddb2",
+      "content_hash": "e56ba0f0485dcad9fd6c942629b30f7fb84b1716fcdb68fe3384ed4977af15de",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-21T17:49:58.758Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-kube-rs-kube": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-kube-rs-kube",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/kube-rs-kube-verification-protocol-empirical-defect-shield-for-kube-rs-kube.md",
+      "title": "Verification Protocol: Empirical Defect Shield for kube-rs/kube",
+      "repository": "kube-rs/kube",
+      "source_version": "6f9fddb2",
+      "content_hash": "e55395e25aa60e59ddfc526a6c777fa06ffec99a258f7a94a08221a4198eccf3",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-21T17:49:58.921Z"
+    },
+    "rule-9816": {
+      "learning_id": "rule-9816",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9816,
+      "title": "Ignore run-to-run plan cost variation in the plan-cost regression runner",
+      "source_url": "https://github.com/duckdb/duckdb",
+      "source_version": "87d96b77",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T17:50:04.056Z"
+    },
+    "candidate_directive-ignore-run-to-run-plan-cost-variation-in-the-plan-cost-regression-runner": {
+      "item_id": "candidate_directive-ignore-run-to-run-plan-cost-variation-in-the-plan-cost-regression-runner",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-DWHK-ignore-run-to-run-plan-cost-variation-in-the-plan-cost-regression-runner.md",
+      "title": "Ignore run-to-run plan cost variation in the plan-cost regression runner",
+      "repository": "duckdb/duckdb",
+      "source_version": "87d96b77",
+      "content_hash": "413ffc9d7a8c526690f6d7894b073eeb781f034de2513b9c3109a6979e540d1a",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-21T17:50:04.476Z"
+    },
+    "candidate_directive-helm-bump-nginx-ingress-to-5-8-alpine": {
+      "item_id": "candidate_directive-helm-bump-nginx-ingress-to-5-8-alpine",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-E1D9-helm-bump-nginx-ingress-to-5-8-alpine.md",
+      "title": "helm): bump nginx-ingress to 5.8-alpine",
+      "repository": "openreplay-openreplay-learnings",
+      "source_version": "HEAD",
+      "content_hash": "bbe88ae983f59def116aab4a7a9ac3db3aff2fea441d537b4f4194e8a4a4e7d9",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T17:50:10.797Z"
     }
   },
   "ai-builder-brain": {

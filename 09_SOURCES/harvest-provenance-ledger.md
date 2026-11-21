@@ -11892,3 +11892,8 @@ Every entry in this ledger must capture:
 | `learn-github-ratatui-ratatui` | `https://github.com/ratatui/ratatui` | `29196825` | Multi-dimensional audit evidence | 2026-11-21T17:41:49.682Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `2875dee3` | Multi-dimensional audit evidence | 2026-11-21T17:41:58.128Z |
 | `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `66de9e68` | Multi-dimensional audit evidence | 2026-11-21T17:42:01.481Z |
+| `learn-huggingface-fastvideo-fasth3-omni-comfy` | `https://huggingface.co/FastVideo/FastH3-Omni-Comfy` | `hf-fastvid` | Multi-dimensional audit evidence | 2026-11-21T17:49:49.117Z |
+| `learn-github-1jehuang-jcode` | `https://github.com/1jehuang/jcode` | `b33d94f0` | Multi-dimensional audit evidence | 2026-11-21T17:49:50.689Z |
+| `learn-github-openreplay-openreplay` | `https://github.com/openreplay/openreplay` | `fc6d0e45` | Multi-dimensional audit evidence | 2026-11-21T17:49:56.667Z |
+| `learn-github-kube-rs-kube` | `https://github.com/kube-rs/kube` | `6f9fddb2` | Multi-dimensional audit evidence | 2026-11-21T17:49:58.384Z |
+| `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `87d96b77` | Multi-dimensional audit evidence | 2026-11-21T17:50:04.263Z |

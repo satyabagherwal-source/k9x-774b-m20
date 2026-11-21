@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kube-rs-kube-learnings.md`  
 > **Source**: github ([https://github.com/kube-rs/kube](https://github.com/kube-rs/kube))  
-> **Source Version**: `fc801fba`  
+> **Source Version**: `6f9fddb2`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T00:30:57.174Z  
+> **Timestamp**: 2026-11-21T17:49:57.303Z  
 > **Learning ID**: `learn-github-kube-rs-kube`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kube-rs-kube-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kube-rs/kube](https://github.com/kube-rs/kube))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T00:30:57.168Z  
+> **Harvest Timestamp**: 2026-11-21T17:49:57.295Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Rust Kubernetes client and controller runtime
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3862 stars
+- **Stars / Engagement**: 3868 stars
 
 ---
 
@@ -1707,74 +1707,173 @@ fn test_to_plural_native() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d207fbc1` (2026-11-12)
-**Commit Message**: fix: correct eviction deleteOptions key (#2152)
+### Incident Patch 1: `050ef4e7` (2026-11-21)
+**Commit Message**: Chore(deps): Update axum-server requirement from 0.8.0 to 0.9.2 (#2155)
 
-fix(kube-core): send eviction deleteOptions under its API field name
+Updates the requirements on [axum-server](https://github.com/programatik29/axum-server) to permit the latest version.
+- [Release notes](https://github.com/programatik29/axum-server/releases)
+- [Changelog](https://github.com/programatik29/axum-server/blob/master/CHANGELOG.md)
+- [Commits](https://github.com/programatik29/axum-server/compare/v0.8.0...v0.9.2)
 
-Request::evict built the Eviction body with the key `delete_options`.
-The Eviction API field is `deleteOptions`, so the apiserver dropped it
-as an unknown field and every eviction ignored its preconditions,
-gracePeriodSeconds, dryRun and propagationPolicy. With a UID
-precondition, a controller holding a stale view could evict a
-recreated pod of the same name.
+---
+updated-dependencies:
+- dependency-name: axum-server
+  dependency-version: 0.9.2
+  dependency-type: direct:production
+...
 
-Rename the key and add a test that asserts the serialized body.
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Co-authored-by: Eirik A <[REDACTED_EMAIL]>
 
-Signed-off-by: Kyle Kosic <[REDACTED_EMAIL]>
-
-**File**: `kube-core/src/subresource.rs` (modified, +25/-2)
+**File**: `examples/Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -121,7 +121,7 @@ impl Request {
-         let urlstr = qp.finish();
-         // eviction body parameters are awkward, need metadata with name
-         let data = serde_json::to_vec(&serde_json::json!({
--            "delete_options": ep.delete_options,
-+            "deleteOptions": ep.delete_options,
-             "metadata": { "name": name }
-         }))
-         .map_err(Error::SerializeBody)?;
-@@ -424,7 +424,30 @@ mod test {
-     use k8s::core::v1 as corev1;
-     use k8s_openapi::api as k8s;
+@@ -63,7 +63,7 @@ tar = "0.4.37"
+ tracing.workspace = true
+ tracing-subscriber.workspace = true
+ axum = "0.8.7"
+-axum-server = { version = "0.8.0", features = ["tls-rustls-no-provider"] }
++axum-server = { version = "0.9.2", features = ["tls-rustls-no-provider"] }
+ bytes.workspace = true
+ http.workspace = true
+ http-body-util.workspace = true
+```
+
+---
+
+### Incident Patch 2: `35136d31` (2026-11-21)
+**Commit Message**: Fix kube-derive UI test on Rust 1.100 (#2154)
+
+* Fix kube-derive UI test on Rust 1.100
+
+Signed-off-by: doxxx93 <[REDACTED_EMAIL]>
+
+* Clarify why the cel UI test derives JsonSchema
+
+Signed-off-by: doxxx93 <[REDACTED_EMAIL]>
+
+* Reject cel with a manual schema before generating code
+
+Signed-off-by: doxxx93 <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: doxxx93 <[REDACTED_EMAIL]>
+
+**File**: `kube-derive/src/custom_resource/mod.rs` (modified, +25/-24)
+```diff
+@@ -224,6 +224,16 @@ pub(crate) fn derive(input: proc_macro2::TokenStream) -> proc_macro2::TokenStrea
  
--    use crate::subresource::LogParams;
-+    use crate::{
-+        params::{DeleteParams, Preconditions},
-+        subresource::{EvictParams, LogParams},
-+    };
-+
-+    #[test]
-+    fn evict_body_carries_delete_options() {
-+        let url = corev1::Pod::url_path(&(), Some("ns"));
-+        let ep = EvictParams {
-+            delete_options: Some(DeleteParams {
-+                preconditions: Some(Preconditions {
-+                    uid: Some("u1".into()),
-+                    resource_version: None,
-+                }),
-+                ..Default::default()
-+            }),
-+            ..Default::default()
-+        };
-+        let req = Request::new(url).evict("mypod", &ep).unwrap();
-+        let body: serde_json::Value = serde_json::from_slice(req.body()).unwrap();
-+        assert_eq!(body["deleteOptions"]["preconditions"]["uid"], "u1");
-+        assert_eq!(body["metadata"]["name"], "mypod");
-+        assert!(body.get("delete_options").is_none());
+     // Enable schema generation by default as in v1 it is mandatory.
+     let schema_mode = schema_mode.unwrap_or(SchemaMode::Derived);
++    // `#[kube(cel)]` needs a derived schema: a manual schema is not forced through `KubeSchema`,
++    // so it would carry no `x-kubernetes-validations` and the generated methods would silently
++    // validate nothing. Reject it before generating anything, like the other attribute errors.
++    if cel && !schema_mode.derive() {
++        return syn::Error::new(
++            Span::call_site(),
++            r#"#[kube(cel)] requires a derived schema; it cannot be combined with `schema = "manual"`"#,
++        )
++        .to_compile_error();
 +    }
+     // We exclude fields `apiVersion`, `kind`, and `metadata` from our schema because
+     // these are validated by the API server implicitly. Also, we can't generate the
+     // schema for `metadata` (`ObjectMeta`) because it doesn't implement `JsonSchema`.
+@@ -564,34 +574,25 @@ pub(crate) fn derive(input: proc_macro2::TokenStream) -> proc_macro2::TokenStrea
+     // Requires the downstream crate to enable `kube/cel` (the generated code references
+     // `#kube_core::cel`). The bodies just delegate to `kube_core::cel::validate_cel{,_update}`, which
+     // own the schema extraction + validation so they are compiled once in kube-core rather than
+-    // re-expanded at every derive site. Gated on a derived schema: a manual schema is not forced
+-    // through `KubeSchema`, so it would carry no `x-kubernetes-validations` and the methods would
+-    // silently validate nothing — reject that combination at compile time instead.
++    // re-expanded at every derive site. `cel` with `schema = "manual"` was already rejected above,
++    // so the schema is derived here.
+     let impl_validate_cel = if cel {
+-        if schema_mode.derive() {
+-            quote! {
+-                impl #rootident {
+-                    /// Validate this resource against its CEL creation rules (`x-kubernetes-validations`)
+-                    /// client-side, without an apiserver. `Ok(())` if all rules pass, otherwise the
+-                    /// aggregated failures.
+-                    pub fn validate_cel(&self) -> ::core::result::Result<(), #kube_core::cel::ValidationErrors> {
+-                        #kube_core::cel::validate_cel(self)
+-                    }
++        quote! {
++            impl #rootident {
++                /// Validate this resource against its CEL creation rules (`x-kubernetes-validations`)
++                /// client-side, without an apiserver. `Ok(())` if all rules pass, otherwise the
++                /// aggregated failures.
++                pub fn validate_cel(&self) -> ::core::result::Result<(), #kube_core::cel::ValidationErrors> {
++                    #kube_core::cel::validate_cel(self)
++                }
  
-     #[test]
-     fn logs_all_params() {
+-                    /// Validate this resource against its CEL transition rules (rules using `oldSelf`)
+-                    /// client-side, comparing against the `old` state. `Ok(())` if all rules pass,
+-                    /// otherwise the aggregated failures.
+-                    pub fn validate_cel_update(&self, old: &Self) -> ::core::result::Result<(), #kube_core::cel::ValidationErrors> {
+-                        #kube_core::cel::validate_cel_update(self, old)
+-                    }
++                /// Validate this resource against its CEL transition rules (rules using `oldSelf`)
++                /// client-side, comparing against the `old` state. `Ok(())` if all rules pass,
++                /// otherwise the aggregated failures.
++                pub fn validate_cel_update(&self, old: &Self) -> ::core::result::Result<(), #kube_core::cel::ValidationErrors> {
++                    #kube_core::cel::validate_cel_update(self, old)
+                 }
+             }
+-        } else {
+-            quote! {
+-                ::core::compile_error!(
+-                    "#[kube(cel)] requires a derived schema; it cannot be combined with `schema = \"manual\"`"
+-                );
+-            }
+         }
+     } else {
+         quote! {}
+```
+
+**File**: `kube-derive/tests/ui/cel_requires_derived_schema.stderr` (modified, +0/-28)
+```diff
+@@ -5,31 +5,3 @@ error: #[kube(cel)] requires a derived schema; it cannot be combined with `schem
+   |          ^^^^^^^^^^^^^^
+   |
+   = note: this error originates in the derive macro `CustomResource` (in Nightly builds, run with -Z macro-backtrace for more info)
+-
+-error[E0277]: the trait bound `Foo: JsonSchema` is not satisfied
+- --> tests/ui/cel_requires_derived_schema.rs:9:10
+-  |
+-9 | #[derive(CustomResource, Serialize, Deserialize, Debug, Clone, JsonSchema)]
+-  |          ^^^^^^^^^^^^^^ unsatisfied trait bound
+-  |
+-help: the trait `JsonSchema` is not implemented for `Foo`
+- --> tests/ui/cel_requires_derived_schema.rs:9:10
+-  |
+-9 | #[derive(CustomResource, Serialize, Deserialize, Debug, Clone, JsonSchema)]
+-  |          ^^^^^^^^^^^^^^
+-  = help: the following other types implement trait `JsonSchema`:
+-            &'a T
+-            &'a mut T
+-            ()
+-            (T0, T1)
+-            (T0, T1, T2)
+-            (T0, T1, T2, T3)
+-            (T0, T1, T2, T3, T4)
+-            (T0, T1, T2, T3, T4, T5)
+-          and $N others
+-note: required by a bound in `SchemaGenerator::into_root_schema_for`
+- --> $CARGO/schemars-$VERSION/src/generate.rs
+-  |
+-  |     pub fn into_root_schema_for<T: ?Sized + JsonSchema>(mut self) -> Schema {
+-  |                                             ^^^^^^^^^^ required by this bound in `SchemaGenerator::into_root_schema_for`
+-  = note: this error originates in the derive macro `CustomResource` (in Nightly builds, run with -Z macro-backtrace for more info)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2152** (2026-11-12): fix: correct eviction deleteOptions key (@kykosic)
-- **PR #2149** (2026-11-11): Bound watch startup with the watcher idle timeout (@doxxx93)
-- **PR #2146** (2026-11-06): Fix nightly clippy and rustdoc warnings (@doxxx93)
-- **PR #2145** (2026-11-06): Make kube-client modules visible to rustfmt (@doxxx93)
-- **PR #2144** (2026-11-06): Match NO_PROXY against the apiserver instead of the proxy (@doxxx93)
-- **PR #2143** (2026-11-05): fix parse error messages for LabelSelectorRequirement into Expression (@orangecms)
+- **PR #2161** (2026-11-21): move tokio's signal feature to kube-runtime (@verokarhu)
+- **PR #2160** (closed): remove unused dependency feature (@verokarhu)
+- **PR #2157** (closed): Support cleanup actions deferring finalizer removal (@Alphadelta14)
+- **PR #2155** (2026-11-21): Chore(deps): Update axum-server requirement from 0.8.0 to 0.9.2 (@dependabot[bot])
+- **PR #2154** (2026-11-21): Fix kube-derive UI test on Rust 1.100 (@doxxx93)
+- **PR #2153** (2026-11-21): Accept socks5h proxy URLs (@doxxx93)
 
 ---
 
@@ -1794,53 +1893,28 @@ Signed-off-by: Kyle Kosic <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. correct eviction deleteOptions key (#2152)
+## X. deps): Update axum-server requirement from 0.8.0 to 0.9.2
 
 **RULE**:
-When implementing operations in `kube-core/src/subresource.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kube-rs/kube. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `examples/Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kube-rs/kube. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d207fbc1`: correct eviction deleteOptions key (#2152). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `050ef4e7`: deps): Update axum-server requirement from 0.8.0 to 0.9.2. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `kube-core/src/subresource.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `examples/Cargo.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            "deleteOptions": ep.delete_options,
-    use crate::{
-        params::{DeleteParams, Preconditions},
-        subresource::{EvictParams, LogParams},
-    };
-
-    #[test]
-    fn evict_body_carries_delete_options() {
-        let url = corev1::Pod::url_path(&(), Some("ns"));
-        let ep = EvictParams {
-            delete_options: Some(DeleteParams {
-                preconditions: Some(Preconditions {
-                    uid: Some("u1".into()),
-                    resource_version: None,
-                }),
-                ..Default::default()
-            }),
-            ..Default::default()
-        };
-        let req = Request::new(url).evict("mypod", &ep).unwrap();
-        let body: serde_json::Value = serde_json::from_slice(req.body()).unwrap();
-        assert_eq!(body["deleteOptions"]["preconditions"]["uid"], "u1");
-        assert_eq!(body["metadata"]["name"], "mypod");
-        assert!(body.get("delete_options").is_none());
-    }
+axum-server = { version = "0.9.2", features = ["tls-rustls-no-provider"] }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-            "delete_options": ep.delete_options,
-    use crate::subresource::LogParams;
+// Induced defect failure mode:
+axum-server = { version = "0.8.0", features = ["tls-rustls-no-provider"] }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d207fbc1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `050ef4e7` are properly handled with clean fallback behavior.

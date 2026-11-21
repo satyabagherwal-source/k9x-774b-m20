@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-21T17:42:01.489Z",
+  "last_updated": "2026-11-21T17:50:04.272Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5106,14 +5106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-openreplay-openreplay",
-      "content_hash": "4df3d9e83e998cf6fd75d74eeb97e0f8ead113403aac0da4f7ac17102dadedca",
-      "verified_at": "2026-11-18T14:15:51.323Z",
+      "content_hash": "bb82497f94a9281706806b3a5d75b36f0d1729a7a06372e201ea667d0f5f9549",
+      "verified_at": "2026-11-21T17:49:56.675Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T14:15:51.323Z"
+      "last_updated": "2026-11-21T17:49:56.675Z"
     },
     "kumahq/kuma": {
       "repository": "kumahq/kuma",
@@ -5541,14 +5541,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-1jehuang-jcode",
-      "content_hash": "30d3e1860ecd607709e31066a9f83f90ed8acbbf8d3a69b7b53e772c219c842f",
-      "verified_at": "2026-11-20T03:13:07.881Z",
+      "content_hash": "90c2f4a4054d5ad260687dc1b8e5352a49c0d38733a35585eb339df16f9f65b9",
+      "verified_at": "2026-11-21T17:49:50.697Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T03:13:07.881Z"
+      "last_updated": "2026-11-21T17:49:50.697Z"
     },
     "wix/Detox": {
       "repository": "wix/Detox",
@@ -9381,14 +9381,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-duckdb-duckdb",
-      "content_hash": "eb529b2976ebb20ce838d5abbae88425507097f63b57f26cd067c9aa983b383c",
-      "verified_at": "2026-11-20T12:50:28.057Z",
+      "content_hash": "f18cc8e24aeb8ee4d7287bd633e71fb5976cda559fc2ff257978bc96e8be311a",
+      "verified_at": "2026-11-21T17:50:04.271Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T12:50:28.057Z"
+      "last_updated": "2026-11-21T17:50:04.271Z"
     },
     "megh-bari/pattern-craft": {
       "repository": "megh-bari/pattern-craft",
@@ -10326,14 +10326,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kube-rs-kube",
-      "content_hash": "83fa1a011f117c49c324ed38fa7a621aefe4a808378696af71fd1968d8b2922c",
-      "verified_at": "2026-11-13T00:31:10.424Z",
+      "content_hash": "55c73f6a61c28307863d62968ebb3411dca660e7936cc8ac37e124ab5eaf544c",
+      "verified_at": "2026-11-21T17:49:58.393Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T00:31:10.424Z"
+      "last_updated": "2026-11-21T17:49:58.393Z"
     },
     "weaviate/weaviate": {
       "repository": "weaviate/weaviate",
@@ -16326,14 +16326,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-fastvideo-fasth3-omni-comfy",
-      "content_hash": "a4b51ce810d6495c86a12ca00a0cb2406ab2ddce1a5471b7a7c05a6793c89d41",
-      "verified_at": "2026-11-17T19:19:33.148Z",
+      "content_hash": "702ce0bda670fe18299d9499ee7d755fdf54bd3289b5b5e963a83398acba1466",
+      "verified_at": "2026-11-21T17:49:49.124Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T19:19:33.148Z"
+      "last_updated": "2026-11-21T17:49:49.124Z"
     },
     "YoanWai/agent-manager": {
       "repository": "YoanWai/agent-manager",

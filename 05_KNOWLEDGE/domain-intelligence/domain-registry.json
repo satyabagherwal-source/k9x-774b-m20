@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T17:42:06.599Z",
-  "total_records": 2266,
+  "last_updated": "2026-11-21T17:50:10.962Z",
+  "total_records": 2267,
   "domains": {
     "A": {
       "total": 17,
@@ -1985,7 +1985,7 @@
       ]
     },
     "I": {
-      "total": 123,
+      "total": 124,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -2109,7 +2109,8 @@
         "domain_intelligence-content-information-intelligence-infracost-infracost-core-invariants",
         "domain_intelligence-content-information-intelligence-infracost-infracost-learnings-core-invariants",
         "domain_intelligence-content-information-intelligence-fabio-rovai-open-ontologies-core-invariants",
-        "domain_intelligence-content-information-intelligence-fabio-rovai-open-ontologies-learnings-core-inva"
+        "domain_intelligence-content-information-intelligence-fabio-rovai-open-ontologies-learnings-core-inva",
+        "domain_intelligence-content-information-intelligence-kube-rs-kube-core-invariants"
       ]
     },
     "J": {
@@ -8162,8 +8163,8 @@
       "title": "Architecture Intelligence: duckdb/duckdb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-duckdb-duckdb-architecture-intelligence-duckdb-duckdb-core-invariants.md",
       "repository": "duckdb/duckdb",
-      "content_hash": "24d9a4be95d4a5477fc8ff63a1c6f591c875842d839ec91b4ba8827d689d4f59",
-      "created_at": "2026-11-20T12:50:28.413Z"
+      "content_hash": "db5a8cc73c414c3dd43b735df5942109df74248f142bc69cc843c68d73459006",
+      "created_at": "2026-11-21T17:50:04.634Z"
     },
     "DOM-D-A827EB1D": {
       "record_id": "DOM-D-A827EB1D",
@@ -11684,8 +11685,8 @@
       "title": "Technical Construction Intelligence: openreplay/openreplay Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-openreplay-openreplay-technical-construction-intelligence-openreplay-openreplay-.md",
       "repository": "openreplay/openreplay",
-      "content_hash": "29a2995ed1d99f0270658268c3a19741b329478d02bbac728665905574ff33fb",
-      "created_at": "2026-11-18T14:15:51.653Z"
+      "content_hash": "1bcb547f01349f7b99ac533df4aa4f55436df5dd3601371b0710036da4a0b615",
+      "created_at": "2026-11-21T17:49:57.030Z"
     },
     "domain_intelligence-architecture-intelligence-crate-crate-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-crate-crate-core-invariants",
@@ -11762,8 +11763,8 @@
       "title": "Technical Construction Intelligence: openreplay-openreplay-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-openreplay-openreplay-learnings-technical-construction-intelligence-openreplay-o.md",
       "repository": "openreplay-openreplay-learnings",
-      "content_hash": "801d0f22ca789d86b7677f100b34fab8b7e9a8050fc2651482750d5d673d3170",
-      "created_at": "2026-11-18T14:16:03.525Z"
+      "content_hash": "9227910ed687ccc98dd36944d59a943b87c24e66ac17a74dd431e7655de41b27",
+      "created_at": "2026-11-21T17:50:10.962Z"
     },
     "domain_intelligence-research-knowledge-intelligence-meta-llama-meta-llama-3-8b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-meta-llama-meta-llama-3-8b-core-invariants",
@@ -28817,8 +28818,8 @@
       "title": "Research & Knowledge Intelligence: FastVideo/FastH3-Omni-Comfy Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-fastvideo-fasth3-omni-comfy-research-knowledge-intelligence-fastvideo-fasth3-.md",
       "repository": "FastVideo/FastH3-Omni-Comfy",
-      "content_hash": "ed254f23b0b6cec1030a20d080cb17ae7492ac157d82062c9f0d8e780011952d",
-      "created_at": "2026-11-17T19:19:33.291Z"
+      "content_hash": "c52816db1e45c4b84761a80430ba57f8852bcc81535836012a37b9d884fae4c7",
+      "created_at": "2026-11-21T17:49:49.314Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-fastvideo-fasth3-omni-comfy-learnings-core-in": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-fastvideo-fasth3-omni-comfy-learnings-core-in",
@@ -28826,8 +28827,8 @@
       "title": "Research & Knowledge Intelligence: hf-fastvideo-fasth3-omni-comfy-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-fastvideo-fasth3-omni-comfy-learnings-research-knowledge-intelligence-hf-fast.md",
       "repository": "hf-fastvideo-fasth3-omni-comfy-learnings",
-      "content_hash": "b68ca945b1a012ba377365a2302d21ed935a9fbf75b56aeffb36cbe70f942db9",
-      "created_at": "2026-11-17T19:19:54.002Z"
+      "content_hash": "f3e09a84ba81c5e08c050d39ed6bda6a22030bfdf5c50161d12dc65d6b5f3bbe",
+      "created_at": "2026-11-21T17:50:08.738Z"
     },
     "domain_intelligence-research-knowledge-intelligence-baidu-unlimited-ocr-2-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-baidu-unlimited-ocr-2-core-invariants",
@@ -30171,8 +30172,8 @@
       "title": "Architecture Intelligence: 1jehuang/jcode Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-1jehuang-jcode-architecture-intelligence-1jehuang-jcode-core-invariants.md",
       "repository": "1jehuang/jcode",
-      "content_hash": "0b29bc5c515bfed617096958fc5457dcb67879121aa9b97f0384844db80db6cc",
-      "created_at": "2026-11-20T03:13:08.345Z"
+      "content_hash": "dbd6f23a6258efeddf40a30c145d93a41fa94357c495de925749c4ed1938bccb",
+      "created_at": "2026-11-21T17:49:51.083Z"
     },
     "domain_intelligence-architecture-intelligence-1jehuang-jcode-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-1jehuang-jcode-learnings-core-invariants",
@@ -30180,8 +30181,8 @@
       "title": "Architecture Intelligence: 1jehuang-jcode-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-1jehuang-jcode-learnings-architecture-intelligence-1jehuang-jcode-learnings-core.md",
       "repository": "1jehuang-jcode-learnings",
-      "content_hash": "3f5116e969e6eba3a2b2f88594e57c436292e129833eb5f0117cdf3862eeeea6",
-      "created_at": "2026-11-20T03:13:18.260Z"
+      "content_hash": "21154dbce82c362856a8724c894255e08205f2cb53d260da849b5a3d9e86be8c",
+      "created_at": "2026-11-21T17:50:08.046Z"
     },
     "domain_intelligence-architecture-intelligence-sqlpage-sqlpage-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-sqlpage-sqlpage-core-invariants",
@@ -38064,6 +38065,15 @@
       "repository": "hf-atomicchat-inkling-2-mini-uncensored-gguf-learnings",
       "content_hash": "9da9c2d94a7d4cad36271af7ca31f2df896a7bf1647c4fb1880d51458fcc48f1",
       "created_at": "2026-11-21T17:28:53.436Z"
+    },
+    "domain_intelligence-content-information-intelligence-kube-rs-kube-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-kube-rs-kube-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: kube-rs/kube Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-kube-rs-kube-content-information-intelligence-kube-rs-kube-core-invariants.md",
+      "repository": "kube-rs/kube",
+      "content_hash": "e56ba0f0485dcad9fd6c942629b30f7fb84b1716fcdb68fe3384ed4977af15de",
+      "created_at": "2026-11-21T17:49:58.758Z"
     }
   }
 }

@@ -11859,3 +11859,8 @@
 | `CYCLE-20261121-3APA` | `2026-11-21T17:41:49.678Z` | `ratatui/ratatui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9811` | Yes (`1beefc20...`) |
 | `CYCLE-20261121-3H7V` | `2026-11-21T17:41:58.123Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8826` | Yes (`c1ef2640...`) |
 | `CYCLE-20261121-3JT1` | `2026-11-21T17:42:01.477Z` | `dragonflydb/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9812` | Yes (`dc1d52a3...`) |
+| `CYCLE-20261121-DKMW` | `2026-11-21T17:49:49.112Z` | `FastVideo/FastH3-Omni-Comfy` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fastvideo-fasth3-omni-comfy-learnings.md` | Yes (`702ce0bd...`) |
+| `CYCLE-20261121-DLUL` | `2026-11-21T17:49:50.685Z` | `1jehuang/jcode` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9813` | Yes (`90c2f4a4...`) |
+| `CYCLE-20261121-DQGN` | `2026-11-21T17:49:56.663Z` | `openreplay/openreplay` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9814` | Yes (`bb82497f...`) |
+| `CYCLE-20261121-DRSB` | `2026-11-21T17:49:58.379Z` | `kube-rs/kube` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9815` | Yes (`55c73f6a...`) |
+| `CYCLE-20261121-DWBN` | `2026-11-21T17:50:04.259Z` | `duckdb/duckdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9816` | Yes (`f18cc8e2...`) |

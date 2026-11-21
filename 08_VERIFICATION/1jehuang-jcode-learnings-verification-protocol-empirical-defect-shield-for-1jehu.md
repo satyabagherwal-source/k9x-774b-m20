@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T03:13:17.925Z",
+  "timestamp": "2026-11-21T17:50:07.757Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-1jehuang-jcode-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [1jehuang-jcode-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T03:13:17.925Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T17:50:07.757Z`  
 > **Learning ID**: `LEARN-EVO-1jehuang-jcode-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/1jehuang-jcode-learnings.md`  
 > **Source**: github ([https://github.com/1jehuang/jcode](https://github.com/1jehuang/jcode))  
-> **Source Version**: `90595b24`  
+> **Source Version**: `b33d94f0`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T03:13:06.565Z  
+> **Timestamp**: 2026-11-21T17:49:49.639Z  
 > **Learning ID**: `learn-github-1jehuang-jcode`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/1jehuang-jcode-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/1jehuang/jcode](https://github.com/1jehuang/jcode))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T03:13:06.409Z  
+> **Harvest Timestamp**: 2026-11-21T17:49:49.633Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: High performance coding agent harness written in Rust, built for heavy multi-agent dev workflows
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 21925 stars
+- **Stars / Engagement**: 21967 stars
 
 ---
 
@@ -2069,1208 +2069,157 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d0b8d7a8` (2026-11-19)
-**Commit Message**: Integrate recorder quiet-window guard with explicit retry and stale speech cleanup
+### Incident Patch 1: `173eb49b` (2026-11-19)
+**Commit Message**: Render trusted Jarvis requests as speech, with structured detail and original payload inspection
 
-**File**: `crates/jcode-voice/src/continuous.rs` (modified, +82/-41)
+**File**: `Cargo.lock` (modified, +1/-0)
 ```diff
-@@ -160,10 +160,25 @@ impl GateContext {
-         serde_json::json!({"recent_chat":chat,"continuous_transcript":continuous_transcript,"background_transcript":self.background,"candidate":candidate,"require_explicit_name":require_name})
-     }
+@@ -4814,6 +4814,7 @@ dependencies = [
+  "jcode-session-types",
+  "jcode-tui-markdown",
+  "ratatui",
++ "serde",
+  "serde_json",
+ ]
+ 
+```
+
+**File**: `crates/jcode-app-core/src/server/client_api.rs` (modified, +1/-0)
+```diff
+@@ -48,6 +48,7 @@ impl Client {
+ 
+         let request = Request::Message {
+             id,
++            jarvis_voice: false,
+             content: content.to_string(),
+             images: vec![],
+             system_reminder: None,
+```
+
+**File**: `crates/jcode-app-core/src/tool/communicate_tests.rs` (modified, +1/-0)
+```diff
+@@ -456,6 +456,7 @@ impl RawClient {
+         self.next_id += 1;
+         self.send_request(Request::Message {
+             id,
++            jarvis_voice: false,
+             content: content.to_string(),
+             images: vec![],
+             system_reminder: None,
+```
+
+**File**: `crates/jcode-base/src/config.rs` (modified, +4/-0)
+```diff
+@@ -1055,6 +1055,10 @@ impl Default for CompanionConfig {
+ #[derive(Debug, Clone, Serialize, Deserialize, Default)]
+ #[serde(default)]
+ pub struct JarvisConfig {
++    /// Expand Jarvis requests into readable transcript, status, context and instruction sections.
++    pub show_raw_requests: bool,
++    /// Show the original user payload instead of the clean or expanded presentation.
++    pub show_exact_request_payload: bool,
+     pub speech: JarvisSpeechConfig,
+     pub listening: JarvisListeningConfig,
  }
-+#[derive(Default)]
-+struct QuietWindow {
-+    since: Option<Instant>,
-+    last: Option<Instant>,
-+}
-+impl QuietWindow {
-+    fn observe(&mut self, now:Instant, voiced:bool) {
-+        if voiced || self.last.is_some_and(|last| now.duration_since(last) > Duration::from_millis(200)) {self.since=None;}
-+        self.last=Some(now);
-+        if !voiced {self.since.get_or_insert(now);}
-+    }
-+    fn ready(&self, now:Instant)->bool {
-+        self.last.is_some_and(|last|now.duration_since(last)<=Duration::from_millis(200)) && self.since.is_some_and(|at|now.duration_since(at)>=Duration::from_millis(250))
-+    }
-+}
- struct Events {
-     context: GateContext,
-     queue: VecDeque<ContinuousEvent>,
--    quiet_since: Option<Instant>,
-+    quiet: QuietWindow,
-     notify: Arc<tokio::sync::Notify>,
- }
- struct ClassifiedCaption {
-@@ -252,6 +267,14 @@ impl ContinuousRecording {
-         key: &str,
-         recorder: &str,
-         config: ContinuousConfig,
-+    ) -> Result<Self, VoiceError> {
-+        Self::start_auto_with_budget(cancel, key, recorder, config, ContinuousBudget::default())
-+    }
-+
-+    /// Keep the same ledger when a user explicitly retries a stopped listener.
-+    pub fn start_auto_with_budget(
-+        cancel: Arc<AtomicBool>, key: &str, recorder: &str, config: ContinuousConfig,
-+        budget: ContinuousBudget,
-     ) -> Result<Self, VoiceError> {
-         if cancel.load(Ordering::SeqCst) {
-             return Err(VoiceError::Cancelled);
-@@ -267,14 +290,6 @@ impl ContinuousRecording {
-             || !(0.5..=1.0).contains(&config.action_probability)
-         {
-             return Err(VoiceError::InvalidResponse);
--    ) -> Result<Self, VoiceError> {
--        Self::start_auto_with_budget(cancel, key, recorder, config, ContinuousBudget::default())
--    }
--
--    /// Keep the same ledger when a user explicitly retries a stopped listener.
--    pub fn start_auto_with_budget(
--        cancel: Arc<AtomicBool>, key: &str, recorder: &str, config: ContinuousConfig,
--        budget: ContinuousBudget,
-         }
-         #[cfg(not(test))]
-         let gate =
-@@ -294,7 +309,7 @@ impl ContinuousRecording {
-         let events = Arc::new(Mutex::new(Events {
-             context: GateContext::default(),
-             queue: VecDeque::new(),
--            quiet_since: None,
-+            quiet: QuietWindow::default(),
-             notify: Arc::new(tokio::sync::Notify::new()),
-         }));
-         let (c, s, g, l, e) = (
-@@ -323,6 +338,7 @@ impl ContinuousRecording {
-                             key,
-                             recorder,
-                             config,
-+                            budget,
-                             p,
-                             a.clone(),
-                             gate,
-@@ -338,7 +354,6 @@ impl ContinuousRecording {
-                     if error != VoiceError::Cancelled {
-                         emit(&e, ContinuousEvent::Error(error));
-                     }
--                            budget,
-                 }
-                 emit(&e, ContinuousEvent::Stopped);
-             })
-@@ -380,6 +395,7 @@ impl ContinuousRecording {
-     }
-     fn clear_speech_events(&self, clear_chat: bool) {
-         let mut output = self.events.lock().unwrap_or_else(|e| e.into_inner());
-+        output.quiet = QuietWindow::default();
-         // Aborted gate jobs never report back: forget their pending caption.
-         output.context.inflight = None;
-         output.context.claimed = None;
-@@ -410,8 +426,9 @@ impl ContinuousRecording {
-     }
-     /// Claim a quiet playback window without invalidating pending transcript events.
-     pub fn suppress_if_quiet(&self) -> bool {
--        let output = self.events.lock().unwrap_or_else(|e| e.into_inner());
--        if !self.is_capturing() || !output.quiet_since.is_some_and(|at| at.elapsed() >= Duration::from_millis(250)) || output.queue.iter().any(|e| matches!(e, ContinuousEvent::Transcript {..} | ContinuousEvent::Continuation {..} | ContinuousEvent::State(VoiceState::Speaking | VoiceState::Transcribing))) { return false; }
-+        let mut output = self.events.lock().unwrap_or_else(|e| e.into_inner());
-+        if !self.is_capturing() || !output.quiet.ready(Instant::now()) || output.queue.iter().any(|e| matches!(e, ContinuousEvent::Transcript {..} | ContinuousEvent::Continuation {..} | ContinuousEvent::State(VoiceState::Speaking | VoiceState::Transcribing))) { return false; }
-+        output.quiet = QuietWindow::default();
-         if !self.suppressed.swap(true, Ordering::SeqCst) { self.epoch.fetch_add(1, Ordering::SeqCst); }
-         true
-     }
-@@ -643,6 +660,9 @@ async fn session_permitted(_config: &ContinuousConfig) -> bool {
-     crate::global::session::permitted().await
- }
- 
-+#[derive(Default, Clone)
 ```
 
----
-
-### Incident Patch 2: `5bce1275` (2026-11-19)
-**Commit Message**: Extract capture loop, argument normalization and focused regression test modules
-
-**File**: `crates/jcode-app-core/src/tool/selfdev/reconcile_bootstrap_tests.rs` (added, +90/-0)
+**File**: `crates/jcode-protocol/src/protocol_tests/core_events.rs` (modified, +3/-0)
 ```diff
-@@ -0,0 +1,90 @@
-+use super::*;
-+
-+#[test]
-+fn reconcile_keeps_running_request_not_yet_registered_in_live_task_map() {
-+    // Regression: spawn_with_notify writes the Running status file and starts
-+    // the build future *before* inserting the task into the in-process task
-+    // map. The build's own first wait_for_turn iteration (or another agent's
-+    // queue poll) could then see status=Running + is_live_task=false and prune
-+    // the request instantly: "Queued build request disappeared". Within the
-+    // bootstrap grace window a Running-but-unregistered task must survive.
-+    let _storage_guard = crate::storage::lock_test_env();
-+    let temp_home = tempfile::TempDir::new().expect("temp home");
-+    let _home_guard = EnvVarGuard::set("JCODE_HOME", temp_home.path());
-+
-+    let mut session = session::Session::create(None, Some("Racing Build".to_string()));
-+    session.save().expect("save session");
-+
-+    let status_path = temp_home.path().join("racing.status.json");
-+    storage::write_json(
-+        &status_path,
-+        &background::TaskStatusFile {
-+            task_id: "racing-task-not-in-live-map".to_string(),
-+            tool_name: "selfdev-build".to_string(),
-+            display_name: Some("selfdev build".to_string()),
-+            session_id: session.id.clone(),
-+            status: BackgroundTaskStatus::Running,
-+            exit_code: None,
-+            error: None,
-+            started_at: Utc::now().to_rfc3339(),
-+            completed_at: None,
-+            duration_secs: None,
-+            pid: None,
-+            owner_pid: None,
-+            owner_instance: None,
-+            detached: false,
-+            notify: true,
-+            wake: true,
-+            progress: None,
-+            event_history: Vec::new(),
-+            stall_wake_seconds: None,
-+        },
-+    )
-+    .expect("write running status file");
-+
-+    let source = test_source_state(std::path::Path::new("/tmp/jcode"));
-+    let request = BuildRequest {
-+        request_id: "racing-request".to_string(),
-+        background_task_id: Some("racing-task-not-in-live-map".to_string()),
-+        session_id: session.id.clone(),
-+        session_short_name: session.short_name.clone(),
-+        session_title: Some("Racing Build".to_string()),
-+        release_notes: None,
-+        reason: "racing reason".to_string(),
-+        repo_dir: "/tmp/jcode".to_string(),
-+        repo_scope: source.repo_scope.clone(),
-+        worktree_scope: source.worktree_scope.clone(),
-+        command: "scripts/dev_cargo.sh build --profile selfdev -p jcode --bin jcode".to_string(),
-+        requested_at: Utc::now().to_rfc3339(),
-+        started_at: None,
-+        completed_at: None,
-+        state: BuildRequestState::Queued,
-+        version: Some("racing-build".to_string()),
-+        dedupe_key: Some("racing-dedupe".to_string()),
-+        requested_source: Some(source.clone()),
-+        built_source: None,
-+        published_version: None,
-+        last_progress: Some("queued".to_string()),
-+        validated: false,
-+        error: None,
-+        output_file: None,
-+        status_file: Some(status_path.display().to_string()),
-+        attached_to_request_id: None,
-+    };
-+    request.save().expect("save racing request");
-+
-+    let pending =
-+        BuildRequest::pending_requests_for_scope(&source.worktree_scope).expect("pending requests");
-+    assert!(
-+        pending
-+            .iter()
-+            .any(|request| request.request_id == "racing-request"),
-+        "running-but-unregistered request must stay pending during bootstrap grace"
-+    );
-+
-+    let reloaded = BuildRequest::load("racing-request")
-+        .expect("load racing request")
-+        .expect("racing request exists");
-+    assert_eq!(reloaded.state, BuildRequestState::Queued);
-+    assert!(reloaded.error.is_none());
-+}
+@@ -130,6 +130,7 @@ fn test_model_changed_oauth_identity_legacy_and_redaction() -> Result<()> {
+ fn test_request_roundtrip() -> Result<()> {
+     let req = Request::Message {
+         id: 1,
++        jarvis_voice: false,
+         content: "hello".to_string(),
+         images: vec![],
+         system_reminder: None,
+@@ -146,6 +147,7 @@ fn test_request_roundtrip() -> Result<()> {
+ fn test_soft_interrupt_images_roundtrip_and_legacy_default() -> Result<()> {
+     let req = Request::SoftInterrupt {
+         id: 2,
++        jarvis_voice: false,
+         content: "look at this".to_string(),
+         images: vec![("image/png".to_string(), "ZmFrZQ==".to_string())],
+         urgent: true,
+@@ -182,6 +184,7 @@ fn test_soft_interrupt_images_roundtrip_and_legacy_default() -> Result<()> {
+ fn test_soft_interrupt_ids_wire_shape_and_legacy_defaults() -> Result<()> {
+     let req = Request::SoftInterrupt {
+         id: 4,
++        jarvis_voice: false,
+         content: "steer".to_string(),
+         images: Vec::new(),
+         urgent: false,
 ```
 
-**File**: `crates/jcode-app-core/src/tool/selfdev/tests.rs` (modified, +2/-88)
+**File**: `crates/jcode-protocol/src/protocol_tests/misc_events.rs` (modified, +3/-0)
 ```diff
-@@ -1375,94 +1375,8 @@ fn reconcile_pending_state_maps_superseded_background_status() {
-     );
- }
- 
--#[test]
--fn reconcile_keeps_running_request_not_yet_registered_in_live_task_map() {
--    // Regression: spawn_with_notify writes the Running status file and starts
--    // the build future *before* inserting the task into the in-process task
--    // map. The build's own first wait_for_turn iteration (or another agent's
--    // queue poll) could then see status=Running + is_live_task=false and prune
--    // the request instantly: "Queued build request disappeared". Within the
--    // bootstrap grace window a Running-but-unregistered task must survive.
--    let _storage_guard = crate::storage::lock_test_env();
--    let temp_home = tempfile::TempDir::new().expect("temp home");
--    let _home_guard = EnvVarGuard::set("JCODE_HOME", temp_home.path());
--
--    let mut session = session::Session::create(None, Some("Racing Build".to_string()));
--    session.save().expect("save session");
--
--    let status_path = temp_home.path().join("racing.status.json");
--    storage::write_json(
--        &status_path,
--        &background::TaskStatusFile {
--            task_id: "racing-task-not-in-live-map".to_string(),
--            tool_name: "selfdev-build".to_string(),
--            display_name: Some("selfdev build".to_string()),
--            session_id: session.id.clone(),
--            status: BackgroundTaskStatus::Running,
--            exit_code: None,
--            error: None,
--            started_at: Utc::now().to_rfc3339(),
--            completed_at: None,
--            duration_secs: None,
--            pid: None,
--            owner_pid: None,
--            owner_instance: None,
--            detached: false,
--            notify: true,
--            wake: true,
--            progress: None,
--            event_history: Vec::new(),
--            stall_wake_seconds: None,
--        },
--    )
--    .expect("write running status file");
--
--    let source = test_source_state(std::path::Path::new("/tmp/jcode"));
--    let request = BuildRequest {
--        request_id: "racing-request".to_string(),
--        background_task_id: Some("racing-task-not-in-live-map".to_string()),
--        session_id: session.id.clone(),
--        session_short_name: session.short_name.clone(),
--        session_title: Some("Racing Build".to_string()),
--        release_notes: None,
--        reason: "racing reason".to_string(),
--        repo_dir: "/tmp/jcode".to_string(),
--        repo_scope: source.repo_scope.clone(),
--        worktree_scope: source.worktree_scope.clone(),
--        command: "scripts/dev_cargo.sh build --profile selfdev -p jcode --bin jcode".to_string(),
--        requested_at: Utc::now().to_rfc3339(),
--        started_at: None,
--        completed_at: None,
--        state: BuildRequestState::Queued,
--        version: Some("racing-build".to_string()),
--        dedupe_key: Some("racing-dedupe".to_string()),
--        requested_source: Some(source.clone()),
--        built_source: None,
--        published_version: None,
--        last_progress: Some("queued".to_string()),
--        validated: false,
--        error: None,
--        output_file: None,
--        status_file: Some(status_path.display().to_string()),
--        attached_to_request_id: None,
--    };
--    request.save().expect("save racing request");
--
--    let pending =
--        BuildRequest::pending_requests_for_scope(&source.worktree_scope).expect("pending requests");
--    assert!(
--        pending
--            .iter()
--            .any(|request| request.request_id == "racing-request"),
--        "running-but-unregistered request must stay pending during bootstrap grace"
--    );
--
--    let reloaded = BuildRequest::load("racing-request")
--        .expect("load racing request")
--        .expect("racing request exists");
--    assert_eq!(reloaded.state, BuildRequestState::Queued);
--    assert!(reloaded.error.is_none());
--}
-+#[path = "reconcile_bootstrap_tests.rs"]
-+mod reconcile_bootstrap;
- 
- #[path = "repo_resolver_tests.rs"]
- mod repo_resolver;
+@@ -570,6 +570,7 @@ fn test_resume_all_result_event_roundtrip() -> Result<()> {
+ fn test_message_request_roundtrip_preserves_images_and_system_reminder() -> Result<()> {
+     let req = Request::Message {
+         id: 88,
++        jarvis_voice: false,
+         content: "inspect this".to_string(),
+         images: vec![
+             ("image/png".to_string(), "AAA".to_string()),
+@@ -583,11 +584,13 @@ fn test_message_request_roundtrip_preserves_images_and_system_reminder() -> Resu
+     let decoded = parse_request_json(&json)?;
+     let Request::Message {
+         id,
++        jarvis_voice: false,
+         content,
+         images,
+         system_reminder,
+         active_skill,
+         no_reply,
++        ..
+     } = decoded
+     else {
+         return Err(anyhow!("expected Message"));
 ```
 
-**File**: `crates/jcode-app-core/src/tool/todo.rs` (modified, +3/-107)
+**File**: `crates/jcode-protocol/src/protocol_tests/randomized.rs` (modified, +1/-0)
 ```diff
-@@ -1174,113 +1174,9 @@ fn build_todo_output(
-         .with_metadata(metadata))
- }
- 
--/// Leniently normalize raw todo-tool arguments before strict deserialization.
--///
--/// Some providers (notably Claude tool calling) intermittently emit tool
--/// arguments as JSON *strings* instead of native types: the whole `todos`
--/// array as one stringified JSON blob, individual items as stringified
--/// objects, or numeric fields like `confidence` as `"90"`. Strict
--/// `serde_json::from_value` rejects these with `invalid type: string ...`,
--/// failing the entire call (issue #357; same provider quirk as #106).
--fn normalize_todo_input(mut input: Value) -> Value {
--    let Some(obj) = input.as_object_mut() else {
--        return input;
--    };
--    if let Some(plan) = obj.get_mut("plan") {
--        if let Value::String(raw) = plan {
--            let trimmed = raw.trim();
--            if trimmed.is_empty() {
--                *plan = Value::Null;
--            } else if let Ok(parsed @ (Value::Object(_) | Value::Null)) =
--                serde_json::from_str::<Value>(trimmed)
--            {
--                *plan = parsed;
--            }
--        }
--        if let Some(fields) = plan.as_object_mut() {
--            for key in [
--                "alignment_score",
--                "user_intention_alignment",
--                "understands_user_intent",
--            ] {
--                if let Some(value) = fields.get_mut(key) {
--                    coerce_empty_string_to_null(value);
--                }
--            }
--        }
--    }
--    for key in ["todos", "goals"] {
--        let Some(entries) = obj.get_mut(key) else {
--            continue;
--        };
--
--        // Whole array sent as a stringified JSON blob.
--        if let Value::String(raw) = entries {
--            let trimmed = raw.trim();
--            if trimmed.is_empty() {
--                *entries = Value::Null;
--            } else if let Ok(parsed @ (Value::Array(_) | Value::Null)) =
--                serde_json::from_str::<Value>(trimmed)
--            {
--                *entries = parsed;
--            }
--        }
--
--        if let Value::Array(items) = entries {
--            for item in items.iter_mut() {
--                // Individual item sent as a stringified JSON object.
--                if let Value::String(raw) = item
--                    && let Ok(parsed @ Value::Object(_)) = serde_json::from_str::<Value>(raw.trim())
--                {
--                    *item = parsed;
--                }
--                let Some(fields) = item.as_object_mut() else {
--                    continue;
--                };
--                if key == "todos"
--                    && let Some(Value::String(status)) = fields.get_mut("status")
--                    && let Some(canonical) = crate::todo::canonical_todo_status(status)
--                {
--                    *status = canonical.to_string();
--                }
--                for key in [
--                    "confidence",
--                    "completion_confidence",
--                    "alignment_score",
--                    "user_intention_alignment",
--                    "closed_feedback_loop",
--                    // Pre-rename aliases; some prompts and replayed transcripts
--                    // still carry the old keys.
--                    "hill_climbability",
--                    "end_to_end_ownership",
--                    "delivery_state",
--                    "feedback_loop_relevance",
--                    "feedback_loop_coverage",
--                    "feedback_loop_traceability",
--                    "difficulty",
--                    "autonomy",
--                ] {
--                    if let Some(value) = fields.get_mut(key) {
--                        coerce_empty_string_to_null(value);
--                    }
--                }
--            }
--        }
--    }
--    input
--}
--
--/// Coerce an empty or whitespace-only string to `null` so an omitted-but-sent
--/// assessment reads as absent. Numeric legacy scores (ints, floats, numeric
--/// strings) are handled by the semantic-state deserializers themselves, so no
--/// numeric coercion is needed here anymore.
--fn coerce_empty_string_to_null(value: &mut Value) {
--    if let Value::String(raw) = value
--        && raw.trim().is_empty()
--    {
--        *value = Value::Null;
--    }
--}
-+#[path = "todo_normalize.rs"]
-+mod normalize;
-+use normalize::normalize_todo_input;
- 
- #[async_trait]
- impl Tool for TodoTool {
+@@ -25,6 +25,7 @@ fn test_protocol_request_roundtrip_randomized_samples() -> Result<()> {
+         };
+         let req = Request::Message {
+             id,
++            jarvis_voice: false,
+             content: content.clone(),
+             images: images.clone(),
+             system_reminder: system_reminder.clone(),
 ```
 
-**File**: `crates/jcode-app-core/src/tool/todo_normalize.rs` (added, +109/-0)
+**File**: `crates/jcode-protocol/src/wire.rs` (modified, +6/-0)
 ```diff
-@@ -0,0 +1,109 @@
-+use serde_json::Value;
-+
-+/// Leniently normalize raw todo-tool arguments before strict deserialization.
-+///
-+/// Some providers (notably Claude tool calling) intermittently emit tool
-+/// arguments as JSON *strings* instead of native types: the whole `todos`
-+/// array as one stringified JSON blob, individual items as stringified
-+/// objects, or numeric fields like `confidence` as `"90"`. Strict
-+/// `serde_json::from_value` rejects these with `invalid type: string ...`,
-+/// failing the entire call (issue #357; same provider quirk as #106).
-+pub(super) fn normalize_todo_input(mut input: Value) -> Value {
-+    let Some(obj) = input.as_object_mut() else {
-+        return input;
-+    };
-+    if let Some(plan) = obj.get_mut("plan") {
-+        if let Value::String(raw) = plan {
-+            let trimmed = raw.trim();
-+            if trimmed.is_empty() {
-+                *plan = Value::Null;
-+            } else if let Ok(parsed @ (Value::Object(_) | Value::Null)) =
-+                serde_json::from_str::<Value>(trimmed)
-+            {
-+                *plan = parsed;
-+            }
-+        }
-+        if let Some(fields) = plan.as_object_mut() {
-+            for key in [
-+                "alignment_score",
-+                "user_intention_alignment",
-+                "understands_user_intent",
-+            ] {
-+                if let Some(value) = fields.get_mut(key) {
-+                    coerce_empty_string_to_null(value);
-+                }
-+            }
-+        }
-+    }
-+    for key in ["todos", "goals"] {
-+        let Some(entries) = obj.get_mut(key) else {
-+            continue;
-+        };
-+
-+        // Whole array sent as a stringified JSON blob.
-+        if let Value::String(raw) = entries {
-+            let trimmed = raw.trim();
-+            if trimmed.is_empty() {
-+                *entries = Value::Null;
-+            } else if let Ok(parsed @ (Value::Array(_) | Value::Null)) =
-+                serde_json::from_str::<Value>(trimmed)
-+            {
-+                *entries = parsed;
-+            }
-+        }
-+
-+        if let Value::Array(items) = entries {
-+            for item in items.iter_mut() {
-+                // Individual item sent as a stringified JSON object.
-+                if let Value::String(raw) = item
-+                    && let Ok(parsed @ Value::Object(_)) = serde_json::from_str::<Value>(raw.trim())
-+                {
-+                    *item = parsed;
-+                }
-+                let Some(fields) = item.as_object_mut() else {
-+                    continue;
-+                };
-+                if key == "todos"
-+                    && let Some(Value::String(status)) = fields.get_mut("status")
-+                    && let Some(canonical) = crate::todo::canonical_todo_status(status)
-+                {
-+                    *status = canonical.to_string();
-+                }
-+                for key in [
-+                    "confidence",
-+                    "completion_confidence",
-+                    "alignment_score",
-+                    "user_intention_alignment",
-+                    "closed_feedback_loop",
-+                    // Pre-rename aliases; some prompts and replayed transcripts
-+                    // still carry the old keys.
-+                    "hill_climbability",
-+                    "end_to_end_ownership",
-+                    "delivery_state",
-+                    "feedback_loop_relevance",
-+                    "feedback_loop_coverage",
-+                    "feedback_loop_traceability",
-+                    "difficulty",
-+                    "autonomy",
-+                ] {
-+                    if let Some(value) = fields.get_mut(key) {
-+                        coerce_empty_string_to_null(value);
-+                    }
-+                }
-+            }
-+        }
-+    }
-+    input
-+}
-+
-+/// Coerce an empty or whitespace-only string to `null` so an omitted-but-sent
-+/// assessment reads as absent. Numeric legacy scores (ints, floats, numeric
-+/// strings) are handled by the semantic-state deserializers themselves, so no
-+/// numeric coercion is needed here anymore.
-+fn coerce_empty_string_to_null(value: &mut Value) {
-+    if let Value::String(raw) = value
-+        && raw.trim().is_empty()
-+    {
-+        *value = Value::Null;
-+    }
-+}
-```
-
-**File**: `crates/jcode-base/src/background.rs` (modified, +7/-11)
-```diff
-@@ -73,8 +73,7 @@ impl BackgroundTaskManager {
- 
-     /// Create a new background task manager
-     pub fn new() -> Self {
--        let output_dir = task_dir();
--        Self::with_output_dir(output_dir)
-+        Self::with_output_dir(task_dir())
-     }
- 
-     /// Generate a short, unique task ID
-@@ -85,27 +84,24 @@ impl BackgroundTaskManager {
-         let timestamp = SystemTime::now()
-             .duration_since(UNIX_EPOCH)
-             .unwrap_or_default()
--            .as_millis();
--        // Use last 6 digits of timestamp + 4 random chars
-+            .as_millis()
-+            .to_string();
-         let rand_part: String = (0..4)
-             .map(|_| {
-                 let idx = (rand::random::<u8>() as usize) % TASK_ID_ALPHABET.len();
-                 TASK_ID_ALPHABET[idx] as char
-             })
-             .collect();
--        format!(
--            "{}{}",
--            &timestamp.to_string()[timestamp.to_string().len().saturating_sub(6)..],
--            rand_part
--        )
-+        let suffix = &timestamp[timestamp.len().saturating_sub(6)..];
-+        format!("{suffix}{rand_part}")
-     }
- 
-     pub fn output_path_for(&self, task_id: &str) -> PathBuf {
--        self.output_dir.join(format!("{}.output", task_id))
-+        self.output_dir.join(format!("{task_id}.output"))
-     }
- 
-     pub fn status_path_for(&self, task_id: &str) -> PathBuf {
--        self.output_dir.join(format!("{}.status.json", task_id))
-+        self.output_dir.join(format!("{task_id}.status.json"))
-     }
- 
-     fn publish_task_started_activity(
-```
-
-**File**: `crates/jcode-tui/src/tui/ui_todo_lane_display_tests.rs` (added, +63/-0)
-```diff
-@@ -0,0 +1,63 @@
-+use super::*;
-+
-+/// Lanes that expand per todo (waiting on a swarm await) must not add a
-+/// second "Waiting for ..." row under the worker's task.
-+#[test]
-+fn waiting_worker_reason_shares_its_todo_row() {
-+    let render_at = |width: u16| {
-+        let mut item = laned("M4 project loading gaps", "in_progress", 1, "Crates");
-+        item.assigned_to = Some("fox".into());
-+        item.waiting_on = vec!["await_1".into()];
-+        let mut fox = agent("fox", "running", None, Some(12));
-+        fox.wait_reason = Some("Waiting for cargo test suite".into());
-+        fox.wait_age_secs = Some(1128);
-+        fox.live_status = Some(crate::protocol::SwarmLiveStatus {
-+            phase: "waiting".into(),
-+            elapsed_ms: 12_000,
-+            ..Default::default()
-+        });
-+        crate::tui::markdown::set_center_code_blocks(false);
-+        let payload = serde_json::json!({
-+            "todos": [item], "plan": {}, "goals": [], "agents": [fox],
-+            "background_tasks": [{"task_id": "await_1", "label": "Swarm await"}],
-+        });
-+        let msg = DisplayMessage::todos(payload.to_string());
-+        render_pinned_todos_message(&msg, width, crate::config::DiffDisplayMode::Off)
-+            .iter()
-+            .map(|line| {
-+                line.spans
-+                    .iter()
-+                    .map(|s| s.content.as_ref())
-+                    .collect::<String>()
-+            })
-+            .collect::<Vec<_>>()
-+    };
-+    let rows = render_at(180);
-+    let joined = rows.join("\n");
-+    let row = rows
-+        .iter()
-+        .find(|row| row.contains("M4 project loading gaps"))
-+        .unwrap_or_else(|| panic!("{joined}"));
-+    assert!(row.contains("Waiting for cargo test suite"), "{joined}");
-+    assert!(row.contains("Swarm await"), "{joined}");
-+    assert_eq!(joined.matches("Waiting for").count(), 1, "{joined}");
-+    for width in 0..120 {
-+        assert_fits(&render_at(width), width);
-+    }
-+}
-+
-+#[test]
-+fn lane_name_shared_by_every_lane_is_not_drawn() {
-+    let same = [
-+        laned("a", "completed", 1, "main"),
-+        laned("b", "pending", 2, "main"),
-+    ];
-+    let rows = render(&same, &[], 120);
-+    assert!(rows.iter().all(|row| !row.contains("main")), "{rows:?}");
-+    let distinct = [
-+        laned("a", "completed", 1, "parser"),
-+        laned("b", "pending", 2, "ship"),
-+    ];
-+    let rows = render(&distinct, &[], 120).join("\n");
-+    assert!(rows.contains("parser") && rows.contains("ship"), "{rows}");
-+}
-```
-
-**File**: `crates/jcode-tui/src/tui/ui_todo_stages_tests.rs` (modified, +2/-61)
-```diff
-@@ -1163,67 +1163,8 @@ fn failed_lane_blocks_its_phase_and_offers_retry() {
- #[path = "ui_todo_worker_heading_tests.rs"]
- mod worker_headings;
- 
--/// Lanes that expand per todo (waiting on a swarm await) must not add a
--/// second "Waiting for ..." row under the worker's task.
--#[test]
--fn waiting_worker_reason_shares_its_todo_row() {
--    let render_at = |width: u16| {
--        let mut item = laned("M4 project loading gaps", "in_progress", 1, "Crates");
--        item.assigned_to = Some("fox".into());
--        item.waiting_on = vec!["await_1".into()];
--        let mut fox = agent("fox", "running", None, Some(12));
--        fox.wait_reason = Some("Waiting for cargo test suite".into());
--        fox.wait_age_secs = Some(1128);
--        fox.live_status = Some(crate::protocol::SwarmLiveStatus {
--            phase: "waiting".into(),
--            elapsed_ms: 12_000,
--            ..Default::default()
--        });
--        crate::tui::markdown::set_center_code_blocks(false);
--        let payload = serde_json::json!({
--            "todos": [item], "plan": {}, "goals": [], "agents": [fox],
--            "background_tasks": [{"task_id": "await_1", "label": "Swarm await"}],
--        });
--        let msg = DisplayMessage::todos(payload.to_string());
--        render_pinned_todos_message(&msg, width, crate::config::DiffDisplayMode::Off)
--            .iter()
--            .map(|line| {
--                line.spans
--                    .iter()
--                    .map(|s| s.content.as_ref())
--                    .collect::<String>()
--            })
--            .collect::<Vec<_>>()
--    };
--    let rows = render_at(180);
--    let joined = rows.join("\n");
--    let row = rows
--        .iter()
--        .find(|row| row.contains("M4 project loading gaps"))
--        .unwrap_or_else(|| panic!("{joined}"));
--    assert!(row.contains("Waiting for cargo test suite"), "{joined}");
--    assert!(row.contains("Swarm await"), "{joined}");
--    assert_eq!(joined.matches("Waiting for").count(), 1, "{joined}");
--    for width in 0..120 {
--        assert_fits(&render_at(width), width);
--    }
--}
--
--#[test]
--fn lane_name_shared_by_every_lane_is_not_drawn() {
--    let same = [
--        laned("a", "completed", 1, "main"),
--        laned("b", "pending", 2, "main"),
--    ];
--    let rows = render(&same, &[], 120);
--    assert!(rows.iter().all(|row| !row.contains("main")), "{rows:?}");
--    let distinct = [
--        laned("a", "completed", 1, "parser"),
--        laned("b", "pending", 2, "ship"),
--    ];
--    let rows = render(&distinct, &[], 120).join("\n");
--    assert!(rows.contains("parser") && rows.contains("ship"), "{rows}");
--}
-+#[path = "ui_todo_lane_display_tests.rs"]
-+mod lane_display;
- 
- #[path = "ui_todo_stages_tests_additional_tests.rs"]
- mod additional_self_owned_todos_have_amber_pips_and_you_badges;
-```
-
-**File**: `crates/jcode-voice/src/continuous.rs` (modified, +5/-1007)
-```diff
-@@ -1108,1012 +1108,10 @@ async fn transcribe(
-     let (_, result) = tokio::join!(send, session.run(rx, |_| {}));
-     result
- }
--async fn run(
--    cancel: Arc<AtomicBool>,
--    suppressed: Arc<AtomicBool>,
--    epoch: Arc<AtomicU64>,
--    level: Arc<AtomicU32>,
--    events: Arc<Mutex<Events>>,
--    key: String,
--    recorder: String,
--    config: ContinuousConfig,
--    budget: ContinuousBudget,
--    paused: Arc<AtomicBool>,
--    capturing: Arc<AtomicBool>,
--    gate: Option<jcode_base::jev::JevClient>,
--) -> Result<(), VoiceError> {
--    emit(&events, ContinuousEvent::State(VoiceState::Starting));
--    let mut segmenter = Segmenter::default();
--    let mut generation = epoch.load(Ordering::SeqCst);
--    let mut resume_at = Instant::now();
--    // Randomize the process origin so IDs in persisted logs do not restart at 1.
--    static NEXT_ID: std::sync::OnceLock<AtomicU64> = std::sync::OnceLock::new();
--    let mut jobs: VecDeque<(
--        tokio::task::JoinHandle<Result<Option<ClassifiedCaption>, VoiceError>>,
--        Arc<AtomicBool>,
--        u64,
--    )> = VecDeque::new();
--    // Audio sink of the utterance currently streaming to Nari.
--    let mut live: Option<(u64, tokio::sync::mpsc::UnboundedSender<Vec<i16>>)> = None;
--    let mut warm: Option<Warm> = None;
--    let mut warm_retry_at = Instant::now();
--    let mut tick = tokio::time::interval(Duration::from_millis(100));
--    // Device rotation and manual retry share the listener's original hourly ledger.
--    let mut consecutive_failures = 0;
--    let mut budget_limited = false;
--    let mut permission_at = Instant::now();
--    let mut permitted = false;
--    loop {
--        while paused.load(Ordering::SeqCst) || !permitted {
--            if cancel.load(Ordering::SeqCst) {
--                return Err(VoiceError::Cancelled);
--            }
--            permitted = session_permitted(&config).await;
--            permission_at = Instant::now();
--            if !paused.load(Ordering::SeqCst) && permitted {
--                break;
--            }
--            emit(&events, ContinuousEvent::State(VoiceState::Suppressed));
--            tokio::time::sleep(Duration::from_millis(200)).await;
--        }
--        let setup_cancel = Arc::new(AtomicBool::new(false));
--        let setup = open_capture(setup_cancel.clone(), recorder.clone());
--        let (mic, mut pcm) = tokio::select! {
--            biased;
--            _ = crate::nari::cancelled(&cancel) => { setup_cancel.store(true,Ordering::SeqCst); return Err(VoiceError::Cancelled); },
--            result = setup => result?,
--        };
--        capturing.store(true, Ordering::SeqCst);
--        let rotate = tokio::time::sleep(Duration::from_secs(240));
--        tokio::pin!(rotate);
--        let mut last_audio = Instant::now();
--        emit(&events, ContinuousEvent::State(VoiceState::Listening));
--        let result = loop {
--            tokio::select! {
--                biased;
--                _ = crate::nari::cancelled(&cancel) => break Err(VoiceError::Cancelled),
--                _ = &mut rotate => break Ok(()),
--                chunk = pcm.recv() => {
--                    let Some(chunk) = chunk else { break Err(VoiceError::CaptureFailed); };
--                    last_audio = Instant::now();
--                    let next = epoch.load(Ordering::SeqCst);
--                    if next != generation {
--                        generation = next; segmenter = Segmenter::default(); live = None;
--                        for (handle,token,_) in jobs.drain(..) { token.store(true,Ordering::SeqCst); handle.abort(); }
--                        // Drain stale capture buffers and allow loudspeaker decay after TTS.
--                        resume_at = Instant::now() + Duration::from_millis(500);
--                    }
--                    if paused.load(Ordering::SeqCst) || suppressed.load(Ordering::SeqCst) || Instant::now() < resume_at {
--                        level.store(0,Ordering::Relaxed); continue;
--                    }
--                    let amplitude = rms(&chunk);
--                    level.store(amplitude.to_bits(),Ordering::Relaxed);
--                    {
--                        let mut output = events.lock().unwrap_or_else(|e| e.into_inner());
--                        output.quiet.observe(Instant::now(), amplitude >= 0.018 || segmenter.active);
--                    }
--                    for seg in segmenter.push_stream(&chunk) {
--                        match seg {
--                            Seg::Start(audio) => {
--                                live = None;
--                                // Bounded: drop speech rather than build an upload backlog.
--                                if jobs.len() >= 2 { continue; }
--                                if !budget.0.lock().unwrap_or_else(|e| e.into_inner()).reserve(Instant::now(), audio.len(), &config) {
--                                    budget_limited = true;
--                                    emit(&events, ContinuousEvent::State(VoiceState::BudgetLi
-```
-
----
-
-### Incident Patch 3: `5a98c5cf` (2026-11-19)
-**Commit Message**: Organize TUI helpers and fixtures within existing file-size budgets
-
-**File**: `crates/jcode-tui/src/tui/app.rs` (modified, +1/-2)
-```diff
-@@ -41,9 +41,8 @@ use std::cell::RefCell;
- use std::collections::HashSet;
- use std::hash::{Hash, Hasher};
- use std::path::PathBuf;
--use std::sync::Arc;
- use std::sync::atomic::AtomicBool;
--use std::sync::mpsc;
-+use std::sync::{Arc, mpsc};
- use std::time::{Duration, Instant};
- use tokio::sync::RwLock;
- 
-```
-
-**File**: `crates/jcode-tui/src/tui/app/debug_bench.rs` (modified, +3/-56)
-```diff
-@@ -1,62 +1,9 @@
- use super::*;
- 
--impl App {
--    pub(in crate::tui::app) fn build_scroll_test_content(
--        diagrams: usize,
--        padding: usize,
--        override_diagram: Option<&str>,
--    ) -> String {
--        let mut out = String::new();
--        let intro_lines = padding.max(4);
--        for i in 0..intro_lines {
--            out.push_str(&format!(
--                "Intro line {:02} - quick brown fox jumps over the lazy dog.\n",
--                i + 1
--            ));
--        }
--
--        let diagram_templates = [
--            r#"flowchart TD
--    A[Start] --> B{Decision}
--    B -->|Yes| C[Process 1]
--    B -->|No| D[Process 2]
--    C --> E[Merge]
--    D --> E
--    E --> F[End]"#,
--            r#"sequenceDiagram
--    participant U as User
--    participant A as App
--    participant S as Service
--    U->>A: Scroll request
--    A->>S: Render diagram
--    S-->>A: PNG
--    A-->>U: Draw frame"#,
--            r#"stateDiagram-v2
--    [*] --> Idle
--    Idle --> Scrolling: input
--    Scrolling --> Rendering: diagram
--    Rendering --> Idle: frame drawn"#,
--        ];
--
--        for idx in 0..diagrams {
--            let diagram =
--                override_diagram.unwrap_or(diagram_templates[idx % diagram_templates.len()]);
--            out.push_str("```mermaid\n");
--            out.push_str(diagram);
--            out.push_str("\n```\n");
--
--            for j in 0..padding {
--                out.push_str(&format!(
--                    "After diagram {} line {:02} - stretch content for scrolling.\n",
--                    idx + 1,
--                    j + 1
--                ));
--            }
--        }
--
--        out
--    }
-+#[path = "debug_bench_scroll_content.rs"]
-+mod scroll_content;
- 
-+impl App {
-     fn build_side_panel_latency_snapshot(
-         diagrams: usize,
-         padding: usize,
-```
-
-**File**: `crates/jcode-tui/src/tui/app/debug_bench_scroll_content.rs` (added, +59/-0)
-```diff
-@@ -0,0 +1,59 @@
-+use super::App;
-+
-+impl App {
-+    pub(in crate::tui::app) fn build_scroll_test_content(
-+        diagrams: usize,
-+        padding: usize,
-+        override_diagram: Option<&str>,
-+    ) -> String {
-+        let mut out = String::new();
-+        let intro_lines = padding.max(4);
-+        for i in 0..intro_lines {
-+            out.push_str(&format!(
-+                "Intro line {:02} - quick brown fox jumps over the lazy dog.\n",
-+                i + 1
-+            ));
-+        }
-+
-+        let diagram_templates = [
-+            r#"flowchart TD
-+    A[Start] --> B{Decision}
-+    B -->|Yes| C[Process 1]
-+    B -->|No| D[Process 2]
-+    C --> E[Merge]
-+    D --> E
-+    E --> F[End]"#,
-+            r#"sequenceDiagram
-+    participant U as User
-+    participant A as App
-+    participant S as Service
-+    U->>A: Scroll request
-+    A->>S: Render diagram
-+    S-->>A: PNG
-+    A-->>U: Draw frame"#,
-+            r#"stateDiagram-v2
-+    [*] --> Idle
-+    Idle --> Scrolling: input
-+    Scrolling --> Rendering: diagram
-+    Rendering --> Idle: frame drawn"#,
-+        ];
-+
-+        for idx in 0..diagrams {
-+            let diagram =
-+                override_diagram.unwrap_or(diagram_templates[idx % diagram_templates.len()]);
-+            out.push_str("```mermaid\n");
-+            out.push_str(diagram);
-+            out.push_str("\n```\n");
-+
-+            for j in 0..padding {
-+                out.push_str(&format!(
-+                    "After diagram {} line {:02} - stretch content for scrolling.\n",
-+                    idx + 1,
-+                    j + 1
-+                ));
-+            }
-+        }
-+
-+        out
-+    }
-+}
-```
-
-**File**: `crates/jcode-tui/src/tui/app/input.rs` (modified, +2/-30)
-```diff
-@@ -47,36 +47,8 @@ pub(super) fn floor_char_boundary(text: &str, index: usize) -> usize {
-     index
- }
- 
--/// Remove reasoning-marked lines from committed transcript text. Reasoning lines
--/// are wrapped in emphasis containing the invisible [`REASONING_SENTINEL`]
--/// (see `jcode_tui_markdown::reasoning_line_markup`). Trailing blank lines left
--/// behind are trimmed so the remaining answer renders cleanly.
--pub(super) fn strip_reasoning_lines(content: &str) -> String {
--    let sentinel = jcode_tui_markdown::REASONING_SENTINEL;
--    let mut out_lines: Vec<&str> = Vec::new();
--    for line in content.split('\n') {
--        if line.contains(sentinel) {
--            continue;
--        }
--        out_lines.push(line);
--    }
--    // Collapse runs of blank lines created by removed reasoning blocks, and trim
--    // leading/trailing blank lines.
--    let mut result = String::with_capacity(content.len());
--    let mut prev_blank = true; // suppress leading blanks
--    for line in out_lines {
--        let is_blank = line.trim().is_empty();
--        if is_blank && prev_blank {
--            continue;
--        }
--        if !result.is_empty() {
--            result.push('\n');
--        }
--        result.push_str(line);
--        prev_blank = is_blank;
--    }
--    result.trim_end().to_string()
--}
-+mod reasoning_transcript;
-+pub(super) use reasoning_transcript::strip_reasoning_lines;
- 
- fn mission_turn_reminder(session_id: &str) -> Option<String> {
-     crate::mission::active_system_reminder(session_id)
-```
-
-**File**: `crates/jcode-tui/src/tui/app/input/reasoning_transcript.rs` (added, +30/-0)
-```diff
-@@ -0,0 +1,30 @@
-+/// Remove reasoning-marked lines from committed transcript text. Reasoning lines
-+/// are wrapped in emphasis containing the invisible [`REASONING_SENTINEL`]
-+/// (see `jcode_tui_markdown::reasoning_line_markup`). Trailing blank lines left
-+/// behind are trimmed so the remaining answer renders cleanly.
-+pub(in crate::tui::app) fn strip_reasoning_lines(content: &str) -> String {
-+    let sentinel = jcode_tui_markdown::REASONING_SENTINEL;
-+    let mut out_lines: Vec<&str> = Vec::new();
-+    for line in content.split('\n') {
-+        if line.contains(sentinel) {
-+            continue;
-+        }
-+        out_lines.push(line);
-+    }
-+    // Collapse runs of blank lines created by removed reasoning blocks, and trim
-+    // leading/trailing blank lines.
-+    let mut result = String::with_capacity(content.len());
-+    let mut prev_blank = true; // suppress leading blanks
-+    for line in out_lines {
-+        let is_blank = line.trim().is_empty();
-+        if is_blank && prev_blank {
-+            continue;
-+        }
-+        if !result.is_empty() {
-+            result.push('\n');
-+        }
-+        result.push_str(line);
-+        prev_blank = is_blank;
-+    }
-+    result.trim_end().to_string()
-+}
-```
-
-**File**: `crates/jcode-tui/src/tui/app/remote.rs` (modified, +2/-42)
-```diff
-@@ -841,48 +841,8 @@ async fn dispatch_compacted_history_load(app: &mut App, remote: &mut RemoteConne
- mod tests;
- 
- #[cfg(test)]
--#[test]
--fn borrowed_remote_status_fields_match_legacy_and_retain_sources() {
--    for value in [None, Some(String::new()), Some("fixture 🦀".to_string())] {
--        let mut provider_name = value.clone();
--        let mut connection_type = value.clone();
--        let mut remote_transport = value.clone();
--        let mut server_version = value;
--        let legacy = serde_json::json!({
--            "provider_name": provider_name.clone(),
--            "connection_type": connection_type.clone(),
--            "remote_transport": remote_transport.clone(),
--            "server_version": server_version.clone(),
--        });
--        let evidence = serde_json::json!({
--            "provider_name": provider_name,
--            "connection_type": connection_type,
--            "remote_transport": remote_transport,
--            "server_version": server_version,
--        });
--        assert_eq!(evidence, legacy);
--        assert_eq!(evidence.to_string(), legacy.to_string());
--        assert_eq!(provider_name.as_deref(), legacy["provider_name"].as_str());
--        assert_eq!(
--            connection_type.as_deref(),
--            legacy["connection_type"].as_str()
--        );
--        assert_eq!(
--            remote_transport.as_deref(),
--            legacy["remote_transport"].as_str()
--        );
--        assert_eq!(server_version.as_deref(), legacy["server_version"].as_str());
--        for source in [
--            &mut provider_name,
--            &mut connection_type,
--            &mut remote_transport,
--            &mut server_version,
--        ] {
--            *source = Some("changed after serialization".to_string());
--        }
--        assert_eq!(evidence, legacy);
--    }
--}
-+#[path = "remote_status_serialization_tests.rs"]
-+mod status_serialization_tests;
- 
- pub(super) async fn handle_bus_event(
-     app: &mut App,
-```
-
-**File**: `crates/jcode-tui/src/tui/app/remote/server_events.rs` (modified, +4/-5)
-```diff
-@@ -112,11 +112,10 @@ mod runtime_identity_tests;
- mod history_fingerprint;
- #[cfg(test)]
- use history_fingerprint::AppliedHistoryFingerprint;
--use history_fingerprint::history_images_match_retained;
--use history_fingerprint::history_payload_fingerprint;
--use history_fingerprint::last_applied_history_fingerprint;
--use history_fingerprint::record_applied_history_fingerprint;
--use history_fingerprint::should_skip_identical_history_payload;
-+use history_fingerprint::{
-+    history_images_match_retained, history_payload_fingerprint, last_applied_history_fingerprint,
-+    record_applied_history_fingerprint, should_skip_identical_history_payload,
-+};
- #[cfg(test)]
- #[path = "server_events/history_dedup_tests.rs"]
- mod history_dedup_tests;
-```
-
-**File**: `crates/jcode-tui/src/tui/app/remote_status_serialization_tests.rs` (added, +42/-0)
-```diff
-@@ -0,0 +1,42 @@
-+#[test]
-+fn borrowed_remote_status_fields_match_legacy_and_retain_sources() {
-+    for value in [None, Some(String::new()), Some("fixture 🦀".to_string())] {
-+        let mut provider_name = value.clone();
-+        let mut connection_type = value.clone();
-+        let mut remote_transport = value.clone();
-+        let mut server_version = value;
-+        let legacy = serde_json::json!({
-+            "provider_name": provider_name.clone(),
-+            "connection_type": connection_type.clone(),
-+            "remote_transport": remote_transport.clone(),
-+            "server_version": server_version.clone(),
-+        });
-+        let evidence = serde_json::json!({
-+            "provider_name": provider_name,
-+            "connection_type": connection_type,
-+            "remote_transport": remote_transport,
-+            "server_version": server_version,
-+        });
-+        assert_eq!(evidence, legacy);
-+        assert_eq!(evidence.to_string(), legacy.to_string());
-+        assert_eq!(provider_name.as_deref(), legacy["provider_name"].as_str());
-+        assert_eq!(
-+            connection_type.as_deref(),
-+            legacy["connection_type"].as_str()
-+        );
-+        assert_eq!(
-+            remote_transport.as_deref(),
-+            legacy["remote_transport"].as_str()
-+        );
-+        assert_eq!(server_version.as_deref(), legacy["server_version"].as_str());
-+        for source in [
-+            &mut provider_name,
-+            &mut connection_type,
-+            &mut remote_transport,
-+            &mut server_version,
-+        ] {
-+            *source = Some("changed after serialization".to_string());
-+        }
-+        assert_eq!(evidence, legacy);
-+    }
-+}
+@@ -61,6 +61,9 @@ pub enum Request {
+     Message {
+         id: u64,
+         content: String,
++        /// Out-of-band client provenance for rendering. Never part of provider input.
++        #[serde(default, skip_serializing_if = "is_false")]
++        jarvis_voice: bool,
+         #[serde(default, skip_serializing_if = "Vec::is_empty")]
+         images: Vec<(String, String)>,
+         #[serde(default, skip_serializing_if = "Option::is_none")]
+@@ -88,6 +91,9 @@ pub enum Request {
+     SoftInterrupt {
+         id: u64,
+         content: String,
++        /// Out-of-band client provenance for rendering. Never part of provider input.
++        #[serde(default, skip_serializing_if = "is_false")]
++        jarvis_voice: bool,
+         #[serde(default, skip_serializing_if = "Vec::is_empty")]
+         images: Vec<(String, String)>,
+         /// If true, can skip remaining tools at injection point C
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2257** (closed): feat(zcode): add native ZCode OAuth, Client Request Signing v4, provider, and usage (@navidRashik)
 - **PR #2222** (closed): fix(harness): require architectural intent for understand routing (@adminwat)
 - **PR #2199** (closed): style: restore rustfmt-clean state so the Format gate can pass (@KooshaPari)
 - **PR #2197** (closed): docs: freeze new kcode/jcode lanes and evaluate the churn (@KooshaPari)
 - **PR #2195** (closed): build(app-core): drop a call to the reverted todo-plan tracker (@KooshaPari)
 - **PR #2194** (closed): style(ci): clear the Format gate and the macOS warning budget for every PR (@KooshaPari)
-- **PR #2189** (closed): fix(tui): repair the three tests that fail on master and block every PR (@KooshaPari)
 
 ---
 
@@ -3290,70 +2239,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Integrate recorder quiet-window guard with explicit retry and stale speech clean
+## X. Render trusted Jarvis requests as speech, with structured detail and original pa
 
 **RULE**:
-When implementing operations in `crates/jcode-voice/src/continuous.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 1jehuang/jcode. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 1jehuang/jcode. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d0b8d7a8`: Integrate recorder quiet-window guard with explicit retry and stale speech cleanup. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `173eb49b`: Render trusted Jarvis requests as speech, with structured detail and original payload inspection. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/jcode-voice/src/continuous.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-#[derive(Default)]
-struct QuietWindow {
-    since: Option<Instant>,
-    last: Option<Instant>,
-}
-impl QuietWindow {
-    fn observe(&mut self, now:Instant, voiced:bool) {
-        if voiced || self.last.is_some_and(|last| now.duration_since(last) > Duration::from_millis(200)) {self.since=None;}
-        self.last=Some(now);
-        if !voiced {self.since.get_or_insert(now);}
-    }
-    fn ready(&self, now:Instant)->bool {
-        self.last.is_some_and(|last|now.duration_since(last)<=Duration::from_millis(200)) && self.since.is_some_and(|at|now.duration_since(at)>=Duration::from_millis(250))
-    }
-}
-    quiet: QuietWindow,
-    ) -> Result<Self, VoiceError> {
-        Self::start_auto_with_budget(cancel, key, recorder, config, ContinuousBudget::default())
-    }
-
-    /// Keep the same ledger when a user explicitly retries a stopped listener.
-    pub fn start_auto_with_budget(
-        cancel: Arc<AtomicBool>, key: &str, recorder: &str, config: ContinuousConfig,
-        budget: ContinuousBudget,
-            quiet: QuietWindow::default(),
-                            budget,
-        output.quiet = QuietWindow::default();
-        let mut output = self.events.lock().unwrap_or_else(|e| e.into_inn
+ "serde",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    quiet_since: Option<Instant>,
-    ) -> Result<Self, VoiceError> {
-        Self::start_auto_with_budget(cancel, key, recorder, config, ContinuousBudget::default())
-    }
-
-    /// Keep the same ledger when a user explicitly retries a stopped listener.
-    pub fn start_auto_with_budget(
-        cancel: Arc<AtomicBool>, key: &str, recorder: &str, config: ContinuousConfig,
-        budget: ContinuousBudget,
-            quiet_since: None,
-                            budget,
-        let output = self.events.lock().unwrap_or_else(|e| e.into_inner());
-        if !self.is_capturing() || !output.quiet_since.is_some_and(|at| at.elapsed() >= Duration::from_millis(250)) || output.queue.iter().any(|e| matches!(e, ContinuousEvent::Transcript {..} | ContinuousEvent::Continuation {..} | ContinuousEvent::State(VoiceState::Speaking | VoiceState::Transcribing))) { return false; }
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d0b8d7a8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `173eb49b` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -3323,10 +3323,10 @@
     "repository": "openreplay/openreplay",
     "platform": "github",
     "sourceUrl": "https://github.com/openreplay/openreplay",
-    "sourceVersion": "42a68706",
+    "sourceVersion": "fc6d0e45",
     "license": "NOASSERTION",
-    "contentHash": "4df3d9e83e998cf6fd75d74eeb97e0f8ead113403aac0da4f7ac17102dadedca",
-    "lastHarvestedAt": "2026-11-18T14:15:51.315Z",
+    "contentHash": "bb82497f94a9281706806b3a5d75b36f0d1729a7a06372e201ea667d0f5f9549",
+    "lastHarvestedAt": "2026-11-21T17:49:56.667Z",
     "learningId": "learn-github-openreplay-openreplay"
   },
   "kumahq-kuma": {
@@ -3613,10 +3613,10 @@
     "repository": "1jehuang/jcode",
     "platform": "github",
     "sourceUrl": "https://github.com/1jehuang/jcode",
-    "sourceVersion": "90595b24",
+    "sourceVersion": "b33d94f0",
     "license": "MIT",
-    "contentHash": "30d3e1860ecd607709e31066a9f83f90ed8acbbf8d3a69b7b53e772c219c842f",
-    "lastHarvestedAt": "2026-11-20T03:13:07.869Z",
+    "contentHash": "90c2f4a4054d5ad260687dc1b8e5352a49c0d38733a35585eb339df16f9f65b9",
+    "lastHarvestedAt": "2026-11-21T17:49:50.689Z",
     "learningId": "learn-github-1jehuang-jcode"
   },
   "wix-detox": {
@@ -6173,10 +6173,10 @@
     "repository": "duckdb/duckdb",
     "platform": "github",
     "sourceUrl": "https://github.com/duckdb/duckdb",
-    "sourceVersion": "522f213e",
+    "sourceVersion": "87d96b77",
     "license": "MIT",
-    "contentHash": "eb529b2976ebb20ce838d5abbae88425507097f63b57f26cd067c9aa983b383c",
-    "lastHarvestedAt": "2026-11-20T12:50:28.049Z",
+    "contentHash": "f18cc8e24aeb8ee4d7287bd633e71fb5976cda559fc2ff257978bc96e8be311a",
+    "lastHarvestedAt": "2026-11-21T17:50:04.263Z",
     "learningId": "learn-github-duckdb-duckdb"
   },
   "megh-bari-pattern-craft": {
@@ -6843,10 +6843,10 @@
     "repository": "kube-rs/kube",
     "platform": "github",
     "sourceUrl": "https://github.com/kube-rs/kube",
-    "sourceVersion": "fc801fba",
+    "sourceVersion": "6f9fddb2",
     "license": "Apache-2.0",
-    "contentHash": "83fa1a011f117c49c324ed38fa7a621aefe4a808378696af71fd1968d8b2922c",
-    "lastHarvestedAt": "2026-11-13T00:31:10.414Z",
+    "contentHash": "55c73f6a61c28307863d62968ebb3411dca660e7936cc8ac37e124ab5eaf544c",
+    "lastHarvestedAt": "2026-11-21T17:49:58.384Z",
     "learningId": "learn-github-kube-rs-kube"
   },
   "weaviate-weaviate": {
@@ -10865,8 +10865,8 @@
     "sourceUrl": "https://huggingface.co/FastVideo/FastH3-Omni-Comfy",
     "sourceVersion": "hf-fastvideo-fasth3-omni-comfy",
     "license": "Open-Source",
-    "contentHash": "a4b51ce810d6495c86a12ca00a0cb2406ab2ddce1a5471b7a7c05a6793c89d41",
-    "lastHarvestedAt": "2026-11-17T19:19:33.141Z",
+    "contentHash": "702ce0bda670fe18299d9499ee7d755fdf54bd3289b5b5e963a83398acba1466",
+    "lastHarvestedAt": "2026-11-21T17:49:49.117Z",
     "learningId": "learn-huggingface-fastvideo-fasth3-omni-comfy"
   },
   "yoanwai-agent-manager": {

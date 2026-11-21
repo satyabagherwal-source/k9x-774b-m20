@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for kube/rs/kube
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for kube-rs/kube
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "kube/rs/kube",
-  "source_url": "https://github.com/kube/rs/kube",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "kube-rs/kube",
+  "source_url": "https://github.com/kube-rs/kube",
+  "source_version": "6f9fddb2",
+  "license": "Apache-2.0",
+  "timestamp": "2026-11-21T17:49:58.594Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-kube-rs-kube",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [kube/rs/kube](https://github.com/kube/rs/kube) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [kube-rs/kube](https://github.com/kube-rs/kube) (Revision: `6f9fddb2`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-21T17:49:58.594Z`  
+> **Learning ID**: `learn-github-kube-rs-kube`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `kube/rs/kube` (Commit: `historical`)
+- **Target Repository**: `kube-rs/kube` (Commit: `6f9fddb2`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kube-rs-kube-learnings.md`  
-> **Source**: github ([https://github.com/kube-rs/kube](https://github.com/kube-rs/kube))  
-> **Source Version**: `b970938d`  
-> **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T14:39:05.720Z  
-> **Learning ID**: `learn-github-kube-rs-kube`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): kube-rs/kube
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kube-rs-kube-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kube-rs/kube](https://github.com/kube-rs/kube))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T14:38:36.898Z  
+> **Harvest Timestamp**: 2026-11-21T17:49:57.295Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Rust Kubernetes client and controller runtime
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3861 stars
+- **Stars / Engagement**: 3868 stars
 
 ---
 
@@ -1732,162 +1718,173 @@ fn test_to_plural_native() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `224f8434` (2026-11-11)
-**Commit Message**: Bound watch startup with the watcher idle timeout (#2149)
+### Incident Patch 1: `050ef4e7` (2026-11-21)
+**Commit Message**: Chore(deps): Update axum-server requirement from 0.8.0 to 0.9.2 (#2155)
 
-Fixes #2148
+Updates the requirements on [axum-server](https://github.com/programatik29/axum-server) to permit the latest version.
+- [Release notes](https://github.com/programatik29/axum-server/releases)
+- [Changelog](https://github.com/programatik29/axum-server/blob/master/CHANGELOG.md)
+- [Commits](https://github.com/programatik29/axum-server/compare/v0.8.0...v0.9.2)
 
-Signed-off-by: doxxx93 <[REDACTED_EMAIL]>
+---
+updated-dependencies:
+- dependency-name: axum-server
+  dependency-version: 0.9.2
+  dependency-type: direct:production
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 Co-authored-by: Eirik A <[REDACTED_EMAIL]>
 
-**File**: `kube-runtime/Cargo.toml` (modified, +3/-0)
+**File**: `examples/Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -47,6 +47,9 @@ async-stream.workspace = true
- hostname.workspace = true
- 
- [dev-dependencies]
-+http.workspace = true
-+http-body-util.workspace = true
-+tower.workspace = true
- kube = { path = "../kube", features = ["derive", "client", "runtime"] }
- serde_json.workspace = true
- serde-saphyr.workspace = true
+@@ -63,7 +63,7 @@ tar = "0.4.37"
+ tracing.workspace = true
+ tracing-subscriber.workspace = true
+ axum = "0.8.7"
+-axum-server = { version = "0.8.0", features = ["tls-rustls-no-provider"] }
++axum-server = { version = "0.9.2", features = ["tls-rustls-no-provider"] }
+ bytes.workspace = true
+ http.workspace = true
+ http-body-util.workspace = true
 ```
 
-**File**: `kube-runtime/src/watcher.rs` (modified, +188/-20)
+---
+
+### Incident Patch 2: `35136d31` (2026-11-21)
+**Commit Message**: Fix kube-derive UI test on Rust 1.100 (#2154)
+
+* Fix kube-derive UI test on Rust 1.100
+
+Signed-off-by: doxxx93 <[REDACTED_EMAIL]>
+
+* Clarify why the cel UI test derives JsonSchema
+
+Signed-off-by: doxxx93 <[REDACTED_EMAIL]>
+
+* Reject cel with a manual schema before generating code
+
+Signed-off-by: doxxx93 <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: doxxx93 <[REDACTED_EMAIL]>
+
+**File**: `kube-derive/src/custom_resource/mod.rs` (modified, +25/-24)
 ```diff
-@@ -530,17 +530,25 @@ async fn next_with_idle_timeout<S, T>(stream: &mut S, timeout: Option<u32>) -> O
- where
-     S: Stream<Item = T> + Unpin,
- {
-+    with_idle_timeout(stream.next(), timeout).await.flatten()
-+}
-+
-+/// Await `fut` with the same idle timeout, returning `None` on expiry.
-+///
-+/// Also wraps the watch call, which can stall before a stream exists,
-+/// e.g. on an error response whose body never completes.
-+async fn with_idle_timeout<F: Future>(fut: F, timeout: Option<u32>) -> Option<F::Output> {
-     if timeout == Some(0) {
--        return stream.next().await;
-+        return Some(fut.await);
-     }
+@@ -224,6 +224,16 @@ pub(crate) fn derive(input: proc_macro2::TokenStream) -> proc_macro2::TokenStrea
  
-     let idle_timeout = Duration::from_secs(u64::from(timeout.unwrap_or(290))) + WATCH_IDLE_TIMEOUT_MARGIN;
--    match tokio::time::timeout(idle_timeout, stream.next()).await {
--        Ok(item) => item,
-+    match tokio::time::timeout(idle_timeout, fut).await {
-+        Ok(output) => Some(output),
-         Err(_elapsed) => {
-             debug!(
-                 timeout_secs = idle_timeout.as_secs(),
--                "watch stream idle timeout, reconnecting"
-+                "watch idle timeout, reconnecting"
-             );
-             None
-         }
-@@ -569,16 +577,22 @@ where
-                 last_bookmark: None,
-             }),
-             InitialListStrategy::StreamingList => {
--                match api.watch(&wc.to_watch_params(WatchPhase::Initial), "0").await {
--                    Ok(stream) => (Some(Ok(Event::Init)), State::InitialWatch { stream }),
--                    Err(err) => {
-+                match with_idle_timeout(
-+                    api.watch(&wc.to_watch_params(WatchPhase::Initial), "0"),
-+                    wc.timeout,
-+                )
-+                .await
-+                {
-+                    Some(Ok(stream)) => (Some(Ok(Event::Init)), State::InitialWatch { stream }),
-+                    Some(Err(err)) => {
-                         if std::matches!(err, ClientErr::Api(ref status) if status.is_forbidden()) {
-                             warn!("watch initlist error with 403: {err:?}");
-                         } else {
-                             debug!("watch initlist error: {err:?}");
-                         }
-                         (Some(Err(Error::WatchStartFailed(err))), State::default())
-                     }
-+                    None => (None, State::default()),
+     // Enable schema generation by default as in v1 it is mandatory.
+     let schema_mode = schema_mode.unwrap_or(SchemaMode::Derived);
++    // `#[kube(cel)]` needs a derived schema: a manual schema is not forced through `KubeSchema`,
++    // so it would carry no `x-kubernetes-validations` and the generated methods would silently
++    // validate nothing. Reject it before generating anything, like the other attribute errors.
++    if cel && !schema_mode.derive() {
++        return syn::Error::new(
++            Span::call_site(),
++            r#"#[kube(cel)] requires a derived schema; it cannot be combined with `schema = "manual"`"#,
++        )
++        .to_compile_error();
++    }
+     // We exclude fields `apiVersion`, `kind`, and `metadata` from our schema because
+     // these are validated by the API server implicitly. Also, we can't generate the
+     // schema for `metadata` (`ObjectMeta`) because it doesn't implement `JsonSchema`.
+@@ -564,34 +574,25 @@ pub(crate) fn derive(input: proc_macro2::TokenStream) -> proc_macro2::TokenStrea
+     // Requires the downstream crate to enable `kube/cel` (the generated code references
+     // `#kube_core::cel`). The bodies just delegate to `kube_core::cel::validate_cel{,_update}`, which
+     // own the schema extraction + validation so they are compiled once in kube-core rather than
+-    // re-expanded at every derive site. Gated on a derived schema: a manual schema is not forced
+-    // through `KubeSchema`, so it would carry no `x-kubernetes-validations` and the methods would
+-    // silently validate nothing — reject that combination at compile time instead.
++    // re-expanded at every derive site. `cel` with `schema = "manual"` was already rejected above,
++    // so the schema is derived here.
+     let impl_validate_cel = if cel {
+-        if schema_mode.derive() {
+-            quote! {
+-                impl #rootident {
+-                    /// Validate this resource against its CEL creation rules (`x-kubernetes-validations`)
+-                    /// client-side, without an apiserver. `Ok(())` if all rules pass, otherwise the
+-                    /// aggregated failures.
+-                    pub fn validate_cel(&self) -> ::core::result::Result<(), #kube_core::cel::ValidationErrors> {
+-                        #kube_core::cel::validate_cel(self)
+-                    }
++        quote! {
++            impl #rootident {
++                /// Validate this resource against its CEL creation rules (`x-kubernetes-validations`)
++                /// client-side, without an apiserver. `Ok(())` if all rules pass, otherwise the
++                /// aggregated failures.
++                pub fn validate_cel(&self) -> ::core::result::Result<(), #kube_core::cel::ValidationErrors> {
++                    #kube_core::cel::validate_cel(self)
++                }
+ 
+-                    /// Validate this resource against its CEL transition rules (rules using `oldSelf`)
+-                    /// client-side, comparing against the `old` state. `Ok(())` if all rules pass,
+-                    /// otherwise the aggregated failures.
+-                    pub fn validate_cel_update(&self, old: &Self) -> ::core::result::Result<(), #kube_core::cel::ValidationErrors> {
+-                        #kube_core::cel::validate_cel_update(self, old)
+-                    }
++                /// Validate this resource against its CEL transition rules (rules using `oldSelf`)
++                /// client-side, comparing against the `old` state. `Ok(())` if all rules pass,
++                /// otherwise the aggregated failures.
++                pub fn validate_cel_update(&self, old: &Self) -> ::core::result::Result<(), #kube_core::cel::ValidationErrors> {
++                    #kube_core::cel::validate_cel_update(self, old)
                  }
              }
-         },
-@@ -676,15 +690,17 @@ where
-             }
+-        } else {
+-            quote! {
+-                ::core::compile_error!(
+-                    "#[kube(cel)] requires a derived schema; it cannot be combined with `schema = \"manual\"`"
+-                );
+-            }
          }
-         State::InitListed { resource_version } => {
--            match api
--                .watch(&wc.to_watch_params(WatchPhase::Resumed), &resource_version)
--                .await
-+            match with_idle_timeout(
-+                api.watch(&wc.to_watch_params(WatchPhase::Resumed), &resource_version),
-+                wc.timeout,
-+            )
-+            .await
-             {
--                Ok(stream) => (None, State::Watching {
-+                Some(Ok(stream)) => (None, State::Watching {
-                     resource_version,
-                     stream,
-                 }),
--                Err(err) => {
-+                Some(Err(err)) => {
-                     if std::matches!(err, ClientErr::Api(ref status) if status.is_forbidden()) {
-                         warn!("watch initlist error with 403: {err:?}");
-                     } else {
-@@ -694,6 +710,7 @@ where
-                         resource_version,
-                     })
-                 }
-+                None => (None, State::InitListed { resource_version }),
-             }
-         }
-         State::Watching {
-@@ -1052,22 +1069,30 @@ impl Backoff for DefaultBackoff {
- mod tests {
-     use std::{collections::BTreeMap, time::Duration};
- 
--    use futures::StreamExt;
-+    use futures::{StreamExt, TryStreamExt, stream::BoxStream};
-+    use http::{Request, Response, StatusCode, header::CONTENT_LENGTH};
-+    use http_body_util::{BodyExt, StreamBody};
-     use k8s_openapi::{api::core::v1::ConfigMap, apimachinery::pkg::apis::meta::v1::ObjectMeta};
-     use kube_client::{
--        api::{TypeMeta, WatchEvent, WatchParams},
-+        Api, Client,
-+        api::{ListParams, TypeMeta, WatchEvent, WatchParams},
-+        client::Body,
-         core::{
--            Status,
-+            ObjectList, Status,
-             watch::{Bookmark, BookmarkMeta},
-         },
-     };
- 
--    use crate::watcher::{
--        ApiMode, Config, ExponentialBackoff, State, WatchPhase, next_with_idle_timeout, step,
--        stub_watcher::{
--            Recording, Sequence, SequenceStep, TestMode, error_indicates_graceful_watch_seq_exhaustion,
-+    use crate::{
-+        WatchStreamExt,
-+        watcher::{
-+            ApiMode, Config, Error, ExponentialBackoff, State, WatchPhase, next_with_idle_timeout, step,
-+            step_trampolined,
-+            stub_watcher::{
-+                Recording, Sequence, SequenceStep, TestMode, error_indicates_graceful_watch_seq_exhaustion,
-+            },
-+            watcher, watcher_inner,
-         },
--        watch
+     } else {
+         quote! {}
+```
+
+**File**: `kube-derive/tests/ui/cel_requires_derived_schema.stderr` (modified, +0/-28)
+```diff
+@@ -5,31 +5,3 @@ error: #[kube(cel)] requires a derived schema; it cannot be combined with `schem
+   |          ^^^^^^^^^^^^^^
+   |
+   = note: this error originates in the derive macro `CustomResource` (in Nightly builds, run with -Z macro-backtrace for more info)
+-
+-error[E0277]: the trait bound `Foo: JsonSchema` is not satisfied
+- --> tests/ui/cel_requires_derived_schema.rs:9:10
+-  |
+-9 | #[derive(CustomResource, Serialize, Deserialize, Debug, Clone, JsonSchema)]
+-  |          ^^^^^^^^^^^^^^ unsatisfied trait bound
+-  |
+-help: the trait `JsonSchema` is not implemented for `Foo`
+- --> tests/ui/cel_requires_derived_schema.rs:9:10
+-  |
+-9 | #[derive(CustomResource, Serialize, Deserialize, Debug, Clone, JsonSchema)]
+-  |          ^^^^^^^^^^^^^^
+-  = help: the following other types implement trait `JsonSchema`:
+-            &'a T
+-            &'a mut T
+-            ()
+-            (T0, T1)
+-            (T0, T1, T2)
+-            (T0, T1, T2, T3)
+-            (T0, T1, T2, T3, T4)
+-            (T0, T1, T2, T3, T4, T5)
+-          and $N others
+-note: required by a bound in `SchemaGenerator::into_root_schema_for`
+- --> $CARGO/schemars-$VERSION/src/generate.rs
+-  |
+-  |     pub fn into_root_schema_for<T: ?Sized + JsonSchema>(mut self) -> Schema {
+-  |                                             ^^^^^^^^^^ required by this bound in `SchemaGenerator::into_root_schema_for`
+-  = note: this error originates in the derive macro `CustomResource` (in Nightly builds, run with -Z macro-backtrace for more info)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2149** (2026-11-11): Bound watch startup with the watcher idle timeout (@doxxx93)
-- **PR #2146** (2026-11-06): Fix nightly clippy and rustdoc warnings (@doxxx93)
-- **PR #2145** (2026-11-06): Make kube-client modules visible to rustfmt (@doxxx93)
-- **PR #2144** (2026-11-06): Match NO_PROXY against the apiserver instead of the proxy (@doxxx93)
-- **PR #2143** (2026-11-05): fix parse error messages for LabelSelectorRequirement into Expression (@orangecms)
-- **PR #2141** (2026-11-05): Show missing feature requirements on kube-client items in docs (@doxxx93)
+- **PR #2161** (2026-11-21): move tokio's signal feature to kube-runtime (@verokarhu)
+- **PR #2160** (closed): remove unused dependency feature (@verokarhu)
+- **PR #2157** (closed): Support cleanup actions deferring finalizer removal (@Alphadelta14)
+- **PR #2155** (2026-11-21): Chore(deps): Update axum-server requirement from 0.8.0 to 0.9.2 (@dependabot[bot])
+- **PR #2154** (2026-11-21): Fix kube-derive UI test on Rust 1.100 (@doxxx93)
+- **PR #2153** (2026-11-21): Accept socks5h proxy URLs (@doxxx93)
 
 ---
 
@@ -1907,33 +1904,31 @@ Co-authored-by: Eirik A <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Bound watch startup with the watcher idle timeout (#2149)
+## X. deps): Update axum-server requirement from 0.8.0 to 0.9.2
 
 **RULE**:
-When implementing operations in `kube-runtime/Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kube-rs/kube. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `examples/Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kube-rs/kube. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `224f8434`: Bound watch startup with the watcher idle timeout (#2149). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `050ef4e7`: deps): Update axum-server requirement from 0.8.0 to 0.9.2. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `kube-runtime/Cargo.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `examples/Cargo.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-http.workspace = true
-http-body-util.workspace = true
-tower.workspace = true
+axum-server = { version = "0.9.2", features = ["tls-rustls-no-provider"] }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+axum-server = { version = "0.8.0", features = ["tls-rustls-no-provider"] }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `224f8434` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `050ef4e7` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

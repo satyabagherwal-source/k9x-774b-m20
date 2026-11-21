@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/duckdb-duckdb-learnings.md`  
 > **Source**: github ([https://github.com/duckdb/duckdb](https://github.com/duckdb/duckdb))  
-> **Source Version**: `522f213e`  
+> **Source Version**: `87d96b77`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T12:50:27.021Z  
+> **Timestamp**: 2026-11-21T17:50:03.227Z  
 > **Learning ID**: `learn-github-duckdb-duckdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/duckdb-duckdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/duckdb/duckdb](https://github.com/duckdb/duckdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T12:50:27.015Z  
+> **Harvest Timestamp**: 2026-11-21T17:50:03.221Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: DuckDB is a high-performance analytical database system
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 43202 stars
+- **Stars / Engagement**: 43218 stars
 
 ---
 
@@ -1964,11 +1964,14 @@ struct ModeState {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #29134** (2026-11-20): **Skip plan-cost regression checks for identical plans**
-  *Symptoms*: Adaptive join filters can produce different intermediate row counts for identical plans, causing spurious CI failures.  Compare physical `EXPLAIN` plans without estimated cardinalities and skip cost and timing comparisons when they match. Keep the existing checks for changed plans.
+- **Issue #29154** (2026-11-20): **[v2.0-cyanoptera] Bump aws to 9ba41b09**
+  *Symptoms*: Moves the aws pin from 1b969258 to duckdb-aws main tip 9ba41b09.  - ATTACH of an athena ARN dispatches to the `athena` extension from aws.amazon.com, as `redshift` already does (duckdb/duckdb-aws#271) - Short ARNs are accepted: sections after the service may be left out - The extension adopts the new build/deploy workflows (duckdb/duckdb-aws#249)  No new functions, settings, secret types or log types, so `extension_entries.hpp` is unchanged.
+  **Post-Mortem & Fix Analysis**:
+  > Superseded: the dispatcher work already shipped in the 18-11 aws bump; the extra changes here aren't needed on v2.0-cyanoptera right now.
+  > I think this PR does makes sense, I should also sent it earlier.
 
-- **Issue #29131** (2026-11-20): **Register a sort temporary memory state on its first sink**
-  *Symptoms*: With the following query: ```sql SET threads = 16; SET memory_limit = '24GiB'; CREATE TABLE t_win AS SELECT (range % 50000)::BIGINT AS k, range::BIGINT AS v FROM range(3000000); CREATE TABLE t_agg AS SELECT (hash(range) % 2000000)::BIGINT AS g, range::BIGINT AS x FROM range(100000000);  SELECT count(*), sum(coalesce(w.s, 0) + coalesce(a.s, 0)) FROM 	(SELECT k, sum(v) OVER (PARTITION BY k ORDER BY v ROWS UNBOUNDED PRECEDING) AS s FROM t_win) w 	FULL JOIN (SELECT g, sum(x) AS s FROM t_agg GROUP BY g) a ON w.k = a.g; ```  This takes ~1.4 s on main because the `GROUP BY` finalizes on a single thread:  1. The window (probe side) sinks first and creates one `Sort` per hash group, 64 here. Each `Sort` registers with the `TemporaryMemoryManager` in its constructor and books the default minimum, 1.35 GiB: ~86 GiB booked against a 21.6 GiB budget. 2. The groups are only sorted in the window's source phase, which waits for the join build, so they sit idle and booked. 3. The `GROUP BY` (build side) then asks for memory in `MaxThreads`. The manager is over-committed and grants only the aggregate's minimum, so `partitions_fit` becomes 1.  TPC-DS Q51 can hit the same pattern, depending on the order in which the scheduler runs the two sides of its FULL join.  **Changes**: a `Sort` now registers with the `TemporaryMemoryManager` at its first `Sink`, not in the `SortGlobalSinkState` constructor. Idle hash groups, and groups that skip sorting, book nothing. A registered `Sor
+- **Issue #29138** (2026-11-20): **Check the released page lock, not the address, after BlockAllocator shutdown**
+  *Symptoms*: "BlockAllocator database shutdown unmaps locked pool pages" (`test/api/test_block_allocator_tls.cpp`) fails intermittently on PRs that don't touch the block allocator:  ``` FAILED: CHECK( mincore(block, 1, &residency) == -1 )   with expansion: 0 == -1 ```  It failed every attempt on duckdb/duckdb#29068 (v2-open-shared-init, "No String Inline / Destroy Unpinned Blocks", the ASan job) and on the encoding-encode PR ("Linux Relassert Tests", 2026-11-20).  After `db.reset()`, the test checked that the pool's address was no longer mapped by calling `mincore` on it. But once the pool is unmapped, any later mapping can reuse that range, for example ASan's allocator or another allocation, and then `mincore` succeeds even though the pool really was unmapped.  The test now checks that the process's locked memory (`VmLck` in `/proc/self/status`) is back to its value from before the page was locked. A reused range isn't locked, so the check only depends on the pool being unmapped. If the unmap in `~BlockAllocator` is skipped, the new check fails (4 == 0 KiB). 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1985,720 +1988,232 @@ struct ModeState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `abbad801` (2026-11-20)
-**Commit Message**: Fix min/max for INTERVAL type (#29104)
+### Incident Patch 1: `aa009031` (2026-11-20)
+**Commit Message**: Ignore run-to-run plan cost variation in the plan-cost regression runner (#29124)
 
-Hi team, I found min/max stats for INTERVAL type seems to be incorrect,
-for example
-```sql
-memory D SELECT max(x, 1), min(x, 1) FROM (VALUES (INTERVAL 25 HOUR), (INTERVAL 1 DAY)) v(x);
-┌────────────┬──────────────┐
-│ max(x, 1)  │  min(x, 1)   │
-│ interval[] │  interval[]  │
-├────────────┼──────────────┤
-│ [1 day]    │ ['25:00:00'] │
-└────────────┴──────────────┘
-```
+`regression / Regression Tests` currently fails on roughly half of all
+PR runs in the IMDB plan-cost step. Each time it is a different query
+with a small probe-cost drift, while total and build costs are
+unchanged. Examples from the last day: #29115 (23c), #27678 (19c, 23a),
+#29107 (08c, 09c, 12a), #29105 (05c), #29104 (15a), #29100 (19a), #29102
+(16a), #29099 (05c, 09d).
 
-In the current implementation, min(x, n) and max(x, n) handled INTERVAL
-by comparing sort keys, which order values field by field over the raw
-(months, days, micros) without normalizing them, so max(x, 1) over {31
-days, 1 month} returned [1 month].
-In this PR specializes INTERVAL to `MinMaxFixedValue<interval_t>`, so
-values are compared with the normalized interval_t comparison,
-consistent with ORDER BY and plain min/max.
+### Cause
+The plan costs are not deterministic for a single binary. I ran the same
+binary 3 times against the same `plan_cost.duckdb`, and the costs
+differed on 41 of 113 IMDB queries. They still differed with `SET
+threads=1`. For example, over 5 runs of 19c a probe-side scan produced
+1652908, 1626111, 1629118, 1679707 and 1626186 rows, and over 5 runs of
+12a a join produced 6094 to 6142 rows. The varying operators are scans
+with optional dynamic join filters (`optional: x IN PRF(y)`, Bloom
+filters). These filters pause themselves based on the selectivity they
+measure over their first vectors. The scan's adaptive filter also
+reorders conjuncts by measured time. Together, each run pauses the
+filter at a different point.
 
-**File**: `src/function/aggregate/distributive/minmax.cpp` (modified, +4/-0)
+So in each 
+
+**File**: `scripts/plan_cost_runner.py` (modified, +43/-2)
 ```diff
-@@ -549,6 +549,10 @@ void SpecializeMinMaxNFunction(PhysicalType arg_type, BoundAggregateFunction &fu
- 	case PhysicalType::DOUBLE:
- 		SpecializeMinMaxNFunction<MinMaxFixedValue<double>, COMPARATOR>(function);
- 		break;
-+	case PhysicalType::INTERVAL:
-+		// sort keys do not normalize intervals, so compare them as interval_t
-+		SpecializeMinMaxNFunction<MinMaxFixedValue<interval_t>, COMPARATOR>(function);
-+		break;
- 	default:
- 		SpecializeMinMaxNFunction<MinMaxFallbackValue, COMPARATOR>(function);
- 		break;
-```
-
-**File**: `test/configs/verify_aggregate_state_export.json` (modified, +1/-0)
-```diff
-@@ -102,6 +102,7 @@
-         "test/sql/aggregate/aggregates/arg_min_max_n_tpch.test",
-         "test/sql/aggregate/aggregates/arg_min_max_nulls_last.test",
-         "test/sql/aggregate/aggregates/minmax_n_fallible.test",
-+        "test/sql/aggregate/aggregates/minmax_n_interval.test",
-         "test/sql/aggregate/aggregates/bitstring_agg_empty.test",
-         "test/sql/aggregate/aggregates/bitstring_agg_memory_limit.test",
-         "test/sql/aggregate/aggregates/first_last_alloc_reuse.test",
-```
-
-**File**: `test/sql/aggregate/aggregates/minmax_n_interval.test` (added, +15/-0)
-```diff
-@@ -0,0 +1,15 @@
-+# name: test/sql/aggregate/aggregates/minmax_n_interval.test
-+# description: N-variant min/max on INTERVAL follow the normalized INTERVAL order
-+# group: [aggregates]
+@@ -23,6 +23,9 @@
+ 
+ BANNER_SIZE = 52
+ RETRIES = 2
++PROFILE_RUNS = 5
++# Overlapping cost samples whose medians differ by more than this are still compared.
++MEDIAN_TOLERANCE = 0.02
+ 
+ 
+ def run_command(command, **kwargs):
+@@ -233,6 +236,45 @@ def query_plan_cost(cli, dbname, query):
+         return cost
+ 
+ 
++def cost_components(cost):
++    return (cost.total, cost.build_side, cost.probe_side)
 +
-+# 1 month is 30 days
-+query II
-+SELECT max(x, 2), min(x, 2) FROM (VALUES (INTERVAL 1 MONTH), (INTERVAL 31 DAY), (NULL)) v(x)
-+----
-+[31 days, 1 month]	[1 month, 31 days]
 +
-+# 1 day is 24 hours
-+query II
-+SELECT max(x, 1), min(x, 1) FROM (VALUES (INTERVAL 25 HOUR), (INTERVAL 1 DAY)) v(x)
-+----
-+['25:00:00']	[1 day]
++def median_cost(costs):
++    result = PlanCost()
++    result.total, result.build_side, result.probe_side = (
++        statistics.median_low(values) for values in zip(*(cost_components(cost) for cost in costs))
++    )
++    return result
++
++
++def within_run_variation(old_costs, new_costs):
++    for old_values, new_values in zip(
++        zip(*(cost_components(cost) for cost in old_costs)), zip(*(cost_components(cost) for cost in new_costs))
++    ):
++        if max(old_values) < min(new_values) or max(new_values) < min(old_values):
++            return False
++        old_median, new_median = statistics.median_low(old_values), statistics.median_low(new_values)
++        if abs(old_median - new_median) > MEDIAN_TOLERANCE * max(old_median, new_median):
++            return False
++    return True
++
++
++def query_plan_costs(old, new, dbname, query):
++    old_costs = [query_plan_cost(old, dbname, query)]
++    new_costs = [query_plan_cost(new, dbname, query)]
++    if old_costs[0] == new_costs[0]:
++        return old_costs[0], new_costs[0]
++    # Selectivity-paused optional join filters make scan cardinalities vary between runs of one binary.
++    for _ in range(PROFILE_RUNS - 1):
++        old_costs.append(query_plan_cost(old, dbname, query))
++        new_costs.append(query_plan_cost(new, dbname, query))
++    if within_run_variation(old_costs, new_costs):
++        # The difference is within the run-to-run variation of both binaries.
++        return old_costs[0], old_costs[0]
++    return median_cost(old_costs), median_cost(new_costs)
++
++
+ def query_timings(cli, dbname, query, runs):
+     # Warm up in the same process before enabling the timer.
+     command = [cli, '--readonly', dbname, '-c', query, '-c', '.timer on 6']
+@@ -326,8 +368,7 @@ def main():
+         with open(f, "r") as file:
+             query = file.read()
+ 
+-        old_cost = query_plan_cost(old, DB_NAME, query)
+-        new_cost = query_plan_cost(new, DB_NAME, query)
++        old_cost, new_cost = query_plan_costs(old, new, DB_NAME, query)
+ 
+         if old_cost.needs_timing(new_cost):
+             print(f"{query_name}: comparing hot query timings")
+```
+
+**File**: `scripts/regression/test_comparison.py` (modified, +36/-2)
+```diff
+@@ -67,6 +67,33 @@ def test_mixed_work_uses_timing_and_comparisons_agree(self):
+                 self.assertEqual(old < new, regressed)
+                 self.assertFalse(new > old and old > new)
+ 
++    def test_run_to_run_variation_is_not_a_difference(self):
++        def cost(total, build, probe):
++            result = PlanCost()
++            result.total, result.build_side, result.probe_side = total, build, probe
++            return result
++
++        def profile(old_probes, new_probes):
++            samples = {
++                'old': [cost(20, 10, probe) for probe in old_probes],
++                'new': [cost(20, 10, probe) for probe in new_probes],
++            }
++            with patch.object(
++                plan_cost_runner, 'query_plan_cost', side_effect=lambda cli, db, query: samples[cli].pop(0)
++            ):
++                return plan_cost_runner.query_plan_costs('old', 'new', 'db', 'SELECT 1;')
++
++        old, new = profile([100], [100])
++        self.assertEqual(old, new)
++        old, new = profile([100, 104, 98, 101, 103], [102, 97, 100, 99, 105])
++        self.assertEqual(old, new)
++        old, new = profile([100, 104, 98, 101, 103], [150, 151, 149, 150, 152])
++        self.assertEqual((old.probe_side, new.probe_side), (101, 150))
++        varying = [1652908, 1626111, 1629118, 1679707, 1626186]
++        old, new = profile(varying, [int(probe * 1.03) for probe in varying])
++        self.assertEqual((old.probe_side, new.probe_side), (1629118, 1677991))
++        self.assertTrue(old.needs_timing(new) or new > old)
++
+     def test_runner_confirms_hot_regression_on_shared_database(self):
+         old, new = PlanCost(), PlanCost()
+         old.total, old.build_side, old.probe_side, old.time = 20, 10, 20, 1.0
+@@ -78,7 +105,11 @@ def test_runner_confirms_hot_regression_on_shared_database(self):
+             database = str(root / 'plan_cost.duckdb')
+             stack.enter_context(patch.object(plan_cost_runner, 'DB_NAME', database))
+             initialize = stack.enter_context(patch.object(plan_cost_runner, 'init_db'))
+-            profiles = stack.enter_context(patch.object(plan_cost_runner, 'query_plan_cost', side_effect=[old, new]))
++            profiles = stack.enter_context(
++                patch.object(
++                    plan_cost_runner, 'query_plan_cost', side_effect=lambda cli, db, query: old if cli == 'old' else new
++                )
++            )
+             timings = stack.enter_context(
+                 patch.object(
+                     plan_cost_runner,
+@@ -93,7 +124,10 @@ def test_runner_confirms_hot_regression_on_shared_database(self):
+                 plan_cost_runner.main()
+             self.assertEqual(result.exception.code, 1)
+             initialize.assert_called_once_with('old', database, directory, [])
+-            self.assertEqual(profiles.call_args_list, [call(cli, database, 'SELECT 1;') for cli in ('old', 'new')])
++            self.assertEqual(
++                profiles.call_args_list,
++                [call(cli, database, 'SELECT 1;') for cli in ('old', 'new') * plan_cost_runner.PROFILE_RUNS],
++            )
+             self.assertEqual(
+                 timings.call_args_list,
+                 [call(cli, database, 'SELECT 1;', 5) for cli in ('old', 'new', 'new', 'old') * 4],
 ```
 
 ---
 
-### Incident Patch 2: `0d9dfc12` (2026-11-20)
-**Commit Message**: Merge remote-tracking branch 'upstream/main' into hjiang/fix-minmax-interval
+### Incident Patch 2: `171b1f5f` (2026-11-20)
+**Commit Message**: Do not use an ART scan for a BETWEEN with a NULL bound (#28537)
 
-**File**: `.github/config/extensions/sqlite_scanner.cmake` (modified, +1/-1)
+Hi team, I found current implementation returns incorrect result for
+BETWEEN with a NULL bound (see regression test).
+
+This PR skips the ART index scan when a BETWEEN bound is a NULL
+constant, so the other bound is no longer used as a one-sided range scan
+that returns rows when it should return none.
+
+**File**: `src/execution/index/art/art.cpp` (modified, +7/-1)
 ```diff
-@@ -2,7 +2,7 @@
- duckdb_extension_load(sqlite_scanner
-         LOAD_TESTS
-         GIT_URL https://github.com/duckdb/duckdb-sqlite
--        GIT_TAG ce0987fda4f6393231c6783ee32f72ab873a6d3e
-+        GIT_TAG 4072b28f8ded96acf1fc7c31c2ad9a552eaf0f77
-         APPLY_PATCHES
-         SUBMODULES database-connector
-         )
+@@ -275,12 +275,18 @@ unique_ptr<IndexScanState> ART::TryInitializeScan(const Expression &expr, const
+ 			return nullptr;
+ 		}
+ 
++		// A NULL bound matches no rows.
++		if (lower_bound.Cast<BoundConstantExpression>().GetValue().IsNull() ||
++		    upper_bound.Cast<BoundConstantExpression>().GetValue().IsNull()) {
++			return nullptr;
++		}
++
+ 		auto lower_inclusive = BoundBetweenExpression::LowerInclusive(between);
+ 		auto upper_inclusive = BoundBetweenExpression::UpperInclusive(between);
+ 		low_value = lower_bound.Cast<BoundConstantExpression>().GetValue();
+ 		low_comparison_type =
+ 		    lower_inclusive ? ExpressionType::COMPARE_GREATERTHANOREQUALTO : ExpressionType::COMPARE_GREATERTHAN;
+-		high_value = (upper_bound.Cast<BoundConstantExpression>()).GetValue();
++		high_value = upper_bound.Cast<BoundConstantExpression>().GetValue();
+ 		high_comparison_type =
+ 		    upper_inclusive ? ExpressionType::COMPARE_LESSTHANOREQUALTO : ExpressionType::COMPARE_LESSTHAN;
+ 	} else {
 ```
 
-**File**: `.github/patches/extensions/delta/0004-transaction-takes-context.patch` (added, +256/-0)
+**File**: `test/sql/index/art/scan/test_art_between_null_bound_scan.test` (added, +20/-0)
 ```diff
-@@ -0,0 +1,256 @@
-+diff --git a/src/include/storage/delta_transaction.hpp b/src/include/storage/delta_transaction.hpp
-+index db31d77..b7aaefa 100644
-+--- a/src/include/storage/delta_transaction.hpp
-++++ b/src/include/storage/delta_transaction.hpp
-+@@ -12,6 +12,7 @@
-+ #include "duckdb/common/optional_idx.hpp"
-+ #include "duckdb/common/types/timestamp.hpp"
-+ #include "duckdb/transaction/transaction.hpp"
-++#include "duckdb/main/context.hpp"
-+ 
-+ namespace duckdb {
-+ class DeltaCatalog;
-+@@ -24,14 +25,30 @@ struct DeltaMultiFileColumnDefinition;
-+ 
-+ enum class DeltaTransactionState { TRANSACTION_NOT_YET_STARTED, TRANSACTION_STARTED, TRANSACTION_FINISHED };
-+ 
-++class DeltaTransaction;
-++
-++//! Makes the client context available to CommitCallback for the duration of a kernel commit call
-++class CommitContextScope {
-++public:
-++	CommitContextScope(DeltaTransaction &transaction, ClientContext &context);
-++	~CommitContextScope();
-++	CommitContextScope(const CommitContextScope &) = delete;
-++	CommitContextScope &operator=(const CommitContextScope &) = delete;
-++
-++private:
-++	DeltaTransaction &transaction;
-++};
-++
-+ class DeltaTransaction : public Transaction {
-++	friend class CommitContextScope;
-++
-+ public:
-+-	DeltaTransaction(DeltaCatalog &delta_catalog, TransactionManager &manager, ClientContext &context);
-++	DeltaTransaction(DeltaCatalog &delta_catalog, TransactionManager &manager, Context &context);
-+ 	~DeltaTransaction() override;
-+ 
-+ 	void Start();
-+ 	void Commit(ClientContext &context);
-+-	void Rollback();
-++	void Rollback(ClientContext &context);
-+ 
-+ 	void Append(ClientContext &context, const vector<DeltaDataFile> &append_files);
-+ 
-+@@ -52,7 +69,7 @@ public:
-+ 	vector<DeltaMultiFileColumnDefinition> GetWriteSchema(ClientContext &context);
-+ 
-+ 	//! Removes all outstanding appends and removes the files if possible
-+-	void CleanUpFiles();
-++	void CleanUpFiles(ClientContext &context);
-+ 
-+ 	//! CGetCommits callback for Unity Catalog managed commits
-+ 	//! CCommit callback for Unity Catalog managed commits - returns None on success, Some(error) on failure
-+@@ -111,7 +128,8 @@ private:
-+ 	// string parent_catalog_schema;
-+ 	optional_ptr<TableFunctionCatalogEntry> commit_function;
-+ 	string unity_table_id;
-+-	weak_ptr<ClientContext> current_context;
-++	//! Only set while a kernel commit call is running (see CommitContextScope), read by CommitCallback
-++	optional_ptr<ClientContext> commit_context;
-+ 	optional_ptr<TableCatalogEntry> parent_table_entry;
-+ 
-+ 	ErrorData active_error;
-+diff --git a/src/include/storage/delta_transaction_manager.hpp b/src/include/storage/delta_transaction_manager.hpp
-+index 3957982..aaf5fd9 100644
-+--- a/src/include/storage/delta_transaction_manager.hpp
-++++ b/src/include/storage/delta_transaction_manager.hpp
-+@@ -18,9 +18,9 @@ class DeltaTransactionManager : public TransactionManager {
-+ public:
-+ 	DeltaTransactionManager(AttachedDatabase &db_p, DeltaCatalog &delta_catalog);
-+ 
-+-	Transaction &StartTransaction(ClientContext &context) override;
-++	Transaction &StartTransaction(Context &context, MetaTransaction &meta_transaction) override;
-+ 	ErrorData CommitTransaction(ClientContext &context, Transaction &transaction) override;
-+-	void RollbackTransaction(Transaction &transaction) override;
-++	void RollbackTransaction(ClientContext &context, Transaction &transaction) override;
-+ 
-+ 	void Checkpoint(ClientContext &context, bool force = false) override;
-+ 
-+diff --git a/src/storage/delta_schema_entry.cpp b/src/storage/delta_schema_entry.cpp
-+index 0d453d9..9d6241d 100644
-+--- a/src/storage/delta_schema_entry.cpp
-++++ b/src/storage/delta_schema_entry.cpp
-+@@ -327,8 +327,12 @@ optional_ptr<CatalogEntry> DeltaSchemaEntry::CreateTable(CatalogTransaction tran
-+ 	}
-+ 
-+ 	ffi::ExclusiveCommittedTransaction *committed;
-+-	auto commit_res =
-+-	    KernelUtils::TryUnpackResult(ffi::create_table_commit(create_transaction, engine.get()), committed);
-++	ErrorData commit_res;
-++	{
-++		CommitContextScope commit_scope(GetDeltaTransaction(transaction), context);
-++		commit_res =
-++		    KernelUtils::TryUnpackResult(ffi::create_table_commit(create_transaction, engine.get()), committed);
-++	}
-+ 	if (commit_res.HasError()) {
-+ 		commit_res.Throw();
-+ 	}
-+diff --git a/src/storage/delta_transaction.cpp b/src/storage/delta_transaction.cpp
-+index 4c8961e..7ec33f8 100644
-+--- a/src/storage/delta_transaction.cpp
-++++ b/src/storage/delta_transaction.cpp
-+@@ -29,7 +29,7 @@
-+ 
-+ namespace duckdb {
-+ 
-+-DeltaTransaction::DeltaTransaction(DeltaCatalog &delta_catalog, TransactionManager &manager, ClientContext &context)
-++DeltaTransaction::DeltaTransaction(DeltaCatalog &delta_catalog, TransactionManager &manager, Context &context)
-+     : Transaction(manager, context), access_mode(delta_catalog.access_mode), parent_commit(delta_catalog.parent_commit),
-+       parent_catalog_name(delta_catalog.parent_catalog_name), unity_table_id(delta_catalog.unity_table_id) {
-+ 	commit_function = delta_catalog.commit_function;
-+@@
-```
-
-**File**: `.github/patches/extensions/ducklake/0029-transaction-takes-context.patch` (added, +1154/-0)
-```diff
-@@ -0,0 +1,1154 @@
-+diff --git a/src/common/ducklake_util.cpp b/src/common/ducklake_util.cpp
-+index f65438a3..96de1ab6 100644
-+--- a/src/common/ducklake_util.cpp
-++++ b/src/common/ducklake_util.cpp
-+@@ -591,21 +591,22 @@ string DuckLakeUtil::InlinedStorageExpression(DuckLakeMetadataManager &metadata_
-+ 	return expression;
-+ }
-+ 
-+-vector<string> DuckLakeUtil::InlinedDataToSQL(DuckLakeTransaction &transaction, ColumnDataCollection &data) {
-++vector<string> DuckLakeUtil::InlinedDataToSQL(ClientContext &context, DuckLakeTransaction &transaction,
-++                                              ColumnDataCollection &data) {
-+ 	auto &metadata_manager = transaction.GetMetadataManager();
-+-	auto context = transaction.context.lock();
-+ 	vector<string> rows;
-+ 	rows.reserve(data.Count());
-+ 	for (auto &chunk : data.Chunks()) {
-+ 		for (idx_t r = 0; r < chunk.size(); r++) {
-+-			rows.push_back(ChunkRowToSQL(metadata_manager, *context, chunk, r));
-++			rows.push_back(ChunkRowToSQL(metadata_manager, context, chunk, r));
-+ 		}
-+ 	}
-+ 	return rows;
-+ }
-+ 
-+-void DuckLakeUtil::CopyExtensionSettings(ClientContext &from, ClientContext &to) {
-+-	auto &db_config = DBConfig::GetConfig(from);
-++vector<pair<idx_t, Value>> DuckLakeUtil::GetExtensionSettings(Context &from) {
-++	vector<pair<idx_t, Value>> result;
-++	auto &db_config = DBConfig::GetConfig(from.GetDatabase());
-+ 	for (auto &entry : db_config.GetExtensionSettings()) {
-+ 		auto &option = entry.second;
-+ 		if (!option.setting_index.IsValid()) {
-+@@ -616,18 +617,30 @@ void DuckLakeUtil::CopyExtensionSettings(ClientContext &from, ClientContext &to)
-+ 		auto setting_index = option.setting_index.GetIndex();
-+ 		// these change the types read from the metadata and data files
-+ 		if (entry.first == "sqlite_all_varchar" || entry.first == "binary_as_string") {
-+-			ClientConfig::GetConfig(to).user_settings.SetUserSetting(setting_index, Value::BOOLEAN(false));
-++			result.emplace_back(setting_index, Value::BOOLEAN(false));
-+ 			continue;
-+ 		}
-+-		if (!ClientConfig::GetConfig(from).user_settings.IsSet(setting_index)) {
-++		auto client_config = from.TryGetClientConfig();
-++		if (!client_config || !client_config->user_settings.IsSet(setting_index)) {
-+ 			continue;
-+ 		}
-+ 		Value value;
-+ 		from.TryGetCurrentUserSetting(setting_index, value);
-+-		ClientConfig::GetConfig(to).user_settings.SetUserSetting(setting_index, std::move(value));
-++		result.emplace_back(setting_index, std::move(value));
-++	}
-++	return result;
-++}
-++
-++void DuckLakeUtil::ApplyExtensionSettings(const vector<pair<idx_t, Value>> &settings, ClientContext &to) {
-++	for (auto &entry : settings) {
-++		ClientConfig::GetConfig(to).user_settings.SetUserSetting(entry.first, entry.second);
-+ 	}
-+ }
-+ 
-++void DuckLakeUtil::CopyExtensionSettings(ClientContext &from, ClientContext &to) {
-++	ApplyExtensionSettings(GetExtensionSettings(from.GetContext()), to);
-++}
-++
-+ void DuckLakeUtil::SetExtensionSetting(ClientContext &context, const string &name, const Value &value) {
-+ 	ExtensionOption option;
-+ 	if (!DBConfig::GetConfig(context).TryGetExtensionOption(Identifier(name), option)) {
-+diff --git a/src/functions/ducklake_cleanup_files.cpp b/src/functions/ducklake_cleanup_files.cpp
-+index a79438d7..0337d542 100644
-+--- a/src/functions/ducklake_cleanup_files.cpp
-++++ b/src/functions/ducklake_cleanup_files.cpp
-+@@ -86,7 +86,7 @@ static unique_ptr<FunctionData> CleanupBind(ClientContext &context, TableFunctio
-+ 	if (!skip_cleanup) {
-+ 		auto &transaction = DuckLakeTransaction::Get(context, ducklake_catalog);
-+ 		auto &metadata_manager = transaction.GetMetadataManager();
-+-		result->files = metadata_manager.GetFilesForCleanup(result->GetFilter(), type);
-++		result->files = metadata_manager.GetFilesForCleanup(context, result->GetFilter(), type);
-+ 		for (auto &file : result->files) {
-+ 			result->rows.push_back({Value(file.path)});
-+ 		}
-+diff --git a/src/functions/ducklake_expire_snapshots.cpp b/src/functions/ducklake_expire_snapshots.cpp
-+index 01c645fc..d56a8255 100644
-+--- a/src/functions/ducklake_expire_snapshots.cpp
-++++ b/src/functions/ducklake_expire_snapshots.cpp
-+@@ -72,7 +72,7 @@ static unique_ptr<FunctionData> DuckLakeExpireSnapshotsBind(ClientContext &conte
-+ 	}
-+ 	auto &transaction = DuckLakeTransaction::Get(context, ducklake_catalog);
-+ 	auto &metadata_manager = transaction.GetMetadataManager();
-+-	result->snapshots = metadata_manager.GetAllSnapshots(filter);
-++	result->snapshots = metadata_manager.GetAllSnapshots(context, filter);
-+ 	for (auto &snapshot : result->snapshots) {
-+ 		result->rows.push_back(DuckLakeSnapshotsFunction::GetSnapshotValues(snapshot));
-+ 	}
-+diff --git a/src/functions/ducklake_flush_inlined_data.cpp b/src/functions/ducklake_flush_inlined_data.cpp
-+index 49f07791..9a9bdd99 100644
-+--- a/src/functions/ducklake_flush_inlined_data.cpp
-++++ b/src/functions/ducklake_flush_inlined_data.cpp
-+@@ -498,7 +498,7 @@ WHERE del.begin_snapshot <= {SNAPSHOT_ID}
-+ 	}
-+ 
-+ 	// Register the delete files
-+-	transac
-```
-
-**File**: `.github/patches/extensions/fts/0004-indexing-result-order.patch` (added, +22/-0)
-```diff
-@@ -0,0 +1,22 @@
-+diff --git a/test/sql/fts/test_indexing.test_slow b/test/sql/fts/test_indexing.test_slow
-+index 4643b87..a1f283e 100644
-+--- a/test/sql/fts/test_indexing.test_slow
-++++ b/test/sql/fts/test_indexing.test_slow
-+@@ -62,7 +62,7 @@ one
-+ two
-+ three
-+ 
-+-query III
-++query III rowsort
-+ SELECT termid, docid, fieldid FROM fts_main_documents.terms
-+ ----
-+ 0	0	0
-+@@ -100,7 +100,7 @@ SELECT * FROM qtermids
-+ 0
-+ 1
-+ 
-+-query II
-++query II rowsort
-+ WITH ppterms AS (SELECT stem(unnest(string_split_regex(regexp_replace(lower(strip_accents('QUÁCKED BÁRKED')), '[^a-z]', ' ', 'g'), '\s+')), 'porter') AS term),
-+ qtermids AS (SELECT termid FROM fts_main_documents.dict AS dict, ppterms WHERE dict.term = ppterms.term),
-+ qterms AS (SELECT termid, docid FROM fts_main_documents.terms AS terms WHERE termid IN (SELECT qtermids.termid FROM qtermids))
-```
-
-**File**: `.github/patches/extensions/glue/0005-transaction-takes-context.patch` (added, +85/-0)
-```diff
-@@ -0,0 +1,85 @@
-+diff --git a/src/catalog/glue_transaction.cpp b/src/catalog/glue_transaction.cpp
-+index 09f8369..5deb6d3 100644
-+--- a/src/catalog/glue_transaction.cpp
-++++ b/src/catalog/glue_transaction.cpp
-+@@ -5,13 +5,14 @@
-+ #include "duckdb/logging/logger.hpp"
-+ #include "duckdb/main/attached_database.hpp"
-+ #include "duckdb/main/client_context.hpp"
-++#include "duckdb/main/context.hpp"
-+ #include "duckdb/transaction/transaction_manager.hpp"
-+ 
-+ namespace duckdb {
-+ 
-+ namespace {
-+ 
-+-bool ConnectionScopedMetadataCache(ClientContext &context) {
-++bool ConnectionScopedMetadataCache(Context &context) {
-+ 	Value scope;
-+ 	if (context.TryGetCurrentSetting("glue_metadata_cache_scope", scope) && !scope.IsNull()) {
-+ 		return StringUtil::Lower(StringValue::Get(scope)) == "connection";
-+@@ -22,11 +23,11 @@ bool ConnectionScopedMetadataCache(ClientContext &context) {
-+ 
-+ } // namespace
-+ 
-+-GlueTransaction::GlueTransaction(GlueCatalog &glue_catalog, TransactionManager &manager, ClientContext &context)
-++GlueTransaction::GlueTransaction(GlueCatalog &glue_catalog, TransactionManager &manager, Context &context)
-+     : Transaction(manager, context), glue_catalog(glue_catalog),
-+       transaction_state(GlueTransactionState::TRANSACTION_NOT_YET_STARTED) {
-+ 	if (ConnectionScopedMetadataCache(context)) {
-+-		auto state = context.GetContext().GetRegisteredState().GetOrCreate<GlueMetadataCacheState>("glue_metadata_cache");
-++		auto state = context.GetRegisteredState().GetOrCreate<GlueMetadataCacheState>("glue_metadata_cache");
-+ 		cache = state->GetCache(glue_catalog.GetName().GetIdentifierName(), glue_catalog.GetAttached().oid);
-+ 	} else {
-+ 		cache = make_shared_ptr<GlueTransactionCache>();
-+diff --git a/src/catalog/glue_transaction_manager.cpp b/src/catalog/glue_transaction_manager.cpp
-+index 9f53af1..b5b6778 100644
-+--- a/src/catalog/glue_transaction_manager.cpp
-++++ b/src/catalog/glue_transaction_manager.cpp
-+@@ -11,7 +11,7 @@ GlueTransactionManager::GlueTransactionManager(AttachedDatabase &db_p, GlueCatal
-+     : TransactionManager(db_p), glue_catalog(glue_catalog) {
-+ }
-+ 
-+-Transaction &GlueTransactionManager::StartTransaction(ClientContext &context) {
-++Transaction &GlueTransactionManager::StartTransaction(Context &context, MetaTransaction &) {
-+ 	auto transaction = make_uniq<GlueTransaction>(glue_catalog, *this, context);
-+ 	transaction->Start();
-+ 	auto &result = *transaction;
-+@@ -31,7 +31,7 @@ ErrorData GlueTransactionManager::CommitTransaction(ClientContext &context, Tran
-+ 	return ErrorData();
-+ }
-+ 
-+-void GlueTransactionManager::RollbackTransaction(Transaction &transaction) {
-++void GlueTransactionManager::RollbackTransaction(ClientContext &context, Transaction &transaction) {
-+ 	auto &glue_transaction = transaction.Cast<GlueTransaction>();
-+ 	glue_transaction.Rollback();
-+ 	lock_guard<mutex> l(transaction_lock);
-+diff --git a/src/include/catalog/glue_transaction.hpp b/src/include/catalog/glue_transaction.hpp
-+index 68bb793..db37941 100644
-+--- a/src/include/catalog/glue_transaction.hpp
-++++ b/src/include/catalog/glue_transaction.hpp
-+@@ -146,7 +146,7 @@ private:
-+ //! immediately. The transaction exists because every attached database needs one, and carries the metadata cache.
-+ class GlueTransaction : public Transaction {
-+ public:
-+-	GlueTransaction(GlueCatalog &glue_catalog, TransactionManager &manager, ClientContext &context);
-++	GlueTransaction(GlueCatalog &glue_catalog, TransactionManager &manager, Context &context);
-+ 	~GlueTransaction() override;
-+ 
-+ 	void Start();
-+diff --git a/src/include/catalog/glue_transaction_manager.hpp b/src/include/catalog/glue_transaction_manager.hpp
-+index e37e655..bc17782 100644
-+--- a/src/include/catalog/glue_transaction_manager.hpp
-++++ b/src/include/catalog/glue_transaction_manager.hpp
-+@@ -12,9 +12,9 @@ class GlueTransactionManager : public TransactionManager {
-+ public:
-+ 	GlueTransactionManager(AttachedDatabase &db_p, GlueCatalog &glue_catalog);
-+ 
-+-	Transaction &StartTransaction(ClientContext &context) override;
-++	Transaction &StartTransaction(Context &context, MetaTransaction &) override;
-+ 	ErrorData CommitTransaction(ClientContext &context, Transaction &transaction) override;
-+-	void RollbackTransaction(Transaction &transaction) override;
-++	void RollbackTransaction(ClientContext &context, Transaction &transaction) override;
-+ 
-+ 	void Checkpoint(ClientContext &context, bool force = false) override;
-+ 
-```
-
-**File**: `.github/patches/extensions/iceberg/0005-transaction-takes-context.patch` (added, +678/-0)
-```diff
-@@ -0,0 +1,678 @@
-+diff --git a/src/catalog/rest/catalog_entry/schema/iceberg_schema_entry.cpp b/src/catalog/rest/catalog_entry/schema/iceberg_schema_entry.cpp
-+index e30b8dfc8..e16d07a22 100644
-+--- a/src/catalog/rest/catalog_entry/schema/iceberg_schema_entry.cpp
-++++ b/src/catalog/rest/catalog_entry/schema/iceberg_schema_entry.cpp
-+@@ -505,13 +505,13 @@ void IcebergSchemaEntry::Alter(CatalogTransaction transaction, AlterInfo &info)
-+ 				}
-+ 				D_ASSERT(state && state->IsDroppedOrRenamed());
-+ 			}
-+-			irc_transaction.RenameTable(catalog_table_info, new_name.GetIdentifierName());
-++			irc_transaction.RenameTable(context, catalog_table_info, new_name.GetIdentifierName());
-+ 			return;
-+ 		}
-+ 	}
-+ 
-+ 	auto &alter = irc_transaction.GetOrCreateAlter();
-+-	auto &updated_table = alter.GetOrInitializeTable(catalog_table_info);
-++	auto &updated_table = alter.GetOrInitializeTable(context, catalog_table_info);
-+ 	auto &transaction_data = updated_table.GetOrCreateTransactionData(irc_transaction);
-+ 	auto &current_schema = updated_table.table_metadata.GetLatestSchema();
-+ 
-+@@ -565,7 +565,7 @@ void IcebergSchemaEntry::Alter(CatalogTransaction transaction, AlterInfo &info)
-+ 		// Ensure last assigned partition field id is up to date
-+ 		transaction_data.TableAddAssertLastAssignedPartitionId();
-+ 
-+-		updated_table.SetSortedBy(irc_transaction, sort_info.orders, current_schema);
-++		updated_table.SetSortedBy(context, irc_transaction, sort_info.orders, current_schema);
-+ 		return;
-+ 	}
-+ 	case AlterTableType::ADD_COLUMN: {
-+diff --git a/src/catalog/rest/catalog_entry/table/iceberg_table.cpp b/src/catalog/rest/catalog_entry/table/iceberg_table.cpp
-+index 4d4a83c43..4034fda70 100644
-+--- a/src/catalog/rest/catalog_entry/table/iceberg_table.cpp
-++++ b/src/catalog/rest/catalog_entry/table/iceberg_table.cpp
-+@@ -551,15 +551,15 @@ void IcebergTable::SetPartitionedBy(IcebergTransaction &transaction,
-+ 	transaction_data.TableSetDefaultSpec();
-+ }
-+ 
-+-void IcebergTable::SetSortedBy(IcebergTransaction &transaction, const vector<OrderByNode> &orders,
-+-                               const IcebergTableSchema &schema, bool first_sort_spec) {
-++void IcebergTable::SetSortedBy(ClientContext &context, IcebergTransaction &transaction,
-++                               const vector<OrderByNode> &orders, const IcebergTableSchema &schema,
-++                               bool first_sort_spec) {
-+ 	idx_t new_sort_order_id = UNSORTED_SORT_ORDER_ID;
-+ 	if (!first_sort_spec && !orders.empty()) {
-+ 		new_sort_order_id = GetNextSortOrderId();
-+ 	}
-+ 
-+-	auto context = transaction.context.lock();
-+-	auto new_sort_order = BuildSortOrder(*context, orders, schema, static_cast<int32_t>(new_sort_order_id));
-++	auto new_sort_order = BuildSortOrder(context, orders, schema, static_cast<int32_t>(new_sort_order_id));
-+ 
-+ 	// if spec definition already exists in a previous spec definition, set it to that spec id
-+ 	// (some catalog may allow duplicate definitions, others not)
-+@@ -824,10 +824,7 @@ IcebergTableMetadata IcebergTable::CreateMetadataFromLog(ClientContext &context,
-+ 	return IcebergTableMetadata::FromTableMetadata(parsed_metadata);
-+ }
-+ 
-+-IcebergTable IcebergTable::Copy(IcebergTransaction &iceberg_transaction) const {
-+-	auto locked_context = iceberg_transaction.context.lock();
-+-	auto &context = *locked_context;
-+-
-++IcebergTable IcebergTable::Copy(ClientContext &context) const {
-+ 	auto ret = Copy();
-+ 	auto transaction_start_ms = IcebergUtils::GetTransactionStartTimeMS(context);
-+ 	auto clock_skew_ms = DEFAULT_METADATA_LOG_CLOCK_SKEW_MS;
-+@@ -891,8 +888,7 @@ shared_ptr<IcebergTable> IcebergTable::CreatePlaceholder(IcebergCatalog &catalog
-+ IcebergTransactionData &IcebergTable::GetOrCreateTransactionData(IcebergTransaction &transaction) {
-+ 	lock_guard<mutex> guard(transaction.lock);
-+ 	if (!transaction_data) {
-+-		auto context = transaction.context.lock();
-+-		transaction_data = make_uniq<IcebergTransactionData>(*context, transaction, *this);
-++		transaction_data = make_uniq<IcebergTransactionData>(transaction, *this);
-+ 	}
-+ 	return *transaction_data;
-+ }
-+diff --git a/src/catalog/rest/iceberg_table_set.cpp b/src/catalog/rest/iceberg_table_set.cpp
-+index d6efdf664..43cea7fe7 100644
-+--- a/src/catalog/rest/iceberg_table_set.cpp
-++++ b/src/catalog/rest/iceberg_table_set.cpp
-+@@ -252,7 +252,7 @@ void IcebergTableSet::DropEntry(ClientContext &context, DropInfo &info, bool del
-+ 
-+ 	// Add the table to the transaction's deleted tables.
-+ 	auto &transaction = IcebergTransaction::Get(context, catalog).Cast<IcebergTransaction>();
-+-	auto &table = transaction.DeleteTable(*entry->second);
-++	auto &table = transaction.DeleteTable(context, *entry->second);
-+ 	//! FIXME: Schema versions point back to their IcebergTable and must be reinitialized after the copy.
-+ 	table.InitSchemaVersions();
-+ }
-+@@ -521,8 +521,8 @@ optional_ptr<CatalogEntry> IcebergTableSet::GetEntry(ClientContext &context, con
-+ 	}
-+ 	iceberg_transaction.tables[table_key] = new_vers
-```
-
-**File**: `.github/patches/extensions/mysql_scanner/0003-transaction-takes-context.patch` (added, +817/-0)
-```diff
-@@ -0,0 +1,817 @@
-+diff --git a/src/include/mysql_types.hpp b/src/include/mysql_types.hpp
-+index bacb77d..06ac6f4 100644
-+--- a/src/include/mysql_types.hpp
-++++ b/src/include/mysql_types.hpp
-+@@ -12,6 +12,7 @@
-+ 
-+ #include "duckdb.hpp"
-+ #include "duckdb/main/client_context.hpp"
-++#include "duckdb/main/context.hpp"
-+ #include "duckdb/parser/expression/type_expression.hpp"
-+ #include "duckdb/parser/parsed_expression.hpp"
-+ 
-+@@ -39,6 +40,7 @@ struct MySQLTypeConfig {
-+ 	bool incomplete_dates_as_nulls = false;
-+ 
-+ 	MySQLTypeConfig();
-++	MySQLTypeConfig(Context &context);
-+ 	MySQLTypeConfig(ClientContext &context);
-+ };
-+ 
-+diff --git a/src/include/storage/mysql_catalog_set.hpp b/src/include/storage/mysql_catalog_set.hpp
-+index 096686b..b676f4a 100644
-+--- a/src/include/storage/mysql_catalog_set.hpp
-++++ b/src/include/storage/mysql_catalog_set.hpp
-+@@ -24,16 +24,17 @@ class MySQLCatalogSet {
-+ public:
-+ 	MySQLCatalogSet(Catalog &catalog);
-+ 
-+-	optional_ptr<CatalogEntry> GetEntry(MySQLTransaction &transaction, const string &name);
-+-	virtual void DropEntry(MySQLTransaction &transaction, DropInfo &info);
-+-	void Scan(MySQLTransaction &transaction, const std::function<void(CatalogEntry &)> &callback);
-++	optional_ptr<CatalogEntry> GetEntry(ClientContext &context, MySQLTransaction &transaction, const string &name);
-++	virtual void DropEntry(ClientContext &context, MySQLTransaction &transaction, DropInfo &info);
-++	void Scan(ClientContext &context, MySQLTransaction &transaction,
-++	          const std::function<void(CatalogEntry &)> &callback);
-+ 	virtual optional_ptr<CatalogEntry> CreateEntry(MySQLTransaction &transaction, shared_ptr<CatalogEntry> entry);
-+ 	void ClearEntries();
-+ 
-+ protected:
-+-	virtual void LoadEntries(MySQLTransaction &transaction) = 0;
-++	virtual void LoadEntries(ClientContext &context, MySQLTransaction &transaction) = 0;
-+ 
-+-	void TryLoadEntries(MySQLTransaction &transaction);
-++	void TryLoadEntries(ClientContext &context, MySQLTransaction &transaction);
-+ 
-+ 	void EraseEntryInternal(const string &name);
-+ 
-+diff --git a/src/include/storage/mysql_index_set.hpp b/src/include/storage/mysql_index_set.hpp
-+index 122a00b..415af85 100644
-+--- a/src/include/storage/mysql_index_set.hpp
-++++ b/src/include/storage/mysql_index_set.hpp
-+@@ -17,10 +17,10 @@ class MySQLIndexSet : public MySQLInSchemaSet {
-+ public:
-+ 	MySQLIndexSet(MySQLSchemaEntry &schema);
-+ 
-+-	void DropEntry(MySQLTransaction &transaction, DropInfo &info) override;
-++	void DropEntry(ClientContext &context, MySQLTransaction &transaction, DropInfo &info) override;
-+ 
-+ protected:
-+-	void LoadEntries(MySQLTransaction &transaction) override;
-++	void LoadEntries(ClientContext &context, MySQLTransaction &transaction) override;
-+ };
-+ 
-+ } // namespace duckdb
-+diff --git a/src/include/storage/mysql_schema_set.hpp b/src/include/storage/mysql_schema_set.hpp
-+index a0762ad..8ceff1e 100644
-+--- a/src/include/storage/mysql_schema_set.hpp
-++++ b/src/include/storage/mysql_schema_set.hpp
-+@@ -23,10 +23,11 @@ public:
-+ 	explicit MySQLSchemaSet(Catalog &catalog, vector<string> schemas_to_load);
-+ 
-+ public:
-+-	optional_ptr<CatalogEntry> CreateSchema(MySQLTransaction &transaction, CreateSchemaInfo &info);
-++	optional_ptr<CatalogEntry> CreateSchema(ClientContext &context, MySQLTransaction &transaction,
-++	                                        CreateSchemaInfo &info);
-+ 
-+ protected:
-+-	void LoadEntries(MySQLTransaction &transaction) override;
-++	void LoadEntries(ClientContext &context, MySQLTransaction &transaction) override;
-+ 
-+ 	vector<string> schemas_to_load;
-+ };
-+diff --git a/src/include/storage/mysql_table_set.hpp b/src/include/storage/mysql_table_set.hpp
-+index 7e01552..96b69fe 100644
-+--- a/src/include/storage/mysql_table_set.hpp
-++++ b/src/include/storage/mysql_table_set.hpp
-+@@ -25,21 +25,23 @@ public:
-+ 	explicit MySQLTableSet(MySQLSchemaEntry &schema);
-+ 
-+ public:
-+-	optional_ptr<CatalogEntry> CreateTable(MySQLTransaction &transaction, BoundCreateTableInfo &info);
-++	optional_ptr<CatalogEntry> CreateTable(ClientContext &context, MySQLTransaction &transaction,
-++	                                       BoundCreateTableInfo &info);
-+ 
-+-	static unique_ptr<MySQLTableInfo> GetTableInfo(MySQLTransaction &transaction, MySQLSchemaEntry &schema,
-+-	                                               const string &table_name);
-+-	optional_ptr<CatalogEntry> RefreshTable(MySQLTransaction &transaction, const string &table_name);
-++	static unique_ptr<MySQLTableInfo> GetTableInfo(ClientContext &context, MySQLTransaction &transaction,
-++	                                               MySQLSchemaEntry &schema, const string &table_name);
-++	optional_ptr<CatalogEntry> RefreshTable(ClientContext &context, MySQLTransaction &transaction,
-++	                                        const string &table_name);
-+ 
-+-	void AlterTable(MySQLTransaction &transaction, AlterTableInfo &info);
-++	void AlterTable(ClientContext &context, MySQLTransaction &transaction, AlterTa
-```
-
-**File**: `.github/patches/extensions/mysql_scanner/0004-database-connector-transaction-manager-takes-context.patch` (added, +51/-0)
-```diff
-@@ -0,0 +1,51 @@
-+--- a/database-connector/src/include/dbconnector/storage/transaction_manager.hpp
-++++ b/database-connector/src/include/dbconnector/storage/transaction_manager.hpp
-+@@ -5,6 +5,8 @@
-+ #include "duckdb/common/reference_map.hpp"
-+ #include "duckdb/main/attached_database.hpp"
-+ #include "duckdb/main/client_context.hpp"
-++#include "duckdb/main/context.hpp"
-++#include "duckdb/transaction/meta_transaction.hpp"
-+ #include "duckdb/transaction/transaction_manager.hpp"
-+ 
-+ namespace dbconnector {
-+@@ -17,7 +19,7 @@
-+ 	    : duckdb::TransactionManager(db_p), catalog(catalog_p) {
-+ 	}
-+ 
-+-	duckdb::Transaction &StartTransaction(duckdb::ClientContext &context) override {
-++	duckdb::Transaction &StartTransaction(duckdb::Context &context, duckdb::MetaTransaction &) override {
-+ 		auto transaction = duckdb::make_uniq<TransactionT>(catalog, *this, context);
-+ 		transaction->Start();
-+ 		auto &result = *transaction;
-+@@ -30,7 +32,7 @@
-+ 		auto &db_transaction = transaction.Cast<TransactionT>();
-+ 		duckdb::ErrorData error;
-+ 		try {
-+-			db_transaction.Commit();
-++			db_transaction.Commit(context);
-+ 		} catch (const std::exception &ex) {
-+ 			error = duckdb::ErrorData(ex);
-+ 		} catch (...) {
-+@@ -40,10 +42,10 @@
-+ 		return error;
-+ 	}
-+ 
-+-	void RollbackTransaction(duckdb::Transaction &transaction) override {
-++	void RollbackTransaction(duckdb::ClientContext &context, duckdb::Transaction &transaction) override {
-+ 		auto &db_transaction = transaction.Cast<TransactionT>();
-+ 		try {
-+-			db_transaction.Rollback();
-++			db_transaction.Rollback(context);
-+ 		} catch (...) {
-+ 			DestroyTransaction(transaction);
-+ 			throw;
-+@@ -53,7 +55,7 @@
-+ 
-+ 	void Checkpoint(duckdb::ClientContext &context, bool force = false) override {
-+ 		auto &transaction = TransactionT::Get(context, db.GetCatalog());
-+-		auto &conn = transaction.GetConnection();
-++		auto &conn = transaction.GetConnection(context);
-+ 		conn.Execute(context, "CHECKPOINT");
-+ 	}
-+ 
-```
-
----
-
-### Incident Patch 3: `8c17d8c3` (2026-11-20)
-**Commit Message**: fix ci
-
-**File**: `test/configs/force_storage_restart.json` (modified, +1/-0)
-```diff
-@@ -55,6 +55,7 @@
-       "paths": [
-         "test/sql/copy/parquet/bloom_filter_coalesced_memory.test_slow",
-         "test/sql/copy/parquet/bloom_filter_coalesced_reads.test",
-+        "test/sql/copy/parquet/bloom_filter_or_reads.test",
-         "test/sql/storage/compression/zstd/zstd_compression_ratio.test_slow",
-         "test/sql/logging/logging_memory_after_truncate.test",
-         "test/sql/logging/logging_deprecated_names.test",
+@@ -0,0 +1,20 @@
++# name: test/sql/index/art/scan/test_art_between_null_bound_scan.test
++# description: An ART scan must not turn a BETWEEN with a NULL bound into a one-sided range scan
++# group: [scan]
++
++statement ok
++CREATE TABLE t AS SELECT ('POINT(' || r || ' ' || r || ')')::GEOMETRY AS g FROM range(10) r(r);
++
++statement ok
++CREATE INDEX idx ON t ((vertex_extract(g, 'x')));
++
++# The points have no z coordinate, so the statistics fold vertex_extract(g, 'z') to a NULL constant.
++query I
++SELECT count(*) FROM t WHERE vertex_extract(g, 'x') BETWEEN vertex_extract(g, 'z') AND 5;
++----
++0
++
++query I
++SELECT count(*) FROM t WHERE vertex_extract(g, 'x') BETWEEN 2 AND vertex_extract(g, 'z');
++----
++0
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #29154** (closed): [v2.0-cyanoptera] Bump aws to 9ba41b09 (@autograaf)
+- **PR #29138** (2026-11-20): Check the released page lock, not the address, after BlockAllocator shutdown (@Robinho-MR)
 - **PR #29134** (closed): Skip plan-cost regression checks for identical plans (@lnkuiper)
 - **PR #29131** (closed): Register a sort temporary memory state on its first sink (@anhphanmd)
 - **PR #29126** (2026-11-20): Remove duplicate Unity Catalog test patch (@lnkuiper)
-- **PR #29122** (2026-11-20): [v2.0-cyanoptera] Skip async_task_synchronous_batch under storage_compatibility and v1_storage_block_size_16kB (@Robinho-MR)
-- **PR #29118** (2026-11-20): Scan validity segments into ValidityMask (@lnkuiper)
-- **PR #29105** (2026-11-20): Avoid unnecessary bloom filter IO (@dentiny)
+- **PR #29124** (2026-11-20): Ignore run-to-run plan cost variation in the plan-cost regression runner (@Robinho-MR)
 
 ---
 
@@ -2718,31 +2233,60 @@ consistent with ORDER BY and plain min/max.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. min/max for INTERVAL type
+## X. Ignore run-to-run plan cost variation in the plan-cost regression runner
 
 **RULE**:
-When implementing operations in `src/function/aggregate/distributive/minmax.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duckdb/duckdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `scripts/plan_cost_runner.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duckdb/duckdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `abbad801`: min/max for INTERVAL type. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `aa009031`: Ignore run-to-run plan cost variation in the plan-cost regression runner. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/function/aggregate/distributive/minmax.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/plan_cost_runner.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-	case PhysicalType::INTERVAL:
-		// sort keys do not normalize intervals, so compare them as interval_t
-		SpecializeMinMaxNFunction<MinMaxFixedValue<interval_t>, COMPARATOR>(function);
-		break;
+PROFILE_RUNS = 5
+# Overlapping cost samples whose medians differ by more than this are still compared.
+MEDIAN_TOLERANCE = 0.02
+def cost_components(cost):
+    return (cost.total, cost.build_side, cost.probe_side)
+
+
+def median_cost(costs):
+    result = PlanCost()
+    result.total, result.build_side, result.probe_side = (
+        statistics.median_low(values) for values in zip(*(cost_components(cost) for cost in costs))
+    )
+    return result
+
+
+def within_run_variation(old_costs, new_costs):
+    for old_values, new_values in zip(
+        zip(*(cost_components(cost) for cost in old_costs)), zip(*(cost_components(cost) for cost in new_costs))
+    ):
+        if max(old_values) < min(new_values) or max(new_values) < min(old_values):
+            return False
+        old_median, new_median = statistics.median_low(old_values), statistics.median_low(new_values)
+        if abs(old_median - new_median) > MEDIAN_TOLERANCE * max(old_median, new_median):
+            return False
+    return True
+
+
+def query_plan_costs(old, new, dbname, query):
+    old_costs = [query_plan_cost(old, dbname, query)]
+    new_costs = [query_plan_cost(new, dbname, query)]
+    if old_costs[0] == new_costs[0]:
+        ret
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+        old_cost = query_plan_cost(old, DB_NAME, query)
+        new_cost = query_plan_cost(new, DB_NAME, query)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `abbad801` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `aa009031` are properly handled with clean fallback behavior.

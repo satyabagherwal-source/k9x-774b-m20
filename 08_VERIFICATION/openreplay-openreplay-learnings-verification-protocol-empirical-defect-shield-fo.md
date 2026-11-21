@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T14:16:03.288Z",
+  "timestamp": "2026-11-21T17:50:10.681Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-openreplay-openreplay-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [openreplay-openreplay-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T14:16:03.288Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T17:50:10.681Z`  
 > **Learning ID**: `LEARN-EVO-openreplay-openreplay-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/openreplay-openreplay-learnings.md`  
 > **Source**: github ([https://github.com/openreplay/openreplay](https://github.com/openreplay/openreplay))  
-> **Source Version**: `42a68706`  
+> **Source Version**: `fc6d0e45`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T14:15:50.354Z  
+> **Timestamp**: 2026-11-21T17:49:55.627Z  
 > **Learning ID**: `learn-github-openreplay-openreplay`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/openreplay-openreplay-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/openreplay/openreplay](https://github.com/openreplay/openreplay))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T14:15:50.349Z  
+> **Harvest Timestamp**: 2026-11-21T17:49:55.622Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Session replay, cobrowsing and product analytics you can self-host. Best for reproducing issues and iterating on your product.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 13158 stars
+- **Stars / Engagement**: 13169 stars
 
 ---
 
@@ -1080,11 +1080,11 @@ def api_key_authorizer(token):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #5184** (2026-11-20): **[tracker-reactnative][iOS] Crash in RntrackerTouchView.handlePan when a swipe ends at a negative coordinate (UInt64 conversion)**
+  *Symptoms*: ### Summary  On iOS, `@openreplay/react-native` crashes the app with `EXC_BREAKPOINT (SIGTRAP)` inside `RntrackerTouchView.handlePan(_:)` when a pan gesture ends at a negative x or y coordinate relative to the tracking view.  ### Environment  - `@openreplay/react-native`: 0.7.15 (also reproduced on 0.7.14) - React Native 0.88.1, Expo SDK 58 (New Architecture) - iOS 27.0.1, iPhone 13 Pro, Release build  ### Steps to reproduce  1. Wrap a navigation section in `ORTouchTrackingView` (for example the root of a nested native stack), with tracking active. 2. Push that section on top of a parent native stack screen. 3. Use the iOS edge swipe-back gesture to pop the section.  The whole `ORTouchTrackingView` moves to the right during the interactive pop. When the gesture ends, the finger's position relative to the view is negative, and the app terminates.  ### Crash (main thread)  ``` EXC_BREAKPOINT (SIGTRAP) 0  RntrackerTouchView.handlePan(_:) 1  @objc RntrackerTouchView.handlePan(_:) 2  -[UIGestureRecognizerTarget _sendActionWithGestureRecognizer:] ...    UIWindow.or_sendEvent(_:)        (Openreplay)    -[UIApplication sendEvent:] ```  ### Cause  `ios/ReactNativeORTouchViewManager.swift` converts the touch location with `UInt64(_:)`:  ```swift Analytics.shared.sendSwipe(label: "React-Native View", x: UInt64(endPoint.x), y: UInt64(endPoint.y), direction: direction) ```  `UInt64(_:)` traps at runtime for negative, NaN or infinite `CGFloat` values. `recognizer.location(in: self)` can re
+
 - **Issue #5177** (2026-11-18): **Replay drops DOM messages between ~15 s and ~30 s after session start**
   *Symptoms*: ### Versions  Self-hosted 1.28.5 (helm), tracker 19.1.2, default `PROTOCOL_VERSION` (2) and `FILE_SPLIT_TIME` (15 s). The code below is the same on `main` and `tracker-19.x.x`.  ### What happens  When a page changes a lot of DOM in the first ~30 s of a session, the replay misses everything created between ~15 s and the end of that window. Elements stay missing for the rest of the page; a `<canvas>` created there stays empty (`CanvasManager: Node <id> not found`). The player console logs hundreds of:  ``` Trying to append message with the less time then the list tail: 16350 vs 29998 ```  ### Cause  1. **Tracker worker** (`BatchWriter.pushTo`): with protocol 2, URL-based messages (`SetNodeAttributeURLBased`, i.e. every `style`/`href`/`src` attribute, `SetCSSDataURLBased`, `AdoptedSS*URLBased`) go to `assetBuilder`, the rest to `playerBuilder`. When `assetBuilder` hits the soft budget, the player builder is flushed first. When `playerBuilder` hits it (every few seconds while a page renders), only the player builder is flushed, so `assetBuilder` keeps its messages until the next `finaliseBatch` (30 s `flushInterval`). One assets batch can span 0.9 s → 30 s. 2. **Sink** (`sessionwriter/mobwriter.go`, `HandleBatch`): a batch goes to `dom.mobs` if `DataTimestamp() - startTime <= FILE_SPLIT_TIME`, else to `dom.mobe`. `DataTimestamp` is the batch's first timestamp, so that assets batch lands in `dom.mobs` while ending at 30 s. 3. **Player** (`MessageLoader`): each file is sorted on it
-
-- **Issue #5136** (2026-11-06): **Canvas replay blank when canvas has no display style (follow-up to #4853 / #4854)**
-  *Symptoms*: **Describe the issue** Canvas replay is still blank when the recorded canvas has no `display` style (follow-up to #4853 / #4854).  Since 1.28 the replay iframe is sandboxed without `allow-scripts`. With scripting disabled, the HTML spec says a `<canvas>` represents its fallback content, so it is laid out as a normal (non-replaced) element. #4854 handles this by painting recorded frames as the canvas's CSS `background-image`, but that only works if the canvas already has a size. A canvas without an explicit `display` stays `display: inline`, and CSS `width`/`height` don't apply to plain inline boxes. The canvas collapses to 0×0 and the replay shows a blank page, even though the frames are recorded and reach the player.  This affects any page that sizes its canvas only through inline `style.width`/`style.height`, which is common: PixiJS with `autoDensity: true` does exactly that, as do many other game engines and raw canvas apps.  **Steps to reproduce the issue** 1. Record a page whose canvas has no `display` rule and is sized by inline styles, e.g. `<canvas style="width: 800px; height: 600px">` drawn every frame (2D, or WebGL with `preserveDrawingBuffer: true`), with canvas recording enabled (`canvas: { disableCanvas: false }`). 2. Open the session in the player. 3. Inspect the replayed canvas inside the player iframe in DevTools: its computed size is 0×0 while its `background-image` keeps updating with frames.  **Expected behavior** The canvas replays at its recorded size and
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1101,364 +1101,238 @@ def api_key_authorizer(token):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `42a68706` (2026-11-18)
-**Commit Message**: Increment frontend chart version to v1.28.13 (#5181)
+### Incident Patch 1: `a82fdbea` (2026-11-20)
+**Commit Message**: fix(helm): bump nginx-ingress to 5.8-alpine (#5185)
 
-Co-authored-by: GitHub Action <[REDACTED_EMAIL]>
+NIC 5.8.0 bundles nginx 1.31.9, which fixes the nginx2root
+HTTP/2 RCE CVE-2026-123007 and related CVEs. The 2.4.1 chart
+templates render fine against 5.8 and no feature we use changed
+between 5.7 and 5.8.
 
-**File**: `scripts/helmcharts/openreplay/charts/frontend/Chart.yaml` (modified, +1/-1)
+Refs: OR-3999
+
+**File**: `scripts/helmcharts/openreplay/values.yaml` (modified, +1/-1)
 ```diff
-@@ -18,4 +18,4 @@ version: 0.1.10
- # incremented each time you make changes to the application. Versions are not expected to
- # follow Semantic Versioning. They should reflect the version the application is using.
- # It is recommended to use it with quotes.
--AppVersion: "v1.28.12"
-+AppVersion: "v1.28.13"
+@@ -73,7 +73,7 @@ ingress-nginx:
+   enabled: true
+   controller:
+     image:
+-      tag: 5.4-alpine
++      tag: 5.8-alpine
+     enableSnippets: true
+     # Keep k8s ingress compatible health check for LB
+     healthStatus: true
 ```
 
 ---
 
-### Incident Patch 2: `66d79de4` (2026-11-18)
-**Commit Message**: Player patches 11 18 (#5180)
+### Incident Patch 2: `fc6d0e45` (2026-11-20)
+**Commit Message**: chore(deps): update dependency vite to v7.3.7 [security] (#5188)
 
-* player: insert out-of-order messages by time instead of dropping them
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
-dom.mobs can end after dom.mobe starts (the sink files a batch by its first
-timestamp, and a protocol v2 assets batch can span until the next flush), so
-ListWalker.append dropped DOM messages older than the list tail.
-
-Backport of the ListWalker/ListWalkerWithMarks part of a12bb10dc from dev.
-
-* player: same-time cross-file DOM messages keep create-before-modify order
-
-An asset message in dom.mobs (style, link href, CSS data) and the node it
-targets, created in dom.mobe in the same tracker commit, share a timestamp.
-Inserting after equal-time items applied the attribute before the node
-existed, so the element came back without its style. DOMManager breaks
-equal-time ties with the same priority fixMessageOrder uses within a file.
-
-**File**: `frontend/tests/unit/DOMManager.test.ts` (modified, +46/-0)
+**File**: `mcp_app/yarn.lock` (modified, +187/-343)
 ```diff
-@@ -9,6 +9,7 @@ import {
- import DOMManager from '../../../player/src/web/managers/DOM/DOMManager';
- import { VElement } from '../../../player/src/web/managers/DOM/VirtualDOM';
- import { MType } from '../../../player/src/web/messages/raw.gen';
-+import { fixMessageOrder } from '../../../player/src/web/messages/messageOrder';
+@@ -185,261 +185,131 @@
+     "@babel/helper-string-parser" "^7.29.7"
+     "@babel/helper-validator-identifier" "^7.29.7"
  
- class FrameVElement extends VElement {
-   constructor(
-@@ -182,3 +183,48 @@ describe('SetInputValue rejections', () => {
-     expect(error).toHaveBeenCalled();
-   });
- });
-+
-+// dom.mobs is cut by a batch's first timestamp, so an assets batch in it can end
-+// after dom.mobe starts; the style below was set in the commit that created h1.
-+describe('dom.mobs assets batch overlapping dom.mobe', () => {
-+  const create = { tp: MType.CreateElementNode, id: 10, parentID: 5, index: 0, tag: 'H1', svg: false, time: 20 };
-+  const style = { tp: MType.SetNodeAttribute, id: 10, name: 'style', value: 'color: red', time: 20 };
-+
-+  async function replay(mobs: any[], mobe: any[]) {
-+    jest.spyOn(console, 'warn').mockImplementation(() => {});
-+    jest.spyOn(console, 'error').mockImplementation(() => {});
-+    mount('div', 5);
-+    [...fixMessageOrder(mobs), ...fixMessageOrder(mobe)].forEach((m) => manager.append(m));
-+    await manager.moveReady(40);
-+    // @ts-ignore private access
-+    const h1 = manager.vElements.get(10);
-+    h1?.applyChanges();
-+    return h1?.node as Element | undefined;
-+  }
-+
-+  it('creates the node before its same-time attribute at the mobs tail', async () => {
-+    const h1 = await replay([{ ...style }], [{ ...create }]);
-+    expect(h1?.getAttribute('style')).toBe('color: red');
-+  });
-+
-+  it('creates the node before its same-time attribute inside the mobs range', async () => {
-+    const later = { tp: MType.SetNodeAttribute, id: 5, name: 'style', value: 'top: 0', time: 30 };
-+    const h1 = await replay([{ ...style }, later], [{ ...create }]);
-+    expect(h1?.getAttribute('style')).toBe('color: red');
-+    expect(manager.list.map((m: any) => m.tp)).toEqual([
-+      MType.CreateElementNode,
-+      MType.SetNodeAttribute,
-+      MType.SetNodeAttribute,
-+    ]);
-+  });
-+
-+  it('keeps a same-time removal after the attribute', async () => {
-+    const remove = { tp: MType.RemoveNode, id: 10, time: 20 };
-+    await replay([{ ...create }, { ...style }], [remove]);
-+    expect(manager.list.map((m: any) => m.tp)).toEqual([
-+      MType.CreateElementNode,
-+      MType.SetNodeAttribute,
-+      MType.RemoveNode,
-+    ]);
-+  });
-+});
+-"@esbuild/aix-ppc64@0.27.7":
+-  version "0.27.7"
+-  resolved "https://registry.yarnpkg.com/@esbuild/aix-ppc64/-/aix-ppc64-0.27.7.tgz#82b74f92aa78d720b714162939fb248c90addf53"
+-  integrity sha512-EKX3Qwmhz1eMdEJokhALr0YiD0lhQNwDqkPYyPhiSwKrh7/4KRjQc04sZ8db+5DVVnZ1LmbNDI1uAMPEUBnQPg==
+-
+ "@esbuild/aix-ppc64@0.28.2":
+   version "0.28.2"
+   resolved "https://registry.yarnpkg.com/@esbuild/aix-ppc64/-/aix-ppc64-0.28.2.tgz#bf6e10303bcf2e7c686975fa52f937ec2728d8bc"
+   integrity sha512-XExcO+dvLKvVtNTibSTBej1NCAbaGhWn9Ww1ZPx80qsahhPFe/8jgWP0IchNe0F3HwkU7n8ejhH8bjonqht8mQ==
+ 
+-"@esbuild/android-arm64@0.27.7":
+-  version "0.27.7"
+-  resolved "https://registry.yarnpkg.com/@esbuild/android-arm64/-/android-arm64-0.27.7.tgz#f78cb8a3121fc205a53285adb24972db385d185d"
+-  integrity sha512-62dPZHpIXzvChfvfLJow3q5dDtiNMkwiRzPylSCfriLvZeq0a1bWChrGx/BbUbPwOrsWKMn8idSllklzBy+dgQ==
+-
+ "@esbuild/android-arm64@0.28.2":
+   version "0.28.2"
+   resolved "https://registry.yarnpkg.com/@esbuild/android-arm64/-/android-arm64-0.28.2.tgz#0c6246bc8d2c4d172aac2db3fb1190d72bd65504"
+   integrity sha512-5YfKeeI8qWfBZIX+u2xZC3Zlb3Os/gLS2sbEKM+I4ZOcsWmHS2WLysCcQZDAFRslDUU5Oiq44gf6PYN1vGwG5A==
+ 
+-"@esbuild/android-arm@0.27.7":
+-  version "0.27.7"
+-  resolved "https://registry.yarnpkg.com/@esbuild/android-arm/-/android-arm-0.27.7.tgz#593e10a1450bbfcac6cb321f61f468453bac209d"
+-  integrity sha512-jbPXvB4Yj2yBV7HUfE2KHe4GJX51QplCN1pGbYjvsyCZbQmies29EoJbkEc+vYuU5o45AfQn37vZlyXy4YJ8RQ==
+-
+ "@esbuild/android-arm@0.28.2":
+   version "0.28.2"
+   resolved "https://registry.yarnpkg.com/@esbuild/android-arm/-/android-arm-0.28.2.tgz#2d84ece6a4e2684d92be26ee13d42757d831c381"
+   integrity sha512-kXXoiPVVGQcnIYGOeaovwOURpniDBpSq4A03qkQ+BMQqtGG6HYap3xne9C1O1yo4TR3qxlCX5IqqmX6fFo2Lqg==
+ 
+-"@esbuild/android-x64@0.27.7":
+-  version "0.27.7"
+-  resolved "https://registry.yarnpkg.com/@esbuild/android-x64/-/android-x64-0.27.7.tgz#453143d073326033d2d22caf9e48de4bae274b07"
+-  integrity sha512-x5VpMODneVDb70PYV2VQOmIUUiBtY3D3mPBG8NxVk5CogneYhkR7MmM3yR/uMdITLrC1ml/NV1rj4bMJuy9MCg==
+-
+ "@esbuild/android-x64@0.28.2":
+   version "0.28.2"
+   resolved "https://registry.yarnpkg.com/@esbuild/android-x64/-/android-x64-0.28.2.tgz#fc38d4d6358d8dc1cf53f09f7589fe436eb64801"
+   integrity sha512-O387ite7SzUyCcy3JQX4P4bLtEA7bLLkx+esve5JHnyYfNTxcVpXZo9jhdB0lTKN44gztELTdU7nS8Nr16Fs1Q==
+ 
+-"@esbuild/darwin-arm64@0.27.7":
+-  version "0.27.7"
+-  resolved "https://registry.yarnpkg.com/@esbuild/darwin-arm64/-/darwin-arm64-0.27.7.tgz#6f23000fb9b40b7e04b7d0606c0693bd0632f322"
+-  integrity sha512-5lckdqeuBPlKUwvoCXIgI2D9/ABmPq3Rdp7IfL70393YgaASt7tbju3Ac+ePVi3KDH6N2RqePfHnXkaDtY9fkw==
+-
+ "@esbuild/darwin-arm64@0.28.2":
+   version "0.28.2"
+   resolved "https://registry.yarnpkg.com/@esbuild/darwin-arm64/-/darwin-arm64-0.28.2.tgz#f83afeeac1d7dac01c7a2fd012b3e451a0591fcc"
+   integrity sha512-n4KqkOQrraxHJcgjM1RvwbigfQKIKJVpM7xp+KsxiyUSrRdIXnt73VhrPAx0fV44hgfmIVKjxMN9J1t5jySVkw==
+ 
+-"@esbuild/darwin-x64@0.27.7":
+-  version "0.27.7"
+-  resolved "https://registry.yarnpkg.com/@esbuild/darwin-x64/-/darwin-x64-0.27.7.tgz#27393dd18bb1263c663979c5f1576e00c2d024be"
+-  integrity sha512-rYnXrKcXuT7Z+WL5K980jVFdvVKhCHhUwid+dDYQpH+qu+TefcomiMAJpIiC2EM3Rjtq0sO3StMV/+3w3MyyqQ==
+-
+ "@esbuild/darwin-x64@0.28.2":
+   version "0.28.2"
+   resolved "https://registry.yarnpkg.com/@esbuild/darwin-x64/-/darwin-x64-0.28.2.tgz#510147c055a795588dbbe14fd6b1b8ad0a2f30de"
+   integrity sha512-uq6suIWYP37qzGddBKPw5QEQPi6HiLGsO7UmkpfyaYNQ3D+rN6w6WfwH+nuqcGXWvawGwxOEroO4YGnFh95azw==
+ 
+-"@esbuild/freebsd-arm64@0.27.7":
+-  version "0.27.7"
+-  resolved "https://registry.yarnpkg.com/@esbuild/freebsd-arm64/-/freebsd-arm64-0.27.7.tgz#22e4638fa502d1c0027077324c97640e3adf3a62"
+-  integrity sha512-B48PqeCsEgOtzME2GbNM2roU29AMTuOIN91dsMO30t+Ydis3z/3Ngoj5hhnsOSSwNzS+6JppqWsuhTp6E82l2w==
+-
+ "@esbuild/freebsd-arm64@0.28.2":
+   version "0.28.2"
+   resolved "https://registry.yarnpkg.com/@esbuild/freebsd-arm64/-/freebsd-arm64-0.28.2.tgz#093b9200ecf0b115ba4e5e248a7485c9c5f8bd5e"
+   integrity sha512-n+I0BTSRIoy+d6RPKnEVwql5UwBJolytvY4mAOIEJorKlqgPII8ix6slVVrfZ5Tnj7glIZvloylbB/EJPMWEXw==
+ 
+-"@esbuild/freebsd-x64@0.27.7":
+-  version "0.27.7"
+-  resolved "https://registry.yarnpkg.com/@esbuild/freebsd-x64/-/freebsd-x64-0.27.7.tgz#9224b8e4fea924ce2194e3efc3e9aebf822192d6"
+-  integrity sha512-jOBDK5XEjA4m5IJK3bpAQF9/Lelu/Z9ZcdhTRLf4cajlB+8VEhFFRjWgfy3M1O4rO2GQ/b2dLwCUGpiF/eATNQ==
+-
+ "@esbuild/freebsd-x64@0.28.2":
+   version "0.28.2"
+   resolved "https://registry.yarnpkg.com/@esbuild/freebsd-x64/-/freebsd-x64-0.28.2.tgz#0be22b6df925d213e841ea87123af5df80b0faf7"
+   integrity sha512-78XJTJkvPs0kz2w61301PJjXl4g7q3JqiYMZ/M/yVI73EHBrCRTgkhu9oqG7vPqq+a/yadEW8aD+agKlk5xrmg==
+ 
+-"@esbuild/linux-arm64@0.27.7":
+-  version "0.27.7"
+-  resolved "https://registry.yarnpkg.com/@esbuild/linux-arm64/-/linux-arm64-0.27.7.tgz#4f5d1c27527d817b35684ae21419e57c2bda0
 ```
 
-**File**: `frontend/tests/unit/ListWalker.test.ts` (modified, +65/-5)
-```diff
-@@ -1,5 +1,6 @@
--import { describe, test, expect, beforeEach, jest } from '@jest/globals';
-+import { describe, test, expect, beforeEach, afterEach, jest } from '@jest/globals';
- import ListWalker from '../../../player/src/common/ListWalker';
-+import ListWalkerWithMarks from '../../../player/src/common/ListWalkerWithMarks';
- import type { Timed } from '../../../player/src/common/types';
- 
- interface Item extends Timed {
-@@ -11,17 +12,55 @@ describe('ListWalker', () => {
- 
-   beforeEach(() => {
-     walker = new ListWalker<Item>([]);
--    jest.spyOn(console, 'error').mockImplementation(() => {});
-   });
- 
--  test('append maintains order and prevents out of order inserts', () => {
-+  afterEach(() => {
-+    jest.restoreAllMocks();
-+  });
-+
-+  test('append keeps order and inserts out-of-order items by time', () => {
-+    const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
-     walker.append({ time: 1 });
-     walker.append({ time: 3 });
-     expect(walker.list.map((i) => i.time)).toEqual([1, 3]);
- 
-     walker.append({ time: 2 });
--    expect(walker.list.map((i) => i.time)).toEqual([1, 3]);
--    expect((console.error as jest.Mock).mock.calls.length).toBe(1);
-+    walker.append({ time: 0 });
-+    expect(walker.list.map((i) => i.time)).toEqual([0, 1, 2, 3]);
-+    expect(warn.mock.calls.length).toBe(1);
-+  });
-+
-+  test('out-of-order item goes after items with equal time', () => {
-+    jest.spyOn(console, 'warn').mockImplementation(() => {});
-+    walker.append({ time: 1 });
-+    walker.append({ time: 3, value: 'a' });
-+    walker.append({ time: 5 });
-+    walker.append({ time: 3, value: 'b' });
-+    expect(walker.list.map((i) => `${i.time}${i.value ?? ''}`)).toEqual([
-+      '1',
-+      '3a',
-+      '3b',
-+      '5',
-+    ]);
-+  });
-+
-+  test('overlapping files (dom.mobs tail after dom.mobe head) lose nothing', () => {
-+    jest.spyOn(console, 'warn').mockImplementation(() => {});
-+    const mobs = [{ time: 0 }, { time: 10 }, { time: 15 }, { time: 29 }];
-+    const mobe = [{ time: 16 }, { time: 20 }, { time: 30 }];
-+    [...mobs, ...mobe].forEach((m) => walker.append(m));
-+    expect(walker.list.map((i) => i.time)).toEqual([0, 10, 15, 16, 20, 29, 30]);
-+  });
-+
-+  test('insert before the pointer keeps the current item', () => {
-+    walker.append({ time: 1, value: 'a' });
-+    walker.append({ time: 5, value: 'b' });
-+    walker.moveGetLast(5);
-+    expect(walker.current?.value).toBe('b');
-+    walker.insert({ time: 3, value: 'c' });
-+    expect(walker.current?.value).toBe('b');
-+    expect(walker.countNow).toBe(3);
-+    expect(walker.moveGetLast(5)).toBeNull();
-   });
- 
-   test('unshift prepends items', () => {
-@@ -81,3 +120,24 @@ describe('ListWalker', () => {
-     expect(walker.countNow).toBe(1);
-   });
- });
-+
-+describe('ListWalkerWithMarks', () => {
-+  test('marked counts stay consistent on insert behind the pointer', () => {
-+    jest.spyOn(console, 'warn').mockImplementation(() => {});
-+    const w = new ListWalkerWithMarks<{ time: number; red?: boolean }>(
-+      (i) => !!i.red,
-+    );
-+    w.append({ time: 1, red: true });
-+    w.append({ time: 10 });
-+    w.moveGetLast(10);
-+    expect(w.markedCountNow).toBe(1);
-+    w.append({ time: 5, red: true });
-+    w.insert({ time: 7, red: true });
-+    w.append({ time: 12, red: true });
-+    expect(w.markedCount).toBe(4);
-+    expect(w.markedCountNow).toBe(3);
-+    w.moveGetLast(12);
-+    expect(w.markedCountNow).toBe(4);
-+    jest.restoreAllMocks();
-+  });
-+});
-```
+---
 
-**File**: `player/src/common/ListWalker.ts` (modified, +68/-15)
-```diff
-@@ -4,37 +4,90 @@ export default class ListWalker<T extends Timed> {
-   /* Pointer to the "current" item */
-   private p = 0;
- 
-+  private warnedOutOfOrder = false;
-+
-   constructor(private _list: Array<T> = []) {}
- 
-+  /**
-+   * Appends in time order. Out-of-order items (late batches, cross-file splits)
-+   * are inserted at their sorted position instead of being dropped.
-+   */
-   append(m: T): void {
--    if (this.length > 0 && this.last && m.time < this.last.time) {
--      console.error(
--        'Trying to append message with the less time then the list tail:',
--        m.time,
--        'vs',
--        this.last.time,
--        m,
--        this.last,
--        this,
--      );
-+    const last = this.last;
-+    if (last && !this.fitsAfter(m, last)) {
-+      if (!this.warnedOutOfOrder) {
-+        this.warnedOutOfOrder = true;
-+        console.warn(
-+          'ListWalker: out-of-order item inserted by time',
-+          m.time,
-+          'vs tail',
-+          last.time,
-+        );
-+      }
-+      this.insert(m);
-       return;
-     }
-     this.list.push(m);
-+    this.onAdd(m);
-   }
- 
-   unshift(m: T): void {
-     this.list.unshift(m);
-   }
- 
-+  /** Sorted insert (after items with equal time unless goesBefore). O(log n) search, O(1) for in-order items. */
-   insert(m: T): void {
--    let index = this.list.findIndex((om) => om.time > m.time);
--    if (index === -1) {
--      index = this.length;
-+    const list = this.list;
-+    this.onAdd(m);
-+    if (list.length === 0 || this.fitsAfter(m, list[list.length - 1])) {
-+      list.push(m);
-+      return;
-+    }
-+    let lo = 0;
-+    let hi = list.length;
-+    while (lo < hi) {
-+      const mid = (lo + hi) >> 1;
-+      if (list[mid].time <= m.time) {
-+        lo = mid + 1;
-+      } else {
-+        hi = mid;
-+      }
-+    }
-+    while (
-+      lo > 0 &&
-+      list[lo - 1].time === m.time &&
-+      this.goesBefore(m, list[lo - 1])
-+    ) {
-+      lo--;
-     }
--    const oldList = this.list;
--    this._list = [...oldList.slice(0, index), m, ...oldList.slice(index)];
-+    list.splice(lo, 0, m);
-+    if (lo < this.p) {
-+      // keep the pointer on the same "current" item; the new one counts as passed
-+      this.p++;
-+      this.onPassedInsert(m);
-+    }
-+  }
-+
-+  private fitsAfter(m: T, prev: T): boolean {
-+    return !(
-+      m.time < prev.time ||
-+      (m.time === prev.time && this.goesBefore(m, prev))
-+    );
-   }
- 
-+  /**
-+   * Tie-break for items with equal time arriving out of order (e.g. an asset
-+   * message in dom.mobs and the node it targets created in dom.mobe).
-+   */
-+  protected goesBefore(_m: T, _other: T): boolean {
-+    return false;
-+  }
-+
-+  /** Hooks for subclasses tracking per-item state. */
-+  protected onAdd(_m: T): void {}
-+
-+  protected onPassedInsert(_m: T): void {}
-+
-   reset(): void {
-     this.p = 0;
-   }
-```
+### Incident Patch 3: `475ac45f` (2026-11-20)
+**Commit Message**: chore(deps): update dependency @modelcontextprotocol/sdk to v1.32.0 [security] (#5189)
 
-**File**: `player/src/common/ListWalkerWithMarks.ts` (modified, +7/-2)
-```diff
-@@ -21,11 +21,16 @@ export default class ListWalkerWithMarks<
-     );
-   }
- 
--  append(item: T) {
-+  protected onAdd(item: T) {
-     if (this.isMarked(item)) {
-       this._markCount++;
-     }
--    super.append(item);
-+  }
-+
-+  protected onPassedInsert(item: T) {
-+    if (this.isMarked(item)) {
-+      this._markCountNow++;
-+    }
-   }
- 
-   protected moveNext() {
-```
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
-**File**: `player/src/web/managers/DOM/DOMManager.ts` (modified, +6/-0)
+**File**: `mcp_app/yarn.lock` (modified, +89/-102)
 ```diff
-@@ -30,6 +30,7 @@ import {
-   VText,
- } from './VirtualDOM';
- import { deleteRule, insertRule } from './safeCSSRules';
-+import { getMsgPriority } from '../../messages/messageOrder';
- import {
-   REPLAY_CSP,
-   REPLAY_IFRAME_SANDBOX,
-@@ -167,6 +168,11 @@ export default class DOMManager extends ListWalker<Message> {
-     super.append(m);
-   }
+@@ -446,9 +446,9 @@
+   integrity sha512-5ebpxr3nWMzrL/rnUI755Jkuee0bHL/Gq0WTF9lvcpv73wAp5eu8MfBUgWK9bhWvZjj7yX8etf/8tI8Ney695g==
  
-+  // same CREATE -> MODIFY -> DELETE order fixMessageOrder gives a time group within one file
-+  protected goesBefore(m: Message, other: Message): boolean {
-+    return getMsgPriority(m.tp) < getMsgPriority(other.tp);
-+  }
-+
-   private removeBodyScroll(id: number, vElem: VElement): void {
-     if (this.isMobile && this.upperBodyId === id) {
-       // Need more type safety!
+ "@hono/node-server@^1.19.9 || ^2.0.5":
+-  version "2.1.1"
+-  resolved "https://registry.yarnpkg.com/@hono/node-server/-/node-server-2.1.1.tgz#9cfa8649e9ecbcd48edf505b103002402ea51e70"
+-  integrity sha512-ELuehkj5VCBdgEw9zs+ivkKwyzzUCSQuE96YmiPvn1ECBoZCczbFXJLeEGMTYjphP6gydh4pHMqEYPVMYUVgQg==
++  version "2.1.11"
++  resolved "https://registry.yarnpkg.com/@hono/node-server/-/node-server-2.1.11.tgz#cfc6266cd3389925acaf5a6ec5d8ed4b66990d53"
++  integrity sha512-KzKz9vl4vvr1vgLHamj+g5uonbrj5NwAdO3yzOS6cd2HjALVeOgTgeZOyAzNxejbkfOOPIcvuf/Tg8l1pEFLog==
+ 
+ "@jridgewell/gen-mapping@^0.3.12", "@jridgewell/gen-mapping@^0.3.5":
+   version "0.3.13"
+@@ -497,9 +497,9 @@
+     "@standard-schema/spec" "^1.1.0"
+ 
+ "@modelcontextprotocol/sdk@^1.30.0":
+-  version "1.30.0"
+-  resolved "https://registry.yarnpkg.com/@modelcontextprotocol/sdk/-/sdk-1.30.0.tgz#dfa8a48347ec2d2c0d47917d7dc57f754e37f5ff"
+-  integrity sha512-xKd8OIzlqNzcqcNumGAa6g+PW2kjD5vrpcKOnfldAUPP3j7lnqMPwlTXQm8gF+UwH72z0lqaRbjr9hqGz0eITA==
++  version "1.32.2"
++  resolved "https://registry.yarnpkg.com/@modelcontextprotocol/sdk/-/sdk-1.32.2.tgz#6ede940e436998cc20a70092f0af875735bc78f8"
++  integrity sha512-SWsVtH/0vULSQStoZ6xxH2K09Li8fXYTMC64ZeogCdpZ3XSi1eCPOByV1OpuJxuI3OcmHhosDWYyii07tpPsLw==
+   dependencies:
+     "@hono/node-server" "^1.19.9 || ^2.0.5"
+     ajv "^8.17.1"
+@@ -768,18 +768,18 @@ baseline-browser-mapping@^2.11.25:
+   resolved "https://registry.yarnpkg.com/baseline-browser-mapping/-/baseline-browser-mapping-2.11.26.tgz#01bf6774efb3fbb9de20afc6b923ab85c7d230a6"
+   integrity sha512-GLQdD3y6UF8iVuMJl5fHgE4jdn/ua7n+toKfLgNlg3BqQtOZjpy68T8Tup8/wGWZCDlm7KMg7tPb4MPn7oN0TQ==
+ 
+-body-parser@^2.2.1:
+-  version "2.3.0"
+-  resolved "https://registry.yarnpkg.com/body-parser/-/body-parser-2.3.0.tgz#6d8662f4d8c336028b8ac9aa24251b0ca64ba437"
+-  integrity sha512-2cGmJupaNgg+QUwVLAucDuWuoMZ6EX9iHDRswZ5lsNYEmwPaRknMPCLZz07yTzVq/83p4o/wzbDZbBrTvGGTIw==
++body-parser@^2.3.0:
++  version "2.4.0"
++  resolved "https://registry.yarnpkg.com/body-parser/-/body-parser-2.4.0.tgz#337a76249270f83e450ad385a9606ca3b4a75c06"
++  integrity sha512-Ifk1KcLrxaGt1occQagQNFNNOqRt1LFuehEnHHzB8Z6cRgIxRU1TBaiIsUiCdA+gy5PL7Y1IX31DNKkRmxtXjQ==
+   dependencies:
+     bytes "^3.1.2"
+-    content-type "^2.0.0"
++    content-type "^2.1.0"
+     debug "^4.4.3"
+     http-errors "^2.0.1"
+-    iconv-lite "^0.7.2"
++    iconv-lite "^0.7.3"
+     on-finished "^2.4.1"
+-    qs "^6.15.2"
++    qs "^6.16.1"
+     raw-body "^3.0.2"
+     type-is "^2.1.0"
+ 
+@@ -827,17 +827,17 @@ caniuse-lite@^1.0.30001810:
+   resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001812.tgz#55b32ed819d120b384149a4f9fd59d179ce008f9"
+   integrity sha512-qN+QNNBr93TCmFrmte0bBCjSDMuRvt78VlHT99qIGPszm4QsqCX8lnyWUFkHi8B7ZBAPq8SH+UqyXNy/odMdng==
+ 
+-content-disposition@^1.0.0:
+-  version "1.1.0"
+-  resolved "https://registry.yarnpkg.com/content-disposition/-/content-disposition-1.1.0.tgz#f3db789c752d45564cc7e9e1e0b31790d4a38e17"
+-  integrity sha512-5jRCH9Z/+DRP7rkvY83B+yGIGX96OYdJmzngqnw2SBSxqCFPd0w2km3s5iawpGX8krnwSGmF0FW5Nhr0Hfai3g==
++content-disposition@^2.0.1:
++  version "2.0.1"
++  resolved "https://registry.yarnpkg.com/content-disposition/-/content-disposition-2.0.1.tgz#88a75c7a52ef9c407c96035fe83a66939c2a4dc9"
++  integrity sha512-e+H0ZXHSWYrENhQzw1LPuP4oF5MzVKmDU6d3hxlvaPEYLLg62MxtQNPRx4SYSuYJSBUgnQIG4HIN2tEtNv7Dog==
+ 
+ content-type@^1.0.5:
+   version "1.0.5"
+   resolved "https://registry.yarnpkg.com/content-type/-/content-type-1.0.5.tgz#8b773162656d1d1086784c8f23a54ce6d73d7918"
+   integrity sha512-nTjqfcBFEipKdXCv4YDQWCfmcLZKm81ldF0pAopTvyrFGVbcR6P/VAAd5G7N+0tTr8QqiU0tFadD6FK4NtJwOA==
+ 
+-content-type@^2.0.0:
++content-type@^2.0.0, content-type@^2.1.0:
+   version "2.1.0"
+   resolved "https://registry.yarnpkg.com/content-type/-/content-type-2.1.0.tgz#d9389c43c0a8cf6a355db464d21e07092a40493a"
+   integrity sha512-mj7UPXE0jaqaOsukNZRUEfEi2AcL7C/vwmwcHV0O97eO1E1pxBZuyjlZrx5seTaNBg1U6+o35wpa35Qfcc+7ag==
+@@ -919,9 +919,9 @@ electron-to-chromium@^1.5.438:
+   integrity sha512-qu6QIPXhsb+CRcAiTMNjR4A1y/7tCYKkKjr5CZXRVih6qkDf79peZ2BpEU3qoDBNCRrcy3Mra3X9nG5oruuA7Q==
+ 
+ encodeurl@^2.0.0:
+-  version "2.0.0"
+-  resolved "https://registry.yarnpkg.com/encodeurl/-/encodeurl-2.0.0.tgz#7b8ea898077d7e409d3ac45474ea38eaf0857a58"
+-  integrity sha512-Q0n9HRi4m6JuGIV1eFlmvJB7ZEVxu93IrMyiMsGC0lrMJMWzRgx6WGquyfQgZVb31vhGgXnfmPNNXmxnOkRBrg==
++  version "2.0.3"
++  resolved "https://registry.yarnpkg.com/encodeurl/-/encodeurl-2.0.3.tgz#d3895ecc5f498ae0b8840bcf670e1fcaf519f44d"
++  integrity sha512-mIteYONiEfc4xWf2F1WXovh1c8npzS00vNeiUPdwFF+QlVJni+gNvpQltLMQhob8rew/bWWc/bGTuUr0EUGt0w==
+ 
+ engine.io-client@~6.6.1:
+   version "6.6.4"
+@@ -950,9 +950,9 @@ es-errors@^1.3.0:
+   integrity sha512-Zf5H2Kxt2xjTvbJvP2ZWLEICxA6j+hAmMzIlypy4xcBg1vKVnx89Wy0GbS+kf5cwCVFFzdCFh2XSCFNULS6csw==
+ 
+ es-object-atoms@^1.0.0, es-object-atoms@^1.1.1:
+-  ve
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5181** (2026-11-18): Updated patch build from main 66d79de4ae2573aa93f654c9ba3db19655deeb1f (@estradino)
-- **PR #5180** (2026-11-18): Player patches 11 18 (@nick-delirium)
-- **PR #5179** (closed): fix(player): keep messages older than the list tail (@iflyhere)
-- **PR #5178** (closed): fix(tracker): flush player and assets batches together (@iflyhere)
-- **PR #5176** (2026-11-17): Separate service for OTLP logs ingest (@zavorotynskiy)
-- **PR #5175** (2026-11-17): feat(scripts): changed secrets length (@tahayk)
+- **PR #5197** (2026-11-20): Update dependency bun to v1.4.5 (main) (@renovate[bot])
+- **PR #5195** (2026-11-20): chore(deps): update dependency glob to v10 [security] (dev) (@renovate[bot])
+- **PR #5194** (2026-11-20): Update dependency axios to v0.34.0 [SECURITY] (dev) (@renovate[bot])
+- **PR #5193** (2026-11-20): chore(deps): update dependency glob to v10 [security] (main) (@renovate[bot])
+- **PR #5192** (2026-11-20): chore(deps): update dependency axios to v0.34.0 [security] (main) (@renovate[bot])
+- **PR #5191** (2026-11-20): chore(deps): update dependency vitest to v4 [security] (main) (@renovate[bot])
 
 ---
 
@@ -1478,31 +1352,31 @@ equal-time ties with the same priority fixMessageOrder uses within a file.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Increment frontend chart version to v1.28.13
+## X. helm): bump nginx-ingress to 5.8-alpine
 
 **RULE**:
-When implementing operations in `scripts/helmcharts/openreplay/charts/frontend/Chart.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in openreplay/openreplay. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `scripts/helmcharts/openreplay/values.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in openreplay/openreplay. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `42a68706`: Increment frontend chart version to v1.28.13. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a82fdbea`: helm): bump nginx-ingress to 5.8-alpine. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/helmcharts/openreplay/charts/frontend/Chart.yaml`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/helmcharts/openreplay/values.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-AppVersion: "v1.28.13"
+      tag: 5.8-alpine
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-AppVersion: "v1.28.12"
+      tag: 5.4-alpine
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `42a68706` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a82fdbea` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
