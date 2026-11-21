@@ -6263,10 +6263,10 @@
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/limbo",
-    "sourceVersion": "6b667193",
+    "sourceVersion": "1db4b548",
     "license": "MIT",
-    "contentHash": "08925c50610b46eb30fa51278f0bda55b7529b460d7a15055d13921f9b2f5483",
-    "lastHarvestedAt": "2026-11-20T13:40:23.452Z",
+    "contentHash": "6a25e4ccfc221674678ea6ffd71ba5bcc62eef7bb297a414f911c022844e69e2",
+    "lastHarvestedAt": "2026-11-21T18:52:24.395Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "carbon-design-system-carbon": {
@@ -11365,8 +11365,8 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/LFM3-1.7B",
     "sourceVersion": "hf-liquidai-lfm3-1.7b",
     "license": "Open-Source",
-    "contentHash": "105480e9bebdf0b51bddd58645ae63f965e71d7077fde7d0fcbd33fcb6682ff3",
-    "lastHarvestedAt": "2026-11-17T19:44:53.477Z",
+    "contentHash": "91d14176c4153ccca17c2b845ec706d09053b82776514df5a9587f182dae2a99",
+    "lastHarvestedAt": "2026-11-21T18:52:07.028Z",
     "learningId": "learn-huggingface-liquidai-lfm3-1-7b"
   },
   "michael-denyer-pstack-claude": {

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T18:44:18.299Z",
-  "total_cycles_completed": 11297,
-  "total_learnings_persisted": 11297,
-  "total_rules_promoted": 10625,
+  "last_updated": "2026-11-21T18:52:24.400Z",
+  "total_cycles_completed": 11300,
+  "total_learnings_persisted": 11300,
+  "total_rules_promoted": 10627,
   "history": [
-    {
-      "timestamp": "2026-11-20T23:13:30.177Z",
-      "repository": "sveltejs/svelte",
-      "learningId": "learn-github-sveltejs-svelte",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T23:13:37.660Z",
-      "repository": "koderover/zadig",
-      "learningId": "learn-github-koderover-zadig",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T23:21:19.339Z",
-      "repository": "zvec-ai/zvec-grep",
-      "learningId": "learn-github-zvec-ai-zvec-grep",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-20T23:21:22.201Z",
       "repository": "solidjs/solid",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-21T18:44:18.299Z",
       "repository": "Orange-OpenSource/hurl",
       "learningId": "learn-github-orange-opensource-hurl",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T18:52:07.033Z",
+      "repository": "LiquidAI/LFM3-1.7B",
+      "learningId": "learn-huggingface-liquidai-lfm3-1-7b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T18:52:24.398Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T18:52:24.400Z",
+      "repository": "tursodatabase/turso",
+      "learningId": "learn-github-tursodatabase-turso",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

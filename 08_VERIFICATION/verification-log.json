@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261119-J3HI",
-    "timestamp": "2026-11-19T15:58:47.910Z",
-    "repository": "oxc-project/oxc",
-    "learningId": "learn-github-oxc-project-oxc",
-    "contentHash": "702a4d08b9e4042edb3db349411ba002b91b0f6d137a2d3419ef215919fcbf51",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-J6P6",
-    "timestamp": "2026-11-19T15:58:52.074Z",
-    "repository": "meshtastic/Meshtastic-Android",
-    "learningId": "learn-github-meshtastic-meshtastic-android",
-    "contentHash": "fee09e94c023447a320d64ea38d6e83bf6741a15d4c2c6c6f27272d3ab8c182f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-JBIC",
-    "timestamp": "2026-11-19T15:58:58.308Z",
-    "repository": "cilium/cilium",
-    "learningId": "learn-github-cilium-cilium",
-    "contentHash": "e01043928efedb765b787308f3448f2488c2513bae47685896030b91b9230cdc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261119-TVND",
     "timestamp": "2026-11-19T16:07:10.969Z",
     "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
@@ -7490,6 +7445,51 @@
     "repository": "Orange-OpenSource/hurl",
     "learningId": "learn-github-orange-opensource-hurl",
     "contentHash": "7174f376cf202eac6c4c7de804a96fb65f691c031a1b4d0d147462ac7f19e8a1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-LOTR",
+    "timestamp": "2026-11-21T18:52:07.023Z",
+    "repository": "LiquidAI/LFM3-1.7B",
+    "learningId": "learn-huggingface-liquidai-lfm3-1-7b",
+    "contentHash": "91d14176c4153ccca17c2b845ec706d09053b82776514df5a9587f182dae2a99",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-M285",
+    "timestamp": "2026-11-21T18:52:24.389Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "d70a9f374025905546054be8d90547486fb94e769e3d5cae95a865aefaa6979a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-M287",
+    "timestamp": "2026-11-21T18:52:24.391Z",
+    "repository": "tursodatabase/turso",
+    "learningId": "learn-github-tursodatabase-turso",
+    "contentHash": "6a25e4ccfc221674678ea6ffd71ba5bcc62eef7bb297a414f911c022844e69e2",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

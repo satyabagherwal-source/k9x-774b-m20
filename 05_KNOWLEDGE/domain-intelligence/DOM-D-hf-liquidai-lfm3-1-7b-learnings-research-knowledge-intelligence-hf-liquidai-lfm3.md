@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T19:45:04.335Z",
+  "timestamp": "2026-11-21T18:52:27.885Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-liquidai-lfm3-1.7b-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-liquidai-lfm3-1.7b-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T19:45:04.335Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T18:52:27.885Z`  
 > **Learning ID**: `LEARN-EVO-hf-liquidai-lfm3-1.7b-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-liquidai-`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T19:44:53.078Z  
+> **Timestamp**: 2026-11-21T18:52:06.544Z  
 > **Learning ID**: `learn-huggingface-liquidai-lfm3-1-7b`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-liquidai-lfm3-1.7b-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/LiquidAI/LFM3-1.7B](https://huggingface.co/LiquidAI/LFM3-1.7B))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T19:44:45.858Z  
+> **Harvest Timestamp**: 2026-11-21T18:52:06.360Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 109972 downloads | 1906 likes
+- **Stars / Engagement**: 135129 downloads | 1834 likes
 
 ---
 

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T18:44:32.049Z",
+  "last_updated": "2026-11-21T18:52:29.741Z",
   "total_verified_learnings": 9062,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23202,
+  "total_items": 23205,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113010,13 +113010,13 @@
       "item_id": "domain_intelligence-technical-construction-intelligence-tursodatabase-turso-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-turso-technical-construction-intelligence-tursodatabase-turso-core.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-limbo-technical-construction-intelligence-tursodatabase-turso-core.md",
       "title": "Technical Construction Intelligence: tursodatabase/turso Core Invariants",
       "repository": "tursodatabase/turso",
-      "source_version": "93648484",
-      "content_hash": "7849a5821740cfa8d084fa081b8588917570b5283c8b58b8a6e42adeb214f750",
+      "source_version": "1db4b548",
+      "content_hash": "eb16b4a8af07be23845a2b5c65c5c1b1b1a2f19f59975cab80d3ec4f09a35889",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T19:11:46.563Z"
+      "persisted_at": "2026-11-21T18:52:24.787Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-turso": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-turso",
@@ -213586,13 +213586,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "slug": "tursodatabase-turso",
+      "slug": "tursodatabase-limbo",
       "platform": "github",
-      "source_url": "https://github.com/tursodatabase/turso",
-      "source_version": "93648484",
-      "content_hash": "f496b4d6787f2a96e8c8e4b14cca27fbaa05d96dcd12a01b4680845966bfb161",
-      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+      "source_url": "https://github.com/tursodatabase/limbo",
+      "source_version": "1db4b548",
+      "content_hash": "6a25e4ccfc221674678ea6ffd71ba5bcc62eef7bb297a414f911c022844e69e2",
+      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
       "promoted_rules": [
         {
           "number": 8367,
@@ -213643,6 +213643,11 @@
           "number": 9624,
           "title": "fix compilation and lint errors after main rebase",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9820,
+          "title": "run the simulator built with optimizations",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -213650,7 +213655,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T19:11:45.892Z",
+      "verified_at": "2026-11-21T18:52:24.174Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -229671,10 +229676,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "d2feb4ac",
-      "content_hash": "5f24b3b610e62708acca389ee3755f9e9a1649a487510f5807242fba517490a6",
+      "source_version": "23b93c48",
+      "content_hash": "0cf12127a4831f724a68c2f276883346a138070c110001ded09dd53c80cbbeb7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T14:27:55.890Z"
+      "persisted_at": "2026-11-21T18:52:24.969Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -230752,9 +230757,9 @@
       "title": "Architecture Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "9fb691dc5eb22db2f700e55e9b0d52832a1dea5793cf53f02bf4fdb585eabcba",
+      "content_hash": "d16f83ce07db53748fbc3da9b867d257ab227acd59031534bf380f4326a54428",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T14:28:01.072Z"
+      "persisted_at": "2026-11-21T18:52:29.573Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid-learnings",
@@ -230764,9 +230769,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nucleoidai-nucleoid-learnings",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "0ae9b3906ceb978c181f4c6aa08b1abf768dc8cff2bc1a10fd1aa9ff8b1d3f02",
+      "content_hash": "b4de08e30a6bc8e10e45726c821ae033b0dbe744abe624bcd242219b7fc067b3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T14:28:01.289Z"
+      "persisted_at": "2026-11-21T18:52:29.741Z"
     },
     "learn-huggingface-qwen-qwen3-8b": {
       "learning_id": "learn-huggingface-qwen-qwen3-8b",
@@ -256639,9 +256644,9 @@
       "title": "Technical Construction Intelligence: tursodatabase-limbo-learnings Core Invariants",
       "repository": "tursodatabase-limbo-learnings",
       "source_version": "HEAD",
-      "content_hash": "b807e72992f1bcd9c0bc035b42611cf85f348ead8bce4d8bbd1381bc4626d840",
+      "content_hash": "e1b3bf350c10c72b31e3cfc0d7c9c07cfa6c44d295b85c118c4213873bddcfba",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T13:40:28.147Z"
+      "persisted_at": "2026-11-21T18:52:28.649Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-limbo-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-limbo-learnings",
@@ -256651,9 +256656,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tursodatabase-limbo-learnings",
       "repository": "tursodatabase-limbo-learnings",
       "source_version": "HEAD",
-      "content_hash": "2349a9b4ebeb4d7617ed6e2a09dd1c0e44c518abf2742b613c00096833f89686",
+      "content_hash": "ef6f3c07deea02920e64a7879dc2a250e128853b589c6966884bbf4ae18029c4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T13:40:28.297Z"
+      "persisted_at": "2026-11-21T18:52:28.821Z"
     },
     "rule-8724": {
       "learning_id": "rule-8724",
@@ -279343,7 +279348,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/LiquidAI/LFM3-1.7B",
       "source_version": "hf-liquidai-lfm3-1.7b",
-      "content_hash": "105480e9bebdf0b51bddd58645ae63f965e71d7077fde7d0fcbd33fcb6682ff3",
+      "content_hash": "91d14176c4153ccca17c2b845ec706d09053b82776514df5a9587f182dae2a99",
       "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-lfm3-1.7b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-lfm3-1.7b-learnings.md",
       "promoted_rules": [],
@@ -279352,7 +279357,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T19:44:53.307Z",
+      "verified_at": "2026-11-21T18:52:06.800Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -279369,9 +279374,9 @@
       "title": "Research & Knowledge Intelligence: LiquidAI/LFM3-1.7B Core Invariants",
       "repository": "LiquidAI/LFM3-1.7B",
       "source_version": "hf-liquidai-lfm3-1.7b",
-      "content_hash": "50ab617d6ff5e92291d1440905e95cd587b70b1ad7cc6ecc5957f986669a9d4c",
+      "content_hash": "0e19b89a35988fd9bc054b9e9c06d0788bf46413c5c031ef2b91aeee905caab2",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T19:44:53.649Z"
+      "persisted_at": "2026-11-21T18:52:07.228Z"
     },
     "rule-9040": {
       "learning_id": "rule-9040",
@@ -279459,9 +279464,9 @@
       "title": "Research & Knowledge Intelligence: hf-liquidai-lfm3-1.7b-learnings Core Invariants",
       "repository": "hf-liquidai-lfm3-1.7b-learnings",
       "source_version": "HEAD",
-      "content_hash": "2485758a72823db03c7a292b328a7d9404c4d5f6548d0def1994ba50717bc583",
+      "content_hash": "bda47199b47feeef1545217c109aad93d39c01f450ada63cf388a59fc6c462c2",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T19:45:04.421Z"
+      "persisted_at": "2026-11-21T18:52:27.997Z"
     },
     "candidate_directive-kubeletproxy-match-allowed-node-proxy-subpaths-exactly": {
       "item_id": "candidate_directive-kubeletproxy-match-allowed-node-proxy-subpaths-exactly",
@@ -315339,6 +315344,44 @@
       "content_hash": "586869578f2d5d5d5339dfa96de0deb528219422044c5290ef17b4ae5956a797",
       "domain_letter": "G",
       "persisted_at": "2026-11-21T18:44:29.936Z"
+    },
+    "rule-9820": {
+      "learning_id": "rule-9820",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9820,
+      "title": "run the simulator built with optimizations",
+      "source_url": "https://github.com/tursodatabase/limbo",
+      "source_version": "1db4b548",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T18:52:24.174Z"
+    },
+    "candidate_directive-draft-nuc-128-origins-and-outcomes-of-reasoning-selections": {
+      "item_id": "candidate_directive-draft-nuc-128-origins-and-outcomes-of-reasoning-selections",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-M63Q-draft-nuc-128-origins-and-outcomes-of-reasoning-selections.md",
+      "title": "Draft NUC 128 Origins and Outcomes of Reasoning Selections",
+      "repository": "nucleoidai-nucleoid-learnings",
+      "source_version": "HEAD",
+      "content_hash": "62857eb9b36cb0f74813ec942dc4899ae745d1cbf329d25c02d499538f2d4d66",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T18:52:29.414Z"
+    },
+    "candidate_directive-ci-run-the-simulator-built-with-optimizations": {
+      "item_id": "candidate_directive-ci-run-the-simulator-built-with-optimizations",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-M5E3-ci-run-the-simulator-built-with-optimizations.md",
+      "title": "ci: run the simulator built with optimizations",
+      "repository": "tursodatabase-limbo-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6f632ce74e995e63b65c2ee1d02d8ba5bc8cd56a32bbaf42cc681a9263fdd86c",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T18:52:28.494Z"
     }
   },
   "ai-builder-brain": {

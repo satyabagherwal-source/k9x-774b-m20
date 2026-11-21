@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-21T18:44:18.304Z",
+  "last_updated": "2026-11-21T18:52:24.404Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9516,14 +9516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tursodatabase-turso",
-      "content_hash": "f496b4d6787f2a96e8c8e4b14cca27fbaa05d96dcd12a01b4680845966bfb161",
-      "verified_at": "2026-11-20T19:11:46.172Z",
+      "content_hash": "6a25e4ccfc221674678ea6ffd71ba5bcc62eef7bb297a414f911c022844e69e2",
+      "verified_at": "2026-11-21T18:52:24.403Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T19:11:46.172Z"
+      "last_updated": "2026-11-21T18:52:24.403Z"
     },
     "carbon-design-system/carbon": {
       "repository": "carbon-design-system/carbon",
@@ -17076,14 +17076,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-liquidai-lfm3-1-7b",
-      "content_hash": "105480e9bebdf0b51bddd58645ae63f965e71d7077fde7d0fcbd33fcb6682ff3",
-      "verified_at": "2026-11-17T19:44:53.485Z",
+      "content_hash": "91d14176c4153ccca17c2b845ec706d09053b82776514df5a9587f182dae2a99",
+      "verified_at": "2026-11-21T18:52:07.036Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T19:44:53.485Z"
+      "last_updated": "2026-11-21T18:52:07.036Z"
     },
     "michael-denyer/pstack-claude": {
       "repository": "michael-denyer/pstack-claude",

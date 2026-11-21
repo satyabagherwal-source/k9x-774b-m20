@@ -11903,3 +11903,6 @@ Every entry in this ledger must capture:
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `b17474d2` | Multi-dimensional audit evidence | 2026-11-21T18:23:05.838Z |
 | `learn-huggingface-ccore-qwen3-5-4b-3d-coder` | `https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder` | `hf-ccore-q` | Multi-dimensional audit evidence | 2026-11-21T18:44:17.385Z |
 | `learn-github-orange-opensource-hurl` | `https://github.com/Orange-OpenSource/hurl` | `6d29cb9f` | Multi-dimensional audit evidence | 2026-11-21T18:44:18.293Z |
+| `learn-huggingface-liquidai-lfm3-1-7b` | `https://huggingface.co/LiquidAI/LFM3-1.7B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-21T18:52:07.028Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `23b93c48` | Multi-dimensional audit evidence | 2026-11-21T18:52:24.393Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `1db4b548` | Multi-dimensional audit evidence | 2026-11-21T18:52:24.395Z |

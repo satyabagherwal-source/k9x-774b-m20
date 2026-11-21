@@ -4,22 +4,22 @@
 {
   "source_repository": "tursodatabase/turso",
   "source_url": "https://github.com/tursodatabase/limbo",
-  "source_version": "6b667193",
+  "source_version": "1db4b548",
   "license": "MIT",
-  "timestamp": "2026-11-20T13:40:23.664Z",
+  "timestamp": "2026-11-21T18:52:24.622Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-tursodatabase-turso",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [tursodatabase/turso](https://github.com/tursodatabase/limbo) (Revision: `6b667193`).  
-> **License**: MIT | **Timestamp**: `2026-11-20T13:40:23.664Z`  
+> **Provenance**: Harvested from [tursodatabase/turso](https://github.com/tursodatabase/limbo) (Revision: `1db4b548`).  
+> **License**: MIT | **Timestamp**: `2026-11-21T18:52:24.622Z`  
 > **Learning ID**: `learn-github-tursodatabase-turso`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `tursodatabase/turso` (Commit: `6b667193`)
+- **Target Repository**: `tursodatabase/turso` (Commit: `1db4b548`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tursodatabase/limbo](https://github.com/tursodatabase/limbo))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T13:40:22.414Z  
+> **Harvest Timestamp**: 2026-11-21T18:52:23.314Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: A SQL database in Rust: SQLite-compatible, now also speaking Postgres (experimental). The LLVM of databases.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 25301 stars
+- **Stars / Engagement**: 25314 stars
 
 ---
 
@@ -1443,11 +1443,13 @@ export class Statement {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #12168** (2026-11-20): **ci/dotnet: pin .NET 10 SDK in iOS package validation**
-  *Symptoms*: The `validate-ios-package` job fails at `dotnet workload install ios --version 10.0.401`:  ``` Workload pack 'Microsoft.NET.Runtime.Emscripten.Node.net10' in manifest 'microsoft.net.workload.emscripten.net10' [.../sdk-manifests/11.0.100/...] conflicts with manifest 'microsoft.net.workload.emscripten.current' [.../sdk-manifests/10.0.100/...] ```  The macos-26 runner image now ships a .NET 11 SDK. `actions/setup-dotnet` with `dotnet-version: 10.0.x` installs a .NET 10 SDK but does not stop `dotnet` from choosing the newest SDK, and `bindings/dotnet` has no global.json. The workload install therefore appears to run under SDK 11 and mixes 11.0.100 and 10.0.100 workload manifests. This cause comes from the manifest paths in the error, because the failing log does not print the SDK version.  This PR adds a step to the iOS job only. The step writes `bindings/dotnet/global.json`, pinning the version that setup-dotnet reports as installed, with `rollForward: latestFeature`. The workload install, restore and build in this job run from `bindings/dotnet`, so all of them pick up the global.json. The step prints `dotnet --version` and `dotnet --list-sdks`, so the log shows which SDK ran. The 10.0.401 workload pin and its Xcode 26 comment stay as they are. Other jobs are not changed.
+- **Issue #12230** (2026-11-21): **ci: make PR CI faster**
+  *Symptoms*: ## Description  On main, PR CI takes 9.3 min p50 and 15.9 min p90, from push until the last job ends. This PR removes slow or duplicated work from the jobs that end last. Estimate after this PR: **8.2 min p50, 10.4 min p90.**  | Change | Job | Time saved per job | Reason | |---|---|---|---| | Build `limbo_sim` with a new `simulator` Cargo profile: dev with opt-level 1 and `debug = "line-tables-only"` | Simulator | One WriteStress seed runs in 41 s instead of 534 s (on a Mac) | On main, CI runs an unoptimized simulator. The profile inherits dev, so debug assertions and overflow checks stay on. | | Remove 4 steps: install JS dependencies, build common package, build native binding, build TypeScript | JS sqltest | 73 s p50, 147 s p90 (removed steps, CI) | `make run-js` does all 4 again. It builds the binding with `test_helper`, so the binding from the removed step was never used. | | Add `CARGO_PROFILE_BENCH_LTO: "false"` to `codspeed-memory.yml`, plus the other 3 env vars from `codspeed.yml` | CodSpeed memory | Build after a `turso_core` change: 80 s instead of 106 s (on a Mac) | `codspeed.yml` sets this env var, but a called workflow does not get the caller's `env`. So on main the memory build uses thin LTO. | | Remove the "Memory leak check" step | Rust, `extra` suite | 56 s p50 (removed step, CI) | The `leak_tests` binary is already in the nextest run on Linux, macOS and Windows. The removed step built `turso_core` a second time with other features. |  How the estimate was m
+  **Post-Mortem & Fix Analysis**:
+  > ### Autofixer review <sub>🔄 Autofixer updates this comment while the review runs.</sub>  A maintainer asked Autofixer to review this pull request. The review of `bd1210755865` is [here](https://github.com/tursodatabase/turso/pull/12230#pullrequestreview-6003528435).  ✅ **Verdict: looks good to merge.**  <sub>Automated review by Autofixer; maintainers decide what to merge. Autofixer reviews every new commit pushed to this pull request, up to 3 reviews each time the `autofixer: review-requested` label is added. It then removes the label; adding the label again asks for more.</sub>  <!-- autofixer:contributor-review:bd12107558652e647bcae7150e9bd5b396f89a03 --> <!-- autofixer:contributor-review-recommends:bd12107558652e647bcae7150e9bd5b396f89a03 --> <!-- autofixer:contributor-review-state:eyJ2ZXJzaW9uIjoxLCJyZXZpZXdzIjpbeyJoZWFkU2hhIjoiYmQxMjEwNzU1ODY1MmU2NDdiY2FlNzE1MGU5YmQ1YjM5NmY4OWEwMyIsImF1ZGl0ZWRBdCI6IjIwMjYtMTEtMjFUMDY6Mjg6MDAuNzk0WiIsInZlcmRpY3QiOiJhcHByb3ZlIiwicmVjb21tZW5kYXRpb24
 
-- **Issue #12164** (2026-11-20): **testing/sqltest: record known PostgreSQL differences as @compat-gap tests**
-  *Symptoms*: <img width="1400" height="1530" alt="image" src="https://github.com/user-attachments/assets/c7b3d264-8794-41c8-a627-63ab83bcefb9" />  ## Summary  - Adds `@compat-gap` to sqltest. - It marks a test where tursopg differs from PostgreSQL. - 424 existing tursopg overrides are now tagged.  ``` @compat-gap "type:bool" test like-case-sensitive-literal {     SELECT 'ABC' LIKE 'abc', 'abc' LIKE 'a%', 'abc' LIKE 'A%'; } # PostgreSQL 18 (checked on real PG in CI) expect {     f|t|f } # tursopg today: wrong expect @tursopg {     0|1|0 } ```  ## Why  - Write tests before the feature exists:  ``` @compat-gap "function:json_build_object" test json-build-object {     SELECT json_build_object('id', id, 's', s) FROM t WHERE id = 1; } expect {     {"id" : 1, "s" : "abc"} } @sqlstate 42883 expect @tursopg error {} ```  - When the feature lands, CI tells you:  ``` gap fixed: remove @compat-gap and the expect @tursopg override ```  - CI counts gaps per feature:  | label | gaps | refused | error-mismatch | accepts-invalid | wrong | |---|---:|---:|---:|---:|---:| | `function:age` | 20 | 13 | 7 | 0 | 0 | | `function:format_type` | 3 | 0 | 0 | 0 | 3 | | `function:json_build_object` | 25 | 25 | 0 | 0 | 0 |  - If a gap gets worse, CI fails:  ``` known gap type:bool: tursopg returns NULL|NULL|NULL, PostgreSQL returns f|t|f, recorded tursopg answer 0|1|0 ```  - If someone deletes a gap test, CI fails:  ``` gaps/operators-functions.sqltest: gap 
+- **Issue #12229** (2026-11-21): **core/vdbe: use the test dialect in test_serialize_array_from_blob**
+  *Symptoms*: Core no longer has a \`SqliteDialect\`; the frontends define it. The bytea hex change added a call with \`crate::SqliteDialect\` to a core unit test while the parser-free core change was removing it, so the \`turso_core\` tests did not compile on main.  The test now uses \`DialectThatCannotParse\`, like the other core unit tests that need a dialect but no SQL. It keeps the default blob element format that the test expects.  🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1464,1002 +1466,313 @@ export class Statement {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `091610f8` (2026-11-20)
-**Commit Message**: testing/sqltest: add @compat-gap tests with a fixed-gap check and lints
+### Incident Patch 1: `3885b0ea` (2026-11-21)
+**Commit Message**: ci: run the simulator built with optimizations
 
-The PostgreSQL suites record tursopg's wrong answers with `expect @tursopg`
-blocks, but nothing tells a recorded difference from an error-message
-override, and a fixed gap stays recorded until someone notices.
+The simulator jobs ran a dev-profile (unoptimized) limbo_sim. Each job runs
+its iterations four at a time, so it takes as long as its slowest seed, and
+WriteStress seeds took 100 to 475 s each in CI. WriteStress (7.2 min p50,
+12.2 min p90) was the last check to finish on 7 of 34 pull request pushes.
 
-A test with `@compat-gap "<kind>:<object>"` holds the PostgreSQL 18 answer
-in its default block and tursopg's current answer in its `expect @tursopg`
-block. On tursopg it passes on the recorded answer and fails with "gap
-fixed" on the PostgreSQL answer, so a fix must remove the gap. For an
-error gap, tursopg's answer is compared with the SQLSTATE of the default
-block only, because tursopg need not return PostgreSQL's message; the
-postgres backend checks the SQLSTATE and the message. Other backends
-refuse @compat-gap tests. Both failure messages name tursopg's answer and
-the PostgreSQL answer, so the reader does not have to open the test file
-to see the difference.
+The new simulator profile is dev with opt-level 1, so debug assertions and
+overflow checks stay on. Measured locally with CARGO_INCREMENTAL=0, as in CI:
 
-The gap lints run only when `sqltest run` or `sqltest check` gets
---compat-gaps, so the suites that do not pass it cannot hold a
-@compat-gap test. The lints reject a @compat-gap test that has no
-@tursopg block, does not run on PostgreSQL, use
+  WriteStress seed 10093952252616453925   dev 534 s   opt-level 1 41 s   opt-level 2 39 s
+  WriteStress seed 963397087373001144     dev 212 s                      opt-level 2 17 s
+  rebuild after a turso_core change       dev  33 s   opt-level 1 69 s   opt-level 2 90 s
 
-**File**: `testing/sqltest/src/comparison/mod.rs` (modified, +143/-0)
+opt-level 2 runs no faster than 1 and builds slower, so the profile uses 1.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/rust.yml` (modified, +5/-2)
 ```diff
-@@ -4,6 +4,8 @@ pub mod unordered;
- 
- use crate::backends::QueryResult;
- use crate::parser::ast::Expectation;
-+use regex::RegexBuilder;
-+use std::collections::HashSet;
- 
- /// Result of comparing actual vs expected output
- #[derive(Debug, Clone, PartialEq)]
-@@ -109,6 +111,68 @@ fn compare_error(
-     }
- }
- 
-+/// Whether one query result can match both expectations under the rules of
-+/// [`compare`]. It assumes that no output value holds a line break. Where
-+/// it cannot decide, it answers true: for an `expect pattern` block against
-+/// an `expect unordered` or another `expect pattern` block, and for two error
-+/// messages, because two regexes can match the same message.
-+pub fn may_match_same_output(a: &Expectation, b: &Expectation) -> bool {
-+    match (a, b) {
-+        (Expectation::Error { sqlstate: a, .. }, Expectation::Error { sqlstate: b, .. }) => {
-+            // compare_error checks a SQLSTATE only when the block names one.
-+            match (a, b) {
-+                (Some(a), Some(b)) => a == b,
-+                _ => true,
-+            }
-+        }
-+        (Expectation::Error { .. }, _) | (_, Expectation::Error { .. }) => false,
-+        (Expectation::Exact(a), Expectation::Exact(b)) => exact_text(a) == exact_text(b),
-+        (Expectation::Unordered(a), Expectation::Unordered(b)) => {
-+            unordered_set(a) == unordered_set(b)
-+        }
-+        (Expectation::Exact(exact), Expectation::Unordered(unordered))
-+        | (Expectation::Unordered(unordered), Expectation::Exact(exact)) => {
-+            exact_matches_unordered(exact, unordered)
-+        }
-+        (Expectation::Pattern(pattern), Expectation::Exact(exact))
-+        | (Expectation::Exact(exact), Expectation::Pattern(pattern)) => {
-+            // exact::compare accepts only output whose text is exact_text, and
-+            // pattern::compare matches the regex against that same text.
-+            RegexBuilder::new(pattern)
-+                .build()
-+                .is_ok_and(|re| re.is_match(&exact_text(exact)))
-+        }
-+        (Expectation::Pattern(_), _) | (_, Expectation::Pattern(_)) => true,
-+    }
-+}
-+
-+/// The only output text that exact::compare accepts for these lines.
-+fn exact_text(lines: &[String]) -> String {
-+    format_rows(&parse_expected_rows(lines))
-+}
-+
-+/// The set of rows that unordered::compare accepts for these lines.
-+fn unordered_set(lines: &[String]) -> HashSet<String> {
-+    parse_expected_rows(lines)
-+        .iter()
-+        .map(|row| row.join("|"))
-+        .collect()
-+}
-+
-+/// Whether some output has the text of the exact block and the row set of
-+/// the unordered block. Without line breaks in values, the rows of an output
-+/// are the lines of its text. The empty text is also the text of an output
-+/// with no rows.
-+fn exact_matches_unordered(exact: &[String], unordered: &[String]) -> bool {
-+    let text = exact_text(exact);
-+    let expected = unordered_set(unordered);
-+    if text.is_empty() && expected.is_empty() {
-+        return true;
-+    }
-+    let rows: HashSet<String> = text.split('\n').map(str::to_string).collect();
-+    rows == expected
-+}
-+
- /// Format rows for display (pipe-separated)
- pub fn format_rows(rows: &[Vec<String>]) -> String {
-     rows.iter()
-@@ -279,4 +343,83 @@ mod tests {
-             ComparisonResult::mismatch("expected error but query succeeded")
-         );
-     }
-+
-+    fn lines(rows: &[&str]) -> Vec<String> {
-+        rows.iter().map(|r| r.to_string()).collect()
-+    }
-+
-+    #[test]
-+    fn unordered_blocks_with_repeated_rows_match_the_same_output() {
-+        // unordered::compare compares row sets, so the output `1` matches both.
-+        let a = Expectation::Unordered(lines(&["1", "1"]));
-+        let b = Expectation::Unordered(lines(&["1"]));
-+        let output = QueryResult::success(vec![vec!["1".to_string()]]);
-+        assert!(compare(&output, &a).is_match() && compare(&output, &b).is_match());
-+        assert!(may_match_same_output(&a, &b));
-+    }
-+
-+    #[test]
-+    fn a_null_row_makes_exact_blocks_differ() {
-+        // An empty line is a row with one NULL value.
-+        let a = Expectation::Exact(lines(&["1", ""]));
-+        let b = Expectation::Exact(lines(&["1"]));
-+        assert!(!may_match_same_output(&a, &b));
-+        let with_null = QueryResult::success(vec![vec!["1".to_string()], vec!["".to_string()]]);
-+        assert!(compare(&with_null, &a).is_match() && !compare(&with_null, &b).is_match());
-+    }
-+
-+    #[test]
-+    fn exact_text_is_not_trimmed_inside_rows() {
-+        let a = Expectation::Exact(lines(&["a "]));
-+        let b = Expectation::Exact(lines(&["a"]));
-+        assert!(!may_match_same_output(&a, &b));
-+    }
-+
-+    #[test]
-+    fn exact_and_unordered_blocks() {
-+        let exact = Expectation::Exact(lines(&["2", "1", "2"]));
-+        assert!(may_match_same_output(
-+            &exact,
-+            &Expectation::Unordered(lines(&["1", "2"]))
-+        ));
-+        assert!(!may_match_same_output(
-+            &exact
+@@ -433,8 +433,11 @@ jobs:
+           prefix-key: "v1-rust"
+           cache-on-failure: true
+           save-if: ${{ github.ref == 'refs/heads/main' }}
++      # The simulator profile (Cargo.toml) optimizes the code but keeps
++      # debug assertions; simulations run about ten times faster than with
++      # the dev profile.
+       - name: Build simulator
+-        run: cargo build -p limbo_sim --bin limbo_sim --locked
++        run: cargo build -p limbo_sim --bin limbo_sim --locked --profile simulator
+       - name: Simulator ${{ matrix.profile.name }}
+         env:
+           SIM_ARGS: ${{ matrix.profile.args }}
+@@ -444,7 +447,7 @@ jobs:
+             i="$1"
+             log="sim-run-$i.log"
+             read -r -a args <<< "$SIM_ARGS"
+-            if ./target/debug/limbo_sim "${args[@]}" >"$log" 2>&1; then
++            if ./target/simulator/limbo_sim "${args[@]}" >"$log" 2>&1; then
+               echo "iteration $i ok: $(grep -m1 "^seed: " "$log")"
+             else
+               echo "iteration $i FAILED:"
 ```
 
-**File**: `testing/sqltest/src/gap.rs` (added, +433/-0)
+**File**: `Cargo.toml` (modified, +9/-0)
 ```diff
-@@ -0,0 +1,433 @@
-+//! Gap tests.
-+//!
-+//! A gap test records a known difference between tursopg and PostgreSQL 18.
-+//! It is a test with a `@compat-gap "<kind>:<object>"` decorator, a default `expect`
-+//! block that holds the PostgreSQL answer and an `expect @tursopg` block that
-+//! holds the current tursopg answer. The postgres backend checks the default
-+//! block, which proves the recorded PostgreSQL answer. The tursopg backend
-+//! passes when tursopg still gives the recorded answer and fails when tursopg
-+//! gives the PostgreSQL answer, so that a fixed gap cannot stay recorded.
-+//!
-+//! This module validates gap tests.
-+
-+use crate::backends::QueryResult;
-+use crate::parser::ast::{Backend, Expectation, Skip, SkipCondition, TestCase, TestFile};
-+use std::fmt;
-+
-+/// What a gap label names.
-+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
-+pub enum GapKind {
-+    Function,
-+    Type,
-+    Operator,
-+    Cast,
-+    Syntax,
-+}
-+
-+impl GapKind {
-+    pub const ALL: &'static [GapKind] = &[
-+        GapKind::Function,
-+        GapKind::Type,
-+        GapKind::Operator,
-+        GapKind::Cast,
-+        GapKind::Syntax,
-+    ];
-+
-+    pub fn name(self) -> &'static str {
-+        match self {
-+            GapKind::Function => "function",
-+            GapKind::Type => "type",
-+            GapKind::Operator => "operator",
-+            GapKind::Cast => "cast",
-+            GapKind::Syntax => "syntax",
-+        }
-+    }
-+}
-+
-+impl fmt::Display for GapKind {
-+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-+        f.write_str(self.name())
-+    }
-+}
-+
-+/// The longest answer that messages and the summary print before they cut it.
-+const MAX_ANSWER_LEN: usize = 80;
-+
-+/// One line that describes the answer an expectation records, such as
-+/// `2`, `1|t; 2|f`, `no rows` or `error 22003`.
-+pub fn describe_expectation(expectation: &Expectation) -> String {
-+    let text = match expectation {
-+        Expectation::Exact(rows) => describe_rows(trimmed(rows)),
-+        Expectation::Unordered(rows) => format!("{} (any order)", describe_rows(trimmed(rows))),
-+        Expectation::Pattern(pattern) => format!("output matching /{pattern}/"),
-+        Expectation::Error { sqlstate, .. } => match sqlstate {
-+            Some(sqlstate) => format!("error {sqlstate}"),
-+            None => "an error".to_string(),
-+        },
-+    };
-+    shorten(text)
-+}
-+
-+/// One line that describes what a backend returned, in the form of
-+/// [`describe_expectation`].
-+pub fn describe_result(result: &QueryResult) -> String {
-+    let text = if result.is_error() {
-+        match &result.sqlstate {
-+            Some(sqlstate) => format!("error {sqlstate}"),
-+            None => format!(
-+                "error \"{}\"",
-+                result
-+                    .error
-+                    .as_deref()
-+                    .unwrap_or("")
-+                    .lines()
-+                    .next()
-+                    .unwrap_or("")
-+            ),
-+        }
-+    } else {
-+        let rows: Vec<String> = result.rows.iter().map(|row| row.join("|")).collect();
-+        describe_rows(rows.iter().map(String::as_str).collect())
-+    };
-+    shorten(text)
-+}
-+
-+fn describe_rows(rows: Vec<&str>) -> String {
-+    if rows.is_empty() {
-+        "no rows".to_string()
-+    } else {
-+        rows.iter()
-+            .map(|row| row.trim())
-+            .collect::<Vec<_>>()
-+            .join("; ")
-+    }
-+}
-+
-+fn shorten(text: String) -> String {
-+    match text.char_indices().nth(MAX_ANSWER_LEN) {
-+        Some((end, _)) => format!("{}...", &text[..end]),
-+        None => text,
-+    }
-+}
-+
-+/// Checks the syntax of a gap label and returns its kind. The label is
-+/// `<kind>:<object>`. This does not check that the object exists in
-+/// PostgreSQL.
-+fn label_kind(label: &str) -> Result<GapKind, String> {
-+    let Some((kind, object)) = label.split_once(':') else {
-+        return Err(format!(
-+            "gap label '{label}' has no kind: write it as <kind>:<object>, for example function:round"
-+        ));
-+    };
-+    let kind = GapKind::ALL
-+        .iter()
-+        .copied()
-+        .find(|k| k.name() == kind)
-+        .ok_or_else(|| {
-+            format!(
-+                "gap label '{label}' has the unknown kind '{kind}'; the kinds are {}",
-+                GapKind::ALL
-+                    .iter()
-+                    .map(|k| k.name())
-+                    .collect::<Vec<_>>()
-+                    .join(", ")
-+            )
-+        })?;
-+    if object.is_empty() || object.trim() != object {
-+        return Err(format!(
-+            "gap label '{label}' needs an object after '{kind}:' with no leading or trailing spaces"
-+        ));
-+    }
-+    if kind == GapKind::Cast && !object.contains(" -> ") {
-+        return Err(format!(
-+            "gap label '{label}' names a cast as '<source type> -> <target type>', for example cast:text -> timestamptz"
-+        ));
-+    }
-+    Ok(kind)
-+}
-+
-+/// Checks the rules for a t
-```
-
-**File**: `testing/sqltest/src/lib.rs` (modified, +1/-0)
-```diff
-@@ -1,5 +1,6 @@
- pub mod backends;
- pub mod comparison;
-+pub mod gap;
- pub mod generator;
- pub mod matrix_oracle;
- pub mod output;
-```
-
-**File**: `testing/sqltest/src/main.rs` (modified, +21/-7)
-```diff
-@@ -102,13 +102,23 @@ enum Commands {
-         /// Stop at the first failed test or error
-         #[arg(long)]
-         fail_fast: bool,
-+
-+        /// Turn on the gap lints, which the PostgreSQL suites need; without
-+        /// them a `@compat-gap` test does not parse.
-+        #[arg(long)]
-+        compat_gaps: bool,
-     },
+@@ -196,6 +196,15 @@ shuttle = { version = "0.8.1" }
+ [profile.dev.package.similar]
+ opt-level = 3
  
-     /// Validate test file syntax and check for pending snapshots
-     Check {
-         /// Test files or directories
-         #[arg(required = true)]
-         paths: Vec<PathBuf>,
++# CI runs the simulator built with this profile. A simulation runs about ten
++# times faster than with the dev profile, and a rebuild after a change to
++# turso_core takes about twice as long. opt-level 2 runs no faster than 1.
++# Debug assertions and overflow checks stay on, as in dev.
++[profile.simulator]
++inherits = "dev"
++opt-level = 1
++debug = "line-tables-only"
 +
-+        /// Turn on the gap lints, which the PostgreSQL suites need; without
-+        /// them a `@compat-gap` test does not parse.
-+        #[arg(long)]
-+        compat_gaps: bool,
-     },
- 
-     /// Convert Tcl .test files to .sqltest format
-@@ -173,6 +183,7 @@ async fn main() -> ExitCode {
-             cross_check_binary,
-             postgres_dsn,
-             fail_fast,
-+            compat_gaps,
-         } => {
-             run_tests(
-                 paths,
-@@ -190,10 +201,11 @@ async fn main() -> ExitCode {
-                 cross_check_binary,
-                 postgres_dsn,
-                 fail_fast,
-+                compat_gaps,
-             )
-             .await
-         }
--        Commands::Check { paths } => check_files(paths).await,
-+        Commands::Check { paths, compat_gaps } => check_files(paths, compat_gaps).await,
-         Commands::Convert {
-             paths,
-             output_dir,
-@@ -248,6 +260,7 @@ async fn run_tests(
-     cross_check_binary: Option<PathBuf>,
-     postgres_dsn: Option<String>,
-     fail_fast: bool,
-+    compat_gaps: bool,
- ) -> ExitCode {
-     match (&postgres_dsn, backend_type.as_str()) {
-         (None, "postgres") => {
-@@ -304,7 +317,7 @@ async fn run_tests(
-     };
- 
-     // Load and parse test files
--    let loaded = match load_test_files(&paths).await {
-+    let loaded = match load_test_files(&paths, &sqltest::gap::lint(compat_gaps)).await {
-         Ok(loaded) => loaded,
-         Err(e) => {
-             eprintln!("Error loading test files: {e}");
-@@ -561,7 +574,8 @@ impl sqltest::DefaultDatabaseResolver for DefaultDatabasesResolver {
-     }
- }
- 
--async fn check_files(paths: Vec<PathBuf>) -> ExitCode {
-+async fn check_files(paths: Vec<PathBuf>, compat_gaps: bool) -> ExitCode {
-+    let lint = sqltest::gap::lint(compat_gaps);
-     let mut has_errors = false;
- 
-     // Check for pending snapshot files
-@@ -607,7 +621,7 @@ async fn check_files(paths: Vec<PathBuf>) -> ExitCode {
-                     for entry in entries {
-                         match entry {
-                             Ok(file_path) => {
--                                if !check_single_file(&file_path) {
-+                                if !check_single_file(&file_path, &lint) {
-                                     has_errors = true;
-                                 }
-                             }
-@@ -624,7 +638,7 @@ async fn check_files(paths: Vec<PathBuf>) -> ExitCode {
-                 }
-             }
-         } else if path.is_file() {
--            if !check_single_file(path) {
-+            if !check_single_file(path, &lint) {
-                 has_errors = true;
-             }
-         } else {
-@@ -640,9 +654,9 @@ async fn check_files(paths: Vec<PathBuf>) -> ExitCode {
-     }
- }
- 
--fn check_single_file(path: &PathBuf) -> bool {
-+fn check_single_file(path: &PathBuf, lint: sqltest::parser::TestLint<'_>) -> bool {
-     match std::fs::read_to_string(path) {
--        Ok(content) => match sqltest::parse(&content) {
-+        Ok(content) => match sqltest::parser::parse_with_lint(&content, lint) {
-             Ok(file) => {
-                 let snapshots_str = if file.snapshots.is_empty() {
-                     String::new()
-```
-
-**File**: `testing/sqltest/src/parser/ast.rs` (modified, +3/-0)
-```diff
-@@ -321,6 +321,9 @@ pub struct TestCase {
-     pub sql: String,
-     /// Expected results (with optional backend-specific overrides)
-     pub expectations: Expectations,
-+    /// The label of a gap test, from `@compat-gap "<kind>:<object>"`. A gap test
-+    /// records a known difference between tursopg and PostgreSQL.
-+    pub gap: Option<String>,
-     /// Common modifiers (setups, skip, backend, requires)
-     pub modifiers: CaseModifiers,
- }
-```
-
-**File**: `testing/sqltest/src/parser/lexer.rs` (modified, +5/-0)
-```diff
-@@ -146,6 +146,10 @@ pub enum Token {
-     #[token("@verify-materialized-views")]
-     AtVerifyMaterializedViews,
- 
-+    /// `@compat-gap` (a test of a known difference from PostgreSQL)
-+    #[token("@compat-gap")]
-+    AtGap,
-+
-     /// `@sqlstate` (the SQLSTATE that the next `expect error` block requires)
-     #[token("@sqlstate")]
-     AtSqlstate,
-@@ -276,6 +280,7 @@ impl fmt::Display for Token {
-             Token::AtVar => write!(f, "@var"),
-             Token::AtVerifyMaterializedViews => write!(f, "@verify-materialized-views"),
-             Token::AtSqlstate => write!(f, "@sqlstate"),
-+            Token::AtGap => write!(f, "@compat-gap"),
-             Token::AtIdentifier(s) => write!(f, "@{s}"),
-             Token::Setup => write!(f, "setup"),
-             Token::Test => write!(f, "test"),
-```
-
-**File**: `testing/sqltest/src/parser/mod.rs` (modified, +58/-19)
-```diff
-@@ -21,11 +21,45 @@ enum TestOrSnapshot {
-     Setup(String, Setup),
- }
- 
--/// Parse a `.sqltest` file from source
-+/// A check that a caller of [`parse_with_lint`] runs on each test of a parsed
-+/// file. It returns the message of a broken rule.
-+pub type TestLint<'a> = &'a (dyn Fn(&TestFile, &TestCase) -> Result<(), String> + Sync);
-+
-+/// Parse a `.sqltest` file from source. A test with `@compat-gap` is an error:
-+/// gap tests need the gap lints, which [`parse_with_lint`] runs.
- pub fn parse(input: &str) -> Result<TestFile, ParseError> {
-+    parse_with_lint(input, &reject_compat_gap)
-+}
-+
-+/// Parse a `.sqltest` file from source and run `lint` on each test. A lint
-+/// error points at the name of the test.
-+pub fn parse_with_lint(input: &str, lint: TestLint<'_>) -> Result<TestFile, ParseError> {
-     let tokens = tokenize(input)?;
-     let mut parser = Parser::new(tokens);
--    parser.parse()
-+    let file = parser.parse()?;
-+    for test in &file.tests {
-+        if let Err(message) = lint(&file, test) {
-+            return Err(ParseError::ValidationError {
-+                message: format!("test '{}': {message}", test.name),
-+                span: Some(SourceSpan::new(
-+                    test.name_span.start.into(),
-+                    test.name_span.len(),
-+                )),
-+                help: None,
-+            });
-+        }
-+    }
-+    Ok(file)
-+}
-+
-+/// The lint of [`parse`]: a `@compat-gap` test is an error.
-+pub fn reject_compat_gap(_file: &TestFile, test: &TestCase) -> Result<(), String> {
-+    match test.gap {
-+        Some(_) => Err(
-+            "a @compat-gap test needs the gap lints: run sqltest with --compat-gaps".to_string(),
-+        ),
-+        None => Ok(()),
-+    }
- }
- 
- fn eval_block_macro_count(expr: &str) -> Result<usize, String> {
-@@ -152,6 +186,7 @@ impl Parser {
-                     | Token::AtBackend
-                     | Token::AtCrossCheckIntegrity
-                     | Token::AtSqliteReference
-+                    | Token::AtGap
-                     | Token::AtVar
-                     | Token::Test
-                     | Token::Snapshot
-@@ -306,6 +341,7 @@ impl Parser {
-         let mut cross_check_integrity = false;
-         let mut sqlite_reference = false;
-         let mut matrix_vars: Vec<MatrixVar> = Vec::new();
-+        let mut gap: Option<String> = None;
- 
-         // Parse decorators
-         loop {
-@@ -378,10 +414,21 @@ impl Parser {
-                     sqlite_reference = true;
-                     self.skip_newlines_and_comments();
-                 }
-+                Some(Token::AtGap) => {
-+                    self.advance();
-+                    if gap.is_some() {
-+                        return Err(self.error("a test takes one @compat-gap label".to_string()));
-+                    }
-+                    gap = Some(self.expect_string()?);
-+                    self.skip_newlines_and_comments();
-+                }
-                 _ => break,
-             }
-         }
- 
-+        if gap.is_some() && !matches!(self.peek(), Some(Token::Test)) {
-+            return Err(self.error("@compat-gap is only valid before a test".to_string()));
-+        }
-         // Now check if it's a test, snapshot or matrix
-         if !matrix_vars.is_empty() && !matches!(self.peek(), Some(Token::Matrix)) {
-             return Err(self.error("@var decorators are only valid before a matrix".to_string()));
-@@ -525,6 +572,7 @@ impl Parser {
-                     name_span,
-                     sql,
-                     expectations: Expectations { default, overrides },
-+                    gap,
-                     modifiers: CaseModifiers {
-                         setups: test_setups,
-                         skip,
-@@ -1390,9 +1438,6 @@ test postgres {
- expect {
-     1
- }
--expect @tursopg {
--    2
--}
- "#;
- 
-         let file = parse(input).unwrap();
-@@ -1402,10 +1447,6 @@ expect @tursopg {
-             file.tests[0].modifiers.backend,
-             Some(ast::Backend::Postgres)
-         );
--        assert!(matches!(
--            file.tests[0].expectations.for_backend(ast::Backend::Tursopg),
--            Expectation::Exact(rows) if rows == &vec!["2".to_string()]
--        ));
-         assert!(matches!(
-             file.tests[0].expectations.for_backend(ast::Backend::Postgres),
-             Expectation::Exact(rows) if rows == &vec!["1".to_string()]
-@@ -1738,11 +1779,12 @@ test missing-table {
- expect error {
-     relation "missing" does not exist
- }
-+@sqlstate 42P01
- expect @tursopg error {
-     no such table
- }
--@sqlstate XX000
--expect @postgres error {
-+expect @rust error {
-+    no such table
- }
- "#;
- 
-@@ -1758,15 +1800,15 @@ expect @postgres error {
-         assert_eq!(
-             expectations.for_backend(ast::Backend::Tursopg),
-             &Expectation::Error {
--                sqlstate: None,
-+                sqlstate: Some("42P01".to_string()),
-                 pattern: Some("no such table".to_string()),
-             }
-         );
-         assert_eq!(
--            expectat
-```
-
-**File**: `testing/sqltest/src/runner/mod.rs` (modified, +297/-6)
-```diff
-@@ -9,6 +9,7 @@ use crate::snapshot::{SnapshotInfo, SnapshotManager, SnapshotResult, SnapshotUpd
- use async_trait::async_trait;
- use futures::FutureExt;
- use futures::stream::{FuturesUnordered, StreamExt};
-+use std::borrow::Cow;
- use std::collections::{HashMap, HashSet};
- use std::panic::AssertUnwindSafe;
- use std::path::{Path, PathBuf};
-@@ -128,6 +129,15 @@ impl Runnable for TestCase {
-     }
- 
-     fn check_backend_support(&self, options: &RunOptions) -> Option<String> {
-+        if self.gap.is_some()
-+            && !matches!(options.backend_type, Backend::Tursopg | Backend::Postgres)
-+        {
-+            return Some(format!(
-+                "@compat-gap tests record differences between tursopg and PostgreSQL and run only on \
-+                 the tursopg and postgres backends, not on the {} backend",
-+                options.backend_type
-+            ));
-+        }
-         let expectation = self.expectations.for_backend(options.backend_type);
-         if expectation.sqlstate().is_some() && !options.backend_reports_sqlstate {
-             return Some(format!(
-@@ -159,6 +169,9 @@ impl Runnable for TestCase {
-         // Tests use only the first (and only) result
-         assert!(results.len() == 1);
-         let result = results.first().unwrap();
-+        if self.gap.is_some() && options.backend_type == Backend::Tursopg {
-+            return evaluate_gap_test(self, result);
-+        }
-         let expectation = self.expectations.for_backend(options.backend_type);
-         let comparison = compare(result, expectation);
-         match comparison {
-@@ -168,6 +181,62 @@ impl Runnable for TestCase {
-     }
- }
- 
-+/// The message of a gap test that tursopg now answers like PostgreSQL.
-+pub const GAP_FIXED: &str = "gap fixed: remove @compat-gap and the expect @tursopg override";
-+
-+/// Evaluates a gap test on the tursopg backend. The PostgreSQL answer is
-+/// checked first, so that a fixed gap fails the run instead of passing as a
-+/// known gap. Both failure messages name the tursopg and the PostgreSQL
-+/// answer.
-+fn evaluate_gap_test(test: &TestCase, result: &QueryResult) -> TestOutcome {
-+    let label = test
-+        .gap
-+        .as_deref()
-+        .expect("evaluate_gap_test runs only for @compat-gap tests");
-+    let actual = crate::gap::describe_result(result);
-+    let postgres = crate::gap::describe_expectation(&test.expectations.default);
-+    // The default error block may hold the PostgreSQL message, which only the
-+    // postgres backend checks. tursopg fixes an error gap when it returns the
-+    // PostgreSQL SQLSTATE, whatever its message.
-+    let reference = match &test.expectations.default {
-+        Expectation::Error { sqlstate, .. } => Cow::Owned(Expectation::Error {
-+            sqlstate: sqlstate.clone(),
-+            pattern: None,
-+        }),
-+        expectation => Cow::Borrowed(expectation),
-+    };
-+    if compare(result, &reference).is_match() {
-+        let message_note = if compare(result, &test.expectations.default).is_match() {
-+            ""
-+        } else {
-+            "\ntursopg returns the PostgreSQL SQLSTATE with another message: keep an \
-+             `expect @tursopg error` block with the same @sqlstate and the tursopg message"
-+        };
-+        return TestOutcome::Failed {
-+            reason: format!(
-+                "{GAP_FIXED}\n{label}: tursopg returns {actual}, PostgreSQL returns {postgres}{message_note}"
-+            ),
-+        };
-+    }
-+    let tursopg = test
-+        .expectations
-+        .overrides
-+        .get(&Backend::Tursopg)
-+        .expect("the gap lints reject a @compat-gap test without an `expect @tursopg` block");
-+    match compare(result, tursopg) {
-+        ComparisonResult::Match => TestOutcome::Passed,
-+        ComparisonResult::Mismatch { reason } => TestOutcome::Failed {
-+            reason: format!(
-+                "known gap {label}: tursopg returns {actual}, PostgreSQL returns {postgres}, \
-+                 recorded tursopg answer {recorded}; tursopg gives neither the PostgreSQL answer \
-+                 nor the recorded gap answer (the comparison below is against the \
-+                 `expect @tursopg` block)\n{reason}",
-+                recorded = crate::gap::describe_expectation(tursopg),
-+            ),
-+        },
-+    }
-+}
-+
- #[async_trait]
- impl Runnable for SnapshotCase {
-     fn name(&self) -> &str {
-@@ -707,9 +776,12 @@ impl LoadedTests {
- ///
- /// This function handles:
- /// - Resolving directories (globbing for .sqltest files)
--/// - Reading and parsing each file
-+/// - Reading and parsing each file, running `lint` on each test
- /// - Collecting parse errors separately for reporting
--pub async fn load_test_files(paths: &[PathBuf]) -> Result<LoadedTests, BackendError> {
-+pub async fn load_test_files(
-+    paths: &[PathBuf],
-+    lint: crate::parser::TestLint<'_>,
-+) -> Result<LoadedTests, BackendError> {
-     let mut files = Vec::new();
-     let mut errors = Vec::new();
- 
-@@ -723,15 +795,15 @@ pub async f
+ [profile.release]
+ debug = "line-tables-only"
+ codegen-units = 4
 ```
 
 ---
 
-### Incident Patch 2: `425ed463` (2026-11-19)
-**Commit Message**: core/fts: size the term table of a segment build from the buffered documents
+### Incident Patch 2: `76da890c` (2026-11-21)
+**Commit Message**: Merge 'perf: fix make bench-tpc-c and remove the leftover checkpoint-bench file' from Jussi Saurio
 
-build_segment gave each SegmentWriter the memory budget of the largest
-batch, DEFAULT_MEMORY_BUDGET_BYTES (64 MiB). Tantivy uses this budget
-only to size the initial hash table of terms: the largest power of two
-from 2^10 to 2^19 entries of 8 bytes that is less than a third of the
-budget. Thus each segment build made a table of 2^19 entries (4 MiB),
-also for a statement that adds one row. SegmentWriter::for_segment
-filled this table, and finalize read all of it to collect the terms.
+On main, `make bench-tpc-c` fails: it runs `perf/tpc-c/tpcc-
+turso/run_bench.sh`, and that directory does not exist. This PR points
+the target at `perf/tpc-c/run_bench.sh`, where `635b5c063e` put the
+TPC-C harness.
 
-build_segment now gives a budget of 16 KiB for each buffered document,
-from 32 KiB to DEFAULT_MEMORY_BUDGET_BYTES. A statement that adds one
-row gets the smallest table (2^10 entries), and a batch of 769 or more
-documents gets the table of before. The table grows when it is half
-full, and the writer sorts the terms before it writes them, so the
-segment files do not change. The new test builds the same 1,000
-documents with the smallest budget and with DEFAULT_MEMORY_BUDGET_BYTES,
-and compares the files.
+It also deletes `perf/checkpoint-bench/src/main.rs`. That directory has
+no `Cargo.toml` and is not a workspace member, so nothing builds the
+file. `85c091e17c` deleted the crate, and `28af7f1b6e` re-added only
+`main.rs`.
 
-Simulated time (callgrind, cache settings of the CodSpeed runner):
+Ran `make bench-tpc-c` with this PR in a Linux container (aarch64, gcc).
+Last lines of the report:
 
-| Benchmark | Before | After | Change |
-|---|---:|---:|-
-
-**File**: `core/index_method/fts/mod.rs` (modified, +28/-1)
-```diff
-@@ -137,6 +137,16 @@ fn key_info() -> KeyInfo {
- /// Memory budget for Tantivy's per-segment writer arena.
- pub const DEFAULT_MEMORY_BUDGET_BYTES: usize = 64 * 1024 * 1024;
- 
-+/// Memory budget of the segment writer for each buffered document. With this
-+/// value, a batch of `BATCH_COMMIT_SIZE` documents gets the largest initial
-+/// term table, as with `DEFAULT_MEMORY_BUDGET_BYTES`.
-+const SEGMENT_MEMORY_BUDGET_BYTES_PER_DOC: usize = 16 * 1024;
-+
-+/// The smallest memory budget of the segment writer. It gives Tantivy's
-+/// smallest initial term table (2^10 entries). Tantivy refuses a budget of
-+/// 24 KiB or less.
-+const MIN_SEGMENT_MEMORY_BUDGET_BYTES: usize = 32 * 1024;
-+
- /// Chunk size (512 KiB) for splitting segment files into backing rows.
- pub const DEFAULT_CHUNK_SIZE: usize = 512 * 1024;
- 
-@@ -2201,7 +2211,8 @@ impl FtsCursor {
-         self.register_tokenizers(&index);
-         let segment_id = self.mint_segment_id();
-         let segment = index.segment(index.new_segment_meta(segment_id, 0));
--        let mut writer = SegmentWriter::for_segment(DEFAULT_MEMORY_BUDGET_BYTES, segment)
-+        let memory_budget = Self::segment_memory_budget(self.doc_buffer.len());
-+        let mut writer = SegmentWriter::for_segment(memory_budget, segment)
-             .map_err(|e| build_dir.write_error(e, "FTS segment writer"))?;
-         let identity_base = self.mint_identity_base();
-         let mut added = 0u32;
-@@ -2246,6 +2257,22 @@ impl FtsCursor {
-         segment_rows_from_files(segment_id, max_doc, captured, identities)
-     }
- 
-+    /// The memory budget of the segment writer for `doc_count` buffered
-+    /// documents.
-+    ///
-+    /// Tantivy uses the budget only to size the initial hash table of terms:
-+    /// the largest power of two from 2^10 to 2^19 entries of 8 bytes that
-+    /// is less than a third of the budget. The table grows when it is half
-+    /// full, and the writer sorts the terms before it writes them, so the
-+    /// size does not change the segment files. Each build fills the table
-+    /// and `finalize` reads all of it, so a table that is too large for the
-+    /// batch makes the build slow.
-+    fn segment_memory_budget(doc_count: usize) -> usize {
-+        doc_count
-+            .saturating_mul(SEGMENT_MEMORY_BUDGET_BYTES_PER_DOC)
-+            .clamp(MIN_SEGMENT_MEMORY_BUDGET_BYTES, DEFAULT_MEMORY_BUDGET_BYTES)
-+    }
-+
-     /// Drive the in-flight publication (row deletions, then row inserts,
-     /// then in-memory effects exactly once).
-     fn drive_publish(&mut self) -> IOResultOr<()> {
+```
+  Turso / SQLite ratio: 0.14x
+  Winner: sqlite (+627.4%)
 ```
 
-**File**: `core/index_method/fts/tests.rs` (modified, +57/-0)
+Not fixed here: the harness does not compile on macOS, because it uses
+`timer_t`.
+
+A broken Makefile target and a file that no build includes.
+
+Claude Code found both items, made the change, ran the target, and wrote
+this text.
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Closes #12222
+
+**File**: `Makefile` (modified, +1/-1)
 ```diff
-@@ -554,6 +554,63 @@ fn segment_load_rejects_the_old_identity_field() {
-     assert!(error.to_string().contains("rebuild the index"), "{error}");
- }
+@@ -199,7 +199,7 @@ docker-cli-run:
+ 	docker run -it -v ./:/app turso-cli
  
-+#[test]
-+fn segment_files_do_not_depend_on_the_writer_memory_budget() {
-+    // `build_segment` gives the segment writer of a small batch a small
-+    // memory budget. Tantivy uses the budget only for the initial size of its
-+    // term table, and FTS stores the segment files in the database. Thus the
-+    // files must be the same for each budget, also when the table grows.
-+    let attachment = test_attachment();
-+    let cursor = FtsCursor::new(&attachment);
-+    let segment_id = SegmentId::generate_random();
-+    let build = |memory_budget: usize| {
-+        let directory = BuildDirectory::default();
-+        let index = Index::create(
-+            directory.clone(),
-+            attachment.schema.clone(),
-+            IndexSettings::default(),
-+        )
-+        .unwrap();
-+        cursor.register_tokenizers(&index);
-+        let mut writer = SegmentWriter::for_segment(
-+            memory_budget,
-+            index.segment(index.new_segment_meta(segment_id, 0)),
-+        )
-+        .unwrap();
-+        // About 3,000 different terms: the smallest table (2^10 entries)
-+        // grows three times.
-+        for rowid in 0..1000i64 {
-+            let mut document = TantivyDocument::default();
-+            document.add_i64(attachment.rowid_field, rowid);
-+            document.add_text(attachment.indexed_fields[0].1, format!("title {rowid}"));
-+            document.add_text(
-+                attachment.indexed_fields[1].1,
-+                format!("body word{rowid} shared text{}", rowid % 7),
-+            );
-+            document.add_u64(attachment.identity_hi_field, 1);
-+            document.add_u64(attachment.identity_lo_field, rowid as u64);
-+            writer
-+                .add_document(AddOperation {
-+                    opstamp: 0,
-+                    document,
-+                })
-+                .unwrap();
-+        }
-+        writer.finalize().unwrap();
-+        let mut files: Vec<_> = directory
-+            .captured_files()
-+            .into_iter()
-+            .map(|(path, bytes)| (path, bytes.to_vec()))
-+            .collect();
-+        files.sort();
-+        files
-+    };
-+    let smallest = build(FtsCursor::segment_memory_budget(1));
-+    let largest = build(DEFAULT_MEMORY_BUDGET_BYTES);
-+    assert!(!largest.is_empty());
-+    assert_eq!(smallest, largest);
-+}
-+
- #[test]
- fn merge_keeps_document_identities_and_retires_only_dropped_tombstones() {
-     let attachment = test_attachment();
+ bench-tpc-c:
+-	@cd perf/tpc-c/tpcc-turso && ./run_bench.sh
++	@cd perf/tpc-c && ./run_bench.sh
+ .PHONY: bench-tpc-c
+ 
+ merge-pr:
 ```
 
----
-
-### Incident Patch 3: `d0181b16` (2026-11-19)
-**Commit Message**: core/io: make a full page of an in-memory file from the written bytes
-
-MemStore keeps the bytes of an in-memory file in pages of 4096 bytes.
-write_at_inner allocated each new page filled with zeros, and then
-copied the written bytes over it. Thus a write that covers a whole new
-page wrote each of its bytes twice. The spill files of hash tables,
-temporary files and in-memory databases are written mostly in whole
-pages.
-
-For a new page that the write covers completely, write_at_inner now
-makes the page from the written bytes, with one allocation and one
-copy. A partial write and a write to an existing page work as before,
-and the file gives the same bytes. The new test compares the store with
-a flat Vec after writes of whole pages, partial pages and overwrites.
-
-Simulated time (callgrind, cache settings of the CodSpeed runner):
-
-| Benchmark | Before | After | Change |
-|---|---:|---:|---:|
-| `hash_spill_benchmark` `HashTable Build (Relaxed Budget)` `with_100b_payload[10000]` | 18.19 ms | 16.35 ms | -10.1% |
-| `hash_spill_benchmark` `HashTable Build (Relaxed Budget)` `with_100b_payload[5000]` | 9.45 ms | 8.68 ms | -8.2% |
-| `hash_spill_benchmark` `HashTable Large Payload Spill` `payloa
-
-**File**: `core/io/memory.rs` (modified, +51/-11)
+**File**: `perf/checkpoint-bench/src/main.rs` (removed, +0/-684)
 ```diff
-@@ -5,7 +5,7 @@ use crate::sync::{Mutex, RwLock};
- use crate::turso_assert;
- use crate::Result;
- use std::{
--    collections::{BTreeMap, HashMap},
-+    collections::{btree_map::Entry, BTreeMap, HashMap},
-     sync::Arc,
- };
- use tracing::debug;
-@@ -147,13 +147,6 @@ impl MemStore {
-         }
-     }
- 
--    fn get_or_allocate_page(inner: &mut MemStoreInner, page_no: usize) -> &mut MemPage {
--        inner
--            .pages
--            .entry(page_no)
--            .or_insert_with(|| Box::new([0; PAGE_SIZE]))
--    }
+@@ -1,684 +0,0 @@
+-//! Multithreaded MVCC checkpoint benchmark: TRUNCATE (blocking) vs PASSIVE (non-blocking).
+-//!
+-//! Concurrent writer and reader tasks hammer a small table while the auto-checkpoint fires
+-//! aggressively (low `mvcc_checkpoint_threshold`). The blocking Truncate checkpoint takes the
+-//! global lock for the whole checkpoint, so transactions stall whenever one runs — visible as
+-//! tail-latency spikes and throughput dips. The passive checkpoint only contends for a brief
+-//! publish window. We record per-operation latency with timestamps, so the output includes a
+-//! time series (CSV + self-contained SVG plots) that makes contention visible.
+-//!
+-//! File sizes (db / -wal / logical log) are reported per mode as a "did checkpointing keep up"
+-//! signal: if checkpoints fall behind, the logical log and WAL grow without bound during the run.
+-//!
+-//! Example:
+-//!   cargo run --profile bench-profile -p mvcc-checkpoint-bench -- \
+-//!       --writers 8 --readers 8 --duration 15 --rows 2000 --checkpoint-threshold 4096
 -
-     fn write_at_inner(inner: &mut MemStoreInner, pos: u64, data: &[u8]) -> usize {
-         let buf_len = data.len();
-         if buf_len == 0 {
-@@ -166,9 +159,22 @@ impl MemStore {
-             let page_no = offset / PAGE_SIZE;
-             let page_offset = offset % PAGE_SIZE;
-             let bytes_to_write = remaining.min(PAGE_SIZE - page_offset);
--            let page = Self::get_or_allocate_page(inner, page_no);
--            page[page_offset..page_offset + bytes_to_write]
--                .copy_from_slice(&data[buf_offset..buf_offset + bytes_to_write]);
-+            let src = &data[buf_offset..buf_offset + bytes_to_write];
-+            match inner.pages.entry(page_no) {
-+                // The write gives all the bytes of this new page, so the page
-+                // is made from them instead of a page of zeros that the copy
-+                // then overwrites.
-+                Entry::Vacant(slot) if bytes_to_write == PAGE_SIZE => {
-+                    let page: MemPage = Box::<[u8]>::from(src)
-+                        .try_into()
-+                        .expect("a full-page write has PAGE_SIZE bytes");
-+                    slot.insert(page);
-+                }
-+                entry => {
-+                    let page = entry.or_insert_with(|| Box::new([0; PAGE_SIZE]));
-+                    page[page_offset..page_offset + bytes_to_write].copy_from_slice(src);
-+                }
-+            }
-             offset += bytes_to_write;
-             buf_offset += bytes_to_write;
-             remaining -= bytes_to_write;
-@@ -349,6 +355,40 @@ mod tests {
-     use super::*;
-     use std::{sync::mpsc, time::Duration};
+-use std::path::{Path, PathBuf};
+-use std::sync::Arc;
+-use std::time::{Duration, Instant};
+-
+-use clap::Parser;
+-use tokio::sync::Mutex;
+-use turso::Builder;
+-
+-#[derive(Parser, Clone)]
+-#[command(about = "Compare TRUNCATE vs PASSIVE MVCC checkpoint latency/throughput")]
+-struct Args {
+-    /// Concurrent writer tasks (each runs BEGIN CONCURRENT / UPDATE / COMMIT in a loop).
+-    #[arg(long, default_value_t = 4)]
+-    writers: usize,
+-    /// Concurrent reader tasks (each runs point SELECTs in a loop).
+-    #[arg(long, default_value_t = 4)]
+-    readers: usize,
+-    /// Measurement duration per mode, in seconds.
+-    #[arg(long, default_value_t = 10)]
+-    duration: u64,
+-    /// Rows seeded into the table (also the key space writers/readers touch).
+-    #[arg(long, default_value_t = 1000)]
+-    rows: i64,
+-    /// `PRAGMA mvcc_checkpoint_threshold` in bytes: 0 = checkpoint on every commit,
+-    /// N > 0 = when the logical log exceeds N bytes, -1 = never.
+-    #[arg(long, default_value_t = 0)]
+-    checkpoint_threshold: i64,
+-    /// `PRAGMA synchronous`: full = fsync per commit (durable, default), normal/off = relax fsync.
+-    #[arg(long, default_value = "full")]
+-    synchronous: String,
+-    /// Which mode(s) to run.
+-    #[arg(long, value_enum, default_value_t = ModeArg::Both)]
+-    mode: ModeArg,
+-    /// Time-series bucket width in milliseconds.
+-    #[arg(long, default_value_t = 200)]
+-    bucket_ms: u32,
+-    /// Output path prefix for the CSV and HTML report.
+-    #[arg(long, default_value = "checkpoint-bench-out")]
+-    out: String,
+-    /// Tokio worker threads (0 = tokio default = number of cores).
+-    #[arg(long, default_value_t = 0)]
+-    worker_threads: usize,
+-}
+-
+-#[derive(clap::ValueEnum, Clone, Copy, PartialEq)]
+-enum ModeArg {
+-    Truncate,
+-    Passive,
+-    Both,
+-}
+-
+-/// One operation: milliseconds since the measurement window started, and its latency (us).
+-type Sample = (u32, u32);
+-
+-struct ModeData {
+-    writes: Vec<Sample>,
+-    reads: Vec<Sample>,
+-    write_conflicts: u64,
+-    elapsed_secs: f64,
+-    files: Vec<(String, u64)>,
+-}
+-
+-struct Stats {
+-    count: u64,
+-    per_sec: f64,
+-    mean: f64,
+-    p50: u64,
+-    p90: u64,
+-    p99: u64,
+-    p999: u64,
+-    max: u64,
+-}
+-
+-impl Stats {
+-    fn compute(samples: &[Sample], elapsed_secs: f64) -> Self {
+-        let mut lat: Vec<u64> = samples.iter().map(|&(_, l)| l as u64).collect();
+-        let count = lat.len() as u64;
+-        if lat.is_empty() {
+-            return Stats {
+-                count: 0,
+-                per_sec: 0.0,
+-                mean: 0.0,
+-                p50: 0,
+-                p90: 0,
+-                p99: 0,
+-                p999: 0,
+-                max: 0,
+-            };
+-        }
+-        lat.sort_unstable();
+-        let sum: u128 = lat.iter().map(|&x| x as u128).sum();
+-        let pct =
+-            |p: f64| lat[((p * (lat.len() as f64 - 1.0)).round() as usize).min(lat.len() - 1)];
+-        Stats {
+-            count,
+-            per_sec: count as f64 / elapsed_secs,
+-            mean: sum as f64 / lat.len() as f64,
+-            p50: pct(0.50),
+-            p90: pct(0.90),
+-            p99: pct(0.99),
+-            p999: pct(0.999),
+-            max: *lat.last().unwrap(),
+-        }
+-    }
+-}
+-
+-/// Per-time-bucket aggregate for the time series.
+-struct Bucket {
+-    t_ms: u32,
+-    throughput: f64,
+-    p50: u64,
+-    p99: u64,
+-    max: u64,
+-}
+-
+-fn bucketize(samples: &[Sample], bucket_ms: u32, duration_ms: u32) -> Vec<Bucket> {
+-    let n = (duration_ms / bucket_ms) as usize + 1;
+-    let mut buckets: Vec<Vec<u64>> = vec![Vec::new(); n];
+-    for &(t, l) in samples {
+-        let b = (t / bucket_ms) as usize;
+-        if b < n {
+-            buckets[b].push(l as u64);
+-        }
+-    }
+-    let secs = bucket_ms as f64 / 1000.0;
+-    buckets
+-        .into_iter()
+-        .enumerate()
+-        .map(|(i, mut v)| {
+-            let t_ms = i as u32
+```
+
+---
+
+### Incident Patch 3: `e7fd7e2d` (2026-11-21)
+**Commit Message**: ci: build the CodSpeed memory benchmarks without LTO
+
+26fc7e7f27 turned off LTO for CodSpeed builds with CARGO_PROFILE_BENCH_LTO in
+codspeed.yml's env. codspeed-memory.yml is a called workflow, and a called
+workflow does not get the env of the workflow that calls it, so the memory
+benchmark build still used thin LTO. That build (233 s p50) plus the
+benchmark shard after it was the last check to finish on 11 of 34 pull
+request pushes. Locally, a rebuild after a turso_core change takes 80 s
+without LTO and 106 s with thin LTO.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/codspeed-memory.yml` (modified, +10/-0)
+```diff
+@@ -14,6 +14,16 @@ permissions:
+   contents: read
+   id-token: write # required for OIDC authentication with CodSpeed
  
-+    /// A write that covers a whole new page makes the page from its bytes,
-+    /// and the other writes copy into a page of zeros. Both must give the
-+    /// bytes of a flat file, with zeros in the holes.
-+    #[test]
-+    fn writes_read_back_like_a_flat_file() {
-+        let store = MemStore::new();
-+        let mut model: Vec<u8> = Vec::new();
-+        // (position, length, first byte)
-+        let writes = [
-+            (0, PAGE_SIZE, 1u8),
-+            (PAGE_SIZE * 3 + 100, PAGE_SIZE * 2, 2),
-+            (10, 20, 3),
-+            (PAGE_SIZE * 6, PAGE_SIZE * 2, 4),
-+            (PAGE_SIZE, PAGE_SIZE, 5),
-+            (PAGE_SIZE * 6, PAGE_SIZE, 6),
-+        ];
-+        for (pos, len, first) in writes {
-+            let data: Vec<u8> = (0..len).map(|i| first.wrapping_add(i as u8)).collect();
-+            assert_eq!(store.write_at(pos as u64, &data), len);
-+            if model.len() < pos + len {
-+                model.resize(pos + len, 0);
-+            }
-+            model[pos..pos + len].copy_from_slice(&data);
-+        }
++# A called workflow does not get the env block of the workflow that calls
++# it, so codspeed.yml's settings are repeated here.
++env:
++  CARGO_INCREMENTAL: "0"
++  CARGO_NET_RETRY: 10
++  CARGO_TERM_COLOR: always
++  # Thin LTO made up a large part of the bench build. CodSpeed compares each
++  # PR against main built the same way, so the comparison does not need it.
++  CARGO_PROFILE_BENCH_LTO: "false"
 +
-+        assert_eq!(store.size(), model.len() as u64);
-+        let buffer = Buffer::new_temporary(model.len());
-+        assert_eq!(store.read_into(0, &buffer) as usize, model.len());
-+        assert!(buffer.as_slice() == &model[..]);
-+        // No write touched the third page.
-+        assert!(store.has_hole(PAGE_SIZE * 2, PAGE_SIZE));
-+        assert!(!store.has_hole(PAGE_SIZE, PAGE_SIZE));
-+    }
-+
-     #[test]
-     fn vectored_write_is_not_observed_partially() {
-         let store = Arc::new(MemStore::new());
+ jobs:
+   build:
+     runs-on: blacksmith-4vcpu-ubuntu-2404
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #12168** (2026-11-20): ci/dotnet: pin .NET 10 SDK in iOS package validation (@penberg)
-- **PR #12164** (2026-11-20): testing/sqltest: record known PostgreSQL differences as @compat-gap tests (@jussisaurio)
-- **PR #12157** (2026-11-20): sdk-kit: update README examples to the current C and Rust API (@turso-github-handyman[bot])
-- **PR #12156** (closed): postgres: store timestamp and timestamptz as PostgreSQL does (@jussisaurio)
-- **PR #12155** (2026-11-20): postgres: now() is the start of the transaction, statement_timestamp() the time the client's query arrived (@jussisaurio)
-- **PR #12151** (2026-11-20): sqlite/conformance: regenerate two gencol snapshots for new bytecode (@glommer)
+- **PR #12230** (2026-11-21): ci: make PR CI faster (@jussisaurio)
+- **PR #12229** (2026-11-21): core/vdbe: use the test dialect in test_serialize_array_from_blob (@jussisaurio)
+- **PR #12222** (2026-11-21): perf: fix make bench-tpc-c and remove the leftover checkpoint-bench file (@jussisaurio)
+- **PR #12221** (2026-11-21): ci: remove the GitHub-runner criterion benchmark job (@jussisaurio)
+- **PR #12218** (2026-11-21): sync/engine: pass a session role to ConnectOpts::new in the verify test (@jussisaurio)
+- **PR #12210** (2026-11-21): core/translate: keep upsert clauses with INSERT OR IGNORE and OR REPLACE (@turso-github-handyman[bot])
 
 ---
 
@@ -2479,53 +1792,36 @@ Simulated time (callgrind, cache settings of the CodSpeed runner):
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. testing/sqltest: add @compat-gap tests with a fixed-gap check and lints
+## X. ci: run the simulator built with optimizations
 
 **RULE**:
-When implementing operations in `testing/sqltest/src/comparison/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/rust.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `091610f8`: testing/sqltest: add @compat-gap tests with a fixed-gap check and lints. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3885b0ea`: ci: run the simulator built with optimizations. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `testing/sqltest/src/comparison/mod.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/rust.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use regex::RegexBuilder;
-use std::collections::HashSet;
-/// Whether one query result can match both expectations under the rules of
-/// [`compare`]. It assumes that no output value holds a line break. Where
-/// it cannot decide, it answers true: for an `expect pattern` block against
-/// an `expect unordered` or another `expect pattern` block, and for two error
-/// messages, because two regexes can match the same message.
-pub fn may_match_same_output(a: &Expectation, b: &Expectation) -> bool {
-    match (a, b) {
-        (Expectation::Error { sqlstate: a, .. }, Expectation::Error { sqlstate: b, .. }) => {
-            // compare_error checks a SQLSTATE only when the block names one.
-            match (a, b) {
-                (Some(a), Some(b)) => a == b,
-                _ => true,
-            }
-        }
-        (Expectation::Error { .. }, _) | (_, Expectation::Error { .. }) => false,
-        (Expectation::Exact(a), Expectation::Exact(b)) => exact_text(a) == exact_text(b),
-        (Expectation::Unordered(a), Expectation::Unordered(b)) => {
-            unordered_set(a) == unordered_set(b)
-        }
-        (Expectation::Exact(exact), Expectation::Unordered(unordered))
-        | (Expect
+      # The simulator profile (Cargo.toml) optimizes the code but keeps
+      # debug assertions; simulations run about ten times faster than with
+      # the dev profile.
+        run: cargo build -p limbo_sim --bin limbo_sim --locked --profile simulator
+            if ./target/simulator/limbo_sim "${args[@]}" >"$log" 2>&1; then
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+        run: cargo build -p limbo_sim --bin limbo_sim --locked
+            if ./target/debug/limbo_sim "${args[@]}" >"$log" 2>&1; then
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `091610f8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3885b0ea` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

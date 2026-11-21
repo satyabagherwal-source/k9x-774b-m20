@@ -11870,3 +11870,6 @@
 | `CYCLE-20261121-KDBE` | `2026-11-21T18:23:05.834Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9819` | Yes (`d69d2760...`) |
 | `CYCLE-20261121-BMG4` | `2026-11-21T18:44:17.380Z` | `ccore/Qwen3.5-4B-3D-Coder` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ccore-qwen3.5-4b-3d-coder-learnings.md` | Yes (`1b8e7b0e...`) |
 | `CYCLE-20261121-BN5C` | `2026-11-21T18:44:18.288Z` | `Orange-OpenSource/hurl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7098` | Yes (`7174f376...`) |
+| `CYCLE-20261121-LOTR` | `2026-11-21T18:52:07.023Z` | `LiquidAI/LFM3-1.7B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-lfm3-1.7b-learnings.md` | Yes (`91d14176...`) |
+| `CYCLE-20261121-M285` | `2026-11-21T18:52:24.389Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9820` | Yes (`d70a9f37...`) |
+| `CYCLE-20261121-M287` | `2026-11-21T18:52:24.391Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9820` | Yes (`6a25e4cc...`) |
