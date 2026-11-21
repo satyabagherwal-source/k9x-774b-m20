@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T06:14:05.708Z",
+  "last_updated": "2026-11-21T06:28:11.484Z",
   "total_verified_learnings": 9058,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22961,
+  "total_items": 22971,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -223341,8 +223341,8 @@
       "slug": "sceneview-sceneview",
       "platform": "github",
       "source_url": "https://github.com/sceneview/sceneview",
-      "source_version": "0600bf13",
-      "content_hash": "7d38ec63829696c2dbbbcb86c8da71dc44512725736ff2714d1690da2da9e687",
+      "source_version": "8a3f4274",
+      "content_hash": "182b94ce1530bf6844eb01a08bc9839e4148de79561a59b8515f5b7cc656b94a",
       "dossier_path": "07_PROJECT_LEARNING/sceneview-sceneview-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sceneview-sceneview-learnings.md",
       "promoted_rules": [
@@ -223355,6 +223355,11 @@
           "number": 9007,
           "title": "apply per-frame EIS camera compensation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9737,
+          "title": "bound the 3D scan journal and release the live model on exit",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -223362,7 +223367,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T16:46:41.077Z",
+      "verified_at": "2026-11-21T06:27:57.353Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -223416,10 +223421,10 @@
       "relative_path": "08_VERIFICATION/sceneview-sceneview-verification-protocol-empirical-defect-shield-for-sceneview-.md",
       "title": "Verification Protocol: Empirical Defect Shield for sceneview/sceneview",
       "repository": "sceneview/sceneview",
-      "source_version": "0600bf13",
-      "content_hash": "05e46097982aacbc436977203aa18f449e2db3d5942fe85ba4e0e6486135254a",
+      "source_version": "8a3f4274",
+      "content_hash": "2ef5e21b7d48e1d5a7e97fdee959a637ded3d1c8fe047fc7170767f847ea7fd8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T16:46:41.708Z"
+      "persisted_at": "2026-11-21T06:27:58.051Z"
     },
     "learn-github-higress-group-higress": {
       "learning_id": "learn-github-higress-group-higress",
@@ -223757,9 +223762,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for sceneview-sceneview-learnings",
       "repository": "sceneview-sceneview-learnings",
       "source_version": "HEAD",
-      "content_hash": "dcf1d2e56eeaefefccc04e1357d09d941d4c9e5c492a4f50d7d76609eab5df55",
+      "content_hash": "17d8c49a97ef4e30e1be801b7d9df441d2b3a90d9638de2a6328e6a0f238ec18",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T16:47:26.353Z"
+      "persisted_at": "2026-11-21T06:28:10.708Z"
     },
     "candidate_directive-mcp-server-preserve-proxy-tool-input-schemas": {
       "item_id": "candidate_directive-mcp-server-preserve-proxy-tool-input-schemas",
@@ -229286,8 +229291,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "aa069366",
-      "content_hash": "64d10ae7a2b1df2f8530a9c7e8ed5eab3f765f9e147618e51613f437076debe8",
+      "source_version": "8b37fa90",
+      "content_hash": "914a0399f0583d0514d1e46f48912783461165620fca94cb17769653728da543",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -229460,6 +229465,11 @@
           "number": 9612,
           "title": "Initialize synthesized instance value fields",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9738,
+          "title": "synthesized instance implementations",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -229467,7 +229477,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T17:45:31.900Z",
+      "verified_at": "2026-11-21T06:28:05.778Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -229509,10 +229519,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "aa069366",
-      "content_hash": "91fd43246d29fbd34f782e320c22c8e6de7c2a3cbd8837db13e18070a7476034",
+      "source_version": "8b37fa90",
+      "content_hash": "84edcfe9a44c2325cdd5502d935a6387dfffd5519d40d93c06737b0f9dd49045",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T17:45:32.451Z"
+      "persisted_at": "2026-11-21T06:28:06.295Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid",
@@ -229521,10 +229531,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "aa069366",
-      "content_hash": "8c66108bbecf77f8aec5cf48044cdcc1a0da237babf500f1444852ce87637edc",
+      "source_version": "8b37fa90",
+      "content_hash": "1daa27cca9697d7d975b0cd367436ca707cf30843125bbee02c6e7bb9c002c1a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T17:45:32.600Z"
+      "persisted_at": "2026-11-21T06:28:06.439Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -230602,9 +230612,9 @@
       "title": "Architecture Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "53a67c5c9de59bdc0d845c0cf4dc1cf71c89353afe9b2bce16505b0f1f528873",
+      "content_hash": "bfcd772c11e12c796341a02c9f694e4b67c854739daaef40e4d69eaa44cb0ba9",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T17:45:36.799Z"
+      "persisted_at": "2026-11-21T06:28:11.345Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid-learnings",
@@ -230614,9 +230624,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nucleoidai-nucleoid-learnings",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "ff5f9383ebef65bbd750892caf155414c703e04610e89c6ad9ea681611ec6447",
+      "content_hash": "e4f985f3f1332ed1b72d7c871ffa3c122acefae5549a058e8c65615b93fb4760",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T17:45:36.951Z"
+      "persisted_at": "2026-11-21T06:28:11.484Z"
     },
     "learn-huggingface-qwen-qwen3-8b": {
       "learning_id": "learn-huggingface-qwen-qwen3-8b",
@@ -244744,8 +244754,8 @@
       "slug": "tuist-tuist",
       "platform": "github",
       "source_url": "https://github.com/tuist/tuist",
-      "source_version": "5679c950",
-      "content_hash": "5271a2aacfa6ef9a57f5a9c4541201d69b5e698efa22cd2375127cee51d6f3af",
+      "source_version": "45d39123",
+      "content_hash": "ed4b03f14a6f2bb479e134c46aa1c54c1c0d5322e9a4aeda2cb38dee8f083f8a",
       "dossier_path": "07_PROJECT_LEARNING/tuist-tuist-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tuist-tuist-learnings.md",
       "promoted_rules": [
@@ -244768,6 +244778,11 @@
           "number": 9433,
           "title": "prelink external packages again so release builds keep Swift metadata",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9736,
+          "title": "install a site's first edge without an archive (hotfix)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -244775,7 +244790,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T19:39:01.876Z",
+      "verified_at": "2026-11-21T06:27:54.055Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -244817,10 +244832,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tuist-tuist-architecture-intelligence-tuist-tuist-core-invariants.md",
       "title": "Architecture Intelligence: tuist/tuist Core Invariants",
       "repository": "tuist/tuist",
-      "source_version": "5679c950",
-      "content_hash": "701141ca0b35163306edbf00aad9c6c22a2c00c2a61e6507aa4d1cd2bc1e6a6c",
+      "source_version": "45d39123",
+      "content_hash": "84279eb037730cb254d547db853b4da50c25d5aaf04032837b05e30152fe4edb",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T19:39:02.436Z"
+      "persisted_at": "2026-11-21T06:27:54.555Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tuist-tuist": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tuist-tuist",
@@ -244829,10 +244844,10 @@
       "relative_path": "08_VERIFICATION/tuist-tuist-verification-protocol-empirical-defect-shield-for-tuist-tuist.md",
       "title": "Verification Protocol: Empirical Defect Shield for tuist/tuist",
       "repository": "tuist/tuist",
-      "source_version": "5679c950",
-      "content_hash": "c2c4beab9f8cc798922498e5201b3a1b6b55dfed0d990807fbec9c6da54b08c7",
+      "source_version": "45d39123",
+      "content_hash": "113602b3a34b389bf8c40bab6a32fc0e1961dd0deb0b2fe84babbffb1cf5992e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T19:39:02.714Z"
+      "persisted_at": "2026-11-21T06:27:54.820Z"
     },
     "learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated": {
       "learning_id": "learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated",
@@ -245125,9 +245140,9 @@
       "title": "Architecture Intelligence: tuist-tuist-learnings Core Invariants",
       "repository": "tuist-tuist-learnings",
       "source_version": "HEAD",
-      "content_hash": "4ace6711d2275a856a6b6ee2a70f82470b8ea02910d3a0b8a639bb0f54d1efdf",
+      "content_hash": "60d3f6a94164579e47be491ff4e7e0ecfb61d62dd1670c90f5655c35f5a244af",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T19:39:10.178Z"
+      "persisted_at": "2026-11-21T06:28:09.836Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tuist-tuist-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tuist-tuist-learnings",
@@ -245137,9 +245152,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tuist-tuist-learnings",
       "repository": "tuist-tuist-learnings",
       "source_version": "HEAD",
-      "content_hash": "4076d5eae810893fe9cf343a7615cac8246f377c23499f47baf2cbe18852c494",
+      "content_hash": "9c0ca333d33e1fe41caf8230bef8f44a90a6af433bfb79ce7984d1de26e3c662",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T19:39:10.470Z"
+      "persisted_at": "2026-11-21T06:28:10.105Z"
     },
     "candidate_directive-orthogonal-weight-projection-invariant-for-activation-ablation": {
       "item_id": "candidate_directive-orthogonal-weight-projection-invariant-for-activation-ablation",
@@ -298139,10 +298154,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/tuist-tuist-agent-contract-tuist-tuist-autonomous-specialist-persona.md",
       "title": "Agent Contract: tuist/tuist Autonomous Specialist Persona",
       "repository": "tuist/tuist",
-      "source_version": "5679c950",
-      "content_hash": "ba4cfa4cbcd28a3ca0853867e148ff13f08f36891b10d7cd226c29ea039390a3",
+      "source_version": "45d39123",
+      "content_hash": "0bc53cc3de1ff3dcd532d67e25e23127b85a7be330816722a1d393688ad41219",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T19:39:02.585Z"
+      "persisted_at": "2026-11-21T06:27:54.700Z"
     },
     "candidate_directive-add-introspection-benchmarks": {
       "item_id": "candidate_directive-add-introspection-benchmarks",
@@ -298188,9 +298203,9 @@
       "title": "Agent Contract: tuist-tuist-learnings Autonomous Specialist Persona",
       "repository": "tuist-tuist-learnings",
       "source_version": "HEAD",
-      "content_hash": "bb6db17f5b5a8a0413a6b7069f7ca790bc8be03ae8d626b99abcc8f46b9710ac",
+      "content_hash": "74b8f007954500f30810325edfa7ccf15a7eff8b83acaa92d8e27fd5563879ea",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T19:39:10.345Z"
+      "persisted_at": "2026-11-21T06:28:09.985Z"
     },
     "candidate_directive-docs-add-latest-release-badge-to-readme": {
       "item_id": "candidate_directive-docs-add-latest-release-badge-to-readme",
@@ -311784,6 +311799,132 @@
       "content_hash": "0168aa8715d2212618c9387770a2aea042eb59d037727ffbd4adcfe42b4ee1b3",
       "domain_letter": "G",
       "persisted_at": "2026-11-21T06:14:04.680Z"
+    },
+    "rule-9736": {
+      "learning_id": "rule-9736",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9736,
+      "title": "install a site's first edge without an archive (hotfix)",
+      "source_url": "https://github.com/tuist/tuist",
+      "source_version": "45d39123",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T06:27:54.055Z"
+    },
+    "candidate_directive-install-a-site-s-first-edge-without-an-archive-hotfix": {
+      "item_id": "candidate_directive-install-a-site-s-first-edge-without-an-archive-hotfix",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-0MNI-install-a-site-s-first-edge-without-an-archive-hotfix.md",
+      "title": "install a site's first edge without an archive (hotfix)",
+      "repository": "tuist/tuist",
+      "source_version": "45d39123",
+      "content_hash": "adbd736e52fbe1eca11947cc4dfcbc602fb8240a20a9959a0ee4f9308a34bd77",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T06:27:54.415Z"
+    },
+    "rule-9737": {
+      "learning_id": "rule-9737",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9737,
+      "title": "bound the 3D scan journal and release the live model on exit",
+      "source_url": "https://github.com/sceneview/sceneview",
+      "source_version": "8a3f4274",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T06:27:57.353Z"
+    },
+    "candidate_directive-bound-the-3d-scan-journal-and-release-the-live-model-on-exit": {
+      "item_id": "candidate_directive-bound-the-3d-scan-journal-and-release-the-live-model-on-exit",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-0P7R-bound-the-3d-scan-journal-and-release-the-live-model-on-exit.md",
+      "title": "bound the 3D scan journal and release the live model on exit",
+      "repository": "sceneview/sceneview",
+      "source_version": "8a3f4274",
+      "content_hash": "cd0367220edc1b8f7f528efc9aada7ce523ffc505612d7787267692f7e3eccb6",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T06:27:57.738Z"
+    },
+    "domain_intelligence-architecture-intelligence-sceneview-sceneview-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-sceneview-sceneview-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-sceneview-sceneview-architecture-intelligence-sceneview-sceneview-core-invariant.md",
+      "title": "Architecture Intelligence: sceneview/sceneview Core Invariants",
+      "repository": "sceneview/sceneview",
+      "source_version": "8a3f4274",
+      "content_hash": "248265626be733c0f1b9537c7072526d5444929d1d3b0899bc6c28d9a8659a2b",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T06:27:57.893Z"
+    },
+    "rule-9738": {
+      "learning_id": "rule-9738",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9738,
+      "title": "synthesized instance implementations",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "8b37fa90",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T06:28:05.778Z"
+    },
+    "candidate_directive-synthesized-instance-implementations": {
+      "item_id": "candidate_directive-synthesized-instance-implementations",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-0ZLW-synthesized-instance-implementations.md",
+      "title": "synthesized instance implementations",
+      "repository": "nucleoidai-nucleoid-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b73b3fc11862a098890b98df032334c612bf8166a619a0db7885fa8b2d25801b",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T06:28:11.205Z"
+    },
+    "candidate_directive-infra-install-a-site-s-first-edge-without-an-archive-hotfix": {
+      "item_id": "candidate_directive-infra-install-a-site-s-first-edge-without-an-archive-hotfix",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-0YG3-infra-install-a-site-s-first-edge-without-an-archive-hotfix.md",
+      "title": "infra): install a site's first edge without an archive (hotfix)",
+      "repository": "tuist-tuist-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9a81323cf8d884aba2986bf22583f193e32ced2e938d0022e7c6b118274b2a83",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T06:28:09.700Z"
+    },
+    "candidate_directive-demo-bound-the-3d-scan-journal-and-release-the-live-model-on-exit": {
+      "item_id": "candidate_directive-demo-bound-the-3d-scan-journal-and-release-the-live-model-on-exit",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-0Z08-demo-bound-the-3d-scan-journal-and-release-the-live-model-on-exit.md",
+      "title": "demo): bound the 3D scan journal and release the live model on exit",
+      "repository": "sceneview-sceneview-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f1ea6d6d447cdb1d8cb3faedbe193e450cbb0ce622c53fc910202868160d2c6e",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T06:28:10.427Z"
+    },
+    "domain_intelligence-architecture-intelligence-sceneview-sceneview-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-sceneview-sceneview-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-sceneview-sceneview-learnings-architecture-intelligence-sceneview-sceneview-lear.md",
+      "title": "Architecture Intelligence: sceneview-sceneview-learnings Core Invariants",
+      "repository": "sceneview-sceneview-learnings",
+      "source_version": "HEAD",
+      "content_hash": "bc3823efe3e27e6ffcc33d6890abbd7658738f2e65c4f36a3b0fd15e175b15ba",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T06:28:10.559Z"
     }
   },
   "ai-builder-brain": {

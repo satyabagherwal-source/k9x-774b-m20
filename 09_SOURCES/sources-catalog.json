@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "aa069366",
+    "sourceVersion": "8b37fa90",
     "license": "Apache-2.0",
-    "contentHash": "64d10ae7a2b1df2f8530a9c7e8ed5eab3f765f9e147618e51613f437076debe8",
-    "lastHarvestedAt": "2026-11-20T17:45:32.099Z",
+    "contentHash": "914a0399f0583d0514d1e46f48912783461165620fca94cb17769653728da543",
+    "lastHarvestedAt": "2026-11-21T06:28:05.961Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -12253,10 +12253,10 @@
     "repository": "sceneview/sceneview",
     "platform": "github",
     "sourceUrl": "https://github.com/sceneview/sceneview",
-    "sourceVersion": "0600bf13",
+    "sourceVersion": "8a3f4274",
     "license": "Apache-2.0",
-    "contentHash": "7d38ec63829696c2dbbbcb86c8da71dc44512725736ff2714d1690da2da9e687",
-    "lastHarvestedAt": "2026-11-17T16:46:41.254Z",
+    "contentHash": "182b94ce1530bf6844eb01a08bc9839e4148de79561a59b8515f5b7cc656b94a",
+    "lastHarvestedAt": "2026-11-21T06:27:57.544Z",
     "learningId": "learn-github-sceneview-sceneview"
   },
   "hf-tencent-qwen3.8-27b-dspine-b16": {
@@ -12453,10 +12453,10 @@
     "repository": "tuist/tuist",
     "platform": "github",
     "sourceUrl": "https://github.com/tuist/tuist",
-    "sourceVersion": "5679c950",
+    "sourceVersion": "45d39123",
     "license": "NOASSERTION",
-    "contentHash": "5271a2aacfa6ef9a57f5a9c4541201d69b5e698efa22cd2375127cee51d6f3af",
-    "lastHarvestedAt": "2026-11-19T19:39:02.075Z",
+    "contentHash": "ed4b03f14a6f2bb479e134c46aa1c54c1c0d5322e9a4aeda2cb38dee8f083f8a",
+    "lastHarvestedAt": "2026-11-21T06:27:54.240Z",
     "learningId": "learn-github-tuist-tuist"
   },
   "mixelpixx-kicad-mcp-server": {

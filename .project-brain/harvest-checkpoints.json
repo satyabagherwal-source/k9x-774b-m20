@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-21T06:14:00.257Z",
+  "last_updated": "2026-11-21T06:28:05.969Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "64d10ae7a2b1df2f8530a9c7e8ed5eab3f765f9e147618e51613f437076debe8",
-      "verified_at": "2026-11-20T17:45:32.106Z",
+      "content_hash": "914a0399f0583d0514d1e46f48912783461165620fca94cb17769653728da543",
+      "verified_at": "2026-11-21T06:28:05.968Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T17:45:32.106Z"
+      "last_updated": "2026-11-21T06:28:05.968Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -18441,14 +18441,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sceneview-sceneview",
-      "content_hash": "7d38ec63829696c2dbbbcb86c8da71dc44512725736ff2714d1690da2da9e687",
-      "verified_at": "2026-11-17T16:46:41.262Z",
+      "content_hash": "182b94ce1530bf6844eb01a08bc9839e4148de79561a59b8515f5b7cc656b94a",
+      "verified_at": "2026-11-21T06:27:57.552Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T16:46:41.262Z"
+      "last_updated": "2026-11-21T06:27:57.552Z"
     },
     "tencent/Qwen3.8-27B-DSpine-b16": {
       "repository": "tencent/Qwen3.8-27B-DSpine-b16",
@@ -18741,14 +18741,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tuist-tuist",
-      "content_hash": "5271a2aacfa6ef9a57f5a9c4541201d69b5e698efa22cd2375127cee51d6f3af",
-      "verified_at": "2026-11-19T19:39:02.084Z",
+      "content_hash": "ed4b03f14a6f2bb479e134c46aa1c54c1c0d5322e9a4aeda2cb38dee8f083f8a",
+      "verified_at": "2026-11-21T06:27:54.248Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T19:39:02.084Z"
+      "last_updated": "2026-11-21T06:27:54.248Z"
     },
     "mixelpixx/KiCAD-MCP-Server": {
       "repository": "mixelpixx/KiCAD-MCP-Server",

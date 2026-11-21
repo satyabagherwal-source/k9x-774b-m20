@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T06:14:00.254Z",
-  "total_cycles_completed": 11177,
-  "total_learnings_persisted": 11177,
-  "total_rules_promoted": 10533,
+  "last_updated": "2026-11-21T06:28:05.966Z",
+  "total_cycles_completed": 11180,
+  "total_learnings_persisted": 11180,
+  "total_rules_promoted": 10536,
   "history": [
-    {
-      "timestamp": "2026-11-20T11:08:57.960Z",
-      "repository": "prometheus/prometheus",
-      "learningId": "learn-github-prometheus-prometheus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T11:09:07.203Z",
-      "repository": "vespa-engine/vespa",
-      "learningId": "learn-github-vespa-engine-vespa",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T11:30:39.843Z",
-      "repository": "tencent/Hy4",
-      "learningId": "learn-huggingface-tencent-hy4",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-20T11:30:45.614Z",
       "repository": "touchlab/Kermit",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-21T06:14:00.254Z",
       "repository": "slatedb/slatedb",
       "learningId": "learn-github-slatedb-slatedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T06:27:54.245Z",
+      "repository": "tuist/tuist",
+      "learningId": "learn-github-tuist-tuist",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T06:27:57.549Z",
+      "repository": "sceneview/sceneview",
+      "learningId": "learn-github-sceneview-sceneview",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T06:28:05.966Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -11741,3 +11741,6 @@
 | `CYCLE-20261121-IJTF` | `2026-11-21T06:13:50.931Z` | `nitrojs/nitro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9733` | Yes (`cb29821f...`) |
 | `CYCLE-20261121-ILPA` | `2026-11-21T06:13:53.374Z` | `wquguru/cicada` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9734` | Yes (`fe2db3ad...`) |
 | `CYCLE-20261121-IR05` | `2026-11-21T06:14:00.245Z` | `slatedb/slatedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9735` | Yes (`cc33051d...`) |
+| `CYCLE-20261121-0MIL` | `2026-11-21T06:27:54.237Z` | `tuist/tuist` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9736` | Yes (`ed4b03f1...`) |
+| `CYCLE-20261121-0P2C` | `2026-11-21T06:27:57.540Z` | `sceneview/sceneview` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9737` | Yes (`182b94ce...`) |
+| `CYCLE-20261121-0VK6` | `2026-11-21T06:28:05.958Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9738` | Yes (`914a0399...`) |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tuist-tuist-learnings.md`  
 > **Source**: github ([https://github.com/tuist/tuist](https://github.com/tuist/tuist))  
-> **Source Version**: `5679c950`  
+> **Source Version**: `45d39123`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T19:39:01.075Z  
+> **Timestamp**: 2026-11-21T06:27:53.310Z  
 > **Learning ID**: `learn-github-tuist-tuist`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tuist-tuist-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tuist/tuist](https://github.com/tuist/tuist))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T19:39:00.882Z  
+> **Harvest Timestamp**: 2026-11-21T06:27:53.137Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Tuist builds infrastructure for faster, more reliable build and test workflows across developers, CI, and coding agents. Shared cache, tests, and insights that sit alongside your existing CI.
 - **Primary Language / Ecosystem**: Elixir
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 5869 stars
+- **Stars / Engagement**: 5868 stars
 
 ---
 
@@ -458,317 +458,361 @@ struct PreviewsEmptyStateView: View {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `33b6cfcd` (2026-11-19)
-**Commit Message**: fix(cli): prelink external packages again so release builds keep Swift metadata
+### Incident Patch 1: `a182e968` (2026-11-20)
+**Commit Message**: fix(infra): install a site's first edge without an archive (hotfix)
 
-This reverts c1b88fa4b9. Without GENERATE_MASTER_OBJECT_FILE, the statically
-linked release executable only loads the archive members of external packages
-that some symbol references. Swift looks up protocol conformances and type
-descriptors at runtime, so the ones in unreferenced members were dropped:
-4.219.0-canary.31 has 983 fewer conformance records than canary.30, and
-`tuist generate` and `tuist cache` crash with a segmentation fault from
-canary.31 on. A release build with prelinking restored keeps the metadata and
-generates this repository again.
+larch-edge-a's install failed at subiquity's package step: iputils-arping, added for the first-boot WAN in #14765, is not on the Ubuntu image, and the first edge of a site installs with no route to an archive (its WAN comes up only at first boot), so apt exited 100 and the install stopped. The first-boot WAN now uses the installer's own busybox arping, copied onto the edge in a late-command, as the resident installer already does, and the install brings no package the image lacks. Subiquity treats a failed security-updates run as non-fatal, so that step does not block the install.
 
-Prelinking brings back the cache warm skipping external packages, which needs
-a fix that does not change how the release executable links.
+Bumps larch-edge-a's reinstallGeneration so the operator publishes the fixed seed.
 
-Amp-Thread-ID: https://ampcode.com/threads/T-01a1f0b3-0852-70c0-aaf5-9d10c32bb839
-Co-authored-by: Pedro Piñera Buendía <[REDACTED_EMAIL]>
-
-**File**: `Package.resolved` (modified, +1/-1)
-```diff
-@@ -1,5 +1,5 @@
- {
--  "originHash" : "b9bc213cbb2a3ea148cc63449b708badce9b1709cc64b00e9c043acae8642e8d",
-+  "originHash" : "a07ded586f504de57c8f0e77d86c28a78e9278bb7ec41877ab07e0f3187adcc7",
-   "pins" : [
-     {
-       "identity" : "1024jp.gzipswift",
-```
-
-**File**: `Package.swift` (modified, +2/-1)
-```diff
-@@ -2019,7 +2019,8 @@ targets.append(
-             // references nothing in it; a static framework would be dropped by the linker.
-             "TestCoverageAttribution": .framework,
-             "TestCoverageAttributionObserver": .framework,
--        ]
-+        ],
-+        baseSettings: .settings(base: ["GENERATE_MASTER_OBJECT_FILE": "YES"])
-     )
- #endif
- 
-```
-
----
-
-### Incident Patch 2: `6cd85d0f` (2026-11-19)
-**Commit Message**: chore(cli): pin Tuist CLI back to 4.219.0-canary.12
-
-This reverts 3b65939e60. 4.219.0-canary.31 to .34 segfault in `tuist generate`
-and `tuist cache` because the release link dropped Swift metadata (fixed in
-33b6cfcdaa), so the App workflow and the release bundle, which generate with
-the pinned CLI, fail. The update workflow can bump again once a canary with
-the fix is published.
-
-Amp-Thread-ID: https://ampcode.com/threads/T-01a1f0b3-0852-70c0-aaf5-9d10c32bb839
-Co-authored-by: Pedro Piñera Buendía <[REDACTED_EMAIL]>
-
-**File**: `infra/sandbox-image/Dockerfile` (modified, +2/-2)
-```diff
-@@ -37,8 +37,8 @@ ARG CLAUDE_CODE_SHA256=86dc1fcc69498159eaf15f446613e847010f9036bfbbdffd4c49350be
- # The first release that signs in with the sandbox's workload identity (#15541)
- # without `tuist auth login`; SHA-256 of tuist-linux-x86_64.tar.gz from the
- # release's SHASUMS256.txt.
--ARG TUIST_VERSION=4.219.0-canary.34
--ARG TUIST_SHA256=c2821c8b4bc7e187105f70e69248e7e9e7048894a050c878f5a64ab6356d679a
-+ARG TUIST_VERSION=4.219.0-canary.12
-+ARG TUIST_SHA256=51476eeb54fba068a2e47dee79e033c0dbfc7d9fc02d5e6488ed49959637e56d
- # Struo, which thread agents build and test with first; SHA-256 of
- # struo-<version>-x86_64-unknown-linux-gnu.tar.gz from the release's .sha256.
- ARG STRUO_VERSION=1.0.0
-```
-
-**File**: `luft/mise.toml` (modified, +1/-1)
-```diff
-@@ -11,7 +11,7 @@ kotlin = "2.4.10"
- # Signed device and macOS preview publication only; CI installs them only in those jobs.
- "1password-cli" = "2.32.0"
- # update-tuist-cli.yml keeps tuist in sync with the root mise.toml, which this workspace ignores.
--tuist = "4.219.0-canary.34"
-+tuist = "4.219.0-canary.12"
- 
- # Desktop tool installation must not run the monorepo's CLI bootstrap hook.
- [hooks]
-```
-
-**File**: `mise.lock` (modified, +13/-13)
-```diff
-@@ -680,32 +680,32 @@ url = "https://github.com/realm/SwiftLint/releases/download/0.59.1/portable_swif
- url = "https://github.com/realm/SwiftLint/releases/download/0.59.1/portable_swiftlint.zip"
- 
- [[tools.tuist]]
--version = "4.219.0-canary.34"
-+version = "4.219.0-canary.12"
- backend = "aqua:tuist/tuist"
- 
- [tools.tuist."platforms.linux-arm64"]
--checksum = "sha256:4165026178bb52e941f74caa97755a6dae570e338f4560eb4df638107504d574"
--url = "https://github.com/tuist/tuist/releases/download/4.219.0-canary.34/tuist-linux-aarch64.tar.gz"
-+checksum = "sha256:c6aa40e9c4063a1233037776d015a1e935af6be6f2bf420ef52034d3812ca5f0"
-+url = "https://github.com/tuist/tuist/releases/download/4.219.0-canary.12/tuist-linux-aarch64.tar.gz"
- 
- [tools.tuist."platforms.linux-arm64-musl"]
--checksum = "sha256:4165026178bb52e941f74caa97755a6dae570e338f4560eb4df638107504d574"
--url = "https://github.com/tuist/tuist/releases/download/4.219.0-canary.34/tuist-linux-aarch64.tar.gz"
-+checksum = "sha256:c6aa40e9c4063a1233037776d015a1e935af6be6f2bf420ef52034d3812ca5f0"
-+url = "https://github.com/tuist/tuist/releases/download/4.219.0-canary.12/tuist-linux-aarch64.tar.gz"
- 
- [tools.tuist."platforms.linux-x64"]
--checksum = "sha256:c2821c8b4bc7e187105f70e69248e7e9e7048894a050c878f5a64ab6356d679a"
--url = "https://github.com/tuist/tuist/releases/download/4.219.0-canary.34/tuist-linux-x86_64.tar.gz"
-+checksum = "sha256:51476eeb54fba068a2e47dee79e033c0dbfc7d9fc02d5e6488ed49959637e56d"
-+url = "https://github.com/tuist/tuist/releases/download/4.219.0-canary.12/tuist-linux-x86_64.tar.gz"
- 
- [tools.tuist."platforms.linux-x64-musl"]
--checksum = "sha256:c2821c8b4bc7e187105f70e69248e7e9e7048894a050c878f5a64ab6356d679a"
--url = "https://github.com/tuist/tuist/releases/download/4.219.0-canary.34/tuist-linux-x86_64.tar.gz"
-+checksum = "sha256:51476eeb54fba068a2e47dee79e033c0dbfc7d9fc02d5e6488ed49959637e56d"
-+url = "https://github.com/tuist/tuist/releases/download/4.219.0-canary.12/tuist-linux-x86_64.tar.gz"
- 
- [tools.tuist."platforms.macos-arm64"]
--checksum = "sha256:b83452f16b22bf268710c6310fc6c36d65d9ce1e8440a26ee99680e79d6f2b45"
--url = "https://github.com/tuist/tuist/releases/download/4.219.0-canary.34/tuist.zip"
-+checksum = "sha256:8d23abca2c56a1516e253f00012c91a066391312f8e6e3ef10241cfc2d0d2815"
-+url = "https://github.com/tuist/tuist/releases/download/4.219.0-canary.12/tuist.zip"
- 
- [tools.tuist."platforms.macos-x64"]
--checksum = "sha256:b83452f16b22bf268710c6310fc6c36d65d9ce1e8440a26ee99680e79d6f2b45"
--url = "https://github.com/tuist/tuist/releases/download/4.219.0-canary.34/tuist.zip"
-+checksum = "sha256:8d23abca2c56a1516e253f00012c91a066391312f8e6e3ef10241cfc2d0d2815"
-+url = "https://github.com/tuist/tuist/releases/download/4.219.0-canary.12/tuist.zip"
- 
- [[tools.xcodes]]
- version = "2.1.0"
-```
-
-**File**: `mise.toml` (modified, +1/-1)
-```diff
-@@ -4,7 +4,7 @@
-     # config and devDependencies live here rather than in a package.
-     node = "24.11.0"
-     # Auto-bumped to the latest Tuist CLI release (incl. canary) by the update-tuist-cli workflow.
--    tuist = "4.219.0-canary.34"
-+    tuist = "4.219.0-canary.12"
-     swiftlint = "0.59.1"
-     "elixir" = "1.20.2"
-     "erlang" = "29.0.3"
-```
-
----
-
-### Incident Patch 3: `520abb00` (2026-11-19)
-**Commit Message**: fix(cli): fail fast on an expired workload session that cannot renew
-
-An account session exchanged from a workload identity has no refresh
-token. A process without the identity, such as the cache proxy's agent
-after the sandbox command that minted it ended, retried the refresh 30
-times under the shared lock and timed out after 15 seconds. Commands that
-could renew it, such as tuist setup, waited behind that loop.
-
-Such a lookup now fails at once with workloadSessionExpired without taking
-the lock. It is not treated as signed out, so report publishing cannot
-downgrade to anonymous.
-
-Amp-Thread-ID: https://ampcode.com/threads/T-01a1ef61-c459-7170-9840-a51e65a86eda
+Amp-Thread-ID: https://ampcode.com/threads/T-01a1c0f5-6c72-77c0-9cd8-2fdf847232d3
 Co-authored-by: Marek Fort <[REDACTED_EMAIL]>
 
-**File**: `cli/Sources/TuistServer/AGENTS.md` (modified, +1/-1)
+**File**: `infra/cluster-api-provider-tuist/internal/rackinstall/seed.go` (modified, +11/-6)
 ```diff
-@@ -16,7 +16,7 @@ Do not edit generated OpenAPI clients. Change the controller schemas in
- - `BuildMetadata` reuses string-valued custom metadata: explicit entries win, automatic probes fill spare slots, and legacy allowance is 20 unless credential-free, nonredirecting discovery advertises up to 64. No persistent discovery cache, auth forwarding or POST replay. Only live-build callers may supply observations; imports must not probe the upload host. See `server/docs/build-metadata.md`.
- - `ServerClientActorHeadersMiddleware` sends `x-tuist-actor-id` only on report creation, requiring explicit `TUIST_ACTOR_ID` or a supplied request header. Never infer operating-system usernames; empty/invalid environment values omit the claim. Identifiers are opaque, unverified, 1–128 bytes of printable non-space ASCII and never replace authentication. Actor API fields are optional and evolving provenance values remain open strings for older-server compatibility. `ReportActorCompatibilityTests` covers missing/null actors, future fields and provenance on native/legacy responses and test children; keep numeric legacy run timestamps distinct from ISO 8601 test timestamps. Never attach the claim to cache/read/admin/artifact requests.
- - `Client.reporting` enables absent-credential publication only for structured build/test creates to a validated self-hosted destination advertising `network_trusted_report_publishing: true` at `GET /.well-known/tuist.json`. No client opt-in is required. Bind the discovered mode used to strip each build/test payload to its reporting client; transport rechecks credentials but must never independently rediscover and downgrade an authenticated payload. Discovery honors runtime proxy/private-CA settings while remaining credential/actor-free, uncached across commands, and never follows redirects; older/disabled/malformed discovery does not grant publishing. Preserve corrupt/rejected credentials in every mode so later commands cannot silently downgrade. Existing credentials and errors must never become anonymous retries; optional cache auth must not suppress report credential errors. Resolve reporting credentials with foreground refresh, independently of the instance policy. Rejected-refresh markers intentionally apply to ordinary authentication too. Blank-token validation is strict for report publication; do not broaden it to ordinary authentication. File credentials normalize hostname case/trailing dots, retain legacy aliases on reads, and explicit logout removes every matching alias. Directory inspection errors fail closed; fresh login replaces the rejected canonical entry.
--- Workload identities stay provider-neutral here: `ServerAuthenticationController` asks `TuistOIDC` (`CIOIDCAuthenticator.hasWorkloadIdentity`, an environment-only check) and never names a CI provider or Amp. Where one is available and there is no `TUIST_TOKEN` or stored credential, the first token lookup (with or without `refreshIfNeeded`) exchanges it and stores the session, matching `tuist_ex`, so CI and connected Amp workspaces need no `tuist auth login`. A refused exchange is remembered for the process so later lookups do not mint again. OIDC-exchanged account tokens have no refresh token; an expiring (or force-refreshed) one is renewed the same way, and a failed renewal keeps the old session. `TuistOIDC` is a macOS/Linux-only dependency (`#if canImport(TuistOIDC)`); the iOS app builds without it.
-+- Workload identities stay provider-neutral here: `ServerAuthenticationController` asks `TuistOIDC` (`CIOIDCAuthenticator.hasWorkloadIdentity`, an environment-only check) and never names a CI provider or Amp. Where one is available and there is no `TUIST_TOKEN` or stored credential, the first token lookup (with or without `refreshIfNeeded`) exchanges it and stores the session, matching `tuist_ex`, so CI and connected Amp workspaces need no `tuist auth login`. A refused exchange is remembered for the process so later lookups do not mint again. OIDC-exchanged account tokens have no refresh token; an expiring (or force-refreshed) one is renewed the same way, and a failed renewal keeps the old session. Without a workload identity, such as in the cache proxy's agent after the identity's command ended, an expired one fails at once with `workloadSessionExpired` instead of retrying under the refresh lock, which held back processes that could renew it; it is not treated as signed out. `TuistOIDC` is a macOS/Linux-only dependency (`#if canImport(TuistOIDC)`); the iOS app builds without it.
- - Refresh timeouts do not establish credential rejection. Preserve credentials and keep timeout messages free of login/logout advice, including when optional cache authentication reports them as warnings.
- - `TUIST_URL` overrides config URL and must be a valid URL.
- - OAuth client ID defaults to a built-in value if not provided. OAuth app credentials may carry an issuing `oauthClientID`; refresh uses that server-scoped value and preserves it when rotating 
-```
-
-**File**: `cli/Sources/TuistServer/Client/ServerAuthenticationController.swift` (modified, +26/-5)
-```diff
-@@ -26,6 +26,7 @@ public enum ServerAuthenticationControllerError: LocalizedError, Equatable {
-     case failToLaunchRefreshProcess(command: String, arguments: [String], serverURL: URL)
-     case timedOut(seconds: Int, serverURL: URL)
-     case cantRefreshWithLockingAndBackground
-+    case workloadSessionExpired(serverURL: URL)
- 
-     public var errorDescription: String? {
-         switch self {
-@@ -39,6 +40,9 @@ public enum ServerAuthenticationControllerError: LocalizedError, Equatable {
-         case .cantRefreshWithLockingAndBackground:
-             return
-                 "The refreshing with background and locking configurations enabled is not a valid configuration (liley a bug)."
-+        case let .workloadSessionExpired(serverURL):
-+            return
-+                "The session for \(serverURL.absoluteString) came from a workload identity and expired. It has no refresh token, so it renews only where a workload identity is available, such as with TUIST_OIDC_TOKEN set."
-         }
-     }
+@@ -261,7 +261,6 @@ autoinstall:
+     - jq
+     - ethtool
+     - lvm2
+-    - iputils-arping
+   updates: security
+   shutdown: reboot
+   early-commands:
+@@ -397,6 +396,10 @@ func edgeResolvers(e *EdgeNetwork) string {
+ const (
+ 	EdgeFirstWANPath  = "/usr/local/sbin/tuist-edge-first-wan"
+ 	EdgeFirstWANState = "/run/rack-edge/first-wan"
++	// EdgeFirstWANBusybox is the installer's busybox, copied onto the edge for
++	// its arping: the first edge of a site installs with no route to an
++	// archive, so the install can bring no package the image lacks.
++	EdgeFirstWANBusybox = "/usr/local/sbin/tuist-busybox"
+ 	// EdgeFirstWANMetric is the metric of its default route, below the route
+ 	// through the other edge (EdgeVRRPMetric).
+ 	EdgeFirstWANMetric = 50
+@@ -423,6 +426,7 @@ func edgeFirstWAN(e *EdgeNetwork) string {
+ 		"@GATEWAY@", e.WAN.Gateway,
+ 		"@STATE@", EdgeFirstWANState,
+ 		"@METRIC@", fmt.Sprint(EdgeFirstWANMetric),
++		"@BUSYBOX@", EdgeFirstWANBusybox,
+ 	).Replace(`#!/usr/bin/env bash
+ set -u
+ uplinks='@UPLINKS@' vlan=@VLAN@ address='@ADDRESS@' gateway='@GATEWAY@'
+@@ -455,8 +459,8 @@ wan_bond() {
+ take() {
+   dev=$1
+   pod && return 1
+-  if arping -D -q -c 2 -w 3 -I "$dev" "${address%/*}" && ip addr add "$address" dev "$dev"; then
+-    if arping -q -c 2 -w 3 -I "$dev" "$gateway" && ip route add default via "$gateway" dev "$dev" metric "$metric"; then
++  if @BUSYBOX@ arping -D -q -c 2 -w 3 -I "$dev" "${address%/*}" && ip addr add "$address" dev "$dev"; then
++    if @BUSYBOX@ arping -q -c 2 -w 3 -I "$dev" "$gateway" && ip route add default via "$gateway" dev "$dev" metric "$metric"; then
+       echo "$dev" >"$state"
+       log "took the site's WAN $address on $dev, through $gateway"
+       return 0
+@@ -482,7 +486,7 @@ misses=0
+ while ! pod; do
+   if [ -s "$state" ]; then
+     read -r dev <"$state"
+-    if arping -q -c 2 -w 3 -I "$dev" "$gateway"; then
++    if @BUSYBOX@ arping -q -c 2 -w 3 -I "$dev" "$gateway"; then
+       misses=0
+     elif [ $((misses += 1)) -ge 3 ]; then
+       release
+@@ -507,10 +511,11 @@ RestartSec=20
+ [Install]
+ WantedBy=multi-user.target
+ `
+-	return fmt.Sprintf("    - |\n      cat > /target%s <<'TUIST_EOF'\n%s      TUIST_EOF\n      chmod 755 /target%s\n"+
++	return fmt.Sprintf("    - install -D -m 0755 \"$(command -v busybox)\" /target%s\n"+
++		"    - |\n      cat > /target%s <<'TUIST_EOF'\n%s      TUIST_EOF\n      chmod 755 /target%s\n"+
+ 		"    - |\n      cat > /target/etc/systemd/system/tuist-edge-first-wan.service <<'TUIST_EOF'\n%s      TUIST_EOF\n"+
+ 		"    - curtin in-target --target=/target -- systemctl enable tuist-edge-first-wan.service\n",
+-		EdgeFirstWANPath, indent(script, "      "), EdgeFirstWANPath, indent(unit, "      "))
++		EdgeFirstWANBusybox, EdgeFirstWANPath, indent(script, "      "), EdgeFirstWANPath, indent(unit, "      "))
  }
-@@ -452,11 +456,14 @@ public struct ServerAuthenticationController: ServerAuthenticationControlling {
-             }
-         }
  
--        switch (
--            try await tokenStatus(serverURL: serverURL, forceRefresh: forceRefresh),
--            inBackground,
--            locking
--        ) {
-+        let status = try await tokenStatus(serverURL: serverURL, forceRefresh: forceRefresh)
-+        // Nothing here can renew such a session, so fail at once instead of retrying the refresh under the
-+        // shared lock for its full timeout, which made every process that could renew it wait behind this one.
-+        if case .expired = status, try await isUnrenewableWorkloadSession(serverURL: serverURL) {
-+            throw ServerAuthenticationControllerError.workloadSessionExpired(serverURL: serverURL)
-+        }
-+
-+        switch (status, inBackground, locking) {
-         case let (.valid(token), _, _):
-             return token
-         case (.absent, _, _):
-@@ -777,6 +784,20 @@ public struct ServerAuthenticationController: ServerAuthenticationControlling {
-         #endif
-     }
- 
-+    /// An expired account session without a refresh token, such as one exchanged from a workload identity, in an
-+    /// environment without a workload identity to exchange again: a process that outlives the identity's command,
-+    /// such as the cache proxy's agent. Reads the store again, so a session another process just renewed counts.
-+    private func isUnrenewableWorkloadSession(serverURL: URL) async throws -> Bool {
-+        guard case let .account(accessToken) = try await fetchTokenFromStore(serverURL: serverURL),
-+              accessToken.expiryDate.timeIntervalSince(Date.now()) < 30
-+        else { return false }
-+        #if canImport(TuistOIDC)
-+            return !CIOIDCAuthenticator().hasWorkloadIdentity
-+        #else
-+            return true
-+        #endif
-+    }
-+
-     /// Where the environment offers a workload identity (CI providers, Amp orbs, a supplied
-     /// `TUIST_OIDC_TOKEN`), a signed-out CLI signs in on its own by exchanging it, so CI needs no
-     /// `tuist auth login` step. A refused exchange, such as from a repository or workspace no account
+ // sshStartLimit takes sshd out of systemd's start rate limit (internal/sshd)
 ```
 
-**File**: `cli/Tests/TuistServerTests/Utilities/ServerAuthenticationControllerTests.swift` (modified, +35/-19)
+**File**: `infra/cluster-api-provider-tuist/internal/rackinstall/seed_test.go` (modified, +11/-3)
 ```diff
-@@ -265,31 +265,47 @@ struct ServerAuthenticationControllerTests {
-         }
-     }
+@@ -640,7 +640,7 @@ func TestUserDataGivesAnEdgeTheSitesStaticWANWhileNoPodRuns(t *testing.T) {
+ 		"uplinks='enp2s0f1np1 enp2s0f0np0' vlan=4001 address='149.6.170.31/31' gateway='149.6.170.30'",
+ 		"state=" + EdgeFirstWANState + " metric=50",
+ 		"compgen -G '/etc/kubernetes/manifests/rack-edge-*.yaml'",
+-		`arping -D -q -c 2 -w 3 -I "$dev" "${address%/*}"`,
++		EdgeFirstWANBusybox + ` arping -D -q -c 2 -w 3 -I "$dev" "${address%/*}"`,
+ 	} {
+ 		if !strings.Contains(script, want) {
+ 			t.Errorf("the first-boot WAN lacks %q:\n%s", want, script)
+@@ -663,8 +663,16 @@ func TestUserDataGivesAnEdgeTheSitesStaticWANWhileNoPodRuns(t *testing.T) {
+ 	if strings.Contains(fmt.Sprint(seed.Autoinstall.Network), "149.6.170.31") {
+ 		t.Errorf("netplan carries the WAN: %+v", seed.Autoinstall.Network)
+ 	}
+-	if !strings.Contains(out, "    - iputils-arping\n") {
+-		t.Errorf("the install does not bring arping")
++	// The first edge installs with no route to an archive, so its arping is
++	// the installer's busybox, not a package the image lacks.
++	if strings.Contains(out, "iputils-arping") {
++		t.Errorf("the install needs a package from the archive for arping")
++	}
++	if !strings.Contains(late, `install -D -m 0755 "$(command -v busybox)" /target`+EdgeFirstWANBusybox) {
++		t.Errorf("late-commands do not copy the installer's busybox:\n%s", late)
++	}
++	if !strings.Contains(script, EdgeFirstWANBusybox+` arping -q -c 2 -w 3 -I "$dev" "$gateway"`) {
++		t.Errorf("the first-boot WAN does not use the copied busybox's arping:\n%s", script)
+ 	}
  
--    @Test(.withMockedEnvironment(), .withMockedDependencies()) func expired_account_token_returns_expired() async throws {
--        let date = Date()
-+    @Test(
-+        .withMockedEnvironment(),
-+        .withMockedDependencies(),
-+        arguments: [false, true]
-+    ) func expired_account_token_renews_only_with_a_workload_identity(hasWorkloadIdentity: Bool) async throws {
-+        let exchangeOIDCTokenService = MockExchangeOIDCTokenServicing()
-+        let subject = ServerAuthenticationController(
-+            refreshAuthTokenService: refreshAuthTokenService,
-+            refreshOAuthTokenService: refreshOAuthTokenService,
-+            exchangeOIDCTokenService: exchangeOIDCTokenService,
-+            cachedValueStore: CachedValueStore(backend: .inSystemProcess)
-+        )
-         let mockEnvironment = try #require(Environment.mocked)
--        mockEnvironment.variables = [
--            "CI": "1",
--        ]
-+        mockEnvironment.variables = hasWorkloadIdentity ? ["TUIST_OIDC_TOKEN": "workload-identity-token"] : ["CI": "1"]
-+        let date = Date()
-         try await Date.$now.withValue({ date }) {
-             // Given
-             let serverURL: URL = .test()
-             let serverCredentialsStore = try #require(ServerCredentialsStore.mocked)
--            let accessToken = try JWT.make(expiryDate: date.addingTimeInterval(-100), typ: "access", type: "account")
--
--            let storeCredentials: ServerCredentials = .test(
--                accessToken: accessToken.token,
--                refreshToken: ""
--            )
--
--            given(serverCredentialsStore).read(serverURL: .value(serverURL)).willReturn(storeCredentials)
--            given(cachedValueStore).getValue(key: .any, computeIfNeeded: .any).willReturn(nil as AuthenticationToken?)
--
--            // When
--            let got = try await subject.authenticationToken(serverURL: .test())
-+            let expiredToken = try JWT.make(expiryDate: date.addingTimeInterval(-100), typ: "access", type: "account")
-+            let renewedToken = try JWT.make(expiryDate: date.addingTimeInterval(+3600), typ: "access", type: "account")
-+            let stored = TestStore(ServerCredentials.test(accessToken: expiredToken.token, refreshToken: nil))
-+            given(serverCredentialsStore).read(serverURL: .value(serverURL)).willProduce { _ in stored.value }
-+            given(serverCredentialsStore).store(credentials: .any, serverURL: .any).willProduce { credentials, _ in
-+                stored.value = credentials
-+            }
-+            given(exchangeOIDCTokenService)
-+                .exchangeOIDCToken(oidcToken: .any, serverURL: .any)
-+                .willReturn(renewedToken.token)
+ 	_, seed = renderEdgeNetwork(t, ber1EdgeB())
+```
+
+**File**: `infra/helm/tuist/values-managed-production.yaml` (modified, +3/-0)
+```diff
+@@ -1920,6 +1920,9 @@ rackLinuxFleet:
+       role: edge
+       site: larch
+       tpmCheckCode: 921d-3fe4-7a7b-a3ea
++      # 1: its first install (20 Nov) failed fetching iputils-arping with no
++      # route to an archive; this publishes the fixed seed.
++      reinstallGeneration: 1
+   authorizedKeys:
+     - "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIB/Y8pQ/HHZ1BKE+DILq/gE7cd8tSiGHcT8pj5wR2f4W marek@tuist.dev"
+   preinstall:
+```
+
+---
+
+### Incident Patch 2: `9fe46225` (2026-11-21)
+**Commit Message**: fix(tuist-ex): explain a pending coverage complete and link the coverage pages
+
+When no run of the signalled commit has reported coverage yet,
+mix tuist.coverage.complete now says where the commit came from (the
+checkout's HEAD, or GIT_COMMIT, when --commit is omitted), that this is
+expected while runs are still being processed, and how to signal another
+commit with --commit <sha>. The pending output links the project's coverage
+commits list, since the commit's own page is a 404 until one of its runs is
+processed; the complete output links the commit's coverage page. Ports the
+command line tool's change.
+
+Amp-Thread-ID: https://ampcode.com/threads/T-01a1f798-bad2-7074-b38e-5de8b04c8013
+Co-authored-by: Eduardo Nunes <[REDACTED_EMAIL]>
+
+**File**: `tuist_ex/lib/mix/tasks/tuist.coverage.complete.ex` (modified, +27/-3)
+```diff
+@@ -15,6 +15,7 @@ defmodule Mix.Tasks.Tuist.Coverage.Complete do
  
--            // Then
--            #expect(got == nil)
-+            // When / Then
-+            if hasWorkloadIdentity {
-+                let got = try await subject.authenticationToken(serverURL: serverURL)
-+                #expect(got == .account(try JWT.parse(renewedToken.token)))
-+            } else {
-+                // Nothing can renew it, so the lookup fails at once rather than retrying under the refresh lock.
-+                await #expect(throws: ServerAuthenticationControllerError.workloadSessionExpired(serverURL: serverURL)) {
-+                    try await subject.authenticationToken(serverURL: serverURL)
-+                }
-+                verify(exchangeOIDCTokenService).exchangeOIDCToken(oidcToken: .any, serverURL: .any).called(0)
-+            }
-         }
-     }
+   use Mix.Task
  
++  alias TuistEx.Analytics.Config
+   alias TuistEx.Analytics.Env
+   alias TuistEx.Analytics.HTTP
+ 
+@@ -37,13 +38,22 @@ defmodule Mix.Tasks.Tuist.Coverage.Complete do
+     case HTTP.project_request(:post, "/tests/coverage/commits/#{sha}/complete", %{}, options) do
+       {:ok, %{"coverage" => coverage}} ->
+         Mix.shell().info(
+-          "Coverage of commit #{String.slice(sha, 0, 7)} is complete: #{coverage}%."
++          "Coverage of commit #{String.slice(sha, 0, 7)} is complete: #{coverage}%.\n" <>
++            "  See the commit's coverage at #{commits_url(options)}/#{sha}"
+         )
+ 
+       {:ok, _pending} ->
++        # Usually the runs are still being processed, but a signal kept for a
++        # commit the runs didn't report never applies, so name the commit and
++        # how to signal another. The commit's own page is a 404 until one of
++        # its runs is processed, so the commits list is linked instead.
+         Mix.shell().info(
+-          "No run of commit #{String.slice(sha, 0, 7)} has reported coverage yet. " <>
+-            "Its coverage is marked complete once one does."
++          "No run of commit #{String.slice(sha, 0, 7)}#{origin(options)} has reported coverage yet. " <>
++            "That's expected while its runs are still being processed: the signal is kept, " <>
++            "and the commit's coverage is marked complete once one is.\n" <>
++            "  If your test runs reported another commit, signal that one with " <>
++            "`mix tuist.coverage.complete --commit <sha>`\n" <>
++            "  See the commits your runs reported coverage for at #{commits_url(options)}"
+         )
+ 
+       {:error, reason} ->
+@@ -52,4 +62,18 @@ defmodule Mix.Tasks.Tuist.Coverage.Complete do
+         )
+     end
+   end
++
++  defp origin(options) do
++    cond do
++      options[:commit] -> ""
++      System.get_env("GIT_COMMIT") -> ", from GIT_COMMIT,"
++      true -> ", the checkout's HEAD,"
++    end
++  end
++
++  # The request that just succeeded resolved the same configuration.
++  defp commits_url(options) do
++    {:ok, %{url: url, project_handle: handle}} = Config.resolve(options)
++    "#{url}/#{handle.account}/#{handle.project}/tests/coverage/commits"
++  end
+ end
+```
+
+**File**: `tuist_ex/test/mix/tasks/tuist.coverage.complete_test.exs` (modified, +66/-9)
+```diff
+@@ -5,32 +5,89 @@ defmodule Mix.Tasks.Tuist.Coverage.CompleteTest do
+   alias Mix.Tasks.Tuist.Coverage.Complete
+   alias TuistEx.Analytics.HTTP
+ 
++  @environment %{
++    "TUIST_URL" => "https://tuist.dev",
++    "TUIST_PROJECT" => nil,
++    "GIT_COMMIT" => nil
++  }
++
+   setup do
+     Mix.shell(Mix.Shell.Process)
+-    on_exit(fn -> Mix.shell(Mix.Shell.IO) end)
++    previous = Map.new(@environment, fn {name, _} -> {name, System.get_env(name)} end)
++    put_env(@environment)
++
++    on_exit(fn ->
++      Mix.shell(Mix.Shell.IO)
++      put_env(previous)
++    end)
++  end
++
++  defp put_env(variables) do
++    Enum.each(variables, fn
++      {name, nil} -> System.delete_env(name)
++      {name, value} -> System.put_env(name, value)
++    end)
+   end
+ 
+-  test "signals the commit's coverage complete" do
++  test "signals the commit's coverage complete and links its coverage page" do
+     expect(HTTP, :project_request, fn :post,
+                                       "/tests/coverage/commits/abcdef123/complete",
+                                       %{},
+                                       options ->
+-      assert options[:project] == "tuist/server"
++      assert options[:project] == "acme/app"
+       {:ok, %{"coverage" => 81.5}}
+     end)
+ 
+-    Complete.run(["--commit", "abcdef123", "--project", "tuist/server"])
++    Complete.run(["--commit", "abcdef123", "--project", "acme/app"])
++
++    assert_received {:mix_shell, :info, [message]}
++
++    assert message ==
++             "Coverage of commit abcdef1 is complete: 81.5%.\n" <>
++               "  See the commit's coverage at https://tuist.dev/acme/app/tests/coverage/commits/abcdef123"
++  end
++
++  test "says when no run reported coverage yet, how to signal another commit, and where the commits are" do
++    stub(HTTP, :project_request, fn :post, _, %{}, _ -> {:ok, %{"message" => "pending"}} end)
++
++    Complete.run(["--commit", "abcdef123", "--project", "acme/app"])
++
++    assert_received {:mix_shell, :info, [message]}
++    assert message =~ "No run of commit abcdef1 has reported coverage yet."
++    assert message =~ "expected while its runs are still being processed"
++    assert message =~ "`mix tuist.coverage.complete --commit <sha>`"
++
++    assert String.ends_with?(
++             message,
++             "See the commits your runs reported coverage for at https://tuist.dev/acme/app/tests/coverage/commits"
++           )
++  end
++
++  test "names the checkout's HEAD when no commit is passed" do
++    {head, 0} = System.cmd("git", ["rev-parse", "HEAD"])
++    head = String.trim(head)
++
++    expect(HTTP, :project_request, fn :post, path, %{}, _ ->
++      assert path == "/tests/coverage/commits/#{head}/complete"
++      {:ok, %{"message" => "pending"}}
++    end)
++
++    Complete.run(["--project", "acme/app"])
++
++    assert_received {:mix_shell, :info, [message]}
+ 
+-    assert_received {:mix_shell, :info, ["Coverage of commit abcdef1 is complete: 81.5%."]}
++    assert message =~
++             "No run of commit #{String.slice(head, 0, 7)}, the checkout's HEAD, has reported coverage yet."
+   end
+ 
+-  test "says when no run reported coverage yet" do
++  test "names GIT_COMMIT when it sets the commit" do
++    System.put_env("GIT_COMMIT", "fedcba987")
+     stub(HTTP, :project_request, fn :post, _, %{}, _ -> {:ok, %{"message" => "pending"}} end)
+ 
+-    Complete.run(["--commit", "abcdef123"])
++    Complete.run(["--project", "acme/app"])
+ 
+-    assert_received {:mix_shell, :info,
+-                     ["No run of commit abcdef1 has reported coverage yet." <> _]}
++    assert_received {:mix_shell, :info, [message]}
++    assert message =~ "No run of commit fedcba9, from GIT_COMMIT, has reported coverage yet."
+   end
+ 
+   test "fails when the server refuses" do
+```
+
+---
+
+### Incident Patch 3: `7167faf0` (2026-11-20)
+**Commit Message**: fix(infra): change larch-tor-b before larch-tor-a again
+
+larch-tor-b is adopted and converged, so the bring-up swap is no longer
+needed: put the switch without the live internet port back first.
+
+Amp-Thread-ID: https://ampcode.com/threads/T-01a1c0f5-6c72-77c0-9cd8-2fdf847232d3
+Co-authored-by: Marek Fort <[REDACTED_EMAIL]>
+
+**File**: `infra/rack-switch-fleet/k8s/larch/larch-tor-a.yaml` (modified, +1/-1)
+```diff
+@@ -12,7 +12,7 @@ spec:
+   mac: 64:9d:99:d9:81:0e
+   managedBy: controller
+   managementAddress: 192.168.61.2
+-  applyOrder: 1
++  applyOrder: 2
+   applyNote: Carries the live internet port, so a bad change takes the site off the internet. Changed only after the same change has been applied to larch-tor-b and the rack is still up.
+   credentialItem: rack-switch-controller picos admin
+   configRevision: 8f0ae806def44545
+```
+
+**File**: `infra/rack-switch-fleet/k8s/larch/larch-tor-b.yaml` (modified, +1/-1)
+```diff
+@@ -12,7 +12,7 @@ spec:
+   mac: 64:9d:99:d9:81:0b
+   managedBy: controller
+   managementAddress: 192.168.61.6
+-  applyOrder: 2
++  applyOrder: 1
+   applyNote: Its port 27 holds the spare internet optic and nothing live (the site has one Cogent port, on larch-tor-a), so a bad change costs half the minis and none of the site's connectivity. Always the first switch changed.
+   credentialItem: rack-switch-controller picos admin
+   configRevision: f659540c07895cd7
+```
+
+**File**: `infra/rack-switch-fleet/sites/larch.json` (modified, +2/-2)
+```diff
+@@ -153,7 +153,7 @@
+       "mgmt_address": "192.168.61.6",
+       "credential_item": "rack-switch-controller picos admin",
+       "console_baud": 115200,
+-      "apply_order": 2,
++      "apply_order": 1,
+       "apply_note": "Its port 27 holds the spare internet optic and nothing live (the site has one Cogent port, on larch-tor-a), so a bad change costs half the minis and none of the site's connectivity. Always the first switch changed.",
+       "mac": "64:9d:99:d9:81:0b",
+       "adopted": true,
+@@ -203,7 +203,7 @@
+       "mac": "64:9d:99:d9:81:0e",
+       "credential_item": "rack-switch-controller picos admin",
+       "console_baud": 115200,
+-      "apply_order": 1,
++      "apply_order": 2,
+       "apply_note": "Carries the live internet port, so a bad change takes the site off the internet. Changed only after the same change has been applied to larch-tor-b and the rack is still up.",
+       "adopted": true,
+       "feeds": [
 ```
 
 #### Recent Merged Pull Requests:
@@ -797,28 +841,43 @@ Co-authored-by: Marek Fort <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cli): prelink external packages again so release builds keep Swift metadata
+## X. infra): install a site's first edge without an archive (hotfix)
 
 **RULE**:
-When implementing operations in `Package.resolved`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tuist/tuist. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `infra/cluster-api-provider-tuist/internal/rackinstall/seed.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tuist/tuist. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `33b6cfcd`: cli): prelink external packages again so release builds keep Swift metadata. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a182e968`: infra): install a site's first edge without an archive (hotfix). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Elixir data structures, boundary deserialization, API parsing, or resource lifecycles matching `Package.resolved`.
+Subsystems managing Elixir data structures, boundary deserialization, API parsing, or resource lifecycles matching `infra/cluster-api-provider-tuist/internal/rackinstall/seed.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```elixir
 // Verified production-grade fix pattern:
-  "originHash" : "a07ded586f504de57c8f0e77d86c28a78e9278bb7ec41877ab07e0f3187adcc7",
+	// EdgeFirstWANBusybox is the installer's busybox, copied onto the edge for
+	// its arping: the first edge of a site installs with no route to an
+	// archive, so the install can bring no package the image lacks.
+	EdgeFirstWANBusybox = "/usr/local/sbin/tuist-busybox"
+		"@BUSYBOX@", EdgeFirstWANBusybox,
+  if @BUSYBOX@ arping -D -q -c 2 -w 3 -I "$dev" "${address%/*}" && ip addr add "$address" dev "$dev"; then
+    if @BUSYBOX@ arping -q -c 2 -w 3 -I "$dev" "$gateway" && ip route add default via "$gateway" dev "$dev" metric "$metric"; then
+    if @BUSYBOX@ arping -q -c 2 -w 3 -I "$dev" "$gateway"; then
+	return fmt.Sprintf("    - install -D -m 0755 \"$(command -v busybox)\" /target%s\n"+
+		"    - |\n      cat > /target%s <<'TUIST_EOF'\n%s      TUIST_EOF\n      chmod 755 /target%s\n"+
+		EdgeFirstWANBusybox, EdgeFirstWANPath, indent(script, "      "), EdgeFirstWANPath, indent(unit, "      "))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```elixir
 // Induced defect failure mode:
-  "originHash" : "b9bc213cbb2a3ea148cc63449b708badce9b1709cc64b00e9c043acae8642e8d",
+    - iputils-arping
+  if arping -D -q -c 2 -w 3 -I "$dev" "${address%/*}" && ip addr add "$address" dev "$dev"; then
+    if arping -q -c 2 -w 3 -I "$dev" "$gateway" && ip route add default via "$gateway" dev "$dev" metric "$metric"; then
+    if arping -q -c 2 -w 3 -I "$dev" "$gateway"; then
+	return fmt.Sprintf("    - |\n      cat > /target%s <<'TUIST_EOF'\n%s      TUIST_EOF\n      chmod 755 /target%s\n"+
+		EdgeFirstWANPath, indent(script, "      "), EdgeFirstWANPath, indent(unit, "      "))
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `33b6cfcd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a182e968` are properly handled with clean fallback behavior.

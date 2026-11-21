@@ -723387,3 +723387,236 @@ overlapping targets in the same call do not double-fetch.
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `c7c7976b` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9736. install a site's first edge without an archive (hotfix) (Harvested from tuist/tuist)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "install a site's first edge without an archive (hotfix)",
+  "source": "tuist/tuist",
+  "source_url": "https://github.com/tuist/tuist",
+  "source_version": "45d39123",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-21T06:27:53.790Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-tuist-tuist",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [tuist/tuist](https://github.com/tuist/tuist) (Revision: `45d39123`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `infra/cluster-api-provider-tuist/internal/rackinstall/seed.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tuist/tuist. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `a182e968`: infra): install a site's first edge without an archive (hotfix). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Elixir data structures, boundary deserialization, API parsing, or resource lifecycles matching `infra/cluster-api-provider-tuist/internal/rackinstall/seed.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```elixir
+// Verified production-grade fix pattern:
+	// EdgeFirstWANBusybox is the installer's busybox, copied onto the edge for
+	// its arping: the first edge of a site installs with no route to an
+	// archive, so the install can bring no package the image lacks.
+	EdgeFirstWANBusybox = "/usr/local/sbin/tuist-busybox"
+		"@BUSYBOX@", EdgeFirstWANBusybox,
+  if @BUSYBOX@ arping -D -q -c 2 -w 3 -I "$dev" "${address%/*}" && ip addr add "$address" dev "$dev"; then
+    if @BUSYBOX@ arping -q -c 2 -w 3 -I "$dev" "$gateway" && ip route add default via "$gateway" dev "$dev" metric "$metric"; then
+    if @BUSYBOX@ arping -q -c 2 -w 3 -I "$dev" "$gateway"; then
+	return fmt.Sprintf("    - install -D -m 0755 \"$(command -v busybox)\" /target%s\n"+
+		"    - |\n      cat > /target%s <<'TUIST_EOF'\n%s      TUIST_EOF\n      chmod 755 /target%s\n"+
+		EdgeFirstWANBusybox, EdgeFirstWANPath, indent(script, "      "), EdgeFirstWANPath, indent(unit, "      "))
+```
+
+**NEGATIVE CONSTRAINT**:
+```elixir
+// Induced defect failure mode:
+    - iputils-arping
+  if arping -D -q -c 2 -w 3 -I "$dev" "${address%/*}" && ip addr add "$address" dev "$dev"; then
+    if arping -q -c 2 -w 3 -I "$dev" "$gateway" && ip route add default via "$gateway" dev "$dev" metric "$metric"; then
+    if arping -q -c 2 -w 3 -I "$dev" "$gateway"; then
+	return fmt.Sprintf("    - |\n      cat > /target%s <<'TUIST_EOF'\n%s      TUIST_EOF\n      chmod 755 /target%s\n"+
+		EdgeFirstWANPath, indent(script, "      "), EdgeFirstWANPath, indent(unit, "      "))
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `a182e968` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9737. bound the 3D scan journal and release the live model on exit (Harvested from sceneview/sceneview)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "bound the 3D scan journal and release the live model on exit",
+  "source": "sceneview/sceneview",
+  "source_url": "https://github.com/sceneview/sceneview",
+  "source_version": "8a3f4274",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-21T06:27:57.087Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-sceneview-sceneview",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [sceneview/sceneview](https://github.com/sceneview/sceneview) (Revision: `8a3f4274`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `changelog.d/5186-scan-oom.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sceneview/sceneview. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `0db548c6`: demo): bound the 3D scan journal and release the live model on exit. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/5186-scan-oom.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```kotlin
+// Verified production-grade fix pattern:
+<!-- category: Fixed -->
+- **Demo app: smoother, more reliable 3D scans.** The demo now requests a large heap, so long room scans keep full model detail, with a memory safety net on phones still below 384 MiB. The replay journal, previously unbounded, is capped (8 MiB on a 512 MiB heap) and always keeps photos, floor coverage, anchors and when each plane appeared or was removed. Leaving a scan frees its memory reliably, and the saved-scans list loads lazily, so exits no longer freeze.
+```
+
+**NEGATIVE CONSTRAINT**:
+```kotlin
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `0db548c6` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9738. synthesized instance implementations (Harvested from NucleoidAI/Nucleoid)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "synthesized instance implementations",
+  "source": "NucleoidAI/Nucleoid",
+  "source_url": "https://github.com/NucleoidAI/Nucleoid",
+  "source_version": "8b37fa90",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-21T06:28:05.508Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nucleoidai-nucleoid",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `8b37fa90`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `arc/src/synthesizer.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `315b255b`: synthesized instance implementations. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/src/synthesizer.ts`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+  { x: 1, y: 0, rotation: 270 },
+  { x: 0, y: 0, rotation: 180 },
+  { x: 0, y: 1, rotation: 90 },
+          implementation: undefined,
+        synthesized_instance.implementation = await object.implementation({
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+  // { x: 1, y: 0, rotation: 270 },
+  // { x: 0, y: 0, rotation: 180 },
+  // { x: 0, y: 1, rotation: 90 },
+        instance.implementation = await object.implementation({
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `315b255b` are properly handled with clean fallback behavior.

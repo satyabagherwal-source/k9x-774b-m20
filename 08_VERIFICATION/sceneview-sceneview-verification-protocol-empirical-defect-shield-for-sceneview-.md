@@ -4,22 +4,22 @@
 {
   "source_repository": "sceneview/sceneview",
   "source_url": "https://github.com/sceneview/sceneview",
-  "source_version": "0600bf13",
+  "source_version": "8a3f4274",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-17T16:46:41.450Z",
+  "timestamp": "2026-11-21T06:27:57.737Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-sceneview-sceneview",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [sceneview/sceneview](https://github.com/sceneview/sceneview) (Revision: `0600bf13`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T16:46:41.450Z`  
+> **Provenance**: Harvested from [sceneview/sceneview](https://github.com/sceneview/sceneview) (Revision: `8a3f4274`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-21T06:27:57.737Z`  
 > **Learning ID**: `learn-github-sceneview-sceneview`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `sceneview/sceneview` (Commit: `0600bf13`)
+- **Target Repository**: `sceneview/sceneview` (Commit: `8a3f4274`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,17 +28,17 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sceneview-sceneview-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sceneview/sceneview](https://github.com/sceneview/sceneview))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T16:46:40.278Z  
+> **Harvest Timestamp**: 2026-11-21T06:27:56.581Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
 
 ## 1. Context & Architectural Overview
 - **Repository / Resource**: `sceneview/sceneview`
-- **Description**: 3D & AR SDK for Jetpack Compose (Filament, ARCore), Compose Multiplatform, SwiftUI (RealityKit, ARKit) and the web, with Flutter and React Native bridges. The maintained successor to Google Sceneform. Opens glTF/GLB and USDZ, at real size in AR. Assistant-ready: MCP server, AGENTS.md and llms.txt.
+- **Description**: Declarative 3D and AR for Android with Jetpack Compose, Filament and ARCore, plus web and Compose Multiplatform desktop. Open source, Apache 2.0. SwiftUI, Flutter and React Native: end of life at 4.68.0.
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1376 stars
+- **Stars / Engagement**: 1379 stars
 
 ---
 
@@ -576,7 +576,7 @@ class ARCore(
      * Called on the main thread whenever [cameraPermissionRecovery] changes.
      *
      * [ARCameraPermissionRecovery.Request] offers [retryCameraPermission];
-     * [ARCameraPermissionRecovery.RequestWithSettings] keeps that action and also offers
+     * [ARCameraPermissionRecovery.SettingsWithRequest] keeps that action and also offers
      * [openAppSettings] with neutral copy; [ARCameraPermissionRecovery.Settings] offers
      * settings alone. `null` clears the denial after permission is granted, including on
      * return from settings. The property is updated before this callback runs.
@@ -1340,11 +1340,11 @@ suspend fun ArCoreApk.awaitAvailability(context: Context): Availability =
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5098** (2026-11-15): **3D Scan: a kept scan reopened stays on an empty stage when animations are off**
-  *Symptoms*: ## What happens  With the phone's animations off (Settings › Accessibility › Remove animations, or `animator_duration_scale` 0), a kept scan reopened from "Your scans" can stay on an empty stage for good: the title card and the bottom bar are there, the model never shows and there is no Photo | Model | Plan.  Pixel 4a, Android 13, build of `main` at 9f635f50c2, animator scale 0, kept scans reopened from the list:  | Scan | Result | |---|---| | Outdoor area, try 1 | Empty stage at 20 s, still empty at 45 s | | Outdoor area, try 2 | Empty stage at 20 s, still empty at 45 s | | Room, try 1 | Empty at 20 s, shown at 45 s | | Room, try 2 | Shown within 20 s |  With animations on, the same build showed the same scans 5 times out of 5.  ## Why  A kept scan's stored model and its points are read in parallel. When the model is on screen first, the result is staged again on the points once they arrive: `stageKey` goes from the model to the points, and `shown` (`remember(stageKey)`) starts over at `false`.  `ScanResultCinematics.frameDrawn` lets a view be seen once: it returns `true` a single time, then never again. The cinematics is remembered on `(orbit, entersLow)`. With animations on, `entersLow` flips when the points arrive, so a new cinematics is made and the second stage is let seen. With animations off, `entersLow` stays `false`, the same cinematics is kept across the two stages, `frameDrawn` never says "seen" again, and the stage stays behind its veil.  ## Fix  Remember the cin
+- **Issue #5162** (2026-11-19): **Node editing overlay: the selection ring collapses to a dot when the node's yaw is ~90° from the camera**
+  *Symptoms*: Found while reviewing #5161 (the PR does not cause it; present on `main` since #3357).  **Symptom.** In the demo "Camera & object controls" → Move, on the Damaged Helmet: during a twist the selection ring shrinks to a dot, stays a dot at rest, and stays a dot during a pinch; a second twist brings back a full ring.  **Cause.** `sceneview/src/main/java/io/github/sceneview/gesture/NodeEditingOverlay.kt` (~521): `radiusX` is only the screen-x span of the node-local X chord, so the ring width is `R · |cos(node yaw − camera azimuth)|`. The helmet rests at −22° yaw with the Hero camera at 32°, so the ring is already at 59 % width at rest; after a −35°/−37° twist the yaw is ~90° from the camera → 1.7 %, a dot.  **Fix.** Project both local axes and take the ellipse's extent from both: with `a = (xPos − xNeg)/2` and `b = (zPos − zNeg)/2` in screen space, `radiusX = hypot(a.x, b.x)` and `radiusY = hypot(a.y, b.y)`. Add a JVM test: rotating the node about Y keeps the ring's screen width within a tolerance of its rest width.  Proof needed: emulator captures of the same twist before/after, light and dark. 
 
-- **Issue #4926** (2026-11-03): **Demo home hero: SSR blur shader fails to compile on some GPUs, crash loop on launch**
-  *Symptoms*: ## Crash  Firebase Crashlytics, `android-demo`: 29 events, 8 users, on 4.62 (3), 4.63 (5) and 4.64 (21). None on 4.65 so far. Devices: Motorola (Moto G Stylus 5G 2024) 42 %, Honor (Pad 9) 31 %, Xreal 17 %, Vivo 10 %.  Crashlytics groups it under `std::underflow_error` because of wrong symbols; the tombstone reads:  ``` Postcondition in operator():371 reason: OpenGL program separableGaussianBlur failed to link or compile ```  `separableGaussianBlur` is the shader Filament uses to build the mip chain of screen-space reflections. Only the home hero's top rung, `HeroTier.Cinematic`, turns SSR on (`applyNightLook` → `ssr.enabled = tier.reflections`). The panic is raised on the render thread and cannot be caught, so the app aborts on its first hero frames — and since nothing records it, it aborts again on every launch: a crash loop.  ## Fix  - A rung is written down as *on trial* (synchronous `commit`) before its first frame, and cleared once it has drawn 120 textured frames, or when the home is left or the app stopped. - A mark still there at the next launch means the process died on that rung: it is promoted to a `tier_crashed` key (not versioned — the failing shader is Filament's) and `HeroTier.forDevice(crashed = …)` caps the pick one rung below it from then on. - The affected devices lose reflections on the home hero after one crash instead of crashing forever. 
+- **Issue #5134** (2026-11-18): **ARSceneView: sceneUnderstanding silently overrides planeRenderer (occlusion = true turns planes back on)**
+  *Symptoms*: Found while reviewing #5087.  `ARSceneView` applies two plane-visibility knobs in two `SideEffect`s (`ARSceneView.kt` ~1519-1540): `planeRenderer`, then the grouped `sceneUnderstanding.planeVisualization`. Both run on the main thread and the grouped one always wins, as the KDoc (~600-612) and `llms.txt` (~677) say. It is not a race, but it is a trap:  - `SceneUnderstanding(occlusion = true)` — the `llms.txt` sample (~702) — silently forces planes back on over `planeRenderer = false`. An app that turns occlusion on through the grouped settings loses its plane toggle with no warning. - Each recomposition where the two disagree refreshes every plane renderable twice.  Proposed fix: - [ ] Skip the `planeRenderer` write when `sceneUnderstanding.planeVisualization` is non-null (or the reverse: let an explicit `planeRenderer` win), so only one knob writes. - [ ] Document "do not combine `planeRenderer` with `sceneUnderstanding`" in the KDoc and `llms.txt`, and fix the `llms.txt` sample so turning occlusion on does not force planes on. - [ ] A test: `sceneUnderstanding = SceneUnderstanding(occlusion = true)` with `planeRenderer = false` keeps planes hidden. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1361,1371 +1361,1525 @@ suspend fun ArCoreApk.awaitAvailability(context: Context): Availability =
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d07b968a` (2026-11-17)
-**Commit Message**: fix(ar): apply per-frame EIS camera compensation (#5091)
+### Incident Patch 1: `0db548c6` (2026-11-20)
+**Commit Message**: fix(demo): bound the 3D scan journal and release the live model on exit (#5186)
 
-* fix(ar): apply per-frame EIS camera compensation
+* fix(demo): bound the 3D scan journal and release the live model on exit
 
-* fix(ar): keep EIS camera background at the far plane
+A 406-second room scan ran a real user's 256 MB Java heap out of memory
+(Crashlytics, 4.69.5). Two retentions grew with the scan or outlived it:
 
-* fix(ar): preserve EIS-off rendering and reuse camera uploads
+- the scan's replay journal had no total budget; it is now an
+  ArDebugJournal capped at 4 MiB that halves camera and point
+  observations across the timeline when full, keeping photo poses,
+  planes, depth counts and floor cells;
+- the live model's TSDF (up to ~48 MB) stayed in a process-wide slot
+  after leaving the demo; a per-demo owner now forgets it on exit or on a
+  discarded capture, while a successful save still hands it to the
+  result screen.
 
-* fix(ar): dispatch camera upload completion callbacks
+Closing a capture also releases its trace, dense map, photos and
+thumbnails. Debug builds log heap and journal sizes every minute of a
+scan (tag SceneView/ScanMem) for device measurements.
 
-* fix(ar): resolve the EIS material flag at bind time, not per frame
-
-On a Pixel 4a (ARCore 1.57, Filament 1.77.3) no AR demo showed the camera:
-update() called materialInstance.material.hasParameter(...) every frame, and
-since Filament 1.77 the MaterialInstance read back from the renderable is
-wrapped without its Material. The NullPointerException fired on every frame
-before the camera quad was revealed, so ARSceneView logged "ARCore session
-update failed" and showed "Camera couldn't start", EIS on or off.
-
-- Override setMaterialInstanceAt, the one path every binding goes through,
-  and decide there (through materialOrNull) whether the bound material
-  declares imageStabilizationEnabled. The flag is written only when the
-  binding or its value changes; update() never reads the bound material.
-- Hoist the two ARCore transform lambdas into fields so update() no longer
-  allocates them every frame, and 
-
-**File**: `arsceneview/src/main/java/io/github/sceneview/ar/camera/ARCameraStream.kt` (modified, +109/-34)
-```diff
-@@ -15,6 +15,7 @@ import com.google.android.filament.TextureSampler
- import com.google.android.filament.VertexBuffer
- import com.google.ar.core.Config
- import com.google.ar.core.Coordinates2d
-+import com.google.ar.core.Coordinates3d
- import com.google.ar.core.Frame
- import com.google.ar.core.Session
- import com.google.ar.core.TrackingState
-@@ -27,6 +28,7 @@ import io.github.sceneview.components.RenderableComponent
- import io.github.sceneview.components.RenderableInstance
- import io.github.sceneview.loaders.MaterialLoader
- import io.github.sceneview.managers.safeDestroy
-+import io.github.sceneview.material.materialOrNull
- import io.github.sceneview.material.setExternalTexture
- import io.github.sceneview.material.setParameter
- import io.github.sceneview.material.setTexture
-@@ -37,12 +39,12 @@ import io.github.sceneview.safeRecycleEntity
- import io.github.sceneview.safeDestroyTexture
- import io.github.sceneview.safeDestroyVertexBuffer
- import io.github.sceneview.utils.OpenGL
--import io.github.sceneview.utils.clone
- import java.nio.ByteBuffer
- import java.nio.ByteOrder
- import java.nio.FloatBuffer
- import java.nio.ShortBuffer
- import java.util.concurrent.ConcurrentLinkedQueue
-+import java.util.concurrent.Executor
- 
- const val kUVTransformParameter = "uvTransform"
- const val kCameraTextureParameter = "cameraTexture"
-@@ -67,6 +69,10 @@ const val kFogEndParameter = "fogEnd"
- internal const val kGroundContactParameter = "groundContact"
- internal const val kGroundNormalParameter = "groundNormal"
- 
-+// Electronic image stabilization (#2728): `true` makes the camera materials sample the
-+// homogeneous EIS coordinates in CUSTOM0 instead of UV0. Absent from custom legacy materials.
-+internal const val kImageStabilizationParameter = "imageStabilizationEnabled"
-+
- /**
-  * Renders the live AR camera feed as the scene background using Filament.
-  *
-@@ -76,6 +82,8 @@ internal const val kGroundNormalParameter = "groundNormal"
-  * behind real-world surfaces using the ARCore depth image — and **people occlusion**
-  * ([isPersonOcclusionEnabled], #1761) — virtual content is hidden behind real people using
-  * the ARCore Scene Semantics `PERSON`-class segmentation mask.
-+ * Electronic image stabilization uses ARCore's per-frame compensated geometry and homogeneous
-+ * camera texture coordinates, so live EIS configuration changes preserve registration (#2728).
-  *
-  * Typically created via [rememberARCameraStream] and passed to `ARSceneView(cameraStream = ...)`.
-  *
-@@ -387,6 +395,15 @@ open class ARCameraStream(
-         super.setMaterialInstances(materialInstance)
-     }
- 
-+    /**
-+     * Every binding path ([setMaterialInstances], the [materialInstance] and [materialInstances]
-+     * setters) ends here, so this is where the EIS flag learns which instance to drive (#5091).
-+     */
-+    override fun setMaterialInstanceAt(primitiveIndex: Int, materialInstance: MaterialInstance) {
-+        super.setMaterialInstanceAt(primitiveIndex, materialInstance)
-+        if (primitiveIndex == 0) stabilizationFlag.bind(materialInstance)
-+    }
-+
-     /**
-      * ### Enable the depth occlusion material
-      *
-@@ -587,8 +604,36 @@ open class ARCameraStream(
-         )
-     }
- 
-+    private val coordinates = CameraStreamCoordinates(CAMERA_VERTICES)
-+    private val coordinateUploads = CameraStreamUploadRing(VERTEX_COUNT)
-+    private var pendingDisplayGeometryChange = false
-+
-+    // Whether the bound material declares the EIS flag is resolved when it is bound, never per
-+    // frame: since Filament 1.77 the `materialInstance` read back from the renderable has a null
-+    // `material`, and the per-frame `hasParameter` on it threw on every frame (#5091).
-+    private val stabilizationFlag = CameraStreamStabilizationFlag<MaterialInstance>(
-+        accepts = ::acceptsImageStabilizationFlag,
-+        write = { instance, enabled -> instance.setParameter(kImageStabilizationParameter, enabled) },
-+    )
-+
-+    // Allocated once: [update] points them at the current frame instead of capturing it in two
-+    // new lambdas every frame.
-+    private var transformFrame: Frame? = null
-+    private val transform3d: (FloatBuffer, Coordinates3d, FloatBuffer) -> Unit =
-+        { input, outputType, output ->
-+            checkNotNull(transformFrame).transformCoordinates3d(
-+                Coordinates2d.OPENGL_NORMALIZED_DEVICE_COORDINATES, input, outputType, output
-+            )
-+        }
-+    private val transform2d: (Coordinates2d, FloatBuffer, FloatBuffer) -> Unit =
-+        { inputType, input, output ->
-+            checkNotNull(transformFrame).transformCoordinates2d(
-+                inputType, input, Coordinates2d.TEXTURE_NORMALIZED, output
-+            )
-+        }
-+
-     private val vertexBuffer: VertexBuffer =
--        VertexBuffer.Builder().vertexCount(VERTEX_COUNT).bufferCount(2).attribute(
-+        VertexBuffer.Builder().vertexCount(VERTEX_COUNT).bufferCount(3).attribute(
-             VertexBuffer.VertexAttribute.POSITION,
-             POSIT
-```
-
-**File**: `arsceneview/src/main/java/io/github/sceneview/ar/camera/CameraStreamCoordinates.kt` (added, +158/-0)
-```diff
-@@ -0,0 +1,158 @@
-+package io.github.sceneview.ar.camera
-+
-+import com.google.ar.core.Config
-+import com.google.ar.core.Coordinates2d
-+import com.google.ar.core.Coordinates3d
-+import java.nio.ByteBuffer
-+import java.nio.ByteOrder
-+import java.nio.FloatBuffer
-+import java.util.concurrent.atomic.AtomicInteger
-+
-+/** EIS geometry and the original display-transformed 2D UVs used while stabilization is off. */
-+internal class CameraStreamCoordinates(private val vertices: FloatArray) {
-+    private val vertexCount = vertices.size / 3
-+    private val ndc = buffer(vertexCount * 2).apply {
-+        for (i in 0 until vertexCount) {
-+            put(vertices[i * 3])
-+            put(vertices[i * 3 + 1])
-+        }
-+        rewind()
-+    }
-+    private val screenNdc = buffer(vertexCount * 2)
-+    private val viewUvs = buffer(vertexCount * 2)
-+    private var initialized = false
-+    private var stabilized = false
-+    val positions: FloatBuffer = buffer(vertices.size).apply { put(vertices); rewind() }
-+    val cameraUvs: FloatBuffer = buffer(vertices.size)
-+    val imageUvs: FloatBuffer = buffer(vertexCount * 2)
-+
-+    init {
-+        for (i in 0 until vertexCount) {
-+            val u = (vertices[i * 3] + 1f) / 2f
-+            val v = (1f - vertices[i * 3 + 1]) / 2f
-+            cameraUvs.put(u).put(1f - v).put(1f)
-+            imageUvs.put(u).put(v)
-+            viewUvs.put(u).put(v)
-+        }
-+        cameraUvs.rewind()
-+        imageUvs.rewind()
-+        viewUvs.rewind()
-+    }
-+
-+    /** Returns whether the vertex data changed and needs uploading. */
-+    fun update(
-+        mode: Config.ImageStabilizationMode,
-+        displayGeometryChanged: Boolean,
-+        transform3d: (FloatBuffer, Coordinates3d, FloatBuffer) -> Unit,
-+        transform2d: (Coordinates2d, FloatBuffer, FloatBuffer) -> Unit,
-+    ): Boolean {
-+        val eis = mode == Config.ImageStabilizationMode.EIS
-+        if (!eis && initialized && !stabilized && !displayGeometryChanged) return false
-+        positions.rewind()
-+        imageUvs.rewind()
-+        if (eis) {
-+            ndc.rewind()
-+            transform3d(ndc, Coordinates3d.EIS_NORMALIZED_DEVICE_COORDINATES, positions)
-+            // Device-domain Filament shaders take raster depth directly from POSITION.
-+            for (i in 0 until vertexCount) positions.put(i * 3 + 2, 1f)
-+            ndc.rewind()
-+            cameraUvs.rewind()
-+            transform3d(ndc, Coordinates3d.EIS_TEXTURE_NORMALIZED, cameraUvs)
-+
-+            // Retain UV0 for custom materials that use the physical-camera mapping.
-+            screenNdc.rewind()
-+            for (i in 0 until vertexCount) {
-+                screenNdc.put(positions[i * 3])
-+                screenNdc.put(positions[i * 3 + 1])
-+            }
-+            screenNdc.rewind()
-+            transform2d(Coordinates2d.OPENGL_NORMALIZED_DEVICE_COORDINATES, screenNdc, imageUvs)
-+        } else {
-+            // Match main exactly: original geometry, VIEW_NORMALIZED input, same Y flip.
-+            // Never ask ARCore for EIS coordinates while OFF (#2728).
-+            positions.put(vertices)
-+            viewUvs.rewind()
-+            transform2d(Coordinates2d.VIEW_NORMALIZED, viewUvs, imageUvs)
-+        }
-+        for (i in 0 until vertexCount) {
-+            imageUvs.put(i * 2 + 1, 1f - imageUvs[i * 2 + 1])
-+        }
-+        positions.rewind()
-+        cameraUvs.rewind()
-+        imageUvs.rewind()
-+        initialized = true
-+        stabilized = eis
-+        return true
-+    }
-+}
-+
-+/** A bounded ring: a slot stays immutable until all three asynchronous uploads complete. */
-+internal class CameraStreamUploadRing(vertexCount: Int, size: Int = 3) {
-+    class Slot(vertexCount: Int) {
-+        val positions = buffer(vertexCount * 3)
-+        val imageUvs = buffer(vertexCount * 2)
-+        val cameraUvs = buffer(vertexCount * 3)
-+        private val pending = AtomicInteger(0)
-+        val onConsumed = Runnable { pending.decrementAndGet() }
-+
-+        fun acquire(): Boolean = pending.compareAndSet(0, 3)
-+        fun cancel() { pending.set(0) }
-+
-+        fun copyFrom(coordinates: CameraStreamCoordinates) {
-+            copy(coordinates.positions, positions)
-+            copy(coordinates.imageUvs, imageUvs)
-+            copy(coordinates.cameraUvs, cameraUvs)
-+        }
-+
-+        private fun copy(source: FloatBuffer, target: FloatBuffer) {
-+            target.clear()
-+            target.put(source.duplicate())
-+            target.flip()
-+        }
-+    }
-+
-+    private val slots = Array(size) { Slot(vertexCount) }
-+    private var next = 0
-+
-+    fun acquire(): Slot? {
-+        repeat(slots.size) {
-+            val slot = slots[next]
-+            next = (next + 1) % slots.size
-+            if (slot.acquire()) return slot
-+        }
-+        // Keep the last geometry if the renderer falls behind; never overwrite an upload.
-+        return null
-+    }
-+}
-+
-+/**
-+ * The EIS flag of the camera material bound to primitive 0 (#5091).
-+ *
-+ * Whether t
-```
-
-**File**: `arsceneview/src/main/materials/camera_stream_depth.mat` (modified, +19/-5)
-```diff
-@@ -23,6 +23,10 @@ material {
-     culling : none,
-     vertexDomain : device,
-     parameters : [
-+        {
-+            type : bool,
-+            name : imageStabilizationEnabled
-+        },
-         {
-             type : samplerExternal,
-             name : cameraTexture
-@@ -87,13 +91,14 @@ material {
-         }
-     ],
-     variables : [
-+        { name : cameraUv, precision : high },
-         {
-             name : groundRay,
-             precision : high
-         }
-     ],
-     requires : [
--        uv0
-+        uv0, custom0
-     ]
- }
- 
-@@ -231,16 +236,20 @@ fragment {
- 
-     void material(inout MaterialInputs material) {
-         prepareMaterial(material);
-+        // EIS supplies homogeneous texture coordinates. Divide AFTER interpolation (#2728).
-+        // OFF samples UV0 exactly as before EIS support, without a second Y flip.
-+        highp vec2 cameraUv = materialParams.imageStabilizationEnabled
-+                ? variable_cameraUv.xy / variable_cameraUv.z : getUV0();
-         vec3 camera = Inverse_Tonemap_Filmic(
--                srgbToLinearExact(texture(materialParams_cameraTexture, getUV0()).rgb));
--        vec2 packed_depth = texture(materialParams_depthTexture, getUV0()).xy;
-+                srgbToLinearExact(texture(materialParams_cameraTexture, cameraUv).rgb));
-+        vec2 packed_depth = texture(materialParams_depthTexture, cameraUv).xy;
-         float depth_mm = dot(packed_depth, vec2(255.f, 256.f * 255.f));
-         float depth_m = depth_mm / 1000.f;
-         // The bilinear sample blends a hole (0xFFFF, 65.5 m) with its neighbour into any
-         // depth from 5 to 60 m, which the fog would read as valid: a ring of near-full fog
-         // around every hole. The fog reads the unfiltered texel for validity and never a
-         // depth farther than it.
--        ivec2 depth_texel = ivec2(getUV0() * vec2(textureSize(materialParams_depthTexture, 0)));
-+        ivec2 depth_texel = ivec2(cameraUv * vec2(textureSize(materialParams_depthTexture, 0)));
-         float nearest_m = dot(texelFetch(materialParams_depthTexture, depth_texel, 0).xy,
-                               vec2(255.f, 256.f * 255.f)) / 1000.f;
-         float fog_m = min(depth_m, nearest_m);
-@@ -284,7 +293,7 @@ fragment {
-         // depth near the far plane under whatever convention the active projection
-         // uses — no division by zero, no clamped infinity, and "no data" degrades to
-         // "occludes nothing", which is the documented intent.
--        float occlusion_m = occlusionDepthMeters(getUV0());
-+        float occlusion_m = occlusionDepthMeters(cameraUv);
-         float occlusion_valid = step(0.001f, occlusion_m) * step(occlusion_m, kMaxValidDepthMeters);
-         vec2 ground = groundSurface(variable_groundRay.xyz / variable_groundRay.w);
-         float occlusion_depth_m = occluderDistance(occlusion_m, occlusion_valid,
-@@ -297,6 +306,11 @@ fragment {
- 
- vertex {
-     void materialVertex(inout MaterialVertexInputs material) {
-+        // CUSTOM0 is already in GPU texture orientation (unlike Filament's flipped UV0).
-+        highp vec3 cameraUv = getCustom0().xyz;
-+        material.cameraUv = vec4(
-+            (materialParams.uvTransform * vec4(cameraUv.xy, 0.f, cameraUv.z)).xy,
-+            cameraUv.z, 0.f);
-         material.uv0 = mulMat4x4Float3(materialParams.uvTransform, vec3(material.uv0.x, material.uv0.y, 0.f)).xy;
-         vec4 clip = getPosition();
-         clip.z = 0.9999f;
-```
-
-**File**: `arsceneview/src/main/materials/camera_stream_flat.mat` (modified, +18/-2)
-```diff
-@@ -14,6 +14,10 @@ material {
-     blending : opaque,
-     culling : none,
-     parameters : [
-+        {
-+            type : bool,
-+            name : imageStabilizationEnabled
-+        },
-         {
-             type : samplerExternal,
-             name : cameraTexture
-@@ -23,8 +27,11 @@ material {
-             name : uvTransform
-         }
-     ],
-+    variables : [
-+        { name : cameraUv, precision : high }
-+    ],
-     requires : [
--        uv0
-+        uv0, custom0
-     ]
- }
- 
-@@ -56,17 +63,26 @@ fragment {
- 
-     void material(inout MaterialInputs material) {
-         prepareMaterial(material);
-+        // EIS supplies homogeneous texture coordinates. Divide AFTER interpolation (#2728).
-+        // OFF samples UV0 exactly as before EIS support, without a second Y flip.
-+        highp vec2 cameraUv = materialParams.imageStabilizationEnabled
-+                ? variable_cameraUv.xy / variable_cameraUv.z : getUV0();
-         // Inverse_Tonemap_Filmic is the exact analytic inverse of ToneMapper.Filmic,
-         // which createARView() installs on the View — that leg already cancelled and is
-         // kept as-is. Only the transfer-function leg changes (#3338).
--        vec3 camera = texture(materialParams_cameraTexture, getUV0()).rgb;
-+        vec3 camera = texture(materialParams_cameraTexture, cameraUv).rgb;
-         material.baseColor.rgb = Inverse_Tonemap_Filmic(srgbToLinearExact(camera));
-         material.baseColor.a = 1.f;
-     }
- }
- 
- vertex {
-     void materialVertex(inout MaterialVertexInputs material) {
-+        // CUSTOM0 is already in GPU texture orientation (unlike Filament's flipped UV0).
-+        highp vec3 cameraUv = getCustom0().xyz;
-+        material.cameraUv = vec4(
-+            (materialParams.uvTransform * vec4(cameraUv.xy, 0.f, cameraUv.z)).xy,
-+            cameraUv.z, 0.f);
-         material.uv0 = mulMat4x4Float3(materialParams.uvTransform, vec3(material.uv0.x, material.uv0.y, 0.f)).xy;
-         vec4 clip = getPosition();
-         clip.z = 0.9999f;
-```
-
-**File**: `arsceneview/src/main/materials/camera_stream_person_occlusion.mat` (modified, +20/-6)
-```diff
-@@ -27,6 +27,10 @@ material {
-     culling : none,
-     vertexDomain : device,
-     parameters : [
-+        {
-+            type : bool,
-+            name : imageStabilizationEnabled
-+        },
-         {
-             type : samplerExternal,
-             name : cameraTexture
-@@ -83,13 +87,14 @@ material {
-         }
-     ],
-     variables : [
-+        { name : cameraUv, precision : high },
-         {
-             name : groundRay,
-             precision : high
-         }
-     ],
-     requires : [
--        uv0
-+        uv0, custom0
-     ]
- }
- 
-@@ -224,16 +229,20 @@ fragment {
- 
-     void material(inout MaterialInputs material) {
-         prepareMaterial(material);
-+        // EIS supplies homogeneous texture coordinates. Divide AFTER interpolation (#2728).
-+        // OFF samples UV0 exactly as before EIS support, without a second Y flip.
-+        highp vec2 cameraUv = materialParams.imageStabilizationEnabled
-+                ? variable_cameraUv.xy / variable_cameraUv.z : getUV0();
-         vec3 camera = Inverse_Tonemap_Filmic(
--                srgbToLinearExact(texture(materialParams_cameraTexture, getUV0()).rgb));
--        vec2 packed_depth = texture(materialParams_depthTexture, getUV0()).xy;
-+                srgbToLinearExact(texture(materialParams_cameraTexture, cameraUv).rgb));
-+        vec2 packed_depth = texture(materialParams_depthTexture, cameraUv).xy;
-         float depth_mm = dot(packed_depth, vec2(255.f, 256.f * 255.f));
-         float depth_m = depth_mm / 1000.f;
-         // The bilinear sample blends a hole (0xFFFF, 65.5 m) with its neighbour into any
-         // depth from 5 to 60 m, which the fog would read as valid: a ring of near-full fog
-         // around every hole. The fog reads the unfiltered texel for validity and never a
-         // depth farther than it.
--        ivec2 depth_texel = ivec2(getUV0() * vec2(textureSize(materialParams_depthTexture, 0)));
-+        ivec2 depth_texel = ivec2(cameraUv * vec2(textureSize(materialParams_depthTexture, 0)));
-         float nearest_m = dot(texelFetch(materialParams_depthTexture, depth_texel, 0).xy,
-                               vec2(255.f, 256.f * 255.f)) / 1000.f;
-         float fog_m = min(depth_m, nearest_m);
-@@ -253,7 +262,7 @@ fragment {
-         // ARCore depth are pushed to `kNoDepthDistanceMeters` rather than left at 0,
-         // which would divide by `view.w == 0` and clamp to the near plane, occluding
-         // everything. Same fix, same reason as `camera_stream_depth.mat` (#3340).
--        float occlusion_m = occlusionDepthMeters(getUV0());
-+        float occlusion_m = occlusionDepthMeters(cameraUv);
-         float occlusion_valid = step(0.001f, occlusion_m) * step(occlusion_m, kMaxValidDepthMeters);
-         vec2 ground = groundSurface(variable_groundRay.xyz / variable_groundRay.w);
-         float occlusion_depth_m = occluderDistance(occlusion_m, occlusion_valid,
-@@ -277,13 +286,18 @@ fragment {
-         // stereo depth is unreliable on a moving person (thin limbs, fast motion), so the
-         // semantic mask is the authoritative people cue. Where there is NO person we keep
-         // the genuine `ndc_depth`, so static real-world geometry still occludes correctly.
--        float is_person = step(0.5f, texture(materialParams_personTexture, getUV0()).r);
-+        float is_person = step(0.5f, texture(materialParams_personTexture, cameraUv).r);
-         gl_FragDepth = mix(ndc_depth, kNdcNearPlane, is_person);
-     }
- }
- 
- vertex {
-     void materialVertex(inout MaterialVertexInputs material) {
-+        // CUSTOM0 is already in GPU texture orientation (unlike Filament's flipped UV0).
-+        highp vec3 cameraUv = getCustom0().xyz;
-+        material.cameraUv = vec4(
-+            (materialParams.uvTransform * vec4(cameraUv.xy, 0.f, cameraUv.z)).xy,
-+            cameraUv.z, 0.f);
-         material.uv0 = mulMat4x4Float3(materialParams.uvTransform, vec3(material.uv0.x, material.uv0.y, 0.f)).xy;
-         vec4 clip = getPosition();
-         clip.z = 0.9999f;
-```
-
-**File**: `arsceneview/src/test/java/io/github/sceneview/ar/camera/CameraStreamCoordinatesTest.kt` (added, +239/-0)
-```diff
-@@ -0,0 +1,239 @@
-+package io.github.sceneview.ar.camera
-+
-+import com.google.ar.core.Config
-+import com.google.ar.core.Coordinates2d
-+import com.google.ar.core.Coordinates3d
-+import org.junit.Assert.assertArrayEquals
-+import org.junit.Assert.assertEquals
-+import org.junit.Assert.assertFalse
-+import org.junit.Assert.assertNull
-+import org.junit.Assert.assertSame
-+import org.junit.Assert.assertTrue
-+import org.junit.Test
-+import java.nio.FloatBuffer
-+
-+class CameraStreamCoordinatesTest {
-+    private val vertices = floatArrayOf(-1f, 1f, 1f, -1f, -3f, 1f, 3f, 1f, 1f)
-+    private val ndc = floatArrayOf(-1f, 1f, -1f, -3f, 3f, 1f)
-+
-+    @Test
-+    fun `OFF is bit identical to main and never requests EIS coordinates`() {
-+        val coordinates = CameraStreamCoordinates(vertices)
-+        val viewUvs = floatArrayOf(0f, 0f, 0f, 2f, 2f, 0f)
-+        // Include values whose second Y flip would lose precision.
-+        val transformed = floatArrayOf(0.125f, 0.00000001f, -0.2f, 0.3f, 1.2f, 1.0000001f)
-+        val mainUvs = transformed.copyOf().apply {
-+            for (i in 1 until size step 2) this[i] = 1f - this[i]
-+        }
-+        assertTrue(coordinates.update(
-+            mode = Config.ImageStabilizationMode.OFF,
-+            displayGeometryChanged = false,
-+            transform3d = { _, _, _ -> error("OFF must not request EIS coordinates") },
-+            transform2d = { type, input, output ->
-+                assertEquals(Coordinates2d.VIEW_NORMALIZED, type)
-+                assertArrayEquals(viewUvs, input.values(), 0f)
-+                output.put(transformed)
-+            },
-+        ))
-+        assertArrayEquals(vertices.map { it.toRawBits() }.toIntArray(),
-+            coordinates.positions.values().map { it.toRawBits() }.toIntArray())
-+        assertArrayEquals(mainUvs.map { it.toRawBits() }.toIntArray(),
-+            coordinates.imageUvs.values().map { it.toRawBits() }.toIntArray())
-+
-+        assertFalse(coordinates.update(
-+            mode = Config.ImageStabilizationMode.OFF,
-+            displayGeometryChanged = false,
-+            transform3d = { _, _, _ -> error("Unexpected 3D transform") },
-+            transform2d = { _, _, _ -> error("OFF must cache unchanged display geometry") },
-+        ))
-+    }
-+
-+    @Test
-+    fun `OFF recomputes legacy UVs on rotation and restores the triangle after EIS`() {
-+        val coordinates = CameraStreamCoordinates(vertices)
-+        update(coordinates, shift = 0.2f)
-+        var transforms = 0
-+        fun off(displayChanged: Boolean): Boolean = coordinates.update(
-+            mode = Config.ImageStabilizationMode.OFF,
-+            displayGeometryChanged = displayChanged,
-+            transform3d = { _, _, _ -> error("OFF must not request EIS coordinates") },
-+            transform2d = { type, input, output ->
-+                assertEquals(Coordinates2d.VIEW_NORMALIZED, type)
-+                transforms++
-+                output.put(input)
-+            },
-+        )
-+        assertTrue(off(false))
-+        assertArrayEquals(vertices, coordinates.positions.values(), 0f)
-+        assertArrayEquals(floatArrayOf(0f, 1f, 0f, -1f, 2f, 1f), coordinates.imageUvs.values(), 0f)
-+        assertFalse(off(false))
-+        assertTrue(off(true))
-+        assertEquals(2, transforms)
-+        update(coordinates, shift = 0.3f)
-+        assertEquals(-0.7f, coordinates.positions[0], 0f)
-+        assertTrue(off(false))
-+        assertArrayEquals(vertices, coordinates.positions.values(), 0f)
-+    }
-+
-+    @Test
-+    fun `EIS screen Z never moves the uploaded camera background off the far plane`() {
-+        val coordinates = CameraStreamCoordinates(vertices)
-+        for (screenZ in listOf(0f, 0.25f, -0.5f, 0f)) {
-+            coordinates.update(
-+                mode = Config.ImageStabilizationMode.EIS,
-+                displayGeometryChanged = false,
-+                transform3d = { _, type, output ->
-+                    if (type == Coordinates3d.EIS_NORMALIZED_DEVICE_COORDINATES) {
-+                        output.put(floatArrayOf(-0.8f, 0.9f, screenZ, -0.9f, -2.8f, screenZ, 3.1f, 1.2f, screenZ))
-+                    } else {
-+                        output.put(floatArrayOf(0.4f, 0.3f, 2f, 0.8f, 1.4f, 3f, 1.8f, 0.6f, 4f))
-+                    }
-+                },
-+                transform2d = { _, _, output -> output.put(FloatArray(6)) },
-+            )
-+            val upload = requireNotNull(CameraStreamUploadRing(3).acquire()).apply { copyFrom(coordinates) }
-+            // Device-domain Filament shaders take raster depth directly from POSITION.
-+            // Assert the actual upload: XY must retain EIS compensation, Z must stay at 1.
-+            assertArrayEquals(
-+                floatArrayOf(-0.8f, 0.9f, 1f, -0.9f, -2.8f, 1f, 3.1f, 1.2f, 1f),
-+                upload.positions.values(),
-+                0f,
-+            )
-+            // The independent homogeneous texture denominator must retain its ARCore value.
-+            assertArrayEquals(
-+               
-```
-
-**File**: `arsceneview/src/test/java/io/github/sceneview/ar/camera/CameraStreamStabilizationContractTest.kt` (added, +46/-0)
-```diff
-@@ -0,0 +1,46 @@
-+package io.github.sceneview.ar.camera
-+
-+import org.junit.Assert.assertTrue
-+import org.junit.Test
-+import java.io.File
-+
-+/** The perspective divide must happen after interpolation, in every camera material (#2728). */
-+class CameraStreamStabilizationContractTest {
-+    @Test
-+    fun `camera materials sample homogeneous EIS coordinates in the fragment shader`() {
-+        for (name in listOf("flat", "depth", "person_occlusion")) {
-+            val source = File("src/main/materials/camera_stream_$name.mat").readText()
-+            val fragment = source.substringAfter("fragment {").substringBefore("vertex {")
-+            assertTrue(
-+                "$name must divide interpolated camera coordinates by their homogeneous Z",
-+                fragment.contains("variable_cameraUv.xy / variable_cameraUv.z"),
-+            )
-+            assertTrue(
-+                "$name must use the compensated coordinates to sample the camera",
-+                fragment.contains("texture(materialParams_cameraTexture, cameraUv)"),
-+            )
-+            assertTrue(
-+                "$name must preserve main's UV0 sampling while EIS is OFF",
-+                fragment.contains("materialParams.imageStabilizationEnabled\n") &&
-+                    fragment.contains("? variable_cameraUv.xy / variable_cameraUv.z : getUV0()"),
-+            )
-+            assertTrue("$name must receive all three camera coordinates", source.contains("getCustom0()"))
-+        }
-+    }
-+
-+    @Test
-+    fun `depth fog and person masks use the same coordinates as the camera`() {
-+        for (name in listOf("depth", "person_occlusion")) {
-+            val source = File("src/main/materials/camera_stream_$name.mat").readText()
-+            val fragment = source.substringAfter("fragment {").substringBefore("vertex {")
-+            assertTrue(fragment.contains("texture(materialParams_depthTexture, cameraUv)"))
-+            assertTrue(fragment.contains("ivec2(cameraUv * vec2(textureSize(materialParams_depthTexture, 0)))"))
-+            assertTrue(fragment.contains("occlusionDepthMeters(cameraUv)"))
-+            // UV0 may appear only in the OFF fallback, never at a mask lookup.
-+            assertTrue(fragment.split("getUV0()").size == 2)
-+            if (name == "person_occlusion") {
-+                assertTrue(fragment.contains("texture(materialParams_personTexture, cameraUv)"))
-+            }
-+        }
-+    }
-+}
-```
-
-**File**: `arsceneview/src/test/java/io/github/sceneview/ar/camera/CameraStreamStabilizationFlagTest.kt` (added, +94/-0)
-```diff
-@@ -0,0 +1,94 @@
-+package io.github.sceneview.ar.camera
-+
-+import com.google.android.filament.MaterialInstance
-+import org.junit.Assert.assertEquals
-+import org.junit.Assert.assertFalse
-+import org.junit.Assert.assertNull
-+import org.junit.Assert.assertTrue
-+import org.junit.Test
-+import java.io.File
-+
-+/**
-+ * The EIS material flag is resolved at bind time and never read from the bound material per
-+ * frame (#5091).
-+ *
-+ * On a Pixel 4a with Filament 1.77.3, `update()` called
-+ * `materialInstance.material.hasParameter(...)` every frame. `materialInstance` is read back
-+ * from the renderable, and Filament 1.77 builds that wrapper without its `Material`: the call threw
-+ * a NullPointerException on every frame, so the camera quad was never revealed and every AR demo
-+ * showed "Camera couldn't start". The JVM tests had no Filament to see it.
-+ */
-+class CameraStreamStabilizationFlagTest {
-+
-+    private class FakeInstance(val name: String, val declaresFlag: Boolean)
-+
-+    private val writes = mutableListOf<Pair<String, Boolean>>()
-+    private val flag = CameraStreamStabilizationFlag<FakeInstance>(
-+        accepts = { it.declaresFlag },
-+        write = { instance, enabled -> writes += instance.name to enabled },
-+    )
-+
-+    @Test
-+    fun `a wrapper read back from a renderable has no material and is not a flag target`() {
-+        // What `RenderableManager.getMaterialInstanceAt` returns since Filament 1.77: no natives
-+        // are needed to build it, and its `material` is null.
-+        val readBack = MaterialInstance.wrap(42L)
-+        assertNull(readBack.material)
-+        val threw = runCatching { readBack.material.hasParameter(kImageStabilizationParameter) }
-+            .exceptionOrNull()
-+        assertTrue("the pre-#5091 per-frame call throws here", threw is NullPointerException)
-+
-+        assertFalse(acceptsImageStabilizationFlag(readBack))
-+    }
-+
-+    @Test
-+    fun `binding a material that declares the flag writes the current value once`() {
-+        flag.enabled = true
-+        assertEquals(emptyList<Pair<String, Boolean>>(), writes)
-+
-+        flag.bind(FakeInstance("depth", declaresFlag = true))
-+        assertEquals(listOf("depth" to true), writes)
-+    }
-+
-+    @Test
-+    fun `an unchanged value writes nothing, however many frames pass`() {
-+        flag.bind(FakeInstance("flat", declaresFlag = true))
-+        writes.clear()
-+
-+        repeat(300) { flag.enabled = false }
-+        assertEquals(emptyList<Pair<String, Boolean>>(), writes)
-+
-+        flag.enabled = true
-+        repeat(300) { flag.enabled = true }
-+        assertEquals(listOf("flat" to true), writes)
-+    }
-+
-+    @Test
-+    fun `a legacy material without the flag is never written`() {
-+        flag.bind(FakeInstance("legacy", declaresFlag = false))
-+        flag.enabled = true
-+        flag.enabled = false
-+        assertEquals(emptyList<Pair<String, Boolean>>(), writes)
-+    }
-+
-+    @Test
-+    fun `switching material carries the current value to the new one`() {
-+        flag.bind(FakeInstance("flat", declaresFlag = true))
-+        flag.enabled = true
-+        flag.bind(FakeInstance("legacy", declaresFlag = false))
-+        flag.bind(FakeInstance("person", declaresFlag = true))
-+        assertEquals(listOf("flat" to false, "flat" to true, "person" to true), writes)
-+    }
-+
-+    @Test
-+    fun `the per-frame update never reads the bound material`() {
-+        val source = File("src/main/java/io/github/sceneview/ar/camera/ARCameraStream.kt").readText()
-+        val update = source.substringAfter("fun update(session: Session, frame: Frame) {")
-+            .substringBefore("\n    fun ")
-+            .substringBefore("\n    private fun ")
-+        assertTrue("update() body not found", update.contains("coordinateUploads.acquire()"))
-+        for (forbidden in listOf(".material.", ".material)", "materialOrNull", "hasParameter")) {
-+            assertFalse("update() must not call `$forbidden` per frame (#5091)", update.contains(forbidden))
-+        }
-+    }
-+}
-```
-
----
-
-### Incident Patch 2: `987a4be5` (2026-11-17)
-**Commit Message**: fix(demo): Matter material switch plays fully, never locks the chips or the press (#5138)
-
-* fix(demo): Matter material switch plays fully, never locks the chips or the press
-
-Switching material in Matter could show the new title over the old solid for
-up to two seconds and then pop the new one in at rest: the slide ran on a
-450 ms wall-clock tween, and the first draw of a sample stalls the renderer
-(1.5 s per material on emulator-5554), so the whole slide elapsed on one
-frozen frame. The chip row also greyed out on every switch and dropped taps
-and flings made during it, a press started during a switch stayed dead until
-the finger lifted, and selecting a chip scrolled the row so the first chips
-(Memory foam) left the screen.
-
-- MatterSwitch: a pure state machine advanced once per presented frame. The
-  incoming solid is drawn from the first frame at its hidden pose under the
-  floor, the slide steps by the presented-frame interval capped at 34 ms, and
-  it waits on the empty stage until the incoming solid has been drawn twice.
-- Requests are never refused: until the incoming solid shows, a new one
-  replaces it; once it rises, the latest one waits for it to land. Flings
-  step fro
-
-**File**: `changelog.d/5138-matter-switch.md` (added, +2/-0)
-```diff
-@@ -0,0 +1,2 @@
-+<!-- category: Fixed -->
-+- **Demo app: Matter's material switch plays fully ([#5138](https://github.com/sceneview/sceneview/pull/5138)).** Selecting another material now always shows the full slide. Before, the first draw of each material could freeze the old solid under the new title and then pop the new one in. The chips stay enabled during a switch, and taps or flings made during it queue instead of being dropped. A finger held through a switch presses the new solid as soon as it lands, and choosing a chip no longer scrolls the first chips off screen.
-```
-
-**File**: `samples/android-demo/src/main/java/io/github/sceneview/demo/demos/FeelDemo.kt` (modified, +94/-83)
-```diff
-@@ -7,12 +7,11 @@ import android.view.ViewTreeObserver
- import android.view.MotionEvent
- import android.view.VelocityTracker
- import android.view.ViewConfiguration
--import androidx.compose.animation.core.Animatable
--import androidx.compose.animation.core.LinearEasing
--import androidx.compose.animation.core.tween
- import androidx.compose.foundation.background
-+import androidx.compose.foundation.gestures.animateScrollBy
- import androidx.compose.foundation.gestures.awaitEachGesture
- import androidx.compose.foundation.gestures.awaitFirstDown
-+import androidx.compose.foundation.gestures.scrollBy
- import androidx.compose.foundation.layout.Arrangement
- import androidx.compose.foundation.layout.Box
- import androidx.compose.foundation.layout.Column
-@@ -81,6 +80,7 @@ import io.github.sceneview.demo.demos.internal.feel.MatterIdentity
- import io.github.sceneview.demo.demos.internal.feel.MatterOpening
- import io.github.sceneview.demo.demos.internal.feel.MatterStage
- import io.github.sceneview.demo.demos.internal.feel.MatterPreparation
-+import io.github.sceneview.demo.demos.internal.feel.MatterSwitch
- import io.github.sceneview.demo.demos.internal.feel.MatterTransition
- import io.github.sceneview.demo.demos.internal.feel.MatterSurfaces
- import io.github.sceneview.demo.recording.rememberDemoSceneRecorder
-@@ -295,12 +295,8 @@ fun FeelDemo(onBack: () -> Unit) {
-     }
-     val pads = remember { arrayOfNulls<Node>(FeelMaterial.entries.size) }
-     val mark = remember { arrayOfNulls<Node>(1) }
--    var selected by remember { mutableStateOf(FeelMaterial.MemoryFoam) }
--    var displayed by remember { mutableStateOf(selected) }
--    var outgoing by remember { mutableStateOf<FeelMaterial?>(null) }
--    val slide = remember { Animatable(1f) }
--    var transitionStarted by remember { mutableStateOf<Long?>(null) }
--    val switching = selected != displayed || outgoing != null
-+    // Selection, the solid on stage and the slide between them, advanced per presented frame.
-+    val switch = remember { MatterSwitch() }
-     var openingPrepared by remember(materials) { mutableStateOf(false) }
-     // Only the opening belongs behind the cover. Never draw another sample to warm it:
-     // Material.compile queues backend work without putting its slab in the visible set.
-@@ -340,41 +336,22 @@ fun FeelDemo(onBack: () -> Unit) {
-             if (BuildConfig.DEBUG) Log.d("Matter", "Background material ready: ${kind.name}")
-         }
-         launch {
--            snapshotFlow { selected }.collect { kind ->
-+            snapshotFlow { switch.selected }.collect { kind ->
-                 if (kind != FeelMaterial.MemoryFoam) prepareSample(kind)
-             }
-         }
-         while (true) {
-             // Space background submissions out. Explicit selections may overtake a slow bake.
-             repeat(MatterPreparation.FRAMES_BETWEEN_MATERIALS) { withFrameNanos { } }
--            val kind = preparation.next(selected, revealed = firstFrame.sceneReady.value) ?: break
-+            val kind = preparation.next(switch.selected, revealed = firstFrame.sceneReady.value) ?: break
-             prepareSample(kind).await()
-         }
-     }
--    val targetReady = selected in materials.samples
--    LaunchedEffect(selected, targetReady, motion, materials) {
--        if (!targetReady) return@LaunchedEffect
--        val target = selected
--        wakeRender()
--        val previous = displayed
--        if (!motion || previous == target) {
--            displayed = target; outgoing = null; slide.snapTo(1f)
--            transitionStarted = null
--        } else {
--            transitionStarted = SystemClock.uptimeMillis()
--            idle.touch(transitionStarted!!, down = false)
--            slide.snapTo(0f)
--            outgoing = previous
--            displayed = target
--            slide.animateTo(1f, tween(SceneViewTokens.Motion.containerMillis, easing = LinearEasing))
--            outgoing = null
--        }
--    }
-+    // Never refused while a slide runs: the chips stay enabled and the latest request queues.
-     val choose: (FeelMaterial) -> Unit = { next ->
--        if (firstFrame.sceneReady.value && next != selected && outgoing == null) {
-+        if (firstFrame.sceneReady.value && switch.request(next)) {
-             touch.cancel()
-             simulation.select(next, SystemClock.uptimeMillis())
--            selected = next
-             wakeRender()
-         }
-     }
-@@ -400,16 +377,23 @@ fun FeelDemo(onBack: () -> Unit) {
-     // Changing state is read by the FIRST SceneView callbacks through these updated delegates.
-     val onTouchNow by rememberUpdatedState<(MotionEvent) -> Boolean>({ event ->
-         wakeRender()
--        firstFrame.sceneReady.value && touch.onEvent(event, displayed, switching, choose)
-+        firstFrame.sceneReady.value && touch.onEvent(event, switch, choose)
-     })
-     val onFrameNow by rememberUpdatedState<(Long) -> Unit>({ nanos ->
-         val now = SystemClock.uptimeMillis()
-         if (BuildConfig.DEBUG && firstFrame.
-```
-
-**File**: `samples/android-demo/src/main/java/io/github/sceneview/demo/demos/internal/feel/MatterPresentation.kt` (modified, +2/-0)
-```diff
-@@ -7,6 +7,8 @@ import kotlin.math.sin
- 
- /** Product-shot travel in model space. The caller supplies the 450 ms motion-token clock. */
- internal object MatterTransition {
-+    /** Progress at which the outgoing solid has left and the incoming one waits under the floor. */
-+    const val HIDDEN = .40f
-     private fun smooth(t: Float) = t.coerceIn(0f, 1f).let { it * it * (3f - 2f * it) }
-     fun outgoingTravel(progress: Float): Float = (progress / .40f).coerceIn(0f, 1f).let { it * it }
-     fun incomingTravel(progress: Float): Float = 1f - smooth((progress - .40f) / .42f)
-```
-
-**File**: `samples/android-demo/src/main/java/io/github/sceneview/demo/demos/internal/feel/MatterSwitch.kt` (added, +121/-0)
-```diff
-@@ -0,0 +1,121 @@
-+package io.github.sceneview.demo.demos.internal.feel
-+
-+import androidx.compose.runtime.getValue
-+import androidx.compose.runtime.mutableStateOf
-+import androidx.compose.runtime.setValue
-+
-+/**
-+ * Chip selection → solid on stage. Main thread only, advanced once per PRESENTED frame.
-+ *
-+ * The first frame that draws a sample can stall for hundreds of milliseconds while the backend
-+ * links its program (up to 1.5 s per material on emulator-5554). A wall-clock tween spent that
-+ * stall on a frozen picture and popped the new solid in at rest. Here the slide advances only by
-+ * the presented-frame interval, capped at [MAX_STEP_MILLIS], so a hitch slows it down but never
-+ * skips it; and the incoming solid is drawn from the first frame at its hidden pose under the
-+ * floor, so its first draw happens while the outgoing one leaves. The slide waits at
-+ * [MatterTransition.HIDDEN], on an empty stage, until the incoming solid has been drawn for
-+ * [PRIME_FRAMES] presented frames.
-+ *
-+ * Requests are never refused. Until the incoming solid shows, a new request replaces it; once
-+ * it is rising, the latest request waits for it to land.
-+ */
-+internal class MatterSwitch(initial: FeelMaterial = FeelMaterial.MemoryFoam) {
-+    /** The chip, the title and the readout. Changes on every request. */
-+    var selected by mutableStateOf(initial)
-+        private set
-+    /** The solid that owns touch and the readout; the INCOMING one during a slide. */
-+    var displayed by mutableStateOf(initial)
-+        private set
-+    var outgoing by mutableStateOf<FeelMaterial?>(null)
-+        private set
-+    /** 0 at the start of a slide, 1 at rest. */
-+    var progress = 1f
-+        private set
-+    /** +1 when the outgoing solid leaves towards the next material, -1 towards the previous. */
-+    var direction = 1f
-+        private set
-+    /** Uptime when the current or last slide began, null before any switch. */
-+    var startedAt: Long? = null
-+        private set
-+    /** Uptime when the incoming solid reached its rest height ([ARRIVE]). */
-+    var landedAt: Long? = null
-+        private set
-+    private var primeLeft = 0
-+    private var lastFrame = 0L
-+
-+    val switching: Boolean get() = selected != displayed || outgoing != null
-+    /** The incoming solid has not yet been drawn (hidden) for [PRIME_FRAMES] presented frames. */
-+    val priming: Boolean get() = outgoing != null && primeLeft > 0
-+
-+    /** A chip tap or a fling. Returns false only for the material already requested. */
-+    fun request(kind: FeelMaterial): Boolean {
-+        if (kind == selected) return false
-+        selected = kind
-+        return true
-+    }
-+
-+    /**
-+     * Returns true on the frame a slide starts. [ready]: the selected solid exists and can be
-+     * drawn. While a slide runs, the frame step is the interval since the previous presented frame.
-+     */
-+    fun advance(now: Long, ready: Boolean, motion: Boolean): Boolean {
-+        val leaving = outgoing
-+        if (leaving == null) {
-+            if (selected == displayed || !ready) return false
-+            direction = if (selected.ordinal >= displayed.ordinal) 1f else -1f
-+            outgoing = displayed
-+            displayed = selected
-+            progress = 0f
-+            primeLeft = PRIME_FRAMES
-+            startedAt = now
-+            landedAt = null
-+            lastFrame = now
-+            return true
-+        }
-+        if (selected != displayed && selected != leaving && progress < MatterTransition.HIDDEN && ready) {
-+            // The previous target is still under the floor: replace it, keep the exit direction.
-+            // Back to the solid that is leaving queues instead: it cannot leave and rise at once.
-+            displayed = selected
-+            primeLeft = PRIME_FRAMES
-+        }
-+        val step = (now - lastFrame).coerceIn(0L, MAX_STEP_MILLIS)
-+        lastFrame = now
-+        val primed = primeLeft == 0
-+        if (primeLeft > 0) primeLeft--
-+        progress = when {
-+            !motion -> if (primed) 1f else 0f
-+            !primed -> (progress + step / DURATION_MILLIS.toFloat()).coerceAtMost(MatterTransition.HIDDEN)
-+            else -> (progress + step / DURATION_MILLIS.toFloat()).coerceAtMost(1f)
-+        }
-+        if (progress >= ARRIVE && landedAt == null) landedAt = now
-+        if (progress >= 1f) outgoing = null
-+        return false
-+    }
-+
-+    /** Seconds since the incoming solid landed, negative before. Drives the settle wobble. */
-+    fun landingAge(now: Long): Float = landedAt?.let { (now - it) / 1000f } ?: -1f
-+
-+    companion object {
-+        /** Same as SceneViewTokens.Motion.containerMillis, kept here for the JVM tests. */
-+        const val DURATION_MILLIS = 450L
-+        const val MAX_STEP_MILLIS = 34L
-+        const val PRIME_FRAMES = 2
-+        const val ARRIVE = .82f
-+
-+        /** A horizontal fling on the empty stage: leftwards is the next material. */
-+        fun flingTarget(selected: FeelMater
-```
-
-**File**: `samples/android-demo/src/test/java/io/github/sceneview/demo/demos/internal/feel/MatterSwitchTest.kt` (added, +177/-0)
-```diff
-@@ -0,0 +1,177 @@
-+package io.github.sceneview.demo.demos.internal.feel
-+
-+import org.junit.Assert.assertEquals
-+import org.junit.Assert.assertFalse
-+import org.junit.Assert.assertNull
-+import org.junit.Assert.assertTrue
-+import org.junit.Test
-+
-+class MatterSwitchTest {
-+    private fun MatterSwitch.frames(from: Long, count: Int, step: Long = 16L, motion: Boolean = true): Long {
-+        var now = from
-+        repeat(count) { now += step; advance(now, ready = true, motion = motion) }
-+        return now
-+    }
-+
-+    private fun MatterSwitch.untilLanded(from: Long): Long {
-+        var now = from
-+        while (outgoing != null) { now += 16L; advance(now, ready = true, motion = true) }
-+        return now
-+    }
-+
-+    @Test fun aStalledFirstDrawCannotSwallowTheSlide() {
-+        val switch = MatterSwitch()
-+        assertTrue(switch.request(FeelMaterial.Leather))
-+        assertTrue(switch.advance(1_000L, ready = true, motion = true))
-+        assertEquals(0f, switch.progress, 0f)
-+        assertTrue(switch.priming)
-+        // Emulator-5554 measured 1.5 s between the presented frames around the first Leather
-+        // draw. The old 450 ms wall-clock tween was over before the next frame: a pop at rest.
-+        switch.advance(2_500L, ready = true, motion = true)
-+        val perStep = MatterSwitch.MAX_STEP_MILLIS / MatterSwitch.DURATION_MILLIS.toFloat()
-+        assertEquals(perStep, switch.progress, 1e-6f)
-+        assertEquals(FeelMaterial.MemoryFoam, switch.outgoing)
-+        // Another hitch mid-slide costs at most one capped step too.
-+        var now = switch.frames(2_500L, 5)
-+        val before = switch.progress
-+        now += 1_000L
-+        switch.advance(now, ready = true, motion = true)
-+        assertEquals(before + perStep, switch.progress, 1e-6f)
-+        // At 60 Hz the rest of the slide still takes its presented frames.
-+        var frames = 0
-+        while (switch.outgoing != null) { now += 16L; frames++; switch.advance(now, ready = true, motion = true) }
-+        assertTrue("$frames frames", frames >= 15)
-+        assertEquals(1f, switch.progress, 0f)
-+        assertEquals(FeelMaterial.Leather, switch.displayed)
-+        assertFalse(switch.switching)
-+    }
-+
-+    @Test fun theStageWaitsEmptyUntilTheIncomingSolidHasBeenDrawn() {
-+        val switch = MatterSwitch()
-+        switch.request(FeelMaterial.Gel)
-+        switch.advance(0L, ready = true, motion = true)
-+        var now = 0L
-+        while (switch.progress < .35f) { now += 16L; switch.advance(now, ready = true, motion = true) }
-+        // A late replacement: the foam has nearly left, velvet has never been drawn.
-+        switch.request(FeelMaterial.Velvet)
-+        now += 34L; switch.advance(now, ready = true, motion = true)
-+        assertEquals(FeelMaterial.Velvet, switch.displayed)
-+        assertEquals(MatterTransition.HIDDEN, switch.progress, 1e-6f)
-+        now += 34L; switch.advance(now, ready = true, motion = true)
-+        assertEquals(MatterTransition.HIDDEN, switch.progress, 1e-6f)
-+        assertFalse(switch.priming)
-+        now += 34L; switch.advance(now, ready = true, motion = true)
-+        assertTrue(switch.progress > MatterTransition.HIDDEN)
-+    }
-+
-+    @Test fun requestsAreNeverRefusedAndReplaceATargetStillUnderTheFloor() {
-+        val switch = MatterSwitch()
-+        switch.request(FeelMaterial.Gel)
-+        switch.advance(0L, ready = true, motion = true)
-+        var now = switch.frames(0L, 3)
-+        assertTrue(switch.progress < MatterTransition.HIDDEN)
-+        // Two quick taps while the foam is still leaving: the chip follows each one, and the
-+        // solid that rises is the last one, primed again before it may rise.
-+        assertTrue(switch.request(FeelMaterial.Velvet))
-+        assertTrue(switch.request(FeelMaterial.Marble))
-+        now += 16L
-+        switch.advance(now, ready = true, motion = true)
-+        assertEquals(FeelMaterial.Marble, switch.displayed)
-+        assertEquals(FeelMaterial.MemoryFoam, switch.outgoing)
-+        assertEquals(1f, switch.direction, 0f)
-+        assertTrue(switch.priming)
-+        now = switch.untilLanded(now)
-+        assertEquals(FeelMaterial.Marble, switch.displayed)
-+        assertFalse(switch.switching)
-+        assertFalse(switch.request(FeelMaterial.Marble))
-+    }
-+
-+    @Test fun aRequestOnceTheSolidRisesWaitsForItToLand() {
-+        val switch = MatterSwitch()
-+        switch.request(FeelMaterial.Gel)
-+        switch.advance(0L, ready = true, motion = true)
-+        var now = 0L
-+        while (switch.progress < .6f) { now += 16L; switch.advance(now, ready = true, motion = true) }
-+        switch.request(FeelMaterial.Leather)
-+        now = switch.untilLanded(now)
-+        assertEquals(FeelMaterial.Gel, switch.displayed)
-+        assertTrue(switch.switching)
-+        now += 16L
-+        assertTrue(switch.advance(now, ready = true, motion = true))
-+        assertEquals(FeelMaterial.Gel, switch.outgoing)
-+        assertEquals(FeelMaterial.Lea
-```
-
----
-
-### Incident Patch 3: `810eca5f` (2026-11-16)
-**Commit Message**: fix(demo): decode launcher previews off the main thread (#5095)
-
-Launcher preview images (AR View grid, Explore carousel, featured pager) are decoded on Dispatchers.IO into a bounded cache cleared on trim; a cache miss shows a neutral placeholder and a short fade instead of jumping from the category icon. On a Pixel 4a the ~0.9 s stall when opening the AR View tab cold is unchanged and exists on main too, so #4461 stays open. Refs #4461.
+Refs #5043
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `changelog.d/4461-ar-preview-decoding.md` (added, +2/-0)
+* chore(changelog): number the scan memory fragment
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* test(demo): check ScanMem log lines only in debug builds
+
+The memory release a
+
+**File**: `changelog.d/5186-scan-oom.md` (added, +2/-0)
 ```diff
 @@ -0,0 +1,2 @@
 +<!-- category: Fixed -->
-+- **Demo app: decode AR launcher previews in the background ([#4461](https://github.com/sceneview/sceneview/issues/4461)).** Show a neutral placeholder while uncached card pictures load, then fade them in. Cached pictures still appear immediately when returning from a demo.
++- **Demo app: smoother, more reliable 3D scans.** The demo now requests a large heap, so long room scans keep full model detail, with a memory safety net on phones still below 384 MiB. The replay journal, previously unbounded, is capped (8 MiB on a 512 MiB heap) and always keeps photos, floor coverage, anchors and when each plane appeared or was removed. Leaving a scan frees its memory reliably, and the saved-scans list loads lazily, so exits no longer freeze.
 ```
 
-**File**: `samples/android-demo/src/main/java/io/github/sceneview/demo/DemoPreviews.kt` (modified, +54/-7)
+**File**: `samples/android-demo/src/main/AndroidManifest.xml` (modified, +1/-0)
 ```diff
-@@ -3,15 +3,28 @@ package io.github.sceneview.demo
- import android.content.res.Resources
- import android.util.LruCache
- import androidx.annotation.DrawableRes
-+import androidx.compose.animation.core.animateFloatAsState
- import androidx.compose.foundation.isSystemInDarkTheme
- import androidx.compose.runtime.Composable
-+import androidx.compose.runtime.State
-+import androidx.compose.runtime.getValue
-+import androidx.compose.runtime.key
-+import androidx.compose.runtime.produceState
- import androidx.compose.runtime.remember
-+import androidx.compose.ui.geometry.Size
-+import androidx.compose.ui.graphics.Color
- import androidx.compose.ui.graphics.ImageBitmap
- import androidx.compose.ui.graphics.asAndroidBitmap
-+import androidx.compose.ui.graphics.drawscope.DrawScope
- import androidx.compose.ui.graphics.painter.BitmapPainter
- import androidx.compose.ui.graphics.painter.Painter
+@@ -102,6 +102,7 @@
+         android:fullBackupContent="@xml/backup_descriptor"
+         android:icon="@mipmap/ic_launcher"
+         android:label="@string/launcher_label"
++        android:largeHeap="true"
+         android:roundIcon="@mipmap/ic_launcher_round"
+         android:supportsRtl="true"
+         android:theme="@style/Theme.SceneViewDemo">
+```
+
+**File**: `samples/android-demo/src/main/java/io/github/sceneview/demo/demos/ARRerunDemo.kt` (modified, +113/-33)
+```diff
+@@ -29,6 +29,9 @@ import androidx.compose.foundation.layout.Column
+ import androidx.compose.foundation.layout.Row
+ import androidx.compose.foundation.layout.Spacer
+ import androidx.compose.foundation.layout.WindowInsets
++import androidx.compose.foundation.layout.WindowInsetsSides
++import androidx.compose.foundation.layout.only
++import androidx.compose.foundation.layout.windowInsetsPadding
+ import androidx.compose.foundation.layout.fillMaxSize
+ import androidx.compose.foundation.layout.fillMaxWidth
+ import androidx.compose.foundation.layout.heightIn
+@@ -41,6 +44,7 @@ import androidx.compose.foundation.layout.widthIn
+ import androidx.compose.foundation.shape.CircleShape
+ import androidx.compose.foundation.shape.RoundedCornerShape
+ import androidx.compose.material.icons.Icons
++import androidx.compose.material.icons.automirrored.filled.ArrowBack
+ import androidx.compose.material.icons.outlined.RestartAlt
+ import androidx.compose.material.icons.rounded.ExpandLess
+ import androidx.compose.material.icons.rounded.ExpandMore
+@@ -90,6 +94,7 @@ import androidx.compose.ui.platform.LocalConfiguration
  import androidx.compose.ui.platform.LocalContext
- import androidx.compose.ui.res.imageResource
-+import io.github.sceneview.demo.theme.SceneViewTokens
-+import io.github.sceneview.demo.theme.md_theme_dark_surfaceContainer
-+import io.github.sceneview.demo.theme.md_theme_light_surfaceContainer
-+import kotlinx.coroutines.Dispatchers
-+import kotlinx.coroutines.withContext
- 
- /**
-  * Captured preview images for the home grid, keyed by [DemoEntry.id].
-@@ -90,17 +103,23 @@ object DemoPreviews {
-      * platform's own drawable cache holds weak references, so by the time a demo is closed
-      * the list behind it has lost every picture and decodes them again, on the main thread,
-      * in the one frame that starts the exit transition (about 8 ms a card on a Pixel 4a).
--     * Holding the last few screens of pictures here makes coming back to a list free.
-+     * Holding the last few screens of pictures here avoids decoding again on Back. A cache
-+     * miss (including after memory pressure) is decoded off the main thread by [bitmap].
-      *
-      * Bounded by size, not by count: [PREVIEW_CACHE_BYTES] is about sixteen 800x640 captures.
-      */
-     private val decoded = object : LruCache<Int, ImageBitmap>(PREVIEW_CACHE_BYTES) {
-         override fun sizeOf(key: Int, value: ImageBitmap): Int = value.asAndroidBitmap().allocationByteCount
+ import androidx.compose.ui.platform.LocalDensity
+ import androidx.compose.ui.platform.LocalLayoutDirection
++import androidx.compose.ui.platform.LocalLocale
+ import androidx.compose.ui.platform.LocalWindowInfo
+ import androidx.compose.ui.platform.testTag
+ import androidx.compose.ui.res.stringResource
+@@ -216,7 +221,6 @@ import io.github.sceneview.demo.demos.internal.rerunShowsSaveAction
+ import io.github.sceneview.demo.demos.internal.rerunStatusUx
+ import io.github.sceneview.demo.demos.internal.turnedBy
+ import io.github.sceneview.demo.rememberArPlaybackDataset
+-import io.github.sceneview.demo.theme.LocalStageChrome
+ import io.github.sceneview.demo.theme.SceneViewTokens
+ import io.github.sceneview.demo.theme.SceneViewTokens.ArOverlay
+ import io.github.sceneview.demo.theme.SceneViewTokens.Space
+@@ -237,6 +241,8 @@ import kotlin.math.roundToInt
+ import kotlin.math.sin
+ import kotlinx.coroutines.CancellationException
+ import kotlinx.coroutines.Dispatchers
++import io.github.sceneview.demo.ui.GlassIconButton
++import io.github.sceneview.demo.ui.GlassPill
+ import kotlinx.coroutines.Job
+ import kotlinx.coroutines.cancel
+ import kotlinx.coroutines.delay
+@@ -279,6 +285,7 @@ fun ARRerunDemo(onBack: () -> Unit, startInDollhouse: Boolean = false) {
+     val context = LocalContext.current
+     val scope = rememberCoroutineScope()
+     ForgetRoomSurveysOnExit()
++    val liveModels = rememberRerunLiveModels()
+     // Replay a recorded ARCore dataset when the device-QA harness deep-links this demo
+     // with `--es ar_playback_file <path>` (#1576): that harness drives the live path.
+     val arPlaybackDataset = rememberArPlaybackDataset()
+@@ -304,8 +311,9 @@ fun ARRerunDemo(onBack: () -> Unit, startInDollhouse: Boolean = false) {
+     var exampleRead by remember { mutableStateOf(false) }
+     var exampleAsked by remember { mutableStateOf(false) }
+     // The room feeds the example replay and the staged QA capture states.
+-    val sample by produceState<RerunReplayMedia?>(null) {
+-        value = runCatching { loadRerunReplay(context) }.getOrNull()
++    var sample by remember { mutableStateOf<RerunReplayMedia?>(null) }
++    LaunchedEffect(Unit) {
++        sample = runCatching { loadRerunReplay(context) }.getOrNull()
+         exampleRead = true
      }
  
--    /** The picture for [res], decoded once and kept while the cache has room for it. */
--    internal fun bitmap(resources: Resources, @DrawableRes res: Int): ImageBitmap =
--        decoded[res] ?: ImageBitmap.imageResource(resources, res).also { decoded.put(res, it) }
-+    /** A picture that can be drawn immediately, without decoding on the composition thread. */
-+    internal fun cachedBitmap(@DrawableRes res: Int): ImageBitmap? = decoded[res]
-+
-+    /** The picture for [res], decoded off the main thread and kept while the cache has room. */
-+    internal suspend fun bitmap(resources: Resources, @DrawableRes res: Int): ImageBitmap =
-+        withContext(Dispatchers.IO) {
-+            decoded[res] ?: ImageBitmap.imageResource(resources, res).also { decoded.put(res, it) }
-+        }
+@@ -314,8 +322,10 @@ fun ARRerunDemo(onBack: () -> Unit, startInDollhouse: Boolean = false) {
+     var sessionsVersion by remember { mutableIntStateOf(0) }
+     // A scan saved after its capture screen was left (#4500) lands in the list too.
+     val savedAway = RerunScanBuilds.savedAway
+-    val sessions by produceState<List<LandingSession>?>(null, sessionsVersion, savedAway) {
+-        value = store.landingSessions()
++    val landingCache = remember { RerunLandingCache() }
++    val landingLocale = LocalLocale.current.platformLocale
++    val sessions by produceState<List<LandingSession>?>(null, sessionsVersion, savedAway, landingLocale) {
++        value = store.landingSessions(landingCache, landingLocale)
+     }
+     // What the landing says about the last file opened: why it did not open, or that it is opening.
+     var notice by remember { mutableStateOf<String?>(null) }
+@@ -362,6 +372,13 @@ fun ARRerunDemo(onBack: () -> Unit, startInDollhouse: Boolean = false) {
+             },
+         )
+     }
++    // Save hands the live TSDF to this demo, not to one result tab. mesh releases it after
++    // extraction, clearScanResult releases it on leaving the result, and this effect covers
++    // source replacement and demo exit. Capture Discard uses dropCapture/ScanCapture.close(false).
++    DisposableEffect(modelSource) {
++        val live = modelSource as? RerunModelSource.Live
++        onDispose { live?.release() }
++    }
+     // The model on screen, once built or read back: what the export sheet writes first.
+     var resultModel by remember { 
+```
+
+**File**: `samples/android-demo/src/main/java/io/github/sceneview/demo/demos/ArDebugView.kt` (modified, +4/-1)
+```diff
+@@ -299,7 +299,10 @@ internal class ArDebugRecorder {
+         livePlanes += seen
+     }
  
-     /** Lets go of every decoded picture; the next card to need one decodes it again. */
-     fun trimMemory() = decoded.evictAll()
-@@ -109,8 +128,9 @@ object DemoPreviews {
+-    private fun reset(trace: ArDebugTrace) {
++    /** Detaches a closed capture even when no subsequent AR frame arrives. */
++    fun clear() = reset(null)
++
++    private fun reset(trace: ArDebugTrace?) {
+         recordedFor = trace
+         pointsGate.reset()
+         planesGate.reset()
+```
+
+**File**: `samples/android-demo/src/main/java/io/github/sceneview/demo/demos/RerunLandingUi.kt` (modified, +83/-77)
+```diff
+@@ -7,6 +7,9 @@ import androidx.compose.foundation.clickable
+ import androidx.compose.foundation.layout.Arrangement
+ import androidx.compose.foundation.layout.Box
+ import androidx.compose.foundation.layout.Column
++import androidx.compose.foundation.layout.PaddingValues
++import androidx.compose.foundation.lazy.LazyColumn
++import androidx.compose.foundation.lazy.items
+ import androidx.compose.foundation.layout.Row
+ import androidx.compose.foundation.layout.RowScope
+ import androidx.compose.foundation.layout.WindowInsets
+@@ -63,7 +66,6 @@ import androidx.compose.ui.graphics.drawscope.Stroke
+ import androidx.compose.ui.graphics.vector.ImageVector
+ import androidx.compose.ui.layout.ContentScale
+ import androidx.compose.ui.platform.LocalContext
+-import androidx.compose.ui.platform.LocalLocale
+ import androidx.compose.ui.platform.testTag
+ import androidx.compose.ui.res.stringResource
+ import androidx.compose.ui.semantics.Role
+@@ -120,63 +122,42 @@ internal class RerunLandingActions(
+  */
+ @Composable
+ internal fun RerunLanding(state: RerunLandingState, actions: RerunLandingActions) {
+-    LandingPage(state, actions)
++    SessionsSection(state, actions)
+ }
+ 
+ /** The themed stage the landing is drawn on. */
+ private val stage: StageChrome @Composable get() = LocalStageChrome.current
+ 
+ @Composable
+ private fun LandingPage(state: RerunLandingState, actions: RerunLandingActions) {
+-    Box(
+-        modifier = Modifier
+-            .fillMaxSize()
+-            .background(stage.ground),
+-        contentAlignment = Alignment.TopCenter,
+-    ) {
+-        Column(
+-            modifier = Modifier
+-                .fillMaxSize()
+-                .rerunPageScroll()
+-                .padding(horizontal = Space.md),
+-            horizontalAlignment = Alignment.CenterHorizontally,
+-        ) {
+-            Column(
+-                modifier = Modifier
+-                    .widthIn(max = RerunPageMaxWidth)
+-                    .fillMaxWidth(),
+-                verticalArrangement = Arrangement.spacedBy(Space.md),
+-            ) {
+-                Column(verticalArrangement = Arrangement.spacedBy(Space.xs)) {
+-                    Text(
+-                        text = ScanCopy.LANDING_TITLE,
+-                        style = Type.display.copy(color = stage.onGlass),
+-                        modifier = Modifier.semantics { heading() },
+-                    )
+-                    Text(text = ScanCopy.LANDING_BODY, style = Type.body.copy(color = stage.onGlassMuted))
+-                }
+-                RecordRoomCard(onClick = actions.onRecord)
+-                Row(horizontalArrangement = Arrangement.spacedBy(Space.sm)) {
+-                    GlassAction(
+-                        icon = Icons.Rounded.PlayArrow,
+-                        label = ScanCopy.WATCH_SAMPLE,
+-                        onClick = actions.onWatchSample,
+-                        modifier = Modifier.weight(1f).testTag(WATCH_SAMPLE_TAG),
+-                    )
+-                    GlassAction(
+-                        icon = Icons.Outlined.FileOpen,
+-                        label = ScanCopy.OPEN_FILE,
+-                        onClick = actions.onOpenFile,
+-                        modifier = Modifier.testTag(OPEN_FILE_TAG),
+-                    )
+-                }
+-                // What happened to the file just opened: under the button that opened it, not
+-                // inside the list of sessions.
+-                state.notice?.let { NoticeCard(it, onDismiss = actions.onDismissNotice) }
+-                if (state.openingFile) OpeningCard(ScanCopy.OPENING_FILE)
+-                SessionsSection(state, actions)
+-            }
++    Column(verticalArrangement = Arrangement.spacedBy(Space.md)) {
++        Column(verticalArrangement = Arrangement.spacedBy(Space.xs)) {
++            Text(
++                text = ScanCopy.LANDING_TITLE,
++                style = Type.display.copy(color = stage.onGlass),
++                modifier = Modifier.semantics { heading() },
++            )
++            Text(text = ScanCopy.LANDING_BODY, style = Type.body.copy(color = stage.onGlassMuted))
+         }
++        RecordRoomCard(onClick = actions.onRecord)
++        Row(horizontalArrangement = Arrangement.spacedBy(Space.sm)) {
++            GlassAction(
++                icon = Icons.Rounded.PlayArrow,
++                label = ScanCopy.WATCH_SAMPLE,
++                onClick = actions.onWatchSample,
++                modifier = Modifier.weight(1f).testTag(WATCH_SAMPLE_TAG),
++            )
++            GlassAction(
++                icon = Icons.Outlined.FileOpen,
++                label = ScanCopy.OPEN_FILE,
++                onClick = actions.onOpenFile,
++                modifier = Modifier.testTag(OPEN_FILE_TAG),
++            )
++        }
++        // What happened to the file just opened: under the button that opened it, not
++        // inside the list of sessions.
++        state.notice?.let { NoticeCard(it, onDismiss = actions.onDismissNotice) }
++        if (state.openingFile) OpeningCard(ScanC
+```
+
+**File**: `samples/android-demo/src/main/java/io/github/sceneview/demo/demos/RerunModelUi.kt` (modified, +111/-40)
+```diff
+@@ -135,6 +135,7 @@ import io.github.sceneview.demo.demos.internal.RoomMeasure
+ import io.github.sceneview.demo.demos.internal.ScanGround
+ import io.github.sceneview.demo.demos.internal.ScanGroundMeshes
+ import io.github.sceneview.demo.demos.internal.ScanPreset
++import io.github.sceneview.demo.demos.internal.ScanMemoryBudget
+ import io.github.sceneview.demo.demos.internal.ScanResultCamera
+ import io.github.sceneview.demo.demos.internal.ScanResultCut
+ import io.github.sceneview.demo.demos.internal.ScanResultFrame
+@@ -274,10 +275,15 @@ internal sealed interface RerunModelSource {
+  * lens, fresh depth only — on its own worker: a frame that arrives while one integrates is left
+  * to the surfel map alone, so neither slows the other.
+  */
+-internal class RerunLiveModel(private val preset: ScanPreset = ScanPreset.ROOM) {
++internal class RerunLiveModel(
++    private val owner: RerunLiveModels.Owner,
++    private val preset: ScanPreset = ScanPreset.ROOM,
++    budget: ScanMemoryBudget = ScanMemoryBudget(Runtime.getRuntime().maxMemory()),
++) {
+     /** The TSDF while it records; `null` once [keepFor] has handed it on, so only its slot holds it. */
+     @Volatile
+-    private var tsdf: RerunTsdf? = RerunTsdf(voxelM = preset.modelVoxelM)
++    private var tsdf: RerunTsdf? = RerunTsdf(voxelM = budget.modelVoxelM(preset), maxBytes = budget.tsdfBytes)
++    private var transferred: java.lang.ref.WeakReference<RerunTsdf>? = null
+     private val busy = AtomicBoolean(false)
+ 
+     @Volatile
+@@ -315,31 +321,86 @@ internal class RerunLiveModel(private val preset: ScanPreset = ScanPreset.ROOM)
+     fun keepFor(pack: RerunCapturePack?) {
+         val tsdf = tsdf ?: return
+         this.tsdf = null
+-        if (pack != null && tsdf.frames > 0) RerunLiveModels.keep(pack, tsdf)
++        if (pack != null && tsdf.frames > 0) {
++            owner.keep(pack, tsdf)
++            transferred = java.lang.ref.WeakReference(tsdf)
++        }
++    }
++
++    /** Drops an abandoned capture's TSDF; an integration already running releases its local copy on return. */
++    fun close(keepTransferred: Boolean = false): Job? {
++        val worker = job
++        worker?.cancel()
++        job = null
++        tsdf = null
++        if (!keepTransferred) transferred?.get()?.let(RerunLiveModels::forget)
++        transferred = null
++        return worker
+     }
  }
  
  /**
-- * The captured preview for this demo in the current colour scheme, or `null`
-- * when the pipeline has not produced one — callers draw the icon tile instead.
-+ * The captured preview for this demo in the current colour scheme, or `null` when no
-+ * capture exists. An uncached picture fades in over a neutral placeholder after loading.
-+ * Cached pictures are available in the first composition, including on Back.
-  *
-  * [dark] picks the capture explicitly. A surface that is dark in both themes — the
-  * home hero band over the live stage — passes `true`, so its white copy never sits
-@@ -120,5 +140,32 @@ object DemoPreviews {
- fun DemoEntry.previewPainter(dark: Boolean = isSystemInDarkTheme()): Painter? =
-     DemoPreviews.resourceFor(id, dark = dark)?.let { res ->
-         val resources = LocalContext.current.resources
--        remember(res, resources) { BitmapPainter(DemoPreviews.bitmap(resources, res)) }
-+        key(res, resources) {
-+            val bitmap by produceState<ImageBitmap?>(initialValue = DemoPreviews.cachedBitmap(res)) {
-+                if (value == null) value = DemoPreviews.bitmap(resources, res)
-+            }
-+            val alpha = animateFloatAsState(
-+                targetValue = if (bitmap == null) 0f else 1f,
-+                animationSpec = SceneViewTokens.Motion.fade(),
-+                label = "previewFade",
-+            )
-+            val placeholder = if (dark) md_theme_dark_surfaceContainer else md_theme_light_surfaceContainer
-+            remember(bitmap, placeholder) {
-+                PreviewPainter(bitmap?.let { BitmapPainter(it) }, placeholder, alpha)
-+            }
-+        }
+  * The last recording's TSDF, kept in memory with the scan it belongs to (one slot: ~50 MB at
+- * most). A scan reopened from the list in the same process finds it by its manifest's bytes.
++ * most). It survives capture -> result so [RerunModelSource.of] can mesh it. The owning demo
++ * releases it on exit; a later reopen uses the saved model or surfels instead.
+  */
+ internal object RerunLiveModels {
+     @Volatile
+     private var kept: Pair<ByteArray, RerunTsdf>? = null
+ 
+-    fun keep(pack: RerunCapturePack, tsdf: RerunTsdf) {
++    @Synchronized
++    private fun keep(pack: RerunCapturePack, tsdf: RerunTsdf) {
+         kept = pack.manifest to tsdf
+     }
+ 
++    @Synchronized
+     fun find(pack: RerunCapturePack?): RerunTsdf? {
+         pack ?: return null
+         return kept?.takeIf { it.first.contentEquals(pack.manifest) }?.second
+     }
+ 
+     /** Empties the slot when it holds [tsdf]. */
++    @Synchronized
+     fun forget(tsdf: RerunTsdf) {
+         if (kept?.second === tsdf) kept = null
      }
 +
-+/** The same loading treatment for grid, carousel and pager, without changing their layout. */
-+private class PreviewPai
++    /** One demo composition, including its result screen. A detached save cannot refill a closed owner. */
++    class Owner : AutoCloseable {
++        private var closed = false
++        // The owner must not undo Live.release() by retaining a second strong reference.
++        private var held: java.lang.ref.WeakReference<RerunTsdf>? = null
++
++        @Synchronized
++        fun keep(pack: RerunCapturePack, tsdf: RerunTsdf) {
++            if (closed) return
++            held = java.lang.ref.WeakReference(tsdf)
++            RerunLiveModels.keep(pack, tsdf)
++        }
++
++        @Synchronized
++        override fun close() {
++            closed = true
++            forget()
++        }
++
++        /** AR placement has no model-result reader. The owner stays reusable for another capture. */
++        @Synchronized
++        fun forget() {
++            held?.get()?.let(RerunLiveModels::forget)
++            held = null
++        }
++    }
++}
++
++/** The cache belongs to the entire demo, so capture -> result can still use the live TSDF. */
++@Composable
++internal fun rememberRerunLiveModels(): RerunLiveModels.Owner {
++    val owner = remember { RerunLiveModels.Owner() }
++    DisposableEffect(owner) {
++        onDispose { owner.close() }
++    }
++    return owner
+ }
+ 
+ /**
+@@ -485,8 +546,9 @@ private class Meshed(
+ /**
+  * Fuses [source] (unless done) and meshes it. Nothing past this function holds the TSDF, so the
+  * finish's peak — the cleaning and the photos — never sits on top of its up to
+- * [RerunTsdf.MAX_BYTES]. A recording's TSDF that big is also let go from its slot: reopened
+- * without a model kep
 ```
 
-**File**: `samples/android-demo/src/main/java/io/github/sceneview/demo/ui/home/DemoMediaCard.kt` (modified, +1/-1)
+**File**: `samples/android-demo/src/main/java/io/github/sceneview/demo/demos/RerunScan.kt` (modified, +125/-16)
 ```diff
-@@ -80,7 +80,7 @@ import io.github.sceneview.sample.ui.DemoCategoryAccent
-  * One demo on the home grid (design spec §2, "Card").
-  *
-  * Anatomy, top to bottom: a square picture ([SceneViewTokens.Home.cardMediaAspect])
-- * showing the captured preview when the image pipeline has produced one
-+ * showing a neutral placeholder that fades into the captured preview when available
-  * ([DemoEntry.previewPainter]) and the category-tinted [DemoEntry.icon] tile
-  * otherwise; then title (`type-card`) and subtitle (`type-caption`, weight 400), never
-  * truncated. There is no white box under the picture any more: the caption sits on
-```
-
-**File**: `samples/android-demo/src/test/java/io/github/sceneview/demo/DemoPreviewsTest.kt` (added, +227/-0)
-```diff
-@@ -0,0 +1,227 @@
-+package io.github.sceneview.demo
-+
-+import android.content.Context
-+import android.content.ContextWrapper
-+import android.content.res.Resources
-+import android.graphics.drawable.Drawable
-+import android.os.Looper
-+import androidx.compose.runtime.CompositionLocalProvider
-+import androidx.compose.runtime.SideEffect
-+import androidx.compose.runtime.getValue
-+import androidx.compose.runtime.mutableStateOf
-+import androidx.compose.runtime.setValue
-+import androidx.compose.ui.geometry.Size
-+import androidx.compose.ui.graphics.Canvas
-+import androidx.compose.ui.graphics.Color
-+import androidx.compose.ui.graphics.ImageBitmap
-+import androidx.compose.ui.graphics.drawscope.CanvasDrawScope
-+import androidx.compose.ui.graphics.painter.BitmapPainter
-+import androidx.compose.ui.graphics.painter.Painter
-+import androidx.compose.ui.graphics.toPixelMap
-+import androidx.compose.ui.platform.LocalContext
-+import androidx.compose.ui.test.junit4.createComposeRule
-+import androidx.compose.ui.unit.Density
-+import androidx.compose.ui.unit.LayoutDirection
-+import androidx.test.core.app.ApplicationProvider
-+import io.github.sceneview.demo.theme.SceneViewTokens
-+import io.github.sceneview.demo.theme.md_theme_dark_surfaceContainer
-+import io.github.sceneview.demo.theme.md_theme_light_surfaceContainer
-+import kotlinx.coroutines.runBlocking
-+import org.junit.After
-+import org.junit.Assert.assertEquals
-+import org.junit.Assert.assertFalse
-+import org.junit.Assert.assertNotNull
-+import org.junit.Assert.assertNull
-+import org.junit.Assert.assertSame
-+import org.junit.Assert.assertTrue
-+import org.junit.Before
-+import org.junit.Rule
-+import org.junit.Test
-+import org.junit.runner.RunWith
-+import org.robolectric.RobolectricTestRunner
-+import org.robolectric.annotation.Config
-+import org.robolectric.annotation.GraphicsMode
-+import java.util.concurrent.CopyOnWriteArrayList
-+import java.util.concurrent.CountDownLatch
-+import java.util.concurrent.TimeUnit
-+
-+/** A cold preview cache must not hold up the first frame of Back from an AR demo (#4461). */
-+@RunWith(RobolectricTestRunner::class)
-+@Config(sdk = [34])
-+@GraphicsMode(GraphicsMode.Mode.NATIVE)
-+class DemoPreviewsTest {
-+    @get:Rule
-+    val composeRule = createComposeRule()
-+
-+    private val decodeThreads = CopyOnWriteArrayList<Thread>()
-+    private var decodeGate: CountDownLatch? = null
-+    private val context = ApplicationProvider.getApplicationContext<Context>()
-+    private val baseResources = context.resources
-+
-+    @Suppress("DEPRECATION")
-+    private val resources = object : Resources(
-+        baseResources.assets, baseResources.displayMetrics, baseResources.configuration,
+@@ -8,6 +8,7 @@ import android.util.Log
+ import com.google.ar.core.CameraIntrinsics
+ import com.google.ar.core.Frame
+ import com.google.ar.core.Pose
++import io.github.sceneview.demo.BuildConfig
+ import io.github.sceneview.demo.demos.internal.AdaptiveConfidence
+ import io.github.sceneview.demo.demos.internal.ArDebugEvent
+ import io.github.sceneview.demo.demos.internal.ArDebugGeometry
+@@ -38,6 +39,7 @@ import io.github.sceneview.demo.demos.internal.ScanCutoff
+ import io.github.sceneview.demo.demos.internal.ScanPhotoMotion
+ import io.github.sceneview.demo.demos.internal.ScanPhotoPolicy
+ import io.github.sceneview.demo.demos.internal.ScanPreset
++import io.github.sceneview.demo.demos.internal.ScanMemoryBudget
+ import io.github.sceneview.demo.demos.internal.ScanProjection
+ import io.github.sceneview.demo.demos.internal.ScanSharpPicker
+ import io.github.sceneview.demo.demos.internal.YuvFrame
+@@ -75,20 +77,28 @@ import java.util.concurrent.atomic.AtomicInteger
+  * Main thread, like the recorder, except the photo encoding and the depth fusion it launches in
+  * [scope].
+  */
+-internal class ScanCapture private constructor(
++internal class ScanCapture(
+     /** The CPU camera image's lens: the photos' and the sparse points' colours. */
+     private val intrinsics: ScanIntrinsics,
+     /** The GPU camera texture's lens, which ARCore aligns the raw depth with. */
+     private val textureIntrinsics: ScanIntrinsics?,
+     private val lens: ReplayLens,
+     private val scope: CoroutineScope,
++    private val modelOwner: RerunLiveModels.Owner,
+     /** Whether the session runs ARCore's raw depth: the scan's tier. */
+     val rawDepth: Boolean,
+     /** What is scanned decides the photo spacing, the depth kept and the model's voxel (#4647). */
+     val preset: ScanPreset = ScanPreset.ROOM,
+-) {
++    private val budget: ScanMemoryBudget = ScanMemoryBudget(Runtime.getRuntime().maxMemory()),
++) : AutoCloseable {
+     /** The scan's trace; its journal is what [finish] saves. */
+-    val trace = ArDebugTrace().apply {
++    val trace = ArDebugTrace(
++        journalMaxBytes = budget.journalBytes,
++        observationMaxBytes = budget.observationBytes,
++        observationMaxCount = ArDebugTrace.MAX_OBSERVATIONS,
 +    ) {
-+        override fun getDrawable(id: Int, theme: Theme?): Drawable {
-+            decodeThreads += Thread.currentThread()
-+            check(decodeGate?.await(TIMEOUT_MS, TimeUnit.MILLISECONDS) != false) { "decode gate timed out" }
-+            return super.getDrawable(id, theme)
++        Log.w(MEMORY_TAG, "journal cap ${budget.journalBytes} bytes reached; decimating scan observations")
++    }.apply {
+         keyframeSpacing = ReplayGeometry.KEYFRAME_SPACING_M
+         journal = ArrayList()
+         // #4683: an object keeps arm's length in its sparse points and planes too, depth or not.
+@@ -115,11 +125,12 @@ internal class ScanCapture private constructor(
+     // one runs is skipped, never queued, so a slow phone thins the depth instead of lagging.
+     // The map keeps a whole flat or house within this phone's budget: past it, it coarsens the
+     // regions the camera has left instead of dropping what is new (#4629).
+-    private val dense = if (rawDepth) ScanDenseMap() else null
++    private var dense = if (rawDepth) ScanDenseMap(maxPoints = budget.densePoints) else null
+     private val fusing = AtomicBoolean(false)
+     private var fuseJob: Job? = null
+     // The final model's TSDF, fed the same depth copies on its own worker (RerunModelUi.kt).
+-    private val model = if (rawDepth) RerunLiveModel(preset) else null
++    private var model = if (rawDepth) RerunLiveModel(modelOwner, preset, budget) else null
++    private val closed = AtomicBoolean(false)
+     // Which depth estimate was taken last, and how long the scan has waited for one.
+     private val depthWindow = DepthWindow()
+     private var loggedSizes = false
+@@ -135,9 +146,9 @@ internal class ScanCapture private constructor(
+     private val denseKept = AtomicInteger(0)
+     private var recordedTotal = 0
+ 
+-    // The dense frame count each DepthStats on the timeline was written at, in order: what
+-    // [finish] turns into the saved cloud's prefix found by then (ScanDenseMap.revealed).
+-    private val recordedFrames = ArrayList<Int>()
++    // The dense frame count at each DepthStats timestamp. Keyed by time so journal decimation
++    // cannot shift the saved cloud's reveal counts onto different events.
++    private val recordedFrames = HashMap<Long, Int>()
+ 
+     // Why depth frames did or did not grow the map, logged every two seconds for a device run.
+     private val intake = DepthIntake()
+@@ -150,6 +161,11 @@ internal class ScanCapture private constructor(
+ 
+     /** The journal [finish] took, kept so Try again rebuilds from it after a build that threw. */
+     private var finishedEvents: List<ArDebugEvent>? = null
++    private var finishedBytes = 0L
++
++    /** Cleanup outlives the capture scope, which the screen cancels before calling [close]. */
++    internal var releaseJob: Job? = null
++        private set
+ 
+     /**
+      * Points the saved scan keeps so far: the HUD's count, the same figure the saved scan shows.
+@@ -199,14 +215,15 @@ internal class ScanCapture private constructor(
+     /** The scan as it grow
+```
+
+**File**: `samples/android-demo/src/main/java/io/github/sceneview/demo/demos/RerunScanBuilds.kt` (modified, +22/-0)
+```diff
+@@ -1,5 +1,9 @@
+ package io.github.sceneview.demo.demos
+ 
++import androidx.compose.runtime.Composable
++import androidx.compose.runtime.DisposableEffect
++import androidx.compose.runtime.SideEffect
++import androidx.compose.runtime.remember
+ import androidx.compose.runtime.getValue
+ import androidx.compose.runtime.mutableIntStateOf
+ import androidx.compose.runtime.setValue
+@@ -37,3 +41,21 @@ internal object RerunScanBuilds {
+         if (away) savedAway++
+     }
+ }
++
++/** A stale accessibility node keeps only this small, cleared handle after its screen closes. */
++internal class RerunClick : () -> Unit {
++    internal var action: (() -> Unit)? = null
++        private set
++
++    fun update(action: () -> Unit) { this.action = action }
++    fun clear() { action = null }
++    override fun invoke() { action?.invoke() }
++}
++
++@Composable
++internal fun rememberRerunClick(action: () -> Unit): RerunClick {
++    val click = remember { RerunClick() }
++    SideEffect { click.update(action) }
++    DisposableEffect(click) { onDispose { click.clear() } }
++    return click
++}
+```
+
+---
+
+### Incident Patch 2: `ce630c48` (2026-11-20)
+**Commit Message**: fix(demo): discard AR session state after a fatal session failure (#5196)
+
+* fix(demo): discard AR session state after a fatal session failure
+
+After a fatal session.update() failure the SDK closes the session and
+creates a new one on Retry. Seven demos kept anchors, augmented images,
+frames or futures of the closed session and read them afterwards.
+
+- Each demo's session-bound state now lives in a small holder
+  (DemoSessionState) cleared on ARSessionFailure.Fatal; late async
+  results from the old session are rejected by a generation counter.
+- AR Image, Orbital AR, Depth of Field, Cloud Anchor, Geospatial
+  Anchors, Record & Playback, Point and Ask, and the shared
+  FeaturePlacementScene.
+- AR Surfaces keeps the sofa on a nonfatal resume failure, where its
+  anchor is still valid.
+
+Measure and 3D Scan are left for a later change: other branches are
+editing them.
+
+Tests: DemoClosedSessionTest (12). Whole demo debug suite: 4685 pass;
+detekt clean.
+
+Refs #5132
+
+Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
+
+* fix(demo): address the closed-session review
+
+- Point and Ask no longer hands its failure flag to DemoScaffold, which
+  replaced the scene with the no-retry card and dis
+
+**File**: `changelog.d/5132-ar-demos-closed-session.md` (added, +2/-0)
+```diff
+@@ -0,0 +1,2 @@
++<!-- category: Fixed -->
++- **Demo app: AR demos no longer touch a closed camera session after a failure, preventing crashes.** AR Surfaces keeps its sofa when the camera only failed to resume.
+```
+
+**File**: `samples/android-demo/src/main/java/io/github/sceneview/demo/common/placement/ARFeatureComparison.kt` (modified, +3/-0)
+```diff
+@@ -285,6 +285,9 @@ private fun FeatureComparisonSession(feature: PlacementFeature, onBack: () -> Un
+                     }
+                 },
+                 onSessionFailed = { cameraFailed = true },
++                onSessionFailure = { failure ->
++                    if (failure is ARSessionFailure.Fatal) session = null
++                },
+                 onARCoreAvailability = { availability = it },
+                 onTrackingFailureChanged = { trackingFailure = it },
+             ) { placement ->
+```
+
+**File**: `samples/android-demo/src/main/java/io/github/sceneview/demo/common/placement/FeaturePlacementScene.kt` (modified, +11/-4)
+```diff
+@@ -13,6 +13,8 @@ import io.github.sceneview.ar.camera.ARCameraStream
+ import io.github.sceneview.ar.rememberHostLifecycle
+ import io.github.sceneview.loaders.MaterialLoader
+ import io.github.sceneview.loaders.ModelLoader
++import io.github.sceneview.demo.demos.internal.FeaturePlacementSessionState
++import io.github.sceneview.demo.demos.internal.onFailure
+ import io.github.sceneview.rememberOnGestureListener
+ import java.io.File
+ 
+@@ -34,6 +36,7 @@ internal fun FeaturePlacementScene(
+     onSessionResumed: (Session) -> Unit = {},
+     onSessionUpdated: (Session, Frame) -> Unit = { _, _ -> },
+     onSessionFailed: (Exception) -> Unit = {},
++    onSessionFailure: (ARSessionFailure) -> Unit = {},
+     onARCoreAvailability: (ARCoreAvailability?) -> Unit = {},
+     arCoreAvailabilityOverlay: (@Composable BoxScope.(ARCoreAvailabilityState) -> Unit)? =
+         { ARCoreAvailabilityOverlay(it) },
+@@ -42,8 +45,9 @@ internal fun FeaturePlacementScene(
+     content: @Composable ARSceneScope.(AutoPlacementResult?) -> Unit,
+ ) {
+     var viewport by remember { mutableStateOf(IntSize.Zero) }
+-    var placement by remember(state) { mutableStateOf<AutoPlacementResult?>(null) }
+-    var planes by remember { mutableStateOf<List<Plane>>(emptyList()) }
++    val sessionState = remember(state) { FeaturePlacementSessionState<AutoPlacementResult, Plane>() }
++    var placement by sessionState::placement
++    var planes by sessionState::planes
+     val ready by rememberUpdatedState(assetReady)
+     LaunchedEffect(state, assetReady) {
+         if (assetReady) state.requestPlacement() else state.withdrawRequest()
+@@ -55,10 +59,9 @@ internal fun FeaturePlacementScene(
+             placement = null
+         }
+     }
+-    val currentPlacement by rememberUpdatedState(placement)
+     DisposableEffect(state) {
+         onDispose {
+-            currentPlacement?.anchor?.detach()
++            sessionState.placement?.anchor?.detach()
+             state.dismiss()
+         }
+     }
+@@ -77,6 +80,10 @@ internal fun FeaturePlacementScene(
+             onSessionResumed(session)
+         },
+         onSessionFailed = { state.cameraFailed(); onSessionFailed(it) },
++        onSessionFailure = { failure ->
++            if (sessionState.onFailure(failure)) state.resetPlacement(SystemClock.uptimeMillis())
++            onSessionFailure(failure)
++        },
+         onARCoreAvailability = onARCoreAvailability,
+         arCoreAvailabilityOverlay = arCoreAvailabilityOverlay,
+         onTrackingFailureChanged = onTrackingFailureChanged,
+```
+
+**File**: `samples/android-demo/src/main/java/io/github/sceneview/demo/demos/ARCloudAnchorDemo.kt` (modified, +22/-9)
+```diff
+@@ -51,7 +51,8 @@ import io.github.sceneview.ar.ARHapticFeedback
+ import io.github.sceneview.ar.AutoPlacementModel
+ import io.github.sceneview.ar.rememberAutoPlacementState
+ import io.github.sceneview.demo.common.placement.FeaturePlacementScene
+-import io.github.sceneview.demo.demos.internal.CloudRequestGeneration
++import io.github.sceneview.demo.demos.internal.CloudAnchorSessionState
++import io.github.sceneview.demo.demos.internal.onFailure
+ import io.github.sceneview.math.Position
+ import io.github.sceneview.ar.rememberARCameraStream
+ import io.github.sceneview.demo.ARCameraInitScrim
+@@ -172,18 +173,21 @@ fun ARCloudAnchorDemo(onBack: () -> Unit) {
+     ARHapticFeedback(placementState)
+     var show3D by remember { mutableStateOf(false) }
+     var invalidMove by remember { mutableStateOf(false) }
+-    var localPlacement by remember { mutableStateOf<AutoPlacementResult?>(null) }
+-    var resolvedAnchor by remember { mutableStateOf<Anchor?>(null) }
+-    val requestGeneration = remember { CloudRequestGeneration() }
++    val sessionState = remember {
++        CloudAnchorSessionState<Session, AutoPlacementResult, Anchor, HostCloudAnchorFuture, ResolveCloudAnchorFuture>()
++    }
++    var localPlacement by sessionState::localPlacement
++    var resolvedAnchor by sessionState::resolvedAnchor
++    val requestGeneration = sessionState.requests
+     val mainHandler = remember { Handler(Looper.getMainLooper()) }
+-    var hostFuture by remember { mutableStateOf<HostCloudAnchorFuture?>(null) }
+-    var hostAnchor by remember { mutableStateOf<Anchor?>(null) }
++    var hostFuture by sessionState::hostFuture
++    var hostAnchor by sessionState::hostAnchor
+     var isTracking by remember { mutableStateOf(false) }
+     var cameraReady by remember { mutableStateOf(false) }
+     var arCoreAvailability by remember { mutableStateOf<ARCoreAvailability?>(null) }
+     var trackingFailureReason by remember { mutableStateOf<TrackingFailureReason?>(null) }
+-    var arSession by remember { mutableStateOf<Session?>(null) }
+-    var resolveFuture by remember { mutableStateOf<ResolveCloudAnchorFuture?>(null) }
++    var arSession by sessionState::arSession
++    var resolveFuture by sessionState::resolveFuture
+ 
+     // ── Flow state ──────────────────────────────────────────────────────────
+     // `rememberSaveable` on the two pieces a rotation must not destroy: a hosted code the
+@@ -373,7 +377,7 @@ fun ARCloudAnchorDemo(onBack: () -> Unit) {
+                 // cancelled Compose coroutine would strand a late native anchor result.
+                 mainHandler.post {
+                     if (!requestGeneration.accepts(generation)) {
+-                        anchor?.detach()
++                        if (requestGeneration.canRelease(generation)) anchor?.detach()
+                     } else {
+                         resolveFuture = null
+                         if (result == Anchor.CloudAnchorState.SUCCESS && anchor != null) {
+@@ -563,6 +567,15 @@ fun ARCloudAnchorDemo(onBack: () -> Unit) {
+                 },
+                 onPlaced = { localPlacement = it },
+                 onSessionCreated = { session -> arSession = session },
++                onSessionFailure = { failure ->
++                    if (sessionState.onFailure(failure)) {
++                        hostTask = CloudAnchorTask.Idle
++                        resolveTask = CloudAnchorTask.Idle
++                        roomQuality = RoomQuality.Insufficient
++                        cameraReady = false
++                        isTracking = false
++                    }
++                },
+                 onARCoreAvailability = { arCoreAvailability = it },
+                 arCoreAvailabilityOverlay = if (forcedScenario != null) null else { { ARCoreAvailabilityOverlay(it) } },
+                 onSessionUpdated = { session: Session, frame: Frame ->
+```
+
+**File**: `samples/android-demo/src/main/java/io/github/sceneview/demo/demos/ARDepthOfFieldDemo.kt` (modified, +11/-2)
+```diff
+@@ -42,6 +42,7 @@ import com.google.ar.core.Frame
+ import com.google.ar.core.Session
+ import com.google.ar.core.TrackingState
+ import io.github.sceneview.ar.ARSceneView
++import io.github.sceneview.demo.demos.internal.PortraitSessionState
+ import io.github.sceneview.ar.createARCameraStream
+ import io.github.sceneview.ar.postprocessing.ARDepthOfFieldOptions
+ import io.github.sceneview.ar.postprocessing.arDepthOfField
+@@ -120,7 +121,8 @@ fun ARDepthOfFieldDemo(onBack: () -> Unit) {
+     val appliedFocus = PortraitFocus.focusDistance(target, subjectDistance) ?: DEFAULT_FOCUS_METRES
+ 
+     // Latest Frame for tap-to-focus. The depth API requires the Frame from the same update tick.
+-    var latestFrame by remember { mutableStateOf<Frame?>(null) }
++    val sessionState = remember { PortraitSessionState<Frame>() }
++    var latestFrame by sessionState::latestFrame
+     // Where the focus ring is drawn, and a counter that restarts its fade on every tap.
+     var ringAt by remember { mutableStateOf<Offset?>(null) }
+     var ringTap by remember { mutableIntStateOf(0) }
+@@ -206,7 +208,14 @@ fun ARDepthOfFieldDemo(onBack: () -> Unit) {
+         Box(modifier = Modifier.fillMaxSize()) {
+             ARSceneView(
+                 lifecycle = rememberHostLifecycle(),
+-                onSessionFailure = { arSessionFailed = true },
++                onSessionFailure = {
++                    arSessionFailed = true
++                    // The scaffold removes the scene and closes the session on every failure.
++                    if (sessionState.onFailure(fatal = true)) {
++                        subjectDistance = null
++                        ringAt = null
++                    }
++                },
+                 onARCoreAvailability = { arSessionUnavailable = it != null },
+                 modifier = Modifier.fillMaxSize(),
+                 engine = engine,
+```
+
+**File**: `samples/android-demo/src/main/java/io/github/sceneview/demo/demos/ARGeospatialAnchorsDemo.kt` (modified, +47/-17)
+```diff
+@@ -40,7 +40,6 @@ import androidx.compose.runtime.Stable
+ import androidx.compose.runtime.getValue
+ import androidx.compose.runtime.key
+ import androidx.compose.runtime.mutableIntStateOf
+-import androidx.compose.runtime.mutableStateListOf
+ import androidx.compose.runtime.mutableStateOf
+ import androidx.compose.runtime.remember
+ import androidx.compose.runtime.rememberUpdatedState
+@@ -64,7 +63,6 @@ import dev.romainguy.kotlin.math.Quaternion
+ import io.github.sceneview.NodeScope
+ import io.github.sceneview.ar.ARCoreAvailability
+ import io.github.sceneview.ar.ARSceneView
+-import io.github.sceneview.ar.arcore.awaitVpsAvailability
+ import io.github.sceneview.ar.rememberARCameraStream
+ import io.github.sceneview.ar.rememberHostLifecycle
+ import io.github.sceneview.demo.ARCameraInitScrim
+@@ -87,7 +85,9 @@ import io.github.sceneview.demo.common.rememberHasArcoreApiKey
+ import io.github.sceneview.demo.common.rememberIsNetworkAvailable
+ import io.github.sceneview.demo.common.rememberQaCameraBackdropActive
+ import io.github.sceneview.demo.common.toCloudServiceStatus
++import io.github.sceneview.demo.demos.internal.GeospatialSessionState
+ import io.github.sceneview.demo.demos.internal.CloudRequestGeneration
++import io.github.sceneview.demo.demos.internal.onFailure
+ import io.github.sceneview.demo.demos.internal.DropFeedback
+ import io.github.sceneview.demo.demos.internal.DropOutcome
+ import io.github.sceneview.demo.demos.internal.GeospatialAnchorMode
+@@ -122,6 +122,8 @@ import io.github.sceneview.rememberModelInstance
+ import io.github.sceneview.rememberModelLoader
+ import io.github.sceneview.sample.rememberUnlitMaterialInstance
+ import java.util.Locale
++import kotlinx.coroutines.suspendCancellableCoroutine
++import kotlin.coroutines.resume
+ import kotlin.coroutines.cancellation.CancellationException
+ import kotlin.math.roundToInt
+ import kotlin.math.sqrt
+@@ -356,11 +358,6 @@ private class GeospatialDrop(val id: Int, val mode: GeospatialAnchorMode) {
+     }
+ }
+ 
+-/** Plain holder for the latest camera pose: written per frame, read on tap, never drawn. */
+-private class CameraPoseHolder {
+-    var pose: Pose? = null
+-}
+-
+ @Composable
+ private fun GeospatialSection(
+     onBack: () -> Unit,
+@@ -378,7 +375,8 @@ private fun GeospatialSection(
+     // rejected key (#3262).
+     val isNetworkAvailable = rememberIsNetworkAvailable()
+ 
+-    var arSession by remember { mutableStateOf<Session?>(null) }
++    val sessionState = remember { GeospatialSessionState<Session, Pose, GeospatialDrop>() }
++    var arSession by sessionState::arSession
+     var cameraReady by remember { mutableStateOf(false) }
+     // Whether ARCameraInitScrim's card is the one saying "Starting camera…" (#3825).
+     var cameraScrimNarrating by remember { mutableStateOf(true) }
+@@ -393,10 +391,9 @@ private fun GeospatialSection(
+     var sessionError by remember { mutableStateOf<String?>(null) }
+     val qaBackdrop = rememberQaCameraBackdropActive(cameraReady)
+ 
+-    val cameraPose = remember { CameraPoseHolder() }
+-    val drops = remember { mutableStateListOf<GeospatialDrop>() }
++    val drops = sessionState.drops
+     var nextId by remember { mutableStateOf(0) }
+-    val requestGeneration = remember { CloudRequestGeneration() }
++    val requestGeneration = sessionState.requests
+     val mainHandler = remember { Handler(Looper.getMainLooper()) }
+ 
+     // Street View (VPS) coverage where the user stands, re-asked every ~100 m. The helper
+@@ -408,7 +405,7 @@ private fun GeospatialSection(
+         val here = latestFix ?: return@LaunchedEffect
+         if (vps == VpsCoverage.Unknown) vps = VpsCoverage.Checking
+         vps = try {
+-            when (session.awaitVpsAvailability(here.latitude, here.longitude)) {
++            when (session.awaitDemoVpsAvailability(here.latitude, here.longitude, requestGeneration, mainHandler)) {
+                 VpsAvailability.AVAILABLE -> VpsCoverage.Available
+                 VpsAvailability.UNAVAILABLE -> VpsCoverage.Unavailable
+                 else -> VpsCoverage.Error
+@@ -460,8 +457,10 @@ private fun GeospatialSection(
+         rooftop: RooftopAnchorNodeImpl?,
+     ) {
+         if (!requestGeneration.accepts(generation) || drop !in drops) {
+-            terrain?.destroy()
+-            rooftop?.destroy()
++            if (requestGeneration.canRelease(generation)) {
++                terrain?.destroy()
++                rooftop?.destroy()
++            }
+             return
+         }
+         drop.future = null
+@@ -480,7 +479,7 @@ private fun GeospatialSection(
+     val onDrop: () -> Unit = onDrop@{
+         val session = arSession ?: return@onDrop
+         val earth = session.earth ?: return@onDrop
+-        val camera = cameraPose.pose ?: return@onDrop
++        val camera = sessionState.cameraPose ?: return@onDrop
+         if (earth.trackingState != TrackingState.TRACKING) return@onDrop
+         val target = dropPoseAhead(
+             cameraX = camera.tx(),
+@@ -645,12 +644,25 @@ private fun GeospatialSection(
+               
+```
+
+**File**: `samples/android-demo/src/main/java/io/github/sceneview/demo/demos/ARImageDemo.kt` (modified, +28/-5)
+```diff
+@@ -25,7 +25,6 @@ import androidx.compose.material3.Surface
+ import androidx.compose.material3.Text
+ import androidx.compose.runtime.Composable
+ import androidx.compose.runtime.getValue
+-import androidx.compose.runtime.mutableStateListOf
+ import androidx.compose.runtime.mutableStateOf
+ import androidx.compose.runtime.remember
+ import androidx.compose.runtime.rememberCoroutineScope
+@@ -44,6 +43,7 @@ import com.google.ar.core.TrackingFailureReason
+ import com.google.ar.core.TrackingState
+ import io.github.sceneview.ar.ARCoreAvailability
+ import io.github.sceneview.ar.ARSceneView
++import io.github.sceneview.demo.demos.internal.ImageSessionState
+ import io.github.sceneview.ar.rememberARCameraStream
+ import io.github.sceneview.ar.rememberHostLifecycle
+ import io.github.sceneview.demo.common.QaCameraBackdrop
+@@ -73,6 +73,7 @@ import io.github.sceneview.rememberMaterialLoader
+ import io.github.sceneview.rememberModelLoader
+ import kotlinx.coroutines.CoroutineStart
+ import kotlinx.coroutines.Dispatchers
++import kotlinx.coroutines.Job
+ import kotlinx.coroutines.launch
+ import kotlinx.coroutines.withContext
+ 
+@@ -117,7 +118,10 @@ fun ARImageDemo(onBack: () -> Unit) {
+     // image the user captures on-device via the "Capture this view" button (#1553).
+     val runtimeDatabase = rememberRuntimeAugmentedImageDatabase()
+ 
+-    val detectedImages = remember { mutableStateListOf<AugmentedImage>() }
++    val sessionState = remember { ImageSessionState<AugmentedImage>() }
++    val detectedImages = sessionState.detectedImages
++    var captureJob by remember { mutableStateOf<Job?>(null) }
++    var registrationJob by remember { mutableStateOf<Job?>(null) }
+     var isTracking by remember { mutableStateOf(false) }
+     // Cover the jet-black ARSceneView surface until ARCore delivers its first camera
+     // frame, so the ~1–3 s warm-up on entry doesn't read as a frozen screen (#2484).
+@@ -322,7 +326,21 @@ fun ARImageDemo(onBack: () -> Unit) {
+             if (qaBackdrop) QaCameraBackdrop(seed = "ar-image")
+             ARSceneView(
+                 lifecycle = rememberHostLifecycle(),
+-                onSessionFailure = { arSessionFailed = true },
++                onSessionFailure = {
++                    arSessionFailed = true
++                    // The scaffold removes the scene and closes the session on every failure.
++                    if (sessionState.onFailure(fatal = true)) {
++                        imageCount = 0
++                        cameraReady = false
++                        isTracking = false
++                        captureRequested = false
++                        isCapturing = false
++                        captureStatus = null
++                        runtimeDatabase.unbind()
++                        captureJob?.cancel()
++                        registrationJob?.cancel()
++                    }
++                },
+                 modifier = Modifier.fillMaxSize(),
+                 engine = engine,
+                 modelLoader = modelLoader,
+@@ -344,7 +362,7 @@ fun ARImageDemo(onBack: () -> Unit) {
+                     // Bind the live session so RuntimeAugmentedImageDatabase.addImage can
+                     // rebuild + reconfigure on its own. Seed the pre-bundled reference image.
+                     runtimeDatabase.bind(session)
+-                    scope.launch {
++                    registrationJob = scope.launch {
+                         runtimeDatabase.addImage("reference", referenceBitmap, 0.15f)
+                     }
+                 },
+@@ -361,12 +379,17 @@ fun ARImageDemo(onBack: () -> Unit) {
+                         // withContext). `null` (warm-up, image pool full) lands on the "try
+                         // again" message.
+                         val image = frame.cameraImage()
+-                        scope.launch(start = CoroutineStart.ATOMIC) {
++                        val generation = sessionState.generation
++                        captureJob = scope.launch(start = CoroutineStart.ATOMIC) {
+                             val photo = image?.use { img ->
+                                 withContext(Dispatchers.Default) {
+                                     img.toArgbBitmap(rotationDegrees = 0)
+                                 }
+                             }
++                            if (sessionState.generation != generation) {
++                                photo?.recycle()
++                                return@launch
++                            }
+                             val (message, tone) = if (photo == null) {
+                                 "Camera image not ready yet — try again" to
+                                     DemoStatusTone.Guidance
+```
+
+**File**: `samples/android-demo/src/main/java/io/github/sceneview/demo/demos/ARRecordPlaybackDemo.kt` (modified, +27/-5)
+```diff
+@@ -39,6 +39,7 @@ import com.google.ar.core.TrackingState
+ import io.github.sceneview.ar.ARCoreAvailability
+ import io.github.sceneview.ar.ARCoreAvailabilityOverlay
+ import io.github.sceneview.ar.ARSceneView
++import io.github.sceneview.demo.demos.internal.RecordingSessionState
+ import io.github.sceneview.ar.recording.ARRecordInterpretation
+ import io.github.sceneview.ar.recording.ARRecordInterpreter
+ import io.github.sceneview.ar.recording.ARRecorder
+@@ -209,6 +210,7 @@ fun ARRecordPlaybackDemo(onBack: () -> Unit) {
+     }
+ 
+     fun startRecording() {
++        if (take.arSession == null) return
+         take.placementTrack = take.recorder.addTrack(PlacementTrack.TRACK_ID, PlacementTrack.MIME_TYPE)
+         take.interpreter.reset()
+         take.writeSchedule.reset()
+@@ -550,8 +552,7 @@ private fun TakeScene(
+         if (qaBackdrop) QaCameraBackdrop(seed = QA_SEED)
+         ARSceneView(
+             lifecycle = rememberHostLifecycle(),
+-            onSessionFailure = { take.sessionFailed = true },
+-            onSessionResumed = { take.sessionFailed = false },
++            onSessionFailure = { take.onSessionFailure() },
+             modifier = Modifier.fillMaxSize(),
+             engine = engine,
+             modelLoader = modelLoader,
+@@ -626,9 +627,10 @@ private class TakeState(
+     var trackingFailureReason by mutableStateOf<TrackingFailureReason?>(null)
+ 
+     /** Published for `rememberARPlaybackStatus`, which has no other handle on the session. */
+-    var arSession by mutableStateOf<Session?>(null)
++    private val sessionState = RecordingSessionState<Session, Frame, Anchor>()
++    var arSession by sessionState::arSession
+ 
+-    val anchors = mutableStateListOf<Anchor>()
++    val anchors = sessionState.anchors
+     var restoredCount by mutableIntStateOf(0)
+     var replayElapsedMillis by mutableLongStateOf(0L)
+ 
+@@ -638,7 +640,7 @@ private class TakeState(
+     var placementTrack: ARRecorder.TrackHandle? = null
+     val writeSchedule = PlacementWriteSchedule()
+ 
+-    private var latestFrame: Frame? = null
++    private var latestFrame by sessionState::latestFrame
+     private var firstFrameNanos = 0L
+     private val frameGate = NewFrameGate()
+     private val replayQueue = PlacementReplayQueue()
+@@ -647,6 +649,26 @@ private class TakeState(
+     private val packet: ByteBuffer =
+         ByteBuffer.allocateDirect(PlacementTrack.PACKET_BYTES).order(ByteOrder.LITTLE_ENDIAN)
+ 
++    fun onSessionFailure() {
++        sessionFailed = true
++        // The scaffold removes the scene and closes the session on every failure.
++        if (sessionState.onFailure(fatal = true)) {
++            // Detach first: stop then resets the recorder without touching the closed session.
++            recorder.detach()
++            recorder.stop()
++            interpreter.reset()
++            placementTrack = null
++            writeSchedule.reset()
++            replayQueue.reset()
++            frameGate.reset()
++            firstFrameNanos = 0L
++            replayElapsedMillis = 0L
++            restoredCount = 0
++            cameraReady = false
++            isTracking = false
 +        }
 +    }
 +
-+    @Before
-+    fun clearCache() = DemoPreviews.trimMemory()
+     /** `onSessionUpdated` — runs on the thread that owns [frame]. */
+     fun onFrame(session: Session, frame: Frame, replaying: Boolean) {
+         cameraReady = true
+```
+
+---
+
+### Incident Patch 3: `85852640` (2026-11-20)
+**Commit Message**: fix(demo): draw Measure's doors and windows on the plan, its walls list and its shares (#4783) (#5194)
+
+* fix(demo): draw Measure's doors and windows on the plan, its walls list and its shares (#4783)
+
+Measure's Plan page handed RerunPlanView the room's survey only: the doors
+and windows marked on its walls, and the net wall area, reached the card
+under the plan and nothing else.
+
+RerunPlanView now takes a PlanOpenings (openings in the plan's frame plus
+the net wall area; PlanOpenings.None by default, so 3D Scan is unchanged):
+- RoomPlanLayout breaks each wall between an opening's jambs, to scale and
+  at its position along the wall; a window gets its frame, a door (bottom
+  within 15 cm of the floor) its leaf and swing into the room.
+- SurveyReport.wallRows lists each opening under its wall and the net wall
+  area last; SurveyReport.text adds a line per opening and the net area.
+- RoomPlanPdf draws and lists them; its page drawing is split out (draw)
+  so a test can read the first page back. The DXF share gets them too.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* changelog: format the #4783 fragment as a bullet
+
+Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
+
+* fix
+
+**File**: `changelog.d/4783-measure-plan-openings.md` (added, +2/-0)
+```diff
+@@ -0,0 +1,2 @@
++<!-- category: Fixed -->
++- **Demo app: Measure's plan shows the doors and windows you marked.** Each one is drawn on its wall, listed under that wall with the net wall area, and carried into the PDF, DXF and text shares (#4783).
+```
+
+**File**: `samples/android-demo/src/main/java/io/github/sceneview/demo/demos/ARMeasureDemo.kt` (modified, +12/-1)
+```diff
+@@ -162,6 +162,7 @@ import io.github.sceneview.demo.demos.internal.MeasurePlaneKind
+ import io.github.sceneview.demo.demos.internal.MeasurePlanOpening
+ import io.github.sceneview.demo.demos.internal.measurePlanCard
+ import io.github.sceneview.demo.demos.internal.measurePlanOpenings
++import io.github.sceneview.demo.demos.internal.measurePlanOpeningsOnPlan
+ import io.github.sceneview.demo.demos.internal.measurePlanRoom
+ import io.github.sceneview.demo.demos.internal.MeasurePlanTap
+ import io.github.sceneview.demo.demos.internal.measurePlanTap
+@@ -1011,6 +1012,8 @@ internal class MeasurePlanPage(
+  * The whole page reads in [units], the Measure screen's: the plan, its PDF and text shares, and,
+  * with doors or windows marked, the card under the plan that names each one by the wall the plan
+  * letters it on and reads the walls' net area ([measurePlanCard]). One page, one unit system.
++ * The doors and windows are drawn on the plan's walls too, listed under each wall with the net
++ * area after them, and carried by the PDF, DXF and text shares (#4783).
+  */
+ @Composable
+ internal fun MeasurePlanOverlay(
+@@ -1053,7 +1056,15 @@ internal fun MeasurePlanOverlay(
+             },
+             bottomOverlayReservesScene = true,
+         ) {
+-            RerunPlanView(survey = page.survey, title = title, date = date, units = units, locale = locale)
++            // The doors and windows, and the walls' net area, reach the plan, its walls and its shares, not the card alone (#4783).
++            RerunPlanView(
++                survey = page.survey,
++                title = title,
++                date = date,
++                units = units,
++                locale = locale,
++                openings = measurePlanOpeningsOnPlan(page.openings, net),
++            )
+         }
+     }
+ }
+```
+
+**File**: `samples/android-demo/src/main/java/io/github/sceneview/demo/demos/RerunPlanDxf.kt` (modified, +8/-2)
+```diff
+@@ -11,11 +11,17 @@ import io.github.sceneview.demo.demos.internal.RoomSurvey
+  * handed to the share sheet alone, typed [DXF_MIME_TYPE]; `false` when the survey has no plan to
+  * draw or the drawing could not be written. The drawing is named after the PDF of the same plan.
+  */
+-internal suspend fun sharePlanDxf(context: Context, survey: RoomSurvey, words: PlanWords, title: String): Boolean {
++internal suspend fun sharePlanDxf(
++    context: Context,
++    survey: RoomSurvey,
++    words: PlanWords,
++    title: String,
++    openings: List<RoomPlanDxf.Opening> = emptyList(),
++): Boolean {
+     if (!survey.hasPlan) return false
+     val drawing = planDxfWords(context, survey, words, title)
+     val name = words.pdfFile.format(title).substringBeforeLast('.') + DXF_EXTENSION
+-    val uri = writePlanShare(context, name) { RoomPlanDxf.write(it, survey, words.survey, drawing) } ?: return false
++    val uri = writePlanShare(context, name) { RoomPlanDxf.write(it, survey, words.survey, drawing, openings) } ?: return false
+     sharePlanFile(context, uri, DXF_MIME_TYPE, title)
+     return true
+ }
+```
+
+**File**: `samples/android-demo/src/main/java/io/github/sceneview/demo/demos/RerunPlanUi.kt` (modified, +172/-49)
+```diff
+@@ -78,6 +78,9 @@ import io.github.sceneview.demo.demos.internal.DepthBackProjection
+ import io.github.sceneview.demo.demos.internal.MeasureUnitSystem
+ import io.github.sceneview.demo.demos.internal.PlanLine
+ import io.github.sceneview.demo.demos.internal.PlanMetrics
++import io.github.sceneview.demo.demos.internal.PlanOpening
++import io.github.sceneview.demo.demos.internal.PlanOpenings
++import io.github.sceneview.demo.demos.internal.RoomPlanDxf
+ import io.github.sceneview.demo.demos.internal.PlanPage
+ import io.github.sceneview.demo.demos.internal.PlanStroke
+ import io.github.sceneview.demo.demos.internal.PlanTextRole
+@@ -197,6 +200,9 @@ private fun planWords(units: MeasureUnitSystem, locale: Locale): PlanWords = Pla
+         ),
+         units = units,
+         locale = locale,
++        door = stringResource(R.string.demo_ar_rerun_plan_door),
++        window = stringResource(R.string.demo_ar_rerun_plan_window),
++        netWallArea = stringResource(R.string.demo_ar_measure_label_net_walls),
+     ),
+     surveyTitle = stringResource(R.string.demo_ar_rerun_plan_survey_title),
+     emptyTitle = stringResource(R.string.demo_ar_rerun_plan_empty_title),
+@@ -273,7 +279,11 @@ internal fun RerunPlanScreen(media: RerunReplayMedia?, title: String, date: Stri
+  * the page starts under them and is clipped there, so nothing scrolls behind a pill.
+  *
+  * @param zones the parts of the scan still to scan, in the scan's frame, laid on the plan (#4735).
++ * @param openings the doors and windows marked on the plan's walls and the walls' net area (#4783):
++ *   drawn on the plan, listed under their walls, and carried by the PDF, DXF and text shares. A
++ *   3D Scan has none.
+  */
++@Suppress("LongParameterList") // a survey, its heading, its units, and what is laid on its plan
+ @Composable
+ internal fun RerunPlanView(
+     survey: RoomSurvey?,
+@@ -283,6 +293,7 @@ internal fun RerunPlanView(
+     units: MeasureUnitSystem = SurveyFormat.units(LocalLocale.current.platformLocale),
+     locale: Locale = LocalLocale.current.platformLocale,
+     zones: List<RescanZone> = emptyList(),
++    openings: PlanOpenings = PlanOpenings.None,
+ ) {
+     val words = rememberPlanWords(units, locale)
+     val context = LocalContext.current
+@@ -326,9 +337,9 @@ internal fun RerunPlanView(
+                 }
+             }
+         }
+-        val sharePdf = { shareFile { sharePlanPdf(context, survey, words, title, date) } }
+-        val shareDxf = { shareFile { sharePlanDxf(context, survey, words, title) } }
+-        val shareText = { sharePlanText(context, SurveyReport.text(survey, words.survey, title, date), title) }
++        val sharePdf = { shareFile { sharePlanPdf(context, survey, words, title, date, openings) } }
++        val shareDxf = { shareFile { sharePlanDxf(context, survey, words, title, openings.openings.map(::dxfOpening)) } }
++        val shareText = { sharePlanText(context, SurveyReport.text(survey, words.survey, title, date, openings), title) }
+         val dock = maxOf(SETTINGS_FAB_RESERVED_SPACE, LocalDemoBottomChromeCover.current) + Space.md
+         // Under the header: a scrolling column clips to its own box, which starts below the pills.
+         val frame = Modifier
+@@ -344,10 +355,13 @@ internal fun RerunPlanView(
+             Row(modifier = frame, horizontalArrangement = Arrangement.spacedBy(Space.md)) {
+                 BoxWithConstraints(Modifier.weight(PLAN_SHARE).fillMaxHeight()) {
+                     if (maxHeight - dock >= maxWidth / MAX_PLAN_RATIO) {
+-                        PlanCard(survey, words, Modifier.fillMaxHeight().padding(bottom = dock), fill = true, zones = zones)
++                        PlanCard(
++                            survey, words, Modifier.fillMaxHeight().padding(bottom = dock),
++                            fill = true, zones = zones, openings = openings,
++                        )
+                     } else {
+                         Column(Modifier.verticalScroll(rememberScrollState()).padding(bottom = dock)) {
+-                            PlanCard(survey, words, hint = words.scrollHint, zones = zones)
++                            PlanCard(survey, words, hint = words.scrollHint, zones = zones, openings = openings)
+                         }
+                     }
+                 }
+@@ -358,7 +372,7 @@ internal fun RerunPlanView(
+                         .padding(bottom = dock),
+                     verticalArrangement = Arrangement.spacedBy(Space.md),
+                 ) {
+-                    SurveyDetails(survey, words, title, date, PlanShares(sharePdf, shareDxf, shareText))
++                    SurveyDetails(survey, words, title, date, PlanShares(sharePdf, shareDxf, shareText), openings)
+                 }
+             }
+         } else {
+@@ -368,8 +382,8 @@ internal fun RerunPlanView(
+                     modifier = Modifier.widthIn(max = RerunPageMaxWidth).fillMaxWidth(),
+                     verticalArrangement = Arrangement.spacedBy(Space.md),
+                 ) {
+-                    if (s
+```
+
+**File**: `samples/android-demo/src/main/java/io/github/sceneview/demo/demos/internal/MeasurePlan.kt` (modified, +19/-4)
+```diff
+@@ -94,6 +94,17 @@ fun measurePlanOpenings(outline: List<Position>, openings: List<MeasureOpening>)
+         .map { it.second }
+ }
+ 
++/**
++ * What a traced room's plan shows besides its survey (#4783): its [openings] on the plan's walls
++ * and the walls' [netWallArea], for the drawing, the walls' table and the PDF and text shares.
++ */
++fun measurePlanOpeningsOnPlan(openings: List<MeasurePlanOpening>, netWallArea: Float?): PlanOpenings = PlanOpenings(
++    openings = openings.map {
++        PlanOpening(wall = it.opening.wall, from = it.opening.from, to = it.opening.to, bottom = it.opening.bottom, top = it.opening.top)
++    },
++    netWallArea = netWallArea,
++)
 +
-+    @After
-+    fun releaseCache() {
-+        decodeGate?.countDown()
-+        DemoPreviews.trimMemory()
+ /** One door or window on the card under a traced room's plan: the plan's [wall] letter, its [width] × [height]. */
+ data class MeasurePlanCardOpening(val wall: String, val width: String, val height: String)
+ 
+@@ -117,14 +128,18 @@ fun measurePlanCard(
+     openings = openings.map {
+         MeasurePlanCardOpening(
+             wall = it.wall,
+-            width = planCardLength(it.opening.width, units, locale),
+-            height = planCardLength(it.opening.height, units, locale),
++            width = measurePlanLength(it.opening.width, units, locale),
++            height = measurePlanLength(it.opening.height, units, locale),
+         )
+     },
+ )
+ 
+-/** A length on the plan's card: in metres below one too, `0.90 m`; feet and inches as the Measure screen writes them. */
+-private fun planCardLength(metres: Float, units: MeasureUnitSystem, locale: Locale): String = when (units) {
++/**
++ * A door's or a window's side on a traced room's plan page, on its card and in its walls' table
++ * alike: in metres to the centimetre, below one too, `0.90 m`; feet and inches as the Measure
++ * screen writes them.
++ */
++fun measurePlanLength(metres: Float, units: MeasureUnitSystem, locale: Locale): String = when (units) {
+     MeasureUnitSystem.Metric -> String.format(locale, "%.2f m", (metres.coerceAtLeast(0f) * CENTIMETRES_PER_METRE).roundToInt() / CENTIMETRES_PER_METRE)
+     MeasureUnitSystem.Imperial -> formatMeasureLength(metres, units, locale)
+ }
+```
+
+**File**: `samples/android-demo/src/main/java/io/github/sceneview/demo/demos/internal/RoomPlanDxf.kt` (modified, +9/-2)
+```diff
+@@ -8,6 +8,7 @@ import kotlin.math.cos
+ import kotlin.math.hypot
+ import kotlin.math.max
+ import kotlin.math.min
++import kotlin.math.roundToInt
+ import kotlin.math.sin
+ import kotlin.math.sqrt
+ 
+@@ -92,10 +93,15 @@ object RoomPlanDxf {
+         out.write(drawing.file().toByteArray(Charsets.US_ASCII))
+     }
+ 
+-    /** `Door 0.90 × 2.10`, `Window 1.20 × 1.20, sill 0.90`: the size the plan knows, in its units. */
++    /**
++     * `Door 0.93 × 2.04`, `Window 1.20 × 1.20, sill 0.90`: the size the plan knows, in its units —
++     * to the centimetre, as the plan page's card, walls list, PDF and text write a door or a window
++     * (#4783), not in the 5 cm steps of a wall's dimension; to the inch in feet and inches.
++     */
+     private fun label(opening: Opening, words: Words, units: MeasureUnitSystem): String {
+         fun length(metres: Float) = when (units) {
+-            MeasureUnitSystem.Metric -> SurveyFormat.length(metres)
++            MeasureUnitSystem.Metric ->
++                "%.2f".format(Locale.US, (metres.coerceAtLeast(0f) * CENTIMETRES_PER_METRE).roundToInt() / CENTIMETRES_PER_METRE)
+             MeasureUnitSystem.Imperial -> SurveyFormat.feetAndInchesMark(metres)
+         }
+         val size = length(opening.width) + (opening.height?.let { " × " + length(it) } ?: "")
+@@ -777,6 +783,7 @@ object RoomPlanDxf {
+ 
+     // Sizes and distances on the drawing, millimetres: a 1:50 print reads its dimensions at 3 mm.
+     private const val MM = 1000.0
++    private const val CENTIMETRES_PER_METRE = 100f
+     private const val MM_PER_INCH = 25.4
+     private const val JOIN = 1.0
+     private const val DIMENSION_OFFSET = 600.0
+```
+
+**File**: `samples/android-demo/src/main/java/io/github/sceneview/demo/demos/internal/RoomPlanLayout.kt` (modified, +173/-6)
+```diff
+@@ -3,10 +3,12 @@ package io.github.sceneview.demo.demos.internal
+ import java.util.Locale
+ import kotlin.math.abs
+ import kotlin.math.ceil
++import kotlin.math.cos
+ import kotlin.math.hypot
+ import kotlin.math.max
+ import kotlin.math.min
+ import kotlin.math.roundToInt
++import kotlin.math.sin
+ 
+ /*
+  * A room survey as a dimensioned floor plan (#4540): the outline to scale, each wall's length on
+@@ -123,8 +125,11 @@ object SurveyFormat {
+     private const val EPSILON = 1e-3f
+ }
+ 
+-/** What a line of the plan is, so each surface paints it its own way. */
+-enum class PlanStroke { Wall, WallUnseen, Dimension, Extension, Tick, Scale }
++/**
++ * What a line of the plan is, so each surface paints it its own way. [Opening] is a door's or a
++ * window's jambs, a window's frame and a door's leaf; [Swing] the arc a door sweeps (#4783).
++ */
++enum class PlanStroke { Wall, WallUnseen, Dimension, Extension, Tick, Scale, Opening, Swing }
+ 
+ /** What a text of the plan is. */
+ enum class PlanTextRole { Dimension, Area, AreaNote, Tag, Scale }
+@@ -198,6 +203,9 @@ object RoomPlanLayout {
+     private const val SCALE_MIN = 56f
+     private const val TAG_INSET = 11f
+     private const val TAG_MIN_WALL = 26f
++    private const val JAMB = 3.5f
++    private const val FRAME = 1.75f
++    private const val SWING_STEPS = 12
+     private const val TOP = 0
+     private const val RIGHT = 1
+     private const val BOTTOM = 2
+@@ -207,21 +215,30 @@ object RoomPlanLayout {
+     private const val POLE_STEPS = 40
+     private const val ALIGNED = 0.01f
+ 
++    private const val HALF_PI = (Math.PI / 2).toFloat()
++
+     /** The round lengths a scale bar is drawn at, metres. */
+     private val SCALE_BARS = floatArrayOf(0.5f, 1f, 2f, 5f, 10f)
+ 
+     /**
+      * Lays [survey] out in a [width] × [height] box. With [scales] (pixels per metre, any
+      * order) the plan is drawn at the largest of them that fits — a paper plan is at 1:50, not
+      * at 1:43; without, it fills the box.
++     *
++     * Each of [openings] (#4783) is drawn on its wall, to scale, where it was marked along it: the
++     * wall broken between its two jambs, a window's frame across the gap, a door's leaf open
++     * square into the room and the quarter circle it sweeps. A plan without any is drawn as
++     * it always was.
+      */
++    @Suppress("LongParameterList") // a box, its ruler and the scales and openings it may be drawn with
+     fun layout(
+         survey: RoomSurvey,
+         texts: PlanTexts,
+         width: Float,
+         height: Float,
+         metrics: PlanMetrics,
+         scales: List<Float>? = null,
++        openings: List<PlanOpening> = emptyList(),
+     ): RoomPlanDrawing {
+         if (!survey.hasPlan) return RoomPlanDrawing(width, height, 0f, FloatArray(0), emptyList(), emptyList())
+         var rows = IntArray(SIDES)
+@@ -230,7 +247,7 @@ object RoomPlanLayout {
+         repeat(MAX_PASSES) {
+             if (drawing != null && rows.all { it == 0 }) return@repeat
+             val needed = IntArray(SIDES)
+-            val pass = Pass(survey, texts, width, height, metrics, scales, rows.copyOf(), needed)
++            val pass = Pass(survey, texts, width, height, metrics, scales, rows.copyOf(), needed, openings)
+             val settled = drawing != null && (0 until SIDES).all { needed[it] <= rows[it] }
+             drawing = pass.drawing
+             if (settled || needed.all { it == 0 }) return drawing!!
+@@ -277,6 +294,7 @@ object RoomPlanLayout {
+         scales: List<Float>?,
+         private val rows: IntArray,
+         private val needed: IntArray,
++        private val openings: List<PlanOpening>,
+     ) {
+         private val u = metrics.unit
+         private val lines = ArrayList<PlanLine>()
+@@ -347,13 +365,18 @@ object RoomPlanLayout {
+         }
+ 
+         private fun walls() {
+-            for (wall in survey.walls) {
++            survey.walls.forEachIndexed { index, wall ->
+                 val length = wall.length.value
+-                if (length <= 0f) continue
++                if (length <= 0f) return@forEachIndexed
+                 val dx = (wall.bx - wall.ax) / length
+                 val dy = (wall.by - wall.ay) / length
++                // The doors and windows on this wall, each kept on it: the wall is not drawn across them.
++                val cuts = openings.filter { it.wall == index }
++                    .map { Cut(it.from.coerceIn(0f, length), it.to.coerceIn(0f, length), it.door) }
++                    .filter { it.to > it.from }
++                    .sortedBy { it.from }
+                 var at = 0f
+-                fun run(from: Float, to: Float, stroke: PlanStroke) {
++                fun segment(from: Float, to: Float, stroke: PlanStroke) {
+                     if (to - from <= 0f) return
+                     lines += PlanLine(
+                         x(wall.ax + dx * from),
+@@ -363,15 +386,128 @@ object RoomPlanLayout {
+                         stroke,
+                     )
+                 }
++                fun run(from: F
+```
+
+**File**: `samples/android-demo/src/main/java/io/github/sceneview/demo/demos/internal/RoomSurveyReport.kt` (modified, +97/-6)
+```diff
+@@ -1,5 +1,6 @@
+ package io.github.sceneview.demo.demos.internal
+ 
++import io.github.sceneview.demo.demos.internal.room.WallOpenings
+ import java.util.Locale
+ import kotlin.math.max
+ 
+@@ -95,10 +96,51 @@ class SurveyWording(
+      * English when none is given; the Plan view, 3D Scan's and Measure's alike, passes the phone's.
+      */
+     val locale: Locale = Locale.US,
++    /** A door, then a window, as the walls' table names an opening on a wall (#4783). */
++    val door: String = "",
++    val window: String = "",
++    /** The walls' area once their doors and windows are taken off. */
++    val netWallArea: String = "",
+ )
+ 
+-/** One line of the survey's table. [muted] ones say a figure is missing. */
+-class SurveyRow(val label: String, val value: String, val muted: Boolean = false)
++/**
++ * One line of the survey's table. [muted] ones say a figure is missing. A door's or a window's row
++ * names the letter of the wall it stands on in [wall], for a table that may set it apart from that
++ * wall's row: the PDF, at the top of a column.
++ */
++class SurveyRow(val label: String, val value: String, val muted: Boolean = false, val wall: String? = null)
++
++/**
++ * A door or a window on a plan's wall (#4783), in the plan's frame: on the survey's wall number
++ * [wall] (its index in [RoomSurvey.walls]), [from]..[to] metres along it from its start
++ * ([SurveyWall.ax], [SurveyWall.ay]), [bottom]..[top] metres above the floor.
++ */
++data class PlanOpening(val wall: Int, val from: Float, val to: Float, val bottom: Float, val top: Float) {
++    val width: Float get() = to - from
++    val height: Float get() = top - bottom
++
++    /**
++     * A door: an opening whose bottom is under the lowest sill 3D Scan gives a window
++     * ([WallOpenings.belowWindowSill], 0.30 m). Measure marks doors and windows the same way, two
++     * opposite corners, so its bottom is all that tells them apart, and on the scan's own rule.
++     */
++    val door: Boolean get() = WallOpenings.belowWindowSill(bottom)
++}
++
++/**
++ * What a plan shows besides its survey (#4783): the doors and windows marked on its walls, in the
++ * plan's wall order then along each wall, and [netWallArea], the walls' area without them (m²),
++ * `null` when none was worked out. A room traced in Measure has them; a 3D Scan has none
++ * ([None]), and its plan, its PDF and its text read as they always have.
++ */
++class PlanOpenings(val openings: List<PlanOpening>, val netWallArea: Float?) {
++    /** `true` when there is nothing to add to the survey: no opening and no net wall area. */
++    val isEmpty: Boolean get() = openings.isEmpty() && netWallArea == null
++
++    companion object {
++        val None = PlanOpenings(emptyList(), null)
 +    }
-+
-+    @Test
-+    fun `a cache miss decodes off the main thread`() = runBlocking {
-+        val bitmap = DemoPreviews.bitmap(resources, R.drawable.preview_ar_placement_light)
-+
-+        assertTrue(bitmap.width > 0)
-+        assertFalse("the probe must observe the real drawable decode", decodeThreads.isEmpty())
-+        assertTrue("decoding must leave the UI thread", decodeThreads.all { it != Looper.getMainLooper().thread })
-+    }
-+
-+    @Test
-+    fun `a cached bitmap is reused until memory is trimmed`() = runBlocking {
-+        val res = R.drawable.preview_ar_placement_light
-+        val first = DemoPreviews.bitmap(resources, res)
-+        val decodes = decodeThreads.size
-+
-+        assertSame(first, DemoPreviews.bitmap(resources, res))
-+        assertEquals("a cache hit must not decode again", decodes, decodeThreads.size)
-+
-+        DemoPreviews.trimMemory()
-+        DemoPreviews.bitmap(resources, res)
-+        assertTrue("trimmed previews must be decoded again", decodeThreads.size > decodes)
-+    }
-+
-+    @Test
-+    fun `a cold preview fades from a neutral placeholder to the picture`() {
-+        composeRule.mainClock.autoAdvance = false
-+        decodeGate = CountDownLatch(1)
-+        val observed = observePreview()
-+
-+        val placeholder = List(64) { md_theme_light_surfaceContainer }
-+        assertEquals(
-+            "the first frame must be neutral without waiting for a decode",
-+            placeholder,
-+            pixels(observed.first()!!),
-+        )
-+        decodeGate!!.countDown()
-+        composeRule.waitUntil(timeoutMillis = TIMEOUT_MS) {
-+            DemoPreviews.cachedBitmap(R.drawable.preview_ar_placement_light) != null
++}
+ 
+ object SurveyReport {
+     private const val SEPARATOR = " · "
+@@ -276,10 +318,42 @@ object SurveyReport {
+             muted = area == null,
+         )
+ 
+-    /** One row per wall: its letter, its length, and whether it was seen. */
+-    fun wallRows(survey: RoomSurvey, wording: SurveyWording): List<SurveyRow> = survey.walls.map { wall ->
++    /**
++     * One row per wall: its letter, its length, and whether it was seen. With [openings] (#4783),
++     * each wall's row is followed by one per door or window on it ([openingRow]), and the walls'
++     * net area comes last ([netWallAreaRow]); without, the rows a 3D Scan has always had.
++     */
++    fun wallRows(survey: RoomSurvey, wording: SurveyWording, openings: PlanOpenings = PlanOpenings.None): List<SurveyRow> {
++        val walls = survey.walls.map { wallRow(it, wording) }
++        if (openings.isEmpty) return walls
++        val rows = ArrayList<SurveyRow>()
++        walls.forEachIndexed { i, row ->
++            rows += row
++            openings.openings.filter { it.wall == i }.forEach { rows += openingRow(it, wording, survey.walls[i].tag) }
 +        }
-+        composeRule.waitUntil(timeoutMillis = TIMEOUT_MS) {
-+            composeRule.mainClock.advanceTimeByFrame()
-+            observed.size > 1
-+     
++        openings.netWallArea?.let { rows += netWallAreaRow(it, wording) }
++        return rows
++    }
++
++    /**
++     * A door or a window as the walls' table lists it under its wall: `Door` · `0.93 m × 2.04 m`,
++     * as wide by as high as it was marked. Written as the card under Measure's plan writes it
++     * ([measurePlanLength]): to the centimetre in metres, so the page says one size for it.
++     */
++    fun openingRow(opening: PlanOpening, wording: SurveyWording, wall: String? = null): SurveyRow = SurveyRow(
++        label = if (opening.door) wording.door else wording.window,
++        value = measurePlanLength(opening.width, wording.units, wording.locale) + " × " +
++            measurePlanLength(opening.height, wording.units, wording.locale),
++        wall = wall,
++    )
++
++    /** The walls' area net of their doors and windows, [squareMetres], as the card under Measure's plan writes it. */
++    fun netWallAreaRow(squareMetres: Float, wording: SurveyWording): SurveyRow =
++        SurveyRow(wording.netWallArea, formatMeasureArea(squareMetres, wording.units, wording.locale))
++
++    private fun wallRow(wall: SurveyWal
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5138** (2026-11-17): fix(demo): Matter material switch plays fully, never locks the chips or the press (@ThomasGorisse)
-- **PR #5136** (2026-11-17): docs: add Volkswagen Group and Philips Hue apps to the Used in wall (@ThomasGorisse)
-- **PR #5131** (2026-11-17): docs(store): List Matter under Start here in the demo's Play description (@ThomasGorisse)
-- **PR #5129** (2026-11-17): release: 4.69.6 — version bump + changelog collate (@github-actions[bot])
-- **PR #5128** (2026-11-17): ci(release): publish to npm through OIDC only, no NPM_TOKEN (@ThomasGorisse)
-- **PR #5127** (2026-11-17): feat(demo): Matter v15 — smooth finger wells, a seamless studio, truer velvet and marble (@ThomasGorisse)
+- **PR #5197** (2026-11-20): release: 4.70.0 — version bump + changelog collate (@github-actions[bot])
+- **PR #5196** (2026-11-20): fix(demo): discard AR session state after a fatal session failure (@ThomasGorisse)
+- **PR #5195** (2026-11-20): chore(listing): one dark Play set, four real frames, galaxy banner (@ThomasGorisse)
+- **PR #5194** (2026-11-20): fix(demo): draw Measure's doors and windows on the plan, its walls list and its shares (#4783) (@ThomasGorisse)
+- **PR #5192** (2026-11-20): fix(demo): opaque settings sheet and bottom fade on the 3D Scan landing (@ThomasGorisse)
+- **PR #5190** (2026-11-20): fix(ios-demo): label a bundled model "Built-in model", not "Offline model" (@ThomasGorisse)
 
 ---
 
@@ -2745,52 +2899,32 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ar): apply per-frame EIS camera compensation
+## X. demo): bound the 3D scan journal and release the live model on exit
 
 **RULE**:
-When implementing operations in `arsceneview/src/main/java/io/github/sceneview/ar/camera/ARCameraStream.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sceneview/sceneview. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog.d/5186-scan-oom.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sceneview/sceneview. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d07b968a`: ar): apply per-frame EIS camera compensation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0db548c6`: demo): bound the 3D scan journal and release the live model on exit. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `arsceneview/src/main/java/io/github/sceneview/ar/camera/ARCameraStream.kt`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/5186-scan-oom.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-import com.google.ar.core.Coordinates3d
-import io.github.sceneview.material.materialOrNull
-import java.util.concurrent.Executor
-// Electronic image stabilization (#2728): `true` makes the camera materials sample the
-// homogeneous EIS coordinates in CUSTOM0 instead of UV0. Absent from custom legacy materials.
-internal const val kImageStabilizationParameter = "imageStabilizationEnabled"
-
- * Electronic image stabilization uses ARCore's per-frame compensated geometry and homogeneous
- * camera texture coordinates, so live EIS configuration changes preserve registration (#2728).
-    /**
-     * Every binding path ([setMaterialInstances], the [materialInstance] and [materialInstances]
-     * setters) ends here, so this is where the EIS flag learns which instance to drive (#5091).
-     */
-    override fun setMaterialInstanceAt(primitiveIndex: Int, materialInstance: MaterialInstance) {
-        super.setMaterialInstanceAt(primitiveIndex, materialInstance)
-        if (primitiveIndex == 0) stabilizationFlag.bind(materialInstance)
-    }
-
-    private val coordinates = CameraStreamCoordinates(CAMERA_VERTICES)
-    private val coordinateUploads = CameraStreamUploadRing(VERTEX_COUNT)
-    private var
+<!-- category: Fixed -->
+- **Demo app: smoother, more reliable 3D scans.** The demo now requests a large heap, so long room scans keep full model detail, with a memory safety net on phones still below 384 MiB. The replay journal, previously unbounded, is capped (8 MiB on a 512 MiB heap) and always keeps photos, floor coverage, anchors and when each plane appeared or was removed. Leaving a scan frees its memory reliably, and the saved-scans list loads lazily, so exits no longer freeze.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Induced defect failure mode:
-import io.github.sceneview.utils.clone
-        VertexBuffer.Builder().vertexCount(VERTEX_COUNT).bufferCount(2).attribute(
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d07b968a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0db548c6` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

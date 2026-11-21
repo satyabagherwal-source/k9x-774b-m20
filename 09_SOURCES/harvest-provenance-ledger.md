@@ -11774,3 +11774,6 @@ Every entry in this ledger must capture:
 | `learn-github-nitrojs-nitro` | `https://github.com/unjs/nitro` | `571aade6` | Multi-dimensional audit evidence | 2026-11-21T06:13:50.935Z |
 | `learn-github-wquguru-cicada` | `https://github.com/wquguru/cicada` | `8450cb9d` | Multi-dimensional audit evidence | 2026-11-21T06:13:53.379Z |
 | `learn-github-slatedb-slatedb` | `https://github.com/slatedb/slatedb` | `c7c7976b` | Multi-dimensional audit evidence | 2026-11-21T06:14:00.249Z |
+| `learn-github-tuist-tuist` | `https://github.com/tuist/tuist` | `45d39123` | Multi-dimensional audit evidence | 2026-11-21T06:27:54.240Z |
+| `learn-github-sceneview-sceneview` | `https://github.com/sceneview/sceneview` | `8a3f4274` | Multi-dimensional audit evidence | 2026-11-21T06:27:57.544Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `8b37fa90` | Multi-dimensional audit evidence | 2026-11-21T06:28:05.961Z |

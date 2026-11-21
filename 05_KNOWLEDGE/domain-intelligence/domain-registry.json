@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T06:14:05.539Z",
-  "total_records": 2228,
+  "last_updated": "2026-11-21T06:28:11.345Z",
+  "total_records": 2230,
   "domains": {
     "A": {
       "total": 17,
@@ -1040,7 +1040,7 @@
       ]
     },
     "G": {
-      "total": 376,
+      "total": 378,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1417,7 +1417,9 @@
         "domain_intelligence-architecture-intelligence-lancedb-lancedb-core-invariants",
         "domain_intelligence-architecture-intelligence-lancedb-lancedb-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-mswjs-msw-core-invariants",
-        "domain_intelligence-architecture-intelligence-mswjs-msw-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-mswjs-msw-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-sceneview-sceneview-core-invariants",
+        "domain_intelligence-architecture-intelligence-sceneview-sceneview-learnings-core-invariants"
       ]
     },
     "H": {
@@ -15307,8 +15309,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "91fd43246d29fbd34f782e320c22c8e6de7c2a3cbd8837db13e18070a7476034",
-      "created_at": "2026-11-20T17:45:32.451Z"
+      "content_hash": "84edcfe9a44c2325cdd5502d935a6387dfffd5519d40d93c06737b0f9dd49045",
+      "created_at": "2026-11-21T06:28:06.295Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -15757,8 +15759,8 @@
       "title": "Architecture Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-learnings-architecture-intelligence-nucleoidai-nucleoid-lear.md",
       "repository": "nucleoidai-nucleoid-learnings",
-      "content_hash": "53a67c5c9de59bdc0d845c0cf4dc1cf71c89353afe9b2bce16505b0f1f528873",
-      "created_at": "2026-11-20T17:45:36.799Z"
+      "content_hash": "bfcd772c11e12c796341a02c9f694e4b67c854739daaef40e4d69eaa44cb0ba9",
+      "created_at": "2026-11-21T06:28:11.345Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants",
@@ -20564,8 +20566,8 @@
       "title": "Architecture Intelligence: tuist/tuist Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tuist-tuist-architecture-intelligence-tuist-tuist-core-invariants.md",
       "repository": "tuist/tuist",
-      "content_hash": "701141ca0b35163306edbf00aad9c6c22a2c00c2a61e6507aa4d1cd2bc1e6a6c",
-      "created_at": "2026-11-19T19:39:02.436Z"
+      "content_hash": "84279eb037730cb254d547db853b4da50c25d5aaf04032837b05e30152fe4edb",
+      "created_at": "2026-11-21T06:27:54.555Z"
     },
     "domain_intelligence-quality-verification-intelligence-obliteratus-deepseek-v4-1-flash-1017-obliterat": {
       "record_id": "domain_intelligence-quality-verification-intelligence-obliteratus-deepseek-v4-1-flash-1017-obliterat",
@@ -20591,8 +20593,8 @@
       "title": "Architecture Intelligence: tuist-tuist-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tuist-tuist-learnings-architecture-intelligence-tuist-tuist-learnings-core-invar.md",
       "repository": "tuist-tuist-learnings",
-      "content_hash": "4ace6711d2275a856a6b6ee2a70f82470b8ea02910d3a0b8a639bb0f54d1efdf",
-      "created_at": "2026-11-19T19:39:10.178Z"
+      "content_hash": "60d3f6a94164579e47be491ff4e7e0ecfb61d62dd1670c90f5655c35f5a244af",
+      "created_at": "2026-11-21T06:28:09.836Z"
     },
     "domain_intelligence-quality-verification-intelligence-hf-obliteratus-deepseek-v4-1-flash-1017-oblite": {
       "record_id": "domain_intelligence-quality-verification-intelligence-hf-obliteratus-deepseek-v4-1-flash-1017-oblite",
@@ -37405,6 +37407,24 @@
       "repository": "a2ui-project-a2ui-learnings",
       "content_hash": "8db73d9e4f49818679668e783472345817f81a3f47d13aca98e812e87d768666",
       "created_at": "2026-11-21T05:28:01.735Z"
+    },
+    "domain_intelligence-architecture-intelligence-sceneview-sceneview-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-sceneview-sceneview-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: sceneview/sceneview Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-sceneview-sceneview-architecture-intelligence-sceneview-sceneview-core-invariant.md",
+      "repository": "sceneview/sceneview",
+      "content_hash": "248265626be733c0f1b9537c7072526d5444929d1d3b0899bc6c28d9a8659a2b",
+      "created_at": "2026-11-21T06:27:57.893Z"
+    },
+    "domain_intelligence-architecture-intelligence-sceneview-sceneview-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-sceneview-sceneview-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: sceneview-sceneview-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-sceneview-sceneview-learnings-architecture-intelligence-sceneview-sceneview-lear.md",
+      "repository": "sceneview-sceneview-learnings",
+      "content_hash": "bc3823efe3e27e6ffcc33d6890abbd7658738f2e65c4f36a3b0fd15e175b15ba",
+      "created_at": "2026-11-21T06:28:10.559Z"
     }
   }
 }
