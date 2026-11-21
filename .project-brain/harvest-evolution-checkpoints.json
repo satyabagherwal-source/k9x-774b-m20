@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T20:11:02.318Z",
+  "last_updated": "2026-11-21T20:25:11.320Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-21T15:59:55.405Z",
@@ -643,7 +643,7 @@
       "staged_for_review": 1
     },
     "gitoxidelabs-gitoxide-learnings.md": {
-      "processed_at": "2026-11-20T04:48:40.394Z",
+      "processed_at": "2026-11-21T20:25:08.966Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2303,7 +2303,7 @@
       "staged_for_review": 0
     },
     "software-mansion-react-native-reanimated-learnings.md": {
-      "processed_at": "2026-11-18T15:22:21.227Z",
+      "processed_at": "2026-11-21T20:25:10.400Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2898,8 +2898,8 @@
       "staged_for_review": 0
     },
     "hf-liquidai-lfm3-omni-2b-learnings.md": {
-      "processed_at": "2026-11-15T06:18:53.943Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-21T20:25:09.919Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "hf-datalab-to-indra-ocr-learnings.md": {
@@ -3673,7 +3673,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 2874,
+  "total_dossiers_evaluated": 2877,
   "total_canonical_promoted": 453,
-  "total_staged_for_review": 2207
+  "total_staged_for_review": 2209
 }

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md`  
 > **Source**: github ([https://github.com/software-mansion/react-native-reanimated](https://github.com/software-mansion/react-native-reanimated))  
-> **Source Version**: `8ec64786`  
+> **Source Version**: `2d283998`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T15:22:15.859Z  
+> **Timestamp**: 2026-11-21T20:24:56.801Z  
 > **Learning ID**: `learn-github-software-mansion-react-native-reanimated`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/software-mansion/react-native-reanimated](https://github.com/software-mansion/react-native-reanimated))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T15:22:15.854Z  
+> **Harvest Timestamp**: 2026-11-21T20:24:56.794Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: React Native's Animated library reimplemented
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 11080 stars
+- **Stars / Engagement**: 11089 stars
 
 ---
 
@@ -898,575 +898,815 @@ export const getCodeWithOverrides = <C extends object, O extends object>(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8a666116` (2026-11-17)
-**Commit Message**: fix(SET): don't crash when switching tabs before a shared element transition ends (#11371)
+### Incident Patch 1: `816d62ba` (2026-11-20)
+**Commit Message**: fix(Worklets): preserve UI scheduler order (#11439)
 
 > [!NOTE]
-> This pull request was authored by AI on behalf of @bartlomiejbloniarz.
+> This pull request was authored by AI on behalf of @tjzel.
 
-## Summary
+## Human track
 
-In `[SET] Tab Navigator`, switching tabs back before the shared element
-transition ends crashed debug builds on iOS. The tab navigator hides the
-inactive tab with `display: none`, so React deletes the views of the tab
-you leave. The moving view is kept mounted until its transition ends.
-When you switch back early, React re-creates the source view with the
-same tag, and the proxy tears down the kept view. Since #11045, a view
-that an ancestor clips moves inside two clip views. Tearing it down also
-removes those clip views. The assertion in
-`LayoutAnimationsProxy::tearDown` expected exactly one Remove and one
-Delete per removed view, so it failed.
+### Why
 
-The teardown itself was correct. The assertion now checks that the light
-tree lost exactly the removed views, instead of counting mutations.
-Release builds were not affected, because `react_native_assert` compiles
-out there.
+Fixes #11429.
 
-## Test plan
+`IOSUIScheduler::scheduleOnUI` and its Android counterpart run a job
+inline when called from the UI thread. This lets the new job overtake
+older jobs already queued from another thread. A synchronous React event
+can therefore unregister a frame callback before its earlier
+registration reaches the UI runtime. The same ordering problem can
+affect mapper and shared-value setup.
 
-- New runtime test in `sharedTransitionCarrier.test.tsx`: a source
-inside an `overflow: hidden` view is hidden with `
+### How
 
-**File**: `apps/common-app/runtime-tests/reanimated/tests/layoutAnimations/sharedTransitionCarrier.test.tsx` (modified, +57/-0)
+Every UI job now enters the shared FIFO queue before the platform
+scheduler decides how to trigger it:
+
+```text
+background caller ─┐
+                   ├─> FIFO queue ─> guarded drain on UI thread
+UI-thread caller ──┘
+```
+
+A drain guard prevents a job that schedules another UI job from
+recursively draining the queue. Explicit exception handling resets the
+state and rethrows if a queued job fails.
+
+Follow-up PR #11457 adds a separate Reanimated defense against unknown
+frame callback IDs.
+
+### Testing
+
+Added a Bundle Mode runtime regression that holds an active UI job while
+a worker queues older work, then verifies that the older work runs
+fi
+
+**File**: `apps/common-app/runtime-tests/worklets/tests/runtimes/scheduleOnUI.test.tsx` (modified, +48/-1)
 ```diff
-@@ -212,6 +212,33 @@ function ChildContainer({
-   );
+@@ -1,11 +1,13 @@
+ import {
+-  scheduleOnRuntime,
++  createSynchronizable,
+   scheduleOnRN,
++  scheduleOnRuntime,
+   scheduleOnUI,
+ } from 'react-native-worklets';
+ 
+ import {
+   beforeEach,
++  createOrderConstraint,
+   describe,
+   expect,
+   getWorkletRuntimesFromPool,
+@@ -48,6 +50,51 @@ describe('scheduleOnUI', () => {
+   });
+ 
+   if (globalThis._WORKLETS_BUNDLE_MODE_ENABLED) {
++    test('preserves queued UI work before a UI caller', async () => {
++      const [confirmedOrder, order] = createOrderConstraint();
++      const uiActive = createSynchronizable(false);
++      const queued = createSynchronizable(false);
++      const [first, second] = ['first', 'second'];
++
++      scheduleOnRuntime(workletRuntime, () => {
++        'worklet';
++        const deadline = performance.now() + 1000;
++        while (!uiActive.getBlocking() && performance.now() < deadline) {
++          uiActive.getBlocking();
++        }
++        if (!uiActive.getBlocking()) {
++          throw new Error('UI job did not start.');
++        }
++        scheduleOnUI(() => {
++          'worklet';
++          order(1, first);
++        });
++        queueMicrotask(() => {
++          queued.setBlocking(true);
++        });
++      });
++
++      scheduleOnUI(() => {
++        'worklet';
++        uiActive.setBlocking(true);
++        const deadline = performance.now() + 1000;
++        while (!queued.getBlocking() && performance.now() < deadline) {
++          queued.getBlocking();
++        }
++        if (!queued.getBlocking()) {
++          throw new Error('Worker did not enqueue the UI job.');
++        }
++        scheduleOnUI(() => {
++          'worklet';
++          order(2, second);
++        });
++      });
++
++      await waitForNotification(first);
++      await waitForNotification(second);
++      expect(confirmedOrder.value).toBe(2);
++    });
++
+     test('schedules on UI Runtime to UI Runtime', async () => {
+       scheduleOnUI(() => {
+         'worklet';
+```
+
+**File**: `packages/react-native-worklets/Common/cpp/worklets/Tools/UIScheduler.cpp` (modified, +14/-4)
+```diff
+@@ -12,11 +12,21 @@ void UIScheduler::scheduleOnUI(std::function<void()> job) {
  }
  
-+function HiddenClippedSourceScreens({
-+  active,
-+  transition,
-+}: {
-+  active: boolean;
-+  transition: SharedTransition;
-+}) {
-+  const source = useTestRef('source');
-+  return (
-+    <View style={styles.container}>
-+      <SharedTransitionBoundary isActive={!active}>
-+        <View
-+          collapsable={false}
-+          style={[styles.clippingAncestor, active && { display: 'none' }]}>
-+          <Animated.View
-+            ref={source}
-+            sharedTransitionTag="carrier"
-+            sharedTransitionStyle={transition}
-+            style={styles.source}
-+          />
-+        </View>
-+      </SharedTransitionBoundary>
-+      <Target active={active} transition={transition} opacity={1} mounted />
-+    </View>
-+  );
-+}
-+
- function observer() {
-   if (!RuntimeTestObserver) {
-     throw new Error('RuntimeTestObserver requires a runtime-test build');
-@@ -363,6 +390,35 @@ describe('Shared transition moves a real native view', () => {
-     }
-   );
- 
-+  recreateChildTest(
-+    'tears down a clipped carrier when React recreates its tag',
-+    async () => {
-+      await mockAnimationTimer({ autoAdvance: false });
-+      const transition = transitionWithNotification(4000);
-+      await render(
-+        <HiddenClippedSourceScreens active={false} transition={transition} />
-+      );
-+      await waitForFrames();
-+      const sourceTag = getTestComponent('source').getTag();
-+
-+      await render(
-+        <HiddenClippedSourceScreens active transition={transition} />
-+      );
-+      await waitForFrames(3);
-+      await advanceAnimationTimer(500);
-+      expect(await isViewMountedNatively(sourceTag)).toBe(true);
-+
-+      await render(
-+        <HiddenClippedSourceScreens active={false} transition={transition} />
-+      );
-+      await waitForFrames(3);
-+      expect(getTestComponent('source').getTag()).toBe(sourceTag);
-+      await advanceAnimationTimer(4000);
-+      await waitForNotification('carrier-finished');
-+      await expectAtHome('source', 60, 1);
+ void UIScheduler::triggerUI() {
+-  scheduledOnUI_ = false;
+-  while (!uiJobs_.empty()) {
+-    const auto job = uiJobs_.pop();
+-    job();
++  if (drainingUI_) {
++    return;
+   }
++  drainingUI_ = true;
++  try {
++    scheduledOnUI_ = false;
++    while (!uiJobs_.empty()) {
++      const auto job = uiJobs_.pop();
++      job();
 +    }
-+  );
-+
-   test('moves the source with its untagged child and keeps the target hidden', async () => {
-     await mockAnimationTimer({ autoAdvance: false });
-     const transition = transitionWithNotification();
-@@ -881,4 +937,5 @@ const styles = StyleSheet.create({
-     backgroundColor: '#2277dd',
-   },
-   child: { width: 20, height: 15, backgroundColor: '#ffffff' },
-+  clippingAncestor: { width: 40, height: 40, overflow: 'hidden' },
- });
-```
-
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/LayoutAnimations/LayoutAnimationsProxy.cpp` (modified, +2/-2)
-```diff
-@@ -1237,12 +1237,12 @@ void LayoutAnimationsProxy::tearDown(const std::unordered_set<Tag> &removals, Sh
-       roots.push_back(node);
-     }
-   }
--  [[maybe_unused]] const auto mutationCount = mutations.size();
-+  [[maybe_unused]] const auto lightNodeCount = lightNodes_.size();
-   for (const auto &root : roots) {
-     endAnimationsRecursively(root, mutations, mutations);
-   }
-   react_native_assert(
--      mutations.size() - mutationCount == 2 * removals.size() &&
-+      lightNodeCount - lightNodes_.size() == removals.size() &&
-       std::ranges::none_of(removals, [this](const Tag tag) { return lightNodes_.contains(tag); }) &&
-       "The teardown must remove exactly the removals");
++  } catch (...) {
++    drainingUI_ = false;
++    throw;
++  }
++  drainingUI_ = false;
  }
+ 
+ bool UIScheduler::isOnUIThread() const {
 ```
 
-**File**: `packages/react-native-reanimated/changelog/shared-transition-recreated-clipped-carrier.fix.md` (added, +1/-0)
+**File**: `packages/react-native-worklets/Common/cpp/worklets/Tools/UIScheduler.h` (modified, +1/-0)
+```diff
+@@ -18,6 +18,7 @@ class UIScheduler {
+  protected:
+   virtual bool queryIsOnUIThread() const = 0;
+ 
++  bool drainingUI_{false};
+   std::atomic<bool> scheduledOnUI_{false};
+   ThreadSafeQueue<std::function<void()>> uiJobs_;
+ };
+```
+
+**File**: `packages/react-native-worklets/android/src/main/cpp/worklets/android/AndroidUIScheduler.cpp` (modified, +2/-2)
+```diff
+@@ -25,11 +25,11 @@ class UISchedulerWrapper : public UIScheduler {
+   }
+ 
+   void scheduleOnUI(std::function<void()> job) override {
++    UIScheduler::scheduleOnUI(std::move(job));
+     if (isOnUIThread()) {
+-      job();
++      triggerUI();
+       return;
+     }
+-    UIScheduler::scheduleOnUI(job);
+     if (!scheduledOnUI_) {
+       scheduledOnUI_ = true;
+       static const auto method = androidUiScheduler_->getClass()->getMethod<void()>("scheduleTriggerOnUI");
+```
+
+**File**: `packages/react-native-worklets/apple/worklets/apple/IOSUIScheduler.mm` (modified, +3/-3)
+```diff
+@@ -1,5 +1,6 @@
+ #import <Foundation/Foundation.h>
+ #import <dispatch/dispatch.h>
++#import <utility>
+ 
+ #import <worklets/apple/IOSUIScheduler.h>
+ 
+@@ -15,13 +16,12 @@
+ 
+ void IOSUIScheduler::scheduleOnUI(std::function<void()> job)
+ {
++  UIScheduler::scheduleOnUI(std::move(job));
+   if (isOnUIThread()) {
+-    job();
++    triggerUI();
+     return;
+   }
+ 
+-  UIScheduler::scheduleOnUI(job);
+-
+   if (!scheduledOnUI_) {
+     dispatch_async(dispatch_get_main_queue(), [weakThis = weak_from_this()] {
+       // Before triggering the UI, we check if the weak pointer is still valid to avoid possible dangling pointer
+```
+
+**File**: `packages/react-native-worklets/changelog/preserve-ui-scheduler-order.fix.md` (added, +1/-0)
 ```diff
 @@ -0,0 +1 @@
-+Fix a debug assertion crash when React re-creates a shared view whose transition clips it, for example when switching tabs before the transition ends.
++Preserve UI job order when scheduling work from the UI thread.
 ```
 
 ---
 
-### Incident Patch 2: `2e763219` (2026-11-18)
-**Commit Message**: test(Worklets): run a headless suite in a process without an Activity on Android (#11405)
+### Incident Patch 2: `861c4ac0` (2026-11-19)
+**Commit Message**: fix(Worklets): run the microtasks of synchronous calls when the outermost call returns (#11410)
 
 > [!NOTE]
 > This pull request was authored by AI on behalf of @tjzel.
 
 ## Summary
 
-### Human track
+Stacked on #11421 and #11377. Needed by #11372. Refs #10845.
 
-#### Why
+## Human track
 
-No test runs the UI Runtime in a process that has no Activity. #11400
-changes what the frame queue does in such a process, and the tests of
-#11373 run inside the test app, which always has an Activity. A review
-of #11400 and #11373 named this as a coverage gap.
+### Why
 
-#### How
+A synchronous call into a Worklet Runtime (`runOnUISync`,
+`runOnRuntimeSync`, and the calls Reanimated makes for events, sensors
+and layout animations) did not run a microtask checkpoint. Microtasks
+queued in such a call waited for a later task. On the UI runtime that
+task was the next frame of the frame loop, which always runs today.
+#11372 makes the frame loop run on demand, so there may be no next
+frame, and a promise reaction queued in an event handler or in
+`runOnUISync` would then never run.
 
-The driver gets the flag `--headless-task` (Android, `worklets` only):
+### How
 
 ```
-driver: am force-stop, then am startservice RuntimeTestsHeadlessTaskService
-  -> the process starts with no Activity
-  -> the headless JS task runs the ReJest runner without a React root
-  -> the runner reports to the driver over the same WebSocket as a normal run
+before: sync call -> returns, microtasks stay queued -> a later task or frame drains them
+after:  sync call -> requests a checkpoint -> the outermost call into the runtime drains when it returns
 ```
 
-- The run uses a separate list of suites, `worklets/headlessSuites.ts`.
-It has one suite now, `headless cold start`, with two tests: the process
-has no Activity, and `requestAnimationFrame` and `setTimeout` fire on
-the UI Runtime.
-- Android refuses a service start for an app in the background. The
-driver gives the app a temporary power-save exemption (`cmd deviceidle
-tempwhitel
+- The checkpoint is still a policy of each call. A call that requests it
+marks the request on the runtime. The outermost call runs the checkpoint
+when it returns, if a request was made by it or by a call nested in it
 
-**File**: `.github/workflows/runtime-tests-android.yml` (modified, +1/-0)
+**File**: `apps/common-app/runtime-tests/worklets/suites.ts` (modified, +1/-0)
 ```diff
-@@ -145,6 +145,7 @@ jobs:
-             echo "::group::ReJest self-tests"; node --experimental-strip-types scripts/runtime-tests-server.mts $RUNTIME_TESTS_ARGS --library self-tests; status=$?; echo "::endgroup::"; exit $status
-             echo "::group::Verify CI catches failing tests"; if RUNTIME_TESTS_CI_REPORT=0 node --experimental-strip-types scripts/runtime-tests-server.mts $RUNTIME_TESTS_ARGS --library self-tests --only "intentional failures"; then echo "A failing suite did not fail the runner"; status=1; else echo "Failing tests correctly failed the runner"; status=0; fi; echo "::endgroup::"; exit $status
-             echo "::group::Worklets runtime tests"; node --experimental-strip-types scripts/runtime-tests-server.mts $RUNTIME_TESTS_ARGS --library worklets; status=$?; echo "::endgroup::"; exit $status
-+            echo "::group::Worklets runtime tests in a headless JS task"; node --experimental-strip-types scripts/runtime-tests-server.mts $RUNTIME_TESTS_ARGS --library worklets --headless-task; status=$?; echo "::endgroup::"; exit $status
-             echo "::group::Reanimated runtime tests"; node --experimental-strip-types scripts/runtime-tests-server.mts $RUNTIME_TESTS_ARGS --library reanimated; status=$?; echo "::endgroup::"; exit $status
- 
-       - name: Show disk usage
+@@ -54,6 +54,7 @@ export const WORKLETS_TEST_SUITES: RuntimeTestSuite[] = [
+       require('./tests/runtimes/runOnRuntimeSyncWithId.test');
+       require('./tests/runtimes/scheduleOnRuntimeWithId.test');
+       require('./tests/runtimes/microtaskDrains.test');
++      require('./tests/runtimes/reentrantModuleLoad.test');
+       require('./tests/runtimes/microtaskErrors.test');
+       require('./tests/runtimes/weakRef.test');
+       require('./tests/runtimes/performanceNow.test');
 ```
 
-**File**: `AGENTS.md` (modified, +1/-1)
+**File**: `apps/common-app/runtime-tests/worklets/tests/runtimes/microtaskDrains.test.tsx` (modified, +149/-31)
 ```diff
-@@ -104,7 +104,7 @@ clang++ -std=c++20 -fsyntax-only -I Common/cpp -I $RN/ReactCommon/jsi -I $RN/Rea
- yarn workspace fabric-example runtime-tests --library worklets --platform ios --udid <udid>
- ```
+@@ -1,6 +1,7 @@
+ import type { Synchronizable } from 'react-native-worklets';
+ import {
+   createSynchronizable,
++  isBundleModeEnabled,
+   runOnRuntimeAsync,
+   runOnRuntimeAsyncWithId,
+   runOnRuntimeSync,
+@@ -25,23 +26,24 @@ import {
+   waitForNotifications,
+ } from '../../../ReJest/RuntimeTestsApi';
  
--- `--library` takes `reanimated`, `worklets` or `self-tests`. `--platform` takes `ios` or `android`, with the device given by `--udid`, `--serial` or `--avd`. `--configuration` takes `Debug` (the default, the same build as a normal Debug build) or `ReleaseRuntimeTests`. Other flags: `--only suiteA,suiteB`, `--skip-build`, `--metro-port N`, `--port N`, `--full`. Without `--full` a run uses the short variants that PR CI runs: fewer GC-loop iterations, a subset of the execution-order matrix and, in Legacy Eval, a subset of the Reanimated suites. The nightlies pass `--full`.
-+- `--library` takes `reanimated`, `worklets` or `self-tests`. `--platform` takes `ios` or `android`, with the device given by `--udid`, `--serial` or `--avd`. `--configuration` takes `Debug` (the default, the same build as a normal Debug build) or `ReleaseRuntimeTests`. Other flags: `--only suiteA,suiteB`, `--skip-build`, `--metro-port N`, `--port N`, `--full`. `--headless-task` (Android, `worklets` only) runs the suites of `apps/common-app/runtime-tests/worklets/headlessSuites.ts` in a headless JS task of a process that has no Activity. Without `--full` a run uses the short variants that PR CI runs: fewer GC-loop iterations, a subset of the execution-order matrix and, in Legacy Eval, a subset of the Reanimated suites. The nightlies pass `--full`.
- - The reporting port defaults to the Metro port plus one (8082 for Release, which embeds the bundle and runs no Metro). The driver hands the resulting `ws://127.0.0.1:<port>` to the app at launch as `RUNTIME_TESTS_WS_URL` (iOS process env, Android intent extra), so `--port` works for Release builds too. `--skip-build` installs whatever is already built for that configuration. iOS builds use the Derived Data location from Xcode's settings. A build for a simulator compiles only its architecture, and `--build-only` without `--udid` builds every simulator architecture. `--help` lists everything. Approximate durations: self-tests under a minute, worklets about 1 minute, reanimated about 2 minutes.
- - ReJest semantics: `mockAnimationTimer()` advances 16 ms per real frame, `mockAnimationTimer(false)` holds a nonzero time until `advanceAnimationTimer(ms)` adds it and waits 3 frames (a spring takes at most 64 ms per frame), `wait()` is real time, `waitForNotification` is the idiom for "animation finished", `toThrow` matches substrings, `toMatchNativeSnapshots` compares against pixel-grid-rounded native metrics with a 0.5 dp tolerance. Suites are `__DEV__`-gated inconsistently, so a `__DEV__`-only assertion can fail only in the Release nightly. Android emulators need GPU acceleration (`hw.gpu.mode=host`) or mocked-clock tests time out.
- - CI: `*-static-checks.yml`, `runtime-tests-{ios,android,nightly,sanitizers-nightly}.yml`, `{android,apple}-validation.yml`, `changelog-check.yml`, `yarn-validation.yml`, example build checks, docs build and publish, `npm-*-publish*.yml`.
-```
-
-**File**: `apps/common-app/runtime-tests/ReJest/AutoRunRuntimeTestsRunner.tsx` (modified, +3/-26)
-```diff
-@@ -9,6 +9,7 @@ import { setFullRun } from './utils/fullRun';
- import { applyIsolationCheck } from './utils/isolationCheck';
- import { runWithRemoteReporter } from './utils/remoteReporter';
- import { RenderLock } from './utils/RenderLock';
-+import { declareSuites, selectSuitesToRun } from './utils/suiteSelection';
- 
- // IMPORTANT: do not statically import `./RuntimeTestsApi` or anything else that pulls in
- // react-native-reanimated. The framework is loaded lazily once the host sends `start`, so
-@@ -54,42 +55,18 @@ export default function AutoRunRuntimeTestsRunner({
-   useEffect(() => {
-     let cancelled = false;
- 
--    const declaredSuites = tests.map((test) => ({
--      name: test.testSuiteName,
--      skipByDefault: !!test.skipByDefault,
--      fullRunOnly: !!test.fullRunOnly,
--      disabled: !!test.disabled,
--    }));
+-const DONE_NOTIFICATION = 'DONE';
 -
-     const teardown = runWithRemoteReporter({
-       wsUrl: autoRun.wsUrl,
-       library,
--      declaredSuites,
-+      declaredSuites: declareSuites(tests),
-       onStatus: (message) => {
-         if (!cancelled) {
-           setStatus(message);
-         }
-       },
-       onStart: async ({ only, full, reportSuiteFinished, requestReload }) => {
-         setFullRun(!!full);
--        const filterSet = only ? new Set(only) : null;
--        const selected = tests.filter((test) => {
--          if (test.disabled) {
--            return false;
--          }
--          if (filterSet) {
--            return filterSet.has(test.testSuiteName);
--          }
--          return !test.skipByDefault && (!!full || !test.fullRunOnly);
--        });
--
--        const known = new Set(tests.map((test) => test.testSuiteName));
--        const unknown = [...(filterSet ?? [])].filter(
--          (name) => !known.has(name)
--        );
--        if (unknown.length > 0) {
--          throw new Error(`Unknown test suites: ${unknown.join(', ')}`);
--        }
-+        const selected = selectSuitesToRun(tests, only, full);
+ type OrderSetter = ReturnType<typeof createOrderConstraint>[1];
  
-         const { configure, importRuntimeTestSuite, runTests } =
-           require('./RuntimeTestsApi') as {
-```
-
-**File**: `apps/common-app/runtime-tests/ReJest/HeadlessRuntimeTestsRunner.ts` (added, +89/-0)
-```diff
-@@ -0,0 +1,89 @@
-+/* eslint-disable @typescript-eslint/no-var-requires */
-+import { AppRegistry } from 'react-native';
-+
-+import type { RuntimeTestSuite } from '../types';
-+import type { TestConfiguration, TestRunSummary } from './types';
-+import { setFullRun } from './utils/fullRun';
-+import { applyIsolationCheck } from './utils/isolationCheck';
-+import { runWithRemoteReporter } from './utils/remoteReporter';
-+import type { RenderLock } from './utils/RenderLock';
-+import { deriveWsUrl, setWsUrlOverride } from './utils/serverUrl';
-+import { declareSuites, selectSuitesToRun } from './utils/suiteSelection';
-+
-+const HEADLESS_RUN_TASK_KEY = 'RuntimeTestsHeadlessRun';
-+
-+interface HeadlessRuntimeTestsOptions {
-+  tests: RuntimeTestSuite[];
-+  library: string;
-+  forbidReanimated?: boolean;
+-describe('microtask draining', () => {
+-  const [workletRuntime] = getWorkletRuntimesFromPool(1);
++const MICROTASK_NOT_RUN = 0;
++const MICROTASK_RAN_IN_SAME_CALL = 1;
++const MICROTASK_RAN_IN_LATER_CALL = 2;
++const NESTED_CALL_RESULT = 42;
+ 
+-  const notifyDone = () => {
+-    notify(DONE_NOTIFICATION);
+-  };
++type RootTaskIdGlobal = typeof globalThis & {
++  __getRootTaskId: () => number;
++};
+ 
+-  const flushProbe = () => {
+-    'worklet';
+-    queueMicrotask(() => {
+-      scheduleOnRN(notifyDone);
+-    });
+-  };
++function getRootTaskId() {
++  'worklet';
++  return (globalThis as RootTaskIdGlobal).__getRootTaskId();
 +}
 +
-+interface HeadlessRunTaskData {
-+  wsUrl?: string;
-+}
-+
-+/**
-+ * Registers the headless JS task that runs `tests` without a React root and
-+ * reports to the runtime tests server. `RuntimeTestsHeadlessTaskService` of
-+ * FabricExample starts it on Android.
-+ *
-+ * Like `AutoRunRuntimeTestsRunner`, this file must not statically import
-+ * `./RuntimeTestsApi` or anything else that pulls in react-native-reanimated.
-+ */
-+export function registerHeadlessRuntimeTests(
-+  options: HeadlessRuntimeTestsOptions
-+) {
-+  AppRegistry.registerHeadlessTask(
-+    HEADLESS_RUN_TASK_KEY,
-+    () => (data) =>
-+      runHeadlessRuntimeTests(options, data as HeadlessRunTaskData)
-+  );
-+}
-+
-+function runHeadlessRuntimeTests(
-+  { tests, library, forbidReanimated }: HeadlessRuntimeTestsOptions,
-+  { wsUrl }: HeadlessRunTaskData
-+): Promise<void> {
-+  if (wsUrl) {
-+    setWsUrlOverride(wsUrl);
-+  }
-+  return new Promise((resolve) => {
-+    runWithRemoteReporter({
-+      wsUrl: deriveWsUrl(),
-+      library,
-+      declaredSuites: declareSuites(tests),
-+      onStatus: () => {},
-+      onFinished: resolve,
-+      onStart: async ({ only, full, reportSuiteFinished, requestReload }) => {
-+        setFullRun(!!full);
-+        const selected = selectSuitesToRun(tests, only, full);
-+
-+        const { configure, importRuntimeTestSuite, runTests } =
-+          require('./RuntimeTestsApi') as {
-+            configure: (config: TestConfiguration) => RenderLock;
-+            importRuntimeTestSuite: (
-+              name: string,
-+              importTest: () => void
-+            ) => void;
-+            runTests: () => Promise<TestRunSummary>;
-+          };
-+
-+        selected.forEach((test) =>
-+          importRuntimeTestSuite(test.testSuiteName, test.importTest)
-+        );
-+        let renderLock: RenderLock | null = null;
-+        renderLock = configure({
-+          render: () => renderLock?.unlock(),
-+          onProgress: () => {},
-+          onSuiteFinished: reportSuiteFinished,
-+          onReloadRequested: (resumeFromSuite, summarySoFar) =>
-+            requestReload(
-+              resumeFromSuite,
-+              applyIsolationCheck(summarySoFar, !!forbidReanimated)
-+            ),
-+        });
-+        return applyIsolationCheck(await runTests(), !!forbidReanimated);
-+      },
-+    });
-+  });
-+}
-```
-
-**File**: `apps/common-app/runtime-tests/ReJest/native/NativeRuntimeTestObserver.ts` (modified, +2/-0)
-```diff
-@@ -84,6 +84,8 @@ export interface Spec extends TurboModule {
-   waitForHeadlessTaskFinish(taskId: CodegenTypes.Int32): Promise<void>;
++describe('microtask draining', () => {
++  const [workletRuntime] = getWorkletRuntimesFromPool(1);
  
-   delay(milliseconds: CodegenTypes.Int32): Promise<void>;
-+
-+  hasCurrentActivity(): Promise<boolean>;
- }
- 
- export default TurboModuleRegistry.get<Spec>('RuntimeTestObserver');
-```
-
-**File**: `apps/common-app/runtime-tests/ReJest/utils/remoteReporter.ts` (modified, +5/-0)
-```diff
-@@ -30,6 +30,8 @@ export interface RemoteReporterOptions {
-   library: string;
-   declaredSuites: DeclaredSuite[];
-   onStatus: (message: string) => void;
-+  /** Called once, when the connection to the server has ended. */
-+  onFinished?: () => void;
-   onStart: (params: {
-     only?: string[];
-     full?: boolean;
-@@ -74,6 +76,7 @@ export function runWithRemoteReporter({
-   library,
-   declaredSuites,
-   onStatus,
-+  onFinished,
-   onStart,
- }: RemoteReporterOptions): () => void {
-   let socket: WebSocket | null = null;
-@@ -83,6 +86,7 @@ export function runWithRemoteReporter({
-     socket = new WebSocket(wsUrl);
-   } catch (error) {
-     onStatus(`Failed to open WebSocket: ${(error as Error).message}`);
-+    onFinished?.();
-     return () => {};
-   }
- 
-@@ -224,6 +228,7 @@ export function runWithRemoteReporter({
-     }
-     restoreConsole();
-     restoreGlobalErrorHandler();
-+    onFinished?.();
+   const checkpointProbe = (order: OrderSetter) => {
+     'worklet';
+@@ -51,10 +53,15 @@ describe('microtask draining', () => {
+     order(1, 'task');
    };
  
-   ws.onmessage = (event) => {
-```
-
-**File**: `apps/common-app/runtime-tests/ReJest/utils/suiteSelection.ts` (added, +34/-0)
-```diff
-@@ -0,0 +1,34 @@
-+import type { RuntimeTestSuite } from '../../types';
-+import type { DeclaredSuite } from './remoteProtocol';
-+
-+export function declareSuites(tests: RuntimeTestSuite[]): DeclaredSuite[] {
-+  return tests.map((test) => ({
-+    name: test.testSuiteName,
-+    skipByDefault: !!test.skipByDefault,
-+    fullRunOnly: !!test.fullRunOnly,
-+    disabled: !!test.disabled,
-+  }));
-+}
-+
-+export function selectSuitesToRun(
-+  tests: RuntimeTestSuite[],
-+  only: string[] | undefined,
-+  full: boolean | undefined
-+): RuntimeTestSuite[] {
-+  const filterSet = only ? new Set(only) : null;
-+  const known = new Set(tests.map((test) => test.testSuiteName));
-+  const unknown = [...(filterSet ?? [])].filter((name) => !known.has(name));
-+  if (unknown.length > 0) {
-+    throw new Error(`Unknown test suites: ${unknown.join(', ')}`);
-+  }
-+
-+  return tests.filter((test) => {
-+    if (test.disabled) {
-+      return false;
-+    }
-+    if (filterSet) {
-+      return filterSet.has(test.testSuiteName);
-+    }
-+    return !test.skipByDefault && (!!full || !test.fullRunOnly);
+-  const pendingMicrotaskProbe = (flag: Synchronizable<boolean>) => {
++  const pendingMicrotaskProbe = (state: Synchronizable<number>) => {
+     'worklet';
++    const rootTaskId = getRootTaskId();
+     queueMicrotask(() => {
+-      flag.setBlocking(true);
++      state.setBlocking(
++        getRootTaskId() === rootTaskId
++          ? MICROTASK_RAN_IN_SAME_CALL
++          : MICROTASK_RAN_IN_LATER_CALL
++      );
+     });
+   };
+ 
+@@ -123,31 +130,26 @@ describe('microtask draining', () => {
+     });
+   });
+ 
+-  const noCheckpointCases: {
++  const syncCases: {
+     name: string;
+-    runtimeId: number;
+-    invoke: (flag: Synchronizable<boolean>) => void;
++    invoke: (state: Synchronizable<number>) => void;
+   }[] = [
+     {
+       name: 'runOnUISync',
+-      runtimeId: UIRuntimeId,
+       invoke: (flag) => runOnUISync(pendingMicrotaskProbe, flag),
+     },
+     {
+       name: 'runOnRuntimeSync',
+-      runtimeId: workletRuntime.runtimeId,
+       invoke: (flag) =>
+         runOnRuntimeSync(workletRuntime, pendingMicrotaskProbe, flag),
+     },
+     {
+       name: 'runOnRuntimeSyncWithId, UI Runtime',
+-      runtimeId: UIRuntimeId,
+       invoke: (flag) =>
+         runOnRuntimeSyncWithId(UIRuntimeId, pendingMicrotaskProbe, flag),
+     },
+     {
+       name: 'runOnRuntimeSyncWithId, Worker Runtime',
+-      runtimeId: workletRuntime.runtimeId,
+       invoke: (flag) =>
+         runOnRuntimeSyncWithId(
+           workletRuntime.runtimeId,
+@@ -157,20 +159,136 @@ describe('microtask draining', () => {
+     },
+   ];
+ 
+-  noCheckpointCases.forEach(({ name, runtimeId, invoke }) => {
++  syncCases.forEach(({ name, invoke }) => {
+     describe(name, () => {
+-      test('defers queued microtasks past the synchronous call', async () => {
+-        const flag = createSynchronizable(false);
++      test('runs queued microtasks at the end of the synchronous call', () => {
++        const state = createSynchronizable(MICROTASK_NOT_RUN);
+ 
+-        invoke(flag);
++        invoke(state);
+ 
+-        expect(flag.getBlocking()).toBe(false);
++        expect(state.getBlocking()).toBe(MICROTASK_RAN_IN_SAME_CALL);
++      });
++    });
 +  });
+ 
+-        scheduleOnRuntimeWithId(runtimeId, flushProbe);
+-        await waitForNotification(DONE_NOTIFICATION);
++  const NESTED_NOTIFICATION = 'NESTED_SYNC_CALL';
++  const NESTED_MICROTASK_NOTIFICATION = 'NESTED_SYNC_CALL_MICROTASK';
++  const nestedResults = new Map<number, boolean>();
+ 
+-        expect(flag.getBlocking()).toBe(true);
+-      });
++  const nestedCallsExecuted = new Map<number, boolean>();
++
++  const onNestedResult = (
++    token: number,
++    ranDuringTask: boolean,
++    nestedCallExecuted: boolean
++  ) => {
++    nestedResults.set(token, ranDuringTask);
++    nestedCallsExecuted.set(token, nestedCallExecuted);
++    notify(`${NESTED_NOTIFICATION}_${token}`);
++  };
++
++  const nestedMicrotaskRanInOuterTask = new Map<number, boolean>();
++
++  const onNestedMicrotask = (token: number, ranInOuterTask: boolean) => {
++    nestedMicrotaskRanInOuterTask.set(token, ranInOuterTask);
++    notify(`${NESTED_MICROTASK_NOTIFICATION}_${token}`);
++  };
++
++  const nestedSyncCallProbe = (runtimeId: number, token: number) => {
++    'worklet';
++    const rootTaskId = getRootTaskId();
++    let microtaskRan = false;
++    queueMicrotask(() => {
++      microtaskRan = true;
++      scheduleOnRN(onNestedMicrotask, token, getRootTaskId() === rootTaskId);
++    });
++    const nestedCallResult = runOnRuntimeSyncWithId(runtimeId, () => {
++      'worklet';
++      return NESTED_CALL_RESULT;
++    });
++    scheduleOnRN(
++      onNestedResult,
++      token,
++      microtaskRan,
++      nestedCallResult === NESTED_CALL_RESULT
++    );
++  };
++
++  const nestedSyncC
+```
+
+**File**: `apps/common-app/runtime-tests/worklets/tests/runtimes/microtaskErrors.test.tsx` (modified, +24/-0)
+```diff
+@@ -1,4 +1,5 @@
+ import {
++  runOnUISync,
+   scheduleOnRN,
+   scheduleOnRuntime,
+   scheduleOnUI,
+@@ -15,6 +16,7 @@ import {
+ 
+ const UI_ERROR = 'microtask error on the UI Runtime';
+ const WORKER_ERROR = 'microtask error on a Worker Runtime';
++const SYNC_CALL_ERROR = 'microtask error in a synchronous call';
+ const ALIVE_NOTIFICATION = 'RUNTIME_ALIVE_AFTER_MICROTASK_ERROR';
+ 
+ describe('errors thrown by microtasks', () => {
+@@ -47,6 +49,28 @@ describe('errors thrown by microtasks', () => {
+     }
+   );
+ 
++  debugTest(
++    'reports an error thrown at the checkpoint of a synchronous call into the UI Runtime',
++    async () => {
++      await expect(() => {
++        runOnUISync(() => {
++          'worklet';
++          queueMicrotask(() => {
++            throw new Error(SYNC_CALL_ERROR);
++          });
++        });
++      }).toThrow(SYNC_CALL_ERROR);
++
++      scheduleOnUI(() => {
++        'worklet';
++        queueMicrotask(() => {
++          scheduleOnRN(onAlive);
++        });
++      });
++      await waitForNotification(ALIVE_NOTIFICATION);
++    }
++  );
++
+   debugTest(
+     'reports an error thrown at the checkpoint of a worklet scheduled on a Worker Runtime',
+     async () => {
+```
+
+**File**: `apps/common-app/runtime-tests/worklets/tests/runtimes/reentrantModule.ts` (added, +25/-0)
+```diff
+@@ -0,0 +1,25 @@
++import {
++  getRuntimeKind,
++  runOnRuntimeSyncWithId,
++  RuntimeKind,
++} from 'react-native-worklets';
++
++type ReentrantModuleGlobal = typeof globalThis & {
++  __reentrantModuleRuntimeId?: number;
++};
++
++export const evaluationLog: string[] = [];
++
++const runtimeId = (globalThis as ReentrantModuleGlobal)
++  .__reentrantModuleRuntimeId;
++
++if (getRuntimeKind() === RuntimeKind.Worker && runtimeId !== undefined) {
++  evaluationLog.push('module begins');
++  queueMicrotask(() => {
++    evaluationLog.push('microtask');
++  });
++  runOnRuntimeSyncWithId(runtimeId, () => {
++    'worklet';
++  });
++  evaluationLog.push('module ends');
 +}
 ```
 
-**File**: `apps/common-app/runtime-tests/worklets/headlessSuites.ts` (added, +10/-0)
+**File**: `apps/common-app/runtime-tests/worklets/tests/runtimes/reentrantModuleLoad.test.tsx` (added, +45/-0)
 ```diff
-@@ -0,0 +1,10 @@
-+import type { RuntimeTestSuite } from '../types';
+@@ -0,0 +1,45 @@
++import {
++  createWorkletRuntime,
++  isBundleModeEnabled,
++  runOnRuntimeSync,
++} from 'react-native-worklets';
 +
-+export const WORKLETS_HEADLESS_TEST_SUITES: RuntimeTestSuite[] = [
-+  {
-+    testSuiteName: 'headless cold start',
-+    importTest: () => {
-+      require('./tests/headless/coldStart.test');
-+    },
++import { describe, expect, test } from '../../../ReJest/RuntimeTestsApi';
++import { evaluationLog } from './reentrantModule';
++
++type ReentrantModuleGlobal = typeof globalThis & {
++  __reentrantModuleRuntimeId?: number;
++};
++
++describe('module loaded while a worklet is unpacked', () => {
++  const reentrantModuleTest = isBundleModeEnabled() ? test : test.skip;
++
++  reentrantModuleTest(
++    'runs microtasks queued by the module after the worklet',
++    () => {
++      const runtime = createWorkletRuntime({
++        name: 'reentrant module load',
++      });
++      runOnRuntimeSync(
++        runtime,
++        (runtimeId: number) => {
++          'worklet';
++          (globalThis as ReentrantModuleGlobal).__reentrantModuleRuntimeId =
++            runtimeId;
++        },
++        runtime.runtimeId
++      );
++
++      runOnRuntimeSync(runtime, () => {
++        'worklet';
++        evaluationLog.push('worklet body');
++      });
++      const log = runOnRuntimeSync(runtime, () => {
++        'worklet';
++        return evaluationLog.join(', ');
++      });
++
++      expect(log).toBe('module begins, module ends, worklet body, microtask');
++    }
++  );
++});
+```
+
+**File**: `apps/fabric-example/babel.config.js` (modified, +3/-0)
+```diff
+@@ -6,6 +6,9 @@ const workletsPluginOptions = {
+   getHBCBinary,
+   importForwarding: {
+     moduleNames: ['axios'],
++    relativePaths: [
++      'runtime-tests/worklets/tests/runtimes/reentrantModuleLoad.test.tsx',
++    ],
+   },
+ };
+ 
+```
+
+**File**: `apps/fabric-example/metro.config.js` (modified, +17/-0)
+```diff
+@@ -24,6 +24,23 @@ const appsRoot = path.resolve(monorepoRoot, 'apps');
+ let config = {
+   projectRoot: __dirname,
+   watchFolders: [monorepoRoot, appsRoot],
++  transformer: {
++    getTransformOptions: async () => ({
++      transform: {
++        experimentalImportSupport: false,
++        inlineRequires: true,
++        nonInlinedRequires: [
++          'React',
++          'react',
++          'react/jsx-dev-runtime',
++          'react/jsx-runtime',
++          'react-compiler-runtime',
++          'react-native',
++          '../../../apps/common-app/runtime-tests/worklets/tests/runtimes/reentrantModule',
++        ],
++      },
++    }),
 +  },
-+];
+   resolver: {
+     blockList,
+     extraNodeModules,
+```
+
+**File**: `packages/react-native-worklets/Common/cpp/worklets/Compat/StableApi.cpp` (modified, +6/-5)
+```diff
+@@ -117,33 +117,34 @@ std::shared_ptr<Serializable> extractSerializable(
+ void runSyncOnRuntime(
+     const std::shared_ptr<WorkletRuntime> &workletRuntime,
+     const std::shared_ptr<Serializable> &worklet) {
+-  workletRuntime->runSyncAndDiscard(std::static_pointer_cast<SerializableWorklet>(worklet));
++  workletRuntime->runSyncAndDiscardAndDrainMicrotasks(std::static_pointer_cast<SerializableWorklet>(worklet));
+ }
+ 
+ void runSyncOnRuntime(
+     const std::shared_ptr<WorkletRuntime> &workletRuntime,
+     const std::shared_ptr<Serializable> &worklet,
+     const facebook::jsi::Value &arg0) {
+-  workletRuntime->runSyncAndDiscard(std::static_pointer_cast<SerializableWorklet>(worklet), arg0);
++  workletRuntime->runSyncAndDiscardAndDrainMicrotasks(std::static_pointer_cast<SerializableWorklet>(worklet), arg0);
+ }
+ 
+ void runSyncOnRuntime(
+     const std::shared_ptr<WorkletRuntime> &workletRuntime,
+     const std::shared_ptr<Serializable> &worklet,
+     const facebook::jsi::Value &arg0,
+     const facebook::jsi::Value &arg1) {
+-  workletRuntime->runSyncAndDiscard(std::static_pointer_cast<SerializableWorklet>(worklet), arg0, arg1);
++  workletRuntime->runSyncAndDiscardAndDrainMicrotasks(
++      std::static_pointer_cast<SerializableWorklet>(worklet), arg0, arg1);
+ }
+ 
+ void runSyncOnRuntime(const std::shared_ptr<WorkletRuntime> &workletRuntime, const facebook::jsi::Function &function) {
+-  workletRuntime->runSyncAndDiscard(function);
++  workletRuntime->runSyncAndDiscardAndDrainMicrotasks(function);
+ }
+ 
+ void runSyncOnRuntime(
+     const std::shared_ptr<WorkletRuntime> &workletRuntime,
+     const facebook::jsi::Function &function,
+     const facebook::jsi::Value &arg0) {
+-  workletRuntime->runSyncAndDiscard(function, arg0);
++  workletRuntime->runSyncAndDiscardAndDrainMicrotasks(function, arg0);
+ }
+ 
+ std::shared_ptr<WorkletRuntime> getWorkletRuntimeFromHolder(
 ```
 
 ---
 
-### Incident Patch 3: `86c2c97e` (2026-11-18)
-**Commit Message**: fix(SET): keep the content of a popped stack screen during its exit animation on Android (#11388)
+### Incident Patch 3: `6c644f09` (2026-11-19)
+**Commit Message**: fix(Worklets): report an error thrown by a microtask at a task checkpoint (#11421)
 
 > [!NOTE]
-> This pull request was authored by AI on behalf of @pawicao.
-
-> [!CAUTION]
-> This PR needs react-native-screens 4.27 or newer in Android apps that
-run a layout animation or a shared element transition while React
-removes a stack screen. Only then does it reverse the child-first
-removal order of #10754 for that screen. With 4.26.2 or older, such an
-app can crash when React removes a stack screen that holds a nested
-stack with header buttons, for example on sign-out (#10620). The test
-[`removes a screen that holds a nested stack with header
-buttons`](https://github.com/software-mansion/react-native-reanimated/blob/af973351977b43012101bb921f46c3ab1eb1f508/apps/common-app/runtime-tests/reanimated/tests/layoutAnimations/nativeStackRemoval.test.tsx#L297)
-runs layout animations during sign-out, and with 4.26.2 it crashed in 3
-of 3 runs. When nothing animates, the order stays child-first, as on
-`main`: a local variant of that test without layout animations passed in
-3 of 3 runs with 4.26.2. The 4.8 release notes will tell users to use
-4.27 or newer.
+> This pull request was authored by AI on behalf of @tjzel.
 
 ## Summary
 
-On Android, a stack
+Stacked on #11377. #11410 is stacked on this PR.
 
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/LayoutAnimations/LayoutAnimationsProxy.cpp` (modified, +10/-3)
+## Human track
+
+### Why
+
+Bug fix. A microtask that throws at the checkpoint of a scheduled
+worklet crashes the app in a debug build:
+
+```ts
+scheduleOnUI(() => {
+  'worklet';
+  queueMicrotask(() => {
+    throw new Error('boom');
+  });
+});
+```
+
+An error thrown by the worklet itself is caught and reported to the RN
+runtime. The checkpoint that runs after the worklet has no such
+handling, so the exception leaves the scheduled task as an uncaught C++
+exception.
+
+#11410 makes more calls run a checkpoint (`runOnUISync`,
+`runOnRuntimeSync`, the calls Reanimated makes for events), so the gap
+is closed first.
+
+### How
+
+In debug builds, the checkpoint catches the error of a microtask and
+reports it with the same function that reports worklet errors. Release
+builds are unchanged: there, neither a worklet error nor a microtask
+error is caught.
+
+After the error is reported, the runtime keeps working. The microtasks
+that were queued after the throwing one stay queued and run at the n
+
+**File**: `apps/common-app/runtime-tests/worklets/suites.ts` (modified, +1/-0)
 ```diff
-@@ -1097,7 +1097,9 @@ std::optional<SurfaceId> LayoutAnimationsProxy::endLayoutAnimation(int tag, bool
- // A subtree that animates keeps its place in the host tree, so nothing is emitted for its root.
- // A subtree that does not animate is removed at its current host index after its descendants, like React
- // removes it. On iOS a subtree that holds a screen React Native Screens snapshots is removed before its
--// descendants instead, and their teardown mounts at the end of the transaction.
-+// descendants instead, and their teardown mounts at the end of the transaction. On Android a stack screen is also
-+// removed first while animations run. A UI-thread pull can then mount its Remove before React Native Screens starts
-+// the exit transition. That transition keeps only the children that the screen still has.
- void LayoutAnimationsProxy::handleSubtreeRemoval(const std::shared_ptr<LightNode> &node, TransactionMeta &transaction)
-     const {
-   ReanimatedSystraceSection s("handleSubtreeRemoval");
-@@ -1112,6 +1114,7 @@ void LayoutAnimationsProxy::handleSubtreeRemoval(const std::shared_ptr<LightNode
-     }
-   }
-   const bool defersTeardown = holdsSnapshottedScreen(node);
-+  const bool removesRootFirst = defersTeardown || (startsExitTransitionOnRemove(node) && hasRunningAnimations());
- #ifdef __APPLE__
-   if (!defersTeardown && holdsSourceInModal(node, transaction)) {
-     std::unordered_set<Tag> heldTags;
-@@ -1143,8 +1146,8 @@ void LayoutAnimationsProxy::handleSubtreeRemoval(const std::shared_ptr<LightNode
-     if (removals.contains(parent->current.tag)) {
-       continue;
-     }
--    const bool removeBeforeChildren = defersTeardown && root == node;
--    if (removeBeforeChildren && !transaction.screenSnapshotRemoval) {
-+    const bool removeBeforeChildren = removesRootFirst && root == node;
-+    if (defersTeardown && removeBeforeChildren && !transaction.screenSnapshotRemoval) {
-       transaction.screenSnapshotRemoval = transaction.filteredMutations.size();
-     }
-     endAnimationsRecursively(
-@@ -1170,6 +1173,10 @@ bool LayoutAnimationsProxy::holdsSnapshottedScreen([[maybe_unused]] const std::s
-   return false;
- }
- 
-+bool LayoutAnimationsProxy::hasRunningAnimations() const {
-+  return hasLayoutAnimationRecords() || !std::ranges::empty(activeSharedTransitionRuns());
-+}
+@@ -54,6 +54,7 @@ export const WORKLETS_TEST_SUITES: RuntimeTestSuite[] = [
+       require('./tests/runtimes/runOnRuntimeSyncWithId.test');
+       require('./tests/runtimes/scheduleOnRuntimeWithId.test');
+       require('./tests/runtimes/microtaskDrains.test');
++      require('./tests/runtimes/microtaskErrors.test');
+       require('./tests/runtimes/weakRef.test');
+       require('./tests/runtimes/performanceNow.test');
+     },
+```
+
+**File**: `apps/common-app/runtime-tests/worklets/tests/runtimes/microtaskErrors.test.tsx` (added, +71/-0)
+```diff
+@@ -0,0 +1,71 @@
++import {
++  scheduleOnRN,
++  scheduleOnRuntime,
++  scheduleOnUI,
++} from 'react-native-worklets';
 +
- #ifdef __APPLE__
- // React Native animates a modal that it removes while presented from a snapshot of what the screen shows, which lags a
- // mount by up to two frames. A modal that holds the source of a transition stays mounted until 34 ms, two frames of a
++import {
++  describe,
++  expect,
++  getWorkletRuntimesFromPool,
++  notify,
++  test,
++  waitForNotification,
++} from '../../../ReJest/RuntimeTestsApi';
++
++const UI_ERROR = 'microtask error on the UI Runtime';
++const WORKER_ERROR = 'microtask error on a Worker Runtime';
++const ALIVE_NOTIFICATION = 'RUNTIME_ALIVE_AFTER_MICROTASK_ERROR';
++
++describe('errors thrown by microtasks', () => {
++  const [workletRuntime] = getWorkletRuntimesFromPool(1);
++  const debugTest = __DEV__ ? test : test.skip;
++
++  const onAlive = () => {
++    notify(ALIVE_NOTIFICATION);
++  };
++
++  debugTest(
++    'reports an error thrown at the checkpoint of a worklet scheduled on the UI Runtime',
++    async () => {
++      await expect(() => {
++        scheduleOnUI(() => {
++          'worklet';
++          queueMicrotask(() => {
++            throw new Error(UI_ERROR);
++          });
++        });
++      }).toThrow(UI_ERROR);
++
++      scheduleOnUI(() => {
++        'worklet';
++        queueMicrotask(() => {
++          scheduleOnRN(onAlive);
++        });
++      });
++      await waitForNotification(ALIVE_NOTIFICATION);
++    }
++  );
++
++  debugTest(
++    'reports an error thrown at the checkpoint of a worklet scheduled on a Worker Runtime',
++    async () => {
++      await expect(() => {
++        scheduleOnRuntime(workletRuntime, () => {
++          'worklet';
++          queueMicrotask(() => {
++            throw new Error(WORKER_ERROR);
++          });
++        });
++      }).toThrow(WORKER_ERROR);
++
++      scheduleOnRuntime(workletRuntime, () => {
++        'worklet';
++        queueMicrotask(() => {
++          scheduleOnRN(onAlive);
++        });
++      });
++      await waitForNotification(ALIVE_NOTIFICATION);
++    }
++  );
++});
 ```
 
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/LayoutAnimations/LayoutAnimationsProxy.h` (modified, +1/-0)
+**File**: `packages/react-native-worklets/Common/cpp/worklets/WorkletRuntime/WorkletRuntime.h` (modified, +10/-1)
 ```diff
-@@ -845,6 +845,7 @@ struct LayoutAnimationsProxy : public LayoutAnimationsProxyCommon {
- 
-   void handleSubtreeRemoval(const std::shared_ptr<LightNode> &node, TransactionMeta &transaction) const;
-   bool holdsSnapshottedScreen(const std::shared_ptr<LightNode> &node) const;
-+  bool hasRunningAnimations() const;
- #ifdef __APPLE__
-   bool holdsSourceInModal(const std::shared_ptr<LightNode> &node, const TransactionMeta &transaction) const;
- #endif
-```
-
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/LayoutAnimations/LayoutAnimationsUtils.h` (modified, +9/-0)
-```diff
-@@ -456,6 +456,15 @@ static inline bool isRNSScreen(const std::shared_ptr<LightNode> &node) {
-   return !std::strcmp(componentName, "RNSScreen") || !std::strcmp(componentName, "RNSModalScreen");
- }
- 
-+static inline bool startsExitTransitionOnRemove([[maybe_unused]] const std::shared_ptr<LightNode> &node) {
-+#ifdef ANDROID
-+  const auto parent = node->parent.lock();
-+  return isRNSScreen(node) && parent && !std::strcmp(parent->current.componentName, "RNSScreenStack");
+@@ -419,7 +419,16 @@ class WorkletRuntime : public jsi::HostObject, public std::enable_shared_from_th
+       }
+       if constexpr (TCheckpoint == MicrotaskCheckpoint::Run) {
+         if (microtaskQueueEnabled_) {
+-          getJSIRuntime().drainMicrotasks();
++          jsi::Runtime &rt = getJSIRuntime();
++#ifndef NDEBUG
++          try {
++            rt.drainMicrotasks();
++          } catch (jsi::JSError &e) {
++            JSLogger::handleJSError(jsScheduler_, rt, name_, e, std::nullopt);
++          }
 +#else
-+  return false;
-+#endif
-+}
-+
- static inline std::shared_ptr<LightNode> findParentRNSScreen(const std::shared_ptr<LightNode> &node) {
-   auto current = node->parent.lock();
-   while (current && !isRNSScreen(current)) {
++          rt.drainMicrotasks();
++#endif // NDEBUG
+         }
+       }
+       rootTaskRunning_ = false;
 ```
 
-**File**: `packages/react-native-reanimated/changelog/android-set-pop-keeps-screen-content.fix.md` (added, +1/-0)
+**File**: `packages/react-native-worklets/changelog/report-microtask-errors.fix.md` (added, +1/-0)
 ```diff
 @@ -0,0 +1 @@
-+Fix a popped stack screen on Android losing its content at the start of its exit animation during a shared element transition, which briefly showed only the shared views.
++Report an error thrown by a microtask at the checkpoint of a scheduled worklet the same way as an error thrown by the worklet, instead of crashing the app in debug builds.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #11408** (2026-11-18): test(Reanimated): give the nested inner view a size change in the pending boundary test (@pawicao)
-- **PR #11407** (2026-11-18): chore(Worklets): rename the Metro 0.87.0 patches changelog fragment to a valid slug (@tjzel)
-- **PR #11405** (2026-11-18): test(Worklets): run a headless suite in a process without an Activity on Android (@tjzel)
-- **PR #11404** (2026-11-18): ci: run changelog-check on the pull request head, not on its merge with the current base (@tjzel)
-- **PR #11400** (2026-11-18): fix(Worklets): run the Android frame queue only while the host is resumed or a headless JS task is active (@tjzel)
-- **PR #11398** (2026-11-18): chore: bump react-native-gesture-handler to 3.5.0 in the example apps (@bartlomiejbloniarz)
+- **PR #11467** (2026-11-20): docs(Reanimated): serve testimonial avatars from the docs site (@tjzel)
+- **PR #11463** (2026-11-20): release(Worklets): 0.12.3 (@tjzel)
+- **PR #11462** (2026-11-20): test(Reanimated): step the held clock in the all-rows Animated.Text test (@tjzel)
+- **PR #11460** (2026-11-20): docs(Worklets): remove the serialization TODO from the returning results tutorial (@tjzel)
+- **PR #11459** (2026-11-20): docs(Worklets): redirect getting-started to the About page (@tjzel)
+- **PR #11457** (2026-11-20): fix(Reanimated): ignore unknown frame callbacks (@tjzel)
 
 ---
 
@@ -1486,67 +1726,63 @@ On Android, a stack
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. SET): don't crash when switching tabs before a shared element transition ends
+## X. Worklets): preserve UI scheduler order
 
 **RULE**:
-When implementing operations in `apps/common-app/runtime-tests/reanimated/tests/layoutAnimations/sharedTransitionCarrier.test.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-reanimated. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/common-app/runtime-tests/worklets/tests/runtimes/scheduleOnUI.test.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-reanimated. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8a666116`: SET): don't crash when switching tabs before a shared element transition ends. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `816d62ba`: Worklets): preserve UI scheduler order. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/common-app/runtime-tests/reanimated/tests/layoutAnimations/sharedTransitionCarrier.test.tsx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/common-app/runtime-tests/worklets/tests/runtimes/scheduleOnUI.test.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-function HiddenClippedSourceScreens({
-  active,
-  transition,
-}: {
-  active: boolean;
-  transition: SharedTransition;
-}) {
-  const source = useTestRef('source');
-  return (
-    <View style={styles.container}>
-      <SharedTransitionBoundary isActive={!active}>
-        <View
-          collapsable={false}
-          style={[styles.clippingAncestor, active && { display: 'none' }]}>
-          <Animated.View
-            ref={source}
-            sharedTransitionTag="carrier"
-            sharedTransitionStyle={transition}
-            style={styles.source}
-          />
-        </View>
-      </SharedTransitionBoundary>
-      <Target active={active} transition={transition} opacity={1} mounted />
-    </View>
-  );
-}
+  createSynchronizable,
+  scheduleOnRuntime,
+  createOrderConstraint,
+    test('preserves queued UI work before a UI caller', async () => {
+      const [confirmedOrder, order] = createOrderConstraint();
+      const uiActive = createSynchronizable(false);
+      const queued = createSynchronizable(false);
+      const [first, second] = ['first', 'second'];
 
-  recreateChildTest(
-    'tears down a clipped carrier when React recreates its tag',
-    async () => {
-      await mockAnimationTimer({ autoAdvance: false });
-      const transition = transitionWithNotification(4000);
-      await render(
-        <HiddenClippedSourceScreens active={false} transition={transition} />
-      );
-      await waitForFrames();
-      const sourceTag = getTestComponent('source').getTag();
+      scheduleOnRuntime(workletRuntime, () => {
+        'worklet';
+        const deadline = performance.now() + 1000;
+        while (!uiActive.getBlocking() && performance.now() < deadline) {
+          uiActive.getBlocking();
+        }
+        if (!uiActive.getBlocking()) {
+          throw new Error('UI job did not start.');
+        }
+        scheduleOnUI(() => {
+          'worklet';
+          order(1, first);
+        });
+        queueMicrotask(() => {
+          queued.setBlocking(true);
+        });
+      });
 
-      await render(
-        <HiddenClippedSourceScreens active transi
+      scheduleOnUI(() => {
+        'worklet';
+        uiActive.setBlocking(true);
+        const deadline = performance.now() + 1000;
+        while (!queued.getBlocking() && performance.now() < deadline) {
+          queued.getBlocking();
+        }
+        if (!queued.getBlocking()) {
+          throw new Error('Worker did not e
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+  scheduleOnRuntime,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8a666116` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `816d62ba` are properly handled with clean fallback behavior.

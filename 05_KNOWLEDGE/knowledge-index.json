@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T20:11:02.110Z",
+  "last_updated": "2026-11-21T20:25:11.151Z",
   "total_verified_learnings": 9062,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23242,
+  "total_items": 23250,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -221103,8 +221103,8 @@
       "slug": "software-mansion-react-native-reanimated",
       "platform": "github",
       "source_url": "https://github.com/software-mansion/react-native-reanimated",
-      "source_version": "8ec64786",
-      "content_hash": "874993902dd0e58e571ace67862012cb443caf4cbe33171ee601f2a12a8f10c7",
+      "source_version": "2d283998",
+      "content_hash": "462a4690335fb227394caf343c7c5fd05afa91e8ee88211b83811abff6439252",
       "dossier_path": "07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md",
       "promoted_rules": [
@@ -221122,6 +221122,11 @@
           "number": 9250,
           "title": "don't crash when switching tabs before a shared element transition ends",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9833,
+          "title": "preserve UI scheduler order",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -221129,7 +221134,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T15:22:16.594Z",
+      "verified_at": "2026-11-21T20:24:57.791Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -221180,13 +221185,13 @@
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-software-mansion-react-native-",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/software-mansion-react-native-screens-learnings-verification-protocol-empirical-.md",
-      "title": "Verification Protocol: Empirical Defect Shield for software-mansion-react-native-screens-learnings",
-      "repository": "software-mansion-react-native-screens-learnings",
+      "relative_path": "08_VERIFICATION/software-mansion-react-native-reanimated-learnings-verification-protocol-empiric.md",
+      "title": "Verification Protocol: Empirical Defect Shield for software-mansion-react-native-reanimated-learnings",
+      "repository": "software-mansion-react-native-reanimated-learnings",
       "source_version": "HEAD",
-      "content_hash": "8f46c45efd237d127b854ff54d633eccd9ea4fb1c8d14956e811b78fbb72be1e",
+      "content_hash": "c292fb0f0fb9743b3eb02d38126757fc633a8cff469986054fc82719bf2931c3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T01:51:41.373Z"
+      "persisted_at": "2026-11-21T20:25:11.151Z"
     },
     "learn-github-zeromicro-go-zero": {
       "learning_id": "learn-github-zeromicro-go-zero",
@@ -234301,8 +234306,8 @@
       "slug": "apache-pinot",
       "platform": "github",
       "source_url": "https://github.com/apache/pinot",
-      "source_version": "01004140",
-      "content_hash": "c815bda94e20452ad60e616ab4777d8bc88cd8bff64dad8e94a92a5fe7579a3b",
+      "source_version": "1fa59ea0",
+      "content_hash": "0200bc03ade79e4add922572786686ed59484444732f9b6b42bd9501694285fd",
       "dossier_path": "07_PROJECT_LEARNING/apache-pinot-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-pinot-learnings.md",
       "promoted_rules": [
@@ -234330,6 +234335,11 @@
           "number": 9588,
           "title": "Add prefixed minion dataDir config key",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9834,
+          "title": "Render BOOLEAN keys as booleans when selecting a whole OPEN_STRUCT column",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -234337,7 +234347,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T15:15:22.912Z",
+      "verified_at": "2026-11-21T20:25:05.111Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -234379,10 +234389,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-apache-pinot-content-information-intelligence-apache-pinot-core-invariants.md",
       "title": "Content & Information Intelligence: apache/pinot Core Invariants",
       "repository": "apache/pinot",
-      "source_version": "01004140",
-      "content_hash": "cb9ffa57a61a56847fc286571f55fbbce82641db0d56b9b3eb95eff027c17c20",
+      "source_version": "1fa59ea0",
+      "content_hash": "de6046d800944347d517ff8592eb4be79cf1c4451b222c3ac2c40f4964a59a87",
       "domain_letter": "I",
-      "persisted_at": "2026-11-20T15:15:23.466Z"
+      "persisted_at": "2026-11-21T20:25:05.832Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-apache-pinot": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-apache-pinot",
@@ -234391,10 +234401,10 @@
       "relative_path": "08_VERIFICATION/apache-pinot-verification-protocol-empirical-defect-shield-for-apache-pinot.md",
       "title": "Verification Protocol: Empirical Defect Shield for apache/pinot",
       "repository": "apache/pinot",
-      "source_version": "01004140",
-      "content_hash": "2753cba08d086dbcdb033b07ffbd6244612f425f334be1006e57108dae96ecb3",
+      "source_version": "1fa59ea0",
+      "content_hash": "cf72e96d16fd6b5fd48700de5dd35f1c2889e367ddca20ef6b725daf07d45b98",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T15:15:23.615Z"
+      "persisted_at": "2026-11-21T20:25:06.054Z"
     },
     "domain_intelligence-architecture-intelligence-astral-sh-uv-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-astral-sh-uv-learnings-core-invariants",
@@ -244174,7 +244184,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/LiquidAI/LFM3-Omni-2B",
       "source_version": "hf-liquidai-lfm3-omni-2b",
-      "content_hash": "e906a90dfd1747e119601f80ef95b18d332d5136244486fb663d490bd0693ef0",
+      "content_hash": "90465e2d835c37476f3cf604655d4d1d22860054d3e94df3546c311816e5ae71",
       "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-lfm3-omni-2b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-lfm3-omni-2b-learnings.md",
       "promoted_rules": [],
@@ -244183,7 +244193,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T06:18:10.073Z",
+      "verified_at": "2026-11-21T20:24:49.735Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -244200,9 +244210,9 @@
       "title": "Research & Knowledge Intelligence: LiquidAI/LFM3-Omni-2B Core Invariants",
       "repository": "LiquidAI/LFM3-Omni-2B",
       "source_version": "hf-liquidai-lfm3-omni-2b",
-      "content_hash": "0df4777aacc98df35dd024beaa98cd6b11329ca6a60e3bda1065bae7afaf1741",
+      "content_hash": "c0330b35e9f843c2c8ae5e8e53198c6aa9ab1185050b2296ebf097f9d46da9d3",
       "domain_letter": "D",
-      "persisted_at": "2026-11-15T06:18:10.411Z"
+      "persisted_at": "2026-11-21T20:24:50.270Z"
     },
     "learn-github-orange-opensource-hurl": {
       "learning_id": "learn-github-orange-opensource-hurl",
@@ -244339,9 +244349,9 @@
       "title": "Research & Knowledge Intelligence: hf-liquidai-lfm3-omni-2b-learnings Core Invariants",
       "repository": "hf-liquidai-lfm3-omni-2b-learnings",
       "source_version": "HEAD",
-      "content_hash": "a27ab278680b5ce4aebdaf3594c60be3eaebecdb12fb9f688776322f9509d12a",
+      "content_hash": "b6efece8df2c621c2bd3265963242a799d27cc7271373f95ad96fc7204ebd2d8",
       "domain_letter": "D",
-      "persisted_at": "2026-11-15T06:18:54.140Z"
+      "persisted_at": "2026-11-21T20:25:10.171Z"
     },
     "learn-huggingface-datalab-to-indra-ocr": {
       "learning_id": "learn-huggingface-datalab-to-indra-ocr",
@@ -245543,8 +245553,8 @@
       "slug": "gitoxidelabs-gitoxide",
       "platform": "github",
       "source_url": "https://github.com/GitoxideLabs/gitoxide",
-      "source_version": "3599c4e9",
-      "content_hash": "fc52ea10ef1f60e9af0653a8f8330ad011fabea70af9b9cfccfe86acd53f74f9",
+      "source_version": "aa9d8f14",
+      "content_hash": "3cd313beea2458a11915cc25e0a8c3c525e7bf3c1cf448739a0ee60b94bc6fb0",
       "dossier_path": "07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
       "promoted_rules": [
@@ -245592,6 +245602,11 @@
           "number": 9512,
           "title": "!: preserve configuration permissions during branch deletion and clone",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9832,
+          "title": "treat empty `GIT_CONFIG_COUNT` as zero",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -245599,7 +245614,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T04:48:27.026Z",
+      "verified_at": "2026-11-21T20:24:52.793Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -245641,10 +245656,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-gitoxidelabs-gitoxide-architecture-intelligence-gitoxidelabs-gitoxide-core-invar.md",
       "title": "Architecture Intelligence: GitoxideLabs/gitoxide Core Invariants",
       "repository": "GitoxideLabs/gitoxide",
-      "source_version": "3599c4e9",
-      "content_hash": "422a9e9445215150910b3c0f76a8ddae9b462a4b0afd03d7d63810587c23edbf",
+      "source_version": "aa9d8f14",
+      "content_hash": "08dd2625532cb83781c783b07a2f1d32eb084091f68d65c357d04cff4e613268",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T04:48:27.547Z"
+      "persisted_at": "2026-11-21T20:24:53.527Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-gitoxidelabs-gitoxide": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gitoxidelabs-gitoxide",
@@ -245653,10 +245668,10 @@
       "relative_path": "08_VERIFICATION/gitoxidelabs-gitoxide-verification-protocol-empirical-defect-shield-for-gitoxide.md",
       "title": "Verification Protocol: Empirical Defect Shield for GitoxideLabs/gitoxide",
       "repository": "GitoxideLabs/gitoxide",
-      "source_version": "3599c4e9",
-      "content_hash": "efab93030667b25be0a7e276514ecac1e6ea2049efe1b0da1662b158060c6edd",
+      "source_version": "aa9d8f14",
+      "content_hash": "fa65c46644d92faea4042c4f35201bb986497b68e91a157c2680a920dc899142",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T04:48:27.683Z"
+      "persisted_at": "2026-11-21T20:24:53.749Z"
     },
     "learn-github-melnixdev-seo-crawl-audit": {
       "learning_id": "learn-github-melnixdev-seo-crawl-audit",
@@ -245828,9 +245843,9 @@
       "title": "Architecture Intelligence: gitoxidelabs-gitoxide-learnings Core Invariants",
       "repository": "gitoxidelabs-gitoxide-learnings",
       "source_version": "HEAD",
-      "content_hash": "0d9699727595bf1b7174506911fc096f8bfaf3d367ebae0affa6e4f442862cb2",
+      "content_hash": "dfff3ec6cce0e85d351fe778a029ed498a3f24d94671d7ea30667ef1c4890e46",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T04:48:40.746Z"
+      "persisted_at": "2026-11-21T20:25:09.504Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-gitoxidelabs-gitoxide-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gitoxidelabs-gitoxide-learning",
@@ -245840,9 +245855,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for gitoxidelabs-gitoxide-learnings",
       "repository": "gitoxidelabs-gitoxide-learnings",
       "source_version": "HEAD",
-      "content_hash": "24cacacbd72659acddd28486bd3eac343ec92703ac647940655e6ff504d8f6e6",
+      "content_hash": "6ee8dc5904fae46b869de3fcb91bd0ce6ec81efdd4ab9731447b70d673309cc7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T04:48:40.895Z"
+      "persisted_at": "2026-11-21T20:25:09.723Z"
     },
     "domain_intelligence-technical-construction-intelligence-melnixdev-seo-crawl-audit-learnings-core-inv": {
       "item_id": "domain_intelligence-technical-construction-intelligence-melnixdev-seo-crawl-audit-learnings-core-inv",
@@ -275702,10 +275717,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-software-mansion-react-native-reanimated-technical-construction-intelligence-sof.md",
       "title": "Technical Construction Intelligence: software-mansion/react-native-reanimated Core Invariants",
       "repository": "software-mansion/react-native-reanimated",
-      "source_version": "d7d1bc3f",
-      "content_hash": "f098405a7f28560071d04eb856aedec4ac39edaeb97a471a9f4a52062240e161",
+      "source_version": "2d283998",
+      "content_hash": "9c533a9ca4d63b443dfb532213623c3c90b9587092e88d263576d821d83bf107",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T15:43:44.212Z"
+      "persisted_at": "2026-11-21T20:24:58.488Z"
     },
     "rule-8990": {
       "learning_id": "rule-8990",
@@ -275789,9 +275804,9 @@
       "title": "Technical Construction Intelligence: software-mansion-react-native-reanimated-learnings Core Invariants",
       "repository": "software-mansion-react-native-reanimated-learnings",
       "source_version": "HEAD",
-      "content_hash": "38a9a57af1c7c5187c0faa64498c20946dd3b1f13b2305a58ed26b1d8bc28bee",
+      "content_hash": "4279905f3f658f370d6708ad09eca0c05a663b90bcbe6dbfee47d3aa6325423e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T15:43:54.750Z"
+      "persisted_at": "2026-11-21T20:25:10.939Z"
     },
     "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd": {
       "learning_id": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd",
@@ -315911,6 +315926,108 @@
       "content_hash": "50ccd1dd163d9c204ab1816841bb261e4495755468571049db4676f6f95e44cf",
       "domain_letter": "H",
       "persisted_at": "2026-11-21T20:11:01.689Z"
+    },
+    "rule-9832": {
+      "learning_id": "rule-9832",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9832,
+      "title": "treat empty `GIT_CONFIG_COUNT` as zero",
+      "source_url": "https://github.com/GitoxideLabs/gitoxide",
+      "source_version": "aa9d8f14",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T20:24:52.793Z"
+    },
+    "candidate_directive-treat-empty-git_config_count-as-zero": {
+      "item_id": "candidate_directive-treat-empty-git_config_count-as-zero",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-WZT3-treat-empty-git_config_count-as-zero.md",
+      "title": "treat empty `GIT_CONFIG_COUNT` as zero",
+      "repository": "GitoxideLabs/gitoxide",
+      "source_version": "aa9d8f14",
+      "content_hash": "9e516e1e8e8e78106b4dc13b4c4f48a63e831aab436c53c396533f10f4de0c4d",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T20:24:53.326Z"
+    },
+    "rule-9833": {
+      "learning_id": "rule-9833",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9833,
+      "title": "preserve UI scheduler order",
+      "source_url": "https://github.com/software-mansion/react-native-reanimated",
+      "source_version": "2d283998",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T20:24:57.791Z"
+    },
+    "candidate_directive-preserve-ui-scheduler-order": {
+      "item_id": "candidate_directive-preserve-ui-scheduler-order",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-X3N0-preserve-ui-scheduler-order.md",
+      "title": "preserve UI scheduler order",
+      "repository": "software-mansion/react-native-reanimated",
+      "source_version": "2d283998",
+      "content_hash": "6f5898dd6de7261305f1a015ef6f335273cefdf0af8764f692a32bafe07eecfe",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T20:24:58.285Z"
+    },
+    "rule-9834": {
+      "learning_id": "rule-9834",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9834,
+      "title": "Render BOOLEAN keys as booleans when selecting a whole OPEN_STRUCT column",
+      "source_url": "https://github.com/apache/pinot",
+      "source_version": "1fa59ea0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T20:25:05.111Z"
+    },
+    "candidate_directive-render-boolean-keys-as-booleans-when-selecting-a-whole-open_struct-column": {
+      "item_id": "candidate_directive-render-boolean-keys-as-booleans-when-selecting-a-whole-open_struct-column",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-X9AZ-render-boolean-keys-as-booleans-when-selecting-a-whole-open_struct-column.md",
+      "title": "Render BOOLEAN keys as booleans when selecting a whole OPEN_STRUCT column",
+      "repository": "apache/pinot",
+      "source_version": "1fa59ea0",
+      "content_hash": "6fbac0fa2a782a9002d7d58f032cc2ae72e2c0bfc7f57bb844c679e3f700ee9c",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-21T20:25:05.633Z"
+    },
+    "candidate_directive-gix-config-treat-empty-git_config_count-as-zero": {
+      "item_id": "candidate_directive-gix-config-treat-empty-git_config_count-as-zero",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-XC4Y-gix-config-treat-empty-git_config_count-as-zero.md",
+      "title": "gix-config): treat empty `GIT_CONFIG_COUNT` as zero",
+      "repository": "gitoxidelabs-gitoxide-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1a2f5bd80779a055d11c4e1409bab8019ddb5d0395620d8de967cb547ba8cc0c",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T20:25:09.305Z"
+    },
+    "candidate_directive-worklets-preserve-ui-scheduler-order": {
+      "item_id": "candidate_directive-worklets-preserve-ui-scheduler-order",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-XD89-worklets-preserve-ui-scheduler-order.md",
+      "title": "Worklets): preserve UI scheduler order",
+      "repository": "software-mansion-react-native-reanimated-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6d794b2e6c02b3f515bb8993d99ee3b947ae3c05f5e00127744b6e9398f1c5ae",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T20:25:10.714Z"
     }
   },
   "ai-builder-brain": {

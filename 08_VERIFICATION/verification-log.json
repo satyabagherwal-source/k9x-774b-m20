@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261119-GTG6",
-    "timestamp": "2026-11-19T16:25:01.206Z",
-    "repository": "tailscale/tailscale",
-    "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "f809030f51254b31bf92b1d69806f02fbdb558ee11a64f0d237701046b4ce822",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-RDTY",
-    "timestamp": "2026-11-19T16:33:14.183Z",
-    "repository": "black-forest-labs/flux-3-image-klein",
-    "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein",
-    "contentHash": "0860393eddaa2e954ceb1cff1d305cf0a47eba93aba101284df47667eecdd767",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-RGQK",
-    "timestamp": "2026-11-19T16:33:17.948Z",
-    "repository": "oven-sh/bun",
-    "learningId": "learn-github-oven-sh-bun",
-    "contentHash": "4677864a6895e566f893c5bfbdddaef39fd2035b7d7547171fb76ce8bd462763",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-RJQM",
-    "timestamp": "2026-11-19T16:33:21.838Z",
-    "repository": "darrylmorley/whatcable",
-    "learningId": "learn-github-darrylmorley-whatcable",
-    "contentHash": "a414be723b0e7ed5dcfef6a851ff48c98c8f898d5ead3160bafe3f0c1d21c3b9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261119-RN3X",
     "timestamp": "2026-11-19T16:33:26.205Z",
     "repository": "authzed/spicedb",
@@ -7490,6 +7430,66 @@
     "repository": "volcengine/OpenViking",
     "learningId": "learn-github-volcengine-openviking",
     "contentHash": "cc047c904745f51d1536fc057b13c4b5aeb9932c16998d2f74db04acba808c9a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-WX95",
+    "timestamp": "2026-11-21T20:24:50.009Z",
+    "repository": "LiquidAI/LFM3-Omni-2B",
+    "learningId": "learn-huggingface-liquidai-lfm3-omni-2b",
+    "contentHash": "90465e2d835c37476f3cf604655d4d1d22860054d3e94df3546c311816e5ae71",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-WZLK",
+    "timestamp": "2026-11-21T20:24:53.048Z",
+    "repository": "GitoxideLabs/gitoxide",
+    "learningId": "learn-github-gitoxidelabs-gitoxide",
+    "contentHash": "3cd313beea2458a11915cc25e0a8c3c525e7bf3c1cf448739a0ee60b94bc6fb0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-X3FX",
+    "timestamp": "2026-11-21T20:24:58.029Z",
+    "repository": "software-mansion/react-native-reanimated",
+    "learningId": "learn-github-software-mansion-react-native-reanimated",
+    "contentHash": "462a4690335fb227394caf343c7c5fd05afa91e8ee88211b83811abff6439252",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-X93A",
+    "timestamp": "2026-11-21T20:25:05.351Z",
+    "repository": "apache/pinot",
+    "learningId": "learn-github-apache-pinot",
+    "contentHash": "0200bc03ade79e4add922572786686ed59484444732f9b6b42bd9501694285fd",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

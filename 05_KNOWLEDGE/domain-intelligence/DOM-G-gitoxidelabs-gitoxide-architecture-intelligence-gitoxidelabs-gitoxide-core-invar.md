@@ -4,24 +4,24 @@
 {
   "source_repository": "GitoxideLabs/gitoxide",
   "source_url": "https://github.com/GitoxideLabs/gitoxide",
-  "source_version": "3599c4e9",
+  "source_version": "aa9d8f14",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-20T04:48:27.404Z",
+  "timestamp": "2026-11-21T20:24:53.320Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-gitoxidelabs-gitoxide",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [GitoxideLabs/gitoxide](https://github.com/GitoxideLabs/gitoxide) (Revision: `3599c4e9`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T04:48:27.404Z`  
+> **Provenance**: Harvested from [GitoxideLabs/gitoxide](https://github.com/GitoxideLabs/gitoxide) (Revision: `aa9d8f14`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-21T20:24:53.320Z`  
 > **Learning ID**: `learn-github-gitoxidelabs-gitoxide`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), B (Product Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), E (Creative Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), F (Design Intelligence)
-- **Confidence Rating**: 62%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), E (Creative Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 70%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from GitoxideLabs/gitoxide:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/GitoxideLabs/gitoxide](https://github.com/GitoxideLabs/gitoxide))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T04:48:26.063Z  
+> **Harvest Timestamp**: 2026-11-21T20:24:51.763Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: A tasteful, lean, fast & safe pure Rust implementation of Git
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 12154 stars
+- **Stars / Engagement**: 12158 stars
 
 ---
 
@@ -1627,15 +1627,13 @@ where
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3218** (2026-11-19): **fix issues**
-  *Symptoms*: 
-  **Post-Mortem & Fix Analysis**:
-  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"b08357469afcedbb36914664004b9a8f029c7703","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-19T06:49:35.719459Z">2026-11-19T06:49:35.719459Z</relative-time> | `b083574` | Draft marked ready |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as rea
+- **Issue #3229** (2026-11-21): **fix: preserve the lookup marker while loading pack indices**
+  *Symptoms*: ## Motivation  A lookup can report a packed object as missing when another thread finishes loading the pack index that contains it. The pack is already on disk.  After `load_one_index()` checked the caller's marker, `load_next_index()` read the state ID again and used it as its baseline. If another thread finished loading the last index between those reads, the baseline already included that load. With no slots left, the loader reported no progress and the lookup kept its stale snapshot.  ## What this changes  `load_next_index()` now compares the slot map's generation and state ID with the caller's original marker, even if a refresh replaces the slot map during a retry. A lookup can then retry with a snapshot that includes the newly loaded index. The opportunistic load after a refresh uses the newly published slot map's own marker. A regression test checks that an exhausted slot map reports progress for a marker saved before the last load and no progress for the current marker.  ## Validation  Ran `cargo test` locally for the gitoxide super::Store change; it passed.  Fixes #3201  AI was used for assistance. 
 
-- **Issue #3217** (2026-11-18): **perf(gix-blame): cache decoded trees and commits during blame**
+- **Issue #3228** (2026-11-21): **fix(gix-merge): keep ancestor directories out of symlink conflict paths**
   *Symptoms*: 
   **Post-Mortem & Fix Analysis**:
-  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"52ca4a2b047e50dc4d68325d846c141171509a4c","has_any_findings":true,"has_unresolved_findings":true,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-18T19:12:18.664625Z">2026-11-18T19:12:18.664625Z</relative-time> | `52ca4a2` | PR opened |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Commen
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"e2c321d9dec8ba9c50b09ced36db3636449cf0b1","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-21T04:00:42.672064Z">2026-11-21T04:00:42.672064Z</relative-time> | `e2c321d` | PR opened |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Comm
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1652,731 +1650,374 @@ where
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4895baec` (2026-09-14)
-**Commit Message**: fix(gix)!: preserve configuration permissions during branch deletion and clone
-
-Straightforward, it leverages the new `config_file_mut()` to change the configuration,
-which automatically feeds the lock file with the shared permissions settings.
+### Incident Patch 1: `3304b2b0` (2026-11-20)
+**Commit Message**: fix(gix-config): treat empty `GIT_CONFIG_COUNT` as zero (#3224)
 
 <!-- agent -->
-Deleting branch configuration and adopting a cloned remote's object format
-must preserve an existing configuration file's explicit permissions, even when
-`core.sharedRepository` is enabled.
+Paperclip reported that exporting an empty `GIT_CONFIG_COUNT` worked with
+Git but stopped Gitoxide from loading configuration. Git 2.54.0 ignores
+injected pairs when the count is empty, just as it does for `0`. Git's
+`t/t1300-config.sh` also checks both cases with a pair present.
 
-Use the existing `FileTransaction` for both updates. This preserves the
-configuration mode and follows the transaction's symlink and locking behavior
-while retaining branch deletion's partial-success error reporting. Regression
-coverage checks that an explicit `0600` config stays private, matching Git.
+Skip parsing when the count is empty so that `File::from_env` returns
+`Ok(None)`. Extend the zero-count regression test to check both values
+with an injected pair. The empty case failed before this change with an
+integer parse error. Keep the existing validation of malformed counts.
 
-BREAKING CHANGE: branch deletion and clone configuration failures expose
-`FileTransaction` errors instead of separate raw lock, read, write, and commit
-errors.
-
+Assisted-by: GPT 6.2 Sol
 Assisted-by: GPT 6.1 Sol
-Co-authored-by: GPT 6.1 Sol <[REDACTED_EMAIL]>
+Co-authored-by: GPT 6.2 Sol <[REDACTED_EMAIL]>
 
-**File**: `gix/src/clone/fetch/util.rs` (modified, +5/-9)
+**File**: `gix-config/src/file/init/from_env.rs` (modified, +4/-3)
 ```diff
-@@ -50,8 +50,9 @@ pub(super) fn reinitialize_with_object_hash(repo: &mut crate::Repository, object
-     let git_dir = repo.git_dir();
-     let config_path = git_dir.join("config");
+@@ -5,7 +5,8 @@ use crate::{File, KeyRef, file, file::init};
  
--    let mut config = gix_config::File::from_path_no_includes(config_path.clone(), gix_config::Source::Local)
--        .or_raise(|| message("Failed to load repo-local git configuration before writing"))?;
-+    let mut config = repo
-+        .config_file_mut(&config_path)
-+        .or_raise(|| message("Failed to update repository configuration"))?;
-     // Mirror what `crate::create` writes at init time: only SHA-256 repositories get
-     // `repositoryformatversion = 1` along with the `objectformat` extension.
-     let is_sha256 = object_hash == gix_hash::Kind::Sha256;
-@@ -68,14 +69,9 @@ pub(super) fn reinitialize_with_object_hash(repo: &mut crate::Repository, object
-         // In a freshly initialized repository, this section exists solely to carry `objectformat`.
-         config.remove_section("extensions", None);
-     }
--    let mut lock =
--        gix_lock::File::acquire_to_update_resource(&config_path, gix_lock::acquire::Fail::Immediately, None, 0)
--            .or_raise(|| message("Failed to acquire lock to write repository configuration to disk"))?;
-     config
--        .write_to_filter(&mut lock, |section| section.meta().source == gix_config::Source::Local)
--        .or_raise(|| message("Failed to write repository configuration to disk"))?;
--    lock.commit()
--        .or_raise(|| message("Failed to commit lock after writing repository configuration to disk"))?;
-+        .commit()
-+        .or_raise(|| message("Failed to update repository configuration"))?;
+ /// Instantiation from environment variables
+ impl File {
+-    /// Generates a config from `GIT_CONFIG_*` environment variables or returns `Ok(None)` if no configuration was found.
++    /// Generates a config from `GIT_CONFIG_*` environment variables.
++    /// Returns `Ok(None)` if `GIT_CONFIG_COUNT` is unset, empty, or zero.
+     /// See [`git-config`'s documentation] for more information on the environment variables in question.
+     ///
+     /// With `options` configured, it's possible to resolve `include.path` or `includeIf.<condition>.path` directives as well.
+@@ -18,10 +19,10 @@ impl File {
+         use gix_error::{OptionExt, ResultExt, message, not_found, validation};
+         use std::env;
+         let count: usize = match env::var("GIT_CONFIG_COUNT") {
+-            Ok(v) => v
++            Ok(v) if !v.is_empty() => v
+                 .parse::<usize>()
+                 .or_raise(|| validation("GIT_CONFIG_COUNT was not a positive integer").with_input(v.into_bytes()))?,
+-            Err(_) => return Ok(None),
++            Ok(_) | Err(_) => return Ok(None),
+         };
  
-     repo.reload()
-         .or_raise(|| message("Failed to reopen the local repository after adopting the remote's object format"))?;
+         if count == 0 {
 ```
 
-**File**: `gix/src/repository/branch.rs` (modified, +9/-30)
+**File**: `gix-config/tests/config/file/init/from_env.rs` (modified, +9/-4)
 ```diff
-@@ -1,5 +1,5 @@
- use crate::Result;
--use crate::error::{ErrorExt, ResultExt, bail, message};
-+use crate::error::{ResultExt, bail, message};
- use gix_ref::{
-     Category, FullName, Target,
-     transaction::{PreviousValue, RefEdit},
-@@ -136,19 +136,10 @@ impl crate::Repository {
-             .collect();
+@@ -21,10 +21,15 @@ fn empty_without_relevant_environment() -> TestResult {
  
-         let config_path = self.common_dir().join("config");
--        let mut config_lock =
--            gix_lock::File::acquire_to_update_resource(&config_path, gix_lock::acquire::Fail::Immediately, None, 0)
--                .or_raise(|| message("Could not acquire the local configuration lock"))?;
--        let mut config = match gix_config::File::from_path_no_includes(config_path.clone(), gix_config::Source::Local) {
--            Ok(config) => Some(config),
--            Err(err) if err.is_not_found() => None,
--            Err(err) => {
--                bail!(err.and_raise(message("Could not read the local configuration")));
--            }
--        };
--        let removed_config = config
--            .as_mut()
--            .is_some_and(|config| remove_branch_config(config, &names, |_| true));
-+        let mut config = self
-+            .config_file_mut(&config_path)
-+            .or_raise(|| message("Could not open the local configuration transaction"))?;
-+        let removed_config = remove_branch_config(&mut config, &names, |_| true);
- 
-         let deleted: Vec<_> = self
-             .edit_references(edits)
-@@ -158,22 +149,10 @@ impl crate::Repository {
-             .collect();
- 
-         if removed_config {
--            let config = config.expect("configuration was present when sections were removed");
--            config
--                .write_to(&mut config_lock)
--                .or_raise(|| message("Could not write the updated local configuration"))
--                .or_raise(|| delete::CleanupError {
--                    references: names.clone(),
--                    deleted: deleted.clone(),
--                })?;
--            config_lock
--                .commit()
--                .map_err(|err| err.error)
--                .or_raise(|| message("Could not commit the updated local configuration"))
--                .or_raise(|| delete::CleanupError {
--                    references: names.clone(),
--                    deleted: deleted.clone(),
--                })?;
-+            config.commit().or_raise(|| delete::CleanupError {
-+                references: names.clone(),
-+                deleted: deleted.clone(),
-+            })?;
-             remove_branch_config(
-                 gix_parallel::OwnShared::make_mut(&mut self.config.resolved),
-                 &names,
-```
-
-**File**: `gix/tests/gix/clone.rs` (modified, +30/-8)
-```diff
-@@ -715,14 +715,21 @@ mod blocking_io {
-     #[test]
-     #[cfg(unix)]
-     fn fetch_and_checkout_honors_shared_repository_permissions() -> TestResult {
-+        for umask in [0o022, 0o077] {
-+            if gix_testtools::run_with_umask(umask)? {
-+                check_clone_permissions(umask)?;
-+            }
-+        }
-+        Ok(())
+ #[test]
+ #[serial]
+-fn empty_with_zero_count() -> TestResult {
+-    let _environment = gix_testtools::isolate_git_environment()?.set("GIT_CONFIG_COUNT", "0");
+-    let config = File::from_env(Default::default())?;
+-    assert!(config.is_none());
++fn ignore_pairs_with_zero_or_empty_count() -> TestResult {
++    let _environment = gix_testtools::isolate_git_environment()?
++        .set("GIT_CONFIG_KEY_0", "core.key")
++        .set("GIT_CONFIG_VALUE_0", "value");
++    for count in ["0", ""] {
++        let _count = gix_testtools::Env::new().set("GIT_CONFIG_COUNT", count);
++        let config = File::from_env(Default::default())?;
++        assert!(config.is_none(), "count {count:?} ignores environment pairs");
 +    }
-+
-+    #[cfg(unix)]
-+    fn check_clone_permissions(umask: u32) -> TestResult {
-         use std::{fs, os::unix::fs::PermissionsExt};
- 
--        if gix_testtools::run_in_isolated_process()? {
--            return Ok(());
--        }
-         let source_path = gix_testtools::scripted_fixture_read_only_with_args(
-             "make_shared_repository_clones.sh",
--            [format!("{:04o}", gix_testtools::umask())],
-+            [format!("{umask:04o}")],
-         )?;
-         let destinations = gix_testtools::tempfile::Builder::new()
-             .prefix("clone's destinations")
-@@ -1580,14 +1587,29 @@ mod blocking_io {
-         );
- 
-         let tmp = gix_testtools::tempfile::TempDir::new()?;
--        let (repo, out) = gix::clone::PrepareFetch::new(
-+        let mut prepare = gix::clone::PrepareFetch::new(
-             remote,
-             tmp.path(),
-             gix::create::Kind::Bare,
-             Default::default(),
--            restricted(),
--        )?
--        .fetch_only(gix::progress::Discard, &AtomicBool::default())?;
-+            restricted().config_overrides(["core.sharedRepository=group"]),
-+        )?;
-+        #[cfg(unix)]
-+        {
-+            use std::os::unix::fs::PermissionsExt;
-+            std::fs::set_permissions(tmp.path().join("config"), std::fs::Permissions::from_mode(0o600))?;
-+        }
-+        let (repo, out) = prepare.fetch_only(gix::progress::Discard, &AtomicBool::default())?;
-+
-+        #[cfg(unix)]
-+        {
-+            use std::os::unix::fs::PermissionsExt;
-+            assert_eq!(
-+                repo.git_dir().join("config").metadata()?.permissions().mode() & 0o777,
-+                0o600,
-+                "adopting the remote object format preserves the existing configuration's mode"
-+            );
-+        }
- 
-         assert_eq!(
-             repo.object_hash(),
-```
-
-**File**: `gix/tests/gix/repository/branch.rs` (modified, +31/-0)
-```diff
-@@ -11,6 +11,37 @@ fn refname(value: &str) -> FullName {
-     value.try_into().expect("test branch names are valid")
+     Ok(())
  }
  
-+#[test]
-+#[cfg(unix)]
-+fn deleting_branch_configuration_preserves_its_permissions_like_git() -> crate::Result {
-+    use std::{fs, os::unix::fs::PermissionsExt};
+```
+
+---
+
+### Incident Patch 2: `aa9d8f14` (2026-11-21)
+**Commit Message**: Merge pull request #3228 from GitoxideLabs/tree-panic
+
+fix(gix-merge): keep ancestor directories out of symlink conflict paths
+
+**File**: `gix-merge/src/tree/function/entry.rs` (modified, +2/-0)
+```diff
+@@ -161,6 +161,8 @@ pub(super) fn merge(
+     options: &Options,
+     policy: ResolutionPolicy,
+ ) -> Result<Option<Outcome>> {
++    // Directory ancestors are resolved through their children and cannot be selected as leaves.
++    let base = base.filter(|(_, mode)| mode.is_no_tree());
+     let global_side = side.to_global(outer_side);
+     let (current_mode, other_mode) = if global_side.is_swapped() {
+         (their_mode, our_mode)
+```
+
+**File**: `gix-merge/src/tree/mod.rs` (modified, +2/-2)
+```diff
+@@ -305,9 +305,9 @@ pub enum Resolution {
+         merged_blob: ContentMerge,
+     },
+     /// Both sides replaced the ancestor with conflicting symlinks, and the
+-    /// [symlink conflict policy](Options::symlink_conflicts) restored the whole ancestor entry.
++    /// [symlink conflict policy](Options::symlink_conflicts) selected the ancestor leaf.
+     /// The selected ancestor need not be a blob; its mode and object ID are preserved in the result.
+-    /// If the ancestor is absent, the entry is removed instead.
++    /// If the ancestor is absent or a directory, the symlink is removed. Directory children are merged independently.
+     /// This counts as a forced content resolution for [`Conflict::is_unresolved()`].
+     OursModifiedTheirsModifiedThenAncestor,
+     /// This is a resolution failure was forcefully turned into a usable resolution, i.e. [making a choice](ResolveWith)
+```
+
+**File**: `gix-merge/tests/merge/tree/synthetic_trees.rs` (modified, +95/-0)
+```diff
+@@ -2149,3 +2149,98 @@ fn index_plans_reject_duplicate_and_overlapping_paths() -> TestResult {
+     );
+     Ok(())
+ }
 +
-+    let (mut repo, _fixture) = crate::basic_rw_repo()?;
-+    let work_dir = repo.workdir().expect("fixture checkout").to_owned();
-+    for name in ["git-topic", "gix-topic"] {
-+        gix_testtools::git(&work_dir, &format!("branch {name}"))?;
-+        gix_testtools::git(&work_dir, &format!("config branch.{name}.description remove-me"))?;
++#[test]
++fn symlink_ancestor_resolution_does_not_relocate_the_ancestor_directory() -> TestResult {
++    use gix_index::entry::{Mode, Stage};
++    use gix_merge::tree::TreatAsUnresolved;
++
++    let repo = Repo::new()?;
++    let child_blob_id = repo.blob("binary payload 0\0\n")?;
++    let old_target_blob_id = repo.blob("binary payload 6\0\n")?;
++    let new_target_blob_id = repo.blob("binary payload 7\0\n")?;
++    let executable = EntryKind::BlobExecutable;
++    // The opposing e/d -> a rename relocates e/a/a back under a, where both sides added a symlink.
++    let base_tree_id = repo.tree_from_paths(&[
++        ("a/a/a", executable, child_blob_id),
++        ("b", executable, new_target_blob_id),
++        ("e/d", EntryKind::Link, old_target_blob_id),
++    ])?;
++    let our_tree_id = repo.tree_from_paths(&[
++        ("a", EntryKind::Link, new_target_blob_id),
++        ("e/a/a", executable, child_blob_id),
++        ("e/d", EntryKind::Link, old_target_blob_id),
++        ("e/h", executable, new_target_blob_id),
++    ])?;
++    let their_tree_id = repo.tree_from_paths(&[
++        ("a", EntryKind::Link, old_target_blob_id),
++        ("e", executable, new_target_blob_id),
++    ])?;
++    let expected_tree_id = repo.tree_from_paths(&[
++        ("a/a", executable, child_blob_id),
++        ("e", executable, new_target_blob_id),
++        ("h", executable, new_target_blob_id),
++    ])?;
++
++    let mut options = gix_merge::tree::Options {
++        rewrites: Some(gix_diff::Rewrites {
++            percentage: Some(1.0),
++            limit: 0,
++            copies: None,
++            track_empty: false,
++        }),
++        symlink_conflicts: Some(ResolveWith::Ancestor),
++        marker_size_multiplier: 3,
++        ..Default::default()
++    };
++    options.blob_merge.resolve_binary_with = Some(ResolveWith::Theirs);
++    options.blob_merge.text.diff_algorithm = imara_diff::Algorithm::Histogram;
++    for (current, other, renamed_child, other_rename) in [
++        (our_tree_id, their_tree_id, Stage::Ours, Stage::Theirs),
++        (their_tree_id, our_tree_id, Stage::Theirs, Stage::Ours),
++    ] {
++        let mut outcome = gix_merge::tree(
++            &base_tree_id,
++            &current,
++            &other,
++            gix_merge::blob::builtin_driver::text::Labels {
++                ancestor: Some("BASE".into()),
++                current: Some("OURS".into()),
++                other: Some("THEIRS".into()),
++            },
++            &repo.objects,
++            |buf| repo.objects.write_buf(gix_object::Kind::Blob, buf),
++            &mut Default::default(),
++            &mut new_diff_resource_cache(repo.root.path()),
++            &mut new_blob_merge_platform(repo.root.path(), Some(1)),
++            Default::default(),
++            options.clone(),
++        )?;
++        assert_eq!(
++            outcome.tree.write(|tree| repo.objects.write(tree))?,
++            expected_tree_id,
++            "selecting the symlink ancestor preserves the relocated child without copying its old directory to a conflict path"
++        );
++        let index = outcome
++            .index
++            .to_index(TreatAsUnresolved::git(), None, &repo.objects, Default::default())?;
++        let entries: Vec<_> = index
++            .entries()
++            .iter()
++            .map(|entry| (entry.path(&index), entry.stage(), entry.mode, entry.id))
++            .collect();
++        let mode = Mode::from(executable);
++        assert_eq!(
++            entries,
++            [
++                ("a/a".into(), Stage::Base, mode, child_blob_id),
++                ("a/a".into(), renamed_child, mode, child_blob_id),
++                ("b".into(), Stage::Base, mode, new_target_blob_id),
++                ("e".into(), other_rename, mode, new_target_blob_id),
++                ("h".into(), renamed_child, mode, new_target_blob_id),
++            ],
++            "the index retains the original rename conflict stages in either orientation"
++        );
 +    }
-+    gix_testtools::git(&work_dir, "config core.sharedRepository group")?;
-+    repo.reload()?;
-+    let config_path = repo.common_dir().join("config");
-+    fs::set_permissions(&config_path, fs::Permissions::from_mode(0o600))?;
-+    gix_testtools::git(&work_dir, "branch -D git-topic")?;
-+    let git_mode = config_path.metadata()?.permissions().mode();
-+    assert_eq!(
-+        git_mode & 0o777,
-+        0o600,
-+        "Git preserves an existing configuration's explicit mode"
-+    );
-+    repo.delete_local_branches([refname("refs/heads/gix-topic")])?;
-+    assert_eq!(
-+        config_path.metadata()?.permissions().mode(),
-+        git_mode,
-+        "branch cleanup preserves configuration permissions instead of reapplying sharing"
-+    );
 +    Ok(())
 +}
-+
- #[test]
- fn deletes_a_batch_and_all_of_its_local_config_without_inspecting_commits() -> TestResult {
-     let (mut repo, _tmp) = crate::repo_rw("make_references_repo.sh")?;
 ```
 
 ---
 
-### Incident Patch 2: `ba1557ad` (2026-09-14)
-**Commit Message**: fix(gix)!: apply sharing to loose object writes
+### Incident Patch 3: `5f2af642` (2026-11-21)
+**Commit Message**: fix(gix-merge): keep ancestor directories out of symlink conflict paths
 
-A very straight-forward wiring of shared repository permissions down to loose
-object writes.
+A tiny fix that limits a base to leafs, avoiding directories, alongside a test.
+This will also have no impact on performance.
 
 <!-- agent -->
-Shared refs are insufficient when loose objects remain private. Propagate the
-resolved repository policy through object-store initialization and each handle's
-loose-object writes, applying it before publishing objects and to newly created
-fanout directories.
+Selecting the ancestor in a symlink conflict could emit its directory at
+a unique conflict path after rename resolution had already placed the
+children. That copied directory introduced resolved paths in the tree
+that were absent from the index plan.
 
-Keep objects read-only. Runtime configuration changes and reloads affect the
-next write through the current handle without changing other handles, including
-cloned and thread-safe round trips. Cover both object hash formats and update
-the existing repository-size guard for the measured Windows layout.
+Treat a directory as an absent ancestor in leaf merges and let its
+children follow their own resolution. Recreate the reported trees and
+check the emitted tree and index stages in both merge directions.
 
-BREAKING CHANGE: dynamic and loose object-store initialization options gain
-`shared_repository_permissions`. Standalone callers can retain umask behavior
-with `0`.
+Assisted-by: GPT 6.2 Sol
+Co-authored-by: GPT 6.2 Sol <[REDACTED_EMAIL]>
 
-Assisted-by: GPT 6.1 Sol
-Co-authored-by: GPT 6.1 Sol <[REDACTED_EMAIL]>
-
-**File**: `gix-odb/src/lib.rs` (modified, +2/-0)
+**File**: `gix-merge/src/tree/function/entry.rs` (modified, +2/-0)
 ```diff
-@@ -182,6 +182,8 @@ pub struct Store {
-     alloc_limit_bytes: Option<usize>,
-     /// The compression level to use when writing loose objects.
-     loose_compression: gix_zlib::Compression,
-+    /// The initial sharing policy for newly created handles.
-+    shared_repository_permissions: i32,
+@@ -161,6 +161,8 @@ pub(super) fn merge(
+     options: &Options,
+     policy: ResolutionPolicy,
+ ) -> Result<Option<Outcome>> {
++    // Directory ancestors are resolved through their children and cannot be selected as leaves.
++    let base = base.filter(|(_, mode)| mode.is_no_tree());
+     let global_side = side.to_global(outer_side);
+     let (current_mode, other_mode) = if global_side.is_swapped() {
+         (their_mode, our_mode)
+```
+
+**File**: `gix-merge/src/tree/mod.rs` (modified, +2/-2)
+```diff
+@@ -305,9 +305,9 @@ pub enum Resolution {
+         merged_blob: ContentMerge,
+     },
+     /// Both sides replaced the ancestor with conflicting symlinks, and the
+-    /// [symlink conflict policy](Options::symlink_conflicts) restored the whole ancestor entry.
++    /// [symlink conflict policy](Options::symlink_conflicts) selected the ancestor leaf.
+     /// The selected ancestor need not be a blob; its mode and object ID are preserved in the result.
+-    /// If the ancestor is absent, the entry is removed instead.
++    /// If the ancestor is absent or a directory, the symlink is removed. Directory children are merged independently.
+     /// This counts as a forced content resolution for [`Conflict::is_unresolved()`].
+     OursModifiedTheirsModifiedThenAncestor,
+     /// This is a resolution failure was forcefully turned into a usable resolution, i.e. [making a choice](ResolveWith)
+```
+
+**File**: `gix-merge/tests/merge/tree/synthetic_trees.rs` (modified, +95/-0)
+```diff
+@@ -2149,3 +2149,98 @@ fn index_plans_reject_duplicate_and_overlapping_paths() -> TestResult {
+     );
+     Ok(())
  }
- 
- /// Create a new cached handle to the object store with support for additional options.
-```
-
-**File**: `gix-odb/src/store_impls/dynamic/handle.rs` (modified, +6/-0)
-```diff
-@@ -267,6 +267,7 @@ impl super::Store {
-             refresh: RefreshMode::default(),
-             ignore_replacements: false,
-             loose_compression: self.loose_compression,
-+            shared_repository_permissions: self.shared_repository_permissions,
-             token: Some(token),
-             inflate: RefCell::new(Default::default()),
-             snapshot: RefCell::new(self.collect_snapshot()),
-@@ -285,6 +286,7 @@ impl super::Store {
-             refresh: Default::default(),
-             ignore_replacements: false,
-             loose_compression: self.loose_compression,
-+            shared_repository_permissions: self.shared_repository_permissions,
-             token: Some(token),
-             inflate: RefCell::new(Default::default()),
-             snapshot: RefCell::new(self.collect_snapshot()),
-@@ -375,6 +377,7 @@ impl TryFrom<&super::Store> for super::Store {
-                 alloc_limit_bytes: s.alloc_limit_bytes,
-                 current_dir: s.current_dir.clone().into(),
-                 loose_compression: s.loose_compression,
-+                shared_repository_permissions: s.shared_repository_permissions,
-             },
-         )
-     }
-@@ -389,6 +392,7 @@ impl super::Handle<Rc<super::Store>> {
-             max_recursion_depth,
-             ignore_replacements,
-             loose_compression,
-+            shared_repository_permissions,
-             token,
-             snapshot: _,
-             inflate: _,
-@@ -400,6 +404,7 @@ impl super::Handle<Rc<super::Store>> {
-         cache.ignore_replacements = *ignore_replacements;
-         cache.max_recursion_depth = *max_recursion_depth;
-         cache.loose_compression = *loose_compression;
-+        cache.shared_repository_permissions = *shared_repository_permissions;
-         if matches!(token.as_ref(), Some(Mode::KeepDeletedPacksAvailable)) {
-             cache.prevent_pack_unload();
-         }
-@@ -424,6 +429,7 @@ where
-             refresh: self.refresh,
-             ignore_replacements: self.ignore_replacements,
-             loose_compression: self.loose_compression,
-+            shared_repository_permissions: self.shared_repository_permissions,
-             token: {
-                 let token = self.store.register_handle();
-                 match self.token.as_ref().expect("token is always set here ") {
-```
-
-**File**: `gix-odb/src/store_impls/dynamic/init.rs` (modified, +7/-0)
-```diff
-@@ -23,6 +23,10 @@ pub struct Options {
-     /// Defaults to [`Compression::BEST_SPEED`](gix_zlib::Compression::BEST_SPEED), which is
-     /// also what `git` uses unless configured otherwise with `core.looseCompression` or `core.compression`.
-     pub loose_compression: gix_zlib::Compression,
-+    /// The parsed `core.sharedRepository` policy for loose objects written by new handles.
-+    /// Defaults to `0`, leaving permissions to the process umask.
-+    /// See [`gix_fs::adjust_shared_repository_permissions()`] for the signed mode encoding.
-+    pub shared_repository_permissions: i32,
- }
- 
- impl Default for Options {
-@@ -33,6 +37,7 @@ impl Default for Options {
-             alloc_limit_bytes: None,
-             current_dir: None,
-             loose_compression: gix_zlib::Compression::BEST_SPEED,
-+            shared_repository_permissions: 0,
-         }
-     }
- }
-@@ -85,6 +90,7 @@ impl Store {
-             alloc_limit_bytes,
-             current_dir,
-             loose_compression,
-+            shared_repository_permissions,
-         }: Options,
-     ) -> std::io::Result<Self> {
-         let _span = gix_trace::detail!("gix_odb::Store::at()");
-@@ -144,6 +150,7 @@ impl Store {
-             object_hash,
-             alloc_limit_bytes,
-             loose_compression,
-+            shared_repository_permissions,
-             num_handles_stable: Default::default(),
-             num_handles_unstable: Default::default(),
-             num_disk_state_consolidation: Default::default(),
-```
-
-**File**: `gix-odb/src/store_impls/dynamic/load_index.rs` (modified, +1/-0)
-```diff
-@@ -244,6 +244,7 @@ impl super::Store {
-                             crate::loose::Options {
-                                 alloc_limit_bytes: self.alloc_limit_bytes,
-                                 compression: loose_compression,
-+                                shared_repository_permissions: self.shared_repository_permissions,
-                             },
-                         )
-                     })
-```
-
-**File**: `gix-odb/src/store_impls/dynamic/mod.rs` (modified, +6/-0)
-```diff
-@@ -35,6 +35,12 @@ where
-     /// Changing this value does not affect loose object databases that are already open or change the value in other handles.
-     pub loose_compression: gix_zlib::Compression,
- 
-+    /// The parsed `core.sharedRepository` policy applied when this handle writes loose objects.
-+    ///
-+    /// Changes take effect on the next write, including already-open loose databases, without affecting other handles.
-+    /// See [`gix_fs::adjust_shared_repository_permissions()`] for the signed mode encoding.
-+    pub shared_repository_permissions: i32,
 +
-     pub(crate) token: Option<handle::Mode>,
-     snapshot: RefCell<load_index::Snapshot>,
-     inflate: RefCell<gix_zlib::Inflate>,
-```
-
-**File**: `gix-odb/src/store_impls/dynamic/write.rs` (modified, +26/-6)
-```diff
-@@ -15,44 +15,64 @@ where
-     fn write_stream(&self, kind: Kind, size: u64, from: &mut dyn Read) -> Result<ObjectId> {
-         let mut snapshot = self.snapshot.borrow_mut();
-         match snapshot.loose_dbs.first() {
--            Some(ldb) => ldb.write_stream(kind, size, from),
-+            Some(ldb) => ldb.write_stream_with_permissions(kind, size, from, self.shared_repository_permissions),
-             None => {
-                 let new_snapshot = self
-                     .store
-                     .load_one_index(self.index_ctx(snapshot.marker))?
-                     .expect("there is always at least one ODB, and this code runs only once for initialization");
-                 *snapshot = new_snapshot;
--                snapshot.loose_dbs[0].write_stream(kind, size, from)
-+                snapshot.loose_dbs[0].write_stream_with_permissions(
-+                    kind,
-+                    size,
-+                    from,
-+                    self.shared_repository_permissions,
-+                )
-             }
-         }
-     }
- 
-     fn write_buf_with_known_id(&self, kind: Kind, from: &[u8], id: ObjectId) -> Result<ObjectId> {
-         let mut snapshot = self.snapshot.borrow_mut();
-         match snapshot.loose_dbs.first() {
--            Some(ldb) => ldb.write_buf_with_known_id(kind, from, id),
-+            Some(ldb) => {
-+                ldb.write_buf_with_known_id_and_permissions(kind, from, id, self.shared_repository_permissions)
-+            }
-             None => {
-                 let new_snapshot = self
-                     .store
-                     .load_one_index(self.index_ctx(snapshot.marker))?
-                     .expect("there is always at least one ODB, and this code runs only once for initialization");
-                 *snapshot = new_snapshot;
--                snapshot.loose_dbs[0].write_buf_with_known_id(kind, from, id)
-+                snapshot.loose_dbs[0].write_buf_with_known_id_and_permissions(
-+                    kind,
-+                    from,
-+                    id,
-+                    self.shared_repository_permissions,
-+                )
-             }
-         }
-     }
- 
-     fn write_stream_with_known_id(&self, kind: Kind, size: u64, from: &mut dyn Read, id: ObjectId) -> Result<ObjectId> {
-         let mut snapshot = self.snapshot.borrow_mut();
-         match snapshot.loose_dbs.first() {
--            Some(ldb) => ldb.write_stream_with_known_id(kind, size, from, id),
-+            Some(ldb) => {
-+                ldb.write_stream_with_known_id_and_permissions(kind, size, from, id, self.shared_repository_permissions)
-+            }
-             None => {
-                 let new_snapshot = self
-                     .store
-                     .load_one_index(self.index_ctx(snapshot.marker))?
-                     .expect("there is always at least one ODB, and this code runs only once for initialization");
-                 *snapshot = new_snapshot;
--                snapshot.loose_dbs[0].write_stream_with_known_id(kind, size, from, id)
-+                snapshot.loose_dbs[0].write_stream_with_known_id_and_permissions(
-+                    kind,
-+                    size,
-+                    from,
-+                    id,
-+                    self.shared_repository_permissions,
-+                )
-             }
-         }
-     }
-```
-
-**File**: `gix-odb/src/store_impls/loose/mod.rs` (modified, +9/-0)
-```diff
-@@ -15,13 +15,19 @@ pub struct Options {
-     /// Git uses [`Compression::BEST_SPEED`](gix_zlib::Compression::BEST_SPEED) unless configured otherwise with
-     /// `core.looseCompression` or `core.compression`.
-     pub compression: gix_zlib::Compression,
-+    /// The parsed `core.sharedRepository` policy for new loose objects and fanout directories.
-+    ///
-+    /// Defaults to `0`, leaving permissions to the process umask. Objects remain read-only.
-+    /// See [`gix_fs::adjust_shared_repository_permissions()`] for the signed mode encoding.
-+    pub shared_repository_permissions: i32,
- }
- 
- impl Default for Options {
-     fn default() -> Self {
-         Options {
-             alloc_limit_bytes: None,
-             compression: gix_zlib::Compression::BEST_SPEED,
-+            shared_repository_permissions: 0,
-         }
-     }
- }
-@@ -37,6 +43,7 @@ pub struct Store {
-     pub(crate) alloc_limit_bytes: Option<usize>,
-     /// The compression level to use when writing loose objects.
-     pub(crate) compression: gix_zlib::Compression,
-+    pub(crate) shared_repository_permissions: i32,
- }
- 
- /// Initialization
-@@ -62,12 +69,14 @@ impl Store {
-         let Options {
-             alloc_limit_bytes,
-             compression,
-+            shared_repository_permissions,
-         } = options;
-         Store {
-             path: objects_directory.into(),
-             object_hash,
-             alloc_limit_bytes,
-             compression,
-+            shared_repository_permissions,
-         }
-     }
- 
-```
-
-**File**: `gix-odb/src/store_impls/loose/write.rs` (modified, +51/-17)
-```diff
-@@ -22,7 +22,7 @@ impl gix_object::Write for Store {
-             .or_raise(|| write_header_error(&self.path))?;
-         object.write_to(&mut to).or_raise(|| stream_data_error(&self.path))?;
-         to.flush().or_error()?;
--        self.finalize_object(to)
-+        self.finalize_object(to, self.shared_repository_permissions)
-     }
- 
-     /// Write the given buffer in `from` to disk in one syscall at best.
-@@ -37,7 +37,7 @@ impl gix_object::Write for Store {
- 
-         to.write_all(from).or_raise(|| stream_data_error(&self.path))?;
-         to.flush().or_error()?;
--        self.finalize_object(to)
-+        self.finalize_object(to, self.shared_repository_permissions)
-     }
- 
-     /// Write failures include [metadata](gix_error::Error::metadata()) `path` (native path), the temporary object
-@@ -47,52 +47,80 @@ impl gix_object::Write for Store {
-         kind: gix_object::Kind,
-         from: &[u8],
-         id: gix_hash::ObjectId,
-+    ) -> Result<gix_hash::ObjectId> {
-+        self.write_buf_with_known_id_and_permissions(kind, from, id, self.shared_repository_permissions)
-+    }
++#[test]
++fn symlink_ancestor_resolution_does_not_relocate_the_ancestor_directory() -> TestResult {
++    use gix_index::entry::{Mode, Stage};
++    use gix_merge::tree::TreatAsUnresolved;
 +
-+    fn write_stream(&self, kind: gix_object::Kind, size: u64, from: &mut dyn io::Read) -> Result<gix_hash::ObjectId> {
-+        self.write_stream_with_permissions(kind, size, from, self.shared_repository_permissions)
-+    }
++    let repo = Repo::new()?;
++    let child_blob_id = repo.blob("binary payload 0\0\n")?;
++    let old_target_blob_id = repo.blob("binary payload 6\0\n")?;
++    let new_target_blob_id = repo.blob("binary payload 7\0\n")?;
++    let executable = EntryKind::BlobExecutable;
++    // The opposing e/d -> a rename relocates e/a/a back under a, where both sides added a symlink.
++    let base_tree_id = repo.tree_from_paths(&[
++        ("a/a/a", executable, child_blob_id),
++        ("b", executable, new_target_blob_id),
++        ("e/d", EntryKind::Link, old_target_blob_id),
++    ])?;
++    let our_tree_id = repo.tree_from_paths(&[
++        ("a", EntryKind::Link, new_target_blob_id),
++        ("e/a/a", executable, child_blob_id),
++        ("e/d", EntryKind::Link, old_target_blob_id),
++        ("e/h", executable, new_target_blob_id),
++    ])?;
++    let their_tree_id = repo.tree_from_paths(&[
++        ("a", EntryKind::Link, old_target_blob_id),
++        ("e", executable, new_target_blob_id),
++    ])?;
++    let expected_tree_id = repo.tree_from_paths(&[
++        ("a/a", executable, child_blob_id),
++        ("e", executable, new_target_blob_id),
++        ("h", executable, new_target_blob_id),
++    ])?;
 +
-+    fn write_stream_with_known_id(
-+        &self,
-+        kind: gix_object::Kind,
-+        size: u64,
-+        from: &mut dyn io::Read,
-+        id: gix_hash::ObjectId,
-+    ) -> Result<gix_hash::ObjectId> {
-+        self.write_stream_with_known_id_and_permissions(kind, size, from, id, self.shared_repository_permissions)
++    let mut options = gix_merge::tree::Options {
++        rewrites: Some(gix_diff::Rewrites {
++            percentage: Some(1.0),
++            limit: 0,
++            copies: None,
++            track_empty: false,
++        }),
++        symlink_conflicts: Some(ResolveWith::Ancestor),
++        marker_size_multiplier: 3,
++        ..Default::default()
++    };
++    options.blob_merge.resolve_binary_with = Some(ResolveWith::Theirs);
++    options.blob_merge.text.diff_algorithm = imara_diff::Algorithm::Histogram;
++    for (current, other, renamed_child, other_rename) in [
++        (our_tree_id, their_tree_id, Stage::Ours, Stage::Theirs),
++        (their_tree_id, our_tree_id, Stage::Theirs, Stage::Ours),
++    ] {
++        let mut outcome = gix_merge::tree(
++            &base_tree_id,
++            &current,
++            &other,
++            gix_merge::blob::builtin_driver::text::Labels {
++                ancestor: Some("BASE".into()),
++                current: Some("OURS".into()),
++                other: Some("THEIRS".into()),
++            },
++            &repo.objects,
++            |buf| repo.objects.write_buf(gix_object::Kind::Blob, buf),
++            &mut Default::default(),
++            &mut new_diff_resource_cache(repo.root.path()),
++            &mut new_blob_merge_platform(repo.root.path(), Some(1)),
++            Default::default(),
++            options.clone(),
++        )?;
++        assert_eq!(
++            outcome.tree.write(|tree| repo.objects.write(tree))?,
++            expected_tree_id,
++            "selecting the symlink ancestor preserves the relocated child without copying its old directory to a conflict path"
++        );
++        let index = outcome
++            .index
++            .to_index(TreatAsUnresolved::git(), None, &repo.objects, Default::default())?;
++        let entries: Vec<_> = index
++            .entries()
++            .iter()
++            .map(|entry| (entry.path(&index), entry.stage(), entry.mode, entry.id))
++            .collect();
++        let mode = Mode::from(executable);
++        assert_eq!(
++            entries,
++            [
++                ("a/a".into(), Stage::Base, mode, child_blob_id),
++                ("a/a".into(), renamed_child, mode, child_blob_id),
++                ("b".into(), Stage::Base, mode, new_target_blob_id),
++                ("e".into(), other_rename, mode, new_target_blob_id),
++                ("h".into(), renamed_child, mode, new_target_blob_id),
++            ],
++            "the index retains the original rename conflict stages in either orientation"
++        );
 +    }
++    Ok(())
 +}
-+
-+impl Store {
-+    pub(crate) fn write_buf_with_known_id_and_permissions(
-+        &self,
-+        kind: gix_object::Kind,
-+        from: &[u8],
-+        id: gix_hash::ObjectId,
-+        shared_repository_permissions: i32,
-     ) -> Result<gix_hash::ObjectId> {
-         let mut to = self.compressed_tempfile()?;
-         to.write_all(&gix_object::encode::loose_header(kind, from.len() as u64))
-             .or_raise(|| write_header_error(&self.path))?;
- 
-         to.write_all(from).or_raise(|| stream_data_error(&self.path))?;
-         to.flush().or_error()?;
--        self.finalize_object_at(id, to)
-+        self.finalize_object_at(id, to, shared_repository_permissions)
-     }
- 
-     /// Write the given stream in `from` to disk with at least one syscall.
-     ///
-     /// This will cost at least 4 IO operations.
-     /// Write failures include [metadata](gix_error::Error::metadata()) `path` (native path), the temporary object
-     /// directory.
--    fn write_stream(
-+    pub(crate) fn write_stream_with_permissions(
-         &self,
-         kind: gix_object::Kind,
-         size: u64,
-         mut from: &mut dyn io::Read,
-+        shared_repository_permissions: i32,
-     ) -> Result<gix_hash::ObjectId> {
-         let mut to = self.dest()?;
-         to.write_all(&gix_object::encode::loose_header(kind, size))
-             .or_raise(|| write_header_error(&self.path))?;
- 
-         io::copy(&mut from, &mut to).or_raise(|| stream_data_error(&self.path))?;
-         to.flush().or_error()?;
--        self.finalize_object(to)
-+        self.finalize_object(to, shared_repository_permissions)
-     }
- 
-     /// Write failures include [metadata](gix_error::Error::metadata()) `path` (native path), the temporary object
-     /// directory.
--    fn write_stream_with_known_id(
-+    pub(crate) fn write_stream_with_known_id_and_permissions(
-         &self,
-         kind: gix_object::Kind,
-         size: u64,
-         mut from: &mut dyn io::Read,
-         id: gix_hash::ObjectId,
-+        shared_repository_permissions: i32,
-     ) -> Result<gix_hash::ObjectId> {
-         let mut to = self.compressed_tempfile()?;
-         to.write_all(&gix_object::encode::loose_header(kind, size))
-             .or_raise(|| write_header_error(&self.path))?;
- 
-         io::copy(&mut from, &mut to).or_raise(|| stream_data_error(&self.path))?;
-         to.flush().or_error()?;
--        self.finalize_object_at(id, to)
-+        self.finalize_object_at(id, to, shared_repository_permissions)
-     }
- }
- 
-@@ -139,31 +167,37 @@ impl Store {
-     fn finalize_object(
-         &self,
-         gix_hash::io::Write { hash, inner: file }: gix_hash::io::Write<CompressedTempfile>,
-+        shared_repository_permissions: i32,
-     ) -> Result<gix_hash::ObjectId> {
-         let id = hash
-             .try_finalize()
-             .or_raise(|| Message::new("Could not hash temporary object file").with("path", self.path.as_path()))?;
--        self.finalize_object_at(id, file)
-+        self.finalize_object_at(id, file, shared_repository_permissions)
-     }
- 
-     /// Publication failures include [metadata](gix_error::Error::metadata()) `path` (native path), the object directory
-     /// or destination file.
--    fn finalize_object_at(&self, id: gix_hash::ObjectId, file: CompressedTempfile) -> Result<gix_hash::ObjectId> {
-+    fn finalize_object_at(
-
-```
-
----
-
-### Incident Patch 3: `7ee1a5ee` (2026-09-14)
-**Commit Message**: fix(gitoxide-core): apply repository sharing to MIDX output
-
-<!-- agent -->
-A multi-pack-index written into the selected repository must honor that
-repository's sharing policy. Leaving it at the process umask can make an
-otherwise shared object database inaccessible to other readers.
-
-Resolve sharing for the default MIDX destination only when the selected
-repository owns that path, and pass the policy into its output lock. Explicit
-standalone destinations retain process-umask behavior. Extend the CLI journey
-coverage for repository-owned and standalone output.
-
-Assisted-by: GPT 6.1 Sol
-Co-authored-by: GPT 6.1 Sol <[REDACTED_EMAIL]>
-
-**File**: `gitoxide-core/src/pack/multi_index.rs` (modified, +2/-1)
-```diff
-@@ -25,12 +25,13 @@ pub fn create(
-     mut progress: impl NestedProgress + 'static,
-     should_interrupt: &AtomicBool,
-     object_hash: gix::hash::Kind,
-+    shared_repository_permissions: i32,
- ) -> Result<()> {
-     let mut out = BufWriter::new(gix::lock::File::acquire_to_update_resource(
-         output_path,
-         gix::lock::acquire::Fail::Immediately,
-         None,
--        0,
-+        shared_repository_permissions,
-     )?);
-     gix::odb::pack::multi_index::write_from_index_paths(
-         index_paths,
-```
-
-**File**: `src/plumbing/main.rs` (modified, +19/-0)
-```diff
-@@ -1011,12 +1011,31 @@ pub fn main() -> Result<()> {
-                             verbose,
-                             core::pack::multi_index::PROGRESS_RANGE,
-                             move |progress, _out, _err| {
-+                                let repo = (multi_index_path
-+                                    == std::path::Path::new(".git/objects/pack/multi-pack-index"))
-+                                .then(|| repository(Mode::Lenient));
-+                                let shared_repository_permissions = match repo {
-+                                    Some(Ok(repo)) => {
-+                                        let repository_index =
-+                                            repo.objects.store_ref().path().join("pack/multi-pack-index");
-+                                        if gix::path::realpath(&multi_index_path)?
-+                                            == gix::path::realpath(repository_index)?
-+                                        {
-+                                            repo.refs.shared_repository_permissions
-+                                        } else {
-+                                            0
-+                                        }
-+                                    }
-+                                    Some(Err(err)) if !err.is_not_found() => return Err(err),
-+                                    _ => 0,
-+                                };
-                                 core::pack::multi_index::create(
-                                     index_paths,
-                                     multi_index_path,
-                                     progress,
-                                     &should_interrupt,
-                                     object_hash,
-+                                    shared_repository_permissions,
-                                 )
-                             },
-                         ),
-```
-
-**File**: `src/plumbing/options/free.rs` (modified, +3/-0)
-```diff
-@@ -336,6 +336,9 @@ pub mod pack {
-         #[derive(Debug, clap::Parser)]
-         pub struct Platform {
-             /// The path to the index file.
-+            ///
-+            /// Creating the default path uses the selected repository's sharing configuration when
-+            /// that repository owns the destination. Other output paths use the process umask.
-             #[clap(short = 'i', long, default_value = ".git/objects/pack/multi-pack-index")]
-             pub multi_index_path: PathBuf,
- 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3218** (2026-11-19): fix issues (@Byron)
-- **PR #3217** (closed): perf(gix-blame): cache decoded trees and commits during blame (@vikram-experiments)
-- **PR #3216** (2026-11-18): Update libz-sys to resolve the CI advisory failure (@Byron)
-- **PR #3215** (closed): `ein tool diff` - structural diffing experiment (@Byron)
-- **PR #3214** (2026-11-17): fix(gix-merge): preserve explicit renames blocked by directory relocation (@Byron)
-- **PR #3211** (2026-11-16): change(gix)!: upgrade workspace dependencies and require Rust 1.95 (@Byron)
+- **PR #3229** (closed): fix: preserve the lookup marker while loading pack indices (@mvanhorn)
+- **PR #3228** (2026-11-21): fix(gix-merge): keep ancestor directories out of symlink conflict paths (@Byron)
+- **PR #3226** (2026-11-20): fix(gix-config): treat empty `GIT_CONFIG_COUNT` as zero (@Byron)
+- **PR #3222** (closed): fix(gix-transport): honour `http.proxy` in the blocking reqwest backend (@akshaytheflash)
+- **PR #3221** (2026-11-20): Upgrade `faster-hex` to 2.0 in `gix-hash` and `gix-packetline` (@zhangsoledad)
+- **PR #3220** (2026-11-20): Add `--repo-trust` to `gix` (@Byron)
 
 ---
 
@@ -2396,43 +2037,36 @@ Co-authored-by: GPT 6.1 Sol <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. gix)!: preserve configuration permissions during branch deletion and clone
+## X. gix-config): treat empty `GIT_CONFIG_COUNT` as zero
 
 **RULE**:
-When implementing operations in `gix/src/clone/fetch/util.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GitoxideLabs/gitoxide. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `gix-config/src/file/init/from_env.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GitoxideLabs/gitoxide. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4895baec`: gix)!: preserve configuration permissions during branch deletion and clone. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3304b2b0`: gix-config): treat empty `GIT_CONFIG_COUNT` as zero. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `gix/src/clone/fetch/util.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `gix-config/src/file/init/from_env.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    let mut config = repo
-        .config_file_mut(&config_path)
-        .or_raise(|| message("Failed to update repository configuration"))?;
-        .commit()
-        .or_raise(|| message("Failed to update repository configuration"))?;
+    /// Generates a config from `GIT_CONFIG_*` environment variables.
+    /// Returns `Ok(None)` if `GIT_CONFIG_COUNT` is unset, empty, or zero.
+            Ok(v) if !v.is_empty() => v
+            Ok(_) | Err(_) => return Ok(None),
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    let mut config = gix_config::File::from_path_no_includes(config_path.clone(), gix_config::Source::Local)
-        .or_raise(|| message("Failed to load repo-local git configuration before writing"))?;
-    let mut lock =
-        gix_lock::File::acquire_to_update_resource(&config_path, gix_lock::acquire::Fail::Immediately, None, 0)
-            .or_raise(|| message("Failed to acquire lock to write repository configuration to disk"))?;
-        .write_to_filter(&mut lock, |section| section.meta().source == gix_config::Source::Local)
-        .or_raise(|| message("Failed to write repository configuration to disk"))?;
-    lock.commit()
-        .or_raise(|| message("Failed to commit lock after writing repository configuration to disk"))?;
+    /// Generates a config from `GIT_CONFIG_*` environment variables or returns `Ok(None)` if no configuration was found.
+            Ok(v) => v
+            Err(_) => return Ok(None),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4895baec` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3304b2b0` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

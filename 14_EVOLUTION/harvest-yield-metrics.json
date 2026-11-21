@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T20:10:56.170Z",
-  "total_cycles_completed": 11311,
-  "total_learnings_persisted": 11311,
-  "total_rules_promoted": 10639,
+  "last_updated": "2026-11-21T20:25:05.362Z",
+  "total_cycles_completed": 11315,
+  "total_learnings_persisted": 11315,
+  "total_rules_promoted": 10642,
   "history": [
-    {
-      "timestamp": "2026-11-21T00:24:38.687Z",
-      "repository": "TanStack/router",
-      "learningId": "learn-github-tanstack-router",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T00:24:47.781Z",
-      "repository": "cilium/cilium",
-      "learningId": "learn-github-cilium-cilium",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T00:32:38.290Z",
-      "repository": "TanStack/query",
-      "learningId": "learn-github-tanstack-query",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T00:32:45.839Z",
-      "repository": "projectdiscovery/nuclei",
-      "learningId": "learn-github-projectdiscovery-nuclei",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T00:43:44.270Z",
       "repository": "bahdotsh/wrkflw",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-21T20:10:56.170Z",
       "repository": "volcengine/OpenViking",
       "learningId": "learn-github-volcengine-openviking",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T20:24:50.020Z",
+      "repository": "LiquidAI/LFM3-Omni-2B",
+      "learningId": "learn-huggingface-liquidai-lfm3-omni-2b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T20:24:53.058Z",
+      "repository": "GitoxideLabs/gitoxide",
+      "learningId": "learn-github-gitoxidelabs-gitoxide",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T20:24:58.040Z",
+      "repository": "software-mansion/react-native-reanimated",
+      "learningId": "learn-github-software-mansion-react-native-reanimated",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T20:25:05.362Z",
+      "repository": "apache/pinot",
+      "learningId": "learn-github-apache-pinot",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

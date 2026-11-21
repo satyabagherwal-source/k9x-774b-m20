@@ -3803,10 +3803,10 @@
     "repository": "software-mansion/react-native-reanimated",
     "platform": "github",
     "sourceUrl": "https://github.com/software-mansion/react-native-reanimated",
-    "sourceVersion": "8ec64786",
+    "sourceVersion": "2d283998",
     "license": "MIT",
-    "contentHash": "874993902dd0e58e571ace67862012cb443caf4cbe33171ee601f2a12a8f10c7",
-    "lastHarvestedAt": "2026-11-18T15:22:16.759Z",
+    "contentHash": "462a4690335fb227394caf343c7c5fd05afa91e8ee88211b83811abff6439252",
+    "lastHarvestedAt": "2026-11-21T20:24:58.034Z",
     "learningId": "learn-github-software-mansion-react-native-reanimated"
   },
   "liftbridge-io-liftbridge": {
@@ -4043,10 +4043,10 @@
     "repository": "GitoxideLabs/gitoxide",
     "platform": "github",
     "sourceUrl": "https://github.com/GitoxideLabs/gitoxide",
-    "sourceVersion": "3599c4e9",
+    "sourceVersion": "aa9d8f14",
     "license": "Apache-2.0",
-    "contentHash": "fc52ea10ef1f60e9af0653a8f8330ad011fabea70af9b9cfccfe86acd53f74f9",
-    "lastHarvestedAt": "2026-11-20T04:48:27.214Z",
+    "contentHash": "3cd313beea2458a11915cc25e0a8c3c525e7bf3c1cf448739a0ee60b94bc6fb0",
+    "lastHarvestedAt": "2026-11-21T20:24:53.052Z",
     "learningId": "learn-github-gitoxidelabs-gitoxide"
   },
   "devhubapp-devhub": {
@@ -11435,8 +11435,8 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/LFM3-Omni-2B",
     "sourceVersion": "hf-liquidai-lfm3-omni-2b",
     "license": "Open-Source",
-    "contentHash": "e906a90dfd1747e119601f80ef95b18d332d5136244486fb663d490bd0693ef0",
-    "lastHarvestedAt": "2026-11-15T06:18:10.239Z",
+    "contentHash": "90465e2d835c37476f3cf604655d4d1d22860054d3e94df3546c311816e5ae71",
+    "lastHarvestedAt": "2026-11-21T20:24:50.014Z",
     "learningId": "learn-huggingface-liquidai-lfm3-omni-2b"
   },
   "fabio-rovai-open-ontologies": {
@@ -11963,10 +11963,10 @@
     "repository": "apache/pinot",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/pinot",
-    "sourceVersion": "01004140",
+    "sourceVersion": "1fa59ea0",
     "license": "Apache-2.0",
-    "contentHash": "c815bda94e20452ad60e616ab4777d8bc88cd8bff64dad8e94a92a5fe7579a3b",
-    "lastHarvestedAt": "2026-11-20T15:15:23.113Z",
+    "contentHash": "0200bc03ade79e4add922572786686ed59484444732f9b6b42bd9501694285fd",
+    "lastHarvestedAt": "2026-11-21T20:25:05.355Z",
     "learningId": "learn-github-apache-pinot"
   },
   "n1neman-sapper-v2": {

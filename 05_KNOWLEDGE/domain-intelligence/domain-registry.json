@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T20:11:01.893Z",
+  "last_updated": "2026-11-21T20:25:10.939Z",
   "total_records": 2275,
   "domains": {
     "A": {
@@ -17070,8 +17070,8 @@
       "title": "Content & Information Intelligence: apache/pinot Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-apache-pinot-content-information-intelligence-apache-pinot-core-invariants.md",
       "repository": "apache/pinot",
-      "content_hash": "cb9ffa57a61a56847fc286571f55fbbce82641db0d56b9b3eb95eff027c17c20",
-      "created_at": "2026-11-20T15:15:23.466Z"
+      "content_hash": "de6046d800944347d517ff8592eb4be79cf1c4451b222c3ac2c40f4964a59a87",
+      "created_at": "2026-11-21T20:25:05.832Z"
     },
     "domain_intelligence-architecture-intelligence-astral-sh-uv-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-astral-sh-uv-learnings-core-invariants",
@@ -20182,8 +20182,8 @@
       "title": "Research & Knowledge Intelligence: LiquidAI/LFM3-Omni-2B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liquidai-lfm3-omni-2b-research-knowledge-intelligence-liquidai-lfm3-omni-2b-c.md",
       "repository": "LiquidAI/LFM3-Omni-2B",
-      "content_hash": "0df4777aacc98df35dd024beaa98cd6b11329ca6a60e3bda1065bae7afaf1741",
-      "created_at": "2026-11-15T06:18:10.411Z"
+      "content_hash": "c0330b35e9f843c2c8ae5e8e53198c6aa9ab1185050b2296ebf097f9d46da9d3",
+      "created_at": "2026-11-21T20:24:50.270Z"
     },
     "domain_intelligence-technical-construction-intelligence-orange-opensource-hurl-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-orange-opensource-hurl-core-invariants",
@@ -20251,8 +20251,8 @@
       "title": "Research & Knowledge Intelligence: hf-liquidai-lfm3-omni-2b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liquidai-lfm3-omni-2b-learnings-research-knowledge-intelligence-hf-liquidai-l.md",
       "repository": "hf-liquidai-lfm3-omni-2b-learnings",
-      "content_hash": "a27ab278680b5ce4aebdaf3594c60be3eaebecdb12fb9f688776322f9509d12a",
-      "created_at": "2026-11-15T06:18:54.140Z"
+      "content_hash": "b6efece8df2c621c2bd3265963242a799d27cc7271373f95ad96fc7204ebd2d8",
+      "created_at": "2026-11-21T20:25:10.171Z"
     },
     "DOM-D-7DB1294C": {
       "record_id": "DOM-D-7DB1294C",
@@ -20665,8 +20665,8 @@
       "title": "Architecture Intelligence: GitoxideLabs/gitoxide Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-gitoxidelabs-gitoxide-architecture-intelligence-gitoxidelabs-gitoxide-core-invar.md",
       "repository": "GitoxideLabs/gitoxide",
-      "content_hash": "422a9e9445215150910b3c0f76a8ddae9b462a4b0afd03d7d63810587c23edbf",
-      "created_at": "2026-11-20T04:48:27.547Z"
+      "content_hash": "08dd2625532cb83781c783b07a2f1d32eb084091f68d65c357d04cff4e613268",
+      "created_at": "2026-11-21T20:24:53.527Z"
     },
     "domain_intelligence-technical-construction-intelligence-melnixdev-seo-crawl-audit-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-melnixdev-seo-crawl-audit-core-invariants",
@@ -20683,8 +20683,8 @@
       "title": "Architecture Intelligence: gitoxidelabs-gitoxide-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-gitoxidelabs-gitoxide-learnings-architecture-intelligence-gitoxidelabs-gitoxide-.md",
       "repository": "gitoxidelabs-gitoxide-learnings",
-      "content_hash": "0d9699727595bf1b7174506911fc096f8bfaf3d367ebae0affa6e4f442862cb2",
-      "created_at": "2026-11-20T04:48:40.746Z"
+      "content_hash": "dfff3ec6cce0e85d351fe778a029ed498a3f24d94671d7ea30667ef1c4890e46",
+      "created_at": "2026-11-21T20:25:09.504Z"
     },
     "DOM-J-C5E210D6": {
       "record_id": "DOM-J-C5E210D6",
@@ -28093,8 +28093,8 @@
       "title": "Technical Construction Intelligence: software-mansion/react-native-reanimated Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-software-mansion-react-native-reanimated-technical-construction-intelligence-sof.md",
       "repository": "software-mansion/react-native-reanimated",
-      "content_hash": "f098405a7f28560071d04eb856aedec4ac39edaeb97a471a9f4a52062240e161",
-      "created_at": "2026-11-17T15:43:44.212Z"
+      "content_hash": "9c533a9ca4d63b443dfb532213623c3c90b9587092e88d263576d821d83bf107",
+      "created_at": "2026-11-21T20:24:58.488Z"
     },
     "domain_intelligence-architecture-intelligence-dalance-procs-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-dalance-procs-learnings-core-invariants",
@@ -28120,8 +28120,8 @@
       "title": "Technical Construction Intelligence: software-mansion-react-native-reanimated-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-software-mansion-react-native-reanimated-learnings-technical-construction-intell.md",
       "repository": "software-mansion-react-native-reanimated-learnings",
-      "content_hash": "38a9a57af1c7c5187c0faa64498c20946dd3b1f13b2305a58ed26b1d8bc28bee",
-      "created_at": "2026-11-17T15:43:54.750Z"
+      "content_hash": "4279905f3f658f370d6708ad09eca0c05a663b90bcbe6dbfee47d3aa6325423e",
+      "created_at": "2026-11-21T20:25:10.939Z"
     },
     "domain_intelligence-research-knowledge-intelligence-lodestones-moss-image-sft-8-steps-dmd-core-invar": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-lodestones-moss-image-sft-8-steps-dmd-core-invar",

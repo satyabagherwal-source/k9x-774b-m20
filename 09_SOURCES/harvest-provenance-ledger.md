@@ -11919,3 +11919,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b` | `https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-21T20:10:41.203Z |
 | `learn-github-o2sh-onefetch` | `https://github.com/o2sh/onefetch` | `8b63584a` | Multi-dimensional audit evidence | 2026-11-21T20:10:42.892Z |
 | `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `1efb03a3` | Multi-dimensional audit evidence | 2026-11-21T20:10:56.164Z |
+| `learn-huggingface-liquidai-lfm3-omni-2b` | `https://huggingface.co/LiquidAI/LFM3-Omni-2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-21T20:24:50.014Z |
+| `learn-github-gitoxidelabs-gitoxide` | `https://github.com/GitoxideLabs/gitoxide` | `aa9d8f14` | Multi-dimensional audit evidence | 2026-11-21T20:24:53.052Z |
+| `learn-github-software-mansion-react-native-reanimated` | `https://github.com/software-mansion/react-native-reanimated` | `2d283998` | Multi-dimensional audit evidence | 2026-11-21T20:24:58.034Z |
+| `learn-github-apache-pinot` | `https://github.com/apache/pinot` | `1fa59ea0` | Multi-dimensional audit evidence | 2026-11-21T20:25:05.355Z |

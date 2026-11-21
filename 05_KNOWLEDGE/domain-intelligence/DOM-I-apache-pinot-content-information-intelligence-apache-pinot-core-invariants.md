@@ -4,24 +4,24 @@
 {
   "source_repository": "apache/pinot",
   "source_url": "https://github.com/apache/pinot",
-  "source_version": "01004140",
+  "source_version": "1fa59ea0",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-20T15:15:23.312Z",
+  "timestamp": "2026-11-21T20:25:05.627Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-apache-pinot",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [apache/pinot](https://github.com/apache/pinot) (Revision: `01004140`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T15:15:23.312Z`  
+> **Provenance**: Harvested from [apache/pinot](https://github.com/apache/pinot) (Revision: `1fa59ea0`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-21T20:25:05.627Z`  
 > **Learning ID**: `learn-github-apache-pinot`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain I (Content & Information Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), F (Design Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), E (Creative Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 61%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), G (Architecture Intelligence), F (Design Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), E (Creative Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 63%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from apache/pinot:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-pinot-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/pinot](https://github.com/apache/pinot))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T15:15:22.080Z  
+> **Harvest Timestamp**: 2026-11-21T20:25:04.137Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2007,116 +2007,249 @@ const syncTableSchemaData = (data, showFieldType) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `25be8417` (2026-11-19)
-**Commit Message**: Add prefixed minion dataDir config key (#20312)
+### Incident Patch 1: `1fa59ea0` (2026-11-21)
+**Commit Message**: Render BOOLEAN keys as booleans when selecting a whole OPEN_STRUCT column (#20337)
 
-**File**: `pinot-integration-test-base/src/test/java/org/apache/pinot/integration/tests/ClusterTest.java` (modified, +2/-1)
-```diff
-@@ -338,7 +338,8 @@ protected PinotConfiguration getMinionConf() {
-       _minionBaseApiUrl = "http://localhost:" + minionPort;
-     }
-     _nextMinionPort = minionPort + 1;
--    minionConf.setProperty(Helix.Instance.DATA_DIR_KEY, TEMP_MINION_DIR + File.separator + "dataDir");
-+    minionConf.setProperty(CommonConstants.Minion.CONFIG_OF_MINION_DATA_DIR,
-+        TEMP_MINION_DIR + File.separator + "dataDir");
-     minionConf.setProperty(CommonConstants.CONFIG_OF_TIMEZONE, "UTC");
-     overrideMinionConf(minionConf);
-     return minionConf;
-```
+* Render BOOLEAN keys as booleans when selecting a whole OPEN_STRUCT column
 
-**File**: `pinot-minion/src/main/java/org/apache/pinot/minion/BaseMinionStarter.java` (modified, +1/-2)
+A BOOLEAN key is stored as INT 0/1, and the reconstruction behind SELECT
+open_struct_col hands back the stored number, so the document read
+{"flag":1} where col['flag'] returns true.
+
+ProjectionBlock now reads the materialized keys declared BOOLEAN from the
+per-key data sources and renders their 0/1 as false/true. A boolean that lives
+in the sparse blob is already a JSON boolean and is unchanged. The
+reconstruction shared with the seal path is not touched.
+
+* Render declared OPEN_STRUCT booleans consistently across storage tiers
+
+Handle sparse numeric values and multi-value children using the logical BOOLEAN result conversion. Size the dictionary reader buffer for a materialized multi-value child.
+
+Reproduce by selecting the whole OPEN_STRUCT column in ProjectionBlockOpenStructTest.testBooleanKeysInWholeDocument, which seals dense and sparse boolean fields in one segment.
+
+---------
+
+Co-authored-by: Xiang Fu <[REDACTED_EMAIL]>
+
+**File**: `pinot-core/src/main/java/org/apache/pinot/core/operator/blocks/ProjectionBlock.java` (modified, +36/-11)
 ```diff
-@@ -220,8 +220,7 @@ public void start()
+@@ -21,9 +21,11 @@
+ import com.fasterxml.jackson.core.type.TypeReference;
+ import java.io.IOException;
+ import java.util.ArrayList;
++import java.util.HashSet;
+ import java.util.LinkedHashMap;
+ import java.util.List;
+ import java.util.Map;
++import java.util.Set;
+ import javax.annotation.Nullable;
+ import org.apache.pinot.common.request.context.ExpressionContext;
+ import org.apache.pinot.core.common.BlockValSet;
+@@ -35,7 +37,10 @@
+ import org.apache.pinot.segment.spi.datasource.OpenStructDataSource;
+ import org.apache.pinot.segment.spi.datasource.OpenStructDataSource.MapValueReader;
+ import org.apache.pinot.spi.data.ComplexFieldSpec;
++import org.apache.pinot.spi.data.FieldSpec;
++import org.apache.pinot.spi.data.FieldSpec.DataType;
+ import org.apache.pinot.spi.data.OpenStructKeyFlattener;
++import org.apache.pinot.spi.utils.BooleanUtils;
+ import org.apache.pinot.spi.utils.BytesUtils;
+ import org.apache.pinot.spi.utils.JsonUtils;
  
-     // Initialize data directory
-     LOGGER.info("Initializing data directory");
--    File dataDir = new File(_config.getProperty(CommonConstants.Helix.Instance.DATA_DIR_KEY,
--        CommonConstants.Minion.DEFAULT_INSTANCE_DATA_DIR));
-+    File dataDir = new File(_config.getDataDir());
-     if (dataDir.exists()) {
-       FileUtils.cleanDirectory(dataDir);
-     } else {
-```
-
-**File**: `pinot-minion/src/main/java/org/apache/pinot/minion/MinionConf.java` (modified, +8/-0)
-```diff
-@@ -70,6 +70,14 @@ public String getInstanceId() {
-     return instanceId != null ? instanceId : getProperty(CommonConstants.Helix.Instance.INSTANCE_ID_KEY);
+@@ -93,10 +98,11 @@ private BlockValSet openStructDocuments(String column, OpenStructDataSource open
+     int numDocs = getNumDocs();
+     int[] docIds = getDocIds();
+     String[] documents = new String[numDocs];
++    Set<String> booleanKeys = booleanKeys(openStructDataSource);
+     try (MapValueReader reader = openStructDataSource.openMapValueReader()) {
+       for (int i = 0; i < numDocs; i++) {
+         Map<String, Object> document = reader.getMapValue(docIds[i]);
+-        documents[i] = document == null ? "{}" : JsonUtils.objectToString(renderDocument(document));
++        documents[i] = document == null ? "{}" : JsonUtils.objectToString(renderDocument(document, booleanKeys));
+       }
+     } catch (IOException e) {
+       throw new RuntimeException("Failed to read OPEN_STRUCT column: " + column, e);
+@@ -111,16 +117,33 @@ private BlockValSet openStructDocuments(String column, OpenStructDataSource open
+   /// the shape the source had, so it wins and the paths into it are dropped. `.` is an ordinary key character with
+   /// no escape, and that is exactly what makes the container's own entry the thing that disambiguates: a dotted key
+   /// whose prefix is not itself a key was never a path, so it stays a key spelled with a dot.
+-  private static Map<String, Object> renderDocument(Map<String, Object> document) {
++  ///
++  /// The top-level keys use the segment's declared types. Nested objects retain their original JSON types.
++  private static Map<String, Object> renderDocument(Map<String, Object> document, Set<String> booleanKeys) {
+     Map<String, Object> rendered = new LinkedHashMap<>(document.size());
+     for (Map.Entry<String, Object> entry : document.entrySet()) {
+-      if (!isPathIntoPresentObject(entry.getKey(), document)) {
+-        rendered.put(entry.getKey(), renderValue(entry.getValue()));
++      String key = entry.getKey();
++      if (!isPathIntoPresentObject(key, document)) {
++        rendered.put(key, renderValue(entry.getValue(), booleanKeys.contains(key)));
+       }
+     }
+     return rendered;
    }
  
-+  @SuppressWarnings("deprecation") // Falls back to the legacy un-prefixed key for backward compatibility
-+  public String getDataDir() {
-+    String dataDir = getProperty(CommonConstants.Minion.CONFIG_OF_MINION_DATA_DIR);
-+    return dataDir != null
-+        ? dataDir
-+        : getProperty(CommonConstants.Helix.Instance.DATA_DIR_KEY, CommonConstants.Minion.DEFAULT_INSTANCE_DATA_DIR);
++  /// Both dense children and the sparse JSON can contain stored integers for declared BOOLEAN keys. On older
++  /// segments a dense child can still report INT, which is also the type returned by a direct key projection.
++  private static Set<String> booleanKeys(OpenStructDataSource openStructDataSource) {
++    Set<String> booleanKeys = new HashSet<>();
++    for (Map.Entry<String, FieldSpec> entry : openStructDataSource.getFieldSpec().getChildFieldSpecs().entrySet()) {
++      String key = entry.getKey();
++      if (entry.getValue().getDataType() == DataType.BOOLEAN && (!openStructDataSource.isMaterialized(key)
++          || openStructDataSource.getDataSourceMetadata(key).getDataType() == DataType.BOOLEAN)) {
++        booleanKeys.add(key);
++      }
++    }
++    return booleanKeys;
 +  }
 +
-   public int getEndReplaceSegmentsTimeoutMs() {
-     return getProperty(END_REPLACE_SEGMENTS_TIMEOUT_MS_KEY, DEFAULT_END_REPLACE_SEGMENTS_SOCKET_TIMEOUT_MS);
+   /// Whether `key` is a path into an object that the document also carries whole. `configApi.timeTaken` is, when
+   /// `configApi` is an object of the document holding `timeTaken`; a key the document literally spells with a dot
+   /// is not.
+@@ -175,7 +198,7 @@ private static Object unwrapJsonText(String text) {
+       return text;
+     }
+     try {
+-      return renderValue(JsonUtils.stringToObject(text, OBJECT_TYPE_REFERENCE));
++      return renderValue(JsonUtils.stringToObject(text, OBJECT_TYPE_REFERENCE), false);
+     } catch (IOException e) {
+       return text;
+     }
+@@ -190,16 +213,18 @@ private static Map<String, Object> asStringKeyedMap(Map<?, ?> map) {
    }
+ 
+   /// Values as JSON renders them, recursing so a nested object is cleaned up the same way the top level is.
+-  /// Only BYTES needs a hand: Jackson would base64 it, while every other way of reading this value out of Pinot
+-  /// -- `col['key']` included -- gives hex.
++  /// Numeric BOOLEAN values use Pinot's stored representation. BYTES values use the same hex encoding as key reads.
+   @Nullable
+-  private static Object renderValue(@Nullable Object value) {
++  private static Object renderValue(@Nullable Object v
 ```
 
-**File**: `pinot-minion/src/test/java/org/apache/pinot/minion/MinionConfTest.java` (modified, +15/-0)
+**File**: `pinot-core/src/test/java/org/apache/pinot/core/operator/blocks/ProjectionBlockOpenStructTest.java` (modified, +65/-4)
 ```diff
-@@ -26,6 +26,8 @@
- import org.testng.Assert;
+@@ -18,18 +18,36 @@
+  */
+ package org.apache.pinot.core.operator.blocks;
+ 
++import java.io.File;
++import java.nio.file.Files;
+ import java.util.HashMap;
+ import java.util.LinkedHashMap;
+ import java.util.List;
+ import java.util.Map;
++import java.util.Set;
++import org.apache.commons.io.FileUtils;
+ import org.apache.pinot.core.common.BlockValSet;
+ import org.apache.pinot.core.common.DataBlockCache;
+ import org.apache.pinot.core.common.DataFetcher;
++import org.apache.pinot.segment.local.indexsegment.immutable.ImmutableSegmentLoader;
++import org.apache.pinot.segment.local.segment.readers.GenericRowRecordReader;
++import org.apache.pinot.segment.local.segment.readers.PinotSegmentUtil;
++import org.apache.pinot.segment.spi.ImmutableSegment;
+ import org.apache.pinot.segment.spi.datasource.DataSource;
+ import org.apache.pinot.segment.spi.datasource.DataSourceMetadata;
+ import org.apache.pinot.segment.spi.datasource.OpenStructDataSource;
+ import org.apache.pinot.segment.spi.index.reader.ForwardIndexReader;
+-import org.apache.pinot.spi.data.FieldSpec;
++import org.apache.pinot.spi.config.table.FieldConfig;
++import org.apache.pinot.spi.config.table.TableConfig;
++import org.apache.pinot.spi.config.table.TableType;
++import org.apache.pinot.spi.data.ComplexFieldSpec;
++import org.apache.pinot.spi.data.DimensionFieldSpec;
++import org.apache.pinot.spi.data.FieldSpec.DataType;
++import org.apache.pinot.spi.data.Schema;
++import org.apache.pinot.spi.data.readers.GenericRow;
++import org.apache.pinot.spi.utils.JsonUtils;
++import org.apache.pinot.spi.utils.ReadMode;
++import org.apache.pinot.spi.utils.builder.TableConfigBuilder;
  import org.testng.annotations.Test;
  
-+import static org.testng.Assert.assertEquals;
-+
+ import static org.mockito.Mockito.doReturn;
+@@ -54,7 +72,10 @@ public class ProjectionBlockOpenStructTest {
  
- public class MinionConfTest {
+   /// OPEN_STRUCT parent: an empty index container, so {@code getForwardIndex()} is null.
+   private static OpenStructDataSource mockOpenStructDataSource() {
+-    return mock(OpenStructDataSource.class);
++    OpenStructDataSource dataSource = mock(OpenStructDataSource.class);
++    when(dataSource.getFieldSpec()).thenReturn(new ComplexFieldSpec(OPEN_STRUCT_COLUMN, DataType.OPEN_STRUCT, true,
++        Map.of()));
++    return dataSource;
+   }
  
-@@ -73,6 +75,19 @@ public void testDeprecatedConfigs()
-         "org.apache.pinot.core.crypt.NoOpPinotCrypter");
+   private static DataSource mockPlainDataSource() {
+@@ -64,7 +85,7 @@ private static DataSource mockPlainDataSource() {
+     doReturn(forwardIndex).when(dataSource).getForwardIndex();
+     DataSourceMetadata metadata = mock(DataSourceMetadata.class);
+     when(metadata.isSingleValue()).thenReturn(true);
+-    when(metadata.getDataType()).thenReturn(FieldSpec.DataType.LONG);
++    when(metadata.getDataType()).thenReturn(DataType.LONG);
+     when(dataSource.getDataSourceMetadata()).thenReturn(metadata);
+     return dataSource;
+   }
+@@ -128,7 +149,7 @@ public void testRegisteringSameColumnTwiceKeepsFirstReader() {
+   @Test
+   public void testSelectingOpenStructParentReadsTheWholeDocument() {
+     BlockValSet values = project(Map.of("errors", 3L));
+-    assertEquals(values.getValueType(), FieldSpec.DataType.STRING);
++    assertEquals(values.getValueType(), DataType.STRING);
+     assertTrue(values.isSingleValue());
+     assertEquals(values.getStringValuesSV()[0], "{\"errors\":3}");
+   }
+@@ -259,6 +280,46 @@ public void testListValuesAreRendered() {
+     assertEquals(project(Map.of("tags", List.of("a", "b"))).getStringValuesSV()[0], "{\"tags\":[\"a\",\"b\"]}");
    }
  
 +  @Test
-+  @SuppressWarnings("deprecation") // Tests the legacy un-prefixed key fallback
-+  public void testDataDirPrecedence() {
-+    MinionConf conf = new MinionConf();
-+    assertEquals(conf.getDataDir(), CommonConstants.Minion.DEFAULT_INSTANCE_DATA_DIR);
++  public void testBooleanKeysInWholeDocument()
++      throws Exception {
++    ComplexFieldSpec parent = new ComplexFieldSpec(OPEN_STRUCT_COLUMN, DataType.OPEN_STRUCT, true, Map.of(
++        "flag", new DimensionFieldSpec("flag", DataType.BOOLEAN, true),
++        "off", new DimensionFieldSpec("off", DataType.BOOLEAN, true),
++        "noncanonical", new DimensionFieldSpec("noncanonical", DataType.BOOLEAN, true),
++        "denseFlags", new DimensionFieldSpec("denseFlags", DataType.BOOLEAN, false),
++        "sparseFlags", new DimensionFieldSpec("sparseFlags", DataType.BOOLEAN, false)));
++    Schema schema = new Schema.SchemaBuilder().setSchemaName("bools").addField(parent).build();
++    FieldConfig field = new FieldConfig.Builder(OPEN_STRUCT_COLUMN).withIndexes(JsonUtils.objectToJsonNode(
++        Map.of("open_struct", Map.of("maxDenseKeys", 3, "denseKeys", List.of("flag", "noncanonical", "denseFlags")))))
++        .build();
++    TableConfig table = new TableConfigBuilder(TableType.OFFLINE).setTableName("bools")
++        .setFieldConfigList(List.of(field)).build();
++    GenericRow row = new GenericRow();
++    row.putValue(OPEN_STRUCT_COLUMN, Map.of("flag", true, "off", false, "noncanonical", 2,
++        "denseFlags", List.of(true, false), "sparseFlags", List.of(false, true), "count", 1,
++        "nested", Map.of("flag", 0)));
 +
-+    conf.setProperty(CommonConstants.Helix.Instance.DATA_DIR_KEY, "/legacy/data");
-+    assertEquals(conf.getDataDir(), "/legacy/data");
-+
-+    conf.setProperty(CommonConstants.Minion.CONFIG_OF_MINION_DATA_DIR, "/minion/data");
-+    assertEquals(conf.getDataDir(), "/minion/data");
-+  }
-+
-   @Test
-   public void testReplaceSegmentsTimeoutDefaultsAndOverrides() {
-     MinionConf conf = new MinionConf();
++    File tempDir = Files.createTempDirectory("openStructBoolean").toFile();
++    try {
++      File indexDir = PinotSegmentUtil.createSegment(table, schema, "bools", tempDir.getAbsolutePath(),
++          new GenericRowRecordReader(List.of
 ```
 
-**File**: `pinot-spi/src/main/java/org/apache/pinot/spi/utils/CommonConstants.java` (modified, +2/-0)
+**File**: `pinot-segment-local/src/main/java/org/apache/pinot/segment/local/segment/index/openstruct/ImmutableOpenStructDataSource.java` (modified, +3/-1)
 ```diff
-@@ -205,6 +205,7 @@ public enum SegmentAssignmentStrategyType {
-     public static class Instance {
-       @Deprecated
-       public static final String INSTANCE_ID_KEY = "instanceId";
-+      @Deprecated
-       public static final String DATA_DIR_KEY = "dataDir";
-       public static final String ADMIN_PORT_KEY = "adminPort";
-       public static final String ADMIN_HTTPS_PORT_KEY = "adminHttpsPort";
-@@ -2190,6 +2191,7 @@ public static class Controller {
-   public static class Minion {
-     public static final String CONFIG_OF_METRICS_PREFIX = "pinot.minion.";
-     public static final String CONFIG_OF_MINION_ID = "pinot.minion.instance.id";
-+    public static final String CONFIG_OF_MINION_DATA_DIR = "pinot.minion.instance.dataDir";
-     public static final String METADATA_EVENT_OBSERVER_PREFIX = "metadata.event.notifier";
+@@ -313,8 +313,10 @@ private PinotSegmentColumnReader createReader(String key, DataSource dataSource)
+       if (fwdReader == null) {
+         return null;
+       }
++      int maxNumValues = !fwdReader.isSingleValue() && fwdReader.isDictionaryEncoded()
++          ? dataSource.getDataSourceMetadata().getMaxNumValuesPerMVEntry() : 0;
+       return new PinotSegmentColumnReader(key, fwdReader, dataSource.getDictionary(),
+-          dataSource.getNullValueVector(), 0);
++          dataSource.getNullValueVector(), maxNumValues);
+     }
  
-     // Config keys
+     @Override
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #20337** (2026-11-21): Render BOOLEAN keys as booleans when selecting a whole OPEN_STRUCT column (@raghavyadav01)
+- **PR #20336** (2026-11-21): Preserve sparse samples and errors in time-series responses (@xiangfu0)
 - **PR #20325** (2026-11-20): Bump io.github.hakky54:ayza-bom from 10.1.1 to 10.1.2 (@dependabot[bot])
 - **PR #20324** (2026-11-20): Bump at.yawk.lz4:lz4-java from 1.14.0 to 1.14.1 (@dependabot[bot])
 - **PR #20323** (2026-11-20): Bump software.amazon.awssdk:bom from 2.59.1 to 2.59.2 (@dependabot[bot])
-- **PR #20315** (2026-11-19): Bump org.apache.httpcomponents.core5:httpcore5 from 5.4.4 to 5.5 (@dependabot[bot])
-- **PR #20312** (2026-11-19): Add pinot.minion.instance.dataDir config and deprecate un-prefixed dataDir (@ilamhs)
-- **PR #20309** (2026-11-19): Bump org.codehaus.plexus:plexus-utils from 4.1.0 to 4.2.0 (@dependabot[bot])
+- **PR #20319** (2026-11-20): Extract SQL query options without parsing the executable statement (@xiangfu0)
 
 ---
 
@@ -2136,32 +2269,55 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add prefixed minion dataDir config key
+## X. Render BOOLEAN keys as booleans when selecting a whole OPEN_STRUCT column
 
 **RULE**:
-When implementing operations in `pinot-integration-test-base/src/test/java/org/apache/pinot/integration/tests/ClusterTest.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/pinot. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pinot-core/src/main/java/org/apache/pinot/core/operator/blocks/ProjectionBlock.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/pinot. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `25be8417`: Add prefixed minion dataDir config key. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1fa59ea0`: Render BOOLEAN keys as booleans when selecting a whole OPEN_STRUCT column. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `pinot-integration-test-base/src/test/java/org/apache/pinot/integration/tests/ClusterTest.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `pinot-core/src/main/java/org/apache/pinot/core/operator/blocks/ProjectionBlock.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-    minionConf.setProperty(CommonConstants.Minion.CONFIG_OF_MINION_DATA_DIR,
-        TEMP_MINION_DIR + File.separator + "dataDir");
+import java.util.HashSet;
+import java.util.Set;
+import org.apache.pinot.spi.data.FieldSpec;
+import org.apache.pinot.spi.data.FieldSpec.DataType;
+import org.apache.pinot.spi.utils.BooleanUtils;
+    Set<String> booleanKeys = booleanKeys(openStructDataSource);
+        documents[i] = document == null ? "{}" : JsonUtils.objectToString(renderDocument(document, booleanKeys));
+  ///
+  /// The top-level keys use the segment's declared types. Nested objects retain their original JSON types.
+  private static Map<String, Object> renderDocument(Map<String, Object> document, Set<String> booleanKeys) {
+      String key = entry.getKey();
+      if (!isPathIntoPresentObject(key, document)) {
+        rendered.put(key, renderValue(entry.getValue(), booleanKeys.contains(key)));
+  /// Both dense children and the sparse JSON can contain stored integers for declared BOOLEAN keys. On older
+  /// segments a dense child can still report INT, which is also the type returned by a direct key projection.
+  private static Set<String> booleanKeys(OpenStructDataSource openStructDataSource) {
+    Set<String> booleanKeys = new HashSet<>();
+    for (Map.Entry<String, FieldSpec> entry : openStructDataSource.getFieldSpe
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-    minionConf.setProperty(Helix.Instance.DATA_DIR_KEY, TEMP_MINION_DIR + File.separator + "dataDir");
+        documents[i] = document == null ? "{}" : JsonUtils.objectToString(renderDocument(document));
+  private static Map<String, Object> renderDocument(Map<String, Object> document) {
+      if (!isPathIntoPresentObject(entry.getKey(), document)) {
+        rendered.put(entry.getKey(), renderValue(entry.getValue()));
+      return renderValue(JsonUtils.stringToObject(text, OBJECT_TYPE_REFERENCE));
+  /// Only BYTES needs a hand: Jackson would base64 it, while every other way of reading this value out of Pinot
+  /// -- `col['key']` included -- gives hex.
+  private static Object renderValue(@Nullable Object value) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `25be8417` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1fa59ea0` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

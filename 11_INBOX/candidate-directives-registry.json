@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T20:11:01.689Z",
+  "last_updated": "2026-11-21T20:25:10.714Z",
   "directives": [
     {
       "id": "CD-001",
@@ -43477,6 +43477,61 @@
       "source_repo": "volcengine-openviking-learnings",
       "source_commit": "HEAD",
       "staged_file": "11_INBOX/candidate-directives/CD-F643-crypto-reject-malformed-local-root-key-files.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-WZT3",
+      "directive_title": "treat empty `GIT_CONFIG_COUNT` as zero",
+      "source_repo": "GitoxideLabs/gitoxide",
+      "source_commit": "aa9d8f14",
+      "staged_file": "11_INBOX/candidate-directives/CD-WZT3-treat-empty-git_config_count-as-zero.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-21",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-X3N0",
+      "directive_title": "preserve UI scheduler order",
+      "source_repo": "software-mansion/react-native-reanimated",
+      "source_commit": "2d283998",
+      "staged_file": "11_INBOX/candidate-directives/CD-X3N0-preserve-ui-scheduler-order.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-21",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-X9AZ",
+      "directive_title": "Render BOOLEAN keys as booleans when selecting a whole OPEN_STRUCT column",
+      "source_repo": "apache/pinot",
+      "source_commit": "1fa59ea0",
+      "staged_file": "11_INBOX/candidate-directives/CD-X9AZ-render-boolean-keys-as-booleans-when-selecting-a-whole-open_struct-column.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-21",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-XC4Y",
+      "directive_title": "gix-config): treat empty `GIT_CONFIG_COUNT` as zero",
+      "source_repo": "gitoxidelabs-gitoxide-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-XC4Y-gix-config-treat-empty-git_config_count-as-zero.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-XD89",
+      "directive_title": "Worklets): preserve UI scheduler order",
+      "source_repo": "software-mansion-react-native-reanimated-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-XD89-worklets-preserve-ui-scheduler-order.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-21",

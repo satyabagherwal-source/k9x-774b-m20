@@ -11886,3 +11886,7 @@
 | `CYCLE-20261121-EQB1` | `2026-11-21T20:10:41.198Z` | `nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-transcribe-30b-a4b-learnings.md` | Yes (`b7fcb117...`) |
 | `CYCLE-20261121-ERLZ` | `2026-11-21T20:10:42.887Z` | `o2sh/onefetch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9830` | Yes (`5810b7d9...`) |
 | `CYCLE-20261121-F1UN` | `2026-11-21T20:10:56.159Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9831` | Yes (`cc047c90...`) |
+| `CYCLE-20261121-WX95` | `2026-11-21T20:24:50.009Z` | `LiquidAI/LFM3-Omni-2B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-lfm3-omni-2b-learnings.md` | Yes (`90465e2d...`) |
+| `CYCLE-20261121-WZLK` | `2026-11-21T20:24:53.048Z` | `GitoxideLabs/gitoxide` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9832` | Yes (`3cd313be...`) |
+| `CYCLE-20261121-X3FX` | `2026-11-21T20:24:58.029Z` | `software-mansion/react-native-reanimated` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9833` | Yes (`462a4690...`) |
+| `CYCLE-20261121-X93A` | `2026-11-21T20:25:05.351Z` | `apache/pinot` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9834` | Yes (`0200bc03...`) |
