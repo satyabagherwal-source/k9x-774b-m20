@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T06:45:20.311Z",
-  "total_cycles_completed": 11182,
-  "total_learnings_persisted": 11182,
-  "total_rules_promoted": 10540,
+  "last_updated": "2026-11-21T07:10:31.566Z",
+  "total_cycles_completed": 11184,
+  "total_learnings_persisted": 11184,
+  "total_rules_promoted": 10542,
   "history": [
-    {
-      "timestamp": "2026-11-20T11:30:51.306Z",
-      "repository": "zama-ai/tfhe-rs",
-      "learningId": "learn-github-zama-ai-tfhe-rs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T11:31:34.215Z",
-      "repository": "harness-hub/Qwen3.8-27B-opencode-adapted",
-      "learningId": "learn-huggingface-harness-hub-qwen3-8-27b-opencode-adapted",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-20T11:41:01.060Z",
       "repository": "genkit-ai/genkit",
@@ -1403,6 +1389,20 @@
       "repository": "lingyired/status-trio",
       "learningId": "learn-github-lingyired-status-trio",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T07:05:13.154Z",
+      "repository": "jithin-sabu/purge-app",
+      "learningId": "learn-github-jithin-sabu-purge-app",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T07:10:31.566Z",
+      "repository": "rtk-ai/rtk",
+      "learningId": "learn-github-rtk-ai-rtk",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

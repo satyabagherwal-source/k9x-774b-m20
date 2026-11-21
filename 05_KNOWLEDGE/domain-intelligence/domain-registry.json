@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T06:46:55.708Z",
+  "last_updated": "2026-11-21T07:10:37.673Z",
   "total_records": 2232,
   "domains": {
     "A": {
@@ -8965,8 +8965,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "c200411ab9345c722867b03b322ff0d334d8f311620bc99c35f3f4245fd8c6aa",
-      "created_at": "2026-11-21T06:46:55.708Z"
+      "content_hash": "afd2f33afbd4c1bb83889888cacff0bb54f463e5f1515b491e937c6800423d25",
+      "created_at": "2026-11-21T07:10:37.673Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -24349,8 +24349,8 @@
       "title": "Quality & Verification Intelligence: rtk-ai/rtk Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-rtk-ai-rtk-quality-verification-intelligence-rtk-ai-rtk-core-invariants.md",
       "repository": "rtk-ai/rtk",
-      "content_hash": "9da12165a79e1b2461575b2aecbc62c33b3b073e2ef6284097869d5ce43258d8",
-      "created_at": "2026-11-18T09:28:27.871Z"
+      "content_hash": "218e891b89d3fe9a6c3553a55db0cf2d3e6ce305ec681e24b052ec72abb8747f",
+      "created_at": "2026-11-21T07:10:31.924Z"
     },
     "domain_intelligence-quality-verification-intelligence-rtk-ai-rtk-learnings-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-rtk-ai-rtk-learnings-core-invariants",
@@ -24358,8 +24358,8 @@
       "title": "Quality & Verification Intelligence: rtk-ai-rtk-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-rtk-ai-rtk-learnings-quality-verification-intelligence-rtk-ai-rtk-learnings-core.md",
       "repository": "rtk-ai-rtk-learnings",
-      "content_hash": "62bebc86ac90216092cc743f96829108ec87c6bd6bf0d5eaf633cfcdde26fb2e",
-      "created_at": "2026-11-18T09:28:37.903Z"
+      "content_hash": "94a4e5bda49cfe827e250aa3959fcd4a93fa4d13e088ce77358ff6864202c554",
+      "created_at": "2026-11-21T07:10:35.599Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-audio-2b-learnings-core-invaria": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-audio-2b-learnings-core-invaria",
@@ -29263,8 +29263,8 @@
       "title": "Technical Construction Intelligence: jithin-sabu/purge-app Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-jithin-sabu-purge-app-technical-construction-intelligence-jithin-sabu-purge-app-.md",
       "repository": "jithin-sabu/purge-app",
-      "content_hash": "e42874d8f8925a395dc3e808c84ee05342f8d78bec28f578c0a3e2bac997133b",
-      "created_at": "2026-11-17T22:56:28.684Z"
+      "content_hash": "09ce0d39251a104f2b5e9db110701bd3c7dfbb629a0980635bc10c3bc0cd016a",
+      "created_at": "2026-11-21T07:05:13.537Z"
     },
     "domain_intelligence-research-knowledge-intelligence-moonshotai-kimi-k3-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-moonshotai-kimi-k3-core-invariants",
@@ -29290,8 +29290,8 @@
       "title": "Technical Construction Intelligence: jithin-sabu-purge-app-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-jithin-sabu-purge-app-learnings-technical-construction-intelligence-jithin-sabu-.md",
       "repository": "jithin-sabu-purge-app-learnings",
-      "content_hash": "ac8ebe82973eddc0ce0af431ec685bf4b81d5719bcea0fdbb7bc1852830b1839",
-      "created_at": "2026-11-17T22:56:52.310Z"
+      "content_hash": "5a298c618bc13847974b023beb3df40b1d5bf9ecee82f4e979d5921ab2952a01",
+      "created_at": "2026-11-21T07:10:36.746Z"
     },
     "domain_intelligence-technical-construction-intelligence-stabilityai-stable-diffusion-xl-base-1-0-cor": {
       "record_id": "domain_intelligence-technical-construction-intelligence-stabilityai-stable-diffusion-xl-base-1-0-cor",

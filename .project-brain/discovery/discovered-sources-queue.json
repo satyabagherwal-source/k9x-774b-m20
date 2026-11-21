@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-21T06:45:25.136Z",
+  "updated_at": "2026-11-21T07:10:36.365Z",
   "stats": {
-    "total_discovered": 7058,
-    "approved_pending_harvest": 6668,
+    "total_discovered": 7071,
+    "approved_pending_harvest": 6680,
     "harvested_count": 0,
-    "rejected_count": 390,
+    "rejected_count": 391,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6647,
+      "COMMUNITY_AND_EXPERT": 6660,
       "OFFICIAL_DOCUMENTATION": 234,
       "STANDARDS_AND_SPECIFICATIONS": 122,
       "ENGINEERING_BLOGS": 5,
@@ -152569,6 +152569,285 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/folkbench-folkbench-learnings.md",
         "fileName": "folkbench-folkbench-learnings.md"
+      }
+    },
+    "SRC-C7DFEF4763C2": {
+      "id": "SRC-C7DFEF4763C2",
+      "url": "https://fonts.googleapis.com/",
+      "title": "https://fonts.googleapis.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T07:10:34.969Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
+        "fileName": "rtk-ai-rtk-learnings.md"
+      }
+    },
+    "SRC-EE365F970E45": {
+      "id": "SRC-EE365F970E45",
+      "url": "https://fonts.googleapis.com/css2?family=Geist%3Awght%40400%3B500%3B600&family=JetBrains+Mono%3Awght%40400%3B500&display=block",
+      "title": "https://fonts.googleapis.com/css2?family=Geist%3Awght%40400%3B500%3B600&family=JetBrains+Mono%3Awght%40400%3B500&display=block",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T07:10:35.025Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
+        "fileName": "rtk-ai-rtk-learnings.md"
+      }
+    },
+    "SRC-77A8433B8F95": {
+      "id": "SRC-77A8433B8F95",
+      "url": "https://fonts.googleapis.com/css2?family=Inter%3Awght%40400%3B500&family=JetBrains+Mono%3Awght%40500&display=block",
+      "title": "https://fonts.googleapis.com/css2?family=Inter%3Awght%40400%3B500&family=JetBrains+Mono%3Awght%40500&display=block",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T07:10:35.083Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
+        "fileName": "rtk-ai-rtk-learnings.md"
+      }
+    },
+    "SRC-3F88F70B4C7D": {
+      "id": "SRC-3F88F70B4C7D",
+      "url": "http://www.inkscape.org/",
+      "title": "http://www.inkscape.org/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-21T07:10:35.146Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
+        "fileName": "rtk-ai-rtk-learnings.md"
+      }
+    },
+    "SRC-D5376E68F8D8": {
+      "id": "SRC-D5376E68F8D8",
+      "url": "https://github.com/omlahore/RemoveMacAI/issues/123",
+      "title": "https://github.com/omlahore/RemoveMacAI/issues/123",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T07:10:35.972Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jithin-sabu-purge-app-learnings.md",
+        "fileName": "jithin-sabu-purge-app-learnings.md"
+      }
+    },
+    "SRC-34060046E4AE": {
+      "id": "SRC-34060046E4AE",
+      "url": "https://github.com/omlahore/RemoveMacAI/commit/84d3da06c69cbfbcc9ccd9b315c10e8142760d59",
+      "title": "https://github.com/omlahore/RemoveMacAI/commit/84d3da06c69cbfbcc9ccd9b315c10e8142760d59",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T07:10:36.023Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jithin-sabu-purge-app-learnings.md",
+        "fileName": "jithin-sabu-purge-app-learnings.md"
+      }
+    },
+    "SRC-DC171E15A0C1": {
+      "id": "SRC-DC171E15A0C1",
+      "url": "https://github.com/jithin-sabu/purge-app/issues/422",
+      "title": "https://github.com/jithin-sabu/purge-app/issues/422",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T07:10:36.069Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jithin-sabu-purge-app-learnings.md",
+        "fileName": "jithin-sabu-purge-app-learnings.md"
+      }
+    },
+    "SRC-EBBF1CD42FD5": {
+      "id": "SRC-EBBF1CD42FD5",
+      "url": "https://github.com/jithin-sabu/purge-app/issues/424",
+      "title": "https://github.com/jithin-sabu/purge-app/issues/424",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T07:10:36.117Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jithin-sabu-purge-app-learnings.md",
+        "fileName": "jithin-sabu-purge-app-learnings.md"
+      }
+    },
+    "SRC-AA21125557C4": {
+      "id": "SRC-AA21125557C4",
+      "url": "https://github.com/jithin-sabu/purge-app/pull/425",
+      "title": "https://github.com/jithin-sabu/purge-app/pull/425",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T07:10:36.164Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jithin-sabu-purge-app-learnings.md",
+        "fileName": "jithin-sabu-purge-app-learnings.md"
+      }
+    },
+    "SRC-3FD07828FB41": {
+      "id": "SRC-3FD07828FB41",
+      "url": "https://github.com/jithin-sabu/purge-app/issues/420",
+      "title": "https://github.com/jithin-sabu/purge-app/issues/420",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T07:10:36.224Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jithin-sabu-purge-app-learnings.md",
+        "fileName": "jithin-sabu-purge-app-learnings.md"
+      }
+    },
+    "SRC-D57318E83C49": {
+      "id": "SRC-D57318E83C49",
+      "url": "https://github.com/jithin-sabu/purge-app/pull/423",
+      "title": "https://github.com/jithin-sabu/purge-app/pull/423",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T07:10:36.276Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jithin-sabu-purge-app-learnings.md",
+        "fileName": "jithin-sabu-purge-app-learnings.md"
+      }
+    },
+    "SRC-C57500304E78": {
+      "id": "SRC-C57500304E78",
+      "url": "https://github.com/jithin-sabu/purge-app/pull/417",
+      "title": "https://github.com/jithin-sabu/purge-app/pull/417",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T07:10:36.320Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jithin-sabu-purge-app-learnings.md",
+        "fileName": "jithin-sabu-purge-app-learnings.md"
+      }
+    },
+    "SRC-A6CA507D4503": {
+      "id": "SRC-A6CA507D4503",
+      "url": "https://github.com/jithin-sabu/purge-app/pull/421",
+      "title": "https://github.com/jithin-sabu/purge-app/pull/421",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T07:10:36.365Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jithin-sabu-purge-app-learnings.md",
+        "fileName": "jithin-sabu-purge-app-learnings.md"
       }
     }
   }

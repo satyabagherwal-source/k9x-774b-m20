@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T09:28:37.587Z",
+  "timestamp": "2026-11-21T07:10:35.294Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-rtk-ai-rtk-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [rtk-ai-rtk-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T09:28:37.587Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T07:10:35.294Z`  
 > **Learning ID**: `LEARN-EVO-rtk-ai-rtk-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain K (Quality & Verification Intelligence)
-- **Secondary Corroborating Domains**: A (Human & Need Intelligence), J (Search & Distribution Intelligence), D (Research & Knowledge Intelligence), G (Architecture Intelligence), I (Content & Information Intelligence), H (Technical Construction Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence)
-- **Confidence Rating**: 58%
+- **Secondary Corroborating Domains**: A (Human & Need Intelligence), J (Search & Distribution Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), G (Architecture Intelligence), H (Technical Construction Intelligence), C (Market & Business Intelligence)
+- **Confidence Rating**: 63%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from rtk-ai-rtk-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md`  
 > **Source**: github ([https://github.com/rtk-ai/rtk](https://github.com/rtk-ai/rtk))  
-> **Source Version**: `eb710be4`  
+> **Source Version**: `ef0b734b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T09:28:26.093Z  
+> **Timestamp**: 2026-11-21T07:10:30.505Z  
 > **Learning ID**: `learn-github-rtk-ai-rtk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rtk-ai/rtk](https://github.com/rtk-ai/rtk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T09:28:26.083Z  
+> **Harvest Timestamp**: 2026-11-21T07:05:07.315Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: CLI proxy that reduces LLM token consumption by 60-90% on common dev commands. Single Rust binary, zero dependencies
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 87000 stars
+- **Stars / Engagement**: 87325 stars
 
 ---
 
@@ -1771,271 +1771,559 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `eb710be4` (2026-11-18)
-**Commit Message**: Merge pull request #4679 from Ehsan-hash/fix/hook-command-ownership
+### Incident Patch 1: `ef0b734b` (2026-11-21)
+**Commit Message**: Merge pull request #4706 from gaurav0107/fix/4616-the-telemetry-marker-is-written-before-a
 
-fix(hooks): preserve compound user hook entries
+fix(telemetry): claim the daily ping in the send thread, not before it
 
-**File**: `src/hooks/init/claude.rs` (modified, +189/-0)
+**File**: `src/core/telemetry.rs` (modified, +188/-31)
 ```diff
-@@ -1176,6 +1176,195 @@ mod tests {
-         ));
+@@ -9,7 +9,7 @@ use crate::hooks::init::resolve_claude_dir;
+ use base16ct::HexDisplay;
+ use sha2::{Digest, Sha256};
+ use std::io::Write as IoWrite;
+-use std::path::PathBuf;
++use std::path::{Path, PathBuf};
+ use std::sync::OnceLock;
+ 
+ static CACHED_SALT: OnceLock<String> = OnceLock::new();
+@@ -59,27 +59,57 @@ pub fn maybe_ping() {
+         return;
      }
  
-+    #[test]
-+    fn compound_shell_commands_are_not_rtk_hooks() {
-+        for command in [
-+            "my-audit;/usr/local/bin/rtk hook claude",
-+            "my-audit&&/usr/local/bin/rtk hook claude",
-+            "my-audit||/usr/local/bin/rtk hook claude",
-+            "my-audit|/usr/local/bin/rtk hook claude",
-+            "my-audit&/usr/local/bin/rtk hook claude",
-+            "my-audit>/usr/local/bin/rtk hook claude",
-+            "/usr/local/bin/rtk hook claude > /tmp/audit.log",
-+            "/usr/local/bin/rtk\nhook claude",
-+            "/usr/local/bin/rtk hook claude\nmy-audit",
-+            "/usr/local/bin/rtk hook claude\r\n",
-+            "/usr/local/bin/rtk hook claude\r",
-+            "/usr/local/bin/rtk hook claude\\ ",
-+            "/usr/local/bin/rtk hook \"claude\n",
-+            "/usr/local/bin/rtk hook 'claude\n",
-+            " \t/usr/local/bin/rtk hook claude\r\n\t ",
-+            " \t/usr/local/bin/rtk hook claude\r\t ",
-+        ] {
-+            assert!(
-+                !is_claude_hook_command(command),
-+                "user command was claimed as RTK-owned: {command:?}"
-+            );
-+        }
-+
-+        for command in [
-+            "/usr/local/bin/rtk hook claude\n",
-+            "\n/usr/local/bin/rtk hook claude",
-+            " \n/usr/local/bin/rtk hook claude\n ",
-+            "\t\n/usr/local/bin/rtk hook claude\n\t",
-+            "${HOME}/.local/bin/rtk hook claude",
-+        ] {
-+            assert!(
-+                is_claude_hook_command(command),
-+                "RTK hook command was not recognised: {command:?}"
-+            );
-+        }
-+
-+        for command in [
-+            "\"/usr/local/my;bin/rtk\" hook claude",
-+            "/usr/local/my\\;bin/rtk hook claude",
-+            "\"/usr/local/my&&bin/rtk\" hook claude",
-+        ] {
-+            assert!(
-+                is_claude_hook_command(command),
-+                "literal operator character changed RTK path: {command:?}"
-+            );
-+        }
+-    // Check last ping time
+-    let marker = telemetry_marker_path();
+-    if let Ok(metadata) = std::fs::metadata(&marker)
+-        && let Ok(modified) = metadata.modified()
+-        && let Ok(elapsed) = modified.elapsed()
+-        && elapsed.as_secs() < PING_INTERVAL_SECS
+-    {
+-        return;
+-    }
++    let _ = start_ping_if_due(telemetry_marker_path(), |marker| {
++        let _ = send_ping(marker);
++    });
++}
+ 
+-    // Touch marker file immediately (before sending) to avoid double-ping
+-    touch_marker(&marker);
++/// The main-thread half of the ping: checks the marker and hands the work to a
++/// thread so the CLI never blocks. It never writes the marker. Process exit
++/// kills the thread, often before it connects, and a marker written here would
++/// then skip the day's ping without sending it; `run_ping` claims it instead.
++fn start_ping_if_due<W>(marker: PathBuf, work: W) -> Option<std::thread::JoinHandle<()>>
++where
++    W: FnOnce(&Path) + Send + 'static,
++{
++    if !ping_due(&marker) {
++        return None;
 +    }
-+
-+    #[test]
-+    fn install_and_uninstall_preserve_compound_user_hook() {
-+        let tmp = test_isolation::tempdir();
-+        with_claude_dir_override(&tmp, |dir| {
-+            let path = dir.join(SETTINGS_JSON);
-+            let compound = serde_json::json!({
-+                "type": "command",
-+                "command": "my-audit;/usr/local/bin/rtk hook claude",
-+                "timeout": 9,
-+                "metadata": { "owner": "user", "labels": ["keep"] }
-+            });
-+            fs::write(
-+                &path,
-+                serde_json::json!({
-+                    "hooks": {
-+                        (PRE_TOOL_USE_KEY): [{
-+                            "matcher": "Bash|Read",
-+                            "hooks": [compound.clone()]
-+                        }]
-+                    },
-+                    "permissions": { "allow": ["Bash(ls)"] }
-+                })
-+                .to_string(),
-+            )
-+            .unwrap();
-+
-+            assert_eq!(
-+                patch_settings_json_command(
-+                    CLAUDE_HOOK_COMMAND,
-+                    PatchMode::Auto,
-+                    false,
-+                    InitContext::default(),
-+                    HookInstallScope::UserGlobal,
-+                )
-+                .unwrap(),
-+                PatchResult::Patched
-+            );
-+            let installed = read_json_file(&path).unwrap().unwrap();
-+            let entries = installed["hooks"][PRE_TOOL_USE_KEY].as_array().unwrap();
-+            assert_eq!(entries.len(), 2);
-+            assert!(entries.iter().any(|entry| {
-+                entry["hooks"]
-+                    .as_array()
-+                    .is_some_and(|hooks| hooks.iter().any(|hook| hook == &compound))
-+            }));
-+            assert!(entries.iter().any(|entry| {
-+                entry["hooks"].as_array().is_some_and(|hooks| {
-+                    hooks
-+                        .iter()
-+                        .any(|hook| hook["command"].as_str() == Some(CLAUDE_HOOK_COMMAND))
-+                })
-+            }));
-+
-+            assert_eq!(
-+                remove_settings_entries(InitContext::default()).unwrap(),
-+                SettingsRemoval {
-+                    hook: true,
-+                    proxy_base_url: false
-+                }
-+            );
-+            let after = read_json_file(&path).unwrap().unwrap();
-+            assert_eq!(
-+                after["hooks"][PRE_TOOL_USE_KEY][0]["hooks"][0], compound,
-+                "uninstall must preserve the complete compound user hook"
-+            );
-+            assert_eq!(after["permissions"]["allow"][0], "Bash(ls)");
-+        });
++    Some(std::thread::spawn(move || work(&marker)))
++}
+ 
+-    // Spawn thread so we never block the CLI
+-    std::thread::spawn(|| {
+-        let _ = send_ping();
+-    });
++/// The send-thread half: prepares the payload, then claims the marker, then
++/// sends. Claiming last means a command that exits during preparation leaves
++/// the ping for the next one, and re-checking at the claim means a process
++/// that claimed in the meantime wins. Returns whether a request went out.
++fn run_ping<P, E>(
++    marker: &Path,
++    prepare: impl FnOnce() -> P,
++    send: impl FnOnce(P) -> Result<(), E>,
++) -> Result<bool, E> {
++    let payload = prepare();
++    if !claim_ping(marker) {
++        return Ok(false);
 +    }
-+
-+    #[test]
-+    fn boundary_newline_hook_is_idempotent_and_uninstall_is_selective() {
-+        let tmp = test_isolation::tempdir();
-+        with_claude_dir_override(&tmp, |dir| {
-+            let path = dir.join(SETTINGS_JSON);
-+            let boundary_hook = format!("{CLA
-```
-
-**File**: `src/hooks/init/codex.rs` (modified, +28/-8)
-```diff
-@@ -1024,6 +1024,7 @@ mod tests {
-         assert!(is_codex_hook_command(
-             "\"C:\\Program Files\\rtk.exe\" hook codex"
-         ));
-+        assert!(is_codex_hook_command("rtk hook codex\n"));
-     }
- 
-     #[test]
-@@ -1263,14 +1264,22 @@ mod tests {
-     fn test_patch_codex_hooks_is_idempotent_and_preserves_existing_hooks() {
-         let temp = TempDir::new().unwrap();
-         let hooks_json = temp.path().join(HOOKS_JSON);
-+        let user_hook = serde_json::json!({
-+            "type": "command",
-+            "command": "audit;/usr/local/bin/rtk hook codex",
-+            "timeout": 11,
-+            "metadata": { "owner": "user", "labels": ["keep"] }
-+        });
-+        let user_group = serde_json::json!({
-+            "matcher": "Bash",
-+            "description": "user group",
-+            "hooks": [user_hook.clone()]
-+        });
-         fs::write(
-             &hooks_json,
-             serde_json::to_string_pretty(&serde_json::json!({
-                 "hooks": {
--                    "PreToolUse": [{
--                        "matcher": "Bash",
--                        "hooks": [{ "type": "command", "command": "echo existing" }]
--                    }],
-+                    "PreToolUse": [user_group.clone()],
-                     "Stop": [{
-                         "hooks": [{ "type": "command", "command": "echo stop" }]
-                     }]
-@@ -1287,12 +1296,23 @@ mod tests {
-             serde_json::from_str(&fs::read_to_string(&hooks_json).unwrap()).unwrap();
-         assert!(codex_hook_already_present(&root));
-         assert_eq!(root["hooks"]["PreToolUse"].as_array().unwrap().len(), 2);
--        assert_eq!(
--            root["hooks"]["PreToolUse"][0]["hooks"][0]["command"],
--            "echo existing"
--        );
-+        assert_eq!(root["hooks"]["PreToolUse"][0], user_group,);
-         assert_eq!(root["hooks"]["Stop"][0]["hooks"][0]["command"], "echo stop");
-         assert!(hooks_json.with_extension("json.bak").exists());
-+
-+        assert!(remove_codex_hook_from_file(&hooks_json, InitContext::default()).unwrap());
-+        let after: serde_json::Value =
-+            serde_json::from_str(&fs::read_to_string(&hooks_json).unwrap()).unwrap();
-+        assert!(!codex_hook_already_present(&after));
-+        assert_eq!(
-+            after["hooks"]["PreToolUse"].as_array().unwrap(),
-+            std::slice::from_ref(&user_group)
-+        );
-+        assert_eq!(
-+            after["hooks"]["Stop"][0]["hooks"][0]["command"],
-+            "echo stop"
-+        );
-+        assert_eq!(after["hooks"]["PreToolUse"][0]["hooks"][0], user_hook);
-     }
- 
-     #[test]
-```
-
-**File**: `src/hooks/init/trae.rs` (modified, +1/-0)
-```diff
-@@ -379,6 +379,7 @@ mod tests {
-         assert!(is_trae_hook_command("rtk hook trae"));
-         assert!(is_trae_hook_command("/opt/homebrew/bin/rtk hook trae"));
-         assert!(is_trae_hook_command("\"/opt/homebrew/bin/rtk\" hook trae"));
-+        assert!(is_trae_hook_command("rtk hook trae\n"));
-         assert!(!is_trae_hook_command("rtk hook claude"));
-     }
- 
-```
-
-**File**: `src/hooks/mod.rs` (modified, +29/-0)
-```diff
-@@ -30,6 +30,35 @@ fn is_rtk_binary(binary: &str) -> bool {
++    send(payload)?;
++    Ok(true)
  }
  
- fn is_rtk_hook_command(command: &str, agent: &str) -> bool {
-+    let mut tokens = crate::discover::lexer::tokenize_with_newlines(command);
-+    // Ignore only literal LF operator tokens at the command's boundaries.
-+    // The lexer also reports the CR of a CRLF pair as an LF operator; checking
-+    // the source byte leaves that token for the guard below, and the word check
-+    // after shell_split would reject the CR anyway.
-+    while tokens.first().is_some_and(|token| {
-+        matches!(token.kind, crate::discover::lexer::TokenKind::Operator)
-+            && token.value == "\n"
-+            && command.as_bytes().get(token.offset) == Some(&b'\n')
-+    }) {
-+        tokens.remove(0);
-+    }
-+    while tokens.last().is_some_and(|token| {
-+        matches!(token.kind, crate::discover::lexer::TokenKind::Operator)
-+            && token.value == "\n"
-+            && command.as_bytes().get(token.offset) == Some(&b'\n')
-+    }) {
-+        tokens.pop();
-+    }
-+    if tokens.iter().any(|token| match token.kind {
-+        crate::discover::lexer::TokenKind::Operator
-+        | crate::discover::lexer::TokenKind::Pipe(_)
-+        | crate::discover::lexer::TokenKind::Redirect => true,
-+        crate::discover::lexer::TokenKind::Shellism => token.value == "&",
-+        _ => false,
-+    }) {
+-fn send_ping() -> Result<(), Box<dyn std::error::Error>> {
++fn send_ping(marker: &Path) -> Result<(), Box<dyn std::error::Error>> {
+     let url = endpoint_url().ok_or("no telemetry URL")?;
++    run_ping(marker, build_payload, |payload| {
++        let mut req = ureq::post(url);
++        if let Some(token) = TELEMETRY_TOKEN {
++            req = req.header("X-RTK-Token", token);
++        }
++        // 2 second timeout — if server is down, we move on
++        http::global_timeout(req, std::time::Duration::from_secs(2)).send_json(&payload)?;
++        Ok::<(), Box<dyn std::error::Error>>(())
++    })?;
++    Ok(())
++}
++
++fn build_payload() -> serde_json::Value {
+     let device_hash = generate_device_hash();
+     let version = env!("CARGO_PKG_VERSION").to_string();
+     let os = std::env::consts::OS.to_string();
+@@ -115,7 +145,7 @@ fn send_ping() -> Result<(), Box<dyn std::error::Error>> {
+         },
+     };
+ 
+-    let payload = serde_json::json!({
++    serde_json::json!({
+         "device_hash": device_hash,
+         "version": version,
+         "os": os,
+@@ -154,18 +184,7 @@ fn send_ping() -> Result<(), Box<dyn std::error::Error>> {
+         "recall_stats": build_recall_stats(
+             &crate::core::retriever::stats_snapshot().unwrap_or_default()
+         ),
+-    });
+-
+-    let mut req = ureq::post(url);
+-
+-    if let Some(token) = TELEMETRY_TOKEN {
+-        req = req.header("X-RTK-Token", token);
+-    }
+-
+-    // 2 second timeout — if server is down, we move on
+-    http::global_timeout(req, std::time::Duration::from_secs(2)).send_json(&payload)?;
+-
+-    Ok(())
++    })
+ }
+ 
+ pub fn generate_device_hash() -> String {
+@@ -552,7 +571,27 @@ pub fn telemetry_marker_path() -> PathBuf {
+     data_dir.join(".telemetry_last_ping")
+ }
+ 
+-fn touch_marker(path: &std::path::Path) {
++fn ping_due(marker: &Path) -> bool {
++    let fresh = std::fs::metadata(marker)
++        .and_then(|m| m.modified())
++        .ok()
++        .and_then(|modified| modified.elapsed().ok())
++        .is_some_and(|elapsed| elapsed.as_secs() < PING_INTERVAL_SECS);
++    !fresh
++}
++
++/// Marks today's ping as sent, unless another process already did so after
++/// `maybe_ping` checked. Called right before the request goes out, so the
++/// marker only records a send that was actually attempted.
++fn claim_ping(marker: &Path) -> bool {
++    if !ping_due(marker) {
 +        return false;
 +    }
++    touch_marker(marker);
++    true
++}
 +
-     let parts = crate::discover::lexer::shell_split(command);
-     let [parsed_binary, hook, target] = parts.as_slice() else {
-         return false;
++fn touch_marker(path: &Path) {
+     let _ = crate::core::utils::touch_file(path);
+ }
+ 
+@@ -663,6 +702,124 @@ mod tests {
+         assert!(path.to_string_lossy().contains("rtk"));
+     }
+ 
++    #[test]
++    fn checking_whether_a_ping_is_due_does_not_spend_it() {
++        let dir = tempfile::tempdir().expect("tempdir");
++        let marker = dir.path().join(".telemetry_last_ping");
++
++        assert
+```
+
+**File**: `src/core/telemetry_cmd.rs` (modified, +3/-3)
+```diff
+@@ -31,9 +31,9 @@ fn salt_missing_label(
+         Some(false) | None => "(telemetry not enabled; run `rtk telemetry enable` to opt in)",
+         Some(true) if !enabled => "(telemetry disabled in config.toml)",
+         // Every gate is clear, so the salt is simply not there yet. This is true
+-        // both when no ping has landed (the 23 h interval, or a run that touched
+-        // the marker before the detached thread wrote the salt) and when a write
+-        // genuinely failed — as far as the available state lets us go.
++        // both when no ping has been prepared yet (the 23 h interval, or every
++        // run so far exited before the detached thread wrote the salt) and when
++        // a write genuinely failed — as far as the available state lets us go.
+         Some(true) => "(no salt file yet; written on the first ping)",
+     }
+ }
+```
+
+**File**: `src/lib.rs` (modified, +17/-3)
+```diff
+@@ -2489,13 +2489,18 @@ fn require_single_script(subcommand: &str, shell: Option<&str>, command: &[Strin
+ 
+ /// Whether this invocation runs the daily telemetry ping. A parsed
+ /// `rtk hook …` command does not: the hook processors run before every
+-/// command an agent runs. Anything clap rejects (help, version, a
+-/// passthrough command) still runs it.
++/// command an agent runs. Neither does `rtk telemetry forget`: the send thread
++/// would outlive the command and could write the ping marker back after
++/// `forget` deleted it. Anything clap rejects (help, version, a passthrough
++/// command) still runs it.
+ fn pings_telemetry(parsed: &Result<Cli, clap::Error>) -> bool {
+     !matches!(
+         parsed,
+         Ok(Cli {
+-            command: Commands::Hook { .. },
++            command: Commands::Hook { .. }
++                | Commands::Telemetry {
++                    command: core::telemetry_cmd::TelemetrySubcommand::Forget,
++                },
+             ..
+         })
+     )
+@@ -5250,11 +5255,20 @@ mod tests {
+         }
+     }
+ 
++    #[test]
++    fn telemetry_forget_skips_the_telemetry_ping() {
++        assert!(
++            !pings_telemetry(&try_parse_cli_from(["rtk", "telemetry", "forget"])),
++            "a ping thread started by `forget` could recreate the marker it deletes"
++        );
++    }
++
+     #[test]
+     fn other_invocations_still_run_the_ping() {
+         for args in [
+             &["rtk", "ls"][..],
+             &["rtk", "gain"],
++            &["rtk", "telemetry", "status"],
+             &["rtk", "--help"],
+             &["rtk", "--version"],
+             // Rejected by clap: an unknown command runs through the fallback,
+```
+
+---
+
+### Incident Patch 2: `b00f553a` (2026-11-21)
+**Commit Message**: Merge rtk-ai/rtk develop (1deaf915) into fix/4616-the-telemetry-marker-is-written-before-a
+
+Resolves two conflicts in src/core/telemetry.rs:
+- send_ping, with develop's ureq 3 migration: the send closure keeps
+  run_ping's structure and sends the request develop sends (X-RTK-Token
+  header, http::global_timeout of 2 s, send_json).
+- touch_marker, with develop's Windows marker fix: it now calls
+  utils::touch_file, which sets the modification time explicitly.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `.github/assets/src/before-after.html` (added, +104/-0)
+```diff
+@@ -0,0 +1,104 @@
++<!doctype html>
++<html><head><meta charset="utf-8">
++<!-- Real output. Captured with `rtk bypass cargo test` (left) and `rtk cargo test` (right)
++     on a 48-test crate with one failing assertion, rtk core 1.0.1. Only the lines marked
++     "⋯ N more lines" are elided; the counts are exact. -->
++<link rel="preconnect" href="https://fonts.googleapis.com">
++<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=block" rel="stylesheet">
++<style>
++:root{--bg:#060b18;--bg-card:#0f1629;--text:#e2e8f0;--text-bright:#f8fafc;--text-muted:#94a3b8;--text-dim:#7e8ca6;--accent:#00e599;--accent-dim:rgba(0,229,153,.10);--accent-glow:rgba(0,229,153,.25);--red:#f87171;--scene:rgba(0,229,153,.09);--tint:rgba(0,229,153,.045);--vignette:rgba(0,0,0,.42);--grid:rgba(148,163,184,.05);--line:rgba(148,163,184,.14)}
++*{margin:0;padding:0;box-sizing:border-box}
++html,body{width:1280px;height:560px;background:transparent}
++.card{position:relative;width:1280px;height:560px;border-radius:20px;overflow:hidden;background:var(--bg);border:1px solid var(--line);isolation:isolate;font-family:'Geist','Inter',sans-serif;color:var(--text)}
++.atmo{position:absolute;inset:0;z-index:-1;background-image:
++ radial-gradient(ellipse 34% 80% at 50% 50%,var(--scene),transparent 62%),
++ linear-gradient(180deg,transparent 4%,var(--tint) 42%,transparent 84%),
++ radial-gradient(ellipse 120% 105% at 50% 48%,transparent 56%,var(--vignette) 100%)}
++.grid{position:absolute;inset:0;z-index:-1;background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:40px 40px;-webkit-mask-image:radial-gradient(ellipse 30% 70% at 50% 50%,#000 20%,transparent 75%)}
++.eyebrow{position:absolute;left:56px;top:34px;font-family:'JetBrains Mono',monospace;font-weight:500;font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-dim)}
++.eyebrow b{color:var(--text-muted);font-weight:500}
++.cmd{position:absolute;right:56px;top:30px;font-family:'JetBrains Mono',monospace;font-size:15px;color:var(--text-muted)}
++.cmd span{color:var(--accent)}
++.panel{position:absolute;top:84px;width:470px;height:440px;border:1px solid var(--line);border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,.025),transparent 30%),var(--bg-card);overflow:hidden}
++.panel.left{left:56px}.panel.right{right:56px}
++.ph{display:flex;align-items:center;gap:10px;height:42px;padding:0 18px;border-bottom:1px solid var(--line);font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-dim)}
++.ph i{width:9px;height:9px;border-radius:50%;display:inline-block}
++.left .ph i{background:var(--red);opacity:.8}.right .ph i{background:var(--accent);box-shadow:0 0 10px var(--accent-glow)}
++.ph .n{margin-left:auto;letter-spacing:.04em;text-transform:none}
++.left .ph .n{color:var(--red);opacity:.85}.right .ph .n{color:var(--accent)}
++pre{font-family:'JetBrains Mono',monospace}
++.left pre{white-space:pre;padding:10px 18px;font-size:11.5px;line-height:13.5px;color:rgba(148,163,184,.55)}
++.left pre .f{color:var(--red);opacity:.9}
++.left pre .m{color:rgba(148,163,184,.38);font-style:italic}
++.right pre{white-space:pre-wrap;padding:18px 20px;font-size:13.5px;line-height:22px;color:var(--text)}
++.right pre .f{color:var(--red)}
++.right pre .ok{color:var(--accent)}
++.right pre .p{color:var(--text-muted)}
++.right pre .r{color:var(--accent);opacity:.85}
++.gate{position:absolute;left:526px;top:84px;width:228px;height:440px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px}
++.gate::before{content:'';position:absolute;left:50%;top:0;width:1px;height:100%;transform:translateX(-50%);background:linear-gradient(to bottom,transparent,var(--accent-glow) 30%,var(--accent-glow) 70%,transparent)}
++.gate::after{content:'';position:absolute;left:50%;top:50%;width:260px;height:260px;transform:translate(-50%,-50%);background:radial-gradient(circle,var(--accent-glow) 0%,transparent 62%);opacity:.7}
++.gate img{position:relative;z-index:1;width:124px;height:124px;filter:drop-shadow(0 0 10px var(--accent-glow)) drop-shadow(0 0 32px var(--accent-glow))}
++.gate .lbl{position:relative;z-index:1;font-family:'JetBrains Mono',monospace;font-size:13px;letter-spacing:.26em;color:var(--text-muted)}
++.strand{position:absolute;left:526px;top:84px;width:228px;height:440px;z-index:0}
++</style></head>
++<body><div class="card"><div class="atmo"></div><div class="grid"></div>
++<p class="eyebrow">01 / Install &amp; forget · <b>what your agent reads</b></p>
++<p class="cmd"><span>$</span> cargo test</p>
++
++<div class="panel left">
++ <div class="ph"><i></i>without rtk<span class="n">71 lines</span></div>
++<pre>   Compiling authkit v0.4.2 (/private/tmp/claude-501/-Users-aeppling--superconductor-worktrees-rtk-sc-flux-phonon-4e98/d36bac6a-c158-4776-8c24-adbe62511c7f/scratchpad/demo)
++    Finished `test` 
+```
+
+**File**: `.github/assets/src/companies.html` (added, +22/-0)
+```diff
+@@ -0,0 +1,22 @@
++<!doctype html>
++<html><head><meta charset="utf-8">
++<!-- The 18 logos of rtk-ai.app's "Starred by developers at" strip (rtk-ldp Companies.astro) plus a third
++     row of the largest companies found in the stargazers' public profiles. Transparent background and one
++     flat grey so it reads on GitHub's light and dark themes alike. -->
++<link rel="preconnect" href="https://fonts.googleapis.com">
++<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=JetBrains+Mono:wght@500&display=block" rel="stylesheet">
++<style>
++*{margin:0;padding:0;box-sizing:border-box}
++html,body{width:1280px;height:300px;background:transparent}
++.wrap{width:1280px;height:300px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;font-family:'Inter',sans-serif}
++.eyebrow{font-family:'JetBrains Mono',monospace;font-weight:500;font-size:17px;letter-spacing:.16em;text-transform:uppercase;color:#8b95a7}
++.rows{display:flex;flex-direction:column;gap:26px}
++.row{display:flex;align-items:center;justify-content:center;gap:26px}
++.row img{display:block;width:auto;height:calc(var(--h) * 1.4);filter:brightness(0) invert(.6);opacity:.95}
++.more{font-size:18px;color:#8b95a7;white-space:nowrap}
++</style></head>
++<body><div class="wrap">
++ <p class="eyebrow">Starred by developers at</p>
++ <div class="rows"><div class="row"><img src="companies/microsoft.svg" alt="Microsoft" style="--h:20px"><img src="companies/google.svg" alt="Google" style="--h:22px"><img src="companies/amazon.svg" alt="Amazon" style="--h:22px"><img src="companies/meta.svg" alt="Meta" style="--h:20px"><img src="companies/apple.svg" alt="Apple" style="--h:29px"><img src="companies/nvidia.svg" alt="NVIDIA" style="--h:19px"><img src="companies/ibm.svg" alt="IBM" style="--h:24px"><img src="companies/tencent.svg" alt="Tencent" style="--h:17px"><img src="companies/bytedance.svg" alt="ByteDance" style="--h:19px"></div><div class="row"><img src="companies/alibaba.svg" alt="Alibaba" style="--h:18px"><img src="companies/shopify.svg" alt="Shopify" style="--h:21px"><img src="companies/datadog.svg" alt="Datadog" style="--h:22px"><img src="companies/sap.svg" alt="SAP" style="--h:26px"><img src="companies/adobe.svg" alt="Adobe" style="--h:21px"><img src="companies/intel.svg" alt="Intel" style="--h:24px"><img src="companies/samsung.svg" alt="Samsung" style="--h:18px"><img src="companies/bosch.svg" alt="Bosch" style="--h:20px"><img src="companies/cisco.svg" alt="Cisco" style="--h:26px"></div><div class="row"><img src="companies/jpmorgan-chase.svg" alt="JPMorgan Chase" style="--h:14px"><img src="companies/oracle.svg" alt="Oracle" style="--h:13px"><img src="companies/netflix.svg" alt="Netflix" style="--h:18px"><img src="companies/toyota.svg" alt="Toyota" style="--h:14px"><img src="companies/salesforce.svg" alt="Salesforce" style="--h:26px"><img src="companies/siemens.svg" alt="Siemens" style="--h:16px"><img src="companies/accenture.svg" alt="Accenture" style="--h:21px"><img src="companies/uber.svg" alt="Uber" style="--h:19px"><img src="companies/spotify.svg" alt="Spotify" style="--h:19px"></div></div>
++ <p class="more">and 1,100+ more companies</p>
++</div></body></html>
+```
+
+**File**: `.github/assets/src/companies/accenture.svg` (added, +410/-0)
+```diff
+@@ -0,0 +1,410 @@
++<?xml version="1.0" encoding="UTF-8" standalone="no"?>
++<!-- Created with Inkscape (http://www.inkscape.org/) -->
++<svg
++   xmlns:svg="http://www.w3.org/2000/svg"
++   xmlns="http://www.w3.org/2000/svg"
++   version="1.0"
++   width="1133.8583"
++   height="374.88187"
++   id="svg2">
++  <defs
++     id="defs4">
++    <clipPath
++       id="clipPath2349">
++      <path
++         d="M -85.5,-19 L -85.5,19 L 85.5,19 L 85.5,-19 L -85.5,-19 z"
++         id="path2351" />
++    </clipPath>
++    <clipPath
++       id="clipPath2341">
++      <path
++         d="M 0,0 L 603.7795,0 L 603.7795,841.8898 L 0,841.8898 L 0,0 z"
++         id="path2343" />
++    </clipPath>
++    <clipPath
++       id="clipPath2926">
++      <path
++         d="M 0.015,840.99 L 595.005,840.99 L 595.005,0 L 0.015,0 L 0.015,840.99 z"
++         id="path2928" />
++    </clipPath>
++    <clipPath
++       id="clipPath2918">
++      <path
++         d="M 0,841 L 595,841 L 595,0 L 0,0 L 0,841 z"
++         id="path2920" />
++    </clipPath>
++    <clipPath
++       id="clipPath2694">
++      <path
++         d="M 0.015,840.99 L 595.005,840.99 L 595.005,0 L 0.015,0 L 0.015,840.99 z"
++         id="path2696" />
++    </clipPath>
++    <clipPath
++       id="clipPath2686">
++      <path
++         d="M 0,841 L 595,841 L 595,0 L 0,0 L 0,841 z"
++         id="path2688" />
++    </clipPath>
++    <clipPath
++       id="clipPath2678">
++      <path
++         d="M 405.35,120.15 L 510.24,120.15 L 510.24,91.8 L 405.35,91.8 L 405.35,120.15 z"
++         id="path2680" />
++    </clipPath>
++    <clipPath
++       id="clipPath2498">
++      <path
++         d="M 0.015,840.99 L 595.005,840.99 L 595.005,0 L 0.015,0 L 0.015,840.99 z"
++         id="path2500" />
++    </clipPath>
++    <clipPath
++       id="clipPath2490">
++      <path
++         d="M 0,841 L 595,841 L 595,0 L 0,0 L 0,841 z"
++         id="path2492" />
++    </clipPath>
++    <clipPath
++       id="clipPath2482">
++      <path
++         d="M 51.02,680.71 L 595.28,680.71 L 595.28,126.67 L 51.02,126.67 L 51.02,680.71 z"
++         id="path2484" />
++    </clipPath>
++    <clipPath
++       id="clipPath2464">
++      <path
++         d="M 0.015,840.99 L 595.005,840.99 L 595.005,0 L 0.015,0 L 0.015,840.99 z"
++         id="path2466" />
++    </clipPath>
++    <clipPath
++       id="clipPath2456">
++      <path
++         d="M 0,841 L 595,841 L 595,0 L 0,0 L 0,841 z"
++         id="path2458" />
++    </clipPath>
++    <clipPath
++       id="clipPath5050">
++      <path
++         d="M -610.389,657.405 L -56.916,657.405 L -56.916,664.488 L -610.389,664.488 L -610.389,657.405 z"
++         id="path5052" />
++    </clipPath>
++    <clipPath
++       id="clipPath5036">
++      <path
++         d="M 303.624,657.405 L 362.034,657.405 L 362.034,664.488 L 303.624,664.488 L 303.624,657.405 z"
++         id="path5038" />
++    </clipPath>
++    <clipPath
++       id="clipPath5028">
++      <path
++         d="M 303.624,657.405 L 362.034,657.405 L 362.034,664.488 L 303.624,664.488 L 303.624,657.405 z"
++         id="path5030" />
++    </clipPath>
++    <clipPath
++       id="clipPath5016">
++      <path
++         d="M 271.575,657.405 L 329.985,657.405 L 329.985,664.488 L 271.575,664.488 L 271.575,657.405 z"
++         id="path5018" />
++    </clipPath>
++    <clipPath
++       id="clipPath5008">
++      <path
++         d="M 271.575,657.405 L 329.985,657.405 L 329.985,664.488 L 271.575,664.488 L 271.575,657.405 z"
++         id="path5010" />
++    </clipPath>
++    <clipPath
++       id="clipPath4996">
++      <path
++         d="M 204.345,657.405 L 262.755,657.405 L 262.755,664.488 L 204.345,664.488 L 204.345,657.405 z"
++         id="path4998" />
++    </clipPath>
++    <clipPath
++       id="clipPath4988">
++      <path
++         d="M 204.345,657.405 L 262.755,657.405 L 262.755,664.488 L 204.345,664.488 L 204.345,657.405 z"
++         id="path4990" />
++    </clipPath>
++    <clipPath
++       id="clipPath4972">
++      <path
++         d="M 375.417,657.405 L 433.827,657.405 L 433.827,664.488 L 375.417,664.488 L 375.417,657.405 z"
++         id="path4974" />
++    </clipPath>
++    <clipPath
++       id="clipPath4964">
++      <path
++         d="M 375.417,657.405 L 433.827,657.405 L 433.827,664.488 L 375.417,664.488 L 375.417,657.405 z"
++         id="path4966" />
++    </clipPath>
++    <clipPath
++       id="clipPath4950">
++      <path
++         d="M 88.236,657.405 L 146.646,657.405 L 146.646,664.488 L 88.236,664.488 L 88.236,657.405 z"
++         id="path4952" />
++    </clipPath>
++    <clipPath
++       id="clipPath4942">
++      <path
++         d="M 88.236,657.405 L 146.646,657.405 L 146.646,664.488 L 88.236,664.488 L 88.236,657.405 z"
++         id="path4944" />
++    </clipPath>
++    <clipPath
++       id="clipPath4928">
++      <path
++         d="M 40.806,657.405 L 99.216,657.405 L 99.216,664.488 L 40.806,664.488 L 40.806,657.405 z"
++         id="path4930" />
++    </clipPath>
++    <clipPath
++       id="clipPath4920">
++      <path
++         d="M 40.806,657.405 L 99.216,657.405 L 99.216,664.488 L 40.806,664.488 L 4
+```
+
+**File**: `.github/assets/src/companies/adobe.svg` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++<svg xmlns="http://www.w3.org/2000/svg" fill="#fa0c00" viewBox="-0.27 -0.27 54.97 14.88"><path d="M5.996 0H0v14.34zm4.219 0h5.988v14.34zm-2.11 5.285 3.817 9.055H9.418l-1.14-2.883H5.483Zm17.88 3.835.707 2.027c.024.05.059.074.121.074h1.36c.074 0 .086-.035.074-.11l-2.809-7.8c-.011-.063-.023-.075-.086-.075h-1.687c-.047 0-.074.036-.074.086-.024.41-.059.536-.11.657l-2.504 7.12c-.011.087.016.122.086.122h1.215c.074 0 .11-.024.137-.098l.668-2.004ZM23.47 7.794c.367-1.11.851-2.531 1.047-3.344h.011c.242.852.813 2.54 1.07 3.344zm8.388 3.548a5.8 5.8 0 0 0 2.297-.473c.062-.023.074-.05.074-.11a8 8 0 0 1-.051-.776V2.639c0-.047 0-.07-.059-.07h-1.324c-.05 0-.074.023-.074.085v2.489a4 4 0 0 0-.523-.035c-2.137 0-3.45 1.41-3.45 3.171 0 2.043 1.348 3.063 3.11 3.063m.863-1.36c-.219.07-.461.098-.707.098-.969 0-1.762-.547-1.762-1.875 0-1.176.817-1.87 1.899-1.87.218 0 .41.023.57.085zm5.732-4.874c-1.824 0-2.953 1.398-2.953 3.125 0 1.542.899 3.109 2.926 3.109 1.715 0 2.918-1.262 2.918-3.149 0-1.664-1.02-3.085-2.89-3.085m-.074 1.226c1.031 0 1.469.887 1.469 1.899 0 1.25-.645 1.87-1.395 1.87-.925 0-1.472-.777-1.472-1.898 0-1.152.582-1.87 1.398-1.87m4.333-3.767c-.05 0-.086.024-.086.086v8.313c0 .035.035.098.086.11q.875.267 1.82.265c1.801 0 3.551-1.117 3.551-3.367 0-1.63-1.117-2.867-2.867-2.867a3.5 3.5 0 0 0-1.106.171l-.015-2.613c0-.086-.024-.098-.11-.098zm3.875 5.555c0 1.348-.922 1.98-1.918 1.98-.207 0-.39-.011-.559-.062V6.494c.192-.074.422-.136.848-.136.961 0 1.629.609 1.629 1.765m6.438.437c.594 0 1.082-.011 1.25-.05.063-.012.086-.035.098-.086.035-.133.05-.41.05-.75 0-1.156-.695-2.566-2.492-2.566-1.836 0-2.855 1.496-2.855 3.183 0 1.496.789 3.05 3 3.05.828 0 1.363-.132 1.824-.35.047-.024.07-.063.07-.133V9.846c0-.059-.035-.07-.07-.047q-.688.293-1.508.293c-1.238 0-1.8-.684-1.836-1.531zm-2.469-1.046c.098-.594.473-1.239 1.313-1.239.926 0 1.168.778 1.168 1.13v.097c-.051.012-.207.012-.668.012zm0 0"/></svg>
+\ No newline at end of file
+```
+
+**File**: `.github/assets/src/companies/alibaba.svg` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++<svg viewBox="-3.87 -3.87 781.00 129.73" xmlns="http://www.w3.org/2000/svg"><rect width="100%" height="100%" fill="none"/><g class="currentLayer"><path d="M487.347 82.828c0 12.332-6.25 18.498-18.741 18.498-8.006 0-12.006-2.926-12.006-8.798 0-5.323 4.217-8.716 12.62-10.185 3.105-.544 9.143-.818 18.127-.818zm35.239-16.99c0-21.399-16.204-31.45-47.942-32.108-33.079-.683-47.053 7.93-49.832 26.019h34.3c1.654-5.891 5.616-9.188 13.826-8.9 8.07.287 14.077 4.382 14.377 15.104-18.46.275-32.057 1.348-41.392 3.585-18.013 4.32-26.964 14.14-26.964 27.5 0 9.004 3.987 15.579 11.935 19.706 5.988 3.093 13.757 4.978 23.303 4.646 15.642-.544 26.914-5.003 33.897-14.23v12.357h34.504zm215.44 16.99c0 12.332-6.255 18.498-18.74 18.498-8.007 0-12.007-2.926-12.007-8.798 0-5.323 4.211-8.716 12.62-10.185 3.105-.544 9.137-.818 18.127-.818zm35.239-16.99c0-21.399-16.21-31.45-47.941-32.108-33.086-.683-47.06 7.93-49.833 26.019h34.3c1.654-5.891 5.616-9.188 13.827-8.9 8.063.287 14.07 4.382 14.37 15.104-18.453.275-32.057 1.348-41.392 3.585-18.006 4.32-26.958 14.14-26.958 27.5 0 9.004 3.98 15.579 11.93 19.706 5.993 3.093 13.763 4.978 23.302 4.646 15.649-.544 26.92-5.003 33.897-14.23v12.357h34.504zM59.577 72.005 79.148 28.44l18.537 43.565zM59.717 0 0 119.652h38.772l9.476-21.565h59.718l8.817 21.565h43.028L102.848 0zm111.197 119.648h37.577V.003h-37.577zM232.338.003v23.762h37.576V.003zm0 36.69v82.955h37.576V36.693zM364.89 91.505c-6.895 9.489-15.495 11.591-25.789 6.326a26 26 0 0 1-1.565-1.125c-3.24-3.01-5.304-6.702-6.186-11.086q-1.984-9.66.614-19.13c1.233-4.281 3.623-7.655 7.182-10.102 4.09-2.358 8.44-3.208 13.035-2.556 6.428 1.016 10.958 4.613 13.61 10.792 1.635 4.051 2.421 8.294 2.357 12.71q.096 7.502-3.258 14.171m-71.085 28.185h36.69v-15.086c9.718 12.402 21.999 17.603 36.918 17.067 8.313-.422 15.962-3.304 22.888-8.14 9.386-7.496 14.46-17.368 15.214-29.63 1.067-12.625-1.987-24.07-9.17-34.344-6.99-8.658-15.897-13.635-26.727-14.907-15.06-1.993-28.306 2.972-38.83 14.396V.114h-36.945zm321.671-28.185c-6.894 9.489-15.495 11.591-25.788 6.326a26 26 0 0 1-1.566-1.125c-3.24-3.01-5.303-6.702-6.185-11.086q-1.984-9.66.613-19.13c1.234-4.281 3.623-7.655 7.182-10.102 4.09-2.358 8.441-3.208 13.035-2.556 6.428 1.016 10.958 4.613 13.604 10.792 1.642 4.051 2.428 8.294 2.364 12.71q.096 7.502-3.259 14.171m-71.084 28.185h36.689v-15.086c9.718 12.402 22 17.603 36.92 17.067 8.312-.422 15.96-3.304 22.887-8.14 9.386-7.496 14.46-17.368 15.213-29.63 1.068-12.625-1.987-24.07-9.169-34.344-6.99-8.658-15.897-13.635-26.727-14.907-15.06-1.993-28.307 2.972-38.83 14.396V.114H544.43z" class="selected" style="fill:#ff5a00;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:6.38963"/></g></svg>
+\ No newline at end of file
+```
+
+**File**: `.github/assets/src/companies/amazon.svg` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++<svg viewBox="-2.65 -2.77 608.30 187.52" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="fill:#221f1f"><path d="M374.006 142.184c-35 25.797-85.729 39.561-129.406 39.561-61.242 0-116.376-22.651-158.087-60.325-3.278-2.962-.341-7 3.591-4.693 45.015 26.191 100.673 41.947 158.166 41.947 38.775 0 81.43-8.022 120.65-24.67 5.925-2.516 10.88 3.88 5.086 8.18" style="fill:#f90"/><path d="M388.557 125.536c-4.457-5.715-29.573-2.7-40.846-1.363-3.434.42-3.959-2.57-.865-4.719 20.003-14.078 52.827-10.015 56.654-5.296 3.828 4.745-.996 37.648-19.793 53.352-2.884 2.411-5.637 1.127-4.352-2.072 4.22-10.539 13.685-34.16 9.202-39.902" style="fill:#f90"/><path d="M348.497 20.066V6.381c0-2.071 1.573-3.46 3.461-3.46h61.269c1.966 0 3.54 1.415 3.54 3.46V18.1c-.027 1.966-1.679 4.535-4.615 8.599l-31.749 45.329c11.798-.289 24.25 1.468 34.947 7.498 2.412 1.363 3.068 3.356 3.251 5.322V99.45c0 1.992-2.202 4.325-4.509 3.12-18.85-9.884-43.887-10.96-64.73.104-2.123 1.154-4.351-1.153-4.351-3.146V85.661c0-2.229.026-6.03 2.254-9.412L384.047 23.5h-32.01c-1.967 0-3.54-1.39-3.54-3.434m-223.498 85.388h-18.64c-1.783-.13-3.199-1.468-3.33-3.172V6.617c0-1.914 1.6-3.435 3.592-3.435h17.382c1.809.079 3.25 1.468 3.382 3.199v12.505h.34c4.536-12.086 13.056-17.722 24.54-17.722 11.666 0 18.954 5.636 24.198 17.722 4.509-12.086 14.76-17.722 25.744-17.722 7.813 0 16.36 3.224 21.577 10.46 5.899 8.049 4.693 19.741 4.693 29.992l-.026 60.378c0 1.913-1.6 3.46-3.592 3.46h-18.614c-1.862-.13-3.356-1.625-3.356-3.46V51.29c0-4.037.367-14.104-.524-17.932-1.39-6.423-5.558-8.232-10.959-8.232-4.51 0-9.228 3.015-11.142 7.839s-1.73 12.898-1.73 18.325v50.704c0 1.913-1.6 3.46-3.592 3.46h-18.614c-1.888-.13-3.356-1.625-3.356-3.46l-.026-50.704c0-10.67 1.757-26.374-11.483-26.374-13.397 0-12.872 15.31-12.872 26.374v50.704c0 1.913-1.6 3.46-3.592 3.46M469.514 1.164c27.66 0 42.629 23.752 42.629 53.954 0 29.18-16.543 52.329-42.629 52.329-27.16 0-41.947-23.753-41.947-53.352 0-29.782 14.97-52.931 41.947-52.931m.158 19.531c-13.738 0-14.603 18.719-14.603 30.386 0 11.692-.184 36.65 14.445 36.65 14.446 0 15.128-20.134 15.128-32.403 0-8.075-.341-17.723-2.78-25.378-2.097-6.66-6.265-9.255-12.19-9.255m78.336 84.759h-18.562c-1.861-.13-3.356-1.625-3.356-3.46l-.026-95.692c.157-1.756 1.704-3.12 3.592-3.12h17.277c1.625.079 2.962 1.18 3.33 2.674v14.63h.34c5.217-13.083 12.532-19.322 25.404-19.322 8.363 0 16.517 3.015 21.76 11.273 4.877 7.655 4.877 20.528 4.877 29.782v60.22c-.21 1.678-1.757 3.015-3.592 3.015h-18.693c-1.704-.13-3.12-1.39-3.303-3.015V50.478c0-10.461 1.206-25.772-11.667-25.772-4.535 0-8.704 3.042-10.775 7.656-2.621 5.846-2.962 11.666-2.962 18.116v51.516c-.026 1.913-1.652 3.46-3.644 3.46"/><use xlink:href="#a" transform="translate(244.367)"/><path id="a" d="M55.288 59.758v-4.037c-13.475 0-27.71 2.884-27.71 18.771 0 8.049 4.168 13.502 11.325 13.502 5.243 0 9.936-3.225 12.898-8.468 3.67-6.45 3.487-12.506 3.487-19.768m18.798 45.434c-1.232 1.101-3.015 1.18-4.405.446-6.187-5.139-7.288-7.524-10.696-12.427-10.225 10.434-17.46 13.554-30.726 13.554-15.678 0-27.895-9.674-27.895-29.048 0-15.127 8.206-25.43 19.872-30.464 10.12-4.457 24.25-5.244 35.052-6.476v-2.412c0-4.43.341-9.674-2.254-13.501-2.281-3.435-6.633-4.85-10.46-4.85-7.106 0-13.45 3.644-14.997 11.194-.315 1.678-1.547 3.33-3.225 3.408l-18.09-1.94c-1.52-.34-3.198-1.573-2.778-3.906C7.652 6.853 27.446.246 45.169.246c9.07 0 20.92 2.412 28.078 9.28 9.07 8.469 8.206 19.768 8.206 32.064v29.048c0 8.73 3.618 12.558 7.026 17.277 1.206 1.678 1.468 3.697-.053 4.955-3.801 3.172-10.565 9.071-14.288 12.375z"/></svg>
+\ No newline at end of file
+```
+
+**File**: `.github/assets/src/companies/apple.svg` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++<svg viewBox="-5.00 -5.00 824.10 1009.90" xmlns="http://www.w3.org/2000/svg"><path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76.5 0-103.7 40.8-165.9 40.8s-105.6-57-155.5-127C46.7 790.7 0 663 0 541.8c0-194.4 126.4-297.5 250.8-297.5 66.1 0 121.2 43.4 162.7 43.4 39.5 0 101.1-46 176.3-46 28.5 0 130.9 2.6 198.3 99.2m-234-181.5c31.1-36.9 53.1-88.1 53.1-139.3 0-7.1-.6-14.3-1.9-20.1-50.6 1.9-110.8 33.7-147.1 75.8-28.5 32.4-55.1 83.6-55.1 135.5 0 7.8 1.3 15.6 1.9 18.1 3.2.6 8.4 1.3 13.6 1.3 45.4 0 102.5-30.4 135.5-71.3"/></svg>
+\ No newline at end of file
+```
+
+**File**: `.github/assets/src/companies/bosch.svg` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++<svg xmlns="http://www.w3.org/2000/svg" viewBox="-2.17 -1.98 437.33 100.73"><path d="M185.2 46.88a13.77 13.77 0 0 0 8.8-13c0-11.7-8.3-17.5-19.7-17.5h-29.9V80h32.5c10 0 19.8-7 19.8-17.7 0-12.72-11.5-15.3-11.5-15.42M160 29.58h11.6a5.66 5.66 0 0 1 6 5.31v.69a5.93 5.93 0 0 1-6 5.81h-11.7Zm11.7 37.1h-11.6v-12.5h11.3c5.7 0 8.4 2.5 8.4 6.2 0 4.62-3.4 6.3-8.1 6.3m59.4-51.9c-18.4 0-29.2 14.7-29.2 33.3s10.8 33.3 29.2 33.3 29.2-14.6 29.2-33.3-10.7-33.3-29.2-33.3m0 51.4c-9 0-13.5-8.1-13.5-18.1s4.5-18 13.5-18 13.6 8.1 13.6 18c0 10.1-4.6 18.1-13.6 18.1m63.1-24.8-2.2-.5c-5.4-1.1-9.7-2.5-9.7-6.4 0-4.2 4.1-5.9 7.7-5.9a17.86 17.86 0 0 1 13 5.9l9.9-9.8c-4.5-5.1-11.8-10-23.2-10-13.4 0-23.6 7.5-23.6 20 0 11.4 8.2 17 18.2 19.1l2.2.5c8.3 1.7 11.4 3 11.4 7 0 3.8-3.4 6.3-8.6 6.3-6.2 0-11.8-2.7-16.1-8.2l-10.1 10c5.6 6.7 12.7 11.9 26.4 11.9 11.9 0 24.6-6.8 24.6-20.7.2-14.5-10.8-17.3-19.9-19.2m55.5 24.8c-7 0-14.3-5.8-14.3-18.5 0-11.3 6.8-17.6 13.9-17.6 5.6 0 8.9 2.6 11.5 7.1l12.8-8.5c-6.4-9.7-14-13.8-24.5-13.8-19.2 0-29.6 14.9-29.6 32.9 0 18.9 11.5 33.7 29.4 33.7 12.6 0 18.6-4.4 25.1-13.8L361.1 59c-2.6 4.18-5.4 7.18-11.4 7.18m66.6-49.8v23.4H397v-23.4h-16.7v63.6H397v-25.1h19.3v25.1H433v-63.6z" style="fill:#ed0007;fill-rule:evenodd"/><path d="M48.2.18a48.2 48.2 0 1 0 48.2 48.2A48.2 48.2 0 0 0 48.2.18m0 91.9a43.7 43.7 0 1 1 43.7-43.7 43.71 43.71 0 0 1-43.7 43.7"/><path d="M68.1 18.28h-3.3v16.5H31.7v-16.5h-3.4a36.06 36.06 0 0 0 0 60.2h3.4V62h33.1v16.5h3.3a36.05 36.05 0 0 0 0-60.2ZM27.1 72a31.59 31.59 0 0 1-2.63-44.6 33 33 0 0 1 2.63-2.62Zm37.7-14.6H31.7V39.28h33.1Zm4.5 14.5V24.78a31.65 31.65 0 0 1 2.39 44.71 34 34 0 0 1-2.39 2.39Z"/></svg>
+\ No newline at end of file
+```
+
+---
+
+### Incident Patch 3: `1deaf915` (2026-11-20)
+**Commit Message**: Merge pull request #4784 from viniciusdsandrade/fix/4728-windows-fuzz-git-help-browser
+
+test(git): skip git in help passthrough fuzz on Windows
+
+**File**: `tests/help_passthrough_fuzz_test.rs` (modified, +6/-1)
+```diff
+@@ -279,7 +279,12 @@ fn a_wrapped_tools_own_help_survives_rtk() {
+     // The cases of one tool, in `CASES` order, with the tool's resolved path.
+     let mut by_tool: Vec<(PathBuf, Vec<&Case>)> = Vec::new();
+     for case in CASES {
+-        if UNIX_ONLY.contains(&case.tool) {
++        // Git for Windows renders `--help` as an HTML page in the default browser
++        // (`help.format=html` is compiled in, so the scratch git config cannot change
++        // it, and there is no `man` to fall back on). `-h` still prints text there.
++        let opens_browser =
++            cfg!(windows) && case.tool == "git" && case.native_args.contains(&"--help");
++        if UNIX_ONLY.contains(&case.tool) || opens_browser {
+             skipped.push(case.tool);
+             continue;
+         }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5072** (closed): hook: add Kiro CLI agent support (@evandrojr)
-- **PR #5069** (2026-11-11): chore(deps): bump anyhow from 1.0.102 to 1.0.104 (@dependabot[bot])
-- **PR #5068** (2026-11-11): chore(deps): bump softprops/action-gh-release from 3.0.3 to 3.0.4 (@dependabot[bot])
-- **PR #5067** (2026-11-11): chore(deps): bump codepage from 0.1.2 to 0.1.3 (@dependabot[bot])
-- **PR #5060** (closed): Sync/upstream reliability (@idolgoff)
-- **PR #5056** (2026-11-17): fix(cargo): filter toolchain and global-prefix invocations (@milyin)
+- **PR #5188** (2026-11-19): chore(master): release 1.2.1 (@rtk-release-bot[bot])
+- **PR #5181** (2026-11-19): fix: Pro line in rtk gain, stale proxy lockfile, proxy variable docs (@aeppling)
+- **PR #5180** (2026-11-19): fix(recall): keep clippy clean on Windows, where FileId is () (@LeviReisJs)
+- **PR #5170** (closed): feat(recall): include context around grep matches (@shiroha777777)
+- **PR #5154** (2026-11-20): chore(deps): bump rusqlite from 0.34.0 to 0.42.0 (@dependabot[bot])
+- **PR #5153** (2026-11-19): chore(deps): bump htmd from 0.5.5 to 0.5.6 (@dependabot[bot])
 
 ---
 
@@ -2055,59 +2343,89 @@ fix(hooks): preserve compound user hook entries
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in claude.rs
+## X. Empirical Invariant Guard in telemetry.rs
 
 **RULE**:
-When implementing operations in `src/hooks/init/claude.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rtk-ai/rtk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/core/telemetry.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rtk-ai/rtk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `eb710be4`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ef0b734b`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/hooks/init/claude.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/core/telemetry.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    #[test]
-    fn compound_shell_commands_are_not_rtk_hooks() {
-        for command in [
-            "my-audit;/usr/local/bin/rtk hook claude",
-            "my-audit&&/usr/local/bin/rtk hook claude",
-            "my-audit||/usr/local/bin/rtk hook claude",
-            "my-audit|/usr/local/bin/rtk hook claude",
-            "my-audit&/usr/local/bin/rtk hook claude",
-            "my-audit>/usr/local/bin/rtk hook claude",
-            "/usr/local/bin/rtk hook claude > /tmp/audit.log",
-            "/usr/local/bin/rtk\nhook claude",
-            "/usr/local/bin/rtk hook claude\nmy-audit",
-            "/usr/local/bin/rtk hook claude\r\n",
-            "/usr/local/bin/rtk hook claude\r",
-            "/usr/local/bin/rtk hook claude\\ ",
-            "/usr/local/bin/rtk hook \"claude\n",
-            "/usr/local/bin/rtk hook 'claude\n",
-            " \t/usr/local/bin/rtk hook claude\r\n\t ",
-            " \t/usr/local/bin/rtk hook claude\r\t ",
-        ] {
-            assert!(
-                !is_claude_hook_command(command),
-                "user command was claimed as RTK-owned: {command:?}"
-            );
-        }
-
-        for command in [
-            "/usr/local/bin/rtk hook claude\n",
-     
+use std::path::{Path, PathBuf};
+    let _ = start_ping_if_due(telemetry_marker_path(), |marker| {
+        let _ = send_ping(marker);
+    });
+}
+/// The main-thread half of the ping: checks the marker and hands the work to a
+/// thread so the CLI never blocks. It never writes the marker. Process exit
+/// kills the thread, often before it connects, and a marker written here would
+/// then skip the day's ping without sending it; `run_ping` claims it instead.
+fn start_ping_if_due<W>(marker: PathBuf, work: W) -> Option<std::thread::JoinHandle<()>>
+where
+    W: FnOnce(&Path) + Send + 'static,
+{
+    if !ping_due(&marker) {
+        return None;
+    }
+    Some(std::thread::spawn(move || work(&marker)))
+}
+/// The send-thread half: prepares the payload, then claims the marker, then
+/// sends. Claiming last means a command that exits during preparation leaves
+/// the ping for the next one, and re-checking at the claim means a process
+/// that claimed in the meantime wins. Returns whether a request went out.
+fn run_ping<P, E>(
+    marker: &Path,
+    prepare: impl FnOnce() -> P,
+    send: impl FnOnce(P) -> Result<(), E>,
+) -> Result<bool, E> {
+    let payload = prepare();
+    if !claim_ping(marke
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+use std::path::PathBuf;
+    // Check last ping time
+    let marker = telemetry_marker_path();
+    if let Ok(metadata) = std::fs::metadata(&marker)
+        && let Ok(modified) = metadata.modified()
+        && let Ok(elapsed) = modified.elapsed()
+        && elapsed.as_secs() < PING_INTERVAL_SECS
+    {
+        return;
+    }
+    // Touch marker file immediately (before sending) to avoid double-ping
+    touch_marker(&marker);
+    // Spawn thread so we never block the CLI
+    std::thread::spawn(|| {
+        let _ = send_ping();
+    });
+fn send_ping() -> Result<(), Box<dyn std::error::Error>> {
+    let payload = serde_json::json!({
+    });
+
+    let mut req = ureq::post(url);
+
+    if let Some(token) = TELEMETRY_TOKEN {
+        req = req.header("X-RTK-Token", token);
+    }
+
+    // 2 second timeout — if server is down, we move on
+    http::global_timeout(req, std::time::Duration::from_secs(2)).send_json(&payload)?;
+
+    Ok(())
+fn touch_marker(path: &std::path::Path) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `eb710be4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ef0b734b` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

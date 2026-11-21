@@ -11748,3 +11748,5 @@
 | `CYCLE-20261121-N1NV` | `2026-11-21T06:45:20.299Z` | `lingyired/status-trio` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9740, Rule 9741, Rule 9742` | Yes (`bcd61914...`) |
 | `CYCLE-2026-11-21-PROJ-EVOLVE` | `2026-11-21T06:46:05.583Z` | `lingyired-status-trio` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-2B0EB374` [Domain H] | Yes (`0f05a5c4...`) |
 | `CYCLE-2026-11-21-PROJ-EVOLVE` | `2026-11-21T06:46:53.155Z` | `lingyired-status-trio` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-9744E937` [Domain F] | Yes (`92e27fca...`) |
+| `CYCLE-20261121-CM2G` | `2026-11-21T07:05:13.144Z` | `jithin-sabu/purge-app` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9743` | Yes (`1bf8fa2b...`) |
+| `CYCLE-20261121-JFR8` | `2026-11-21T07:10:31.556Z` | `rtk-ai/rtk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9744` | Yes (`0afe1831...`) |

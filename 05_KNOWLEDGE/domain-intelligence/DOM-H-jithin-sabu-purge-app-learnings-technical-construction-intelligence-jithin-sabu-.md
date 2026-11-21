@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T22:56:52.070Z",
+  "timestamp": "2026-11-21T07:10:36.462Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-jithin-sabu-purge-app-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [jithin-sabu-purge-app-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T22:56:52.070Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T07:10:36.462Z`  
 > **Learning ID**: `LEARN-EVO-jithin-sabu-purge-app-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 54%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), A (Human & Need Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence)
+- **Confidence Rating**: 65%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from jithin-sabu-purge-app-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/jithin-sabu-purge-app-learnings.md`  
 > **Source**: github ([https://github.com/jithin-sabu/purge-app](https://github.com/jithin-sabu/purge-app))  
-> **Source Version**: `6e5c3d30`  
+> **Source Version**: `384b5b6c`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T22:56:27.477Z  
+> **Timestamp**: 2026-11-21T07:05:12.104Z  
 > **Learning ID**: `learn-github-jithin-sabu-purge-app`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/jithin-sabu-purge-app-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/jithin-sabu/purge-app](https://github.com/jithin-sabu/purge-app))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T22:56:27.081Z  
+> **Harvest Timestamp**: 2026-11-21T07:05:11.987Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Free up your Mac. Safely. A free, open-source native Mac app that clears the cache and junk your Mac piles up on its own. Files go to the Trash by default, so you can put them back.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 1954 stars
+- **Stars / Engagement**: 1991 stars
 
 ---
 
@@ -257,7 +257,6 @@ enum UnifiedAssetCalls {
 
     static let frameworkPath =
         "/System/Library/PrivateFrameworks/UnifiedAssetFramework.framework/UnifiedAssetFramework"
-    static let serviceName = "com.apple.siri.uaf.subscription.service"
 
     static func load() throws {
         guard dlopen(frameworkPath, RTLD_NOW) != nil else {
@@ -321,6 +320,10 @@ enum UnifiedAssetCalls {
     /// Sends one operation to the subscription service and waits for its reply.
     /// `config` carries "Operation" and its arguments. Throws on a missing
     /// interface, a transport error, a timeout, or an error reply.
+    ///
+    /// `AppleIntelligenceModelRoute` picks the service. When the subscription
+    /// service refuses or drops the connection, as it does from macOS 27.3,
+    /// the same request goes out once more through siriknowledged's service.
     static func send(_ config: [String: Any], timeout: TimeInterval) throws {
         try load()
         guard let interfaceClass = NSClassFromString("UAFXPCProxyServiceInterface"),
@@ -332,7 +335,23 @@ enum UnifiedAssetCalls {
             || protocol_getMethodDescription(interface.protocol, selector, false, true).name != nil
         guard described else { throw CallError("the service interface no longer has operationWithConfig:completion:") }
 
-        let connection = NSXPCConnection(machServiceName: serviceName, options: [])
+        do {
+            try AppleIntelligenceModelRoute.send(timeout: timeout) { service, timeout in
+                try send(config, to: service, interface: interface, selector: selector, timeout: timeout)
+            }
+        } catch let failure as AppleIntelligenceModelRoute.SecondTryFailure {
+            // A worker refusal has no domain or code, so the first try joins its text.
+            if let second = failure.error as? CallError {
+                throw CallError("\(second.description); \(failure.firstTry)")
+            }
+            throw failure.withFirstTry
+        }
+    }
+
+    /// One try at one Mach service.
+    private static func send(_ config: [String: Any], to service: String, interface: NSXPCInterface,
+                             selector: Selector, timeout: TimeInterval) throws {
+        let connection = NSXPCConnection(machServiceName: service, options: [])
         connection.remoteObjectInterface = interface
         connection.resume()
 
@@ -358,7 +377,7 @@ enum UnifiedAssetCalls {
         let waited = done.wait(timeout: .now() + timeout)
         connection.invalidate()
         guard waited == .success else {
-            throw CallError("no reply from \(serviceName) in \(Int(timeout)) seconds; the request may still have run")
+            throw CallError("no reply from \(service) in \(Int(timeout)) seconds; the request may still have run")
         }
         if let replyError { throw replyError }
     }
@@ -409,19 +428,7 @@ enum UnifiedAssetCalls {
             throw CallError("UAFAssetSetSubscription validator is missing")
         }
         let manager = try configurationManager()
-        typealias Validate = @convention(c) (AnyObject, Selector, AnyObject, AutoreleasingUnsafeMutablePointer<AnyObject?>) -> ObjCBool
-        let validate = unsafeBitCast(method_getImplementation(validMethod), to: Validate.self)
-        var returnedError: AnyObject?
-        let valid = validate(subscription, validSelector, manager, &returnedError).boolValue
-        if let returnedError = returnedError as? NSError { return returnedError }
-        guard valid else {
-            let name = message(subscription, "name") as? String ?? "?"
-            return CallError("macOS rejected the subscription \(name)")
-        }
-        return nil
-    }
-}
-
+        typealias Validate = @convention(c) (AnyObject, Sel
 ```
 
 ### Core Architecture Module: `purge/Models/ScanQueue.swift`
@@ -1336,11 +1343,11 @@ nonisolated enum ContainerAccessGate {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #395** (2026-11-17): **Large Files lists Ollama blobs when Purge doesn't know the store's path**
-  *Symptoms*: Large Files lists each blob of an Ollama model store as a loose file, as `sha256-…` rows. This happens when the store sits in a folder Large Files walks but Purge doesn't know its path. One example is `OLLAMA_MODELS` set only in a shell profile while Purge started from the Dock.  Trashing one of those blobs breaks every model that uses it, and Ollama goes on listing the models.  ## How it was found  While live-testing #318. With `OLLAMA_MODELS` set, a store on an added drive stayed out of Large Files as intended. With it unset, the same store's 26 MB blob showed up as a loose file. The same thing already happens on main for a store in `~/Documents`. #318 makes it more likely, because the reporter there keeps Ollama models on an external drive.  ## Fix  - The Large Files walk recognises an Ollama store by its shape, a folder holding both `blobs` and `manifests`, and skips it like the known model stores. - The Large Files delete gate refuses anything inside such a folder. - AI Models doesn't list these stores. Only the Large Files walk can find them, and `FileDeleter` also asks the AI model gate about plain Large Files rows, so a gate that accepted store files would let a lone blob through again. 
+- **Issue #428** (2026-11-21): **Purge 1.17.0 — Homebrew upgrade leaves application running**
+  *Symptoms*: ### What happened?  Hi,  I recently upgraded Purge from 1.16.2 to 1.17.0 through Homebrew on my Apple Silicon Mac.  The upgrade completed successfully, including unloading the 2 background services and replacing the application bundle. However, Purge remained running and was never automatically restarted. I had to quit and relaunch it manually.  Both Homebrew and the installed application report version 1.17.0, and Terminal already has App Management permission.  Could you confirm whether Purge should automatically quit and relaunch during updates? It looks like the Homebrew cask might be missing the appropriate quit: lifecycle directive.  Ideally, upgrades should gracefully stop the application, replace it, and restore its running state afterward.  Would you be able to coordinate the necessary change with the Homebrew maintainers?  Thanks!  ### What did you expect to happen?  I expected Purge to be quit and relaunched after brew updated it.  ### Steps to reproduce  _No response_  ### Purge version  1.17.0 (47)  ### macOS version  macOS 27.2.1, Apple silicon  ### Logs, screenshots, or screen recording  _No response_
 
-- **Issue #385** (2026-11-16): **Unable to reinstall Apple Intelligence Models**
-  *Symptoms*: ### What happened?  I got the following message when trying to reinstall the Apple Intelligence models:  Purge 1.16.1 (45), macOS Version 27.2.1 (Build 26B131)  subscribe imageGeneration, spatialPhotos: com.apple.UnifiedAssetFramework -1: Subscription imageGeneration references unknown value language_en in usage type VisualGeneration.GenerativePlayground  ### What did you expect to happen?  For it to work.  ### Steps to reproduce  1. Open Purge 2. Remove Apple Intelligence models 3. Attempt to redownload Apple Intelligence models  ### Purge version  1.6.1  ### macOS version  macOS 27.2.1  ### Logs, screenshots, or screen recording  N/A
+- **Issue #422** (2026-11-20): **Allowlisted rows outside ~/.cache follow a link to another folder**
+  *Symptoms*: ## The gap  The allowlist in `purge/Services/DeletionSafetyPolicy.swift` (`whitelistedAbsolutePrefixes(home:)`) compares path text. #420 closed this for the entries under `~/.cache`. Every other entry still has it.  If `~/.gradle` is a link to `~/Developer`, the row names `~/.gradle/caches`, the text matches, and the move takes `~/Developer/caches`. Found while fixing #420. No report from a user.  ## What each case really moves  Checked in the scanners, the sizing code and `FileDeleter`:  | Where the link is | Example | What a clean does today | | --- | --- | --- | | A folder above the row | `~/.gradle` for `~/.gradle/caches`, `~/.npm` for `~/.npm/_cacache` | Moves the real folder behind the link. The scan sizes it through the link, so the row looks normal. | | The entry itself, and the row is the entry | `~/.npm`, `DerivedData` | Moves only the link. The scan reads the link with `lstat`, so the row is sized at zero. Nothing is freed and the tool makes a new folder on the startup disk. | | A link inside the row's folder | `~/.npm/_cacache/some-link` | Goes to the Trash with the folder, as a link. Its target stays. | | A child of `~/Library/Caches` that is a link | `~/Library/Caches/com.foo` | App Caches never lists it (`isDirectoryKey` is false for a link). A Dev Tools row there is sized at zero and moves as a link. | | `~/Library/Caches` or `~/Library/Logs` itself | | The scan and the entry by entry clean list nothing (`contentsOfDirectory` fails on a linked folder). Dev Too
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1357,1073 +1364,1078 @@ nonisolated enum ContainerAccessGate {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5d909efd` (2026-11-17)
-**Commit Message**: fix: keep an Ollama store Purge doesn't know out of Large Files (#395) (#396)
+### Incident Patch 1: `09c6920d` (2026-11-20)
+**Commit Message**: fix: send Apple Intelligence requests through siriknowledged when macOS 27.3 refuses them (#343) (#418)
 
-* fix: keep an Ollama store Purge doesn't know out of Large Files (#395)
+* fix: send Apple Intelligence model requests through siriknowledged on macOS 27.3
 
-Large Files listed each blob of an Ollama store as a loose sha256 file
-when the store sat in a walked folder at a path Purge didn't know, such
-as OLLAMA_MODELS set only in a shell profile. Trashing one blob breaks
-every model that uses it, and Ollama goes on listing them.
+macOS 27.3 (from beta 1, 26C5035r) puts an anchor apple code-signing
+requirement on assetsubscriptiond's com.apple.siri.uaf.subscription.service,
+so the asset worker's requests are dropped with NSCocoaErrorDomain 4097 and
+removing or downloading the models again does nothing.
 
-The walk now skips any folder holding both blobs and manifests, read
-from the names it already listed, so it costs no extra call. A root with
-that shape is skipped too. manifests/registry.ollama.ai is not required,
-because models pulled from hf.co are filed under manifests/hf.co.
+siriknowledged serves com.apple.siri.uaf.service with the same interface and
+passes operationWithConfig: on unchanged. When the first connection is
+refused or dropped (4097 or 4099), the worker now sends the same request once
+more through it. Both tries share the original timeout. Error replies from the
+service and timeouts are never resent. The first try is unchanged, so older
+macOS behaves as before.
 
-The Large Files delete gate refuses anything inside such a folder, by
-the path given and by its real path, so a saved row can't trash a blob
-either.
+Found by pdfux and shipped first by RemoveMacAI (MIT):
+https://github.com/omlahore/RemoveMacAI/issues/123
+https://github.com/omlahore/RemoveMacAI/commit/84d3da06c69cbfbcc9ccd9b315c10e8142760d59
 
-AI Models does not list these stores. Only the Large Files walk can
-find them, and FileDeleter also asks the AI model gate about plain Large
-Files rows, so letting that gate accept store files would let a lone
-blob through again.
+Written and reviewed on Linux, not built or run on a Mac.
 
-OllamaStoreShapeTests: 8 tests. Without the fix, 6 fail and 2 pass
-(the two controls). Full suite minus Folder
+* test: cover the second-service retry rule (#343)
 
-**File**: `PurgeTests/OllamaStoreShapeTests.swift` (added, +273/-0)
+The retry rule lived
+
+**File**: `PurgeAssetWorker/UnifiedAssetCalls.swift` (modified, +22/-3)
 ```diff
-@@ -0,0 +1,273 @@
+@@ -14,7 +14,6 @@ enum UnifiedAssetCalls {
+ 
+     static let frameworkPath =
+         "/System/Library/PrivateFrameworks/UnifiedAssetFramework.framework/UnifiedAssetFramework"
+-    static let serviceName = "com.apple.siri.uaf.subscription.service"
+ 
+     static func load() throws {
+         guard dlopen(frameworkPath, RTLD_NOW) != nil else {
+@@ -78,6 +77,10 @@ enum UnifiedAssetCalls {
+     /// Sends one operation to the subscription service and waits for its reply.
+     /// `config` carries "Operation" and its arguments. Throws on a missing
+     /// interface, a transport error, a timeout, or an error reply.
++    ///
++    /// `AppleIntelligenceModelRoute` picks the service. When the subscription
++    /// service refuses or drops the connection, as it does from macOS 27.3,
++    /// the same request goes out once more through siriknowledged's service.
+     static func send(_ config: [String: Any], timeout: TimeInterval) throws {
+         try load()
+         guard let interfaceClass = NSClassFromString("UAFXPCProxyServiceInterface"),
+@@ -89,7 +92,23 @@ enum UnifiedAssetCalls {
+             || protocol_getMethodDescription(interface.protocol, selector, false, true).name != nil
+         guard described else { throw CallError("the service interface no longer has operationWithConfig:completion:") }
+ 
+-        let connection = NSXPCConnection(machServiceName: serviceName, options: [])
++        do {
++            try AppleIntelligenceModelRoute.send(timeout: timeout) { service, timeout in
++                try send(config, to: service, interface: interface, selector: selector, timeout: timeout)
++            }
++        } catch let failure as AppleIntelligenceModelRoute.SecondTryFailure {
++            // A worker refusal has no domain or code, so the first try joins its text.
++            if let second = failure.error as? CallError {
++                throw CallError("\(second.description); \(failure.firstTry)")
++            }
++            throw failure.withFirstTry
++        }
++    }
++
++    /// One try at one Mach service.
++    private static func send(_ config: [String: Any], to service: String, interface: NSXPCInterface,
++                             selector: Selector, timeout: TimeInterval) throws {
++        let connection = NSXPCConnection(machServiceName: service, options: [])
+         connection.remoteObjectInterface = interface
+         connection.resume()
+ 
+@@ -115,7 +134,7 @@ enum UnifiedAssetCalls {
+         let waited = done.wait(timeout: .now() + timeout)
+         connection.invalidate()
+         guard waited == .success else {
+-            throw CallError("no reply from \(serviceName) in \(Int(timeout)) seconds; the request may still have run")
++            throw CallError("no reply from \(service) in \(Int(timeout)) seconds; the request may still have run")
+         }
+         if let replyError { throw replyError }
+     }
+```
+
+**File**: `PurgeTests/AppleIntelligenceModelRouteTests.swift` (added, +173/-0)
+```diff
+@@ -0,0 +1,173 @@
 +import Foundation
 +import Testing
 +@testable import Purge
 +
-+/// An Ollama store in a folder Large Files walks, at a path Purge doesn't know
-+/// (`OLLAMA_MODELS` set only in a shell profile while Purge started from the
-+/// Dock), is known by its shape: `blobs` beside `manifests`. Large Files never
-+/// lists its blobs one by one, and its gate refuses them, because trashing one
-+/// blob breaks every model that uses it. AI Models doesn't list such a store
-+/// either. Every fixture is a throwaway home in the temporary folder.
-+@Suite("An Ollama store Purge doesn't know stays out of Large Files")
-+struct OllamaStoreShapeTests {
-+    // MARK: - Fixtures
++/// The asset worker sends each request through `AppleIntelligenceModelRoute`
++/// (#343). A reset names the model sets to release, so what matters here is
++/// that a request is repeated only after a refused or dropped connection,
++/// only once, and only through the second service.
++@Suite("A refused Apple Intelligence request goes once through the second service, and nothing else is sent again")
++struct AppleIntelligenceModelRouteTests {
++    private typealias Route = AppleIntelligenceModelRoute
 +
-+    private struct Home {
-+        let url: URL
++    /// Stands in for the worker's own refusals and its timeout, which are
++    /// Swift errors.
++    private struct WorkerRefusal: Error {}
 +
-+        init() throws {
-+            url = FileManager.default.temporaryDirectory
-+                .appendingPathComponent("purge-ollama-shape-\(UUID().uuidString)", isDirectory: true)
-+                .standardizedFileURL
-+            try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
++    /// Plays one outcome per try, on a clock that only the tries move.
++    private final class Tries {
++        struct Outcome {
++            var error: Error?
++            var seconds: TimeInterval = 0
 +        }
 +
-+        @discardableResult
-+        func file(_ relative: String, bytes: Int = 4096) throws -> URL {
-+            let file = url.appendingPathComponent(relative)
-+            try FileManager.default.createDirectory(
-+                at: file.deletingLastPathComponent(), withIntermediateDirectories: true
-+            )
-+            try Data(repeating: 0x01, count: bytes).write(to: file)
-+            return file
++        private(set) var services: [String] = []
++        private(set) var timeouts: [TimeInterval] = []
++        private var clock = Date(timeIntervalSinceReferenceDate: 0)
++        private var outcomes: [Outcome]
++
++        init(_ outcomes: [Outcome]) { self.outcomes = outcomes }
++
++        /// The error the route threw, or nil when the request went through.
++        func send(timeout: TimeInterval) -> Error? {
++            do {
++                try Route.send(timeout: timeout, now: { self.clock }) { service, timeout in
++                    self.services.append(service)
++                    self.timeouts.append(timeout)
++                    let outcome = self.outcomes.isEmpty ? Outcome() : self.outcomes.removeFirst()
++                    self.clock = self.clock.addingTimeInterval(outcome.seconds)
++                    if let error = outcome.error { throw error }
++                }
++                return nil
++            } catch {
++                return error
++            }
 +        }
-+
-+        /// An Ollama store at `relative`: one model pulled from `registry`,
-+        /// with one blob. Returns the blob.
-+        @discardableResult
-+        func ollamaStore(_ relative: String, registry: String = "registry.ollama.ai") throws -> URL {
-+            let manifest = url.appendingPathComponent("\(relative)/manifests/\(registry)/library/gemma3/latest")
-+            try FileManager.default.createDirectory(
-+                at: manifest.deletingLastPathComponent(), withIntermediateDirectories: true
-+            )
-+            let body: [String: Any] = [
-+                "schemaVersion": 2,
-+                "layers": [["mediaType": "application/vnd.ollama.image.model", "digest": "sha256:aaa"]],
-+            ]
-+            try JSONSerialization.data(withJSONObject: body).write(to: manifest)
-+            return try file("\(relative)/blobs/sha256-aaa")
-+        }
-+
-+        func remove() { try? FileManager.default.removeItem(at: url) }
 +    }
 +
-+    private func scannedPaths(_ home: Home, roots: [String]) async -> Set<String> {
-+        let stream = LargeFileScanner().scanStream(
-+            minBytes: 1024,
-+            staleDays: 0,
-+            roots: roots.map { home.url.appendingPathComponent($0, isDirectory: true) },
-+            virtualMachineRoots: [],
-+            iCloudDriveRoots: [],
-+            installedApps: [],
-+            isAppRunning: { _ in false },
-+            home: home.url,
-+            exclusions: ScanExclusions(keys: []),
-+            isExcluded: { _ in false }
-+        )
-+        var paths = Set<String>()
-+        for await file in stream {
-+            paths.insert(URL(fileURLWithPath: file.id).resolvingSymlinksInPath().path)
-+        }
-+        return paths
++    private func connectionError(_ code: Int) -> NSError {
++        NSError(domain: NSCocoaErrorDomain, code: code)
 +    }
 +
-+    private func real(_ url: URL) -> String { url.resolvingSymlinksInPath().path }
-+
-+    // MARK: - The walk
-+
-+    /// The bug: the store's blob showed up as a `sha256-…` row of its own.
-+    @Test
-+    func blobsOfAnUnknownStoreAreNotListed() async throws {
-+        let home = try Home()
-+        defer { home.remove() }
-+        try home.ollamaStore("Documents/ollama-models")
-+        let film = try home.file("Documents/film.mov")
-+
-+        #expect(await scannedPaths(home, roots: ["Documents"]) == [real(film)])
++    private var lockReply: NSError {
++        NSError(domain: "com.apple.UnifiedAssetFramework", code: -1,
++                userInfo: [NSLocalizedDescriptionKey: "Could not eliminate as there are current locks"])
 +    }
 +
-+    /// Ollama files a model pulled from Hugging Face under `manifests/hf.co`,
-+    /// so a store holding only those is still a store.
-+    @Test
-+    func aStoreWithModelsFromAnotherRegistryIsSkipped() async throws {
-+        let home = try Home()
-+        defer { home.remove() }
-+        try home.ollamaStore("Documents/Deep/Down/models", registry: "hf.co")
-+
-+        #expect(await scannedPaths(home, roots: ["Documents"]).isEmpty)
++    /// The names are Apple's. A change here is a change to where a release goes.
++    @Test func theTwoServicesAreApplesAssetServices() {
++        #expect(Route.subscriptionService == "com.apple.siri.uaf.subscription.service")
++        #expect(Route.forwardingService == "com.apple.siri.uaf.service")
 +    }
 +
-+    /// A walked root that is itself a store, such as one picked as a folder to
-+    /// scan, lists nothing.
-+    @Test
-+    func aRootThatIsAStoreListsNothing() async throws {
-+        let home = try Home()
-+        defer { home.remove() }
-+        try home.ollamaStore("Models")
-+
-+        #expect(await scannedPaths(home, roots: ["Models"]).isEmpty)
++    /// macOS 26 and 27.0 to 27.2: the first service takes the request, and
++    /// the second is never asked.
++    @Test func aRequestTheFirstServiceTakesGoesOutOnce() {
++        let tries = Tries([.init()])
++        #expect(tries.send(timeout: 120) == nil)
++        #expect(tries.services == [Route.subscriptionService])
++        #expect(tries.timeouts == [120])
 +    }
 +
-+    /// APFS compares names without case, so `Blobs` beside `Manifests` is the
-+    /// same shape. The walk skips it and the gate refuses it alike, so no row
-+    /// is listed that could only come back "skipped for safety".
-+    @Test
-+    func aStoreInOtherCapitalsIsSkippedAndRefused() async throws {
-+        let home = try Home()
-+        defer { home.remove() }
-+        let blob = try home.file("Documents/models/Blobs/sha2
++    /// 4097 is what macOS 27.3 answers Purge with, and 4099 is a service that
++    /// could not be reached.
++    @Test(arguments: [NSXPCConnectionInterrupted, NSXPCConnectionInvalid])
++    func aRefusedOrDroppedConnectionGoesOnceThroughTheSecondService(code: Int) {
++        let tries = Tries([.init(error: connectionError(code)), .init()])
++        #expect(tries.send(timeout: 120) == nil)
++        #expect(tries.services == [Route.subscriptionService, Route.forwardingService])
++    }
++
++    /// The second service is the last one. Its failure keeps its own domain
++    /// and code and carries the first refusal for the details.
++    @Test func nothingIsSentAThirdTime() throws {
++        let tries = Tries([
++            .init(error: connectionError(NSXPCConnectionInterrupted)),
++            .init(error: connectionError(NSXPCConnectionInvalid)),
++            .init(),
++        ])
++        let failure = try #require(tries.send(timeout: 120) as? Route.SecondTryFailure)
++        #expect(tries.services == [Route.subscriptionService, Route.forwardingService])
++        #expect(failure.firstTry
++            == "com.apple.siri.uaf.subscription.service refused the connection first (NSCocoaErrorDomain 4097)")
++        let reported = failure.withFirstTry
++        #expect(reported.domain == NSCocoaErrorDomain)
++        #expect(reported.code == NSXPCConnectionInvalid)
++        #expect(reported.userInfo[Route.firstTryKey] as? String == failure.firstTry)
++    }
++
++    /// An error reply is the service's answer to this request. The lock reply
++    /// is the one Purge reads, and a second service would only repeat it.
++    @Test func theServicesOwnAnswerIsNeverSentAgain() throws {
++        let tries = Tries([.init(error: lockReply), .init()])
++        let error = try #require(tries.send(timeout: 120)) as NSError
++        #expect(tries.services == [Route.subscriptionService])
++        #expect(error.domain == "com.apple.UnifiedAssetFramework")
++        #expect(error.code == -1)
++    }
++
++ 
 ```
 
-**File**: `docs/safety-notes.md` (modified, +43/-0)
+**File**: `PurgeTests/AppleIntelligenceModelStoreTests.swift` (modified, +29/-0)
 ```diff
-@@ -11,6 +11,49 @@ that belongs here, [SECURITY.md](../SECURITY.md) says how to report it.
+@@ -535,6 +535,35 @@ struct AppleIntelligenceModelStoreTests {
+         #expect(fine.result["assetType"] as? String == "x")
+     }
+ 
++    /// From macOS 27.3 the worker sends a refused request once more through
++    /// siriknowledged. When that fails too, the reply carries the second
++    /// error's domain and code and names the first try somewhere in its text,
++    /// so the row and the lock check read the service's own answer and the
++    /// details include the first try.
++    @Test func aReplyAfterTheSecondServiceReadsAsThatServicesAnswer() {
++        let firstTry = "PurgeFirstTry: com.apple.siri.uaf.subscription.service refused the connection first (NSCocoaErrorDomain 4097)"
++        let locked = AppleIntelligenceWorker.outcome(fromReply: [
++            "ok": false,
++            "error": "com.apple.UnifiedAssetFramework -1: Could not eliminate as there are current locks; \(firstTry)",
++            "errorDomain": "com.apple.UnifiedAssetFramework",
++            "errorCode": -1,
++            "errorSummary": "com.apple.UnifiedAssetFramework -1: Could not eliminate as there are current locks",
++        ])
++        #expect(!locked.isConnectionDrop)
++        #expect(locked.problem == "com.apple.UnifiedAssetFramework -1: Could not eliminate as there are current locks")
++        #expect(locked.detailLine(op: "reset", subject: "a").contains(firstTry))
++
++        let refusedTwice = AppleIntelligenceWorker.outcome(fromReply: [
++            "ok": false,
++            "error": "NSCocoaErrorDomain 4099: x; \(firstTry)",
++            "errorDomain": NSCocoaErrorDomain,
++            "errorCode": 4099,
++            "errorSummary": "NSCocoaErrorDomain 4099: x",
++        ])
++        #expect(refusedTwice.isConnectionDrop)
++        #expect(refusedTwice.problem == String(localized: "macOS's asset service couldn't be reached"))
++    }
++
+     /// The row has room for one short reason. The three ways the connection to
+     /// the service fails get plain words; any other error keeps its own first
+     /// part and drops the userInfo, which is in the details.
+```
+
+**File**: `SECURITY.md` (modified, +4/-0)
+```diff
+@@ -143,6 +143,10 @@ and the one change it makes that outlasts the app:
+   it to release the model sets, the other asks for them back. They run in a
+   separate helper, `io.getpurge.assetworker`, started once per call and gone
+   after it, so a change in a future macOS crashes that helper and not Purge.
++  When that service refuses or drops the connection, the helper sends the
++  same request once more through Apple's `com.apple.siri.uaf.service`, which
++  passes it on. From macOS 27.3 the first service refuses every app Apple
++  didn't sign, so there each request takes the second route.
+   Purge checks that macOS still names each set as expected before sending
+   anything, and never sends a release with an empty list, which macOS would
+   read as every asset on the Mac.
+```
+
+**File**: `purge.xcodeproj/project.pbxproj` (modified, +4/-0)
+```diff
+@@ -26,6 +26,7 @@
+ 		957945A658563B63C6ADC1D7 /* HelperSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A21D7856EC3D4A4B450ABCB /* HelperSupport.swift */; };
+ 		AA10C0DE0001000000000005 /* PurgeAssetWorkerMain.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA10C0DE0001000000000002 /* PurgeAssetWorkerMain.swift */; };
+ 		AA10C0DE0001000000000006 /* UnifiedAssetCalls.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA10C0DE0001000000000003 /* UnifiedAssetCalls.swift */; };
++		AA10C0DE0001000000000020 /* AppleIntelligenceModelRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA10C0DE0001000000000021 /* AppleIntelligenceModelRoute.swift */; };
+ 		AA10C0DE0001000000000007 /* io.getpurge.assetworker in Embed Asset Worker */ = {isa = PBXBuildFile; fileRef = AA10C0DE0001000000000001 /* io.getpurge.assetworker */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+ 		AB099A00000000000000B001 /* AppFolders.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB099A00000000000000F001 /* AppFolders.swift */; };
+ 		AB127A00000000000000B001 /* MacOSInstallLeftovers.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB127A00000000000000F001 /* MacOSInstallLeftovers.swift */; };
+@@ -142,6 +143,7 @@
+ 		AA10C0DE0001000000000002 /* PurgeAssetWorkerMain.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PurgeAssetWorkerMain.swift; sourceTree = "<group>"; };
+ 		AA10C0DE0001000000000003 /* UnifiedAssetCalls.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = UnifiedAssetCalls.swift; sourceTree = "<group>"; };
+ 		AA10C0DE0001000000000004 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
++		AA10C0DE0001000000000021 /* AppleIntelligenceModelRoute.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AppleIntelligenceModelRoute.swift; path = purge/Services/AppleIntelligenceModelRoute.swift; sourceTree = SOURCE_ROOT; };
+ 		AB099A00000000000000F001 /* AppFolders.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AppFolders.swift; path = purge/Services/AppFolders.swift; sourceTree = SOURCE_ROOT; };
+ 		AB127A00000000000000F001 /* MacOSInstallLeftovers.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MacOSInstallLeftovers.swift; path = purge/PrivilegedHelper/MacOSInstallLeftovers.swift; sourceTree = "<group>"; };
+ 		AB143A00000000000000F001 /* AppBundleReach.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AppBundleReach.swift; path = purge/Services/AppBundleReach.swift; sourceTree = SOURCE_ROOT; };
+@@ -294,6 +296,7 @@
+ 			children = (
+ 				AA10C0DE0001000000000002 /* PurgeAssetWorkerMain.swift */,
+ 				AA10C0DE0001000000000003 /* UnifiedAssetCalls.swift */,
++				AA10C0DE0001000000000021 /* AppleIntelligenceModelRoute.swift */,
+ 				AA10C0DE0001000000000004 /* Info.plist */,
+ 			);
+ 			path = PurgeAssetWorker;
+@@ -533,6 +536,7 @@
+ 			files = (
+ 				AA10C0DE0001000000000005 /* PurgeAssetWorkerMain.swift in Sources */,
+ 				AA10C0DE0001000000000006 /* UnifiedAssetCalls.swift in Sources */,
++				AA10C0DE0001000000000020 /* AppleIntelligenceModelRoute.swift in Sources */,
+ 			);
+ 			runOnlyForDeploymentPostprocessing = 0;
+ 		};
+```
+
+**File**: `purge/Services/AppleIntelligenceModelRoute.swift` (added, +90/-0)
+```diff
+@@ -0,0 +1,90 @@
++import Foundation
++
++/// Which of Apple's two asset services a request for the Apple Intelligence
++/// models goes to, and when it is sent a second time (#343).
++///
++/// From macOS 27.3 the subscription service takes connections only from
++/// clients Apple signed and drops Purge's. siriknowledged's service has the
++/// same interface and passes `operationWithConfig:` on unchanged, so a
++/// refused request goes out once more through it. Found by pdfux and shipped
++/// first by RemoveMacAI (github.com/omlahore/RemoveMacAI, MIT, its issue 123).
++/// On macOS 27.0 siriknowledged logs each request as "proxying to
++/// subscription service", and the subscription service then logs the same
++/// subscriber and names it was sent.
++///
++/// The second try is not limited to 27.3. On any macOS it follows a refused
++/// or dropped first connection, and it sends the same request, so it can
++/// never name more than the first try did.
++///
++/// The rule is kept here, apart from the private calls in `PurgeAssetWorker/`,
++/// so the unit tests can run it. The asset worker compiles this file too, so
++/// it uses Foundation only.
++nonisolated enum AppleIntelligenceModelRoute {
++    /// assetsubscriptiond's service, which does the work.
++    static let subscriptionService = "com.apple.siri.uaf.subscription.service"
++    /// siriknowledged's service, which passes each operation on to `subscriptionService`.
++    static let forwardingService = "com.apple.siri.uaf.service"
++
++    /// A second try is not started with less time left than this.
++    static let leastSecondsForSecondTry: TimeInterval = 1
++
++    /// The userInfo key that carries the first refusal on a second failure.
++    static let firstTryKey = "PurgeFirstTry"
++
++    /// Both services failed. `error` is the second service's and `firstTry`
++    /// says how the first refused.
++    nonisolated struct SecondTryFailure: Error {
++        let error: Error
++        let firstTry: String
++
++        /// The second error with its own domain and code, which Purge reads,
++        /// and the first try in its userInfo for the details.
++        var withFirstTry: NSError {
++            let second = error as NSError
++            var userInfo = second.userInfo
++            userInfo[AppleIntelligenceModelRoute.firstTryKey] = firstTry
++            return NSError(domain: second.domain, code: second.code, userInfo: userInfo)
++        }
++    }
++
++    /// Whether `error` says the connection was dropped or never made, rather
++    /// than the service answering or the wait running out. The worker's own
++    /// refusals and its timeout are Swift errors, which are never in
++    /// `NSCocoaErrorDomain`.
++    static func isRefusedConnection(_ error: Error) -> Bool {
++        let nsError = error as NSError
++        return nsError.domain == NSCocoaErrorDomain
++            && (nsError.code == NSXPCConnectionInterrupted || nsError.code == NSXPCConnectionInvalid)
++    }
++
++    /// Runs `attempt` on the subscription service. When that connection is
++    /// refused or dropped, runs it once more on the forwarding service with
++    /// the time that is left, and never a third time.
++    ///
++    /// Both tries share `timeout`, so the wait is no longer than one try's.
++    /// An error reply is the service's own answer and is not sent again. A
++    /// timeout is not sent again either, because the request may still be
++    /// running. A dropped connection can also mean the request ran. It is
++    /// sent again all the same, because a reset, an unsubscribe and a
++    /// subscribe are each safe to repeat.
++    ///
++    /// Throws the first error when there is no second try, and a
++    /// `SecondTryFailure` when the second try fails too.
++    static func send(timeout: TimeInterval, now: () -> Date = { Date() },
++                     attempt: (_ service: String, _ timeout: TimeInterval) throws -> Void) throws {
++        let deadline = now().addingTimeInterval(timeout)
++        do {
++            try attempt(subscriptionService, timeout)
++        } catch {
++            let remaining = deadline.timeIntervalSince(now())
++            guard isRefusedConnection(error), remaining >= leastSecondsForSecondTry else { throw error }
++            let refused = error as NSError
++            let firstTry = "\(subscriptionService) refused the connection first (\(refused.domain) \(refused.code))"
++            do {
++                try attempt(forwardingService, remaining)
++            } catch {
++                throw SecondTryFailure(error: error, firstTry: firstTry)
++            }
++        }
++    }
++}
+```
+
+---
+
+### Incident Patch 2: `61e8c011` (2026-11-20)
+**Commit Message**: fix: refuse shape-matched cache rows reached through a link (#424) (#425)
+
+* fix: refuse shape-matched cache rows reached through a link (#424)
+
+Nine rules in DeletionSafetyPolicy.evaluate allow a path by its shape and
+have no allowlist entry, so the link check from #422 did not cover them:
+Application Support caches, Chromium caches in ~/.gemini, container
+caches, Telegram media, gem downloads, unfinished downloads, editor
+workspace storage, old CLI versions and Gradle leftovers. With an app's
+Crashpad folder a link to ~/Documents, the row named Crashpad/completed
+and the move took ~/Documents/completed.
+
+shapeLinkRefusesDeletion refuses such a path when the folder its rule
+names, or any folder above the path up to home, is a link. It is the #422
+rule with the named folder in place of the entry. isOfferedForCleanup
+asks it before its saved answers, so the scan drops the row and
+FileDeleter refuses the move.
+
+The links macOS makes in an app container are not on the way to
+Data/Library/Caches, so a Mac with no link of the user's own is offered
+what it was. Telegram's media folder is emptied entry by entry, so it is
+read itself.
+
+Cost per row in a Release build: 0.24 to 0.40 µs on th
+
+**File**: `CLAUDE.md` (modified, +2/-1)
+```diff
+@@ -48,7 +48,8 @@ Cloud sessions run on Linux, so they can build no Swift code. Run the three Linu
+   - `.unknown` is "Not Sure". It never appears in scan results, but the delete confirmation sheets can still list it.
+ - Mark a path `.safe` only when it holds nothing but data its app rebuilds by itself. If it can hold settings, installed tools, keys, history, databases, projects, or offline downloads, it is `.medium` or not offered at all.
+ - Every cache and Dev Tools removal goes through `DeletionSafetyPolicy.evaluate(_:)`. Never add a delete path that skips it.
+-  - The allowlist compares path text, so `isOfferedForCleanup` also asks `DeletionSafetyPolicy.allowlistLinkRefusesDeletion` (#420, #422). A path in an allowlist entry is refused when the entry, or any folder above the path up to home, is a link, even a link to another drive. A link below that moves to the Trash as a link, except a folder emptied entry by entry (`~/Library/Logs/DiagnosticReports`), which is refused when it is a link itself. A simulator device is left alone, because `simctl` removes it by its UDID. A new entry is covered when it is added. The rules in `evaluate` that match by shape, like container caches, have no such check. `AllowlistLinkTests` in `PurgeTests/AllowlistAuditTests.swift` checks each case.
++  - The allowlist compares path text, so `isOfferedForCleanup` also asks `DeletionSafetyPolicy.allowlistLinkRefusesDeletion` (#420, #422). A path in an allowlist entry is refused when the entry, or any folder above the path up to home, is a link, even a link to another drive. A link below that moves to the Trash as a link, except a folder emptied entry by entry (`~/Library/Logs/DiagnosticReports`), which is refused when it is a link itself. A simulator device is left alone, because `simctl` removes it by its UDID. A new entry is covered when it is added. `AllowlistLinkTests` in `PurgeTests/AllowlistAuditTests.swift` checks each case.
++  - Nine rules in `evaluate` allow a path by its shape and have no entry: Application Support caches, Chromium caches outside it, container caches, Telegram media, gem downloads, unfinished downloads, editor workspace storage, old CLI versions and Gradle leftovers. `isOfferedForCleanup` asks `DeletionSafetyPolicy.shapeLinkRefusesDeletion` for them (#424). The rule is the same, with the folder the shape names in place of the entry (`shapeMatchedFolder`): the cache folder, a container's `Data/Library/Caches`, Telegram's `media`, a gem `cache` folder, or the entry itself. The links macOS makes in an app container are not on the way to `Caches`, so they refuse nothing. A new shape rule, or a new shape in an old one, needs a row in `shapeMatchedFolder` and in `ShapeLinkTests`. The shape rules outside home (old browser frameworks, macOS installers, the clang module cache) and the project rules, which follow #190, have no such check.
+   - Items the user picks one by one have their own gate instead, because they are the user's own files and `evaluate` refuses those by design. Large Files, AI models, the uninstaller, and command-line tools go through `FileDeleter.deleteUserSelectedFiles`, which checks `LargeFileScanPolicy`, `AIModelScanPolicy`, `AppUninstallScanPolicy`, and `CommandLineToolScanPolicy`. Those gates are deletion-safety code too. They never feed Clean Safe Items or scheduled cleans.
+   - Folders the user adds in Settings for Large Files and Dev Projects (#318, `ScanFolders`) follow `AppFolders.refusal(forPicked:)`, except that a whole drive may be added when it holds no `System`, `Users`, `Backups.backupdb` or APFS Time Machine backup. Only local disks count (`AppFolders.isOnLocalDisk`), so never a network share or a macFUSE mount. They widen two gates and nothing else: `LargeFileScanPolicy.isEligibleForDeletion`, which reads the list from disk at delete time and also needs the file on a local disk, and the catalog rule in `isWhitelistedProjectArtifactPath`, which reads `ScanFolders.snapshot`, refreshed at each project scan and at the start of `FileDeleter.deleteItems`. The name-only rule and agent worktrees stay home only. Below an added folder, both walks and both gates skip a copy of a Mac, a home folder (`Library` beside `Desktop`, `Documents` or `Downloads`) or a Time Machine backup, and a folder another sync service keeps (`ScanFolders.isOffLimits`); the project rule also refuses a `Library` folder or a bundle between the added folder and the project, and the project walk never enters a bundle. A pick in or above another sync service's folder is refused like iCloud Drive. Projects in a folder added outside the home folder are Check First (`ProjectCheckFirstReason.addedFolder`), judged by real path too, so a home folder linked onto an added drive counts, `countsAsSafeCleanup` refuses them even when overridden to Safe, and `manualSafeCleanupCandidates` drops any path inside such a saved folder, plugged in or not, so Clean Safe Items and scheduled cleans never reach them. A folder added insid
+```
+
+**File**: `PurgeTests/AllowlistAuditTests.swift` (modified, +495/-0)
+```diff
+@@ -1741,6 +1741,501 @@ struct AllowlistLinkTests {
+     }
+ }
+ 
++// MARK: - Shape-matched rows reached through a link (#424)
++
++/// The rules in `evaluate` that allow a path by its shape compare text, like
++/// the allowlist. With an app's `Crashpad` folder a link to `~/Documents`, a
++/// move would take `~/Documents/completed`, so only
++/// `shapeLinkRefusesDeletion` catches it. Every test builds its own home.
++@Suite("Shape-matched rows reached through a link (#424)")
++struct ShapeLinkTests {
++    private static let appSupport = "Library/Application Support"
++    private static let container = "Library/Containers/com.example.app/Data/Library/Caches"
++    private static let telegram = CacheDiscoveryPaths.telegramGroupContainerRelative
++    private static let profile = DeletionSafetyPolicy.chromiumUserDataStores[0].relative
++    private static let workerVersions = "\(DeletionSafetyPolicy.cursorAgentWorkerCLI)/.local/share/cursor-agent/versions"
++
++    /// One path per shape a rule allows, relative to home, with the folder the
++    /// rule names for it. `readsDisk` marks the two rules that also look at
++    /// what is in the folder, so their text can't be asked without one.
++    private static let rows: [(row: String, folder: String, readsDisk: Bool)] = [
++        ("\(appSupport)/Foo/Cache", "\(appSupport)/Foo/Cache", true),
++        ("\(appSupport)/Foo/Code Cache", "\(appSupport)/Foo/Code Cache", true),
++        ("\(appSupport)/Foo/Crashpad/completed", "\(appSupport)/Foo/Crashpad/completed", true),
++        ("\(appSupport)/Foo/web/Crashpad/pending", "\(appSupport)/Foo/web/Crashpad/pending", true),
++        ("\(appSupport)/Foo/User Data/GPUCache", "\(appSupport)/Foo/User Data/GPUCache", true),
++        ("\(appSupport)/Foo/User Data/Default/Code Cache", "\(appSupport)/Foo/User Data/Default/Code Cache", true),
++        ("\(appSupport)/Google/Chrome Beta/Default/Cache", "\(appSupport)/Google/Chrome Beta/Default/Cache", true),
++        ("\(profile)/GPUCache", "\(profile)/GPUCache", true),
++        ("\(profile)/GPUCache/data_0", "\(profile)/GPUCache", true),
++        ("\(profile)/Default/Cache", "\(profile)/Default/Cache", true),
++        ("\(profile)/Default/Cache/Cache_Data/f_0001", "\(profile)/Default/Cache", true),
++        (container, container, false),
++        ("\(container)/com.example.app", container, false),
++        ("\(container)/com.example.app/fsCachedData/a", container, false),
++        ("\(telegram)/stable/account-1/postbox/media", "\(telegram)/stable/account-1/postbox/media", false),
++        ("\(telegram)/stable/account-1/postbox/media/photo.jpg", "\(telegram)/stable/account-1/postbox/media", false),
++        ("\(telegram)/account-2/postbox/media/a/b", "\(telegram)/account-2/postbox/media", false),
++        (".gem/ruby/3.3.0/cache", ".gem/ruby/3.3.0/cache", false),
++        (".gem/ruby/3.3.0/cache/rake-13.0.6.gem", ".gem/ruby/3.3.0/cache", false),
++        ("Downloads/movie.mkv.crdownload", "Downloads/movie.mkv.crdownload", false),
++        ("Downloads/archive.zip.part", "Downloads/archive.zip.part", false),
++        ("Downloads/Big.dmg.download", "Downloads/Big.dmg.download", false),
++        ("Downloads/Big.dmg.download/Info.plist", "Downloads/Big.dmg.download", false),
++        ("\(appSupport)/Code/User/workspaceStorage/0a1b2c3d", "\(appSupport)/Code/User/workspaceStorage/0a1b2c3d", false),
++        ("\(appSupport)/Cursor/User/workspaceStorage/4e5f6a7b", "\(appSupport)/Cursor/User/workspaceStorage/4e5f6a7b", false),
++        (".local/share/claude/versions/2.0.1", ".local/share/claude/versions/2.0.1", false),
++        (".local/share/cursor-agent/versions/2026.01.02-abc/node_modules", ".local/share/cursor-agent/versions/2026.01.02-abc", false),
++        ("\(workerVersions)/2026.01.02-abc", "\(workerVersions)/2026.01.02-abc", false),
++        (".grok/downloads/grok-1.0.13", ".grok/downloads/grok-1.0.13", false),
++        (".gradle/daemon/8.10.2", ".gradle/daemon/8.10.2", false),
++        (".gradle/.tmp", ".gradle/.tmp", false),
++    ]
++
++    /// A temporary home, with a `Developer` folder beside it for links to point at.
++    private static func makeHome() throws -> (base: URL, home: URL, elsewhere: URL) {
++        let fm = FileManager.default
++        let base = fm.temporaryDirectory.appendingPathComponent("shape-link-\(UUID().uuidString)", isDirectory: true)
++        let home = base.appendingPathComponent("home", isDirectory: true)
++        let elsewhere = base.appendingPathComponent("Developer", isDirectory: true)
++        try fm.createDirectory(at: home, withIntermediateDirectories: true)
++        try fm.createDirectory(at: elsewhere, withIntermediateDirectories: true)
++        return (base, home, elsewhere)
++    }
++
++    private static func refuses(_ relative: String, home: URL, reuseRecentRead: Bool = false) -> Bool {
++        DeletionSafetyPolicy.shapeLinkRefusesDeletion(
++            standardizedPath: home.appendingPathComponent(relative).standardizedFileURL.path,
++            home: ho
+```
+
+**File**: `docs/safety-notes.md` (modified, +72/-0)
+```diff
+@@ -11,6 +11,78 @@ that belongs here, [SECURITY.md](../SECURITY.md) says how to report it.
  
  Newest first.
  
-+## 2026-11-17: Large Files offered single Ollama blobs from a store Purge didn't know
++## 2026-11-20: Shape-matched cache rows followed a link to another folder
 +
-+**Found internally** while testing [#318](https://github.com/jithin-sabu/purge-app/issues/318) ([#395](https://github.com/jithin-sabu/purge-app/issues/395)), no report. **Fixed:** [#396](https://github.com/jithin-sabu/purge-app/pull/396), not shipped yet. **Affected:** every release up to v1.16.2.
++**Found internally** while fixing [#422](https://github.com/jithin-sabu/purge-app/issues/422) ([#424](https://github.com/jithin-sabu/purge-app/issues/424)), no report. **Fixed:** [#425](https://github.com/jithin-sabu/purge-app/pull/425), not shipped yet. **Affected:** v1.1.2 to v1.16.2.
 +
 +### What happened
 +
-+An Ollama store keeps each model's weights as blobs named by digest
-+(`blobs/sha256-…`), and lists the models in `manifests`. Purge reads
-+`OLLAMA_MODELS` to find the store, and Large Files skips the store when it sits
-+in a folder Large Files walks. When Purge can't see the variable, such as one
-+set only in a shell profile while Purge started from the Dock, it doesn't know
-+the store's path. A store in `~/Documents` or another walked folder was then
-+walked like any folder, and each blob over the size floor was a row of its own
-+with a `sha256-…` name.
++The fix for #422 covered the entries in the allowlist. Nine rules allow a path
++by its shape and have no entry, so they kept the same gap: Application Support
++caches, Chromium caches in `~/.gemini`, container caches, Telegram media, gem
++downloads, unfinished downloads, editor workspace storage, old CLI versions and
++Gradle's daemon logs. Each compares path text and never checked whether a
++folder on the way was a link.
 +
-+Trashing one blob breaks every model that uses it, and Ollama goes on listing
-+those models.
++If an app's `Crashpad` folder in Application Support was a link to
++`~/Documents`, the row named `Crashpad/completed`, the name matched, and the
++move took `~/Documents/completed`. A container whose `Data` folder was a link,
++a linked `~/.gem`, or VS Code's `User` folder kept in a dotfiles folder did the
++same: the scan listed rows through the link and the move took what was behind
++it.
++
++Where the scan lists a folder itself, as it does `~/Downloads` and
++`Application Support`, a link there gave no rows. The gate still allowed the
++path by its text, so a link made after the scan was followed.
++
++Gradle's daemon logs and temp folder were the one group already safe:
++`gradleLeftoverRefusesDeletion` asks for real folders at every step.
 +
 +### Who was affected
 +
-+Nobody reported a loss. It took a store in a walked folder at a path Purge
-+couldn't see, and a click on a row named only by a hash. The blob went to the
-+Trash and could be put back.
++Nobody reported a loss. It took a link on the way to a row, and macOS makes
++none there. The links it puts in every app container (`Data/Desktop`,
++`Data/Library/Fonts` and the rest) are not on the way to `Data/Library/Caches`:
++on the Mac this was checked on, all 788 containers had a real `Data`,
++`Data/Library` and `Data/Library/Caches`. A link of the user's own usually led
++to the real cache on another drive. Anything moved went to the Trash and could
++be put back.
 +
 +### What changed
 +
-+The Large Files walk knows a store by its shape, a folder holding both `blobs`
-+and `manifests`, compared without case, and skips it
-+(`AIModelScanPolicy.isOllamaStore`). It also skips a root that is a store or
-+sits inside one. The Large Files delete gate refuses anything under a folder
-+with that shape, by the path given and by its real path
-+(`AIModelScanPolicy.isInsideOllamaStore`), so a row saved before the fix can't
-+trash a blob either. AI Models doesn't list these stores, because `FileDeleter`
-+also asks the AI model gate about plain Large Files rows.
++`DeletionSafetyPolicy.shapeLinkRefusesDeletion` refuses a path one of the nine
++rules can allow when the folder the rule names, or any folder above the path up
++to home, is a link. `shapeMatchedFolder` finds that folder by text: the cache
++folder, a container's `Caches`, Telegram's `media`, a gem `cache` folder, or
++the entry itself for a download, a workspace or a CLI version.
++`isOfferedForCleanup` asks it outside its saved answers, next to the allowlist
++guard, so the scan drops the row and `FileDeleter` refuses the move even when
++the link appeared after the scan.
++
++A link lower down refuses nothing, because it moves to the Trash as a link.
++Telegram's `media` folder is emptied entry by entry and never moved, so it is
++refused when it is a link itself. Folders above a row are found as bytes, as
++in #423, so a name that starts with a combining mark hides none of them.
++
++A Mac with a link on the way to one of these rows no longer gets that row. The
++issue lists them. Nothing changes for unfinished downloads or Gradle, which
++were not offered through a link before.
 +
 +### What would have caught it earlier
 +
-+A walk test with a store at a path Purge doesn't know, not only at the paths
-+it reads from the environment.
-+[`PurgeTests/OllamaStoreShapeTests.swift`](../PurgeTests/OllamaStoreShapeTests.swift)
-+now walks such a store, a mixed-case one and a root inside one, expects no
-+blob rows, and expects `FileDeleter` to skip a blob for safety.
++The #422 fixture, run for the rules that have no allowlist entry.
++`ShapeLinkTests` in
++[`PurgeTests/AllowlistAuditTests.swift`](../PurgeTests/AllowlistAuditTests.swift)
++builds a temporary home and checks each rule with a folder above the row
++linked, the named folder linked, a link inside it and nothing linked.
++`everyDiscoveredApplicationSupportCacheIsGuarded` and
++`everyDiscoveredChromiumUserDataCacheIsGuarded` fail if the scan lists a cache
++the guard does not read, and `everyPathATextRuleAllowsIsGuarded` fails if a
++text rule allows a path the guard has no folder for.
++`theLinksMacOSMakesInAContainerRefuseNothing` keeps the guard off a normal Mac.
++`aNameThatStartsWithACombiningMarkHidesNoFolder` checks the byte walk for each
++rule.
 +
- ## 2026-11-12: Retry could move a scripts folder that had gained files
+ ## 2026-11-19: Allowlisted rows followed a link to another folder
  
- **Found internally** in a deletion-safety review before 1.15.0 ([#362](https://github.com/jithin-sabu/purge-app/issues/362)), no report. **Fixed:** [#363](https://github.com/jithin-sabu/purge-app/pull/363), shipped in v1.16.0 (2026-11-16). **Affected:** v1.15.0.
+ **Found internally** while fixing [#420](https://github.com/jithin-sabu/purge-app/issues/420) ([#422](https://github.com/jithin-sabu/purge-app/issues/422)), no report. **Fixed:** [#423](https://github.com/jithin-sabu/purge-app/pull/423), not shipped yet. **Affected:** v1.1.0 to v1.16.2.
 ```
 
-**File**: `purge/Services/AIModelScanPolicy.swift` (modified, +53/-0)
+**File**: `purge/Services/DeletionSafetyPolicy.swift` (modified, +219/-1)
 ```diff
-@@ -110,6 +110,59 @@ nonisolated enum AIModelScanPolicy {
-         return home.appendingPathComponent(".ollama/models", isDirectory: true).standardizedFileURL
+@@ -519,6 +519,8 @@ enum DeletionSafetyPolicy {
+         // the scan (#420, #422). Same split as Playwright: the on-screen filter may
+         // reuse a read from the last few seconds, and a move reads the disk again.
+         if allowlistLinkRefusesDeletion(standardizedPath: key, reuseRecentRead: Thread.isMainThread) { return false }
++        // The rules that allow a path by its shape compare text too (#424).
++        if shapeLinkRefusesDeletion(standardizedPath: key, reuseRecentRead: Thread.isMainThread) { return false }
+         if prekToolsRefuseDeletion(url) { return false }
+         if mailRunningRefusesDeletion(url) { return false }
+         // A daemon's log stays while it runs, and a temp file until it is old.
+@@ -698,7 +700,25 @@ enum DeletionSafetyPolicy {
+         // The lowest folder that has to be real: the row itself when it is the
+         // entry or is emptied entry by entry, else the folder the row sits in.
+         let contentsOnly = home == cachedHomePath ? cachedContentsOnlyPrefixes : contentsOnlyPrefixes(home: home)
+-        let folder = path == entry || contentsOnly.contains(path) ? path : PathContainment.parentFolder(of: path)
++        return rowReachesThroughLink(
++            path,
++            readsRowItself: path == entry || contentsOnly.contains(path),
++            home: home,
++            reuseRecentRead: reuseRecentRead
++        )
++    }
++
++    /// The walk both link guards share. `readsRowItself` is true for a row that
++    /// is the folder its rule names, an allowlist entry or the folder a shape
++    /// rule matched, and for a folder emptied entry by entry. Any other row
++    /// may be a link itself, so the walk stops at the folder it sits in.
++    private nonisolated static func rowReachesThroughLink(
++        _ path: String,
++        readsRowItself: Bool,
++        home: String,
++        reuseRecentRead: Bool
++    ) -> Bool {
++        let folder = readsRowItself ? path : PathContainment.parentFolder(of: path)
+         guard reuseRecentRead else { return PathContainment.reachesThroughLink(folder, home: home) }
+ 
+         let now = ProcessInfo.processInfo.systemUptime
+@@ -715,6 +735,204 @@ enum DeletionSafetyPolicy {
+         return refuses
      }
  
-+    /// The two folders every Ollama store holds: `blobs` for the weights, named
-+    /// by digest, and `manifests` for the models that use them. Ollama files a
-+    /// model pulled from another registry under `manifests/<host>` (`hf.co`),
-+    /// so the folder for its own registry is not required.
-+    nonisolated static let ollamaStoreFolders: Set<String> = ["blobs", "manifests"]
++    // MARK: - Shape-matched rows reached through a link (#424)
 +
-+    /// Whether a folder is shaped like an Ollama store, read from the names of
-+    /// its entries that are not regular files: folders, and links, so a store
-+    /// with a linked `manifests` is still a store. Names are compared without
-+    /// case, as APFS compares them by default. Large Files skips such a folder
-+    /// even when Purge doesn't know it is Ollama's, such as `OLLAMA_MODELS` set
-+    /// only in a shell profile while Purge started from the Dock. Trashing one
-+    /// blob from it breaks every model that uses the blob, and Ollama goes on
-+    /// listing them.
-+    nonisolated static func isOllamaStore(folderNames: some Sequence<String>) -> Bool {
-+        ollamaStoreFolders.isSubset(of: Set(folderNames.lazy.map { $0.lowercased() }))
-+    }
++    /// The folders the shape rules below look in, relative to home and ending
++    /// in `/`. A path under none of them matches none of the rules. The stores
++    /// come from their own lists, so a new one is covered when it is added.
++    nonisolated static let shapeRuleRoots: [String] = [
++        "Library/Application Support/",
++        "Library/Containers/",
++        "\(CacheDiscoveryPaths.telegramGroupContainerRelative)/",
++        "Downloads/",
++        ".gem/ruby/",
++        ".gradle/"
++    ]
++        + chromiumUserDataStores.map { "\($0.relative)/" }
++        + cliVersionStores.map { "\($0.versions)/" }
++        + EditorWorkspaceStoragePolicy.relativeRoots.map { "\($0.relative)/" }
 +
-+    /// Whether a folder on disk is shaped like an Ollama store, read the way
-+    /// the Large Files walk reads it, so the walk and the delete gate always
-+    /// agree. False for a folder that can't be listed.
-+    nonisolated static func isOllamaStore(_ folder: URL) -> Bool {
-+        guard let entries = DirectoryListing.entries(of: folder.path) else { return false }
-+        return isOllamaStore(folderNames: entries.lazy.filter { !$0.isRegularFile }.map(\.name))
-+    }
-+
-+    /// Whether any folder above `url` is shaped like an Ollama store. Large
-+    /// Files' delete gate asks this, so a blob never goes alone, even from a
-+    /// row saved before the walk knew the shape. The walk asks it of each
-+    /// root, so a root inside a store lists nothing the gate would refuse.
-+    ///
-+    /// A folder above that can't be listed counts as a store: it may be one,
-+    /// such as a store whose read permission was taken away after the scan. A
-+    /// link counts as neither, because the listing doesn't follow it; the gate
-+    /// also asks this of the real path, which passes through where it leads.
-+    nonisolated static func isInsideOllamaStore(_ url: URL) -> Bool {
-+        var folder = url.standardizedFileURL.deletingLastPathComponent()
-+        while folder.path != "/", !folder.path.isEmpty {
-+            if let entries = DirectoryListing.entries(of: folder.path) {
-+                if isOllamaStore(folderNames: entries.lazy.filter { !$0.isRegularFile }.map(\.name)) { return true }
-+            } else if !isLink(folder) {
-+                return true
-+            }
-+            folder = folder.deletingLastPathComponent()
++    /// `shapeRuleRoots` by their first folder, so a row in `~/Library/Caches` or
++    /// in a project costs one lookup and three comparisons. A root inside
++    /// another is left out.
++    private nonisolated static let shapeRuleRootsByFirstFolder: [Substring: [String]] = {
++        var index: [Substring: [String]] = [:]
++        for root in shapeRuleRoots where !shapeRuleRoots.contains(where: { $0 != root && root.hasPrefix($0) }) {
++            index[Substring(String(firstFolder(of: root[...]))), default: []].append(root)
 +        }
-+        return false
-+    }
++        return index
++    }()
 +
-+    private nonisolated static func isLink(_ url: URL) -> Bool {
-+        var info = stat()
-+        return lstat(url.path, &info) == 0 && (info.st_mode & S_IFMT) == S_IFLNK
-+    }
++    /// Every name an Application Support cache row can end in: the cache names
++    /// `CacheDiscoveryPaths.isApplicationSupportCachePath` accepts. Crash report
++    /// folders are matched by their last two names, and the fixed paths in
++    /// `applicationSupportRelativeCachePaths` whole.
++    private nonisolated static let applicationSupportCacheFolderNames: Set<String> =
++        CacheDiscoveryPaths.applicationSupportDirectCacheNames.union(CacheDiscoveryPaths.chromiumProfileCacheNames)
 +
-     /// Current LM Studio location first, then the pre-0.3 cache location. Both
-     /// are checked because an upgrade leaves the old directory behind.
-     nonisolated static func lmStudioRoots(home: URL) -> [URL] {
-```
-
-**File**: `purge/Services/LargeFileScanPolicy.swift` (modified, +10/-1)
-```diff
-@@ -247,7 +247,8 @@ enum LargeFileScanPolicy {
-     /// a VM bundle (`.pvm`, `.utm`, `.vmwarevm`) that is not in use, under a scan
-     /// root or a VM root, and a Safari download bundle in `~/Downloads`. A loose
-     /// file in a VM root is never eligible; that walk lists bundles only. Nor is a
--    /// file inside either kind of bundle.
-+    /// file inside either kind of bundle, or inside a folder shaped like an
-+    /// Ollama store, which the walk skips.
-     ///
-     /// This is Large Files' own gate, not `DeletionSafetyPolicy.evaluate(_:)`:
-     /// these are the user's files, which the cache allowlist refuses by design.
-@@ -281,6 +282,14 @@ enum LargeFileScanPolicy {
-         let realPath = real.path
-         if realPath.contains("/Library/") || isInHomeLibrary(realPath, home: home) { return false }
-         if isInsideExcludedDirectory(real) { return false }
-+        // Nothing in a folder shaped like an Ollama store is a Large Files
-+        // row, whether or not Purge knows the store is Ollama's. A blob
-+        // trashed alone breaks every model that uses it.
-+        if AIModelScanPolicy.isInsideOllamaStore(std) || AIModelScanPolicy.isInsideOllamaStore(real) { return false }
-+        // Nor is the store itself, whatever it is named (`models.pvm`).
-+        if isDir.boolValue, AIModelScanPolicy.isOllamaStore(std) || AIModelScanPolicy.isOllamaStore(real) {
-+            return false
-+        }
- 
-         func walkedPath(_ root: URL) -> String? {
-             walkedFolder(for: root, home: home, volumes: volumes, isLocalDisk: isLocalDisk).map {
-```
-
-**File**: `purge/Services/LargeFileScanner.swift` (modified, +27/-0)
-```diff
-@@ -216,6 +216,18 @@ nonisolated final class LargeFileScanner {
-                 if !bundlesOnly { summary.checkedRoots.append(root) }
-                 continue
-             }
-+            // A root that is shaped like an Ollama store, or sits inside one,
-+            // holds nothing but blobs and manifests. The delete gate refuses
-+            // anything under a store-shaped folder at any height, so the root
-+            // is asked the same, by its spelling and where it really is. See
-+            // the check on each folder below.
-+            let realFolder = folder.resolvingSymlinksInPath()
-+            if [root, realFolder].contains(where: {
-+                AIModelScanPolicy.isOllamaStore($0) || AIModelScanPolicy.isInsideOllamaStore($0)
-+            }) {
-+                if !bundlesOnly { summary.checkedRoots.append(root) }
-+                continue
-+            }
-             // How the enumerator spells the root, taken from its first child rather
-             // than from `root`: it can differ (`/private/var` for `/var`), and
-             // matching is on the path below this prefix. See `ScanExclusions`.
-@@ -278,6 +290,11 @@ nonisolated final class LargeFileScanner {
-                     if isVirtualMachine
-                         || (!bundlesOnly && LargeFileScanPolicy.isSafariDownloadBundle(fileURL, home: home)) {
-                         if isUserExcluded(fileURL) { return ([], false) }
-+                        // A store shaped like Ollama's is never a row, whatever
-+                        // it is named, such as `models.pvm`. Asked only of the
-+                        // folders that would be rows, so the walk lists no
-+                        // other folder twice.
-+                        if AIModelScanPolicy.isOllamaStore(fileURL) { return ([], false) }
-                         // A VM that may be running is left off the list; the
-                         // delete check refuses it again in case it starts later.
-                         if isVirtualMachine,
-@@ -410,6 +427,16 @@ nonisolated final class LargeFileScanner {
-                     }
-                     // As `FileManager` lists with `.skipsHiddenFiles`.
-                     let children = DirectoryListing.entries(of: folderURL.path) ?? []
-+                    // A folder shaped like an Ollama store is skipped like the
-+                    // known model stores, even where Purge doesn't know it is
-+                    // Ollama's: listed one by one, each blob would be a row
-+                    // that breaks models when trashed. Read from the names
-+                    // just listed, so it costs no call.
-+                    if AIModelScanPolicy.isOllamaStore(
-+                        folderNames: children.lazy.filter { !$0.isRegularFile }.map(\.name)
-+                    ) {
-+                        return []
-+                    }
-                     var steps: [TreeStep<[Finding], WalkFolder>] = []
-                     for child in children where !child.isHidden {
-                         // A file under the size floor that is not a cloud
++    /// `path` when it could be a row of `isWhitelistedApplicationSupportCachePath`,
++    /// by its names alone. That rule reads the disk and allows only the cache or
++    /// crash report folder itself, never a path inside one, so the row is the
++    /// folder the rule names. Wider than the rule on purpose: it never reads.
++    private nonisolated static func applicationSupportCacheFolder(_ path: String, home: String) -> String? {
++        let prefix = "\(home)/Library/Application Support/"
++        guard path.hasPrefix(prefix) else { return nil }
++        // Split as the rule splits it: the app's folder, then the names it judges.
++        let parts = path.dropFirst(prefix.count).split(separator: "/")
++        guard parts.count >= 2, let name = parts.last else { return nil }
++        if applicationSupportCacheFolderNames.contains(String(name)) { return path }
++        if CacheDiscoveryPaths.applicationSupp
 ```
 
 ---
 
-### Incident Patch 2: `ec40fc72` (2026-11-16)
-**Commit Message**: fix: retry and explain Apple Intelligence removals that fail on macOS 27.3 (#343) (#390)
+### Incident Patch 3: `f4d9fcc0` (2026-11-20)
+**Commit Message**: fix: refuse allowlisted rows reached through a link (#422) (#423)
 
-* fix: retry and explain Apple Intelligence removals that fail on macOS 27.3 (#343)
+* fix: refuse allowlisted rows reached through a link (#422)
 
-On the macOS 27.3 beta every release fails with NSCocoaErrorDomain 4097:
-the asset service drops the connection. RemoveMacAI #123 shows the same.
-A user there got through by removing the profile, letting the downloads
-finish, then removing again.
+The allowlist compares path text. #420 closed the gap for the entries
+under ~/.cache. Every other entry still had it: with ~/.gradle a link to
+~/Developer, the row named ~/.gradle/caches and the move took
+~/Developer/caches.
 
-A release or download request whose connection drops goes out again,
-up to 3 times, 3 s and 6 s apart. A set that answers with a lock reply
-gets one more request. Every request still names exactly one set.
+allowlistLinkRefusesDeletion refuses a path in an allowlist entry when
+the entry, or any folder above the path up to home, is a link.
+isOfferedForCleanup asks it outside its saved answers, so the scan drops
+the row and FileDeleter refuses the move. It replaces the ~/.cache and
+prek checks, which now ask it for their own folders.
 
-Purge now watches the sets it released for up to 60 s before it judges
-them, since macOS answers before it deletes. Sets that go within 15 min
-of a failed removal are booked then, and the row says Removed.
+A link lower down refuses nothing: it moves to the Trash as a link. A
+simulator device is left alone, because simctl removes it by its UDID.
+A folder that can't be read is refused.
 
-Details now opens with what to try next, and adds what the asset
-service logged while the requests ran. When nothing was removed, the
-undo button reads Remove Profile, since that is all it does. Stopping a
-removal now says Stopped instead of reporting a failure.
+A path in no entry costs a dictionary lookup. Any other is read with
+lstat: 1.2 µs for a row in ~/Library/Caches, against 12.5 µs through
+URL. On the main thread a read from the last 10 s is reused. A move
+always reads again.
 
-Tested on macOS 27.0 only. Not verified on 27.3.
+A Mac with no link on the way to a row is offered what it was before.
+A cache linked to another drive is
 
-* fix: hold Stop and book only real late removals
-
-**File**: `PurgeTests/AppleIntelligenceModelStoreTests.swift` (modified, +551/-15)
+**File**: `CLAUDE.md` (modified, +1/-0)
 ```diff
-@@ -323,66 +323,132 @@ struct AppleIntelligenceModelStoreTests {
-     }
- 
-     /// A Mac that answers the worker from memory and records what was asked of
--    /// it, so `remove` and `downloadAgain` can run whole in a test.
-+    /// it, so `remove` and `downloadAgain` can run whole in a test. Nothing
-+    /// waits: pauses return at once.
-     @MainActor
-     private final class FakeMac {
--        var reading: AppleIntelligenceReading
-         var blocks: [String]
-         var siriLanguage: String? = "zh-TW"
-         var resets: [String] = []
-+        /// Each release request as sent, so a test can see how many sets one named.
-+        var resetRequests: [[String]] = []
-+        var subscribeCalls = 0
-         var subscribed: [[String: Any]] = []
-         var recorded: [[AppleIntelligenceModelSet]] = []
-         /// What the worker answers for an op instead of success.
-         var failing: [String: AppleIntelligenceWorker.Outcome] = [:]
-         /// What the worker answers for a release of one set, by set name.
-         var failingResets: [String: AppleIntelligenceWorker.Outcome] = [:]
--        /// What the Mac reads as once a release has been asked for.
-+        /// Answers for a set's releases in order, before `failingResets` applies.
-+        var resetReplies: [String: [AppleIntelligenceWorker.Outcome]] = [:]
-+        /// Answers for the download requests in order, before `failing` applies.
-+        var subscribeReplies: [AppleIntelligenceWorker.Outcome] = []
-+        /// What the Mac reads as once a release has been asked for, and after
-+        /// how many more readings, since macOS deletes after it answers.
-         var readingAfterReset: AppleIntelligenceReading?
-+        var readsBeforeDeleted = 0
-+        /// How many releases macOS takes before `readingAfterReset` applies.
-+        var resetsBeforeDeleted = 1
-+        /// What the asset service logged, for the details.
-+        var serviceLog: [String] = []
-+        /// Runs after each release request, with how many have gone out.
-+        var afterReset: ((Int) -> Void)?
-+        /// Runs after a set's asset-type lookup.
-+        var afterLookup: (() -> Void)?
-+        /// Runs inside each pause, as a click during it would.
-+        var duringPause: (() -> Void)?
-+
-+        func paused() { duringPause?() }
- 
-         /// The current reading, behind a lock: the store reads it off the main actor.
--        private final class ReadingBox: @unchecked Sendable {
-+        final class ReadingBox: @unchecked Sendable {
-             private let lock = NSLock()
-             private var value: AppleIntelligenceReading
-+            private var pending: (reading: AppleIntelligenceReading, reads: Int)?
-             init(_ value: AppleIntelligenceReading) { self.value = value }
--            func get() -> AppleIntelligenceReading { lock.withLock { value } }
--            func set(_ new: AppleIntelligenceReading) { lock.withLock { value = new } }
-+            func get() -> AppleIntelligenceReading {
-+                lock.withLock {
-+                    if let next = pending {
-+                        if next.reads <= 0 {
-+                            value = next.reading
-+                            pending = nil
-+                        } else {
-+                            pending = (next.reading, next.reads - 1)
-+                        }
-+                    }
-+                    return value
-+                }
-+            }
-+            func set(_ new: AppleIntelligenceReading, afterReads reads: Int = 0) {
-+                lock.withLock { pending = (new, reads) }
-+            }
-         }
- 
-+        let current: ReadingBox
-+
-         init(reading: AppleIntelligenceReading, blocks: [String]) {
--            self.reading = reading
-+            current = ReadingBox(reading)
-             self.blocks = blocks
-         }
- 
-+        private let accepted = AppleIntelligenceWorker.Outcome(ok: true, result: [:], error: nil)
-+
-         var services: Store.Services {
-             var services = Store.Services()
--            let current = ReadingBox(reading)
-+            let current = current
-             services.read = { current.get() }
-             services.installedBlocks = { [blocks] in blocks }
-             services.siriLanguage = { [siriLanguage] in siriLanguage }
-             services.recordRemoval = { [self] sets, _, _ in self.recorded.append(sets) }
-+            services.pause = { [self] _ in await self.paused() }
-+            services.serviceLog = { [serviceLog] _ in serviceLog }
-             services.runWorker = { [self] op, input, _ in
-                 switch op {
-                 case "asset-type":
-+                    defer { self.afterLookup?() }
-+                    if let failure = self.failing[op] { return failure }
-                     let name = input["assetSet"] as? String
-                     let type = AppleIntelligenceCatalog.sets.first { $0.name == name }?.assetType
-                     return AppleIntelligenceWorker.Outcome(ok: true, result: [
+@@ -48,6 +48,7 @@ Cloud sessions run on Linux, so they can build no Swift code. Run the three Linu
+   - `.unknown` is "Not Sure". It never appears in scan results, but the delete confirmation sheets can still list it.
+ - Mark a path `.safe` only when it holds nothing but data its app rebuilds by itself. If it can hold settings, installed tools, keys, history, databases, projects, or offline downloads, it is `.medium` or not offered at all.
+ - Every cache and Dev Tools removal goes through `DeletionSafetyPolicy.evaluate(_:)`. Never add a delete path that skips it.
++  - The allowlist compares path text, so `isOfferedForCleanup` also asks `DeletionSafetyPolicy.allowlistLinkRefusesDeletion` (#420, #422). A path in an allowlist entry is refused when the entry, or any folder above the path up to home, is a link, even a link to another drive. A link below that moves to the Trash as a link, except a folder emptied entry by entry (`~/Library/Logs/DiagnosticReports`), which is refused when it is a link itself. A simulator device is left alone, because `simctl` removes it by its UDID. A new entry is covered when it is added. The rules in `evaluate` that match by shape, like container caches, have no such check. `AllowlistLinkTests` in `PurgeTests/AllowlistAuditTests.swift` checks each case.
+   - Items the user picks one by one have their own gate instead, because they are the user's own files and `evaluate` refuses those by design. Large Files, AI models, the uninstaller, and command-line tools go through `FileDeleter.deleteUserSelectedFiles`, which checks `LargeFileScanPolicy`, `AIModelScanPolicy`, `AppUninstallScanPolicy`, and `CommandLineToolScanPolicy`. Those gates are deletion-safety code too. They never feed Clean Safe Items or scheduled cleans.
+   - Folders the user adds in Settings for Large Files and Dev Projects (#318, `ScanFolders`) follow `AppFolders.refusal(forPicked:)`, except that a whole drive may be added when it holds no `System`, `Users`, `Backups.backupdb` or APFS Time Machine backup. Only local disks count (`AppFolders.isOnLocalDisk`), so never a network share or a macFUSE mount. They widen two gates and nothing else: `LargeFileScanPolicy.isEligibleForDeletion`, which reads the list from disk at delete time and also needs the file on a local disk, and the catalog rule in `isWhitelistedProjectArtifactPath`, which reads `ScanFolders.snapshot`, refreshed at each project scan and at the start of `FileDeleter.deleteItems`. The name-only rule and agent worktrees stay home only. Below an added folder, both walks and both gates skip a copy of a Mac, a home folder (`Library` beside `Desktop`, `Documents` or `Downloads`) or a Time Machine backup, and a folder another sync service keeps (`ScanFolders.isOffLimits`); the project rule also refuses a `Library` folder or a bundle between the added folder and the project, and the project walk never enters a bundle. A pick in or above another sync service's folder is refused like iCloud Drive. Projects in a folder added outside the home folder are Check First (`ProjectCheckFirstReason.addedFolder`), judged by real path too, so a home folder linked onto an added drive counts, `countsAsSafeCleanup` refuses them even when overridden to Safe, and `manualSafeCleanupCandidates` drops any path inside such a saved folder, plugged in or not, so Clean Safe Items and scheduled cleans never reach them. A folder added inside home keeps the home rules. The project walk goes 12 levels below an added folder, and 4 below the built-in roots, 1 below the home folder itself (#392). Right before each project artifact moves, and again on Retry, `FileDeleter` asks `ScanFolders.permitsProjectArtifactMove`, which refuses an artifact under a saved folder that left the snapshot or now has a link in its path, and `ProjectActivityPolicy.artifactBelongsToActiveProject`, which refuses it while a process works in the project or git holds a lock there. `PurgeTests/ProjectScanDepthTests.swift` checks both. `OLLAMA_MODELS` naming `/`, home or above is ignored, and under the Ollama root the gate takes only `manifests/` files and `blobs/sha256-*`. `PurgeTests/ScanFoldersTests.swift` and `ProjectAddedFolderTests.swift` check each rule.
+   - The Go Module Cache row (#397) offers Go's whole module cache, found the way Go finds it: `GOMODCACHE`, else the first `GOPATH` entry plus `pkg/mod`, else `~/go/pkg/mod`, each read from Purge's environment, then launchd, then Go's env file. Purge can't see a value set only in a shell profile, so it may offer the default folder while Go uses another; that folder still has to pass every check below. Nothing about it is in the static allowlist: `GoModuleCacheScanPolicy` is the gate, and `evaluate` allows only the folder it found. The folder must be a real local folder reached through no link. It must not be home or above, `/System` or `/private` (other spellings of real folders), under a never-delete prefix or one of the exact folders, in iCloud (Drive, CloudStorage, o
 ```
 
-**File**: `README.md` (modified, +1/-1)
+**File**: `PurgeTests/AllowlistAuditTests.swift` (modified, +399/-0)
 ```diff
-@@ -60,7 +60,7 @@ You do not need to understand any of it to use it. But if you ever want to check
- - **Scan Everything** (⇧⌘R) scans every category, one at a time so the Mac stays responsive. When you open Purge it does the same on its own. Large Files, the app list and leftovers need Full Disk Access. Without it Purge still scans App Caches and Dev Tools, and skips the places macOS protects, such as sandboxed apps' caches
- - Each byte is counted once: an app's cache folder counts under App Caches, not again under the app
- - **Hidden in System Data**: a card under the categories for space macOS counts as System Data. Its **Time Machine snapshots** row is where you remove local snapshots, and on macOS 27 it also holds the Apple Intelligence models
--- **Apple Intelligence models** (macOS 27, Apple silicon): the on-device models macOS files under System Data, with no switch to remove them. Remove releases them through Apple's asset service and installs a profile, which you approve once, so they don't download again. Download Again asks you to remove the profile in System Settings, then asks macOS for the sets Purge removed, in your Siri language. The size shown is Apple's figure; Purge records what the disk really gave back
-+- **Apple Intelligence models** (macOS 27, Apple silicon): the on-device models macOS files under System Data, with no switch to remove them. Remove releases them through Apple's asset service and installs a profile, which you approve once, so they don't download again. Download Again asks you to remove the profile in System Settings, then asks macOS for the sets Purge removed, in your Siri language. The size shown is Apple's figure; Purge records what the disk really gave back. If a removal fails, **Details** says what to try and shows everything macOS answered, and when nothing was removed the button reads **Remove Profile**
- 
- ### App Caches
- 
-```
-
-**File**: `README.ru.md` (modified, +1/-1)
-```diff
-@@ -60,7 +60,7 @@
- - **Сканировать всё** (⇧⌘R) проверяет каждую категорию по очереди, чтобы Mac оставался отзывчивым. При открытии Purge делает то же самое сам. Для больших файлов, списка приложений и остатков нужен «Полный доступ к диску». Без него Purge всё равно сканирует кэши приложений и инструменты разработчика и пропускает места, которые защищает macOS, например кэши приложений из песочницы
- - Каждый байт считается один раз: папка кэша приложения учитывается в кэшах приложений и не повторяется в самом приложении
- - **Скрыто в «Системных данных»**: карточка под категориями для места, которое macOS относит к «Системным данным». В её строке **Снимки Time Machine** удаляются локальные снимки, а в macOS 27 там же находятся модели Apple Intelligence
--- **Модели Apple Intelligence** (macOS 27, Apple silicon): модели на устройстве, которые macOS складывает в раздел «Системные данные», без переключателя для их удаления. «Удалить» освобождает их через службу ресурсов Apple и устанавливает профиль, который вы один раз подтверждаете, чтобы они больше не скачивались. «Скачать снова» просит вас удалить профиль в Системных настройках, а затем запрашивает у macOS наборы, которые удалил Purge, на языке Siri. Показанный размер — цифра Apple; Purge записывает, сколько места диск действительно вернул
-+- **Модели Apple Intelligence** (macOS 27, Apple silicon): модели на устройстве, которые macOS складывает в раздел «Системные данные», без переключателя для их удаления. «Удалить» освобождает их через службу ресурсов Apple и устанавливает профиль, который вы один раз подтверждаете, чтобы они больше не скачивались. «Скачать снова» просит вас удалить профиль в Системных настройках, а затем запрашивает у macOS наборы, которые удалил Purge, на языке Siri. Показанный размер — цифра Apple; Purge записывает, сколько места диск действительно вернул. Если удаление не удалось, **Подробности** подсказывают, что попробовать, и показывают полный ответ macOS, а если ничего не удалено, кнопка называется **Удалить профиль**
- 
- ### Кэши приложений
- 
-```
-
-**File**: `README.uk.md` (modified, +1/-1)
-```diff
-@@ -63,7 +63,7 @@
- - **Scan Everything** (⇧⌘R) сканує всі категорії по черзі, щоб Mac не гальмував. Коли ви відкриваєте Purge, він робить це сам. Для Large Files, списку застосунків і залишків потрібен «Повний доступ до диска». Без нього Purge однаково сканує App Caches і Dev Tools та пропускає місця, які захищає macOS, наприклад кеші застосунків у пісочниці
- - Кожен байт рахується один раз: папка кешу застосунку рахується в App Caches, а не ще раз у самому застосунку
- - **Hidden in System Data** («сховане в системних даних»): картка під категоріями для місця, яке macOS зараховує до системних даних. У її рядку **Time Machine snapshots** видаляються локальні знімки, а на macOS 27 там же є моделі Apple Intelligence
--- **Моделі Apple Intelligence** (macOS 27, Apple silicon): моделі на пристрої, які macOS записує до системних даних і для яких немає перемикача, щоб їх видалити. Remove вивільняє їх через службу ресурсів Apple і встановлює профіль, який ви схвалюєте один раз, щоб вони не завантажувалися знову. Download Again просить вас видалити профіль у Системних параметрах, а потім запитує в macOS набори, які видалив Purge, мовою вашої Siri. Показаний розмір — це цифра Apple; Purge записує, скільки диск звільнив насправді
-+- **Моделі Apple Intelligence** (macOS 27, Apple silicon): моделі на пристрої, які macOS записує до системних даних і для яких немає перемикача, щоб їх видалити. Remove вивільняє їх через службу ресурсів Apple і встановлює профіль, який ви схвалюєте один раз, щоб вони не завантажувалися знову. Download Again просить вас видалити профіль у Системних параметрах, а потім запитує в macOS набори, які видалив Purge, мовою вашої Siri. Показаний розмір — це цифра Apple; Purge записує, скільки диск звільнив насправді. Якщо видалити не вдалося, **Details** підказує, що спробувати, і показує повну відповідь macOS, а якщо нічого не видалено, кнопка називається **Remove Profile**
- 
- ### Кеші застосунків (App Caches)
- 
-```
-
-**File**: `README.zh-CN.md` (modified, +1/-1)
-```diff
-@@ -64,7 +64,7 @@
- - **扫描全部**（⇧⌘R）会逐个扫描所有类别，一次只扫一个，让 Mac 保持流畅。打开 Purge 时，它也会自动执行同样的操作。大文件、应用列表和残留文件需要完全磁盘访问权限。没有该权限时，Purge 仍会扫描应用缓存和开发工具，并跳过受 macOS 保护的位置，例如沙盒应用的缓存
- - 每个字节只统计一次：应用的缓存文件夹计入应用缓存，不会在该应用名下重复计算
- - **藏在“系统数据”中**：位于各类别下方的一张卡片，显示 macOS 计入“系统数据”的空间。其中的 **时间机器快照** 一行用来移除本地快照；在 macOS 27 上，它还包含 Apple 智能模型
--- **Apple 智能模型**（macOS 27，Apple 芯片）：macOS 归入“系统数据”的设备端模型，系统没有提供移除它们的开关。**移除** 会通过 Apple 的资源服务释放它们，并安装一个描述文件（你只需批准一次），让它们不会再次下载。**重新下载** 会请你在系统设置中移除该描述文件，然后按你的 Siri 语言向 macOS 请求 Purge 移除的那些模型。显示的大小是 Apple 给出的数字；Purge 记录的是磁盘实际释放的空间
-+- **Apple 智能模型**（macOS 27，Apple 芯片）：macOS 归入“系统数据”的设备端模型，系统没有提供移除它们的开关。**移除** 会通过 Apple 的资源服务释放它们，并安装一个描述文件（你只需批准一次），让它们不会再次下载。**重新下载** 会请你在系统设置中移除该描述文件，然后按你的 Siri 语言向 macOS 请求 Purge 移除的那些模型。显示的大小是 Apple 给出的数字；Purge 记录的是磁盘实际释放的空间。如果移除失败，**详细信息** 会告诉你可以尝试的办法，并显示 macOS 的完整回应；如果什么都没有移除，按钮会显示为 **移除描述文件**
- 
- ### 应用缓存（App Caches）
- 
-```
-
-**File**: `SECURITY.md` (modified, +6/-1)
-```diff
-@@ -150,7 +150,12 @@ and the one change it makes that outlasts the app:
-   Settings. It only points the model downloads at a dead local address so
-   macOS does not fetch them again. It stays in Device Management until you
-   choose Download Again or remove it there. Download Again also asks macOS
--  for the models back.
-+  for the models back. When a removal took nothing, the same button reads
-+  Remove Profile and only removes the profile.
-+- **One log read, after a failure only.** When a request fails, Purge reads
-+  what the asset service, `assetsubscriptiond`, logged meanwhile with
-+  `log show`, so the row's Details can show it. Private values stay redacted,
-+  and nothing leaves the Mac unless you copy it into a report.
- - **Nothing automatic.** Neither scheduled cleaning nor Clean Safe Items ever
-   touches the models.
- 
-```
-
-**File**: `purge/Models/AppleIntelligenceModels.swift` (modified, +29/-1)
-```diff
-@@ -202,6 +202,8 @@ nonisolated enum AppleIntelligenceOutcome: Equatable, Sendable {
-     /// `reason` is short enough for the row. `details` is everything macOS
-     /// answered, for the Details button; nil when Purge has no more to say (#343).
-     case someLeft(removed: Int, left: Int, reason: String, details: String?)
-+    /// The user stopped the removal between sets, and nothing failed.
-+    case stopped(removed: Int, left: Int)
-     /// The profile was never installed, so nothing was released.
-     case profileNotInstalled
-     case notReady(String, details: String?)
-@@ -217,8 +219,34 @@ nonisolated enum AppleIntelligenceOutcome: Equatable, Sendable {
-         switch self {
-         case .someLeft(_, _, _, let details), .notReady(_, let details), .downloadRequestFailed(_, let details):
-             return details
--        case .removed, .profileNotInstalled, .downloadRequested, .downloadNotStarted, .profileStillInstalled:
-+        case .removed, .stopped, .profileNotInstalled, .downloadRequested, .downloadNotStarted, .profileStillInstalled:
-             return nil
-         }
-     }
-+
-+    /// What the user can do after a failed Remove or Download Again, for the
-+    /// row's Details. `undoTitle` is the title the button that lifts the block
-+    /// has right now, so the steps name the button the row shows.
-+    ///
-+    /// A restart comes first: it lets go of a model something still holds
-+    /// (RemoveMacAI's issue 38) and of a download stuck on the block (its issue
-+    /// 109). The second step is what got the removal through on the macOS 27.3
-+    /// beta, where the service dropped every release (its issue 123, #343).
-+    func nextSteps(undoTitle: String) -> [String] {
-+        switch self {
-+        case .someLeft:
-+            return [
-+                String(localized: "Restart your Mac, then click Remove again."),
-+                String(localized: "If they still stay, click \(undoTitle), leave your Mac on until macOS has finished downloading the models, then click Remove again."),
-+            ]
-+        case .downloadRequestFailed:
-+            return [
-+                String(localized: "Restart your Mac, then click Download Again."),
-+                String(localized: "The profile is gone, so macOS also downloads the models by itself when you use a feature that needs them."),
-+            ]
-+        case .removed, .stopped, .notReady, .profileNotInstalled, .downloadRequested, .downloadNotStarted,
-+             .profileStillInstalled:
-+            return []
-+        }
-+    }
- }
-```
-
-**File**: `purge/Services/AppleIntelligenceModelReader.swift` (modified, +56/-2)
-```diff
-@@ -494,6 +494,14 @@ nonisolated enum AppleIntelligenceWorker {
-         func detailLine(op: String, subject: String) -> String {
-             "\(op) \(subject): \(error ?? "no reason given")"
-         }
-+
-+        /// The connection to the service broke rather than the service saying
-+        /// no. The service starts on demand and can go away mid-request, so
-+        /// these are worth asking again; a release or a subscription asked
-+        /// twice is the same request.
-+        var isConnectionDrop: Bool {
-+            AppleIntelligenceWorker.connectionProblem(domain: domain, code: code) != nil
-+        }
-     }
- 
-     /// The three ways the connection to macOS's asset service fails, in plain
-@@ -516,11 +524,18 @@ nonisolated enum AppleIntelligenceWorker {
-     /// The text behind the row's Details button, made to be pasted into a bug
-     /// report: the Purge and macOS versions, then one line per failed call.
-     /// The lines are the service's own words, so they stay as they came.
--    static func details(_ lines: [String], purge: String = AppleIntelligenceWorker.purgeVersion,
-+    /// `serviceLog` is what the asset service itself logged meanwhile, which is
-+    /// the only place its reason shows when it drops the connection (#343).
-+    static func details(_ lines: [String], serviceLog: [String] = [],
-+                        purge: String = AppleIntelligenceWorker.purgeVersion,
-                         system: String = ProcessInfo.processInfo.operatingSystemVersionString) -> String? {
-         guard !lines.isEmpty else { return nil }
-         // A blank line between requests: each one wraps over several lines.
--        return (["Purge \(purge), macOS \(system)"] + lines).joined(separator: "\n\n")
-+        var parts = ["Purge \(purge), macOS \(system)"] + lines
-+        if !serviceLog.isEmpty {
-+            parts.append((["assetsubscriptiond log:"] + serviceLog).joined(separator: "\n"))
-+        }
-+        return parts.joined(separator: "\n\n")
-     }
- 
-     static var purgeVersion: String {
-@@ -618,6 +633,45 @@ nonisolated enum AppleIntelligenceWorker {
+@@ -1342,6 +1342,405 @@ struct OpencodeCacheTests {
      }
  }
  
-+/// What macOS's asset service, `assetsubscriptiond`, logged while Purge's
-+/// requests ran. When the service drops the connection, the worker gets only
-+/// NSCocoaErrorDomain 4097 and the reason is in this log (#343), so a failed
-+/// request's details carry it. Read with `log show`, which keeps private
-+/// values redacted; nothing is read unless a request failed.
-+nonisolated enum AppleIntelligenceServiceLog {
-+    /// The service's request handling (`UAFXPCService`, which also logs a
-+    /// client it turns away and a relaunch), its faults, and its errors about
-+    /// releasing. Its other errors are routine catalog checks, dozens a minute.
-+    static let predicate = #"process == "assetsubscriptiond" AND (eventMessage CONTAINS "UAFXPCService" OR messageType == fault OR (messageType == error AND (eventMessage CONTAINS[c] "reset" OR eventMessage CONTAINS[c] "eliminat" OR eventMessage CONTAINS[c] "unauthorized")))"#
++// MARK: - Allowlisted rows reached through a link (#422)
 +
-+    static let maxLines = 30
-+    static let maxLineLength = 400
-+
-+    static func lines(since start: Date) async -> [String] {
-+        let formatter = DateFormatter()
-+        formatter.locale = Locale(identifier: "en_US_POSIX")
-+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-+        guard let output = await ProcessRunner.runAsync(
-+            executablePath: "/usr/bin/log",
-+            arguments: ["show", "--start", formatter.string(from: start.addingTimeInterval(-2)),
-+                        "--predicate", predicate, "--style", "compact"],
-+            timeout: 30
-+        ), output.succeeded else { return [] }
-+        return parse(output.stdoutText)
++/// The allowlist accepts `.gradle/caches` by its text. With `~/.gradle` a link
++/// to `~/Developer`, a move would take `~/Developer/caches`, so only
++/// `allowlistLinkRefusesDeletion` catches it. Every test builds its own home.
++@Suite("Allowlisted rows reached through a link (#422)")
++struct AllowlistLinkTests {
++    /// A temporary home, with a `Developer` folder beside it for links to point at.
++    private static func makeHome() throws -> (base: URL, home: URL, elsewhere: URL) {
++        let fm = FileManager.default
++        let base = fm.temporaryDirectory.appendingPathComponent("allowlist-link-\(UUID().uuidString)", isDirectory: true)
++        let home = base.appendingPathComponent("home", isDirectory: true)
++        let elsewhere = base.appendingPathComponent("Developer", isDirectory: true)
++        try fm.createDirectory(at: home, withIntermediateDirectories: true)
++        try fm.createDirectory(at: elsewhere, withIntermediateDirectories: true)
++        return (base, home, elsewhere)
 +    }
 +
-+    /// One line per entry, newest last, each cut to a readable length. A
-+    /// message's continuation lines and the header are left out.
-+    static func parse(_ text: String) -> [String] {
-+        let entries = text.split(whereSeparator: \.isNewline).map(String.init).filter { line in
-+            line.first?.isNumber == true
-+        }
-+        return entries.suffix(maxLines).map { line in
-+            line.count > maxLineLength ? String(line.prefix(maxLineLength)) + "…" : line
-+        }
-+    }
-+}
-+
- /// Free blocks only, with no purgeable accounting. On macOS 27 freshly
- /// downloaded models are purgeable, so they vanish from the figure System
- /// Settings shows but not from this one; the two together say what a removal
-```
-
----
-
-### Incident Patch 3: `08c1bf14` (2026-11-16)
-**Commit Message**: fix: count APFS clones once in Large Files rows (#376) (#384)
-
-* fix: count APFS clones once in Large Files rows (#376)
-
-A file duplicated in Finder is a clone. Both copies showed their full
-size in Large Files, and Duplicates said trashing the extra copy freed
-all of it. Trashing either frees nothing while the other stays.
-
-Large Files rows for single files now show a full clone's share, as
-folder scans do since #131, so a duplicated file adds up to one copy.
-The size floor still reads the whole allocated size, so a copy of a big
-file stays on the list. Purgeable files keep their full size.
-
-Duplicates leaves out a file that shares all its blocks with clones,
-as it already leaves out hard-linked files.
-
-DirectoryListing asks for the extended flags and clone count, never
-ATTR_CMNEXT_PRIVATESIZE. One SharedBlocks.FileState reader now serves
-the folder walk, the listing, single-file reads and the contents-clean
-booking.
-
-* fix: list a folder without clone state when the extended read fails
-
-DirectoryListing now always asks for the extended flags and clone
-count. When the first getattrlistbulk call fails with them, it tries
-once more without them, as the folder walk does, and the file
-
-**File**: `PurgeTests/LargeFileCloneTests.swift` (added, +256/-0)
-```diff
-@@ -0,0 +1,256 @@
-+import Darwin
-+import Foundation
-+import Testing
-+@testable import Purge
-+
-+/// Large Files rows count an APFS clone set once, as folder scans do (#376).
-+/// A file duplicated in Finder is a clone, and trashing one copy frees nothing
-+/// while the other stays. Real clones are made in temporary folders only,
-+/// never the user's own.
-+@Suite("Clones in Large Files (#376)")
-+struct LargeFileCloneTests {
-+    private let fm = FileManager.default
-+
-+    private static var countsClones: Bool {
-+        SharedBlocks.attributes & attrgroup_t(ATTR_CMNEXT_CLONE_REFCNT) != 0
++    /// Every allowlist entry, relative to home.
++    private static func entries(_ home: URL) -> [String] {
++        DeletionSafetyPolicy.whitelistedAbsolutePrefixes(home: home.path).map { String($0.dropFirst(home.path.count + 1)) }
 +    }
 +
-+    /// The folder the scan walks, inside a folder of the test's own. Remove
-+    /// the parent when done.
-+    private func makeRoot() throws -> URL {
-+        let root = fm.temporaryDirectory
-+            .appendingPathComponent("purge-large-clones-\(UUID().uuidString)/files", isDirectory: true)
-+        try fm.createDirectory(at: root, withIntermediateDirectories: true)
-+        return root
++    private static func refuses(_ relative: String, home: URL) -> Bool {
++        DeletionSafetyPolicy.allowlistLinkRefusesDeletion(home.appendingPathComponent(relative), home: home.path)
 +    }
 +
-+    private func write(_ bytes: Int, to url: URL, seed: UInt8 = 31) throws {
-+        try fm.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
-+        try Data((0..<bytes).map { UInt8(truncatingIfNeeded: $0) &* seed }).write(to: url)
++    private static func makeFolder(_ url: URL) throws {
++        try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
 +    }
 +
-+    private func clone(_ source: URL, to destination: URL) throws {
-+        try fm.createDirectory(at: destination.deletingLastPathComponent(), withIntermediateDirectories: true)
-+        try #require(clonefile(source.path, destination.path, 0) == 0, "clonefile: \(errno)")
++    /// Where `relative` lands when `link`, a folder at or above it, points at `target`.
++    private static func behind(_ relative: String, link: String, target: URL) -> URL {
++        let rest = relative.dropFirst(link.count).drop { $0 == "/" }
++        return rest.isEmpty ? target : target.appendingPathComponent(String(rest), isDirectory: true)
 +    }
 +
-+    private func allocated(_ url: URL) throws -> Int64 {
-+        Int64(try #require(url.resourceValues(forKeys: [.totalFileAllocatedSizeKey]).totalFileAllocatedSize))
-+    }
-+
-+    private func scan(_ root: URL, minBytes: Int64) async -> [LargeFile] {
-+        let ledger = FileAccessLedger(
-+            fileURL: root.deletingLastPathComponent().appendingPathComponent("ledger/access-times.json")
-+        )
-+        let stream = LargeFileScanner().scanEvents(
-+            minBytes: minBytes,
-+            staleDays: 0,
-+            roots: [root],
-+            virtualMachineRoots: [],
-+            iCloudDriveRoots: [],
-+            installedApps: [],
-+            isAppRunning: { _ in false },
-+            home: root,
-+            exclusions: ScanExclusions(keys: []),
-+            isExcluded: { _ in false },
-+            accessLedger: ledger
-+        )
-+        var files: [LargeFile] = []
-+        for await event in stream {
-+            if case .file(let file) = event { files.append(file) }
-+        }
-+        return files
-+    }
-+
-+    private func row(_ name: String, in rows: [LargeFile]) throws -> LargeFile {
-+        try #require(rows.first { $0.path.lastPathComponent == name })
-+    }
-+
-+    // MARK: The rule
-+
-+    /// Keep Only in iCloud is offered only for purgeable files, and its row
-+    /// shows what eviction gives back, so a purgeable file keeps its size.
++    /// The guard starts from the list itself, so a new entry is covered the day
++    /// it is added.
 +    @Test
-+    func aPurgeableFileKeepsItsSize() {
-+        let purgeable = SharedBlocks.FileState(flags: UInt64(EF_IS_PURGEABLE), cloneCount: 1)
-+        #expect(!purgeable.isFullClone)
-+        #expect(purgeable.countedBytes(allocated: 90_112) == 90_112)
-+    }
-+
-+    @Test
-+    func aFullCloneShowsItsShareAndAnythingElseItsSize() {
-+        let sharesAll = UInt64(EF_SHARES_ALL_BLOCKS) | UInt64(EF_MAY_SHARE_BLOCKS)
-+        let full = SharedBlocks.FileState(flags: sharesAll, cloneCount: 2)
-+        #expect(full.isFullClone)
-+        #expect(full.countedBytes(allocated: 90_112) == 45_056)
-+        // A purgeable clone still shows only its share: evicting it frees
-+        // nothing while another clone stays.
-+        let purgeableClone = SharedBlocks.FileState(flags: sharesAll | UInt64(EF_IS_PURGEABLE), cloneCount: 3)
-+        #expect(purgeableClone.isFullClone)
-+        #expect(purgeableClone.countedBytes(allocated: 90_112) == 30_038)
-+
++    func everyEntryIsFoundByItsText() {
++        let home = "/Users/someone"
++        let entries = DeletionSafetyPolicy.whitelistedAbsolutePrefixes(home: home)
++        #expect(entries.count > 80)
++        for entry in entries {
++            #expect(DeletionSafetyPolicy.allowlistEntry(containing: entry, home: home) == entry, "\(entry)")
++            #expect(DeletionSafetyPolicy.allowlistEntry(containing: "\(entry)/a/b", home: home) == entry, "\(entry)")
++            #expect(DeletionSafetyPolicy.allowlistEntry(containing: "\(entry)-old", home: home) == nil, "\(entry)")
++        }
 +        for other in [
-+            SharedBlocks.FileState.unknown,
-+            SharedBlocks.FileState(flags: 0, cloneCount: 1),
-+            SharedBlocks.FileState(flags: UInt64(EF_MAY_SHARE_BLOCKS), cloneCount: 2),
-+            SharedBlocks.FileState(flags: sharesAll, cloneCount: 1),
-+            SharedBlocks.FileState(flags: sharesAll, cloneCount: nil),
++            home, "\(home)/", "\(home)/.gradle", "\(home)/.gradle/jdks", "\(home)/Library", "\(home)/Library/CachesX/a",
++            "\(home)/.cache/unknown", "\(home)2/.npm", "/Users/other/.npm", "/Library/Caches/a", "",
 +        ] {
-+            #expect(!other.isFullClone)
-+            #expect(other.countedBytes(allocated: 90_112) == 90_112)
++            #expect(DeletionSafetyPolicy.allowlistEntry(containing: other, home: home) == nil, "\(other)")
 +        }
 +    }
 +
-+    // MARK: Reading the volume
++    /// `~/.gradle`, `~/Library` or `~/Movies` as a link: the move would take the
++    /// folder behind it.
++    @Test
++    func everyEntryIsRefusedWhenItsFirstFolderIsALink() throws {
++        let fm = FileManager.default
++        let byFirstFolder = Dictionary(grouping: Self.entries(URL(fileURLWithPath: "/Users/someone"))) {
++            String($0.split(separator: "/")[0])
++        }
++        #expect(byFirstFolder.count > 30)
++        for (first, entries) in byFirstFolder {
++            let (base, home, elsewhere) = try Self.makeHome()
++            defer { try? fm.removeItem(at: base) }
++            try fm.createSymbolicLink(at: home.appendingPathComponent(first), withDestinationURL: elsewhere)
++            for relative in entries {
++                // The folder a move would really take.
++                let behind = Self.behind(relative, link: first, target: elsewhere)
++                try Self.makeFolder(behind.appendingPathComponent("inner", isDirectory: true))
++                for path in [relative, "\(relative)/inner", "\(relative)/inner/deeper"] {
++                    #expect(Self.refuses(path, home: home), "\(path)")
++                }
++                #expect(fm.fileExists(atPath: home.appendingPathComponent("\(relative)/inner").path))
++            }
++        }
++    }
 +
-+    @Test(.enabled(if: countsClones))
-+    func bothReadsSeeAClone() throws {
-+        let root = try makeRoot()
-+        defer { try? fm.removeItem(at: root.deletingLastPathComponent()) }
-+        let original = root.appendingPathComponent("original.mov")
-+        let copy = root.appendingPathComponent("original copy.mov")
-+        let plain = root.appendingPathComponent("plain.mov")
-+        try write(300_000, to: original)
-+        try clone(original, to: copy)
-+        try write(300_000, to: plain, seed: 7)
-+
-+        #expect(
++    /// `~/.npm` or `DerivedData` as a link: its own row would only move the
++    /// link, and a row inside it would take what is behind.
++    @Test
++    func everyEntryIsRefusedWhenItsOwnFolderIsALink() throws {
++        let fm = FileManager.default
++        let (base, home, elsewhere) = try Self.makeHome()
++        defer { try? fm.removeItem(at: base) }
++        for (index, relative) in Self.entries(home).enumerated() {
++            let entry = home.appendingPathComponent(relative)
++     
 ```
 
-**File**: `purge/Services/DuplicateFileDetector.swift` (modified, +11/-4)
+**File**: `docs/safety-notes.md` (modified, +61/-0)
 ```diff
-@@ -22,10 +22,10 @@ import Foundation
- /// Trash is a thin backstop for that.
- ///
- /// **Hard links** are collapsed before bucketing: two names for one inode are not
--/// two copies, and deleting one frees nothing. **APFS clones** are not detectable
--/// this way — they have distinct inodes but share storage, so a clone pair is
--/// reported as a duplicate whose reclaimable bytes overstate what deleting
--/// actually frees. There is no cheap public API for block sharing.
-+/// two copies, and deleting one frees nothing. **APFS clones** are left out
-+/// the same way (#376): a file that shares all its blocks with another full
-+/// clone, such as a copy made with Finder's Duplicate, has its own inode but
-+/// no blocks of its own, so deleting it frees nothing either.
- ///
- /// `nonisolated` is load-bearing, not tidiness — same reason as `LargeFileScanner`.
- /// The project builds with `SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor`, so without
-@@ -123,6 +123,13 @@ nonisolated final class DuplicateFileDetector {
-             // the failure this feature cannot afford.
-             guard linkCount(for: url) == 1 else { continue }
+@@ -11,6 +11,67 @@ that belongs here, [SECURITY.md](../SECURITY.md) says how to report it.
  
-+            // A full clone is left out for the same reason (#376). While any
-+            // other clone stays, its blocks stay too, so its group would
-+            // promise space that trashing it never gives back. A copy that was
-+            // written to after it was cloned shares only some blocks and is
-+            // still compared.
-+            guard !SharedBlocks.state(ofFileAt: url.path).isFullClone else { continue }
+ Newest first.
+ 
++## 2026-11-19: Allowlisted rows followed a link to another folder
 +
-             // One file can still have two rows when a folder on the way is a
-             // symlink: one inode by two paths, each with a link count of 1. They
-             // are one file, not two copies, and trashing the "extra copy" would
++**Found internally** while fixing [#420](https://github.com/jithin-sabu/purge-app/issues/420) ([#422](https://github.com/jithin-sabu/purge-app/issues/422)), no report. **Fixed:** [#423](https://github.com/jithin-sabu/purge-app/pull/423), not shipped yet. **Affected:** v1.1.0 to v1.16.2.
++
++### What happened
++
++The fix for #420 covered the allowlist entries under `~/.cache`. Every other
++entry had the same gap. The allowlist compares path text, and never checked
++whether a folder on the way was a link.
++
++If `~/.gradle` was a link to `~/Developer`, the row named `~/.gradle/caches`,
++the text matched, and the move took `~/Developer/caches`. The same held for a
++row inside an entry, such as `~/.npm/_cacache` with `~/.npm` linked, or a
++JetBrains cache with `~/Library/Caches/JetBrains` linked.
++
++Many of these rows are Safe to Clean, so Clean Safe Items or a scheduled clean
++could have moved the folder behind the link without asking.
++
++An entry that was itself a link, and its own row, did less harm: the move took
++only the link. The row was still wrong. Nothing was freed, and the tool made a
++new folder on the startup disk.
++
++### Who was affected
++
++Nobody reported a loss. It took a tool folder linked to a place that held a
++folder named like a cache: `caches`, `repository`, `registry`, `pkgs`. The
++common setup, a tool folder linked to another drive, moved the cache the tool
++really used. Anything moved went to the Trash and could be put back.
++
++### What changed
++
++`DeletionSafetyPolicy.allowlistLinkRefusesDeletion` refuses a path in an
++allowlist entry when the entry, or any folder above the path up to home, is a
++link. It finds the entry in the allowlist itself, so a new row is covered when
++it is added. `isOfferedForCleanup` asks it outside its saved answers, so the
++scan drops the row and `FileDeleter` refuses the move even when the link
++appeared after the scan. The checks for `~/.cache` and prek are now this one
++check.
++
++A link lower down refuses nothing, because it moves to the Trash as a link. A
++folder emptied entry by entry is the exception: it is never moved itself, so
++`~/Library/Logs/DiagnosticReports` as a link is refused too. A simulator
++device is left alone, because `simctl` removes it by its UDID and its path is
++never moved.
++
++A Mac with a link on the way to a row no longer gets that row. That includes a
++cache linked to another drive. Offering those again would need rows that say
++where they really are, and that never go into Clean Safe Items or a scheduled
++clean.
++
++### What would have caught it earlier
++
++The #420 fixture, run for every entry and not only the ones under `~/.cache`.
++`AllowlistLinkTests` in
++[`PurgeTests/AllowlistAuditTests.swift`](../PurgeTests/AllowlistAuditTests.swift)
++builds a temporary home and checks every allowlist entry with its first folder
++linked, its own folder linked and nothing linked, and checks a folder on the
++way, a folder between an entry and a row, a link inside a folder, and a
++linked folder that is emptied entry by entry.
++`everyEntryIsFoundByItsText` fails if the guard misses an entry.
++
+ ## 2026-11-19: Rows under `~/.cache` followed a link to another folder
+ 
+ **Found internally** in review of [#417](https://github.com/jithin-sabu/purge-app/pull/417) ([#420](https://github.com/jithin-sabu/purge-app/issues/420)), no report. **Fixed:** [#421](https://github.com/jithin-sabu/purge-app/pull/421), not shipped yet. **Affected:** v1.1.0 to v1.16.2.
 ```
 
-**File**: `purge/Services/LargeFileScanner.swift` (modified, +23/-5)
+**File**: `purge/Services/DeletionSafetyPolicy.swift` (modified, +143/-32)
 ```diff
-@@ -254,7 +254,7 @@ nonisolated final class LargeFileScanner {
-                 if walkedRootPrefix == nil {
-                     walkedRootPrefix = fileURL.deletingLastPathComponent().path + "/"
-                 }
--                units.append((fileURL, (try? fileURL.resourceValues(forKeys: resourceKeys)).map(Seen.init)))
-+                units.append((fileURL, (try? fileURL.resourceValues(forKeys: resourceKeys)).map { Seen($0, url: fileURL) }))
-             }
-             let prefix = walkedRootPrefix
- 
-@@ -348,8 +348,17 @@ nonisolated final class LargeFileScanner {
-                     let provider = LargeFileScanSummary.CloudProvider.provider(for: fileURL, isUbiquitous: isUbiquitous, home: home)
-                     return ([.cloudOnly(provider, bytes: Int64(logical))], false)
-                 }
-+                // A file that shares all its blocks with clones shows its share,
-+                // so a file duplicated in Finder adds up to one copy (#376).
-+                // The size floor still reads the whole allocated size: a copy
-+                // of a big file is a big file to the person looking for it.
-+                // Read only for a file past the floor, since a root's own
-+                // entries cost a call each.
-+                let rowBytes = size >= minBytes
-+                    ? values.allocatedBytes.map { values.sharedBlocks().countedBytes(allocated: $0) }
-+                    : nil
-                 guard let file = listed(
--                    fileURL, size: size, lastUsed: max(accessed, modified),
-+                    fileURL, size: size, rowBytes: rowBytes, lastUsed: max(accessed, modified),
-                     minBytes: minBytes, staleDays: staleDays, now: now,
-                     installedApps: installedApps, isExcluded: isExcluded,
-                     home: home, downloadOnly: walk.downloadOnly
-@@ -455,8 +464,12 @@ nonisolated final class LargeFileScanner {
-         let accessDate: Date
-         let modificationDate: Date
-         let isPackage: () -> Bool
-+        /// The blocks a file shares with clones. `URLResourceValues` has no
-+        /// key for them, so for an entry read that way they are asked of the
-+        /// file when the walk needs them.
-+        let sharedBlocks: () -> SharedBlocks.FileState
- 
--        init(_ values: URLResourceValues) {
-+        init(_ values: URLResourceValues, url: URL) {
-             // A package reads as a folder here, as it did in the walk's checks.
-             isDirectory = values.isDirectory == true || values.isPackage == true
-             isRegularFile = values.isRegularFile == true
-@@ -466,6 +479,7 @@ nonisolated final class LargeFileScanner {
-             modificationDate = values.contentModificationDate ?? .distantPast
-             let isPackage = values.isPackage == true
-             self.isPackage = { isPackage }
-+            sharedBlocks = { SharedBlocks.state(ofFileAt: url.path) }
-         }
- 
-         init(_ entry: ListingEntry, url: URL) {
-@@ -476,6 +490,8 @@ nonisolated final class LargeFileScanner {
-             accessDate = entry.accessDate
-             modificationDate = entry.modificationDate
-             isPackage = { (try? url.resourceValues(forKeys: [.isPackageKey]))?.isPackage == true }
-+            let sharedBlocks = entry.sharedBlocks
-+            self.sharedBlocks = { sharedBlocks }
-         }
+@@ -459,7 +459,7 @@ enum DeletionSafetyPolicy {
+             // session loads its packages from here, and `bin` holds downloaded tools.
+             // `~/.local/share/opencode` holds sessions, snapshots and `auth.json`, and
+             // `~/.config/opencode` the settings. Neither is listed. Refused when
+-            // reached through a link; see `dotCacheLinkRefusesDeletion`.
++            // reached through a link; see `allowlistLinkRefusesDeletion`.
+             "\(home)/.cache/opencode",
+             // The videos only. The thumbnails next to them are the covers System
+             // Settings shows; deleting those blanks the wallpaper picker.
+@@ -515,10 +515,10 @@ enum DeletionSafetyPolicy {
+         // The Go module cache is moved whole only while it still holds nothing
+         // but modules. Same split as Playwright: a move reads the folder again.
+         if GoModuleCacheScanPolicy.refusesDeletion(url, reuseRecentRead: Thread.isMainThread) { return false }
+-        // `~/.cache` or a cache folder in it can become a link after the scan (#420).
+-        if dotCacheLinkRefusesDeletion(standardizedPath: key) { return false }
+-        // Recheck before a move in case the prek store was redirected since the scan.
+-        if prekStoreLinkRefusesDeletion(url) { return false }
++        // An allowlisted folder, or a folder above the row, can become a link after
++        // the scan (#420, #422). Same split as Playwright: the on-screen filter may
++        // reuse a read from the last few seconds, and a move reads the disk again.
++        if allowlistLinkRefusesDeletion(standardizedPath: key, reuseRecentRead: Thread.isMainThread) { return false }
+         if prekToolsRefuseDeletion(url) { return false }
+         if mailRunningRefusesDeletion(url) { return false }
+         // A daemon's log stays while it runs, and a temp file until it is old.
+@@ -550,12 +550,12 @@ enum DeletionSafetyPolicy {
+         return verdict
      }
  
-@@ -517,10 +533,12 @@ nonisolated final class LargeFileScanner {
+-    /// The allowlist compares path text, so if `~/.cache/prek` or `~/.cache` were a
+-    /// link to `~/Developer`, its `repos`, `tools` and `cache` would be the user's own
+-    /// folders. Any link on the way down from home refuses the path.
++    /// `allowlistLinkRefusesDeletion` asked for prek's store alone: `repos`,
++    /// `hooks`, `tools` and `cache` under `~/.cache/prek`.
+     nonisolated static func prekStoreLinkRefusesDeletion(_ url: URL, home: String = cachedHomePath) -> Bool {
+-        guard PathContainment.isInside(url.standardizedFileURL.path, "\(home)/.cache/prek") else { return false }
+-        return PathContainment.containsSymlinkComponent(url, home: home)
++        let path = url.standardizedFileURL.path
++        guard PathContainment.isInside(path, "\(home)/.cache/prek") else { return false }
++        return allowlistLinkRefusesDeletion(standardizedPath: path, home: home)
      }
  
-     /// The checks every listed item passes, file or bundle, and the row it
--    /// becomes. Nil when the item stays off the list.
-+    /// becomes. Nil when the item stays off the list. `size` is what the size
-+    /// floor compares, and the row shows `rowBytes` when given (#376).
-     private static func listed(
-         _ fileURL: URL,
-         size: Int64,
-+        rowBytes: Int64? = nil,
-         lastUsed: Date,
-         minBytes: Int64,
-         staleDays: Int,
-@@ -571,7 +589,7 @@ nonisolated final class LargeFileScanner {
+     /// Installed prek hooks can retain absolute paths to managed Rust tools.
+@@ -572,39 +572,147 @@ enum DeletionSafetyPolicy {
+         return isExcluded(root.appendingPathComponent("hooks", isDirectory: true))
+     }
  
-         return LargeFile(
-             path: fileURL.standardizedFileURL,
--            sizeBytes: size,
-+            sizeBytes: rowBytes ?? size,
-             lastUsed: lastUsed,
-             category: LargeFileCategory.category(forExtension: fileURL.pathExtension),
-             syncsWithICloud: syncsWithICloud,
+-    /// The allowlist entries under `~/.cache`, taken from the list itself, so a
+-    /// new one is covered by `dotCacheLinkRefusesDeletion` the day it is added.
++    /// The allowlist entries under `~/.cache`, taken from the list itself.
+     nonisolated static func dotCacheEntries(home: String) -> [String] {
+         whitelistedPrefixes(home: home).filter { PathContainment.isInside($0, "\(home)/.cache") }
+     }
+ 
++    /// `allowlistLinkRefusesDeletion` asked for the entries under `~/.cache`
++    /// alone (#420). With `~/.cache` a link to `~/Developer`, the move would take
++    /// `~/Developer/uv`, or `~/Developer/opencode`, which could be a clone of
++    /// that repository.
++    nonisolated static func dotCacheLinkRefusesDeletion(_ url: URL, home: String = cachedHomePath) -> Bool {
++        let path = url.standardizedFileURL.path
++        guard path.hasPrefix("\(home)/.cache/") else { return false }
++        return allowlistLinkRefusesDeletion(standardizedPath: path, home: home)
++    }
++
++    // MARK: - Rows reached through a link (#420, #422)
++
++    /// One allowlist entry, with its path below home.
++    private nonisolated struct AllowlistEntry: Sendable {
++        let path: String
++        let relative: String
++    }
++
++    /// The allowlist's entries by their first folder below home, so a path is
++    /// compared only with the few entries that start the same way.
++    private nonisolated static func allowlistEntriesByFirstFolder(home: String) -> [Substring: [AllowlistEntry]] {
++        var index: [Substring: [AllowlistEntry]] = [:]
++        for path in whitelistedPrefixes(home: home) {
++            guard let below = pathBelowHome(path, home: home) else { continue }
++            index[Substring(String(firstFolder(of: below))), default: []]
++                .append(AllowlistEntry(path: path, relative: String(below)))
++        }
++        return index
++    }
+
 ```
 
-**File**: `purge/Utilities/FolderWalker.swift` (modified, +81/-25)
+**File**: `purge/Services/FileDeleter.swift` (modified, +2/-6)
 ```diff
-@@ -439,29 +439,69 @@ nonisolated enum SharedBlocks {
-     /// One file read on its own, without following a link: `allocated` when
-     /// the volume says nothing or the file can't be read.
-     static func countedBytes(ofFileAt path: String, allocated: Int64) -> Int64 {
--        guard attributes & attrgroup_t(ATTR_CMNEXT_CLONE_REFCNT) != 0 else { return allocated }
-+        state(ofFileAt: path).countedBytes(allocated: allocated)
-+    }
-+}
-+
-+/// One file's shared blocks, read on their own or from a listing: Large Files
-+/// rows and Duplicates (#376), and the sizes a contents clean books.
-+nonisolated extension SharedBlocks {
-+    /// What the volume reports about one file's shared blocks. Both are nil
-+    /// when it reports nothing.
-+    struct FileState {
-+        var flags: UInt64?
-+        var cloneCount: UInt32?
-+
-+        static let unknown = FileState(flags: nil, cloneCount: nil)
-+
-+        /// The file shares all its blocks with at least one other full clone,
-+        /// so moving it to the Trash gives back nothing while they stay.
-+        var isFullClone: Bool {
-+            guard let flags, flags & UInt64(EF_SHARES_ALL_BLOCKS) != 0, let cloneCount else { return false }
-+            return cloneCount > 1
-+        }
-+
-+        /// A full clone's share of `allocated`, and all of it for any other
-+        /// file, a purgeable one included.
-+        func countedBytes(allocated: Int64) -> Int64 {
-+            SharedBlocks.countedBytes(allocated: allocated, flags: flags, cloneCount: cloneCount)
-+        }
-+    }
-+
-+    /// Reads one file's flags and clone count with `getattrlist`, without
-+    /// following a link. `.unknown` when it can't be read.
-+    static func state(ofFileAt path: String) -> FileState {
-+        guard attributes != 0 else { return .unknown }
-         var list = attrlist()
-         list.bitmapcount = u_short(ATTR_BIT_MAP_COUNT)
-         list.commonattr = attrgroup_t(ATTR_CMN_RETURNED_ATTRS)
-         list.forkattr = attributes
-+        // Length, returned set, then a UInt64 and a UInt32.
-         var buffer = [UInt8](repeating: 0, count: 64)
-         let options = UInt32(FSOPT_NOFOLLOW) | UInt32(FSOPT_ATTR_CMN_EXTENDED)
--        return buffer.withUnsafeMutableBytes { raw -> Int64 in
--            guard let base = raw.baseAddress, getattrlist(path, &list, base, raw.count, options) == 0 else {
--                return allocated
--            }
--            // A 4-byte length, the returned set, then the attributes by bit.
-+        return buffer.withUnsafeMutableBytes { raw -> FileState in
-+            guard let base = raw.baseAddress,
-+                  getattrlist(path, &list, base, raw.count, options) == 0 else { return .unknown }
-             var field = base + 4
-             let returned = field.loadUnaligned(as: attribute_set_t.self)
-             field += MemoryLayout<attribute_set_t>.size
--            guard returned.forkattr & attrgroup_t(ATTR_CMNEXT_EXT_FLAGS) != 0,
--                  returned.forkattr & attrgroup_t(ATTR_CMNEXT_CLONE_REFCNT) != 0
--            else { return allocated }
--            let flags = field.loadUnaligned(as: UInt64.self)
-+            return readState(from: &field, returned: returned)
-+        }
-+    }
-+
-+    /// Reads the flags and clone count where `field` points, in the order the
-+    /// kernel packs them, and moves `field` past them.
-+    static func readState(from field: inout UnsafeMutableRawPointer, returned: attribute_set_t) -> FileState {
-+        var state = FileState.unknown
-+        if returned.forkattr & attrgroup_t(ATTR_CMNEXT_EXT_FLAGS) != 0 {
-+            state.flags = field.loadUnaligned(as: UInt64.self)
-             field += MemoryLayout<UInt64>.size
--            let cloneCount = field.loadUnaligned(as: UInt32.self)
--            return countedBytes(allocated: allocated, flags: flags, cloneCount: cloneCount)
-         }
-+        if returned.forkattr & attrgroup_t(ATTR_CMNEXT_CLONE_REFCNT) != 0 {
-+            state.cloneCount = field.loadUnaligned(as: UInt32.self)
-+            field += MemoryLayout<UInt32>.size
-+        }
-+        return state
+@@ -1110,13 +1110,9 @@ nonisolated final class FileDeleter: Sendable {
      }
- }
  
-@@ -623,16 +663,7 @@ nonisolated final class DirectoryReader {
-             allocated = field.loadUnaligned(as: Int64.self)
-             field += MemoryLayout<Int64>.size
-         }
--        var flags: UInt64?
--        if returned.forkattr & attrgroup_t(ATTR_CMNEXT_EXT_FLAGS) != 0 {
--            flags = field.loadUnaligned(as: UInt64.self)
--            field += MemoryLayout<UInt64>.size
--        }
--        var cloneCount: UInt32?
--        if returned.forkattr & attrgroup_t(ATTR_CMNEXT_CLONE_REFCNT) != 0 {
--            cloneCount = field.loadUnaligned(as: UInt32.self)
--        }
--        let counted = SharedBlocks.countedBytes(allocated: max(0, allocated), flags: flags, cloneCount: cloneCount)
-+        let counted = SharedBlocks.readState(from: &field, returned: returned).countedBytes(allocated: max(0, allocated))
-         if counting == .regularFiles {
-             guard type == VREG.
+     /// Returns the simulator UDID when `url` is exactly `…/CoreSimulator/Devices/{UUID}`.
++    /// The link guard asks the same rule, so it lives in the policy (#422).
+     private static func coreSimulatorDeviceUDID(from url: URL) -> String? {
+-        let std = url.standardizedFileURL
+-        let name = std.lastPathComponent
+-        guard UUID(uuidString: name) != nil else { return nil }
+-        guard std.deletingLastPathComponent().lastPathComponent == "Devices" else { return nil }
+-        guard std.path.contains("CoreSimulator/Devices") else { return nil }
+-        return name
++        DeletionSafetyPolicy.simulatorDeviceUDID(from: url)
+     }
+ 
+     /// Deleting a large device is real disk work, so this is generous — but still bounded, so a
+```
+
+**File**: `purge/Utilities/PathContainment.swift` (modified, +60/-0)
+```diff
+@@ -31,6 +31,66 @@ nonisolated enum PathContainment {
+         return false
+     }
+ 
++    private static let slash = UInt8(ascii: "/")
++
++    /// Where the `/` that follows `root` sits in `path`, or nil when `path` is
++    /// `root` itself or not under it.
++    ///
++    /// Separators are found as bytes, never as characters. Swift joins a `/` and
++    /// a combining mark after it into one character, so a search by character
++    /// walks past the `/` in front of a name that starts with such a mark, and
++    /// a folder on the way is never looked at (#422 review).
++    static func separatorIndex(after root: String, in path: String) -> String.Index? {
++        var rootBytes = root.utf8[...]
++        if rootBytes.last == slash { rootBytes = rootBytes.dropLast() }
++        let bytes = path.utf8
++        if bytes.starts(with: rootBytes) {
++            guard bytes.count > rootBytes.count else { return nil }
++            let index = bytes.index(bytes.startIndex, offsetBy: rootBytes.count)
++            return bytes[index] == slash ? index : nil
++        }
++        // The same root spelled with another form of an accented letter is the
++        // same text with other bytes. Plain ASCII has only one spelling.
++        guard !rootBytes.allSatisfy({ $0 < 0x80 }) else { return nil }
++        let rootText = String(Substring(rootBytes))
++        var search = bytes.startIndex
++        while let index = bytes[search...].firstIndex(of: slash) {
++            if String(path[..<index]) == rootText { return index }
++            search = bytes.index(after: index)
++        }
++        return nil
++    }
++
++    /// The folder `path` sits in: everything before its last `/` byte.
++    static func parentFolder(of path: String) -> String {
++        String(path[..<(path.utf8.lastIndex(of: slash) ?? path.endIndex)])
++    }
++
++    /// True when `folder`, or a folder above it up to `home`, is a link or can't
++    /// be read, and when `folder` is not under `home` at all. `home` itself is
++    /// never read. A step that isn't there ends the walk: nothing below it
++    /// exists, so nothing below it is a link.
++    ///
++    /// The same walk as `containsSymlinkComponent`, on plain paths with
++    /// `lstat`, for callers that ask for every row of a scan (#422): 1 µs for
++    /// two steps, against 12 µs through `URL`. Each step ends at a `/` byte.
++    static func reachesThroughLink(_ folder: String, home: String) -> Bool {
++        guard folder != home else { return false }
++        guard var separator = separatorIndex(after: home, in: folder) else { return true }
++        let bytes = folder.utf8
++        while true {
++            let stepEnd = bytes[bytes.index(after: separator)...].firstIndex(of: slash) ?? bytes.endIndex
++            var info = stat()
++            // `errno` is read inside the call, before the path's C string is
++            // freed, so nothing can change it first.
++            let failure: Int32? = String(folder[..<stepEnd]).withCString { lstat($0, &info) == 0 ? nil : errno }
++            if let failure { return !(failure == ENOENT || failure == ENOTDIR) }
++            if (info.st_mode & S_IFMT) == S_IFLNK { return true }
++            guard stepEnd < bytes.endIndex else { return false }
++            separator = stepEnd
++        }
++    }
++
+     /// `url` resolves to somewhere under `root`, and `root` itself is reached
+     /// through no link, so a link inside the root cannot point the delete
+     /// elsewhere. `includingRoot` also accepts `url` resolving to `root` itself.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #396** (2026-11-17): fix: keep an Ollama store Purge doesn't know out of Large Files (#395) (@jithin-sabu)
-- **PR #394** (2026-11-17): feat: scan added folders and drives in Large Files and Developer Projects (#318) (@jithin-sabu)
-- **PR #391** (2026-11-16): docs: add a website badge to the README (@jithin-sabu)
-- **PR #390** (2026-11-16): fix: retry and explain Apple Intelligence removals that fail on macOS 27.3 (#343) (@jithin-sabu)
-- **PR #389** (2026-11-16): refactor: name every case in switches over Purge's own enums (#186) (@jithin-sabu)
-- **PR #388** (2026-11-16): fix: stop a stray kill on timeout and show app names as typed (#182) (@jithin-sabu)
+- **PR #430** (2026-11-21): feat: offer old rustup toolchains as Check First (#406) (@jithin-sabu)
+- **PR #429** (2026-11-21): fix: bring Purge forward at launch when the Dock icon is hidden (#428) (@jithin-sabu)
+- **PR #427** (2026-11-20): docs: mark the shape-matched link guard safety note as shipped in 1.17.0 (#424) (@jithin-sabu)
+- **PR #426** (2026-11-20): docs: mark four safety notes as shipped in 1.17.0 (@jithin-sabu)
+- **PR #425** (2026-11-20): fix: refuse shape-matched cache rows reached through a link (#424) (@jithin-sabu)
+- **PR #423** (2026-11-20): fix: refuse allowlisted rows reached through a link (#422) (@jithin-sabu)
 
 ---
 
@@ -2443,58 +2455,54 @@ once more without them, as the folder walk does, and the file
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. keep an Ollama store Purge doesn't know out of Large Files
+## X. send Apple Intelligence requests through siriknowledged when macOS 27.3 refuses 
 
 **RULE**:
-When implementing operations in `PurgeTests/OllamaStoreShapeTests.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in jithin-sabu/purge-app. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `PurgeAssetWorker/UnifiedAssetCalls.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in jithin-sabu/purge-app. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5d909efd`: keep an Ollama store Purge doesn't know out of Large Files. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `09c6920d`: send Apple Intelligence requests through siriknowledged when macOS 27.3 refuses them. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `PurgeTests/OllamaStoreShapeTests.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `PurgeAssetWorker/UnifiedAssetCalls.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-import Foundation
-import Testing
-@testable import Purge
-
-/// An Ollama store in a folder Large Files walks, at a path Purge doesn't know
-/// (`OLLAMA_MODELS` set only in a shell profile while Purge started from the
-/// Dock), is known by its shape: `blobs` beside `manifests`. Large Files never
-/// lists its blobs one by one, and its gate refuses them, because trashing one
-/// blob breaks every model that uses it. AI Models doesn't list such a store
-/// either. Every fixture is a throwaway home in the temporary folder.
-@Suite("An Ollama store Purge doesn't know stays out of Large Files")
-struct OllamaStoreShapeTests {
-    // MARK: - Fixtures
-
-    private struct Home {
-        let url: URL
-
-        init() throws {
-            url = FileManager.default.temporaryDirectory
-                .appendingPathComponent("purge-ollama-shape-\(UUID().uuidString)", isDirectory: true)
-                .standardizedFileURL
-            try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
+    ///
+    /// `AppleIntelligenceModelRoute` picks the service. When the subscription
+    /// service refuses or drops the connection, as it does from macOS 27.3,
+    /// the same request goes out once more through siriknowledged's service.
+        do {
+            try AppleIntelligenceModelRoute.send(timeout: timeout) { service, timeout in
+                try send(config, to: service, interface: interface, selector: selector, timeout: timeout)
+            }
+        } catch let failure as AppleIntelligenceModelRoute.SecondTryFailure {
+            // A worker refusal has no domain or code, so the first try joins its text.
+            if let second = failure.error as? CallError {
+                throw CallError("\(second.description); \(failure.firstTry)")
+            }
+            throw failure.withFirstTry
         }
+    }
 
-        @discardableResult
-        func file(_ relative: String, bytes: Int = 4096) throws -> URL {
-            let file = url.appendingPathComponent(relative)
-            try
+    /// One try at one Mach service.
+    private static func send(_ config: [String: Any], to service: String, interface: NSXPCInterface,
+                             selector: Selector, timeout: TimeInterval) throws {
+        let connection = NSXPCConnection(machServiceName: service, options: [])
+            throw CallError("no reply from \(service) in \(Int(ti
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+    static let serviceName = "com.apple.siri.uaf.subscription.service"
+        let connection = NSXPCConnection(machServiceName: serviceName, options: [])
+            throw CallError("no reply from \(serviceName) in \(Int(timeout)) seconds; the request may still have run")
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5d909efd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `09c6920d` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

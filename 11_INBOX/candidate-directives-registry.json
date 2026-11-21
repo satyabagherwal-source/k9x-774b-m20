@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T06:46:55.480Z",
+  "last_updated": "2026-11-21T07:10:37.521Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4835,11 +4835,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-P33A",
+      "id": "CD-JKCU",
       "directive_title": "editor): add scoped ios account deletion",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-P33A-editor-add-scoped-ios-account-deletion.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-JKCU-editor-add-scoped-ios-account-deletion.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-21",
@@ -41676,6 +41676,55 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-30842B-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-21"
+    },
+    {
+      "id": "CD-JJMU",
+      "directive_title": "send Apple Intelligence requests through siriknowledged when macOS 27.3 refuses",
+      "source_repo": "jithin-sabu-purge-app-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-JJMU-send-apple-intelligence-requests-through-siriknowledged-when-macos-27-3-refuses.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-JIQL",
+      "directive_title": "Empirical Invariant Guard in telemetry.rs",
+      "source_repo": "rtk-ai-rtk-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-JIQL-empirical-invariant-guard-in-telemetry-rs.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-REV-2A9210",
+      "directive_title": "Empirical Invariant Guard in telemetry.rs",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "rtk-ai-rtk",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-2A9210-empirical-invariant-guard-in-telemetry-r.md",
+      "staged_date": "2026-11-21"
+    },
+    {
+      "id": "CD-REV-CB47F4",
+      "directive_title": "send Apple Intelligence requests through siriknowledged when macOS 27.3 refuses",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "jithin-sabu-purge-app",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-CB47F4-send-apple-intelligence-requests-through.md",
+      "staged_date": "2026-11-21"
+    },
+    {
+      "id": "CD-REV-DE628E",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-DE628E-editor-add-scoped-ios-account-deletion.md",
       "staged_date": "2026-11-21"
     }
   ]

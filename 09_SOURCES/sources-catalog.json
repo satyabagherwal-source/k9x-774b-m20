@@ -7843,10 +7843,10 @@
     "repository": "rtk-ai/rtk",
     "platform": "github",
     "sourceUrl": "https://github.com/rtk-ai/rtk",
-    "sourceVersion": "5f81080f",
+    "sourceVersion": "ef0b734b",
     "license": "Apache-2.0",
-    "contentHash": "7866f4e6dfa710362738b149ae75f8b0777b2269d3ac6d65629b51190c2c7d4c",
-    "lastHarvestedAt": "2026-11-19T20:33:56.720Z",
+    "contentHash": "0afe18311557c238e35f0e916671700c6f23842c179689df060754f8da9076c7",
+    "lastHarvestedAt": "2026-11-21T07:10:31.560Z",
     "learningId": "learn-github-rtk-ai-rtk"
   },
   "gao-sun-eul": {
@@ -12583,10 +12583,10 @@
     "repository": "jithin-sabu/purge-app",
     "platform": "github",
     "sourceUrl": "https://github.com/jithin-sabu/purge-app",
-    "sourceVersion": "6e5c3d30",
+    "sourceVersion": "384b5b6c",
     "license": "MIT",
-    "contentHash": "b579907a376dba690802428bda98772f52ba09de6ee055214dbf18977bf1be5d",
-    "lastHarvestedAt": "2026-11-17T22:56:28.375Z",
+    "contentHash": "1bf8fa2b9f46695f02e55e7b0924f9f5e442297682f177fe95e85f387d03d2ef",
+    "lastHarvestedAt": "2026-11-21T07:05:13.148Z",
     "learningId": "learn-github-jithin-sabu-purge-app"
   },
   "hf-conceptcountry-qwen-concept-27b": {

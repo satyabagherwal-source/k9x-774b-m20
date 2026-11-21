@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T06:46:56.139Z",
+  "last_updated": "2026-11-21T07:10:37.954Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-21T06:01:34.139Z",
@@ -208,8 +208,8 @@
       "staged_for_review": 1
     },
     "rtk-ai-rtk-learnings.md": {
-      "processed_at": "2026-11-19T20:34:29.203Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-21T07:10:34.900Z",
+      "promoted_canonical": 0,
       "staged_for_review": 1
     },
     "temporalio-temporal-learnings.md": {
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-21T06:46:54.682Z",
+      "processed_at": "2026-11-21T07:10:37.050Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2628,7 +2628,7 @@
       "staged_for_review": 0
     },
     "jithin-sabu-purge-app-learnings.md": {
-      "processed_at": "2026-11-17T22:56:51.823Z",
+      "processed_at": "2026-11-21T07:10:35.928Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3658,7 +3658,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2757,
+  "total_dossiers_evaluated": 2760,
   "total_canonical_promoted": 444,
-  "total_staged_for_review": 2128
+  "total_staged_for_review": 2131
 }

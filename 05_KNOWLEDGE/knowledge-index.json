@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T06:46:55.931Z",
+  "last_updated": "2026-11-21T07:10:37.823Z",
   "total_verified_learnings": 9058,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22979,
+  "total_items": 22983,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113706,13 +113706,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-P33A-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-JKCU-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "171b4bb4b6c6c93f31befc2ce3a369be0f9bc45509e41da9bd9836aff7956ff3",
+      "content_hash": "fd04aa0db74b836650bfbcaee3cb22ba0c51f1f3e3ca472bca4e9c208576d0bb",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T06:46:55.480Z"
+      "persisted_at": "2026-11-21T07:10:37.521Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "c200411ab9345c722867b03b322ff0d334d8f311620bc99c35f3f4245fd8c6aa",
+      "content_hash": "afd2f33afbd4c1bb83889888cacff0bb54f463e5f1515b491e937c6800423d25",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T06:46:55.708Z"
+      "persisted_at": "2026-11-21T07:10:37.673Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "e6ce231c126b86de63bd5a2c3433c40a8037f42c298b72e821b216a114bab99e",
+      "content_hash": "461f0556c3b4e970233e5e3fe3b94783e38f78d5ea85ce77f788dcf0194b8a4f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T06:46:55.931Z"
+      "persisted_at": "2026-11-21T07:10:37.823Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -232186,8 +232186,8 @@
       "slug": "jithin-sabu-purge-app",
       "platform": "github",
       "source_url": "https://github.com/jithin-sabu/purge-app",
-      "source_version": "6e5c3d30",
-      "content_hash": "b579907a376dba690802428bda98772f52ba09de6ee055214dbf18977bf1be5d",
+      "source_version": "384b5b6c",
+      "content_hash": "1bf8fa2b9f46695f02e55e7b0924f9f5e442297682f177fe95e85f387d03d2ef",
       "dossier_path": "07_PROJECT_LEARNING/jithin-sabu-purge-app-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/jithin-sabu-purge-app-learnings.md",
       "promoted_rules": [
@@ -232200,6 +232200,11 @@
           "number": 9078,
           "title": "keep an Ollama store Purge doesn't know out of Large Files",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9743,
+          "title": "send Apple Intelligence requests through siriknowledged when macOS 27.3 refuses",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -232207,7 +232212,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T22:56:28.204Z",
+      "verified_at": "2026-11-21T07:05:12.939Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -232261,10 +232266,10 @@
       "relative_path": "08_VERIFICATION/jithin-sabu-purge-app-verification-protocol-empirical-defect-shield-for-jithin-s.md",
       "title": "Verification Protocol: Empirical Defect Shield for jithin-sabu/purge-app",
       "repository": "jithin-sabu/purge-app",
-      "source_version": "6e5c3d30",
-      "content_hash": "76535a59754f9ce8ee4bf76113c4e0ece408be3a3a9d21ab031ec2a9d137c123",
+      "source_version": "384b5b6c",
+      "content_hash": "f46cf655cf7015f1ce14ea60e40570d5cbabff89c0a77126a2f42a06169a8b25",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T22:56:28.817Z"
+      "persisted_at": "2026-11-21T07:05:13.700Z"
     },
     "learn-github-arangodb-arangodb": {
       "learning_id": "learn-github-arangodb-arangodb",
@@ -232399,9 +232404,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for jithin-sabu-purge-app-learnings",
       "repository": "jithin-sabu-purge-app-learnings",
       "source_version": "HEAD",
-      "content_hash": "3a9a89f8c1a6b3ce7b91b4956fd715bf10d263714a734add444a485d2dc615d4",
+      "content_hash": "7073114cf3b092cb871cedc487f354b1f9ef04fc06210719eca4d0b63bb28f8e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T22:56:52.436Z"
+      "persisted_at": "2026-11-21T07:10:36.900Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-baai-bge-large-en-v1-5-learnings-core-invaria": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-baai-bge-large-en-v1-5-learnings-core-invaria",
@@ -258948,8 +258953,8 @@
       "slug": "rtk-ai-rtk",
       "platform": "github",
       "source_url": "https://github.com/rtk-ai/rtk",
-      "source_version": "5f81080f",
-      "content_hash": "7866f4e6dfa710362738b149ae75f8b0777b2269d3ac6d65629b51190c2c7d4c",
+      "source_version": "ef0b734b",
+      "content_hash": "0afe18311557c238e35f0e916671700c6f23842c179689df060754f8da9076c7",
       "dossier_path": "07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
       "promoted_rules": [
@@ -258982,6 +258987,11 @@
           "number": 9440,
           "title": "Fail-Open Hook Interceptor Contract for Agent Tooling",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9744,
+          "title": "Empirical Invariant Guard in telemetry.rs",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -258989,7 +258999,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T20:33:56.528Z",
+      "verified_at": "2026-11-21T07:10:31.358Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -259031,10 +259041,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-rtk-ai-rtk-quality-verification-intelligence-rtk-ai-rtk-core-invariants.md",
       "title": "Quality & Verification Intelligence: rtk-ai/rtk Core Invariants",
       "repository": "rtk-ai/rtk",
-      "source_version": "eb710be4",
-      "content_hash": "9da12165a79e1b2461575b2aecbc62c33b3b073e2ef6284097869d5ce43258d8",
+      "source_version": "ef0b734b",
+      "content_hash": "218e891b89d3fe9a6c3553a55db0cf2d3e6ce305ec681e24b052ec72abb8747f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T09:28:27.871Z"
+      "persisted_at": "2026-11-21T07:10:31.924Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-rtk-ai-rtk": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rtk-ai-rtk",
@@ -259043,10 +259053,10 @@
       "relative_path": "08_VERIFICATION/rtk-ai-rtk-verification-protocol-empirical-defect-shield-for-rtk-ai-rtk.md",
       "title": "Verification Protocol: Empirical Defect Shield for rtk-ai/rtk",
       "repository": "rtk-ai/rtk",
-      "source_version": "5f81080f",
-      "content_hash": "9800ddb53bc930fe20f9845d5e6a72f7e9f3dd9815b45eb327dc6d0f44563b2c",
+      "source_version": "ef0b734b",
+      "content_hash": "1254d3cc60ee439f4db1d50d7177ce948fff7144a867e8cc5ac975a8fbb9f3ed",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T20:33:57.489Z"
+      "persisted_at": "2026-11-21T07:10:32.080Z"
     },
     "rule-8761": {
       "learning_id": "rule-8761",
@@ -259082,9 +259092,9 @@
       "title": "Quality & Verification Intelligence: rtk-ai-rtk-learnings Core Invariants",
       "repository": "rtk-ai-rtk-learnings",
       "source_version": "HEAD",
-      "content_hash": "62bebc86ac90216092cc743f96829108ec87c6bd6bf0d5eaf633cfcdde26fb2e",
+      "content_hash": "94a4e5bda49cfe827e250aa3959fcd4a93fa4d13e088ce77358ff6864202c554",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T09:28:37.903Z"
+      "persisted_at": "2026-11-21T07:10:35.599Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-rtk-ai-rtk-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rtk-ai-rtk-learnings",
@@ -259094,9 +259104,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for rtk-ai-rtk-learnings",
       "repository": "rtk-ai-rtk-learnings",
       "source_version": "HEAD",
-      "content_hash": "b527dc07023220718506e72a11efa14bfd25033b051e1a9bc6e5e0a3d2360912",
+      "content_hash": "1088ad5b5617b4f533e5a510610b9235f36fe84cb7ede74619201c158d92385b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T20:34:30.134Z"
+      "persisted_at": "2026-11-21T07:10:35.767Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-audio-2b-learnings-core-invaria": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-audio-2b-learnings-core-invaria",
@@ -281076,10 +281086,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-jithin-sabu-purge-app-technical-construction-intelligence-jithin-sabu-purge-app-.md",
       "title": "Technical Construction Intelligence: jithin-sabu/purge-app Core Invariants",
       "repository": "jithin-sabu/purge-app",
-      "source_version": "6e5c3d30",
-      "content_hash": "e42874d8f8925a395dc3e808c84ee05342f8d78bec28f578c0a3e2bac997133b",
+      "source_version": "384b5b6c",
+      "content_hash": "09ce0d39251a104f2b5e9db110701bd3c7dfbb629a0980635bc10c3bc0cd016a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T22:56:28.684Z"
+      "persisted_at": "2026-11-21T07:05:13.537Z"
     },
     "learn-huggingface-moonshotai-kimi-k3": {
       "learning_id": "learn-huggingface-moonshotai-kimi-k3",
@@ -281140,9 +281150,9 @@
       "title": "Technical Construction Intelligence: jithin-sabu-purge-app-learnings Core Invariants",
       "repository": "jithin-sabu-purge-app-learnings",
       "source_version": "HEAD",
-      "content_hash": "ac8ebe82973eddc0ce0af431ec685bf4b81d5719bcea0fdbb7bc1852830b1839",
+      "content_hash": "5a298c618bc13847974b023beb3df40b1d5bf9ecee82f4e979d5921ab2952a01",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T22:56:52.310Z"
+      "persisted_at": "2026-11-21T07:10:36.746Z"
     },
     "rule-9079": {
       "learning_id": "rule-9079",
@@ -312049,6 +312059,58 @@
       "content_hash": "946b7745485ce95a0b1f4b28137784a96426ebaf7d380e5f246ee28d223ce1f2",
       "domain_letter": "H",
       "persisted_at": "2026-11-21T06:46:53.967Z"
+    },
+    "rule-9743": {
+      "learning_id": "rule-9743",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9743,
+      "title": "send Apple Intelligence requests through siriknowledged when macOS 27.3 refuses",
+      "source_url": "https://github.com/jithin-sabu/purge-app",
+      "source_version": "384b5b6c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T07:05:12.939Z"
+    },
+    "candidate_directive-send-apple-intelligence-requests-through-siriknowledged-when-macos-27-3-refuses": {
+      "item_id": "candidate_directive-send-apple-intelligence-requests-through-siriknowledged-when-macos-27-3-refuses",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-JJMU-send-apple-intelligence-requests-through-siriknowledged-when-macos-27-3-refuses.md",
+      "title": "send Apple Intelligence requests through siriknowledged when macOS 27.3 refuses",
+      "repository": "jithin-sabu-purge-app-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d5f3e116574f726add6e8dec358b5d780e4259fbe16b5e0f40618abfc59de040",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T07:10:36.585Z"
+    },
+    "rule-9744": {
+      "learning_id": "rule-9744",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9744,
+      "title": "Empirical Invariant Guard in telemetry.rs",
+      "source_url": "https://github.com/rtk-ai/rtk",
+      "source_version": "ef0b734b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T07:10:31.358Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-telemetry-rs": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-telemetry-rs",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-JIQL-empirical-invariant-guard-in-telemetry-rs.md",
+      "title": "Empirical Invariant Guard in telemetry.rs",
+      "repository": "rtk-ai-rtk-learnings",
+      "source_version": "HEAD",
+      "content_hash": "34d9d29c9dbfcad5a706827a33eb1df1fd6b32f13e803cbab4b4565a38ee5854",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-21T07:10:35.425Z"
     }
   },
   "ai-builder-brain": {

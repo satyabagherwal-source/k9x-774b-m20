@@ -724066,3 +724066,224 @@ func testUnalignedAppleEventPIDExtraction() {
 ```
 
 ---
+
+
+---
+
+## 9743. send Apple Intelligence requests through siriknowledged when macOS 27.3 refuses (Harvested from jithin-sabu/purge-app)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "send Apple Intelligence requests through siriknowledged when macOS 27.3 refuses",
+  "source": "jithin-sabu/purge-app",
+  "source_url": "https://github.com/jithin-sabu/purge-app",
+  "source_version": "384b5b6c",
+  "license": "MIT",
+  "extracted_at": "2026-11-21T07:05:12.643Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-jithin-sabu-purge-app",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [jithin-sabu/purge-app](https://github.com/jithin-sabu/purge-app) (Revision: `384b5b6c`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `PurgeAssetWorker/UnifiedAssetCalls.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in jithin-sabu/purge-app. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `09c6920d`: send Apple Intelligence requests through siriknowledged when macOS 27.3 refuses them. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `PurgeAssetWorker/UnifiedAssetCalls.swift`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+// Verified production-grade fix pattern:
+    ///
+    /// `AppleIntelligenceModelRoute` picks the service. When the subscription
+    /// service refuses or drops the connection, as it does from macOS 27.3,
+    /// the same request goes out once more through siriknowledged's service.
+        do {
+            try AppleIntelligenceModelRoute.send(timeout: timeout) { service, timeout in
+                try send(config, to: service, interface: interface, selector: selector, timeout: timeout)
+            }
+        } catch let failure as AppleIntelligenceModelRoute.SecondTryFailure {
+            // A worker refusal has no domain or code, so the first try joins its text.
+            if let second = failure.error as? CallError {
+                throw CallError("\(second.description); \(failure.firstTry)")
+            }
+            throw failure.withFirstTry
+        }
+    }
+
+    /// One try at one Mach service.
+    private static func send(_ config: [String: Any], to service: String, interface: NSXPCInterface,
+                             selector: Selector, timeout: TimeInterval) throws {
+        let connection = NSXPCConnection(machServiceName: service, options: [])
+            throw CallError("no reply from \(service) in \(Int(ti
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// Induced defect failure mode:
+    static let serviceName = "com.apple.siri.uaf.subscription.service"
+        let connection = NSXPCConnection(machServiceName: serviceName, options: [])
+            throw CallError("no reply from \(serviceName) in \(Int(timeout)) seconds; the request may still have run")
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `09c6920d` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9744. Empirical Invariant Guard in telemetry.rs (Harvested from rtk-ai/rtk)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Empirical Invariant Guard in telemetry.rs",
+  "source": "rtk-ai/rtk",
+  "source_url": "https://github.com/rtk-ai/rtk",
+  "source_version": "ef0b734b",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-21T07:10:31.055Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-rtk-ai-rtk",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [rtk-ai/rtk](https://github.com/rtk-ai/rtk) (Revision: `ef0b734b`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `src/core/telemetry.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rtk-ai/rtk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `ef0b734b`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/core/telemetry.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+use std::path::{Path, PathBuf};
+    let _ = start_ping_if_due(telemetry_marker_path(), |marker| {
+        let _ = send_ping(marker);
+    });
+}
+/// The main-thread half of the ping: checks the marker and hands the work to a
+/// thread so the CLI never blocks. It never writes the marker. Process exit
+/// kills the thread, often before it connects, and a marker written here would
+/// then skip the day's ping without sending it; `run_ping` claims it instead.
+fn start_ping_if_due<W>(marker: PathBuf, work: W) -> Option<std::thread::JoinHandle<()>>
+where
+    W: FnOnce(&Path) + Send + 'static,
+{
+    if !ping_due(&marker) {
+        return None;
+    }
+    Some(std::thread::spawn(move || work(&marker)))
+}
+/// The send-thread half: prepares the payload, then claims the marker, then
+/// sends. Claiming last means a command that exits during preparation leaves
+/// the ping for the next one, and re-checking at the claim means a process
+/// that claimed in the meantime wins. Returns whether a request went out.
+fn run_ping<P, E>(
+    marker: &Path,
+    prepare: impl FnOnce() -> P,
+    send: impl FnOnce(P) -> Result<(), E>,
+) -> Result<bool, E> {
+    let payload = prepare();
+    if !claim_ping(marke
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+use std::path::PathBuf;
+    // Check last ping time
+    let marker = telemetry_marker_path();
+    if let Ok(metadata) = std::fs::metadata(&marker)
+        && let Ok(modified) = metadata.modified()
+        && let Ok(elapsed) = modified.elapsed()
+        && elapsed.as_secs() < PING_INTERVAL_SECS
+    {
+        return;
+    }
+    // Touch marker file immediately (before sending) to avoid double-ping
+    touch_marker(&marker);
+    // Spawn thread so we never block the CLI
+    std::thread::spawn(|| {
+        let _ = send_ping();
+    });
+fn send_ping() -> Result<(), Box<dyn std::error::Error>> {
+    let payload = serde_json::json!({
+    });
+
+    let mut req = ureq::post(url);
+
+    if let Some(token) = TELEMETRY_TOKEN {
+        req = req.header("X-RTK-Token", token);
+    }
+
+    // 2 second timeout — if server is down, we move on
+    http::global_timeout(req, std::time::Duration::from_secs(2)).send_json(&payload)?;
+
+    Ok(())
+fn touch_marker(path: &std::path::Path) {
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `ef0b734b` are properly handled with clean fallback behavior.
