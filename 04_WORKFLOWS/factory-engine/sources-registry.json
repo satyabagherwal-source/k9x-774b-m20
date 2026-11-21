@@ -45,8 +45,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-21T13:05:29.414Z",
-    "lastVerified": "2026-11-21T13:05:29.414Z",
+    "lastChecked": "2026-11-21T14:49:41.914Z",
+    "lastVerified": "2026-11-21T14:49:41.914Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-21T14:27:58.623Z",
-    "lastVerified": "2026-11-21T14:27:58.623Z",
+    "lastChecked": "2026-11-21T14:49:41.925Z",
+    "lastVerified": "2026-11-21T14:49:41.925Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -1382,8 +1382,8 @@
     "officialUrl": "https://github.com/RustCrypto/hashes",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-21T04:39:04.791Z",
-    "lastVerified": "2026-11-21T04:39:04.791Z",
+    "lastChecked": "2026-11-21T14:49:36.892Z",
+    "lastVerified": "2026-11-21T14:49:36.892Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustcrypto-hashes",
@@ -1451,14 +1451,14 @@
     "officialUrl": "https://github.com/zulip/zulip",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-18T12:23:57.017Z",
-    "lastVerified": "2026-11-18T12:23:57.017Z",
+    "lastChecked": "2026-11-21T14:49:37.401Z",
+    "lastVerified": "2026-11-21T14:49:37.401Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zulip-zulip",
-    "contentHash": "88e6a4c6052ac1afbae67331489fd8bde75211e7333a6cc81560730a647464b5",
+    "contentHash": "20ac90d255f7bf46881ebf08f14029f4e6e75f88071510e80365ec9e294251c7",
     "promotedRulesCount": 0,
-    "recentFixesCount": 5,
+    "recentFixesCount": 9,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1987,9 +1987,9 @@
   "michael-a-kuykendall-shimmy": {
     "name": "shimmy",
     "officialUrl": "https://github.com/Michael-A-Kuykendall/shimmy",
-    "lastChecked": "2026-11-20T00:43:03.044Z",
+    "lastChecked": "2026-11-21T14:49:26.879Z",
     "revisionIdentifier": "9f6d996e",
-    "lastVerified": "2026-11-20T00:43:03.044Z"
+    "lastVerified": "2026-11-21T14:49:26.879Z"
   },
   "hf-fastino-gliner2.5-decide": {
     "name": "fastino/GLiNER2.5-Decide",
@@ -6178,9 +6178,9 @@
   "olric-data-olric": {
     "name": "olric",
     "officialUrl": "https://github.com/olric-data/olric",
-    "lastChecked": "2026-11-20T07:36:02.267Z",
+    "lastChecked": "2026-11-21T14:49:39.504Z",
     "revisionIdentifier": "9092df94",
-    "lastVerified": "2026-11-20T07:36:02.267Z"
+    "lastVerified": "2026-11-21T14:49:39.504Z"
   },
   "yvgude-lean-ctx": {
     "name": "lean-ctx",
@@ -6901,12 +6901,12 @@
     "lastVerified": "2026-11-19T05:54:44.310Z"
   },
   "k3s-io-k3s": {
-    "name": "k3s-io/k3s",
+    "name": "k3s",
     "officialUrl": "https://github.com/k3s-io/k3s",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-20T10:34:22.505Z",
-    "lastVerified": "2026-11-20T10:34:22.505Z",
+    "lastChecked": "2026-11-21T14:49:34.487Z",
+    "lastVerified": "2026-11-21T14:49:34.487Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-k3s-io-k3s",
@@ -6915,7 +6915,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "647ad670"
   },
   "duckdb-duckdb": {
     "name": "duckdb/duckdb",
@@ -12384,6 +12385,23 @@
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-comfy-org-z-image-turbo",
     "contentHash": "141c759a5eb78bf21cf49890220c9c4aba09e8fa9481e5e87e7393aa9587fd5f",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-unsloth-flint-gguf": {
+    "name": "unsloth/flint-GGUF",
+    "officialUrl": "https://huggingface.co/unsloth/flint-GGUF",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-21T14:49:29.691Z",
+    "lastVerified": "2026-11-21T14:49:29.691Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-unsloth-flint-gguf",
+    "contentHash": "dcd38815877018ccb0e1d4d687b0752803c4c3f5019c3d08ad4322556c559113",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

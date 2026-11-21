@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/unsloth/flint-GGUF",
   "source_version": "hf-unsloth-flint-gguf",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T17:11:31.873Z",
+  "timestamp": "2026-11-21T14:49:30.812Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-unsloth-flint-gguf",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [unsloth/flint-GGUF](https://huggingface.co/unsloth/flint-GGUF) (Revision: `hf-unsloth`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T17:11:31.873Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T14:49:30.812Z`  
 > **Learning ID**: `learn-huggingface-unsloth-flint-gguf`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-unsloth-flint-gguf-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/unsloth/flint-GGUF](https://huggingface.co/unsloth/flint-GGUF))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T17:11:24.752Z  
+> **Harvest Timestamp**: 2026-11-21T14:49:29.691Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 344257 downloads | 388 likes
+- **Stars / Engagement**: 297569 downloads | 396 likes
 
 ---
 

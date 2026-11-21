@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T14:28:01.072Z",
+  "last_updated": "2026-11-21T14:49:45.238Z",
   "total_records": 2252,
   "domains": {
     "A": {
@@ -8067,8 +8067,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "ea467a61a932f1021bd1866e19ff384c9a8ada9392b17d5d679d6faa6fe97872",
-      "created_at": "2026-11-17T09:56:54.818Z"
+      "content_hash": "106b74f2ed278926ffc49e5bd8eda04fec89891fc4bc64351f6ca9808675fc65",
+      "created_at": "2026-11-21T14:49:44.126Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -8985,8 +8985,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "42b3123332f9bb294d513ea9f0b45c41794022fd2e48ae1bd7dd23e9672925d1",
-      "created_at": "2026-11-21T07:42:07.264Z"
+      "content_hash": "942c657a12150de0872d474ec236212e8855256644bcff56d2cafe3544df0de8",
+      "created_at": "2026-11-21T14:49:45.238Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -10554,8 +10554,8 @@
       "title": "Architecture Intelligence: zulip/zulip Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-architecture-intelligence-zulip-zulip-core-invariants.md",
       "repository": "zulip/zulip",
-      "content_hash": "d7403eb69adfdd023c454e96a1d63fb203de32e5472777ac11087aa0aff68347",
-      "created_at": "2026-11-13T20:36:52.035Z"
+      "content_hash": "2b6583c79753a0e7d5a62be2778ccb6aaa18f08c99e12654475b687f0b63b892",
+      "created_at": "2026-11-21T14:49:38.279Z"
     },
     "domain_intelligence-architecture-intelligence-opentofu-opentofu-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-opentofu-opentofu-core-invariants",
@@ -28409,8 +28409,8 @@
       "title": "Research & Knowledge Intelligence: unsloth/flint-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-unsloth-flint-gguf-research-knowledge-intelligence-unsloth-flint-gguf-core-in.md",
       "repository": "unsloth/flint-GGUF",
-      "content_hash": "4d88fb2067a0b4b461e6ce860e87b22ac417e21a311f76956a46a8ec066a8c26",
-      "created_at": "2026-11-17T17:11:31.874Z"
+      "content_hash": "da66f2237aca4929cccdc78c0b4cf15cf7f20e40e28d26abe041cd09443661ce",
+      "created_at": "2026-11-21T14:49:30.813Z"
     },
     "domain_intelligence-architecture-intelligence-arxanas-git-branchless-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-arxanas-git-branchless-learnings-core-invariants",
@@ -28427,8 +28427,8 @@
       "title": "Research & Knowledge Intelligence: hf-unsloth-flint-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-unsloth-flint-gguf-learnings-research-knowledge-intelligence-hf-unsloth-flint.md",
       "repository": "hf-unsloth-flint-gguf-learnings",
-      "content_hash": "51aace5764a41885959d36ba114f9b750987b7c3d38c6db7884d796a211fd27a",
-      "created_at": "2026-11-17T17:11:39.193Z"
+      "content_hash": "3a863a33c5bb47208ba1b1d931cdf403a360c4ae024f80a75f76bb1bd2a376ad",
+      "created_at": "2026-11-21T14:49:42.362Z"
     },
     "domain_intelligence-research-knowledge-intelligence-minimaxai-minimax-m3-1-flash-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-minimaxai-minimax-m3-1-flash-core-invariants",

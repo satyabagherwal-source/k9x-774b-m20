@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zulip-zulip-learnings.md`  
 > **Source**: github ([https://github.com/zulip/zulip](https://github.com/zulip/zulip))  
-> **Source Version**: `64b848e5`  
+> **Source Version**: `4b6608d2`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T12:23:57.022Z  
+> **Timestamp**: 2026-11-21T14:49:37.408Z  
 > **Learning ID**: `learn-github-zulip-zulip`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zulip-zulip-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zulip/zulip](https://github.com/zulip/zulip))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T12:23:57.017Z  
+> **Harvest Timestamp**: 2026-11-21T14:49:37.401Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Zulip server and web application. Open-source team chat that helps teams stay productive and focused.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: package.json, pyproject.toml, README.md
-- **Stars / Engagement**: 26250 stars
+- **Stars / Engagement**: 26282 stars
 
 ---
 
@@ -1234,448 +1234,183 @@ def check_rabbitmq_queues() -> None:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `08bb8255` (2026-10-02)
-**Commit Message**: reactions: Remove `overflow: hidden` from the reactions box.
+### Incident Patch 1: `307338bc` (2026-10-30)
+**Commit Message**: requirements: Upgrade brotli and brotlicffi for security fix.
 
-With reaction pills now shrinking to fit the reactions box, nothing
-in the box can extend past its edges, so its `overflow: hidden` is no
-longer needed. It was added in bb0225acec to suppress a scroll bar,
-back when the pills were floats contained by the overflow; the box
-is now a wrapping flexbox, which contains its items by itself.
+Versions before brotli 1.2.1 and brotlicffi 1.2.1.0 have an
+out-of-bounds write in the decoder (GHSA-9v8h-qqgm-4m35).
 
-Fixes #38594.
+Generated with `uv lock --upgrade-package brotli --upgrade-package
+brotlicffi`. Newer uv also reorders the resolution markers, which
+changes nothing, so this keeps the original order.
 
-Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
-
-**File**: `web/styles/reactions.css` (modified, +0/-1)
+**File**: `uv.lock` (modified, +113/-71)
 ```diff
-@@ -1,5 +1,4 @@
- .message_reactions {
--    overflow: hidden;
-     user-select: none;
+@@ -788,85 +788,127 @@ wheels = [
  
-     &:has(.message_reaction) {
+ [[package]]
+ name = "brotli"
+-version = "1.2.0"
+-source = { registry = "https://pypi.org/simple" }
+-sdist = { url = "https://files.pythonhosted.org/packages/f7/16/c92ca344d646e71a43b8bb353f0a6490d7f6e06210f8554c8f874e454285/brotli-1.2.0.tar.gz", hash = "sha256:e310f77e41941c13340a95976fe66a8a95b01e783d430eeaf7a2f87e0a57dd0a", size = 7388632, upload-time = "2025-11-05T18:39:42.86Z" }
+-wheels = [
+-    { url = "https://files.pythonhosted.org/packages/64/10/a090475284fc4a71aed40a96f32e44a7fe5bda39687353dd977720b211b6/brotli-1.2.0-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:3b90b767916ac44e93a8e28ce6adf8d551e43affb512f2377c732d486ac6514e", size = 863089, upload-time = "2025-11-05T18:38:01.181Z" },
+-    { url = "https://files.pythonhosted.org/packages/03/41/17416630e46c07ac21e378c3464815dd2e120b441e641bc516ac32cc51d2/brotli-1.2.0-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:6be67c19e0b0c56365c6a76e393b932fb0e78b3b56b711d180dd7013cb1fd984", size = 445442, upload-time = "2025-11-05T18:38:02.434Z" },
+-    { url = "https://files.pythonhosted.org/packages/24/31/90cc06584deb5d4fcafc0985e37741fc6b9717926a78674bbb3ce018957e/brotli-1.2.0-cp310-cp310-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:0bbd5b5ccd157ae7913750476d48099aaf507a79841c0d04a9db4415b14842de", size = 1532658, upload-time = "2025-11-05T18:38:03.588Z" },
+-    { url = "https://files.pythonhosted.org/packages/62/17/33bf0c83bcbc96756dfd712201d87342732fad70bb3472c27e833a44a4f9/brotli-1.2.0-cp310-cp310-manylinux2014_ppc64le.manylinux_2_17_ppc64le.manylinux_2_28_ppc64le.whl", hash = "sha256:3f3c908bcc404c90c77d5a073e55271a0a498f4e0756e48127c35d91cf155947", size = 1631241, upload-time = "2025-11-05T18:38:04.582Z" },
+-    { url = "https://files.pythonhosted.org/packages/48/10/f47854a1917b62efe29bc98ac18e5d4f71df03f629184575b862ef2e743b/brotli-1.2.0-cp310-cp310-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:1b557b29782a643420e08d75aea889462a4a8796e9a6cf5621ab05a3f7da8ef2", size = 1424307, upload-time = "2025-11-05T18:38:05.587Z" },
+-    { url = "https://files.pythonhosted.org/packages/e4/b7/f88eb461719259c17483484ea8456925ee057897f8e64487d76e24e5e38d/brotli-1.2.0-cp310-cp310-musllinux_1_2_aarch64.whl", hash = "sha256:81da1b229b1889f25adadc929aeb9dbc4e922bd18561b65b08dd9343cfccca84", size = 1488208, upload-time = "2025-11-05T18:38:06.613Z" },
+-    { url = "https://files.pythonhosted.org/packages/26/59/41bbcb983a0c48b0b8004203e74706c6b6e99a04f3c7ca6f4f41f364db50/brotli-1.2.0-cp310-cp310-musllinux_1_2_ppc64le.whl", hash = "sha256:ff09cd8c5eec3b9d02d2408db41be150d8891c5566addce57513bf546e3d6c6d", size = 1597574, upload-time = "2025-11-05T18:38:07.838Z" },
+-    { url = "https://files.pythonhosted.org/packages/8e/e6/8c89c3bdabbe802febb4c5c6ca224a395e97913b5df0dff11b54f23c1788/brotli-1.2.0-cp310-cp310-musllinux_1_2_x86_64.whl", hash = "sha256:a1778532b978d2536e79c05dac2d8cd857f6c55cd0c95ace5b03740824e0e2f1", size = 1492109, upload-time = "2025-11-05T18:38:08.816Z" },
+-    { url = "https://files.pythonhosted.org/packages/ed/9a/4b19d4310b2dbd545c0c33f176b0528fa68c3cd0754e34b2f2bcf56548ae/brotli-1.2.0-cp310-cp310-win32.whl", hash = "sha256:b232029d100d393ae3c603c8ffd7e3fe6f798c5e28ddca5feabb8e8fdb732997", size = 334461, upload-time = "2025-11-05T18:38:10.729Z" },
+-    { url = "https://files.pythonhosted.org/packages/ac/39/70981d9f47705e3c2b95c0847dfa3e7a37aa3b7c6030aedc4873081ed005/brotli-1.2.0-cp310-cp310-win_amd64.whl", hash = "sha256:ef87b8ab2704da227e83a246356a2b179ef826f550f794b2c52cddb4efbd0196", size = 369035, upload-time = "2025-11-05T18:38:11.827Z" },
+-    { url = "https://files.pythonhosted.org/packages/7a/ef/f285668811a9e1ddb47a18cb0b437d5fc2760d537a2fe8a57875ad6f8448/brotli-1.2.0-cp311-cp311-macosx_10_9_universal2.whl", hash = "sha256:15b33fe93cedc4caaff8a0bd1eb7e3dab1c61bb22a0bf5bdfdfd97cd7da79744", size = 863110, upload-time = "2025-11-05T18:38:12.978Z" },
+-    { url = "https://files.pythonhosted.org/packages/50/62/a3b77593587010c789a9d6eaa527c79e0848b7b860402cc64bc0bc28a86c/brotli-1.2.0-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:898be2be399c221d2671d29eed26b6b2713a02c2119168ed914e7d00ceadb56f", size = 445438, upload-time = "2025-11-05T18:38:14.208Z" },
+-    { url = "https://files.pythonhosted.org/packages/cd/e1/7fadd47f40ce5549dc44493877db40292277db373da5053aff181656e16e/brotli-1.2.0-cp311-cp311-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:350c8348f0e76fff0a0fd6c26755d2653863279d086d3aa2c290a6a7251135dd", size = 1534420, upload-time = "2025-11-05T18:38:15.111Z" },
+-    { url = "https://files.pythonhosted.org/packages/12/8b/1ed2f64054a5a008a4ccd2f271dbba7a5fb1a3067a99f5ceadedd4c1d5a7/brotli-1.2.0-cp311-cp311-manylinux2014_ppc64le.manylinux_2_17_ppc64le.manylinux_2_28_ppc64le.whl", hash = "sha256:2e1ad3fda65ae0d93fec742a128d72e145c9c7a99ee2fcd667785d99eb25a7fe", size = 1632619, upload-time = "2025
+```
+
+**File**: `version.py` (modified, +1/-1)
+```diff
+@@ -48,4 +48,4 @@
+ #   historical commits sharing the same major version, in which case a
+ #   minor version bump suffices.
+ 
+-PROVISION_VERSION = (394, 1)  # bumped 2026-10-27 to rebuild emoji_names
++PROVISION_VERSION = (394, 2)  # bumped 2026-11-09 to upgrade brotli
 ```
 
 ---
 
-### Incident Patch 2: `543451f6` (2026-10-21)
-**Commit Message**: streams: Fix "-1 days" in channel retention change notice.
+### Incident Patch 2: `263b6ac5` (2026-11-15)
+**Commit Message**: outgoing_webhook: Fix exception text ending its code block early.
 
-When a channel's retention period changed between the organization
-default and an explicit value, and both resolved to forever, the
-notice showed "New retention period: -1 days" and said messages would
-be deleted "-1 days after they are sent". Only the notice was wrong;
-such channels are still excluded from retention-based deletion.
+The exception text was put in a code block with a fixed fence, so a
+fence in the text ended the code block early.
 
-Fix this by formatting the old and new periods independently, and
-label a period that comes from the organization default, so that
-default-to-explicit changes with the same effective period no longer
-read as "Forever -> Forever" or "N days -> N days".
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-Reported at
-https://chat.zulip.org/#narrow/channel/31-production-help/topic/bug.20when.20retention.20is.20set.20to.20forever.3F/with/2542327
-
-Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
-
-**File**: `zerver/actions/streams.py` (modified, +15/-11)
+**File**: `zerver/lib/outgoing_webhook.py` (modified, +2/-1)
 ```diff
-@@ -1634,27 +1634,31 @@ def send_change_stream_message_retention_days_notification(
-     sender = get_system_bot(settings.NOTIFICATION_BOT, user_profile.realm_id)
-     user_mention = silent_mention_syntax_for_user(user_profile)
- 
-+    old_is_realm_default = old_value is None
-+    new_is_realm_default = new_value is None
-+
-     # If switching from or to the organization's default retention policy,
-     # we want to take the realm's default into account.
-     if old_value is None:
-         old_value = stream.realm.message_retention_days
-     if new_value is None:
-         new_value = stream.realm.message_retention_days
- 
-+    def format_retention_period(value: int, is_realm_default: bool) -> str:
-+        if value == Stream.MESSAGE_RETENTION_SPECIAL_VALUES_MAP["unlimited"]:
-+            if is_realm_default:
-+                return _("Forever (organization default)")
-+            return _("Forever")
-+        if is_realm_default:
-+            return _("{number_of_days} days (organization default)").format(number_of_days=value)
-+        return _("{number_of_days} days").format(number_of_days=value)
-+
-     with override_language(stream.realm.default_language):
--        if old_value == Stream.MESSAGE_RETENTION_SPECIAL_VALUES_MAP["unlimited"]:
--            old_retention_period = _("Forever")
--            new_retention_period = _("{number_of_days} days").format(number_of_days=new_value)
--            summary_line = _(
--                "Messages in this channel will now be automatically deleted {number_of_days} days after they are sent."
--            ).format(number_of_days=new_value)
--        elif new_value == Stream.MESSAGE_RETENTION_SPECIAL_VALUES_MAP["unlimited"]:
--            old_retention_period = _("{number_of_days} days").format(number_of_days=old_value)
--            new_retention_period = _("Forever")
-+        old_retention_period = format_retention_period(old_value, old_is_realm_default)
-+        new_retention_period = format_retention_period(new_value, new_is_realm_default)
-+        if new_value == Stream.MESSAGE_RETENTION_SPECIAL_VALUES_MAP["unlimited"]:
-             summary_line = _("Messages in this channel will now be retained forever.")
-         else:
--            old_retention_period = _("{number_of_days} days").format(number_of_days=old_value)
--            new_retention_period = _("{number_of_days} days").format(number_of_days=new_value)
-             summary_line = _(
-                 "Messages in this channel will now be automatically deleted {number_of_days} days after they are sent."
-             ).format(number_of_days=new_value)
-```
-
-**File**: `zerver/tests/test_subs.py` (modified, +83/-2)
-```diff
-@@ -2314,7 +2314,7 @@ def test_change_stream_message_retention_days_notifications(self) -> None:
-         self.assert_length(messages, 1)
-         expected_notification = (
-             f"@_**Desdemona|{user_profile.id}** has changed the [message retention period](/help/message-retention-policy) for this channel:\n"
--            "* **Old retention period**: Forever\n"
-+            "* **Old retention period**: Forever (organization default)\n"
-             "* **New retention period**: 2 days\n\n"
-             "Messages in this channel will now be automatically deleted 2 days after they are sent."
+@@ -15,6 +15,7 @@
+ from version import ZULIP_VERSION
+ from zerver.actions.message_send import check_send_message
+ from zerver.lib.exceptions import JsonableError, StreamDoesNotExistError
++from zerver.lib.markdown.fenced_code import wrap_in_code_block
+ from zerver.lib.message_cache import MessageDict
+ from zerver.lib.outgoing_http import OutgoingSession
+ from zerver.lib.queue import retry_event
+@@ -273,7 +274,7 @@ def notify_bot_owner(
+     if exception:
+         notification_message += (
+             "\nWhen trying to send a request to the webhook service, an exception "
+-            f"of type {type(exception).__name__} occurred:\n```\n{exception}\n```"
++            f"of type {type(exception).__name__} occurred:\n{wrap_in_code_block(str(exception))}"
          )
-@@ -2358,7 +2358,7 @@ def test_change_stream_message_retention_days_notifications(self) -> None:
-         expected_notification = (
-             f"@_**Desdemona|{user_profile.id}** has changed the [message retention period](/help/message-retention-policy) for this channel:\n"
-             "* **Old retention period**: 8 days\n"
--            "* **New retention period**: Forever\n\n"
-+            "* **New retention period**: Forever (organization default)\n\n"
-             "Messages in this channel will now be retained forever."
-         )
-         self.assertEqual(messages[2].content, expected_notification)
-@@ -2372,6 +2372,87 @@ def test_change_stream_message_retention_days_notifications(self) -> None:
-         }
-         self.assertEqual(realm_audit_log.extra_data, expected_extra_data)
- 
-+        # Go from realm default (forever) to forever
-+        result = self.client_patch(
-+            f"/json/streams/{stream.id}",
-+            {"message_retention_days": orjson.dumps("unlimited").decode()},
-+        )
-+        self.assert_json_success(result)
-+        messages = get_topic_messages(user_profile, stream, "channel events")
-+        self.assert_length(messages, 4)
-+        expected_notification = (
-+            f"@_**Desdemona|{user_profile.id}** has changed the [message retention period](/help/message-retention-policy) for this channel:\n"
-+            "* **Old retention period**: Forever (organization default)\n"
-+            "* **New retention period**: Forever\n\n"
-+            "Messages in this channel will now be retained forever."
-+        )
-+        self.assertEqual(messages[3].content, expected_notification)
-+
-+        # Go from forever to realm default (forever)
-+        result = self.client_patch(
-+            f"/json/streams/{stream.id}",
-+            {"message_retention_days": orjson.dumps("realm_default").decode()},
-+        )
-+        self.assert_json_success(result)
-+        messages = get_topic_messages(user_profile, stream, "channel events")
-+        self.assert_length(messages, 5)
-+        expected_notification = (
-+            f"@_**Desdemona|{user_profile.id}** has changed the [message retention period](/help/message-retention-policy) for this channel:\n"
-+            "* **Old retention period**: Forever\n"
-+            "* **New retention period**: Forever (organization default)\n\n"
-+            "Messages in this channel will now be retained forever."
-+        )
-+        self.assertEqual(messages[4].content, expected_notification)
-+
-+        do_set_realm_property(realm, "message_retention_days", 10, acting_user=None)
-+
-+        # Go from realm default (10 days) to 10 days
-+        result = self.client_patch(
-+            f"/json/streams/{stream.id}", {"message_retention_days": orjson.dumps(10).decode()}
-+        )
-+        self.assert_json_success(result)
-+        messages = get_topic_messages(user_profile, stream, "channel events")
-+        self.assert_length(messages, 6)
-+        expected_notification = (
-+            f"@_**Desdemona|{user_profile.id}** has changed the [message retention period](/help/message-retention-policy) for this channel:\n"
-+            "* **Old retention period**: 10 days (organization default)\n"
-+            "* **New retention period**: 10 days\n\n"
-+            "Messages in this channel will now be automatically deleted 10 days after they are sent."
-+        )
-+        self.assertEqual(messages[5].content, expected_notification)
-+
-+        # Go from 10 days to realm default (10 days)
-+        result = self.client_patch(
-+            f"/json/streams/{stream.id}",
-+            {"message_retention_days": orjson.dumps("realm_default").decode()},
-+        )
-+        self.assert_json_success(result)
-+        messages = get_topic_messages(user_profile, stream, "channel events")
-+        self.assert_length(messages, 7)
-+        expected_notification = (
-+            f"@_**Desdemona|{user_profile.id}** has changed the [message retention period](/help/message-retention-policy) for this channel:\n"
-+            "* **Old retention period**: 10 days\n"
-+            "* **New retention period**: 10 days (organization default)\n\n"
-+            "Messages in this channel will now be automatically deleted 10 days after they are sent."
-+        )
-+        self.assertEqual(messages[6].content, expected_notification)
-+
-+        # Go from realm default (10 days) to forever
-+ 
+     elif failure_message:
+         notification_message += "\n" + failure_message
 ```
 
 ---
 
-### Incident Patch 3: `c0b7d8bd` (2026-11-16)
-**Commit Message**: message_edit: Fix move notification links breaking on topic renames.
+### Incident Patch 3: `b7447c20` (2026-07-21)
+**Commit Message**: markdown: Fix `MarkdownListPreprocessor`'s list regex.
 
-When a topic's name can't be written in the `#**channel>topic**`
-syntax, for example because it contains backticks, the notifications
-sent when messages are moved fall back to a plain Markdown link to
-that topic. That link had no `with` operand, unlike the link the
-syntax renders to, so it stopped working once the topic was renamed
-or moved again.
+Previously, LIST_ITEM_REGEX only matched single-digit list items. This
+updates it to match multi-digit list items (up to 9 digits, to be
+exact) and only Arabic digits.
 
-Fix this by adding a `with` operand to the fallback link. It uses the
-latest message in the linked topic that the user who moved the
-messages can access, which is the message the syntax would have
-picked.
+The CommonMark spec for list items says:
 
-Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
+```
+An ordered list marker is a sequence of 1–9 arabic digits (0-9),
+followed by either a . character or a ) character. (The reason for
+the length limit is that with 10 digits we start seeing integer
+overflows in some browsers.)
+```
 
-**File**: `zerver/actions/message_edit.py` (modified, +32/-3)
+https://spec.commonmark.org/0.26/#list-items
+
+We still don't handle list items that use the ")" character, but we're
+pretty clear about this limitation in the help center.
+
+Fixes #39797.
+
+Co-authored-by: PieterCK <[REDACTED_EMAIL]>
+
+**File**: `zerver/lib/markdown/__init__.py` (modified, +4/-4)
 ```diff
-@@ -73,6 +73,7 @@
- from zerver.lib.timestamp import datetime_to_timestamp
- from zerver.lib.topic import (
-     RESOLVED_TOPIC_PREFIX,
-+    get_latest_message_for_user_in_topic,
-     get_topic_display_name,
-     maybe_rename_general_chat_to_empty_topic,
-     messages_for_topic,
-@@ -81,7 +82,10 @@
-     update_edit_history,
-     update_messages_for_topic_edit,
+@@ -1536,10 +1536,10 @@ class Fence:
+ 
+ LIST_ITEM_REGEX = re.compile(
+     r"""
+-    ^[ ]*        # Start with zero or more spaces
+-    ([*+-]|\d\.) # A bullet marker (*, +, or -) or a digit followed by "."
+-    [ ]+         # Followed by one or more spaces
+-    (.*)         # The list content, which could be empty
++    ^[ ]*                   # Start with zero or more spaces
++    ([*+-]|[0-9]{1,9}\.)    # A bullet marker (*, +, or -) or 1-9 digits followed by "."
++    [ ]+                    # Followed by one or more spaces
++    (.*)                    # The list content, which could be empty
+     """,
+     re.VERBOSE,
  )
--from zerver.lib.topic_link_util import get_stream_topic_link_syntax
-+from zerver.lib.topic_link_util import (
-+    get_stream_topic_link_syntax,
-+    topic_link_needs_fallback_markdown_link,
-+)
- from zerver.lib.types import (
-     DirectMessageEditRequest,
-     EditHistoryEvent,
-@@ -334,6 +338,27 @@ def maybe_delete_previous_resolve_topic_notification(
-     return True
- 
- 
-+def get_topic_link_syntax_for_move_notification(
-+    stream: Stream, topic_name: str, user_profile: UserProfile
-+) -> str:
-+    # The #**channel>topic** syntax gets its `with` operand when it is
-+    # rendered, so we only look one up when that syntax can't be used.
-+    with_message_id = None
-+    if topic_link_needs_fallback_markdown_link(stream.name, topic_name):
-+        assert stream.recipient_id is not None
-+        with_message_id = get_latest_message_for_user_in_topic(
-+            stream.realm_id,
-+            user_profile,
-+            stream.recipient_id,
-+            topic_name,
-+            stream.is_history_public_to_subscribers(),
-+            acting_user_has_channel_content_access=True,
-+        )
-+    return get_stream_topic_link_syntax(
-+        stream.id, stream.name, topic_name, with_message_id=with_message_id
-+    )
-+
-+
- def send_message_moved_breadcrumbs(
-     target_message: Message,
-     user_profile: UserProfile,
-@@ -352,8 +377,6 @@ def send_message_moved_breadcrumbs(
-     old_topic_name = message_edit_request.orig_topic_name
-     new_stream = message_edit_request.target_stream
-     new_topic_name = message_edit_request.target_topic_name
--    old_topic_link = get_stream_topic_link_syntax(old_stream.id, old_stream.name, old_topic_name)
--    new_topic_link = get_stream_topic_link_syntax(new_stream.id, new_stream.name, new_topic_name)
-     message = {
-         "id": target_message.id,
-         "stream_id": new_stream.id,
-@@ -363,6 +386,9 @@ def send_message_moved_breadcrumbs(
-     moved_message_link = stream_message_url(target_message.realm, message)
- 
-     if new_thread_notification_string is not None:
-+        old_topic_link = get_topic_link_syntax_for_move_notification(
-+            old_stream, old_topic_name, user_profile
-+        )
-         with override_language(new_stream.realm.default_language):
-             internal_send_stream_message(
-                 sender,
-@@ -379,6 +405,9 @@ def send_message_moved_breadcrumbs(
-             )
- 
-     if old_thread_notification_string is not None:
-+        new_topic_link = get_topic_link_syntax_for_move_notification(
-+            new_stream, new_topic_name, user_profile
-+        )
-         with override_language(old_stream.realm.default_language):
-             # Send a notification to the old stream that the topic was moved.
-             internal_send_stream_message(
 ```
 
-**File**: `zerver/lib/topic_link_util.py` (modified, +19/-3)
+**File**: `zerver/tests/fixtures/markdown_test_cases.json` (modified, +20/-0)
 ```diff
-@@ -58,19 +58,31 @@ def get_message_link_label(
- 
- 
- def get_fallback_markdown_link(
--    stream_id: int, stream_name: str, topic_name: str | None = None, message_id: int | None = None
-+    stream_id: int,
-+    stream_name: str,
-+    topic_name: str | None = None,
-+    message_id: int | None = None,
-+    *,
-+    with_message_id: int | None = None,
- ) -> str:
-     """
-     Helper that should only be called by other methods in this file.
- 
-     Generates the vanilla markdown link syntax for a stream/topic/message link, as
-     a fallback for cases where the nicer Zulip link syntax would not
-     render properly due to special characters in the channel or topic name.
-+
-+    `with_message_id` makes a topic link follow that message if the
-+    topic is later moved or renamed, as the `#**channel>topic**` syntax
-+    does when rendered.
-     """
-     link = f"#narrow/channel/{encode_channel(stream_id, stream_name)}"
-     if topic_name is not None:
-         link += f"/topic/{encode_hash_component(topic_name)}"
- 
-+    if with_message_id is not None:
-+        link += f"/with/{with_message_id}"
-+
-     if message_id is not None:
-         link += f"/near/{message_id}"
- 
-@@ -95,11 +107,15 @@ def get_message_link_syntax(
-     return f"#**{stream_name}>{topic_name}@{message_id}**"
- 
- 
--def get_stream_topic_link_syntax(stream_id: int, stream_name: str, topic_name: str) -> str:
-+def get_stream_topic_link_syntax(
-+    stream_id: int, stream_name: str, topic_name: str, *, with_message_id: int | None = None
-+) -> str:
-     # If the stream/topic name is such that it will generate an invalid #**stream>topic** syntax,
-     # we revert to generating the normal markdown syntax for a link.
-     if topic_link_needs_fallback_markdown_link(stream_name, topic_name):
--        return get_fallback_markdown_link(stream_id, stream_name, topic_name)
-+        return get_fallback_markdown_link(
-+            stream_id, stream_name, topic_name, with_message_id=with_message_id
-+        )
-     return f"#**{stream_name}>{topic_name}**"
- 
- 
+@@ -423,6 +423,26 @@
+       "expected_output": "<ol>\n<li>A</li>\n<li>B<ol start=\"2\">\n<li>C</li>\n</ol>\n</li>\n<li>D</li>\n</ol>",
+       "text_content": "1. A\n2. B\n  2. C\n3. D"
+     },
++    {
++      "name": "numbered_list_double_digit",
++      "input": "8. eight\n9. nine\n10. ten",
++      "expected_output": "<ol start=\"8\">\n<li>eight</li>\n<li>nine</li>\n<li>ten</li>\n</ol>",
++      "text_content": "8. eight\n9. nine\n10. ten"
++    },
++    {
++      "name": "numbered_list_double_digit_after_unordered_list",
++      "input": "8. eight\n9. nine\n   - sub item\n10. ten",
++      "expected_output": "<ol start=\"8\">\n<li>eight</li>\n<li>\n<p>nine</p>\n<ul>\n<li>sub item</li>\n</ul>\n</li>\n<li>\n<p>ten</p>\n</li>\n</ol>",
++      "marked_expected_output": "<ol start=\"8\">\n<li>eight</li>\n<li>nine<ul>\n<li>sub item</li>\n</ul>\n</li>\n<li>ten</li>\n</ol>",
++      "text_content": "8. eight\n9. nine\n\nsub item\n10. ten"
++    },
++    {
++      "name": "numbered_list_nine_digit_cap",
++      "input": "999999999. nine nines\n9999999999. ten digits",
++      "expected_output": "<ol start=\"999999999\">\n<li>nine nines</li>\n<li>ten digits</li>\n</ol>",
++      "marked_expected_output": "<ol start=\"999999999\">\n<li>nine nines<br>\n9999999999. ten digits</li>\n</ol>",
++      "text_content": "999999999. nine nines\n1000000000. ten digits"
++    },
+     {
+       "name": "linkify_interference",
+       "input": "link: xx, x xxxxx xx xxxx xx\n\n[xxxxx #xx](http://xxxxxxxxx:xxxx/xxx/xxxxxx%78xxxx/xx/):**xxxxxxx**\n\nxxxxxxx xxxxx xxxx xxxxx:\n`xxxxxx`: xxxxxxx\n`xxxxxx`: xxxxx\n`xxxxxx`: xxxxx xxxxx",
 ```
 
-**File**: `zerver/tests/test_message_move_stream.py` (modified, +64/-0)
+**File**: `zerver/tests/test_markdown.py` (modified, +5/-0)
 ```diff
-@@ -446,6 +446,70 @@ def test_move_message_to_stream(self) -> None:
-             f"This topic was moved here from #**test move stream>test** by @_**Iago|{user_profile.id}**.",
-         )
+@@ -528,6 +528,11 @@ def test_basic_list(self) -> None:
+         original, expected = self.split_message("List without a gap\n<>* One\n* Two")
+         self.assertEqual(preprocessor.run(original), expected)
  
-+    def test_move_message_to_topic_name_unsupported_by_topic_link_syntax(self) -> None:
-+        (user_profile, old_stream, new_stream, msg_id, _msg_id_lt) = self.prepare_move_topics(
-+            "iago", "test move stream", "new stream", "test"
-+        )
++    def test_basic_list_with_double_digit_numbers(self) -> None:
++        preprocessor = MarkdownListPreprocessor()
++        original, expected = self.split_message("List without a gap\n<>10. One\n11. Two")
++        self.assertEqual(preprocessor.run(original), expected)
 +
-+        result = self.client_patch(
-+            f"/json/messages/{msg_id}",
-+            {
-+                "stream_id": new_stream.id,
-+                "topic": "new `code` topic",
-+                "propagate_mode": "change_all",
-+                "send_notification_to_old_thread": "true",
-+            },
-+        )
-+        self.assert_json_success(result)
-+
-+        messages = get_topic_messages(user_profile, new_stream, "new `code` topic")
-+        self.assert_length(messages, 4)
-+        latest_message_id_in_new_topic = messages[3].id
-+
-+        messages = get_topic_messages(user_profile, old_stream, "test")
-+        self.assert_length(messages, 1)
-+        self.assertEqual(
-+            messages[0].content,
-+            f"This topic was moved to [#new stream > new &#96;code&#96; topic](#narrow/channel/{new_stream.id}-new-stream/topic/new.20.60code.60.20topic/with/{latest_message_id_in_new_topic}) by @_**Iago|{user_profile.id}**.",
-+        )
-+
-+    def test_move_message_from_topic_name_unsupported_by_topic_link_syntax(self) -> None:
-+        (user_profile, old_stream, new_stream, _msg_id, msg_id_later) = self.prepare_move_topics(
-+            "iago", "test move stream", "new stream", "old `code` topic"
-+        )
-+
-+        result = self.client_patch(
-+            f"/json/messages/{msg_id_later}",
-+            {
-+                "stream_id": new_stream.id,
-+                "propagate_mode": "change_one",
-+                "send_notification_to_old_thread": "false",
-+                "send_notification_to_new_thread": "true",
-+            },
-+        )
-+        self.assert_json_success(result)
-+
-+        messages = get_topic_messages(user_profile, old_stream, "old `code` topic")
-+        self.assert_length(messages, 2)
-+        latest_message_id_in_old_topic = messages[1].id
-+
-+        messages = get_topic_messages(user_profile, new_stream, "old `code` topic")
-+        self.assert_length(messages, 2)
-+        self.assertEqual(messages[0].id, msg_id_later)
-+        moved_message_link = stream_message_url(
-+            user_profile.realm,
-+            {
-+                "id": msg_id_later,
-+                "stream_id": new_stream.id,
-+                "display_recipient": new_stream.name,
-+                "topic": "old `code` topic",
-+            },
-+        )
-+        self.assertEqual(
-+            messages[1].content,
-+            f"[A message]({moved_message_link}) was moved here from [#test move stream > old &#96;code&#96; topic](#narrow/channel/{old_stream.id}-test-move-stream/topic/old.20.60code.60.20topic/with/{latest_message_id_in_old_topic}) by @_**Iago|{user_profile.id}**.",
-+        )
-+
-     def test_move_message_to_preexisting_topic(self) -> None:
-         (user_profile, old_stream, new_stream, msg_id, _msg_id_lt) = self.prepare_move_topics(
-             "iago",
-```
-
-**File**: `zerver/tests/test_topic_link_util.py` (modified, +10/-0)
-```diff
-@@ -32,6 +32,16 @@ def test_stream_topic_link_syntax(self) -> None:
-         self.assertEqual(
-             get_stream_topic_link_syntax(sweden_id, "Sweden", "topic"), "#**Sweden>topic**"
-         )
-+        self.assertEqual(
-+            get_stream_topic_link_syntax(sweden_id, "Sweden", "topic", with_message_id=123),
-+            "#**Sweden>topic**",
-+        )
-+        self.assertEqual(
-+            get_stream_topic_link_syntax(
-+                sweden_id, "Sweden", "test `test` test", with_message_id=123
-+            ),
-+            f"[#Sweden > test &#96;test&#96; test](#narrow/channel/{sweden_id}-Sweden/topic/test.20.60test.60.20test/with/123)",
-+        )
-         self.assertEqual(
-             get_stream_topic_link_syntax(sweden_id, "Sweden", "test `test` test"),
-             f"[#Sweden > test &#96;test&#96; test](#narrow/channel/{sweden_id}-Sweden/topic/test.20.60test.60.20test)",
+     def test_list_after_quotes(self) -> None:
+         preprocessor = MarkdownListPreprocessor()
+         original, expected = self.split_message(
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #40743** (2026-11-18): Updated translations for main from Weblate. (@mateuszmandera)
-- **PR #40742** (closed): Updated translations for main from Weblate. (@mateuszmandera)
-- **PR #40733** (2026-11-17): [ai] ci: Test upgrades from 13.0. (@amanagr)
-- **PR #40728** (2026-11-17): [Backport] oidc: Enable PKCE. (@mateuszmandera)
-- **PR #40727** (closed): message_flags: Fix marking empty topics as read. (@nikitha-bit)
-- **PR #40720** (2026-11-18): message_edit: Fix "moved to" links breaking when the topic is renamed. (@evykassirer)
+- **PR #40767** (2026-11-21): message_fetch: Don't backfill message history for spectators. (@mateuszmandera)
+- **PR #40766** (2026-11-21): requirements: Upgrade brotli and brotlicffi for security fix. (@mateuszmandera)
+- **PR #40763** (2026-11-20): demo-orgs: Restrict invitations until owner has set an email. (@mateuszmandera)
+- **PR #40757** (closed): [ai] compose_paste: Fix lost anchors in pasted topic permalinks. (@Celestial-0)
+- **PR #40756** (closed): [ai] portico: Fix RTL layout on login and footer pages. (@mo23hammad)
+- **PR #40747** (2026-11-18): skills: Keep exploit details out of security advisories. (@mateuszmandera)
 
 ---
 

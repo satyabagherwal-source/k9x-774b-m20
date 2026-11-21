@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T09:56:54.568Z",
+  "timestamp": "2026-11-21T14:49:44.003Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-zulip-zulip-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [zulip-zulip-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T09:56:54.568Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T14:49:44.003Z`  
 > **Learning ID**: `LEARN-EVO-zulip-zulip-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: A (Human & Need Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 66%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 61%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from zulip-zulip-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zulip-zulip-learnings.md`  
 > **Source**: github ([https://github.com/zulip/zulip](https://github.com/zulip/zulip))  
-> **Source Version**: `37b5e4a9`  
+> **Source Version**: `4b6608d2`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T20:36:50.874Z  
+> **Timestamp**: 2026-11-21T14:49:37.408Z  
 > **Learning ID**: `learn-github-zulip-zulip`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zulip-zulip-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zulip/zulip](https://github.com/zulip/zulip))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T20:36:50.868Z  
+> **Harvest Timestamp**: 2026-11-21T14:49:37.401Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Zulip server and web application. Open-source team chat that helps teams stay productive and focused.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: package.json, pyproject.toml, README.md
-- **Stars / Engagement**: 26223 stars
+- **Stars / Engagement**: 26282 stars
 
 ---
 
@@ -1238,11 +1238,14 @@ def check_rabbitmq_queues() -> None:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #40648** (2026-11-13): **custom_profile_fields: Reject name/hint/field_data when updating default external account fields**
-  *Symptoms*: Description / Bug Summary  In zerver/views/custom_profile_fields.py, updating a default external account field (e.g. GitHub username or X username) is restricted: only the display_in_profile_summary property is allowed to be updated.  Historically, because name, hint, and field_data were required parameters on PATCH /realm/profile_fields/{id}, a helper function update_only_display_in_profile_summary was used to allow clients to pass the existing values of those fields.  A TODO in zerver/views/custom_profile_fields.py explicitly tracks this cleanup: ``` # TODO: Make the name/hint/field_data parameters optional, and # explicitly require that the client passes None for all of them for this case. # Right now, for name/hint/field_data we allow the client to send the existing # values for the respective fields. After this TODO is done, we will only allow # the client to pass None values if the field is unchanged. ``` Now that the endpoint uses @typed_endpoint and name, hint, and field_data are optional parameters (| None = None), sending any of name, hint, or field_data when updating a default external account field should be explicitly disallowed with "Default custom field cannot be updated.", and the unused update_only_display_in_profile_summary helper function can be removed.  I have a branch ready with this cleanup and updated test coverage. **Zulip Server and web app version:**  - [ ] Zulip Cloud (`*.zulipchat.com`) - [ ] Zulip Server 12.x - [ ] Zulip Server 11.x - [ ] Zulip S
+- **Issue #40737** (2026-11-17): **Vagrant 2.4 on macOS fails with false forwarded port 9991 collision**
+  *Symptoms*: ### Describe the bug When running `vagrant up --provider=docker` on macOS using modern Vagrant (v2.4.x, which embeds Ruby 3.3), provisioning fails immediately due to a false `ForwardPortCollision`:  ```text Vagrant cannot forward the specified ports on this VM, since they would collide with some other application that is already listening on these ports. The forwarded port to 9991 is already in use on the host machine. ```  No service or process is listening on port 9991 (verified via `lsof -nP -iTCP:9991`).  ### Environment - **Host OS**: macOS (Apple Silicon / Intel) - **Vagrant Version**: 2.4.9 (embedded Ruby 3.3.0) - **Provider**: Docker (Docker Desktop on macOS)  ### Steps to reproduce 1. Clone the Zulip repository on macOS. 2. Install Docker Desktop and Vagrant via Homebrew (`brew install hashicorp/tap/hashicorp-vagrant`). 3. Ensure no local service is listening on port 9991. 4. Run `vagrant up --provider=docker`. 5. Observe the false port collision failure on port 9991.  ### Root Cause Vagrant checks whether a port is open in `lib/vagrant/util/is_port_open.rb` by executing: ```ruby Socket.tcp(host, port, connect_timeout: 0.1).close ``` expecting an `Errno::ECONNREFUSED` exception if the port is closed.  On Darwin with Ruby 3.3, a non-blocking connect (`connect_timeout`) to an unused port does not raise `Errno::ECONNREFUSED`. Instead, `IO.select` marks the socket writable, and the error code is held in the socket option `SO_ERROR: 61 (ECONNREFUSED)`.   Because no except
 
-- **Issue #40631** (2026-11-09): **docs(help): Update legacy stream references to channels in help documentation**
-  *Symptoms*: ### Documentation link: https://zulip.com/help/introduction-to-topics  ### Problem: Zulip transitioned from the term "streams" to "channels" in Zulip 9.0+. While most help center articles have been updated, several explanatory sections in `help/introduction-to-topics.md` still use the word "streams" when explaining how topics organize conversations within channels.  ### Suggested fix: Update the remaining user-facing references from "stream" / "streams" to "channel" / "channels" in `help/introduction-to-topics.md` to maintain consistency with the current Zulip interface.  *I would like to submit a PR to update this documentation.*
+- **Issue #40704** (2026-11-17): **Update 12.4 to 13.2**
+  *Symptoms*: Following an update from 12.4 to 13.2, the following issues have appeared on Windows 7 clients using Firefox 115.26: 1. Status indicators have turned white. 2. The `message_feed_container` header overlaps with the main window.  <img width="1366" height="452" alt="zulip" src="https://github.com/user-attachments/assets/92a03a3e-31aa-4ca9-b3d4-937ff6b6c628" />  I also noticed that there are long-running requests leading up to these events:  <img width="1262" height="335" alt="events_1" src="https://github.com/user-attachments/assets/997b752a-28df-4ba3-a42b-3705af83a81d" /> 
+  **Post-Mortem & Fix Analysis**:
+  > A couple preliminary things to try on your end while I chat with folks here: - Are your users able to update to a more recent version of Firefox ESR 115? It looks like 115.45 was just released. - Can they try Zulip Desktop https://zulip.com/apps/?
+  > Update: the oldest Firefox that we support in Zulip 13 is ESR 126. However, our team is not able to think of any changes between 12 and 13 that would cause the display issues you're seeing. Wondering if there could be something cached on the user's system that’s causing this?  Please feel welcome to come chat about it in the [production help](https://chat.zulip.org/#narrow/channel/31-production-help) channel of the [Zulip Development Community](https://zulip.com/development-community/)! Folks with more helpful context are active there.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1259,511 +1262,183 @@ def check_rabbitmq_queues() -> None:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `37b5e4a9` (2026-11-13)
-**Commit Message**: puppet: Fix PostgreSQL failing to start on new installs.
+### Incident Patch 1: `307338bc` (2026-10-30)
+**Commit Message**: requirements: Upgrade brotli and brotlicffi for security fix.
 
-postgresql-common 294 leaves /var/log/postgresql owned by root on
-a new install. Its postinst runs systemd-tmpfiles before it creates
-the postgres user, and the error is ignored. Our configuration
-logs to that directory, so PostgreSQL failed to start with:
+Versions before brotli 1.2.1 and brotlicffi 1.2.1.0 have an
+out-of-bounds write in the decoder (GHSA-9v8h-qqgm-4m35).
 
-    FATAL:  could not open log file "...": Permission denied
+Generated with `uv lock --upgrade-package brotli --upgrade-package
+brotlicffi`. Newer uv also reorders the resolution markers, which
+changes nothing, so this keeps the original order.
 
-This broke every new-install CI job once 294 reached
-apt.postgresql.org. Upgrades are not affected, because older
-versions already set the owner.
-
-Fix this by managing the directory with the owner and mode that
-294's tmpfiles.d entry sets, so that systemd-tmpfiles does not
-change it back at boot. Tested in an ubuntu:resolute container with
-postgresql-common 294 and PostgreSQL 18.7.
-
-Reported upstream: https://bugs.debian.org/1153884
-
-**File**: `puppet/zulip/manifests/profile/postgresql.pp` (modified, +13/-1)
+**File**: `uv.lock` (modified, +113/-71)
 ```diff
-@@ -69,6 +69,18 @@
-     fail("PostgreSQL ${version} not supported")
-   }
+@@ -788,85 +788,127 @@ wheels = [
  
-+  # Our configuration sets log_directory to this directory.  On a new
-+  # install, postgresql-common 294 can leave it owned by root, because
-+  # its tmpfiles.d entry runs before the postgres user exists.
-+  # https://bugs.debian.org/1153884
-+  file { '/var/log/postgresql':
-+    ensure  => directory,
-+    require => Package[$zulip::postgresql_base::postgresql],
-+    owner   => 'postgres',
-+    group   => 'postgres',
-+    mode    => '2775',
-+  }
-+
-   # PostgreSQL 18's io_method = io_uring requires a larger
-   # RLIMIT_MEMLOCK than systemd's default on Linux 6.14 and newer
-   if $facts['os']['family'] == 'Debian' {
-@@ -110,7 +122,7 @@
-   }
-   service { 'postgresql':
-     ensure    => $start,
--    require   => $require + [Exec['reload systemd']],
-+    require   => $require + [Exec['reload systemd'], File['/var/log/postgresql']],
-     subscribe => [ File[$postgresql_conf_file] ],
-   }
- }
+ [[package]]
+ name = "brotli"
+-version = "1.2.0"
+-source = { registry = "https://pypi.org/simple" }
+-sdist = { url = "https://files.pythonhosted.org/packages/f7/16/c92ca344d646e71a43b8bb353f0a6490d7f6e06210f8554c8f874e454285/brotli-1.2.0.tar.gz", hash = "sha256:e310f77e41941c13340a95976fe66a8a95b01e783d430eeaf7a2f87e0a57dd0a", size = 7388632, upload-time = "2025-11-05T18:39:42.86Z" }
+-wheels = [
+-    { url = "https://files.pythonhosted.org/packages/64/10/a090475284fc4a71aed40a96f32e44a7fe5bda39687353dd977720b211b6/brotli-1.2.0-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:3b90b767916ac44e93a8e28ce6adf8d551e43affb512f2377c732d486ac6514e", size = 863089, upload-time = "2025-11-05T18:38:01.181Z" },
+-    { url = "https://files.pythonhosted.org/packages/03/41/17416630e46c07ac21e378c3464815dd2e120b441e641bc516ac32cc51d2/brotli-1.2.0-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:6be67c19e0b0c56365c6a76e393b932fb0e78b3b56b711d180dd7013cb1fd984", size = 445442, upload-time = "2025-11-05T18:38:02.434Z" },
+-    { url = "https://files.pythonhosted.org/packages/24/31/90cc06584deb5d4fcafc0985e37741fc6b9717926a78674bbb3ce018957e/brotli-1.2.0-cp310-cp310-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:0bbd5b5ccd157ae7913750476d48099aaf507a79841c0d04a9db4415b14842de", size = 1532658, upload-time = "2025-11-05T18:38:03.588Z" },
+-    { url = "https://files.pythonhosted.org/packages/62/17/33bf0c83bcbc96756dfd712201d87342732fad70bb3472c27e833a44a4f9/brotli-1.2.0-cp310-cp310-manylinux2014_ppc64le.manylinux_2_17_ppc64le.manylinux_2_28_ppc64le.whl", hash = "sha256:3f3c908bcc404c90c77d5a073e55271a0a498f4e0756e48127c35d91cf155947", size = 1631241, upload-time = "2025-11-05T18:38:04.582Z" },
+-    { url = "https://files.pythonhosted.org/packages/48/10/f47854a1917b62efe29bc98ac18e5d4f71df03f629184575b862ef2e743b/brotli-1.2.0-cp310-cp310-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:1b557b29782a643420e08d75aea889462a4a8796e9a6cf5621ab05a3f7da8ef2", size = 1424307, upload-time = "2025-11-05T18:38:05.587Z" },
+-    { url = "https://files.pythonhosted.org/packages/e4/b7/f88eb461719259c17483484ea8456925ee057897f8e64487d76e24e5e38d/brotli-1.2.0-cp310-cp310-musllinux_1_2_aarch64.whl", hash = "sha256:81da1b229b1889f25adadc929aeb9dbc4e922bd18561b65b08dd9343cfccca84", size = 1488208, upload-time = "2025-11-05T18:38:06.613Z" },
+-    { url = "https://files.pythonhosted.org/packages/26/59/41bbcb983a0c48b0b8004203e74706c6b6e99a04f3c7ca6f4f41f364db50/brotli-1.2.0-cp310-cp310-musllinux_1_2_ppc64le.whl", hash = "sha256:ff09cd8c5eec3b9d02d2408db41be150d8891c5566addce57513bf546e3d6c6d", size = 1597574, upload-time = "2025-11-05T18:38:07.838Z" },
+-    { url = "https://files.pythonhosted.org/packages/8e/e6/8c89c3bdabbe802febb4c5c6ca224a395e97913b5df0dff11b54f23c1788/brotli-1.2.0-cp310-cp310-musllinux_1_2_x86_64.whl", hash = "sha256:a1778532b978d2536e79c05dac2d8cd857f6c55cd0c95ace5b03740824e0e2f1", size = 1492109, upload-time = "2025-11-05T18:38:08.816Z" },
+-    { url = "https://files.pythonhosted.org/packages/ed/9a/4b19d4310b2dbd545c0c33f176b0528fa68c3cd0754e34b2f2bcf56548ae/brotli-1.2.0-cp310-cp310-win32.whl", hash = "sha256:b232029d100d393ae3c603c8ffd7e3fe6f798c5e28ddca5feabb8e8fdb732997", size = 334461, upload-time = "2025-11-05T18:38:10.729Z" },
+-    { url = "https://files.pythonhosted.org/packages/ac/39/70981d9f47705e3c2b95c0847dfa3e7a37aa3b7c6030aedc4873081ed005/brotli-1.2.0-cp310-cp310-win_amd64.whl", hash = "sha256:ef87b8ab2704da227e83a246356a2b179ef826f550f794b2c52cddb4efbd0196", size = 369035, upload-time = "2025-11-05T18:38:11.827Z" },
+-    { url = "https://files.pythonhosted.org/packages/7a/ef/f285668811a9e1ddb47a18cb0b437d5fc2760d537a2fe8a57875ad6f8448/brotli-1.2.0-cp311-cp311-macosx_10_9_universal2.whl", hash = "sha256:15b33fe93cedc4caaff8a0bd1eb7e3dab1c61bb22a0bf5bdfdfd97cd7da79744", size = 863110, upload-time = "2025-11-05T18:38:12.978Z" },
+-    { url = "https://files.pythonhosted.org/packages/50/62/a3b77593587010c789a9d6eaa527c79e0848b7b860402cc64bc0bc28a86c/brotli-1.2.0-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:898be2be399c221d2671d29eed26b6b2713a02c2119168ed914e7d00ceadb56f", size = 445438, upload-time = "2025-11-05T18:38:14.208Z" },
+-    { url = "https://files.pythonhosted.org/packages/cd/e1/7fadd47f40ce5549dc44493877db40292277db373da5053aff181656e16e/brotli-1.2.0-cp311-cp311-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:350c8348f0e76fff0a0fd6c26755d2653863279d086d3aa2c290a6a7251135dd", size = 1534420, upload-time = "2025-11-05T18:38:15.111Z" },
+-    { url = "https://files.pythonhosted.org/packages/12/8b/1ed2f64054a5a008a4ccd2f271dbba7a5fb1a3067a99f5ceadedd4c1d5a7/brotli-1.2.0-cp311-cp311-manylinux2014_ppc64le.manylinux_2_17_ppc64le.manylinux_2_28_ppc64le.whl", hash = "sha256:2e1ad3fda65ae0d93fec742a128d72e145c9c7a99ee2fcd667785d99eb25a7fe", size = 1632619, upload-time = "2025
+```
+
+**File**: `version.py` (modified, +1/-1)
+```diff
+@@ -48,4 +48,4 @@
+ #   historical commits sharing the same major version, in which case a
+ #   minor version bump suffices.
+ 
+-PROVISION_VERSION = (394, 1)  # bumped 2026-10-27 to rebuild emoji_names
++PROVISION_VERSION = (394, 2)  # bumped 2026-11-09 to upgrade brotli
 ```
 
 ---
 
-### Incident Patch 2: `366c9ba5` (2026-11-05)
-**Commit Message**: create_realm: Handle race condition with RealmSubdomainUnavailableError.
+### Incident Patch 2: `263b6ac5` (2026-11-15)
+**Commit Message**: outgoing_webhook: Fix exception text ending its code block early.
 
-When concurrent realm creation requests race on subdomain selection,
-the second request hits a database unique constraint and raises an
-IntegrityError.
+The exception text was put in a code block with a fixed fence, so a
+fence in the text ended the code block early.
 
-Update do_create_realm to catch IntegrityError and raise a custom
-RealmSubdomainUnavailableError when the subdomain already exists,
-and remove the redundant pre-creation assertion.
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-In the registration view, catch RealmSubdomainUnavailableError and
-re-render the form with an inline field-level error.
-
-Fixes #21160.
-
-**File**: `zerver/actions/create_realm.py` (modified, +72/-68)
+**File**: `zerver/lib/outgoing_webhook.py` (modified, +2/-1)
 ```diff
-@@ -3,7 +3,7 @@
- from typing import Any
- 
- from django.conf import settings
--from django.db import transaction
-+from django.db import IntegrityError, transaction
- from django.utils.timezone import now as timezone_now
- from django.utils.translation import gettext as _
- from django.utils.translation import override as override_language
 @@ -15,6 +15,7 @@
-     do_deactivate_realm,
- )
- from zerver.lib.bulk_create import create_users
-+from zerver.lib.exceptions import RealmSubdomainUnavailableError
- from zerver.lib.push_notifications import sends_notifications_directly
- from zerver.lib.realm_description import render_realm_description
- from zerver.lib.remote_server import maybe_enqueue_audit_log_upload
-@@ -209,8 +210,6 @@ def do_create_realm(
-         raise AssertionError(
-             "Creating a realm on SOCIAL_AUTH_SUBDOMAIN or SELF_HOSTING_MANAGEMENT_SUBDOMAIN is not allowed!"
+ from version import ZULIP_VERSION
+ from zerver.actions.message_send import check_send_message
+ from zerver.lib.exceptions import JsonableError, StreamDoesNotExistError
++from zerver.lib.markdown.fenced_code import wrap_in_code_block
+ from zerver.lib.message_cache import MessageDict
+ from zerver.lib.outgoing_http import OutgoingSession
+ from zerver.lib.queue import retry_event
+@@ -273,7 +274,7 @@ def notify_bot_owner(
+     if exception:
+         notification_message += (
+             "\nWhen trying to send a request to the webhook service, an exception "
+-            f"of type {type(exception).__name__} occurred:\n```\n{exception}\n```"
++            f"of type {type(exception).__name__} occurred:\n{wrap_in_code_block(str(exception))}"
          )
--    if Realm.objects.filter(string_id=string_id).exists():
--        raise AssertionError(f"Realm {string_id} already exists!")
-     if not server_initialized():
-         logging.info("Server not yet initialized. Creating the internal realm first.")
-         create_internal_realm()
-@@ -266,77 +265,82 @@ def do_create_realm(
-     # is required to do so correctly.
-     kwargs["push_notifications_enabled"] = sends_notifications_directly()
- 
--    with transaction.atomic(durable=True):
--        realm = Realm(string_id=string_id, name=name, **kwargs)
--        if is_demo_organization:
--            assert settings.DEMO_ORG_DEADLINE_DAYS is not None
--            realm.demo_organization_scheduled_deletion_date = realm.date_created + timedelta(
--                days=settings.DEMO_ORG_DEADLINE_DAYS
-+    try:
-+        with transaction.atomic(durable=True):
-+            realm = Realm(string_id=string_id, name=name, **kwargs)
-+            if is_demo_organization:
-+                assert settings.DEMO_ORG_DEADLINE_DAYS is not None
-+                realm.demo_organization_scheduled_deletion_date = realm.date_created + timedelta(
-+                    days=settings.DEMO_ORG_DEADLINE_DAYS
-+                )
-+
-+            # For now a dummy value of -1 is given to groups fields which
-+            # is changed later before the transaction is committed.
-+            for setting_name in Realm.REALM_PERMISSION_GROUP_SETTINGS:
-+                setattr(realm, setting_name + "_id", -1)
-+
-+            realm.save()
-+
-+            RealmAuditLog.objects.create(
-+                # acting_user will be set as the initial realm owner inside
-+                # do_create_user(..., realm_creation=True).
-+                acting_user=None,
-+                realm=realm,
-+                event_type=AuditLogEventType.REALM_CREATED,
-+                event_time=realm.date_created,
-+                extra_data={
-+                    "how_realm_creator_found_zulip": how_realm_creator_found_zulip,
-+                    "how_realm_creator_found_zulip_extra_context": how_realm_creator_found_zulip_extra_context,
-+                },
-             )
- 
--        # For now a dummy value of -1 is given to groups fields which
--        # is changed later before the transaction is committed.
--        for setting_name in Realm.REALM_PERMISSION_GROUP_SETTINGS:
--            setattr(realm, setting_name + "_id", -1)
--
--        realm.save()
--
--        RealmAuditLog.objects.create(
--            # acting_user will be set as the initial realm owner inside
--            # do_create_user(..., realm_creation=True).
--            acting_user=None,
--            realm=realm,
--            event_type=AuditLogEventType.REALM_CREATED,
--            event_time=realm.date_created,
--            extra_data={
--                "how_realm_creator_found_zulip": how_realm_creator_found_zulip,
--                "how_realm_creator_found_zulip_extra_context": how_realm_creator_found_zulip_extra_context,
--            },
--        )
--
--        RealmUserDefault.objects.create(
--            realm=realm,
--            email_address_visibility=get_email_address_visibility_default(realm.org_type),
--        )
--
--        create_system_user_groups_for_realm(realm)
-+            RealmUserDefault.objects.create(
-+                realm=realm,
-+                email_address_visibility=get_email_address_visibility_default(realm.org_type),
-+            )
- 
--        group_settings_defaults_for_org_types = {
--            "can_add_subscribers_group": {
--                Realm.ORG_TYPES["education_nonprofit"]["id"]: SystemGroups.MODERATORS,
--                Realm.ORG_TYPES["education"]["id"]: SystemGroups.MODERATORS,
--            },
--            "can_create_public_channel_group": {
--                Realm.ORG_TYPES["education_nonprofit"]["id"]: SystemGroups.ADMINISTRATORS,
--                Realm.ORG_TYPES["education"]["id"]: SystemGroups.ADMINISTRATORS,
--            },
--            "can_create_groups": {
--                Realm.ORG_TYPES["education_nonprofit"]["id"]: SystemGroups.MODERATORS,
--                Realm.ORG_TYPES["education"]["id"]: Syst
-```
-
-**File**: `zerver/lib/exceptions.py` (modified, +6/-0)
-```diff
-@@ -534,6 +534,12 @@ def msg_format() -> str:
-         return _("Invalid subdomain")
- 
- 
-+class RealmSubdomainUnavailableError(Exception):
-+    def __init__(self, string_id: str) -> None:
-+        self.string_id = string_id
-+        super().__init__(f"Realm {string_id} already exists!")
-+
-+
- class InvitationError(JsonableError):
-     code = ErrorCode.INVITATION_FAILED
-     data_fields = [
-```
-
-**File**: `zerver/tests/test_signup.py` (modified, +96/-0)
-```diff
-@@ -34,6 +34,7 @@
- from zerver.forms import HomepageForm
- from zerver.lib.default_streams import get_slim_realm_default_streams
- from zerver.lib.email_notifications import enqueue_welcome_emails
-+from zerver.lib.exceptions import RealmSubdomainUnavailableError
- from zerver.lib.i18n import get_default_language_for_new_user
- from zerver.lib.initial_password import initial_password
- from zerver.lib.mobile_auth_otp import (
-@@ -1904,6 +1905,101 @@ def test_signup_with_email_address_race(self) -> None:
-             )
-         )
- 
-+    def test_do_create_realm_subdomain_unavailable_error(self) -> None:
-+        """
-+        do_create_realm raises RealmSubdomainUnavailableError when attempting to
-+        create a realm with an existing subdomain.
-+        """
-+        with self.assertRaises(RealmSubdomainUnavailableError):
-+            do_create_realm("zulip", "Zulip clone")
-+
-+    def test_do_create_realm_unexpected_integrity_error(self) -> None:
-+        """
-+        do_create_realm re-raises IntegrityError when an unexpected database
-+        integrity error occurs during realm creation.
-+        """
-+        with (
-+            patch.object(Realm, "save", side_effect=IntegrityError("unexpected error")),
-+            self.assertRaises(IntegrityError),
-+        ):
-+            do_create_realm("new-realm-subdomain", "New Realm")
-+
-+    def test_realm_creation_with_subdomain_race(self) -> None:
-+        """
-+        The availability check for a realm subdomain can race with another
-+        realm creation. Verify that RealmSubdomainUnavailableError is handled
-+        by re-rendering the registration form with an error without consuming
-+        the confirmation link.
-+        """
-+        email = self.nonreg_email("newguy")
-+        realm_subdomain = "custom-test"
-+        realm_name = "Race organization"
-+
-+        self.submit_realm_creation_form(
-+            email,
-+            realm_subdomain=realm_subdomain,
-+            realm_name=realm_name,
-+        )
-+        confirmation_url = self.get_confirmation_url_from_outbox(email)
-+        self.client_get(confirmation_url)
-+
-+        with patch(
-+            "zerver.views.registration.do_create_realm",
-+            side_effect=RealmSubdomainUnavailableError(realm_subdomain),
-+        ):
-+            result = self.submit_reg_form_for_user(
-+                email,
-+                "password",
-+                realm_subdomain=realm_subdomain,
-+                realm_name=realm_name,
-+            )
-+
-+        self.assertEqual(result.status_code, 400)
-+        self.assert_in_response(
-+            "Subdomain is already in use. Please choose a different one.", result
-+        )
-+        self.assert_in_response('id="registration"', result)
-+        self.assert_in_response('name="realm_subdomain"', result)
-+        self.assert_in_response(f'value="{realm_subdomain}"', result)
-+        self.assert_in_response(f'value="{realm_name}"', result)
-+
-+        # The user can retry with the same confirmation link and only a new
-+        # organization URL.
-+        result = self.submit_reg_form_for_user(
-+            email,
-+            "password",
-+            realm_subdomain="custom-test-2",
-+            realm_name=realm_name,
-+        )
-+        self.assertEqual(result.status_code, 302)
-+
-+    def test_realm_creation_with_unexpected_integrity_error(self) -> None:
-+        email = self.nonreg_email("newguy")
-+        realm_subdomain = "custom-test"
-+
-+        self.submit_realm_creation_form(
-+            email,
-+            realm_subdomain=realm_subdomain,
-+            realm_name="Zulip test",
-+        )
-+        confirmation_url = self.get_confirmation_url_from_outbox(email)
-+        self.client_get(confirmation_url)
-+
-+        with (
-+            patch(
-+                "zerver.views.registration.do_create_realm",
-+                side_effect=IntegrityError("unexpected error"),
-+            ),
-+            self.assertRaises(IntegrityError),
-+            self.assertLogs("django.request", "ERROR"),
-+        ):
-+            self.submit_reg_form_for_user(
-+                email,
-+                "password",
-+                realm_subdomain=realm_subdomain,
-+                realm_name="Zulip test",
-+            )
-+
-     def test_signup_with_weak_password(self) -> None:
-         """
-         Check if signing up with a weak password fails.
-```
-
-**File**: `zerver/views/registration.py` (modified, +32/-12)
-```diff
-@@ -72,7 +72,7 @@
-     schedule_demo_organization_deletion_reminder,
- )
- from zerver.lib.email_validation import email_allowed_for_realm, validate_email_not_already_in_realm
--from zerver.lib.exceptions import JsonableError, RateLimitedError
-+from zerver.lib.exceptions import JsonableError, RateLimitedError, RealmSubdomainUnavailableError
- from zerver.lib.i18n import (
-     get_browser_language_code,
-     get_default_language_for_anonymous_user,
-@@ -834,17 +834,37 @@ def registration_helper(
-                 extra_context_field = HOW_FOUND_ZULIP_EXTRA_CONTEXT[how_found_zulip]
-                 how_found_zulip_extra_context = form.cleaned_data[extra_context_field]
- 
--            realm = do_create_realm(
--                string_id,
--                realm_name,
--                org_type=realm_type,
--                default_language=realm_default_language,
--                prereg_realm=prereg_realm,
--                how_realm_creator_found_zulip=RealmAuditLog.HOW_REALM_CREATOR_FOUND_ZULIP_OPTIONS[
--                    how_found_zulip
--                ],
--                how_realm_creator_found_zulip_extra_context=how_found_zulip_extra_context,
--            )
-+            try:
-+                realm = do_create_realm(
-+                    string_id,
-+                    realm_name,
-+                    org_type=realm_type,
-+                    default_language=realm_default_language,
-+                    prereg_realm=prereg_realm,
-+                    how_realm_creator_found_zulip=RealmAuditLog.HOW_REALM_CREATOR_FOUND_ZULIP_OPTIONS[
-+                        how_found_zulip
-+                    ],
-+                    how_realm_creator_found_zulip_extra_context=how_found_zulip_extra_context,
-+                )
-+            except RealmSubdomainUnavailableError:
-+                form.add_error(
-+                    "realm_subdomain",
-+                    _("Subdomain is already in use. Please choose a different one."),
-+                )
-+                return render_registration_form(
-+                    request,
-+                    form=form,
-+                    email=email,
-+                    key=key,
-+                    name_validated=name_validated,
-+                    realm=realm,
-+                    realm_creation=realm_creation,
-+                    password_required=password_required,
-+                    require_ldap_password=require_ldap_password,
-+                    prereg_realm=prereg_realm,
-+                    next_url=next,
-+                    status=400,
-+                )
-         assert realm is not None
- 
-         full_name = form.cleaned_data["full_name"]
+     elif failure_message:
+         notification_message += "\n" + failure_message
 ```
 
 ---
 
-### Incident Patch 3: `b5b2af98` (2026-11-12)
-**Commit Message**: tests: Clean up realm creation subdomain race tests.
+### Incident Patch 3: `b7447c20` (2026-07-21)
+**Commit Message**: markdown: Fix `MarkdownListPreprocessor`'s list regex.
 
-Move test_realm_creation_unexpected_integrity_error to test_realm.py
-with the other test_realm_creation_* tests. Remove the now-unnecessary
-test_realm_creation_with_unexpected_integrity_error from test_signup.py.
+Previously, LIST_ITEM_REGEX only matched single-digit list items. This
+updates it to match multi-digit list items (up to 9 digits, to be
+exact) and only Arabic digits.
 
-In test_realm_creation_with_subdomain_race, simplify the assertions
-to just the status code and error message checks. Update the docstring
-to avoid spelling out the exception name.
+The CommonMark spec for list items says:
 
-**File**: `zerver/tests/test_realm.py` (modified, +8/-0)
-```diff
-@@ -15,6 +15,7 @@
- import time_machine
- from django.conf import settings
- from django.core import mail
-+from django.db import IntegrityError
- from django.test import override_settings
- from django.utils.timezone import now as timezone_now
- from typing_extensions import override
-@@ -132,6 +133,13 @@ def test_realm_creation_on_special_subdomains_disallowed(self) -> None:
-         ):
-             do_create_realm("zulipselfhosting", "Test Realm")
- 
-+    def test_realm_creation_unexpected_integrity_error(self) -> None:
-+        with (
-+            mock.patch.object(Realm, "save", side_effect=IntegrityError("unexpected error")),
-+            self.assertRaises(IntegrityError),
-+        ):
-+            do_create_realm("new-realm-subdomain", "New Realm")
-+
-     def test_permission_for_education_non_profit_organization(self) -> None:
-         realm = do_create_realm(
-             "test_education_non_profit",
+```
+An ordered list marker is a sequence of 1–9 arabic digits (0-9),
+followed by either a . character or a ) character. (The reason for
+the length limit is that with 10 digits we start seeing integer
+overflows in some browsers.)
 ```
 
-**File**: `zerver/tests/test_signup.py` (modified, +3/-49)
+https://spec.commonmark.org/0.26/#list-items
+
+We still don't handle list items that use the ")" character, but we're
+pretty clear about this limitation in the help center.
+
+Fixes #39797.
+
+Co-authored-by: PieterCK <[REDACTED_EMAIL]>
+
+**File**: `zerver/lib/markdown/__init__.py` (modified, +4/-4)
 ```diff
-@@ -1906,30 +1906,15 @@ def test_signup_with_email_address_race(self) -> None:
-         )
+@@ -1536,10 +1536,10 @@ class Fence:
  
-     def test_do_create_realm_subdomain_unavailable_error(self) -> None:
--        """
--        do_create_realm raises RealmSubdomainUnavailableError when attempting to
--        create a realm with an existing subdomain.
--        """
-         with self.assertRaises(RealmSubdomainUnavailableError):
-             do_create_realm("zulip", "Zulip clone")
+ LIST_ITEM_REGEX = re.compile(
+     r"""
+-    ^[ ]*        # Start with zero or more spaces
+-    ([*+-]|\d\.) # A bullet marker (*, +, or -) or a digit followed by "."
+-    [ ]+         # Followed by one or more spaces
+-    (.*)         # The list content, which could be empty
++    ^[ ]*                   # Start with zero or more spaces
++    ([*+-]|[0-9]{1,9}\.)    # A bullet marker (*, +, or -) or 1-9 digits followed by "."
++    [ ]+                    # Followed by one or more spaces
++    (.*)                    # The list content, which could be empty
+     """,
+     re.VERBOSE,
+ )
+```
+
+**File**: `zerver/tests/fixtures/markdown_test_cases.json` (modified, +20/-0)
+```diff
+@@ -423,6 +423,26 @@
+       "expected_output": "<ol>\n<li>A</li>\n<li>B<ol start=\"2\">\n<li>C</li>\n</ol>\n</li>\n<li>D</li>\n</ol>",
+       "text_content": "1. A\n2. B\n  2. C\n3. D"
+     },
++    {
++      "name": "numbered_list_double_digit",
++      "input": "8. eight\n9. nine\n10. ten",
++      "expected_output": "<ol start=\"8\">\n<li>eight</li>\n<li>nine</li>\n<li>ten</li>\n</ol>",
++      "text_content": "8. eight\n9. nine\n10. ten"
++    },
++    {
++      "name": "numbered_list_double_digit_after_unordered_list",
++      "input": "8. eight\n9. nine\n   - sub item\n10. ten",
++      "expected_output": "<ol start=\"8\">\n<li>eight</li>\n<li>\n<p>nine</p>\n<ul>\n<li>sub item</li>\n</ul>\n</li>\n<li>\n<p>ten</p>\n</li>\n</ol>",
++      "marked_expected_output": "<ol start=\"8\">\n<li>eight</li>\n<li>nine<ul>\n<li>sub item</li>\n</ul>\n</li>\n<li>ten</li>\n</ol>",
++      "text_content": "8. eight\n9. nine\n\nsub item\n10. ten"
++    },
++    {
++      "name": "numbered_list_nine_digit_cap",
++      "input": "999999999. nine nines\n9999999999. ten digits",
++      "expected_output": "<ol start=\"999999999\">\n<li>nine nines</li>\n<li>ten digits</li>\n</ol>",
++      "marked_expected_output": "<ol start=\"999999999\">\n<li>nine nines<br>\n9999999999. ten digits</li>\n</ol>",
++      "text_content": "999999999. nine nines\n1000000000. ten digits"
++    },
+     {
+       "name": "linkify_interference",
+       "input": "link: xx, x xxxxx xx xxxx xx\n\n[xxxxx #xx](http://xxxxxxxxx:xxxx/xxx/xxxxxx%78xxxx/xx/):**xxxxxxx**\n\nxxxxxxx xxxxx xxxx xxxxx:\n`xxxxxx`: xxxxxxx\n`xxxxxx`: xxxxx\n`xxxxxx`: xxxxx xxxxx",
+```
+
+**File**: `zerver/tests/test_markdown.py` (modified, +5/-0)
+```diff
+@@ -528,6 +528,11 @@ def test_basic_list(self) -> None:
+         original, expected = self.split_message("List without a gap\n<>* One\n* Two")
+         self.assertEqual(preprocessor.run(original), expected)
  
--    def test_do_create_realm_unexpected_integrity_error(self) -> None:
--        """
--        do_create_realm re-raises IntegrityError when an unexpected database
--        integrity error occurs during realm creation.
--        """
--        with (
--            patch.object(Realm, "save", side_effect=IntegrityError("unexpected error")),
--            self.assertRaises(IntegrityError),
--        ):
--            do_create_realm("new-realm-subdomain", "New Realm")
--
-     def test_realm_creation_with_subdomain_race(self) -> None:
-         """
-         The availability check for a realm subdomain can race with another
--        realm creation. Verify that RealmSubdomainUnavailableError is handled
--        by re-rendering the registration form with an error without consuming
--        the confirmation link.
-+        realm creation. Verify that such a situation is handled by re-rendering
-+        the registration form with an error without consuming the confirmation
-+        link.
-         """
-         email = self.nonreg_email("newguy")
-         realm_subdomain = "custom-test"
-@@ -1958,10 +1943,6 @@ def test_realm_creation_with_subdomain_race(self) -> None:
-         self.assert_in_response(
-             "Subdomain is already in use. Please choose a different one.", result
-         )
--        self.assert_in_response('id="registration"', result)
--        self.assert_in_response('name="realm_subdomain"', result)
--        self.assert_in_response(f'value="{realm_subdomain}"', result)
--        self.assert_in_response(f'value="{realm_name}"', result)
- 
-         # The user can retry with the same confirmation link and only a new
-         # organization URL.
-@@ -1973,33 +1954,6 @@ def test_realm_creation_with_subdomain_race(self) -> None:
-         )
-         self.assertEqual(result.status_code, 302)
- 
--    def test_realm_creation_with_unexpected_integrity_error(self) -> None:
--        email = self.nonreg_email("newguy")
--        realm_subdomain = "custom-test"
--
--        self.submit_realm_creation_form(
--            email,
--            realm_subdomain=realm_subdomain,
--            realm_name="Zulip test",
--        )
--        confirmation_url = self.get_confirmation_url_from_outbox(email)
--        self.client_get(confirmation_url)
--
--        with (
--            patch(
--                "zerver.views.registration.do_create_realm",
--                side_effect=IntegrityError("unexpected error"),
--            ),
--            self.assertRaises(IntegrityError),
--            self.assertLogs("django.request", "ERROR"),
--        ):
--            self.submit_reg_form_for_user(
--                email,
--                "password",
--                realm_subdomain=realm_subdomain,
--                realm_name="Zulip test",
--            )
--
-     def test_signup_with_weak_password(self) -> None:
-         """
-         Check if signing up with a weak password fails.
++    def test_basic_list_with_double_digit_numbers(self) -> None:
++        preprocessor = MarkdownListPreprocessor()
++        original, expected = self.split_message("List without a gap\n<>10. One\n11. Two")
++        self.assertEqual(preprocessor.run(original), expected)
++
+     def test_list_after_quotes(self) -> None:
+         preprocessor = MarkdownListPreprocessor()
+         original, expected = self.split_message(
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #40675** (closed): left_sidebar: Remove leftover home-page-input class. (@lasyaishu05-spec)
-- **PR #40673** (2026-11-13): [ai] puppet: Fix PostgreSQL failing to start on new installs. (@benprew)
-- **PR #40672** (2026-11-12): version: Start 14.0 development branch. (@benprew)
-- **PR #40671** (2026-11-12): Release Zulip Server 13.0. (@benprew)
-- **PR #40668** (2026-11-13): tests: Clean up realm creation subdomain race tests. (@Tanaya-2007)
-- **PR #40659** (closed): [ai] inbox: Fix hotkeys acting on the wrong row after a background update. (@Cyberhet)
+- **PR #40767** (2026-11-21): message_fetch: Don't backfill message history for spectators. (@mateuszmandera)
+- **PR #40766** (2026-11-21): requirements: Upgrade brotli and brotlicffi for security fix. (@mateuszmandera)
+- **PR #40763** (2026-11-20): demo-orgs: Restrict invitations until owner has set an email. (@mateuszmandera)
+- **PR #40757** (closed): [ai] compose_paste: Fix lost anchors in pasted topic permalinks. (@Celestial-0)
+- **PR #40756** (closed): [ai] portico: Fix RTL layout on login and footer pages. (@mo23hammad)
+- **PR #40747** (2026-11-18): skills: Keep exploit details out of security advisories. (@mateuszmandera)
 
 ---
 
@@ -1777,49 +1452,6 @@ to avoid spelling out the exception name.
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. puppet: Fix PostgreSQL failing to start on new installs.
-
-**RULE**:
-When implementing operations in `puppet/zulip/manifests/profile/postgresql.pp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zulip/zulip. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `37b5e4a9`: puppet: Fix PostgreSQL failing to start on new installs.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `puppet/zulip/manifests/profile/postgresql.pp`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```python
-// Verified production-grade fix pattern:
-  # Our configuration sets log_directory to this directory.  On a new
-  # install, postgresql-common 294 can leave it owned by root, because
-  # its tmpfiles.d entry runs before the postgres user exists.
-  # https://bugs.debian.org/1153884
-  file { '/var/log/postgresql':
-    ensure  => directory,
-    require => Package[$zulip::postgresql_base::postgresql],
-    owner   => 'postgres',
-    group   => 'postgres',
-    mode    => '2775',
-  }
-
-    require   => $require + [Exec['reload systemd'], File['/var/log/postgresql']],
-```
-
-**NEGATIVE CONSTRAINT**:
-```python
-// Induced defect failure mode:
-    require   => $require + [Exec['reload systemd']],
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `37b5e4a9` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

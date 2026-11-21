@@ -2613,10 +2613,10 @@
     "repository": "zulip/zulip",
     "platform": "github",
     "sourceUrl": "https://github.com/zulip/zulip",
-    "sourceVersion": "64b848e5",
+    "sourceVersion": "4b6608d2",
     "license": "Apache-2.0",
-    "contentHash": "88e6a4c6052ac1afbae67331489fd8bde75211e7333a6cc81560730a647464b5",
-    "lastHarvestedAt": "2026-11-18T12:23:57.450Z",
+    "contentHash": "20ac90d255f7bf46881ebf08f14029f4e6e75f88071510e80365ec9e294251c7",
+    "lastHarvestedAt": "2026-11-21T14:49:38.019Z",
     "learningId": "learn-github-zulip-zulip"
   },
   "goodrain-rainbond": {
@@ -10555,8 +10555,8 @@
     "sourceUrl": "https://huggingface.co/unsloth/flint-GGUF",
     "sourceVersion": "hf-unsloth-flint-gguf",
     "license": "Open-Source",
-    "contentHash": "fb3e06e4bebe2196340b8d9658ce79be5ece7cd96d3a5759aa0867a45f8e0e22",
-    "lastHarvestedAt": "2026-11-17T17:11:31.626Z",
+    "contentHash": "dcd38815877018ccb0e1d4d687b0752803c4c3f5019c3d08ad4322556c559113",
+    "lastHarvestedAt": "2026-11-21T14:49:30.548Z",
     "learningId": "learn-huggingface-unsloth-flint-gguf"
   },
   "gauthierpiarrette-highball": {

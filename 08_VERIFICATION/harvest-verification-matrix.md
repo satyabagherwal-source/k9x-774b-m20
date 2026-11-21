@@ -11817,3 +11817,5 @@
 | `CYCLE-20261121-5MGY` | `2026-11-21T14:27:40.930Z` | `Comfy-Org/Z-Image-Turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-z-image-turbo-learnings.md` | Yes (`141c759a...`) |
 | `CYCLE-20261121-5S6U` | `2026-11-21T14:27:48.342Z` | `envoyproxy/envoy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9792` | Yes (`8835edd0...`) |
 | `CYCLE-20261121-5XHN` | `2026-11-21T14:27:55.211Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9793` | Yes (`d45ac296...`) |
+| `CYCLE-20261121-XOZ3` | `2026-11-21T14:49:30.543Z` | `unsloth/flint-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-flint-gguf-learnings.md` | Yes (`dcd38815...`) |
+| `CYCLE-20261121-XUQN` | `2026-11-21T14:49:38.015Z` | `zulip/zulip` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/zulip-zulip-learnings.md` | Yes (`20ac90d2...`) |
