@@ -4773,10 +4773,10 @@
     "repository": "etcd-io/etcd",
     "platform": "github",
     "sourceUrl": "https://github.com/etcd-io/etcd",
-    "sourceVersion": "e4cf2bb0",
+    "sourceVersion": "f872eb46",
     "license": "Apache-2.0",
-    "contentHash": "b84711d3d8d4219e8cded5da8a4e6b9fdd8eaa6bae2c6b7a824b772486871a74",
-    "lastHarvestedAt": "2026-11-20T04:58:10.357Z",
+    "contentHash": "09bbcc92d5b90de5dc0d14851d36f98a7c1b7d58109d5ee6b433aeddce2777c7",
+    "lastHarvestedAt": "2026-11-21T08:52:48.404Z",
     "learningId": "learn-github-etcd-io-etcd"
   },
   "wasm-bindgen-wasm-pack": {
@@ -7005,8 +7005,8 @@
     "sourceUrl": "https://huggingface.co/Comfy-Org/z_image_turbo",
     "sourceVersion": "hf-comfy-org-z_image_turbo",
     "license": "Open-Source",
-    "contentHash": "b594e48199a477b9cd3e5606d16a12fa243218e33010b0e5c45bbd89e55d6ac4",
-    "lastHarvestedAt": "2026-11-17T14:49:49.627Z",
+    "contentHash": "d7187627183cdf41de8eda6ad72f68bf427be934a8dd2473fadecc2c7da0aa56",
+    "lastHarvestedAt": "2026-11-21T08:54:38.939Z",
     "learningId": "learn-huggingface-comfy-org-z_image_turbo"
   },
   "jhspetersson-fselect": {
@@ -10273,10 +10273,10 @@
     "repository": "react/react-native",
     "platform": "github",
     "sourceUrl": "https://github.com/react/react-native",
-    "sourceVersion": "cf7f3f39",
+    "sourceVersion": "32a5aa6a",
     "license": "MIT",
-    "contentHash": "81404fc1347efa6bbbaa616676a16a9f2b7f5eed9c61958c852f773282534690",
-    "lastHarvestedAt": "2026-11-18T09:28:33.912Z",
+    "contentHash": "892d3af58ad6969e83b8523b4e74d797a80081ecdc6b53b1cdb99fab3a0d1191",
+    "lastHarvestedAt": "2026-11-21T08:52:53.135Z",
     "learningId": "learn-github-react-react-native"
   },
   "faker-js-faker": {

@@ -11761,3 +11761,6 @@
 | `CYCLE-20261121-6XTN` | `2026-11-21T08:24:47.291Z` | `yazinsai/OpenOats` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9755, Rule 9756, Rule 9757` | Yes (`15cc519a...`) |
 | `CYCLE-20261121-7B66` | `2026-11-21T08:25:04.590Z` | `Comfy-Org/MOSS-Image` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9758, Rule 9759, Rule 9760` | Yes (`bb3d98ff...`) |
 | `CYCLE-2026-11-21-PROJ-EVOLVE` | `2026-11-21T08:25:39.928Z` | `hf-comfy-org-moss-image` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-351DFF5E` [Domain H] | Yes (`6a0af5a5...`) |
+| `CYCLE-20261121-6YZ3` | `2026-11-21T08:52:48.399Z` | `etcd-io/etcd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9761` | Yes (`09bbcc92...`) |
+| `CYCLE-20261121-72MJ` | `2026-11-21T08:52:53.131Z` | `react/react-native` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9762` | Yes (`892d3af5...`) |
+| `CYCLE-20261121-9C9I` | `2026-11-21T08:54:38.934Z` | `Comfy-Org/Z-Image-Turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-z_image_turbo-learnings.md` | Yes (`d7187627...`) |

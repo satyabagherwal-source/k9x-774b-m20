@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T09:29:19.294Z",
+  "timestamp": "2026-11-21T08:54:43.138Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-react-react-native-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [react-react-native-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T09:29:19.294Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T08:54:43.138Z`  
 > **Learning ID**: `LEARN-EVO-react-react-native-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/react-react-native-learnings.md`  
 > **Source**: github ([https://github.com/react/react-native](https://github.com/react/react-native))  
-> **Source Version**: `cf7f3f39`  
+> **Source Version**: `32a5aa6a`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T09:28:32.700Z  
+> **Timestamp**: 2026-11-21T08:52:51.929Z  
 > **Learning ID**: `learn-github-react-react-native`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/react-react-native-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/react/react-native](https://github.com/react/react-native))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T09:28:32.693Z  
+> **Harvest Timestamp**: 2026-11-21T08:52:20.541Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: A framework for building native applications using React
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 126951 stars
+- **Stars / Engagement**: 126984 stars
 
 ---
 
@@ -647,671 +647,817 @@ export {prepareDebuggerShellFromDotSlashFile};
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2b60e633` (2026-11-17)
-**Commit Message**: fix(android): don't preallocate a view that a commit already created
+### Incident Patch 1: `a5b0bf0f` (2026-11-20)
+**Commit Message**: Add ReactTextView regression test for effect spans without remeasure
 
-## Summary:
+Summary:
+A frame-preserving text update can reach `ReactTextView.onDraw` without a `Layout`, in which case effect spans (underline, strikethrough) were skipped and only plain text painted. This pins the corrected behavior: after `setText` carrying an effect span with no intervening measure, drawing still invokes the span hooks.
 
-Fixes #60018, and I believe #58526 too.
+Changelog: [Internal]
 
-The preallocation queue is drained on the UI thread, so a commit can get there first. If the commit creates a view and the next commit deletes it again (a View that is flattened right after it mounts, e.g. `opacity` set and cleared in a layout effect), `executeMount` adds the tag to `allocatedViewTags` and erases it before the drain runs. The drain then finds the tag missing, registers it as preallocated and creates the Java view, which the queued `DELETE` removes. The tag stays allocated in C++ with no view behind it. The next `CREATE` for that family is skipped, the inserts land in a view that doesn't exist, and the next `REMOVE` crashes with `Unable to find parentView for tag`.
+Differential Revision: D129186364
 
-This skips the drain for a family that is already part of a committed tree (`ShadowNodeFamily::hasBeenMounted()`). Its view belongs to `executeMount` from then on. The check runs under `allocatedViewsMutex_`, which `executeMount` takes after the commit has marked the family, so the two can't interleave in a way that brings the tag back. Views that haven't been committed yet are stil
+Pull Request resolved: https://github.com/react/react-native/pull/59769
 
-**File**: `packages/react-native/ReactAndroid/src/main/jni/react/fabric/FabricMountingManager.cpp` (modified, +11/-1)
+**File**: `packages/react-native/ReactAndroid/src/test/java/com/facebook/react/views/text/ReactTextViewTest.kt` (modified, +48/-0)
 ```diff
-@@ -1092,7 +1092,17 @@ void FabricMountingManager::drainPreallocateViewsQueue() {
-   {
-     std::lock_guard allocatedViewsLock(allocatedViewsMutex_);
-     for (auto& [shadowView, family] : queuedViews) {
--      if (pullModel && family.expired()) {
-+      auto queuedFamily = family.lock();
-+      if (pullModel && queuedFamily == nullptr) {
-+        continue;
-+      }
-+      // Once a family is part of a committed tree, its view is executeMount's
-+      // to create. The commit can run before this drain and both create and
-+      // delete the view, e.g. when it is flattened again by the next commit;
-+      // registering the tag now would leave it allocated with no view behind
-+      // it, and its next Create would be skipped. executeMount takes
-+      // allocatedViewsMutex_ after the commit has marked the family mounted.
-+      if (queuedFamily != nullptr && queuedFamily->hasBeenMounted()) {
-         continue;
-       }
-       auto allocatedViewsIterator =
-```
-
-**File**: `packages/react-native/ReactAndroid/src/main/jni/react/fabric/test_helper/FabricMountingManagerTestHelper.cpp` (modified, +29/-7)
-```diff
-@@ -222,9 +222,9 @@ void FabricMountingManagerTestHelper::drainPreallocationQueue() {
-   mountingManager_->drainPreallocateViewsQueue();
- }
- 
--void FabricMountingManagerTestHelper::executeCreateMutation(
-+void FabricMountingManagerTestHelper::executeMutation(
-     jint surfaceId,
--    jint tag) {
-+    ShadowViewMutation mutation) {
-   auto telemetry = TransactionTelemetry{};
-   telemetry.willCommit();
-   telemetry.willDiff();
-@@ -233,11 +233,27 @@ void FabricMountingManagerTestHelper::executeCreateMutation(
-   telemetry.didLayout();
-   telemetry.didCommit();
-   mountingManager_->executeMount(
--      MountingTransaction{
--          surfaceId,
--          0,
--          {ShadowViewMutation::CreateMutation(makeShadowView(surfaceId, tag))},
--          telemetry});
-+      MountingTransaction{surfaceId, 0, {std::move(mutation)}, telemetry});
-+}
-+
-+void FabricMountingManagerTestHelper::executeCreateMutation(
-+    jint surfaceId,
-+    jint tag) {
-+  executeMutation(
-+      surfaceId,
-+      ShadowViewMutation::CreateMutation(makeShadowView(surfaceId, tag)));
-+}
-+
-+void FabricMountingManagerTestHelper::executeDeleteMutation(
-+    jint surfaceId,
-+    jint tag) {
-+  executeMutation(
-+      surfaceId,
-+      ShadowViewMutation::DeleteMutation(makeShadowView(surfaceId, tag)));
-+}
-+
-+void FabricMountingManagerTestHelper::commitQueuedView(jint tag) {
-+  queuedShadowNodes_.at(tag)->setMounted(true);
- }
- 
- void FabricMountingManagerTestHelper::dropFamily(jint tag) {
-@@ -495,6 +511,12 @@ void FabricMountingManagerTestHelper::registerNatives() {
-       makeNativeMethod(
-           "executeCreateMutation",
-           FabricMountingManagerTestHelper::executeCreateMutation),
-+      makeNativeMethod(
-+          "executeDeleteMutation",
-+          FabricMountingManagerTestHelper::executeDeleteMutation),
-+      makeNativeMethod(
-+          "commitQueuedView",
-+          FabricMountingManagerTestHelper::commitQueuedView),
-       makeNativeMethod(
-           "dropFamily", FabricMountingManagerTestHelper::dropFamily),
-       makeNativeMethod(
-```
-
-**File**: `packages/react-native/ReactAndroid/src/main/jni/react/fabric/test_helper/FabricMountingManagerTestHelper.h` (modified, +6/-0)
-```diff
-@@ -35,6 +35,10 @@ class FabricMountingManagerTestHelper : public jni::HybridClass<FabricMountingMa
-   void queuePreallocation(jint surfaceId, jint tag);
-   void drainPreallocationQueue();
-   void executeCreateMutation(jint surfaceId, jint tag);
-+  void executeDeleteMutation(jint surfaceId, jint tag);
-+  // Marks the family of a view queued by queuePreallocation as part of a
-+  // committed tree, as ShadowTree's commit does.
-+  void commitQueuedView(jint tag);
-   void dropFamily(jint tag);
-   void destroyUnmountedView(jint surfaceId, jint tag);
-   void destroyCommittedView(jint surfaceId, jint tag);
-@@ -66,6 +70,8 @@ class FabricMountingManagerTestHelper : public jni::HybridClass<FabricMountingMa
- 
-   explicit FabricMountingManagerTestHelper(jni::alias_ref<JFabricUIManager::javaobject> jFabricUIManager);
- 
-+  void executeMutation(jint surfaceId, ShadowViewMutation mutation);
-+
-   static void initHybrid(
-       jni::alias_ref<jhybridobject> jobj,
-       jni::alias_ref<JFabricUIManager::javaobject> jFabricUIManager);
-```
-
-**File**: `packages/react-native/ReactAndroid/src/test/java/com/facebook/react/fabric/FabricMountingManagerInstrumentationTest.kt` (modified, +31/-0)
-```diff
-@@ -459,6 +459,37 @@ class FabricMountingManagerInstrumentationTest {
-     assertThat(helper.isTagAllocated(surfaceId, 42)).isFalse()
+@@ -12,6 +12,7 @@ import android.graphics.Bitmap
+ import android.graphics.Canvas
+ import android.graphics.Color
+ import android.graphics.Paint
++import android.text.Layout
+ import android.text.SpannableString
+ import android.text.Spanned
+ import android.text.TextPaint
+@@ -27,6 +28,7 @@ import com.facebook.react.bridge.JavaOnlyArray
+ import com.facebook.react.bridge.JavaOnlyMap
+ import com.facebook.react.uimanager.DisplayMetricsHolder
+ import com.facebook.react.uimanager.ReactStylesDiffMap
++import com.facebook.react.views.text.internal.span.CanvasEffectSpan
+ import com.facebook.react.views.text.internal.span.ReactAbsoluteSizeSpan
+ import org.assertj.core.api.Assertions.assertThat
+ import org.junit.After
+@@ -130,6 +132,39 @@ class ReactTextViewTest {
+     assertThat(view.letterSpacing).isEqualTo(expectedLetterSpacing)
    }
  
-+  /**
-+   * A commit can create and delete a view before the queue drains, when the view is flattened again
-+   * by the next commit. The drain must not register the tag again: its next Create would be skipped
-+   * and the view would never exist.
-+   */
 +  @Test
-+  fun native_drainPreallocationQueue_skipsViewThatACommitCreatedAndDeleted() {
-+    val helper = createTestHelper()
-+    helper.startSurface(surfaceId)
-+    helper.queuePreallocation(surfaceId, 42)
-+    helper.commitQueuedView(42)
-+    helper.executeCreateMutation(surfaceId, 42)
-+    helper.executeDeleteMutation(surfaceId, 42)
++  fun effectSpansPaintAfterFramePreservingUpdateWithoutRemeasure() {
++    val width = 200
++    val height = 100
++    val view = TestReactTextView(RuntimeEnvironment.getApplication())
++    view.layoutParams =
++        ViewGroup.LayoutParams(
++            ViewGroup.LayoutParams.WRAP_CONTENT,
++            ViewGroup.LayoutParams.WRAP_CONTENT,
++        )
++    view.setTextColor(Color.BLACK)
++    view.setTextSize(TypedValue.COMPLEX_UNIT_PX, 24f)
++    val plain = SpannableString("Hello")
++    view.setSpanned(plain)
++    view.text = plain
++    view.measure(
++        View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),
++        View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY),
++    )
++    view.layout(0, 0, width, height)
++    assertThat(view.layout).isNotNull()
 +
-+    helper.drainPreallocationQueue()
++    val span = RecordingCanvasEffectSpan()
++    val decorated = SpannableString("Hello")
++    decorated.setSpan(span, 0, decorated.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
++    view.setSpanned(decorated)
++    view.text = decorated
++    view.drawTextForTest(Canvas(createBitmap(width, height)))
 +
-+    assertThat(helper.isTagAllocated(surfaceId, 42)).isFalse()
++    assertThat(view.layout).isNotNull()
++    assertThat(span.drawCalls + span.preDrawCalls).isGreaterThan(0)
 +  }
 +
-+  /** A view that no commit has taken yet is still preallocated. */
-+  @Test
-+  fun native_drainPreallocationQueue_preallocatesViewNotYetCommitted() {
-+    val helper = createTestHelper()
-+    helper.startSurface(surfaceId)
-+    helper.queuePreallocation(surfaceId, 42)
-+
-+    helper.drainPreallocationQueue()
-+
-+    assertThat(helper.isTagAllocated(surfaceId, 42)).isTrue()
-+  }
-+
-   /** Without the pull model, a committed family does not destroy its view. */
    @Test
-   fun native_destroyCommittedView_keepsPreallocatedView() {
-```
-
-**File**: `packages/react-native/ReactAndroid/src/test/java/com/facebook/react/fabric/FabricMountingManagerTestHelper.kt` (modified, +4/-0)
-```diff
-@@ -41,6 +41,10 @@ private constructor(fabricUIManager: FabricUIManager) : HybridClassBase() {
+   fun drawsGlyphInkOutsideLineHeightWhenOverflowIsVisible() {
+     val bitmap = drawReactTextViewWithOverflow(null)
+@@ -351,6 +386,19 @@ class ReactTextViewTest {
+     }
+   }
  
-   external fun executeCreateMutation(surfaceId: Int, tag: Int)
- 
-+  external fun executeDeleteMutation(surfaceId: Int, tag: Int)
++  private class RecordingCanvasEffectSpan : CanvasEffectSpan() {
++    var preDrawCalls = 0
++    var drawCalls = 0
 +
-+  external fun commitQueuedView(tag: Int)
++    override fun onPreDraw(start: Int, end: Int, canvas: Canvas, layout: Layout) {
++      preDrawCalls++
++    }
 +
-   external fun dropFamily(tag: Int)
- 
-   external fun destroyUnmountedView(surfaceId: Int, tag: Int)
++    override fun onDraw(start: Int, end: Int, canvas: Canvas, layout: Layout) {
++      drawCalls++
++    }
++  }
++
+   private class OverflowingInkSpan(private val lineHeight: Int) : ReplacementSpan() {
+     override fun getSize(
+         paint: Paint,
 ```
 
 ---
 
-### Incident Patch 2: `bfea95fb` (2026-11-17)
-**Commit Message**: Keep the iOS renderer scheduler alive through instance shutdown
+### Incident Patch 2: `3113e81f` (2026-11-19)
+**Commit Message**: [CI] Reuse iOS template app builds across E2E retries
 
-## Summary
+## Summary:
 
-Fixes #59721.
+An iOS template-app E2E retry currently rebuilds Debug and Release and reruns both configurations. Separate compilation from testing so test retries download the original successful apps, select only unsuccessful configurations, and resume Maestro flows that have not passed.
 
-During a normal bridgeless reload, `RCTInstance::invalidate` suspends the surface presenter before JS-thread cleanup runs. Suspension can destroy the renderer scheduler and its delegate proxy while the current JS task still has rendering updates capturing the proxy by raw pointer.
+Builds and tests retain up to three attempts. Successful build configurations are carried forward while unsuccessful builds retry independently. Configuration-specific results prevent one passing matrix leg from overwriting another failure; missing results remain failures. Flow state is scoped to the configuration and GitHub run attempt, and malformed state is discarded before rerunning flows. Cancellation prevents further retries, and the final report fails when either configuration has not passed.
 
-Retain the scheduler through that cleanup, and clear its Objective-C delegate after stopping surfaces. Before dispatching cleanup, permanently remove its layout-animation run-loop observer on main. Scheduler destruction then stays in the same JS cleanup block as runtime destruction, with the scheduler released first. This prevents both an observer callout racing teardown and queued JSI handles outliving the runtime. It adds no per-rendering-callback guard, synchronous main wait, or JS-to-main-to-JS destruction round trip.
+This PR targets main and preserves its existing runner and simulator configuration, including the arm64 executable check in the extracted build workflow.
 
-Add three native lifecycle tests, the required CocoaPods Yoga header dependency for the scheduler import, and regenerated Apple API snapshots.
+## Changelog:
 
-## Changelog
+[INTERNAL] [CHANGED] - Reuse iOS template app builds and completed flows across CI retries.
 
-[IOS] [FIXED] - Prevent a queued view command from accessing a destroyed scheduler delegate during a normal bridgeless reload
+## Test Plan:
 
-## Test Pla
+- Passed: `yarn test .github/workflow-scripts/__tests__/template-app-ci
 
-**File**: `packages/react-native/React/Fabric/RCTScheduler.h` (modified, +3/-0)
+**File**: `.github/workflow-scripts/__tests__/template-app-ci-state-test.js` (added, +277/-0)
 ```diff
-@@ -62,6 +62,9 @@ NS_ASSUME_NONNULL_BEGIN
- 
- - (void)setupAnimationDriver:(const facebook::react::SurfaceHandler &)surfaceHandler;
- 
-+// Permanently removes the layout-animation observer. Call on the main queue.
-+- (void)stopObservingLayoutAnimations;
-+
- - (void)onAnimationStarted;
- 
- - (void)onAllAnimationsComplete;
-```
-
-**File**: `packages/react-native/React/Fabric/RCTScheduler.mm` (modified, +7/-0)
-```diff
-@@ -8,6 +8,7 @@
- #import "RCTScheduler.h"
- 
- #import <QuartzCore/CADisplayLink.h>
-+#import <React/RCTAssert.h>
- #import <cxxreact/TraceSection.h>
- #import <react/featureflags/ReactNativeFeatureFlags.h>
- #import <react/renderer/animations/LayoutAnimationDriver.h>
-@@ -258,6 +259,12 @@ - (void)setupAnimationDriver:(const facebook::react::SurfaceHandler &)surfaceHan
-   surfaceHandler.getMountingCoordinator()->setMountingOverrideDelegate(_animationDriver);
- }
- 
-+- (void)stopObservingLayoutAnimations
-+{
-+  RCTAssertMainQueue();
-+  _uiRunLoopObserver.reset();
-+}
-+
- - (void)onAnimationStarted
- {
-   if (_uiRunLoopObserver) {
-```
-
-**File**: `packages/react-native/React/Fabric/RCTSurfacePresenter.mm` (modified, +1/-0)
-```diff
-@@ -234,6 +234,7 @@ - (BOOL)suspend
-   }
- 
-   [self _stopAllSurfacesWithScheduler:scheduler];
-+  scheduler.delegate = nil;
- 
-   return YES;
- }
-```
-
-**File**: `packages/react-native/ReactCommon/react/runtime/platform/ios/React-RuntimeApple.podspec` (modified, +2/-0)
-```diff
-@@ -18,6 +18,7 @@ end
- 
- header_search_paths = [
-   "$(PODS_ROOT)/Headers/Private/React-Core",
-+  "$(PODS_ROOT)/Headers/Private/Yoga",
-   "$(PODS_TARGET_SRCROOT)/../../../..",
-   "$(PODS_TARGET_SRCROOT)/../../../../..",
- ]
-@@ -50,6 +51,7 @@ Pod::Spec.new do |s|
-   s.dependency "React-CoreModules"
-   s.dependency "React-NativeModulesApple"
-   s.dependency "React-RCTFabric"
-+  s.dependency "Yoga"
-   s.dependency "React-RuntimeCore"
-   s.dependency "React-Mapbuffer"
-   s.dependency "React-jserrorhandler"
-```
-
-**File**: `packages/react-native/ReactCommon/react/runtime/platform/ios/ReactCommon/RCTInstance.mm` (modified, +30/-21)
-```diff
-@@ -29,6 +29,7 @@
- #import <React/RCTLogBox.h>
- #import <React/RCTPerformanceLogger.h>
- #import <React/RCTRedBox.h>
-+#import <React/RCTScheduler.h>
- #import <React/RCTSurfacePresenter.h>
- #import <ReactCommon/RCTTurboModule.h>
- #import <ReactCommon/RCTTurboModuleManager.h>
-@@ -206,28 +207,36 @@ - (void)invalidate
-   }
-   // suspend shouldn't be called under _invalidationMutex: it notifies surface observers,
-   // which can call callFunctionOnJSModule and deadlock on the same mutex.
-+  // Queued rendering updates capture the scheduler's delegate by raw pointer.
-+  // Stop its run-loop observer on main, but keep it alive until queued JS work
-+  // has drained. Release it before the runtime so its queued JSI handles remain valid.
-+  __block RCTScheduler *scheduler = _surfacePresenter.scheduler;
-   [_surfacePresenter suspend];
--  [_jsThreadManager dispatchToJSThread:^{
--    /**
--     * Every TurboModule is invalidated on its own method queue.
--     * TurboModuleManager invalidate blocks the calling thread until all TurboModules are invalidated.
--     */
--    [self->_turboModuleManager invalidate];
--
--    // Clean up all the Resources
--    self->_reactInstance = nullptr;
--    self->_jsRuntimeFactory = nullptr;
--    self->_appTMMDelegate = nil;
--    self->_delegate = nil;
--    [self->_displayLink invalidate];
--    self->_displayLink = nil;
--
--    self->_turboModuleManager = nil;
--    self->_performanceLogger = nil;
--
--    // Terminate the JavaScript thread, so that no other work executes after this block.
--    self->_jsThreadManager = nil;
--  }];
-+  RCTExecuteOnMainQueue(^{
-+    [scheduler stopObservingLayoutAnimations];
-+    [self->_jsThreadManager dispatchToJSThread:^{
-+      /**
-+       * Every TurboModule is invalidated on its own method queue.
-+       * TurboModuleManager invalidate blocks the calling thread until all TurboModules are invalidated.
-+       */
-+      [self->_turboModuleManager invalidate];
-+
-+      // Clean up all the Resources
-+      scheduler = nil;
-+      self->_reactInstance = nullptr;
-+      self->_jsRuntimeFactory = nullptr;
-+      self->_appTMMDelegate = nil;
-+      self->_delegate = nil;
-+      [self->_displayLink invalidate];
-+      self->_displayLink = nil;
-+
-+      self->_turboModuleManager = nil;
-+      self->_performanceLogger = nil;
-+
-+      // Terminate the JavaScript thread, so that no other work executes after this block.
-+      self->_jsThreadManager = nil;
-+    }];
-+  });
- }
- 
- - (std::shared_ptr<CallInvoker>)jsCallInvoker
-```
-
-**File**: `packages/rn-tester/RNTesterPods.xcodeproj/project.pbxproj` (modified, +4/-0)
-```diff
-@@ -51,6 +51,7 @@
- 		F0D621C32BBB9E38005960AC /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = F0D621C22BBB9E38005960AC /* PrivacyInfo.xcprivacy */; };
- 		F1A0B1C23D4E5F6071829302 /* RCTTurboModuleArrayBufferTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = F1A0B1C23D4E5F6071829301 /* RCTTurboModuleArrayBufferTests.mm */; };
- 		F1A0B1C23D4E5F6071829322 /* RCTTurboModuleStringConversionTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = F1A0B1C23D4E5F6071829321 /* RCTTurboModuleStringConversionTests.mm */; };
-+		F1A0B1C23D4E5F6071829342 /* RCTInstanceInvalidationTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = F1A0B1C23D4E5F6071829341 /* RCTInstanceInvalidationTests.mm */; };
- 		D1A60AD11B9247A080734F02 /* RCTDevLoadingViewTests.m in Sources */ = {isa = PBXBuildFile; fileRef = D1A60AD11B9247A080734F01 /* RCTDevLoadingViewTests.m */; };
- /* End PBXBuildFile section */
- 
-@@ -150,6 +151,7 @@
- 		F0D621C22BBB9E38005960AC /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
- 		F1A0B1C23D4E5F6071829301 /* RCTTurboModuleArrayBufferTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RCTTurboModuleArrayBufferTests.mm; sourceTree = "<group>"; };
- 		F1A0B1C23D4E5F6071829321 /* RCTTurboModuleStringConversionTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RCTTurboModuleStringConversionTests.mm; sourceTree = "<group>"; };
-+		F1A0B1C23D4E5F6071829341 /* RCTInstanceInvalidationTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RCTInstanceInvalidationTests.mm; sourceTree = "<group>"; };
- 		D1A60AD11B9247A080734F01 /* RCTDevLoadingViewTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RCTDevLoadingViewTests.m; sourceTree = "<group>"; };
- /* End PBXFileReference section */
- 
-@@ -311,6 +313,7 @@
- 				E7DB20CB22B2BAA5005AC45F /* RCTModuleMethodTests.mm */,
- 				F1A0B1C23D4E5F6071829301 /* RCTTurboModuleArrayBufferTests.mm */,
- 				F1A0B1C23D4E5F6071829321 /* RCTTurboModuleStringConversionTests.mm */,
-+				F1A0B1C23D4E5F6071829341 /* RCTInstanceInvalidationTests.mm */,
- 				E7DB20CF22B2BAA5005AC45F /* RCTMultipartStreamReaderTests.m */,
- 				A975CA6B2C05EADE0043F72A /* RCTNetworkTaskTests.m */,
- 				E7DB20BE22B2BAA4005AC45F /* RCTNativeAnimatedNodesManagerTests.m */,
-@@ -623,6 +626,7 @@
- 				E7DB20E822B2BAA6005AC45F /* RCTModuleMethodTests.mm in Sources */,
- 				F1A0B1C23D4E5F6071829302 /* RCTTurboModuleArrayBufferTests.mm in Sources */,
- 				F1A0B1C23D4E5F6071829322 /* RCTTurboModuleStringConversionTests.mm in Sources */,
-+				F1A0B1C23D4E5F6071829342 /* RCTInstanceInvalidationTests.mm in Sources */,
- 				E7DB20E222B2BAA6005AC45F /* RCTGzipTests.m in Sources */,
- 				E7DB20ED22B2BAA6005AC45F /* RCTURLUtilsTests.m in Sources */,
- 				E7DB20D322B2BAA6005AC45F /* RCTBlobManagerTests.m in Sources */,
-```
-
-**File**: `packages/rn-tester/RNTesterUnitTests/RCTInstanceInvalidationTests.mm` (added, +196/-0)
-```diff
-@@ -0,0 +1,196 @@
-+/*
+@@ -0,0 +1,277 @@
++/**
 + * Copyright (c) Meta Platforms, Inc. and affiliates.
 + *
 + * This source code is licensed under the MIT license found in the
 + * LICENSE file in the root directory of this source tree.
++ *
++ * @noflow
++ * @format
 + */
 +
-+#import <CoreFoundation/CoreFoundation.h>
-+#import <XCTest/XCTest.h>
++const {
++  configurationResults,
++  prepareTestState,
++  recordConfigurationResult,
++  reportConfigurationResults,
++} = require('../template-app-ci-state');
++const fs = require('node:fs');
++const os = require('node:os');
++const path = require('node:path');
 +
-+#import <React/RCTSurfacePresenter.h>
-+#import <ReactCommon/RCTInstance.h>
++const bothFlavors = ['Debug', 'Release'];
 +
-+@interface RCTSchedulerLifetimeProbe : NSObject
-+@property (nonatomic, weak) id delegate;
-+@property (nonatomic, copy) void (^onDealloc)(BOOL onMainThread);
-+@property (nonatomic, copy) void (^onStopObserving)(BOOL onMainThread);
-+@property (nonatomic, copy) dispatch_block_t onTick;
-+- (void)startObserving;
-+- (void)stopObservingLayoutAnimations;
-+@end
-+
-+@implementation RCTSchedulerLifetimeProbe {
-+  CFRunLoopObserverRef _observer;
++function results(outputs, flavors = bothFlavors, previousResults = {}) {
++  return configurationResults({outputs, flavors, previousResults});
 +}
 +
-+- (void)startObserving
-+{
-+  void *unretainedSelf = (__bridge void *)self;
-+  _observer = CFRunLoopObserverCreateWithHandler(
-+      kCFAllocatorDefault, kCFRunLoopBeforeWaiting, true, 0, ^(CFRunLoopObserverRef, CFRunLoopActivity) {
-+        __unsafe_unretained RCTSchedulerLifetimeProbe *probe = (__bridge RCTSchedulerLifetimeProbe *)unretainedSelf;
-+        dispatch_block_t tick = probe.onTick;
-+        if (tick) {
-+          tick();
-+        }
-+      });
-+  CFRunLoopAddObserver(CFRunLoopGetMain(), _observer, kCFRunLoopCommonModes);
-+}
-+
-+- (void)stopObservingLayoutAnimations
-+{
-+  if (_observer) {
-+    CFRunLoopRemoveObserver(CFRunLoopGetMain(), _observer, kCFRunLoopCommonModes);
-+    CFRelease(_observer);
-+    _observer = nullptr;
-+  }
-+  if (_onStopObserving) {
-+    _onStopObserving([NSThread isMainThread]);
-+  }
-+}
-+
-+- (void)dealloc
-+{
-+  if (_observer) {
-+    CFRunLoopRemoveObserver(CFRunLoopGetMain(), _observer, kCFRunLoopCommonModes);
-+    CFRelease(_observer);
-+  }
-+  if (_onDealloc) {
-+    _onDealloc([NSThread isMainThread]);
-+  }
-+}
-+@end
-+
-+@interface RCTJSThreadManagerStub : NSObject
-+@property (nonatomic, copy) dispatch_block_t pendingWork;
-+@end
-+
-+@implementation RCTJSThreadManagerStub
-+- (void)dispatchToJSThread:(dispatch_block_t)work
-+{
-+  self.pendingWork = work;
-+}
-+@end
-+
-+@interface RCTInstanceInvalidationTests : XCTestCase
-+@end
-+
-+@implementation RCTInstanceInvalidationTests
-+
-+- (void)runJSWork:(dispatch_block_t)work
-+{
-+  dispatch_semaphore_t finished = dispatch_semaphore_create(0);
-+  dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^{
-+    @autoreleasepool {
-+      work();
-+    }
-+    dispatch_semaphore_signal(finished);
++describe('template app configuration retries', () => {
++  it('does not retry when both configurations pass', () => {
++    expect(
++      results({'debug-result': 'passed', 'release-result': 'passed'}),
++    ).toEqual({
++      results: {Debug: 'passed', Release: 'passed'},
++      failedFlavors: [],
++      status: 'success',
++    });
 +  });
-+  XCTAssertEqual(dispatch_semaphore_wait(finished, dispatch_time(DISPATCH_TIME_NOW, 3 * NSEC_PER_SEC)), 0);
-+}
 +
-+- (void)testInvalidateStopsObserverOnMainAndReleasesSchedulerDuringJSCleanup
-+{
-+  XCTAssertTrue([NSThread isMainThread]);
-+  RCTSurfacePresenter *presenter = [RCTSurfacePresenter new];
-+  RCTJSThreadManagerStub *jsThreadManager = [RCTJSThreadManagerStub new];
-+  RCTInstance *instance = [RCTInstance new];
-+  [instance setValue:presenter forKey:@"surfacePresenter"];
-+  [instance setValue:jsThreadManager forKey:@"jsThreadManager"];
++  it.each(bothFlavors)('retries only the failed %s configuration', flavor => {
++    const outputs = {'debug-result': 'passed', 'release-result': 'passed'};
++    outputs[`${flavor.toLowerCase()}-result`] = 'failed';
++    expect(results(outputs).failedFlavors).toEqual([flavor]);
++  });
 +
-+  XCTestExpectation *released = [self expectationWithDescription:@"Scheduler released during JS cleanup"];
-+  __block BOOL observerStoppedOnMain = NO;
-+  __block BOOL releasedBeforeJSThreadCleanup = NO;
-+  __weak RCTInstance *weakInstance = instance;
-+  __weak RCTSchedulerLifetimeProbe *weakScheduler;
-+  @autoreleasepool {
-+    RCTSchedulerLifetimeProbe *scheduler = [RCTSchedulerLifetimeProbe new];
-+    scheduler.delegate = presenter;
-+    scheduler.onStopObserving = ^(BOOL onMainThread) {
-+      observerStoppedOnMain = onMainThread;
++  it('retains a successful build while retrying the other configuration', () => {
++    const first = results({
++      'debug-result': 'passed',
++      'release-result': 'failed',
++    });
++    const second = results(
++      {'release-result': 'passed'},
++      first.failedFlavors,
++      first.results,
++    );
++    expect(second.status).toBe('success');
++    expect(second.results).toEqual({Debug: 'passed', Release: 'passed'});
++  });
++
++  it('keeps a configuration retryable after its result step is lost', () => {
++    const first = results({'debug-result': 'passed'});
++    const second = results({}, first.failedFlavors, first.results);
++    expect(second).toEqual({
++      results: {Debug: 'passed', Release: 'failed'},
++      failedFlavors: ['Release'],
++      status: 'failure',
++    });
++  });
++
++  it('does not reuse an old pass for a configuration attempted again', () => {
++    expect(
++      results({}, ['Debug'], {Debug: 'passed', Release: 'passed'}),
++    ).toEqual({
++      results: {Debug: 'failed', Release: 'passed'},
++      failedFlavors: ['Debug'],
++      status: 'failure',
++    });
++  });
++
++  it('never treats an omitted configuration without an earlier pass as passed', () => {
++    expect(
++      results({'release-result': 'passed'}, ['Release']).failedFlavors,
++    ).toEqual(['Debug']);
++  });
++
++  it.each([[], ['Debug', 'Debug'], ['Profile'], 'Debug'])(
++    'rejects an invalid retry matrix %p',
++    flavors => {
++      expect(() => results({}, flavors)).toThrow('unique Debug/Release');
++    },
++  );
++
++  it('writes independent outputs for both matrix legs', () => {
++    const core = {setOutput: jest.fn()};
++    recordConfigurationResult({core, flavor: 'Release', passed: false});
++    recordConfigurationResult({core, flavor: 'Debug', passed: true});
++    expect(core.setOutput.mock.calls).toEqual([
++      ['release-result', 'failed'],
++      ['debug-result', 'passed'],
++    ]);
++  });
++
++  it('rejects an unknown configuration when recording results', () => {
++    expect(() =>
++      recordConfigurationResult({
++        core: {setOutput: jest.fn()},
++        flavor: 'Profile',
++        passed: true,
++      }),
++    ).toThrow('Unknown template app configuration');
++  });
++});
++
++describe('template app final reporting', () => {
++  function core() {
++    const result = {
++      setOutput: jest.fn(),
++      setFailed: jest.fn(),
++      warning: jest.fn(),
++      summary: {addRaw: jest.fn(), write: jest.fn().mockResolvedValue()},
 +    };
-+    scheduler.onDealloc = ^(BOOL) {
-+      releasedBeforeJSThreadCleanup = [weakInstance valueForKey:@"jsThreadManager"] != nil;
-+      [released fulfill];
-+    };
-+    weakScheduler = scheduler;
-+    // Exercise real instance invalidation and presenter suspension without a JS VM.
-+    [presenter setValue:scheduler forKey:@"scheduler"];
++    result.summary.addRaw.mockReturnValue(result.summary);
++    return result;
 +  }
 +
-+  @autoreleasepool {
-+    [instance invalidate];
-+    XCTAssertNil(presenter.scheduler);
-+    XCTAssertNotNil(weakScheduler);
-+    XCTAssertNil(weakScheduler.delegate);
-+    XCTAssertNotNil(jsThreadManager.pendingWork);
-+    XCTAssertTrue(observerStoppedOnMain);
++  async function report(jobResult, outputs, failOnError = false) {
++    const result = core();
++    await reportConfigurationResults({
++      context: {
++        serverUrl: 'https://github.com',
++        repo: {owner: 'react', repo: 'react-native'},
++        runId: 1,
++      },
++      core: result,
++      needs: {test: {result: jobResult, outputs}},
++      job: 'test',
++      flavors: ['Release'],
++      previousResults: {Debug: 'passed', Release: 'failed'},
++      failOnError,
++      attempt: 1,
++    });
++    return result;
 +  }
 +
-+  dispatch_block_t drainWork = jsThreadManager.pendingWork;
-+  [self runJSWork:drainWork];
++  it('reports success after the previously unsuccessful lane passes', async () => {
++    const result = await report('success', {'release-result': 'passed'}, true);
++    expect(result.setOutput).toHaveBeenCalledWith('status', 'success');
++    expect(result.setOutput).toHaveBeenCalledWith('failed-flavors', '[]');
++    expect(result.setFailed).not.toHaveBeenCalled();
++  });
 +
-+  [self waitForExpectations:@[ released ] timeout:3];
-+  XCTAssertTrue(releasedBeforeJSThreadCleanup);
-+  // Keeping the cleanup block itself must not keep the scheduler alive.
-+  XCTAssertNil(weakScheduler);
-+  XCTAssertNil([instance valueForKey:@"jsThreadManager"]);
-+  jsThreadManager.pendingWork = nil;
-+}
-+
-+- (void)testStoppedObserverDoesNotRunWhileWaitingForJSCleanup
-+{
-+  XCTAssertTrue([NSThread isMainThread]);
-+  RCTSurfacePresenter *presenter = [RCTSurfacePresenter new];
-+  RCTJSThreadManagerStub *jsThreadManager = [RCTJSThreadManagerStub new];
-+  RCTInstance *instance = [RCTInstance new];
-+  [instance setValue:presenter forKey:@"surfacePresenter"];
-+  [i
++  it('reports intermediate failures without failing the report job', async () => {
++    const result = await report('success', {'release-result': 'failed'});
++    expect(result.
 ```
 
-**File**: `scripts/cxx-api/api-snapshots/ReactAppleDebugCxx.api` (modified, +1/-0)
+**File**: `.github/workflow-scripts/template-app-ci-state.js` (added, +131/-0)
 ```diff
-@@ -1614,6 +1614,7 @@ interface RCTScheduler : public NSObject {
-   public virtual void removeEventListener:(const std::shared_ptr<facebook::react::EventListener>& listener);
-   public virtual void reportMount:(facebook::react::SurfaceId surfaceId);
-   public virtual void setupAnimationDriver:(const facebook::react::SurfaceHandler& surfaceHandler);
-+  public virtual void stopObservingLayoutAnimations();
-   public virtual void unregisterSurface:(const facebook::react::SurfaceHandler& surfaceHandler);
- }
+@@ -0,0 +1,131 @@
++/**
++ * Copyright (c) Meta Platforms, Inc. and affiliates.
++ *
++ * This source code is licensed under the MIT license found in the
++ * LICENSE file in the root directory of this source tree.
++ *
++ * @noflow
++ * @format
++ */
++
++const {collectFlows, loadState} = require('./maestro-ios');
++const {reportTestResults} = require('./report-test-results');
++const fs = require('node:fs');
++const path = require('node:path');
++
++const FLAVORS = ['Debug', 'Release'];
++
++function recordConfigurationResult({core, flavor, passed}) {
++  if (!FLAVORS.includes(flavor)) {
++    throw new Error(`Unknown template app configuration: ${flavor}`);
++  }
++  // Each matrix leg writes only its own result, so a passing leg cannot
++  // overwrite the failure of another configuration.
++  core.setOutput(
++    `${flavor.toLowerCase()}-result`,
++    passed ? 'passed' : 'failed',
++  );
++}
++
++function configurationResults({flavors, previousResults, outputs}) {
++  if (
++    !Array.isArray(flavors) ||
++    flavors.length === 0 ||
++    flavors.some(flavor => !FLAVORS.includes(flavor)) ||
++    new Set(flavors).size !== flavors.length
++  ) {
++    throw new Error(
++      'Expected a non-empty array of unique Debug/Release configurations',
++    );
++  }
++
++  const results = Object.fromEntries(
++    FLAVORS.map(flavor => {
++      const result = flavors.includes(flavor)
++        ? outputs[`${flavor.toLowerCase()}-result`]
++        : previousResults[flavor];
++      // Missing results include runner/setup/reporting failures. They must
++      // remain eligible for another attempt rather than becoming a pass.
++      return [flavor, result === 'passed' ? 'passed' : 'failed'];
++    }),
++  );
++  const failedFlavors = FLAVORS.filter(flavor => results[flavor] !== 'passed');
++  return {
++    results,
++    failedFlavors,
++    status: failedFlavors.length === 0 ? 'success' : 'failure',
++  };
++}
++
++async function reportConfigurationResults({
++  context,
++  core,
++  needs,
++  job,
++  flavors,
++  previousResults,
++  failOnError,
++  attempt,
++}) {
++  const current = needs[job];
++  const result = configurationResults({
++    flavors,
++    previousResults,
++    outputs: current.outputs ?? {},
++  });
++  // A failed matrix job also needs a retry if its final result step was lost.
++  // Configuration results remain authoritative for omitted successful legs.
++  if (current.result !== 'success' && result.status === 'success') {
++    for (const flavor of flavors) {
++      result.results[flavor] = 'failed';
++    }
++    result.failedFlavors = FLAVORS.filter(
++      flavor => result.results[flavor] !== 'passed',
++    );
++    result.status = 'failure';
++  }
++  core.setOutput('results', JSON.stringify(result.results));
++  core.setOutput('failed-flavors', JSON.stringify(result.failedFlavors));
++  await reportTestResults({
++    context,
++    core,
++    needs: {
++      [job]: {
++        ...current,
++        outputs: {...current.outputs, status: result.status},
++      },
++    },
++    failOnError,
++    attempt,
++  });
++}
++
++function prepareTestState(statePath, flowPath) {
++  let state;
++  try {
++    state = loadState(statePath);
++  } catch {
++    // A missing/invalid state download is recoverable: execute the flows
++    // again, and replace malformed JSON before the Maestro runner reads it.
++    fs.rmSync(statePath, {force: true});
++    return true;
++  }
++  const flows = collectFlows(flowPath);
++  return !(
++    flows.length > 0 &&
++    flows.every(flow => {
++      const key = path
++        .relative(process.cwd(), path.resolve(flow))
++        .split(path.sep)
++        .join('/');
++      return state.flows[key]?.status === 'passed';
++    })
++  );
++}
++
++module.exports = {
++  configurationResults,
++  prepareTestState,
++  recordConfigurationResult,
++  reportConfigurationResults,
++};
+```
+
+**File**: `.github/workflows/build-ios-templateapp.yml` (added, +149/-0)
+```diff
+@@ -0,0 +1,149 @@
++name: Build iOS Template App
++
++permissions:
++  contents: read
++  actions: read
++
++on:
++  workflow_call:
++    inputs:
++      flavors:
++        description: 'JSON array of configurations to build'
++        type: string
++        default: '["Debug", "Release"]'
++      previous-results:
++        description: 'Results retained from an earlier build attempt in this run'
++        type: string
++        default: '{}'
++      fail-on-error:
++        type: boolean
++        default: false
++    outputs:
++      status:
++        description: 'Whether both configurations have built successfully'
++        value: ${{ jobs.report.outputs.status }}
++      results:
++        description: 'Build results for both configurations, including earlier attempts'
++        value: ${{ jobs.report.outputs.results }}
++      failed-flavors:
++        description: 'JSON array of configurations that still need a successful build'
++        value: ${{ jobs.report.outputs.failed-flavors }}
++
++jobs:
++  build:
++    runs-on: macos-26
++    outputs:
++      debug-result: ${{ steps.report-status.outputs.debug-result }}
++      release-result: ${{ steps.report-status.outputs.release-result }}
++      failure-debug: ${{ steps.report-status.outputs.failure-debug }}
++      failure-release: ${{ steps.report-status.outputs.failure-release }}
++    strategy:
++      fail-fast: false
++      matrix:
++        flavor: ${{ fromJSON(inputs.flavors) }}
++    steps:
++      - name: Checkout
++        uses: actions/checkout@v6
++      - name: Setup node.js
++        uses: ./.github/actions/setup-node
++      - name: Run yarn
++        uses: ./.github/actions/yarn-install
++      - name: Download React Native Package
++        uses: ./.github/actions/download-artifact
++        with:
++          name: react-native-package
++          path: /tmp/react-native-tmp
++      - name: Print /tmp folder
++        run: ls -lR /tmp/react-native-tmp
++      - name: Configure git
++        shell: bash
++        run: |
++          git config --global user.email "react-native-bot@meta.com"
++          git config --global user.name "React Native Bot"
++      - name: Create the app
++        run: |
++          REACT_NATIVE_PKG=$(find /tmp/react-native-tmp -type f -name "*.tgz")
++          echo "React Native tgs is $REACT_NATIVE_PKG"
++
++          # For stable branches, we want to use the stable branch of the template
++          # In all the other cases, we want to use "main"
++          BRANCH=${{ github.ref_name }}
++          if ! [[ $BRANCH == *-stable* ]]; then
++            BRANCH=main
++          fi
++
++          node ./scripts/e2e/init-project-e2e.js --projectName RNTestProject --currentBranch $BRANCH --directory /tmp/RNTestProject --pathToLocalReactNative $REACT_NATIVE_PKG
++      - name: Download the XCFrameworks built in this run
++        uses: ./.github/actions/setup-spm-artifacts
++        with:
++          working-directory: /tmp/RNTestProject/ios
++      - name: Convert the app to SwiftPM
++        working-directory: /tmp/RNTestProject/ios
++        run: RN_STRICT_API=1 npx react-native spm add --deintegrate --artifacts /tmp/spm-artifacts --download skip
++      - name: Build the app
++        working-directory: /tmp/RNTestProject/ios
++        run: |
++          xcodebuild \
++            -scheme "RNTestProject" \
++            -project RNTestProject.xcodeproj \
++            -configuration "${{ matrix.flavor }}" \
++            -sdk "iphonesimulator" \
++            -destination "generic/platform=iOS Simulator" \
++            -derivedDataPath "/tmp/RNTestProject"
++      - name: Verify app supports the arm64 simulator
++        run: lipo /tmp/RNTestProject/Build/Products/${{ matrix.flavor }}-iphonesimulator/RNTestProject.app/RNTestProject -verify_arch arm64
++      - name: Upload app
++        uses: ./.github/actions/upload-artifact
++        with:
++          name: RNTestProject-${{ matrix.flavor }}
++          overwrite: true
++          path: /tmp/RNTestProject/Build/Products/${{ matrix.flavor }}-iphonesimulator/RNTestProject.app
++      - name: Report status
++        id: report-status
++        if: always()
++        uses: actions/github-script@v8
++        env:
++          STEP_RESULTS: ${{ toJSON(steps) }}
++          JOB_STATUS: ${{ job.status }}
++          TEST_FLAVOR: ${{ matrix.flavor }}
++        with:
++          script: |
++            const {recordJobFailure} = require('./.github/workflow-scripts/report-test-results');
++            const {recordConfigurationResult} = require('./.github/workflow-scripts/template-app-ci-state');
++            recordConfigurationResult({core, flavor: process.env.TEST_FLAVOR,
++              passed: process.env.JOB_STATUS === 'success'});
++            await recordJobFailure({github, context, core,
++              steps: JSON.parse(process.env.STEP_RESULTS),
++              flavor: process.env.TEST_FLAVOR,
++              runnerName: process.env.RUNNER_NAME,
++              jobStatus: process.env.JOB_STATUS,
++              attempt: Number(process.env.GITHUB_RUN_ATTEMPT)});
++
++  rep
+```
+
+**File**: `.github/workflows/e2e-ios-templateapp.yml` (modified, +69/-98)
+```diff
+@@ -7,139 +7,88 @@ permissions:
+ on:
+   workflow_call:
+     inputs:
++      flavors:
++        description: 'JSON array of configurations to test'
++        type: string
++        default: '["Debug", "Release"]'
++      previous-results:
++        description: 'Results retained from an earlier test attempt in this run'
++        type: string
++        default: '{}'
++      retry-attempt:
++        type: number
++        default: 0
+       fail-on-error:
+         type: boolean
+         default: false
+     outputs:
+       status:
+-        description: 'The result of the E2E tests (success or failure)'
++        description: 'Whether both configurations have passed E2E'
+         value: ${{ jobs.report.outputs.status }}
++      results:
++        description: 'Test results for both configurations, including earlier attempts'
++        value: ${{ jobs.report.outputs.results }}
++      failed-flavors:
++        description: 'JSON array of configurations that still need successful E2E'
++        value: ${{ jobs.report.outputs.failed-flavors }}
+ 
+ jobs:
+-  build:
+-    runs-on: macos-26
+-    outputs:
+-      failure-debug: ${{ steps.report-status.outputs.failure-debug }}
+-      failure-release: ${{ steps.report-status.outputs.failure-release }}
+-    strategy:
+-      fail-fast: false
+-      matrix:
+-        flavor: [Debug, Release]
+-    steps:
+-      - name: Checkout
+-        uses: actions/checkout@v6
+-      - name: Setup node.js
+-        uses: ./.github/actions/setup-node
+-      - name: Run yarn
+-        uses: ./.github/actions/yarn-install
+-      - name: Download React Native Package
+-        uses: ./.github/actions/download-artifact
+-        with:
+-          name: react-native-package
+-          path: /tmp/react-native-tmp
+-      - name: Print /tmp folder
+-        run: ls -lR /tmp/react-native-tmp
+-      - name: Configure git
+-        shell: bash
+-        run: |
+-          git config --global user.email "react-native-bot@meta.com"
+-          git config --global user.name "React Native Bot"
+-      - name: Create the app
+-        run: |
+-          REACT_NATIVE_PKG=$(find /tmp/react-native-tmp -type f -name "*.tgz")
+-          echo "React Native tgs is $REACT_NATIVE_PKG"
+-
+-          # For stable branches, we want to use the stable branch of the template
+-          # In all the other cases, we want to use "main"
+-          BRANCH=${{ github.ref_name }}
+-          if ! [[ $BRANCH == *-stable* ]]; then
+-            BRANCH=main
+-          fi
+-
+-          node ./scripts/e2e/init-project-e2e.js --projectName RNTestProject --currentBranch $BRANCH --directory /tmp/RNTestProject --pathToLocalReactNative $REACT_NATIVE_PKG
+-      - name: Download the XCFrameworks built in this run
+-        uses: ./.github/actions/setup-spm-artifacts
+-        with:
+-          working-directory: /tmp/RNTestProject/ios
+-      - name: Convert the app to SwiftPM
+-        working-directory: /tmp/RNTestProject/ios
+-        run: RN_STRICT_API=1 npx react-native spm add --deintegrate --artifacts /tmp/spm-artifacts --download skip
+-      - name: Build the app
+-        working-directory: /tmp/RNTestProject/ios
+-        run: |
+-          xcodebuild \
+-            -scheme "RNTestProject" \
+-            -project RNTestProject.xcodeproj \
+-            -configuration "${{ matrix.flavor }}" \
+-            -sdk "iphonesimulator" \
+-            -destination "generic/platform=iOS Simulator" \
+-            -derivedDataPath "/tmp/RNTestProject"
+-      - name: Verify app supports the arm64 simulator
+-        run: lipo /tmp/RNTestProject/Build/Products/${{ matrix.flavor }}-iphonesimulator/RNTestProject.app/RNTestProject -verify_arch arm64
+-      - name: Upload app
+-        uses: ./.github/actions/upload-artifact
+-        with:
+-          name: RNTestProject-${{ matrix.flavor }}
+-          overwrite: true
+-          path: /tmp/RNTestProject/Build/Products/${{ matrix.flavor }}-iphonesimulator/RNTestProject.app
+-      - name: Report status
+-        id: report-status
+-        if: always()
+-        uses: actions/github-script@v8
+-        env:
+-          STEP_RESULTS: ${{ toJSON(steps) }}
+-          JOB_STATUS: ${{ job.status }}
+-          TEST_FLAVOR: ${{ matrix.flavor }}
+-        with:
+-          script: |
+-            const {recordJobFailure} = require('./.github/workflow-scripts/report-test-results');
+-            await recordJobFailure({github, context, core,
+-              steps: JSON.parse(process.env.STEP_RESULTS),
+-              flavor: process.env.TEST_FLAVOR,
+-              runnerName: process.env.RUNNER_NAME,
+-              jobStatus: process.env.JOB_STATUS,
+-              attempt: Number(process.env.GITHUB_RUN_ATTEMPT)});
+-
+   test:
+-    needs: build
+     # Standard arm64 runner: run the simulator natively, as RNTester does.
+     runs-on: macos-26
+     outputs:
++      debug-result: ${{ steps.report-status.outputs.debug-result }}
++      release-result: ${{ steps.report-status.outputs.release-result }}
+       status: ${{ steps.report-status.outputs.status }}
+       failure-debug: $
+```
+
+**File**: `.github/workflows/test-all.yml` (modified, +47/-4)
+```diff
+@@ -153,23 +153,66 @@ jobs:
+     with:
+       platform: ios
+ 
+-  test_e2e_ios_templateapp:
+-    needs: [build_npm_package, prebuild_apple_dependencies, check_code_changes]
++  build_ios_templateapp:
++    needs:
++      [
++        build_npm_package,
++        prebuild_apple_dependencies,
++        prebuild_react_native_core,
++        check_code_changes,
++      ]
+     if: needs.check_code_changes.outputs.should_test_ios == 'true'
++    uses: ./.github/workflows/build-ios-templateapp.yml
++    secrets: inherit
++
++  build_ios_templateapp_retry_1:
++    needs: build_ios_templateapp
++    if: ${{ !cancelled() && (needs.build_ios_templateapp.outputs.status == 'failure' || needs.build_ios_templateapp.result == 'failure') }}
++    uses: ./.github/workflows/build-ios-templateapp.yml
++    with:
++      flavors: ${{ needs.build_ios_templateapp.outputs.failed-flavors || '["Debug", "Release"]' }}
++      previous-results: ${{ needs.build_ios_templateapp.outputs.results || '{}' }}
++    secrets: inherit
++
++  build_ios_templateapp_retry_2:
++    needs: build_ios_templateapp_retry_1
++    if: ${{ !cancelled() && (needs.build_ios_templateapp_retry_1.outputs.status == 'failure' || needs.build_ios_templateapp_retry_1.result == 'failure') }}
++    uses: ./.github/workflows/build-ios-templateapp.yml
++    with:
++      flavors: ${{ needs.build_ios_templateapp_retry_1.outputs.failed-flavors || '["Debug", "Release"]' }}
++      previous-results: ${{ needs.build_ios_templateapp_retry_1.outputs.results || '{}' }}
++      fail-on-error: true
++    secrets: inherit
++
++  test_e2e_ios_templateapp:
++    needs:
++      [
++        build_ios_templateapp,
++        build_ios_templateapp_retry_1,
++        build_ios_templateapp_retry_2,
++      ]
++    if: ${{ !cancelled() && (needs.build_ios_templateapp.outputs.status == 'success' || needs.build_ios_templateapp_retry_1.outputs.status == 'success' || needs.build_ios_templateapp_retry_2.outputs.status == 'success') }}
+     uses: ./.github/workflows/e2e-ios-templateapp.yml
+     secrets: inherit
+ 
+   test_e2e_ios_templateapp_retry_1:
+     needs: test_e2e_ios_templateapp
+-    if: ${{ always() && needs.test_e2e_ios_templateapp.outputs.status == 'failure' }}
++    if: ${{ !cancelled() && (needs.test_e2e_ios_templateapp.outputs.status == 'failure' || needs.test_e2e_ios_templateapp.result == 'failure') }}
+     uses: ./.github/workflows/e2e-ios-templateapp.yml
++    with:
++      flavors: ${{ needs.test_e2e_ios_templateapp.outputs.failed-flavors || '["Debug", "Release"]' }}
++      previous-results: ${{ needs.test_e2e_ios_templateapp.outputs.results || '{}' }}
++      retry-attempt: 1
+     secrets: inherit
+ 
+   test_e2e_ios_templateapp_retry_2:
+     needs: test_e2e_ios_templateapp_retry_1
+-    if: ${{ always() && needs.test_e2e_ios_templateapp_retry_1.outputs.status == 'failure' }}
++    if: ${{ !cancelled() && (needs.test_e2e_ios_templateapp_retry_1.outputs.status == 'failure' || needs.test_e2e_ios_templateapp_retry_1.result == 'failure') }}
+     uses: ./.github/workflows/e2e-ios-templateapp.yml
+     with:
++      flavors: ${{ needs.test_e2e_ios_templateapp_retry_1.outputs.failed-flavors || '["Debug", "Release"]' }}
++      previous-results: ${{ needs.test_e2e_ios_templateapp_retry_1.outputs.results || '{}' }}
++      retry-attempt: 2
+       fail-on-error: true
+     secrets: inherit
  
 ```
 
 ---
 
-### Incident Patch 3: `2a7b305c` (2026-11-17)
-**Commit Message**: [visual testing] open-example: Wait for RNTester to render before linking
+### Incident Patch 3: `05c0d3dd` (2026-11-20)
+**Commit Message**: Fix int truncation in JSI's default Runtime::push (#60062)
 
-RNTester ignores a deep link until its JS has rendered, but `open-example.yml` only waits for animations to end - which on a fresh iOS simulator happens ~1.4s after relaunch, before RNTester takes links at ~2.7s. Since #59994 sent the link once on iOS, 17 of 25 iOS capture jobs had a flow fail its first attempt this way (29 failures across almost every flow), and in one job the retries ran out.
+Summary:
 
-This waits for the "Components" label in RNTester's tab bar, which is on every screen including a restored example, before linking. The five button and switch flows that only waited for `example-container` - which a restored previous example also has, so a missed link could screenshot the wrong screen - now wait for an element only their example has.
+JSI's default `Runtime::push`, used by runtimes that don't override it such as HermesSandboxRuntime, converted the element indices and the new length to `int`. Once an array's length passes INT_MAX, the elements go to the wrong keys and `length` gets a wrapped value: from length 2^31, `push(1)` throws "Invalid array length"; from length 2^32-1, it silently sets `length` to 0, emptying the array.
+
+Fix: convert to `double`, which holds every array index and length exactly, and keep the running length in a `uint64_t` so it can't wrap on 32-bit hosts, where `size_t` is 32 bits. A successful `length` store bounds the result by 2^32-1, so narrowing it to `size_t` on return is safe.
 
 Changelog: [Internal]
 
-Test plan:
-Ran every visual flow once (no Maestro retries) on a freshly erased iPhone 17 Pro simulator (iOS 27) with RNTester Release from CI. Locally the drop is deterministic:
+Reviewed By: avp
 
-| Before the link | Result |
-|---|---|
-| `main` (wait for animations) | All 12 flows failed |
-| This PR (wait for "Components") | All 12 flows passed, 3/3 runs, ~8 min ea
+Differential Revision: D132346566
 
-**File**: `packages/rn-tester/visual-tests/README.md` (modified, +1/-1)
+Pull Request resolved: https://github.com/react/react-native/pull/60062
+
+**File**: `packages/react-native/ReactCommon/jsi/jsi/jsi.cpp` (modified, +4/-4)
 ```diff
-@@ -36,7 +36,7 @@ The baseline for a PR is the one for the commit it's based on, or the nearest ea
-          id: 'text-width-mode-example'
-    ```
+@@ -460,13 +460,13 @@ void Runtime::deleteProperty(const Object& object, const Value& name) {
+ }
  
--   `open-example.yml` deep-links to `rntester://example/<module>/<example>`. Wait for something that's only visible once the example has rendered, and crop to the example's `testID` so that the status bar and surrounding UI aren't part of the screenshot.
-+   `open-example.yml` deep-links to `rntester://example/<module>/<example>`. Wait for something that's only visible once the example has rendered, and that only this example has (not the generic `example-container`, which a restored previous example also has), and crop to the example's `testID` so that the status bar and surrounding UI aren't part of the screenshot.
+ size_t Runtime::push(const Array& arr, const Value* elements, size_t count) {
+-  size_t newSize = size(arr);
++  uint64_t newSize = size(arr);
+   for (size_t i = 0; i < count; i++) {
+-    arr.setProperty(*this, Value((int)newSize), elements[i]);
++    arr.setProperty(*this, Value(static_cast<double>(newSize)), elements[i]);
+     ++newSize;
+   }
+-  arr.setProperty(*this, "length", Value((int)newSize));
+-  return newSize;
++  arr.setProperty(*this, "length", Value(static_cast<double>(newSize)));
++  return static_cast<size_t>(newSize);
+ }
  
- 3. Open a PR. The new test has no baseline yet, so the report lists it as new, and like any other difference it needs a maintainer's approval (see below). Once the PR lands, `main` is captured with it and later PRs are compared against that.
- 
+ void Runtime::setRuntimeDataImpl(
 ```
 
-**File**: `packages/rn-tester/visual-tests/flows/button.yml` (modified, +4/-4)
+**File**: `packages/react-native/ReactCommon/jsi/jsi/test/testlib.cpp` (modified, +16/-0)
 ```diff
-@@ -6,7 +6,7 @@ appId: ${APP_ID}
-       EXAMPLE_URL: rntester://example/ButtonExample/default-styling
- - extendedWaitUntil:
-     visible:
--      id: 'example-container'
-+      id: 'button_default_styling'
-     timeout: 15000
- - waitForAnimationToEnd:
-     timeout: 5000
-@@ -20,7 +20,7 @@ appId: ${APP_ID}
-       EXAMPLE_URL: rntester://example/ButtonExample/disabled
- - extendedWaitUntil:
-     visible:
--      id: 'example-container'
-+      id: 'disabled_button'
-     timeout: 15000
- - waitForAnimationToEnd:
-     timeout: 5000
-@@ -34,7 +34,7 @@ appId: ${APP_ID}
-       EXAMPLE_URL: rntester://example/ButtonExample/color-red
- - extendedWaitUntil:
-     visible:
--      id: 'example-container'
-+      id: 'cancel_button'
-     timeout: 15000
- - waitForAnimationToEnd:
-     timeout: 5000
-@@ -48,7 +48,7 @@ appId: ${APP_ID}
-       EXAMPLE_URL: rntester://example/ButtonExample/two-buttons-flexbox
- - extendedWaitUntil:
-     visible:
--      id: 'example-container'
-+      id: 'two_cancel_button'
-     timeout: 15000
- - waitForAnimationToEnd:
-     timeout: 5000
-```
-
-**File**: `packages/rn-tester/visual-tests/flows/switch.yml` (modified, +1/-1)
-```diff
-@@ -40,7 +40,7 @@ appId: ${APP_ID}
-       EXAMPLE_URL: rntester://example/SwitchExample/disabled
- - extendedWaitUntil:
-     visible:
--      id: 'example-container'
-+      id: 'disabled-initial-off'
-     timeout: 15000
- - assertVisible:
-     id: 'disabled-initial-off'
-```
-
-**File**: `packages/rn-tester/visual-tests/helpers/open-example.yml` (modified, +7/-12)
-```diff
-@@ -2,20 +2,15 @@ appId: ${APP_ID} # iOS: com.meta.RNTester.localDevelopment | Android: com.facebo
- ---
- - launchApp:
-     stopApp: true
--- waitForAnimationToEnd:
-+# RNTester ignores links until its JS has rendered, which waiting for
-+# animations to end doesn't guarantee. Its tab bar shows "Components" on every
-+# screen, including a restored example. Optional, so that a missed link fails
-+# at the flow's own check for its example instead.
-+- extendedWaitUntil:
-+    visible: 'Components'
-     timeout: 30000
-+    optional: true
- - openLink: ${EXAMPLE_URL}
--# On a slow Android emulator, the first link can arrive before the JS Linking
--# listener is registered and be dropped, so Android sends it again once settled.
--# On iOS, each link raises an "Open in RNTester?" dialog, so it's sent once and
--# accepted. A second, unaccepted dialog leaves RNTester on the previous screen.
--- runFlow:
--    when:
--      platform: Android
--    commands:
--      - waitForAnimationToEnd:
--          timeout: 15000
--      - openLink: ${EXAMPLE_URL}
- - runFlow:
-     when:
-       platform: iOS
+@@ -2557,6 +2557,22 @@ TEST_P(JSITest, ArrayPush) {
+   EXPECT_EQ(arr.getValueAtIndex(rd, 1).getNumber(), 2);
+   EXPECT_EQ(arr.getValueAtIndex(rd, 2).getNumber(), 3);
+   EXPECT_TRUE(arr.getValueAtIndex(rd, 3).isUndefined());
++
++  // Push to an array whose length doesn't fit in an int
++  arr =
++      eval("var a = []; a.length = 2147483648; a;").getObject(rd).getArray(rd);
++  EXPECT_NO_THROW(newLength = arr.push(rd, 1));
++  EXPECT_EQ(newLength, 2147483649);
++  EXPECT_EQ(arr.length(rd), 2147483649);
++  EXPECT_TRUE(Value::strictEquals(rd, arr.getProperty(rd, "2147483648"), 1));
++
++  // Push past the maximum array length. As in JS, the element is stored under
++  // the non-index key "4294967295", then setting 'length' throws a RangeError.
++  arr =
++      eval("var a = []; a.length = 4294967295; a;").getObject(rd).getArray(rd);
++  EXPECT_THROW(arr.push(rd, 1), JSError);
++  EXPECT_EQ(arr.length(rd), 4294967295);
++  EXPECT_TRUE(Value::strictEquals(rd, arr.getProperty(rd, "4294967295"), 1));
+ }
+ 
+ TEST_P(JSITest, UInt8ArrayTest) {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #60103** (closed): Reuse parsed text attributes on Android behind a feature flag (@hryhoriiK97)
-- **PR #60101** (2026-11-18): Name function type params and label dictionary keys in Flow libdefs (@SamChou19815)
-- **PR #60096** (2026-11-17): Tolerate unchanged layout metrics on sealed shared nodes (@adityasharat)
-- **PR #60088** (2026-11-17): Preserve the original Fantom spawn error (@jipeng6036-del)
-- **PR #60082** (2026-11-17): Release Yoga ownership of children an unowned node shares with its clone (@javache)
-- **PR #60078** (2026-11-17): [iOS] Sync drifted internal fixes for the status bar stub and scroll content view (@javache)
+- **PR #60193** (2026-11-21): Type `process.env` and `fs.rm` options with `undefined`, as `@types/node` does (@SamChou19815)
+- **PR #60192** (2026-11-20): Type jest test and hook callbacks as `@types/jest` does (@SamChou19815)
+- **PR #60191** (2026-11-20): Use cloneChildIfNeeded for Yoga child cloning (@cipolleschi)
+- **PR #60190** (2026-11-20): Remove extra type arguments in calls (@SamChou19815)
+- **PR #60185** (2026-11-20): Preserve selective cloning of hidden Yoga children (@cipolleschi)
+- **PR #60182** (2026-11-20): Upgrade Flow in fbsource (@SamChou19815)
 
 ---
 
@@ -1331,41 +1477,62 @@ Ran every visual flow once (no Maestro retries) on a freshly erased iPhone 17 Pr
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. android): don't preallocate a view that a commit already created
+## X. Add ReactTextView regression test for effect spans without remeasure
 
 **RULE**:
-When implementing operations in `packages/react-native/ReactAndroid/src/main/jni/react/fabric/FabricMountingManager.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react/react-native. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/react-native/ReactAndroid/src/test/java/com/facebook/react/views/text/ReactTextViewTest.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react/react-native. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2b60e633`: android): don't preallocate a view that a commit already created. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a5b0bf0f`: Add ReactTextView regression test for effect spans without remeasure. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native/ReactAndroid/src/main/jni/react/fabric/FabricMountingManager.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native/ReactAndroid/src/test/java/com/facebook/react/views/text/ReactTextViewTest.kt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-      auto queuedFamily = family.lock();
-      if (pullModel && queuedFamily == nullptr) {
-        continue;
-      }
-      // Once a family is part of a committed tree, its view is executeMount's
-      // to create. The commit can run before this drain and both create and
-      // delete the view, e.g. when it is flattened again by the next commit;
-      // registering the tag now would leave it allocated with no view behind
-      // it, and its next Create would be skipped. executeMount takes
-      // allocatedViewsMutex_ after the commit has marked the family mounted.
-      if (queuedFamily != nullptr && queuedFamily->hasBeenMounted()) {
+import android.text.Layout
+import com.facebook.react.views.text.internal.span.CanvasEffectSpan
+  @Test
+  fun effectSpansPaintAfterFramePreservingUpdateWithoutRemeasure() {
+    val width = 200
+    val height = 100
+    val view = TestReactTextView(RuntimeEnvironment.getApplication())
+    view.layoutParams =
+        ViewGroup.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+        )
+    view.setTextColor(Color.BLACK)
+    view.setTextSize(TypedValue.COMPLEX_UNIT_PX, 24f)
+    val plain = SpannableString("Hello")
+    view.setSpanned(plain)
+    view.text = plain
+    view.measure(
+        View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY),
+        View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY),
+    )
+    view.layout(0, 0, width, height)
+    assertThat(view.layout).isNotNull()
+
+    val span = RecordingCanvasEffectSpan()
+    val decorated = SpannableString("Hello")
+    decorated.setSpan(span, 0, decorated.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+    view.setSpanned(decorated)
+    view.text = decorated
+    view.drawTextForTest(Canvas(createBitmap(width, height)))
+
+    assertThat(view.layout).is
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-      if (pullModel && family.expired()) {
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2b60e633` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a5b0bf0f` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

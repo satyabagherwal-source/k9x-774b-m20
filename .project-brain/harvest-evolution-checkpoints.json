@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T08:25:42.498Z",
+  "last_updated": "2026-11-21T08:54:44.725Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-21T07:42:07.590Z",
@@ -683,7 +683,7 @@
       "staged_for_review": 1
     },
     "etcd-io-etcd-learnings.md": {
-      "processed_at": "2026-11-20T04:58:14.284Z",
+      "processed_at": "2026-11-21T08:54:43.883Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1428,7 +1428,7 @@
       "staged_for_review": 1
     },
     "hf-comfy-org-z-image-turbo-learnings.md": {
-      "processed_at": "2026-11-17T17:02:41.625Z",
+      "processed_at": "2026-11-21T08:54:42.129Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3253,8 +3253,8 @@
       "staged_for_review": 1
     },
     "react-react-native-learnings.md": {
-      "processed_at": "2026-11-18T09:29:18.930Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-21T08:54:42.613Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "avajs-ava-learnings.md": {
@@ -3663,7 +3663,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 2769,
+  "total_dossiers_evaluated": 2772,
   "total_canonical_promoted": 445,
-  "total_staged_for_review": 2137
+  "total_staged_for_review": 2138
 }

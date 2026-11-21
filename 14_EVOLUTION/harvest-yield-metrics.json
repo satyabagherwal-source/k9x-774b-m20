@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T08:25:04.599Z",
-  "total_cycles_completed": 11194,
-  "total_learnings_persisted": 11194,
-  "total_rules_promoted": 10559,
+  "last_updated": "2026-11-21T08:54:38.945Z",
+  "total_cycles_completed": 11197,
+  "total_learnings_persisted": 11197,
+  "total_rules_promoted": 10561,
   "history": [
-    {
-      "timestamp": "2026-11-20T13:08:28.294Z",
-      "repository": "tailscale/tailscale",
-      "learningId": "learn-github-tailscale-tailscale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T13:08:32.510Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T13:08:32.566Z",
-      "repository": "ClickHouse/ClickHouse",
-      "learningId": "learn-github-clickhouse-clickhouse",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-20T13:13:19.044Z",
       "repository": "embassy-rs/embassy",
@@ -1403,6 +1382,27 @@
       "repository": "Comfy-Org/MOSS-Image",
       "learningId": "learn-huggingface-comfy-org-moss-image",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T08:52:48.410Z",
+      "repository": "etcd-io/etcd",
+      "learningId": "learn-github-etcd-io-etcd",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T08:52:53.142Z",
+      "repository": "react/react-native",
+      "learningId": "learn-github-react-react-native",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T08:54:38.945Z",
+      "repository": "Comfy-Org/Z-Image-Turbo",
+      "learningId": "learn-huggingface-comfy-org-z_image_turbo",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

@@ -11794,3 +11794,6 @@ Every entry in this ledger must capture:
 | `learn-github-yazinsai-openoats` | `https://github.com/yazinsai/OpenOats` | `2d6e6ce5` | Multi-dimensional audit evidence | 2026-11-21T08:24:47.295Z |
 | `learn-huggingface-comfy-org-moss-image` | `https://huggingface.co/Comfy-Org/MOSS-Image` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-21T08:25:04.594Z |
 | `learn-dom-h-351dff5e` | `project://hf-comfy-org-moss-image` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-comfy-org-moss-image-learnings.md` | 2026-11-21T08:25:39.928Z |
+| `learn-github-etcd-io-etcd` | `https://github.com/etcd-io/etcd` | `f872eb46` | Multi-dimensional audit evidence | 2026-11-21T08:52:48.404Z |
+| `learn-github-react-react-native` | `https://github.com/react/react-native` | `32a5aa6a` | Multi-dimensional audit evidence | 2026-11-21T08:52:53.135Z |
+| `learn-huggingface-comfy-org-z_image_turbo` | `https://huggingface.co/Comfy-Org/z_image_turbo` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-21T08:54:38.939Z |

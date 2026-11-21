@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-21T08:25:41.413Z",
+  "updated_at": "2026-11-21T08:54:43.003Z",
   "stats": {
-    "total_discovered": 7082,
-    "approved_pending_harvest": 6687,
+    "total_discovered": 7084,
+    "approved_pending_harvest": 6689,
     "harvested_count": 0,
     "rejected_count": 395,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6671,
+      "COMMUNITY_AND_EXPERT": 6673,
       "OFFICIAL_DOCUMENTATION": 234,
       "STANDARDS_AND_SPECIFICATIONS": 122,
       "ENGINEERING_BLOGS": 5,
@@ -153062,6 +153062,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yazinsai-openoats-learnings.md",
         "fileName": "yazinsai-openoats-learnings.md"
+      }
+    },
+    "SRC-26EB8A2235F9": {
+      "id": "SRC-26EB8A2235F9",
+      "url": "https://github.com/react/react-native/pull/59769",
+      "title": "https://github.com/react/react-native/pull/59769",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T08:54:42.914Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-react-native-learnings.md",
+        "fileName": "react-react-native-learnings.md"
+      }
+    },
+    "SRC-40FA14E624AE": {
+      "id": "SRC-40FA14E624AE",
+      "url": "https://github.com/react/react-native/pull/60062",
+      "title": "https://github.com/react/react-native/pull/60062",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T08:54:43.003Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-react-native-learnings.md",
+        "fileName": "react-react-native-learnings.md"
       }
     }
   }

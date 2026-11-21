@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T08:25:42.346Z",
+  "last_updated": "2026-11-21T08:54:44.552Z",
   "total_verified_learnings": 9059,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23031,
+  "total_items": 23037,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -114093,10 +114093,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-react-react-native-technical-construction-intelligence-react-react-native-core-i.md",
       "title": "Technical Construction Intelligence: react/react-native Core Invariants",
       "repository": "react/react-native",
-      "source_version": "cf7f3f39",
-      "content_hash": "afad750377cda7842067720d10bb70e722a8dc483ebe561eaba4356c2f773f05",
+      "source_version": "32a5aa6a",
+      "content_hash": "b9f6437766a1c8b2f303d1e552f96731eb65d08868e26125ffeaf9b85aa7add9",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T09:28:34.344Z"
+      "persisted_at": "2026-11-21T08:52:53.597Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-react-react-native": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-react-react-native",
@@ -114105,10 +114105,10 @@
       "relative_path": "08_VERIFICATION/react-react-native-verification-protocol-empirical-defect-shield-for-react-react.md",
       "title": "Verification Protocol: Empirical Defect Shield for react/react-native",
       "repository": "react/react-native",
-      "source_version": "cf7f3f39",
-      "content_hash": "916a973004bc6314661fa26325c68dcb31247184b77e534a1898f72ee79cb91e",
+      "source_version": "32a5aa6a",
+      "content_hash": "cf5551ef7187583a84dfe4cad2d94e074d6a99950af41468b1896396bf70248c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T09:28:34.525Z"
+      "persisted_at": "2026-11-21T08:52:53.799Z"
     },
     "domain_intelligence-architecture-intelligence-mixelpixx-kicad-mcp-server-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-mixelpixx-kicad-mcp-server-learnings-core-invariants",
@@ -251974,8 +251974,8 @@
       "slug": "etcd-io-etcd",
       "platform": "github",
       "source_url": "https://github.com/etcd-io/etcd",
-      "source_version": "e4cf2bb0",
-      "content_hash": "b84711d3d8d4219e8cded5da8a4e6b9fdd8eaa6bae2c6b7a824b772486871a74",
+      "source_version": "f872eb46",
+      "content_hash": "09bbcc92d5b90de5dc0d14851d36f98a7c1b7d58109d5ee6b433aeddce2777c7",
       "dossier_path": "07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
       "promoted_rules": [
@@ -251993,6 +251993,11 @@
           "number": 9295,
           "title": "Empirical Invariant Guard in Makefile",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 9761,
+          "title": "Empirical Invariant Guard in remote.go",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -252000,7 +252005,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T04:58:10.178Z",
+      "verified_at": "2026-11-21T08:52:48.157Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -252040,10 +252045,10 @@
       "relative_path": "08_VERIFICATION/etcd-io-etcd-verification-protocol-empirical-defect-shield-for-etcd-io-etcd.md",
       "title": "Verification Protocol: Empirical Defect Shield for etcd-io/etcd",
       "repository": "etcd-io/etcd",
-      "source_version": "e4cf2bb0",
-      "content_hash": "9e696b01ac7468a39056037c8516d5405ded91524da54957f60191d71ab542ea",
+      "source_version": "f872eb46",
+      "content_hash": "c9133f3c30379a73f44a9c560408294d280938483489490520b4496820c0317c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T04:58:10.808Z"
+      "persisted_at": "2026-11-21T08:52:49.052Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-webai-official-twil-8b-learnings-core-invaria": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-webai-official-twil-8b-learnings-core-invaria",
@@ -252089,9 +252094,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for etcd-io-etcd-learnings",
       "repository": "etcd-io-etcd-learnings",
       "source_version": "HEAD",
-      "content_hash": "9a0904bc174b23c270d570e6b977a4e628143410da0af03feea56196b0b6c6ac",
+      "content_hash": "3ed2bccab0de8fa51cebf211bdc14e18934be0a11d4a7af5cf3d9a5730e8de63",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T04:58:14.969Z"
+      "persisted_at": "2026-11-21T08:54:44.552Z"
     },
     "learn-github-metrolistgroup-metrolist": {
       "learning_id": "learn-github-metrolistgroup-metrolist",
@@ -269367,8 +269372,8 @@
       "slug": "react-react-native",
       "platform": "github",
       "source_url": "https://github.com/react/react-native",
-      "source_version": "cf7f3f39",
-      "content_hash": "81404fc1347efa6bbbaa616676a16a9f2b7f5eed9c61958c852f773282534690",
+      "source_version": "32a5aa6a",
+      "content_hash": "892d3af58ad6969e83b8523b4e74d797a80081ecdc6b53b1cdb99fab3a0d1191",
       "dossier_path": "07_PROJECT_LEARNING/react-react-native-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react-react-native-learnings.md",
       "promoted_rules": [
@@ -269381,6 +269386,11 @@
           "number": 9187,
           "title": "don't preallocate a view that a commit already created",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9762,
+          "title": "Add ReactTextView regression test for effect spans without remeasure",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -269388,7 +269398,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T09:28:33.682Z",
+      "verified_at": "2026-11-21T08:52:52.892Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -269479,9 +269489,9 @@
       "title": "Technical Construction Intelligence: react-react-native-learnings Core Invariants",
       "repository": "react-react-native-learnings",
       "source_version": "HEAD",
-      "content_hash": "0ee74a5c432c435ebddc42dbc019fa82790a64fc14ce13ccd75885019ce47f9b",
+      "content_hash": "7f41d617748cc4b6b4998be49801b19642ec9368fea339af395c39e2fdca6647",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T09:29:19.639Z"
+      "persisted_at": "2026-11-21T08:54:43.467Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-react-react-native-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-react-react-native-learnings",
@@ -269491,9 +269501,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for react-react-native-learnings",
       "repository": "react-react-native-learnings",
       "source_version": "HEAD",
-      "content_hash": "fa891fb507affe6d739fa50128c36a301c26cc445dd09c833dffb6eed5f1b0f9",
+      "content_hash": "fc3b1a882f6b56c7720e81db0f959429f8dfa5bb96fde3991c09d6b432fdc1ac",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T09:29:19.836Z"
+      "persisted_at": "2026-11-21T08:54:43.668Z"
     },
     "learn-github-mswjs-msw": {
       "learning_id": "learn-github-mswjs-msw",
@@ -274456,7 +274466,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Comfy-Org/z_image_turbo",
       "source_version": "hf-comfy-org-z_image_turbo",
-      "content_hash": "b594e48199a477b9cd3e5606d16a12fa243218e33010b0e5c45bbd89e55d6ac4",
+      "content_hash": "d7187627183cdf41de8eda6ad72f68bf427be934a8dd2473fadecc2c7da0aa56",
       "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-z_image_turbo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-z_image_turbo-learnings.md",
       "promoted_rules": [],
@@ -274465,7 +274475,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T14:49:49.456Z",
+      "verified_at": "2026-11-21T08:54:38.666Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -274478,13 +274488,13 @@
       "item_id": "domain_intelligence-research-knowledge-intelligence-comfy-org-z-image-turbo-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-z-image-turbo-research-knowledge-intelligence-comfy-org-z-image-tur.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-z_image_turbo-research-knowledge-intelligence-comfy-org-z-image-tur.md",
       "title": "Research & Knowledge Intelligence: Comfy-Org/Z-Image-Turbo Core Invariants",
       "repository": "Comfy-Org/Z-Image-Turbo",
-      "source_version": "hf-comfy-org-z-image-turbo",
-      "content_hash": "680b33d51bfc9f5542b224fbc319dac6088b57c3c6c86604508e9310b95a9e41",
+      "source_version": "hf-comfy-org-z_image_turbo",
+      "content_hash": "e00f57206aa14b4d73e010e66fec55511b929053690fd962ccb462b5f3c3af0f",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T17:02:24.585Z"
+      "persisted_at": "2026-11-21T08:54:39.197Z"
     },
     "rule-8978": {
       "learning_id": "rule-8978",
@@ -274546,9 +274556,9 @@
       "title": "Research & Knowledge Intelligence: hf-comfy-org-z-image-turbo-learnings Core Invariants",
       "repository": "hf-comfy-org-z-image-turbo-learnings",
       "source_version": "HEAD",
-      "content_hash": "7c3385e46431f4fa5318e2a83a4a535576322fb8b09718cfab64cd5d33518940",
+      "content_hash": "22d6d2041bd13f42804b88f1f3b5bdd6c9ce9899a8c2ec9ffba00960c0b9b1db",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T17:02:41.798Z"
+      "persisted_at": "2026-11-21T08:54:42.399Z"
     },
     "candidate_directive-test-fix-flaky-tests-in-socket-auth-capture-and-fd-churn": {
       "item_id": "candidate_directive-test-fix-flaky-tests-in-socket-auth-capture-and-fd-churn",
@@ -312821,6 +312831,82 @@
       "content_hash": "4b7e65716034153eba176894931dcb53c54f4b6fd2d3fd3dc53faab9a8538da4",
       "domain_letter": "H",
       "persisted_at": "2026-11-21T08:25:42.177Z"
+    },
+    "rule-9761": {
+      "learning_id": "rule-9761",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9761,
+      "title": "Empirical Invariant Guard in remote.go",
+      "source_url": "https://github.com/etcd-io/etcd",
+      "source_version": "f872eb46",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T08:52:48.157Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-remote-go": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-remote-go",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-9GAQ-empirical-invariant-guard-in-remote-go.md",
+      "title": "Empirical Invariant Guard in remote.go",
+      "repository": "etcd-io-etcd-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b5605d8f83054200e3b167bfed09d28e11749505dea179a12eb4699986237e4a",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-21T08:54:44.162Z"
+    },
+    "domain_intelligence-architecture-intelligence-etcd-io-etcd-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-etcd-io-etcd-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-etcd-io-etcd-architecture-intelligence-etcd-io-etcd-core-invariants.md",
+      "title": "Architecture Intelligence: etcd-io/etcd Core Invariants",
+      "repository": "etcd-io/etcd",
+      "source_version": "f872eb46",
+      "content_hash": "5c043183b9c95f2b27ba12aa248eecb9dece5e360455cf0ed17af312e32f2c62",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T08:52:48.858Z"
+    },
+    "rule-9762": {
+      "learning_id": "rule-9762",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9762,
+      "title": "Add ReactTextView regression test for effect spans without remeasure",
+      "source_url": "https://github.com/react/react-native",
+      "source_version": "32a5aa6a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T08:52:52.892Z"
+    },
+    "candidate_directive-add-reacttextview-regression-test-for-effect-spans-without-remeasure": {
+      "item_id": "candidate_directive-add-reacttextview-regression-test-for-effect-spans-without-remeasure",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-9FLM-add-reacttextview-regression-test-for-effect-spans-without-remeasure.md",
+      "title": "Add ReactTextView regression test for effect spans without remeasure",
+      "repository": "react-react-native-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6a7288876d0c2dd8fbe815951d882230b20d82cbb4d015f902dc5a44c40daf49",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-21T08:54:43.258Z"
+    },
+    "domain_intelligence-architecture-intelligence-etcd-io-etcd-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-etcd-io-etcd-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-etcd-io-etcd-learnings-architecture-intelligence-etcd-io-etcd-learnings-core-inv.md",
+      "title": "Architecture Intelligence: etcd-io-etcd-learnings Core Invariants",
+      "repository": "etcd-io-etcd-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4fd52202d29d654285ea7a597b20604e473cc8325f24528e5da9d4d9063fa6e1",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T08:54:44.362Z"
     }
   },
   "ai-builder-brain": {

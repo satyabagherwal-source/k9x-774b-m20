@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T08:25:42.177Z",
-  "total_records": 2240,
+  "last_updated": "2026-11-21T08:54:44.362Z",
+  "total_records": 2242,
   "domains": {
     "A": {
       "total": 17,
@@ -1044,7 +1044,7 @@
       ]
     },
     "G": {
-      "total": 378,
+      "total": 380,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1423,7 +1423,9 @@
         "domain_intelligence-architecture-intelligence-mswjs-msw-core-invariants",
         "domain_intelligence-architecture-intelligence-mswjs-msw-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-sceneview-sceneview-core-invariants",
-        "domain_intelligence-architecture-intelligence-sceneview-sceneview-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-sceneview-sceneview-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-etcd-io-etcd-core-invariants",
+        "domain_intelligence-architecture-intelligence-etcd-io-etcd-learnings-core-invariants"
       ]
     },
     "H": {
@@ -9189,8 +9191,8 @@
       "title": "Technical Construction Intelligence: react/react-native Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-react-react-native-technical-construction-intelligence-react-react-native-core-i.md",
       "repository": "react/react-native",
-      "content_hash": "afad750377cda7842067720d10bb70e722a8dc483ebe561eaba4356c2f773f05",
-      "created_at": "2026-11-18T09:28:34.344Z"
+      "content_hash": "b9f6437766a1c8b2f303d1e552f96731eb65d08868e26125ffeaf9b85aa7add9",
+      "created_at": "2026-11-21T08:52:53.597Z"
     },
     "domain_intelligence-architecture-intelligence-mixelpixx-kicad-mcp-server-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-mixelpixx-kicad-mcp-server-learnings-core-invariants",
@@ -26316,8 +26318,8 @@
       "title": "Technical Construction Intelligence: react-react-native-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-react-react-native-learnings-technical-construction-intelligence-react-react-nat.md",
       "repository": "react-react-native-learnings",
-      "content_hash": "0ee74a5c432c435ebddc42dbc019fa82790a64fc14ce13ccd75885019ce47f9b",
-      "created_at": "2026-11-18T09:29:19.639Z"
+      "content_hash": "7f41d617748cc4b6b4998be49801b19642ec9368fea339af395c39e2fdca6647",
+      "created_at": "2026-11-21T08:54:43.467Z"
     },
     "domain_intelligence-quality-verification-intelligence-mswjs-msw-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-mswjs-msw-core-invariants",
@@ -27852,10 +27854,10 @@
       "record_id": "domain_intelligence-research-knowledge-intelligence-comfy-org-z-image-turbo-core-invariants",
       "domain_letter": "D",
       "title": "Research & Knowledge Intelligence: Comfy-Org/Z-Image-Turbo Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-z-image-turbo-research-knowledge-intelligence-comfy-org-z-image-tur.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-z_image_turbo-research-knowledge-intelligence-comfy-org-z-image-tur.md",
       "repository": "Comfy-Org/Z-Image-Turbo",
-      "content_hash": "680b33d51bfc9f5542b224fbc319dac6088b57c3c6c86604508e9310b95a9e41",
-      "created_at": "2026-11-17T17:02:24.585Z"
+      "content_hash": "e00f57206aa14b4d73e010e66fec55511b929053690fd962ccb462b5f3c3af0f",
+      "created_at": "2026-11-21T08:54:39.197Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-z-image-turbo-learnings-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-z-image-turbo-learnings-core-invari",
@@ -27863,8 +27865,8 @@
       "title": "Research & Knowledge Intelligence: hf-comfy-org-z-image-turbo-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-z-image-turbo-learnings-research-knowledge-intelligence-hf-comfy-or.md",
       "repository": "hf-comfy-org-z-image-turbo-learnings",
-      "content_hash": "7c3385e46431f4fa5318e2a83a4a535576322fb8b09718cfab64cd5d33518940",
-      "created_at": "2026-11-17T17:02:41.798Z"
+      "content_hash": "22d6d2041bd13f42804b88f1f3b5bdd6c9ce9899a8c2ec9ffba00960c0b9b1db",
+      "created_at": "2026-11-21T08:54:42.399Z"
     },
     "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nv": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nv",
@@ -37600,6 +37602,24 @@
       "repository": "yazinsai-openoats-learnings",
       "content_hash": "4b7e65716034153eba176894931dcb53c54f4b6fd2d3fd3dc53faab9a8538da4",
       "created_at": "2026-11-21T08:25:42.177Z"
+    },
+    "domain_intelligence-architecture-intelligence-etcd-io-etcd-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-etcd-io-etcd-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: etcd-io/etcd Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-etcd-io-etcd-architecture-intelligence-etcd-io-etcd-core-invariants.md",
+      "repository": "etcd-io/etcd",
+      "content_hash": "5c043183b9c95f2b27ba12aa248eecb9dece5e360455cf0ed17af312e32f2c62",
+      "created_at": "2026-11-21T08:52:48.858Z"
+    },
+    "domain_intelligence-architecture-intelligence-etcd-io-etcd-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-etcd-io-etcd-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: etcd-io-etcd-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-etcd-io-etcd-learnings-architecture-intelligence-etcd-io-etcd-learnings-core-inv.md",
+      "repository": "etcd-io-etcd-learnings",
+      "content_hash": "4fd52202d29d654285ea7a597b20604e473cc8325f24528e5da9d4d9063fa6e1",
+      "created_at": "2026-11-21T08:54:44.362Z"
     }
   }
 }
