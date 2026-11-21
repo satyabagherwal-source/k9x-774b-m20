@@ -11688,3 +11688,4 @@
 | `CYCLE-20261121-LPN5` | `2026-11-21T01:08:22.673Z` | `cypress-io/cypress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9688` | Yes (`ad352604...`) |
 | `CYCLE-20261121-LULJ` | `2026-11-21T01:08:29.095Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9653` | Yes (`b29c0226...`) |
 | `CYCLE-20261121-LWV4` | `2026-11-21T01:08:32.032Z` | `doobidoo/mcp-memory-service` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9689` | Yes (`9e079f04...`) |
+| `CYCLE-20261121-W0RS` | `2026-11-21T01:16:23.656Z` | `webdriverio/webdriverio` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md` | Yes (`d5e39396...`) |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md`  
 > **Source**: github ([https://github.com/webdriverio/webdriverio](https://github.com/webdriverio/webdriverio))  
-> **Source Version**: `81cc6f0d`  
+> **Source Version**: `68055ce4`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T06:36:01.314Z  
+> **Timestamp**: 2026-11-21T01:16:23.227Z  
 > **Learning ID**: `learn-github-webdriverio-webdriverio`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/webdriverio/webdriverio](https://github.com/webdriverio/webdriverio))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T06:36:01.205Z  
+> **Harvest Timestamp**: 2026-11-21T01:16:23.079Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Next-gen browser and mobile automation test framework for Node.js
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 9883 stars
+- **Stars / Engagement**: 9885 stars
 
 ---
 
@@ -357,11 +357,11 @@ export default {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #16474** (2026-11-17): **fix(webdriverio): don't offer the commands of a chained element behind `(await chain)`**
-  *Symptoms*: ## Proposed changes  Fixes #16470.  In an editor, accepting a completion on a chained element rewrites the line. Typing `await this.btnSubmit.cl` and accepting `click` gives `(await this.btnSubmit).click`.  `ChainablePromiseElement` declares `then` since #15856. TypeScript therefore offers the members of the awaited `WebdriverIO.Element` as `(await chain).member` completions. It only skips such an entry when the chain declares a member of that name itself. Almost all members of the chain came out of mapped types (`AsyncElementProto` and `Omit<WebdriverIO.Element, …>`), and those do not count. With `includeCompletionsWithInsertText`, 257 members of the chain got the extra entry.  This PR gives the members a declaration, without changing their types:  - `ChainableElementCommands` declares the 55 element commands one by one. It extends `AsyncElementProto`, which still gives each command its type and JSDoc. - The chain extends `ProtocolCommands` and the shared element properties directly instead of through `Omit`. For that, `ElementBase` and `InstanceBase` are each split into two interfaces. Their members are the same as before.  Not covered:  - The `EventEmitter` members (`on`, `once`, …) and the element reference key still get the extra entry. They return `this`, so extending them directly would change their return type on the chain from `WebdriverIO.Element` to `ChainablePromiseElement`. - Commands a user adds to `WebdriverIO.Element` through declaration merging still get it. 
+- **Issue #16488** (2026-11-20): **docs(v9): explain when the CLI reads spec paths from stdin**
+  *Symptoms*: ## Proposed changes  Backports #16485 to v9 for #10618. Explain how `wdio run` selects spec paths from standard input when stdout is a terminal. The previous example said that an explicit `--spec` always takes precedence. A nonempty pipe actually replaces it. The revised guide also covers captured output in CI and Node.js, plus Git pre-push hooks that pass ref updates on stdin.  ## How you tested  Ran the CLI with the repository's mock WebDriver service and passing spec fixtures. With stdin piped, stdout attached to a pseudo-terminal, and an explicit `--spec`, only the file named on stdin ran. With stdout captured, only the explicit spec ran. With an empty pipe and terminal output, only the explicit spec ran. All three exited successfully. Compiled the updated page with the site's MDX compiler.  ## Types of changes  - [x] Documentation  ## Backport Request  Companion to #16485. Confirmed all three CLI selections on the v9 implementation using its mock-driver smoke environment.  AI assistance was used to prepare and test this contribution. 
 
-- **Issue #16473** (2026-11-16): **feat(@wdio/mobilecli-driver): start and end a session on a device**
-  *Symptoms*: ## Proposed changes  Part of #16468. The driver can now start and end a session on a device. A testrunner run connects to a running mobilecli server and a device, runs the spec, and disconnects.  ```ts // wdio.conf.ts export const config: WebdriverIO.Config = {     // ...     automationProtocol: '@wdio/mobilecli-driver',     hostname: 'localhost', // where `mobilecli server start` runs, these are the defaults     port: 12000,     capabilities: [{         platformName: 'iOS',         'mobilecli:udid': '<id from `mobilecli devices`>'     }] } ```  What is in it:  - `rpc.ts`: a JSON-RPC 2.0 client for `POST /rpc`, with the global `fetch`. The address comes from the WebdriverIO connection options `protocol`, `hostname`, `port` and `path`. mobilecli puts the reason of a failure in `error.data`, the client makes that the error message. - `newSession`: `device.resolve` picks the device of `mobilecli:udid`, or the only device that is online. `device.info` starts the agent of mobilecli, so a device that can not be driven fails at the session start and not at the first command. `platformName` is filled from the device. mobilecli has no sessions, so the session id is made up by the driver. - `deleteSession`: only disconnects. The device, the app and the server keep running. - `getWindowHandle` (returns `NATIVE_APP`) and `setTimeouts` / `getTimeouts` (remembered, mobilecli has no timeouts), which WebdriverIO calls when a session starts. - Every other WebDriver and Appium command exists a
+- **Issue #16487** (2026-11-20): **fix(@wdio/mocha-framework): respect custom Mocha interfaces on v9**
+  *Symptoms*: ## Proposed changes  Backports #16486 to v9 for #12843. The Node.js adapter can load a third-party Mocha interface, but TypeScript configurations rejected names registered by that interface's type declarations. A local CommonJS interface such as `custom-tdd.cjs` also fell back to BDD hook names, so its tests ran without WebdriverIO's `beforeTest` and `afterTest` hooks.  Use Mocha’s extensible interface type and recognize the BDD, TDD and QUnit naming conventions with JavaScript file extensions. The framework guide shows how to select a module and declare its name in TypeScript.  ## How you tested  - [x] The regression test failed for `custom-tdd.cjs` before the fix. All 45 v9 Mocha adapter unit tests passed after the backport. - [x] `pnpm run test:typings:mocha` passed with a third-party interface in the config. - [x] `pnpm run test:smoke mochaTestrunner` passed. A separate CLI run with the mock driver and a real local CommonJS interface ran one TDD spec and recorded both WebdriverIO hooks exactly once. - [x] The v9 packages compiled. The updated framework guide compiled as MDX.  ## Types of changes  - [x] Bug fix - [x] Documentation  ## Backport Request  Companion to #16486.  AI assistance was used to prepare and test this contribution. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -378,90 +378,51 @@ export default {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `81cc6f0d` (2026-11-16)
-**Commit Message**: docs: update remaining LambdaTest references to TestMu AI (#16472)
+### Incident Patch 1: `68055ce4` (2026-11-19)
+**Commit Message**: docs(devtools): describe how the test tree shows retries and failed Cucumber hooks (#16458)
 
-Follow-up to #15055. Point the README and BACKERS Gold Sponsor logo at
-testmu_ai_black.svg (the old lambdatest_black.svg was removed and now
-404s), and update the LT:Options link, the MCP cloud providers list and
-one boilerplate line. Functional hosts, package names and env vars are
-unchanged.
-
-Co-authored-by: Rahul Jain <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `BACKERS.md` (modified, +1/-1)
+**File**: `website/docs/devtools/Wdio.md` (modified, +7/-0)
 ```diff
-@@ -24,7 +24,7 @@ We are immensely grateful to our exclusive Premium Sponsor for their invaluable
- ### 🥇 Gold Sponsor
+@@ -65,6 +65,13 @@ services: [['devtools', options]]
+ | `maskInputs` | `boolean` | `true` | Mask password fields in the replayed page, live and trace mode alike; `false` records them as typed. Command rows always keep the typed text ([see Password masking](/docs/devtools/dashboard#password-masking)) |
+ | `maskSelectors` | `string[]` | `[]` | Also mask the text and value of every element these CSS selectors match, and everything inside it, in the replayed page |
  
- <p align="center">
--    <a href="https://www.lambdatest.com/"><img src="https://webdriver.io/img/sponsors/lambdatest_black.svg" width="300" alt="Lambdatest" /></a>
-+    <a href="https://www.testmuai.com/"><img src="https://webdriver.io/img/sponsors/testmu_ai_black.svg" width="300" alt="TestMu AI (Formerly LambdaTest)" /></a>
- </p>
++## Test tree
++
++The sidebar lists each spec's suites and tests (each Cucumber feature's scenarios and steps) as they run, the same on WebdriverIO 9 and 10.
++
++- **Retries.** A retried test is one row. Its next attempt replaces the failed one in place, and the row shows the final attempt's result with its retry count; for a Cucumber scenario retried with `cucumberOpts.retry`, the count is on the scenario. The failed attempt is still recorded, so the retry-aware `tracePolicy` values see it.
++- **Failed Cucumber hooks.** A hook fails no step, so a failed `BeforeAll` or `AfterAll` shows as a failed row of its feature (an `AfterAll` below the scenarios), and a failed `Before` or `After` as a failed row of its scenario, carrying the hook's error. Each failed hook is a row of its own, titled with its position among the hooks of that kind on the same feature or scenario, whether those passed or failed: the second `After` hook is `After #2` even when the first passed. When a retried scenario runs again, the failed hooks of the earlier attempt leave the tree with the rest of that attempt. Mocha and Jasmine hooks are left to the framework's own reporting.
++
+ ## Runtime snapshot
  
- [Become a Gold Sponsor](https://github.com/sponsors/christian-bromann/sponsorships?tier_id=303973&preview=false)
+ The service adds a `browser.getSnapshot()` command that returns an AI-readable accessibility tree of the current page (`text`) plus an `elements` map from short refs (`e1`, `e2`, …) to selectors:
 ```
 
-**File**: `README.md` (modified, +1/-1)
-```diff
-@@ -193,7 +193,7 @@ We are immensely grateful to our exclusive Premium Sponsor for their invaluable
- ### 🥇 Gold Sponsor
- 
- <p align="center">
--    <a href="https://www.lambdatest.com/"><img src="https://webdriver.io/img/sponsors/lambdatest_black.svg" width="300" alt="Lambdatest" /></a>
-+    <a href="https://www.testmuai.com/"><img src="https://webdriver.io/img/sponsors/testmu_ai_black.svg" width="300" alt="TestMu AI (Formerly LambdaTest)" /></a>
- </p>
- 
- ### 🥈 Silver Sponsor
-```
+---
 
-**File**: `website/docs/BoilerplateProjects.md` (modified, +1/-1)
-```diff
-@@ -199,7 +199,7 @@ This boilerplate project has WebdriverIO 8 tests with cucumber and typescript, f
- - Features
-     - Contain sample test scenario in cucumber
-     - Integrated cucumber html reports with Embedded videos on failures
--    - Integrated Lambdatest and CircleCI services
-+    - Integrated TestMu AI (Formerly LambdaTest) and CircleCI services
-     - Integrated Visual, Accessibility and API testing
-     - Integrated Email functionality
-     - Integrated s3 bucket for test reports storage and retrieval
-```
+### Incident Patch 2: `e59ff433` (2026-11-19)
+**Commit Message**: docs: add a troubleshooting note for hover tests with headed parallel browsers (#16002)
 
-**File**: `website/docs/Capabilities.md` (modified, +1/-1)
+**File**: `website/docs/platforms/Web.md` (modified, +1/-0)
 ```diff
-@@ -27,7 +27,7 @@ While the amount of fixed defined capabilities is very low, everyone can provide
- - `sauce:options`: [Sauce Labs](https://docs.saucelabs.com/dev/test-configuration-options/#w3c-webdriver-browser-capabilities--optional)
- - `bstack:options`: [BrowserStack](https://www.browserstack.com/docs/automate/selenium/organize-tests)
- - `tb:options`: [TestingBot](https://testingbot.com/support/other/test-options)
--- `LT:Options`: [LambdaTest](https://www.lambdatest.com/support/docs/webdriverio-with-selenium-running-webdriverio-automation-scripts-on-lambdatest-selenium-grid/)
-+- `LT:Options`: [TestMu AI (Formerly LambdaTest)](https://www.testmuai.com/support/docs/javascript-with-selenium-running-javascript-automation-scripts-on-testmu-selenium-grid/?framework=webdriverio)
- - and many more...
+@@ -122,6 +122,7 @@ The Browser Runner requires `@wdio/browser-runner`. The React preset also needs
+ ## Troubleshooting
  
- ### Automation Engine Capability Extensions
-```
-
-**File**: `website/docs/mcp/cloud-providers.md` (modified, +1/-1)
-```diff
-@@ -8,7 +8,7 @@ The WebdriverIO MCP server has native support for running browser and mobile aut
- 
- - **BrowserStack** — [Automate](https://www.browserstack.com/automate) (browsers) and [App Automate](https://www.browserstack.com/app-automate) (mobile apps)
- - **Sauce Labs** — [Sauce Labs](https://saucelabs.com) real device cloud and virtual browsers
--- **TestMu (formerly LambdaTest)** — [TestMu](https://www.lambdatest.com) real device and browser cloud
-+- **TestMu AI (formerly LambdaTest)** — [TestMu AI](https://www.testmuai.com) real device and browser cloud
- - **TestingBot** — [TestingBot](https://testingbot.com) real device cloud and browser grid
- - **Digital.ai Testing** — browser and mobile sessions on your own Digital.ai cloud host
- 
+ - Chrome fails to start in CI with "user data directory is already in use" or "DevToolsActivePort file doesn't exist": see [Headless & Display Servers](/docs/headless-and-display-servers#troubleshooting).
++- Hover or `moveTo()` tests fail intermittently with a headed browser and parallel workers, on Windows or under Xvfb on Linux: when another worker's browser window opens or closes under the OS pointer, the page under it gets real mouse events. Run headless, with `wdio run --headless` or the args in [Run Browser Headless](/docs/capabilities#run-browser-headless). On Linux, [Weston](/docs/headless-and-display-servers#which-display-server-is-used) (`displayServer: 'wayland'`) also avoids it.
+ - `browser.mock()` or `browser.emulate()` has no effect: the session is not using WebDriver BiDi. Check your browser (Safari has no BiDi support), your cloud vendor, and `wdio:enforceWebDriverClassic`.
+ - Drivers or browsers can't be downloaded behind a proxy: see [Custom Driver Download Host](/docs/capabilities#custom-driver-download-host) and [Proxy Setup](/docs/proxy).
+ - Flaky tests: see [Retry Flaky Tests](/docs/retry) and [Debugging](/docs/debugging).
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #16474** (closed): fix(webdriverio): don't offer the commands of a chained element behind `(await chain)` (@tomicodesdev)
-- **PR #16473** (2026-11-16): feat(@wdio/mobilecli-driver): start and end a session on a device (@wswebcreation)
-- **PR #16472** (2026-11-16): docs: update remaining LambdaTest references to TestMu AI (@rahulj-123)
-- **PR #16469** (2026-11-16): feat(@wdio/types): add the mobilecli:udid capability (@wswebcreation)
-- **PR #16467** (2026-11-16): feat(@wdio/mobilecli-driver): scaffold the mobilecli automation protocol driver (@wswebcreation)
-- **PR #16454** (2026-11-12): ci: block PRs with compromised commits or sensitive install changes (@plum117)
+- **PR #16488** (closed): docs(v9): explain when the CLI reads spec paths from stdin (@singhaditya21)
+- **PR #16487** (closed): fix(@wdio/mocha-framework): respect custom Mocha interfaces on v9 (@singhaditya21)
+- **PR #16486** (closed): fix(@wdio/mocha-framework): respect custom Mocha interfaces (@singhaditya21)
+- **PR #16485** (closed): docs: explain when the CLI reads spec paths from stdin (@singhaditya21)
+- **PR #16484** (closed): docs(v9): explain the spec job counts in onComplete (@singhaditya21)
+- **PR #16483** (closed): docs: explain the spec job counts in onComplete (@singhaditya21)
 
 ---
 
@@ -481,28 +442,34 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: update remaining LambdaTest references to TestMu AI
+## X. docs(devtools): describe how the test tree shows retries and failed Cucumber hoo
 
 **RULE**:
-When implementing operations in `BACKERS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in webdriverio/webdriverio. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `website/docs/devtools/Wdio.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in webdriverio/webdriverio. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `81cc6f0d`: docs: update remaining LambdaTest references to TestMu AI. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `68055ce4`: docs(devtools): describe how the test tree shows retries and failed Cucumber hooks. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `BACKERS.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `website/docs/devtools/Wdio.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    <a href="https://www.testmuai.com/"><img src="https://webdriver.io/img/sponsors/testmu_ai_black.svg" width="300" alt="TestMu AI (Formerly LambdaTest)" /></a>
+## Test tree
+
+The sidebar lists each spec's suites and tests (each Cucumber feature's scenarios and steps) as they run, the same on WebdriverIO 9 and 10.
+
+- **Retries.** A retried test is one row. Its next attempt replaces the failed one in place, and the row shows the final attempt's result with its retry count; for a Cucumber scenario retried with `cucumberOpts.retry`, the count is on the scenario. The failed attempt is still recorded, so the retry-aware `tracePolicy` values see it.
+- **Failed Cucumber hooks.** A hook fails no step, so a failed `BeforeAll` or `AfterAll` shows as a failed row of its feature (an `AfterAll` below the scenarios), and a failed `Before` or `After` as a failed row of its scenario, carrying the hook's error. Each failed hook is a row of its own, titled with its position among the hooks of that kind on the same feature or scenario, whether those passed or failed: the second `After` hook is `After #2` even when the first passed. When a retried scenario runs again, the failed hooks of the earlier attempt leave the tree with the rest of that attempt. Mocha and Jasmine hooks are left to the framework's own reporting.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-    <a href="https://www.lambdatest.com/"><img src="https://webdriver.io/img/sponsors/lambdatest_black.svg" width="300" alt="Lambdatest" /></a>
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `81cc6f0d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `68055ce4` are properly handled with clean fallback behavior.

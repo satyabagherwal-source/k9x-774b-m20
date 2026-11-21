@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T01:08:38.910Z",
+  "last_updated": "2026-11-21T01:16:32.473Z",
   "total_verified_learnings": 9055,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22816,
+  "total_items": 22819,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113706,13 +113706,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-BSIC-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-W70C-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "258d190086ffb24e9040f7984fdaf9d4fc92a735184997c7f688b5ba45ee7659",
+      "content_hash": "f16541e57789dd3a3a5d714de4599a6a8dd6129d2950ad8dba9edeabfb11230c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T01:00:39.833Z"
+      "persisted_at": "2026-11-21T01:16:31.743Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "1c851339fcaebc795ebbe03b9fdde6a172848e49a5db9975bad039a6a893f480",
+      "content_hash": "4d733cb1d9a32f046509235ac6c3878abd9b1fd21cbfc4ae9976b1d084b02464",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T01:00:40.023Z"
+      "persisted_at": "2026-11-21T01:16:31.894Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "41dabc322e2a2bfb9a7f8ac4e4c629685871fb379b6541a51876045c49f530b7",
+      "content_hash": "39059ab143d9261ea9713224b002d6af7fe71fddb3f04a02a788e7bda1daa4e2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T01:00:40.202Z"
+      "persisted_at": "2026-11-21T01:16:32.042Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -268817,8 +268817,8 @@
       "slug": "webdriverio-webdriverio",
       "platform": "github",
       "source_url": "https://github.com/webdriverio/webdriverio",
-      "source_version": "81cc6f0d",
-      "content_hash": "9de65f89270e1eaed21bbc8fd9c02943ff57cc4ef5476b28375b4318d9a62e56",
+      "source_version": "68055ce4",
+      "content_hash": "d5e39396c082cb72d0fd95f17c3ba756354e70d61c797b0e59401a7210a97a8b",
       "dossier_path": "07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md",
       "promoted_rules": [
@@ -268833,7 +268833,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T06:36:02.019Z",
+      "verified_at": "2026-11-21T01:16:23.450Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -268887,10 +268887,10 @@
       "relative_path": "08_VERIFICATION/webdriverio-webdriverio-verification-protocol-empirical-defect-shield-for-webdri.md",
       "title": "Verification Protocol: Empirical Defect Shield for webdriverio/webdriverio",
       "repository": "webdriverio/webdriverio",
-      "source_version": "81cc6f0d",
-      "content_hash": "a68e07e972df94480725f8f34f8ab2cac8bd544225f7543e28acba2976a76918",
+      "source_version": "68055ce4",
+      "content_hash": "6107ad5e24c0d0ad5f451143962a7d2158faf6f792b6092aa605026515702ef4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T06:36:02.601Z"
+      "persisted_at": "2026-11-21T01:16:24.182Z"
     },
     "learn-github-kirillzyusko-react-native-keyboard-controller": {
       "learning_id": "learn-github-kirillzyusko-react-native-keyboard-controller",
@@ -268983,9 +268983,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for webdriverio-webdriverio-learnings",
       "repository": "webdriverio-webdriverio-learnings",
       "source_version": "HEAD",
-      "content_hash": "16e9042f05ee3be013c358bc66ec482de17586a6b708984c76e62ec46c882dde",
+      "content_hash": "0bece62fbed3bd0f28bab2324df432c2fd83c8d54b3fd9e50a8672a3f4b5a127",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T06:36:11.258Z"
+      "persisted_at": "2026-11-21T01:16:31.192Z"
     },
     "learn-github-mdiri-ai-soduwork": {
       "learning_id": "learn-github-mdiri-ai-soduwork",
@@ -288527,9 +288527,9 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "c55470684ef29723dda3ef338528c8d98f3567ddc06681bd87d7d0329452d30c",
+      "content_hash": "14d629fd1fcc24eae3199e67fb783e1d1056fa155de15037e04328ab6308c913",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T01:00:40.695Z"
+      "persisted_at": "2026-11-21T01:16:32.473Z"
     },
     "learn-github-software-mansion-argent": {
       "learning_id": "learn-github-software-mansion-argent",
@@ -309673,6 +309673,42 @@
       "content_hash": "69d90f326fb79371993b16c4806d95abaa3e61922eae6081946ce2c94a8398de",
       "domain_letter": "K",
       "persisted_at": "2026-11-21T01:08:36.082Z"
+    },
+    "candidate_directive-docs-devtools-describe-how-the-test-tree-shows-retries-and-failed-cucumber-hoo": {
+      "item_id": "candidate_directive-docs-devtools-describe-how-the-test-tree-shows-retries-and-failed-cucumber-hoo",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-W6C9-docs-devtools-describe-how-the-test-tree-shows-retries-and-failed-cucumber-hoo.md",
+      "title": "docs(devtools): describe how the test tree shows retries and failed Cucumber hoo",
+      "repository": "webdriverio-webdriverio-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4b4dcf1659b4cbb7d198a4df685fb68b42c2c6b5a3e84e17a2b78009d126ebf1",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-21T01:16:30.874Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-webdriverio-webdriverio-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-webdriverio-webdriverio-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-webdriverio-webdriverio-quality-verification-intelligence-webdriverio-webdriveri.md",
+      "title": "Quality & Verification Intelligence: webdriverio/webdriverio Core Invariants",
+      "repository": "webdriverio/webdriverio",
+      "source_version": "68055ce4",
+      "content_hash": "e7f0a397c7e380aca61619bee2aff8492ff709740f9f31c77c08f23ff7fd1a62",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-21T01:16:24.033Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-webdriverio-webdriverio-learnings-core-invaria": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-webdriverio-webdriverio-learnings-core-invaria",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-webdriverio-webdriverio-learnings-quality-verification-intelligence-webdriverio-.md",
+      "title": "Quality & Verification Intelligence: webdriverio-webdriverio-learnings Core Invariants",
+      "repository": "webdriverio-webdriverio-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f70c31c6f299c70a4f32f3a5a4618baa73e60c2156e53ad7329234877d19e8ff",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-21T01:16:31.026Z"
     }
   },
   "ai-builder-brain": {

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T01:08:38.761Z",
-  "total_records": 2204,
+  "last_updated": "2026-11-21T01:16:32.473Z",
+  "total_records": 2206,
   "domains": {
     "A": {
       "total": 17,
@@ -2105,7 +2105,7 @@
       ]
     },
     "K": {
-      "total": 131,
+      "total": 133,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -2237,7 +2237,9 @@
         "domain_intelligence-quality-verification-intelligence-webpack-webpack-learnings-core-invariants",
         "domain_intelligence-quality-verification-intelligence-xevrion-hatchzip-core-invariants",
         "domain_intelligence-quality-verification-intelligence-xevrion-hatchzip-learnings-core-invariants",
-        "DOM-K-BC44E02A"
+        "DOM-K-BC44E02A",
+        "domain_intelligence-quality-verification-intelligence-webdriverio-webdriverio-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-webdriverio-webdriverio-learnings-core-invaria"
       ]
     },
     "L": {
@@ -8937,8 +8939,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "1c851339fcaebc795ebbe03b9fdde6a172848e49a5db9975bad039a6a893f480",
-      "created_at": "2026-11-21T01:00:40.023Z"
+      "content_hash": "4d733cb1d9a32f046509235ac6c3878abd9b1fd21cbfc4ae9976b1d084b02464",
+      "created_at": "2026-11-21T01:16:31.894Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -31300,8 +31302,8 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zulip-zulip-learnings-technical-construction-intelligence-zulip-zulip-learnings-.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "c55470684ef29723dda3ef338528c8d98f3567ddc06681bd87d7d0329452d30c",
-      "created_at": "2026-11-21T01:00:40.695Z"
+      "content_hash": "14d629fd1fcc24eae3199e67fb783e1d1056fa155de15037e04328ab6308c913",
+      "created_at": "2026-11-21T01:16:32.473Z"
     },
     "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants": {
       "record_id": "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants",
@@ -37057,6 +37059,24 @@
       "repository": "dosco-deeporg-learnings",
       "content_hash": "61321ab7eae77561d8bdedc98d976bf2a51a0ec7008c1fd366dd076ff795506a",
       "created_at": "2026-11-21T01:08:35.914Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-webdriverio-webdriverio-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-webdriverio-webdriverio-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: webdriverio/webdriverio Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-webdriverio-webdriverio-quality-verification-intelligence-webdriverio-webdriveri.md",
+      "repository": "webdriverio/webdriverio",
+      "content_hash": "e7f0a397c7e380aca61619bee2aff8492ff709740f9f31c77c08f23ff7fd1a62",
+      "created_at": "2026-11-21T01:16:24.033Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-webdriverio-webdriverio-learnings-core-invaria": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-webdriverio-webdriverio-learnings-core-invaria",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: webdriverio-webdriverio-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-webdriverio-webdriverio-learnings-quality-verification-intelligence-webdriverio-.md",
+      "repository": "webdriverio-webdriverio-learnings",
+      "content_hash": "f70c31c6f299c70a4f32f3a5a4618baa73e60c2156e53ad7329234877d19e8ff",
+      "created_at": "2026-11-21T01:16:31.026Z"
     }
   }
 }

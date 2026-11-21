@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T01:08:38.609Z",
+  "last_updated": "2026-11-21T01:16:32.178Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4835,11 +4835,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-BSIC",
+      "id": "CD-W70C",
       "directive_title": "editor): add scoped ios account deletion",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-BSIC-editor-add-scoped-ios-account-deletion.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-W70C-editor-add-scoped-ios-account-deletion.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-21",
@@ -40417,6 +40417,44 @@
       "source_repo": "aleo-labs-protocol-snarkos",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-87A486-empirical-invariant-guard-in-test-partia.md",
+      "staged_date": "2026-11-21"
+    },
+    {
+      "id": "CD-W6C9",
+      "directive_title": "docs(devtools): describe how the test tree shows retries and failed Cucumber hoo",
+      "source_repo": "webdriverio-webdriverio-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-W6C9-docs-devtools-describe-how-the-test-tree-shows-retries-and-failed-cucumber-hoo.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-REV-51D377",
+      "directive_title": "docs(devtools): describe how the test tree shows retries and failed Cucumber hoo",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "webdriverio-webdriverio",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-51D377-docs-devtools-describe-how-the-test-tree.md",
+      "staged_date": "2026-11-21"
+    },
+    {
+      "id": "CD-REV-A78DE6",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-A78DE6-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-21"
+    },
+    {
+      "id": "CD-REV-765E00",
+      "directive_title": "Forensic Learning Record (Deep Inspection): zulip/zulip",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "A",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-765E00-forensic-learning-record-deep-inspection.md",
       "staged_date": "2026-11-21"
     }
   ]

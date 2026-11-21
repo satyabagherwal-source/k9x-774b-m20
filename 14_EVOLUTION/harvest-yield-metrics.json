@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T01:08:32.041Z",
-  "total_cycles_completed": 11128,
-  "total_learnings_persisted": 11128,
+  "last_updated": "2026-11-21T01:16:23.683Z",
+  "total_cycles_completed": 11129,
+  "total_learnings_persisted": 11129,
   "total_rules_promoted": 10483,
   "history": [
-    {
-      "timestamp": "2026-11-20T04:58:03.627Z",
-      "repository": "rainbow-me/rainbow",
-      "learningId": "learn-github-rainbow-me-rainbow",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-20T04:58:10.361Z",
       "repository": "etcd-io/etcd",
@@ -1403,6 +1396,13 @@
       "repository": "doobidoo/mcp-memory-service",
       "learningId": "learn-github-doobidoo-mcp-memory-service",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T01:16:23.683Z",
+      "repository": "webdriverio/webdriverio",
+      "learningId": "learn-github-webdriverio-webdriverio",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
