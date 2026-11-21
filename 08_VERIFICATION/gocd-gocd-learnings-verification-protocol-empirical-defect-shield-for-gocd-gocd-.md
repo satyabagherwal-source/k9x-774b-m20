@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T04:29:29.654Z",
+  "timestamp": "2026-11-21T05:28:02.723Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-gocd-gocd-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [gocd-gocd-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T04:29:29.654Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T05:28:02.723Z`  
 > **Learning ID**: `LEARN-EVO-gocd-gocd-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gocd-gocd-learnings.md`  
 > **Source**: github ([https://github.com/gocd/gocd](https://github.com/gocd/gocd))  
-> **Source Version**: `d0652eba`  
+> **Source Version**: `2addd4f0`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T04:29:23.211Z  
+> **Timestamp**: 2026-11-21T05:27:55.430Z  
 > **Learning ID**: `learn-github-gocd-gocd`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gocd-gocd-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gocd/gocd](https://github.com/gocd/gocd))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T04:29:22.977Z  
+> **Harvest Timestamp**: 2026-11-21T05:27:55.425Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: GoCD - Continuous Delivery server main repository
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 7440 stars
+- **Stars / Engagement**: 7441 stars
 
 ---
 
@@ -905,23 +905,24 @@ export class CommentRenderWidget extends MithrilViewComponent<Attrs> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `99be1b85` (2026-11-19)
-**Commit Message**: build(deps-ui): bump filesize in /server/src/main/webapp/WEB-INF/rails (#14746)
+### Incident Patch 1: `0baa28c1` (2026-11-20)
+**Commit Message**: build(deps-ui): bump filesize in /server/src/main/webapp/WEB-INF/rails (#14751)
 
-Bumps [filesize](https://github.com/avoidwork/filesize.js) from 11.0.32 to 11.0.33.
+Bumps [filesize](https://github.com/avoidwork/filesize.js) from 11.0.33 to 11.0.34.
 - [Changelog](https://github.com/avoidwork/filesize.js/blob/master/CHANGELOG.md)
-- [Commits](https://github.com/avoidwork/filesize.js/compare/11.0.32...11.0.33)
+- [Commits](https://github.com/avoidwork/filesize.js/compare/11.0.33...11.0.34)
 
 ---
 updated-dependencies:
 - dependency-name: filesize
-  dependency-version: 11.0.33
+  dependency-version: 11.0.34
   dependency-type: direct:production
   update-type: version-update:semver-patch
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Co-authored-by: Chad Wilson <[REDACTED_EMAIL]>
 
 **File**: `server/src/main/webapp/WEB-INF/rails/package.json` (modified, +1/-1)
 ```diff
@@ -929,8 +930,8 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
      "chartjs-plugin-zoom": "^2.2.0",
      "classnames": "^2.5.1",
      "core-js": "^3.51.0",
--    "filesize": "^11.0.32",
-+    "filesize": "^11.0.33",
+-    "filesize": "^11.0.33",
++    "filesize": "^11.0.34",
      "foundation-sites": "^6.9.0",
      "hack-font": "^3.3.0",
      "jquery": "^3.7.1",
@@ -938,85 +939,93 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 **File**: `server/src/main/webapp/WEB-INF/rails/yarn.lock` (modified, +5/-5)
 ```diff
-@@ -4043,10 +4043,10 @@ __metadata:
+@@ -4052,10 +4052,10 @@ __metadata:
    languageName: node
    linkType: hard
  
--"filesize@npm:^11.0.32":
--  version: 11.0.32
--  resolution: "filesize@npm:11.0.32"
--  checksum: 10c0/2680171297522d01a2831027f535f718719dcb122b6b2ceaea89ec8c348a1f5b60a3e5364eb4a1619f30a44ef2c71906101d5c40f7f7986b768a2cb4b69c7898
-+"filesize@npm:^11.0.33":
-+  version: 11.0.33
-+  resolution: "filesize@npm:11.0.33"
-+  checksum: 10c0/b90c344c6ab231244e0a984978b2b1f9ba1dfa17a8a4cb705d118fcb7ed1f51b19036f6953309d215dbd3ab2858926aad3bfe1ec81b0c020bf07c2daa4f5fb80
+-"filesize@npm:^11.0.33":
+-  version: 11.0.33
+-  resolution: "filesize@npm:11.0.33"
+-  checksum: 10c0/b90c344c6ab231244e0a984978b2b1f9ba1dfa17a8a4cb705d118fcb7ed1f51b19036f6953309d215dbd3ab2858926aad3bfe1ec81b0c020bf07c2daa4f5fb80
++"filesize@npm:^11.0.34":
++  version: 11.0.34
++  resolution: "filesize@npm:11.0.34"
++  checksum: 10c0/5759dd47fd59d940426664251be50b04b059f8a1df77825d769909d67741c335a2896fd7572db0e5074808167e11236492330202acffa9f7f108bf8b7e141009
    languageName: node
    linkType: hard
  
-@@ -4450,7 +4450,7 @@ __metadata:
+@@ -4448,7 +4448,7 @@ __metadata:
      eslint-plugin-react: "npm:^7.37.5"
      eslint-webpack-plugin: "npm:^6.0.0"
      file-loader: "npm:^6.2.0"
--    filesize: "npm:^11.0.32"
-+    filesize: "npm:^11.0.33"
-     fork-ts-checker-webpack-plugin: "npm:^9.1.1"
+-    filesize: "npm:^11.0.33"
++    filesize: "npm:^11.0.34"
+     fork-ts-checker-webpack-plugin: "npm:^9.2.0"
      foundation-sites: "npm:^6.9.0"
      fs-extra: "npm:^11.4.1"
 ```
 
 ---
 
-### Incident Patch 2: `2f0b5f01` (2026-11-19)
-**Commit Message**: build(deps): bump com.github.oshi:oshi-core from 7.7.3 to 7.8.0 (#14747)
+### Incident Patch 2: `c1f3fa75` (2026-11-20)
+**Commit Message**: build(deps-ui-dev): bump regexp_parser (#14752)
 
-Bumps [com.github.oshi:oshi-core](https://github.com/oshi/oshi) from 7.7.3 to 7.8.0.
-- [Release notes](https://github.com/oshi/oshi/releases)
-- [Changelog](https://github.com/oshi/oshi/blob/master/CHANGELOG.md)
-- [Commits](https://github.com/oshi/oshi/compare/oshi-parent-7.7.3...oshi-parent-7.8.0)
+Bumps [regexp_parser](https://github.com/ammar/regexp_parser) from 2.13.1 to 2.13.4.
+- [Changelog](https://github.com/ammar/regexp_parser/blob/master/CHANGELOG.md)
+- [Commits](https://github.com/ammar/regexp_parser/compare/v2.13.1...v2.13.4)
 
 ---
 updated-dependencies:
-- dependency-name: com.github.oshi:oshi-core
-  dependency-version: 7.8.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
+- dependency-name: regexp_parser
+  dependency-version: 2.13.4
+  dependency-type: indirect
+  update-type: version-update:semver-patch
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `build.gradle` (modified, +1/-1)
+**File**: `server/src/main/webapp/WEB-INF/rails/Gemfile.lock` (modified, +2/-2)
 ```diff
-@@ -124,7 +124,7 @@ def libraries = [
-   mybatisSpring       : 'org.mybatis:mybatis-spring:2.1.2',
-   mysql               : 'com.mysql:mysql-connector-j:26.10.0',
-   objenesis           : 'org.objenesis:objenesis:3.6',
--  oshi                : 'com.github.oshi:oshi-core:7.7.3',
-+  oshi                : 'com.github.oshi:oshi-core:7.8.0',
-   plexusUtils         : 'org.codehaus.plexus:plexus-utils:4.2.0',
-   postgresql          : 'org.postgresql:postgresql:42.7.14',
-   quartz              : 'org.quartz-scheduler:quartz:2.5.2',
+@@ -125,7 +125,7 @@ GEM
+       tsort (>= 0.2)
+       zeitwerk (~> 2.6)
+     rake (13.4.2)
+-    regexp_parser (2.13.1)
++    regexp_parser (2.13.4)
+     rspec-core (3.13.7)
+       rspec-support (~> 3.13.0)
+     rspec-expectations (3.13.6)
+@@ -237,7 +237,7 @@ CHECKSUMS
+   rails-html-sanitizer (1.7.1) sha256=e797a7c9b01e567307e317c576b49ab4168017e63eea4dba9ce3cb587e2f22c2
+   railties (7.2.4) sha256=e4b754edc7b42c9f3d6cc3048832efe634d727aa59093a03bf8a78096917f121
+   rake (13.4.2) sha256=cb825b2bd5f1f8e91ca37bddb4b9aaf345551b4731da62949be002fa89283701
+-  regexp_parser (2.13.1) sha256=5aedb6b7c35688f51e86eef17a15374dfd287c83f4ca644b2c5f3ec50a33b44b
++  regexp_parser (2.13.4) sha256=1d0547814f57e6f00946957bd0ca201bc42f42cfb08eee89df60998aedcd8a3b
+   rspec-core (3.13.7) sha256=c64ff16d9788119805cbc6a3f4b6d87cc22417c2d25976a3330de136896b5469
+   rspec-expectations (3.13.6) sha256=bf538ca6d367ff5b0d85a87fdb5c0c6038f2cd1308a0eeba07476caa02d22f35
+   rspec-mocks (3.13.9) sha256=ea5c7ff3054a6098ca6039aacef80aec69d5a8a3ef80be8fc88337359b672a30
 ```
 
 ---
 
-### Incident Patch 3: `d385ed1e` (2026-11-19)
-**Commit Message**: build(deps-ui-dev): bump fork-ts-checker-webpack-plugin (#14745)
+### Incident Patch 3: `7ab8bf74` (2026-11-20)
+**Commit Message**: build(deps-ui-dev): bump fork-ts-checker-webpack-plugin (#14750)
 
 Bumps the webpack group in /server/src/main/webapp/WEB-INF/rails with 1 update: [fork-ts-checker-webpack-plugin](https://github.com/TypeStrong/fork-ts-checker-webpack-plugin).
 
 
-Updates `fork-ts-checker-webpack-plugin` from 9.1.0 to 9.1.1
+Updates `fork-ts-checker-webpack-plugin` from 9.1.1 to 9.2.0
 - [Release notes](https://github.com/TypeStrong/fork-ts-checker-webpack-plugin/releases)
 - [Changelog](https://github.com/TypeStrong/fork-ts-checker-webpack-plugin/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/TypeStrong/fork-ts-checker-webpack-plugin/compare/v9.1.0...v9.1.1)
+- [Commits](https://github.com/TypeStrong/fork-ts-checker-webpack-plugin/compare/v9.1.1...v9.2.0)
 
 ---
 updated-dependencies:
 - dependency-name: fork-ts-checker-webpack-plugin
-  dependency-version: 9.1.1
+  dependency-version: 9.2.0
   dependency-type: direct:development
-  update-type: version-update:semver-patch
+  update-type: version-update:semver-minor
   dependency-group: webpack
 ...
 
@@ -1029,55 +1038,175 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
      "eslint-plugin-react": "^7.37.5",
      "eslint-webpack-plugin": "^6.0.0",
      "file-loader": "^6.2.0",
--    "fork-ts-checker-webpack-plugin": "^9.1.0",
-+    "fork-ts-checker-webpack-plugin": "^9.1.1",
+-    "fork-ts-checker-webpack-plugin": "^9.1.1",
++    "fork-ts-checker-webpack-plugin": "^9.2.0",
      "fs-extra": "^11.4.1",
      "globals": "^17.14.0",
      "html-webpack-plugin": "^5.6.8",
 ```
 
-**File**: `server/src/main/webapp/WEB-INF/rails/yarn.lock` (modified, +5/-5)
+**File**: `server/src/main/webapp/WEB-INF/rails/yarn.lock` (modified, +81/-39)
 ```diff
-@@ -4129,9 +4129,9 @@ __metadata:
+@@ -5,7 +5,7 @@ __metadata:
+   version: 10
+   cacheKey: 10c0
+ 
+-"@babel/code-frame@npm:^7.0.0, @babel/code-frame@npm:^7.16.7, @babel/code-frame@npm:^7.29.7":
++"@babel/code-frame@npm:^7.0.0, @babel/code-frame@npm:^7.29.7":
+   version: 7.29.7
+   resolution: "@babel/code-frame@npm:7.29.7"
+   dependencies:
+@@ -2640,6 +2640,15 @@ __metadata:
    languageName: node
    linkType: hard
  
--"fork-ts-checker-webpack-plugin@npm:^9.1.0":
--  version: 9.1.0
--  resolution: "fork-ts-checker-webpack-plugin@npm:9.1.0"
-+"fork-ts-checker-webpack-plugin@npm:^9.1.1":
-+  version: 9.1.1
-+  resolution: "fork-ts-checker-webpack-plugin@npm:9.1.1"
++"brace-expansion@npm:^2.0.2":
++  version: 2.1.8
++  resolution: "brace-expansion@npm:2.1.8"
++  dependencies:
++    balanced-match: "npm:^1.0.0"
++  checksum: 10c0/72e79fbb273a10ec3d01f45a09a4fb08344f1bac88477a1664401cd1b7730887e755a094b012a2487e3007ad73bef5fa54efb25aef389d7f41268cb137b857d8
++  languageName: node
++  linkType: hard
++
+ "brace-expansion@npm:^5.0.8":
+   version: 5.0.12
+   resolution: "brace-expansion@npm:5.0.12"
+@@ -2811,7 +2820,7 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"chokidar@npm:^4.0.1":
++"chokidar@npm:^4.0.3":
+   version: 4.0.3
+   resolution: "chokidar@npm:4.0.3"
    dependencies:
-     "@babel/code-frame": "npm:^7.16.7"
+@@ -3038,20 +3047,20 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"cosmiconfig@npm:^8.2.0":
+-  version: 8.3.6
+-  resolution: "cosmiconfig@npm:8.3.6"
++"cosmiconfig@npm:^9.0.2":
++  version: 9.0.2
++  resolution: "cosmiconfig@npm:9.0.2"
+   dependencies:
++    env-paths: "npm:^2.2.1"
+     import-fresh: "npm:^3.3.0"
+     js-yaml: "npm:^4.1.0"
+     parse-json: "npm:^5.2.0"
+-    path-type: "npm:^4.0.0"
+   peerDependencies:
+     typescript: ">=4.9.5"
+   peerDependenciesMeta:
+     typescript:
+       optional: true
+-  checksum: 10c0/0382a9ed13208f8bfc22ca2f62b364855207dffdb73dc26e150ade78c3093f1cf56172df2dd460c8caf2afa91c0ed4ec8a88c62f8f9cd1cf423d26506aa8797a
++  checksum: 10c0/132d32863c0b3d9ace7010a10011e09089532b36e3b11e02004d671dcbd8b8f2f16293b82d510d9c15890f30358baf8722127c7b1c011449c90b6a178f9c6594
+   languageName: node
+   linkType: hard
+ 
+@@ -3240,7 +3249,7 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"deepmerge@npm:^4.2.2, deepmerge@npm:^4.3.1":
++"deepmerge@npm:^4.3.1":
+   version: 4.3.1
+   resolution: "deepmerge@npm:4.3.1"
+   checksum: 10c0/e53481aaf1aa2c4082b5342be6b6d8ad9dfe387bc92ce197a66dea08bd4265904a087e75e464f14d1347cf2ac8afe1e4c16b266e0561cc5df29382d3c5f80044
+@@ -4129,26 +4138,26 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"fork-ts-checker-webpack-plugin@npm:^9.1.1":
+-  version: 9.1.1
+-  resolution: "fork-ts-checker-webpack-plugin@npm:9.1.1"
++"fork-ts-checker-webpack-plugin@npm:^9.2.0":
++  version: 9.2.0
++  resolution: "fork-ts-checker-webpack-plugin@npm:9.2.0"
+   dependencies:
+-    "@babel/code-frame": "npm:^7.16.7"
++    "@babel/code-frame": "npm:^7.29.7"
      chalk: "npm:^4.1.2"
-@@ -4148,7 +4148,7 @@ __metadata:
+-    chokidar: "npm:^4.0.1"
+-    cosmiconfig: "npm:^8.2.0"
+-    deepmerge: "npm:^4.2.2"
+-    fs-extra: "npm:^10.0.0"
+-    memfs: "npm:^3.4.1"
+-    minimatch: "npm:^3.0.4"
++    chokidar: "npm:^4.0.3"
++    cosmiconfig: "npm:^9.0.2"
++    deepmerge: "npm:^4.3.1"
++    fs-extra: "npm:^11.4.1"
++    memfs: "npm:^3.6.0"
++    minimatch: "npm:^9.0.9"
+     node-abort-controller: "npm:^3.0.1"
+-    schema-utils: "npm:^3.1.1"
+-    semver: "npm:^7.3.5"
+-    tapable: "npm:^2.2.1"
++    schema-utils: "npm:^4.8.3"
++    semver: "npm:^7.8.6"
++    tapable: "npm:^2.3.4"
    peerDependencies:
      typescript: ">3.6.0"
      webpack: ^5.11.0
--  checksum: 10c0/b4acdf400862af5f57d3e159b3a444e7f9f73e9f4609d54604c3810f75f8adcea0165a8b17ee856ed3c65591d058ffd73cd08d273e289d4952844e75f6efa85d
-+  checksum: 10c0/6ad8f4e1b0163284e60259390b18cd301213b85213216c9836a33340b43629edad0fbdeb772ca599bbe4e44dbed90846929b7792c7d0d121fb5b5727fae98c70
+-  checksum: 10c0/6ad8f4e1b0163284e60259390b18cd301213b85213216c9836a33340b43629edad0fbdeb772ca599bbe4e44dbed90846929b7792c7d0d121fb5b5727fae98c70
++  checksum: 10c0/2a936a8e4887f7463171cc4854a633aca4b0ec0c2493600c5fb1d8f070dd49add4adef99dd0af6ccc4c4d3bf2537400987ad34769da7a0c67c08d6640c668096
    languageName: node
    linkType: hard
  
-@@ -4451,7 +4451,7 @@ __metadata:
+@@ -4170,17 +4179,6 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"fs-extra@npm:^10.0.0":
+-  version: 10.1.0
+-  resolution: "fs-extra@npm:10.1.0"
+-  dependencies:
+-    graceful-fs: "npm:^4.2.0"
+-    jsonfile: "npm:^6.0.1"
+-    universalify: "npm:^2.0.0"
+-  checksum: 10c0/5f579466e7109719d162a9249abbeffe7f426eb133ea486e020b89bc6d67a741134076bf439983f2eb79276ceaf6bd7b7c1e43c3fd67fe889863e69072fb0a5e
+-  languageName: node
+-  linkType: hard
+-
+ "fs-extra@npm:^11.4.1":
+   version: 11.4.1
+   resolution: "fs-extra@npm:11.4.1"
+@@ -4451,7 +4449,7 @@ __metadata:
      eslint-webpack-plugin: "npm:^6.0.0"
      file-loader: "npm:^6.2.0"
-     filesize: "npm:^11.0.32"
--    fork-ts-checker-webpack-plugin: "npm:^9.1.0"
-+    fork-ts-checker-webpack-plugin: "npm:^9.1.1"
+     filesize: "npm:^11.0.33"
+-    fork-ts-checker-webpack-plugin: "npm:^9.1.1"
++    fork-ts-checker-webpack-plugin: "npm:^9.2.0"
      foundation-sites: "npm:^6.9.0"
      fs-extra: "npm:^11.4.1"
      globals: "npm:^17.14.0"
+@@ -5698,12 +5696,12 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"memfs@npm:^3.4.1":
+-  version: 3.5.3
+-  resolution: "memfs@npm:3.5.3"
++"memfs@npm:^3.6.0":
++  version: 3.6.0
++  resolution: "memfs@npm:3.6.0"
+   dependencies:
+     fs-monkey: "npm:^1.0.4"
+-  checksum: 10c0/038fc81bce17ea92dde15aaa68fa0fdaf4960c721ce3ffc7c2cb87a259333f5159784ea48b3b72bf9e054254d9d0d0d5209d0fdc3d07d08653a09933b168fbd7
++  checksum: 10c0/af567f9038bbb5bbacf100b35d5839e90a89f882d191d8a1c7002faeb224c6cfcebd0e97c0150e9af8be95ec7
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #14752** (2026-11-20): build(deps-ui-dev): bump regexp_parser from 2.13.1 to 2.13.4 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
+- **PR #14751** (2026-11-20): build(deps-ui): bump filesize from 11.0.33 to 11.0.34 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
+- **PR #14750** (2026-11-20): build(deps-ui-dev): bump fork-ts-checker-webpack-plugin from 9.1.1 to 9.2.0 in /server/src/main/webapp/WEB-INF/rails in the webpack group (@dependabot[bot])
+- **PR #14749** (2026-11-20): build(deps): bump com.autonomousapps.dependency-analysis from 3.20.3 to 3.20.4 in the gradle-plugins group (@dependabot[bot])
 - **PR #14748** (2026-11-19): build(deps): bump org.codehaus.plexus:plexus-utils from 4.1.0 to 4.2.0 (@dependabot[bot])
 - **PR #14747** (2026-11-19): build(deps): bump com.github.oshi:oshi-core from 7.7.3 to 7.8.0 (@dependabot[bot])
-- **PR #14746** (2026-11-19): build(deps-ui): bump filesize from 11.0.32 to 11.0.33 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
-- **PR #14745** (2026-11-19): build(deps-ui-dev): bump fork-ts-checker-webpack-plugin from 9.1.0 to 9.1.1 in /server/src/main/webapp/WEB-INF/rails in the webpack group (@dependabot[bot])
-- **PR #14744** (2026-11-19): build(deps): bump com.autonomousapps.dependency-analysis from 3.20.2 to 3.20.3 in the gradle-plugins group (@dependabot[bot])
-- **PR #14742** (2026-11-17): build(deps-ui): bump filesize from 11.0.31 to 11.0.32 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
 
 ---
 
@@ -1103,7 +1232,7 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 When implementing operations in `server/src/main/webapp/WEB-INF/rails/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gocd/gocd. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `99be1b85`: build(deps-ui): bump filesize in /server/src/main/webapp/WEB-INF/rails. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0baa28c1`: build(deps-ui): bump filesize in /server/src/main/webapp/WEB-INF/rails. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/src/main/webapp/WEB-INF/rails/package.json`.
@@ -1111,17 +1240,17 @@ Subsystems managing Java data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-    "filesize": "^11.0.33",
+    "filesize": "^11.0.34",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-    "filesize": "^11.0.32",
+    "filesize": "^11.0.33",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `99be1b85` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0baa28c1` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

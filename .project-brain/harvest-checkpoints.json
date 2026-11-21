@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-21T04:48:30.088Z",
+  "last_updated": "2026-11-21T05:27:56.178Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3141,14 +3141,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fastify-fastify",
-      "content_hash": "15c6145e574d755721b215bff3ae8b2e0719924a0ea79be7dcfc70d4e24b424f",
-      "verified_at": "2026-11-17T12:41:40.148Z",
+      "content_hash": "83f1cd4f8bae41790a1c704f91882622273a5cb8a7af07088814c3ec0d5f5a9c",
+      "verified_at": "2026-11-21T05:27:50.173Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T12:41:40.148Z"
+      "last_updated": "2026-11-21T05:27:50.173Z"
     },
     "expressjs/express": {
       "repository": "expressjs/express",
@@ -7866,14 +7866,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gocd-gocd",
-      "content_hash": "3bc738b0cda0f12e8ea19f218aee7af8e5648925a989448ae39feb7f1a12cbfc",
-      "verified_at": "2026-11-20T04:29:24.038Z",
+      "content_hash": "1ada0fcdf4bc5d0903ecd9dafdbd90c9746a44ee696667907081124ce9a29829",
+      "verified_at": "2026-11-21T05:27:56.177Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T04:29:24.038Z"
+      "last_updated": "2026-11-21T05:27:56.177Z"
     },
     "citusdata/citus": {
       "repository": "citusdata/citus",
@@ -18111,14 +18111,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-a2ui-project-a2ui",
-      "content_hash": "b88241c73a49fb53abc3a1125ca74a9b780dc2152fb6eb5c3b3b045347dc35f5",
-      "verified_at": "2026-11-17T05:19:45.823Z",
+      "content_hash": "67459ac5f72b68fafcef639eb95376e2ac42f08ff61548a25ca185bd81078d60",
+      "verified_at": "2026-11-21T05:27:53.628Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T05:19:45.823Z"
+      "last_updated": "2026-11-21T05:27:53.628Z"
     },
     "milind-soni/OpenMausBot": {
       "repository": "milind-soni/OpenMausBot",

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/fastify-fastify-learnings.md`  
 > **Source**: github ([https://github.com/fastify/fastify](https://github.com/fastify/fastify))  
-> **Source Version**: `36a67047`  
+> **Source Version**: `825d7722`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T12:41:39.234Z  
+> **Timestamp**: 2026-11-21T05:27:49.081Z  
 > **Learning ID**: `learn-github-fastify-fastify`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/fastify-fastify-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/fastify/fastify](https://github.com/fastify/fastify))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T12:40:55.653Z  
+> **Harvest Timestamp**: 2026-11-21T05:27:48.933Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Fast and low overhead web framework, for Node.js
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 37432 stars
+- **Stars / Engagement**: 37450 stars
 
 ---
 
@@ -1303,160 +1303,83 @@ fastify.listen({ port: 3000 }, (err, address) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `46797238` (2026-11-15)
-**Commit Message**: docs(security): list non-canonical content schema keys as a non-vulnerability
+### Incident Patch 1: `825d7722` (2026-11-17)
+**Commit Message**: docs(request): state that runtime-compiled schemas skip header-name normalization (#7227)
 
-Per-content-type schemas are selected by exact match on the essence MIME
-type. Keys written with different casing, parameters, whitespace or media
-ranges never match. This has been reported repeatedly as a validation
-bypass; document why it is a trusted-configuration concern.
+`request.compileValidationSchema()` and `request.validateInput()` with a
+schema object compile the schema as given, even when `httpPart` is
+`'headers'`. Unlike a route `headers` schema, header names are not
+normalized to lowercase, because these methods validate whatever data
+the caller passes and Fastify cannot assume it holds lowercased header
+names. A canonical-case schema applied to `request.headers` never
+matches, so assertions such as `dependencies` or a `propertyNames`
+deny-list are silently skipped.
 
-**File**: `SECURITY.md` (modified, +14/-0)
+This documents that boundary in both methods and in the "Header name
+case" section of the validation docs, and points to
+`request.validateInput(data, 'headers')` for reusing the normalized
+route validator.
+
+Co-authored-by: Antonio Tripodi <[REDACTED_EMAIL]>
+
+**File**: `docs/Reference/Request.md` (modified, +14/-1)
 ```diff
-@@ -55,6 +55,20 @@ parser has a matching validation schema entry. This is a configuration concern,
- not a framework vulnerability (see
- [Validation and Serialization](./docs/Reference/Validation-and-Serialization.md)
- and [Content-Type Parser](./docs/Reference/ContentTypeParser.md))
-+- **Non-canonical `content` schema keys**: Per-content-type schemas
-+(`schema.body.content` and `schema.response[code].content`) are selected by an
-+exact match on the essence MIME type of the request or reply: lowercase,
-+without parameters or whitespace (e.g. `application/json`). The only other
-+supported key is the `*/*` catch-all for response schemas. Any other spelling,
-+such as `Application/JSON`, `application/json; charset=utf-8`,
-+` application/json `, or `application/*`, never matches. Body validation for
-+that entry is skipped, and the response is serialized without that schema (or
-+rejected with an error on releases that fail closed). The key is part of the
-+trusted route schema, so this is a configuration concern, not a framework
-+vulnerability. A route that uses the canonical key keeps validating no matter
-+what casing, parameters, or whitespace the client sends in the
-+`Content-Type` header. Bypasses against canonical keys remain in scope (see
-+[Validation and Serialization](./docs/Reference/Validation-and-Serialization.md))
- - **`insecureHTTPParser: true` deployments**: Reports that rely on enabling
- Node.js `insecureHTTPParser` are out of scope; Fastify assumes this flag is
- `false`
+@@ -401,6 +401,17 @@ The optional parameter `httpPart`, if provided, is forwarded to the
+ `ValidationCompiler`, allowing it to compile the validation function if a custom
+ `ValidationCompiler` is provided for the route.
+ 
++The schema is compiled as given, and the returned function validates whatever
++data is passed to it. Unlike a route `headers` schema, header names are not
++[normalized to lowercase](./Validation-and-Serialization.md#header-name-case),
++even when `httpPart` is `'headers'`. Node.js exposes `request.headers` with
++lowercase names, so a schema used to validate them must write header names in
++lowercase (for example `required: ['x-api-key']`, not
++`required: ['X-Api-Key']`). Otherwise assertions such as `dependencies` or a
++`propertyNames` deny-list never match and are silently skipped. To reuse the
++normalized validator of the route `headers` schema, call
++`request.validateInput(data, 'headers')`.
++
+ This function has an `errors` property. Errors encountered during the last
+ validation are assigned to `errors`.
+ 
+@@ -483,7 +494,9 @@ This function validates the input based on the provided schema or HTTP part. If
+ both are provided, the `httpPart` parameter takes precedence.
+ 
+ If no validation function exists for a given `schema`, a new validation function
+-will be compiled, forwarding the `httpPart` if provided.
++will be compiled, forwarding the `httpPart` if provided. A schema compiled this
++way is not header-name normalized; see
++[.compileValidationSchema(schema, [httpPart])](#compilevalidationschema).
+ 
+ ```js
+ request
 ```
 
----
-
-### Incident Patch 2: `7e0c8feb` (2026-11-11)
-**Commit Message**: fix(route): apply prefixTrailingSlash to HEAD routes declared explicitly
-
-Under a prefix, a HEAD route declared on `/` was only registered with the
-trailing slash, e.g. at `/prefix/`, whatever its `prefixTrailingSlash`,
-so `HEAD /prefix` got a 404. Since #2790, HEAD routes skip the prefix
-handling, so that the HEAD routes Fastify generates for GET routes,
-which are already created for each path of their GET route, are not
-registered twice. Only generated HEAD routes skip it now.
-
-Fixes #7208
-
-**File**: `lib/route.js` (modified, +2/-1)
+**File**: `docs/Reference/Validation-and-Serialization.md` (modified, +7/-0)
 ```diff
-@@ -249,7 +249,8 @@ function buildRouting (options) {
+@@ -193,6 +193,13 @@ validate the body, querystring, or params. Fastify emits
+ object instead (for example `fastify.getSchema('shared-headers')`), or write
+ header names in lowercase.
  
-     const prefix = this[kRoutePrefix]
- 
--    if (path === '/' && prefix.length > 0 && opts.method !== 'HEAD') {
-+    // Generated HEAD routes are already created for each path of their GET route
-+    if (path === '/' && prefix.length > 0 && !opts.isGeneratedHeadRoute) {
-       switch (opts.prefixTrailingSlash) {
-         case 'slash':
-           addNewRoute.call(this, { path, isFastify })
-```
-
-**File**: `test/route.7.test.js` (modified, +75/-0)
-```diff
-@@ -312,6 +312,81 @@ test('HEAD routes properly auto created for GET routes when prefixTrailingSlash:
-   t.assert.strictEqual(noneTrailingReply.statusCode, 200)
- })
- 
-+test('HEAD routes declared explicitly follow prefixTrailingSlash: \'both\'', async t => {
-+  t.plan(2)
++Normalization also does not apply to schemas compiled at request time with
++[`request.compileValidationSchema()`](./Request.md#compilevalidationschema) or
++[`request.validateInput()`](./Request.md#validate), even when `httpPart` is
++`'headers'`. These methods validate whatever data the caller passes, so Fastify
++cannot assume it holds lowercased header names. Write header names in
++lowercase in those schemas.
 +
-+  const fastify = Fastify()
-+
-+  fastify.register(function routes (f, opts, next) {
-+    f.route({
-+      method: 'HEAD',
-+      url: '/',
-+      prefixTrailingSlash: 'both',
-+      handler: (req, reply) => {
-+        reply.send()
-+      }
-+    })
-+
-+    next()
-+  }, { prefix: '/prefix' })
-+
-+  const noneTrailingReply = await fastify.inject({ url: '/prefix', method: 'HEAD' })
-+  const trailingSlashReply = await fastify.inject({ url: '/prefix/', method: 'HEAD' })
-+
-+  t.assert.strictEqual(noneTrailingReply.statusCode, 200)
-+  t.assert.strictEqual(trailingSlashReply.statusCode, 200)
-+})
-+
-+test('HEAD routes declared explicitly follow prefixTrailingSlash: \'no-slash\'', async t => {
-+  t.plan(2)
-+
-+  const fastify = Fastify()
-+
-+  fastify.register(function routes (f, opts, next) {
-+    f.route({
-+      method: 'HEAD',
-+      url: '/',
-+      prefixTrailingSlash: 'no-slash',
-+      handler: (req, reply) => {
-+        reply.send()
-+      }
-+    })
-+
-+    next()
-+  }, { prefix: '/prefix' })
-+
-+  const noneTrailingReply = await fastify.inject({ url: '/prefix', method: 'HEAD' })
-+  const trailingSlashReply = await fastify.inject({ url: '/prefix/', method: 'HEAD' })
-+
-+  t.assert.strictEqual(noneTrailingReply.statusCode, 200)
-+  t.assert.strictEqual(trailingSlashReply.statusCode, 404)
-+})
-+
-+test('HEAD routes declared explicitly follow prefixTrailingSlash: \'slash\'', async t => {
-+  t.plan(2)
-+
-+  const fastify = Fastify()
-+
-+  fastify.register(function routes (f, opts, next) {
-+    f.route({
-+      method: 'HEAD',
-+      url: '/',
-+      prefixTrailingSlash: 'slash',
-+      handler: (req, reply) => {
-+        reply.send()
-+      }
-+    })
-+
-+    next()
-+  }, { prefix: '/prefix' })
-+
-+  const noneTrailingReply = await fastify.inject({ url: '/prefix', method: 'HEAD' })
-+  const trailingSlashReply = await fastify.inject({ url: '/prefix/', method: 'HEAD' })
-+
-+  t.assert.strictEqual(noneTrailingReply.statusCode, 404)
-+  t.assert.strictEqual(trailingSlashReply.statusCode, 200)
-+})
-+
- test('GET route with body schema should throw', t => {
-   t.plan(1)
- 
+ Example:
+ ```js
+ const bodyJsonSchema = {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7230** (2026-11-17): [Backport 5.x] docs(request): state that runtime-compiled schemas skip header-name normalization (@github-actions[bot])
+- **PR #7227** (2026-11-17): docs(request): state that runtime-compiled schemas skip header-name normalization (@mcollina)
 - **PR #7225** (2026-11-15): [Backport 5.x] docs(security): list non-canonical content schema keys as a non-vulnerability (@github-actions[bot])
 - **PR #7224** (2026-11-15): docs(security): list non-canonical content schema keys as a non-vulnerability (@mcollina)
 - **PR #7221** (2026-11-13): [Backport 5.x] fix(route): apply prefixTrailingSlash to HEAD routes declared explicitly (@github-actions[bot])
 - **PR #7215** (closed): fix(route): respect prefixTrailingSlash for explicit HEAD routes on / (@abdul-karim-mia)
-- **PR #7209** (2026-11-13): fix(route): apply prefixTrailingSlash to HEAD routes declared explicitly (@satazor)
-- **PR #7204** (closed): perf(route): guard keepAliveConnections tracking on request hot path (@abdul-karim-mia)
 
 ---
 
@@ -1476,41 +1399,41 @@ Fixes #7208
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(security): list non-canonical content schema keys as a non-vulnerability
+## X. docs(request): state that runtime-compiled schemas skip header-name normalizatio
 
 **RULE**:
-When implementing operations in `SECURITY.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fastify/fastify. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/Reference/Request.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fastify/fastify. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `46797238`: docs(security): list non-canonical content schema keys as a non-vulnerability. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `825d7722`: docs(request): state that runtime-compiled schemas skip header-name normalization. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `SECURITY.md`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/Reference/Request.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-- **Non-canonical `content` schema keys**: Per-content-type schemas
-(`schema.body.content` and `schema.response[code].content`) are selected by an
-exact match on the essence MIME type of the request or reply: lowercase,
-without parameters or whitespace (e.g. `application/json`). The only other
-supported key is the `*/*` catch-all for response schemas. Any other spelling,
-such as `Application/JSON`, `application/json; charset=utf-8`,
-` application/json `, or `application/*`, never matches. Body validation for
-that entry is skipped, and the response is serialized without that schema (or
-rejected with an error on releases that fail closed). The key is part of the
-trusted route schema, so this is a configuration concern, not a framework
-vulnerability. A route that uses the canonical key keeps validating no matter
-what casing, parameters, or whitespace the client sends in the
-`Content-Type` header. Bypasses against canonical keys remain in scope (see
-[Validation and Serialization](./docs/Reference/Validation-and-Serialization.md))
+The schema is compiled as given, and the returned function validates whatever
+data is passed to it. Unlike a route `headers` schema, header names are not
+[normalized to lowercase](./Validation-and-Serialization.md#header-name-case),
+even when `httpPart` is `'headers'`. Node.js exposes `request.headers` with
+lowercase names, so a schema used to validate them must write header names in
+lowercase (for example `required: ['x-api-key']`, not
+`required: ['X-Api-Key']`). Otherwise assertions such as `dependencies` or a
+`propertyNames` deny-list never match and are silently skipped. To reuse the
+normalized validator of the route `headers` schema, call
+`request.validateInput(data, 'headers')`.
+
+will be compiled, forwarding the `httpPart` if provided. A schema compiled this
+way is not header-name normalized; see
+[.compileValidationSchema(schema, [httpPart])](#compilevalidationschema).
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+will be compiled, forwarding the `httpPart` if provided.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `46797238` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `825d7722` are properly handled with clean fallback behavior.

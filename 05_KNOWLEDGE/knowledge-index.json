@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T05:01:31.314Z",
+  "last_updated": "2026-11-21T05:28:03.156Z",
   "total_verified_learnings": 9058,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22946,
+  "total_items": 22953,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -78844,13 +78844,13 @@
       "rule_number": 4898,
       "title": "build(deps-ui): bump filesize in /server/src/main/webapp/WEB-INF/rails",
       "source_url": "https://github.com/gocd/gocd",
-      "source_version": "d0652eba",
+      "source_version": "2addd4f0",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-20T04:29:23.799Z"
+      "verified_at": "2026-11-21T05:27:55.953Z"
     },
     "rule-4899": {
       "learning_id": "rule-4899",
@@ -113145,10 +113145,10 @@
       "relative_path": "08_VERIFICATION/a2ui-project-a2ui-verification-protocol-empirical-defect-shield-for-a2ui-project.md",
       "title": "Verification Protocol: Empirical Defect Shield for a2ui-project/a2ui",
       "repository": "a2ui-project/a2ui",
-      "source_version": "1cbef31b",
-      "content_hash": "d887c29f22a9e1a1fc4b3c8ea128bcccf1f07e87d9792a890dec1ff0e9f39744",
+      "source_version": "5ff1b05f",
+      "content_hash": "7bcca0b5d1d4ef5ecd44860b26a293d47dac13944f94d80f36487a9efd97b4d4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T05:19:46.225Z"
+      "persisted_at": "2026-11-21T05:27:54.208Z"
     },
     "candidate_directive-mcp-preserve-distinct-block-search-results-by-relationship-id-2414": {
       "item_id": "candidate_directive-mcp-preserve-distinct-block-search-results-by-relationship-id-2414",
@@ -113218,9 +113218,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for a2ui-project-a2ui-learnings",
       "repository": "a2ui-project-a2ui-learnings",
       "source_version": "HEAD",
-      "content_hash": "8026e28c52738dcef1451c38c18c477fc79b734a437ccb36f2f89d01ae7eb362",
+      "content_hash": "5362b7feaae996d762e7430bad54360ea034301bddb59c9935991e4ea12cf12b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T05:19:50.007Z"
+      "persisted_at": "2026-11-21T05:28:01.900Z"
     },
     "domain_intelligence-architecture-intelligence-open-source-legal-opencontracts-learnings-core-invaria": {
       "item_id": "domain_intelligence-architecture-intelligence-open-source-legal-opencontracts-learnings-core-invaria",
@@ -113289,10 +113289,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-gocd-gocd-technical-construction-intelligence-gocd-gocd-core-invariants.md",
       "title": "Technical Construction Intelligence: gocd/gocd Core Invariants",
       "repository": "gocd/gocd",
-      "source_version": "d0652eba",
-      "content_hash": "86790230e035293d0afdd5b0195a664d17cfe35ac34204be5a6865e207e541cd",
+      "source_version": "2addd4f0",
+      "content_hash": "5d1db3c50e348237ae44d679f7d473ae4ac873ab1f1d3788add140242ea2fdad",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T04:29:24.473Z"
+      "persisted_at": "2026-11-21T05:27:56.557Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-gocd-gocd": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gocd-gocd",
@@ -113301,10 +113301,10 @@
       "relative_path": "08_VERIFICATION/gocd-gocd-verification-protocol-empirical-defect-shield-for-gocd-gocd.md",
       "title": "Verification Protocol: Empirical Defect Shield for gocd/gocd",
       "repository": "gocd/gocd",
-      "source_version": "d0652eba",
-      "content_hash": "4b4a7b961b5872aee555ae329b0543daf1e0d25c3cdb92cfe0130c2304d4df25",
+      "source_version": "2addd4f0",
+      "content_hash": "8d8c1e1f87fdefa482dfa3f8db565559f400a4164f64be212a79625c2b49a353",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T04:29:24.664Z"
+      "persisted_at": "2026-11-21T05:27:56.721Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-27b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-27b-core-invariants",
@@ -113362,9 +113362,9 @@
       "title": "Technical Construction Intelligence: gocd-gocd-learnings Core Invariants",
       "repository": "gocd-gocd-learnings",
       "source_version": "HEAD",
-      "content_hash": "03c817383f0de71956eeab206cd4003e33e16b33f17920babfa134a03500edb0",
+      "content_hash": "60db5392ed31304e9626c562447d66b72ed4076882202291b2e9f2cd59ad6fad",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T04:29:29.967Z"
+      "persisted_at": "2026-11-21T05:28:02.991Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-gocd-gocd-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gocd-gocd-learnings",
@@ -113374,9 +113374,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for gocd-gocd-learnings",
       "repository": "gocd-gocd-learnings",
       "source_version": "HEAD",
-      "content_hash": "493213af8b275ecfaccece4887189fcbb8f2cfbd7f557bbdd78ff21f4d15a22e",
+      "content_hash": "b61e98975c5b6944be2c94489402098e7f14746772b450149890a86fb2a8b9d9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T04:29:30.193Z"
+      "persisted_at": "2026-11-21T05:28:03.156Z"
     },
     "domain_intelligence-research-knowledge-intelligence-taichuai-zdtaichu5-0-9b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-taichuai-zdtaichu5-0-9b-core-invariants",
@@ -238260,8 +238260,8 @@
       "slug": "gocd-gocd",
       "platform": "github",
       "source_url": "https://github.com/gocd/gocd",
-      "source_version": "d0652eba",
-      "content_hash": "3bc738b0cda0f12e8ea19f218aee7af8e5648925a989448ae39feb7f1a12cbfc",
+      "source_version": "2addd4f0",
+      "content_hash": "1ada0fcdf4bc5d0903ecd9dafdbd90c9746a44ee696667907081124ce9a29829",
       "dossier_path": "07_PROJECT_LEARNING/gocd-gocd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gocd-gocd-learnings.md",
       "promoted_rules": [
@@ -238306,7 +238306,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T04:29:23.799Z",
+      "verified_at": "2026-11-21T05:27:55.953Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -267608,14 +267608,19 @@
       "slug": "a2ui-project-a2ui",
       "platform": "github",
       "source_url": "https://github.com/a2ui-project/a2ui",
-      "source_version": "1cbef31b",
-      "content_hash": "b88241c73a49fb53abc3a1125ca74a9b780dc2152fb6eb5c3b3b045347dc35f5",
+      "source_version": "5ff1b05f",
+      "content_hash": "67459ac5f72b68fafcef639eb95376e2ac42f08ff61548a25ca185bd81078d60",
       "dossier_path": "07_PROJECT_LEARNING/a2ui-project-a2ui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/a2ui-project-a2ui-learnings.md",
       "promoted_rules": [
         {
           "number": 8873,
           "title": "docs(blueprints): sync dart/a2ui_agent codebase blueprint to 24d1bf9c",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9732,
+          "title": "bump dompurify to ^3.4.17 to resolve security advisories",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -267624,7 +267629,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T05:19:45.664Z",
+      "verified_at": "2026-11-21T05:27:53.383Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -272768,13 +272773,13 @@
       "item_id": "candidate_directive-build-deps-ui-bump-filesize-in-server-src-main-webapp-web-inf-rails",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-CI0F-build-deps-ui-bump-filesize-in-server-src-main-webapp-web-inf-rails.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-VND2-build-deps-ui-bump-filesize-in-server-src-main-webapp-web-inf-rails.md",
       "title": "build(deps-ui): bump filesize in /server/src/main/webapp/WEB-INF/rails",
       "repository": "gocd-gocd-learnings",
       "source_version": "HEAD",
-      "content_hash": "15f344203301301d9fac707be202f734ace677cf515e269b1239272ce8d7f8ca",
+      "content_hash": "002bc27471c107958e940bed1a99bc90c27f826ea019a4df3d3f83070b3e299f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T04:29:29.776Z"
+      "persisted_at": "2026-11-21T05:28:02.826Z"
     },
     "candidate_directive-nuc-112-node-names-of-reasoning-selections": {
       "item_id": "candidate_directive-nuc-112-node-names-of-reasoning-selections",
@@ -273336,14 +273341,19 @@
       "slug": "fastify-fastify",
       "platform": "github",
       "source_url": "https://github.com/fastify/fastify",
-      "source_version": "36a67047",
-      "content_hash": "15c6145e574d755721b215bff3ae8b2e0719924a0ea79be7dcfc70d4e24b424f",
+      "source_version": "825d7722",
+      "content_hash": "83f1cd4f8bae41790a1c704f91882622273a5cb8a7af07088814c3ec0d5f5a9c",
       "dossier_path": "07_PROJECT_LEARNING/fastify-fastify-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fastify-fastify-learnings.md",
       "promoted_rules": [
         {
           "number": 8965,
           "title": "docs(security): list non-canonical content schema keys as a non-vulnerability",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9731,
+          "title": "docs(request): state that runtime-compiled schemas skip header-name normalizatio",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -273352,7 +273362,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T12:41:39.966Z",
+      "verified_at": "2026-11-21T05:27:49.921Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -273394,10 +273404,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-fastify-fastify-technical-construction-intelligence-fastify-fastify-core-invaria.md",
       "title": "Technical Construction Intelligence: fastify/fastify Core Invariants",
       "repository": "fastify/fastify",
-      "source_version": "36a67047",
-      "content_hash": "e931065747e069ab12380cf80786fb9b485992c4cba406e3485e9591ded37441",
+      "source_version": "825d7722",
+      "content_hash": "bbf71a74377259649df52753aa9aa956382cfe12d0fc94f1c0696f2d08071829",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T12:41:40.435Z"
+      "persisted_at": "2026-11-21T05:27:50.555Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-fastify-fastify": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-fastify-fastify",
@@ -273406,10 +273416,10 @@
       "relative_path": "08_VERIFICATION/fastify-fastify-verification-protocol-empirical-defect-shield-for-fastify-fastif.md",
       "title": "Verification Protocol: Empirical Defect Shield for fastify/fastify",
       "repository": "fastify/fastify",
-      "source_version": "36a67047",
-      "content_hash": "5972bc87174e8eeac393e67ee342b09758ce7118b38b535d299f8c4550770ab4",
+      "source_version": "825d7722",
+      "content_hash": "b994320ef47c7bc584f943dcc9995dbefe2f0a90685dd90cff6f2125f0cdb6c6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T12:41:40.566Z"
+      "persisted_at": "2026-11-21T05:27:50.750Z"
     },
     "rule-8966": {
       "learning_id": "rule-8966",
@@ -273445,9 +273455,9 @@
       "title": "Technical Construction Intelligence: fastify-fastify-learnings Core Invariants",
       "repository": "fastify-fastify-learnings",
       "source_version": "HEAD",
-      "content_hash": "52b41156fc1ec7e7a6176904c3711691b2f1fad792e24611dc3a28c870cd9376",
+      "content_hash": "ed111ef5ec43081b104fe89d1cc0a1bf8471cd1b81f0d9b7d8f04e752206dd93",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T12:46:16.055Z"
+      "persisted_at": "2026-11-21T05:28:00.104Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-fastify-fastify-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-fastify-fastify-learnings",
@@ -273457,9 +273467,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for fastify-fastify-learnings",
       "repository": "fastify-fastify-learnings",
       "source_version": "HEAD",
-      "content_hash": "a1236acd10d2026a5558b5bbf06bc25828c8a72dceb9c8a9d4ba339578c820d8",
+      "content_hash": "f77e4f6b628a7387cfc795c86d68907aea168b186dd3aee4b03c879f6977fa22",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T12:46:16.176Z"
+      "persisted_at": "2026-11-21T05:28:00.278Z"
     },
     "rule-8967": {
       "learning_id": "rule-8967",
@@ -311569,6 +311579,94 @@
       "content_hash": "a45aa19095ce3101c56442adb7ce0fd97f116aeace2702c97a91f9d0c8d98503",
       "domain_letter": "H",
       "persisted_at": "2026-11-21T04:48:37.169Z"
+    },
+    "rule-9731": {
+      "learning_id": "rule-9731",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9731,
+      "title": "docs(request): state that runtime-compiled schemas skip header-name normalizatio",
+      "source_url": "https://github.com/fastify/fastify",
+      "source_version": "825d7722",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T05:27:49.921Z"
+    },
+    "candidate_directive-docs-request-state-that-runtime-compiled-schemas-skip-header-name-normalizatio": {
+      "item_id": "candidate_directive-docs-request-state-that-runtime-compiled-schemas-skip-header-name-normalizatio",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VL4E-docs-request-state-that-runtime-compiled-schemas-skip-header-name-normalizatio.md",
+      "title": "docs(request): state that runtime-compiled schemas skip header-name normalizatio",
+      "repository": "fastify-fastify-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f66080e67a4bc6abe733cdc8dbdf420ca9554dc82638506b7586a766b8eb4964",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T05:27:59.919Z"
+    },
+    "rule-9732": {
+      "learning_id": "rule-9732",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9732,
+      "title": "bump dompurify to ^3.4.17 to resolve security advisories",
+      "source_url": "https://github.com/a2ui-project/a2ui",
+      "source_version": "5ff1b05f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T05:27:53.383Z"
+    },
+    "candidate_directive-bump-dompurify-to-3-4-17-to-resolve-security-advisories": {
+      "item_id": "candidate_directive-bump-dompurify-to-3-4-17-to-resolve-security-advisories",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VGFX-bump-dompurify-to-3-4-17-to-resolve-security-advisories.md",
+      "title": "bump dompurify to ^3.4.17 to resolve security advisories",
+      "repository": "a2ui-project/a2ui",
+      "source_version": "5ff1b05f",
+      "content_hash": "6fb85bf280d6d2a86adfafb531877c8dd0bddd1f166e77aed1f93d6d647d128a",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-21T05:27:53.858Z"
+    },
+    "domain_intelligence-design-intelligence-a2ui-project-a2ui-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-a2ui-project-a2ui-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-a2ui-project-a2ui-design-intelligence-a2ui-project-a2ui-core-invariants.md",
+      "title": "Design Intelligence: a2ui-project/a2ui Core Invariants",
+      "repository": "a2ui-project/a2ui",
+      "source_version": "5ff1b05f",
+      "content_hash": "5f49fcc3b122855db2f0736f362568ba5de01304db1ab125c0fda9facb92fa4b",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-21T05:27:54.040Z"
+    },
+    "candidate_directive-markdown-it-bump-dompurify-to-3-4-17-to-resolve-security-advisories": {
+      "item_id": "candidate_directive-markdown-it-bump-dompurify-to-3-4-17-to-resolve-security-advisories",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VME4-markdown-it-bump-dompurify-to-3-4-17-to-resolve-security-advisories.md",
+      "title": "markdown-it): bump dompurify to ^3.4.17 to resolve security advisories",
+      "repository": "a2ui-project-a2ui-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f2f9343777d111ca7f65c2a13e7e60a9e3ef18aec341aae77013e10e64c4ac20",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-21T05:28:01.569Z"
+    },
+    "domain_intelligence-design-intelligence-a2ui-project-a2ui-learnings-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-a2ui-project-a2ui-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-a2ui-project-a2ui-learnings-design-intelligence-a2ui-project-a2ui-learnings-core.md",
+      "title": "Design Intelligence: a2ui-project-a2ui-learnings Core Invariants",
+      "repository": "a2ui-project-a2ui-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8db73d9e4f49818679668e783472345817f81a3f47d13aca98e812e87d768666",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-21T05:28:01.735Z"
     }
   },
   "ai-builder-brain": {

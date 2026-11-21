@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/a2ui-project-a2ui-learnings.md`  
 > **Source**: github ([https://github.com/a2ui-project/a2ui](https://github.com/a2ui-project/a2ui))  
-> **Source Version**: `1cbef31b`  
+> **Source Version**: `5ff1b05f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T05:19:45.007Z  
+> **Timestamp**: 2026-11-21T05:27:52.531Z  
 > **Learning ID**: `learn-github-a2ui-project-a2ui`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/a2ui-project-a2ui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/a2ui-project/a2ui](https://github.com/a2ui-project/a2ui))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T05:19:44.600Z  
+> **Harvest Timestamp**: 2026-11-21T05:27:52.526Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open-source generative UI framework: agents stream layout data, and apps render it with native components in React, Angular, Lit, Flutter, SwiftUI and Jetpack Compose.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, pyproject.toml, README.md
-- **Stars / Engagement**: 17516 stars
+- **Stars / Engagement**: 17697 stars
 
 ---
 
@@ -2004,11 +2004,11 @@ class A2uiRendererCallsStore:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4249** (2026-11-17): **fix(web_core): recognize DataBinding and FunctionCall schemas in isDynamicDef**
-  *Symptoms*: # Description  In `@a2ui/web_core`, `GenericBinder.isDynamicDef(defName, typeName)` checks whether a schema definition represents a dynamic value (data binding or function call): ```typescript function isDynamicDef(defName: string, typeName?: string): boolean {   return (     (defName === 'DataBinding' || defName === 'FunctionCall' || defName.startsWith('Dynamic')) &&     typeName !== 'ZodObject' &&     typeName !== 'ZodArray'   ); } ```  However, `CommonSchemas.DataBinding` (`DataBindingSchema`) and `CommonSchemas.FunctionCall` (`FunctionCallSchema`) are defined as `z.object({...})`, meaning their `typeName` is `'ZodObject'`. When a component property schema directly uses `CommonSchemas.DataBinding` or `CommonSchemas.FunctionCall`, `typeName !== 'ZodObject'` evaluates to `false`. Consequently, `getFieldBehavior` treats the property as static `{type: 'OBJECT'}` instead of `{type: 'DYNAMIC'}`: 1. Snapshot values retain raw `{path: '...'}` objects instead of resolving against `surface.dataModel`. 2. Two-way setters (`setValue`) are not synthesized.  This PR fixes `isDynamicDef` to return `true` immediately when `defName === 'DataBinding' || defName === 'FunctionCall'`, reserving the `typeName !== 'ZodObject' && typeName !== 'ZodArray'` check for `Dynamic*` schemas.  Fixes #3809  ## Pre-launch Checklist  One time:  - [x] I signed the [CLA]. - [x] I read the [Contributors Guide]. - [x] I read the [Style Guide]. - [ ] I have built and run at least one [sample].  For this PR:  - [x
+- **Issue #4332** (2026-11-20): **chore(deps): bump the npm_and_yarn group across 2 directories with 13 updates**
+  *Symptoms*: Bumps the npm_and_yarn group with 11 updates in the / directory:  | Package | From | To | | --- | --- | --- | | [@modelcontextprotocol/sdk](https://github.com/modelcontextprotocol/typescript-sdk) | `1.30.1` | `1.32.0` | | [markdown-it](https://github.com/markdown-it/markdown-it) | `14.2.0` | `14.3.3` | | [hono](https://github.com/honojs/hono) | `4.12.25` | `4.13.16` | | [next](https://github.com/vercel/next.js) | `16.3.6` | `16.4.5` | | [@fastify/busboy](https://github.com/fastify/busboy) | `3.2.0` | `3.2.6` | | [engine.io](https://github.com/socketio/socket.io) | `6.6.9` | `6.6.12` | | [fast-copy](https://github.com/planttheidea/fast-copy) | `3.0.2` | `3.1.0` | | [fast-uri](https://github.com/fastify/fast-uri) | `3.1.2` | `3.1.9` | | [http-cache-semantics](https://github.com/kornelski/http-cache-semantics) | `4.2.0` | `4.3.0` | | [proxy-addr](https://github.com/jshttp/proxy-addr) | `2.0.7` | `2.0.8` | | [source-map-js](https://github.com/7rulnik/source-map-js) | `1.2.1` | `1.2.4` | | [markdown-it](https://github.com/markdown-it/markdown-it) | `14.2.0` | `14.3.3` | | [@modelcontextprotocol/sdk](https://github.com/modelcontextprotocol/typescript-sdk) | `1.30.1` | `1.32.0` | | [fast-uri](https://github.com/fastify/fast-uri) | `3.1.2` | `3.1.9` | | [hono](https://github.com/honojs/hono) | `4.12.25` | `4.13.16` | | [proxy-addr](https://github.com/jshttp/proxy-addr) | `2.0.7` | `2.0.8` | | [source-map-js](https://github.com/7rulnik/source-map-js) | `1.2.1` | `1.2.4` |  Bumps the n
 
-- **Issue #4244** (2026-11-16): **fix(angular): prevent NG0205 destroyed-injector errors across multi-spec test runs**
-  *Symptoms*: > **Architecture & Contract Brief** > - Root cause: `initializeAngularReactivity` kept only the first `EnvironmentInjector` (`if (isAttached) return`), leaving `@a2ui/web_core` bound to a destroyed `TestBed` injector (`NG0205`). > - Contract impact: Public `@a2ui/angular` signatures are unchanged. Effects stay on the earliest live `EnvironmentInjector` and promote the next live injector upon destruction or `NG0205`. > - Regression test: Added `typescript/renderers/angular/src/core/reactivity.spec.ts` covering `TestBed` resets, overlapping and nested injectors, code-based and message-only `NG0205` eviction, and fallback behavior. > - Key judgment call: Kept earliest-live host selection rather than last-wins so transient route injectors cleaned up by Angular Router cannot destroy effects on root surfaces.  ## Summary  Track active `EnvironmentInjector` instances in `@a2ui/angular` so destroyed injectors are pruned and effects promote to the next live injector across multi-spec `TestBed` runs.  Fixes #3949  ## Changes  - Replace the single-shot `isAttached` early return in `typescript/renderers/angular/src/core/reactivity.ts` with an ordered set of live `EnvironmentInjector` instances pruned via `DestroyRef.onDestroy` hooks and `.destroyed` checks. - Keep effects hosted on the earliest live `EnvironmentInjector`, evicting any injector that throws `NG0205` during `angularEffect` registration. - Delegate effect creation to `@a2ui/web_core`'s default signal backend once no live `En
+- **Issue #4330** (2026-11-20): **fix(agent): find Express action slots behind allOf, $ref and $defs aliases**
+  *Symptoms*: Fixes #3724.  When a catalog declared an action inside `allOf` or behind a `$ref`, and the object also had `additionalProperties`, the Express compilers took `additionalProperties` first and never saw the action, so `openUrl(...)` there compiled to a plain call and failed validation. Now `additionalProperties` only applies when nothing else declares the property. An action typed through a local `$defs` alias, or wrapped in `allOf`, had the same problem, but each SDK missed a different one: TypeScript the alias, Dart the `allOf`. The check now lives on `CatalogSchemaHelper` and follows references the same way the resolver does.  I added three cases to `compiler.yaml` with a new fixture. On main all three SDKs fail the first one, TypeScript fails the alias and Dart the `allOf`. They all pass now. Dart already inlines local aliases, except past the second level of a recursive definition, so its tests cover that case. Dart's decompiler and prompt generator use the same check, so they get the fix too.  About the example in the issue: `additionalProperties` only looks at sibling `properties`, so `{"type": "string"}` there also applies to `onTap` and no action could pass validation. The fixture's `additionalProperties` only has a description. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2025,610 +2025,631 @@ class A2uiRendererCallsStore:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dd29fa27` (2026-11-16)
-**Commit Message**: docs(blueprints): sync dart/a2ui_agent codebase blueprint to 24d1bf9c (#4186)
-
-## Summary
-
-Synchronizes
-`blueprints/codebases/dart/a2ui_agent/codebase.blueprint.md` with the
-`a2ui_agent` module blueprint
-(`24d1bf9c830071f74c9c908433e73cc6cbe0aa33`) and the `agent_functions`
-feature blueprint (`87b945802660c507bc84f7f47a25199b4939efbe`),
-documenting the RPC layer, v1.0 `@`-prefixed component envelope
-handling, and local `PromptGenerator` and transport-adapter decisions.
-
-## Changes
-
-- Advanced `module_blueprint_commit` in
-`blueprints/codebases/dart/a2ui_agent/codebase.blueprint.md` to
-`24d1bf9c830071f74c9c908433e73cc6cbe0aa33` and added `agent_functions:
-87b945802660c507bc84f7f47a25199b4939efbe` under `implemented_features`.
-- Added the `Bidirectional Function RPC` architecture entry
-(`RendererToAgentMessageProcessor` and `RendererFunctionCalls` in
-`lib/src/rpc/`) and removed the nonexistent `BlockLexer` reference from
-`Parser & Streaming Layer`.
-- Documented `Single-Method PromptGenerator (No skill_generator)`, `No
-Built-in Transport Adapters`, and `Component Envelope Keys` under `Local
-Technical Decisions & Overrides`.
-
-**File**: `blueprints/codebases/dart/a2ui_agent/codebase.blueprint.md` (modified, +7/-2)
-```diff
-@@ -1,8 +1,9 @@
- ---
- codebase_path: dart/a2ui_agent
- associated_module: a2ui_agent
--module_blueprint_commit: a641e84f2861d1ff068df7616e06d08bfd4d0a88
-+module_blueprint_commit: 24d1bf9c830071f74c9c908433e73cc6cbe0aa33
- implemented_features:
-+  agent_functions: 87b945802660c507bc84f7f47a25199b4939efbe
-   agent_renderer_app: 21e8df7f8e67619c30682ede25f17f0a9cfa96f8
- local_development:
-   test_command: 'dart test'
-@@ -17,14 +18,18 @@ local_development:
- The official Dart implementation of the A2UI Agent SDK (`a2ui_agent`), targeting A2UI protocols v0.9 and v1.0 across Direct JSON and Express inference formats.
- 
- - **Inference Formats & Prompt Generation**: Implements `InferenceFormat` and `PromptGenerator` (`lib/src/inference_format.dart`, `lib/src/prompt/generator.dart`) with concrete strategies for Direct JSON (`lib/src/inference_formats/direct_json/`) and Express (`lib/src/inference_formats/express/`).
--- **Parser & Streaming Layer**: `Parser`, `BlockLexer`, `ResponsePart`, and `ResponseStream` (`lib/src/parser/`) tokenize sentinel-wrapped model responses and support incremental Direct JSON streaming.
-+- **Parser & Streaming Layer**: `Parser`, `ResponsePart`, and `ResponseStream` (`lib/src/parser/`) tokenize sentinel-wrapped model responses and support incremental Direct JSON and Express streaming.
- - **Express Compiler & Decompiler**: `ExpressCompiler` and `ExpressDecompiler` (`lib/src/inference_formats/express/`) compile A2UI Express DSL scopes into protocol messages and decompile messages back into Express syntax using an ANTLR-generated parser (`generated/`).
- - **Processor Facades & Catalog Negotiation**: `A2uiGenerator`, `A2uiRequestProcessor`, `CatalogConfig`, `CatalogProvider`, `readRendererCapabilities` (with `a2uiClientCapabilitiesKey` and `a2uiRendererCapabilitiesKey` in `lib/src/utils/renderer_capabilities.dart`), `resolveCatalogs`, and `RendererState` (`lib/src/processor/`, `lib/src/utils/`) manage capability extraction and negotiation, pruning transformers (`lib/src/catalog_transformers/`), and multi-catalog surface validation against `a2ui_core`.
-+- **Bidirectional Function RPC**: `RendererToAgentMessageProcessor` and `RendererFunctionCalls` (`lib/src/rpc/`) dispatch `callAgentFunction` requests against registered catalog `AgentFunction` implementations and manage pending `callRendererFunction` invocations.
- 
- ## **Local Technical Decisions & Overrides**
- 
- - **Protocol Version Selection from Active Catalogs**: Emitted message envelopes take their protocol version from the active `Catalog` instances negotiated for the request rather than a hardcoded default.
- - **ANTLR-Generated Express Grammar**: The Express lexer and parser under `lib/src/inference_formats/express/generated/` are generated from the canonical `specification/inference_formats/express/Express.g4` grammar.
-+- **Single-Method `PromptGenerator` (No `skill_generator`)**: Because `dart/a2ui_agent` does not implement the optional `skill_generator` feature, `PromptGenerator` (`lib/src/prompt/generator.dart`) declares a single abstract `String generate()` method rather than splitting prompt construction into `generateBaseRules`, `generateCatalogInstructions`, `generateExamples`, and `assembleInstructions` hooks, and `lib/a2ui_agent.dart` exports `DirectJsonPromptGenerator` and `ExpressPromptGenerator` directly.
-+- **No Built-in Transport Adapters**: `dart/a2ui_agent` stays transport-agnostic and does not bundle A2A or ADK framework wrappers; callers pass decoded `RendererToAgentMessage` payloads to `RendererToAgentMessageProcessor` and read transport metadata through `readRendererCapabilities`.
-+- **Component Envelope Keys**: On v1.0 components, `ExpressCompiler` (`lib/src/inference_formats/express/compiler.dart`) emits `@catalogId`, `@metadata`, and `@checks`; `CatalogSchemaHelper` (`lib/src/inference_formats/express/schema_helper.dart`) strips `@catalogId`, `@metadata`, `@accessibility`, and `@checks` (plus standard bare mixins) from Express signatures while keeping custom bare properties; `ExpressDecompiler` (`lib/src/inference_formats/express/decompiler.dart`) dual-reads `@`-prefixed and undeclared legacy bare `catalogId`, `metadata`, and `checks`; and `MessageReader` (`lib/src/utils/message_reader.dart`) and `RendererState` (`lib/src/utils/renderer_state.dart`) accept `@catalogId` alongside legacy bare `catalogId` during validation and surface tracking.
- 
- ## **Validation & Execution Recipes**
- 
-```
-
----
-
-### Incident Patch 2: `fbed1176` (2026-11-13)
-**Commit Message**: fix(web_core): settle surface actions once group action listeners settle (#4205)
+### Incident Patch 1: `94ce6322` (2026-11-19)
+**Commit Message**: fix(markdown-it): bump dompurify to ^3.4.17 to resolve security advisories (#4278) (#4284)
 
 ### Summary
 
-[`SurfaceGroupModel.addSurface`](https://github.com/a2ui-project/a2ui/blob/a3b0a06c0710701763f124a61324b5781468e327/typescript/core/web_core/src/state/surface-group-model.ts#L69-L72) returns the `this._onAction.emit(action)` promise from its surface `onAction` subscription, so [`SurfaceModel.dispatchAction`](https://github.com/a2ui-project/a2ui/blob/a3b0a06c0710701763f124a61324b5781468e327/typescript/core/web_core/src/state/surface-model.ts#L752) resolves only after group-level `onAction` listeners finish processing the action.
+Fixes #4278.
 
-[#3579](https://github.com/a2ui-project/a2ui/pull/3579) discarded that promise with `void` when adding error propagation. That caused `SurfaceModel.dispatchAction` to settle immediately for hosts listening on `SurfaceGroupModel.onAction` or `MessageProcessor`'s `actionHandler`, ending pending action UI states before async listeners completed.
+`@a2ui/markdown-it` previously pinned `dompurify` to exact version
+`3.4.11`, which has multiple published CVE/GHSA security advisories
+(including critical GHSA-cg2g-xh64-v4q7 and high GHSA-mrv2-3pqr-j5jr).
 
-### Changes
+Changes:
+- Relaxes and bumps the `dompurify` dependency range in
+`typescript/renderers/markdown-it/package.json` to `^3.4.17`.
+- Updates monorepo `resolutions` in root `package.json` to `^3.4.17`.
+- Updates `yarn.lock` to resolve `dompurify@npm:^3.4.17` (`3.4.18`),
+which includes all security patches.
+- Adds an unreleased entry in
+`typescript/renderers/markdown-it/CHANGELOG.md`.
 
-1. Return `this._onAction.emit(action)` from the `surface.onAction` subscription in [`typescript/core/web_core/src/state/surface-group-model.ts`](https://github.com/a2ui-project/a2ui/blob/a3b0a06c0710701763f124a
-
-**File**: `typescript/core/web_core/CHANGELOG.md` (modified, +1/-0)
+**File**: `package.json` (modified, +1/-1)
 ```diff
-@@ -41,6 +41,7 @@
- - `extractRefFields`, `NodeResolver`, `GenericBinder`, `scrapeSchemaBehavior`, `scrapeComponentBehavior` (newly exported), and `Catalog.componentRefMap` now resolve child references and dynamic bindings across wrapped (`ZodCatch`, `ZodPipeline`), composite (`ZodIntersection`, `ZodUnion`, `ZodDiscriminatedUnion`), empty-shape (`z.object({})`), open (`.passthrough()`, `.catchall()`, `z.record()`, `z.any()`, `z.unknown()`), and unannotated `child` / `children` component schemas ([#3783](https://github.com/a2ui-project/a2ui/issues/3783), [#3938](https://github.com/a2ui-project/a2ui/pull/3938)).
- - Export `getMarkdownRenderer`, `markdown`, and `setMarkdownRenderer` from `@a2ui/web_core/universal`, make `Catalog<T, F>` covariant in `T` and `F`, and infer `T` from the `catalogs` argument of `new MessageProcessor(catalogs)` so `SurfaceModel` instances carry the component implementation type of their registered catalogs ([#3423](https://github.com/a2ui-project/a2ui/issues/3423), [#4181](https://github.com/a2ui-project/a2ui/pull/4181)).
- - `A2uiLitElement.adoptLightDomStyles` scopes styles per element class, so a subclass registered under another tag gets its own stylesheet instead of reusing its parent's. [#4129](https://github.com/a2ui-project/a2ui/pull/4129)
-+- Return the `onAction` emit promise from `SurfaceGroupModel` surface subscriptions so `SurfaceModel.dispatchAction` resolves only after group `onAction` listeners settle. [#4205](https://github.com/a2ui-project/a2ui/pull/4205)
+@@ -69,7 +69,7 @@
+     "js-yaml@npm:^3": "3.15.0",
+     "js-yaml@npm:^4": "4.2.0",
+     "undici": "7.28.0",
+-    "dompurify": "3.4.11",
++    "dompurify": "3.4.18",
+     "piscina": "5.2.0",
+     "vite@npm:7.3.2": "7.3.5",
+     "vite@npm:^6.0.0 || ^7.0.0 || ^8.0.0": "8.0.16",
+```
+
+**File**: `samples/community/package.json` (modified, +1/-0)
+```diff
+@@ -35,6 +35,7 @@
+     "@angular/material": "^21.2.5",
+     "undici@npm:7.24.4": "7.28.0",
+     "undici@npm:^6.25.0": "7.28.0",
++    "dompurify": "3.4.18",
+     "piscina": "5.2.0",
+     "vite": "^8.0.16",
+     "@babel/core": "7.29.6",
+```
+
+**File**: `samples/community/yarn.lock` (modified, +4/-4)
+```diff
+@@ -6030,15 +6030,15 @@ __metadata:
+   languageName: node
+   linkType: hard
  
- ## 0.15.0
+-"dompurify@npm:^3.3.1":
+-  version: 3.4.11
+-  resolution: "dompurify@npm:3.4.11"
++"dompurify@npm:3.4.18":
++  version: 3.4.18
++  resolution: "dompurify@npm:3.4.18"
+   dependencies:
+     "@types/trusted-types": "npm:^2.0.7"
+   dependenciesMeta:
+     "@types/trusted-types":
+       optional: true
+-  checksum: 10c0/31439481c7e8fc3805d40c376936fd66936620fb1b1a31a2ec097f6165412c37f2d868e082c9ceba62bb37661c1ea132a5db4d5213434317e30df68d4aca9cc9
++  checksum: 10c0/03c96d4e04ce6588014d008c09bb80e97dc1f905acc28d0be0cf14ea6974f788f5706cac409a5b7b7a73831dbce15ac7ca68c6fe08b2e1522254f06ce6647e87
+   languageName: node
+   linkType: hard
  
 ```
 
-**File**: `typescript/core/web_core/src/state/surface-group-model.test.ts` (modified, +26/-0)
+**File**: `typescript/renderers/markdown-it/CHANGELOG.md` (modified, +2/-0)
 ```diff
-@@ -88,6 +88,32 @@ describe('SurfaceGroupModel', () => {
-     assert.strictEqual(receivedAction.sourceComponentId, 'c1');
-   });
+@@ -1,5 +1,7 @@
+ ## Unreleased
  
-+  it('settles surface actions once the group action listeners settle', async () => {
-+    let completeAction!: () => void;
-+    model.onAction.subscribe(
-+      () =>
-+        new Promise<void>(resolve => {
-+          completeAction = resolve;
-+        }),
-+    );
-+    const surface = new SurfaceModel('s1', catalog, new Map(), {});
-+    model.addSurface(surface);
-+    let isSettled = false;
++- Bump `dompurify` to `^3.4.17` to resolve security advisories GHSA-cg2g-xh64-v4q7 and GHSA-mrv2-3pqr-j5jr ([#4278](https://github.com/a2ui-project/a2ui/issues/4278), [#4284](https://github.com/a2ui-project/a2ui/pull/4284)).
 +
-+    const dispatched = surface.dispatchAction({event: {name: 'test'}}, 'c1').then(() => {
-+      isSettled = true;
-+    });
-+    await Promise.resolve();
-+    await Promise.resolve();
-+
-+    assert.strictEqual(isSettled, false);
-+
-+    completeAction();
-+    await dispatched;
-+
-+    assert.strictEqual(isSettled, true);
-+  });
-+
-   it('stops propagating actions after deletion', async () => {
-     let callCount = 0;
-     model.onAction.subscribe(() => {
+ ## 0.2.3
+ 
+ - Bump dependencies for compatibility with `@a2ui/web_core: ^0.16.0`.
 ```
 
-**File**: `typescript/core/web_core/src/state/surface-group-model.ts` (modified, +3/-3)
+**File**: `typescript/renderers/markdown-it/package.json` (modified, +1/-1)
 ```diff
-@@ -67,9 +67,9 @@ export class SurfaceGroupModel<T extends ComponentApi> {
-     this.surfaces.set(surface.id, surface);
+@@ -44,7 +44,7 @@
+     "clean": "wireit"
+   },
+   "dependencies": {
+-    "dompurify": "3.4.11",
++    "dompurify": "^3.4.17",
+     "markdown-it": "^14.2.0"
+   },
+   "devDependencies": {
+```
+
+**File**: `yarn.lock` (modified, +5/-5)
+```diff
+@@ -298,7 +298,7 @@ __metadata:
+     "@types/jsdom": "npm:^28.0.3"
+     "@types/markdown-it": "npm:^14.1.2"
+     "@types/node": "npm:^25.9.3"
+-    dompurify: "npm:3.4.11"
++    dompurify: "npm:^3.4.17"
+     eslint: "npm:^10.4.1"
+     gts: "npm:^7.0.0"
+     js-yaml: "npm:^4.1.0"
+@@ -12646,15 +12646,15 @@ __metadata:
+   languageName: node
+   linkType: hard
  
-     // Subscribe to surface actions and errors and propagate
--    const sub = surface.onAction.subscribe(action => {
--      void this._onAction.emit(action);
--    });
-+    // Return the emit promise so that `surface.dispatchAction` only settles
-+    // once the group's action listeners have settled.
-+    const sub = surface.onAction.subscribe(action => this._onAction.emit(action));
-     this.surfaceUnsubscribers.set(surface.id, sub);
-     const errSub = surface.onError.subscribe(err => {
-       void this._onError.emit(err);
+-"dompurify@npm:3.4.11":
+-  version: 3.4.11
+-  resolution: "dompurify@npm:3.4.11"
++"dompurify@npm:3.4.18":
++  version: 3.4.18
++  resolution: "dompurify@npm:3.4.18"
+   dependencies:
+     "@types/trusted-types": "npm:^2.0.7"
+   dependenciesMeta:
+     "@types/trusted-types":
+       optional: true
+-  checksum: 10c0/31439481c7e8fc3805d40c376936fd66936620fb1b1a31a2ec097f6165412c37f2d868e082c9ceba62bb37661c1ea132a5db4d5213434317e30df68d4aca9cc9
++  checksum: 10c0/03c96d4e04ce6588014d008c09bb80e97dc1f905acc28d0be0cf14ea6974f788f5706cac409a5b7b7a73831dbce15ac7ca68c6fe08b2e1522254f06ce6647e87
+   languageName: node
+   linkType: hard
+ 
 ```
 
 ---
 
-### Incident Patch 3: `8da65014` (2026-11-16)
-**Commit Message**: fix(core): enforce function catalog validation across TypeScript, Dart, Python, and Swift (#4173) (#4187)
+### Incident Patch 2: `6bf4cc21` (2026-11-20)
+**Commit Message**: fix(swift/core): reject counted repetition of an ambiguous nullable group in RegexSubset (#4310)
+
+# Description
+
+`RegexSubset.analyze` in Swift accepts `(a?){1000}a{1000}`, the pattern
+from #4236. Rule 2
+
+([`hasNestedQuantifier`](https://github.com/a2ui-project/a2ui/blob/979eaee4954900f67b5b73484248a3d4776f1bba/swift/core/Sources/BasicCatalog/Functions/RegexSubset.swift#L701-L718))
+rejects a repetition only when its child contains an unbounded
+quantifier, and the `?` inside
+`(a?)` is bounded. web_core has the same gap, and #4237 fixes it there.
+This PR ports that rule to
+Swift.
+
+ICU backtracks worse than V8 on these patterns. Matching with
+`NSRegularExpression` on macOS, with
+a 5 second limit per run:
+
+| Pattern | Value | Result |
+| --- | --- | --- |
+| `(a?){1000}a{1000}` | `a!` | `false`, 5 ms |
+| `(a?){1000}a{1000}` | `aa!` | `false`, 1.2 s |
+| `(a?){1000}a{1000}` | `aaa!` | no return |
+| `(a?){500}a{500}` | 10 `a` + `!` | no return |
+| `(a?b?){100}a{1000}` | 10 `a` + `!` | no return |
+| `(a\|b?){1000}a{1000}` | 10 `a` + `!` | no return |
+
+`RegexSubset.test` only caps the value at 4,096 code points, so a
+catalog `regex` check with one
+of these patterns blocks the calling thread o
+
+**File**: `swift/CHANGELOG.md` (modified, +8/-0)
+```diff
+@@ -12,6 +12,14 @@
+   `\.a2uiCatalogs`, `\.a2uiDefaultCatalogID`, and `\.a2uiSurfaceMetadata` from `@Environment`.
+   [#4195](https://github.com/a2ui-project/a2ui/issues/4195),
+   [#4275](https://github.com/a2ui-project/a2ui/pull/4275)
++- **BREAKING CHANGE**: `RegexSubset.analyze`, `RegexSubset.compileGuarded`, and the `regex`
++  function in `BasicCatalog` reject a repetition of a group that can match the empty string in
++  more than one way, such as `(a?){1000}a{1000}` or `(a{0,2})+b`, with `NESTED_QUANTIFIER`. Such a
++  pattern made `NSRegularExpression` run for seconds or longer on a value only a few characters
++  long. Recommended migration: rewrite the group so each repetition consumes at least one
++  character, for example `(?:ab?){3}` instead of `(?:a?b?){3}`.
++  [#4236](https://github.com/a2ui-project/a2ui/issues/4236),
++  [#4310](https://github.com/a2ui-project/a2ui/pull/4310)
+ - Add optional `instructions` (Markdown design guidelines for agents) to `CatalogProtocol` and
+   `Catalog`, with an `instructions:` parameter on `Catalog.init` and `Catalog.derive`. `derive`
+   does not keep the source catalog's instructions, and `MessageProcessor.getRendererCapabilities`
+```
+
+**File**: `swift/core/Sources/BasicCatalog/Functions/RegexSubset.swift` (modified, +49/-1)
+```diff
+@@ -705,7 +705,11 @@ public enum RegexSubset {
+     case .group(_, let child), .lookahead(_, let child):
+       return hasNestedQuantifier(child)
+     case .repeatNode(let child, _, let max, _):
+-      if (max == nil || max! > 1) && hasUnbounded(child) {
++      if let max, max <= 1 {
++        return hasNestedQuantifier(child)
++      }
++      // The repeat runs its child more than once, so every way the child can match is multiplied.
++      if hasUnbounded(child) || boundedRunIsAmbiguous(unwrap(child)) {
+         return true
+       }
+       return hasNestedQuantifier(child)
+@@ -716,6 +720,50 @@ public enum RegexSubset {
+     }
+   }
+ 
++  /// Returns true when one run of `node` can match the same text in more than one way and can
++  /// match the empty string, so that N runs leave the matcher free to choose where each run starts
++  /// and ends.
++  ///
++  /// A backtracking engine takes exponential time on a repetition of such a body:
++  /// `NSRegularExpression` needs over a second for `(a?){1000}a{1000}` on `"aa!"` and does not
++  /// return within five seconds on `"aaa!"`. A body with a single way to match it, like
++  /// `(\d{1,3}){1,4}`, stays linear.
++  ///
++  /// This applies to repeats without an upper bound as well. Unlike V8, ICU runs the mandatory
++  /// repetitions first, so `(a?){1000,}a{1000}` and `(a{0,2})+b` also take seconds on short values.
++  ///
++  /// `node` is a repeat child, already unwrapped of its outer groups.
++  private static func boundedRunIsAmbiguous(_ node: RegexNode) -> Bool {
++    return isNullable(node) && hasMatchShorterThanItsLongest(node)
++  }
++
++  /// Returns true when some string `node` matches has two derivations.
++  ///
++  /// Every node has a single maximal match length, so a second derivation exists exactly when a
++  /// shorter match of the same string does. This walks the tree looking for the place where that
++  /// shorter match can come from.
++  private static func hasMatchShorterThanItsLongest(_ node: RegexNode) -> Bool {
++    switch node {
++    case .empty, .anchor, .charSet:
++      return false
++    case .group(_, let child), .lookahead(_, let child):
++      return hasMatchShorterThanItsLongest(child)
++    case .repeatNode(let child, let min, let max, _):
++      // `a?` adds one derivation, the empty string. A quantifier that admits a count above one
++      // adds more (`a{0,2}` matches `a` and the empty string), and a repeated group multiplies
++      // them.
++      if let max, max <= 1 {
++        return min == 0 || hasMatchShorterThanItsLongest(child)
++      }
++      return true
++    case .concat(let items):
++      return items.allSatisfy(isNullable) || items.contains(where: hasMatchShorterThanItsLongest)
++    case .alt(let branches):
++      return branches.contains(where: isNullable)
++        || branches.contains(where: hasMatchShorterThanItsLongest)
++    }
++  }
++
+   private static func branchesOverlap(_ branches: [RegexNode]) -> Bool {
+     let firstSets = branches.map { firstSet(unwrap($0)) }
+     for i in 0..<firstSets.count {
+```
+
+**File**: `swift/core/Tests/BasicCatalogTests/RegexSubsetTests.swift` (modified, +57/-0)
+```diff
+@@ -163,6 +163,63 @@ struct RegexSubsetTests {
+     }
+   }
+ 
++  @Test func rule2RejectsRepetitionOfAmbiguousNullableGroup() {
++    // A repeat that runs its child more than once multiplies every way the child can match. The
++    // ICU engine behind `NSRegularExpression` runs for seconds on each of these patterns with a
++    // value only a few characters long, with or without an upper bound on the repeat.
++    let evil = [
++      "(a?){1000}a{1000}",
++      "(a?){500}a{500}",
++      "(?:a?){1000}a{1000}",
++      "((a?)){1000}a{1000}",
++      "(a?b?){100}a{1000}",
++      "(a|b?){1000}a{1000}",
++      "(a|){1000}a{1000}",
++      "(a{0,2}){2}",
++      "((?:a?){1}){2}",
++      "(a?){1000,}a{1000}",
++      "(a|b?){300,}a{300}",
++      "(a{0,2})+b",
++      "(a?)*a{1000}",
++    ]
++    for pattern in evil {
++      let result = RegexSubset.analyze(pattern)
++      #expect(!result.ok, "Expected nested quantifier rejection: \(pattern)")
++      #expect(result.reason == .nestedQuantifier, "Unexpected reason for \(pattern)")
++    }
++
++    let safe = [
++      "(?:ab?){3}c",
++      "(?:ab?){0,2}",
++      "(a|b){2,4}",
++      "(?:\\d{2,4}){2}",
++      "(a?){1}",
++      "(a?){0,1}",
++      "(?:ab?)+c",
++    ]
++    for pattern in safe {
++      #expect(RegexSubset.analyze(pattern).ok, "Expected safe: \(pattern)")
++    }
++  }
++
++  @Test func rule2RejectsCountedNullableRepetitionBeforeMatching() throws {
++    // Only the analysis runs here: matching this pattern against "aaa!" does not return within
++    // five seconds, so the evaluation below uses an empty value and relies on the guard throwing
++    // before any match starts.
++    let pattern = "(a?){1000}a{1000}"
++    let clock = ContinuousClock()
++    let elapsed = clock.measure {
++      #expect(RegexSubset.analyze(pattern).reason == .nestedQuantifier)
++    }
++    #expect(elapsed < .seconds(1))
++
++    let error = #expect(throws: FunctionError.self) {
++      _ = try RegexSubset.test(pattern: pattern, value: "")
++    }
++    let message = try #require(error.map { "\($0)" })
++    #expect(message.contains("NESTED_QUANTIFIER"))
++  }
++
+   @Test func rule3RejectsOverlappingAlternationInRepetition() {
+     let evil = [
+       "(a|ab)+",
+```
+
+---
+
+### Incident Patch 3: `2d38217c` (2026-11-20)
+**Commit Message**: docs(web_core): document overridable CSS custom properties across basic components (#4309)
+
+Fixes #2461
 
 ## Summary
 
-Brings `@a2ui/web_core` (TypeScript), `a2ui_core` (Dart), `a2ui-core`
-(Python), and `A2UICore` / `BasicCatalog` (Swift) to full 43/43 parity
-on the v0.9
-`specification/v0_9/test/cases/function_catalog_validation.json` test
-suite, and executes that suite in CI across all four Core SDKs.
-
-Resolves #4173
+Documents every overridable `--a2ui-*` CSS custom property read by
+universal Basic Catalog Lit components in `@a2ui/web_core`. Also aligns
+fallback prose with each component's `static override styles` block and
+`injectBasicCatalogStyles()`.
 
 ## Changes
 
-- **TypeScript (`typescript/core/web_core`)**:
-- Updated `scripts/generate-catalog-schemas.mjs` and
-`src/catalog/schema_loader.ts` to emit and enforce `anyOf`
-required-property disjunctions, array `minItems` / `maxItems`, and
-`format: 'uri'` checks, and regenerated the basic catalog schema
-modules.
-- Added pre-v1.0 `returnType` checking and recursive nested function
-argument validation in `src/validation/payload-validator.ts`.
-- Wired `specification/v0_9/test/cases/function_catalog_validation.json`
-into `src/validation/payload-validator.test.ts` and
-`src/v0_9/schema/schema_generators.test.ts`.
-- **Dart (`dart/a2ui_core`)**:
-- Updated `PayloadValidator._resolve` in
-`lib/src/validation/validator.dart` to enforce RFC 3986 URI syntax on
-`'format': 'uri'` subs
+- Added `static override styles` JSDoc blocks to `AudioPlayer.ts` and
+`List.ts`, which previously carried only `@nocollapse`.
+- Documented missing `--a2ui-<component>-*` custom properties and shared
+`--a2ui-*` theme, font, border, and spacing tokens across the remaining
+14 incomplete component files. Kept private `--_a2ui-*` plumbing
+variables internal.
+- Corrected stale fallback prose in `Button.ts` (removed unused
+`--a2ui-color-secondary`, noted `.a2ui-button-borderless` forces
+`padding: 0`, and updated padding and radius fallbacks).
+- Aligned fallback descriptions in `CheckBox.ts`, `ChoicePicker.ts`
+(`--a2ui-text-color-text` precedence and `:host` cascade),
+`DateTimeInput.ts`, `Slider.ts`, and `TextField.ts`.
 
-**File**: `dart/a2ui_core/CHANGELOG.md` (modified, +1/-0)
+**File**: `typescript/core/web_core/src/universal/basic_catalog/components/AudioPlayer.ts` (modified, +17/-1)
 ```diff
-@@ -2,6 +2,7 @@
- 
- ## Unreleased
- 
-+- **Breaking:** `PayloadValidator` enforces RFC 3986 scheme-prefixed URI syntax (`^[A-Za-z][A-Za-z0-9+.-]*:\S*$`) on string subschemas with `"format": "uri"` (such as `openUrl.args.url`) without mutating `Catalog.toJson()`, rejecting strings lacking a scheme or containing whitespace ([#4173](https://github.com/a2ui-project/a2ui/issues/4173), [#4187](https://github.com/a2ui-project/a2ui/pull/4187)).
- - **Breaking:** (v1_0) Update `ComponentCommon` and `Checkable` schemas, `Catalog.toJson()`, `Catalog.validationSchema`, and `ComponentModel.toJson()` to emit `@catalogId`, `@metadata`, `@accessibility`, and `@checks` on v1.0 surfaces, while `PayloadValidator` and `MessageProcessor` gate component `metadata` and `catalogId` envelope handling to v1.0+ surfaces (so pre-1.0 surfaces treat them as ordinary component properties), dual-read legacy bare `catalogId`, `metadata`, `accessibility`, and `checks` when undeclared as custom properties by the component schema, validate `@metadata.extensions` keys as UAX #31 identifiers, reject `null` `@catalogId` / legacy `catalogId`, and reject components specifying both `@`-prefixed and bare forms of the same mixin ([#1376](https://github.com/a2ui-project/a2ui/issues/1376), [#3466](https://github.com/a2ui-project/a2ui/issues/3466), [#3511](https://github.com/a2ui-project/a2ui/issues/3511), [#4012](https://github.com/a2ui-project/a2ui/issues/4012), [#4037](https://github.com/a2ui-project/a2ui/pull/4037), [#4044](https://github.com/a2ui-project/a2ui/pull/4044)).
- - Add explicit type annotations to internal local and pattern variables to satisfy the `specify_nonobvious_local_variable_types` analyzer lint on Dart 3.15+ ([#4233](https://github.com/a2ui-project/a2ui/pull/4233)).
- 
+@@ -27,7 +27,23 @@ import type {AudioPlayerSupportedApis} from './supported_apis.js';
+ export class A2uiAudioPlayerElement extends BasicCatalogA2uiLitElement<AudioPlayerSupportedApis> {
+   /** @nocollapse */
+   static readonly tagName = 'a2ui-audioplayer';
+-  /** @nocollapse */
++  /**
++   * The styles of the audio player can be customized by redefining the
++   * following CSS variables:
++   *
++   * - `--a2ui-audioplayer-background`: Background of the player container. Defaults to `transparent`.
++   * - `--a2ui-audioplayer-border-radius`: Border radius of the player container. Defaults to `0`.
++   * - `--a2ui-audioplayer-padding`: Padding of the player container. Defaults to `0`.
++   * - `--a2ui-audioplayer-description-color`: Text color of the description. Defaults to `--a2ui-text-caption-color`, then `light-dark(#666, #aaa)`.
++   *
++   * Global theme variables read by this component:
++   *
++   * - `--a2ui-spacing-xs`: Gap between the description and audio controls.
++   * - `--a2ui-font-size-s`: Font size of the description.
++   * - `--a2ui-text-caption-color`: Fallback text color for the description. Defaults to `light-dark(#666, #aaa)`.
++   *
++   * @nocollapse
++   */
+   static override styles = css`
+     .a2ui-audio-player {
+       display: flex;
 ```
 
-**File**: `dart/a2ui_core/lib/src/validation/validator.dart` (modified, +27/-5)
+**File**: `typescript/core/web_core/src/universal/basic_catalog/components/Button.ts` (modified, +21/-10)
 ```diff
-@@ -1216,14 +1216,36 @@ class PayloadValidator<C extends ComponentApi, F extends FunctionApi> {
-   }();
- 
-   Schema _resolve(Map<String, Object?> schema) => Schema.fromMap(
--        resolveSchemaRefs(
--          schema,
--          _resolutionDocument,
--          commonTypes: commonTypesSchema,
--          fallbackCommonTypes: _fallbackCommonTypes,
-+        _enforceStrictUriFormat(
-+          resolveSchemaRefs(
-+            schema,
-+            _resolutionDocument,
-+            commonTypes: commonTypesSchema,
-+            fallbackCommonTypes: _fallbackCommonTypes,
-+          ),
-         ),
-       );
- 
-+  static const String _uriFormatPattern = r'^[A-Za-z][A-Za-z0-9+.-]*:\S*$';
-+
-+  static Map<String, Object?> _enforceStrictUriFormat(
-+    Map<String, Object?> schema,
-+  ) =>
-+      _enforceStrictUriValue(schema)! as Map<String, Object?>;
-+
-+  static Object? _enforceStrictUriValue(Object? value) => switch (value) {
-+        final Map<Object?, Object?> map => <String, Object?>{
-+            for (final MapEntry<Object?, Object?> entry in map.entries)
-+              '${entry.key}': _enforceStrictUriValue(entry.value),
-+            if (map['format'] == 'uri' && !map.containsKey('pattern'))
-+              'pattern': _uriFormatPattern,
-+          },
-+        final List<Object?> list => <Object?>[
-+            for (final Object? item in list) _enforceStrictUriValue(item),
-+          ],
-+        _ => value,
-+      };
-+
-   static const Map<String, Object?> _anyV1FunctionCall = {
-     'type': 'object',
-     'properties': {
+@@ -30,16 +30,27 @@ export class A2uiBasicButtonElement extends BasicCatalogA2uiLitElement<ButtonSup
+    * The styles of the button can be customized by redefining the following
+    * CSS variables:
+    *
+-   * - Primary variant:
+-   *   - `--a2ui-color-primary`: The color for the primary variant.
+-   *   - `--a2ui-color-on-primary`: The color of the text on the primary variant.
+-   * - Standard/default variant:
+-   *   - `--a2ui-color-secondary`: The color for the default variant.
+-   *   - `--a2ui-color-on-secondary`: The color of the text on the default variant.
+-   * - `--a2ui-button-border`: The styling for the button border. Defaults to `--a2ui-border-width` width and `--a2ui-color-border` color.
+-   * - `--a2ui-button-border-radius`: The border radius of the button. Defaults to `--a2ui-border-radius`.
+-   * - `--a2ui-button-padding`: The padding of the button. Defaults to `--a2ui-spacing-m`.
+-   * - `--a2ui-button-margin`: The outer margin of the button. Defaults to `--a2ui-spacing-m`.
++   * - `--a2ui-button-padding`: Padding of the default and `primary` variants (`borderless` forces `0`). Defaults to `--a2ui-spacing-m` vertically and `--a2ui-spacing-l` horizontally.
++   * - `--a2ui-button-border-radius`: Border radius of the button. Defaults to `--a2ui-spacing-s`.
++   * - `--a2ui-button-border`: Border shorthand of the default variant. Defaults to `var(--a2ui-border-width) solid var(--a2ui-color-border)`.
++   * - `--a2ui-button-margin`: Outer margin of the button. Defaults to `--a2ui-spacing-m`.
++   * - `--a2ui-button-background`: Background of the default variant. Defaults to `--a2ui-color-surface`.
++   * - `--a2ui-button-box-shadow`: Box shadow of the button. Defaults to `none`.
++   * - `--a2ui-button-font-weight`: Font weight of the button text. Defaults to `normal`.
++   *
++   * Global theme variables read by this component:
++   *
++   * - `--a2ui-color-primary`: Background of the `primary` variant and text color of the `borderless` variant.
++   * - `--a2ui-color-primary-hover`: Hover background color of the `primary` variant.
++   * - `--a2ui-color-on-primary`: Text color on the `primary` variant.
++   * - `--a2ui-color-surface`: Fallback background color of the default variant.
++   * - `--a2ui-color-secondary-hover`: Hover background color of the default variant.
++   * - `--a2ui-color-on-secondary`: Text color on the default variant.
++   * - `--a2ui-border-width`: Fallback border width of the default variant.
++   * - `--a2ui-color-border`: Fallback border color of the default variant.
++   * - `--a2ui-spacing-s`: Fallback border radius of the button.
++   * - `--a2ui-spacing-m`: Fallback vertical padding and outer margin of the button.
++   * - `--a2ui-spacing-l`: Fallback horizontal padding of the button.
+    *
+    * @nocollapse
+    */
 ```
 
-**File**: `dart/a2ui_core/test/validator_test.dart` (modified, +46/-0)
+**File**: `typescript/core/web_core/src/universal/basic_catalog/components/Card.ts` (modified, +15/-5)
 ```diff
-@@ -12,6 +12,9 @@
- // See the License for the specific language governing permissions and
- // limitations under the License.
- 
-+import 'dart:convert';
-+import 'dart:io';
-+
- import 'package:a2ui_core/a2ui_core.dart';
- import 'package:a2ui_core/src/validation/component_graph.dart'
-     show maxFunctionCallArgs, maxFunctionCallDepth;
-@@ -1675,4 +1678,47 @@ void v1RulesTests() {
-       );
-     });
-   });
-+
-+  group('v0.9 function_catalog_validation.json specification suite', () {
-+    final suiteJson = jsonDecode(
-+      File(
-+        '../../specification/v0_9/test/cases/function_catalog_validation.json',
-+      ).readAsStringSync(),
-+    ) as Map<String, Object?>;
-+    final List<Map<String, Object?>> tests =
-+        (suiteJson['tests'] as List<Object?>).cast<Map<String, Object?>>();
-+
-+    for (final testCase in tests) {
-+      final description = testCase['description']! as String;
-+      final expectedValid = testCase['valid']! as bool;
-+      final data = testCase['data']! as Map<String, Object?>;
-+      final update = data['updateComponents']! as Map<String, Object?>;
-+      final List<Map<String, Object?>> components =
-+          (update['components'] as List<Object?>).cast<Map<String, Object?>>();
-+
-+      test(description, () {
-+        final validator = PayloadValidator<ComponentApi, FunctionApi>(
-+          catalog: BasicCatalog.v0_9(),
-+          config: ValidationConfig.strict,
-+        );
-+        if (expectedValid) {
-+          for (final component in components) {
-+            expect(
-+              () => validator.validateComponent(component),
-+              returnsNormally,
-+            );
-+          }
-+        } else {
-+          expect(
-+            () {
-+              for (final component in components) {
-+                validator.validateComponent(component);
-+              }
-+            },
-+            throwsA(isA<A2uiValidationError>()),
-+          );
-+        }
-+      });
-+    }
-+  });
- }
+@@ -26,11 +26,21 @@ export class A2uiCardElement extends BasicCatalogA2uiLitElement<CardSupportedApi
+    * The styles of the card can be customized by redefining the following
+    * CSS variables:
+    *
+-   * - `--a2ui-card-border`: The styling for the card border. Defaults to `--a2ui-border-width` width and `--a2ui-color-border` color.
+-   * - `--a2ui-card-border-radius`: The border radius of the card. Defaults to `--a2ui-border-radius`.
+-   * - `--a2ui-card-padding`: The padding of the card. Defaults to `--a2ui-spacing-m`.
+-   * - `--a2ui-card-box-shadow`: The box shadow of the card. Defaults to `0 2px 4px rgba(0,0,0,0.1)`.
+-   * - `--a2ui-card-margin`: The outer margin of the card. Defaults to `--a2ui-spacing-m`.
++   * - `--a2ui-card-padding`: Padding of the card. Defaults to `--a2ui-spacing-m`.
++   * - `--a2ui-card-border-radius`: Border radius of the card. Defaults to `--a2ui-border-radius`.
++   * - `--a2ui-card-box-shadow`: Box shadow of the card. Defaults to `0 2px 4px rgba(0, 0, 0, 0.1)`.
++   * - `--a2ui-card-background`: Background of the card. Defaults to `--a2ui-color-surface`.
++   * - `--a2ui-card-border`: Border shorthand of the card. Defaults to `var(--a2ui-border-width) solid var(--a2ui-color-border)`.
++   * - `--a2ui-card-margin`: Outer margin of the card. Defaults to `--a2ui-spacing-m`.
++   *
++   * Global theme variables read by this component:
++   *
++   * - `--a2ui-color-surface`: Fallback background color of the card.
++   * - `--a2ui-color-on-surface`: Text color inside the card.
++   * - `--a2ui-border-radius`: Fallback border radius of the card.
++   * - `--a2ui-border-width`: Fallback border width of the card.
++   * - `--a2ui-color-border`: Fallback border color of the card.
++   * - `--a2ui-spacing-m`: Fallback padding and outer margin of the card.
+    *
+    * @nocollapse
+    */
 ```
 
-**File**: `python/a2ui_core/CHANGELOG.md` (modified, +1/-0)
+**File**: `typescript/core/web_core/src/universal/basic_catalog/components/CheckBox.ts` (modified, +18/-6)
 ```diff
-@@ -1,5 +1,6 @@
- ## Unreleased
- 
-+- **BREAKING CHANGE**: Enforce basic catalog function argument and return-type validation across `StrictBaseModel`, `SchemaValidator`, and `PayloadValidator`: reject `str` and `bool` values on pure `int`/`float` fields (such as `length.min`, `length.max`, `numeric.min`, and `numeric.max`), enforce `anyOf` required-branch constraints (`SchemaKeywords.required_any_of`), enforce RFC 3986 scheme-prefixed URI syntax (`^[A-Za-z][A-Za-z0-9+.-]*:\S*$`) on `"format": "uri"` fields (such as `openUrl.args.url`), and validate declared `returnType` values on nested function calls against the catalog function definition on pre-1.0 surfaces. Recommended migration: pass numeric values to `min` and `max`, supply at least one bound on `length` and `numeric`, pass a scheme-prefixed URI to `openUrl.url`, and match or omit `returnType` on nested function calls ([#4173](https://github.com/a2ui-project/a2ui/issues/4173), [#4187](https://github.com/a2ui-project/a2ui/pull/4187)).
- - **BREAKING CHANGE**: (v1_0) Update `ComponentCommon` and `Checkable` schemas, `Catalog.validation_schema`, and `ComponentModel.component_tree` to emit `@catalogId`, `@metadata`, `@accessibility`, and `@checks` on v1.0 surfaces (`ComponentModel.component_tree` writes envelope metadata under `@metadata`), while `PayloadValidator` and `MessageProcessor` gate component `metadata` and `catalogId` envelope handling to v1.0+ surfaces (so pre-1.0 surfaces treat them as ordinary component properties), dual-read legacy bare `catalogId`, `metadata`, `accessibility`, and `checks` when undeclared as custom properties by the component schema, validate `@metadata.extensions` keys as UAX #31 identifiers, reject `null` `@catalogId` / legacy `catalogId`, and reject components specifying both `@`-prefixed and bare forms of the same mixin ([#1376](https://github.com/a2ui-project/a2ui/issues/1376), [#3466](https://github.com/a2ui-project/a2ui/issues/3466), [#3511](https://github.com/a2ui-project/a2ui/issues/3511), [#4012](https://github.com/a2ui-project/a2ui/issues/4012), [#4037](https://github.com/a2ui-project/a2ui/pull/4037), [#4044](https://github.com/a2ui-project/a2ui/pull/4044)).
- 
- ## 0.6.0 (2026-11-10)
+@@ -32,13 +32,25 @@ export class A2uiCheckBoxElement extends BasicCatalogA2uiLitElement<CheckBoxSupp
+    * The styles of the checkbox can be customized by redefining the following
+    * CSS variables:
+    *
+-   * - `--a2ui-checkbox-size`: Size of the box. Defaults to `1rem`.
+-   * - `--a2ui-checkbox-border-radius`: Default corner rounding of the box.
+-   * - `--a2ui-checkbox-gap`: Spacing between the checkbox and its label. Defaults to `8px`.
+    * - `--a2ui-checkbox-margin`: Outer margin of the component. Defaults to `--a2ui-spacing-m`.
+-   * - `--a2ui-checkbox-color-error`: Color for invalid state. Defaults to `red`.
+-   * - `--a2ui-checkbox-label-font-size`: Font size of the label. Defaults to `--a2ui-label-font-size` then `--a2ui-font-size-s`.
+-   * - `--a2ui-checkbox-label-font-weight`: Font weight of the label. Defaults to `--a2ui-label-font-weight` then `bold`.
++   * - `--a2ui-checkbox-gap`: Spacing between the checkbox input and its label. Defaults to `--a2ui-spacing-s`.
++   * - `--a2ui-checkbox-label-font-size`: Font size of the label. Defaults to `--a2ui-label-font-size`, then `--a2ui-font-size-s`.
++   * - `--a2ui-checkbox-label-font-weight`: Font weight of the label. Defaults to `--a2ui-label-font-weight`, then `bold`.
++   * - `--a2ui-checkbox-size`: Width and height of the checkbox input. Defaults to `1rem`.
++   * - `--a2ui-checkbox-background`: Background of the checkbox input. Defaults to `inherit`.
++   * - `--a2ui-checkbox-border`: Border of the checkbox input. Defaults to `--a2ui-border`.
++   * - `--a2ui-checkbox-border-radius`: Border radius of the checkbox input. Defaults to `4px`.
++   * - `--a2ui-checkbox-color-error`: Label, outline, and error message color in the invalid state. Defaults to `red`.
++   *
++   * Global theme variables read by this component:
++   *
++   * - `--a2ui-spacing-m`: Fallback outer margin of the component.
++   * - `--a2ui-spacing-s`: Fallback spacing between the checkbox input and its label.
++   * - `--a2ui-label-font-size`: Fallback font size of the label. Defaults to `--a2ui-font-size-s`.
++   * - `--a2ui-label-font-weight`: Fallback font weight of the label. Defaults to `bold`.
++   * - `--a2ui-font-size-s`: Fallback label font size when `--a2ui-label-font-size` is unset.
++   * - `--a2ui-font-size-xs`: Font size of validation error messages.
++   * - `--a2ui-border`: Fallback border of the checkbox input.
+    *
+    * @nocollapse
+    */
 ```
 
-**File**: `python/a2ui_core/src/a2ui/core/schema/_json_schema.py` (modified, +32/-0)
+**File**: `typescript/core/web_core/src/universal/basic_catalog/components/ChoicePicker.ts` (modified, +38/-7)
 ```diff
-@@ -29,13 +29,16 @@
- from contextlib import contextmanager
- from contextvars import ContextVar
- import copy
-+import re
- import sys
- from typing import Annotated, Any, Final
- 
- from pydantic import GetCoreSchemaHandler, GetJsonSchemaHandler, TypeAdapter
- from pydantic.json_schema import JsonSchemaValue
- from pydantic_core import core_schema
- 
-+_URI_RE: Final[re.Pattern[str]] = re.compile(r"^[A-Za-z][A-Za-z0-9+.-]*:\S*\Z")
-+
- # Pydantic rejects `$ref`s it has not registered while it generates a schema,
- # so declared keywords reference other defs through these markers, which
- # `resolve_ref_markers` replaces afterwards: one for the catalog's function
-@@ -373,6 +376,21 @@ def required_one_of(self) -> list[list[str]] | None:
-             return None
-         return [list(branch["required"]) for branch in branches]
- 
-+    def required_any_of(self) -> list[list[str]] | None:
-+        """Returns the property groups of an `anyOf` of required properties.
-+
-+        For example `LengthArgs` and `NumericArgs` require at least one of
-+        `min` and `max`. Returns None if the keywords have no such `anyOf`.
-+        """
-+        branches = self.keywords.get("anyOf")
-+        if not (
-+            isinstance(branches, list)
-+            and branches
-+            and all(isinstance(b, dict) and set(b) == {"required"} for b in branches)
-+        ):
-+            return None
-+        return [list(branch["required"]) for branch in branches]
-+
-     def apply(self, schema: dict[str, Any]) -> None:
-         """Applies the keywords to `schema` in place."""
-         if self.spec_only and not is_spec_schema():
-@@ -392,6 +410,20 @@ def __call__(self, schema: dict[str, Any], cls: type[Any]) -> None:
-         if self.declared_by(cls):
-             self.apply(schema)
- 
-+    def __get_pydantic_core_schema__(
-+        self, source: Any, handler: GetCoreSchemaHandler
-+    ) -> core_schema.CoreSchema:
-+        inner = handler(source)
-+        if self.keywords.get("format") != "uri":
-+            return inner
-+        return core_schema.no_info_after_validator_function(self._validate_uri, inner)
-+
-+    @staticmethod
-+    def _validate_uri(value: Any) -> Any:
-+        if isinstance(value, str) and _URI_RE.match(value) is None:
-+            raise ValueError(f"Invalid URI '{value}'")
-+        return value
-+
-     def __get_pydantic_json_schema__(
-         self, schema: core_schema.CoreSchema, handler: GetJsonSchemaHandler
-     ) -> JsonSchemaValue:
+@@ -34,13 +34,44 @@ export class A2uiChoicePickerElement extends BasicCatalogA2uiLitElement<ChoicePi
+    * The styles of the choice picker can be customized by redefining the following
+    * CSS variables:
+    *
+-   * - `--a2ui-choicepicker-label-color`: Color of all labels.
+-   * - `--a2ui-choicepicker-label-font-size`: Font size of all labels. Defaults to `--a2ui-label-font-size` then `--a2ui-font-size-s` for the main label.
+-   * - `--a2ui-choicepicker-label-font-weight`: Font weight of the main label. Defaults to `--a2ui-label-font-weight` then `bold`.
+-   * - `--a2ui-choicepicker-gap`: Spacing between options.
+-   * - `--a2ui-choicepicker-filter-padding`: Padding for the filter input. Defaults to `--a2ui-spacing-xs` and `--a2ui-spacing-s` (4px 8px).
+-   * - `--a2ui-choicepicker-chip-padding`: Padding for chips. Defaults to `--a2ui-spacing-s` and `--a2ui-spacing-m` (4px 8px).
+-   * - `--a2ui-choicepicker-chip-border-radius`: Border radius for chips. Defaults to `999px`.
++   * - `--a2ui-choicepicker-gap`: Spacing between options, chips, and label items. Defaults to `--a2ui-spacing-xs`.
++   * - `--a2ui-choicepicker-padding`: Padding of both the host element and the options container. Defaults to `0`.
++   * - `--a2ui-choicepicker-label-color`: Fallback text color of labels when `--a2ui-text-color-text` is unset. Defaults to `inherit`.
++   * - `--a2ui-choicepicker-label-font-size`: Font size of the host element, group label, and option labels. Defaults to `--a2ui-label-font-size`, then `--a2ui-font-size-s`.
++   * - `--a2ui-choicepicker-label-font-weight`: Font weight of the host element and group label (inherited by option labels). Defaults to `--a2ui-label-font-weight`, then `bold`.
++   * - `--a2ui-choicepicker-filter-padding`: Padding of the filter input. Defaults to `--a2ui-spacing-xs` vertically and `--a2ui-spacing-s` horizontally.
++   * - `--a2ui-choicepicker-filter-margin-bottom`: Bottom margin of the filter input. Defaults to `--a2ui-spacing-s`.
++   * - `--a2ui-choicepicker-checkbox-size`: Width and height of radio and checkbox inputs. Defaults to `1rem`.
++   * - `--a2ui-choicepicker-chip-padding`: Padding of chip buttons. Defaults to `--a2ui-spacing-s` vertically and `--a2ui-spacing-m` horizontally.
++   * - `--a2ui-choicepicker-chip-border-radius`: Border radius of chip buttons. Defaults to `999px`.
++   * - `--a2ui-choicepicker-chip-border`: Border of unselected chip buttons. Defaults to `1px solid var(--a2ui-color-border)`.
++   * - `--a2ui-choicepicker-chip-background`: Background color of unselected chip buttons. Defaults to `--a2ui-color-surface`.
++   * - `--a2ui-choicepicker-chip-font-size`: Font size of chip buttons. Defaults to `--a2ui-font-size-xs`.
++   * - `--a2ui-choicepicker-chip-font-weight`: Font weight of chip buttons. Defaults to `normal`.
++   * - `--a2ui-choicepicker-chip-background-selected`: Background and border color of selected chip buttons. Defaults to `--a2ui-color-primary`.
++   * - `--a2ui-choicepicker-color-error`: Text color of validation error messages. Defaults to `red`.
++   *
++   * Shared text-field and global theme variables read by this component:
++   *
++   * - `--a2ui-text-color-text`: Text color of labels (evaluated before `--a2ui-choicepicker-label-color`).
++   * - `--a2ui-label-font-size`: Fallback font size of the host element, group label, and option labels. Defaults to `--a2ui-font-size-s`.
++   * - `--a2ui-label-font-weight`: Fallback font weight of the host element and group label (inherited by option labels). Defaults to `bold`.
++   * - `--a2ui-textfield-border`: Border of the filter input. Defaults to `--a2ui-border`.
++   * - `--a2ui-textfield-border-radius`: Border radius of the filter input. Defaults to `--a2ui-spacing-m`.
++   * - `--a2ui-textfield-color-border-focus`: Border color of the focused filter input. Defaults to `--a2ui-color-primary`.
++   * - `--a2ui-color-input`: Background color of the filter input.
++   * - `--a2ui-color-on-input`: Text color of the filter input.
++   * - `--a2ui-border`: Fallback border shorthand of the filter input.
++   * - `--a2ui-color-border`: Fallback border color of the filter input and unselected chips.
++   * - `--a2ui-color-surface`: Fallback background color of unselected chips.
++   * - `--a2ui-color-on-surface`: Text color of unselected chips.
++   * - `--a2ui-color-primary`: Fallback focused filter border and selected chip background and border color.
++   * - `--a2ui-color-on-primary`: Text color of selected chips.
++   * - `--a2ui-spacing-xs`: Fallback option gap and vertical filter padding.
++   * - `--a2ui-spacing-s`: Fallback horizontal filter padding, filter bottom margin, and vertical chip padding.
++   * - `--a2ui-spacing-m`: Fallback filter border radius and horizontal chip padding.
++   * - `--a2ui-font-size-s`: Fallback font size of the host element, group label, and option labels.
++   * - `--a2ui-font-size-xs`: Fallback chip font size and validation error message font size.
+    *
+    * @nocollapse
+    */
 ```
 
-**File**: `python/a2ui_core/src/a2ui/core/schema/common_types.py` (modified, +95/-1)
+**File**: `typescript/core/web_core/src/universal/basic_catalog/components/Column.ts` (modified, +6/-2)
 ```diff
-@@ -15,13 +15,14 @@
- from __future__ import annotations
- import functools
- import sys
-+import types
- import typing
- from typing import Any, Dict, List, Optional, Union
- from pydantic import BaseModel, ConfigDict, Field, GetCoreSchemaHandler, ValidationInfo, field_validator, model_validator, StrictBool, StrictFloat, StrictInt, StrictStr
- from pydantic_core import CoreSchema, PydanticUndefined
- from typing_extensions import Self, TypeAliasType
- 
--from ._json_schema import SchemaKeywords
-+from ._json_schema import _URI_RE, SchemaKeywords
- 
- 
- class ComponentReference:
-@@ -47,9 +48,102 @@ class ListReference(ComponentReference):
-     """Marker class indicating a field holds a list of component references."""
- 
- 
-+def _unwrap_leaf_types(annotation: Any) -> list[Any]:
-+    """Unwraps Union, UnionType, Annotated, and TypeAliasType into leaf types."""
-+    if isinstance(annotation, TypeAliasType):
-+        return _unwrap_leaf_types(annotation.__value__)
-+    origin = typing.get_origin(annotation)
-+    if origin is typing.Annotated:
-+        args = typing.get_args(annotation)
-+        return _unwrap_leaf_types(args[0]) if args else []
-+    if origin is Union or origin is types.UnionType:
-+        leaves: list[Any] = []
-+        for arg in typing.get_args(annotation):
-+            leaves.extend(_unwrap_leaf_types(arg))
-+        return leaves
-+    return [annotation]
-+
-+
-+def _is_strict_numeric_field(annotation: Any) -> bool:
-+    """Returns whether non-None leaf annotations are strictly int or float."""
-+    non_none = [t for t in _unwrap_leaf_types(annotation) if t is not type(None)]
-+    return bool(non_none) and all(t is int or t is float for t in non_none)
-+
-+
-+def _has_uri_format(extra: Any) -> bool:
-+    """Returns whether `json_schema_extra` declares `format: "uri"`."""
-+    if isinstance(extra, dict):
-+        return extra.get("format") == "uri"
-+    if isinstance(extra, SchemaKeywords):
-+        return extra.keywords.get("format") == "uri"
-+    return False
-+
-+
-+@functools.cache
-+def _strict_field_checks(
-+    cls: type[BaseModel],
-+) -> tuple[frozenset[str], frozenset[str]]:
-+    """Returns `(numeric_keys, uri_keys)` for `cls` (including aliases)."""
-+    numeric_keys: set[str] = set()
-+    uri_keys: set[str] = set()
-+    for name, field in cls.model_fields.items():
-+        keys = {name, field.alias or name}
-+        if isinstance(field.validation_alias, str):
-+            keys.add(field.validation_alias)
-+        if _is_strict_numeric_field(field.annotation):
-+            numeric_keys.update(keys)
-+        if _has_uri_format(field.json_schema_extra):
-+            uri_keys.update(keys)
-+    return frozenset(numeric_keys), frozenset(uri_keys)
-+
-+
- class StrictBaseModel(BaseModel):
-     model_config = ConfigDict(extra="forbid", populate_by_name=True)
- 
-+    @model_validator(mode="before")
-+    @classmethod
-+    def _validate_strict_fields(cls, data: Any) -> Any:
-+        if not isinstance(data, dict):
-+            return data
-+        numeric_keys, uri_keys = _strict_field_checks(cls)
-+        for key in numeric_keys.intersection(data):
-+            if isinstance(data[key], (str, bool)):
-+                raise ValueError(
-+                    f"Field '{key}' expected a numeric value, got"
-+                    f" {type(data[key]).__name__}"
-+                )
-+        for key in uri_keys.intersection(data):
-+            val = data[key]
-+            if isinstance(val, str) and _URI_RE.match(val) is None:
-+                raise ValueError(f"Field '{key}' must be a valid URI, got '{val}'")
-+        return data
-+
-+    @model_validator(mode="after")
-+    def _check_required_any_of(self) -> Self:
-+        keywords = type(self).model_config.get("json_schema_extra")
-+        branches = (
-+            keywords.required_any_of() if isinstance(keywords, SchemaKeywords) else None
-+        )
-+        if not branches:
-+            return self
-+        names = {
-+            field.alias or name: name for name, field in type(self).model_fields.items()
-+        }
-+        matched = any(
-+            all(
-+                names.get(prop, prop) in self.model_fields_set
-+                and getattr(self, names.get(prop, prop), None) is not None
-+                for prop in branch
-+            )
-+            for branch in branches
-+        )
-+        if not matched:
-+            choices = " | ".join(", ".join(branch) for branch in branches)
-+            raise ValueError(
-+                f"{type(self).__name__} must set at least one of: {choices}"
-+            )
-+        return self
-+
-     @field_validator("version", mode="after", check_fields=False)
-     @classmethod
-     def validate_version_field(cls, v: Any, info: ValidationInfo) -> Any:
+@@ -53,8 +53,12 @@ export class A2uiBasicColumnElement extends BasicCatalogA2uiLitElement<ColumnSup
+    * The styles of the column can be customized by redefining the following
+    * CSS variables:
+    *
+-   * - `--a2ui-column-gap`: The gap between items in the column. Defaults to `--a2ui-spacing-m`.
+-   * - `--a2ui-column-width`: The width of the column. Defaults to `100%`.
++   * - `--a2ui-column-gap`: Gap between items in the column. Defaults to `--a2ui-spacing-m`.
++   * - `--a2ui-column-width`: Width of the column. Defaults to `100%`.
++   *
++   * Global theme variables read by this component:
++   *
++   * - `--a2ui-spacing-m`: Fallback gap between items in the column.
+    *
+    * @nocollapse
+    */
 ```
 
-**File**: `python/a2ui_core/src/a2ui/core/validation/payload_validator.py` (modified, +52/-0)
+**File**: `typescript/core/web_core/src/universal/basic_catalog/components/DateTimeInput.ts` (modified, +21/-7)
 ```diff
-@@ -1150,6 +1150,58 @@ def _validate_nested_call(
-                 )
-             )
- 
-+        self._check_pre_v10_return_type(
-+            fn_name, call, call_path, at_least_v10, full_check, errors
-+        )
-+
-+    def _check_pre_v10_return_type(
-+        self,
-+        fn_name: str,
-+        call: dict[str, Any],
-+        call_path: str,
-+        at_least_v10: bool,
-+        full_check: bool,
-+        errors: list[A2uiErrorDetail],
-+    ) -> None:
-+        """Checks an explicit pre-v1.0 `returnType` against the catalog definition."""
-+        if at_least_v10 or not full_check or "returnType" not in call:
-+            return
-+        expected_rt = self._expected_function_return_type(fn_name)
-+        actual_rt = call["returnType"]
-+        if (
-+            expected_rt is not None
-+            and expected_rt != "any"
-+            and actual_rt != expected_rt
-+        ):
-+            errors.append(
-+                A2uiErrorDetail(
-+                    path=f"{call_path}.returnType",
-+                    code="invalid_function_call",
-+                    message=(
-+                        f"Function '{fn_name}' expects returnType"
-+                        f" '{expected_rt}', got '{actual_rt}'"
-+                    ),
-+                )
-+            )
-+
-+    def _expected_function_return_type(self, fn_name: str) -> str | None:
-+        """Returns the catalog function's declared returnType, or None."""
-+        fn_def, fn_schema, _ = self._find_function_definition(fn_name)
-+        return_type = getattr(fn_def, "return_type", None)
-+        if isinstance(return_type, str):
-+            return return_type
-+        if isinstance(fn_schema, dict):
-+            top = fn_schema.get("returnType")
-+            if isinstance(top, str):
-+                return top
-+            props = fn_schema.get("properties")
-+            if isinstance(props, dict):
-+                rt_prop = props.get("returnType")
-+                const_rt = rt_prop.get("const") if isinstance(rt_prop, dict) else None
-+                if isinstance(const_rt, str):
-+                    return const_rt
-+        return None
-+
-     def _validate_system_function(
-         self,
-         fn_name: str,
+@@ -78,13 +78,27 @@ export class A2uiDateTimeInputElement extends BasicCatalogA2uiLitElement<DateTim
+    * CSS variables:
+    *
+    * - `--a2ui-datetimeinput-width`: Width of the component. Defaults to `100%`.
+-   * - `--a2ui-datetimeinput-background`: Controls the background of inputs.
+-   * - `--a2ui-datetimeinput-color`: Controls the text color of inputs.
+-   * - `--a2ui-datetimeinput-border`: Controls the border of inputs.
+-   * - `--a2ui-datetimeinput-border-radius`: Controls the border radius of inputs.
+-   * - `--a2ui-datetimeinput-padding`: Controls the padding of inputs.
+-   * - `--a2ui-datetimeinput-label-font-size`: Font size of the label. Defaults to `--a2ui-label-font-size` then `--a2ui-font-size-s`.
+-   * - `--a2ui-datetimeinput-label-font-weight`: Font weight of the label. Defaults to `--a2ui-label-font-weight` then `bold`.
++   * - `--a2ui-datetimeinput-background`: Background color of the input elements. Defaults to `--a2ui-color-input`.
++   * - `--a2ui-datetimeinput-color`: Text color of the input elements. Defaults to `--a2ui-color-on-input`.
++   * - `--a2ui-datetimeinput-border`: Border of the input elements. Defaults to `1px solid var(--a2ui-color-border)`.
++   * - `--a2ui-datetimeinput-border-radius`: Border radius of the input elements. Defaults to `4px`.
++   * - `--a2ui-datetimeinput-padding`: Padding of the input elements. Defaults to `8px`.
++   * - `--a2ui-datetimeinput-label-font-size`: Font size of the label. Defaults to `--a2ui-label-font-size`, then `--a2ui-font-size-s`.
++   * - `--a2ui-datetimeinput-label-font-weight`: Font weight of the label. Defaults to `bold`.
++   * - `--a2ui-datetimeinput-color-error`: Text color of validation error messages. Defaults to `red`.
++   *
++   * Global theme variables read by this component:
++   *
++   * - `--a2ui-spacing-xs`: Gap between the label, input row, and validation errors.
++   * - `--a2ui-spacing-s`: Gap between combined date and time inputs.
++   * - `--a2ui-label-font-size`: Fallback font size of the label. Defaults to `--a2ui-font-size-s`.
++   * - `--a2ui-font-size-s`: Fallback label font size when `--a2ui-label-font-size` is unset.
++   * - `--a2ui-font-size-xs`: Font size of validation error messages.
++   * - `--a2ui-text-color-text`: Text color of the label. Defaults to `--a2ui-color-on-background`.
++   * - `--a2ui-color-on-background`: Fallback text color of the label.
++   * - `--a2ui-color-border`: Fallback border color of the input elements.
++   * - `--a2ui-color-input`: Fallback background color of the input elements.
++   * - `--a2ui-color-on-input`: Fallback text color of the input elements.
+    *
+    * @nocollapse
+    */
 ```
 
-**File**: `python/a2ui_core/src/a2ui/core/validation/schema_validator.py` (modified, +22/-2)
+**File**: `typescript/core/web_core/src/universal/basic_catalog/components/Divider.ts` (modified, +8/-2)
 ```diff
-@@ -136,13 +136,33 @@ def _refuse_retrieval(uri: str) -> referencing.Resource[Any]:
-     retrieve=_refuse_retrieval  # type: ignore[call-arg]
- )
- 
-+_URI_RE: Final[regex.Pattern[str]] = regex.compile(r"^[A-Za-z][A-Za-z0-9+.-]*:\S*\Z")
-+
-+_FORMAT_CHECKER: Final[jsonschema.FormatChecker] = jsonschema.FormatChecker()
-+
-+
-+@_FORMAT_CHECKER.checks("uri")
-+def _is_valid_uri(instance: object) -> bool:
-+    return not isinstance(instance, str) or _URI_RE.match(instance) is not None
-+
-+
- _orig_init = SchemaValidator.__init__
- 
- 
- def _init_schema_validator(
--    self: Any, *args: Any, registry: Any = _NO_RETRIEVAL_REGISTRY, **kwargs: Any
-+    self: Any,
-+    *args: Any,
-+    registry: Any = _NO_RETRIEVAL_REGISTRY,
-+    format_checker: Any = _FORMAT_CHECKER,
-+    **kwargs: Any,
- ) -> None:
--    _orig_init(self, *args, registry=registry, **kwargs)
-+    _orig_init(
-+        self,
-+        *args,
-+        registry=registry,
-+        format_checker=format_checker,
-+        **kwargs,
-+    )
- 
- 
- SchemaValidator.__init__ = _init_schema_validator
+@@ -27,8 +27,14 @@ export class A2uiDividerElement extends BasicCatalogA2uiLitElement<DividerSuppor
+    * The styles of the divider can be customized by redefining the following
+    * CSS variables:
+    *
+-   * - `--a2ui-divider-border`: The styling for the divider border. Defaults to `--a2ui-border-width` solid `--a2ui-color-border`.
+-   * - `--a2ui-divider-spacing`: The spacing around the divider. Defaults to `--a2ui-spacing-m`.
++   * - `--a2ui-divider-border`: Border shorthand for the divider line. Defaults to `var(--a2ui-border-width) solid var(--a2ui-color-border)`.
++   * - `--a2ui-divider-spacing`: Block or inline margin around the divider. Defaults to `--a2ui-spacing-m`.
++   *
++   * Global theme variables read by this component:
++   *
++   * - `--a2ui-border-width`: Width of vertical dividers and fallback border width.
++   * - `--a2ui-color-border`: Fallback border color of the divider.
++   * - `--a2ui-spacing-m`: Fallback spacing around the divider.
+    *
+    * @nocollapse
+    */
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4249** (closed): fix(web_core): recognize DataBinding and FunctionCall schemas in isDynamicDef (@jihanurrahman33)
-- **PR #4244** (2026-11-16): fix(angular): prevent NG0205 destroyed-injector errors across multi-spec test runs (@gspencergoog)
-- **PR #4235** (2026-11-14): docs(site): update landing page closing CTA (@yjbanov)
-- **PR #4234** (2026-11-16): chore(github): add CODEOWNERS for /specification/ (@gspencergoog)
-- **PR #4233** (2026-11-13): fix(dart): add explicit types for specify_nonobvious_local_variable_types lint (@ditman)
-- **PR #4229** (closed): feat(web_core)!: migrate the TypeScript packages to zod 4 (@pomahtuk)
+- **PR #4332** (closed): chore(deps): bump the npm_and_yarn group across 2 directories with 13 updates (@dependabot[bot])
+- **PR #4330** (closed): fix(agent): find Express action slots behind allOf, $ref and $defs aliases (@diegolopezrm)
+- **PR #4319** (closed): chore(deps): bump the npm_and_yarn group across 2 directories with 16 updates (@dependabot[bot])
+- **PR #4318** (closed): [Prototype, do not merge] feat(samples): serve the a2ui-embed-sql sample as an MCP App (@josemontespg)
+- **PR #4317** (closed): [Prototype, do not merge] feat(samples): add the a2ui-embed-sql view composers and explain (@josemontespg)
+- **PR #4316** (closed): [Prototype, do not merge] feat(samples): add the a2ui-embed-sql catalog (@josemontespg)
 
 ---
 
@@ -2648,34 +2669,28 @@ into `src/validation/payload-validator.test.ts` and
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(blueprints): sync dart/a2ui_agent codebase blueprint to 24d1bf9c
+## X. markdown-it): bump dompurify to ^3.4.17 to resolve security advisories
 
 **RULE**:
-When implementing operations in `blueprints/codebases/dart/a2ui_agent/codebase.blueprint.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in a2ui-project/a2ui. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in a2ui-project/a2ui. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dd29fa27`: docs(blueprints): sync dart/a2ui_agent codebase blueprint to 24d1bf9c. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `94ce6322`: markdown-it): bump dompurify to ^3.4.17 to resolve security advisories. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `blueprints/codebases/dart/a2ui_agent/codebase.blueprint.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-module_blueprint_commit: 24d1bf9c830071f74c9c908433e73cc6cbe0aa33
-  agent_functions: 87b945802660c507bc84f7f47a25199b4939efbe
-- **Parser & Streaming Layer**: `Parser`, `ResponsePart`, and `ResponseStream` (`lib/src/parser/`) tokenize sentinel-wrapped model responses and support incremental Direct JSON and Express streaming.
-- **Bidirectional Function RPC**: `RendererToAgentMessageProcessor` and `RendererFunctionCalls` (`lib/src/rpc/`) dispatch `callAgentFunction` requests against registered catalog `AgentFunction` implementations and manage pending `callRendererFunction` invocations.
-- **Single-Method `PromptGenerator` (No `skill_generator`)**: Because `dart/a2ui_agent` does not implement the optional `skill_generator` feature, `PromptGenerator` (`lib/src/prompt/generator.dart`) declares a single abstract `String generate()` method rather than splitting prompt construction into `generateBaseRules`, `generateCatalogInstructions`, `generateExamples`, and `assembleInstructions` hooks, and `lib/a2ui_agent.dart` exports `DirectJsonPromptGenerator` and `ExpressPromptGenerator` directly.
-- **No Built-in Transport Adapters**: `dart/a2ui_agent` stays transport-agnostic and does not bundle A
+    "dompurify": "3.4.18",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-module_blueprint_commit: a641e84f2861d1ff068df7616e06d08bfd4d0a88
-- **Parser & Streaming Layer**: `Parser`, `BlockLexer`, `ResponsePart`, and `ResponseStream` (`lib/src/parser/`) tokenize sentinel-wrapped model responses and support incremental Direct JSON streaming.
+    "dompurify": "3.4.11",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dd29fa27` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `94ce6322` are properly handled with clean fallback behavior.

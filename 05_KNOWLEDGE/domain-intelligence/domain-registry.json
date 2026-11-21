@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T05:01:31.314Z",
-  "total_records": 2226,
+  "last_updated": "2026-11-21T05:28:02.991Z",
+  "total_records": 2228,
   "domains": {
     "A": {
       "total": 17,
@@ -959,7 +959,7 @@
       ]
     },
     "F": {
-      "total": 74,
+      "total": 76,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -1034,7 +1034,9 @@
         "domain_intelligence-design-intelligence-simonschubert-kai-learnings-core-invariants",
         "domain_intelligence-design-intelligence-kianuni-erosion-cn-core-invariants",
         "domain_intelligence-design-intelligence-kianuni-erosion-cn-learnings-core-invariants",
-        "DOM-F-6DD8B1FE"
+        "DOM-F-6DD8B1FE",
+        "domain_intelligence-design-intelligence-a2ui-project-a2ui-core-invariants",
+        "domain_intelligence-design-intelligence-a2ui-project-a2ui-learnings-core-invariants"
       ]
     },
     "G": {
@@ -8620,8 +8622,8 @@
       "title": "Technical Construction Intelligence: gocd/gocd Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-gocd-gocd-technical-construction-intelligence-gocd-gocd-core-invariants.md",
       "repository": "gocd/gocd",
-      "content_hash": "86790230e035293d0afdd5b0195a664d17cfe35ac34204be5a6865e207e541cd",
-      "created_at": "2026-11-20T04:29:24.473Z"
+      "content_hash": "5d1db3c50e348237ae44d679f7d473ae4ac873ab1f1d3788add140242ea2fdad",
+      "created_at": "2026-11-21T05:27:56.557Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-27b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-27b-core-invariants",
@@ -8698,8 +8700,8 @@
       "title": "Technical Construction Intelligence: gocd-gocd-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-gocd-gocd-learnings-technical-construction-intelligence-gocd-gocd-learnings-core.md",
       "repository": "gocd-gocd-learnings",
-      "content_hash": "03c817383f0de71956eeab206cd4003e33e16b33f17920babfa134a03500edb0",
-      "created_at": "2026-11-20T04:29:29.967Z"
+      "content_hash": "60db5392ed31304e9626c562447d66b72ed4076882202291b2e9f2cd59ad6fad",
+      "created_at": "2026-11-21T05:28:02.991Z"
     },
     "domain_intelligence-research-knowledge-intelligence-taichuai-zdtaichu5-0-9b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-taichuai-zdtaichu5-0-9b-core-invariants",
@@ -27627,8 +27629,8 @@
       "title": "Technical Construction Intelligence: fastify/fastify Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-fastify-fastify-technical-construction-intelligence-fastify-fastify-core-invaria.md",
       "repository": "fastify/fastify",
-      "content_hash": "e931065747e069ab12380cf80786fb9b485992c4cba406e3485e9591ded37441",
-      "created_at": "2026-11-17T12:41:40.435Z"
+      "content_hash": "bbf71a74377259649df52753aa9aa956382cfe12d0fc94f1c0696f2d08071829",
+      "created_at": "2026-11-21T05:27:50.555Z"
     },
     "domain_intelligence-technical-construction-intelligence-fastify-fastify-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-fastify-fastify-learnings-core-invariants",
@@ -27636,8 +27638,8 @@
       "title": "Technical Construction Intelligence: fastify-fastify-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-fastify-fastify-learnings-technical-construction-intelligence-fastify-fastify-le.md",
       "repository": "fastify-fastify-learnings",
-      "content_hash": "52b41156fc1ec7e7a6176904c3711691b2f1fad792e24611dc3a28c870cd9376",
-      "created_at": "2026-11-17T12:46:16.055Z"
+      "content_hash": "ed111ef5ec43081b104fe89d1cc0a1bf8471cd1b81f0d9b7d8f04e752206dd93",
+      "created_at": "2026-11-21T05:28:00.104Z"
     },
     "domain_intelligence-technical-construction-intelligence-startrail-org-leann-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-startrail-org-leann-core-invariants",
@@ -37385,6 +37387,24 @@
       "repository": "infracost-infracost-learnings",
       "content_hash": "0b0a364555db6eb0547a95904ac695b7a44a679f0e3ea0ebda574fdfe27ccbd5",
       "created_at": "2026-11-21T03:44:52.446Z"
+    },
+    "domain_intelligence-design-intelligence-a2ui-project-a2ui-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-a2ui-project-a2ui-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: a2ui-project/a2ui Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-a2ui-project-a2ui-design-intelligence-a2ui-project-a2ui-core-invariants.md",
+      "repository": "a2ui-project/a2ui",
+      "content_hash": "5f49fcc3b122855db2f0736f362568ba5de01304db1ab125c0fda9facb92fa4b",
+      "created_at": "2026-11-21T05:27:54.040Z"
+    },
+    "domain_intelligence-design-intelligence-a2ui-project-a2ui-learnings-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-a2ui-project-a2ui-learnings-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: a2ui-project-a2ui-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-a2ui-project-a2ui-learnings-design-intelligence-a2ui-project-a2ui-learnings-core.md",
+      "repository": "a2ui-project-a2ui-learnings",
+      "content_hash": "8db73d9e4f49818679668e783472345817f81a3f47d13aca98e812e87d768666",
+      "created_at": "2026-11-21T05:28:01.735Z"
     }
   }
 }

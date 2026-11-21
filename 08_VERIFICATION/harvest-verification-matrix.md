@@ -11734,3 +11734,6 @@
 | `CYCLE-20261121-4WKI` | `2026-11-21T04:39:15.426Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9729` | Yes (`a0a6618b...`) |
 | `CYCLE-20261121-GPJI` | `2026-11-21T04:48:26.190Z` | `tw93/Pake` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9730` | Yes (`00dbe6c0...`) |
 | `CYCLE-20261121-GSIQ` | `2026-11-21T04:48:30.050Z` | `fastapi/fastapi` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/tiangolo-fastapi-learnings.md` | Yes (`67e9437d...`) |
+| `CYCLE-20261121-VDLB` | `2026-11-21T05:27:50.159Z` | `fastify/fastify` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9731` | Yes (`83f1cd4f...`) |
+| `CYCLE-20261121-VG9B` | `2026-11-21T05:27:53.615Z` | `a2ui-project/a2ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9732` | Yes (`67459ac5...`) |
+| `CYCLE-20261121-VI84` | `2026-11-21T05:27:56.164Z` | `gocd/gocd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4898` | Yes (`1ada0fcd...`) |

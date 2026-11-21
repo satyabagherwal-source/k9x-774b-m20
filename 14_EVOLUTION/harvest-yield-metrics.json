@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T04:48:30.085Z",
-  "total_cycles_completed": 11170,
-  "total_learnings_persisted": 11170,
-  "total_rules_promoted": 10526,
+  "last_updated": "2026-11-21T05:27:56.174Z",
+  "total_cycles_completed": 11173,
+  "total_learnings_persisted": 11173,
+  "total_rules_promoted": 10529,
   "history": [
-    {
-      "timestamp": "2026-11-20T09:59:07.807Z",
-      "repository": "chrisbanes/skills",
-      "learningId": "learn-github-chrisbanes-skills",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T09:59:10.592Z",
-      "repository": "envoyproxy/envoy",
-      "learningId": "learn-github-envoyproxy-envoy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T10:34:20.850Z",
-      "repository": "kamgurgul/cpu-info",
-      "learningId": "learn-github-kamgurgul-cpu-info",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-20T10:34:23.735Z",
       "repository": "k3s-io/k3s",
@@ -1403,6 +1382,27 @@
       "repository": "fastapi/fastapi",
       "learningId": "learn-github-fastapi-fastapi",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T05:27:50.169Z",
+      "repository": "fastify/fastify",
+      "learningId": "learn-github-fastify-fastify",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T05:27:53.625Z",
+      "repository": "a2ui-project/a2ui",
+      "learningId": "learn-github-a2ui-project-a2ui",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T05:27:56.174Z",
+      "repository": "gocd/gocd",
+      "learningId": "learn-github-gocd-gocd",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

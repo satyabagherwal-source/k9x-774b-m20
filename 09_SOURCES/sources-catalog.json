@@ -2003,10 +2003,10 @@
     "repository": "fastify/fastify",
     "platform": "github",
     "sourceUrl": "https://github.com/fastify/fastify",
-    "sourceVersion": "36a67047",
+    "sourceVersion": "825d7722",
     "license": "MIT",
-    "contentHash": "15c6145e574d755721b215bff3ae8b2e0719924a0ea79be7dcfc70d4e24b424f",
-    "lastHarvestedAt": "2026-11-17T12:41:40.140Z",
+    "contentHash": "83f1cd4f8bae41790a1c704f91882622273a5cb8a7af07088814c3ec0d5f5a9c",
+    "lastHarvestedAt": "2026-11-21T05:27:50.163Z",
     "learningId": "learn-github-fastify-fastify"
   },
   "expressjs-express": {
@@ -5163,10 +5163,10 @@
     "repository": "gocd/gocd",
     "platform": "github",
     "sourceUrl": "https://github.com/gocd/gocd",
-    "sourceVersion": "d0652eba",
+    "sourceVersion": "2addd4f0",
     "license": "Apache-2.0",
-    "contentHash": "3bc738b0cda0f12e8ea19f218aee7af8e5648925a989448ae39feb7f1a12cbfc",
-    "lastHarvestedAt": "2026-11-20T04:29:24.028Z",
+    "contentHash": "1ada0fcdf4bc5d0903ecd9dafdbd90c9746a44ee696667907081124ce9a29829",
+    "lastHarvestedAt": "2026-11-21T05:27:56.168Z",
     "learningId": "learn-github-gocd-gocd"
   },
   "citusdata-citus": {
@@ -12033,10 +12033,10 @@
     "repository": "a2ui-project/a2ui",
     "platform": "github",
     "sourceUrl": "https://github.com/a2ui-project/a2ui",
-    "sourceVersion": "1cbef31b",
+    "sourceVersion": "5ff1b05f",
     "license": "Apache-2.0",
-    "contentHash": "b88241c73a49fb53abc3a1125ca74a9b780dc2152fb6eb5c3b3b045347dc35f5",
-    "lastHarvestedAt": "2026-11-17T05:19:45.815Z",
+    "contentHash": "67459ac5f72b68fafcef639eb95376e2ac42f08ff61548a25ca185bd81078d60",
+    "lastHarvestedAt": "2026-11-21T05:27:53.619Z",
     "learningId": "learn-github-a2ui-project-a2ui"
   },
   "milind-soni-openmausbot": {

@@ -11767,3 +11767,6 @@ Every entry in this ledger must capture:
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `ea8e9cca` | Multi-dimensional audit evidence | 2026-11-21T04:39:15.430Z |
 | `learn-github-tw93-pake` | `https://github.com/tw93/Pake` | `002c958a` | Multi-dimensional audit evidence | 2026-11-21T04:48:26.194Z |
 | `learn-github-fastapi-fastapi` | `https://github.com/tiangolo/fastapi` | `05e6df7e` | Multi-dimensional audit evidence | 2026-11-21T04:48:30.054Z |
+| `learn-github-fastify-fastify` | `https://github.com/fastify/fastify` | `825d7722` | Multi-dimensional audit evidence | 2026-11-21T05:27:50.163Z |
+| `learn-github-a2ui-project-a2ui` | `https://github.com/a2ui-project/a2ui` | `5ff1b05f` | Multi-dimensional audit evidence | 2026-11-21T05:27:53.619Z |
+| `learn-github-gocd-gocd` | `https://github.com/gocd/gocd` | `2addd4f0` | Multi-dimensional audit evidence | 2026-11-21T05:27:56.168Z |

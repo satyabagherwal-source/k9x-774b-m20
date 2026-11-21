@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261119-3AS1",
-    "timestamp": "2026-11-19T01:18:42.769Z",
-    "repository": "u-root/u-root",
-    "learningId": "learn-github-u-root-u-root",
-    "contentHash": "9988f43cd0a1541d03eb4372ec94d94dbe1f3354924f84ba0af973e81f2ed15d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-3LCH",
-    "timestamp": "2026-11-19T01:18:56.465Z",
-    "repository": "yugabyte/yugabyte-db",
-    "learningId": "learn-github-yugabyte-yugabyte-db",
-    "contentHash": "96e0a339bd639f08bb88d1bcf399f6cd23fc8674df202194ff0e6f7c070072b5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-L4LS",
-    "timestamp": "2026-11-19T01:32:34.576Z",
-    "repository": "Qwen/Qwen3-VL-8B-Instruct",
-    "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
-    "contentHash": "2a71d00f27d90d4c3945a2a3ca5928fcc6785d3aa5d1ca3530e2067b913d14ce",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261119-L6SW",
     "timestamp": "2026-11-19T01:32:37.424Z",
     "repository": "kubearmor/KubeArmor",
@@ -7492,6 +7447,51 @@
     "contentHash": "67e9437dc988d3aabac5118980656436314475e53efacb6e081d19207b1d3748",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-VDLB",
+    "timestamp": "2026-11-21T05:27:50.159Z",
+    "repository": "fastify/fastify",
+    "learningId": "learn-github-fastify-fastify",
+    "contentHash": "83f1cd4f8bae41790a1c704f91882622273a5cb8a7af07088814c3ec0d5f5a9c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-VG9B",
+    "timestamp": "2026-11-21T05:27:53.615Z",
+    "repository": "a2ui-project/a2ui",
+    "learningId": "learn-github-a2ui-project-a2ui",
+    "contentHash": "67459ac5f72b68fafcef639eb95376e2ac42f08ff61548a25ca185bd81078d60",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-VI84",
+    "timestamp": "2026-11-21T05:27:56.164Z",
+    "repository": "gocd/gocd",
+    "learningId": "learn-github-gocd-gocd",
+    "contentHash": "1ada0fcdf4bc5d0903ecd9dafdbd90c9746a44ee696667907081124ce9a29829",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

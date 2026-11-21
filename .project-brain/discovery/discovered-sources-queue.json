@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-21T04:48:36.985Z",
+  "updated_at": "2026-11-21T05:28:02.604Z",
   "stats": {
-    "total_discovered": 7026,
-    "approved_pending_harvest": 6636,
+    "total_discovered": 7047,
+    "approved_pending_harvest": 6657,
     "harvested_count": 0,
     "rejected_count": 390,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6615,
+      "COMMUNITY_AND_EXPERT": 6636,
       "OFFICIAL_DOCUMENTATION": 234,
       "STANDARDS_AND_SPECIFICATIONS": 122,
       "ENGINEERING_BLOGS": 5,
@@ -151865,6 +151865,468 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tiangolo-fastapi-learnings.md",
         "fileName": "tiangolo-fastapi-learnings.md"
+      }
+    },
+    "SRC-F7FB7D70E0FF": {
+      "id": "SRC-F7FB7D70E0FF",
+      "url": "https://github.com/modelcontextprotocol/typescript-sdk",
+      "title": "https://github.com/modelcontextprotocol/typescript-sdk",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T05:28:00.527Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/a2ui-project-a2ui-learnings.md",
+        "fileName": "a2ui-project-a2ui-learnings.md"
+      }
+    },
+    "SRC-4255EEFFE1C0": {
+      "id": "SRC-4255EEFFE1C0",
+      "url": "https://github.com/markdown-it/markdown-it",
+      "title": "https://github.com/markdown-it/markdown-it",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T05:28:00.575Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/a2ui-project-a2ui-learnings.md",
+        "fileName": "a2ui-project-a2ui-learnings.md"
+      }
+    },
+    "SRC-23D031E20206": {
+      "id": "SRC-23D031E20206",
+      "url": "https://github.com/fastify/busboy",
+      "title": "https://github.com/fastify/busboy",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T05:28:00.673Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/a2ui-project-a2ui-learnings.md",
+        "fileName": "a2ui-project-a2ui-learnings.md"
+      }
+    },
+    "SRC-D8AE6603DBA4": {
+      "id": "SRC-D8AE6603DBA4",
+      "url": "https://github.com/socketio/socket.io",
+      "title": "https://github.com/socketio/socket.io",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T05:28:00.723Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/a2ui-project-a2ui-learnings.md",
+        "fileName": "a2ui-project-a2ui-learnings.md"
+      }
+    },
+    "SRC-B69244BCEAD1": {
+      "id": "SRC-B69244BCEAD1",
+      "url": "https://github.com/planttheidea/fast-copy",
+      "title": "https://github.com/planttheidea/fast-copy",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T05:28:00.772Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/a2ui-project-a2ui-learnings.md",
+        "fileName": "a2ui-project-a2ui-learnings.md"
+      }
+    },
+    "SRC-2AA09E069EAA": {
+      "id": "SRC-2AA09E069EAA",
+      "url": "https://github.com/fastify/fast-uri",
+      "title": "https://github.com/fastify/fast-uri",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T05:28:00.823Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/a2ui-project-a2ui-learnings.md",
+        "fileName": "a2ui-project-a2ui-learnings.md"
+      }
+    },
+    "SRC-CBCC2EDB54FB": {
+      "id": "SRC-CBCC2EDB54FB",
+      "url": "https://github.com/kornelski/http-cache-semantics",
+      "title": "https://github.com/kornelski/http-cache-semantics",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T05:28:00.870Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/a2ui-project-a2ui-learnings.md",
+        "fileName": "a2ui-project-a2ui-learnings.md"
+      }
+    },
+    "SRC-D229EB73FCF9": {
+      "id": "SRC-D229EB73FCF9",
+      "url": "https://github.com/jshttp/proxy-addr",
+      "title": "https://github.com/jshttp/proxy-addr",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T05:28:00.920Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/a2ui-project-a2ui-learnings.md",
+        "fileName": "a2ui-project-a2ui-learnings.md"
+      }
+    },
+    "SRC-419F118C2857": {
+      "id": "SRC-419F118C2857",
+      "url": "https://github.com/7rulnik/source-map-js",
+      "title": "https://github.com/7rulnik/source-map-js",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T05:28:00.967Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/a2ui-project-a2ui-learnings.md",
+        "fileName": "a2ui-project-a2ui-learnings.md"
+      }
+    },
+    "SRC-557C0FF43096": {
+      "id": "SRC-557C0FF43096",
+      "url": "https://github.com/a2ui-project/a2ui/issues/4278",
+      "title": "https://github.com/a2ui-project/a2ui/issues/4278",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T05:28:01.017Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/a2ui-project-a2ui-learnings.md",
+        "fileName": "a2ui-project-a2ui-learnings.md"
+      }
+    },
+    "SRC-117289E6EDDC": {
+      "id": "SRC-117289E6EDDC",
+      "url": "https://github.com/a2ui-project/a2ui/pull/4284",
+      "title": "https://github.com/a2ui-project/a2ui/pull/4284",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T05:28:01.063Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/a2ui-project-a2ui-learnings.md",
+        "fileName": "a2ui-project-a2ui-learnings.md"
+      }
+    },
+    "SRC-5D4A007C654D": {
+      "id": "SRC-5D4A007C654D",
+      "url": "https://github.com/a2ui-project/a2ui/blob/979eaee4954900f67b5b73484248a3d4776f1bba/swift/core/Sources/BasicCatalog/Functions/RegexSubset.swift",
+      "title": "https://github.com/a2ui-project/a2ui/blob/979eaee4954900f67b5b73484248a3d4776f1bba/swift/core/Sources/BasicCatalog/Functions/RegexSubset.swift",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T05:28:01.113Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/a2ui-project-a2ui-learnings.md",
+        "fileName": "a2ui-project-a2ui-learnings.md"
+      }
+    },
+    "SRC-E3A4EEA0545E": {
+      "id": "SRC-E3A4EEA0545E",
+      "url": "https://github.com/a2ui-project/a2ui/issues/4195",
+      "title": "https://github.com/a2ui-project/a2ui/issues/4195",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T05:28:01.159Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/a2ui-project-a2ui-learnings.md",
+        "fileName": "a2ui-project-a2ui-learnings.md"
+      }
+    },
+    "SRC-59BFFC04B70D": {
+      "id": "SRC-59BFFC04B70D",
+      "url": "https://github.com/a2ui-project/a2ui/pull/4275",
+      "title": "https://github.com/a2ui-project/a2ui/pull/4275",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T05:28:01.222Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/a2ui-project-a2ui-learnings.md",
+        "fileName": "a2ui-project-a2ui-learnings.md"
+      }
+    },
+    "SRC-1B3CE98D947C": {
+      "id": "SRC-1B3CE98D947C",
+      "url": "https://github.com/a2ui-project/a2ui/issues/4236",
+      "title": "https://github.com/a2ui-project/a2ui/issues/4236",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T05:28:01.281Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/a2ui-project-a2ui-learnings.md",
+        "fileName": "a2ui-project-a2ui-learnings.md"
+      }
+    },
+    "SRC-9B5396726CA3": {
+      "id": "SRC-9B5396726CA3",
+      "url": "https://github.com/a2ui-project/a2ui/pull/4310",
+      "title": "https://github.com/a2ui-project/a2ui/pull/4310",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T05:28:01.328Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/a2ui-project-a2ui-learnings.md",
+        "fileName": "a2ui-project-a2ui-learnings.md"
+      }
+    },
+    "SRC-89ACDDD88E45": {
+      "id": "SRC-89ACDDD88E45",
+      "url": "https://github.com/avoidwork/filesize.js/compare/11.0.33...11.0.34",
+      "title": "https://github.com/avoidwork/filesize.js/compare/11.0.33...11.0.34",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T05:28:02.328Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gocd-gocd-learnings.md",
+        "fileName": "gocd-gocd-learnings.md"
+      }
+    },
+    "SRC-6CCA5097DEAC": {
+      "id": "SRC-6CCA5097DEAC",
+      "url": "https://github.com/ammar/regexp_parser",
+      "title": "https://github.com/ammar/regexp_parser",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T05:28:02.382Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gocd-gocd-learnings.md",
+        "fileName": "gocd-gocd-learnings.md"
+      }
+    },
+    "SRC-35814C1C431E": {
+      "id": "SRC-35814C1C431E",
+      "url": "https://github.com/ammar/regexp_parser/blob/master/CHANGELOG.md",
+      "title": "https://github.com/ammar/regexp_parser/blob/master/CHANGELOG.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T05:28:02.429Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gocd-gocd-learnings.md",
+        "fileName": "gocd-gocd-learnings.md"
+      }
+    },
+    "SRC-AB6AC565A885": {
+      "id": "SRC-AB6AC565A885",
+      "url": "https://github.com/ammar/regexp_parser/compare/v2.13.1...v2.13.4",
+      "title": "https://github.com/ammar/regexp_parser/compare/v2.13.1...v2.13.4",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T05:28:02.479Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gocd-gocd-learnings.md",
+        "fileName": "gocd-gocd-learnings.md"
+      }
+    },
+    "SRC-0155898558FD": {
+      "id": "SRC-0155898558FD",
+      "url": "https://github.com/TypeStrong/fork-ts-checker-webpack-plugin/compare/v9.1.1...v9.2.0",
+      "title": "https://github.com/TypeStrong/fork-ts-checker-webpack-plugin/compare/v9.1.1...v9.2.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T05:28:02.604Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gocd-gocd-learnings.md",
+        "fileName": "gocd-gocd-learnings.md"
       }
     }
   }

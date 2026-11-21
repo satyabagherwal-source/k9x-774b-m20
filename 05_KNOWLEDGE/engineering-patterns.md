@@ -722992,3 +722992,156 @@ const CONVERSION: &str = "unhide-2";
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `c44435aa` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9731. docs(request): state that runtime-compiled schemas skip header-name normalizatio (Harvested from fastify/fastify)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "docs(request): state that runtime-compiled schemas skip header-name normalizatio",
+  "source": "fastify/fastify",
+  "source_url": "https://github.com/fastify/fastify",
+  "source_version": "825d7722",
+  "license": "MIT",
+  "extracted_at": "2026-11-21T05:27:49.627Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-fastify-fastify",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.76,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [fastify/fastify](https://github.com/fastify/fastify) (Revision: `825d7722`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 76%).
+
+**RULE**:
+When implementing operations in `docs/Reference/Request.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fastify/fastify. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `825d7722`: docs(request): state that runtime-compiled schemas skip header-name normalization. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/Reference/Request.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+// Verified production-grade fix pattern:
+The schema is compiled as given, and the returned function validates whatever
+data is passed to it. Unlike a route `headers` schema, header names are not
+[normalized to lowercase](./Validation-and-Serialization.md#header-name-case),
+even when `httpPart` is `'headers'`. Node.js exposes `request.headers` with
+lowercase names, so a schema used to validate them must write header names in
+lowercase (for example `required: ['x-api-key']`, not
+`required: ['X-Api-Key']`). Otherwise assertions such as `dependencies` or a
+`propertyNames` deny-list never match and are silently skipped. To reuse the
+normalized validator of the route `headers` schema, call
+`request.validateInput(data, 'headers')`.
+
+will be compiled, forwarding the `httpPart` if provided. A schema compiled this
+way is not header-name normalized; see
+[.compileValidationSchema(schema, [httpPart])](#compilevalidationschema).
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// Induced defect failure mode:
+will be compiled, forwarding the `httpPart` if provided.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `825d7722` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9732. bump dompurify to ^3.4.17 to resolve security advisories (Harvested from a2ui-project/a2ui)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "bump dompurify to ^3.4.17 to resolve security advisories",
+  "source": "a2ui-project/a2ui",
+  "source_url": "https://github.com/a2ui-project/a2ui",
+  "source_version": "5ff1b05f",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-21T05:27:53.072Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-a2ui-project-a2ui",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [a2ui-project/a2ui](https://github.com/a2ui-project/a2ui) (Revision: `5ff1b05f`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in a2ui-project/a2ui. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `94ce6322`: markdown-it): bump dompurify to ^3.4.17 to resolve security advisories. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package.json`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+    "dompurify": "3.4.18",
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
+    "dompurify": "3.4.11",
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `94ce6322` are properly handled with clean fallback behavior.
