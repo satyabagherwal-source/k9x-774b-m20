@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T09:52:45.616Z",
-  "total_cycles_completed": 11202,
-  "total_learnings_persisted": 11202,
-  "total_rules_promoted": 10564,
+  "last_updated": "2026-11-21T10:37:34.759Z",
+  "total_cycles_completed": 11204,
+  "total_learnings_persisted": 11204,
+  "total_rules_promoted": 10565,
   "history": [
-    {
-      "timestamp": "2026-11-20T13:40:23.457Z",
-      "repository": "tursodatabase/turso",
-      "learningId": "learn-github-tursodatabase-turso",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T13:40:23.933Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-20T13:48:19.150Z",
       "repository": "open-policy-agent/gatekeeper",
@@ -1403,6 +1389,20 @@
       "repository": "mistralai/Timestral-209M",
       "learningId": "learn-huggingface-mistralai-timestral-209m",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T10:37:32.594Z",
+      "repository": "meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
+      "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b-nvfp4",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T10:37:34.759Z",
+      "repository": "Automattic/harper",
+      "learningId": "learn-github-automattic-harper",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T09:52:49.987Z",
+  "last_updated": "2026-11-21T10:37:45.799Z",
   "directives": [
     {
       "id": "CD-001",
@@ -39760,11 +39760,11 @@
       "domain_letter": "D"
     },
     {
-      "id": "CD-AZMX",
+      "id": "CD-XY2S",
       "directive_title": "benchmarks): report Gold coverage across retrieval stages",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-AZMX-benchmarks-report-gold-coverage-across-retrieval-stages.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-XY2S-benchmarks-report-gold-coverage-across-retrieval-stages.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-21",
@@ -42035,6 +42035,35 @@
       "source_repo": "apache-shardingsphere",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-4A41BC-add-regression-coverage-for-unsupported-.md",
+      "staged_date": "2026-11-21"
+    },
+    {
+      "id": "CD-XX2D",
+      "directive_title": "holey grail / holly grail",
+      "source_repo": "automattic-harper-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-XX2D-holey-grail-holly-grail.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-REV-C083F7",
+      "directive_title": "holey grail / holly grail",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "automattic-harper",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C083F7-holey-grail-holly-grail.md",
+      "staged_date": "2026-11-21"
+    },
+    {
+      "id": "CD-REV-FC395E",
+      "directive_title": "benchmarks): report Gold coverage across retrieval stages",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-FC395E-benchmarks-report-gold-coverage-across-r.md",
       "staged_date": "2026-11-21"
     }
   ]

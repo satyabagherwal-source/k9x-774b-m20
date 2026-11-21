@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T09:23:55.373Z",
+  "timestamp": "2026-11-21T10:37:45.684Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-zvec-ai-zvec-grep-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [zvec-ai-zvec-grep-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T09:23:55.373Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T10:37:45.684Z`  
 > **Learning ID**: `LEARN-EVO-zvec-ai-zvec-grep-learnings`
 
 

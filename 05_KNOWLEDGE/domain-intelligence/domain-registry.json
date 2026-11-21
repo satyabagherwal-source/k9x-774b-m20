@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T09:52:50.130Z",
+  "last_updated": "2026-11-21T10:37:45.952Z",
   "total_records": 2242,
   "domains": {
     "A": {
@@ -8012,8 +8012,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "0b399a3e57931a644a9466dce9ca3b6f2e082844a438e210d7aebad191196e4a",
-      "created_at": "2026-11-21T09:23:55.697Z"
+      "content_hash": "e1d63232b1f5dba17da3404e1ea5abef8a321a19e15f5d122dd638a6f6297f7f",
+      "created_at": "2026-11-21T10:37:45.952Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -18094,8 +18094,8 @@
       "title": "Quality & Verification Intelligence: Automattic/harper Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-automattic-harper-quality-verification-intelligence-automattic-harper-core-invar.md",
       "repository": "Automattic/harper",
-      "content_hash": "01ebcdefbf724e021f7757b0744ddb46edf8793088e1ef10bbc5b6ace25a8a04",
-      "created_at": "2026-11-19T22:19:41.806Z"
+      "content_hash": "7eb3536e4b80060c26dfaa1aad43b5d7849a14d9e2268f7abe5eb806a3332f7a",
+      "created_at": "2026-11-21T10:37:35.109Z"
     },
     "domain_intelligence-content-information-intelligence-kotest-kotest-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-kotest-kotest-core-invariants",
@@ -18121,8 +18121,8 @@
       "title": "Quality & Verification Intelligence: automattic-harper-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-automattic-harper-learnings-quality-verification-intelligence-automattic-harper-.md",
       "repository": "automattic-harper-learnings",
-      "content_hash": "0ead2e0f52d5130d1e2aa378255bfa2ed64bb4f2bd26874967372ed172a3a4bb",
-      "created_at": "2026-11-19T22:19:52.227Z"
+      "content_hash": "091db02b413d9bdd4457b763866a712b307ebf3572770eb3153365b4ca7302a7",
+      "created_at": "2026-11-21T10:37:44.642Z"
     },
     "DOM-D-04705777": {
       "record_id": "DOM-D-04705777",
@@ -28006,8 +28006,8 @@
       "title": "Research & Knowledge Intelligence: meta-models/Muse-Spark-Open-816B-A42B-NVFP4 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meta-models-muse-spark-open-816b-a42b-nvfp4-research-knowledge-intelligence-m.md",
       "repository": "meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
-      "content_hash": "c546cd05aa0d2f35b999903bf3c58e2eeee5bd89fe80ac2af705346894d64123",
-      "created_at": "2026-11-17T15:35:00.396Z"
+      "content_hash": "f28ae241f9605ce02b33f33a53596c08546e185083aee473b71ed86e68379d1c",
+      "created_at": "2026-11-21T10:37:32.787Z"
     },
     "domain_intelligence-technical-construction-intelligence-tickernelz-opencode-mem-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-tickernelz-opencode-mem-core-invariants",
@@ -28024,8 +28024,8 @@
       "title": "Research & Knowledge Intelligence: hf-meta-models-muse-spark-open-816b-a42b-nvfp4-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meta-models-muse-spark-open-816b-a42b-nvfp4-learnings-research-knowledge-inte.md",
       "repository": "hf-meta-models-muse-spark-open-816b-a42b-nvfp4-learnings",
-      "content_hash": "4c6e7f8d7dc60a4380441809b846a16bc52cae18f76c5d7f6a426afe9b0d5d16",
-      "created_at": "2026-11-17T15:35:20.787Z"
+      "content_hash": "29367285483ebb494a50b33d66a6b47f830a97b99f1dbd150610905a49cde61b",
+      "created_at": "2026-11-21T10:37:45.151Z"
     },
     "domain_intelligence-technical-construction-intelligence-tickernelz-opencode-mem-learnings-core-invar": {
       "record_id": "domain_intelligence-technical-construction-intelligence-tickernelz-opencode-mem-learnings-core-invar",

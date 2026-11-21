@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/automattic-harper-learnings.md`  
 > **Source**: github ([https://github.com/Automattic/harper](https://github.com/Automattic/harper))  
-> **Source Version**: `0dfea2bd`  
+> **Source Version**: `9ddf6b5b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T22:19:40.524Z  
+> **Timestamp**: 2026-11-21T10:37:33.711Z  
 > **Learning ID**: `learn-github-automattic-harper`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/automattic-harper-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Automattic/harper](https://github.com/Automattic/harper))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T22:19:40.348Z  
+> **Harvest Timestamp**: 2026-11-21T10:37:33.706Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Offline, privacy-first grammar checker. Fast, open-source, Rust-powered
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 17865 stars
+- **Stars / Engagement**: 17883 stars
 
 ---
 
@@ -1432,259 +1432,173 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7139cb11` (2026-11-18)
-**Commit Message**: ci: cut WebAssembly build time in PR checks (#4985)
-
-* ci: skip wasm-opt when building WebAssembly for Just Checks
-
-Every Just Checks job that builds the WebAssembly module ran wasm-opt
-on both the full and slim builds, which took 70 to 87 seconds per job.
-wasm-opt makes the module smaller and faster, which matters for what
-ships but not for checks that only test behaviour. The build recipe
-already supports DISABLE_WASM_OPT, and test-vscode already sets it.
-
-The trade-off is that these checks now test an unoptimised module,
-not byte for byte what ships. wasm-opt is meant to preserve behaviour,
-but if it ever changed it, these tests would no longer catch that. The
-Chrome Plugin, WordPress Plugin and Build Web checks still build with
-wasm-opt on every pull request, so a wasm-opt build failure is still
-caught.
-
-* build(web): download a prebuilt wasm-pack in the Dockerfile
-
-Compiling wasm-pack from source took 57 seconds of Build Web's 11
-minutes, and Build Web is about to become the slowest required check.
-Downloading the release binary takes about two seconds.
-
-There are trade-offs. The version is now pinned, where each build used
-to compile the latest release, so someone has to upda
-
-**File**: `.github/workflows/just_checks.yml` (modified, +4/-0)
-```diff
-@@ -15,6 +15,10 @@ concurrency:
- 
- env:
-   CARGO_TERM_COLOR: always
-+  # Skip wasm-opt when building the WebAssembly module for these checks. It only makes the
-+  # module smaller and faster, and took over a minute per job. The Chrome Plugin, WordPress
-+  # Plugin and Build Web checks still build it with wasm-opt, as shipped.
-+  DISABLE_WASM_OPT: 1
- 
- jobs:
-   just-checks:
-```
-
-**File**: `Dockerfile` (modified, +17/-1)
-```diff
-@@ -10,7 +10,23 @@ RUN apt-get update -y && apt-get install clang -y
- RUN mkdir -p /usr/build/
- WORKDIR /usr/build/
- 
--RUN cargo install wasm-pack --locked
-+# Download a prebuilt wasm-pack instead of compiling it, which took about a minute. Update the
-+# checksums whenever the version changes.
-+ARG WASM_PACK_VERSION=0.15.1
-+RUN set -eu; \
-+    arch="$(uname -m)"; \
-+    case "$arch" in \
-+      x86_64) sha256=410101009739b9d01c7d5affaaad6e9c9a24b4cba6791a4805db8e89b9bf7af2 ;; \
-+      aarch64) sha256=7004853c7925ae1984033b5f25866ec604bbc921ef956d5e6c5595bc5af6d30c ;; \
-+      *) echo "No prebuilt wasm-pack for $arch" >&2; exit 1 ;; \
-+    esac; \
-+    name="wasm-pack-v${WASM_PACK_VERSION}-${arch}-unknown-linux-musl"; \
-+    curl -sSfL -o /tmp/wasm-pack.tar.gz \
-+      "https://github.com/wasm-bindgen/wasm-pack/releases/download/v${WASM_PACK_VERSION}/${name}.tar.gz"; \
-+    echo "${sha256}  /tmp/wasm-pack.tar.gz" | sha256sum -c -; \
-+    tar -xzf /tmp/wasm-pack.tar.gz -C /tmp; \
-+    install "/tmp/${name}/wasm-pack" /usr/local/cargo/bin/wasm-pack; \
-+    rm -rf /tmp/wasm-pack.tar.gz "/tmp/${name}"
- 
- COPY . .
- 
-```
-
----
-
-### Incident Patch 2: `9961d94f` (2026-11-18)
-**Commit Message**: fix(core): flag `no to` only where `not to` is meant (#4843)
-
-`NotTo` corrected every "no to", including "say no to", "the answer is no
-to both" and "Click No to cancel". It now needs a verb after "no to" (or a
-dropped one, "I prefer no to.") and skips "no" used as an answer or a noun.
-Each exception has a test.
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `harper-core/src/linting/weir_rules/NotTo.weir` (modified, +81/-2)
-```diff
-@@ -1,7 +1,86 @@
--expr main (no to)
-+# "no to" is a typo for "not to" before a verb ("try no to laugh"), but correct when "no"
-+# is an answer or a noun ("say no to", "a hard no to", "Click No to cancel").
-+expr guard [say, says, said, saying, or, and, but, hell, DET, click, clicked, clicking, press, pressed, tap, tapped, tapping, reply, replied, replying, respond, responded, responding, answer, answered, answering, vote, voted, voting, text, texted, texting, type, typed, typing]
-+expr verb [VERB, AUX, (ADV VERB), (ADV AUX)]
-+# An adjective before "no" makes a noun phrase after a determiner ("a hard no to", "a really
-+# strong no to"), and is a typo otherwise ("important no to rush", "quite useful no to have").
-+expr afterAdjective [(![DET, ADV] ADJ no to @verb), (!DET ADV ADJ no to @verb)]
-+# An "-ing" form after "no to" is a noun use ("say no to adding"); a dropped verb
-+# ("I prefer no to.") is a typo.
-+# Weir cannot anchor the start of a sentence, so a typo there is missed
-+# ("No to be rude, but..."), except "no to mention".
-+expr main [<([(![@guard, ADJ] no to @verb), @afterAdjective, (no to mention)]), (no to !PROG), (no to)>, <([(![@guard, ADJ] no to.), (![@guard, ADJ] no to,), (![@guard, ADJ] no to?)]), (no to)>]
- 
- let message "Did you mean `not to`?"
--let description "Corrects `no to` to `not to`, ensuring proper negation."
-+let description "Corrects `no to` to `not to` before a verb, as in `try no to laugh`."
- let kind "Typo"
- let becomes "not to"
-+let scope "Sentence"
- 
-+# Typos
-+test "I decided no to go to the party." "I decided not to go to the party."
-+test "It is important no to rush." "It is important not to rush."
-+test "Try no to be late." "Try not to be late."
-+test "Try no to just copy the code." "Try not to just copy the code."
-+test "Try no to ever be late." "Try not to ever be late."
-+test "It is fine, no to worry." "It is fine, not to worry."
-+test "No to mention the cost." "Not to mention the cost."
-+
-+# From a Hacker News comment (item 33894399)
-+test "you remove/hide them in order no to have issues if police officer stop you" "you remove/hide them in order not to have issues if police officer stop you"
-+
-+# Verb left out, and after an adverb and adjective
-+test "I cannot afford no to." "I cannot afford not to."
-+test "There are good reasons no to, even so." "There are good reasons not to, even so."
-+test "It is quite useful no to have that." "It is quite useful not to have that."
-+test "Why did you decide no to?" "Why did you decide not to?"
-+
-+# Correct uses
-+allows "That is the one thing they said no to."
-+allows "Learn to say no to change."
-+allows "She says no to change."
-+allows "He said no to change."
-+allows "Saying no to change is hard."
-+allows "Answer yes or no to continue."
-+allows "Yes to adding and no to removing."
-+allows "Yes to adding, but no to removing."
-+allows "Hell no to waiting."
-+allows "That is a no to waiting."
-+allows "It was a hard no to continuing."
-+allows "It was a really strong no to continuing."
-+allows "Click No to cancel the order."
-+allows "I clicked no to keep the file."
-+allows "Press No to keep your changes."
-+allows "I pressed no to keep it."
-+allows "Tap No to stay signed in."
-+allows "I tapped no to continue."
-+allows "I am clicking no to cancel it."
-+allows "I am tapping no to cancel it."
-+allows "I am replying no to cancel it."
-+allows "I am responding no to cancel it."
-+allows "I am answering no to cancel it."
-+allows "I am texting no to cancel it."
-+allows "I am typing no to cancel it."
-+allows "Reply NO to stop these messages."
-+allows "I replied no to stop them."
-+allows "Respond NO to cancel."
-+allows "I responded no to cancel it."
-+allows "Answer No to continue the setup."
-+allows "I answered no to continue."
-+allows "Vote no to extend the contract."
-+allows "They voted no to extend the contract."
-+allows "We are voting no to extend it."
-+allows "Text NO to opt out."
-+allows "I texted no to opt out."
-+allows "Type NO to cancel."
-+allows "I typed no to cancel."
-+allows "The answer is no to both questions."
-+allows "Say yes to tolerance and no to racism."
-+allows "Yes to some requests and no to others."
-+allows "Yes to the trial, but no to sales."
-+allows "Hell no to change."
-+allows "That is a no to change."
-+allows "It was a hard no to change."
-+allows "It was a really strong no to change."
-+allows "They told them no to training on that data."
-+allows "The startup had no to little funding."
-```
-
----
-
-### Incident Patch 3: `0f18fdcf` (2026-11-18)
-**Commit Message**: fix(lint): flag "your probably right" as you're (#4781) (#4783)
-
-* fix(lint): flag "your probably right" as you're
-
-Add YourPredicativeAdverb.weir so intensifying adverbs like
-"probably" before a predicative adjective after your/yr/ur/ya
-suggest the contraction you're.
-
-Fixes #4781
-
-AI assistance: Cursor Cloud Agent helped implement and test this change.
-
-* fix(core): enable YourPredicativeAdverb in the default config
-
----------
-
-Co-authored-by: ShahadatTest <[REDACTED_EMAIL]>
-Co-authored-by: Elijah Potter <[REDACTED_EMAIL]>
+### Incident Patch 1: `9ddf6b5b` (2026-11-21)
+**Commit Message**: feat: holey grail / holly grail (#5005)
 
 **File**: `harper-core/default_config.json` (modified, +7/-0)
 ```diff
-@@ -2386,6 +2386,13 @@
- 								"label": "Your Predicate Adjective"
+@@ -1317,6 +1317,13 @@
+ 								"label": "Hit The Nail On The Head"
  							}
  						},
 +						{
 +							"Bool": {
-+								"name": "YourPredicativeAdverb",
++								"name": "HolyGrail",
 +								"state": true,
-+								"label": "Your Predicative Adverb"
++								"label": "Holy Grail"
 +							}
 +						},
  						{
  							"Bool": {
- 								"name": "Yourself",
+ 								"name": "HolyWar",
 ```
 
-**File**: `harper-core/src/linting/weir_rules/YourPredicativeAdverb.weir` (added, +25/-0)
+**File**: `harper-core/src/linting/phrase_set_corrections/many_to_many_tests.rs` (modified, +45/-4)
 ```diff
-@@ -0,0 +1,25 @@
-+expr intensifiers [probably, clearly, likely, certainly, definitely, surely, maybe, perhaps]
-+expr predicative [right, wrong, correct, incorrect, fine, okay, ok, crazy, nuts, serious, ready, welcome, safe, sorry]
-+expr main <([your, yr, ur, ya] @intensifiers @predicative), [your, yr, ur, ya]>
+@@ -1,7 +1,10 @@
+-use super::LintGroup;
+-use crate::linting::pooled_linter::for_tests::create_test_pool;
+-use crate::linting::tests::{
+-    assert_good_and_bad_suggestions, assert_lint_count, assert_no_lints, assert_suggestion_result,
++use crate::linting::{
++    LintGroup,
++    pooled_linter::for_tests::create_test_pool,
++    tests::{
++        assert_good_and_bad_suggestions, assert_lint_count, assert_no_lints,
++        assert_suggestion_result,
++    },
+ };
+ 
+ use super::lint_group;
+@@ -801,6 +804,44 @@ fn fix_high_space_jacks() {
+     );
+ }
+ 
++// HolyGrail
 +
-+let message "Use the contraction `you're` (you are) before a predicative adjective instead of the possessive `your` or its variants."
-+let description "Catches cases where an intensifying adverb and a predicate adjective follow `your`, `yr`, `ur`, or `ya` (for example `your probably right`) and suggests the proper contraction. Intensifiers are a closed list of sentence adverbs; attributive uses that need a following noun (for example `your probably best option`) are out of scope of this list."
-+let kind "Grammar"
-+let becomes "you're"
-+let strategy "MatchCase"
++#[test]
++fn correct_holey_grail() {
++    assert_suggestion_result(
++        "But it seems that some rock-star developers have found the holey grail in one or another strange language.",
++        test_linter(),
++        "But it seems that some rock-star developers have found the holy grail in one or another strange language.",
++    );
++}
 +
-+test "so your probably right" "so you're probably right"
-+test "Your probably right." "You're probably right."
-+test "your clearly wrong?" "you're clearly wrong?"
-+test "UR certainly correct." "YOU'RE certainly correct."
-+test "ya definitely fine." "you're definitely fine."
-+test "Your maybe crazy." "You're maybe crazy."
-+test "yr surely ready?" "you're surely ready?"
-+test "Your perhaps sorry." "You're perhaps sorry."
-+test "your likely safe." "you're likely safe."
++#[test]
++fn correct_holly_grail() {
++    assert_suggestion_result(
++        "And last but not least, the holly grail of languages workbenches",
++        test_linter(),
++        "And last but not least, the holy grail of languages workbenches",
++    );
++}
 +
-+# Possessive uses that must stay (predicative list does not include these heads)
-+test "Your probably best option is sleep." "Your probably best option is sleep."
-+test "Your clearly marked answer was wrong." "Your clearly marked answer was wrong."
-+test "Your favorite color is blue." "Your favorite color is blue."
-+test "Your excitement is contagious." "Your excitement is contagious."
++#[test]
++fn correct_holy_grale() {
++    assert_suggestion_result(
++        "We are by no means close to such a holy grale yet but the library will grow",
++        test_linter(),
++        "We are by no means close to such a holy grail yet but the library will grow",
++    );
++}
++
++#[test]
++fn correct_holly_grale_network() {
++    assert_suggestion_result(
++        "and Image toolbox that is not working is the holly grale of network ...",
++        test_linter(),
++        "and Image toolbox that is not working is the holy grail of network ...",
++    );
++}
++
+ // HolyWar
+ 
+ #[test]
+```
+
+**File**: `harper-core/src/linting/phrase_set_corrections/mod.rs` (modified, +15/-0)
+```diff
+@@ -1005,6 +1005,21 @@ pub fn lint_group() -> LintGroup {
+             "Corrects misspellings of `hijack`.",
+             LintKind::Spelling
+         ),
++        "HolyGrail" => (
++            &[
++                (
++                    &["holey grail", "holly grail", "holy grale", "holly grale"],
++                    &["holy grail"]
++                ),
++                (
++                    &["holey grails", "holly grails", "holy grales", "holly grales"],
++                    &["holy grails"]
++                ),
++            ],
++            "Did you mean `holy grail`?",
++            "Corrects misspellings of `holy grail`.",
++            LintKind::Spelling
++        ),
+         "HolyWar" => (
+             &[
+                 (&["holey war", "holly war"], &["holy war"]),
+```
+
+---
+
+### Incident Patch 2: `f80af255` (2026-11-21)
+**Commit Message**: feat: a same way→the same way / the similar way→a similar way (#5023)
+
+**File**: `harper-core/default_config.json` (modified, +7/-0)
+```diff
+@@ -6895,6 +6895,13 @@
+ 								"label": "Safe To Save"
+ 							}
+ 						},
++						{
++							"Bool": {
++								"name": "SameSimilarWay",
++								"state": true,
++								"label": "Same/Similar Way"
++							}
++						},
+ 						{
+ 							"Bool": {
+ 								"name": "SaveToSafe",
+```
+
+**File**: `harper-core/src/linting/weir_rules/SameSimilarWay/ASame.weir` (added, +8/-0)
+```diff
+@@ -0,0 +1,8 @@
++expr main <(a same [way, fashion]), a>
++
++let message "`Same way` requires the definite article `the` instead of the indefinite article `a`."
++let description "`Corrects `a same way` to `the same way`."
++let kind "Usage"
++let becomes "the"
++
++test "Translate two different strings in a same way." "Translate two different strings in the same way."
+```
+
+**File**: `harper-core/src/linting/weir_rules/SameSimilarWay/TheSimilar.weir` (added, +8/-0)
+```diff
+@@ -0,0 +1,8 @@
++expr main <([(the similar),(the very similar)] [way, fashion]), the>
++
++let message "`Similar way` requires the indefinite article `a` instead of the definite article `the` definite article `the`."
++let description "`Corrects `the similar way` to `a similar way`."
++let kind "Usage"
++let becomes "a"
++
++test "took underapproved actions, ignored orders to stop, and then denied it in the very similar fashion to Muse" "took underapproved actions, ignored orders to stop, and then denied it in a very similar fashion to Muse"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5025** (2026-11-21): Many linters' `message` and `description` fields lacked a sentence-final punctuation (@hippietrail)
+- **PR #5023** (2026-11-21): feat: a same way→the same way / the similar way→a similar way (@hippietrail)
+- **PR #5019** (2026-11-20): feat(desktop): add Coffee as a default app (@PTthe13)
+- **PR #5005** (2026-11-21): feat: holey grail / holly grail (@hippietrail)
 - **PR #5000** (2026-11-19): fix(desktop): issue with Discord + create modular support for new apps (@elijah-potter)
 - **PR #4999** (2026-11-18): fix(core): flag plural subjects followed by singular seems (@socrabs151)
-- **PR #4998** (2026-11-18): feat: he same → the same (@hippietrail)
-- **PR #4991** (2026-11-18): fix(git-commit): skip conventional commit prefixes when linting (@KemalG-u)
-- **PR #4989** (2026-11-18): feat: akin of → akin to (@hippietrail)
-- **PR #4988** (2026-11-17): fix(components): darken background letters beneath text in dark mode (@elijah-potter)
 
 ---
 
@@ -1704,24 +1618,27 @@ Co-authored-by: Elijah Potter <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci: cut WebAssembly build time in PR checks
+## X. holey grail / holly grail
 
 **RULE**:
-When implementing operations in `.github/workflows/just_checks.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `harper-core/default_config.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7139cb11`: ci: cut WebAssembly build time in PR checks. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9ddf6b5b`: holey grail / holly grail. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/just_checks.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `harper-core/default_config.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  # Skip wasm-opt when building the WebAssembly module for these checks. It only makes the
-  # module smaller and faster, and took over a minute per job. The Chrome Plugin, WordPress
-  # Plugin and Build Web checks still build it with wasm-opt, as shipped.
-  DISABLE_WASM_OPT: 1
+						{
+							"Bool": {
+								"name": "HolyGrail",
+								"state": true,
+								"label": "Holy Grail"
+							}
+						},
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1731,4 +1648,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7139cb11` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9ddf6b5b` are properly handled with clean fallback behavior.

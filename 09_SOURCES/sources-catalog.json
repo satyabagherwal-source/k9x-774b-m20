@@ -2253,10 +2253,10 @@
     "repository": "Automattic/harper",
     "platform": "github",
     "sourceUrl": "https://github.com/Automattic/harper",
-    "sourceVersion": "0dfea2bd",
+    "sourceVersion": "9ddf6b5b",
     "license": "Apache-2.0",
-    "contentHash": "4335bdce8f976cd56e267d360757158cb8e203ff0fd4428c0a897e2bf1b2b633",
-    "lastHarvestedAt": "2026-11-19T22:19:41.478Z",
+    "contentHash": "60b569167d5e460b9da2e927159b3af827b55b73d2c67f4b0d5f78994252c36e",
+    "lastHarvestedAt": "2026-11-21T10:37:34.754Z",
     "learningId": "learn-github-automattic-harper"
   },
   "sudheerj-reactjs-interview-questions": {
@@ -8565,8 +8565,8 @@
     "sourceUrl": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
     "sourceVersion": "hf-meta-models-muse-spark-open-816b-a42b-nvfp4",
     "license": "Open-Source",
-    "contentHash": "907e78710c46392261845dbd51f3885aac3819f7782a1412de5e84734fa25fb1",
-    "lastHarvestedAt": "2026-11-17T15:35:00.231Z",
+    "contentHash": "eeec5fe5f1ee00f546f996b5a3afed28bfaa25774454f01cf20094a38d7e9727",
+    "lastHarvestedAt": "2026-11-21T10:37:32.589Z",
     "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b-nvfp4"
   },
   "rickclephas-kmp-nativecoroutines": {

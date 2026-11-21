@@ -45,8 +45,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-21T08:20:42.226Z",
-    "lastVerified": "2026-11-21T08:20:42.226Z",
+    "lastChecked": "2026-11-21T10:37:44.034Z",
+    "lastVerified": "2026-11-21T10:37:44.034Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-21T09:52:48.484Z",
-    "lastVerified": "2026-11-21T09:52:48.484Z",
+    "lastChecked": "2026-11-21T10:37:44.041Z",
+    "lastVerified": "2026-11-21T10:37:44.042Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -330,8 +330,8 @@
     "officialUrl": "https://github.com/openziti/zrok",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-21T01:43:46.859Z",
-    "lastVerified": "2026-11-21T01:43:46.859Z",
+    "lastChecked": "2026-11-21T10:37:39.061Z",
+    "lastVerified": "2026-11-21T10:37:39.061Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-openziti-zrok",
@@ -405,9 +405,9 @@
   "enaqx-awesome-react": {
     "name": "awesome-react",
     "officialUrl": "https://github.com/enaqx/awesome-react",
-    "lastChecked": "2026-11-18T10:08:41.249Z",
+    "lastChecked": "2026-11-21T10:37:34.157Z",
     "revisionIdentifier": "e6fd973e",
-    "lastVerified": "2026-11-18T10:08:41.249Z"
+    "lastVerified": "2026-11-21T10:37:34.157Z"
   },
   "nginx-kubernetes-ingress": {
     "name": "nginx/kubernetes-ingress",
@@ -737,14 +737,14 @@
     "officialUrl": "https://github.com/Automattic/harper",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-19T22:19:40.348Z",
-    "lastVerified": "2026-11-19T22:19:40.348Z",
+    "lastChecked": "2026-11-21T10:37:33.706Z",
+    "lastVerified": "2026-11-21T10:37:33.706Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-automattic-harper",
-    "contentHash": "4335bdce8f976cd56e267d360757158cb8e203ff0fd4428c0a897e2bf1b2b633",
+    "contentHash": "60b569167d5e460b9da2e927159b3af827b55b73d2c67f4b0d5f78994252c36e",
     "promotedRulesCount": 1,
-    "recentFixesCount": 11,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5348,12 +5348,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "rqlite-rqlite": {
-    "name": "rqlite/rqlite",
+    "name": "rqlite",
     "officialUrl": "https://github.com/rqlite/rqlite",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-20T05:21:11.070Z",
-    "lastVerified": "2026-11-20T05:21:11.070Z",
+    "lastChecked": "2026-11-21T10:37:41.604Z",
+    "lastVerified": "2026-11-21T10:37:41.604Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rqlite-rqlite",
@@ -5362,7 +5362,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "4452a98a"
   },
   "nvidia-cuda-rust": {
     "name": "NVIDIA/cuda-rust",
@@ -6131,9 +6132,9 @@
   "someengineering-fixinventory": {
     "name": "fixinventory",
     "officialUrl": "https://github.com/someengineering/fixinventory",
-    "lastChecked": "2026-11-20T06:19:26.080Z",
+    "lastChecked": "2026-11-21T10:37:36.666Z",
     "revisionIdentifier": "21183338",
-    "lastVerified": "2026-11-20T06:19:26.080Z"
+    "lastVerified": "2026-11-21T10:37:36.666Z"
   },
   "olric-data-olric": {
     "name": "olric",
@@ -12139,6 +12140,23 @@
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-mistralai-timestral-209m",
     "contentHash": "215ab52ac3bd1c62b89de0e81eb9882b0a8e385ea76f1ce65c7d70ef634cb08c",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-meta-models-muse-spark-open-816b-a42b-nvfp4": {
+    "name": "meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
+    "officialUrl": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-21T10:37:31.899Z",
+    "lastVerified": "2026-11-21T10:37:31.899Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b-nvfp4",
+    "contentHash": "eeec5fe5f1ee00f546f996b5a3afed28bfaa25774454f01cf20094a38d7e9727",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

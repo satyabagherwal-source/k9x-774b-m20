@@ -11802,3 +11802,5 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `345fe568` | Multi-dimensional audit evidence | 2026-11-21T09:47:30.672Z |
 | `learn-github-storybookjs-storybook` | `https://github.com/storybookjs/storybook` | `20075e60` | Multi-dimensional audit evidence | 2026-11-21T09:52:22.241Z |
 | `learn-huggingface-mistralai-timestral-209m` | `https://huggingface.co/mistralai/Timestral-209M` | `hf-mistral` | Multi-dimensional audit evidence | 2026-11-21T09:52:45.610Z |
+| `learn-huggingface-meta-models-muse-spark-open-816b-a42b-nvfp4` | `https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B-NVFP4` | `hf-meta-mo` | Multi-dimensional audit evidence | 2026-11-21T10:37:32.589Z |
+| `learn-github-automattic-harper` | `https://github.com/Automattic/harper` | `9ddf6b5b` | Multi-dimensional audit evidence | 2026-11-21T10:37:34.754Z |

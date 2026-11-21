@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-21T09:52:45.619Z",
+  "last_updated": "2026-11-21T10:37:34.763Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3516,14 +3516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-automattic-harper",
-      "content_hash": "4335bdce8f976cd56e267d360757158cb8e203ff0fd4428c0a897e2bf1b2b633",
-      "verified_at": "2026-11-19T22:19:41.485Z",
+      "content_hash": "60b569167d5e460b9da2e927159b3af827b55b73d2c67f4b0d5f78994252c36e",
+      "verified_at": "2026-11-21T10:37:34.762Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T22:19:41.485Z"
+      "last_updated": "2026-11-21T10:37:34.762Z"
     },
     "sudheerj/reactjs-interview-questions": {
       "repository": "sudheerj/reactjs-interview-questions",
@@ -12891,14 +12891,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-meta-models-muse-spark-open-816b-a42b-nvfp4",
-      "content_hash": "907e78710c46392261845dbd51f3885aac3819f7782a1412de5e84734fa25fb1",
-      "verified_at": "2026-11-17T15:35:00.238Z",
+      "content_hash": "eeec5fe5f1ee00f546f996b5a3afed28bfaa25774454f01cf20094a38d7e9727",
+      "verified_at": "2026-11-21T10:37:32.597Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T15:35:00.238Z"
+      "last_updated": "2026-11-21T10:37:32.597Z"
     },
     "rickclephas/KMP-NativeCoroutines": {
       "repository": "rickclephas/KMP-NativeCoroutines",
