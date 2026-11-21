@@ -46,8 +46,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-21T20:25:01.588Z",
-    "lastVerified": "2026-11-21T20:25:01.588Z",
+    "lastChecked": "2026-11-21T21:19:45.318Z",
+    "lastVerified": "2026-11-21T21:19:45.318Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-21T21:04:48.943Z",
-    "lastVerified": "2026-11-21T21:04:48.943Z",
+    "lastChecked": "2026-11-21T21:23:01.293Z",
+    "lastVerified": "2026-11-21T21:23:01.293Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -247,9 +247,9 @@
   "pathwaycom-llm-app": {
     "name": "llm-app",
     "officialUrl": "https://github.com/pathwaycom/llm-app",
-    "lastChecked": "2026-11-20T16:23:31.537Z",
+    "lastChecked": "2026-11-21T21:19:42.819Z",
     "revisionIdentifier": "53c6382b",
-    "lastVerified": "2026-11-20T16:23:31.537Z"
+    "lastVerified": "2026-11-21T21:19:42.819Z"
   },
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
@@ -1127,14 +1127,14 @@
     "officialUrl": "https://github.com/ProvableHQ/snarkOS",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-21T13:30:38.978Z",
-    "lastVerified": "2026-11-21T13:30:38.978Z",
+    "lastChecked": "2026-11-21T21:19:44.893Z",
+    "lastVerified": "2026-11-21T21:19:44.893Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "a1cdc9c07f8a58e82a58209d5fecbab942cd50584fda5b7124777eb7352a21db",
+    "contentHash": "3919bff8a6ca847a991704fc8a036f429364c06081633873aec27c63011af5f2",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1783,8 +1783,8 @@
     "officialUrl": "https://github.com/loft-sh/vcluster",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-20T17:37:12.427Z",
-    "lastVerified": "2026-11-20T17:37:12.427Z",
+    "lastChecked": "2026-11-21T21:19:37.814Z",
+    "lastVerified": "2026-11-21T21:19:37.814Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-loft-sh-vcluster",
@@ -3181,9 +3181,9 @@
   "runanywhereai-runanywhere-sdks": {
     "name": "runanywhere-sdks",
     "officialUrl": "https://github.com/RunanywhereAI/runanywhere-sdks",
-    "lastChecked": "2026-11-18T15:59:41.731Z",
+    "lastChecked": "2026-11-21T21:19:35.319Z",
     "revisionIdentifier": "87865ea8",
-    "lastVerified": "2026-11-18T15:59:41.731Z"
+    "lastVerified": "2026-11-21T21:19:35.319Z"
   },
   "cdk-team-cdk": {
     "name": "CDK",
@@ -3655,9 +3655,9 @@
   "kuberwastaken-claurst": {
     "name": "claurst",
     "officialUrl": "https://github.com/Kuberwastaken/claurst",
-    "lastChecked": "2026-11-20T05:20:54.731Z",
+    "lastChecked": "2026-11-21T21:19:30.309Z",
     "revisionIdentifier": "e4228cc6",
-    "lastVerified": "2026-11-20T05:20:54.731Z"
+    "lastVerified": "2026-11-21T21:19:30.309Z"
   },
   "hf-google-bert-bert-base-uncased": {
     "name": "google-bert/bert-base-uncased",
@@ -12845,6 +12845,23 @@
     "learningId": "learn-huggingface-mistralai-mistral-large-4-1t-a52b",
     "contentHash": "6879173e1f9e3a6ca1d27c336994cc7f7e947075b0850c46695a917f2dc84b98",
     "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-diffuspace-clover-35b-a3b-preview": {
+    "name": "Diffuspace/Clover-35B-A3B-Preview",
+    "officialUrl": "https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-21T21:19:32.870Z",
+    "lastVerified": "2026-11-21T21:19:32.870Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-diffuspace-clover-35b-a3b-preview",
+    "contentHash": "00889c50410ab03f898ac9c6f99622cf1374aeb94cc6521007abd032ff83d9cb",
+    "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

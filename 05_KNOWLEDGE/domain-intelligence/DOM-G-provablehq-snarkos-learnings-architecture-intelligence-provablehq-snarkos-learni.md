@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T22:57:30.426Z",
+  "timestamp": "2026-11-21T21:23:02.684Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-provablehq-snarkos-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [provablehq-snarkos-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T22:57:30.426Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T21:23:02.684Z`  
 > **Learning ID**: `LEARN-EVO-provablehq-snarkos-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
 - **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 57%
+- **Confidence Rating**: 62%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from provablehq-snarkos-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source**: github ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
-> **Source Version**: `60e3fed6`  
+> **Source Version**: `3862fd16`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T22:57:24.618Z  
+> **Timestamp**: 2026-11-21T21:19:45.000Z  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T22:57:24.613Z  
+> **Harvest Timestamp**: 2026-11-21T21:19:44.893Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -193,6 +193,7 @@ use crate::{
     spawn_blocking,
 };
 use snarkos_node_bft_ledger_service::{LedgerService, deserialize_transaction_strict};
+use snarkos_utilities::locks::parking_lot::{Mutex, RwLock};
 use snarkvm::{
     console::prelude::*,
     ledger::{
@@ -204,10 +205,6 @@ use snarkvm::{
 
 use anyhow::Context;
 use indexmap::{IndexMap, IndexSet};
-#[cfg(feature = "locktick")]
-use locktick::parking_lot::{Mutex, RwLock};
-#[cfg(not(feature = "locktick"))]
-use parking_lot::{Mutex, RwLock};
 use rand::seq::IteratorRandom;
 
 use std::{future::Future, net::SocketAddr, sync::Arc};
@@ -419,7 +416,8 @@ impl<N: Network> Worker<N> {
     pub(crate) fn reinsert(&self, transmission_id: TransmissionID<N>, transmission: Transmission<N>) -> bool {
         // Check if the transmission ID exists.
         if !self.contains_transmission(transmission_id) {
-            // Insert the transmission
+            // Insert the transmission into the ready queue.
+            return self.ready.write().insert(transmission_
 ```
 
 ### Core Architecture Module: `node/consensus/src/transactions_queue.rs`
@@ -969,12 +967,8 @@ mod tests {
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+use crate::locks::parking_lot::{RwLock, RwLockReadGuard};
 use anyhow::{Result, bail};
-#[cfg(feature = "locktick")]
-use locktick::{LockGuard, parking_lot::RwLock};
-#[cfg(not(feature = "locktick"))]
-use parking_lot::RwLock;
-use parking_lot::RwLockReadGuard;
 
 /// Helper struct to hold a reference to a callback struct.
 pub struct CallbackHandle<C: Clone + Send + Sync> {
@@ -1009,15 +1003,6 @@ impl<C: Send + Sync + Clone> CallbackHandle<C> {
 
     /// Get reference to the callback.
     /// Cannot be shared across await-boundaries.
-    #[cfg(feature = "locktick")]
-    #[inline]
-    pub fn get_ref(&self) -> LockGuard<RwLockReadGuard<'_, Option<C>>> {
-        self.callback.read()
-    }
-
-    /// Get reference to the callback.
-    /// Cannot be shared across await-boundaries.
-    #[cfg(not(feature = "locktick"))]
     #[inline]
     pub fn get_ref(&self) -> RwLockReadGuard<'_, Option<C>> {
         self.callback.read()
@@ -1124,6 +1109,8 @@ pub use signals::*;
 pub mod node_data;
 pub use node_data::*;
 
+pub mod locks;
+
 mod callback_handle;
 pub use callback_handle::CallbackHandle;
 
@@ -1138,6 +1125,116 @@ pub const DEVELOPMENT_MODE_RNG_SEED: u64 = 1234567890u64;
 pub struct DevHotswapConfig {
     /// Number of validators in the dev committee.
     pub dev_num_validators: u16,
+}
+
+```
+
+### Core Architecture Module: `utilities/src/locks.rs`
+```
+// Copyright (c) 2019-2026 Provable Inc.
+// This file is part of the snarkOS library.
+
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at:
+
+// http://www.apache.org/licenses/LICENSE-2.0
+
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+//! The lock types that snarkOS crates use.
+//!
+//! Building with `--cfg locktick` swaps every lock for its instrumented counterpart from the
+//! `locktick` crate, which records where each lock and guard is taken. `.cargo/config.toml`
+//! defines the cargo aliases that set the cfg.
+//!
+//! The submodules mirror the layout of `locktick`. A lock's methods return the guard alias of
+//! its submodule in both builds. Under `--cfg locktick` that guard is a `locktick::LockGuard`
+//! that dereferences to the plain guard. Code that passes a guard to an associated function of
+//! the plain guard type, such as `parking_lot::MutexGuard::map`, compiles only without the cfg.
+//!
+//! `clippy.toml` disallows the lock types of `parking_lot`, `tokio` and `locktick` everywhere
+//! else. Turning these type aliases into `pub use` re-exports would make that lint flag every
+//! user of them.
+
+#![allow(clippy::disallowed_types)]
+
+#[cfg(not(locktick))]
+type Guard<G> = G;
+#[cfg(locktick)]
+type Guard<G> = ::locktick::LockGuard<G>;
+
+/// Synchronous locks from `parking_lot`.
+pub mod parking_lot {
+    use super::Guard;
+
+    #[cfg(locktick)]
+    use ::locktick::parking_lot as backend;
+    #[cfg(not(locktick))]
+    use ::parking_lot as backend;
+
+    pub type Mutex<T> = backend::Mutex<T>;
+    pub type RwLock<T> = backend::RwLock<T>;
+    pub type MutexGuard<'a, T> = Guard<::parking_lot::MutexGuard<'a, T>>;
+    pub type RwLockReadGuard<'a, T> = Guard<::parking_lot::RwLockReadGuard<'a, T>>;
+    pub type RwLockWriteGuard<'a, T> = Guard<::parking_lot::RwLockWriteGuard<'a, T>>;
+}
+
+/// Asynchronous locks from `tokio::sync`.
+pub mod tokio {
+    use super::Guard;
+
+    #[cfg(locktick)]
+    use ::locktick::tokio as backend;
+    #[cfg(not(locktick))]
+    use ::tokio::sync as backend;
+
+    pub type Mutex<T> = backend::Mutex<T>;
+    pub type RwLock<T> = backend::RwLock<T>;
+    pub type MutexGuard<'a, T> = Guard<::tokio::sync::MutexGuard<'a, T>>;
+    pub type RwLockReadGuard<'a, T> = Guard<::tokio::sync::RwLockReadGuard<'a, T>>;
+    pub type RwLockWriteGuard<'a, T> = Guard<::tokio::sync::RwLockWriteGuard<'a, T>>;
+}
+
+/// Under `--cfg locktick`, spawns a thread that logs every lock guard that is held or waited
+/// for, every three seconds. Otherwise, does nothing.
+pub fn spawn_lock_reporter() {
+    #[cfg(locktick)]
+    std::thread::spawn(|| {
+        loop {
+            tracing::info!("[locktick] checking for active lock guards");
+            let ts = std::time::Instant::now();
+            let mut infos = ::locktick::lock_snapshots();
+            infos.sort_unstable_by(|l1, l2| l1.location.cmp(&l2.location));
+
+            for lock in infos {
+                let mut guards = lock.known_guards.values().filter(|g| g.is_in_use()).collect::<Vec<_>>();
+                guards.sort_unstable_by(|g1, g2| g1.location.cmp(&g2.location));
+
+                for guard in guards {
+                    let location = &guard.location;
+                    let kind = guard.kind;
+                    let num_uses = guard.num_uses;
+                    let active_users = guard.num_active_uses();
+                    let avg_duration = guard.avg_duration();
+                    let avg_wait_time = guard.avg_wait_time();
+                    let num_waiting = guard.num_waiting();
+                    tracing::info!(
+                        "[locktick] {location} ({:?}): {num_uses}; {active_users} active; {num_waiting} waiting; avg d: {:?}; avg w: {:?}",
+                        kind,
+                        avg_duration,
+                        avg_wait_time
+                    );
+                }
+            }
+            tracing::debug!("[locktick] finished the check in {:?}", ts.elapsed());
+            std::thread::sleep(std::time::Duration::from_secs(3));
+        }
+    });
 }
 
 ```
@@ -1378,10 +1475,7 @@ mod tests {
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#[cfg(feature = "locktick")]
-use locktick::parking_lot::{Mutex, RwLock};
-#[cfg(not(feature = "locktick"))]
-use parking_lot::{Mutex, RwLock};
+use crate::locks::parking_lot::{Mutex, RwLock};
 
 use std::sync::{
     Arc,
@@ -1781,218 +1875,6 @@ if __name__ == "__main__":
 
 ```
 
-### Core Architecture Module: `account/src/lib.rs`
-```
-// Copyright (c) 2019-2026 Provable Inc.
-// This file is part of the snarkOS library.
-
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at:
-
-// http://www.apache.org/licenses/LICENSE-2.0
-
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-#![forbid(unsafe_code)]
-
-use snarkvm::{
-    console::{network::prelude::*, types::Field},
-    prelude::*,
-};
-
-use colored::*;
-use core::fmt;
-
-/// A helper struct for an Aleo account.
-#[derive(Clone, Debug)]
-pub struct Account<N: Network> {
-    /// The account private key.
-    private_key: PrivateKey<N>,
-    /// The account view key.
-    view_key: ViewKey<N>,
-    /// The account address.
-    address: Address<N>,
-}
-
-impl<N: Network> Account<N> {
-    /// Samples a new account.
-    pub fn new<R: Rng + CryptoRng>(rng: &mut R) -> Result<Self> {
-        Self::try_from(PrivateKey::new(rng)?)
-    }
-
-    /// Returns the account private key.
-    pub const fn private_key(&self) -> &PrivateKey<N> {
-        &self.private_key
-    }
-
-    /// Returns the account view key.
-    pub const fn view_key(&self) -> &ViewKey<N> {
-        &self.view_key
-    }
-
-    /// Returns the account address.
-    pub const fn address(&self) -> Address<N> {
-        self.address
-    }
-}
-
-impl<N: Network> Account<N> {
-    /// Returns a signature for the given message (as field elements), using the account private key.
-    pub fn sign<R: Rng + CryptoRng>(&self, message: &[Field<N>], rng: &mut R) -> Result<Signature<N>> {
-        Signature::sign(&self.private_key, message, rng)
-    }
-
-    /// Returns a signature for the given message (as bytes), using the account private key.
-    pub fn sign_bytes<R: Rng + CryptoRng>(&self, message: &[u8], rng: &mut R) -> Result<Signature<N>> {
-        Signature::sign_bytes(&self.private_key, message, rng)
-    }
-
-    /// Returns a signature for the given message (as bits), using the account private key.
-    pub fn sign_bits<R: Rng + CryptoRng>(&self, message: &[bool], rng: &mut R) -> Result<Signature<N>> {
-        Signature::sign_bits(&self.private_key, message, rng)
-    }
-
-    /// Verifies a signature for the given message (as fields), using the account address.
-    pub fn verify(&self, message: &[Field<N>], signature: &Signature<N>) -> bool {
-        signature.verify(&self.address, message)
-    }
-
-    /// Verifies a signature for the given message (as bytes), using the account address.
-    pub fn verify_bytes(&self, message: &[u8], signature: &Signature<N>) -> bool {
-        signature.verify_bytes(&self.address, message)
-    }
-
-    /// Verifies a signature for the given message (as bits), using the account address.
-    pub fn verify_bits(&self, message: &[bool], signature: &Signature<N>) -> bool {
-        signature.verify_bits(&self.address, message)
-    }
-}
-
-impl<N: Network> TryFrom<PrivateKey<N>> for Account<N> {
-    type Error = Error;
-
-    /// Initializes a new account from a private key.
-    fn try_from(private_key: PrivateKey<N>) -> Result<Self, Self::Error> {
-        Self::try_from(&private_key)
-    }
-}
-
-impl<N: Network> TryFrom<&PrivateKey<N>> for Account<N> {
-    type Error = Error;
-
-    /// Initializes a new account from a private key.
-    fn try_from(private_key: &PrivateKey<N>) -> Result<Self, Self::Error> {
-        let view_key = ViewKey::try_from(private_key)?;
-        let address = view_key.to_address();
-        Ok(Self { private_key: *private_key, view_key, address })
-    }
-}
-
-impl<N: Network> TryFrom<String> for Account<N> {
-    type Error = Error;
-
-    /// Initializes a new account from a private key string.
-    fn try_from(private_key: String) -> Result<Self, Self::Error> {
-        Self::try_from(&private_key)
-    }
-}
-
-impl<N: Network> TryFrom<&String> for Account<N> {
-    type Error = Error;
-
-    /// Initializes a new account from a private key string.
-    fn try_from(private_key: &String) -> Result<Self, Self::Error> {
-        Self::from_str(private_key.as_str())
-    }
-}
-
-impl<N: Network> TryFrom<&str> for Account<N> {
-    type Error = Error;
-
-    /// Initializes a new account from a private key string.
-    fn try_from(private_key: &str) -> Result<Self, Self::Error> {
-        Self::from_str(private_key)
-    }
-}
-
-impl<N: Network> FromStr for Account<N> {
-    type Err = Error;
-
-    /// Initializes a new account from a private key string.
-    fn from_str(private_key: &str) -> Result<Self, Self::Err> {
-        Self::try_from(PrivateKey::from_str(private_key)?)
-    }
-}
-
-impl<N: Network> Display for Account<N> {
-    /// Renders the account as a string.
-    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            " {:>12}  {}\n {:>12}  {}\n {:>12}  {}",
-            "Private Key".cyan().bold(),
-            self.private_key,
-            "View Key".cyan().bold(),
-            self.view_key,
-            "Address".cyan().bold(),
-            self.address
-        )
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use snarkvm::prelude::MainnetV0;
-
-    type CurrentNetwork = MainnetV0;
-
-    #[test]
-    fn test_sign() {
-        // Initialize the RNG.
-        let mut rng = TestRng::default();
-        // Prepare the account and message.
-        let account = Account::<CurrentNetwork>::new(&mut rng).unwrap();
-        let message = vec![Field::rand(&mut rng); 10];
-        // Sign and verify.
-        let signature = account.sign(&message, &mut rng).unwrap();
-        assert!(account.verify(&message, &signature));
-    }
-
-    #[test]
-    fn test_sign_bytes() {
-        // Initialize the RNG.
-        let mut rng = TestRng::default();
-        // Prepare the account and message.
-        let account = Account::<CurrentNetwork>::new(&mut rng).unwrap();
-
-        // TODO(kaimast): remove once we upgrade the rand crate
-        let message = (0..10).map(|_| rng.random::<u8>()).collect::<Vec<u8>>();
-        // Sign and verify.
-        let signature = account.sign_bytes(&message, &mut rng).unwrap();
-        assert!(account.verify_bytes(&message, &signature));
-    }
-
-    #[test]
-    fn test_sign_bits() {
-        // Initialize the RNG.
-        let mut rng = TestRng::default();
-        // Prepare the account and message.
-        let account = Account::<CurrentNetwork>::new(&mut rng).unwrap();
-        let message = (0..10).map(|_| rng.random::<bool>()).collect::<Vec<bool>>();
-        // Sign and verify.
-        let signature = account.sign_bits(&message, &mut rng).unwrap();
-        assert!(account.verify_bits(&message, &signature));
-    }
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -2020,94 +1902,294 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `60e3fed6` (2026-11-20)
-**Commit Message**: Merge pull request #4742 from aleo-labs-protocol/ci/partial-upgrade-expected-errors
+### Incident Patch 1: `d41f2d25` (2026-11-21)
+**Commit Message**: Merge pull request #4750 from aleo-labs-protocol/agent/sync-quiet-at-tip
 
-Expect the errors of a consensus upgrade in the partial upgrade test
+Keep block sync quiet while the tip block is in flight
 
-**File**: `.ci/test_partial_upgrade.sh` (modified, +18/-1)
+**File**: `node/sync/src/block_sync.rs` (modified, +38/-6)
 ```diff
-@@ -289,7 +289,24 @@ fi
+@@ -752,15 +752,15 @@ impl<N: Network> BlockSync<N> {
+         if batches.is_empty() {
+             let total_requests = self.num_total_block_requests();
+             let num_outstanding = self.num_outstanding_block_requests();
+-            if total_requests != 0 {
+-                trace!(
+-                    "Not block synced yet, but there are still {total_requests} in-flight requests. {num_outstanding} are still awaiting responses."
+-                );
+-            } else {
++            if total_requests == 0 {
+                 debug!(
+                     "Not block synced yet, and there are no outstanding block requests or \
+                  new block requests to send"
+                 );
++            } else if !self.requested_all_served() {
++                trace!(
++                    "Not block synced yet, but there are still {total_requests} in-flight requests. {num_outstanding} are still awaiting responses."
++                );
+             }
+         } else {
+             let chunk_size = DataBlocks::<N>::MAXIMUM_NUMBER_OF_BLOCKS as usize;
+@@ -1375,6 +1375,10 @@ impl<N: Network> BlockSync<N> {
  
- log "🎉 Test passed! Node synced to new consensus height ($new_consensus_height) after another node was upgraded."
+             print_requests();
+             vec![]
++        } else if self.requested_all_served() {
++            // Nothing to request until a peer serves more blocks, e.g. at the tip while the tip
++            // block is in flight.
++            vec![]
+         } else if let Some((sync_peers, min_common_ancestor)) =
+             self.find_sync_peers_inner(current_height, Some(start_height))
+         {
+@@ -1407,7 +1411,7 @@ impl<N: Network> BlockSync<N> {
  
--if check_logs "$log_dir" "$total_validators" 0 "$MAX_VALIDATOR_LOG_SIZE_BYTES"; then
-+# Once two validators run the new version, they hold at least a third of the stake, so the
-+# release validators shut down. Before that, the last node rejects the blocks of its outdated
-+# peers.
-+upgrade_stop="Validators holding at least a third of the stake run ConsensusVersion::V[0-9]+ from height [0-9]+, but this build does not schedule it at that height, and must be upgraded"
-+outdated_peer="The peer's consensus version for height [0-9]+ is behind ours"
-+# The release binary leaves a task running when it shuts down this way.
-+surplus_tasks="There are [0-9]+ surplus live tasks"
-+expected_errors="$upgrade_stop|$outdated_peer|$surplus_tasks"
+             vec![]
+         } else {
+-            // This happens if we already requested all advertised blocks.
++            // No sync peers serve the next height to request.
+             trace!("No new blocks can be requested, but there are still outstanding requests.");
+ 
+             print_requests();
+@@ -1939,6 +1943,15 @@ impl<N: Network> BlockSync<N> {
+         height
+     }
+ 
++    /// Returns `true` if a peer is ahead of this node, and every block any peer serves is in the
++    /// ledger or requested.
++    fn requested_all_served(&self) -> bool {
++        let current_height = self.retention_height();
++        let start_height = self.first_unrequested_height(current_height.saturating_add(1));
++        let max_tip = self.locators.read().values().map(|peer| peer.serving_tip()).max();
++        max_tip.is_some_and(|tip| current_height < tip && tip < start_height)
++    }
 +
-+# Only the release validators may log the surplus task error.
-+for ((node_index = penultimate_index; node_index < total_validators; node_index++)); do
-+  if grep -E "ERROR.*$surplus_tasks" "$log_dir/validator-$node_index.log"; then
-+    log "❌ Test failed! Upgraded validator #${node_index} left surplus live tasks."
-+    exit 1
-+  fi
-+done
+     /// Given the sync peers and their minimum common ancestor, return a list of block requests
+     /// starting at `start_height` (see `first_unrequested_height`).
+     ///
+@@ -2931,6 +2944,25 @@ mod tests {
+         assert!(sync_peers.contains_key(&sample_peer_ip(2)));
+     }
+ 
++    /// Tests when block sync has requested every block its peers serve.
++    #[test]
++    fn test_quiet_while_tip_block_in_flight() {
++        let sync = sample_sync_at_height(1_000);
++        add_peers(&sync, 1, 1, 1_001, 0);
++        insert_requests_to(&sync, sample_peer_ip(1), 1_001..1_002);
++        assert!(sync.requested_all_served());
 +
-+if check_logs "$log_dir" "$total_validators" 0 "$MAX_VALIDATOR_LOG_SIZE_BYTES" "" "$expected_errors"; then
-   exit 0
- else
-   exit 1
++        // A peer ahead whose floor is above the next height to request.
++        add_peers(&sync, 2, 1, 1_100, 1_050);
++        assert!(!sync.requested_all_served());
++
++        // No peer ahead, but requests are outstanding.
++        let sync = sample_sync_at_height(1_000);
++        add_peers(&sync, 1, 1, 1_000, 0);
++        insert_requests_to(&sync, sample_peer_ip(1), 1_001..1_002);
++        assert!(!sync.requested_all_served());
++    }
++
+     /// Tests that a `Pruned` reply raises the floor, releases the whole chunk at once, and that the
+     /// chunk is re-issued at once to a peer that serves it.
+     #[test]
 ```
 
 ---
 
-### Incident Patch 2: `749c1dae` (2026-11-20)
-**Commit Message**: Expect the errors of a consensus upgrade in the partial upgrade test
+### Incident Patch 2: `4282ec76` (2026-11-21)
+**Commit Message**: Compute the quiet-sync condition in one place
 
-The partial upgrade test runs only when the current build has a newer
-consensus version than the latest release. Once two validators run it, the
-release validators shut down, and before that the last validator rejects
-the blocks of its outdated peers. Both log an ERROR, and so does the
-release binary's shutdown, which leaves a task running. Pass these to
-`check_logs` as expected errors, and fail if an upgraded validator logs
-the surplus task error.
+requested_all_served now derives the heights itself, so
+issue_block_requests computes them only when it decides the trace.
+Fix the quiet-branch and else-branch comments, and trim the test.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01UYfmmLGgpejAr8wqRMCv45
-
-**File**: `.ci/test_partial_upgrade.sh` (modified, +18/-1)
+**File**: `node/sync/src/block_sync.rs` (modified, +14/-16)
 ```diff
-@@ -289,7 +289,24 @@ fi
+@@ -752,14 +752,12 @@ impl<N: Network> BlockSync<N> {
+         if batches.is_empty() {
+             let total_requests = self.num_total_block_requests();
+             let num_outstanding = self.num_outstanding_block_requests();
+-            let current_height = self.retention_height();
+-            let start_height = self.first_unrequested_height(current_height.saturating_add(1));
+             if total_requests == 0 {
+                 debug!(
+                     "Not block synced yet, and there are no outstanding block requests or \
+                  new block requests to send"
+                 );
+-            } else if !self.requested_all_served(current_height, start_height) {
++            } else if !self.requested_all_served() {
+                 trace!(
+                     "Not block synced yet, but there are still {total_requests} in-flight requests. {num_outstanding} are still awaiting responses."
+                 );
+@@ -1377,8 +1375,9 @@ impl<N: Network> BlockSync<N> {
  
- log "🎉 Test passed! Node synced to new consensus height ($new_consensus_height) after another node was upgraded."
+             print_requests();
+             vec![]
+-        } else if self.requested_all_served(current_height, start_height) {
+-            // This is normal at the tip, while the tip block is in flight.
++        } else if self.requested_all_served() {
++            // Nothing to request until a peer serves more blocks, e.g. at the tip while the tip
++            // block is in flight.
+             vec![]
+         } else if let Some((sync_peers, min_common_ancestor)) =
+             self.find_sync_peers_inner(current_height, Some(start_height))
+@@ -1412,7 +1411,7 @@ impl<N: Network> BlockSync<N> {
  
--if check_logs "$log_dir" "$total_validators" 0 "$MAX_VALIDATOR_LOG_SIZE_BYTES"; then
-+# Once two validators run the new version, they hold at least a third of the stake, so the
-+# release validators shut down. Before that, the last node rejects the blocks of its outdated
-+# peers.
-+upgrade_stop="Validators holding at least a third of the stake run ConsensusVersion::V[0-9]+ from height [0-9]+, but this build does not schedule it at that height, and must be upgraded"
-+outdated_peer="The peer's consensus version for height [0-9]+ is behind ours"
-+# The release binary leaves a task running when it shuts down this way.
-+surplus_tasks="There are [0-9]+ surplus live tasks"
-+expected_errors="$upgrade_stop|$outdated_peer|$surplus_tasks"
+             vec![]
+         } else {
+-            // This happens if we already requested all advertised blocks.
++            // No sync peers serve the next height to request.
+             trace!("No new blocks can be requested, but there are still outstanding requests.");
+ 
+             print_requests();
+@@ -1944,9 +1943,11 @@ impl<N: Network> BlockSync<N> {
+         height
+     }
+ 
+-    /// Returns `true` if a peer serves blocks above `current_height`, and every block any peer
+-    /// serves is below `start_height`, i.e. already requested (see `first_unrequested_height`).
+-    fn requested_all_served(&self, current_height: u32, start_height: u32) -> bool {
++    /// Returns `true` if a peer is ahead of this node, and every block any peer serves is in the
++    /// ledger or requested.
++    fn requested_all_served(&self) -> bool {
++        let current_height = self.retention_height();
++        let start_height = self.first_unrequested_height(current_height.saturating_add(1));
+         let max_tip = self.locators.read().values().map(|peer| peer.serving_tip()).max();
+         max_tip.is_some_and(|tip| current_height < tip && tip < start_height)
+     }
+@@ -2943,26 +2944,23 @@ mod tests {
+         assert!(sync_peers.contains_key(&sample_peer_ip(2)));
+     }
+ 
+-    /// Tests that block sync takes the quiet branch at the tip while the tip block is in flight,
+-    /// but not when a peer ahead does not serve the next block or no peer is ahead.
++    /// Tests when block sync has requested every block its peers serve.
+     #[test]
+     fn test_quiet_while_tip_block_in_flight() {
+         let sync = sample_sync_at_height(1_000);
+         add_peers(&sync, 1, 1, 1_001, 0);
+         insert_requests_to(&sync, sample_peer_ip(1), 1_001..1_002);
+-        assert!(sync.prepare_block_requests().is_empty());
+-        assert!(sync.requested_all_served(1_000, 1_002));
++        assert!(sync.requested_all_served());
+ 
+         // A peer ahead whose floor is above the next height to request.
+         add_peers(&sync, 2, 1, 1_100, 1_050);
+-        assert!(sync.prepare_block_requests().is_empty());
+-        assert!(!sync.requested_all_served(1_000, 1_002));
++        assert!(!sync.requested_all_served());
+ 
+         // No peer ahead, but requests are outstanding.
+         let sync = sample_sync_at_height(1_000);
+         add_peers(&sync, 1, 1, 1_000, 0);
+         insert_requests_to(&sync, sample_peer_ip(1), 1_001..1_002);
+-        assert!(!sync.requested_all_served(1_000, 1_002));
++        assert!(!sync.requested_all_served());
+     }
+ 
+     /// Tests that a `Pruned` reply raises the floor, releases the whole chunk at once, and that the
+```
+
+---
+
+### Incident Patch 3: `12893ec2` (2026-11-21)
+**Commit Message**: Keep block sync quiet while the tip block is in flight
+
+Since #4725, a client at the tip logs five TRACE lines on each sync pass
+while the tip block is in flight: no peer serves the next height, so
+prepare_block_requests takes the "outstanding requests" branch. This
+pushed client logs in the devnet-merge upgrade test over the 1 MiB cap.
+
+If every block the peers serve is already requested, return no batches
+without logging, and skip the "Not block synced yet" trace.
+
+**File**: `node/sync/src/block_sync.rs` (modified, +39/-5)
+```diff
+@@ -752,15 +752,17 @@ impl<N: Network> BlockSync<N> {
+         if batches.is_empty() {
+             let total_requests = self.num_total_block_requests();
+             let num_outstanding = self.num_outstanding_block_requests();
+-            if total_requests != 0 {
+-                trace!(
+-                    "Not block synced yet, but there are still {total_requests} in-flight requests. {num_outstanding} are still awaiting responses."
+-                );
+-            } else {
++            let current_height = self.retention_height();
++            let start_height = self.first_unrequested_height(current_height.saturating_add(1));
++            if total_requests == 0 {
+                 debug!(
+                     "Not block synced yet, and there are no outstanding block requests or \
+                  new block requests to send"
+                 );
++            } else if !self.requested_all_served(current_height, start_height) {
++                trace!(
++                    "Not block synced yet, but there are still {total_requests} in-flight requests. {num_outstanding} are still awaiting responses."
++                );
+             }
+         } else {
+             let chunk_size = DataBlocks::<N>::MAXIMUM_NUMBER_OF_BLOCKS as usize;
+@@ -1375,6 +1377,9 @@ impl<N: Network> BlockSync<N> {
+ 
+             print_requests();
+             vec![]
++        } else if self.requested_all_served(current_height, start_height) {
++            // This is normal at the tip, while the tip block is in flight.
++            vec![]
+         } else if let Some((sync_peers, min_common_ancestor)) =
+             self.find_sync_peers_inner(current_height, Some(start_height))
+         {
+@@ -1939,6 +1944,13 @@ impl<N: Network> BlockSync<N> {
+         height
+     }
+ 
++    /// Returns `true` if a peer serves blocks above `current_height`, and every block any peer
++    /// serves is below `start_height`, i.e. already requested (see `first_unrequested_height`).
++    fn requested_all_served(&self, current_height: u32, start_height: u32) -> bool {
++        let max_tip = self.locators.read().values().map(|peer| peer.serving_tip()).max();
++        max_tip.is_some_and(|tip| current_height < tip && tip < start_height)
++    }
 +
-+# Only the release validators may log the surplus task error.
-+for ((node_index = penultimate_index; node_index < total_validators; node_index++)); do
-+  if grep -E "ERROR.*$surplus_tasks" "$log_dir/validator-$node_index.log"; then
-+    log "❌ Test failed! Upgraded validator #${node_index} left surplus live tasks."
-+    exit 1
-+  fi
-+done
+     /// Given the sync peers and their minimum common ancestor, return a list of block requests
+     /// starting at `start_height` (see `first_unrequested_height`).
+     ///
+@@ -2931,6 +2943,28 @@ mod tests {
+         assert!(sync_peers.contains_key(&sample_peer_ip(2)));
+     }
+ 
++    /// Tests that block sync takes the quiet branch at the tip while the tip block is in flight,
++    /// but not when a peer ahead does not serve the next block or no peer is ahead.
++    #[test]
++    fn test_quiet_while_tip_block_in_flight() {
++        let sync = sample_sync_at_height(1_000);
++        add_peers(&sync, 1, 1, 1_001, 0);
++        insert_requests_to(&sync, sample_peer_ip(1), 1_001..1_002);
++        assert!(sync.prepare_block_requests().is_empty());
++        assert!(sync.requested_all_served(1_000, 1_002));
 +
-+if check_logs "$log_dir" "$total_validators" 0 "$MAX_VALIDATOR_LOG_SIZE_BYTES" "" "$expected_errors"; then
-   exit 0
- else
-   exit 1
++        // A peer ahead whose floor is above the next height to request.
++        add_peers(&sync, 2, 1, 1_100, 1_050);
++        assert!(sync.prepare_block_requests().is_empty());
++        assert!(!sync.requested_all_served(1_000, 1_002));
++
++        // No peer ahead, but requests are outstanding.
++        let sync = sample_sync_at_height(1_000);
++        add_peers(&sync, 1, 1, 1_000, 0);
++        insert_requests_to(&sync, sample_peer_ip(1), 1_001..1_002);
++        assert!(!sync.requested_all_served(1_000, 1_002));
++    }
++
+     /// Tests that a `Pruned` reply raises the floor, releases the whole chunk at once, and that the
+     /// chunk is re-issued at once to a peer that serves it.
+     #[test]
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4742** (2026-11-20): Expect the errors of a consensus upgrade in the partial upgrade test (@cbeck88)
-- **PR #4740** (2026-11-20): Bump snarkVM to aleo-labs-protocol/snarkVM@7ba14e66b (@cbeck88)
-- **PR #4739** (2026-11-20): Bump snarkVM to aleo-labs-protocol/snarkVM@7ba14e66b and remove the serial feature (@cbeck88)
-- **PR #4738** (2026-11-20): release-test: the sync legs run at once (@cbeck88)
-- **PR #4737** (2026-11-20): Give skipped devnet jobs a static name (@cbeck88)
-- **PR #4733** (2026-11-20): Restore the upgrade test's new-version check, and make the test faster (@cbeck88)
+- **PR #4754** (2026-11-21): Check staging on a 6-hourly schedule instead of on every push (@cbeck88)
+- **PR #4753** (2026-11-21): Bump snarkVM to aleo-labs-protocol/snarkVM@1757a9b84 (@cbeck88)
+- **PR #4751** (2026-11-21): CI: remove the start-runner job and fork-pr-runners.yml (@cbeck88)
+- **PR #4750** (2026-11-21): Keep block sync quiet while the tip block is in flight (@eranrund)
+- **PR #4749** (closed): Deserialize snarkVM Data on the blocking pool in snarkOS (@cbeck88)
+- **PR #4748** (2026-11-21): Print the startup error chain without snarkvm::utilities::display_error (@cbeck88)
 
 ---
 
@@ -2127,48 +2209,58 @@ Claude-Session: https://claude.ai/code/session_01UYfmmLGgpejAr8wqRMCv45
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in test_partial_upgrade.sh
+## X. Empirical Invariant Guard in block_sync.rs
 
 **RULE**:
-When implementing operations in `.ci/test_partial_upgrade.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `node/sync/src/block_sync.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `60e3fed6`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d41f2d25`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.ci/test_partial_upgrade.sh`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `node/sync/src/block_sync.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# Once two validators run the new version, they hold at least a third of the stake, so the
-# release validators shut down. Before that, the last node rejects the blocks of its outdated
-# peers.
-upgrade_stop="Validators holding at least a third of the stake run ConsensusVersion::V[0-9]+ from height [0-9]+, but this build does not schedule it at that height, and must be upgraded"
-outdated_peer="The peer's consensus version for height [0-9]+ is behind ours"
-# The release binary leaves a task running when it shuts down this way.
-surplus_tasks="There are [0-9]+ surplus live tasks"
-expected_errors="$upgrade_stop|$outdated_peer|$surplus_tasks"
+            if total_requests == 0 {
+            } else if !self.requested_all_served() {
+                trace!(
+                    "Not block synced yet, but there are still {total_requests} in-flight requests. {num_outstanding} are still awaiting responses."
+                );
+        } else if self.requested_all_served() {
+            // Nothing to request until a peer serves more blocks, e.g. at the tip while the tip
+            // block is in flight.
+            vec![]
+            // No sync peers serve the next height to request.
+    /// Returns `true` if a peer is ahead of this node, and every block any peer serves is in the
+    /// ledger or requested.
+    fn requested_all_served(&self) -> bool {
+        let current_height = self.retention_height();
+        let start_height = self.first_unrequested_height(current_height.saturating_add(1));
+        let max_tip = self.locators.read().values().map(|peer| peer.serving_tip()).max();
+        max_tip.is_some_and(|tip| current_height < tip && tip < start_height)
+    }
 
-# Only the release validators may log the surplus task error.
-for ((node_index = penultimate_index; node_index < total_validators; node_index++)); do
-  if grep -E "ERROR.*$surplus_tasks" "$log_dir/validator-$node_index.log"; then
-    log "❌ Test failed! Upgraded validator #${node_index} left surplus live tasks."
-    exit 1
-  fi
-done
-
-if check_logs "$log_dir" "$total_validators" 0 "$MAX_VALIDATOR_LOG_SIZE_BYTES" "" "$expected_errors"; then
+    /// Tests when block sync has requested every block its peers serve.
+    #[test]
+    fn test_quiet_while_tip_block_in_flight() {
+        let sync = sample_sync
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-if check_logs "$log_dir" "$total_validators" 0 "$MAX_VALIDATOR_LOG_SIZE_BYTES"; then
+            if total_requests != 0 {
+                trace!(
+                    "Not block synced yet, but there are still {total_requests} in-flight requests. {num_outstanding} are still awaiting responses."
+                );
+            } else {
+            // This happens if we already requested all advertised blocks.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `60e3fed6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d41f2d25` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

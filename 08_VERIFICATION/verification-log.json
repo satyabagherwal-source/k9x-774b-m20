@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261119-Z2UY",
-    "timestamp": "2026-11-19T17:07:12.826Z",
-    "repository": "meta-models/Muse-Spark-Open-816B-A42B",
-    "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b",
-    "contentHash": "c6146e0992f659c26a1dcb52839b8a7219ee0e44816a1fa575a347722a7e1d63",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-JP98",
-    "timestamp": "2026-11-19T17:23:14.972Z",
-    "repository": "black-forest-labs/flux-3-image-klein-comfy",
-    "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
-    "contentHash": "f2d87d9fe2a55d18ce7fa71d38edcb3f00e7ddf470e1e0d108cef39ed6aa444f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261119-JRYY",
     "timestamp": "2026-11-19T17:23:18.490Z",
     "repository": "apache/arrow",
@@ -7492,6 +7462,36 @@
     "contentHash": "b720d3debe8c328593bab6555fb20b30145cfb202ea73ac7c127373f798022d2",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-VKHF",
+    "timestamp": "2026-11-21T21:19:46.035Z",
+    "repository": "aleo-labs-protocol/snarkOS",
+    "learningId": "learn-github-aleo-labs-protocol-snarkos",
+    "contentHash": "3919bff8a6ca847a991704fc8a036f429364c06081633873aec27c63011af5f2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-ZOCY",
+    "timestamp": "2026-11-21T21:22:57.682Z",
+    "repository": "Diffuspace/Clover-35B-A3B-Preview",
+    "learningId": "learn-huggingface-diffuspace-clover-35b-a3b-preview",
+    "contentHash": "00889c50410ab03f898ac9c6f99622cf1374aeb94cc6521007abd032ff83d9cb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

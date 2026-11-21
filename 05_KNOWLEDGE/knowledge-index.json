@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T21:04:51.396Z",
+  "last_updated": "2026-11-21T21:23:04.099Z",
   "total_verified_learnings": 9062,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23274,
+  "total_items": 23286,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112818,25 +112818,25 @@
       "item_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "2875dee3",
-      "content_hash": "f7a78f08b646913d46183eef548062956ea2485c1ee60aaf1e945540691b5e14",
+      "source_version": "3862fd16",
+      "content_hash": "c7bcfd9c44558594ad9476dfb2352d0720616394f05b11cc84b9eb6ed35cc774",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T17:41:58.507Z"
+      "persisted_at": "2026-11-21T21:19:46.431Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/aleo-labs-protocol-snarkos-verification-protocol-empirical-defect-shield-for-ale.md",
+      "relative_path": "08_VERIFICATION/provablehq-snarkos-verification-protocol-empirical-defect-shield-for-aleo-labs-p.md",
       "title": "Verification Protocol: Empirical Defect Shield for aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "2875dee3",
-      "content_hash": "55f05e6ffe9455cfd1497375ba60e252f71008f430735009a78a82ff3bbbc038",
+      "source_version": "3862fd16",
+      "content_hash": "f78e2ede8e70251dab4c0e6626b9d90ddc2299f0b8cf0c1f8c525bf3086489b1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T17:41:58.811Z"
+      "persisted_at": "2026-11-21T21:19:46.595Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar",
@@ -113706,13 +113706,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-LFHG-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZT1Y-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "3a15900e91d573ebfa619c6f62b3195daef3be5e1e5fe50e802be8ed99b800a5",
+      "content_hash": "d155216b0734130f8742dd1585426b64ab2f58ef7ee0b036c1ffca841665a91b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T19:47:54.161Z"
+      "persisted_at": "2026-11-21T21:23:03.769Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "bc3fb5df61c23f1f9c83ca1616dfa1a37fe7ac949dd7e53ba256c5cc7b0b902d",
+      "content_hash": "88fa35530d448a1d38f3be700478475e63cda9e5b38b8cadf6ae680a903ece00",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T19:47:54.295Z"
+      "persisted_at": "2026-11-21T21:23:03.926Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "63dd959c4ce14706bde573337a17e6f0f39f64d9854782b5fe7a6ecff3d83672",
+      "content_hash": "5022d81a7e3746cbecd542adc140a0d914a90f4ffabe9d018f11781caa9c0929",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T19:47:54.442Z"
+      "persisted_at": "2026-11-21T21:23:04.099Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -114598,9 +114598,9 @@
       "title": "Architecture Intelligence: provablehq-snarkos-learnings Core Invariants",
       "repository": "provablehq-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "930791e98c716a32a9e5a5cd4e7d0ebc8d4d4cf5d1187c6d0394d678b16b3b9a",
+      "content_hash": "0d9d4295ec1c8ddba28b33eb493bba1f0fb7b45ebb58c65e4cc35e53cf0f354e",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T22:57:30.668Z"
+      "persisted_at": "2026-11-21T21:23:02.958Z"
     },
     "candidate_directive-server-security-check-the-token-on-the-account-confirmation-page-when-confirm_": {
       "item_id": "candidate_directive-server-security-check-the-token-on-the-account-confirmation-page-when-confirm_",
@@ -215847,13 +215847,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "aleo-labs-protocol-snarkos",
+      "slug": "provablehq-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
-      "source_version": "2875dee3",
-      "content_hash": "c1ef264025a4a50ce160fd774557f35969be02e131fb8e3c5c34e52e15767de4",
-      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_version": "3862fd16",
+      "content_hash": "3919bff8a6ca847a991704fc8a036f429364c06081633873aec27c63011af5f2",
+      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 8012,
@@ -215944,6 +215944,11 @@
           "number": 9754,
           "title": "Diagnostic Compile-Time Cfg Isolation Over Cargo Dependency Leaks",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9843,
+          "title": "Empirical Invariant Guard in block_sync.rs",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -215951,7 +215956,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T17:41:57.915Z",
+      "verified_at": "2026-11-21T21:19:45.828Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -220075,9 +220080,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for provablehq-snarkos-learnings",
       "repository": "provablehq-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "7bc1e5759142c3c1c40be68d93c280988f3793ca0d6d3d49dd39959b031e519b",
+      "content_hash": "ecfb1d8e195983b221b972083d1411bd0e7e6e230797f0506d06d781e42ded63",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T22:57:30.819Z"
+      "persisted_at": "2026-11-21T21:23:03.136Z"
     },
     "candidate_directive-viz-category-axis-tickvals-are-category-names-not-positions": {
       "item_id": "candidate_directive-viz-category-axis-tickvals-are-category-names-not-positions",
@@ -249856,16 +249861,32 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview",
       "source_version": "hf-diffuspace-clover-35b-a3b-preview",
-      "content_hash": "11aa01ab9ee5f67aeb9fb7f906312e25d86f617d79c767dcc22c7cf398081fa4",
+      "content_hash": "00889c50410ab03f898ac9c6f99622cf1374aeb94cc6521007abd032ff83d9cb",
       "dossier_path": "07_PROJECT_LEARNING/hf-diffuspace-clover-35b-a3b-preview-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-diffuspace-clover-35b-a3b-preview-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 9844,
+          "title": "Invariant Progress Guarantee in Threshold-Based Iterative Denoising",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9845,
+          "title": "Bidirectional Block vs. Causal Prefix Hybrid Attention Masking Isolation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9846,
+          "title": "Logit Bias Windowed Linear Ramp for Soft Sequence Boundary Enforcement",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T19:04:02.954Z",
+      "verified_at": "2026-11-21T21:22:57.479Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -316373,6 +316394,158 @@
       "content_hash": "214a1806ea8339912269304b606564c615958af45ba65a7a08d21be98b84db60",
       "domain_letter": "G",
       "persisted_at": "2026-11-21T21:04:49.926Z"
+    },
+    "rule-9843": {
+      "learning_id": "rule-9843",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9843,
+      "title": "Empirical Invariant Guard in block_sync.rs",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_version": "3862fd16",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T21:19:45.828Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-block_sync-rs": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-block_sync-rs",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZSB3-empirical-invariant-guard-in-block_sync-rs.md",
+      "title": "Empirical Invariant Guard in block_sync.rs",
+      "repository": "provablehq-snarkos-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6c9f07b4f708b0b72db351b33f45157a9a1a81a2b1df583c63bf78cb15d25fc6",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-21T21:23:02.802Z"
+    },
+    "rule-9844": {
+      "learning_id": "rule-9844",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9844,
+      "title": "Invariant Progress Guarantee in Threshold-Based Iterative Denoising",
+      "source_url": "https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview",
+      "source_version": "hf-diffuspace-clover-35b-a3b-preview",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T21:22:57.479Z"
+    },
+    "rule-9845": {
+      "learning_id": "rule-9845",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9845,
+      "title": "Bidirectional Block vs. Causal Prefix Hybrid Attention Masking Isolation",
+      "source_url": "https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview",
+      "source_version": "hf-diffuspace-clover-35b-a3b-preview",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T21:22:57.479Z"
+    },
+    "rule-9846": {
+      "learning_id": "rule-9846",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9846,
+      "title": "Logit Bias Windowed Linear Ramp for Soft Sequence Boundary Enforcement",
+      "source_url": "https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview",
+      "source_version": "hf-diffuspace-clover-35b-a3b-preview",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T21:22:57.479Z"
+    },
+    "domain_intelligence-design-intelligence-diffuspace-clover-35b-a3b-preview-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-diffuspace-clover-35b-a3b-preview-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-hf-diffuspace-clover-35b-a3b-preview-design-intelligence-diffuspace-clover-35b-a.md",
+      "title": "Design Intelligence: Diffuspace/Clover-35B-A3B-Preview Core Invariants",
+      "repository": "Diffuspace/Clover-35B-A3B-Preview",
+      "source_version": "hf-diffuspace-clover-35b-a3b-preview",
+      "content_hash": "f7f3326fa2505bdb6273b732b1abb0db9b272e4f91d170396e6460874e929765",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-21T21:22:58.162Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-diffuspace-clover-35b-a3b-prev": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-diffuspace-clover-35b-a3b-prev",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/hf-diffuspace-clover-35b-a3b-preview-verification-protocol-empirical-defect-shie.md",
+      "title": "Verification Protocol: Empirical Defect Shield for Diffuspace/Clover-35B-A3B-Preview",
+      "repository": "Diffuspace/Clover-35B-A3B-Preview",
+      "source_version": "hf-diffuspace-clover-35b-a3b-preview",
+      "content_hash": "5f014da1971cdb996db3610119db42ce4a51c928246ba57051f8f23df4135539",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-21T21:22:58.329Z"
+    },
+    "candidate_directive-invariant-progress-guarantee-in-threshold-based-iterative-denoising": {
+      "item_id": "candidate_directive-invariant-progress-guarantee-in-threshold-based-iterative-denoising",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZRGA-invariant-progress-guarantee-in-threshold-based-iterative-denoising.md",
+      "title": "Invariant Progress Guarantee in Threshold-Based Iterative Denoising",
+      "repository": "hf-diffuspace-clover-35b-a3b-preview-learnings",
+      "source_version": "HEAD",
+      "content_hash": "17d4e481d07759b45cb8b6e98851a67641728e6a37cc0824089bcea9ecf48bd0",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-21T21:23:01.692Z"
+    },
+    "candidate_directive-bidirectional-block-vs-causal-prefix-hybrid-attention-masking-isolation": {
+      "item_id": "candidate_directive-bidirectional-block-vs-causal-prefix-hybrid-attention-masking-isolation",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZRGA-bidirectional-block-vs-causal-prefix-hybrid-attention-masking-isolation.md",
+      "title": "Bidirectional Block vs. Causal Prefix Hybrid Attention Masking Isolation",
+      "repository": "hf-diffuspace-clover-35b-a3b-preview-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c7ba6a62417bcff63b022fd4dcb61a5cdefa1888cf53b82f90a4533de06e577b",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-21T21:23:01.860Z"
+    },
+    "candidate_directive-logit-bias-windowed-linear-ramp-for-soft-sequence-boundary-enforcement": {
+      "item_id": "candidate_directive-logit-bias-windowed-linear-ramp-for-soft-sequence-boundary-enforcement",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZRGB-logit-bias-windowed-linear-ramp-for-soft-sequence-boundary-enforcement.md",
+      "title": "Logit Bias Windowed Linear Ramp for Soft Sequence Boundary Enforcement",
+      "repository": "hf-diffuspace-clover-35b-a3b-preview-learnings",
+      "source_version": "HEAD",
+      "content_hash": "bd38e4a5ee24a47a52f31ddb58d06be4e8b7eff0a778d5ccd9822b7d945a83b6",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T21:23:02.027Z"
+    },
+    "domain_intelligence-design-intelligence-hf-diffuspace-clover-35b-a3b-preview-learnings-core-invarian": {
+      "item_id": "domain_intelligence-design-intelligence-hf-diffuspace-clover-35b-a3b-preview-learnings-core-invarian",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-hf-diffuspace-clover-35b-a3b-preview-learnings-design-intelligence-hf-diffuspace.md",
+      "title": "Design Intelligence: hf-diffuspace-clover-35b-a3b-preview-learnings Core Invariants",
+      "repository": "hf-diffuspace-clover-35b-a3b-preview-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9fad3f69d46992c8a69db48e36755f8759612434f03a2a245e1ee69326eb71f5",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-21T21:23:02.187Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-hf-diffuspace-clover-35b-a3b-p": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-hf-diffuspace-clover-35b-a3b-p",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/hf-diffuspace-clover-35b-a3b-preview-learnings-verification-protocol-empirical-d.md",
+      "title": "Verification Protocol: Empirical Defect Shield for hf-diffuspace-clover-35b-a3b-preview-learnings",
+      "repository": "hf-diffuspace-clover-35b-a3b-preview-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2b58c5fc2213143a5500c1b967d046a19e6c3121a981a75fc7096e8f5aa1232c",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-21T21:23:02.353Z"
     }
   },
   "ai-builder-brain": {

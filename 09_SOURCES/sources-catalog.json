@@ -2923,10 +2923,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/ProvableHQ/snarkOS",
-    "sourceVersion": "ffa93916",
+    "sourceVersion": "3862fd16",
     "license": "Apache-2.0",
-    "contentHash": "a1cdc9c07f8a58e82a58209d5fecbab942cd50584fda5b7124777eb7352a21db",
-    "lastHarvestedAt": "2026-11-21T13:30:39.683Z",
+    "contentHash": "3919bff8a6ca847a991704fc8a036f429364c06081633873aec27c63011af5f2",
+    "lastHarvestedAt": "2026-11-21T21:19:46.039Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "vasu-devs-justhireme": {
@@ -11505,8 +11505,8 @@
     "sourceUrl": "https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview",
     "sourceVersion": "hf-diffuspace-clover-35b-a3b-preview",
     "license": "Open-Source",
-    "contentHash": "11aa01ab9ee5f67aeb9fb7f906312e25d86f617d79c767dcc22c7cf398081fa4",
-    "lastHarvestedAt": "2026-11-15T19:04:03.117Z",
+    "contentHash": "00889c50410ab03f898ac9c6f99622cf1374aeb94cc6521007abd032ff83d9cb",
+    "lastHarvestedAt": "2026-11-21T21:22:57.686Z",
     "learningId": "learn-huggingface-diffuspace-clover-35b-a3b-preview"
   },
   "cherryhq-cherry-studio": {

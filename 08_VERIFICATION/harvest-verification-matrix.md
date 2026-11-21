@@ -11899,3 +11899,5 @@
 | `CYCLE-2026-11-21-PROJ-EVOLVE` | `2026-11-21T20:52:05.497Z` | `hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-6F3CCE20` [Domain H] | Yes (`58a9f210...`) |
 | `CYCLE-20261121-BXNP` | `2026-11-21T21:04:29.989Z` | `mistralai/Mistral-Large-4-1T-A52B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-mistralai-mistral-large-4-1t-a52b-learnings.md` | Yes (`6879173e...`) |
 | `CYCLE-20261121-C9RA` | `2026-11-21T21:04:45.670Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`b720d3de...`) |
+| `CYCLE-20261121-VKHF` | `2026-11-21T21:19:46.035Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9843` | Yes (`3919bff8...`) |
+| `CYCLE-20261121-ZOCY` | `2026-11-21T21:22:57.682Z` | `Diffuspace/Clover-35B-A3B-Preview` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9844, Rule 9845, Rule 9846` | Yes (`00889c50...`) |

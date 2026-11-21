@@ -11932,3 +11932,5 @@ Every entry in this ledger must capture:
 | `learn-dom-h-6f3cce20` | `project://hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-unsloth-nvidia-nemotron-3.5-bolt-e4b-gguf-learnings.md` | 2026-11-21T20:52:05.497Z |
 | `learn-huggingface-mistralai-mistral-large-4-1t-a52b` | `https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B` | `hf-mistral` | Multi-dimensional audit evidence | 2026-11-21T21:04:29.994Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `d0e53bdc` | Multi-dimensional audit evidence | 2026-11-21T21:04:45.674Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `3862fd16` | Multi-dimensional audit evidence | 2026-11-21T21:19:46.039Z |
+| `learn-huggingface-diffuspace-clover-35b-a3b-preview` | `https://huggingface.co/Diffuspace/Clover-35B-A3B-Preview` | `hf-diffusp` | Multi-dimensional audit evidence | 2026-11-21T21:22:57.686Z |

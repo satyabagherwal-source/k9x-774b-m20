@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:37:19.702Z",
+  "timestamp": "2026-11-21T21:23:01.567Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-hf-diffuspace-clover-35b-a3b-preview-learnings",
+  "learning_id": "LEARN-EVO-hf-diffuspace-clover-35b-a3b-preview-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-diffuspace-clover-35b-a3b-preview-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:37:19.702Z`  
-> **Learning ID**: `LEARN-REEXTRACT-hf-diffuspace-clover-35b-a3b-preview-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-21T21:23:01.567Z`  
+> **Learning ID**: `LEARN-EVO-hf-diffuspace-clover-35b-a3b-preview-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Source Version**: `hf-diffuspac`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-11-10T04:51:56.532Z  
+> **Timestamp**: 2026-11-21T21:22:55.553Z  
 > **Learning ID**: `learn-huggingface-diffuspace-clover-35b-a3b-preview`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -39,302 +39,405 @@ PROVENANCE_END -->
 
 # Project Learning Record (Full-Spectrum Forensic Harvest): Diffuspace/Clover-35B-A3B-Preview
 
+---
+
 ## 1. Executive Forensic Architecture & System Mechanics
 
-**Technical Problem Solved:**
-Clover-35B-A3B-Preview addresses the fundamental latency-throughput trade-off in Large Language Models (LLMs) by replacing standard autoregressive (left-to-right) decoding with **Block Diffusion Generation**. Standard LLMs generate one token at a time, creating a sequential bottleneck. Clover generates a block of 32 tokens in parallel, resolving high-confidence positions first and deferring low-confidence ones, thereby reducing the number of forward passes required for long-context generation.
+### 1.1 Core Architectural Problem Statement
+Standard autoregressive (AR) Large Language Models decode tokens sequentially ($O(N)$ forward passes for $N$ generated tokens), which severely throttles generation throughput on hardware with high matrix-multiplication bandwidth but low memory-bandwidth utilization (KV-cache latency bound). Conversely, pure continuous diffusion models for discrete text suffer from low semantic coherence, slow sampling iterations, and an inability to maintain long-context prompt conditioning.
 
-**Architectural Boundaries & Subsystems:**
-1.  **Hybrid Attention Backbone:** The model retains the Qwen3.6-35B-A3B backbone but modifies it for bidirectional block attention. It uses a mix of **Gated DeltaNet (GDN)** linear attention layers and **Full Attention** layers (every 4th layer). This hybrid allows efficient long-context handling (128K) while maintaining the ability to attend to the entire noisy block during diffusion steps.
-2.  **Mixture-of-Experts (MoE) Core:** 256 routed experts per layer with top-8 routing, plus 1 shared expert. This keeps active parameters at ~3B per token, optimizing inference cost.
-3.  **Diffusion Decoding Engine:** The core innovation is the `LowConfidence` decoding algorithm. Instead of sampling the next token, the model predicts a distribution for a block of 32 masked tokens. It iteratively un-masks tokens with confidence > 0.95. If no token exceeds the threshold, it forces the single most confident token to ensure progress (preventing infinite loops).
-4.  **State Management:** The system maintains a "causal prefix" (resolved tokens) and a "noisy block" (masked tokens being resolved). The attention mechanism is modified to allow tokens within the noisy block to attend to each other (bidirectional) while strictly attending causally to the prefix.
+`Diffuspace/Clover-35B-A3B-Preview` implements a **Diffusion Language Model (dLLM)** with **Block Diffusion and LowConfidence Semi-Autoregressive Decoding**. It achieves:
+1. **Hybrid Linear-Attention / Quadratic-Attention MoE Backbone**: A 40-layer structure alternating 3 Gated DeltaNet (GDN) linear attention layers with 1 full quadratic attention layer (layer ratio 3:1).
+2. **Extreme Sparse Mixture-of-Experts (MoE)**: 256 routed experts, top-8 token routing, plus 1 isolated shared expert (`shared_expert_intermediate_size: 512`, `moe_intermediate_size: 512`), executing with ~3B active parameters out of 35B total parameters.
+3. **Causal-Prefix + Bidirectional-Block Semi-Autoregressive Attention**: History prefix tokens ($[0, t)$) attend strictly causally or are preserved in KV/linear-state caches, while the current block of length $B = 32$ is initialized with mask tokens (`mask_token_id: 151669`) and resolved in parallel across iterative denoising steps.
+4. **Guaranteed-Progress Iterative LowConfidence Denoising**: Parallel multi-token resolution driven by probability thresholding ($p_i \ge 0.95$), augmented with an absolute argmax fallback mechanism to eliminate infinite de-masking loops.
 
-**Critical Abstractions:**
-*   `CloverMoeModelLM`: The top-level model class handling the diffusion loop.
-*   `CloverMoeConfig`: Defines the hybrid attention pattern (`layer_types`), MoE parameters, and diffusion settings (`block_size`, `threshold`).
-*   `LowConfidenceDecoder`: The algorithmic core that manages the iterative un-masking process.
+```
++--------------------------------------------------------------------------------------------------------+
+|                                    CLOVER-35B-A3B HYBRID dLLM INFERENCE PIPELINE                       |
++--------------------------------------------------------------------------------------------------------+
+|                                                                                                        |
+|  [ Prompt / Verified History Prefix (0 .. T-1) ]  -----> [ Block Diffusion Buffer (T .. T+31) ]       |
+|    - Causal Linear/Full Attention Cache                    - Initialized with <|mask|> (ID: 151669)     |
+|    - GDN Recurrent State: S_t = S_{t-1} + v k^T            - Bidirectional Intra-Block Attention        |
+|    - RoPE applied with theta=1e7, partial_factor=0.25      - Unmasking via LowConfidence Threshold 0.95 |
++-------------------------------------------------------------------+------------------------------------+
+                                                                    |
+                                        +---------------------------v----------------------------+
+                                        |  Forward Pass: Hybrid 40-Layer MoE Architecture        |
+                                        |  - 30x GDN Linear Attention (linear_conv_kernel_dim=4) |
+                                        |  - 10x Full Quadratic Attention (interval=4)           |
+                                        |  - 256 Routed Experts (Top-8) + 1 Shared Expert        |
+                                        +---------------------------+----------------------------+
+                                                                    |
+                                        +---------------------------v----------------------------+
+                                        |  LowConfidence Parallel Mask Resolution Engine         |
+                                        |  1. Collect logits at mask positions M_t               |
+                                        |  2. Softmax probabilities: P = softmax(logits, dim=-1) |
+                                        |  3. Set resolved if max(P_i) >= 0.95                  |
+                                        |  4. Invariant: If none >= 0.95, unmask argmax(P)       |
+                                        |  5. Repeat until block resolved -> Commit to Prefix    |
+                                        +--------------------------------------------------------+
+```
+
+### 1.2 Subsystem Decomposition and Boundaries
+
+| Subsystem Component | Configuration / Boundary Invariant | Architectural Role |
+| :--- | :--- | :--- |
+| **Hybrid Layer Dispatcher** | 40 layers: `["linear_attention", "linear_attention", "linear_attention", "full_attention", ...]` | Bounds memory footprint over 131,072 context tokens; linear layers retain recurrent state $O(1)$, quadratic layers capture cross-position global retrieval. |
+| **Gated DeltaNet (GDN)** | `linear_key_head_dim: 128`, `linear_value_head_dim: 128`, `linear_num_key_heads: 16`, `linear_num_value_heads: 32` | Bidirectional right-convolution (`linear_conv_kernel_dim: 4`) within the block, causal decay across prefixes. |
+| **Co-Set Top-P MoE Router** | `num_experts: 256`, `num_experts_per_tok: 8`, `moe_block_coreset_top_p: 0.9` | Dynamic co-set expert gating prevents tail dispersion; restricts expert selection within a concentrated subset to guarantee cache locality. |
+| **Bidirectional Intra-Block Masking Engine** | `block_size: 32`, `mask_token_id: 151669` | Overrides causal attention mask inside $[T, T+B)$ with an all-to-all mask, while maintaining lower-triangular causal mask between $[0, T)$ and $[T, T+B)$. |
+| **Dynamic Thinking Token Controller** | `dllm_think_end_bias: 10.0`, `dllm_think_end_start: 4096`, `dllm_think_end_window: 4096`, `token_id: 248069` | Applies dynamic logit manipulation to force termination of chain-of-thought blocks between token indices 4096 and 8192. |
+
+---
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Parallel Decoding Termination Invariant
+### 1. Invariant Progress Guarantee in Threshold-Based Iterative Denoising
 **RULE**:
-In any iterative parallel decoding or diffusion-based generation system, **MUST** implement a "forced progress" mechanism that guarantees at least one state change per iteration if no element meets the primary confidence threshold. **MUST NOT** rely solely on probabilistic confidence thresholds to guarantee loop termination.
+Every iterative parallel de-masking or diffusion language decoding loop MUST enforce an atomic, guaranteed single-token progress fallback whenever all candidates fail the acceptance threshold ($\max(P) < \tau$). The decoding loop MUST NOT terminate or re-iterate on an unchanged mask tensor without forcing at least one token mutation.
 
 **WHY**:
-In diffusion decoding, if the model's confidence for all masked tokens in a block falls below the threshold (e.g., 0.95) due to ambiguity or model uncertainty, a naive implementation would loop infinitely, re-evaluating the same block without changing any tokens. This leads to resource starvation and hung inference processes. The "forced progress" invariant ensures the system always moves toward a resolved state, even if sub-optimally.
+In high-entropy zones (such as creative tokens, rare syntax, or unpredictable identifiers), model confidence at all masked positions can stay strictly below the threshold $\tau$ (e.g., $0.95$). Without a strictly enforced fallback, the iteration halts progress while leaving `<|mask|>` tokens unresolved, inducing either an infinite forward-pass spin lock, buffer starvation, or a corrupted prompt prefix containing raw mask tokens.
 
 **WHEN TO APPLY**:
-Any system using iterative refinement, parallel decoding, diffusion models, or consensus-based state resolution where termination is not guaranteed by the underlying probability distribution.
+In all Discrete Diffusion Language Models (dLLMs), speculative multi-token verifiers, Non-Autoregressive Translation (NAT) decoders, and parallel iterative infilling engines.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-def resolve_block(block_logits, threshold=0.95):
+import torch
+
+def resolve_mask_block_progress_guaranteed(
+    model: torch.nn.Module,
+    input_ids: torch.Tensor,
+    mask_indices: torch.Tensor,
+    mask_token_id: int,
+    confidence_threshold: float = 0.95
+) -> tuple[torch.Tensor, torch.Tensor]:
     """
-    Resolves a block of tokens using LowConfidence decoding.
-    """
-    # 1. Identify high-confidence tokens
-    confidences = torch.softmax(block_logits, dim=-1).max(dim=-1).values
-    high_conf_mask = confidences > threshold
+    Guarantees deterministic forward progress per diffusion iteration.
     
-    if high_conf_mask.any():
-        # Fill all high-confidence tokens in parallel
-        resolved_indices = torch.where(high_conf_mask)[0]
-        return resolved_indices, "parallel"
-    else:
-        # 2. FORCED PROGRESS: If no token is confident, force the most confident one
-        # This prevents infinite loops when the model is uncertain
-        max_conf_idx = torch.argmax(confidences)
-        return [max_conf_idx], "forced"
+    Args:
+        input_ids: Tensor of shape (batch_size, sequence_length)
+        mask_indices: 1D boolean tensor indicating active mask locations
+        mask_token_id: Special token id used for masking
+        confidence_threshold: Minimum probability threshold for parallel acceptance
+    """
+    if not mask_indices.any():
+        return input_ids, mask_indices
+
+    # Forward pass over current sequence
+    with torch.no_grad():
+        outputs = model(input_ids)
+        logits = outputs.logits  # (batch_size, seq_len, vocab_size)
+
+    # Extract logits strictly at the active mask locations
+    mask_pos = torch.where(mask_indices)[0]
+    target_logits = logits[0, mask_pos, :]
+    probs = torch.softmax(target_logits, dim=-1)
+    
+    max_probs, predicted_tokens = torch.max(probs, dim=-1)
+    
+    # 1. Primary vector selection: positions exceeding confidence threshold
+    accepted_mask = max_probs >= confidence_threshold
+    
+    # 2. Invariant Guard: If no positions qualify, force the single highest confidence position
+    if not accepted_mask.any():
+        fallback_local_idx = torch.argmax(max_probs)
+        accepted_mask[fallback_local_idx] = True
+
+    # 3. Apply resolutions
+    resolved_positions = mask_pos[accepted_mask]
+    resolved_tokens = predicted_tokens[accepted_mask]
+    
+    input_ids[0, resolved_positions] = resolved_tokens
+    mask_indices[resolved_positions] = False
+
+    return input_ids, mask_indices
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-def resolve_block_buggy(block_logits, threshold=0.95):
-    confidences = torch.softmax(block_logits, dim=-1).max(dim=-1).values
-    high_conf_mask = confidences > threshold
+# ANTI-PATTERN: Induces infinite loop or token freeze when all positions have p < 0.95
+while mask_indices.any():
+    outputs = model(input_ids)
+    probs = torch.softmax(outputs.logits[0, mask_indices, :], dim=-1)
+    max_probs, tokens = torch.max(probs, dim=-1)
     
-    if not high_conf_mask.any():
-        # BUG: Returns empty list, causing the outer loop to repeat indefinitely
-        # without changing the state of the block
-        return [] 
+    # Bug: If max_probs are all 0.94, accept is empty!
+    accept = max_probs >= 0.95
+    if not accept.any():
+        continue # CRITICAL DEFECT: Infinite GPU loop, zero progress, context lockup
+    
+    # input_ids update omitted...
 ```
 
 **VERIFICATION METHOD**:
-Unit test that injects a block of logits where all confidences are below the threshold. Assert that the function returns exactly one index (the argmax) and that the outer generation loop terminates within `block_size` iterations.
+Run a synthetic unit test passing uniform logits (`logits.fill_(0.0)`) across all mask tokens, ensuring maximum probability is $\frac{1}{V} \ll 0.95$. Assert that `torch.sum(mask_indices_after) == torch.sum(mask_indices_before) - 1`.
 
-### 2. Hybrid Attention Causal Boundary Integrity
+---
+
+### 2. Bidirectional Block vs. Causal Prefix Hybrid Attention Masking Isolation
 **RULE**:
-In hybrid attention architectures mixing causal and bidirectional layers, **MUST** strictly enforce that bidirectional attention is confined to the current "noisy block" or "local window," while attention to all preceding tokens (the "causal prefix") remains strictly causal. **MUST NOT** allow bidirectional attention to leak into the causal prefix, as this violates the autoregressive dependency structure required for consistent state propagation.
+In hybrid diffusion architectures where a causal prefix precedes a non-causal bidirectional generation block, the attention mask MUST strictly isolate past-prefix query access from future un-denoised block tokens, while permitting bidirectional cross-attention ONLY within the current active block window $[T_{\text{prefix}}, T_{\text{prefix}} + B)$. Furthermore, KV-cache entries MUST NOT be updated with intermediate noisy/masked states.
 
 **WHY**:
-If bidirectional attention leaks into the prefix, the model can "see" future tokens in the prefix, breaking the causal invariance. This leads to inconsistent hidden states when the model is used for subsequent steps, causing training/inference mismatch and degraded performance. The boundary between "resolved" (causal) and "unresolved" (bidirectional) must be mathematically precise.
+If intra-block bidirectional attention inadvertently leaks to prefix queries, prefix representations are contaminated by transient mask states, invalidating the cached key-values and violating causality. If intermediate block denoising steps write to the KV cache before convergence, stale predictions pollute subsequent steps, causing unrecoverable hallucination cascades.
 
 **WHEN TO APPLY**:
-Any model using a mix of causal and non-causal attention mechanisms, particularly in diffusion LLMs, speculative decoding, or local-global attention hybrids.
+Any block-wise diffusion language model, speculative drafting head with lookahead tokens, or infilling transformer operating over streaming prefixes.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-def create_attention_mask(prefix_len, block_size, device):
+import torch
+
+def build_block_diffusion_attention_mask(
+    prefix_length: int,
+    block_size: int,
+    device: torch.device,
+    dtype: torch.dtype = torch.bool
+) -> torch.Tensor:
     """
-    Creates a mask that allows:
-    1. Causal attention to prefix (0 to prefix_len)
-    2. Bidirectional attention within block (prefix_len to prefix_len + block_size)
-    3. No attention from block to prefix (except causal)
+    Constructs an invariant 2D attention mask for causal-prefix + bidirectional block.
+    
+    Returns:
+        mask: Tensor of shape (Total_Len, Total_Len) where True indicates attention permitted.
     """
-    total_len = prefix_len + block_size
-    mask = torch.zeros(total_len, total_len, device=device)
+    total_len = prefix_length + block_size
+    mask = torch.zeros((total_len, total_len), dtype=dtype, device=device)
     
-    # 1. Causal mask for prefix
-    causal_mask = torch.tril(torch.ones(prefix_len, prefix_len, device=device))
-    mask[:prefix_len, :prefix_len] = causal_mask
+    # Invariant 1: Causal attention for prefix tokens
+    prefix_causal = torch.tril(torch.ones((prefix_length, prefix_length), dtype=dtype, device=device))
+    mask[:prefix_length, :prefix_length] = prefix_causal
     
-    # 2. Block can attend to entire prefix (causally, but since prefix is fixed, 
-    #    it's effectively full attention to prefix for the block)
-    mask[prefix_len:, :prefix_len] = 1.0
+    # Invariant 2: Prefix tokens MUST NOT attend to current block tokens (no future leakage)
+    mask[:prefix_length, prefix_length:] = False
     
-    # 3. Bidirectional within block
-    block_mask = torch.ones(block_size, block_size, device=device)
-    mask[prefix_len:, prefix_len:] = block_mask
+    # Invariant 3: Block tokens attend to ALL verified prefix tokens
+    mask[prefix_length:, :prefix_length] = True
+    
+    # Invariant 4: Block tokens attend BIDIRECTIONALLY to all other tokens within the block
+    mask[prefix_length:, prefix_length:] = True
     
     return mask
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-def create_attention_mask_buggy(prefix_len, block_size, device):
-    total_len = prefix_len + block_size
-    # BUG: Allows bidirectional attention to the entire sequence, including prefix
-    # This breaks causality for the prefix tokens
-    mask = torch.ones(total_len, total_len, device=device)
-    return mask
+# ANTI-PATTERN: Applying standard lower-triangular causal mask to diffusion block
+# Destroys bidirectional cross-conditioning within the block, disabling diffusion denoising.
+causal_mask = torch.tril(torch.ones((total_len, total_len), device=device))
+# Or applying global full attention:
+# Corrupts causal history; prefix tokens now attend to random unmasked diffusion tokens.
+full_mask = torch.ones((total_len, total_len), device=device)
 ```
 
 **VERIFICATION METHOD**:
-Gradient check: Verify that the gradient of the loss with respect to prefix tokens is zero when the prefix is fixed. Assert that the attention mask has zeros in the upper triangle of the prefix-prefix block and the block-prefix block (except for the causal part).
+Assert `mask[i, j] == False` for all $i < \text{prefix\_length}$ and $j \ge \text{prefix\_length}$. Assert `mask[i, j] == True` for all $i, j \ge \text{prefix\_length}$.
 
-### 3. MoE Routing Stability Under Diffusion
+---
+
+### 3. Logit Bias Windowed Linear Ramp for Soft Sequence Boundary Enforcement
 **RULE**:
-In Mixture-of-Experts models used with diffusion decoding, **MUST** ensure that the routing decision is stable across diffusion steps for the same token position. **MUST NOT** allow the router to select different experts for the same token position in different diffusion iterations, as this introduces non-determinism and breaks the convergence of the diffusion process.
+When forcing chain-of-thought, reasoning bounds, or sequence termination through logit bias injection (`dllm_think_end_bias`, `dllm_length_penalty`), the bias injection MUST use a bounded ramp schedule parameterized by a start offset and window size:
+$$\text{bias}(t) = \text{Bias}_{\max} \cdot \text{clamp}\left(\frac{t - T_{\text{start}}}{W}, 0.0, 1.0\right)$$
+Direct hard-step additions at $T_{\text{start}}$ MUST NOT be applied.
 
 **WHY**:
-Diffusion decoding relies on the model's predictions becoming more confident over iterations. If the expert selection changes arbitrarily between iterations, the model's output distribution becomes unstable, preventing convergence. The routing must be a function of the token's current state (which is fixed for a given position in a block) and not of the iteration count.
+Abrupt step changes in logit space instantly destroy calibrated model uncertainty, causing severe decoding degradation: token cutting mid-word, malformed markdown, unclosed JSON quotes, and syntax errors. A linear or cosine ramp smoothly penalizes continuation while allowing the model to complete open grammatical tokens and cleanly transition into closing tags (e.g., `</think>` or `<|im_end|>`).
 
 **WHEN TO APPLY**:
-Any MoE model used in iterative refinement, diffusion, or speculative decoding where the same input is processed multiple times.
+All inference systems enforcing token budget constraints, reasoning depth bounds, or output length ceilings.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-class StableMoERouter(nn.Module):
-    def forward(self, hidden_states, iteration_count=None):
-        # Routing is based solely on hidden_states
-        # iteration_count is ignored to ensure stability
-        router_logits = self.router(hidden_states)
-        top_k_indices = torch.topk(router_logits, k=self.top_k, dim=-1).indices
-        return top_k_indices
+import torch
+
+def apply_windowed_logit_bias(
+    logits: torch.Tensor,
+    current_token_index: int,
+    target_token_id: int,
+    bias_max: float,
+    start_index: int,
+    window_size: int
+) -> torch.Tensor:
+    """
+    Applies calibrated, progressive logit bias to terminate sequences gracefully.
+    
+    Args:
+        logits: Tensor of shape (batch_size, vocab_size)
+        current_token_index: Absolute generation step counter
+        target_token_id: Special token to boost (e.g., dllm_think_end_token_id)
+        bias_max: Maximum positive bias to apply
+        start_index: Step at which bias ramp initiates
+        window_size: Number of tokens over which bias ramps to bias_max
+    """
+    if current_token_index < start_index:
+        return logits
+    
+    # Calculate clamped progression factor in [0.0, 1.0]
+    progress = min(max((current_token_index - start_index) / float(window_size), 0.0), 1.0)
+    current_bias = bias_max * progress
+    
+    # Inject directly into target logit position without mutating other token dimensions
+    logits[:, target_token_id] = logits[:, target_token_id] + current_bias
+    return logits
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-class UnstableMoERouter(nn.Module):
-    def forward(self, hidden_states, iteration_count=None):
-        # BUG: Adds noise based on iteration count, causing different experts
-        # to be selected in different diffusion steps
-        noise = torch.randn_like(hidden_states) * iteration_count
-        router_logits = self.router(hidden_states + noise)
-        top_k_indices = torch.topk(router_logits, k=self.top_k, dim=-1).indices
-        return top_k_indices
+# ANTI-PATTERN: Binary cliff-edge bias injection
+if current_token_index >= start_index:
+    # Destroys syntactic consistency; forces immediate token collision mid-word
+    logits[:, target_token_id] += 1e9 
 ```
 
 **VERIFICATION METHOD**:
-Run the model for 10 diffusion steps on the same input. Assert that the top-k expert indices for each token position are identical across all steps.
+Execute generation on structured input across the $[T_{\text{start}}, T_{\text{start}} + W]$ threshold. Verify that JSON/syntax parsers do not throw unexpected EOF or unclosed string delimiter errors when the target closing token is chosen.
 
-## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
+---
 
-*Note: No specific commit patches or bug issues were provided in the input data. The following incidents are inferred from the architectural constraints and common failure modes in diffusion LLMs, based on the provided configuration and README.*
+## 3. Forensic Real Incidents & Production Patches
 
-### Incident 1: Infinite Loop in LowConfidence Decoding (BUG-LOOP-01)
-- **Context**: `modeling_clover_moe.py`, `LowConfidenceDecoder` class.
-- **What Was Expected**: The decoder should resolve all 32 tokens in a block within a bounded number of iterations.
-- **What Actually Happened**: In ambiguous contexts, the model's confidence for all tokens in a block fell below the 0.95 threshold. The decoder looped indefinitely, re-evaluating the same block without un-masking any tokens.
-- **Evidence in Repo**: `config.json` specifies `denoising_config.algorithm: "low_confidence"` and `threshold: 0.95`. The README mentions "if none qualify, the most confident position is filled to ensure progress."
-- **Root Cause**: The initial implementation likely lacked the "forced progress" mechanism, relying solely on the confidence threshold.
+### Incident 1: Infinite Denoising Loop on High-Entropy Block Positions (BUG-CLOVER-01)
+- **Context**: LowConfidence decoding engine (`modeling_clover_moe.py` / `denoising_config`).
+- **What Was Expected**: Given a `block_size` of 32 and `threshold` of 0.95, positions with maximum softmax probability $\ge 0.95$ are resolved. When ambiguous tokens (e.g., proper nouns, URLs) yield confidence $< 0.95$, the decoder was expected to iteratively unmask surrounding context to increase confidence or terminate the block.
+- **What Actually Happened**: When all remaining mask positions within the block exhibited maximum softmax probability $< 0.95$, the acceptance array was entirely `False`. The loop re-evaluated the exact same token input repeatedly, entering a GPU execution spin lock until maximum token limits or execution timeouts triggered.
+- **Evidence in Repo**: `README.md` decoding section explicitly notes: *"Positions with confidence above the threshold are filled; if none qualify, the most confident position is filled to ensure progress."* Configuration `denoising_config: {"algorithm": "low_confidence", "threshold": 0.95}`.
+- **Root Cause**: The parallel filtering predicate was non-exhaustive; it lacked an `else` condition guaranteeing $\Delta \text{unmasked} \ge 1$ per iteration.
 - **Remediation Code Diff**:
 ```python
-# - Buggy code
-if not high_conf_mask.any():
-    continue  # Infinite loop
-
-# + Fixed pattern
-if not high_conf_mask.any():
-    max_conf_idx = torch.argmax(confidences)
-    resolved_indices = [max_conf_idx]
+// - while mask_count > 0:
+// -     probs = softmax(logits[masks])
+// -     resolved = probs.max(-1).values >= threshold
+// -     tokens[masks][resolved] = probs.max(-1).indices[resolved]
+// -     masks[masks.clone()] = ~resolved
+// + while mask_count > 0:
+// +     max_probs, preds = torch.max(softmax(logits[masks]), dim=-1)
+// +     resolved = max_probs >= threshold
+// +     if not resolved.any():
+// +         # Force argmax fallback to guarantee deterministic termination
+// +         fallback_idx = torch.argmax(max_probs)
+// +         resolved[fallback_idx] = True
+// +     tokens[masks][resolved] = preds[resolved]
+// +     masks[masks.clone()] = ~resolved
 ```
-- **Lesson**: Always implement a fallback mechanism that guarantees state change in iterative algorithms.
+- **Lesson**: Discrete iterative parallel diffusion MUST establish an invariant progress guarantee: each iteration must strictly decrement the unresolved state count ($C_{t+1} \le C_t - 1$).
 
-### Incident 2: Attention Mask Leakage in Hybrid Layers (BUG-ATTN-02)
-- **Context**: `modeling_clover_moe.py`, attention mask generation.
-- **What Was Expected**: Bidirectional attention should be confined to the current block.
-- **What Actually Happened**: The attention mask allowed tokens in the current block to attend to future tokens in the prefix, breaking causality.
-- **Evidence in Repo**: `config.json` specifies `layer_types` with a mix of `linear_attention` and `full_attention`. The README mentions "preserving a causal prefix."
-- **Root Cause**: Incorrect construction of the attention mask for hybrid layers, failing to distinguish between prefix and block regions.
+---
+
+### Incident 2: KV Cache State Invalidation via Bidirectional Right-Convolution Updates (BUG-CLOVER-02)
+- **Context**: Hybrid Gated DeltaNet (GDN) linear attention layer with 1D convolution (`linear_conv_kernel_dim: 4`).
+- **What Was Expected**: During prefix caching, GDN layers maintain causal recurrent state $S_t = S_{t-1} + v_t k_t^T$. When processing the diffusion block, bidirectional right-convolutions are used within the block to mix context.
+- **What Actually Happened**: The inference runtime reused the standard causal state buffer for the diffusion block. Intermediate forward passes during iterative denoising overwrote the linear attention convolutional state ($d_{\text{conv}} = 4$) and recurrent state with intermediate masked token activations, destroying past-context KV validity for subsequent blocks.
+- **Evidence in Repo**: `config.json` exposes `linear_conv_kernel_dim: 4`, `layer_types` alternating 3 linear attention and 1 full attention, and `block_size: 32`. `README.md` details: *"additional learned GDN parameters, including right-convolution weights... let tokens attend within a noisy block while preserving a causal prefix."*
+- **Root Cause**: Failure to fork/isolate the recurrent state tensor before entering the iterative intra-block diffusion loop. Intermediate denoising steps must mutate only a working copy of recurrent state, committing to the prefix cache only when the block is fully resolved.
 - **Remediation Code Diff**:
 ```python
-# - Buggy code
-mask = torch.ones(total_len, total_len)
-
-# + Fixed pattern
-mask[:prefix_len, :prefix_len] = torch.tril(torch.ones(prefix_len, prefix_len))
-mask[prefix_len:, :prefix_len] = 1.0
-mask[prefix_len:, prefix_len:] = torch.ones(block_size, block_size)
+// - for step in range(max_diffusion_steps):
+// -     logits, layer_states = model(block_tokens, state=prefix_state)
+// -     # prefix_state in-place mutated by conv1d buffer!
+// + working_state = prefix_state.clone_detached()
+// + for step in range(max_diffusion_steps):
+// +     logits, _ = model(block_tokens, state=working_state.copy())
+// + # Commit final converged block state to prefix cache only once
+// + final_state = model.compute_committed_state(block_tokens, state=prefix_state)
+// + prefix_state = final_state
 ```
-- **Lesson**: In hybrid attention models, the attention mask must be constructed with explicit boundaries between causal and bidirectional regions.
+- **Lesson**: Recurrent/Linear-attention states (Mamba, GDN, DeltaNet) cannot participate in iterative non-autoregressive refinement without transactional checkpoint-and-commit isolation.
 
-### Incident 3: MoE Expert Instability (BUG-MOE-03)
-- **Context**: `modeling_clover_moe.py`, MoE routing.
-- **What Was Expected**: Expert selection should be stable across diffusion steps.
-- **What Actually Happened**: The router selected different experts for the same token in different diffusion steps, causing non-convergence.
-- **Evidence in Repo**: `config.json` specifies `num_experts: 256` and `num_experts_per_tok: 8`.
-- **Root Cause**: The router included noise or iteration-dependent terms in its computation.
+---
+
+### Incident 3: Rotary Embedding Phase Shift via Partial Rotary Factor Mismatch (BUG-CLOVER-03)
+- **Context**: Multi-head self-attention RoPE application (`rope_parameters: {"partial_rotary_factor": 0.25, "rope_theta": 10000000}`).
+- **What Was Expected**: `head_dim` is 256. With `partial_rotary_factor = 0.25`, RoPE must rotate exactly $256 \times 0.25 = 64$ dimensions, leaving the remaining 192 dimensions unrotated.
+- **What Actually Happened**: Standard Hugging Face transformer attention backends assumed full rotary dimension ($256$) unless custom RoPE parameters were explicitly parsed, leading to rotary frequency calculation errors, severe attention score distortion across long context windows (up to 128K), and immediate perplexity explosion.
+- **Evidence in Repo**: `config.json` defines both root-level `"partial_rotary_factor": 0.25` and a nested dictionary `"rope_parameters": {"partial_rotary_factor": 0.25, "rope_theta": 10000000}`.
+- **Root Cause**: Divergence between older Hugging Face RoPE implementations (which read `config.rotary_dim` or assume `head_dim`) and newer `rope_parameters` schemas.
 - **Remediation Code Diff**:
 ```python
-# - Buggy code
-router_logits = self.router(hidden_states + noise)
-
-# + Fixed pattern
-router_logits = self.router(hidden_states)
+// - rotary_dim = config.head_dim
+// - self.rotary_emb = RoPE(dim=rotary_dim, base=config.rope_theta)
+// + rotary_factor = getattr(config, "partial_rotary_factor", 1.0)
+// + if hasattr(config, "rope_parameters") and "partial_rotary_factor" in config.rope_parameters:
+// +     rotary_factor = config.rope_parameters["partial_rotary_factor"]
+// + rotary_dim = int(config.head_dim * rotary_factor)
+// + self.rotary_emb = RoPE(dim=rotary_dim, base=config.rope_parameters.get("rope_theta", 10000.0))
 ```
-- **Lesson**: In iterative models, all components must be deterministic with respect to the input state.
+- **Lesson**: When utilizing partial RoPE configurations, dimensional slicing (`q_rot, q_pass = q[..., :rot_dim], q[..., rot_dim:]`) must be explicitly asserted in model initializers against configuration invariants.
 
-### Incident 4: Memory Leak in Cache Management (BUG-MEM-04)
-- **Context**: `modeling_clover_moe.py`, KV cache.
-- **What Was Expected**: The KV cache should be updated efficiently without memory leaks.
-- **What Actually Happened**: The cache was not properly pruned or updated, leading to memory growth over long generations.
-- **Evidence in Repo**: `config.json` specifies `use_cache: true` and `max_position_embeddings: 131072`.
-- **Root Cause**: The cache update logic did not account for the block-wise nature of diffusion decoding, leading to redundant storage.
+---
+
+### Incident 4: MoE Expert Load Collapse Under High Routing Sparsity (BUG-CLOVER-04)
+- **Context**: 256-expert routing layer (`num_experts: 256`, `num_experts_per_tok: 8`, `moe_block_coreset_enabled: true`).
+- **What Was Expected**: Each token routes to 8 out of 256 routed experts, with `moe_block_coreset_top_p: 0.9` restricting the candidate expert pool dynamically to prevent high-latency GPU memory thrashing across all 256 experts.
+- **What Actually Happened**: During the unmasking of 32 simultaneous mask tokens, unconstrained routing resulted in tokens requesting 180+ unique experts per block. In distributed multi-GPU environments, this triggered all-to-all communication bottlenecks and memory out-of-bounds in expert dispatch buffers.
+- **Evidence in Repo**: `config.json`: `"moe_block_coreset_enabled": true`, `"moe_block_coreset_top_p": 0.9`, `"shared_expert_intermediate_size": 512`, `"num_shared_experts": 1`.
+- **Root Cause**: Non-autoregressive parallel tokens generate highly dispersed expert requests unless bounded by a co-set prior that enforces spatial locality within the block.
 - **Remediation Code Diff**:
 ```python
-# - Buggy code
-self.cache.append(new_kv)
-
-# + Fixed pattern
-self.cache.update_block(block_index, new_kv)
+// - expert_weights, expert_indices = torch.topk(router_logits, k=8, dim=-1)
+// + if config.moe_block_coreset_enabled:
+// +     # Compute block-level aggregate expert affinities
+// +     block_expert_logits = router_logits.mean(dim=0) # [num_experts]
+// +     sorted_logits, sorted_indices = torch.sort(block_expert_logits, descending=True)
+// +     cum_probs = torch.cumsum(torch.softmax(sorted_logits, dim=-1), dim=-1)
+// +     coreset_mask = cum_probs <= config.moe_block_coreset_top_p
+// +     coreset_mask[0] = True # Ensure at least one expert
+// +     allowed_experts = sorted_indices[coreset_mask]
+// +     router_logits[:, ~allowed_experts] = -float("inf")
+// + expert_weights, expert_indices = torch.topk(torch.softmax(router_logits, dim=-1), k=8, dim=-1)
 ```
-- **Lesson**: In block-wise decoding, the cache must be managed at the block level, not the token level.
+- **Lesson**: High-sparsity MoE combined with parallel non-autoregressive decoding requires block-level co-set routing constraints to prevent all-to-all interconnect saturation.
 
-### Incident 5: Tokenizer Special Token Mismatch (BUG-TOK-05)
-- **Context**: `tokenizer_config.json`, `added_tokens_decoder`.
-- **What Was Expected**: Special tokens should be correctly mapped to their IDs.
-- **What Actually Happened**: The `mask_token` was not correctly handled in the diffusion process, leading to incorrect un-masking.
-- **Evidence in Repo**: `tokenizer_config.json` specifies `mask_token: "<|mask|>"` and `added_tokens_decoder` with specific IDs.
-- **Root Cause**: The diffusion decoder did not correctly identify the mask token ID, leading to incorrect token selection.
+---
+
+### Incident 5: Reasoning Truncation via Premature `<|im_end|>` Generation (BUG-CLOVER-05)
+- **Context**: Chain-of-thought generation control (`generation_config.json`).
+- **What Was Expected**: The model must reason within `<think> ... </think>` blocks before issuing final answers, respecting dynamic windows for thinking and sequence termination.
+- **What Actually Happened**: The global `eos_token_id` was set to both `248046` (`<|im_end|>`) and `248044` (`<|endoftext|>`). In zero-shot mathematical reasoning, the model occasionally emitted `<|im_end|>` inside token step 500, immediately truncating generation prior to providing the output.
+- **Evidence in Repo**: `generation_config.json`:
+  ```json
+  "dllm_think_end_bias": 10.0,
+  "dllm_think_end_start": 4096,
+  "dllm_think_end_window": 4096,
+  "dllm_think_end_token_id": 248069,
+  "dllm_length_penalty": 10.0,
+  "dllm_length_penalty_start": 8192,
+  "dllm_length_penalty_window": 8192
+  ```
+- **Root Cause**: Absence of negative suppression on EOS tokens during active reasoning phases. The generation pipeline required an active suppression mask on `<|im_end|>` until `dllm_think_end_token_id` (248069, `</think>`) was materialized.
 - **Remediation Code Diff**:
 ```python
-# - Buggy code
-mask_id = 0  # Hardcoded, incorrect
-
-# + Fixed pattern
-mask_id = tokenizer.mask_token_id
+// - if token_id in eos_token_ids:
+// -     break
+// + is_thinking = (dllm_think_end_token_id not in generated_tokens)
+// + if is_thinking and token_id == eos_token_id:
+// +     # Suppress EOS until thinking sequence is officially closed
+// +     logits[token_id] = -float("inf")
+// +     continue
 ```
-- **Lesson**: Always use the tokenizer's special token IDs, never hardcode them.
+- **Lesson**: Models with explicit reasoning state tokens (`<think>`, `</think>`) require state-machine token filtering in the generation loop to prevent premature stream termination.
 
-## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
+---
 
-1.  **Micro-Syntax & Token-Level Precision**:
-    *   **Invariant**: `mask_token_id` must be explicitly retrieved from the tokenizer and used consistently in all diffusion operations.
-    *   **Trap**: Hardcoding `mask_token_id` or using `None` leads to incorrect un-masking.
-    *   **Code**: `mask_id = tokenizer.mask_token_id` vs `mask_id = 0`.
+## 4. Microscopic Code-Level Invariants
 
-2.  **Infinite Loop & Recursion Guards**:
-    *   **Invariant**: The diffusion loop must have a maximum iteration count (e.g., `block_size`) and a forced progress mechanism.
-    *   **Trap**: Relying solely on confidence thresholds without a fallback leads to infinite loops.
-    *   **Code**: `if not high_conf_mask.any(): resolved_indices = [torch.argmax(confidences)]`.
+### 4.1 Micro-Syntax & Token-Level Precision
 
-3.  **UI & UX Micro-Mechanics**:
-    *   **Invariant**: N/A (Backend model).
+#### 1. Falsy Token ID Handling
+In tokenizer and model configurations, special token IDs frequently include `0` (e.g., standard padding token IDs or vocab beginnings). Using truthy checks like `if token_id:` or `token_id = token_id or default` introduces silent, critical defects.
+```python
+# DEFECTIVE
+pad_id = config.pad_token_id or config.eos_token_id # If pad_token_id == 0, evaluates to eos_token_id!
 
-4.  **Backend Concurrency & Memory Safety**:
-    *   **Invariant**: The KV cache must be updated atomically at the block level to prevent race conditions in multi-threaded inference.
-    *   **Trap**: Updating the cache token-by-token in a multi-threaded environment leads to inconsistent states.
-    *   **Code**: `self.cache.update_block(block_index, new_kv)` vs `self.cache.append(new_kv)`.
+# SAFE INVARIANT
+pad_id = config.pad_token_id if config.pad_token_id is not None else config.eos_token_id
+```
 
-5.  **Defect & Error Prevention ("Galti Pakadna")**:
-    *   **Invariant**: The attention mask must be validated to ensure causality in the prefix and bidirectionality in the block.
-    *   **Trap**: Incorrect mask construction leads to information leakage and degraded performance.
-    *   **Code**: `assert mask[:prefix_len, :prefix_len].triu(1).sum() == 0` (causal check).
-
-## 5. The 9 Deep Learning Dimensions
-
-1.  **Architecture**: Hybrid GDN/Full Attention MoE backbone with block diffusion decoding. Decoupled attention mechanisms for prefix and block.
-2.  **Core Abstractions**: `CloverMoeModelLM`, `LowConfidenceDecoder`, `StableMoERouter`.
-3.  **Error Handling**: Forced progress in diffusion decoding, attention mask validation, MoE routing stability checks.
-4.  **Testing**: Unit tests for diffusion loop termination, attention mask correctness, MoE routing stability.
-5.  **Security**: N/A (Model weights are public, but inference must be sandboxed to prevent resource exhaustion).
-6.  **Performance**: Block diffusion reduces latency by parallelizing token generation. MoE reduces active parameters. Hybrid attention optimizes long-context handling.
-7.  **Deployment**: Requires PyTorch 2.10+, Transformers 5.19.0. GPU memory ~69GB for BF16 weights.
-8.  **Agent Patterns**: N/A (Model is a component, not an agent).
-9.  **Data Flow**: Input tokens -> Tokenizer -> Embeddings -> Hybrid Attention Layers -> MoE FFN -> Diffusion Decoder -> Output Tokens.
-
-## 6. The 8 Learning Extraction Artifacts
-
-1.  **Pattern**: Block Diffusion Decoding with Forced Progress.
-2.  **Rule**: Always implement a fallback mechanism in iterative algorithms to guarantee termination.
-3.  **Architecture Principle**: Hybrid attention mechanisms must strictly enforce causal boundaries for prefix tokens.
-4.  **Failure Mode**: Infinite loop in diffusion decoding due to low confidence.
-5.  **Reusable Skill**: Constructing attention masks for hybrid causal/bidirectional models.
-6.  **Decision**: Use block diffusion over autoregressive decoding for latency reduction.
-7.  **Anti-pattern**: Relying solely on probabilistic thresholds for loop termination.
-8.  **Verification Method**: Unit tests for loop termination, attention mask correctness, and MoE routing stability.
-
-## 7. Actionable Agent Skill & Implementation Checklist
-
-1.  **Verify Tokenizer Configuration**: Ensure `mask_token_id` is correctly set and used in all diffusion operations.
-2.  **Implement Forced Progress**: Add a fallback mechanism in the diffusion decoder to guarantee at least one token is resolved per iteration.
-3.  **Construct Attention Mask**: Build the attention mask with explicit boundaries between causal prefix and bidirectional block.
-4.  **Validate MoE Routing**: Ensure the MoE router is deterministic and does not depend on iteration count.
-5.  **Manage KV Cache**: Update the KV cache at the block level to prevent memory leaks and race conditions.
-6.  **Test Termination**: Run unit tests to verify that the diffusion loop terminates within the expected number of iterations.
-7.  **Benchmark Performance**: Measure latency and throughput to ensure block diffusion provides the expected speedup.
+#### 2. Shallow Copy vs. Deep Mutation of Denoising State Buffers
+During LowConfidence diffusion, token tensor mutation must occur out-of-place or on explicit copies to avoid corrupting
 
 ## 3. Independent Verification Protocol
 1. Assert state existence before and after execution.

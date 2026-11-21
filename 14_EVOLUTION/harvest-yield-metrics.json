@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T21:04:45.708Z",
-  "total_cycles_completed": 11323,
-  "total_learnings_persisted": 11323,
-  "total_rules_promoted": 10650,
+  "last_updated": "2026-11-21T21:22:57.691Z",
+  "total_cycles_completed": 11325,
+  "total_learnings_persisted": 11325,
+  "total_rules_promoted": 10654,
   "history": [
-    {
-      "timestamp": "2026-11-21T01:00:31.032Z",
-      "repository": "vitest-dev/vitest",
-      "learningId": "learn-github-vitest-dev-vitest",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T01:08:19.098Z",
-      "repository": "dosco/deeporg",
-      "learningId": "learn-github-dosco-deeporg",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T01:08:22.682Z",
       "repository": "cypress-io/cypress",
@@ -1403,6 +1389,20 @@
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T21:19:46.045Z",
+      "repository": "aleo-labs-protocol/snarkOS",
+      "learningId": "learn-github-aleo-labs-protocol-snarkos",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T21:22:57.691Z",
+      "repository": "Diffuspace/Clover-35B-A3B-Preview",
+      "learningId": "learn-huggingface-diffuspace-clover-35b-a3b-preview",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
