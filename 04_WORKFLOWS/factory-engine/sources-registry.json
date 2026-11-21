@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-21T22:40:17.617Z",
-    "lastVerified": "2026-11-21T22:40:17.617Z",
+    "lastChecked": "2026-11-21T22:48:41.675Z",
+    "lastVerified": "2026-11-21T22:48:41.675Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -172,22 +172,21 @@
     "revisionIdentifier": "9a44a8e8"
   },
   "dathere-qsv": {
-    "name": "qsv",
+    "name": "dathere/qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-21T22:06:32.890Z",
-    "lastVerified": "2026-11-21T22:06:32.890Z",
+    "lastChecked": "2026-11-21T22:48:37.254Z",
+    "lastVerified": "2026-11-21T22:48:37.254Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "09c63f84cc4682f8ab7139f81793ad0e143eca4659fc0998557d5ba8b448f0ea",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 1,
+    "contentHash": "1b7c00ff9946028a37bfede9c49bf0a294647cb047541d1c7d65bd11154fe3cb",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "6f4d08b6"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -968,9 +967,9 @@
   "influxdata-influxdb": {
     "name": "influxdb",
     "officialUrl": "https://github.com/influxdata/influxdb",
-    "lastChecked": "2026-11-20T18:17:00.382Z",
+    "lastChecked": "2026-11-21T22:48:30.698Z",
     "revisionIdentifier": "185688a5",
-    "lastVerified": "2026-11-20T18:17:00.382Z"
+    "lastVerified": "2026-11-21T22:48:30.698Z"
   },
   "eclipse-theia-theia": {
     "name": "eclipse-theia/theia",
@@ -1897,8 +1896,8 @@
     "officialUrl": "https://github.com/cilium/cilium",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-21T16:31:13.270Z",
-    "lastVerified": "2026-11-21T16:31:13.270Z",
+    "lastChecked": "2026-11-21T22:48:28.505Z",
+    "lastVerified": "2026-11-21T22:48:28.505Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cilium-cilium",
@@ -2531,8 +2530,8 @@
     "officialUrl": "https://github.com/nats-io/nats.go",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-20T20:02:20.185Z",
-    "lastVerified": "2026-11-20T20:02:20.185Z",
+    "lastChecked": "2026-11-21T22:48:25.651Z",
+    "lastVerified": "2026-11-21T22:48:25.651Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nats-io-nats-go",
@@ -3768,9 +3767,9 @@
   "gorhom-react-native-bottom-sheet": {
     "name": "react-native-bottom-sheet",
     "officialUrl": "https://github.com/gorhom/react-native-bottom-sheet",
-    "lastChecked": "2026-11-18T17:27:59.818Z",
+    "lastChecked": "2026-11-21T22:48:23.436Z",
     "revisionIdentifier": "9bfbeb52",
-    "lastVerified": "2026-11-18T17:27:59.818Z"
+    "lastVerified": "2026-11-21T22:48:23.436Z"
   },
   "alibaba-sentinel-golang": {
     "name": "sentinel-golang",
@@ -4209,9 +4208,9 @@
   "timvisee-ffsend": {
     "name": "ffsend",
     "officialUrl": "https://github.com/timvisee/ffsend",
-    "lastChecked": "2026-11-20T07:14:40.886Z",
+    "lastChecked": "2026-11-21T22:48:18.142Z",
     "revisionIdentifier": "85aae2f3",
-    "lastVerified": "2026-11-20T07:14:40.886Z"
+    "lastVerified": "2026-11-21T22:48:18.142Z"
   },
   "hf-openai-whisper-large-v3": {
     "name": "openai/whisper-large-v3",
@@ -13032,6 +13031,23 @@
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-efficient-large-model-open-h3-regenerate-2k",
     "contentHash": "4b8664ed06b704faa76c6f5b599357107a0424c1bdace175a45fed420f235707",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-atomicchat-lfm3-1.7b-uncensored-gguf": {
+    "name": "AtomicChat/LFM3-1.7B-Uncensored-GGUF",
+    "officialUrl": "https://huggingface.co/AtomicChat/LFM3-1.7B-Uncensored-GGUF",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-21T22:48:20.975Z",
+    "lastVerified": "2026-11-21T22:48:20.975Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf",
+    "contentHash": "d9b8a89ac7c770e41d9c08a27924ae83d1afe815b9070f9f5e0d0f91984a72ff",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

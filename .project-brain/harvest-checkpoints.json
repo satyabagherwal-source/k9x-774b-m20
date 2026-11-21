@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-21T22:40:14.193Z",
+  "last_updated": "2026-11-21T22:48:38.320Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "09c63f84cc4682f8ab7139f81793ad0e143eca4659fc0998557d5ba8b448f0ea",
-      "verified_at": "2026-11-21T21:31:48.476Z",
+      "content_hash": "1b7c00ff9946028a37bfede9c49bf0a294647cb047541d1c7d65bd11154fe3cb",
+      "verified_at": "2026-11-21T22:48:38.319Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T21:31:48.476Z"
+      "last_updated": "2026-11-21T22:48:38.319Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -17541,14 +17541,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf",
-      "content_hash": "cda1720f1870f6d7789fb20363434c0ba0dc9af262e98c5eaf0da1bf314c47f1",
-      "verified_at": "2026-11-14T00:07:59.749Z",
+      "content_hash": "d9b8a89ac7c770e41d9c08a27924ae83d1afe815b9070f9f5e0d0f91984a72ff",
+      "verified_at": "2026-11-21T22:48:21.607Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T00:07:59.749Z"
+      "last_updated": "2026-11-21T22:48:21.607Z"
     },
     "Edge0/Audio8-TTS-Realistic-0.6b": {
       "repository": "Edge0/Audio8-TTS-Realistic-0.6b",

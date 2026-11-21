@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T22:40:14.188Z",
-  "total_cycles_completed": 11345,
-  "total_learnings_persisted": 11345,
-  "total_rules_promoted": 10664,
+  "last_updated": "2026-11-21T22:48:38.316Z",
+  "total_cycles_completed": 11347,
+  "total_learnings_persisted": 11347,
+  "total_rules_promoted": 10665,
   "history": [
-    {
-      "timestamp": "2026-11-21T02:57:50.203Z",
-      "repository": "aquasecurity/trivy",
-      "learningId": "learn-github-aquasecurity-trivy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T03:15:32.161Z",
-      "repository": "oven-sh/bun",
-      "learningId": "learn-github-oven-sh-bun",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T03:15:35.061Z",
       "repository": "faker-js/faker",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-21T22:40:14.188Z",
       "repository": "authzed/spicedb",
       "learningId": "learn-github-authzed-spicedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T22:48:21.604Z",
+      "repository": "AtomicChat/LFM3-1.7B-Uncensored-GGUF",
+      "learningId": "learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T22:48:38.316Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

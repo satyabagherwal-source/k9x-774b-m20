@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T21:32:22.420Z",
+  "timestamp": "2026-11-21T22:48:43.190Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-dathere-qsv-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [dathere-qsv-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T21:32:22.420Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T22:48:43.190Z`  
 > **Learning ID**: `LEARN-EVO-dathere-qsv-learnings`
 
 
@@ -26,10 +26,10 @@ PROVENANCE_END -->
 ## 2. Operational Capabilities
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `6f4d08b6`  
+> **Source Version**: `778227f6`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T21:31:47.966Z  
+> **Timestamp**: 2026-11-21T22:48:37.260Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -43,7 +43,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T21:31:47.960Z  
+> **Harvest Timestamp**: 2026-11-21T22:48:37.254Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2250,325 +2250,423 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6f4d08b6` (2026-11-21)
-**Commit Message**: fix(mcp): don't report an error for commands that write only their own files (#5089)
+### Incident Patch 1: `778227f6` (2026-11-21)
+**Commit Message**: fix(mcp): ignore output_file with a note for commands that can't write one (#5092)
 
-* fix(mcp): don't report an error for commands that write only their own files
+* fix(mcp): ignore output_file with a note instead of refusing it
 
-split, partition, to, validate and index have no --output. In TSV output
-mode (the default) or on large inputs the server still gave them a temp
-output file, then failed reading it back (ENOENT) although the command
-succeeded. Use a temp file only for skills with --output or a positional
-output, and report completion plus qsv's stderr summary when a successful
-command prints nothing.
+For skills with no output option, output_file is dropped and the result
+qsv printed is returned with a note, so a client that passes output_file
+by habit gets the answer on the first try.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* fix(mcp): refuse output_file without an output option; fall back when no temp file
+* fix(mcp): drop an ignored output_file before path checks; note in its own block
 
-Addresses roborev job 6694:
-- output_file is refused for skills with no --output or positional output
-  (split used to report writing a file qsv never wrote)
-- an auto temp file the command never wrote (extdedup --no-output,
-  schema --stdout) falls back to stdout / the completion summary
-- the stderr summary is cut to 4,000 characters
-- a spawn error (binary missing or not executable) is exit 127, not 0
-- CHANGELOG: index was never affected; it's out of the list
+Addresses roborev job 6705: a missing parent dir or reserved name in an
+ignored output_file no longer fails the call, the note no longer breaks
+JSON output (count --json), and it no longer claims nothing was written
+to that path.
 
-Co-Authored-By: Claude Opus 5.5 <[REDAC
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `.claude/skills/CHANGELOG.md` (modified, +5/-0)
+* docs(mcp): cite #5092 in CHANGELOG [skip ci]
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+---------
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `.claude/skills/CHANGELOG.md` (modified, +1/-1)
 ```diff
-@@ -23,6 +23,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **`qsv-synthesize --seed` is the same at any `--jobs`**: rows are now generated in parallel, in fixed 8,192-row blocks, so a seed gives the same rows whatever `--jobs` is (unless `stats` uses approximate estimators, whether requested via `--stats-options` or switched on automatically when the input won't fit in memory), though different rows than qsv 29.0.0. Skill regenerated from the USAGE text. ([#5069](https://github.com/dathere/qsv/pull/5069))
- - **`qsv-synthesize` warns that its output is not anonymized** ([#5064](https://github.com/dathere/qsv/pull/5064)): synthetic output can contain real source values. The skill description was regenerated from the README command table.
+@@ -25,7 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  
-+### Fixed
-+- **Commands that write only their own files no longer report an error.** The `split`, `partition`, `to` and `validate` skills have no `--output`, but in TSV output mode (the default) or on large inputs the server still gave them a temp output file, then failed reading it back (`Error processing output from temp file: ENOENT`) although the command had succeeded. `extdedup --no-output` and `schema --stdout` failed the same way. The server now uses a temp file only for skills with `--output` or a positional output, and returns stdout when a command didn't write its temp file. A successful command with no stdout reports that it completed, with qsv's own summary (for example `Wrote 2 chunk/s to …`, cut to 4,000 characters) (#5089).
-+- **`output_file` is refused for commands that can't write one.** Passing it to `split`, `partition` or another skill without an output option used to report "Successfully wrote output to" a file qsv never wrote (#5089).
-+- **A qsv binary that fails to start is reported as an error.** If the configured binary was removed or lost its execute permission after the server started, the spawn error was treated as exit code 0 (#5089).
-+
+ ### Fixed
+ - **Commands that write only their own files no longer report an error.** The `split`, `partition`, `to` and `validate` skills have no `--output`, but in TSV output mode (the default) or on large inputs the server still gave them a temp output file, then failed reading it back (`Error processing output from temp file: ENOENT`) although the command had succeeded. `extdedup --no-output` and `schema --stdout` failed the same way. The server now uses a temp file only for skills with `--output` or a positional output, and returns stdout when a command didn't write its temp file. A successful command with no stdout reports that it completed, with qsv's own summary (for example `Wrote 2 chunk/s to …`, cut to 4,000 characters) (#5089).
+-- **`output_file` is refused for commands that can't write one.** Passing it to `split`, `partition` or another skill without an output option used to report "Successfully wrote output to" a file qsv never wrote (#5089).
++- **`output_file` no longer loses the result of commands that can't write one.** Passing it to `count`, `headers`, `split` or another skill without an output option reported "Successfully wrote output to" a file qsv never wrote, and dropped what qsv printed. The server now ignores `output_file` for these commands, returns the result and adds a note saying so in a separate content block (#5089, #5092).
+ - **A qsv binary that fails to start is reported as an error.** If the configured binary was removed or lost its execute permission after the server started, the spawn error was treated as exit code 0 (#5089).
+ 
  ## [29.0.1] - 2026-11-21
- Patch release of the MCP server and the Claude Cowork / Claude Code plugin, for use with qsv 29.0.0 (`minimum_qsv_version` stays 29.0.0). It carries the security fixes below, published as advisory [GHSA-vm54-v922-fpq5](https://github.com/dathere/qsv/security/advisories/GHSA-vm54-v922-fpq5); update now. The bundled skill files also describe `qsv-synthesize` options from the next qsv release (listed under [Unreleased]); with qsv 29.0.0 those options are rejected as unknown flags.
- 
 ```
 
-**File**: `.claude/skills/src/executor.ts` (modified, +2/-1)
+**File**: `.claude/skills/src/tool-handlers.ts` (modified, +14/-7)
 ```diff
-@@ -439,7 +439,8 @@ export class SkillExecutor {
+@@ -769,6 +769,16 @@ export async function handleToolCall(
+       return errorResult("Error: input_file parameter is required (unless using help=true to view command documentation)");
      }
  
-     return {
--      exitCode: result.exitCode ?? 0,
-+      // null with no signal: the process never started (spawn error)
-+      exitCode: result.exitCode ?? 127,
-       stdout: result.stdout,
-       stderr: result.stderr,
-     };
-```
-
-**File**: `.claude/skills/src/file-operations.ts` (modified, +35/-0)
-```diff
-@@ -226,6 +226,20 @@ export async function autoIndexIfNeeded(
-  * @param inputFile - Path to the input file
-  * @returns Promise<boolean> - true if temp file should be used
-  */
-+/**
-+ * Whether a skill can write its output to a file the server names (`--output` or a
-+ * positional `output` arg). Commands like `split` and `to` write their own files, so a
-+ * temp output file would never be created.
-+ */
-+const MAX_STDERR_SUMMARY_CHARS = 4000;
-+
-+export function skillTakesOutputFile(skill: QsvSkill): boolean {
-+  return (
-+    skill.command.options.some((o) => o.flag === "--output") ||
-+    skill.command.args.some((a) => a.name === "output")
-+  );
-+}
-+
- export async function shouldUseTempFile(
-   command: string,
-   inputFile: string,
-@@ -813,6 +827,18 @@ export async function formatToolResult(
-   // (or undefined if the temp file was small enough to return inline and deleted).
-   let finalOutputFile: string | undefined = outputFile;
- 
-+  // Some modes never write the temp file (extdedup --no-output, schema --stdout):
-+  // their result is on stdout/stderr instead
-+  if (outputFile && autoCreatedTempFile) {
-+    try {
-+      await stat(outputFile);
-+    } catch (err: unknown) {
-+      if (!(isNodeError(err) && err.code === "ENOENT")) throw err;
++    // qsv would never write it, and the result would claim it was written and
++    // drop what qsv printed; drop it before path checks that could reject it
++    let ignoredOutputNote = "";
++    if (outputFile && !isHelpRequest && !skillTakesOutputFile(skill)) {
++      ignoredOutputNote =
++        `Note: qsv ${commandName} has no output file option, so the output_file parameter was ignored. ` +
++        `Commands that write their own files take a destination parameter (see help=true).`;
 +      outputFile = undefined;
-+      finalOutputFile = undefined;
 +    }
-+  }
 +
-   if (outputFile) {
-     if (autoCreatedTempFile) {
+     // Resolve file paths using filesystem provider if available (skip for help requests)
+     if (filesystemProvider && inputFile) {
        try {
-@@ -905,6 +931,15 @@ export async function formatToolResult(
-         responseText += `- Rows processed: ${result.metadata.rowsProcessed}\n`;
-       }
-     }
-+  } else if (result.output.trim() === "") {
-+    // e.g. split or `to` write their own files and print only a summary on stderr
-+    const summary = result.stderr.trim();
-+    responseText = `✅ qsv ${commandName} completed; it printed no output.`;
-+    if (summary.length > MAX_STDERR_SUMMARY_CHARS) {
-+      responseText += `\n\n${summary.slice(0, MAX_STDERR_SUMMARY_CHARS)}\n[stderr truncated]`;
-+    } else if (summary) {
-+      responseText += `\n\n${summary}`;
-+    }
-   } else {
-     responseText = result.output;
-   }
-```
-
-**File**: `.claude/skills/src/tool-handlers.ts` (modified, +10/-0)
-```diff
-@@ -45,6 +45,7 @@ import {
-   formatToolResult,
-   resolveParamAliases,
-   shouldUseTempFile,
-+  skillTakesOutputFile,
-   canonicalFlag,
-   isSqlScriptArg,
- } from "./file-operations.js";
-@@ -865,6 +866,14 @@ export async function handleToolCall(
+@@ -866,13 +876,6 @@ export async function handleToolCall(
        return errorResult(`Error: output_file can't be the input file for ${commandName}; it would be emptied.`);
      }
  
-+    // qsv would never write it, yet the result would claim it was written
-+    if (outputFile && !isHelpRequest && !skillTakesOutputFile(skill)) {
-+      return errorResult(
-+        `Error: qsv ${commandName} has no output file option, so output_file can't be used. ` +
-+          `It writes its own files; set its destination parameter instead (see help=true).`,
-+      );
-+    }
-+
+-    // qsv would never write it, yet the result would claim it was written
+-    if (outputFile && !isHelpRequest && !skillTakesOutputFile(skill)) {
+-      return errorResult(
+-        `Error: qsv ${commandName} has no output file option, so output_file can't be used. ` +
+-          `It writes its own files; set its destination parameter instead (see help=true).`,
+-      );
+-    }
+ 
      // DuckDB/Parquet-first interception for sqlp queries. The orchestration
      // (multi-table detection, Parquet conversion, DuckDB attempt, fallback
-     // SQL rewrite, warning capture) lives in runSqlpParquetInterception so
-@@ -894,6 +903,7 @@ export async function handleToolCall(
-       inputFile &&
-       commandName !== "describegpt" &&
-       !isBinaryOutputFormat(commandName, params) &&
-+      skillTakesOutputFile(skill) &&
-       (await shouldUseTempFile(commandName, inputFile))
-     ) {
-       // viz emits a self-contained interactive HTML artifact; its output format is
+@@ -1000,6 +1003,10 @@ export async function handleToolCall(
+           console.error(`[MCP Tools] Could not append moarstats note to result: unexpected content structure`);
+         }
+       }
++      // a separate block keeps qsv's output (e.g. count --json) parseable
++      if (ignoredOutputNote) {
++        formattedResult.content.push({ type: "text", text: ignoredOutputNote });
++      }
+       // Attach pipeline metadata for reproducibility manifest.
+       // Note: formatToolResult can return isError (e.g., temp file I/O failure)
+       // even though the qsv command itself succeeded — derive success from the result.
 ```
 
-**File**: `.claude/skills/tests/executor.test.ts` (modified, +7/-0)
+**File**: `.claude/skills/tests/qsv-integration.test.ts` (modified, +22/-7)
 ```diff
-@@ -555,3 +555,10 @@ test('buildCommand does not add --frequency-jsonl when option definition is miss
-     config.qsvValidation.version = originalVersion;
+@@ -1130,7 +1130,7 @@ test('qsv split succeeds although it writes only its own files', { skip: !QSV_AV
    }
  });
-+
-+test('a qsv binary that fails to start is a failure, not a success', async () => {
-+  const executor = new SkillExecutor('/nonexistent/qsv-binary-for-test');
-+  const result = await executor.execute(countSkill, { args: { input: 'x.csv' } } as SkillParams);
-+  assert.strictEqual(result.success, false);
-+  assert.match(result.stderr, /SPAWN ERROR/);
-+});
-```
-
-**File**: `.claude/skills/tests/file-operations.test.ts` (modified, +60/-0)
-```diff
-@@ -23,6 +23,8 @@ import {
-   collectAdditionalInputFiles,
-   resolveFilePathParams,
-   canonicalFlag,
-+  skillTakesOutputFile,
-+  formatToolResult,
- } from "../src/file-operations.js";
- import {
-   FILE_PATH_INPUT_OPTIONS,
-@@ -759,3 +761,61 @@ describe("path confinement", () => {
-     assert.deepStrictEqual(missing, [], "classify these in tool-constants.ts (path kind) or NOT_A_PATH here");
-   });
- });
-+
-+describe("commands that write their own files", () => {
-+  test("only a skill with --output or a positional output gets a temp output file", async () => {
-+    const loader = new SkillLoader();
-+    await loader.loadAll();
-+    for (const name of ["split", "partition", "to", "validate", "index"]) {
-+      const s = await loader.load(`qsv-${name}`);
-+      assert.ok(s, name);
-+      assert.strictEqual(skillTakesOutputFile(s), false, name);
-+    }
-+    for (const name of ["select", "sort", "extsort"]) {
-+      const s = await loader.load(`qsv-${name}`);
-+      assert.ok(s, name);
-+      assert.strictEqual(skillTakesOutputFile(s), true, name);
-+    }
-+  });
-+
-+  test("a successful command with no stdout reports completion and its stderr summary", async () => {
-+    const result = {
-+      success: true,
-+      output: "",
-+      stderr: "Wrote 'in.parquet' (1 rows)\n",
-+      metadata: { command: "qsv to parquet out in.csv", duration: 5, exitCode: 0 },
-+    };
-+    const formatted = await formatToolResult(result, "to", "/in.csv", undefined, false, {});
-+    assert.ok(!formatted.isError);
-+    const text = formatted.content[0].text ?? "";
-+    assert.match(text, /qsv to completed; it printed no output/);
-+    assert.match(text, /Wrote 'in\.parquet' \(1 rows\)/);
-+  });
-+
-+  test("an auto temp file the command never wrote falls back to its stdout", async () => {
-+    const base = {
-+      success: true,
-+      stderr: "2 duplicates\n",
-+      metadata: { command: "qsv x", duration: 5, exitCode: 0 },
-+    };
-+    const missing = join(homedir(), `qsv-never-written-${Date.now()}.tsv`);
-+    const json = await formatToolResult({ ...base, output: '{"a":1}' }, "schema", "/in.csv", missing, true, {});
-+    assert.ok(!json.isError, json.content[0].text);
-+    assert.strictEqual(json.content[0].text, '{"a":1}');
-+    const empty = await formatToolResult({ ...base, output: "" }, "extdedup", "/in.csv", missing, true, {});
-+    assert.ok(!empty.isError, empty.content[0].text);
-+    assert.match(empty.content[0].text ?? "", /qsv extdedup completed[^]*2 duplicates/);
-+  });
-+
-+  test("a long stderr summary is truncated", async () => {
-+    const result = {
-+      success: true,
-+      output: "",
-+      stderr: "x".repeat(100_000),
-+      metadata: { command: "qsv split", duration: 5, exitCode: 0 },
-+    };
-+    const text = (await formatToolResult(result, "split", "/in.csv", undefined, false, {})).content[0].text ?? "";
-+    assert.ok(text.length < 5000, String(text.length));
-+    assert.match(text, /\[stderr truncated\]$/);
-+  });
-+});
-```
-
-**File**: `.claude/skills/tests/qsv-integration.test.ts` (modified, +54/-1)
-```diff
-@@ -5,7 +5,7 @@
  
- import { test } from 'node:test';
- import assert from 'node:assert';
--import { readFile, stat, access, chmod, mkdir } from 'node:fs/promises';
-+import { readFile, readdir, stat, access, chmod, mkdir } from 'node:fs/promises';
- import { join } from 'node:path';
- import { handleToolCall, handleToParquetCall } from '../src/mcp-tools.js';
- import { config } from '../src/config.js';
-@@ -1102,3 +1102,56 @@ test('qsv_sqlp runs a .sql script file, also when DuckDB is available', { skip:
+-test('output_file is refused for a command that has no output file option', { skip: !QSV_AVAILABLE }, async () => {
++test('output_file is ignored, with a note, for a command that has no output file option', { skip: !QSV_AVAILABLE }, async () => {
+   const testDir = await createTestDir();
+   const loader = new SkillLoader();
+   const executor = new SkillExecutor();
+@@ -1139,18 +1139,33 @@ test('output_file is refused for a command that has no output file option', { sk
+     await loader.loadAll();
+     const csvPath = await createTestCSV(testDir, 'test.csv', 'id,name\n1,a\n2,b\n');
+     const provider = new FilesystemResourceProvider({ workingDirectory: testDir, allowedDirectories: [testDir] });
++    const ignored = join(testDir, 'out.csv');
+ 
+-    const result = await handleToolCall(
+-      'qsv_split',
+-      { input_file: csvPath, outdir: join(testDir, 'parts'), size: 1, output_file: join(testDir, 'out.csv') },
++    // a missing parent dir in the ignored path must not fail the call
++    const count = await handleToolCall(
++      'qsv_count',
++      { input_file: csvPath, json: true, output_file: join(testDir, 'nope', 'out.csv') },
+       executor,
+       loader,
+       provider,
+     );
++    assert.ok(!count.isError, count.content[0].text);
++    assert.strictEqual(JSON.parse(count.content[0].text ?? '').count, 2);
++    assert.match(count.content[1]?.text ?? '', /output_file parameter was ignored/);
+ 
+-    assert.ok(result.isError);
+-    assert.match(result.content[0].text ?? '', /has no output file option/);
+-    await assert.rejects(stat(join(testDir, 'parts')));
++    const outdir = join(testDir, 'parts');
++    const split = await handleToolCall(
++      'qsv_split',
++      { input_file: csvPath, outdir, size: 1, output_file: ignored },
++      executor,
++      loader,
++      provider,
++    );
++    assert.ok(!split.isError, split.content[0].text);
++    assert.match(split.content[0].text ?? '', /qsv split completed/);
++    assert.match(split.content[1]?.text ?? '', /output_file parameter was ignored/);
++    assert.strictEqual((await readdir(outdir)).length, 2);
++    await assert.rejects(stat(ignored));
+   } finally {
      await cleanupTestDir(testDir);
    }
- });
-+
-+test('qsv split succeeds although it writes only its own files', { skip: !QSV_AVAILABLE }, async () => {
-+  const testDir = await createTestDir();
-+  const loader = new SkillLoader();
-+  const executor = new SkillExecutor();
-+
-+  try {
-+    await loader.loadAll();
-+    const csvPath = await createTestCSV(testDir, 'test.csv', 'id,name\n1,a\n2,b\n3,c\n');
-+    const provider = new FilesystemResourceProvider({ workingDirectory: testDir, allowedDirectories: [testDir] });
-+    const outdir = join(testDir, 'parts');
-+
-+    const result = await handleToolCall(
-+      'qsv_split',
-+      { input_file: csvPath, outdir, size: 1 },
-+      executor,
-+      loader,
-+      provider,
-+    );
-+
-+    assert.ok(!result.isError, result.content[0].text);
-+    assert.match(result.content[0].text ?? '', /qsv split completed; it printed no output/);
-+    assert.strictEqual((await readdir(outdir)).length, 3);
-+  } finally {
-+    await cleanupTestDir(testDir);
-+  }
-+});
-+
-+test('output_file is refused for a command that has no output file option', { skip: !QSV_AVAILABLE }, async () => {
-+  const testDir = await createTestDir();
-+  const loader = new SkillLoader();
-+  const executor = new SkillExecutor();
-+
-+  try {
-+    await loader.loadAll();
-+    const csvPath = await createTestCSV(testDir, 'test.csv', 'id,name\n1,a\n2,b\n');
-+    const provider = new FilesystemResourceProvider({ workingDirectory: testDir, allowedDirectories: [testDir] });
-+
-+    const result = await handleToolCall(
-+      'qsv_split',
-+      { input_file: csvPath, outdir: join(testDir, 'parts'), size: 1, output_file: join(testDir, 'out.csv') },
-+      executor,
-+      loader,
-+      provider,
-+    );
-+
-+    assert.ok(result.isError);
-+    assert.match(result.content[0].text ?? '', /has no output file option/);
-+    await assert.rejects(stat(join(testDir, 'parts')));
-+  } finally {
-+    await cleanupTestDir(testDir);
-+  }
-+});
+```
+
+---
+
+### Incident Patch 2: `76048351` (2026-11-21)
+**Commit Message**: fix(synthesize): cap ordered members only by the members a row leaves filled (#5091)
+
+* fix(synthesize): cap ordered members only by the members a row leaves filled
+
+Each member's upper bound was capped by every later member's, even in
+rows where those are blank, so a blank close date held every open case's
+opened date at or below the last close date. Caps are now computed per
+blank pattern from the members it leaves filled; a blank member keeps
+the chain in order but has no range of its own. The pattern is drawn
+before the values, so a chain with one pattern still takes no extra
+draw. (roborev 6697)
+
+Also regenerate the help files the README synthesize entry feeds, and
+say that the relationships kept are the ones a dictionary declares or
+--discover-relationships finds. (roborev 6700)
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* docs: cite #5091 in CHANGELOG [skip ci]
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* fix(synthesize): don't round a blank ordered member or cap by its grid
+
+A blank member prints nothing, so its grid no longer floors the cap it
+carries back from the next filled member, nor rounds the chain's value
+forward. An Integer member blank between
+
+**File**: `.claude/skills/qsv/qsv-synthesize.json` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ {
+   "name": "qsv-synthesize",
+   "version": "29.0.0",
+-  "description": "Generate a synthetic CSV that is statistically faithful to a source CSV. Runs `stats` + `frequency` on the source so synthesized columns reproduce its per-column attributes — frequency-weighted sampling for categorical columns, quantile-bucketed numeric/date generation (quartiles by default), null-ratio preservation. With a Data Dictionary from `describegpt --dictionary --infer-content-type`, semantic Content Types pick realistic fake-rs fakers (names, emails, addresses, UUIDs, etc.) for non-enumerable columns. A dictionary `relationships` array preserves inter-column structure within each row — `joint` (functional dependencies like city/state/zip), `ordered` (monotonic chains like created_date ≤ closed_date) and `correlated` (numeric correlation via a Gaussian copula). Fully reproducible with `--seed`. Output is not anonymized: it can contain real source values, though by default values and `joint` tuples seen fewer than 5 times are dropped from the real values it samples, and numeric/date range ends are trimmed so a lone outlier can't set them (`--min-count`). `--report` writes a JSON summary of how many synthetic rows exactly match a source row (numbers and dates compared by value) and which values and `joint` tuples `--min-count` dropped.",
++  "description": "Generate a synthetic CSV that is statistically faithful to a source CSV, from its `stats` and `frequency`. A Data Dictionary adds realistic fake values by Content Type, and keeps the relationships between columns it declares (`joint`, `ordered`, `correlated`). Reproducible with `--seed`. Output is not anonymized: it can contain real source values (see `--min-count`).",
+   "category": "generation",
+   "command": {
+     "subcommand": "synthesize",
+```
+
+**File**: `CHANGELOG.md` (modified, +1/-1)
+```diff
+@@ -28,7 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - `synthesize`: a column with any null was never treated as fully enumerated, because frequency's `(NULL)` row parses to rank 0, the same as an "Other" bucket. Such columns fell back to fakers, filler or the min/max range instead of sampling their real values by frequency, which also let them bypass `--min-count`. Nulls are still reproduced through the null ratio. **Behavior change:** columns with blank cells now emit their real values (those seen at least `--min-count` times), like every other enumerated column. With a Data Dictionary but without `--consistent-fakes`, a name, email or address column that has blanks goes from generated fakes to real values; pass `--consistent-fakes` to keep fakes. ([#5066](https://github.com/dathere/qsv/pull/5066))
+ 
+ ### Changed
+-- `synthesize`: `ordered` relationship members now keep their own blanks. Before, a chain was blank whole when its anchor was and filled whole otherwise, so a follower blank more often than its anchor (a `closed_date` left blank while a case is open) was never blank in the output. The fit now counts, in its existing pass over the source, how often each combination of blank members occurs, and each synthetic row draws one. Rows blank in every member stay blank whole, and the members left filled stay in order, a blank one between them included. This applies to declared relationships too. A chain whose members are blank in the same rows writes the same bytes as before, while a seeded run of one whose blanks differ writes different rows. `--discover-relationships` no longer requires `ordered` dates to be blank in the same rows, so it can now find pairs like NYC 311's Created Date ≤ Due Date (Due Date blank in 66% of rows). Saved models hold the blank combinations, so the model format is version 5 and models saved before this change must be fitted again. ([#5090](https://github.com/dathere/qsv/pull/5090))
++- `synthesize`: `ordered` relationship members now keep their own blanks. Before, a chain was blank whole when its anchor was and filled whole otherwise, so a follower blank more often than its anchor (a `closed_date` left blank while a case is open) was never blank in the output. The fit now counts, in its existing pass over the source, how often each combination of blank members occurs, and each synthetic row draws one. Rows blank in every member stay blank whole, and the members left filled stay in order, a blank one between them included. A member's range is capped only by the later members left filled in that row, so a blank close date doesn't hold back the open dates of open cases. This applies to declared relationships too. A chain whose members are blank in the same rows writes the same bytes as before, while a seeded run of one whose blanks differ writes different rows. `--discover-relationships` no longer requires `ordered` dates to be blank in the same rows, so it can now find pairs like NYC 311's Created Date ≤ Due Date (Due Date blank in 66% of rows). Saved models hold the blank combinations, so the model format is version 5 and models saved before this change must be fitted again. ([#5090](https://github.com/dathere/qsv/pull/5090), [#5091](https://github.com/dathere/qsv/pull/5091))
+ - **deps: Polars bumped to upstream rev [`93d31f0`](https://github.com/pola-rs/polars/commit/93d31f095fe3247677895b67d32f681b89e1e103)** (91 commits past `2d9938d`; crates stay 0.55.1). Some `sqlp` results that already worked change:
+   - `DELETE` now changes the table for the statements after it ([#30869](https://github.com/pola-rs/polars/pull/30869)). Before, `DELETE FROM t WHERE ...; SELECT COUNT(*) FROM t;` still counted the deleted rows.
+   - A NULL length makes `LEFT` and `SUBSTRING` NULL ([#30934](https://github.com/pola-rs/polars/pull/30934)); `LEFT` used to return the whole string. `SPLIT_PART` of NULL is NULL ([#30936](https://github.com/pola-rs/polars/pull/30936)).
+```
+
+**File**: `README.md` (modified, +1/-1)
+```diff
+@@ -96,7 +96,7 @@
+ | [split](docs/help/split.md)<br>📇🏎️ | Split one CSV file into many CSV files. It can split by number of rows, number of chunks or file size. Uses multithreading to go faster if an index is present when splitting by rows or chunks. |
+ | [sqlp](docs/help/sqlp.md)✨<br>📇🗄️🐻‍❄️🚀🪄 | <a name="sqlp_deeplink"></a>Run [Polars](https://pola.rs) SQL (a PostgreSQL dialect) queries against several CSVs, Parquet, JSONL and Arrow files - converting queries to blazing-fast Polars [LazyFrame](https://docs.pola.rs/user-guide/lazy/) expressions, processing larger than memory CSV files. Query results can be saved in CSV, JSON, JSONL, Parquet, Apache Arrow IPC and Apache Avro formats. |
+ | [stats](docs/help/stats.md)<br>📇🤯🏎️👆🪄 | <a name="stats_deeplink"></a>Compute up to 48 [summary statistics](docs/STATS_DEFINITIONS.md) & make GUARANTEED data type inferences (Null, String, Float, Integer, Date, DateTime, Boolean) for each column in a CSV ([Example](https://github.com/dathere/qsv/blob/master/docs/stats/NYC_311_SR_2010-2020-sample-1M.stats.csv)).<br>Uses multithreading to go faster if an index is present. With an index, can compile "streaming" stats on a 1M row sample of NYC's 311 data in [less than 0.25 seconds vs 2.24 seconds without one](https://qsv.dathere.com/benchmarks). |
+-| [synthesize](docs/help/synthesize.md)✨<br>📇🎲🤖 | <a name="synthesize_deeplink"></a>Generate a synthetic CSV that is statistically faithful to a source CSV, from its `stats` and `frequency`. A Data Dictionary adds realistic fake values by Content Type and keeps relationships between columns (`joint`, `ordered`, `correlated`). Reproducible with `--seed`. Output is not anonymized: it can contain real source values (see `--min-count`). |
++| [synthesize](docs/help/synthesize.md)✨<br>📇🎲🤖 | <a name="synthesize_deeplink"></a>Generate a synthetic CSV that is statistically faithful to a source CSV, from its `stats` and `frequency`. A Data Dictionary adds realistic fake values by Content Type, and keeps the relationships between columns it declares (`joint`, `ordered`, `correlated`). Reproducible with `--seed`. Output is not anonymized: it can contain real source values (see `--min-count`). |
+ | [table](docs/help/table.md)<br>🤯 | Align output of a CSV using [elastic tabstops](https://github.com/BurntSushi/tabwriter) for viewing; or to create an "aligned TSV" file or Fixed Width Format file. To interactively view a CSV, use the `lens` command. |
+ | [template](docs/help/template.md)<br>📇🚀🔣📚⛩️ ![CKAN](docs/images/ckan.png) | Renders a template using CSV data with the [MiniJinja](https://docs.rs/minijinja/latest/minijinja/) template engine ([Example](https://github.com/dathere/qsv/blob/4645ec07b5befe3b0c0e49bf0f547315d0d7514b/src/cmd/template.rs#L18-L44)). |
+ | [to](docs/help/to.md)✨<br>🗄️🐻‍❄️🚀 | Convert CSV files to [Parquet](https://parquet.apache.org), [PostgreSQL](https://www.postgresql.org), [SQLite](https://www.sqlite.org/index.html), Excel (XLSX), [LibreOffice Calc](https://www.libreoffice.org/discover/calc/) (ODS) and [Data Package](https://datahub.io/docs/data-packages/tabular). |
+```
+
+**File**: `docs/help/TableOfContents.md` (modified, +1/-1)
+```diff
+@@ -75,7 +75,7 @@
+ | [split](split.md)<br>[📇](#legend "uses an index when available.")[🏎️](#legend "multithreaded and/or faster when an index (📇) is available.") | Split one CSV file into many CSV files. It can split by number of rows, number of chunks or file size. Uses multithreading to go faster if an index is present when splitting by rows or chunks. |
+ | [sqlp](sqlp.md)<br>[📇](#legend "uses an index when available.")[🗄️](#legend "Extended input support.")[🐻‍❄️](#legend "command powered/accelerated by  vectorized query engine.")[🚀](#legend "multithreaded even without an index.")[🪄](#legend "\"automagical\" commands that uses stats and/or frequency tables to work \"smarter\" & \"faster\".") | Run [Polars](https://pola.rs) SQL (a PostgreSQL dialect) queries against several CSVs, Parquet, JSONL and Arrow files - converting queries to blazing-fast Polars [LazyFrame](https://docs.pola.rs/user-guide/lazy/) expressions, processing larger than memory CSV files. Query results can be saved in CSV, JSON, JSONL, Parquet, Apache Arrow IPC and Apache Avro formats. |
+ | [stats](stats.md)<br>[📇](#legend "uses an index when available.")[🤯](#legend "loads entire CSV into memory, though `dedup`, `stats` & `transpose` have \"streaming\" modes as well.")[🏎️](#legend "multithreaded and/or faster when an index (📇) is available.")[👆](#legend "has powerful column selector support. See `select` for syntax.")[🪄](#legend "\"automagical\" commands that uses stats and/or frequency tables to work \"smarter\" & \"faster\".") | Compute up to 48 [summary statistics](../STATS_DEFINITIONS.md) & make GUARANTEED data type inferences (Null, String, Float, Integer, Date, DateTime, Boolean) for each column in a CSV ([Example](https://github.com/dathere/qsv/blob/master/docs/stats/NYC_311_SR_2010-2020-sample-1M.stats.csv)). Uses multithreading to go faster if an index is present. With an index, can compile "streaming" stats on a 1M row sample of NYC's 311 data in [less than 0.25 seconds vs 2.24 seconds without one](https://qsv.dathere.com/benchmarks). |
+-| [synthesize](synthesize.md)<br>[📇](#legend "uses an index when available.")[🎲](#legend "randomly generated or randomized output with a --seed option for reproducibility.")[🤖](#legend "command uses Natural Language Processing or Generative AI.") | Generate a synthetic CSV that is statistically faithful to a source CSV. Runs `stats` + `frequency` on the source so synthesized columns reproduce its per-column attributes — frequency-weighted sampling for categorical columns, quantile-bucketed numeric/date generation (quartiles by default), null-ratio preservation. With a Data Dictionary from `describegpt --dictionary --infer-content-type`, semantic Content Types pick realistic [fake-rs](https://github.com/cksac/fake-rs) fakers (names, emails, addresses, UUIDs, etc.) for non-enumerable columns. A dictionary `relationships` array preserves inter-column structure within each row — `joint` (functional dependencies like city/state/zip), `ordered` (monotonic chains like created_date ≤ closed_date) and `correlated` (numeric correlation via a Gaussian copula). Fully reproducible with `--seed`. Output is not anonymized: it can contain real source values, though by default values and `joint` tuples seen fewer than 5 times are dropped from the real values it samples, and numeric/date range ends are trimmed so a lone outlier can't set them (`--min-count`). `--report` writes a JSON summary of how many synthetic rows exactly match a source row (numbers and dates compared by value) and which values and `joint` tuples `--min-count` dropped. |
++| [synthesize](synthesize.md)<br>[📇](#legend "uses an index when available.")[🎲](#legend "randomly generated or randomized output with a --seed option for reproducibility.")[🤖](#legend "command uses Natural Language Processing or Generative AI.") | Generate a synthetic CSV that is statistically faithful to a source CSV, from its `stats` and `frequency`. A Data Dictionary adds realistic fake values by Content Type, and keeps the relationships between columns it declares (`joint`, `ordered`, `correlated`). Reproducible with `--seed`. Output is not anonymized: it can contain real source values (see `--min-count`). |
+ | [table](table.md)<br>[🤯](#legend "loads entire CSV into memory, though `dedup`, `stats` & `transpose` have \"streaming\" modes as well.") | Align output of a CSV using [elastic tabstops](https://github.com/BurntSushi/tabwriter) for viewing; or to create an "aligned TSV" file or Fixed Width Format file. To interactively view a CSV, use the `lens` command. |
+ | [template](template.md)<br>[📇](#legend "uses an index when available.")[🚀](#legend "multithreaded even without an index.")[🔣](#legend "requires UTF-8 encoded input.")[📚](#legend "has lookup table support, enabling runtime \"lookups\" against local or remote reference CSVs.")[⛩️](#legend "uses MiniJinja template engine.") [![CKAN](../images/ckan.png)](#legend "has CKAN-aware integrati
+```
+
+**File**: `docs/help/synthesize.md` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ # synthesize
+ 
+-> Generate a synthetic CSV that is statistically faithful to a source CSV. Runs `stats` + `frequency` on the source so synthesized columns reproduce its per-column attributes — frequency-weighted sampling for categorical columns, quantile-bucketed numeric/date generation (quartiles by default), null-ratio preservation. With a Data Dictionary from `describegpt --dictionary --infer-content-type`, semantic Content Types pick realistic [fake-rs](https://github.com/cksac/fake-rs) fakers (names, emails, addresses, UUIDs, etc.) for non-enumerable columns. A dictionary `relationships` array preserves inter-column structure within each row — `joint` (functional dependencies like city/state/zip), `ordered` (monotonic chains like created_date ≤ closed_date) and `correlated` (numeric correlation via a Gaussian copula). Fully reproducible with `--seed`. Output is not anonymized: it can contain real source values, though by default values and `joint` tuples seen fewer than 5 times are dropped from the real values it samples, and numeric/date range ends are trimmed so a lone outlier can't set them (`--min-count`). `--report` writes a JSON summary of how many synthetic rows exactly match a source row (numbers and dates compared by value) and which values and `joint` tuples `--min-count` dropped.
++> Generate a synthetic CSV that is statistically faithful to a source CSV, from its `stats` and `frequency`. A Data Dictionary adds realistic fake values by Content Type, and keeps the relationships between columns it declares (`joint`, `ordered`, `correlated`). Reproducible with `--seed`. Output is not anonymized: it can contain real source values (see `--min-count`).
+ 
+ **[Table of Contents](TableOfContents.md)** | **Source: [src/cmd/synthesize/mod.rs](https://github.com/dathere/qsv/blob/master/src/cmd/synthesize/mod.rs)** | [📇](TableOfContents.md#legend "uses an index when available.")[🎲](TableOfContents.md#legend "randomly generated or randomized output with a --seed option for reproducibility.")[🤖](TableOfContents.md#legend "command uses Natural Language Processing or Generative AI.")
+ 
+```
+
+**File**: `src/cmd/synthesize/group_generator.rs` (modified, +44/-47)
+```diff
+@@ -66,19 +66,20 @@ pub(crate) enum GroupGenerator {
+         /// `member_cols[i]` to `member_cols[i + 1]`, clamped to >= 0. Length is
+         /// `member_cols.len() - 1`.
+         gap_buckets:      Vec<Vec<(f64, f64)>>,
+-        /// Per-member `[lo, hi]` in the same domain as the buckets, with each
+-        /// `hi` capped by every later member's. Each follower is clamped into
+-        /// its range (then kept >= its predecessor, which the cap keeps in
+-        /// range), so anchor + gap can't reach a follower's real extremes once
+-        /// `--min-count` has trimmed them.
+-        member_ranges:    Vec<(f64, f64)>,
++        /// Per blank pattern, per-member `[lo, hi]` in the same domain as the
++        /// buckets, with each `hi` capped by every later member the pattern
++        /// leaves filled; a blank member's range is otherwise unbounded. Each
++        /// follower is clamped into its range (then kept >= its predecessor,
++        /// which the cap keeps in range), so anchor + gap can't reach a
++        /// follower's real extremes once `--min-count` has trimmed them.
++        pattern_ranges:   Vec<Vec<(f64, f64)>>,
+         /// Share of source rows where every member is blank; such a row is
+         /// emitted blank without drawing any value.
+         null_ratio:       f64,
+         /// Which members are blank in the other rows, as seen in the source:
+         /// `blank_patterns[p][k]` is true when member `k` is blank. The chain
+-        /// is drawn whole and then blanked, so the members left filled stay in
+-        /// order.
++        /// is drawn whole, its blank members unprinted, so the members left
++        /// filled stay in order.
+         blank_patterns:   Vec<Vec<bool>>,
+         /// Normalized cumulative weights of `blank_patterns`, ascending, last
+         /// element == 1.0. A single pattern takes no draw.
+@@ -147,7 +148,7 @@ impl GroupGenerator {
+                 date_format,
+                 anchor_buckets,
+                 gap_buckets,
+-                member_ranges,
++                pattern_ranges,
+                 null_ratio,
+                 blank_patterns,
+                 blank_cumulative,
+@@ -158,65 +159,61 @@ impl GroupGenerator {
+                 if draw_null(*null_ratio, rng) {
+                     return member_cols.iter().map(|&c| (c, String::new())).collect();
+                 }
+-                // The anchor's upper bound is capped by every follower's (see
+-                // `resolve_ordered`), so the chain can always stay in range.
+-                let mut value = sample_bucket(anchor_buckets, rng).min(member_ranges[0].1);
++                // A chain with one pattern takes no draw, so one whose members
++                // are blank in the same rows keeps the draws it had when a
++                // blank anchor blanked the chain.
++                let p = if blank_patterns.len() > 1 {
++                    let r = rng.random_range(0.0..1.0);
++                    blank_cumulative
++                        .partition_point(|&c| c < r)
++                        .min(blank_patterns.len() - 1)
++                } else {
++                    0
++                };
++                let (blanks, ranges) = (&blank_patterns[p], &pattern_ranges[p]);
++                let text = |value: f64, i: usize| {
++                    if blanks[i] {
++                        String::new()
++                    } else {
++                        format_ordered(value, *kind, is_int[i], decimals[i], date_format.as_ref())
++                    }
++                };
++                // The anchor's upper bound is capped by every filled
++                // follower's (see `resolve_ordered`), so the chain can always
++                // stay in range.
++                let mut value = sample_bucket(anchor_buckets, rng).min(ranges[0].1);
+                 // Chain from the value actually emitted: a member is printed
+                 // rounded to its grid (whole numbers for Integer, its source
+                 // decimals for Float), so the next member must build on the
+                 // rounded value or it can print below it. A follower rounds no
+                 // lower than its predecessor, or a coarser grid can print it
+                 // below a finer one (1.24 at one decimal is 1.2). That stays
+                 // within range: the predecessor's cap is at most this
+-                // member's grid-floored cap.
++                // member's grid-floored cap. A blank member prints nothing,
++                // so it isn't rounded: its grid must not move the members
++                // after it.
+                 let quantize = |v: f64, i: usize, floor: f64| {
+-                    round_at_least(v, floor, member_grid(*kind, is_int[i], decimals[i]))
++                    if blanks[i] {
++                        v
++                    } else {
++                        round_at_least(v, floor, member_grid(*kind, is_int[i], decimals[i]))
++                    }
+                 };
+                 value = quant
+```
+
+**File**: `src/cmd/synthesize/model.rs` (modified, +7/-3)
+```diff
+@@ -241,7 +241,7 @@ fn check_group(group: &GroupGenerator) -> Result<(), String> {
+             date_format,
+             anchor_buckets,
+             gap_buckets,
+-            member_ranges,
++            pattern_ranges,
+             null_ratio,
+             blank_patterns,
+             blank_cumulative,
+@@ -258,14 +258,18 @@ fn check_group(group: &GroupGenerator) -> Result<(), String> {
+             if n == 0
+                 || is_int.len() != n
+                 || decimals.len() != n
+-                || member_ranges.len() != n
+                 || gap_buckets.len() != n - 1
+                 || anchor_buckets.is_empty()
+                 || gap_buckets.iter().any(Vec::is_empty)
+             {
+                 return bad("an ordered group with inconsistent members");
+             }
+-            if member_ranges.iter().any(|(lo, hi)| lo > hi) {
++            if pattern_ranges.len() != blank_patterns.len()
++                || pattern_ranges.iter().any(|r| r.len() != n)
++            {
++                return bad("an ordered group with inconsistent members");
++            }
++            if pattern_ranges.iter().flatten().any(|(lo, hi)| lo > hi) {
+                 return bad("an ordered range whose low end is above its high end");
+             }
+             check_date_format(date_format.as_ref())
+```
+
+**File**: `src/cmd/synthesize/relationships.rs` (modified, +24/-1)
+```diff
+@@ -524,6 +524,7 @@ fn resolve_ordered(
+         return Ok(None);
+     }
+     let mut member_ranges: Vec<(f64, f64)> = ranges.into_iter().flatten().collect();
++    let own_ranges = member_ranges.clone();
+     // Members are non-decreasing, so no member may exceed any later member's
+     // upper bound. Cap each upper bound by the ones after it; otherwise the
+     // order floor (`max(prev)`) would push a follower past its trimmed range.
+@@ -666,6 +667,28 @@ fn resolve_ordered(
+     if let Some(last) = blank_cumulative.last_mut() {
+         *last = 1.0;
+     }
++    // Each pattern caps a member only by the members it leaves filled after
++    // it: a blank close date must not hold back the open dates of open cases.
++    // A blank member has no range or grid of its own (it prints nothing, so
++    // the generator doesn't round it): it only carries the next filled
++    // member's cap back through the chain.
++    let pattern_ranges: Vec<Vec<(f64, f64)>> = blank_patterns
++        .iter()
++        .map(|blanks| {
++            let mut caps = own_ranges.clone();
++            let mut later = f64::MAX;
++            for i in (0..caps.len()).rev() {
++                if blanks[i] {
++                    caps[i] = (f64::MIN, later);
++                } else {
++                    let hi = caps[i].1.min(later);
++                    caps[i].1 = if hi < f64::MAX { floor_grid(i, hi) } else { hi };
++                    later = caps[i].1;
++                }
++            }
++            caps
++        })
++        .collect();
+     let date_format = ordered_date_format(&member_cols, params, kind);
+ 
+     log::info!(
+@@ -680,7 +703,7 @@ fn resolve_ordered(
+         date_format,
+         anchor_buckets,
+         gap_buckets,
+-        member_ranges,
++        pattern_ranges,
+         null_ratio,
+         blank_patterns,
+         blank_cumulative,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5092** (2026-11-21): fix(mcp): ignore output_file with a note for commands that can't write one (@jqnatividad)
+- **PR #5091** (2026-11-21): fix(synthesize): cap ordered members only by the members a row leaves filled (@jqnatividad)
 - **PR #5090** (2026-11-21): feat(synthesize): ordered relationship members keep their own blanks (@jqnatividad)
 - **PR #5089** (2026-11-21): fix(mcp): don't report an error for commands that write only their own files (@jqnatividad)
 - **PR #5088** (2026-11-21): docs(synthesize): name both blank limits for discovered ordered pairs (@jqnatividad)
 - **PR #5087** (2026-11-21): fix(mcp): run .sql scripts on sqlp; allow nested ~/ and to parquet dirs (@jqnatividad)
-- **PR #5086** (2026-11-21): fix(mcp): don't let extsort/extdedup empty a file through output_file (@jqnatividad)
-- **PR #5085** (2026-11-21): feat(synthesize): --discover-relationships <file> finds joint, correlated and ordered groups (@jqnatividad)
 
 ---
 
@@ -2588,13 +2686,13 @@ Co-Authored-By: Claude Opus 5.5 <[REDAC
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. mcp): don't report an error for commands that write only their own files
+## X. mcp): ignore output_file with a note for commands that can't write one
 
 **RULE**:
 When implementing operations in `.claude/skills/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6f4d08b6`: mcp): don't report an error for commands that write only their own files. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `778227f6`: mcp): ignore output_file with a note for commands that can't write one. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/CHANGELOG.md`.
@@ -2602,21 +2700,17 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-### Fixed
-- **Commands that write only their own files no longer report an error.** The `split`, `partition`, `to` and `validate` skills have no `--output`, but in TSV output mode (the default) or on large inputs the server still gave them a temp output file, then failed reading it back (`Error processing output from temp file: ENOENT`) although the command had succeeded. `extdedup --no-output` and `schema --stdout` failed the same way. The server now uses a temp file only for skills with `--output` or a positional output, and returns stdout when a command didn't write its temp file. A successful command with no stdout reports that it completed, with qsv's own summary (for example `Wrote 2 chunk/s to …`, cut to 4,000 characters) (#5089).
-- **`output_file` is refused for commands that can't write one.** Passing it to `split`, `partition` or another skill without an output option used to report "Successfully wrote output to" a file qsv never wrote (#5089).
-- **A qsv binary that fails to start is reported as an error.** If the configured binary was removed or lost its execute permission after the server started, the spawn error was treated as exit code 0 (#5089).
-
+- **`output_file` no longer loses the result of commands that can't write one.** Passing it to `count`, `headers`, `split` or another skill without an output option reported "Successfully wrote output to" a file qsv never wrote, and dropped what qsv printed. The server now ignores `output_file` for these commands, returns the result and adds a note saying so in a separate content block (#5089, #5092).
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+- **`output_file` is refused for commands that can't write one.** Passing it to `split`, `partition` or another skill without an output option used to report "Successfully wrote output to" a file qsv never wrote (#5089).
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6f4d08b6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `778227f6` are properly handled with clean fallback behavior.
 
 
 ## 3. Decision Protocol & Boundary Restrictions

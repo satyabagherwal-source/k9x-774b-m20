@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "6f4d08b6",
+    "sourceVersion": "778227f6",
     "license": "NOASSERTION",
-    "contentHash": "09c63f84cc4682f8ab7139f81793ad0e143eca4659fc0998557d5ba8b448f0ea",
-    "lastHarvestedAt": "2026-11-21T21:31:48.441Z",
+    "contentHash": "1b7c00ff9946028a37bfede9c49bf0a294647cb047541d1c7d65bd11154fe3cb",
+    "lastHarvestedAt": "2026-11-21T22:48:38.311Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -11655,8 +11655,8 @@
     "sourceUrl": "https://huggingface.co/AtomicChat/LFM3-1.7B-Uncensored-GGUF",
     "sourceVersion": "hf-atomicchat-lfm3-1.7b-uncensored-gguf",
     "license": "Open-Source",
-    "contentHash": "cda1720f1870f6d7789fb20363434c0ba0dc9af262e98c5eaf0da1bf314c47f1",
-    "lastHarvestedAt": "2026-11-14T00:07:59.739Z",
+    "contentHash": "d9b8a89ac7c770e41d9c08a27924ae83d1afe815b9070f9f5e0d0f91984a72ff",
+    "lastHarvestedAt": "2026-11-21T22:48:21.599Z",
     "learningId": "learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf"
   },
   "hf-edge0-audio8-tts-realistic-0.6b": {

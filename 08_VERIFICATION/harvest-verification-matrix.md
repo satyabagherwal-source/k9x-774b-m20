@@ -11924,3 +11924,5 @@
 | `CYCLE-2026-11-21-PROJ-EVOLVE` | `2026-11-21T22:30:46.080Z` | `nucleoidai-nucleoid` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-DB0D402F` [Domain D] | Yes (`2e2a0964...`) |
 | `CYCLE-20261121-QU9Q` | `2026-11-21T22:40:04.286Z` | `Efficient-Large-Model/Open-H3-Regenerate-2K` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-efficient-large-model-open-h3-regenerate-2k-learnings.md` | Yes (`4b8664ed...`) |
 | `CYCLE-20261121-R1WI` | `2026-11-21T22:40:14.178Z` | `authzed/spicedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9856` | Yes (`df5bd163...`) |
+| `CYCLE-20261121-1HZU` | `2026-11-21T22:48:21.594Z` | `AtomicChat/LFM3-1.7B-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-atomicchat-lfm3-1.7b-uncensored-gguf-learnings.md` | Yes (`d9b8a89a...`) |
+| `CYCLE-20261121-1UW3` | `2026-11-21T22:48:38.307Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9857` | Yes (`1b7c00ff...`) |

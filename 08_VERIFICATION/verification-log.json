@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261119-FEWQ",
-    "timestamp": "2026-11-19T19:11:53.402Z",
-    "repository": "datalab-to/indra-ocr",
-    "learningId": "learn-huggingface-datalab-to-indra-ocr",
-    "contentHash": "bbd722879260e3f3c637c1e292f3d89507bb802c29dd1022fe19711b25eab4e1",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-FHBJ",
-    "timestamp": "2026-11-19T19:11:56.527Z",
-    "repository": "vercel-labs/agent-desktop",
-    "learningId": "learn-github-vercel-labs-agent-desktop",
-    "contentHash": "d94c6c7da69e72f9d7b61e81f01edcd9f9dc838c3b0b623f1082e1c7cda49adc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261119-FO5D",
     "timestamp": "2026-11-19T19:12:05.377Z",
     "repository": "beclab/Olares",
@@ -7490,6 +7460,36 @@
     "repository": "authzed/spicedb",
     "learningId": "learn-github-authzed-spicedb",
     "contentHash": "df5bd163d5382c84ae4f406c20af4227ddc5de1399c15aa16b2969f0199c8d37",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-1HZU",
+    "timestamp": "2026-11-21T22:48:21.594Z",
+    "repository": "AtomicChat/LFM3-1.7B-Uncensored-GGUF",
+    "learningId": "learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf",
+    "contentHash": "d9b8a89ac7c770e41d9c08a27924ae83d1afe815b9070f9f5e0d0f91984a72ff",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-1UW3",
+    "timestamp": "2026-11-21T22:48:38.307Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "1b7c00ff9946028a37bfede9c49bf0a294647cb047541d1c7d65bd11154fe3cb",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T22:40:20.193Z",
+  "last_updated": "2026-11-21T22:48:44.515Z",
   "total_verified_learnings": 9062,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23313,
+  "total_items": 23316,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112125,10 +112125,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-dathere-qsv-content-information-intelligence-dathere-qsv-core-invariants.md",
       "title": "Content & Information Intelligence: dathere/qsv Core Invariants",
       "repository": "dathere/qsv",
-      "source_version": "82819859",
-      "content_hash": "a80b29d921ca027c4f5547f423b67ce37a596bb35ac033f94e7357798201ff48",
+      "source_version": "778227f6",
+      "content_hash": "9e680615dc94f03c409441a9a834d6243aa74d5417183729471d78de1f27c355",
       "domain_letter": "I",
-      "persisted_at": "2026-11-20T16:42:28.759Z"
+      "persisted_at": "2026-11-21T22:48:38.701Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-dathere-qsv": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dathere-qsv",
@@ -112137,10 +112137,10 @@
       "relative_path": "08_VERIFICATION/dathere-qsv-verification-protocol-empirical-defect-shield-for-dathere-qsv.md",
       "title": "Verification Protocol: Empirical Defect Shield for dathere/qsv",
       "repository": "dathere/qsv",
-      "source_version": "6f4d08b6",
-      "content_hash": "246980d81bc6f2952ddc835924756fde395d13dd8981bb8808ebffaccbdbd847",
+      "source_version": "778227f6",
+      "content_hash": "84f2bf2a50782de0086dbaedb292f6be9547d9d4cef6c91c4d69658bc143f140",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T21:31:49.130Z"
+      "persisted_at": "2026-11-21T22:48:39.007Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i",
@@ -112162,9 +112162,9 @@
       "title": "Content & Information Intelligence: dathere-qsv-learnings Core Invariants",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "782666e0bf0ecdb32a39992b7f34ac5ea31caae55a69005da850e92979c39082",
+      "content_hash": "e331797199142b117529f4f3f87076df4fc29d61037dca48f47d8edc255191c7",
       "domain_letter": "I",
-      "persisted_at": "2026-11-20T16:42:33.088Z"
+      "persisted_at": "2026-11-21T22:48:43.467Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-dathere-qsv-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dathere-qsv-learnings",
@@ -112174,9 +112174,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dathere-qsv-learnings",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "f3e397fa6a1e00cb87d42f919d76eb3792ef45555a5a3496b396928808f42662",
+      "content_hash": "f69d5ffd97a165bbc4875bae5adb5d43e712ecf780adda51388f721c2f6846e8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T21:32:23.082Z"
+      "persisted_at": "2026-11-21T22:48:43.788Z"
     },
     "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels": {
       "item_id": "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels",
@@ -218874,13 +218874,13 @@
       "item_id": "candidate_directive-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-R67W-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-1ZFD-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "b7a090bc0b164c0f44e72421326973d0d57e43fe0c40f187df51c6490147c3df",
+      "content_hash": "239fb7101b0580ed365bd135efcf3f8f014b799ed7438d55ffcc7f3eda31b244",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T22:40:19.777Z"
+      "persisted_at": "2026-11-21T22:48:44.188Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c",
@@ -218890,9 +218890,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "49d9e9e22454057779644995da8f24a7095db431dcd45dd649843e927acec112",
+      "content_hash": "d5306c5e5eddd530cddc63492dc20fc4d4ed2cb303c014dc59db9d58a1113f63",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T22:40:19.985Z"
+      "persisted_at": "2026-11-21T22:48:44.347Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -218902,9 +218902,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "bcfd542acbff058f4c9f3fbe0255fd37065ba2ec84017e12657ec742407aa010",
+      "content_hash": "c763140be1fc26a208902e28edf162053962a282b3fe4e6bf0dc03e791a36945",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T22:40:20.193Z"
+      "persisted_at": "2026-11-21T22:48:44.515Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -219809,7 +219809,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/AtomicChat/LFM3-1.7B-Uncensored-GGUF",
       "source_version": "hf-atomicchat-lfm3-1.7b-uncensored-gguf",
-      "content_hash": "cda1720f1870f6d7789fb20363434c0ba0dc9af262e98c5eaf0da1bf314c47f1",
+      "content_hash": "d9b8a89ac7c770e41d9c08a27924ae83d1afe815b9070f9f5e0d0f91984a72ff",
       "dossier_path": "07_PROJECT_LEARNING/hf-atomicchat-lfm3-1.7b-uncensored-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-atomicchat-lfm3-1.7b-uncensored-gguf-learnings.md",
       "promoted_rules": [],
@@ -219818,7 +219818,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T00:07:59.580Z",
+      "verified_at": "2026-11-21T22:48:21.369Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -219835,9 +219835,9 @@
       "title": "Research & Knowledge Intelligence: AtomicChat/LFM3-1.7B-Uncensored-GGUF Core Invariants",
       "repository": "AtomicChat/LFM3-1.7B-Uncensored-GGUF",
       "source_version": "hf-atomicchat-lfm3-1.7b-uncensored-gguf",
-      "content_hash": "9c8974422206e72f50917774fe6d2565f44b9e7c6f5572c57e43f2223e478b4d",
+      "content_hash": "5e94d3cdd1da2295334d7e183e001a1cbe0113bf262d1d47a3e5dd24291aecb4",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T00:07:59.937Z"
+      "persisted_at": "2026-11-21T22:48:21.807Z"
     },
     "learn-github-dathere-qsv": {
       "learning_id": "learn-github-dathere-qsv",
@@ -219847,8 +219847,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "6f4d08b6",
-      "content_hash": "09c63f84cc4682f8ab7139f81793ad0e143eca4659fc0998557d5ba8b448f0ea",
+      "source_version": "778227f6",
+      "content_hash": "1b7c00ff9946028a37bfede9c49bf0a294647cb047541d1c7d65bd11154fe3cb",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -220006,6 +220006,11 @@
           "number": 9836,
           "title": "ordered relationship members keep their own blanks",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9857,
+          "title": "ignore output_file with a note for commands that can't write one",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -220013,7 +220018,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T21:31:48.233Z",
+      "verified_at": "2026-11-21T22:48:38.106Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -220068,9 +220073,9 @@
       "title": "Research & Knowledge Intelligence: hf-atomicchat-lfm3-1.7b-uncensored-gguf-learnings Core Invariants",
       "repository": "hf-atomicchat-lfm3-1.7b-uncensored-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "3c832eb28c69dbf3be5d393d9a2762a89cd73c1ca3f6863516646ab669780b1b",
+      "content_hash": "1b8b16b583404568ee0a558701ecbbcd7505d9fb50f83be657d10fe6ac009462",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T00:08:54.409Z"
+      "persisted_at": "2026-11-21T22:48:42.020Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-provablehq-snarkos-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-provablehq-snarkos-learnings",
@@ -314233,10 +314238,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/dathere-qsv-agent-contract-dathere-qsv-autonomous-specialist-persona.md",
       "title": "Agent Contract: dathere/qsv Autonomous Specialist Persona",
       "repository": "dathere/qsv",
-      "source_version": "6f4d08b6",
-      "content_hash": "d5850121c789aa599d354ed85d806789c496fc14f9e03c6890551323d25afe78",
-      "domain_letter": "H",
-      "persisted_at": "2026-11-21T21:31:48.995Z"
+      "source_version": "778227f6",
+      "content_hash": "e33f521453116e9c39dd628446354e37bb8f6f2f45a68a7239bf8a0d5a98d6fb",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-21T22:48:38.868Z"
     },
     "candidate_directive-groovy-adding-npm-groovy-lint-and-fixing-npm-build-error": {
       "item_id": "candidate_directive-groovy-adding-npm-groovy-lint-and-fixing-npm-build-error",
@@ -316655,9 +316660,9 @@
       "title": "Agent Contract: dathere-qsv-learnings Autonomous Specialist Persona",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "9b5406713babd7a30385826cdf98279a099562d7c1660f93d2b002da93aec475",
-      "domain_letter": "H",
-      "persisted_at": "2026-11-21T21:32:22.929Z"
+      "content_hash": "809c53ebeabe10fe9369cee48b8c87cf3712d02539f6ff6390048faa6dbbf481",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-21T22:48:43.629Z"
     },
     "rule-9848": {
       "learning_id": "rule-9848",
@@ -316940,6 +316945,44 @@
       "content_hash": "51a52e02b09b3ab882dbb85a6e0daea6f0a0a7f3ab3897de09c4d0605c6b6d27",
       "domain_letter": "I",
       "persisted_at": "2026-11-21T22:40:18.828Z"
+    },
+    "rule-9857": {
+      "learning_id": "rule-9857",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9857,
+      "title": "ignore output_file with a note for commands that can't write one",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "778227f6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T22:48:38.106Z"
+    },
+    "candidate_directive-ignore-output_file-with-a-note-for-commands-that-can-t-write-one": {
+      "item_id": "candidate_directive-ignore-output_file-with-a-note-for-commands-that-can-t-write-one",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-1V2G-ignore-output_file-with-a-note-for-commands-that-can-t-write-one.md",
+      "title": "ignore output_file with a note for commands that can't write one",
+      "repository": "dathere/qsv",
+      "source_version": "778227f6",
+      "content_hash": "cc69a7728484e1c5b00edf4457d70c5c64b5aba6e5a91c0d3aef4b49d397d284",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-21T22:48:38.540Z"
+    },
+    "candidate_directive-mcp-ignore-output_file-with-a-note-for-commands-that-can-t-write-one": {
+      "item_id": "candidate_directive-mcp-ignore-output_file-with-a-note-for-commands-that-can-t-write-one",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-1YQZ-mcp-ignore-output_file-with-a-note-for-commands-that-can-t-write-one.md",
+      "title": "mcp): ignore output_file with a note for commands that can't write one",
+      "repository": "dathere-qsv-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4bad1b859756c3196c27ffa99516193f54b858e3646e938d0b6843d0061ab37b",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-21T22:48:43.310Z"
     }
   },
   "ai-builder-brain": {

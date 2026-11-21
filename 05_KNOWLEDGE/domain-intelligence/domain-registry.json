@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T22:40:19.985Z",
+  "last_updated": "2026-11-21T22:48:44.347Z",
   "total_records": 2286,
   "domains": {
     "A": {
@@ -8074,8 +8074,8 @@
       "title": "Content & Information Intelligence: dathere/qsv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-dathere-qsv-content-information-intelligence-dathere-qsv-core-invariants.md",
       "repository": "dathere/qsv",
-      "content_hash": "a80b29d921ca027c4f5547f423b67ce37a596bb35ac033f94e7357798201ff48",
-      "created_at": "2026-11-20T16:42:28.759Z"
+      "content_hash": "9e680615dc94f03c409441a9a834d6243aa74d5417183729471d78de1f27c355",
+      "created_at": "2026-11-21T22:48:38.701Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i",
@@ -8092,8 +8092,8 @@
       "title": "Content & Information Intelligence: dathere-qsv-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-dathere-qsv-learnings-content-information-intelligence-dathere-qsv-learnings-cor.md",
       "repository": "dathere-qsv-learnings",
-      "content_hash": "782666e0bf0ecdb32a39992b7f34ac5ea31caae55a69005da850e92979c39082",
-      "created_at": "2026-11-20T16:42:33.088Z"
+      "content_hash": "e331797199142b117529f4f3f87076df4fc29d61037dca48f47d8edc255191c7",
+      "created_at": "2026-11-21T22:48:43.467Z"
     },
     "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -11677,8 +11677,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "49d9e9e22454057779644995da8f24a7095db431dcd45dd649843e927acec112",
-      "created_at": "2026-11-21T22:40:19.985Z"
+      "content_hash": "d5306c5e5eddd530cddc63492dc20fc4d4ed2cb303c014dc59db9d58a1113f63",
+      "created_at": "2026-11-21T22:48:44.347Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
@@ -11979,8 +11979,8 @@
       "title": "Research & Knowledge Intelligence: AtomicChat/LFM3-1.7B-Uncensored-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-atomicchat-lfm3-1-7b-uncensored-gguf-research-knowledge-intelligence-atomicch.md",
       "repository": "AtomicChat/LFM3-1.7B-Uncensored-GGUF",
-      "content_hash": "9c8974422206e72f50917774fe6d2565f44b9e7c6f5572c57e43f2223e478b4d",
-      "created_at": "2026-11-14T00:07:59.937Z"
+      "content_hash": "5e94d3cdd1da2295334d7e183e001a1cbe0113bf262d1d47a3e5dd24291aecb4",
+      "created_at": "2026-11-21T22:48:21.807Z"
     },
     "domain_intelligence-design-intelligence-dathere-qsv-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-dathere-qsv-core-invariants",
@@ -12039,8 +12039,8 @@
       "title": "Research & Knowledge Intelligence: hf-atomicchat-lfm3-1.7b-uncensored-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-atomicchat-lfm3-1-7b-uncensored-gguf-learnings-research-knowledge-intelligenc.md",
       "repository": "hf-atomicchat-lfm3-1.7b-uncensored-gguf-learnings",
-      "content_hash": "3c832eb28c69dbf3be5d393d9a2762a89cd73c1ca3f6863516646ab669780b1b",
-      "created_at": "2026-11-14T00:08:54.409Z"
+      "content_hash": "1b8b16b583404568ee0a558701ecbbcd7505d9fb50f83be657d10fe6ac009462",
+      "created_at": "2026-11-21T22:48:42.020Z"
     },
     "domain_intelligence-design-intelligence-dathere-qsv-learnings-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-dathere-qsv-learnings-core-invariants",

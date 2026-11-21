@@ -11957,3 +11957,5 @@ Every entry in this ledger must capture:
 | `learn-dom-d-db0d402f` | `project://nucleoidai-nucleoid` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | 2026-11-21T22:30:46.080Z |
 | `learn-huggingface-efficient-large-model-open-h3-regenerate-2k` | `https://huggingface.co/Efficient-Large-Model/Open-H3-Regenerate-2K` | `hf-efficie` | Multi-dimensional audit evidence | 2026-11-21T22:40:04.291Z |
 | `learn-github-authzed-spicedb` | `https://github.com/authzed/spicedb` | `c77bad6d` | Multi-dimensional audit evidence | 2026-11-21T22:40:14.182Z |
+| `learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf` | `https://huggingface.co/AtomicChat/LFM3-1.7B-Uncensored-GGUF` | `hf-atomicc` | Multi-dimensional audit evidence | 2026-11-21T22:48:21.599Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `778227f6` | Multi-dimensional audit evidence | 2026-11-21T22:48:38.311Z |
