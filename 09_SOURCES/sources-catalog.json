@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "3996998d",
+    "sourceVersion": "6d77feaf",
     "license": "NOASSERTION",
-    "contentHash": "39b266b2f16abcb3d890b12113fb12ea4601637d8580adece257176551229597",
-    "lastHarvestedAt": "2026-11-21T13:30:43.015Z",
+    "contentHash": "43a1a0a685f7e79e7f0dc7c6700508a78d413f0acd2fa75a328194b899241bf4",
+    "lastHarvestedAt": "2026-11-21T15:17:53.155Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -3013,10 +3013,10 @@
     "repository": "metalbear-co/mirrord",
     "platform": "github",
     "sourceUrl": "https://github.com/metalbear-co/mirrord",
-    "sourceVersion": "3a843d8d",
+    "sourceVersion": "7f23826a",
     "license": "MIT",
-    "contentHash": "42987ebf66e7d1cde8f469f4775f9c125b1362175957e010f1a01c8a109a90aa",
-    "lastHarvestedAt": "2026-11-20T01:00:31.599Z",
+    "contentHash": "e6a25db44bef3579de93ccb76226c09487517bee6e077d617aec6441397a3a94",
+    "lastHarvestedAt": "2026-11-21T15:17:38.945Z",
     "learningId": "learn-github-metalbear-co-mirrord"
   },
   "openkruise-kruise": {
@@ -6413,10 +6413,10 @@
     "repository": "prometheus/prometheus",
     "platform": "github",
     "sourceUrl": "https://github.com/prometheus/prometheus",
-    "sourceVersion": "2b311b97",
+    "sourceVersion": "06170caa",
     "license": "Apache-2.0",
-    "contentHash": "92004005a6e474b3ac81c6a36223edfe14809167a3bd9223531f18810fe675eb",
-    "lastHarvestedAt": "2026-11-20T11:08:57.954Z",
+    "contentHash": "b013df4c1cf6153889609c59a2c84086553a27eeae8aec6a1246d21e4b7c0702",
+    "lastHarvestedAt": "2026-11-21T15:17:45.792Z",
     "learningId": "learn-github-prometheus-prometheus"
   },
   "meilisearch-meilisearch": {
@@ -10575,8 +10575,8 @@
     "sourceUrl": "https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash",
     "sourceVersion": "hf-minimaxai-minimax-m3.1-flash",
     "license": "Open-Source",
-    "contentHash": "f1050e030f337b984a71f5d06f6b0be61a06534f75569719fb88e9514fa1dc2d",
-    "lastHarvestedAt": "2026-11-17T17:20:11.509Z",
+    "contentHash": "ee48255f09804cdf510a77f82928d118c6ede8131b2e2a8fe3d6471c33fd408a",
+    "lastHarvestedAt": "2026-11-21T15:17:36.885Z",
     "learningId": "learn-huggingface-minimaxai-minimax-m3-1-flash"
   },
   "nomadamas-cozyclay": {

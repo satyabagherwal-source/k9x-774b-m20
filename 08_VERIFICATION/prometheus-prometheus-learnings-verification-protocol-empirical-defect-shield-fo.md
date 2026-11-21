@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T11:09:14.636Z",
+  "timestamp": "2026-11-21T15:17:59.517Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-prometheus-prometheus-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [prometheus-prometheus-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T11:09:14.636Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T15:17:59.517Z`  
 > **Learning ID**: `LEARN-EVO-prometheus-prometheus-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/prometheus-prometheus-learnings.md`  
 > **Source**: github ([https://github.com/prometheus/prometheus](https://github.com/prometheus/prometheus))  
-> **Source Version**: `2b311b97`  
+> **Source Version**: `06170caa`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T11:08:56.719Z  
+> **Timestamp**: 2026-11-21T15:17:44.548Z  
 > **Learning ID**: `learn-github-prometheus-prometheus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/prometheus-prometheus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/prometheus/prometheus](https://github.com/prometheus/prometheus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T11:08:56.712Z  
+> **Harvest Timestamp**: 2026-11-21T15:17:44.541Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: The Prometheus monitoring system and time series database.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 67735 stars
+- **Stars / Engagement**: 67744 stars
 
 ---
 
@@ -1806,13 +1806,11 @@ func OpenDir(path string) (*os.File, error) { return os.Open(path) }
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #20507** (2026-11-19): **ci: pin golang-builder image in repo_sync workflow**
-  *Symptoms*: ### What did you do?  Inspected the `repo_sync` workflow:  https://github.com/prometheus/prometheus/blob/main/.github/workflows/repo_sync.yml  It references `quay.io/prometheus/golang-builder` without a tag or digest, making the image reference mutable. [PR #20115](https://github.com/prometheus/prometheus/pull/20115) updates a digest for this image, but the reference in `repo_sync.yml` remains unpinned.  ### What did you expect to see?  The `repo_sync` workflow should use an immutable image digest, with digest updates tracked by Renovate.  ### What did you see instead? Under which circumstances?  The image reference in `repo_sync.yml` has no tag or digest. This occurs whenever the scheduled `repo_sync` workflow runs.  ### System information  N/A  ### Prometheus version  N/A  ### Prometheus configuration file  N/A  ### Alertmanager version N/A   ### Alertmanager configuration file  N/A  ### Logs  N/A
-  **Post-Mortem & Fix Analysis**:
-  > This was addressed by [PR #20115](https://github.com/prometheus/prometheus/pull/20115), which pinned the `golang-builder` image digest in `.github/workflows/repo_sync.yml`. The workflow now uses an immutable digest, and Renovate has continued to update it.  I’ll close this issue as already addressed.
+- **Issue #20521** (2026-11-20): **cmd/prometheus: pass --scrape.discovery-reload-interval=100ms in scrape tests**
+  *Symptoms*: Triggered by https://github.com/prometheus/prometheus/pull/18727#discussion_r4530902102  Reduce test runtime by passing --scrape.discovery-reload-interval=100ms to TestRemoteWrite_PerQueueMetricsAfterRelabeling (~5s saved on my laptop) and TestScrapeFailureLogFile (~3s saved on my laptop). The default 5s reload interval is pure wait time in tests with static targets.  Follows the same pattern used in pthjer tests.  <!--     - Please give your PR a title in the form "area: short description".  For example "tsdb: reduce disk usage by 95%"      - Please sign CNCF's Developer Certificate of Origin and sign-off your commits by adding the -s / --signoff flag to `git commit`. See https://github.com/apps/dco for more information.      - If the PR adds or changes a behaviour or fixes a bug of an exported API it would need a unit/e2e test.      - Where possible use only exported APIs for tests to simplify the review and make it as close as possible to an actual library usage.      - Performance improvements would need a benchmark test to prove it.      - All exposed objects should have a comment.      - All comments should start with a capital letter and end with a full stop.  -->  #### Which issue(s) does the PR fix: <!-- If it applies. Automatically closes linked issue when PR is merged. Usage: `Fixes #<issue number>`, or `Fixes (paste link of issue)`. More at https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/linking-a-pull-request-to-an-issue#linking-a-pu
 
-- **Issue #20499** (2026-11-19): **ui: fix function signatures in the codemirror-promql lint table**
-  *Symptoms*: `codemirror-promql/src/types/function.ts` is the table the editor's linter uses to check function calls. Four entries disagreed with the Go parser (`promql/parser/functions.go`):  - `pi` returned `vector` instead of `scalar`, so valid queries like `vector(pi())` or `histogram_quantile(pi() / 4, ...)` were flagged with "expected type scalar ..., got vector". - `histogram_quantiles` had `variadic: 10` instead of 9, so the linter accepted one argument more than Prometheus does (12 allowed, 13 passed). - `cosh` and `sinh` were registered as `Cosh` and `Sinh`, which showed up in the lint messages.  This PR fixes those four entries. It doesn't change the grammar or anything else.  Tests: `parser.test.ts` gets lint cases for each of the above. `function.test.ts` is new: it compares every entry of the table with `mantine-ui/src/promql/functionSignatures.ts`, which `make check-generated-promql-functions` keeps in sync with the Go parser, so the two can't drift apart unnoticed. It skips `min_of` and `max_of`, because lezer-promql only supports them inside duration expressions so far. On `main`, 6 of the new cases fail; with this change the codemirror-promql tests pass.  #### Which issue(s) does the PR fix:  Fixes #20498  #### Release notes for end users (**ALL** commits must be considered).  *Reviewers should verify clarity and quality.*  ```release-notes [BUGFIX] UI: Fix false type errors in the PromQL editor for `pi()`, and align the `histogram_quantiles` argument 
+- **Issue #20520** (2026-11-20): **tsdb: downgrade compaction cancel log from error to info on shutdown**
+  *Symptoms*: Triggered by https://github.com/prometheus/prometheus/pull/18340#discussion_r4626779980  `DB.Close()` cancels the compaction context. If a compaction is in-flight, it returns `context.Canceled` and `run()` logs it at `level=ERROR`, even though the codebase already treats this as expected shutdown behavior (skips the failure metric [here](https://github.com/prometheus/prometheus/blob/2b311b9762bb5834a17374fcf45a8e5b2043293f/tsdb/db.go#L1570), skips marking blocks as failed [here](https://github.com/prometheus/prometheus/blob/2b311b9762bb5834a17374fcf45a8e5b2043293f/tsdb/compact.go#L674)).  This change adds a check at both compaction call sites in `run()` and downgrades the log to `info`. Per the [docs](https://prometheus.io/docs/prometheus/2.55/getting_started/#shutting-down-your-instance-gracefully), `SIGTERM` is the recommended clean shutdown, it should not emit `level=ERROR`.  <!--     - Please give your PR a title in the form "area: short description".  For example "tsdb: reduce disk usage by 95%"      - Please sign CNCF's Developer Certificate of Origin and sign-off your commits by adding the -s / --signoff flag to `git commit`. See https://github.com/apps/dco for more information.      - If the PR adds or changes a behaviour or fixes a bug of an exported API it would need a unit/e2e test.      - Where possible use only exported APIs for tests to simplify the review and make it as close as possible to an actual library usage.      - Performance improvements would need a b
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1829,376 +1827,102 @@ func OpenDir(path string) (*os.File, error) { return os.Open(path) }
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2b311b97` (2026-11-19)
-**Commit Message**: ui: fix function signatures in the codemirror-promql lint table (#20499)
+### Incident Patch 1: `06170caa` (2026-11-20)
+**Commit Message**: cmd/prometheus: pass --scrape.discovery-reload-interval=100ms in scrape tests
 
-* ui: fix function signatures in the codemirror-promql lint table
+Reduce test runtime by passing --scrape.discovery-reload-interval=100ms
+to TestRemoteWrite_PerQueueMetricsAfterRelabeling (~5s saved on my laptop) and
+TestScrapeFailureLogFile (~3s saved on my laptop). The default 5s reload interval
+is pure wait time in tests with static targets.
 
-pi() returns a scalar, but the table said vector, so valid queries such as
-vector(pi()) or histogram_quantile(pi() / 4, ...) were flagged with a type
-error. histogram_quantiles allowed one argument more than the Go parser, and
-cosh and sinh were registered as "Cosh" and "Sinh", which showed up in the
-lint messages.
+Follows the same pattern used in pthjer tests.
 
-Add lint tests for these cases, and a test that compares every entry of the
-table with functionSignatures.ts, which CI keeps in sync with the Go parser,
-so the two cannot drift apart unnoticed.
+Signed-off-by: Ayoub Mrini <[REDACTED_EMAIL]>
 
-Fixes #20498
-
-Signed-off-by: Bahaa Mattar <[REDACTED_EMAIL]>
-
-* ui: address review on the codemirror-promql function table test
-
-Keep the generated table's own type in the comparison test so it
-type-checks, describe min_of and max_of as an editor gap, and add a case
-that rejects pi() where an instant vector is required.
-
-Signed-off-by: Bahaa Mattar <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Bahaa Mattar <[REDACTED_EMAIL]>
-
-**File**: `web/ui/module/codemirror-promql/src/parser/parser.test.ts` (modified, +63/-0)
+**File**: `cmd/prometheus/main_test.go` (modified, +1/-0)
 ```diff
-@@ -918,6 +918,69 @@ describe('promql operations', () => {
-         },
-       ],
-     },
-+    {
-+      expr: 'vector(pi())',
-+      expectedValueType: ValueType.vector,
-+      expectedDiag: [],
-+    },
-+    {
-+      expr: 'histogram_quantile(pi() / 4, rate(some_metric[5m]))',
-+      expectedValueType: ValueType.vector,
-+      expectedDiag: [],
-+    },
-+    {
-+      expr: 'sum(pi())',
-+      expectedValueType: ValueType.vector,
-+      expectedDiag: [
-+        {
-+          from: 4,
-+          to: 8,
-+          message: 'expected type vector in aggregation expression, got scalar',
-+          severity: 'error',
-+        },
-+      ],
-+    },
-+    {
-+      expr: 'cosh(1)',
-+      expectedValueType: ValueType.vector,
-+      expectedDiag: [
-+        {
-+          from: 5,
-+          to: 6,
-+          message: 'expected type vector in call to function "cosh", got scalar',
-+          severity: 'error',
-+        },
-+      ],
-+    },
-+    {
-+      expr: 'sinh(1)',
-+      expectedValueType: ValueType.vector,
-+      expectedDiag: [
-+        {
-+          from: 5,
-+          to: 6,
-+          message: 'expected type vector in call to function "sinh", got scalar',
-+          severity: 'error',
-+        },
-+      ],
-+    },
-+    {
-+      expr: 'histogram_quantiles(some_metric, "quantile", 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.99)',
-+      expectedValueType: ValueType.vector,
-+      expectedDiag: [],
-+    },
-+    {
-+      expr: 'histogram_quantiles(some_metric, "quantile", 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.99, 0.999)',
-+      expectedValueType: ValueType.vector,
-+      expectedDiag: [
-+        {
-+          from: 0,
-+          to: 102,
-+          message: 'expected at most 12 argument(s) in call to "histogram_quantiles", got 13',
-+          severity: 'error',
-+        },
-+      ],
-+    },
-     {
-       expr: 'rate(some_metric)',
-       expectedValueType: ValueType.vector,
+@@ -1408,6 +1408,7 @@ remote_write:
+ 		configFile,
+ 		port,
+ 		fmt.Sprintf("--storage.tsdb.path=%s", tmpDir),
++		"--scrape.discovery-reload-interval=100ms",
+ 	)
+ 	require.NoError(t, prom.Start())
+ 
 ```
 
-**File**: `web/ui/module/codemirror-promql/src/types/function.test.ts` (added, +43/-0)
+**File**: `cmd/prometheus/scrape_failure_log_test.go` (modified, +1/-0)
 ```diff
-@@ -0,0 +1,43 @@
-+// Copyright 2026 The Prometheus Authors
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+// http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+import { parser } from '@prometheus-io/lezer-promql';
-+import { getFunction, PromQLFunction } from './function';
-+// functionSignatures.ts is generated from promql/parser/functions.go, and CI checks that it is up to date.
-+import { functionSignatures } from '../../../../mantine-ui/src/promql/functionSignatures';
-+
-+// min_of and max_of are regular (experimental) functions in the Go parser, but lezer-promql only supports them
-+// inside duration expressions so far, so they have no entry in the function table yet.
-+const durationOnlyFunctions = ['min_of', 'max_of'];
-+
-+describe('promqlFunctions', () => {
-+  it('matches the function signatures of the Go parser', () => {
-+    // The table is keyed by the grammar's node IDs, so probe every node ID to collect all of its entries.
-+    const actual: { [name: string]: PromQLFunction } = {};
-+    for (let id = 0; id < parser.nodeSet.types.length; id++) {
-+      const fn = getFunction(id);
-+      if (fn) {
-+        actual[fn.name] = fn;
-+      }
-+    }
-+
-+    const expected: typeof functionSignatures = {};
-+    for (const { name, argTypes, variadic, returnType } of Object.values(functionSignatures)) {
-+      if (!durationOnlyFunctions.includes(name)) {
-+        expected[name] = { name, argTypes, variadic, returnType };
-+      }
-+    }
-+
-+    expect(actual).toEqual(expected);
-+  });
-+});
-```
-
-**File**: `web/ui/module/codemirror-promql/src/types/function.ts` (modified, +4/-4)
-```diff
-@@ -218,7 +218,7 @@ const promqlFunctions: { [key: number]: PromQLFunction } = {
-     returnType: ValueType.vector,
-   },
-   [Cosh]: {
--    name: 'Cosh',
-+    name: 'cosh',
-     argTypes: [ValueType.vector],
-     variadic: 0,
-     returnType: ValueType.vector,
-@@ -322,7 +322,7 @@ const promqlFunctions: { [key: number]: PromQLFunction } = {
-   [HistogramQuantiles]: {
-     name: 'histogram_quantiles',
-     argTypes: [ValueType.vector, ValueType.string, ValueType.scalar, ValueType.scalar],
--    variadic: 10,
-+    variadic: 9,
-     returnType: ValueType.vector,
-   },
-   [HistogramStdDev]: {
-@@ -479,7 +479,7 @@ const promqlFunctions: { [key: number]: PromQLFunction } = {
-     name: 'pi',
-     argTypes: [],
-     variadic: 0,
--    returnType: ValueType.vector,
-+    returnType: ValueType.scalar,
-   },
-   [PredictLinear]: {
-     name: 'predict_linear',
-@@ -548,7 +548,7 @@ const promqlFunctions: { [key: number]: PromQLFunction } = {
-     returnType: ValueType.vector,
-   },
-   [Sinh]: {
--    name: 'Sinh',
-+    name: 'sinh',
-     argTypes: [ValueType.vector],
-     variadic: 0,
-     returnType: ValueType.vector,
+@@ -77,6 +77,7 @@ scrape_configs:
+ 		"--storage.tsdb.path=" + filepath.Join(tempDir, "data"),
+ 		fmt.Sprintf("--web.listen-address=127.0.0.1:%d", port),
+ 		"--web.enable-lifecycle",
++		"--scrape.discovery-reload-interval=100ms",
+ 	}
+ 	prometheusProcess := exec.Command(promPath, params...)
+ 	prometheusProcess.Stdout = os.Stdout
 ```
 
 ---
 
-### Incident Patch 2: `e52fb5b0` (2026-11-19)
-**Commit Message**: ui: highlight missing PromQL functions and keywords in the editor (#20488)
+### Incident Patch 2: `6c2b2964` (2026-11-20)
+**Commit Message**: tsdb: downgrade compaction cancel log from error to info on shutdown (#20520)
 
-* ui: highlight missing PromQL functions and keywords in the editor
+Triggered by https://github.com/prometheus/prometheus/pull/18340#discussion_r4626779980
 
-highlight.js maps grammar terms to highlighting tags, and any term that
-is not listed there is left unstyled. The list was missing:
+`DB.Close()` cancels the compaction context. If a compaction is in-flight,
+it returns `context.Canceled` and `run()` logs it at `level=ERROR`,
+even though the codebase already treats this as expected shutdown
+behavior (skips the failure metric
+[here](https://github.com/prometheus/prometheus/blob/2b311b9762bb5834a17374fcf45a8e5b2043293f/tsdb/db.go#L1570),
+skips marking blocks as failed
+[here](https://github.com/prometheus/prometheus/blob/2b311b9762bb5834a17374fcf45a8e5b2043293f/tsdb/compact.go#L674)).
 
-- the functions first_over_time, histogram_quantiles, histogram_stddev,
-  histogram_stdvar, info, mad_over_time, start_timestamp and the four
-  ts_of_*_over_time functions
-- count_values, which was listed as "Count_values" while the grammar
-  term is "CountValues"
-- the fill, fill_left and fill_right binop modifiers
-- the trim operators </ and >/
+This change adds a check at both
+compaction call sites in `run()` and downgrades the log to `info`.
+Per the [docs](https://prometheus.io/docs/prometheus/2.55/getting_started/#shutting-down-your-instance-gracefully),
+`SIGTERM` is the recommended clean shutdown, it should not emit
+`level=ERROR`.
 
-Add them, and add a test that reads every function name from the
-grammar, so that a new function cannot be added without highlighting.
+Signed-off-by: Ayoub Mrini <[REDACTED_EMAIL]>
 
-Fixes #20487
-
-Signed-off-by: Bahaa Mattar <[REDACTED_EMAIL]>
-
-* ui: test the new highlighted terms in expression.txt
-
-Replace the highlighting tests in promql.test.js with cases in
-expression.txt, as the grammar tests are written there.
-
-Signed-off-by: Bahaa Mattar <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Bahaa Mattar <[REDACTED_EMAIL]>
-
-**File**: `web/ui/module/lezer-promql/src/highlight.js` (modified, +4/-4)
+**File**: `tsdb/db.go` (modified, +10/-2)
 ```diff
-@@ -20,13 +20,13 @@ export const promQLHighLight = styleTags({
-     NumberDurationLiteral: tags.number,
-     NumberDurationLiteralInDurationContext: tags.number,
-     Identifier: tags.variableName,
--    'Abs Absent AbsentOverTime Acos Acosh Asin Asinh Atan Atanh AvgOverTime Ceil Changes Clamp ClampMax ClampMin Cos Cosh CountOverTime DaysInMonth DayOfMonth DayOfWeek DayOfYear Deg Delta Deriv EndFn Exp Floor HistogramAvg HistogramCount HistogramFraction HistogramQuantile HistogramSum DoubleExponentialSmoothing Hour Idelta Increase Integral Irate LabelReplace LabelJoin LastOverTime Ln Log10 Log2 MaxOverTime MinOverTime Minute Month Pi PredictLinear PresentOverTime QuantileOverTime Rad Range Rate Resets Round Scalar Sgn Sin Sinh Sort SortDesc SortByLabel SortByLabelDesc Sqrt StartFn Step StddevOverTime StdvarOverTime SumOverTime Tan Tanh Time Timestamp Vector Year':
-+    'Abs Absent AbsentOverTime Acos Acosh Asin Asinh Atan Atanh AvgOverTime Ceil Changes Clamp ClampMax ClampMin Cos Cosh CountOverTime DaysInMonth DayOfMonth DayOfWeek DayOfYear Deg Delta Deriv EndFn Exp FirstOverTime Floor HistogramAvg HistogramCount HistogramFraction HistogramQuantile HistogramQuantiles HistogramStdDev HistogramStdVar HistogramSum DoubleExponentialSmoothing Hour Idelta Increase Info Integral Irate LabelReplace LabelJoin LastOverTime Ln Log10 Log2 MadOverTime MaxOverTime MinOverTime Minute Month Pi PredictLinear PresentOverTime QuantileOverTime Rad Range Rate Resets Round Scalar Sgn Sin Sinh Sort SortDesc SortByLabel SortByLabelDesc Sqrt StartFn StartTimestamp Step StddevOverTime StdvarOverTime SumOverTime Tan Tanh Time Timestamp TsOfFirstOverTime TsOfMaxOverTime TsOfMinOverTime TsOfLastOverTime Vector Year':
-         tags.function(tags.variableName),
--    'Avg Bottomk Count Count_values Group LimitK LimitRatio Max Min Quantile Stddev Stdvar Sum Topk': tags.operatorKeyword,
--    'AtModifierPreprocessors By Without Bool On Ignoring GroupLeft GroupRight Offset Smoothed Anchored': tags.modifier,
-+    'Avg Bottomk Count CountValues Group LimitK LimitRatio Max Min Quantile Stddev Stdvar Sum Topk': tags.operatorKeyword,
-+    'AtModifierPreprocessors By Without Bool On Ignoring GroupLeft GroupRight Fill FillLeft FillRight Offset Smoothed Anchored': tags.modifier,
-     'DurationExpr/DurationStep DurationExpr/DurationRange DurationExpr/DurationMinOf DurationExpr/DurationMaxOf OffsetDurationExpr/DurationStep OffsetDurationExpr/DurationRange OffsetDurationExpr/DurationMinOf OffsetDurationExpr/DurationMaxOf': tags.function(tags.variableName),
-     'And Unless Or': tags.logicOperator,
--    'Sub Add Mul Mod Div Atan2 BitAnd BitOr BitXor Eql Neq Lte Lss Gte Gtr EqlRegex EqlSingle NeqRegex Pow At': tags.operator,
-+    'Sub Add Mul Mod Div Atan2 BitAnd BitOr BitXor Eql Neq Lte Lss Gte Gtr TrimUpper TrimLower EqlRegex EqlSingle NeqRegex Pow At': tags.operator,
-     UnaryOp: tags.arithmeticOperator,
-     '( )': tags.paren,
-     '[ ]': tags.squareBracket,
-```
-
-**File**: `web/ui/module/lezer-promql/test/expression.txt` (modified, +104/-0)
-```diff
-@@ -967,3 +967,107 @@ PromQL(VectorSelector(Identifier))
+@@ -1341,7 +1341,11 @@ func (db *DB) run(ctx context.Context) {
  
- ==>
- PromQL(BinaryExpr(BinaryExpr(NumberDurationLiteral,Mul,NumberDurationLiteral),BitXor,NumberDurationLiteral))
-+
-+# Function histogram_quantiles
-+
-+histogram_quantiles(foo, "q", 0.5, 0.9)
-+
-+==>
-+
-+PromQL(FunctionCall(FunctionIdentifier(HistogramQuantiles),FunctionCallBody(VectorSelector(Identifier),StringLiteral,NumberDurationLiteral,NumberDurationLiteral)))
-+
-+# Function histogram_stddev
-+
-+histogram_stddev(foo)
-+
-+==>
-+
-+PromQL(FunctionCall(FunctionIdentifier(HistogramStdDev),FunctionCallBody(VectorSelector(Identifier))))
-+
-+# Function histogram_stdvar
-+
-+histogram_stdvar(foo)
-+
-+==>
-+
-+PromQL(FunctionCall(FunctionIdentifier(HistogramStdVar),FunctionCallBody(VectorSelector(Identifier))))
-+
-+# Function info
-+
-+info(foo)
-+
-+==>
-+
-+PromQL(FunctionCall(FunctionIdentifier(Info),FunctionCallBody(VectorSelector(Identifier))))
-+
-+# Function mad_over_time
-+
-+mad_over_time(foo[5m])
-+
-+==>
-+
-+PromQL(FunctionCall(FunctionIdentifier(MadOverTime),FunctionCallBody(MatrixSelector(VectorSelector(Identifier),DurationExpr(NumberDurationLiteralInDurationContext)))))
-+
-+# Function start_timestamp
-+
-+start_timestamp(foo)
-+
-+==>
-+
-+PromQL(FunctionCall(FunctionIdentifier(StartTimestamp),FunctionCallBody(VectorSelector(Identifier))))
-+
-+# Function ts_of_first_over_time
-+
-+ts_of_first_over_time(foo[5m])
-+
-+==>
-+
-+PromQL(FunctionCall(FunctionIdentifier(TsOfFirstOverTime),FunctionCallBody(MatrixSelector(VectorSelector(Identifier),DurationExpr(NumberDurationLiteralInDurationContext)))))
-+
-+# Function ts_of_last_over_time
-+
-+ts_of_last_over_time(foo[5m])
-+
-+==>
-+
-+PromQL(FunctionCall(FunctionIdentifier(TsOfLastOverTime),FunctionCallBody(MatrixSelector(VectorSelector(Identifier),DurationExpr(NumberDurationLiteralInDurationContext)))))
-+
-+# Function ts_of_max_over_time
-+
-+ts_of_max_over_time(foo[5m])
-+
-+==>
-+
-+PromQL(FunctionCall(FunctionIdentifier(TsOfMaxOverTime),FunctionCallBody(MatrixSelector(VectorSelector(Identifier),DurationExpr(NumberDurationLiteralInDurationContext)))))
-+
-+# Function ts_of_min_over_time
-+
-+ts_of_min_over_time(foo[5m])
-+
-+==>
-+
-+PromQL(FunctionCall(FunctionIdentifier(TsOfMinOverTime),FunctionCallBody(MatrixSelector(VectorSelector(Identifier),DurationExpr(NumberDurationLiteralInDurationContext)))))
-+
-+# Aggregation count_values
-+
-+count_values("value", foo)
-+
-+==>
-+
-+PromQL(AggregateExpr(AggregateOp(CountValues),FunctionCallBody(StringLiteral,VectorSelector(Identifier))))
-+
-+# Fill modifier
-+
-+foo + fill(0) bar
-+
-+==>
-+
-+PromQL(BinaryExpr(VectorSelector(Identifier),Add,FillModifier(FillClause(Fill,NumberDurationLiteral)),VectorSelector(Identifier)))
-+
-+# Fill left and fill right modifiers
-+
-+foo + fill_left(0) fill_right(1) bar
-+
-+==>
-+
-+PromQL(BinaryExpr(VectorSelector(Identifier),Add,FillModifier(FillLeftClause(FillLeft,NumberDurationLiteral),FillRightClause(FillRight,NumberDurationLiteral)),VectorSelector(Identifier)))
+ 					if !nextCompactionIsSoon {
+ 						if err := db.CompactStaleHead(); err != nil {
+-							db.logger.Error("immediate stale series compaction failed", "err", err)
++							if errors.Is(err, context.Canceled) {
++								db.logger.Info("immediate stale series compaction cancelled", "err", err)
++							} else {
++								db.logger.Error("immediate stale series compaction failed", "err", err)
++							}
+ 						}
+ 					}
+ 				}
+@@ -1353,7 +1357,11 @@ func (db *DB) run(ctx context.Context) {
+ 			db.autoCompactMtx.Lock()
+ 			if db.autoCompact {
+ 				if err := db.Compact(ctx); err != nil {
+-					db.logger.Error("compaction failed", "err", err)
++					if errors.Is(err, context.Canceled) {
++						db.logger.Info("compaction cancelled", "err", err)
++					} else {
++						db.logger.Error("compaction failed", "err", err)
++					}
+ 					backoff = exponential(backoff, 1*time.Second, 1*time.Minute)
+ 				} else {
+ 					backoff = 0
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #20521** (2026-11-20): cmd/prometheus: pass --scrape.discovery-reload-interval=100ms in scrape tests (@machine424)
+- **PR #20520** (2026-11-20): tsdb: downgrade compaction cancel log from error to info on shutdown (@machine424)
 - **PR #20499** (2026-11-19): ui: fix function signatures in the codemirror-promql lint table (@BahaaMattar)
 - **PR #20488** (2026-11-19): ui: highlight missing PromQL functions and keywords in the editor (@BahaaMattar)
 - **PR #20470** (2026-11-17): ui: emphasize focused graph series (@divyanshAgarwal123)
 - **PR #20467** (2026-11-16): tsdb: tombstone series with exemplars during early compaction (@duricanikolic)
-- **PR #20460** (2026-11-19): web api: Search expr http param (@tcp13equals2)
-- **PR #20456** (2026-11-16): web: ui: align literal and duration keyword parsing with PromQL (@xixi-box)
 
 ---
 
@@ -2218,68 +1942,21 @@ Signed-off-by: Bahaa Mattar <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ui: fix function signatures in the codemirror-promql lint table
+## X. cmd/prometheus: pass --scrape.discovery-reload-interval=100ms in scrape tests
 
 **RULE**:
-When implementing operations in `web/ui/module/codemirror-promql/src/parser/parser.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prometheus/prometheus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cmd/prometheus/main_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prometheus/prometheus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2b311b97`: ui: fix function signatures in the codemirror-promql lint table. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `06170caa`: cmd/prometheus: pass --scrape.discovery-reload-interval=100ms in scrape tests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `web/ui/module/codemirror-promql/src/parser/parser.test.ts`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/prometheus/main_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-    {
-      expr: 'vector(pi())',
-      expectedValueType: ValueType.vector,
-      expectedDiag: [],
-    },
-    {
-      expr: 'histogram_quantile(pi() / 4, rate(some_metric[5m]))',
-      expectedValueType: ValueType.vector,
-      expectedDiag: [],
-    },
-    {
-      expr: 'sum(pi())',
-      expectedValueType: ValueType.vector,
-      expectedDiag: [
-        {
-          from: 4,
-          to: 8,
-          message: 'expected type vector in aggregation expression, got scalar',
-          severity: 'error',
-        },
-      ],
-    },
-    {
-      expr: 'cosh(1)',
-      expectedValueType: ValueType.vector,
-      expectedDiag: [
-        {
-          from: 5,
-          to: 6,
-          message: 'expected type vector in call to function "cosh", got scalar',
-          severity: 'error',
-        },
-      ],
-    },
-    {
-      expr: 'sinh(1)',
-      expectedValueType: ValueType.vector,
-      expectedDiag: [
-        {
-          from: 5,
-          to: 6,
-          message: 'expected type vector in call to function "sinh", got scalar',
-          severity: 'error',
-        },
-      ],
-    },
-    {
-      expr: 'histogram_quantiles(some_metric, "quantile", 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0
+		"--scrape.discovery-reload-interval=100ms",
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2289,7 +1966,7 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2b311b97` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `06170caa` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

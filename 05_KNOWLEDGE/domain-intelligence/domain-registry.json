@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T14:49:45.238Z",
+  "last_updated": "2026-11-21T15:17:59.844Z",
   "total_records": 2252,
   "domains": {
     "A": {
@@ -10998,8 +10998,8 @@
       "title": "Content & Information Intelligence: prometheus/prometheus Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-prometheus-prometheus-content-information-intelligence-prometheus-prometheus-cor.md",
       "repository": "prometheus/prometheus",
-      "content_hash": "beb707eb3bc2c5495dfb74840c31b62ff7877dd2640111a27ae833a1bc3447f3",
-      "created_at": "2026-11-17T16:38:48.346Z"
+      "content_hash": "a96a6dd395c05c7032dabef89683e80d707235262feb0d87c4bf28e648c3d444",
+      "created_at": "2026-11-21T15:17:46.277Z"
     },
     "domain_intelligence-content-information-intelligence-lancedb-lancedb-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-lancedb-lancedb-core-invariants",
@@ -12309,8 +12309,8 @@
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "repository": "dathere/qsv",
-      "content_hash": "108e880bc43cac0774a9425da887cd1618f2ccbee70bea18dbd6380006ada4e8",
-      "created_at": "2026-11-21T04:39:15.868Z"
+      "content_hash": "a706fb470d528bcc50d2561e514f488a9f71983b68a243660d969c3cddd0ed2d",
+      "created_at": "2026-11-21T15:17:53.634Z"
     },
     "DOM-D-F5645095": {
       "record_id": "DOM-D-F5645095",
@@ -19241,8 +19241,8 @@
       "title": "Technical Construction Intelligence: metalbear-co/mirrord Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-metalbear-co-mirrord-technical-construction-intelligence-metalbear-co-mirrord-co.md",
       "repository": "metalbear-co/mirrord",
-      "content_hash": "fdbd6d412ceff31bb27f44db3bda323812dd9ff2617220c7bb8de49417222e01",
-      "created_at": "2026-11-20T01:00:32.306Z"
+      "content_hash": "2d0c0b08a6f5063cb438755c4901dfa214e9d6f951bfe8edbe5727a212cbee0f",
+      "created_at": "2026-11-21T15:17:39.416Z"
     },
     "domain_intelligence-technical-construction-intelligence-run-llama-llama_index-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-run-llama-llama_index-core-invariants",
@@ -19268,8 +19268,8 @@
       "title": "Technical Construction Intelligence: metalbear-co-mirrord-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-metalbear-co-mirrord-learnings-technical-construction-intelligence-metalbear-co-.md",
       "repository": "metalbear-co-mirrord-learnings",
-      "content_hash": "c920b18b7217ffd7b0ac0d1caf3b4f1ce3d5809953dda17d2e632559c49c9e31",
-      "created_at": "2026-11-20T01:02:18.477Z"
+      "content_hash": "88f9a0e977281b2af418cfb83c35e79663f67fbd98b97c29888c03763d2f56ef",
+      "created_at": "2026-11-21T15:17:57.972Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-dealignai-deepseek-v4-1-flash-uncensored-fp8-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-dealignai-deepseek-v4-1-flash-uncensored-fp8-",
@@ -24315,8 +24315,8 @@
       "title": "Content & Information Intelligence: prometheus-prometheus-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-prometheus-prometheus-learnings-content-information-intelligence-prometheus-prom.md",
       "repository": "prometheus-prometheus-learnings",
-      "content_hash": "02097c87b9edc2fe68ed61384cfec03fa451d2b4e73874c25233ff6ccd18ecb4",
-      "created_at": "2026-11-17T16:38:58.567Z"
+      "content_hash": "424a57e5c4dd5d970d1a945f26c04adf2119d14c1019f0f5d04c6ca3d235f5ff",
+      "created_at": "2026-11-21T15:17:59.844Z"
     },
     "domain_intelligence-technical-construction-intelligence-stakater-reloader-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-stakater-reloader-core-invariants",
@@ -28436,8 +28436,8 @@
       "title": "Research & Knowledge Intelligence: MiniMaxAI/MiniMax-M3.1-Flash Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-minimaxai-minimax-m3-1-flash-research-knowledge-intelligence-minimaxai-minima.md",
       "repository": "MiniMaxAI/MiniMax-M3.1-Flash",
-      "content_hash": "a734f0889039e407fc148f6949875c954b6b05fc7491fe7c24dc8aa477554157",
-      "created_at": "2026-11-17T17:20:11.686Z"
+      "content_hash": "fbba5cbba49f15a012120e48f08230ed90e844df1c1b60176a853f31c2a5079f",
+      "created_at": "2026-11-21T15:17:37.145Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-m3-1-flash-learnings-core-i": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-m3-1-flash-learnings-core-i",
@@ -28445,8 +28445,8 @@
       "title": "Research & Knowledge Intelligence: hf-minimaxai-minimax-m3.1-flash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-minimaxai-minimax-m3-1-flash-learnings-research-knowledge-intelligence-hf-min.md",
       "repository": "hf-minimaxai-minimax-m3.1-flash-learnings",
-      "content_hash": "6952115a0782ed60befc9f58d440bd4b30030e7eab595bb6c7aa3b9f2d24dd21",
-      "created_at": "2026-11-17T17:20:28.856Z"
+      "content_hash": "6f0092df9c330fb56d65fd374a7e3f19fee6d90b435937d9a62a1007fa7546bf",
+      "created_at": "2026-11-21T15:17:58.632Z"
     },
     "domain_intelligence-research-knowledge-intelligence-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-ggu": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-ggu",

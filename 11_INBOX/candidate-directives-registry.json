@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T14:49:45.032Z",
+  "last_updated": "2026-11-21T15:17:59.643Z",
   "directives": [
     {
       "id": "CD-001",
@@ -42641,6 +42641,57 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-AD7423-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-21"
+    },
+    {
+      "id": "CD-YA9P",
+      "directive_title": "Publish the docs and guides on every release",
+      "source_repo": "metalbear-co-mirrord-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-YA9P-publish-the-docs-and-guides-on-every-release.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-YBPX",
+      "directive_title": "cmd/prometheus: pass --scrape.discovery-reload-interval=100ms in scrape tests",
+      "source_repo": "prometheus-prometheus-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-YBPX-cmd-prometheus-pass-scrape-discovery-reload-interval-100ms-in-scrape-tests.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-Y6XG",
+      "directive_title": "run .sql scripts on sqlp; allow nested ~/ and to parquet dirs",
+      "source_repo": "dathere/qsv",
+      "source_commit": "6d77feaf",
+      "staged_file": "11_INBOX/candidate-directives/CD-Y6XG-run-sql-scripts-on-sqlp-allow-nested-and-to-parquet-dirs.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-21",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-FB8A1D",
+      "directive_title": "Publish the docs and guides on every release",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "metalbear-co-mirrord",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-FB8A1D-publish-the-docs-and-guides-on-every-rel.md",
+      "staged_date": "2026-11-21"
+    },
+    {
+      "id": "CD-REV-42BF0B",
+      "directive_title": "cmd/prometheus: pass --scrape.discovery-reload-interval=100ms in scrape tests",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "prometheus-prometheus",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-42BF0B-cmd-prometheus-pass-scrape-discovery-rel.md",
       "staged_date": "2026-11-21"
     }
   ]

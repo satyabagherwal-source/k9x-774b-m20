@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T14:49:38.026Z",
-  "total_cycles_completed": 11250,
-  "total_learnings_persisted": 11250,
-  "total_rules_promoted": 10595,
+  "last_updated": "2026-11-21T15:17:53.161Z",
+  "total_cycles_completed": 11254,
+  "total_learnings_persisted": 11254,
+  "total_rules_promoted": 10598,
   "history": [
-    {
-      "timestamp": "2026-11-20T18:16:54.516Z",
-      "repository": "u-root/u-root",
-      "learningId": "learn-github-u-root-u-root",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T18:27:26.151Z",
-      "repository": "syntax-tree/hast-util-to-html",
-      "learningId": "learn-github-syntax-tree-hast-util-to-html",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T18:41:40.825Z",
-      "repository": "chaos-mesh/chaos-mesh",
-      "learningId": "learn-github-chaos-mesh-chaos-mesh",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T18:41:42.359Z",
-      "repository": "zama-ai/tfhe-rs",
-      "learningId": "learn-github-zama-ai-tfhe-rs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-20T18:41:44.376Z",
       "repository": "clockworklabs/SpacetimeDB",
@@ -1403,6 +1375,34 @@
       "repository": "zulip/zulip",
       "learningId": "learn-github-zulip-zulip",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T15:17:36.892Z",
+      "repository": "MiniMaxAI/MiniMax-M3.1-Flash",
+      "learningId": "learn-huggingface-minimaxai-minimax-m3-1-flash",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T15:17:38.951Z",
+      "repository": "metalbear-co/mirrord",
+      "learningId": "learn-github-metalbear-co-mirrord",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T15:17:45.799Z",
+      "repository": "prometheus/prometheus",
+      "learningId": "learn-github-prometheus-prometheus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T15:17:53.161Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

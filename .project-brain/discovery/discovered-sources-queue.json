@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-21T14:49:43.857Z",
+  "updated_at": "2026-11-21T15:17:59.370Z",
   "stats": {
-    "total_discovered": 7203,
-    "approved_pending_harvest": 6805,
+    "total_discovered": 7215,
+    "approved_pending_harvest": 6817,
     "harvested_count": 0,
     "rejected_count": 398,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6787,
-      "OFFICIAL_DOCUMENTATION": 239,
+      "COMMUNITY_AND_EXPERT": 6798,
+      "OFFICIAL_DOCUMENTATION": 240,
       "STANDARDS_AND_SPECIFICATIONS": 122,
       "ENGINEERING_BLOGS": 5,
       "SECURITY_ADVISORIES": 41,
@@ -155703,6 +155703,270 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zulip-zulip-learnings.md",
         "fileName": "zulip-zulip-learnings.md"
+      }
+    },
+    "SRC-CDCF9C268F0A": {
+      "id": "SRC-CDCF9C268F0A",
+      "url": "https://metalbear.com/mirrord/docs",
+      "title": "https://metalbear.com/mirrord/docs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T15:17:57.190Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
+        "fileName": "metalbear-co-mirrord-learnings.md"
+      }
+    },
+    "SRC-FD0CC91D53BF": {
+      "id": "SRC-FD0CC91D53BF",
+      "url": "https://github.com/metalbear-co/docs",
+      "title": "https://github.com/metalbear-co/docs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T15:17:57.259Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
+        "fileName": "metalbear-co-mirrord-learnings.md"
+      }
+    },
+    "SRC-0ABC3FC8BDB3": {
+      "id": "SRC-0ABC3FC8BDB3",
+      "url": "https://app.gitbook.com/",
+      "title": "https://app.gitbook.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T15:17:57.329Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
+        "fileName": "metalbear-co-mirrord-learnings.md"
+      }
+    },
+    "SRC-45D58964E112": {
+      "id": "SRC-45D58964E112",
+      "url": "https://claude.ai/code/session_018mVFv54yrLmejMELYsfxa6",
+      "title": "https://claude.ai/code/session_018mVFv54yrLmejMELYsfxa6",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T15:17:57.410Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
+        "fileName": "metalbear-co-mirrord-learnings.md"
+      }
+    },
+    "SRC-4AA077632505": {
+      "id": "SRC-4AA077632505",
+      "url": "https://www.youtube.com/watch?v=jzwGS48ZKKM",
+      "title": "https://www.youtube.com/watch?v=jzwGS48ZKKM",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T15:17:57.471Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
+        "fileName": "metalbear-co-mirrord-learnings.md"
+      }
+    },
+    "SRC-AFBC2B8F80C2": {
+      "id": "SRC-AFBC2B8F80C2",
+      "url": "https://github.com/prometheus/prometheus/pull/18727",
+      "title": "https://github.com/prometheus/prometheus/pull/18727",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T15:17:58.981Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
+        "fileName": "prometheus-prometheus-learnings.md"
+      }
+    },
+    "SRC-6EBC1C9843B6": {
+      "id": "SRC-6EBC1C9843B6",
+      "url": "https://github.com/apps/dco",
+      "title": "https://github.com/apps/dco",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T15:17:59.044Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
+        "fileName": "prometheus-prometheus-learnings.md"
+      }
+    },
+    "SRC-F42C5792E9A9": {
+      "id": "SRC-F42C5792E9A9",
+      "url": "https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/linking-a-pull-request-to-an-issue",
+      "title": "https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/linking-a-pull-request-to-an-issue",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T15:17:59.103Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
+        "fileName": "prometheus-prometheus-learnings.md"
+      }
+    },
+    "SRC-D6304A21AA32": {
+      "id": "SRC-D6304A21AA32",
+      "url": "https://github.com/prometheus/prometheus/pull/18340",
+      "title": "https://github.com/prometheus/prometheus/pull/18340",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T15:17:59.171Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
+        "fileName": "prometheus-prometheus-learnings.md"
+      }
+    },
+    "SRC-80167F2DCE49": {
+      "id": "SRC-80167F2DCE49",
+      "url": "https://github.com/prometheus/prometheus/blob/2b311b9762bb5834a17374fcf45a8e5b2043293f/tsdb/db.go",
+      "title": "https://github.com/prometheus/prometheus/blob/2b311b9762bb5834a17374fcf45a8e5b2043293f/tsdb/db.go",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T15:17:59.231Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
+        "fileName": "prometheus-prometheus-learnings.md"
+      }
+    },
+    "SRC-21571ECCCD32": {
+      "id": "SRC-21571ECCCD32",
+      "url": "https://github.com/prometheus/prometheus/blob/2b311b9762bb5834a17374fcf45a8e5b2043293f/tsdb/compact.go",
+      "title": "https://github.com/prometheus/prometheus/blob/2b311b9762bb5834a17374fcf45a8e5b2043293f/tsdb/compact.go",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T15:17:59.310Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
+        "fileName": "prometheus-prometheus-learnings.md"
+      }
+    },
+    "SRC-40AEA47F82DA": {
+      "id": "SRC-40AEA47F82DA",
+      "url": "https://prometheus.io/docs/prometheus/2.55/getting_started",
+      "title": "https://prometheus.io/docs/prometheus/2.55/getting_started",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T15:17:59.370Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
+        "fileName": "prometheus-prometheus-learnings.md"
       }
     }
   }

@@ -11819,3 +11819,7 @@
 | `CYCLE-20261121-5XHN` | `2026-11-21T14:27:55.211Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9793` | Yes (`d45ac296...`) |
 | `CYCLE-20261121-XOZ3` | `2026-11-21T14:49:30.543Z` | `unsloth/flint-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-flint-gguf-learnings.md` | Yes (`dcd38815...`) |
 | `CYCLE-20261121-XUQN` | `2026-11-21T14:49:38.015Z` | `zulip/zulip` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/zulip-zulip-learnings.md` | Yes (`20ac90d2...`) |
+| `CYCLE-20261121-XU5S` | `2026-11-21T15:17:36.880Z` | `MiniMaxAI/MiniMax-M3.1-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-minimaxai-minimax-m3.1-flash-learnings.md` | Yes (`ee48255f...`) |
+| `CYCLE-20261121-XVR0` | `2026-11-21T15:17:38.940Z` | `metalbear-co/mirrord` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9794` | Yes (`e6a25db4...`) |
+| `CYCLE-20261121-Y117` | `2026-11-21T15:17:45.787Z` | `prometheus/prometheus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9795` | Yes (`b013df4c...`) |
+| `CYCLE-20261121-Y6PQ` | `2026-11-21T15:17:53.150Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9796` | Yes (`43a1a0a6...`) |

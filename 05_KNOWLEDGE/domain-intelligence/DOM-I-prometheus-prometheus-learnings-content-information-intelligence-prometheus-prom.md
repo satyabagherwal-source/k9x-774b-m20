@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T16:38:58.341Z",
+  "timestamp": "2026-11-21T15:17:59.517Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-prometheus-prometheus-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [prometheus-prometheus-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T16:38:58.341Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T15:17:59.517Z`  
 > **Learning ID**: `LEARN-EVO-prometheus-prometheus-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain I (Content & Information Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 63%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), G (Architecture Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 61%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from prometheus-prometheus-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/prometheus-prometheus-learnings.md`  
 > **Source**: github ([https://github.com/prometheus/prometheus](https://github.com/prometheus/prometheus))  
-> **Source Version**: `620819d1`  
+> **Source Version**: `06170caa`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T16:38:46.968Z  
+> **Timestamp**: 2026-11-21T15:17:44.548Z  
 > **Learning ID**: `learn-github-prometheus-prometheus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/prometheus-prometheus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/prometheus/prometheus](https://github.com/prometheus/prometheus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T16:38:46.963Z  
+> **Harvest Timestamp**: 2026-11-21T15:17:44.541Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: The Prometheus monitoring system and time series database.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 67672 stars
+- **Stars / Engagement**: 67744 stars
 
 ---
 
@@ -1809,11 +1809,11 @@ func OpenDir(path string) (*os.File, error) { return os.Open(path) }
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #20467** (2026-11-16): **tsdb: tombstone series with exemplars during early compaction**
-  *Symptoms*: [PR #19940](https://github.com/prometheus/prometheus/pull/19940) introduced protection against evicting series with recent exemplars. In case of `Head.truncateSeries()`, their persisted sample chunks are removed, but their series records and exemplars are retained without eviction tombstones. A later regular GC can delete these empty series with a WAL expiry below the timestamps of records still awaiting replay. Checkpointing can then permanently remove them, causing “Unknown series references” warnings on restart.  This PR makes `DB.CompactSelectedSeries()` and `DB.CompactStaleHead()`, the only callers of `Head.truncateSeries()` fully evict eligible series regardless of exemplars:  - Write full-series WAL tombstones and retain declarations through at least the compaction’s `maxt`, preserving any later expiry already recorded. - Remove `truncatedChunks` tracking, since eviction no longer retains series identities while reclaiming their chunks.  Regular `Head.Truncate()` exemplar protection is unchanged.  The trade-off is exemplar retention: already-buffered exemplars remain queryable, but pending exemplars may be discarded during eviction, and recovery after restart is not guaranteed. Exemplar replay and tombstone processing run in separate workers, so a tombstone may remove the series before its exemplars are processed.  Updated tests cover eviction with exemplars, concurrent sample appends, chunk reads, and recovery, while retaining coverage of exemplar protectio
+- **Issue #20521** (2026-11-20): **cmd/prometheus: pass --scrape.discovery-reload-interval=100ms in scrape tests**
+  *Symptoms*: Triggered by https://github.com/prometheus/prometheus/pull/18727#discussion_r4530902102  Reduce test runtime by passing --scrape.discovery-reload-interval=100ms to TestRemoteWrite_PerQueueMetricsAfterRelabeling (~5s saved on my laptop) and TestScrapeFailureLogFile (~3s saved on my laptop). The default 5s reload interval is pure wait time in tests with static targets.  Follows the same pattern used in pthjer tests.  <!--     - Please give your PR a title in the form "area: short description".  For example "tsdb: reduce disk usage by 95%"      - Please sign CNCF's Developer Certificate of Origin and sign-off your commits by adding the -s / --signoff flag to `git commit`. See https://github.com/apps/dco for more information.      - If the PR adds or changes a behaviour or fixes a bug of an exported API it would need a unit/e2e test.      - Where possible use only exported APIs for tests to simplify the review and make it as close as possible to an actual library usage.      - Performance improvements would need a benchmark test to prove it.      - All exposed objects should have a comment.      - All comments should start with a capital letter and end with a full stop.  -->  #### Which issue(s) does the PR fix: <!-- If it applies. Automatically closes linked issue when PR is merged. Usage: `Fixes #<issue number>`, or `Fixes (paste link of issue)`. More at https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/linking-a-pull-request-to-an-issue#linking-a-pu
 
-- **Issue #20456** (2026-11-16): **web: ui: align literal and duration keyword parsing with PromQL**
-  *Symptoms*: Fixes #20455  The query editor rejects valid trailing-dot floats, uppercase hexadecimal prefixes, hexadecimal digit separators, and uppercase duration keywords that the Go parser accepts. The frontend number token excludes these literal forms, and duration keywords use case-sensitive function extensions.  Allow an empty fractional part and hexadecimal prefixes/separators in the number token. Match duration keywords through the existing case-insensitive contextual matcher, preserving metric names and the case sensitivity of ordinary functions. Add strict parser cases for valid queries, malformed literals, and keyword names used as metrics.  Tests: `/bin/sh -c 'cd web/ui/module/lezer-promql && pnpm test --runInBand --verbose --json'` (fails on base; passes with this patch). Regression coverage: `web/ui/module/lezer-promql/test/promql.test.js`.  #### Which issue(s) does the PR fix: Fixes #20455  #### Release notes for end users (**ALL** commits must be considered). *Reviewers should verify clarity and quality.*  ```release-notes [BUGFIX] UI: Accept trailing-dot floats, uppercase and underscored hexadecimal literals, and case-insensitive duration keywords in the query editor. ``` <!-- oss-scout-job:job-70275eb8-baf2-463e-87b9-a5071179f51e -->  ```release-notes [BUGFIX] web: ui: align literal and duration keyword parsing with PromQL ```
+- **Issue #20520** (2026-11-20): **tsdb: downgrade compaction cancel log from error to info on shutdown**
+  *Symptoms*: Triggered by https://github.com/prometheus/prometheus/pull/18340#discussion_r4626779980  `DB.Close()` cancels the compaction context. If a compaction is in-flight, it returns `context.Canceled` and `run()` logs it at `level=ERROR`, even though the codebase already treats this as expected shutdown behavior (skips the failure metric [here](https://github.com/prometheus/prometheus/blob/2b311b9762bb5834a17374fcf45a8e5b2043293f/tsdb/db.go#L1570), skips marking blocks as failed [here](https://github.com/prometheus/prometheus/blob/2b311b9762bb5834a17374fcf45a8e5b2043293f/tsdb/compact.go#L674)).  This change adds a check at both compaction call sites in `run()` and downgrades the log to `info`. Per the [docs](https://prometheus.io/docs/prometheus/2.55/getting_started/#shutting-down-your-instance-gracefully), `SIGTERM` is the recommended clean shutdown, it should not emit `level=ERROR`.  <!--     - Please give your PR a title in the form "area: short description".  For example "tsdb: reduce disk usage by 95%"      - Please sign CNCF's Developer Certificate of Origin and sign-off your commits by adding the -s / --signoff flag to `git commit`. See https://github.com/apps/dco for more information.      - If the PR adds or changes a behaviour or fixes a bug of an exported API it would need a unit/e2e test.      - Where possible use only exported APIs for tests to simplify the review and make it as close as possible to an actual library usage.      - Performance improvements would need a b
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1830,239 +1830,102 @@ func OpenDir(path string) (*os.File, error) { return os.Open(path) }
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `620819d1` (2026-11-17)
-**Commit Message**: Merge pull request #20351 from CJstate/fix/otlp-propagate-commit-error
+### Incident Patch 1: `06170caa` (2026-11-20)
+**Commit Message**: cmd/prometheus: pass --scrape.discovery-reload-interval=100ms in scrape tests
 
-storage/remote: propagate OTLP appender Commit errors
+Reduce test runtime by passing --scrape.discovery-reload-interval=100ms
+to TestRemoteWrite_PerQueueMetricsAfterRelabeling (~5s saved on my laptop) and
+TestScrapeFailureLogFile (~3s saved on my laptop). The default 5s reload interval
+is pure wait time in tests with static targets.
 
-**File**: `storage/remote/write_otlp_handler.go` (modified, +1/-1)
+Follows the same pattern used in pthjer tests.
+
+Signed-off-by: Ayoub Mrini <[REDACTED_EMAIL]>
+
+**File**: `cmd/prometheus/main_test.go` (modified, +1/-0)
 ```diff
-@@ -122,7 +122,7 @@ type rwExporter struct {
- 	converterPool           sync.Pool
- }
+@@ -1408,6 +1408,7 @@ remote_write:
+ 		configFile,
+ 		port,
+ 		fmt.Sprintf("--storage.tsdb.path=%s", tmpDir),
++		"--scrape.discovery-reload-interval=100ms",
+ 	)
+ 	require.NoError(t, prom.Start())
  
--func (rw *rwExporter) ConsumeMetrics(ctx context.Context, md pmetric.Metrics) error {
-+func (rw *rwExporter) ConsumeMetrics(ctx context.Context, md pmetric.Metrics) (err error) {
- 	otlpCfg := rw.config().OTLPConfig
- 	app := rw.appendable.AppenderV2(ctx)
- 	converter := rw.converterPool.Get().(*otlptranslator.PrometheusConverter)
 ```
 
-**File**: `storage/remote/write_otlp_handler_test.go` (modified, +38/-0)
+**File**: `cmd/prometheus/scrape_failure_log_test.go` (modified, +1/-0)
 ```diff
-@@ -16,6 +16,7 @@ package remote
- import (
- 	"bytes"
- 	"context"
-+	"errors"
- 	"fmt"
- 	"log/slog"
- 	"math"
-@@ -683,6 +684,43 @@ func (discardAppender) Rollback() error {
- 	return nil
- }
- 
-+// commitErrorAppendable returns an appender whose Commit always fails.
-+type commitErrorAppendable struct {
-+	err error
-+}
-+
-+func (a commitErrorAppendable) AppenderV2(context.Context) storage.AppenderV2 {
-+	return commitErrorAppender{err: a.err}
-+}
-+
-+type commitErrorAppender struct {
-+	discardAppender
-+	err error
-+}
-+
-+func (a commitErrorAppender) Commit() error { return a.err }
-+
-+func TestConsumeMetricsPropagatesCommitError(t *testing.T) {
-+	t.Parallel()
-+
-+	commitErr := errors.New("commit failed")
-+	log := slog.New(slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{Level: slog.LevelWarn}))
-+	reg := prometheus.NewRegistry()
-+	handler := NewOTLPWriteHandler(log, reg, commitErrorAppendable{err: commitErr}, func() config.Config {
-+		return config.Config{OTLPConfig: config.DefaultOTLPConfig}
-+	}, OTLPOptions{})
-+	ex := handler.(*otlpWriteHandler).defaultConsumer.(*rwExporter)
-+
-+	request := pmetricotlp.NewExportRequest()
-+	m := request.Metrics().ResourceMetrics().AppendEmpty().ScopeMetrics().AppendEmpty().Metrics().AppendEmpty()
-+	m.SetName("test_gauge")
-+	dp := m.SetEmptyGauge().DataPoints().AppendEmpty()
-+	dp.SetTimestamp(pcommon.NewTimestampFromTime(time.Now()))
-+	dp.SetIntValue(1)
-+
-+	require.ErrorIs(t, ex.ConsumeMetrics(t.Context(), request.Metrics()), commitErr)
-+}
-+
- func BenchmarkOTLP(b *testing.B) {
- 	b.Skip("Not supported by teststorage Appender")
- 	start := time.Date(2000, 1, 2, 3, 4, 5, 0, time.UTC)
+@@ -77,6 +77,7 @@ scrape_configs:
+ 		"--storage.tsdb.path=" + filepath.Join(tempDir, "data"),
+ 		fmt.Sprintf("--web.listen-address=127.0.0.1:%d", port),
+ 		"--web.enable-lifecycle",
++		"--scrape.discovery-reload-interval=100ms",
+ 	}
+ 	prometheusProcess := exec.Command(promPath, params...)
+ 	prometheusProcess.Stdout = os.Stdout
 ```
 
 ---
 
-### Incident Patch 2: `74980d4b` (2026-11-16)
-**Commit Message**: Fixing review findings
+### Incident Patch 2: `6c2b2964` (2026-11-20)
+**Commit Message**: tsdb: downgrade compaction cancel log from error to info on shutdown (#20520)
 
-Signed-off-by: Yuri Nikolic <[REDACTED_EMAIL]>
+Triggered by https://github.com/prometheus/prometheus/pull/18340#discussion_r4626779980
 
-**File**: `tsdb/db_test.go` (modified, +104/-0)
+`DB.Close()` cancels the compaction context. If a compaction is in-flight,
+it returns `context.Canceled` and `run()` logs it at `level=ERROR`,
+even though the codebase already treats this as expected shutdown
+behavior (skips the failure metric
+[here](https://github.com/prometheus/prometheus/blob/2b311b9762bb5834a17374fcf45a8e5b2043293f/tsdb/db.go#L1570),
+skips marking blocks as failed
+[here](https://github.com/prometheus/prometheus/blob/2b311b9762bb5834a17374fcf45a8e5b2043293f/tsdb/compact.go#L674)).
+
+This change adds a check at both
+compaction call sites in `run()` and downgrades the log to `info`.
+Per the [docs](https://prometheus.io/docs/prometheus/2.55/getting_started/#shutting-down-your-instance-gracefully),
+`SIGTERM` is the recommended clean shutdown, it should not emit
+`level=ERROR`.
+
+Signed-off-by: Ayoub Mrini <[REDACTED_EMAIL]>
+
+**File**: `tsdb/db.go` (modified, +10/-2)
 ```diff
-@@ -1652,6 +1652,110 @@ func TestSeriesCompactionReclaimsChunksWithExemplars(t *testing.T) {
- 	}
- }
+@@ -1341,7 +1341,11 @@ func (db *DB) run(ctx context.Context) {
  
-+// TestEarlyCompactionExemplarProtectionOrphansLaterSample reproduces the mechanism behind a
-+// real production incident (observed independently on two ingesters running early
-+// compaction, via both CompactSelectedSeries and CompactStaleHead): early compaction
-+// protects a series with a recent exemplar by emptying its chunks without evicting or
-+// tombstoning it, a later regular GC (as triggered by ordinary compaction) then deletes that
-+// same series once its exemplar is no longer recent enough, but the walExpiry it records for
-+// checkpointing purposes reflects only that regular GC's own cutoff, not the series's own,
-+// higher-timestamped sample still awaiting replay in a WAL segment the checkpoint has not
-+// reached yet. Checkpointing then drops the series's declaration while that segment
-+// survives, so WAL replay after a restart finds the sample's reference unresolvable and logs
-+// it as unknown, even though the sample itself was already safely captured in the
-+// early-compaction block.
-+func TestEarlyCompactionExemplarProtectionOrphansLaterSample(t *testing.T) {
-+	for _, compaction := range []string{"selected", "stale"} {
-+		t.Run(compaction, func(t *testing.T) {
-+			const chunkRange = 1000
-+			opts := DefaultOptions()
-+			opts.MinBlockDuration = chunkRange
-+			opts.MaxBlockDuration = chunkRange
-+			opts.EnableExemplarStorage = true
-+			opts.MaxExemplars = 10
-+			db := newTestDB(t, withOpts(opts))
-+			db.DisableCompactions()
-+			ctx := context.Background()
-+
-+			sel := labels.FromStrings("name", "selected")
-+			app := db.AppenderV2(ctx)
-+			selRef, err := app.Append(0, sel, 0, 50, 1.0, nil, nil, storage.AOptions{})
-+			require.NoError(t, err)
-+			e := exemplar.Exemplar{Labels: labels.FromStrings("trace_id", "abc123"), Value: 1, Ts: 100}
-+			_, err = app.(storage.ExemplarAppenderV2).AppendExemplars(selRef, sel, []exemplar.Exemplar{e})
-+			require.NoError(t, err)
-+			require.NoError(t, app.Commit())
-+
-+			// Roll the WAL well past the segment holding sel's declaration and exemplar, so
-+			// sel's later sample below lands in a segment the checkpoints forced later never
-+			// reach.
-+			const preRollSegments = 30
-+			for range preRollSegments {
-+				_, err := db.head.wal.NextSegment()
-+				require.NoError(t, err)
-+			}
-+
-+			// CompactStaleHead only picks up series whose last sample is a stale marker.
-+			v := 2.0
-+			if compaction == "stale" {
-+				v = math.Float64frombits(value.StaleNaN)
-+			}
-+			app = db.AppenderV2(ctx)
-+			_, err = app.Append(selRef, sel, 0, 900, v, nil, nil, storage.AOptions{})
-+			require.NoError(t, err)
-+			require.NoError(t, app.Commit())
-+			require.Equal(t, int64(900), db.Head().MaxTime())
-+
-+			// Early compaction compacts both of sel's samples into a block. On an unpatched
-+			// Head.gcSeries, sel's recent exemplar keeps its identity alive, chunk-less,
-+			// instead of evicting and tombstoning it.
-+			if compaction == "stale" {
-+				require.NoError(t, db.CompactStaleHead())
-+			} else {
-+				require.NoError(t, db.CompactSelectedSeries([]storage.SeriesRef{selRef}))
-+			}
-+			require.Len(t, db.Blocks(), 1)
-+
-+			// A regular GC, as triggered by ordinary compaction, stops protecting a
-+			// still-alive sel via its exemplar once mint passes it -- well before sel's own
-+			// second sample at 900 -- and deletes it without writing a tombstone for it. The
-+			// walExpiry it then records reflects only this GC's own cutoff, not sel's own
-+			// later sample still awaiting replay.
-+			require.NoError(t, db.head.truncateMemory(e.Ts+1))
-+			require.Nil(t, db.Head().series.getByID(chunks.HeadSeriesRef(selRef)), "sel must be fully evicted by now")
-+
-+			// Force a checkpoint past the exemplar's timestamp, but still well before sel's
-+			// own second sample, so the WAL segment holding it is left untouched either way.
-+			const truncateMint = 150
-+			for range 10 {
-+				db.head.lastWALTruncationTime.Store(0)
-+				require.NoError(t, db.head.truncateWAL(truncateMint))
-+				if _, _, err := wlog.LastCheckpoint(db.head.wal.Dir()); err == nil {
-+					break
-+				}
-+			}
-+			_, _, err = wlog.LastCheckpoint(db.head.wal.Dir())
-+			require.NoError(t, err, "a checkpoint must have been produced")
-+
-+			require.NoError(t, db.Close())
-+			reopened, err := Open(db.Dir(), nil, nil, opts, nil)
-+			require.NoError(t, err)
-+			t.Cleanup(func() { require.NoError(t, reopened.Close()) })
-+
-+			// sel's second sample is already safely stored in the early-compaction block, so
-+			// losing its WAL replay is not sample loss by itself, but it must not be
-+			// misreported as an unknown series reference: the series was deliberately
-+			// evicted, not corrupted data.
-+			unknownSamples := prom_testutil.ToFloat64(reopened.head.metrics.walReplayUnknownRefsTotal.WithLabelValues("samples"))
-+			require.Zero(t, unknownSamples,
-+				"WAL replay must not report unknown series references for sel's second 
-```
-
-**File**: `tsdb/head_wal.go` (modified, +4/-15)
-```diff
-@@ -505,31 +505,20 @@ Outer:
- 		return fmt.Errorf("read records: %w", err)
- 	}
- 
--	missingExemplarRefs := unknownExemplarRefs.Load()
--	totalUnknownRefs := unknownSampleRefs.Load() + missingExemplarRefs + unknownHistogramRefs.Load() + unknownMetadataRefs.Load() + unknownTombstoneRefs.Load()
--	// Report exemplar-only unknown references separately. They can occur when
--	// tombstone replay removes a series before its exemplars are processed.
--	if totalUnknownRefs > 0 && totalUnknownRefs == missingExemplarRefs {
--		h.logger.Warn(
--			"Unknown series references for exemplars",
--			"series", unknownSeriesRefs.count(),
--			"exemplars", missingExemplarRefs,
--		)
--	} else if totalUnknownRefs > 0 {
-+	if unknownSampleRefs.Load()+unknownExemplarRefs.Load()+unknownHistogramRefs.Load()+unknownMetadataRefs.Load()+unknownTombstoneRefs.Load() > 0 {
- 		h.logger.Warn(
- 			"Unknown series references",
- 			"series", unknownSeriesRefs.count(),
- 			"samples", unknownSampleRefs.Load(),
--			"exemplars", missingExemplarRefs,
-+			"exemplars", unknownExemplarRefs.Load(),
- 			"histograms", unknownHistogramRefs.Load(),
- 			"metadata", unknownMetadataRefs.Load(),
- 			"tombstones", unknownTombstoneRefs.Load(),
- 		)
--	}
--	if totalUnknownRefs > 0 {
-+
- 		counterAddNonZero(h.metrics.walReplayUnknownRefsTotal, float64(unknownSeriesRefs.count()), "series")
- 		counterAddNonZero(h.metrics.walReplayUnknownRefsTotal, float64(unknownSampleRefs.Load()), "samples")
--		counterAddNonZero(h.metrics.walReplayUnknownRefsTotal, float64(missingExemplarRefs), "exemplars")
-+		counterAddNonZero(h.metrics.walReplayUnknownRefsTotal, float64(unknownExemplarRefs.Load()), "exemplars")
- 		counterAddNonZero(h.metrics.walReplayUnknownRefsTotal, float64(unknownHistogramRefs.Load()), "histograms")
- 		counterAddNonZero(h.metrics.walReplayUnknownRefsTotal, float64(unknownMetadataRefs.Load()), "metadata")
- 		counterAddNonZero(h.metrics.walReplayUnknownRefsTotal, float64(unknownTombstoneRefs.Load()), "tombstones")
+ 					if !nextCompactionIsSoon {
+ 						if err := db.CompactStaleHead(); err != nil {
+-							db.logger.Error("immediate stale series compaction failed", "err", err)
++							if errors.Is(err, context.Canceled) {
++								db.logger.Info("immediate stale series compaction cancelled", "err", err)
++							} else {
++								db.logger.Error("immediate stale series compaction failed", "err", err)
++							}
+ 						}
+ 					}
+ 				}
+@@ -1353,7 +1357,11 @@ func (db *DB) run(ctx context.Context) {
+ 			db.autoCompactMtx.Lock()
+ 			if db.autoCompact {
+ 				if err := db.Compact(ctx); err != nil {
+-					db.logger.Error("compaction failed", "err", err)
++					if errors.Is(err, context.Canceled) {
++						db.logger.Info("compaction cancelled", "err", err)
++					} else {
++						db.logger.Error("compaction failed", "err", err)
++					}
+ 					backoff = exponential(backoff, 1*time.Second, 1*time.Minute)
+ 				} else {
+ 					backoff = 0
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #20521** (2026-11-20): cmd/prometheus: pass --scrape.discovery-reload-interval=100ms in scrape tests (@machine424)
+- **PR #20520** (2026-11-20): tsdb: downgrade compaction cancel log from error to info on shutdown (@machine424)
+- **PR #20499** (2026-11-19): ui: fix function signatures in the codemirror-promql lint table (@BahaaMattar)
+- **PR #20488** (2026-11-19): ui: highlight missing PromQL functions and keywords in the editor (@BahaaMattar)
+- **PR #20470** (2026-11-17): ui: emphasize focused graph series (@divyanshAgarwal123)
 - **PR #20467** (2026-11-16): tsdb: tombstone series with exemplars during early compaction (@duricanikolic)
-- **PR #20456** (2026-11-16): web: ui: align literal and duration keyword parsing with PromQL (@xixi-box)
-- **PR #20443** (2026-11-13): ci: do not run govulncheck on forks (@electron0zero)
-- **PR #20437** (2026-11-13): rules: restrict automatic metadata inference to schema-preserving expressions (@roidelapluie)
-- **PR #20429** (closed): tsdb: optimize memSeries struct alignment (@pitasi)
-- **PR #20428** (2026-11-13): docs: fix STACKIT example key and list Vultr SD in scrape_config (@rawsun007)
 
 ---
 
@@ -2082,31 +1945,31 @@ Signed-off-by: Yuri Nikolic <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in write_otlp_handler.go
+## X. cmd/prometheus: pass --scrape.discovery-reload-interval=100ms in scrape tests
 
 **RULE**:
-When implementing operations in `storage/remote/write_otlp_handler.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prometheus/prometheus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cmd/prometheus/main_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in prometheus/prometheus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `620819d1`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `06170caa`: cmd/prometheus: pass --scrape.discovery-reload-interval=100ms in scrape tests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `storage/remote/write_otlp_handler.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/prometheus/main_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-func (rw *rwExporter) ConsumeMetrics(ctx context.Context, md pmetric.Metrics) (err error) {
+		"--scrape.discovery-reload-interval=100ms",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-func (rw *rwExporter) ConsumeMetrics(ctx context.Context, md pmetric.Metrics) error {
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `620819d1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `06170caa` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

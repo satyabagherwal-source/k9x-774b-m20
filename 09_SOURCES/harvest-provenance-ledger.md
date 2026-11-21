@@ -11852,3 +11852,7 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `d2feb4ac` | Multi-dimensional audit evidence | 2026-11-21T14:27:55.216Z |
 | `learn-huggingface-unsloth-flint-gguf` | `https://huggingface.co/unsloth/flint-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-21T14:49:30.548Z |
 | `learn-github-zulip-zulip` | `https://github.com/zulip/zulip` | `4b6608d2` | Multi-dimensional audit evidence | 2026-11-21T14:49:38.019Z |
+| `learn-huggingface-minimaxai-minimax-m3-1-flash` | `https://huggingface.co/MiniMaxAI/MiniMax-M3.1-Flash` | `hf-minimax` | Multi-dimensional audit evidence | 2026-11-21T15:17:36.885Z |
+| `learn-github-metalbear-co-mirrord` | `https://github.com/metalbear-co/mirrord` | `7f23826a` | Multi-dimensional audit evidence | 2026-11-21T15:17:38.945Z |
+| `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `06170caa` | Multi-dimensional audit evidence | 2026-11-21T15:17:45.792Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `6d77feaf` | Multi-dimensional audit evidence | 2026-11-21T15:17:53.155Z |
