@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T03:28:50.577Z",
-  "total_cycles_completed": 11153,
-  "total_learnings_persisted": 11153,
-  "total_rules_promoted": 10510,
+  "last_updated": "2026-11-21T03:36:50.299Z",
+  "total_cycles_completed": 11157,
+  "total_learnings_persisted": 11157,
+  "total_rules_promoted": 10514,
   "history": [
-    {
-      "timestamp": "2026-11-20T07:03:00.697Z",
-      "repository": "yshrsmz/BuildKonfig",
-      "learningId": "learn-github-yshrsmz-buildkonfig",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T07:03:23.850Z",
-      "repository": "juicedata/juicefs",
-      "learningId": "learn-github-juicedata-juicefs",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T07:14:54.427Z",
-      "repository": "rook/rook",
-      "learningId": "learn-github-rook-rook",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T07:15:00.736Z",
-      "repository": "ydb-platform/ydb",
-      "learningId": "learn-github-ydb-platform-ydb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-20T07:35:56.456Z",
       "repository": "pimalaya/himalaya",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-21T03:28:50.577Z",
       "repository": "MaterializeInc/materialize",
       "learningId": "learn-github-materializeinc-materialize",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T03:36:38.121Z",
+      "repository": "pola-rs/polars",
+      "learningId": "learn-github-pola-rs-polars",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T03:36:43.007Z",
+      "repository": "ShiGuangSchedule/shiguangschedule",
+      "learningId": "learn-github-shiguangschedule-shiguangschedule",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T03:36:45.644Z",
+      "repository": "aws/aws-cdk",
+      "learningId": "learn-github-aws-aws-cdk",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T03:36:50.299Z",
+      "repository": "HelixDB/helix-db",
+      "learningId": "learn-github-helixdb-helix-db",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

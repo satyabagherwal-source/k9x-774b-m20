@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T03:02:47.408Z",
+  "timestamp": "2026-11-21T03:36:55.112Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-aws-aws-cdk-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [aws-aws-cdk-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T03:02:47.408Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T03:36:55.112Z`  
 > **Learning ID**: `LEARN-EVO-aws-aws-cdk-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aws-aws-cdk-learnings.md`  
 > **Source**: github ([https://github.com/aws/aws-cdk](https://github.com/aws/aws-cdk))  
-> **Source Version**: `66801507`  
+> **Source Version**: `629d0164`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T02:58:31.608Z  
+> **Timestamp**: 2026-11-21T03:36:44.650Z  
 > **Learning ID**: `learn-github-aws-aws-cdk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aws-aws-cdk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aws/aws-cdk](https://github.com/aws/aws-cdk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T02:58:31.603Z  
+> **Harvest Timestamp**: 2026-11-21T03:36:44.645Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: The AWS Cloud Development Kit is a framework for defining cloud infrastructure in code
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 12987 stars
+- **Stars / Engagement**: 12989 stars
 
 ---
 
@@ -1225,664 +1225,44 @@ export abstract class OnlineEvaluationBase extends Resource implements IOnlineEv
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4ed690ec` (2026-11-19)
-**Commit Message**: fix(core): asset hashing and symlink contract is not documented (#39779)
+### Incident Patch 1: `d09b7a5b` (2026-11-20)
+**Commit Message**: Revert "chore: update lambda runtime integration tests"
 
-We didn't clearly explain how all the various options of `AssetStaging` interacted with each other. This led to multiple security researchers thinking they found a problem in our contract, whereas the actual contract never intended to guarantee what they thought they found.
+This reverts commit 6c796c7d5c924acc7fb56f085d94bd53dff9ae22.
 
-It's also not very helpful to users if it's not clear what `exclude` applies to in the case of bundling (source, output? both, neither?)
-
-This change more clearly defines the contract, and cleans up the implementation of the asset staging flow that have accreted over time (mostly with respect to bundling) to also make the intended flow more clear.
-
-The contract
-=============
-
-WITHOUT BUNDLING
-
-Without the `bundling` property the asset is just a regular file copy operation.
-
-- `exclude` and `ignoreMode` control which files are excluded from the copy operation.
-- `follow` controls how symlinks are handled during the copy operation: the symlink can be copied, the file the symlink points to can be copied, or symlinks pointing outside the source tree can be blocked.
-- The asset hash is calculated based on the files that are copied into the ass
-
-**File**: `packages/@aws-cdk/aws-lambda-python-alpha/lib/bundling.ts` (modified, +7/-2)
+**File**: `packages/@aws-cdk-testing/framework-integ/test/aws-lambda-nodejs/test/integ.nodejs.build.images.ts` (modified, +1/-1)
 ```diff
-@@ -2,7 +2,7 @@ import * as path from 'path';
- import type { AssetCode, Runtime } from 'aws-cdk-lib/aws-lambda';
- import { Architecture, Code } from 'aws-cdk-lib/aws-lambda';
- import type { BundlingFileAccess, BundlingOptions as CdkBundlingOptions, DockerVolume } from 'aws-cdk-lib/core';
--import { AssetStaging, DockerImage, PERF_BUNDLING_SRC_SYM } from 'aws-cdk-lib/core';
-+import { AssetHashType, AssetStaging, DockerImage, PERF_BUNDLING_SRC_SYM } from 'aws-cdk-lib/core';
- import { UnscopedValidationError } from 'aws-cdk-lib/core/lib/errors';
- import { lit, posixShellEscape } from 'aws-cdk-lib/core/lib/helpers-internal';
- import { Packaging, DependenciesFile } from './packaging';
-@@ -60,10 +60,15 @@ export class Bundling implements CdkBundlingOptions {
-   public static bundle(options: BundlingProps): AssetCode {
-     validateOutputPathSuffix(options.outputPathSuffix ?? '');
+@@ -14,7 +14,7 @@ class TestStack extends Stack {
+     super(scope, id, props);
  
-+    let exclude = [];
-+    if (options.assetHashType === AssetHashType.SOURCE || options.assetHashType === undefined) {
-+      exclude.push(...DEPENDENCY_EXCLUDES);
-+    }
-+
-     return Code.fromAsset(options.entry, {
-       assetHash: options.assetHash,
-       assetHashType: options.assetHashType,
--      exclude: DEPENDENCY_EXCLUDES,
-+      exclude,
-       bundling: options.skip ? undefined : new Bundling(options),
-     });
-   }
+     const runtimes: Runtime[]= [
+-      Runtime.NODEJS_20_X, Runtime.NODEJS_LATEST, Runtime.NODEJS_22_X, Runtime.NODEJS_24_X, Runtime.NODEJS_26_X,
++      Runtime.NODEJS_20_X, Runtime.NODEJS_LATEST, Runtime.NODEJS_22_X, Runtime.NODEJS_24_X,
+     ];
+ 
+     const uniqueRuntimes: Runtime[] = runtimes.filter((value, index, array) => array.findIndex(value1 => value1.runtimeEquals(value)) === index);
 ```
 
-**File**: `packages/aws-cdk-lib/core/lib/asset-staging.ts` (modified, +310/-192)
+**File**: `packages/@aws-cdk/aws-lambda-python-alpha/test/integ.python.build.images.ts` (modified, +1/-1)
 ```diff
-@@ -2,13 +2,14 @@ import * as crypto from 'crypto';
- import * as path from 'path';
- import { Construct } from 'constructs';
- import * as fs from 'fs-extra';
-+import { Annotations } from './annotations';
- import type { AssetOptions } from './assets';
- import { AssetHashType, FileAssetPackaging } from './assets';
- import type { BundlingOptions } from './bundling';
- import { BundlingFileAccess, BundlingOutput, PERF_BUNDLING_SRC_SYM } from './bundling';
- import { AssumptionError, ValidationError } from './errors';
- import type { FingerprintOptions } from './fs';
--import { FileSystem, SymlinkFollowMode, IgnoreStrategy } from './fs';
-+import { FileSystem, IgnoreStrategy, SymlinkFollowMode } from './fs';
- import { clearLargeFileFingerprintCache } from './fs/fingerprint';
- import { Names } from './names';
- import { AssetBundlingVolumeCopy, AssetBundlingBindMount } from './private/asset-staging';
-@@ -45,7 +46,10 @@ interface StagedAsset {
-   readonly packaging: FileAssetPackaging;
+@@ -20,7 +20,7 @@ class TestStack extends Stack {
+     super(scope, id, props);
  
-   /**
--   * Whether this asset is an archive
-+   * Whether this asset will ultimately end up in S3 as an archive
-+   *
-+   * It will end up as an archive either if it's a directory (which
-+   * the CDK will ZIP) or if it's a file that's an archive.
-    */
-   readonly isArchive: boolean;
- }
-@@ -64,11 +68,59 @@ export interface AssetStagingProps extends FingerprintOptions, AssetOptions {
-  * Stages a file or directory from a location on the file system into a staging
-  * directory.
-  *
-- * This is controlled by the context key 'aws:cdk:asset-staging' and enabled
-- * by the CLI by default in order to ensure that when the CDK app exists, all
-- * assets are available for deployment. Otherwise, if an app references assets
-- * in temporary locations, those will not be available when it exists (see
-- * https://github.com/aws/aws-cdk/issues/1716).
-+ * This construct can operate in two modes: without and with "bundling". Bundling
-+ * means that an additional command is run to transform the source files into
-+ * a final asset that will be used for deployment.
-+ *
-+ * ## Without bundling
-+ *
-+ * Without the `bundling` property, the asset is just a regular file copy
-+ * operation.
-+ *
-+ * - `exclude` and `ignoreMode` control which files are excluded from the copy operation.
-+ * - `follow` controls how symlinks are handled during the copy operation:
-+ *   the symlink can be copied, the file the symlink points to can be copied,
-+ *   or symlinks pointing outside the source tree can be blocked.
-+ * - The asset hash is calculated based on the files that are copied into the asset,
-+ *   unless the hash is overridden entirely by the `assetHash` property.
-+ *
-+ * The copy-staging operation can be disabled by setting the context
-+ * key `'aws:cdk:asset-staging': false`. This can be useful for local
-+ * development tools like SAM CLI, so that you can update the source files
-+ * directly and immediately see the result in a local emulator without needing
-+ * to run `cdk synth` every time to stage the assets. Note that in this mode,
-+ * since there is no copying, `exclude` and `follow` settings have no effect,
-+ * including `BLOCK_EXTERNAL` which will not be applied.
-+ *
-+ * ## With bundling
-+ *
-+ * With the `bundling` property, the transformation of source files to a final asset
-+ * is done through bundling operation specified in the `bundling` property.
-+ *
-+ * The behavior of the construct depends on the `assetHashType` selected:
-+ *
-+ * - `AssetHashType.SOURCE`: the asset hash will be based on the source files
-+ *   after applying the `exclude`, `ignoreMode` and `follow` settings. That hash
-+ *   will be used to skip the bundling command entirely if an asset with the given
-+ *   hash already exists in the assembly directory. This requires that those
-+ *   settings accurately model the dependencies used by the bundling operation to
-+ *   produce the final asset.
-+ * - `AssetHashType.OUTPUT`: the asset hash will be based on the output of the
-+ *   bundling operation. `exclude`/`ignoreMode` are not used, and no attempt
-+ *   is made to materialize any symlinks that bundling may have written.
-+ * - `AssetHashType.CUSTOM`: the asset hash will be taken from the `assetHash`
-+ *   property. `exclude`/`ignoreMode` are not used, and no attempt is made to
-+ *   materialize any symlinks that bundling may have written.
-+ *
-+ * For all three modes, if `follow` is set to `SymlinkFollowMode.BLOCK_EXTERNAL`,
-+ * any symlinks written by bundling that point outside the output directory
-+ * will be blocked.
-+ *
-+ * For bundled assets, staging can not be disabled for the benefit of local
-+ * development. If you are iterating against a local emulator, you will need to
-+ * run `cdk synth` for every asset change.
-+ *
-+ * ## Other behavior
-  *
-  * The `stagedPath` property is a stringified token that represents the location
-  * of the file or directory after staging. It will be resolved only during the
-@@ -77,6 +129,15 @@ export interface AssetStagingProps extends FingerprintOption
-```
-
-**File**: `packages/aws-cdk-lib/core/lib/assets.ts` (modified, +39/-7)
-```diff
-@@ -66,30 +66,62 @@ export interface AssetOptions {
-  */
- export enum AssetHashType {
-   /**
--   * Based on the content of the source path
-+   * Base the asset hash on the contents of the source path
-    *
--   * When bundling, use `SOURCE` when the content of the bundling output is not
--   * stable across repeated bundling operations.
-+   * ## Without bundling
-+   *
-+   * When used without the `bundling` property, and the asset is just a regular file
-+   * copy operation: the hash will be based on the files in the source path
-+   * respecting the `exclude` patterns given (i.e., excluded files will not be
-+   * included in the hash). This matches the files that are actually copied by the
-+   * copy operation.
-+   *
-+   * ## With bundling
-+   *
-+   * When used with the `bundling` property, and the asset is produced by a
-+   * bundling operation: the hash will still be based on the files in the source
-+   * path while respecting the `exclude` patterns given. If those given files
-+   * did not change since the last bundling operation, the hash will remain the same
-+   * and the bundling operation itself will be skipped. However, do note the following
-+   * important caveat:
-+   *
-+   * - The bundling operation has access to all files in the source path, regardless
-+   *   of the `exclude` pattern you configure. It is your responsibility to ensure
-+   *   the `exclude` pattern accurately matches the files the bundling operation
-+   *   will *actually* access and base its final output on.
-+   *
-+   * It is always safe to fingerprint more files than strictly necessary. This will
-+   * potentially reduce the efficiency of cache hits, but not affect correctness.
-    */
-   SOURCE = 'source',
+     const runtimes: Runtime[]= [
+-      Runtime.PYTHON_3_10, Runtime.PYTHON_3_11, Runtime.PYTHON_3_12, Runtime.PYTHON_3_13, Runtime.PYTHON_3_14, Runtime.PYTHON_3_15,
++      Runtime.PYTHON_3_10, Runtime.PYTHON_3_11, Runtime.PYTHON_3_12, Runtime.PYTHON_3_13, Runtime.PYTHON_3_14,
+     ];
  
-   /**
--   * Based on the content of the bundled path
-+   * Base the asset hash on the contents of the bundled path
-    *
-    * @deprecated use `OUTPUT` instead
-    */
-   BUNDLE = 'bundle',
- 
-   /**
--   * Based on the content of the bundling output
-+   * Base the asset hash on the contents of the bundling output
-+   *
-+   * Use `OUTPUT` when it is hard to isolate the full set of source files that
-+   * contribute to the final asset. Instead, the files produced by the `bundling` step
-+   * will be fingerprinted to produce the asset hash.
-    *
--   * Use `OUTPUT` when the source of the asset is a top level folder containing
--   * code and/or dependencies that are not directly linked to the asset.
-+   * Use of this value precludes caching of the transform operation: since the
-+   * asset hash can only be calculated *after* the asset is bundled, the asset must
-+   * be bundled on every synthesis.
-+   *
-+   * This option can only be used in combination with the `bundling` property.
-    */
-   OUTPUT = 'output',
- 
-   /**
-    * Use a custom hash
-+   *
-+   * The `AssetStaging` construct will not calculate the asset hash; instead, it
-+   * will use the asset hash given in the `assetHash` property.
-    */
-   CUSTOM = 'custom',
- }
-```
-
-**File**: `packages/aws-cdk-lib/core/lib/fs/ignore.ts` (modified, +15/-0)
-```diff
-@@ -46,6 +46,21 @@ export abstract class IgnoreStrategy {
-     return new DockerIgnoreStrategy(absoluteRootPath, patterns);
-   }
- 
-+  /**
-+   * Return an IgnoreStrategy that does not ignore any files.
-+   */
-+  public static none(): IgnoreStrategy {
-+    return new class extends IgnoreStrategy {
-+      public add(): void {
-+        // no-op
-+      }
-+
-+      public ignores(): boolean {
-+        return false;
-+      }
-+    };
-+  }
-+
-   /**
-    * Creates an IgnoreStrategy based on the `ignoreMode` and `exclude` in a `CopyOptions`.
-    *
-```
-
-**File**: `packages/aws-cdk-lib/core/lib/fs/index.ts` (modified, +22/-0)
-```diff
-@@ -16,6 +16,7 @@ export * from './options';
- export class FileSystem {
-   /**
-    * Copies an entire directory structure.
-+   *
-    * @param srcDir Source directory
-    * @param destDir Destination directory
-    * @param options options
-@@ -25,6 +26,27 @@ export class FileSystem {
-     return copyDirectory(srcDir, destDir, options, rootDir);
-   }
- 
-+  /**
-+   * Copies an entire directory structure.
-+   *
-+   * Protects against interruption by copying to a temporary directory first and then renaming the directory into place.
-+   * Both the target directory and the temporary directory will be overwritten if they already exist.
-+   *
-+   * The temporary directory is deleted if an error occurs.
-+   */
-+  public static copyDirectoryAtomic(srcDir: string, destDir: string, options: CopyOptions = { }) {
-+    const tmpDest = `${destDir}.tmp`;
-+    FileSystem.rmrf(tmpDest);
-+    try {
-+      fs.mkdirSync(tmpDest, { recursive: true });
-+      copyDirectory(srcDir, tmpDest, options);
-+      FileSystem.rmrf(destDir);
-+      fs.renameSync(tmpDest, destDir);
-+    } finally {
-+      FileSystem.rmrf(tmpDest);
-+    }
-+  }
-+
-   /**
-    * Produces fingerprint based on the contents of a single file or an entire directory tree.
-    *
-```
-
-**File**: `packages/aws-cdk-lib/core/lib/fs/options.ts` (modified, +81/-6)
-```diff
-@@ -74,16 +74,38 @@ export enum IgnoreMode {
- interface FileOptions {
-   /**
-    * File paths matching the patterns will be excluded. See `ignoreMode` to set the matching behavior.
--   * Has no effect on Assets bundled using the `bundling` property.
-+   *
-+   * ## Without bundling
-+   *
-+   * When used without the `bundling` property, the asset is just a regular file
-+   * copy operation. In that case, this controls the files that will be included
-+   * in the copy. Files matching the `exclude` patterns will not be included in
-+   * the copy.
-+   *
-+   * ## With bundling
-+   *
-+   * When used with the `bundling` property, the asset is produced by a
-+   * bundling operation. In that case, the value of `exclude` is only meaningful
-+   * if the `assetHashType` is set to `AssetHashType.SOURCE`, and ignored for
-+   * other asset hash types. The `exclude` patterns will be used to determine
-+   * which files contribute to the asset, and the bundling command is skipped
-+   * if the source files have not changed since the last bundling operation.
-+   *
-+   * **NOTE:** The bundling operation still has access to all files in the source path,
-+   * regardless of the `exclude` patterns. It is your responsibility to ensure
-+   * the `exclude` pattern accurately matches the files the bundling operation
-+   * will *actually* access and base its final output on.
-+   *
-+   * For `OUTPUT` or `CUSTOM` asset hash types, the `exclude` pattern is ignored.
-    *
-    * @default - nothing is excluded
-    */
-   readonly exclude?: string[];
- 
-   /**
--   * The ignore behavior to use for `exclude` patterns.
-+   * What syntax the `exclude` patterns are written in.
-    *
--   * @default IgnoreMode.GLOB
-+   * @default - IgnoreMode.GLOB for file assets, `IgnoreMode.DOCKER` for image assets (requires that the `@aws-cdk/aws-ecr-assets:dockerIgnoreSupport` feature flag is set, which is recommended)
-    */
-   readonly ignoreMode?: IgnoreMode;
- }
-@@ -95,7 +117,34 @@ export interface CopyOptions extends FileOptions {
-   /**
-    * A strategy for how to handle symlinks.
-    *
--   * @default SymlinkFollowMode.NEVER
-+   * Symlinks may be copied, materialized or rejected. Note that if symlinks are
-+   * copied they should be relative; absolute symlinks will lose their
-+   * meaning if the cloud assembly is moved to another machine.
-+   *
-+   * ## Without bundling
-+   *
-+   * When used without the `bundling` property, the asset is just a regular file
-+   * copy operation. In that case, symlinks are materialized or blocked with respect
-+   * to the source path root as they are being copied.
-+   *
-+   * ## With bundling
-+   *
-+   * When used with the `bundling` property, the asset is produced by a
-+   * bundling operation. In that case, the bundling command is fully
-+   * in charge of producing a set of files in an output directory, and
-+   * the `AssetStaging` construct will never affect symlink materialization.
-+   *
-+   * If the `assetHashType` is `AssetHashType.SOURCE`, this flag affects what
-+   * the source hash is based on, and the recommended value is one of
-+   * `SymlinkFollowMode.EXTERNAL` or `SymlinkFollowMode.BLOCK_EXTERNAL`.
-+   *
-+   * If the `SymlinkFollowMode.BLOCK_EXTERNAL` mode is used:
-+   *
-+   * - Symlinks pointing outside the source tree will be blocked, but only
-+   *   if using `AssetHashType.SOURCE` (not for any of the other asset hash types).
-+   * - Symlinks pointing outside the bundle output will be blocked.
-+   *
-+   * @default SymlinkFollowMode.EXTERNAL
-    */
-   readonly follow?: SymlinkFollowMode;
- }
-@@ -107,7 +156,32 @@ export interface FileCopyOptions extends FileOptions {
-   /**
-    * A strategy for how to handle symlinks.
-    *
--   * @default SymlinkFollowMode.NEVER
-+   * Symlinks may be copied, materialized or rejected. Note that if symlinks are
-+   * copied they should be relative; absolute symlinks will lose their
-+   * meaning if the cloud assembly is moved to another machine.
-+   *
-+   * ## Without bundling
-+   *
-+   * When used without the `bundling` property, the asset is just a regular file
-+   * copy operation. In that case, symlinks are materialized or blocked with respect
-+   * to the `sourcePath` directory as they are being copied.
-+   *
-+   * ## With bundling
-+   *
-+   * When used with the `bundling` property, the asset is produced by a
-+   * bundling operation. In that case, the bundling command is fully
-+   * in charge of producing a set of files in an output directory, and
-+   * the `AssetStaging` construct will never affect symlink materialization.
-+   *
-+   * If the `assetHashType` is `AssetHashType.SOURCE`, this flag affects what
-+   * the source hash is based on, and the recommended value is one of
-+   * `SymlinkFollowMode.EXTERNAL` or `SymlinkFollowMode.BLOCK_EXTERNAL`.
-+   *
-+   * If the `SymlinkFollowMode.BLOCK_EXTERNAL` mode is used:
-+   * - symlinks pointing outside the source tree will be blocked if using `AssetHashType.SOURCE`.
-+   * - symlinks pointing outside the bundle output will be block
-```
-
-**File**: `packages/aws-cdk-lib/core/lib/fs/utils.ts` (modified, +8/-2)
-```diff
-@@ -2,6 +2,8 @@ import * as fs from 'fs';
- import * as path from 'path';
- import type { IgnoreStrategy } from './ignore';
- import { SymlinkFollowMode } from './options';
-+import { UnscopedValidationError } from '../errors';
-+import { lit } from '../private/literal-string';
- 
- export function isInternalPath(rootPath: string, targetPath: string): boolean {
-   return rootPath === targetPath || targetPath.startsWith(rootPath + path.sep);
-@@ -221,6 +223,12 @@ export function walkDirectory(directory: string, options: WalkOptions, visitor:
- 
-     if (!targetStats) {
-       if (!ignoreStrategy.ignores(symbolicPath)) {
-+        if (follow === SymlinkFollowMode.BLOCK_EXTERNAL && !internal) {
-+          throw new UnscopedValidationError(
-+            lit`ExternalSymlink`,
-+            `BLOCK_EXTERNAL forbids the symbolic link ${realPath} from pointing outside the directory tree (to ${linkTarget}). Set \`follow\` to a mode that will follow symlinks (ALWAYS or EXTERNAL) or emit a regular file`,
-+          );
-+        }
-         visitor.onSymlink?.({ path: symbolicPath, realPath, linkTarget, resolvedLinkTarget, internal });
-       }
-       return;
-@@ -247,9 +255,7 @@ export function walkDirectory(directory: string, options: WalkOptions, visitor:
-       case SymlinkFollowMode.EXTERNAL:
-         return !internal;
-       case SymlinkFollowMode.BLOCK_EXTERNAL:
--        return internal;
-       case SymlinkFollowMode.NEVER:
--      default:
-         return false;
-     }
-   }
-```
-
-**File**: `packages/aws-cdk-lib/core/test/app-that-is-interrupted-during-copy.ts` (added, +24/-0)
-```diff
-@@ -0,0 +1,24 @@
-+/**
-+ * This is a CDK app that is guaranteed to kill itself while copying an asset into the cloud assembly
-+ */
-+import fs from 'fs';
-+import * as path from 'path';
-+import { App, AssetStaging, Stack } from '../lib';
-+
-+// Die right after the first file has been copied, so the copy is left half-done
-+const copyFileSync = fs.copyFileSync;
-+fs.copyFileSync = (...args: Parameters<typeof fs.copyFileSync>) => {
-+  copyFileSync(...args);
-+  process.kill(process.pid, 'SIGTERM');
-+  // Signal delivery is asynchronous; make sure we don't get to copy anything else in the meantime
-+  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 10_000);
-+};
-+
-+const app = new App();
-+const stack = new Stack(app, 'stack');
-+
-+new AssetStaging(stack, 'Asset', {
-+  sourcePath: path.join(__dirname, 'fs', 'fixtures', 'test1'),
-+});
-+
-+app.synth();
-```
-
----
-
-### Incident Patch 2: `b7476c8a` (2026-11-19)
-**Commit Message**: chore: release build runs out of memory in jsii-pacmak (#39840)
-
-### Issue # (if applicable)
-
-None.
-
-### Reason for this change
-
-The release build fails in `pack.sh` when `jsii-pacmak` runs out of heap:
-
-```
-[jsii-pacmak] [INFO] Packaging 'python' for 44 modules
-FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory
-./pack.sh: line 49: Aborted   $PACMAK --verbose $(cat $TMPDIR/jsii.txt)
-```
-
-`pack.sh` packages all jsii modules in one `jsii-pacmak` process with the 8 GB heap it sets at the top of the script. The service spec update in #39788 grew `@aws-cdk/mixins-preview` from about 2,000 to about 28,000 types, almost all of them EventBridge event types, and the release build's Rosetta step now handles 68,160 examples instead of about 42,000. The pacmak step no longer fits in 8 GB. The build host has 144 GB.
-
-This failure showed up after #39836 fixed the Rosetta errors that stopped the build earlier in `pack.sh`.
-
-### Description of changes
-
-Give the `jsii-pacmak` step in `pack.sh` a 32 GB heap. The other steps in `pack.sh` keep the 8 GB heap.
-
-A later `--max-old-space-size` in `NODE_OPTIONS` overrides the earlier one, so the change 
-
-**File**: `pack.sh` (modified, +3/-1)
-```diff
-@@ -43,8 +43,10 @@ echo "Running aws-cdk-lib pre-package"
- npx lerna run --scope aws-cdk-lib package -- --pre-only
- 
- # Jsii packaging (all at once using jsii-pacmak)
-+# jsii-pacmak loads every assembly and its translations into one process. With about 28,000 types
-+# in @aws-cdk/mixins-preview, that needs more than the 8 GB set above.
- echo "Packaging jsii modules" >&2
--$PACMAK \
-+NODE_OPTIONS="${NODE_OPTIONS} --max-old-space-size=32768" $PACMAK \
-   --verbose \
-   $(cat $TMPDIR/jsii.txt)
- 
-```
-
----
-
-### Incident Patch 3: `2f790a31` (2026-11-18)
-**Commit Message**: fix(core): upgrade CloudFormation validation to latest version (#39643)
-
-### Description
-This upgrades `@aws/cloudformation-validate` to [1.17.0](https://github.com/aws-cloudformation/cloudformation-validate/compare/1.14.0...1.17.0) in order to get the latest fixes and improvements, and allows compatible 1.17.x patch releases to be picked up automatically.
-
-Changes:
-* Fixes the `E1152` false positive for `resolve:ssm:` values on `AWS::EC2::Instance.ImageId`, including templates produced by `MachineImage.resolveSsmParameterAtLaunch`
-* Replaces the hard-coded `E3511` IAM role check with schema-backed `E1156` and `E1165` validation, removing duplicate diagnostics and accepting valid bare and path-prefixed role names for AWS Batch compute environments
-* Fixes conditional schema evaluation for nested `allOf` constraints and reachable `Fn::If` scenarios, including RDS KMS encryption checks and EC2 IPv6 mutual-exclusion checks
-* Honors CloudFormation `$uppercase` property transforms during enum validation, preventing `W3030` false positives for accepted case variants
-* Improves diagnostic locations for malformed condition operands and missing or empty `Resources` sections
-* Includes the l
-
-**File**: `packages/@aws-cdk/aws-apprunner-alpha/test/auto-scaling-configuration.test.ts` (modified, +4/-0)
-```diff
-@@ -5,6 +5,10 @@ import { AutoScalingConfiguration } from '../lib';
- let stack: cdk.Stack;
- beforeEach(() => {
-   stack = new cdk.Stack();
-+  cdk.Validations.of(stack).acknowledge({
-+    id: 'CloudFormation-Validate::W3697',
-+    reason: 'App Runner is in maintenance mode and is intentionally exercised by this unit test',
-+  });
- });
- 
- test.each([
-```
-
-**File**: `packages/@aws-cdk/aws-apprunner-alpha/test/obserbability-configuration.test.ts` (modified, +4/-0)
-```diff
-@@ -5,6 +5,10 @@ import { ObservabilityConfiguration, TraceConfigurationVendor } from '../lib';
- let stack: cdk.Stack;
- beforeEach(() => {
-   stack = new cdk.Stack();
-+  cdk.Validations.of(stack).acknowledge({
-+    id: 'CloudFormation-Validate::W3697',
-+    reason: 'App Runner is in maintenance mode and is intentionally exercised by this unit test',
-+  });
- });
- 
- test.each([
-```
-
-**File**: `packages/@aws-cdk/aws-s3objectlambda-alpha/test/s3objectlambda.test.ts` (modified, +4/-0)
-```diff
-@@ -10,6 +10,10 @@ let handler: lambda.Function;
- 
- beforeEach(() => {
-   stack = new cdk.Stack();
-+  cdk.Validations.of(stack).acknowledge({
-+    id: 'CloudFormation-Validate::W3697',
-+    reason: 'S3 Object Lambda is in maintenance mode and is intentionally exercised by this unit test',
-+  });
-   bucket = new s3.Bucket(stack, 'MyBucket');
-   handler = new lambda.Function(stack, 'MyFunction', {
-     runtime: lambda.Runtime.NODEJS_LATEST,
-```
-
-**File**: `packages/aws-cdk-lib/aws-cloudwatch-actions/test/ssm.test.ts` (modified, +4/-0)
-```diff
-@@ -133,6 +133,10 @@ test('SSM Incident alarm action with full stack including replication set and re
- 
-   // GIVEN
-   const stack = new Stack();
-+  cdk.Validations.of(stack).acknowledge({
-+    id: 'CloudFormation-Validate::W3697',
-+    reason: 'SSM Incident Manager is in maintenance mode and is intentionally exercised by this unit test',
-+  });
-   const responsePlanName = 'test-response-plan';
- 
-   const key = new kms.Key(stack, 'Key', {
-```
-
-**File**: `packages/aws-cdk-lib/aws-lambda/test/function.test.ts` (modified, +2/-2)
-```diff
-@@ -5632,7 +5632,7 @@ describe('L1 Relationships', () => {
-     const bucket = new s3.Bucket(stack, 'MyBucket');
- 
-     const codeToken = cdk.Token.asAny({
--      resolve: () => ({ s3Bucket: bucket.bucketName }),
-+      resolve: () => ({ s3Bucket: bucket.bucketName, s3Key: 'code.zip' }),
-     });
- 
-     const fsConfigToken = cdk.Token.asAny({
-@@ -5647,7 +5647,7 @@ describe('L1 Relationships', () => {
-     Template.fromStack(stack).hasResource('AWS::Lambda::Function', {
-       Properties: {
-         Role: { 'Fn::GetAtt': ['SomeRole6DDC54DD', 'Arn'] },
--        Code: { S3Bucket: { Ref: 'MyBucketF68F3FF0' } },
-+        Code: { S3Bucket: { Ref: 'MyBucketF68F3FF0' }, S3Key: 'code.zip' },
-         FileSystemConfigs: [{ Arn: 'TestArn', LocalMountPath: '/mnt' }],
-       },
-     });
-```
-
-**File**: `packages/aws-cdk-lib/package.json` (modified, +1/-1)
-```diff
-@@ -122,7 +122,7 @@
-     "@aws-cdk/asset-node-proxy-agent-v6": "^2.1.3",
-     "@aws-cdk/cloud-assembly-api": "^2.5.0",
-     "@aws-cdk/cloud-assembly-schema": "^55.6.0",
--    "@aws/cloudformation-validate": "1.14.0",
-+    "@aws/cloudformation-validate": "~1.17.0",
-     "@balena/dockerignore": "^1.0.2",
-     "case": "1.6.3",
-     "fs-extra": "^11.4.1",
-```
-
-**File**: `packages/aws-cdk-lib/testhelpers/jest-global-app-testhook.ts` (modified, +1/-0)
-```diff
-@@ -25,6 +25,7 @@ const APP_INIT_HOOK_SYMBOL = Symbol.for('@aws-cdk/core.App#initHook');
-     { id: 'CloudFormation-Validate::W7001', reason: 'Tests do not always reference mappings' },
-     { id: 'CloudFormation-Validate::W9008', reason: 'Do not care about storage encryption of RDS instances in tests' },
-     { id: 'CloudFormation-Validate::W3696', reason: 'Service is about to get shut down, no reason not to test' },
-+    { id: 'CloudFormation-Validate::W3697', reason: 'Services in maintenance mode are intentionally exercised in unit tests' },
-     { id: 'CloudFormation-Validate::F3031', reason: 'Some test value does not match the expected regex' },
-     { id: 'CloudFormation-Validate::F3017', reason: 'Many tests use placeholder KMS key identifiers; valid forms are documented at https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#key-id' },
-     { id: 'CloudFormation-Validate::E1151', reason: 'vpc-12345 is not a valid VPC ID' },
-```
-
-**File**: `yarn.lock` (modified, +4/-4)
-```diff
-@@ -2367,10 +2367,10 @@
-     "@smithy/types" "^4.20.0"
-     tslib "^2.6.2"
- 
--"@aws/cloudformation-validate@1.14.0":
--  version "1.14.0"
--  resolved "https://registry.npmjs.org/@aws/cloudformation-validate/-/cloudformation-validate-1.14.0.tgz#618e5b0709f702cb07eb670a665137fd63a61678"
--  integrity sha512-KIgS+l0XB890RT7zWcrnULexkxkA7vaIf2DllOGOU47iNQNgitlMndqBHGERgx9VXxxb3EpVXCD8PlpHbJZ+uQ==
-+"@aws/cloudformation-validate@~1.17.0":
-+  version "1.17.1"
-+  resolved "https://registry.npmjs.org/@aws/cloudformation-validate/-/cloudformation-validate-1.17.1.tgz#d7e27705e2131626651967d27291bad88a203f6e"
-+  integrity sha512-Rf3ISGZYfXq1c0fOSYYt33UvF5lSmphnl8JpCvlFMyAa5qc7GECXc8kPq1HL5+62leUQWMIiWceYjkuQhhJmZw==
- 
- "@aws/lambda-invoke-store@^0.3.0":
-   version "0.3.0"
+     const uniqueRuntimes: Runtime[] = runtimes.filter((value, index, array) => array.findIndex(value1 => value1.runtimeEquals(value)) === index);
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #39860** (2026-11-20): chore(merge-back): 2.278.0 (@aws-cdk-automation)
+- **PR #39858** (2026-11-20): chore(core): add telemetry counters for asset bundling (@mrgrain)
+- **PR #39855** (2026-11-20): chore(release): 2.278.0 (@aws-cdk-automation)
+- **PR #39848** (2026-11-20): chore: automate @aws/cloudformation-validate patch updates (@satyakigh)
 - **PR #39847** (2026-11-19): feat: update L1 CloudFormation resource definitions (@aws-cdk-automation)
 - **PR #39840** (2026-11-19): chore: release build runs out of memory in jsii-pacmak (@alvazjor)
-- **PR #39836** (2026-11-19): chore: synthetic examples for types named Export and Interface do not compile (@alvazjor)
-- **PR #39834** (2026-11-18): feat(lambda): add FunctionRuntimeConfig mixin for customer-managed runtimes (@kumvprat)
-- **PR #39832** (2026-11-19): chore(skills): rate, attribute and report review findings more precisely (@ozelalisen)
-- **PR #39831** (2026-11-18): chore(workflows): docker image cache fills the cache budget without speeding up builds (@mrgrain)
 
 ---
 
@@ -1902,38 +1282,31 @@ Changes:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. core): asset hashing and symlink contract is not documented
+## X. Revert "chore: update lambda runtime integration tests"
 
 **RULE**:
-When implementing operations in `packages/@aws-cdk/aws-lambda-python-alpha/lib/bundling.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws/aws-cdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/@aws-cdk-testing/framework-integ/test/aws-lambda-nodejs/test/integ.nodejs.build.images.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws/aws-cdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4ed690ec`: core): asset hashing and symlink contract is not documented. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d09b7a5b`: Revert "chore: update lambda runtime integration tests". Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/@aws-cdk/aws-lambda-python-alpha/lib/bundling.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/@aws-cdk-testing/framework-integ/test/aws-lambda-nodejs/test/integ.nodejs.build.images.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-import { AssetHashType, AssetStaging, DockerImage, PERF_BUNDLING_SRC_SYM } from 'aws-cdk-lib/core';
-    let exclude = [];
-    if (options.assetHashType === AssetHashType.SOURCE || options.assetHashType === undefined) {
-      exclude.push(...DEPENDENCY_EXCLUDES);
-    }
-
-      exclude,
+      Runtime.NODEJS_20_X, Runtime.NODEJS_LATEST, Runtime.NODEJS_22_X, Runtime.NODEJS_24_X,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-import { AssetStaging, DockerImage, PERF_BUNDLING_SRC_SYM } from 'aws-cdk-lib/core';
-      exclude: DEPENDENCY_EXCLUDES,
+      Runtime.NODEJS_20_X, Runtime.NODEJS_LATEST, Runtime.NODEJS_22_X, Runtime.NODEJS_24_X, Runtime.NODEJS_26_X,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4ed690ec` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d09b7a5b` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

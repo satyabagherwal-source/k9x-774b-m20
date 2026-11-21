@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-21T03:28:57.361Z",
+  "updated_at": "2026-11-21T03:36:54.329Z",
   "stats": {
-    "total_discovered": 6992,
-    "approved_pending_harvest": 6603,
+    "total_discovered": 6993,
+    "approved_pending_harvest": 6604,
     "harvested_count": 0,
     "rejected_count": 389,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6581,
+      "COMMUNITY_AND_EXPERT": 6582,
       "OFFICIAL_DOCUMENTATION": 234,
       "STANDARDS_AND_SPECIFICATIONS": 122,
       "ENGINEERING_BLOGS": 5,
@@ -151124,6 +151124,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
         "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-531453789B47": {
+      "id": "SRC-531453789B47",
+      "url": "https://github.com/ShiGuangSchedule/shiguangschedule",
+      "title": "https://github.com/ShiGuangSchedule/shiguangschedule",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T03:36:54.329Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shiguangschedule-shiguangschedule-learnings.md",
+        "fileName": "shiguangschedule-shiguangschedule-learnings.md"
       }
     }
   }

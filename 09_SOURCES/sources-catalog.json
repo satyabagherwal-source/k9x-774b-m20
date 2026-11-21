@@ -3973,10 +3973,10 @@
     "repository": "HelixDB/helix-db",
     "platform": "github",
     "sourceUrl": "https://github.com/HelixDB/helix-db",
-    "sourceVersion": "b943942d",
+    "sourceVersion": "a29a8d49",
     "license": "Apache-2.0",
-    "contentHash": "31e5f143b059d5592fead8ee3c7a4123dd08d59cb725d69a2d2860ebdda8d6a5",
-    "lastHarvestedAt": "2026-11-20T01:31:33.207Z",
+    "contentHash": "6329e3e0dc0e27046f87347157b5b89c28ef3175927d09d02384fff8fd994007",
+    "lastHarvestedAt": "2026-11-21T03:36:50.294Z",
     "learningId": "learn-github-helixdb-helix-db"
   },
   "microsoft-fluentui": {
@@ -4803,10 +4803,10 @@
     "repository": "aws/aws-cdk",
     "platform": "github",
     "sourceUrl": "https://github.com/aws/aws-cdk",
-    "sourceVersion": "66801507",
+    "sourceVersion": "629d0164",
     "license": "Apache-2.0",
-    "contentHash": "8fe2834fa7f79996da2bb4bf3f192532a449afe3c029d77f634a2cf634418a92",
-    "lastHarvestedAt": "2026-11-20T02:58:32.453Z",
+    "contentHash": "6ad9fbc60d194fa0713652f9574e550c543bde44e70fee5f569e7d7e055b43dd",
+    "lastHarvestedAt": "2026-11-21T03:36:45.639Z",
     "learningId": "learn-github-aws-aws-cdk"
   },
   "cockroachdb-cockroach": {
@@ -7743,10 +7743,10 @@
     "repository": "pola-rs/polars",
     "platform": "github",
     "sourceUrl": "https://github.com/pola-rs/polars",
-    "sourceVersion": "e02c237a",
+    "sourceVersion": "34f40615",
     "license": "MIT",
-    "contentHash": "d0c7a3bbb1c7dce5fd8fc53766b38660bf48623b468c649a7e55a787190dcf33",
-    "lastHarvestedAt": "2026-11-19T17:06:44.019Z",
+    "contentHash": "8bc5a4317998f3c31d8a2085b54a9174480e76de174a1ddeecfeaa8feb136b0d",
+    "lastHarvestedAt": "2026-11-21T03:36:38.116Z",
     "learningId": "learn-github-pola-rs-polars"
   },
   "mrkai77-loop": {
@@ -10643,10 +10643,10 @@
     "repository": "ShiGuangSchedule/shiguangschedule",
     "platform": "github",
     "sourceUrl": "https://github.com/ShiGuangSchedule/shiguangschedule",
-    "sourceVersion": "feabb68f",
+    "sourceVersion": "790f3072",
     "license": "Apache-2.0",
-    "contentHash": "06c748de254c6b7825845e5ce35dfc08897c4562ea61c08e871b8c65e1015863",
-    "lastHarvestedAt": "2026-10-25T02:05:13.531Z",
+    "contentHash": "1313f0ec6eb03146312fecb8e031b6454f88ca1ff9f7225fa35d905299f5576b",
+    "lastHarvestedAt": "2026-11-21T03:36:43.002Z",
     "learningId": "learn-github-shiguangschedule-shiguangschedule"
   },
   "glincker-thesvg": {

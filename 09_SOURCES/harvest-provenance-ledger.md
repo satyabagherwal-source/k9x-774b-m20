@@ -11750,3 +11750,7 @@ Every entry in this ledger must capture:
 | `learn-github-astral-sh-uv` | `https://github.com/astral-sh/uv` | `ac154af9` | Multi-dimensional audit evidence | 2026-11-21T03:28:36.255Z |
 | `learn-github-gauthierpiarrette-highball` | `https://github.com/gauthierpiarrette/highball` | `eaa9be2c` | Multi-dimensional audit evidence | 2026-11-21T03:28:41.619Z |
 | `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `5c494ac8` | Multi-dimensional audit evidence | 2026-11-21T03:28:50.572Z |
+| `learn-github-pola-rs-polars` | `https://github.com/pola-rs/polars` | `34f40615` | Multi-dimensional audit evidence | 2026-11-21T03:36:38.116Z |
+| `learn-github-shiguangschedule-shiguangschedule` | `https://github.com/ShiGuangSchedule/shiguangschedule` | `790f3072` | Multi-dimensional audit evidence | 2026-11-21T03:36:43.002Z |
+| `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `629d0164` | Multi-dimensional audit evidence | 2026-11-21T03:36:45.639Z |
+| `learn-github-helixdb-helix-db` | `https://github.com/HelixDB/helix-db` | `a29a8d49` | Multi-dimensional audit evidence | 2026-11-21T03:36:50.294Z |

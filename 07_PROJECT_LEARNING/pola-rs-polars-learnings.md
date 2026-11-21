@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pola-rs-polars-learnings.md`  
 > **Source**: github ([https://github.com/pola-rs/polars](https://github.com/pola-rs/polars))  
-> **Source Version**: `e02c237a`  
+> **Source Version**: `34f40615`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T17:06:42.780Z  
+> **Timestamp**: 2026-11-21T03:36:37.117Z  
 > **Learning ID**: `learn-github-pola-rs-polars`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pola-rs-polars-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pola-rs/polars](https://github.com/pola-rs/polars))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T17:06:42.653Z  
+> **Harvest Timestamp**: 2026-11-21T03:36:36.937Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Extremely fast Query Engine for DataFrames, written in Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 40385 stars
+- **Stars / Engagement**: 40407 stars
 
 ---
 
@@ -1697,11 +1697,11 @@ pub fn check_same_len(lhs: &dyn Array, rhs: &dyn Array) -> PolarsResult<()> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #30871** (2026-11-19): **Streaming join on a single List/Array/Struct key finds no matches when both inputs are sorted descending (merge join)**
-  *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example   ```python import polars as pl  left = pl.DataFrame({"k": [[3], [2], [2], [1]], "l": ["a", "b", "c", "d"]}).sort("k", descending=True) right = pl.DataFrame({"k": [[3], [2], [0]], "r": ["A", "B", "Z"]}).sort("k", descending=True)  q = left.lazy().join(right.lazy(), on="k") print(q.collect().rows())  # default engine (streaming) print(q.collect(engine="in-memory").rows()) print(left.join(right, on="k").rows())  q.sink_parquet("out.parquet") print(pl.read_parquet("out.parquet").height)  print(left.lazy().join(right.lazy(), on="k", how="left").collect().rows())  # sorted ascending, the same join is correct print(left.sort("k").lazy().join(right.sort("k").lazy(), on="k").collect().height) ```  Output:  ``` [] [([3], 'a', 'A'), ([2], 'b', 'B'), ([2], 'c', 'B')] [([3], 'a', 'A'), ([2], 'b', 'B'), ([2], 'c', 'B')] 0 [([3], 'a', None), ([2], 'b', None), ([2], 'c', None), ([1], 'd', None)] 3 ```  ### Log output  ```shell $ POLARS_VERBOSE=1 python ...   # stderr excerpt for q.collect() above: first graph phase, "updating <node>" lines omitted polars-stream: updating graph state polars-stream: running in-memory-sink in subgraph polars-stream: running with-columns in subgraph polars-stream: running in-memory-source in subgraph polars-stream: running in-memory-source in subgraph
+- **Issue #30922** (2026-11-20): **is_in with series.implode() doesn't do Parquet row group skipping**
+  *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example  ```python import os os.environ["POLARS_VERBOSE"] = "1" import polars as pl  pl.DataFrame({"job_id": range(100_000)}).write_parquet("data.parquet", row_group_size=10_000)  ids = pl.Series([30_005, 30_500, 31_234]) df = pl.scan_parquet("data.parquet").filter(pl.col("job_id").is_in(ids.implode())).collect() ```    ### Log output  ```shell total memory: 62.691 GiB (67313618944 bytes) _init_credential_provider_builder(): credential_provider_init = None async thread count: 24 blocking thread count: 512 polars-stream: updating graph state updating io-sink[single-file[parquet]], before: [Blocked] [] updating io-sink[single-file[parquet]], after: [Ready] [] (took 70ns) updating in-memory-source, before: [] [Ready] updating in-memory-source, after: [] [Ready] (took 2.816µs) updating io-sink[single-file[parquet]], before: [Ready] [] updating io-sink[single-file[parquet]], after: [Ready] [] (took 50ns) polars-stream: running in-memory-source in subgraph polars-stream: running io-sink[single-file[parquet]] in subgraph io-sink[single-file[parquet]]: start_single_file_sink_pipeline: file_writer_starter: parquet, target_sink_morsel_size: TargetSinkMorselSize { target_num_rows: 10000, target_num_bytes: 18446744073709551615, target_num_bytes_min_rows: 16384, target_num_rows_mode: Ex
 
-- **Issue #30860** (2026-11-18): **read_csv on an unbuffered io.FileIO pipe fails on Linux with OSError: No such device (os error 19) (regression in 2.x)**
-  *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example  ```python import os import polars as pl  def make_pipe():     r, w = os.pipe()     os.write(w, b"a,b\n1,2\n3,4\n")     os.close(w)     return r  # fails: exact io.FileIO wrapping a pipe with open(make_pipe(), "rb", buffering=0) as f:     print(pl.read_csv(f))  # works: io.BufferedReader wrapping a pipe # with open(make_pipe(), "rb") as f: #     print(pl.read_csv(f)) ```   ### Log output  ```shell total memory: 31.076 GiB (33367142400 bytes) _init_credential_provider_builder(): credential_provider_init = None async thread count: 22 blocking thread count: 512 sourcing csv scan file schema from: 'open-file' OSError: No such device (os error 19) ```  ### Issue description  Results on Linux, Python 3.14.3:  | Source | polars 1.44.2 | polars 2.1.0 | |---|---|---| | `open(pipe_fd, "rb", buffering=0)` (`FileIO`) | OK | **OSError: os error 19** | | `open(pipe_fd, "rb")` (`BufferedReader`) | OK | OK | | `f.read()` (bytes) | OK | OK |  - Error 19 is ENODEV, which is what `mmap()` returns for a pipe. Only Linux is affected; the same code works on Windows. - Likely cause, in `try_get_pyfile` in `crates/polars-python/src/file.rs` (tag `py-2.1.0`):   ```rust   py_f.is_exact_instance(FileIO)       || (is_exact_instance(Buffered*) || is_exact_instance(TextIOWrapper) && ...)        
+- **Issue #30916** (2026-11-20): **`scan_arrow_c_stream` (and `pl.defer`) apply pushed-down predicate before `n_rows`, giving wrong results for `.limit(n).filter(...)`**
+  *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example  ```python import polars as pl  df = pl.DataFrame({"a": [1, 2, 3, 4, 5, 6], "b": ["x", "y", "z", "a", "b", "c"]})  expected = df.lazy().limit(3).filter(pl.col("a") > 2).collect() actual_stream = pl.scan_arrow_c_stream(df).limit(3).filter(pl.col("a") > 2).collect() actual_defer = pl.defer(lambda: df, schema=df.schema).limit(3).filter(pl.col("a") > 2).collect() no_pushdown = (     pl.scan_arrow_c_stream(df)     .limit(3)     .filter(pl.col("a") > 2)     .collect(optimizations=pl.QueryOptFlags(predicate_pushdown=False)) )  print("expected:     ", expected["a"].to_list()) # expected:      [3] print("arrow_stream: ", actual_stream["a"].to_list()) # arrow_stream:  [3, 4, 5] print("defer:        ", actual_defer["a"].to_list()) # defer:         [3, 4, 5] print("no_pushdown:  ", no_pushdown["a"].to_list()) # no_pushdown:   [3]  print() print(pl.scan_arrow_c_stream(df).limit(3).filter(pl.col("a") > 2).explain()) """ PYTHON SCAN [] PROJECT */2 COLUMNS SELECTION: col("a") > 2 SLICE: Positive { offset: 0, len: 3 } """ ```   ### Log output  ```shell total memory: 117.901 GiB (126595493888 bytes) async thread count: 32 blocking thread count: 512 polars-stream: updating graph state updating in-memory-sink, before: [Blocked] [] updating in-memory-sink, after: [Ready] [] (took 270ns)
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1718,578 +1718,726 @@ pub fn check_same_len(lhs: &dyn Array, rhs: &dyn Array) -> PolarsResult<()> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `60a4ec62` (2026-11-19)
-**Commit Message**: fix: Turn panics in Arrow C stream callbacks into stream errors (#30886)
+### Incident Patch 1: `70eaa1b9` (2026-11-20)
+**Commit Message**: fix: Don't panic on extreme counts in string, binary and list slicing (#30940)
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `crates/polars-arrow/src/ffi/stream.rs` (modified, +55/-21)
+**File**: `crates/polars-arrow/src/legacy/index.rs` (modified, +3/-11)
 ```diff
-@@ -1,5 +1,6 @@
- use std::ffi::{CStr, CString};
- use std::ops::DerefMut;
-+use std::panic::AssertUnwindSafe;
- 
- use polars_error::{PolarsError, PolarsResult, polars_bail, polars_err};
- 
-@@ -127,25 +128,61 @@ impl<Iter: DerefMut<Target = ArrowArrayStream>> ArrowArrayStreamReader<Iter> {
- }
- 
- struct PrivateData {
--    iter: Box<dyn Iterator<Item = PolarsResult<Box<dyn Array>>>>,
-+    iter: Box<dyn Iterator<Item = PolarsResult<Box<dyn Array>>> + Send>,
-     field: Field,
-     error: Option<CString>,
-+    /// Whether a callback panicked, which ends the stream as `iter` is left in an unknown state.
-+    panicked: bool,
- }
- 
--unsafe extern "C" fn get_next(iter: *mut ArrowArrayStream, array: *mut ArrowArray) -> i32 {
-+/// The status of a failed callback, as no status of the interface itself is ever this.
-+const CALLBACK_ERROR: i32 = 2001;
-+
-+fn error_cstring(message: &str) -> CString {
-+    CString::new(message.replace('\0', "\\0")).unwrap()
-+}
-+
-+/// Run the body of a stream callback, storing a panic as the stream's error, as unwinding out of
-+/// an `extern "C"` function aborts the process.
-+unsafe fn catch_callback(
-+    iter: *mut ArrowArrayStream,
-+    body: impl FnOnce(&mut PrivateData) -> i32,
-+) -> i32 {
-     if iter.is_null() {
--        return 2001;
-+        return CALLBACK_ERROR;
-     }
--    let private = &mut *((*iter).private_data as *mut PrivateData);
-+    let private = (*iter).private_data as *mut PrivateData;
-+    if (*private).panicked {
-+        return CALLBACK_ERROR;
-+    }
-+    match std::panic::catch_unwind(AssertUnwindSafe(|| body(&mut *private))) {
-+        Ok(status) => status,
-+        Err(payload) => {
-+            let message = payload
-+                .downcast_ref::<&str>()
-+                .copied()
-+                .or_else(|| payload.downcast_ref::<String>().map(String::as_str))
-+                .unwrap_or("unknown panic");
-+            (*private).error = Some(error_cstring(&format!(
-+                "panic in an Arrow C stream callback: {message}"
-+            )));
-+            (*private).panicked = true;
-+            CALLBACK_ERROR
-+        },
-+    }
-+}
- 
--    match private.iter.next() {
-+unsafe extern "C" fn get_next(iter: *mut ArrowArrayStream, array: *mut ArrowArray) -> i32 {
-+    catch_callback(iter, |private| match private.iter.next() {
-         Some(Ok(item)) => {
-             // check that the array has the same dtype as field
-             let item_dt = item.dtype();
-             let expected_dt = private.field.dtype();
-             if item_dt != expected_dt {
--                private.error = Some(CString::new(format!("The iterator produced an item of data type {item_dt:?} but the producer expects data type {expected_dt:?}").as_bytes().to_vec()).unwrap());
--                return 2001; // custom application specific error (since this is never a result of this interface)
-+                private.error = Some(error_cstring(&format!(
-+                    "The iterator produced an item of data type {item_dt:?} but the producer expects data type {expected_dt:?}"
-+                )));
-+                return CALLBACK_ERROR;
-             }
- 
-             std::ptr::write(array, export_array_to_c(item));
-@@ -154,29 +191,23 @@ unsafe extern "C" fn get_next(iter: *mut ArrowArrayStream, array: *mut ArrowArra
-             0
-         },
-         Some(Err(err)) => {
--            // A NUL would end the C string: without it, `CString::new` can't fail (and a panic
--            // here can't unwind out of this `extern "C"` function).
--            let message = err.to_string().replace('\0', "\\0");
--            private.error = Some(CString::new(message).unwrap());
--            2001 // custom application specific error (since this is never a result of this interface)
-+            private.error = Some(error_cstring(&err.to_string()));
-+            CALLBACK_ERROR
-         },
-         None => {
-             let a = ArrowArray::empty();
-             std::ptr::write_unaligned(array, a);
-             private.error = None;
-             0
-         },
--    }
-+    })
- }
- 
- unsafe extern "C" fn get_schema(iter: *mut ArrowArrayStream, schema: *mut ArrowSchema) -> i32 {
--    if iter.is_null() {
--        return 2001;
--    }
--    let private = &mut *((*iter).private_data as *mut PrivateData);
--
--    std::ptr::write(schema, export_field_to_c(&private.field));
--    0
-+    catch_callback(iter, |private| {
-+        std::ptr::write(schema, export_field_to_c(&private.field));
-+        0
-+    })
- }
- 
- unsafe extern "C" fn get_last_error(iter: *mut ArrowArrayStream) -> *const ::std::os::raw::c_char {
-@@ -202,14 +233,17 @@ unsafe extern "C" fn release(iter: *mut ArrowArrayStream) {
- }
- 
- /// Exports an iterator to the [C stream interface](https://arrow.apache.org/docs/format/CStreamInterface.html)
-+///
-+/// The iterator must be `Send`, as the consumer may read the stream from any thread.
- pub fn export_iterator(
--    iter: Box<dyn Iterator<Item = PolarsResult<Box<dyn Array>>>>,
-+    iter: Box<dyn Iterator<Item = Polars
-```
-
-**File**: `crates/polars/tests/it/arrow/ffi/stream.rs` (modified, +29/-0)
-```diff
-@@ -42,3 +42,32 @@ fn stream_reader_try_new_invalid_argument_error_on_released_stream() {
-         _ => panic!("ArrowArrayStreamReader::try_new did not return an InvalidArgumentError"),
+@@ -26,18 +26,10 @@ where
+     #[inline]
+     fn negative_to_usize(self, len: usize) -> Option<usize> {
+         if self >= Zero::zero() {
+-            if (self.to_usize().unwrap()) < len {
+-                Some(self.to_usize().unwrap())
+-            } else {
+-                None
+-            }
++            self.to_usize().filter(|idx| *idx < len)
+         } else {
+-            let subtract = self.abs().to_usize().unwrap();
+-            if subtract > len {
+-                None
+-            } else {
+-                Some(len - subtract)
+-            }
++            let subtract = usize::try_from(self.to_i128()?.unsigned_abs()).ok()?;
++            len.checked_sub(subtract)
+         }
      }
  }
+```
+
+**File**: `crates/polars-ops/src/chunked_array/binary/namespace.rs` (modified, +2/-2)
+```diff
+@@ -90,7 +90,7 @@ pub trait BinaryNameSpaceImpl: AsBinary {
+     /// element. `n` can be negative, in which case the slice ends `n` bytes from the end.
+     fn bin_head(&self, n: &Column) -> PolarsResult<BinaryChunked> {
+         let ca = self.as_binary();
+-        let n = n.strict_cast(&DataType::Int64)?;
++        let n = crate::chunked_array::count_as_i64(n, ca.len())?;
+ 
+         super::slice::head(ca, n.i64()?)
+     }
+@@ -101,7 +101,7 @@ pub trait BinaryNameSpaceImpl: AsBinary {
+     /// negative, in which case the slice begins `n` bytes from the start.
+     fn bin_tail(&self, n: &Column) -> PolarsResult<BinaryChunked> {
+         let ca = self.as_binary();
+-        let n = n.strict_cast(&DataType::Int64)?;
++        let n = crate::chunked_array::count_as_i64(n, ca.len())?;
+ 
+         super::slice::tail(ca, n.i64()?)
+     }
+```
+
+**File**: `crates/polars-ops/src/chunked_array/binary/slice.rs` (modified, +16/-12)
+```diff
+@@ -4,6 +4,8 @@ use polars_core::prelude::arity::{binary_elementwise, ternary_elementwise, unary
+ use polars_core::prelude::{BinaryChunked, ChunkFullNull, DataType, Int64Chunked, UInt64Chunked};
+ use polars_error::{PolarsResult, polars_ensure};
+ 
++use crate::chunked_array::saturating_usize;
 +
-+#[test]
-+fn panic_in_iterator_ends_stream() -> PolarsResult<()> {
-+    use std::sync::Arc;
-+    use std::sync::atomic::{AtomicUsize, Ordering};
+ fn head_binary(opt_bytes: Option<&[u8]>, opt_n: Option<i64>) -> Option<&[u8]> {
+     if let (Some(bytes), Some(n)) = (opt_bytes, opt_n) {
+         let end_idx = head_binary_values(bytes, n);
+@@ -18,11 +20,13 @@ fn head_binary_values(bytes: &[u8], n: i64) -> usize {
+         Ordering::Equal => 0,
+         Ordering::Greater => {
+             // Take first n bytes
+-            std::cmp::min(n as usize, bytes.len())
++            std::cmp::min(saturating_usize(n.unsigned_abs()), bytes.len())
+         },
+         Ordering::Less => {
+             // End n bytes from the end
+-            bytes.len().saturating_sub((-n) as usize)
++            bytes
++                .len()
++                .saturating_sub(saturating_usize(n.unsigned_abs()))
+         },
+     }
+ }
+@@ -43,11 +47,11 @@ fn tail_binary_values(bytes: &[u8], n: i64) -> usize {
+         Ordering::Equal => max_len,
+         Ordering::Greater => {
+             // Start from nth byte from the end
+-            max_len.saturating_sub(n as usize)
++            max_len.saturating_sub(saturating_usize(n.unsigned_abs()))
+         },
+         Ordering::Less => {
+             // Start after the nth byte
+-            std::cmp::min((-n) as usize, max_len)
++            std::cmp::min(saturating_usize(n.unsigned_abs()), max_len)
+         },
+     }
+ }
+@@ -73,21 +77,21 @@ pub fn slice_ternary_offsets_value(bytes: &[u8], offset: i64, length: u64) -> (u
+     }
+ 
+     let start_byte_offset = if offset >= 0 {
+-        std::cmp::min(offset as usize, bytes.len())
++        std::cmp::min(saturating_usize(offset.unsigned_abs()), bytes.len())
+     } else {
+         // If `offset` is negative, it counts from the end
+-        let abs_offset = (-offset) as usize;
+-        if abs_offset > bytes.len() {
++        let abs_offset = offset.unsigned_abs();
++        let len = bytes.len() as u64;
++        if abs_offset > len {
+             // Offset is before the start - handle length reduction
+-            let length_reduction = abs_offset - bytes.len();
+-            let adjusted_length = (length as usize).saturating_sub(length_reduction);
+-            return (0, std::cmp::min(adjusted_length, bytes.len()));
++            let adjusted_length = length.saturating_sub(abs_offset - len);
++            return (0, std::cmp::min(adjusted_length, len) as usize);
+         }
+-        bytes.len() - abs_offset
++        bytes.len() - abs_offset as usize
+     };
+ 
+     let remaining = bytes.len() - start_byte_offset;
+-    let end_byte_offset = start_byte_offset + std::cmp::min(length as usize, remaining);
++    let end_byte_offset = start_byte_offset + std::cmp::min(length, remaining as u64) as usize;
+ 
+     (start_byte_offset, end_byte_offset)
+ }
+```
+
+**File**: `crates/polars-ops/src/chunked_array/list/get.rs` (modified, +10/-2)
+```diff
+@@ -33,7 +33,11 @@ pub fn lst_get(ca: &ListChunked, index: &Int64Chunked, null_on_oob: bool) -> Pol
+                             let (start, end) = unsafe {
+                                 (*offsets.get_unchecked(i), *offsets.get_unchecked(i + 1))
+                             };
+-                            let offset = if idx >= 0 { start + idx } else { end + idx };
++                            let offset = if idx >= 0 {
++                                start.saturating_add(idx)
++                            } else {
++                                end + idx
++                            };
+                             if offset >= end || offset < start || start == end {
+                                 if null_on_oob {
+                                     Ok(None)
+@@ -57,7 +61,11 @@ pub fn lst_get(ca: &ListChunked, index: &Int64Chunked, null_on_oob: bool) -> Pol
+                             let (start, end) = unsafe {
+                                 (*offsets.get_unchecked(i), *offsets.get_unchecked(i + 1))
+                             };
+-                            let offset = if idx >= 0 { start + idx } else { end + idx };
++                            let offset = if idx >= 0 {
++                                start.saturating_add(idx)
++                            } else {
++                                end + idx
++                            };
+                             if offset >= end || offset < start || start == end {
+                                 if null_on_oob {
+                                     Ok(None)
+```
+
+**File**: `crates/polars-ops/src/chunked_array/mod.rs` (modified, +25/-0)
+```diff
+@@ -46,3 +46,28 @@ pub use top_k::*;
+ 
+ #[allow(unused_imports)]
+ use crate::prelude::*;
 +
-+    let array: Box<dyn Array> = Box::new(Int32Array::from(&[Some(1), None]));
-+    let field = Field::new("a".into(), array.dtype().clone(), true);
-+    let calls = Arc::new(AtomicUsize::new(0));
-+    let iter = {
-+        let (array, calls) = (array.clone(), calls.clone());
-+        std::iter::from_fn(move || match calls.fetch_add(1, Ordering::Relaxed) {
-+            0 => Some(Ok(array.clone())),
-+            1 => panic!("iterator boom"),
-+            _ => Some(Ok(array.clone())),
-+        })
++/// A count as `usize`; a count beyond `usize::MAX` covers any string or binary value the same way.
++pub(crate) fn saturating_usize(n: u64) -> usize {
++    usize::try_from(n).unwrap_or(usize::MAX)
++}
++
++/// `n` as Int64 counts for `len` values. A UInt64 count beyond the Int64 range is clipped, as
++/// it covers any value. A repeated count is returned once, so that it is applied as a scalar.
++pub(crate) fn count_as_i64(n: &Column, len: usize) -> PolarsResult<Column> {
++    let n = match n.as_scalar_column() {
++        Some(sc) if n.len() == len && len > 1 => &sc.as_single_value_series().into_column(),
++        _ => n,
 +    };
-+
-+    let stream = Box::new(ffi::export_iterator(Box::new(iter), field));
-+    let mut reader = unsafe { ffi::ArrowArrayStreamReader::try_new(stream)? };
-+
-+    assert_eq!(unsafe { reader.next() }.unwrap()?, array);
-+    for _ in 0..2 {
-+        let err = unsafe { reader.next() }.unwrap().unwrap_err();
-+        assert!(err.to_string().contains("iterator boom"), "{err}");
++    match n.dtype() {
++        DataType::UInt64 => n.try_apply_unary_elementwise(|n| {
++            Ok(
++                arity::unary_elementwise_values::<_, Int64Type, _>(n.u64()?, |v| {
++                    v.min(i64::MAX as u64) as i64
++                })
++                .into_series(),
++            )
++        }),
++        _ => n.strict_cast(&DataType::Int64),
 +    }
-+    assert_eq!(calls.load(Ordering::Relaxed), 2);
-+    Ok(())
 +}
 ```
 
-**File**: `py-polars/tests/unit/interop/test_interop.py` (modified, +20/-0)
+**File**: `crates/polars-ops/src/chunked_array/strings/namespace.rs` (modified, +2/-2)
 ```diff
-@@ -27,6 +27,8 @@
- from tests.unit.utils.pycapsule_utils import PyCapsuleArrayHolder, PyCapsuleStreamHolder
+@@ -928,7 +928,7 @@ pub trait StringNameSpaceImpl: AsString {
+     /// the end of the string.
+     fn str_head(&self, n: &Column) -> PolarsResult<StringChunked> {
+         let ca = self.as_string();
+-        let n = n.strict_cast(&DataType::Int64)?;
++        let n = crate::chunked_array::count_as_i64(n, ca.len())?;
  
- if TYPE_CHECKING:
-+    from collections.abc import Callable
-+
-     from tests.conftest import PlMonkeyPatch
+         substring::head(ca, n.i64()?)
+     }
+@@ -939,7 +939,7 @@ pub trait StringNameSpaceImpl: AsString {
+     /// negative, in which case the slice begins `n` characters from the start of the string.
+     fn str_tail(&self, n: &Column) -> PolarsResult<StringChunked> {
+         let ca = self.as_string();
+-        let n = n.strict_cast(&DataType::Int64)?;
++        let n = crate::chunked_array::count_as_i64(n, ca.len())?;
  
- 
-@@ -1903,3 +1905,21 @@ def test_export_arrow_to_c_logical_dtype(s: pl.Series) -> None:
-     arr = pa.Array._import_from_c(ctypes.addressof(c_array), ctypes.addressof(c_schema))
-     arr.validate(full=True)
-     assert arr.equals(s.to_arrow(compat_level=CompatLevel.newest()))
-+
-+
-+@pytest.mark.parametrize(
-+    "export",
-+    [
-+        lambda df: pa.table(df),
-+        lambda df: pa.RecordBatchReader.from_stream(df.lazy().collect_batches()),
-+    ],
-+    ids=["DataFrame", "LazyFrame.collect_batches"],
-+)
-+def test_arrow_c_stream_raises_on_a_nul_in_a_column_name(
-+    export: Callable[[pl.DataFrame], Any],
-+) -> None:
-+    # Exporting the name panics in the stream's `get_schema` callback.
-+    df = pl.DataFrame({"a\0b": [1]})
-+
-+    with pytest.raises(OSError, match="panic in an Arrow C stream callback"):
-+        export(df)
+         substring::tail(ca, n.i64()?)
+     }
 ```
 
----
-
-### Incident Patch 2: `501ba548` (2026-11-19)
-**Commit Message**: fix: Lower the cloud connect timeout to 10 seconds (#30897)
-
-**File**: `crates/polars-io/src/cloud/options.rs` (modified, +89/-20)
+**File**: `crates/polars-ops/src/chunked_array/strings/substring.rs` (modified, +20/-9)
 ```diff
-@@ -333,33 +333,81 @@ impl CloudType {
+@@ -4,6 +4,8 @@ use polars_core::prelude::{ChunkFullNull, Int64Chunked, StringChunked, UInt64Chu
+ use polars_core::series::IsSorted;
+ use polars_error::{PolarsResult, polars_ensure};
  
- pub static USER_AGENT: &str = concat!("polars", "/", env!("CARGO_PKG_VERSION"),);
- 
-+/// HTTP client timeouts from the environment, in whole seconds. 0 disables a timeout.
- #[cfg(any(feature = "aws", feature = "gcp", feature = "azure", feature = "http"))]
--pub(super) fn get_client_options() -> ClientOptions {
--    use std::num::NonZeroU64;
-+struct HttpTimeouts {
-+    /// DNS lookup, TCP connect and TLS handshake.
-+    connect: Option<std::time::Duration>,
-+    /// Wait for the response headers, then each gap between reads of the body. The header
-+    /// timer starts when the request is created, so it also limits sending a request body.
-+    read: Option<std::time::Duration>,
-+    /// One request attempt up to the end of the response body, whatever its progress.
-+    request: Option<std::time::Duration>,
-+}
++use crate::chunked_array::saturating_usize;
 +
-+#[cfg(any(feature = "aws", feature = "gcp", feature = "azure", feature = "http"))]
-+impl HttpTimeouts {
-+    fn from_env() -> Self {
-+        fn secs(name: &str, default: u64) -> Option<std::time::Duration> {
-+            let secs = std::env::var(name).map_or(default, |x| {
-+                x.parse::<u64>()
-+                    .unwrap_or_else(|_| panic!("invalid value for {name}: {x}"))
-+            });
-+            (secs > 0).then(|| std::time::Duration::from_secs(secs))
-+        }
- 
-+        Self {
-+            connect: secs("POLARS_HTTP_CONNECT_TIMEOUT_SECONDS", 10),
-+            read: secs("POLARS_HTTP_READ_TIMEOUT_SECONDS", 0),
-+            request: secs("POLARS_HTTP_REQUEST_TIMEOUT_SECONDS", 0),
-+        }
-+    }
-+}
-+
-+#[cfg(any(feature = "aws", feature = "gcp", feature = "azure", feature = "http"))]
-+pub(super) fn get_client_options() -> ClientOptions {
-     use reqwest::header::HeaderValue;
- 
--    ClientOptions::new()
--        // Disables the time limit for downloading the response body.
--        .with_timeout_disabled()
--        // Set the time limit for establishing the connection.
--        .with_connect_timeout(std::time::Duration::from_secs(
--            std::env::var("POLARS_HTTP_CONNECT_TIMEOUT_SECONDS")
--                .map(|x| {
--                    x.parse::<NonZeroU64>()
--                        .ok()
--                        .unwrap_or_else(|| {
--                            panic!("invalid value for POLARS_HTTP_CONNECT_TIMEOUT_SECONDS: {x}")
--                        })
--                        .get()
--                })
--                .unwrap_or(5 * 60),
--        ))
-+    let HttpTimeouts {
-+        connect,
-+        read,
-+        request,
-+    } = HttpTimeouts::from_env();
-+
-+    let opts = ClientOptions::new()
-         .with_user_agent(HeaderValue::from_static(USER_AGENT))
-         .with_allow_http(true)
-         .with_dns_resolver(Arc::new(
-             CachingResolver::new(DnsResolverConfig::from_env()),
--        ))
-+        ));
-+
-+    // `ClientOptions::new()` sets a connect and a request timeout of its own.
-+    let opts = match connect {
-+        Some(v) => opts.with_connect_timeout(v),
-+        None => opts.with_connect_timeout_disabled(),
-+    };
-+    let opts = match read {
-+        Some(v) => opts.with_read_timeout(v),
-+        None => opts.with_read_timeout_disabled(),
-+    };
-+    match request {
-+        Some(v) => opts.with_timeout(v),
-+        None => opts.with_timeout_disabled(),
-+    }
-+}
-+
-+/// Logs the timeouts of a client, as set by the environment and `storage_options`.
-+#[cfg(any(feature = "aws", feature = "gcp", feature = "azure", feature = "http"))]
-+fn log_http_timeouts(get_config_value: impl Fn(object_store::ClientConfigKey) -> Option<String>) {
-+    use object_store::ClientConfigKey as K;
-+
-+    let get = |key| get_config_value(key).unwrap_or_else(|| "disabled".to_string());
-+    eprintln!(
-+        "object-store http timeouts: connect: {}, read: {}, request: {}",
-+        get(K::ConnectTimeout),
-+        get(K::ReadTimeout),
-+        get(K::Timeout),
-+    );
+ #[inline(always)]
+ fn is_utf8_codepoint_start(b: u8) -> bool {
+     // The top two bits of a continuation byte are 10. Any other value is a
+@@ -131,10 +133,11 @@ fn head_binary(opt_str_val: Option<&str>, opt_n: Option<i64>) -> Option<&str> {
  }
  
- #[cfg(feature = "aws")]
-@@ -497,6 +545,10 @@ impl CloudOptions {
-             }
+ fn head_binary_values(str_val: &str, n: i64) -> usize {
++    let count = saturating_usize(n.unsigned_abs());
+     if n >= 0 {
+-        char_to_byte_idx(str_val, n as usize)
++        char_to_byte_idx(str_val, count)
+     } else {
+-        rev_char_to_byte_idx(str_val, (-n) as usize)
++        rev_char_to_byte_idx(str_val, count)
+     }
+ }
+ 
+@@ -148,10 +151,11 @@ fn tail_binary(opt_str_val: Option<&str>, opt_n: Option<i64>) -> Option<&str> {
+ }
+ 
+ fn tail_binary_values(str_val: &str, n: i64) -> usize {
++    let count = saturating_usize(n.unsigned_abs());
+     if n >= 0 {
+-        rev_char_to_byte_idx(str_val, n as usize)
++        rev_char_to_byte_idx(str_val, count)
+     } else {
+-        char_to_byte_idx(str_val, (-n) as usize)
++        char_to_byte_idx(str_val, count)
+     }
+ }
+ 
+@@ -190,18 +194,20 @@ pub fn substring_ternary_offsets_value(
+             return (0, 0);
          }
  
-+        if polars_core::config::verbose() {
-+            log_http_timeouts(|key| builder.get_config_value(&AmazonS3ConfigKey::Client(key)));
-+        }
-+
-         if builder
-             .get_config_value(&AmazonS3ConfigKey::DefaultRegion)
-             .is_none()
-@@ -527,8 +579,14 @@ impl CloudOptions {
-                             "'(default_)region' not set; polars will try to get it from bucket\n\nSet the region manually to silence this warning."
-                         );
-                         let result = with_concurrency_budget(1, || async {
--                            reqwest::Client::builder()
-+                            // A single HEAD that is not retried.
-+                            let mut client = reqwest::Client::builder()
-                                 .user_agent(USER_AGENT)
-+                                .timeout(std::time::Duration::from_secs(30));
-+                            if let Some(v) = HttpTimeouts::from_env().connect {
+-        match rev_char_to_byte_idx_or_cp_count(str_val, (-offset) as usize) {
++        let rev_offset = offset.unsigned_abs();
++        match rev_char_to_byte_idx_or_cp_count(str_val, saturating_usize(rev_offset)) {
+             Ok(so) => so,
+             Err(n_cp) => {
+                 // Our offset was so negative it is before the start of our string.
+                 // This means our length must be reduced, assuming it is finite.
+-                length = length.saturating_sub((-offset) as u64 - n_cp as u64);
++                length = length.saturating_sub(rev_offset - n_cp as u64);
+                 0
+             },
+         }
+     };
+ 
+-    let stop_byte_offset = char_to_byte_idx(&str_val[start_byte_offset..], length as usize);
++    let stop_byte_offset =
++        char_to_byte_idx(&str_val[start_byte_offset..], saturating_usize(length));
+     (start_byte_offset, start_byte_offset + stop_byte_offset)
+ }
+ 
+@@ -311,12 +317,17 @@ pub(super) fn head(ca: &StringChunked, n: &Int64Chunked) -> PolarsResult<StringC
+                 return Ok(StringChunked::full_null(ca.name().clone(), len));
+             };
+ 
+-            Ok(unsafe {
++            let mut out = unsafe {
+                 ca.apply_views(|view, val| {
+                     let end = head_binary_values(val, n);
+                     update_view(view, 0, end, val)
+                 })
+-            })
++            };
++            // A prefix keeps the order, removing a suffix does not.
++            if n < 0 {
++                out.set_sorted_flag(IsSorted::Not);
++            }
++            Ok(out)
+         },
+         // TODO! below should also work on only views
+         (1, _) => {
+```
 
+**File**: `py-polars/tests/unit/operations/namespaces/list/test_list.py` (modified, +17/-0)
+```diff
+@@ -1023,6 +1023,23 @@ def test_list_get_null_list_broadcast() -> None:
+     assert out.to_series().to_list() == [None, None]
+ 
+ 
++@pytest.mark.parametrize("index", [-(2**63), 2**63 - 1])
++def test_list_get_extreme_index(index: int) -> None:
++    df = pl.DataFrame({"a": [[1], None, [], [1, 2]]})
++    out = df.select(
++        scalar=pl.col("a").list.get(index, null_on_oob=True),
++        column=pl.col("a").list.get(pl.repeat(index, 4), null_on_oob=True),
++    )
++    assert out.to_dict(as_series=False) == {
++        "scalar": [None] * 4,
++        "column": [None] * 4,
++    }
++    gets: list[int | pl.Expr] = [index, pl.repeat(index, 4)]
++    for get in gets:
++        with pytest.raises(ComputeError, match="out of bounds"):
++            df.select(pl.col("a").list.get(get))
++
++
+ def test_list_get_with_null() -> None:
+     df = pl.DataFrame({"a": [None, [1, 2]], "b": [False, True]})
+ 
 ```
 
 ---
 
-### Incident Patch 3: `4d76833f` (2026-11-18)
-**Commit Message**: fix!: Make SQL `DELETE` change the registered table in a `SQLContext` (#30869)
+### Incident Patch 2: `97b951d7` (2026-11-20)
+**Commit Message**: fix: Raise instead of panicking on SQL GREATEST, LEAST and COALESCE without arguments (#30933)
 
-**File**: `crates/polars-sql/src/context.rs` (modified, +25/-7)
+**File**: `crates/polars-sql/src/functions.rs` (modified, +16/-10)
 ```diff
-@@ -3138,23 +3138,41 @@ impl SQLContext {
-             polars_bail!(SQLInterface: "unexpected statement type; expected DELETE")
+@@ -1759,10 +1759,8 @@ impl SQLFunctionVisitor<'_> {
+             // ----
+             // Conditional functions
+             // ----
+-            Coalesce => self.visit_temporal_variadic(coalesce),
+-            Greatest => {
+-                self.visit_temporal_variadic(|exprs: &[Expr]| max_horizontal(exprs).unwrap())
+-            },
++            Coalesce => self.visit_temporal_variadic(|exprs: &[Expr]| Ok(coalesce(exprs))),
++            Greatest => self.visit_temporal_variadic(|exprs: &[Expr]| max_horizontal(exprs)),
+             If => {
+                 let args = extract_args(function)?;
+                 match args.len() {
+@@ -1778,21 +1776,21 @@ impl SQLFunctionVisitor<'_> {
+             IfNull => {
+                 let args = extract_args(function)?;
+                 match args.len() {
+-                    2 => self.visit_temporal_variadic(coalesce),
++                    2 => self.visit_temporal_variadic(|exprs: &[Expr]| Ok(coalesce(exprs))),
+                     _ => {
+                         polars_bail!(SQLSyntax: "IFNULL expects 2 arguments (found {})", args.len())
+                     },
+                 }
+             },
+-            Least => self.visit_temporal_variadic(|exprs: &[Expr]| min_horizontal(exprs).unwrap()),
++            Least => self.visit_temporal_variadic(|exprs: &[Expr]| min_horizontal(exprs)),
+             NullIf => {
+                 let args = extract_args(function)?;
+                 match args.len() {
+                     2 => self.visit_temporal_variadic(|exprs: &[Expr]| {
+                         let [l, r] = exprs else { unreachable!() };
+-                        when(l.clone().eq(r.clone()))
++                        Ok(when(l.clone().eq(r.clone()))
+                             .then(lit(LiteralValue::untyped_null()))
+-                            .otherwise(l.clone())
++                            .otherwise(l.clone()))
+                     }),
+                     _ => {
+                         polars_bail!(SQLSyntax: "NULLIF expects 2 arguments (found {})", args.len())
+@@ -3026,8 +3024,16 @@ impl SQLFunctionVisitor<'_> {
+     /// [`Self::visit_variadic`] for a function whose arguments share one type: a string
+     /// literal is read as a value of the common temporal type of the other arguments, as
+     /// in `COALESCE(date_col, '2020-01-01')`.
+-    fn visit_temporal_variadic(&mut self, f: impl Fn(&[Expr]) -> Expr) -> PolarsResult<Expr> {
++    fn visit_temporal_variadic(
++        &mut self,
++        f: impl Fn(&[Expr]) -> PolarsResult<Expr>,
++    ) -> PolarsResult<Expr> {
+         let mut expr_args = self.parse_variadic_args()?;
++        polars_ensure!(
++            !expr_args.is_empty(),
++            SQLSyntax: "{} expects at least 1 argument (found 0)",
++            self.func.name.to_string().to_uppercase()
++        );
+         let is_string_literal =
+             |e: &Expr| matches!(e, Expr::Literal(lv) if lv.extract_str().is_some());
+         if expr_args.iter().any(is_string_literal) {
+@@ -3045,7 +3051,7 @@ impl SQLFunctionVisitor<'_> {
+                 }
+             }
+         }
+-        self.apply_window_spec(f(&expr_args))
++        self.apply_window_spec(f(&expr_args)?)
+     }
+ 
+     fn parse_variadic_args(&mut self) -> PolarsResult<Vec<Expr>> {
+```
+
+**File**: `py-polars/tests/unit/sql/test_conditional.py` (modified, +8/-0)
+```diff
+@@ -180,6 +180,14 @@ def test_greatest_least() -> None:
+         )
+ 
+ 
++@pytest.mark.parametrize("func", ["GREATEST", "LEAST", "COALESCE"])
++def test_variadic_no_arguments(func: str) -> None:
++    with pytest.raises(
++        SQLSyntaxError, match=f"{func} expects at least 1 argument \\(found 0\\)"
++    ):
++        pl.sql(f"SELECT {func}() AS x").collect()
++
++
+ @pytest.mark.parametrize(
+     "expr",
+     [
+```
+
+---
+
+### Incident Patch 3: `b692ad84` (2026-11-20)
+**Commit Message**: perf: Abandon stalled cloud reads after a stall timeout (#30966)
+
+**File**: `Cargo.lock` (modified, +1/-0)
+```diff
+@@ -3437,6 +3437,7 @@ dependencies = [
+  "futures",
+  "glob",
+  "hashbrown 0.17.1",
++ "http-body 1.1.0",
+  "itoa",
+  "libc",
+  "memchr",
+```
+
+**File**: `crates/polars-io/Cargo.toml` (modified, +2/-0)
+```diff
+@@ -34,6 +34,7 @@ flate2 = { workspace = true, optional = true }
+ futures = { workspace = true, optional = true }
+ glob = { version = "0.3" }
+ hashbrown = { workspace = true }
++http-body = { version = "1", optional = true }
+ itoa = { workspace = true, optional = true }
+ libc = { workspace = true }
+ memchr = { workspace = true }
+@@ -144,6 +145,7 @@ async = [
+ ]
+ cloud = [
+   "object_store",
++  "dep:http-body",
+   "async",
+   "serde_json",
+   "serde",
+```
+
+**File**: `crates/polars-io/src/cloud/http_rate_limit.rs` (modified, +24/-4)
+```diff
+@@ -45,13 +45,14 @@ use object_store::client::{
+ use polars_core::runtime::ASYNC;
+ use tokio::sync::oneshot;
+ 
++use super::stall_timer::{StallStats, StallTimer, TtfbMin};
+ use super::token_bucket::TokenBucket;
+ use crate::cloud::{CloudDirectionalRateLimitConfig, CloudRateLimitConfig};
+ 
+ // For tracing purposes.
+ static CONTROLLER_ID: AtomicU32 = AtomicU32::new(0);
+ 
+-// Verbose.
++// Diagnostics; the format is unstable.
+ static LOG_HTTP_RATE_LIMIT: LazyLock<bool> =
+     LazyLock::new(|| std::env::var("POLARS_LOG_HTTP_RATE_LIMIT").is_ok());
+ 
+@@ -312,6 +313,7 @@ pub(crate) struct RateState {
+     pub admitted: Arc<AtomicU64>,
+     // A throttle response was seen.
+     pub throttled: Arc<AtomicBool>,
++    pub stall: Arc<StallStats>,
+ }
+ 
+ impl RateState {
+@@ -321,6 +323,7 @@ impl RateState {
+             max_bits: Arc::new(AtomicU64::new(f64::NAN.to_bits())),
+             admitted: Arc::new(AtomicU64::new(0)),
+             throttled: Arc::new(AtomicBool::new(false)),
++            stall: Arc::default(),
+         }
+     }
+ 
+@@ -517,6 +520,7 @@ pub(crate) struct PacerSignal {
+     // Cumulative HTTP response counters, since epoch.
+     resp_succeeded: AtomicU64,
+     resp_throttled: AtomicU64,
++    stall: Arc<StallStats>,
+ }
+ 
+ #[derive(Debug)]
+@@ -561,6 +565,7 @@ impl AdaptiveRateController {
+             last_cut_ns: AtomicU64::new(0),
+             resp_succeeded: AtomicU64::new(0),
+             resp_throttled: AtomicU64::new(0),
++            stall: Arc::clone(&shared.stall),
          };
-         let (from, selection) = delete_parts(delete)?;
--        if let TableFactor::Table { name, .. } = &from.relation
--            && let Some((tbl, table)) = self.catalog_change_target(name)?
--        {
-+        let TableFactor::Table { name, .. } = &from.relation else {
-+            polars_bail!(SQLInterface: "DELETE requires a registered table")
-+        };
-+        if let Some((tbl, table)) = self.catalog_change_target(name)? {
-             polars_bail!(
-                 SQLInterface: "DELETE of catalog table '{}' ('{}') must be performed on the catalog (see `SQLContext::catalog_statement`)",
-                 tbl, display_name(&table.full_name())
+ 
+         let state = Mutex::new(AimdState {
+@@ -885,10 +890,12 @@ impl AdaptiveRateController {
+         // Logging.
+         let raises = std::mem::take(&mut state.raises);
+         if *LOG_HTTP_RATE_LIMIT {
++            let stall = self.signal.stall.take();
+             eprintln!(
+                 "[http rate_limit #{}_{} {}] {}: rate: {:.1}, success_rate_ewma: {:.1}, last_max: {:.1}, \
+                     elapsed: {:.1}s, win_admit: {}, win_deny: {}, win_success: {}, win_throttle: {},  q_depth: {}, \
+-                    demand: {:.1}, raises: {}",
++                    demand: {:.1}, raises: {}, win_stall_hdr: {}, win_stall_body: {}, win_stall_refused: {}, \
++                    stall_t: {:.1}ms",
+                 self.id,
+                 self.label,
+                 Utc::now(),
+@@ -904,6 +911,10 @@ impl AdaptiveRateController {
+                 self.pacer.queue_depth(),
+                 state.demand.unwrap_or_default(),
+                 raises,
++                stall.hdr_abandons,
++                stall.body_abandons,
++                stall.refused,
++                stall.t.as_secs_f64() * 1e3,
              );
          }
-         let lf = self.delete_target(from)?;
--        match selection {
-+        let tbl = object_name_to_string(name);
-+        polars_ensure!(
-+            key_ignoring_case(&self.table_map.read().unwrap(), &tbl)?.is_some(),
-+            SQLInterface: "DELETE requires a registered table; '{}' is not one", tbl
-+        );
-+        let remaining = match selection {
-             // no WHERE clause; equivalent to TRUNCATE (drop all rows)
--            None => Ok(lf.clear()),
-+            None => lf.clear(),
-             // apply constraint as inverted filter (drops rows matching the selection)
-             Some(selection) => {
--                self.process_where(lf, Some(selection), FilterMode::RemoveTrue, None)
-+                let remaining =
-+                    self.process_where(lf, Some(selection), FilterMode::RemoveTrue, None)?;
-+                // A missing column fails here, before the table changes (no data is read).
-+                LazyFrame::from(remaining.logical_plan.clone()).collect_schema()?;
-+                remaining
-             },
--        }
-+        };
-+        // Later statements see the remaining rows, as after TRUNCATE. Locked only now:
-+        // resolving the table and its WHERE read the table map.
-+        let mut table_map = self.table_map.write().unwrap();
-+        let Some(key) = key_ignoring_case(&table_map, &tbl)?.cloned() else {
-+            polars_bail!(SQLInterface: "DELETE requires a registered table; '{}' is not one", tbl)
-+        };
-+        table_map.insert(key, remaining.clone());
-+        Ok(remaining)
      }
+@@ -1134,6 +1145,7 @@ impl HttpConnector for PacedHttpConnector {
+         Ok(HttpClient::new(PacedHttpService {
+             inner: client,
+             controller: Arc::clone(&self.controller),
++            ttfb_min: TtfbMin::default(),
+         }))
+     }
+ }
+@@ -1142,6 +1154,7 @@ impl HttpConnector for PacedHttpConnector {
+ pub(crate) struct PacedHttpService {
+     inner: HttpClient,
+     controller: Arc<RateController>,
++    ttfb_min: TtfbMin,
+ }
  
-     fn delete_target(&mut self, from: &TableWithJoins) -> PolarsResult<LazyFrame> {
+ #[async_trait]
+@@ -1154,7 +1167,11 @@ impl HttpService for PacedHttpService {
+         // The object_store is responsible for retry.
+         verb_pacer.pacer.admit().await?;
+ 
+-        let response = self.inner.execute(req).await;
++        let stall_timer = StallTimer::start(&req, &self.ttfb_min, &verb_pacer.signal.stall);
++        let response = match &stall_timer {
++            Some(timer) => Box::pin(timer.headers(self.inner.execute(req))).await,
++            None => self.inner.execute(req).await,
++        };
+         match &response {
+             Ok(r) if r.status().as_u16() == 429 || r.status().as_u16() == 503 => {
+                 verb_pacer.on_congestion()
+@@ -1163,6 +1180,9 @@ impl HttpService for PacedHttpService {
+             _ => verb_pacer.on_other(),
+         }
+ 
+-        response
++        match stall_timer {
++            Some(timer) => timer.body(response),
++            None => response,
++        }
+     }
+ }
 ```
 
-**File**: `py-polars/docs/source/reference/sql/table_operations.rst` (modified, +17/-0)
+**File**: `crates/polars-io/src/cloud/mod.rs` (modified, +2/-0)
 ```diff
-@@ -378,6 +378,23 @@ DELETE
- Remove specific rows from a table using an (optional) constraint.
- Omitting the constraint deletes *all* rows, equivalent to `TRUNCATE`.
- 
-+On a registered table, it returns the remaining rows, and later statements in the same
-+context see the table without the deleted rows. Source files and the original frame are
-+not changed.
-+
-+The table keeps the condition, not its result. Each read of the table runs the condition
-+again on the table's source. A subquery of the condition keeps its tables as registered at
-+the time of the ``DELETE``.
-+
-+- A condition that names a missing column fails at the ``DELETE`` and leaves the table
-+  unchanged. Other errors in the condition, such as a string compared with an integer or a
-+  cast of a string that is not a number, show when the table is read, on each read until
-+  the table is registered again.
-+- Collecting the result of a ``DELETE`` computes the remaining rows. Leave the result lazy
-+  when only the change is needed.
-+- Each ``DELETE`` adds its condition to the table. After many, register the collected rows
-+  again: ``ctx.register("t", ctx.execute("SELECT * FROM t", eager=True))``.
-+
- On a table of an attached catalog, it deletes the matching rows in one commit, as one
- snapshot. It returns the statement, not the remaining rows. Rows where the condition is NULL
- are kept.
+@@ -31,4 +31,6 @@ mod http_origin_store;
+ #[cfg(feature = "cloud")]
+ pub mod http_rate_limit;
+ #[cfg(feature = "cloud")]
++mod stall_timer;
++#[cfg(feature = "cloud")]
+ pub mod token_bucket;
 ```
 
-**File**: `py-polars/tests/unit/sql/test_catalogs.py` (modified, +11/-0)
+**File**: `crates/polars-io/src/cloud/stall_timer.rs` (added, +441/-0)
 ```diff
-@@ -4485,6 +4485,17 @@ def test_delete_catalog_table_float_condition(lake: CountingCatalog) -> None:
-     assert len(table_rows(lake, "tpch", "f")) == 2
- 
- 
-+@pytest.mark.write_disk
-+def test_delete_registered_table_shadowing_catalog_table(lake: CountingCatalog) -> None:
-+    # a registered table of the name wins: DELETE changes it, not the catalog table
-+    ctx = lake_ctx(lake)
-+    ctx.register("lineitem", pl.LazyFrame({"k": [1, 2], "v": ["x", "y"]}))
-+    ctx.execute("DELETE FROM lineitem WHERE k = 1")
-+    assert ctx.execute("SELECT k FROM lineitem", eager=True)["k"].to_list() == [2]
-+    res = ctx.execute("SELECT k FROM lake.tpch.lineitem ORDER BY k", eager=True)
-+    assert res["k"].to_list() == [1, 2]
+@@ -0,0 +1,441 @@
++//! Stall timer for cloud reads.
++//!
++//! A ranged GET or a HEAD that receives no response headers, or no new body data, for longer
++//! than T is abandoned: the attempt ends in a `Timeout` error and its connection is dropped.
++//! object_store then retries the request, or resumes the body from the bytes already received.
++//!
++//! By default T sits just after the sender's second retransmission timeout:
++//! 1.1 x 3 x (200 ms + `ttfb_min`), where `ttfb_min` is the smallest recent time to headers of
++//! successful ranged GETs on the same object store (about 0.7 s in-region). A connection that is
++//! still silent at that point is typically waiting for a lost packet to be resent, which can
++//! take seconds.
++//!
++//! At most 20 attempts per second are abandoned per process; a stalled attempt without a token
++//! keeps waiting. `POLARS_HTTP_STALL_TIMEOUT_MS=0` disables the timer, any other value sets T in
++//! milliseconds. With `POLARS_LOG_HTTP_RATE_LIMIT`, the read controller's log line reports the
++//! abandons per window.
 +
++use std::fmt;
++use std::pin::Pin;
++use std::sync::atomic::AtomicU64;
++use std::sync::atomic::Ordering::Relaxed;
++use std::sync::{Arc, LazyLock};
++use std::task::{Context, Poll};
++use std::time::{Duration, Instant};
 +
- @pytest.mark.write_disk
- def test_delete_catalog_table_resolution(lake: CountingCatalog) -> None:
-     ctx = lake_ctx(lake)
-```
-
-**File**: `py-polars/tests/unit/sql/test_table_operations.py` (modified, +141/-0)
-```diff
-@@ -505,6 +505,7 @@ def test_qualified_table_name_ddl() -> None:
-     [
-         ("My Table", 'DROP TABLE "My Table"'),
-         ("My Table", 'TRUNCATE TABLE "My Table"'),
-+        ("My Table", 'DELETE FROM "My Table"'),
-         ("frame", "DROP TABLE FRAME"),
-     ],
- )
-@@ -845,3 +846,143 @@ def test_information_schema_columns(test_frame: pl.LazyFrame) -> None:
-         lf = ctx.execute("SELECT column_name FROM information_schema.columns")
-         ctx.unregister("df")
-         assert lf.collect()["column_name"].to_list() == ["a", "x", "y", "z", "x2", "y"]
++use bytes::Bytes;
++use http_body::{Body, Frame, SizeHint};
++use object_store::client::{HttpError, HttpErrorKind, HttpRequest, HttpResponse, HttpResponseBody};
 +
++// The sender resends a lost packet after its retransmission timeout, which starts at about
++// 200 ms (Linux' minimum) plus the round trip and doubles on every retry. The resends form a
++// ladder of rungs at 1, 3, 7 and 15 times that base: 0.2, 0.6, 1.4 and 3.0 s on a short path,
++// where the silences of slow S3 reads cluster. T waits for the second rung, with a margin.
++const RUNG_BASE: Duration = Duration::from_millis(200);
++/// Cumulative multiple of the base at the second rung (1 + 2).
++const RUNGS: f64 = 3.0;
++const MARGIN: f64 = 1.1;
++/// `ttfb_min` before the first sample.
++const TTFB_DEFAULT: Duration = Duration::from_millis(100);
++const TTFB_BUCKET_US: u64 = 5_000_000;
++/// Per process, with a burst of one second's worth.
++const MAX_ABANDONS_PER_S: u64 = 20;
 +
-+def test_delete_from_registered_table_30714() -> None:
-+    # later statements see the deletion, as after TRUNCATE; DELETE returns the rest
-+    with pl.SQLContext({"t": pl.LazyFrame({"a": [1, 2, 3, 4, 5]})}) as ctx:
-+        res = ctx.execute("DELETE FROM t WHERE a = 1", eager=True)
-+        assert res["a"].to_list() == [2, 3, 4, 5]
-+        assert ctx.execute("SELECT a FROM t", eager=True)["a"].to_list() == [2, 3, 4, 5]
++const ENV_VAR: &str = "POLARS_HTTP_STALL_TIMEOUT_MS";
 +
-+        # a lazy execute changes the table too
-+        ctx.execute("DELETE FROM t WHERE a = 5")
-+        assert ctx.execute("SELECT a FROM t", eager=True)["a"].to_list() == [2, 3, 4]
++enum Mode {
++    Off,
++    Auto,
++    Fixed(Duration),
++}
 +
-+        # an alias names the same table
-+        ctx.execute("DELETE FROM t AS x WHERE x.a = 4")
-+        assert ctx.execute("SELECT a FROM t", eager=True)["a"].to_list() == [2, 3]
++static MODE: LazyLock<Mode> = LazyLock::new(|| match std::env::var(ENV_VAR) {
++    Err(_) => Mode::Auto,
++    Ok(v) => match v.parse::<u64>() {
++        Ok(0) => Mode::Off,
++        Ok(ms) => Mode::Fixed(Duration::from_millis(ms)),
++        Err(_) => panic!("invalid value for {ENV_VAR}: {v}"),
++    },
++});
 +
-+        # a subquery on the table sees it as before the DELETE
-+        ctx.execute("DELETE FROM t WHERE a IN (SELECT min(a) FROM t)")
-+        assert ctx.execute("SELECT a FROM t", eager=True)["a"].to_list() == [3]
-+        assert ctx.tables() == ["t"]
++/// Stall timer counts of one object store, for `POLARS_LOG_HTTP_RATE_LIMIT`.
++#[derive(Debug, Default)]
++pub(crate) struct StallStats {
++    /// Attempts abandoned while waiting for response headers.
++    hdr_abandons: AtomicU64,
++    /// Attempts abandoned while waiting for body data.
++    body_abandons: AtomicU64,
++    /// Expired timers that got no token (`MAX_ABANDONS_PER_S`): the attempt kept waiting.
++    refused: AtomicU64,
++    /// T of the latest timed attempt, in µs.
++    t_us: AtomicU64,
++}
 +
-+        # without WHERE, as TRUNCATE
-+        ctx.execute("DELETE FROM T")
-+        out = ctx.execute("SELECT * FROM t", eager=True)
-+        assert out.height == 0
-+        assert out.columns == ["a"]
++/// `StallStats` since the previous `take`.
++#[derive(Debug)]
++pub(crate) struct StallCounts {
++    pub hdr_abandons: u64,
++    pub body_abandons: u64,
++    pub refused: u64,
++    /// T of the latest timed attempt.
++    pub t: Duration,
++}
 +
-+
-+@pytest.mark.write_disk
-+def test_delete_leaves_sources_unchanged(tmp_path: Path) -> None:
-+    df = pl.DataFrame({"a": [1, 2, 3]})
-+    path = tmp_path / "t.parquet"
-+    df.write_parquet(path)
-+    with pl.SQLContext({"scan": pl.scan_parquet(path), "frame": df}) as ctx:
-+        ctx.execute("DELETE FROM scan WHERE a = 1")
-+        ctx.execute("DELETE FROM frame WHERE a = 2")
-+        assert ctx.execute("SELECT a FROM scan", eager=True)["a"].to_list() == [2, 3]
-+        # the condition is pushed into the scan
-+        assert "SELECTION" in ctx.execute("SELECT a FROM scan").explain()
-+        assert ctx.execute("SELECT a FROM frame", eager=True)["a"].to_list() == [1, 3]
-+    assert_frame_equal(pl.read_parquet(path), df)
-+    assert df["a"].to_list() == [1, 2, 3]
-+
-+    # `df.sql` runs in its own context
-+    assert df.sql("DELETE FROM self WHERE a = 1")["a"].to_list() == [2, 3]
-+    assert df["a"].to_list() == [1, 2, 3]
-+
-+
-+def test_delete_in_scope_persists() -> None:
-+    # a table registered before the scope keeps the deletion, as after TRUNCATE
-+    ctx = pl.SQLContext({"t": pl.LazyFrame({"a": [1, 2]})})
-+    with ctx:
-+        ctx.execute("DELETE FROM t WHERE a = 1")
-+    assert ctx.execute("SELECT a FROM t", eager=True)["a"].to_list() == [2]
-+
-+    # registering it again restores it
-+    ctx.register("t", pl.LazyFrame({"a": [1, 2]}))
-+    assert ctx.execute("SELECT count(*) FROM t", eager=True).item() == 2
-+
-+
-+def test_delete_table_name_case() -> None:
-+    frames = {
-+        "Foo": pl.LazyFrame({"x": ["Foo", "Foo"]}),
-+        "FOO": pl.LazyFrame({"x": ["FOO"]}),
++impl StallStats {
++    pub(crate) fn take(&self) -> StallCounts {
++        StallCounts {
++            hdr_abandons: self.hdr_abandons.swap(0, Relaxed),
++            body_abandons: self.body_abandons.swap(0, Relaxed),
++            refused: self.refused.swap(0, Relaxed),
++            t: Duration::from_micros(self.t_us.load(Relaxed)),
++        }
 +    }
-+    with pl.SQLContext(frames) as ctx:
-+        # the exact name wins
-+        ctx.execute("DELETE FROM FOO")
-+        assert ctx.execute("SELECT count(*) FROM FOO", eager=True).item() == 0
-+        assert ctx.execute("SELECT count(*) FROM Foo", eager=True).item() == 2
-+        with pytest.raises(SQLInterfaceError, match=r"foo.*matches more than one"):
-+            ctx.execute("DELETE FROM foo")
++}
 +
++static EPOCH: LazyLock<Instant> = LazyLock::new(Instant::now);
 +
-+@pytest.mark.parametrize(
-+    ("query", "error"),
-+    [
-+        (
-+            "DELETE FROM (SELECT * FROM t) AS s WHERE a = 1",
-+            "DELETE requires a registered table",
-+        ),
-+        ("DELETE FROM missing", "relation 'missing' was not found"),
-+        # refused before its condition is checked
-+        ("DELETE FROM v WHERE a = 'x'", "DELETE requires a registered table; 'v'"),
-+    ],
-+)
-+def test_delete_requires_registered_table(query: str, error: str) -> None:
-+    with pl.SQLContext({"t": pl.LazyFrame({"a": [1]})}) as ctx:
-+        ctx.execute("CREATE VIEW v AS SELECT a FROM t")
-+        with pytest.raises(SQLInterfaceError, match=error):
-+            ctx.execute(query)
-+        assert ctx.execute("SELECT count(*) FROM t", eager=True).item() == 1
++fn now_us() -> u64 {
++    EPOCH.elapsed().as_micros() as u64
++}
 +
++/// The process-wide abandon budget, as the time (µs since `EPOCH`) at which the bucket is
++/// full again.
++static ABANDON_BUDGET: AtomicU64 = AtomicU64::new(0);
 +
-+@pytest.mark.parametrize(
-+    ("condition", "error"),
-+    [
-+        ("missing = 1", pl.exceptions.ColumnNotFoundError),
-+        ("a IN (SELECT s FROM u)", pl.exceptions.InvalidOperationError),
-+    ],
-+)
-+def test_delete_failure_leaves_table_unchanged(
-+    condition: str, error: type[Exception]
-+) -> None:
-+    frames = {"t": pl.LazyFrame({"a": [1, 2]}), "u": pl.
++/// Takes a token from a bucket that refills at `MAX_ABANDONS_PER_S` and holds one second's
++/// worth, kept in one atomic: `full_at`, when the bucket is full again. A token moves
++/// `full_at` one token's worth of time later, and is available while `full_at` stays within
++/// one second of `now`.
++fn take_token(full_at: &AtomicU64, now: u64) -> bool {
++    const COST_US: u64 = 1_000_000 / MAX_ABANDONS_PER_S;
++    let mut cur = full_at.load(Relaxed);
++    loop {
++        let next = cur.max(now) + COST_US;
++        if next > now + 1_000_000 {
++            return false;
++        }
++        match full_at.compare_exchange_weak(cur, next, Relaxed, Relaxed) {
++            Ok(_) => return true,
++            Err(v) => cur = v,
++        }
++    }
++}
++
++/// Takes an abandon token; without one, counts the refusal.
++fn take_abandon_token(stats: &StallStats) -> bool {
++    let ok = take_token(&ABANDON_BUDGET, now_us());
++    if !ok
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #30902** (2026-11-19): fix: Evaluate the quantile argument per group in `group_by` (@dancsi)
-- **PR #30900** (2026-11-19): feat: Report cloud read stats in the in-flight concurrency log (@kdn36)
-- **PR #30897** (2026-11-19): fix: Lower the cloud connect timeout to 10 seconds and add env vars (@kdn36)
-- **PR #30896** (2026-11-19): fix: Merge a single nested descending key in the right order (@kdn36)
-- **PR #30894** (2026-11-19): refactor(rust): Attach the plan of a failed conversion to the error as data (@kdn36)
-- **PR #30892** (2026-11-18): fix(python): Use per-account ADLS SAS tokens vended by Iceberg catalogs (@Ferdinanddb)
+- **PR #30966** (2026-11-20): perf: Abandon stalled cloud reads after a stall timeout (@kdn36)
+- **PR #30963** (2026-11-20): chore: Bump polars-iceberg to 0.1.1 (@nameexhaustion)
+- **PR #30958** (2026-11-20): feat: Support SQL `INSERT` and `UPDATE` on registered tables (@kdn36)
+- **PR #30952** (2026-11-20): fix(python): Release pooled connections and use the Arrow cursor for Databricks in read_database (@nameexhaustion)
+- **PR #30951** (2026-11-20): fix: Bound the wait for DSL resolvers still running after an error (@nameexhaustion)
+- **PR #30950** (2026-11-20): feat: Support a pattern per row in `str.replace` and `str.replace_all` (@ritchie46)
 
 ---
 
@@ -2309,77 +2457,40 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Turn panics in Arrow C stream callbacks into stream errors
+## X. Don't panic on extreme counts in string, binary and list slicing
 
 **RULE**:
-When implementing operations in `crates/polars-arrow/src/ffi/stream.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pola-rs/polars. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/polars-arrow/src/legacy/index.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pola-rs/polars. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `60a4ec62`: Turn panics in Arrow C stream callbacks into stream errors. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `70eaa1b9`: Don't panic on extreme counts in string, binary and list slicing. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/polars-arrow/src/ffi/stream.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/polars-arrow/src/legacy/index.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use std::panic::AssertUnwindSafe;
-    iter: Box<dyn Iterator<Item = PolarsResult<Box<dyn Array>>> + Send>,
-    /// Whether a callback panicked, which ends the stream as `iter` is left in an unknown state.
-    panicked: bool,
-/// The status of a failed callback, as no status of the interface itself is ever this.
-const CALLBACK_ERROR: i32 = 2001;
-
-fn error_cstring(message: &str) -> CString {
-    CString::new(message.replace('\0', "\\0")).unwrap()
-}
-
-/// Run the body of a stream callback, storing a panic as the stream's error, as unwinding out of
-/// an `extern "C"` function aborts the process.
-unsafe fn catch_callback(
-    iter: *mut ArrowArrayStream,
-    body: impl FnOnce(&mut PrivateData) -> i32,
-) -> i32 {
-        return CALLBACK_ERROR;
-    let private = (*iter).private_data as *mut PrivateData;
-    if (*private).panicked {
-        return CALLBACK_ERROR;
-    }
-    match std::panic::catch_unwind(AssertUnwindSafe(|| body(&mut *private))) {
-        Ok(status) => status,
-        Err(payload) => {
-            let message = payload
-                .downcast_ref::<&str>()
-                .copied()
-                .or_else(|| payload.downcast_ref::<String>().map(String::as_str))
-         
+            self.to_usize().filter(|idx| *idx < len)
+            let subtract = usize::try_from(self.to_i128()?.unsigned_abs()).ok()?;
+            len.checked_sub(subtract)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    iter: Box<dyn Iterator<Item = PolarsResult<Box<dyn Array>>>>,
-unsafe extern "C" fn get_next(iter: *mut ArrowArrayStream, array: *mut ArrowArray) -> i32 {
-        return 2001;
-    let private = &mut *((*iter).private_data as *mut PrivateData);
-    match private.iter.next() {
-                private.error = Some(CString::new(format!("The iterator produced an item of data type {item_dt:?} but the producer expects data type {expected_dt:?}").as_bytes().to_vec()).unwrap());
-                return 2001; // custom application specific error (since this is never a result of this interface)
-            // A NUL would end the C string: without it, `CString::new` can't fail (and a panic
-            // here can't unwind out of this `extern "C"` function).
-            let message = err.to_string().replace('\0', "\\0");
-            private.error = Some(CString::new(message).unwrap());
-            2001 // custom application specific error (since this is never a result of this interface)
-    }
-    if iter.is_null() {
-        return 2001;
-    }
-    let private = &mut *((*iter).private_data as *mut PrivateData);
-
-    std::ptr::write(schema, export_field_to_c(&private.field));
-    0
-    iter: Box
+            if (self.to_usize().unwrap()) < len {
+                Some(self.to_usize().unwrap())
+            } else {
+                None
+            }
+            let subtract = self.abs().to_usize().unwrap();
+            if subtract > len {
+                None
+            } else {
+                Some(len - subtract)
+            }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `60a4ec62` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `70eaa1b9` are properly handled with clean fallback behavior.

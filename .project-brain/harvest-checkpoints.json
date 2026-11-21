@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-21T03:28:50.580Z",
+  "last_updated": "2026-11-21T03:36:50.302Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6081,14 +6081,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-helixdb-helix-db",
-      "content_hash": "31e5f143b059d5592fead8ee3c7a4123dd08d59cb725d69a2d2860ebdda8d6a5",
-      "verified_at": "2026-11-20T01:31:33.215Z",
+      "content_hash": "6329e3e0dc0e27046f87347157b5b89c28ef3175927d09d02384fff8fd994007",
+      "verified_at": "2026-11-21T03:36:50.301Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T01:31:33.215Z"
+      "last_updated": "2026-11-21T03:36:50.301Z"
     },
     "microsoft/fluentui": {
       "repository": "microsoft/fluentui",
@@ -7326,14 +7326,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aws-aws-cdk",
-      "content_hash": "8fe2834fa7f79996da2bb4bf3f192532a449afe3c029d77f634a2cf634418a92",
-      "verified_at": "2026-11-20T02:58:32.460Z",
+      "content_hash": "6ad9fbc60d194fa0713652f9574e550c543bde44e70fee5f569e7d7e055b43dd",
+      "verified_at": "2026-11-21T03:36:45.647Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T02:58:32.460Z"
+      "last_updated": "2026-11-21T03:36:45.647Z"
     },
     "cockroachdb/cockroach": {
       "repository": "cockroachdb/cockroach",
@@ -11661,14 +11661,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pola-rs-polars",
-      "content_hash": "d0c7a3bbb1c7dce5fd8fc53766b38660bf48623b468c649a7e55a787190dcf33",
-      "verified_at": "2026-11-19T17:06:44.029Z",
+      "content_hash": "8bc5a4317998f3c31d8a2085b54a9174480e76de174a1ddeecfeaa8feb136b0d",
+      "verified_at": "2026-11-21T03:36:38.124Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T17:06:44.029Z"
+      "last_updated": "2026-11-21T03:36:38.124Z"
     },
     "mrkai77/Loop": {
       "repository": "mrkai77/Loop",
@@ -15996,14 +15996,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-shiguangschedule-shiguangschedule",
-      "content_hash": "06c748de254c6b7825845e5ce35dfc08897c4562ea61c08e871b8c65e1015863",
-      "verified_at": "2026-10-25T02:05:13.544Z",
+      "content_hash": "1313f0ec6eb03146312fecb8e031b6454f88ca1ff9f7225fa35d905299f5576b",
+      "verified_at": "2026-11-21T03:36:43.010Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-25T02:05:13.544Z"
+      "last_updated": "2026-11-21T03:36:43.010Z"
     },
     "glincker/thesvg": {
       "repository": "glincker/thesvg",

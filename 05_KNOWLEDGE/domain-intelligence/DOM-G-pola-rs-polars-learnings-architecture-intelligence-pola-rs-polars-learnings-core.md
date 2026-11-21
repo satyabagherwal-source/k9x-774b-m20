@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T21:41:20.390Z",
+  "timestamp": "2026-11-21T03:36:53.722Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-pola-rs-polars-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [pola-rs-polars-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T21:41:20.390Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T03:36:53.722Z`  
 > **Learning ID**: `LEARN-EVO-pola-rs-polars-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 51%
+- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), B (Product Intelligence), C (Market & Business Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 62%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from pola-rs-polars-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pola-rs-polars-learnings.md`  
 > **Source**: github ([https://github.com/pola-rs/polars](https://github.com/pola-rs/polars))  
-> **Source Version**: `dec76f87`  
+> **Source Version**: `34f40615`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T21:41:01.908Z  
+> **Timestamp**: 2026-11-21T03:36:37.117Z  
 > **Learning ID**: `learn-github-pola-rs-polars`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pola-rs-polars-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pola-rs/polars](https://github.com/pola-rs/polars))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T21:41:01.903Z  
+> **Harvest Timestamp**: 2026-11-21T03:36:36.937Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Extremely fast Query Engine for DataFrames, written in Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 40367 stars
+- **Stars / Engagement**: 40407 stars
 
 ---
 
@@ -1725,11 +1725,11 @@ pub fn check_same_len(lhs: &dyn Array, rhs: &dyn Array) -> PolarsResult<()> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #30823** (2026-11-17): **`drop_nans()` in `group_by().agg()` drops null values whose underlying slot is NaN (regression since 1.35)**
-  *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example  ```python import polars as pl  df = pl.DataFrame(     {"g": [1, 1, 2], "x": [float("nan"), 1.0, float("nan")], "y": [None, 2.0, None]} ).with_columns(s=pl.col("x") + pl.col("y")) print(df["s"].to_list()) print(df.select(pl.col("s").drop_nans())["s"].to_list()) print(df.group_by("g", maintain_order=True).agg(pl.col("s").drop_nans())) ```  ### Log output  ```shell total memory: 755.264 GiB (810958176256 bytes) async thread count: 32 blocking thread count: 512 keys/aggregates are not partitionable: running default HASH AGGREGATION [None, 3.0, None] [None, 3.0, None] shape: (2, 2) ┌─────┬───────────┐ │ g   ┆ s         │ │ --- ┆ ---       │ │ i64 ┆ list[f64] │ ╞═════╪═══════════╡ │ 1   ┆ [3.0]     │ │ 2   ┆ []        │ └─────┴───────────┘ ```  ### Issue description  Column `s` is `[null, 3.0, null]`: it has no NaN. `select(pl.col("s").drop_nans())` keeps both nulls, but inside `group_by(...).agg(...)` the same expression drops them, so group 1 gets `[3.0]` and group 2 gets `[]`. `pl.col("s").drop_nans().len().over("g")` is affected too: it gives `[1, 1, 0]` instead of `[2, 2, 1]`. The in-memory and the streaming engine give the same wrong result. Nulls that come straight from the constructor (`[1.0, None, 2.0]`) are kept; the nulls here come from `NaN + null`, so the va
+- **Issue #30922** (2026-11-20): **is_in with series.implode() doesn't do Parquet row group skipping**
+  *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example  ```python import os os.environ["POLARS_VERBOSE"] = "1" import polars as pl  pl.DataFrame({"job_id": range(100_000)}).write_parquet("data.parquet", row_group_size=10_000)  ids = pl.Series([30_005, 30_500, 31_234]) df = pl.scan_parquet("data.parquet").filter(pl.col("job_id").is_in(ids.implode())).collect() ```    ### Log output  ```shell total memory: 62.691 GiB (67313618944 bytes) _init_credential_provider_builder(): credential_provider_init = None async thread count: 24 blocking thread count: 512 polars-stream: updating graph state updating io-sink[single-file[parquet]], before: [Blocked] [] updating io-sink[single-file[parquet]], after: [Ready] [] (took 70ns) updating in-memory-source, before: [] [Ready] updating in-memory-source, after: [] [Ready] (took 2.816µs) updating io-sink[single-file[parquet]], before: [Ready] [] updating io-sink[single-file[parquet]], after: [Ready] [] (took 50ns) polars-stream: running in-memory-source in subgraph polars-stream: running io-sink[single-file[parquet]] in subgraph io-sink[single-file[parquet]]: start_single_file_sink_pipeline: file_writer_starter: parquet, target_sink_morsel_size: TargetSinkMorselSize { target_num_rows: 10000, target_num_bytes: 18446744073709551615, target_num_bytes_min_rows: 16384, target_num_rows_mode: Ex
 
-- **Issue #30784** (2026-11-15): **Streaming Parquet sinks continue consuming input after an upload failure**
-  *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example (Using some of Polars' internal pytest fixtures)  ```python import io import re  import pytest import polars as pl   @pytest.mark.parametrize("partitioned", [False, True]) def test_sink_error_stops_input(s3, plmonkeypatch, partitioned):     for name, value in {         "POLARS_CLOUD_FOOTER_READ_SIZE": "512",         "POLARS_NUM_READERS_PRE_INIT": "1",         "POLARS_MAX_CONCURRENT_SCANS": "1",         "POLARS_MAX_OPEN_SINKS": "1",         "POLARS_INFLIGHT_SINK_MORSEL_LIMIT": "1",         "POLARS_UPLOAD_CHUNK_SIZE": "1024",     }.items():         plmonkeypatch.setenv(name, value)      data = io.BytesIO()     pl.DataFrame({"x": range(1024)}).write_parquet(         data, compression="uncompressed"     )     keys = [f"input/{i}.parquet" for i in range(32)]     for key in keys:         s3.client.put_object(             Bucket="bucket", Key=key, Body=data.getvalue()         )      def fail_upload(environ):         if environ["REQUEST_METHOD"] == "PUT":             return True         return None      s3.on_request = fail_upload     mark = len(s3.log)      source = pl.scan_parquet(         [f"s3://bucket/{key}" for key in keys],         storage_options=s3.storage_options,     )     target = (         pl.PartitionBy("s3://bucket/output/", max_rows_per_file=1024)         if
+- **Issue #30916** (2026-11-20): **`scan_arrow_c_stream` (and `pl.defer`) apply pushed-down predicate before `n_rows`, giving wrong results for `.limit(n).filter(...)`**
+  *Symptoms*: ### Checks  - [x] I have checked that this issue has not already been reported. - [x] I have confirmed this bug exists on the [latest version](https://pypi.org/project/polars/) of Polars.  ### Reproducible example  ```python import polars as pl  df = pl.DataFrame({"a": [1, 2, 3, 4, 5, 6], "b": ["x", "y", "z", "a", "b", "c"]})  expected = df.lazy().limit(3).filter(pl.col("a") > 2).collect() actual_stream = pl.scan_arrow_c_stream(df).limit(3).filter(pl.col("a") > 2).collect() actual_defer = pl.defer(lambda: df, schema=df.schema).limit(3).filter(pl.col("a") > 2).collect() no_pushdown = (     pl.scan_arrow_c_stream(df)     .limit(3)     .filter(pl.col("a") > 2)     .collect(optimizations=pl.QueryOptFlags(predicate_pushdown=False)) )  print("expected:     ", expected["a"].to_list()) # expected:      [3] print("arrow_stream: ", actual_stream["a"].to_list()) # arrow_stream:  [3, 4, 5] print("defer:        ", actual_defer["a"].to_list()) # defer:         [3, 4, 5] print("no_pushdown:  ", no_pushdown["a"].to_list()) # no_pushdown:   [3]  print() print(pl.scan_arrow_c_stream(df).limit(3).filter(pl.col("a") > 2).explain()) """ PYTHON SCAN [] PROJECT */2 COLUMNS SELECTION: col("a") > 2 SLICE: Positive { offset: 0, len: 3 } """ ```   ### Log output  ```shell total memory: 117.901 GiB (126595493888 bytes) async thread count: 32 blocking thread count: 512 polars-stream: updating graph state updating in-memory-sink, before: [Blocked] [] updating in-memory-sink, after: [Ready] [] (took 270ns)
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1746,244 +1746,726 @@ pub fn check_same_len(lhs: &dyn Array, rhs: &dyn Array) -> PolarsResult<()> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8579b224` (2026-11-17)
-**Commit Message**: fix: Keep nulls in `drop_nans` inside `group_by` and `over` (#30836)
+### Incident Patch 1: `70eaa1b9` (2026-11-20)
+**Commit Message**: fix: Don't panic on extreme counts in string, binary and list slicing (#30940)
 
-**File**: `crates/polars-expr/src/dispatch/groups_dispatch.rs` (modified, +2/-1)
+**File**: `crates/polars-arrow/src/legacy/index.rs` (modified, +3/-11)
 ```diff
-@@ -480,7 +480,8 @@ pub fn drop_nans<'a>(
-         let values = ac.flat_naive();
-         let mut values = values.is_nan().unwrap();
-         values.rechunk_mut();
--        values.downcast_as_array().values().clone()
-+        // A null slot can hold a NaN value, so mask with the validity.
-+        values.downcast_as_array().true_and_valid()
+@@ -26,18 +26,10 @@ where
+     #[inline]
+     fn negative_to_usize(self, len: usize) -> Option<usize> {
+         if self >= Zero::zero() {
+-            if (self.to_usize().unwrap()) < len {
+-                Some(self.to_usize().unwrap())
+-            } else {
+-                None
+-            }
++            self.to_usize().filter(|idx| *idx < len)
+         } else {
+-            let subtract = self.abs().to_usize().unwrap();
+-            if subtract > len {
+-                None
+-            } else {
+-                Some(len - subtract)
+-            }
++            let subtract = usize::try_from(self.to_i128()?.unsigned_abs()).ok()?;
++            len.checked_sub(subtract)
+         }
+     }
+ }
+```
+
+**File**: `crates/polars-ops/src/chunked_array/binary/namespace.rs` (modified, +2/-2)
+```diff
+@@ -90,7 +90,7 @@ pub trait BinaryNameSpaceImpl: AsBinary {
+     /// element. `n` can be negative, in which case the slice ends `n` bytes from the end.
+     fn bin_head(&self, n: &Column) -> PolarsResult<BinaryChunked> {
+         let ca = self.as_binary();
+-        let n = n.strict_cast(&DataType::Int64)?;
++        let n = crate::chunked_array::count_as_i64(n, ca.len())?;
+ 
+         super::slice::head(ca, n.i64()?)
+     }
+@@ -101,7 +101,7 @@ pub trait BinaryNameSpaceImpl: AsBinary {
+     /// negative, in which case the slice begins `n` bytes from the start.
+     fn bin_tail(&self, n: &Column) -> PolarsResult<BinaryChunked> {
+         let ca = self.as_binary();
+-        let n = n.strict_cast(&DataType::Int64)?;
++        let n = crate::chunked_array::count_as_i64(n, ca.len())?;
+ 
+         super::slice::tail(ca, n.i64()?)
+     }
+```
+
+**File**: `crates/polars-ops/src/chunked_array/binary/slice.rs` (modified, +16/-12)
+```diff
+@@ -4,6 +4,8 @@ use polars_core::prelude::arity::{binary_elementwise, ternary_elementwise, unary
+ use polars_core::prelude::{BinaryChunked, ChunkFullNull, DataType, Int64Chunked, UInt64Chunked};
+ use polars_error::{PolarsResult, polars_ensure};
+ 
++use crate::chunked_array::saturating_usize;
++
+ fn head_binary(opt_bytes: Option<&[u8]>, opt_n: Option<i64>) -> Option<&[u8]> {
+     if let (Some(bytes), Some(n)) = (opt_bytes, opt_n) {
+         let end_idx = head_binary_values(bytes, n);
+@@ -18,11 +20,13 @@ fn head_binary_values(bytes: &[u8], n: i64) -> usize {
+         Ordering::Equal => 0,
+         Ordering::Greater => {
+             // Take first n bytes
+-            std::cmp::min(n as usize, bytes.len())
++            std::cmp::min(saturating_usize(n.unsigned_abs()), bytes.len())
+         },
+         Ordering::Less => {
+             // End n bytes from the end
+-            bytes.len().saturating_sub((-n) as usize)
++            bytes
++                .len()
++                .saturating_sub(saturating_usize(n.unsigned_abs()))
+         },
+     }
+ }
+@@ -43,11 +47,11 @@ fn tail_binary_values(bytes: &[u8], n: i64) -> usize {
+         Ordering::Equal => max_len,
+         Ordering::Greater => {
+             // Start from nth byte from the end
+-            max_len.saturating_sub(n as usize)
++            max_len.saturating_sub(saturating_usize(n.unsigned_abs()))
+         },
+         Ordering::Less => {
+             // Start after the nth byte
+-            std::cmp::min((-n) as usize, max_len)
++            std::cmp::min(saturating_usize(n.unsigned_abs()), max_len)
+         },
+     }
+ }
+@@ -73,21 +77,21 @@ pub fn slice_ternary_offsets_value(bytes: &[u8], offset: i64, length: u64) -> (u
+     }
+ 
+     let start_byte_offset = if offset >= 0 {
+-        std::cmp::min(offset as usize, bytes.len())
++        std::cmp::min(saturating_usize(offset.unsigned_abs()), bytes.len())
      } else {
-         Bitmap::new_with_value(false, 1)
+         // If `offset` is negative, it counts from the end
+-        let abs_offset = (-offset) as usize;
+-        if abs_offset > bytes.len() {
++        let abs_offset = offset.unsigned_abs();
++        let len = bytes.len() as u64;
++        if abs_offset > len {
+             // Offset is before the start - handle length reduction
+-            let length_reduction = abs_offset - bytes.len();
+-            let adjusted_length = (length as usize).saturating_sub(length_reduction);
+-            return (0, std::cmp::min(adjusted_length, bytes.len()));
++            let adjusted_length = length.saturating_sub(abs_offset - len);
++            return (0, std::cmp::min(adjusted_length, len) as usize);
+         }
+-        bytes.len() - abs_offset
++        bytes.len() - abs_offset as usize
      };
+ 
+     let remaining = bytes.len() - start_byte_offset;
+-    let end_byte_offset = start_byte_offset + std::cmp::min(length as usize, remaining);
++    let end_byte_offset = start_byte_offset + std::cmp::min(length, remaining as u64) as usize;
+ 
+     (start_byte_offset, end_byte_offset)
+ }
 ```
 
-**File**: `crates/polars-stream/src/physical_plan/lower_group_by.rs` (modified, +21/-17)
+**File**: `crates/polars-ops/src/chunked_array/list/get.rs` (modified, +10/-2)
 ```diff
-@@ -874,29 +874,33 @@ fn try_lower_agg_input_expr(
-             function: function @ (IRFunctionExpr::DropNulls | IRFunctionExpr::DropNans),
-             options: _,
-         } => {
--            let input = &inputs_ref[0];
--            if !is_elementwise_rec_cached(input.node(), expr_arena, expr_cache) {
-+            let input = inputs_ref[0].node();
-+            if !is_elementwise_rec_cached(input, expr_arena, expr_cache) {
-                 return Ok(None);
-             }
+@@ -33,7 +33,11 @@ pub fn lst_get(ca: &ListChunked, index: &Int64Chunked, null_on_oob: bool) -> Pol
+                             let (start, end) = unsafe {
+                                 (*offsets.get_unchecked(i), *offsets.get_unchecked(i + 1))
+                             };
+-                            let offset = if idx >= 0 { start + idx } else { end + idx };
++                            let offset = if idx >= 0 {
++                                start.saturating_add(idx)
++                            } else {
++                                end + idx
++                            };
+                             if offset >= end || offset < start || start == end {
+                                 if null_on_oob {
+                                     Ok(None)
+@@ -57,7 +61,11 @@ pub fn lst_get(ca: &ListChunked, index: &Int64Chunked, null_on_oob: bool) -> Pol
+                             let (start, end) = unsafe {
+                                 (*offsets.get_unchecked(i), *offsets.get_unchecked(i + 1))
+                             };
+-                            let offset = if idx >= 0 { start + idx } else { end + idx };
++                            let offset = if idx >= 0 {
++                                start.saturating_add(idx)
++                            } else {
++                                end + idx
++                            };
+                             if offset >= end || offset < start || start == end {
+                                 if null_on_oob {
+                                     Ok(None)
+```
+
+**File**: `crates/polars-ops/src/chunked_array/mod.rs` (modified, +25/-0)
+```diff
+@@ -46,3 +46,28 @@ pub use top_k::*;
  
-+            let predicate = if matches!(function, IRFunctionExpr::DropNulls) {
-+                AExprBuilder::new_from_node(input).is_not_null(expr_arena)
-+            } else {
-+                let input_schema = input_stream.output_schema(phys_sm);
-+                let dtype = expr_arena
-+                    .get(input)
-+                    .to_dtype(&ToFieldContext::new(expr_arena, input_schema))?;
-+                // `drop_nans` only drops values of float columns.
-+                if !dtype.is_float() {
-+                    return Ok(Some((input_stream, input, true)));
-+                }
-+                // Keep nulls, for which `is_not_nan` is null.
-+                let x = AExprBuilder::new_from_node(input);
-+                let is_null = x.is_null(expr_arena);
-+                x.is_not_nan(expr_arena).or(is_null, expr_arena)
+ #[allow(unused_imports)]
+ use crate::prelude::*;
++
++/// A count as `usize`; a count beyond `usize::MAX` covers any string or binary value the same way.
++pub(crate) fn saturating_usize(n: u64) -> usize {
++    usize::try_from(n).unwrap_or(usize::MAX)
++}
++
++/// `n` as Int64 counts for `len` values. A UInt64 count beyond the Int64 range is clipped, as
++/// it covers any value. A repeated count is returned once, so that it is applied as a scalar.
++pub(crate) fn count_as_i64(n: &Column, len: usize) -> PolarsResult<Column> {
++    let n = match n.as_scalar_column() {
++        Some(sc) if n.len() == len && len > 1 => &sc.as_single_value_series().into_column(),
++        _ => n,
++    };
++    match n.dtype() {
++        DataType::UInt64 => n.try_apply_unary_elementwise(|n| {
++            Ok(
++                arity::unary_elementwise_values::<_, Int64Type, _>(n.u64()?, |v| {
++                    v.min(i64::MAX as u64) as i64
++                })
++                .into_series(),
++            )
++        }),
++        _ => n.strict_cast(&DataType::Int64),
++    }
++}
+```
+
+**File**: `crates/polars-ops/src/chunked_array/strings/namespace.rs` (modified, +2/-2)
+```diff
+@@ -928,7 +928,7 @@ pub trait StringNameSpaceImpl: AsString {
+     /// the end of the string.
+     fn str_head(&self, n: &Column) -> PolarsResult<StringChunked> {
+         let ca = self.as_string();
+-        let n = n.strict_cast(&DataType::Int64)?;
++        let n = crate::chunked_array::count_as_i64(n, ca.len())?;
+ 
+         substring::head(ca, n.i64()?)
+     }
+@@ -939,7 +939,7 @@ pub trait StringNameSpaceImpl: AsString {
+     /// negative, in which case the slice begins `n` characters from the start of the string.
+     fn str_tail(&self, n: &Column) -> PolarsResult<StringChunked> {
+         let ca = self.as_string();
+-        let n = n.strict_cast(&DataType::Int64)?;
++        let n = crate::chunked_array::count_as_i64(n, ca.len())?;
+ 
+         substring::tail(ca, n.i64()?)
+     }
+```
+
+**File**: `crates/polars-ops/src/chunked_array/strings/substring.rs` (modified, +20/-9)
+```diff
+@@ -4,6 +4,8 @@ use polars_core::prelude::{ChunkFullNull, Int64Chunked, StringChunked, UInt64Chu
+ use polars_core::series::IsSorted;
+ use polars_error::{PolarsResult, polars_ensure};
+ 
++use crate::chunked_array::saturating_usize;
++
+ #[inline(always)]
+ fn is_utf8_codepoint_start(b: u8) -> bool {
+     // The top two bits of a continuation byte are 10. Any other value is a
+@@ -131,10 +133,11 @@ fn head_binary(opt_str_val: Option<&str>, opt_n: Option<i64>) -> Option<&str> {
+ }
+ 
+ fn head_binary_values(str_val: &str, n: i64) -> usize {
++    let count = saturating_usize(n.unsigned_abs());
+     if n >= 0 {
+-        char_to_byte_idx(str_val, n as usize)
++        char_to_byte_idx(str_val, count)
+     } else {
+-        rev_char_to_byte_idx(str_val, (-n) as usize)
++        rev_char_to_byte_idx(str_val, count)
+     }
+ }
+ 
+@@ -148,10 +151,11 @@ fn tail_binary(opt_str_val: Option<&str>, opt_n: Option<i64>) -> Option<&str> {
+ }
+ 
+ fn tail_binary_values(str_val: &str, n: i64) -> usize {
++    let count = saturating_usize(n.unsigned_abs());
+     if n >= 0 {
+-        rev_char_to_byte_idx(str_val, n as usize)
++        rev_char_to_byte_idx(str_val, count)
+     } else {
+-        char_to_byte_idx(str_val, (-n) as usize)
++        char_to_byte_idx(str_val, count)
+     }
+ }
+ 
+@@ -190,18 +194,20 @@ pub fn substring_ternary_offsets_value(
+             return (0, 0);
+         }
+ 
+-        match rev_char_to_byte_idx_or_cp_count(str_val, (-offset) as usize) {
++        let rev_offset = offset.unsigned_abs();
++        match rev_char_to_byte_idx_or_cp_count(str_val, saturating_usize(rev_offset)) {
+             Ok(so) => so,
+             Err(n_cp) => {
+                 // Our offset was so negative it is before the start of our string.
+                 // This means our length must be reduced, assuming it is finite.
+-                length = length.saturating_sub((-offset) as u64 - n_cp as u64);
++                length = length.saturating_sub(rev_offset - n_cp as u64);
+                 0
+             },
+         }
+     };
+ 
+-    let stop_byte_offset = char_to_byte_idx(&str_val[start_byte_offset..], length as usize);
++    let stop_byte_offset =
++        char_to_byte_idx(&str_val[start_byte_offset..], saturating_usize(length));
+     (start_byte_offset, start_byte_offset + stop_byte_offset)
+ }
+ 
+@@ -311,12 +317,17 @@ pub(super) fn head(ca: &StringChunked, n: &Int64Chunked) -> PolarsResult<StringC
+                 return Ok(StringChunked::full_null(ca.name().clone(), len));
+             };
+ 
+-            Ok(unsafe {
++            let mut out = unsafe {
+                 ca.apply_views(|view, val| {
+                     let end = head_binary_values(val, n);
+                     update_view(view, 0, end, val)
+                 })
+-            })
 +            };
-+
-             let output_name = unique_column_name();
-             let predicate_name = unique_column_name();
-             let mut select_exprs = keys.to_vec();
--            select_exprs.push(ExprIR::new(
--                input.node(),
--                OutputName::Alias(output_name.clone()),
--            ));
--            let predicate = AExprBuilder::function(
--                vec![inputs_ref[0].clone()],
--                if matches!(function, IRFunctionExpr::DropNulls) {
--                    IRFunctionExpr::Boolean(IRBooleanFunction::IsNotNull)
--                } else {
--                    IRFunctionExpr::Boolean(IRBooleanFunction::IsNotNan)
--                },
--                expr_arena,
--            )
--            .expr_ir(predicate_name.clone());
--            select_exprs.push(predicate);
-+            select_exprs.push(ExprIR::new(input, OutputName::Alias(output_name.clone())));
-+            select_exprs.push(predicate.expr_ir(predicate_name.clone()));
- 
-             let mut stream = build_select_stream(
-                 input_stream,
++            // A prefix keeps the order, removing a suffix does not.
++            if n < 0 {
++                out.set_sorted_flag(IsSorted::Not);
++            }
++            Ok(out)
+         },
+         // TODO! below should also work on only views
+         (1, _) => {
 ```
 
-**File**: `py-polars/tests/unit/operations/test_group_by.py` (modified, +130/-0)
+**File**: `py-polars/tests/unit/operations/namespaces/list/test_list.py` (modified, +17/-0)
 ```diff
-@@ -2417,6 +2417,136 @@ def test_group_by_drop_nans(s: pl.Series) -> None:
-     )
+@@ -1023,6 +1023,23 @@ def test_list_get_null_list_broadcast() -> None:
+     assert out.to_series().to_list() == [None, None]
  
  
-+@pytest.mark.parametrize("engine", ["in-memory", "streaming"])
-+@pytest.mark.parametrize("dtype", [pl.Float16, pl.Float32, pl.Float64])
-+@pytest.mark.parametrize("sorted_key", [False, True])
-+def test_group_by_drop_nans_keeps_nan_payload_nulls_30823(
-+    engine: EngineType, dtype: PolarsDataType, sorted_key: bool
-+) -> None:
-+    # `s` is [null, 3.0, NaN, NaN, null] and both nulls hold a NaN value.
-+    lf = (
-+        pl.DataFrame(
-+            {
-+                "g": [1, 1, 1, 2, 2],
-+                "x": [float("nan"), 1.0, float("nan"), float("nan"), float("nan")],
-+                "y": [None, 2.0, 0.0, 0.0, None],
-+            },
-+            schema_overrides={"x": dtype, "y": dtype},
-+        )
-+        .with_columns(s=pl.col("x") + pl.col("y"))
-+        .lazy()
++@pytest.mark.parametrize("index", [-(2**63), 2**63 - 1])
++def test_list_get_extreme_index(index: int) -> None:
++    df = pl.DataFrame({"a": [[1], None, [], [1, 2]]})
++    out = df.select(
++        scalar=pl.col("a").list.get(index, null_on_oob=True),
++        column=pl.col("a").list.get(pl.repeat(index, 4), null_on_oob=True),
 +    )
-+    if sorted_key:
-+        lf = lf.set_sorted("g")
-+
-+    out = (
-+        lf.group_by("g", maintain_order=True)
-+        .agg(
-+            list=pl.col("s").drop_nans(),
-+            first_list=(pl.col("x").first() + pl.col("y").first()).drop_nans(),
-+            diff_list=(pl.col("y").diff() + float("nan")).drop_nans(),
-+        )
-+        .collect(engine=engine)
-+    )
-+    expected = pl.DataFrame(
-+        {
-+            "g": [1, 2],
-+            "list": [[None, 3.0], [None]],
-+            "first_list": [[None], []],
-+            "diff_list": [[None, None], [None, None]],
-+        },
-+        schema_overrides={
-+            c: pl.List(dtype) for c in ["list", "first_list", "diff_list"]
-+        },
-+    )
-+    assert_frame_equal(out, expected)
-+
-+    # Only reductions, which the streaming engine lowers to a filter.
-+    out = (
-+        lf.group_by("g", maintain_order=True)
-+        .agg(
-+            len=pl.col("s").drop_nans().len(),
-+            null_count=pl.col("s").drop_nans().null_count(),
-+        )
-+        .collect(engine=engine)
-+    )
-+    expected = pl.DataFrame(
-+        {"g": [1, 2], "len": [2, 1], "null_count": [1, 1]},
-+        schema_overrides={
-+            "len": pl.get_index_type(),
-+            "null_count": pl.get_index_type(),
-+        },
-+    )
-+    assert_frame_equal(out, expected)
-+
-+    out = lf.select(
-+        pl.col("s").drop_nans().len().over("g"),
-+        list=pl.col("s").implode().list.eval(pl.element().drop_nans()),
-+    ).collect(engine=engine)
-+    expected = pl.DataFrame(
-+        {"s": [2, 2, 2, 1, 1], "list": [[None, 3.0, None]] * 5},
-+        schema_overrides={"s": pl.get_index_type(), "list": pl.List(dtype)},
-+    )
-+    assert_frame_equal(out, expected)
++    assert out.to_dict(as_series=False) == {
++        "scalar": [None] * 4,
++        "column": [None] * 4,
++    }
++    gets: list[int | pl.Expr] = [index, pl.repeat(index, 4)]
++    for get in gets:
++        with pytest.raises(ComputeError, match="out of bounds"):
++            df.select(pl.col("a").list.get(get))
 +
 +
-+@pytest.mark.parametrize("engine", ["in-memory", "streaming"])
-+@pytest.mark.parametrize("maintain_order", [False, True])
-+@pytest.mark.parametrize(
-+    "cols", [["f"], ["i", "s", "b", "n", "d", "l"], ["f", "i", "s", "b", "n", "d", "l"]]
-+)
-+def test_group_by_drop_nans_reduction_30823(
-+    engine: EngineType, maintain_order: bool, cols: list[str]
-+) -> None:
-+    # drop_nans keeps nulls, and it keeps everything in non-float columns.
-+    df = pl.DataFrame(
-+        {
-+            "g": [1, 1, 2],
-+            "f": [None, 1.0, float("nan")],
-+            "i": [None, 1, 2],
-+            "s": [None, "a", "b"],
-+            "b": [None, True, False],
-+            "n": [None, None, None],
-+            "d": [None, Decimal("1.0"), Decimal("2.0")],
-+            "l": [None, [1.0], [float("nan")]],
-+        },
-+        schema_overrides={"d": pl.Decimal(10, 1)},
-+    )
-+    out = (
-+        df.lazy()
-+        .group_by("g", maintain_order=maintain_order)
-+        .agg(
-+            pl.col(cols).drop_nans().len().name.suffix("_len"),
-+            pl.col(cols).drop_nans().null_count().name.suffix("_null_count"),
-+            pl.col(cols).drop_nans().n_unique().name.suffix("_n_unique"),
-+            pl.col(cols).drop_nans().first().name.suffix("_first"),
-+        )
-+        .collect(engine=engine)
-+        .sort("g")
-+    )
-+    # Group 2 of `f` is empty after drop_nans.
-+    idx = pl.get_index_type()
-+    expected = pl.DataFrame(
-+        [pl.Series("g", [1, 2])]
-+        + [pl.Series(f"{c}_len", [2, 0 if c == "f" else 1], idx) for c in cols]
-+        + [
-+            pl.Series(f"{c}_null_count", [2, 1] if c == "n" else [1, 0], idx)
-+            for c in cols
-+        ]
-+        + [
-+            pl.Series(f"{c}_n_unique", [1, 1] if c == "n" else [2, int(c != "f")], idx)
-+            for c in cols
-+        ]
-+        + [
-+            df[c].gather([0, 2]).alias(f"{c}_first")
-+            if c != "f"
-+            else pl.Series("f_first", [None, None], pl.Float64)
-+            for c in cols
-+        ]
-+    )
-+    assert_frame_equal(out, expected)
-+
-+
- @pytest.mark.slow
- @pytest.mark.parametrize(
-     ("expr", "check_order", "returns_scalar", "length_preserving", "is_window"),
+ def test_list_get_with_null() -> None:
+     df = pl.DataFrame({"a": [None, [1, 2]], "b": [False, True]})
+ 
 ```
 
 ---
 
-### Incident Patch 2: `b8a17622` (2026-11-17)
-**Commit Message**: fix: Lower the default OOC dirty page limit to 0.8 of total memory (#30838)
+### Incident Patch 2: `97b951d7` (2026-11-20)
+**Commit Message**: fix: Raise instead of panicking on SQL GREATEST, LEAST and COALESCE without arguments (#30933)
 
-**File**: `crates/polars-config/src/lib.rs` (modified, +1/-1)
+**File**: `crates/polars-sql/src/functions.rs` (modified, +16/-10)
 ```diff
-@@ -107,7 +107,7 @@ const OOC_LOG_METRICS: &str = "POLARS_OOC_LOG_METRICS";
- const DEFAULT_OOC_LOG_METRICS: bool = false;
+@@ -1759,10 +1759,8 @@ impl SQLFunctionVisitor<'_> {
+             // ----
+             // Conditional functions
+             // ----
+-            Coalesce => self.visit_temporal_variadic(coalesce),
+-            Greatest => {
+-                self.visit_temporal_variadic(|exprs: &[Expr]| max_horizontal(exprs).unwrap())
+-            },
++            Coalesce => self.visit_temporal_variadic(|exprs: &[Expr]| Ok(coalesce(exprs))),
++            Greatest => self.visit_temporal_variadic(|exprs: &[Expr]| max_horizontal(exprs)),
+             If => {
+                 let args = extract_args(function)?;
+                 match args.len() {
+@@ -1778,21 +1776,21 @@ impl SQLFunctionVisitor<'_> {
+             IfNull => {
+                 let args = extract_args(function)?;
+                 match args.len() {
+-                    2 => self.visit_temporal_variadic(coalesce),
++                    2 => self.visit_temporal_variadic(|exprs: &[Expr]| Ok(coalesce(exprs))),
+                     _ => {
+                         polars_bail!(SQLSyntax: "IFNULL expects 2 arguments (found {})", args.len())
+                     },
+                 }
+             },
+-            Least => self.visit_temporal_variadic(|exprs: &[Expr]| min_horizontal(exprs).unwrap()),
++            Least => self.visit_temporal_variadic(|exprs: &[Expr]| min_horizontal(exprs)),
+             NullIf => {
+                 let args = extract_args(function)?;
+                 match args.len() {
+                     2 => self.visit_temporal_variadic(|exprs: &[Expr]| {
+                         let [l, r] = exprs else { unreachable!() };
+-                        when(l.clone().eq(r.clone()))
++                        Ok(when(l.clone().eq(r.clone()))
+                             .then(lit(LiteralValue::untyped_null()))
+-                            .otherwise(l.clone())
++                            .otherwise(l.clone()))
+                     }),
+                     _ => {
+                         polars_bail!(SQLSyntax: "NULLIF expects 2 arguments (found {})", args.len())
+@@ -3026,8 +3024,16 @@ impl SQLFunctionVisitor<'_> {
+     /// [`Self::visit_variadic`] for a function whose arguments share one type: a string
+     /// literal is read as a value of the common temporal type of the other arguments, as
+     /// in `COALESCE(date_col, '2020-01-01')`.
+-    fn visit_temporal_variadic(&mut self, f: impl Fn(&[Expr]) -> Expr) -> PolarsResult<Expr> {
++    fn visit_temporal_variadic(
++        &mut self,
++        f: impl Fn(&[Expr]) -> PolarsResult<Expr>,
++    ) -> PolarsResult<Expr> {
+         let mut expr_args = self.parse_variadic_args()?;
++        polars_ensure!(
++            !expr_args.is_empty(),
++            SQLSyntax: "{} expects at least 1 argument (found 0)",
++            self.func.name.to_string().to_uppercase()
++        );
+         let is_string_literal =
+             |e: &Expr| matches!(e, Expr::Literal(lv) if lv.extract_str().is_some());
+         if expr_args.iter().any(is_string_literal) {
+@@ -3045,7 +3051,7 @@ impl SQLFunctionVisitor<'_> {
+                 }
+             }
+         }
+-        self.apply_window_spec(f(&expr_args))
++        self.apply_window_spec(f(&expr_args)?)
+     }
  
- const OOC_DIRTY_LIMIT_FRACTION: &str = "POLARS_OOC_DIRTY_LIMIT_FRACTION";
--const DEFAULT_OOC_DIRTY_LIMIT_FRACTION: f64 = 0.9;
-+const DEFAULT_OOC_DIRTY_LIMIT_FRACTION: f64 = 0.8;
+     fn parse_variadic_args(&mut self) -> PolarsResult<Vec<Expr>> {
+```
+
+**File**: `py-polars/tests/unit/sql/test_conditional.py` (modified, +8/-0)
+```diff
+@@ -180,6 +180,14 @@ def test_greatest_least() -> None:
+         )
  
- const OOMKILL_THRESHOLD_FRACTION: &str = "POLARS_OOMKILL_THRESHOLD_FRACTION";
- const DEFAULT_OOMKILL_THRESHOLD_FRACTION: f64 = f64::INFINITY;
+ 
++@pytest.mark.parametrize("func", ["GREATEST", "LEAST", "COALESCE"])
++def test_variadic_no_arguments(func: str) -> None:
++    with pytest.raises(
++        SQLSyntaxError, match=f"{func} expects at least 1 argument \\(found 0\\)"
++    ):
++        pl.sql(f"SELECT {func}() AS x").collect()
++
++
+ @pytest.mark.parametrize(
+     "expr",
+     [
+```
+
+---
+
+### Incident Patch 3: `b692ad84` (2026-11-20)
+**Commit Message**: perf: Abandon stalled cloud reads after a stall timeout (#30966)
+
+**File**: `Cargo.lock` (modified, +1/-0)
+```diff
+@@ -3437,6 +3437,7 @@ dependencies = [
+  "futures",
+  "glob",
+  "hashbrown 0.17.1",
++ "http-body 1.1.0",
+  "itoa",
+  "libc",
+  "memchr",
+```
+
+**File**: `crates/polars-io/Cargo.toml` (modified, +2/-0)
+```diff
+@@ -34,6 +34,7 @@ flate2 = { workspace = true, optional = true }
+ futures = { workspace = true, optional = true }
+ glob = { version = "0.3" }
+ hashbrown = { workspace = true }
++http-body = { version = "1", optional = true }
+ itoa = { workspace = true, optional = true }
+ libc = { workspace = true }
+ memchr = { workspace = true }
+@@ -144,6 +145,7 @@ async = [
+ ]
+ cloud = [
+   "object_store",
++  "dep:http-body",
+   "async",
+   "serde_json",
+   "serde",
+```
+
+**File**: `crates/polars-io/src/cloud/http_rate_limit.rs` (modified, +24/-4)
+```diff
+@@ -45,13 +45,14 @@ use object_store::client::{
+ use polars_core::runtime::ASYNC;
+ use tokio::sync::oneshot;
+ 
++use super::stall_timer::{StallStats, StallTimer, TtfbMin};
+ use super::token_bucket::TokenBucket;
+ use crate::cloud::{CloudDirectionalRateLimitConfig, CloudRateLimitConfig};
+ 
+ // For tracing purposes.
+ static CONTROLLER_ID: AtomicU32 = AtomicU32::new(0);
+ 
+-// Verbose.
++// Diagnostics; the format is unstable.
+ static LOG_HTTP_RATE_LIMIT: LazyLock<bool> =
+     LazyLock::new(|| std::env::var("POLARS_LOG_HTTP_RATE_LIMIT").is_ok());
+ 
+@@ -312,6 +313,7 @@ pub(crate) struct RateState {
+     pub admitted: Arc<AtomicU64>,
+     // A throttle response was seen.
+     pub throttled: Arc<AtomicBool>,
++    pub stall: Arc<StallStats>,
+ }
+ 
+ impl RateState {
+@@ -321,6 +323,7 @@ impl RateState {
+             max_bits: Arc::new(AtomicU64::new(f64::NAN.to_bits())),
+             admitted: Arc::new(AtomicU64::new(0)),
+             throttled: Arc::new(AtomicBool::new(false)),
++            stall: Arc::default(),
+         }
+     }
+ 
+@@ -517,6 +520,7 @@ pub(crate) struct PacerSignal {
+     // Cumulative HTTP response counters, since epoch.
+     resp_succeeded: AtomicU64,
+     resp_throttled: AtomicU64,
++    stall: Arc<StallStats>,
+ }
+ 
+ #[derive(Debug)]
+@@ -561,6 +565,7 @@ impl AdaptiveRateController {
+             last_cut_ns: AtomicU64::new(0),
+             resp_succeeded: AtomicU64::new(0),
+             resp_throttled: AtomicU64::new(0),
++            stall: Arc::clone(&shared.stall),
+         };
+ 
+         let state = Mutex::new(AimdState {
+@@ -885,10 +890,12 @@ impl AdaptiveRateController {
+         // Logging.
+         let raises = std::mem::take(&mut state.raises);
+         if *LOG_HTTP_RATE_LIMIT {
++            let stall = self.signal.stall.take();
+             eprintln!(
+                 "[http rate_limit #{}_{} {}] {}: rate: {:.1}, success_rate_ewma: {:.1}, last_max: {:.1}, \
+                     elapsed: {:.1}s, win_admit: {}, win_deny: {}, win_success: {}, win_throttle: {},  q_depth: {}, \
+-                    demand: {:.1}, raises: {}",
++                    demand: {:.1}, raises: {}, win_stall_hdr: {}, win_stall_body: {}, win_stall_refused: {}, \
++                    stall_t: {:.1}ms",
+                 self.id,
+                 self.label,
+                 Utc::now(),
+@@ -904,6 +911,10 @@ impl AdaptiveRateController {
+                 self.pacer.queue_depth(),
+                 state.demand.unwrap_or_default(),
+                 raises,
++                stall.hdr_abandons,
++                stall.body_abandons,
++                stall.refused,
++                stall.t.as_secs_f64() * 1e3,
+             );
+         }
+     }
+@@ -1134,6 +1145,7 @@ impl HttpConnector for PacedHttpConnector {
+         Ok(HttpClient::new(PacedHttpService {
+             inner: client,
+             controller: Arc::clone(&self.controller),
++            ttfb_min: TtfbMin::default(),
+         }))
+     }
+ }
+@@ -1142,6 +1154,7 @@ impl HttpConnector for PacedHttpConnector {
+ pub(crate) struct PacedHttpService {
+     inner: HttpClient,
+     controller: Arc<RateController>,
++    ttfb_min: TtfbMin,
+ }
+ 
+ #[async_trait]
+@@ -1154,7 +1167,11 @@ impl HttpService for PacedHttpService {
+         // The object_store is responsible for retry.
+         verb_pacer.pacer.admit().await?;
+ 
+-        let response = self.inner.execute(req).await;
++        let stall_timer = StallTimer::start(&req, &self.ttfb_min, &verb_pacer.signal.stall);
++        let response = match &stall_timer {
++            Some(timer) => Box::pin(timer.headers(self.inner.execute(req))).await,
++            None => self.inner.execute(req).await,
++        };
+         match &response {
+             Ok(r) if r.status().as_u16() == 429 || r.status().as_u16() == 503 => {
+                 verb_pacer.on_congestion()
+@@ -1163,6 +1180,9 @@ impl HttpService for PacedHttpService {
+             _ => verb_pacer.on_other(),
+         }
+ 
+-        response
++        match stall_timer {
++            Some(timer) => timer.body(response),
++            None => response,
++        }
+     }
+ }
+```
+
+**File**: `crates/polars-io/src/cloud/mod.rs` (modified, +2/-0)
+```diff
+@@ -31,4 +31,6 @@ mod http_origin_store;
+ #[cfg(feature = "cloud")]
+ pub mod http_rate_limit;
+ #[cfg(feature = "cloud")]
++mod stall_timer;
++#[cfg(feature = "cloud")]
+ pub mod token_bucket;
+```
+
+**File**: `crates/polars-io/src/cloud/stall_timer.rs` (added, +441/-0)
+```diff
+@@ -0,0 +1,441 @@
++//! Stall timer for cloud reads.
++//!
++//! A ranged GET or a HEAD that receives no response headers, or no new body data, for longer
++//! than T is abandoned: the attempt ends in a `Timeout` error and its connection is dropped.
++//! object_store then retries the request, or resumes the body from the bytes already received.
++//!
++//! By default T sits just after the sender's second retransmission timeout:
++//! 1.1 x 3 x (200 ms + `ttfb_min`), where `ttfb_min` is the smallest recent time to headers of
++//! successful ranged GETs on the same object store (about 0.7 s in-region). A connection that is
++//! still silent at that point is typically waiting for a lost packet to be resent, which can
++//! take seconds.
++//!
++//! At most 20 attempts per second are abandoned per process; a stalled attempt without a token
++//! keeps waiting. `POLARS_HTTP_STALL_TIMEOUT_MS=0` disables the timer, any other value sets T in
++//! milliseconds. With `POLARS_LOG_HTTP_RATE_LIMIT`, the read controller's log line reports the
++//! abandons per window.
++
++use std::fmt;
++use std::pin::Pin;
++use std::sync::atomic::AtomicU64;
++use std::sync::atomic::Ordering::Relaxed;
++use std::sync::{Arc, LazyLock};
++use std::task::{Context, Poll};
++use std::time::{Duration, Instant};
++
++use bytes::Bytes;
++use http_body::{Body, Frame, SizeHint};
++use object_store::client::{HttpError, HttpErrorKind, HttpRequest, HttpResponse, HttpResponseBody};
++
++// The sender resends a lost packet after its retransmission timeout, which starts at about
++// 200 ms (Linux' minimum) plus the round trip and doubles on every retry. The resends form a
++// ladder of rungs at 1, 3, 7 and 15 times that base: 0.2, 0.6, 1.4 and 3.0 s on a short path,
++// where the silences of slow S3 reads cluster. T waits for the second rung, with a margin.
++const RUNG_BASE: Duration = Duration::from_millis(200);
++/// Cumulative multiple of the base at the second rung (1 + 2).
++const RUNGS: f64 = 3.0;
++const MARGIN: f64 = 1.1;
++/// `ttfb_min` before the first sample.
++const TTFB_DEFAULT: Duration = Duration::from_millis(100);
++const TTFB_BUCKET_US: u64 = 5_000_000;
++/// Per process, with a burst of one second's worth.
++const MAX_ABANDONS_PER_S: u64 = 20;
++
++const ENV_VAR: &str = "POLARS_HTTP_STALL_TIMEOUT_MS";
++
++enum Mode {
++    Off,
++    Auto,
++    Fixed(Duration),
++}
++
++static MODE: LazyLock<Mode> = LazyLock::new(|| match std::env::var(ENV_VAR) {
++    Err(_) => Mode::Auto,
++    Ok(v) => match v.parse::<u64>() {
++        Ok(0) => Mode::Off,
++        Ok(ms) => Mode::Fixed(Duration::from_millis(ms)),
++        Err(_) => panic!("invalid value for {ENV_VAR}: {v}"),
++    },
++});
++
++/// Stall timer counts of one object store, for `POLARS_LOG_HTTP_RATE_LIMIT`.
++#[derive(Debug, Default)]
++pub(crate) struct StallStats {
++    /// Attempts abandoned while waiting for response headers.
++    hdr_abandons: AtomicU64,
++    /// Attempts abandoned while waiting for body data.
++    body_abandons: AtomicU64,
++    /// Expired timers that got no token (`MAX_ABANDONS_PER_S`): the attempt kept waiting.
++    refused: AtomicU64,
++    /// T of the latest timed attempt, in µs.
++    t_us: AtomicU64,
++}
++
++/// `StallStats` since the previous `take`.
++#[derive(Debug)]
++pub(crate) struct StallCounts {
++    pub hdr_abandons: u64,
++    pub body_abandons: u64,
++    pub refused: u64,
++    /// T of the latest timed attempt.
++    pub t: Duration,
++}
++
++impl StallStats {
++    pub(crate) fn take(&self) -> StallCounts {
++        StallCounts {
++            hdr_abandons: self.hdr_abandons.swap(0, Relaxed),
++            body_abandons: self.body_abandons.swap(0, Relaxed),
++            refused: self.refused.swap(0, Relaxed),
++            t: Duration::from_micros(self.t_us.load(Relaxed)),
++        }
++    }
++}
++
++static EPOCH: LazyLock<Instant> = LazyLock::new(Instant::now);
++
++fn now_us() -> u64 {
++    EPOCH.elapsed().as_micros() as u64
++}
++
++/// The process-wide abandon budget, as the time (µs since `EPOCH`) at which the bucket is
++/// full again.
++static ABANDON_BUDGET: AtomicU64 = AtomicU64::new(0);
++
++/// Takes a token from a bucket that refills at `MAX_ABANDONS_PER_S` and holds one second's
++/// worth, kept in one atomic: `full_at`, when the bucket is full again. A token moves
++/// `full_at` one token's worth of time later, and is available while `full_at` stays within
++/// one second of `now`.
++fn take_token(full_at: &AtomicU64, now: u64) -> bool {
++    const COST_US: u64 = 1_000_000 / MAX_ABANDONS_PER_S;
++    let mut cur = full_at.load(Relaxed);
++    loop {
++        let next = cur.max(now) + COST_US;
++        if next > now + 1_000_000 {
++            return false;
++        }
++        match full_at.compare_exchange_weak(cur, next, Relaxed, Relaxed) {
++            Ok(_) => return true,
++            Err(v) => cur = v,
++        }
++    }
++}
++
++/// Takes an abandon token; without one, counts the refusal.
++fn take_abandon_token(stats: &StallStats) -> bool {
++    let ok = take_token(&ABANDON_BUDGET, now_us());
++    if !ok
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #30859** (2026-11-17): ci: Ignore unmaintained advisories for chrono, chrono-tz and humantime (@dancsi)
-- **PR #30856** (2026-11-17): feat: Support CALL rewrite_data_files (compaction) on Iceberg catalog tables in SQL (@kdn36)
-- **PR #30854** (closed): fix: Re-resolve a reused scan when its local files change (@nameexhaustion)
-- **PR #30845** (2026-11-17): feat: Support escape string literals in SQL (@ritchie46)
-- **PR #30844** (2026-11-17): feat: Support JSON operators after a JSON cast in SQL (@ritchie46)
-- **PR #30840** (2026-11-17): feat: Support query parameters in SQL (@ritchie46)
+- **PR #30966** (2026-11-20): perf: Abandon stalled cloud reads after a stall timeout (@kdn36)
+- **PR #30963** (2026-11-20): chore: Bump polars-iceberg to 0.1.1 (@nameexhaustion)
+- **PR #30958** (2026-11-20): feat: Support SQL `INSERT` and `UPDATE` on registered tables (@kdn36)
+- **PR #30952** (2026-11-20): fix(python): Release pooled connections and use the Arrow cursor for Databricks in read_database (@nameexhaustion)
+- **PR #30951** (2026-11-20): fix: Bound the wait for DSL resolvers still running after an error (@nameexhaustion)
+- **PR #30950** (2026-11-20): feat: Support a pattern per row in `str.replace` and `str.replace_all` (@ritchie46)
 
 ---
 
@@ -2003,32 +2485,43 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Keep nulls in `drop_nans` inside `group_by` and `over`
+## X. Don't panic on extreme counts in string, binary and list slicing
 
 **RULE**:
-When implementing operations in `crates/polars-expr/src/dispatch/groups_dispatch.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pola-rs/polars. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/polars-arrow/src/legacy/index.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pola-rs/polars. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8579b224`: Keep nulls in `drop_nans` inside `group_by` and `over`. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `70eaa1b9`: Don't panic on extreme counts in string, binary and list slicing. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/polars-expr/src/dispatch/groups_dispatch.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/polars-arrow/src/legacy/index.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        // A null slot can hold a NaN value, so mask with the validity.
-        values.downcast_as_array().true_and_valid()
+            self.to_usize().filter(|idx| *idx < len)
+            let subtract = usize::try_from(self.to_i128()?.unsigned_abs()).ok()?;
+            len.checked_sub(subtract)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        values.downcast_as_array().values().clone()
+            if (self.to_usize().unwrap()) < len {
+                Some(self.to_usize().unwrap())
+            } else {
+                None
+            }
+            let subtract = self.abs().to_usize().unwrap();
+            if subtract > len {
+                None
+            } else {
+                Some(len - subtract)
+            }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8579b224` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `70eaa1b9` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

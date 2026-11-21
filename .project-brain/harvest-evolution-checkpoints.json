@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T03:28:58.140Z",
+  "last_updated": "2026-11-21T03:36:55.656Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-21T01:16:32.184Z",
@@ -108,9 +108,9 @@
       "staged_for_review": 1
     },
     "pola-rs-polars-learnings.md": {
-      "processed_at": "2026-11-19T17:07:53.122Z",
-      "promoted_canonical": 1,
-      "staged_for_review": 0
+      "processed_at": "2026-11-21T03:36:53.576Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "juicedata-juicefs-learnings.md": {
       "processed_at": "2026-11-20T07:05:19.679Z",
@@ -1018,7 +1018,7 @@
       "staged_for_review": 1
     },
     "aws-aws-cdk-learnings.md": {
-      "processed_at": "2026-11-20T03:02:47.048Z",
+      "processed_at": "2026-11-21T03:36:54.991Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3651,9 +3651,14 @@
       "processed_at": "2026-11-21T01:08:35.490Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "shiguangschedule-shiguangschedule-learnings.md": {
+      "processed_at": "2026-11-21T03:36:54.305Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2721,
+  "total_dossiers_evaluated": 2724,
   "total_canonical_promoted": 442,
-  "total_staged_for_review": 2093
+  "total_staged_for_review": 2096
 }
