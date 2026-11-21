@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-21T04:48:35.801Z",
-    "lastVerified": "2026-11-21T04:48:35.801Z",
+    "lastChecked": "2026-11-21T05:01:29.338Z",
+    "lastVerified": "2026-11-21T05:01:29.338Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -354,8 +354,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-21T03:52:37.926Z",
-    "lastVerified": "2026-11-21T03:52:37.926Z",
+    "lastChecked": "2026-11-21T05:01:29.330Z",
+    "lastVerified": "2026-11-21T05:01:29.330Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1509,9 +1509,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-11-20T23:39:47.631Z",
+    "lastChecked": "2026-11-21T05:01:24.315Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-11-20T23:39:47.631Z"
+    "lastVerified": "2026-11-21T05:01:24.315Z"
   },
   "seaql-sea-orm": {
     "name": "sea-orm",
@@ -4545,9 +4545,9 @@
   "cozodb-cozo": {
     "name": "cozo",
     "officialUrl": "https://github.com/cozodb/cozo",
-    "lastChecked": "2026-11-20T02:58:30.332Z",
+    "lastChecked": "2026-11-21T05:01:26.858Z",
     "revisionIdentifier": "481af058",
-    "lastVerified": "2026-11-20T02:58:30.332Z"
+    "lastVerified": "2026-11-21T05:01:26.858Z"
   },
   "actix-actix-web": {
     "name": "actix-web",
@@ -5261,9 +5261,9 @@
   "orange-cyberdefense-goad": {
     "name": "GOAD",
     "officialUrl": "https://github.com/Orange-Cyberdefense/GOAD",
-    "lastChecked": "2026-11-20T04:14:18.388Z",
+    "lastChecked": "2026-11-21T05:01:21.778Z",
     "revisionIdentifier": "74af01eb",
-    "lastVerified": "2026-11-20T04:14:18.388Z"
+    "lastVerified": "2026-11-21T05:01:21.778Z"
   },
   "apache-shardingsphere": {
     "name": "apache/shardingsphere",
@@ -8606,9 +8606,9 @@
   "mrjackwills-oxker": {
     "name": "oxker",
     "officialUrl": "https://github.com/mrjackwills/oxker",
-    "lastChecked": "2026-11-19T18:48:43.895Z",
+    "lastChecked": "2026-11-21T05:01:14.281Z",
     "revisionIdentifier": "791342c0",
-    "lastVerified": "2026-11-19T18:48:43.895Z"
+    "lastVerified": "2026-11-21T05:01:14.281Z"
   },
   "hf-deepseek-ai-deepseek-v4.1-flash-1017": {
     "name": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
@@ -11785,5 +11785,19 @@
     "lastChecked": "2026-11-21T04:48:25.813Z",
     "revisionIdentifier": "3f474ff2",
     "lastVerified": "2026-11-21T04:48:25.813Z"
+  },
+  "pallets-flask": {
+    "name": "flask",
+    "officialUrl": "https://github.com/pallets/flask",
+    "lastChecked": "2026-11-21T05:01:16.969Z",
+    "revisionIdentifier": "49943b5a",
+    "lastVerified": "2026-11-21T05:01:16.969Z"
+  },
+  "jarvis322-macos-sysdata": {
+    "name": "macos-sysdata",
+    "officialUrl": "https://github.com/Jarvis322/macos-sysdata",
+    "lastChecked": "2026-11-21T05:01:19.264Z",
+    "revisionIdentifier": "e06a5803",
+    "lastVerified": "2026-11-21T05:01:19.264Z"
   }
 }
