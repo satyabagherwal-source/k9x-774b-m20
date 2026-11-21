@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-21T02:57:55.371Z",
+  "updated_at": "2026-11-21T03:15:43.798Z",
   "stats": {
-    "total_discovered": 6945,
-    "approved_pending_harvest": 6556,
+    "total_discovered": 6954,
+    "approved_pending_harvest": 6565,
     "harvested_count": 0,
     "rejected_count": 389,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6535,
+      "COMMUNITY_AND_EXPERT": 6544,
       "OFFICIAL_DOCUMENTATION": 234,
       "STANDARDS_AND_SPECIFICATIONS": 122,
       "ENGINEERING_BLOGS": 5,
@@ -150090,6 +150090,204 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iliyami-macsai-learnings.md",
         "fileName": "iliyami-macsai-learnings.md"
+      }
+    },
+    "SRC-19E80854165C": {
+      "id": "SRC-19E80854165C",
+      "url": "https://github.com/oven-sh/bun/pull/49337",
+      "title": "https://github.com/oven-sh/bun/pull/49337",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T03:15:42.595Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
+        "fileName": "oven-sh-bun-learnings.md"
+      }
+    },
+    "SRC-F8622C38ADDC": {
+      "id": "SRC-F8622C38ADDC",
+      "url": "https://en.wikipedia.org/wiki/Postal_codes_in_South_Korea",
+      "title": "https://en.wikipedia.org/wiki/Postal_codes_in_South_Korea",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T03:15:43.438Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/faker-js-faker-learnings.md",
+        "fileName": "faker-js-faker-learnings.md"
+      }
+    },
+    "SRC-2472019EF737": {
+      "id": "SRC-2472019EF737",
+      "url": "https://www.data.go.kr/data/15070368/fileData.do",
+      "title": "https://www.data.go.kr/data/15070368/fileData.do",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T03:15:43.482Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/faker-js-faker-learnings.md",
+        "fileName": "faker-js-faker-learnings.md"
+      }
+    },
+    "SRC-D82EDC3702B6": {
+      "id": "SRC-D82EDC3702B6",
+      "url": "https://app.netlify.com/projects/fakerjs/deploys/6afad43e3fdb99244b481276",
+      "title": "https://app.netlify.com/projects/fakerjs/deploys/6afad43e3fdb99244b481276",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T03:15:43.575Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/faker-js-faker-learnings.md",
+        "fileName": "faker-js-faker-learnings.md"
+      }
+    },
+    "SRC-073A4D0488A5": {
+      "id": "SRC-073A4D0488A5",
+      "url": "https://deploy-preview-4274.fakerjs.dev/",
+      "title": "https://deploy-preview-4274.fakerjs.dev/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T03:15:43.623Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/faker-js-faker-learnings.md",
+        "fileName": "faker-js-faker-learnings.md"
+      }
+    },
+    "SRC-C6E146D1F117": {
+      "id": "SRC-C6E146D1F117",
+      "url": "https://app.netlify.com/qr-code/eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJodHRwczovL2RlcGxveS1wcmV2aWV3LTQyNzQuZmFrZXJqcy5kZXYifQ.nxemMtZyu2DtScPnZI8tEMt7Mhio8DEXp-4IqpUMCq8",
+      "title": "https://app.netlify.com/qr-code/eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJodHRwczovL2RlcGxveS1wcmV2aWV3LTQyNzQuZmFrZXJqcy5kZXYifQ.nxemMtZyu2DtScPnZI8tEMt7Mhio8DEXp-4IqpUMCq8",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T03:15:43.665Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/faker-js-faker-learnings.md",
+        "fileName": "faker-js-faker-learnings.md"
+      }
+    },
+    "SRC-55D5501E54BF": {
+      "id": "SRC-55D5501E54BF",
+      "url": "https://app.codecov.io/gh/faker-js/faker/pull/4274?dropdown=coverage&src=pr&el=h1",
+      "title": "https://app.codecov.io/gh/faker-js/faker/pull/4274?dropdown=coverage&src=pr&el=h1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T03:15:43.710Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/faker-js-faker-learnings.md",
+        "fileName": "faker-js-faker-learnings.md"
+      }
+    },
+    "SRC-A95B149D64D5": {
+      "id": "SRC-A95B149D64D5",
+      "url": "https://app.codecov.io/gh/faker-js/faker/commit/5060c90a7f06bfa6d65eee322ffb55e4139dcb08?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/faker-js/faker/commit/5060c90a7f06bfa6d65eee322ffb55e4139dcb08?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T03:15:43.753Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/faker-js-faker-learnings.md",
+        "fileName": "faker-js-faker-learnings.md"
+      }
+    },
+    "SRC-7875BC9353FC": {
+      "id": "SRC-7875BC9353FC",
+      "url": "https://app.codecov.io/gh/faker-js/faker/commit/48fef06913c6fc0b0ed4374ffc39a861407a2fe6?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/faker-js/faker/commit/48fef06913c6fc0b0ed4374ffc39a861407a2fe6?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T03:15:43.798Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/faker-js-faker-learnings.md",
+        "fileName": "faker-js-faker-learnings.md"
       }
     }
   }

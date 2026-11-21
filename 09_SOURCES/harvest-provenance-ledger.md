@@ -11743,3 +11743,7 @@ Every entry in this ledger must capture:
 | `learn-github-dubzzz-fast-check` | `https://github.com/dubzzz/fast-check` | `56ed4c78` | Multi-dimensional audit evidence | 2026-11-21T02:57:43.886Z |
 | `learn-github-iliyami-macsai` | `https://github.com/iliyami/MacSai` | `5891a8ce` | Multi-dimensional audit evidence | 2026-11-21T02:57:46.059Z |
 | `learn-github-aquasecurity-trivy` | `https://github.com/aquasecurity/trivy` | `edf9f5c1` | Multi-dimensional audit evidence | 2026-11-21T02:57:50.199Z |
+| `learn-github-oven-sh-bun` | `https://github.com/oven-sh/bun` | `98eae327` | Multi-dimensional audit evidence | 2026-11-21T03:15:32.156Z |
+| `learn-github-faker-js-faker` | `https://github.com/faker-js/faker` | `84d1bf84` | Multi-dimensional audit evidence | 2026-11-21T03:15:35.056Z |
+| `learn-github-saffsanity-sill` | `https://github.com/Saffsanity/sill` | `c33d1057` | Multi-dimensional audit evidence | 2026-11-21T03:15:36.453Z |
+| `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `8c164554` | Multi-dimensional audit evidence | 2026-11-21T03:15:39.202Z |

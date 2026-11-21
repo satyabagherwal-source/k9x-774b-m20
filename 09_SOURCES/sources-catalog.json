@@ -1613,10 +1613,10 @@
     "repository": "Saffsanity/sill",
     "platform": "github",
     "sourceUrl": "https://github.com/Saffsanity/sill",
-    "sourceVersion": "4e00c805",
+    "sourceVersion": "c33d1057",
     "license": "Apache-2.0",
-    "contentHash": "e4882eac9192400567ab56b255e15d248ac53739b35c964e9a28b4b90e634570",
-    "lastHarvestedAt": "2026-11-17T04:56:47.994Z",
+    "contentHash": "9f4b2f41da6e67d3bf1e8a462453a3f137f2220a9450aeebdfa3195dd68eca84",
+    "lastHarvestedAt": "2026-11-21T03:15:36.453Z",
     "learningId": "learn-github-saffsanity-sill"
   },
   "textbee-textbee": {
@@ -4713,10 +4713,10 @@
     "repository": "pulumi/pulumi",
     "platform": "github",
     "sourceUrl": "https://github.com/pulumi/pulumi",
-    "sourceVersion": "146e1e67",
+    "sourceVersion": "8c164554",
     "license": "Apache-2.0",
-    "contentHash": "a85ab319bce73b0b20234728a8e472874e51164d8d3e370a7ad0f843c6b92260",
-    "lastHarvestedAt": "2026-11-20T02:27:50.259Z",
+    "contentHash": "3843f9903b278b88fa44be264f546aa10c9ba624743c455aa200e6fb4488f40f",
+    "lastHarvestedAt": "2026-11-21T03:15:39.202Z",
     "learningId": "learn-github-pulumi-pulumi"
   },
   "sqlpage-sqlpage": {
@@ -7703,10 +7703,10 @@
     "repository": "oven-sh/bun",
     "platform": "github",
     "sourceUrl": "https://github.com/oven-sh/bun",
-    "sourceVersion": "084e3627",
+    "sourceVersion": "98eae327",
     "license": "NOASSERTION",
-    "contentHash": "4677864a6895e566f893c5bfbdddaef39fd2035b7d7547171fb76ce8bd462763",
-    "lastHarvestedAt": "2026-11-19T16:33:17.951Z",
+    "contentHash": "4b1c9037083566c979d0cdfe73d04326373fd93dfa870761a26ae66fed439723",
+    "lastHarvestedAt": "2026-11-21T03:15:32.156Z",
     "learningId": "learn-github-oven-sh-bun"
   },
   "codeeditapp-codeedit": {
@@ -10283,10 +10283,10 @@
     "repository": "faker-js/faker",
     "platform": "github",
     "sourceUrl": "https://github.com/faker-js/faker",
-    "sourceVersion": "5060c90a",
+    "sourceVersion": "84d1bf84",
     "license": "NOASSERTION",
-    "contentHash": "08beee8908af7822bb903a22f43215867b0f8b5115d362b25145fbc314e136ff",
-    "lastHarvestedAt": "2026-11-17T08:56:31.873Z",
+    "contentHash": "14cc82f9f478387e5bc87b4733c292ed97217a831b75f7b0c67683d3dbba10b3",
+    "lastHarvestedAt": "2026-11-21T03:15:35.056Z",
     "learningId": "learn-github-faker-js-faker"
   },
   "storybookjs-storybook": {

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T02:57:55.998Z",
+  "last_updated": "2026-11-21T03:15:45.095Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-21T01:16:32.184Z",
@@ -78,7 +78,7 @@
       "staged_for_review": 1
     },
     "oven-sh-bun-learnings.md": {
-      "processed_at": "2026-11-19T16:33:32.731Z",
+      "processed_at": "2026-11-21T03:15:42.474Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1948,7 +1948,7 @@
       "staged_for_review": 0
     },
     "saffsanity-sill-learnings.md": {
-      "processed_at": "2026-11-17T04:56:56.957Z",
+      "processed_at": "2026-11-21T03:15:44.451Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3273,9 +3273,9 @@
       "staged_for_review": 0
     },
     "faker-js-faker-learnings.md": {
-      "processed_at": "2026-11-17T08:57:17.742Z",
-      "promoted_canonical": 1,
-      "staged_for_review": 0
+      "processed_at": "2026-11-21T03:15:43.378Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "hf-meituan-longcat-longcat-video-avatar-1.6-learnings.md": {
       "processed_at": "2026-11-17T11:26:09.517Z",
@@ -3653,7 +3653,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2715,
+  "total_dossiers_evaluated": 2718,
   "total_canonical_promoted": 442,
-  "total_staged_for_review": 2087
+  "total_staged_for_review": 2090
 }

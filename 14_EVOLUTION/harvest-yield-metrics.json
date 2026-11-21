@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T02:57:50.203Z",
-  "total_cycles_completed": 11146,
-  "total_learnings_persisted": 11146,
-  "total_rules_promoted": 10503,
+  "last_updated": "2026-11-21T03:15:39.207Z",
+  "total_cycles_completed": 11150,
+  "total_learnings_persisted": 11150,
+  "total_rules_promoted": 10507,
   "history": [
-    {
-      "timestamp": "2026-11-20T06:19:37.532Z",
-      "repository": "StarRocks/starrocks",
-      "learningId": "learn-github-starrocks-starrocks",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T06:37:24.766Z",
-      "repository": "tmolavi/siteprobe",
-      "learningId": "learn-github-tmolavi-siteprobe",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T06:45:04.523Z",
-      "repository": "thejagstudio/tessera-small",
-      "learningId": "learn-huggingface-thejagstudio-tessera-small",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T06:45:13.510Z",
-      "repository": "prof18/feed-flow",
-      "learningId": "learn-github-prof18-feed-flow",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-20T06:45:17.504Z",
       "repository": "argoproj/argo-workflows",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-21T02:57:50.203Z",
       "repository": "aquasecurity/trivy",
       "learningId": "learn-github-aquasecurity-trivy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T03:15:32.161Z",
+      "repository": "oven-sh/bun",
+      "learningId": "learn-github-oven-sh-bun",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T03:15:35.061Z",
+      "repository": "faker-js/faker",
+      "learningId": "learn-github-faker-js-faker",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T03:15:36.458Z",
+      "repository": "Saffsanity/sill",
+      "learningId": "learn-github-saffsanity-sill",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T03:15:39.207Z",
+      "repository": "pulumi/pulumi",
+      "learningId": "learn-github-pulumi-pulumi",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

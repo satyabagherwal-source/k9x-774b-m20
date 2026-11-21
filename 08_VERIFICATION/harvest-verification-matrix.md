@@ -11710,3 +11710,7 @@
 | `CYCLE-20261121-ICAY` | `2026-11-21T02:57:43.882Z` | `dubzzz/fast-check` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9706` | Yes (`be3d244b...`) |
 | `CYCLE-20261121-IDZA` | `2026-11-21T02:57:46.054Z` | `iliyami/MacSai` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9707` | Yes (`4cf2d4de...`) |
 | `CYCLE-20261121-IH6A` | `2026-11-21T02:57:50.194Z` | `aquasecurity/trivy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9708` | Yes (`aaac4ceb...`) |
+| `CYCLE-20261121-58L4` | `2026-11-21T03:15:32.152Z` | `oven-sh/bun` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9709` | Yes (`4b1c9037...`) |
+| `CYCLE-20261121-5ATN` | `2026-11-21T03:15:35.051Z` | `faker-js/faker` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9710` | Yes (`14cc82f9...`) |
+| `CYCLE-20261121-5BWH` | `2026-11-21T03:15:36.449Z` | `Saffsanity/sill` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9711` | Yes (`9f4b2f41...`) |
+| `CYCLE-20261121-5E0U` | `2026-11-21T03:15:39.198Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9712` | Yes (`3843f990...`) |

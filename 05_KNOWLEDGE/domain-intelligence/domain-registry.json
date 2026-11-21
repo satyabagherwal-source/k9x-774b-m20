@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T02:57:55.716Z",
+  "last_updated": "2026-11-21T03:15:44.837Z",
   "total_records": 2220,
   "domains": {
     "A": {
@@ -8413,8 +8413,8 @@
       "title": "Quality & Verification Intelligence: Saffsanity/sill Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-saffsanity-sill-quality-verification-intelligence-saffsanity-sill-core-invariant.md",
       "repository": "Saffsanity/sill",
-      "content_hash": "d57a68ed7288e4a419f5d135ced200843918c43f2adceb79c4653708cb34af03",
-      "created_at": "2026-11-17T04:56:48.361Z"
+      "content_hash": "bca63c1ac4aaa547e6dad5814141244ad38717f69c8e90952024c9bd686b589a",
+      "created_at": "2026-11-21T03:15:36.807Z"
     },
     "domain_intelligence-technical-construction-intelligence-bridgecrewio-checkov-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-bridgecrewio-checkov-core-invariants",
@@ -8491,8 +8491,8 @@
       "title": "Quality & Verification Intelligence: saffsanity-sill-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-saffsanity-sill-learnings-quality-verification-intelligence-saffsanity-sill-lear.md",
       "repository": "saffsanity-sill-learnings",
-      "content_hash": "9727af30fe549f88919a31b414ea80d51f256c80dc0ea6f66380417f9283334b",
-      "created_at": "2026-11-17T04:56:57.381Z"
+      "content_hash": "e4ceefe695647b06f337e08a2cba36bd2b0cc1c50e177b70181340b417f1f0cb",
+      "created_at": "2026-11-21T03:15:44.837Z"
     },
     "domain_intelligence-technical-construction-intelligence-bridgecrewio-checkov-learnings-core-invarian": {
       "record_id": "domain_intelligence-technical-construction-intelligence-bridgecrewio-checkov-learnings-core-invarian",
@@ -16868,8 +16868,8 @@
       "title": "Technical Construction Intelligence: oven-sh/bun Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-oven-sh-bun-technical-construction-intelligence-oven-sh-bun-core-invariants.md",
       "repository": "oven-sh/bun",
-      "content_hash": "76af26a62566c726e11b33e6742ac7c1fe53d27135c15ff99bc984d518d97423",
-      "created_at": "2026-11-19T16:33:18.293Z"
+      "content_hash": "816269d4c37c53cb9e8d3b856215516bb259d52a5f37c56b8a00da0dbd3b9bc7",
+      "created_at": "2026-11-21T03:15:32.511Z"
     },
     "domain_intelligence-research-knowledge-intelligence-autotrust-gev-26b-decide-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-autotrust-gev-26b-decide-core-invariants",
@@ -16928,8 +16928,8 @@
       "title": "Technical Construction Intelligence: oven-sh-bun-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-oven-sh-bun-learnings-technical-construction-intelligence-oven-sh-bun-learnings-.md",
       "repository": "oven-sh-bun-learnings",
-      "content_hash": "4e5138d60f9355e9d8b976f74bd2885c84219a76af98c238b31688ef5ae75f57",
-      "created_at": "2026-11-19T16:33:33.413Z"
+      "content_hash": "dd26d14075a214aa77623b5dc6c5d0f7bb7fbab4eab7e2d76005524d15a9b048",
+      "created_at": "2026-11-21T03:15:42.959Z"
     },
     "DOM-D-02DACB51": {
       "record_id": "DOM-D-02DACB51",
@@ -17627,8 +17627,8 @@
       "title": "Content & Information Intelligence: pulumi/pulumi Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pulumi-pulumi-content-information-intelligence-pulumi-pulumi-core-invariants.md",
       "repository": "pulumi/pulumi",
-      "content_hash": "389a8a3893e4f027dade30c80f75a26ed74ccd0984d553bdb62bdeb567831e86",
-      "created_at": "2026-11-20T02:27:50.606Z"
+      "content_hash": "9224364590e5a06c6500b1bdca5af046babbe51ae6bc89e9d5f576161b2cecfb",
+      "created_at": "2026-11-21T03:15:39.550Z"
     },
     "domain_intelligence-architecture-intelligence-ytsaurus-ytsaurus-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-ytsaurus-ytsaurus-core-invariants",
@@ -27014,8 +27014,8 @@
       "title": "Architecture Intelligence: faker-js/faker Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-faker-js-faker-architecture-intelligence-faker-js-faker-core-invariants.md",
       "repository": "faker-js/faker",
-      "content_hash": "153b0fed6de39dec75342b4481c24993500b86a4b15a3f914e76079bfc298307",
-      "created_at": "2026-11-17T08:56:32.072Z"
+      "content_hash": "0b029de932be6b37473217aa8c37795d49962b70e8e7686352da4436e02974cf",
+      "created_at": "2026-11-21T03:15:35.397Z"
     },
     "domain_intelligence-technical-construction-intelligence-mattermost-mattermost-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-mattermost-mattermost-core-invariants",
@@ -27083,8 +27083,8 @@
       "title": "Architecture Intelligence: faker-js-faker-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-faker-js-faker-learnings-architecture-intelligence-faker-js-faker-learnings-core.md",
       "repository": "faker-js-faker-learnings",
-      "content_hash": "f38a21a8b882309598973e49dfd573845c1e8ef1bdf40d4d2840b263c18ec28d",
-      "created_at": "2026-11-17T08:57:18.607Z"
+      "content_hash": "8180f654862c10942b44dced9665442964424ce3fd6ae5e3d2ae889a99f12eb1",
+      "created_at": "2026-11-21T03:15:44.145Z"
     },
     "domain_intelligence-technical-construction-intelligence-mattermost-mattermost-learnings-core-invaria": {
       "record_id": "domain_intelligence-technical-construction-intelligence-mattermost-mattermost-learnings-core-invaria",

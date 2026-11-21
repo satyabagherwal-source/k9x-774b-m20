@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:35:37.418Z",
+  "timestamp": "2026-11-21T03:15:43.893Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-faker-js-faker-learnings",
+  "learning_id": "LEARN-EVO-faker-js-faker-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [faker-js-faker-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:35:37.418Z`  
-> **Learning ID**: `LEARN-REEXTRACT-faker-js-faker-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-21T03:15:43.893Z`  
+> **Learning ID**: `LEARN-EVO-faker-js-faker-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/faker-js-faker-learnings.md`  
 > **Source**: github ([https://github.com/faker-js/faker](https://github.com/faker-js/faker))  
-> **Source Version**: `5415aecc`  
+> **Source Version**: `84d1bf84`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T23:47:03.531Z  
+> **Timestamp**: 2026-11-21T03:15:34.082Z  
 > **Learning ID**: `learn-github-faker-js-faker`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/faker-js-faker-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/faker-js/faker](https://github.com/faker-js/faker))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T23:47:02.271Z  
+> **Harvest Timestamp**: 2026-11-21T03:15:34.077Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Generate massive amounts of fake data in the browser and node.js
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 15545 stars
+- **Stars / Engagement**: 15556 stars
 
 ---
 
@@ -389,14 +389,14 @@ export default [
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4260** (2026-11-06): **refactor(module): reuse one Faker instance per FakerCore in standalone functions**
-  *Symptoms*:  Since #4033 (not released yet), 17 standalone functions that resolve a pattern through `helpers.fake` build a new `Faker` on every call, e.g. `fakePersonLastName`, `fakeLocationCity`, `fakeCompanyName`, `fakeInternetUserAgent`. Building a `Faker` sets up every module, so these calls, and the module methods that call them (`faker.person.lastName()` etc.), are now roughly 10-40x slower than in 10.6.0.  This adds an internal `getFakerForCore(fakerCore)` that keeps one `Faker` per `FakerCore` in a `WeakMap`, and uses it in those 17 functions. The cached instance shares the core's randomizer, locale and config, so the output is unchanged for every seed. No snapshots changed. Seeded output of `next` and this branch matches across all 78 locales (20 methods that use these functions, 60 draws each).  The helper only gets imported by files that already imported `Faker`, so it adds no new import edges and doesn't conflict with #4220.  µs per call (best of 5 runs of 20k calls), Node 24.12, Apple M4 Pro:  | | 10.6.0 | `next` | this PR | |---|---|---|---| | `person.lastName()` | 0.50 | 19.91 | 0.53 | | `person.fullName()` | 1.62 | 21.21 | 1.64 | | `person.jobTitle()` | 1.23 | 20.46 | 1.16 | | `location.city()` | 0.94 | 23.53 | 0.93 | | `location.streetAddress()` | 2.17 | 45.85 | 2.11 | | `company.name()` | 1.92 | 59.47 | 1.84 | | `commerce.productName()` | 1.26 | 19.84 | 1.21 | | `internet.userAgent()` | 3.06 | 21.75 | 2.89 | | `hacker.phrase()` | 2.66 | 21.26 | 2.54 | 
-  **Post-Mortem & Fix Analysis**:
-  > ### <span aria-hidden="true">✅</span> Deploy Preview for *fakerjs* ready! Built [without sensitive environment variables](https://docs.netlify.com/configure-builds/environment-variables/#sensitive-variable-policy)  |  Name | Link | |:-:|------------------------| |<span aria-hidden="true">🔨</span> Latest commit | 0bc7dcb8230c8f0c9f911ca750f5a88bddf6d808 | |<span aria-hidden="true">🔍</span> Latest deploy log | https://app.netlify.com/projects/fakerjs/deploys/6aee03b74e02cd27a78c9021 | |<span aria-hidden="true">😎</span> Deploy Preview | [https://deploy-preview-4260.fakerjs.dev](https://deploy-preview-4260.fakerjs.dev) | |<span aria-hidden="true">📱</span> Preview on mobile | <details><summary> Toggle QR Code... </summary><br /><br />![QR Code](https://app.netlify.com/qr-code/eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJodHRwczovL2RlcGxveS1wcmV2aWV3LTQyNjAuZmFrZXJqcy5kZXYifQ.nV2BQbJpyva2y93Qelp_Ltg5ycc2HQ7apqeDS37mTn8)<br /><br />_Use your smartphone camera to open QR code link._</de
-  > ## [Codecov](https://app.codecov.io/gh/faker-js/faker/pull/4260?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=faker-js) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 99.14%. Comparing base ([`698d335`](https://app.codecov.io/gh/faker-js/faker/commit/698d3358d38d03c3261e999211ef0332a501d499?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=faker-js)) to head ([`0bc7dcb`](https://app.codecov.io/gh/faker-js/faker/commit/0bc7dcb8230c8f0c9f911ca750f5a88bddf6d808?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=faker-js)).  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##             next    #4260   +/-   ## ===============================
+- **Issue #4276** (2026-11-18): **fix(locale): use five-digit postcodes with assigned prefixes for ko**
+  *Symptoms*: South Korea replaced its six-digit postcodes (`XXX-XXX`) with five-digit ones on 1 August 2015 (see https://en.wikipedia.org/wiki/Postal_codes_in_South_Korea). The `ko` patterns were `['###-###', '#####']`, so half of `fakerKO.location.zipCode()` results used the retired format, and the other half could start with a prefix no area has, like `67098` or `98306`. Only 29.6% of 100,000 generated codes could be Korean postcodes.  The first two digits of a Korean postcode identify the province or metropolitan city, from `01` (Seoul) to `63` (Jeju). This lists the 59 prefixes used by the 3,307 post offices in Korea Post's [nationwide post office list](https://www.data.go.kr/data/15070368/fileData.do) (as of 2026-08-31): `01`–`08`, `10`–`18`, `21`–`59` and `61`–`63`, one pattern each so every prefix is equally likely. With this change, all 100,000 generated codes are five digits with one of those prefixes.  Prepared with Claude Code and checked by me.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
 
-- **Issue #4259** (2026-11-06): **feat(system): add depth option to directoryPath**
-  *Symptoms*: Closes #3785  `faker.system.directoryPath()` returns a path of random depth from the locale data, so callers that need a specific number of segments (e.g. for parent/child path structures) have to post-process the result.  This adds an optional `depth` option: `faker.system.directoryPath({ depth: 2 })` returns a path with exactly two segments (e.g. `/etc/mail`), and `depth: 0` returns the root path `/`. Without the option, the behaviour is unchanged — the seeded `noArgs` snapshot values are identical to before; only the snapshot keys moved, because `directoryPath` now has its own seeded describe block.  Implementation notes:  - The option filters the existing locale `directory_path` data by segment count, so returned paths stay realistic for the locale instead of being assembled from invented segments. - Validation mirrors how the date module handles numeric options: a non-integer or negative `depth` throws a `FakerError`, as does a depth for which the locale data contains no path (currently any depth above 3).  Related: #3790 (`internet.urlPath`) is a separate feature and is not covered here. 
+- **Issue #4274** (2026-11-18): **fix(locale): correct uz_UZ_latin month names**
+  *Symptoms*: Split out of #4273, as requested.  Fixes two month names in `uz_UZ_latin` `date.month.wide`:  | before | after | |---|---| | `Oktyabr` | `Oktabr` | | `Sentyabr` | `Sentabr` |  `Oktabr` and `Sentabr` are the spellings in the current Uzbek Latin orthography and in CLDR (`common/main/uz.xml`: `oktabr`, `sentabr`). `-yabr` is the Russian form. I'm a native speaker.  The abbreviations (`Okt`, `Sen`) already match. No other characters change, so the `locale-data` snapshot is unaffected.
+  **Post-Mortem & Fix Analysis**:
+  > ### <span aria-hidden="true">✅</span> Deploy Preview for *fakerjs* ready! Built [without sensitive environment variables](https://docs.netlify.com/build/environment-variables/get-started/#untrusted-deploys-and-sensitive-variables)  |  Name | Link | |:-:|------------------------| |<span aria-hidden="true">🔨</span> Latest commit | 48fef06913c6fc0b0ed4374ffc39a861407a2fe6 | |<span aria-hidden="true">🔍</span> Latest deploy log | https://app.netlify.com/projects/fakerjs/deploys/6afad43e3fdb99244b481276 | |<span aria-hidden="true">😎</span> Deploy Preview | [https://deploy-preview-4274.fakerjs.dev](https://deploy-preview-4274.fakerjs.dev) | |<span aria-hidden="true">📱</span> Preview on mobile | <details><summary> Toggle QR Code... </summary><br /><br />![QR Code](https://app.netlify.com/qr-code/eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJodHRwczovL2RlcGxveS1wcmV2aWV3LTQyNzQuZmFrZXJqcy5kZXYifQ.nxemMtZyu2DtScPnZI8tEMt7Mhio8DEXp-4IqpUMCq8)<br /><br />_Use your smartphone camera to open Q
+  > ## [Codecov](https://app.codecov.io/gh/faker-js/faker/pull/4274?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=faker-js) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 99.09%. Comparing base ([`5060c90`](https://app.codecov.io/gh/faker-js/faker/commit/5060c90a7f06bfa6d65eee322ffb55e4139dcb08?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=faker-js)) to head ([`48fef06`](https://app.codecov.io/gh/faker-js/faker/commit/48fef06913c6fc0b0ed4374ffc39a861407a2fe6?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=faker-js)).  <details><summary>Additional details and impacted files</summary>    ```diff @@            Coverage Diff             @@ ##             next    #4274      +/-   ## =========================
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -413,93 +413,89 @@ export default [
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `756cfed2` (2026-11-06)
-**Commit Message**: fix(locale): only generate valid postcode formats for sk (#4257)
+### Incident Patch 1: `fe174e4b` (2026-11-18)
+**Commit Message**: fix(locale): avoid a leading zero in sv postcodes (#4261)
 
-**File**: `src/locales/sk/location/postcode.ts` (modified, +1/-1)
+**File**: `src/locales/sv/location/postcode.ts` (modified, +12/-1)
 ```diff
-@@ -1 +1 @@
--export default ['#####', '### ##', '## ###'];
-+export default ['#####', '### ##'];
-```
-
----
-
-### Incident Patch 2: `698d3358` (2026-11-05)
-**Commit Message**: docs: guidance on locale tests that don't add value (#4256)
-
-**File**: `CONTRIBUTING.md` (modified, +28/-0)
-```diff
-@@ -182,6 +182,34 @@ describe('someModule', () => {
- });
- ```
- 
-+### Testing locale data
-+
-+It is not necessary to add tests that check locale-specific rules which are already clear from the data. These kinds of tests are clutter: they restate the definition files without checking any additional behavior.
-+
-+For example, if you add international phone number patterns for Thailand:
-+
-+```ts
+@@ -1 +1,12 @@
+-export default ['#####'];
++// The first digit of a Swedish postal code is 1 to 9 (0 is not used).
 +export default [
-+  '+662#######',
-+  '+665!######',
-+  '+666########',
-+  '+668########',
-+  '+669########',
++  '1####',
++  '2####',
++  '3####',
++  '4####',
++  '5####',
++  '6####',
++  '7####',
++  '8####',
++  '9####',
 +];
-+```
-+
-+Do **not** add a test like this:
-+
-+```ts
-+it('should start with +66 in the th locale', () => {
-+  const phoneNumber = fakerTH.phone.number({ style: 'international' });
-+
-+  expect(phoneNumber).toMatch(/^\+66/);
-+});
-+```
-+
-+The same constraint is already visible in the definition file, so the test does not add value.
-+
- ## Deprecation workflow
- 
- If you ever find yourself deprecating something in the source code, you can follow these steps to save yourself (and the reviewers) some trouble.
 ```
 
 ---
 
-### Incident Patch 3: `004e3848` (2026-11-05)
-**Commit Message**: fix(locale): use 4-digit postcodes for South African locales (#4252)
+### Incident Patch 2: `b75e6f09` (2026-11-18)
+**Commit Message**: fix(locale): fix postcodes and add missing province for id_ID (#4272)
 
-**File**: `src/locales/af_ZA/location/postcode.ts` (modified, +1/-1)
+Co-authored-by: Insan Rizky <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `src/locales/id_ID/location/postcode.ts` (modified, +11/-1)
 ```diff
-@@ -1 +1 @@
--export default ['#####', '####'];
-+export default ['####'];
+@@ -1 +1,11 @@
+-export default ['#####'];
++export default [
++  '1####',
++  '2####',
++  '3####',
++  '4####',
++  '5####',
++  '6####',
++  '7####',
++  '8####',
++  '9####',
++];
 ```
 
-**File**: `src/locales/en_ZA/location/postcode.ts` (modified, +1/-1)
+**File**: `src/locales/id_ID/location/state.ts` (modified, +1/-0)
 ```diff
-@@ -1 +1 @@
--export default ['#####', '####'];
-+export default ['####'];
+@@ -36,4 +36,5 @@ export default [
+   'Papua Tengah',
+   'Papua Pegunungan',
+   'Papua Selatan',
++  'Papua Barat Daya',
+ ];
 ```
 
-**File**: `src/locales/zu_ZA/location/postcode.ts` (modified, +1/-1)
+---
+
+### Incident Patch 3: `be68da3b` (2026-11-18)
+**Commit Message**: fix(locale): correct uz_UZ_latin month names (#4274)
+
+**File**: `src/locales/uz_UZ_latin/date/month.ts` (modified, +2/-2)
 ```diff
-@@ -1 +1 @@
--export default ['#####', '####'];
-+export default ['####'];
+@@ -9,8 +9,8 @@ export default {
+     'Mart',
+     'May',
+     'Noyabr',
+-    'Oktyabr',
+-    'Sentyabr',
++    'Oktabr',
++    'Sentabr',
+     'Yanvar',
+   ],
+   abbr: [
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4260** (closed): refactor(module): reuse one Faker instance per FakerCore in standalone functions (@TheNetherWatcher)
-- **PR #4259** (closed): feat(system): add depth option to directoryPath (@QuincyGB)
-- **PR #4258** (2026-11-06): feat(locale): add person labels for az (@jamalkamaladdin)
-- **PR #4257** (2026-11-06): fix(locale): only generate valid postcode formats for sk (@simonkundrik)
-- **PR #4256** (2026-11-05): docs: guidance on locale tests that don't add value (@matthewmayer)
-- **PR #4253** (2026-11-06): feat(locale): add company catchphrase data for az (@jamalkamaladdin)
+- **PR #4276** (2026-11-18): fix(locale): use five-digit postcodes with assigned prefixes for ko (@wonjangcloud9)
+- **PR #4274** (2026-11-18): fix(locale): correct uz_UZ_latin month names (@XakimovNosirbek)
+- **PR #4273** (2026-11-19): feat(locale): add phone numbers to uz_UZ_latin (@XakimovNosirbek)
+- **PR #4272** (2026-11-18): fix(locale): fix postcodes and add missing province for id_ID (@insanrizky)
+- **PR #4271** (2026-11-13): feat(locale): add date data for tr (@bahriy-dev)
+- **PR #4270** (closed): infra: use actions-lock (@matthewmayer)
 
 ---
 
@@ -519,31 +515,42 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. locale): only generate valid postcode formats for sk (#4257)
+## X. locale): avoid a leading zero in sv postcodes
 
 **RULE**:
-When implementing operations in `src/locales/sk/location/postcode.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in faker-js/faker. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/locales/sv/location/postcode.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in faker-js/faker. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `756cfed2`: locale): only generate valid postcode formats for sk (#4257). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fe174e4b`: locale): avoid a leading zero in sv postcodes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/locales/sk/location/postcode.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/locales/sv/location/postcode.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-export default ['#####', '### ##'];
+// The first digit of a Swedish postal code is 1 to 9 (0 is not used).
+export default [
+  '1####',
+  '2####',
+  '3####',
+  '4####',
+  '5####',
+  '6####',
+  '7####',
+  '8####',
+  '9####',
+];
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-export default ['#####', '### ##', '## ###'];
+// Induced defect failure mode:
+export default ['#####'];
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `756cfed2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fe174e4b` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

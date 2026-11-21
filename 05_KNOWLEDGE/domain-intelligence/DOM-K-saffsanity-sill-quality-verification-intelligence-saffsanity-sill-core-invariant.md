@@ -4,24 +4,24 @@
 {
   "source_repository": "Saffsanity/sill",
   "source_url": "https://github.com/Saffsanity/sill",
-  "source_version": "4e00c805",
+  "source_version": "c33d1057",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-17T04:56:48.213Z",
+  "timestamp": "2026-11-21T03:15:36.658Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-saffsanity-sill",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [Saffsanity/sill](https://github.com/Saffsanity/sill) (Revision: `4e00c805`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T04:56:48.213Z`  
+> **Provenance**: Harvested from [Saffsanity/sill](https://github.com/Saffsanity/sill) (Revision: `c33d1057`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-21T03:15:36.658Z`  
 > **Learning ID**: `learn-github-saffsanity-sill`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain K (Quality & Verification Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), E (Creative Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 57%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), E (Creative Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence), F (Design Intelligence)
+- **Confidence Rating**: 63%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from Saffsanity/sill:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/saffsanity-sill-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Saffsanity/sill](https://github.com/Saffsanity/sill))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T04:56:46.684Z  
+> **Harvest Timestamp**: 2026-11-21T03:15:35.438Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Any window from your Mac, live on your iPhone or iPad. Touch, Apple Pencil, trackpad and keys. Free, open source, no servers.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 4920 stars
+- **Stars / Engagement**: 5003 stars
 
 ---
 
@@ -326,7 +326,9 @@ import StreamProtocol
 ///                                              awayBitrate, awayCaptureScale,
 ///                                              prioritizeSpeed, virtualDisplay, directWireless,
 ///                                              sendAudio, remoteAccess, remotePort, internetAccess,
-///                                              shareClipboard, offConsoleView, remoteAddressName=host[:port],
+///                                              shareClipboard, offConsoleView, lockAfterSession,
+///                                              lockSleepsDisplay, lockOnlyAfterAway,
+///                                              remoteAddressName=host[:port],
 ///                                              updateCheck, showPairingWindowToScreenSharing=0|1,
 ///                                              requirePairing=0|1). Saved like any change
 ///                                              (requirePairing in the identity store: memory, or
@@ -430,9 +432,7 @@ enum DebugHooks {
     static let windowHooks = ["SillTestScreenHeight", "SillSettingsShot"]
 
     /// TEST ONLY (-SillTestScreenHeight <points>, and -SillSettingsAfter's height=): the Settings
-    /// window fits the top <points> of its screen's visible frame (SettingsWindowFit.visible). Nil in
-    /// Sill.app itself, and without it.
-    static var 
+    /
 ```
 
 ### Core Architecture Module: `iOSClient/MacMenuState.swift`
@@ -952,6 +952,8 @@ var second = false   // the source switched to the second tone
     }
 }
 server.onAudioListenersChanged = { n in Task { @MainActor in listeners = n; follow() } }
+// A tone that failed or ended by itself (SILL_TEST_AUDIO_END) is asked for again, as the coordinator does.
+audio.onRetry = { follow() }
 
 server.onKeyframeNeeded = { encoder.requestKeyframe() }
 server.onClientCountChanged = { n in Stats.shared.activeClients = n }
@@ -1530,16 +1532,14 @@ func took(_ header: StreamHeader, _ payload: Data) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #365** (2026-11-20): **Sound can stay off for a whole stream after its capture fails once (-3815, "Start stream fail")**
+  *Symptoms*: ### What happened  With Virtual Display and Send Audio on, picking a window sometimes loses the app's sound for the rest of that stream. Sill's log on the Mac then has one of these lines:  ``` Audio capture ended: … (com.apple.ScreenCaptureKit.SCStreamErrorDomain -3815). The picture is unaffected. Audio: could not capture ‹app›'s sound: Start stream fail ```  -3815 is ScreenCaptureKit saying it found no display or window to capture. The picture keeps streaming; only the sound stops.  I found this while looking into #359, whose log has both lines. My own Mac's log has them too: 8 and 10 times over the last two days.  ### What I think is going on  Two things in Sill for Mac, both in how it captures an app's sound:  1. Sill asks ScreenCaptureKit for the app's sound on the Mac's **main display**. A window that streams from Sill's own virtual display isn't on the main display, and the app may have no window there at all. When Sill's display appears or goes, the sound capture can end with -3815 or fail to start. 2. After a failure, Sill tries the sound again only at the next event (the picture restarting, a device connecting or leaving, a setting changing), and at most once every 10 seconds. If nothing like that happens, the sound stays off until the stream ends.  I haven't proven that the main display is the cause of every one of these lines. It fits the timing: in #359's log the -3815 comes in the same millisecond as Sill's display being created.  ### What should happen  The app'
+
 - **Issue #215** (2026-11-09): **Keyboard covers keyboard button on iPhone Duo "laptop mode"**
   *Symptoms*: ### What happened  Keyboard covers keyboard button on iPhone Duo "laptop mode" Meaning you can't dismiss the keyboard after you have summoned it.  <img width="1004" height="1427" alt="Image" src="https://github.com/user-attachments/assets/d013cc01-409b-4eca-ad63-8954b5e16114" />  ### How to make it happen again  Put duo in laptop mode Summon keyboard with toggle button  ### Your Mac and its macOS  MacBook Pro M1 Max, macOS 27  ### Sill for Mac's version  0.5.1 (563)  ### Your iPhone or iPad and its iOS or iPadOS  iPhone Duo iOS 27.2  ### The Sill app's version  0.5.1  ### How the device reached the Mac  Wi-Fi  ### Sill's log on your Mac  ```text  ```
   **Post-Mortem & Fix Analysis**:
   > Opened #220 to fix this: in laptop mode on the iPhone Duo, the window bar now shows a **Keyboard** button alongside **Apps**, **Aa**, **Desktop**, and **Settings**, and drops its 12 pt top padding while the software keyboard is up so the buttons stay above the keyboard.
   > @matt-cahill  This is a bad one. I will see about pushing a new build in the next day or two to resolve this bug. Really sorry about this. Thank you for reporting and bearing with me. Maybe at some point I had the hardware in hand to test!
-
-- **Issue #162** (2026-10-30): **Option/CMD + left/right arrows sends the keys just once**
-  *Symptoms*: ### What happened  holding down combos like this should send the combo repeatedly. doesnt happen for non-combo keystrokes.  ### How to make it happen again  _No response_  ### Your Mac and its macOS  macbook pro m4 27.2 beta 3  ### Sill for Mac's version  latest as of filing  ### Your iPhone or iPad and its iOS or iPadOS  ipad m4 pro  ### The Sill app's version  _No response_  ### How the device reached the Mac  Wi-Fi  ### Sill's log on your Mac  ```text  ```
-  **Post-Mortem & Fix Analysis**:
-  > Opened #163 so held keys and `Option`/`Command` + arrow key chords repeat properly on iPad.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1556,211 +1556,73 @@ func took(_ header: StreamHeader, _ payload: Data) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7ee759c5` (2026-11-15)
-**Commit Message**: Update Now's new copy starts once the old Sill has quit: the launch wait asks the kernel
+### Incident Patch 1: `3919e780` (2026-11-19)
+**Commit Message**: Steps: privacy-lock's close-out turn ran: the build, live.py 48 of 48, the previews, run-all, H2 as main's
 
-The rehearsal's first real update (2026-11-15) replaced Sill in two seconds, and then no Sill ran: the
-new copy waits at launch for the Sill that started it to quit, asked NSRunningApplication.isTerminated
-for 30 s, and gave up, though the system log has the old Sill's end 0.2 s after it said it was
-quitting. That value is one AppKit keeps from LaunchServices' notifications, and it never changed in a
-Sill that had only just launched. No test had run this path with Developer ID signed copies.
-
-ProcessLife (Foundation only) knows a process by its pid and the time it started, both the kernel's,
-so a pid given to another process is not taken for the Sill that had it. The wait counts the other
-Sill gone when AppKit says so or the kernel does.
-
-update-install: 973 checks (18 new, against this process, launchd and a child of its own), seven new
-mutants, 7 of 7, the first of them the fault as it was.
+The local turn the step file said was still to run, at 34c899ed on 2026-11-18 22:37. H2 with a Desktop client
+differs from the lines recorded in the first round only in the statistics line of the second the client leaves,
+and main's own CLI (eb48ac9f) differs from its own recorded lines in the same way the same night.
 
 Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
 
-**File**: `Sources/SillMenuBar/AppUpdater.swift` (modified, +6/-1)
+**File**: `docs/steps/2026-11-18-privacy-lock.md` (modified, +8/-3)
 ```diff
-@@ -1099,6 +1099,9 @@ final class AppUpdater {
-     /// has quit, at most `Policy.launchWait`, then quits itself. True when it waits (`start` comes later).
-     /// Only a process that satisfies Sill's requirement counts (review 3, N7: anything can claim the bundle
-     /// identifier). From applicationDidFinishLaunching; the Timer is a run-loop one (it may call NSApp.terminate).
-+    /// Whether the other one has quit is the kernel's word (ProcessLife) as well as AppKit's: `isTerminated`
-+    /// alone never changed in a Sill that had only just launched, so the first real update's new copy waited
-+    /// the whole 30 s for a Sill that had quit after 0.2 s, and left (the rehearsal, 2026-11-15).
-     static func waitForOtherSill(then start: @escaping @MainActor () -> Void) -> Bool {
-         guard let id = Bundle.main.bundleIdentifier else { return false }
-         let own = ProcessInfo.processInfo.processIdentifier
-@@ -1107,11 +1110,13 @@ final class AppUpdater {
-         let others = candidates.filter { genuine.contains($0.processIdentifier) }
-         guard !others.isEmpty else { return false }
-         let pids = others.map { String($0.processIdentifier) }.joined(separator: ", ")
-+        // Each as the kernel knows it now, its pid and when it started; none with that pid any more is gone already.
-+        let lives = others.map { (app: $0, life: ProcessLife.of($0.processIdentifier)) }
-         print("Another Sill is running (pid \(pids)); waiting for it to quit before starting.")
-         let deadline = Date().addingTimeInterval(Policy.launchWait)
-         let timer = Timer(timeInterval: 0.2, repeats: true) { timer in
-             MainActor.assumeIsolated {
--                if others.allSatisfy({ $0.isTerminated }) {
-+                if lives.allSatisfy({ $0.app.isTerminated || ($0.life?.gone ?? true) }) {
-                     timer.invalidate()
-                     print("The other Sill quit; starting.")
-                     start()
+@@ -100,9 +100,14 @@
+   mutants (9 new); `lock-policy` 1,411 of 1,411. CI on the pull request (run 44313954856, at c3b5b96b): `swift build -c
+   release`, `Tests/checks/run-all.sh`, the iOS app for the simulator and the CLI's paths, all green. The review's own
+   heavy turn (08:35) built c3b5b96b (49 s) and passed live.py's off, wait and back before its session stopped; the
+-  close-out's turn (`swift build -c release`, `Scripts/privacy-check/live.py OUT all` with the nosleep and away cases,
+-  H2 again against main's recorded lines, the previews from the bare binary, run-all) waits in heavy.sh's queue, with
+-  four other agents' jobs in it at 15:45: its results go in the pull request and here.
++  close-out's turn ran at 22:37 at 34c899ed: `swift build -c release` passed; `Scripts/privacy-check/live.py OUT all`,
++  48 of 48 verdicts hold, the nosleep and away cases among them; the previews drawn from the bare binary (326, the
++  eight lock panes among them, SillMenuBar's lock keys in this Mac's defaults as they were); run-all, every check
++  passed. H2 again (the CLI's stdout without the flag): idle, identical to main's recorded lines; with a Desktop
++  client, five runs differ from the lines recorded in the first round only in the statistics line of the second the
++  client leaves (which counters it holds, and whether it still counts the client), and main's own CLI (eb48ac9f), run
++  twice the same night, differs from its own recorded lines in the same way, line for line as the branch's last two
++  runs: the branch's stdout is main's.
+ - **Defaults taken for Noah to confirm** (the plan's recommendations): the switch in Settings › Devices (open decision
+   1); a 30 s wait (4); after any session, home or away (5, now the switch Only after a device away from home, off: so
+   an iPad used as a second screen at the desk locks the Mac 30 s after it disconnects unless it is turned on); the
 ```
 
-**File**: `Sources/SillMenuBar/ProcessLife.swift` (added, +56/-0)
-```diff
-@@ -0,0 +1,56 @@
-+import Foundation
-+
-+/// The kernel's word on whether a process is still there. Update Now's new copy waits at launch for the Sill
-+/// that started it to quit (AppUpdater.waitForOtherSill), and what it asked at first, NSRunningApplication's
-+/// `isTerminated`, is a value AppKit keeps from LaunchServices' notifications: in a Sill that had only just
-+/// launched it stayed false through the wait's 30 s although the other Sill had exited 0.2 s after saying so
-+/// (the rehearsal, 2026-11-15: the new copy gave up and quit, and no Sill was running until it was opened by
-+/// hand). A pid goes to another process once its own is gone, so a process is known here by its pid and the
-+/// time it started. Foundation only; `Tests/checks/update-install` runs it against a process of its own.
-+struct ProcessLife: Equatable, Sendable {
-+    /// When a process started, by the kernel.
-+    struct Start: Equatable, Sendable {
-+        let seconds: Int
-+        let microseconds: Int
-+    }
-+
-+    let pid: pid_t
-+    /// Nil when it couldn't be read.
-+    let started: Start?
-+
-+    /// The process that has `pid` now; nil when none has.
-+    static func of(_ pid: pid_t) -> ProcessLife? {
-+        guard exists(pid) else { return nil }
-+        return ProcessLife(pid: pid, started: start(of: pid))
-+    }
-+
-+    /// Whether this very process has gone, asked now.
-+    var gone: Bool { Self.gone(then: self, now: Self.of(pid)) }
-+
-+    /// The rule: gone when no process has the pid, or when the one that has it started at another time (the pid
-+    /// was given to another process). A start that couldn't be read, then or now, decides nothing: a process
-+    /// with the pid then counts as the same one, so a Sill is never started beside one that may still run.
-+    static func gone(then: ProcessLife, now: ProcessLife?) -> Bool {
-+        guard let now else { return true }
-+        if let before = then.started, let after = now.started, before != after { return true }
-+        return false
-+    }
-+
-+    /// A process has `pid`. `kill` with signal 0 sends nothing; it fails with ESRCH only when there is none
-+    /// (with EPERM there is one, another account's). No pid at all (0 or less) counts as there.
-+    static func exists(_ pid: pid_t) -> Bool {
-+        guard pid > 0 else { return true }
-+        return kill(pid, 0) == 0 || errno != ESRCH
-+    }
-+
-+    /// When the process `pid` started (kern.proc.pid); nil when there is none or it can't be read.
-+    static func start(of pid: pid_t) -> Start? {
-+        var info = kinfo_proc()
-+        var size = MemoryLayout<kinfo_proc>.stride
-+        var mib: [Int32] = [CTL_KERN, KERN_PROC, KERN_PROC_PID, pid]
-+        guard pid > 0, sysctl(&mib, UInt32(mib.count), &info, &size, nil, 0) == 0,
-+              size >= MemoryLayout<kinfo_proc>.stride, info.kp_proc.p_pid == pid else { return nil }
-+        let t = info.kp_proc.p_starttime
-+        return Start(seconds: Int(t.tv_sec), microseconds: Int(t.tv_usec))
-+    }
-+}
-```
+---
 
-**File**: `Tests/checks/update-install/build.sh` (modified, +1/-1)
-```diff
-@@ -5,7 +5,7 @@
- # module (each `import StreamProtocol` stripped), and this check's main.swift.
- WT=$1; OUT=$2; SRC=${3:-$WT/Sources/SillMenuBar}; T=$(mktemp -d)
- cp "$WT"/Sources/StreamProtocol/*.swift "$T"/
--for f in UpdatePolicy UpdateInstallPolicy UpdateManifest UpdateArchive UpdateAutoPolicy; do
-+for f in UpdatePolicy UpdateInstallPolicy UpdateManifest UpdateArchive UpdateAutoPolicy ProcessLife; do
-     sed '/^import StreamProtocol$/d' "$SRC/$f.swift" > "$T/$f.swift"
- done
- cp "$(dirname "$0")/main.swift" "$T/main.swift"
-```
+### Incident Patch 2: `ae5ab086` (2026-11-18)
+**Commit Message**: docs/steps: pr368-ready's release build on this Mac, and the smoke run on it
 
-**File**: `Tests/checks/update-install/main.swift` (modified, +40/-0)
-```diff
-@@ -1479,5 +1479,45 @@ for path in ["StreamProtocol/HostSettings.swift", "StreamProtocol/StreamMessage.
- check(!text("DebugHooks.swift").contains("setAutomaticUpdate(") && !text("DebugHooks.swift").contains("AutoUpdateStore")
-       && !text("DebugHooks.swift").contains("setNightly("), "the previews draw the switches, never set them")
- 
-+// The other Sill a launch waits for (AppUpdater.waitForOtherSill): gone by the kernel's word, ProcessLife. The
-+// rehearsal's first update (2026-11-15) waited 30 s for a Sill that had exited after 0.2 s: NSRunningApplication's
-+// isTerminated never changed in the new copy.
-+do {
-+    typealias Life = ProcessLife
-+    let a = Life.Start(seconds: 1_794_000_000, microseconds: 10), b = Life.Start(seconds: 1_794_000_000, microseconds: 11)
-+    check(Life.gone(then: Life(pid: 500, started: a), now: nil), "no process with the pid: gone")
-+    check(!Life.gone(then: Life(pid: 500, started: a), now: Life(pid: 500, started: a)), "the same pid and start: still there")
-+    check(Life.gone(then: Life(pid: 500, started: a), now: Life(pid: 500, started: b)), "the pid with another start (a pid reused): gone")
-+    check(!Life.gone(then: Life(pid: 500, started: nil), now: Life(pid: 500, started: b)), "no start read then: the pid alone says still there")
-+    check(!Life.gone(then: Life(pid: 500, started: a), now: Life(pid: 500, started: nil)), "no start read now: the pid alone says still there")
-+    // Live, against this process, launchd, and a process of the check's own.
-+    let me = ProcessInfo.processInfo.processIdentifier
-+    let mine = Life.of(me)
-+    check(mine != nil && mine?.started != nil, "this process is there, with a start time")
-+    check(mine?.gone == false, "this process is not gone")
-+    check(Life(pid: me, started: Life.Start(seconds: 1, microseconds: 2)).gone, "this pid under another start counts as another process")
-+    check(Life.exists(1) && Life.of(1)?.gone == false, "launchd, another account's process, is there (EPERM is not ESRCH)")
-+    check(Life.exists(0) && Life.exists(-1) && Life.start(of: 0) == nil, "no pid at all counts as there, with no start")
-+    let child = Process()
-+    child.executableURL = URL(fileURLWithPath: "/bin/sleep")
-+    child.arguments = ["60"]
-+    if (try? child.run()) != nil {
-+        let life = Life.of(child.processIdentifier)
-+        check(life != nil && life?.started != nil && life?.gone == false, "a running child is there")
-+        child.terminate()
-+        child.waitUntilExit()
-+        check(life?.gone == true, "the child, once it has exited, is gone")
-+        check(Life.of(child.processIdentifier) == nil && !Life.exists(child.processIdentifier), "and nothing has its pid")
-+        check(Life.start(of: child.processIdentifier) == nil, "and a pid no process has reads no start time")
-+    } else {
-+        check(false, "the check's child process started")
-+    }
-+    // The wait asks it: a mutant that asks AppKit alone is the fault as it was.
-+    let wait = text("AppUpdater.swift")
-+    check(wait.contains("let lives = others.map { (app: $0, life: ProcessLife.of($0.processIdentifier)) }")
-+          && wait.contains("if lives.allSatisfy({ $0.app.isTerminated || ($0.life?.gone ?? true) }) {")
-+          && !wait.contains("others.allSatisfy({ $0.isTerminated })"), "the launch wait asks the kernel as well as AppKit whether the other Sill has gone")
-+}
-+
- print("update-install: \(checks - failures) of \(checks) checks passed")
- exit(failures == 0 ? 0 : 1)
-```
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `Tests/checks/update-install/mutants.py` (modified, +9/-0)
+**File**: `docs/steps/2026-11-18-pr368-ready.md` (modified, +6/-5)
 ```diff
-@@ -6,7 +6,16 @@
- SRC = os.path.join(WT, "Sources/SillMenuBar")
- POL, MAN, ARC, INS, APP = "UpdateInstallPolicy.swift", "UpdateManifest.swift", "UpdateArchive.swift", "UpdateInstaller.swift", "AppUpdater.swift"
- AUTO = "UpdateAutoPolicy.swift"
-+LIFE = "ProcessLife.swift"
- MUTANTS = [
-+    # The launch wait: whether the other Sill has gone (ProcessLife; the rehearsal's first update, 2026-11-15).
-+    ("the launch wait asks AppKit alone (the fault as it was)", APP, "if lives.allSatisfy({ $0.app.isTerminated || ($0.life?.gone ?? true) }) {", "if lives.allSatisfy({ $0.app.isTerminated }) {"),
-+    ("no process with the pid counts as still there", LIFE, "guard let now else { return true }", "guard let now else { return false }"),
-+    ("a pid given to another process counts as the same one", LIFE, "if let before = then.started, let after = now.started, before != after { return true }", ""),
-+    ("an unread start counts as another process", LIFE, "if let before = then.started, let after = now.started, before != after { return true }", "if then.started != now.started { return true }"),
-+    ("another account's process counts as none", LIFE, "return kill(pid, 0) == 0 || errno != ESRCH", "return kill(pid, 0) == 0"),
-+    ("any failure of kill counts as there (a process gone is never noticed)", LIFE, "return kill(pid, 0) == 0 || errno != ESRCH", "return true"),
-+    ("the start read without asking whose it is", LIFE, "size >= MemoryLayout<kinfo_proc>.stride, info.kp_proc.p_pid == pid else { return nil }", "size >= 0 else { return nil }"),
-     # The version rule and the release.
-     ("the same version installed", POL, "guard isNewer(version, build: Int(build), than: running, runningBuild: runningBuild,", "guard version >= running || isNewer(version, build: Int(build), than: running, runningBuild: runningBuild,"),
-     ("the same release fetched", POL, "guard version > running else { return .failure(.releaseNotNewer) }", "guard version >= running else { return .failure(.releaseNotNewer) }"),
-```
-
-**File**: `docs/steps/2026-11-15-update-launch-wait.md` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+**TITLE: what it does, in plain words (2026-11-15, branch `update-launch-wait` from main at 588ae90).** 
+@@ -60,11 +60,12 @@ group's frame.
+   release` (only the CaptureProbe warning), `Tests/checks/run-all.sh` (74 of 74), the iOS app's build and the CLI's paths;
+   and again at c4a40b27, where another agent merged main's #388 in (the layout entries carried to docs/LAYOUT.md word for
+   word): the same, `repo-rules` 11 of 11.
+-  On this Mac the release build with the review's changes and `run-all.sh` did not run: the build lock was busy for 2 h
+-  25 min, and then the disk had 24 GB free, under the 25 GB floor. A synthetic host on loopback (software encoder, no
+-  screen, under a minute; the build of #368 merged with main, before the review's changes), with a test client: the
+-  Desktop's test pattern, a pick of a window it does not list (nothing streams), none, the Desktop again and a keyframe
+-  request each answered, no line out of place. A test host lists no windows, so no tab can switch there.
++  On this Mac the first try at the release build and `run-all.sh` waited 2 h 25 min for the build lock and stopped
++  itself at 24 GB free, under the 25 GB floor; once the disk had 36 GB, `swift build -c release` of the head (f25f8e77)
++  ran clean, and `run-all.sh` was left to CI. A synthetic host on loopback (software encoder, no screen, under a minute),
++  on #368 merged with main and again on the head, with a test client: the Desktop's test pattern, a pick of a window it
++  does not list (nothing streams), none, the Desktop again and a keyframe request each answered, the two hosts' lines
++  identical with ports and the once-a-second lines masked. A test host lists no windows, so no tab can switch there.
+ - Not verified: anything with a real window. A test host lists no windows (SILL_TEST_NO_SCREEN), so no tab can switch on
+   this Mac without Screen Recording for the agent's host and a window of Noah's moved; and no virtual display may be made.
+ - **Untested, for Noah** (draft PR #399 has the steps): Virtual Display on (nobody has tried it); defect 1's flow (a tab
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #402** (2026-11-20): Privacy: lock this Mac when the last device leaves (part 1 of privacy mode, on #184) (@Saffsanity)
+- **PR #399** (2026-11-20): #368 ready: Host: follow macOS native tab switches in a streamed window (#366) (@Saffsanity)
+- **PR #396** (2026-11-20): #367 ready: Audio: capture a staged window's sound on Sill's display, and retry an ended capture by itself (#365) (@Saffsanity)
+- **PR #388** (2026-11-18): CLAUDE.md lean: the layout, the build and test notes and the compatibility floor move to docs (@Saffsanity)
+- **PR #387** (2026-11-18): Version 0.6.3 for both apps, after 0.6.2 (@Saffsanity)
 - **PR #378** (2026-11-16): Release 0.6.2: Sill for Mac and Sill for iPhone and iPad (@Saffsanity)
-- **PR #377** (2026-11-15): A nightly is offered the release of its own version (@Saffsanity)
-- **PR #376** (2026-11-15): Sill's nightly key: its public half in nightlyKeys (@Saffsanity)
-- **PR #375** (2026-11-15): One update at a time, and a helper Sill is starting is no other copy of Sill (@Saffsanity)
-- **PR #374** (2026-11-15): Sill's update key: its public half in releaseKeys (@Saffsanity)
-- **PR #373** (2026-11-15): After an update started in Settings, the new Sill opens Settings on General again and says it was installed (@Saffsanity)
 
 ---
 
@@ -1780,36 +1642,40 @@ Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update Now's new copy starts once the old Sill has quit: the launch wait asks th
+## X. Steps: privacy-lock's close-out turn ran: the build, live.py 48 of 48, the previ
 
 **RULE**:
-When implementing operations in `Sources/SillMenuBar/AppUpdater.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Saffsanity/sill. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/steps/2026-11-18-privacy-lock.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Saffsanity/sill. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7ee759c5`: Update Now's new copy starts once the old Sill has quit: the launch wait asks the kernel. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3919e780`: Steps: privacy-lock's close-out turn ran: the build, live.py 48 of 48, the previews, run-all, H2 as main's. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Sources/SillMenuBar/AppUpdater.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/steps/2026-11-18-privacy-lock.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-    /// Whether the other one has quit is the kernel's word (ProcessLife) as well as AppKit's: `isTerminated`
-    /// alone never changed in a Sill that had only just launched, so the first real update's new copy waited
-    /// the whole 30 s for a Sill that had quit after 0.2 s, and left (the rehearsal, 2026-11-15).
-        // Each as the kernel knows it now, its pid and when it started; none with that pid any more is gone already.
-        let lives = others.map { (app: $0, life: ProcessLife.of($0.processIdentifier)) }
-                if lives.allSatisfy({ $0.app.isTerminated || ($0.life?.gone ?? true) }) {
+  close-out's turn ran at 22:37 at 34c899ed: `swift build -c release` passed; `Scripts/privacy-check/live.py OUT all`,
+  48 of 48 verdicts hold, the nosleep and away cases among them; the previews drawn from the bare binary (326, the
+  eight lock panes among them, SillMenuBar's lock keys in this Mac's defaults as they were); run-all, every check
+  passed. H2 again (the CLI's stdout without the flag): idle, identical to main's recorded lines; with a Desktop
+  client, five runs differ from the lines recorded in the first round only in the statistics line of the second the
+  client leaves (which counters it holds, and whether it still counts the client), and main's own CLI (eb48ac9f), run
+  twice the same night, differs from its own recorded lines in the same way, line for line as the branch's last two
+  runs: the branch's stdout is main's.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Induced defect failure mode:
-                if others.allSatisfy({ $0.isTerminated }) {
+  close-out's turn (`swift build -c release`, `Scripts/privacy-check/live.py OUT all` with the nosleep and away cases,
+  H2 again against main's recorded lines, the previews from the bare binary, run-all) waits in heavy.sh's queue, with
+  four other agents' jobs in it at 15:45: its results go in the pull request and here.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7ee759c5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3919e780` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

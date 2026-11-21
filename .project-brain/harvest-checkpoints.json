@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-21T02:57:50.207Z",
+  "last_updated": "2026-11-21T03:15:39.210Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2556,14 +2556,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-saffsanity-sill",
-      "content_hash": "e4882eac9192400567ab56b255e15d248ac53739b35c964e9a28b4b90e634570",
-      "verified_at": "2026-11-17T04:56:48.004Z",
+      "content_hash": "9f4b2f41da6e67d3bf1e8a462453a3f137f2220a9450aeebdfa3195dd68eca84",
+      "verified_at": "2026-11-21T03:15:36.461Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T04:56:48.004Z"
+      "last_updated": "2026-11-21T03:15:36.461Z"
     },
     "textbee/textbee": {
       "repository": "textbee/textbee",
@@ -7191,14 +7191,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pulumi-pulumi",
-      "content_hash": "a85ab319bce73b0b20234728a8e472874e51164d8d3e370a7ad0f843c6b92260",
-      "verified_at": "2026-11-20T02:27:50.266Z",
+      "content_hash": "3843f9903b278b88fa44be264f546aa10c9ba624743c455aa200e6fb4488f40f",
+      "verified_at": "2026-11-21T03:15:39.209Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T02:27:50.266Z"
+      "last_updated": "2026-11-21T03:15:39.209Z"
     },
     "sqlpage/SQLPage": {
       "repository": "sqlpage/SQLPage",
@@ -11601,14 +11601,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-oven-sh-bun",
-      "content_hash": "4677864a6895e566f893c5bfbdddaef39fd2035b7d7547171fb76ce8bd462763",
-      "verified_at": "2026-11-19T16:33:17.960Z",
+      "content_hash": "4b1c9037083566c979d0cdfe73d04326373fd93dfa870761a26ae66fed439723",
+      "verified_at": "2026-11-21T03:15:32.164Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T16:33:17.960Z"
+      "last_updated": "2026-11-21T03:15:32.164Z"
     },
     "CodeEditApp/CodeEdit": {
       "repository": "CodeEditApp/CodeEdit",
@@ -15441,14 +15441,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-faker-js-faker",
-      "content_hash": "08beee8908af7822bb903a22f43215867b0f8b5115d362b25145fbc314e136ff",
-      "verified_at": "2026-11-17T08:56:31.887Z",
+      "content_hash": "14cc82f9f478387e5bc87b4733c292ed97217a831b75f7b0c67683d3dbba10b3",
+      "verified_at": "2026-11-21T03:15:35.063Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T08:56:31.887Z"
+      "last_updated": "2026-11-21T03:15:35.063Z"
     },
     "storybookjs/storybook": {
       "repository": "storybookjs/storybook",

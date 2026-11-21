@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T02:57:55.868Z",
+  "last_updated": "2026-11-21T03:15:44.976Z",
   "total_verified_learnings": 9056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22879,
+  "total_items": 22892,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112929,10 +112929,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-saffsanity-sill-quality-verification-intelligence-saffsanity-sill-core-invariant.md",
       "title": "Quality & Verification Intelligence: Saffsanity/sill Core Invariants",
       "repository": "Saffsanity/sill",
-      "source_version": "4e00c805",
-      "content_hash": "d57a68ed7288e4a419f5d135ced200843918c43f2adceb79c4653708cb34af03",
+      "source_version": "c33d1057",
+      "content_hash": "bca63c1ac4aaa547e6dad5814141244ad38717f69c8e90952024c9bd686b589a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T04:56:48.361Z"
+      "persisted_at": "2026-11-21T03:15:36.807Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-saffsanity-sill": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-saffsanity-sill",
@@ -112941,10 +112941,10 @@
       "relative_path": "08_VERIFICATION/saffsanity-sill-verification-protocol-empirical-defect-shield-for-saffsanity-sil.md",
       "title": "Verification Protocol: Empirical Defect Shield for Saffsanity/sill",
       "repository": "Saffsanity/sill",
-      "source_version": "4e00c805",
-      "content_hash": "9fd62cd57e9dc6891244dbd706d393d819d79a2e4e1fce94bafe646dafb970e4",
+      "source_version": "c33d1057",
+      "content_hash": "4924441231c8ec3fcd40ee77520105024d04f906d3c7ec2ffa8643e3f8993b66",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T04:56:48.511Z"
+      "persisted_at": "2026-11-21T03:15:36.956Z"
     },
     "candidate_directive-general-harden-request-error-logging-7795": {
       "item_id": "candidate_directive-general-harden-request-error-logging-7795",
@@ -113050,9 +113050,9 @@
       "title": "Quality & Verification Intelligence: saffsanity-sill-learnings Core Invariants",
       "repository": "saffsanity-sill-learnings",
       "source_version": "HEAD",
-      "content_hash": "9727af30fe549f88919a31b414ea80d51f256c80dc0ea6f66380417f9283334b",
+      "content_hash": "e4ceefe695647b06f337e08a2cba36bd2b0cc1c50e177b70181340b417f1f0cb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T04:56:57.381Z"
+      "persisted_at": "2026-11-21T03:15:44.837Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-saffsanity-sill-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-saffsanity-sill-learnings",
@@ -113062,9 +113062,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for saffsanity-sill-learnings",
       "repository": "saffsanity-sill-learnings",
       "source_version": "HEAD",
-      "content_hash": "54aeab7c2e6d63db523805d8159428a1e775f81e849cf0524b9ce4d4fc26aa6d",
+      "content_hash": "b43e6faec420a4a0fe8cd1cb542b7414d21fc1f21aeb177412f829a275e5d693",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T04:56:57.534Z"
+      "persisted_at": "2026-11-21T03:15:44.976Z"
     },
     "domain_intelligence-technical-construction-intelligence-bridgecrewio-checkov-learnings-core-invarian": {
       "item_id": "domain_intelligence-technical-construction-intelligence-bridgecrewio-checkov-learnings-core-invarian",
@@ -233672,8 +233672,8 @@
       "slug": "oven-sh-bun",
       "platform": "github",
       "source_url": "https://github.com/oven-sh/bun",
-      "source_version": "084e3627",
-      "content_hash": "4677864a6895e566f893c5bfbdddaef39fd2035b7d7547171fb76ce8bd462763",
+      "source_version": "98eae327",
+      "content_hash": "4b1c9037083566c979d0cdfe73d04326373fd93dfa870761a26ae66fed439723",
       "dossier_path": "07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/oven-sh-bun-learnings.md",
       "promoted_rules": [
@@ -233691,6 +233691,11 @@
           "number": 9408,
           "title": "Timeout and Immediate are separate types with an explicit phase",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9709,
+          "title": "three fixes to how a job waits for a descriptor",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -233698,7 +233703,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T16:33:17.756Z",
+      "verified_at": "2026-11-21T03:15:31.957Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -233714,10 +233719,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-oven-sh-bun-technical-construction-intelligence-oven-sh-bun-core-invariants.md",
       "title": "Technical Construction Intelligence: oven-sh/bun Core Invariants",
       "repository": "oven-sh/bun",
-      "source_version": "084e3627",
-      "content_hash": "76af26a62566c726e11b33e6742ac7c1fe53d27135c15ff99bc984d518d97423",
+      "source_version": "98eae327",
+      "content_hash": "816269d4c37c53cb9e8d3b856215516bb259d52a5f37c56b8a00da0dbd3b9bc7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T16:33:18.293Z"
+      "persisted_at": "2026-11-21T03:15:32.511Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-oven-sh-bun": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-oven-sh-bun",
@@ -233726,10 +233731,10 @@
       "relative_path": "12_DECISIONS/ADR-oven-sh-bun-adr-subsystem-boundary-modular-decoupling-in-oven-sh-bun.md",
       "title": "ADR: Subsystem Boundary & Modular Decoupling in oven-sh/bun",
       "repository": "oven-sh/bun",
-      "source_version": "084e3627",
-      "content_hash": "ca1a520c99d4ef9c31c748ad5c7cc2dffa56012cacb441c75a5f7679d6965436",
+      "source_version": "98eae327",
+      "content_hash": "c98b7c595de2cdb7f0e166ded57845c5d0750b5687f021717c4a34974468997d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T16:33:18.436Z"
+      "persisted_at": "2026-11-21T03:15:32.657Z"
     },
     "learn-huggingface-autotrust-gev-26b-decide": {
       "learning_id": "learn-huggingface-autotrust-gev-26b-decide",
@@ -233778,9 +233783,9 @@
       "title": "Technical Construction Intelligence: oven-sh-bun-learnings Core Invariants",
       "repository": "oven-sh-bun-learnings",
       "source_version": "HEAD",
-      "content_hash": "4e5138d60f9355e9d8b976f74bd2885c84219a76af98c238b31688ef5ae75f57",
+      "content_hash": "dd26d14075a214aa77623b5dc6c5d0f7bb7fbab4eab7e2d76005524d15a9b048",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T16:33:33.413Z"
+      "persisted_at": "2026-11-21T03:15:42.959Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-oven-sh-bun-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-oven-sh-bun-learnings",
@@ -233790,9 +233795,9 @@
       "title": "ADR: Subsystem Boundary & Modular Decoupling in oven-sh-bun-learnings",
       "repository": "oven-sh-bun-learnings",
       "source_version": "HEAD",
-      "content_hash": "7c052b7eb64aed70b0220164e333f390480ec5587f92f82df362d2c6c21f0e47",
+      "content_hash": "8143e9de40cb7ed424129106f44cd9fc59e44fef9876313fe7a6e8a702ba19b6",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T16:33:33.551Z"
+      "persisted_at": "2026-11-21T03:15:43.111Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-autotrust-gev-26b-decide-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-autotrust-gev-26b-decide-learnings-core-invar",
@@ -236158,8 +236163,8 @@
       "slug": "pulumi-pulumi",
       "platform": "github",
       "source_url": "https://github.com/pulumi/pulumi",
-      "source_version": "146e1e67",
-      "content_hash": "a85ab319bce73b0b20234728a8e472874e51164d8d3e370a7ad0f843c6b92260",
+      "source_version": "8c164554",
+      "content_hash": "3843f9903b278b88fa44be264f546aa10c9ba624743c455aa200e6fb4488f40f",
       "dossier_path": "07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
       "promoted_rules": [
@@ -236187,6 +236192,11 @@
           "number": 9497,
           "title": "issues from the policy exception dogfood report",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9712,
+          "title": "data race in TestInvokeSourceContext",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -236194,7 +236204,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T02:27:50.077Z",
+      "verified_at": "2026-11-21T03:15:39.016Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -236236,10 +236246,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pulumi-pulumi-content-information-intelligence-pulumi-pulumi-core-invariants.md",
       "title": "Content & Information Intelligence: pulumi/pulumi Core Invariants",
       "repository": "pulumi/pulumi",
-      "source_version": "146e1e67",
-      "content_hash": "389a8a3893e4f027dade30c80f75a26ed74ccd0984d553bdb62bdeb567831e86",
+      "source_version": "8c164554",
+      "content_hash": "9224364590e5a06c6500b1bdca5af046babbe51ae6bc89e9d5f576161b2cecfb",
       "domain_letter": "I",
-      "persisted_at": "2026-11-20T02:27:50.606Z"
+      "persisted_at": "2026-11-21T03:15:39.550Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pulumi-pulumi": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pulumi-pulumi",
@@ -236248,10 +236258,10 @@
       "relative_path": "08_VERIFICATION/pulumi-pulumi-verification-protocol-empirical-defect-shield-for-pulumi-pulumi.md",
       "title": "Verification Protocol: Empirical Defect Shield for pulumi/pulumi",
       "repository": "pulumi/pulumi",
-      "source_version": "146e1e67",
-      "content_hash": "e5d7e208f45ff0ffac6d3ce2d5d160529402de32aff0fe2114cf7683477f3134",
+      "source_version": "8c164554",
+      "content_hash": "9b5fcf7e2cf1ceae67827c8e014e1f1d9b69708bcf66c166888d3fa03b510460",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T02:27:50.748Z"
+      "persisted_at": "2026-11-21T03:15:39.702Z"
     },
     "learn-github-ytsaurus-ytsaurus": {
       "learning_id": "learn-github-ytsaurus-ytsaurus",
@@ -256871,10 +256881,10 @@
       "relative_path": "08_VERIFICATION/oven-sh-bun-verification-protocol-empirical-defect-shield-for-oven-sh-bun.md",
       "title": "Verification Protocol: Empirical Defect Shield for oven-sh/bun",
       "repository": "oven-sh/bun",
-      "source_version": "084e3627",
-      "content_hash": "77c7e7fc59fe8c82ff693769ab1e53f072f6e339f2bf4adfd38c736d77606182",
+      "source_version": "98eae327",
+      "content_hash": "ba29289b8ef72cf75bf5e7aa1b6fde888f25e953b1a2615cad3a2d583d36df62",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T16:33:18.563Z"
+      "persisted_at": "2026-11-21T03:15:32.782Z"
     },
     "candidate_directive-jsc-event-loop-keep-alives-and-vm-handle-references-have-owners": {
       "item_id": "candidate_directive-jsc-event-loop-keep-alives-and-vm-handle-references-have-owners",
@@ -256896,9 +256906,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for oven-sh-bun-learnings",
       "repository": "oven-sh-bun-learnings",
       "source_version": "HEAD",
-      "content_hash": "756fc9ab670fb8953b89470f0b04de39a0b18e14e57b7cf00077f1811e52f350",
+      "content_hash": "d50fad358eca093b5802a1ae27f7cde45e6f8a7c1521f8d95704b8b41cafa78e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T16:33:33.673Z"
+      "persisted_at": "2026-11-21T03:15:43.239Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-pika-labs-pika-h3-flex-learnings-core-invaria": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-pika-labs-pika-h3-flex-learnings-core-invaria",
@@ -267448,14 +267458,19 @@
       "slug": "saffsanity-sill",
       "platform": "github",
       "source_url": "https://github.com/Saffsanity/sill",
-      "source_version": "4e00c805",
-      "content_hash": "e4882eac9192400567ab56b255e15d248ac53739b35c964e9a28b4b90e634570",
+      "source_version": "c33d1057",
+      "content_hash": "9f4b2f41da6e67d3bf1e8a462453a3f137f2220a9450aeebdfa3195dd68eca84",
       "dossier_path": "07_PROJECT_LEARNING/saffsanity-sill-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/saffsanity-sill-learnings.md",
       "promoted_rules": [
         {
           "number": 8871,
           "title": "Update Now's new copy starts once the old Sill has quit: the launch wait asks th",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9711,
+          "title": "privacy-lock's close-out turn ran: the build, live.py 48 of 48, the previ",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -267464,7 +267479,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T04:56:47.794Z",
+      "verified_at": "2026-11-21T03:15:36.269Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -271606,17 +271621,23 @@
       "slug": "faker-js-faker",
       "platform": "github",
       "source_url": "https://github.com/faker-js/faker",
-      "source_version": "5060c90a",
-      "content_hash": "08beee8908af7822bb903a22f43215867b0f8b5115d362b25145fbc314e136ff",
+      "source_version": "84d1bf84",
+      "content_hash": "14cc82f9f478387e5bc87b4733c292ed97217a831b75f7b0c67683d3dbba10b3",
       "dossier_path": "07_PROJECT_LEARNING/faker-js-faker-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/faker-js-faker-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 9710,
+          "title": "avoid a leading zero in sv postcodes",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T08:56:31.661Z",
+      "verified_at": "2026-11-21T03:15:34.855Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -271632,10 +271653,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-faker-js-faker-architecture-intelligence-faker-js-faker-core-invariants.md",
       "title": "Architecture Intelligence: faker-js/faker Core Invariants",
       "repository": "faker-js/faker",
-      "source_version": "5060c90a",
-      "content_hash": "153b0fed6de39dec75342b4481c24993500b86a4b15a3f914e76079bfc298307",
+      "source_version": "84d1bf84",
+      "content_hash": "0b029de932be6b37473217aa8c37795d49962b70e8e7686352da4436e02974cf",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T08:56:32.072Z"
+      "persisted_at": "2026-11-21T03:15:35.397Z"
     },
     "rule-8940": {
       "learning_id": "rule-8940",
@@ -271776,9 +271797,9 @@
       "title": "Architecture Intelligence: faker-js-faker-learnings Core Invariants",
       "repository": "faker-js-faker-learnings",
       "source_version": "HEAD",
-      "content_hash": "f38a21a8b882309598973e49dfd573845c1e8ef1bdf40d4d2840b263c18ec28d",
+      "content_hash": "8180f654862c10942b44dced9665442964424ce3fd6ae5e3d2ae889a99f12eb1",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T08:57:18.607Z"
+      "persisted_at": "2026-11-21T03:15:44.145Z"
     },
     "domain_intelligence-technical-construction-intelligence-mattermost-mattermost-learnings-core-invaria": {
       "item_id": "domain_intelligence-technical-construction-intelligence-mattermost-mattermost-learnings-core-invaria",
@@ -310578,6 +310599,170 @@
       "content_hash": "03d2106dbef7a8d834283257702ca64023516277af69af552e34cd231b837f91",
       "domain_letter": "H",
       "persisted_at": "2026-11-21T02:57:55.716Z"
+    },
+    "rule-9709": {
+      "learning_id": "rule-9709",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9709,
+      "title": "three fixes to how a job waits for a descriptor",
+      "source_url": "https://github.com/oven-sh/bun",
+      "source_version": "98eae327",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T03:15:31.957Z"
+    },
+    "candidate_directive-three-fixes-to-how-a-job-waits-for-a-descriptor": {
+      "item_id": "candidate_directive-three-fixes-to-how-a-job-waits-for-a-descriptor",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-58QV-three-fixes-to-how-a-job-waits-for-a-descriptor.md",
+      "title": "three fixes to how a job waits for a descriptor",
+      "repository": "oven-sh/bun",
+      "source_version": "98eae327",
+      "content_hash": "1fc4b5a8535a0a1eae58d734a4e5e46bade2767ee7a8b668e7dbfa89d327d592",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T03:15:32.363Z"
+    },
+    "rule-9710": {
+      "learning_id": "rule-9710",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9710,
+      "title": "avoid a leading zero in sv postcodes",
+      "source_url": "https://github.com/faker-js/faker",
+      "source_version": "84d1bf84",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T03:15:34.855Z"
+    },
+    "candidate_directive-avoid-a-leading-zero-in-sv-postcodes": {
+      "item_id": "candidate_directive-avoid-a-leading-zero-in-sv-postcodes",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5AZ0-avoid-a-leading-zero-in-sv-postcodes.md",
+      "title": "avoid a leading zero in sv postcodes",
+      "repository": "faker-js/faker",
+      "source_version": "84d1bf84",
+      "content_hash": "288e6fcf8352d725be0468d5b7275b7ba47db36352481af226e92b7457e6aa2e",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T03:15:35.245Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-faker-js-faker": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-faker-js-faker",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/faker-js-faker-verification-protocol-empirical-defect-shield-for-faker-js-faker.md",
+      "title": "Verification Protocol: Empirical Defect Shield for faker-js/faker",
+      "repository": "faker-js/faker",
+      "source_version": "84d1bf84",
+      "content_hash": "8f4aa9d5b34ddac676935c672418dab3981f4b0367c239e60eb834551591bd39",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-21T03:15:35.566Z"
+    },
+    "rule-9711": {
+      "learning_id": "rule-9711",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9711,
+      "title": "privacy-lock's close-out turn ran: the build, live.py 48 of 48, the previ",
+      "source_url": "https://github.com/Saffsanity/sill",
+      "source_version": "c33d1057",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T03:15:36.269Z"
+    },
+    "candidate_directive-privacy-lock-s-close-out-turn-ran-the-build-live-py-48-of-48-the-previ": {
+      "item_id": "candidate_directive-privacy-lock-s-close-out-turn-ran-the-build-live-py-48-of-48-the-previ",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5C29-privacy-lock-s-close-out-turn-ran-the-build-live-py-48-of-48-the-previ.md",
+      "title": "privacy-lock's close-out turn ran: the build, live.py 48 of 48, the previ",
+      "repository": "Saffsanity/sill",
+      "source_version": "c33d1057",
+      "content_hash": "c7f7e344bc712530f4355e886ea9c6aeaf33dc09c86b381af8cd671b6e514fea",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-21T03:15:36.661Z"
+    },
+    "rule-9712": {
+      "learning_id": "rule-9712",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9712,
+      "title": "data race in TestInvokeSourceContext",
+      "source_url": "https://github.com/pulumi/pulumi",
+      "source_version": "8c164554",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T03:15:39.016Z"
+    },
+    "candidate_directive-data-race-in-testinvokesourcecontext": {
+      "item_id": "candidate_directive-data-race-in-testinvokesourcecontext",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5E6E-data-race-in-testinvokesourcecontext.md",
+      "title": "data race in TestInvokeSourceContext",
+      "repository": "pulumi/pulumi",
+      "source_version": "8c164554",
+      "content_hash": "14afbfc21c0d2191a9f1ac167e0fc1d4d2f61a24fc95d0dd7cbb2ec5d8b9eb01",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-21T03:15:39.401Z"
+    },
+    "candidate_directive-blob-three-fixes-to-how-a-job-waits-for-a-descriptor": {
+      "item_id": "candidate_directive-blob-three-fixes-to-how-a-job-waits-for-a-descriptor",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5GSS-blob-three-fixes-to-how-a-job-waits-for-a-descriptor.md",
+      "title": "blob: three fixes to how a job waits for a descriptor",
+      "repository": "oven-sh-bun-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a0f499ec03eeabbf906df35734e37be76045c2f98d487c68f585b88db34aa38b",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T03:15:42.800Z"
+    },
+    "candidate_directive-locale-avoid-a-leading-zero-in-sv-postcodes": {
+      "item_id": "candidate_directive-locale-avoid-a-leading-zero-in-sv-postcodes",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5HQ4-locale-avoid-a-leading-zero-in-sv-postcodes.md",
+      "title": "locale): avoid a leading zero in sv postcodes",
+      "repository": "faker-js-faker-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0c8c7203e19f83287c82a6678a34f9fa43b672a886241be3307375cfd0922a4b",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T03:15:43.996Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-faker-js-faker-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-faker-js-faker-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/faker-js-faker-learnings-verification-protocol-empirical-defect-shield-for-faker.md",
+      "title": "Verification Protocol: Empirical Defect Shield for faker-js-faker-learnings",
+      "repository": "faker-js-faker-learnings",
+      "source_version": "HEAD",
+      "content_hash": "be1c9ed8786b3937791c9e7b418464e3ca77cc8b374d9dffc5aa2f16da250206",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-21T03:15:44.311Z"
+    },
+    "candidate_directive-steps-privacy-lock-s-close-out-turn-ran-the-build-live-py-48-of-48-the-previ": {
+      "item_id": "candidate_directive-steps-privacy-lock-s-close-out-turn-ran-the-build-live-py-48-of-48-the-previ",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5I9C-steps-privacy-lock-s-close-out-turn-ran-the-build-live-py-48-of-48-the-previ.md",
+      "title": "Steps: privacy-lock's close-out turn ran: the build, live.py 48 of 48, the previ",
+      "repository": "saffsanity-sill-learnings",
+      "source_version": "HEAD",
+      "content_hash": "abeb685d6a1e76c26a0d633371538552e2047137439b1afd9dcef2710e75b012",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-21T03:15:44.691Z"
     }
   },
   "ai-builder-brain": {

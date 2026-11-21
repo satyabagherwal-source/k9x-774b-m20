@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261119-ACPO",
-    "timestamp": "2026-11-19T00:00:13.020Z",
-    "repository": "NVIDIA/cuda-rust",
-    "learningId": "learn-github-nvidia-cuda-rust",
-    "contentHash": "80e1d8a83bc0cd86982bc456dc335337553032f16c4822a1d5e0627246dfcbc0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-AKAW",
-    "timestamp": "2026-11-19T00:00:22.856Z",
-    "repository": "tailscale/tailscale",
-    "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "cdcd0eaee00a4e8642b3c16f0d91062b082986cc180ef38bb5297e4e309ccb86",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-ALQL",
-    "timestamp": "2026-11-19T00:00:24.717Z",
-    "repository": "apple/foundationdb",
-    "learningId": "learn-github-apple-foundationdb",
-    "contentHash": "335aab112d218418ff523d8dd01a2e80a7b6df89fe8af25e42b95e892ad434d4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-3961",
-    "timestamp": "2026-11-19T00:22:41.449Z",
-    "repository": "NaiveAI/Naive-N0.5-Flash",
-    "learningId": "learn-huggingface-naiveai-naive-n0-5-flash",
-    "contentHash": "d74702c27481021edccbb2a0e7046ff0b6ca639c54daf49f5876da00ef967e2f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261119-3AOT",
     "timestamp": "2026-11-19T00:22:43.421Z",
     "repository": "mlua-rs/mlua",
@@ -7490,6 +7430,66 @@
     "repository": "aquasecurity/trivy",
     "learningId": "learn-github-aquasecurity-trivy",
     "contentHash": "aaac4cebe0b25b16bb78cd81f130e6d164e675bff28f3191c5144f8a0f11739b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-58L4",
+    "timestamp": "2026-11-21T03:15:32.152Z",
+    "repository": "oven-sh/bun",
+    "learningId": "learn-github-oven-sh-bun",
+    "contentHash": "4b1c9037083566c979d0cdfe73d04326373fd93dfa870761a26ae66fed439723",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-5ATN",
+    "timestamp": "2026-11-21T03:15:35.051Z",
+    "repository": "faker-js/faker",
+    "learningId": "learn-github-faker-js-faker",
+    "contentHash": "14cc82f9f478387e5bc87b4733c292ed97217a831b75f7b0c67683d3dbba10b3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-5BWH",
+    "timestamp": "2026-11-21T03:15:36.449Z",
+    "repository": "Saffsanity/sill",
+    "learningId": "learn-github-saffsanity-sill",
+    "contentHash": "9f4b2f41da6e67d3bf1e8a462453a3f137f2220a9450aeebdfa3195dd68eca84",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-5E0U",
+    "timestamp": "2026-11-21T03:15:39.198Z",
+    "repository": "pulumi/pulumi",
+    "learningId": "learn-github-pulumi-pulumi",
+    "contentHash": "3843f9903b278b88fa44be264f546aa10c9ba624743c455aa200e6fb4488f40f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
