@@ -3033,10 +3033,10 @@
     "repository": "callstack/react-native-paper",
     "platform": "github",
     "sourceUrl": "https://github.com/callstack/react-native-paper",
-    "sourceVersion": "9845c6f4",
+    "sourceVersion": "7ab2640c",
     "license": "MIT",
-    "contentHash": "dfec6b028aa2a4129bbea22ae7f6327fb2f2a1070573434deeb9e59eb684ff7e",
-    "lastHarvestedAt": "2026-11-18T13:25:41.456Z",
+    "contentHash": "2b73aac0bd992a0eed27ee74445bacf89adefa0a02b62fae7dac8ea4bd997b49",
+    "lastHarvestedAt": "2026-11-21T16:40:10.537Z",
     "learningId": "learn-github-callstack-react-native-paper"
   },
   "tensorchord-pgvecto.rs": {
@@ -3373,10 +3373,10 @@
     "repository": "Kuddev/pebrel",
     "platform": "github",
     "sourceUrl": "https://github.com/Kuddev/pebrel",
-    "sourceVersion": "e7405725",
+    "sourceVersion": "76f74be1",
     "license": "GPL-3.0",
-    "contentHash": "2f1d3a14b7300f742205a28c116ee9b867fa35c7a394f2d606ce3c9952116cd5",
-    "lastHarvestedAt": "2026-11-20T02:14:54.819Z",
+    "contentHash": "371858ea20c6e098a20aaae15f47d7e72fe2749b159f1cecdf5430434326e9d9",
+    "lastHarvestedAt": "2026-11-21T16:40:03.952Z",
     "learningId": "learn-github-kuddev-pebrel"
   },
   "alibaba-formily": {
@@ -5873,10 +5873,10 @@
     "repository": "vespa-engine/vespa",
     "platform": "github",
     "sourceUrl": "https://github.com/vespa-engine/vespa",
-    "sourceVersion": "a5623114",
+    "sourceVersion": "f099e88f",
     "license": "Apache-2.0",
-    "contentHash": "a59d3298e5d0c8b52cb5c73a78c0c5871b223280228b0e0b5a288387f4aa58d4",
-    "lastHarvestedAt": "2026-11-20T11:09:07.197Z",
+    "contentHash": "377404da9935bd1b4a5682e0adcb5714fffc289adca2ebbb5e7fd8762825ae9a",
+    "lastHarvestedAt": "2026-11-21T16:40:17.259Z",
     "learningId": "learn-github-vespa-engine-vespa"
   },
   "radix-ui-themes": {
@@ -10665,8 +10665,8 @@
     "sourceUrl": "https://huggingface.co/HuggingFaceBio/Carbon-X",
     "sourceVersion": "hf-huggingfacebio-carbon-x",
     "license": "Open-Source",
-    "contentHash": "8703cf17354348dbddbd4a803082e9431b2df475e24e7008e7e128d0af1257ac",
-    "lastHarvestedAt": "2026-11-17T18:35:24.783Z",
+    "contentHash": "d3ad2147d536d6390328b074f6b8a76128804cbc9dbff4a9d63bb361be1207d4",
+    "lastHarvestedAt": "2026-11-21T16:40:02.237Z",
     "learningId": "learn-huggingface-huggingfacebio-carbon-x"
   },
   "hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-21T16:31:24.966Z",
+  "last_updated": "2026-11-21T16:40:17.270Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4671,14 +4671,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-callstack-react-native-paper",
-      "content_hash": "dfec6b028aa2a4129bbea22ae7f6327fb2f2a1070573434deeb9e59eb684ff7e",
-      "verified_at": "2026-11-18T13:25:41.463Z",
+      "content_hash": "2b73aac0bd992a0eed27ee74445bacf89adefa0a02b62fae7dac8ea4bd997b49",
+      "verified_at": "2026-11-21T16:40:10.548Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T13:25:41.463Z"
+      "last_updated": "2026-11-21T16:40:10.548Z"
     },
     "tensorchord/pgvecto.rs": {
       "repository": "tensorchord/pgvecto.rs",
@@ -5181,14 +5181,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kuddev-pebrel",
-      "content_hash": "2f1d3a14b7300f742205a28c116ee9b867fa35c7a394f2d606ce3c9952116cd5",
-      "verified_at": "2026-11-20T02:14:54.830Z",
+      "content_hash": "371858ea20c6e098a20aaae15f47d7e72fe2749b159f1cecdf5430434326e9d9",
+      "verified_at": "2026-11-21T16:40:03.963Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T02:14:54.830Z"
+      "last_updated": "2026-11-21T16:40:03.963Z"
     },
     "alibaba/formily": {
       "repository": "alibaba/formily",
@@ -8931,14 +8931,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vespa-engine-vespa",
-      "content_hash": "a59d3298e5d0c8b52cb5c73a78c0c5871b223280228b0e0b5a288387f4aa58d4",
-      "verified_at": "2026-11-20T11:09:07.207Z",
+      "content_hash": "377404da9935bd1b4a5682e0adcb5714fffc289adca2ebbb5e7fd8762825ae9a",
+      "verified_at": "2026-11-21T16:40:17.269Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T11:09:07.207Z"
+      "last_updated": "2026-11-21T16:40:17.269Z"
     },
     "radix-ui/themes": {
       "repository": "radix-ui/themes",
@@ -16026,14 +16026,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-huggingfacebio-carbon-x",
-      "content_hash": "8703cf17354348dbddbd4a803082e9431b2df475e24e7008e7e128d0af1257ac",
-      "verified_at": "2026-11-17T18:35:24.793Z",
+      "content_hash": "d3ad2147d536d6390328b074f6b8a76128804cbc9dbff4a9d63bb361be1207d4",
+      "verified_at": "2026-11-21T16:40:02.248Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T18:35:24.793Z"
+      "last_updated": "2026-11-21T16:40:02.248Z"
     },
     "orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF": {
       "repository": "orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",

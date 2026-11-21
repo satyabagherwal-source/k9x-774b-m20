@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T16:31:30.111Z",
+  "last_updated": "2026-11-21T16:40:23.388Z",
   "total_verified_learnings": 9060,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23153,
+  "total_items": 23160,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -217405,14 +217405,19 @@
       "slug": "callstack-react-native-paper",
       "platform": "github",
       "source_url": "https://github.com/callstack/react-native-paper",
-      "source_version": "9845c6f4",
-      "content_hash": "dfec6b028aa2a4129bbea22ae7f6327fb2f2a1070573434deeb9e59eb684ff7e",
+      "source_version": "7ab2640c",
+      "content_hash": "2b73aac0bd992a0eed27ee74445bacf89adefa0a02b62fae7dac8ea4bd997b49",
       "dossier_path": "07_PROJECT_LEARNING/callstack-react-native-paper-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/callstack-react-native-paper-learnings.md",
       "promoted_rules": [
         {
           "number": 9230,
           "title": "merge the theme prop deeply",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9804,
+          "title": "place accessories and label correctly in RTL",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -217421,7 +217426,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T13:25:41.285Z",
+      "verified_at": "2026-11-21T16:40:10.265Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -217449,10 +217454,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-callstack-react-native-paper-design-intelligence-callstack-react-native-paper-co.md",
       "title": "Design Intelligence: callstack/react-native-paper Core Invariants",
       "repository": "callstack/react-native-paper",
-      "source_version": "9845c6f4",
-      "content_hash": "d53fb5a81f4acb6ace0c6f35569bf017a051cfb7d35ae7a476c3dabb9c4729d5",
+      "source_version": "7ab2640c",
+      "content_hash": "e22ee6c43258463c40814eb8f6273fc6c1c69bf549531bcb137427d520b92dcd",
       "domain_letter": "F",
-      "persisted_at": "2026-11-18T13:25:41.785Z"
+      "persisted_at": "2026-11-21T16:40:11.069Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-callstack-react-native-paper": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-callstack-react-native-paper",
@@ -217461,10 +217466,10 @@
       "relative_path": "08_VERIFICATION/callstack-react-native-paper-verification-protocol-empirical-defect-shield-for-c.md",
       "title": "Verification Protocol: Empirical Defect Shield for callstack/react-native-paper",
       "repository": "callstack/react-native-paper",
-      "source_version": "9845c6f4",
-      "content_hash": "2c8b53956b24767ed0c59503ecaaef6b70bd5ac116c79024a9c84b84ab497ba3",
+      "source_version": "7ab2640c",
+      "content_hash": "515b8d6930c3c2aa7238356916e8e6d5423c83181a0560d8da97025be854881f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T13:25:41.927Z"
+      "persisted_at": "2026-11-21T16:40:11.309Z"
     },
     "learn-github-databendlabs-databend": {
       "learning_id": "learn-github-databendlabs-databend",
@@ -217673,9 +217678,9 @@
       "title": "Design Intelligence: callstack-react-native-paper-learnings Core Invariants",
       "repository": "callstack-react-native-paper-learnings",
       "source_version": "HEAD",
-      "content_hash": "c1e7f70e9ddcfe1928926daddf25297d88b4a52c53b29cb84e780c4c015f2f4d",
+      "content_hash": "6353de9d0d8e54b10ddaadadc4173a31872cb86e223fb9096164d4d073969af3",
       "domain_letter": "F",
-      "persisted_at": "2026-11-18T13:25:54.215Z"
+      "persisted_at": "2026-11-21T16:40:23.167Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-callstack-react-native-paper-l": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-callstack-react-native-paper-l",
@@ -217685,9 +217690,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for callstack-react-native-paper-learnings",
       "repository": "callstack-react-native-paper-learnings",
       "source_version": "HEAD",
-      "content_hash": "e7c4dc5892f48630d6f185b4f82e5289bb25fdd05df01adea5f36abb682cf2d9",
+      "content_hash": "d399e8168d7c0089c75467ef4372db1f652abffff29396f5475b229490ce9a3e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T13:25:54.358Z"
+      "persisted_at": "2026-11-21T16:40:23.388Z"
     },
     "learn-github-xudong-huang-may": {
       "learning_id": "learn-github-xudong-huang-may",
@@ -237107,8 +237112,8 @@
       "slug": "vespa-engine-vespa",
       "platform": "github",
       "source_url": "https://github.com/vespa-engine/vespa",
-      "source_version": "a5623114",
-      "content_hash": "a59d3298e5d0c8b52cb5c73a78c0c5871b223280228b0e0b5a288387f4aa58d4",
+      "source_version": "f099e88f",
+      "content_hash": "377404da9935bd1b4a5682e0adcb5714fffc289adca2ebbb5e7fd8762825ae9a",
       "dossier_path": "07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
       "promoted_rules": [
@@ -237126,6 +237131,11 @@
           "number": 9558,
           "title": "Empirical Invariant Guard in DeployState.java",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9805,
+          "title": "Pass a timeout to every ONNX evaluation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -237133,7 +237143,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T11:09:06.963Z",
+      "verified_at": "2026-11-21T16:40:16.965Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -237175,10 +237185,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-vespa-engine-vespa-architecture-intelligence-vespa-engine-vespa-core-invariants.md",
       "title": "Architecture Intelligence: vespa-engine/vespa Core Invariants",
       "repository": "vespa-engine/vespa",
-      "source_version": "a5623114",
-      "content_hash": "914a7473c85d22f606e3450ea6a2df9232f69565d811fa0d7bda20d13215edce",
+      "source_version": "f099e88f",
+      "content_hash": "720cbe48d087c659975ade65b7e1c66ef5bb5c5f8d74d6d89310d8e9d9b26485",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T11:09:07.637Z"
+      "persisted_at": "2026-11-21T16:40:17.717Z"
     },
     "agent_contract-agent-contract-vespa-engine-vespa-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-vespa-engine-vespa-autonomous-specialist-persona",
@@ -237187,10 +237197,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/vespa-engine-vespa-agent-contract-vespa-engine-vespa-autonomous-specialist-perso.md",
       "title": "Agent Contract: vespa-engine/vespa Autonomous Specialist Persona",
       "repository": "vespa-engine/vespa",
-      "source_version": "a5623114",
-      "content_hash": "d223c9440d2ee50403e89fd0597ffbd627dee7d4c4fe82118a54fd74bac287ae",
+      "source_version": "f099e88f",
+      "content_hash": "086458bfdaa6079d5fb01da5974c47861038e02c5a7a4e991d6efba4c047563c",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T11:09:07.823Z"
+      "persisted_at": "2026-11-21T16:40:17.941Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-vespa-engine-vespa": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-vespa-engine-vespa",
@@ -237199,10 +237209,10 @@
       "relative_path": "08_VERIFICATION/vespa-engine-vespa-verification-protocol-empirical-defect-shield-for-vespa-engin.md",
       "title": "Verification Protocol: Empirical Defect Shield for vespa-engine/vespa",
       "repository": "vespa-engine/vespa",
-      "source_version": "a5623114",
-      "content_hash": "8094fb1456d14f8b313ebb1d5d8b3f946d41f1aa397e7f6a6a224ac45d246195",
+      "source_version": "f099e88f",
+      "content_hash": "121fbf336c3b56a07a1101e0d1c1fe12b483e409a76bd12c7a43748b0729549b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T11:09:07.989Z"
+      "persisted_at": "2026-11-21T16:40:18.167Z"
     },
     "candidate_directive-update-lock-file": {
       "item_id": "candidate_directive-update-lock-file",
@@ -242896,8 +242906,8 @@
       "slug": "kuddev-pebrel",
       "platform": "github",
       "source_url": "https://github.com/Kuddev/pebrel",
-      "source_version": "e7405725",
-      "content_hash": "2f1d3a14b7300f742205a28c116ee9b867fa35c7a394f2d606ce3c9952116cd5",
+      "source_version": "76f74be1",
+      "content_hash": "371858ea20c6e098a20aaae15f47d7e72fe2749b159f1cecdf5430434326e9d9",
       "dossier_path": "07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
       "promoted_rules": [
@@ -242912,6 +242922,11 @@
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
+          "number": 9414,
+          "title": "Empirical Invariant Guard in Cargo.toml",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
           "number": 9493,
           "title": "Integrate reviewed changes from #1004 with the verified merge queue",
           "status": "PROMOTED_AND_VERIFIED"
@@ -242922,7 +242937,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T02:14:54.565Z",
+      "verified_at": "2026-11-21T16:40:03.631Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -242962,10 +242977,10 @@
       "relative_path": "08_VERIFICATION/kuddev-pebrel-verification-protocol-empirical-defect-shield-for-kuddev-pebrel.md",
       "title": "Verification Protocol: Empirical Defect Shield for Kuddev/pebrel",
       "repository": "Kuddev/pebrel",
-      "source_version": "e7405725",
-      "content_hash": "32429e6c58d3ed64c5b266c523f17599c54eb28fd23318aa9f9144fe02a530ed",
+      "source_version": "76f74be1",
+      "content_hash": "5fd86da81c6bdb10592c682d4ec0967b55a691098f19a0a29cef37f1f71d2b2b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T02:14:55.493Z"
+      "persisted_at": "2026-11-21T16:40:04.681Z"
     },
     "domain_intelligence-architecture-intelligence-kuddev-pebrel-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-kuddev-pebrel-learnings-core-invariants",
@@ -242987,9 +243002,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for kuddev-pebrel-learnings",
       "repository": "kuddev-pebrel-learnings",
       "source_version": "HEAD",
-      "content_hash": "c16c71b4dee40d06609744399bad0893485474fa0620bdd08e1ef1987fcf6ce6",
+      "content_hash": "63a68e53f6a712ce494bacc69751d5698d6847f42360be50f5e0f6db3f04780a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T02:15:12.878Z"
+      "persisted_at": "2026-11-21T16:40:21.859Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-3-image-klein-comfy-le": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-3-image-klein-comfy-le",
@@ -278299,7 +278314,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/HuggingFaceBio/Carbon-X",
       "source_version": "hf-huggingfacebio-carbon-x",
-      "content_hash": "8703cf17354348dbddbd4a803082e9431b2df475e24e7008e7e128d0af1257ac",
+      "content_hash": "d3ad2147d536d6390328b074f6b8a76128804cbc9dbff4a9d63bb361be1207d4",
       "dossier_path": "07_PROJECT_LEARNING/hf-huggingfacebio-carbon-x-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-huggingfacebio-carbon-x-learnings.md",
       "promoted_rules": [],
@@ -278308,7 +278323,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T18:35:24.537Z",
+      "verified_at": "2026-11-21T16:40:01.898Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -278325,9 +278340,9 @@
       "title": "Research & Knowledge Intelligence: HuggingFaceBio/Carbon-X Core Invariants",
       "repository": "HuggingFaceBio/Carbon-X",
       "source_version": "hf-huggingfacebio-carbon-x",
-      "content_hash": "c262aa35f0791d08bc2c70380f1dd910f908d2803bbb034ee8eae69cffed91fe",
+      "content_hash": "9ce95a29f40d28fcbb4c9de8b25f4c7e688044ba573ff55ed191c584cda05098",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T18:35:25.018Z"
+      "persisted_at": "2026-11-21T16:40:02.484Z"
     },
     "domain_intelligence-technical-construction-intelligence-flux-iac-tofu-controller-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-flux-iac-tofu-controller-core-invariants",
@@ -278361,9 +278376,9 @@
       "title": "Research & Knowledge Intelligence: hf-huggingfacebio-carbon-x-learnings Core Invariants",
       "repository": "hf-huggingfacebio-carbon-x-learnings",
       "source_version": "HEAD",
-      "content_hash": "c29f91fc4da0e7727daa23138ec2bf10d67ff044482b5e9e220f690eb51d1929",
+      "content_hash": "60a85e35adca65592c4201668ec01ac2d0eaaa42a2cbc8fe6a47210f4bcbf536",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T18:35:39.852Z"
+      "persisted_at": "2026-11-21T16:40:22.316Z"
     },
     "candidate_directive-deps-bump-go-opentelemetry-io-otel-trace-from-1-45-0-to-1-47-0": {
       "item_id": "candidate_directive-deps-bump-go-opentelemetry-io-otel-trace-from-1-45-0-to-1-47-0",
@@ -297679,26 +297694,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 9414,
       "title": "Empirical Invariant Guard in Cargo.toml",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
-      "source_version": "fefb2cb8",
+      "source_url": "https://github.com/Kuddev/pebrel",
+      "source_version": "76f74be1",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-19T16:41:06.812Z"
+      "verified_at": "2026-11-21T16:40:03.631Z"
     },
     "candidate_directive-empirical-invariant-guard-in-cargo-toml": {
       "item_id": "candidate_directive-empirical-invariant-guard-in-cargo-toml",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-1M0W-empirical-invariant-guard-in-cargo-toml.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-W8SV-empirical-invariant-guard-in-cargo-toml.md",
       "title": "Empirical Invariant Guard in Cargo.toml",
-      "repository": "aleo-labs-protocol-snarkos-learnings",
+      "repository": "kuddev-pebrel-learnings",
       "source_version": "HEAD",
-      "content_hash": "0ba99c41c18c36eca20b241e08db0009664abd26f9e4acf0922b962cae3376bb",
+      "content_hash": "c6a493e5d84b51253d72bba642941f467bec641554222cc5946689b344ff11a9",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T16:41:11.365Z"
+      "persisted_at": "2026-11-21T16:40:21.396Z"
     },
     "rule-9415": {
       "learning_id": "rule-9415",
@@ -314598,6 +314613,94 @@
       "content_hash": "f260491eba0645d62bbdea4b44a8a9a024717bef14eb2db271de2974d769fd77",
       "domain_letter": "G",
       "persisted_at": "2026-11-21T16:19:05.444Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-kuddev-pebrel-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-kuddev-pebrel-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-kuddev-pebrel-research-knowledge-intelligence-kuddev-pebrel-core-invariants.md",
+      "title": "Research & Knowledge Intelligence: Kuddev/pebrel Core Invariants",
+      "repository": "Kuddev/pebrel",
+      "source_version": "76f74be1",
+      "content_hash": "89df73bc1962ebd322bce5348e4cd5a42f592e91324a0a56fb12ac23df54e2c4",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-21T16:40:04.455Z"
+    },
+    "rule-9804": {
+      "learning_id": "rule-9804",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9804,
+      "title": "place accessories and label correctly in RTL",
+      "source_url": "https://github.com/callstack/react-native-paper",
+      "source_version": "7ab2640c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T16:40:10.265Z"
+    },
+    "candidate_directive-place-accessories-and-label-correctly-in-rtl": {
+      "item_id": "candidate_directive-place-accessories-and-label-correctly-in-rtl",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-W0MH-place-accessories-and-label-correctly-in-rtl.md",
+      "title": "place accessories and label correctly in RTL",
+      "repository": "callstack/react-native-paper",
+      "source_version": "7ab2640c",
+      "content_hash": "3fa4c88e2fd5eea03167362e485043371d8fb9553c1db43b38e831ce119984d1",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-21T16:40:10.797Z"
+    },
+    "rule-9805": {
+      "learning_id": "rule-9805",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9805,
+      "title": "Pass a timeout to every ONNX evaluation",
+      "source_url": "https://github.com/vespa-engine/vespa",
+      "source_version": "f099e88f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T16:40:16.965Z"
+    },
+    "candidate_directive-pass-a-timeout-to-every-onnx-evaluation": {
+      "item_id": "candidate_directive-pass-a-timeout-to-every-onnx-evaluation",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-W5SJ-pass-a-timeout-to-every-onnx-evaluation.md",
+      "title": "Pass a timeout to every ONNX evaluation",
+      "repository": "vespa-engine/vespa",
+      "source_version": "f099e88f",
+      "content_hash": "685f69140d2ff928b8bc4477f58287a1a8bce779d4ba9d8c86bebfd628a266e2",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-21T16:40:17.493Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-kuddev-pebrel-learnings-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-kuddev-pebrel-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-kuddev-pebrel-learnings-research-knowledge-intelligence-kuddev-pebrel-learnings-.md",
+      "title": "Research & Knowledge Intelligence: kuddev-pebrel-learnings Core Invariants",
+      "repository": "kuddev-pebrel-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d3d3f52767aed83c27b68c05fe17a240fc73e8a654e34411325996f79b5a9ba2",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-21T16:40:21.608Z"
+    },
+    "candidate_directive-text-input-place-accessories-and-label-correctly-in-rtl": {
+      "item_id": "candidate_directive-text-input-place-accessories-and-label-correctly-in-rtl",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-W9ZT-text-input-place-accessories-and-label-correctly-in-rtl.md",
+      "title": "text-input): place accessories and label correctly in RTL",
+      "repository": "callstack-react-native-paper-learnings",
+      "source_version": "HEAD",
+      "content_hash": "76392d8f56284fae1327be50e17647726715535a6d0401c0bbb1f4ea3d174ba9",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-21T16:40:22.941Z"
     }
   },
   "ai-builder-brain": {

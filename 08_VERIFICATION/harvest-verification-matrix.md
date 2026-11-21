@@ -11839,3 +11839,7 @@
 | `CYCLE-20261121-4GHM` | `2026-11-21T16:18:44.986Z` | `flox/flox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9802` | Yes (`c94233de...`) |
 | `CYCLE-20261121-4RSK` | `2026-11-21T16:18:59.636Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9803` | Yes (`71e39d67...`) |
 | `CYCLE-20261121-KQVT` | `2026-11-21T16:31:24.953Z` | `orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf-learnings.md` | Yes (`4dc9f70c...`) |
+| `CYCLE-20261121-VU0N` | `2026-11-21T16:40:02.231Z` | `HuggingFaceBio/Carbon-X` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-huggingfacebio-carbon-x-learnings.md` | Yes (`d3ad2147...`) |
+| `CYCLE-20261121-VVCB` | `2026-11-21T16:40:03.947Z` | `Kuddev/pebrel` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9414` | Yes (`371858ea...`) |
+| `CYCLE-20261121-W0F8` | `2026-11-21T16:40:10.532Z` | `callstack/react-native-paper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9804` | Yes (`2b73aac0...`) |
+| `CYCLE-20261121-W5LX` | `2026-11-21T16:40:17.253Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9805` | Yes (`377404da...`) |

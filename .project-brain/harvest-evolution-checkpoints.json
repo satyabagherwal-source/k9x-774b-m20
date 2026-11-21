@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T16:31:30.281Z",
+  "last_updated": "2026-11-21T16:40:23.579Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-21T15:59:55.405Z",
@@ -488,7 +488,7 @@
       "staged_for_review": 1
     },
     "kuddev-pebrel-learnings.md": {
-      "processed_at": "2026-11-20T02:15:11.527Z",
+      "processed_at": "2026-11-21T16:40:21.111Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1623,7 +1623,7 @@
       "staged_for_review": 1
     },
     "hf-huggingfacebio-carbon-x-learnings.md": {
-      "processed_at": "2026-11-17T18:35:39.631Z",
+      "processed_at": "2026-11-21T16:40:22.080Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -2208,7 +2208,7 @@
       "staged_for_review": 0
     },
     "callstack-react-native-paper-learnings.md": {
-      "processed_at": "2026-11-18T13:25:53.872Z",
+      "processed_at": "2026-11-21T16:40:22.568Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3668,7 +3668,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2835,
+  "total_dossiers_evaluated": 2838,
   "total_canonical_promoted": 449,
-  "total_staged_for_review": 2180
+  "total_staged_for_review": 2182
 }

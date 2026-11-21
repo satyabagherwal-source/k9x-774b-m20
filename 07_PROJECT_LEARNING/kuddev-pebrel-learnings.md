@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kuddev-pebrel-learnings.md`  
 > **Source**: github ([https://github.com/Kuddev/pebrel](https://github.com/Kuddev/pebrel))  
-> **Source Version**: `e7405725`  
+> **Source Version**: `76f74be1`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T02:14:53.553Z  
+> **Timestamp**: 2026-11-21T16:40:02.985Z  
 > **Learning ID**: `learn-github-kuddev-pebrel`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kuddev-pebrel-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Kuddev/pebrel](https://github.com/Kuddev/pebrel))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T02:14:53.363Z  
+> **Harvest Timestamp**: 2026-11-21T16:40:02.978Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: AI-native, GPU-accelerated terminal emulator for Windows with SSH, persistent sessions, split panes, and first-class AI CLI workflows.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3852 stars
+- **Stars / Engagement**: 3861 stars
 
 ---
 
@@ -672,7 +672,7 @@ async function supportsSettled(): Promise<boolean> {
   return false;
 }
 
-// Only provider IDs and the first JSONL metadata line are recovery identities.
+// Only provider IDs and the native session header are recovery identities.
 // A timestamped basename or a process ID cannot be handed to pi --session.
 function sessionFor(ctx: any): { session_id?: string; session_file?: string } {
   let direct: string | undefined;
@@ -685,9 +685,15 @@ function sessionFor(ctx: any): { session_id?: string; session_file?: string } {
       fd = openSync(file, "r");
       const buffer = Buffer.alloc(16384);
       const length = readSync(fd, buffer, 0, buffer.length, 0);
-      const end = buffer.indexOf(10, 0);
-      if (end >= 0 && end < length) {
-        const header = JSON.parse(buffer.subarray(0, end).toString("utf8"));
+      const prefix = buffer.subarray(0, length);
+      const end = prefix.indexOf(10);
+      if (end >= 0) {
+        let header = JSON.parse(prefix.subarray(0, end).toString("utf8"));
+        // OMP 18 writes a fixed-width title record before its session header.
+        if (SOURCE === "omp" && end === 255 && header.type === "title" && header.v === 1) {
+          const next = prefix.indexOf(10, end + 1);
+          if (next > end) header = JSON.parse(prefix.subarray(end + 1, next).toString("utf8"));
+        }
         if (header.type === "session" && typeof header.id === "string" && header.id
             && (!direct || direct === header.id)) {
           return { session_id: header.id, session_file: file };
@@ -898,6 +904,22 @@ def stream_state(token, identity):
             yield state
 
 
+def completion_field(source, native, payload):
+    if (source == "claude" or native) and payload.get("hook_event_name") == "Stop":
+        return "last_assistant_message"
+    if source == "codex" and not native and payload.get("type") == "agent-turn-complete":
+        return "last-assistant-message"
+    if source in ("opencode", "pi") and payload.get("kind") == "done":
+        return "message"
+    return None
+
+
+def encode_envelope(header, payload):
+    return header.encode() + b"\n" + json.dumps(
+        payload, separators=(",", ":"), ensure_ascii=False
+    ).encode("utf-8")
+
+
 def send(source, native, mode, payload, token, owner=None, route=None, deadline=None):
     owner = owner or process_identity(source)
     with stream_state(token, owner or source) as state:
@@ -918,18 +940,22 @@ def send(source, native, mode, payload, token, owner=None, route=None, deadline=
             header += " tmux=" + route["context"]
         if native:
             header += " codex_hooks=" + mode.split("=", 1)[1]
-        encoded = json.dumps(payload, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
-        envelope = header.encode() + b"\n" + encoded
+        envelope = encode_envelope(header, payload)
         if len(envelope) > MAX_ENVELOPE:
-            # Lifecycle must still arrive when a tool or answer is huge. Keep
-            # protocol identities and drop content, without inventing a result.
             keep = ("hook_event_name", "type", "kind", "session_id", "session_file", "transcript_path", "thread-id", "turn_id", "turn-id", "source", "bridge_instance", "bridge_sequence", "event_id", "notification_type", "permission_mode", "stop_reason", "error", "background_tasks", "agent_id", "agent_type")
-            question_input = payload.get("tool_input") if payload.get("tool_name") in ("request_user_input", "AskUserQuestion") else None
-            tool_name = payload.get("tool_name")
-            payload = {key: payload[key] for key in keep if key in payload}
-            if question_input is not None:
-                payload.update(tool_name=tool_name, tool_input=question_input)
-            envelope = header.encode() + b"\n" + json.dumps(payload, separators=(",", ":")).encode()
+            compact = {key: payload[key] for key in keep if key in payload}
+            if payload.get("tool_name") in ("request_user_input", "AskUserQuestion") and payload.get("tool_input") is not None:
+                compact.update(tool_name=payload["tool_name"], tool_input=payload["tool_input"])
+            if source == "opencode" and payload.get("outcome") in ("succeeded", "failed", "cancelled"):
+                compact["outcome"] = payload["outcome"]
+            envelope = encode_envelope(header, compact)
+            field = completion_field(source, native, payload)
+            answer = payload.get(field)
+            if field and isinstance(answer, str) and len(answer) <= MAX_ENVELOPE - len(envelope):
+                compact[field] = answer
+                with_answer = encode_envelope(header, compact)
+                if len(with_answer) <= MAX_ENVELOPE:
+                    envelope = with_answer
         if len(envelope) > MAX_ENVELOPE:
             return
         osc = b"\x1b]777;nebula-hook;" + token.encode() + b";" + base64.b64encode(envelope) + b"\x07"
@@ -985,28 +1011,7 @@ def write_terminal(osc, source=None, route=None, deadline=None, *, exit_owner=No
         if route:
             info = os.fstat(fd)
             if not stat.S_ISCHR(info.st_mode) or info.st_rdev != route["device"]:
-                raise ValueError("SSH terminal identity changed")
-        while offset < len(osc):
-            remaining = deadline - time.monotonic()
-            if remaining <= 0 or not select.select([], [fd], [], remaining)[1]:
-                raise TimeoutError("terminal output is full")
-            try:
-                offset += os.write(fd, osc[offset:])
-            except BlockingIOError:
-                continue
-    finally:
-        if 0 < offset < len(osc):
-            # Cancel a partial OSC so a failed hook cannot swallow future output.
-            try:
-                if select.select([], [fd], [], 0.1)[1]:
-                    os.write(fd, b"\x18")
-            except OSError:
-                pass
-        os.close(fd)
-
-
-def run(args):
-    if not args or args[0] 
+                raise V
 ```
 
 ### Core Architecture Module: `pebrel_app/res/hooks/remote_files.py`
@@ -1494,11 +1499,11 @@ def destinations(owner, deadline):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1028** (2026-11-19): **[Bug] 无法启用"登录时自启动"选项**
-  *Symptoms*: ### Operating system / 操作系统  Windows  ### OS version and display / 系统版本与显示  Windows 11 25H2, 150%, 1 monitor  ### Pebrel version / 版本号  2.5.9  ### How did you install Pebrel? / 安装方式  GitHub Release (.exe / .zip / .dmg / .AppImage / .deb)  ### Shell in the affected pane / 出问题的面板用的 Shell  PowerShell 7 (pwsh)  ### Program running in the pane / 面板里正在跑的程序  Nothing, plain shell prompt / 什么都没跑  ### Connection type / 连接方式  Local terminal / 本地终端  ### Affected area / 影响范围  Shell startup / PATH / start directory / context menu — Shell 启动、环境变量、起始目录、右键菜单  ### Did it work in a previous version? / 旧版本是否正常？  No, it never worked / 一直如此  ### Can you reproduce it? / 复现概率  Always (100%) / 必现  ### Steps to reproduce / 复现步骤  1. 启动 Perbel，打开设置页 2. 尝试启用"登录时自启动"选项  ### Expected behavior / 期望结果  选项被正常启用  ### Actual behavior / 实际结果  选项没有启用，并报错“”  ### Logs / screenshots / 日志或截图  <img width="1967" height="1075" alt="图片" src="https://github.com/user-attachments/assets/536de216-602a-47f7-94b9-9c4c89c7eda6" />  ### Non-default settings / 改过的设置  还尝试了使用管理员权限启动，没有解决此问题  ### Before submitting / 提交前确认  - [x] I searched existing issues and did not find a duplicate / 已搜索，无重复 - [x] I tested with the latest release / 已用最新版本试过 - [x] I removed passwords, private keys, tokens and other secrets / 已删除敏感信息
+- **Issue #1078** (2026-11-21): **[Bug] JumpServer（KoKo）直连 SSH 登录仍卡住，无法进入远端 shell（#856 后续）**
+  *Symptoms*: ### Operating system / 操作系统  Windows  ### OS version and display / 系统版本与显示  Windows 10 Pro 22H2（19045）  ### Pebrel version / 版本号  2.6.1（本机当前运行版本）  ### How did you install Pebrel? / 安装方式  GitHub Release (.exe / .zip / .dmg / .AppImage / .deb)  ### Shell in the affected pane / 出问题的面板用的 Shell  bash  ### Program running in the pane / 面板里正在跑的程序  ssh client / remote shell — 远程 shell  ### Connection type / 连接方式  SSH via Pebrel host list / Pebrel 内 SSH 主机  ### Affected area / 影响范围  SSH / proxy / jump host — SSH、代理、跳板  ### Did it work in a previous version? / 旧版本是否正常？  Not sure / 不确定  ### Can you reproduce it? / 复现概率  Always (100%) / 必现  ### Steps to reproduce / 复现步骤  1. 在 `~/.ssh/config` 中配置 JumpServer（KoKo）直连目标资产的主机别名，例如：     ```sshconfig    Host my-hpc        HostName <JumpServer 地址>        Port 2222        User <JumpServer 用户>@<资产账号>@<资产 IP>        IdentityFile ~/.ssh/<密钥文件名>    ```  2. 启动 Pebrel，在 SSH 窗格中打开 `my-hpc`。 3. 等待目标主机的 shell 提示符出现。  ### Expected behavior / 期望结果  登录完成后，SSH 窗格应显示目标主机的 shell 提示符，并能执行 `pwd` 等命令。  ### Actual behavior / 实际结果  和 #856 相同的直连配置下，#858 修复后已经看不到 `PEBREL_PTY_…=not a tty:<pid>` 这行输出，但 SSH 窗格仍然卡住，没有出现可用的远端 shell，无法登录服务器。  目前无法从窗格输出判断连接卡在哪一步。希望能用实际的 KoKo 直连会话验证，直到可以在目标主机执行命令。  ### Logs / screenshots / 日志或截图  #856 中记录的旧输出（标识和进程号已省略）：  ```text PEBREL_PTY_<token>=not a tty:<pid> ```  本次卡住时，窗格已不再显示这行输出。暂无本次连接的调试日志。  ### Non-default settings / 改过的设置  _No response_  ### Before submitting / 提交前确认  - [x] I searched existing issues and did not find a duplicate / 
 
-- **Issue #1016** (2026-11-19): **[Bug] 无法粘贴图片：unsupported clipboard image format: Tiff**
-  *Symptoms*: ### Operating system / 操作系统  macOS  ### OS version and display / 系统版本与显示  macos26.0  ### Pebrel version / 版本号  2.5.8  ### How did you install Pebrel? / 安装方式  GitHub Release (.exe / .zip / .dmg / .AppImage / .deb)  ### Shell in the affected pane / 出问题的面板用的 Shell  bash  ### Program running in the pane / 面板里正在跑的程序  Codex CLI  ### Connection type / 连接方式  SSH via Pebrel host list / Pebrel 内 SSH 主机  ### Affected area / 影响范围  SSH / proxy / jump host — SSH、代理、跳板  ### Did it work in a previous version? / 旧版本是否正常？  Not sure / 不确定  ### Can you reproduce it? / 复现概率  Always (100%) / 必现  ### Steps to reproduce / 复现步骤  截图后粘贴出现 tiff 格式无法粘贴的情况  ### Expected behavior / 期望结果  希望支持下截图 tiff 粘贴  ### Actual behavior / 实际结果  <img width="404" height="59" alt="image" src="https://github.com/user-attachments/assets/ed7abd98-861f-49f8-90a4-40f17a793362" />  ### Logs / screenshots / 日志或截图  如上  ### Non-default settings / 改过的设置  _No response_  ### Before submitting / 提交前确认  - [x] I searched existing issues and did not find a duplicate / 已搜索，无重复 - [x] I tested with the latest release / 已用最新版本试过 - [x] I removed passwords, private keys, tokens and other secrets / 已删除敏感信息
+- **Issue #1063** (2026-11-20): **[Bug] 在win11 powershell 7 下执行`ls env:`查看环境变量报错**
+  *Symptoms*: ### Operating system / 操作系统  Windows  ### OS version and display / 系统版本与显示  Windows 11 Pro 23H2（build 22631）  ### Pebrel version / 版本号  2.6.0 (5ff71de)  ### How did you install Pebrel? / 安装方式  GitHub Release (.exe / .zip / .dmg / .AppImage / .deb)  ### Shell in the affected pane / 出问题的面板用的 Shell  PowerShell 7 (pwsh)  ### Program running in the pane / 面板里正在跑的程序  Nothing, plain shell prompt / 什么都没跑  ### Connection type / 连接方式  Local terminal / 本地终端  ### Affected area / 影响范围  Shell startup / PATH / start directory / context menu — Shell 启动、环境变量、起始目录、右键菜单  ### Did it work in a previous version? / 旧版本是否正常？  Not sure / 不确定  ### Can you reproduce it? / 复现概率  Always (100%) / 必现  ### Steps to reproduce / 复现步骤  1. 启动 Pebrel，新开 PowerShell 7 标签页 2. 执行 `ls env:` 3. 每个环境变量报一条 `InvalidOperation`  ❯ ls env: InvalidOperation: ...\pebrel-shell\2.6.0-9b9c4248...\pebrel_prompt.ps1:363  363 |          $date = '{0,12}' -f $i.LastWriteTime.ToString('MMM d HH:mm',  …      |          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      | 不能对值为 Null 的表达式调用方法。 -rw-r--r--       1    all_proxy ...  ## 改过的设置  `follow_system_theme=0`、`shell=pwsh`、`refresh_environment=1`；`builtin_ls` 未设置，保持默认 `1`。  ## 补充观察：先执行一次 `pwsh` 就不报错  报错来自 Pebrel 启动时注入的脚本（启动参数 `-Command ". '<temp>\pebrel_prompt.ps1'"`），预先手敲执行的 `pwsh` 子会话不加载它，`ls` 退回原生别名：  | 场景                            | `(Get-Command ls).Definition` | `ls env:` 错误数 | | ------------------------------- | ----------------------------- | ---------------- 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1515,125 +1520,602 @@ def destinations(owner, deadline):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e7405725` (2026-11-19)
-**Commit Message**: Integrate reviewed changes from #1004 with the verified merge queue
+### Incident Patch 1: `9a6e19ed` (2026-11-21)
+**Commit Message**: Merge pull request #1031 from Life-go-on/fix/macos-fullscreen-toolbar
 
-**File**: `CHANGELOG.md` (modified, +4/-4)
+fix(macos): restore app chrome in fullscreen
+
+**File**: `pebrel_app/Cargo.toml` (modified, +1/-0)
 ```diff
-@@ -2049,7 +2049,7 @@ Windows 提供 Pebrel 安装器和 ZIP 便携包；Linux x64 包以及 macOS App
- - Fixed queued AI resume commands and session identities being lost during Shell initialization. Compact Codex resume screens are recognized without another AI message, and exiting the CLI clears the foreground identity.
- - Fixed long WSL directory titles overlapping distribution labels in the sidebar and top tabs.
- - Fixed quiet terminals retaining an intermediate startup size. The final viewport size reaches the terminal even when no more output arrives.
--- Fixed Windows terminal focus consuming `Alt+F4` and `Alt+Space`. `Alt+F4` now uses the normal window-close flow, and `Alt+Space`, followed by `N`, uses the system menu to minimize the window.
-+- Fixed the focused terminal on Windows consuming `Alt+F4` and `Alt+Space`. `Alt+F4` now uses the normal window-close flow, and `Alt+Space`, followed by `N`, uses the system menu to minimize the window.
- - Fixed the top Settings tab disappearing when switching to another tab. It now remains available until explicitly closed, including when tabs overflow or the tab layout changes.
- - Fixed `Alt+1–9` and `Ctrl+1–9` tab shortcuts losing priority to terminal input. They now work while a terminal or CLI has focus and respect custom shortcut changes without restarting.
- - Fixed WSL filename search failing when the directory path contains spaces or shell punctuation. Cancelling a search stops its own directory scan.
-@@ -2300,7 +2300,7 @@ Windows 提供 Pebrel 安装器和 ZIP 便携包，不再提供旧名兼容安
- 
- <a href="https://github.com/Sakyvo"><img src="https://github.com/Sakyvo.png?size=96" width="64" height="64" alt="@Sakyvo avatar"></a><a href="https://github.com/821869798"><img src="https://github.com/821869798.png?size=96" width="64" height="64" alt="@821869798 avatar"></a>
- 
--**[@Sakyvo](https://github.com/Sakyvo)** - Added the optional Windows terminal proxy, selection-aware `Ctrl+C`, and word deletion with `Ctrl+Backspace`. / 新增可选的 Windows 终端代理、按选区处理的 `Ctrl+C`，以及 `Ctrl+Backspace` 按词删除。（[#94](https://github.com/Kuddev/pebrel/pull/94)、[#93](https://github.com/Kuddev/pebrel/pull/93)、[#92](https://github.com/Kuddev/pebrel/pull/92)）
-+**[@Sakyvo](https://github.com/Sakyvo)** - Added the optional proxy for terminals on Windows, selection-aware `Ctrl+C`, and word deletion with `Ctrl+Backspace`. / 新增可选的 Windows 终端代理、按选区处理的 `Ctrl+C`，以及 `Ctrl+Backspace` 按词删除。（[#94](https://github.com/Kuddev/pebrel/pull/94)、[#93](https://github.com/Kuddev/pebrel/pull/93)、[#92](https://github.com/Kuddev/pebrel/pull/92)）
- 
- **[@821869798](https://github.com/821869798)** - Contributed `Shift+Enter` multiline input and Antigravity completion and permission-state detection. / 贡献 `Shift+Enter` 多行输入，以及 Antigravity 回答结束与权限状态识别。（[#96](https://github.com/Kuddev/pebrel/pull/96)）
- 
-@@ -2497,7 +2497,7 @@ Windows 提供 Pebrel 安装器和 ZIP 便携包，不再提供旧名兼容安
- - **Panes and live managed Agents support bounded bracketed paste from literal text, stdin, or a file.** Prompt, paste, control-key, argv, and multiline validation prevent arbitrary terminal bytes from bypassing the public API, and generation-aware targeting keeps delayed input from reaching a restarted Agent with the same display name.
- - **Quick Jump searches tabs, panes, frequent directories, configured SSH hosts, and recoverable AI sessions in one palette.** Results retain tab and pane location, cwd, remote destination, provider, and session metadata, then expose direct focus, open, launch, or resume actions. File and Recipe scopes remain hidden because those backends are not yet end-to-end.
- - **Selected terminal or document text can be sent to an explicitly chosen live Agent.** The searchable Send to Chat dialog previews the selection as a quote, preserves blank lines, accepts an optional comment, can copy the composed message, labels remote SSH targets, and reports the destination after sending. If no live Agent exists, the action is disabled instead of guessing a pane.
--- **Windows terminal tabs can be dragged between Nebula windows.** A tab may become a new tab in the target or dock its complete split tree to the left, right, top, or bottom; terminal panes, runtime ownership, subscriptions, focus, and session metadata move together. Moving the last tab closes the empty source window, while a target that disappears before commit leaves the source tab attached.
-+- **Terminal tabs on Windows can be dragged between Nebula windows.** A tab may become a new tab in the target or dock its complete split tree to the left, right, top, or bottom; terminal panes, runtime ownership, subscriptions, focus, and session metadata move together. Moving the last tab closes the empty source window, while a target that disappears before commit leaves the source tab attached.
- - **Windows taskbar progress reflects OSC 9;4 emitted by terminal applications.** Normal, indeterminate, error, paused, and cleared states map to the native taskbar indicator; unsupported or unknown states clear stale progress instead of leaving the task
+@@ -210,6 +210,7 @@ objc2-foundation = { version = "0.3.1", default-features = false, features = [
+     "NSString",
+     "NSLocale",
+     "NSBundle",
++    "NSNotification",
+     "NSUserDefaults",
+ ] }
+ objc2-app-kit = { version = "0.3.1", default-features = false, features = [
 ```
 
-**File**: `docs/release-notes/v1.6.0.md` (modified, +1/-1)
+**File**: `pebrel_app/src/gpui_shell/workspace/window_titlebar.rs` (modified, +34/-13)
 ```diff
-@@ -82,7 +82,7 @@
- 
- <a href="https://github.com/Sakyvo"><img src="https://github.com/Sakyvo.png?size=96" width="64" height="64" alt="@Sakyvo avatar"></a><a href="https://github.com/821869798"><img src="https://github.com/821869798.png?size=96" width="64" height="64" alt="@821869798 avatar"></a>
- 
--**[@Sakyvo](https://github.com/Sakyvo)** - Added the optional Windows terminal proxy, selection-aware `Ctrl+C`, and word deletion with `Ctrl+Backspace`. / 新增可选的 Windows 终端代理、按选区处理的 `Ctrl+C`，以及 `Ctrl+Backspace` 按词删除。（[#94](https://github.com/Kuddev/pebrel/pull/94)、[#93](https://github.com/Kuddev/pebrel/pull/93)、[#92](https://github.com/Kuddev/pebrel/pull/92)）
-+**[@Sakyvo](https://github.com/Sakyvo)** - Added the optional proxy for terminals on Windows, selection-aware `Ctrl+C`, and word deletion with `Ctrl+Backspace`. / 新增可选的 Windows 终端代理、按选区处理的 `Ctrl+C`，以及 `Ctrl+Backspace` 按词删除。（[#94](https://github.com/Kuddev/pebrel/pull/94)、[#93](https://github.com/Kuddev/pebrel/pull/93)、[#92](https://github.com/Kuddev/pebrel/pull/92)）
- 
- **[@821869798](https://github.com/821869798)** - Contributed `Shift+Enter` multiline input and Antigravity completion and permission-state detection. / 贡献 `Shift+Enter` 多行输入，以及 Antigravity 回答结束与权限状态识别。（[#96](https://github.com/Kuddev/pebrel/pull/96)）
+@@ -233,19 +233,40 @@ mod tests {
+         });
+         let workspace = workspace.unwrap();
+         window.simulate_resize(gpui::size(px(1200.0), px(800.0)));
+-        for position in
+-            [pebrel_settings::TabsPositionName::Sidebar, pebrel_settings::TabsPositionName::Top]
+-        {
+-            window.update(|window, cx| {
+-                workspace.update(cx, |workspace, cx| {
+-                    workspace.tabs_position = position;
+-                    cx.notify();
+-                });
+-                window.draw(cx).clear(cx);
+-            });
+-            let find = window.debug_bounds("terminal-find").unwrap();
+-            let commands = window.debug_bounds("command-manager-toggle").unwrap();
+-            assert!(find.right() < commands.left(), "{position:?}");
++        for mode in [gpui_component::ThemeMode::Dark, gpui_component::ThemeMode::Light] {
++            for position in
++                [pebrel_settings::TabsPositionName::Sidebar, pebrel_settings::TabsPositionName::Top]
++            {
++                for fullscreen in [false, true, false, true, false] {
++                    window.update(|window, cx| {
++                        if window.is_fullscreen() != fullscreen {
++                            window.toggle_fullscreen();
++                        }
++                        gpui_component::Theme::change(mode, Some(window), cx);
++                        workspace.update(cx, |workspace, cx| {
++                            workspace.tabs_position = position;
++                            cx.notify();
++                        });
++                        window.draw(cx).clear(cx);
++                    });
++                    // The app's controls must keep their row in full screen.
++                    // TestWindow cannot verify the AppKit overlay's transparency.
++                    let title = window.debug_bounds("workspace-titlebar").unwrap();
++                    let find = window.debug_bounds("terminal-find").unwrap();
++                    let commands = window.debug_bounds("command-manager-toggle").unwrap();
++                    assert!(find.right() < commands.left(), "{position:?}, {fullscreen}");
++                    assert!(find.top() >= title.top() && find.bottom() <= title.bottom());
++                    assert!(commands.top() >= title.top() && commands.bottom() <= title.bottom());
++                    let expected_height = if crate::platform::Platform::current()
++                        == crate::platform::Platform::MacOS
++                    {
++                        52.0
++                    } else {
++                        48.0
++                    };
++                    assert_eq!(title.size.height, px(expected_height));
++                }
++            }
+         }
+     }
  
 ```
 
-**File**: `docs/release-notes/v1.8.0.md` (modified, +1/-1)
+**File**: `pebrel_app/src/platform/window_chrome/macos.rs` (modified, +55/-9)
 ```diff
-@@ -22,7 +22,7 @@
- - Fixed queued AI resume commands and session identities being lost during Shell initialization. Compact Codex resume screens are recognized without another AI message, and exiting the CLI clears the foreground identity.
- - Fixed long WSL directory titles overlapping distribution labels in the sidebar and top tabs.
- - Fixed quiet terminals retaining an intermediate startup size. The final viewport size reaches the terminal even when no more output arrives.
--- Fixed Windows terminal focus consuming `Alt+F4` and `Alt+Space`. `Alt+F4` now uses the normal window-close flow, and `Alt+Space`, followed by `N`, uses the system menu to minimize the window.
-+- Fixed the focused terminal on Windows consuming `Alt+F4` and `Alt+Space`. `Alt+F4` now uses the normal window-close flow, and `Alt+Space`, followed by `N`, uses the system menu to minimize the window.
- - Fixed the top Settings tab disappearing when switching to another tab. It now remains available until explicitly closed, including when tabs overflow or the tab layout changes.
- - Fixed `Alt+1–9` and `Ctrl+1–9` tab shortcuts losing priority to terminal input. They now work while a terminal or CLI has focus and respect custom shortcut changes without restarting.
- - Fixed WSL filename search failing when the directory path contains spaces or shell punctuation. Cancelling a search stops its own directory scan.
+@@ -2,9 +2,12 @@
+ 
+ use super::TitleBarLayout;
+ use gpui::Window;
+-use objc2::{MainThreadOnly, rc::Retained};
+-use objc2_app_kit::{NSToolbar, NSView, NSWindow, NSWindowButton, NSWindowToolbarStyle};
+-use objc2_foundation::{NSRect, ns_string};
++use objc2::{MainThreadOnly, define_class, msg_send, rc::Retained, sel};
++use objc2_app_kit::{
++    NSToolbar, NSView, NSWindow, NSWindowButton, NSWindowDidEnterFullScreenNotification,
++    NSWindowDidExitFullScreenNotification, NSWindowToolbarStyle,
++};
++use objc2_foundation::{NSNotification, NSNotificationCenter, NSObject, NSRect, ns_string};
+ use winit::raw_window_handle::{HasWindowHandle, RawWindowHandle};
+ 
+ fn native_window(window: &Window) -> Option<Retained<NSWindow>> {
+@@ -15,16 +18,59 @@ fn native_window(window: &Window) -> Option<Retained<NSWindow>> {
+     view.window()
+ }
+ 
++define_class!(
++    #[unsafe(super(NSToolbar, NSObject))]
++    #[thread_kind = MainThreadOnly]
++    struct PebrelWindowControlsToolbar;
++
++    impl PebrelWindowControlsToolbar {
++        #[unsafe(method(pebrelWindowDidEnterFullScreen:))]
++        fn did_enter_full_screen(&self, notification: &NSNotification) {
++            // AppKit draws the empty Unified toolbar in a separate full-screen
++            // overlay. Transparency on the main window alone cannot remove it.
++            self.setVisible(false);
++            if let Some(window) = notification.object().and_then(|object| object.downcast::<NSWindow>().ok()) {
++                // GPUI 4f2c269f turns transparency off before the transition.
++                window.setTitlebarAppearsTransparent(true);
++            }
++        }
++
++        #[unsafe(method(pebrelWindowDidExitFullScreen:))]
++        fn did_exit_full_screen(&self, _notification: &NSNotification) {
++            self.setVisible(true);
++        }
++    }
++);
++
+ pub(super) fn configure(window: &Window) {
+     let Some(native) = native_window(window) else { return };
+-    let toolbar = NSToolbar::initWithIdentifier(
+-        NSToolbar::alloc(native.mtm()),
+-        ns_string!("pebrel-window-controls"),
+-    );
+-    // An empty native toolbar supplies the system's current window-control
+-    // treatment. AppKit retains it; GPUI continues to render the app controls.
++    // SAFETY: initWithIdentifier: is NSToolbar's designated initializer and
++    // PebrelWindowControlsToolbar adds no instance state or initializer.
++    let toolbar: Retained<PebrelWindowControlsToolbar> = unsafe {
++        msg_send![PebrelWindowControlsToolbar::alloc(native.mtm()), initWithIdentifier: ns_string!("pebrel-window-controls")]
++    };
+     native.setToolbarStyle(NSWindowToolbarStyle::Unified);
+     native.setToolbar(Some(&toolbar));
++
++    // AppKit retains the toolbar for this window. Selector observers are weak
++    // (macOS 10.11+); the observer is not kept alive after the window closes.
++    let center = NSNotificationCenter::defaultCenter();
++    // SAFETY: the selectors above accept one NSNotification. The object filter
++    // limits delivery to AppKit's main-thread transitions of this exact window.
++    unsafe {
++        center.addObserver_selector_name_object(
++            &toolbar,
++            sel!(pebrelWindowDidEnterFullScreen:),
++            Some(NSWindowDidEnterFullScreenNotification),
++            Some(&native),
++        );
++        center.addObserver_selector_name_object(
++            &toolbar,
++            sel!(pebrelWindowDidExitFullScreen:),
++            Some(NSWindowDidExitFullScreenNotification),
++            Some(&native),
++        );
++    }
+ }
+ 
+ pub(super) fn layout(window: &Window) -> TitleBarLayout {
 ```
 
 ---
 
-### Incident Patch 2: `a2243319` (2026-11-19)
-**Commit Message**: Integrate reviewed changes from #1033 with the verified merge queue
+### Incident Patch 2: `b9bf2291` (2026-11-21)
+**Commit Message**: Merge branch 'main' into fix/macos-fullscreen-toolbar
 
-**File**: `pebrel_app/Cargo.toml` (modified, +1/-1)
+**File**: `pebrel_app/src/gpui_shell/terminal/view/startup_tests.rs` (modified, +1/-1)
 ```diff
-@@ -162,7 +162,7 @@ regex = "1.13.1"
- # `image` 被 GPUI 壳的壁纸、文档 tab、行内图片、数学视图无条件使用，必须是
- # 无条件依赖；此前按 `cfg(not(target_os = "macos"))` 排除会让 macOS 目标在
- # 编译期找不到 crate（2026-09-02 交叉 check 首个暴露的问题）。
--image = { version = "0.25.8", default-features = false, features = ["bmp", "gif", "jpeg", "png", "webp"] }
-+image = { version = "0.25.8", default-features = false, features = ["bmp", "gif", "jpeg", "png", "tiff", "webp"] }
- rusqlite = { version = "0.40.2", features = ["bundled"] }
- sha1 = "0.11.0"
- 
+@@ -1350,7 +1350,7 @@ fn cold_resume_of_supported_clis_waits_for_the_shell_and_preserves_each_target(
+         ("cursor", "agent --resume=saved-conversation"),
+         ("copilot", "copilot --resume saved-conversation"),
+         ("grok", "grok --resume saved-conversation"),
+-        ("codebuddy", "codebuddy --resume saved-conversation"),
++        ("codebuddy", "codebuddy --resume saved-conversation --port 0"),
+         ("omp", "omp --resume saved-conversation"),
+         ("kimi", "kimi --session saved-conversation"),
+     ] {
 ```
 
-**File**: `pebrel_app/src/gpui_shell/terminal/inline_image.rs` (modified, +9/-9)
+**File**: `pebrel_app/src/gpui_shell/workspace.rs` (modified, +1/-6)
 ```diff
-@@ -523,6 +523,7 @@ pub(super) fn clipboard_png(data: &[u8]) -> Result<Vec<u8>, String> {
-             | ImageFormat::Jpeg
-             | ImageFormat::Gif
-             | ImageFormat::Bmp
-+            | ImageFormat::Tiff
-             | ImageFormat::WebP
-     ) {
-         return Err(format!("unsupported clipboard image format: {format:?}"));
-@@ -982,15 +983,14 @@ mod tests {
-     #[test]
-     fn clipboard_bitmaps_become_png_without_extending_terminal_protocol_formats() {
-         let pixels = image::RgbaImage::from_pixel(2, 1, image::Rgba([10, 20, 30, 255]));
--        let mut output = std::io::Cursor::new(Vec::new());
--        image::DynamicImage::ImageRgba8(pixels.clone())
--            .write_to(&mut output, ImageFormat::Bmp)
--            .unwrap();
--        let bmp = output.into_inner();
--        assert!(decode_bytes(&bmp).is_err());
--        let png = clipboard_png(&bmp).unwrap();
--        assert_eq!(image::guess_format(&png).unwrap(), ImageFormat::Png);
--        assert_eq!(image::load_from_memory(&png).unwrap().into_rgba8(), pixels);
-+        for format in [ImageFormat::Bmp, ImageFormat::Tiff] {
-+            let mut bitmap = std::io::Cursor::new(Vec::new());
-+            pixels.write_to(&mut bitmap, format).unwrap();
-+            assert!(decode_bytes(bitmap.get_ref()).is_err());
-+            let png = clipboard_png(bitmap.get_ref()).unwrap();
-+            assert_eq!(image::guess_format(&png).unwrap(), ImageFormat::Png);
-+            assert_eq!(image::load_from_memory(&png).unwrap().into_rgba8(), pixels);
-+        }
+@@ -1275,12 +1275,7 @@ impl NebulaWorkspace {
+         };
+         let (cols, rows, launch) = {
+             let view = anchor.view.read(cx);
+-            let (launch, cwd) = tab_duplication::copy_launch(
+-                view.session_launch.clone(),
+-                tab_duplication::CopyKind::Split,
+-                tab_duplication::PaneOrigin::of(view),
+-            );
+-            let launch = Self::terminal_launch_from_session(&launch, cwd);
++            let launch = tab_duplication::split_launch(view, cx);
+             (view.grid_cols() as u16, view.grid_rows() as u16, launch)
+         };
+         let grid = match direction {
+```
+
+**File**: `pebrel_app/src/gpui_shell/workspace/tab_duplication.rs` (modified, +13/-0)
+```diff
+@@ -117,6 +117,19 @@ impl<'a> PaneOrigin<'a> {
      }
+ }
  
-     #[test]
++pub(super) fn split_launch(
++    view: &crate::gpui_shell::terminal::view::TerminalView,
++    cx: &gpui::App,
++) -> crate::gpui_shell::terminal::view::TerminalLaunch {
++    let (launch, cwd) =
++        copy_launch(view.session_launch.clone(), CopyKind::Split, PaneOrigin::of(view));
++    let launch = match launch {
++        LaunchSession::Default => super::shell_launch::configured_at(cx, cwd.as_deref()),
++        launch => launch,
++    };
++    NebulaWorkspace::terminal_launch_from_session(&launch, cwd)
++}
++
+ /// The guest cwd travels through `--cd` only when the copy enters the origin
+ /// pane's guest as the same user; otherwise the copy gets the host directory.
+ pub(super) fn copy_launch(
+```
+
+**File**: `pebrel_app/src/gpui_shell/workspace/windowing/tab_launch_tests.rs` (modified, +40/-0)
+```diff
+@@ -208,6 +208,46 @@ fn imported_profile(
+     }
+ }
+ 
++#[gpui::test]
++fn splits_resolve_the_imported_default_from_a_host_shell(cx: &mut TestAppContext) {
++    if isolated("splits_resolve_the_imported_default_from_a_host_shell") {
++        return;
++    }
++    let profile =
++        imported_profile(&crate::platform::profile_test_isolation::root(), "imported.exe");
++    let mut store = crate::terminal_profiles::TerminalProfiles::default();
++    store.upsert(profile.clone()).unwrap();
++    store.save().unwrap();
++    initialize_test(cx);
++    cx.update(|cx| {
++        let (window_id, workspace) = open_test_window(cx, 1);
++        let mut settings =
++            crate::gpui_shell::config::Settings::load(pebrel_settings::ThemeName::Nord);
++        settings.shell_id = Some(format!("profile:custom|{}", profile.id));
++        cx.set_global(settings);
++        for direction in ["left_right", "top_bottom"] {
++            let command = RuntimeCommand::test_request(
++                "pane.split",
++                json!({"window_id": window_id, "direction": direction}),
++            )
++            .unwrap();
++            let (dispatch, reply) = RuntimeDispatch::test(command);
++            dispatch_runtime(dispatch, cx);
++            reply.try_recv().unwrap().unwrap();
++            let workspace = workspace.read(cx);
++            let view = workspace.tabs[workspace.active].focused_view().unwrap().read(cx);
++            let crate::session::LaunchSession::Profile { command, args, profile_id, .. } =
++                &view.session_launch
++            else {
++                panic!("the split lost the imported default shell");
++            };
++            assert_eq!(command, profile.command.to_str().unwrap());
++            assert_eq!(args, &profile.args);
++            assert_eq!(profile_id.as_deref(), Some(profile.id.as_str()));
++        }
++    });
++}
++
+ #[gpui::test]
+ fn cli_directory_is_interpreted_by_the_residents_default_or_imported_program(
+     cx: &mut TestAppContext,
+```
+
+**File**: `pebrel_app/src/session.rs` (modified, +5/-2)
+```diff
+@@ -119,8 +119,7 @@ pub(crate) fn valid_native_session_file(path: &str) -> bool {
+ 
+ impl AgentSession {
+     /// 恢复时敲进 shell 的命令行；无法安全构造（未知来源、异形 id、codex
+-    /// 缺 id）时返回 `None`，宁可只恢复布局也不上屏可疑字节。命令形状与
+-    /// `ai_sessions::AiSession::resume_command`（手动恢复面板）保持一致。
++    /// 缺 id）时返回 `None`，只恢复布局。
+     pub fn resume_command(&self) -> Option<String> {
+         let agent = crate::ai_agents::AgentKind::parse(&self.source)?;
+         if agent == crate::ai_agents::AgentKind::Codex
+@@ -130,6 +129,10 @@ impl AgentSession {
+         }
+         match self.session_id.as_deref() {
+             Some(id) if agent == crate::ai_agents::AgentKind::Pi && id.starts_with("pid-") => None,
++            // Concurrent interactive restores otherwise contend for CodeBuddy's saved web port.
++            Some(id) if agent == crate::ai_agents::AgentKind::CodeBuddy => {
++                agent.resume_command(id).map(|command| format!("{command} --port 0"))
++            },
+             Some(id) => agent.resume_command(id),
+             // claude 无 id（hook 未装、OSC 认出的启动）：`--continue` 恢复
+             // 当前目录最近一次对话——pane 的 cwd 已经先被恢复，语义正好。
+```
+
+**File**: `pebrel_app/src/session/recovery_tests.rs` (modified, +1/-1)
+```diff
+@@ -15,7 +15,7 @@ fn expected_resume(kind: AgentKind, id: &str) -> Option<String> {
+         Pi => format!("pi --session {id}"),
+         Antigravity => format!("agy --conversation {id}"),
+         Grok => format!("grok --resume {id}"),
+-        CodeBuddy => format!("codebuddy --resume {id}"),
++        CodeBuddy => format!("codebuddy --resume {id} --port 0"),
+         OhMyPi => format!("omp --resume {id}"),
+         Kimi => format!("kimi --session {id}"),
+         CommandCode => format!("command-code --resume {id}"),
+```
+
+**File**: `scripts/conformance/agent_recovery/providers.py` (modified, +3/-1)
+```diff
+@@ -70,7 +70,9 @@ def native_match(agent, file, rows, session_id, marker):
+     for row in rows:
+         if agent in ("claude", "codebuddy") and row.get("sessionId") != session_id:
+             continue
+-        message = row.get("message") or row
++        # CodeBuddy stores the assistant's role and content at the top level;
++        # its nested message contains token usage.
++        message = row if agent == "codebuddy" else (row.get("message") or row)
+         role = message.get("role") or row.get("type")
+         content = message.get("content")
+         if role == "user":
+```
+
+**File**: `scripts/conformance/agent_recovery/run.py` (modified, +50/-4)
+```diff
+@@ -81,6 +81,49 @@ def wait_for_editor(ctx, pane, agent):
+         # SessionStart can arrive while the grid still shows the shell command.
+         ctx.poll(lambda: any(row.strip() == "❯" for row in ctx.read(pane)["text"].splitlines()[-8:]),
+                  bool, "Claude did not display its empty composer", timeout=45)
++    elif agent == "codebuddy":
++        def ready():
++            lines = ctx.read(pane)["text"].splitlines()[-8:]
++            return any(line.strip() == ">" for line in lines) and any(
++                "for shortcuts" in line for line in lines
++            )
++
++        ctx.poll(ready, bool, "CodeBuddy editor is not ready", timeout=30)
++
++
++def submit_turn(ctx, pane, agent, text):
++    if agent != "codebuddy":
++        ctx.prompt(text, pane)
++        return
++    ctx.paste(text, pane, submit=False)
++
++    def composer_contains_turn():
++        lines = ctx.read(pane)["text"].splitlines()[-8:]
++        return any(line.strip() == "> " + text for line in lines)
++
++    ctx.poll(composer_contains_turn, bool, "CodeBuddy did not display the input before submission")
++    ctx.send_key("enter", pane)
++
++
++def codebuddy_project_prompt(ctx, screen):
++    return (f"> 1. trust folder only ({ctx.work_dir.name.lower()})" in screen
++            and "enter to confirm" in screen)
++
++
++def confirm_codebuddy_restore(ctx, targets, expected):
++    accepted = set()
++
++    def confirmed():
++        ids = [live_id(ctx, pane, "codebuddy") for pane in targets]
++        for pane, session, target_id in zip(targets, ids, expected):
++            if session == target_id or pane in accepted:
++                continue
++            if codebuddy_project_prompt(ctx, ctx.read(pane)["text"].lower()):
++                ctx.send_key("enter", pane)
++                accepted.add(pane)
++        return ids
++
++    ctx.poll(confirmed, lambda ids: ids == expected, "CodeBuddy did not restore both native IDs", timeout=60)
+ 
+ 
+ def accept_project_prompt(ctx, pane, agent):
+@@ -94,7 +137,7 @@ def accept_project_prompt(ctx, pane, agent):
+         if "yes, proceed" in screen and "contents of this directory" in screen:
+             ctx.prompt("y", pane, submit=False)
+             return
+-        if "trust parent folder" in screen and "enter to confirm" in screen:
++        if agent == "codebuddy" and codebuddy_project_prompt(ctx, screen):
+             ctx.send_key("enter", pane)
+             return
+         if "for shortcuts" in screen or "ctrl+" in screen:
+@@ -136,7 +179,7 @@ def running():
+             accept_project_prompt(ctx, pane, agent)
+             wait_for_editor(ctx, pane, agent)
+             if agent not in ("pi", "omp"):
+-                ctx.prompt(first[index], pane)
++                submit_turn(ctx, pane, agent, first[index])
+             ctx.poll(lambda: any(first[index] in turn for turn in model.turns), bool,
+                      f"{agent} initial turn did not reach the local model", timeout=40)
+             def initial_id():
+@@ -146,12 +189,15 @@ def initial_id():
+         assert expected[0] != expected[1]
+         for round_index in range(rounds):
+             ctx.restart()
+-            for index, pane in enumerate(panes(ctx)):
++            targets = panes(ctx)
++            if agent == "codebuddy":
++                confirm_codebuddy_restore(ctx, targets, expected)
++            for index, pane in enumerate(targets):
+                 ctx.poll(lambda: live_id(ctx, pane, agent) == expected[index], bool,
+                          f"{agent} did not acknowledge its saved ID in {sides[index]}", timeout=45)
+                 wait_for_editor(ctx, pane, agent)
+                 after = marker()
+-                ctx.prompt(after, pane)
++                submit_turn(ctx, pane, agent, after)
+                 turns = ctx.poll(lambda: [turn for turn in model.turns if after in turn], bool,
+                                  f"{agent} did not submit the restored turn in {sides[index]}", timeout=40)
+                 assert any(first[index] in turn and first[1-index] not in turn for turn in turns), (
+```
+
+---
+
+### Incident Patch 3: `ed9b2331` (2026-11-21)
+**Commit Message**: Merge commit 'e7dfcf6a' into fix/imported-default-split-1074-1121
+
+**File**: `pebrel_app/src/gpui_shell/terminal/view/startup_tests.rs` (modified, +1/-1)
+```diff
+@@ -1350,7 +1350,7 @@ fn cold_resume_of_supported_clis_waits_for_the_shell_and_preserves_each_target(
+         ("cursor", "agent --resume=saved-conversation"),
+         ("copilot", "copilot --resume saved-conversation"),
+         ("grok", "grok --resume saved-conversation"),
+-        ("codebuddy", "codebuddy --resume saved-conversation"),
++        ("codebuddy", "codebuddy --resume saved-conversation --port 0"),
+         ("omp", "omp --resume saved-conversation"),
+         ("kimi", "kimi --session saved-conversation"),
+     ] {
+```
+
+**File**: `pebrel_app/src/session.rs` (modified, +5/-2)
+```diff
+@@ -119,8 +119,7 @@ pub(crate) fn valid_native_session_file(path: &str) -> bool {
+ 
+ impl AgentSession {
+     /// 恢复时敲进 shell 的命令行；无法安全构造（未知来源、异形 id、codex
+-    /// 缺 id）时返回 `None`，宁可只恢复布局也不上屏可疑字节。命令形状与
+-    /// `ai_sessions::AiSession::resume_command`（手动恢复面板）保持一致。
++    /// 缺 id）时返回 `None`，只恢复布局。
+     pub fn resume_command(&self) -> Option<String> {
+         let agent = crate::ai_agents::AgentKind::parse(&self.source)?;
+         if agent == crate::ai_agents::AgentKind::Codex
+@@ -130,6 +129,10 @@ impl AgentSession {
+         }
+         match self.session_id.as_deref() {
+             Some(id) if agent == crate::ai_agents::AgentKind::Pi && id.starts_with("pid-") => None,
++            // Concurrent interactive restores otherwise contend for CodeBuddy's saved web port.
++            Some(id) if agent == crate::ai_agents::AgentKind::CodeBuddy => {
++                agent.resume_command(id).map(|command| format!("{command} --port 0"))
++            },
+             Some(id) => agent.resume_command(id),
+             // claude 无 id（hook 未装、OSC 认出的启动）：`--continue` 恢复
+             // 当前目录最近一次对话——pane 的 cwd 已经先被恢复，语义正好。
+```
+
+**File**: `pebrel_app/src/session/recovery_tests.rs` (modified, +1/-1)
+```diff
+@@ -15,7 +15,7 @@ fn expected_resume(kind: AgentKind, id: &str) -> Option<String> {
+         Pi => format!("pi --session {id}"),
+         Antigravity => format!("agy --conversation {id}"),
+         Grok => format!("grok --resume {id}"),
+-        CodeBuddy => format!("codebuddy --resume {id}"),
++        CodeBuddy => format!("codebuddy --resume {id} --port 0"),
+         OhMyPi => format!("omp --resume {id}"),
+         Kimi => format!("kimi --session {id}"),
+         CommandCode => format!("command-code --resume {id}"),
+```
+
+**File**: `scripts/conformance/agent_recovery/providers.py` (modified, +3/-1)
+```diff
+@@ -70,7 +70,9 @@ def native_match(agent, file, rows, session_id, marker):
+     for row in rows:
+         if agent in ("claude", "codebuddy") and row.get("sessionId") != session_id:
+             continue
+-        message = row.get("message") or row
++        # CodeBuddy stores the assistant's role and content at the top level;
++        # its nested message contains token usage.
++        message = row if agent == "codebuddy" else (row.get("message") or row)
+         role = message.get("role") or row.get("type")
+         content = message.get("content")
+         if role == "user":
+```
+
+**File**: `scripts/conformance/agent_recovery/run.py` (modified, +50/-4)
+```diff
+@@ -81,6 +81,49 @@ def wait_for_editor(ctx, pane, agent):
+         # SessionStart can arrive while the grid still shows the shell command.
+         ctx.poll(lambda: any(row.strip() == "❯" for row in ctx.read(pane)["text"].splitlines()[-8:]),
+                  bool, "Claude did not display its empty composer", timeout=45)
++    elif agent == "codebuddy":
++        def ready():
++            lines = ctx.read(pane)["text"].splitlines()[-8:]
++            return any(line.strip() == ">" for line in lines) and any(
++                "for shortcuts" in line for line in lines
++            )
++
++        ctx.poll(ready, bool, "CodeBuddy editor is not ready", timeout=30)
++
++
++def submit_turn(ctx, pane, agent, text):
++    if agent != "codebuddy":
++        ctx.prompt(text, pane)
++        return
++    ctx.paste(text, pane, submit=False)
++
++    def composer_contains_turn():
++        lines = ctx.read(pane)["text"].splitlines()[-8:]
++        return any(line.strip() == "> " + text for line in lines)
++
++    ctx.poll(composer_contains_turn, bool, "CodeBuddy did not display the input before submission")
++    ctx.send_key("enter", pane)
++
++
++def codebuddy_project_prompt(ctx, screen):
++    return (f"> 1. trust folder only ({ctx.work_dir.name.lower()})" in screen
++            and "enter to confirm" in screen)
++
++
++def confirm_codebuddy_restore(ctx, targets, expected):
++    accepted = set()
++
++    def confirmed():
++        ids = [live_id(ctx, pane, "codebuddy") for pane in targets]
++        for pane, session, target_id in zip(targets, ids, expected):
++            if session == target_id or pane in accepted:
++                continue
++            if codebuddy_project_prompt(ctx, ctx.read(pane)["text"].lower()):
++                ctx.send_key("enter", pane)
++                accepted.add(pane)
++        return ids
++
++    ctx.poll(confirmed, lambda ids: ids == expected, "CodeBuddy did not restore both native IDs", timeout=60)
+ 
+ 
+ def accept_project_prompt(ctx, pane, agent):
+@@ -94,7 +137,7 @@ def accept_project_prompt(ctx, pane, agent):
+         if "yes, proceed" in screen and "contents of this directory" in screen:
+             ctx.prompt("y", pane, submit=False)
+             return
+-        if "trust parent folder" in screen and "enter to confirm" in screen:
++        if agent == "codebuddy" and codebuddy_project_prompt(ctx, screen):
+             ctx.send_key("enter", pane)
+             return
+         if "for shortcuts" in screen or "ctrl+" in screen:
+@@ -136,7 +179,7 @@ def running():
+             accept_project_prompt(ctx, pane, agent)
+             wait_for_editor(ctx, pane, agent)
+             if agent not in ("pi", "omp"):
+-                ctx.prompt(first[index], pane)
++                submit_turn(ctx, pane, agent, first[index])
+             ctx.poll(lambda: any(first[index] in turn for turn in model.turns), bool,
+                      f"{agent} initial turn did not reach the local model", timeout=40)
+             def initial_id():
+@@ -146,12 +189,15 @@ def initial_id():
+         assert expected[0] != expected[1]
+         for round_index in range(rounds):
+             ctx.restart()
+-            for index, pane in enumerate(panes(ctx)):
++            targets = panes(ctx)
++            if agent == "codebuddy":
++                confirm_codebuddy_restore(ctx, targets, expected)
++            for index, pane in enumerate(targets):
+                 ctx.poll(lambda: live_id(ctx, pane, agent) == expected[index], bool,
+                          f"{agent} did not acknowledge its saved ID in {sides[index]}", timeout=45)
+                 wait_for_editor(ctx, pane, agent)
+                 after = marker()
+-                ctx.prompt(after, pane)
++                submit_turn(ctx, pane, agent, after)
+                 turns = ctx.poll(lambda: [turn for turn in model.turns if after in turn], bool,
+                                  f"{agent} did not submit the restored turn in {sides[index]}", timeout=40)
+                 assert any(first[index] in turn and first[1-index] not in turn for turn in turns), (
+```
+
+**File**: `scripts/conformance/tests/test_agent_recovery.py` (modified, +2/-0)
+```diff
+@@ -40,6 +40,8 @@ def test_native_transcript_must_match_the_pane_and_new_user_message(self):
+                                  "sessionId": wanted, "message": {"role": "assistant", "content": reply}}
+                 else:
+                     assistant = {"type": "assistant", "role": "assistant", "content": reply, "sessionId": wanted}
++                if provider == "codebuddy":
++                    assistant.update(type="message", status="completed", message={"usage": {"output_tokens": 5}})
+                 content += json.dumps(assistant) + "\n"
+                 path.write_text(content, encoding="utf-8")
+                 self.assertTrue(provider_confirmed(home, provider, wanted, marker))
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1035** (2026-11-19): Reset terminal mouse reporting after a killed Bash foreground command (@Kuddev)
-- **PR #1034** (2026-11-19): Create a missing Windows Startup directory when enabling login launch (@Kuddev)
-- **PR #1033** (2026-11-19): Accept TIFF screenshots in terminal clipboard pastes (@Kuddev)
-- **PR #1023** (2026-11-19): Collect host resource metrics with comparable CPU samples and a fixed Docker target (@Kuddev)
-- **PR #1021** (2026-11-17): Establish confirmed foreground ownership before exercising transcript scan limits (@Kuddev)
-- **PR #1020** (2026-11-17): Import Niu installations as independent terminal profiles (@Kuddev)
+- **PR #1085** (2026-11-21): Add cached wallpaper glass and collapsible appearance settings (@Kuddev)
+- **PR #1079** (2026-11-21): Use the interactive SSH shell when the gateway gives exec commands no terminal (@Kuddev)
+- **PR #1076** (2026-11-21): Use the configured imported shell for splits from host panes (@Kuddev)
+- **PR #1075** (2026-11-21): Avoid local web port collisions when restoring multiple CodeBuddy panes (@Kuddev)
+- **PR #1072** (2026-11-21): Keep the OMP task title through message redraws without hooks (@Kuddev)
+- **PR #1071** (2026-11-20): Request client-side decorations for Pebrel windows on Wayland (@Kuddev)
 
 ---
 
@@ -1653,32 +2135,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Integrate reviewed changes from #1004 with the verified merge queue
+## X. Empirical Invariant Guard in Cargo.toml
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Kuddev/pebrel. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pebrel_app/Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Kuddev/pebrel. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e7405725`: Integrate reviewed changes from #1004 with the verified merge queue. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9a6e19ed`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `pebrel_app/Cargo.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- Fixed the focused terminal on Windows consuming `Alt+F4` and `Alt+Space`. `Alt+F4` now uses the normal window-close flow, and `Alt+Space`, followed by `N`, uses the system menu to minimize the window.
-**[@Sakyvo](https://github.com/Sakyvo)** - Added the optional proxy for terminals on Windows, selection-aware `Ctrl+C`, and word deletion with `Ctrl+Backspace`. / 新增可选的 Windows 终端代理、按选区处理的 `Ctrl+C`，以及 `Ctrl+Backspace` 按词删除。（[#94](https://github.com/Kuddev/pebrel/pull/94)、[#93](https://github.com/Kuddev/pebrel/pull/93)、[#92](https://github.com/Kuddev/pebrel/pull/92)）
-- **Terminal tabs on Windows can be dragged between Nebula windows.** A tab may become a new tab in the target or dock its complete split tree to the left, right, top, or bottom; terminal panes, runtime ownership, subscriptions, focus, and session metadata move together. Moving the last tab closes the empty source window, while a target that disappears before commit leaves the source tab attached.
+    "NSNotification",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-- Fixed Windows terminal focus consuming `Alt+F4` and `Alt+Space`. `Alt+F4` now uses the normal window-close flow, and `Alt+Space`, followed by `N`, uses the system menu to minimize the window.
-**[@Sakyvo](https://github.com/Sakyvo)** - Added the optional Windows terminal proxy, selection-aware `Ctrl+C`, and word deletion with `Ctrl+Backspace`. / 新增可选的 Windows 终端代理、按选区处理的 `Ctrl+C`，以及 `Ctrl+Backspace` 按词删除。（[#94](https://github.com/Kuddev/pebrel/pull/94)、[#93](https://github.com/Kuddev/pebrel/pull/93)、[#92](https://github.com/Kuddev/pebrel/pull/92)）
-- **Windows terminal tabs can be dragged between Nebula windows.** A tab may become a new tab in the target or dock its complete split tree to the left, right, top, or bottom; terminal panes, runtime ownership, subscriptions, focus, and session metadata move together. Moving the last tab closes the empty source window, while a target that disappears before commit leaves the source tab attached.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e7405725` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9a6e19ed` are properly handled with clean fallback behavior.

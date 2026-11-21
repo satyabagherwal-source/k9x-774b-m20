@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T13:25:53.978Z",
+  "timestamp": "2026-11-21T16:40:22.782Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-callstack-react-native-paper-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [callstack-react-native-paper-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T13:25:53.978Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T16:40:22.782Z`  
 > **Learning ID**: `LEARN-EVO-callstack-react-native-paper-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/callstack-react-native-paper-learnings.md`  
 > **Source**: github ([https://github.com/callstack/react-native-paper](https://github.com/callstack/react-native-paper))  
-> **Source Version**: `9845c6f4`  
+> **Source Version**: `7ab2640c`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T13:25:40.532Z  
+> **Timestamp**: 2026-11-21T16:40:09.259Z  
 > **Learning ID**: `learn-github-callstack-react-native-paper`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/callstack-react-native-paper-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/callstack/react-native-paper](https://github.com/callstack/react-native-paper))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T13:25:40.527Z  
+> **Harvest Timestamp**: 2026-11-21T16:40:09.252Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Material Design for React Native (Android & iOS)
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 14504 stars
+- **Stars / Engagement**: 14505 stars
 
 ---
 
@@ -375,20 +375,35 @@ export const createConfiguredFontNavigationTheme = (
 
 ### Core Architecture Module: `src/components/Appbar/utils.ts`
 ```
-import React from 'react';
-import type { ColorValue, StyleProp, ViewStyle } from 'react-native';
-import { StyleSheet } from 'react-native';
+import { I18nManager } from 'react-native';
+import type { ColorValue } from 'react-native';
 
 import { white } from '../../theme/colors';
-import type { InternalTheme, ThemeProp } from '../../theme/types';
+import type { InternalTheme } from '../../theme/types';
 
-export type AppbarModes = 'small' | 'medium' | 'large' | 'center-aligned';
+export type AppbarModes =
+  | 'small'
+  | 'medium'
+  | 'large'
+  | 'center-aligned'
+  | 'medium-flexible'
+  | 'large-flexible';
 
-export type AppbarChildProps = {
-  isLeading?: boolean;
-  color: string;
-  style?: StyleProp<ViewStyle>;
-};
+export const APPBAR_HORIZONTAL_PADDING = 4;
+
+// Width of an icon button with its margin.
+export const APPBAR_ACTION_WIDTH = 52;
+
+// Height of the row with the controls of the `medium`, `large` and flexible modes.
+export const APPBAR_CONTROLS_HEIGHT = 64;
+
+// Space above the controls of these modes, which centers them in the row,
+// at the same height as in the `small` mode.
+export const APPBAR_CONTROLS_OFFSET =
+  (APPBAR_CONTROLS_HEIGHT - APPBAR_ACTION_WIDTH) / 2;
+
+export const isFlexibleMode = (mode: AppbarModes) =>
+  mode === 'medium-flexible' || mode === 'large-flexible';
 
 export const getAppbarBackgroundColor = (
   theme: InternalTheme,
@@ -410,7 +425,10 @@ export const getAppbarBackgroundColor = (
 export const getAppbarColor = ({
   color,
   isDark,
-}: BaseProps & { color: string }) => {
+}: {
+  color?: ColorValue;
+  isDark: boolean;
+}): ColorValue | undefined => {
   if (typeof color !== 'undefined') {
     return color;
   }
@@ -422,27 +440,20 @@ export const getAppbarColor = ({
   return undefined;
 };
 
-type BaseProps = {
-  isDark: boolean;
-};
-
-type RenderAppbarContentProps = BaseProps & {
-  children: React.ReactNode;
-  shouldCenterContent?: boolean;
-  renderOnly?: (string | boolean)[];
-  renderExcept?: string[];
-  mode?: AppbarModes;
-  theme?: ThemeProp;
-};
-
 export const DEFAULT_APPBAR_HEIGHT = 56;
 const MD3_DEFAULT_APPBAR_HEIGHT = 64;
 
+/**
+ * Height of the content area of the Appbar, without the safe area insets.
+ * The flexible modes use it as the minimum height.
+ */
 export const modeAppbarHeight = {
   small: MD3_DEFAULT_APPBAR_HEIGHT,
   medium: 112,
   large: 152,
   'center-aligned': MD3_DEFAULT_APPBAR_HEIGHT,
+  'medium-flexible': 112,
+  'large-flexible': 120,
 };
 
 export const modeTextVariant = {
@@ -450,85 +461,42 @@ export const modeTextVariant = {
   medium: 'headlineSmall',
   large: 'headlineMedium',
   'center-aligned': 'titleLarge',
+  'medium-flexible': 'headlineMedium',
+  'large-flexible': 'displaySmall',
 } as const;
 
-export const filterAppbarActions = (
-  children: React.ReactNode,
-  isLeading = false
+/**
+ * Margins that center the title of the `center-aligned` Appbar,
+ * from the width of the actions on each side of it. Wider actions on one side
+ * than room for two actions leave the title off-center, as there is not
+ * enough space to center it.
+ */
+export const getCenteringMargins = (
+  sides: { left: number; right: number } | null
 ) => {
-  return React.Children.toArray(children).filter((child) => {
-    if (!React.isValidElement<AppbarChildProps>(child)) return false;
-    return isLeading ? child.props.isLeading : !child.props.isLeading;
-  });
+  if (!sides) {
+    return { left: 0, right: 0 };
+  }
+
+  const { left, right } = sides;
+
+  if (Math.max(left, right) > 2 * APPBAR_ACTION_WIDTH) {
+    return { left: 0, right: 0 };
+  }
+
+  return { left: Math.max(0, right - left), right: Math.max(0, left - right) };
 };
 
-export const renderAppbarContent = ({
-  children,
-  isDark,
-  shouldCenterContent = false,
-  renderOnly,
-  renderExcept,
-  mode = 'small',
-  theme,
-}: RenderAppbarContentProps) => {
-  return React.Children.toArray(children)
-    .filter((child) => child != null && typeof child !== 'boolean')
-    .filter((child) =>
-      // @ts-expect-error: TypeScript complains about the type of type but it doesn't matter
-      renderExcept ? !renderExcept.includes(child.type.displayName) : child
-    )
-    .filter((child) =>
-      // @ts-expect-error: TypeScript complains about the type of type but it doesn't matter
-      renderOnly ? renderOnly.includes(child.type.displayName) : child
-    )
-    .map((child, i) => {
-      if (
-        !React.isValidElement<AppbarChildProps>(child) ||
-        ![
-          'Appbar.Content',
-          'Appbar.Action',
-          'Appbar.BackAction',
-          'Tooltip',
-        ].includes(
-          // @ts-expect-error: TypeScript complains about the type of type but it doesn't matter
-          child.type.displayName
-        )
-      ) {
-        return child;
-      }
+/**
+ * Whether React Native swaps the left and right of the styles, which it does in RTL,
+ * so they apply to the right and the left of the screen. The layout it reports
+ * is not swapped.
+ */
+export const isLeftRightSwapped = () => {
+  const constants = I18nManager.getConstants?.();
 
-      const props: {
-        color?: string;
-        style?: StyleProp<ViewStyle>;
-        mode?: AppbarModes;
-        theme?: ThemeProp;
-      } = {
-        theme,
-        color: getAppbarColor({ color: child.props.color, isDark }),
-      };
-
-      // @ts-expect-error: TypeScript complains about the type of type but it doesn't matter
-      if (child.type.displayName === 'Appbar.Content') {
-        props.mode = mode;
-        props.style = [
-          i === 0 && !shouldCenterContent && styles.v3Spacing,
-          shouldCenterContent && styles.centerAlignedContent,
-          child.props.style,
-        ];
-        props.color;
-      }
-      return React.cloneElement(child, props);
-    });
+  return !!constants?.isRTL && !!constants.doLeftAndRightSwapInRTL;
 };
-
-const styles = StyleSheet.create({
-  centerAlignedContent: {
-    alignItems: 'center',
-  },
-  v3Spacing: {
-    marginLeft: 12,
-  },
-});
 
 ```
 
@@ -1396,157 +1364,183 @@ export const getDimensions = ({
 ```
 import type { ColorValue } from 'react-native';
 
+import { IconButtonTokens } from './tokens';
+import type { ColorSet, Mode, Shape, Size, Width } from './tokens';
 import { tokens } from '../../theme/tokens';
 import type { InternalTheme } from '../../theme/types';
+import { resolveCornerRadius } from '../../theme/utils/shape';
+import type { ShapeToken } from '../../theme/utils/shape';
 
 const stateOpacity = tokens.md.sys.state.opacity;
 
-type IconButtonMode = 'outlined' | 'contained' | 'contained-tonal';
-
-type BaseProps = {
-  theme: InternalTheme;
-  isMode: (mode: IconButtonMode) => boolean;
-  disabled?: boolean;
-  selected?: boolean;
-};
-
-const getBackgroundColor = ({
-  theme,
-  isMode,
-  disabled,
-  selected,
-  customContainerColor,
-}: BaseProps & { customContainerColor?: ColorValue }) => {
-  if (disabled) {
-    if (isMode('contained') || isMode('contained-tonal')) {
-      return theme.colors.onSurface;
-    }
-  }
-
-  if (typeof customContainerColor !== 'undefined') {
-    return customContainerColor;
-  }
-
-  if (isMode('contained')) {
-    if (selected) {
-      return theme.colors.primary;
-    }
-    return theme.colors.surfaceVariant;
-  }
-
-  if (isMode('contained-tonal')) {
-    if (selected) {
-      return theme.colors.secondaryContainer;
-    }
-    return theme.colors.surfaceVariant;
-  }
-
-  if (isMode('outlined')) {
-    if (selected) {
-      return theme.colors.inverseSurface;
-    }
-  }
-
-  return undefined;
-};
-
-const getIconColor = ({
-  theme,
-  isMode,
-  disabled,
-  selected,
-  customIconColor,
-}: BaseProps & { customIconColor?: ColorValue }) => {
-  if (disabled) {
-    return theme.colors.onSurface;
-  }
-
-  if (typeof customIconColor !== 'undefined') {
-    return customIconColor;
-  }
-
-  if (isMode('contained')) {
-    if (selected) {
-      return theme.colors.onPrimary;
-    }
-    return theme.colors.primary;
-  }
-
-  if (isMode('contained-tonal')) {
-    if (selected) {
-      return theme.colors.onSecondaryContainer;
-    }
-    return theme.colors.onSurfaceVariant;
-  }
-
-  if (isMode('outlined')) {
-    if (selected) {
-      return theme.colors.inverseOnSurface;
-    }
-    return theme.colors.onSurfaceVariant;
-  }
-
-  if (selected) {
-    return theme.colors.primary;
-  }
-  return theme.colors.onSurfaceVariant;
-};
-
-export const getIconButtonColor = ({
-  theme,
-  disabled,
-  mode,
-  selected,
-  customIconColor,
-  customContainerColor,
-}: {
-  theme: InternalTheme;
-  disabled?: boolean;
-  selected?: boolean;
-  mode?: IconButtonMode;
-  customIconColor?: ColorValue;
-  customContainerColor?: ColorValue;
-}): {
+export type IconButtonColors = {
   iconColor: ColorValue;
   iconOpacity: number;
   backgroundColor: ColorValue | undefined;
-  borderColor: ColorValue;
   backgroundOpacity: number;
-} => {
-  const isMode = (modeToCompare: IconButtonMode) => {
-    return mode === modeToCompare;
-  };
+  borderColor: ColorValue;
+  borderWidth: number;
+};
 
-  const baseIconColorProps = {
-    theme,
-    isMode,
-    disabled,
-    selected,
-  };
+export type IconButtonDimensions = {
+  width: number;
+  height: number;
+  iconSize: number;
+  outlineWidth: number;
+  restingRadius: number;
+  pressedRadius: number;
+};
 
-  const iconColor = getIconColor({
-    ...baseIconColorProps,
-    customIconColor,
-  });
+const colorSetFor = (mode: Mode, selected: boolean | undefined): ColorSet => {
+  if (selected === true) {
+    return IconButtonTokens.modes[mode].selected;
+  }
+  if (selected === false) {
+    return IconButtonTokens.modes[mode].unselected;
+  }
+  return IconButtonTokens.modes[mode].default;
+};
 
+const hasDisabledContainer = (
+  mode: Mode,
+  selected: boolean | undefined
+): boolean => {
+  if (mode === 'filled' || mode === 'tonal') {
+    return true;
+  }
+  return mode === 'outlined' && selected === true;
+};
+
+/**
+ * Resolve container, icon, and outline colors for an icon button.
+ *
+ * A disabled button always takes the disabled icon color, whatever
+ * `customIconColor` says.
+ *
+ * `selected` is a tri-state: `undefined` is the default (non-toggle)
+ * appearance; `true`/`false` are the toggle-ON / toggle-OFF color sets.
+ */
+export const getIconButtonColor = ({
+  theme,
+  disabled,
+  mode = 'standard',
+  selected,
+  customIconColor,
+  customContainerColor,
+  outlineWidth = 0,
+}: {
+  theme: InternalTheme;
+  disabled?: boolean;
+  mode?: Mode;
+  selected?: boolean;
+  customIconColor?: ColorValue;
+  customContainerColor?: ColorValue;
+  outlineWidth?: number;
+}): IconButtonColors => {
   const iconOpacity = disabled ? stateOpacity.disabled : stateOpacity.enabled;
+  const usesDisabledContainer =
+    Boolean(disabled) && hasDisabledContainer(mode, selected);
 
-  const backgroundColor = getBackgroundColor({
-    ...baseIconColorProps,
-    customContainerColor,
-  });
+  if (usesDisabledContainer) {
+    return {
+      iconColor: theme.colors[IconButtonTokens.disabled.icon],
+      iconOpacity,
+      backgroundColor: theme.colors[IconButtonTokens.disabled.container],
+      backgroundOpacity: IconButtonTokens.disabled.containerOpacity,
+      borderColor: theme.colors[IconButtonTokens.disabled.outline],
+      borderWidth: 0,
+    };
+  }
 
-  const backgroundOpacity =
-    disabled && (isMode('contained') || isMode('contained-tonal'))
-      ? stateOpacity.disabled
-      : stateOpacity.enabled;
+  const set = colorSetFor(mode, selected);
 
   return {
-    iconColor,
+    iconColor: disabled
+      ? theme.colors[IconButtonTokens.disabled.icon]
+      : (customIconColor ?? theme.colors[set.icon]),
     iconOpacity,
-    backgroundColor,
-    borderColor: theme.colors.outlineVariant,
-    backgroundOpacity,
+    backgroundColor:
+      customContainerColor ??
+      (set.container ? theme.colors[set.container] : undefined),
+    backgroundOpacity: stateOpacity.enabled,
+    borderColor: theme.colors[set.outline ?? 'outlineVariant'],
+    borderWidth: set.outline ? outlineWidth : 0,
+  };
+};
+
+/**
+ * Resting container shape. Toggle-ON inverts round↔square; pressed uses
+ * the shared pressed shape (same for round and square).
+ */
+export const resolveShapeToken = ({
+  size = 'small',
+  shape = 'round',
+  selected,
+  pressed = false,
+}: {
+  size?: Size;
+  shape?: Shape;
+  selected?: boolean;
+  pressed?: boolean;
+}): ShapeToken => {
+  const spec = IconButtonTokens.sizes[size];
+  if (pressed) {
+    return spec.pressedShape;
+  }
+  const inverted = selected === true;
+  if (shape === 'round') {
+    return inverted ? spec.squareShape : 'full';
+  }
+  return inverted ? 'full' : spec.squareShape;
+};
+
+export const getDimensions = ({
+  theme,
+  size = 'small',
+  width = 'default',
+  shape = 'round',
+  selected,
+  iconSize,
+}: {
+  theme: InternalTheme;
+  size?: Size;
+  width?: Width;
+  shape?: Shape;
+  selected?: boolean;
+  iconSize?: number;
+}): IconButtonDimensions => {
+  const spec = IconButtonTokens.sizes[size];
+  const padding = spec.widths[width];
+  const resolvedIcon = iconSize ?? spec.icon;
+  const height = spec.containerHeight;
+  // From the spec icon, not `iconSize`: the container keeps the scale of its
+  // `size` and a `default` width stays square when the glyph is resized.
+  const containerWidth = spec.icon + padding.leading + padding.trailing;
+
+  const restingToken = resolveShapeToken({
+    size,
+    shape,
+    selected,
+    pressed: false,
+  });
+  const pressedToken = resolveShapeToken({
+    size,
+    shape,
+    selected,
+    pressed: true,
+  });
+
+  const roundRadius = height / 2;
+  const resolveRadius = (token: ShapeToken) =>
+    token === 'full' ? roundRadius : resolveCornerRadius(theme, token);
+
+  return {
+    width: containerWidth,
+    height,
+    iconSize: resolvedIcon,
+    outlineWidth: spec.outlineWidth,
+    restingRadius: resolveRadius(restingToken),
+    pressedRadius: resolveRadius(pressedToken),
   };
 };
 
@@ -1558,11 +1552,11 @@ export const getIconButtonColor = ({
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5187** (2026-11-09): **TextInput without a label is invisible while it is empty and unfocused**
-  *Symptoms*: ### Current behaviour  A `TextInput` with no `label` is invisible while it is empty and unfocused: its input, its placeholder and any prefix or suffix have opacity 0, so only the outline shows until the field is focused. The wrapper around the native input takes the label float opacity (`animatedContainerStyle` in `src/components/TextInput/hooks.ts`, applied at `TextInput.tsx:401`) whether or not there is a label, and that value is 0 while the field is empty and unfocused. In 5.x the placeholder was visible.  ### Expected behaviour  A `TextInput` without a label shows its input and placeholder at full opacity at all times. Only a `TextInput` with a label hides the input while the label rests in its place.  ### How to reproduce?  ```tsx const [query, setQuery] = React.useState('');  <TextInput   variant="outlined"   placeholder="Search for plugins..."   value={query}   onChangeText={setQuery} /> ```  1. Render it: only the outline shows, with no placeholder. 2. In a test, `expect(screen.getByPlaceholderText('Search for plugins...')).toBeVisible()` fails with "Received element is not visible".  ### What have you tried so far?  Applying `animatedContainerStyle` only when `label` is set keeps the floating label behaviour and shows the placeholder.  ### Your Environment  | software | version | --- | --- | react-native | 0.88.1 | react-native-paper | 6.0.0-alpha.1 and `main` at c8d8bab 
+- **Issue #5267** (2026-11-20): **TouchableRipple: on Android, a press that disables the touchable leaves its ripple drawn**
+  *Symptoms*: ### Current behaviour On Android, when a press disables a TouchableRipple (for example an `onPressIn` that sets `disabled`), the pressed ripple stays drawn after the press ends. It's still there after the touchable is enabled again, and goes only with the next press. This affects everything built on TouchableRipple, such as IconButton. iOS and web leave nothing behind. With the default ripple it's a faint tint; with a strong `rippleColor` it's plainly visible.  ### Expected behaviour No pressed layer once the press ends, as on iOS and web.  ### How to reproduce? 1. Render a touchable that disables itself on press-in:    ```tsx    const [disabled, setDisabled] = React.useState(false);     <TouchableRipple      rippleColor="rgba(255, 0, 0, 0.5)"      disabled={disabled}      onPressIn={() => setDisabled(true)}      onPress={() => {}}      style={{ width: 96, height: 96, backgroundColor: '#9E9E9E' }}    >      <View />    </TouchableRipple>    ``` 2. Press it once, then set `disabled` back to `false`. 3. The box stays tinted red (#C0918F instead of #AEAEAE on screen).  ### What have you tried so far? TouchableRipple passes `android_ripple` only while the touchable is interactive (since #5071). React Native clears the native pressed state only in the ripple's own press out, so once the ripple config is gone in the middle of a press, nothing clears it, and the ripple attached again on enable shows it. Keeping `android_ripple` while disabled fixes it; a disabled view never presses,
 
-- **Issue #5162** (2026-11-06): **Text inside a View inside a Text renders with the default color on iOS and Android**
-  *Symptoms*: ### Current behaviour  With #5040, a nested `Text` or `AnimatedText` sets only its own style and leaves color and font to the enclosing text. Paper detects nesting with its own context, but React Native's `View` resets text inheritance, and Paper's context doesn't. So a Paper `Text` inside a `View` inside a Paper `Text` still counts as nested and sets no color or font. React Native then draws it with its defaults: black, system font, 14pt. In dark theme it is invisible. Before #5040 it rendered with the theme's `onSurface` color and default font.  This reaches any Paper component that wraps a `ReactNode` in a Paper `Text`, such as `Button` and `Chip` children or `List.Accordion`'s `title`, when the caller wraps a `Text` in a `View`.  Web is not affected: react-native-web's `View` doesn't reset inheritance, so the color reaches the text through CSS.  ### Expected behaviour  A `Text` inside a `View` isn't nested as far as React Native is concerned, so it should render like a top-level `Text`, with the theme color and default font, as before #5040.  ### How to reproduce?  ```tsx <Text variant="headlineSmall">   Parent{' '}   <View>     <Text>child in a View</Text>   </View> </Text> ```  Render it in dark theme on iOS or Android: "child in a View" is black on the dark surface.  ### Preview <img width="1144" height="287" alt="Image" src="https://github.com/user-attachments/assets/ed27b7b9-6baa-4228-91ae-2269907b6cb0" />  ### What have you tried so far?  Workarounds: pass `theme` t
+- **Issue #5246** (2026-11-20): **TextInput: with a suffix, the input text aligns toward the suffix instead of the start**
+  *Symptoms*: ### Current behaviour With a prefix and a suffix, the placeholder and the typed text sit right next to the suffix instead of starting after the prefix, on iOS and Android. `src/components/TextInput/utils.ts` sets `textAlign` toward the suffix (`hasSuffix === isRTL ? 'left' : 'right'`) for both variants. In 5.x the input start-aligned (the `textAlign` prop, else the layout direction), so this changed in 6.x.  ### Expected behaviour The input text starts after the prefix, as in 5.x and in Material's text fields. An app that wants end-aligned text (an amount field) still sets `textAlign` in `style`.  ### How to reproduce? 1. Render a TextInput with a label, a prefix (`"$"`), a suffix (`"/100"`) and a placeholder. 2. Focus it, then type.  ### Your Environment  | software | version | --- | --- | ios | 27.2 (iPhone 18 Pro simulator) | android | 13 (emulator) | react-native | 0.88.1 (New Architecture) | react-native-paper | main | expo sdk | 58 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1579,715 +1573,940 @@ export const getIconButtonColor = ({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1e20a682` (2026-11-18)
-**Commit Message**: fix(provider): merge the theme prop deeply (#5234)
+### Incident Patch 1: `c8c3a394` (2026-11-19)
+**Commit Message**: fix(text-input): place accessories and label correctly in RTL (#5219)
 
-PaperProvider spread the theme's top-level keys and merged only colors one level deep, so a partial nested object replaced the default whole. A theme with only `motion: { duration: { short3: 300 } }` type-checked but crashed every component at render, and a partial `shapes.corner` left the other corner roles undefined. Merge with safeMerge, as a component's theme prop already does, so a partial override keeps every key it leaves out. The theming guide now says a custom theme only needs the properties it changes.
+In RTL, startAccessory now renders on the right and endAccessory on the left on iOS, Android and web. The label sits next to the start accessory on every platform and makes room only for it, and the error icon shows when only a startAccessory is set.
 
-**File**: `docs/6.x/docs/guides/migration.md` (modified, +1/-3)
+Fixes #5214
+
+**File**: `docs/6.x/docs/guides/migration.md` (modified, +2/-0)
 ```diff
-@@ -251,7 +251,7 @@ A component's `theme` prop is merged deeply, so you can set only the role you ne
- +</Button>
+@@ -838,6 +838,8 @@ import { TextInput, type TextInputProps } from 'react-native-paper';
+ - **`left` / `right`** → **`startAccessory` / `endAccessory`**
+ - **`TextInput.Affix`** → **`prefix` / `suffix`**, or **`TextInput.Icon`**, or **`startAccessory` / `endAccessory`**
+ 
++`startAccessory` and `endAccessory` follow the writing direction. In RTL, `startAccessory` sits on the right on every platform, while v5's `left` stayed on the left on web.
++
+ ```tsx
+ // Before (v5)
+ <TextInput
+```
+
+**File**: `src/components/TextInput/hooks.ts` (modified, +3/-7)
+```diff
+@@ -332,7 +332,7 @@ export const useTextInput = (props: TextInputProps): TextInputHookReturn => {
+ 
+   const isControlled = props.value !== undefined;
+   const isRTL = direction === 'rtl';
+-  const hasAccessory = isRTL ? !!props.endAccessory : !!props.startAccessory;
++  const hasAccessory = !!props.startAccessory;
+ 
+   const { hasValue, inputLength, getHasText, onChangeText } =
+     useTextInputInput(props);
+@@ -430,12 +430,8 @@ export const useTextInput = (props: TextInputProps): TextInputHookReturn => {
+ 
+   const counterText = `${inputLength}/${props.maxLength}`;
+ 
+-  const renderLeadingAccessory = flags.isRTL
+-    ? props.endAccessory
+-    : props.startAccessory;
+-  const renderTrailingAccessory = flags.isRTL
+-    ? props.startAccessory
+-    : props.endAccessory;
++  const renderLeadingAccessory = props.startAccessory;
++  const renderTrailingAccessory = props.endAccessory;
+ 
+   // https://github.com/facebook/react-native/issues/31573
+   const placeholder =
+```
+
+**File**: `src/components/TextInput/utils.ts` (modified, +14/-8)
+```diff
+@@ -353,15 +353,17 @@ export const getFilledTextInputData = (
+    * Variant-specific styles
+    */
+ 
++  const filledLabelOffset = hasAccessory
++    ? FILLED_LABEL_START_OFFSET_WITH_ACCESSORY
++    : LABEL_START_OFFSET_WITHOUT_ACCESSORY;
++
+   const animatedLabelWrapperStyles: StyleProp<
+     AnimatedStyle<StyleProp<ViewStyle>>
+   > = [
+     filledStyles.labelWrapper,
+-    {
+-      left: hasAccessory
+-        ? FILLED_LABEL_START_OFFSET_WITH_ACCESSORY
+-        : LABEL_START_OFFSET_WITHOUT_ACCESSORY,
+-    },
++    Platform.OS === 'web' && shared.isRTL
++      ? { right: filledLabelOffset }
++      : { start: filledLabelOffset },
+     animatedLabelWrapperStyle,
+   ];
+ 
+@@ -518,14 +520,18 @@ export const getOutlinedTextInputData = (
+     isDisabled && { opacity: OUTLINED_DISABLED_OUTLINE_OPACITY },
+   ];
+ 
++  const outlinedLabelOffset = hasAccessory
++    ? OUTLINED_LABEL_START_OFFSET_WITH_ACCESSORY
++    : LABEL_START_OFFSET_WITHOUT_ACCESSORY;
++
+   const animatedLabelWrapperStyles: StyleProp<
+     AnimatedStyle<StyleProp<ViewStyle>>
+   > = [
+     outlinedStyles.labelWrapper,
+     {
+-      left: hasAccessory
+-        ? OUTLINED_LABEL_START_OFFSET_WITH_ACCESSORY
+-        : LABEL_START_OFFSET_WITHOUT_ACCESSORY,
++      ...(Platform.OS === 'web' && shared.isRTL
++        ? { right: outlinedLabelOffset }
++        : { start: outlinedLabelOffset }),
+       backgroundColor: labelBackgroundColor,
+     },
+     animatedLabelWrapperStyle,
+```
+
+**File**: `src/components/__tests__/TextInput.test.tsx` (modified, +126/-6)
+```diff
+@@ -1,6 +1,7 @@
+ import * as React from 'react';
+ import {
+   I18nManager,
++  Platform,
+   StyleSheet,
+   TextInput as NativeTextInput,
+   View,
+@@ -11,6 +12,8 @@ import {
+   afterAll,
+   afterEach,
+   beforeAll,
++  beforeEach,
++  describe,
+   expect,
+   it,
+   jest,
+@@ -21,6 +24,11 @@ import { act, fireEvent, render, screen, userEvent } from '../../test-utils';
+ import { LightTheme } from '../../theme/schemes';
+ import { tokens } from '../../theme/tokens';
+ import TextInput from '../TextInput';
++import {
++  FILLED_LABEL_START_OFFSET_WITH_ACCESSORY,
++  LABEL_START_OFFSET_WITHOUT_ACCESSORY,
++  OUTLINED_LABEL_START_OFFSET_WITH_ACCESSORY,
++} from '../TextInput/constants';
+ import type {
+   TextInputRenderProps,
+   TextInputHandles,
+@@ -987,7 +995,7 @@ it('applies RTL writing direction to supporting text', async () => {
+   });
+ });
+ 
+-it('places EndAccessory before StartAccessory in the tree when RTL', async () => {
++it('renders StartAccessory before EndAccessory in RTL', async () => {
+   I18nManager.isRTL = true;
+ 
+   function StartAccessory() {
+@@ -1010,9 +1018,9 @@ it('places EndAccessory before StartAccessory in the tree when RTL', async () =>
+   );
+ 
+   const tree = toJSON();
+-  expect(firstIndexOfTestIdInTree(tree, 'rtl-acc-from-end-prop')).toBeLessThan(
++  expect(
+     firstIndexOfTestIdInTree(tree, 'rtl-acc-from-start-prop')
+-  );
++  ).toBeLessThan(firstIndexOfTestIdInTree(tree, 'rtl-acc-from-end-prop'));
+ });
+ 
+ it('places StartAccessory before EndAccessory in the tree when LTR', async () => {
+@@ -1164,7 +1172,7 @@ it('does not expose the placeholder string again after the TextInput loses focus
+   expect(screen.getByTestId('tf-input').props.placeholder).toBe(' ');
+ });
+ 
+-it('maps a lone StartAccessory to leading in LTR and trailing in RTL (tree order)', async () => {
++it('keeps a lone StartAccessory before the input in both LTR and RTL (tree order)', async () => {
+   function LoneStartAccessory() {
+     return <View testID="lone-start-acc" />;
+   }
+@@ -1199,9 +1207,121 @@ it('maps a lone StartAccessory to leading in LTR and trailing in RTL (tree order
+   );
+ 
+   const rtlTree = toJsonRtl();
+-  expect(firstIndexOfTestIdInTree(rtlTree, 'tf-lone-rtl')).toBeLessThan(
+-    firstIndexOfTestIdInTree(rtlTree, 'lone-start-acc')
++  expect(firstIndexOfTestIdInTree(rtlTree, 'lone-start-acc')).toBeLessThan(
++    firstIndexOfTestIdInTree(rtlTree, 'tf-lone-rtl')
++  );
++});
++
++it('shows the error icon in RTL when only a StartAccessory is set', async () => {
++  I18nManager.isRTL = true;
++
++  function StartAccessory() {
++    return <View testID="rtl-error-start-acc" />;
++  }
++
++  await render(
++    <TextInput
++      label="Email"
++      value=""
++      error
++      onChangeText={() => {}}
++      startAccessory={StartAccessory}
++    />
++  );
++
++  expect(
++    screen.getByText('alert-circle', includeHiddenElements)
++  ).toBeOnTheScreen();
++});
++
++it('keeps the label at the field edge in RTL when only an EndAccessory is set', async () => {
++  I18nManager.isRTL = true;
++
++  function EndAccessory() {
++    return <View testID="rtl-lone-end-acc" />;
++  }
++
++  await render(
++    <TextInput
++      label="Email"
++      value=""
++      onChangeText={() => {}}
++      endAccessory={EndAccessory}
++    />
++  );
++
++  expect(screen.getByText('Email', includeHiddenElements).parent).toHaveStyle({
++    start: LABEL_START_OFFSET_WITHOUT_ACCESSORY,
++  });
++});
++
++// React Native Web resolves `start` from a `dir` prop on its own Views, not
++// from `<html dir>`, so on web the label takes its side from Paper's direction.
++describe('on web in RTL', () => {
++  let platformOS: { restore(): void } | undefined;
++
++  beforeEach(() => {
++    platformOS = jest.replaceProperty(Platform, 'OS', 'web');
++    I18nManager.isRTL = true;
++  });
++
++  afterEach(() => {
++    platformOS?.restore();
++  });
++
++  it.each([
++    {
++      variant: 'filled' as const,
++      offset: FILLED_LABEL_START_OFFSET_WITH_ACCESSORY,
++    },
++    {
++      variant: 'outlined' as const,
++      offset: OUTLINED_LABEL_START_OFFSET_WITH_ACCESSORY,
++    },
++  ])(
++    'places the $variant label next to the StartAccessory on the right',
++    async ({ variant, offset }) => {
++      function StartAccessory() {
++        return <View testID="web-rtl-start-acc" />;
++      }
++
++      await render(
++        <TextInput
++          variant={variant}
++          label="Email"
++          value=""
++          onChangeText={() => {}}
++          startAccessory={StartAccessory}
++        />
++      );
++
++      const labelWrapper = screen.getByText(
++        'Email',
++        includeHiddenElements
++      ).parent;
++      expect(labelWrapper).toHaveStyle({ right: offset });
++      expect(labelWrapper).not.toHaveStyle({ start: offset });
++    }
+   );
++
++  it('keeps the label on the right, clear of a lone EndAccessory', async () => {
++    function EndAccessory() {
++      return <View testID="web-rtl-end-acc" />;
++    }
++
++    await render(
++      <TextInput
++        label="Email"
++        value=""
++        on
+```
+
+**File**: `src/components/__tests__/__snapshots__/TextInput.test.tsx.snap` (modified, +7/-7)
+```diff
+@@ -127,7 +127,7 @@ exports[`dims a disabled TextInput with TextInput.Icon accessories exactly once
+             "position": "absolute",
+           },
+           {
+-            "left": 52,
++            "start": 52,
+           },
+           {
+             "top": 16,
+@@ -584,7 +584,7 @@ exports[`renders filled TextInput with TextInput.Icon accessories 1`] = `
+             "position": "absolute",
+           },
+           {
+-            "left": 52,
++            "start": 52,
+           },
+           {
+             "top": 16,
+@@ -1000,7 +1000,7 @@ exports[`renders filled TextInput with TextInput.Icon accessories when error is
+             "position": "absolute",
+           },
+           {
+-            "left": 52,
++            "start": 52,
+           },
+           {
+             "top": 16,
+@@ -1452,7 +1452,7 @@ exports[`renders filled TextInput with label and value 1`] = `
+             "position": "absolute",
+           },
+           {
+-            "left": 16,
++            "start": 16,
+           },
+           {
+             "top": 16,
+@@ -1625,7 +1625,7 @@ exports[`renders outlined TextInput with TextInput.Icon accessories 1`] = `
+           },
+           {
+             "backgroundColor": "rgba(254, 247, 255, 1)",
+-            "left": 48,
++            "start": 48,
+           },
+           {
+             "top": -12,
+@@ -2021,7 +2021,7 @@ exports[`renders outlined TextInput with TextInput.Icon accessories when error i
+           },
+           {
+             "backgroundColor": "rgba(254, 247, 255, 1)",
+-            "left": 48,
++            "start": 48,
+           },
+           {
+             "top": -12,
+@@ -2453,7 +2453,7 @@ exports[`renders outlined TextInput with label and value 1`] = `
+           },
+           {
+             "backgroundColor": "rgba(254, 247, 255, 1)",
+-            "left": 16,
++            "start": 16,
+           },
+           {
+             "top": -12,
+```
+
+---
+
+### Incident Patch 2: `7ab2640c` (2026-11-20)
+**Commit Message**: fix(locale): lay out a LocaleProvider subtree in its direction on web (#5255)
+
+On web, LocaleProvider only passed the direction to Paper's components. In a `<LocaleProvider direction="rtl">` subtree, Switch and the TextInput label went right to left while Button, Chip, List.Item and TextInput accessories stayed left to right, and a lone `endAccessory` overlapped the label.
+
+On web, LocaleProvider now wraps its children in a `display: contents` View with `dir`, and Portal carries the direction to menus, dialogs and other portaled content. PaperProvider and native are unchanged. The RTL guide describes the web behavior.
+
+Follow-up to #5219.
+
+**File**: `docs/6.x/docs/guides/rtl.md` (modified, +6/-2)
+```diff
+@@ -23,7 +23,7 @@ On the Web, the RTL value is not set globally, unlike native platforms. `I18nMan
+ Then, let `react-native-paper` know about it by using the `direction` prop on `PaperProvider` or the `LocaleProvider` component to match the writing direction in your app.
+ 
+ :::note
+-The `direction` prop informs React Native Paper about the text direction in the app i.e. it doesn't change the text direction by itself. If you intend to support RTL languages, it's important to set this prop to the correct value that's configured in the app. If it doesn't match the actual text direction, the layout might be incorrect.
++The `direction` prop of `PaperProvider` informs React Native Paper about the text direction in the app i.e. it doesn't change the text direction by itself. If you intend to support RTL languages, it's important to set this prop to the correct value that's configured in the app. If it doesn't match the actual text direction, the layout might be incorrect.
+ :::
+ 
+ On the web, `Text` aligns to the start of the writing direction, so it aligns right when `direction` is `rtl`. On Android and iOS, React Native already aligns `left` text to the right in a right-to-left layout. A `textAlign` in `style` still wins.
+@@ -62,13 +62,17 @@ import { LocaleProvider } from 'react-native-paper';
+ export default function ArabicSection({ children }) {
+   return (
+     <LocaleProvider direction="rtl">
+-      {/* Components here will use RTL layout */}
++      {/* Paper's components here use the RTL direction */}
+       {children}
+     </LocaleProvider>
+   );
+ }
  ```
  
--`PaperProvider` doesn't merge `shapes` deeply: a `shapes` key in its `theme` replaces the default one. So spread the base `shapes` and `corner`, or the roles you leave out are `undefined` and those components lose their rounded corners:
-+`PaperProvider` merges its `theme` deeply too, so a custom theme only needs the roles it changes:
- 
- ```diff
- -import { MD3LightTheme, PaperProvider } from 'react-native-paper';
-@@ -262,9 +262,7 @@ A component's `theme` prop is merged deeply, so you can set only the role you ne
- -  roundness: 2,
- +  ...LightTheme,
- +  shapes: {
--+    ...LightTheme.shapes,
- +    corner: {
--+      ...LightTheme.shapes.corner,
- +      extraSmall: 2,
- +      small: 4,
- +      medium: 6,
-```
-
-**File**: `docs/6.x/docs/guides/theming.mdx` (modified, +3/-4)
-```diff
-@@ -137,7 +137,9 @@ A theme usually contains the following properties:
- - `animation` (`object`)
-   - `scale` - scale for all animations
- 
--When creating a custom theme, you will need to provide all of these properties.
-+When creating a custom theme, you only need to provide the properties you change. `PaperProvider` merges your theme deeply with the default one, so a nested object such as `shapes` or `motion` keeps every key you leave out.
++On the Web, `LocaleProvider` also lays out its part of the tree in that direction, including menus, dialogs and other content it opens in a `Portal`. It renders a wrapper with the `dir` attribute that doesn't take part in the layout, so you don't need to set `dir` yourself.
 +
-+Paper merges a custom theme onto `DarkTheme` when it sets `dark: true`, and onto `LightTheme` otherwise. The examples on this page still spread `LightTheme` or `DarkTheme`: that sets `dark`, and in TypeScript it gives the theme object the full `Theme` shape. Without TypeScript, nested spreads such as `...LightTheme.colors` are optional.
++On Android and iOS, `I18nManager` sets the layout direction for the whole app, and `LocaleProvider` doesn't change it. It only changes the direction that Paper's components read, so rows and `start`/`end` styles in the subtree keep the app's direction.
++
+ ## Reading the current direction
  
- If you don't use a custom theme, Paper will automatically turn animations on/off, depending on device settings.
- 
-@@ -351,14 +353,11 @@ import App from './src/App';
- const theme = {
-   ...LightTheme, // or DarkTheme
-   shapes: {
--    ...LightTheme.shapes,
-     corner: {
--      ...LightTheme.shapes.corner,
-       largeIncreased: 10,
-     },
-   },
-   colors: {
--    ...LightTheme.colors,
-     primary: '#3498db',
-     secondary: '#f1c40f',
-     tertiary: '#a1b2c3',
+ The direction is available in your own components via the `useLocale` hook:
 ```
 
-**File**: `src/core/PaperProvider.tsx` (modified, +3/-8)
+**File**: `src/components/Portal/Portal.tsx` (modified, +8/-3)
 ```diff
-@@ -4,7 +4,7 @@ import { getDefaultDirection, LocaleProvider, type Direction } from './locale';
+@@ -2,7 +2,11 @@ import * as React from 'react';
+ 
+ import PortalConsumer from './PortalConsumer';
+ import PortalHost, { PortalContext } from './PortalHost';
+-import { LocaleProvider, useLocale } from '../../core/locale';
++import {
++  DirectionProvider,
++  SubtreeDirectionContext,
++  useLocale,
++} from '../../core/locale';
+ import {
+   SettingsContext,
+   Provider as SettingsProvider,
+@@ -51,6 +55,7 @@ export type Props = {
+ const Portal = ({ children, modal, theme: themeOverrides }: Props) => {
+   const theme = useInternalTheme(themeOverrides);
+   const { direction } = useLocale();
++  const setsLayout = React.useContext(SubtreeDirectionContext);
+   const settings = React.useContext(SettingsContext);
+   const manager = React.useContext(PortalContext);
+   const reduceMotion = React.useContext(ReduceMotionContext);
+@@ -59,11 +64,11 @@ const Portal = ({ children, modal, theme: themeOverrides }: Props) => {
+     <PortalConsumer manager={manager} modal={modal}>
+       <SettingsProvider value={settings}>
+         <ReduceMotionContext.Provider value={reduceMotion}>
+-          <LocaleProvider direction={direction}>
++          <DirectionProvider direction={direction} setsLayout={setsLayout}>
+             <InternalThemeProvider theme={theme}>
+               {children}
+             </InternalThemeProvider>
+-          </LocaleProvider>
++          </DirectionProvider>
+         </ReduceMotionContext.Provider>
+       </SettingsProvider>
+     </PortalConsumer>
+```
+
+**File**: `src/core/PaperProvider.tsx` (modified, +7/-3)
+```diff
+@@ -1,6 +1,10 @@
+ import * as React from 'react';
+ 
+-import { getDefaultDirection, LocaleProvider, type Direction } from './locale';
++import {
++  DirectionProvider,
++  getDefaultDirection,
++  type Direction,
++} from './locale';
  import SafeAreaProviderCompat from './SafeAreaProviderCompat';
  import { Provider as SettingsProvider } from './settings';
  import type { Settings } from './settings';
--import { ThemeProvider, withoutUnsafeKeys } from './theming';
-+import { safeMerge, ThemeProvider } from './theming';
- import {
-   useResolvedReduceMotion,
-   type ReduceMotionPreference,
-@@ -36,14 +36,9 @@ const PaperProvider = (props: Props) => {
-     const scale = resolvedReduceMotion
-       ? 0
-       : (props.theme?.animation?.scale ?? 1);
--    const safeTheme = withoutUnsafeKeys(props.theme);
-+    const merged = safeMerge(base, props.theme);
- 
--    return {
--      ...base,
--      ...safeTheme,
--      colors: { ...base.colors, ...safeTheme?.colors },
--      animation: { ...safeTheme?.animation, scale },
--    };
-+    return { ...merged, animation: { ...merged.animation, scale } };
-   }, [colorScheme, props.theme, resolvedReduceMotion]);
- 
-   const { children, settings } = props;
+@@ -68,11 +72,11 @@ const PaperProvider = (props: Props) => {
+       <PortalHost>
+         <SettingsProvider value={settingsValue}>
+           <ReduceMotionContext.Provider value={resolvedReduceMotion}>
+-            <LocaleProvider direction={direction}>
++            <DirectionProvider direction={direction}>
+               <InternalThemeProvider theme={theme}>
+                 {children}
+               </InternalThemeProvider>
+-            </LocaleProvider>
++            </DirectionProvider>
+           </ReduceMotionContext.Provider>
+         </SettingsProvider>
+       </PortalHost>
 ```
 
-**File**: `src/core/__tests__/PaperProviderThemeMerge.test.tsx` (added, +116/-0)
+**File**: `src/core/__tests__/LocaleProvider.test.tsx` (added, +76/-0)
 ```diff
-@@ -0,0 +1,116 @@
-+import { PlatformColor, Text } from 'react-native';
+@@ -0,0 +1,76 @@
++import { Platform, View } from 'react-native';
 +
-+import { describe, expect, it, jest } from '@jest/globals';
++import {
++  afterEach,
++  beforeEach,
++  describe,
++  expect,
++  it,
++  jest,
++} from '@jest/globals';
 +import { render, screen } from '@testing-library/react-native';
 +
-+import Button from '../../components/Button/Button';
-+import Checkbox from '../../components/Checkbox';
-+import Chip from '../../components/Chip/Chip';
-+import FAB from '../../components/FAB';
-+import Surface from '../../components/Surface';
-+import Switch from '../../components/Switch/Switch';
-+import { LightTheme } from '../../theme/schemes';
-+import type { Theme, ThemeProp } from '../../theme/types';
++import Portal from '../../components/Portal/Portal';
++import { LocaleProvider } from '../locale';
 +import PaperProvider from '../PaperProvider';
-+import { useTheme } from '../theming';
 +
-+const ThemeReader = ({ onTheme }: { onTheme: (theme: Theme) => void }) => {
-+  onTheme(useTheme());
-+  return null;
-+};
++// react-native-web renders `dir` as the attribute that lays out the element's
++// children in that direction.
++const parentOf = (testID: string) => screen.getByTestId(testID).parent;
 +
-+const getProvidedTheme = async (theme: ThemeProp) => {
-+  const onTheme = jest.fn<(theme: Theme) => void>();
-+
-+  await render(
-+    <PaperProvider theme={theme}>
-+      <ThemeReader onTheme={onTheme} />
++const renderSubtree = () =>
++  render(
++    <PaperProvider>
++      <LocaleProvider direction="rtl">
++        <View testID="content" />
++        <Portal>
++          <View testID="portal-content" />
++        </Portal>
++      </LocaleProvider>
 +    </PaperProvider>
 +  );
 +
-+  return onTheme.mock.lastCall?.[0];
-+};
++describe.each(['web', 'ios', 'android'] as const)('on %s', (os) => {
++  let platformOS: { restore(): void } | undefined;
 +
-+describe('PaperProvider theme merge', () => {
-+  it('renders components when the theme overrides a single motion token', async () => {
++  beforeEach(() => {
++    platformOS = jest.replaceProperty(Platform, 'OS', os);
++  });
++
++  afterEach(() => {
++    platformOS?.restore();
++  });
++
++  if (os === 'web') {
++    it('lays out a LocaleProvider subtree and its portal content in its direction', async () => {
++      await renderSubtree();
++      await screen.findByTestId('portal-content');
++
++      expect(parentOf('content')).toHaveProp('dir', 'rtl');
++      expect(parentOf('portal-content')).toHaveProp('dir', 'rtl');
++    });
++  } else {
++    it('leaves the layout direction of a LocaleProvider subtree to the app', async () => {
++      await renderSubtree();
++      await screen.findByTestId('portal-content');
++
++      expect(parentOf('content')).not.toHaveProp('dir');
++      expect(parentOf('portal-content')).not.toHaveProp('dir');
++    });
++  }
++
++  it('leaves the layout direction to the app with PaperProvider alone', async () => {
 +    await render(
-+      <PaperProvider theme={{ motion: { duration: { short3: 300 } } }}>
-+        <Surface elevation={1}>
-+          <Text>Surface</Text>
-+        </Surface>
-+        <Chip onPress={() => {}}>Chip</Chip>
-+        <Button onPress={() => {}}>Button</Button>
-+        <Switch value onValueChange={() => {}} />
-+        <Checkbox status="checked" onPress={() => {}} />
-+        <FAB icon="plus" aria-label="Add" onPress={() => {}} />
++      <PaperProvider direction="rtl">
++        <View testID="content" />
++        <Portal>
++          <View testID="portal-content" />
++        </Portal>
 +      </PaperProvider>
 +    );
++    await screen.findByTestId('portal-content');
 +
-+    expect(screen.getByText('Surface')).toBeOnTheScreen();
-+    expect(screen.getByText('Button')).toBeOnTheScreen();
-+  });
-+
-+  it('keeps the motion tokens a partial motion override leaves out', async () => {
-+    const theme = await getProvidedTheme({
-+      motion: { duration: { short3: 300 } },
-+    });
-+
-+    expect(theme?.motion).toStrictEqual({
-+      ...LightTheme.motion,
-+      duration: { ...LightTheme.motion.duration, short3: 300 },
-+    });
-+  });
-+
-+  it('keeps the corner roles a partial shapes override leaves out', async () => {
-+    const theme = await getProvidedTheme({
-+      shapes: { corner: { medium: 6 } },
-+    });
-+
-+    expect(theme?.shapes).toStrictEqual({
-+      ...LightTheme.shapes,
-+      corner: { ...LightTheme.shapes.corner, medium: 6 },
-+    });
-+  });
-+
-+  it('keeps the elevation colors a partial colors override leaves out', async () => {
-+    const theme = await getProvidedTheme({
-+      colors: { primary: 'tomato', elevation: { level1: 'red' } },
-+    });
-+
-+    expect(theme?.colors).toStrictEqual({
-+      ...LightTheme.colors,
-+      primary: 'tomato',
-+      elevation: { ...LightTheme.colors.elevation, level1: 'red' },
-+    });
-+  });
-+
-+  it('keeps the font properties and variants a partial fonts override leaves out', async () => {
-+    const theme = await getProvidedTheme({
-+      fonts: { bodyLarge: { fontSize: 18 } },
-+    });
-+
-+    expect(theme?.fonts).toStrictEqual({
-+      ...LightTheme.fonts,
-+      bodyLarge: { ...LightTheme.fonts.bodyLarge, fontSize: 18 },
-+    });
-+  });
-+
-+  it('replaces an easing curve as a whole', async () => {
-+    const theme = await getProvidedTheme({
-+      motion: { easing: { emphasized: [0.1, 0, 0, 1] } },
-+    });
-+
-+    expect(theme?.motion.easing.emphasized).toStrictEqual([0.1, 0, 0, 1]);
-+    expect(theme?.motion.easing.standard).toStrictEqual(
-+      LightTheme.motion.easing.standard
-+    );
-+  });
-+
-+  it('keeps a platform color as a single value', async () => {
-+    const primary = PlatformColor('systemBlue');
-+    const theme = await getProvidedTheme({ colors: { primary } });
-+
-+    expect(theme?.colors.primary).toStrictEqual(primary);
-+    expect(theme?.colors.secondary).toBe(LightTheme.colors.secondary);
++    expect(parentOf('content')).not.toHaveProp('dir');
++    expect(parentOf('portal-content')).not.toHaveProp('dir');
 +  });
 +});
 ```
 
+**File**: `src/core/locale.tsx` (modified, +58/-4)
+```diff
+@@ -1,5 +1,5 @@
+ import * as React from 'react';
+-import { I18nManager } from 'react-native';
++import { I18nManager, Platform, StyleSheet, View } from 'react-native';
+ 
+ /**
+  * Writing direction of the app.
+@@ -15,18 +15,66 @@ export const LocaleContext = React.createContext<LocaleContextValue | null>(
+   null
+ );
+ 
++/**
++ * Whether the nearest direction comes from a `LocaleProvider`, which also sets
++ * the layout direction of its subtree on web. `Portal` reads it to carry that
++ * layout direction to the portal host.
++ */
++export const SubtreeDirectionContext = React.createContext(false);
++
+ export type LocaleProviderProps = {
+   direction: Direction;
+   children: React.ReactNode;
+ };
+ 
++type DirectionProviderProps = LocaleProviderProps & {
++  /**
++   * Whether to lay the children out in `direction` on web. `PaperProvider`
++   * leaves the layout direction of the whole app to the page (`<html dir>`).
++   */
++  setsLayout?: boolean;
++};
++
+ /**
+- * Provider component for locale configuration.
++ * Provides the direction to Paper's components.
+  */
+-export function LocaleProvider({ direction, children }: LocaleProviderProps) {
++export function DirectionProvider({
++  direction,
++  setsLayout = false,
++  children,
++}: DirectionProviderProps) {
+   const value = React.useMemo(() => ({ direction }), [direction]);
+   return (
+-    <LocaleContext.Provider value={value}>{children}</LocaleContext.Provider>
++    <LocaleContext.Provider value={value}>
++      <SubtreeDirectionContext.Provider value={setsLayout}>
++        {Platform.OS === 'web' && setsLayout ? (
++          // react-native-web reads `dir` for `start` and `end` styles, and the
++          // browser for rows and text. `display: contents` keeps the wrapper
++          // out of the layout.
++          <View
++            // @ts-expect-error: `ViewProps` doesn't expose the web-specific `dir` prop.
++            dir={direction}
++            style={styles.contents}
++          >
++            {children}
++          </View>
++        ) : (
++          children
++        )}
++      </SubtreeDirectionContext.Provider>
++    </LocaleContext.Provider>
++  );
++}
++
++/**
++ * Overrides the direction for a part of the tree. On web it also lays that
++ * part out in the direction, including content it opens in a `Portal`.
++ */
++export function LocaleProvider({ direction, children }: LocaleProviderProps) {
++  return (
++    <DirectionProvider direction={direction} setsLayout>
++      {children}
++    </DirectionProvider>
+   );
+ }
+ 
+@@ -43,3 +91,9 @@ export function useLocale(): LocaleContextValue {
+ 
+ export const getDefaultDirection = (): Direction =>
+   I18nManager.getConstants?.().isRTL ? 'rtl' : 'ltr';
++
++const styles = StyleSheet.create({
++  contents: {
++    display: 'contents',
++  },
++});
+```
+
+**File**: `src/test-utils.tsx` (modified, +3/-3)
+```diff
+@@ -3,7 +3,7 @@ import * as React from 'react';
+ import { render, type RenderOptions } from '@testing-library/react-native';
+ 
+ import MaterialCommunityIcon from './components/MaterialCommunityIcon';
+-import { getDefaultDirection, LocaleProvider } from './core/locale';
++import { DirectionProvider, getDefaultDirection } from './core/locale';
+ import { Provider as SettingsProvider } from './core/settings';
+ import { ThemeProvider } from './core/theming';
+ import { LightTheme } from './theme/schemes';
+@@ -12,9 +12,9 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
+   <SettingsProvider
+     value={{ icon: MaterialCommunityIcon, rippleEffectEnabled: true }}
+   >
+-    <LocaleProvider direction={getDefaultDirection()}>
++    <DirectionProvider direction={getDefaultDirection()}>
+       <ThemeProvider theme={LightTheme}>{children}</ThemeProvider>
+-    </LocaleProvider>
++    </DirectionProvider>
+   </SettingsProvider>
+ );
+ 
+```
+
 ---
 
-### Incident Patch 2: `9845c6f4` (2026-11-18)
-**Commit Message**: fix(fab)!: align MD3 variants and interaction states (#5110)
+### Incident Patch 3: `add03a12` (2026-11-20)
+**Commit Message**: fix(text): align right-to-left text to the right on web (#5265)
 
-FAB, FAB.Extended and FAB.Menu take Material 3's role names for their container presets: `tonalPrimary`, `tonalSecondary` and `tonalTertiary` become `primaryContainer`, `secondaryContainer` and `tertiaryContainer`, and `primaryContainer` stays the default. On web, a FAB with a touch handler rises from elevation level 3 to 4 on hover and drops back while pressed (iOS and Android send no hover events by default). A hidden FAB can't be focused or pressed and screen readers skip it, and on web, hiding a keyboard-focused FAB returns focus to the element that had it before.
+On web, Text and AnimatedText now align right when Paper's direction is
+rtl, as Android and iOS already do. Native, left-to-right text and a
+textAlign set in style are unchanged. Both components take the
+alignment from a shared getTextAlignStyle helper, and rtl.md and the
+migration guide's Text section describe the web behavior.
 
-BREAKING CHANGE: the FAB variants `tonalPrimary`, `tonalSecondary` and `tonalTertiary` are renamed to `primaryContainer`, `secondaryContainer` and `tertiaryContainer`, with no aliases.
-
-**File**: `docs/6.x/docs/guides/migration.md` (modified, +5/-5)
+**File**: `docs/6.x/docs/guides/migration.md` (modified, +2/-0)
 ```diff
-@@ -1296,18 +1296,18 @@ mutually exclusive options, use `SegmentedButtons`.
+@@ -1395,6 +1395,8 @@ A `Text` nested in another `Text` now inherits the parent's font and color, as R
  
- #### `variant`
+ On iOS and Android, nesting follows React Native: a `Text` inside React Native's own `Text` inherits from it as well, and a `Text` inside a `View` isn't nested, so it renders like a top-level `Text`.
  
--The variants changed meaning. In 5.x, `primary`, `secondary` and `tertiary` painted the container role, e.g. `primaryContainer`. In 6.x they paint the role itself, e.g. `primary`, and the new tonal variants paint the container role. So a FAB with an explicit `variant` looks different. To keep the 5.x colors:
-+The variants changed meaning. In 5.x, `primary`, `secondary` and `tertiary` painted the container role, e.g. `primaryContainer`. In 6.x they paint the role itself, e.g. `primary`, and the new `primaryContainer`, `secondaryContainer` and `tertiaryContainer` variants paint the container role. So a FAB with an explicit `variant` looks different. To keep the 5.x colors:
++On the web, a `Text` under `direction="rtl"` (on `PaperProvider` or `LocaleProvider`) now aligns right by default. In 5.x it stayed left. A `textAlign` in `style` still wins.
++
+ ### ToggleButton
  
--- **`primary`** (the 5.x default) → **`tonalPrimary`** (the 6.x default)
--- **`secondary`** → **`tonalSecondary`**
--- **`tertiary`** → **`tonalTertiary`**
-+- **`primary`** (the 5.x default) → **`primaryContainer`** (the 6.x default)
-+- **`secondary`** → **`secondaryContainer`**
-+- **`tertiary`** → **`tertiaryContainer`**
- - **`surface`** has no variant. Set `containerColor` and `contentColor` instead, e.g. to `theme.colors.surfaceContainerHigh` and `theme.colors.primary`.
- 
- A FAB without a `variant` keeps its 5.x colors.
- 
- ```diff
- -<FAB icon="plus" variant="secondary" onPress={onPress} />
--+<FAB icon="plus" variant="tonalSecondary" onPress={onPress} />
-++<FAB icon="plus" variant="secondaryContainer" onPress={onPress} />
- ```
- 
- #### `size`
+ `ToggleButton`, `ToggleButton.Group` and `ToggleButton.Row` were removed. For an
 ```
 
-**File**: `example/src/Examples/FABExample.tsx` (modified, +6/-4)
+**File**: `docs/6.x/docs/guides/rtl.md` (modified, +2/-0)
 ```diff
-@@ -34,9 +34,9 @@ const variants: FabColor[] = [
-   'primary',
-   'secondary',
-   'tertiary',
--  'tonalPrimary',
--  'tonalSecondary',
--  'tonalTertiary',
-+  'primaryContainer',
-+  'secondaryContainer',
-+  'tertiaryContainer',
-   'custom',
- ];
+@@ -26,6 +26,8 @@ Then, let `react-native-paper` know about it by using the `direction` prop on `P
+ The `direction` prop informs React Native Paper about the text direction in the app i.e. it doesn't change the text direction by itself. If you intend to support RTL languages, it's important to set this prop to the correct value that's configured in the app. If it doesn't match the actual text direction, the layout might be incorrect.
+ :::
  
-@@ -91,7 +91,7 @@ const FABExample = () => {
-   const { colors } = useTheme();
-   const insets = useSafeAreaInsets();
++On the web, `Text` aligns to the start of the writing direction, so it aligns right when `direction` is `rtl`. On Android and iOS, React Native already aligns `left` text to the right in a right-to-left layout. A `textAlign` in `style` still wins.
++
+ ## Setting direction for the whole app
  
--  const [variant, setVariant] = React.useState<FabColor>('tonalPrimary');
-+  const [variant, setVariant] = React.useState<FabColor>('primaryContainer');
-   const activeVariant = variant === 'custom' ? undefined : variant;
-   const activeContainerColor =
-     variant === 'custom' ? CUSTOM_CONTAINER_COLOR : undefined;
-@@ -187,6 +187,7 @@ const FABExample = () => {
-         {type === 'icon' && (
-           <FAB
-             icon="pencil"
-+            aria-label="Compose"
-             variant={activeVariant}
-             containerColor={activeContainerColor}
-             size={size}
-@@ -214,6 +215,7 @@ const FABExample = () => {
-           alignment={position}
-           trigger={{
-             icon: 'pencil',
-+            'aria-label': 'Compose',
-             variant: activeVariant,
-             containerColor: activeContainerColor,
-             size,
+ Pass the `direction` prop to `PaperProvider`. Defaults to `'rtl'` when `I18nManager.getConstants().isRTL` returns `true`, otherwise `'ltr'`.
 ```
 
-**File**: `src/components/FAB/Extended.tsx` (modified, +2/-2)
+**File**: `src/components/Typography/AnimatedText.tsx` (modified, +4/-9)
 ```diff
-@@ -39,7 +39,7 @@ export type Props = {
-    */
-   label: string;
-   /**
--   * Role-color preset. Defaults to `tonalPrimary`.
-+   * Role-color preset. Defaults to `primaryContainer`.
-    */
-   variant?: Variant;
-   /**
-@@ -167,7 +167,7 @@ export type Props = {
- const Extended = ({
-   icon,
-   label,
--  variant = 'tonalPrimary',
-+  variant = 'primaryContainer',
-   containerColor,
-   contentColor,
-   size = 'default',
-```
-
-**File**: `src/components/FAB/FAB.tsx` (modified, +2/-2)
-```diff
-@@ -21,7 +21,7 @@ export type Props = {
-    */
-   icon: IconSource;
-   /**
--   * Role-color preset. Defaults to `tonalPrimary`.
-+   * Role-color preset. Defaults to `primaryContainer`.
-    */
-   variant?: Variant;
-   /**
-@@ -130,7 +130,7 @@ export type Props = {
-  */
- const FAB = ({
-   icon,
--  variant = 'tonalPrimary',
-+  variant = 'primaryContainer',
-   size = 'default',
-   visible = true,
-   onPress,
-```
-
-**File**: `src/components/FAB/Menu.tsx` (modified, +14/-8)
-```diff
-@@ -117,23 +117,29 @@ export type MenuProps = {
-  * tonal (container) role color.
-  */
- const getCloseVariant = (triggerVariant: Variant): Variant => {
--  if (triggerVariant === 'primary' || triggerVariant === 'tonalPrimary') {
-+  if (triggerVariant === 'primary' || triggerVariant === 'primaryContainer') {
-     return 'primary';
-   }
--  if (triggerVariant === 'secondary' || triggerVariant === 'tonalSecondary') {
-+  if (
-+    triggerVariant === 'secondary' ||
-+    triggerVariant === 'secondaryContainer'
-+  ) {
-     return 'secondary';
-   }
-   return 'tertiary';
- };
+@@ -1,11 +1,11 @@
+ import * as React from 'react';
+ import type { ReactNode } from 'react';
+-import { StyleSheet } from 'react-native';
  
- const getItemsVariant = (triggerVariant: Variant): Variant => {
--  if (triggerVariant === 'primary' || triggerVariant === 'tonalPrimary') {
--    return 'tonalPrimary';
-+  if (triggerVariant === 'primary' || triggerVariant === 'primaryContainer') {
-+    return 'primaryContainer';
-   }
--  if (triggerVariant === 'secondary' || triggerVariant === 'tonalSecondary') {
--    return 'tonalSecondary';
-+  if (
-+    triggerVariant === 'secondary' ||
-+    triggerVariant === 'secondaryContainer'
-+  ) {
-+    return 'secondaryContainer';
-   }
--  return 'tonalTertiary';
-+  return 'tertiaryContainer';
- };
+ import Animated from 'react-native-reanimated';
  
- // Per-item delay used by the stagger. Compose uses a single SlowEffects-driven
-@@ -551,7 +557,7 @@ const Menu = ({
-   const isRTL = direction === 'rtl';
-   const insets = useSafeAreaInsets();
- 
--  const triggerVariant: Variant = trigger.variant ?? 'tonalPrimary';
-+  const triggerVariant: Variant = trigger.variant ?? 'primaryContainer';
-   const size: Size = trigger.size ?? 'default';
-   const openIcon: IconSource = trigger.icon;
-   const openOnPress = trigger.onPress;
-```
-
-**File**: `src/components/FAB/Shell.tsx` (modified, +122/-18)
-```diff
-@@ -24,7 +24,7 @@ import { getDimensions, resolveColors } from './utils';
+ import { useIsNestedText, markChildrenAsNested } from './NestedTextContext';
+ import type { VariantProp } from './types';
++import { getTextAlignStyle } from './utils';
+ import { useLocale } from '../../core/locale';
  import { useInternalTheme } from '../../core/theming';
- import { useReduceMotion } from '../../theme/accessibility/ReduceMotionContext';
- import { toRawSpring } from '../../theme/tokens/sys/motion';
--import type { Elevation, ThemeProp } from '../../theme/types';
-+import type { ThemeProp } from '../../theme/types';
- import type { ShapeToken } from '../../theme/utils/shape';
- import hasTouchHandler from '../../utils/hasTouchHandler';
- import { useFocusRing } from '../../utils/useFocusRing';
-@@ -43,7 +43,7 @@ export type ShellProps = {
-    */
-   label?: string;
-   /**
--   * Role-color preset. Defaults to `tonalPrimary`.
-+   * Role-color preset. Defaults to `primaryContainer`.
-    */
-   variant?: Variant;
-   /**
-@@ -74,11 +74,6 @@ export type ShellProps = {
-    * Trailing-padding override.
-    */
-   trailing?: number;
--  /**
--   * Resting elevation level. Defaults to the FAB's enabled-state elevation.
--   * Pass `0` to disable the shadow entirely.
--   */
--  elevation?: Elevation;
-   /**
-    * When `false`, the shell animates out (scale + alpha) and stops accepting
-    * touches.
-@@ -200,15 +195,14 @@ export type ShellProps = {
- const Shell = ({
-   icon,
-   label,
--  variant = 'tonalPrimary',
-+  variant = 'primaryContainer',
-   size = 'default',
-   containerColor,
-   contentColor,
-   shape,
-   iconSize,
-   leading,
-   trailing,
--  elevation = Tokens.stateElevation.enabled,
-   visible = true,
-   onPress,
-   onLongPress,
-@@ -235,6 +229,23 @@ const Shell = ({
-   ref,
- }: ShellProps) => {
+ import type { ThemeProp } from '../../theme/types';
+@@ -49,6 +49,7 @@ function AnimatedText({
    const theme = useInternalTheme(themeOverrides);
-+  const [hovered, setHovered] = React.useState(false);
-+  const [pressed, setPressed] = React.useState(false);
-+  const touchableRef = React.useRef<React.ComponentRef<typeof View>>(null);
-+  const previousFocusedElement = React.useRef<HTMLElement | null>(null);
-+  const hoveredRef = React.useRef(false);
-+  const pressingRef = React.useRef(false);
-+
-+  const hasHandler = hasTouchHandler({ onPress, onLongPress, onPressOut });
-+
-+  const resolvedElevation =
-+    visible && hasHandler
-+      ? pressed
-+        ? Tokens.stateElevation.pressed
-+        : hovered
-+          ? Tokens.stateElevation.hover
-+          : Tokens.stateElevation.enabled
-+      : Tokens.stateElevation.enabled;
  
-   const dimensions = React.useMemo(
-     () => getDimensions({ theme, size, shape, iconSize, leading, trailing }),
-@@ -315,8 +326,6 @@ const Shell = ({
-     [borderRadius, containerBg]
-   );
+   const { direction: writingDirection } = useLocale();
++  const alignStyle = getTextAlignStyle(writingDirection);
+   // Nested text inherits the parent's style unless it has its own theme
+   const inheritsStyle = useIsNestedText() && !themeOverrides;
  
--  const hasHandler = hasTouchHandler({ onPress, onLongPress, onPressOut });
+@@ -73,7 +74,7 @@ function AnimatedText({
+             ? [font, style]
+             : [
+                 font,
+-                styles.text,
++                alignStyle,
+                 { writingDirection, color: theme.colors.onSurface },
+                 style,
+               ]
+@@ -93,7 +94,7 @@ function AnimatedText({
+         ref={ref}
+         {...rest}
+         style={[
+-          styles.text,
++          alignStyle,
+           textStyle,
+           {
+             writingDirection,
+@@ -107,12 +108,6 @@ function AnimatedText({
+   return markChildrenAsNested(element, rest.children);
+ }
+ 
+-const styles = StyleSheet.create({
+-  text: {
+-    textAlign: 'left',
+-  },
+-});
 -
-   // `scope: 'within'`: the ring is drawn on the clip view below, not the
-   // inner `TouchableRipple` that actually receives focus. On web the shared
-   // stylesheet hides the browser's own outline there, so only the clip view's
-@@ -325,14 +334,82 @@ const Shell = ({
-   // Off when `disabled` or without a touch handler: the inner TouchableRipple
-   // is then a plain View, and a focused one unmounts without a blur reaching
-   // the hook. The public FAB has no `disabled`, so dropping the handlers is how
--  // an app turns it off.
-+  // an app turns it off. Also off while hidden, which clears the focus state on
-+  // native when the FAB hides while focused.
-   const { target: focusTarget, ring: focusRing } = useFocusRing(
--    disabled || !hasHandler,
-+    disabled || !hasHandler || !visible,
-     theme.colors.secondary,
-     'outward',
-     'within'
-   );
- 
-+  React.useEffect(() => {
-+    if (!visible) {
-+      if (Platform.OS === 'web') {
-+        const target: unknown = touchableRef.current;
-+        if (
-+          target instanceof HTMLElement &&
-+          target === document.activeElement
-+        ) {
-+          const previous = previousFocusedElement.current;
-+          // Only restore keyboard focus. A mouse click or tap also focuses the
-+          // FAB, and moving focus back could jump into an earlier text field.
-+          if (
-+            target.matches(':focus-visible') &&
-+            previous?.isConnected &&
-+            !previous.closest('[aria-hidden="true"], [inert]')
-+          ) {
-+            previous.focus({ preventScroll: true });
-+          }
-+          // Blur when focus didn't move back, e.g. after a mouse click or when
-+          // the previous element is gone or can't take focus.
-+          if (target === document.activeElement) target.blur();
-+        }
-+      }
-+      hoveredRef.current = false;
-+      pressingRef.current = false;
-+      setHovered(false);
-+      setPressed(false);
-+    }
-+  }, [visible]);
-+
-+  React.useEffect(() => {
-+    if (!hasHandler) {
-+      hoveredRef.current = false;
-+      pressingRef.current = false;
-+      setHovered(false);
-+      setPressed(false);
-+    }
-+  }, [hasHandler]);
-+
-+  // The pressed elevation matches the resting one, so a press only shows on a
-+  // hovered FAB, and `pressed` is set only then. iOS and Android send no hover
-+  // events by default, so a tap there doesn't re-render the 
+ export const customAnimatedText = <T,>() =>
+   // eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
+   AnimatedText as (props: Props<T>) => ReactNode;
 ```
 
-**File**: `src/components/FAB/tokens.ts` (modified, +6/-6)
+**File**: `src/components/Typography/Text.tsx` (modified, +5/-9)
 ```diff
-@@ -9,9 +9,9 @@ export type Variant =
-   | 'primary'
-   | 'secondary'
-   | 'tertiary'
--  | 'tonalPrimary'
--  | 'tonalSecondary'
--  | 'tonalTertiary';
-+  | 'primaryContainer'
-+  | 'secondaryContainer'
-+  | 'tertiaryContainer';
+@@ -1,11 +1,12 @@
+ import * as React from 'react';
+ import type { ReactNode } from 'react';
+-import { StyleSheet, Text as NativeText } from 'react-native';
++import { Text as NativeText } from 'react-native';
+ import type { StyleProp, TextStyle } from 'react-native';
  
- export type Size = 'default' | 'medium' | 'large';
- 
-@@ -68,15 +68,15 @@ const variants = {
-   primary: { container: 'primary', content: 'onPrimary' },
-   secondary: { container: 'secondary', content: 'onSecondary' },
-   tertiary: { container: 'tertiary', content: 'onTertiary' },
--  tonalPrimary: {
-+  primaryContainer: {
-     container: 'primaryContainer',
-     content: 'onPrimaryContainer',
-   },
--  tonalSecondary: {
-+  secondaryContainer: {
-     container: 'secondaryContainer',
-     content: 'onSecondaryContainer',
-   },
--  tonalTertiary: {
-+  tertiaryContainer: {
-     container: 'tertiaryContainer',
-     content: 'onTertiaryContainer',
-   },
-```
-
-**File**: `src/components/FAB/utils.ts` (modified, +1/-1)
-```diff
-@@ -19,7 +19,7 @@ export type ResolvedColors = {
-  */
- export const resolveColors = ({
-   theme,
--  variant = 'tonalPrimary',
-+  variant = 'primaryContainer',
-   containerColor,
-   contentColor,
- }: {
-```
-
----
-
-### Incident Patch 3: `dd4ea6ef` (2026-11-18)
-**Commit Message**: fix(drawer): expand the collapsed item indicator when it becomes active (#5233)
-
-The indicator only expanded on press out, so an item made active without a press (for example by a route change) kept the half-width indicator. Animate it to full size whenever active turns true. After a press the indicator is already at full size or on its way there, and the new animation carries on from its current value.
-
-**File**: `src/components/Drawer/DrawerCollapsedItem.tsx` (modified, +15/-9)
-```diff
-@@ -15,6 +15,7 @@ import Animated, {
-   useSharedValue,
-   withTiming,
- } from 'react-native-reanimated';
-+import useLatestCallback from 'use-latest-callback';
- 
+ import AnimatedText from './AnimatedText';
+ import { useIsNestedText, markChildrenAsNested } from './NestedTextContext';
+ import type { VariantProp } from './types';
++import { getTextAlignStyle } from './utils';
+ import { useLocale } from '../../core/locale';
  import { useInternalTheme } from '../../core/theming';
- import { tokens } from '../../theme/tokens';
-@@ -141,19 +142,24 @@ const DrawerCollapsedItem = ({
+ import type { ThemeProp } from '../../theme/types';
+@@ -90,6 +91,7 @@ const Text = ({
+   const root = React.useRef<React.ComponentRef<typeof NativeText> | null>(null);
+   const theme = useInternalTheme(initialTheme);
+   const { direction: writingDirection } = useLocale();
++  const alignStyle = getTextAlignStyle(writingDirection);
+   // Nested text inherits the parent's style unless it has its own theme
+   const inheritsStyle = useIsNestedText() && !initialTheme;
  
-   const outlineScale = useSharedValue(active ? 1 : 0.5);
+@@ -157,7 +159,7 @@ const Text = ({
+           inheritsStyle
+             ? textStyle
+             : [
+-                styles.text,
++                alignStyle,
+                 { writingDirection, color: theme.colors.onSurface },
+                 textStyle,
+               ]
+@@ -177,20 +179,14 @@ const Text = ({
+       <NativeText
+         {...rest}
+         ref={root}
+-        style={[styles.text, textStyle, { writingDirection }, style]}
++        style={[alignStyle, textStyle, { writingDirection }, style]}
+       />
+     );
+   }
  
--  React.useEffect(() => {
--    if (!active) {
--      outlineScale.value = 0.5;
--    }
--  }, [active, outlineScale]);
+   return markChildrenAsNested(element, rest.children);
+ };
+ 
+-const styles = StyleSheet.create({
+-  text: {
+-    textAlign: 'left',
+-  },
+-});
 -
--  const handlePressOut = () => {
-+  const expandOutline = useLatestCallback(() => {
-     outlineScale.value = withTiming(1, {
-       duration: 150 * scale,
-       easing: Easing.inOut(Easing.ease),
-       reduceMotion: ReduceMotion.Never,
-     });
--  };
-+  });
-+
-+  React.useEffect(() => {
-+    if (active) {
-+      // The item can become active without a press, for example when the
-+      // current route changes. After a press the indicator is already at full
-+      // size or on its way there, and this carries on from where it is.
-+      expandOutline();
-+    } else {
-+      outlineScale.value = 0.5;
-+    }
-+  }, [active, expandOutline, outlineScale]);
+ type TextComponent<T> = (props: Props<T>) => ReactNode;
  
-   const iconPadding = ((!label ? itemSize : outlineHeight) - iconSize) / 2;
- 
-@@ -196,7 +202,7 @@ const DrawerCollapsedItem = ({
-     <View {...rest}>
-       <Pressable
-         onPress={onPress}
--        onPressOut={onPress ? handlePressOut : undefined}
-+        onPressOut={onPress ? expandOutline : undefined}
-         disabled={disabled}
-         role="button"
-         aria-selected={active}
+ const Component = Text as TextComponent<never>;
 ```
 
-**File**: `src/components/__tests__/Drawer/DrawerCollapsedItem.test.tsx` (modified, +53/-2)
+**File**: `src/components/Typography/utils.ts` (added, +13/-0)
 ```diff
-@@ -1,6 +1,9 @@
--import { describe, expect, it } from '@jest/globals';
-+import * as React from 'react';
- 
--import { render } from '../../../test-utils';
-+import { describe, expect, it, jest } from '@jest/globals';
-+import { getAnimatedStyle } from 'react-native-reanimated';
+@@ -0,0 +1,13 @@
++import { Platform, StyleSheet } from 'react-native';
 +
-+import { act, render, screen, userEvent } from '../../../test-utils';
- import DrawerCollapsedItem from '../../Drawer/DrawerCollapsedItem';
++import type { Direction } from '../../core/locale';
++
++// A `left` alignment follows the layout direction on Android and iOS, but
++// stays physical on web, so right-to-left text aligns right there.
++export const getTextAlignStyle = (direction: Direction) =>
++  Platform.OS === 'web' && direction === 'rtl' ? styles.rtlWeb : styles.start;
++
++const styles = StyleSheet.create({
++  start: { textAlign: 'left' },
++  rtlWeb: { textAlign: 'right' },
++});
+```
+
+**File**: `src/components/__tests__/Typography/Text.test.tsx` (modified, +90/-3)
+```diff
+@@ -1,8 +1,9 @@
+-import { View } from 'react-native';
+-import type { Text as NativeText } from 'react-native';
++import { Platform, View } from 'react-native';
++import type { Text as NativeText, TextStyle } from 'react-native';
  
- describe('DrawerCollapsedItem', () => {
-@@ -59,4 +62,52 @@ describe('DrawerCollapsedItem', () => {
+-import { expect, it, jest } from '@jest/globals';
++import { afterEach, describe, expect, it, jest } from '@jest/globals';
  
-     expect(tree).toMatchSnapshot();
++import { LocaleProvider, type Direction } from '../../../core/locale';
+ import PaperProvider from '../../../core/PaperProvider';
+ import { render, screen } from '../../../test-utils';
+ import configureFonts from '../../../theme/fonts';
+@@ -328,6 +329,92 @@ it("detects nesting like React Native's own Text and View", async () => {
    });
+ });
+ 
++describe('text alignment', () => {
++  let platformOS: { restore(): void } | undefined;
 +
-+  describe('active indicator', () => {
-+    const indicatorStyle = () => {
-+      const [indicator] = screen
-+        .getByRole('button')
-+        .queryAll((node) => 'transform' in getAnimatedStyle(node));
-+      return getAnimatedStyle(indicator);
-+    };
++  afterEach(() => {
++    platformOS?.restore();
++    platformOS = undefined;
++  });
 +
-+    it('expands to full size when the item becomes active without a press', async () => {
-+      await render(
-+        <DrawerCollapsedItem label="Inbox" focusedIcon="inbox" active={false} />
-+      );
++  const textIDs = [
++    'text',
++    'variant-text',
++    'animated-text',
++    'animated-variant-text',
++  ];
 +
-+      await screen.rerender(
-+        <DrawerCollapsedItem label="Inbox" focusedIcon="inbox" active />
-+      );
-+      await act(() => jest.advanceTimersByTimeAsync(300));
++  const renderTexts = (direction: Direction, style?: TextStyle) =>
++    render(
++      <LocaleProvider direction={direction}>
++        <Text testID="text" style={style}>
++          {content}
++        </Text>
++        <Text testID="variant-text" variant="bodyLarge" style={style}>
++          {content}
++        </Text>
++        <AnimatedText testID="animated-text" style={style}>
++          {content}
++        </AnimatedText>
++        <AnimatedText
++          testID="animated-variant-text"
++          variant="bodyLarge"
++          style={style}
++        >
++          {content}
++        </AnimatedText>
++      </LocaleProvider>
++    );
 +
-+      expect(indicatorStyle().transform).toEqual([{ scaleX: 1 }]);
-+    });
++  it('aligns right-to-left text to the right on web', async () => {
++    platformOS = jest.replaceProperty(Platform, 'OS', 'web');
 +
-+    it('animates the expansion when a press makes the item active', async () => {
-+      const Item = () => {
-+        const [active, setActive] = React.useState(false);
-+        return (
-+          <DrawerCollapsedItem
-+            label="Inbox"
-+            focusedIcon="inbox"
-+            active={active}
-+            onPress={() => setActive(true)}
-+          />
-+        );
-+      };
-+      await render(<Item />);
-+      const collapsed = indicatorStyle().transform;
++    await renderTexts('rtl');
 +
-+      await userEvent.press(screen.getByRole('button'));
-+      await act(() => jest.advanceTimersByTimeAsync(75));
-+      const midway = indicatorStyle().transform;
-+      await act(() => jest.advanceTimersByTimeAsync(300));
-+      const expanded = indicatorStyle().transform;
-+
-+      expect(expanded).toEqual([{ scaleX: 1 }]);
-+      expect(midway).not.toEqual(collapsed);
-+      expect(midway).not.toEqual(expanded);
++    textIDs.forEach((testID) => {
++      expect(screen.getByTestId(testID)).toHaveStyle({
++        textAlign: 'right',
++        writingDirection: 'rtl',
++      });
 +    });
 +  });
- });
++
++  it('aligns left-to-right text to the left on web', async () => {
++    platformOS = jest.replaceProperty(Platform, 'OS', 'web');
++
++    await renderTexts('ltr');
++
++    textIDs.forEach((testID) => {
++      expect(screen.getByTestId(testID)).toHaveStyle({ textAlign: 'left' });
++    });
++  });
++
++  // React Native aligns `left` text to the right when the layout is
++  // right-to-left, so Android and iOS keep it.
++  it.each(['android', 'ios'] as const)(
++    'keeps the left alignment for right-to-left text on %s',
++    async (os) => {
++      platformOS = jest.replaceProperty(Platform, 'OS', os);
++
++      await renderTexts('rtl');
++
++      textIDs.forEach((testID) => {
++        expect(screen.getByTestId(testID)).toHaveStyle({ textAlign: 'left' });
++      });
++    }
++  );
++
++  it('keeps an alignment set in style for right-to-left text on web', async () => {
++    platformOS = jest.replaceProperty(Platform, 'OS', 'web');
++
++    await renderTexts('rtl', { textAlign: 'center' });
++
++    textIDs.forEach((testID) => {
++      expect(screen.getByTestId(testID)).toHaveStyle({ textAlign: 'center' });
++    });
++  });
++});
++
+ it('throws when custom variant not provided', async () => {
+   jest.spyOn(console, 'error').mockImplementation(() => {});
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5235** (2026-11-18): feat(theme)!: remove animation.scale and export useReduceMotion (@Doberjohn)
-- **PR #5234** (2026-11-18): fix(provider): merge the theme prop deeply (@Doberjohn)
-- **PR #5233** (2026-11-18): fix(drawer): expand the collapsed item indicator when it becomes active (@Doberjohn)
-- **PR #5232** (2026-11-18): fix(menu): scale the menu in on every open, not only the first (@Doberjohn)
-- **PR #5231** (2026-11-18): fix(fab): honour reduceMotion="off" over the device setting (@Doberjohn)
-- **PR #5230** (2026-11-17): chore: review draft PRs with Apex Sentinel only once they're ready (@Doberjohn)
+- **PR #5274** (2026-11-20): docs(migration): add the missing Dialog, FAB and TextInput notes (@Doberjohn)
+- **PR #5268** (2026-11-20): fix(touchable-ripple): clear a ripple left by a disabling press (@Doberjohn)
+- **PR #5265** (2026-11-20): fix(text): align right-to-left text to the right on web (@Doberjohn)
+- **PR #5262** (2026-11-20): feat(text-input)!: rename TextInput.Icon size to iconSize (@lukewalczak)
+- **PR #5261** (2026-11-20): fix(TextInput): start-align input text when suffix is active (@EnesKartal)
+- **PR #5255** (2026-11-20): fix(locale): lay out a LocaleProvider subtree in its direction on web (@Doberjohn)
 
 ---
 
@@ -2307,13 +2526,13 @@ The indicator only expanded on press out, so an item made active without a press
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. provider): merge the theme prop deeply
+## X. text-input): place accessories and label correctly in RTL
 
 **RULE**:
 When implementing operations in `docs/6.x/docs/guides/migration.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in callstack/react-native-paper. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1e20a682`: provider): merge the theme prop deeply. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c8c3a394`: text-input): place accessories and label correctly in RTL. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/6.x/docs/guides/migration.md`.
@@ -2321,19 +2540,18 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-`PaperProvider` merges its `theme` deeply too, so a custom theme only needs the roles it changes:
+`startAccessory` and `endAccessory` follow the writing direction. In RTL, `startAccessory` sits on the right on every platform, while v5's `left` stayed on the left on web.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-`PaperProvider` doesn't merge `shapes` deeply: a `shapes` key in its `theme` replaces the default one. So spread the base `shapes` and `corner`, or the roles you leave out are `undefined` and those components lose their rounded corners:
-+    ...LightTheme.shapes,
-+      ...LightTheme.shapes.corner,
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1e20a682` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c8c3a394` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

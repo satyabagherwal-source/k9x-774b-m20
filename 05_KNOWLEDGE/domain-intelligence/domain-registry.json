@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T16:31:30.111Z",
-  "total_records": 2258,
+  "last_updated": "2026-11-21T16:40:23.167Z",
+  "total_records": 2260,
   "domains": {
     "A": {
       "total": 17,
@@ -59,7 +59,7 @@
       ]
     },
     "D": {
-      "total": 888,
+      "total": 890,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -948,7 +948,9 @@
         "domain_intelligence-research-knowledge-intelligence-biomejs-biome-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-biomejs-biome-learnings-core-invariants",
         "DOM-D-9397456A",
-        "domain_intelligence-research-knowledge-intelligence-sfu-db-connector-x-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-sfu-db-connector-x-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-kuddev-pebrel-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-kuddev-pebrel-learnings-core-invariants"
       ]
     },
     "E": {
@@ -11238,8 +11240,8 @@
       "title": "Design Intelligence: callstack/react-native-paper Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-callstack-react-native-paper-design-intelligence-callstack-react-native-paper-co.md",
       "repository": "callstack/react-native-paper",
-      "content_hash": "d53fb5a81f4acb6ace0c6f35569bf017a051cfb7d35ae7a476c3dabb9c4729d5",
-      "created_at": "2026-11-18T13:25:41.785Z"
+      "content_hash": "e22ee6c43258463c40814eb8f6273fc6c1c69bf549531bcb137427d520b92dcd",
+      "created_at": "2026-11-21T16:40:11.069Z"
     },
     "domain_intelligence-technical-construction-intelligence-databendlabs-databend-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-databendlabs-databend-core-invariants",
@@ -11325,8 +11327,8 @@
       "title": "Design Intelligence: callstack-react-native-paper-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-callstack-react-native-paper-learnings-design-intelligence-callstack-react-nativ.md",
       "repository": "callstack-react-native-paper-learnings",
-      "content_hash": "c1e7f70e9ddcfe1928926daddf25297d88b4a52c53b29cb84e780c4c015f2f4d",
-      "created_at": "2026-11-18T13:25:54.215Z"
+      "content_hash": "6353de9d0d8e54b10ddaadadc4173a31872cb86e223fb9096164d4d073969af3",
+      "created_at": "2026-11-21T16:40:23.167Z"
     },
     "domain_intelligence-architecture-intelligence-xudong-huang-may-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-xudong-huang-may-core-invariants",
@@ -17944,8 +17946,8 @@
       "title": "Architecture Intelligence: vespa-engine/vespa Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-vespa-engine-vespa-architecture-intelligence-vespa-engine-vespa-core-invariants.md",
       "repository": "vespa-engine/vespa",
-      "content_hash": "914a7473c85d22f606e3450ea6a2df9232f69565d811fa0d7bda20d13215edce",
-      "created_at": "2026-11-20T11:09:07.637Z"
+      "content_hash": "720cbe48d087c659975ade65b7e1c66ef5bb5c5f8d74d6d89310d8e9d9b26485",
+      "created_at": "2026-11-21T16:40:17.717Z"
     },
     "domain_intelligence-technical-construction-intelligence-qwen-qwen-image-2-1-turbo-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-qwen-qwen-image-2-1-turbo-core-invariants",
@@ -28613,8 +28615,8 @@
       "title": "Research & Knowledge Intelligence: HuggingFaceBio/Carbon-X Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-huggingfacebio-carbon-x-research-knowledge-intelligence-huggingfacebio-carbon.md",
       "repository": "HuggingFaceBio/Carbon-X",
-      "content_hash": "c262aa35f0791d08bc2c70380f1dd910f908d2803bbb034ee8eae69cffed91fe",
-      "created_at": "2026-11-17T18:35:25.018Z"
+      "content_hash": "9ce95a29f40d28fcbb4c9de8b25f4c7e688044ba573ff55ed191c584cda05098",
+      "created_at": "2026-11-21T16:40:02.484Z"
     },
     "domain_intelligence-technical-construction-intelligence-flux-iac-tofu-controller-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-flux-iac-tofu-controller-core-invariants",
@@ -28640,8 +28642,8 @@
       "title": "Research & Knowledge Intelligence: hf-huggingfacebio-carbon-x-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-huggingfacebio-carbon-x-learnings-research-knowledge-intelligence-hf-huggingf.md",
       "repository": "hf-huggingfacebio-carbon-x-learnings",
-      "content_hash": "c29f91fc4da0e7727daa23138ec2bf10d67ff044482b5e9e220f690eb51d1929",
-      "created_at": "2026-11-17T18:35:39.852Z"
+      "content_hash": "60a85e35adca65592c4201668ec01ac2d0eaaa42a2cbc8fe6a47210f4bcbf536",
+      "created_at": "2026-11-21T16:40:22.316Z"
     },
     "domain_intelligence-technical-construction-intelligence-flux-iac-tofu-controller-learnings-core-inva": {
       "record_id": "domain_intelligence-technical-construction-intelligence-flux-iac-tofu-controller-learnings-core-inva",
@@ -37912,6 +37914,24 @@
       "repository": "pubkey-rxdb-learnings",
       "content_hash": "0fab6ba68704bf0182c58f0380b0ff4d7fe27b746bbacdc6aeb48210aa448a90",
       "created_at": "2026-11-21T15:49:51.292Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-kuddev-pebrel-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-kuddev-pebrel-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: Kuddev/pebrel Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-kuddev-pebrel-research-knowledge-intelligence-kuddev-pebrel-core-invariants.md",
+      "repository": "Kuddev/pebrel",
+      "content_hash": "89df73bc1962ebd322bce5348e4cd5a42f592e91324a0a56fb12ac23df54e2c4",
+      "created_at": "2026-11-21T16:40:04.455Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-kuddev-pebrel-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-kuddev-pebrel-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: kuddev-pebrel-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-kuddev-pebrel-learnings-research-knowledge-intelligence-kuddev-pebrel-learnings-.md",
+      "repository": "kuddev-pebrel-learnings",
+      "content_hash": "d3d3f52767aed83c27b68c05fe17a240fc73e8a654e34411325996f79b5a9ba2",
+      "created_at": "2026-11-21T16:40:21.608Z"
     }
   }
 }

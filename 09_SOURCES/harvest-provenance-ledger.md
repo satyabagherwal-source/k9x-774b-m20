@@ -11872,3 +11872,7 @@ Every entry in this ledger must capture:
 | `learn-github-flox-flox` | `https://github.com/flox/flox` | `2130d6d7` | Multi-dimensional audit evidence | 2026-11-21T16:18:44.991Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `ef2aebe1` | Multi-dimensional audit evidence | 2026-11-21T16:18:59.641Z |
 | `learn-huggingface-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf` | `https://huggingface.co/orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-11-21T16:31:24.957Z |
+| `learn-huggingface-huggingfacebio-carbon-x` | `https://huggingface.co/HuggingFaceBio/Carbon-X` | `hf-hugging` | Multi-dimensional audit evidence | 2026-11-21T16:40:02.237Z |
+| `learn-github-kuddev-pebrel` | `https://github.com/Kuddev/pebrel` | `76f74be1` | Multi-dimensional audit evidence | 2026-11-21T16:40:03.952Z |
+| `learn-github-callstack-react-native-paper` | `https://github.com/callstack/react-native-paper` | `7ab2640c` | Multi-dimensional audit evidence | 2026-11-21T16:40:10.537Z |
+| `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `f099e88f` | Multi-dimensional audit evidence | 2026-11-21T16:40:17.259Z |

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-21T16:19:05.154Z",
+  "updated_at": "2026-11-21T16:40:22.669Z",
   "stats": {
-    "total_discovered": 7251,
-    "approved_pending_harvest": 6853,
+    "total_discovered": 7252,
+    "approved_pending_harvest": 6854,
     "harvested_count": 0,
     "rejected_count": 398,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6834,
+      "COMMUNITY_AND_EXPERT": 6835,
       "OFFICIAL_DOCUMENTATION": 240,
       "STANDARDS_AND_SPECIFICATIONS": 122,
       "ENGINEERING_BLOGS": 5,
@@ -156759,6 +156759,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
         "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-74DEE4F0F970": {
+      "id": "SRC-74DEE4F0F970",
+      "url": "https://github.com/facebook/react-native/issues/31573",
+      "title": "https://github.com/facebook/react-native/issues/31573",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T16:40:22.669Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/callstack-react-native-paper-learnings.md",
+        "fileName": "callstack-react-native-paper-learnings.md"
       }
     }
   }
