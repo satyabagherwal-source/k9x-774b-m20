@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tanstack-query-learnings.md`  
 > **Source**: github ([https://github.com/TanStack/query](https://github.com/TanStack/query))  
-> **Source Version**: `d63a027c`  
+> **Source Version**: `0911673d`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T05:37:10.336Z  
+> **Timestamp**: 2026-11-21T00:32:37.328Z  
 > **Learning ID**: `learn-github-tanstack-query`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tanstack-query-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/TanStack/query](https://github.com/TanStack/query))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T05:37:10.330Z  
+> **Harvest Timestamp**: 2026-11-21T00:32:37.061Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 🤖 Powerful asynchronous state management, server-state utilities and data fetching for the web. TS/JS, React Query, Solid Query, Svelte Query and Vue Query.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 50568 stars
+- **Stars / Engagement**: 50599 stars
 
 ---
 
@@ -3586,343 +3586,325 @@ async function serializeRequest(request) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cb62f4f2` (2026-11-16)
-**Commit Message**: chore(*): adopt '@tanstack/oxlint-config' and '@tanstack/oxfmt-config', and fix the newly reported lint errors (#12555)
+### Incident Patch 1: `816a0aab` (2026-11-18)
+**Commit Message**: chore: bump vite for examples to cover security release (#12625)
 
-* chore(*): adopt '@tanstack/oxlint-config' and '@tanstack/oxfmt-config', and fix the newly reported lint errors
-
-* chore(pnpm-lock.yaml): run 'pnpm dedupe'
-
-* chore(scripts): move 'oxlint/plugin.ts' to 'oxlint-plugin.ts' to match the flat layout of 'scripts'
-
-* chore(pnpm-workspace.yaml): update '@typescript-eslint/parser' and '@typescript-eslint/rule-tester' to '^8.72.1' to match the deduped '@typescript-eslint/utils'
-
-**File**: `docs/eslint/eslint-plugin-query.md` (modified, +1/-1)
+**File**: `examples/lit/algolia/package.json` (modified, +1/-1)
 ```diff
-@@ -125,8 +125,8 @@ The plugin can also be used with [Oxlint](https://oxc.rs/docs/guide/usage/linter
- To enable all of the recommended rules for our plugin, add the plugin to `jsPlugins` and spread the rules of the `recommended` config:
- 
- ```ts
--import { defineConfig } from 'oxlint'
- import pluginQuery from '@tanstack/eslint-plugin-query'
-+import { defineConfig } from 'oxlint'
- 
- export default defineConfig({
-   jsPlugins: ['@tanstack/eslint-plugin-query'],
+@@ -20,6 +20,6 @@
+     "@tanstack/eslint-plugin-query": "^5.108.0",
+     "eslint": "^9.39.5",
+     "typescript": "^6.0.3",
+-    "vite": "^8.3.5"
++    "vite": "^8.3.8"
+   }
+ }
 ```
 
-**File**: `docs/eslint/no-unstable-deps.md` (modified, +2/-2)
+**File**: `examples/lit/auto-refetching/package.json` (modified, +1/-1)
 ```diff
-@@ -21,9 +21,9 @@ Instead, destructure the return value of the query hook and pass the destructure
- Examples of **incorrect** code for this rule:
- 
- ```tsx
-+import { useMutation } from '@tanstack/react-query'
- /* eslint "@tanstack/query/no-unstable-deps": "warn" */
- import { useCallback } from 'react'
--import { useMutation } from '@tanstack/react-query'
- 
- function Component() {
-   const mutation = useMutation({ mutationFn: (value: string) => value })
-@@ -37,9 +37,9 @@ function Component() {
- Examples of **correct** code for this rule:
- 
- ```tsx
-+import { useMutation } from '@tanstack/react-query'
- /* eslint "@tanstack/query/no-unstable-deps": "warn" */
- import { useCallback } from 'react'
--import { useMutation } from '@tanstack/react-query'
- 
- function Component() {
-   const { mutate } = useMutation({ mutationFn: (value: string) => value })
-```
-
-**File**: `docs/framework/angular/devtools.md` (modified, +2/-3)
-```diff
-@@ -20,7 +20,6 @@ import {
-   QueryClient,
-   provideTanStackQuery,
- } from '@tanstack/angular-query-experimental'
--
- import { withDevtools } from '@tanstack/angular-query-experimental/devtools'
- 
- export const appConfig: ApplicationConfig = {
-@@ -59,9 +58,9 @@ When setting the option to true, the devtools will be loaded in both development
- This is useful if you want to load devtools based on [Angular environment configurations](https://angular.dev/tools/cli/environments). E.g. you could set this to true when the application is running on your production build staging environment.
- 
- ```ts
--import { environment } from './environments/environment'
- // Make sure to use the production sub-path to load devtools in production builds
- import { withDevtools } from '@tanstack/angular-query-experimental/devtools/production'
-+import { environment } from './environments/environment'
- 
- provideTanStackQuery(
-   new QueryClient(),
-@@ -87,8 +86,8 @@ The example below always loads devtools in development mode and loads on-demand
- 
- ```ts
- import { Injectable, isDevMode } from '@angular/core'
--import { fromEvent, map, scan } from 'rxjs'
- import { toSignal } from '@angular/core/rxjs-interop'
-+import { fromEvent, map, scan } from 'rxjs'
- 
- @Injectable({ providedIn: 'root' })
- export class DevtoolsOptionsManager {
-```
-
-**File**: `docs/framework/angular/overview.md` (modified, +1/-1)
-```diff
-@@ -61,8 +61,8 @@ In the example below, you can see TanStack Query in its most basic and simple fo
- [Open in StackBlitz](https://stackblitz.com/github/TanStack/query/tree/main/examples/angular/simple)
- 
- ```angular-ts
--import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
- import { HttpClient } from '@angular/common/http'
-+import { ChangeDetectionStrategy, Component, inject } from '@angular/core'
- import { injectQuery } from '@tanstack/angular-query-experimental'
- import { lastValueFrom } from 'rxjs'
- 
-```
-
-**File**: `docs/framework/angular/quick-start.md` (modified, +2/-3)
-```diff
-@@ -44,15 +44,14 @@ export class AppModule {}
- ### Component with query and mutation
- 
- ```angular-ts
--import { Component, Injectable, inject } from '@angular/core'
- import { HttpClient } from '@angular/common/http'
--import { lastValueFrom } from 'rxjs'
--
-+import { Component, Injectable, inject } from '@angular/core'
- import {
-   injectMutation,
-   injectQuery,
-   QueryClient,
- } from '@tanstack/angular-query-experimental'
-+import { lastValueFrom } from 'rxjs'
- 
- @Component({
-   template: `
-```
-
-**File**: `docs/framework/lit/guides/infinite-queries.md` (modified, +1/-1)
-```diff
-@@ -16,8 +16,8 @@ An infinite query result contains:
- ## Load More Example
- 
- ```ts
--import { LitElement, html } from 'lit'
- import { createInfiniteQueryController } from '@tanstack/lit-query'
-+import { LitElement, html } from 'lit'
- 
- class ProjectsList extends LitElement {
-   private readonly projects = createInfiniteQueryController(this, {
-```
-
-**File**: `docs/framework/lit/guides/mutations.md` (modified, +1/-1)
-```diff
-@@ -6,13 +6,13 @@ title: Mutations
- Unlike queries, mutations are used to create, update, delete, or otherwise perform server side effects. In Lit, use [`createMutationController`](../reference/functions/createMutationController.md).
- 
- ```ts
--import { LitElement, html } from 'lit'
- import {
-   QueryClient,
-   QueryClientProvider,
-   createMutationController,
-   createQueryController,
- } from '@tanstack/lit-query'
-+import { LitElement, html } from 'lit'
- 
- const queryClient = new QueryClient()
- 
-```
-
-**File**: `docs/framework/lit/guides/parallel-queries.md` (modified, +2/-2)
-```diff
-@@ -10,8 +10,8 @@ Parallel queries are queries that run at the same time so the UI does not wait f
- When the number of queries is fixed, create multiple query controllers on the same host. They will all subscribe when the host connects.
- 
- ```ts
--import { LitElement, html } from 'lit'
- import { createQueryController } from '@tanstack/lit-query'
-+import { LitElement, html } from 'lit'
- 
- class DashboardView extends LitElement {
-   private readonly users = createQueryController(this, {
-@@ -62,8 +62,8 @@ When the number of queries changes with host state, use [`createQueriesControlle
- Use an options getter when the query list depends on reactive host fields:
- 
- ```ts
--import { LitElement, html } from 'lit'
- import { createQueriesController } from '@tanstack/lit-query'
-+import { LitElement, html } from 'lit'
- 
- class UsersDetails extends LitElement {
-   static properties = {
-```
-
----
-
-### Incident Patch 2: `2c1e767b` (2026-11-13)
-**Commit Message**: chore(vue-query/package.json): set 'parallelism: false' on 'test:lib' and 'test:types' so 'vue-demi-switch' does not race with vue example tasks (#12596)
-
-**File**: `packages/vue-query/package.json` (modified, +10/-0)
-```diff
-@@ -33,6 +33,16 @@
-     "test:build": "publint --strict && attw --pack",
-     "build": "tsdown --tsconfig tsconfig.prod.json"
+@@ -19,7 +19,7 @@
+     "@tanstack/eslint-plugin-query": "^5.108.0",
+     "eslint": "^9.39.5",
+     "typescript": "^6.0.3",
+-    "vite": "^8.3.5"
++    "vite": "^8.3.8"
    },
-+  "nx": {
-+    "targets": {
-+      "test:lib": {
-+        "parallelism": false
-+      },
-+      "test:types": {
-+        "parallelism": false
-+      }
-+    }
-+  },
-   "type": "module",
-   "types": "build/legacy/index.d.ts",
-   "main": "build/legacy/index.cjs",
+   "msw": {
+     "workerDirectory": [
+```
+
+**File**: `examples/lit/basic-graphql-request/package.json` (modified, +1/-1)
+```diff
+@@ -20,6 +20,6 @@
+     "@tanstack/eslint-plugin-query": "^5.108.0",
+     "eslint": "^9.39.5",
+     "typescript": "^6.0.3",
+-    "vite": "^8.3.5"
++    "vite": "^8.3.8"
+   }
+ }
+```
+
+**File**: `examples/lit/basic/package.json` (modified, +1/-1)
+```diff
+@@ -18,6 +18,6 @@
+     "@tanstack/eslint-plugin-query": "^5.108.0",
+     "eslint": "^9.39.5",
+     "typescript": "^6.0.3",
+-    "vite": "^8.3.5"
++    "vite": "^8.3.8"
+   }
+ }
+```
+
+**File**: `examples/lit/batching/package.json` (modified, +1/-1)
+```diff
+@@ -19,6 +19,6 @@
+     "@tanstack/eslint-plugin-query": "^5.108.0",
+     "eslint": "^9.39.5",
+     "typescript": "^6.0.3",
+-    "vite": "^8.3.5"
++    "vite": "^8.3.8"
+   }
+ }
+```
+
+**File**: `examples/lit/chat/package.json` (modified, +1/-1)
+```diff
+@@ -20,6 +20,6 @@
+     "eslint": "^9.39.5",
+     "tailwindcss": "^4.3.3",
+     "typescript": "^6.0.3",
+-    "vite": "^8.3.5"
++    "vite": "^8.3.8"
+   }
+ }
+```
+
+**File**: `examples/lit/default-query-function/package.json` (modified, +1/-1)
+```diff
+@@ -18,6 +18,6 @@
+     "@tanstack/eslint-plugin-query": "^5.108.0",
+     "eslint": "^9.39.5",
+     "typescript": "^6.0.3",
+-    "vite": "^8.3.5"
++    "vite": "^8.3.8"
+   }
+ }
+```
+
+**File**: `examples/lit/infinite-query-with-max-pages/package.json` (modified, +1/-1)
+```diff
+@@ -19,7 +19,7 @@
+     "@tanstack/eslint-plugin-query": "^5.108.0",
+     "eslint": "^9.39.5",
+     "typescript": "^6.0.3",
+-    "vite": "^8.3.5"
++    "vite": "^8.3.8"
+   },
+   "msw": {
+     "workerDirectory": [
 ```
 
 ---
 
-### Incident Patch 3: `7b3a72e5` (2026-11-13)
-**Commit Message**: docs(examples/solid): rename 'astro' to 'ssr-astro', replace '@astrojs/tailwind' with Tailwind CSS v4 via '@tailwindcss/vite', and align it with the current Astro template (#12585)
+### Incident Patch 2: `6b849cff` (2026-11-20)
+**Commit Message**: fix(query-core): keep a placeholder that select maps to undefined (#12575)
 
-**File**: `docs/config.json` (modified, +2/-2)
+Amp-Thread-ID: https://ampcode.com/threads/T-01a1c72d-7954-7320-aa9d-9f2611a997c4
+
+Co-authored-by: Amp <[REDACTED_EMAIL]>
+Co-authored-by: Dominik Dorfmeister 🔮 <[REDACTED_EMAIL]>
+
+**File**: `.changeset/keep-placeholder-select-undefined.md` (added, +5/-0)
 ```diff
-@@ -6868,8 +6868,8 @@
-               "to": "framework/solid/examples/streaming-solid-start2"
-             },
-             {
--              "label": "Astro",
--              "to": "framework/solid/examples/astro"
-+              "label": "SSR (Astro)",
-+              "to": "framework/solid/examples/ssr-astro"
-             },
-             {
-               "label": "Offline Queries and Mutations (TanStack Router)",
+@@ -0,0 +1,5 @@
++---
++'@tanstack/query-core': patch
++---
++
++Keep a memoized placeholder result when `select` maps it to `undefined`, so a query with `keepPreviousData` that is disabled or still loading no longer loops between `pending` and `success`.
 ```
 
-**File**: `examples/solid/astro/src/env.d.ts` (removed, +0/-2)
+**File**: `packages/query-core/src/__tests__/queryObserver.test.tsx` (modified, +41/-0)
 ```diff
-@@ -1,2 +0,0 @@
--/// <reference path="../.astro/types.d.ts" />
--/// <reference types="astro/client" />
-```
-
-**File**: `examples/solid/astro/tailwind.config.mjs` (removed, +0/-8)
-```diff
-@@ -1,8 +0,0 @@
--/** @type {import('tailwindcss').Config} */
--export default {
--  content: ['./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}'],
--  theme: {
--    extend: {},
--  },
--  plugins: [],
--}
-```
-
-**File**: `examples/solid/ssr-astro/.gitignore` (renamed, +0/-1)
-```diff
-@@ -1,6 +1,5 @@
- # build output
- dist/
--.vercel/
- # generated types
- .astro/
- 
-```
-
-**File**: `examples/solid/ssr-astro/README.md` (renamed, +1/-1)
-```diff
-@@ -1,4 +1,4 @@
--# TanStack Solid Query Astro Example
-+# TanStack Solid Query SSR Example (Astro)
- 
- A Pokémon search with `keepPreviousData` and `<Suspense>`, rendered as a Solid island.
- 
-```
-
-**File**: `examples/solid/ssr-astro/astro.config.mjs` (renamed, +6/-2)
-```diff
-@@ -1,12 +1,16 @@
-+// @ts-check
- import { defineConfig } from 'astro/config'
- import solidJs from '@astrojs/solid-js'
--import tailwind from '@astrojs/tailwind'
- import node from '@astrojs/node'
-+import tailwindcss from '@tailwindcss/vite'
- // https://astro.build/config
- export default defineConfig({
-   output: 'server',
--  integrations: [solidJs(), tailwind()],
-+  integrations: [solidJs()],
-   adapter: node({
-     mode: 'standalone',
-   }),
-+  vite: {
-+    plugins: [tailwindcss()],
-+  },
+@@ -4,6 +4,7 @@ import {
+   QueryClient,
+   QueryObserver,
+   focusManager,
++  keepPreviousData,
+   noop,
+   timeoutManager,
+ } from '..'
+@@ -2000,4 +2001,44 @@ describe('queryObserver', () => {
+       unsubscribe2()
+     })
+   })
++
++  it('should keep a placeholder that select maps to undefined', async () => {
++    const key = createKey()
++    const options = (id: string) =>
++      queryClient.defaultQueryOptions({
++        queryKey: [...key, id],
++        queryFn: () => [id],
++        enabled: id !== '',
++        placeholderData: keepPreviousData,
++        select: (items: Array<string>) => items.find((item) => item === id),
++      })
++    const observer = new QueryObserver(queryClient, options('a'))
++    const unsubscribe = observer.subscribe(() => undefined)
++    await vi.advanceTimersByTimeAsync(0)
++
++    // 'b' is still loading, '' is disabled. What useQuery does on every
++    // render: an optimistic result, then the options
++    for (const id of ['b', '']) {
++      for (let i = 0; i < 2; i++) {
++        expect(observer.getOptimisticResult(options(id)).status).toBe('success')
++        observer.setOptions(options(id))
++        expect(observer.getCurrentResult()).toMatchObject({
++          status: 'success',
++          isPlaceholderData: true,
++          data: undefined,
++        })
++      }
++      await vi.advanceTimersByTimeAsync(0)
++    }
++
++    // A new placeholderData is not memoized, so its undefined means pending
++    observer.setOptions({ ...options(''), placeholderData: () => undefined })
++    expect(observer.getCurrentResult()).toMatchObject({
++      status: 'pending',
++      isPlaceholderData: false,
++      data: undefined,
++    })
++
++    unsubscribe()
++  })
  })
 ```
 
-**File**: `examples/solid/ssr-astro/eslint.config.js` (renamed, +0/-1)
+**File**: `packages/query-core/src/queryObserver.ts` (modified, +4/-3)
 ```diff
-@@ -6,7 +6,6 @@ import pluginSolid from 'eslint-plugin-solid/configs/typescript'
- import { defineConfig } from 'eslint/config'
+@@ -648,10 +648,10 @@ export class QueryObserver<
+       let placeholderData
  
- export default defineConfig([
--  { ignores: ['src/env.d.ts'] },
-   ...tanstackConfig,
-   ...pluginQuery.configs['flat/recommended-strict'],
-   pluginSolid,
+       // Memoize placeholder data
+-      if (
++      const isMemoizedPlaceholder =
+         prevResult?.isPlaceholderData &&
+         options.placeholderData === prevResultOptions?.placeholderData
+-      ) {
++      if (isMemoizedPlaceholder) {
+         placeholderData = prevResult.data
+         // we have to skip select when reading this memoization
+         // because prevResult.data is already "selected"
+@@ -669,7 +669,8 @@ export class QueryObserver<
+             : options.placeholderData
+       }
+ 
+-      if (placeholderData !== undefined) {
++      // A memoized placeholder stays one even when `select` turned it into undefined
++      if (isMemoizedPlaceholder || placeholderData !== undefined) {
+         status = 'success'
+         data = replaceData(
+           prevResult?.data,
 ```
 
-**File**: `examples/solid/ssr-astro/package.json` (renamed, +3/-4)
+**File**: `packages/react-query/src/__tests__/useQuery.test.tsx` (modified, +60/-0)
 ```diff
-@@ -1,10 +1,9 @@
- {
--  "name": "@tanstack/query-example-solid-astro",
-+  "name": "@tanstack/query-example-solid-ssr-astro",
-   "private": true,
-   "type": "module",
-   "scripts": {
-     "dev": "astro dev",
--    "start": "astro dev",
-     "build": "astro build",
-     "preview": "astro preview",
-     "astro": "astro",
-@@ -15,12 +14,12 @@
-     "@astrojs/check": "^0.9.10",
-     "@astrojs/node": "^11.1.9",
-     "@astrojs/solid-js": "^7.0.2",
--    "@astrojs/tailwind": "^6.0.2",
-+    "@tailwindcss/vite": "^4.3.3",
-     "@tanstack/solid-query": "^5.107.1",
-     "@tanstack/solid-query-devtools": "^5.107.1",
-     "astro": "^7.4.4",
-     "solid-js": "^1.9.18",
--    "tailwindcss": "^3.4.19",
-+    "tailwindcss": "^4.3.3",
-     "typescript": "^6.0.3"
-   },
-   "devDependencies": {
+@@ -7130,4 +7130,64 @@ describe('useQuery', () => {
+ 
+     expect(queryFn.mock.calls).toStrictEqual([['a'], ['b']])
+   })
++
++  it('should not loop when a query with select and keepPreviousData is disabled', async () => {
++    const key = createKey()
++
++    function Page() {
++      const [id, setId] = React.useState('a')
++      const { data } = useQuery({
++        queryKey: [...key, id],
++        queryFn: () => [id],
++        enabled: id !== '',
++        placeholderData: keepPreviousData,
++        select: (items) => items.find((item) => item === id),
++      })
++
++      return (
++        <button onClick={() => setId('')}>{`picked: ${data ?? 'none'}`}</button>
++      )
++    }
++
++    const rendered = renderWithClient(queryClient, <Page />)
++    await vi.advanceTimersByTimeAsync(0)
++    expect(rendered.getByText('picked: a')).toBeInTheDocument()
++
++    fireEvent.click(rendered.getByRole('button'))
++    await vi.advanceTimersByTimeAsync(0)
++    expect(rendered.getByText('picked: none')).toBeInTheDocument()
++  })
++
++  it('should settle as placeholder data when select maps keepPreviousData to undefined', async () => {
++    const key = createKey()
++    const states: Array<UseQueryResult<string | undefined>> = []
++
++    function Page() {
++      const [id, setId] = React.useState('a')
++      const state = useQuery({
++        queryKey: [...key, id],
++        queryFn: () => [id],
++        enabled: id !== '',
++        placeholderData: keepPreviousData,
++        select: (items) => items.find((item) => item === id),
++      })
++      states.push(state)
++
++      return (
++        <button onClick={() => setId('')}>{`status: ${state.status}`}</button>
++      )
++    }
++
++    const rendered = renderWithClient(queryClient, <Page />)
++    await vi.advanceTimersByTimeAsync(0)
++    expect(rendered.getByText('status: success')).toBeInTheDocument()
++
++    fireEvent.click(rendered.getByRole('button'))
++    await vi.advanceTimersByTimeAsync(0)
++    expect(states.at(-1)).toMatchObject({
++      status: 'success',
++      isPlaceholderData: true,
++      data: undefined,
++    })
++  })
+ })
+```
+
+---
+
+### Incident Patch 3: `f7abc938` (2026-11-20)
+**Commit Message**: fix(query-devtools): clear the PiP document without innerHTML (#12629)
+
+Trusted Types block assigning a string to innerHTML, even an empty one.
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `.changeset/query-devtools-pip-trusted-types.md` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++---
++'@tanstack/query-devtools': patch
++---
++
++The picture-in-picture window no longer clears its document with `innerHTML`, which pages that enforce Trusted Types block.
+```
+
+**File**: `packages/query-devtools/src/contexts/PiPContext.tsx` (modified, +4/-4)
+```diff
+@@ -72,10 +72,10 @@ export const PiPProvider = (props: PiPProviderProps) => {
+       )
+     }
+ 
+-    // Remove existing styles
+-    pip.document.head.innerHTML = ''
+-    // Remove existing body
+-    pip.document.body.innerHTML = ''
++    // Remove existing styles and body. `replaceChildren` instead of
++    // `innerHTML = ''`, which Trusted Types block.
++    pip.document.head.replaceChildren()
++    pip.document.body.replaceChildren()
+     // Clear Delegated Events
+     clearDelegatedEvents(pip.document)
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #12604** (2026-11-16): docs(docs/framework): regenerate reference pages after adopting '@tanstack/oxfmt-config' (@sukvvon)
-- **PR #12602** (2026-11-16): docs({query-core,react,preact,vue,solid,svelte,angular}-query): describe the query result's 'status', its derived booleans and the error result types by the query's data and error (@sukvvon)
-- **PR #12601** (2026-11-14): docs({react,preact,vue,solid,svelte,angular}-query): describe when 'status' is 'error', 'success' or 'pending', and that 'data' is 'undefined' when 'select' throws with 'initialData' (@sukvvon)
-- **PR #12596** (2026-11-13): chore(vue-query/package.json): set 'parallelism: false' on 'test:lib' and 'test:types' so 'vue-demi-switch' does not race with vue example tasks (@sukvvon)
-- **PR #12593** (2026-11-13): docs(examples/angular): align 'angular.json', root components, 'OnPush', mock interceptors and 'tsconfig' across the examples (@sukvvon)
-- **PR #12592** (2026-11-13): docs(examples): use each framework's template '.gitignore' in every example (@sukvvon)
+- **PR #12644** (2026-11-20): ci: Version Packages (@github-actions[bot])
+- **PR #12643** (2026-11-20): feat(query-devtools): add a trustedTypesPolicy option (@schiller-manuel)
+- **PR #12642** (closed): fix(query-core): prevent placeholder render loops 🤖🤖🤖 (@sakaintp)
+- **PR #12637** (2026-11-19): ci: Version Packages (@github-actions[bot])
+- **PR #12636** (2026-11-19): fix(query-core): require getNextPageParam for infinite query client methods (@TkDodo)
+- **PR #12635** (closed): fix(query-core): refetch cached infinite query pages without getNextPageParam (@YK-03)
 
 ---
 
@@ -3942,28 +3924,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. *): adopt '@tanstack/oxlint-config' and '@tanstack/oxfmt-config', and fix the ne
+## X. bump vite for examples to cover security release
 
 **RULE**:
-When implementing operations in `docs/eslint/eslint-plugin-query.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TanStack/query. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `examples/lit/algolia/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TanStack/query. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cb62f4f2`: *): adopt '@tanstack/oxlint-config' and '@tanstack/oxfmt-config', and fix the newly reported lint errors. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `816a0aab`: bump vite for examples to cover security release. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/eslint/eslint-plugin-query.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `examples/lit/algolia/package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-import { defineConfig } from 'oxlint'
+    "vite": "^8.3.8"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-import { defineConfig } from 'oxlint'
+    "vite": "^8.3.5"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cb62f4f2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `816a0aab` are properly handled with clean fallback behavior.

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T00:24:53.207Z",
+  "last_updated": "2026-11-21T00:32:51.325Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-21T00:13:24.140Z",
@@ -88,7 +88,7 @@
       "staged_for_review": 0
     },
     "projectdiscovery-nuclei-learnings.md": {
-      "processed_at": "2026-11-20T19:45:19.326Z",
+      "processed_at": "2026-11-21T00:32:49.859Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-20T23:47:54.015Z",
+      "processed_at": "2026-11-21T00:32:50.482Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1153,7 +1153,7 @@
       "staged_for_review": 0
     },
     "tanstack-query-learnings.md": {
-      "processed_at": "2026-11-17T05:37:19.729Z",
+      "processed_at": "2026-11-21T00:32:49.052Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3648,7 +3648,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 2673,
+  "total_dossiers_evaluated": 2676,
   "total_canonical_promoted": 438,
-  "total_staged_for_review": 2047
+  "total_staged_for_review": 2050
 }

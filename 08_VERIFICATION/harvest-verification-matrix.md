@@ -11673,3 +11673,5 @@
 | `CYCLE-20261121-1F0J` | `2026-11-21T00:24:36.163Z` | `zenbu-labs/terminal-browser` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9675` | Yes (`ed85dc81...`) |
 | `CYCLE-20261121-1GYE` | `2026-11-21T00:24:38.678Z` | `TanStack/router` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9676` | Yes (`2d0640cc...`) |
 | `CYCLE-20261121-1NZ1` | `2026-11-21T00:24:47.773Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9677` | Yes (`412fc6b9...`) |
+| `CYCLE-20261121-BR0Q` | `2026-11-21T00:32:38.282Z` | `TanStack/query` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9678` | Yes (`2a062f50...`) |
+| `CYCLE-20261121-BWUF` | `2026-11-21T00:32:45.831Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9679` | Yes (`dc25d572...`) |

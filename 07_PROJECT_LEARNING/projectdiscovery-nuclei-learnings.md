@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source**: github ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
-> **Source Version**: `0dca809a`  
+> **Source Version**: `9bd87c68`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T19:44:41.516Z  
+> **Timestamp**: 2026-11-21T00:32:44.882Z  
 > **Learning ID**: `learn-github-projectdiscovery-nuclei`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T19:44:41.509Z  
+> **Harvest Timestamp**: 2026-11-21T00:32:44.877Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Nuclei is a fast, customizable vulnerability scanner powered by the global security community and built on a simple YAML-based DSL, enabling collaboration to tackle trending vulnerabilities on the internet. It helps you find vulnerabilities in your applications, APIs, networks, DNS, and cloud configurations.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 33150 stars
+- **Stars / Engagement**: 33156 stars
 
 ---
 
@@ -1627,538 +1627,473 @@ type ipOptions struct {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e026c3a9` (2026-11-19)
-**Commit Message**: fix(http): keep the scan context of requests with @timeout
+### Incident Patch 1: `c58ce114` (2026-11-20)
+**Commit Message**: fix(whois): use upstream RDAP with pooled client locking
 
-parseAnnotations moved every raw request of an http block that uses
-@timeout onto context.TODO(): the annotated ones with their custom
-timeout, and the others because such a block's client has no timeout
-of its own. Replacing the context used to let an @timeout outlast a
-default deadline set on it, but executeRequest now starts the
-request's timeout when the request is sent, and the context has no
-deadline before that. The swap only lost what the context carried.
-Canceling ExecuteCallbackWithCtx left such a request waiting until the
-server answered or its timeout ran out, and its match was reported
-after the cancel. The @tls-sni server name and the IP a target is
-pinned to, which the dialer reads from the context, were lost too.
+Codex-Session: codex resume 01a1c1de-e73c-7622-949e-fbbbd741b6c5
 
-The annotated request now adds its custom timeout to its own context,
-and the other requests keep theirs.
-
-Fixes: #8178
-Signed-off-by: Dwi Siswanto <[REDACTED_EMAIL]>
-
-**File**: `pkg/protocols/http/request_annotations.go` (modified, +1/-5)
+**File**: `go.mod` (modified, +4/-5)
 ```diff
-@@ -168,15 +168,11 @@ func (r *Request) parseAnnotations(rawRequest string, request *retryablehttp.Req
- 				}
- 
- 				overrides.timeout, overrides.timeoutCause = parsedTimeout, ErrTimeoutAnnotationDeadline
--				// The replaced context drops the input's cancellation (#8178).
--				ctx := context.TODO()
-+				ctx := request.Context()
- 				// add timeout value to context
- 				ctx = context.WithValue(ctx, httpclientpool.WithCustomTimeout{}, httpclientpool.WithCustomTimeout{Timeout: parsedTimeout})
- 				request = request.Clone(ctx)
- 			}
--		} else {
--			// The replaced context drops the input's cancellation (#8178).
--			request = request.Clone(context.TODO())
- 		}
- 	}
- 
+@@ -74,6 +74,7 @@ require (
+ 	github.com/miekg/dns v1.1.73
+ 	github.com/oiweiwei/go-msrpc v1.2.12
+ 	github.com/olekukonko/tablewriter v1.0.8
++	github.com/openrdap/rdap v0.10.2
+ 	github.com/ory/dockertest/v3 v3.12.0
+ 	github.com/pkg/errors v0.9.1
+ 	github.com/praetorian-inc/fingerprintx v1.1.15
+@@ -98,7 +99,6 @@ require (
+ 	github.com/projectdiscovery/networkpolicy v0.1.58
+ 	github.com/projectdiscovery/ratelimit v0.0.95
+ 	github.com/projectdiscovery/rawhttp v0.3.1
+-	github.com/projectdiscovery/rdap v0.9.1-0.20221108103045-9865884d1917
+ 	github.com/projectdiscovery/retryabledns v1.0.118
+ 	github.com/projectdiscovery/retryablehttp-go v1.3.34
+ 	github.com/projectdiscovery/sarif v0.1.0
+@@ -174,8 +174,8 @@ require (
+ 	github.com/STARRY-S/zip v0.2.3 // indirect
+ 	github.com/VividCortex/ewma v1.2.0 // indirect
+ 	github.com/akrylysov/pogreb v0.10.2 // indirect
+-	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751 // indirect
+-	github.com/alecthomas/units v0.0.0-20211218093645-b94a6e3cc137 // indirect
++	github.com/alecthomas/kingpin/v2 v2.4.0 // indirect
++	github.com/alecthomas/units v0.0.0-20240927000941-0f3dac36c52b // indirect
+ 	github.com/andybalholm/cascadia v1.3.4 // indirect
+ 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 // indirect
+ 	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.8 // indirect
+@@ -309,7 +309,6 @@ require (
+ 	github.com/imdario/mergo v0.3.16 // indirect
+ 	github.com/indece-official/go-ebcdic v1.2.0 // indirect
+ 	github.com/itchyny/timefmt-go v0.1.6 // indirect
+-	github.com/jarcoal/httpmock v1.3.0 // indirect
+ 	github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 // indirect
+ 	github.com/jcmturner/aescts/v2 v2.0.0 // indirect
+ 	github.com/jcmturner/dnsutils/v2 v2.0.0 // indirect
+@@ -423,6 +422,7 @@ require (
+ 	github.com/xeipuuv/gojsonpointer v0.0.0-20190905194746-02993c407bfb // indirect
+ 	github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415 // indirect
+ 	github.com/xeipuuv/gojsonschema v1.2.0 // indirect
++	github.com/xhit/go-str2duration/v2 v2.1.0 // indirect
+ 	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
+ 	github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78 // indirect
+ 	github.com/ysmood/fetchup v0.2.3 // indirect
+@@ -462,7 +462,6 @@ require (
+ 	google.golang.org/genproto v0.0.0-20260128011058-8636f8732409 // indirect
+ 	google.golang.org/genproto/googleapis/api v0.0.0-20260526163538-3dc84a4a5aaa // indirect
+ 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260526163538-3dc84a4a5aaa // indirect
+-	gopkg.in/alecthomas/kingpin.v2 v2.2.6 // indirect
+ 	gopkg.in/corvus-ch/zbase32.v1 v1.0.0 // indirect
+ 	gopkg.in/ini.v1 v1.67.0 // indirect
+ 	gopkg.in/warnings.v0 v0.1.2 // indirect
 ```
 
-**File**: `pkg/protocols/http/request_annotations_test.go` (modified, +29/-0)
+**File**: `go.sum` (modified, +10/-8)
 ```diff
-@@ -12,6 +12,7 @@ import (
- 	"testing"
- 	"time"
+@@ -148,16 +148,18 @@ github.com/alecthomas/assert/v2 v2.11.0/go.mod h1:Bze95FyfUr7x34QZrjL+XP+0qgp/zg
+ github.com/alecthomas/chroma/v2 v2.27.0 h1:FodwmyOBgJULFYmDqibcp9pvfDLWdtPRh9v/r5BXYZs=
+ github.com/alecthomas/chroma/v2 v2.27.0/go.mod h1:NjJ3ciIgrqBNeIkWZ4e46nseoLDslxU1LmfCoL+wcY8=
+ github.com/alecthomas/kingpin/v2 v2.3.1/go.mod h1:oYL5vtsvEHZGHxU7DMp32Dvx+qL+ptGn6lWaot2vCNE=
++github.com/alecthomas/kingpin/v2 v2.4.0 h1:f48lwail6p8zpO1bC4TxtqACaGqHYA22qkHjHpqDjYY=
++github.com/alecthomas/kingpin/v2 v2.4.0/go.mod h1:0gyi0zQnjuFk8xrkNKamJoyUo382HRL7ATRpFZCw6tE=
+ github.com/alecthomas/repr v0.5.2 h1:SU73FTI9D1P5UNtvseffFSGmdNci/O6RsqzeXJtP0Qs=
+ github.com/alecthomas/repr v0.5.2/go.mod h1:Fr0507jx4eOXV7AlPV6AVZLYrLIuIeSOWtW57eE/O/4=
+ github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc/go.mod h1:LOuyumcjzFXgccqObfd/Ljyb9UuFJ6TxHnclSeseNhc=
+-github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751 h1:JYp7IbQjafoB+tBA3gMyHYHrpOtNuDiK/uB5uXxq5wM=
+ github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751/go.mod h1:LOuyumcjzFXgccqObfd/Ljyb9UuFJ6TxHnclSeseNhc=
+ github.com/alecthomas/units v0.0.0-20151022065526-2efee857e7cf/go.mod h1:ybxpYRFXyAe+OPACYpWeL0wqObRcbAqCMya13uyzqw0=
+ github.com/alecthomas/units v0.0.0-20190717042225-c3de453c63f4/go.mod h1:ybxpYRFXyAe+OPACYpWeL0wqObRcbAqCMya13uyzqw0=
+ github.com/alecthomas/units v0.0.0-20190924025748-f65c72e2690d/go.mod h1:rBZYJk541a8SKzHPHnH3zbiI+7dagKZ0cgpgrD7Fyho=
+-github.com/alecthomas/units v0.0.0-20211218093645-b94a6e3cc137 h1:s6gZFSlWYmbqAuRjVTiNNhvNRfY2Wxp9nhfyel4rklc=
+ github.com/alecthomas/units v0.0.0-20211218093645-b94a6e3cc137/go.mod h1:OMCwj8VM1Kc9e19TLln2VL61YJF0x1XFtfdL4JdbSyE=
++github.com/alecthomas/units v0.0.0-20240927000941-0f3dac36c52b h1:mimo19zliBX/vSQ6PWWSL9lK8qwHozUj03+zLoEB8O0=
++github.com/alecthomas/units v0.0.0-20240927000941-0f3dac36c52b/go.mod h1:fvzegU4vN3H1qMT+8wDmzjAcDONcgo2/SZ/TyfdUOFs=
+ github.com/alexbrainman/sspi v0.0.0-20250919150558-7d374ff0d59e h1:4dAU9FXIyQktpoUAgOJK3OTFc/xug0PCXYCqU0FgDKI=
+ github.com/alexbrainman/sspi v0.0.0-20250919150558-7d374ff0d59e/go.mod h1:cEWa1LVoE5KvSD9ONXsZrj0z6KqySlCCNKHlLzbqAt4=
+ github.com/alexsnet/go-vnc v0.1.0 h1:vBCwPNy79WEL8V/Z5A0ngEFCvTWBAjmS048lkR2rdmY=
+@@ -694,9 +696,8 @@ github.com/itchyny/gojq v0.12.17 h1:8av8eGduDb5+rvEdaOO+zQUjA04MS0m3Ps8HiD+fceg=
+ github.com/itchyny/gojq v0.12.17/go.mod h1:WBrEMkgAfAGO1LUcGOckBl5O726KPp+OlkKug0I/FEY=
+ github.com/itchyny/timefmt-go v0.1.6 h1:ia3s54iciXDdzWzwaVKXZPbiXzxxnv1SPGFfM/myJ5Q=
+ github.com/itchyny/timefmt-go v0.1.6/go.mod h1:RRDZYC5s9ErkjQvTvvU7keJjxUYzIISJGxm9/mAERQg=
+-github.com/jarcoal/httpmock v1.0.4/go.mod h1:ATjnClrvW/3tijVmpL/va5Z3aAyGvqU3gCT8nX0Txik=
+-github.com/jarcoal/httpmock v1.3.0 h1:2RJ8GP0IIaWwcC9Fp2BmVi8Kog3v2Hn7VXM3fTd+nuc=
+-github.com/jarcoal/httpmock v1.3.0/go.mod h1:3yb8rc4BI7TCBhFY8ng0gjuLKJNquuDNiPaZjnENuYg=
++github.com/jarcoal/httpmock v1.4.2 h1:dKwiP/9zITCPfBLsDn3kchbSOu16JrnxtVEmL0fPRcI=
++github.com/jarcoal/httpmock v1.4.2/go.mod h1:ftW1xULwo+j0R0JJkJIIi7UKigZUXCLLanykgjwBXL0=
+ github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 h1:BQSFePA1RWJOlocH6Fxy8MmwDt+yVQYULKfN0RoTN8A=
+ github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99/go.mod h1:1lJo3i6rXxKeerYnT8Nvf0QmHCRC1n8sfWVwXF2Frvo=
+ github.com/jcmturner/aescts/v2 v2.0.0 h1:9YKLH6ey7H4eDBXW8khjYslgyqG2xZikXP0EQFKrle8=
+@@ -896,6 +897,8 @@ github.com/opencontainers/image-spec v1.1.1 h1:y0fUlFfIZhPF1W537XOLg0/fcx6zcHCJw
+ github.com/opencontainers/image-spec v1.1.1/go.mod h1:qpqAh3Dmcf36wStyyWU+kCeDgrGnAve2nCC8+7h8Q0M=
+ github.com/opencontainers/runc v1.3.6 h1:SLGIymCtsk80iNPWgbc8dtjI30r+5mTVV+4dN8/17Sk=
+ github.com/opencontainers/runc v1.3.6/go.mod h1:o1wyv76EDlTkcf0KTFgN8bMWLPvgF/HfX709lDv+rr4=
++github.com/openrdap/rdap v0.10.2 h1:dAP3rvrn9uInV6eBg1c6LNoEeWAKkgdqm09MRgKDpWo=
++github.com/openrdap/rdap v0.10.2/go.mod h1:3XWb3R5cdN59jD6MlxzwmAQw1MMio2QDH7+pwpgb5jY=
+ github.com/orisano/pixelmatch v0.0.0-20220722002657-fb0b55479cde/go.mod h1:nZgzbfBr3hhjoZnS66nKrHmduYNpc34ny7RK4z5/HM0=
+ github.com/ory/dockertest/v3 v3.12.0 h1:3oV9d0sDzlSQfHtIaB5k6ghUCVMVLpAY8hwrqoCyRCw=
+ github.com/ory/dockertest/v3 v3.12.0/go.mod h1:aKNDTva3cp8dwOWwb9cWuX84aH5akkxXRvO7KCwWVjE=
+@@ -974,8 +977,6 @@ github.com/projectdiscovery/ratelimit v0.0.95 h1:/vwnXSuVz9di/nJ2x/ebX9d1Hd320nU
+ github.com/projectdiscovery/ratelimit v0.0.95/go.mod h1:QCzQMpdcjlXZNhfy1UJFp6vdPk2E3DaGKxKhFZ3dI48=
+ github.com/projectdiscovery/rawhttp v0.3.1 h1:utudlS3qCAZYa+DU+WK0Q0uuiUxgYXfLwxWIs9dd1Bc=
+ github.com/projectdiscovery/rawhttp v0.3.1/go.mod h1:ezbLgLuzFC3EunY4OqptRunQb6QUM7z78gOBL8DrWYY=
+-github.com/projectdiscovery/rdap v0.9.1-0.20221108103045-9865884d1917 h1:m03X4gBVSorSzvmm0bFa7gDV4QNSOWPL/fgZ4kTXBxk=
+-github.com/projectdiscovery/rdap v0.9.1-0.20221108103045-9865884d1917/go.mod h1:JxXtZC9e195awe7EynrcnBJmFoad/BNDzW9mzFkK8Sg=
+ github.com/projectdiscovery/retryabledns v1.0.118 h1:vrWzUgjRyD5fg2QiPF0boDuSL/QYuoxPftgpYQv2MiQ=
+ github.com/projectdiscovery/retryabledns v
+```
+
+**File**: `pkg/protocols/whois/rdapclientpool/clientpool.go` (modified, +20/-7)
+```diff
+@@ -7,18 +7,29 @@ import (
+ 	"net/http"
+ 	"sync"
  
-+	"github.com/projectdiscovery/fastdialer/fastdialer" //nolint:depguard // No depguard rules are configured, so its default list allows only the standard library.
++	"github.com/openrdap/rdap"
++	"github.com/openrdap/rdap/bootstrap"
  	"github.com/projectdiscovery/gologger"
- 	"github.com/projectdiscovery/nuclei/v3/internal/tests/testutils"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/model"
-@@ -210,6 +211,34 @@ func TestRequestParseAnnotationsTimeout(t *testing.T) {
- 		require.False(t, deadlined, "request deadline started before the request was sent")
- 	})
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/protocolstate"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/types"
+-	"github.com/projectdiscovery/rdap"
+-	"github.com/projectdiscovery/rdap/bootstrap"
+ )
  
-+	// The request keeps the scan's cancellation and the values set before the
-+	// timeout, such as the SNI, with or without the annotation (#8178).
-+	t.Run("keeps-request-context", func(t *testing.T) { //nolint:paralleltest // like the other subtests
-+		annotations := map[string]string{
-+			"annotated":       "@tls-sni: github.com\n@timeout: 2s\n",
-+			"default-timeout": "@tls-sni: github.com\n",
-+		}
-+		for name, annotation := range annotations {
-+			t.Run(name, func(t *testing.T) { //nolint:paralleltest // like the other subtests
-+				//nolint:exhaustruct,exhaustruct_v5 // zero values are the defaults
-+				request := &Request{
-+					options:           getExecuterOptions(t),
-+					connConfiguration: &httpclientpool.Configuration{NoTimeout: true},
-+				}
-+				scanCtx, cancelScan := context.WithCancel(t.Context())
-+
-+				httpReq, err := retryablehttp.NewRequestWithContext(scanCtx, http.MethodGet, "https://example.com", nil)
-+				require.NoError(t, err, "could not create http request")
-+
-+				overrides, _ := request.parseAnnotations(annotation+"GET / HTTP/1.1\nHost: {{Hostname}}", httpReq)
-+				require.Equal(t, "github.com", overrides.request.Context().Value(fastdialer.SniName))
-+
-+				cancelScan()
-+				require.ErrorIs(t, overrides.request.Context().Err(), context.Canceled)
-+			})
-+		}
-+	})
-+
- 	// A timeout that does not parse or is not positive keeps the default
- 	// timeout, and the request keeps its context.
- 	t.Run("invalid", func(t *testing.T) { //nolint:paralleltest // like the other subtests
-```
-
-**File**: `pkg/protocols/http/request_test.go` (modified, +65/-0)
-```diff
-@@ -994,6 +994,71 @@ func TestParallelRequestGetsDefaultTimeoutWithoutClientTimeout(t *testing.T) {
- 	require.Less(t, time.Since(start), 1500*time.Millisecond, "requests waited out the server's 2s reply")
- }
+ // clients holds one client per execution, because each one dials with the
+ // network policy of its execution.
+-var clients = map[string]*rdap.Client{}
++var clients = map[string]*Client{}
+ var m sync.Mutex
  
-+// Canceling the scan must stop a request of a template that uses @timeout,
-+// whether the request has the annotation or takes the default timeout because
-+// another request of the template does (#8178).
-+//
-+//nolint:paralleltest // the cases share the protocol state testutils.Init sets up
-+func TestTimeoutAnnotationKeepsScanCancellation(t *testing.T) {
-+	const answerAfter = 5 * time.Second
-+
-+	tests := []struct {
-+		name string
-+		raw  []string
-+	}{
-+		{name: "annotated", raw: []string{"@timeout: 30s\nGET / HTTP/1.1\nHost: {{Hostname}}"}},
-+		{name: "default timeout", raw: []string{
-+			"GET / HTTP/1.1\nHost: {{Hostname}}",
-+			"@timeout: 30s\nGET /next HTTP/1.1\nHost: {{Hostname}}",
-+		}},
-+	}
-+	for _, test := range tests {
-+		t.Run(test.name, func(t *testing.T) {
-+			options := testutils.DefaultOptions.Copy()
-+			timeouts := *options.GetTimeouts()
-+			timeouts.HttpTimeout = time.Minute
-+			options.SetTimeouts(&timeouts)
-+			testutils.Init(options)
-+			t.Cleanup(func() { testutils.Cleanup(options) })
-+
-+			server := httptest.NewServer(http.HandlerFunc(func(resp http.ResponseWriter, req *http.Request) {
-+				select {
-+				case <-req.Context().Done():
-+				case <-time.After(answerAfter):
-+					_, _ = resp.Write([]byte("done"))
-+				}
-+			}))
-+			t.Cleanup(server.Close)
-+
-+			//nolint:exhaustruct,exhaustruct_v5 // zero values are the template defaults
-+			request := &Request{
-+				Raw: test.raw,
-+				Matchers: []*matchers.Matcher{{
-+					Type:  matchers.MatcherTypeHolder{MatcherType: matchers.WordsMatcher},
-+					Words: []string{"done"},
-+				}},
-+			}
-+			require.NoError(t, request.Compile(testutils.NewMockExecuterOptions(options, nil)))
-+
-+			ctx, cancel := context.WithTimeout(t.Context(), 200*time.Millisecond)
-+			defer cancel()
-+
-+			var matched atomic.Bool
-+
-+			start := time.Now()
-+			_ = request.ExecuteWithResults(contextargs.NewWithInput(ctx, server.URL),
-+				make(output.InternalEvent), make(output.InternalEvent), func(event *output.InternalWrappedEvent) {
-+					if event.OperatorsResult != nil && event.OperatorsResult.Matched {
-+						matched.Store(true)
-+					}
-+				})
-+
-+			require.Less(t, time.Since(start), answerAfter/2, "the request outlived the canceled scan")
-+			require.False(t, matched.Load(), "a canceled scan reported a match")
-+		})
-+	}
++type Client struct {
++	mu     sync.Mutex
++	client *rdap.Client
 +}
 +
- // executePacedRequests runs request with a 500ms HTTP timeout and a rate limit
- // of one token every 800ms, so the second request waits past its timeout. It
- // returns the paths the server received.
-```
-
----
-
-### Incident Patch 2: `d81ad4bc` (2026-11-19)
-**Commit Message**: fix(http): end the stop-at-first-match goroutine on every return
-
-Since a5715288a, executeParallelHTTP builds its stop-at-first-match
-handler on context.Background(), so only Wait ends the handler's
-goroutine. Several returns skip Wait: a canceled scan, a worker
-context canceled by a first match, a failed resize, and a request
-that fails to build. Each left a goroutine in
-StopAtFirstMatchHandler.run, so an SDK process that cancels scans of
-templates with threads and payloads piled them up, and
-stop-at-first-match scans leaked some even when they completed.
-
-The handler now runs on a context that the function cancels when it
-returns, as in the race and pipeline paths. The context still does
-not derive from the input, so with stop-at-first-match a canceled
-input is not reported as a first match. The Wait that aac4d67dc added
-to the unresponsive-host return only stopped this leak there, so it
-is gone.
-
-Fixes: #8181
-Signed-off-by: Dwi Siswanto <[REDACTED_EMAIL]>
-
-**File**: `pkg/protocols/http/request.go` (modified, +9/-3)
-```diff
-@@ -310,7 +310,15 @@ func (request *Request) executeParallelHTTP(input *contextargs.Context, dynamicV
- 	workerCtx, cancelWorkers := context.WithCancel(input.Context())
- 	defer cancelWorkers()
- 
--	spmHandler := httputils.NewBlockingSPMHandler[error](context.Background(), maxWorkers, maxErrorsWhenParallel, shouldStop)
-+	// The handler's goroutine runs until Wait or until the context passed to
-+	// it ends; Cancel does not stop it. Some returns skip Wait, so that context
-+	// ends with this function (#8181). It does not derive from the input: with
-+	// stop-at-first-match, the handler would report the input's cancellation
-+	// as a first match.
-+	spmCtx, cancelSPM := context.WithCancel(context.Background())
-+	defer cancelSPM()
++func (c *Client) Do(request *rdap.Request) (*rdap.Response, error) {
++	c.mu.Lock()
++	defer c.mu.Unlock()
++	return c.client.Do(request)
++}
 +
-+	spmHandler := httputils.NewBlockingSPMHandler[error](spmCtx, maxWorkers, maxErrorsWhenParallel, shouldStop)
- 	defer spmHandler.Cancel()
- 
- 	// wrappedCallback is a callback that wraps the original callback
-@@ -509,8 +517,6 @@ func (request *Request) executeParallelHTTP(input *contextargs.Context, dynamicV
- 			reservation.done()
- 			spmHandler.Cancel()
- 			stopWorkers()
--			// The handler watches context.Background(), so only Wait ends it.
--			spmHandler.Wait()
- 			return nil
- 		}
- 		select {
-```
-
-**File**: `pkg/protocols/http/request_test.go` (modified, +126/-0)
-```diff
-@@ -10,6 +10,7 @@ import (
- 	"net/http"
- 	"net/http/httptest"
- 	"slices"
-+	"strconv"
- 	"strings"
- 	"sync"
- 	"sync/atomic"
-@@ -1930,6 +1931,131 @@ func TestExecuteParallelHTTP_GoroutineLeaks(t *testing.T) {
- 		require.Error(t, err)
- 		require.Equal(t, context.Canceled, err)
- 	})
-+
-+	// Test Case 4: the context is canceled while payloads still wait for a
-+	// worker, so the scan returns before its stop-at-first-match handler is
-+	// waited on (#8181).
-+	//
-+	//nolint:exhaustruct,exhaustruct_v5,paralleltest // zero-value fixtures; goleak and testutils.Init state are shared
-+	t.Run("ContextCancellationWhileQueueing", func(t *testing.T) {
-+		server := httptest.NewServer(http.HandlerFunc(func(writer http.ResponseWriter, r *http.Request) {
-+			select {
-+			case <-r.Context().Done():
-+			case <-time.After(200 * time.Millisecond):
-+			}
-+
-+			_, _ = fmt.Fprintf(writer, "response")
-+		}))
-+		defer server.Close()
-+
-+		req := &Request{
-+			ID:      "parallel-context-cancel-queueing",
-+			Method:  HTTPMethodTypeHolder{MethodType: HTTPGet},
-+			Path:    []string{"{{BaseURL}}/test?param={{payload}}"},
-+			Threads: 2,
-+			Payloads: map[string]any{
-+				"payload": []string{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"},
-+			},
-+			Matchers: []*matchers.Matcher{{
-+				Part:  "body",
-+				Type:  matchers.MatcherTypeHolder{MatcherType: matchers.WordsMatcher},
-+				Words: []string{"response"},
-+			}},
-+		}
-+
-+		executerOpts := testutils.NewMockExecuterOptions(options, &testutils.TemplateInfo{
-+			ID:   "parallel-context-cancel-queueing",
-+			Info: model.Info{SeverityHolder: severity.Holder{Severity: severity.Low}, Name: "test"},
-+		})
-+
-+		err := req.Compile(executerOpts)
-+		require.NoError(t, err)
-+
-+		ctx, cancel := context.WithTimeout(t.Context(), 300*time.Millisecond)
-+		defer cancel()
-+
-+		ctxArgs := contextargs.NewWithInput(ctx, server.URL)
-+		err = req.ExecuteWithResults(ctxArgs, make(output.InternalEvent), make(output.InternalEvent),
-+			func(*output.InternalWrappedEvent) {})
-+		require.ErrorIs(t, err, context.DeadlineExceeded)
-+	})
-+
-+	// Test Case 5: only the port the requests go to is unresponsive, not the
-+	// target's own, so the scan returns from inside the payload loop.
-+	//
-+	//nolint:exhaustruct,exhaustruct_v5,paralleltest // zero-value fixtures; goleak and testutils.Init state are shared
-+	t.Run("UnresponsiveRequestPort", func(t *testing.T) {
-+		req := &Request{
-+			ID:       "parallel-unresponsive-request-port",
-+			Method:   HTTPMethodTypeHolder{MethodType: HTTPGet},
-+			Path:     []string{"{{BaseURL}}/n?x={{v}}"},
-+			Threads:  2,
-+			Payloads: map[string]any{"v": []string{"1", "2"}},
-+		}
-+
-+		executerOpts := testutils.NewMockExecuterOptions(options, &testutils.TemplateInfo{
-+			ID:   "parallel-unresponsive-request-port",
-+			Info: model.Info{SeverityHolder: severity.Holder{Severity: severity.Low}, Name: "test"},
-+		})
-+		executerOpts.HostErrorsCache = &addressSpyHostErrorsCache{unresponsive: "127.0.0.1:443"}
-+
-+		err := req.Compile(executerOpts)
-+		require.NoError(t, err)
-+
-+		// A target without a scheme is sent to https, so its own address is
-+		// 127.0.0.1:80 while its requests go to 127.0.0.1:443.
-+		ctxArgs := contextargs.NewWithInput(t.Context(), "127.0.0.1")
-+		err = req.ExecuteWithResults(ctxArgs, make(output.InternalEvent), make(output.InternalEvent),
-+			func(*output.InternalWrappedEvent) {})
-+		require.NoError(t, err)
-+	})
-+
-+	// Test Case 6: a first match cancels the workers while payloads are still
-+	// being queued, and the scan can return before its stop-at-first-match
-+	// handler is waited on. Only some scans take that return, so it runs 30
-+	// (#8181).
-+	//
-+	//nolint:exhaustruct,exhaustruct_v5,paralleltest // zero-value fixtures; goleak and testutils.Init state are shared
-+	t.Run("StopAtFirstMatchWhileQueueing", func(t *testing.T) {
-+		server := httptest.NewServer(http.HandlerFunc(func(writer http.ResponseWriter, _ *http.Request) {
-+			_, _ = fmt.Fprintf(writer, "response")
-+		}))
-+		defer server.Close()
-+
-+		payloads := make([]string, 2000)
-+		for i := range payloads {
-+			payloads[i] = strconv.Itoa(i)
-+		}
-+
-+		req := &Request{
-+			ID:               "parallel-stop-first-match-queueing",
-+			Method:           HTTPMethodTypeHolder{MethodType: HTTPGet},
-+			Path:             []string{"{{BaseURL}}/test?param={{payload}}"},
-+			Threads:          50,
-+			Payloads:         map[string]any{"payload": payloads},
-+			StopAtFirstMatch: true,
-+			Matchers: []*matchers.Matcher{{
-+				Part:  "body",
-+				Type:  matchers.MatcherTypeHolder{MatcherType: matchers.WordsMatcher},
-+				Words: []string{"response"},
-+			}},
-+		}
-+
-+		executerOpts := testutils.NewMockExecuterOptions(options, &testutils.TemplateInfo{
-+			ID:   "parallel-stop-first-match-queueing",
-+			Info: model.Info{SeverityHolder: severity.Holder{Severity: severity.Low}, Name: "test"},
-+		})
-+
-+		err := req.Compile(executerOpts)
-+		require.NoError(t, err)
-+
-+		for range 30 {
-+			ctxArgs := contextargs.NewWithInput(t.Context(), server.
-```
-
----
-
-### Incident Patch 3: `bca311bf` (2026-11-19)
-**Commit Message**: fix(workflow): stop resetting host errors after each step
-
-After each step without matchers, runWorkflowStep recorded the step's
-result in the host errors cache. A step usually returns nil when its
-requests fail, because the generic template engine logs request errors
-instead of returning them, and the cache treats nil as a success that
-clears the host. So every step erased the failures its own requests
-had just recorded, and a workflow kept sending to a host that refused
-every connection or timed out on every request, while -t skips it
-after the first refusal or after -mhe timeouts. The call passed the
-workflow's protocol type, which the cache never counts, so it could
-only clear entries. It has done so since 052fd8b79 made it run on
-every result instead of only on errors.
-
-The requests record their own results, as they do outside workflows,
-so the step no longer records one. That leaves the workflow parameter
-of runWorkflowStep unused, and it is dropped. The signature and its
-call sites are reformatted for the linters.
-
-Fixes: #8177
-Signed-off-by: Dwi Siswanto <[REDACTED_EMAIL]>
-
-**File**: `pkg/core/workflow_execute.go` (modified, +19/-9)
-```diff
-@@ -41,7 +41,8 @@ func (e *Engine) executeWorkflow(ctx *scan.ScanContext, w *workflows.Workflow) b
- 	for _, template := range w.Workflows {
- 		newCtx := scan.NewScanContext(ctx.Context(), ctx.Input.Clone())
- 		// Root steps do not own a waitgroup slot.
--		if err := e.runWorkflowStep(template, newCtx, results, swg, &pending, w, nil); err != nil {
-+		err := e.runWorkflowStep(template, newCtx, results, swg, &pending, nil)
-+		if err != nil {
- 			gologger.Warning().Msgf(workflowStepExecutionError, template.Template, err)
+ // Init initializes the client pool implementation
+ func Init(options *types.Options) error {
+ 	_, err := Get(options, nil)
+@@ -28,7 +39,7 @@ func Init(options *types.Options) error {
+ // newClient returns an rdap client whose requests, bootstrap lookups and
+ // redirects all dial through the fastdialer of the execution, so every
+ // address it connects to is checked against the network policy.
+-func newClient(options *types.Options) *rdap.Client {
++func newClient(options *types.Options) *Client {
+ 	executionID := options.ExecutionId
+ 	httpClient := &http.Client{
+ 		Transport: &http.Transport{
+@@ -51,7 +62,7 @@ func newClient(options *types.Options) *rdap.Client {
+ 			gologger.Debug().Msgf("rdap: %s", text)
  		}
  	}
-@@ -71,7 +72,12 @@ func slotRelease(swg *syncutil.AdaptiveWaitGroup) func() {
- //
- // pending is incremented for every child step before it starts, and each child
- // calls Done when it returns, so the root can wait for the whole tree.
--func (e *Engine) runWorkflowStep(template *workflows.WorkflowTemplate, ctx *scan.ScanContext, results *atomic.Bool, swg *syncutil.AdaptiveWaitGroup, pending *sync.WaitGroup, w *workflows.Workflow, releaseSlot func()) error {
-+//
-+//nolint:cyclop,funlen,gocognit // a step's executers, matchers and child steps share its match result and slot
-+func (e *Engine) runWorkflowStep(
-+	template *workflows.WorkflowTemplate, ctx *scan.ScanContext, results *atomic.Bool,
-+	swg *syncutil.AdaptiveWaitGroup, pending *sync.WaitGroup, releaseSlot func(),
-+) error {
- 	var firstMatched bool
- 	var err error
- 	var mainErr error
-@@ -103,9 +109,9 @@ func (e *Engine) runWorkflowStep(template *workflows.WorkflowTemplate, ctx *scan
- 					firstMatched = true
- 				}
- 			}
--			if w.Options.HostErrorsCache != nil {
--				w.Options.HostErrorsCache.MarkFailedOrRemove(w.Options.ProtocolType.String(), ctx.Input, err)
--			}
-+			// Each request records its own result in the host errors cache. A
-+			// step can return nil when all its requests failed, and recording
-+			// that nil would clear the host after every step (#8177).
- 			if err != nil {
- 				if len(template.Executers) == 1 {
- 					mainErr = err
-@@ -156,8 +162,10 @@ func (e *Engine) runWorkflowStep(template *workflows.WorkflowTemplate, ctx *scan
- 							// create a new context with the same input but with unset callbacks
- 							// clone the Input so that other parallel executions won't overwrite the shared variables when subsequent templates are running
- 							subCtx := scan.NewScanContext(ctx.Context(), ctx.Input.Clone())
--							if err := e.runWorkflowStep(subtemplate, subCtx, results, swg, pending, w, release); err != nil {
--								gologger.Warning().Msgf(workflowStepExecutionError, subtemplate.Template, err)
-+
-+							stepErr := e.runWorkflowStep(subtemplate, subCtx, results, swg, pending, release)
-+							if stepErr != nil {
-+								gologger.Warning().Msgf(workflowStepExecutionError, subtemplate.Template, stepErr)
- 							}
- 						}(subtemplate)
- 					}
-@@ -194,8 +202,10 @@ func (e *Engine) runWorkflowStep(template *workflows.WorkflowTemplate, ctx *scan
+-	return client
++	return &Client{client: client}
+ }
  
- 				// create a new context with the same input but with unset callbacks
- 				subCtx := scan.NewScanContext(ctx.Context(), ctx.Input.Clone())
--				if err := e.runWorkflowStep(template, subCtx, results, swg, pending, w, release); err != nil {
--					gologger.Warning().Msgf(workflowStepExecutionError, template.Template, err)
+ // Configuration contains the custom configuration options for a client - placeholder
+@@ -63,7 +74,7 @@ func (c *Configuration) Hash() string {
+ }
+ 
+ // Get creates or gets the client of the execution
+-func Get(options *types.Options, configuration *Configuration) (*rdap.Client, error) {
++func Get(options *types.Options, configuration *Configuration) (*Client, error) {
+ 	m.Lock()
+ 	defer m.Unlock()
+ 	if client, ok := clients[options.ExecutionId]; ok {
+@@ -81,6 +92,8 @@ func Close(executionID string) {
+ 	delete(clients, executionID)
+ 	m.Unlock()
+ 	if client != nil {
+-		client.HTTP.CloseIdleConnections()
++		client.mu.Lock()
++		client.client.HTTP.CloseIdleConnections()
++		client.mu.Unlock()
+ 	}
+ }
+```
+
+**File**: `pkg/protocols/whois/rdapclientpool/clientpool_test.go` (modified, +36/-1)
+```diff
+@@ -4,12 +4,13 @@ import (
+ 	"net/http"
+ 	"net/http/httptest"
+ 	"net/url"
++	"sync"
+ 	"sync/atomic"
+ 	"testing"
+ 
++	"github.com/openrdap/rdap"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/protocolstate"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/types"
+-	"github.com/projectdiscovery/rdap"
+ 	"github.com/stretchr/testify/require"
+ )
+ 
+@@ -32,6 +33,7 @@ func rdapOptions(t *testing.T, executionID string, excludeTargets []string) *typ
+ 	require.NoError(t, protocolstate.Init(options))
+ 	t.Cleanup(func() { protocolstate.Close(options.ExecutionId) })
+ 	require.NoError(t, Init(options))
++	t.Cleanup(func() { Close(options.ExecutionId) })
+ 	return options
+ }
+ 
+@@ -64,3 +66,36 @@ func TestClientObeysExecutionNetworkPolicy(t *testing.T) {
+ 	require.Error(t, err)
+ 	require.Equal(t, int32(1), hits.Load(), "rdap request reached a denied address")
+ }
 +
-+				stepErr := e.runWorkflowStep(template, subCtx, results, swg, pending, release)
-+				if stepErr != nil {
-+					gologger.Warning().Msgf(workflowStepExecutionError, template.Template, stepErr)
- 				}
- 			}(subtemplate)
++func TestClientDoConcurrent(t *testing.T) {
++	var hits atomic.Int32
++	server := newRdapServer(t, &hits)
++	options := rdapOptions(t, t.Name(), nil)
++	client, err := Get(options, nil)
++	require.NoError(t, err)
++	serverURL, err := url.Parse(server.URL)
++	require.NoError(t, err)
++
++	const requests = 32
++	start := make(chan struct{})
++	errs := make(chan error, requests)
++	var wg sync.WaitGroup
++	for range requests {
++		wg.Add(1)
++		go func() {
++			defer wg.Done()
++			<-start
++			request := rdap.NewAutoRequest("example.com")
++			request.Server = serverURL
++			_, err := client.Do(request)
++			errs <- err
++		}()
++	}
++	close(start)
++	wg.Wait()
++	close(errs)
++	for err := range errs {
++		require.NoError(t, err)
++	}
++	require.Equal(t, int32(requests), hits.Load())
++}
+```
+
+**File**: `pkg/protocols/whois/whois.go` (modified, +2/-2)
+```diff
+@@ -5,6 +5,7 @@ import (
+ 	"strings"
+ 	"time"
+ 
++	"github.com/openrdap/rdap"
+ 	"github.com/pkg/errors"
+ 	"github.com/projectdiscovery/gologger"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/operators"
+@@ -24,7 +25,6 @@ import (
+ 	templateTypes "github.com/projectdiscovery/nuclei/v3/pkg/templates/types"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/types"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/utils/json"
+-	"github.com/projectdiscovery/rdap"
+ )
+ 
+ // Request is a request for the WHOIS protocol
+@@ -47,7 +47,7 @@ type Request struct {
+ 	//   Otherwise, nil enables bootstrapping
+ 	Server string `yaml:"server,omitempty" json:"server,omitempty" jsonschema:"title=server url to execute the WHOIS request on,description=Server contains the server url to execute the WHOIS request on"`
+ 	// cache any variables that may be needed for operation.
+-	client          *rdap.Client
++	client          *rdapclientpool.Client
+ 	options         *protocols.ExecutorOptions
+ 	parsedServerURL *url.URL
+ }
+```
+
+---
+
+### Incident Patch 2: `11020e36` (2026-11-20)
+**Commit Message**: fix(whois): preserve existing registrar server response key
+
+Codex-Session: codex resume 01a1c1de-e73c-7622-949e-fbbbd741b6c5
+
+**File**: `pkg/protocols/whois/whois.go` (modified, +9/-0)
+```diff
+@@ -145,6 +145,15 @@ func (request *Request) ExecuteWithResults(input *contextargs.Context, dynamicVa
+ 	case rdap.DomainRequest:
+ 		// convert the rdap response to a whois style response (for domain request type only)
+ 		whoisResp := res.ToWhoisStyleResponse()
++		if servers, ok := whoisResp.Data["WHOIS Server"]; ok {
++			delete(whoisResp.Data, "WHOIS Server")
++			whoisResp.Data["Registrar WHOIS Server"] = servers
++			for i, key := range whoisResp.KeyDisplayOrder {
++				if key == "WHOIS Server" {
++					whoisResp.KeyDisplayOrder[i] = "Registrar WHOIS Server"
++				}
++			}
++		}
+ 		for k, v := range whoisResp.Data {
+ 			data[strings.ToLower(k)] = strings.Join(v, ",")
  		}
 ```
 
-**File**: `pkg/core/workflow_execute_test.go` (modified, +53/-0)
+**File**: `pkg/protocols/whois/whois_test.go` (modified, +21/-0)
 ```diff
-@@ -2,6 +2,7 @@ package core
+@@ -2,6 +2,7 @@ package whois
  
  import (
  	"context"
-+	"errors"
- 	"sync/atomic"
- 	"testing"
- 	"time"
-@@ -12,6 +13,7 @@ import (
- 	"github.com/projectdiscovery/nuclei/v3/pkg/progress"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/contextargs"
-+	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/hosterrorscache" //nolint:depguard // No depguard rules are configured, so its default list allows only the standard library.
- 	"github.com/projectdiscovery/nuclei/v3/pkg/scan"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/types"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/workflows"
-@@ -441,6 +443,57 @@ func TestWorkflowSubtemplatesUnblockCancelledAcquire(t *testing.T) {
- 	require.False(t, waitingStarted.Load(), "third subtemplate must not start while slots are held")
- }
++	"encoding/json"
+ 	"fmt"
+ 	"net/http"
+ 	"net/http/httptest"
+@@ -18,6 +19,26 @@ import (
+ 	templateTypes "github.com/projectdiscovery/nuclei/v3/pkg/templates/types"
+ )
  
-+// errHeaderTimeout is the error of a request to a host that accepts
-+// connections and never answers.
-+var errHeaderTimeout = errors.New("net/http: timeout awaiting response headers")
++func TestWhoisPreservesRegistrarWhoisServer(t *testing.T) {
++	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		require.Equal(t, "/domain/example.com", r.URL.Path)
++		w.Header().Set("Content-Type", "application/rdap+json")
++		_, _ = fmt.Fprint(w, `{"objectClassName":"domain","ldhName":"example.com","port43":"whois.example.com"}`)
++	}))
++	t.Cleanup(server.Close)
 +
-+// TestWorkflowStepsKeepHostErrors runs steps whose requests time out, as they
-+// do against a host that accepts connections and never answers. Each request
-+// records its failure, and the step itself returns nil, as a template step can
-+// when its requests fail. The step after the last allowed failure must find the
-+// host unresponsive (#8177).
-+//
-+//nolint:exhaustruct,exhaustruct_v5 // fixtures keep zero-value defaults
-+func TestWorkflowStepsKeepHostErrors(t *testing.T) {
-+	t.Parallel()
-+
-+	const maxHostError = 3
-+
-+	cache := hosterrorscache.New(maxHostError, hosterrorscache.DefaultMaxHostsCount, nil)
-+	t.Cleanup(cache.Close)
-+
-+	progressBar, _ := progress.NewStatsTicker(0, false, false, false, 0)
-+	stepOptions := &protocols.ExecutorOptions{Progress: progressBar}
-+
-+	steps := make([]*workflows.WorkflowTemplate, 0, maxHostError+1)
-+	for range maxHostError {
-+		steps = append(steps, &workflows.WorkflowTemplate{Executers: []*workflows.ProtocolExecuterPair{{
-+			Executer: &mockExecuter{executeScanHook: func(ctx *scan.ScanContext) {
-+				cache.MarkFailedOrRemove("http", ctx.Input, errHeaderTimeout)
-+			}},
-+			Options: stepOptions,
-+		}}})
++	_, event, _ := runWhoisDurationRequest(t, "example.com", server.URL)
++	require.Equal(t, "whois.example.com", event["registrar whois server"])
++	var response struct {
++		Data            map[string][]string
++		KeyDisplayOrder []string
 +	}
-+
-+	var unresponsive bool
-+
-+	steps = append(steps, &workflows.WorkflowTemplate{Executers: []*workflows.ProtocolExecuterPair{{
-+		Executer: &mockExecuter{executeScanHook: func(ctx *scan.ScanContext) {
-+			unresponsive = cache.Check("http", ctx.Input)
-+		}},
-+		Options: stepOptions,
-+	}}})
-+
-+	workflow := &workflows.Workflow{
-+		Options:   &protocols.ExecutorOptions{Options: &types.Options{TemplateThreads: 1}, HostErrorsCache: cache},
-+		Workflows: steps,
-+	}
-+	input := contextargs.NewWithInput(t.Context(), "http://127.0.0.1:47321")
-+	(&Engine{}).executeWorkflow(scan.NewScanContext(t.Context(), input), workflow)
-+
-+	require.True(t, unresponsive, "the host errors recorded by earlier steps must not be reset")
++	require.NoError(t, json.Unmarshal([]byte(event["response"].(string)), &response))
++	require.Equal(t, []string{"whois.example.com"}, response.Data["Registrar WHOIS Server"])
++	require.Contains(t, response.KeyDisplayOrder, "Registrar WHOIS Server")
++	require.NotContains(t, response.KeyDisplayOrder, "WHOIS Server")
 +}
 +
- type mockExecuter struct {
- 	result          bool
- 	executeHook     func(input *contextargs.MetaInput)
+ func TestWhoisDuration(t *testing.T) {
+ 	tests := []struct {
+ 		name         string
+```
+
+---
+
+### Incident Patch 3: `2a8cd431` (2026-11-20)
+**Commit Message**: fix(whois): align RDAP bootstrap module types
+
+Codex-Session: codex resume 01a1c1de-e73c-7622-949e-fbbbd741b6c5
+
+**File**: `go.mod` (modified, +2/-3)
+```diff
+@@ -74,7 +74,6 @@ require (
+ 	github.com/miekg/dns v1.1.73
+ 	github.com/oiweiwei/go-msrpc v1.2.12
+ 	github.com/olekukonko/tablewriter v1.0.8
+-	github.com/openrdap/rdap v0.9.1
+ 	github.com/ory/dockertest/v3 v3.12.0
+ 	github.com/pkg/errors v0.9.1
+ 	github.com/praetorian-inc/fingerprintx v1.1.15
+@@ -99,7 +98,7 @@ require (
+ 	github.com/projectdiscovery/networkpolicy v0.1.58
+ 	github.com/projectdiscovery/ratelimit v0.0.95
+ 	github.com/projectdiscovery/rawhttp v0.3.1
+-	github.com/projectdiscovery/rdap v0.9.0
++	github.com/projectdiscovery/rdap v0.9.1-0.20221108103045-9865884d1917
+ 	github.com/projectdiscovery/retryabledns v1.0.118
+ 	github.com/projectdiscovery/retryablehttp-go v1.3.34
+ 	github.com/projectdiscovery/sarif v0.1.0
+@@ -175,7 +174,6 @@ require (
+ 	github.com/STARRY-S/zip v0.2.3 // indirect
+ 	github.com/VividCortex/ewma v1.2.0 // indirect
+ 	github.com/akrylysov/pogreb v0.10.2 // indirect
+-	github.com/alecthomas/kingpin/v2 v2.4.0 // indirect
+ 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751 // indirect
+ 	github.com/alecthomas/units v0.0.0-20211218093645-b94a6e3cc137 // indirect
+ 	github.com/andybalholm/cascadia v1.3.4 // indirect
+@@ -311,6 +309,7 @@ require (
+ 	github.com/imdario/mergo v0.3.16 // indirect
+ 	github.com/indece-official/go-ebcdic v1.2.0 // indirect
+ 	github.com/itchyny/timefmt-go v0.1.6 // indirect
++	github.com/jarcoal/httpmock v1.3.0 // indirect
+ 	github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 // indirect
+ 	github.com/jcmturner/aescts/v2 v2.0.0 // indirect
+ 	github.com/jcmturner/dnsutils/v2 v2.0.0 // indirect
+```
+
+**File**: `go.sum` (modified, +3/-9)
+```diff
+@@ -148,8 +148,6 @@ github.com/alecthomas/assert/v2 v2.11.0/go.mod h1:Bze95FyfUr7x34QZrjL+XP+0qgp/zg
+ github.com/alecthomas/chroma/v2 v2.27.0 h1:FodwmyOBgJULFYmDqibcp9pvfDLWdtPRh9v/r5BXYZs=
+ github.com/alecthomas/chroma/v2 v2.27.0/go.mod h1:NjJ3ciIgrqBNeIkWZ4e46nseoLDslxU1LmfCoL+wcY8=
+ github.com/alecthomas/kingpin/v2 v2.3.1/go.mod h1:oYL5vtsvEHZGHxU7DMp32Dvx+qL+ptGn6lWaot2vCNE=
+-github.com/alecthomas/kingpin/v2 v2.4.0 h1:f48lwail6p8zpO1bC4TxtqACaGqHYA22qkHjHpqDjYY=
+-github.com/alecthomas/kingpin/v2 v2.4.0/go.mod h1:0gyi0zQnjuFk8xrkNKamJoyUo382HRL7ATRpFZCw6tE=
+ github.com/alecthomas/repr v0.5.2 h1:SU73FTI9D1P5UNtvseffFSGmdNci/O6RsqzeXJtP0Qs=
+ github.com/alecthomas/repr v0.5.2/go.mod h1:Fr0507jx4eOXV7AlPV6AVZLYrLIuIeSOWtW57eE/O/4=
+ github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc/go.mod h1:LOuyumcjzFXgccqObfd/Ljyb9UuFJ6TxHnclSeseNhc=
+@@ -696,6 +694,7 @@ github.com/itchyny/gojq v0.12.17 h1:8av8eGduDb5+rvEdaOO+zQUjA04MS0m3Ps8HiD+fceg=
+ github.com/itchyny/gojq v0.12.17/go.mod h1:WBrEMkgAfAGO1LUcGOckBl5O726KPp+OlkKug0I/FEY=
+ github.com/itchyny/timefmt-go v0.1.6 h1:ia3s54iciXDdzWzwaVKXZPbiXzxxnv1SPGFfM/myJ5Q=
+ github.com/itchyny/timefmt-go v0.1.6/go.mod h1:RRDZYC5s9ErkjQvTvvU7keJjxUYzIISJGxm9/mAERQg=
++github.com/jarcoal/httpmock v1.0.4/go.mod h1:ATjnClrvW/3tijVmpL/va5Z3aAyGvqU3gCT8nX0Txik=
+ github.com/jarcoal/httpmock v1.3.0 h1:2RJ8GP0IIaWwcC9Fp2BmVi8Kog3v2Hn7VXM3fTd+nuc=
+ github.com/jarcoal/httpmock v1.3.0/go.mod h1:3yb8rc4BI7TCBhFY8ng0gjuLKJNquuDNiPaZjnENuYg=
+ github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 h1:BQSFePA1RWJOlocH6Fxy8MmwDt+yVQYULKfN0RoTN8A=
+@@ -897,8 +896,6 @@ github.com/opencontainers/image-spec v1.1.1 h1:y0fUlFfIZhPF1W537XOLg0/fcx6zcHCJw
+ github.com/opencontainers/image-spec v1.1.1/go.mod h1:qpqAh3Dmcf36wStyyWU+kCeDgrGnAve2nCC8+7h8Q0M=
+ github.com/opencontainers/runc v1.3.6 h1:SLGIymCtsk80iNPWgbc8dtjI30r+5mTVV+4dN8/17Sk=
+ github.com/opencontainers/runc v1.3.6/go.mod h1:o1wyv76EDlTkcf0KTFgN8bMWLPvgF/HfX709lDv+rr4=
+-github.com/openrdap/rdap v0.9.1 h1:Rv6YbanbiVPsKRvOLdUmlU1AL5+2OFuEFLjFN+mQsCM=
+-github.com/openrdap/rdap v0.9.1/go.mod h1:vKSiotbsENrjM/vaHXLddXbW8iQkBfa+ldEuYEjyLTQ=
+ github.com/orisano/pixelmatch v0.0.0-20220722002657-fb0b55479cde/go.mod h1:nZgzbfBr3hhjoZnS66nKrHmduYNpc34ny7RK4z5/HM0=
+ github.com/ory/dockertest/v3 v3.12.0 h1:3oV9d0sDzlSQfHtIaB5k6ghUCVMVLpAY8hwrqoCyRCw=
+ github.com/ory/dockertest/v3 v3.12.0/go.mod h1:aKNDTva3cp8dwOWwb9cWuX84aH5akkxXRvO7KCwWVjE=
+@@ -977,8 +974,8 @@ github.com/projectdiscovery/ratelimit v0.0.95 h1:/vwnXSuVz9di/nJ2x/ebX9d1Hd320nU
+ github.com/projectdiscovery/ratelimit v0.0.95/go.mod h1:QCzQMpdcjlXZNhfy1UJFp6vdPk2E3DaGKxKhFZ3dI48=
+ github.com/projectdiscovery/rawhttp v0.3.1 h1:utudlS3qCAZYa+DU+WK0Q0uuiUxgYXfLwxWIs9dd1Bc=
+ github.com/projectdiscovery/rawhttp v0.3.1/go.mod h1:ezbLgLuzFC3EunY4OqptRunQb6QUM7z78gOBL8DrWYY=
+-github.com/projectdiscovery/rdap v0.9.0 h1:wPhHx5pQ2QI+WGhyNb2PjhTl0NtB39Nk7YFZ9cp8ZGA=
+-github.com/projectdiscovery/rdap v0.9.0/go.mod h1:zk4yrJFQ2Hy36Aqk+DvotYQxYAeALaCJ5ORySkff36Q=
++github.com/projectdiscovery/rdap v0.9.1-0.20221108103045-9865884d1917 h1:m03X4gBVSorSzvmm0bFa7gDV4QNSOWPL/fgZ4kTXBxk=
++github.com/projectdiscovery/rdap v0.9.1-0.20221108103045-9865884d1917/go.mod h1:JxXtZC9e195awe7EynrcnBJmFoad/BNDzW9mzFkK8Sg=
+ github.com/projectdiscovery/retryabledns v1.0.118 h1:vrWzUgjRyD5fg2QiPF0boDuSL/QYuoxPftgpYQv2MiQ=
+ github.com/projectdiscovery/retryabledns v1.0.118/go.mod h1:qHuxflnN8BWWqQ+N+TIe9OTqmaMpE/G2+36chAcFQhg=
+ github.com/projectdiscovery/retryablehttp-go v1.3.34 h1:tp45jp3yAtXunuIPeOB1k4L/9vq4Tn9Lm0wkRHRKMnI=
+@@ -1194,10 +1191,7 @@ github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415 h1:EzJWgHo
+ github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415/go.mod h1:GwrjFmJcFw6At/Gs6z4yjiIwzuJ1/+UwLxMQDVQXShQ=
+ github.com/xeipuuv/gojsonschema v1.2.0 h1:LhYJRs+L4fBtjZUfuSZIKGeVu0QRy8e5Xi7D17UxZ74=
+ github.com/xeipuuv/gojsonschema v1.2.0/go.mod h1:anYRn/JVcOK2ZgGU+IjEV4nwlhoK5sQluxsYJ78Id3Y=
+-github.com/xhit/go-str2duration v1.2.0 h1:BcV5u025cITWxEQKGWr1URRzrcXtu7uk8+luz3Yuhwc=
+ github.com/xhit/go-str2duration v1.2.0/go.mod h1:3cPSlfZlUHVlneIVfePFWcJZsuwf+P1v2SRTV4cUmp4=
+-github.com/xhit/go-str2duration/v2 v2.1.0 h1:lxklc02Drh6ynqX+DdPyp5pCKLUQpRT8bp8Ydu2Bstc=
+-github.com/xhit/go-str2duration/v2 v2.1.0/go.mod h1:ohY8p+0f07DiV6Em5LKB0s2YpLtXVyJfNt1+BlmyAsU=
+ github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e h1:JVG44RsyaB9T2KIHavMF/ppJZNG9ZpyihvCd0w101no=
+ github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e/go.mod h1:RbqR21r5mrJuqunuUZ/Dhy/avygyECGrLceyNeo4LiM=
+ github.com/xyproto/randomstring v1.0.5 h1:YtlWPoRdgMu3NZtP45drfy1GKoojuR7hmRcnhZqKjWU=
+```
+
+**File**: `pkg/protocols/whois/rdapclientpool/clientpool.go` (modified, +1/-1)
+```diff
+@@ -7,11 +7,11 @@ import (
+ 	"net/http"
+ 	"sync"
+ 
+-	"github.com/openrdap/rdap/bootstrap"
+ 	"github.com/projectdiscovery/gologger"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/protocolstate"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/types"
+ 	"github.com/projectdiscovery/rdap"
++	"github.com/projectdiscovery/rdap/bootstrap"
+ )
+ 
+ // clients holds one client per execution, because each one dials with the
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8219** (2026-11-20): fix(whois): use upstream RDAP safely in concurrent scans (@knakul853)
 - **PR #8210** (2026-11-20): fix(http): count a failed request as one error (@dwisiswant0)
 - **PR #8209** (2026-11-20): fix(http): count a request that stops at its first match once (@dwisiswant0)
 - **PR #8206** (2026-11-20): fix(core): run http templates that send to another port of a down target (@dwisiswant0)
 - **PR #8205** (2026-11-20): fix(http): report requests skipped for an unresponsive address (@dwisiswant0)
 - **PR #8195** (2026-11-20): fix(http): end the stop-at-first-match goroutine on every return (@dwisiswant0)
-- **PR #8194** (2026-11-20): fix(core): check http templates at the port their requests go to (@dwisiswant0)
 
 ---
 
@@ -2178,32 +2113,35 @@ Signed-off-by: Dwi Siswanto <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. http): keep the scan context of requests with @timeout
+## X. whois): use upstream RDAP with pooled client locking
 
 **RULE**:
-When implementing operations in `pkg/protocols/http/request_annotations.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e026c3a9`: http): keep the scan context of requests with @timeout. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c58ce114`: whois): use upstream RDAP with pooled client locking. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/protocols/http/request_annotations.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-				ctx := request.Context()
+	github.com/openrdap/rdap v0.10.2
+	github.com/alecthomas/kingpin/v2 v2.4.0 // indirect
+	github.com/alecthomas/units v0.0.0-20240927000941-0f3dac36c52b // indirect
+	github.com/xhit/go-str2duration/v2 v2.1.0 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-				// The replaced context drops the input's cancellation (#8178).
-				ctx := context.TODO()
-		} else {
-			// The replaced context drops the input's cancellation (#8178).
-			request = request.Clone(context.TODO())
+	github.com/projectdiscovery/rdap v0.9.1-0.20221108103045-9865884d1917
+	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751 // indirect
+	github.com/alecthomas/units v0.0.0-20211218093645-b94a6e3cc137 // indirect
+	github.com/jarcoal/httpmock v1.3.0 // indirect
+	gopkg.in/alecthomas/kingpin.v2 v2.2.6 // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e026c3a9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c58ce114` are properly handled with clean fallback behavior.

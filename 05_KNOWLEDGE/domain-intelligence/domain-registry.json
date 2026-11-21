@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T00:24:52.917Z",
+  "last_updated": "2026-11-21T00:32:51.044Z",
   "total_records": 2202,
   "domains": {
     "A": {
@@ -8935,8 +8935,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "0ee98c646474903d5fb4f316d7f9de737e211d5de3072c2353dc53dfd2afccac",
-      "created_at": "2026-11-20T23:47:54.598Z"
+      "content_hash": "36f6b61eba02a580ecd0ed16404a59209102e10b2ce13a1c1e7a74817ec52882",
+      "created_at": "2026-11-21T00:32:51.044Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -15551,8 +15551,8 @@
       "title": "Architecture Intelligence: projectdiscovery/nuclei Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-projectdiscovery-nuclei-architecture-intelligence-projectdiscovery-nuclei-core-i.md",
       "repository": "projectdiscovery/nuclei",
-      "content_hash": "bd5f6c5af1d296dc7bcd548938e82fb9631b58807cb6b88e1daa13634fba7df4",
-      "created_at": "2026-11-20T19:44:42.895Z"
+      "content_hash": "465fa2bfffd212b68cfac773a4169aa94ea371fe3e19a04da20c6832695371f3",
+      "created_at": "2026-11-21T00:32:46.152Z"
     },
     "domain_intelligence-architecture-intelligence-agent-of-empires-agent-of-empires-learnings-core-invar": {
       "record_id": "domain_intelligence-architecture-intelligence-agent-of-empires-agent-of-empires-learnings-core-invar",
@@ -20100,8 +20100,8 @@
       "title": "Architecture Intelligence: projectdiscovery-nuclei-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-projectdiscovery-nuclei-learnings-architecture-intelligence-projectdiscovery-nuc.md",
       "repository": "projectdiscovery-nuclei-learnings",
-      "content_hash": "0f834e5779e93abf6a371e7278bd1ef93da1e3936c6898f940b924bb3c687066",
-      "created_at": "2026-11-20T19:45:19.826Z"
+      "content_hash": "79ae4a12803ecef6f628ea670df66af1793fc5003becf7b6d2df95fc5e04db74",
+      "created_at": "2026-11-21T00:32:50.199Z"
     },
     "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-omni-2b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-omni-2b-core-invariants",
@@ -26040,8 +26040,8 @@
       "title": "Technical Construction Intelligence: TanStack/query Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tanstack-query-technical-construction-intelligence-tanstack-query-core-invariant.md",
       "repository": "TanStack/query",
-      "content_hash": "1d469f78a9350b3a5803d03ae156891a4f648daf80045f1c71a0f82e3eb02cb7",
-      "created_at": "2026-11-17T05:37:11.509Z"
+      "content_hash": "ea229b45e30ccf00e1ae36dd3d1cf7b46a4854b7f0cca9b63d73c746a2642504",
+      "created_at": "2026-11-21T00:32:38.624Z"
     },
     "domain_intelligence-technical-construction-intelligence-tanstack-query-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-tanstack-query-learnings-core-invariants",
@@ -26049,8 +26049,8 @@
       "title": "Technical Construction Intelligence: tanstack-query-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tanstack-query-learnings-technical-construction-intelligence-tanstack-query-lear.md",
       "repository": "tanstack-query-learnings",
-      "content_hash": "d61ada48cf184029839a8fb462fd5e6338f7fc5732caa4700ab442436feef596",
-      "created_at": "2026-11-17T05:37:20.167Z"
+      "content_hash": "7c0291ee1c2a6f4d5d81664b4b1f5ab1a6d99c3d7df6dfc32f140fd32b229a13",
+      "created_at": "2026-11-21T00:32:49.567Z"
     },
     "domain_intelligence-architecture-intelligence-preactjs-preact-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-preactjs-preact-core-invariants",

@@ -3453,10 +3453,10 @@
     "repository": "projectdiscovery/nuclei",
     "platform": "github",
     "sourceUrl": "https://github.com/projectdiscovery/nuclei",
-    "sourceVersion": "0dca809a",
+    "sourceVersion": "9bd87c68",
     "license": "MIT",
-    "contentHash": "9abb39bc8549c027dcba17c609e267bacb5647f8e65e166e9c0066ffc35f5861",
-    "lastHarvestedAt": "2026-11-20T19:44:42.528Z",
+    "contentHash": "dc25d572074d8105bf86002a9ccdb0cb022c7175c2778708824ee342f7e38860",
+    "lastHarvestedAt": "2026-11-21T00:32:45.834Z",
     "learningId": "learn-github-projectdiscovery-nuclei"
   },
   "okteto-okteto": {
@@ -10053,10 +10053,10 @@
     "repository": "TanStack/query",
     "platform": "github",
     "sourceUrl": "https://github.com/TanStack/query",
-    "sourceVersion": "d63a027c",
+    "sourceVersion": "0911673d",
     "license": "MIT",
-    "contentHash": "2a7862c8dff8e4989bc07af5a69e52f12c63007eb9b6222fd055b432e294d9ac",
-    "lastHarvestedAt": "2026-11-17T05:37:11.194Z",
+    "contentHash": "2a062f505cc5fb72ebbd97ae3c80f4147c9244c679765365f5d2143b39d0b1a4",
+    "lastHarvestedAt": "2026-11-21T00:32:38.285Z",
     "learningId": "learn-github-tanstack-query"
   },
   "apple-sample-food-truck": {

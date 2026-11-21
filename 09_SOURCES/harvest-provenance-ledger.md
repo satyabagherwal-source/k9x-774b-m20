@@ -11706,3 +11706,5 @@ Every entry in this ledger must capture:
 | `learn-github-zenbu-labs-terminal-browser` | `https://github.com/zenbu-labs/terminal-browser` | `fa9e5eb0` | Multi-dimensional audit evidence | 2026-11-21T00:24:36.168Z |
 | `learn-github-tanstack-router` | `https://github.com/TanStack/router` | `ce46b21b` | Multi-dimensional audit evidence | 2026-11-21T00:24:38.681Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `fb070362` | Multi-dimensional audit evidence | 2026-11-21T00:24:47.776Z |
+| `learn-github-tanstack-query` | `https://github.com/TanStack/query` | `0911673d` | Multi-dimensional audit evidence | 2026-11-21T00:32:38.285Z |
+| `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `9bd87c68` | Multi-dimensional audit evidence | 2026-11-21T00:32:45.834Z |

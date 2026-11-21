@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-21T00:24:47.787Z",
+  "last_updated": "2026-11-21T00:32:45.842Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5301,14 +5301,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-projectdiscovery-nuclei",
-      "content_hash": "9abb39bc8549c027dcba17c609e267bacb5647f8e65e166e9c0066ffc35f5861",
-      "verified_at": "2026-11-20T19:44:42.536Z",
+      "content_hash": "dc25d572074d8105bf86002a9ccdb0cb022c7175c2778708824ee342f7e38860",
+      "verified_at": "2026-11-21T00:32:45.841Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T19:44:42.536Z"
+      "last_updated": "2026-11-21T00:32:45.841Z"
     },
     "okteto/okteto": {
       "repository": "okteto/okteto",
@@ -15126,14 +15126,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tanstack-query",
-      "content_hash": "2a7862c8dff8e4989bc07af5a69e52f12c63007eb9b6222fd055b432e294d9ac",
-      "verified_at": "2026-11-17T05:37:11.202Z",
+      "content_hash": "2a062f505cc5fb72ebbd97ae3c80f4147c9244c679765365f5d2143b39d0b1a4",
+      "verified_at": "2026-11-21T00:32:38.293Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T05:37:11.202Z"
+      "last_updated": "2026-11-21T00:32:38.293Z"
     },
     "apple/sample-food-truck": {
       "repository": "apple/sample-food-truck",

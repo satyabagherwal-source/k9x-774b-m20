@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-20T23:57:53.738Z",
+  "updated_at": "2026-11-21T00:32:49.200Z",
   "stats": {
-    "total_discovered": 6816,
-    "approved_pending_harvest": 6435,
+    "total_discovered": 6817,
+    "approved_pending_harvest": 6436,
     "harvested_count": 0,
     "rejected_count": 381,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6408,
+      "COMMUNITY_AND_EXPERT": 6409,
       "OFFICIAL_DOCUMENTATION": 234,
       "STANDARDS_AND_SPECIFICATIONS": 121,
       "ENGINEERING_BLOGS": 5,
@@ -147308,6 +147308,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
         "fileName": "lioensky-vcptoolbox-learnings.md"
+      }
+    },
+    "SRC-993D75B3CBE6": {
+      "id": "SRC-993D75B3CBE6",
+      "url": "https://ampcode.com/threads/T-01a1c72d-7954-7320-aa9d-9f2611a997c4",
+      "title": "https://ampcode.com/threads/T-01a1c72d-7954-7320-aa9d-9f2611a997c4",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T00:32:49.200Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tanstack-query-learnings.md",
+        "fileName": "tanstack-query-learnings.md"
       }
     }
   }

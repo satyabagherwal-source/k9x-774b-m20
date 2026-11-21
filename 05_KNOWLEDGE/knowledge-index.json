@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T00:24:53.082Z",
+  "last_updated": "2026-11-21T00:32:51.205Z",
   "total_verified_learnings": 9054,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22781,
+  "total_items": 22786,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113706,13 +113706,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-Q85Q-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-C0R6-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "a770a71da1030fa28a579372bc625c117ba2c02d46a3792fc05d209c02a63045",
+      "content_hash": "f0affe397af99eb9312cb98c0273e91f33a3bd281e85c1fe0594c1bc01afc239",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T23:47:54.449Z"
+      "persisted_at": "2026-11-21T00:32:50.902Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "0ee98c646474903d5fb4f316d7f9de737e211d5de3072c2353dc53dfd2afccac",
+      "content_hash": "36f6b61eba02a580ecd0ed16404a59209102e10b2ce13a1c1e7a74817ec52882",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T23:47:54.598Z"
+      "persisted_at": "2026-11-21T00:32:51.044Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "9eb7f8771edb9ffdb833abe75d319650201b2f673eb88d63a1fb73541d549739",
+      "content_hash": "a1a822db6b70a920553464bfbff7dc4adb66b1dfe7d39ba0e05761b851d8058f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T23:47:54.767Z"
+      "persisted_at": "2026-11-21T00:32:51.205Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -230240,8 +230240,8 @@
       "slug": "projectdiscovery-nuclei",
       "platform": "github",
       "source_url": "https://github.com/projectdiscovery/nuclei",
-      "source_version": "0dca809a",
-      "content_hash": "9abb39bc8549c027dcba17c609e267bacb5647f8e65e166e9c0066ffc35f5861",
+      "source_version": "9bd87c68",
+      "content_hash": "dc25d572074d8105bf86002a9ccdb0cb022c7175c2778708824ee342f7e38860",
       "dossier_path": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "promoted_rules": [
@@ -230299,6 +230299,11 @@
           "number": 9630,
           "title": "keep the scan context of requests with @timeout",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9679,
+          "title": "use upstream RDAP with pooled client locking",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -230306,7 +230311,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T19:44:42.334Z",
+      "verified_at": "2026-11-21T00:32:45.658Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -230348,10 +230353,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-projectdiscovery-nuclei-architecture-intelligence-projectdiscovery-nuclei-core-i.md",
       "title": "Architecture Intelligence: projectdiscovery/nuclei Core Invariants",
       "repository": "projectdiscovery/nuclei",
-      "source_version": "0dca809a",
-      "content_hash": "bd5f6c5af1d296dc7bcd548938e82fb9631b58807cb6b88e1daa13634fba7df4",
+      "source_version": "9bd87c68",
+      "content_hash": "465fa2bfffd212b68cfac773a4169aa94ea371fe3e19a04da20c6832695371f3",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T19:44:42.895Z"
+      "persisted_at": "2026-11-21T00:32:46.152Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-projectdiscovery-nuclei": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-projectdiscovery-nuclei",
@@ -230360,10 +230365,10 @@
       "relative_path": "08_VERIFICATION/projectdiscovery-nuclei-verification-protocol-empirical-defect-shield-for-projec.md",
       "title": "Verification Protocol: Empirical Defect Shield for projectdiscovery/nuclei",
       "repository": "projectdiscovery/nuclei",
-      "source_version": "0dca809a",
-      "content_hash": "7a30fb3fffa44ca23247387015ad7f923338e5f70c55f962d17e7346301bef64",
+      "source_version": "9bd87c68",
+      "content_hash": "e276531c1abef9365d18ea24749489aff73a82d17ced96f5f332c9c5e8e010f2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T19:44:43.048Z"
+      "persisted_at": "2026-11-21T00:32:46.286Z"
     },
     "candidate_directive-tui-flash-deletion-cleanup-notes-instead-of-a-blocking-dialog": {
       "item_id": "candidate_directive-tui-flash-deletion-cleanup-notes-instead-of-a-blocking-dialog",
@@ -243694,9 +243699,9 @@
       "title": "Architecture Intelligence: projectdiscovery-nuclei-learnings Core Invariants",
       "repository": "projectdiscovery-nuclei-learnings",
       "source_version": "HEAD",
-      "content_hash": "0f834e5779e93abf6a371e7278bd1ef93da1e3936c6898f940b924bb3c687066",
+      "content_hash": "79ae4a12803ecef6f628ea670df66af1793fc5003becf7b6d2df95fc5e04db74",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T19:45:19.826Z"
+      "persisted_at": "2026-11-21T00:32:50.199Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-projectdiscovery-nuclei-learni": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-projectdiscovery-nuclei-learni",
@@ -243706,9 +243711,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for projectdiscovery-nuclei-learnings",
       "repository": "projectdiscovery-nuclei-learnings",
       "source_version": "HEAD",
-      "content_hash": "a3569272080ac665082eb7cdc74c2cb5804c26b3c23ee99a124096e640aaeac2",
+      "content_hash": "8f19d5b9f1ec2e1aff322cdd8f3ed21a486f62a4749437fc417732fc9c6a4103",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T19:45:19.996Z"
+      "persisted_at": "2026-11-21T00:32:50.342Z"
     },
     "learn-huggingface-liquidai-lfm3-omni-2b": {
       "learning_id": "learn-huggingface-liquidai-lfm3-omni-2b",
@@ -267508,14 +267513,19 @@
       "slug": "tanstack-query",
       "platform": "github",
       "source_url": "https://github.com/TanStack/query",
-      "source_version": "d63a027c",
-      "content_hash": "2a7862c8dff8e4989bc07af5a69e52f12c63007eb9b6222fd055b432e294d9ac",
+      "source_version": "0911673d",
+      "content_hash": "2a062f505cc5fb72ebbd97ae3c80f4147c9244c679765365f5d2143b39d0b1a4",
       "dossier_path": "07_PROJECT_LEARNING/tanstack-query-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tanstack-query-learnings.md",
       "promoted_rules": [
         {
           "number": 8875,
           "title": "*): adopt '@tanstack/oxlint-config' and '@tanstack/oxfmt-config', and fix the ne",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9678,
+          "title": "bump vite for examples to cover security release",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -267524,7 +267534,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T05:37:11.036Z",
+      "verified_at": "2026-11-21T00:32:38.101Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -267566,10 +267576,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tanstack-query-technical-construction-intelligence-tanstack-query-core-invariant.md",
       "title": "Technical Construction Intelligence: TanStack/query Core Invariants",
       "repository": "TanStack/query",
-      "source_version": "d63a027c",
-      "content_hash": "1d469f78a9350b3a5803d03ae156891a4f648daf80045f1c71a0f82e3eb02cb7",
+      "source_version": "0911673d",
+      "content_hash": "ea229b45e30ccf00e1ae36dd3d1cf7b46a4854b7f0cca9b63d73c746a2642504",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T05:37:11.509Z"
+      "persisted_at": "2026-11-21T00:32:38.624Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tanstack-query": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tanstack-query",
@@ -267578,10 +267588,10 @@
       "relative_path": "08_VERIFICATION/tanstack-query-verification-protocol-empirical-defect-shield-for-tanstack-query.md",
       "title": "Verification Protocol: Empirical Defect Shield for TanStack/query",
       "repository": "TanStack/query",
-      "source_version": "d63a027c",
-      "content_hash": "373c057bec9e313534a9792f695719fefb3bcc22977c9b1d54d1b0312a75622e",
+      "source_version": "0911673d",
+      "content_hash": "fd979267f6123726c728bc1e58152084b7f96fc3dac519727a23629ba152a654",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T05:37:11.619Z"
+      "persisted_at": "2026-11-21T00:32:38.764Z"
     },
     "learn-github-gauthierpiarrette-highball": {
       "learning_id": "learn-github-gauthierpiarrette-highball",
@@ -267676,9 +267686,9 @@
       "title": "Technical Construction Intelligence: tanstack-query-learnings Core Invariants",
       "repository": "tanstack-query-learnings",
       "source_version": "HEAD",
-      "content_hash": "d61ada48cf184029839a8fb462fd5e6338f7fc5732caa4700ab442436feef596",
+      "content_hash": "7c0291ee1c2a6f4d5d81664b4b1f5ab1a6d99c3d7df6dfc32f140fd32b229a13",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T05:37:20.167Z"
+      "persisted_at": "2026-11-21T00:32:49.567Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tanstack-query-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tanstack-query-learnings",
@@ -267688,9 +267698,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tanstack-query-learnings",
       "repository": "tanstack-query-learnings",
       "source_version": "HEAD",
-      "content_hash": "ee4d6b71ed29cd3aa0f9b9381e1e9951a98393bf298918e8bc95e190a0f8cb82",
+      "content_hash": "8de7ed9aa061a93df3d1dacdad81e3a1434947c10fe42222ace344a3ca86c7e9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T05:37:20.280Z"
+      "persisted_at": "2026-11-21T00:32:49.723Z"
     },
     "learn-github-preactjs-preact": {
       "learning_id": "learn-github-preactjs-preact",
@@ -309143,6 +309153,70 @@
       "content_hash": "bc0f275135bffefec958ad9a46dd367770f7a9032b09f6da397f4c245220c45e",
       "domain_letter": "G",
       "persisted_at": "2026-11-21T00:24:52.117Z"
+    },
+    "rule-9678": {
+      "learning_id": "rule-9678",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9678,
+      "title": "bump vite for examples to cover security release",
+      "source_url": "https://github.com/TanStack/query",
+      "source_version": "0911673d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T00:32:38.101Z"
+    },
+    "candidate_directive-bump-vite-for-examples-to-cover-security-release": {
+      "item_id": "candidate_directive-bump-vite-for-examples-to-cover-security-release",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-BZM4-bump-vite-for-examples-to-cover-security-release.md",
+      "title": "bump vite for examples to cover security release",
+      "repository": "tanstack-query-learnings",
+      "source_version": "HEAD",
+      "content_hash": "cc3342a8707628ef8ef8dd61c2d2d73f897b4bc920bd2985405f0e0dd0679f96",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T00:32:49.423Z"
+    },
+    "rule-9679": {
+      "learning_id": "rule-9679",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9679,
+      "title": "use upstream RDAP with pooled client locking",
+      "source_url": "https://github.com/projectdiscovery/nuclei",
+      "source_version": "9bd87c68",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T00:32:45.658Z"
+    },
+    "candidate_directive-use-upstream-rdap-with-pooled-client-locking": {
+      "item_id": "candidate_directive-use-upstream-rdap-with-pooled-client-locking",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-BWZK-use-upstream-rdap-with-pooled-client-locking.md",
+      "title": "use upstream RDAP with pooled client locking",
+      "repository": "projectdiscovery/nuclei",
+      "source_version": "9bd87c68",
+      "content_hash": "092005c1e82639207165cfd9b58f9adf66a82b62977a91a6fa4c48efdcdc371f",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T00:32:46.019Z"
+    },
+    "candidate_directive-whois-use-upstream-rdap-with-pooled-client-locking": {
+      "item_id": "candidate_directive-whois-use-upstream-rdap-with-pooled-client-locking",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-C03P-whois-use-upstream-rdap-with-pooled-client-locking.md",
+      "title": "whois): use upstream RDAP with pooled client locking",
+      "repository": "projectdiscovery-nuclei-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3ccfe0a502968f73bae0d694e18cbbe4aeff1dbbda08488dfd9ede1f1a240a60",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T00:32:50.056Z"
     }
   },
   "ai-builder-brain": {

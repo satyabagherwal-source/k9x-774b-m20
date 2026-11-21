@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T00:24:47.781Z",
-  "total_cycles_completed": 11113,
-  "total_learnings_persisted": 11113,
-  "total_rules_promoted": 10468,
+  "last_updated": "2026-11-21T00:32:45.839Z",
+  "total_cycles_completed": 11115,
+  "total_learnings_persisted": 11115,
+  "total_rules_promoted": 10470,
   "history": [
-    {
-      "timestamp": "2026-11-20T02:58:29.319Z",
-      "repository": "jellyfin/Swiftfin",
-      "learningId": "learn-github-jellyfin-swiftfin",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T02:58:32.457Z",
-      "repository": "aws/aws-cdk",
-      "learningId": "learn-github-aws-aws-cdk",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-20T03:01:47.936Z",
       "repository": "searchsolved/search-solved-public-seo",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-21T00:24:47.781Z",
       "repository": "cilium/cilium",
       "learningId": "learn-github-cilium-cilium",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T00:32:38.290Z",
+      "repository": "TanStack/query",
+      "learningId": "learn-github-tanstack-query",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T00:32:45.839Z",
+      "repository": "projectdiscovery/nuclei",
+      "learningId": "learn-github-projectdiscovery-nuclei",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
