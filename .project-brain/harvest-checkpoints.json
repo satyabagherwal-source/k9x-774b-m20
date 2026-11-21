@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-21T11:55:35.200Z",
+  "last_updated": "2026-11-21T12:19:45.743Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3291,14 +3291,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dkhamsing-open-source-ios-apps",
-      "content_hash": "daa288c651d549c01207fd824b3334fdd2046fd8a9917334b237273ca7f27d54",
-      "verified_at": "2026-11-18T10:55:16.293Z",
+      "content_hash": "62e99f7c7e9f06bccaaa327ba31ee4906a0eb93eafb519140f3d31f7eb4b6c33",
+      "verified_at": "2026-11-21T12:19:41.547Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T10:55:16.293Z"
+      "last_updated": "2026-11-21T12:19:41.547Z"
     },
     "moby/buildkit": {
       "repository": "moby/buildkit",
@@ -3861,14 +3861,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sharkdp-bat",
-      "content_hash": "43b45712cca4c9f198789a6477cd23e13371cf1c8c9455d10bd77039e0cbd895",
-      "verified_at": "2026-11-16T20:20:57.518Z",
+      "content_hash": "923beee69297150abaef93279337b91390eb6fed14ead3941754d146701b0d0d",
+      "verified_at": "2026-11-21T12:19:37.462Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T20:20:57.518Z"
+      "last_updated": "2026-11-21T12:19:37.462Z"
     },
     "karakeep-app/karakeep": {
       "repository": "karakeep-app/karakeep",
@@ -9066,14 +9066,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rook-rook",
-      "content_hash": "c36b19d8f89199a69dbc5c9ca931300d9faa6cc9cb830778432e517ff0e8c645",
-      "verified_at": "2026-11-20T07:14:54.429Z",
+      "content_hash": "a8632ff23350be1697adb352de3f4580909248a6ba3d8325f4b0e2b2bfdd0170",
+      "verified_at": "2026-11-21T12:19:45.742Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T07:14:54.429Z"
+      "last_updated": "2026-11-21T12:19:45.742Z"
     },
     "genkit-ai/genkit": {
       "repository": "genkit-ai/genkit",
@@ -15621,14 +15621,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-lodestones-kromoss",
-      "content_hash": "b39c6d3474614cffb75b6596c8f49e38f4a8cc7806001f0e21f44b5b909756cb",
-      "verified_at": "2026-11-17T16:05:33.520Z",
+      "content_hash": "ee28843308c57b40cb587491c5db6e3d83c8eee0ced52b194aab35fdf238d728",
+      "verified_at": "2026-11-21T12:19:35.440Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T16:05:33.520Z"
+      "last_updated": "2026-11-21T12:19:35.440Z"
     },
     "HemmingwayAI/Hemmingway-1": {
       "repository": "HemmingwayAI/Hemmingway-1",

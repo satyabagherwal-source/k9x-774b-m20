@@ -3,7 +3,7 @@
 > **Source Version**: `hf-lodestone`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T16:05:33.111Z  
+> **Timestamp**: 2026-11-21T12:19:34.819Z  
 > **Learning ID**: `learn-huggingface-lodestones-kromoss`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-lodestones-kromoss-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/lodestones/Kromoss](https://huggingface.co/lodestones/Kromoss))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T16:05:32.885Z  
+> **Harvest Timestamp**: 2026-11-21T12:19:34.592Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-to-image
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 74114 downloads | 345 likes
+- **Stars / Engagement**: 60090 downloads | 389 likes
 
 ---
 

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-21T11:55:40.067Z",
+  "updated_at": "2026-11-21T12:19:53.797Z",
   "stats": {
-    "total_discovered": 7099,
-    "approved_pending_harvest": 6704,
+    "total_discovered": 7141,
+    "approved_pending_harvest": 6746,
     "harvested_count": 0,
     "rejected_count": 395,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6684,
+      "COMMUNITY_AND_EXPERT": 6726,
       "OFFICIAL_DOCUMENTATION": 238,
       "STANDARDS_AND_SPECIFICATIONS": 122,
       "ENGINEERING_BLOGS": 5,
@@ -153436,6 +153436,930 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/expo-expo-learnings.md",
         "fileName": "expo-expo-learnings.md"
+      }
+    },
+    "SRC-37ED898332B6": {
+      "id": "SRC-37ED898332B6",
+      "url": "https://github.com/abdeen-labs/rapid-serial-visual-presentation",
+      "title": "https://github.com/abdeen-labs/rapid-serial-visual-presentation",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:19:51.016Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
+        "fileName": "dkhamsing-open-source-ios-apps-learnings.md"
+      }
+    },
+    "SRC-0FF77A08A7EB": {
+      "id": "SRC-0FF77A08A7EB",
+      "url": "https://github.com/INotSleep/Detour",
+      "title": "https://github.com/INotSleep/Detour",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:19:51.080Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
+        "fileName": "dkhamsing-open-source-ios-apps-learnings.md"
+      }
+    },
+    "SRC-C9D66D921943": {
+      "id": "SRC-C9D66D921943",
+      "url": "https://apps.apple.com/app/id6836001774",
+      "title": "https://apps.apple.com/app/id6836001774",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:19:51.139Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
+        "fileName": "dkhamsing-open-source-ios-apps-learnings.md"
+      }
+    },
+    "SRC-0F3416E18345": {
+      "id": "SRC-0F3416E18345",
+      "url": "https://apps.apple.com/app/readest-ebook-reader/id6738622779",
+      "title": "https://apps.apple.com/app/readest-ebook-reader/id6738622779",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:19:51.201Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
+        "fileName": "dkhamsing-open-source-ios-apps-learnings.md"
+      }
+    },
+    "SRC-D6BF8F340B76": {
+      "id": "SRC-D6BF8F340B76",
+      "url": "https://github.com/user-attachments/assets/c6de1b0e-8a49-4ad8-a72e-b04e7e7b9917",
+      "title": "https://github.com/user-attachments/assets/c6de1b0e-8a49-4ad8-a72e-b04e7e7b9917",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:19:51.261Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
+        "fileName": "dkhamsing-open-source-ios-apps-learnings.md"
+      }
+    },
+    "SRC-14F86426B59A": {
+      "id": "SRC-14F86426B59A",
+      "url": "https://strobefast.app/",
+      "title": "https://strobefast.app/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:19:51.323Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
+        "fileName": "dkhamsing-open-source-ios-apps-learnings.md"
+      }
+    },
+    "SRC-C3E9A5A730DF": {
+      "id": "SRC-C3E9A5A730DF",
+      "url": "https://strobefast.app`/",
+      "title": "https://strobefast.app`/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:19:51.380Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
+        "fileName": "dkhamsing-open-source-ios-apps-learnings.md"
+      }
+    },
+    "SRC-F02FB65D7BC2": {
+      "id": "SRC-F02FB65D7BC2",
+      "url": "https://apps.apple.com/app/id6759187873",
+      "title": "https://apps.apple.com/app/id6759187873",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:19:51.442Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
+        "fileName": "dkhamsing-open-source-ios-apps-learnings.md"
+      }
+    },
+    "SRC-C0BD14ADBDC1": {
+      "id": "SRC-C0BD14ADBDC1",
+      "url": "https://raw.githubusercontent.com/abdeen-labs/rapid-serial-visual-presentation/main/AppStore/Screenshots/iPhone%206.9-inch/01-one-word.png",
+      "title": "https://raw.githubusercontent.com/abdeen-labs/rapid-serial-visual-presentation/main/AppStore/Screenshots/iPhone%206.9-inch/01-one-word.png",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:19:51.499Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
+        "fileName": "dkhamsing-open-source-ios-apps-learnings.md"
+      }
+    },
+    "SRC-D18CAEF32BE9": {
+      "id": "SRC-D18CAEF32BE9",
+      "url": "https://raw.githubusercontent.com/abdeen-labs/rapid-serial-visual-presentation/main/AppStore/Screenshots/iPhone%206.9-inch/03-hold-to-read.png",
+      "title": "https://raw.githubusercontent.com/abdeen-labs/rapid-serial-visual-presentation/main/AppStore/Screenshots/iPhone%206.9-inch/03-hold-to-read.png",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:19:51.561Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
+        "fileName": "dkhamsing-open-source-ios-apps-learnings.md"
+      }
+    },
+    "SRC-D3DC8CD914FA": {
+      "id": "SRC-D3DC8CD914FA",
+      "url": "https://raw.githubusercontent.com/abdeen-labs/rapid-serial-visual-presentation/main/AppStore/Screenshots/iPhone%206.9-inch/08-full-text.png",
+      "title": "https://raw.githubusercontent.com/abdeen-labs/rapid-serial-visual-presentation/main/AppStore/Screenshots/iPhone%206.9-inch/08-full-text.png",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:19:51.619Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
+        "fileName": "dkhamsing-open-source-ios-apps-learnings.md"
+      }
+    },
+    "SRC-2E9B3B66DE99": {
+      "id": "SRC-2E9B3B66DE99",
+      "url": "https://apps.apple.com/app/stackov/id1511838391",
+      "title": "https://apps.apple.com/app/stackov/id1511838391",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:19:51.681Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
+        "fileName": "dkhamsing-open-source-ios-apps-learnings.md"
+      }
+    },
+    "SRC-CC8DCDAE7280": {
+      "id": "SRC-CC8DCDAE7280",
+      "url": "https://uploads-ssl.webflow.com/5eda13df55b72c9ccf1b6aef/5eda4288c8019d1cc6edc24e_preview2.png",
+      "title": "https://uploads-ssl.webflow.com/5eda13df55b72c9ccf1b6aef/5eda4288c8019d1cc6edc24e_preview2.png",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:19:51.738Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
+        "fileName": "dkhamsing-open-source-ios-apps-learnings.md"
+      }
+    },
+    "SRC-A34E7790D9E4": {
+      "id": "SRC-A34E7790D9E4",
+      "url": "https://github.com/yattee/yattee",
+      "title": "https://github.com/yattee/yattee",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:19:51.800Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
+        "fileName": "dkhamsing-open-source-ios-apps-learnings.md"
+      }
+    },
+    "SRC-D01B350FEAF3": {
+      "id": "SRC-D01B350FEAF3",
+      "url": "https://apps.apple.com/app/yattee/id1595136629",
+      "title": "https://apps.apple.com/app/yattee/id1595136629",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:19:51.857Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
+        "fileName": "dkhamsing-open-source-ios-apps-learnings.md"
+      }
+    },
+    "SRC-205ACD670623": {
+      "id": "SRC-205ACD670623",
+      "url": "https://github.com/Gunnarguy/OpenIntelligence",
+      "title": "https://github.com/Gunnarguy/OpenIntelligence",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:19:51.963Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
+        "fileName": "dkhamsing-open-source-ios-apps-learnings.md"
+      }
+    },
+    "SRC-80E87800020C": {
+      "id": "SRC-80E87800020C",
+      "url": "https://github.com/joexk1/wudland",
+      "title": "https://github.com/joexk1/wudland",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:19:52.198Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
+        "fileName": "dkhamsing-open-source-ios-apps-learnings.md"
+      }
+    },
+    "SRC-1D419702261B": {
+      "id": "SRC-1D419702261B",
+      "url": "https://github.com/sithewok13-dev/OpenJKDF2-iOS",
+      "title": "https://github.com/sithewok13-dev/OpenJKDF2-iOS",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:19:52.258Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
+        "fileName": "dkhamsing-open-source-ios-apps-learnings.md"
+      }
+    },
+    "SRC-6B04372EE599": {
+      "id": "SRC-6B04372EE599",
+      "url": "https://github.com/Efesop/rich-text-editor",
+      "title": "https://github.com/Efesop/rich-text-editor",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:19:52.315Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
+        "fileName": "dkhamsing-open-source-ios-apps-learnings.md"
+      }
+    },
+    "SRC-5818CFD6AD76": {
+      "id": "SRC-5818CFD6AD76",
+      "url": "https://github.com/Mdavoigneau/Unreeled",
+      "title": "https://github.com/Mdavoigneau/Unreeled",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:19:52.377Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
+        "fileName": "dkhamsing-open-source-ios-apps-learnings.md"
+      }
+    },
+    "SRC-1BA2AC8A94FB": {
+      "id": "SRC-1BA2AC8A94FB",
+      "url": "https://github.com/minchopm/chess-trainer",
+      "title": "https://github.com/minchopm/chess-trainer",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:19:52.436Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
+        "fileName": "dkhamsing-open-source-ios-apps-learnings.md"
+      }
+    },
+    "SRC-0F1B3D5EB889": {
+      "id": "SRC-0F1B3D5EB889",
+      "url": "https://github.com/iziuqo/compresso",
+      "title": "https://github.com/iziuqo/compresso",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:19:52.498Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
+        "fileName": "dkhamsing-open-source-ios-apps-learnings.md"
+      }
+    },
+    "SRC-8D68A79023E5": {
+      "id": "SRC-8D68A79023E5",
+      "url": "https://github.com/hyya-dev/hYYa-Digital-Footprint-Check",
+      "title": "https://github.com/hyya-dev/hYYa-Digital-Footprint-Check",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:19:52.556Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
+        "fileName": "dkhamsing-open-source-ios-apps-learnings.md"
+      }
+    },
+    "SRC-DF6411BA8539": {
+      "id": "SRC-DF6411BA8539",
+      "url": "https://github.com/bakirgdev/CrocApp",
+      "title": "https://github.com/bakirgdev/CrocApp",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:19:52.638Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
+        "fileName": "dkhamsing-open-source-ios-apps-learnings.md"
+      }
+    },
+    "SRC-F9E9E88C004C": {
+      "id": "SRC-F9E9E88C004C",
+      "url": "https://github.com/aeharding/voyager",
+      "title": "https://github.com/aeharding/voyager",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:19:52.715Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
+        "fileName": "dkhamsing-open-source-ios-apps-learnings.md"
+      }
+    },
+    "SRC-7D2BBEFEA8D3": {
+      "id": "SRC-7D2BBEFEA8D3",
+      "url": "https://github.com/viktor-svirsky/tether",
+      "title": "https://github.com/viktor-svirsky/tether",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:19:52.772Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
+        "fileName": "dkhamsing-open-source-ios-apps-learnings.md"
+      }
+    },
+    "SRC-28F43FB67EBB": {
+      "id": "SRC-28F43FB67EBB",
+      "url": "https://github.com/Merlin1A/resecta",
+      "title": "https://github.com/Merlin1A/resecta",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:19:52.834Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
+        "fileName": "dkhamsing-open-source-ios-apps-learnings.md"
+      }
+    },
+    "SRC-438410F5FCB9": {
+      "id": "SRC-438410F5FCB9",
+      "url": "https://github.com/AbinGanlary/yt-music",
+      "title": "https://github.com/AbinGanlary/yt-music",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:19:52.923Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
+        "fileName": "dkhamsing-open-source-ios-apps-learnings.md"
+      }
+    },
+    "SRC-84763D1CA011": {
+      "id": "SRC-84763D1CA011",
+      "url": "https://github.com/kabrapratik28/ThumbFree",
+      "title": "https://github.com/kabrapratik28/ThumbFree",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:19:52.982Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
+        "fileName": "dkhamsing-open-source-ios-apps-learnings.md"
+      }
+    },
+    "SRC-5954031E4164": {
+      "id": "SRC-5954031E4164",
+      "url": "https://github.com/happier-dev/happier",
+      "title": "https://github.com/happier-dev/happier",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:19:53.043Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
+        "fileName": "dkhamsing-open-source-ios-apps-learnings.md"
+      }
+    },
+    "SRC-7435E2734AF0": {
+      "id": "SRC-7435E2734AF0",
+      "url": "https://github.com/OathWallet/oath-wallet",
+      "title": "https://github.com/OathWallet/oath-wallet",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:19:53.100Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
+        "fileName": "dkhamsing-open-source-ios-apps-learnings.md"
+      }
+    },
+    "SRC-6D6A1DB72DA6": {
+      "id": "SRC-6D6A1DB72DA6",
+      "url": "https://github.com/PndaMan/Currents",
+      "title": "https://github.com/PndaMan/Currents",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:19:53.162Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
+        "fileName": "dkhamsing-open-source-ios-apps-learnings.md"
+      }
+    },
+    "SRC-ECFF2887283F": {
+      "id": "SRC-ECFF2887283F",
+      "url": "https://github.com/bitbill/bittool-signer-ios",
+      "title": "https://github.com/bitbill/bittool-signer-ios",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:19:53.218Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
+        "fileName": "dkhamsing-open-source-ios-apps-learnings.md"
+      }
+    },
+    "SRC-098D8D2E2216": {
+      "id": "SRC-098D8D2E2216",
+      "url": "https://github.com/achubnet/Tuber",
+      "title": "https://github.com/achubnet/Tuber",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:19:53.279Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
+        "fileName": "dkhamsing-open-source-ios-apps-learnings.md"
+      }
+    },
+    "SRC-BAC9ED99E90F": {
+      "id": "SRC-BAC9ED99E90F",
+      "url": "https://github.com/ateymoori/pomelu",
+      "title": "https://github.com/ateymoori/pomelu",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:19:53.335Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
+        "fileName": "dkhamsing-open-source-ios-apps-learnings.md"
+      }
+    },
+    "SRC-BF763ECC8C83": {
+      "id": "SRC-BF763ECC8C83",
+      "url": "https://github.com/peterzhang0216/lexa",
+      "title": "https://github.com/peterzhang0216/lexa",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:19:53.397Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
+        "fileName": "dkhamsing-open-source-ios-apps-learnings.md"
+      }
+    },
+    "SRC-EFF23DE9EC06": {
+      "id": "SRC-EFF23DE9EC06",
+      "url": "https://img.shields.io/badge/Projects-1759-green.svg",
+      "title": "https://img.shields.io/badge/Projects-1759-green.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:19:53.488Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
+        "fileName": "dkhamsing-open-source-ios-apps-learnings.md"
+      }
+    },
+    "SRC-92A69BE60C32": {
+      "id": "SRC-92A69BE60C32",
+      "url": "https://img.shields.io/badge/Updated-November%2020,%202026-lightgrey.svg",
+      "title": "https://img.shields.io/badge/Updated-November%2020,%202026-lightgrey.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:19:53.545Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
+        "fileName": "dkhamsing-open-source-ios-apps-learnings.md"
+      }
+    },
+    "SRC-59C0F2013251": {
+      "id": "SRC-59C0F2013251",
+      "url": "https://img.shields.io/badge/Projects-1760-green.svg",
+      "title": "https://img.shields.io/badge/Projects-1760-green.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:19:53.619Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
+        "fileName": "dkhamsing-open-source-ios-apps-learnings.md"
+      }
+    },
+    "SRC-291E763DD07C": {
+      "id": "SRC-291E763DD07C",
+      "url": "https://github.com/bcye/whathaveiread",
+      "title": "https://github.com/bcye/whathaveiread",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:19:53.676Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
+        "fileName": "dkhamsing-open-source-ios-apps-learnings.md"
+      }
+    },
+    "SRC-F97EB688F6F6": {
+      "id": "SRC-F97EB688F6F6",
+      "url": "https://github.com/joreilly/WordMasterKMP",
+      "title": "https://github.com/joreilly/WordMasterKMP",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:19:53.734Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
+        "fileName": "dkhamsing-open-source-ios-apps-learnings.md"
+      }
+    },
+    "SRC-43632DF65292": {
+      "id": "SRC-43632DF65292",
+      "url": "https://user-images.githubusercontent.com/6302/148663064-3ed57b1f-c1a3-4e39-b2c2-2ddb3fb09ed9.png",
+      "title": "https://user-images.githubusercontent.com/6302/148663064-3ed57b1f-c1a3-4e39-b2c2-2ddb3fb09ed9.png",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:19:53.797Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
+        "fileName": "dkhamsing-open-source-ios-apps-learnings.md"
       }
     }
   }

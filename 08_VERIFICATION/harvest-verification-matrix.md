@@ -11784,3 +11784,7 @@
 | `CYCLE-20261121-PUEN` | `2026-11-21T11:55:26.639Z` | `expo/expo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9774` | Yes (`e1b3aae3...`) |
 | `CYCLE-20261121-PZT0` | `2026-11-21T11:55:33.636Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9775` | Yes (`e846110a...`) |
 | `CYCLE-20261121-Q104` | `2026-11-21T11:55:35.188Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9776` | Yes (`b8ec76bf...`) |
+| `CYCLE-20261121-KWAO` | `2026-11-21T12:19:35.424Z` | `lodestones/Kromoss` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-lodestones-kromoss-learnings.md` | Yes (`ee288433...`) |
+| `CYCLE-20261121-KXUW` | `2026-11-21T12:19:37.448Z` | `sharkdp/bat` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8545` | Yes (`923beee6...`) |
+| `CYCLE-20261121-L10B` | `2026-11-21T12:19:41.531Z` | `dkhamsing/open-source-ios-apps` | Commit diff / Patch analysis | `VERIFIED` | `Rule 3068` | Yes (`62e99f7c...`) |
+| `CYCLE-20261121-L48V` | `2026-11-21T12:19:45.727Z` | `rook/rook` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9777` | Yes (`a8632ff2...`) |

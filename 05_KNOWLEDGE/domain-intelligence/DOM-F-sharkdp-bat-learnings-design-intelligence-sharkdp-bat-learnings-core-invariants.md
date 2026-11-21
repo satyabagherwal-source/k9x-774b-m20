@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-16T20:21:11.124Z",
+  "timestamp": "2026-11-21T12:19:49.703Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-sharkdp-bat-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [sharkdp-bat-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-16T20:21:11.124Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T12:19:49.703Z`  
 > **Learning ID**: `LEARN-EVO-sharkdp-bat-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain F (Design Intelligence)
-- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), I (Content & Information Intelligence), G (Architecture Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 59%
+- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), G (Architecture Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), B (Product Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 54%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from sharkdp-bat-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sharkdp-bat-learnings.md`  
 > **Source**: github ([https://github.com/sharkdp/bat](https://github.com/sharkdp/bat))  
-> **Source Version**: `fbd9a416`  
+> **Source Version**: `dbc11b69`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T20:20:56.578Z  
+> **Timestamp**: 2026-11-21T12:19:36.555Z  
 > **Learning ID**: `learn-github-sharkdp-bat`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sharkdp-bat-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sharkdp/bat](https://github.com/sharkdp/bat))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T20:20:56.217Z  
+> **Harvest Timestamp**: 2026-11-21T12:19:36.547Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: A cat(1) clone with wings.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 61286 stars
+- **Stars / Engagement**: 61344 stars
 
 ---
 
@@ -636,736 +636,321 @@ impl AssetsMetadata {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3aa7ebb7` (2026-11-15)
-**Commit Message**: fix: keep automatic cache build progress off stdout
+### Incident Patch 1: `4a50cfbe` (2026-11-20)
+**Commit Message**: Merge pull request #3892 from JMak-Security/gh-1534-async-await-highlight
 
-On first run with custom themes or syntaxes present, bat builds the
-cache automatically, but the build printed its progress to stdout, so
-redirected output (e.g. `bat file > out.txt`) started with the build
-log instead of the file content.
+Highlight Rust async and await as keywords
 
-Thread a progress sink through `assets::build`: `bat cache --build`
-keeps writing progress to stdout, while the automatic first-run build
-writes it to stderr, next to the existing "building cache ..." notice.
-
-Fixes #4129.
-
-**File**: `CHANGELOG.md` (modified, +2/-1)
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -30,11 +30,12 @@
- - Add `--fallback-syntax`/`--fallback-language` to apply syntax highlighting only when auto-detection fails, see #1341 (@Xavrir)
- - Map `BUILD` case sensitively to Python (Starlark) for Bazel, see #3576 (@vorburger)
- - Syntax highlighting for Python files using uv as script runner in shebang #3689 (@janlarres)
--
- ## Bugfixes
-+
- - Do not run filter commands from the configuration of the Git repository that contains the displayed file, see #4127 (@curious-rabbit)
- - Ignore empty `--ignored-suffix` values to avoid a stack overflow, see #4122 (@spicysharkco)
- - Fix `--number-nonblank` counting empty UTF-16 lines, see #4118 (@pcbeingused333)
-+- Fix automatic cache build progress polluting stdout, see #4129 (@intertermux-code)
- - Don't emit `--highlight-line` escape sequences (background color or `ansi` theme underline) when colors are disabled with `--color=never`. Closes #4099, see #4100 (@DeviousCardi)
- - Fix missing colors, pager, and decorations in mintty/MSYS2 and Cygwin terminals on Windows, see #4115 (@rezamuliawijaya)
- - Make full-path `--map-syntax` patterns and the built-in `$HOME` and `$XDG_CONFIG_HOME` mappings work on Windows, see #4113 (@b84330808)
+@@ -104,6 +104,7 @@
+ 
+ ## Syntaxes
+ 
++- Highlight Rust `async` and `await` as keywords. Closes #1534, see #3892 (@JMak-Security)
+ - Add shebang-based detection for Tcl (`tclsh`, `wish`) and Expect (`expect`) scripts, see #3647 (@mvanhorn)
+ - Change the URL of Zig submodule from GitHub to Codeberg, see #3519 (@sorairolake)
+ - Don't color strings inside CSV files, to make it easier to tell which column they belong to, see #3521 (@keith-hall)
 ```
 
-**File**: `src/assets/build_assets.rs` (modified, +28/-15)
+**File**: `assets/patches/Rust.sublime-syntax.patch` (modified, +3/-0)
 ```diff
-@@ -1,5 +1,5 @@
- use std::convert::TryInto;
--use std::io::{self, Write};
-+use std::io::Write;
- use std::path::Path;
- 
- use syntect::highlighting::ThemeSet;
-@@ -16,27 +16,34 @@ pub fn build(
-     include_acknowledgements: bool,
-     target_dir: &Path,
-     current_version: &str,
-+    progress: &mut dyn Write,
- ) -> Result<()> {
--    let theme_set = build_theme_set(source_dir, include_integrated_assets)?;
-+    let theme_set = build_theme_set(source_dir, include_integrated_assets, progress)?;
- 
--    let syntax_set_builder = build_syntax_set_builder(source_dir, include_integrated_assets)?;
-+    let syntax_set_builder =
-+        build_syntax_set_builder(source_dir, include_integrated_assets, progress)?;
- 
-     let syntax_set = syntax_set_builder.build();
- 
-     let acknowledgements = build_acknowledgements(source_dir, include_acknowledgements)?;
- 
--    print_unlinked_contexts(&syntax_set)?;
-+    print_unlinked_contexts(&syntax_set, progress)?;
- 
-     write_assets(
-         &theme_set,
-         &syntax_set,
-         &acknowledgements,
-         target_dir,
-         current_version,
-+        progress,
-     )
- }
- 
--fn build_theme_set(source_dir: &Path, include_integrated_assets: bool) -> Result<LazyThemeSet> {
-+fn build_theme_set(
-+    source_dir: &Path,
-+    include_integrated_assets: bool,
-+    progress: &mut dyn Write,
-+) -> Result<LazyThemeSet> {
-     let mut theme_set = if include_integrated_assets {
-         crate::assets::get_integrated_themeset().try_into()?
-     } else {
-@@ -48,14 +55,14 @@ fn build_theme_set(source_dir: &Path, include_integrated_assets: bool) -> Result
-         let res = theme_set.add_from_folder(&theme_dir);
-         if let Err(err) = res {
-             writeln!(
--                io::stdout(),
-+                progress,
-                 "Failed to load one or more themes from '{}' (reason: '{err}')",
-                 theme_dir.to_string_lossy(),
-             )?;
-         }
-     } else {
-         writeln!(
--            io::stdout(),
-+            progress,
-             "No themes were found in '{}', using the default set",
-             theme_dir.to_string_lossy()
-         )?;
-@@ -67,6 +74,7 @@ fn build_theme_set(source_dir: &Path, include_integrated_assets: bool) -> Result
- fn build_syntax_set_builder(
-     source_dir: &Path,
-     include_integrated_assets: bool,
-+    progress: &mut dyn Write,
- ) -> Result<SyntaxSetBuilder> {
-     let mut syntax_set_builder = if !include_integrated_assets {
-         let mut builder = syntect::parsing::SyntaxSetBuilder::new();
-@@ -82,7 +90,7 @@ fn build_syntax_set_builder(
-         syntax_set_builder.add_from_folder(syntax_dir, true)?;
-     } else {
-         writeln!(
--            io::stdout(),
-+            progress,
-             "No syntaxes were found in '{}', using the default set.",
-             syntax_dir.to_string_lossy()
-         )?;
-@@ -91,12 +99,12 @@ fn build_syntax_set_builder(
-     Ok(syntax_set_builder)
- }
- 
--fn print_unlinked_contexts(syntax_set: &SyntaxSet) -> Result<()> {
-+fn print_unlinked_contexts(syntax_set: &SyntaxSet, progress: &mut dyn Write) -> Result<()> {
-     let missing_contexts = syntax_set.find_unlinked_contexts();
-     if !missing_contexts.is_empty() {
--        writeln!(io::stdout(), "Some referenced contexts could not be found!")?;
-+        writeln!(progress, "Some referenced contexts could not be found!")?;
-         for context in missing_contexts {
--            writeln!(io::stdout(), "- {context}")?;
-+            writeln!(progress, "- {context}")?;
+@@ -2,6 +2,9 @@ diff --git syntaxes/01_Packages/Rust/Rust.sublime-syntax syntaxes/01_Packages/Ru
+ index 3c354486..24727a4e 100644
+ --- syntaxes/01_Packages/Rust/Rust.sublime-syntax
+ +++ syntaxes/01_Packages/Rust/Rust.sublime-syntax
++@@ -139 +139 @@ contexts:
++-    - match: \b(break|else|for|if|loop|match|while|continue)\b
+++    - match: \b(async|await|break|else|for|if|loop|match|while|continue)\b
+ @@ -907,6 +907,8 @@ contexts:
+      - include: type-any-identifier
+      - match: ':'
+```
+
+**File**: `tests/syntax-tests/highlighted/Rust/output.rs` (modified, +4/-0)
+```diff
+@@ -159,3 +159,7 @@
+ [38;2;248;248;242m        [0m[38;2;248;248;242m}[0m
+ [38;2;248;248;242m    [0m[38;2;248;248;242m}[0m
+ [38;2;248;248;242m}[0m
++
++[38;2;249;38;114masync[0m[38;2;248;248;242m [0m[3;38;2;102;217;239mfn[0m[38;2;248;248;242m [0m[38;2;166;226;46mfoo[0m[38;2;248;248;242m([0m[38;2;248;248;242m)[0m[38;2;248;248;242m [0m[38;2;248;248;242m{[0m
++[38;2;248;248;242m    [0m[38;2;102;217;239masync_foo[0m[38;2;248;248;242m([0m[38;2;248;248;242m)[0m[38;2;248;248;242m.[0m[38;2;249;38;114mawait[0m[38;2;248;248;242m.[0m[38;2;249;38;114mawait[0m[38;2;248;248;242m.[0m[38;2;249;38;114mawait[0m[38;2;248;248;242m;[0m
++[38;2;248;248;242m}[0m
+```
+
+**File**: `tests/syntax-tests/source/Rust/output.rs` (modified, +4/-0)
+```diff
+@@ -159,3 +159,7 @@ impl Drop for OutputType {
          }
      }
-     Ok(())
-@@ -108,19 +116,22 @@ fn write_assets(
-     acknowledgements: &Option<String>,
-     target_dir: &Path,
-     current_version: &str,
-+    progress: &mut dyn Write,
- ) -> Result<()> {
-     let _ = std::fs::create_dir_all(target_dir);
-     asset_to_cache(
-         theme_set,
-         &target_dir.join("themes.bin"),
-         "theme set",
-         COMPRESS_THEMES,
-+        progress,
-     )?;
-     asset_to_cache(
-         syntax_set,
-         &target_dir.join("syntaxes.bin"),
-         "syntax set",
-         COMPRESS_SYNTAXES,
-+        progress,
-     )?;
- 
-     if let Some(acknowledgements) = acknowledgements {
-@@ -129,16 +140,17 @@ fn write_assets(
-             &target_dir.join("acknowledgements.bin"),
-             "acknowledgements",
-             COMPRESS_ACKNOWLEDGEMENTS,
-+            progress,
-         )?;
-     }
- 
-     write!(
--        io::stdout(),
-+        progress,
-         "Writing metadata to folder {} ... ",
-         target_dir.to_string_lossy()
-     )?;
-     crate::assets_metadata::AssetsMetadata::new(current_version).save_to_folder(target_dir)?;
--    writeln!(io::stdout(), "okay")?;
-+    writeln!(progress, "okay")?;
- 
-     Ok(())
  }
-@@ -166,15 +178,16 @@ fn asset_to_cache<T: serde::Serialize>(
-     path: &Path,
-     description: &str,
-     compressed: bool,
-+    progress: &mut dyn Write,
- ) -> Result<()> {
-     write!(
--        io::stdout(),
-+        progress,
-         "Writing {description} to {} ... ",
-         path.to_string_lossy()
-     )?;
-  
-```
-
-**File**: `src/bin/bat/assets.rs` (modified, +9/-1)
-```diff
-@@ -76,7 +76,15 @@ fn ensure_cache_built(config_dir: &Path, cache_dir: &Path) {
-     }
- 
-     eprintln!("bat: custom themes or syntaxes found, building cache ...");
--    if let Err(err) = bat::assets::build(config_dir, true, false, cache_dir, crate_version!()) {
-+    let mut progress = io::stderr();
-+    if let Err(err) = bat::assets::build(
-+        config_dir,
-+        true,
-+        false,
-+        cache_dir,
-+        crate_version!(),
-+        &mut progress,
-+    ) {
-         eprintln!("bat: automatic cache build failed ({err}), falling back to integrated assets.");
-     }
- }
-```
-
-**File**: `src/bin/bat/main.rs` (modified, +2/-0)
-```diff
-@@ -50,13 +50,15 @@ fn build_assets(matches: &clap::ArgMatches, config_dir: &Path, cache_dir: &Path)
-         .get_one::<String>("source")
-         .map(Path::new)
-         .unwrap_or_else(|| config_dir);
-+    let mut progress = io::stdout();
- 
-     bat::assets::build(
-         source_dir,
-         !matches.get_flag("blank"),
-         matches.get_flag("acknowledgements"),
-         cache_dir,
-         clap::crate_version!(),
-+        &mut progress,
-     )
- }
- 
-```
-
-**File**: `tests/integration_tests.rs` (modified, +32/-0)
-```diff
-@@ -2411,6 +2411,38 @@ fn cache_auto_build_on_first_run() {
-     assert!(cache_dir.path().join("metadata.yaml").exists());
- }
- 
-+#[test]
-+fn cache_auto_build_plain_output_clean_stdout() {
-+    let config_dir = tempdir().expect("can create temporary config directory");
-+    let cache_dir = tempdir().expect("can create temporary cache directory");
-+    let input_dir = tempdir().expect("can create temporary input directory");
-+    let input_path = input_dir.path().join("hello.txt");
 +
-+    std::fs::create_dir_all(config_dir.path().join("themes")).expect("can create themes directory");
-+    std::fs::copy(
-+        Path::new(EXAMPLES_DIR).join("cache_source/themes/example.tmTheme"),
-+        config_dir.path().join("themes/example.tmTheme"),
-+    )
-+    .expect("can copy example theme");
-+    std::fs::write(&input_path, "hello\n").expect("can write input file");
-+
-+    bat_with_config()
-+        .env("BAT_CONFIG_DIR", config_dir.path())
-+        .env("BAT_CACHE_PATH", cache_dir.path())
-+        .arg("--no-config")
-+        .arg("--paging=never")
-+        .arg("--color=never")
-+        .arg(input_path.to_str().expect("input path is valid utf-8"))
-+        .assert()
-+        .success()
-+        .stdout("hello\n")
-+        .stdout(predicate::str::contains("Writing").not())
-+        .stdout(predicate::str::contains("No syntaxes").not())
-+        .stdout(predicate::str::contains("No themes").not())
-+        .stderr(predicate::str::contains("building cache"))
-+        .stderr(predicate::str::contains("Writing"));
++async fn foo() {
++    async_foo().await.await.await;
 +}
-+
- #[test]
- fn cache_no_auto_build_with_no_custom_assets() {
-     // `--no-custom-assets` opts out of the automatic cache build (see #4017).
 ```
 
 ---
 
-### Incident Patch 2: `87837d34` (2026-11-15)
-**Commit Message**: Merge origin/master into fix-cache-help-paging
+### Incident Patch 2: `93db2dbb` (2026-11-21)
+**Commit Message**: fix: support SHA-256 git repositories in --diff
 
-Resolve conflicts:
+gix was built without its `sha256` feature, so repositories created with
+`git init --object-format=sha256` could not be opened and `get_git_diff`
+returned None. `--diff` then printed no content and `--style=changes` showed
+no change markers, both with exit code 0.
 
-- src/bin/bat/main.rs: keep the branch's behavior of showing help when
-  'bat cache' is invoked without arguments (exit 0), while preserving
-  the config_dir parameter that origin/master added to run_cache_subcommand.
-- src/bin/bat/clap_app.rs: keep .disable_help_flag(true) on the cache
-  subcommand (already merged cleanly from origin/master).
-- src/output.rs: keep generate_default_bindings() fix for the builtin
-  pager (no conflict).
-- CHANGELOG.md: combine both sets of Bugfixes entries.
+Enable the gix `sha256` feature and add a regression test.
 
-**File**: `.github/workflows/CICD.yml` (modified, +15/-11)
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -166,7 +166,8 @@ jobs:
-           - { target: arm-unknown-linux-gnueabihf , os: ubuntu-latest , dpkg_arch: armhf,            use-cross: true }
-           - { target: arm-unknown-linux-musleabihf, os: ubuntu-latest , dpkg_arch: musl-linux-armhf, use-cross: true }
-           - { target: i686-pc-windows-msvc        , os: windows-2025  ,                                              }
--          - { target: i686-unknown-linux-gnu      , os: ubuntu-latest , dpkg_arch: i386,             use-cross: true }
-+          # The timeout test's socketpair fails on the Ubuntu 26.04 runner.
-+          - { target: i686-unknown-linux-gnu      , os: ubuntu-24.04  , dpkg_arch: i386,             use-cross: true }
-           - { target: i686-unknown-linux-musl     , os: ubuntu-latest , dpkg_arch: musl-linux-i686,  use-cross: true }
-           - { target: x86_64-apple-darwin         , os: macos-15-intel,                                              }
-           - { target: aarch64-apple-darwin        , os: macos-latest  ,                                              }
-@@ -214,6 +215,9 @@ jobs:
- 
-     - name: Build
-       shell: bash
-+      env:
-+        BAT_ASSETS_GEN_DIR: ${{ env.CICD_INTERMEDIATES_DIR }}/generated
-+        CROSS_BUILD_ENV_PASSTHROUGH: BAT_ASSETS_GEN_DIR
-       run: $BUILD_CMD build --locked --release --target=${{ matrix.job.target }}
- 
-     - name: Set binary name & path
-@@ -302,13 +306,13 @@ jobs:
-         cp "README.md" "LICENSE-MIT" "LICENSE-APACHE" "CHANGELOG.md" "$ARCHIVE_DIR"
- 
-         # Man page
--        cp 'target/${{ matrix.job.target }}/release/build/${{ needs.crate_metadata.outputs.name }}'-*/out/assets/manual/bat.1 "$ARCHIVE_DIR"
-+        cp "${{ env.CICD_INTERMEDIATES_DIR }}/generated/assets/manual/bat.1" "$ARCHIVE_DIR"
- 
-         # Autocompletion files
--        cp 'target/${{ matrix.job.target }}/release/build/${{ needs.crate_metadata.outputs.name }}'-*/out/assets/completions/bat.bash "$ARCHIVE_DIR/autocomplete/${{ needs.crate_metadata.outputs.name }}.bash"
--        cp 'target/${{ matrix.job.target }}/release/build/${{ needs.crate_metadata.outputs.name }}'-*/out/assets/completions/bat.fish "$ARCHIVE_DIR/autocomplete/${{ needs.crate_metadata.outputs.name }}.fish"
--        cp 'target/${{ matrix.job.target }}/release/build/${{ needs.crate_metadata.outputs.name }}'-*/out/assets/completions/_bat.ps1 "$ARCHIVE_DIR/autocomplete/_${{ needs.crate_metadata.outputs.name }}.ps1"
--        cp 'target/${{ matrix.job.target }}/release/build/${{ needs.crate_metadata.outputs.name }}'-*/out/assets/completions/bat.zsh "$ARCHIVE_DIR/autocomplete/${{ needs.crate_metadata.outputs.name }}.zsh"
-+        cp "${{ env.CICD_INTERMEDIATES_DIR }}/generated/assets/completions/bat.bash" "$ARCHIVE_DIR/autocomplete/${{ needs.crate_metadata.outputs.name }}.bash"
-+        cp "${{ env.CICD_INTERMEDIATES_DIR }}/generated/assets/completions/bat.fish" "$ARCHIVE_DIR/autocomplete/${{ needs.crate_metadata.outputs.name }}.fish"
-+        cp "${{ env.CICD_INTERMEDIATES_DIR }}/generated/assets/completions/_bat.ps1" "$ARCHIVE_DIR/autocomplete/_${{ needs.crate_metadata.outputs.name }}.ps1"
-+        cp "${{ env.CICD_INTERMEDIATES_DIR }}/generated/assets/completions/bat.zsh" "$ARCHIVE_DIR/autocomplete/${{ needs.crate_metadata.outputs.name }}.zsh"
- 
-         # base compressed package
-         pushd "${PKG_STAGING}/" >/dev/null
-@@ -343,13 +347,13 @@ jobs:
-         install -Dm755 "${{ steps.bin.outputs.BIN_PATH }}" "${DPKG_DIR}/usr/bin/${{ steps.bin.outputs.BIN_NAME }}"
- 
-         # Man page
--        install -Dm644 'target/${{ matrix.job.target }}/release/build/${{ needs.crate_metadata.outputs.name }}'-*/out/assets/manual/bat.1 "${DPKG_DIR}/usr/share/man/man1/${{ needs.crate_metadata.outputs.name }}.1"
-+        install -Dm644 "${{ env.CICD_INTERMEDIATES_DIR }}/generated/assets/manual/bat.1" "${DPKG_DIR}/usr/share/man/man1/${{ needs.crate_metadata.outputs.name }}.1"
-         gzip -n --best "${DPKG_DIR}/usr/share/man/man1/${{ needs.crate_metadata.outputs.name }}.1"
- 
-         # Autocompletion files
--        install -Dm644 'target/${{ matrix.job.target }}/release/build/${{ needs.crate_metadata.outputs.name }}'-*/out/assets/completions/bat.bash "${DPKG_DIR}/usr/share/bash-completion/completions/${{ needs.crate_metadata.outputs.name }}"
--        install -Dm644 'target/${{ matrix.job.target }}/release/build/${{ needs.crate_metadata.outputs.name }}'-*/out/assets/completions/bat.fish "${DPKG_DIR}/usr/share/fish/vendor_completions.d/${{ needs.crate_metadata.outputs.name }}.fish"
--        install -Dm644 'target/${{ matrix.job.target }}/release/build/${{ needs.crate_metadata.outputs.name }}'-*/out/assets/completions/bat.zsh "${DPKG_DIR}/usr/share/zsh/vendor-completions/_${{ needs.crate_metadata.outputs.name }}"
-+        install -Dm644 "${{ env.CICD_INTERMEDIATES_DIR }}/generated/assets/completions/bat.bash" "${DPKG_DIR}/usr/share/bash-completion/completions/${{ needs.crate_metadata.outputs.name }}"
-+        install -Dm644 "${{ env.CICD_INTERMEDIATES_DIR }}/gen
-```
-
-**File**: `.gitmodules` (modified, +3/-0)
-```diff
-@@ -284,3 +284,6 @@
- [submodule "assets/syntaxes/02_Extra/Caddy"]
- 	path = assets/syntaxes/02_Extra/Caddy
- 	url = https://github.com/caddyserver/sublimetext.git
-+[submodule "assets/syntaxes/02_Extra/CUE"]
-+	path = assets/syntaxes/02_Extra/CUE
-+	url = https://github.com/cue-lang/vscode-cue.git
-```
-
-**File**: `CHANGELOG.md` (modified, +45/-1)
-```diff
-@@ -3,13 +3,22 @@
+@@ -94,6 +94,7 @@
+ - Fix zsh tab completion word-splitting language names containing spaces (e.g. `HTML (Jinja2)`, `Apache Conf`), see #3693 (@YoshKoz)
+ - Fix zsh tab completion offering invalid `-l` arguments (file globs, paths, hidden filenames) sourced from the second column of `--list-languages`. Closes #3735, see #3737 (@truffle-dev)
+ - Fix `usize` underflow in `--list-languages` when `--terminal-width` is smaller than the longest language name, see #3812 (@greymoth-jp)
++- Show changes in `--diff` mode and the change-marker column in Git repositories that use the SHA-256 object format (`git init --object-format=sha256`), see #XXXX (@BlueX888)
  
  ## Other
+ - Use git version of cross. See #3533 (@OctopusET)
+```
+
+**File**: `Cargo.lock` (modified, +64/-0)
+```diff
+@@ -215,6 +215,15 @@ version = "2.13.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "3ded4057c258ba199e2d26386d3af3780957ecaee6c4ef4041c6b4b8b97c0b06"
  
-+- Document submodule initialization when rebuilding syntax and theme assets, see #3801 (@xfocus3)
-+- Fix anchor case in `doc/assets.md` links, see #4026 (@ump45nose)
-+- Pin the i686 GNU CI runner to Ubuntu 24.04 to avoid `socketpair` failures on Ubuntu 26.04, see #4101 (@PerchAnton)
-+- Fix dead Visual C++ Redistributable link in README, see #3895 (@1t1sCooL)
-+- Document `StripAnsiMode` and its variants in rustdoc, see #4067 (@ump45nose)
-+- Update Cargo dependencies to resolve current RustSec advisories, see #3861 (@TyceHerrman)
++[[package]]
++name = "block-buffer"
++version = "0.12.1"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "d2f6c7dbe95a6ed67ad9f18e57daf93a2f034c524b99fd2b76d18fdfeb6660aa"
++dependencies = [
++ "hybrid-array",
++]
++
+ [[package]]
+ name = "bstr"
+ version = "1.12.1"
+@@ -372,6 +381,15 @@ version = "0.8.7"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "773648b94d0e5d620f64f280777445740e61fe701025087ec8b57f45c791888b"
+ 
++[[package]]
++name = "cpufeatures"
++version = "0.3.1"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "5ca28b0ae3115b884660db4118d803791fd6756b6e88f39c0f3f7859060d7566"
++dependencies = [
++ "libc",
++]
++
+ [[package]]
+ name = "crc32fast"
+ version = "1.5.2"
+@@ -442,6 +460,15 @@ dependencies = [
+  "winapi",
+ ]
+ 
++[[package]]
++name = "crypto-common"
++version = "0.2.2"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "ce6e4c961d6cd6c9a86db418387425e8bdeaf05b3c8bc1411e6dca4c252f1453"
++dependencies = [
++ "hybrid-array",
++]
++
+ [[package]]
+ name = "darling"
+ version = "0.23.0"
+@@ -581,6 +608,16 @@ version = "0.4.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "6184e33543162437515c2e2b48714794e37845ec9851711914eec9d308f6ebe8"
+ 
++[[package]]
++name = "digest"
++version = "0.11.3"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "f1dd6dbb5841937940781866fa1281a1ff7bd3bf827091440879f9994983d5c2"
++dependencies = [
++ "block-buffer",
++ "crypto-common",
++]
++
+ [[package]]
+ name = "dissimilar"
+ version = "1.0.11"
+@@ -1078,6 +1115,7 @@ dependencies = [
+  "gix-error",
+  "gix-utils",
+  "sha1dc",
++ "sha2",
+ ]
+ 
+ [[package]]
+@@ -1651,6 +1689,15 @@ dependencies = [
+  "stable_deref_trait",
+ ]
+ 
++[[package]]
++name = "hybrid-array"
++version = "0.4.15"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "27f864f10dfb56725ce5ce5472bc52252c8f93a4ab86327122cebf62c5f59a17"
++dependencies = [
++ "typenum",
++]
++
+ [[package]]
+ name = "ident_case"
+ version = "1.0.1"
+@@ -2339,6 +2386,17 @@ version = "0.1.5"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "c5b0ebf6537e3e8db8bb7d21ecb6d7399738c953c757945c6b95e46c4e95df7b"
+ 
++[[package]]
++name = "sha2"
++version = "0.11.1"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "47d7069beb7d6ac7b9acd1039986e73443f24234f41074da099d6f994ac9ad19"
++dependencies = [
++ "cfg-if",
++ "cpufeatures",
++ "digest",
++]
++
+ [[package]]
+ name = "shell-escape"
+ version = "0.1.5"
+@@ -2654,6 +2712,12 @@ version = "1.1.1+spec-1.1.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "756daf9b1013ebe47a8776667b466417e2d4c5679d441c26230efd9ef78692db"
+ 
++[[package]]
++name = "typenum"
++version = "1.20.1"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "b6f5e870be6c3b371b77fe0ee0bafb859fa4964b4404c27de1d380043c4dda20"
++
+ [[package]]
+ name = "unicode-bom"
+ version = "2.0.3"
+```
+
+**File**: `Cargo.toml` (modified, +1/-1)
+```diff
+@@ -79,7 +79,7 @@ itertools = "0.14.0"
+ version = "0.90"
+ optional = true
+ default-features = false
+-features = ["sha1", "blob-diff"]
++features = ["sha1", "sha256", "blob-diff"]
+ 
+ [dependencies.syntect]
+ version = "5.3.0"
+```
+
+**File**: `src/diff.rs` (modified, +26/-0)
+```diff
+@@ -149,6 +149,32 @@ mod tests {
+         assert_eq!(get_git_diff(&file), None);
+     }
+ 
++    #[test]
++    fn diff_is_calculated_in_sha256_repository() {
++        let dir = tempfile::tempdir().expect("can create temporary directory");
++        let repo = dir.path();
++        let init = Command::new("git")
++            .args(["init", "--object-format=sha256"])
++            .current_dir(repo)
++            .output()
++            .expect("git command can run");
++        if !init.status.success() {
++            eprintln!("skipping: git does not support sha256 repositories");
++            return;
++        }
++        git(repo, &["config", "user.email", "test@test.test"]);
++        git(repo, &["config", "user.name", "Test"]);
++        let filepath = repo.join("file.txt");
++        std::fs::write(&filepath, "file\n").expect("can write file");
++        git(repo, &["add", "file.txt"]);
++        git(repo, &["commit", "-m", "initial"]);
++
++        std::fs::write(&filepath, "file\nline 2 added\n").expect("can write file");
++
++        let changes = get_git_diff(&filepath).expect("one change");
++        assert_eq!(changes.get(&2), Some(&LineChange::Added));
++    }
++
+     #[test]
+     fn diff_is_calculated_against_index() {
+         let repo = setup_repo();
+```
+
+---
+
+### Incident Patch 3: `e118c20e` (2026-11-20)
+**Commit Message**: Merge pull request #4137 from divya0795/fix/test-env-scrub
+
+Remove BAT_WIDTH, BAT_PAGING and BAT_THEME_DARK/LIGHT in test harnesses
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -11,6 +11,7 @@
+ - Update Cargo dependencies to resolve current RustSec advisories, see #3861 (@TyceHerrman)
  - Add instructions for removing fish help abbreviations to README, see #3655 (@claw-explorer). Closes #3536
  - Add .NET slnx extension, see #3682 (@ltrzesniewski)
++- Remove `BAT_WIDTH`, `BAT_PAGING`, `BAT_THEME_DARK` and `BAT_THEME_LIGHT` from the test environment, so exporting them no longer breaks `cargo test`, see #4137 (@divya0795)
  
  ## Features
  
--- Add a `--sanitize=<auto|always|never>` flag for safe display of untrusted input. It implies `--strip-ansi` at the same value and additionally substitutes terminal-active control bytes (cursor moves, charset switches, beep, etc.) and Unicode bidi / zero-width formatting characters with the Unicode replacement character (U+FFFD). Mitigates Trojan-Source-style spoofing (CVE-2021-42574). See #3729 (@curious-rabbit)
-+- Automatically build the syntax/theme cache on first run when custom themes or syntaxes are present but no cache exists yet, so newly installed dotfiles work without a manual `bat cache --build`. Use `--no-custom-assets` to opt out. Closes #4017, see #4038 (@mmustafasenoglu)
-+- Add `-b` / `--number-nonblank` flag to only number non-blank lines, for `cat -b` compatibility. Closes #3856, see #3857 (@MeGaurav4)
-+- Add a `--sanitize=<auto|always|never>` flag for safe display of untrusted input. It substitutes terminal-active control bytes (escape, cursor moves, charset switches, beep, etc.) and Unicode bidi / zero-width formatting characters with the Unicode replacement character (U+FFFD). Mitigates Trojan-Source-style spoofing (CVE-2021-42574). See #3729 (@curious-rabbit)
- - Map justfile, Justfile, .justfile, and *.justfile to Makefile syntax highlighting, see #3623 (@zachvalenta)
-+- Map `.kube/config` to YAML syntax highlighting, see #3911 (@logarithmone1128)
- - Preserve `--diff` change markers and snip separators when `--plain` is set. Closes #3630, see #3643 (@mvanhorn)
- - Added support for `hidden_file_extensions` from `.sublime-syntax` files, see #3613 (@Matei02355)
- - Add word wrapping mode via `--wrap=word`, see #3597 (@veeceey)
-@@ -23,8 +32,40 @@
- - Syntax highlighting for Python files using uv as script runner in shebang #3689 (@janlarres)
- 
- ## Bugfixes
-+
- - Fix `bat cache --help` returning exit code 1 instead of 0. Remove `.arg_required_else_help(true)` from the cache subcommand and show help when no arguments are provided. See #3798, #3831 and #3837 (@Amilliox)
- - Fix builtin pager (minus) not responding to search (`/`, `?`, `n`, `N`) and navigation (`PgUp`, `PgDown`, arrows, `g`, `G`) keys. `HashedEventRegister` was overriding all default `minus` bindings instead of extending them. Add `generate_default_bindings()` before custom bindings. See #3831, #3798 and #3837 (@Amilliox)
-+- Build the cache automatically on first run when custom themes or syntaxes are in subdirectories, see #4131 (@NotAFlightRisk)
-+- Do not run filter commands from the configuration of the Git repository that contains the displayed file, see #4127 (@curious-rabbit)
-+- Ignore empty `--ignored-suffix` values to avoid a stack overflow, see #4122 (@spicysharkco)
-+- Fix `--number-nonblank` counting empty UTF-16 lines, see #4118 (@pcbeingused333)
-+- Fix automatic cache build progress polluting stdout, see #4130 (@intertermux-code)
-+- Don't emit `--highlight-line` escape sequences (background color or `ansi` theme underline) when colors are disabled with `--color=never`. Closes #4099, see #4100 (@DeviousCardi)
-+- Fix missing colors, pager, and decorations in mintty/MSYS2 and Cygwin terminals on Windows, see #4115 (@rezamuliawijaya)
-+- Make full-path `--map-syntax` patterns and the built-in `$HOME` and `$XDG_CONFIG_HOME` mappings work on Windows, see #4113 (@b84330808)
-+- Keep configuration and BAT_OPTS active for option-like filenames after `--`, and report invalid configuration for help-like filenames, see #4112 (@Marve10s)
-+- Keep emoji sequences together within text chunks when wrapping content, and measure their combined display width, see #4108 (@Marve10s)
-+- Preserve full-path syntax mappings when removing ignored filename suffixes, see #4111 (@Marve10s)
-+- Fix UTF-16 line splitting at unaligned newline bytes corrupting text and shifting line ranges, see #4110 (@Marve10s)
-+- Respect `NO_COLOR` for the `[bat error]` and `[bat warning]` prefixes, see #4048 (@qodelicious)
-+- Offer the valid `--wrap` value `auto` instead of the rejected `always` in the PowerShell completion, see #4070 (@ump45nose)
-+- Report `BAT_CONFIG_DIR` in `bat --diagnostic`, so bug reports show a config directory that overrides `$XDG_CONFIG_HOME`. See #4068 (@ump45nose)
-+- Ignore a UTF-8 byte order mark at the sta
 ```
 
-**File**: `Cargo.lock` (modified, +192/-206)
+**File**: `tests/syntax-tests/create_highlighted_versions.py` (modified, +4/-0)
 ```diff
-@@ -68,7 +68,7 @@ version = "1.1.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "40c48f72fd53cd289104fc64099abca73db4166ad86ea0b4341abe65af83dadc"
- dependencies = [
-- "windows-sys 0.61.2",
-+ "windows-sys",
- ]
- 
- [[package]]
-@@ -79,14 +79,14 @@ checksum = "291e6a250ff86cd4a820112fb8898808a366d8f9f58ce16d1f538353ad55747d"
- dependencies = [
-  "anstyle",
-  "once_cell_polyfill",
-- "windows-sys 0.61.2",
-+ "windows-sys",
- ]
- 
- [[package]]
- name = "anyhow"
--version = "1.0.102"
-+version = "1.0.103"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "7f202df86484c868dbad7eaa557ef785d5c66295e41b460ef922eca0723b842c"
-+checksum = "2a4385e2e34eb35d6b3efe798b9eb88096925d87726c0798709bf56d9ed84af3"
- 
- [[package]]
- name = "arc-swap"
-@@ -188,6 +188,21 @@ dependencies = [
-  "serde",
- ]
- 
-+[[package]]
-+name = "bisync"
-+version = "0.3.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "5020822f6d6f23196ccaf55e228db36f9de1cf788052b37992e17cbc96ec41a7"
-+dependencies = [
-+ "bisync_macros",
-+]
-+
-+[[package]]
-+name = "bisync_macros"
-+version = "0.2.3"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "d21f40d350a700f6aa107e45fb26448cf489d34794b2ba4522181dc9f1173af6"
-+
- [[package]]
- name = "bit-set"
- version = "0.8.0"
-@@ -221,7 +236,7 @@ version = "0.10.4"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "3078c7629b62d3f0439517fa394996acacc5cbc91c5a20d8c658e77abd503a71"
- dependencies = [
-- "generic-array 0.14.7",
-+ "generic-array",
- ]
- 
- [[package]]
-@@ -266,9 +281,9 @@ checksum = "1e748733b7cbc798e1434b6ac524f0c1ff2ab456fe201501e6497c8417a4fc33"
- 
- [[package]]
- name = "bytesize"
--version = "2.3.1"
-+version = "2.7.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "6bd91ee7b2422bcb158d90ef4d14f75ef67f340943fc4149891dcce8f8b972a3"
-+checksum = "7354288c522e7e980fafd2075d63d1285794c3a6a16cdd492f189ea406e5f18b"
- 
- [[package]]
- name = "cc"
-@@ -347,14 +362,14 @@ checksum = "1d07550c9036bf2ae0c684c4297d503f838287c83c53686d05370d0e139ae570"
- 
- [[package]]
- name = "console"
--version = "0.16.3"
-+version = "0.16.4"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "d64e8af5551369d19cf50138de61f1c42074ab970f74e99be916646777f8fc87"
-+checksum = "4fe5f465a4f6fee88fad41b85d990f84c835335e85b5d9e6e63e0d06d28cba7c"
- dependencies = [
-  "encode_unicode",
-  "libc",
-  "unicode-width",
-- "windows-sys 0.61.2",
-+ "windows-sys",
- ]
- 
- [[package]]
-@@ -420,9 +435,9 @@ dependencies = [
- 
- [[package]]
- name = "crossbeam-epoch"
--version = "0.9.18"
-+version = "0.9.20"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "5b82ac4a3c2ca9c3460964f020e1402edd5753411d7737aa39c3714ad1b5420e"
-+checksum = "2d6914041f254d6e9176c01941b21115dcfb7089e55135a35411081bd106ef3f"
- dependencies = [
-  "crossbeam-utils",
- ]
-@@ -466,7 +481,7 @@ version = "0.1.7"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "78c8292055d1c1df0cce5d180393dc8cce0abec0a7102adb6c7b1eef6016d60a"
- dependencies = [
-- "generic-array 0.14.7",
-+ "generic-array",
-  "typenum",
- ]
- 
-@@ -519,9 +534,9 @@ dependencies = [
- 
- [[package]]
- name = "dashmap"
--version = "6.1.0"
-+version = "6.2.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "5041cc499144891f3790297212f32a74fb938e5136a14943f338ef9e0ae276cf"
-+checksum = "e6361d5c062261c78a176addb82d4c821ae42bed6089de0e12603cd25de2059c"
- dependencies = [
-  "cfg-if",
-  "crossbeam-utils",
-@@ -665,7 +680,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
- dependencies = [
-  "libc",
-- "windows-sys 0.61.2",
-+ "windows-sys",
- ]
- 
- [[package]]
-@@ -675,34 +690,33 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "de48cc4d1c1d97a20fd819def54b890cadde72ed3ad0c614822a0a433361be96"
- dependencies = [
-  "cfg-if",
-- "windows-sys 0.61.2",
-+ "windows-sys",
- ]
- 
- [[package]]
- name = "execute"
--version = "0.2.15"
-+version = "0.3.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "0be3cc61fe54b4cae4463cdbda0401978ffe19d4dcc7a5201a312cddf64726dd"
-+checksum = "a8bc8fa7331f8c9f97fb52c60c4e1d07fd424db18130cb252b1da7c6bbcfc2c9"
- dependencies = [
-  "execute-command-macro",
-  "execute-command-tokens",
-- "generic-array 1.4.1",
- ]
- 
- [[package]]
- name = "execute-command-macro"
--version = "0.1.11"
-+version = "0.3.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "b3e748391d89b43c52decaed8645b4a83a09d14f5ee868071c6813389e9e7036"
-+checksum = "889365b82d31077b07ed81c1b37f49eed80266f57c99bc3706e8d8d4783388ac"
- dependencies = [
-  "execute-command-macro-impl",
- ]
- 
- [[package]]
- name = "execute-command-macro-impl"
--version = "0.1.12"
-+version = "0.3.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "57dd896d
+@@ -48,9 +48,13 @@ def create_highlighted_version(args):
+     env.pop("BAT_CONFIG_PATH", None)
+     env.pop("BAT_OPTS", None)
+     env.pop("BAT_PAGER", None)
++    env.pop("BAT_PAGING", None)
+     env.pop("BAT_STYLE", None)
+     env.pop("BAT_TABS", None)
+     env.pop("BAT_THEME", None)
++    env.pop("BAT_THEME_DARK", None)
++    env.pop("BAT_THEME_LIGHT", None)
++    env.pop("BAT_WIDTH", None)
+     env.pop("NO_COLOR", None)
+     env.pop("PAGER", None)
+     env["COLORTERM"] = "truecolor"  # make sure to output 24bit colors
 ```
 
-**File**: `Cargo.toml` (modified, +3/-3)
+**File**: `tests/utils/command.rs` (modified, +4/-0)
 ```diff
-@@ -70,13 +70,13 @@ regex = { version = "1.12.3", optional = true }
- walkdir = { version = "2.5", optional = true }
- bytesize = { version = "2.3.1" }
- encoding_rs = "0.8.35"
--execute = { version = "0.2.15", optional = true }
-+execute = { version = "0.3.0", optional = true }
- terminal-colorsaurus = "1.0"
- unicode-segmentation = "1.13.2"
- itertools = "0.14.0"
- 
- [dependencies.gix]
--version = "0.85"
-+version = "0.86"
- optional = true
- default-features = false
- features = ["sha1", "blob-diff"]
-@@ -104,7 +104,7 @@ tempfile = "3.27.0"
- serde = { version = "1.0", features = ["derive"] }
- 
- [target.'cfg(unix)'.dev-dependencies]
--nix = { version = "0.31", default-features = false, features = ["term"] }
-+nix = { version = "0.31", default-features = false, features = ["poll", "term"] }
- 
- [build-dependencies]
- anyhow = "1.0.97"
-```
-
-**File**: `README.md` (modified, +12/-6)
-```diff
-@@ -417,7 +417,7 @@ scoop install bat
- 
- You can download prebuilt binaries from the [Release page](https://github.com/sharkdp/bat/releases),
- 
--You will need to install the [Visual C++ Redistributable](https://support.microsoft.com/en-us/help/2977003/the-latest-supported-visual-c-downloads) package.
-+You will need to install the [Visual C++ Redistributable](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist) package.
- 
- ### From binaries
- 
-@@ -431,6 +431,12 @@ If you want to build `bat` from source, you need Rust 1.79.0 or
- higher. You can then use `cargo` to build everything:
- 
- #### From local source
-+
-+The checkout includes prebuilt syntax and theme assets. If you want to regenerate them
-+from their sources, first initialize the Git submodules with
-+`git submodule update --init --recursive`, then follow the [Development](#development)
-+instructions. This includes the `help` syntax used to highlight command-line help.
-+
- ```bash
- cargo install --path . --locked
- ```
-@@ -794,7 +800,7 @@ Example configuration file:
- 
- ### Prerequisites
- 
--You will need to install the [Visual C++ Redistributable](https://support.microsoft.com/en-us/help/2977003/the-latest-supported-visual-c-downloads) package.
-+You will need to install the [Visual C++ Redistributable](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist) package.
- 
- ### Paging
- 
-@@ -843,9 +849,9 @@ If your version of `bat` supports the `--strip-ansi=auto` option, it can be used
- before syntax highlighting. Alternatively, you may disable both syntax highlighting and wrapping by
- passing the `--color=never --wrap=never` options to `bat`.
- 
--For untrusted input, the `--sanitize=auto|always|never` option additionally replaces terminal-active
--control bytes and Unicode bidi / zero-width formatting characters with the Unicode replacement
--character. It implies `--strip-ansi` at the same value.
-+For untrusted input, the `--sanitize=auto|always|never` option replaces terminal-active control
-+bytes, including the escape character, and Unicode bidi / zero-width formatting characters with the
-+Unicode replacement character. Escape sequences are not removed, so they cannot hide text.
- 
- > [!NOTE]
- > The `auto` option of `--strip-ansi` avoids removing escape sequences when the syntax is plain text.
-@@ -902,7 +908,7 @@ cargo install --path . --locked --force
- ```
- 
- If you want to build an application that uses `bat`'s pretty-printing
--features as a library, check out the [the API documentation](https://docs.rs/bat/).
-+features as a library, check out the [API documentation](https://docs.rs/bat/).
- Note that you have to use either `regex-onig` or `regex-fancy` as a feature
- when you depend on `bat` as a library.
- 
-```
-
-**File**: `assets/completions/_bat.ps1.in` (modified, +1/-1)
-```diff
-@@ -9,7 +9,7 @@ Register-ArgumentCompleter -Native -CommandName '{{PROJECT_EXECUTABLE}}' -Script
-     $ArrayCompletion = @('bash', 'fish', 'zsh', 'ps1')
-     $ArrayWhen       = @('auto', 'never', 'always')
-     $ArrayYesNo      = @('never', 'always')
--    $ArrayWrap       = @('always', 'never', 'character', 'word')
-+    $ArrayWrap       = @('auto', 'never', 'character', 'word')
-     $ArrayBinary     = @('no-printing', 'as-text')
-     $ArrayPrint      = @('unicode', 'caret')
- 
-```
-
-**File**: `assets/patches/JavaScript.sublime-syntax.patch` (modified, +10/-0)
-```diff
-@@ -12,3 +12,13 @@ index 05a4fed6..78a7bf55 100644
-  scope: source.js
-  variables:
-    bin_digit: '[01_]'
-+@@ -93,7 +93,8 @@ variables:
-+       (?! \+\+ | -- )
-+       (?=
-+         != |
-+-        [-+*/%><=&|^\[(;,.:?] |
-++        [-+*%><=&|^\[(;,.:?] |
-++        /(?!\*) |
-+         (?:in|instanceof){{identifier_break}}
-+       )
-+     ))
-```
-
----
-
-### Incident Patch 3: `38c77af1` (2026-11-15)
-**Commit Message**: fix: reference PR number in changelog entry
-
-CONTRIBUTING asks changelog entries to cite the pull request number,
-not the issue number.
-
-**File**: `CHANGELOG.md` (modified, +2/-2)
-```diff
-@@ -30,12 +30,12 @@
- - Add `--fallback-syntax`/`--fallback-language` to apply syntax highlighting only when auto-detection fails, see #1341 (@Xavrir)
- - Map `BUILD` case sensitively to Python (Starlark) for Bazel, see #3576 (@vorburger)
- - Syntax highlighting for Python files using uv as script runner in shebang #3689 (@janlarres)
--## Bugfixes
- 
-+## Bugfixes
- - Do not run filter commands from the configuration of the Git repository that contains the displayed file, see #4127 (@curious-rabbit)
- - Ignore empty `--ignored-suffix` values to avoid a stack overflow, see #4122 (@spicysharkco)
- - Fix `--number-nonblank` counting empty UTF-16 lines, see #4118 (@pcbeingused333)
--- Fix automatic cache build progress polluting stdout, see #4129 (@intertermux-code)
-+- Fix automatic cache build progress polluting stdout, see #4130 (@intertermux-code)
- - Don't emit `--highlight-line` escape sequences (background color or `ansi` theme underline) when colors are disabled with `--color=never`. Closes #4099, see #4100 (@DeviousCardi)
- - Fix missing colors, pager, and decorations in mintty/MSYS2 and Cygwin terminals on Windows, see #4115 (@rezamuliawijaya)
- - Make full-path `--map-syntax` patterns and the built-in `$HOME` and `$XDG_CONFIG_HOME` mappings work on Windows, see #4113 (@b84330808)
+@@ -11,9 +11,13 @@ pub fn bat_raw_command_with_config() -> Command {
+     cmd.env_remove("BAT_CONFIG_PATH");
+     cmd.env_remove("BAT_OPTS");
+     cmd.env_remove("BAT_PAGER");
++    cmd.env_remove("BAT_PAGING");
+     cmd.env_remove("BAT_STYLE");
+     cmd.env_remove("BAT_TABS");
+     cmd.env_remove("BAT_THEME");
++    cmd.env_remove("BAT_THEME_DARK");
++    cmd.env_remove("BAT_THEME_LIGHT");
++    cmd.env_remove("BAT_WIDTH");
+     cmd.env_remove("COLORTERM");
+     cmd.env_remove("NO_COLOR");
+     cmd.env_remove("PAGER");
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4143** (2026-11-21): fix: support SHA-256 git repositories in --diff (@BlueX888)
+- **PR #4137** (2026-11-20): Remove BAT_WIDTH, BAT_PAGING and BAT_THEME_DARK/LIGHT in test harnesses (@divya0795)
 - **PR #4132** (2026-11-16): cargo upgrade -i -p gix (@keith-hall)
 - **PR #4131** (2026-11-15): Auto-build the cache when custom themes or syntaxes are in subfolders (@NotAFlightRisk)
 - **PR #4130** (2026-11-15): fix: keep automatic cache build progress off stdout (@intertermux-code)
 - **PR #4128** (2026-11-14): Fix CI packaging of generated assets (@Copilot)
-- **PR #4127** (2026-11-14): do not run filter commands from the repository config (@curious-rabbit)
-- **PR #4122** (2026-11-10): Ignore empty values for --ignored-suffix (@spicysharkco)
 
 ---
 
@@ -1385,13 +970,13 @@ not the issue number.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. keep automatic cache build progress off stdout
+## X. Empirical Invariant Guard in CHANGELOG.md
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sharkdp/bat. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3aa7ebb7`: keep automatic cache build progress off stdout. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4a50cfbe`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -1399,8 +984,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-
-- Fix automatic cache build progress polluting stdout, see #4129 (@intertermux-code)
+- Highlight Rust `async` and `await` as keywords. Closes #1534, see #3892 (@JMak-Security)
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1410,7 +994,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3aa7ebb7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4a50cfbe` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

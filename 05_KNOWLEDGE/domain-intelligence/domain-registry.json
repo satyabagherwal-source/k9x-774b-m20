@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T11:55:40.405Z",
+  "last_updated": "2026-11-21T12:19:54.272Z",
   "total_records": 2244,
   "domains": {
     "A": {
@@ -10084,8 +10084,8 @@
       "title": "Architecture Intelligence: rook/rook Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rook-rook-architecture-intelligence-rook-rook-core-invariants.md",
       "repository": "rook/rook",
-      "content_hash": "f4264e957ef1ab62591f8e7ee062d98d6ea9469778c3e6cf2f8c93f6a1cb0fdb",
-      "created_at": "2026-11-20T07:14:54.778Z"
+      "content_hash": "e9d42d93a368fd75855d7c1ee64d30551ddac7668465405a4ec19cee511bca15",
+      "created_at": "2026-11-21T12:19:46.211Z"
     },
     "domain_intelligence-technical-construction-intelligence-zama-ai-tfhe-rs-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-zama-ai-tfhe-rs-core-invariants",
@@ -24778,8 +24778,8 @@
       "title": "Design Intelligence: sharkdp/bat Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-sharkdp-bat-design-intelligence-sharkdp-bat-core-invariants.md",
       "repository": "sharkdp/bat",
-      "content_hash": "6f8d15708c7cf98c702d5a89fa1888e5d69966200efbaa734a1e56dd715600a7",
-      "created_at": "2026-11-16T20:20:57.819Z"
+      "content_hash": "369b1a672bf581197095ae8bef2dab93d2c61208fa4482e800c8bdf0df5410af",
+      "created_at": "2026-11-21T12:19:37.918Z"
     },
     "domain_intelligence-human-need-intelligence-defguard-defguard-core-invariants": {
       "record_id": "domain_intelligence-human-need-intelligence-defguard-defguard-core-invariants",
@@ -24796,8 +24796,8 @@
       "title": "Design Intelligence: sharkdp-bat-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-sharkdp-bat-learnings-design-intelligence-sharkdp-bat-learnings-core-invariants.md",
       "repository": "sharkdp-bat-learnings",
-      "content_hash": "a678d6e85a44cdfe450c578bed7cea17b2d918f00bf797be5991be4feb176b80",
-      "created_at": "2026-11-16T20:21:11.348Z"
+      "content_hash": "6aa2ada6395ff75b3822f4002f1bfedb01aa9749491a7697597ed34e16b74776",
+      "created_at": "2026-11-21T12:19:50.038Z"
     },
     "domain_intelligence-human-need-intelligence-defguard-defguard-learnings-core-invariants": {
       "record_id": "domain_intelligence-human-need-intelligence-defguard-defguard-learnings-core-invariants",
@@ -26603,8 +26603,8 @@
       "title": "Content & Information Intelligence: dkhamsing/open-source-ios-apps Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-dkhamsing-open-source-ios-apps-content-information-intelligence-dkhamsing-open-s.md",
       "repository": "dkhamsing/open-source-ios-apps",
-      "content_hash": "add23271c6b401ce0e6496c2fe2f16c3307fd96d0c0e343dd1c734133aa941b4",
-      "created_at": "2026-11-17T08:19:31.018Z"
+      "content_hash": "6519a7b69d863bf946e29648cd716d42ab91ca34125d022d290adac6c3929a78",
+      "created_at": "2026-11-21T12:19:42.026Z"
     },
     "DOM-K-8B2A4B0A": {
       "record_id": "DOM-K-8B2A4B0A",
@@ -26689,8 +26689,8 @@
       "title": "Content & Information Intelligence: dkhamsing-open-source-ios-apps-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-dkhamsing-open-source-ios-apps-learnings-content-information-intelligence-dkhams.md",
       "repository": "dkhamsing-open-source-ios-apps-learnings",
-      "content_hash": "f3277f18b05125b60507ff892e4bf332a7e0f233f7e3b7d16cf6ddc9898e62b9",
-      "created_at": "2026-11-17T08:20:27.352Z"
+      "content_hash": "9e4c965b84181ffe6344c1ba8b45ccf1d43e39071dff34b2b4e699fda3803133",
+      "created_at": "2026-11-21T12:19:54.272Z"
     },
     "DOM-K-93409B61": {
       "record_id": "DOM-K-93409B61",
@@ -28143,8 +28143,8 @@
       "title": "Research & Knowledge Intelligence: lodestones/Kromoss Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-lodestones-kromoss-research-knowledge-intelligence-lodestones-kromoss-core-in.md",
       "repository": "lodestones/Kromoss",
-      "content_hash": "0912c9583420e36d457144aef25bf2fa3868ac3fb85c2b108000964911068cf3",
-      "created_at": "2026-11-17T16:05:33.685Z"
+      "content_hash": "69fb60c049f2b02137c6d148c600c2a79e7726951dadcf1fef0784565af34278",
+      "created_at": "2026-11-21T12:19:35.693Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-lodestones-kromoss-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-lodestones-kromoss-learnings-core-invariants",
@@ -28152,8 +28152,8 @@
       "title": "Research & Knowledge Intelligence: hf-lodestones-kromoss-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-lodestones-kromoss-learnings-research-knowledge-intelligence-hf-lodestones-kr.md",
       "repository": "hf-lodestones-kromoss-learnings",
-      "content_hash": "2d98e08b8739cc71a1cdf8de51d8b2bcbf3b48ea603e48b341077efa08d986d3",
-      "created_at": "2026-11-17T16:05:53.102Z"
+      "content_hash": "d03651e9064d974b526b197c8014c33255ec3e98f149e70cdb8e92d6bcd4b99a",
+      "created_at": "2026-11-21T12:19:50.721Z"
     },
     "domain_intelligence-architecture-intelligence-opentofu-opentofu-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-opentofu-opentofu-learnings-core-invariants",

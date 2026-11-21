@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T11:55:40.681Z",
+  "last_updated": "2026-11-21T12:19:54.651Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-21T07:42:07.590Z",
@@ -323,7 +323,7 @@
       "staged_for_review": 1
     },
     "sharkdp-bat-learnings.md": {
-      "processed_at": "2026-11-16T20:21:10.777Z",
+      "processed_at": "2026-11-21T12:19:49.497Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1508,7 +1508,7 @@
       "staged_for_review": 1
     },
     "hf-lodestones-kromoss-learnings.md": {
-      "processed_at": "2026-11-17T16:05:52.925Z",
+      "processed_at": "2026-11-21T12:19:50.465Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3263,7 +3263,7 @@
       "staged_for_review": 1
     },
     "dkhamsing-open-source-ios-apps-learnings.md": {
-      "processed_at": "2026-11-18T10:55:20.829Z",
+      "processed_at": "2026-11-21T12:19:50.958Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3663,7 +3663,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 2790,
+  "total_dossiers_evaluated": 2793,
   "total_canonical_promoted": 445,
-  "total_staged_for_review": 2152
+  "total_staged_for_review": 2154
 }

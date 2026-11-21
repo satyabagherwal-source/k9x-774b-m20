@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261119-0FEC",
-    "timestamp": "2026-11-19T06:52:24.180Z",
-    "repository": "Reson8/Rumble-2-Flash",
-    "learningId": "learn-huggingface-reson8-rumble-2-flash",
-    "contentHash": "1bda1950dbf9aa4623e16cb8be34bc542d0745db8826341c0d3e65bea3dbb4bc",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-0H5Z",
-    "timestamp": "2026-11-19T06:52:26.471Z",
-    "repository": "autotrust/GEV-26B-Decide",
-    "learningId": "learn-huggingface-autotrust-gev-26b-decide",
-    "contentHash": "1f03d9851d119e3680b2a1893c9dcd0cbb1fbd814993a5f2e99e8655e62eb0b4",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-ICPR",
-    "timestamp": "2026-11-19T07:06:20.511Z",
-    "repository": "google/embeddinggemma-2",
-    "learningId": "learn-huggingface-google-embeddinggemma-2",
-    "contentHash": "908315c113f96aa16bcc2e587d4fe19ef68b1d6f2a4b209b5426f64f38e54cfc",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-IEG4",
-    "timestamp": "2026-11-19T07:06:22.756Z",
-    "repository": "domcyrus/rustnet",
-    "learningId": "learn-github-domcyrus-rustnet",
-    "contentHash": "aec7ab902910fd2bfa99b97f8a501ca60067c6368af214f236f45e3de229c24a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261119-IQ0D",
     "timestamp": "2026-11-19T07:06:37.741Z",
     "repository": "tursodatabase/turso",
@@ -7490,6 +7430,66 @@
     "repository": "NucleoidAI/Nucleoid",
     "learningId": "learn-github-nucleoidai-nucleoid",
     "contentHash": "b8ec76bf10181508f5a209e8748512e5628ceb57c745df033e4bb7d6919b6134",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-KWAO",
+    "timestamp": "2026-11-21T12:19:35.424Z",
+    "repository": "lodestones/Kromoss",
+    "learningId": "learn-huggingface-lodestones-kromoss",
+    "contentHash": "ee28843308c57b40cb587491c5db6e3d83c8eee0ced52b194aab35fdf238d728",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-KXUW",
+    "timestamp": "2026-11-21T12:19:37.448Z",
+    "repository": "sharkdp/bat",
+    "learningId": "learn-github-sharkdp-bat",
+    "contentHash": "923beee69297150abaef93279337b91390eb6fed14ead3941754d146701b0d0d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-L10B",
+    "timestamp": "2026-11-21T12:19:41.531Z",
+    "repository": "dkhamsing/open-source-ios-apps",
+    "learningId": "learn-github-dkhamsing-open-source-ios-apps",
+    "contentHash": "62e99f7c7e9f06bccaaa327ba31ee4906a0eb93eafb519140f3d31f7eb4b6c33",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-L48V",
+    "timestamp": "2026-11-21T12:19:45.727Z",
+    "repository": "rook/rook",
+    "learningId": "learn-github-rook-rook",
+    "contentHash": "a8632ff23350be1697adb352de3f4580909248a6ba3d8325f4b0e2b2bfdd0170",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

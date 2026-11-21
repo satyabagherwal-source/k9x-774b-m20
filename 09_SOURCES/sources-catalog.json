@@ -2103,10 +2103,10 @@
     "repository": "dkhamsing/open-source-ios-apps",
     "platform": "github",
     "sourceUrl": "https://github.com/dkhamsing/open-source-ios-apps",
-    "sourceVersion": "bba77685",
+    "sourceVersion": "d7a14f21",
     "license": "CC0-1.0",
-    "contentHash": "daa288c651d549c01207fd824b3334fdd2046fd8a9917334b237273ca7f27d54",
-    "lastHarvestedAt": "2026-11-18T10:55:16.286Z",
+    "contentHash": "62e99f7c7e9f06bccaaa327ba31ee4906a0eb93eafb519140f3d31f7eb4b6c33",
+    "lastHarvestedAt": "2026-11-21T12:19:41.536Z",
     "learningId": "learn-github-dkhamsing-open-source-ios-apps"
   },
   "moby-buildkit": {
@@ -2483,10 +2483,10 @@
     "repository": "sharkdp/bat",
     "platform": "github",
     "sourceUrl": "https://github.com/sharkdp/bat",
-    "sourceVersion": "fbd9a416",
+    "sourceVersion": "dbc11b69",
     "license": "Apache-2.0",
-    "contentHash": "43b45712cca4c9f198789a6477cd23e13371cf1c8c9455d10bd77039e0cbd895",
-    "lastHarvestedAt": "2026-11-16T20:20:57.509Z",
+    "contentHash": "923beee69297150abaef93279337b91390eb6fed14ead3941754d146701b0d0d",
+    "lastHarvestedAt": "2026-11-21T12:19:37.453Z",
     "learningId": "learn-github-sharkdp-bat"
   },
   "karakeep-app-karakeep": {
@@ -5963,10 +5963,10 @@
     "repository": "rook/rook",
     "platform": "github",
     "sourceUrl": "https://github.com/rook/rook",
-    "sourceVersion": "e7bfa815",
+    "sourceVersion": "cfe72976",
     "license": "Apache-2.0",
-    "contentHash": "c36b19d8f89199a69dbc5c9ca931300d9faa6cc9cb830778432e517ff0e8c645",
-    "lastHarvestedAt": "2026-11-20T07:14:54.421Z",
+    "contentHash": "a8632ff23350be1697adb352de3f4580909248a6ba3d8325f4b0e2b2bfdd0170",
+    "lastHarvestedAt": "2026-11-21T12:19:45.732Z",
     "learningId": "learn-github-rook-rook"
   },
   "genkit-ai-genkit": {
@@ -10405,8 +10405,8 @@
     "sourceUrl": "https://huggingface.co/lodestones/Kromoss",
     "sourceVersion": "hf-lodestones-kromoss",
     "license": "Open-Source",
-    "contentHash": "b39c6d3474614cffb75b6596c8f49e38f4a8cc7806001f0e21f44b5b909756cb",
-    "lastHarvestedAt": "2026-11-17T16:05:33.513Z",
+    "contentHash": "ee28843308c57b40cb587491c5db6e3d83c8eee0ced52b194aab35fdf238d728",
+    "lastHarvestedAt": "2026-11-21T12:19:35.429Z",
     "learningId": "learn-huggingface-lodestones-kromoss"
   },
   "hf-nvidia-nvidia-nemotron-labs-dory1.0-4b-bf16": {

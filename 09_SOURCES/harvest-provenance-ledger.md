@@ -11817,3 +11817,7 @@ Every entry in this ledger must capture:
 | `learn-github-expo-expo` | `https://github.com/expo/expo` | `aa82194f` | Multi-dimensional audit evidence | 2026-11-21T11:55:26.644Z |
 | `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `6678854c` | Multi-dimensional audit evidence | 2026-11-21T11:55:33.639Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `f0b8dbab` | Multi-dimensional audit evidence | 2026-11-21T11:55:35.192Z |
+| `learn-huggingface-lodestones-kromoss` | `https://huggingface.co/lodestones/Kromoss` | `hf-lodesto` | Multi-dimensional audit evidence | 2026-11-21T12:19:35.429Z |
+| `learn-github-sharkdp-bat` | `https://github.com/sharkdp/bat` | `dbc11b69` | Multi-dimensional audit evidence | 2026-11-21T12:19:37.453Z |
+| `learn-github-dkhamsing-open-source-ios-apps` | `https://github.com/dkhamsing/open-source-ios-apps` | `d7a14f21` | Multi-dimensional audit evidence | 2026-11-21T12:19:41.536Z |
+| `learn-github-rook-rook` | `https://github.com/rook/rook` | `cfe72976` | Multi-dimensional audit evidence | 2026-11-21T12:19:45.732Z |

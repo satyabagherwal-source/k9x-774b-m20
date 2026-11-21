@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T11:55:35.197Z",
-  "total_cycles_completed": 11217,
-  "total_learnings_persisted": 11217,
-  "total_rules_promoted": 10575,
+  "last_updated": "2026-11-21T12:19:45.738Z",
+  "total_cycles_completed": 11221,
+  "total_learnings_persisted": 11221,
+  "total_rules_promoted": 10578,
   "history": [
-    {
-      "timestamp": "2026-11-20T15:43:55.657Z",
-      "repository": "ArchiveBox/ArchiveBox",
-      "learningId": "learn-github-archivebox-archivebox",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T15:44:05.759Z",
-      "repository": "vcaesar/riot",
-      "learningId": "learn-github-vcaesar-riot",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T16:13:00.936Z",
-      "repository": "emberstack/kubernetes-reflector",
-      "learningId": "learn-github-emberstack-kubernetes-reflector",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T16:13:04.441Z",
-      "repository": "DefGuard/defguard",
-      "learningId": "learn-github-defguard-defguard",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-20T16:13:06.711Z",
       "repository": "meilisearch/meilisearch",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-21T11:55:35.197Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T12:19:35.435Z",
+      "repository": "lodestones/Kromoss",
+      "learningId": "learn-huggingface-lodestones-kromoss",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T12:19:37.459Z",
+      "repository": "sharkdp/bat",
+      "learningId": "learn-github-sharkdp-bat",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T12:19:41.543Z",
+      "repository": "dkhamsing/open-source-ios-apps",
+      "learningId": "learn-github-dkhamsing-open-source-ios-apps",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T12:19:45.738Z",
+      "repository": "rook/rook",
+      "learningId": "learn-github-rook-rook",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

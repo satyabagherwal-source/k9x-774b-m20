@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T11:55:40.557Z",
+  "last_updated": "2026-11-21T12:19:54.478Z",
   "total_verified_learnings": 9059,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23071,
+  "total_items": 23074,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -53280,13 +53280,13 @@
       "rule_number": 3068,
       "title": "[auto] [ci skip] Generate content",
       "source_url": "https://github.com/dkhamsing/open-source-ios-apps",
-      "source_version": "4ce2a715",
+      "source_version": "d7a14f21",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-31T00:05:34.778Z"
+      "verified_at": "2026-11-21T12:19:41.253Z"
     },
     "rule-3069": {
       "learning_id": "rule-3069",
@@ -114994,9 +114994,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dkhamsing-open-source-ios-apps-learnings",
       "repository": "dkhamsing-open-source-ios-apps-learnings",
       "source_version": "HEAD",
-      "content_hash": "695111ede01f91f6380a6378860a1b3b0fb18bcc0e391931aa3f1198ecbb9dcf",
+      "content_hash": "cda6d20e031d90ee680ef9c76b06e471866d56d542ffe5a3a9bc4f9469c2d70a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T10:55:22.277Z"
+      "persisted_at": "2026-11-21T12:19:54.478Z"
     },
     "candidate_directive-merge-pull-request-13862-from-weaviate-jose-fix-named-vector-index-type-change": {
       "item_id": "candidate_directive-merge-pull-request-13862-from-weaviate-jose-fix-named-vector-index-type-change",
@@ -213326,8 +213326,8 @@
       "slug": "rook-rook",
       "platform": "github",
       "source_url": "https://github.com/rook/rook",
-      "source_version": "e7bfa815",
-      "content_hash": "c36b19d8f89199a69dbc5c9ca931300d9faa6cc9cb830778432e517ff0e8c645",
+      "source_version": "cfe72976",
+      "content_hash": "a8632ff23350be1697adb352de3f4580909248a6ba3d8325f4b0e2b2bfdd0170",
       "dossier_path": "07_PROJECT_LEARNING/rook-rook-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rook-rook-learnings.md",
       "promoted_rules": [
@@ -213360,6 +213360,11 @@
           "number": 9538,
           "title": "Empirical Invariant Guard in activate-osd.sh",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9777,
+          "title": "build(deps): bump the github-dependencies group across 1 directory with 8 update",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -213367,7 +213372,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T07:14:54.223Z",
+      "verified_at": "2026-11-21T12:19:45.484Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -213409,10 +213414,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rook-rook-architecture-intelligence-rook-rook-core-invariants.md",
       "title": "Architecture Intelligence: rook/rook Core Invariants",
       "repository": "rook/rook",
-      "source_version": "e7bfa815",
-      "content_hash": "f4264e957ef1ab62591f8e7ee062d98d6ea9469778c3e6cf2f8c93f6a1cb0fdb",
+      "source_version": "cfe72976",
+      "content_hash": "e9d42d93a368fd75855d7c1ee64d30551ddac7668465405a4ec19cee511bca15",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T07:14:54.778Z"
+      "persisted_at": "2026-11-21T12:19:46.211Z"
     },
     "agent_contract-agent-contract-rook-rook-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-rook-rook-autonomous-specialist-persona",
@@ -213421,10 +213426,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/rook-rook-agent-contract-rook-rook-autonomous-specialist-persona.md",
       "title": "Agent Contract: rook/rook Autonomous Specialist Persona",
       "repository": "rook/rook",
-      "source_version": "e7bfa815",
-      "content_hash": "5bf7e062648a9a60c093fda37dffb37f2919d7099432ca67b051dc8bc0ec6bb1",
+      "source_version": "cfe72976",
+      "content_hash": "844e8064ad0463090562ad64f2ea708e42271178942a82d7bbc9c9c27b360770",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T07:14:54.930Z"
+      "persisted_at": "2026-11-21T12:19:46.427Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-rook-rook": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rook-rook",
@@ -213433,10 +213438,10 @@
       "relative_path": "08_VERIFICATION/rook-rook-verification-protocol-empirical-defect-shield-for-rook-rook.md",
       "title": "Verification Protocol: Empirical Defect Shield for rook/rook",
       "repository": "rook/rook",
-      "source_version": "e7bfa815",
-      "content_hash": "1d562ba68a465aa6d944cbe13270e058cac39db9bd1516a0061c897c7cc9f4b8",
+      "source_version": "cfe72976",
+      "content_hash": "590fa901214e0f17b4d4c4460f20b025fa4f2897c814b7924b6f1235ee164359",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T07:14:55.059Z"
+      "persisted_at": "2026-11-21T12:19:46.600Z"
     },
     "learn-github-zama-ai-tfhe-rs": {
       "learning_id": "learn-github-zama-ai-tfhe-rs",
@@ -220084,13 +220089,13 @@
       "item_id": "candidate_directive-empirical-invariant-guard-in-changelog-md",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-38EH-empirical-invariant-guard-in-changelog-md.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-L7EU-empirical-invariant-guard-in-changelog-md.md",
       "title": "Empirical Invariant Guard in CHANGELOG.md",
-      "repository": "openziti/zrok",
-      "source_version": "d8e5316d",
-      "content_hash": "be9d62bad3b21e7a4f373931651f4cddceceb9d5b38c17518a40208fe4460584",
+      "repository": "sharkdp-bat-learnings",
+      "source_version": "HEAD",
+      "content_hash": "39c50075e3c2374cba8e70bfebf4cec499955ed5f9832635cf549831d16ab58b",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T18:06:25.868Z"
+      "persisted_at": "2026-11-21T12:19:49.831Z"
     },
     "domain_intelligence-architecture-intelligence-yvgude-lean-ctx-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-yvgude-lean-ctx-core-invariants",
@@ -239086,14 +239091,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 8545,
       "title": "Empirical Invariant Guard in CHANGELOG.md",
-      "source_url": "https://github.com/xerj-org/xerj",
-      "source_version": "dc1a4622",
+      "source_url": "https://github.com/sharkdp/bat",
+      "source_version": "dbc11b69",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-18T15:35:16.155Z"
+      "verified_at": "2026-11-21T12:19:37.203Z"
     },
     "domain_intelligence-search-distribution-intelligence-sharkdp-fd-core-invariants": {
       "item_id": "domain_intelligence-search-distribution-intelligence-sharkdp-fd-core-invariants",
@@ -261259,11 +261264,16 @@
       "slug": "sharkdp-bat",
       "platform": "github",
       "source_url": "https://github.com/sharkdp/bat",
-      "source_version": "fbd9a416",
-      "content_hash": "43b45712cca4c9f198789a6477cd23e13371cf1c8c9455d10bd77039e0cbd895",
+      "source_version": "dbc11b69",
+      "content_hash": "923beee69297150abaef93279337b91390eb6fed14ead3941754d146701b0d0d",
       "dossier_path": "07_PROJECT_LEARNING/sharkdp-bat-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sharkdp-bat-learnings.md",
       "promoted_rules": [
+        {
+          "number": 8545,
+          "title": "Empirical Invariant Guard in CHANGELOG.md",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
         {
           "number": 8787,
           "title": "keep automatic cache build progress off stdout",
@@ -261275,7 +261285,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T20:20:57.327Z",
+      "verified_at": "2026-11-21T12:19:37.203Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -261317,10 +261327,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-sharkdp-bat-design-intelligence-sharkdp-bat-core-invariants.md",
       "title": "Design Intelligence: sharkdp/bat Core Invariants",
       "repository": "sharkdp/bat",
-      "source_version": "fbd9a416",
-      "content_hash": "6f8d15708c7cf98c702d5a89fa1888e5d69966200efbaa734a1e56dd715600a7",
+      "source_version": "dbc11b69",
+      "content_hash": "369b1a672bf581197095ae8bef2dab93d2c61208fa4482e800c8bdf0df5410af",
       "domain_letter": "F",
-      "persisted_at": "2026-11-16T20:20:57.819Z"
+      "persisted_at": "2026-11-21T12:19:37.918Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-sharkdp-bat": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-sharkdp-bat",
@@ -261329,10 +261339,10 @@
       "relative_path": "08_VERIFICATION/sharkdp-bat-verification-protocol-empirical-defect-shield-for-sharkdp-bat.md",
       "title": "Verification Protocol: Empirical Defect Shield for sharkdp/bat",
       "repository": "sharkdp/bat",
-      "source_version": "fbd9a416",
-      "content_hash": "7a75e0e0cd4a48bd799713f0eb3ea01ffa8e41a10fd83a05799ef5540f6c83f4",
+      "source_version": "dbc11b69",
+      "content_hash": "2c8106ecdbc6b54d4220d4c3f5d7db4591325311711ce343f2cbeaf42c6f6da3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T20:20:57.943Z"
+      "persisted_at": "2026-11-21T12:19:38.127Z"
     },
     "candidate_directive-release-0-17-0": {
       "item_id": "candidate_directive-release-0-17-0",
@@ -261447,9 +261457,9 @@
       "title": "Design Intelligence: sharkdp-bat-learnings Core Invariants",
       "repository": "sharkdp-bat-learnings",
       "source_version": "HEAD",
-      "content_hash": "a678d6e85a44cdfe450c578bed7cea17b2d918f00bf797be5991be4feb176b80",
+      "content_hash": "6aa2ada6395ff75b3822f4002f1bfedb01aa9749491a7697597ed34e16b74776",
       "domain_letter": "F",
-      "persisted_at": "2026-11-16T20:21:11.348Z"
+      "persisted_at": "2026-11-21T12:19:50.038Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-sharkdp-bat-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-sharkdp-bat-learnings",
@@ -261459,9 +261469,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for sharkdp-bat-learnings",
       "repository": "sharkdp-bat-learnings",
       "source_version": "HEAD",
-      "content_hash": "fb69554b91fc8378ae488105753af5c0023223a9097525a982d493e739214897",
+      "content_hash": "efdbbe69d711912406cd83b2a812dd3e32692e6a205532270c6e44db05462deb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T20:21:11.471Z"
+      "persisted_at": "2026-11-21T12:19:50.244Z"
     },
     "domain_intelligence-human-need-intelligence-defguard-defguard-learnings-core-invariants": {
       "item_id": "domain_intelligence-human-need-intelligence-defguard-defguard-learnings-core-invariants",
@@ -271081,11 +271091,16 @@
       "slug": "dkhamsing-open-source-ios-apps",
       "platform": "github",
       "source_url": "https://github.com/dkhamsing/open-source-ios-apps",
-      "source_version": "bba77685",
-      "content_hash": "daa288c651d549c01207fd824b3334fdd2046fd8a9917334b237273ca7f27d54",
+      "source_version": "d7a14f21",
+      "content_hash": "62e99f7c7e9f06bccaaa327ba31ee4906a0eb93eafb519140f3d31f7eb4b6c33",
       "dossier_path": "07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
       "promoted_rules": [
+        {
+          "number": 3068,
+          "title": "[auto] [ci skip] Generate content",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
         {
           "number": 8922,
           "title": "Tail-Append Single-File Serialization Invariant",
@@ -271102,7 +271117,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T10:55:16.110Z",
+      "verified_at": "2026-11-21T12:19:41.253Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -271156,10 +271171,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-dkhamsing-open-source-ios-apps-content-information-intelligence-dkhamsing-open-s.md",
       "title": "Content & Information Intelligence: dkhamsing/open-source-ios-apps Core Invariants",
       "repository": "dkhamsing/open-source-ios-apps",
-      "source_version": "f50676d2",
-      "content_hash": "add23271c6b401ce0e6496c2fe2f16c3307fd96d0c0e343dd1c734133aa941b4",
+      "source_version": "d7a14f21",
+      "content_hash": "6519a7b69d863bf946e29648cd716d42ab91ca34125d022d290adac6c3929a78",
       "domain_letter": "I",
-      "persisted_at": "2026-11-17T08:19:31.018Z"
+      "persisted_at": "2026-11-21T12:19:42.026Z"
     },
     "domain_intelligence-architecture-intelligence-avajs-ava-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-avajs-ava-learnings-core-invariants",
@@ -271205,9 +271220,9 @@
       "title": "Content & Information Intelligence: dkhamsing-open-source-ios-apps-learnings Core Invariants",
       "repository": "dkhamsing-open-source-ios-apps-learnings",
       "source_version": "HEAD",
-      "content_hash": "f3277f18b05125b60507ff892e4bf332a7e0f233f7e3b7d16cf6ddc9898e62b9",
+      "content_hash": "9e4c965b84181ffe6344c1ba8b45ccf1d43e39071dff34b2b4e699fda3803133",
       "domain_letter": "I",
-      "persisted_at": "2026-11-17T08:20:27.352Z"
+      "persisted_at": "2026-11-21T12:19:54.272Z"
     },
     "agent_contract-agent-contract-hashicorp-terraform-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-hashicorp-terraform-learnings-autonomous-specialist-persona",
@@ -275830,7 +275845,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/lodestones/Kromoss",
       "source_version": "hf-lodestones-kromoss",
-      "content_hash": "b39c6d3474614cffb75b6596c8f49e38f4a8cc7806001f0e21f44b5b909756cb",
+      "content_hash": "ee28843308c57b40cb587491c5db6e3d83c8eee0ced52b194aab35fdf238d728",
       "dossier_path": "07_PROJECT_LEARNING/hf-lodestones-kromoss-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-lodestones-kromoss-learnings.md",
       "promoted_rules": [],
@@ -275839,7 +275854,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T16:05:33.322Z",
+      "verified_at": "2026-11-21T12:19:35.154Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -275856,9 +275871,9 @@
       "title": "Research & Knowledge Intelligence: lodestones/Kromoss Core Invariants",
       "repository": "lodestones/Kromoss",
       "source_version": "hf-lodestones-kromoss",
-      "content_hash": "0912c9583420e36d457144aef25bf2fa3868ac3fb85c2b108000964911068cf3",
+      "content_hash": "69fb60c049f2b02137c6d148c600c2a79e7726951dadcf1fef0784565af34278",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T16:05:33.685Z"
+      "persisted_at": "2026-11-21T12:19:35.693Z"
     },
     "rule-8995": {
       "learning_id": "rule-8995",
@@ -275894,9 +275909,9 @@
       "title": "Research & Knowledge Intelligence: hf-lodestones-kromoss-learnings Core Invariants",
       "repository": "hf-lodestones-kromoss-learnings",
       "source_version": "HEAD",
-      "content_hash": "2d98e08b8739cc71a1cdf8de51d8b2bcbf3b48ea603e48b341077efa08d986d3",
+      "content_hash": "d03651e9064d974b526b197c8014c33255ec3e98f149e70cdb8e92d6bcd4b99a",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T16:05:53.102Z"
+      "persisted_at": "2026-11-21T12:19:50.721Z"
     },
     "domain_intelligence-architecture-intelligence-opentofu-opentofu-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-opentofu-opentofu-learnings-core-invariants",
@@ -313413,6 +313428,44 @@
       "content_hash": "79b7a92d1bae07e26ba136cb7a117d051cc252db613981eb621e90a64ac546eb",
       "domain_letter": "G",
       "persisted_at": "2026-11-21T11:55:38.766Z"
+    },
+    "candidate_directive-auto-ci-skip-generate-content": {
+      "item_id": "candidate_directive-auto-ci-skip-generate-content",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-LAOF-auto-ci-skip-generate-content.md",
+      "title": "[auto] [ci skip] Generate content",
+      "repository": "dkhamsing-open-source-ios-apps-learnings",
+      "source_version": "HEAD",
+      "content_hash": "05a23686e8d9d93e361d9d097a6725e2c77938cd9038303a1de5fd840e1042f9",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-21T12:19:54.063Z"
+    },
+    "rule-9777": {
+      "learning_id": "rule-9777",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9777,
+      "title": "build(deps): bump the github-dependencies group across 1 directory with 8 update",
+      "source_url": "https://github.com/rook/rook",
+      "source_version": "cfe72976",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T12:19:45.484Z"
+    },
+    "candidate_directive-build-deps-bump-the-github-dependencies-group-across-1-directory-with-8-update": {
+      "item_id": "candidate_directive-build-deps-bump-the-github-dependencies-group-across-1-directory-with-8-update",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-L4GJ-build-deps-bump-the-github-dependencies-group-across-1-directory-with-8-update.md",
+      "title": "build(deps): bump the github-dependencies group across 1 directory with 8 update",
+      "repository": "rook/rook",
+      "source_version": "cfe72976",
+      "content_hash": "5d2661158b798bd6049b6ed1582e49bf7dc49707759a5c49cc46d853d736a0aa",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T12:19:46.010Z"
     }
   },
   "ai-builder-brain": {
