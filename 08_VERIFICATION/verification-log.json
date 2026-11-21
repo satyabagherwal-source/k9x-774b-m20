@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261119-5GHC",
-    "timestamp": "2026-11-19T04:36:20.784Z",
-    "repository": "graphprotocol/graph-node",
-    "learningId": "learn-github-graphprotocol-graph-node",
-    "contentHash": "5c9434c8db3992aa2b42d45612e339432e33514d64147956290abfc108c8c95a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-5REC",
-    "timestamp": "2026-11-19T04:36:34.932Z",
-    "repository": "vespa-engine/vespa",
-    "learningId": "learn-github-vespa-engine-vespa",
-    "contentHash": "f53450633a13f1a1a3caf80ce5267e96e4bd6ca4518e9c5df90e25660c29a98b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-FDND",
-    "timestamp": "2026-11-19T04:44:03.673Z",
-    "repository": "lilylilith/QI_2.1_AnyAngle",
-    "learningId": "learn-huggingface-lilylilith-qi_2-1_anyangle",
-    "contentHash": "3136ce7bed5dd2532f161abdeed5ac917db753909354aa4e2dc1d65c3baf3575",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-FN1H",
-    "timestamp": "2026-11-19T04:44:15.845Z",
-    "repository": "linkerd/linkerd2",
-    "learningId": "learn-github-linkerd-linkerd2",
-    "contentHash": "b802fcc3386c4f8956952ad81b7e049bd05ce7df01595cfe7066376fc02953f4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261119-7OY9",
     "timestamp": "2026-11-19T05:06:04.689Z",
     "repository": "BAAI/bge-large-en-v1.5",
@@ -7490,6 +7430,66 @@
     "repository": "nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
     "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4",
     "contentHash": "d9da591b9401b251de58827312c6aafac32c88ee205dc8b94ee63175bda469b4",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-5A9X",
+    "timestamp": "2026-11-21T09:47:28.965Z",
+    "repository": "apache/shardingsphere",
+    "learningId": "learn-github-apache-shardingsphere",
+    "contentHash": "bb2c133901ee77e8fa3c70655029ce73cc163aa3c0ecd5ad5c0b9f52258ffe03",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-5BL8",
+    "timestamp": "2026-11-21T09:47:30.668Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "3c190e213a34da31c6225a0f6ceb8917e3d51f2ca31c55e1a1e5feb35609bdd0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-BKKE",
+    "timestamp": "2026-11-21T09:52:22.238Z",
+    "repository": "storybookjs/storybook",
+    "learningId": "learn-github-storybookjs-storybook",
+    "contentHash": "4fd31e215d34575cb1740f0e822c48cd1ef6d177a00718b28dc7c19bdc345312",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-C2LJ",
+    "timestamp": "2026-11-21T09:52:45.607Z",
+    "repository": "mistralai/Timestral-209M",
+    "learningId": "learn-huggingface-mistralai-timestral-209m",
+    "contentHash": "215ab52ac3bd1c62b89de0e81eb9882b0a8e385ea76f1ce65c7d70ef634cb08c",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

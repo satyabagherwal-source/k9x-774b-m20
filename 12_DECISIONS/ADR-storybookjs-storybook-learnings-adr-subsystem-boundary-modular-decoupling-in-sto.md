@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T09:57:33.369Z",
+  "timestamp": "2026-11-21T09:52:49.119Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-storybookjs-storybook-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [storybookjs-storybook-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T09:57:33.369Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T09:52:49.119Z`  
 > **Learning ID**: `LEARN-EVO-storybookjs-storybook-learnings`
 
 
@@ -27,10 +27,10 @@ During deep inspection of storybookjs-storybook-learnings, modular boundaries, p
 ## Decision
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/storybookjs-storybook-learnings.md`  
 > **Source**: github ([https://github.com/storybookjs/storybook](https://github.com/storybookjs/storybook))  
-> **Source Version**: `1227202d`  
+> **Source Version**: `20075e60`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T09:57:18.130Z  
+> **Timestamp**: 2026-11-21T09:52:21.266Z  
 > **Learning ID**: `learn-github-storybookjs-storybook`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -44,7 +44,7 @@ During deep inspection of storybookjs-storybook-learnings, modular boundaries, p
 > **Canonical Artifact**: `07_PROJECT_LEARNING/storybookjs-storybook-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/storybookjs/storybook](https://github.com/storybookjs/storybook))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T09:57:18.121Z  
+> **Harvest Timestamp**: 2026-11-21T09:47:20.398Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -54,7 +54,7 @@ During deep inspection of storybookjs-storybook-learnings, modular boundaries, p
 - **Description**: Storybook is the industry standard workshop for building, documenting, and testing UI components in isolation
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 91621 stars
+- **Stars / Engagement**: 91672 stars
 
 ---
 
@@ -582,11 +582,11 @@ export function isRecord(value: unknown): value is Record<string, unknown> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #37514** (2026-11-17): **CLI: Delete stale Storybook cache directory on upgrade**
-  *Symptoms*: Closes # <!-- If your PR is related to an issue, provide the number(s) above; if it resolves multiple issues, be sure to break them up (e.g. "closes #1000, closes #1001"). -->  <!--  Thank you for contributing to Storybook! Please submit all PRs to the `next` branch unless they are specific to the current release. Storybook maintainers cherry-pick bug and documentation fixes into the `main` branch as part of the release process, so you shouldn't need to worry about this. For additional guidance: https://storybook.js.org/docs/contribute  -->  ## What I did  After upgrading to Storybook 11.0.0-beta.3, some users hit errors on Storybook restart that went away after restarting Storybook again. Stale state in `node_modules/.cache/storybook` is the suspected cause, and the team confirmed the directory holds nothing that cannot be safely deleted.  This PR makes `storybook upgrade` delete the whole `node_modules/.cache/storybook` directory on every upgrade, regardless of the version transition:  - The deletion is best-effort: it is wrapped in a try/catch, failures are logged via `logger.debug`, and a failed deletion never fails the upgrade. - Dry runs (`--dry-run`) do not touch the filesystem, so the deletion is skipped there. - The path matches the fallback in `resolve-path-in-sb-cache.ts` (`join(process.cwd(), 'node_modules', '.cache', 'storybook')`).  **How it was tested:** new unit tests in `upgrade.skills.test.ts` cover that (1) the cache directory is removed on upgrade, (2) a d
+- **Issue #37624** (2026-11-20): **React: Read referenced project sources in component docgen**
+  *Symptoms*: Closes #37598  ## What I did  React docgen returned no props for a component when its story and the component sit in two TypeScript projects linked by a project reference. The components manifest and the MCP `docs-show` tool then had nothing to show for that component. This PR makes docgen read the referenced project's sources, the same way the TypeScript language server does in an editor.  The layout that broke is common: the root `tsconfig.json` owns the stories and references a `tsconfig.src.json` that owns the components and excludes `*.stories.tsx`.  ``` Button.stories.tsx ──(tsconfig.json program)──► import './Button'                                                      │           projectReferences: [tsconfig.src.json]     │  before: redirected to dist-types/Button.d.ts                                                      │          → getSourceFile(Button.tsx) === undefined → skipped                                                      │  after:  Button.tsx stays in the program → props extracted ```  The fix is one host flag, set like tsserver sets it. `useSourceOfProjectReferenceRedirect` is public on `WatchCompilerHost` but internal on `LanguageServiceHost` typings, so it goes through `Object.assign` rather than a cast:  ```diff -    this.service = typescript.createLanguageService(languageServiceHost, this.documentRegistry); +    this.service = typescript.createLanguageService( +      Object.assign(languageServiceHost, { useSourceOfProjectReferenceRedirect: () => tru
 
-- **Issue #37511** (2026-11-17): **CLI: Update compatibility guidance URL in summary message**
-  *Symptoms*: Closes #  <!-- If your PR is related to an issue, provide the number(s) above; if it resolves multiple issues, be sure to break them up (e.g. "closes #1000, closes #1001"). -->  <!--  Thank you for contributing to Storybook! Please submit all PRs to the `next` branch unless they are specific to the current release. Storybook maintainers cherry-pick bug and documentation fixes into the `main` branch as part of the release process, so you shouldn't need to worry about this. For additional guidance: https://storybook.js.org/docs/contribute  -->  ## What I did  The Storybook doctor compatibility guidance link was incorrect, pointing to the issue about [Storybook 10 compatibility](https://github.com/storybookjs/storybook/issues/32836) and not [Storybook 11 compatibility](https://github.com/storybookjs/storybook/issues/36283). This PR fixes that!  ## Checklist for Contributors  ### Testing  <!-- Please check (put an "x" inside the "[ ]") the applicable items below to communicate how to test your changes -->  #### The changes in this PR are covered in the following automated tests:  - [ ] stories - [ ] unit tests - [ ] integration tests - [ ] end-to-end tests  #### Manual testing  It's such a minor change the only manual test you could do is check whether the link is correct  ### Documentation  <!-- Please check (put an "x" inside the "[ ]") the applicable items below to indicate which documentation has been updated. -->  - [ ] Add or update docume
+- **Issue #37619** (2026-11-20): **Manager: Fix crash from stale toolbar landmark on first load**
+  *Symptoms*: Closes #  ## What I did  The manager sometimes crashed on first load with `Failed to execute 'compareDocumentPosition' on 'Node': parameter 1 is not of type 'Node'`. It happened most often on docs URLs with `@storybook/addon-vitest` installed, when the dev server was slow.  ### Cause  Found in npmx when testing nuxt-storybook 11  react-aria's `useLandmark` registers a landmark when the component mounts and removes it only when the component unmounts. `ToolbarComp` called `useLandmark` and then rendered `null` when it had no tools to show. Its landmark stayed registered with `ref.current === null`. When `TestingWidget` mounted later, react-aria compared the new landmark against the null ref and threw.  ### Fix  The landmark now lives in a child component that mounts and unmounts with its DOM element:  - `ToolbarComp` renders `ToolbarSection` only while the toolbar is shown. - `TestingWidget` and `ReviewWidget` had the same early `return null`; they now render `LandmarkCard` and `LandmarkRegion`.  The markup and the memoization are unchanged.  The other `useLandmark` call sites always render their element, so they are safe.  Side effect: `TestingWidget` used to skip its landmark when its first render was `null`, so F6 never reached it. It now registers when it appears.  ## Checklist for Contributors  ### Testing  #### The changes in this PR are covered in the following automated tests:  - [x] stories - [ ] unit tests - [ ] integration tests - [ ] end-to-end tests  `Toolbar.stor
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -603,140 +603,244 @@ export function isRecord(value: unknown): value is Record<string, unknown> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fbb34286` (2026-11-17)
-**Commit Message**: fix(cli): check addon ranges that start with a 0.x canary part
+### Incident Patch 1: `2156707f` (2026-11-20)
+**Commit Message**: Apply contribution-review fixes: derive Yarn gate from npm day count
 
-`checkPackageCompatibility` skipped any range matching `/^[~^]?0\./`, to
-ignore 0.x ranges it cannot compare. The regex tested the start of the whole
-range, so `^0.0.0-0 || ^10.0.0`, a common way for addons to accept canaries,
-was skipped as a whole. `storybook-addon-test-codegen@3.0.4` declares such a
-range, so doctor reported nothing on 11.0.0-beta.3 while the addon's preset
-failed to load (#37285).
+- BEFORE_SANDBOX_MIN_AGE_GATE now derives from BEFORE_SANDBOX_NPM_MIN_RELEASE_AGE_DAYS
+  so the Yarn and npm gates cannot drift apart.
+- Comments reference the constants instead of repeating the day count.
+- Test expectations hard-code '3d' / '3' so an accidental gate change fails the tests.
 
-Skip a range only when every `||` part is 0.x. Canaries still satisfy the
-`^0.0.0-0` part when the whole range is compared.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `code/lib/cli-storybook/src/doctor/getIncompatibleStorybookPackages.test.ts` (modified, +28/-0)
+**File**: `scripts/sandbox/generate.ts` (modified, +4/-2)
 ```diff
-@@ -78,6 +78,34 @@ describe('checkPackageCompatibility', () => {
+@@ -134,7 +134,8 @@ const addStorybook = async ({
+     }
+ 
+     // This install is the only step that runs package code, so it keeps the
+-    // 3-day gate inherited from before-storybook. The locally published
++    // age gate inherited from before-storybook (`BEFORE_SANDBOX_MIN_AGE_GATE`).
++    // The locally published
+     // Storybook packages are seconds old and can never satisfy it, so they are
+     // allowlisted by name rather than the gate being switched off.
+     await preapproveLocallyPublishedPackages(tmpDir);
+@@ -341,7 +342,8 @@ const runGenerators = async (
+ 
+           await localizeYarnConfigFiles(createBaseDir, createBeforeDir);
+ 
+-          // Refresh the lockfile to a Yarn 4 one with a 3-day npmMinimalAgeGate
++          // Refresh the lockfile to a Yarn 4 one with the
++          // `BEFORE_SANDBOX_MIN_AGE_GATE` npmMinimalAgeGate
+           // so consumers who clone the published sandbox install a reproducible,
+           // non-freshly-quarantined dependency tree.
+           //
+```
+
+**File**: `scripts/sandbox/utils/yarn.test.ts` (modified, +2/-4)
+```diff
+@@ -9,8 +9,6 @@ import yml from 'yaml';
+ import { ROOT_DIRECTORY } from '../../utils/constants.ts';
+ import { runCommand } from '../generate.ts';
+ import {
+-  BEFORE_SANDBOX_MIN_AGE_GATE,
+-  BEFORE_SANDBOX_NPM_MIN_RELEASE_AGE_DAYS,
+   BEFORE_SANDBOX_NPM_MIN_VERSION,
+   LOCALLY_PUBLISHED_PACKAGE_PATTERNS,
+   ensureNpmSupportsMinReleaseAge,
+@@ -150,7 +148,7 @@ describe('refreshBeforeStorybookLockfile', () => {
+     await refreshBeforeStorybookLockfile({ cwd: SANDBOX });
+ 
+     const scripts = vi.mocked(runCommand).mock.calls.map(([script]) => script);
+-    expect(scripts).toContain(`yarn config set npmMinimalAgeGate ${BEFORE_SANDBOX_MIN_AGE_GATE}`);
++    expect(scripts).toContain('yarn config set npmMinimalAgeGate 3d');
+   });
+ 
+   it('upgrades only the quarantined package, leaving every other range alone', async () => {
+@@ -297,7 +295,7 @@ describe('writeScaffoldNpmrc', () => {
+     await writeScaffoldNpmrc(SANDBOX, ['@react-native-community/*', 'multitars']);
+ 
+     expect(vol.readFileSync(`${SANDBOX}/.npmrc`, 'utf-8')).toBe(
+-      `min-release-age=${BEFORE_SANDBOX_NPM_MIN_RELEASE_AGE_DAYS}\nmin-release-age-exclude[]=@react-native-community/*\nmin-release-age-exclude[]=multitars\n`
++      'min-release-age=3\nmin-release-age-exclude[]=@react-native-community/*\nmin-release-age-exclude[]=multitars\n'
      );
    });
  
-+  it.each([
-+    ['ignores a 0.x range', '^0.4.0', '11.0.0', false],
-+    [
-+      'flags a range whose canary part comes first',
-+      '^0.0.0-0 || ^10.0.0 || ^10.3.0-0',
-+      '11.0.0-beta.3',
-+      true,
-+    ],
-+    ['accepts a range with a canary part', '^0.0.0-0 || ^10.6.0-0 || ^11.0.0-0', '11.0.0', false],
-+    [
-+      'accepts a canary through the canary part',
-+      '^0.0.0-0 || ^10.0.0',
-+      '0.0.0-pr-1-sha-abc',
-+      false,
-+    ],
-+  ])('%s', async (_, range, currentStorybookVersion, hasIncompatibleDependencies) => {
-+    vi.mocked(packageManagerMock.getModulePackageJSON).mockResolvedValueOnce({
-+      name: 'my-storybook-package',
-+      version: '1.0.0',
-+      peerDependencies: { storybook: range },
-+    });
-+    const result = await checkPackageCompatibility('my-storybook-package', {
-+      currentStorybookVersion,
-+      packageManager: packageManagerMock as JsPackageManager,
-+    });
-+    expect(result.hasIncompatibleDependencies).toBe(hasIncompatibleDependencies);
+```
+
+**File**: `scripts/sandbox/utils/yarn.ts` (modified, +6/-3)
+```diff
+@@ -56,14 +56,16 @@ export async function localizeYarnConfigFiles(baseDir: string, beforeDir: string
+ }
+ 
+ /**
+- * 3-day age gate for generated sandboxes.
++ * Age gate for generated sandboxes.
+  *
+  * - Yarn: `BEFORE_SANDBOX_MIN_AGE_GATE`
+  * - npm scaffold: `BEFORE_SANDBOX_NPM_MIN_RELEASE_AGE_DAYS` → `NPM_CONFIG_MIN_RELEASE_AGE`
++ *
++ * The Yarn gate is derived from the npm day count so the two cannot drift.
+  */
+-export const BEFORE_SANDBOX_MIN_AGE_GATE = '3d';
+ /** npm `min-release-age` is in days (npm 11.10+). */
+ export const BEFORE_SANDBOX_NPM_MIN_RELEASE_AGE_DAYS = 3;
++export const BEFORE_SANDBOX_MIN_AGE_GATE = `${BEFORE_SANDBOX_NPM_MIN_RELEASE_AGE_DAYS}d`;
+ export async function ensureNpmSupportsMinReleaseAge() {
+   const { stdout } = await runCommand('npm --version', { cwd: process.cwd() });
+   const version = String(stdout).trim();
+@@ -115,7 +117,8 @@ interface RefreshLockfileOptions {
+  *    legacy `yarn.lock`, `pnpm-lock.yaml`).
+  * 2. Pin Yarn 4 via the `package.json` `packageManager` field so corepack
+  *    resolves it deterministically (no network `yarn set version`).
+- * 3. Set `npmMinimalAgeGate` to 3 days so resolution skips quarantined versions,
++ * 3. Set `npmMinimalAgeGate` to the `BEFORE_SANDBOX_MIN_AGE_GATE` duration so
++ *    resolution skips quarantined versions,
+  *    plus any per-template `npmPreapprovedPackages` allowlist.
+  * 4. Run `yarn install --mode=update-lockfile`, narrowing only the ranges that
+  *    the gate leaves with no installable version (see `narrowQuarantinedRanges`).
+```
+
+---
+
+### Incident Patch 2: `1f82922d` (2026-11-20)
+**Commit Message**: fix(csf-tools): skip types when remove searches code for a key
+
+The search for a key walked type annotations too, so a reference in a
+type such as `typeof defaults` in a generic led it to an unrelated
+`defaultValue` and refused a harmless arg. It now reads code only, as
+types do not change what code returns.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `code/core/src/csf-tools/CsfObjectPath.ts` (modified, +24/-24)
+```diff
+@@ -19,7 +19,7 @@ import {
+   type E,
+   type Node,
+   type Property,
+-  walk,
++  children,
+   isNumericLiteral,
+   isStringLiteral,
+   staticKey,
+@@ -328,29 +328,29 @@ const showsConstant = (editor: SourceEditor, init: Node, path: CsfPattern, seen:
+ const mentions = (editor: SourceEditor, code: Node, keys: ReadonlySet<string>): boolean => {
+   const missing = new Set(keys);
+   const searched = new Set<Node>();
+-  const search = (node: Node) =>
+-    walk(node, (child) => {
+-      if (missing.size === 0) {
+-        return false;
+-      }
+-      const named = namedKey(child);
+-      if (isAnyKey(named)) {
+-        missing.clear();
+-      } else if (named !== undefined) {
+-        missing.delete(named);
+-      }
+-      const binding = child.type === 'Identifier' ? editor.scopes.bindingOf(child) : undefined;
+-      if (
+-        binding &&
+-        binding.kind !== 'import' &&
+-        binding.kind !== 'param' &&
+-        !searched.has(binding.node)
+-      ) {
+-        searched.add(binding.node);
+-        searchBinding(binding);
+-      }
+-      return missing.size > 0;
+-    });
++  // Types do not change what code returns, so they are not read.
++  const search = (child: Node): void => {
++    if (missing.size === 0) {
++      return;
++    }
++    const named = namedKey(child);
++    if (isAnyKey(named)) {
++      missing.clear();
++    } else if (named !== undefined) {
++      missing.delete(named);
++    }
++    const binding = child.type === 'Identifier' ? editor.scopes.bindingOf(child) : undefined;
++    if (
++      binding &&
++      binding.kind !== 'import' &&
++      binding.kind !== 'param' &&
++      !searched.has(binding.node)
++    ) {
++      searched.add(binding.node);
++      searchBinding(binding);
++    }
++    children(child, { skipTypes: true }).forEach(search);
++  };
+   const searchBinding = (binding: Binding) => {
+     if (writtenThrough(editor, binding)) {
+       missing.clear();
+```
+
+**File**: `code/lib/cli-storybook/src/automigrate/fixes/argtypes-default-value.test.ts` (modified, +13/-0)
+```diff
+@@ -515,6 +515,19 @@ describe('argtypes-default-value', () => {
+     expect(result.story).not.toContain("defaultValue: 'M'");
+   });
+ 
++  it('skips an arg whose helper refers to a defaultValue only in a type', async () => {
++    const story = [
++      "const defaults = { defaultValue: 'unused' };",
++      "function arg<T = typeof defaults>() { return { control: 'text' }; }",
++      "export default { argTypes: { label: arg(), size: { defaultValue: 'M' } } };",
++    ].join('\n');
++    const result = await migrate({ story });
++
++    expect(result.failures).toEqual([]);
++    expect(result.story).toContain('label: arg()');
++    expect(result.story).not.toContain("defaultValue: 'M'");
 +  });
 +
-   it('returns that a package is incompatible and because it is core, can be upgraded', async () => {
-     const packageName = '@storybook/addon-docs';
- 
-```
-
-**File**: `code/lib/cli-storybook/src/doctor/getIncompatibleStorybookPackages.ts` (modified, +2/-2)
-```diff
-@@ -58,8 +58,8 @@ export const checkPackageCompatibility = async (
-         // prevent issues with "tag" based versions e.g. "latest" or "next" instead of actual numbers
-         return (
-           versionRange &&
--          // We can't check compatibility for 0.x packages, so we skip them
--          !/^[~^]?0\./.test(versionRange) &&
-+          // We can't check compatibility for 0.x packages, so we skip ranges that only allow 0.x
-+          versionRange.split('||').some((part) => !/^[~^]?0\./.test(part.trim())) &&
-           semver.validRange(versionRange) &&
-           !semver.satisfies(currentStorybookVersion, versionRange)
-         );
+   it('deletes the defaultValue of an arg named table', async () => {
+     const result = await migrate({
+       story: "export default { argTypes: { table: { defaultValue: 'x', control: 'text' } } };",
 ```
 
 ---
 
-### Incident Patch 2: `b637a776` (2026-11-17)
-**Commit Message**: Merge pull request #37506 from storybookjs/steve/addon-panel-code-tab-any-renderer
+### Incident Patch 3: `890b1d61` (2026-11-20)
+**Commit Message**: Sandboxes: Pin source-map-js and csstype in vue3-vite/prerelease-ts
 
-E2E: Check the Code tab snippet by the story's label
+The template exempts vue and @vue/* from the npm age gate. Vue 3.5.46 and
+3.6.0-rc.16 (both published 2026-11-20) need source-map-js ^1.2.3 and
+csstype ^3.2.4, which are still inside the published scaffold's 7-day gate,
+so init fails. Pin both to the previous release until they clear the gate.
 
-**File**: `code/e2e-sandbox/addon-panel.spec.ts` (modified, +4/-1)
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `scripts/utils/yarn.ts` (modified, +10/-0)
 ```diff
-@@ -151,11 +151,14 @@ test.describe('addon panel', () => {
-     await sbPage.deepLinkToStory(storybookUrl, 'addons/docs/codePanel', 'default');
-     await expect(codeTab).toBeVisible();
-     await sbPage.viewAddonPanel('Code');
--    await expect(sbPage.panelContent()).toContainText('Button');
-+    // Each renderer prints the snippet its own way, and some fall back to the story as written, so
-+    // the story's label is what every snippet shares; the component name is not.
-+    await expect(sbPage.panelContent()).toContainText('e2eStoryDocsBefore');
-     await expect(sbPage.panelContent()).not.toContainText('Custom code');
+@@ -122,6 +122,16 @@ export const addWorkaroundResolutions = async ({
+     };
+   }
  
-     await sbPage.navigateToStory('addons/docs/codePanel', 'custom-code');
-     await expect(sbPage.panelContent()).toContainText('Custom code');
-+    await expect(sbPage.panelContent()).not.toContainText('e2eStoryDocsBefore');
- 
-     await sbPage.navigateToStory('addons/docs/codePanel', 'without-panel');
-     await expect(codeTab).toBeHidden();
-```
-
----
-
-### Incident Patch 3: `6d069198` (2026-11-17)
-**Commit Message**: Merge pull request #37492 from storybookjs/fix/resolver-destructured-shadow-test
-
-Core: Update the stale expectation for a destructured export shadowing an `export *`
-
-**File**: `code/core/src/common/utils/resolve-meta-component.test.ts` (modified, +8/-2)
-```diff
-@@ -165,11 +165,17 @@ describe('createMetaComponentResolver', () => {
-       ).toMatchObject({ component: { path: join(FIXTURES, 'button.component.ts') } });
-     });
- 
--    it('does not follow an `export *` that a destructured export of the same name shadows', () => {
-+    it('follows a destructured export that shadows an `export *` to the file that declares the member', () => {
-       expect(
-         resolveInFixtures(`import { UI } from './barrel/destructured';
-                            export default { component: UI.Button };`)
--      ).toEqual({ reason: 'unreadable-component-expression', expression: 'UI.Button' });
-+      ).toMatchObject({
-+        component: {
-+          importId: '../button.component',
-+          importer: join(FIXTURES, 'barrel', 'destructured.ts'),
-+          path: join(FIXTURES, 'button.component.ts'),
-+        },
-+      });
-     });
- 
-     it('reports a named import that is not a namespace as unreadable', () => {
++  // Vue 3.5.46 and 3.6.0-rc.16 need these at versions still inside the age gate.
++  // Remove once source-map-js 1.2.3 (2026-11-18) is older than the gate.
++  if (key === 'vue3-vite/prerelease-ts') {
++    additionalResolutions = {
++      ...additionalResolutions,
++      'source-map-js': '1.2.2',
++      csstype: '3.2.3',
++    };
++  }
++
+   packageJson.resolutions = {
+     ...packageJson.resolutions,
+     '@testing-library/dom': '^9.3.4',
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #37514** (closed): CLI: Delete stale Storybook cache directory on upgrade (@obvious-autobuild[bot])
-- **PR #37513** (2026-11-17): CI: Show cancelled CircleCI jobs as pending instead of failed (@ndelangen)
-- **PR #37512** (2026-11-17): CLI: the skills-removal hint is optional and quotes the command (@obvious-autobuild[bot])
-- **PR #37511** (2026-11-17): CLI: Update compatibility guidance URL in summary message (@yannbf)
-- **PR #37506** (2026-11-17): E2E: Check the Code tab snippet by the story's label (@Sidnioulz)
-- **PR #37505** (closed): MCP: Stop announcing list-changed notifications, which made Claude Code wait 25 seconds (@kasperpeulen)
+- **PR #37630** (2026-11-20): Sandboxes: Pin source-map-js and csstype in the Vue 3 prerelease sandbox (@ndelangen)
+- **PR #37624** (2026-11-20): React: Read referenced project sources in component docgen (@valentinpalkovic)
+- **PR #37623** (2026-11-20): Build: Reduce sandbox npm age gate from 7 days to 3 days (@obvious-autobuild[bot])
+- **PR #37622** (2026-11-20): Renderers: Stop deciding args from argTypes at render time (@valentinpalkovic)
+- **PR #37619** (2026-11-20): Manager: Fix crash from stale toolbar landmark on first load (@huang-julien)
+- **PR #37617** (2026-11-20): README: Fix logo color in GitHub (@Sidnioulz)
 
 ---
 
@@ -756,58 +860,35 @@ Core: Update the stale expectation for a destructured export shadowing an `expor
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cli): check addon ranges that start with a 0.x canary part
+## X. Apply contribution-review fixes: derive Yarn gate from npm day count
 
 **RULE**:
-When implementing operations in `code/lib/cli-storybook/src/doctor/getIncompatibleStorybookPackages.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in storybookjs/storybook. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `scripts/sandbox/generate.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in storybookjs/storybook. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fbb34286`: cli): check addon ranges that start with a 0.x canary part. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2156707f`: Apply contribution-review fixes: derive Yarn gate from npm day count. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `code/lib/cli-storybook/src/doctor/getIncompatibleStorybookPackages.test.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/sandbox/generate.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  it.each([
-    ['ignores a 0.x range', '^0.4.0', '11.0.0', false],
-    [
-      'flags a range whose canary part comes first',
-      '^0.0.0-0 || ^10.0.0 || ^10.3.0-0',
-      '11.0.0-beta.3',
-      true,
-    ],
-    ['accepts a range with a canary part', '^0.0.0-0 || ^10.6.0-0 || ^11.0.0-0', '11.0.0', false],
-    [
-      'accepts a canary through the canary part',
-      '^0.0.0-0 || ^10.0.0',
-      '0.0.0-pr-1-sha-abc',
-      false,
-    ],
-  ])('%s', async (_, range, currentStorybookVersion, hasIncompatibleDependencies) => {
-    vi.mocked(packageManagerMock.getModulePackageJSON).mockResolvedValueOnce({
-      name: 'my-storybook-package',
-      version: '1.0.0',
-      peerDependencies: { storybook: range },
-    });
-    const result = await checkPackageCompatibility('my-storybook-package', {
-      currentStorybookVersion,
-      packageManager: packageManagerMock as JsPackageManager,
-    });
-    expect(result.hasIncompatibleDependencies).toBe(hasIncompatibleDependencies);
-  });
-
+    // age gate inherited from before-storybook (`BEFORE_SANDBOX_MIN_AGE_GATE`).
+    // The locally published
+          // Refresh the lockfile to a Yarn 4 one with the
+          // `BEFORE_SANDBOX_MIN_AGE_GATE` npmMinimalAgeGate
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+    // 3-day gate inherited from before-storybook. The locally published
+          // Refresh the lockfile to a Yarn 4 one with a 3-day npmMinimalAgeGate
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fbb34286` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2156707f` are properly handled with clean fallback behavior.
 
 
 ## Consequences

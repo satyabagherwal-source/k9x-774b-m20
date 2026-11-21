@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T09:23:57.251Z",
+  "last_updated": "2026-11-21T09:52:50.275Z",
   "total_verified_learnings": 9059,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23037,
+  "total_items": 23043,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -114261,10 +114261,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-storybookjs-storybook-technical-construction-intelligence-storybookjs-storybook-.md",
       "title": "Technical Construction Intelligence: storybookjs/storybook Core Invariants",
       "repository": "storybookjs/storybook",
-      "source_version": "f071f047",
-      "content_hash": "2a00dbfd93d7bb8e89649da19fea083e2ae8ce3b139844b557961586c1b6c758",
+      "source_version": "20075e60",
+      "content_hash": "57fbfe6b13da6918d615d4c895d7cdd8d0fce55d89e697e39cedaa31bcd2a200",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T18:05:59.553Z"
+      "persisted_at": "2026-11-21T09:52:22.609Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-storybookjs-storybook": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-storybookjs-storybook",
@@ -114273,10 +114273,10 @@
       "relative_path": "12_DECISIONS/ADR-storybookjs-storybook-adr-subsystem-boundary-modular-decoupling-in-storybookjs-s.md",
       "title": "ADR: Subsystem Boundary & Modular Decoupling in storybookjs/storybook",
       "repository": "storybookjs/storybook",
-      "source_version": "1227202d",
-      "content_hash": "10596ff1d641eb5fef8d6592521cc5d6698500a7ea6c4aa376f776234d5ed6bf",
-      "domain_letter": "G",
-      "persisted_at": "2026-11-18T09:57:20.021Z"
+      "source_version": "20075e60",
+      "content_hash": "33e5f52f623351ac328d1f89c43d30ddb8672dcdbd863bebe5a3c461ca1daba2",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T09:52:22.758Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-storybookjs-storybook": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-storybookjs-storybook",
@@ -114285,10 +114285,10 @@
       "relative_path": "08_VERIFICATION/storybookjs-storybook-verification-protocol-empirical-defect-shield-for-storyboo.md",
       "title": "Verification Protocol: Empirical Defect Shield for storybookjs/storybook",
       "repository": "storybookjs/storybook",
-      "source_version": "1227202d",
-      "content_hash": "f39dcec966890c53a080858a742fc19156d36456ddfa45626c8e7202db39ca39",
+      "source_version": "20075e60",
+      "content_hash": "265e25beec1f6b025b5849a461a3e8eeb23b5c121cc28d75b98bb8e3d6b30844",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T09:57:20.177Z"
+      "persisted_at": "2026-11-21T09:52:22.920Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-akatz-ai-minimax-h3-character-swap-lora-learn": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-akatz-ai-minimax-h3-character-swap-lora-learn",
@@ -114310,9 +114310,9 @@
       "title": "Technical Construction Intelligence: storybookjs-storybook-learnings Core Invariants",
       "repository": "storybookjs-storybook-learnings",
       "source_version": "HEAD",
-      "content_hash": "85d3b9fa7ad8569a7036e456227e25b3cc829963e7962e89f5ffaafa48418904",
+      "content_hash": "969419e4cfae4974a81565f6ed52e6a188969967830365089ad721fa0be77b03",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T18:06:48.883Z"
+      "persisted_at": "2026-11-21T09:52:49.368Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-storybookjs-storybook-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-storybookjs-storybook-learnings",
@@ -114322,9 +114322,9 @@
       "title": "ADR: Subsystem Boundary & Modular Decoupling in storybookjs-storybook-learnings",
       "repository": "storybookjs-storybook-learnings",
       "source_version": "HEAD",
-      "content_hash": "acb05b06a32e4555f19b766dbce54fffe438baf0317bf5da7542c162e5f8830f",
-      "domain_letter": "G",
-      "persisted_at": "2026-11-18T09:57:33.876Z"
+      "content_hash": "f843de9cdf2c2635b23d7174c47e510a79e7a40dfb3cfbcbbb653f5b0eba95c5",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T09:52:49.511Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-storybookjs-storybook-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-storybookjs-storybook-learning",
@@ -114334,9 +114334,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for storybookjs-storybook-learnings",
       "repository": "storybookjs-storybook-learnings",
       "source_version": "HEAD",
-      "content_hash": "324b3b1b8edc11ebc742719d18a6b4ddf0ad5214e28fb70ea9c4d5696e0e0e7e",
+      "content_hash": "699ae3dda505a4605f53a322872810c0280e72b023e3ed8497510cad934ca74a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T09:57:34.034Z"
+      "persisted_at": "2026-11-21T09:52:49.632Z"
     },
     "candidate_directive-deps-bump-the-npm-dependencies-group-in-packages-ui-with-6-updates-766": {
       "item_id": "candidate_directive-deps-bump-the-npm-dependencies-group-in-packages-ui-with-6-updates-766",
@@ -229321,8 +229321,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "e2f16915",
-      "content_hash": "ef228f9fec24006807303a600ba05fc673e2ede4b735b2313dd16e35cf437cbf",
+      "source_version": "345fe568",
+      "content_hash": "3c190e213a34da31c6225a0f6ceb8917e3d51f2ca31c55e1a1e5feb35609bdd0",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -229505,6 +229505,11 @@
           "number": 9748,
           "title": "synthesized instance execution",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9764,
+          "title": "Use OpenRouter SDK for ARC generation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -229512,7 +229517,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T07:58:56.916Z",
+      "verified_at": "2026-11-21T09:47:30.490Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -229554,10 +229559,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "e2f16915",
-      "content_hash": "795de077ee769128f10461bd409d6c579c3519a02514ae30f0ef1724ec6da113",
+      "source_version": "345fe568",
+      "content_hash": "b9a6f3b80334f0391a2590eb7ef5a8f2c6211f92087c405b4c236d815f475ee4",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T07:58:57.390Z"
+      "persisted_at": "2026-11-21T09:47:31.009Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid",
@@ -229566,10 +229571,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "e2f16915",
-      "content_hash": "c8ee4e4209843a1d891d8155b36ea3df14a4b6c41dcd01d471cacc8164abce48",
+      "source_version": "345fe568",
+      "content_hash": "bb2b2967fc3746b519bc996313dc50dd54f5c63a657f534ada805a8412762a0a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T07:58:57.520Z"
+      "persisted_at": "2026-11-21T09:47:31.156Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -252277,8 +252282,8 @@
       "slug": "apache-shardingsphere",
       "platform": "github",
       "source_url": "https://github.com/apache/shardingsphere",
-      "source_version": "eac4d896",
-      "content_hash": "44ffd2ec9fdd630497d1ed6820e7b2233010b35f1c93e46d4742768c6a4279dc",
+      "source_version": "ef1f4581",
+      "content_hash": "bb2c133901ee77e8fa3c70655029ce73cc163aa3c0ecd5ad5c0b9f52258ffe03",
       "dossier_path": "07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
       "promoted_rules": [
@@ -252306,6 +252311,11 @@
           "number": 9516,
           "title": "Align MCP release packaging and preparation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9763,
+          "title": "Add regression coverage for unsupported Javadoc parameter nullability",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -252313,7 +252323,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T05:16:25.738Z",
+      "verified_at": "2026-11-21T09:47:28.785Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -252355,10 +252365,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-apache-shardingsphere-research-knowledge-intelligence-apache-shardingsphere-core.md",
       "title": "Research & Knowledge Intelligence: apache/shardingsphere Core Invariants",
       "repository": "apache/shardingsphere",
-      "source_version": "eac4d896",
-      "content_hash": "89a2dd361d59e9ab3e691bcfdb79f39a2c0a61e1e5a67352f5f1b0d74f22fafb",
+      "source_version": "ef1f4581",
+      "content_hash": "fecdfc26eaf61b3ad26199b5a83219fe9052671c8f1961f1c8229f9a4e963539",
       "domain_letter": "D",
-      "persisted_at": "2026-11-20T05:16:26.304Z"
+      "persisted_at": "2026-11-21T09:47:29.324Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-apache-shardingsphere": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-apache-shardingsphere",
@@ -252367,10 +252377,10 @@
       "relative_path": "08_VERIFICATION/apache-shardingsphere-verification-protocol-empirical-defect-shield-for-apache-s.md",
       "title": "Verification Protocol: Empirical Defect Shield for apache/shardingsphere",
       "repository": "apache/shardingsphere",
-      "source_version": "eac4d896",
-      "content_hash": "bd104ebf00f0c6d348d4a0e04824e224efa597135ab220a07324e2d73f7be9cf",
+      "source_version": "ef1f4581",
+      "content_hash": "e479256777942f0fbb0dc34aaea6b2286c234f92d64b3f5b01bfd3f5f12e4cf1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T05:16:26.457Z"
+      "persisted_at": "2026-11-21T09:47:29.462Z"
     },
     "candidate_directive-desktop-register-java-rmi-marshalledobject-for-native-clipboard-reflection": {
       "item_id": "candidate_directive-desktop-register-java-rmi-marshalledobject-for-native-clipboard-reflection",
@@ -252440,9 +252450,9 @@
       "title": "Research & Knowledge Intelligence: apache-shardingsphere-learnings Core Invariants",
       "repository": "apache-shardingsphere-learnings",
       "source_version": "HEAD",
-      "content_hash": "e9a4b6d3eac1408208c594661ac3a35abe7612cadfa210646fa4980c0719e130",
+      "content_hash": "bf54a881126f2b2a45e8c143134a326848eaf218f038ba94f3385e40efcd4759",
       "domain_letter": "D",
-      "persisted_at": "2026-11-20T05:16:31.833Z"
+      "persisted_at": "2026-11-21T09:52:50.130Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-apache-shardingsphere-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-apache-shardingsphere-learning",
@@ -252452,9 +252462,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for apache-shardingsphere-learnings",
       "repository": "apache-shardingsphere-learnings",
       "source_version": "HEAD",
-      "content_hash": "6433db820561ba3427a146bb63c34fff973125de84939581fd6cc72ecabd4aea",
+      "content_hash": "092bfcb1700fb60c6c9468fe1dc56889ff0db8f7bb3284557488c9be48b0c93a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T05:16:32.003Z"
+      "persisted_at": "2026-11-21T09:52:50.275Z"
     },
     "learn-huggingface-liconstudio-minimax-h3-vbvr": {
       "learning_id": "learn-huggingface-liconstudio-minimax-h3-vbvr",
@@ -269841,8 +269851,8 @@
       "slug": "storybookjs-storybook",
       "platform": "github",
       "source_url": "https://github.com/storybookjs/storybook",
-      "source_version": "1227202d",
-      "content_hash": "d9b795ec365b2232aad81e5567d0d93a667ba1347f6906a9ec1d9f321c9c0546",
+      "source_version": "20075e60",
+      "content_hash": "4fd31e215d34575cb1740f0e822c48cd1ef6d177a00718b28dc7c19bdc345312",
       "dossier_path": "07_PROJECT_LEARNING/storybookjs-storybook-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/storybookjs-storybook-learnings.md",
       "promoted_rules": [
@@ -269855,6 +269865,11 @@
           "number": 9188,
           "title": "check addon ranges that start with a 0.x canary part",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9765,
+          "title": "Apply contribution-review fixes: derive Yarn gate from npm day count",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -269862,7 +269877,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T09:57:19.168Z",
+      "verified_at": "2026-11-21T09:52:22.010Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -274670,7 +274685,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/mistralai/Timestral-209M",
       "source_version": "hf-mistralai-timestral-209m",
-      "content_hash": "1b3d9b2c978dd7c2257b0d006d0f536574f9f7a9da9ebe17c7ed171d149fcbf2",
+      "content_hash": "215ab52ac3bd1c62b89de0e81eb9882b0a8e385ea76f1ce65c7d70ef634cb08c",
       "dossier_path": "07_PROJECT_LEARNING/hf-mistralai-timestral-209m-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-mistralai-timestral-209m-learnings.md",
       "promoted_rules": [],
@@ -274679,7 +274694,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T15:06:11.715Z",
+      "verified_at": "2026-11-21T09:52:45.376Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -274696,9 +274711,9 @@
       "title": "Research & Knowledge Intelligence: mistralai/Timestral-209M Core Invariants",
       "repository": "mistralai/Timestral-209M",
       "source_version": "hf-mistralai-timestral-209m",
-      "content_hash": "eb3626e6099393efb575b2e551152a97233ec4feddec12f43b3de5445bf662e3",
+      "content_hash": "17d8b3a6a1afe1fabe021af33ed5120da76f3e79526a6a0f01e11838c274c66b",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T15:06:12.068Z"
+      "persisted_at": "2026-11-21T09:52:45.801Z"
     },
     "rule-8982": {
       "learning_id": "rule-8982",
@@ -274772,9 +274787,9 @@
       "title": "Research & Knowledge Intelligence: hf-mistralai-timestral-209m-learnings Core Invariants",
       "repository": "hf-mistralai-timestral-209m-learnings",
       "source_version": "HEAD",
-      "content_hash": "3066b075600896c55b4395c6bb538806911323f9c0ed2874bbebd4fbdc5dddf6",
+      "content_hash": "de281a2e5479296cd27b285f47afacbffbb5e3a096e27288221b0235489698d4",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T15:06:27.429Z"
+      "persisted_at": "2026-11-21T09:52:48.828Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-invertase-react-native-firebase-lea": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-invertase-react-native-firebase-lea",
@@ -312907,6 +312922,84 @@
       "content_hash": "4fd52202d29d654285ea7a597b20604e473cc8325f24528e5da9d4d9063fa6e1",
       "domain_letter": "G",
       "persisted_at": "2026-11-21T08:54:44.362Z"
+    },
+    "rule-9763": {
+      "learning_id": "rule-9763",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9763,
+      "title": "Add regression coverage for unsupported Javadoc parameter nullability",
+      "source_url": "https://github.com/apache/shardingsphere",
+      "source_version": "ef1f4581",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T09:47:28.785Z"
+    },
+    "candidate_directive-add-regression-coverage-for-unsupported-javadoc-parameter-nullability": {
+      "item_id": "candidate_directive-add-regression-coverage-for-unsupported-javadoc-parameter-nullability",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-C5Z1-add-regression-coverage-for-unsupported-javadoc-parameter-nullability.md",
+      "title": "Add regression coverage for unsupported Javadoc parameter nullability",
+      "repository": "apache-shardingsphere-learnings",
+      "source_version": "HEAD",
+      "content_hash": "129b0a92ca3565826185c5937a2a67c128e8b43dccb0b375c49b0e9271380746",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-21T09:52:49.987Z"
+    },
+    "rule-9764": {
+      "learning_id": "rule-9764",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9764,
+      "title": "Use OpenRouter SDK for ARC generation",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "345fe568",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T09:47:30.490Z"
+    },
+    "candidate_directive-use-openrouter-sdk-for-arc-generation": {
+      "item_id": "candidate_directive-use-openrouter-sdk-for-arc-generation",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5BQO-use-openrouter-sdk-for-arc-generation.md",
+      "title": "Use OpenRouter SDK for ARC generation",
+      "repository": "NucleoidAI/Nucleoid",
+      "source_version": "345fe568",
+      "content_hash": "b980da0b33d4c23429840da7e54cef49e97800d38f828ddd9b1ba098e20d5fd6",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T09:47:30.865Z"
+    },
+    "rule-9765": {
+      "learning_id": "rule-9765",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9765,
+      "title": "Apply contribution-review fixes: derive Yarn gate from npm day count",
+      "source_url": "https://github.com/storybookjs/storybook",
+      "source_version": "20075e60",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T09:52:22.010Z"
+    },
+    "candidate_directive-apply-contribution-review-fixes-derive-yarn-gate-from-npm-day-count": {
+      "item_id": "candidate_directive-apply-contribution-review-fixes-derive-yarn-gate-from-npm-day-count",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-C5DP-apply-contribution-review-fixes-derive-yarn-gate-from-npm-day-count.md",
+      "title": "Apply contribution-review fixes: derive Yarn gate from npm day count",
+      "repository": "storybookjs-storybook-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e94c430c6b6f7706a33355688ba25cac13070c5d6c1cc4164145ae2e9c73219e",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T09:52:49.214Z"
     }
   },
   "ai-builder-brain": {

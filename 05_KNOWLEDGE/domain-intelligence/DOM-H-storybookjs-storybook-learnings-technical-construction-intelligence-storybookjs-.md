@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T18:06:48.660Z",
+  "timestamp": "2026-11-21T09:52:49.119Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-storybookjs-storybook-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [storybookjs-storybook-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T18:06:48.660Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T09:52:49.119Z`  
 > **Learning ID**: `LEARN-EVO-storybookjs-storybook-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), B (Product Intelligence), I (Content & Information Intelligence), F (Design Intelligence), C (Market & Business Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 58%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), I (Content & Information Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), C (Market & Business Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 62%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from storybookjs-storybook-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/storybookjs-storybook-learnings.md`  
 > **Source**: github ([https://github.com/storybookjs/storybook](https://github.com/storybookjs/storybook))  
-> **Source Version**: `f071f047`  
+> **Source Version**: `20075e60`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T18:05:58.654Z  
+> **Timestamp**: 2026-11-21T09:52:21.266Z  
 > **Learning ID**: `learn-github-storybookjs-storybook`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/storybookjs-storybook-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/storybookjs/storybook](https://github.com/storybookjs/storybook))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T18:05:58.647Z  
+> **Harvest Timestamp**: 2026-11-21T09:47:20.398Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Storybook is the industry standard workshop for building, documenting, and testing UI components in isolation
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 91557 stars
+- **Stars / Engagement**: 91672 stars
 
 ---
 
@@ -583,13 +583,11 @@ export function isRecord(value: unknown): value is Record<string, unknown> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #37406** (2026-11-13): **[Bug]: @storybook/react-vite 10.x -> @joshwooding/vite-plugin-react-docgen-typescript 0.7.0 -> glob 13.x has CVE-2026-118773**
-  *Symptoms*: ### Describe the bug  @storybook/react-vite 10.x has dependency to "@joshwooding/vite-plugin-react-docgen-typescript" "^0.7.0".  All version of "@joshwooding/vite-plugin-react-docgen-typescript" below 0.9.1 has a dependency of glob 13.x which has CVE-2026-118773.  Since 0.7.0 is < 1.0.0, semver does not resolve ^0.7.0 to 0.9.1 - at least pnpm does not do so).  Upping the dependency to "@joshwooding/vite-plugin-react-docgen-typescript" "^0.9.1" should resolve the issue.  ### Reproduction link  no  ### Reproduction steps  _No response_  ### System  ```bash storybook 10.6.7 ```  ### Additional context  _No response_
-  **Post-Mortem & Fix Analysis**:
-  > We could not detect a valid reproduction link. **Make sure to follow the bug report template carefully.**  ### Why was this issue closed?  To be able to investigate, we need access to a reproduction to identify what triggered the issue. We need a link to a **public** GitHub repository, Stackblitz or CodeSandbox. The easiest way to create a reproduction is with [storybook.new](https://storybook.new).  The bug template that you filled out has a section called "To reproduce", which is where you should provide the link to the reproduction.  - If you did not provide a link or the link you provided is not valid, we will close the issue. - If you provide a link to a private repository, we will close the issue. - If you provide a link to a repository but not in the correct section, we will close the issue.  ### What should I do?  Depending on the reason the issue was closed, you can do the following:  - If you did not provide a link, please open a new issue with a link to a reproduction. - If 
+- **Issue #37624** (2026-11-20): **React: Read referenced project sources in component docgen**
+  *Symptoms*: Closes #37598  ## What I did  React docgen returned no props for a component when its story and the component sit in two TypeScript projects linked by a project reference. The components manifest and the MCP `docs-show` tool then had nothing to show for that component. This PR makes docgen read the referenced project's sources, the same way the TypeScript language server does in an editor.  The layout that broke is common: the root `tsconfig.json` owns the stories and references a `tsconfig.src.json` that owns the components and excludes `*.stories.tsx`.  ``` Button.stories.tsx ──(tsconfig.json program)──► import './Button'                                                      │           projectReferences: [tsconfig.src.json]     │  before: redirected to dist-types/Button.d.ts                                                      │          → getSourceFile(Button.tsx) === undefined → skipped                                                      │  after:  Button.tsx stays in the program → props extracted ```  The fix is one host flag, set like tsserver sets it. `useSourceOfProjectReferenceRedirect` is public on `WatchCompilerHost` but internal on `LanguageServiceHost` typings, so it goes through `Object.assign` rather than a cast:  ```diff -    this.service = typescript.createLanguageService(languageServiceHost, this.documentRegistry); +    this.service = typescript.createLanguageService( +      Object.assign(languageServiceHost, { useSourceOfProjectReferenceRedirect: () => tru
 
-- **Issue #37389** (2026-11-13): **Manager: Improve performance of story preloading**
-  *Symptoms*: Closes #37145.  ## What I did  `PRELOAD_ENTRIES` is fired on multiple occasions: * When hovering a sidebar node, for the node and its children * When loading a story, for its direct siblings addressable by kb shortcut * After a search, to preload results  The hover and kb sibling preloads compete with the rest of the web app for resources, and can cause significant lags. Preloading a story can cause many imported modules to be downloaded, and hovering over the sidebar can cause dozens of stories to be queued for preloading.  ### Fix 1: Dedupe preload requests  Some data: * Preloading provides roughly 50-150ms of benefit to end users, based on probe measurements * The gain concentrates on first paint (up to 33% faster with preloading) and dimishes on story ready (possibly due to sibling preloading competing for CPU)  * We also assume from past UX research that users spend 200-400ms between the moment they hover a story and the moment they click it * The preloading itself can take 250ms based on probe measurements  So the benefit is obtained only if we don't further slow down or delay preloading. Debouncing in the manager UI would probably cause the benefits of preloading to be lost.  Instead, as emitting events is relatively cheap, we make the event handler drop pending preloads as soon as a new preload request lands. This matches the fact that if a user hovers over many sidebar items, they're only ever gonna click on the one their mouse is actually on top of.  ### Fix 2: Fix 
+- **Issue #37619** (2026-11-20): **Manager: Fix crash from stale toolbar landmark on first load**
+  *Symptoms*: Closes #  ## What I did  The manager sometimes crashed on first load with `Failed to execute 'compareDocumentPosition' on 'Node': parameter 1 is not of type 'Node'`. It happened most often on docs URLs with `@storybook/addon-vitest` installed, when the dev server was slow.  ### Cause  Found in npmx when testing nuxt-storybook 11  react-aria's `useLandmark` registers a landmark when the component mounts and removes it only when the component unmounts. `ToolbarComp` called `useLandmark` and then rendered `null` when it had no tools to show. Its landmark stayed registered with `ref.current === null`. When `TestingWidget` mounted later, react-aria compared the new landmark against the null ref and threw.  ### Fix  The landmark now lives in a child component that mounts and unmounts with its DOM element:  - `ToolbarComp` renders `ToolbarSection` only while the toolbar is shown. - `TestingWidget` and `ReviewWidget` had the same early `return null`; they now render `LandmarkCard` and `LandmarkRegion`.  The markup and the memoization are unchanged.  The other `useLandmark` call sites always render their element, so they are safe.  Side effect: `TestingWidget` used to skip its landmark when its first render was `null`, so F6 never reached it. It now registers when it appears.  ## Checklist for Contributors  ### Testing  #### The changes in this PR are covered in the following automated tests:  - [x] stories - [ ] unit tests - [ ] integration tests - [ ] end-to-end tests  `Toolbar.stor
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -606,476 +604,244 @@ export function isRecord(value: unknown): value is Record<string, unknown> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c36d09d2` (2026-11-13)
-**Commit Message**: fix(ecosystem-qa): redact the run result in a step of its own, also after a crash
+### Incident Patch 1: `2156707f` (2026-11-20)
+**Commit Message**: Apply contribution-review fixes: derive Yarn gate from npm day count
 
-run.ts redacts its output only when it reaches its end, while the upload runs always. A run that crashed or was cancelled uploaded its logs as they were. The upload now waits for a redaction step that runs always, and does not happen when that step fails.
+- BEFORE_SANDBOX_MIN_AGE_GATE now derives from BEFORE_SANDBOX_NPM_MIN_RELEASE_AGE_DAYS
+  so the Yarn and npm gates cannot drift apart.
+- Comments reference the constants instead of repeating the day count.
+- Test expectations hard-code '3d' / '3' so an accidental gate change fails the tests.
 
-**File**: `.github/workflows/ecosystem-qa.yml` (modified, +8/-1)
+**File**: `scripts/sandbox/generate.ts` (modified, +4/-2)
 ```diff
-@@ -250,8 +250,15 @@ jobs:
-         if: ${{ always() }}
-         run: if [[ -d ecosystem-qa/results ]]; then find ecosystem-qa/results -type l -print -delete; fi
+@@ -134,7 +134,8 @@ const addStorybook = async ({
+     }
  
--      - name: Upload the run result
-+      # run.ts redacts its output when it reaches its end. A run that crashed or was cancelled did
-+      # not, and the upload publishes whatever is there.
-+      - name: Redact credentials in the run result
-+        id: redact
-         if: ${{ always() }}
-+        run: node ecosystem-qa/redact.ts ecosystem-qa/results
-+
-+      - name: Upload the run result
-+        if: ${{ always() && steps.redact.outcome == 'success' }}
-         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-         with:
-           name: qa-result-${{ matrix.os }}-${{ matrix.engine }}
+     // This install is the only step that runs package code, so it keeps the
+-    // 3-day gate inherited from before-storybook. The locally published
++    // age gate inherited from before-storybook (`BEFORE_SANDBOX_MIN_AGE_GATE`).
++    // The locally published
+     // Storybook packages are seconds old and can never satisfy it, so they are
+     // allowlisted by name rather than the gate being switched off.
+     await preapproveLocallyPublishedPackages(tmpDir);
+@@ -341,7 +342,8 @@ const runGenerators = async (
+ 
+           await localizeYarnConfigFiles(createBaseDir, createBeforeDir);
+ 
+-          // Refresh the lockfile to a Yarn 4 one with a 3-day npmMinimalAgeGate
++          // Refresh the lockfile to a Yarn 4 one with the
++          // `BEFORE_SANDBOX_MIN_AGE_GATE` npmMinimalAgeGate
+           // so consumers who clone the published sandbox install a reproducible,
+           // non-freshly-quarantined dependency tree.
+           //
 ```
 
-**File**: `ecosystem-qa/redact.ts` (added, +17/-0)
+**File**: `scripts/sandbox/utils/yarn.test.ts` (modified, +2/-4)
 ```diff
-@@ -0,0 +1,17 @@
-+import { existsSync } from 'node:fs';
-+
-+import { redactTree } from './lib/redact.ts';
-+
-+const HELP = `Usage: node ecosystem-qa/redact.ts <dir>
-+
-+Redacts credentials in every text file under <dir>, in place. run.ts does the same when it reaches
-+its end; this is for the output of a run that did not.`;
-+
-+const [dir] = process.argv.slice(2);
-+if (!dir || dir === '--help') {
-+  console.log(HELP);
-+  process.exit(dir ? 0 : 1);
-+}
-+if (existsSync(dir)) {
-+  redactTree(dir);
-+}
+@@ -9,8 +9,6 @@ import yml from 'yaml';
+ import { ROOT_DIRECTORY } from '../../utils/constants.ts';
+ import { runCommand } from '../generate.ts';
+ import {
+-  BEFORE_SANDBOX_MIN_AGE_GATE,
+-  BEFORE_SANDBOX_NPM_MIN_RELEASE_AGE_DAYS,
+   BEFORE_SANDBOX_NPM_MIN_VERSION,
+   LOCALLY_PUBLISHED_PACKAGE_PATTERNS,
+   ensureNpmSupportsMinReleaseAge,
+@@ -150,7 +148,7 @@ describe('refreshBeforeStorybookLockfile', () => {
+     await refreshBeforeStorybookLockfile({ cwd: SANDBOX });
+ 
+     const scripts = vi.mocked(runCommand).mock.calls.map(([script]) => script);
+-    expect(scripts).toContain(`yarn config set npmMinimalAgeGate ${BEFORE_SANDBOX_MIN_AGE_GATE}`);
++    expect(scripts).toContain('yarn config set npmMinimalAgeGate 3d');
+   });
+ 
+   it('upgrades only the quarantined package, leaving every other range alone', async () => {
+@@ -297,7 +295,7 @@ describe('writeScaffoldNpmrc', () => {
+     await writeScaffoldNpmrc(SANDBOX, ['@react-native-community/*', 'multitars']);
+ 
+     expect(vol.readFileSync(`${SANDBOX}/.npmrc`, 'utf-8')).toBe(
+-      `min-release-age=${BEFORE_SANDBOX_NPM_MIN_RELEASE_AGE_DAYS}\nmin-release-age-exclude[]=@react-native-community/*\nmin-release-age-exclude[]=multitars\n`
++      'min-release-age=3\nmin-release-age-exclude[]=@react-native-community/*\nmin-release-age-exclude[]=multitars\n'
+     );
+   });
+ 
+```
+
+**File**: `scripts/sandbox/utils/yarn.ts` (modified, +6/-3)
+```diff
+@@ -56,14 +56,16 @@ export async function localizeYarnConfigFiles(baseDir: string, beforeDir: string
+ }
+ 
+ /**
+- * 3-day age gate for generated sandboxes.
++ * Age gate for generated sandboxes.
+  *
+  * - Yarn: `BEFORE_SANDBOX_MIN_AGE_GATE`
+  * - npm scaffold: `BEFORE_SANDBOX_NPM_MIN_RELEASE_AGE_DAYS` → `NPM_CONFIG_MIN_RELEASE_AGE`
++ *
++ * The Yarn gate is derived from the npm day count so the two cannot drift.
+  */
+-export const BEFORE_SANDBOX_MIN_AGE_GATE = '3d';
+ /** npm `min-release-age` is in days (npm 11.10+). */
+ export const BEFORE_SANDBOX_NPM_MIN_RELEASE_AGE_DAYS = 3;
++export const BEFORE_SANDBOX_MIN_AGE_GATE = `${BEFORE_SANDBOX_NPM_MIN_RELEASE_AGE_DAYS}d`;
+ export async function ensureNpmSupportsMinReleaseAge() {
+   const { stdout } = await runCommand('npm --version', { cwd: process.cwd() });
+   const version = String(stdout).trim();
+@@ -115,7 +117,8 @@ interface RefreshLockfileOptions {
+  *    legacy `yarn.lock`, `pnpm-lock.yaml`).
+  * 2. Pin Yarn 4 via the `package.json` `packageManager` field so corepack
+  *    resolves it deterministically (no network `yarn set version`).
+- * 3. Set `npmMinimalAgeGate` to 3 days so resolution skips quarantined versions,
++ * 3. Set `npmMinimalAgeGate` to the `BEFORE_SANDBOX_MIN_AGE_GATE` duration so
++ *    resolution skips quarantined versions,
+  *    plus any per-template `npmPreapprovedPackages` allowlist.
+  * 4. Run `yarn install --mode=update-lockfile`, narrowing only the ranges that
+  *    the gate leaves with no installable version (see `narrowQuarantinedRanges`).
 ```
 
 ---
 
-### Incident Patch 2: `2a70199b` (2026-11-13)
-**Commit Message**: Merge pull request #37390 from storybookjs/sidnioulz/manager-rerender-storm
+### Incident Patch 2: `1f82922d` (2026-11-20)
+**Commit Message**: fix(csf-tools): skip types when remove searches code for a key
 
-Manager: Cut re-renders and store writes on story change
-
-**File**: `code/core/src/manager-api/modules/addons.ts` (modified, +14/-4)
-```diff
-@@ -8,6 +8,8 @@ import type {
-   Addon_TypesMapping,
- } from 'storybook/internal/types';
- 
-+import { isEqual } from 'es-toolkit/predicate';
-+
- import type { ModuleFn } from '../lib/types.tsx';
- import type { Options } from '../store.ts';
- 
-@@ -128,10 +130,18 @@ export const init: ModuleFn<SubAPI, SubState> = ({ provider, store, fullAPI }):
-         typeof newStateOrMerger === 'function' ? newStateOrMerger : () => newStateOrMerger
-       ) as API_StateMerger<S>;
-       return store
--        .setState(
--          (s) => ({ addons: { ...s.addons, [addonId]: merger(s.addons[addonId]) } }),
--          options
--        )
-+        .setState((s) => {
-+          const current = s.addons[addonId];
-+          const next = merger(current);
-+          // Addons tend to write their state again on every story change, mostly unchanged. A
-+          // write of an equal state would still re-render the whole manager and hand consumers
-+          // a new object. A write that asks for persistence goes through: the value may not be
-+          // in storage yet.
-+          const persisted = (options?.persistence ?? 'none') !== 'none';
-+          return !persisted && isEqual(next, current)
-+            ? {}
-+            : { addons: { ...s.addons, [addonId]: next } };
-+        }, options)
-         .then(() => api.getAddonState(addonId));
-     },
-     getAddonState: (addonId) => {
-```
-
-**File**: `code/core/src/manager-api/modules/shortcuts.ts` (modified, +16/-5)
-```diff
-@@ -9,6 +9,7 @@ import {
- import { global } from '@storybook/global';
- 
- import copy from 'copy-to-clipboard';
-+import { isEqual } from 'es-toolkit/predicate';
- 
- import { logger } from 'storybook/internal/client-logger';
- import type { KeyboardEventLike } from '../lib/shortcut.ts';
-@@ -264,11 +265,21 @@ export const init: ModuleFn = ({ store, fullAPI, provider }) => {
-       return value;
-     },
-     async setAddonShortcut(addon: string, shortcut: API_AddonShortcut) {
--      await api.setShortcuts((shortcuts) => ({
--        ...shortcuts,
--        [`${addon}-${shortcut.actionName}`]: shortcut.defaultShortcut,
--      }));
--      addonsShortcuts[`${addon}-${shortcut.actionName}`] = shortcut;
-+      const id = `${addon}-${shortcut.actionName}`;
-+      const previous = addonsShortcuts[id];
-+      addonsShortcuts[id] = shortcut;
-+      // The store holds the key binding, which the user may have customised. A registration writes
-+      // it when it is new or its default changed, not to replace the binding with the default.
-+      const isRegistered =
-+        !!previous &&
-+        isEqual(previous.defaultShortcut, shortcut.defaultShortcut) &&
-+        id in (store.getState().shortcuts ?? {});
-+      if (!isRegistered) {
-+        await api.setShortcuts((shortcuts) => ({
-+          ...shortcuts,
-+          [id]: shortcut.defaultShortcut,
-+        }));
-+      }
-       return shortcut;
-     },
-     async restoreDefaultShortcut(action) {
-```
-
-**File**: `code/core/src/manager-api/store.ts` (modified, +7/-0)
-```diff
-@@ -138,6 +138,13 @@ export default class Store {
- 
-     const delta: Patch =
-       typeof inputPatch === 'function' ? resolveUpdater(inputPatch, this.getState()) : inputPatch;
-+    // Nothing to commit or persist: every React setState re-renders the provider, and persisting
-+    // rewrites the whole stored state.
-+    if (Object.keys(delta).length === 0) {
-+      const state = this.getState();
-+      callback?.(state);
-+      return state;
-+    }
-     const pending: PendingPatch = { patch: delta, committed: false };
-     this.pendingPatches.push(pending);
- 
-```
-
-**File**: `code/core/src/manager-api/tests/addons.test.js` (modified, +69/-0)
-```diff
-@@ -1,11 +1,27 @@
- import { describe, expect, it, vi } from 'vitest';
- 
-+import store2 from 'store2';
-+
- import { Addon_TypesEnum as types } from 'storybook/internal/types';
- 
- import { init as initAddons } from '../modules/addons';
- import Store from '../store';
- import { createLaggingUpstream } from '../test-utils/store';
- 
-+vi.mock('store2', () => ({
-+  default: {
-+    local: {
-+      set: vi.fn(),
-+      get: vi.fn(),
-+    },
-+    session: {
-+      set: vi.fn(),
-+      get: vi.fn(),
-+    },
-+    _: { fn: () => {} },
-+  },
-+}));
-+
- const PANELS = {
-   a11y: {
-     title: 'Accessibility',
-@@ -202,5 +218,58 @@ describe('Addons API', () => {
-       expect(storyIdsDuringCommit).toEqual(['story-2']);
-       expect(api.getAddonState('my-addon')).toEqual({ open: true });
-     });
-+
-+    it('does not write a state equal to the current one', async () => {
-+      const current = { open: true, results: [{ id: 1 }] };
-+      const setState = vi.fn().mockImplementation((patch, callback) => callback());
-+      const store = new Store({ setState, getState: () => ({ addons: { 'my-addon': current } }) });
-+      const { api } = initAddons({ provider, store });
-+
-+      const result = await api.setAddonState('my-addon', { open: true, results: [{ id: 1 }] });
-+
-+      expect(setState).not.toHaveBeenCalled();
-+      expect(result).toBe(current);
-+    });
-+
-+    it('does not write when a merger returns a state equal to the current one', async () => {
-+      const setState = vi.fn().mockImplementation((patch, callback) => callback());
-+      const store = new Store({
-+        setState,
-+        getState: () => ({ addons: { counter: { count: 0 } } }),
-+      });
-+      const { api } = initAddons({ provider, store });
-+
-+      await api.setAddonState('counter', (s) => ({ ...s, count: 0 }));
-+
-+      expect(setState).not.toHaveBeenCalled();
-+    });
-+
-+    it('writes an equal state when persistence is requested', async () => {
-+      const current = { open: true };
-+      const setState = vi.fn().mockImplementation((patch, callback) => callback());
-+      const store = new Store({ setState, getState: () => ({ addons: { 'my-addon': current } }) });
-+      const { api } = initAddons({ provider, store });
-+
-+      await api.setAddonState('my-addon', { open: true }, { persistence: 'session' });
-+
-+      expect(setState).toHaveBeenCalledTimes(1);
-+      expect(store2.session.set).toHaveBeenCalled();
-+    });
-+
-+    it('writes a changed state', async () => {
-+      let state = { addons: { counter: { count: 0 } } };
-+      const setState = vi.fn().mockImplementation((patch, callback) => {
-+        state = { ...state, ...patch };
-+        callback();
-+      });
-+      const store = new Store({ setState, getState: () => state });
-+      const { api } = initAddons({ provider, store });
-+
-+      const result = await api.setAddonState('counter', (s) => ({ ...s, count: s.count + 1 }));
-+
-+      expect(setState).toHaveBeenCalledTimes(1);
-+      expect(result).toEqual({ count: 1 });
-+      expect(api.getAddonState('counter')).toEqual({ count: 1 });
-+    });
-   });
- });
-```
-
-**File**: `code/core/src/manager-api/tests/shortcuts.test.js` (modified, +70/-0)
-```diff
-@@ -344,6 +344,76 @@ describe('addon shortcut matching', () => {
-   });
- });
- 
-+describe('addon shortcut re-registration', () => {
-+  const setup = () => {
-+    const store = createMockStore();
-+    const fullAPI = { getNavAvailability: () => 'shown' };
-+    const { api, state } = initShortcuts({ store, provider: {}, fullAPI });
-+    store.setState({ ...state, ui: { enableShortcuts: true }, storyId: 'a', refId: undefined });
-+    store.setState.mockClear();
-+    return { api, store };
-+  };
-+  const shortcut = (overrides) => ({
-+    label: 'Do it',
-+    defaultShortcut: ['O'],
-+    actionName: 'doIt',
-+    action: vi.fn(),
-+    ...overrides,
-+  });
-+
-+  it('writes the binding to the store once and fires the latest action', async () => {
-+    const { api, store } = setup();
-+    const first = shortcut();
-+    const second = shortcut();
-+
-+    await api.setAddonShortcut('my-addon', first);
-+    expect(store.setState).toHaveBeenCalledTimes(1);
-+
-+    await api.setAddonShortcut('my-addon', second);
-+    expect(store.setState).toHaveBeenCalledTimes(1);
-+
-+    expect(api.handleKeydownEvent({ key: 'O', code: 'KeyO' })).toBe('my-addon-doIt');
-+    expect(first.action).not.toHaveBeenCalled();
-+    expect(second.action).toHaveBeenCalled();
-+  });
-+
-+  it('keeps a binding the user customised when the addon registers again', async () => {
-+    const { api } = setup();
-+    await api.setAddonShortcut('my-addon', shortcut());
-+    await api.setShortcut('my-addon-doIt', ['P']);
-+
-+    await api.setAddonShortcut('my-addon', shortcut());
-+
-+    expect(api.getShortcutKeys()['my-addon-doIt']).toEqual(['P']);
-+    expect(api.handleKeydownEvent({ key: 'P', code: 'KeyP' })).toBe('my-addon-doIt');
-+  });
-+
-+  it('writes again when the default binding changes', async () => {
-+    const { api, store } = setup();
-+    await api.setAddonShortcut('my-addon', shortcut());
-+    store.setState.mockClear();
-+
-+    await api.setAddonShortcut('my-addon', shortcut({ defaultShortcut: ['P'] }));
-+
-+    expect(store.setState).toHaveBeenCalledTimes(1);
-+    expect(api.getShortcutKeys()['my-addon-doIt']).toEqual(['P']);
-+    expect(api.getDefaultShortcuts()['my-addon-doIt']).toEqual(['P']);
-+  });
-+
-+  it('writes again when the binding is missing from the store', async () => {
-+    const { api, store } = setup();
-+    await api.setAddonShortcut('my-addon', shortcut());
-+    const { 'my-addon-doIt': _removed, ...rest } = store.getState().shortcuts;
-+    store.setState({ shortcuts: rest });
-+    store.setState.mockClear();
-+
-+    await api.setAddonShortcut('my-addon', shortcut());
-+
-+    expect(store.setState).toHaveBeenCalledTimes(1);
-+    expect(api.getShortcutKeys()['my-addon-doIt']).toEqual(['O']);
-+  });
-+});
-+
- describe('focus region shortcuts', () => {
-   const setup = ({ navShown = true, panelShown = true } = {}) => {
-     const store = createMockStore();
-```
-
-**File**: `code/core/src/manager-api/tests/store.test.js` (modified, +27/-0)
-```diff
-@@ -172,6 +172,33 @@ describe('store', () => {
-         });
-       }));
- 
-+    it('skips React and storage when a patch function changes nothing', async () => {
-+      const setState = vi.fn().mockImplementation((x, cb) => cb());
-+      const getState = vi.fn().mockReturnValue({ foo: 'bar', other: { a: 1 } });
-+      const store = new Store({ setState, getState });
-+      const callback = vi.fn();
-+
-+      const result = await store.setState((s) => ({ foo: s.foo }), callback, {
-+        persistence: 'session',
-+      });
-+
-+      expect(setState).not.toHaveBeenCalled();
-+      expect(store2.session.set).not.toHaveBeenCalled();
-+      expect(result).toEqual({ foo: 'bar', other: { a: 1 } });
-+      expect(callback).toHaveBeenCalledWith({ foo: 'bar', other: { a: 1 } });
-+    });
-+
-+    it('skips React and storage for an empty patch', async () => {
-+      const setState = vi.fn().mockImplementation((x, cb) => cb());
-+      const getState = vi.fn().mockReturnValue({ foo: 'bar' });
-+      const store = new Store({ setState, getState });
-+
-+      await store.setState({}, { persistence: 'permanent' });
-+
-+      expect(setState).not.toHaveBeenCalled();
-+      expect(store2.local.set).not.toHaveBeenCalled();
-+    });
-+
-     it('allows a patch function and persists its results', async () => {
-       const setState = vi.fn().mockImplementation((x, cb) => cb());
-       const getState = vi.fn().mockReturnValue({ foo: 'OLD' });
-```
-
-**File**: `code/core/src/manager/container/Menu.test.tsx` (added, +53/-0)
-```diff
-@@ -0,0 +1,53 @@
-+// @vitest-environment happy-dom
-+import type { SyntheticEvent } from 'react';
-+
-+import { renderHook } from '@testing-library/react';
-+import { describe, expect, it, vi } from 'vitest';
-+
-+import type { API } from 'storybook/manager-api';
-+
-+import { useMenu } from './Menu.tsx';
-+
-+vi.mock('../components/sidebar/useChecklist.ts', () => ({
-+  useChecklist: () => ({ progress: 100 }),
-+}));
-+
-+describe('useMenu', () => {
-+  it('runs the action an addon registered last when its menu item is clicked', () => {
-+    const first = vi.fn();
-+    const second = vi.fn();
-+    const registration = {
-+      label: 'Do it',
-+      defaultShortcut: ['O'],
-+      actionName: 'doIt',
-+      showInMenu: true,
-+      action: first,
-+    };
-+    const addonsShortcuts = { 'my-addon-doIt': registration };
-+    const api = {
-+      getShortcutKeys: () => ({}),
-+      getAddonsShortcuts: () => addonsShortcuts,
-+      getDocsUrl: () => 'https://storybook.js.org/docs',
-+    } as unknown as API;
-+
-+    const { result } = renderHook(() =>
-+      useMenu({
-+        api,
-+        showToolbar: true,
-+        isPanelShown: true,
-+        isNavShown: true,
-+        enableShortcuts: true,
-+      })
-+    );
-+    const item = result.current.flat().find((menuItem) => menuItem.id === 'my-addon-doIt');
-+    expect(item).toBeDefined();
-+
-+    // The addon registers again with a new closure. Nothing in the store changes, so the menu
-+    // list is not rebuilt.
-+    addonsShortcuts['my-addon-doIt'] = { ...registration, action: second };
-+    item?.onClick?.({} as SyntheticEvent, item);
-+
-+    expect(first).not.toHaveBeenCalled();
-+    expect(second).toHaveBeenCalledTimes(1);
-+  });
-+});
-```
-
-**File**: `code/core/src/manager/container/Menu.tsx` (modified, +4/-2)
-```diff
-@@ -195,10 +195,12 @@ export const useMenu = ({
-     const keys = shortcutKeys as any;
-     return Object.entries(addonsShortcuts)
-       .filter(([_, { showInMenu }]) => showInMenu)
--      .map(([actionName, { label, action }]) => ({
-+      .map(([actionName, { label }]) => ({
-         id: actionName,
-         title: label,
--        onClick: () => action(),
-+        // An addon re-registers its action without a store write, so read it when the item is
-+        // clicked rather than when this list is built.
-+        onClick: () => api.getAddonsShortcuts()[actionName]?.action(),
-         right: enableShortcuts && keys[actionName] ? <Shortcut keys={keys[actionName]} /> : null,
-       }));
-   }, [api, enableShortcuts, shortcutKeys]);
-```
-
----
-
-### Incident Patch 3: `93a4eef9` (2026-11-13)
-**Commit Message**: ci: pack ecosystem-qa node_modules into the Linux workspace
-
-ecosystem-qa nests its dependencies (hoistingLimits: workspaces), like
-agent-eval. Without its node_modules in the workspace, typescript-validation
-can't resolve @ai-hero/sandcastle or ecosystem-qa's own zod v4.
+The search for a key walked type annotations too, so a reference in a
+type such as `typeof defaults` in a generic led it to an unrelated
+`defaultValue` and refused a harmless arg. It now reads code only, as
+types do not change what code returns.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `scripts/ci/common-jobs.ts` (modified, +3/-2)
+**File**: `code/core/src/csf-tools/CsfObjectPath.ts` (modified, +24/-24)
 ```diff
-@@ -68,9 +68,10 @@ export const build_linux = defineJob('Build (linux)', () => ({
-         `${WORKING_DIR}/node_modules`,
-         `${WORKING_DIR}/code/node_modules`,
-         `${WORKING_DIR}/scripts/node_modules`,
--        // agent-eval nests all its dependencies (installConfig.hoistingLimits),
--        // so downstream checks need its node_modules packed explicitly.
-+        // agent-eval and ecosystem-qa nest all their dependencies (installConfig.hoistingLimits),
-+        // so downstream checks need their node_modules packed explicitly.
-         `${WORKING_DIR}/agent-eval/node_modules`,
-+        `${WORKING_DIR}/ecosystem-qa/node_modules`,
-       ],
-       packageDirs.map((p) => `${WORKING_DIR}/code/${p.replace('src', 'node_modules')}`)
-     ),
+@@ -19,7 +19,7 @@ import {
+   type E,
+   type Node,
+   type Property,
+-  walk,
++  children,
+   isNumericLiteral,
+   isStringLiteral,
+   staticKey,
+@@ -328,29 +328,29 @@ const showsConstant = (editor: SourceEditor, init: Node, path: CsfPattern, seen:
+ const mentions = (editor: SourceEditor, code: Node, keys: ReadonlySet<string>): boolean => {
+   const missing = new Set(keys);
+   const searched = new Set<Node>();
+-  const search = (node: Node) =>
+-    walk(node, (child) => {
+-      if (missing.size === 0) {
+-        return false;
+-      }
+-      const named = namedKey(child);
+-      if (isAnyKey(named)) {
+-        missing.clear();
+-      } else if (named !== undefined) {
+-        missing.delete(named);
+-      }
+-      const binding = child.type === 'Identifier' ? editor.scopes.bindingOf(child) : undefined;
+-      if (
+-        binding &&
+-        binding.kind !== 'import' &&
+-        binding.kind !== 'param' &&
+-        !searched.has(binding.node)
+-      ) {
+-        searched.add(binding.node);
+-        searchBinding(binding);
+-      }
+-      return missing.size > 0;
+-    });
++  // Types do not change what code returns, so they are not read.
++  const search = (child: Node): void => {
++    if (missing.size === 0) {
++      return;
++    }
++    const named = namedKey(child);
++    if (isAnyKey(named)) {
++      missing.clear();
++    } else if (named !== undefined) {
++      missing.delete(named);
++    }
++    const binding = child.type === 'Identifier' ? editor.scopes.bindingOf(child) : undefined;
++    if (
++      binding &&
++      binding.kind !== 'import' &&
++      binding.kind !== 'param' &&
++      !searched.has(binding.node)
++    ) {
++      searched.add(binding.node);
++      searchBinding(binding);
++    }
++    children(child, { skipTypes: true }).forEach(search);
++  };
+   const searchBinding = (binding: Binding) => {
+     if (writtenThrough(editor, binding)) {
+       missing.clear();
+```
+
+**File**: `code/lib/cli-storybook/src/automigrate/fixes/argtypes-default-value.test.ts` (modified, +13/-0)
+```diff
+@@ -515,6 +515,19 @@ describe('argtypes-default-value', () => {
+     expect(result.story).not.toContain("defaultValue: 'M'");
+   });
+ 
++  it('skips an arg whose helper refers to a defaultValue only in a type', async () => {
++    const story = [
++      "const defaults = { defaultValue: 'unused' };",
++      "function arg<T = typeof defaults>() { return { control: 'text' }; }",
++      "export default { argTypes: { label: arg(), size: { defaultValue: 'M' } } };",
++    ].join('\n');
++    const result = await migrate({ story });
++
++    expect(result.failures).toEqual([]);
++    expect(result.story).toContain('label: arg()');
++    expect(result.story).not.toContain("defaultValue: 'M'");
++  });
++
+   it('deletes the defaultValue of an arg named table', async () => {
+     const result = await migrate({
+       story: "export default { argTypes: { table: { defaultValue: 'x', control: 'text' } } };",
+```
+
+---
+
+### Incident Patch 3: `890b1d61` (2026-11-20)
+**Commit Message**: Sandboxes: Pin source-map-js and csstype in vue3-vite/prerelease-ts
+
+The template exempts vue and @vue/* from the npm age gate. Vue 3.5.46 and
+3.6.0-rc.16 (both published 2026-11-20) need source-map-js ^1.2.3 and
+csstype ^3.2.4, which are still inside the published scaffold's 7-day gate,
+so init fails. Pin both to the previous release until they clear the gate.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `scripts/utils/yarn.ts` (modified, +10/-0)
+```diff
+@@ -122,6 +122,16 @@ export const addWorkaroundResolutions = async ({
+     };
+   }
+ 
++  // Vue 3.5.46 and 3.6.0-rc.16 need these at versions still inside the age gate.
++  // Remove once source-map-js 1.2.3 (2026-11-18) is older than the gate.
++  if (key === 'vue3-vite/prerelease-ts') {
++    additionalResolutions = {
++      ...additionalResolutions,
++      'source-map-js': '1.2.2',
++      csstype: '3.2.3',
++    };
++  }
++
+   packageJson.resolutions = {
+     ...packageJson.resolutions,
+     '@testing-library/dom': '^9.3.4',
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #37416** (2026-11-13): Ecosystem QA: Give the agent one list of check ids and their number (@valentinpalkovic)
-- **PR #37412** (2026-11-13): Ecosystem QA: Keep the agent's answer when the sandbox cannot be removed (@valentinpalkovic)
-- **PR #37408** (2026-11-13): Build: Pack ecosystem-qa node_modules into the CI workspace (@ndelangen)
-- **PR #37402** (2026-11-13): Ecosystem QA: Give the agent the migration guide of the tested version (@valentinpalkovic)
-- **PR #37400** (2026-11-13): Core: Make the watch-story-specifiers test expectations separator-agnostic (@obvious-autobuild[bot])
-- **PR #37390** (2026-11-13): Manager: Cut re-renders and store writes on story change (@Sidnioulz)
+- **PR #37630** (2026-11-20): Sandboxes: Pin source-map-js and csstype in the Vue 3 prerelease sandbox (@ndelangen)
+- **PR #37624** (2026-11-20): React: Read referenced project sources in component docgen (@valentinpalkovic)
+- **PR #37623** (2026-11-20): Build: Reduce sandbox npm age gate from 7 days to 3 days (@obvious-autobuild[bot])
+- **PR #37622** (2026-11-20): Renderers: Stop deciding args from argTypes at render time (@valentinpalkovic)
+- **PR #37619** (2026-11-20): Manager: Fix crash from stale toolbar landmark on first load (@huang-julien)
+- **PR #37617** (2026-11-20): README: Fix logo color in GitHub (@Sidnioulz)
 
 ---
 
@@ -1095,38 +861,35 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ecosystem-qa): redact the run result in a step of its own, also after a crash
+## X. Apply contribution-review fixes: derive Yarn gate from npm day count
 
 **RULE**:
-When implementing operations in `.github/workflows/ecosystem-qa.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in storybookjs/storybook. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `scripts/sandbox/generate.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in storybookjs/storybook. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c36d09d2`: ecosystem-qa): redact the run result in a step of its own, also after a crash. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2156707f`: Apply contribution-review fixes: derive Yarn gate from npm day count. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ecosystem-qa.yml`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/sandbox/generate.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-      # run.ts redacts its output when it reaches its end. A run that crashed or was cancelled did
-      # not, and the upload publishes whatever is there.
-      - name: Redact credentials in the run result
-        id: redact
-        run: node ecosystem-qa/redact.ts ecosystem-qa/results
-
-      - name: Upload the run result
-        if: ${{ always() && steps.redact.outcome == 'success' }}
+    // age gate inherited from before-storybook (`BEFORE_SANDBOX_MIN_AGE_GATE`).
+    // The locally published
+          // Refresh the lockfile to a Yarn 4 one with the
+          // `BEFORE_SANDBOX_MIN_AGE_GATE` npmMinimalAgeGate
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-      - name: Upload the run result
+// Induced defect failure mode:
+    // 3-day gate inherited from before-storybook. The locally published
+          // Refresh the lockfile to a Yarn 4 one with a 3-day npmMinimalAgeGate
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c36d09d2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2156707f` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

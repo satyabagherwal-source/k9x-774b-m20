@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "e2f16915",
+    "sourceVersion": "345fe568",
     "license": "Apache-2.0",
-    "contentHash": "ef228f9fec24006807303a600ba05fc673e2ede4b735b2313dd16e35cf437cbf",
-    "lastHarvestedAt": "2026-11-21T07:58:57.076Z",
+    "contentHash": "3c190e213a34da31c6225a0f6ceb8917e3d51f2ca31c55e1a1e5feb35609bdd0",
+    "lastHarvestedAt": "2026-11-21T09:47:30.672Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -4873,10 +4873,10 @@
     "repository": "apache/shardingsphere",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/shardingsphere",
-    "sourceVersion": "eac4d896",
+    "sourceVersion": "ef1f4581",
     "license": "Apache-2.0",
-    "contentHash": "44ffd2ec9fdd630497d1ed6820e7b2233010b35f1c93e46d4742768c6a4279dc",
-    "lastHarvestedAt": "2026-11-20T05:16:25.932Z",
+    "contentHash": "bb2c133901ee77e8fa3c70655029ce73cc163aa3c0ecd5ad5c0b9f52258ffe03",
+    "lastHarvestedAt": "2026-11-21T09:47:28.968Z",
     "learningId": "learn-github-apache-shardingsphere"
   },
   "sharkdp-pastel": {
@@ -8455,8 +8455,8 @@
     "sourceUrl": "https://huggingface.co/mistralai/Timestral-209M",
     "sourceVersion": "hf-mistralai-timestral-209m",
     "license": "Open-Source",
-    "contentHash": "1b3d9b2c978dd7c2257b0d006d0f536574f9f7a9da9ebe17c7ed171d149fcbf2",
-    "lastHarvestedAt": "2026-11-17T15:06:11.876Z",
+    "contentHash": "215ab52ac3bd1c62b89de0e81eb9882b0a8e385ea76f1ce65c7d70ef634cb08c",
+    "lastHarvestedAt": "2026-11-21T09:52:45.610Z",
     "learningId": "learn-huggingface-mistralai-timestral-209m"
   },
   "software-mansion-react-native-screens": {
@@ -10293,10 +10293,10 @@
     "repository": "storybookjs/storybook",
     "platform": "github",
     "sourceUrl": "https://github.com/storybookjs/storybook",
-    "sourceVersion": "1227202d",
+    "sourceVersion": "20075e60",
     "license": "MIT",
-    "contentHash": "d9b795ec365b2232aad81e5567d0d93a667ba1347f6906a9ec1d9f321c9c0546",
-    "lastHarvestedAt": "2026-11-18T09:57:19.411Z",
+    "contentHash": "4fd31e215d34575cb1740f0e822c48cd1ef6d177a00718b28dc7c19bdc345312",
+    "lastHarvestedAt": "2026-11-21T09:52:22.241Z",
     "learningId": "learn-github-storybookjs-storybook"
   },
   "enaqx-awesome-react": {

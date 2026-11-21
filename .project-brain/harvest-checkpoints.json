@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-21T09:23:44.304Z",
+  "last_updated": "2026-11-21T09:52:45.619Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "ef228f9fec24006807303a600ba05fc673e2ede4b735b2313dd16e35cf437cbf",
-      "verified_at": "2026-11-21T07:58:57.083Z",
+      "content_hash": "3c190e213a34da31c6225a0f6ceb8917e3d51f2ca31c55e1a1e5feb35609bdd0",
+      "verified_at": "2026-11-21T09:47:30.680Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T07:58:57.083Z"
+      "last_updated": "2026-11-21T09:47:30.680Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -7431,14 +7431,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apache-shardingsphere",
-      "content_hash": "44ffd2ec9fdd630497d1ed6820e7b2233010b35f1c93e46d4742768c6a4279dc",
-      "verified_at": "2026-11-20T05:16:25.941Z",
+      "content_hash": "bb2c133901ee77e8fa3c70655029ce73cc163aa3c0ecd5ad5c0b9f52258ffe03",
+      "verified_at": "2026-11-21T09:47:28.977Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T05:16:25.941Z"
+      "last_updated": "2026-11-21T09:47:28.977Z"
     },
     "sharkdp/pastel": {
       "repository": "sharkdp/pastel",
@@ -12726,14 +12726,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-mistralai-timestral-209m",
-      "content_hash": "1b3d9b2c978dd7c2257b0d006d0f536574f9f7a9da9ebe17c7ed171d149fcbf2",
-      "verified_at": "2026-11-17T15:06:11.907Z",
+      "content_hash": "215ab52ac3bd1c62b89de0e81eb9882b0a8e385ea76f1ce65c7d70ef634cb08c",
+      "verified_at": "2026-11-21T09:52:45.618Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T15:06:11.907Z"
+      "last_updated": "2026-11-21T09:52:45.618Z"
     },
     "software-mansion/react-native-screens": {
       "repository": "software-mansion/react-native-screens",
@@ -15456,14 +15456,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-storybookjs-storybook",
-      "content_hash": "d9b795ec365b2232aad81e5567d0d93a667ba1347f6906a9ec1d9f321c9c0546",
-      "verified_at": "2026-11-18T09:57:19.421Z",
+      "content_hash": "4fd31e215d34575cb1740f0e822c48cd1ef6d177a00718b28dc7c19bdc345312",
+      "verified_at": "2026-11-21T09:52:22.249Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T09:57:19.421Z"
+      "last_updated": "2026-11-21T09:52:22.250Z"
     },
     "enaqx/awesome-react": {
       "repository": "enaqx/awesome-react",

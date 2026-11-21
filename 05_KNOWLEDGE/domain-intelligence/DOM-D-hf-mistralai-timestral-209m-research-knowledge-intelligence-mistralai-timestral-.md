@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/mistralai/Timestral-209M",
   "source_version": "hf-mistralai-timestral-209m",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T15:06:12.068Z",
+  "timestamp": "2026-11-21T09:52:45.800Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-mistralai-timestral-209m",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [mistralai/Timestral-209M](https://huggingface.co/mistralai/Timestral-209M) (Revision: `hf-mistral`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T15:06:12.068Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T09:52:45.800Z`  
 > **Learning ID**: `learn-huggingface-mistralai-timestral-209m`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-mistralai-timestral-209m-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/mistralai/Timestral-209M](https://huggingface.co/mistralai/Timestral-209M))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T15:06:11.310Z  
+> **Harvest Timestamp**: 2026-11-21T09:47:13.185Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: time-series-forecasting
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 31857 downloads | 494 likes
+- **Stars / Engagement**: 30653 downloads | 500 likes
 
 ---
 

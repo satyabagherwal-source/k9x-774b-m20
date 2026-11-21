@@ -11798,3 +11798,7 @@ Every entry in this ledger must capture:
 | `learn-github-react-react-native` | `https://github.com/react/react-native` | `32a5aa6a` | Multi-dimensional audit evidence | 2026-11-21T08:52:53.135Z |
 | `learn-huggingface-comfy-org-z_image_turbo` | `https://huggingface.co/Comfy-Org/z_image_turbo` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-21T08:54:38.939Z |
 | `learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4` | `https://huggingface.co/nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-21T09:23:44.294Z |
+| `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `ef1f4581` | Multi-dimensional audit evidence | 2026-11-21T09:47:28.968Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `345fe568` | Multi-dimensional audit evidence | 2026-11-21T09:47:30.672Z |
+| `learn-github-storybookjs-storybook` | `https://github.com/storybookjs/storybook` | `20075e60` | Multi-dimensional audit evidence | 2026-11-21T09:52:22.241Z |
+| `learn-huggingface-mistralai-timestral-209m` | `https://huggingface.co/mistralai/Timestral-209M` | `hf-mistral` | Multi-dimensional audit evidence | 2026-11-21T09:52:45.610Z |

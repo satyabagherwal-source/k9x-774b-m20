@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T09:23:57.057Z",
+  "last_updated": "2026-11-21T09:52:50.130Z",
   "total_records": 2242,
   "domains": {
     "A": {
@@ -9347,8 +9347,8 @@
       "title": "Technical Construction Intelligence: storybookjs/storybook Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-storybookjs-storybook-technical-construction-intelligence-storybookjs-storybook-.md",
       "repository": "storybookjs/storybook",
-      "content_hash": "2a00dbfd93d7bb8e89649da19fea083e2ae8ce3b139844b557961586c1b6c758",
-      "created_at": "2026-11-13T18:05:59.553Z"
+      "content_hash": "57fbfe6b13da6918d615d4c895d7cdd8d0fce55d89e697e39cedaa31bcd2a200",
+      "created_at": "2026-11-21T09:52:22.609Z"
     },
     "DOM-D-33D763C2": {
       "record_id": "DOM-D-33D763C2",
@@ -9407,8 +9407,8 @@
       "title": "Technical Construction Intelligence: storybookjs-storybook-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-storybookjs-storybook-learnings-technical-construction-intelligence-storybookjs-.md",
       "repository": "storybookjs-storybook-learnings",
-      "content_hash": "85d3b9fa7ad8569a7036e456227e25b3cc829963e7962e89f5ffaafa48418904",
-      "created_at": "2026-11-13T18:06:48.883Z"
+      "content_hash": "969419e4cfae4974a81565f6ed52e6a188969967830365089ad721fa0be77b03",
+      "created_at": "2026-11-21T09:52:49.368Z"
     },
     "domain_intelligence-human-need-intelligence-foreactlabs-openexecutive-core-invariants": {
       "record_id": "domain_intelligence-human-need-intelligence-foreactlabs-openexecutive-core-invariants",
@@ -15321,8 +15321,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "795de077ee769128f10461bd409d6c579c3519a02514ae30f0ef1724ec6da113",
-      "created_at": "2026-11-21T07:58:57.390Z"
+      "content_hash": "b9a6f3b80334f0391a2590eb7ef5a8f2c6211f92087c405b4c236d815f475ee4",
+      "created_at": "2026-11-21T09:47:31.009Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -23005,8 +23005,8 @@
       "title": "Research & Knowledge Intelligence: apache/shardingsphere Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-apache-shardingsphere-research-knowledge-intelligence-apache-shardingsphere-core.md",
       "repository": "apache/shardingsphere",
-      "content_hash": "89a2dd361d59e9ab3e691bcfdb79f39a2c0a61e1e5a67352f5f1b0d74f22fafb",
-      "created_at": "2026-11-20T05:16:26.304Z"
+      "content_hash": "fecdfc26eaf61b3ad26199b5a83219fe9052671c8f1961f1c8229f9a4e963539",
+      "created_at": "2026-11-21T09:47:29.324Z"
     },
     "domain_intelligence-architecture-intelligence-metrolistgroup-metrolist-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-metrolistgroup-metrolist-learnings-core-invariants",
@@ -23032,8 +23032,8 @@
       "title": "Research & Knowledge Intelligence: apache-shardingsphere-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-apache-shardingsphere-learnings-research-knowledge-intelligence-apache-shardings.md",
       "repository": "apache-shardingsphere-learnings",
-      "content_hash": "e9a4b6d3eac1408208c594661ac3a35abe7612cadfa210646fa4980c0719e130",
-      "created_at": "2026-11-20T05:16:31.833Z"
+      "content_hash": "bf54a881126f2b2a45e8c143134a326848eaf218f038ba94f3385e40efcd4759",
+      "created_at": "2026-11-21T09:52:50.130Z"
     },
     "domain_intelligence-research-knowledge-intelligence-liconstudio-minimax-h3-vbvr-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-liconstudio-minimax-h3-vbvr-core-invariants",
@@ -27934,8 +27934,8 @@
       "title": "Research & Knowledge Intelligence: mistralai/Timestral-209M Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-mistralai-timestral-209m-research-knowledge-intelligence-mistralai-timestral-.md",
       "repository": "mistralai/Timestral-209M",
-      "content_hash": "eb3626e6099393efb575b2e551152a97233ec4feddec12f43b3de5445bf662e3",
-      "created_at": "2026-11-17T15:06:12.068Z"
+      "content_hash": "17d8b3a6a1afe1fabe021af33ed5120da76f3e79526a6a0f01e11838c274c66b",
+      "created_at": "2026-11-21T09:52:45.801Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-mistralai-timestral-209m-learnings-core-invar": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-mistralai-timestral-209m-learnings-core-invar",
@@ -27943,8 +27943,8 @@
       "title": "Research & Knowledge Intelligence: hf-mistralai-timestral-209m-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-mistralai-timestral-209m-learnings-research-knowledge-intelligence-hf-mistral.md",
       "repository": "hf-mistralai-timestral-209m-learnings",
-      "content_hash": "3066b075600896c55b4395c6bb538806911323f9c0ed2874bbebd4fbdc5dddf6",
-      "created_at": "2026-11-17T15:06:27.429Z"
+      "content_hash": "de281a2e5479296cd27b285f47afacbffbb5e3a096e27288221b0235489698d4",
+      "created_at": "2026-11-21T09:52:48.828Z"
     },
     "domain_intelligence-content-information-intelligence-tursodatabase-turso-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-tursodatabase-turso-core-invariants",

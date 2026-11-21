@@ -11765,3 +11765,7 @@
 | `CYCLE-20261121-72MJ` | `2026-11-21T08:52:53.131Z` | `react/react-native` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9762` | Yes (`892d3af5...`) |
 | `CYCLE-20261121-9C9I` | `2026-11-21T08:54:38.934Z` | `Comfy-Org/Z-Image-Turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-z_image_turbo-learnings.md` | Yes (`d7187627...`) |
 | `CYCLE-20261121-AQZL` | `2026-11-21T09:23:44.289Z` | `nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotron-3.5-super-vl-120b-a12b-nvfp4-learnings.md` | Yes (`d9da591b...`) |
+| `CYCLE-20261121-5A9X` | `2026-11-21T09:47:28.965Z` | `apache/shardingsphere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9763` | Yes (`bb2c1339...`) |
+| `CYCLE-20261121-5BL8` | `2026-11-21T09:47:30.668Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9764` | Yes (`3c190e21...`) |
+| `CYCLE-20261121-BKKE` | `2026-11-21T09:52:22.238Z` | `storybookjs/storybook` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9765` | Yes (`4fd31e21...`) |
+| `CYCLE-20261121-C2LJ` | `2026-11-21T09:52:45.607Z` | `mistralai/Timestral-209M` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-mistralai-timestral-209m-learnings.md` | Yes (`215ab52a...`) |

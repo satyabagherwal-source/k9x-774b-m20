@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T09:23:44.300Z",
-  "total_cycles_completed": 11198,
-  "total_learnings_persisted": 11198,
-  "total_rules_promoted": 10561,
+  "last_updated": "2026-11-21T09:52:45.616Z",
+  "total_cycles_completed": 11202,
+  "total_learnings_persisted": 11202,
+  "total_rules_promoted": 10564,
   "history": [
-    {
-      "timestamp": "2026-11-20T13:26:29.151Z",
-      "repository": "itsdecodingai/llm-twin-course",
-      "learningId": "learn-github-itsdecodingai-llm-twin-course",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T13:26:32.713Z",
-      "repository": "microsoft/Aion-1.0-Instruct-2.3B",
-      "learningId": "learn-huggingface-microsoft-aion-1-0-instruct-2-3b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T13:26:41.627Z",
-      "repository": "nginx/kubernetes-ingress",
-      "learningId": "learn-github-nginx-kubernetes-ingress",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T13:40:20.591Z",
-      "repository": "aleo-labs-protocol/snarkOS",
-      "learningId": "learn-github-aleo-labs-protocol-snarkos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-20T13:40:23.457Z",
       "repository": "tursodatabase/turso",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-21T09:23:44.300Z",
       "repository": "nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
       "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T09:47:28.974Z",
+      "repository": "apache/shardingsphere",
+      "learningId": "learn-github-apache-shardingsphere",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T09:47:30.677Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T09:52:22.247Z",
+      "repository": "storybookjs/storybook",
+      "learningId": "learn-github-storybookjs-storybook",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T09:52:45.616Z",
+      "repository": "mistralai/Timestral-209M",
+      "learningId": "learn-huggingface-mistralai-timestral-209m",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

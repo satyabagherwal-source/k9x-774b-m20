@@ -4,22 +4,22 @@
 {
   "source_repository": "NucleoidAI/Nucleoid",
   "source_url": "https://github.com/NucleoidAI/Nucleoid",
-  "source_version": "e2f16915",
+  "source_version": "345fe568",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-21T07:58:57.253Z",
+  "timestamp": "2026-11-21T09:47:30.865Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nucleoidai-nucleoid",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `e2f16915`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-21T07:58:57.253Z`  
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `345fe568`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-21T09:47:30.865Z`  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `NucleoidAI/Nucleoid` (Commit: `e2f16915`)
+- **Target Repository**: `NucleoidAI/Nucleoid` (Commit: `345fe568`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T07:58:56.226Z  
+> **Harvest Timestamp**: 2026-11-21T09:47:29.730Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1569,52 +1569,269 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `356bce8c` (2026-11-21)
-**Commit Message**: Fix synthesized instance execution
+### Incident Patch 1: `345fe568` (2026-11-21)
+**Commit Message**: Use OpenRouter SDK for ARC generation
 
-Use synthesized implementations and include the current instance in execution. Reorder the synthesis routine's final transformations.
+Replace Axios with the official SDK, disable automatic retries, and adapt response handling and diagnostics. Update the TypeScript module target and provider documentation.
 
-**File**: `arc/src/synthesizer.ts` (modified, +5/-4)
+**File**: `arc/README.md` (modified, +3/-1)
 ```diff
-@@ -8,9 +8,9 @@ const SYNTHESIZING_ROUTINE = [
+@@ -26,7 +26,9 @@ Use type checking, linting, builds, and manual/offline evaluation instead.
+ Keep puzzle datasets, instruction examples, and training/held-out scoring intact.
+ 
+ OpenRouter is the only LLM provider. Set `OPENROUTER_API_KEY` in `.env`.
+-`src\lib\openrouter.ts` fixes the model to `qwen/qwen3.8-27b`, served only by
++`src\lib\openrouter.ts` calls it through the official `@openrouter/sdk` client
++with the SDK's retries turned off, so each generation is a single request.
++It fixes the model to `qwen/qwen3.8-27b`, served only by
+ the `deepinfra/bf16` provider without fallbacks, with reasoning disabled and
+ JSON output requested through `response_format: { type: "json_object" }`. No
+ setting or request argument changes the model. The legacy `LLM` selector is no
+```
+
+**File**: `arc/bun.lock` (modified, +5/-1)
+```diff
+@@ -6,7 +6,7 @@
+       "name": "nuc-arc",
+       "dependencies": {
+         "@nucleoidai/expert": "^1.0.3",
+-        "axios": "^1.7.7",
++        "@openrouter/sdk": "^1.5.127",
+         "dotenv": "^16.4.5",
+         "string-width": "^4.2.3",
+         "tsx": "^4.20.0",
+@@ -106,6 +106,8 @@
+ 
+     "@nucleoidai/expert": ["@nucleoidai/expert@1.0.3", "", { "dependencies": { "@types/node": "^20.11.30", "assert": "^2.1.0", "axios": "^1.6.7", "express-async-errors": "^3.1.1", "joi": "^17.12.1", "openai": "^4.28.0", "typescript": "^5.4.3", "uuid": "^9.0.1" } }, "sha512-PrR1j4rYQBZX6xuc+85gBEHlyi8Hl8nngAPyD+xeLDcMSy/6N3jHnFfVGRvl4qjIXf6p8akB5LyIPbw8tu2SCA=="],
+ 
++    "@openrouter/sdk": ["@openrouter/sdk@1.5.127", "", { "dependencies": { "zod": "^3.25.0 || ^4.0.0" } }, "sha512-Xnix4qhB0GyGdWSzCsYz2mzbd8eqhKm8OBNhqttBHMqB724Io+OR3VCaRA9pwCs8sclBo2hnG3I/GHosVo1dYg=="],
++
+     "@sideway/address": ["@sideway/address@4.1.5", "", { "dependencies": { "@hapi/hoek": "^9.0.0" } }, "sha512-IqO/DUQHUkPeixNQ8n0JA6102hT9CmaljNTPmQ1u8MEhBo/R4Q8eKLN/vGZxuebwOroDB4cbpjheD4+/sKFK4Q=="],
+ 
+     "@sideway/formula": ["@sideway/formula@3.0.1", "", {}, "sha512-/poHZJJVjx3L+zVD6g9KgHfYnb443oi7wLu/XKojDviHy6HOEOA6z1Trk5aR1dGcmPenJEgb2sK2I80LeS3MIg=="],
+@@ -584,6 +586,8 @@
+ 
+     "yocto-queue": ["yocto-queue@0.1.0", "", {}, "sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q=="],
+ 
++    "zod": ["zod@4.6.7", "", {}, "sha512-g8W2D2kU6a8untc053fX1uVBKzM7yqAxW/3zwk83+6RyF2+SKOuV+c0wBDhUwzV1PaGapmZH+rmcUzPf+3CGwg=="],
++
+     "@eslint/eslintrc/ignore": ["ignore@5.3.2", "", {}, "sha512-hsBTNUqQTDwkWtcdYI2i06Y/nUBEsNEDJKjWdigLvegy8kDuJAS8uRlpkkcQpyEXL0Z/pjDy5HBmMjRCJ2gq+g=="],
+ 
+     "@nucleoidai/expert/@types/node": ["@types/node@20.19.43", "", { "dependencies": { "undici-types": "~6.21.0" } }, "sha512-6oYBAi5ikg4Pl+kGsoYtawUMBT2zZMCvPNF7pVLnHZfd1zf38DRiWn/gT01RYCdUqkv7Fhr+C9ot4/tb+2sVvA=="],
+```
+
+**File**: `arc/package.json` (modified, +1/-1)
+```diff
+@@ -26,7 +26,7 @@
+   },
+   "dependencies": {
+     "@nucleoidai/expert": "^1.0.3",
+-    "axios": "^1.7.7",
++    "@openrouter/sdk": "^1.5.127",
+     "dotenv": "^16.4.5",
+     "string-width": "^4.2.3",
+     "tsx": "^4.20.0",
+```
+
+**File**: `arc/src/lib/openrouter.ts` (modified, +81/-49)
+```diff
+@@ -1,4 +1,10 @@
+-import axios from "axios";
++import { HTTPClient, OpenRouter } from "@openrouter/sdk";
++import {
++  HTTPClientError,
++  OpenRouterError,
++  ResponseValidationError,
++  SDKValidationError,
++} from "@openrouter/sdk/models/errors";
+ import * as milestone from "./milestone.ts";
+ 
+ export async function generate({ reasoning = false, messages = [] }) {
+@@ -7,67 +13,70 @@ export async function generate({ reasoning = false, messages = [] }) {
+     throw new Error("OPENROUTER_API_KEY is required");
+   }
+ 
+-  const { data, headers } = await axios({
+-    method: "POST",
+-    url: "https://openrouter.ai/api/v1/chat/completions",
+-    headers: {
+-      "Content-Type": "application/json",
+-      Authorization: `Bearer ${apiKey}`,
+-      "X-OpenRouter-Cache": "false",
+-    },
+-    data: {
+-      model: "qwen/qwen3.8-27b",
+-      messages,
+-      temperature: 0,
+-      top_p: 1,
+-      top_k: 1,
+-      seed: 42,
+-      frequency_penalty: 0,
+-      presence_penalty: 0,
+-      reasoning: { enabled: reasoning },
+-      response_format: { type: "json_object" },
+-      provider: {
+-        only: ["deepinfra/fp8"],
+-        allow_fallbacks: false,
++  let cacheStatus = "";
++  const httpClient = new HTTPClient().addHook("response", (response) => {
++    cacheStatus = response.headers.get("x-openrouter-cache-status") ?? "";
++  });
++
++  // The SDK retries 5XX responses and connection errors for up to an hour by
++  // default, so retries are disabled to keep each generation one request.
++  const openrouter = new OpenRouter({
++    apiKey,
++    httpClient,
++    retryConfig: { strategy: "none" },
++  });
++
++  const data = await openrouter.chat
++    .send(
++      {
++        chatRequest: {
++          model: "qwen/qwen3.8-27b",
++          messages,
++          temperature: 0,
++          topP: 1,
++          topK: 1,
++          seed: 42,
++          frequencyPenalty: 0,
++          presencePenalty: 0,
++          reasoning: { enabled: reasoning },
++          responseFormat: { type: "json_object" },
++          provider: {
++            only: ["deepinfra/fp8"],
++            allowFallbacks: false,
++          },
++        },
+       },
+-    },
+-  }).catch((error) => {
+-    if (!axios.isAxiosError(error)) {
++      { headers: { "X-OpenRouter-Cache": "false" } }
++    )
++    .catch((error) => {
++      // SDK errors hold the raw response, the request payload or the transport
++      // error, so only their messages are rethrown, without the cause.
++      if (
++        error instanceof OpenRouterError ||
++        error instanceof HTTPClientError ||
++        error instanceof SDKValidationError
++      ) {
++        throw new Error(describe(error));
++      }
+       throw error;
+-    }
+-    const status: string = error.response ? ` (${error.response.status})` : "";
+-    const message = error.response?.data?.error?.message;
+-    // Axios errors contain authentication headers, so do not attach the cause.
+-    throw new Error(
+-      `OpenRouter request failed${status}: ${
+-        typeof message === "string" ? message : error.message
+-      }`
+-    );
+-  });
++    });
+ 
+-  const cacheStatus: string = String(
+-    headers["x-openrouter-cache-status"] ?? ""
+-  );
+   if (cacheStatus.toUpperCase() === "HIT") {
+     throw new Error("OpenRouter returned a cached response");
+   }
+ 
+-  if (data.error) {
+-    throw new Error(`OpenRouter error: ${data.error.message}`);
+-  }
+-
+-  const content: string = data.choices?.[0]?.message?.content;
+-  if (!content?.trim()) {
++  const content = data.choices[0]?.message.content;
++  if (typeof content !== "string" || !content.trim()) {
+     throw new Error("OpenRouter returned no text content");
+   }
+ 
+-  const cachedTokens: number = data.usage?.prompt_tokens_details?.cached_tokens;
++  const cachedTokens: number = data.usage?.promptTokensDetails?.cachedTokens;
+ 
+   if (data.usage) {
+-    const { prompt_tokens, completion_tokens } = data.usage;
++    const { promptTokens, completionTokens } = data.usage;
+     milestone.usage({
+-      prompt_tokens,
+-      completion_tokens,
++      prompt_tokens: promptTokens,
++      completion_tokens: completionTokens,
+       cached_tokens: cachedTokens,
+     });
+   }
+@@ -89,3 +98,26 @@ export async function generate({ reasoning = false, messages = [] }) {
+ 
+   return jsonContent;
+ }
++
++function describe(
++  error: OpenRouterError | HTTPClientError | SDKValidationError
++): string {
++  if (error instanceof ResponseValidationError) {
++    // OpenRouter reports an error raised during generation with status 200.
++    const body = error.rawValue as { error?: { message?: unknown } } | null;
++    return typeof body?.error?.message === "string"
++      ? `OpenRouter error: ${body.error.message}`
++      : `OpenRouter returned an invalid response: ${error.pretty()}\n\nResponse body: ${
++          error.body
++        }`;
++  }
++  if (error instanceof OpenRouterError) {
++    return `OpenRouter request failed (${error.statusCode}): ${error.message}`;
++  }
++  // fetch() keeps the network reason, such as ENOTF
+```
+
+**File**: `arc/src/synthesizer.ts` (modified, +0/-3)
+```diff
+@@ -8,9 +8,6 @@ const SYNTHESIZING_ROUTINE = [
    { x: 1, y: 0, rotation: 90 },
    { x: 1, y: 1, rotation: 180 },
    { x: 0, y: 1, rotation: 270 },
--  { x: 1, y: 0, rotation: 270 },
--  { x: 0, y: 0, rotation: 180 },
-   { x: 0, y: 1, rotation: 90 },
-+  { x: 0, y: 0, rotation: 180 },
-+  { x: 1, y: 0, rotation: 270 },
+-  // { x: 0, y: 1, rotation: 90 },
+-  // { x: 0, y: 0, rotation: 180 },
+-  // { x: 1, y: 0, rotation: 270 },
  ];
  
  async function synthesize({ train }) {
-@@ -69,7 +69,7 @@ async function synthesize({ train }) {
-         const canvas_height: number = input_instance_matrix.length;
-         const class_declaration = train.class_declaration;
-         const declarations = train.declarations;
--        const implementations = dataset.instances.map(
-+        const implementations = synthesized_dataset.instances.map(
-           ({ implementation }) => implementation
-         );
- 
-@@ -78,7 +78,7 @@ async function synthesize({ train }) {
-             `canvas_width = ${canvas_width}`,
-             `canvas_height = ${canvas_height}`,
-             class_declaration,
--            instance.implementation,
-+            synthesized_instance.implementation,
-             `${synthesized_instance_name}`,
-           ].join("\n\n")
-         );
-@@ -90,6 +90,7 @@ async function synthesize({ train }) {
-             class_declaration,
-             ...declarations,
-             ...implementations,
-+            synthesized_instance.implementation,
-             `${synthesized_instance_name}`,
-           ].join("\n\n")
-         );
 ```
+
+**File**: `arc/tsconfig.json` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ {
+   "compilerOptions": {
+     "target": "ES2022",
+-    "module": "Node16",
++    "module": "node20",
+     "moduleResolution": "Node16",
+     "strict": false,
+     "esModuleInterop": true,
+```
+
+---
+
+### Incident Patch 2: `b8587c1b` (2026-11-21)
+**Commit Message**: Resume NUC 125 Stepped Slices
+
+Renews this session's claim on NUC 125, allocated by bb087a5c (Draft NUC
+125 Stepped Slices) at 2026-11-20T11:22:22-05:00. The latest allocation or
+claim was 15.6 hours old, past the 12-hour renewal point, and no other
+session has claimed the NUC. The continuous /nuc-proposal cycle continues
+with phase 2 of its proposal against the pinned allocation; this claim
+changes no file and records no outcome.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01AJtz8e8dqMwocimNqgffMq
+
+
 
 #### Recent Merged Pull Requests:
 - **PR #72** (closed): Bump the npm_and_yarn group with 2 updates (@dependabot[bot])
@@ -1642,38 +1859,33 @@ Use synthesized implementations and include the current instance in execution. R
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. synthesized instance execution
+## X. Use OpenRouter SDK for ARC generation
 
 **RULE**:
-When implementing operations in `arc/src/synthesizer.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `arc/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `356bce8c`: synthesized instance execution. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `345fe568`: Use OpenRouter SDK for ARC generation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/src/synthesizer.ts`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  { x: 0, y: 0, rotation: 180 },
-  { x: 1, y: 0, rotation: 270 },
-        const implementations = synthesized_dataset.instances.map(
-            synthesized_instance.implementation,
-            synthesized_instance.implementation,
+`src\lib\openrouter.ts` calls it through the official `@openrouter/sdk` client
+with the SDK's retries turned off, so each generation is a single request.
+It fixes the model to `qwen/qwen3.8-27b`, served only by
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-  { x: 1, y: 0, rotation: 270 },
-  { x: 0, y: 0, rotation: 180 },
-        const implementations = dataset.instances.map(
-            instance.implementation,
+`src\lib\openrouter.ts` fixes the model to `qwen/qwen3.8-27b`, served only by
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `356bce8c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `345fe568` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

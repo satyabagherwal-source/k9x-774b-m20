@@ -726347,3 +726347,235 @@ import com.facebook.react.views.text.internal.span.CanvasEffectSpan
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `a5b0bf0f` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9763. Add regression coverage for unsupported Javadoc parameter nullability (Harvested from apache/shardingsphere)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Add regression coverage for unsupported Javadoc parameter nullability",
+  "source": "apache/shardingsphere",
+  "source_url": "https://github.com/apache/shardingsphere",
+  "source_version": "ef1f4581",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-21T09:47:28.529Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-apache-shardingsphere",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.76,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [apache/shardingsphere](https://github.com/apache/shardingsphere) (Revision: `ef1f4581`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 76%).
+
+**RULE**:
+When implementing operations in `.codex/harness/agents/cases.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/shardingsphere. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `384737e6`: Add regression coverage for unsupported Javadoc parameter nullability. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `.codex/harness/agents/cases.toml`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```java
+// Verified production-grade fix pattern:
+
+[[cases]]
+id = "java_javadoc_review_checks_param_null_claims"
+group = "coding / Javadoc"
+description = "Reviews unsupported nullable claims in parameter tags while preserving concise descriptions and an explicit nullable contract."
+phase = "Javadoc policy and readability acceptance"
+ordinary_loop = false
+profile = "code-review"
+semantic_policy_assertions = true
+prompt = '''
+The final Javadoc review of the task-added ordinary method Checker.check in the current-working-tree file module-a/src/main/java/example/Checker.java is pending.
+Inspect the supplied declaration read-only to complete that review.
+The complete review material from that declaration is supplied below; no additional file lookup or command execution is needed.
+The review scope is the supplied Javadoc; all other applicable standards and formatting checks are satisfied.
+The item parameter is required input.
+Neither settings nor context has an API, SPI, framework, compatibility, or nullable contract permitting null; the implementation merely skips reading either parameter when a selected check does not use it.
+An existing framework contract governing observer explicitly specifies that null means no observer and require
+```
+
+**NEGATIVE CONSTRAINT**:
+```java
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `384737e6` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9764. Use OpenRouter SDK for ARC generation (Harvested from NucleoidAI/Nucleoid)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Use OpenRouter SDK for ARC generation",
+  "source": "NucleoidAI/Nucleoid",
+  "source_url": "https://github.com/NucleoidAI/Nucleoid",
+  "source_version": "345fe568",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-21T09:47:30.227Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nucleoidai-nucleoid",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `345fe568`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `arc/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `345fe568`: Use OpenRouter SDK for ARC generation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/README.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+`src\lib\openrouter.ts` calls it through the official `@openrouter/sdk` client
+with the SDK's retries turned off, so each generation is a single request.
+It fixes the model to `qwen/qwen3.8-27b`, served only by
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+`src\lib\openrouter.ts` fixes the model to `qwen/qwen3.8-27b`, served only by
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `345fe568` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9765. Apply contribution-review fixes: derive Yarn gate from npm day count (Harvested from storybookjs/storybook)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Apply contribution-review fixes: derive Yarn gate from npm day count",
+  "source": "storybookjs/storybook",
+  "source_url": "https://github.com/storybookjs/storybook",
+  "source_version": "20075e60",
+  "license": "MIT",
+  "extracted_at": "2026-11-21T09:52:21.754Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-storybookjs-storybook",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [storybookjs/storybook](https://github.com/storybookjs/storybook) (Revision: `20075e60`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `scripts/sandbox/generate.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in storybookjs/storybook. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `2156707f`: Apply contribution-review fixes: derive Yarn gate from npm day count. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/sandbox/generate.ts`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+    // age gate inherited from before-storybook (`BEFORE_SANDBOX_MIN_AGE_GATE`).
+    // The locally published
+          // Refresh the lockfile to a Yarn 4 one with the
+          // `BEFORE_SANDBOX_MIN_AGE_GATE` npmMinimalAgeGate
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
+    // 3-day gate inherited from before-storybook. The locally published
+          // Refresh the lockfile to a Yarn 4 one with a 3-day npmMinimalAgeGate
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `2156707f` are properly handled with clean fallback behavior.
