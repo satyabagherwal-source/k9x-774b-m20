@@ -4,22 +4,22 @@
 {
   "source_repository": "aleo-labs-protocol/snarkOS",
   "source_url": "https://github.com/ProvableHQ/snarkOS",
-  "source_version": "9138ff8a",
+  "source_version": "ffa93916",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-21T03:44:44.839Z",
+  "timestamp": "2026-11-21T13:30:39.897Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-aleo-labs-protocol-snarkos",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [aleo-labs-protocol/snarkOS](https://github.com/ProvableHQ/snarkOS) (Revision: `9138ff8a`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-21T03:44:44.839Z`  
+> **Provenance**: Harvested from [aleo-labs-protocol/snarkOS](https://github.com/ProvableHQ/snarkOS) (Revision: `ffa93916`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-21T13:30:39.897Z`  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `aleo-labs-protocol/snarkOS` (Commit: `9138ff8a`)
+- **Target Repository**: `aleo-labs-protocol/snarkOS` (Commit: `ffa93916`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T03:44:43.650Z  
+> **Harvest Timestamp**: 2026-11-21T13:30:38.978Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1885,73 +1885,1036 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9138ff8a` (2026-11-21)
-**Commit Message**: Merge pull request #4748 from aleo-labs-protocol/refactor/inline-display-error
+### Incident Patch 1: `ffa93916` (2026-11-21)
+**Commit Message**: Merge pull request #4725 from aleo-labs-protocol/agent/block-response-status-r2
 
-**File**: `snarkos/main.rs` (modified, +3/-2)
+Add BlockResponse status replies and peer floors to block sync
+
+**File**: `Cargo.lock` (modified, +1/-0)
 ```diff
-@@ -14,7 +14,7 @@
- // limitations under the License.
+@@ -5693,6 +5693,7 @@ name = "snarkos-node-sync"
+ version = "4.13.1"
+ dependencies = [
+  "anyhow",
++ "async-trait",
+  "futures",
+  "indexmap 2.14.2",
+  "itertools 0.15.0",
+```
+
+**File**: `node/bft/events/src/block_response.rs` (modified, +173/-6)
+```diff
+@@ -22,13 +22,49 @@ use snarkvm::{
+     utilities::io_error,
+ };
  
- use snarkos_cli::{commands::CLI, helpers::Updater};
--use snarkvm::utilities::{display_error, flatten_error};
-+use snarkvm::utilities::flatten_error;
++use bytes::Bytes;
+ use std::borrow::Cow;
  
- use clap::Parser;
- use std::{backtrace::Backtrace, env, io, io::IsTerminal, panic::catch_unwind};
-@@ -127,7 +127,8 @@ fn main() {
-         Ok(Err(err)) => {
-             // A regular error occurred during startup.
-             if io::stderr().is_terminal() || !has_tracing_subscriber() {
--                display_error(&err);
-+                eprintln!("⚠️ {err}");
-+                err.chain().skip(1).for_each(|cause| eprintln!("     ↳ {cause}"));
-                 eprintln!();
-                 eprintln!("Use `--help` for instructions on how to use this command");
-             } else {
++/// Whether a block response carries the requested blocks, and if not, why.
++///
++/// A status other than `Blocks` is only sent to peers whose protocol version supports it.
++#[derive(Copy, Clone, Debug, PartialEq, Eq)]
++pub enum BlockResponseStatus {
++    /// The response carries the requested blocks.
++    Blocks,
++    /// The sender no longer serves the start of the range; it serves heights from `oldest_retained`.
++    Pruned { oldest_retained: u32 },
++    /// The range reaches past the sender's latest block, at `latest_height`.
++    NotYet { latest_height: u32 },
++}
++
++impl BlockResponseStatus {
++    const NOT_YET_TAG: u8 = 1;
++    const PRUNED_TAG: u8 = 0;
++
++    /// Ensures that a reply of this status does not contradict the request it answers.
++    pub fn ensure_consistent_with(&self, peer_ip: SocketAddr, request: &BlockRequest) -> Result<()> {
++        let BlockRequest { start_height, end_height } = *request;
++        match *self {
++            Self::Blocks => Ok(()),
++            Self::Pruned { oldest_retained } if start_height >= oldest_retained => bail!(
++                "Peer '{peer_ip}' sent a contradictory block response ({start_height}..{end_height} pruned below {oldest_retained})"
++            ),
++            Self::NotYet { latest_height } if end_height - 1 <= latest_height => bail!(
++                "Peer '{peer_ip}' sent a contradictory block response ({start_height}..{end_height} not yet at {latest_height})"
++            ),
++            _ => Ok(()),
++        }
++    }
++}
++
+ #[derive(Clone, Debug, PartialEq, Eq)]
+ pub struct BlockResponse<N: Network> {
+     /// The original block request.
+     pub request: BlockRequest,
+-    /// The blocks.
++    /// Whether the response carries the blocks.
++    pub status: BlockResponseStatus,
++    /// The blocks, empty unless the status is `Blocks`.
+     pub blocks: Data<DataBlocks<N>>,
+     /// The consensus version at the height of the *last* block in this response.
+     /// This enables detecting if the current node, or the peer, missed an upgrade. Its value is `None` for messages with version < 2.
+@@ -52,12 +88,37 @@ impl<N: Network> EventTrait for BlockResponse<N> {
+ impl<N: Network> BlockResponse<N> {
+     // Constructs a new block response.
+     pub fn new(request: BlockRequest, blocks: DataBlocks<N>, latest_consensus_version: ConsensusVersion) -> Self {
+-        Self { request, blocks: Data::Object(blocks), latest_consensus_version: Some(latest_consensus_version) }
++        Self {
++            request,
++            status: BlockResponseStatus::Blocks,
++            blocks: Data::Object(blocks),
++            latest_consensus_version: Some(latest_consensus_version),
++        }
++    }
++
++    /// Constructs a block response without blocks, which explains why with `status`.
++    pub fn unavailable(request: BlockRequest, status: BlockResponseStatus) -> Self {
++        // The serialized empty `DataBlocks`, which is a block count of 0.
++        let blocks = Data::Buffer(Bytes::from_static(&[0]));
++        Self { request, status, blocks, latest_consensus_version: None }
+     }
+ }
+ 
+ impl<N: Network> ToBytes for BlockResponse<N> {
+     fn write_le<W: io::Write>(&self, mut writer: W) -> io::Result<()> {
++        // A status reply starts with `u32::MAX`, which is never a valid start height.
++        let status = match self.status {
++            BlockResponseStatus::Blocks => None,
++            BlockResponseStatus::Pruned { oldest_retained } => Some((BlockResponseStatus::PRUNED_TAG, oldest_retained)),
++            BlockResponseStatus::NotYet { latest_height } => Some((BlockResponseStatus::NOT_YET_TAG, latest_height)),
++        };
++        if let Some((tag, value)) = status {
++            u32::MAX.write_le(&mut writer)?;
++            self.request.write_le(&mut writer)?;
++            tag.write_le(&mut writer)?;
++            return value.write_le(&mut writer);
++        }
++
+         // Block responses without a consesnsus version have message version `1`, other have to `2` (or greater in the future).
+         let Some(latest_consensus_version) = self.latest_consensus_version else {
+             return Err(io_error("Can only serialize block responses of version 2 or greater"));
+@@ -83,6 +144,18 @@ impl<N: Network> FromBytes for BlockResponse<N> {
+     fn read_le<R: io::Read>(mut reader: R) -> io::Result<Self> {
+         let start_height = u32::read_le(&mut reader)?;
+ 
++        if start_height == u32::MAX {
++            let request = BlockRequest::read_le(&mut reader)?;
++            let tag = u8::read_le(&mut reader)?;
++            let value = u32::read_le(&mut reader)?;
++            let status = match tag {
++                BlockResponseStatus::PRUNED_TAG => BlockResponseStatus::Pruned { oldest_retained: value },
++                BlockResponseStatus::NOT_YET_TAG => BlockResponseStatus::NotYet { latest_height: value },
++                _ => return Err(io_error
+```
+
+**File**: `node/bft/events/src/lib.rs` (modified, +4/-2)
+```diff
+@@ -28,7 +28,7 @@ mod block_request;
+ pub use block_request::BlockRequest;
+ 
+ mod block_response;
+-pub use block_response::{BlockResponse, DataBlocks};
++pub use block_response::{BlockResponse, BlockResponseStatus, DataBlocks};
+ 
+ mod certificate_request;
+ pub use certificate_request::CertificateRequest;
+@@ -174,8 +174,10 @@ impl<N: Network> Event<N> {
+     /// The oldest event protocol version this node accepts from a peer; it can be incremented in
+     /// order to force users to update. Minor releases can change this value.
+     pub const MINIMUM_VERSION: u32 = 10;
++    /// The oldest event version that receives `BlockResponse` status replies.
++    pub const STATUS_EVENT_VERSION: u32 = 13;
+     /// The version of the event protocol this node speaks. Minor releases can change this value.
+-    pub const VERSION: u32 = 12;
++    pub const VERSION: u32 = 13;
+ 
+     /// Serializes the event's [`Data`] payload, if it holds one that is not already serialized.
+     ///
+```
+
+**File**: `node/bft/src/gateway.rs` (modified, +68/-15)
+```diff
+@@ -30,6 +30,7 @@ use snarkos_account::Account;
+ use snarkos_node_bft_events::{
+     BlockRequest,
+     BlockResponse,
++    BlockResponseStatus,
+     CertificateRequest,
+     CertificateResponse,
+     ConsensusSchedule,
+@@ -70,7 +71,7 @@ use snarkos_node_network::{
+     },
+     shorten_snarkos_sha,
+ };
+-use snarkos_node_sync::{MAX_BLOCKS_BEHIND, communication_service::CommunicationService};
++use snarkos_node_sync::{MAX_BLOCKS_BEHIND, communication_service::CommunicationService, serve_block_request};
+ use snarkos_node_tcp::{
+     Config,
+     ConnectError,
+@@ -422,6 +423,11 @@ impl<N: Network> CommunicationService for Gateway<N> {
+         Event::BlockRequest(BlockRequest { start_height, end_height })
+     }
+ 
++    /// Returns `None`: the block requests sent to validators are not limited.
++    fn block_request_limit(&self) -> Option<(usize, Duration)> {
++        None
++    }
++
+     /// Sends the given message to specified peer.
+     ///
+     /// This function returns as soon as the message is queued to be sent,
+@@ -503,6 +509,12 @@ impl<N: Network> Gateway<N> {
+         self.primary_sender.get().expect("Primary sender not set in gateway")
+     }
+ 
++    /// Returns `true` if the peer is connected at an event version that receives `BlockResponse`
++    /// status replies.
++    fn supports_status_replies(&self, peer_ip: SocketAddr) -> bool {
++        self.get_connected_peer(peer_ip).is_some_and(|peer| peer.version >= Event::<N>::STATUS_EVENT_VERSION)
++    }
++
+     /// Returns the number of workers.
+     pub fn num_workers(&self) -> u8 {
+         u8::try_from(self.worker_senders.get().expect("Missing worker senders in gateway").len())
+@@ -730,41 +742,44 @@ impl<N: Network> Gateway<N> {
+                     bail!("Block request from '{peer_ip}' has an excessive range ({start_height}..{end_height})")
+                 }
+ 
+-                // End height is exclusive.
+-                let latest_consensus_version = N::CONSENSUS_VERSION(end_height - 1)?;
+-
++                let supports_status = self.supports_status_replies(peer_ip);
+                 let self_ = self.clone();
+-                let blocks = match task::spawn_blocking(move || {
+-                    // Retrieve the blocks within the requested range.
+-                    match self_.ledger.get_blocks(start_height..end_height) {
+-                        Ok(blocks) => Ok(DataBlocks(blocks)),
+-                        Err(error) => bail!("Missing blocks {start_height} to {end_height} from ledger - {error}"),
+-                    }
++                let response = match task::spawn_blocking(move || {
++                    serve_block_request(
++                        block_request,
++                        supports_status,
++                        || self_.ledger.latest_block_height(),
++                        |heights| self_.ledger.get_blocks(heights),
++                    )
+                 })
+                 .await
+                 {
+-                    Ok(Ok(blocks)) => blocks,
++                    Ok(Ok(response)) => response,
+                     Ok(Err(error)) => return Err(error),
+                     Err(error) => return Err(anyhow!("[BlockRequest] {error}")),
+                 };
+ 
+                 let self_ = self.clone();
+                 self.spawn(async move {
+                     // Send the `BlockResponse` message to the peer.
+-                    let event =
+-                        Event::BlockResponse(BlockResponse::new(block_request, blocks, latest_consensus_version));
+-                    Transport::send(&self_, peer_ip, event).await;
++                    Transport::send(&self_, peer_ip, Event::BlockResponse(response)).await;
+                 });
+                 Ok(true)
+             }
+-            Event::BlockResponse(BlockResponse { request, latest_consensus_version, blocks, .. }) => {
++            Event::BlockResponse(BlockResponse { request, status, latest_consensus_version, blocks }) => {
+                 // Process the block response. Except for some tests, there is always a sync sender.
+                 if let Some(sync_sender) = self.sync_sender.get() {
+                     // Check the response corresponds to a request.
+                     if !self.cache.remove_outbound_block_request(peer_ip, &request) {
+                         bail!("Unsolicited block response from '{peer_ip}'")
+                     }
+ 
++                    if status != BlockResponseStatus::Blocks {
++                        status.ensure_consistent_with(peer_ip, &request)?;
++                        let _ = sync_sender.tx_block_sync_block_unavailable.send((peer_ip, request, status)).await;
++                        return Ok(true);
++                    }
++
+                     // Perform the deferred non-blocking deserialization of the blocks.
+                     // The deserialization can take a long time (minutes). We should not be running
+                     // this on a blocking task, but on a rayon thread pool.
+@@ -2394,6 +2409,44 @@ mod prop_tests {
+         
+```
+
+**File**: `node/bft/src/helpers/channels.rs` (modified, +7/-0)
+```diff
+@@ -16,6 +16,8 @@
+ use crate::events::{
+     BatchPropose,
+     BatchSignature,
++    BlockRequest,
++    BlockResponseStatus,
+     CertificateRequest,
+     CertificateResponse,
+     TransmissionRequest,
+@@ -185,6 +187,7 @@ pub struct SyncSender<N: Network> {
+         Option<ConsensusVersion>,
+         oneshot::Sender<Result<(), InsertBlockResponseError<N>>>,
+     )>,
++    pub tx_block_sync_block_unavailable: mpsc::Sender<(SocketAddr, BlockRequest, BlockResponseStatus)>,
+     pub tx_block_sync_remove_peer: mpsc::Sender<(SocketAddr, oneshot::Sender<()>)>,
+     pub tx_block_sync_update_peer_locators: mpsc::Sender<(SocketAddr, BlockLocators<N>, oneshot::Sender<Result<()>>)>,
+     pub tx_certificate_request: mpsc::Sender<(SocketAddr, CertificateRequest<N>)>,
+@@ -242,6 +245,7 @@ pub struct SyncReceiver<N: Network> {
+         Option<ConsensusVersion>,
+         oneshot::Sender<Result<(), InsertBlockResponseError<N>>>,
+     )>,
++    pub rx_block_sync_block_unavailable: mpsc::Receiver<(SocketAddr, BlockRequest, BlockResponseStatus)>,
+     pub rx_block_sync_remove_peer: mpsc::Receiver<(SocketAddr, oneshot::Sender<()>)>,
+     pub rx_block_sync_update_peer_locators: mpsc::Receiver<(SocketAddr, BlockLocators<N>, oneshot::Sender<Result<()>>)>,
+     pub rx_certificate_request: mpsc::Receiver<(SocketAddr, CertificateRequest<N>)>,
+@@ -251,20 +255,23 @@ pub struct SyncReceiver<N: Network> {
+ /// Initializes the sync channels.
+ pub fn init_sync_channels<N: Network>() -> (SyncSender<N>, SyncReceiver<N>) {
+     let (tx_block_sync_insert_block_response, rx_block_sync_insert_block_response) = mpsc::channel(MAX_CHANNEL_SIZE);
++    let (tx_block_sync_block_unavailable, rx_block_sync_block_unavailable) = mpsc::channel(MAX_CHANNEL_SIZE);
+     let (tx_block_sync_remove_peer, rx_block_sync_remove_peer) = mpsc::channel(MAX_CHANNEL_SIZE);
+     let (tx_block_sync_update_peer_locators, rx_block_sync_update_peer_locators) = mpsc::channel(MAX_CHANNEL_SIZE);
+     let (tx_certificate_request, rx_certificate_request) = mpsc::channel(MAX_CHANNEL_SIZE);
+     let (tx_certificate_response, rx_certificate_response) = mpsc::channel(MAX_CHANNEL_SIZE);
+ 
+     let sender = SyncSender {
+         tx_block_sync_insert_block_response,
++        tx_block_sync_block_unavailable,
+         tx_block_sync_remove_peer,
+         tx_block_sync_update_peer_locators,
+         tx_certificate_request,
+         tx_certificate_response,
+     };
+     let receiver = SyncReceiver {
+         rx_block_sync_insert_block_response,
++        rx_block_sync_block_unavailable,
+         rx_block_sync_remove_peer,
+         rx_block_sync_update_peer_locators,
+         rx_certificate_request,
+```
+
+**File**: `node/bft/src/sync/mod.rs` (modified, +18/-6)
+```diff
+@@ -158,12 +158,15 @@ impl<N: Network> Sync<N> {
+         // Start the block request generation loop (outgoing).
+         let self_ = self.clone();
+         self.spawn(async move {
++            let mut next_request_slot = None;
+             loop {
+-                // Wait for peer updates or timeout
+-                let _ = tokio::time::timeout(Self::MAX_SYNC_INTERVAL, self_.block_sync.wait_for_peer_update()).await;
++                // Wait for peer updates, a peer's block request limit to allow a request, or timeout.
++                let deadline = Instant::now() + Self::MAX_SYNC_INTERVAL;
++                let deadline = next_request_slot.map_or(deadline, |slot: Instant| slot.min(deadline));
++                let _ = tokio::time::timeout_at(deadline.into(), self_.block_sync.wait_for_peer_update()).await;
+ 
+                 // Issue block requests to peers.
+-                self_.try_issuing_block_requests().await;
++                next_request_slot = self_.try_issuing_block_requests().await;
+ 
+                 // Rate limiting happens in [`BlockSync::try_issuing_block_requests`] and no additional sleeps are needed here.
+             }
+@@ -216,6 +219,7 @@ impl<N: Network> Sync<N> {
+         // Retrieve the sync receiver.
+         let SyncReceiver {
+             mut rx_block_sync_insert_block_response,
++            mut rx_block_sync_block_unavailable,
+             mut rx_block_sync_remove_peer,
+             mut rx_block_sync_update_peer_locators,
+             mut rx_certificate_request,
+@@ -248,6 +252,14 @@ impl<N: Network> Sync<N> {
+             }
+         });
+ 
++        // Process each block response that says the peer cannot serve the request.
++        let self_ = self.clone();
++        self.spawn(async move {
++            while let Some((peer_ip, request, status)) = rx_block_sync_block_unavailable.recv().await {
++                self_.block_sync.insert_block_unavailable(peer_ip, request, status);
++            }
++        });
++
+         // Process the block sync request to remove the peer.
+         let self_ = self.clone();
+         self.spawn(async move {
+@@ -304,8 +316,8 @@ impl<N: Network> Sync<N> {
+     ///
+     /// This method handles timeout removal, checks if block sync is possible,
+     /// and issues block requests to peers.
+-    async fn try_issuing_block_requests(&self) {
+-        self.block_sync.try_issuing_block_requests(&self.gateway).await;
++    async fn try_issuing_block_requests(&self) -> Option<Instant> {
++        self.block_sync.try_issuing_block_requests(&self.gateway).await
+     }
+ }
+ 
+@@ -326,7 +338,7 @@ impl<N: Network> Sync<N> {
+ 
+     /// We received new peer locators during a Ping.
+     fn update_peer_locators(&self, peer_ip: SocketAddr, locators: BlockLocators<N>) -> Result<()> {
+-        self.block_sync.update_peer_locators(peer_ip, &locators)
++        self.block_sync.update_peer_locators(peer_ip, &locators, None)
+     }
+ 
+     /// A peer disconnected.
+```
+
+**File**: `node/bft/tests/gateway_noise.rs` (modified, +146/-1)
+```diff
+@@ -25,8 +25,15 @@ use crate::common::{
+     utils::{sample_gateway, sample_ledger, sample_storage},
+ };
+ use snarkos_account::Account;
+-use snarkos_node_bft::{Gateway, helpers::init_primary_channels};
++use snarkos_node_bft::{
++    Gateway,
++    Transport,
++    helpers::{PrimaryReceiver, SyncReceiver, init_primary_channels, init_sync_channels},
++};
+ use snarkos_node_bft_events::{
++    BlockRequest,
++    BlockResponse,
++    BlockResponseStatus,
+     ConsensusSchedule,
+     DisconnectReason,
+     Event,
+@@ -58,6 +65,7 @@ use futures::{SinkExt, TryStreamExt};
+ use rand::RngExt;
+ use tokio::{
+     net::{TcpListener, TcpStream},
++    sync::mpsc,
+     task,
+     time::timeout,
+ };
+@@ -679,6 +687,143 @@ async fn an_initiator_rejects_a_responder_with_a_different_genesis() {
+     assert!(!gateway_b.connected_addresses().contains(&accounts[0].address()));
+ }
+ 
++/// The receiver of the block requests a gateway reports as unavailable.
++type UnavailableReceiver = mpsc::Receiver<(SocketAddr, BlockRequest, BlockResponseStatus)>;
++
++/// Runs a gateway for the first of `accounts` with a sync sender. Returns the gateway, the
++/// receiver of the block requests it reports as unavailable, and its primary receiver, which has
++/// to stay open. Disconnecting peers are removed from sync at once.
++async fn run_sync_gateway(
++    accounts: &[Account<CurrentNetwork>],
++    ledger: Arc<TranslucentLedgerService<CurrentNetwork, ConsensusMemory<CurrentNetwork>>>,
++) -> (Gateway<CurrentNetwork>, UnavailableReceiver, PrimaryReceiver<CurrentNetwork>) {
++    let gateway = sample_gateway(accounts[0].clone(), sample_storage(ledger.clone()), ledger);
++    let (sync_sender, sync_receiver) = init_sync_channels();
++    let (primary_tx, primary_rx) = init_primary_channels();
++    gateway.run(primary_tx, [].into(), Some(sync_sender)).await;
++
++    let SyncReceiver { rx_block_sync_block_unavailable, mut rx_block_sync_remove_peer, .. } = sync_receiver;
++    task::spawn(async move {
++        while let Some((_, callback)) = rx_block_sync_remove_peer.recv().await {
++            let _ = callback.send(());
++        }
++    });
++    (gateway, rx_block_sync_block_unavailable, primary_rx)
++}
++
++/// Returns the first event the stream yields that `select` picks, skipping the others.
++async fn next_event<T>(
++    framed: &mut Framed<&mut TcpStream, EventCodec<CurrentNetwork>>,
++    select: impl Fn(Event<CurrentNetwork>) -> Option<T>,
++) -> Option<T> {
++    timeout(Duration::from_secs(5), async {
++        while let Ok(Some(event)) = framed.try_next().await {
++            if let Some(value) = select(event) {
++                return Some(value);
++            }
++        }
++        None
++    })
++    .await
++    .expect("the gateway did not send the event in time")
++}
++
++/// Tests the status replies a gateway exchanges with a peer at the status version: it answers a
++/// request past its tip with `NotYet`, reports a `NotYet` reply to sync, and disconnects a peer
++/// whose reply contradicts its request.
++#[tokio::test(flavor = "multi_thread")]
++async fn a_gateway_exchanges_status_replies_with_a_new_peer() {
++    let mut rng = TestRng::default();
++    let (accounts, committee) = shared_test_committee(COMMITTEE_SIZE, &mut rng);
++    let accounts_ = accounts.clone();
++    let mut rng_ = TestRng::fixed(rng.random());
++    let ledger = task::spawn_blocking(move || sample_ledger(&accounts_, &committee, &mut rng_)).await.unwrap();
++    let (gateway, mut unavailable, _primary_rx) = run_sync_gateway(&accounts, ledger).await;
++    let peer = accounts[1].clone();
++    assert_eq!(Event::<CurrentNetwork>::VERSION, Event::<CurrentNetwork>::STATUS_EVENT_VERSION);
++
++    let (verdict, mut stream) =
++        handshake_with_gateway(&gateway, &peer, 4140, honest_signer(peer.clone())).await.unwrap();
++    assert!(matches!(verdict, ResponderProof::Accepted { .. }));
++    let mut framed = Framed::new(&mut stream, EventCodec::<CurrentNetwork>::default());
++    let peer_ip = SocketAddr::from(([127, 0, 0, 1], 4140));
++    let (gateway_clone, address) = (gateway.clone(), peer.address());
++    deadline!(Duration::from_secs(5), move || gateway_clone.connected_addresses().contains(&address));
++
++    // The gateway answers a request past its tip with `NotYet`.
++    let request = BlockRequest::new(1, 3).unwrap();
++    framed.send(Event::BlockRequest(request)).await.unwrap();
++    let response = next_event(&mut framed, |event| match event {
++        Event::BlockResponse(response) => Some(response),
++        _ => None,
++    })
++    .await
++    .unwrap();
++    assert_eq!(response.request, request);
++    assert_eq!(response.status, BlockResponseStatus::NotYet { latest_height: gateway.ledger().latest_block_height() });
++
++    // A `NotYet` reply to the gateway's request reaches sync.
++    let solicit = |request| {
++        let gateway = gateway.clone();
++        async move { assert!(gateway.send(peer_ip, Event::BlockRequest(request)).await.is_some()) }
++    };
++    solicit(request).await;
++    next_even
+```
+
+**File**: `node/router/messages/src/lib.rs` (modified, +45/-18)
+```diff
+@@ -66,7 +66,7 @@ pub use unconfirmed_solution::UnconfirmedSolution;
+ mod unconfirmed_transaction;
+ pub use unconfirmed_transaction::UnconfirmedTransaction;
+ 
+-pub use snarkos_node_bft_events::DataBlocks;
++pub use snarkos_node_bft_events::{BlockResponseStatus, DataBlocks};
+ 
+ /// Proptest strategies for every message type, re-exported so callers outside
+ /// this crate can reach them.
+@@ -148,6 +148,8 @@ impl<N: Network> From<DisconnectReason> for Message<N> {
+ }
+ 
+ impl<N: Network> Message<N> {
++    /// The oldest message version that receives `BlockResponse` status replies and `Ping` floors.
++    pub const STATUS_MESSAGE_VERSION: u32 = 34;
+     /// The version of the network protocol; this is incremented for breaking changes between migration versions.
+     ///
+     /// Each new `ConsensusVersion` adds an entry. Minor releases add entries, and snarkOS does not treat this
+@@ -170,16 +172,22 @@ impl<N: Network> Message<N> {
+         (ConsensusVersion::V20, 31),
+         (ConsensusVersion::V21, 32),
+         (ConsensusVersion::V22, 33),
+-        (ConsensusVersion::V23, 34),
++        (ConsensusVersion::V23, Self::STATUS_MESSAGE_VERSION),
+     ];
+ 
+     /// Returns the latest message version whose consensus upgrade has a scheduled block height.
+     pub fn latest_message_version() -> u32 {
++        Self::latest_message_version_with(|consensus_version| N::CONSENSUS_HEIGHT(consensus_version).ok())
++    }
++
++    /// Returns the latest message version whose consensus upgrade has a scheduled height in
++    /// `consensus_height`.
++    fn latest_message_version_with(consensus_height: impl Fn(ConsensusVersion) -> Option<u32>) -> u32 {
+         Self::VERSIONS
+             .iter()
+             .rev()
+             .find(|(consensus_version, _)| {
+-                N::CONSENSUS_HEIGHT(*consensus_version).is_ok_and(|height| height != u32::MAX)
++                consensus_height(*consensus_version).is_some_and(|height| height != u32::MAX)
+             })
+             .map(|(_, version)| *version)
+             .unwrap_or(0)
+@@ -193,23 +201,21 @@ impl<N: Network> Message<N> {
+     ///     Until block `X`, they stay connected and can communicate.
+     ///     After block `X`, Client A will reject messages from Client B.
+     pub fn lowest_accepted_message_version(current_block_height: u32) -> u32 {
+-        // Fetch the latest message version.
+-        let latest_message_version = Self::latest_message_version();
++        // Determine the minimum accepted message version.
++        N::CONSENSUS_VERSION(current_block_height).map_or(Self::latest_message_version(), Self::message_version_of)
++    }
+ 
+-        // Fetch the versions.
++    /// Returns the message version that consensus version `seek_version` requires.
++    fn message_version_of(seek_version: ConsensusVersion) -> u32 {
+         let versions = Self::VERSIONS;
+-
+-        // Determine the minimum accepted message version.
+-        N::CONSENSUS_VERSION(current_block_height).map_or(latest_message_version, |seek_version| {
+-            // Search the consensus value for the specified version.
+-            match versions.binary_search_by(|(version, _)| version.cmp(&seek_version)) {
+-                // If a value was found for this consensus version, return it.
+-                Ok(index) => versions[index].1,
+-                // If the specified version was not found exactly, return the appropriate value belonging to the consensus version *lower* than the sought version.
+-                // If the constant is not yet in effect at this consensus version, use the earliest version.
+-                Err(index) => versions[index.saturating_sub(1)].1,
+-            }
+-        })
++        // Search the consensus value for the specified version.
++        match versions.binary_search_by(|(version, _)| version.cmp(&seek_version)) {
++            // If a value was found for this consensus version, return it.
++            Ok(index) => versions[index].1,
++            // If the specified version was not found exactly, return the appropriate value belonging to the consensus version *lower* than the sought version.
++            // If the constant is not yet in effect at this consensus version, use the earliest version.
++            Err(index) => versions[index.saturating_sub(1)].1,
++        }
+     }
+ 
+     /// Returns the message type. Instance fields, such as a block height range, are omitted.
+@@ -408,6 +414,27 @@ mod tests {
+         latest_message_version_has_scheduled_height::<CanaryV0>();
+     }
+ 
++    /// Tests that the status message version takes effect with `ConsensusVersion::V23`, under
++    /// snarkVM's test heights: a node advertises it once V23 is scheduled, and requires it from
++    /// the V23 height on.
++    #[test]
++    fn test_status_message_version_follows_v23() {
++        type Versions = Message<MainnetV0>;
++        let status_version = Versions::STATUS_MESSAGE_VERSION;
++        assert!(Versions::VERSIONS.contains(&(ConsensusVersion::V23, status_version)));
++
++        let heig
 ```
 
 ---
 
-### Incident Patch 2: `f3fb4675` (2026-11-21)
-**Commit Message**: Print the startup error chain without snarkvm::utilities::display_error
+### Incident Patch 2: `5746b2fb` (2026-11-21)
+**Commit Message**: Merge staging (9138ff8ae)
 
-main.rs prints the error and its causes itself, in the same format. This
-lets snarkVM remove display_error from its public API.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01UYfmmLpEstoRCMNsPhVpwB
-
-**File**: `snarkos/main.rs` (modified, +3/-2)
+**File**: `.cargo/config.toml` (modified, +21/-0)
 ```diff
-@@ -14,7 +14,7 @@
- // limitations under the License.
+@@ -5,3 +5,24 @@ rustflags = [
+     # you explicitly set target-cpu yourself when building.
+     "-C", "target-cpu=skylake"
+ ]
++
++# `cargo locktick-<command>` runs a cargo command with `--cfg locktick`, which swaps every lock
++# in `snarkos_utilities::locks` for its `locktick` counterpart, for example
++# `cargo locktick-build --release`. The `--config` adds to the `rustflags` above rather than
++# replacing them.
++#
++# Hazard: cargo drops a `--config` placed before an external subcommand such as `clippy`,
++# `nextest` or `hack`, so each alias puts it after its subcommand.
++#
++# Hazard: a `RUSTFLAGS` environment variable replaces every `rustflags` setting, this one
++# included. To combine `--cfg locktick` with a `RUSTFLAGS` build, such as the one the
++# `tokio_console` feature needs, put `--cfg locktick` in `RUSTFLAGS` itself.
++#
++# Hazard: because the aliases set target rustflags, cargo ignores `[build] rustflags` and
++# `CARGO_BUILD_RUSTFLAGS` under them on every platform, as it already does on x86-64 Linux because
++# of the table above. Pass extra flags in `CARGO_TARGET_<TRIPLE>_RUSTFLAGS` instead, which cargo
++# adds to the aliases' flags.
++[alias]
++locktick-build = ["build", "--config", "target.'cfg(all())'.rustflags=['--cfg','locktick']"]
++locktick-check = ["check", "--config", "target.'cfg(all())'.rustflags=['--cfg','locktick']"]
++locktick-clippy = ["clippy", "--config", "target.'cfg(all())'.rustflags=['--cfg','locktick']"]
+```
+
+**File**: `.ci/test_partial_upgrade.sh` (modified, +18/-1)
+```diff
+@@ -289,7 +289,24 @@ fi
  
- use snarkos_cli::{commands::CLI, helpers::Updater};
--use snarkvm::utilities::{display_error, flatten_error};
-+use snarkvm::utilities::flatten_error;
+ log "🎉 Test passed! Node synced to new consensus height ($new_consensus_height) after another node was upgraded."
  
- use clap::Parser;
- use std::{backtrace::Backtrace, env, io, io::IsTerminal, panic::catch_unwind};
-@@ -127,7 +127,8 @@ fn main() {
-         Ok(Err(err)) => {
-             // A regular error occurred during startup.
-             if io::stderr().is_terminal() || !has_tracing_subscriber() {
--                display_error(&err);
-+                eprintln!("⚠️ {err}");
-+                err.chain().skip(1).for_each(|cause| eprintln!("     ↳ {cause}"));
-                 eprintln!();
-                 eprintln!("Use `--help` for instructions on how to use this command");
-             } else {
+-if check_logs "$log_dir" "$total_validators" 0 "$MAX_VALIDATOR_LOG_SIZE_BYTES"; then
++# Once two validators run the new version, they hold at least a third of the stake, so the
++# release validators shut down. Before that, the last node rejects the blocks of its outdated
++# peers.
++upgrade_stop="Validators holding at least a third of the stake run ConsensusVersion::V[0-9]+ from height [0-9]+, but this build does not schedule it at that height, and must be upgraded"
++outdated_peer="The peer's consensus version for height [0-9]+ is behind ours"
++# The release binary leaves a task running when it shuts down this way.
++surplus_tasks="There are [0-9]+ surplus live tasks"
++expected_errors="$upgrade_stop|$outdated_peer|$surplus_tasks"
++
++# Only the release validators may log the surplus task error.
++for ((node_index = penultimate_index; node_index < total_validators; node_index++)); do
++  if grep -E "ERROR.*$surplus_tasks" "$log_dir/validator-$node_index.log"; then
++    log "❌ Test failed! Upgraded validator #${node_index} left surplus live tasks."
++    exit 1
++  fi
++done
++
++if check_logs "$log_dir" "$total_validators" 0 "$MAX_VALIDATOR_LOG_SIZE_BYTES" "" "" "$expected_errors"; then
+   exit 0
+ else
+   exit 1
+```
+
+**File**: `.github/workflows/ci.yml` (modified, +17/-1)
+```diff
+@@ -144,6 +144,22 @@ jobs:
+       - run: cargo check -p snarkos-node-router-messages --features test-helpers
+       - run: cargo check -p snarkos-node-bft-events --features test-helpers
+ 
++  lint-locktick:
++    needs: [check-shared-refs, start-cpu-runners]
++    runs-on: [self-hosted, linux, x64, cpu]
++    timeout-minutes: 90
++    if: *fleet-if
++    steps:
++      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
++        with: { persist-credentials: false }
++      # gh-actions is ours; check-shared-refs requires a @vN tag here, not a SHA.
++      - uses: aleo-labs-protocol/gh-actions/.github/actions/runner-job-setup@v2
++      # An env RUSTFLAGS replaces `--cfg locktick` without an error, and the
++      # build then has no locktick dependency.
++      - name: Check that the build sets cfg(locktick)
++        run: cargo locktick-clippy -q -p snarkos-utilities --message-format=json | grep '"name":"locktick"' > /dev/null
++      - run: cargo locktick-clippy --workspace --all-targets --all-features -- -D warnings
++
+   # Each line of `runs` is one build. `cargo test -p a -p b` unifies the
+   # features of a and b, and several crates enable features on their
+   # dependencies that change what those dependencies do:
+@@ -507,7 +523,7 @@ jobs:
+   # to run.
+   ci-ok:
+     if: always()
+-    needs: [check-shared-refs, fmt, deny, shellcheck, source-checks, merge-fixup, machete, release-graph, lint, test-hosted, test, build-snarkos, devnet, devnet-merge, devnet-release, windows]
++    needs: [check-shared-refs, fmt, deny, shellcheck, source-checks, merge-fixup, machete, release-graph, lint, lint-locktick, test-hosted, test, build-snarkos, devnet, devnet-merge, devnet-release, windows]
+     runs-on: ubuntu-latest
+     steps:
+       - env:
+```
+
+**File**: `CI.md` (modified, +3/-2)
+```diff
+@@ -20,7 +20,7 @@ Jobs run in one of two places:
+ 
+ | Event | Runs |
+ |---|---|
+-| Pull request into `staging` | `fmt`, `deny`, `shellcheck`, `source-checks`, `machete`, `lint`, `test`, `build-snarkos`, `devnet`, `ci-ok` |
++| Pull request into `staging` | `fmt`, `deny`, `shellcheck`, `source-checks`, `machete`, `lint`, `lint-locktick`, `test`, `build-snarkos`, `devnet`, `ci-ok` |
+ | Push to `staging` | the above, plus `devnet-merge`, `windows` |
+ | Pull request into `release/**`, push to `release/**`, or manual dispatch | the above, plus `devnet-release` |
+ 
+@@ -36,8 +36,9 @@ a job marked "release" only on the third. The other jobs run on every event.
+ | `fmt` | hosted | all | | `cargo fmt --check` on `FMT_TOOLCHAIN` |
+ | `deny` | hosted | all | | `cargo deny --workspace check bans licenses sources`, plus `advisories` everywhere but `staging`, whose advisories [`bump-advisories.yml`](.github/workflows/bump-advisories.yml) bumps nightly |
+ | `shellcheck` | hosted | all | | `.ci/*.sh`, `scripts/*.sh` |
+-| `source-checks` | hosted | all | | `scripts/check_sources.py`: license headers and `locktick` imports in `.rs` files |
++| `source-checks` | hosted | all | | `scripts/check_sources.py`: license headers in `.rs` files |
+ | `lint` | `cpu` | all | 90 | clippy, default and `--all-features`; `cargo check --all-features` of `snarkos-node-metrics` and `snarkos-display` |
++| `lint-locktick` | `cpu` | all | 90 | clippy `--all-features` under `--cfg locktick` (`locktick-clippy` alias) |
+ | `test (light)` | hosted | all | 90 | `snarkos-account`, `-utilities`, `-node-tcp`, `-node-sync-locators`, `-node-network` |
+ | `test (cdn)` | hosted | all | 90 | `snarkos-node-cdn` |
+ | `test (messages)` | hosted | all | 90 | `snarkos-node-bft-events`, `-node-router-messages`, `-node-bft-ledger-service` |
+```
+
+**File**: `Cargo.lock` (modified, +7/-28)
+```diff
+@@ -5267,7 +5267,6 @@ version = "4.13.1"
+ dependencies = [
+  "built",
+  "clap",
+- "locktick",
+  "rusty-hook",
+  "snarkos-account",
+  "snarkos-cli",
+@@ -5279,7 +5278,7 @@ dependencies = [
+  "snarkos-node-rest",
+  "snarkos-node-router",
+  "snarkos-node-sync",
+- "snarkos-node-tcp",
++ "snarkos-utilities",
+  "snarkvm",
+  "tikv-jemallocator",
+  "tracing",
+@@ -5305,10 +5304,8 @@ dependencies = [
+  "console-subscriber",
+  "crossterm",
+  "indexmap 2.14.2",
+- "locktick",
+  "nix 0.31.3",
+  "num_cpus",
+- "parking_lot",
+  "rand 0.10.3",
+  "rand_chacha 0.10.0",
+  "rayon",
+@@ -5390,10 +5387,8 @@ dependencies = [
+  "futures-util",
+  "http 1.5.0",
+  "indexmap 2.14.2",
+- "locktick",
+  "lru 0.19.0",
+  "num_cpus",
+- "parking_lot",
+  "paste",
+  "pea2pea",
+  "rand 0.10.3",
+@@ -5436,11 +5431,9 @@ dependencies = [
+  "futures",
+  "indexmap 2.14.2",
+  "itertools 0.15.0",
+- "locktick",
+  "lru 0.19.0",
+  "mockall",
+  "open",
+- "parking_lot",
+  "paste",
+  "pea2pea",
+  "proptest",
+@@ -5504,8 +5497,6 @@ dependencies = [
+  "anyhow",
+  "async-trait",
+  "indexmap 2.14.2",
+- "locktick",
+- "parking_lot",
+  "rand 0.10.3",
+  "rayon",
+  "snarkos-node-metrics",
+@@ -5523,9 +5514,8 @@ dependencies = [
+  "anyhow",
+  "bytes",
+  "indexmap 2.14.2",
+- "locktick",
+  "lru 0.19.0",
+- "parking_lot",
++ "snarkos-utilities",
+  "snarkvm",
+  "tracing",
+ ]
+@@ -5537,8 +5527,6 @@ dependencies = [
+  "anyhow",
+  "bincode",
+  "http 1.5.0",
+- "locktick",
+- "parking_lot",
+  "rayon",
+  "reqwest",
+  "serde",
+@@ -5560,10 +5548,8 @@ dependencies = [
+  "cfg-if",
+  "indexmap 2.14.2",
+  "itertools 0.15.0",
+- "locktick",
+  "lru 0.19.0",
+  "once_cell",
+- "parking_lot",
+  "snarkos-account",
+  "snarkos-node-bft",
+  "snarkos-node-bft-ledger-service",
+@@ -5582,11 +5568,10 @@ name = "snarkos-node-metrics"
+ version = "4.13.1"
+ dependencies = [
+  "built",
+- "locktick",
+  "metrics",
+  "metrics-exporter-prometheus",
+- "parking_lot",
+  "rayon",
++ "snarkos-utilities",
+  "snarkvm",
+  "time",
+  "tokio",
+@@ -5600,12 +5585,11 @@ dependencies = [
+  "anyhow",
+  "built",
+  "bytes",
+- "locktick",
+- "parking_lot",
+  "rand 0.10.3",
+  "serde",
+  "smol_str",
+  "snarkos-node-tcp",
++ "snarkos-utilities",
+  "snarkvm",
+  "snow",
+  "socket2 0.6.5",
+@@ -5627,10 +5611,8 @@ dependencies = [
+  "http 1.5.0",
+  "indexmap 2.14.2",
+  "jsonwebtoken",
+- "locktick",
+  "lru 0.19.0",
+  "once_cell",
+- "parking_lot",
+  "rand 0.10.3",
+  "rayon",
+  "reqwest",
+@@ -5644,6 +5626,7 @@ dependencies = [
+  "snarkos-node-network",
+  "snarkos-node-router",
+  "snarkos-node-sync",
++ "snarkos-utilities",
+  "snarkvm",
+  "tempfile",
+  "time",
+@@ -5664,8 +5647,6 @@ dependencies = [
+  "futures",
+  "futures-util",
+  "linked-hash-map",
+- "locktick",
+- "parking_lot",
+  "peak_alloc",
+  "rand 0.10.3",
+  "rand_chacha 0.10.0",
+@@ -5716,8 +5697,6 @@ dependencies = [
+  "futures",
+  "indexmap 2.14.2",
+  "itertools 0.15.0",
+- "locktick",
+- "parking_lot",
+  "rand 0.10.3",
+  "serde",
+  "snarkos-node-bft-ledger-service",
+@@ -5727,6 +5706,7 @@ dependencies = [
+  "snarkos-node-sync-communication-service",
+  "snarkos-node-sync-locators",
+  "snarkos-node-tcp",
++ "snarkos-utilities",
+  "snarkvm",
+  "thiserror 2.0.20",
+  "tokio",
+@@ -5761,10 +5741,9 @@ dependencies = [
+  "async-trait",
+  "bytes",
+  "futures-util",
+- "locktick",
+  "once_cell",
+- "parking_lot",
+  "snarkos-node-metrics",
++ "snarkos-utilities",
+  "thiserror 2.0.20",
+  "tokio",
+  "tokio-util",
+```
+
+**File**: `Cargo.toml` (modified, +8/-25)
+```diff
+@@ -290,18 +290,6 @@ cuda = [
+   "snarkos-node-router/cuda",
+   "snarkos-node-sync/cuda"
+ ]
+-locktick = [
+-  "dep:locktick",
+-  "snarkos-node/locktick",
+-  "snarkos-node-bft/locktick",
+-  "snarkos-node-consensus/locktick",
+-  "snarkos-node-metrics/locktick",
+-  "snarkos-node-rest/locktick",
+-  "snarkos-node-router/locktick",
+-  "snarkos-node-sync/locktick",
+-  "snarkos-node-tcp/locktick",
+-  "snarkvm/locktick"
+-]
+ test_targets = [ "snarkos-cli/test_targets" ]
+ test_consensus_heights = [ "snarkos-cli/test_consensus_heights" ]
+ test_network = [ "snarkos-cli/test_network", "snarkos-node/test_network" ]
+@@ -311,10 +299,6 @@ tokio_console = [ "snarkos-cli/tokio_console" ]
+ workspace = true
+ features = [ "derive" ]
+ 
+-[dependencies.locktick]
+-workspace = true
+-optional = true
+-
+ [dependencies.snarkos-account]
+ workspace = true
+ 
+@@ -346,7 +330,7 @@ workspace = true
+ [dependencies.snarkos-node-sync]
+ workspace = true
+ 
+-[dependencies.snarkos-node-tcp]
++[dependencies.snarkos-utilities]
+ workspace = true
+ 
+ [dependencies.snarkvm]
+@@ -377,12 +361,11 @@ opt-level = 2
+ ignored = [
+   "snarkos-account", # Needed for cuda feature
+   "snarkos-node", # Needed for metrics feature
+-  "snarkos-node-bft", # Needed for cuda and locktick features
+-  "snarkos-node-cdn", # Needed for cuda and locktick features
+-  "snarkos-node-consensus", # Needed for cuda and locktick features
+-  "snarkos-node-tcp", # Needed for locktick feature
+-  "snarkos-node-rest", # Needed for cuda and locktick features
+-  "snarkos-node-sync", # Needed for cuda and locktick features
+-  "snarkos-node-router", # Needed for cuda and locktick features
+-  "snarkos-node-metrics", # Needed for locktick feature
++  "snarkos-node-bft", # Needed for cuda feature
++  "snarkos-node-cdn", # Needed for cuda feature
++  "snarkos-node-consensus", # Needed for cuda feature
++  "snarkos-node-rest", # Needed for cuda feature
++  "snarkos-node-sync", # Needed for cuda feature
++  "snarkos-node-router", # Needed for cuda feature
++  "snarkos-node-metrics", # Needed for default and serial features
+ ]
+```
+
+**File**: `README.md` (modified, +16/-2)
+```diff
+@@ -621,11 +621,25 @@ cargo run --release -- clean --dev <NODE_ID>
+   telemetry described in [Validator Telemetry Metrics](#321-validator-telemetry-metrics).
+ * **cuda** -
+   Allows some operations to run on the (NVidia) GPU, instead of on the CPU. See [CUDA acceleration for provers](#optional-cuda-acceleration-for-provers) for install tips and current puzzle status.
+-* **locktick** -
+-  This feature turns on code for detecting deadlocks.
+ * **test_targets** -
+   This feature allows the lowering of coinbase and proof targets for testing.
+ 
++### Lock instrumentation
++
++The `locktick` cfg, which is not a feature, swaps every lock for an instrumented one from the
++[`locktick`](https://crates.io/crates/locktick) crate, to help find deadlocks and lock contention.
++Every three seconds, the node logs each lock guard that is held or waited for. To build the node
++with it, run:
++
++```
++cargo locktick-build --release
++```
++
++`cargo locktick-build` is an alias in `.cargo/config.toml` that adds `--cfg locktick` to the
++compiler flags. `cargo locktick-check` and `cargo locktick-clippy` do the same for `check` and
++`clippy`. If you set the `RUSTFLAGS` environment variable, it overrides the alias,
++so add `--cfg locktick` to `RUSTFLAGS` instead.
++
+ ## 6.5 Local Backups
+ 
+ The snarkOS node implementation uses rocksdb under the hood. By using its native checkpointing mechanism, you can create backups locally and efficiently. The backups leverage hard links on your filesystem, thereby incurring only a marginal amount of extra space. The aim of these local backups is for you to be able to recover quickly in case your node were to halt.
+```
+
+**File**: `cli/Cargo.toml` (modified, +0/-17)
+```diff
+@@ -18,15 +18,6 @@ edition = "2024"
+ 
+ [features]
+ default = [ ]
+-locktick = [
+-  "dep:locktick",
+-  "snarkos-display/locktick",
+-  "snarkos-node/locktick",
+-  "snarkos-node-cdn/locktick",
+-  "snarkos-node-rest/locktick",
+-  "snarkos-utilities/locktick",
+-  "snarkvm/locktick"
+-]
+ metrics = [ "dep:snarkos-node-metrics", "snarkos-node/metrics" ]
+ cuda = [
+   "snarkvm/cuda",
+@@ -73,17 +64,9 @@ workspace = true
+ workspace = true
+ features = [ "serde", "rayon" ]
+ 
+-[dependencies.locktick]
+-workspace = true
+-features = [ "parking_lot" ]
+-optional = true
+-
+ [dependencies.num_cpus]
+ workspace = true
+ 
+-[dependencies.parking_lot]
+-workspace = true
+-
+ [dependencies.rand]
+ workspace = true
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4749** (closed): Deserialize snarkVM Data on the blocking pool in snarkOS (@cbeck88)
 - **PR #4748** (2026-11-21): Print the startup error chain without snarkvm::utilities::display_error (@cbeck88)
 - **PR #4746** (2026-11-21): Pass the expected errors to check_logs in the partial upgrade test (@cbeck88)
 - **PR #4742** (2026-11-20): Expect the errors of a consensus upgrade in the partial upgrade test (@cbeck88)
 - **PR #4740** (2026-11-20): Bump snarkVM to aleo-labs-protocol/snarkVM@7ba14e66b (@cbeck88)
 - **PR #4739** (2026-11-20): Bump snarkVM to aleo-labs-protocol/snarkVM@7ba14e66b and remove the serial feature (@cbeck88)
-- **PR #4738** (2026-11-20): release-test: the sync legs run at once (@cbeck88)
 
 ---
 
@@ -1971,34 +2934,31 @@ Claude-Session: https://claude.ai/code/session_01UYfmmLpEstoRCMNsPhVpwB
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in main.rs
+## X. Empirical Invariant Guard in Cargo.lock
 
 **RULE**:
-When implementing operations in `snarkos/main.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9138ff8a`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ffa93916`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `snarkos/main.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use snarkvm::utilities::flatten_error;
-                eprintln!("⚠️ {err}");
-                err.chain().skip(1).for_each(|cause| eprintln!("     ↳ {cause}"));
+ "async-trait",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-use snarkvm::utilities::{display_error, flatten_error};
-                display_error(&err);
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9138ff8a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ffa93916` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

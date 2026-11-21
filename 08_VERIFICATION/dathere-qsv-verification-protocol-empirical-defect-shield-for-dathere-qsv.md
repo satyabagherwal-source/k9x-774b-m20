@@ -4,22 +4,22 @@
 {
   "source_repository": "dathere/qsv",
   "source_url": "https://github.com/dathere/qsv",
-  "source_version": "ea8e9cca",
+  "source_version": "3996998d",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-21T04:39:15.665Z",
+  "timestamp": "2026-11-21T13:30:43.279Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-dathere-qsv",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `ea8e9cca`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-21T04:39:15.665Z`  
+> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `3996998d`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-21T13:30:43.279Z`  
 > **Learning ID**: `learn-github-dathere-qsv`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `dathere/qsv` (Commit: `ea8e9cca`)
+- **Target Repository**: `dathere/qsv` (Commit: `3996998d`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T04:39:14.333Z  
+> **Harvest Timestamp**: 2026-11-21T13:30:42.521Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Blazing-fast, Neuro-symbolic Data-Wrangling toolkit
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3834 stars
+- **Stars / Engagement**: 3836 stars
 
 ---
 
@@ -2212,373 +2212,661 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ea8e9cca` (2026-11-21)
-**Commit Message**: feat(synthesize): --target <col> for conditional generation; read non-UTF8 input (#5084)
+### Incident Patch 1: `3996998d` (2026-11-21)
+**Commit Message**: fix(mcp): sandbox DuckDB in plugin mode; harden the duckdb CLI invocation (#5083)
 
-* feat(synthesize): --target <col> for conditional generation
+* fix(mcp): sandbox DuckDB in plugin mode; harden the duckdb CLI invocation
 
-Each synthetic row draws a class of <col> by its share of the input's
-rows, then fills every other column from that class's own profile.
+Closes #5082.
 
-- Fit: the whole-input pass runs as before (types, fakers, dictionary,
-  report keys); one read of the input then writes each row to its
-  class's temporary CSV, and stats/frequency run once per class, with
-  the fit RNG keyed by (seed, class index) and classes in a fixed order.
-- Classes: at most 50 distinct trimmed values split by value (an empty
-  value is a class); a numeric target with more is split by its own
-  quantile buckets and its value drawn from the class's bucket; any
-  other target is refused. Classes under --min-count rows are dropped
-  and listed in --report.
-- Fake-value columns, and columns a class can't profile, use the
-  whole-input generator; relationships drop the target from their
-  members.
-- Model format 4 stores the per-class schedules; Model::check verifies
-  each fills every non-target column once. --target is refused with
-  --model.
+With SQL file writes off (plugin mode), qsv_sqlp's DuckDB route now runs
+DuckDB with allowed_directories (the MCP allowed directories and working
+directory) and allowed_paths (the input and output files), external access
+off and the configuration locked. ATTACH, EXPORT DATABASE, COPY ... TO and
+INSTALL can't touch files outside those directories, whatever the SQL
+text. ATTACH joins the keyword check that sends such SQL to sqlp. Plugin
+mode needs DuckDB 1.2.0+ for this; older versions run the SQL on sqlp.
 
-Without --target, output is byte-
+The script passed to duckdb -c now always starts with a server statement,
+and SQL that isn't a query goes to sqlp.
 
-**File**: `.claude/skills/CHANGELOG.md` (modified, +1/-0)
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* docs: cite #5083 in MCP CHANGELOG [skip ci]
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* fix(mcp): keep POSIX backslashes in DuckDB paths; gate the live sandbox test
+
+roborev 6663:
+- On macOS/Linux a backslash is a filename character, but DuckDB SQL paths
+  converted it to '/', so an approved name like x\..\..\etc became a
+  '..' pa
+
+**File**: `.claude/skills/CHANGELOG.md` (modified, +5/-0)
 ```diff
-@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ 
  ## [Unreleased]
  
++### Security
++- **DuckDB runs sandboxed in plugin mode (#5082).** With SQL file writes off (plugin mode: Cowork, Claude Code plugin), `qsv_sqlp`'s DuckDB route now has DuckDB confine itself to the MCP allowed directories plus the input file. Parquet output (`format=parquet`) is written by `sqlp` in this mode, so DuckDB writes no query results (it still writes the server's own Parquet cache of the input file): the server's `COPY (<sql>) TO '<output>'` wrapper could otherwise be closed early by the SQL to redirect the write to another allowed file. It sets `allowed_directories` / `allowed_paths`, turns off `enable_external_access` and locks the configuration, so no SQL can lift it. `ATTACH 'new.db'` (which creates the file), `EXPORT DATABASE`, `COPY ... TO` and `INSTALL` can no longer reach files outside those directories, whatever the SQL text looks like. `ATTACH` is also added to the keyword check that sends such SQL to Polars `sqlp`. Needs DuckDB 1.2.0+; with an older DuckDB, plugin-mode SQL runs on `sqlp`. The sandbox covers DuckDB only: SQL that names files itself can still read them on the `sqlp` route. ([#5083](https://github.com/dathere/qsv/pull/5083))
++- **Stricter path handling.** Every path-taking option and positional argument (including short flags, comma-separated path lists, and directory arguments such as `outdir`) is now resolved against the allowed directories, and a call is rejected when one is refused. A raw `--output`/`-o` option is handled like `output_file`. Options that name part of an output filename (`--filename`, `--valid`, `--invalid`, `--outfilename`, `--table`) can't contain a path separator or `..`. `qsv_sqlp` parquet/arrow/avro output now needs `output_file`, and `SKIP_INPUT` is passed to `sqlp` as is (it was resolved as a file path, which broke such queries off the DuckDB route). A test now fails if a skill gains a path-like option that isn't classified. ([#5083](https://github.com/dathere/qsv/pull/5083))
++- **Hardened the DuckDB CLI invocation**: the script passed to `duckdb -c` now always starts with a server statement, and SQL starting with `.` is left to `sqlp`. On macOS and Linux, paths keep their backslashes when written into DuckDB SQL. A backslash is an ordinary filename character there, and turning it into `/` could make DuckDB open a different file than the one the server approved; only Windows separators are converted now. ([#5083](https://github.com/dathere/qsv/pull/5083))
++
  ### Added
-+- **`qsv-synthesize --target <col>`**: conditional generation. Each row draws a class of `<col>` (at most 50 distinct values, or a numeric column's quantile buckets) in proportion to its source rows, after dropping classes seen in fewer than `--min-count` rows, then fills the other columns from that class's own profile; `stats` and `frequency` run once more per class. Skill regenerated from the USAGE text. ([#5084](https://github.com/dathere/qsv/pull/5084))
+ - **`qsv-synthesize --target <col>`**: conditional generation. Each row draws a class of `<col>` (at most 50 distinct values, or a numeric column's quantile buckets) in proportion to its source rows, after dropping classes seen in fewer than `--min-count` rows, then fills the other columns from that class's own profile; `stats` and `frequency` run once more per class. Skill regenerated from the USAGE text. ([#5084](https://github.com/dathere/qsv/pull/5084))
  - **SQL file writes are off in plugin mode (Cowork, Claude Code plugin).** Polars SQL now has `COPY (<query>) TO '<file>'`, where the query rather than `output_file` picks the target. In plugin mode the server sets `QSV_SQL_DISABLE_FILE_WRITES=1` for qsv, and `qsv_sqlp` never sends SQL that may contain `COPY ... TO` or `EXPORT DATABASE` to DuckDB: it runs on Polars `sqlp`, which refuses a real `COPY ... TO`. A `.env` file can't lift the switch, for qsv or the qsv subprocesses it spawns. Other MCP clients and the Desktop extension keep them. New `QSV_MCP_SQL_FILE_WRITES` overrides the default either way. `qsv-sqlp` skill regenerated from the USAGE text. ([#5081](https://github.com/dathere/qsv/pull/5081))
- - **`qsv-synthesize --quantiles <n>`**: 2, 4, 5, 10, 20, 25, 50 or 100 equal-share buckets for numeric/date columns and `ordered` gaps (default 4, the quartiles, unchanged output); more buckets keep long tails. Skill regenerated from the USAGE text. ([#5078](https://github.com/dathere/qsv/pull/5078))
- - **`qsv-synthesize`: `--rows-per-file` is CLI-only for now.** The new `synthesize --rows-per-file` option and its USAGE example are left out of the skill: the MCP server checks only the literal `{}` output template against its allowed directories and would report the template as the written file. The generator's per-command skip list now also drops examples that use a skipped option. ([#5077](https://github.com/dathere/qsv/pull/5077))
 ```
 
-**File**: `.claude/skills/qsv/qsv-synthesize.json` (modified, +5/-0)
+**File**: `.claude/skills/README-MCP.md` (modified, +1/-1)
 ```diff
-@@ -125,6 +125,11 @@
-         "flag": "--strict-relationships",
-         "type": "flag",
-         "description": "Abort instead of warning-and-degrading when a declared relationship fails validation."
-+      },
-+      {
-+        "flag": "--target",
-+        "type": "string",
-+        "description": "Generate the other columns conditionally on the class of column <col> (a column name; with no headers, its 0-based index), e.g. a label to train a classifier on. Each row first draws a class by its share of the rows of <input>, then fills every other column from that class's own profile, so each column keeps its distribution within each class. A column with at most 50 distinct (trimmed) values is split by value, an empty value being a class of its own; a numeric column with more is split by its quantile buckets (see --quantiles), each class drawn at the share of rows its bucket holds (with tied bucket edges, not the shares of an ordinary fit), and any other column is refused. A class seen in fewer than <k> rows (<k> is set by the --min-count option) is dropped and its share redistributed. Fake-value columns, and columns a class has too few values to profile, use the generator fitted on the whole input, blank rate included (a column blank throughout a class stays blank). A numeric or date column needs at least 2k-1 values in a class, so with the default <k> of 5 a class of fewer than 9 rows takes all of them from the whole input; lower the --min-count to profile small classes, if that is acceptable for privacy. Relationships that name <col> drop it from their members, as do fake-value columns in the classes, and each class fits (and with --strict-relationships, enforces) them on its own rows. Dropping <col> can make a group eligible that an ordinary fit skips (it overlapped an earlier one only on <col>); it still yields to earlier groups, and a `joint` one writes real value-tuples, so a column an ordinary fit fakes can then write real values. `stats` and `frequency` run once more per class, on a temporary copy of <input> split by class."
+@@ -176,7 +176,7 @@ This script will:
+ | `QSV_MCP_MAX_OUTPUT_SIZE` | `52428800` | Maximum output size in bytes (50MB) |
+ | `QSV_MCP_MAX_EXAMPLES` | `5` | Maximum examples in tool descriptions (0-20) |
+ | `QSV_MCP_PLUGIN_MODE` | unset | Force plugin mode (for Gemini CLI etc.) |
+-| `QSV_MCP_SQL_FILE_WRITES` | `false` in plugin mode, else `true` | Allow SQL that writes files itself (`COPY ... TO '<file>'`, DuckDB `EXPORT DATABASE`). When `false`, qsv gets `QSV_SQL_DISABLE_FILE_WRITES=1` and SQL that may contain them runs on Polars `sqlp` (which refuses them) instead of DuckDB; use `output_file` instead. |
++| `QSV_MCP_SQL_FILE_WRITES` | `false` in plugin mode, else `true` | Allow SQL that writes files itself (`COPY ... TO '<file>'`, DuckDB `EXPORT DATABASE`). When `false`, qsv gets `QSV_SQL_DISABLE_FILE_WRITES=1` and SQL that may contain them (or `ATTACH`) runs on Polars `sqlp` (which refuses them) instead of DuckDB; use `output_file` instead. DuckDB itself then runs sandboxed to the allowed directories plus the input file, and parquet output (`format=parquet`) is written by `sqlp`, so DuckDB writes no query results, only the server's own Parquet cache of the input (DuckDB 1.2.0+; older versions route everything to `sqlp`). The sandbox covers DuckDB only: SQL that names files itself can still read them on the `sqlp` route. |
+ | `QSV_MCP_ENABLE_APPS` | `true` | Enable MCP Apps UI tools. When `true` and the client supports MCP Apps, exposes the app-only `qsv_browse_directory` interactive directory browser. Set to `false` to disable. |
+ | `QSV_MCP_EXPOSE_ALL_TOOLS` | unset | Controls tool exposure mode. `true`: expose all 57 tools immediately (no deferred loading). `false`: use only 10 core utility tools (+1 app-only tool when Apps enabled; no deferred additions). Unset (default): deferred loading — 23 tools at startup (10 core + 13 commonly-used commands), +1 app-only when Apps enabled, plus tools discovered via search |
+ | `QSV_MCP_SANITIZE_ERRORS` | `true` | Strip absolute paths from qsv error messages (and the command line echoed alongside them) before they reach the MCP client. Protects usernames and directory layout in hosted/shared deployments. Set to `false` to keep full paths for local debugging. |
+```
+
+**File**: `.claude/skills/src/duckdb.ts` (modified, +74/-7)
+```diff
+@@ -54,12 +54,71 @@ export interface DuckDbExecutionOptions {
+   compression?: string;
+   /** Timeout in milliseconds */
+   timeoutMs?: number;
++  /** Restrict DuckDB's file access to these directories and files (see buildSandboxPrelude) */
++  sandbox?: DuckDbSandbox;
+   /** Callback when process spawns (for shutdown tracking) */
+   onSpawn?: (proc: ChildProcess) => void;
+   /** Callback when process exits */
+   onExit?: (proc: ChildProcess) => void;
+ }
+ 
++/**
++ * The only directories and files DuckDB may read or write. DuckDB's allowlist grants both,
++ * so a write is still possible inside these; outside them every file access fails.
++ */
++export interface DuckDbSandbox {
++  allowedDirectories: readonly string[];
++  allowedPaths: readonly string[];
++}
++
++/** First DuckDB release with the allowed_directories / allowed_paths settings. */
++/**
++ * A path as DuckDB SQL should name it. Windows separators become '/', but only on Windows:
++ * elsewhere a backslash is an ordinary filename character, and rewriting it would point
++ * DuckDB at a different file than the one the server approved (`a\..\b` → `a/../b`).
++ */
++export function duckDbPath(p: string, platform: NodeJS.Platform = process.platform): string {
++  return platform === "win32" ? p.replace(/\\/g, "/") : p;
++}
++
++export const MIN_SANDBOX_DUCKDB_VERSION = "1.2.0";
++
++/** Whether a DuckDB version (x.y.z) supports the sandbox settings. */
++export function supportsSandbox(version: string): boolean {
++  const have = version.split(".").map((n) => parseInt(n, 10));
++  const need = MIN_SANDBOX_DUCKDB_VERSION.split(".").map((n) => parseInt(n, 10));
++  for (let i = 0; i < 3; i++) {
++    const h = have[i] ?? 0;
++    if (Number.isNaN(h)) return false;
++    if (h !== need[i]) return h > need[i];
++  }
++  return true;
++}
++
++/**
++ * SET statements that confine DuckDB to the sandbox, then lock its configuration so the
++ * query can't change them back (or point temp_directory and the like elsewhere).
++ */
++export function buildSandboxPrelude(
++  sandbox: DuckDbSandbox,
++  platform: NodeJS.Platform = process.platform,
++): string {
++  const quote = (p: string) => `'${p.replace(/'/g, "''")}'`;
++  const dirs = sandbox.allowedDirectories
++    .filter((d) => d.length > 0)
++    .map((d) => duckDbPath(d, platform))
++    .map((d) => quote(d.endsWith("/") ? d : `${d}/`));
++  const paths = sandbox.allowedPaths
++    .filter((p) => p.length > 0)
++    .map((p) => quote(duckDbPath(p, platform)));
++  return (
++    `SET allowed_directories = [${dirs.join(", ")}];\n` +
++    `SET allowed_paths = [${paths.join(", ")}];\n` +
++    "SET enable_external_access = false;\n" +
++    "SET lock_configuration = true;\n"
++  );
++}
++
+ /**
+  * Result from DuckDB query execution
+  */
+@@ -256,7 +315,7 @@ export function translateSql(
+   options?: TranslateSqlOptions,
+ ): string {
+   // Normalize path separators for SQL (Windows backslashes → forward slashes)
+-  const normalizedPath = inputFile.replace(/\\/g, "/");
++  const normalizedPath = duckDbPath(inputFile);
+   // Escape single quotes in path
+   const escapedPath = normalizedPath.replace(/'/g, "''");
+ 
+@@ -395,10 +454,12 @@ export function findFileWritingStatement(sql: string): string | null {
+   // Deliberately scans the raw text, strings and comments included. Blanking them first
+   // needs DuckDB's own lexer (nested block comments, $tag$ strings, E'' escapes), and any
+   // mismatch would hide a real statement. These keywords can't be spelled any other way,
+-  // so a raw match can only err toward refusing; a refused query can drop the word from
+-  // its literals or comments, or the server can be run with QSV_MCP_SQL_FILE_WRITES=true.
++  // so a raw match can only err toward refusing; a flagged query runs on Polars sqlp
++  // instead. This is the first layer; the DuckDB sandbox (buildSandboxPrelude) enforces.
+   if (/\bEXPORT\b/i.test(sql)) return "EXPORT DATABASE";
+   if (/\bCOPY\b/i.test(sql) && /\bTO\b/i.test(sql)) return "COPY ... TO";
++  // ATTACH creates the database file if it doesn't exist (#5082)
++  if (/\bATTACH\b/i.test(sql)) return "ATTACH";
+   return null;
+ }
+ 
+@@ -432,21 +493,27 @@ export async function executeDuckDbQuery(
+   const timeoutMs = options?.timeoutMs ?? config.operationTimeoutMs;
+   const maxOutputSize = config.maxOutputSize;
+ 
+-  // Build the SQL to execute
+-  let fullSql = "";
++  // Build the SQL to execute. The duckdb CLI reads a -c script that begins with '.' as a
++  // CLI meta-command rather than SQL, so the script always begins with this server
++  // statement and the caller's SQL is never first.
++  let fullSql = "SET enable_progress_bar = false;\n";
+ 
+-  // Decimal comma setting
++  // Decimal comma setting (before the sandbox locks the configuration)
+   if (options?.decimalComma) {
+     fullSql += "SET decimal_separator = ',';\n";
+   }
+ 
++  if (options?.sandbox) {
++    fullSql += buildSandboxPrelude(options.sandbox);
++  }
++
+   if (format === "parquet") {
+     // For parquet output, use COPY TO
+     const outputFi
+```
+
+**File**: `.claude/skills/src/file-operations.ts` (modified, +182/-36)
+```diff
+@@ -5,7 +5,7 @@
+ import { randomUUID } from "node:crypto";
+ import { stat, access, readFile, unlink, rename, copyFile, readdir, mkdir } from "node:fs/promises";
+ import { constants } from "node:fs";
+-import { basename, dirname, isAbsolute, join } from "node:path";
++import { basename, dirname, isAbsolute, join, resolve } from "node:path";
+ import { ConvertedFileManager } from "./converted-file-manager.js";
+ import type {
+   QsvSkill,
+@@ -20,6 +20,15 @@ import {
+   AUTO_INDEX_SIZE_MB,
+   FILE_PATH_INPUT_OPTIONS,
+   FILE_PATH_OUTPUT_OPTIONS,
++  OTHER_PATH_OPTIONS,
++  PATH_LIST_OPTIONS,
++  FILE_PREFIX_OPTIONS,
++  PATH_OR_REMOTE,
++  SELECTOR_OPTIONS,
++  COMMAND_PATH_OPTIONS,
++  FILENAME_PART_OPTIONS,
++  SHORT_PATH_FLAGS,
++  DIRECTORY_PATH_ARGS,
+   FINAL_OUTPUT_FILE,
+   isBinaryOutputFormat,
+ } from "./tool-constants.js";
+@@ -458,6 +467,18 @@ export function paramKeyToFlag(key: string): string {
+   return key.startsWith("-") ? key : `--${key.replace(/_/g, "-")}`;
+ }
+ 
++/**
++ * Like paramKeyToFlag, but maps a command's short flag for a path option
++ * (e.g. dedup's "-D") to its long form, so path checks can't be skipped.
++ */
++export function canonicalFlag(key: string, command: string): string {
++  let flag = paramKeyToFlag(key);
++  // describegpt reads "--stats_options" as --stats-options, so check it as that
++  if (flag.startsWith("--")) flag = flag.replace(/_/g, "-");
++  if (flag === "-o") return "--output";
++  return SHORT_PATH_FLAGS[command]?.[flag] ?? flag;
++}
++
+ /**
+  * Check whether a value looks like a file path (as opposed to inline script text).
+  * Used for ambiguous options like luau --begin/--end that accept both scripts and file paths.
+@@ -508,46 +529,159 @@ export async function resolveFilePathParams(
+   skill: QsvSkill,
+   filesystemProvider: FilesystemProviderExtended,
+ ): Promise<void> {
+-  // 1. Resolve positional args with type "file" (excluding "input", already handled)
+-  for (const arg of skill.command.args) {
+-    if (arg.type === "file" && arg.name !== "input" && params[arg.name]) {
+-      const rawValue = String(params[arg.name]);
++  const command = skill.command.subcommand;
++  const invalid = (label: string, error: unknown) =>
++    new Error(`Invalid path for ${label}: ${getErrorMessage(error)}`);
++  // Fail closed: a path the provider refuses must never reach qsv unresolved
++  const resolveOrThrow = async (label: string, value: string, stdio = true): Promise<string> => {
++    // "-" is stdin/stdout, not a file
++    if (stdio && value === "-") return value;
++    try {
++      const resolved = await filesystemProvider.resolvePath(value);
++      if (resolved !== value) {
++        console.error(`[MCP Tools] Resolved ${label}: ${value} -> ${resolved}`);
++      }
++      return resolved;
++    } catch (error: unknown) {
++      throw invalid(label, error);
++    }
++  };
++  // A directory the command creates: only its nearest existing ancestor must exist
++  const resolveDir = async (label: string, value: string): Promise<string> => {
++    try {
++      return await filesystemProvider.resolvePath(value);
++    } catch (error: unknown) {
++      if (!/does not exist/i.test(getErrorMessage(error)) || value.startsWith("~")) {
++        throw invalid(label, error);
++      }
++    }
++    let ancestor = resolve(filesystemProvider.getWorkingDirectory(), value);
++    const missing: string[] = [];
++    while (dirname(ancestor) !== ancestor) {
++      missing.unshift(basename(ancestor));
++      ancestor = dirname(ancestor);
+       try {
+-        const resolved = await filesystemProvider.resolvePath(rawValue);
+-        if (resolved !== rawValue) {
+-          console.error(`[MCP Tools] Resolved arg '${arg.name}': ${rawValue} -> ${resolved}`);
+-          params[arg.name] = resolved;
+-        }
++        return join(await filesystemProvider.resolvePath(ancestor), ...missing);
+       } catch (error: unknown) {
+-        console.error(`[MCP Tools] Warning: failed to resolve arg '${arg.name}' path '${rawValue}':`, getErrorMessage(error));
++        if (!/does not exist/i.test(getErrorMessage(error))) throw invalid(label, error);
        }
-     ]
-   },
+     }
+-  }
+-
+-  // 2. Resolve option values that are file paths
+-  for (const [key, value] of Object.entries(params)) {
+-    if (!value || typeof value !== "string") continue;
+-
+-    // Convert param key to flag format (e.g. "dupes_output" -> "--dupes-output")
+-    const flag = paramKeyToFlag(key);
+-
+-    const isFilePathOption = FILE_PATH_INPUT_OPTIONS.has(flag) || FILE_PATH_OUTPUT_OPTIONS.has(flag);
++    throw invalid(label, new Error("no existing parent directory"));
++  };
++  // The executor stringifies whatever it gets (["/x"] becomes "/x"), so an
++  // array or object can't stand in for a path; booleans are flags, not paths
++  const asString = (label: string, value: unknown): string | undefined => {
++    if (typeof value === "object" && value !== null) {
++      throw new Error(`Invalid value for ${label}: a path must be a string`);
++    }
++    if (typeof value === "number") return Str
 ```
 
-**File**: `CHANGELOG.md` (modified, +2/-0)
+**File**: `.claude/skills/src/mcp-filesystem.ts` (modified, +5/-1)
 ```diff
-@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- ## [Unreleased]
+@@ -5,7 +5,7 @@
+  * Claude Desktop to work with local files without uploading them.
+  */
  
- ### Added
-+- `synthesize`: new `--target <col>` generates the other columns conditionally on the class of `<col>`, e.g. a label to train a classifier on. Each synthetic row first draws a class by its share of the input's rows, then fills every other column from that class's own profile, so each column keeps its distribution within each class (on a 10%-positive label whose positive rows have a 10x larger `amount`, the synthetic positives' mean `amount` was 499 against the source's 499, and 116 without `--target`). A column with at most 50 distinct (trimmed) values is split by value, an empty value being a class of its own (not counted toward the 50); a numeric column with more is split by its own quantile buckets (`--quantiles`), each class drawn at the share of rows its bucket holds, and each value from the written values that land back in that bucket; any other column is refused. With tied bucket edges that follows the source more closely than an ordinary fit: on 900 zeros and the integers 1–100, 89.8% of synthetic targets were zeros, against 90% in the source and 75.1% without `--target`. `stats` and `frequency` run once more per class, on a temporary copy of the input split by class. A class seen in fewer than `--min-count` rows is dropped and its share redistributed (listed in `--report`, which also records the target and tags per-class suppressions with their class). Fake-value columns use their whole-input generator (blank rate included, though a column blank throughout a class stays blank), so `--consistent-fakes` keeps one fake per source value across classes, and so does any column a class can't profile as well as the whole input (filler text, or a generator that would write the column in another form, such as raw dates in a column the dictionary formats, or zero-padded codes as numbers) or has too few values to profile (a numeric or date column needs 2k−1 values in the class, so at the default `--min-count` of 5 a class of fewer than 9 rows takes them all from the whole input). Relationships that name the target drop it from their members, in the whole-input fit too, and in a class so do fake-value columns, so a class group never writes a column's real values where the whole input fakes it. Dropping the target can make a group eligible that an ordinary fit skips (it overlapped an earlier one only on the target); it still yields to earlier groups, and a `joint` one writes real value-tuples, so a column an ordinary fit fakes can then write real values. Each class fits relationships on its own rows, and `--strict-relationships` applies there, so a relationship that only holds within classes (e.g. y rising with x in one class and falling in another) is kept. Class files quote every field, so a `QSV_COMMENT_CHAR` value can't hide a row. Output is the same bytes at any `--jobs`, from `--model`, and across `--shard` and `--rows-per-file`; without `--target` it is unchanged. Saved models hold per-class profiles, so the model format is version 4 and models saved before this change must be fitted again. `--target` can't be combined with `--model`. ([#5084](https://github.com/dathere/qsv/pull/5084))
- - `synthesize`: new `--quantiles <n>` sets how many equal-share buckets reproduce each numeric and date column's shape, and the gaps of `ordered` relationships: 2, 4, 5, 10, 20, 25, 50 or 100 (divisors of 100, so every bucket edge is a whole percentile and every bucket holds the same share of rows). More buckets keep skewed and long-tailed columns closer to the source: on a column whose values double every 5% of rows, the 90th percentile came out 2.4× too high with the quartiles and 2% high with `--quantiles 20`. The default of 4 still cuts at the source quartiles, so output is unchanged; other values cut at `stats --percentiles`, which are real source values, so a column gets fewer buckets when it has too few non-null values for each bucket to hold more than `--min-count` of them (at worst, the quartiles). Percentile edges are read unrounded (`stats --round 9999`, unless `--stats-options` sets `--round`), so small-magnitude floats keep distinct edges. The model format is unchanged. `--quantiles` can't be combined with `--model`, and with a value other than 4 `--stats-options` may not include `--percentiles` or `--percentile-list`. ([#5078](https://github.com/dathere/qsv/pull/5078))
- - `synthesize`: new `--rows-per-file <n>` splits the output into files of `<n>` rows. The `--output` name must contain `{}`, which is replaced by the zero-based row number of each file's first row, as in `qsv split`, zero-padded so the names sort in order (`-o synthetic_{}.csv` writes `synthetic_000.csv`, `synthetic_250.csv`, …). The files hold the same rows as a single-file run, in order, at any `--jobs` and from a `--model` run, and join the same way as `--shard` slices; each CSV file has a header row and each Parqu
+-import { readdir, stat, realpath, access } from "node:fs/promises";
++import { readdir, stat, lstat, realpath, access } from "node:fs/promises";
+ import { realpathSync } from "node:fs";
+ import { join, resolve, relative, basename, dirname, extname, isAbsolute } from "node:path";
+ import { homedir } from "node:os";
+@@ -344,6 +344,10 @@ export class FilesystemResourceProvider {
+     try {
+       canonical = await realpath(resolved);
+     } catch {
++      // A broken symlink would be followed on write, creating its target anywhere
++      if (await lstat(resolved).then((s) => s.isSymbolicLink(), () => false)) {
++        throw new Error(`Access denied: ${path} is a broken symbolic link`);
++      }
+       // If file doesn't exist yet (e.g., output file), use resolved path
+       // but still validate the parent directory exists and is allowed
+       const parentDir = join(resolved, "..");
 ```
 
-**File**: `docs/help/synthesize.md` (modified, +3/-1)
+**File**: `.claude/skills/src/parquet-bridge.ts` (modified, +35/-4)
 ```diff
-@@ -101,7 +101,8 @@ can reappear at or near its real value.
- Review the output before sharing it, or training on it, as de-identified data.
- A model saved with --save-model holds real values from <input>, such as
- enumerated values, bucket boundaries and range ends, including some the
--output never shows. Review and share it at least as carefully as the output.
-+output never shows; with --target, it holds them for each class, and the
-+class values. Review and share it at least as carefully as the output.
+@@ -12,7 +12,11 @@ import {
+   translateSql,
+   findFileWritingStatement,
+   executeDuckDbQuery,
++  supportsSandbox,
++  duckDbPath,
++  MIN_SANDBOX_DUCKDB_VERSION,
+   CSV_LIKE_EXTENSIONS,
++  type DuckDbSandbox,
+ } from "./duckdb.js";
+ import { config } from "./config.js";
+ import { getErrorMessage, errorResult, successResult } from "./utils.js";
+@@ -163,8 +167,8 @@ async function buildDuckDbParquetSql(
  
- With --seed, output is fully reproducible, whatever the --jobs setting.
- Rows are generated in parallel, in fixed blocks of 8192 rows. With --seed
-@@ -226,6 +227,7 @@ qsv synthesize --help
- | &nbsp;`‑‑locale`&nbsp; | string | Locale for faker-backed columns. Case-insensitive. Supported: en, fr_fr, de_de, it_it, pt_br, pt_pt, ja_jp, zh_cn, zh_tw, ar_sa, cy_gb, fa_ir, nl_nl, tr_tr. Sparse locales (those without per-category data in fake-rs) silently fall back to en data for the missing categories — e.g. lorem text under a non-en locale is still English, since only zh_cn has localized lorem data. | `en` |
- | &nbsp;`‑‑freq‑limit`&nbsp; | integer | Frequency pool depth passed to the internal `frequency` run as --limit. A column is reproduced via exact frequency-weighted sampling only when its cardinality is fully captured within this limit; higher values reproduce more columns verbatim. 0 means unlimited. | `100` |
- | &nbsp;`‑‑quantiles`&nbsp; | integer | Number of equal-share buckets that reproduce the shape of numeric and date columns: 2, 4, 5, 10, 20, 25, 50 or 100. More buckets keep skewed and long-tailed columns closer to the source. 4 (the default) cuts at the source quartiles; other values cut at `stats --percentiles` (real source values). A column with too few non-null values for every bucket to hold more than <k> of them (<k> is set by the --min-count option) gets fewer buckets, or the quartiles. Also applies to the gaps of `ordered` relationships. |  |
-+| &nbsp;`‑‑target`&nbsp; | string | Generate the other columns conditionally on the class of column <col> (a column name; with no headers, its 0-based index), e.g. a label to train a classifier on. Each row first draws a class by its share of the rows of <input>, then fills every other column from that class's own profile, so each column keeps its distribution within each class. A column with at most 50 distinct (trimmed) values is split by value, an empty value being a class of its own; a numeric column with more is split by its quantile buckets (see --quantiles), each class drawn at the share of rows its bucket holds (with tied bucket edges, not the shares of an ordinary fit), and any other column is refused. A class seen in fewer than <k> rows (<k> is set by the --min-count option) is dropped and its share redistributed. Fake-value columns, and columns a class has too few values to profile, use the generator fitted on the whole input, blank rate included (a column blank throughout a class stays blank). A numeric or date column needs at least 2k-1 values in a class, so with the default <k> of 5 a class of fewer than 9 rows takes all of them from the whole input; lower the --min-count to profile small classes, if that is acceptable for privacy. Relationships that name <col> drop it from their members, as do fake-value columns in the classes, and each class fits (and with --strict-relationships, enforces) them on its own rows. Dropping <col> can make a group eligible that an ordinary fit skips (it overlapped an earlier one only on <col>); it still yields to earlier groups, and a `joint` one writes real value-tuples, so a column an ordinary fit fakes can then write real values. `stats` and `frequency` run once more per class, on a temporary copy of <input> split by class. |  |
- | &nbsp;`‑‑min‑count`&nbsp; | integer | Privacy threshold. A real value of an enumerated column, or a real `joint` value-tuple, that occurs fewer than <k> times in <input> is dropped from the values it samples; its share is redistributed over the kept values. An enumerated column whose values are all below <k> falls back to its faker or type-based generator (numeric and date columns to their trimmed range), and a joint group to independent columns, or aborts under the --strict-relationships option. A warning is printed when either happens. 1 disables suppression. Counts are of rows, not people: where one person has many rows (transactions, visits, logs), one person's value can pass <k> alone. Raise <k>, or dedupe to one row per person first. Numeric and date ranges, and the gaps of `ordered` relationships, are also trimmed to their k-th smallest and k-th largest values (one extra pass over <input>). A numeric or date column with fewer than 2k-1 non-null values is left empty unless its real values are sampled. | `5` |
- | &nbsp;`‑‑report`&nbsp; | string | Write a JSON report of what the run reproduced from <input>: source and synthetic row counts, how many synthetic rows exactly 
+   // Normalize paths for SQL: backslash to forward slash (Windows compat),
+   // then single-quote escaping for SQL string literals.
+-  const normInput = inputFile.replace(/\\/g, "/").replace(/'/g, "''");
+-  const normOutput = outputFile.replace(/\\/g, "/").replace(/'/g, "''");
++  const normInput = duckDbPath(inputFile).replace(/'/g, "''");
++  const normOutput = duckDbPath(outputFile).replace(/'/g, "''");
+ 
+   const selectClause = selectParts.length > 0 ? selectParts.join(", ") : "*";
+ 
+@@ -810,17 +814,34 @@ export async function tryDuckDbExecution(
+   parquetFile: string,
+   params: Record<string, unknown>,
+   outputFile: string | undefined,
++  allowedDirectories?: readonly string[],
+ ): Promise<{ content: Array<{ type: string; text: string }>; isError?: boolean } | null> {
+   // Detect DuckDB (lazy, first-call-only)
+   const state = detectDuckDb();
+   if (state.status !== "available") {
+     return null; // Fall through to sqlp
+   }
+ 
++  // Not SQL: the duckdb CLI would read it as a meta-command. Let sqlp reject it.
++  if (sql.trimStart().startsWith(".")) {
++    return null;
++  }
++
+   // With SQL file writes off (plugin mode), SQL that may write files never reaches DuckDB.
+   // The check over-matches (a column named "export" trips it), so fall back to sqlp rather
+   // than fail: Polars runs under QSV_SQL_DISABLE_FILE_WRITES=1 and refuses a real COPY TO.
++  // DuckDB itself then runs sandboxed to the MCP allowed directories plus the input file
++  // (#5082), which also confines what the keyword check can't see.
++  const format = String(params.format ?? "csv").toLowerCase();
++  let sandbox: DuckDbSandbox | undefined;
+   if (!config.sqlFileWrites) {
++    // Parquet output wraps the caller's SQL in the server's own COPY ... TO, which the SQL
++    // could close early to redirect the write. sqlp writes parquet output instead, so
++    // DuckDB never writes a file in this mode.
++    if (format === "parquet") {
++      console.error("[MCP Tools] DuckDB: SQL file writes are disabled; parquet output runs with sqlp");
++      return null;
++    }
+     const kind = findFileWritingStatement(sql);
+     if (kind) {
+       console.error(
+@@ -829,10 +850,19 @@ export async function tryDuckDbExecution(
+       );
+       return null;
+     }
++    if (!allowedDirectories || !supportsSandbox(state.version)) {
++      console.error(
++        `[MCP Tools] DuckDB: SQL file writes are disabled and DuckDB v${state.version} can't be ` +
++        `sandboxed (needs v${MIN_SANDBOX_DUCKDB_VERSION}+ and the allowed directories); running with sqlp`,
++      );
++      return null;
++    }
++    sandbox = {
++      allowedDirectories,
++      allowedPaths: parquetFile === "SKIP_INPUT" ? [] : [parquetFile],
++    };
+   }
+ 
+-  const format = String(params.format ?? "csv").toLowerCase();
+-
+   // Unsupported formats fall back to sqlp
+   if (format === "arrow" || format === "avro") {
+     console.error(`[MCP Tools] DuckDB: format '${format}' not supported, falling back to sqlp`);
+@@ -854,6 +884,7 @@ export async function tryDuckDbExecution(
+       decimalComma: params["decimal-comma"] === true,
+       compression: params.compression as string | undefined,
+       timeoutMs: config.operationTimeoutMs,
++      sandbox,
+       onSpawn: (proc) => activeProcesses.add(proc),
+       onExit: (proc) => activeProcesses.delete(proc),
+     });
 ```
 
-**File**: `src/cmd/synthesize/generator.rs` (modified, +1/-1)
+**File**: `.claude/skills/src/tool-constants.ts` (modified, +82/-4)
 ```diff
-@@ -115,7 +115,7 @@ fn is_unstructured(content_type: &str) -> bool {
-     UNSTRUCTURED_CONTENT_TYPES.contains(&content_type)
- }
+@@ -96,10 +96,13 @@ export const BINARY_OUTPUT_FORMATS = new Set(["parquet", "arrow", "avro"]);
+  * Values are resolved to absolute paths via filesystemProvider.resolvePath().
+  */
+ export const FILE_PATH_INPUT_OPTIONS = new Set([
++  "--context-file",
++  "--dictionary-context",
++  "--globals-json",
++  "--markdown-template",
+   "--prompt-file",
+-  "--tag-vocab",
++  "--sas7bcat",
+   "--template-file",
+-  "--globals-json",
+ ]);
  
--#[derive(Serialize, Deserialize)]
-+#[derive(Clone, Serialize, Deserialize)]
- pub(crate) enum ColumnGenerator {
-     /// Sample real values with real frequency weights.
-     FrequencyWeighted {
+ /**
+@@ -109,12 +112,87 @@ export const FILE_PATH_INPUT_OPTIONS = new Set([
+  */
+ export const FILE_PATH_OUTPUT_OPTIONS = new Set([
+   "--dupes-output",
++  "--export-prompt",
+   "--keys-output",
+-  "--unmatched-output",
++  "--report",
++  "--sarif",
++  "--save-model",
++  "--save-urlsample",
++  "--sketch-out",
+   "--sql-results",
+-  "--export-prompt",
++  "--stats-csv",
++  "--unmatched-output",
++  "--valid-output",
+ ]);
+ 
++/**
++ * Options naming a directory, which the command creates if needed (so only the
++ * nearest existing ancestor has to exist). Resolved like the two sets above.
++ */
++export const OTHER_PATH_OPTIONS = new Set([
++  "--cache-dir",
++  "--disk-cache-dir",
++  "--temp-dir",
++  "--tmp-dir",
++]);
++
++/** Options holding a comma-separated list of local file paths. */
++export const PATH_LIST_OPTIONS = new Set(["--join-inputs", "--sketch-in"]);
++
++/** Options whose value is an ordinary string, or a local file path after a `file:` prefix. */
++export const FILE_PREFIX_OPTIONS = new Set(["--freq-options", "--stats-options"]);
++
++/**
++ * Options and positional args that take a local path or one of the remote or
++ * remote forms the command documents (left as is). Any other value is
++ * resolved as a local path.
++ */
++export const PATH_OR_REMOTE: Readonly<Record<string, RegExp>> = {
++  "--dictionary": /^$/,
++  "--geojson": /^https?:\/\//i,
++  "--tag-vocab": /^(https?|ckan|dathere):\/\//i,
++  "destination": /^(postgres(ql)?:\/\/|env=)/i,
++  "json-schema": /^https?:\/\//i,
++};
++
++/**
++ * PATH_OR_REMOTE options that also take a bare-word selector, such as viz's
++ * `auto`, `infer`, `census:county@2021` or a shortcut name. A bare word (no
++ * `.`, `/` or `\`, and not a Windows drive) stays a selector unless a file by
++ * that name exists, since qsv opens the file first.
++ */
++export const SELECTOR_OPTIONS = new Set(["--dictionary", "--geojson"]);
++
++/** Path options that only one command has; the same flag means something else elsewhere. */
++export const COMMAND_PATH_OPTIONS: Readonly<Record<string, ReadonlySet<string>>> = {
++  synthesize: new Set(["--model"]),
++};
++
++/**
++ * Options whose value becomes part of an output filename inside a directory
++ * the server has resolved, so it must not contain a path separator or `..`.
++ */
++export const FILENAME_PART_OPTIONS = new Set([
++  "--filename",
++  "--invalid",
++  "--outfilename",
++  "--table",
++  "--valid",
++]);
++
++/** Short flags of path options, per command (`-o` is `--output` everywhere). */
++export const SHORT_PATH_FLAGS: Readonly<Record<string, Readonly<Record<string, string>>>> = {
++  dedup: { "-D": "--dupes-output" },
++  extdedup: { "-D": "--dupes-output" },
++  luau: { "-B": "--begin", "-E": "--end" },
++  moarstats: { "-J": "--join-inputs" },
++  template: { "-J": "--globals-json", "-t": "--template-file" },
++  to: { "-c": "--stats-csv" },
++};
++
++/** Positional args (not typed "file" in the skill JSONs) that name a directory the command creates. */
++export const DIRECTORY_PATH_ARGS = new Set(["outdir"]);
++
+ /**
+  * Check if the command+params produce binary output (not tabular text).
+  * Used to skip auto temp file creation and prevent .tsv extensions for
 ```
 
-**File**: `src/cmd/synthesize/mod.rs` (modified, +534/-23)
+**File**: `.claude/skills/src/tool-handlers.ts` (modified, +48/-9)
 ```diff
-@@ -89,7 +89,8 @@ not stop it:
- Review the output before sharing it, or training on it, as de-identified data.
- A model saved with --save-model holds real values from <input>, such as
- enumerated values, bucket boundaries and range ends, including some the
--output never shows. Review and share it at least as carefully as the output.
-+output never shows; with --target, it holds them for each class, and the
-+class values. Review and share it at least as carefully as the output.
+@@ -44,7 +44,7 @@ import {
+   formatToolResult,
+   resolveParamAliases,
+   shouldUseTempFile,
+-  paramKeyToFlag,
++  canonicalFlag,
+ } from "./file-operations.js";
+ import {
+   ensureParquet,
+@@ -404,6 +404,7 @@ async function runSqlpParquetInterception(
+   params: Record<string, unknown>,
+   inputFile: string,
+   outputFile: string | undefined,
++  filesystemProvider?: FilesystemProviderExtended,
+ ): Promise<SqlpInterceptionResult> {
+   const rawSql = params.sql as string | undefined;
+   if (!rawSql) {
+@@ -432,7 +433,20 @@ async function runSqlpParquetInterception(
  
- With --seed, output is fully reproducible, whatever the --jobs setting.
- Rows are generated in parallel, in fixed blocks of 8192 rows. With --seed
-@@ -254,6 +255,44 @@ synthesize options:
-                            by the --min-count option) gets fewer buckets, or
-                            the quartiles.
-                            Also applies to the gaps of `ordered` relationships.
-+    --target <col>         Generate the other columns conditionally on the
-+                           class of column <col> (a column name; with no
-+                           headers, its 0-based index), e.g. a label to train
-+                           a classifier on. Each row first draws a class by
-+                           its share of the rows of <input>, then fills every
-+                           other column from that class's own profile, so
-+                           each column keeps its distribution within each
-+                           class. A column with at most 50 distinct (trimmed)
-+                           values is split by value, an empty value being a
-+                           class of its own; a numeric column with more is
-+                           split by its quantile buckets (see --quantiles),
-+                           each class drawn at the share of rows its bucket
-+                           holds (with tied bucket edges, not the shares of
-+                           an ordinary fit), and any other column is
-+                           refused. A class seen in
-+                           fewer than <k> rows (<k> is set by the --min-count
-+                           option) is dropped and its share redistributed.
-+                           Fake-value columns, and columns a class has too
-+                           few values to profile, use the generator fitted
-+                           on the whole input, blank rate included (a
-+                           column blank throughout a class stays blank). A numeric or date column
-+                           needs at least 2k-1 values in a class, so with
-+                           the default <k> of 5 a class of fewer than 9 rows
-+                           takes all of them from the whole input; lower
-+                           the --min-count to profile small classes, if that
-+                           is acceptable for privacy. Relationships that
-+                           name <col> drop it from their members, as do
-+                           fake-value columns in the classes, and each class
-+                           fits (and with --strict-relationships, enforces)
-+                           them on its own rows. Dropping <col> can make a
-+                           group eligible that an ordinary fit skips (it
-+                           overlapped an earlier one only on <col>); it
-+                           still yields to earlier groups, and a `joint`
-+                           one writes real value-tuples, so a column an
-+                           ordinary fit fakes can then write real values.
-+                           `stats` and `frequency` run once more per
-+                           class, on a
-+                           temporary copy of <input> split by class.
-     --min-count <k>        Privacy threshold. A real value of an enumerated
-                            column, or a real `joint` value-tuple, that occurs
-                            fewer than <k> times in <input> is dropped from the
-@@ -345,7 +384,9 @@ use serde::Deserialize;
+     // Try DuckDB execution (single-table path)
+     const duckDbStart = Date.now();
+-    const duckDbResult = await tryDuckDbExecution(sql, parquetFile, params, outputFile);
++    // The DuckDB sandbox (used when SQL file writes are off) allows these directories
++    const allowedDirectories = filesystemProvider?.getAllowedDirectories
++      ? [
++        ...filesystemProvider.getAllowedDirectories(),
++        filesystemProvider.getWorkingDirectory(),
++      ]
++      : undefined;
++    const duckDbResult = await tryDuckDbExecution(
++      sql,
++      parquetFile,
++      params,
++      outputFile,
++      allowedDirectories,
++    );
+     if (duckDbResult !== null) {
+       // Attach pipeline metadata for parity with the sqlp path
+       const duckDbSuccess = !("isError" in duckDbResult && duckDbResult.isError === true);
+@@ -734,6 +748,12 @@ export async function handleToolCall(
+     const { inputFile: rawInputFile, outputFile: rawOutputFile } = resolveParamAliases(params);
+     let inputFile = rawInputFile;
+     let outputFile = rawOutputFile;
++    // A raw "--format" is the same option as format; normalize it so the binary-output
++    // check and engine routing see it
++    if (params["--format"] !== undefined && params.format === undefined) {
++      params.format = params["--format"];
++      delete params["--format"];
++    }
+     const isHelpRequest = params.help === true || params["--help"] === true;
  
- use crate::{
-     CliError, CliResult,
--    cmd::describegpt::dictionary::{StatsRecord, parse_frequency_csv, parse_stats_csv},
-+    cmd::describegpt::dictionary::{
-+        FrequencyRecord, StatsRecord, parse_frequency_csv, parse_stats_csv,
-+    },
-     config::{Config, Delimiter},
-     util,
- };
-@@ -359,9 +400,13 @@ mod output;
- mod range_trim;
- mod relationships;
- mod report;
-+mod target;
+     // Normalize help flags: once we've interpreted "--help", remove it so it
+@@ -749,11 +769,14 @@ export async function handleToolCall(
+     // Resolve file paths using filesystem provider if available (skip for help requests)
+     if (filesystemProvider && inputFile) {
+       try {
+-        inputFile = await resolveAndConvertInputFile(inputFile, filesystemProvider);
++        // sqlp's SKIP_INPUT is a sentinel (the SQL names its own files), not a path
++        if (!(commandName === "sqlp" && inputFile === "SKIP_INPUT")) {
++          inputFile = await resolveAndConvertInputFile(inputFile, filesystemProvider);
  
-+use dictionary::SynthRelationship;
- use faker_map::Locale;
-+use generator::ColumnGenerator;
- use relationships::{EmitUnit, ScheduleParams, build_emit_schedule};
-+use report::Suppression;
- 
- #[derive(Deserialize)]
- struct Args {
-@@ -378,6 +423,7 @@ struct Args {
-     flag_locale:                String,
-     flag_freq_limit:            usize,
-     flag_quantiles:             Option<usize>,
-+    flag_target:                Option<String>,
-     flag_stats_options:         Option<String>,
-     flag_consistent_fakes:      bool,
-     flag_no_relationships:      bool,
-@@ -479,6 +525,7 @@ pub fn run(argv: &[&str]) -> 
-```
-
-**File**: `src/cmd/synthesize/model.rs` (modified, +62/-23)
-```diff
-@@ -9,11 +9,11 @@ use serde::{Deserialize, Serialize};
- 
- use super::{
-     generator::ColumnGenerator, group_generator::GroupGenerator, output::OutType,
--    relationships::EmitUnit,
-+    relationships::EmitUnit, target::Target,
- };
- use crate::{CliError, CliResult, cmd::describegpt::dictionary::is_valid_strftime};
- 
--const FORMAT_VERSION: u32 = 3;
-+const FORMAT_VERSION: u32 = 4;
- 
- #[derive(Serialize, Deserialize)]
- pub(crate) struct Model {
-@@ -26,6 +26,9 @@ pub(crate) struct Model {
-     /// The source's day-first preference, for reading sampled real dates.
-     pub(crate) prefer_dmy: bool,
-     pub(crate) schedule:   Vec<EmitUnit>,
-+    /// With `--target`: one schedule per class, which rows use instead of
-+    /// `schedule` (still the whole-input fit, for types and `--report`).
-+    pub(crate) target:     Option<Target>,
- }
- 
- /// How the model was fitted. Informational only: generation never reads it.
-@@ -43,6 +46,7 @@ impl Model {
-         types: Vec<OutType>,
-         prefer_dmy: bool,
-         schedule: Vec<EmitUnit>,
-+        target: Option<Target>,
-         fit: FitInfo,
-     ) -> Self {
-         Self {
-@@ -53,6 +57,7 @@ impl Model {
-             types,
-             prefer_dmy,
-             schedule,
-+            target,
+-        // Auto-index native CSV files (skip for help requests)
+-        if (!isHelpRequest) {
+-          await autoIndexIfNeeded(inputFile);
++          // Auto-index native CSV files (skip for help requests)
++          if (!isHelpRequest) {
++            await autoIndexIfNeeded(inputFile);
++          }
          }
+ 
+         if (outputFile) {
+@@ -776,7 +799,11 @@ export async function handleToolCall(
+ 
+     // Resolve additional file-path parameters (positional args and options beyond input/output)
+     if (filesystemProvider && !isHelpRequest) {
+-      await resolveFilePathParams(params, skill, filesystemProvider);
++      try {
++        await resolveFilePathParams(params, skill, filesystemProvider);
++      } catch (error: unknown) {
++        return errorResult(`Error: ${maybeSanitize(getErrorMessage(error))}`);
++      }
      }
  
-@@ -109,31 +114,65 @@ impl Model {
-         for ty in &self.types {
-             check_date_format(ty.date_format())?;
-         }
--        let mut filled = vec![false; ncols];
--        for unit in &self.schedule {
--            let cols: &[usize] = match unit {
--                EmitUnit::Independent { col_idx, generator } => {
--                    check_column(generator)?;
--                    std::slice::from_ref(col_idx)
--                },
--                EmitUnit::Group(group) => {
--                    check_group(group)?;
--                    group.col_indices()
--                },
--            };
--            for &col in cols {
--                match filled.get_mut(col) {
--                    Some(seen) if !*seen => *seen = true,
--                    Some(_) => return Err(format!("column {col} is generated twice.")),
--                    None => return Err(format!("column {col} is out of range.")),
--                }
-+        check_schedule(&self.schedule, ncols, None)?;
-+        let Some(target) = &self.target else {
-+            return Ok(());
-+        };
-+        if target.col_idx >= ncols {
-+            return Err(format!(
-+                "its target column {} is out of range.",
-+                target.col_idx
-+            ));
-+        }
-+        if target.classes.is_empty() || target.classes.iter().all(|c| c.rows == 0) {
-+            return bad("a target with no classes");
-+        }
-+        for class in &target.classes {
-+            if class
-+                .bucket
-+                .is_some_and(|(lo, hi)| lo.partial_cmp(&hi).is_none_or(std::cmp::Ordering::is_gt))
-+            {
-+                return bad("a target class whose low end is above its high end");
-+            }
-+            if class.grid.is_some_and(|(a, b)| a > b) {
-+                return bad("a target class with an empty value range");
-             }
-+            check_schedule(&class.schedule, ncols, Some(target.col_idx))?;
-         }
--        match filled.iter().position(|seen| !seen) {
--            Some(col) => Err(format!("column {col} is never generated.")),
--            None => Ok(()),
-+        Ok(())
-+    }
-+}
-+
-+/// Checks that `schedule` fills every column (except `skip`, the target)
-+/// exactly once, and that nothing it holds can panic when sampled.
-+fn check_schedule(schedule: &[EmitUnit], ncols: usize, skip: Option<usize>) -> Result<(), String> {
-+    let mut filled = vec![false; ncols];
-+    if let Some(skip) = skip {
-+        filled[skip] = true;
-+    }
-+    for unit in schedule {
-+        let cols: &[usize] = match unit {
-+            EmitUnit::Independent { col_idx, generator } => {
-+                check_column(generator)?;
-+                std::slice::from_ref(col_idx)
-+            },
-+            EmitUnit::Group(group) => {
-+                check_group(group)?;
-+                group.col_indices()
-+            },
-+        };
-+        for &col in cols {
-+            match filled.get_mut(col) {
-+                Some(seen) if !*seen => *seen = true,
-+                Some(_) => return Err(format!("column {col} is generated twice.")),
-+                None => return Err(format!("column {col} is out of range.")),
-+            }
-         }
+     // viz is HTML-only over MCP. viz infers its output format from the -o
+@@ -813,19 +840,31 @@ export async function handleToolCall(
      }
-+    match filled.iter().position(|seen| !seen) {
-+        Some(col) => Err(format!("column {col} is never generated.")),
-+        None => Ok(()),
+     for (const [key, value] of Object.entries(params)) {
+       if (!value || typeof value !== "string") continue;
+-      const flag = paramKeyToFlag(key);
++      const flag = canonicalFlag(key, commandName);
+       if (FILE_PATH_OUTPUT_OPTIONS.has(flag) && isReservedCachePath(value)) {
+         return errorResult(reservedCachePathError(value));
+       }
+     }
+ 
++    // Binary results can't come back as text, so they need a validated destination
++    if (commandName === "sqlp" && !isHelpRequest && !outputFile && isBinaryOutputFormat(commandName, params)) {
++      return errorResult(
++        "Error: output_file is required for parquet, arrow and avro output (binary results can't be returned as text).",
++      );
 +    }
- }
- 
- fn bad(what: &str) -> Result<(), String> {
-```
-
-**File**: `src/cmd/synthesize/output.rs` (modified, +17/-2)
-```diff
-@@ -131,7 +131,22 @@ pub(crate) fn resolve_types(
-     types
- }
- 
--const fn number_type(is_int: bool) -> OutType {
-+/// Whether values a generator types `values` keep their written form in a
-+/// column typed `column`: the same type, or Integer values in a Float column.
-+pub(crate) fn holds_exactly(column: &OutType, values: &OutType) -> bool {
-+    column == values || (*column == OutType::Float && *values == OutType::Integer)
-+}
 +
-+/// Whether a column typed `column` can hold values a generator types
-+/// `values`: the same type, Integer values in a Float column, or anything in a
-+/// String column.
-+pub(crate) fn holds(column: &OutType, values: &OutType) -> bool {
-+    column == values
-+        || *column == OutType::String
-+        || (*column == OutType::Float && *values == OutType::Integer)
-+}
-+
-+pub(crate) const fn number_type(is_int: bool) -> OutType {
-     if is_int {
-         OutType::Integer
-     } else {
-@@ -172,7 +187,7 @@ fn date_type(is_datetime: bool, date_format: Option<&String>) -> OutType {
- /// so a zero-padded code stays text; a float must keep its decimal value
- /// through f64; a date must be a whole day and a datetime must fit in
- /// microseconds, as Parquet stores them.
--fn pooled_type<'a>(
-+pub(crate) fn pooled_type<'a>(
-     stats_type: &str,
-     mut values: impl Iterator<Item = &'a str>,
-     prefer_dmy: bool,
+     // DuckDB/Parquet-first interception for sqlp queries. The orchestration
+     // (multi-table detection, Parquet conversion, DuckDB attempt, fallback
+     // SQL rewrite, warning capture) lives in runSqlpParquetInterception so
+     // this function stays free of command-specific logic.
+     let parquetConversionWarning = "";
+     if (commandName === "sqlp" && !isHelpRequest && inputFile) {
+-      const interception = await runSqlpParquetInterception(params, inputFile, outputFile);
++      const interception = await runSqlpParquetInterception(
++        params,
++        inputFile,
++        outputFile,
++        filesystemProvider,
++      );
+       if (i
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #5084** (2026-11-21): feat(synthesize): --target <col> for conditional generation; read non-UTF8 input (@jqnatividad)
+- **PR #5083** (2026-11-21): fix(mcp): sandbox DuckDB in plugin mode; harden the duckdb CLI invocation (@jqnatividad)
 - **PR #5081** (2026-11-20): deps: bump Polars to upstream 93d31f0; gate SQL COPY TO file writes (@jqnatividad)
 - **PR #5080** (2026-11-20): feat(synthesize): Float columns keep their source decimal places (@jqnatividad)
 - **PR #5078** (2026-11-20): feat(synthesize): --quantiles <n> for finer numeric/date marginals (@jqnatividad)
 - **PR #5077** (2026-11-20): feat(synthesize): --rows-per-file <n> splits the output into files (@jqnatividad)
-- **PR #5075** (2026-11-19): feat(synthesize): --format csv|jsonl|parquet with typed columns (@jqnatividad)
 
 ---
 
@@ -2598,13 +2886,13 @@ Without --target, output is byte-
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. synthesize): --target <col> for conditional generation; read non-UTF8 input
+## X. mcp): sandbox DuckDB in plugin mode; harden the duckdb CLI invocation
 
 **RULE**:
 When implementing operations in `.claude/skills/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ea8e9cca`: synthesize): --target <col> for conditional generation; read non-UTF8 input. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3996998d`: mcp): sandbox DuckDB in plugin mode; harden the duckdb CLI invocation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/CHANGELOG.md`.
@@ -2612,7 +2900,9 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **`qsv-synthesize --target <col>`**: conditional generation. Each row draws a class of `<col>` (at most 50 distinct values, or a numeric column's quantile buckets) in proportion to its source rows, after dropping classes seen in fewer than `--min-count` rows, then fills the other columns from that class's own profile; `stats` and `frequency` run once more per class. Skill regenerated from the USAGE text. ([#5084](https://github.com/dathere/qsv/pull/5084))
+### Security
+- **DuckDB runs sandboxed in plugin mode (#5082).** With SQL file writes off (plugin mode: Cowork, Claude Code plugin), `qsv_sqlp`'s DuckDB route now has DuckDB confine itself to the MCP allowed directories plus the input file. Parquet output (`format=parquet`) is written by `sqlp` in this mode, so DuckDB writes no query results (it still writes the server's own Parquet cache of the input file): the server's `COPY (<sql>) TO '<output>'` wrapper could otherwise be closed early by the SQL to redirect the write to another allowed file. It sets `allowed_directories` / `allowed_paths`, turns off `enable_external_access` and locks the configuration, so no SQL can lift it. `ATTACH 'new.db'` (which creates the file), `EXPORT DATABASE`, `COPY ... TO` and `INSTALL` can no longer reach files outside those directories, whatever the SQL text looks like. `ATTACH` is also added to the keyword check that sends such SQL to Polars `sqlp`. Needs DuckDB 1.2.0+; with an older DuckDB, plugin-mode SQL runs on `sqlp`. The sandbox covers DuckDB only: SQL that names files itself can still read them on the `sqlp` route. ([#5083](https://github.com/dathere/qsv/pull/5083))
+- **Stricter path handli
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2622,7 +2912,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ea8e9cca` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3996998d` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

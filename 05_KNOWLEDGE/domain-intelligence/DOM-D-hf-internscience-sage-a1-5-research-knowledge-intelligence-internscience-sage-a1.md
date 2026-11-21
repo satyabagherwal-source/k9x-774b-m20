@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/InternScience/Sage-A1.5",
   "source_version": "hf-internscience-sage-a1.5",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T16:46:33.998Z",
+  "timestamp": "2026-11-21T13:30:26.883Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-internscience-sage-a1-5",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [InternScience/Sage-A1.5](https://huggingface.co/InternScience/Sage-A1.5) (Revision: `hf-interns`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T16:46:33.998Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T13:30:26.883Z`  
 > **Learning ID**: `learn-huggingface-internscience-sage-a1-5`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-internscience-sage-a1.5-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/InternScience/Sage-A1.5](https://huggingface.co/InternScience/Sage-A1.5))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T16:46:33.406Z  
+> **Harvest Timestamp**: 2026-11-21T13:30:26.066Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 25027 downloads | 410 likes
+- **Stars / Engagement**: 25963 downloads | 414 likes
 
 ---
 

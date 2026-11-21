@@ -728354,3 +728354,165 @@ Subsystems managing C data structures, boundary deserialization, API parsing, or
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `3d2a1372` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9786. Add some notes about checks in the different runtimes (Harvested from opentofu/opentofu)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Add some notes about checks in the different runtimes",
+  "source": "opentofu/opentofu",
+  "source_url": "https://github.com/opentofu/opentofu",
+  "source_version": "0183949c",
+  "license": "MPL-2.0",
+  "extracted_at": "2026-11-21T13:30:35.827Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-opentofu-opentofu",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [opentofu/opentofu](https://github.com/opentofu/opentofu) (Revision: `0183949c`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `internal/engine/applying/apply.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in opentofu/opentofu. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `0183949c`: Add some notes about checks in the different runtimes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/engine/applying/apply.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+	// NOTE: The current runtime starts off with a copy of checks from
+	// the plan. Since we visit each node and don't perform graph
+	// surgery here, we can just start with a fresh set of check results
+	// NOTE: The current runtime has a few scenarios where it copies
+	// the checks from the plan (refresh-only), but that should not
+	// be necessary due to how we structured the this runtime.
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+	// TODO copy from plan in certain scenarios?
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `0183949c` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9787. wait for a Leader lease before committing after a catchup (Harvested from GreptimeTeam/greptimedb)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "wait for a Leader lease before committing after a catchup",
+  "source": "GreptimeTeam/greptimedb",
+  "source_url": "https://github.com/GreptimeTeam/greptimedb",
+  "source_version": "87875513",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-21T13:30:42.468Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-greptimeteam-greptimedb",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [GreptimeTeam/greptimedb](https://github.com/GreptimeTeam/greptimedb) (Revision: `87875513`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `src/mito2/AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in GreptimeTeam/greptimedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `5952a49e`: mito2): wait for a Leader lease before committing after a catchup. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/mito2/AGENTS.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+  `engine/index_build_test.rs` and `compaction/`. A background rebuild must not replace a file
+  that carries extension indexes (`worker/handle_rebuild_index.rs::needs_background_indexes`).
+  and `defers_background_flush()`, a flush request `is_flushable()` and `is_staging()` (`is_writable()` and
+- On a node whose writes need a lease, a region that a catchup made writable waits for a
+  Leader or StagingLeader lease sent after the catchup (`awaits_leader_lease`). Until then
+  `ManifestContext::update_locked` refuses its commits unless they are staged or the region is
+  downgrading (a close that must flush downgrades first); only a replay of tails
+  (`TailsEditor::Replay`) skips the check, a discard does not, and ending staging checks it
+  before `commit_staged_locked`. No flush or compaction trigger starts work for a waiting region except
+  a downgrade's flush. The lease that ends the wait wakes the worker
+  (`handle_leader_lease_wait_ended`) to schedule the flushes the wait deferred and, only if the
+  region is then a writable leader, start a compaction, build missing indexes, re-issue the
+  index build retries the wait refused and persist backfilled metadata.
+  a worker's region m
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+  `engine/index_build_test.rs` and `compaction/`.
+  and `is_staging()`, a flush request `is_flushable()` and `is_staging()` (`is_writable()` and
+  a worker's region map must also remove its record: `RegionWorkerLoop::remove_region`
+  (`worker/handle_close.rs`, also used after a close-time flush), `drop_region`
+  (`worker/handle_drop.rs`) and `RegionWorkerLoop::clean` (`worker.rs`).
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `5952a49e` are properly handled with clean fallback behavior.

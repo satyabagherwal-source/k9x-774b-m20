@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "ea8e9cca",
+    "sourceVersion": "3996998d",
     "license": "NOASSERTION",
-    "contentHash": "a0a6618ba359cc594498a45f4e7156bd20e590e4c7f05c6bcb1288588b82c51d",
-    "lastHarvestedAt": "2026-11-21T04:39:15.430Z",
+    "contentHash": "39b266b2f16abcb3d890b12113fb12ea4601637d8580adece257176551229597",
+    "lastHarvestedAt": "2026-11-21T13:30:43.015Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -2783,10 +2783,10 @@
     "repository": "cachix/devenv",
     "platform": "github",
     "sourceUrl": "https://github.com/cachix/devenv",
-    "sourceVersion": "8efcb88c",
+    "sourceVersion": "ba35fb71",
     "license": "Apache-2.0",
-    "contentHash": "e4b061e5e08c32aae65c45f38b0ae1e4e37fc76544f6ad644611107a3cea36d3",
-    "lastHarvestedAt": "2026-11-18T04:03:54.501Z",
+    "contentHash": "118ee830f2285f18490a4fbd4b2d2c90991a087c3113a3a1d9c6300a3d4f8c10",
+    "lastHarvestedAt": "2026-11-21T13:30:27.902Z",
     "learningId": "learn-github-cachix-devenv"
   },
   "pubkey-rxdb": {
@@ -2923,10 +2923,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/ProvableHQ/snarkOS",
-    "sourceVersion": "9138ff8a",
+    "sourceVersion": "ffa93916",
     "license": "Apache-2.0",
-    "contentHash": "5c2dfa7431af085cc9f45c96a3af6c4da578813539599a6c116f5ec0ce4baa33",
-    "lastHarvestedAt": "2026-11-21T03:44:44.639Z",
+    "contentHash": "a1cdc9c07f8a58e82a58209d5fecbab942cd50584fda5b7124777eb7352a21db",
+    "lastHarvestedAt": "2026-11-21T13:30:39.683Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "vasu-devs-justhireme": {
@@ -5373,10 +5373,10 @@
     "repository": "GreptimeTeam/greptimedb",
     "platform": "github",
     "sourceUrl": "https://github.com/GreptimeTeam/greptimedb",
-    "sourceVersion": "5dec7b19",
+    "sourceVersion": "87875513",
     "license": "Apache-2.0",
-    "contentHash": "c05241ada6a8508ba7992e4fa38a86e63e69eb5834a4e5c4609a8597c2289ce1",
-    "lastHarvestedAt": "2026-11-20T06:58:44.864Z",
+    "contentHash": "020a5955b584c0c4ca504f06f7ca4cc1e9352ef386619fc2519a222bb28ea94a",
+    "lastHarvestedAt": "2026-11-21T13:30:42.977Z",
     "learningId": "learn-github-greptimeteam-greptimedb"
   },
   "heroui-inc-heroui-native": {
@@ -6363,10 +6363,10 @@
     "repository": "opentofu/opentofu",
     "platform": "github",
     "sourceUrl": "https://github.com/opentofu/opentofu",
-    "sourceVersion": "1e528630",
+    "sourceVersion": "0183949c",
     "license": "MPL-2.0",
-    "contentHash": "533fff1cc0f287cd15f6f1938d8c8b6e0f94b5ba1dec57d288ce50c9fefea8a2",
-    "lastHarvestedAt": "2026-11-20T09:10:03.729Z",
+    "contentHash": "01444c9797a2628bfc00a175d597fef79a36faa591373b655bffe6dc43c24983",
+    "lastHarvestedAt": "2026-11-21T13:30:36.302Z",
     "learningId": "learn-github-opentofu-opentofu"
   },
   "surrealdb-surrealdb": {
@@ -10505,8 +10505,8 @@
     "sourceUrl": "https://huggingface.co/InternScience/Sage-A1.5",
     "sourceVersion": "hf-internscience-sage-a1.5",
     "license": "Open-Source",
-    "contentHash": "1c12b9937c6eda0892cd429b17ea10d2625ed8e7369e577fb1bdc7542d4e2329",
-    "lastHarvestedAt": "2026-11-17T16:46:33.818Z",
+    "contentHash": "8bcccc18fa2b4c988a451d08b50756114ec65fabde8c2fff69023edbda68404e",
+    "lastHarvestedAt": "2026-11-21T13:30:26.695Z",
     "learningId": "learn-huggingface-internscience-sage-a1-5"
   },
   "hf-recursivesi-flint": {

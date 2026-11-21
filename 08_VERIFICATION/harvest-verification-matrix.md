@@ -11803,3 +11803,9 @@
 | `CYCLE-20261121-7OBT` | `2026-11-21T13:05:17.801Z` | `XHToken/Spark-X2.6-4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xhtoken-spark-x2.6-4b-learnings.md` | Yes (`77b2d33b...`) |
 | `CYCLE-20261121-7UW4` | `2026-11-21T13:05:26.308Z` | `linkerd/linkerd2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9784` | Yes (`c1fbe7f3...`) |
 | `CYCLE-20261121-80GI` | `2026-11-21T13:05:33.522Z` | `yugabyte/yugabyte-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9785` | Yes (`751fc3ec...`) |
+| `CYCLE-20261121-40LF` | `2026-11-21T13:30:26.691Z` | `InternScience/Sage-A1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-internscience-sage-a1.5-learnings.md` | Yes (`8bcccc18...`) |
+| `CYCLE-20261121-41IY` | `2026-11-21T13:30:27.898Z` | `cachix/devenv` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/cachix-devenv-learnings.md` | Yes (`118ee830...`) |
+| `CYCLE-20261121-480A` | `2026-11-21T13:30:36.298Z` | `opentofu/opentofu` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9786` | Yes (`01444c97...`) |
+| `CYCLE-20261121-4AM7` | `2026-11-21T13:30:39.679Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8012` | Yes (`a1cdc9c0...`) |
+| `CYCLE-20261121-4D5P` | `2026-11-21T13:30:42.973Z` | `GreptimeTeam/greptimedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9787` | Yes (`020a5955...`) |
+| `CYCLE-20261121-4D6R` | `2026-11-21T13:30:43.011Z` | `dathere/qsv` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/dathere-qsv-learnings.md` | Yes (`39b266b2...`) |

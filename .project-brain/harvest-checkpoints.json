@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-21T13:05:33.540Z",
+  "last_updated": "2026-11-21T13:30:43.063Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "602d4deb6590f62a69c845b4cc96c9d316ff72c46e6c1ecdd770387db3a81596",
-      "verified_at": "2026-11-21T08:24:30.014Z",
+      "content_hash": "a1cdc9c07f8a58e82a58209d5fecbab942cd50584fda5b7124777eb7352a21db",
+      "verified_at": "2026-11-21T13:30:39.691Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T08:24:30.014Z"
+      "last_updated": "2026-11-21T13:30:39.691Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "a0a6618ba359cc594498a45f4e7156bd20e590e4c7f05c6bcb1288588b82c51d",
-      "verified_at": "2026-11-21T04:39:15.440Z",
+      "content_hash": "39b266b2f16abcb3d890b12113fb12ea4601637d8580adece257176551229597",
+      "verified_at": "2026-11-21T13:30:43.062Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T04:39:15.440Z"
+      "last_updated": "2026-11-21T13:30:43.062Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -4311,14 +4311,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cachix-devenv",
-      "content_hash": "e4b061e5e08c32aae65c45f38b0ae1e4e37fc76544f6ad644611107a3cea36d3",
-      "verified_at": "2026-11-18T04:03:54.509Z",
+      "content_hash": "118ee830f2285f18490a4fbd4b2d2c90991a087c3113a3a1d9c6300a3d4f8c10",
+      "verified_at": "2026-11-21T13:30:27.940Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T04:03:54.509Z"
+      "last_updated": "2026-11-21T13:30:27.940Z"
     },
     "pubkey/rxdb": {
       "repository": "pubkey/rxdb",
@@ -8181,14 +8181,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-greptimeteam-greptimedb",
-      "content_hash": "c05241ada6a8508ba7992e4fa38a86e63e69eb5834a4e5c4609a8597c2289ce1",
-      "verified_at": "2026-11-20T06:58:44.872Z",
+      "content_hash": "020a5955b584c0c4ca504f06f7ca4cc1e9352ef386619fc2519a222bb28ea94a",
+      "verified_at": "2026-11-21T13:30:42.985Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T06:58:44.872Z"
+      "last_updated": "2026-11-21T13:30:42.985Z"
     },
     "heroui-inc/heroui-native": {
       "repository": "heroui-inc/heroui-native",
@@ -9636,14 +9636,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-opentofu-opentofu",
-      "content_hash": "533fff1cc0f287cd15f6f1938d8c8b6e0f94b5ba1dec57d288ce50c9fefea8a2",
-      "verified_at": "2026-11-20T09:10:03.736Z",
+      "content_hash": "01444c9797a2628bfc00a175d597fef79a36faa591373b655bffe6dc43c24983",
+      "verified_at": "2026-11-21T13:30:36.310Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T09:10:03.736Z"
+      "last_updated": "2026-11-21T13:30:36.310Z"
     },
     "surrealdb/surrealdb": {
       "repository": "surrealdb/surrealdb",
@@ -15786,14 +15786,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-internscience-sage-a1-5",
-      "content_hash": "1c12b9937c6eda0892cd429b17ea10d2625ed8e7369e577fb1bdc7542d4e2329",
-      "verified_at": "2026-11-17T16:46:33.826Z",
+      "content_hash": "8bcccc18fa2b4c988a451d08b50756114ec65fabde8c2fff69023edbda68404e",
+      "verified_at": "2026-11-21T13:30:26.703Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T16:46:33.826Z"
+      "last_updated": "2026-11-21T13:30:26.703Z"
     },
     "RecursiveSI/flint": {
       "repository": "RecursiveSI/flint",

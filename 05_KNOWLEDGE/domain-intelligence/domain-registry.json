@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T13:05:40.324Z",
+  "last_updated": "2026-11-21T13:30:48.194Z",
   "total_records": 2250,
   "domains": {
     "A": {
@@ -8354,10 +8354,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
       "repository": "aleo-labs-protocol/snarkOS",
-      "content_hash": "9da41be3d6cd899e9fb5a5827b849b6d36a497724918cfcfb7fa3ed9b93c9368",
-      "created_at": "2026-11-21T08:24:30.688Z"
+      "content_hash": "885479f8f7ac4f69e77a17e71190ceb981970d99e1e78cdcba7d047aee4eeebf",
+      "created_at": "2026-11-21T13:30:40.047Z"
     },
     "DOM-D-7123D3B0": {
       "record_id": "DOM-D-7123D3B0",
@@ -10561,8 +10561,8 @@
       "title": "Architecture Intelligence: opentofu/opentofu Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-opentofu-opentofu-architecture-intelligence-opentofu-opentofu-core-invariants.md",
       "repository": "opentofu/opentofu",
-      "content_hash": "84c274a3d2831801353c1cd62486209a0690530a32efc046f38b8fa8344bc248",
-      "created_at": "2026-11-20T09:10:04.072Z"
+      "content_hash": "7c21bef4ae1a8ff27e74a410f9b23ae60b48771c364681ac08993db538cdb0b6",
+      "created_at": "2026-11-21T13:30:36.641Z"
     },
     "domain_intelligence-technical-construction-intelligence-salvo-rs-salvo-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-salvo-rs-salvo-learnings-core-invariants",
@@ -17237,8 +17237,8 @@
       "title": "Architecture Intelligence: GreptimeTeam/greptimedb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-greptimeteam-greptimedb-architecture-intelligence-greptimeteam-greptimedb-core-i.md",
       "repository": "GreptimeTeam/greptimedb",
-      "content_hash": "1d2e0755ade8f001295cb57e6b405e59559be53348dcb5618c6ad144074d3eaf",
-      "created_at": "2026-11-20T06:58:45.219Z"
+      "content_hash": "aad56e842a0da12439eebd5609666ba4a7f8e407f3a484afe436a84cf327ae00",
+      "created_at": "2026-11-21T13:30:43.370Z"
     },
     "domain_intelligence-content-information-intelligence-apache-arrow-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-apache-arrow-learnings-core-invariants",
@@ -18285,8 +18285,8 @@
       "title": "Technical Construction Intelligence: dathere/qsv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dathere-qsv-technical-construction-intelligence-dathere-qsv-core-invariants.md",
       "repository": "dathere/qsv",
-      "content_hash": "1020c17bffeb839abf6696c19d8b19ec5f0bd559fc585f1efc3dfdac14956bb7",
-      "created_at": "2026-11-20T00:45:37.472Z"
+      "content_hash": "16f5882b3420a79d57cb6d8083f1f1667418a361543166e31902d324c65774ee",
+      "created_at": "2026-11-21T13:30:43.435Z"
     },
     "DOM-D-11540386": {
       "record_id": "DOM-D-11540386",
@@ -18900,8 +18900,8 @@
       "title": "Architecture Intelligence: cachix/devenv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-cachix-devenv-architecture-intelligence-cachix-devenv-core-invariants.md",
       "repository": "cachix/devenv",
-      "content_hash": "015d92d76cc12dcb46abf65e4c02eedff5403b346b3f96a1c8bd4f6fd081e11e",
-      "created_at": "2026-11-18T04:03:54.832Z"
+      "content_hash": "9fbe94fa4cdf1a0f57400e0c2d7d1253ce5a22e91ed18c507ab73b098ca11701",
+      "created_at": "2026-11-21T13:30:28.299Z"
     },
     "domain_intelligence-technical-construction-intelligence-necolas-react-native-web-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-necolas-react-native-web-core-invariants",
@@ -18918,8 +18918,8 @@
       "title": "Architecture Intelligence: cachix-devenv-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-cachix-devenv-learnings-architecture-intelligence-cachix-devenv-learnings-core-i.md",
       "repository": "cachix-devenv-learnings",
-      "content_hash": "306f29f6b5c6ec9e7742fe3fd72db2e62274b90da65b17732dbe5cf0a7fc4a8b",
-      "created_at": "2026-11-18T04:04:04.722Z"
+      "content_hash": "8561164ad82e0d2ad33c6acb5069ec09191fd3a9a7767831dc492cdd4a032568",
+      "created_at": "2026-11-21T13:30:47.074Z"
     },
     "DOM-D-B43360BC": {
       "record_id": "DOM-D-B43360BC",
@@ -28167,8 +28167,8 @@
       "title": "Architecture Intelligence: opentofu-opentofu-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-opentofu-opentofu-learnings-architecture-intelligence-opentofu-opentofu-learning.md",
       "repository": "opentofu-opentofu-learnings",
-      "content_hash": "a0e040f1bd0e48450310a6fc1685052e880f13b82e6e1d5e3a9aeec844ef4bfa",
-      "created_at": "2026-11-20T09:10:40.056Z"
+      "content_hash": "3bccb8d59da076176ca5219549f0cc7d3cf2df299c728482c07239ceedf3dca8",
+      "created_at": "2026-11-21T13:30:48.194Z"
     },
     "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16-core": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16-core",
@@ -28284,8 +28284,8 @@
       "title": "Research & Knowledge Intelligence: InternScience/Sage-A1.5 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-internscience-sage-a1-5-research-knowledge-intelligence-internscience-sage-a1.md",
       "repository": "InternScience/Sage-A1.5",
-      "content_hash": "5944b92376f99caa2866af7eb2b9f2d776eedf588fffa3ffc3d3b447684f0183",
-      "created_at": "2026-11-17T16:46:33.999Z"
+      "content_hash": "39a4b6c55f1eb665cf2ed2d6de6a33d99190e4be7a80b7a9a0b6e96ee65f1b48",
+      "created_at": "2026-11-21T13:30:26.883Z"
     },
     "domain_intelligence-architecture-intelligence-stakater-reloader-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-stakater-reloader-core-invariants",
@@ -28353,8 +28353,8 @@
       "title": "Research & Knowledge Intelligence: hf-internscience-sage-a1.5-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-internscience-sage-a1-5-learnings-research-knowledge-intelligence-hf-internsc.md",
       "repository": "hf-internscience-sage-a1.5-learnings",
-      "content_hash": "8e829be7c19f511facebab12d06021611174a77f82100ab0094a6911c56e86cb",
-      "created_at": "2026-11-17T16:47:25.599Z"
+      "content_hash": "368bcea52c49beade4d0041af682c9d55f447cf0f3803c1fda856443589f0e15",
+      "created_at": "2026-11-21T13:30:47.540Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-14b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-14b-core-invariants",

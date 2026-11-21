@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T13:05:40.555Z",
+  "last_updated": "2026-11-21T13:30:48.338Z",
   "total_verified_learnings": 9059,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23099,
+  "total_items": 23105,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112137,10 +112137,10 @@
       "relative_path": "08_VERIFICATION/dathere-qsv-verification-protocol-empirical-defect-shield-for-dathere-qsv.md",
       "title": "Verification Protocol: Empirical Defect Shield for dathere/qsv",
       "repository": "dathere/qsv",
-      "source_version": "ea8e9cca",
-      "content_hash": "4c5c339a1d3e71305f939be42af05282277ed5e37a21d3d193ce752da70132e7",
+      "source_version": "3996998d",
+      "content_hash": "0f3c344240f403019fa39d4372446afd333b925e8b46b6039bd473f8312c09c4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T04:39:16.027Z"
+      "persisted_at": "2026-11-21T13:30:43.708Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i",
@@ -112818,25 +112818,25 @@
       "item_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
       "repository": "aleo-labs-protocol/snarkOS",
       "source_version": "ffa93916",
-      "content_hash": "9da41be3d6cd899e9fb5a5827b849b6d36a497724918cfcfb7fa3ed9b93c9368",
+      "content_hash": "885479f8f7ac4f69e77a17e71190ceb981970d99e1e78cdcba7d047aee4eeebf",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T08:24:30.688Z"
+      "persisted_at": "2026-11-21T13:30:40.047Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/aleo-labs-protocol-snarkos-verification-protocol-empirical-defect-shield-for-ale.md",
+      "relative_path": "08_VERIFICATION/provablehq-snarkos-verification-protocol-empirical-defect-shield-for-aleo-labs-p.md",
       "title": "Verification Protocol: Empirical Defect Shield for aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
       "source_version": "ffa93916",
-      "content_hash": "f0cb388f9eb78923dd1dc1ce4c37b2c9c987398538bb658e7257aab940d5cfde",
+      "content_hash": "cded181586abf6114a8337c4ad30b32cdf7bc1ceb7bcc3599e7a99550afc451e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T08:24:30.840Z"
+      "persisted_at": "2026-11-21T13:30:40.317Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar",
@@ -215120,8 +215120,8 @@
       "slug": "opentofu-opentofu",
       "platform": "github",
       "source_url": "https://github.com/opentofu/opentofu",
-      "source_version": "1e528630",
-      "content_hash": "533fff1cc0f287cd15f6f1938d8c8b6e0f94b5ba1dec57d288ce50c9fefea8a2",
+      "source_version": "0183949c",
+      "content_hash": "01444c9797a2628bfc00a175d597fef79a36faa591373b655bffe6dc43c24983",
       "dossier_path": "07_PROJECT_LEARNING/opentofu-opentofu-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/opentofu-opentofu-learnings.md",
       "promoted_rules": [
@@ -215144,6 +215144,11 @@
           "number": 9545,
           "title": "Fuller handling of ActionIfUnwanted",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9786,
+          "title": "Add some notes about checks in the different runtimes",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -215151,7 +215156,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T09:10:03.533Z",
+      "verified_at": "2026-11-21T13:30:36.116Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -215193,10 +215198,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-opentofu-opentofu-architecture-intelligence-opentofu-opentofu-core-invariants.md",
       "title": "Architecture Intelligence: opentofu/opentofu Core Invariants",
       "repository": "opentofu/opentofu",
-      "source_version": "1e528630",
-      "content_hash": "84c274a3d2831801353c1cd62486209a0690530a32efc046f38b8fa8344bc248",
+      "source_version": "0183949c",
+      "content_hash": "7c21bef4ae1a8ff27e74a410f9b23ae60b48771c364681ac08993db538cdb0b6",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T09:10:04.072Z"
+      "persisted_at": "2026-11-21T13:30:36.641Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-opentofu-opentofu": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-opentofu-opentofu",
@@ -215205,10 +215210,10 @@
       "relative_path": "08_VERIFICATION/opentofu-opentofu-verification-protocol-empirical-defect-shield-for-opentofu-ope.md",
       "title": "Verification Protocol: Empirical Defect Shield for opentofu/opentofu",
       "repository": "opentofu/opentofu",
-      "source_version": "1e528630",
-      "content_hash": "8e41dcffb38c1d6df9eaf00a203a78b45095771de4cd33b7cf703915d3bfc8ba",
+      "source_version": "0183949c",
+      "content_hash": "3015701d2576e93ee15ec3b01cd8d31537781c82a648ae95b6de1737c0475ecb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T09:10:04.214Z"
+      "persisted_at": "2026-11-21T13:30:36.791Z"
     },
     "domain_intelligence-technical-construction-intelligence-salvo-rs-salvo-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-salvo-rs-salvo-learnings-core-invariants",
@@ -215817,13 +215822,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "aleo-labs-protocol-snarkos",
+      "slug": "provablehq-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
       "source_version": "ffa93916",
-      "content_hash": "602d4deb6590f62a69c845b4cc96c9d316ff72c46e6c1ecdd770387db3a81596",
-      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "content_hash": "a1cdc9c07f8a58e82a58209d5fecbab942cd50584fda5b7124777eb7352a21db",
+      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 8012,
@@ -215921,7 +215926,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T08:24:29.798Z",
+      "verified_at": "2026-11-21T13:30:39.488Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -215935,26 +215940,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 8012,
       "title": "Empirical Invariant Guard in Cargo.lock",
-      "source_url": "https://github.com/sfu-db/connector-x",
-      "source_version": "4cfcea91",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_version": "ffa93916",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-21T07:58:54.962Z"
+      "verified_at": "2026-11-21T13:30:39.488Z"
     },
     "candidate_directive-empirical-invariant-guard-in-cargo-lock": {
       "item_id": "candidate_directive-empirical-invariant-guard-in-cargo-lock",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-9OAZ-empirical-invariant-guard-in-cargo-lock.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-4AS6-empirical-invariant-guard-in-cargo-lock.md",
       "title": "Empirical Invariant Guard in Cargo.lock",
-      "repository": "sfu-db/connector-x",
-      "source_version": "4cfcea91",
-      "content_hash": "56475b3d2621f6960701f55cdec35ec451c0e048e3c4ad18b9e5e45716dbc03e",
+      "repository": "aleo-labs-protocol/snarkOS",
+      "source_version": "ffa93916",
+      "content_hash": "44c957f9ad6dee57b533121fcb62b174a477686d2394c50c60d7960512817811",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T07:58:55.308Z"
+      "persisted_at": "2026-11-21T13:30:39.897Z"
     },
     "learn-github-langchain4j-langchain4j": {
       "learning_id": "learn-github-langchain4j-langchain4j",
@@ -219782,8 +219787,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "ea8e9cca",
-      "content_hash": "a0a6618ba359cc594498a45f4e7156bd20e590e4c7f05c6bcb1288588b82c51d",
+      "source_version": "3996998d",
+      "content_hash": "39b266b2f16abcb3d890b12113fb12ea4601637d8580adece257176551229597",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -219928,7 +219933,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T04:39:15.181Z",
+      "verified_at": "2026-11-21T13:30:42.828Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -238578,10 +238583,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dathere-qsv-technical-construction-intelligence-dathere-qsv-core-invariants.md",
       "title": "Technical Construction Intelligence: dathere/qsv Core Invariants",
       "repository": "dathere/qsv",
-      "source_version": "588d2c40",
-      "content_hash": "1020c17bffeb839abf6696c19d8b19ec5f0bd559fc585f1efc3dfdac14956bb7",
+      "source_version": "3996998d",
+      "content_hash": "16f5882b3420a79d57cb6d8083f1f1667418a361543166e31902d324c65774ee",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T00:45:37.472Z"
+      "persisted_at": "2026-11-21T13:30:43.435Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-francisring-prism-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-francisring-prism-learnings-core-invariants",
@@ -240235,8 +240240,8 @@
       "slug": "cachix-devenv",
       "platform": "github",
       "source_url": "https://github.com/cachix/devenv",
-      "source_version": "8efcb88c",
-      "content_hash": "e4b061e5e08c32aae65c45f38b0ae1e4e37fc76544f6ad644611107a3cea36d3",
+      "source_version": "ba35fb71",
+      "content_hash": "118ee830f2285f18490a4fbd4b2d2c90991a087c3113a3a1d9c6300a3d4f8c10",
       "dossier_path": "07_PROJECT_LEARNING/cachix-devenv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cachix-devenv-learnings.md",
       "promoted_rules": [
@@ -240261,7 +240266,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T04:03:54.319Z",
+      "verified_at": "2026-11-21T13:30:27.723Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -240303,10 +240308,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-cachix-devenv-architecture-intelligence-cachix-devenv-core-invariants.md",
       "title": "Architecture Intelligence: cachix/devenv Core Invariants",
       "repository": "cachix/devenv",
-      "source_version": "8efcb88c",
-      "content_hash": "015d92d76cc12dcb46abf65e4c02eedff5403b346b3f96a1c8bd4f6fd081e11e",
+      "source_version": "ba35fb71",
+      "content_hash": "9fbe94fa4cdf1a0f57400e0c2d7d1253ce5a22e91ed18c507ab73b098ca11701",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T04:03:54.832Z"
+      "persisted_at": "2026-11-21T13:30:28.299Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-cachix-devenv": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cachix-devenv",
@@ -240315,10 +240320,10 @@
       "relative_path": "08_VERIFICATION/cachix-devenv-verification-protocol-empirical-defect-shield-for-cachix-devenv.md",
       "title": "Verification Protocol: Empirical Defect Shield for cachix/devenv",
       "repository": "cachix/devenv",
-      "source_version": "8efcb88c",
-      "content_hash": "4d8dd5cdf677988a3f3d3615190c8a8b28c7a566799022f27e0e7fda6f8b01a3",
+      "source_version": "ba35fb71",
+      "content_hash": "f558b78f425c01aaf739c39365c13ad7091be5e5cf7fcfcab5cb02050980ad13",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T04:03:54.969Z"
+      "persisted_at": "2026-11-21T13:30:28.454Z"
     },
     "learn-github-necolas-react-native-web": {
       "learning_id": "learn-github-necolas-react-native-web",
@@ -240519,9 +240524,9 @@
       "title": "Architecture Intelligence: cachix-devenv-learnings Core Invariants",
       "repository": "cachix-devenv-learnings",
       "source_version": "HEAD",
-      "content_hash": "306f29f6b5c6ec9e7742fe3fd72db2e62274b90da65b17732dbe5cf0a7fc4a8b",
+      "content_hash": "8561164ad82e0d2ad33c6acb5069ec09191fd3a9a7767831dc492cdd4a032568",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T04:04:04.722Z"
+      "persisted_at": "2026-11-21T13:30:47.074Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-cachix-devenv-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cachix-devenv-learnings",
@@ -240531,9 +240536,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for cachix-devenv-learnings",
       "repository": "cachix-devenv-learnings",
       "source_version": "HEAD",
-      "content_hash": "844d6fe36cf9941254cf695f82189153b48c74474dd96d0f570ae5747b95f9e0",
+      "content_hash": "3cb87c58c0af1601b487e0c208287e49bd17e9b14f9f1c2cf344b0af760fecb3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T04:04:04.856Z"
+      "persisted_at": "2026-11-21T13:30:47.222Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-openbmb-minicpm-v-4-7-1b-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-openbmb-minicpm-v-4-7-1b-learnings-core-invar",
@@ -264204,13 +264209,13 @@
       "item_id": "agent_contract-agent-contract-aleo-labs-protocol-snarkos-autonomous-specialist-persona",
       "artifact_type": "agent_contract",
       "target_folder": "02_AGENT_INTELLIGENCE",
-      "relative_path": "02_AGENT_INTELLIGENCE/aleo-labs-protocol-snarkos-agent-contract-aleo-labs-protocol-snarkos-autonomous-.md",
+      "relative_path": "02_AGENT_INTELLIGENCE/provablehq-snarkos-agent-contract-aleo-labs-protocol-snarkos-autonomous-speciali.md",
       "title": "Agent Contract: aleo-labs-protocol/snarkOS Autonomous Specialist Persona",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "29eef2ff",
-      "content_hash": "60125464977161a8b47f63be7aa89e41c98a3894f2a041abdbe0e2831df84db6",
+      "source_version": "ffa93916",
+      "content_hash": "dbce1c78c655899741d02f4a99afff7750c8bceeeab3ceedc995860cea774d4d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T20:41:42.499Z"
+      "persisted_at": "2026-11-21T13:30:40.193Z"
     },
     "domain_intelligence-architecture-intelligence-ratatui-ratatui-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-ratatui-ratatui-learnings-core-invariants",
@@ -275961,9 +275966,9 @@
       "title": "Architecture Intelligence: opentofu-opentofu-learnings Core Invariants",
       "repository": "opentofu-opentofu-learnings",
       "source_version": "HEAD",
-      "content_hash": "a0e040f1bd0e48450310a6fc1685052e880f13b82e6e1d5e3a9aeec844ef4bfa",
+      "content_hash": "3bccb8d59da076176ca5219549f0cc7d3cf2df299c728482c07239ceedf3dca8",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T09:10:40.056Z"
+      "persisted_at": "2026-11-21T13:30:48.194Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-opentofu-opentofu-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-opentofu-opentofu-learnings",
@@ -275973,9 +275978,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for opentofu-opentofu-learnings",
       "repository": "opentofu-opentofu-learnings",
       "source_version": "HEAD",
-      "content_hash": "66c41cd23e407e1125a173d089e880cc342ae745c3ce3649ff6b28d0b3b14686",
+      "content_hash": "5fa9e389307aad345593be88ce5188343ea05966fbfc6b53767e5aefb615ab8d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T09:10:40.207Z"
+      "persisted_at": "2026-11-21T13:30:48.338Z"
     },
     "learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16": {
       "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16",
@@ -276695,7 +276700,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/InternScience/Sage-A1.5",
       "source_version": "hf-internscience-sage-a1.5",
-      "content_hash": "1c12b9937c6eda0892cd429b17ea10d2625ed8e7369e577fb1bdc7542d4e2329",
+      "content_hash": "8bcccc18fa2b4c988a451d08b50756114ec65fabde8c2fff69023edbda68404e",
       "dossier_path": "07_PROJECT_LEARNING/hf-internscience-sage-a1.5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-internscience-sage-a1.5-learnings.md",
       "promoted_rules": [],
@@ -276704,7 +276709,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T16:46:33.639Z",
+      "verified_at": "2026-11-21T13:30:26.469Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -276721,9 +276726,9 @@
       "title": "Research & Knowledge Intelligence: InternScience/Sage-A1.5 Core Invariants",
       "repository": "InternScience/Sage-A1.5",
       "source_version": "hf-internscience-sage-a1.5",
-      "content_hash": "5944b92376f99caa2866af7eb2b9f2d776eedf588fffa3ffc3d3b447684f0183",
+      "content_hash": "39a4b6c55f1eb665cf2ed2d6de6a33d99190e4be7a80b7a9a0b6e96ee65f1b48",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T16:46:33.999Z"
+      "persisted_at": "2026-11-21T13:30:26.883Z"
     },
     "rule-9007": {
       "learning_id": "rule-9007",
@@ -276861,9 +276866,9 @@
       "title": "Research & Knowledge Intelligence: hf-internscience-sage-a1.5-learnings Core Invariants",
       "repository": "hf-internscience-sage-a1.5-learnings",
       "source_version": "HEAD",
-      "content_hash": "8e829be7c19f511facebab12d06021611174a77f82100ab0094a6911c56e86cb",
+      "content_hash": "368bcea52c49beade4d0041af682c9d55f447cf0f3803c1fda856443589f0e15",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T16:47:25.599Z"
+      "persisted_at": "2026-11-21T13:30:47.540Z"
     },
     "candidate_directive-ar-apply-per-frame-eis-camera-compensation": {
       "item_id": "candidate_directive-ar-apply-per-frame-eis-camera-compensation",
@@ -313822,6 +313827,80 @@
       "content_hash": "c479b336cd645804396f34568fd14cee3f3a2254116d3700f69316c3261ebf3f",
       "domain_letter": "H",
       "persisted_at": "2026-11-21T13:05:38.526Z"
+    },
+    "candidate_directive-adding-npm-groovy-lint-and-fixing-npm-build-error": {
+      "item_id": "candidate_directive-adding-npm-groovy-lint-and-fixing-npm-build-error",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-41PS-adding-npm-groovy-lint-and-fixing-npm-build-error.md",
+      "title": "adding npm-groovy-lint and fixing npm build error",
+      "repository": "cachix/devenv",
+      "source_version": "ba35fb71",
+      "content_hash": "cc17f0f5aa233ed7be113a6326cfa8b5086f32d6138184e893dbb565d54944ab",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T13:30:28.147Z"
+    },
+    "rule-9786": {
+      "learning_id": "rule-9786",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9786,
+      "title": "Add some notes about checks in the different runtimes",
+      "source_url": "https://github.com/opentofu/opentofu",
+      "source_version": "0183949c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T13:30:36.116Z"
+    },
+    "candidate_directive-add-some-notes-about-checks-in-the-different-runtimes": {
+      "item_id": "candidate_directive-add-some-notes-about-checks-in-the-different-runtimes",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4H2N-add-some-notes-about-checks-in-the-different-runtimes.md",
+      "title": "Add some notes about checks in the different runtimes",
+      "repository": "opentofu-opentofu-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ded7ecd8881a652c59d0004c7cf644a36f1ca3d6d134d96a27de4c0f16ef0156",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T13:30:48.048Z"
+    },
+    "candidate_directive-sandbox-duckdb-in-plugin-mode-harden-the-duckdb-cli-invocation": {
+      "item_id": "candidate_directive-sandbox-duckdb-in-plugin-mode-harden-the-duckdb-cli-invocation",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4DE4-sandbox-duckdb-in-plugin-mode-harden-the-duckdb-cli-invocation.md",
+      "title": "sandbox DuckDB in plugin mode; harden the duckdb CLI invocation",
+      "repository": "dathere/qsv",
+      "source_version": "3996998d",
+      "content_hash": "2d660f95c4edc1d2c33fb36f085af9fcbd0b2b38ff6696c02e9101fe902370e8",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T13:30:43.280Z"
+    },
+    "agent_contract-agent-contract-dathere-qsv-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-dathere-qsv-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/dathere-qsv-agent-contract-dathere-qsv-autonomous-specialist-persona.md",
+      "title": "Agent Contract: dathere/qsv Autonomous Specialist Persona",
+      "repository": "dathere/qsv",
+      "source_version": "3996998d",
+      "content_hash": "82baf74beef8ebba523c2ab46582b4babd81e654b186615e9ddd866105ccd6ab",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T13:30:43.584Z"
+    },
+    "candidate_directive-groovy-adding-npm-groovy-lint-and-fixing-npm-build-error": {
+      "item_id": "candidate_directive-groovy-adding-npm-groovy-lint-and-fixing-npm-build-error",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4G7C-groovy-adding-npm-groovy-lint-and-fixing-npm-build-error.md",
+      "title": "groovy): adding npm-groovy-lint and fixing npm build error",
+      "repository": "cachix-devenv-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0f0f995d52d7a34f55f56eee3ed20756de89efb1f6a132ecae01931ef4e05157",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T13:30:46.923Z"
     }
   },
   "ai-builder-brain": {

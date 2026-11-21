@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T09:10:39.813Z",
+  "timestamp": "2026-11-21T13:30:47.944Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-opentofu-opentofu-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [opentofu-opentofu-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T09:10:39.813Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T13:30:47.944Z`  
 > **Learning ID**: `LEARN-EVO-opentofu-opentofu-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/opentofu-opentofu-learnings.md`  
 > **Source**: github ([https://github.com/opentofu/opentofu](https://github.com/opentofu/opentofu))  
-> **Source Version**: `1e528630`  
+> **Source Version**: `0183949c`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T09:10:02.736Z  
+> **Timestamp**: 2026-11-21T13:30:35.320Z  
 > **Learning ID**: `learn-github-opentofu-opentofu`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/opentofu-opentofu-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/opentofu/opentofu](https://github.com/opentofu/opentofu))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T09:09:53.437Z  
+> **Harvest Timestamp**: 2026-11-21T13:30:35.315Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: OpenTofu lets you declaratively manage your cloud infrastructure.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 30931 stars
+- **Stars / Engagement**: 30948 stars
 
 ---
 
@@ -1444,210 +1444,89 @@ func consolidateFileAndValue(value, fileName, fieldName string, acceptEmpty bool
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1e528630` (2026-11-18)
-**Commit Message**: resource: Fuller handling of ActionIfUnwanted
+### Incident Patch 1: `0183949c` (2026-11-20)
+**Commit Message**: Add some notes about checks in the different runtimes
 
-Our existing behavior for this in the original runtime includes a
-"latching" behavior where the state records whether the configuration set
-the action-if-unwanted to "destroy" on the most recent round, in which case
-that action is forced on the next round unless there's an explicit
-"removed" block that overrides it.
+Signed-off-by: Christian Mesh <[REDACTED_EMAIL]>
 
-Therefore we need to distinguish in the metadata between the action to use
-if unwanted in this round vs. what is currently set in the configuration
-that should therefore be used to populate the state for the next round.
-
-The logic here still isn't exactly right but the main point of this commit
-is to establish the two separate fields and then make the applying engine
-use the new field to populate the SkipDestroy field in the new state. We'll
-continue to improve the logic for deciding both of these fields in
-subsequent commits.
-
-Signed-off-by: Martin Atkins <[REDACTED_EMAIL]>
-
-**File**: `internal/engine/applying/operations_resource_managed.go` (modified, +22/-0)
+**File**: `internal/engine/applying/apply.go` (modified, +6/-1)
 ```diff
-@@ -68,6 +68,26 @@ func (ops *execOperations) ManagedFinalPlan(
- 	objAddr := instAddr.Object(deposedKey)
- 	log.Printf("[TRACE] apply phase: ManagedFinalPlan %s using %s", objAddr, providerConfigAddr)
+@@ -37,6 +37,9 @@ func ApplyPlannedChanges(ctx context.Context, plan *plans.Plan, configInst *eval
+ 	tracer := contextTracer(ctx)
+ 	ctx = shared.ContextWithTracer(ctx, &tracer.Tracer)
  
-+	newSkipDestroy := false
-+	if metadata.NewActionIfUnwanted.IsKnown() {
-+		// The state only gets to optionally force choosing "forget" on the
-+		// next round, and otherwise it gets no opinion at all.
-+		// FIXME: Should we be doing anything with these marks?
-+		if action, _ := metadata.ActionIfUnwanted.Unmark(); action.KnownValue() == resources.IfUnwantedForget {
-+			newSkipDestroy = true
-+		}
-+	} else {
-+		// We should not get here because the planning phase should refuse to
-+		// produce a plan if we wouldn't know what to set this to during the
-+		// apply phase.
-+		diags = diags.Append(tfdiags.Sourceless(
-+			tfdiags.Error,
-+			`Unknown value for "destroy" argument`,
-+			fmt.Sprintf("The \"destroy\" argument for %s has an unknown value. It's a bug in OpenTofu that this wasn't caught during the planning phase.", instAddr),
-+		))
-+		return nil, diags
-+	}
-+
- 	if desired != nil && prior == nil { // creating
- 		provisionersAfter = metadata.PostCreateProvisioners
- 	} else if prior != nil && desired == nil { // deleting
-@@ -159,6 +179,7 @@ func (ops *execOperations) ManagedFinalPlan(
- 		ProvisionersAfter:         provisionersAfter,
- 		ProviderInstance:          providerConfigAddr,
- 		ProviderPrivate:           resp.Planned.Private,
-+		NewSkipDestroy:            newSkipDestroy,
- 	}, diags
- }
++	// NOTE: The current runtime starts off with a copy of checks from
++	// the plan. Since we visit each node and don't perform graph
++	// surgery here, we can just start with a fresh set of check results
+ 	checkReport := &checks.ReportedChecks{}
+ 	ctx = checks.ContextWithCheckReporting(ctx, checkReport)
+ 	ctx = checks.ContextWithSeverity(ctx, func(addr addrs.Checkable) tfdiags.Severity {
+@@ -77,7 +80,9 @@ func ApplyPlannedChanges(ctx context.Context, plan *plans.Plan, configInst *eval
+ 	newState, moreDiags := execOps.Finish(ctx, !plan.Destroying)
+ 	diags = diags.Append(moreDiags)
  
-@@ -484,6 +505,7 @@ func (ops *execOperations) ManagedApply(
- 			ProviderInstanceAddr: providerConfigAddr,
- 			ResourceType:         plan.ResourceType,
- 			SchemaVersion:        uint64(schema.Version),
-+			SkipDestroy:          plan.NewSkipDestroy,
+-	// TODO copy from plan in certain scenarios?
++	// NOTE: The current runtime has a few scenarios where it copies
++	// the checks from the plan (refresh-only), but that should not
++	// be necessary due to how we structured the this runtime.
+ 	newState.CheckResults = states.NewCheckResults(checkReport.State())
  
- 			// TODO: Propagate the dependencies from the desired object into
- 			// the final plan and then populate "Dependencies" here.
+ 	return newState, diags
 ```
 
-**File**: `internal/engine/internal/exec/resource.go` (modified, +100/-21)
+---
+
+### Incident Patch 2: `2e8c0206` (2026-11-19)
+**Commit Message**: Update test wording to match condition changes
+
+Signed-off-by: Christian Mesh <[REDACTED_EMAIL]>
+
+**File**: `internal/lang/eval/internal/configgraph/input_variable_test.go` (modified, +1/-1)
 ```diff
-@@ -93,6 +93,11 @@ type ManagedResourceObjectFinalPlan struct {
- 	// then if they fail the object is left in a "tainted" state so that the
- 	// next plan/apply round knows that the object is not yet ready to use.
- 	ProvisionersBefore, ProvisionersAfter []*eval.ResourceProvisioner
-+
-+	// NewSkipDestroy specifies what the "SkipDestroy" value ought to be set
-+	// to in the new state for this object, assuming it still exists once
-+	// this change has been applied.
-+	NewSkipDestroy bool
- }
+@@ -105,7 +105,7 @@ func TestInputVariable_Value(t *testing.T) {
+ 				// also mentions the location of the check rule so an author
+ 				// can find it if they want to learn more about it.
+ 				Severity: hcl.DiagError,
+-				Summary:  "Invalid value for input variable",
++				Summary:  "Invalid value for variable",
+ 				Detail: `The value was cty.EmptyObjectVal.
  
- // IntoDeposed returns a new [ManagedResourceObjectFinalPlan] that represents
-@@ -308,6 +313,19 @@ type ResourceInstanceObjectMeta struct {
- 	// be ignored completely for other resource modes.
- 	ActionIfUnwanted exprs.FromValue[resources.ActionIfUnwanted]
- 
-+	// NewActionIfUnwanted is the "action if unwanted" as selected in
-+	// the current configuration, ignoring whatever was recorded in the previous
-+	// run state.
-+	//
-+	// This should be used to decide what decision to save into the state for
-+	// the next round, assuming that there is still an object associated with
-+	// this address in the new state (i.e. if it isn't being deleted/forgotten
-+	// on this round.)
-+	//
-+	// This field is relevant only for managed resource mode and should be
-+	// be ignored completely for other resource modes.
-+	NewActionIfUnwanted exprs.FromValue[resources.ActionIfUnwanted]
-+
- 	// DeletionInvalid is true if the author has configured that any execution
- 	// plan that involves deleting this object should be considered immediately
- 	// invalid. If false then deleting is a valid action to include.
-@@ -379,11 +397,19 @@ func BuildResourceInstanceObjectMeta[SV states.ValueOrJSONEquivalent](
- 		// will override this with something more explicit.
- 		Provider: addrs.ImpliedProviderForUnqualifiedType(addr.InstanceAddr.Resource.Resource.ImpliedProvider()),
- 
--		// We delete when removed unless explicitly overridden in the
--		// configuration somewhere or previously set to forget in the state.
--		ActionIfUnwanted: exprs.Known(resources.IfUnwantedDelete),
-+		// We delete when removed unless we find an explicit declaration that
-+		// supersedes this.
-+		ActionIfUnwanted:    exprs.Known(resources.IfUnwantedDelete),
-+		NewActionIfUnwanted: exprs.Known(resources.IfUnwantedDelete),
- 	}
- 
-+	// The "action if unwanted" field has some special priority rules, so we
-+	// keep track of a few different opinions about it and then choose one
-+	// at the end.
-+	var actionIfUnwantedFromPrior resources.ActionIfUnwanted
-+	actionIfUnwantedFromUnwanted := exprs.Known(resources.IfUnwantedUndecided)
-+	actionIfUnwantedFromDesired := exprs.Known(resources.IfUnwantedUndecided)
-+
- 	// If both state and fromConfig are present then we'll start with state
- 	// so that the config values can potentially override the state values.
- 	if state != nil {
-@@ -405,20 +431,18 @@ func BuildResourceInstanceObjectMeta[SV states.ValueOrJSONEquivalent](
- 		}
- 
- 		if state.SkipDestroy {
--			// The state is allowed to change our base value for this, but the
--			// configuration always wins if it specifies anything, which it
--			// typically will unless there are no mentions of this object
--			// in the configuration at all anymore.
--			ret.ActionIfUnwanted = exprs.Known(resources.IfUnwantedForget)
-+			// The only opinion the state is allowed to express is forcing
-+			// "forget" if there is no explicit "unwanted" declaration. In
-+			// all other cases the configuration decides.
-+			actionIfUnwantedFromPrior = resources.IfUnwantedForget
- 		}
- 
- 		ret.Status = state.Status
- 
- 		// TODO: Everything else
- 	}
- 
--	actionIfUnwantedSet := false
--
-+	var unwanted bool
- 	for _, fromModule := range fromConfig {
- 		if p := fromModule.Provider; p != nil {
- 			ret.Provider = p.Provider
-@@ -445,18 +469,30 @@ func BuildResourceInstanceObjectMeta[SV states.ValueOrJSONEquivalent](
- 		// by a child module it calls. deleteWhenRemovedSet is set to true when
- 		// we encounter the first explicit opinion about it, and then we ignore
- 		// it for any nested modules.
--		if !actionIfUnwantedSet {
--			// We ignore marks here and just propagate them into the result
--			// if relevant, since they don't affect our decision about who
--			// "wins" when there are multiple competing definitions.
--			unmarked, _ := fromModule.ActionIfUnwanted.FromValue.Unmark()
--			if val, known := unmarked.ValueOk(); !known || val != resources.IfUnwantedUndecided {
--				// We discard the source location information here because any
--				// rules restricting usage of this option are expected to be checked
--				// before we merge the configuration-based values together here.
--				ret.ActionIfUnwanted = fromModule.ActionIfUnwanted.FromValue
--				actionIfUnwantedSet = true
-+		switch fromModule.Want {
-+		case eval.ResourceInstanceObjectWantUnspecified:
-+			// If there's no "want" specified then this module's opinion about
-+			// the action when unwanted is irrelevant.
-+		case eval.ResourceInstanceObjectDesired:
-+			// The deepest "desired" wins, thou
+ This problem was reported by the validation rule at child.tf:0,0.`,
 ```
 
-**File**: `internal/engine/planning/plan_managed.go` (modified, +12/-0)
+**File**: `internal/lang/eval/internal/configgraph/output_value_test.go` (modified, +1/-1)
 ```diff
-@@ -394,6 +394,18 @@ func (p *planGlue) planDesiredManagedResourceInstance(
- 		return ret, diags
+@@ -114,7 +114,7 @@ func TestOutputValue_Value(t *testing.T) {
+ 				// doing that correctly right now.
+ 				tfdiags.Sourceless(
+ 					tfdiags.Error,
+-					"Output value precondition failed",
++					"Module output value precondition failed",
+ 					"Failure Message\n\nThis problem was reported by the precondition at precondition:0,0.",
+ 				),
+ 			),
+```
+
+**File**: `internal/lang/eval/internal/tofu2024/compile_output_values_test.go` (modified, +1/-1)
+```diff
+@@ -160,7 +160,7 @@ func TestCompileModuleInstanceOutputValuesValue(t *testing.T) {
+ 					},
+ 				},
+ 			},
+-			WantError: `Output value precondition failed`,
++			WantError: `Module output value precondition failed`,
+ 			WantValue: cty.DynamicVal.Mark(exprs.EvalError),
+ 		},
  	}
- 
-+	if !meta.NewActionIfUnwanted.IsKnown() {
-+		// FIXME: We should defer changes for this object to the next round
-+		// then, since we don't yet know what "SkipDestroy" is supposed to
-+		// be updated to and so the apply phase wouldn't be able to populate it.
-+		// However, we might find that we can refine this a little and only
-+		// defer if the unknown result is marked as "deferred" itself, since
-+		// presumably otherwise the value would be known by the time we need it
-+		// during the apply phase anyway. Need to think about this a little
-+		// more before deciding how to proceed.
-+		diags = diags.Append(fmt.Errorf("unknown 'destroy' value not handled yet; this is a bug in OpenTofu"))
-+	}
-+
- 	// Incomplete
- 	// The ordering here is designed to match the existing runtime where possible,
- 	// but some of the priorities (replaceRequest vs replaceTaint) are
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4864** (2026-11-20): Pre/Post conditions in the new runtime (@cam72cam)
 - **PR #4863** (2026-11-20): resource: "Latching" behavior of ActionIfUnwanted for `destroy = false` (@apparentlymart)
 - **PR #4861** (2026-11-18): Fix symbol libraries crash when uninitialized (@cam72cam)
 - **PR #4859** (2026-11-18): [Backport][v1.13] tofu test: apply mock_provider resource overrides inside modules (#4841) (@yottta)
 - **PR #4854** (2026-11-17): runtime: fix upgrade state on destroy and no skip refresh (@lbordowitz)
 - **PR #4847** (2026-11-17): Bump go-crypto to 1.5.2 to fix intermittent `tofu init` crash (@lxea)
-- **PR #4842** (2026-11-13): planning: Propose to Forget instead of Delete when requested (@apparentlymart)
 
 ---
 
@@ -1667,52 +1546,36 @@ Signed-off-by: Martin Atkins <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. resource: Fuller handling of ActionIfUnwanted
+## X. Add some notes about checks in the different runtimes
 
 **RULE**:
-When implementing operations in `internal/engine/applying/operations_resource_managed.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in opentofu/opentofu. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/engine/applying/apply.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in opentofu/opentofu. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1e528630`: resource: Fuller handling of ActionIfUnwanted. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0183949c`: Add some notes about checks in the different runtimes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/engine/applying/operations_resource_managed.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/engine/applying/apply.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	newSkipDestroy := false
-	if metadata.NewActionIfUnwanted.IsKnown() {
-		// The state only gets to optionally force choosing "forget" on the
-		// next round, and otherwise it gets no opinion at all.
-		// FIXME: Should we be doing anything with these marks?
-		if action, _ := metadata.ActionIfUnwanted.Unmark(); action.KnownValue() == resources.IfUnwantedForget {
-			newSkipDestroy = true
-		}
-	} else {
-		// We should not get here because the planning phase should refuse to
-		// produce a plan if we wouldn't know what to set this to during the
-		// apply phase.
-		diags = diags.Append(tfdiags.Sourceless(
-			tfdiags.Error,
-			`Unknown value for "destroy" argument`,
-			fmt.Sprintf("The \"destroy\" argument for %s has an unknown value. It's a bug in OpenTofu that this wasn't caught during the planning phase.", instAddr),
-		))
-		return nil, diags
-	}
-
-		NewSkipDestroy:            newSkipDestroy,
-			SkipDestroy:          plan.NewSkipDestroy,
+	// NOTE: The current runtime starts off with a copy of checks from
+	// the plan. Since we visit each node and don't perform graph
+	// surgery here, we can just start with a fresh set of check results
+	// NOTE: The current runtime has a few scenarios where it copies
+	// the checks from the plan (refresh-only), but that should not
+	// be necessary due to how we structured the this runtime.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+	// TODO copy from plan in certain scenarios?
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1e528630` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0183949c` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

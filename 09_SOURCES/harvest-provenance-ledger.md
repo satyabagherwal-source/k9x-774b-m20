@@ -11836,3 +11836,9 @@ Every entry in this ledger must capture:
 | `learn-huggingface-xhtoken-spark-x2-6-4b` | `https://huggingface.co/XHToken/Spark-X2.6-4B` | `hf-xhtoken` | Multi-dimensional audit evidence | 2026-11-21T13:05:17.806Z |
 | `learn-github-linkerd-linkerd2` | `https://github.com/linkerd/linkerd2` | `e64ff8dd` | Multi-dimensional audit evidence | 2026-11-21T13:05:26.314Z |
 | `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `d24219e3` | Multi-dimensional audit evidence | 2026-11-21T13:05:33.528Z |
+| `learn-huggingface-internscience-sage-a1-5` | `https://huggingface.co/InternScience/Sage-A1.5` | `hf-interns` | Multi-dimensional audit evidence | 2026-11-21T13:30:26.695Z |
+| `learn-github-cachix-devenv` | `https://github.com/cachix/devenv` | `ba35fb71` | Multi-dimensional audit evidence | 2026-11-21T13:30:27.902Z |
+| `learn-github-opentofu-opentofu` | `https://github.com/opentofu/opentofu` | `0183949c` | Multi-dimensional audit evidence | 2026-11-21T13:30:36.302Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `ffa93916` | Multi-dimensional audit evidence | 2026-11-21T13:30:39.683Z |
+| `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `87875513` | Multi-dimensional audit evidence | 2026-11-21T13:30:42.977Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `3996998d` | Multi-dimensional audit evidence | 2026-11-21T13:30:43.015Z |
