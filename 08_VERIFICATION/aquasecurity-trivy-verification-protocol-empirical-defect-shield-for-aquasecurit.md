@@ -4,22 +4,22 @@
 {
   "source_repository": "aquasecurity/trivy",
   "source_url": "https://github.com/aquasecurity/trivy",
-  "source_version": "92f029f9",
+  "source_version": "edf9f5c1",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-20T02:15:02.456Z",
+  "timestamp": "2026-11-21T02:57:50.392Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-aquasecurity-trivy",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [aquasecurity/trivy](https://github.com/aquasecurity/trivy) (Revision: `92f029f9`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T02:15:02.456Z`  
+> **Provenance**: Harvested from [aquasecurity/trivy](https://github.com/aquasecurity/trivy) (Revision: `edf9f5c1`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-21T02:57:50.392Z`  
 > **Learning ID**: `learn-github-aquasecurity-trivy`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `aquasecurity/trivy` (Commit: `92f029f9`)
+- **Target Repository**: `aquasecurity/trivy` (Commit: `edf9f5c1`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aquasecurity/trivy](https://github.com/aquasecurity/trivy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T02:15:00.914Z  
+> **Harvest Timestamp**: 2026-11-21T02:57:49.218Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Find vulnerabilities, misconfigurations, secrets, SBOM in containers, Kubernetes, code repositories, clouds and more
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 39551 stars
+- **Stars / Engagement**: 39581 stars
 
 ---
 
@@ -1013,101 +1013,495 @@ type TracingConfiguration struct {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `92f029f9` (2026-11-19)
-**Commit Message**: fix(image): export by full image ID with the containerd image store (#11665)
+### Incident Patch 1: `edf9f5c1` (2026-11-20)
+**Commit Message**: fix(java): check repository policy before skipping a shared Maven mirror (#11613)
 
-Signed-off-by: omerfsen <[REDACTED_EMAIL]>
-
-**File**: `pkg/fanal/image/daemon/docker.go` (modified, +14/-0)
+**File**: `pkg/dependency/parser/java/pom/mirror_test.go` (modified, +61/-0)
 ```diff
-@@ -4,6 +4,7 @@ import (
- 	"context"
- 	"os"
- 
-+	"github.com/distribution/reference"
- 	"github.com/google/go-containerregistry/pkg/name"
- 	"github.com/moby/moby/client"
- 	"golang.org/x/xerrors"
-@@ -50,6 +51,7 @@ func DockerImage(ctx context.Context, ref name.Reference, host string) (Image, f
- 		if err != nil {
- 			return nil, cleanup, xerrors.Errorf("unable to inspect the image (%s): %w", imageID, err)
- 		}
-+		imageID = normalizeImageID(imageID)
- 	}
- 
- 	history, err := c.ImageHistory(ctx, imageID)
-@@ -74,3 +76,15 @@ func DockerImage(ctx context.Context, ref name.Reference, host string) (Image, f
- 		history: configHistory(history.Items),
- 	}, cleanup, nil
- }
-+
-+// normalizeImageID turns a bare 64-hex image ID into "sha256:<hex>" the way the daemon does.
-+// The containerd image store refuses to export a bare 64-hex ID
-+// ("cannot specify 64-byte hexadecimal strings"), while inspect and history accept it.
-+func normalizeImageID(s string) string {
-+	if parsed, err := reference.ParseAnyReference(s); err == nil {
-+		if _, named := parsed.(reference.Named); !named {
-+			return parsed.String()
-+		}
-+	}
-+	return s
-+}
-```
-
-**File**: `pkg/fanal/image/daemon/docker_test.go` (modified, +39/-0)
-```diff
-@@ -47,3 +47,42 @@ func TestDockerImage(t *testing.T) {
+@@ -798,3 +798,64 @@ func Test_fetchPOMFromRemoteRepositories_mirror(t *testing.T) {
  		})
  	}
  }
 +
-+func Test_normalizeImageID(t *testing.T) {
++// Repositories with different release and snapshot policies can share one mirror.
++// The mirror is requested for an artifact that only the second repository accepts.
++func Test_fetchPOMFromRemoteRepositories_mirrorPolicy(t *testing.T) {
++	releasesURL, err := url.Parse("https://releases.example.com/maven2/")
++	require.NoError(t, err)
++	snapshotsURL, err := url.Parse("https://snapshots.example.com/maven2/")
++	require.NoError(t, err)
++	releasesRepo := repository{id: "releases", url: *releasesURL, releaseEnabled: true}
++	snapshotsRepo := repository{id: "snapshots", url: *snapshotsURL, snapshotEnabled: true}
++
 +	tests := []struct {
-+		name  string
-+		input string
-+		want  string
++		name      string
++		repos     []repository
++		snapshot  bool
++		version   string
++		wantPaths []string
 +	}{
 +		{
-+			name:  "full image ID without sha256 prefix",
-+			input: "a187dde48cd289ac374ad8539930628314bc581a481cdb41409c9289419ddb72",
-+			want:  "sha256:a187dde48cd289ac374ad8539930628314bc581a481cdb41409c9289419ddb72",
++			name:     "snapshot artifact, release-only repository first",
++			repos:    []repository{releasesRepo, snapshotsRepo},
++			snapshot: true,
++			version:  "1.0.0-SNAPSHOT",
++			wantPaths: []string{
++				"/com/example/example-api/1.0.0-SNAPSHOT/maven-metadata.xml",
++				"/com/example/example-api/1.0.0-SNAPSHOT/example-api-1.0.0-SNAPSHOT.pom",
++			},
 +		},
 +		{
-+			name:  "full image ID with sha256 prefix",
-+			input: "sha256:a187dde48cd289ac374ad8539930628314bc581a481cdb41409c9289419ddb72",
-+			want:  "sha256:a187dde48cd289ac374ad8539930628314bc581a481cdb41409c9289419ddb72",
-+		},
-+		{
-+			name:  "short image ID",
-+			input: "a187dde48cd2",
-+			want:  "a187dde48cd2",
-+		},
-+		{
-+			name:  "63-hex image ID prefix",
-+			input: "a187dde48cd289ac374ad8539930628314bc581a481cdb41409c9289419ddb7",
-+			want:  "a187dde48cd289ac374ad8539930628314bc581a481cdb41409c9289419ddb7",
-+		},
-+		{
-+			name:  "image name",
-+			input: "alpine:3.11",
-+			want:  "alpine:3.11",
++			name:    "release artifact, snapshot-only repository first",
++			repos:   []repository{snapshotsRepo, releasesRepo},
++			version: "1.0.0",
++			wantPaths: []string{
++				"/com/example/example-api/1.0.0/example-api-1.0.0.pom",
++			},
 +		},
 +	}
++
 +	for _, tt := range tests {
 +		t.Run(tt.name, func(t *testing.T) {
-+			assert.Equal(t, tt.want, normalizeImageID(tt.input))
++			var gotPaths []string
++			srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++				gotPaths = append(gotPaths, r.URL.Path)
++				_, _ = w.Write([]byte(`<project><artifactId>example-api</artifactId></project>`))
++			}))
++			t.Cleanup(srv.Close)
++
++			p := &Parser{
++				logger:     log.WithPrefix("pom"),
++				mirrors:    resolveMirrors([]Mirror{{ID: "m1", URL: srv.URL, MirrorOf: "*"}}, nil, nil),
++				httpClient: http.DefaultClient,
++			}
++
++			paths := []string{"com", "example", "example-api", tt.version, "example-api-" + tt.version + ".pom"}
++			got, err := p.fetchPOMFromRemoteRepositories(t.Context(), paths, tt.snapshot, tt.repos)
++			require.NoError(t, err)
++			require.NotNil(t, got)
++			require.Equal(t, tt.wantPaths, gotPaths)
 +		})
 +	}
 +}
 ```
 
+**File**: `pkg/dependency/parser/java/pom/parse.go` (modified, +7/-5)
+```diff
+@@ -857,6 +857,13 @@ func (p *Parser) fetchPOMFromRemoteRepositories(ctx context.Context, paths []str
+ 		// Route each repository through its mirrors; a config-file mirror may expand
+ 		// one repository into several ordered fallback candidates.
+ 		for _, candidate := range p.mirrorFor(repo) {
++			// Skip Release only repositories for snapshot artifacts and vice versa.
++			// This is checked before the URL is marked as seen, because repositories with
++			// different policies may share a mirror.
++			if snapshot && !candidate.snapshotEnabled || !snapshot && !candidate.releaseEnabled {
++				continue
++			}
++
+ 			// After mirrorFor different source repositories may collapse to the same URL
+ 			// (e.g. mirrorOf=*). Maven's aggregateRepositories deduplicates the post-mirror
+ 			// set so a not-found artifact is fetched from each mirror only once; mirror by URL.
+@@ -865,11 +872,6 @@ func (p *Parser) fetchPOMFromRemoteRepositories(ctx context.Context, paths []str
+ 			}
+ 			seen.Append(candidate.url.String())
+ 
+-			// Skip Release only repositories for snapshot artifacts and vice versa
+-			if snapshot && !candidate.snapshotEnabled || !snapshot && !candidate.releaseEnabled {
+-				continue
+-			}
+-
+ 			repoPaths := slices.Clone(paths) // Clone slice to avoid overwriting last element of `paths`
+ 			if snapshot {
+ 				pomFileName, err := p.fetchPomFileNameFromMavenMetadata(ctx, candidate.url, repoPaths)
+```
+
+---
+
+### Incident Patch 2: `e4a56424` (2026-11-20)
+**Commit Message**: chore(deps): bump github.com/moby/buildkit from 0.34.2 to 0.35.0 in the docker group across 1 directory (#11685)
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `go.mod` (modified, +20/-20)
+```diff
+@@ -77,7 +77,7 @@ require (
+ 	github.com/masahiro331/go-xfs-filesystem v0.0.0-20260422061116-d21e5e4481bb
+ 	github.com/mattn/go-shellwords v1.0.16
+ 	github.com/mitchellh/hashstructure/v2 v2.0.2
+-	github.com/moby/buildkit v0.34.2
++	github.com/moby/buildkit v0.35.0
+ 	github.com/moby/docker-image-spec v1.3.1
+ 	github.com/moby/moby/api v1.56.1
+ 	github.com/moby/moby/client v0.6.2
+@@ -146,7 +146,7 @@ require (
+ 	buf.build/go/protoyaml v0.7.0 // indirect
+ 	buf.build/go/spdx v0.2.0 // indirect
+ 	buf.build/go/standard v0.1.1-0.20260325175353-2b287e071df5 // indirect
+-	cel.dev/expr v0.25.2 // indirect
++	cel.dev/expr v0.25.3 // indirect
+ 	cloud.google.com/go v0.123.0 // indirect
+ 	cloud.google.com/go/auth v0.23.3 // indirect
+ 	cloud.google.com/go/auth/oauth2adapt v0.2.8 // indirect
+@@ -161,7 +161,7 @@ require (
+ 	github.com/Azure/go-ansiterm v0.0.0-20261006220739-8c912ac31dd4 // indirect
+ 	github.com/AzureAD/microsoft-authentication-library-for-go v1.10.1 // indirect
+ 	github.com/DataDog/zstd v1.5.5 // indirect
+-	github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.34.0 // indirect
++	github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.35.0 // indirect
+ 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/metric v0.57.0 // indirect
+ 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/resourcemapping v0.57.0 // indirect
+ 	github.com/Intevation/gval v1.3.0 // indirect
+@@ -170,8 +170,8 @@ require (
+ 	github.com/Masterminds/goutils v1.1.1 // indirect
+ 	github.com/Masterminds/semver/v3 v3.5.0 // indirect
+ 	github.com/Masterminds/squirrel v1.5.4 // indirect
+-	github.com/Microsoft/go-winio v0.6.3-0.20251027160822-ad3df93bed29 // indirect
+-	github.com/Microsoft/hcsshim v0.15.0-rc.4 // indirect
++	github.com/Microsoft/go-winio v0.6.4 // indirect
++	github.com/Microsoft/hcsshim v0.15.0 // indirect
+ 	github.com/ProtonMail/go-crypto v1.5.2 // indirect
+ 	github.com/VividCortex/ewma v1.2.0 // indirect
+ 	github.com/agext/levenshtein v1.2.3 // indirect
+@@ -240,7 +240,7 @@ require (
+ 	github.com/ebitengine/purego v0.10.1 // indirect
+ 	github.com/emicklei/go-restful/v3 v3.13.0 // indirect
+ 	github.com/emirpasic/gods v1.18.1 // indirect
+-	github.com/envoyproxy/go-control-plane/envoy v1.37.0 // indirect
++	github.com/envoyproxy/go-control-plane/envoy v1.39.1-0.20260819172001-e6e3fd93e4be // indirect
+ 	github.com/envoyproxy/protoc-gen-validate v1.3.3 // indirect
+ 	github.com/evanphx/json-patch/v5 v5.9.11 // indirect
+ 	github.com/exponent-io/jsonpath v0.0.0-20210407135951-1de76d718b3f // indirect
+@@ -344,10 +344,10 @@ require (
+ 	github.com/moby/locker v1.0.1 // indirect
+ 	github.com/moby/patternmatcher v0.6.1 // indirect
+ 	github.com/moby/sys/atomicwriter v0.1.0 // indirect
+-	github.com/moby/sys/mountinfo v0.7.2 // indirect
++	github.com/moby/sys/mountinfo v0.7.3 // indirect
+ 	github.com/moby/sys/sequential v0.7.0 // indirect
+ 	github.com/moby/sys/signal v0.7.1 // indirect
+-	github.com/moby/sys/user v0.4.1 // indirect
++	github.com/moby/sys/user v0.5.0 // indirect
+ 	github.com/moby/sys/userns v0.2.1 // indirect
+ 	github.com/moby/term v0.5.2 // indirect
+ 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
+@@ -370,7 +370,7 @@ require (
+ 	github.com/planetscale/vtprotobuf v0.6.1-0.20240319094008-0393e58bdf10 // indirect
+ 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
+ 	github.com/power-devops/perfstat v0.0.0-20240221224432-82ca36839d55 // indirect
+-	github.com/prometheus/client_golang v1.24.1 // indirect
++	github.com/prometheus/client_golang v1.25.0 // indirect
+ 	github.com/prometheus/client_model v0.6.3 // indirect
+ 	github.com/prometheus/common v0.72.0 // indirect
+ 	github.com/prometheus/procfs v0.22.0 // indirect
+@@ -426,13 +426,13 @@ require (
+ 	go.lsp.dev/protocol v0.12.0 // indirect
+ 	go.lsp.dev/uri v0.3.0 // indirect
+ 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
+-	go.opentelemetry.io/contrib/detectors/gcp v1.44.0 // indirect
+-	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.71.0 // indirect
+-	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.71.0 // indirect
++	go.opentelemetry.io/contrib/detectors/gcp v1.45.0 // indirect
++	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.72.0 // indirect
++	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.72.0 // indirect
+ 	go.opentelemetry.io/otel v1.47.0 // indirect
+-	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.46.0 // indirect
+-	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.46.0 // indirect
+-	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.46.0 // indirect
++	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.47.0 // indirect
++	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.47.0 // indirect
++	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.47.0 // indirect
+ 	go.opentelemetry.io/ot
+```
+
+**File**: `go.sum` (modified, +46/-46)
+```diff
+@@ -26,8 +26,8 @@ buf.build/go/spdx v0.2.0 h1:IItqM0/cMxvFJJumcBuP8NrsIzMs/UYjp/6WSpq8LTw=
+ buf.build/go/spdx v0.2.0/go.mod h1:bXdwQFem9Si3nsbNy8aJKGPoaPi5DKwdeEp5/ArZ6w8=
+ buf.build/go/standard v0.1.1-0.20260325175353-2b287e071df5 h1:njYKSWoLiq2i5O7y2bPPU2Yzp7iAU0Wk9KJ2OoAhNiU=
+ buf.build/go/standard v0.1.1-0.20260325175353-2b287e071df5/go.mod h1:DQmodNT9EHX94WzUaWiZK+/4EaFa/xZTc1gzfCxZVXU=
+-cel.dev/expr v0.25.2 h1:K6j46C81hXtZQfuX60cVWQFBJahKSE2gfRbNuvr5bFs=
+-cel.dev/expr v0.25.2/go.mod h1:hrXvqGP6G6gyx8UAHSHJ5RGk//1Oj5nXQ2NI02Nrsg4=
++cel.dev/expr v0.25.3 h1:A2jO8jwOugrrovveCWfj0KEZOfqiLgAcwjpHPhzIGw0=
++cel.dev/expr v0.25.3/go.mod h1:hrXvqGP6G6gyx8UAHSHJ5RGk//1Oj5nXQ2NI02Nrsg4=
+ cloud.google.com/go v0.123.0 h1:2NAUJwPR47q+E35uaJeYoNhuNEM9kM8SjgRgdeOJUSE=
+ cloud.google.com/go v0.123.0/go.mod h1:xBoMV08QcqUGuPW65Qfm1o9Y4zKZBpGS+7bImXLTAZU=
+ cloud.google.com/go/auth v0.23.3 h1:UMK+oBtuNGMCR/6i6mmySUItqjOazpJrbmZyhGbGBWo=
+@@ -89,8 +89,8 @@ github.com/DataDog/zstd v1.5.5 h1:oWf5W7GtOLgp6bciQYDmhHHjdhYkALu6S/5Ni9ZgSvQ=
+ github.com/DataDog/zstd v1.5.5/go.mod h1:g4AWEaM3yOg3HYfnJ3YIawPnVdXJh9QME85blwSAmyw=
+ github.com/GoogleCloudPlatform/docker-credential-gcr/v2 v2.2.1 h1:hlWYvaYrCCH1nTnUf39MdE+FOEmf2GYUYNF4ED9S3S0=
+ github.com/GoogleCloudPlatform/docker-credential-gcr/v2 v2.2.1/go.mod h1:tkzPxS3e4iTgbA4PWtc84B3iwgLH+Shjtjgn134AHd4=
+-github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.34.0 h1:yzIYdwuro811Z27D3T80Wkd3rqZzb0K43nner7Eh1yE=
+-github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.34.0/go.mod h1:pJTkW8hEUIIi3Pf65lPZOnn4Y81yCllX6IWk2jNXdkM=
++github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.35.0 h1:bN1gA3of5bXtbnLsRPrwfmbbe7A5UWFlcTHseujLnpc=
++github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.35.0/go.mod h1:Yj5vHEz/aAepZGliRJsA6uvHAVAQyEwajq9ORCHPxzM=
+ github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/metric v0.57.0 h1:jLdiS1vO+XJFyDSWRHBx56r4s/NNtcl5J6KyCcWUX/w=
+ github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/metric v0.57.0/go.mod h1:8lmpHY+1VRoteiOwyrQMDt1YGXOrFKCz+1wJW7n3ODY=
+ github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/cloudmock v0.57.0 h1:cSjUzZ7KU8hicTgzaSv9NmSyM9fTVK3y5lsBUl3wOis=
+@@ -112,10 +112,10 @@ github.com/Masterminds/sprig/v3 v3.3.0/go.mod h1:Zy1iXRYNqNLUolqCpL4uhk6SHUMAOSC
+ github.com/Masterminds/squirrel v1.5.4 h1:uUcX/aBc8O7Fg9kaISIUsHXdKuqehiXAMQTYX8afzqM=
+ github.com/Masterminds/squirrel v1.5.4/go.mod h1:NNaOrjSoIDfDA40n7sr2tPNZRfjzjA400rg+riTZj10=
+ github.com/Microsoft/go-winio v0.5.2/go.mod h1:WpS1mjBmmwHBEWmogvA2mj8546UReBk4v8QkMxJ6pZY=
+-github.com/Microsoft/go-winio v0.6.3-0.20251027160822-ad3df93bed29 h1:0kQAzHq8vLs7Pptv+7TxjdETLf/nIqJpIB4oC6Ba4vY=
+-github.com/Microsoft/go-winio v0.6.3-0.20251027160822-ad3df93bed29/go.mod h1:ZWa7ssZJT30CCDGJ7fk/2SBTq9BIQrrVjrcss0UW2s0=
+-github.com/Microsoft/hcsshim v0.15.0-rc.4 h1:aZFX4LH0S20Lgjq0wG61StIClj7im4yzrxIClkaR8Z8=
+-github.com/Microsoft/hcsshim v0.15.0-rc.4/go.mod h1:BA9CBztgu4h/6Jsvo1O1M4qjWw09PoYpaEYgexPE578=
++github.com/Microsoft/go-winio v0.6.4 h1:kJF2pamtYCWXf0xAT8sAkwKC0pMl2HYBrRPHAqyUc+g=
++github.com/Microsoft/go-winio v0.6.4/go.mod h1:1xl5JXG4ze/m74GH6Dc4Mwxfc3VL5siRVQjIAlHH07U=
++github.com/Microsoft/hcsshim v0.15.0 h1:AWiHGf0+9f7cDcfhuU3zXORCAPmIOWzTYfHhcrMcx3U=
++github.com/Microsoft/hcsshim v0.15.0/go.mod h1:eStXUkML1Fmkgmwr6XHbYkBC1j7p2FA8ZtA9dyRMbts=
+ github.com/NYTimes/gziphandler v1.1.1 h1:ZUDjpQae29j0ryrS0u/B8HZfJBtBQHjqw2rQ2cqUQ3I=
+ github.com/NYTimes/gziphandler v1.1.1/go.mod h1:n/CVRwUEOgIxrgPvAQhUUr9oeUtvrhMomdKFjzJNB0c=
+ github.com/ProtonMail/go-crypto v1.5.2 h1:cucYnvqcY7UOXVD//mSyjeaPY0SSN3v5cDkYPxumINk=
+@@ -363,8 +363,8 @@ github.com/emirpasic/gods v1.18.1 h1:FXtiHYKDGKCW2KzwZKx0iC0PQmdlorYgdFG9jPXJ1Bc
+ github.com/emirpasic/gods v1.18.1/go.mod h1:8tpGGwCnJ5H4r6BWwaV6OrWmMoPhUl5jm/FMNAnJvWQ=
+ github.com/envoyproxy/go-control-plane v0.14.0 h1:hbG2kr4RuFj222B6+7T83thSPqLjwBIfQawTkC++2HA=
+ github.com/envoyproxy/go-control-plane v0.14.0/go.mod h1:NcS5X47pLl/hfqxU70yPwL9ZMkUlwlKxtAohpi2wBEU=
+-github.com/envoyproxy/go-control-plane/envoy v1.37.0 h1:u3riX6BoYRfF4Dr7dwSOroNfdSbEPe9Yyl09/B6wBrQ=
+-github.com/envoyproxy/go-control-plane/envoy v1.37.0/go.mod h1:DReE9MMrmecPy+YvQOAOHNYMALuowAnbjjEMkkWOi6A=
++github.com/envoyproxy/go-control-plane/envoy v1.39.1-0.20260819172001-e6e3fd93e4be h1:SWe0x6yfglnxuvOiYgTTnNq7QD/yvqthOh1RBI8Bj8w=
++github.com/envoyproxy/go-control-plane/envoy v1.39.1-0.20260819172001-e6e3fd93e4be/go.mod h1:PYEOlng9XcrulfyWpm49jECTPV0LT4q8cO7fLW/xwgk=
+ github.com/envoyproxy/go-control-plane/ratelimit v0.1.0 h1:/G9QYbddjL25KvtKTv3an9lx6VBE2cnb8wp1vEGNYGI=
+ github.com/envoyproxy/go-control-plane/ratelimit v0.1.0/go.mod h1:Wk+tMFAFbCXaJPzVVHnPgRKdUdwW/KdbRt94AzgRee4=
+ github.com/envoyproxy/protoc-gen-validate v1.3.3 h1:MVQghNeW+LZcmXe7SY1V36Z+WFMDjpqGAGacLe2T0ds=
+@@ -732,8 +732,8 @@ github.com/mitchellh/mapstructure v1.5.1-0.20231216201459-8508981c8b6c
+```
+
+---
+
+### Incident Patch 3: `93f55093` (2026-11-20)
+**Commit Message**: fix(nodejs): add dependency edges for Bun workspaces (#11650)
+
+**File**: `pkg/dependency/parser/nodejs/bun/parse.go` (modified, +13/-2)
+```diff
+@@ -147,9 +147,15 @@ func (p *Parser) parsePackages(lockFile LockFile) (map[string]ftypes.Package, ma
+ 		// A workspace member is written as "<name>@workspace:<dir>",
+ 		// e.g. "a": ["a@workspace:packages/a"] for the workspace "packages/a".
+ 		if wsDir, ok := strings.CutPrefix(pkgVersion, "workspace:"); ok {
++			ws := lockFile.Workspaces[wsDir]
+ 			wsPaths[wsDir] = pkgPath
+-			pkgVersion = lockFile.Workspaces[wsDir].Version
++			pkgVersion = ws.Version
+ 			relationship = ftypes.RelationshipWorkspace
++			// Since lockfileVersion 1 a workspace entry has no metadata, so its dependencies come from `workspaces`.
++			// Duplicates (e.g. a peer dependency that is also a dev dependency,
++			// or the dependencies in the metadata of lockfileVersion 0) are removed in mergePackages.
++			depNames[pkgPath] = slices.Concat(lo.Keys(ws.Dependencies), lo.Keys(ws.PeerDependencies),
++				lo.Keys(ws.OptionalDependencies), lo.Keys(ws.DevDependencies))
+ 		}
+ 		if pkgVersion != "" {
+ 			if _, err := semver.Parse(pkgVersion); err != nil {
+@@ -169,7 +175,7 @@ func (p *Parser) parsePackages(lockFile LockFile) (map[string]ftypes.Package, ma
+ 		}
+ 
+ 		if depMap, ok := parsed.Meta["dependencies"].(map[string]any); ok && len(depMap) > 0 {
+-			depNames[pkgPath] = lo.Keys(depMap)
++			depNames[pkgPath] = append(depNames[pkgPath], lo.Keys(depMap)...)
+ 		}
+ 	}
+ 	return pkgs, depNames, wsPaths
+@@ -235,6 +241,11 @@ func walkProdPackages(pkgPath string, pkgs map[string]ftypes.Package, deps map[s
+ 	pkgs[pkgPath] = pkg
+ 
+ 	visited.Append(pkgPath)
++	// The dependencies of a workspace include its dev dependencies, so the walk stops at a workspace.
++	// Its prod dependencies are walked as direct dependencies.
++	if pkg.Relationship == ftypes.RelationshipWorkspace {
++		return
++	}
+ 	for _, dep := range deps[pkgPath] {
+ 		walkProdPackages(dep, pkgs, deps, visited)
+ 	}
+```
+
+**File**: `pkg/dependency/parser/nodejs/bun/parse_test.go` (modified, +6/-0)
+```diff
+@@ -53,6 +53,12 @@ func TestParse(t *testing.T) {
+ 			want:     workspaceNestedPkgs,
+ 			wantDeps: workspaceNestedDeps,
+ 		},
++		{
++			name:     "workspace as a dependency of a package",
++			file:     "testdata/bun_workspace_as_dependency.lock",
++			want:     workspaceAsDependencyPkgs,
++			wantDeps: workspaceAsDependencyDeps,
++		},
+ 	}
+ 
+ 	for _, tt := range tests {
+```
+
+**File**: `pkg/dependency/parser/nodejs/bun/parse_testcase.go` (modified, +96/-1)
+```diff
+@@ -156,7 +156,20 @@ var (
+ 		},
+ 	}
+ 
+-	multipleWsDeps = []ftypes.Dependency(nil)
++	multipleWsDeps = []ftypes.Dependency{
++		{
++			ID: "my-app@1.0.0",
++			DependsOn: []string{
++				"lodash@4.17.21",
++			},
++		},
++		{
++			ID: "my-lib@1.0.0",
++			DependsOn: []string{
++				"chalk@5.0.1",
++			},
++		},
++	}
+ 
+ 	// testdata/bun_nested.lock is generated by bun 1.4.2.
+ 	nestedPkgs = []ftypes.Package{
+@@ -1033,6 +1046,23 @@ var (
+ 	}
+ 
+ 	workspaceNestedDeps = []ftypes.Dependency{
++		{
++			ID: "a@1.0.0",
++			DependsOn: []string{
++				"debug@2.6.9",
++				"lodash@4.17.15",
++				"minimist@0.0.8",
++				"ms@0.7.1",
++				"send@0.13.0",
++			},
++		},
++		{
++			ID: "b@1.0.0",
++			DependsOn: []string{
++				"a@1.0.0",
++				"minimist@0.0.10",
++			},
++		},
+ 		{
+ 			ID: "debug@2.2.0",
+ 			DependsOn: []string{
+@@ -1099,4 +1129,69 @@ var (
+ 			},
+ 		},
+ 	}
++
++	// docker run --rm -it oven/bun:1.4.2 sh
++	// mkdir -p /app/packages/ms && cd /app
++	// echo '{"name": "edge-collision", "workspaces": ["packages/*"], "dependencies": {"debug": "2.6.9"}}' > package.json
++	// echo '{"name": "ms", "version": "2.0.0", "devDependencies": {"minimist": "1.2.8"}}' > packages/ms/package.json
++	// bun install
++	// cat bun.lock
++	//
++	// "debug" depends on "ms", which bun links to the workspace "ms".
++	workspaceAsDependencyPkgs = []ftypes.Package{
++		{
++			ID:           "ms@2.0.0",
++			Name:         "ms",
++			Version:      "2.0.0",
++			Relationship: ftypes.RelationshipWorkspace,
++			Dev:          false,
++			Locations: ftypes.Locations{
++				{
++					StartLine: 24,
++					EndLine:   24,
++				},
++			},
++		},
++		{
++			ID:           "debug@2.6.9",
++			Name:         "debug",
++			Version:      "2.6.9",
++			Relationship: ftypes.RelationshipDirect,
++			Dev:          false,
++			Locations: ftypes.Locations{
++				{
++					StartLine: 20,
++					EndLine:   20,
++				},
++			},
++		},
++		{
++			ID:           "minimist@1.2.8",
++			Name:         "minimist",
++			Version:      "1.2.8",
++			Relationship: ftypes.RelationshipDirect,
++			Dev:          true,
++			Locations: ftypes.Locations{
++				{
++					StartLine: 22,
++					EndLine:   22,
++				},
++			},
++		},
++	}
++
++	workspaceAsDependencyDeps = []ftypes.Dependency{
++		{
++			ID: "debug@2.6.9",
++			DependsOn: []string{
++				"ms@2.0.0",
++			},
++		},
++		{
++			ID: "ms@2.0.0",
++			DependsOn: []string{
++				"minimist@1.2.8",
++			},
++		},
++	}
+ )
+```
+
+**File**: `pkg/dependency/parser/nodejs/bun/testdata/bun_workspace_as_dependency.lock` (added, +26/-0)
+```diff
+@@ -0,0 +1,26 @@
++{
++  "lockfileVersion": 2,
++  "configVersion": 1,
++  "workspaces": {
++    "": {
++      "name": "edge-collision",
++      "dependencies": {
++        "debug": "2.6.9",
++      },
++    },
++    "packages/ms": {
++      "name": "ms",
++      "version": "2.0.0",
++      "devDependencies": {
++        "minimist": "1.2.8",
++      },
++    },
++  },
++  "packages": {
++    "debug": ["debug@2.6.9", "", { "dependencies": { "ms": "2.0.0" } }, "sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA=="],
++
++    "minimist": ["minimist@1.2.8", "", {}, "sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA=="],
++
++    "ms": ["ms@workspace:packages/ms"],
++  }
++}
+```
+
+**File**: `pkg/fanal/analyzer/language/nodejs/bun/bun.go` (modified, +1/-1)
+```diff
+@@ -27,7 +27,7 @@ func init() {
+ }
+ 
+ const (
+-	version = 2
++	version = 3
+ )
+ 
+ type bunLibraryAnalyzer struct {
+```
+
 #### Recent Merged Pull Requests:
+- **PR #11700** (closed): Parses TF_VAR_ values for variables of complex types as HCL (@Aakarsh133)
+- **PR #11687** (closed): chore(deps): bump the common group across 1 directory with 18 updates (@dependabot[bot])
+- **PR #11686** (2026-11-20): chore(deps): bump the testcontainers group with 2 updates (@dependabot[bot])
+- **PR #11685** (2026-11-20): chore(deps): bump github.com/moby/buildkit from 0.34.2 to 0.35.0 in the docker group across 1 directory (@dependabot[bot])
 - **PR #11673** (2026-11-18): fix(server): use the correct flag name in the --custom-headers warning (@farisbasha)
-- **PR #11665** (2026-11-19): fix(image): export by full image ID with the containerd image store (@omerfsen)
-- **PR #11654** (2026-11-18): docs: fix the moved Sigstore links in signature verification (@farisbasha)
-- **PR #11644** (closed): fix(sbom): keep components from duplicated third-party SBOMs unique (@nissessenap)
-- **PR #11641** (closed): chore(deps): bump go.opentelemetry.io/otel/trace from 1.46.0 to 1.47.0 (@dependabot[bot])
-- **PR #11640** (2026-11-16): chore(deps): bump go.opentelemetry.io/otel/sdk from 1.46.0 to 1.47.0 (@dependabot[bot])
+- **PR #11672** (2026-11-20): feat(server): add Custom field to secret findings (@DmitriyLewen)
 
 ---
 
@@ -1127,34 +1521,51 @@ Signed-off-by: omerfsen <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. image): export by full image ID with the containerd image store
+## X. java): check repository policy before skipping a shared Maven mirror
 
 **RULE**:
-When implementing operations in `pkg/fanal/image/daemon/docker.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aquasecurity/trivy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/dependency/parser/java/pom/mirror_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aquasecurity/trivy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `92f029f9`: image): export by full image ID with the containerd image store. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `edf9f5c1`: java): check repository policy before skipping a shared Maven mirror. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/fanal/image/daemon/docker.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/dependency/parser/java/pom/mirror_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"github.com/distribution/reference"
-		imageID = normalizeImageID(imageID)
 
-// normalizeImageID turns a bare 64-hex image ID into "sha256:<hex>" the way the daemon does.
-// The containerd image store refuses to export a bare 64-hex ID
-// ("cannot specify 64-byte hexadecimal strings"), while inspect and history accept it.
-func normalizeImageID(s string) string {
-	if parsed, err := reference.ParseAnyReference(s); err == nil {
-		if _, named := parsed.(reference.Named); !named {
-			return parsed.String()
-		}
-	}
-	return s
-}
+// Repositories with different release and snapshot policies can share one mirror.
+// The mirror is requested for an artifact that only the second repository accepts.
+func Test_fetchPOMFromRemoteRepositories_mirrorPolicy(t *testing.T) {
+	releasesURL, err := url.Parse("https://releases.example.com/maven2/")
+	require.NoError(t, err)
+	snapshotsURL, err := url.Parse("https://snapshots.example.com/maven2/")
+	require.NoError(t, err)
+	releasesRepo := repository{id: "releases", url: *releasesURL, releaseEnabled: true}
+	snapshotsRepo := repository{id: "snapshots", url: *snapshotsURL, snapshotEnabled: true}
+
+	tests := []struct {
+		name      string
+		repos     []repository
+		snapshot  bool
+		version   string
+		wantPaths []string
+	}{
+		{
+			name:     "snapshot artifact, release-only repository first",
+			repos:    []repository{releasesRepo, snapshotsRepo},
+			snapshot: true,
+			version:  "1.0.0-SNAPSHOT",
+			wantPaths: []string{
+				"/com/example/example-api/1.0.0-SNAPSHOT/maven-metadata.xml",
+				"/com/example/example-api/1.0.0-SNAPSHOT/example-api-1.0.0-SNAPSHOT.pom",
+			},
+		},
+		{
+			name:    "release artifact, snapshot-only repository first",
+			repos:   []repository{snapshotsRepo, relea
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1164,7 +1575,7 @@ func normalizeImageID(s string) string {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `92f029f9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `edf9f5c1` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -11739,3 +11739,7 @@ Every entry in this ledger must capture:
 | `learn-github-hashicorp-terraform` | `https://github.com/hashicorp/terraform` | `80e6fc28` | Multi-dimensional audit evidence | 2026-11-21T02:26:52.738Z |
 | `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `c0386a2f` | Multi-dimensional audit evidence | 2026-11-21T02:26:58.657Z |
 | `learn-github-astral-sh-ruff` | `https://github.com/astral-sh/ruff` | `cd2d9732` | Multi-dimensional audit evidence | 2026-11-21T02:29:56.869Z |
+| `learn-github-tokio-rs-tokio` | `https://github.com/tokio-rs/tokio` | `717c508f` | Multi-dimensional audit evidence | 2026-11-21T02:57:41.676Z |
+| `learn-github-dubzzz-fast-check` | `https://github.com/dubzzz/fast-check` | `56ed4c78` | Multi-dimensional audit evidence | 2026-11-21T02:57:43.886Z |
+| `learn-github-iliyami-macsai` | `https://github.com/iliyami/MacSai` | `5891a8ce` | Multi-dimensional audit evidence | 2026-11-21T02:57:46.059Z |
+| `learn-github-aquasecurity-trivy` | `https://github.com/aquasecurity/trivy` | `edf9f5c1` | Multi-dimensional audit evidence | 2026-11-21T02:57:50.199Z |

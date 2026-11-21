@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T02:30:03.038Z",
+  "last_updated": "2026-11-21T02:57:55.998Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-21T01:16:32.184Z",
@@ -1278,9 +1278,9 @@
       "staged_for_review": 1
     },
     "dubzzz-fast-check-learnings.md": {
-      "processed_at": "2026-11-17T08:44:59.290Z",
-      "promoted_canonical": 2,
-      "staged_for_review": 0
+      "processed_at": "2026-11-21T02:57:54.193Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "oceanbase-oceanbase-learnings.md": {
       "processed_at": "2026-11-12T22:05:39.904Z",
@@ -1938,7 +1938,7 @@
       "staged_for_review": 0
     },
     "iliyami-macsai-learnings.md": {
-      "processed_at": "2026-11-13T15:39:02.592Z",
+      "processed_at": "2026-11-21T02:57:55.138Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2658,7 +2658,7 @@
       "staged_for_review": 0
     },
     "tokio-rs-tokio-learnings.md": {
-      "processed_at": "2026-11-19T16:25:04.427Z",
+      "processed_at": "2026-11-21T02:57:53.462Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3653,7 +3653,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2712,
+  "total_dossiers_evaluated": 2715,
   "total_canonical_promoted": 442,
-  "total_staged_for_review": 2084
+  "total_staged_for_review": 2087
 }

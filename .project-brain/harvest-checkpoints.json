@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-21T02:29:56.900Z",
+  "last_updated": "2026-11-21T02:57:50.207Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2039,14 +2039,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-iliyami-macsai",
-      "content_hash": "357c96f70299f3fa0802cb9cad493544775edd16bddb2cb1450c3f03affe4dfa",
-      "verified_at": "2026-11-13T15:38:13.692Z",
+      "content_hash": "4cf2d4de4b38558d529b5ea50ae6f84e44979df9bb8988ed6ffa9a9238d50a4c",
+      "verified_at": "2026-11-21T02:57:46.066Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T15:38:13.692Z"
+      "last_updated": "2026-11-21T02:57:46.066Z"
     },
     "duty1g/x64dbg-mcp-server": {
       "repository": "duty1g/x64dbg-mcp-server",
@@ -7116,14 +7116,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aquasecurity-trivy",
-      "content_hash": "ed5a769cbb2e00e72c05d0b4e482611ed5d83265d6efff2e42460c725e6bc456",
-      "verified_at": "2026-11-20T02:15:02.192Z",
+      "content_hash": "aaac4cebe0b25b16bb78cd81f130e6d164e675bff28f3191c5144f8a0f11739b",
+      "verified_at": "2026-11-21T02:57:50.206Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T02:15:02.192Z"
+      "last_updated": "2026-11-21T02:57:50.206Z"
     },
     "sfu-db/connector-x": {
       "repository": "sfu-db/connector-x",
@@ -11691,14 +11691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tokio-rs-tokio",
-      "content_hash": "ea3224ce522b1dbad0367898d0dbcbe2db4756b153ee235414402c7a340ec583",
-      "verified_at": "2026-11-19T16:24:50.892Z",
+      "content_hash": "5f7884f1c48fe1e312339ebd75f021bf0cb28b3995780d86715255e3650c5774",
+      "verified_at": "2026-11-21T02:57:41.684Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T16:24:50.892Z"
+      "last_updated": "2026-11-21T02:57:41.684Z"
     },
     "SimonSchubert/LinuxCommandLibrary": {
       "repository": "SimonSchubert/LinuxCommandLibrary",
@@ -15411,14 +15411,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dubzzz-fast-check",
-      "content_hash": "90336b5e9394475b5f4c447bcd7aab111ce2da995503cf26555f3a72ab64f673",
-      "verified_at": "2026-11-17T08:42:32.147Z",
+      "content_hash": "be3d244b706ab1efa5185ff6062f682649ebdd2f93572456a7566050537ba3a5",
+      "verified_at": "2026-11-21T02:57:43.894Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T08:42:32.147Z"
+      "last_updated": "2026-11-21T02:57:43.894Z"
     },
     "react/react-native": {
       "repository": "react/react-native",

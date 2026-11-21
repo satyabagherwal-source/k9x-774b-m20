@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T02:30:02.598Z",
+  "last_updated": "2026-11-21T02:57:55.564Z",
   "directives": [
     {
       "id": "CD-001",
@@ -40824,6 +40824,77 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-21",
       "domain_letter": "K"
+    },
+    {
+      "id": "CD-IJWM",
+      "directive_title": "Merge 'tokio-1.54.x' into 'master'",
+      "source_repo": "tokio-rs-tokio-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-IJWM-merge-tokio-1-54-x-into-master.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-IKN4",
+      "directive_title": "🏷️ Make built-in arbitrary constraint inputs readonly",
+      "source_repo": "dubzzz-fast-check-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-IKN4-make-built-in-arbitrary-constraint-inputs-readonly.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-ILBD",
+      "directive_title": "Add Universal Clipboard archive detection to System Junk",
+      "source_repo": "iliyami-macsai-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-ILBD-add-universal-clipboard-archive-detection-to-system-junk.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-IHBR",
+      "directive_title": "check repository policy before skipping a shared Maven mirror",
+      "source_repo": "aquasecurity/trivy",
+      "source_commit": "edf9f5c1",
+      "staged_file": "11_INBOX/candidate-directives/CD-IHBR-check-repository-policy-before-skipping-a-shared-maven-mirror.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-21",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-BA670E",
+      "directive_title": "Merge 'tokio-1.54.x' into 'master'",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "tokio-rs-tokio",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-BA670E-merge-tokio-1-54-x-into-master-.md",
+      "staged_date": "2026-11-21"
+    },
+    {
+      "id": "CD-REV-EF8230",
+      "directive_title": "🏷️ Make built-in arbitrary constraint inputs readonly",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "dubzzz-fast-check",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-EF8230--make-built-in-arbitrary-constraint-inpu.md",
+      "staged_date": "2026-11-21"
+    },
+    {
+      "id": "CD-REV-F51897",
+      "directive_title": "Add Universal Clipboard archive detection to System Junk",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "iliyami-macsai",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-F51897-add-universal-clipboard-archive-detectio.md",
+      "staged_date": "2026-11-21"
     }
   ]
 }

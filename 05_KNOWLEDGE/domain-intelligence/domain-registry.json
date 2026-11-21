@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T02:30:02.753Z",
-  "total_records": 2218,
+  "last_updated": "2026-11-21T02:57:55.716Z",
+  "total_records": 2220,
   "domains": {
     "A": {
       "total": 17,
@@ -1419,7 +1419,7 @@
       ]
     },
     "H": {
-      "total": 522,
+      "total": 524,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1942,7 +1942,9 @@
         "DOM-H-0664FD36",
         "domain_intelligence-technical-construction-intelligence-zed-industries-zed-core-invariants",
         "DOM-H-09C0B40C",
-        "domain_intelligence-technical-construction-intelligence-zed-industries-zed-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-zed-industries-zed-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-iliyami-macsai-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-iliyami-macsai-learnings-core-invariants"
       ]
     },
     "I": {
@@ -16770,8 +16772,8 @@
       "title": "Technical Construction Intelligence: tokio-rs/tokio Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tokio-rs-tokio-technical-construction-intelligence-tokio-rs-tokio-core-invariant.md",
       "repository": "tokio-rs/tokio",
-      "content_hash": "bff9199e455fd05436d4aa0a0f72c6863114516c63005d7a1de693693a31a62a",
-      "created_at": "2026-11-19T16:24:51.218Z"
+      "content_hash": "6642803c08256624bf4f3bb77285a82e7e4a3f24a22ca06138df1864de456367",
+      "created_at": "2026-11-21T02:57:42.037Z"
     },
     "domain_intelligence-technical-construction-intelligence-starrocks-starrocks-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-starrocks-starrocks-core-invariants",
@@ -16797,8 +16799,8 @@
       "title": "Technical Construction Intelligence: tokio-rs-tokio-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tokio-rs-tokio-learnings-technical-construction-intelligence-tokio-rs-tokio-lear.md",
       "repository": "tokio-rs-tokio-learnings",
-      "content_hash": "3e9208ec5604fc49443f748e34d7e004508eb03f7c5cca4cf02e404e7b7ceff7",
-      "created_at": "2026-11-19T16:25:04.810Z"
+      "content_hash": "9bc13a30d2c20f42d824a050e454bc821f1bc5501df7ccf247f9c354a13f171f",
+      "created_at": "2026-11-21T02:57:53.888Z"
     },
     "DOM-D-65E545AD": {
       "record_id": "DOM-D-65E545AD",
@@ -17580,8 +17582,8 @@
       "title": "Technical Construction Intelligence: aquasecurity/trivy Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-aquasecurity-trivy-technical-construction-intelligence-aquasecurity-trivy-core-i.md",
       "repository": "aquasecurity/trivy",
-      "content_hash": "2d9c941325598164f9de874898eb236b7f31a3b9235c94c840dbe824948af0ba",
-      "created_at": "2026-11-20T02:15:02.663Z"
+      "content_hash": "8f94fd0337ad985bc69ee1a518d166547039695103c3335eb43f7562e22e5708",
+      "created_at": "2026-11-21T02:57:50.541Z"
     },
     "domain_intelligence-technical-construction-intelligence-tw93-pake-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-tw93-pake-learnings-core-invariants",
@@ -26831,8 +26833,8 @@
       "title": "Technical Construction Intelligence: dubzzz/fast-check Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dubzzz-fast-check-technical-construction-intelligence-dubzzz-fast-check-core-inv.md",
       "repository": "dubzzz/fast-check",
-      "content_hash": "bc8f176adf29688795af11782d75ab106a111b9fbd8c13bd97e59e828c4a2082",
-      "created_at": "2026-11-17T08:42:32.968Z"
+      "content_hash": "61901e6dfe54c753c1730fa5e4bef412d05386438626a57c8fea80e0993818c0",
+      "created_at": "2026-11-21T02:57:44.239Z"
     },
     "domain_intelligence-technical-construction-intelligence-trinodb-trino-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-trinodb-trino-core-invariants",
@@ -26917,8 +26919,8 @@
       "title": "Technical Construction Intelligence: dubzzz-fast-check-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dubzzz-fast-check-learnings-technical-construction-intelligence-dubzzz-fast-chec.md",
       "repository": "dubzzz-fast-check-learnings",
-      "content_hash": "79087483ea802de1b0280044c5f21b6fbc7302bfd55c5a9a2f91910440246e15",
-      "created_at": "2026-11-17T08:45:00.163Z"
+      "content_hash": "c420c6a7e1d78d0bd5290e44588b06463c0680a3bded1bcf9244c535b66623d1",
+      "created_at": "2026-11-21T02:57:54.844Z"
     },
     "DOM-H-C6C068D9": {
       "record_id": "DOM-H-C6C068D9",
@@ -37305,6 +37307,24 @@
       "confidence": 0.6,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-21T02:13:39.543Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-iliyami-macsai-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-iliyami-macsai-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: iliyami/MacSai Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-iliyami-macsai-technical-construction-intelligence-iliyami-macsai-core-invariant.md",
+      "repository": "iliyami/MacSai",
+      "content_hash": "4ddc49ed66c21233158edc6af96dcc594a19e18a8e74c9caff8f6cd670dd83a2",
+      "created_at": "2026-11-21T02:57:46.420Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-iliyami-macsai-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-iliyami-macsai-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: iliyami-macsai-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-iliyami-macsai-learnings-technical-construction-intelligence-iliyami-macsai-lear.md",
+      "repository": "iliyami-macsai-learnings",
+      "content_hash": "03d2106dbef7a8d834283257702ca64023516277af69af552e34cd231b837f91",
+      "created_at": "2026-11-21T02:57:55.716Z"
     }
   }
 }

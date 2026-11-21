@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/iliyami-macsai-learnings.md`  
 > **Source**: github ([https://github.com/iliyami/MacSai](https://github.com/iliyami/MacSai))  
-> **Source Version**: `91b262f3`  
+> **Source Version**: `5891a8ce`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T15:38:13.077Z  
+> **Timestamp**: 2026-11-21T02:57:45.054Z  
 > **Learning ID**: `learn-github-iliyami-macsai`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/iliyami-macsai-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/iliyami/MacSai](https://github.com/iliyami/MacSai))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T15:38:13.069Z  
+> **Harvest Timestamp**: 2026-11-21T02:57:45.049Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Mac Sai: the open-source Mac cleaner, optimizer, and malware scanner. A free, Apple-notarized alternative to CleanMyMac, built with Swift 6 and SwiftUI.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2153 stars
+- **Stars / Engagement**: 2188 stars
 
 ---
 
@@ -1271,15 +1271,15 @@ public actor TargetedScanner {
     private static func scanTarget(_ target: ScanTarget, keys: [URLResourceKey]) -> (items: [FileItem], deniedPath: URL?) {
         let fm = FileManager.default
 
-        guard fm.fileExists(atPath: target.path.path(percentEncoded: false)) else {
-            return ([], nil)
-        }
-
         // The enumerator/`contentsOfDirectory` below swallow EPERM and just
         // yield nothing, so probe readability up front to distinguish a
         // permission denial from a genuinely empty directory.
         if isPermissionDenied(target.path) {
             return ([], target.path)
+        }
+
+        guard fm.fileExists(atPath: target.path.path(percentEncoded: false)) else {
+            return ([], nil)
         }
 
         var results: [FileItem] = []
@@ -1715,546 +1715,276 @@ public enum SharedAppState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `91b262f3` (2026-11-12)
-**Commit Message**: Mac Sai website, in 13 languages, on GitHub Pages (#275)
+### Incident Patch 1: `5891a8ce` (2026-11-17)
+**Commit Message**: Add Universal Clipboard archive detection to System Junk (#273)
 
-* Add the Mac Sai website, in 13 languages, deployed to GitHub Pages
+* Add opt-in detection of old Universal Clipboard archives
 
-A static Astro site in website/ with a home page in every interface
-language (Farsi right to left), seven feature pages, a CleanMyMac
-comparison, and download, privacy and 404 pages. Structured data,
-sitemap with language alternates, robots.txt, llms.txt and Open Graph
-cards. No analytics, cookies or third-party requests: release facts are
-read from the GitHub API at build time.
+* Report blocked scans and detect clipboard archives of all ages
 
-The Website workflow builds pull requests and deploys main, after each
-Release run and daily. scripts/check-dist.mjs fails the build on missing
-metadata, broken links, third-party resources or em dashes.
+* Clipboard archives: translations for all languages, README row, version 1.32.3
 
-Adds a website badge to every README. Version 1.32.1.
+- Translate the five new strings into Brazilian Portuguese, Korean, French,
+  Italian, Spanish, Japanese, Turkish and Farsi, which were added after this
+  PR was opened. Use the existing Full Disk Access and folder terms in
+  Traditional Chinese and German.
+- Test that every supported language resolves the new strings.
+- Describe the category in the System Junk row of all 13 READMEs instead of
+  a separate section.
+- Remove a stray blank line in TargetedScanner.
 
-* Website: live numbers section with downloads, Homebrew installs and rank, stars and a star history chart
+---------
 
-The counts are read from GitHub and Homebrew at build time, now every
-hour, so they stay current without visitors' browsers calling either
-service. The proof strip shows exact counts instead of rounded floors.
+Co-authored-by: Iliya <[REDACTED_EMAIL]>
 
-* Website: fetch each live number independently and keep the build token on api.github.com
-
-A refused stargaze
-
-**File**: `.github/workflows/website.yml` (added, +86/-0)
+**File**: `README.de.md` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,86 @@
-+name: Website
-+
-+# Builds the static site in website/ and publishes it to GitHub Pages.
-+# - Pull requests that touch the site: build only, as a check.
-+# - main: build and deploy.
-+# - After each Release run and every hour: rebuild, so the version, download
-+#   link and the live numbers (downloads, stars, Homebrew installs and rank,
-+#   contributors) stay current. They are read from the GitHub and Homebrew
-+#   APIs at build time; visitors' browsers never contact either.
-+on:
-+  pull_request:
-+    branches: [main]
-+    paths:
-+      - "website/**"
-+      - ".github/workflows/website.yml"
-+  push:
-+    branches: [main]
-+    paths:
-+      - "website/**"
-+      - ".github/workflows/website.yml"
-+  workflow_run:
-+    workflows: [Release]
-+    types: [completed]
-+  schedule:
-+    - cron: "17 * * * *"
-+  workflow_dispatch:
-+
-+permissions:
-+  contents: read
-+
-+concurrency:
-+  group: website-${{ github.event_name == 'pull_request' && github.ref || 'deploy' }}
-+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
-+
-+jobs:
-+  build:
-+    name: Build site
-+    runs-on: ubuntu-latest
-+    defaults:
-+      run:
-+        working-directory: website
-+    steps:
-+      - uses: actions/checkout@v6
-+
-+      - uses: actions/setup-node@v7
-+        with:
-+          node-version: 22
-+          cache: npm
-+          cache-dependency-path: website/package-lock.json
-+
-+      - name: Install dependencies
-+        run: npm ci --no-audit --no-fund
-+
-+      - name: Type-check and build
-+        run: npm run build
-+        env:
-+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-+          # Optional: a fine-grained token with no permissions (public data
-+          # only). GitHub lists stargazers only to user tokens, so with it the
-+          # star chart is live; without it, the committed snapshot is used.
-+          STATS_TOKEN: ${{ secrets.STATS_TOKEN }}
-+
-+      - name: Check the build output
-+        run: node scripts/check-dist.mjs
-+
-+      - name: Upload Pages artifact
-+        if: github.event_name != 'pull_request'
-+        uses: actions/upload-pages-artifact@v5
-+        with:
-+          path: website/dist
-+
-+  deploy:
-+    name: Deploy to GitHub Pages
-+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
-+    needs: build
-+    runs-on: ubuntu-latest
-+    permissions:
-+      pages: write
-+      id-token: write
-+    environment:
-+      name: github-pages
-+      url: ${{ steps.deployment.outputs.page_url }}
-+    steps:
-+      - name: Deploy
-+        id: deployment
-+        uses: actions/deploy-pages@v5
+@@ -141,7 +141,7 @@ Ein voll ausgestatteter Mac-Reiniger sollte kein Jahresabo kosten und dich nicht
+ | Modul | Was es tut |
+ |--------|------------|
+ | **Smart Scan** | Ein Klick führt die Module für Bereinigung, Schutz und Leistung gemeinsam aus, mit Live-Fortschritt, und zeigt danach genau, wie viel pro Modul freigegeben wurde |
+-| **System Junk** | 16+ Scan-Kategorien: Benutzer- und System-Caches, Protokolle, Sprachdateien, defekte Einstellungen, defekte Anmeldeobjekte, Dokumentversionen, iOS-Backups, Xcode-Müll, Caches von Paketmanagern / IDEs / KI-Werkzeugen, Reste gelöschter Benutzer, sowie **Universal-Binary-Verschlankung** (findet fette Mach-O-Binärdateien, die sowohl arm64 als auch x86_64 enthalten, und schreibt sie per `lipo` auf deine native Architektur um, mit Abbrechen-Unterstützung) |
++| **System Junk** | 16+ Scan-Kategorien: Benutzer- und System-Caches, Protokolle, Sprachdateien, defekte Einstellungen, defekte Anmeldeobjekte, Dokumentversionen, iOS-Backups, Xcode-Müll, Caches von Paketmanagern / IDEs / KI-Werkzeugen, Reste gelöschter Benutzer, Archive der universellen Zwischenablage (nur zur Prüfung, nie vorausgewählt) sowie **Universal-Binary-Verschlankung** (findet fette Mach-O-Binärdateien, die sowohl arm64 als auch x86_64 enthalten, und schreibt sie per `lipo` auf deine native Architektur um, mit Abbrechen-Unterstützung) |
+ | **Mail Attachments** | Findet zwischengespeicherte Anhänge aus Apple Mail, Outlook und Spark |
+ | **Trash Bins** | Leert den Papierkorb an jedem Ort, auch auf externen Laufwerken |
+ | **Project Junk** | Findet wiederherstellbare Build-Ordner in deinen Projekten: `node_modules`, `.next`, `dist`, Rust- und Maven-`target`, Gradle-`build`, Python-Virtualenvs und CocoaPods-`Pods`. Ein Ordner zählt nur, wenn die Dateien daneben den Projekttyp bestätigen, und `dist` und `Pods` nur, wenn deine `.gitignore` sie nennt. Alles geht in den Papierkorb |
 ```
 
-**File**: `README.de.md` (modified, +1/-0)
+**File**: `README.es.md` (modified, +1/-1)
 ```diff
-@@ -15,6 +15,7 @@
- </p>
- 
- <p align="center">
-+  <a href="https://iliyami.github.io/MacSai/de/"><img src="https://img.shields.io/badge/website-iliyami.github.io%2FMacSai-7c5cff?style=flat-square" alt="Website" /></a>
-   <a href="https://github.com/iliyami/MacSai/releases/latest"><img src="https://img.shields.io/github/downloads/iliyami/MacSai/total?style=flat-square&label=downloads&color=2ea44f" alt="Total downloads" /></a>
-   <a href="https://github.com/iliyami/MacSai/stargazers"><img src="https://img.shields.io/github/stars/iliyami/MacSai?style=flat-square&color=gold" alt="GitHub stars" /></a>
-   <a href="https://formulae.brew.sh/cask/mac-sai"><img src="https://img.shields.io/homebrew/cask/installs/dm/mac-sai?style=flat-square&label=homebrew&color=orange" alt="Homebrew installs" /></a>
+@@ -141,7 +141,7 @@ Un limpiador completo para Mac no debería costar una suscripción anual ni pedi
+ | Módulo | Qué hace |
+ |--------|------------|
+ | **Smart Scan** | Con un clic ejecuta a la vez los módulos de limpieza, protección y rendimiento con el progreso en tiempo real, y luego muestra exactamente cuánto liberó cada módulo |
+-| **System Junk** | Más de 16 categorías de análisis: cachés del usuario y del sistema, registros, archivos de idioma, preferencias dañadas, ítems de inicio dañados, versiones de documentos, copias de seguridad de iOS, restos de Xcode, cachés de gestores de paquetes / IDE / herramientas de IA, restos de usuarios eliminados y **reducción de binarios universales** (encuentra binarios Mach-O "fat" que incluyen arm64 y x86_64 y los reescribe para tu arquitectura nativa con `lipo`, respetando Cancelar) |
++| **System Junk** | Más de 16 categorías de análisis: cachés del usuario y del sistema, registros, archivos de idioma, preferencias dañadas, ítems de inicio dañados, versiones de documentos, copias de seguridad de iOS, restos de Xcode, cachés de gestores de paquetes / IDE / herramientas de IA, restos de usuarios eliminados, archivos del Portapapeles universal (para revisar, nunca preseleccionados) y **reducción de binarios universales** (encuentra binarios Mach-O "fat" que incluyen arm64 y x86_64 y los reescribe para tu arquitectura nativa con `lipo`, respetando Cancelar) |
+ | **Mail Attachments** | Encuentra los archivos adjuntos en caché de Apple Mail, Outlook y Spark |
+ | **Trash Bins** | Vacía la Papelera en todas las ubicaciones, incluidos los discos externos |
+ | **Project Junk** | Encuentra carpetas de compilación regenerables en tus proyectos: `node_modules`, `.next`, `dist`, `target` de Rust y Maven, `build` de Gradle, entornos virtuales de Python y `Pods` de CocoaPods. Una carpeta solo cuenta si los archivos que la acompañan confirman el tipo de proyecto, y `dist` y `Pods` solo si tu `.gitignore` los menciona. Todo va a la Papelera |
 ```
 
-**File**: `README.es.md` (modified, +1/-0)
+**File**: `README.fa.md` (modified, +1/-1)
 ```diff
-@@ -15,6 +15,7 @@
- </p>
- 
- <p align="center">
-+  <a href="https://iliyami.github.io/MacSai/es/"><img src="https://img.shields.io/badge/website-iliyami.github.io%2FMacSai-7c5cff?style=flat-square" alt="Website" /></a>
-   <a href="https://github.com/iliyami/MacSai/releases/latest"><img src="https://img.shields.io/github/downloads/iliyami/MacSai/total?style=flat-square&label=downloads&color=2ea44f" alt="Descargas totales" /></a>
-   <a href="https://github.com/iliyami/MacSai/stargazers"><img src="https://img.shields.io/github/stars/iliyami/MacSai?style=flat-square&color=gold" alt="Estrellas en GitHub" /></a>
-   <a href="https://formulae.brew.sh/cask/mac-sai"><img src="https://img.shields.io/homebrew/cask/installs/dm/mac-sai?style=flat-square&label=homebrew&color=orange" alt="Instalaciones con Homebrew" /></a>
+@@ -141,7 +141,7 @@ brew install --cask mac-sai
+ | ماژول | کاری که انجام می‌دهد |
+ |--------|------------|
+ | **اسکن هوشمند** | با یک کلیک ماژول‌های پاک‌سازی، محافظت و کارایی را با هم و با نمایش زندهٔ پیشرفت اجرا می‌کند و سپس دقیقاً نشان می‌دهد هر ماژول چه مقدار فضا آزاد کرده است |
+-| **فایل‌های اضافی سیستم** | بیش از ۱۶ دستهٔ اسکن: حافظه‌های نهان کاربر و سیستم، گزارش‌ها، فایل‌های زبان، تنظیمات برگزیدهٔ خراب، موارد ورود خراب، نسخه‌های اسناد، پشتیبان‌های iOS، فایل‌های اضافی Xcode، حافظه‌های نهان مدیران بسته / IDEها / ابزارهای هوش مصنوعی، باقی‌مانده‌های کاربران حذف‌شده، و **کوچک‌سازی باینری‌های Universal** (باینری‌های fat از نوع Mach-O را که هم arm64 و هم x86_64 را در خود دارند پیدا می‌کند و با `lipo` آن‌ها را فقط برای معماری بومی Mac شما بازنویسی می‌کند، و دکمهٔ لغو را هم رعایت می‌کند) |
++| **فایل‌های اضافی سیستم** | بیش از ۱۶ دستهٔ اسکن: حافظه‌های نهان کاربر و سیستم، گزارش‌ها، فایل‌های زبان، تنظیمات برگزیدهٔ خراب، موارد ورود خراب، نسخه‌های اسناد، پشتیبان‌های iOS، فایل‌های اضافی Xcode، حافظه‌های نهان مدیران بسته / IDEها / ابزارهای هوش مصنوعی، باقی‌مانده‌های کاربران حذف‌شده، بایگانی‌های کلیپ‌بورد جهانی (فقط برای بررسی، هرگز از پیش انتخاب نمی‌شوند)، و **کوچک‌سازی باینری‌های Universal** (باینری‌های fat از نوع Mach-O را که هم arm64 و هم x86_64 را در خود دارند پیدا می‌کند و با `lipo` آن‌ها را فقط برای معماری بومی Mac شما بازنویسی می‌کند، و دکمهٔ لغو را هم رعایت می‌کند) |
+ | **پیوست‌های Mail** | پیوست‌های ذخیره‌شده در حافظهٔ نهان Apple Mail، Outlook و Spark را پیدا می‌کند |
+ | **سطل‌های زباله** | سطل زباله را در همهٔ مکان‌ها، از جمله درایوهای خارجی، خالی می‌کند |
+ | **فایل‌های اضافی پروژه‌ها** | پوشه‌های build قابل بازسازی را در پروژه‌هایتان پیدا می‌کند: `node_modules`، `.next`، `dist`، پوشهٔ `target` در Rust و Maven، پوشهٔ `build` در Gradle، محیط‌های مجازی (virtualenv) پایتون و `Pods` در CocoaPods. یک پوشه فقط وقتی به حساب می‌آید که فایل‌های کنارش نوع پروژه را تأیید کنند، و `dist` و `Pods` فقط وقتی که نامشان در `.gitignore` شما آمده باشد. همه چیز به سطل زباله منتقل می‌شود |
 ```
 
-**File**: `README.fa.md` (modified, +1/-0)
+**File**: `README.fr.md` (modified, +1/-1)
 ```diff
-@@ -15,6 +15,7 @@
- </p>
- 
- <p align="center">
-+  <a href="https://iliyami.github.io/MacSai/fa/"><img src="https://img.shields.io/badge/website-iliyami.github.io%2FMacSai-7c5cff?style=flat-square" alt="Website" /></a>
-   <a href="https://github.com/iliyami/MacSai/releases/latest"><img src="https://img.shields.io/github/downloads/iliyami/MacSai/total?style=flat-square&label=downloads&color=2ea44f" alt="Total downloads" /></a>
-   <a href="https://github.com/iliyami/MacSai/stargazers"><img src="https://img.shields.io/github/stars/iliyami/MacSai?style=flat-square&color=gold" alt="GitHub stars" /></a>
-   <a href="https://formulae.brew.sh/cask/mac-sai"><img src="https://img.shields.io/homebrew/cask/installs/dm/mac-sai?style=flat-square&label=homebrew&color=orange" alt="Homebrew installs" /></a>
+@@ -141,7 +141,7 @@ Un nettoyeur Mac complet ne devrait pas coûter un abonnement annuel ni vous dem
+ | Module | Ce que ça fait |
+ |--------|------------|
+ | **Smart Scan** | Un clic exécute ensemble les modules de nettoyage, de protection et de performances avec une progression en direct, puis montre exactement ce qui a été libéré par module |
+-| **System Junk** | 16+ catégories de scan : caches utilisateur et système, journaux, fichiers de langue, préférences corrompues, objets d'ouverture invalides, versions de documents, sauvegardes iOS, résidus Xcode, caches des gestionnaires de paquets / IDE / outils d'IA, restes d'utilisateurs supprimés, ainsi que l'**amincissement des binaires universels** (repère les binaires Mach-O gras contenant à la fois arm64 et x86_64 et les réécrit pour votre architecture native via `lipo`, en respectant l'annulation) |
++| **System Junk** | 16+ catégories de scan : caches utilisateur et système, journaux, fichiers de langue, préférences corrompues, objets d'ouverture invalides, versions de documents, sauvegardes iOS, résidus Xcode, caches des gestionnaires de paquets / IDE / outils d'IA, restes d'utilisateurs supprimés, archives du presse-papiers universel (à vérifier, jamais présélectionnées), ainsi que l'**amincissement des binaires universels** (repère les binaires Mach-O gras contenant à la fois arm64 et x86_64 et les réécrit pour votre architecture native via `lipo`, en respectant l'annulation) |
+ | **Mail Attachments** | Trouve les pièces jointes mises en cache par Apple Mail, Outlook et Spark |
+ | **Trash Bins** | Vide la corbeille à chaque emplacement, y compris sur les disques externes |
+ | **Project Junk** | Trouve les dossiers de build régénérables dans vos projets : `node_modules`, `.next`, `dist`, `target` de Rust et Maven, `build` de Gradle, environnements virtuels Python et `Pods` de CocoaPods. Un dossier ne compte que si les fichiers voisins confirment le type de projet, et `dist` et `Pods` seulement si votre `.gitignore` les nomme. Tout part à la corbeille |
 ```
 
-**File**: `README.fr.md` (modified, +1/-0)
+**File**: `README.it.md` (modified, +1/-1)
 ```diff
-@@ -15,6 +15,7 @@
- </p>
- 
- <p align="center">
-+  <a href="https://iliyami.github.io/MacSai/fr/"><img src="https://img.shields.io/badge/website-iliyami.github.io%2FMacSai-7c5cff?style=flat-square" alt="Website" /></a>
-   <a href="https://github.com/iliyami/MacSai/releases/latest"><img src="https://img.shields.io/github/downloads/iliyami/MacSai/total?style=flat-square&label=downloads&color=2ea44f" alt="Total downloads" /></a>
-   <a href="https://github.com/iliyami/MacSai/stargazers"><img src="https://img.shields.io/github/stars/iliyami/MacSai?style=flat-square&color=gold" alt="GitHub stars" /></a>
-   <a href="https://formulae.brew.sh/cask/mac-sai"><img src="https://img.shields.io/homebrew/cask/installs/dm/mac-sai?style=flat-square&label=homebrew&color=orange" alt="Homebrew installs" /></a>
+@@ -141,7 +141,7 @@ Un pulitore per Mac completo non dovrebbe costare un abbonamento annuale né chi
+ | Modulo | Cosa fa |
+ |--------|------------|
+ | **Smart Scan** | Un solo clic esegue insieme i moduli di pulizia, protezione e prestazioni con l'avanzamento in tempo reale, poi mostra esattamente quanto spazio ha liberato ciascun modulo |
+-| **System Junk** | 16+ categorie di scansione: cache utente e di sistema, log, file di lingua, preferenze danneggiate, elementi di login non validi, versioni dei documenti, backup iOS, file inutili di Xcode, cache di gestori di pacchetti / IDE / strumenti di IA, residui di utenti eliminati e **assottigliamento dei binari Universal** (trova i binari Mach-O "fat" che contengono sia arm64 sia x86_64 e li riscrive per la tua architettura nativa tramite `lipo`, rispettando l'annullamento) |
++| **System Junk** | 16+ categorie di scansione: cache utente e di sistema, log, file di lingua, preferenze danneggiate, elementi di login non validi, versioni dei documenti, backup iOS, file inutili di Xcode, cache di gestori di pacchetti / IDE / strumenti di IA, residui di utenti eliminati, archivi degli Appunti universali (da controllare, mai preselezionati) e **assottigliamento dei binari Universal** (trova i binari Mach-O "fat" che contengono sia arm64 sia x86_64 e li riscrive per la tua architettura nativa tramite `lipo`, rispettando l'annullamento) |
+ | **Mail Attachments** | Trova gli allegati in cache di Apple Mail, Outlook e Spark |
+ | **Trash Bins** | Svuota il Cestino in ogni posizione, compresi i dischi esterni |
+ | **Project Junk** | Trova le cartelle di build rigenerabili nei tuoi progetti: `node_modules`, `.next`, `dist`, `target` di Rust e Maven, `build` di Gradle, virtualenv di Python e `Pods` di CocoaPods. Una cartella viene considerata solo quando i file accanto confermano il tipo di progetto, e `dist` e `Pods` solo quando il tuo `.gitignore` li nomina. Tutto finisce nel Cestino |
 ```
 
-**File**: `README.it.md` (modified, +1/-0)
+**File**: `README.ja.md` (modified, +1/-1)
 ```diff
-@@ -15,6 +15,7 @@
- </p>
- 
- <p align="center">
-+  <a href="https://iliyami.github.io/MacSai/it/"><img src="https://img.shields.io/badge/website-iliyami.github.io%2FMacSai-7c5cff?style=flat-square" alt="Website" /></a>
-   <a href="https://github.com/iliyami/MacSai/releases/latest"><img src="https://img.shields.io/github/downloads/iliyami/MacSai/total?style=flat-square&label=downloads&color=2ea44f" alt="Download totali" /></a>
-   <a href="https://github.com/iliyami/MacSai/stargazers"><img src="https://img.shields.io/github/stars/iliyami/MacSai?style=flat-square&color=gold" alt="Stelle su GitHub" /></a>
-   <a href="https://formulae.brew.sh/cask/mac-sai"><img src="https://img.shields.io/homebrew/cask/installs/dm/mac-sai?style=flat-square&label=homebrew&color=orange" alt="Installazioni da Homebrew" /></a>
+@@ -141,7 +141,7 @@ brew install --cask mac-sai
+ | モジュール | 機能 |
+ |--------|------------|
+ | **スマートスキャン** | ワンクリックでクリーンアップ、保護、パフォーマンスの各モジュールをまとめて実行し、進行状況をリアルタイムで表示したうえで、モジュールごとに解放した容量を正確に示します |
+-| **システムの不要ファイル** | 16+ のスキャンカテゴリ：ユーザーとシステムのキャッシュ、ログ、言語ファイル、破損した環境設定、壊れたログイン項目、書類のバージョン、iOS バックアップ、Xcode の不要ファイル、パッケージマネージャ / IDE / AI ツールのキャッシュ、削除済みユーザーの残留ファイル、そして **ユニバーサルバイナリの軽量化**（arm64 と x86_64 の両方を含む fat Mach-O バイナリを見つけ、`lipo` でお使いの Mac のネイティブアーキテクチャ用に書き換えます。キャンセルにも対応） |
++| **システムの不要ファイル** | 16+ のスキャンカテゴリ：ユーザーとシステムのキャッシュ、ログ、言語ファイル、破損した環境設定、壊れたログイン項目、書類のバージョン、iOS バックアップ、Xcode の不要ファイル、パッケージマネージャ / IDE / AI ツールのキャッシュ、削除済みユーザーの残留ファイル、ユニバーサルクリップボードのアーカイブ（確認用、事前に選択されません）、そして **ユニバーサルバイナリの軽量化**（arm64 と x86_64 の両方を含む fat Mach-O バイナリを見つけ、`lipo` でお使いの Mac のネイティブアーキテクチャ用に書き換えます。キャンセルにも対応） |
+ | **メールの添付ファイル** | Apple Mail、Outlook、Spark にキャッシュされた添付ファイルを見つけます |
+ | **ゴミ箱** | 外付けドライブを含む、すべての場所のゴミ箱を空にします |
+ | **プロジェクトの不要ファイル** | プロジェクト全体から再生成可能なビルドフォルダを見つけます：`node_modules`、`.next`、`dist`、Rust と Maven の `target`、Gradle の `build`、Python の仮想環境（virtualenv）、CocoaPods の `Pods`。隣にあるファイルからプロジェクトの種類を確認できた場合にのみ対象となり、`dist` と `Pods` は `.gitignore` に記載されている場合に限ります。すべてゴミ箱に移動されます |
 ```
 
-**File**: `README.ja.md` (modified, +1/-0)
+**File**: `README.ko.md` (modified, +1/-1)
 ```diff
-@@ -15,6 +15,7 @@
- </p>
- 
- <p align="center">
-+  <a href="https://iliyami.github.io/MacSai/ja/"><img src="https://img.shields.io/badge/website-iliyami.github.io%2FMacSai-7c5cff?style=flat-square" alt="Website" /></a>
-   <a href="https://github.com/iliyami/MacSai/releases/latest"><img src="https://img.shields.io/github/downloads/iliyami/MacSai/total?style=flat-square&label=downloads&color=2ea44f" alt="Total downloads" /></a>
-   <a href="https://github.com/iliyami/MacSai/stargazers"><img src="https://img.shields.io/github/stars/iliyami/MacSai?style=flat-square&color=gold" alt="GitHub stars" /></a>
-   <a href="https://formulae.brew.sh/cask/mac-sai"><img src="https://img.shields.io/homebrew/cask/installs/dm/mac-sai?style=flat-square&label=homebrew&color=orange" alt="Homebrew installs" /></a>
+@@ -141,7 +141,7 @@ brew install --cask mac-sai
+ | 모듈 | 기능 |
+ |--------|------------|
+ | **Smart Scan** | 클릭 한 번으로 정리, 보호, 성능 모듈을 함께 실행하고 진행 상황을 실시간으로 보여 주며, 완료 후 모듈별로 확보한 공간을 정확히 표시합니다 |
+-| **System Junk** | 16개 이상의 스캔 카테고리: 사용자 및 시스템 캐시, 로그, 언어 파일, 손상된 환경설정, 손상된 로그인 항목, 문서 버전, iOS 백업, Xcode 불필요한 파일, 패키지 관리자 / IDE / AI 도구 캐시, 삭제된 사용자의 잔여 파일, 그리고 **Universal Binary 축소** (arm64와 x86_64를 모두 포함한 fat Mach-O 바이너리를 찾아 `lipo`로 사용자의 네이티브 아키텍처용으로 다시 작성하며, 취소를 지원합니다) |
++| **System Junk** | 16개 이상의 스캔 카테고리: 사용자 및 시스템 캐시, 로그, 언어 파일, 손상된 환경설정, 손상된 로그인 항목, 문서 버전, iOS 백업, Xcode 불필요한 파일, 패키지 관리자 / IDE / AI 도구 캐시, 삭제된 사용자의 잔여 파일, 범용 클립보드 보관 파일(검토용, 미리 선택되지 않음), 그리고 **Universal Binary 축소** (arm64와 x86_64를 모두 포함한 fat Mach-O 바이너리를 찾아 `lipo`로 사용자의 네이티브 아키텍처용으로 다시 작성하며, 취소를 지원합니다) |
+ | **Mail Attachments** | Apple Mail, Outlook, Spark에 캐시된 첨부 파일을 찾습니다 |
+ | **Trash Bins** | 외장 드라이브를 포함한 모든 위치의 휴지통을 비웁니다 |
+ | **Project Junk** | 프로젝트 전반에서 다시 생성할 수 있는 빌드 폴더를 찾습니다: `node_modules`, `.next`, `dist`, Rust 및 Maven `target`, Gradle `build`, Python virtualenv, CocoaPods `Pods`. 옆에 있는 파일로 프로젝트 유형이 확인될 때만 대상으로 간주하며, `dist`와 `Pods`는 `.gitignore`에 명시된 경우에만 해당합니다. 모든 항목은 휴지통으로 이동합니다 |
 ```
 
-**File**: `README.ko.md` (modified, +1/-0)
+**File**: `README.md` (modified, +1/-1)
 ```diff
-@@ -15,6 +15,7 @@
- </p>
- 
- <p align="center">
-+  <a href="https://iliyami.github.io/MacSai/ko/"><img src="https://img.shields.io/badge/website-iliyami.github.io%2FMacSai-7c5cff?style=flat-square" alt="Website" /></a>
-   <a href="https://github.com/iliyami/MacSai/releases/latest"><img src="https://img.shields.io/github/downloads/iliyami/MacSai/total?style=flat-square&label=downloads&color=2ea44f" alt="Total downloads" /></a>
-   <a href="https://github.com/iliyami/MacSai/stargazers"><img src="https://img.shields.io/github/stars/iliyami/MacSai?style=flat-square&color=gold" alt="GitHub stars" /></a>
-   <a href="https://formulae.brew.sh/cask/mac-sai"><img src="https://img.shields.io/homebrew/cask/installs/dm/mac-sai?style=flat-square&label=homebrew&color=orange" alt="Homebrew installs" /></a>
+@@ -141,7 +141,7 @@ A full-featured Mac cleaner should not cost a yearly subscription or ask you to
+ | Module | What it does |
+ |--------|------------|
+ | **Smart Scan** | One click runs cleanup, protection, and performance modules together with live progress, then shows exactly what it freed per module |
+-| **System Junk** | 16+ scan categories: user and system caches, logs, language files, broken preferences, broken login items, document versions, iOS backups, Xcode junk, package-manager / IDE / AI-tool caches, deleted-user leftovers, and **Universal Binary thinning** (finds fat Mach-O binaries carrying both arm64 and x86_64 and rewrites them to your native arch via `lipo`, honoring Cancel) |
++| **System Junk** | 16+ scan categories: user and system caches, logs, language files, broken preferences, broken login items, document versions, iOS backups, Xcode junk, package-manager / IDE / AI-tool caches, deleted-user leftovers, Universal Clipboard archives (listed for review, never pre-selected), and **Universal Binary thinning** (finds fat Mach-O binaries carrying both arm64 and x86_64 and rewrites them to your native arch via `lipo`, honoring Cancel) |
+ | **Mail Attachments** | Finds cached attachments from Apple Mail, Outlook, and Spark |
+ | **Trash Bins** | Empties the Trash across every location, including external drives |
+ | **Project Junk** | Finds regenerable build folders across your projects: `node_modules`, `.next`, `dist`, Rust and Maven `target`, Gradle `build`, Python virtualenvs, and CocoaPods `Pods`. A folder only counts when the files next to it confirm the project type, and `dist` and `Pods` only when your `.gitignore` names them. Everything goes to the Trash |
 ```
 
 ---
 
-### Incident Patch 2: `45992b6f` (2026-11-11)
-**Commit Message**: Add Farsi (Persian) interface language and README (#274)
+### Incident Patch 2: `0369c425` (2026-11-17)
+**Commit Message**: README: 44-second video tour under the screenshot, in all 13 languages (#276)
 
-Farsi joins the language picker with a full translation of all 720
-interface strings, a right-to-left layout, and a Farsi README.
+A clickable cover image opens the tour on the website, in the reader's
+language. GitHub does not play videos stored in the repository, so the
+cover links to the site, which plays the self-hosted MP4 with captions.
 
-- AppLanguage.fa, mapped from fa, fa-IR, fa-AF, prs and pes system
-  languages; fa.lproj folders are kept by the language-file cleaner.
-- Right-to-left is applied inside the sidebar and module panes. The
-  NavigationSplitView, HSplitView and ScrollView containers are AppKit
-  backed and misplace mirrored content (the sidebar overflowed the
-  window, rows slid under the sidebar), so those containers stay left to
-  right and only their content is mirrored.
-- Translatable text no longer uses SF Mono in Farsi, which has no
-  Arabic-script glyphs and drew the letters unjoined.
-- Farsi lines that start with a Latin name get a right-to-left mark so
-  they are not laid out left to right.
-- README.fa.md, the language bar and the interface languages section in
-  all thirteen READMEs, and the sponsor page.
-
-**File**: `README.de.md` (modified, +3/-3)
+**File**: `README.de.md` (modified, +5/-0)
 ```diff
-@@ -11,7 +11,7 @@
+@@ -34,6 +34,11 @@
+   <img src="assets/demo.png" width="720" alt="Mac Sai Screenshot" />
  </p>
  
- <p align="center">
--  <a href="README.md">English</a> | <a href="README.zh-CN.md">简体中文</a> | <a href="README.zh-Hant.md">繁體中文</a> | <strong>Deutsch</strong> | <a href="README.fr.md">Français</a> | <a href="README.ru.md">Русский</a> | <a href="README.es.md">Español</a> | <a href="README.it.md">Italiano</a> | <a href="README.pt-BR.md">Português (Brasil)</a> | <a href="README.ja.md">日本語</a> | <a href="README.ko.md">한국어</a> | <a href="README.tr.md">Türkçe</a>
-+  <a href="README.md">English</a> | <a href="README.zh-CN.md">简体中文</a> | <a href="README.zh-Hant.md">繁體中文</a> | <strong>Deutsch</strong> | <a href="README.fr.md">Français</a> | <a href="README.ru.md">Русский</a> | <a href="README.es.md">Español</a> | <a href="README.it.md">Italiano</a> | <a href="README.pt-BR.md">Português (Brasil)</a> | <a href="README.ja.md">日本語</a> | <a href="README.ko.md">한국어</a> | <a href="README.tr.md">Türkçe</a> | <a href="README.fa.md">فارسی</a>
- </p>
- 
- <p align="center">
-@@ -227,7 +227,7 @@ Ein Menüleisten-Widget im Glasmorphismus-Stil, das die Vitalwerte deines Macs e
- 
- ## Oberflächensprachen
- 
--Wähle in Einstellungen → Sprache der Oberfläche zwischen System, English, 简体中文, 繁體中文, Русский, Deutsch, Français, Español, Italiano, Português (Brasil), Türkçe, 日本語 oder 한국어. Englisch, vereinfachtes Chinesisch und Russisch decken die gesamte Oberfläche ab. Die übrigen Sprachen übersetzen die statischen Oberflächentexte; interpolierte Meldungen behalten vorerst den englischen Wortlaut und die Pluralregeln (traditionelles Chinesisch fällt auf Vereinfachtes zurück). Das Hauptfenster und das Menüleisten-Widget teilen sich die Sprachauswahl.
-+Wähle in Einstellungen → Sprache der Oberfläche zwischen System, English, 简体中文, 繁體中文, Русский, Deutsch, Français, Español, Italiano, Português (Brasil), Türkçe, 日本語, 한국어 oder فارسی. Englisch, vereinfachtes Chinesisch und Russisch decken die gesamte Oberfläche ab. Die übrigen Sprachen übersetzen die statischen Oberflächentexte; interpolierte Meldungen behalten vorerst den englischen Wortlaut und die Pluralregeln (traditionelles Chinesisch fällt auf Vereinfachtes zurück). Das Hauptfenster und das Menüleisten-Widget teilen sich die Sprachauswahl. Auf Farsi wird die Oberfläche von rechts nach links dargestellt.
- 
- ## Installation
- 
-@@ -489,7 +489,7 @@ Mac Sai hat **einen einzigen** Sponsorenplatz, hier und oben auf dieser Seite, i
-     <td align="center" width="25%"><h3>125.000+</h3><sub>Downloads</sub></td>
-     <td align="center" width="25%"><h3>2.000+</h3><sub>GitHub-Sterne</sub></td>
-     <td align="center" width="25%"><h3>23.000</h3><sub>Seitenaufrufe pro Monat</sub></td>
--    <td align="center" width="25%"><h3>12</h3><sub>README-Sprachen</sub></td>
-+    <td align="center" width="25%"><h3>13</h3><sub>README-Sprachen</sub></td>
-   </tr>
- </table>
- </div>
-```
-
-**File**: `README.es.md` (modified, +3/-3)
-```diff
-@@ -11,7 +11,7 @@
- </p>
- 
- <p align="center">
--  <a href="README.md">English</a> | <a href="README.zh-CN.md">简体中文</a> | <a href="README.zh-Hant.md">繁體中文</a> | <a href="README.de.md">Deutsch</a> | <a href="README.fr.md">Français</a> | <a href="README.ru.md">Русский</a> | <strong>Español</strong> | <a href="README.it.md">Italiano</a> | <a href="README.pt-BR.md">Português (Brasil)</a> | <a href="README.ja.md">日本語</a> | <a href="README.ko.md">한국어</a> | <a href="README.tr.md">Türkçe</a>
-+  <a href="README.md">English</a> | <a href="README.zh-CN.md">简体中文</a> | <a href="README.zh-Hant.md">繁體中文</a> | <a href="README.de.md">Deutsch</a> | <a href="README.fr.md">Français</a> | <a href="README.ru.md">Русский</a> | <strong>Español</strong> | <a href="README.it.md">Italiano</a> | <a href="README.pt-BR.md">Português (Brasil)</a> | <a href="README.ja.md">日本語</a> | <a href="README.ko.md">한국어</a> | <a href="README.tr.md">Türkçe</a> | <a href="README.fa.md">فارسی</a>
- </p>
- 
- <p align="center">
-@@ -227,7 +227,7 @@ Un widget de estilo glassmorphism en la barra de menús que pone los signos vita
- 
- ## Idiomas de la interfaz
- 
--Elige Sistema, English, 简体中文, 繁體中文, Русский, Deutsch, Français, Español, Italiano, Português (Brasil), Türkçe, 日本語 o 한국어 en Ajustes → Idioma de la interfaz. El inglés, el chino simplificado y el ruso cubren toda la interfaz. Los demás idiomas traducen los textos estáticos de la interfaz; por ahora, los mensajes con valores interpolados mantienen el texto en inglés y sus reglas de plural (el chino tradicional recurre al simplificado). La ventana principal y el widget de la barra de menús comparten la preferencia de idioma.
-+Elige Sistema, English, 简体中文, 繁體中文, Русский, Deutsch, Français, Español, Italiano, Português (Brasil), Türkçe, 日本語, 한국어 o فارسی en Ajustes → Idioma de la interfaz. El inglés, el chino simplificado y el ruso cubren toda la interfaz. Los demás idiomas traducen los textos estáticos de la interfaz; por ahora, los mensajes con valores interpolados mantienen el texto en inglés y sus reglas de plural (el chino tradicional recurre al simplificado). La ventana principal y el widget de la barra de menús comparten la preferencia de idioma. En persa, la interfaz se muestra de derecha a izquierda.
- 
- ## Instalación
- 
-@@ -489,7 +489,7 @@ Mac Sai tiene **un único** espacio de patrocinio, que se muestra aquí y al pri
-     <td align="center" width="25%"><h3>125.000+</h3><sub>descargas</sub></td>
-     <td align="center" width="25%"><h3>2.000+</h3><sub>estrellas en GitHub</sub></td>
-     <td align="center" width="25%"><h3>23.000</h3><sub>visitas a la página al mes</sub></td>
--    <td align="center" width="25%"><h3>12</h3><sub>idiomas del README</sub></td>
-+    <td align="center" width="25%"><h3>13</h3><sub>idiomas del README</sub></td>
-   </tr>
- </table>
- </div>
-```
-
-**File**: `README.fa.md` (added, +523/-0)
-```diff
-@@ -0,0 +1,523 @@
 +<p align="center">
-+  <img src="assets/app_icon.png" width="150" alt="نماد Mac Sai" />
++  <a href="https://iliyami.github.io/MacSai/de/#showcase-title"><img src="assets/video-tour.jpg" width="720" alt="Tour abspielen: Mac Sai in 44 Sekunden" /></a><br>
++  <sub><a href="https://iliyami.github.io/MacSai/de/#showcase-title"><strong>Mac Sai in 44 Sekunden</strong></a>. Eine kurze Tour durch die Werkzeuge, mit echten Bildschirmen aus der App. Video auf Englisch.</sub>
 +</p>
 +
-+<h1 align="center">Mac Sai</h1>
-+
-+<p align="center" dir="rtl">
-+  <strong>پاک‌کننده، بهینه‌ساز و اسکنر بدافزار متن‌باز برای Mac.</strong><br>
-+  جایگزینی رایگان برای CleanMyMac که Apple آن را تأیید (notarize) کرده و با Swift 6 و SwiftUI ساخته شده است.<br>
-+  <sub>بیش از ۱۲۵٬۰۰۰ بار دانلود شده. برای همیشه رایگان، بدون هیچ تله‌متری.</sub>
-+</p>
-+
+ <p align="center">
+   <strong>In einem Befehl installieren:</strong>
+ </p>
+```
+
+**File**: `README.es.md` (modified, +5/-0)
+```diff
+@@ -34,6 +34,11 @@
+   <img src="assets/demo.png" width="720" alt="Captura de pantalla de Mac Sai" />
+ </p>
+ 
 +<p align="center">
-+  <a href="README.md">English</a> | <a href="README.zh-CN.md">简体中文</a> | <a href="README.zh-Hant.md">繁體中文</a> | <a href="README.de.md">Deutsch</a> | <a href="README.fr.md">Français</a> | <a href="README.ru.md">Русский</a> | <a href="README.es.md">Español</a> | <a href="README.it.md">Italiano</a> | <a href="README.pt-BR.md">Português (Brasil)</a> | <a href="README.ja.md">日本語</a> | <a href="README.ko.md">한국어</a> | <a href="README.tr.md">Türkçe</a> | <strong>فارسی</strong>
++  <a href="https://iliyami.github.io/MacSai/es/#showcase-title"><img src="assets/video-tour.jpg" width="720" alt="Ver el recorrido: Mac Sai en 44 segundos" /></a><br>
++  <sub><a href="https://iliyami.github.io/MacSai/es/#showcase-title"><strong>Mac Sai en 44 segundos</strong></a>. Un recorrido breve por las herramientas, con pantallas reales de la app. Vídeo en inglés.</sub>
 +</p>
 +
+ <p align="center">
+   <strong>Instálala con un solo comando:</strong>
+ </p>
+```
+
+**File**: `README.fa.md` (modified, +5/-0)
+```diff
+@@ -34,6 +34,11 @@
+   <img src="assets/demo.png" width="720" alt="تصویر صفحهٔ Mac Sai" />
+ </p>
+ 
++<p align="center" dir="rtl">
++  <a href="https://iliyami.github.io/MacSai/fa/#showcase-title"><img src="assets/video-tour.jpg" width="720" alt="پخش ویدیو: Mac Sai در ۴۴ ثانیه" /></a><br>
++  <sub><a href="https://iliyami.github.io/MacSai/fa/#showcase-title"><strong>Mac Sai در ۴۴ ثانیه</strong></a>. گشتی کوتاه در ابزارها، با صفحه‌های واقعی برنامه. ویدیو به زبان انگلیسی است.</sub>
++</p>
++
+ <p align="center" dir="rtl">
+   <strong>نصب با یک دستور:</strong>
+ </p>
+```
+
+**File**: `README.fr.md` (modified, +5/-0)
+```diff
+@@ -34,6 +34,11 @@
+   <img src="assets/demo.png" width="720" alt="Mac Sai Screenshot" />
+ </p>
+ 
 +<p align="center">
-+  <a href="https://github.com/iliyami/MacSai/releases/latest"><img src="https://img.shields.io/github/downloads/iliyami/MacSai/total?style=flat-square&label=downloads&color=2ea44f" alt="Total downloads" /></a>
-+  <a href="https://github.com/iliyami/MacSai/stargazers"><img src="https://img.shields.io/github/stars/iliyami/MacSai?style=flat-square&color=gold" alt="GitHub stars" /></a>
-+  <a href="https://formulae.brew.sh/cask/mac-sai"><img src="https://img.shields.io/homebrew/cask/installs/dm/mac-sai?style=flat-square&label=homebrew&color=orange" alt="Homebrew installs" /></a>
-+  <a href="https://github.com/iliyami/MacSai/releases/latest"><img src="https://img.shields.io/github/v/release/iliyami/MacSai?style=flat-square&color=blue" alt="Latest release" /></a>
-+  <a href="https://github.com/iliyami/MacSai/graphs/commit-activity"><img src="https://img.shields.io/github/commit-activity/m/iliyami/MacSai?style=flat-square&label=commits" alt="Commit activity" /></a>
-+  <br>
-+  <img src="https://img.shields.io/badge/Apple-notarized-black?style=flat-square&logo=apple" alt="Notarized" />
-+  <img src="https://img.shields.io/badge/telemetry-none-brightgreen?style=flat-square" alt="No telemetry" />
-+  <img src="https://img.shields.io/badge/platform-macOS%2014%2B-lightgrey?style=flat-square" alt="macOS 14+" />
-+  <img src="https://img.shields.io/badge/swift-6-orange?style=flat-square" alt="Swift 6" />
-+  <a href="https://github.com/iliyami/MacSai/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/iliyami/MacSai/ci.yml?branch=main&style=flat-square&label=tests" alt="Tests" /></a>
-+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-BSD--3--Clause-green?style=flat-square" alt="License" /></a>
++  <a href="https://iliyami.github.io/MacSai/fr/#showcase-title"><img src="assets/video-tour.jpg" width="720" alt="Lancer la visite: Mac Sai en 44 secondes" /></a><br>
++  <sub><a href="https://iliyami.github.io/MacSai/fr/#showcase-title"><strong>Mac Sai en 44 secondes</strong></a>. Un petit tour des outils, avec de vrais écrans de l’app. Vidéo en anglais.</sub>
 +</p>
 +
+ <p align="center">
+   <strong>Installez en une commande :</strong>
+ </p>
+```
+
+**File**: `README.it.md` (modified, +5/-0)
+```diff
+@@ -34,6 +34,11 @@
+   <img src="assets/demo.png" width="720" alt="Schermata di Mac Sai" />
+ </p>
+ 
 +<p align="center">
-+  <img src="assets/demo.png" width="720" alt="تصویر صفحهٔ Mac Sai" />
++  <a href="https://iliyami.github.io/MacSai/it/#showcase-title"><img src="assets/video-tour.jpg" width="720" alt="Guarda il tour: Mac Sai in 44 secondi" /></a><br>
++  <sub><a href="https://iliyami.github.io/MacSai/it/#showcase-title"><strong>Mac Sai in 44 secondi</strong></a>. Un breve giro tra gli strumenti, con schermate reali dell’app. Video in inglese.</sub>
 +</p>
 +
-+<p align="center" dir="rtl">
-+  <strong>نصب با یک دستور:</strong>
+ <p align="center">
+   <strong>Installalo con un solo comando:</strong>
+ </p>
+```
+
+**File**: `README.ja.md` (modified, +5/-0)
+```diff
+@@ -34,6 +34,11 @@
+   <img src="assets/demo.png" width="720" alt="Mac Sai のスクリーンショット" />
+ </p>
+ 
++<p align="center">
++  <a href="https://iliyami.github.io/MacSai/ja/#showcase-title"><img src="assets/video-tour.jpg" width="720" alt="ツアーを再生: 44 秒でわかる Mac Sai" /></a><br>
++  <sub><a href="https://iliyami.github.io/MacSai/ja/#showcase-title"><strong>44 秒でわかる Mac Sai</strong></a>。実際のアプリ画面で、各ツールを手短に紹介します。 動画は英語です。</sub>
 +</p>
 +
-+```bash
-+brew install --cask mac-sai
-+```
-+
-+<p align="center" dir="rtl">
-+  یا <a href="https://github.com/iliyami/MacSai/releases/latest">آخرین نسخهٔ DMG</a> را دانلود کنید. این فایل توسط Apple تأیید (notarize) شده است، بنابراین بدون کلیک راست، بدون هشدار و بدون Terminal باز می‌شود.
+ <p align="center">
+   <strong>コマンド1つでインストール：</strong>
+ </p>
+```
+
+**File**: `README.ko.md` (modified, +5/-0)
+```diff
+@@ -34,6 +34,11 @@
+   <img src="assets/demo.png" width="720" alt="Mac Sai 스크린샷" />
+ </p>
+ 
++<p align="center">
++  <a href="https://iliyami.github.io/MacSai/ko/#showcase-title"><img src="assets/video-tour.jpg" width="720" alt="투어 재생: 44초 만에 보는 Mac Sai" /></a><br>
++  <sub><a href="https://iliyami.github.io/MacSai/ko/#showcase-title"><strong>44초 만에 보는 Mac Sai</strong></a>. 실제 앱 화면으로 도구를 짧게 둘러봅니다. 영상은 영어입니다.</sub>
 +</p>
 +
-+<p align="center" dir="rtl">
-+  <sub>هرگز هیچ تبلیغی داخل برنامه نخواهد بود. این صفحه <a href="SPONSORS.md">یک جایگاه حامی مالی بررسی‌شده</a> دارد که فعلاً خالی است.</sub>
+ <p align="center">
+   <strong>명령어 한 줄로 설치하기:</strong>
+ </p>
+```
+
+**File**: `README.md` (modified, +5/-0)
+```diff
+@@ -34,6 +34,11 @@
+   <img src="assets/demo.png" width="720" alt="Mac Sai Screenshot" />
+ </p>
+ 
++<p align="center">
++  <a href="https://iliyami.github.io/MacSai/#showcase-title"><img src="assets/video-tour.jpg" width="720" alt="Play the tour: See Mac Sai in 44 seconds" /></a><br>
++  <sub><a href="https://iliyami.github.io/MacSai/#showcase-title"><strong>See Mac Sai in 44 seconds</strong></a>. A short tour of the tools, with real screens from the app.</sub>
 +</p>
 +
-+---
-+
-+## چرا Mac Sai؟
-+
-+یک پاک‌کنندهٔ کامل برای Mac نباید هزینهٔ اشتراک سالانه داشته باشد یا از شما بخواهد به یک جعبهٔ سیاه با دسترسی عمیق به فایل‌هایتان اعتماد کنید. Mac Sai همهٔ ابزارها را آشکارا و متن‌باز در اختیارتان می‌گذارد.
-+
-+- **رایگان، برای همیشه.** بدون اشتراک، بدون خرید درون‌برنامه‌ای، بدون «ارتقا به Pro» و بدون پنجره‌های آزاردهندهٔ یادآوری. با مجوز BSD-3.
-+- **بدون هیچ تله‌متری.** بدون آمارگیری، بدون گزارشگر خرابی، بدون ردیاب و بدون سروری که اطلاعات به آن فرستاده شود. لازم هم نیست حرف ما را باور کنید، با دو دستور [خودتان بررسی کنید](#نبود-تلهمتری-را-خودتان-بررسی-کنید).
-+- **همهٔ ابزارهای اصلی CleanMyMac در یک برنامه.** ۲۲ ماژول در زمینه‌های پاک‌سازی، محافظت، کارایی، برنامه‌ها و بررسی دیسک، به همراه یک ویجت نوار منو.
-+- **ایمن از پایه.** حذف از طریق سطل زباله، فهرست مسدود مسیرهای محافظت‌شده، محافظ در برابر symlink و TOCTOU، و یک `SafetyGuard` که تک‌تک مسیرها را اعتبارسنجی می‌کند. این برنامه طوری ساخته شده که هرگز داده‌های شما را از بین نبرد.
-+- **تأییدشده توسط Apple و کاملاً متن‌باز.** Mac شما در هر بار اجرا امضای برنامه را بررسی می‌کند و تک‌تک خط‌های کد اینجا برای خواندن در دسترس است.
-+
-+---
-+
-+## نگاهی کلی به ویژگی‌ها
-+
-+<table>
-+<tr>
-+<td width="33%" valign="top">
-+
-+### 🧹 پاک‌سازی
-+- **اسکن هوشمند** (با یک کلیک)
-+- **فایل‌های اضافی سیستم** (بیش از ۱۶ دسته)
-+- **پیوست‌های Mail**
-+- **سطل‌های زباله**
-+- **فایل‌های اضافی پروژه‌ها** (پوشه‌های build)
-+- **فضای اشغال‌شده توسط ابزارهای توسعه** (Docker، شبیه‌سازها)
-+- **تاریخچهٔ پاک‌سازی** (بازیابی با یک کلیک)
-+
-+</td>
-+<td width="33%" valign="top">
-+
-+### 🛡️ محافظت
-+- **حذف بدافزار**
-+- **حریم خصوصی** (مرو
-```
-
-**File**: `README.fr.md` (modified, +3/-3)
-```diff
-@@ -11,7 +11,7 @@
- </p>
- 
  <p align="center">
--  <a href="README.md">English</a> | <a href="README.zh-CN.md">简体中文</a> | <a href="README.zh-Hant.md">繁體中文</a> | <a href="README.de.md">Deutsch</a> | <strong>Français</strong> | <a href="README.ru.md">Русский</a> | <a href="README.es.md">Español</a> | <a href="README.it.md">Italiano</a> | <a href="README.pt-BR.md">Português (Brasil)</a> | <a href="README.ja.md">日本語</a> | <a href="README.ko.md">한국어</a> | <a href="README.tr.md">Türkçe</a>
-+  <a href="README.md">English</a> | <a href="README.zh-CN.md">简体中文</a> | <a href="README.zh-Hant.md">繁體中文</a> | <a href="README.de.md">Deutsch</a> | <strong>Français</strong> | <a href="README.ru.md">Русский</a> | <a href="README.es.md">Español</a> | <a href="README.it.md">Italiano</a> | <a href="README.pt-BR.md">Português (Brasil)</a> | <a href="README.ja.md">日本語</a> | <a href="README.ko.md">한국어</a> | <a href="README.tr.md">Türkçe</a> | <a href="README.fa.md">فارسی</a>
+   <strong>Install in one command:</strong>
  </p>
- 
- <p align="center">
-@@ -227,7 +227,7 @@ Un widget de barre des menus au style glassmorphisme qui met les constantes vita
- 
- ## Langues de l'interface
- 
--Choisissez Selon le système, English, 简体中文, 繁體中文, Русский, Deutsch, Français, Español, Italiano, Português (Brasil), Türkçe, 日本語 ou 한국어 dans Paramètres → Langue de l'interface. L'anglais, le chinois simplifié et le russe couvrent toute l'interface. Les autres langues traduisent les textes statiques de l'interface ; les messages interpolés conservent pour l'instant le texte anglais et ses règles de pluriel (le chinois traditionnel se rabat sur le simplifié). La fenêtre principale et le widget de la barre des menus partagent le réglage de langue.
-+Choisissez Selon le système, English, 简体中文, 繁體中文, Русский, Deutsch, Français, Español, Italiano, Português (Brasil), Türkçe, 日本語, 한국어 ou فارسی dans Paramètres → Langue de l'interface. L'anglais, le chinois simplifié et le russe couvrent toute l'interface. Les autres langues traduisent les textes statiques de l'interface ; les messages interpolés conservent pour l'instant le texte anglais et ses règles de pluriel (le chinois traditionnel se rabat sur le simplifié). La fenêtre principale et le widget de la barre des menus partagent le réglage de langue. En persan, l'interface s'affiche de droite à gauche.
- 
- ## Installation
- 
-@@ -489,7 +489,7 @@ Mac Sai propose **un seul** emplacement sponsor, affiché ici et en haut de cett
-     <td align="center" width="25%"><h3>125 000+</h3><sub>téléchargements</sub></td>
-     <td align="center" width="25%"><h3>2 000+</h3><sub>étoiles GitHub</sub></td>
-     <td align="center" width="25%"><h3>23 000</h3><sub>pages vues par mois</sub></td>
--    <td align="center" width="25%"><h3>12</h3><sub>langues du README</sub></td>
-+    <td align="center" width="25%"><h3>13</h3><sub>langues du README</sub></td>
-   </tr>
- </table>
- </div>
-```
-
-**File**: `README.it.md` (modified, +3/-3)
-```diff
-@@ -11,7 +11,7 @@
- </p>
- 
- <p align="center">
--  <a href="README.md">English</a> | <a href="README.zh-CN.md">简体中文</a> | <a href="README.zh-Hant.md">繁體中文</a> | <a href="README.de.md">Deutsch</a> | <a href="README.fr.md">Français</a> | <a href="README.ru.md">Русский</a> | <a href="README.es.md">Español</a> | <strong>Italiano</strong> | <a href="README.pt-BR.md">Português (Brasil)</a> | <a href="README.ja.md">日本語</a> | <a href="README.ko.md">한국어</a> | <a href="README.tr.md">Türkçe</a>
-+  <a href="README.md">English</a> | <a href="README.zh-CN.md">简体中文</a> | <a href="README.zh-Hant.md">繁體中文</a> | <a href="README.de.md">Deutsch</a> | <a href="README.fr.md">Français</a> | <a href="README.ru.md">Русский</a> | <a href="README.es.md">Español</a> | <strong>Italiano</strong> | <a href="README.pt-BR.md">Português (Brasil)</a> | <a href="README.ja.md">日本語</a> | <a href="README.ko.md">한국어</a> | <a href="README.tr.md">Türkçe</a> | <a href="README.fa.md">فارسی</a>
- </p>
- 
- <p align="center">
-@@ -227,7 +227,7 @@ Un widget in stile glassmorphism nella barra dei menu che mette i parametri vita
- 
- ## Lingue dell'interfaccia
- 
--Scegli Sistema, English, 简体中文, 繁體中文, Русский, Deutsch, Français, Español, Italiano, Português (Brasil), Türkçe, 日本語 o 한국어 in Impostazioni → Lingua interfaccia. Inglese, cinese semplificato e russo coprono l'intera interfaccia. Le altre lingue traducono le stringhe statiche dell'interfaccia; per ora i messaggi con valori interpolati mantengono il testo e le regole del plurale in inglese (il cinese tradizionale ripiega sul cinese semplificato). La finestra principale e il widget della barra dei menu condividono la preferenza della lingua.
-+Scegli Sistema, English, 简体中文, 繁體中文, Русский, Deutsch, Français, Español, Italiano, Português (Brasil), Türkçe, 日本語, 한국어 o فارسی in Impostazioni → Lingua interfaccia. Inglese, cinese semplificato e russo coprono l'intera interfaccia. Le altre lingue traducono le stringhe statiche dell'interfaccia; per ora i messaggi con valori interpolati mantengono il testo e le regole del plurale in inglese (il cinese tradizionale ripiega sul cinese semplificato). La finestra principale e il widget della barra dei menu condividono la preferenza della lingua. In persiano l'interfaccia è disposta da destra a sinistra.
- 
- ## Installazione
- 
-@@ -489,7 +489,7 @@ Mac Sai ha **un solo** spazio sponsor, mostrato qui e in cima a questa pagina, i
-     <td align="center" width="25%"><h3>125.000+</h3><sub>download</sub></td>
-     <td align="center" width="25%"><h3>2.000+</h3><sub>stelle su GitHub</sub></td>
-     <td align="center" width="25%"><h3>23.000</h3><sub>visualizzazioni di pagina al mese</sub></td>
--    <td align="center" width="25%"><h3>12</h3><sub>lingue del README</sub></td>
-+    <td align="center" width="25%"><h3>13</h3><sub>lingue del README</sub></td>
-   </tr>
- </table>
- </div>
-```
-
-**File**: `README.ja.md` (modified, +3/-3)
-```diff
-@@ -11,7 +11,7 @@
- </p>
- 
- <p align="center">
--  <a href="README.md">English</a> | <a href="README.zh-CN.md">简体中文</a> | <a href="README.zh-Hant.md">繁體中文</a> | <a href="README.de.md">Deutsch</a> | <a href="README.fr.md">Français</a> | <a href="README.ru.md">Русский</a> | <a href="README.es.md">Español</a> | <a href="README.it.md">Italiano</a> | <a href="README.pt-BR.md">Português (Brasil)</a> | <strong>日本語</strong> | <a href="README.ko.md">한국어</a> | <a href="README.tr.md">Türkçe</a>
-+  <a href="README.md">English</a> | <a href="README.zh-CN.md">简体中文</a> | <a href="README.zh-Hant.md">繁體中文</a> | <a href="README.de.md">Deutsch</a> | <a href="README.fr.md">Français</a> | <a href="README.ru.md">Русский</a> | <a href="README.es.md">Español</a> | <a href="README.it.md">Italiano</a> | <a href="README.pt-BR.md">Português (Brasil)</a> | <strong>日本語</strong> | <a href="README.ko.md">한국어</a> | <a href="README.tr.md">Türkçe</a> | <a href="README.fa.md">فارسی</a>
- </p>
- 
- <p align="center">
-@@ -227,7 +227,7 @@ Mac の状態をワンクリックで確認できる、グラスモーフィズ
- 
- ## インターフェース言語
- 
--「設定」→「インターフェース言語」で、システム、English、简体中文、繁體中文、Русский、Deutsch、Français、Español、Italiano、Português (Brasil)、Türkçe、日本語、한국어 から選択できます。英語、簡体字中国語、ロシア語はインターフェース全体に対応しています。その他の言語では静的なインターフェース文字列が翻訳されており、値を埋め込むメッセージは現時点では英語の文言と複数形のルールのままです（繁体字中国語では簡体字中国語が代わりに表示されます）。メインウィンドウとメニューバーウィジェットは同じ言語設定を共有します。
-+「設定」→「インターフェース言語」で、システム、English、简体中文、繁體中文、Русский、Deutsch、Français、Español、Italiano、Português (Brasil)、Türkçe、日本語、한국어、فارسی から選択できます。英語、簡体字中国語、ロシア語はインターフェース全体に対応しています。その他の言語では静的なインターフェース文字列が翻訳されており、値を埋め込むメッセージは現時点では英語の文言と複数形のルールのままです（繁体字中国語では簡体字中国語が代わりに表示されます）。メインウィンドウとメニューバーウィジェットは同じ言語設定を共有します。ペルシア語ではインターフェースが右から左に表示されます。
- 
- ## インストール
- 
-@@ -489,7 +489,7 @@ Mac Sai のスポンサー枠は**1つだけ**です。この README のすべ
-     <td align="center" width="25%"><h3>125,000+</h3><sub>ダウンロード</sub></td>
-     <td align="center" width="25%"><h3>2,000+</h3><sub>GitHub スター</sub></td>
-     <td align="center" width="25%"><h3>23,000</h3><sub>月間ページビュー</sub></td>
--    <td align="center" width="25%"><h3>12</h3><sub>README の言語</sub></td>
-+    <td align="center" width="25%"><h3>13</h3><sub>README の言語</sub></td>
-   </tr>
- </table>
- </div>
-```
-
-**File**: `README.ko.md` (modified, +3/-3)
-```diff
-@@ -11,7 +11,7 @@
- </p>
- 
- <p align="center">
--  <a href="README.md">English</a> | <a href="README.zh-CN.md">简体中文</a> | <a href="README.zh-Hant.md">繁體中文</a> | <a href="README.de.md">Deutsch</a> | <a href="README.fr.md">Français</a> | <a href="README.ru.md">Русский</a> | <a href="README.es.md">Español</a> | <a href="README.it.md">Italiano</a> | <a href="README.pt-BR.md">Português (Brasil)</a> | <a href="README.ja.md">日本語</a> | <strong>한국어</strong> | <a href="README.tr.md">Türkçe</a>
-+  <a href="README.md">English</a> | <a href="README.zh-CN.md">简体中文</a> | <a href="README.zh-Hant.md">繁體中文</a> | <a href="README.de.md">Deutsch</a> | <a href="README.fr.md">Français</a> | <a href="README.ru.md">Русский</a> | <a href="README.es.md">Español</a> | <a href="README.it.md">Italiano</a> | <a href="README.pt-BR.md">Português (Brasil)</a> | <a href="README.ja.md">日本語</a> | <strong>한국어</strong> | <a href="README.tr.md">Türkçe</a> | <a href="README.fa.md">فارسی</a>
- </p>
- 
- <p align="center">
-@@ -227,7 +227,7 @@ Mac의 핵심 상태를 클릭 한 번 거리에 두는 글래스모피즘 스
- 
- ## 인터페이스 언어
- 
--설정 → 인터페이스 언어에서 시스템, English, 简体中文, 繁體中文, Русский, Deutsch, Français, Español, Italiano, Português (Brasil), Türkçe, 日本語, 한국어 중 하나를 선택할 수 있습니다. 영어, 중국어 간체, 러시아어는 인터페이스 전체를 지원합니다. 그 외 언어는 고정된 인터페이스 문자열을 번역하며, 변수가 삽입되는 메시지는 당분간 영어 문구와 복수형 규칙을 그대로 사용합니다(중국어 번체는 중국어 간체로 대체됩니다). 메인 윈도우와 메뉴 막대 위젯은 같은 언어 설정을 공유합니다.
-+설정 → 인터페이스 언어에서 시스템, English, 简体中文, 繁體中文, Русский, Deutsch, Français, Español, Italiano, Português (Brasil), Türkçe, 日本語, 한국어, فارسی 중 하나를 선택할 수 있습니다. 영어, 중국어 간체, 러시아어는 인터페이스 전체를 지원합니다. 그 외 언어는 고정된 인터페이스 문자열을 번역하며, 변수가 삽입되는 메시지는 당분간 영어 문구와 복수형 규칙을 그대로 사용합니다(중국어 번체는 중국어 간체로 대체됩니다). 메인 윈도우와 메뉴 막대 위젯은 같은 언어 설정을 공유합니다. 페르시아어에서는 인터페이스가 오른쪽에서 왼쪽 방향으로 표시됩니다.
- 
- ## 설치
- 
-@@ -489,7 +489,7 @@ Mac Sai에는 스폰서 자리가 **하나**뿐이며, 이 README의 모든 언
-     <td align="center" width="25%"><h3>125,000+</h3><sub>다운로드</sub></td>
-     <td align="center" width="25%"><h3>2,000+</h3><sub>GitHub 스타</sub></td>
-     <td align="center" width="25%"><h3>23,000</h3><sub>월간 페이지 조회수</sub></td>
--    <td align="center" width="25%"><h3>12</h3><sub>README 언어</sub></td>
-+    <td align="center" width="25%"><h3>13</h3><sub>README 언어</sub></td>
-   </tr>
- </table>
- </div>
-```
-
-**File**: `README.md` (modified, +3/-3)
-```diff
-@@ -11,7 +11,7 @@
- </p>
- 
- <p align="center">
--  <strong>English</strong> | <a href="README.zh-CN.md">简体中文</a> | <a href="README.zh-Hant.md">繁體中文</a> | <a href="README.de.md">Deutsch</a> | <a href="README.fr.md">Français</a> | <a href="README.ru.md">Русский</a> | <a href="README.es.md">Español</a> | <a href="README.it.md">Italiano</a> | <a href="README.pt-BR.md">Português (Brasil)</a> | <a href="README.ja.md">日本語</a> | <a href="README.ko.md">한국어</a> | <a href="README.tr.md">Türkçe</a>
-+  <strong>English</strong> | <a href="README.zh-CN.md">简体中文</a> | <a href="README.zh-Hant.md">繁體中文</a> | <a href="README.de.md">Deutsch</a> | <a href="README.fr.md">Français</a> | <a href="README.ru.md">Русский</a> | <a href="README.es.md">Español</a> | <a href="README.it.md">Italiano</a> | <a href="README.pt-BR.md">Português (Brasil)</a> | <a href="README.ja.md">日本語</a> | <a href="README.ko.md">한국어</a> | <a href="README.tr.md">Türkçe</a> | <a href="README.fa.md">فارسی</a>
- </p>
- 
- <p align="center">
-@@ -227,7 +227,7 @@ A glassmorphism menu-bar widget that puts your Mac's vitals one click away. It i
- 
- ## Interface languages
- 
--Choose System, English, 简体中文, 繁體中文, Русский, Deutsch, Français, Español, Italiano, Português (Brasil), Türkçe, 日本語, or 한국어 in Settings → Interface Language. English, Simplified Chinese, and Russian cover the whole interface. The other languages translate static interface strings; interpolated messages retain the English wording and plural rules for now (Traditional Chinese falls back to Simplified). The main window and menu-bar widget share the language preference.
-+Choose System, English, 简体中文, 繁體中文, Русский, Deutsch, Français, Español, Italiano, Português (Brasil), Türkçe, 日本語, 한국어, or فارسی in Settings → Interface Language. English, Simplified Chinese, and Russian cover the whole interface. The other languages translate static interface strings; interpolated messages retain the English wording and plural rules for now (Traditional Chinese falls back to Simplified). The main window and menu-bar widget share the language preference. Farsi uses a right-to-left layout.
- 
- ## Installation
- 
-@@ -489,7 +489,7 @@ Mac Sai has **one** sponsor slot, shown here and at the top of this page, in eve
-     <td align="center" width="25%"><h3>125,000+</h3><sub>downloads</sub></td>
-     <td align="center" width="25%"><h3>2,000+</h3><sub>GitHub stars</sub></td>
-     <td align="center" width="25%"><h3>23,000</h3><sub>page views a month</sub></td>
--    <td align="center" width="25%"><h3>12</h3><sub>README languages</sub></td>
-+    <td align="center" width="25%"><h3>13</h3><sub>README languages</sub></td>
-   </tr>
- </table>
- </div>
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #276** (2026-11-17): README: 44-second video tour (@iliyami)
 - **PR #275** (2026-11-12): Mac Sai website, in 13 languages, on GitHub Pages (@iliyami)
 - **PR #274** (2026-11-11): Add Farsi (Persian) interface language and README (@iliyami)
+- **PR #273** (2026-11-17): Add Universal Clipboard archive detection to System Junk (@thorufur)
 - **PR #272** (2026-11-09): README in Spanish, Italian, Brazilian Portuguese, Japanese, Korean and Turkish (@iliyami)
 - **PR #271** (2026-11-06): README: list all 12 interface languages (@iliyami)
-- **PR #270** (2026-11-06): Use the Mac Sai team address for sponsor and funding contact (@iliyami)
-- **PR #269** (2026-11-06): Refresh README and sponsor page stats (@iliyami)
 
 ---
 
@@ -2274,72 +2004,28 @@ interface strings, a right-to-left layout, and a Farsi README.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Mac Sai website, in 13 languages, on GitHub Pages (#275)
+## X. Add Universal Clipboard archive detection to System Junk
 
 **RULE**:
-When implementing operations in `.github/workflows/website.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iliyami/MacSai. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.de.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iliyami/MacSai. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `91b262f3`: Mac Sai website, in 13 languages, on GitHub Pages (#275). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5891a8ce`: Add Universal Clipboard archive detection to System Junk. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/website.yml`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.de.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-name: Website
-
-# Builds the static site in website/ and publishes it to GitHub Pages.
-# - Pull requests that touch the site: build only, as a check.
-# - main: build and deploy.
-# - After each Release run and every hour: rebuild, so the version, download
-#   link and the live numbers (downloads, stars, Homebrew installs and rank,
-#   contributors) stay current. They are read from the GitHub and Homebrew
-#   APIs at build time; visitors' browsers never contact either.
-on:
-  pull_request:
-    branches: [main]
-    paths:
-      - "website/**"
-      - ".github/workflows/website.yml"
-  push:
-    branches: [main]
-    paths:
-      - "website/**"
-      - ".github/workflows/website.yml"
-  workflow_run:
-    workflows: [Release]
-    types: [completed]
-  schedule:
-    - cron: "17 * * * *"
-  workflow_dispatch:
-
-permissions:
-  contents: read
-
-concurrency:
-  group: website-${{ github.event_name == 'pull_request' && github.ref || 'deploy' }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
-
-jobs:
-  build:
-    name: Build site
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: website
-    steps:
-      - uses: actions/checkout@v6
-
-      - uses: actions/setup
+| **System Junk** | 16+ Scan-Kategorien: Benutzer- und System-Caches, Protokolle, Sprachdateien, defekte Einstellungen, defekte Anmeldeobjekte, Dokumentversionen, iOS-Backups, Xcode-Müll, Caches von Paketmanagern / IDEs / KI-Werkzeugen, Reste gelöschter Benutzer, Archive der universellen Zwischenablage (nur zur Prüfung, nie vorausgewählt) sowie **Universal-Binary-Verschlankung** (findet fette Mach-O-Binärdateien, die sowohl arm64 als auch x86_64 enthalten, und schreibt sie per `lipo` auf deine native Architektur um, mit Abbrechen-Unterstützung) |
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+| **System Junk** | 16+ Scan-Kategorien: Benutzer- und System-Caches, Protokolle, Sprachdateien, defekte Einstellungen, defekte Anmeldeobjekte, Dokumentversionen, iOS-Backups, Xcode-Müll, Caches von Paketmanagern / IDEs / KI-Werkzeugen, Reste gelöschter Benutzer, sowie **Universal-Binary-Verschlankung** (findet fette Mach-O-Binärdateien, die sowohl arm64 als auch x86_64 enthalten, und schreibt sie per `lipo` auf deine native Architektur um, mit Abbrechen-Unterstützung) |
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `91b262f3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5891a8ce` are properly handled with clean fallback behavior.

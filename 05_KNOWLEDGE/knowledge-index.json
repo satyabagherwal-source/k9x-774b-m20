@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T02:30:02.907Z",
-  "total_verified_learnings": 9055,
+  "last_updated": "2026-11-21T02:57:55.868Z",
+  "total_verified_learnings": 9056,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22868,
+  "total_items": 22879,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112785,10 +112785,10 @@
       "relative_path": "08_VERIFICATION/iliyami-macsai-verification-protocol-empirical-defect-shield-for-iliyami-macsai.md",
       "title": "Verification Protocol: Empirical Defect Shield for iliyami/MacSai",
       "repository": "iliyami/MacSai",
-      "source_version": "91b262f3",
-      "content_hash": "e0f2b05602068a01c96d0cb3dfe550c217904ad15376a3a7831f7b8f77fd845a",
+      "source_version": "5891a8ce",
+      "content_hash": "ce850075fd10dbcbd28b24a67000a8694575288f468b9515a7afefb419f8b0f3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T15:38:14.089Z"
+      "persisted_at": "2026-11-21T02:57:46.573Z"
     },
     "candidate_directive-merge-pull-request-23479-from-asheesh7298-bug-asheesh7298-23478": {
       "item_id": "candidate_directive-merge-pull-request-23479-from-asheesh7298-bug-asheesh7298-23478",
@@ -112870,9 +112870,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for iliyami-macsai-learnings",
       "repository": "iliyami-macsai-learnings",
       "source_version": "HEAD",
-      "content_hash": "04c30a02bbec189f6856236f37231e5749db058860c106c555d84e1be5f5570f",
+      "content_hash": "e30f894d48e0ee0636e8d83d60c0de0f9364321129ae913e804a01161b49b4be",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T15:39:03.629Z"
+      "persisted_at": "2026-11-21T02:57:55.868Z"
     },
     "domain_intelligence-technical-construction-intelligence-meshery-meshery-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-meshery-meshery-learnings-core-invariants",
@@ -233324,8 +233324,8 @@
       "slug": "tokio-rs-tokio",
       "platform": "github",
       "source_url": "https://github.com/tokio-rs/tokio",
-      "source_version": "3f0ffc85",
-      "content_hash": "ea3224ce522b1dbad0367898d0dbcbe2db4756b153ee235414402c7a340ec583",
+      "source_version": "717c508f",
+      "content_hash": "5f7884f1c48fe1e312339ebd75f021bf0cb28b3995780d86715255e3650c5774",
       "dossier_path": "07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md",
       "promoted_rules": [
@@ -233343,6 +233343,11 @@
           "number": 9406,
           "title": "reject frames shorter than their length field in `LengthDelimitedCodec`",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9705,
+          "title": "Merge 'tokio-1.54.x' into 'master'",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -233350,7 +233355,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T16:24:50.708Z",
+      "verified_at": "2026-11-21T02:57:41.468Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -233392,10 +233397,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tokio-rs-tokio-technical-construction-intelligence-tokio-rs-tokio-core-invariant.md",
       "title": "Technical Construction Intelligence: tokio-rs/tokio Core Invariants",
       "repository": "tokio-rs/tokio",
-      "source_version": "3f0ffc85",
-      "content_hash": "bff9199e455fd05436d4aa0a0f72c6863114516c63005d7a1de693693a31a62a",
+      "source_version": "717c508f",
+      "content_hash": "6642803c08256624bf4f3bb77285a82e7e4a3f24a22ca06138df1864de456367",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T16:24:51.218Z"
+      "persisted_at": "2026-11-21T02:57:42.037Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tokio-rs-tokio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tokio-rs-tokio",
@@ -233404,10 +233409,10 @@
       "relative_path": "08_VERIFICATION/tokio-rs-tokio-verification-protocol-empirical-defect-shield-for-tokio-rs-tokio.md",
       "title": "Verification Protocol: Empirical Defect Shield for tokio-rs/tokio",
       "repository": "tokio-rs/tokio",
-      "source_version": "3f0ffc85",
-      "content_hash": "78fe93a26a367d4cc81401806d33e7aa0c122f00b6917d157be6bb862469b73c",
+      "source_version": "717c508f",
+      "content_hash": "8276f81470f5fed1a1399fe7d92384e091a4cec41ddb174d5a7d93f578dd66a9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T16:24:51.356Z"
+      "persisted_at": "2026-11-21T02:57:42.195Z"
     },
     "learn-github-starrocks-starrocks": {
       "learning_id": "learn-github-starrocks-starrocks",
@@ -233607,9 +233612,9 @@
       "title": "Technical Construction Intelligence: tokio-rs-tokio-learnings Core Invariants",
       "repository": "tokio-rs-tokio-learnings",
       "source_version": "HEAD",
-      "content_hash": "3e9208ec5604fc49443f748e34d7e004508eb03f7c5cca4cf02e404e7b7ceff7",
+      "content_hash": "9bc13a30d2c20f42d824a050e454bc821f1bc5501df7ccf247f9c354a13f171f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T16:25:04.810Z"
+      "persisted_at": "2026-11-21T02:57:53.888Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tokio-rs-tokio-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tokio-rs-tokio-learnings",
@@ -233619,9 +233624,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tokio-rs-tokio-learnings",
       "repository": "tokio-rs-tokio-learnings",
       "source_version": "HEAD",
-      "content_hash": "2738f67438abf538efed9f52161971a715faf40924d6be2ecb91fc9ae8b79afe",
+      "content_hash": "8956acb70b38b1a2c083834b60adbf199a6353c594299ea458ad1c3137ae60e3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T16:25:04.958Z"
+      "persisted_at": "2026-11-21T02:57:54.049Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-autotrust-jev-27b-vl-learnings-core-invariant": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-autotrust-jev-27b-vl-learnings-core-invariant",
@@ -235891,8 +235896,8 @@
       "slug": "aquasecurity-trivy",
       "platform": "github",
       "source_url": "https://github.com/aquasecurity/trivy",
-      "source_version": "92f029f9",
-      "content_hash": "ed5a769cbb2e00e72c05d0b4e482611ed5d83265d6efff2e42460c725e6bc456",
+      "source_version": "edf9f5c1",
+      "content_hash": "aaac4cebe0b25b16bb78cd81f130e6d164e675bff28f3191c5144f8a0f11739b",
       "dossier_path": "07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
       "promoted_rules": [
@@ -235925,6 +235930,11 @@
           "number": 9494,
           "title": "export by full image ID with the containerd image store",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9708,
+          "title": "check repository policy before skipping a shared Maven mirror",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -235932,7 +235942,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T02:15:01.922Z",
+      "verified_at": "2026-11-21T02:57:50.007Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -235974,10 +235984,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-aquasecurity-trivy-technical-construction-intelligence-aquasecurity-trivy-core-i.md",
       "title": "Technical Construction Intelligence: aquasecurity/trivy Core Invariants",
       "repository": "aquasecurity/trivy",
-      "source_version": "92f029f9",
-      "content_hash": "2d9c941325598164f9de874898eb236b7f31a3b9235c94c840dbe824948af0ba",
+      "source_version": "edf9f5c1",
+      "content_hash": "8f94fd0337ad985bc69ee1a518d166547039695103c3335eb43f7562e22e5708",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T02:15:02.663Z"
+      "persisted_at": "2026-11-21T02:57:50.541Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aquasecurity-trivy": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aquasecurity-trivy",
@@ -235986,10 +235996,10 @@
       "relative_path": "08_VERIFICATION/aquasecurity-trivy-verification-protocol-empirical-defect-shield-for-aquasecurit.md",
       "title": "Verification Protocol: Empirical Defect Shield for aquasecurity/trivy",
       "repository": "aquasecurity/trivy",
-      "source_version": "92f029f9",
-      "content_hash": "9336c1557b6608434b1faee5882570ed4e8b72b8e213fbca936050928e81f5ac",
+      "source_version": "edf9f5c1",
+      "content_hash": "77735aedc9fe89fbb06817ed2819d6cff612bc6f1a50ad3b7bc7574b926ee211",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T02:15:02.859Z"
+      "persisted_at": "2026-11-21T02:57:50.688Z"
     },
     "rule-8524": {
       "learning_id": "rule-8524",
@@ -271260,8 +271270,8 @@
       "slug": "dubzzz-fast-check",
       "platform": "github",
       "source_url": "https://github.com/dubzzz/fast-check",
-      "source_version": "1114b71b",
-      "content_hash": "90336b5e9394475b5f4c447bcd7aab111ce2da995503cf26555f3a72ab64f673",
+      "source_version": "56ed4c78",
+      "content_hash": "be3d244b706ab1efa5185ff6062f682649ebdd2f93572456a7566050537ba3a5",
       "dossier_path": "07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md",
       "promoted_rules": [
@@ -271279,6 +271289,11 @@
           "number": 8934,
           "title": "Leak-Free Signal-to-Promise Adapter Contract",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9706,
+          "title": "🏷️ Make built-in arbitrary constraint inputs readonly",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -271286,7 +271301,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T08:42:31.859Z",
+      "verified_at": "2026-11-21T02:57:43.681Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -271380,10 +271395,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dubzzz-fast-check-technical-construction-intelligence-dubzzz-fast-check-core-inv.md",
       "title": "Technical Construction Intelligence: dubzzz/fast-check Core Invariants",
       "repository": "dubzzz/fast-check",
-      "source_version": "1114b71b",
-      "content_hash": "bc8f176adf29688795af11782d75ab106a111b9fbd8c13bd97e59e828c4a2082",
+      "source_version": "56ed4c78",
+      "content_hash": "61901e6dfe54c753c1730fa5e4bef412d05386438626a57c8fea80e0993818c0",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T08:42:32.968Z"
+      "persisted_at": "2026-11-21T02:57:44.239Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-dubzzz-fast-check": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dubzzz-fast-check",
@@ -271392,10 +271407,10 @@
       "relative_path": "08_VERIFICATION/dubzzz-fast-check-verification-protocol-empirical-defect-shield-for-dubzzz-fast-.md",
       "title": "Verification Protocol: Empirical Defect Shield for dubzzz/fast-check",
       "repository": "dubzzz/fast-check",
-      "source_version": "1114b71b",
-      "content_hash": "ea38412f4676338532b09a354e5ecc7ba046ed0426cc59691502a3f1d5c277c9",
+      "source_version": "56ed4c78",
+      "content_hash": "749ee68a97be1af6faa57e2ca45224beaa2ed5f91a74ed1eee0c466418440ee9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T08:42:33.151Z"
+      "persisted_at": "2026-11-21T02:57:44.396Z"
     },
     "rule-8937": {
       "learning_id": "rule-8937",
@@ -271495,9 +271510,9 @@
       "title": "Technical Construction Intelligence: dubzzz-fast-check-learnings Core Invariants",
       "repository": "dubzzz-fast-check-learnings",
       "source_version": "HEAD",
-      "content_hash": "79087483ea802de1b0280044c5f21b6fbc7302bfd55c5a9a2f91910440246e15",
+      "content_hash": "c420c6a7e1d78d0bd5290e44588b06463c0680a3bded1bcf9244c535b66623d1",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T08:45:00.163Z"
+      "persisted_at": "2026-11-21T02:57:54.844Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-dubzzz-fast-check-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dubzzz-fast-check-learnings",
@@ -271507,9 +271522,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dubzzz-fast-check-learnings",
       "repository": "dubzzz-fast-check-learnings",
       "source_version": "HEAD",
-      "content_hash": "b6f3ce55f84dbd96ada5364809e4a44e0f1b5d28bbad5d4eed95a0e6f4388bdf",
+      "content_hash": "f19d1bb31d6fd2217ec1662f649d47d6314e68bfa39e39a731ecda1cea767a5f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T08:45:00.378Z"
+      "persisted_at": "2026-11-21T02:57:54.995Z"
     },
     "domain_intelligence-technical-construction-intelligence-trinodb-trino-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-trinodb-trino-learnings-core-invariants",
@@ -310402,6 +310417,167 @@
       "content_hash": "12631cc7f0e562dadab68b4ba476502af9699b56403faee62fbbe099f53aadea",
       "domain_letter": "K",
       "persisted_at": "2026-11-21T02:30:02.598Z"
+    },
+    "rule-9705": {
+      "learning_id": "rule-9705",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9705,
+      "title": "Merge 'tokio-1.54.x' into 'master'",
+      "source_url": "https://github.com/tokio-rs/tokio",
+      "source_version": "717c508f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T02:57:41.468Z"
+    },
+    "candidate_directive-merge-tokio-1-54-x-into-master": {
+      "item_id": "candidate_directive-merge-tokio-1-54-x-into-master",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-IJWM-merge-tokio-1-54-x-into-master.md",
+      "title": "Merge 'tokio-1.54.x' into 'master'",
+      "repository": "tokio-rs-tokio-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4614826bb8158bcd77e00ff39d5c15cead3ffa828733cc114c6fa0b429354a89",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T02:57:53.738Z"
+    },
+    "rule-9706": {
+      "learning_id": "rule-9706",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9706,
+      "title": "🏷️ Make built-in arbitrary constraint inputs readonly",
+      "source_url": "https://github.com/dubzzz/fast-check",
+      "source_version": "56ed4c78",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T02:57:43.681Z"
+    },
+    "candidate_directive-make-built-in-arbitrary-constraint-inputs-readonly": {
+      "item_id": "candidate_directive-make-built-in-arbitrary-constraint-inputs-readonly",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-IKN4-make-built-in-arbitrary-constraint-inputs-readonly.md",
+      "title": "🏷️ Make built-in arbitrary constraint inputs readonly",
+      "repository": "dubzzz-fast-check-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f68193a84fe6e0473b7bae90b6b5079ea3ad9c9583b506af1495829f95ea9627",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T02:57:54.688Z"
+    },
+    "learn-github-iliyami-macsai": {
+      "learning_id": "learn-github-iliyami-macsai",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "iliyami/MacSai",
+      "repository": "iliyami/MacSai",
+      "slug": "iliyami-macsai",
+      "platform": "github",
+      "source_url": "https://github.com/iliyami/MacSai",
+      "source_version": "5891a8ce",
+      "content_hash": "4cf2d4de4b38558d529b5ea50ae6f84e44979df9bb8988ed6ffa9a9238d50a4c",
+      "dossier_path": "07_PROJECT_LEARNING/iliyami-macsai-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/iliyami-macsai-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 9707,
+          "title": "Add Universal Clipboard archive detection to System Junk",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-21T02:57:45.862Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-9707": {
+      "learning_id": "rule-9707",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9707,
+      "title": "Add Universal Clipboard archive detection to System Junk",
+      "source_url": "https://github.com/iliyami/MacSai",
+      "source_version": "5891a8ce",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T02:57:45.862Z"
+    },
+    "candidate_directive-add-universal-clipboard-archive-detection-to-system-junk": {
+      "item_id": "candidate_directive-add-universal-clipboard-archive-detection-to-system-junk",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ILBD-add-universal-clipboard-archive-detection-to-system-junk.md",
+      "title": "Add Universal Clipboard archive detection to System Junk",
+      "repository": "iliyami-macsai-learnings",
+      "source_version": "HEAD",
+      "content_hash": "33c3cf5335a53e78bbf137c91bac2c8bde38472c24ef2875badc21416e839e01",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T02:57:55.564Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-iliyami-macsai-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-iliyami-macsai-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-iliyami-macsai-technical-construction-intelligence-iliyami-macsai-core-invariant.md",
+      "title": "Technical Construction Intelligence: iliyami/MacSai Core Invariants",
+      "repository": "iliyami/MacSai",
+      "source_version": "5891a8ce",
+      "content_hash": "4ddc49ed66c21233158edc6af96dcc594a19e18a8e74c9caff8f6cd670dd83a2",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T02:57:46.420Z"
+    },
+    "rule-9708": {
+      "learning_id": "rule-9708",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9708,
+      "title": "check repository policy before skipping a shared Maven mirror",
+      "source_url": "https://github.com/aquasecurity/trivy",
+      "source_version": "edf9f5c1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T02:57:50.007Z"
+    },
+    "candidate_directive-check-repository-policy-before-skipping-a-shared-maven-mirror": {
+      "item_id": "candidate_directive-check-repository-policy-before-skipping-a-shared-maven-mirror",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-IHBR-check-repository-policy-before-skipping-a-shared-maven-mirror.md",
+      "title": "check repository policy before skipping a shared Maven mirror",
+      "repository": "aquasecurity/trivy",
+      "source_version": "edf9f5c1",
+      "content_hash": "3574174b3f328a41425d857c1a8a8804e92bfd558185f5e3d389de0daaa96fe1",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T02:57:50.392Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-iliyami-macsai-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-iliyami-macsai-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-iliyami-macsai-learnings-technical-construction-intelligence-iliyami-macsai-lear.md",
+      "title": "Technical Construction Intelligence: iliyami-macsai-learnings Core Invariants",
+      "repository": "iliyami-macsai-learnings",
+      "source_version": "HEAD",
+      "content_hash": "03d2106dbef7a8d834283257702ca64023516277af69af552e34cd231b837f91",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T02:57:55.716Z"
     }
   },
   "ai-builder-brain": {

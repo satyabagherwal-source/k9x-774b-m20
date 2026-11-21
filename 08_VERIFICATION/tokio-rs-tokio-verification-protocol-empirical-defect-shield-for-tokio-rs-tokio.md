@@ -4,22 +4,22 @@
 {
   "source_repository": "tokio-rs/tokio",
   "source_url": "https://github.com/tokio-rs/tokio",
-  "source_version": "3f0ffc85",
+  "source_version": "717c508f",
   "license": "MIT",
-  "timestamp": "2026-11-19T16:24:51.079Z",
+  "timestamp": "2026-11-21T02:57:41.883Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-tokio-rs-tokio",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [tokio-rs/tokio](https://github.com/tokio-rs/tokio) (Revision: `3f0ffc85`).  
-> **License**: MIT | **Timestamp**: `2026-11-19T16:24:51.079Z`  
+> **Provenance**: Harvested from [tokio-rs/tokio](https://github.com/tokio-rs/tokio) (Revision: `717c508f`).  
+> **License**: MIT | **Timestamp**: `2026-11-21T02:57:41.883Z`  
 > **Learning ID**: `learn-github-tokio-rs-tokio`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `tokio-rs/tokio` (Commit: `3f0ffc85`)
+- **Target Repository**: `tokio-rs/tokio` (Commit: `717c508f`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tokio-rs/tokio](https://github.com/tokio-rs/tokio))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T16:24:49.955Z  
+> **Harvest Timestamp**: 2026-11-21T02:57:40.535Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: A runtime for writing reliable asynchronous applications with Rust. Provides I/O, networking, scheduling, timers, ...
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 33733 stars
+- **Stars / Engagement**: 33746 stars
 
 ---
 
@@ -1949,14 +1949,11 @@ where
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #8808** (2026-11-19): **ci: read io_uring test binary paths from cargo json output**
-  *Symptoms*: The `io_uring` kernel test workflow currently globs `target/x86_64-unknown-linux-musl/debug/deps/` to collect compiled test binaries for the QEMU initramfs. With Cargo's new build-dir layout on updated GitHub Actions runners, test binaries are emitted under `debug/build/` instead, leaving `/bin/tests` empty and causing `init` in QEMU to panic. Thus, collect test executable paths from Cargo's JSON output instead of hardcoding the target directory layout.
-  **Post-Mortem & Fix Analysis**:
-  > @guybedford I extracted your CI fix to independent PR
-  > I checked the workflow — the glob is in `.github/workflows/uring-kernel-version-test.yml:60`, `target/x86_64-unknown-linux-musl/debug/deps/{fs_*,tokio-*}`, and the build step right above it already runs the `cargo test -p tokio --features full,io-uring --target x86_64-unknown-linux-musl --test 'fs*' --lib --no-run` command that can emit the paths. One option that avoids a second cargo invocation is to add `--message-format=json` to that build step and collect the executables from it:  `cargo test ... --message-format=json --no-run | jq -r 'select(.reason == "compiler-artifact" and .profile.test == true and .executable != null) | .executable'`  That yields the lib test binary plus the `fs_*` integration binaries the glob used to pick up, and it stops depending on where cargo puts them.
+- **Issue #8811** (2026-11-20): **Merge 'tokio-1.54.x' into 'master'**
+  *Symptoms*: Depends on #8810.
 
-- **Issue #8802** (2026-11-17): **metrics: update the dead H2 histogram link**
-  *Symptoms*: The `LogHistogram` docs link to the H2 histogram write-up at `iop.systems/blog/h2-histogram/`, which now returns 404. IOP Systems publishes the same write-up at https://h2histogram.org/, so this points both the doc link and the algorithm comment there.  Prepared with an AI coding assistant. 
+- **Issue #8810** (2026-11-20): **Merge 'tokio-1.53.x' into 'tokio-1.54.x'**
+  *Symptoms*: Depends on #8809.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1973,454 +1970,465 @@ where
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3f0ffc85` (2026-11-19)
-**Commit Message**: codec: reject frames shorter than their length field in `LengthDelimitedCodec` (#8781)
+### Incident Patch 1: `717c508f` (2026-11-19)
+**Commit Message**: Merge 'tokio-1.54.x' into 'master' (#8811)
 
-**File**: `tokio-util/src/codec/length_delimited.rs` (modified, +11/-0)
+**File**: `.github/workflows/uring-kernel-version-test.yml` (modified, +12/-6)
 ```diff
-@@ -548,6 +548,17 @@ impl LengthDelimitedCodec {
-             }
-         };
+@@ -44,24 +44,30 @@ jobs:
+       # to check if the fallback mechanism works
+       - name: Generate test binaries with io_uring enabled
+         run: |
++          set -euo pipefail
+           # Build both integration (tokio/tests/) and unit (e.g., tokio/src/fs/file/tests.rs) tests with io_uring enabled
+           rustup target add x86_64-unknown-linux-musl
+           RUSTFLAGS="--cfg tokio_unstable" \
+             cargo test -p tokio --features full,io-uring \
+-            --target x86_64-unknown-linux-musl --test 'fs*' --lib --no-run
++            --target x86_64-unknown-linux-musl --test 'fs*' --lib --no-run \
++            --message-format=json-render-diagnostics \
++            | jq -r 'select(.reason == "compiler-artifact" and .profile.test == true and .executable != null) | .executable' > test-binaries.txt
  
-+        // Reject the frame if the frame ends before its own length field.
-+        //
-+        // In the worst case, this can lead to infinite loops if not
-+        // rejected.
-+        if n.saturating_add(self.builder.get_num_skip()) < head_len {
-+            return Err(io::Error::new(
-+                io::ErrorKind::InvalidData,
-+                "the frame is shorter than its own length field",
-+            ));
-+        }
+       - name: Prepare initramfs + tests binaries
+         run: |
+           set -e
+           rm -rf initramfs
+           mkdir -p initramfs/{bin,bin/tests,sbin,proc,sys,tmp}
+ 
++          if [ ! -s test-binaries.txt ]; then
++            echo "no test binaries found"
++            exit 1
++          fi
 +
-         src.advance(self.builder.get_num_skip());
+           # Copy test binaries into initramfs
+-          for bin in target/x86_64-unknown-linux-musl/debug/deps/{fs_*,tokio-*}; do
+-            if [ -f "$bin" ] && [ -x "$bin" ]; then
+-              cp "$bin" initramfs/bin/tests
+-            fi
+-          done
++          while IFS= read -r bin; do
++            cp "$bin" initramfs/bin/tests
++          done < test-binaries.txt
  
-         // Ensure that the buffer has enough space to read the incoming
+           # Add BusyBox & symlinks
+           cp /usr/bin/busybox initramfs/bin/
 ```
 
-**File**: `tokio-util/tests/length_delimited.rs` (modified, +69/-0)
+**File**: `tokio/Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -862,6 +862,75 @@ fn max_allowed_length_field() {
-     assert_eq!(codec.max_frame_length(), usize::MAX);
+@@ -132,7 +132,7 @@ libc = { version = "0.2.168", optional = true }
+ libc = { version = "0.2.168" }
+ 
+ [target.'cfg(all(unix, not(target_os = "emscripten")))'.dev-dependencies]
+-nix = { version = "0.32.0", default-features = false, features = ["aio", "fs", "socket"] }
++nix = { version = "0.32.0", default-features = false, features = ["fs", "socket"] }
+ 
+ [target.'cfg(windows)'.dependencies.windows-sys]
+ version = "0.61"
+```
+
+**File**: `tokio/src/runtime/io/driver/uring.rs` (modified, +14/-5)
+```diff
+@@ -343,21 +343,30 @@ impl Handle {
+ 
+         let cancel_data = data.expect("Data should be present").cancel();
+         match mem::replace(lifecycle, Lifecycle::Cancelled(cancel_data)) {
+-            Lifecycle::Submitted | Lifecycle::Waiting(_) => (),
++            previous @ (Lifecycle::Submitted | Lifecycle::Waiting(_)) => {
++                drop(guard);
++                // A waker destructor may cancel another filesystem operation.
++                drop(previous);
++            }
+             // The driver saw the completion, but it was never polled.
+             Lifecycle::Completed(cqe) => {
+-                if let Lifecycle::Cancelled(CancelData::Open(_)) = lifecycle {
++                let cancelled = ops.remove(index);
++                // `cancelled` drops after this unlock, as the owner of a write's
++                // `Bytes` buffer may cancel another operation from its destructor.
++                drop(guard);
++                if let Lifecycle::Cancelled(CancelData::Open(_)) = &cancelled {
+                     if let Ok(fd) = CqeResult::from(cqe).result {
+                         // SAFETY: the successful CQE result provides
+                         // a non-negative integer, and the event is
+                         // related to an open operation.
+                         unsafe { OwnedFd::from_raw_fd(fd as i32) };
+                     }
+                 }
+-                // We can safely remove the entry from the slab, as it has already been completed.
+-                ops.remove(index);
+             }
+-            prev => panic!("Unexpected state: {prev:?}"),
++            prev => {
++                drop(guard);
++                panic!("Unexpected state: {prev:?}");
++            }
+         };
+     }
+ }
+```
+
+**File**: `tokio/tests/fs_uring.rs` (modified, +104/-0)
+```diff
+@@ -290,6 +290,110 @@ fn completion_waker_panic_preserves_uring() {
+     }
  }
  
-+// Repro for tokio-rs/tokio#8780: LengthDelimitedCodec with num_skip(0)
-+// and a zero-length frame returns empty frames forever without
-+// consuming any input bytes (remote CPU exhaustion via Framed).
-+// The decoder must reject the frame with InvalidData instead.
 +#[test]
-+fn decode_num_skip_zero_zero_length_frame_is_rejected() {
-+    let mut codec = LengthDelimitedCodec::builder()
-+        .length_field_offset(0)
-+        .length_field_type::<u32>()
-+        .length_adjustment(0)
-+        .num_skip(0)
-+        .new_codec();
++fn drop_cancelled_waker_outside_lock() {
++    use std::sync::{Arc, Mutex};
++    use std::task::{Context, Wake, Waker};
 +
-+    let mut buf = BytesMut::from(&b"\x00\x00\x00\x00"[..]);
++    struct Owner<F> {
++        _other: Mutex<F>,
++    }
++    impl<F: Send + 'static> Wake for Owner<F> {
++        fn wake(self: Arc<Self>) {
++            drop(self);
++        }
++    }
 +
-+    let err = codec.decode(&mut buf).unwrap_err();
-+    assert_eq!(err.kind(), io::ErrorKind::InvalidData);
++    if io_uring::IoUring::new(2).is_err() {
++        return;
++    }
++    let rt = Builder::new_current_thread().enable_all().build().unwrap();
++    // Initialize io_uring on the runtime.
++    rt.block_on(tokio::fs::File::open("/dev/null")).unwrap();
++    let _enter = rt.enter();
++
++    let mut other = Box::pin(tokio::fs::File::open("/dev/null"));
++    let mut cx = Context::from_waker(Waker::noop());
++    tokio_test::assert_pending!(other.as_mut().poll_unpin(&mut cx));
++
++    let waker = Waker::from(Arc::new(Owner {
++        _other: Mutex::new(other),
++    }));
++    let mut open = Box::pin(tokio::fs::File::open("/dev/null"));
++    tokio_test::assert_pending!(open.as_mut().poll_unpin(&mut Context::from_waker(&waker)));
++    drop(waker);
++    // Cancelling `open` drops the last waker, which cancels `other`.
++    drop(open);
 +}
 +
-+// A zero-length payload is a legitimate empty frame under the default
-+// config: the 4-byte head is consumed and one empty frame is yielded.
-+// Guards against over-broad fixes for tokio-rs/tokio#8780.
++#[cfg(feature = "io-util")]
 +#[test]
-+fn decode_zero_length_frame_default_config_still_works() {
-+    let mut codec = LengthDelimitedCodec::new();
-+    let mut buf = BytesMut::from(&b"\x00\x00\x00\x00"[..]);
++fn drop_cancelled_write_buffer_outside_lock() {
++    use std::task::{Context, Waker};
 +
-+    let frame = codec.decode(&mut buf).unwrap();
-+    assert_eq!(frame.unwrap().len(), 0);
-+    assert!(buf.is_empty());
-+    assert!(codec.decode(&mut buf).unwrap().is_none());
++    struct Owner<F>(F);
++    impl<F> AsRef<[u8]> for Owner<F> {
++        fn as_ref(&self) -> &[u8] {
++            b"data"
++        }
++    }
++
++    if io_uring::IoUring::new(2).is_err() {
++        return;
++    }
++    let rt = Builder::new_current_thread().enable_all().build().unwrap();
++    // Initialize io_uring on the runtime.
++    rt.block_on(tokio::fs::File::open("/dev/null")).unwrap();
++    let _enter = rt.enter();
++
++    let mut other = Box::pin(tokio::fs::File::open("/dev/null"));
++    let mut cx = Context::from_waker(Waker::noop());
++    tokio_test::assert_pending!(other.as_mut().poll_unpin(&mut cx));
++
++    let path = NamedTempFile::new().unwrap().into_temp_path();
++    let buf = bytes::Bytes::from_owner(Owner(other));
++    let mut write = Box::pin(tokio::fs::write(&path, buf));
++    // Stop polling `write` once the kernel has written the data.
++    rt.block_on(poll_fn(|cx| {
++        if std::fs::read(&path).unwrap() == b"data" {
++            return Poll::Ready(());
++        }
++        tokio_test::assert_pending!(write.as_mut().poll_unpin(cx));
++        Poll::Pending
++    }));
++    // Cancelling the completed write drops the buffer owner, which cancels `other`.
++    drop(write);
 +}
 +
-+// The same rejection applies to any frame shorter than its own length
-+// field, not just a zero-length one: with num_skip(0) a 2-byte frame in
-+// a 4-byte head would leave head bytes behind for the next decode.
 +#[test]
-+fn decode_frame_shorter_than_length_field_is_rejected() {
-+    let mut codec = LengthDelimitedCodec::builder()
-+        .length_field_offset(0)
-+        .length_field_type::<u32>()
-+        .length_adjustment(0)
-+        .num_skip(0)
-+        .new_codec();
++fn cancel_completed_open_closes_fd() {
++    if io_uring::IoUring::new(2).is_err() {
++        return;
++    }
++    let rt = Builder::new_current_thread().enable_all().build().unwrap();
++    // `TempPath` closes the descriptor `NamedTempFile` keeps open.
++    let tmp = NamedTempFile::new().unwrap().into_temp_path();
++    let path = tmp.canonicalize().unwrap();
++    let is_open = || {
++        std::fs::read_dir("/proc/self/fd")
++            .unwrap()
++            .filter_map(|fd| std::fs::read_link(fd.ok()?.path()).ok())
++            .any(|target| target == path)
++    };
 +
-+    let mut buf = BytesMut::from(&b"\x00\x00\x00\x02"[..]);
-+
-+    let err = codec.decode(&mut buf).unwrap_err();
-+    assert_eq!(err.kind(), io::ErrorKind::InvalidData);
++    let mut open = Box::pin(tokio::fs::File::open(&path));
++    // Stop polling `open` once the kernel has opened the file.
++    rt.block_on(poll_fn(|cx| {
++        if is_open() {
++            return Poll::Ready(());
++        }
++        tokio_test::assert_pending!(open.as_mut().poll_unpin(cx));
++        Poll::Pending
++    }));
++    drop(open);
++    assert!(!is_open());
 +}
 +
-+// Boundary: a frame exactly as long as its own length field consumes
-+// the whole head and still decodes.
-+#[test]
-+fn decode_frame_equal_to_length_field_still_works() {
-+    let mut codec = LengthDelimitedCodec::builder()
-+        .length_field_offset(0)
-+        .length_field_type::<u32>()
-+        .length_adjustment(0)
-+        .num_skip(0)
-+        .new_codec();
-+
-+    let mut buf = BytesMut::from(&b"\x00\x00\x00\x04"[..]);
-+
-+    let frame = codec.decode(&mut buf).unwrap();
-+    assert_eq!(frame.unwrap().len(), 4);
-+    assert!(buf.is_empty());
-+}
-+
- // ===== Test utils =====
+ fn create_tmp_files(num_files: usize) -> (Vec<NamedTempFile>, Vec<PathBuf>) {
+     let mut files = Vec::with_capacity(num_files);
+     for _ in 0..num_files {
+```
+
+**File**: `tokio/tests/io_poll_aio.rs` (modified, +1/-1)
+```diff
+@@ -18,7 +18,7 @@ mod aio {
+     use super::*;
  
- struct Mock {
+     #[derive(Debug)]
+-    struct TokioSource<'fd>(mio_aio::Source<nix::sys::aio::AioFsync<'fd>>);
++    struct TokioSource<'fd>(mio_aio::Fsync<'fd>);
+ 
+     impl<'fd> AioSource for TokioSource<'fd> {
+         fn register_borrowed(&mut self, kq: BorrowedFd<'_>, token: usize) {
 ```
 
 ---
 
-### Incident Patch 2: `fc0d1517` (2026-11-18)
-**Commit Message**: rt: coalesce driver unparks in current_thread runtime (#8767)
+### Incident Patch 2: `c696333f` (2026-11-19)
+**Commit Message**: Merge 'tokio-1.53.x' into 'tokio-1.54.x' (#8810)
 
-The current_thread scheduler and time driver currently unpark the I/O
-driver unconditionally on every remote wakeup and timer registration,
-even when the runtime thread is not parked. This causes redundant wake
-syscalls and leaves stale wakeup tokens in the driver that trigger
-spurious non-blocking park turns. Thus, track whether the current_thread
-scheduler is parked and only unpark the driver when transitioning out of
-the parked state.
-
-Fixes: #5207
-
-**File**: `tokio/src/runtime/blocking/schedule.rs` (modified, +1/-1)
+**File**: `.github/workflows/uring-kernel-version-test.yml` (modified, +12/-6)
 ```diff
-@@ -45,7 +45,7 @@ impl task::Schedule for BlockingSchedule {
-             match &self.handle.inner {
-                 scheduler::Handle::CurrentThread(handle) => {
-                     handle.driver.clock.allow_auto_advance();
--                    handle.driver.unpark();
-+                    handle.unpark();
-                 }
-                 #[cfg(feature = "rt-multi-thread")]
-                 scheduler::Handle::MultiThread(_) => {}
+@@ -44,24 +44,30 @@ jobs:
+       # to check if the fallback mechanism works
+       - name: Generate test binaries with io_uring enabled
+         run: |
++          set -euo pipefail
+           # Build both integration (tokio/tests/) and unit (e.g., tokio/src/fs/file/tests.rs) tests with io_uring enabled
+           rustup target add x86_64-unknown-linux-musl
+           RUSTFLAGS="--cfg tokio_unstable" \
+             cargo test -p tokio --features full,io-uring \
+-            --target x86_64-unknown-linux-musl --test 'fs*' --lib --no-run
++            --target x86_64-unknown-linux-musl --test 'fs*' --lib --no-run \
++            --message-format=json-render-diagnostics \
++            | jq -r 'select(.reason == "compiler-artifact" and .profile.test == true and .executable != null) | .executable' > test-binaries.txt
+ 
+       - name: Prepare initramfs + tests binaries
+         run: |
+           set -e
+           rm -rf initramfs
+           mkdir -p initramfs/{bin,bin/tests,sbin,proc,sys,tmp}
+ 
++          if [ ! -s test-binaries.txt ]; then
++            echo "no test binaries found"
++            exit 1
++          fi
++
+           # Copy test binaries into initramfs
+-          for bin in target/x86_64-unknown-linux-musl/debug/deps/{fs_*,tokio-*}; do
+-            if [ -f "$bin" ] && [ -x "$bin" ]; then
+-              cp "$bin" initramfs/bin/tests
+-            fi
+-          done
++          while IFS= read -r bin; do
++            cp "$bin" initramfs/bin/tests
++          done < test-binaries.txt
+ 
+           # Add BusyBox & symlinks
+           cp /usr/bin/busybox initramfs/bin/
 ```
 
-**File**: `tokio/src/runtime/scheduler/current_thread/mod.rs` (modified, +45/-9)
+**File**: `tokio/Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -95,6 +95,10 @@ struct Shared {
-     /// Indicates whether the blocked on thread was woken.
-     woken: AtomicBool,
+@@ -132,7 +132,7 @@ libc = { version = "0.2.168", optional = true }
+ libc = { version = "0.2.168" }
  
-+    /// Indicates whether the thread is currently parked in the driver so
-+    /// remote wakeups are coalesced.
-+    parked: AtomicBool,
-+
-     /// Scheduler configuration options
-     config: Config,
+ [target.'cfg(all(unix, not(target_os = "emscripten")))'.dev-dependencies]
+-nix = { version = "0.31.0", default-features = false, features = ["aio", "fs", "socket"] }
++nix = { version = "0.31.0", default-features = false, features = ["fs", "socket"] }
  
-@@ -169,6 +173,7 @@ impl CurrentThread {
-                 inject: Inject::new(),
-                 owned: OwnedTasks::new(1),
-                 woken: AtomicBool::new(false),
-+                parked: AtomicBool::new(false),
-                 config,
-                 scheduler_metrics: SchedulerMetrics::new(),
-                 worker_metrics,
-@@ -413,15 +418,37 @@ impl Context {
-             core = c;
-         }
+ [target.'cfg(windows)'.dependencies.windows-sys]
+ version = "0.61"
+```
+
+**File**: `tokio/src/runtime/io/driver/uring.rs` (modified, +14/-5)
+```diff
+@@ -352,21 +352,30 @@ impl Handle {
  
-+        // Check for pending work before setting `parked` to avoid an atomic
-+        // swap if work was already scheduled (e.g. by `before_park`).
-         if !self.has_pending_work(&core) {
--            // Park until the thread is signaled
--            core.metrics.about_to_park();
--            core.submit_metrics(handle);
-+            // Mark the scheduler as parked before re-checking for pending work.
-+            // Using `swap` (an RMW) ensures a total modification order with the
-+            // `swap` in `Handle::unpark`, so either `unpark` observes
-+            // `parked == true` and unparks the driver, or our `swap` reads from
-+            // the release sequence headed by `unpark`'s `swap(false, AcqRel)`
-+            // and the second `has_pending_work` check below observes the work
-+            // queued before `unpark`.
-+            handle.shared.parked.swap(true, AcqRel);
- 
--            core = self.park_internal(core, handle, &mut driver, None);
-+            if !self.has_pending_work(&core) {
-+                // Park until the thread is signaled
-+                core.metrics.about_to_park();
-+                core.submit_metrics(handle);
- 
--            core.metrics.unparked();
--            core.submit_metrics(handle);
-+                core = self.park_internal(core, handle, &mut driver, None);
-+
-+                handle.shared.parked.swap(false, AcqRel);
-+
-+                core.metrics.unparked();
-+                core.submit_metrics(handle);
-+            } else {
-+                handle.shared.parked.swap(false, AcqRel);
-+
-+                core.submit_metrics(handle);
-+
-+                core =
-+                    self.park_internal(core, handle, &mut driver, Some(Duration::from_millis(0)));
+         let cancel_data = data.expect("Data should be present").cancel();
+         match mem::replace(lifecycle, Lifecycle::Cancelled(cancel_data)) {
+-            Lifecycle::Submitted | Lifecycle::Waiting(_) => (),
++            previous @ (Lifecycle::Submitted | Lifecycle::Waiting(_)) => {
++                drop(guard);
++                // A waker destructor may cancel another filesystem operation.
++                drop(previous);
 +            }
-         } else {
-             // `before_park` scheduled work (e.g. an `on_thread_park` hook that woke the
-             // `block_on` future), so we don't block. We must still poll the driver once
-@@ -455,7 +482,10 @@ impl Context {
-     }
- 
-     fn has_pending_work(&self, core: &Core) -> bool {
--        !core.tasks.is_empty() || !self.defer.is_empty() || self.handle.shared.woken.load(Acquire)
-+        !core.tasks.is_empty()
-+            || !self.defer.is_empty()
-+            || self.handle.shared.woken.load(Acquire)
-+            || !self.handle.shared.inject.is_empty()
-     }
- 
-     fn park_internal(
-@@ -655,6 +685,12 @@ impl Handle {
-         assert_eq!(0, worker);
-         &self.shared.worker_metrics
-     }
-+
-+    pub(crate) fn unpark(&self) {
-+        if self.shared.parked.swap(false, AcqRel) {
-+            self.driver.unpark();
-+        }
-+    }
- }
- 
- cfg_unstable_metrics! {
-@@ -739,7 +775,7 @@ impl Schedule for Arc<Handle> {
- 
-                 // Schedule the task
-                 self.shared.inject.push(task);
--                self.driver.unpark();
-+                self.unpark();
-             }
-         });
-     }
-@@ -802,7 +838,7 @@ impl Wake for Handle {
-                     arc_self.driver.unpark_self();
-                 }
-                 _ => {
--                    arc_self.driver.unpark();
-+                    arc_self.unpark();
-                 }
-             });
-         }
-```
-
-**File**: `tokio/src/runtime/scheduler/inject.rs` (modified, +4/-0)
-```diff
-@@ -36,6 +36,10 @@ impl<T: 'static> Inject<T> {
-         }
-     }
- 
-+    pub(crate) fn is_empty(&self) -> bool {
-+        self.shared.is_empty()
-+    }
-+
-     // Kind of annoying to have to include the cfg here
-     #[cfg(any(all(tokio_unstable, feature = "taskdump"), feature = "rt-multi-thread"))]
-     pub(crate) fn is_closed(&self) -> bool {
-```
-
-**File**: `tokio/src/runtime/scheduler/inject/rt_multi_thread.rs` (modified, +0/-4)
-```diff
-@@ -89,10 +89,6 @@ impl<T: 'static> InjectQueue<T> {
- }
- 
- impl<T: 'static> Inject<T> {
--    pub(crate) fn is_empty(&self) -> bool {
--        self.shared.is_empty()
--    }
--
-     /// Pushes several values into the queue.
-     #[inline]
-     pub(crate) fn push_batch<I>(&self, mut iter: I)
-```
-
-**File**: `tokio/src/runtime/scheduler/mod.rs` (modified, +14/-0)
-```diff
-@@ -62,6 +62,20 @@ impl Handle {
-             Handle::Disabled => unreachable!(),
-         }
-     }
-+
-+    #[cfg(feature = "time")]
-+    pub(crate) fn unpark_timer(&self) {
-+        match *self {
-+            #[cfg(feature = "rt")]
-+            Handle::CurrentThread(ref h) => h.unpark(),
-+
-+            #[cfg(feature = "rt-multi-thread")]
-+            Handle::MultiThread(ref h) => h.driver.io.unpark(),
-+
-+            #[cfg(not(feature = "rt"))]
-+            Handle::Disabled => unreachable!(),
-+        }
-+    }
- }
- 
- cfg_rt! {
-```
-
-**File**: `tokio/src/runtime/tests/loom_current_thread.rs` (modified, +35/-0)
-```diff
-@@ -160,6 +160,41 @@ fn drop_jh_during_schedule() {
-     });
- }
- 
-+#[test]
-+fn remote_wake_block_on() {
-+    loom::model(|| {
-+        let rt = Builder::new_current_thread().build().unwrap();
-+        let (tx, rx) = oneshot::channel();
-+
-+        let th = thread::spawn(move || {
-+            tx.send(42).unwrap();
-+        });
-+
-+        let out = rt.block_on(rx).unwrap();
-+        assert_eq!(out, 42);
-+        th.join().unwrap();
-+    });
-+}
-+
-+#[test]
-+fn remote_spawn_wakes_park() {
-+    loom::model(|| {
-+        let rt = Builder::new_current_thread().build().unwrap();
-+        let handle = rt.handle().clone();
-+        let (tx, rx) = oneshot::channel();
-+
-+        let th = thread::spawn(move || {
-+            handle.spawn(async move {
-+                tx.send(42).unwrap();
-+            });
-+        });
-+
-+        let out = rt.block_on(rx).unwrap();
-+        assert_eq!(out, 42);
-+        th.join().unwrap();
-+    });
-+}
-+
- struct BlockedFuture {
-     rx: Receiver<()>,
-     num_polls: Arc<AtomicUsize>,
-```
-
-**File**: `tokio/src/runtime/time/entry.rs` (modified, +2/-2)
-```diff
-@@ -480,7 +480,7 @@ impl TimerEntry {
-     pub(crate) fn init(self: Pin<&mut Self>, deadline: u64) {
-         unsafe {
-             self.driver()
--                .reregister(&self.driver.driver().io, deadline, (&self.inner).into());
-+                .reregister(&self.driver, deadline, (&self.inner).into());
-         }
-     }
- 
-@@ -523,7 +523,7 @@ impl TimerEntry {
- 
-         unsafe {
-             self.driver()
--                .reregister(&self.driver.driver().io, deadline, (&self.inner).into());
-+                .reregister(&self.driver, deadline, (&self.inner).into());
-         }
-     }
- 
-```
-
-**File**: `tokio/src/runtime/time/mod.rs` (modified, +18/-13)
-```diff
-@@ -23,7 +23,8 @@ use super::time_alt;
- 
- use crate::loom::sync::atomic::{AtomicBool, Ordering};
- use crate::loom::sync::Mutex;
--use crate::runtime::driver::{self, IoHandle, IoStack};
-+use crate::runtime::driver::{self, IoStack};
-+use crate::runtime::scheduler;
- use crate::time::error::Error;
- use crate::time::{Clock, Duration};
- use crate::util::WakeList;
-@@ -388,11 +389,11 @@ impl Handle {
-     /// the `TimerEntry`)
-     pub(self) unsafe fn reregister(
-         &self,
--        unpark: &IoHandle,
-+        rt_handle: &scheduler::Handle,
-         new_tick: u64,
-         entry: NonNull<TimerShared>,
-     ) {
--        let waker = unsafe {
-+        let (waker, unpark) = unsafe {
-             let mut lock = self.inner.lock();
- 
-             // We may have raced with a firing/deregistration, so check before
-@@ -405,7 +406,10 @@ impl Handle {
-             let entry = entry.as_ref().handle();
- 
-             if self.is_shutdown() {
--                unsafe { entry.fire(Err(crate::time::error::Error::shutdown())) }
-+                (
-+                    unsafe { entry.fire(Err(crate::time::error::Error::shutdown())) },
-+                    false,
-+                )
-             } else {
-                 entry.set_expiration(new_tick);
- 
-@@ -414,24 +418,25 @@ impl Handle {
-                 // the timer entry.
-                 match unsafe { lock.wheel.insert(entry) } {
-                     Ok(when) => {
--                        if lock
-+                        let unpark = lock
-                             .next_wake
--                            .is_none_or(|next_wake| when < next_wake.get())
--                        {
--                            unpark.unpark();
--                        }
-+                            .is_none_or(|next_wake| when < next_wake.get());
- 
--                        None
-+                        (None, unpark)
-+                    }
-+                    Err((entry, crate::time::error::InsertError::Elapsed)) => {
-+                        (unsafe { entry.fire(Ok(())) }, false)
+             // The driver saw the completion, but it was never polled.
+             Lifecycle::Completed(cqe) => {
+-                if let Lifecycle::Cancelled(CancelData::Open(_)) = lifecycle {
++                let cancelled = ops.remove(index);
++                // `cancelled` drops after this unlock, as the owner of a write's
++                // `Bytes` buffer may cancel another operation from its destructor.
++                drop(guard);
++                if let Lifecycle::Cancelled(CancelData::Open(_)) = &cancelled {
+                     if let Ok(fd) = CqeResult::from(cqe).result {
+                         // SAFETY: the successful CQE result provides
+                         // a non-negative integer, and the event is
+                         // related to an open operation.
+                         unsafe { OwnedFd::from_raw_fd(fd as i32) };
                      }
--                    Err((entry, crate::time::error::InsertError::Elapsed)) => unsafe {
--                        entry.fire(Ok(()))
--                    },
                  }
+-                // We can safely remove the entry from the slab, as it has already been completed.
+-                ops.remove(index);
              }
- 
-             // Must release lock before invoking waker to avoid the risk of deadlock.
+-            prev => panic!("Unexpected state: {prev:?}"),
++            prev => {
++                drop(guard);
++                panic!("Unexpected state: {prev:?}");
++            }
          };
+     }
+ }
+```
+
+**File**: `tokio/tests/fs_uring.rs` (modified, +104/-0)
+```diff
+@@ -290,6 +290,110 @@ fn completion_waker_panic_preserves_uring() {
+     }
+ }
  
-+        if unpark {
-+            rt_handle.unpark_timer();
-+        }
++#[test]
++fn drop_cancelled_waker_outside_lock() {
++    use std::sync::{Arc, Mutex};
++    use std::task::{Context, Wake, Waker};
 +
-         // The timer was fired synchronously as a result of the reregistration.
-         // Wake the waker; this is needed because we might reset _after_ a poll,
-         // and otherwise the task won't be awoken to poll again.
++    struct Owner<F> {
++        _other: Mutex<F>,
++    }
++    impl<F: Send + 'static> Wake for Owner<F> {
++        fn wake(self: Arc<Self>) {
++            drop(self);
++        }
++    }
++
++    if io_uring::IoUring::new(2).is_err() {
++        return;
++    }
++    let rt = Builder::new_current_thread().enable_all().build().unwrap();
++    // Initialize io_uring on the runtime.
++    rt.block_on(tokio::fs::File::open("/dev/null")).unwrap();
++    let _enter = rt.enter();
++
++    let mut other = Box::pin(tokio::fs::File::open("/dev/null"));
++    let mut cx = Context::from_waker(Waker::noop());
++    tokio_test::assert_pending!(other.as_mut().poll_unpin(&mut cx));
++
++    let waker = Waker::from(Arc::new(Owner {
++        _other: Mutex::new(other),
++    }));
++    let mut open = Box::pin(tokio::fs::File::open("/dev/null"));
++    tokio_test::assert_pending!(open.as_mut().poll_unpin(&mut Context::from_waker(&waker)));
++    drop(waker);
++    // Cancelling `open` drops the last waker, which cancels `other`.
++    drop(open);
++}
++
++#[cfg(feature = "io-util")]
++#[test]
++fn drop_cancelled_write_buffer_outside_lock() {
++    use std::task::{Context, Waker};
++
++    struct Owner<F>(F);
++    impl<F> AsRef<[u8]> for Owner<F> {
++        fn as_ref(&self) -> &[u8] {
++            b"data"
++        }
++    }
++
++    if io_uring::IoUring::new(2).is_err() {
++        return;
++    }
++    let rt = Builder::new_current_thread().enable_all().build().unwrap();
++    // Initialize io_uring on the runtime.
++    rt.block_on(tokio::fs::File::open("/dev/null")).unwrap();
++    let _enter = rt.enter();
++
++    let mut other = Box::pin(tokio::fs::File::open("/dev/null"));
++    let mut cx = Context::from_waker(Waker::noop());
++    tokio_test::assert_pending!(other.as_mut().poll_unpin(&mut cx));
++
++    let path = NamedTempFile::new().unwrap().into_temp_path();
++    let buf = bytes::Bytes::from_owner(Owner(other));
++    let mut write = Box::pin(tokio::fs::write(&path, buf));
++    // Stop polling `write` once the kernel has written the data.
++    rt.block_on(poll_fn(|cx| {
++        if std::fs::read(&path).unwrap() == b"data" {
++            return Poll::Ready(());
++        }
++        tokio_test::assert_pending!(write.as_mut().poll_unpin(cx));
++        Poll::Pending
++    }));
++    // Cancelling the completed write drops the buffer owner, which cancels `other`.
++    drop(write);
++}
++
++#[test]
++fn cancel_completed_open_closes_fd() {
++    if io_uring::IoUring::new(2).is_err() {
++        return;
++    }
++    let rt = Builder::new_current_thread().enable_all().build().unwrap();
++    // `TempPath` closes the descriptor `NamedTempFile` keeps open.
++    let tmp = NamedTempFile::new().unwrap().into_temp_path();
++    let path = tmp.canonicalize().unwrap();
++    let is_open = || {
++        std::fs::read_dir("/proc/self/fd")
++            .unwrap()
++            .filter_map(|fd| std::fs::read_link(fd.ok()?.path()).ok())
++            .any(|target| target == path)
++    };
++
++    let mut open = Box::pin(tokio::fs::File::open(&path));
++    // Stop polling `open` once the kernel has opened the file.
++    rt.block_on(poll_fn(|cx| {
++        if is_open() {
++            return Poll::Ready(());
++        }
++        tokio_test::assert_pending!(open.as_mut().poll_unpin(cx));
++        Poll::Pending
++    }));
++    drop(open);
++    assert!(!is_open());
++}
++
+ fn create_tmp_files(num_files: usize) -> (Vec<NamedTempFile>, Vec<PathBuf>) {
+     let mut files = Vec::with_capacity(num_files);
+     for _ in 0..num_files {
+```
+
+**File**: `tokio/tests/io_poll_aio.rs` (modified, +1/-1)
+```diff
+@@ -18,7 +18,7 @@ mod aio {
+     use super::*;
+ 
+     #[derive(Debug)]
+-    struct TokioSource<'fd>(mio_aio::Source<nix::sys::aio::AioFsync<'fd>>);
++    struct TokioSource<'fd>(mio_aio::Fsync<'fd>);
+ 
+     impl<'fd> AioSource for TokioSource<'fd> {
+         fn register_borrowed(&mut self, kq: BorrowedFd<'_>, token: usize) {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8811** (2026-11-20): Merge 'tokio-1.54.x' into 'master' (@Darksonn)
+- **PR #8810** (2026-11-20): Merge 'tokio-1.53.x' into 'tokio-1.54.x' (@Darksonn)
+- **PR #8809** (2026-11-20): Merge 'tokio-1.51.x' into 'tokio-1.53.x' (@Darksonn)
 - **PR #8808** (2026-11-19): ci: read io_uring test binary paths from cargo json output (@Darksonn)
 - **PR #8802** (2026-11-17): metrics: update the dead H2 histogram link (@farisbasha)
 - **PR #8801** (2026-11-18): tests: decouple FreeBSD aio test from nix dev-dependency (@Darksonn)
-- **PR #8800** (closed): net: read uninit socket buffers via socket2 (@alex09x)
-- **PR #8795** (2026-11-17): deps: bump `nix` to version 0.32.0 (@xtqqczze)
-- **PR #8794** (closed): ci: remove +atomics flags from wasm32-wasip1 job (@ADD-SP)
 
 ---
 
@@ -2440,41 +2448,47 @@ Fixes: #5207
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. codec: reject frames shorter than their length field in `LengthDelimitedCodec`
+## X. Merge 'tokio-1.54.x' into 'master'
 
 **RULE**:
-When implementing operations in `tokio-util/src/codec/length_delimited.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tokio-rs/tokio. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/uring-kernel-version-test.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tokio-rs/tokio. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3f0ffc85`: codec: reject frames shorter than their length field in `LengthDelimitedCodec`. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `717c508f`: Merge 'tokio-1.54.x' into 'master'. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tokio-util/src/codec/length_delimited.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/uring-kernel-version-test.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        // Reject the frame if the frame ends before its own length field.
-        //
-        // In the worst case, this can lead to infinite loops if not
-        // rejected.
-        if n.saturating_add(self.builder.get_num_skip()) < head_len {
-            return Err(io::Error::new(
-                io::ErrorKind::InvalidData,
-                "the frame is shorter than its own length field",
-            ));
-        }
+          set -euo pipefail
+            --target x86_64-unknown-linux-musl --test 'fs*' --lib --no-run \
+            --message-format=json-render-diagnostics \
+            | jq -r 'select(.reason == "compiler-artifact" and .profile.test == true and .executable != null) | .executable' > test-binaries.txt
+          if [ ! -s test-binaries.txt ]; then
+            echo "no test binaries found"
+            exit 1
+          fi
 
+          while IFS= read -r bin; do
+            cp "$bin" initramfs/bin/tests
+          done < test-binaries.txt
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+            --target x86_64-unknown-linux-musl --test 'fs*' --lib --no-run
+          for bin in target/x86_64-unknown-linux-musl/debug/deps/{fs_*,tokio-*}; do
+            if [ -f "$bin" ] && [ -x "$bin" ]; then
+              cp "$bin" initramfs/bin/tests
+            fi
+          done
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3f0ffc85` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `717c508f` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

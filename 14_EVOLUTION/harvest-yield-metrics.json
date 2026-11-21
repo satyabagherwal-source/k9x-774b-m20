@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T02:29:56.897Z",
-  "total_cycles_completed": 11142,
-  "total_learnings_persisted": 11142,
-  "total_rules_promoted": 10499,
+  "last_updated": "2026-11-21T02:57:50.203Z",
+  "total_cycles_completed": 11146,
+  "total_learnings_persisted": 11146,
+  "total_rules_promoted": 10503,
   "history": [
-    {
-      "timestamp": "2026-11-20T06:10:48.488Z",
-      "repository": "fujiapple852/trippy",
-      "learningId": "learn-github-fujiapple852-trippy",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T06:10:56.097Z",
-      "repository": "ShiftHackZ/SDAI-KMP",
-      "learningId": "learn-github-shifthackz-sdai-kmp",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T06:19:24.636Z",
-      "repository": "erkamyaman/rust-anything",
-      "learningId": "learn-github-erkamyaman-rust-anything",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T06:19:28.918Z",
-      "repository": "SimonSchubert/Kai",
-      "learningId": "learn-github-simonschubert-kai",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-20T06:19:37.532Z",
       "repository": "StarRocks/starrocks",
@@ -1403,6 +1375,34 @@
       "repository": "astral-sh/ruff",
       "learningId": "learn-github-astral-sh-ruff",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T02:57:41.681Z",
+      "repository": "tokio-rs/tokio",
+      "learningId": "learn-github-tokio-rs-tokio",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T02:57:43.891Z",
+      "repository": "dubzzz/fast-check",
+      "learningId": "learn-github-dubzzz-fast-check",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T02:57:46.063Z",
+      "repository": "iliyami/MacSai",
+      "learningId": "learn-github-iliyami-macsai",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T02:57:50.203Z",
+      "repository": "aquasecurity/trivy",
+      "learningId": "learn-github-aquasecurity-trivy",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

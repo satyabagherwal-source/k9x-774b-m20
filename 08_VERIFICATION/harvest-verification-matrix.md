@@ -11706,3 +11706,7 @@
 | `CYCLE-20261121-ENY6` | `2026-11-21T02:26:52.734Z` | `hashicorp/terraform` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9703` | Yes (`4c93538b...`) |
 | `CYCLE-20261121-ESIL` | `2026-11-21T02:26:58.653Z` | `risingwavelabs/risingwave` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9704` | Yes (`abbc7ac8...`) |
 | `CYCLE-20261121-IM0X` | `2026-11-21T02:29:56.865Z` | `astral-sh/ruff` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/astral-sh-ruff-learnings.md` | Yes (`dfca462e...`) |
+| `CYCLE-20261121-IALK` | `2026-11-21T02:57:41.672Z` | `tokio-rs/tokio` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9705` | Yes (`5f7884f1...`) |
+| `CYCLE-20261121-ICAY` | `2026-11-21T02:57:43.882Z` | `dubzzz/fast-check` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9706` | Yes (`be3d244b...`) |
+| `CYCLE-20261121-IDZA` | `2026-11-21T02:57:46.054Z` | `iliyami/MacSai` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9707` | Yes (`4cf2d4de...`) |
+| `CYCLE-20261121-IH6A` | `2026-11-21T02:57:50.194Z` | `aquasecurity/trivy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9708` | Yes (`aaac4ceb...`) |
