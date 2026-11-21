@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T23:43:34.733Z",
+  "timestamp": "2026-11-21T12:38:13.761Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hmbown-codewhale-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hmbown-codewhale-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T23:43:34.733Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T12:38:13.761Z`  
 > **Learning ID**: `LEARN-EVO-hmbown-codewhale-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hmbown-codewhale-learnings.md`  
 > **Source**: github ([https://github.com/Hmbown/Codewhale](https://github.com/Hmbown/Codewhale))  
-> **Source Version**: `3c8dcd7f`  
+> **Source Version**: `6c211938`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T23:43:20.170Z  
+> **Timestamp**: 2026-11-21T12:37:56.283Z  
 > **Learning ID**: `learn-github-codewhale-hq-codewhale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hmbown-codewhale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Hmbown/Codewhale](https://github.com/Hmbown/Codewhale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T23:43:19.909Z  
+> **Harvest Timestamp**: 2026-11-21T12:37:56.277Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: An open-source coding agent for your terminal, written in Rust. It works with any model, can split one task across several agents, and every line of it is yours to read.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 41182 stars
+- **Stars / Engagement**: 41193 stars
 
 ---
 
@@ -1324,7 +1324,7 @@ pub enum FragmentId {
     Route,
     AgentTopology,
     SkillsTools,
-    TokenBudget,
+    SessionRelay,
     ProjectInstructions,
     Constitution,
 }
@@ -1338,7 +1338,7 @@ impl FragmentId {
             Self::Route => "route",
             Self::AgentTopology => "agent_topology",
             Self::SkillsTools => "skills_tools",
-            Self::TokenBudget => "token_budget",
+            Self::SessionRelay => "session_relay",
             Self::ProjectInstructions => "project_instructions",
             Self::Constitution => "constitution",
         }
@@ -1351,7 +1351,7 @@ impl FragmentId {
             Self::Route => "<!-- cw:ctx:route -->",
             Self::AgentTopology => "<!-- cw:ctx:agent_topology -->",
             Self::SkillsTools => "<!-- cw:ctx:skills_tools -->",
-            Self::TokenBudget => "<!-- cw:ctx:token_budget -->",
+            Self::SessionRelay => "<!-- cw:ctx:session_relay -->",
             Self::ProjectInstructions => "<!-- cw:ctx:project_instructions -->",
             Self::Constitution => "<!-- cw:ctx:constitution -->",
         }
@@ -1364,7 +1364,7 @@ impl FragmentId {
             Self::Route => FragmentRole::Route,
             Self::AgentTopology => FragmentRole::AgentTopology,
             Self::SkillsTools => FragmentRole::SkillsTools,
-            Self::TokenBudget => FragmentRole::TokenBudget,
+            Self::SessionRelay => FragmentRole::SessionRelay,
             Self::ProjectInstructions => FragmentRole::ProjectInstructions,
             Self::Constitution => FragmentRole::Constitution,
         }
@@ -1377,7 +1377,7 @@ impl FragmentId {
             Self::Route,
             Self::AgentTopology,
             Self::SkillsTools,
-            Self::TokenBudget,
+            Self::SessionRelay,
             Self::ProjectInstructions,
             Self::Constitution,
         ]
@@ -1391,7 +1391,7 @@ pub enum FragmentRole {
     Route,
     AgentTopology,
     SkillsTools,
-    TokenBudget,
+    SessionRelay,
     ProjectInstructions,
     Constitution,
 }
@@ -1405,7 +1405,7 @@ impl FragmentRole {
             Self::Route => "route",
             Self::AgentTopology => "agent_topology",
             Self::SkillsTools => "skills_tools",
-            Self::TokenBudget => "token_budget",
+            Self::SessionRelay => "session_relay",
             Self::ProjectInstructions => "project_instructions",
             Self::Constitution => "constitution",
         }
@@ -1609,7 +1609,7 @@ pub fn read_project_instruction_file(file: std::fs::File) -> Option<String> {
             .max(observed_len)
             .saturating_sub(INSTRUCTIONS_FILE_MAX_BYTES as u64);
         text.push_str(&format!("\n[…truncated: {omitted} bytes omitted]"));
-        return S
+     
 ```
 
 ### Core Architecture Module: `crates/core/src/lib.rs`
@@ -1991,11 +1991,11 @@ pub use codewhale_protocol::request::*;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7399** (2026-11-19): **fix(engine): unique fallback ids for non-streaming parallel tool calls**
-  *Symptoms*: ## Summary - **Audit V3 (verified):** non-streaming `parse_chat_message` used the constant `"tool_call"` for every tool call missing an `id`, so two id-less parallel calls collided and `validate_tool_call_ids_for_protocol` failed the whole turn with "duplicate tool call pairing ids". - Now `.enumerate()` + `call_{index}` — mirroring the streaming decoder fix. Regression twin test added; 84/84 fallback tests pass.  Found by the overnight 0.10.3 audit.  ## Test plan - [x] `cargo test -p codewhale-engine --lib fallback` — 84 pass - [x] fmt clean  Generated with [Devin](https://devin.ai) <!-- devin-review-badge-begin -->  ---  <a href="https://app.devin.ai/review/codewhale-hq/codewhale/pull/7399" target="_blank"><picture><source media="(prefers-color-scheme: dark)" srcset="https://static.devin.ai/assets/gh-devin-review-dark.svg?v=4"><img src="https://static.devin.ai/assets/gh-devin-review-light.svg?v=4" alt="Devin Review"></picture></a> <!-- devin-review-badge-end -->
+- **Issue #7449** (2026-11-21): **fix(engine): compact diagnostic late-usage receipts at the ledger bound (#6842)**
+  *Symptoms*: ## What and why  The `.late-usage/<id>.json` ledger keeps a 1 MiB bound and refused the whole write when adding a record would cross it. Diagnostic-only receipts — the route-decision evidence written by `persist_late_decision_receipt` — carry no spend, but they count toward that bound and can fill it on their own.  This makes the write compact instead of refusing: when a candidate would exceed 1 MiB, drop the oldest diagnostic-only records until it fits, and keep every spend-bearing record (settled or unresolved) unchanged. Replay still dedupes by `source_fingerprint`, so no spend is forgotten or double-counted.  ## Where this came from  Refs #6842. This is the sidecar half of the issue; bounding the unordered replay index (`usage_source_fingerprints`) and the retained journal archive policy remain open there.  ## How I tested it  - `cargo test -p codewhale-engine --lib oversized_ledger_compacts_diagnostic_receipts_before_failing` — 1 passed (the new fixture builds a ledger over 1 MiB with diagnostic + spend records; after the write, all spend records survive, the diagnostic count shrinks, and the file is within the bound) - The existing bound tests still pass: a ledger made only of spend-bearing records still returns `InvalidData` rather than silently truncating a receipt. - `cargo fmt --all -- --check` — passed - The `Behaviour:` line is in the commit body; `scripts/check-behaviour-line.py` arrives with #7445 and is not on this branch yet.  ## Checklist  - [x] One focused c
 
-- **Issue #7379** (2026-11-19): **[CI only, do not merge] fix(sanitize,config,engine): fast-path secret redaction and retire OpenCode Zen free rows (CW-8225, CW-8257)**
-  *Symptoms*: ## Summary 0.10.3 slice `ci/redact-and-opencode-zen-0103-v1` (CURRENT_DECISIONS §235, ops gap map codewhale-hq/codewhale-ops#20). **Stacked on `ci/release-prep-0103-v2` (`25e73276b5`)**: only the commits after `25e73276b5` belong to this slice; the 16 commits below it are the reviewed release-prep stack, which lands first. Opened to get hosted `ci.yml` on this exact head (`workflow_dispatch` is not available to this session); lands through the designated lander after 2x exact-SHA `VERDICT: LAND`, not by merging this PR.  Slice commit message:  ``` fix(sanitize,config,engine): add fast-path secret redaction and retire dead-end OpenCode Zen free rows (CW-8225, CW-8257)  - CW-8225 (#7347): Add byte-identical fast-path pre-scans in crates/sanitize/src/redact.rs   so ordinary text without secret indicators skips regex/tokenization passes on every   model request, covered by fast_path_is_byte_identical_to_unoptimized_reference_across_corpus. - CW-8257 (#7365): Remove the 11 OpenCode Zen `*-free` rows from the curated catalog   (catalog_corrections.json, bundled Models.dev seed, model_resolution.golden.tsv,   reviewed.rs transport count) because OpenCode restricts them to its own client with   HTTP 429 FreeUsageLimitError and Codewhale does not spoof OpenCode's client. Document   the boundary in docs/PROVIDERS.md and docs/zh_hans/PROVIDERS.md and surface a clear   client-restriction hint in opencode_go_hint. ```   <!-- devin-bot-banner-begin --> ---  <p><picture><source srcset="http
+- **Issue #7431** (2026-11-21): **fix(engine): classify local read-only deferred tools as Safe in get_tool_category**
+  *Symptoms*: ## What and why  `crates/engine/src/core/authority.rs` `get_tool_category()` still left a number of registered `ToolCapability::ReadOnly` local tools, canonical read-action targets, and legacy `tool_search` spellings unclassified, so they fell through to `ToolCategory::Unknown` and Auto-Review routed every call to `AskUser` (`auto_review.rs:1582`).  Each candidate tool from #7407 was audited individually against its implementation and capabilities before classifying:  ### Classified as `ToolCategory::Safe`  | Tool / Target | Rationale | | --- | --- | | `is_tool_search_tool(name)` (`tool_search`, `tool_search_tool_regex`, `tool_search_tool_bm25`) | Replaces the literal `"tool_search"` arm with the shared `codewhale_tools::names::is_tool_search_tool` helper so legacy dispatchable spellings (`turn_loop.rs:1136-1146`, `:2238`) also classify as `Safe`. | | `context_archive_get`, `context_archive_search` | `ReadOnly` / `Auto`. Bounded, secret-scrubbed in-process reads of the current session's compaction archive. | | `session_get`, `session_search` | `ReadOnly` / `Auto`. Bounded, workspace-scoped in-process reads of prior session metadata/tails. | | `memory_get`, `memory_search` | `ReadOnly` / `Auto`. Bounded, workspace-scoped in-process reads of `NativeMemoryStore`. | | `project_map` | `ReadOnly`, `Sandboxable` / `Auto`. In-process directory walk (`"project"` was already in `Safe`, while the registered tool name is `"project_map"`). | | `validate_data` | `ReadOnly`, `Sandboxable` /
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2012,525 +2012,510 @@ pub use codewhale_protocol::request::*;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bacf9dea` (2026-11-19)
-**Commit Message**: 0.10.3 lane 8: execpolicy launcher panic and payload-hiding fixes (#7385)
+### Incident Patch 1: `a98c8010` (2026-11-21)
+**Commit Message**: fix(engine): retain every diagnostic that fits the usage ledger
 
-* fix(execpolicy): guard launcher verb index on flag-only commands
+Measure serialized records and their array separators in insertion order before pruning. A large old record can free enough space by itself. Check every surviving record against the expected ledger, including unresolved usage.
 
-Expander::record_launcher_commands indexed tokens[verb_idx] unchecked in the nix, npm, launchctl, and VERB_LAUNCHERS arms when resolve_wrapper_targets appended tokens.len() after scanning global flags with no subcommand (e.g. docker --version, npm --version). Guard all four arms with tokens.get(verb_idx) and add launcher_flag_only_commands_do_not_panic.
+Behaviour: preserve the newest routing diagnostics when an oversized ledger contains records of different lengths. An exhaustive probe of the production retention block passed 15,408 serialized cases. Formatting and release-version checks passed.
 
-Restacked onto ci/release-prep-0103-v2 25e73276b5 from 03aee41843 (PR #7375, 2x LAND); source patch identical, changelog entry placed under [0.10.3] ### Fixed and crates/tui/CHANGELOG.md resynced. rustfmt applied to the is_container_run line.
-
-Checks on Linux x86_64: cargo test --locked -p codewhale-execpolicy (268 passed on this tip: 246 unit, 1 authorization_order, 11 redirection_policy, 9 shell_parse_policy, 1 doctest; 0 failed); without the shell_expand.rs guards the new test fails (0 passed; 1 failed: index out of bounds: the len is 2 but the index is 2); cargo clippy --locked -p codewhale-execpolicy --all-targets -- -D warnings; cargo fmt -p codewhale-execpolicy -- --check; scripts/syn
-
-**File**: `CHANGELOG.md` (modified, +2/-0)
+**File**: `CHANGELOG.md` (modified, +3/-1)
 ```diff
-@@ -591,6 +591,8 @@ Codewhale v0.10.3 brings a unified Plugins surface with Creator mode (`[features
+@@ -621,6 +621,8 @@ Codewhale v0.10.3 brings a unified Plugins surface with Creator mode (`[features
  
  ### Fixed
  
-+- **Flag-only launcher commands no longer crash the turn:** running `npm --version`, `nix --version`, `launchctl --help`, `docker --version`, `podman --version`, or another launcher command with global flags and no subcommand no longer panics with an out-of-bounds index during command policy expansion.
-+- **Command policy sees payloads behind empty words and `--entrypoint`:** command policy now also checks the nested command in launcher lines with empty-string words before the subcommand (`npm '' exec -c 'rm -rf /'`, `docker '' -D run alpine rm -rf /`) and checks `docker run --entrypoint rm alpine -rf /` as the entrypoint plus the arguments after the image, checking every `--entrypoint` value before the image, so deny rules and approval review match them. A launcher line with so many options that the option walk hits its state limit is now treated like other commands whose words are only known at run time: while deny rules are in force it asks for approval, or is refused where approval is unavailable, instead of dropping the nested command.
- - **File search in very large folders returns results instead of timing out:** `file_search` (shown as `find`) no longer fails with "operation timed out after 30s" in a huge folder that is not a git repository. It now walks the tree in parallel, searches the top four levels first so shallow files are found even when the rest of the tree is too large, also skips `.venv`, `__pycache__`, `.next`, `.turbo` and `.gradle` by default alongside `target`, `node_modules`, `.git` and build output, and, if the tree is still too large to finish in 20 seconds, returns the best matches found so far marked `partial` with a note to narrow `path` or the query. Results in an ordinary repository are unchanged apart from those newly skipped folders. (CW-8265)
- - **Auto-Review on the desktop app sees what you asked for:** the Auto-Review reviewer refused every command started from the desktop composer with "No person request provided (person_messages is empty)", because the desktop reaches its Engine with the local runtime token, which counted as an automation caller. A runtime-token caller that names the owner surface (`"client": "desktop"`) on `POST /v1/threads/{id}/turns` or `.../steer` now records the typed prompt as your message, the same way the signed-in web composer and the terminal already do; a paired device or phone that claims `desktop` is refused with 403, and a runtime-token caller that names no owner surface, a tokenless local server, scheduled work, automations and agent-created threads still record nothing. The reviewer still blocks actions your messages do not cover. (CW-8270)
- - **Scheduled catalog refresh pushes with a branch-tip lease:** the Catalog refresh workflow now resolves the remote `catalog-refresh` branch tip before pushing, aborts if `catalog-refresh` has commits outside `origin/main` not committed by `codewhale-agent[bot]`, and passes that resolved tip (empty when absent) to `--force-with-lease` so pushes no longer fail with `stale info`. (CW-8266)
++- Large session usage ledgers keep settled and unresolved usage and discard only the oldest routing diagnostics needed to stay within the storage limit. Thanks [@donglovejava](https://github.com/donglovejava) ([#7449](https://github.com/codewhale-hq/CodeWhale/pull/7449)).
++
+ - **Shell policy:** statically available AWK and sed programs are scanned for shell commands. AWK analysis that exceeds its scan budget is treated as unresolved. (CW-8300)
+ - **Sub-agent budget-stop receipts show clipped output:** the receipt gives the character count and points to the retained child transcript. It also keeps the workspace preservation receipt visible when the partial output is long. Thanks [@7jrxt42BxFZo4iAnN4CX](https://github.com/7jrxt42BxFZo4iAnN4CX) for [issue 7434](https://github.com/codewhale-hq/Codewhale/issues/7434). (CW-8317)
+ - **TUI command input:** while the terminal’s raw-paste fallback detects a possible paste, Enter inserts a newline before slash completion can change the draft. This also applies to fast typing that matches the paste cadence. After the brief paste window passes, Enter can submit the command. (CW-8301)
+@@ -1327,7 +1329,7 @@ Codewhale v0.10.3 brings a unified Plugins surface with Creator mode (`[features
+ 
+ - **[@swf1996120](https://github.com/swf1996120)** — reported that the PR review prompt discouraged checking callers with the available source tools ([issue 7435](https://github.com/codewhale-hq/Codewhale/issues/7435)).
+ - **[@BX166](https://github.com/BX166)** — clarified the AICraft provider setup for mainland China and international users ([#7421](https://github.com/codewhale-hq/CodeWhale/pull/7421)).
+-- **[@donglovejava](https://github.com/donglovejava)** — covered large raw and bracketed terminal paste and fixed fallback tool-call IDs in streaming chat completions ([#7422](https://github.com/codewhale-hq/CodeWhale/pull/7422), [#7423](https://github.com/codewhale-hq/CodeWhale/pull/7423)).
++- **[@donglovejava](https://github.com/donglovejava)** — covered large raw and bracketed terminal paste, fixed fallback tool-call IDs in streaming chat completions, and preserved usage records when compacting diagnostic receipts ([#7422](https://github.com/codewhale-hq/CodeWhale/pull/7422), [#7423](https://github.com/codewhale-hq/CodeWhale/pull/7423), [#7449](https://github.com/codewhale-hq/CodeWhale/pull/7449)).
+ - **[@gabsferreira](https://github.com/gabsferreira)** added the SearchApi web search provider ([#7410](https://github.com/codewhale-hq/Codewhale/pull/7410)).
+ - **[@cmdcorp6534](https://github.com/cmdcorp6534)** — reported the Chinese input-method candidate window appearing away from the field being typed into ([#2323](https://github.com/codewhale-hq/Codewhale/issues/2323)).
+ - **[@Asteria1028](https://github.com/Asteria1028)** — reported pasted clipboard images piling up with no way to remove them ([#7221](https://github.com/codewhale-hq/Codewhale/issues/7221)).
 ```
 
-**File**: `crates/execpolicy/src/shell_expand.rs` (modified, +211/-30)
+**File**: `crates/engine/src/session_manager.rs` (modified, +33/-42)
 ```diff
-@@ -2048,10 +2048,15 @@ impl Expander {
-         depth: usize,
-     ) {
-         let tokens = &line.words;
-+        let mut truncated = false;
-         match name {
-             "nix" => {
--                for verb_idx in resolve_wrapper_targets(tokens, head + 1, &NIX_GLOBAL_SPEC) {
--                    let verb = tokens[verb_idx].as_str();
-+                for verb_idx in
-+                    launcher_verb_targets(tokens, head + 1, &NIX_GLOBAL_SPEC, &mut truncated)
-+                {
-+                    let Some(verb) = tokens.get(verb_idx).map(String::as_str) else {
-+                        continue;
-+                    };
-                     if matches!(verb, "develop" | "shell")
-                         && let Some(at) = (verb_idx + 1..tokens.len())
-                             .take_while(|&i| tokens[i] != "--")
-@@ -2086,8 +2091,13 @@ impl Expander {
-                         self.code_payload(&payload, payload_dynamic, depth);
-                     }
-                 } else {
--                    for verb_idx in resolve_wrapper_targets(tokens, head + 1, &EMPTY_WRAPPER_SPEC) {
--                        if matches!(tokens[verb_idx].as_str(), "exec" | "x") {
-+                    for verb_idx in
-+                        launcher_verb_targets(tokens, head + 1, &EMPTY_WRAPPER_SPEC, &mut truncated)
-+                    {
-+                        if tokens
-+                            .get(verb_idx)
-+                            .is_some_and(|verb| matches!(verb.as_str(), "exec" | "x"))
-+                        {
-                             for (payload, payload_dynamic) in option_payloads(
-                                 tokens,
-                                 verb_idx,
-@@ -2106,7 +2116,8 @@ impl Expander {
-                 if ssh_skips_remote_command(&tokens[head + 1..]) {
-                     return;
+@@ -3021,64 +3021,55 @@ impl SessionManager {
+     fn write_late_usage_ledger(path: &Path, ledger: &LateUsageLedger) -> io::Result<()> {
+         let mut bytes = serde_json::to_vec(ledger)
+             .map_err(|error| io::Error::new(io::ErrorKind::InvalidData, error))?;
+-        if u64::try_from(bytes.len()).unwrap_or(u64::MAX) > MAX_LATE_USAGE_LEDGER_BYTES {
+-            // Diagnostic-only receipts (route decisions) are evidence, not spend.
+-            // Drop the oldest ones until the ledger fits; spend-bearing records
+-            // stay untouched so a replay cannot double-count a source.
+-            let mut compacted = ledger.clone();
+-            let mut pruned = 0usize;
+-            while u64::try_from(bytes.len()).unwrap_or(u64::MAX) > MAX_LATE_USAGE_LEDGER_BYTES {
+-                let diagnostic = compacted
+-                    .records
+-                    .iter()
+-                    .filter(|record| record.diagnostic_only)
+-                    .count();
+-                if diagnostic == 0 {
++        let limit = usize::try_from(MAX_LATE_USAGE_LEDGER_BYTES).unwrap_or(usize::MAX);
++        if bytes.len() > limit {
++            let mut remaining_bytes = bytes.len();
++            let mut pruned = 0;
++            for record in ledger
++                .records
++                .iter()
++                .filter(|record| record.diagnostic_only)
++            {
++                let record_len = serde_json::to_vec(record)
++                    .map_err(|error| io::Error::new(io::ErrorKind::InvalidData, error))?
++                    .len();
++                pruned += 1;
++                let comma = usize::from(pruned < ledger.records.len());
++                remaining_bytes -= record_len + comma;
++                if remaining_bytes <= limit {
+                     break;
                  }
--                for landing in resolve_wrapper_targets(tokens, head + 1, &SSH_SPEC) {
-+                for landing in resolve_wrapper_targets(tokens, head + 1, &SSH_SPEC, &mut truncated)
-+                {
-                     if landing < tokens.len() {
-                         let rest = &tokens[landing..];
-                         let rest_dynamic = dynamic[landing..].iter().any(|d| *d);
-@@ -2121,7 +2132,9 @@ impl Expander {
-                 if screen_attaches_only(&tokens[head + 1..]) {
-                     return;
-                 }
--                for landing in resolve_wrapper_targets(tokens, head + 1, &SCREEN_SPEC) {
-+                for landing in
-+                    resolve_wrapper_targets(tokens, head + 1, &SCREEN_SPEC, &mut truncated)
-+                {
-                     if landing < tokens.len() {
-                         self.record(&slice_line(line, landing), depth + 1);
-                     }
-@@ -2132,8 +2145,10 @@ impl Expander {
+-                let overflow = bytes.len().saturating_sub(
+-                    usize::try_from(MAX_LATE_USAGE_LEDGER_BYTES).unwrap_or(usize::MAX),
+-                );
+-                let average = (bytes.len() / compacted.records.len().max(1)).max(1);
+-                let remove = (overflow / average).max(1).min(diagnostic);
+-                let mut remaining = remove;
+-                compacted.records.retain(|record| {
+-                    if remaining > 0 && record.diagnostic_only {
+-                        remaining -= 1;
+-                        false
+-                    } else {
+-                        true
+-                    }
+-                });
+-                pruned += remove - remaining;
+-                bytes = serde_json::to_vec(&compacted)
+-                    .map_err(|error| io::Error::new(io::ErrorKind::InvalidData, error))?;
+-            }
+-            if pruned > 0 {
+-                tracing::warn!(
+-                    pruned,
+-                    "compacted late usage diagnostic receipts to fit the ledger bound"
+-                );
              }
-             _ => {
-                 if name == "launchctl" {
--                    for verb_idx in resolve_wrapper_targets(tokens, head + 1, &EMPTY_WRAPPER_SPEC) {
--                        if tokens[verb_idx] == "submit" {
-+                    for verb_idx in
-+                        launcher_verb_targets(tokens, head + 1, &EMPTY_WRAPPER_SPEC, &mut truncated)
-+                    {
-+                        if tokens.get(verb_idx).map(String::as_str) == Some("submit") {
-                             self.record_exec_flag_command(line, verb_idx, &['p'], &[], depth);
-                         }
-                     }
-@@ -2142,24 +2157,55 @@ impl Expander {
-                     if launcher.program != name {
-                         continue;
-                     }
--                    for verb_idx in resolve_wrapper_targets(tokens, head + 1, launcher.global) {
--                        if !launcher.verbs.contains(&tokens[verb_idx].as_str()) {
-+                    for verb_idx in
-+                        launcher_verb_targets(tokens, head + 1, launcher.global, &mut truncated)
-+                    {
-+                        let Some(verb) = tokens.get(verb_idx).map(String::as_str) else {
-+                            continue;
-+                        };
-+                        if !launcher.verbs.contains(&verb) {
-                             continue;
-                         }
--                        let is_container_run =
--                            matches!(name, "docker" | "podman") && tokens[verb_idx] == "run";
--                        let entrypoint = if is_container_run {
--                            find_entrypoint(&tokens[verb_idx + 1..], verb_idx + 1)
--                        } else {
--                            None
-+                        let is_container_run = matches!(name, "docker" | "podman") && verb == "run";
-+                        let entrypoints_before = |end: usize| {
-+                            if !is_container_run {
-+                                return Vec::new();
-+                            }
-+                            let end = end.min(tokens.len()).max(verb_idx + 1);
-+                            l
+-            if u64::try_from(bytes.len()).unwrap_or(u64::MAX) > MAX_LATE_USAGE_LEDGER_BYTES {
++            if remaining_bytes > limit {
+                 return Err(io::Error::new(
+                     io::ErrorKind::InvalidData,
+                     "late usage ledger exceeds its size bound",
+                 ));
+             }
++            let mut compacted = ledger.clone();
++            let mut remaining = pruned;
++            compacted.records.retain(|record| {
++                if record.diagnostic_only && remaining > 0 {
++                    remaining -= 1;
++                    return false;
++                }
++                true
++            });
++            bytes = serde_json::to_vec(&compacted)
++                .map_err(|error| io::Error::new(io::ErrorKind::InvalidData, error))?;
++            tracing::warn!(
++                pruned,
++                "compacted late usage diagnostic receipts to fit the ledger bound"
++            );
+         }
+-        Self::write_late_usage_ledger_bytes(path, &bytes)
+-    }
+-
+-    fn write_late_usage_ledger_bytes(path: &Path, bytes: &[u8]) -> io::Result<()> {
+         let parent = path.parent().ok_or_else(|| {
+             io::Error::new(io::ErrorKind::InvalidInput, "usage ledger has no parent")
+         })?;
+         let name = path.file_name().ok_or_else(|| {
+             io::Error::new(io::ErrorKind::InvalidInput, "usage ledger has no basename")
+         })?;
+         codewhale_util::files::WorkspaceFile::open_resolved_root(parent, Path::new(name), false)?
+-            .replace(bytes)?;
++            .replace(&bytes)?;
+         Self::sync_late_usage_ledger(path)
+     }
+ 
 ```
+
+**File**: `crates/engine/src/session_manager/test_cases_01.rs` (modified, +37/-28)
+```diff
+@@ -1921,34 +1921,48 @@
+             diagnostic_only: false,
+         };
+         let diagnostic = LateUsageRecord {
++            source_fingerprint: crate::cost_status::usage_source_fingerprint("small"),
++            usage: None,
+             diagnostic_only: true,
+             ..spend.clone()
+         };
+-        let empty_bytes = serde_json::to_vec(&LateUsageLedger::default()).unwrap().len();
+-        let diagnostic_bytes = serde_json::to_vec(&diagnostic).unwrap().len() + 1;
+-        let real_count = 4usize;
+-        let diagnostic_count =
+-            (usize::try_from(MAX_LATE_USAGE_LEDGER_BYTES).unwrap() - empty_bytes)
+-                / diagnostic_bytes
+-                + 1;
+-        let mut records: Vec<LateUsageRecord> =
+-            (0..diagnostic_count).map(|_| diagnostic.clone()).collect();
+-        for index in 0..real_count {
+-            records.push(LateUsageRecord {
++        let mut decision = crate::cost_status::decision_receipt_fixture("oldest");
++        for index in 0..40 {
++            decision
++                .evidence
++                .probabilities_bp
++                .insert(format!("{index:0120}"), 100);
++        }
++        assert!(decision.is_bounded());
++        let oldest = LateUsageRecord {
++            source_fingerprint: crate::cost_status::usage_source_fingerprint("oldest"),
++            decision: Some(decision),
++            ..diagnostic.clone()
++        };
++        let unresolved = LateUsageRecord {
++            source_fingerprint: crate::cost_status::usage_source_fingerprint("unresolved"),
++            usage: None,
++            ..spend.clone()
++        };
++        let mut expected = LateUsageLedger {
++            records: vec![spend, unresolved],
++            ..Default::default()
++        };
++        let limit = usize::try_from(MAX_LATE_USAGE_LEDGER_BYTES).unwrap();
++        let record_bytes = serde_json::to_vec(&diagnostic).unwrap().len() + 1;
++        let room = limit - serde_json::to_vec(&expected).unwrap().len();
++        for index in 0..room / record_bytes {
++            expected.records.push(LateUsageRecord {
+                 source_fingerprint: crate::cost_status::usage_source_fingerprint(&format!(
+-                    "spend-{index}"
++                    "small-{index}"
+                 )),
+-                ..spend.clone()
++                ..diagnostic.clone()
+             });
+         }
+-        let oversized = LateUsageLedger {
+-            records,
+-            ..Default::default()
+-        };
+-        assert!(
+-            u64::try_from(serde_json::to_vec(&oversized).unwrap().len()).unwrap()
+-                > MAX_LATE_USAGE_LEDGER_BYTES
+-        );
++        let mut oversized = expected.clone();
++        oversized.records.insert(1, oldest);
++        assert!(serde_json::to_vec(&expected).unwrap().len() <= limit);
++        assert!(serde_json::to_vec(&oversized).unwrap().len() > limit + 2 * record_bytes);
+ 
+         let (path, _) = manager
+             .ensure_late_usage_paths("compact-diagnostics")
+@@ -1957,14 +1971,9 @@
+ 
+         let loaded = manager.load_late_usage("compact-diagnostics").unwrap();
+         assert_eq!(
+-            loaded
+-                .records
+-                .iter()
+-                .filter(|record| !record.diagnostic_only)
+-                .count(),
+-            real_count
++            serde_json::to_value(loaded).unwrap(),
++            serde_json::to_value(expected).unwrap()
+         );
+-        assert!(loaded.records.len() < oversized.records.len());
+         assert!(fs::metadata(&path).unwrap().len() <= MAX_LATE_USAGE_LEDGER_BYTES);
+     }
+ 
+```
+
+**File**: `crates/tui/CHANGELOG.md` (modified, +3/-1)
+```diff
+@@ -621,6 +621,8 @@ Codewhale v0.10.3 brings a unified Plugins surface with Creator mode (`[features
+ 
+ ### Fixed
+ 
++- Large session usage ledgers keep settled and unresolved usage and discard only the oldest routing diagnostics needed to stay within the storage limit. Thanks [@donglovejava](https://github.com/donglovejava) ([#7449](https://github.com/codewhale-hq/CodeWhale/pull/7449)).
++
+ - **Shell policy:** statically available AWK and sed programs are scanned for shell commands. AWK analysis that exceeds its scan budget is treated as unresolved. (CW-8300)
+ - **Sub-agent budget-stop receipts show clipped output:** the receipt gives the character count and points to the retained child transcript. It also keeps the workspace preservation receipt visible when the partial output is long. Thanks [@7jrxt42BxFZo4iAnN4CX](https://github.com/7jrxt42BxFZo4iAnN4CX) for [issue 7434](https://github.com/codewhale-hq/Codewhale/issues/7434). (CW-8317)
+ - **TUI command input:** while the terminal’s raw-paste fallback detects a possible paste, Enter inserts a newline before slash completion can change the draft. This also applies to fast typing that matches the paste cadence. After the brief paste window passes, Enter can submit the command. (CW-8301)
+@@ -1327,7 +1329,7 @@ Codewhale v0.10.3 brings a unified Plugins surface with Creator mode (`[features
+ 
+ - **[@swf1996120](https://github.com/swf1996120)** — reported that the PR review prompt discouraged checking callers with the available source tools ([issue 7435](https://github.com/codewhale-hq/Codewhale/issues/7435)).
+ - **[@BX166](https://github.com/BX166)** — clarified the AICraft provider setup for mainland China and international users ([#7421](https://github.com/codewhale-hq/CodeWhale/pull/7421)).
+-- **[@donglovejava](https://github.com/donglovejava)** — covered large raw and bracketed terminal paste and fixed fallback tool-call IDs in streaming chat completions ([#7422](https://github.com/codewhale-hq/CodeWhale/pull/7422), [#7423](https://github.com/codewhale-hq/CodeWhale/pull/7423)).
++- **[@donglovejava](https://github.com/donglovejava)** — covered large raw and bracketed terminal paste, fixed fallback tool-call IDs in streaming chat completions, and preserved usage records when compacting diagnostic receipts ([#7422](https://github.com/codewhale-hq/CodeWhale/pull/7422), [#7423](https://github.com/codewhale-hq/CodeWhale/pull/7423), [#7449](https://github.com/codewhale-hq/CodeWhale/pull/7449)).
+ - **[@gabsferreira](https://github.com/gabsferreira)** added the SearchApi web search provider ([#7410](https://github.com/codewhale-hq/Codewhale/pull/7410)).
+ - **[@cmdcorp6534](https://github.com/cmdcorp6534)** — reported the Chinese input-method candidate window appearing away from the field being typed into ([#2323](https://github.com/codewhale-hq/Codewhale/issues/2323)).
+ - **[@Asteria1028](https://github.com/Asteria1028)** — reported pasted clipboard images piling up with no way to remove them ([#7221](https://github.com/codewhale-hq/Codewhale/issues/7221)).
+```
+
+**File**: `docs/CONTRIBUTORS.md` (modified, +1/-1)
+```diff
+@@ -45,7 +45,7 @@ changelog or release notes, and this contributor record.
+ **Contributions**
+ 
+ - **[BX166](https://github.com/BX166)** — clarified the AICraft provider setup for mainland China and international users ([#7421](https://github.com/codewhale-hq/CodeWhale/pull/7421)).
+-- **[donglovejava](https://github.com/donglovejava)** — covered large raw and bracketed terminal paste and fixed fallback tool-call IDs in streaming chat completions ([#7422](https://github.com/codewhale-hq/CodeWhale/pull/7422), [#7423](https://github.com/codewhale-hq/CodeWhale/pull/7423)).
++- **[donglovejava](https://github.com/donglovejava)** — covered large raw and bracketed terminal paste, fixed fallback tool-call IDs in streaming chat completions, and preserved usage records when compacting diagnostic receipts ([#7422](https://github.com/codewhale-hq/CodeWhale/pull/7422), [#7423](https://github.com/codewhale-hq/CodeWhale/pull/7423), [#7449](https://github.com/codewhale-hq/CodeWhale/pull/7449)).
+ - **[gabsferreira](https://github.com/gabsferreira)** added Google organic search results through the SearchApi provider ([#7410](https://github.com/codewhale-hq/Codewhale/pull/7410)).
+ - **[zhuowp](https://github.com/zhuowp)** (git author `z27014`) — added bounded HTTP rate-limit recovery and corrected retry deadlines, quota guidance and recovery receipts ([#7220](https://github.com/codewhale-hq/Codewhale/pull/7220)).
+ - **[printf033](https://github.com/printf033)** — enabled exclusive rename on Android so Fleet publication does not fall back to SELinux-denied hard links (`fbe9f24ee`).
+```
+
+---
+
+### Incident Patch 2: `6c211938` (2026-11-21)
+**Commit Message**: Sync the packaged TUI changelog for the notice correction
+
+Regenerated the existing release-note projection with scripts/sync-changelog.sh. The version drift check now passes locally with 40 feature issue references.
 
 **File**: `crates/tui/CHANGELOG.md` (modified, +2/-0)
 ```diff
-@@ -591,6 +591,8 @@ Codewhale v0.10.3 brings a unified Plugins surface with Creator mode (`[features
+@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  
- ### Fixed
+ ## [Unreleased]
  
-+- **Flag-only launcher commands no longer crash the turn:** running `npm --version`, `nix --version`, `launchctl --help`, `docker --version`, `podman --version`, or another launcher command with global flags and no subcommand no longer panics with an out-of-bounds index during command policy expansion.
-+- **Command policy sees payloads behind empty words and `--entrypoint`:** command policy now also checks the nested command in launcher lines with empty-string words before the subcommand (`npm '' exec -c 'rm -rf /'`, `docker '' -D run alpine rm -rf /`) and checks `docker run --entrypoint rm alpine -rf /` as the entrypoint plus the arguments after the image, checking every `--entrypoint` value before the image, so deny rules and approval review match them. A launcher line with so many options that the option walk hits its state limit is now treated like other commands whose words are only known at run time: while deny rules are in force it asks for approval, or is refused where approval is unavailable, instead of dropping the nested command.
- - **File search in very large folders returns results instead of timing out:** `file_search` (shown as `find`) no longer fails with "operation timed out after 30s" in a huge folder that is not a git repository. It now walks the tree in parallel, searches the top four levels first so shallow files are found even when the rest of the tree is too large, also skips `.venv`, `__pycache__`, `.next`, `.turbo` and `.gradle` by default alongside `target`, `node_modules`, `.git` and build output, and, if the tree is still too large to finish in 20 seconds, returns the best matches found so far marked `partial` with a note to narrow `path` or the query. Results in an ordinary repository are unchanged apart from those newly skipped folders. (CW-8265)
- - **Auto-Review on the desktop app sees what you asked for:** the Auto-Review reviewer refused every command started from the desktop composer with "No person request provided (person_messages is empty)", because the desktop reaches its Engine with the local runtime token, which counted as an automation caller. A runtime-token caller that names the owner surface (`"client": "desktop"`) on `POST /v1/threads/{id}/turns` or `.../steer` now records the typed prompt as your message, the same way the signed-in web composer and the terminal already do; a paired device or phone that claims `desktop` is refused with 403, and a runtime-token caller that names no owner surface, a tokenless local server, scheduled work, automations and agent-created threads still record nothing. The reviewer still blocks actions your messages do not cover. (CW-8270)
- - **Scheduled catalog refresh pushes with a branch-tip lease:** the Catalog refresh workflow now resolves the remote `catalog-refresh` branch tip before pushing, aborts if `catalog-refresh` has commits outside `origin/main` not committed by `codewhale-agent[bot]`, and passes that resolved tip (empty when absent) to `--force-with-lease` so pushes no longer fail with `stale info`. (CW-8266)
-```
-
-**File**: `docs/MODES.md` (modified, +3/-1)
-```diff
-@@ -27,7 +27,9 @@ the saved `role`/`profile` assignment. An Exact Fleet fixes each member's route.
- One dial says how much Codewhale may do without asking. Press `Shift+Tab` to
- step it: **Ask → Accept Edits → Plan → Auto-Review → Full Access → Ask**. Plan
- is the Plan mode; every other stop is Work with that permission posture. The
--footer shows the current stop and `Shift+Tab to change`. New installs start on
-+footer shows the current stop and `Shift+Tab to change`; after you have pressed
-+it twice the hint stands down, except on Auto-Review and Full Access, where it
-+stays while the footer has room. New installs start on
- Accept Edits when no permission posture is saved. An explicit saved choice,
- including Ask from an earlier version, stays in control.
- `Tab` only completes composer menus, commands, file mentions and suggestions;
++- Native release bundles, the Windows installer, npm packages and published crates include the Codewhale license and both third-party notice documents.
++
+ - Stopping an external agent while it waits for approval now records the turn as interrupted even when the agent replies that it finished. (CW-7965)
+ 
+ - The Simplified Chinese telemetry guide now explains which files each process keeps, how much disk space they use and when old files are removed. (CW-7987)
 ```
 
 ---
 
-### Incident Patch 2: `b46101ca` (2026-11-18)
-**Commit Message**: fix(app-server): Claude organization availability cache survives sign-out and probe panics (CW-8258)
+### Incident Patch 3: `30ca06be` (2026-11-21)
+**Commit Message**: fix(release): preserve remaining ownership during partial command restore
 
-Both LAND reviews of 65f0149749 flagged the availability cache:
+Keep validated ownership for untouched aliases when one restored command changes. Record the installed replacement digest when displacing a command so undo can distinguish its own unclaimed replacement from a later user edit. Historical four-column recovery manifests still work. All five release recovery tests passed locally, including partial restore and modified-command undo.
 
-- A signed-out or revoked session cleared the cache to unknown with no
-  timestamp, so every GET /v1/providers started another probe; the
-  10-minute TTL no longer applied. Not signed in (and no account
-  client) now caches false with a timestamp.
-- Sign-in (import, claim) and sign-out now forget the cached value, so
-  the option follows the account instead of lingering for 10 minutes.
-- A panic inside the probe left the refreshing flag set forever; a drop
-  guard now resets it.
-
-New test anthropic_browser_connect_follows_control_plane_availability:
-the option is hidden until the background probe lands, then shown, and
-repeated provider lists within the TTL make exactly one probe.
-
-Checks: dev-cargo test -p codewhale-app-server --lib -- anthropic_:
-6 passed; 0 failed; clippy -p codewhale-app-server --tests -D warnings
-clean; blocking-call budget within budget; fmt clean.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `crates/app-server/src/runtime_api/account.rs` (modified, +3/-0)
+**File**: `CHANGELOG.md` (modified, +1/-1)
 ```diff
-@@ -187,6 +187,7 @@ async fn import(
-             import_allowed: false,
-         });
-         status["committedRevision"] = json!(revision);
-+        state.provider_connect.forget_claude_org_availability();
-         Ok(status)
-     })
-     .await
-@@ -208,6 +209,7 @@ async fn claim(
-                 "The Codewhale account changed; try again",
-             ));
-         }
-+        state.provider_connect.forget_claude_org_availability();
-         Ok(status)
-     })
-     .await
-@@ -272,6 +274,7 @@ async fn logout(
-                 access.take();
-             }
-         }
-+        state.provider_connect.forget_claude_org_availability();
-         let mut status = read_status(&client)?;
-         status["remoteRevoked"] = json!(revoked);
-         Ok(status)
+@@ -282,7 +282,7 @@ Codewhale v0.10.3 brings a unified Plugins surface with Creator mode (`[features
+ - **MCP catalogs stay fresh:** a server's tools, resources, prompts and skills are rediscovered on their own connection when an advertised `ttlMs` expires or the server sends a list-changed notice. A tool resolved against the old catalog is refused with "retry the call", a removed tool cannot run, and a failed refresh reconnects instead of serving stale entries. Catalogs are never shared across servers, credentials or reconnects.
+ - **MCP Skills extension:** servers that advertise the published Skills extension have their skills listed in `list_mcp_resources`. Listing never activates a skill, and reading a skill file is refused unless its size and sha256 digest match the listing. MCP skills do not yet join `/skills`.
+ - **Updates install themselves:** release-binary installs check for a new release every 6 hours (was 1), download and checksum-verify it in the background, and apply it the next time `codewhale` starts, never during a session. One line says `Updated to v… · What's new: … · Undo: codewhale update --rollback`. Until releases are signed, the download waits for your OK (one `[y/N]` question at the next start, or `/update install`); a release with a valid Ed25519 manifest signature applies on its own. `codewhale update --rollback` puts back the version the last update replaced and keeps the rolled-back version from returning automatically. Turn it down with `codewhale config set update.mode notify` (or `off`, or `CODEWHALE_UPDATE_MODE`); an organization's root-owned `policy.toml` overrides both. Offline and rate-limited checks retry about an hour later instead of on every launch. Package-manager and desktop-app copies only get their manager's command. Builds with the release key refuse a missing or invalid signature, and re-check the staged binary against the signed manifest at start. The checksum manifest now always comes from GitHub Releases; on Linux x64 the CNB mirror can still serve the binary, but only bytes that GitHub's manifest lists.
+-- **One view of every Codewhale on the machine:** `codewhale doctor` has an Installations section and `codewhale doctor --installs` (`--json`, `--brief`) lists every `codewhale`, `codew`, `codewhale-tui`, `deepseek` and `deepseek-tui` with its owner: install receipt, package manager (with its exact removal command), the desktop app, a backup, or not ours. Nothing found is ever run. `codewhale doctor --fix` adds one plan to tidy them: old backups move to `~/.codewhale/recovery/<stamp>/` (kept 30 days, then deleted by a later `--fix`), an unreceipted `codew` is brought in line with `codewhale`, and the directory gets an install receipt; each move prints its undo and `codewhale doctor --restore <stamp>` reverses the lot. Package-managed, desktop-app, symlinked and foreign files are never touched, and neither is user data. `codewhale uninstall` now lists other copies with the same classification. Restoring an older command set now keeps its ownership receipt consistent and preserves the displaced receipt for undo.
++- **One view of every Codewhale on the machine:** `codewhale doctor` has an Installations section and `codewhale doctor --installs` (`--json`, `--brief`) lists every `codewhale`, `codew`, `codewhale-tui`, `deepseek` and `deepseek-tui` with its owner: install receipt, package manager (with its exact removal command), the desktop app, a backup, or not ours. Nothing found is ever run. `codewhale doctor --fix` adds one plan to tidy them: old backups move to `~/.codewhale/recovery/<stamp>/` (kept 30 days, then deleted by a later `--fix`), an unreceipted `codew` is brought in line with `codewhale`, and the directory gets an install receipt; each move prints its undo and `codewhale doctor --restore <stamp>` reverses the lot. Package-managed, desktop-app, symlinked and foreign files are never touched, and neither is user data. `codewhale uninstall` now lists other copies with the same classification. Restoring an older command set now keeps its ownership receipt consistent and preserves the displaced receipt for undo. A partial restore retains ownership of unchanged commands.
+ - **Uninstall guidance on every install route:** `codewhale uninstall` previews receipt-owned release files and `--yes` removes only checked files, with the running command last. Both Unix installers and the Windows archive installer record command ownership; self-update renews existing receipts on both. On Windows the running `codewhale.exe` is renamed, then a hidden PowerShell process deletes it after the command exits. Package-managed copies are left alone, and the command prints their exact removal command: npm with its prefix, Cargo with its root, the Homebrew formula, `scoop uninstall codewhale`, `winget uninstall --id HunterBown.CodeWhale`, or the Windows setup's `Uninstall.exe`. Every other `codewhale`/`codew` still on PATH is listed. User data is kept unless you add `--purge-da
 ```
 
-**File**: `crates/app-server/src/runtime_api/secrets.rs` (modified, +23/-11)
+**File**: `crates/release/src/installs.rs` (modified, +73/-10)
 ```diff
-@@ -491,6 +491,20 @@ impl ProviderConnect {
-     fn record_claude_org_availability(&self, available: Option<bool>) {
-         *self.1.cached.lock() = available.map(|available| (available, Instant::now()));
+@@ -794,6 +794,10 @@ impl RecoveryBatch {
      }
-+
-+    pub(super) fn forget_claude_org_availability(&self) {
-+        self.record_claude_org_availability(None);
-+    }
-+}
-+
-+struct AvailabilityRefresh(Arc<ClaudeOrgAvailability>);
-+
-+impl Drop for AvailabilityRefresh {
-+    fn drop(&mut self) {
-+        self.0
-+            .refreshing
-+            .store(false, std::sync::atomic::Ordering::Release);
-+    }
- }
  
- pub(super) fn refresh_claude_org_availability_if_stale(state: &RuntimeApiState) {
-@@ -509,7 +523,9 @@ pub(super) fn refresh_claude_org_availability_if_stale(state: &RuntimeApiState)
-     #[cfg(any(test, feature = "test-support"))]
-     let env_ticket = codewhale_engine::test_support::env_scope_ticket();
-     let state = state.clone();
-+    let refresh = AvailabilityRefresh(Arc::clone(availability));
-     drop(tokio::task::spawn_blocking(move || {
-+        let _refresh = refresh;
-         #[cfg(any(test, feature = "test-support"))]
-         let _membership = codewhale_engine::test_support::join_env_scope(env_ticket);
-         let observed = super::account::client(&state)
-@@ -518,25 +534,21 @@ pub(super) fn refresh_claude_org_availability_if_stale(state: &RuntimeApiState)
-         let connect = &state.provider_connect;
-         match observed {
-             Some(Ok(link)) => connect.record_claude_org_availability(Some(link.available)),
-+            None => connect.record_claude_org_availability(Some(false)),
-             Some(Err(error))
--                if error.kind == codewhale_account_cli::ClaudeOrgErrorKind::Disabled =>
-+                if matches!(
-+                    error.kind,
-+                    codewhale_account_cli::ClaudeOrgErrorKind::Disabled
-+                        | codewhale_account_cli::ClaudeOrgErrorKind::NotSignedIn
-+                ) =>
-             {
-                 connect.record_claude_org_availability(Some(false));
-             }
--            Some(Err(error))
--                if error.kind == codewhale_account_cli::ClaudeOrgErrorKind::NotSignedIn =>
--            {
--                connect.record_claude_org_availability(None);
--            }
--            _ => {
-+            Some(Err(_)) => {
-                 let previous = connect.claude_org_available();
-                 connect.record_claude_org_availability(Some(previous));
-             }
+     pub fn move_in(&mut self, path: &Path) -> Result<RecoveryMove> {
++        self.move_in_replaced(path, None)
++    }
++
++    fn move_in_replaced(&mut self, path: &Path, replacement: Option<&str>) -> Result<RecoveryMove> {
+         let original = path.to_string_lossy();
+         if original.contains(['\t', '\n', '\r']) {
+             bail!(
+@@ -842,7 +846,10 @@ impl RecoveryBatch {
+                 format!("failed to move {} to {}", path.display(), to.display())
+             })?;
          }
--        connect
--            .1
--            .refreshing
--            .store(false, std::sync::atomic::Ordering::Release);
-     }));
+-        let line = format!("{original}\t{}\t{digest}\t{bytes}\n", to.display());
++        let suffix = replacement
++            .map(|digest| format!("\t{digest}"))
++            .unwrap_or_default();
++        let line = format!("{original}\t{}\t{digest}\t{bytes}{suffix}\n", to.display());
+         let mut manifest = fs::OpenOptions::new()
+             .create(true)
+             .append(true)
+@@ -889,6 +896,7 @@ pub struct RecoveryRecord {
+     pub stored: PathBuf,
+     pub sha256: Option<String>,
+     pub bytes: u64,
++    pub replacement_sha256: Option<String>,
  }
  
-```
-
-**File**: `crates/app-server/src/runtime_api/tests.rs` (modified, +65/-0)
-```diff
-@@ -29749,6 +29749,71 @@ async fn anthropic_connect_cancel_and_key_clear_stop_a_waiting_attempt() -> Resu
-     Ok(())
+ #[derive(Debug, Clone)]
+@@ -957,6 +965,7 @@ fn read_manifest(dir: &Path) -> Vec<RecoveryRecord> {
+                 stored,
+                 sha256,
+                 bytes,
++                replacement_sha256: fields.next().map(str::to_string),
+             })
+         })
+         .collect()
+@@ -1023,11 +1032,16 @@ fn verified_recovery_file(
+     Ok(meta)
  }
  
-+#[tokio::test]
-+async fn anthropic_browser_connect_follows_control_plane_availability() -> Result<()> {
-+    let _env_lock = lock_test_env();
-+    let tmp = tempfile::tempdir()?;
-+    let control = wiremock::MockServer::start().await;
-+    let _env = claude_org_test_env(&tmp, &control.uri())?;
-+    seed_claude_org_session(&control.uri())?;
-+    mount_claude_org_status(&control, unlinked(), None).await;
-+    let config_path = tmp.path().join("config.toml");
-+    fs::write(&config_path, "provider = \"deepseek\"\n")?;
-+    let live_config = Arc::new(parking_lot::RwLock::new(Config::default()));
-+    let (addr, handle) = spawn_claude_org_server(&tmp, &config_path, live_config).await?;
-+    let client = codewhale_release::tls::reqwest_client();
-+    let base = format!("http://{addr}");
-+    let anthropic_offers_connect = || async {
-+        let providers: Value = client
-+            .get(format!("{base}/v1/providers"))
-+            .bearer_auth("keys-token")
-+            .send()
-+            .await?
-+            .error_for_status()?
-+            .json()
-+            .await?;
-+        let offered = providers["providers"]
-+            .as_array()
-+            .context("providers")?
-+            .iter()
-+            .find(|entry| entry["id"] == "anthropic")
-+            .context("anthropic row")?["browserConnect"]
-+            == true;
-+        anyhow::Ok(offered)
-+    };
-+
-+    assert!(!anthropic_offers_connect().await?);
-+    let deadline = std::time::Instant::now() + Duration::from_secs(10);
-+    while !anthropic_offers_connect().await? {
-+        anyhow::ensure!(
-+            std::time::Instant::now() < deadline,
-+            "availability probe never landed"
-+        );
-+        tokio::time::sleep(Duration::from_millis(50)).await;
-+    }
-+    let probes = control
-+        .received_requests()
-+        .await
-+        .unwrap_or_default()
-+        .iter()
-+        .filter(|request| request.url.path() == "/api/claude-billing")
-+        .count();
-+    for _ in 0..5 {
-+        assert!(anthropic_offers_connect().await?);
-+    }
-+    let after = control
-+        .received_requests()
-+        .await
-+        .unwrap_or_default()
-+        .iter()
-+        .filter(|request| request.url.path() == "/api/claude-billing")
-+        .count();
-+    assert_eq!(probes, 1);
-+    assert_eq!(after, probes);
-+    handle.abort();
-+    Ok(())
++struct DisplacedReceipt {
++    path: PathBuf,
++    retained: Vec<(String, String)>,
 +}
 +
- #[tokio::test]
- async fn anthropic_connect_reports_a_declined_link() -> Result<()> {
-     let _env_lock = lock_test_env();
-```
-
----
-
-### Incident Patch 3: `fc2d391a` (2026-11-19)
-**Commit Message**: fix(release): qualify cosf and IsProcessorFeaturePresent Windows static imports for 0.10.3 (#7371)
-
-Release candidate run 44379943827 on 7616799f09 stopped the Windows import guard
-on api-ms-win-crt-math-l1-1-0.dll!cosf on both 64-bit targets (from f32::cos()
-in 5.4.0 live motion) and kernel32.dll!IsProcessorFeaturePresent on x64 (from
-the windows-2025-vs2026 runner's MSVC 14.52 / Visual Studio 18.12 toolchain
-update; already qualified on ARM64) across codewhale, codew and codewhale-tui.
-
-ARM64: windows-arm64-export-probe.yml run 44417404125 on Windows 11 ARM64
-10.0.26200.0 (build 26200.9974) resolved 449/449 imports of that candidate's
-executables (binary sha256 e8493084..., import receipt sha256 8fdf650e...,
-probe receipt sha256 94f44b2d..., 25/25 system modules loadError=0). Added
-api-ms-win-crt-math-l1-1-0.dll!cosf (475 -> 476 allowed pairs) and moved probe
-43330905781 under supersedes.
-
-x64: no native x64 export probe exists. Recorded both pairs as
-namedApiContracts (17 -> 19) with live-verified Microsoft Learn sources
-(10.0.10240 UCRT API-set minimum for cosf; Windows 2000 Professional minimum
-for IsProcessorFeaturePresent), below the unchanged 14393 floor and labelled
-apart 
-
-**File**: `docs/ENVIRONMENTS.md` (modified, +11/-0)
-```diff
-@@ -181,6 +181,17 @@ executables. For x64 the 2 pairs are documented Microsoft API contracts
- (Windows XP minimum on each function's reference page); the x64 profile now
- allows 473 pairs and the ARM64 profile 475, with the same limits as above.
+ fn command_receipt_to_displace(
+     directory: &Path,
+     records: &BTreeMap<&Path, &RecoveryRecord>,
+     owner: Option<u64>,
+-) -> Result<Option<PathBuf>> {
++) -> Result<Option<DisplacedReceipt>> {
+     let receipt = directory.join(RECEIPT_FILE);
+     let meta = match fs::symlink_metadata(&receipt) {
+         Ok(meta) => meta,
+@@ -1045,17 +1059,19 @@ fn command_receipt_to_displace(
+     }
+     let claims = parse_command_receipt(&read_small(&receipt, 512)?)?;
+     let mut changes_owned_bytes = false;
++    let mut retained = Vec::new();
+     for name in RECEIPT_COMMANDS {
+         let command = directory.join(name);
+-        if records.contains_key(command.as_path())
++        if let Some(record) = records.get(command.as_path())
++            && record.replacement_sha256.is_none()
+             && !claims.contains_key(*name)
+             && fs::symlink_metadata(&command).is_ok()
+         {
+             bail!("preserved unclaimed command {}", command.display());
+         }
+     }
+     for (name, expected) in claims {
+-        let path = directory.join(name);
++        let path = directory.join(&name);
+         match fs::symlink_metadata(&path) {
+             Ok(current)
+                 if current.is_file()
+@@ -1067,13 +1083,25 @@ fn command_receipt_to_displace(
+             _ => bail!("preserved modified command {}", path.display()),
+         }
+         if let Some(record) = records.get(path.as_path()) {
+-            changes_owned_bytes |= match &record.sha256 {
++            let changes = match &record.sha256 {
+                 Some(digest) => digest != &expected,
+                 None => file_sha256(&record.stored)? != expected,
+             };
++            if changes {
++                changes_owned_bytes = true;
++                continue;
++            }
+         }
++        retained.push((name, expected));
++    }
++    let saved = records.contains_key(receipt.as_path());
++    if saved {
++        retained.clear();
+     }
+-    Ok((changes_owned_bytes || records.contains_key(receipt.as_path())).then_some(receipt))
++    Ok((changes_owned_bytes || saved).then_some(DisplacedReceipt {
++        path: receipt,
++        retained,
++    }))
+ }
  
-+Release candidate run 44379943827 on source `7616799f09` stopped the check on
-+`api-ms-win-crt-math-l1-1-0.dll!cosf` on both 64-bit targets (from `f32::cos()`
-+in 5.4.0 live motion) and `kernel32.dll!IsProcessorFeaturePresent` on x64 (from
-+the `windows-2025-vs2026` runner's MSVC 14.52 CRT/toolchain update, already
-+qualified on ARM64). Probe run 44417404125 (Windows 11 ARM64 build 26200.9974)
-+resolved all 449 imports of that candidate's ARM64 executables, and `cosf` was
-+added. For x64 the 2 pairs are documented Microsoft API contracts (10.0.10240
-+UCRT API-set minimum for `cosf` and Windows 2000 Professional minimum for
-+`IsProcessorFeaturePresent`); the x64 profile now allows 475 pairs and the
-+ARM64 profile 476, with the same limits as above.
-+
- At this snapshot, startup/installation of the final release bytes on an actual
- 1607 machine and the candidate's generated uninstaller were still unqualified.
- The final frozen source, release import dumps, archive/native/npm installation,
-```
-
-**File**: `docs/zh_hans/ENVIRONMENTS.md` (modified, +2/-0)
-```diff
-@@ -134,6 +134,8 @@ x64 的这 3 对作为微软文档 API 契约记录（各函数参考页的最
- 
- 候选运行 43320217667 在稳定工具链升级到 Rust 1.100.0 后，又在 kernel32.dll 的 `GetLogicalDrives` 与 `QueryDosDeviceW` 两对上停止；它们来自 Rust 1.100.0 标准库的 Windows 文件系统代码。探测运行 43330905781（Windows 11 ARM64 build 26200.9725）解析了该候选 ARM64 可执行文件的全部 449 个导入。x64 的这 2 对作为微软文档 API 契约记录（各函数参考页的最低客户端为 Windows XP）；x64 允许列表现为 473 对，ARM64 为 475 对，限制同上。
- 
-+源 `7616799f09` 的发布候选运行 44379943827 在两个 64 位目标上停止于 `api-ms-win-crt-math-l1-1-0.dll!cosf`（来自 5.4.0 实时动效中的 `f32::cos()`），并在 x64 上额外停止于 `kernel32.dll!IsProcessorFeaturePresent`（来自 `windows-2025-vs2026` 运行器的 MSVC 14.52 CRT/工具链更新，该符号此前已在 ARM64 上通过验收）。探测运行 44417404125（Windows 11 ARM64 内部版本 26200.9974）解析了该候选 ARM64 可执行文件的全部 449 个导入，`cosf` 已加入基线。x64 的这 2 对作为微软文档 API 契约记录（`cosf` 为 10.0.10240 UCRT API 集最低版本，`IsProcessorFeaturePresent` 为 Windows 2000 Professional 最低客户端）；x64 允许列表现为 475 对，ARM64 为 476 对，限制同上。
-+
- 此快照中，最终发布文件在真实 1607 上启动/安装及候选程序生成的卸载器仍未验收。
- 最终冻结源码、发布导入记录、各安装途径、打包/原生应用崩溃恢复和最低 OS 回执应
- 进入发布验收记录，见[英文发布检查单](../RELEASE_CHECKLIST.md)。
-```
-
-**File**: `scripts/release/windows-import-floor.json` (modified, +165/-84)
-```diff
-@@ -6,7 +6,7 @@
-       "osArchitecture": "x64",
-       "qualification": {
-         "result": "PASS",
--        "kind": "reporter exact-OS export resolution plus 17 documented Microsoft named API minima",
-+        "kind": "reporter exact-OS export resolution plus 19 documented Microsoft named API minima",
-         "evidence": {
-           "issue": "https://github.com/codewhale-hq/Codewhale/issues/6953",
-           "binary": "https://github.com/codewhale-hq/Codewhale/releases/download/v0.10.1/codewhale-windows-x64.exe",
-@@ -16,7 +16,7 @@
-           "previous_sha256": "f7b35a1e928f67884637f36b01fc72854f50690130f191bac3bcf62ece3c1d84"
-         },
-         "runtimeAcceptance": "Final 0.10.2 release bytes on 14393 not run",
--        "qualifiedPairs": 473,
-+        "qualifiedPairs": 475,
-         "namedApiContracts": [
-           {
-             "dll": "advapi32.dll",
-@@ -119,6 +119,18 @@
-             "symbol": "QueryDosDeviceW",
-             "minimumClient": "Windows XP",
-             "source": "https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-querydosdevicew"
-+          },
-+          {
-+            "dll": "api-ms-win-crt-math-l1-1-0.dll",
-+            "symbol": "cosf",
-+            "minimumClient": "Exact API-set pair introduced in 10.0.10240",
-+            "source": "https://learn.microsoft.com/en-us/uwp/win32-and-com/win32-extension-apis"
-+          },
-+          {
-+            "dll": "kernel32.dll",
-+            "symbol": "IsProcessorFeaturePresent",
-+            "minimumClient": "Windows 2000 Professional",
-+            "source": "https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-isprocessorfeaturepresent"
-           }
-         ],
-         "namedApiContractEvidence": {
-@@ -151,6 +163,17 @@
-                 "kernel32.dll!QueryDosDeviceW"
-               ],
-               "scope": "Two pairs that the Rust 1.100.0 standard library's Windows file system code imports (the toolchain, not a Codewhale call site); documentation-backed static contracts, same limits as above"
-+            },
+ fn validate_saved_command_receipt(
+@@ -1134,6 +1162,21 @@ pub fn restore(home: &Path, stamp: Option<&str>) -> Result<(String, RestoreRepor
+             })
+         })
+         .collect();
++    for record in records.values() {
++        if let Some(expected) = &record.replacement_sha256 {
++            let current = match fs::symlink_metadata(&record.original) {
++                Ok(meta) => meta,
++                Err(error) if error.kind() == std::io::ErrorKind::NotFound => continue,
++                Err(error) => return Err(error.into()),
++            };
++            if !current.is_file()
++                || !owned_by(&current, owner_id(home))
++                || file_sha256(&record.original)? != *expected
 +            {
-+              "candidateRun": "https://github.com/codewhale-hq/Codewhale/actions/runs/44379943827",
-+              "source": "7616799f09302544d09b112c33b5e8468b33e5ce",
-+              "binarySha256": "e4a9fb5d237c5e32cdad0e5cec06401447a3dfb39349e203d1a148a3322d99e8",
-+              "importReceiptSha256": "d2165db684c9bdebcda027336987a04e31b040db1f23ab6a355f74c189441474",
-+              "pairs": [
-+                "api-ms-win-crt-math-l1-1-0.dll!cosf",
-+                "kernel32.dll!IsProcessorFeaturePresent"
-+              ],
-+              "scope": "api-ms-win-crt-math-l1-1-0.dll!cosf from f32::cos() in TUI/ratatui 5.4.0 live motion and kernel32.dll!IsProcessorFeaturePresent from the windows-2025-vs2026 runner's MSVC 14.52 / Visual Studio 18.12 toolchain update (not a Codewhale call site); documentation-backed static contracts, same limits as above"
-             }
-           ]
-         }
-@@ -241,6 +264,7 @@
-           "ceilf",
-           "copysign",
-           "cos",
-+          "cosf",
-           "cosh",
-           "exp",
-           "exp2",
-@@ -493,6 +517,7 @@
-           "InitializeProcThreadAttributeList",
-           "InitializeSListHead",
-           "InitializeSRWLock",
-+          "IsProcessorFeaturePresent",
-           "IsThreadAFiber",
-           "LeaveCriticalSection",
-           "LoadLibraryA",
-@@ -691,31 +716,33 @@
-       "qualification": {
-         "result": "PASS",
-         "kind": "exact native system export resolution",
--        "time": "2026-11-12T23:41:18.0140691Z",
-+        "time": "2026-11-18T23:04:14.6447268Z",
-         "osVersion": "10.0.26200.0",
--        "osBuild": "26200.9725",
-+        "osBuild": "26200.9974",
-         "processArchitecture": "ARM64",
-         "runner": "GitHub-hosted windows-11-arm; its registry ProductName reads \"Windows 10 Enterprise\", as Windows 11 reports it",
--        "source": "b97e38645f13f9f5828fd8a013f414955f46d528",
--        "sourceUrl": "https://github.com/codewhale-hq/Codewhale/commit/b97e38645f13f9f5828fd8a013f414955f46d528",
--        "binarySha256": "4d7dfba5955681c0e0d7cb6076a7e1e2ecf253711dcfb2931618ee97ccfdb470",
-+        "source": "7616799f09302544d09b112c33b5e8468b33e5ce",
-+        "sourceUrl": "https://github.com/codewhale-hq/Codewhale/commit/7616799f09302544d09b112c33b5e8468b33e5ce",
-+        "binarySha256": "e84930843d628ed23fa7befa0f5cfc4d04a11d0f833f273f683429435756d85f",
-+        "importReceiptSha256": "8fdf650e3065392538ff342bbee0c3fe454c38f5ffc6a502aa677bdb8a19d3ba",
-+        "probeReceiptSha256": "94f44b2d3329730aeded9c88d04f364174a810be07a4971629dc957dfda6b70e",
-         "binaries": [
-           "codewhale-windows-arm64.exe",
-           "codew-windows-arm64.exe",
-           "codewhale-tui-windows-arm64.exe"
-         ],
-         "resolved": 449,
-         "unresolved": 0,
--        "buildRun": "https://github.com/codewhale-hq/Codewhale/actions/runs/43320217667",
--        "probeRun": "https:/
++                bail!("preserved modified command {}", record.original.display());
++            }
++        }
++    }
+     let mut receipts = Vec::new();
+     for dir in directories {
+         let receipt = dir.join(RECEIPT_FILE);
+@@ -1163,7 +1206,15 @@ pub fn restore(home: &Path, stamp: Option<&str>) -> Result<(String, RestoreRepor
+     if !receipts.is_empty() {
+         let mut batch = RecoveryBatch::open(home)?;
+         for receipt in receipts {
+-            batch.move_in(&receipt)?;
++            batch.move_in(&rec
+```
+
+**File**: `crates/release/tests/recovery_records.rs` (modified, +44/-0)
+```diff
+@@ -164,3 +164,47 @@ fn command_restore_preserves_ownership_and_undo() {
+         assert_eq!(fs::read(unrelated).unwrap(), b"keep me");
+     }
+ }
++
++#[test]
++fn partial_restore_keeps_other_claims_and_only_undoes_its_own_replacement() {
++    use codewhale_release::installs::{
++        RECEIPT_COMMANDS, RECEIPT_FILE, parse_command_receipt, sha256_hex,
++    };
++    let home = tempfile::tempdir().unwrap();
++    let dir = home.path();
++    let prior = dir.join(RECEIPT_COMMANDS[0]);
++    let untouched = dir.join(RECEIPT_COMMANDS[1]);
++    let receipt = dir.join(RECEIPT_FILE);
++    let original_claims = [RECEIPT_COMMANDS[0], RECEIPT_COMMANDS[1]]
++        .map(|name| format!("{}  {name}\n", sha256_hex(b"new")))
++        .concat();
++    fs::write(&prior, b"old").unwrap();
++    let mut batch = RecoveryBatch::open(dir).unwrap();
++    let stamp = batch.stamp.clone();
++    batch.move_in(&prior).unwrap();
++    batch.finish();
++    fs::write(&prior, b"new").unwrap();
++    fs::write(&untouched, b"new").unwrap();
++    fs::write(&receipt, &original_claims).unwrap();
++    let (_, report) = restore(dir, Some(&stamp)).unwrap();
++    assert!(report.skipped.is_empty());
++    let retained = parse_command_receipt(&fs::read_to_string(&receipt).unwrap()).unwrap();
++    assert_eq!(retained.len(), 1);
++    assert_eq!(retained[RECEIPT_COMMANDS[1]], sha256_hex(b"new"));
++    assert_eq!(fs::read(&prior).unwrap(), b"old");
++    assert_eq!(fs::read(&untouched).unwrap(), b"new");
++    let undo = report.displaced.unwrap();
++    fs::write(&prior, b"my changes").unwrap();
++    assert!(restore(dir, Some(&undo)).is_err());
++    assert_eq!(fs::read(&prior).unwrap(), b"my changes");
++    assert_eq!(
++        retained,
++        parse_command_receipt(&fs::read_to_string(&receipt).unwrap()).unwrap()
++    );
++    fs::write(&prior, b"old").unwrap();
++    let (_, report) = restore(dir, Some(&undo)).unwrap();
++    assert!(report.skipped.is_empty());
++    assert_eq!(fs::read(&prior).unwrap(), b"new");
++    assert_eq!(fs::read(&untouched).unwrap(), b"new");
++    assert_eq!(fs::read_to_string(&receipt).unwrap(), original_claims);
++}
+```
+
+**File**: `crates/tui/CHANGELOG.md` (modified, +1/-1)
+```diff
+@@ -282,7 +282,7 @@ Codewhale v0.10.3 brings a unified Plugins surface with Creator mode (`[features
+ - **MCP catalogs stay fresh:** a server's tools, resources, prompts and skills are rediscovered on their own connection when an advertised `ttlMs` expires or the server sends a list-changed notice. A tool resolved against the old catalog is refused with "retry the call", a removed tool cannot run, and a failed refresh reconnects instead of serving stale entries. Catalogs are never shared across servers, credentials or reconnects.
+ - **MCP Skills extension:** servers that advertise the published Skills extension have their skills listed in `list_mcp_resources`. Listing never activates a skill, and reading a skill file is refused unless its size and sha256 digest match the listing. MCP skills do not yet join `/skills`.
+ - **Updates install themselves:** release-binary installs check for a new release every 6 hours (was 1), download and checksum-verify it in the background, and apply it the next time `codewhale` starts, never during a session. One line says `Updated to v… · What's new: … · Undo: codewhale update --rollback`. Until releases are signed, the download waits for your OK (one `[y/N]` question at the next start, or `/update install`); a release with a valid Ed25519 manifest signature applies on its own. `codewhale update --rollback` puts back the version the last update replaced and keeps the rolled-back version from returning automatically. Turn it down with `codewhale config set update.mode notify` (or `off`, or `CODEWHALE_UPDATE_MODE`); an organization's root-owned `policy.toml` overrides both. Offline and rate-limited checks retry about an hour later instead of on every launch. Package-manager and desktop-app copies only get their manager's command. Builds with the release key refuse a missing or invalid signature, and re-check the staged binary against the signed manifest at start. The checksum manifest now always comes from GitHub Releases; on Linux x64 the CNB mirror can still serve the binary, but only bytes that GitHub's manifest lists.
+-- **One view of every Codewhale on the machine:** `codewhale doctor` has an Installations section and `codewhale doctor --installs` (`--json`, `--brief`) lists every `codewhale`, `codew`, `codewhale-tui`, `deepseek` and `deepseek-tui` with its owner: install receipt, package manager (with its exact removal command), the desktop app, a backup, or not ours. Nothing found is ever run. `codewhale doctor --fix` adds one plan to tidy them: old backups move to `~/.codewhale/recovery/<stamp>/` (kept 30 days, then deleted by a later `--fix`), an unreceipted `codew` is brought in line with `codewhale`, and the directory gets an install receipt; each move prints its undo and `codewhale doctor --restore <stamp>` reverses the lot. Package-managed, desktop-app, symlinked and foreign files are never touched, and neither is user data. `codewhale uninstall` now lists other copies with the same classification. Restoring an older command set now keeps its ownership receipt consistent and preserves the displaced receipt for undo.
++- **One view of every Codewhale on the machine:** `codewhale doctor` has an Installations section and `codewhale doctor --installs` (`--json`, `--brief`) lists every `codewhale`, `codew`, `codewhale-tui`, `deepseek` and `deepseek-tui` with its owner: install receipt, package manager (with its exact removal command), the desktop app, a backup, or not ours. Nothing found is ever run. `codewhale doctor --fix` adds one plan to tidy them: old backups move to `~/.codewhale/recovery/<stamp>/` (kept 30 days, then deleted by a later `--fix`), an unreceipted `codew` is brought in line with `codewhale`, and the directory gets an install receipt; each move prints its undo and `codewhale doctor --restore <stamp>` reverses the lot. Package-managed, desktop-app, symlinked and foreign files are never touched, and neither is user data. `codewhale uninstall` now lists other copies with the same classification. Restoring an older command set now keeps its ownership receipt consistent and preserves the displaced receipt for undo. A partial restore retains ownership of unchanged commands.
+ - **Uninstall guidance on every install route:** `codewhale uninstall` previews receipt-owned release files and `--yes` removes only checked files, with the running command last. Both Unix installers and the Windows archive installer record command ownership; self-update renews existing receipts on both. On Windows the running `codewhale.exe` is renamed, then a hidden PowerShell process deletes it after the command exits. Package-managed copies are left alone, and the command prints their exact removal command: npm with its prefix, Cargo with its root, the Homebrew formula, `scoop uninstall codewhale`, `winget uninstall --id HunterBown.CodeWhale`, or the Windows setup's `Uninstall.exe`. Every other `codewhale`/`codew` still on PATH is listed. User data is kept unless you add `--purge-da
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7399** (2026-11-19): fix(engine): unique fallback ids for non-streaming parallel tool calls (@Hmbown)
-- **PR #7395** (2026-11-19): ci: defer unreachable heapless RUSTSEC batch to unblock advisories gate (@Hmbown)
-- **PR #7390** (2026-11-19): 0.10.3 ergonomics and truth batch: pricing, codemode-js, export error codes, redaction/Zen (@Hmbown)
-- **PR #7386** (2026-11-19): release(0.10.3): land ci/release-prep-0103-v2 on main (@Hmbown)
-- **PR #7385** (2026-11-19): 0.10.3 lane 8: execpolicy launcher panic and payload-hiding fixes (@Hmbown)
-- **PR #7382** (closed): [CI only, do not merge] 0.10.3 ergonomics and truth batch: pricing, codemode-js, export errors, redaction/Zen (@Hmbown)
+- **PR #7450** (2026-11-21): feat: add LLMTR as an OpenAI-compatible provider (@knowhycodata)
+- **PR #7449** (2026-11-21): fix(engine): compact diagnostic late-usage receipts at the ledger bound (#6842) (@donglovejava)
+- **PR #7448** (2026-11-21): Show request transmission on provider errors (@deosiree)
+- **PR #7444** (2026-11-21): test(tui): guard all four paste-burst chunk-flush sites (@donglovejava)
+- **PR #7431** (2026-11-21): fix(engine): classify local read-only deferred tools as Safe in get_tool_category (@NieZhuZhu)
+- **PR #7430** (2026-11-21): fix(execpolicy): scan static awk and sed program payloads (@NieZhuZhu)
 
 ---
 
@@ -2550,13 +2535,13 @@ apart
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. 0.10.3 lane 8: execpolicy launcher panic and payload-hiding fixes
+## X. engine): retain every diagnostic that fits the usage ledger
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bacf9dea`: 0.10.3 lane 8: execpolicy launcher panic and payload-hiding fixes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a98c8010`: engine): retain every diagnostic that fits the usage ledger. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2564,18 +2549,19 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **Flag-only launcher commands no longer crash the turn:** running `npm --version`, `nix --version`, `launchctl --help`, `docker --version`, `podman --version`, or another launcher command with global flags and no subcommand no longer panics with an out-of-bounds index during command policy expansion.
-- **Command policy sees payloads behind empty words and `--entrypoint`:** command policy now also checks the nested command in launcher lines with empty-string words before the subcommand (`npm '' exec -c 'rm -rf /'`, `docker '' -D run alpine rm -rf /`) and checks `docker run --entrypoint rm alpine -rf /` as the entrypoint plus the arguments after the image, checking every `--entrypoint` value before the image, so deny rules and approval review match them. A launcher line with so many options that the option walk hits its state limit is now treated like other commands whose words are only known at run time: while deny rules are in force it asks for approval, or is refused where approval is unavailable, instead of dropping the nested command.
+- Large session usage ledgers keep settled and unresolved usage and discard only the oldest routing diagnostics needed to stay within the storage limit. Thanks [@donglovejava](https://github.com/donglovejava) ([#7449](https://github.com/codewhale-hq/CodeWhale/pull/7449)).
+
+- **[@donglovejava](https://github.com/donglovejava)** — covered large raw and bracketed terminal paste, fixed fallback tool-call IDs in streaming chat completions, and preserved usage records when compacting diagnostic receipts ([#7422](https://github.com/codewhale-hq/CodeWhale/pull/7422), [#7423](https://github.com/codewhale-hq/CodeWhale/pull/7423), [#7449](https://github.com/codewhale-hq/CodeWhale/pull/7449)).
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+- **[@donglovejava](https://github.com/donglovejava)** — covered large raw and bracketed terminal paste and fixed fallback tool-call IDs in streaming chat completions ([#7422](https://github.com/codewhale-hq/CodeWhale/pull/7422), [#7423](https://github.com/codewhale-hq/CodeWhale/pull/7423)).
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bacf9dea` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a98c8010` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

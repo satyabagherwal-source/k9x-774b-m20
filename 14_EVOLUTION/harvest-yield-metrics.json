@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T12:29:25.269Z",
-  "total_cycles_completed": 11224,
-  "total_learnings_persisted": 11224,
-  "total_rules_promoted": 10580,
+  "last_updated": "2026-11-21T12:38:09.514Z",
+  "total_cycles_completed": 11228,
+  "total_learnings_persisted": 11228,
+  "total_rules_promoted": 10582,
   "history": [
-    {
-      "timestamp": "2026-11-20T16:13:59.925Z",
-      "repository": "AngelSlim/Hy4-flash-GGUF",
-      "learningId": "learn-huggingface-angelslim-hy4-flash-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T16:28:26.093Z",
-      "repository": "lxml/lxml",
-      "learningId": "learn-github-lxml-lxml",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T16:28:33.004Z",
-      "repository": "pingcap/tidb",
-      "learningId": "learn-github-pingcap-tidb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T16:42:13.832Z",
-      "repository": "NVIDIA/cuda-rust",
-      "learningId": "learn-github-nvidia-cuda-rust",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-20T16:42:28.425Z",
       "repository": "dathere/qsv",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-21T12:29:25.269Z",
       "repository": "react-hook-form/react-hook-form",
       "learningId": "learn-github-react-hook-form-react-hook-form",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T12:37:54.119Z",
+      "repository": "orcarouter/OrcaCyber-Nano-1.0",
+      "learningId": "learn-huggingface-orcarouter-orcacyber-nano-1-0",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T12:37:57.318Z",
+      "repository": "codewhale-hq/Codewhale",
+      "learningId": "learn-github-codewhale-hq-codewhale",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T12:38:02.858Z",
+      "repository": "open-policy-agent/opa",
+      "learningId": "learn-github-open-policy-agent-opa",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T12:38:09.514Z",
+      "repository": "StarRocks/starrocks",
+      "learningId": "learn-github-starrocks-starrocks",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

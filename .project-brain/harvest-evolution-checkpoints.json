@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T12:29:59.704Z",
+  "last_updated": "2026-11-21T12:38:42.319Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-21T07:42:07.590Z",
@@ -158,9 +158,9 @@
       "staged_for_review": 1
     },
     "open-policy-agent-opa-learnings.md": {
-      "processed_at": "2026-11-20T07:36:08.035Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-21T12:38:41.419Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "rustls-rustls-learnings.md": {
       "processed_at": "2026-11-20T22:42:06.325Z",
@@ -353,7 +353,7 @@
       "staged_for_review": 1
     },
     "hmbown-codewhale-learnings.md": {
-      "processed_at": "2026-11-19T23:43:33.814Z",
+      "processed_at": "2026-11-21T12:38:12.771Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1528,7 +1528,7 @@
       "staged_for_review": 1
     },
     "hf-orcarouter-orcacyber-nano-1.0-learnings.md": {
-      "processed_at": "2026-11-17T16:22:03.694Z",
+      "processed_at": "2026-11-21T12:38:14.587Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3663,7 +3663,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 2796,
-  "total_canonical_promoted": 446,
-  "total_staged_for_review": 2155
+  "total_dossiers_evaluated": 2799,
+  "total_canonical_promoted": 447,
+  "total_staged_for_review": 2156
 }

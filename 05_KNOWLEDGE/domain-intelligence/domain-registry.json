@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T12:29:59.371Z",
-  "total_records": 2245,
+  "last_updated": "2026-11-21T12:38:41.978Z",
+  "total_records": 2246,
   "domains": {
     "A": {
       "total": 17,
@@ -1429,7 +1429,7 @@
       ]
     },
     "H": {
-      "total": 533,
+      "total": 534,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1963,7 +1963,8 @@
         "DOM-H-351DFF5E",
         "domain_intelligence-technical-construction-intelligence-hf-comfy-org-moss-image-learnings-core-invar",
         "domain_intelligence-technical-construction-intelligence-yazinsai-openoats-learnings-core-invariants",
-        "DOM-H-B5356809"
+        "DOM-H-B5356809",
+        "DOM-H-D52613BE"
       ]
     },
     "I": {
@@ -10277,8 +10278,8 @@
       "title": "Technical Construction Intelligence: open-policy-agent/opa Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-open-policy-agent-opa-technical-construction-intelligence-open-policy-agent-opa-.md",
       "repository": "open-policy-agent/opa",
-      "content_hash": "e1a6e146bc4ef245187d0fa8ca5b33c3418d0258c25fd975a967d446804666ef",
-      "created_at": "2026-11-20T07:36:03.360Z"
+      "content_hash": "4b205a91f37808058c34b0b9457d6aa3795038d203e1e8b96b56e11eb43b9374",
+      "created_at": "2026-11-21T12:38:03.223Z"
     },
     "domain_intelligence-technical-construction-intelligence-t8y2-dbx-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-t8y2-dbx-core-invariants",
@@ -10346,8 +10347,8 @@
       "title": "Technical Construction Intelligence: open-policy-agent-opa-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-open-policy-agent-opa-learnings-technical-construction-intelligence-open-policy-.md",
       "repository": "open-policy-agent-opa-learnings",
-      "content_hash": "986d96cfcb55f0e0ac5eb3a362131dec407ad638a079a95e6843a3fc740c55e5",
-      "created_at": "2026-11-20T07:36:08.455Z"
+      "content_hash": "5a9de0b786faaec4fa6723510de3e204dbb344fda14c9d2a789765ed8e8be9e5",
+      "created_at": "2026-11-21T12:38:41.978Z"
     },
     "domain_intelligence-research-knowledge-intelligence-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-",
@@ -16084,10 +16085,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: codewhale-hq/Codewhale Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-codewhale-hq-codewhale-architecture-intelligence-codewhale-hq-codewhale-core-inv.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hmbown-codewhale-architecture-intelligence-codewhale-hq-codewhale-core-invariant.md",
       "repository": "codewhale-hq/Codewhale",
-      "content_hash": "ea95f6565da23aa5c83cad064ac298b34507bb74250f2431ca983f407574657a",
-      "created_at": "2026-11-21T01:43:41.994Z"
+      "content_hash": "7c7be3007594367851365b653a7354a9455d8121d6d6fd193b88e0e9bc35e3a4",
+      "created_at": "2026-11-21T12:37:57.679Z"
     },
     "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-learnings-core-invariants",
@@ -16806,8 +16807,8 @@
       "title": "Technical Construction Intelligence: StarRocks/starrocks Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-starrocks-starrocks-technical-construction-intelligence-starrocks-starrocks-core.md",
       "repository": "StarRocks/starrocks",
-      "content_hash": "6e6b263c40a9d16f0559e91d1e88afcf8b3d2f1bab9a3ab6d72bdf3a908c5512",
-      "created_at": "2026-11-20T06:19:37.883Z"
+      "content_hash": "dab0485ebb8924bcb00749e56df45490c9b635efe8347c228aa75061fa5e4d89",
+      "created_at": "2026-11-21T12:38:09.844Z"
     },
     "domain_intelligence-research-knowledge-intelligence-autotrust-autotrust-decider-pro-vision-27b-core-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-autotrust-autotrust-decider-pro-vision-27b-core-",
@@ -18577,8 +18578,8 @@
       "title": "Architecture Intelligence: hmbown-codewhale-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hmbown-codewhale-learnings-architecture-intelligence-hmbown-codewhale-learnings-.md",
       "repository": "hmbown-codewhale-learnings",
-      "content_hash": "bacfdfcfa374603df59c3dc35c1f02b324882c36133ea978dbe207f90486c03e",
-      "created_at": "2026-11-19T23:43:35.101Z"
+      "content_hash": "ccede5c5c058474693da24426807f7926e67c93fbda81e848efd426f0a922142",
+      "created_at": "2026-11-21T12:38:14.036Z"
     },
     "DOM-D-D6B073D5": {
       "record_id": "DOM-D-D6B073D5",
@@ -28198,8 +28199,8 @@
       "title": "Research & Knowledge Intelligence: orcarouter/OrcaCyber-Nano-1.0 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-orcarouter-orcacyber-nano-1-0-research-knowledge-intelligence-orcarouter-orca.md",
       "repository": "orcarouter/OrcaCyber-Nano-1.0",
-      "content_hash": "ecec7be6bd0c01f45a0b2b28c1d8bef1b2b01d9234f6a54846f386292137e95c",
-      "created_at": "2026-11-17T16:21:48.682Z"
+      "content_hash": "bb06fd488a155330920c63fcd926eca4c62006101af2c9f2af5e8bd2e02b8aa3",
+      "created_at": "2026-11-21T12:37:54.307Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-orcacyber-nano-1-0-learnings-core-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-orcacyber-nano-1-0-learnings-core-",
@@ -28207,8 +28208,8 @@
       "title": "Research & Knowledge Intelligence: hf-orcarouter-orcacyber-nano-1.0-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-orcarouter-orcacyber-nano-1-0-learnings-research-knowledge-intelligence-hf-or.md",
       "repository": "hf-orcarouter-orcacyber-nano-1.0-learnings",
-      "content_hash": "06932dbbd022f31337ff72401b36b188f9e961153af84415e0feeefc77a73051",
-      "created_at": "2026-11-17T16:22:03.846Z"
+      "content_hash": "f1e45d6928fa67ecb4f5538860da8abf1f23575068ed5dfae38d221de3293222",
+      "created_at": "2026-11-21T12:38:14.768Z"
     },
     "domain_intelligence-research-knowledge-intelligence-recursivesi-flint-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-recursivesi-flint-core-invariants",
@@ -37683,6 +37684,48 @@
       "confidence": 0.69,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-21T12:29:58.905Z"
+    },
+    "DOM-H-D52613BE": {
+      "record_id": "DOM-H-D52613BE",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "H",
+          "id": "technical_construction",
+          "name": "Technical Construction Intelligence"
+        }
+      ],
+      "title": "docs: document number representation differences in Wasm",
+      "content": "When implementing operations in `docs/docs/wasm.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/opa. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "5d1a8d09fa0844a83035ad6df8ce973d772d9de4a5d56febe943e0d8f2ee9dc4",
+      "summary": "Prevents defects observed in production commit `e4f652d8`: docs: document number representation differences in Wasm. Unvalidated execution p -> When implementing operations in `docs/docs/wasm.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory",
+      "provenance": {
+        "source_uri": "project://open-policy-agent-opa/open-policy-agent-opa-learnings.md",
+        "source_version": "e4f652d8",
+        "observed_at": "2026-11-21T12:38:02.350Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (open-policy-agent-opa)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of open-policy-agent-opa"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "H"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-21T12:38:41.392Z"
     }
   }
 }

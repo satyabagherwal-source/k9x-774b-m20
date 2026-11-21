@@ -11825,3 +11825,8 @@ Every entry in this ledger must capture:
 | `learn-github-sharkdp-fd` | `https://github.com/sharkdp/fd` | `f8d4e0e7` | Multi-dimensional audit evidence | 2026-11-21T12:29:19.483Z |
 | `learn-github-react-hook-form-react-hook-form` | `https://github.com/react-hook-form/react-hook-form` | `0251cbae` | Multi-dimensional audit evidence | 2026-11-21T12:29:25.264Z |
 | `learn-dom-h-b5356809` | `project://react-hook-form-react-hook-form` | `0251cbae` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md` | 2026-11-21T12:29:58.937Z |
+| `learn-huggingface-orcarouter-orcacyber-nano-1-0` | `https://huggingface.co/orcarouter/OrcaCyber-Nano-1.0` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-11-21T12:37:54.114Z |
+| `learn-github-codewhale-hq-codewhale` | `https://github.com/Hmbown/Codewhale` | `6c211938` | Multi-dimensional audit evidence | 2026-11-21T12:37:57.313Z |
+| `learn-github-open-policy-agent-opa` | `https://github.com/open-policy-agent/opa` | `e4f652d8` | Multi-dimensional audit evidence | 2026-11-21T12:38:02.819Z |
+| `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `a9a9fd73` | Multi-dimensional audit evidence | 2026-11-21T12:38:09.509Z |
+| `learn-dom-h-d52613be` | `project://open-policy-agent-opa` | `e4f652d8` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md` | 2026-11-21T12:38:41.419Z |

@@ -4,22 +4,22 @@
 {
   "source_repository": "StarRocks/starrocks",
   "source_url": "https://github.com/StarRocks/starrocks",
-  "source_version": "b400696f",
+  "source_version": "a9a9fd73",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-20T06:19:37.737Z",
+  "timestamp": "2026-11-21T12:38:09.699Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-starrocks-starrocks",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [StarRocks/starrocks](https://github.com/StarRocks/starrocks) (Revision: `b400696f`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T06:19:37.737Z`  
+> **Provenance**: Harvested from [StarRocks/starrocks](https://github.com/StarRocks/starrocks) (Revision: `a9a9fd73`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-21T12:38:09.699Z`  
 > **Learning ID**: `learn-github-starrocks-starrocks`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `StarRocks/starrocks` (Commit: `b400696f`)
+- **Target Repository**: `StarRocks/starrocks` (Commit: `a9a9fd73`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/starrocks-starrocks-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/StarRocks/starrocks](https://github.com/StarRocks/starrocks))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T06:19:36.528Z  
+> **Harvest Timestamp**: 2026-11-21T12:38:08.535Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: The world's fastest open query engine for sub-second analytics both on and off the data lakehouse. With the flexibility to support nearly any scenario, StarRocks provides best-in-class performance for multi-dimensional analytics, real-time analytics, and ad-hoc queries. A Linux Foundation project.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 12271 stars
+- **Stars / Engagement**: 12278 stars
 
 ---
 
@@ -1829,648 +1829,556 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `36091cdd` (2026-11-20)
-**Commit Message**: [BugFix][RB-1573] Count variant nulls in count(VARIANT) and keep scalar types in CAST(VARIANT AS JSON) (#83939)
+### Incident Patch 1: `87ba5c08` (2026-11-20)
+**Commit Message**: [BugFix] Count group roles and security-integration users in SHOW GRANTS FOR ROLE, SHOW AUTHENTICATION and the HTTP admin check (#83211)
 
-Co-authored-by: tqqq <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Co-authored-by: wanpengfei-git <[REDACTED_EMAIL]>
+Signed-off-by: Planck Li <[REDACTED_EMAIL]>
 
-**File**: `be/src/exprs/cast_expr_tpl.hpp` (modified, +9/-1)
+**File**: `docs/en/sql-reference/sql-statements/account-management/SHOW_AUTHENTICATION.md` (modified, +15/-2)
 ```diff
-@@ -229,14 +229,22 @@ static ColumnPtr cast_to_json_fn(ColumnPtr& column, const cctz::time_zone& zone)
-                 if (!st.ok()) {
-                     overflow = true;
-                 } else {
--                    auto parsed = JsonValue::parse_json_or_string(ss.str());
-+                    // variant_to_json writes JSON text, so a number, a boolean or a null must stay one instead of
-+                    // becoming a JSON string, which is what parse_json_or_string makes of a bare scalar.
-+                    auto parsed = JsonValue::parse_json_text(ss.str());
-                     if (parsed.ok()) {
-                         value = parsed.value();
-                     } else {
-                         overflow = true;
-                     }
+@@ -12,6 +12,8 @@ SHOW AUTHENTICATION displays the authentication information of the current user
+ All users have the privilege to view their own authentication information. Only users with the `user_admin` role can view the authentication information of all users or the authentication information of specified users.
+ :::
+ 
++A user that logs in through a security integration is not created in StarRocks: StarRocks creates a virtual user for its session. Such a user can view its own authentication information with `SHOW AUTHENTICATION` without `FOR`. It cannot be specified in `FOR USERNAME`, which accepts only users created in StarRocks, and it is not returned by `SHOW ALL AUTHENTICATION`.
++
+ ## Syntax
+ 
+ ```SQL
+@@ -36,8 +38,8 @@ SHOW [ALL] AUTHENTICATION [FOR USERNAME]
+ | **Field**         | **Description**                                              |
+ | ----------------- | ------------------------------------------------------------ |
+ | UserIdentity      | The user identity.                                           |
+-| Password          | Whether a password is used to log in to the StarRocks cluster.<ul><li>`Yes`: A password is used.</li><li>`No`: No password is used.</li></ul> |
+-| AuthPlugin        | The interface that is used for authentication. Valid values: `MYSQL_NATIVE_PASSWORD` and `AUTHENTICATION_LDAP_SIMPLE`. If no interface is used, `NULL` is returned. |
++| Password          | Whether a password is used to log in to the StarRocks cluster.<ul><li>`Yes`: A password is used.</li><li>`No`: No password is used.</li></ul>For a user that logs in through a security integration, `No` is returned, because StarRocks does not store its password. |
++| AuthPlugin        | The interface that is used for authentication. Valid values: `MYSQL_NATIVE_PASSWORD` and `AUTHENTICATION_LDAP_SIMPLE`. If no interface is used, `NULL` is returned. For a user that logs in through a security integration, the name of that security integration is returned. |
+ | UserForAuthPlugin | The name of the user using the LDAP or Kerberos authentication. If no authentication is used, `NULL` is returned. |
+ 
+ ## Examples
+@@ -75,3 +77,14 @@ SHOW AUTHENTICATION FOR root;
+ | 'root'@'%'   | Yes      | NULL       | NULL              |
+ +--------------+----------+------------+-------------------+
+ ```
++
++Example 4: Display the authentication information of the current user, who logs in through the security integration `ldap_si`.
++
++```Plain
++SHOW AUTHENTICATION;
+++------------------------+----------+------------+-------------------+
++| UserIdentity           | Password | AuthPlugin | UserForAuthPlugin |
+++------------------------+----------+------------+-------------------+
++| 'alice'@'192.168.1.10' | No       | ldap_si    | NULL              |
+++------------------------+----------+------------+-------------------+
++```
+```
+
+**File**: `docs/ja/sql-reference/sql-statements/account-management/SHOW_AUTHENTICATION.md` (modified, +16/-3)
+```diff
+@@ -14,6 +14,8 @@ products: [oss, enterprise, cloud, anywhere]
+ すべてのユーザーは自分自身の認証情報を表示する権限を持っています。`user_admin` ロールを持つユーザーのみが、すべてのユーザーまたは指定されたユーザーの認証情報を表示できます。
+ :::
+ 
++security integration を通じてログインするユーザーは StarRocks 内に作成されません。StarRocks はそのセッション用に仮想ユーザーを作成します。このようなユーザーは、`FOR` を指定しない `SHOW AUTHENTICATION` で自分の認証情報を表示できます。`FOR USERNAME` には StarRocks 内に作成されたユーザーのみ指定できるため、このようなユーザーは指定できず、`SHOW ALL AUTHENTICATION` でも返されません。
++
+ ## 構文
+ 
+ ```SQL
+@@ -38,8 +40,8 @@ SHOW [ALL] AUTHENTICATION [FOR USERNAME]
+ | **フィールド**       | **説明**                                                                 |
+ | -------------------- | ------------------------------------------------------------------------ |
+ | UserIdentity         | ユーザーの識別情報。                                                     |
+-| Password             | StarRocks クラスターにログインするためにパスワードが使用されているかどうか。<ul><li>`Yes`: パスワードが使用されています。</li><li>`No`: パスワードは使用されていません。</li></ul> |
+-| AuthPlugin           | 認証に使用されるインターフェース。 有効な値は `MYSQL_NATIVE_PASSWORD` と `AUTHENTICATION_LDAP_SIMPLE` です。インターフェースが使用されていない場合、`NULL` が返されます。 |
++| Password             | StarRocks クラスターにログインするためにパスワードが使用されているかどうか。<ul><li>`Yes`: パスワードが使用されています。</li><li>`No`: パスワードは使用されていません。</li></ul>security integration を通じてログインするユーザーの場合、StarRocks はそのパスワードを保存しないため `No` が返されます。 |
++| AuthPlugin           | 認証に使用されるインターフェース。 有効な値は `MYSQL_NATIVE_PASSWORD` と `AUTHENTICATION_LDAP_SIMPLE` です。インターフェースが使用されていない場合、`NULL` が返されます。security integration を通じてログインするユーザーの場合、その security integration の名前が返されます。 |
+ | UserForAuthPlugin    | LDAP または Kerberos 認証を使用しているユーザーの名前。認証が使用されていない場合、`NULL` が返されます。 |
+ 
+ ## 例
+@@ -76,4 +78,15 @@ SHOW AUTHENTICATION FOR root;
+ +--------------+----------+------------+-------------------+
+ | 'root'@'%'   | Yes      | NULL       | NULL              |
+ +--------------+----------+------------+-------------------+
+-```
+\ No newline at end of file
++```
++
++例 4: security integration `ldap_si` を通じてログインした現在のユーザーの認証情報を表示します。
++
++```Plain
++SHOW AUTHENTICATION;
+++------------------------+----------+------------+-------------------+
++| UserIdentity           | Password | AuthPlugin | UserForAuthPlugin |
+++------------------------+----------+------------+-------------------+
++| 'alice'@'192.168.1.10' | No       | ldap_si    | NULL              |
+++------------------------+----------+------------+-------------------+
++```
+```
+
+**File**: `docs/zh/sql-reference/sql-statements/account-management/SHOW_AUTHENTICATION.md` (modified, +15/-2)
+```diff
+@@ -16,6 +16,8 @@ products: [oss, enterprise, cloud, anywhere]
+ 
+ :::
+ 
++通过安全集成登录的用户不会在 StarRocks 中创建：StarRocks 只在会话中为其创建一个虚拟用户。这类用户可以用不带 `FOR` 的 `SHOW AUTHENTICATION` 查看自己的认证信息，但不能在 `FOR USERNAME` 中指定（它只接受在 StarRocks 中创建的用户），`SHOW ALL AUTHENTICATION` 也不会返回这类用户。
++
+ ## 语法
+ 
+ ```SQL
+@@ -40,8 +42,8 @@ SHOW [ALL] AUTHENTICATION [FOR USERNAME]
+ | **字段**          | **说明**                                                     |
+ | ----------------- | ------------------------------------------------------------ |
+ | UserIdentity      | 用户标识。                                                   |
+-| Password          | 是否使用密码登录到 StarRocks 集群。<ul><li>`Yes`：使用密码登录。</li><li>`No`：不使用密码登录。</li></ul> |
+-| AuthPlugin        | 使用的认证接口，包括 `MYSQL_NATIVE_PASSWORD` 和 `AUTHENTICATION_LDAP_SIMPLE`。如未使用认证接口，则返回 `NULL`。 |
++| Password          | 是否使用密码登录到 StarRocks 集群。<ul><li>`Yes`：使用密码登录。</li><li>`No`：不使用密码登录。</li></ul>通过安全集成登录的用户返回 `No`，因为 StarRocks 不保存其密码。 |
++| AuthPlugin        | 使用的认证接口，包括 `MYSQL_NATIVE_PASSWORD` 和 `AUTHENTICATION_LDAP_SIMPLE`。如未使用认证接口，则返回 `NULL`。通过安全集成登录的用户返回该安全集成的名称。 |
+ | UserForAuthPlugin | 使用 LDAP 或 Kerberos 认证的用户名称。如未使用认证，则返回 `NULL`。 |
+ 
+ ## 示例
+@@ -79,3 +81,14 @@ SHOW AUTHENTICATION FOR root;
+ | 'root'@'%'   | Yes      | NULL       | NULL              |
+ +--------------+----------+------------+-------------------+
+ ```
++
++示例四：当前用户通过安全集成 `ldap_si` 登录，查看其认证信息。
++
++```Plain
++SHOW AUTHENTICATION;
+++------------------------+----------+------------+-------------------+
++| UserIdentity           | Password | AuthPlugin | UserForAuthPlugin |
+++------------------------+----------+------------+-------------------+
++| 'alice'@'192.168.1.10' | No       | ldap_si    | NULL              |
+++------------------------+----------+------------+-------------------+
++```
+```
+
+**File**: `fe/fe-core/src/main/java/com/starrocks/authorization/AuthorizationMgr.java` (modified, +48/-8)
+```diff
+@@ -2057,13 +2057,14 @@ public Set<Long> getAllRoleIds(UserIdentity user) throws PrivilegeException {
+     }
+ 
+     /**
+-     * The roles a caller can use: the roles granted to the user, plus the roles granted to its groups, which the
+-     * privilege collection always adds. An ephemeral user, one authenticated through a security integration, owns
+-     * no roles: its roles are the ones its session activated. They are taken from the caller, not looked up, as
+-     * the lookup reads the session of the current thread, and the RPC threads calling this have none.
++     * The ids of the roles a caller can use: the roles granted to the user, plus the roles granted to its groups,
++     * which the privilege collection always adds. An ephemeral user, one authenticated through a security
++     * integration, owns no roles: its roles are the ones its session activated. They are taken from the caller, not
++     * looked up, as the lookup reads the session of the current thread, and the RPC threads calling this have none.
++     * Roles that no longer exist are left out. The roles these inherit from are not added.
+      */
+-    public List<RolePrivilegeCollectionV2> getApplicableRoles(UserIdentity user, Set<String> groups,
+-                                                              Set<Long> activatedRoleIds) throws PrivilegeException {
++    public Set<Long> getApplicableRoleIds(UserIdentity user, Set<String> groups, Set<Long> activatedRoleIds)
++            throws PrivilegeException {
+         Set<Long> roleIds = new HashSet<>();
+         if (user.isEphemeral()) {
+             // The activated set is the only place some of these roles live: an LDAP security integration with a
+@@ -2076,7 +2077,6 @@ public List<RolePrivilegeCollectionV2> getApplicableRoles(UserIdentity user, Set
+             roleIds.addAll(getRoleIdsByUser(user));
+         }
+ 
+-        List<RolePrivilegeCollectionV2> applicableRoles = new ArrayList<>();
+         roleReadLock();
+         try {
+             // Under the lock: getRoleIdListByGroup can return the live set, which GRANT and REVOKE change in place.
+@@ -2085,9 +2085,49 @@ public List<RolePrivilegeCollectionV2> getApplicableRoles(UserIdentity user, Set
+                     roleIds.addAll(getRoleIdListByGroup(group));
                  }
              }
-+            if (!overflow && value.is_null() && row_ref.get_value().type() == VariantType::NULL_TYPE) {
-+                // A variant null converts to SQL NULL, as it does for every other cast target. A NaN or infinite
-+                // FLOAT/DOUBLE also prints as null, but it takes the path below like CAST(DOUBLE AS JSON) does.
-+                builder.append_null();
-+                continue;
-+            }
-         } else {
-             if constexpr (AllowThrowException) {
-                 THROW_RUNTIME_ERROR_WITH_TYPE(FromType);
-```
-
-**File**: `be/src/types/json_value.cpp` (modified, +33/-0)
-```diff
-@@ -136,6 +136,39 @@ StatusOr<JsonValue> JsonValue::parse_json_or_string(const Slice& src) {
-     return Status::OK();
- }
- 
-+StatusOr<JsonValue> JsonValue::parse_json_text(const Slice& src) {
-+    if (src.size > kJSONLengthLimit) {
-+        return Status::NotSupported("JSON string exceed maximum length 16MB");
-+    }
-+    try {
-+        // The velocypack parser builds a number that ends the input digit by digit instead of converting it as a
-+        // whole, so a bare 0.3 comes back as the next double. A trailing space sends it through the exact
-+        // conversion; only a bare scalar can end without a closing bracket or quote, and it is short.
-+        std::string padded;
-+        Slice text = src;
-+        if (!src.empty()) {
-+            const char last = src.get_data()[src.get_size() - 1];
-+            if (last != '}' && last != ']' && last != '"') {
-+                padded.reserve(src.get_size() + 1);
-+                padded.append(src.get_data(), src.get_size());
-+                padded.push_back(' ');
-+                text = Slice(padded);
-+            }
++            roleIds.removeIf(roleId -> !roleIdToPrivilegeCollection.containsKey(roleId));
++        } finally {
++            roleReadUnlock();
 +        }
-+        vpack::Exception error(vpack::Exception::InternalError);
-+        vpack::Options options = parse_options_from_config();
-+        auto b = vpack::Parser::tryFromJson(text.get_data(), text.get_size(), &error, &options);
-+        if (b == nullptr) {
-+            return fromVPackException(error);
-+        }
-+        JsonValue res;
-+        res.assign(*b);
-+        return res;
-+    } catch (const vpack::Exception& e) {
-+        return fromVPackException(e);
++        return roleIds;
 +    }
-+}
 +
- Status JsonValue::parse(const Slice& src, JsonValue* out) {
-     ASSIGN_OR_RETURN(auto json_value, parse_json_or_string(src));
-     *out = std::move(json_value);
-```
-
-**File**: `be/src/types/json_value.h` (modified, +2/-0)
-```diff
-@@ -125,6 +125,8 @@ class JsonValue {
-     static StatusOr<JsonValue> parse(const Slice& src);
-     // Try to parse it as JSON object, otherwise consider it as a string
-     static StatusOr<JsonValue> parse_json_or_string(const Slice& src);
-+    // Parse `src` as one JSON text of any kind, including a bare scalar such as 1, true or null.
-+    static StatusOr<JsonValue> parse_json_text(const Slice& src);
-     // Effective JSON nesting-depth cap from config (json_max_parse_nesting_depth), with a built-in
-     // fallback (1024) so it is never silently disabled. Single source of truth shared by the
-     // velocypack parse path (parse_options_from_config) and the simdjson ingest path (SimdJsonConverter).
-```
-
-**File**: `be/test/exprs/cast_expr_test.cpp` (modified, +83/-0)
-```diff
-@@ -17,6 +17,7 @@
- #include <glog/logging.h>
- #include <gtest/gtest.h>
- 
-+#include <cstring>
- #include <limits>
- 
- #include "base/string/slice.h"
-@@ -3740,4 +3741,86 @@ TEST_F(VectorizedCastExprTest, variant_cast_to_json_from_rebuilt_shredded_row) {
-     EXPECT_EQ(long_value, str->to_string());
- }
- 
-+// A scalar VARIANT casts to the same JSON scalar, not to a JSON string of its text, and a variant null casts to SQL
-+// NULL, also under a throwing cast.
-+TEST_F(VectorizedCastExprTest, variant_scalar_cast_to_json_keeps_json_type) {
-+    const std::vector<std::string> inputs = {"1", "true", "1.5", R"("s")", "null", R"({"a":null})"};
-+    auto variant_col = VariantColumn::create();
-+    for (const auto& text : inputs) {
-+        auto encoded = VariantEncoder::encode_json_text_to_variant(text);
-+        ASSERT_TRUE(encoded.ok()) << encoded.status();
-+        variant_col->append(&encoded.value());
-+    }
-+    for (const bool allow_throw : {false, true}) {
-+        ColumnPtr result;
-+        ASSERT_NO_THROW(
-+                result = cast_from_variant(gen_type_desc(TPrimitiveType::JSON), variant_col->clone(), allow_throw));
-+        ASSERT_EQ(inputs.size(), result->size());
-+        const auto json_at = [&](size_t row) {
-+            const JsonValue* json = result->get(row).get_json();
-+            return json == nullptr ? std::string("<null>") : json->to_string_uncheck();
-+        };
-+        EXPECT_EQ("1", json_at(0));
-+        EXPECT_TRUE(result->get(0).get_json()->get_int().ok());
-+        EXPECT_EQ("true", json_at(1));
-+        EXPECT_TRUE(result->get(1).get_json()->get_bool().ok());
-+        EXPECT_EQ("1.5", json_at(2));
-+        EXPECT_EQ(R"("s")", json_at(3));
-+        EXPECT_TRUE(result->is_null(4));
-+        EXPECT_EQ(R"({"a": null})", json_at(5));
-+    }
-+}
-+
-+// A DOUBLE VARIANT casts to the same double in JSON. The JSON parser built a number at the end of its input digit by
-+// digit, which turned 0.3 into the next double up.
-+TEST_F(VectorizedCastExprTest, variant_double_cast_to_json_keeps_exact_value) {
-+    const std::vector<double> values = {0.3, -0.3, 0.7, 1e-5, 123.456, 1e300, 5e-324, -0.0};
-+    auto variant_col = VariantColumn::create();
-+    for (double d : values) {
-+        auto json = JsonValue::from_double(d);
-+        auto encoded = VariantEncoder::encode_json_to_variant(json);
-+        ASSERT_TRUE(encoded.ok()) << encoded.status();
-+        variant_col->append(&encoded.value());
-+    }
-+    ColumnPtr result = cast_from_variant(gen_type_desc(TPrimitiveType::JSON), std::move(variant_col));
-+    ASSERT_EQ(values.size(), result->size());
-+    for (size_t i = 0; i < values.size(); ++i) {
-+        const JsonValue* json = result->get(i).get_json();
-+        ASSERT_NE(nullptr, json) << i;
-+        auto d = json->get_double();
-+        ASSERT_TRUE(d.ok()) << i << ": " << json->to_string_uncheck();
-+        EXPECT_EQ(values[i], d.value()) << i << ": " << json->to_string_uncheck();
-+    }
-+}
-+
-+// A NaN DOUBLE has no JSON form and prints as null; it casts like CAST(DOUBLE AS JSON) does: SQL NULL, or an error
-+// under a throwing cast. Only a variant null is always SQL NULL.
-+TEST_F(VectorizedCastExprTest, variant_nan_cast_to_json_follows_double_cast) {
-+    const auto make_column = [](bool nan) {
-+        auto variant_col = VariantColumn::create();
-+        if (nan) {
-+            const double value = std::numeric_limits<double>::quiet_NaN();
-+            std::string bytes(1 + sizeof(double), '\0');
-+            bytes[0] = static_cast<char>(static_cast<uint8_t>(VariantType::DOUBLE) << 2);
-+            memcpy(bytes.data() + 1, &value, sizeof(value)); // little-endian host
-+            VariantRowValue row(VariantMetadata::kEmptyMetadata, bytes);
-+            variant_col->append(&row);
-+        } else {
-+            auto encoded = VariantEncoder::encode_json_text_to_variant("null");
-+            EXPECT_TRUE(encoded.ok()) << encoded.status();
-+            variant_col->append(&encoded.value());
-+        }
-+        return variant_col;
-+    };
-+    const TTypeDesc json_type = gen_type_desc(TPrimitiveType::JSON);
-+    ColumnPtr nan_result = cast_from_variant(json_type, make_column(true));
-+    ASSERT_EQ(1, nan_result->size());
-+    EXPECT_TRUE(nan_result->is_null(0));
-+    EXPECT_FALSE(cast_from_variant_error(json_type, make_column(true)).empty());
-+
-+    ColumnPtr null_result = cast_from_variant(json_type, make_column(false), true);
-+    ASSERT_EQ(1, null_result->size());
-+    EXPECT_TRUE(null_result->is_null(0));
-+}
-+
- } // namespace starrocks
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/catalog/FunctionSet.java` (modified, +8/-1)
-```diff
-@@ -1396,7 +1396,14 @@ private void initAggregateBuiltins() {
-                 false, false, false));
- 
-         for (Type t : SUPPORTED_TYPES) {
--            if (t.isFunctionType() || t.isVariantType()) {
-+            if (t.isFunctionType()) {
-+                continue;
-+            }
-+            if (t.isVariantType()) {
-+                // Only count: without it count(v) casts v to VARCHAR, which turns a variant null into a SQL NULL
-+                // and drops it from the count, although `v IS NULL` is false.
-+                addBuiltin(AggregateFunction.createBuiltin(FunctionSet.COUNT,
-+                        Lists.newArrayList(t), IntegerType.BIGINT, IntegerType.BIGINT, false, true, true));
-                 continue;
-             }
-             if (t.isNull()) {
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/sql/analyzer/FunctionAnalyzer.java` (modified, +4/-1)
-```diff
-@@ -1620,7 +1620,10 @@ private static Function getAdjustedAnalyzedAggregateFunction(ConnectContext sess
-         if (fnName.equals(FunctionSet.COUNT) && isDistinct) {
-             // Compatible with the logic of the original search function "count distinct"
-             // TODO: fix how we equal count distinct.
--            fn = ExprUtils.getBuiltinFunction(FunctionSet.COUNT, new Type[] { argumentTypes[0] },
-+            // count(VARIANT) is only for plain counting: there is no distinct aggregate over VARIANT, so count
-+            // distinct keeps casting a VARIANT argument to VARCHAR as it did before the VARIANT overload existed.
-+            Type distinctArgType = argumentTypes[0].isVariantType() ? VarcharType.VARCHAR : argumentTypes[0];
-+            fn = ExprUtils.getBuiltinFunction(FunctionSet.COUNT, new Type[] { distinctArgType },
-                     Function.CompareMode.IS_NONSTRICT_SUPERTYPE_OF);
-         } else if (fnName.equals(FunctionSet.EXCHANGE_BYTES) || fnName.equals(FunctionSet.EXCHANGE_SPEED)) {
-             fn = ExprUtils.getBuiltinFunction(fnName, argumentTypes, Function.CompareMode.IS_NONSTRICT_SUPERTYPE_OF);
-```
-
-**File**: `fe/fe-core/src/test/java/com/starrocks/sql/plan/AggregateTest.java` (modified, +28/-0)
-```diff
-@@ -3645,4 +3645,32 @@ public void testStructFieldOfAggregates() throws Exception {
-         assertContains(plan, "output: sum(2: v2), max(3: v3)");
-         assertContains(plan, "named_struct('a', 4: sum, 'b', 5: max).a");
-     }
-+
-+    // count(v) on a VARIANT counts it as VARIANT. Counting cast(v as VARCHAR) instead turned a variant null into a SQL
-+    // NULL and dropped it from the count, although `v IS NULL` is false.
-+    @Test
-+    public void testCountVariantDoesNotCastToVarchar() throws Exception {
-+        int oldStage = connectContext.getSessionVariable().getNewPlannerAggStage();
++    /**
++     * The roles of {@link #getApplicableRoleIds} together with every role they inherit from. Roles
++     * that no longer exist are left out.
++     */
++    public Set<Long> getApplicableRoleIdsWithPredecessors(UserIdentity user, Set<String> groups,
++                                                          Set<Long> activatedRoleIds) throws PrivilegeException {
++        // Hold both locks across the lookup and the expansion, as getEffectiveRoleIds does with the
++        // user lock: otherwise a role revoked from the user or its group and then granted db_admin
++        // in between would be expanded against the new inheritance graph and count as held. The
++        // lookup takes the same read locks again, which they allow.
++        userReadLock();
 +        try {
-+            for (int stage : new int[] {0, 1, 2}) {
-+                connectContext.getSessionVariable().setNewPlanerAggStage(stage);
-+                String plan = getVerboseExplain(
-+                        "select t1b, count(cast(t1a as variant)) from test_all_type group by t1b");
-+                assertContains(plan, "count[([11: cast, VARIANT, true]); args: VARIANT; result: BIGINT");
-+                assertNotContains(plan, "as VARCHAR");
-+            }
-+            // There is no distinct aggregate over VARIANT: count distinct still casts its argument to VARCHAR, so
-+            // the multi-phase split never hands a VARIANT column to a VARCHAR distinct state.
-+            for (int stage : new int[] {0, 1, 2, 3, 4}) {
-+                connectContext.getSessionVariable().setNewPlanerAggStage(stage);
-+                String plan = getVerboseExplain(
-+                        "select count(distinct cast(t1a as variant)) from test_all_type");
-+                assertContains(plan, "VARIANT, true] as VARCHAR)");
-+                assertNotContains(plan, "as VARIANT)); args: CHAR");
-+                assertNotContains(plan, "VARIANT, true]); args: CHAR");
++            roleReadLock();
++            try {
++                Set<Long> roleIds = getApplicableRoleIds(user, groups, activatedRoleIds);
++                return getAllPredecessorRoleIdsUnlocked(roleIds);
++            } finally {
++                roleReadUnlock();
 +            }
 +        } finally {
-+            connectContext.getSessionVariable().setNewPlanerAggStage(oldStage);
++            userReadUnlock();
 +        }
 +    }
- }
++
++    /**
++     * The roles of {@link #getApplicableRoleIds}, for listing them.
++     */
++    public List<RolePrivilegeCollectionV2> getApplicableRoles(UserIdentity user, Set<String> groups,
++                                                              Set<Long> activatedRoleIds) throws PrivilegeException {
++        Set<Long> roleIds = getApplicableRoleIds(user, groups, activatedRoleIds);
++        List<RolePrivilegeCollectionV2> applicableRoles = new ArrayList<>();
++        roleReadLock();
++        try {
+             for (Long roleId : roleIds) {
+                 RolePrivilegeCollectionV2 rolePrivilegeCollection = roleIdToPrivilegeCollection.get(roleId);
+-                if (rolePrivilegeCollection != null) {
++                if (rolePrivilegeCollection != null) { // null when the role was dropped meanwhile
+                     applicableRoles.add(rolePrivilegeCollection);
+                 }
+             }
 ```
 
-**File**: `test/sql/test_iceberg/R/test_iceberg_variant_mixed_files` (modified, +1/-1)
+**File**: `fe/fe-core/src/main/java/com/starrocks/http/BaseAction.java` (modified, +26/-28)
 ```diff
-@@ -67,7 +67,7 @@ alter table plain execute add_files(location='oss://${oss_bucket}/test_iceberg_v
- -- !result
- select count(*), count(v), min(id), max(id) from mixed;
- -- result:
--276	273	1	405
-+276	275	1	405
- -- !result
- function: assert_equal_result("select id, cast(v as string) from mixed order by id", "select id, cast(v as string) from plain order by id")
- -- result:
+@@ -368,22 +368,6 @@ protected void writeCookies(BaseResponse response, HttpResponse responseObj) {
+         }
+     }
+ 
+-    // We check whether user owns db_admin and user_admin role in new RBAC privilege framework for
+-    // operation which checks `PrivPredicate.ADMIN` in global table in old Auth framework.
+-    protected void checkUserOwnsAdminRole(UserIdentity currentUser) throws AccessDeniedException {
+-        try {
+-            Set<Long> userOwnedRoles = AuthorizationMgr.getOwnedRolesByUser(currentUser);
+-            if (!(currentUser.equals(UserIdentity.ROOT) ||
+-                    userOwnedRoles.contains(PrivilegeBuiltinConstants.ROOT_ROLE_ID) ||
+-                    (userOwnedRoles.contains(PrivilegeBuiltinConstants.DB_ADMIN_ROLE_ID) &&
+-                            userOwnedRoles.contains(PrivilegeBuiltinConstants.USER_ADMIN_ROLE_ID)))) {
+-                throw new AccessDeniedException();
+-            }
+-        } catch (PrivilegeException e) {
+-            throw new AccessDeniedException();
+-        }
+-    }
+-
+     /**
+      * Parse the {@code Authorization} header into a protocol-neutral {@link AuthCredentials},
+      * supporting both Basic (plaintext password) and Bearer (token). Returns {@code null} when the
+@@ -471,22 +455,36 @@ public static void checkCredential(ConnectContext ctx, AuthCredentials cred) thr
+     }
+ 
+     /**
+-     * The admin check of {@link #checkUserOwnsAdminRole} on the roles the context actually carries.
+-     * A user from a security integration owns no roles of its own: everything it has arrives through
+-     * its groups and sits on the context authentication wrote to, so that is what is looked at
+-     * first; the user-owned lookup is the fallback for users the role table knows directly.
++     * The roles the user of {@code ctx} holds, granted to it or to one of its groups (for an
++     * ephemeral user, the roles of its session), together with their predecessors, the roles they
++     * inherit from. Whether a role is activated does not matter: a request to these endpoints
++     * cannot run SET ROLE, and a role granted to the user has always counted.
+      */
++    protected static Set<Long> getHeldRoleIdsWithPredecessors(ConnectContext ctx) throws PrivilegeException {
++        AuthorizationMgr authorizationMgr = GlobalStateMgr.getCurrentState().getAuthorizationMgr();
++        return authorizationMgr.getApplicableRoleIdsWithPredecessors(
++                ctx.getCurrentUserIdentity(), ctx.getGroups(), ctx.getCurrentRoleIds());
++    }
++
++    // We check whether user owns db_admin and user_admin role in new RBAC privilege framework for
++    // operation which checks `PrivPredicate.ADMIN` in global table in old Auth framework. The roles
++    // are those of getHeldRoleIdsWithPredecessors.
+     protected void checkAdminRole(ConnectContext ctx) throws AccessDeniedException {
+         UserIdentity currentUser = ctx.getCurrentUserIdentity();
+-        Set<Long> roleIds = ctx.getCurrentRoleIds();
+-        if (currentUser != null && roleIds != null
+-                && (currentUser.equals(UserIdentity.ROOT)
+-                || roleIds.contains(PrivilegeBuiltinConstants.ROOT_ROLE_ID)
+-                || (roleIds.contains(PrivilegeBuiltinConstants.DB_ADMIN_ROLE_ID)
+-                && roleIds.contains(PrivilegeBuiltinConstants.USER_ADMIN_ROLE_ID)))) {
+-            return;
++        if (currentUser == null) {
++            throw new AccessDeniedException();
++        }
++        try {
++            Set<Long> heldRoles = getHeldRoleIdsWithPredecessors(ctx);
++            if (!(currentUser.equals(UserIdentity.ROOT) ||
++                    heldRoles.contains(PrivilegeBuiltinConstants.ROOT_ROLE_ID) ||
++                    (heldRoles.contains(PrivilegeBuiltinConstants.DB_ADMIN_ROLE_ID) &&
++                            heldRoles.contains(PrivilegeBuiltinConstants.USER_ADMIN_ROLE_ID)))) {
++                throw new AccessDeniedException();
++            }
++        } catch (PrivilegeException e) {
++            throw new AccessDeniedException();
+         }
+-        checkUserOwnsAdminRole(currentUser);
+     }
+ 
+     protected int checkIntParam(String strParam) {
+```
+
+**File**: `fe/fe-core/src/main/java/com/starrocks/http/HttpAuthManager.java` (modified, +6/-6)
+```diff
+@@ -19,20 +19,20 @@
+ 
+ import com.google.common.cache.Cache;
+ import com.google.common.cache.CacheBuilder;
+-import com.starrocks.catalog.UserIdentity;
++import com.starrocks.qe.ConnectContext;
+ 
+ import java.util.concurrent.TimeUnit;
+ 
+ // We simulate a simplified session here: only store user-name of clients who already logged in,
+ // and we only have a default admin user for now.
+ public final class HttpAuthManager {
+-    private static long SESSION_EXPIRE_TIME = 2; // hour
+-    private static long SESSION_MAX_SIZE = 100; // avoid to store too many
++    private static final long SESSION_EXPIRE_TIME = 2; // hour
++    private static final long SESSION_MAX_SIZE = 100; // avoid to store too many
+ 
+-    private static HttpAuthManager instance = new HttpAuthManager();
++    private static final HttpAuthManager INSTANCE = new HttpAuthManager();
+ 
+     public static class SessionValue {
+-        public UserIdentity currentUser;
++        public ConnectContext connectContext;
+     }
+ 
+     // session_id => session value
+@@ -46,7 +46,7 @@ private HttpAuthManager() {
+     }
+ 
+     public static HttpAuthManager getInstance() {
+-        return instance;
++        return INSTANCE;
+     }
+ 
+     public SessionValue getSessionValue(String sessionId) {
+```
+
+**File**: `fe/fe-core/src/main/java/com/starrocks/http/action/WebBaseAction.java` (modified, +14/-21)
+```diff
+@@ -37,7 +37,6 @@
+ import com.google.common.base.Strings;
+ import com.starrocks.authorization.AccessDeniedException;
+ import com.starrocks.authorization.PrivilegeType;
+-import com.starrocks.catalog.UserIdentity;
+ import com.starrocks.common.AnalysisException;
+ import com.starrocks.common.Config;
+ import com.starrocks.common.proc.ProcNodeInterface;
+@@ -174,30 +173,25 @@ private boolean checkAuthWithCookie(BaseRequest request, BaseResponse response)
+ 
+         // cookie is invalid.
+         try {
+-            // Only the authenticated UserIdentity is used below: the session keeps just that
+-            // identity, and the NODE check runs on a context holding the user's own roles. A NODE
+-            // privilege that comes only from a role an LDAP or security-integration group maps
+-            // to is therefore not honored for the Web UI.
++            // Authenticate onto the context the NODE check below uses, so the roles an LDAP or
++            // security-integration group maps to are present on it. Authenticating onto a throwaway
++            // context and copying only the UserIdentity across would leave that check looking at
++            // user-owned roles alone, and deny a user whose NODE privilege comes from a group.
+             ConnectContext ctx = new ConnectContext(null);
+             ctx.setGlobalStateMgr(GlobalStateMgr.getCurrentState());
+             ctx.setRemoteIP(request.getHostString());
+             checkCredential(ctx, parseAuthCredentials(request));
+-            UserIdentity currentUser = ctx.getCurrentUserIdentity();
+ 
+             if (needAdmin()) {
+                 try {
+-                    ConnectContext context = new ConnectContext();
+-                    context.setCurrentUserIdentity(currentUser);
+-                    context.setCurrentRoleIds(currentUser);
+-
+-                    Authorizer.checkSystemAction(context, PrivilegeType.NODE);
++                    Authorizer.checkSystemAction(ctx, PrivilegeType.NODE);
+                 } catch (AccessDeniedException e) {
+-                    checkUserOwnsAdminRole(currentUser);
++                    checkAdminRole(ctx);
+                 }
+             }
+             request.setAuthorized(true);
+             SessionValue value = new SessionValue();
+-            value.currentUser = currentUser;
++            value.connectContext = ctx;
+             addSession(request, response, value);
+ 
+             ctx.setQueryId(UUIDUtil.genUUID());
+@@ -224,12 +218,9 @@ private boolean checkCookie(BaseRequest request, BaseResponse response) {
+ 
+             try {
+                 try {
+-                    ConnectContext context = new ConnectContext();
+-                    context.setCurrentUserIdentity(sessionValue.currentUser);
+-                    context.setCurrentRoleIds(sessionValue.currentUser);
+-                    Authorizer.checkSystemAction(context, PrivilegeType.NODE);
++                    Authorizer.checkSystemAction(sessionValue.connectContext, PrivilegeType.NODE);
+                 } catch (AccessDeniedException e) {
+-                    checkUserOwnsAdminRole(sessionValue.currentUser);
++                    checkAdminRole(sessionValue.connectContext);
+                 }
+                 authorized = true;
+             } catch (AccessDeniedException e) {
+@@ -241,12 +232,14 @@ private boolean checkCookie(BaseRequest request, BaseResponse response) {
+                 request.setAuthorized(true);
+ 
+                 ConnectContext ctx = new ConnectContext(null);
+-                ctx.setQualifiedUser(sessionValue.currentUser.getUser());
++                ctx.setQualifiedUser(sessionValue.connectContext.getCurrentUserIdentity().getUser());
+                 ctx.setQueryId(UUIDUtil.genUUID());
+                 ctx.setRemoteIP(request.getHostString());
+-                ctx.setCurrentUserIdentity(sessionValue.currentUser);
++                ctx.setCurrentUserIdentity(sessionValue.connectContext.getCurrentUserIdentity());
+                 ctx.setGlobalStateMgr(GlobalStateMgr.getCurrentState());
+-                ctx.setCurrentRoleIds(sessionValue.currentUser);
++                ctx.setCurrentRoleIds(sessionValue.connectContext.getCurrentRoleIds());
++                // Group-mapped roles and Ranger evaluate the groups; the stored context already resolved them.
++                ctx.setGroups(sessionValue.connectContext.getGroups());
+ 
+                 ctx.setThreadLocalInfo();
+                 return true;
+```
+
+**File**: `fe/fe-core/src/main/java/com/starrocks/http/meta/ColocateMetaService.java` (modified, +1/-3)
+```diff
+@@ -44,7 +44,6 @@
+ import com.starrocks.catalog.ColocateTableIndex.GroupId;
+ import com.starrocks.catalog.Database;
+ import com.starrocks.catalog.OlapTable;
+-import com.starrocks.catalog.UserIdentity;
+ import com.starrocks.common.DdlException;
+ import com.starrocks.common.util.concurrent.lock.LockType;
+ import com.starrocks.common.util.concurrent.lock.Locker;
+@@ -114,8 +113,7 @@ public void executeWithoutPassword(BaseRequest request, BaseResponse response)
+             if (redirectToLeader(request, response)) {
+                 return;
+             }
+-            UserIdentity currentUser = ConnectContext.get().getCurrentUserIdentity();
+-            checkUserOwnsAdminRole(currentUser);
++            checkAdminRole(ConnectContext.get());
+             executeInLeaderWithAdmin(request, response);
+         }
+ 
 ```
 
 ---
 
-### Incident Patch 2: `593ce64a` (2026-11-20)
-**Commit Message**: [BugFix] Derive a pinned refresh's scope from the frozen snapshot, not from live (#81631)
+### Incident Patch 2: `56a6aff2` (2026-11-20)
+**Commit Message**: [BugFix][CVE] Bump pprof to release/20261120 (#84059)
 
-Signed-off-by: Youngwb <[REDACTED_EMAIL]>
-Co-authored-by: Youngwb <[REDACTED_EMAIL]>
+Signed-off-by: Kevin Cai <[REDACTED_EMAIL]>
+Co-authored-by: Kevin Cai <[REDACTED_EMAIL]>
 
-**File**: `fe/fe-core/src/main/java/com/starrocks/catalog/MaterializedView.java` (modified, +8/-2)
+**File**: `thirdparty/vars-aarch64.sh` (modified, +2/-2)
 ```diff
-@@ -1414,22 +1414,28 @@ public List<BasePartitionInfo> getBaseTableLatestPartitionInfo(Table baseTable)
-                 .stream().map(BasePartitionInfo::fromExternalTable).collect(Collectors.toList());
-     }
+@@ -57,7 +57,7 @@ STARCACHE_SOURCE="starcache"
+ STARCACHE_MD5SUM="8baa474b87313f0e9c64e013b1bb435b"
  
-+    public Set<String> getUpdatedPartitionNamesOfExternalTable(Table baseTable, boolean isQueryRewrite) {
-+        return getUpdatedPartitionNamesOfExternalTable(baseTable, isQueryRewrite, null);
-+    }
-+
-     /**
-      * Get the updated partition names of the external base table of the materialized view.
-      *
-      * @param baseTable:      the external base table of the materialized view to check the updated partition names
-      * @param isQueryRewrite: whether it's for query rewrite or not
-+     * @param pinnedVersionRange: the frozen snapshot to compare against, null to compare against the live table
-      * @return: the updated partition names of the external base table
-      */
--    public Set<String> getUpdatedPartitionNamesOfExternalTable(Table baseTable, boolean isQueryRewrite) {
-+    public Set<String> getUpdatedPartitionNamesOfExternalTable(Table baseTable, boolean isQueryRewrite,
-+                                                               TvrVersionRange pinnedVersionRange) {
-         Set<String> result = Sets.newHashSet();
-         // NOTE: For query dump replay, ignore updated partition infos only to check mv can rewrite query or not.
-         // Ignore partitions when mv 's last refreshed time period is less than `maxMVRewriteStaleness`
-         if (FeConstants.isReplayFromQueryDump || (isQueryRewrite && isStalenessSatisfied())) {
-             return result;
-         }
- 
--        ConnectorPartitionTraits traits = ConnectorPartitionTraits.build(this, baseTable);
-+        ConnectorPartitionTraits traits = ConnectorPartitionTraits.build(this, baseTable, pinnedVersionRange);
-         traits.setQueryMVRewrite(isQueryRewrite);
-         return traits.getUpdatedPartitionNames(
-                 this.getBaseTableInfos(),
+ # pprof
+-PPROF_DOWNLOAD="https://github.com/StarRocks/pprof/releases/download/release%2F20261022/pprof-linux-arm64"
++PPROF_DOWNLOAD="https://github.com/StarRocks/pprof/releases/download/release%2F20261120/pprof-linux-arm64"
+ PPROF_NAME="pprof"
+ PPROF_SOURCE="pprof"
+-PPROF_MD5SUM="a6c7aa092c1e0f73b92786d308c3a550"
++PPROF_MD5SUM="53b9f01bfb02348d501590331e052643"
 ```
 
-**File**: `fe/fe-core/src/main/java/com/starrocks/catalog/MvRefreshArbiter.java` (modified, +11/-6)
+**File**: `thirdparty/vars-x86_64.sh` (modified, +2/-2)
 ```diff
-@@ -51,8 +51,10 @@ public class MvRefreshArbiter {
-     private static final Logger LOG = LogManager.getLogger(MvRefreshArbiter.class);
+@@ -52,7 +52,7 @@ STARCACHE_SOURCE="starcache"
+ STARCACHE_MD5SUM="ef647eb27cbb4b0038f73a14daf9b6b8"
  
-     public static boolean needsToRefreshTable(MaterializedView mv, BaseTableInfo baseTableInfo, Table table,
--                                              MVTimelinessArbiter.QueryRewriteParams queryRewriteParams) {
--        Optional<Boolean> needsToRefresh = needsToRefreshTable(mv, baseTableInfo, table, true, queryRewriteParams);
-+                                              MVTimelinessArbiter.QueryRewriteParams queryRewriteParams,
-+                                              TvrVersionRange pinnedVersionRange) {
-+        Optional<Boolean> needsToRefresh =
-+                needsToRefreshTable(mv, baseTableInfo, table, true, queryRewriteParams, pinnedVersionRange);
-         if (needsToRefresh.isPresent()) {
-             return needsToRefresh.get();
-         }
-@@ -130,7 +132,8 @@ private static Optional<Boolean> needsToRefreshTable(MaterializedView mv,
-                                                          BaseTableInfo baseTableInfo,
-                                                          Table baseTable,
-                                                          boolean withMv,
--                                                         MVTimelinessArbiter.QueryRewriteParams queryRewriteParams) {
-+                                                         MVTimelinessArbiter.QueryRewriteParams queryRewriteParams,
-+                                                         TvrVersionRange pinnedVersionRange) {
-         if (baseTable.isView()) {
-             // do nothing
-             return Optional.of(false);
-@@ -168,7 +171,7 @@ private static Optional<Boolean> needsToRefreshTable(MaterializedView mv,
-             return Optional.of(false);
-         } else {
-             Set<String> baseUpdatedPartitionNames = mv.getUpdatedPartitionNamesOfExternalTable(baseTable,
--                    queryRewriteParams.isQueryRewrite());
-+                    queryRewriteParams.isQueryRewrite(), pinnedVersionRange);
-             if (baseUpdatedPartitionNames == null) {
-                 return Optional.empty();
-             }
-@@ -181,12 +184,14 @@ private static Optional<Boolean> needsToRefreshTable(MaterializedView mv,
-      * @param baseTable: the table to check
-      * @param withMv: whether to check the materialized view if it's a materialized view
-      * @param queryRewriteParams: whether this caller is query rewrite or not
-+     * @param pinnedVersionRange: the frozen snapshot to answer from, null to answer from the live table
-      * @return MvBaseTableUpdateInfo: the update info of the base table
-      */
-     public static MvBaseTableUpdateInfo getMvBaseTableUpdateInfo(MaterializedView mv,
-                                                                  Table baseTable,
-                                                                  boolean withMv,
--                                                                 MVTimelinessArbiter.QueryRewriteParams queryRewriteParams) {
-+                                                                 MVTimelinessArbiter.QueryRewriteParams queryRewriteParams,
-+                                                                 TvrVersionRange pinnedVersionRange) {
-         MvBaseTableUpdateInfo baseTableUpdateInfo = new MvBaseTableUpdateInfo();
-         if (baseTable.isView()) {
-             // do nothing
-@@ -225,7 +230,7 @@ public static MvBaseTableUpdateInfo getMvBaseTableUpdateInfo(MaterializedView mv
-             baseTableUpdateInfo.addToRefreshPartitionNames(updatedPCellSet);
-         } else {
-             Set<String> baseUpdatedPartitionNames = mv.getUpdatedPartitionNamesOfExternalTable(baseTable,
--                    queryRewriteParams.isQueryRewrite());
-+                    queryRewriteParams.isQueryRewrite(), pinnedVersionRange);
-             if (baseUpdatedPartitionNames == null) {
-                 return null;
-             }
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/catalog/mv/MVTimelinessArbiter.java` (modified, +3/-2)
-```diff
-@@ -213,7 +213,8 @@ protected boolean needsRefreshOnNonRefBaseTables(Map<Table, List<Column>> refBas
-                 return true;
-             }
-             // If the non-ref table has already changed, need refresh all materialized views' partitions.
--            if (needsToRefreshTable(mv, tableInfo, baseTable, queryRewriteParams)) {
-+            if (needsToRefreshTable(mv, tableInfo, baseTable, queryRewriteParams,
-+                    /* pinnedVersionRange */ null)) {
-                 return true;
-             }
-             if (hasDeletedPartitions(mv, baseTable, /* pinnedVersionRange */ null)) {
-@@ -265,7 +266,7 @@ protected Map<Table, PCellSortedSet> collectBaseTableUpdatePartitionNames(Map<Ta
-         Map<Table, PCellSortedSet> baseChangedPartitionNames = Maps.newHashMap();
-         for (Table baseTable : refBaseTableAndColumns.keySet()) {
-             MvBaseTableUpdateInfo mvBaseTableUpdateInfo = getMvBaseTableUpdateInfo(mv, baseTable,
--                    true, queryRewriteParams);
-+                    true, queryRewriteParams, /* pinnedVersionRange */ null);
-             if (mvBaseTableUpdateInfo == null) {
-                 logMVPrepare(mv, "Failed to collect update info for ref base table {}, fallback to full refresh",
-                         baseTable.getName());
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/catalog/mv/MVTimelinessNonPartitionArbiter.java` (modified, +2/-1)
-```diff
-@@ -69,7 +69,8 @@ protected MvUpdateInfo getMVTimelinessUpdateInfoInChecked() {
-             }
- 
-             // once mv's base table has updated, refresh the materialized view totally.
--            MvBaseTableUpdateInfo mvBaseTableUpdateInfo = getMvBaseTableUpdateInfo(mv, table, true, queryRewriteParams);
-+            MvBaseTableUpdateInfo mvBaseTableUpdateInfo =
-+                    getMvBaseTableUpdateInfo(mv, table, true, queryRewriteParams, /* pinnedVersionRange */ null);
-             if (mvBaseTableUpdateInfo == null) {
-                 logMVPrepare(mv, "Non-partitioned base table update info is unknown, need refresh totally.");
-                 return MvUpdateInfo.fullRefresh(mv);
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/connector/partitiontraits/CachedPartitionTraits.java` (modified, +6/-2)
-```diff
-@@ -66,12 +66,16 @@ public CachedPartitionTraits(Cache<Object, Object> cache,
-     }
- 
-     /**
--     * Construct the cache key: cache_{prefix}_{tableId}
-+     * Construct the cache key: cache_{prefix}_{mvId}_{tableId}, suffixed with the pinned snapshot when
-+     * this instance reads one.
-      * @param prefix use the prefix to distinguish different cache keys, please check the unique usage of this method
-      * @return the cache key
-      */
-     private String buildCacheKey(String prefix) {
--        return String.format("cache_%s_%s_%s", prefix, (mv == null) ? "0" : mv.getId(), table.getId());
-+        String key = String.format("cache_%s_%s_%s", prefix, (mv == null) ? "0" : mv.getId(), table.getId());
-+        // A pinned answer and a live answer for the same base table must not share an entry. The unpinned
-+        // key stays unsuffixed: it is reported per-key in the refresh runtime profile.
-+        return pinnedVersionRange == null ? key : key + "_" + pinnedVersionRange;
-     }
- 
-     /**
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/scheduler/MvTaskRunContext.java` (modified, +6/-2)
-```diff
-@@ -33,8 +33,8 @@ public class MvTaskRunContext extends TaskRunContext {
-     public static class MVRefreshRuntimeState {
-         private final Map<Long, BaseTableSnapshotInfo> snapshotBaseTables = Maps.newHashMap();
- 
--        // Pinned TvrVersionRange per base table, keyed by Table.getTableIdentifier() (stable across
--        // connector getTable() calls, unlike tableId for external tables).
-+        // Pinned TvrVersionRange per base table, keyed by Table.getUUID() (cross-database unique and
-+        // stable across connector getTable() calls, unlike tableId for external tables).
-         private final Map<String, TvrVersionRange> pinnedTvrMap = Maps.newHashMap();
- 
-         public Map<Long, BaseTableSnapshotInfo> getSnapshotBaseTables() {
-@@ -50,6 +50,10 @@ public Map<String, TvrVersionRange> getPinnedTvrMap() {
-             return pinnedTvrMap;
-         }
- 
-+        public TvrVersionRange getPinnedRange(Table baseTable) {
-+            return pinnedTvrMap.get(baseTable.getUUID());
-+        }
-+
-         public void reset() {
-             snapshotBaseTables.clear();
-             pinnedTvrMap.clear();
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/scheduler/mv/pct/MVPCTRefreshNonPartitioner.java` (modified, +1/-1)
-```diff
-@@ -82,7 +82,7 @@ private PCellSortedSet getNonPartitionedMVPartitionsToRefresh() {
-     @Override
-     public PCellSortedSet getMVPartitionsToRefreshWithCheck(Map<Long, BaseTableSnapshotInfo> snapshotBaseTables) {
-         // non-partitioned materialized view
--        if (mvRefreshParams.isForce() || isNonPartitionedMVNeedToRefresh(snapshotBaseTables, mv, queryRewriteParams)) {
-+        if (mvRefreshParams.isForce() || isNonPartitionedMVNeedToRefresh(snapshotBaseTables)) {
-             return getNonPartitionedMVPartitionsToRefresh();
-         }
-         return PCellSortedSet.of();
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/scheduler/mv/pct/MVPCTRefreshPartitioner.java` (modified, +9/-8)
-```diff
-@@ -489,7 +489,7 @@ protected PCellSortedSet getMvPartitionNamesToRefresh(PCellSortedSet toRefreshPa
- 
-             // check the updated partition names in the ref base table
-             MvBaseTableUpdateInfo mvBaseTableUpdateInfo = getMvBaseTableUpdateInfo(mv, baseTable,
--                    false, queryRewriteParams);
-+                    false, queryRewriteParams, pinnedRangeFor(baseTable));
-             if (mvBaseTableUpdateInfo == null) {
-                 throw new DmlException(String.format("Find the updated partition info of ref base table %s of mv " +
-                         "%s failed, current mv partitions:%s", baseTable.getName(), mv.getName(), toRefreshPartitions));
-@@ -554,7 +554,8 @@ protected boolean needsRefreshBasedOnNonRefTables(Map<Long, BaseTableSnapshotInf
-             if (tableColumnMap.containsKey(snapshotTable)) {
-                 continue;
-             }
--            if (needsToRefreshTable(mv, snapshotInfo.getBaseTableInfo(), snapshotTable, queryRewriteParams)) {
-+            if (needsToRefreshTable(mv, snapshotInfo.getBaseTableInfo(), snapshotTable, queryRewriteParams,
-+                    pinnedRangeFor(snapshotTable))) {
-                 return true;
-             }
-             // A non-ref base table is not partition-aligned with the mv, so losing a partition invalidates all of it.
-@@ -571,18 +572,18 @@ protected boolean needsRefreshBasedOnNonRefTables(Map<Long, BaseTableSnapshotInf
-      * - its base table has updated.
-      * - its base table has deleted partitions.
-      */
--    public static boolean isNonPartitionedMVNeedToRefresh(Map<Long, BaseTableSnapshotInfo> snapshotBaseTables,
--                                                          MaterializedView mv,
--                                                          MVTimelinessArbiter.QueryRewriteParams queryRewriteParams) {
-+    public boolean isNonPartitionedMVNeedToRefresh(Map<Long, BaseTableSnapshotInfo> snapshotBaseTables) {
-         for (BaseTableSnapshotInfo snapshotInfo : snapshotBaseTables.values()) {
-             Table snapshotTable = snapshotInfo.getBaseTable();
-             if (!isPartitionRefreshSupported(snapshotTable)) {
-                 return true;
-             }
--            if (needsToRefreshTable(mv, snapshotInfo.getBaseTableInfo(), snapshotTable, queryRewriteParams)) {
-+            TvrVersionRange pinnedRange = pinnedRangeFor(snapshotTable);
-+            if (needsToRefreshTable(mv, snapshotInfo.getBaseTableInfo(), snapshotTable, queryRewriteParams,
-+                    pinnedRange)) {
-                 return true;
-             }
--            if (hasDeletedPartitions(mv, snapshotTable, /* pinnedVersionRange */ null)) {
-+            if (hasDeletedPartitions(mv, snapshotTable, pinnedRange)) {
-                 return true;
-             }
-             if (hasUntrackedRows(mv, snapshotTable)) {
-@@ -633,7 +634,7 @@ public PrefetchedPartitionInfos prefetchExternalPartitionInfos(Map<Long, BaseTab
- 
-     /** The snapshot the scan reads: a pinned run must answer base-state questions from it, not from live. */
-     private TvrVersionRange pinnedRangeFor(Table baseTable) {
--        return mvContext.getRefreshRuntimeState().getPinnedTvrMap().get(baseTable.getUUID());
-+        return mvContext.getRefreshRuntimeState().getPinnedRange(baseTable);
-     }
- 
-     public void dropPartition(Database db, MaterializedView materializedView, String mvPartitionName) {
+ # pprof
+-PPROF_DOWNLOAD="https://github.com/StarRocks/pprof/releases/download/release%2F20261022/pprof-linux-amd64"
++PPROF_DOWNLOAD="https://github.com/StarRocks/pprof/releases/download/release%2F20261120/pprof-linux-amd64"
+ PPROF_NAME="pprof"
+ PPROF_SOURCE="pprof"
+-PPROF_MD5SUM="4a1533413af73e01ba44d5c0d8dc17e8"
++PPROF_MD5SUM="3a5d99f3efe82a2a1e83824701888ed4"
 ```
 
 ---
 
-### Incident Patch 3: `ee983a26` (2026-11-20)
-**Commit Message**: [BugFix][RB-1509] Keep duplicate live entries of an Iceberg delete manifest in the delete file cache (#83938)
+### Incident Patch 3: `4931995f` (2026-11-20)
+**Commit Message**: [UT] Add a failpoint for PK merge index rebuild validation (#84016)
 
-Co-authored-by: tqqq <[REDACTED_EMAIL]>
-Co-authored-by: tqqq <[REDACTED_EMAIL]>
+Co-authored-by: Yixin Luo <[REDACTED_EMAIL]>
+Co-authored-by: code-factory <[REDACTED_EMAIL]>
 
-**File**: `fe/fe-core/src/main/java/com/starrocks/connector/iceberg/DeleteFileWrapper.java` (modified, +7/-2)
+**File**: `be/src/storage/lake/lake_persistent_index.cpp` (modified, +1/-0)
 ```diff
-@@ -53,12 +53,17 @@ public boolean equals(Object o) {
- 
-         DeleteFileWrapper that = (DeleteFileWrapper) o;
- 
--        return deleteFile.path().toString().equals(that.deleteFile.path().toString());
-+        // pos() is the entry's row in its manifest: a manifest can list the same delete file twice (committed twice
-+        // and then merged into one manifest), and Iceberg indexes it once per entry. Keeping both entries keeps the
-+        // cached set in step with the manifest's live entry count, which the read side checks.
-+        return deleteFile.path().toString().equals(that.deleteFile.path().toString())
-+                && Objects.equals(deleteFile.pos(), that.deleteFile.pos());
-     }
- 
-     @Override
-     public int hashCode() {
--        return Objects.hash(deleteFile.path());
-+        // path() is a CharSequence; hash its string form so it stays consistent with equals().
-+        return Objects.hash(deleteFile.path().toString(), deleteFile.pos());
-     }
- 
-     @Override
+@@ -1119,6 +1119,7 @@ Status LakePersistentIndex::load_dels(const RowsetPtr& rowset, const Schema& pke
+         // segment never needs it; after a tablet merge, which orders the rowsets of a version by uid, a rowset
+         // with a larger id may have been replayed first.
+         if ((_memtable->max_rss_rowid() >> 32) > too_old) {
++            TRACE_COUNTER_INCREMENT("soak_pk_merge_delete_lookup_cnt", 1);
+             // Never join here: load_one and these lookups share the PK execution pool.
+             return parallel_get(&get_runner, out->keys.size(), out->keys.data(), too_old, &out->filter_words);
+         }
 ```
 
-**File**: `fe/fe-core/src/test/java/com/starrocks/connector/iceberg/IcebergManifestCacheStatsTest.java` (modified, +51/-0)
+**File**: `be/src/storage/lake/tablet_merger.cpp` (modified, +8/-0)
 ```diff
-@@ -19,6 +19,7 @@
- import com.google.common.collect.Maps;
- import com.starrocks.catalog.Column;
- import com.starrocks.catalog.IcebergTable;
-+import com.starrocks.common.jmockit.Deencapsulation;
- import com.starrocks.common.tvr.TvrTableSnapshot;
- import com.starrocks.connector.ConnectorProperties;
- import com.starrocks.connector.ConnectorType;
-@@ -881,4 +882,54 @@ public void testManifestWithDuplicateLiveEntriesIsCached() throws IOException {
-                 sortedLocations(planTasks(catalog, table, Expressions.equal("id", 5))));
-         Assertions.assertEquals(expected, sortedLocations(planTasksWithStats(catalog, table, List.of("id"))));
+@@ -45,6 +45,7 @@
+ namespace starrocks::lake {
+ 
+ DEFINE_FAIL_POINT(skip_lake_pk_index_merge_source_flush);
++DEFINE_FAIL_POINT(soak_pk_merge_force_index_rebuild);
+ DEFINE_FAIL_POINT(tablet_merge_after_write_delvec);
+ 
+ namespace {
+@@ -1544,6 +1545,13 @@ Status merge_sstables(TabletManager* tablet_manager, MergePlan* plan) {
+         drop_source_sstables(plan->sources, target);
+         return Status::OK();
      }
++    FAIL_POINT_TRIGGER_EXECUTE(soak_pk_merge_force_index_rebuild, {
++        LOG(INFO) << describe_index_rebuild(target->id(), plan->sources.front()->id(),
++                                            SstFallback{"", "forced by soak_pk_merge_force_index_rebuild"},
++                                            /*flushed=*/false);
++        drop_source_sstables(plan->sources, target);
++        return Status::OK();
++    });
+     std::vector<TabletMetadataPtr> flushed = plan->sources;
+     for (auto& source : flushed) {
+         bool skip_source_flush = false;
+```
+
+**File**: `be/test/storage/lake/tablet_merger_test.cpp` (modified, +21/-0)
+```diff
+@@ -6711,6 +6711,27 @@ TEST_F(LakeTabletMergerTest, test_tablet_merging_affine_modern_source_live_reuse
+     EXPECT_EQ(static_cast<uint64_t>(1) << 32, modern->max_rss_rowid());
+ }
+ 
++TEST_F(LakeTabletMergerTest, test_tablet_merging_force_index_rebuild_failpoint) {
++    constexpr char kFailpoint[] = "soak_pk_merge_force_index_rebuild";
++    const int64_t rebuild_before = merge_index_rebuild_total();
++    ScopedLogCapture log;
++    set_failpoint_mode(kFailpoint, FailPointTriggerModeType::ENABLE);
++    DeferOp disable([&] { set_failpoint_mode(kFailpoint, FailPointTriggerModeType::DISABLE); });
 +
-+    @Test
-+    public void testDeleteManifestWithDuplicateLiveEntriesIsCached() throws IOException {
-+        Schema schema = new Schema(List.of(Types.NestedField.required(1, "id", Types.IntegerType.get())));
-+        Table table = create(schema, PartitionSpec.unpartitioned(), "t_dup_deletes", 2);
-+        // merge the delete manifests of the two row deltas below into one
-+        table.updateProperties().set("commit.manifest.min-count-to-merge", "2").commit();
-+        table.newAppend().appendFile(DataFiles.builder(PartitionSpec.unpartitioned())
-+                .withPath("/path/to/dup-deletes-data.parquet")
-+                .withFileSizeInBytes(10)
-+                .withRecordCount(10)
-+                .build()).commit();
-+        DeleteFile deletes = FileMetadata.deleteFileBuilder(PartitionSpec.unpartitioned())
-+                .ofPositionDeletes()
-+                .withPath("/path/to/dup-deletes-pos.parquet")
-+                .withFormat(FileFormat.PARQUET)
-+                .withFileSizeInBytes(10)
-+                .withRecordCount(1)
-+                .build();
-+        // a retried commit: the same delete file is committed twice
-+        table.newRowDelta().addDeletes(deletes).commit();
-+        table.newRowDelta().addDeletes(deletes).commit();
-+
-+        List<ManifestFile> manifests = table.currentSnapshot().deleteManifests(table.io());
-+        Assertions.assertEquals(1, manifests.size());
-+        ManifestFile manifest = manifests.get(0);
-+        Assertions.assertEquals(2, manifest.existingFilesCount() + manifest.addedFilesCount());
-+
-+        int expected;
-+        try (CloseableIterable<FileScanTask> tasks = table.newScan().planFiles()) {
-+            List<FileScanTask> list = Lists.newArrayList(tasks);
-+            Assertions.assertEquals(1, list.size());
-+            expected = list.get(0).deletes().size();
-+        }
-+        Assertions.assertEquals(2, expected);
-+
-+        CachingIcebergCatalog catalog = newCatalog(Map.of());
-+        com.github.benmanes.caffeine.cache.Cache<String, Set<DeleteFile>> deleteFileCache =
-+                Deencapsulation.getField(catalog, "deleteFileCache");
-+        // cold: reads the manifest and fills the cache; warm: must be served from the complete cache entry
-+        for (int i = 0; i < 3; i++) {
-+            List<FileScanTask> tasks = planTasks(catalog, table, Expressions.alwaysTrue());
-+            Assertions.assertEquals(1, tasks.size());
-+            Assertions.assertEquals(expected, tasks.get(0).deletes().size(), "plan " + i);
-+            Set<DeleteFile> cached =
-+                    deleteFileCache.getIfPresent(manifest.path());
-+            Assertions.assertNotNull(cached, "plan " + i + " left no cache entry");
-+            Assertions.assertEquals(2, cached.size(), "plan " + i + " left an incomplete cache entry");
++    ASSIGN_OR_ABORT(auto result, publish_metadata_only_merge_fixture(MetadataOnlyMergeShape::kPrivate));
++    ASSERT_EQ(2, result.source_sst_filenames.size());
++    EXPECT_EQ(rebuild_before + 1, merge_index_rebuild_total());
++    expect_affine_sst_fallback_orphans(result);
++    for (const auto& orphan : result.published.at(result.target_tablet_id).orphan_files()) {
++        if (result.source_sst_filenames.contains(orphan.name())) {
++            EXPECT_TRUE(orphan.shared()) << orphan.name();
 +        }
 +    }
- }
++    EXPECT_TRUE(log.contains(
++            fmt::format("tablet merge into {} rebuilds the primary key index:", result.target_tablet_id), kFailpoint));
++    expect_metadata_merge_lifecycle(result, {{10, 100}, {60, 600}}, {{10, 1010}}, {60});
++}
++
+ // The first source's modern SST has watermark 2 while the source references RSSID 1 only, which the SST owns. The
+ // merge carries it with owner 1 translated and the watermark lowered to RSSID 1, every row of it covered.
+ TEST_F(LakeTabletMergerTest, test_tablet_merging_affine_modern_watermark_above_the_run_is_lowered) {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #83989** (2026-11-20): [Tool] Retire the stale GeoStorageDescPB validation_state waiver (backport #82269) (backport #82278) (@mergify[bot])
-- **PR #83967** (2026-11-20): [BugFix][RB-1509] Keep duplicate live entries of an Iceberg delete manifest in the delete file cache (backport #83938) (@mergify[bot])
-- **PR #83966** (2026-11-20): [BugFix][RB-1509] Keep duplicate live entries of an Iceberg delete manifest in the delete file cache (backport #83938) (@mergify[bot])
-- **PR #83964** (2026-11-20): [Enhancement] Enable nested geo expressions in SQL (backport #83063) (backport #83089) (@mergify[bot])
-- **PR #83962** (2026-11-20): Resolve conflicts for main-cd-contributed-pr-66835 (@GavinMar)
-- **PR #83961** (2026-11-20): [BugFix] Reject REFRESH EXTERNAL TABLE names with more than three parts (backport #83892) (@mergify[bot])
+- **PR #84116** (2026-11-21): [BugFix] Stop pushing aggregations below joins when they cannot reduce rows (backport #84115) (@mergify[bot])
+- **PR #84115** (2026-11-21): [BugFix] Stop pushing aggregations below joins when they cannot reduce rows (@starrocks-bot[bot])
+- **PR #84112** (closed): [BugFix] Reset ORC compression state when suppressing PRESENT streams (@starrocks-bot[bot])
+- **PR #84111** (2026-11-21): [Refactor] Persist the GEO descriptor through GeoType (backport #83841) (backport #83877) (@mergify[bot])
+- **PR #84110** (2026-11-21): [Refactor] Make GeoTypeDescriptor a class instead of a record (backport #83852) (backport #83870) (@mergify[bot])
+- **PR #84109** (2026-11-21): [Refactor] Move the GEO descriptor from ScalarType into GeoType (backport #83795) (backport #83839) (@mergify[bot])
 
 ---
 
@@ -2490,39 +2398,42 @@ Co-authored-by: tqqq <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [BugFix][RB-1573] Count variant nulls in count(VARIANT) and keep scalar types in
+## X. [BugFix] Count group roles and security-integration users in SHOW GRANTS FOR ROL
 
 **RULE**:
-When implementing operations in `be/src/exprs/cast_expr_tpl.hpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarRocks/starrocks. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/en/sql-reference/sql-statements/account-management/SHOW_AUTHENTICATION.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarRocks/starrocks. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `36091cdd`: [BugFix][RB-1573] Count variant nulls in count(VARIANT) and keep scalar types in CAST(VARIANT AS JSON). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `87ba5c08`: [BugFix] Count group roles and security-integration users in SHOW GRANTS FOR ROLE, SHOW AUTHENTICATION and the HTTP admin check. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `be/src/exprs/cast_expr_tpl.hpp`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/en/sql-reference/sql-statements/account-management/SHOW_AUTHENTICATION.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-                    // variant_to_json writes JSON text, so a number, a boolean or a null must stay one instead of
-                    // becoming a JSON string, which is what parse_json_or_string makes of a bare scalar.
-                    auto parsed = JsonValue::parse_json_text(ss.str());
-            if (!overflow && value.is_null() && row_ref.get_value().type() == VariantType::NULL_TYPE) {
-                // A variant null converts to SQL NULL, as it does for every other cast target. A NaN or infinite
-                // FLOAT/DOUBLE also prints as null, but it takes the path below like CAST(DOUBLE AS JSON) does.
-                builder.append_null();
-                continue;
-            }
+A user that logs in through a security integration is not created in StarRocks: StarRocks creates a virtual user for its session. Such a user can view its own authentication information with `SHOW AUTHENTICATION` without `FOR`. It cannot be specified in `FOR USERNAME`, which accepts only users created in StarRocks, and it is not returned by `SHOW ALL AUTHENTICATION`.
+
+| Password          | Whether a password is used to log in to the StarRocks cluster.<ul><li>`Yes`: A password is used.</li><li>`No`: No password is used.</li></ul>For a user that logs in through a security integration, `No` is returned, because StarRocks does not store its password. |
+| AuthPlugin        | The interface that is used for authentication. Valid values: `MYSQL_NATIVE_PASSWORD` and `AUTHENTICATION_LDAP_SIMPLE`. If no interface is used, `NULL` is returned. For a user that logs in through a security integration, the name of that security integration is returned. |
+
+Example 4: Display the authentication information of the current user, who logs in through the security integration `ldap_si`.
+
+```Plain
+SHOW AUTHENTICATION;
++------------------------+----------+------------+-------------------+
+| UserIdentity    
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-                    auto parsed = JsonValue::parse_json_or_string(ss.str());
+| Password          | Whether a password is used to log in to the StarRocks cluster.<ul><li>`Yes`: A password is used.</li><li>`No`: No password is used.</li></ul> |
+| AuthPlugin        | The interface that is used for authentication. Valid values: `MYSQL_NATIVE_PASSWORD` and `AUTHENTICATION_LDAP_SIMPLE`. If no interface is used, `NULL` is returned. |
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `36091cdd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `87ba5c08` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

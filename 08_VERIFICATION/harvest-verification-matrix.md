@@ -11792,3 +11792,8 @@
 | `CYCLE-20261121-XEYF` | `2026-11-21T12:29:19.479Z` | `sharkdp/fd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9778` | Yes (`d5e3494b...`) |
 | `CYCLE-20261121-XJF0` | `2026-11-21T12:29:25.260Z` | `react-hook-form/react-hook-form` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9779` | Yes (`0894c968...`) |
 | `CYCLE-2026-11-21-PROJ-EVOLVE` | `2026-11-21T12:29:58.937Z` | `react-hook-form-react-hook-form` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-B5356809` [Domain H] | Yes (`0e317efc...`) |
+| `CYCLE-20261121-8G1Q` | `2026-11-21T12:37:54.110Z` | `orcarouter/OrcaCyber-Nano-1.0` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-orcacyber-nano-1.0-learnings.md` | Yes (`626151f9...`) |
+| `CYCLE-20261121-8IIL` | `2026-11-21T12:37:57.309Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9780` | Yes (`18275a11...`) |
+| `CYCLE-20261121-8MRI` | `2026-11-21T12:38:02.814Z` | `open-policy-agent/opa` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md` | Yes (`4cc200b3...`) |
+| `CYCLE-20261121-8RXD` | `2026-11-21T12:38:09.505Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9781` | Yes (`b5bed4e6...`) |
+| `CYCLE-2026-11-21-PROJ-EVOLVE` | `2026-11-21T12:38:41.419Z` | `open-policy-agent-opa` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-D52613BE` [Domain H] | Yes (`5d1a8d09...`) |

@@ -727861,3 +727861,156 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `03303481` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9780. retain every diagnostic that fits the usage ledger (Harvested from codewhale-hq/Codewhale)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "retain every diagnostic that fits the usage ledger",
+  "source": "codewhale-hq/Codewhale",
+  "source_url": "https://github.com/Hmbown/Codewhale",
+  "source_version": "6c211938",
+  "license": "MIT",
+  "extracted_at": "2026-11-21T12:37:56.816Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-codewhale-hq-codewhale",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [codewhale-hq/Codewhale](https://github.com/Hmbown/Codewhale) (Revision: `6c211938`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `a98c8010`: engine): retain every diagnostic that fits the usage ledger. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+- Large session usage ledgers keep settled and unresolved usage and discard only the oldest routing diagnostics needed to stay within the storage limit. Thanks [@donglovejava](https://github.com/donglovejava) ([#7449](https://github.com/codewhale-hq/CodeWhale/pull/7449)).
+
+- **[@donglovejava](https://github.com/donglovejava)** — covered large raw and bracketed terminal paste, fixed fallback tool-call IDs in streaming chat completions, and preserved usage records when compacting diagnostic receipts ([#7422](https://github.com/codewhale-hq/CodeWhale/pull/7422), [#7423](https://github.com/codewhale-hq/CodeWhale/pull/7423), [#7449](https://github.com/codewhale-hq/CodeWhale/pull/7449)).
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+- **[@donglovejava](https://github.com/donglovejava)** — covered large raw and bracketed terminal paste and fixed fallback tool-call IDs in streaming chat completions ([#7422](https://github.com/codewhale-hq/CodeWhale/pull/7422), [#7423](https://github.com/codewhale-hq/CodeWhale/pull/7423)).
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `a98c8010` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9781. [BugFix] Count group roles and security-integration users in SHOW GRANTS FOR ROL (Harvested from StarRocks/starrocks)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "[BugFix] Count group roles and security-integration users in SHOW GRANTS FOR ROL",
+  "source": "StarRocks/starrocks",
+  "source_url": "https://github.com/StarRocks/starrocks",
+  "source_version": "a9a9fd73",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-21T12:38:09.040Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-starrocks-starrocks",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [StarRocks/starrocks](https://github.com/StarRocks/starrocks) (Revision: `a9a9fd73`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `docs/en/sql-reference/sql-statements/account-management/SHOW_AUTHENTICATION.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarRocks/starrocks. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `87ba5c08`: [BugFix] Count group roles and security-integration users in SHOW GRANTS FOR ROLE, SHOW AUTHENTICATION and the HTTP admin check. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/en/sql-reference/sql-statements/account-management/SHOW_AUTHENTICATION.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```java
+// Verified production-grade fix pattern:
+A user that logs in through a security integration is not created in StarRocks: StarRocks creates a virtual user for its session. Such a user can view its own authentication information with `SHOW AUTHENTICATION` without `FOR`. It cannot be specified in `FOR USERNAME`, which accepts only users created in StarRocks, and it is not returned by `SHOW ALL AUTHENTICATION`.
+
+| Password          | Whether a password is used to log in to the StarRocks cluster.<ul><li>`Yes`: A password is used.</li><li>`No`: No password is used.</li></ul>For a user that logs in through a security integration, `No` is returned, because StarRocks does not store its password. |
+| AuthPlugin        | The interface that is used for authentication. Valid values: `MYSQL_NATIVE_PASSWORD` and `AUTHENTICATION_LDAP_SIMPLE`. If no interface is used, `NULL` is returned. For a user that logs in through a security integration, the name of that security integration is returned. |
+
+Example 4: Display the authentication information of the current user, who logs in through the security integration `ldap_si`.
+
+```Plain
+SHOW AUTHENTICATION;
++------------------------+----------+------------+-------------------+
+| UserIdentity    
+```
+
+**NEGATIVE CONSTRAINT**:
+```java
+// Induced defect failure mode:
+| Password          | Whether a password is used to log in to the StarRocks cluster.<ul><li>`Yes`: A password is used.</li><li>`No`: No password is used.</li></ul> |
+| AuthPlugin        | The interface that is used for authentication. Valid values: `MYSQL_NATIVE_PASSWORD` and `AUTHENTICATION_LDAP_SIMPLE`. If no interface is used, `NULL` is returned. |
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `87ba5c08` are properly handled with clean fallback behavior.

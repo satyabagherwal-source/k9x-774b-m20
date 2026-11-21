@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261119-SOUI",
-    "timestamp": "2026-11-19T07:14:22.794Z",
-    "repository": "DNSControl/dnscontrol",
-    "learningId": "learn-github-dnscontrol-dnscontrol",
-    "contentHash": "405e4fcfe90f14b070926d4257022adc5281c48ac57f726effeb2bbd1e9da12e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-MI1D",
-    "timestamp": "2026-11-19T07:37:33.649Z",
-    "repository": "tickernelz/opencode-mem",
-    "learningId": "learn-github-tickernelz-opencode-mem",
-    "contentHash": "41bf54493c63c5c42e77fcf572a7015d43963be986d417875a4530ab08a4097a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-RW3W",
-    "timestamp": "2026-11-19T07:41:45.164Z",
-    "repository": "medialab/xan",
-    "learningId": "learn-github-medialab-xan",
-    "contentHash": "7ed62287abd288f00d16b0f8fde12d5afa634a1c22dcb8facf6aa77c83d1153d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-SN08",
-    "timestamp": "2026-11-19T07:42:20.024Z",
-    "repository": "unsloth/embeddinggemma-2-GGUF",
-    "learningId": "learn-huggingface-unsloth-embeddinggemma-2-gguf",
-    "contentHash": "d232a01eaf74d991ec746010cdeb188d2aae9daa34e611bb8f9b8a078c013f2e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261119-3TSI",
     "timestamp": "2026-11-19T07:51:02.034Z",
     "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
@@ -7490,6 +7430,66 @@
     "repository": "react-hook-form/react-hook-form",
     "learningId": "learn-github-react-hook-form-react-hook-form",
     "contentHash": "0894c96861b3f17d0a175f246d6b1b7ba37b113b489a9936651c3e7b5b32a860",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-8G1Q",
+    "timestamp": "2026-11-21T12:37:54.110Z",
+    "repository": "orcarouter/OrcaCyber-Nano-1.0",
+    "learningId": "learn-huggingface-orcarouter-orcacyber-nano-1-0",
+    "contentHash": "626151f90a27cf39d3d9c21f0cec82423b7bc07a4251ec30e0fe8eddae074c3c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-8IIL",
+    "timestamp": "2026-11-21T12:37:57.309Z",
+    "repository": "codewhale-hq/Codewhale",
+    "learningId": "learn-github-codewhale-hq-codewhale",
+    "contentHash": "18275a11a81b54d76ee74bc37e36fdc497ae34384a1cf12bef3ecf2cd9446034",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-8MRI",
+    "timestamp": "2026-11-21T12:38:02.814Z",
+    "repository": "open-policy-agent/opa",
+    "learningId": "learn-github-open-policy-agent-opa",
+    "contentHash": "4cc200b3f04bf2b2c38ba17ad4c28d39489f32b34491dabcb112c045026845aa",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-8RXD",
+    "timestamp": "2026-11-21T12:38:09.505Z",
+    "repository": "StarRocks/starrocks",
+    "learningId": "learn-github-starrocks-starrocks",
+    "contentHash": "b5bed4e6738fc4be9e449bb16450621d872536f1d40b81ff81e84a609661d578",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

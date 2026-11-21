@@ -2603,10 +2603,10 @@
     "repository": "codewhale-hq/Codewhale",
     "platform": "github",
     "sourceUrl": "https://github.com/Hmbown/Codewhale",
-    "sourceVersion": "3c8dcd7f",
+    "sourceVersion": "6c211938",
     "license": "MIT",
-    "contentHash": "dbe136b4b70ab5708f4921cd5a53d2599d96435d3a29f36ba136d0c5e8d6e410",
-    "lastHarvestedAt": "2026-11-19T23:43:21.131Z",
+    "contentHash": "18275a11a81b54d76ee74bc37e36fdc497ae34384a1cf12bef3ecf2cd9446034",
+    "lastHarvestedAt": "2026-11-21T12:37:57.313Z",
     "learningId": "learn-github-codewhale-hq-codewhale"
   },
   "zulip-zulip": {
@@ -5223,10 +5223,10 @@
     "repository": "StarRocks/starrocks",
     "platform": "github",
     "sourceUrl": "https://github.com/StarRocks/starrocks",
-    "sourceVersion": "b400696f",
+    "sourceVersion": "a9a9fd73",
     "license": "Apache-2.0",
-    "contentHash": "5a465d28b97bfb4649ecd6fb1cef650ab0c34c7ab58cdfc28e1eff9e4884afed",
-    "lastHarvestedAt": "2026-11-20T06:19:37.527Z",
+    "contentHash": "b5bed4e6738fc4be9e449bb16450621d872536f1d40b81ff81e84a609661d578",
+    "lastHarvestedAt": "2026-11-21T12:38:09.509Z",
     "learningId": "learn-github-starrocks-starrocks"
   },
   "lobehub-lobe-ui": {
@@ -6113,10 +6113,10 @@
     "repository": "open-policy-agent/opa",
     "platform": "github",
     "sourceUrl": "https://github.com/open-policy-agent/opa",
-    "sourceVersion": "a4d2f0c0",
+    "sourceVersion": "e4f652d8",
     "license": "Apache-2.0",
-    "contentHash": "c53b7789c2a08892cd93e03a49711aa448965c031b4d4f92d4b8a4bbb49d1693",
-    "lastHarvestedAt": "2026-11-20T07:36:03.019Z",
+    "contentHash": "4cc200b3f04bf2b2c38ba17ad4c28d39489f32b34491dabcb112c045026845aa",
+    "lastHarvestedAt": "2026-11-21T12:38:02.819Z",
     "learningId": "learn-github-open-policy-agent-opa"
   },
   "dragonflydb-dragonfly": {
@@ -10435,8 +10435,8 @@
     "sourceUrl": "https://huggingface.co/orcarouter/OrcaCyber-Nano-1.0",
     "sourceVersion": "hf-orcarouter-orcacyber-nano-1.0",
     "license": "Open-Source",
-    "contentHash": "33d70abd753a633350052cd4d73adeb78f3b6bcbb0e0ab0d8f0b0174c92de5cb",
-    "lastHarvestedAt": "2026-11-17T16:21:48.510Z",
+    "contentHash": "626151f90a27cf39d3d9c21f0cec82423b7bc07a4251ec30e0fe8eddae074c3c",
+    "lastHarvestedAt": "2026-11-21T12:37:54.114Z",
     "learningId": "learn-huggingface-orcarouter-orcacyber-nano-1-0"
   },
   "ryder-sun-meldwork": {

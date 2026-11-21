@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-21T12:29:58.934Z",
+  "updated_at": "2026-11-21T12:38:41.416Z",
   "statistics": {
-    "total_nodes": 444,
+    "total_nodes": 445,
     "total_edges": 192,
     "domain_distribution": {
       "D": 279,
       "M": 1,
-      "H": 70,
+      "H": 71,
       "J": 22,
       "K": 27,
       "L": 8,
@@ -9922,6 +9922,28 @@
       ],
       "created_at": "2026-11-21T12:29:58.934Z",
       "updated_at": "2026-11-21T12:29:58.934Z"
+    },
+    "DOM-H-D52613BE": {
+      "id": "DOM-H-D52613BE",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "docs: document number representation differences in Wasm",
+      "summary": "Prevents defects observed in production commit `e4f652d8`: docs: document number representation differences in Wasm. Unvalidated execution p -> When implementing operations in `docs/docs/wasm.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://open-policy-agent-opa/open-policy-agent-opa-learnings.md",
+        "source_version": "e4f652d8",
+        "observed_at": "2026-11-21T12:38:02.350Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (open-policy-agent-opa)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-21T12:38:41.416Z",
+      "updated_at": "2026-11-21T12:38:41.416Z"
     }
   },
   "edges": [

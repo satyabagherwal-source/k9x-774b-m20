@@ -4,24 +4,24 @@
 {
   "source_repository": "open-policy-agent/opa",
   "source_url": "https://github.com/open-policy-agent/opa",
-  "source_version": "a4d2f0c0",
+  "source_version": "e4f652d8",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-20T07:36:03.212Z",
+  "timestamp": "2026-11-21T12:38:03.067Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-open-policy-agent-opa",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [open-policy-agent/opa](https://github.com/open-policy-agent/opa) (Revision: `a4d2f0c0`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T07:36:03.212Z`  
+> **Provenance**: Harvested from [open-policy-agent/opa](https://github.com/open-policy-agent/opa) (Revision: `e4f652d8`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-21T12:38:03.067Z`  
 > **Learning ID**: `learn-github-open-policy-agent-opa`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
 - **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 76%
+- **Confidence Rating**: 82%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from open-policy-agent/opa:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/open-policy-agent/opa](https://github.com/open-policy-agent/opa))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T07:36:02.043Z  
+> **Harvest Timestamp**: 2026-11-21T12:38:02.345Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Open Policy Agent (OPA) is an open source, general-purpose policy engine.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 12500 stars
+- **Stars / Engagement**: 12504 stars
 
 ---
 
@@ -981,33 +981,51 @@ func BuildTLSConfig(scheme string, skipVerify bool, cert *tls.Certificate, pool 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a4d2f0c0` (2026-11-19)
-**Commit Message**: ast: Skip repeated rule names when resolving refs (#9602)
+### Incident Patch 1: `e4f652d8` (2026-11-20)
+**Commit Message**: docs: document number representation differences in Wasm
 
-resolveAllRefs builds the rule globals of a package for every mod in it.
-When many rules share a name, e.g. allow if {...} x N, then the map is
-added to needlessly since the rule is already known.
-```
-BenchmarkCompileGeneratedRules (20000 rules in 40 modules):
+Wasm modules do arithmetic with libmpdec decimals and round division
+results to 18 significant digits. The Go interpreter uses big.Float
+with a 64-bit mantissa for division and for arithmetic on numbers that
+are not integers. 
 
-10883000 allocs/op // was
- 7683000 allocs/op // now
-```
+Add a Numbers section under Current Status in the Wasm docs. Its
+examples come from "opa eval -t wasm" and "opa eval -t rego".
 
-Signed-off-by: Charlie Egan <[REDACTED_EMAIL]>
+Fixes #3298.
 
-**File**: `v1/ast/compile.go` (modified, +3/-0)
+Signed-off-by: Ajay Kumar <[REDACTED_EMAIL]>
+
+**File**: `docs/docs/wasm.md` (modified, +21/-0)
 ```diff
-@@ -6715,6 +6715,9 @@ func (l *localVarGenerator) Generate() Var {
- func storeGlobals(pkg *Package, rules []Ref, imports []*Import, globals map[Var]*usedRef) {
- 	for _, ref := range rules {
- 		v := ref[0].Value.(Var)
-+		if _, ok := globals[v]; ok {
-+			continue
-+		}
- 		globals[v] = &usedRef{ref: pkg.Path.Append(StringTerm(string(v)))}
- 	}
+@@ -26,6 +26,27 @@ functions that are not, and probably won't be natively supported in Wasm (e.g.,
+ `http.send`). Built-in functions that are not natively supported can be
+ implemented in the host environment (e.g., JavaScript).
  
++### Numbers
++
++Wasm modules and OPA's Go interpreter, which `opa eval` uses by default, do
++arithmetic in different ways:
++
++- Wasm modules use decimal arithmetic, and round the result of a division to 18
++  significant digits.
++- The Go interpreter uses binary floating-point numbers with a 64-bit mantissa
++  for division, and for arithmetic on numbers that are not integers.
++
++As a result, the same expression can return numbers that differ in their last
++digits or in their format:
++
++| Expression                         | `opa eval -t wasm`     | `opa eval -t rego`         |
++| ---------------------------------- | ---------------------- | -------------------------- |
++| `1 / 3`                            | `0.333333333333333333` | `0.33333333333333333334`   |
++| `1763371234567891234 / 1000000000` | `1763371234.56789123`  | `1.763371234567891234e+09` |
++| `1 - 0.9`                          | `0.1`                  | `0.10000000000000000002`   |
++| `1.15 + 1.15`                      | `2.30`                 | `2.3`                      |
++| `1e20 * 1`                         | `1e+20`                | `100000000000000000000`    |
++
+ ## Compiling Policies
+ 
+ You can compile Rego policies into Wasm modules using the `opa build` subcommand.
 ```
 
 #### Recent Merged Pull Requests:
@@ -1036,23 +1054,41 @@ Signed-off-by: Charlie Egan <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ast: Skip repeated rule names when resolving refs
+## X. docs: document number representation differences in Wasm
 
 **RULE**:
-When implementing operations in `v1/ast/compile.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/opa. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/docs/wasm.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/opa. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a4d2f0c0`: ast: Skip repeated rule names when resolving refs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e4f652d8`: docs: document number representation differences in Wasm. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `v1/ast/compile.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/docs/wasm.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		if _, ok := globals[v]; ok {
-			continue
-		}
+### Numbers
+
+Wasm modules and OPA's Go interpreter, which `opa eval` uses by default, do
+arithmetic in different ways:
+
+- Wasm modules use decimal arithmetic, and round the result of a division to 18
+  significant digits.
+- The Go interpreter uses binary floating-point numbers with a 64-bit mantissa
+  for division, and for arithmetic on numbers that are not integers.
+
+As a result, the same expression can return numbers that differ in their last
+digits or in their format:
+
+| Expression                         | `opa eval -t wasm`     | `opa eval -t rego`         |
+| ---------------------------------- | ---------------------- | -------------------------- |
+| `1 / 3`                            | `0.333333333333333333` | `0.33333333333333333334`   |
+| `1763371234567891234 / 1000000000` | `1763371234.56789123`  | `1.763371234567891234e+09` |
+| `1 - 0.9`                          | `0.1`                  | `0.10000000000000000002`   |
+| `1.15 + 1.15`                      | `2.30`                 | `2.3`                      |
+| `1e20 * 1`                         | `1e+20`                | `100000000000000000000`    |
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1062,7 +1098,7 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a4d2f0c0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e4f652d8` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

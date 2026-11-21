@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-21T12:19:53.797Z",
+  "updated_at": "2026-11-21T12:38:13.643Z",
   "stats": {
-    "total_discovered": 7141,
-    "approved_pending_harvest": 6746,
+    "total_discovered": 7160,
+    "approved_pending_harvest": 6765,
     "harvested_count": 0,
     "rejected_count": 395,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6726,
+      "COMMUNITY_AND_EXPERT": 6745,
       "OFFICIAL_DOCUMENTATION": 238,
       "STANDARDS_AND_SPECIFICATIONS": 122,
       "ENGINEERING_BLOGS": 5,
@@ -154360,6 +154360,424 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
         "fileName": "dkhamsing-open-source-ios-apps-learnings.md"
+      }
+    },
+    "SRC-98EF50D9B167": {
+      "id": "SRC-98EF50D9B167",
+      "url": "https://github.com/donglovejava",
+      "title": "https://github.com/donglovejava",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:38:12.816Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+        "fileName": "hmbown-codewhale-learnings.md"
+      }
+    },
+    "SRC-1CD28AE2DBF2": {
+      "id": "SRC-1CD28AE2DBF2",
+      "url": "https://github.com/codewhale-hq/CodeWhale/pull/7449",
+      "title": "https://github.com/codewhale-hq/CodeWhale/pull/7449",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:38:12.863Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+        "fileName": "hmbown-codewhale-learnings.md"
+      }
+    },
+    "SRC-414225C1F9D4": {
+      "id": "SRC-414225C1F9D4",
+      "url": "https://github.com/7jrxt42BxFZo4iAnN4CX",
+      "title": "https://github.com/7jrxt42BxFZo4iAnN4CX",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:38:12.910Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+        "fileName": "hmbown-codewhale-learnings.md"
+      }
+    },
+    "SRC-AD7ABAB12021": {
+      "id": "SRC-AD7ABAB12021",
+      "url": "https://github.com/codewhale-hq/Codewhale/issues/7434",
+      "title": "https://github.com/codewhale-hq/Codewhale/issues/7434",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:38:12.965Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+        "fileName": "hmbown-codewhale-learnings.md"
+      }
+    },
+    "SRC-149A3CF2271B": {
+      "id": "SRC-149A3CF2271B",
+      "url": "https://github.com/swf1996120",
+      "title": "https://github.com/swf1996120",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:38:13.008Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+        "fileName": "hmbown-codewhale-learnings.md"
+      }
+    },
+    "SRC-494F338778B6": {
+      "id": "SRC-494F338778B6",
+      "url": "https://github.com/codewhale-hq/Codewhale/issues/7435",
+      "title": "https://github.com/codewhale-hq/Codewhale/issues/7435",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:38:13.054Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+        "fileName": "hmbown-codewhale-learnings.md"
+      }
+    },
+    "SRC-1771F3F19964": {
+      "id": "SRC-1771F3F19964",
+      "url": "https://github.com/BX166",
+      "title": "https://github.com/BX166",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:38:13.098Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+        "fileName": "hmbown-codewhale-learnings.md"
+      }
+    },
+    "SRC-BCCD91DCECBE": {
+      "id": "SRC-BCCD91DCECBE",
+      "url": "https://github.com/codewhale-hq/CodeWhale/pull/7421",
+      "title": "https://github.com/codewhale-hq/CodeWhale/pull/7421",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:38:13.141Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+        "fileName": "hmbown-codewhale-learnings.md"
+      }
+    },
+    "SRC-3FC3DD7C42CC": {
+      "id": "SRC-3FC3DD7C42CC",
+      "url": "https://github.com/codewhale-hq/CodeWhale/pull/7422",
+      "title": "https://github.com/codewhale-hq/CodeWhale/pull/7422",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:38:13.184Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+        "fileName": "hmbown-codewhale-learnings.md"
+      }
+    },
+    "SRC-686C79D3A57D": {
+      "id": "SRC-686C79D3A57D",
+      "url": "https://github.com/codewhale-hq/CodeWhale/pull/7423",
+      "title": "https://github.com/codewhale-hq/CodeWhale/pull/7423",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:38:13.227Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+        "fileName": "hmbown-codewhale-learnings.md"
+      }
+    },
+    "SRC-88272A3C6D1A": {
+      "id": "SRC-88272A3C6D1A",
+      "url": "https://github.com/gabsferreira",
+      "title": "https://github.com/gabsferreira",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:38:13.271Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+        "fileName": "hmbown-codewhale-learnings.md"
+      }
+    },
+    "SRC-8897361A1F24": {
+      "id": "SRC-8897361A1F24",
+      "url": "https://github.com/codewhale-hq/Codewhale/pull/7410",
+      "title": "https://github.com/codewhale-hq/Codewhale/pull/7410",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:38:13.315Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+        "fileName": "hmbown-codewhale-learnings.md"
+      }
+    },
+    "SRC-B92FC6D07307": {
+      "id": "SRC-B92FC6D07307",
+      "url": "https://github.com/cmdcorp6534",
+      "title": "https://github.com/cmdcorp6534",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:38:13.360Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+        "fileName": "hmbown-codewhale-learnings.md"
+      }
+    },
+    "SRC-A376DA113550": {
+      "id": "SRC-A376DA113550",
+      "url": "https://github.com/codewhale-hq/Codewhale/issues/2323",
+      "title": "https://github.com/codewhale-hq/Codewhale/issues/2323",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:38:13.405Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+        "fileName": "hmbown-codewhale-learnings.md"
+      }
+    },
+    "SRC-FFD16483B080": {
+      "id": "SRC-FFD16483B080",
+      "url": "https://github.com/Asteria1028",
+      "title": "https://github.com/Asteria1028",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:38:13.449Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+        "fileName": "hmbown-codewhale-learnings.md"
+      }
+    },
+    "SRC-78CCC2E404ED": {
+      "id": "SRC-78CCC2E404ED",
+      "url": "https://github.com/codewhale-hq/Codewhale/issues/7221",
+      "title": "https://github.com/codewhale-hq/Codewhale/issues/7221",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:38:13.493Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+        "fileName": "hmbown-codewhale-learnings.md"
+      }
+    },
+    "SRC-11922675BC35": {
+      "id": "SRC-11922675BC35",
+      "url": "https://github.com/zhuowp",
+      "title": "https://github.com/zhuowp",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:38:13.538Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+        "fileName": "hmbown-codewhale-learnings.md"
+      }
+    },
+    "SRC-2FE937B0FB41": {
+      "id": "SRC-2FE937B0FB41",
+      "url": "https://github.com/codewhale-hq/Codewhale/pull/7220",
+      "title": "https://github.com/codewhale-hq/Codewhale/pull/7220",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:38:13.592Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+        "fileName": "hmbown-codewhale-learnings.md"
+      }
+    },
+    "SRC-B9C05EAB27F8": {
+      "id": "SRC-B9C05EAB27F8",
+      "url": "https://github.com/printf033",
+      "title": "https://github.com/printf033",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T12:38:13.643Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+        "fileName": "hmbown-codewhale-learnings.md"
       }
     }
   }

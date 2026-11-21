@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-21T12:29:25.272Z",
+  "last_updated": "2026-11-21T12:38:09.517Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4041,14 +4041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-codewhale-hq-codewhale",
-      "content_hash": "e5474569b167416bb11d5e5269d4d6b9c6a7e62f289b38eeef9fa6863a5f5e8b",
-      "verified_at": "2026-11-21T01:43:41.627Z",
+      "content_hash": "18275a11a81b54d76ee74bc37e36fdc497ae34384a1cf12bef3ecf2cd9446034",
+      "verified_at": "2026-11-21T12:37:57.321Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T01:43:41.627Z"
+      "last_updated": "2026-11-21T12:37:57.321Z"
     },
     "zulip/zulip": {
       "repository": "zulip/zulip",
@@ -7956,14 +7956,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-starrocks-starrocks",
-      "content_hash": "5a465d28b97bfb4649ecd6fb1cef650ab0c34c7ab58cdfc28e1eff9e4884afed",
-      "verified_at": "2026-11-20T06:19:37.535Z",
+      "content_hash": "b5bed4e6738fc4be9e449bb16450621d872536f1d40b81ff81e84a609661d578",
+      "verified_at": "2026-11-21T12:38:09.516Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T06:19:37.535Z"
+      "last_updated": "2026-11-21T12:38:09.516Z"
     },
     "lobehub/lobe-ui": {
       "repository": "lobehub/lobe-ui",
@@ -9291,14 +9291,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-open-policy-agent-opa",
-      "content_hash": "c53b7789c2a08892cd93e03a49711aa448965c031b4d4f92d4b8a4bbb49d1693",
-      "verified_at": "2026-11-20T07:36:03.027Z",
+      "content_hash": "4cc200b3f04bf2b2c38ba17ad4c28d39489f32b34491dabcb112c045026845aa",
+      "verified_at": "2026-11-21T12:38:02.861Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T07:36:03.027Z"
+      "last_updated": "2026-11-21T12:38:02.861Z"
     },
     "dragonflydb/dragonfly": {
       "repository": "dragonflydb/dragonfly",
@@ -15681,14 +15681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-orcarouter-orcacyber-nano-1-0",
-      "content_hash": "33d70abd753a633350052cd4d73adeb78f3b6bcbb0e0ab0d8f0b0174c92de5cb",
-      "verified_at": "2026-11-17T16:21:48.518Z",
+      "content_hash": "626151f90a27cf39d3d9c21f0cec82423b7bc07a4251ec30e0fe8eddae074c3c",
+      "verified_at": "2026-11-21T12:37:54.122Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T16:21:48.518Z"
+      "last_updated": "2026-11-21T12:37:54.122Z"
     },
     "Ryder-Sun/Meldwork": {
       "repository": "Ryder-Sun/Meldwork",
