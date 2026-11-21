@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261119-1BAV",
-    "timestamp": "2026-11-19T18:32:55.927Z",
-    "repository": "OpenMOSS-Team/MOSS-Image-SFT",
-    "learningId": "learn-huggingface-openmoss-team-moss-image-sft",
-    "contentHash": "c489df5aa6cd2c1dd49ff1a324265c7a01b6456ee6621fa75b274bece76cf451",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-1DVQ",
-    "timestamp": "2026-11-19T18:32:59.270Z",
-    "repository": "tw93/Pake",
-    "learningId": "learn-github-tw93-pake",
-    "contentHash": "c44571c60aac70116639b0fa812f1bcb677e3f1fab3a110158dbf650780f7607",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-LSZ0",
-    "timestamp": "2026-11-19T18:48:51.948Z",
-    "repository": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
-    "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017",
-    "contentHash": "de6a12d6aa33073a5e3f74e7b7de196903f7e8a5112d790c17817849a7cebec1",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261119-LXAB",
     "timestamp": "2026-11-19T18:48:57.539Z",
     "repository": "openkruise/kruise",
@@ -7492,6 +7447,51 @@
     "contentHash": "d19c47c21500add003c1e204e6e3e1105ff8029ddec43eb8e50af035c80db9cc",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-DP78",
+    "timestamp": "2026-11-21T22:29:51.188Z",
+    "repository": "Comfy-Org/Wan-2.2",
+    "learningId": "learn-huggingface-comfy-org-wan-2-2",
+    "contentHash": "64fca361eaa83b5888bbbe9eec808442ec62bb2c2b64d08245b8b4aec0f2e450",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-DUY0",
+    "timestamp": "2026-11-21T22:29:58.632Z",
+    "repository": "keybase/client",
+    "learningId": "learn-github-keybase-client",
+    "contentHash": "e12b78cb036bef8156242dd74282a05690987e516ca0a485ec7444a679f6481b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-E27M",
+    "timestamp": "2026-11-21T22:30:08.050Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "f1e39ecf42559a0c537f3509cf238e3d79ad6bd03a93f842458330efa9a39a1f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

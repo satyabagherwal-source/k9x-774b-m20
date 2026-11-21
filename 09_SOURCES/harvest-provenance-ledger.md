@@ -11951,3 +11951,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-speridlabs-idol` | `https://huggingface.co/speridlabs/idol` | `hf-speridl` | Multi-dimensional audit evidence | 2026-11-21T22:16:15.213Z |
 | `learn-github-erkamyaman-rust-anything` | `https://github.com/erkamyaman/rust-anything` | `8ac2c1c8` | Multi-dimensional audit evidence | 2026-11-21T22:16:16.332Z |
 | `learn-github-berty-berty` | `https://github.com/berty/berty` | `3d9720d4` | Multi-dimensional audit evidence | 2026-11-21T22:16:22.028Z |
+| `learn-huggingface-comfy-org-wan-2-2` | `https://huggingface.co/Comfy-Org/Wan-2.2` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-21T22:29:51.193Z |
+| `learn-github-keybase-client` | `https://github.com/keybase/client` | `1be7e8a0` | Multi-dimensional audit evidence | 2026-11-21T22:29:58.637Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `bf3afb03` | Multi-dimensional audit evidence | 2026-11-21T22:30:08.055Z |
+| `learn-dom-d-db0d402f` | `project://nucleoidai-nucleoid` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | 2026-11-21T22:30:46.080Z |

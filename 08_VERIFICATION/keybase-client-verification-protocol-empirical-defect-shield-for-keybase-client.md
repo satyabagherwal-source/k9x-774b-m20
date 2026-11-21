@@ -4,22 +4,22 @@
 {
   "source_repository": "keybase/client",
   "source_url": "https://github.com/keybase/client",
-  "source_version": "0d1e3966",
+  "source_version": "1be7e8a0",
   "license": "BSD-3-Clause",
-  "timestamp": "2026-11-17T17:20:21.166Z",
+  "timestamp": "2026-11-21T22:29:58.925Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-keybase-client",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [keybase/client](https://github.com/keybase/client) (Revision: `0d1e3966`).  
-> **License**: BSD-3-Clause | **Timestamp**: `2026-11-17T17:20:21.166Z`  
+> **Provenance**: Harvested from [keybase/client](https://github.com/keybase/client) (Revision: `1be7e8a0`).  
+> **License**: BSD-3-Clause | **Timestamp**: `2026-11-21T22:29:58.925Z`  
 > **Learning ID**: `learn-github-keybase-client`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `keybase/client` (Commit: `0d1e3966`)
+- **Target Repository**: `keybase/client` (Commit: `1be7e8a0`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/keybase-client-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/keybase/client](https://github.com/keybase/client))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T17:20:20.071Z  
+> **Harvest Timestamp**: 2026-11-21T22:29:57.433Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1919,394 +1919,657 @@ func ClassifyDomain(domain string) chat1.UnfurlType {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0b60c398` (2026-11-16)
-**Commit Message**: libkb: stubbed chain links can no longer overwrite full links or crash the service (#29900)
+### Incident Patch 1: `1be7e8a0` (2026-11-20)
+**Commit Message**: improve errors for failed writes to disabled folders (#29914)
 
-* libkb: keep full chain links when a stubbed load returns stubs for them
-
-The link DB and LinkCache are keyed by link ID only and shared by every
-load of a chain. A stubbed load that starts from seqno 0 (e.g. after
-switching accounts, when the local chain walk hits a missing link)
-rewrote full links with their stubs, including the follower's own track
-links. GetRemoteChainLinkFor then parsed the stub's missing payload and
-panicked in ParseTrackChainLink, and since KBFS re-identifies TLF
-members on startup the service crash-looped.
-
-- ChainLink.Store and LinkCache.Put no longer replace a full link with
-  its stub.
-- GetRemoteChainLinkFor treats a stubbed link as a cache miss, so
-  identify takes its existing forced-reload path, which refetches the
-  link unstubbed and repairs databases that were already damaged.
-
-* libkb: a stubbed chain link can no longer crash payload readers
-
-Follow-ups from review of the stub-overwrite fix:
-
-- Store keeps a full link only when the stored record really is one
-  (has a sig, no s2), so unreadable records still get replaced, and
-  drops the stub the load al
-
-**File**: `go/engine/identify2_test.go` (modified, +83/-0)
+**File**: `go/kbfs/kbfsblock/server_errors.go` (modified, +5/-0)
 ```diff
-@@ -434,6 +434,89 @@ func TestIdentify2WithUIDWithUntrackedFastPath(t *testing.T) {
- 	runID2(false)
+@@ -205,6 +205,11 @@ type ServerErrorNoPermission struct {
+ 	Msg string
  }
  
-+// A stub can land on disk in place of one of our own track links: the cleaner
-+// evicts the full link, then a stubbed load of our chain stores the stub.
-+// Identify must not crash on it, must still see the follow, and must rewrite
-+// the full link through its forced unstubbed reload.
-+func TestIdentify2WithUIDWithStubbedTrackLink(t *testing.T) {
-+	tc := SetupEngineTest(t, "TestIdentify2WithUIDWithStubbedTrackLink")
-+	defer tc.Cleanup()
-+	m := NewMetaContextForTest(tc)
++// PublicWritesDisabledMsg is the ServerErrorNoPermission message the
++// bserver sends when it refuses a write because public folder writes are
++// disabled.
++const PublicWritesDisabledMsg = "public folder writes are disabled"
 +
-+	fu := CreateAndSignupFakeUser(tc, "track")
-+	// Only v2 links can be stubbed, and the server never stubs a chain's
-+	// last link, so follow bob after alice.
-+	trackAlice(tc, fu, libkb.KeybaseSignatureV2)
-+	defer untrackAlice(tc, fu, libkb.KeybaseSignatureV2)
-+	trackBob(tc, fu, libkb.KeybaseSignatureV2)
-+	defer untrackBob(tc, fu, libkb.KeybaseSignatureV2)
-+
-+	// Identify loads the logged-in user with these options. Loading that way
-+	// here fills the UPAK cache slot identify reads, so identify gets the
-+	// UPAK alone and has to look the track link up in storage.
-+	meArg := libkb.NewLoadUserArgWithMetaContext(m).WithUID(fu.UID()).WithSelf(true).WithStubMode(libkb.StubModeUnstubbed)
-+	upak, _, err := tc.G.GetUPAKLoader().LoadV2(meArg)
-+	require.NoError(t, err)
-+	remote, ok := upak.Current.RemoteTracks[aliceUID]
-+	require.True(t, ok, "the UPAK should list the follow of t_alice")
-+	lid, err := libkb.LinkIDFromHex(string(remote.LinkID))
-+	require.NoError(t, err)
-+	key := libkb.DbKey{Typ: libkb.DBLink, Key: lid.String()}
-+
-+	readSig := func() string {
-+		raw, found, err := tc.G.LocalDb.GetRaw(key)
-+		require.NoError(t, err)
-+		require.True(t, found)
-+		record, err := jsonw.Unmarshal(raw)
-+		require.NoError(t, err)
-+		sig, _ := record.AtKey("sig").GetString()
-+		return sig
-+	}
-+
-+	// Replace the stored link with what ChainLink.Pack writes for its stub.
-+	sig := readSig()
-+	require.NotEmpty(t, sig)
-+	outer, err := libkb.DecodeOuterLinkV2(sig)
-+	require.NoError(t, err)
-+	require.True(t, outer.LinkID().Eq(lid))
-+	stubRecord := jsonw.NewDictionary()
-+	require.NoError(t, stubRecord.SetKey("s2", jsonw.NewString(outer.EncodeStubbed())))
-+	stubBytes, err := stubRecord.Marshal()
-+	require.NoError(t, err)
-+	require.NoError(t, tc.G.LocalDb.PutRaw(key, stubBytes))
-+	tc.G.LinkCache().Remove(lid)
-+
-+	link, err := libkb.ImportLinkFromStorage(m, lid, fu.UID())
-+	require.NoError(t, err)
-+	require.True(t, link.IsStubbed())
-+	tc.G.LinkCache().Remove(lid)
-+
-+	// With a full user object identify would read the track from it and
-+	// never touch the stored link.
-+	cachedUPAK, fullUser, err := tc.G.GetUPAKLoader().LoadV2(meArg)
-+	require.NoError(t, err)
-+	require.Nil(t, fullUser, "identify must get the cached UPAK, not a full user load")
-+	_, err = libkb.TrackChainLinkFromUPK2AI(m, cachedUPAK, libkb.NewNormalizedUsername("t_alice"), aliceUID)
-+	var inconsistent libkb.InconsistentCacheStateError
-+	require.ErrorAs(t, err, &inconsistent)
-+	tc.G.LinkCache().Remove(lid)
-+
-+	tester := newIdentify2WithUIDTester(tc.G)
-+	tester.noDiskCache = true
-+	eng := NewIdentify2WithUID(tc.G, &keybase1.Identify2Arg{Uid: aliceUID, IdentifyBehavior: keybase1.TLFIdentifyBehavior_CHAT_GUI})
-+	eng.testArgs = &Identify2WithUIDTestArgs{
-+		cache:                  tester,
-+		allowUntrackedFastPath: true,
-+	}
-+	require.NoError(t, eng.Run(identify2MetaContext(tc, tester)))
-+	require.Zero(t, eng.testArgs.stats.untrackedFastPaths, "the follow of t_alice was lost")
-+
-+	require.Equal(t, sig, readSig(), "the forced reload should have rewritten the full link")
-+	tcl, err := libkb.TrackChainLinkFromUPK2AI(m, upak, libkb.NewNormalizedUsername("t_alice"), aliceUID)
-+	require.NoError(t, err)
-+	require.NotNil(t, tcl)
+ // ToStatus implements the ExportableError interface for ServerErrorBlockArchived
+ func (e ServerErrorNoPermission) ToStatus() (s keybase1.Status) {
+ 	s.Code = StatusCodeServerErrorNoPermission
+```
+
+**File**: `go/kbfs/libkbfs/config_local.go` (modified, +2/-1)
+```diff
+@@ -1290,6 +1290,7 @@ func (c *ConfigLocal) EnableJournaling(
+ 	log := c.MakeLogger("")
+ 	branchListener := c.KBFSOps().(branchChangeListener)
+ 	flushListener := c.KBFSOps().(mdFlushListener)
++	refusalListener := c.KBFSOps().(writeRefusalListener)
+ 
+ 	// Make sure the journal root exists.
+ 	err := ioutil.MkdirAll(journalRoot, 0o700)
+@@ -1299,7 +1300,7 @@ func (c *ConfigLocal) EnableJournaling(
+ 
+ 	jManager := makeJournalManager(c, log, journalRoot, c.BlockCache(),
+ 		c.DirtyBlockCache(), c.BlockServer(), c.MDOps(), branchListener,
+-		flushListener, bws)
++		flushListener, refusalListener, bws)
+ 
+ 	c.SetBlockServer(jManager.blockServer())
+ 	c.SetMDOps(jManager.mdOps())
+```
+
+**File**: `go/kbfs/libkbfs/errors.go` (modified, +15/-0)
+```diff
+@@ -106,6 +106,21 @@ func (e WriteUnsupportedError) Error() string {
+ 	return fmt.Sprintf("Writing to %s is unsupported", e.Filename)
+ }
+ 
++// WritesDiscardedError indicates that a folder's journaled writes were
++// discarded because the server refused them.
++type WritesDiscardedError struct {
++	Err error
 +}
 +
- func TestIdentify2WithUIDWithBrokenTrackFromChatGUI(t *testing.T) {
- 	tc := SetupEngineTest(t, "TestIdentify2WithUIDWithBrokenTrackFromChatGUI")
- 	defer tc.Cleanup()
++// Error implements the error interface for WritesDiscardedError
++func (e WritesDiscardedError) Error() string {
++	return fmt.Sprintf("Discarded writes the server refused: %v", e.Err)
++}
++
++func (e WritesDiscardedError) Unwrap() error {
++	return e.Err
++}
++
+ // WriteToReadonlyNodeError indicates an error when trying to write a
+ // node that's marked as read-only.
+ type WriteToReadonlyNodeError struct {
 ```
 
-**File**: `go/engine/identify2_with_uid.go` (modified, +4/-3)
+**File**: `go/kbfs/libkbfs/folder_branch_ops.go` (modified, +49/-4)
 ```diff
-@@ -197,9 +197,10 @@ func (i *identifyUser) trackChainLinkFor(m libkb.MetaContext, name libkb.Normali
- 		// NOTE(max) 2016-12-31
- 		//
- 		// There's a corner case here -- the track chain link does exist, but
--		// it wasn't found on disk. This is probably because the db cache was nuked.
--		// Thus, in this case we force a full user reload, and we're sure to get
--		// the tracking information then.
-+		// it wasn't found on disk, or was only stored as a stub. The db cache
-+		// was probably nuked or cleaned, or a stubbed load of our own chain
-+		// stored the stub. Thus, in this case we force a full user reload,
-+		// and we're sure to get the tracking information then.
- 		//
- 		// See Jira ticket CORE-4310
- 		//
-```
-
-**File**: `go/libkb/chain_link.go` (modified, +97/-24)
-```diff
-@@ -358,12 +358,17 @@ func (c *ChainLink) GetUID() keybase1.UID {
- 	return c.unpacked.uid
+@@ -7798,9 +7798,12 @@ func (fbo *folderBranchOps) UnstageForTesting(
+ 	})
  }
  
-+// UnmarshalPayloadJSON never returns nil: callers chain AtPath/AtKey on the
-+// result, which fail cleanly on a nil-valued wrapper but panic on nil.
- func (c *ChainLink) UnmarshalPayloadJSON() *jsonw.Wrapper {
-+	if c.IsStubbed() {
-+		return jsonw.NewNil()
++var errCancelUploadsBeforeHead = errors.New(
++	"Can't cancel uploads before the folder's head is loaded")
++
+ func (fbo *folderBranchOps) cancelUploadsLocked(
+ 	ctx context.Context, lState *kbfssync.LockState,
+-) error {
++) (err error) {
+ 	fbo.mdWriterLock.AssertLocked(lState)
+ 
+ 	jManager, _ := GetJournalManager(fbo.config)
+@@ -7815,10 +7818,22 @@ func (fbo *folderBranchOps) cancelUploadsLocked(
+ 		return errors.New("Can't cancel uploads while there's a conflict")
+ 	}
+ 
+-	// Pause the uploads right away.
+-	jManager.PauseBackgroundWork(ctx, fbo.id())
++	// Undoing the MD updates below needs the head to undo from.
++	if md, _ := fbo.getHead(ctx, lState, mdNoCommit); md == (ImmutableRootMetadata{}) {
++		return errCancelUploadsBeforeHead
 +	}
- 	jw, err := c.G().PayloadCache.GetOrPrime(c)
++
++	// Pause the uploads right away. If this paused them, resume them if
++	// cancelling fails.
++	if jManager.PauseBackgroundWork(ctx, fbo.id()) {
++		defer func() {
++			if err != nil {
++				jManager.ResumeBackgroundWork(ctx, fbo.id())
++			}
++		}()
++	}
+ 	// Wait until the pause takes effect.
+-	err := jManager.Wait(ctx, fbo.id())
++	err = jManager.Wait(ctx, fbo.id())
  	if err != nil {
--		// Any unmarshal error here would already have
--		// happened in Unpack
--		return nil
-+		// A full link whose payload doesn't parse means a corrupt record.
-+		c.G().Log.Warning("ChainLink.UnmarshalPayloadJSON(%s): unreadable payload: %v", c.id, err)
-+		return jsonw.NewNil()
+ 		return err
  	}
- 	return jw
- }
-@@ -1344,26 +1349,46 @@ func NewChainLink(g *GlobalContext, parent *SigChain, id LinkID) *ChainLink {
- 	}
+@@ -9148,6 +9163,36 @@ func (fbo *folderBranchOps) onMDFlush(
+ 	})
  }
  
-+func linkDbKey(id LinkID) DbKey {
-+	return DbKey{Typ: DBLink, Key: id.String()}
-+}
++// onTLFWriteRefused discards the journaled writes the server refused,
++// since retrying them can't succeed, and then reports the refusal.
++func (fbo *folderBranchOps) onTLFWriteRefused(
++	tlfName tlf.CanonicalName, refusal error,
++) {
++	fbo.goTracked(func() {
++		ctx, cancelFunc := fbo.newCtxWithFBOID()
++		defer cancelFunc()
 +
-+// unpackStoredLink unpacks a link record read from the local DB.
-+func unpackStoredLink(m MetaContext, id LinkID, selfUID keybase1.UID, data []byte) (*ChainLink, error) {
-+	// May as well recheck onload (maybe revisit this)
-+	ret := NewChainLink(m.G(), nil, id)
-+	if err := ret.unpackFromLocalStorage(m, selfUID, data); err != nil {
-+		return nil, err
-+	}
-+	ret.storedLocally = true
-+	return ret, nil
-+}
-+
- func ImportLinkFromStorage(m MetaContext, id LinkID, selfUID keybase1.UID) (*ChainLink, error) {
- 	link, ok := m.G().LinkCache().Get(id)
- 	if ok {
-+		// The DB cleaner evicts records that weren't used since its last
-+		// pass, and this read never reaches the DB. Without the mark, the
-+		// links of a chain that stays cached here get evicted from disk, and
-+		// only some of them, since a link missing from this cache is read
-+		// from the DB and so kept.
-+		if db := m.G().LocalDb; db != nil {
-+			db.MarkRecentlyUsed(linkDbKey(id))
++		err := fbo.CancelUploads(ctx, fbo.folderBranch)
++		switch {
++		case err == nil:
++			refusal = WritesDiscardedError{refusal}
++		case errors.As(err, new(NotPermittedWhileDirtyError)) ||
++			errors.Is(err, errCancelUploadsBeforeHead):
++			// Once the writes are synced or the head is loaded, the
++			// journal's next refused flush tries again.
++			fbo.log.CDebugf(ctx, "Will retry discarding refused writes: %+v", err)
++			if jManager, _ := GetJournalManager(fbo.config); jManager != nil {
++				jManager.retryWriteRefusal(fbo.id())
++			}
++			return
++		default:
++			fbo.log.CDebugf(ctx, "Couldn't discard refused writes: %+v", err)
 +		}
- 		link.Contextified = NewContextified(m.G())
- 		return &link, nil
++		fbo.config.Reporter().ReportErr(
++			ctx, tlfName, fbo.id().Type(), WriteMode, refusal)
++	})
++}
++
+ // TeamNameChanged implements the KBFSOps interface for folderBranchOps
+ func (fbo *folderBranchOps) TeamNameChanged(
+ 	ctx context.Context, tid keybase1.TeamID,
+```
+
+**File**: `go/kbfs/libkbfs/journal_manager.go` (modified, +29/-7)
+```diff
+@@ -121,6 +121,15 @@ type mdFlushListener interface {
+ 	onMDFlush(tlf.ID, kbfsmd.BranchID, kbfsmd.Revision)
+ }
+ 
++// writeRefusalListener describes a caller that will get updates via
++// the onTLFWriteRefused method when the server refuses a public TLF's
++// journaled writes because public folder writes are disabled.  The
++// implementer must access the journal from another goroutine to avoid
++// deadlocks.
++type writeRefusalListener interface {
++	onTLFWriteRefused(tlf.ID, tlf.CanonicalName, error)
++}
++
+ type clearedConflictKey struct {
+ 	tlfID tlf.ID
+ 	date  time.Time // the conflict time truncated to be just the date
+@@ -159,6 +168,7 @@ type JournalManager struct {
+ 	delegateMDOps           MDOps
+ 	onBranchChange          branchChangeListener
+ 	onMDFlush               mdFlushListener
++	onWriteRefused          writeRefusalListener
+ 
+ 	// Just protects lastQuotaError.
+ 	lastQuotaErrorLock sync.Mutex
+@@ -185,7 +195,7 @@ func makeJournalManager(
+ 	config Config, log logger.Logger, dir string,
+ 	bcache data.BlockCache, dirtyBcache data.DirtyBlockCache,
+ 	bserver BlockServer, mdOps MDOps, onBranchChange branchChangeListener,
+-	onMDFlush mdFlushListener,
++	onMDFlush mdFlushListener, onWriteRefused writeRefusalListener,
+ 	bws TLFJournalBackgroundWorkStatus,
+ ) *JournalManager {
+ 	if len(dir) == 0 {
+@@ -203,6 +213,7 @@ func makeJournalManager(
+ 		delegateMDOps:           mdOps,
+ 		onBranchChange:          onBranchChange,
+ 		onMDFlush:               onMDFlush,
++		onWriteRefused:          onWriteRefused,
+ 		tlfJournals:             make(map[tlf.ID]*tlfJournal),
+ 		dirtyOps:                make(map[tlf.ID]uint),
+ 		clearedConflictTlfs:     make(map[clearedConflictKey]clearedConflictVal),
+@@ -470,7 +481,8 @@ func (j *JournalManager) makeJournalForConflictTlfLocked(
+ 		ctx, j.currentUID, j.currentVerifyingKey, dir,
+ 		tlfID, chargedTo, tlfJournalConfigAdapter{j.config},
+ 		j.delegateBlockServer, TLFJournalBackgroundWorkPaused, delegate,
+-		j.onBranchChange, j.onMDFlush, j.config.DiskLimiter(), fakeTlfID)
++		j.onBranchChange, j.onMDFlush, j.onWriteRefused, j.config.DiskLimiter(),
++		fakeTlfID)
+ 	if err != nil {
+ 		return nil, tlf.ID{}, time.Time{}, err
+ 	}
+@@ -841,7 +853,7 @@ func (j *JournalManager) enableLocked(
+ 		ctx, j.currentUID, j.currentVerifyingKey, tlfDir,
+ 		tlfID, chargedTo, tlfJournalConfigAdapter{j.config},
+ 		j.delegateBlockServer, bws, delegate, j.onBranchChange, j.onMDFlush,
+-		j.config.DiskLimiter(),
++		j.onWriteRefused, j.config.DiskLimiter(),
+ 		tlf.NullID)
+ 	if err != nil {
+ 		return nil, err
+@@ -941,17 +953,19 @@ func (j *JournalManager) dirtyOpEnd(tlfID tlf.ID) {
+ }
+ 
+ // PauseBackgroundWork pauses the background work goroutine, if it's
+-// not already paused.
+-func (j *JournalManager) PauseBackgroundWork(ctx context.Context, tlfID tlf.ID) {
++// not already paused, and returns whether this call paused it.
++func (j *JournalManager) PauseBackgroundWork(
++	ctx context.Context, tlfID tlf.ID,
++) bool {
+ 	j.log.CDebugf(ctx, "Signaling pause for %s", tlfID)
+ 	if tlfJournal, ok := j.getTLFJournal(tlfID, nil); ok {
+-		tlfJournal.pauseBackgroundWork()
+-		return
++		return tlfJournal.pauseBackgroundWork()
  	}
  
--	var ret *ChainLink
--	data, _, err := m.G().LocalDb.GetRaw(DbKey{Typ: DBLink, Key: id.String()})
--	if err == nil && data != nil {
--		// May as well recheck onload (maybe revisit this)
--		ret = NewChainLink(m.G(), nil, id)
--		if err = ret.unpackFromLocalStorage(m, selfUID, data); err != nil {
--			return nil, err
--		}
--		ret.storedLocally = true
+ 	j.log.CDebugf(ctx,
+ 		"Could not find journal for %s; dropping pause signal",
+ 		tlfID)
++	return false
+ }
+ 
+ // ResumeBackgroundWork resumes the background work goroutine, if it's
+@@ -968,6 +982,14 @@ func (j *JournalManager) ResumeBackgroundWork(ctx context.Context, tlfID tlf.ID)
+ 		tlfID)
+ }
+ 
++// retryWriteRefusal makes the given TLF's journal handle its next write
++// refusal again.
++func (j *JournalManager) retryWriteRefusal(tlfID tlf.ID) {
++	if tlfJournal, ok := j.getTLFJournal(tlfID, nil); ok {
++		tlfJournal.retryWriteRefusal()
++	}
++}
++
+ // Flush flushes the write journal for the given TLF.
+ func (j *JournalManager) Flush(ctx context.Context, tlfID tlf.ID) (err error) {
+ 	j.log.CDebugf(ctx, "Flushing journal for %s", tlfID)
+```
+
+**File**: `go/kbfs/libkbfs/journal_manager_test.go` (modified, +5/-5)
+```diff
+@@ -427,7 +427,7 @@ func TestJournalManagerRestart(t *testing.T) {
+ 	jManager = makeJournalManager(
+ 		config, jManager.log, tempdir, jManager.delegateBlockCache,
+ 		jManager.delegateDirtyBlockCache,
+-		jManager.delegateBlockServer, jManager.delegateMDOps, nil, nil,
++		jManager.delegateBlockServer, jManager.delegateMDOps, nil, nil, nil,
+ 		TLFJournalBackgroundWorkPaused)
+ 	err = jManager.EnableExistingJournals(
+ 		ctx, session.UID, session.VerifyingKey, TLFJournalBackgroundWorkPaused)
+@@ -797,7 +797,7 @@ func TestJournalManagerEnableAuto(t *testing.T) {
+ 	jManager = makeJournalManager(
+ 		config, jManager.log, tempdir, jManager.delegateBlockCache,
+ 		jManager.delegateDirtyBlockCache,
+-		jManager.delegateBlockServer, jManager.delegateMDOps, nil, nil,
++		jManager.delegateBlockServer, jManager.delegateMDOps, nil, nil, nil,
+ 		TLFJournalBackgroundWorkPaused)
+ 	session, err := config.KBPKI().GetCurrentSession(ctx)
+ 	require.NoError(t, err)
+@@ -922,7 +922,7 @@ func TestJournalManagerNukeEmptyJournalsOnRestart(t *testing.T) {
+ 	jManager = makeJournalManager(
+ 		config, jManager.log, tempdir, jManager.delegateBlockCache,
+ 		jManager.delegateDirtyBlockCache,
+-		jManager.delegateBlockServer, jManager.delegateMDOps, nil, nil,
++		jManager.delegateBlockServer, jManager.delegateMDOps, nil, nil, nil,
+ 		TLFJournalBackgroundWorkPaused)
+ 	session, err := config.KBPKI().GetCurrentSession(ctx)
+ 	require.NoError(t, err)
+@@ -992,7 +992,7 @@ func TestJournalManagerTeamTLFWithRestart(t *testing.T) {
+ 	jManager = makeJournalManager(
+ 		config, jManager.log, tempdir, jManager.delegateBlockCache,
+ 		jManager.delegateDirtyBlockCache,
+-		jManager.delegateBlockServer, jManager.delegateMDOps, nil, nil,
++		jManager.delegateBlockServer, jManager.delegateMDOps, nil, nil, nil,
+ 		TLFJournalBackgroundWorkPaused)
+ 	err = jManager.EnableExistingJournals(
+ 		ctx, session.UID, session.VerifyingKey, TLFJournalBackgroundWorkPaused)
+@@ -1111,7 +1111,7 @@ func TestJournalManagerCorruptJournal(t *testing.T) {
+ 	jManager = makeJournalManager(
+ 		config, jManager.log, tempdir, jManager.delegateBlockCache,
+ 		jManager.delegateDirtyBlockCache,
+-		jManager.delegateBlockServer, jManager.delegateMDOps, nil, nil,
++		jManager.delegateBlockServer, jManager.delegateMDOps, nil, nil, nil,
+ 		TLFJournalBackgroundWorkPaused)
+ 	session, err := config.KBPKI().GetCurrentSession(ctx)
+ 	require.NoError(t, err)
+```
+
+**File**: `go/kbfs/libkbfs/kbfs_ops.go` (modified, +8/-0)
+```diff
+@@ -2208,6 +2208,14 @@ func (fs *KBFSOpsStandard) onMDFlush(tlfID tlf.ID, bid kbfsmd.BranchID,
+ 	ops.onMDFlush(bid, rev) // folderBranchOps makes a goroutine
+ }
+ 
++func (fs *KBFSOpsStandard) onTLFWriteRefused(tlfID tlf.ID,
++	tlfName tlf.CanonicalName, refusal error,
++) {
++	ops := fs.getOps(context.Background(),
++		data.FolderBranch{Tlf: tlfID, Branch: data.MasterBranch}, FavoritesOpNoChange)
++	ops.onTLFWriteRefused(tlfName, refusal) // folderBranchOps makes a goroutine
++}
++
+ func (fs *KBFSOpsStandard) startInitEdit() (
+ 	ctx context.Context, cancel context.CancelFunc,
+ 	reqChan <-chan struct{}, doneChan chan<- struct{},
+```
+
+**File**: `go/kbfs/libkbfs/kbfs_ops_test.go` (modified, +223/-0)
+```diff
+@@ -4949,3 +4949,226 @@ func TestKBFSOpsCancelUploads(t *testing.T) {
+ 	require.NoError(t, err)
+ 	require.Empty(t, children)
+ }
++
++type journaledFolderTest struct {
++	config   *ConfigLocal
++	ctx      context.Context
++	kbfsOps  KBFSOps
++	jManager *JournalManager
++	fb       data.FolderBranch
++	aNode    Node
++}
++
++// setupJournaledFolderTest makes u1's folder of the given type with
++// journaling on, holding a directory "a" that has been flushed.
++func setupJournaledFolderTest(
++	t *testing.T, tlfType tlf.Type,
++) journaledFolderTest {
++	var userName kbname.NormalizedUsername = "u1"
++	config, _, ctx, cancel := kbfsOpsInitNoMocks(t, userName)
++	tempdir, err := ioutil.TempDir(os.TempDir(), "kbfs_ops_test")
++	require.NoError(t, err)
++	t.Cleanup(func() {
++		err := ioutil.RemoveAll(tempdir)
++		require.NoError(t, err)
++	})
++	t.Cleanup(func() { kbfsTestShutdownNoMocks(ctx, t, config, cancel) })
++
++	err = config.EnableDiskLimiter(tempdir)
++	require.NoError(t, err)
++	err = config.EnableJournaling(ctx, tempdir, TLFJournalBackgroundWorkEnabled)
++	require.NoError(t, err)
++
++	h, err := tlfhandle.ParseHandle(
++		ctx, config.KBPKI(), config.MDOps(), nil, string(userName), tlfType)
++	require.NoError(t, err)
++	kbfsOps := config.KBFSOps()
++	rootNode, _, err := kbfsOps.GetOrCreateRootNode(ctx, h, data.MasterBranch)
++	require.NoError(t, err)
++	fb := rootNode.GetFolderBranch()
++	aNode, _, err := kbfsOps.CreateDir(ctx, rootNode, testPPS("a"))
++	require.NoError(t, err)
++	err = kbfsOps.SyncAll(ctx, fb)
++	require.NoError(t, err)
++	jManager, err := GetJournalManager(config)
++	require.NoError(t, err)
++	err = jManager.Wait(ctx, fb.Tlf)
++	require.NoError(t, err)
++	return journaledFolderTest{config, ctx, kbfsOps, jManager, fb, aNode}
++}
++
++// refuseBlockWrites pauses the folder's journal and has the server refuse
++// its block writes with msg. The returned function has the server accept
++// them again.
++func (ft journaledFolderTest) refuseBlockWrites(
++	t *testing.T, msg string,
++) (accept func()) {
++	ft.jManager.PauseBackgroundWork(ft.ctx, ft.fb.Tlf)
++	tj, ok := ft.jManager.getTLFJournal(ft.fb.Tlf, nil)
++	require.True(t, ok)
++	bserver := tj.delegateBlockServer
++	tj.delegateBlockServer = refusingBlockServer{bserver, msg}
++	return func() {
++		ft.jManager.PauseBackgroundWork(ft.ctx, ft.fb.Tlf)
++		err := ft.jManager.Wait(ft.ctx, ft.fb.Tlf)
++		require.NoError(t, err)
++		tj.delegateBlockServer = bserver
++		ft.jManager.ResumeBackgroundWork(ft.ctx, ft.fb.Tlf)
++		err = ft.jManager.Flush(ft.ctx, ft.fb.Tlf)
++		require.NoError(t, err)
++	}
++}
++
++func (ft journaledFolderTest) writeFile(t *testing.T, name string) Node {
++	n, _, err := ft.kbfsOps.CreateFile(
++		ft.ctx, ft.aNode, testPPS(name), false, NoExcl)
++	require.NoError(t, err)
++	err = ft.kbfsOps.Write(ft.ctx, n, []byte(name+"data"), 0)
++	require.NoError(t, err)
++	return n
++}
++
++func (ft journaledFolderTest) waitForReportedError(t *testing.T) error {
++	reporter := ft.config.Reporter()
++	require.Eventually(t, func() bool {
++		return len(reporter.AllKnownErrors()) > 0
++	}, individualTestTimeout, 10*time.Millisecond)
++	errs := reporter.AllKnownErrors()
++	require.Len(t, errs, 1)
++	return errs[0].Error
++}
++
++func (ft journaledFolderTest) requireDiscarded(t *testing.T) {
++	children, err := ft.kbfsOps.GetDirChildren(ft.ctx, ft.aNode)
++	require.NoError(t, err)
++	require.Empty(t, children)
++	status, err := ft.jManager.JournalStatus(ft.fb.Tlf)
++	require.NoError(t, err)
++	require.Zero(t, status.BlockOpCount)
++	require.Equal(t, kbfsmd.RevisionUninitialized, status.RevisionStart)
++}
++
++func TestKBFSOpsDiscardsRefusedPublicWrites(t *testing.T) {
++	ft := setupJournaledFolderTest(t, tlf.Public)
++	ft.refuseBlockWrites(t, kbfsblock.PublicWritesDisabledMsg)
++
++	t.Log("Write a file, and wait for it to be refused and discarded")
++	ft.writeFile(t, "b")
++	err := ft.kbfsOps.SyncAll(ft.ctx, ft.fb)
++	require.NoError(t, err)
++	ft.jManager.ResumeBackgroundWork(ft.ctx, ft.fb.Tlf)
++
++	reported := ft.waitForReportedError(t)
++	require.ErrorAs(t, reported, new(WritesDiscardedError))
++	require.ErrorAs(t, reported, new(kbfsblock.ServerErrorNoPermission))
++	ft.requireDiscarded(t)
++}
++
++func TestKBFSOpsKeepsOtherRefusedPublicWrites(t *testing.T) {
++	ft := setupJournaledFolderTest(t, tlf.Public)
++	// Not the refusal for disabled public writes, so it may go
++	// through later.
++	accept := ft.refuseBlockWrites(t, "")
++
++	ft.writeFile(t, "b")
++	err := ft.kbfsOps.SyncAll(ft.ctx, ft.fb)
++	require.NoError(t, err)
++	ft.jManager.ResumeBackgroundWork(ft.ctx, ft.fb.Tlf)
++
++	reported := ft.waitForReportedError(t)
++	require.NotErrorAs(t, reported, new(WritesDiscardedError))
++	require.ErrorAs(t, reported, new(kbfsblock.ServerErrorNoPermission))
++	children, err := ft.kbfsOps.GetDirChildren(ft.ctx, ft.aNode)
++	require.NoError(t, err)
++	require.Len(t, children, 1)
++	status, err := ft.jManager.JournalStatus(ft.fb.Tlf)
++	require.NoError(t, err)
++	require.NotZero(t, status.BlockOpCount)
++
++	t.Log("The kept writes go through once the server accepts them")
+```
+
+---
+
+### Incident Patch 2: `4709ad55` (2026-11-20)
+**Commit Message**: osx: drop GHODictionary and unused leftovers from the installer (#29913)
+
+- KBComponentStatus info is an ordered list of "Key: value" lines instead
+  of a GHODictionary, which removes the pod from KBKit. Nil or empty values
+  are skipped and keys keep their order, as GHODictionary did, so
+  statusDescription: prints the same text.
+- Remove the now-unused KBIfBlank macro and a no-op second "Bundle Version"
+  assignment in KBHelperTool.
+- Delete Helper/uninstall_helper.sh (unreferenced; duplicates
+  Installer --uninstall-helper) and a commented-out line in Installer.m.
+- build.sh fails with a clear message when APP_NAME, SCHEME or PLIST is unset.
+
+**File**: `osx/Helper/uninstall_helper.sh` (removed, +0/-5)
+```diff
+@@ -1,5 +0,0 @@
+-#!/bin/sh
 -
--		m.G().LinkCache().Put(m, id, ret.Copy())
-+	data, _, err := m.G().LocalDb.GetRaw(linkDbKey(id))
-+	if err != nil || data == nil {
-+		return nil, err
- 	}
--	return ret, err
-+	ret, err := unpackStoredLink(m, id, selfUID, data)
-+	if err != nil {
-+		return nil, err
-+	}
-+	m.G().LinkCache().Put(m, id, ret.Copy())
-+	return ret, nil
- }
- 
- func (c *ChainLink) VerifyLink() error {
-@@ -1502,24 +1527,72 @@ func (c *ChainLink) Store(m MetaContext) (didStore bool, err error) {
- 		return false, err
- 	}
- 
--	packed, err := c.Pack()
--	if err != nil {
--		return false, err
-+	// A stubbed load of a chain returns stubs for links that may already be
-+	// stored in full (e.g. our own track links, stored when we loaded our own
-+	// chain). Overwriting those loses the payload that track lookups read.
-+	// LoadUser holds a per-user lock (loadUserLockTab) across the read and
-+	// the write below when it loads by UID, which every chain load does. The
-+	// lock table is replaced on logout, so a load from before it can still
-+	// write its stub over a full link stored after; GetRemoteChainLinkFor
-+	// treats a stored stub as a miss and reloads the chain unstubbed.
-+	keepFull := false
-+	if c.IsStubbed() {
-+		var err error
-+		if keepFull, err = c.storedFullLinkIsUsable(m); err != nil {
-+			return false, err
-+		}
- 	}
- 
--	key := DbKey{Typ: DBLink, Key: c.id.String()}
--
--	// Don't write with any aliases
--	if err = m.G().LocalDb.Put(key, nil, packed); err != nil {
--		return false, err
-+	if keepFull {
-+		// The load may have cached this stub before storing it; drop it so
-+		// readers fall through to the full link on disk.
-+		m.G().LinkCache().RemoveStub(c.id)
-+		m.VLogf(VLog1, "| Kept full link %s instead of stub", c.id)
-+	} else {
-+		packed, err := c.Pack()
-+		if err != nil {
-+			return false, err
-+		}
-+		// Don't write with any aliases
-+		if err = m.G().LocalDb.Put(linkDbKey(c.id), nil, packed); err != nil {
-+			return false, err
-+		}
-+		m.VLogf(VLog1, "| Store Link %s", c.id)
- 	}
--	m.VLogf(VLog1, "| Store Link %s", c.id)
- 
- 	c.storedLocally = true
- 	c.dirty = false
- 	return true, nil
- }
- 
-+// storedFullLinkIsUsable reports whether the local DB holds the full link for
-+// stub c in a form a load can use: it must unpack, as ImportLinkFromStorage
-+// requires, and name this chain's owner. A stored full link is marked
-+// chain-verified, so a chain that takes it in place of its stub never runs
-+// CheckNameAndID on it, and the stub's chain can't vouch for it either, since
-+// stubs skip that check. A record that doesn't unpack fails every load that
-+// reaches it, so the stub should replace it. A failed DB read is returned:
-+// the record may be fine.
-+func (c *ChainLink) storedFullLinkIsUsable(m Met
+-sudo /bin/launchctl unload /Library/LaunchDaemons/keybase.Helper.plist
+-sudo /bin/rm /Library/LaunchDaemons/keybase.Helper.plist
+-sudo /bin/rm /Library/PrivilegedHelperTools/keybase.Helper
 ```
 
-**File**: `go/libkb/db.go` (modified, +8/-7)
+**File**: `osx/Installer/Installer.m` (modified, +0/-1)
 ```diff
-@@ -290,13 +290,14 @@ type JSONLocalDb struct {
- 	engine LocalDb
- }
+@@ -52,7 +52,6 @@ - (void)run {
+   GBSettings *settings = [GBSettings settingsWithName:@"Settings" parent:nil];
+ #if DEBUG
+   [settings setObject:@"/Applications/Keybase.app" forKey:@"app-path"];
+-  //  [self.settings setObject:@"/Volumes/Keybase/Keybase.app" forKey:@"app-path"];
+   [settings setObject:@"prod" forKey:@"run-mode"];
+   [settings setObject:@"10" forKey:@"timeout"];
+ #endif
+```
+
+**File**: `osx/KBKit/KBKit.podspec` (modified, +0/-1)
+```diff
+@@ -15,7 +15,6 @@ Pod::Spec.new do |s|
+   s.dependency "CocoaLumberjack"
+   s.dependency "Mantle"
+   s.dependency "MPMessagePack"
+-  s.dependency "GHODictionary"
  
--func NewJSONLocalDb(e LocalDb) *JSONLocalDb   { return &JSONLocalDb{e} }
--func (j *JSONLocalDb) Open() error            { return j.engine.Open() }
--func (j *JSONLocalDb) ForceOpen() error       { return j.engine.ForceOpen() }
--func (j *JSONLocalDb) Close() error           { return j.engine.Close() }
--func (j *JSONLocalDb) Nuke() (string, error)  { return j.engine.Nuke() }
--func (j *JSONLocalDb) Clean(force bool) error { return j.engine.Clean(force) }
--func (j *JSONLocalDb) Stats() string          { return j.engine.Stats() }
-+func NewJSONLocalDb(e LocalDb) *JSONLocalDb      { return &JSONLocalDb{e} }
-+func (j *JSONLocalDb) Open() error               { return j.engine.Open() }
-+func (j *JSONLocalDb) ForceOpen() error          { return j.engine.ForceOpen() }
-+func (j *JSONLocalDb) Close() error              { return j.engine.Close() }
-+func (j *JSONLocalDb) Nuke() (string, error)     { return j.engine.Nuke() }
-+func (j *JSONLocalDb) Clean(force bool) error    { return j.engine.Clean(force) }
-+func (j *JSONLocalDb) Stats() string             { return j.engine.Stats() }
-+func (j *JSONLocalDb) MarkRecentlyUsed(id DbKey) { j.engine.MarkRecentlyUsed(id) }
- func (j *JSONLocalDb) CompactionStats() (bool, bool, error) {
- 	return j.engine.CompactionStats()
+   s.platform = :osx, "13.5"
+   s.osx.source_files = "KBKit/**/*.{h,m}"
+```
+
+**File**: `osx/KBKit/KBKit/Component/KBComponentStatus.h` (modified, +3/-3)
+```diff
+@@ -8,7 +8,6 @@
+ 
+ #import <Foundation/Foundation.h>
+ 
+-#import <GHODictionary/GHODictionary.h>
+ #import "KBDefines.h"
+ #import "KBRModels.h"
+ 
+@@ -19,9 +18,10 @@ NSString *NSStringFromKBRInstallStatus(KBRInstallStatus status);
+ @property (readonly) NSError *error;
+ @property (readonly) KBRInstallStatus installStatus;
+ @property (readonly) KBRInstallAction installAction;
+-@property (readonly) GHODictionary *info;
++// "Key: value" lines, in display order.
++@property (readonly, copy) NSArray<NSString *> *info;
+ 
+-+ (instancetype)componentStatusWithInstallStatus:(KBRInstallStatus)installStatus installAction:(KBRInstallAction)installAction info:(GHODictionary *)info error:(NSError *)error;
+++ (instancetype)componentStatusWithInstallStatus:(KBRInstallStatus)installStatus installAction:(KBRInstallAction)installAction info:(NSArray<NSString *> *)info error:(NSError *)error;
+ 
+ + (instancetype)componentStatusWithError:(NSError *)error;
+ 
+```
+
+**File**: `osx/KBKit/KBKit/Component/KBComponentStatus.m` (modified, +3/-7)
+```diff
+@@ -14,12 +14,12 @@ @interface KBComponentStatus ()
+ @property NSError *error;
+ @property KBRInstallStatus installStatus;
+ @property KBRInstallAction installAction;
+-@property GHODictionary *info;
++@property (copy) NSArray<NSString *> *info;
+ @end
+ 
+ @implementation KBComponentStatus
+ 
+-+ (instancetype)componentStatusWithInstallStatus:(KBRInstallStatus)installStatus installAction:(KBRInstallAction)installAction info:(GHODictionary *)info error:(NSError *)error {
+++ (instancetype)componentStatusWithInstallStatus:(KBRInstallStatus)installStatus installAction:(KBRInstallAction)installAction info:(NSArray<NSString *> *)info error:(NSError *)error {
+   KBComponentStatus *componentStatus = [[KBComponentStatus alloc] init];
+   componentStatus.installStatus = installStatus;
+   componentStatus.installAction = installAction;
+@@ -46,11 +46,7 @@ - (NSString *)statusDescription:(NSString *)delimeter {
+   NSMutableArray *str = [NSMutableArray array];
+   [str addObject:NSStringFromKBRInstallStatus(_installStatus)];
+   
+-  NSMutableArray *infos = [NSMutableArray array];
+-  for (id key in _info) {
+-    [infos addObject:NSStringWithFormat(@"%@: %@", key, _info[key])];
+-  }
+-  if ([infos count] > 0) [str addObject:[infos join:delimeter]];
++  if ([_info count] > 0) [str addObject:[_info join:delimeter]];
+ 
+   return [str join:@", "];
  }
 ```
 
-**File**: `go/libkb/id_table.go` (modified, +6/-1)
+**File**: `osx/KBKit/KBKit/Component/KBFuseComponent.m` (modified, +9/-6)
 ```diff
-@@ -74,7 +74,12 @@ func (g *GenericChainLink) markRevoked(r TypedChainLink) {
- }
+@@ -74,18 +74,21 @@ - (void)refreshFuseComponent:(void (^)(KBRFuseStatus *fuseStatus, KBComponentSta
+       self.componentStatus = [KBComponentStatus componentStatusWithError:error];
+     } else {
  
- func (g *GenericChainLink) ToDebugString() string {
--	return fmt.Sprintf("uid=%s, seq=%d, link=%s", g.Parent().uid, g.unpacked.seqno, g.id)
-+	// Links loaded on their own (ImportLinkFromStorage) have no parent chain.
-+	var uid keybase1.UID
-+	if p := g.Parent(); p != nil {
-+		uid = p.uid
-+	}
-+	return fmt.Sprintf("uid=%s, seq=%d, link=%s", uid, g.unpacked.seqno, g.id)
- }
+-      GHODictionary *info = [GHODictionary dictionary];
+-      info[@"Version"] = KBIfBlank(fuseStatus.version, nil);
++      NSMutableArray<NSString *> *info = [NSMutableArray array];
++      void (^addInfo)(NSString *, NSString *) = ^(NSString *key, NSString *value) {
++        if ([value length] > 0) [info addObject:NSStringWithFormat(@"%@: %@", key, value)];
++      };
++      addInfo(@"Version", fuseStatus.version);
  
- func (g *GenericChainLink) GetDelegatedKid() (kid keybase1.KID)          { return }
+       if (![fuseStatus.version isEqualToString:fuseStatus.bundleVersion]) {
+-        info[@"Bundle Version"] = KBIfBlank(fuseStatus.bundleVersion, nil);
++        addInfo(@"Bundle Version", fuseStatus.bundleVersion);
+       }
+ 
+       if (![NSString gh_isBlank:fuseStatus.kextID]) {
+-        info[@"Kext ID"] = KBIfBlank(fuseStatus.kextID, nil);
+-        info[@"Kext Loaded"] = fuseStatus.kextStarted ? @"Yes" : @"No";
++        addInfo(@"Kext ID", fuseStatus.kextID);
++        addInfo(@"Kext Loaded", fuseStatus.kextStarted ? @"Yes" : @"No");
+       }
+-      info[@"Path"] = KBIfBlank(fuseStatus.path, nil);
++      addInfo(@"Path", fuseStatus.path);
+ 
+       if (fuseStatus.status.code > 0) {
+         error = KBMakeError(fuseStatus.status.code, @"%@", fuseStatus.status.desc);
 ```
 
-**File**: `go/libkb/interfaces.go` (modified, +3/-0)
+**File**: `osx/KBKit/KBKit/Component/KBHelperTool.m` (modified, +3/-4)
 ```diff
-@@ -158,6 +158,9 @@ type LocalDb interface {
- 	Close() error
- 	Nuke() (string, error)
- 	Clean(force bool) error
-+	// MarkRecentlyUsed counts a use of id that didn't read the database, e.g.
-+	// one served from an in-memory copy, so Clean doesn't evict the record.
-+	MarkRecentlyUsed(id DbKey)
- 	OpenTransaction() (LocalDbTransaction, error)
- 	KeysWithPrefixes(prefixes ...[]byte) (DBKeySet, error)
- }
-```
-
-**File**: `go/libkb/keyfamily.go` (modified, +7/-0)
-```diff
-@@ -112,6 +112,12 @@ type ComputedKeyInfos struct {
- 	// Now set to 1. Everything before that is thrown away on sigchain load.
- 	Version ComputedKeyInfosVersion
- 
-+	// Set when these were computed over a chain with stubbed links, which
-+	// verification skips. Such a result can miss state that only the full
-+	// links carry, so a chain with no stubs left recomputes instead of
-+	// reusing it. Stored with the link; records without it read as false.
-+	SkippedStubs bool
-+
- 	dirty bool // whether it needs to be written to disk or not
- 
- 	// Map of KID to a computed info
-@@ -245,6 +251,7 @@ func (cki ComputedKeyInfos) ShallowCopy() *ComputedKeyInfos {
- 		Contextified:  NewContextified(cki.G()),
- 		dirty:         cki.dirty,
- 		Version:       cki.Version,
-+		SkippedStubs:  cki.SkippedStubs,
- 		Infos:         make(map[keybase1.KID]*ComputedKeyInfo, len(cki.Infos)),
- 		Sigs:          make(map[keybase1.SigIDMapKey]*ComputedKeyInfo, len(cki.Sigs)),
- 		Devices:       make(map[keybase1.DeviceID]*Device, len(cki.Devices)),
-```
-
-**File**: `go/libkb/leveldb.go` (modified, +4/-0)
-```diff
-@@ -340,6 +340,10 @@ func (l *LevelDb) Clean(force bool) (err error) {
- 	return l.cleaner.clean(force)
+@@ -74,9 +74,9 @@ - (BOOL)isCriticalUpdate:(KBSemVersion *)runningVersion {
  }
  
-+func (l *LevelDb) MarkRecentlyUsed(id DbKey) {
-+	l.cleaner.noteRecentlyUsed(id.ToBytes())
-+}
-+
- func (l *LevelDb) Nuke() (fn string, err error) {
- 	l.Lock()
- 	// We need to do deferred Unlock here in Nuke rather than delegating to
+ - (void)refreshComponent:(KBRefreshComponentCompletion)completion {
+-  GHODictionary *info = [GHODictionary dictionary];
++  NSMutableArray<NSString *> *info = [NSMutableArray array];
+   KBSemVersion *bundleVersion = [self bundleVersion];
+-  info[@"Bundle Version"] = [bundleVersion description];
++  if (bundleVersion) [info addObject:NSStringWithFormat(@"Bundle Version: %@", bundleVersion)];
+ 
+   if (![self exists]) {
+     self.componentStatus = [KBComponentStatus componentStatusWithInstallStatus:KBRInstallStatusNotInstalled installAction:KBRInstallActionInstall info:info error:nil];
+@@ -93,15 +93,14 @@ - (void)refreshComponent:(KBRefreshComponentCompletion)completion {
+     } else {
+       DDLogDebug(@"Helper version: %@", versions);
+       KBSemVersion *runningVersion = [KBSemVersion version:KBIfNull(versions[@"version"], @"")];
+-      if (runningVersion) info[@"Version"] = [runningVersion description];
++      if (runningVersion) [info addObject:NSStringWithFormat(@"Version: %@", runningVersion)];
+       DDLogInfo(@"Running Version: %@", runningVersion);
+       if ([bundleVersion isGreaterThan:runningVersion]) {
+         if ([self isCriticalUpdate:runningVersion]) {
+           DDLogInfo(@"Critical update found: bundle: %@ running: %@", bundleVersion, runningVersion);
+           self.componentStatus = [KBComponentStatus componentStatusWithInstallStatus:KBRInstallStatusError installAction:KBRInstallActionUpgrade info:info error:KBMakeError(KBErrorCodeFuseCriticalUpdate, @"FUSE critical update")];
+           completion(self.componentStatus);
+         } else {
+-          if (bundleVersion) info[@"Bundle Version"] = [bundleVersion description];
+           self.componentStatus = [KBComponentStatus componentStatusWithInstallStatus:KBRInstallStatusInstalled installAction:KBRInstallActionUpgrade info:info error:nil];
+           // No alert when the running helper reported no version.
+           if ([runningVersion.version length] > 0) [self showHelperUpdateAlert];
+```
+
+**File**: `osx/KBKit/KBKit/KBDefines.h` (modified, +0/-1)
+```diff
+@@ -37,5 +37,4 @@ typedef NS_ENUM (NSInteger, KBErrorCode) {
+ #define KBIsWarning(ERR) ((ERR.code == KBErrorCodeWarning))
+ 
+ #define KBIfNull(obj, val) ([obj isEqual:NSNull.null] ? val : obj)
+-#define KBIfBlank(s, dv) ((!s || [s isEqualToString:@""]) ? dv : s)
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #29914** (2026-11-20): improve errors for failed writes to disabled folders (@zoom-ua)
+- **PR #29913** (2026-11-20): osx: drop GHODictionary and unused installer leftovers (@chrisnojima)
+- **PR #29911** (2026-11-19): improve kbfs error handling (@zoom-ua)
 - **PR #29910** (2026-11-17): deps: expo 58.0.26, expo-file-system 58.0.14, typescript-eslint 8.73.0, minimatch 11.0.9 (@chrisnojima)
+- **PR #29909** (2026-11-20): osx: remove everything the Mac installer doesn't use (@chrisnojima)
 - **PR #29908** (2026-11-16): Files: header draws the right state from its first frame, and a real sync icon (@chrisnojima)
-- **PR #29907** (2026-11-16): CLAUDE.md: reviewers report new costs, latent traps and inaccurate comments as findings (@chrisnojima)
-- **PR #29906** (2026-11-16): Files: wait a second before showing loading spinners (@chrisnojima)
-- **PR #29905** (2026-11-16): Files: fall back to the default view when an image can't be previewed (@chrisnojima)
-- **PR #29904** (2026-11-16): Hide the Files upload button above the TLF level (@chrisnojima)
 
 ---
 
@@ -2326,42 +2589,25 @@ Follow-ups from review of the stub-overwrite fix:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. libkb: stubbed chain links can no longer overwrite full links or crash the servi
+## X. improve errors for failed writes to disabled folders
 
 **RULE**:
-When implementing operations in `go/engine/identify2_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in keybase/client. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go/kbfs/kbfsblock/server_errors.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in keybase/client. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0b60c398`: libkb: stubbed chain links can no longer overwrite full links or crash the service. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1be7e8a0`: improve errors for failed writes to disabled folders. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go/engine/identify2_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go/kbfs/kbfsblock/server_errors.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-// A stub can land on disk in place of one of our own track links: the cleaner
-// evicts the full link, then a stubbed load of our chain stores the stub.
-// Identify must not crash on it, must still see the follow, and must rewrite
-// the full link through its forced unstubbed reload.
-func TestIdentify2WithUIDWithStubbedTrackLink(t *testing.T) {
-	tc := SetupEngineTest(t, "TestIdentify2WithUIDWithStubbedTrackLink")
-	defer tc.Cleanup()
-	m := NewMetaContextForTest(tc)
+// PublicWritesDisabledMsg is the ServerErrorNoPermission message the
+// bserver sends when it refuses a write because public folder writes are
+// disabled.
+const PublicWritesDisabledMsg = "public folder writes are disabled"
 
-	fu := CreateAndSignupFakeUser(tc, "track")
-	// Only v2 links can be stubbed, and the server never stubs a chain's
-	// last link, so follow bob after alice.
-	trackAlice(tc, fu, libkb.KeybaseSignatureV2)
-	defer untrackAlice(tc, fu, libkb.KeybaseSignatureV2)
-	trackBob(tc, fu, libkb.KeybaseSignatureV2)
-	defer untrackBob(tc, fu, libkb.KeybaseSignatureV2)
-
-	// Identify loads the logged-in user with these options. Loading that way
-	// here fills the UPAK cache slot identify reads, so identify gets the
-	// UPAK alone and has to look the track link up in storage.
-	meArg := libkb.NewLoadUserArgWithMetaContext(m).WithUID(fu.UID()).WithSelf(true).WithStubMode(libkb.StubModeUnstubbed)
-	upak, _, err := tc.G.GetUPAKLoader().LoadV2(me
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2371,7 +2617,7 @@ func TestIdentify2WithUIDWithStubbedTrackLink(t *testing.T) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0b60c398` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1be7e8a0` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

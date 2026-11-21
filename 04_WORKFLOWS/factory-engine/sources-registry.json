@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-21T22:16:26.992Z",
-    "lastVerified": "2026-11-21T22:16:26.992Z",
+    "lastChecked": "2026-11-21T22:30:11.081Z",
+    "lastVerified": "2026-11-21T22:30:11.081Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -354,22 +354,21 @@
     "lastVerified": "2026-11-21T21:31:41.682Z"
   },
   "nucleoidai-nucleoid": {
-    "name": "Nucleoid",
+    "name": "NucleoidAI/Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-21T21:49:05.819Z",
-    "lastVerified": "2026-11-21T21:49:05.819Z",
+    "lastChecked": "2026-11-21T22:30:07.434Z",
+    "lastVerified": "2026-11-21T22:30:07.434Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "b720d3debe8c328593bab6555fb20b30145cfb202ea73ac7c127373f798022d2",
+    "contentHash": "f1e39ecf42559a0c537f3509cf238e3d79ad6bd03a93f842458330efa9a39a1f",
     "promotedRulesCount": 0,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "d0e53bdc"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -814,9 +813,9 @@
   "nirdiamant-rag_techniques": {
     "name": "RAG_Techniques",
     "officialUrl": "https://github.com/NirDiamant/RAG_Techniques",
-    "lastChecked": "2026-11-20T17:45:23.287Z",
+    "lastChecked": "2026-11-21T22:30:00.243Z",
     "revisionIdentifier": "2fd7bd0f",
-    "lastVerified": "2026-11-20T17:45:23.287Z"
+    "lastVerified": "2026-11-21T22:30:00.243Z"
   },
   "max-sixty-worktrunk": {
     "name": "max-sixty/worktrunk",
@@ -1710,8 +1709,8 @@
     "officialUrl": "https://github.com/zama-ai/tfhe-rs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-21T15:59:43.689Z",
-    "lastVerified": "2026-11-21T15:59:43.689Z",
+    "lastChecked": "2026-11-21T22:29:57.708Z",
+    "lastVerified": "2026-11-21T22:29:57.708Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zama-ai-tfhe-rs",
@@ -2398,9 +2397,9 @@
   "alexellis-k3sup": {
     "name": "k3sup",
     "officialUrl": "https://github.com/alexellis/k3sup",
-    "lastChecked": "2026-11-20T19:25:03.656Z",
+    "lastChecked": "2026-11-21T22:29:55.132Z",
     "revisionIdentifier": "07ee3911",
-    "lastVerified": "2026-11-20T19:25:03.656Z"
+    "lastVerified": "2026-11-21T22:29:55.132Z"
   },
   "volcengine-minecontext": {
     "name": "MineContext",
@@ -3646,11 +3645,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "keybase-client": {
-    "name": "client",
+    "name": "keybase/client",
     "officialUrl": "https://github.com/keybase/client",
-    "lastChecked": "2026-11-18T17:10:17.632Z",
-    "revisionIdentifier": "0d1e3966",
-    "lastVerified": "2026-11-18T17:10:17.632Z"
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-11-21T22:29:57.433Z",
+    "lastVerified": "2026-11-21T22:29:57.433Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-keybase-client",
+    "contentHash": "e12b78cb036bef8156242dd74282a05690987e516ca0a485ec7444a679f6481b",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "koderover-zadig": {
     "name": "koderover/zadig",
@@ -4098,9 +4107,9 @@
   "svenstaro-miniserve": {
     "name": "miniserve",
     "officialUrl": "https://github.com/svenstaro/miniserve",
-    "lastChecked": "2026-11-20T06:34:47.456Z",
+    "lastChecked": "2026-11-21T22:29:47.655Z",
     "revisionIdentifier": "68b6f063",
-    "lastVerified": "2026-11-20T06:34:47.456Z"
+    "lastVerified": "2026-11-21T22:29:47.655Z"
   },
   "hf-hexgrad-kokoro-82m": {
     "name": "hexgrad/Kokoro-82M",
@@ -12988,6 +12997,23 @@
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-speridlabs-idol",
     "contentHash": "8470e61065d944c557c9eeed0da4f747df08a844f22c67f6559a24dbb0df2f91",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-comfy-org-wan-2.2": {
+    "name": "Comfy-Org/Wan-2.2",
+    "officialUrl": "https://huggingface.co/Comfy-Org/Wan-2.2",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-21T22:29:50.388Z",
+    "lastVerified": "2026-11-21T22:29:50.388Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-comfy-org-wan-2-2",
+    "contentHash": "64fca361eaa83b5888bbbe9eec808442ec62bb2c2b64d08245b8b4aec0f2e450",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

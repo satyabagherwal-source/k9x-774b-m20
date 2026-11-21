@@ -11918,3 +11918,7 @@
 | `CYCLE-20261121-W7L5` | `2026-11-21T22:16:15.209Z` | `speridlabs/idol` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-speridlabs-idol-learnings.md` | Yes (`8470e610...`) |
 | `CYCLE-20261121-W8G8` | `2026-11-21T22:16:16.328Z` | `erkamyaman/rust-anything` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9853` | Yes (`6e6c4ff9...`) |
 | `CYCLE-20261121-WCUH` | `2026-11-21T22:16:22.025Z` | `berty/berty` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9854` | Yes (`d19c47c2...`) |
+| `CYCLE-20261121-DP78` | `2026-11-21T22:29:51.188Z` | `Comfy-Org/Wan-2.2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-wan-2.2-learnings.md` | Yes (`64fca361...`) |
+| `CYCLE-20261121-DUY0` | `2026-11-21T22:29:58.632Z` | `keybase/client` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9855` | Yes (`e12b78cb...`) |
+| `CYCLE-20261121-E27M` | `2026-11-21T22:30:08.050Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`f1e39ecf...`) |
+| `CYCLE-2026-11-21-PROJ-EVOLVE` | `2026-11-21T22:30:46.080Z` | `nucleoidai-nucleoid` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-DB0D402F` [Domain D] | Yes (`2e2a0964...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-21T22:16:22.038Z",
+  "last_updated": "2026-11-21T22:30:08.066Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "b720d3debe8c328593bab6555fb20b30145cfb202ea73ac7c127373f798022d2",
-      "verified_at": "2026-11-21T21:04:45.711Z",
+      "content_hash": "f1e39ecf42559a0c537f3509cf238e3d79ad6bd03a93f842458330efa9a39a1f",
+      "verified_at": "2026-11-21T22:30:08.065Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T21:04:45.711Z"
+      "last_updated": "2026-11-21T22:30:08.065Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -6726,14 +6726,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-keybase-client",
-      "content_hash": "3827cef6d5e3a8e77f6bb2fe65252b380c11665e44307a739a8fc232c18bbf12",
-      "verified_at": "2026-11-17T17:20:20.992Z",
+      "content_hash": "e12b78cb036bef8156242dd74282a05690987e516ca0a485ec7444a679f6481b",
+      "verified_at": "2026-11-21T22:29:58.646Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T17:20:20.992Z"
+      "last_updated": "2026-11-21T22:29:58.646Z"
     },
     "sealerio/sealer": {
       "repository": "sealerio/sealer",
@@ -17496,14 +17496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-comfy-org-wan-2-2",
-      "content_hash": "8fb992a5e474068d98c3acb4542787e58c24d4dccfae4449feac7a4952515bdd",
-      "verified_at": "2026-11-18T02:51:15.027Z",
+      "content_hash": "64fca361eaa83b5888bbbe9eec808442ec62bb2c2b64d08245b8b4aec0f2e450",
+      "verified_at": "2026-11-21T22:29:51.204Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T02:51:15.027Z"
+      "last_updated": "2026-11-21T22:29:51.204Z"
     },
     "vercel-labs/agent-desktop": {
       "repository": "vercel-labs/agent-desktop",

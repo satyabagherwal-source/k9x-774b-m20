@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-21T21:40:59.685Z",
+  "updated_at": "2026-11-21T22:30:46.077Z",
   "statistics": {
-    "total_nodes": 454,
+    "total_nodes": 455,
     "total_edges": 196,
     "domain_distribution": {
-      "D": 280,
+      "D": 281,
       "M": 1,
       "H": 76,
       "J": 22,
@@ -10146,6 +10146,28 @@
       ],
       "created_at": "2026-11-21T21:40:59.685Z",
       "updated_at": "2026-11-21T21:40:59.685Z"
+    },
+    "DOM-D-DB0D402F": {
+      "id": "DOM-D-DB0D402F",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): NucleoidAI/Nucleoid",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  \n> **Source**: github ([https://github.com/Nucleo -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  \n> **Source**: github ([https://github.com/Nucleo",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://nucleoidai-nucleoid/nucleoidai-nucleoid-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-21T22:30:12.725Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (nucleoidai-nucleoid)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-21T22:30:46.077Z",
+      "updated_at": "2026-11-21T22:30:46.077Z"
     }
   },
   "edges": [

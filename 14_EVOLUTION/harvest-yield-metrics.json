@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T22:16:22.034Z",
-  "total_cycles_completed": 11340,
-  "total_learnings_persisted": 11340,
-  "total_rules_promoted": 10662,
+  "last_updated": "2026-11-21T22:30:08.061Z",
+  "total_cycles_completed": 11343,
+  "total_learnings_persisted": 11343,
+  "total_rules_promoted": 10663,
   "history": [
-    {
-      "timestamp": "2026-11-21T02:26:58.662Z",
-      "repository": "risingwavelabs/risingwave",
-      "learningId": "learn-github-risingwavelabs-risingwave",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T02:29:56.897Z",
-      "repository": "astral-sh/ruff",
-      "learningId": "learn-github-astral-sh-ruff",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T02:57:41.681Z",
-      "repository": "tokio-rs/tokio",
-      "learningId": "learn-github-tokio-rs-tokio",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T02:57:43.891Z",
       "repository": "dubzzz/fast-check",
@@ -1403,6 +1382,27 @@
       "repository": "berty/berty",
       "learningId": "learn-github-berty-berty",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T22:29:51.200Z",
+      "repository": "Comfy-Org/Wan-2.2",
+      "learningId": "learn-huggingface-comfy-org-wan-2-2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T22:29:58.643Z",
+      "repository": "keybase/client",
+      "learningId": "learn-github-keybase-client",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T22:30:08.061Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
