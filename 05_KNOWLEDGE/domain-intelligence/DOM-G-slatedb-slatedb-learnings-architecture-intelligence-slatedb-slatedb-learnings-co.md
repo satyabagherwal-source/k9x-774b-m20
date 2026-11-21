@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T03:32:41.779Z",
+  "timestamp": "2026-11-21T06:14:05.271Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-slatedb-slatedb-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [slatedb-slatedb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T03:32:41.779Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T06:14:05.271Z`  
 > **Learning ID**: `LEARN-EVO-slatedb-slatedb-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
 - **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 75%
+- **Confidence Rating**: 61%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from slatedb-slatedb-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/slatedb-slatedb-learnings.md`  
 > **Source**: github ([https://github.com/slatedb/slatedb](https://github.com/slatedb/slatedb))  
-> **Source Version**: `cafb91c4`  
+> **Source Version**: `c7c7976b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T03:32:36.493Z  
+> **Timestamp**: 2026-11-21T06:13:59.246Z  
 > **Learning ID**: `learn-github-slatedb-slatedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/slatedb-slatedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/slatedb/slatedb](https://github.com/slatedb/slatedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T03:32:36.487Z  
+> **Harvest Timestamp**: 2026-11-21T06:13:59.240Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: A cloud native embedded storage engine built on object storage.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3660 stars
+- **Stars / Engagement**: 3662 stars
 
 ---
 
@@ -1444,22 +1444,16 @@ impl SsTableView {
 ```
 use crate::block_iterator::BlockIterator;
 use crate::block_iterator_v2::BlockIteratorV2;
-#[allow(deprecated)] // `CachedObjectStore` is deprecated.
-use crate::cached_object_store::CachedObjectStore;
-#[allow(deprecated)] // `PreloadLevel` is deprecated.
-use crate::config::PreloadLevel;
 use crate::db_state::SortedRun;
 use crate::db_state::SsTableHandle;
 use crate::error::SlateDBError;
 use crate::format::sst::{SST_FORMAT_VERSION, SST_FORMAT_VERSION_V2};
 use crate::iter::{IterationOrder, RowEntryIterator};
-use crate::manifest::ManifestCore;
-use crate::paths::PathResolver;
 use crate::read_trace::ReadTrace;
 use crate::tablestore::TableStore;
 use bytes::{Buf, BufMut, Bytes};
 use futures::FutureExt;
-use log::{error, warn};
+use log::error;
 use rand::{Rng, RngExt};
 use slatedb_common::clock::SystemClock;
 use std::any::Any;
@@ -1747,7 +1741,14 @@ fn compute_lower_bound(prev_block_last_key: &Bytes, this_block_first_key: &Bytes
 
     // if the keys are equal, just use the full key
     if prev_block_last_key.len() == this_block_first_key.len() {
-     
+        return this_block_first_key.clone();
+    }
+
+    // if we didn't find a mismatch yet then the prev block's key must be shorter,
+    // so just use the common prefix plus the next byte in this block's key
+    this_block_first_key.slice(..prev_block_last_key.len() + 1)
+}
+
 ```
 
 ### Core Architecture Module: `bindings/go/uniffi/cgo_flags.go`
@@ -2314,6 +2315,7 @@ func init() {
 	FfiConverterMergeOperatorINSTANCE.register()
 	FfiConverterMetricsRecorderINSTANCE.register()
 	FfiConverterPrefixExtractorINSTANCE.register()
+	FfiConverterSegmentFilterINSTANCE.register()
 	FfiConverterUpDownCounterINSTANCE.register()
 	uniffiCheckChecksums()
 }
@@ -2343,8 +2345,7 @@ func uniffiCheckChecksums() {
 			return C.uniffi_slatedb_uniffi_checksum_method_admin_create_clone_builder_from_source()
 		})
 		if checksum != 20657 {
-			// If this happens try cleaning and rebuilding your project
-			panic("sla
+			// If this happens try clea
 ```
 
 
@@ -2374,493 +2375,638 @@ func uniffiCheckChecksums() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cafb91c4` (2026-11-19)
-**Commit Message**: minor: Fail when an observed boundary object is removed (#2268)
+### Incident Patch 1: `c7c7976b` (2026-11-21)
+**Commit Message**: Read a partly cached block range in one GET (#2265)
 
-    `ObjectStoreBoundaryObject::advance` loops forever if something removes the boundary object
-  after this process observed it. The conditional update gets `Precondition`, and `read_boundary`
-  treats `NotFound` as zero without changing the cache. Thus `advance` sends the same update again,
-  with no back-off. `RetryingObjectStore` does not retry these errors, so `max_retries` does not
-  stop the loop.
-  
-  SlateDB never deletes the boundary object. A reset to zero stops fencing stale writes, so fail
-  instead of silently recovering. `read_boundary` now returns `InvalidObjectState` on `NotFound`
-  if the cache held a boundary before the GET. `advance` and `check` both read through
-  `read_boundary`, so both fail. A process that never observed the boundary still reads zero.
-
-**File**: `slatedb-txn-obj/src/object_store.rs` (modified, +56/-5)
+**File**: `rfcs/0023-cache-manager.md` (modified, +8/-4)
 ```diff
-@@ -243,11 +243,23 @@ impl ObjectStoreBoundaryObject {
-                     Err(TransactionalObjectError::InvalidObjectState)
-                 }
-             },
--            // A missing boundary is treated as zero. Don't use cache because
--            // a write that occurred before a boundary file exists is valid even if
--            // we later have a cached boundary above it. Assume the object store is
--            // infallible here; if the object store loses data, this will return 0
--            // when it should panic. But object stores should never lose data.
-+            // The cache snapshot was taken before the GET. The cache is only set after a
-+            // successful GET or put, so the boundary existed before this GET was sent. With
-+            // a strongly consistent store, NotFound now means something outside SlateDB
-+            // removed it. Fail instead of resetting the boundary to zero, which would stop
-+            // fencing stale writes.
-+            Err(Error::NotFound { .. }) if cached.is_some() => {
-+                error!(
-+                    "boundary object removed after it was observed [path={}]",
-+                    self.filepath
-+                );
-+                Err(TransactionalObjectError::InvalidObjectState)
-+            }
-+            // A missing boundary that this process never observed is treated as zero. Don't
-+            // use a cache that was set after the GET was sent, because a write that occurred
-+            // before a boundary file exists is valid even if we later have a cached boundary
-+            // above it. This arm cannot tell "never created" from "removed before this
-+            // process observed it". In the second case, it returns zero and fencing is lost.
-             Err(Error::NotFound { .. }) => Ok((MonotonicId::new(0), None)),
-             Err(e) => Err(TransactionalObjectError::from(e)),
-         }
-@@ -994,6 +1006,45 @@ mod tests {
-         assert!(observed_version.is_none());
+@@ -163,8 +163,9 @@ targets into one call lets SlateDB share the SST index read across
+ For data warming, callers pass any standard `RangeBounds` through
+ `CacheTarget::data(range)`, mirroring the `Db::scan<K, T>(range: T)` signature.
+ Overlapping target ranges in a single call are not coalesced upfront; the
+-block cache's per-block lookup in `read_blocks_using_index` prevents duplicate
+-object-store fetches.
++block cache's per-block lookup in `read_blocks_using_index` keeps a later
++target from fetching blocks an earlier one already cached, except for small
++cached gaps that get merged into a GET (see below).
+ 
+ `CacheTarget::data(..)` expresses "all data" with an unbounded range, so
+ full-SST data warming does not need a separate `AllData` target.
+@@ -201,8 +202,11 @@ For each `CacheTarget::Data(range)`, SlateDB:
+ 
+ For each `CacheTarget::Data(_)`, SlateDB warms the covered block ranges
+ through `TableStore::read_blocks_using_index(..., cache=true)`. That reader
+-consults the block cache per block and fetches only uncached ones, so
+-overlapping targets in the same call do not double-fetch.
++consults the block cache per block and decodes and caches only uncached ones.
++It merges uncached blocks at most `OBJECT_STORE_COALESCE_DEFAULT` (1 MiB)
++apart into one GET, downloading and dropping cached gaps of at most that size.
++Larger cached gaps stay separate, so overlapping targets in the same call
++re-read at most 1 MiB per gap.
+ 
+ If the SST is not reachable from the current manifest, `warm_sst()` returns
+ `Ok(())` without doing any work. It does not try to recreate a previous
+```
+
+**File**: `slatedb/src/format/sst.rs` (modified, +1/-1)
+```diff
+@@ -1090,7 +1090,7 @@ impl SsTableFormat {
+         Ok(VecDeque::from(decoded_blocks))
      }
  
-+    #[tokio::test]
-+    async fn test_boundary_advance_fails_when_observed_boundary_is_removed() {
-+        // InMemory returns Precondition for PutMode::Update on a missing object.
-+        // S3 behaves the same way through object_store. Before the fix, advance
-+        // retried the same update forever.
-+        let object_store = Arc::new(InMemory::new());
-+        let boundary =
-+            ObjectStoreBoundaryObject::new(&Path::from("/root"), object_store.clone(), "manifest");
-+        let boundary_path = Path::from("/root/gc/manifest.boundary");
-+
-+        boundary.advance(MonotonicId::new(2)).await.unwrap();
-+        object_store.delete(&boundary_path).await.unwrap();
-+
-+        let err = boundary.advance(MonotonicId::new(4)).await.unwrap_err();
-+        assert!(matches!(err, TransactionalObjectError::InvalidObjectState));
-+
-+        // The removed boundary must not be recreated with a reset value.
-+        let err = object_store.get(&boundary_path).await.unwrap_err();
-+        assert!(matches!(err, ObjectStoreError::NotFound { .. }));
-+    }
-+
-+    #[tokio::test]
-+    async fn test_boundary_check_fails_when_observed_boundary_is_removed() {
-+        let object_store = Arc::new(InMemory::new());
-+        let boundary =
-+            ObjectStoreBoundaryObject::new(&Path::from("/root"), object_store.clone(), "manifest");
-+
-+        boundary.advance(MonotonicId::new(2)).await.unwrap();
-+        object_store
-+            .delete(&Path::from("/root/gc/manifest.boundary"))
-+            .await
-+            .unwrap();
-+
-+        // An id above the cached boundary passes the cache check, so check reads the
-+        // store and finds the boundary gone.
-+        let err = boundary.check(MonotonicId::new(3)).await.unwrap_err();
-+        assert!(matches!(err, TransactionalObjectError::InvalidObjectState));
-+    }
-+
-     #[tokio::test]
-     async fn test_list_ranges_sorted() {
-         let store = new_store();
+-    async fn decode_block(
++    pub(crate) async fn decode_block(
+         &self,
+         bytes: Bytes,
+         compression_codec: Option<CompressionCodec>,
+```
+
+**File**: `slatedb/src/tablestore.rs` (modified, +252/-115)
+```diff
+@@ -4,17 +4,22 @@ use std::sync::Arc;
+ 
+ use bytes::Bytes;
+ use fail_parallel::{fail_point, FailPointRegistry};
+-use futures::{future::join_all, StreamExt};
++use futures::{
++    future::{join_all, try_join_all},
++    StreamExt,
++};
+ use log::{debug, warn};
+ use object_store::buffered::BufWriter;
+ use object_store::path::Path;
++use object_store::{coalesce_ranges, OBJECT_STORE_COALESCE_DEFAULT};
+ use object_store::{GetOptions, ObjectStore, ObjectStoreExt};
+ use slatedb_common::object_metadata::IdentifiedObjectMetadata;
+ use slatedb_common::ObjectMetadata;
+ use tokio::io::AsyncWriteExt;
+ use tokio_util::sync::CancellationToken;
+ use ulid::Ulid;
+ 
++use crate::blob::ReadOnlyBlob;
+ use crate::block_cache_policy::{should_cache_data_block, BlockCachePolicy};
+ use crate::bytes_range::BytesRange;
+ use crate::db_cache::{CacheFetch, CacheLookup, CacheTarget};
+@@ -784,10 +789,10 @@ impl TableStore {
+ 
+     /// Reads specified blocks from an SSTable using the provided index.
+     ///
+-    /// This function attempts to read blocks from the cache if available
+-    /// and falls back to reading from storage for uncached blocks
+-    /// using an async fetch for each contiguous range that blocks are not cached.
+-    /// It can optionally cache newly read blocks.
++    /// This function reads blocks from the cache if one is available. It reads
++    /// the uncached blocks from storage, merging blocks at most
++    /// `OBJECT_STORE_COALESCE_DEFAULT` bytes apart into one GET. It can
++    /// optionally cache newly read blocks.
+     /// `segment` is a hint attached to the [`ObjectStoreCallTag`] for
+     /// object-store routing.
+     /// `trace` owns the span for the block read.
+@@ -826,9 +831,8 @@ impl TableStore {
+         // Single-block reads (point-gets via SstIterator::for_key, SstFile::read_block,
+         // etc.) take a dedup-aware fast-path: concurrent callers for the same block
+         // collapse onto one loader. Multi-block reads fall through to the range-
+-        // coalesced path below, which issues one object-store GET per contiguous
+-        // run of uncached blocks. Cache errors fall through to the direct load,
+-        // which produces the authoritative error if any.
++        // coalesced path below. Cache errors fall through to the
++        // direct load, which produces the authoritative error if any.
+         if cache_blocks && blocks.len() == 1 {
+             if let Some(cache) = self.cache_for_reads() {
+                 let block_num = blocks.start;
+@@ -842,125 +846,107 @@ impl TableStore {
+                             CacheLookup::Miss => (0, 1),
+                         };
+                         record_read_block_cache_counts(&span, cache_hits, cache_misses);
+-                        let mut result = VecDeque::with_capacity(1);
+-                        result.push_back(block);
+-                        return Ok(result);
++                        return Ok(VecDeque::from([block]));
+                     }
+                 }
+             }
+         }
+ 
+-        let object_store = self.object_store.clone();
+-        let path = self.path(&handle.id);
+-        // Initialize the result vector and a vector to track uncached ranges
+-        let mut blocks_read = VecDeque::with_capacity(blocks.end - blocks.start);
+-        let mut uncached_ranges = Vec::new();
+-        let mut cache_hits = 0;
+-        let mut cache_misses = 0;
+-
+-        // If block cache is available, try to retrieve cached blocks
+-        if let Some(cache) = self.cache_for_reads() {
+-            let index_borrow = index.borrow();
+-            // Attempt to get all requested blocks from cache concurrently
+-            let cached_blocks = join_all(blocks.clone().map(|block_num| async move {
+-                let block_meta = index_borrow.block_meta().get(block_num);
+-                let offset = block_meta.offset();
+-                cache
+-                    .get_block(&(handle.id, offset).into())
+-                    .await
+-                    .unwrap_or(None)
+-                    .and_then(|entry| entry.block())
+-            }))
+-            .await;
+-
+-            let mut last_uncached_start = None;
+-
+-            // Process cached block results
+-            for (index, block_result) in cached_blocks.into_iter().enumerate() {
+-                match block_result {
+-                    Some(cached_block) => {
+-                        cache_hits += 1;
+-                        // If a cached block is found, add it to blocks_read
+-                        if let Some(start) = last_uncached_start.take() {
+-                            uncached_ranges.push((blocks.start + start)..(blocks.start + index));
+-                        }
+-                        blocks_read.push_back(cached_block);
+-                    }
+-                    None => {
+-                        cache_misses += 1;
+-                        // If a block is not in cache, mark the start of an uncached range
+-                        last_uncached_start.get_or_insert(index);
+-   
 ```
 
 ---
 
-### Incident Patch 2: `6d8b3dfc` (2026-11-19)
-**Commit Message**: Add DST to incremental compaction and the mirror  (#2244)
+### Incident Patch 2: `6532cdd7` (2026-11-20)
+**Commit Message**: Delete cached object store (#2266)
 
-**File**: `.github/workflows/dst-hourly.yaml` (modified, +0/-2)
+**File**: `Cargo.lock` (modified, +1/-14)
 ```diff
-@@ -22,8 +22,6 @@ jobs:
-             test-filter: test_dst_is_deterministic
-           - name: rescaling
-             test-filter: test_dst_rescaling_preserves_data
--          - name: segments
--            test-filter: test_dst_segments_is_deterministic
-     # Hard backstop for the whole job. The "Run DST Tests" step below sets a
-     # shorter timeout so an overrun is reported as a step *failure* (which sends
-     # a notification) rather than a job-level cancellation (which does not).
+@@ -1017,16 +1017,6 @@ dependencies = [
+  "version_check",
+ ]
+ 
+-[[package]]
+-name = "filetime"
+-version = "0.2.29"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "5c287a33c7f0a620c38e641e7f60827713987b3c0f26e8ddc9462cc69cf75759"
+-dependencies = [
+- "cfg-if",
+- "libc",
+-]
+-
+ [[package]]
+ name = "find-msvc-tools"
+ version = "0.1.9"
+@@ -3265,14 +3255,12 @@ dependencies = [
+  "duration-str",
+  "fail-parallel",
+  "figment",
+- "filetime",
+  "flatbuffers",
+  "flate2",
+  "foyer",
+  "futures",
+  "insta",
+  "log",
+- "lru",
+  "lz4_flex",
+  "moka",
+  "object_store",
+@@ -3301,7 +3289,6 @@ dependencies = [
+  "ulid",
+  "url",
+  "uuid",
+- "walkdir",
+  "zstd 0.14.3",
+ ]
+ 
+@@ -3312,6 +3299,7 @@ dependencies = [
+  "bytes",
+  "chrono",
+  "clap",
++ "foyer",
+  "futures",
+  "object_store",
+  "rand 0.10.3",
+@@ -3451,7 +3439,6 @@ dependencies = [
+  "tracing-subscriber",
+  "ulid",
+  "uniffi",
+- "uniffi_meta",
+  "url",
+  "uuid",
+ ]
 ```
 
-**File**: `Cargo.lock` (modified, +1/-0)
+**File**: `Cargo.toml` (modified, +0/-2)
 ```diff
-@@ -3379,6 +3379,7 @@ dependencies = [
-  "rstest",
-  "slatedb",
-  "slatedb-common",
-+ "slatedb-mirror",
-  "tempfile",
-  "tokio",
-  "tokio-util",
+@@ -86,7 +86,6 @@ tracing-log = "0.2"
+ tracing-subscriber = { version = "0.3" }
+ thread_local = "1.1.9"
+ uniffi = "0.31.0"
+-uniffi_meta = "0.31.0"
+ ulid = "1.2.1"
+ uuid = "1.18.0"
+ url = "2.5.8"
+@@ -97,7 +96,6 @@ zstd = "0.14.3"
+ bincode = "1"
+ criterion = "0.5.1"
+ ctor = "0.5.0"
+-filetime = "0.2"
+ insta = "1.39.0"
+ pprof = "0.14.0"
+ proptest = "1.12.0"
 ```
 
-**File**: `slatedb-dst/Cargo.toml` (modified, +1/-0)
+**File**: `bindings/go/uniffi/reader_cache_options_test.go` (removed, +0/-99)
 ```diff
-@@ -28,6 +28,7 @@ parking_lot = { workspace = true }
- rand = { workspace = true }
- slatedb = { workspace = true, features = ["all"] }
- slatedb-common = { workspace = true, features = ["test-util"] }
-+slatedb-mirror = { workspace = true }
- tempfile = { workspace = true }
- tokio = { workspace = true, features = ["macros", "rt", "test-util"] }
- tokio-util = { workspace = true, default-features = false, features = ["rt"] }
+@@ -1,99 +0,0 @@
+-package slatedb_test
+-
+-import (
+-	"errors"
+-	"io/fs"
+-	"path/filepath"
+-	"testing"
+-
+-	slatedb "slatedb.io/slatedb-go/uniffi"
+-)
+-
+-// regularFilesUnder counts the files below root, however the cache lays
+-// them out.
+-func regularFilesUnder(t *testing.T, root string) int {
+-	t.Helper()
+-	files := 0
+-	err := filepath.WalkDir(root, func(_ string, entry fs.DirEntry, err error) error {
+-		if err != nil {
+-			return err
+-		}
+-		if entry.Type().IsRegular() {
+-			files++
+-		}
+-		return nil
+-	})
+-	if err != nil {
+-		t.Fatalf("walking %s: %v", root, err)
+-	}
+-	return files
+-}
+-
+-// The reader's object-store cache options reach the engine: a read through
+-// a reader with a disk cache under a fresh, empty root leaves cached parts
+-// in that root.
+-func TestReaderOptionsCarryTheObjectStoreCache(t *testing.T) {
+-	store := newMemoryStore(t)
+-	dbHandle := openTestDB(t, store, nil)
+-	if _, err := dbHandle.db.Put([]byte("k"), []byte("v")); err != nil {
+-		t.Fatalf("Put(): %v", err)
+-	}
+-	if err := dbHandle.db.FlushWithOptions(slatedb.FlushOptions{FlushType: slatedb.FlushTypeMemTable}); err != nil {
+-		t.Fatalf("FlushWithOptions(): %v", err)
+-	}
+-	root := t.TempDir()
+-	maxBytes := uint64(64 << 20)
+-	scan := uint64(60_000)
+-	level := slatedb.PreloadLevelL0Sst
+-	cache := slatedb.ObjectStoreCacheOptions{
+-		RootFolder: &root, MaxCacheSizeBytes: &maxBytes, PartSizeBytes: 1 << 20,
+-		CacheOnFlush: false, CacheOnCompaction: false, PreloadDiskCacheOnStartup: &level,
+-		ScanIntervalMs: &scan, MaxOpenFileHandles: 16,
+-	}
+-	reader := openTestReader(t, store, func(t *testing.T, builder *slatedb.DbReaderBuilder) {
+-		t.Helper()
+-		if err := builder.WithReaderMode(slatedb.ReaderModeFollowLatest{}); err != nil {
+-			t.Fatalf("WithReaderMode(): %v", err)
+-		}
+-		opts := slatedb.ReaderOptions{ManifestPollIntervalMs: 100, CheckpointLifetimeMs: 600_000, MaxMemtableBytes: 64 << 20, ObjectStoreCacheOptions: &cache}
+-		if err := builder.WithOptions(opts); err != nil {
+-			t.Fatalf("WithOptions(cache): %v", err)
+-		}
+-	})
+-	if got, err := reader.reader.Get([]byte("k")); err != nil || valueOf(got) != "v" {
+-		t.Fatalf("Get() through a reader with a disk cache = %q, %v", valueOf(got), err)
+-	}
+-	if files := regularFilesUnder(t, root); files == 0 {
+-		t.Fatalf("the cache root %s holds no part files after a read; the cache options did not reach the engine", root)
+-	}
+-}
+-
+-// A zero MaxOpenFileHandles, the Go zero value, is refused as an invalid
+-// option instead of panicking inside the engine's file handle cache.
+-func TestZeroMaxOpenFileHandlesIsInvalid(t *testing.T) {
+-	store := newMemoryStore(t)
+-	dbHandle := openTestDB(t, store, nil)
+-	if err := dbHandle.db.Shutdown(); err != nil {
+-		t.Fatalf("Shutdown(): %v", err)
+-	}
+-	dbHandle.open = false
+-
+-	root := t.TempDir()
+-	cache := slatedb.ObjectStoreCacheOptions{RootFolder: &root, PartSizeBytes: 4 << 20}
+-	builder := slatedb.NewDbReaderBuilder(testDBPath, store)
+-	defer builder.Destroy()
+-	err := builder.WithOptions(slatedb.ReaderOptions{
+-		ManifestPollIntervalMs: 100, CheckpointLifetimeMs: 600_000, MaxMemtableBytes: 64 << 20,
+-		ObjectStoreCacheOptions: &cache,
+-	})
+-	if err == nil {
+-		var reader *slatedb.DbReader
+-		if reader, err = builder.Build(); err == nil {
+-			_ = reader.Shutdown()
+-			reader.Destroy()
+-		}
+-	}
+-	if !errors.Is(err, slatedb.ErrErrorInvalid) {
+-		t.Fatalf("MaxOpenFileHandles 0 gave %v, want an invalid-argument error", err)
+-	}
+-}
 ```
 
-**File**: `slatedb-dst/README.md` (modified, +5/-2)
+**File**: `bindings/go/uniffi/slatedb.go` (modified, +0/-222)
 ```diff
-@@ -26,6 +26,8 @@ internal path dependency rather than from crates.io.
-   compactor, shutdown, and bank-transfer/auditor actors
- - `DeterministicLocalFilesystem`: filesystem-backed `ObjectStore` with stable
-   metadata, in-memory attribute preservation, and deterministic listing behavior
-+- `DeterministicVfs`: in-memory `Vfs` for the RFC 0034 local mirror, because
-+  `StdVfs` runs its calls on Tokio's blocking pool
- - `FailingObjectStore`: harness-installed `ObjectStore` wrapper that injects
-   deterministic latency, bandwidth, reset-peer, slow-close, and synthetic HTTP
-   failures
-@@ -434,7 +436,8 @@ RUSTFLAGS="--cfg dst --cfg tokio_unstable" \
- cargo test -p slatedb-dst --test determinism
- ```
- 
--The scenario tests (`determinism`, `segments`) run one OS thread per listed
--seed; the `bank` test runs the listed seeds serially. The variable applies to
-+The `determinism` test runs one OS thread per listed seed. The seed also picks
-+the features of the run, such as the mirror. The `bank` test runs the listed
-+seeds serially. The variable applies to
- every DST test in the invocation, so target one test binary with
- `--test <name>` when reproducing a single failure.
-```
-
-**File**: `slatedb-dst/src/actors/compactor.rs` (modified, +1/-1)
-```diff
-@@ -124,7 +124,7 @@ impl CompactorActor {
-     }
- 
-     fn compactor_builder(&self, ctx: &ActorCtx) -> CompactorBuilder<object_store::path::Path> {
--        let mut builder = CompactorBuilder::new(ctx.path().clone(), ctx.main_object_store())
-+        let mut builder = CompactorBuilder::new(ctx.path().clone(), ctx.compactor_object_store())
-             .with_options(self.actor_options.compactor_options.clone())
-             .with_system_clock(ctx.system_clock())
-             .with_seed(ctx.rand().rng().next_u64());
-```
-
-**File**: `slatedb-dst/src/deterministic_vfs.rs` (added, +351/-0)
-```diff
-@@ -0,0 +1,351 @@
-+//! An in-memory [`Vfs`] for the local mirror in DST scenarios.
-+//!
-+//! `StdVfs` runs filesystem calls on Tokio's blocking pool, outside the seeded
-+//! current-thread runtime. This breaks determinism. `DeterministicVfs` keeps
-+//! every file in memory. Each call yields once before it runs, so other tasks
-+//! can run between two calls, as with a real filesystem.
-+
-+use std::collections::{BTreeMap, BTreeSet};
-+use std::io;
-+use std::ops::Range;
-+use std::path::{Path, PathBuf};
-+use std::sync::Arc;
-+
-+use async_trait::async_trait;
-+use bytes::Bytes;
-+use parking_lot::Mutex;
-+use slatedb_mirror::{Vfs, VfsEntry, VfsLock, VfsWriter};
-+use tokio::task::yield_now;
-+
-+/// The contents of one file. A writer keeps a reference, so it can write to a
-+/// file after a rename or a remove, as on a POSIX filesystem. The mirror does
-+/// not rely on this: it closes each writer before it renames or removes the
-+/// file.
-+type Inode = Arc<Mutex<Vec<u8>>>;
-+
-+#[derive(Debug, Default)]
-+struct State {
-+    dirs: BTreeSet<PathBuf>,
-+    files: BTreeMap<PathBuf, Inode>,
-+    locks: BTreeSet<PathBuf>,
-+}
-+
-+impl State {
-+    /// Fails with `NotADirectory` if an ancestor of `path` is a file.
-+    fn check_ancestors(&self, path: &Path) -> io::Result<()> {
-+        match path
-+            .ancestors()
-+            .skip(1)
-+            .find(|dir| self.files.contains_key(*dir))
-+        {
-+            Some(file) => Err(fs_error(io::ErrorKind::NotADirectory, file, "is a file")),
-+            None => Ok(()),
-+        }
-+    }
-+
-+    /// Fails if the parent directory of `path` can't hold a new entry: it is
-+    /// missing, or an ancestor of `path` is a file.
-+    fn check_parent(&self, path: &Path) -> io::Result<()> {
-+        self.check_ancestors(path)?;
-+        match path.parent() {
-+            Some(parent) if !self.dirs.contains(parent) => Err(not_found(parent)),
-+            _ => Ok(()),
-+        }
-+    }
-+
-+    /// Fails with `IsADirectory` if `path` is a directory.
-+    fn check_not_dir(&self, path: &Path) -> io::Result<()> {
-+        if self.dirs.contains(path) {
-+            return Err(fs_error(
-+                io::ErrorKind::IsADirectory,
-+                path,
-+                "is a directory",
-+            ));
-+        }
-+        Ok(())
-+    }
-+}
-+
-+/// An in-memory [`Vfs`]. Clones share the same files. `list` returns files in
-+/// name order.
-+#[derive(Debug, Clone, Default)]
-+pub struct DeterministicVfs {
-+    state: Arc<Mutex<State>>,
-+}
-+
-+impl DeterministicVfs {
-+    pub fn new() -> Self {
-+        Self::default()
-+    }
-+
-+    fn inode(&self, path: &Path) -> io::Result<Inode> {
-+        self.state
-+            .lock()
-+            .files
-+            .get(path)
-+            .cloned()
-+            .ok_or_else(|| not_found(path))
-+    }
-+}
-+
-+#[async_trait]
-+impl Vfs for DeterministicVfs {
-+    async fn create_dir_all(&self, path: &Path) -> io::Result<()> {
-+        yield_now().await;
-+        let mut state = self.state.lock();
-+        if state.files.contains_key(path) {
-+            return Err(fs_error(io::ErrorKind::AlreadyExists, path, "is a file"));
-+        }
-+        state.check_ancestors(path)?;
-+        for dir in path.ancestors() {
-+            state.dirs.insert(dir.to_path_buf());
-+        }
-+        Ok(())
-+    }
-+
-+    async fn lock(&self, path: &Path) -> io::Result<Box<dyn VfsLock>> {
-+        yield_now().await;
-+        let mut state = self.state.lock();
-+        state.check_parent(path)?;
-+        state.check_not_dir(path)?;
-+        if !state.locks.insert(path.to_path_buf()) {
-+            return Err(io::Error::new(
-+                io::ErrorKind::WouldBlock,
-+                format!("{} is locked", path.display()),
-+            ));
-+        }
-+        state.files.entry(path.to_path_buf()).or_default();
-+        Ok(Box::new(DeterministicVfsLock {
-+            state: Arc::clone(&self.state),
-+            path: path.to_path_buf(),
-+        }))
-+    }
-+
-+    async fn list(&self, dir: &Path) -> io::Result<Vec<VfsEntry>> {
-+        yield_now().await;
-+        let state = self.state.lock();
-+        if !state.dirs.contains(dir) {
-+            return Err(not_found(dir));
-+        }
-+        Ok(state
-+            .files
-+            .iter()
-+            .filter(|(path, _)| path.parent() == Some(dir))
-+            .filter_map(|(path, inode)| {
-+                Some(VfsEntry {
-+                    name: path.file_name()?.to_str()?.to_string(),
-+                    size: inode.lock().len() as u64,
-+                })
-+            })
-+            .collect())
-+    }
-+
-+    async fn read_range(&self, path: &Path, range: Range<u64>) -> io::Result<Bytes> {
-+        yield_now().await;
-+        let inode = self.inode(path)?;
-+        let contents = inode.lock();
-+        let (start, end) = (range.start as usize, range.end as usize);
-+        if start > end || end > contents.len() {
-+            return Err(io::Error::new(
-+                io::ErrorKind::UnexpectedEof,
-+                format!("{} 
-```
-
-**File**: `slatedb-dst/src/harness.rs` (modified, +62/-1)
-```diff
-@@ -31,6 +31,12 @@ use crate::failing_object_store::{FailingObjectStore, FailingObjectStoreControll
- 
- type DbFactoryFuture = Pin<Box<dyn Future<Output = Result<Arc<Db>, Error>> + Send + 'static>>;
- type StartupFactory = Box<dyn FnOnce(StartupCtx) -> DbFactoryFuture + Send + 'static>;
-+type MirrorFuture = Pin<Box<dyn Future<Output = Arc<dyn ObjectStore>> + Send + 'static>>;
-+type MirrorFn = Box<
-+    dyn Fn(&'static str, Arc<dyn ObjectStore>, Arc<dyn SystemClock>) -> MirrorFuture
-+        + Send
-+        + 'static,
-+>;
- 
- #[async_trait]
- pub trait Actor: Send + 'static {
-@@ -142,6 +148,12 @@ impl ActorCtx {
-         self.shared.startup_ctx.main_object_store()
-     }
- 
-+    /// Returns the main object store for standalone compactors. See
-+    /// [`StartupCtx::compactor_object_store`].
-+    pub fn compactor_object_store(&self) -> Arc<dyn ObjectStore> {
-+        self.shared.startup_ctx.compactor_object_store()
-+    }
-+
-     /// Returns the wrapped WAL object store, if one was configured.
-     ///
-     /// ## Returns
-@@ -213,6 +225,7 @@ impl ActorCtx {
- pub struct StartupCtx {
-     path: Path,
-     main_object_store: Arc<dyn ObjectStore>,
-+    compactor_object_store: Arc<dyn ObjectStore>,
-     wal_object_store: Option<Arc<dyn ObjectStore>>,
-     system_clock: Arc<dyn SystemClock>,
-     fp_registry: Arc<FailPointRegistry>,
-@@ -240,6 +253,19 @@ impl StartupCtx {
-         Arc::clone(&self.main_object_store)
-     }
- 
-+    /// Returns the object store for standalone compactors.
-+    ///
-+    /// With [`Harness::with_mirror_fn`], standalone compactors share a second
-+    /// mirror, as if they ran on another node. Then each mirror downloads the
-+    /// SSTs that the other side writes. Without a mirror, this is the main
-+    /// object store.
-+    ///
-+    /// ## Returns
-+    /// - `Arc<dyn ObjectStore>`: The object store for standalone compactors.
-+    pub fn compactor_object_store(&self) -> Arc<dyn ObjectStore> {
-+        Arc::clone(&self.compactor_object_store)
-+    }
-+
-     /// Returns the wrapped WAL object store for database startup, if present.
-     ///
-     /// ## Returns
-@@ -392,6 +418,7 @@ pub struct Harness {
-     clock_advance_ms: RangeInclusive<u64>,
-     merge_operator: Option<Arc<dyn MergeOperator + Send + Sync>>,
-     segment_extractor: Option<Arc<dyn PrefixExtractor>>,
-+    mirror_fn: Option<MirrorFn>,
-     startup_factory: StartupFactory,
-     actors: Vec<ActorRegistration>,
+@@ -12690,97 +12690,6 @@ func (_ FfiDestroyerObjectMetadata) Destroy(value ObjectMetadata) {
+ 	value.Destroy()
  }
-@@ -424,6 +451,7 @@ impl Harness {
-             clock_advance_ms: 1..=5,
-             merge_operator: None,
-             segment_extractor: None,
-+            mirror_fn: None,
-             startup_factory: Box::new(move |ctx| Box::pin(factory(ctx))),
-             actors: Vec::new(),
-         }
-@@ -557,6 +585,30 @@ impl Harness {
-         self
-     }
  
-+    /// Puts local mirrors (RFC 0034) in front of the main object store.
-+    ///
-+    /// The harness calls `mirror_fn` twice: with `"db"` and then `"compactor"`,
-+    /// each time with the fault-injecting main store and the harness clock. The
-+    /// returned stores replace the main store for the database and for standalone
-+    /// compactors. See [`StartupCtx::compactor_object_store`].
-+    ///
-+    /// ## Arguments
-+    /// - `mirror_fn`: Builds a mirror from a name, the store to wrap, and the
-+    ///   harness clock.
-+    ///
-+    /// ## Returns
-+    /// - `Harness`: The updated harness builder.
-+    pub fn with_mirror_fn<F, Fut>(mut self, mirror_fn: F) -> Self
-+    where
-+        F: Fn(&'static str, Arc<dyn ObjectStore>, Arc<dyn SystemClock>) -> Fut + Send + 'static,
-+        Fut: Future<Output = Arc<dyn ObjectStore>> + Send + 'static,
-+    {
-+        self.mirror_fn = Some(Box::new(move |name, store, clock| {
-+            Box::pin(mirror_fn(name, store, clock))
-+        }));
-+        self
-+    }
-+
-     /// Registers one actor task under a unique logical name.
-     ///
-     /// ## Arguments
-@@ -627,6 +679,7 @@ impl Harness {
-             clock_advance_ms,
-             merge_operator,
-             segment_extractor,
-+            mirror_fn,
-             startup_factory,
-             actors,
-         } = self;
-@@ -655,6 +708,13 @@ impl Harness {
-             failing_main_object_store,
-             system_clock.clone(),
-         ));
-+        let (main_object_store, compactor_object_store) = match mirror_fn {
-+            Some(mirror_fn) => (
-+                mirror_fn("db", main_object_store.clone(), system_clock.clone()).await,
-+                mirror_fn("compactor", main_object_store, system_clock.clone()).await,
-+            ),
-+            None => (main_object_store.clone(), main_object_store),
-+        };
-         let wal_object_store = wal_object_store.map(|store| {
-             let failing_wal_object_store: Arc<dyn ObjectStore> = Arc::new(FailingObjectStore::new(
-                 store.clone(),
-@@ -669,7 +729,8 @@ impl Harness {
+-// The on-disk object-store cache of one reader. Every default is the
+-// engine's; `root_folder` `None` disables the cache.
+-//
+-// Deprecated: use `ObjectStoreMirrorBuilder` instead.
+-type ObjectStoreCacheOptions struct {
+-	// Directory the cached parts are written under. `None` disables the
+-	// cache and every other field is ignored.
+-	RootFolder *string
+-	// Bytes the cache may hold before its evictor removes the least
+-	// recently used parts. `None` runs no evictor, so the cache grows
+-	// without limit. Default 16 GiB, or `usize::MAX` on a 32-bit target
+-	// where 16 GiB does not fit, as the engine's.
+-	MaxCacheSizeBytes *uint64
+-	// Size of one cached part file: a non-zero multiple of 1024 bytes, or
+-	// the reader refuses to build. Default 4 MiB.
+-	PartSizeBytes uint64
+-	// Whether SSTs written by memtable flushes are added to the cache.
+-	// Default false.
+-	CacheOnFlush bool
+-	// Whether SSTs written by compactions are added to the cache. Default
+-	// false.
+-	CacheOnCompaction bool
+-	// Which SSTs to load into the cache when the reader starts, up to
+-	// `max_cache_size_bytes`. `None` preloads nothing.
+-	PreloadDiskCacheOnStartup *PreloadLevel
+-	// Milliseconds between rescans of the cache directory that rebuild the
+-	// evictor's map; greater than zero. `None` scans once at startup only.
+-	// Default one hour.
+-	ScanIntervalMs *uint64
+-	// Part files kept open in a least-recently-used cache; greater than
+-	// zero. Default 1000.
+-	MaxOpenFileHandles uint64
+-}
+-
+-func (r *ObjectStoreCacheOptions) Destroy() {
+-	FfiDestroyerOptionalString{}.Destroy(r.RootFolder)
+-	FfiDestroyerOptionalUint64{}.Destroy(r.MaxCacheSizeBytes)
+-	FfiDestroyerUint64{}.Destroy(r.PartSizeBytes)
+-	FfiDestroyerBool{}.Destroy(r.CacheOnFlush)
+-	FfiDestroyerBool{}.Destroy(r.CacheOnCompaction)
+-	FfiDestroyerOptionalPreloadLevel{}.Destroy(r.PreloadDiskCacheOnStartup)
+-	FfiDestroyerOptionalUint64{}.Destroy(r.ScanIntervalMs)
+-	FfiDestroyerUint64{}.Destroy(r.MaxOpenFileHandles)
+-}
+-
+-type FfiConverterObjectStoreCacheOptions struct{}
+-
+-var FfiConverterObjectStoreCacheOptionsINSTANCE = FfiConverterObjectStoreCacheOptions{}
+-
+-func (c FfiConverterObjectStoreCacheOptions) Lift(rb RustBufferI) ObjectStoreCacheOptions {
+-	return LiftFromRustBuffer[ObjectStoreCacheOptions](c, rb)
+-}
+-
+-func (c FfiConverterObjectStoreCacheOptions) Read(reader io.Reader) ObjectStoreCacheOptions {
+-	return ObjectStoreCacheOptions{
+-		FfiConverterOptionalStringINSTANCE.Read(reader),
+-		FfiConverterOptionalUint64INSTANCE.Read(reader),
+-		FfiConverterUint64INSTANCE.Read(reader),
+-		FfiConverterBoolINSTANCE.Read(reader),
+-		FfiConverterBoolINSTANCE.Read(reader),
+-		FfiConverterOptionalPreloadLevelINSTANCE.Read(reader),
+-		FfiConverterOptionalUint64INSTANCE.Read(reader),
+-		FfiConverterUint64INSTANCE.Read(reader),
+-	}
+-}
+-
+-func (c FfiConverterObjectStoreCacheOptions) Lower(value ObjectStoreCacheOptions) C.RustBuffer {
+-	return LowerIntoRustBuffer[ObjectStoreCacheOptions](c, value)
+-}
+-
+-func (c FfiConverterObjectStoreCacheOptions) LowerExternal(value ObjectStoreCacheOptions) ExternalCRustBuffer {
+-	return RustBufferFromC(LowerIntoRustBuffer[ObjectStoreCacheOptions](c, value))
+-}
+-
+-func (c FfiConverterObjectStoreCacheOptions) Write(writer io.Writer, value ObjectStoreCacheOptions) {
+-	FfiConverterOptionalStringINSTANCE.Write(writer, value.RootFolder)
+-	FfiConverterOptionalUint64INSTANCE.Write(writer, value.MaxCacheSizeBytes)
+-	FfiConverterUint64INSTANCE.Write(writer, value.PartSizeBytes)
+-	FfiConverterBoolINSTANCE.Write(writer, value.CacheOnFlush)
+-	FfiConverterBoolINSTANCE.Write(writer, value.CacheOnCompaction)
+-	FfiConverterOptionalPreloadLevelINSTANCE.Write(writer, value.PreloadDiskCacheOnStartup)
+-	FfiConverterOptionalUint64INSTANCE.Write(writer, value.ScanIntervalMs)
+-	FfiConverterUint64INSTANCE.Write(writer, value.MaxOpenFileHandles)
+-}
+-
+-type FfiDestroyerObjectStoreCacheOptions struct{}
+-
+-func (_ FfiDestroyerObjectStoreCacheOptions) Destroy(value ObjectStoreCacheOptions) {
+-	value.Destroy()
+-}
+-
+ // Options applied to a put operation.
+ type PutOptions struct {
+ 	// TTL policy for the inserted value.
+@@ -12910,10 +12819,6 @@ type ReaderOptions struct {
+ 	// `None` (default) retries transient errors indefinitely; `Some(n)` gives
+ 	// up after `n` retries and surfaces the underlying error.
+ 	ObjectStoreMaxRetries *uint32
+-	// The reader's object-store cache. `None` is the engine's default.
+-	//
+-	// Deprecated: use `ObjectStoreMirrorBuilder` instead.
+-	ObjectStoreCacheOptions *ObjectStoreCacheOptions
+ }
  
-         let startup_ctx = StartupCtx {
-             path: path.clone(),
--            main_object_store: Arc::clone(&main_object_store),
+ func (r *ReaderOptions) Destroy() {
+@@ -12922,7 +12827,6 @@ func (r *ReaderOptions) Destroy() {
+ 	FfiDestroyerUint64{}.Destroy(r.MaxMemtableBytes)
+ 	FfiDestroyerBool{}.Destroy(r.SkipWalReplay)
+ 	FfiDestroyerOptionalUint32{}.Destroy(r.ObjectStoreMaxRetries)
+-	FfiDestroyerOptionalObjectStoreCacheOptions{}.Destroy(r.ObjectStoreCacheOptions)
+ }
 ```
 
-**File**: `slatedb-dst/src/lib.rs` (modified, +2/-0)
+**File**: `bindings/java/slatedb-uniffi/src/test/java/io/slatedb/uniffi/TestSupport.java` (modified, +1/-1)
 ```diff
-@@ -11,6 +11,7 @@
- pub mod actors;
- mod clocked_object_store;
- mod deterministic_local_filesystem;
-+mod deterministic_vfs;
- pub mod failing_object_store;
- mod harness;
- mod prefix_extractor;
-@@ -19,6 +20,7 @@ mod scenarios;
- pub mod utils;
+@@ -362,7 +362,7 @@ static ScanOptions scanOptions(long readAheadBytes, boolean cacheBlocks, long ma
+     }
  
- pub use self::deterministic_local_filesystem::DeterministicLocalFilesystem;
-+pub use self::deterministic_vfs::DeterministicVfs;
- pub use self::failing_object_store::{
-     FailingObjectStore, FailingObjectStoreController, HttpFailBefore, HttpStatusError, Operation,
-     StreamDirection, Toxic, ToxicKind,
+     static ReaderOptions readerOptions(boolean skipWalReplay) {
+-        return new ReaderOptions(100L, 1000L, 64L * 1024 * 1024, skipWalReplay, null, null);
++        return new ReaderOptions(100L, 1000L, 64L * 1024 * 1024, skipWalReplay, null);
+     }
+ 
+     private static Throwable unwrap(Throwable thrown) {
+```
+
+**File**: `bindings/uniffi/Cargo.toml` (modified, +0/-1)
+```diff
+@@ -38,7 +38,6 @@ url = { workspace = true }
+ [dev-dependencies]
+ figment = { workspace = true, features = ["test"] }
+ tempfile = { workspace = true }
+-uniffi_meta = { workspace = true }
+ 
+ [lints]
+ workspace = true
+```
+
+**File**: `bindings/uniffi/src/builder.rs` (modified, +1/-1)
+```diff
+@@ -277,7 +277,7 @@ impl DbReaderBuilder {
+ 
+     /// Applies custom reader options.
+     pub fn with_options(&self, options: ReaderOptions) -> Result<(), Error> {
+-        let options: slatedb::config::DbReaderOptions = options.try_into()?;
++        let options: slatedb::config::DbReaderOptions = options.into();
+         self.update_builder(|builder| builder.with_options(options))
+             .map_err(Into::into)
+     }
+```
+
+**File**: `bindings/uniffi/src/config.rs` (modified, +6/-311)
+```diff
+@@ -1,7 +1,6 @@
+ use crate::error::{Error, SlateDbError};
+ use crate::filter_policy::FilterContext;
+ use crate::types::{try_checkpoint_id_from_str, CompressionCodec};
+-use crate::wal_reader::positive_usize;
+ use std::collections::HashMap;
+ use std::time::Duration;
+ 
+@@ -230,11 +229,6 @@ pub struct ReaderOptions {
+     /// up after `n` retries and surfaces the underlying error.
+     #[uniffi(default = None)]
+     pub object_store_max_retries: Option<u32>,
+-    /// The reader's object-store cache. `None` is the engine's default.
+-    ///
+-    /// Deprecated: use `ObjectStoreMirrorBuilder` instead.
+-    #[uniffi(default = None)]
+-    pub object_store_cache_options: Option<ObjectStoreCacheOptions>,
+ }
+ 
+ impl Default for ReaderOptions {
+@@ -245,144 +239,20 @@ impl Default for ReaderOptions {
+             max_memtable_bytes: 64 * 1024 * 1024,
+             skip_wal_replay: false,
+             object_store_max_retries: None,
+-            object_store_cache_options: None,
+-        }
+-    }
+-}
+-
+-/// Which SSTs a reader loads into its disk cache at startup, up to
+-/// `max_cache_size_bytes`.
+-///
+-/// Deprecated: use `ObjectStoreMirrorBuilder` instead.
+-#[derive(Clone, Copy, Debug, uniffi::Enum)]
+-pub enum PreloadLevel {
+-    /// The L0 SSTs only, the most recently written.
+-    L0Sst,
+-    /// Every SST, L0 and compacted levels alike.
+-    AllSst,
+-}
+-
+-#[allow(deprecated)] // The engine's `PreloadLevel` is deprecated.
+-impl From<PreloadLevel> for slatedb::config::PreloadLevel {
+-    fn from(value: PreloadLevel) -> Self {
+-        match value {
+-            PreloadLevel::L0Sst => Self::L0Sst,
+-            PreloadLevel::AllSst => Self::AllSst,
+-        }
+-    }
+-}
+-
+-/// The on-disk object-store cache of one reader. Every default is the
+-/// engine's; `root_folder` `None` disables the cache.
+-///
+-/// Deprecated: use `ObjectStoreMirrorBuilder` instead.
+-#[derive(Clone, Debug, uniffi::Record)]
+-pub struct ObjectStoreCacheOptions {
+-    /// Directory the cached parts are written under. `None` disables the
+-    /// cache and every other field is ignored.
+-    #[uniffi(default = None)]
+-    pub root_folder: Option<String>,
+-    /// Bytes the cache may hold before its evictor removes the least
+-    /// recently used parts. `None` runs no evictor, so the cache grows
+-    /// without limit. Default 16 GiB, or `usize::MAX` on a 32-bit target
+-    /// where 16 GiB does not fit, as the engine's.
+-    #[cfg_attr(target_pointer_width = "32", uniffi(default = Some(4294967295)))]
+-    #[cfg_attr(not(target_pointer_width = "32"), uniffi(default = Some(17179869184)))]
+-    pub max_cache_size_bytes: Option<u64>,
+-    /// Size of one cached part file: a non-zero multiple of 1024 bytes, or
+-    /// the reader refuses to build. Default 4 MiB.
+-    #[uniffi(default = 4194304)]
+-    pub part_size_bytes: u64,
+-    /// Whether SSTs written by memtable flushes are added to the cache.
+-    /// Default false.
+-    #[uniffi(default = false)]
+-    pub cache_on_flush: bool,
+-    /// Whether SSTs written by compactions are added to the cache. Default
+-    /// false.
+-    #[uniffi(default = false)]
+-    pub cache_on_compaction: bool,
+-    /// Which SSTs to load into the cache when the reader starts, up to
+-    /// `max_cache_size_bytes`. `None` preloads nothing.
+-    #[uniffi(default = None)]
+-    pub preload_disk_cache_on_startup: Option<PreloadLevel>,
+-    /// Milliseconds between rescans of the cache directory that rebuild the
+-    /// evictor's map; greater than zero. `None` scans once at startup only.
+-    /// Default one hour.
+-    #[uniffi(default = Some(3600000))]
+-    pub scan_interval_ms: Option<u64>,
+-    /// Part files kept open in a least-recently-used cache; greater than
+-    /// zero. Default 1000.
+-    #[uniffi(default = 1000)]
+-    pub max_open_file_handles: u64,
+-}
+-
+-#[allow(deprecated)] // The engine's `ObjectStoreCacheOptions` is deprecated.
+-impl Default for ObjectStoreCacheOptions {
+-    fn default() -> Self {
+-        let engine = slatedb::config::ObjectStoreCacheOptions::default();
+-        Self {
+-            root_folder: None,
+-            max_cache_size_bytes: engine.max_cache_size_bytes.map(|v| v as u64),
+-            part_size_bytes: engine.part_size_bytes as u64,
+-            cache_on_flush: engine.cache_on_flush,
+-            cache_on_compaction: engine.cache_on_compaction,
+-            preload_disk_cache_on_startup: None,
+-            scan_interval_ms: engine.scan_interval.map(|d| d.as_millis() as u64),
+-            max_open_file_handles: engine.max_open_file_handles as u64,
+         }
+     }
+ }
+ 
+-#[allow(deprecated)] // The engine's `ObjectStoreCacheOptions` is deprecated.
+-impl TryFrom<ObjectStoreCacheOptions> for slatedb::config::ObjectStoreCacheOptions {
+-    type Error = Error;
+-
+-    fn try_from(value: ObjectStoreCacheOptions) -> Result<Self, Error> {
+-        let usize_of = |field: &'static str, v: u64| {
+-            usize::try_from(v)
+-                .map_err(|_| Error::from(SlateDbError::ValueTooLargeFo
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2284** (2026-11-20): Retry failed local I/O in the mirror with refetch (@nomiero)
+- **PR #2282** (2026-11-20): Report SSTs shorter than the footer as truncated, not as WAL fences (@nomiero)
+- **PR #2280** (2026-11-20): Expose mirror bindings (@nomiero)
 - **PR #2275** (2026-11-18): Mark the SlateDB Python package as typed (@criccomini)
 - **PR #2274** (2026-11-18): Add `AdminBuilder::with_object_store_max_retries` (@jrandolf)
-- **PR #2268** (2026-11-19): minor: Fail when an observed boundary object is removed (@hachikuji)
-- **PR #2267** (2026-11-19): Randomize DST point-read cache and source concurrency (@siddontang)
-- **PR #2264** (2026-11-14): Bump uniffi-bindgen-go to v0.7.1+v0.31.0 (@JayJamieson)
-- **PR #2262** (2026-11-14): Add JayJamieson to VOUCHED list (@criccomini)
+- **PR #2273** (2026-11-20): Add SST read metrics to TableStore and WalTableStore (@el-yawd)
 
 ---
 
@@ -2880,53 +3026,41 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. minor: Fail when an observed boundary object is removed
+## X. Read a partly cached block range in one GET
 
 **RULE**:
-When implementing operations in `slatedb-txn-obj/src/object_store.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in slatedb/slatedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `rfcs/0023-cache-manager.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in slatedb/slatedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cafb91c4`: minor: Fail when an observed boundary object is removed. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c7c7976b`: Read a partly cached block range in one GET. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `slatedb-txn-obj/src/object_store.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rfcs/0023-cache-manager.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            // The cache snapshot was taken before the GET. The cache is only set after a
-            // successful GET or put, so the boundary existed before this GET was sent. With
-            // a strongly consistent store, NotFound now means something outside SlateDB
-            // removed it. Fail instead of resetting the boundary to zero, which would stop
-            // fencing stale writes.
-            Err(Error::NotFound { .. }) if cached.is_some() => {
-                error!(
-                    "boundary object removed after it was observed [path={}]",
-                    self.filepath
-                );
-                Err(TransactionalObjectError::InvalidObjectState)
-            }
-            // A missing boundary that this process never observed is treated as zero. Don't
-            // use a cache that was set after the GET was sent, because a write that occurred
-            // before a boundary file exists is valid even if we later have a cached boundary
-            // above it. This arm cannot tell "never created" from "removed before this
-            // process observed it". In the second case, it returns zero and fencing is lost.
-    #[tokio::test]
-    async fn tes
+block cache's per-block lookup in `read_blocks_using_index` keeps a later
+target from fetching blocks an earlier one already cached, except for small
+cached gaps that get merged into a GET (see below).
+consults the block cache per block and decodes and caches only uncached ones.
+It merges uncached blocks at most `OBJECT_STORE_COALESCE_DEFAULT` (1 MiB)
+apart into one GET, downloading and dropping cached gaps of at most that size.
+Larger cached gaps stay separate, so overlapping targets in the same call
+re-read at most 1 MiB per gap.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-            // A missing boundary is treated as zero. Don't use cache because
-            // a write that occurred before a boundary file exists is valid even if
-            // we later have a cached boundary above it. Assume the object store is
-            // infallible here; if the object store loses data, this will return 0
-            // when it should panic. But object stores should never lose data.
+block cache's per-block lookup in `read_blocks_using_index` prevents duplicate
+object-store fetches.
+consults the block cache per block and fetches only uncached ones, so
+overlapping targets in the same call do not double-fetch.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cafb91c4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c7c7976b` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

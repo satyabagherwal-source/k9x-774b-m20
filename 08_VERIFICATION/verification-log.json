@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261119-LA3T",
-    "timestamp": "2026-11-19T01:32:41.705Z",
-    "repository": "open-ani/animeko",
-    "learningId": "learn-github-open-ani-animeko",
-    "contentHash": "c473607f6a796e1ac3213f19736f303a1089361a10dfcf0abd5fba566a025408",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-LHSQ",
-    "timestamp": "2026-11-19T01:32:51.674Z",
-    "repository": "GreptimeTeam/greptimedb",
-    "learningId": "learn-github-greptimeteam-greptimedb",
-    "contentHash": "2d22991263db765e9204e7e1aab12dd6054327e43fd4873d0da24447f375ca29",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-3UZA",
-    "timestamp": "2026-11-19T01:47:08.566Z",
-    "repository": "Dicklesworthstone/destructive_command_guard",
-    "learningId": "learn-github-dicklesworthstone-destructive_command_guard",
-    "contentHash": "8afe8e4cf6ba7d434209546581a5c5441575599dc1b84cd80a183c8d5e914904",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261119-44HZ",
     "timestamp": "2026-11-19T01:47:20.903Z",
     "repository": "ydb-platform/ydb",
@@ -7490,6 +7445,51 @@
     "repository": "ShiftHackZ/SDAI-KMP",
     "learningId": "learn-github-shifthackz-sdai-kmp",
     "contentHash": "920b683d00799a4630e8c22d079a6a51c8f99d1e595f706c24cad9177d3141f6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-IJTF",
+    "timestamp": "2026-11-21T06:13:50.931Z",
+    "repository": "nitrojs/nitro",
+    "learningId": "learn-github-nitrojs-nitro",
+    "contentHash": "cb29821f90f2e9fba487fbd541913c96fcb2498b099aebb35c0518e496e1c752",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-ILPA",
+    "timestamp": "2026-11-21T06:13:53.374Z",
+    "repository": "wquguru/cicada",
+    "learningId": "learn-github-wquguru-cicada",
+    "contentHash": "fe2db3ad11a1aa22a8bf8016a6f770e8a6b64bef8eab9f2c44bfe4e4e96ada86",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-IR05",
+    "timestamp": "2026-11-21T06:14:00.245Z",
+    "repository": "slatedb/slatedb",
+    "learningId": "learn-github-slatedb-slatedb",
+    "contentHash": "cc33051d14522be6f4db927fbf2c410fba1630ccfa273bd8a75689a43d469632",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

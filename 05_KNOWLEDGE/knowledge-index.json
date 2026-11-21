@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T06:01:35.455Z",
+  "last_updated": "2026-11-21T06:14:05.708Z",
   "total_verified_learnings": 9058,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22953,
+  "total_items": 22961,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -229183,8 +229183,8 @@
       "slug": "slatedb-slatedb",
       "platform": "github",
       "source_url": "https://github.com/slatedb/slatedb",
-      "source_version": "cafb91c4",
-      "content_hash": "3585b2d9260a7de769e5d37798419c48b0e189621e4a70df1e1aa5ecae6a956e",
+      "source_version": "c7c7976b",
+      "content_hash": "cc33051d14522be6f4db927fbf2c410fba1630ccfa273bd8a75689a43d469632",
       "dossier_path": "07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
       "promoted_rules": [
@@ -229207,6 +229207,11 @@
           "number": 9506,
           "title": "Fail when an observed boundary object is removed",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9735,
+          "title": "Read a partly cached block range in one GET",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -229214,7 +229219,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T03:32:37.282Z",
+      "verified_at": "2026-11-21T06:14:00.052Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -229256,10 +229261,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-slatedb-slatedb-architecture-intelligence-slatedb-slatedb-core-invariants.md",
       "title": "Architecture Intelligence: slatedb/slatedb Core Invariants",
       "repository": "slatedb/slatedb",
-      "source_version": "cafb91c4",
-      "content_hash": "2318992cce072322154c5226b6edd3b0aba9a83cda37f6899cf71ca102dd3f8d",
+      "source_version": "c7c7976b",
+      "content_hash": "47e680e353162a458077ccae9333c24fc40a0f33e47a297021998e5efdd71318",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T03:32:37.816Z"
+      "persisted_at": "2026-11-21T06:14:00.609Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-slatedb-slatedb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-slatedb-slatedb",
@@ -229268,10 +229273,10 @@
       "relative_path": "08_VERIFICATION/slatedb-slatedb-verification-protocol-empirical-defect-shield-for-slatedb-slated.md",
       "title": "Verification Protocol: Empirical Defect Shield for slatedb/slatedb",
       "repository": "slatedb/slatedb",
-      "source_version": "cafb91c4",
-      "content_hash": "9d584729a3271ac059b48eaef7628b491faafce6d6fed1cdc915dccd524fa1be",
+      "source_version": "c7c7976b",
+      "content_hash": "a12a3d74710c4bb415c4fa5f0bc50c73a112b7997a66cfa348ab4d8995cd2d6b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T03:32:37.956Z"
+      "persisted_at": "2026-11-21T06:14:00.759Z"
     },
     "learn-github-nucleoidai-nucleoid": {
       "learning_id": "learn-github-nucleoidai-nucleoid",
@@ -251184,9 +251189,9 @@
       "title": "Architecture Intelligence: slatedb-slatedb-learnings Core Invariants",
       "repository": "slatedb-slatedb-learnings",
       "source_version": "HEAD",
-      "content_hash": "2f64264ad2858fda6961d0bd810b224256e3f1462819b1d7ab6ce20e9f41760f",
+      "content_hash": "cf3d5cba355a2e405c3a60bde6a0df39d058b34b06e81b4f0bf14227fb46c7b3",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T03:32:42.033Z"
+      "persisted_at": "2026-11-21T06:14:05.539Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-slatedb-slatedb-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-slatedb-slatedb-learnings",
@@ -251196,9 +251201,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for slatedb-slatedb-learnings",
       "repository": "slatedb-slatedb-learnings",
       "source_version": "HEAD",
-      "content_hash": "f95ab63524374a375590abfe50bbada372e6dfc6282f271fa122eb9c119f6193",
+      "content_hash": "6a73c5b204814ce1d10f13e2221d3589c7eb05308d6679aefed6034f143bdf53",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T03:32:42.175Z"
+      "persisted_at": "2026-11-21T06:14:05.708Z"
     },
     "candidate_directive-hook-keep-regex-fragments-from-widening-bash-heredoc-dialects-skip-ci": {
       "item_id": "candidate_directive-hook-keep-regex-fragments-from-widening-bash-heredoc-dialects-skip-ci",
@@ -260521,14 +260526,19 @@
       "slug": "wquguru-cicada",
       "platform": "github",
       "source_url": "https://github.com/wquguru/cicada",
-      "source_version": "d8ed8ca6",
-      "content_hash": "73ed9b5961213d0495a29e7a01752020259273108a57126f77659c77adeeb277",
+      "source_version": "8450cb9d",
+      "content_hash": "fe2db3ad11a1aa22a8bf8016a6f770e8a6b64bef8eab9f2c44bfe4e4e96ada86",
       "dossier_path": "07_PROJECT_LEARNING/wquguru-cicada-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/wquguru-cicada-learnings.md",
       "promoted_rules": [
         {
           "number": 8780,
           "title": "a notice says why listening stopped, and a disconnected room mic shows",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9734,
+          "title": "the Dynamic Island shows when listening is paused instead of a clock still",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -260537,7 +260547,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T18:55:45.001Z",
+      "verified_at": "2026-11-21T06:13:53.180Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -260579,10 +260589,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-wquguru-cicada-architecture-intelligence-wquguru-cicada-core-invariants.md",
       "title": "Architecture Intelligence: wquguru/cicada Core Invariants",
       "repository": "wquguru/cicada",
-      "source_version": "d8ed8ca6",
-      "content_hash": "6f308e49e01f1c99781c04f978e14e10db6670ecdb22091c1e1f3d491d869491",
+      "source_version": "8450cb9d",
+      "content_hash": "07a48b2f01d99f948e70997931759f2c436f420bc85691043480a00b37d31d3d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T18:55:45.421Z"
+      "persisted_at": "2026-11-21T06:13:53.754Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-wquguru-cicada": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-wquguru-cicada",
@@ -260591,10 +260601,10 @@
       "relative_path": "08_VERIFICATION/wquguru-cicada-verification-protocol-empirical-defect-shield-for-wquguru-cicada.md",
       "title": "Verification Protocol: Empirical Defect Shield for wquguru/cicada",
       "repository": "wquguru/cicada",
-      "source_version": "d8ed8ca6",
-      "content_hash": "a5cf2d19f90cd3a0bbcc6b31a37b16de71d569fa9ad24441083c169405691006",
+      "source_version": "8450cb9d",
+      "content_hash": "4eb9c627843ee897d11b73e0c9cc1d320122bc65cd6ba9de4288a61f63bf10c9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T18:55:45.525Z"
+      "persisted_at": "2026-11-21T06:13:53.913Z"
     },
     "rule-8781": {
       "learning_id": "rule-8781",
@@ -260742,9 +260752,9 @@
       "title": "Architecture Intelligence: wquguru-cicada-learnings Core Invariants",
       "repository": "wquguru-cicada-learnings",
       "source_version": "HEAD",
-      "content_hash": "25be5099355b063e73c750a2c3dcb36e5d58b9c50d3685d84539d1e4b84d14b5",
+      "content_hash": "42021e72a4ae27ecc0021dca24a2004ddd54ed0c7ed3ec1075a5beebcf7f1e39",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T18:55:56.951Z"
+      "persisted_at": "2026-11-21T06:14:04.835Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-wquguru-cicada-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-wquguru-cicada-learnings",
@@ -260754,9 +260764,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for wquguru-cicada-learnings",
       "repository": "wquguru-cicada-learnings",
       "source_version": "HEAD",
-      "content_hash": "565122aed11865d166fe9f8a1c17b91f0cf6fc2080ada3d405924ef727877283",
+      "content_hash": "16bad0706e5888711cbd39981cb2f86915c356fcd5d39643b8500af6432cbf0e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T18:55:57.054Z"
+      "persisted_at": "2026-11-21T06:14:04.986Z"
     },
     "learn-github-fb55-css-select": {
       "learning_id": "learn-github-fb55-css-select",
@@ -273636,14 +273646,19 @@
       "slug": "unjs-nitro",
       "platform": "github",
       "source_url": "https://github.com/unjs/nitro",
-      "source_version": "749b12bc",
-      "content_hash": "ce9102417182f96e6373ac11b3bf021941ed1135cd159d6050e6ace01675fea3",
+      "source_version": "571aade6",
+      "content_hash": "cb29821f90f2e9fba487fbd541913c96fcb2498b099aebb35c0518e496e1c752",
       "dossier_path": "07_PROJECT_LEARNING/unjs-nitro-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/unjs-nitro-learnings.md",
       "promoted_rules": [
         {
           "number": 8969,
           "title": "skip @rollup/plugin-inject when there is nothing to inject",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9733,
+          "title": "fix GitHub Discussions link in CONTRIBUTING.md",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -273652,7 +273667,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T13:29:49.442Z",
+      "verified_at": "2026-11-21T06:13:50.731Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -273694,10 +273709,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-unjs-nitro-technical-construction-intelligence-nitrojs-nitro-core-invariants.md",
       "title": "Technical Construction Intelligence: nitrojs/nitro Core Invariants",
       "repository": "nitrojs/nitro",
-      "source_version": "749b12bc",
-      "content_hash": "89608807fed84d98592c29e9a7e8e1bac094901abd5fa70d5c5efd5c5c06ca8c",
+      "source_version": "571aade6",
+      "content_hash": "96aa66e2a859152800a9333e3ed7fe53ac0e5eacaff292147958307f0e2e3550",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T13:29:49.894Z"
+      "persisted_at": "2026-11-21T06:13:51.301Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nitrojs-nitro": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nitrojs-nitro",
@@ -273706,10 +273721,10 @@
       "relative_path": "08_VERIFICATION/unjs-nitro-verification-protocol-empirical-defect-shield-for-nitrojs-nitro.md",
       "title": "Verification Protocol: Empirical Defect Shield for nitrojs/nitro",
       "repository": "nitrojs/nitro",
-      "source_version": "749b12bc",
-      "content_hash": "871e5266f8598a288b97d53736cc47cf3d892c0c0d6031f2f00040a5d9897940",
+      "source_version": "571aade6",
+      "content_hash": "03b0ae010bd36eb7e69c704fe4db82986d1babe1ac972f3cfe0aeeebbab76dca",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T13:29:50.020Z"
+      "persisted_at": "2026-11-21T06:13:51.457Z"
     },
     "rule-8970": {
       "learning_id": "rule-8970",
@@ -273769,9 +273784,9 @@
       "title": "Technical Construction Intelligence: unjs-nitro-learnings Core Invariants",
       "repository": "unjs-nitro-learnings",
       "source_version": "HEAD",
-      "content_hash": "231aff6dcdb4e51155ab00e5d7aa0cc1d5ebfba66382daec7c2ecb81e3c541a3",
+      "content_hash": "2ab66e81546867ae86b9d40f2c32633b20708428e89c8abdf20e7a96a62ab977",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T13:29:56.944Z"
+      "persisted_at": "2026-11-21T06:14:04.101Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-unjs-nitro-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-unjs-nitro-learnings",
@@ -273781,9 +273796,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for unjs-nitro-learnings",
       "repository": "unjs-nitro-learnings",
       "source_version": "HEAD",
-      "content_hash": "80ec983347a6e644246db9a41dab98e3865b071005b5f75c45ce6cde11168de8",
+      "content_hash": "6a3a76f10166360d2ee94e6647e962b65c89c3bcb1e6342abb48e81e40422671",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T13:29:57.071Z"
+      "persisted_at": "2026-11-21T06:14:04.267Z"
     },
     "rule-8971": {
       "learning_id": "rule-8971",
@@ -311667,6 +311682,108 @@
       "content_hash": "8db73d9e4f49818679668e783472345817f81a3f47d13aca98e812e87d768666",
       "domain_letter": "F",
       "persisted_at": "2026-11-21T05:28:01.735Z"
+    },
+    "rule-9733": {
+      "learning_id": "rule-9733",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9733,
+      "title": "fix GitHub Discussions link in CONTRIBUTING.md",
+      "source_url": "https://github.com/unjs/nitro",
+      "source_version": "571aade6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T06:13:50.731Z"
+    },
+    "candidate_directive-fix-github-discussions-link-in-contributing-md": {
+      "item_id": "candidate_directive-fix-github-discussions-link-in-contributing-md",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-IJZB-fix-github-discussions-link-in-contributing-md.md",
+      "title": "fix GitHub Discussions link in CONTRIBUTING.md",
+      "repository": "nitrojs/nitro",
+      "source_version": "571aade6",
+      "content_hash": "12a9d21f7b14b2f26020ceb8f76f6aae6f2d17ba17a31d79269e00499a8d8847",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T06:13:51.145Z"
+    },
+    "rule-9734": {
+      "learning_id": "rule-9734",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9734,
+      "title": "the Dynamic Island shows when listening is paused instead of a clock still",
+      "source_url": "https://github.com/wquguru/cicada",
+      "source_version": "8450cb9d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T06:13:53.180Z"
+    },
+    "candidate_directive-the-dynamic-island-shows-when-listening-is-paused-instead-of-a-clock-still": {
+      "item_id": "candidate_directive-the-dynamic-island-shows-when-listening-is-paused-instead-of-a-clock-still",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ILVE-the-dynamic-island-shows-when-listening-is-paused-instead-of-a-clock-still.md",
+      "title": "the Dynamic Island shows when listening is paused instead of a clock still",
+      "repository": "wquguru/cicada",
+      "source_version": "8450cb9d",
+      "content_hash": "8923fd16b5354a069a0d2869c9ad88389295140475971373b64895b20a19cc3f",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T06:13:53.597Z"
+    },
+    "rule-9735": {
+      "learning_id": "rule-9735",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9735,
+      "title": "Read a partly cached block range in one GET",
+      "source_url": "https://github.com/slatedb/slatedb",
+      "source_version": "c7c7976b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T06:14:00.052Z"
+    },
+    "candidate_directive-read-a-partly-cached-block-range-in-one-get": {
+      "item_id": "candidate_directive-read-a-partly-cached-block-range-in-one-get",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-IUYV-read-a-partly-cached-block-range-in-one-get.md",
+      "title": "Read a partly cached block range in one GET",
+      "repository": "slatedb-slatedb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e59165eb61e93fe78fc2c668e663fc4193630061eb3d9b80a4a30f70e1686cce",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T06:14:05.387Z"
+    },
+    "candidate_directive-docs-fix-github-discussions-link-in-contributing-md": {
+      "item_id": "candidate_directive-docs-fix-github-discussions-link-in-contributing-md",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ITUX-docs-fix-github-discussions-link-in-contributing-md.md",
+      "title": "docs: fix GitHub Discussions link in CONTRIBUTING.md",
+      "repository": "unjs-nitro-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9a80a206738ee99d4d02c8d27816c1017b4840b1b321360212447328718ab9d2",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-21T06:14:03.946Z"
+    },
+    "candidate_directive-ios-the-dynamic-island-shows-when-listening-is-paused-instead-of-a-clock-still": {
+      "item_id": "candidate_directive-ios-the-dynamic-island-shows-when-listening-is-paused-instead-of-a-clock-still",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-IUF9-ios-the-dynamic-island-shows-when-listening-is-paused-instead-of-a-clock-still.md",
+      "title": "ios): the Dynamic Island shows when listening is paused instead of a clock still",
+      "repository": "wquguru-cicada-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0168aa8715d2212618c9387770a2aea042eb59d037727ffbd4adcfe42b4ee1b3",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T06:14:04.680Z"
     }
   },
   "ai-builder-brain": {

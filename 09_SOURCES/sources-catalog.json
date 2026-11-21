@@ -2023,10 +2023,10 @@
     "repository": "nitrojs/nitro",
     "platform": "github",
     "sourceUrl": "https://github.com/unjs/nitro",
-    "sourceVersion": "749b12bc",
+    "sourceVersion": "571aade6",
     "license": "NOASSERTION",
-    "contentHash": "ce9102417182f96e6373ac11b3bf021941ed1135cd159d6050e6ace01675fea3",
-    "lastHarvestedAt": "2026-11-17T13:29:49.608Z",
+    "contentHash": "cb29821f90f2e9fba487fbd541913c96fcb2498b099aebb35c0518e496e1c752",
+    "lastHarvestedAt": "2026-11-21T06:13:50.935Z",
     "learningId": "learn-github-nitrojs-nitro"
   },
   "unjs-h3": {
@@ -4573,10 +4573,10 @@
     "repository": "slatedb/slatedb",
     "platform": "github",
     "sourceUrl": "https://github.com/slatedb/slatedb",
-    "sourceVersion": "cafb91c4",
+    "sourceVersion": "c7c7976b",
     "license": "Apache-2.0",
-    "contentHash": "3585b2d9260a7de769e5d37798419c48b0e189621e4a70df1e1aa5ecae6a956e",
-    "lastHarvestedAt": "2026-11-20T03:32:37.469Z",
+    "contentHash": "cc33051d14522be6f4db927fbf2c410fba1630ccfa273bd8a75689a43d469632",
+    "lastHarvestedAt": "2026-11-21T06:14:00.249Z",
     "learningId": "learn-github-slatedb-slatedb"
   },
   "react-component-slider": {
@@ -12223,10 +12223,10 @@
     "repository": "wquguru/cicada",
     "platform": "github",
     "sourceUrl": "https://github.com/wquguru/cicada",
-    "sourceVersion": "d8ed8ca6",
+    "sourceVersion": "8450cb9d",
     "license": "Apache-2.0",
-    "contentHash": "73ed9b5961213d0495a29e7a01752020259273108a57126f77659c77adeeb277",
-    "lastHarvestedAt": "2026-11-16T18:55:45.144Z",
+    "contentHash": "fe2db3ad11a1aa22a8bf8016a6f770e8a6b64bef8eab9f2c44bfe4e4e96ada86",
+    "lastHarvestedAt": "2026-11-21T06:13:53.379Z",
     "learningId": "learn-github-wquguru-cicada"
   },
   "heymrun-heym": {

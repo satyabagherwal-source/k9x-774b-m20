@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-21T05:28:02.604Z",
+  "updated_at": "2026-11-21T06:14:03.710Z",
   "stats": {
-    "total_discovered": 7047,
-    "approved_pending_harvest": 6657,
+    "total_discovered": 7049,
+    "approved_pending_harvest": 6659,
     "harvested_count": 0,
     "rejected_count": 390,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6636,
+      "COMMUNITY_AND_EXPERT": 6638,
       "OFFICIAL_DOCUMENTATION": 234,
       "STANDARDS_AND_SPECIFICATIONS": 122,
       "ENGINEERING_BLOGS": 5,
@@ -152327,6 +152327,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gocd-gocd-learnings.md",
         "fileName": "gocd-gocd-learnings.md"
+      }
+    },
+    "SRC-EEF1036D8F44": {
+      "id": "SRC-EEF1036D8F44",
+      "url": "https://github.com/nitrojs/nitro/discussions",
+      "title": "https://github.com/nitrojs/nitro/discussions",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T06:14:03.657Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/unjs-nitro-learnings.md",
+        "fileName": "unjs-nitro-learnings.md"
+      }
+    },
+    "SRC-7B8E0BE628C5": {
+      "id": "SRC-7B8E0BE628C5",
+      "url": "https://discord.nitro.build/",
+      "title": "https://discord.nitro.build/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T06:14:03.710Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/unjs-nitro-learnings.md",
+        "fileName": "unjs-nitro-learnings.md"
       }
     }
   }

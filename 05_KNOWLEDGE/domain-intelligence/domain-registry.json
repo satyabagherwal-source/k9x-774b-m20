@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T06:01:35.200Z",
+  "last_updated": "2026-11-21T06:14:05.539Z",
   "total_records": 2228,
   "domains": {
     "A": {
@@ -15298,8 +15298,8 @@
       "title": "Architecture Intelligence: slatedb/slatedb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-slatedb-slatedb-architecture-intelligence-slatedb-slatedb-core-invariants.md",
       "repository": "slatedb/slatedb",
-      "content_hash": "2318992cce072322154c5226b6edd3b0aba9a83cda37f6899cf71ca102dd3f8d",
-      "created_at": "2026-11-20T03:32:37.816Z"
+      "content_hash": "47e680e353162a458077ccae9333c24fc40a0f33e47a297021998e5efdd71318",
+      "created_at": "2026-11-21T06:14:00.609Z"
     },
     "domain_intelligence-architecture-intelligence-nucleoidai-nucleoid-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-nucleoidai-nucleoid-core-invariants",
@@ -22668,8 +22668,8 @@
       "title": "Architecture Intelligence: slatedb-slatedb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-slatedb-slatedb-learnings-architecture-intelligence-slatedb-slatedb-learnings-co.md",
       "repository": "slatedb-slatedb-learnings",
-      "content_hash": "2f64264ad2858fda6961d0bd810b224256e3f1462819b1d7ab6ce20e9f41760f",
-      "created_at": "2026-11-20T03:32:42.033Z"
+      "content_hash": "cf3d5cba355a2e405c3a60bde6a0df39d058b34b06e81b4f0bf14227fb46c7b3",
+      "created_at": "2026-11-21T06:14:05.539Z"
     },
     "domain_intelligence-architecture-intelligence-dicklesworthstone-destructive_command_guard-learnings-": {
       "record_id": "domain_intelligence-architecture-intelligence-dicklesworthstone-destructive_command_guard-learnings-",
@@ -24639,8 +24639,8 @@
       "title": "Architecture Intelligence: wquguru/cicada Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-wquguru-cicada-architecture-intelligence-wquguru-cicada-core-invariants.md",
       "repository": "wquguru/cicada",
-      "content_hash": "6f308e49e01f1c99781c04f978e14e10db6670ecdb22091c1e1f3d491d869491",
-      "created_at": "2026-11-16T18:55:45.421Z"
+      "content_hash": "07a48b2f01d99f948e70997931759f2c436f420bc85691043480a00b37d31d3d",
+      "created_at": "2026-11-21T06:13:53.754Z"
     },
     "domain_intelligence-technical-construction-intelligence-inikulin-parse5-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-inikulin-parse5-learnings-core-invariants",
@@ -24657,8 +24657,8 @@
       "title": "Architecture Intelligence: wquguru-cicada-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-wquguru-cicada-learnings-architecture-intelligence-wquguru-cicada-learnings-core.md",
       "repository": "wquguru-cicada-learnings",
-      "content_hash": "25be5099355b063e73c750a2c3dcb36e5d58b9c50d3685d84539d1e4b84d14b5",
-      "created_at": "2026-11-16T18:55:56.951Z"
+      "content_hash": "42021e72a4ae27ecc0021dca24a2004ddd54ed0c7ed3ec1075a5beebcf7f1e39",
+      "created_at": "2026-11-21T06:14:04.835Z"
     },
     "domain_intelligence-technical-construction-intelligence-fb55-css-select-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-fb55-css-select-core-invariants",
@@ -27665,8 +27665,8 @@
       "title": "Technical Construction Intelligence: nitrojs/nitro Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-unjs-nitro-technical-construction-intelligence-nitrojs-nitro-core-invariants.md",
       "repository": "nitrojs/nitro",
-      "content_hash": "89608807fed84d98592c29e9a7e8e1bac094901abd5fa70d5c5efd5c5c06ca8c",
-      "created_at": "2026-11-17T13:29:49.894Z"
+      "content_hash": "96aa66e2a859152800a9333e3ed7fe53ac0e5eacaff292147958307f0e2e3550",
+      "created_at": "2026-11-21T06:13:51.301Z"
     },
     "domain_intelligence-technical-construction-intelligence-unjs-nitro-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-unjs-nitro-learnings-core-invariants",
@@ -27674,8 +27674,8 @@
       "title": "Technical Construction Intelligence: unjs-nitro-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-unjs-nitro-learnings-technical-construction-intelligence-unjs-nitro-learnings-co.md",
       "repository": "unjs-nitro-learnings",
-      "content_hash": "231aff6dcdb4e51155ab00e5d7aa0cc1d5ebfba66382daec7c2ecb81e3c541a3",
-      "created_at": "2026-11-17T13:29:56.944Z"
+      "content_hash": "2ab66e81546867ae86b9d40f2c32633b20708428e89c8abdf20e7a96a62ab977",
+      "created_at": "2026-11-21T06:14:04.101Z"
     },
     "domain_intelligence-content-information-intelligence-gravitl-netmaker-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-gravitl-netmaker-core-invariants",

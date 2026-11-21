@@ -11771,3 +11771,6 @@ Every entry in this ledger must capture:
 | `learn-github-a2ui-project-a2ui` | `https://github.com/a2ui-project/a2ui` | `5ff1b05f` | Multi-dimensional audit evidence | 2026-11-21T05:27:53.619Z |
 | `learn-github-gocd-gocd` | `https://github.com/gocd/gocd` | `2addd4f0` | Multi-dimensional audit evidence | 2026-11-21T05:27:56.168Z |
 | `learn-github-shifthackz-sdai-kmp` | `https://github.com/ShiftHackZ/SDAI-KMP` | `82ebd42d` | Multi-dimensional audit evidence | 2026-11-21T06:01:27.193Z |
+| `learn-github-nitrojs-nitro` | `https://github.com/unjs/nitro` | `571aade6` | Multi-dimensional audit evidence | 2026-11-21T06:13:50.935Z |
+| `learn-github-wquguru-cicada` | `https://github.com/wquguru/cicada` | `8450cb9d` | Multi-dimensional audit evidence | 2026-11-21T06:13:53.379Z |
+| `learn-github-slatedb-slatedb` | `https://github.com/slatedb/slatedb` | `c7c7976b` | Multi-dimensional audit evidence | 2026-11-21T06:14:00.249Z |

@@ -11738,3 +11738,6 @@
 | `CYCLE-20261121-VG9B` | `2026-11-21T05:27:53.615Z` | `a2ui-project/a2ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9732` | Yes (`67459ac5...`) |
 | `CYCLE-20261121-VI84` | `2026-11-21T05:27:56.164Z` | `gocd/gocd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 4898` | Yes (`1ada0fcd...`) |
 | `CYCLE-20261121-2LXX` | `2026-11-21T06:01:27.189Z` | `ShiftHackZ/SDAI-KMP` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9525` | Yes (`920b683d...`) |
+| `CYCLE-20261121-IJTF` | `2026-11-21T06:13:50.931Z` | `nitrojs/nitro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9733` | Yes (`cb29821f...`) |
+| `CYCLE-20261121-ILPA` | `2026-11-21T06:13:53.374Z` | `wquguru/cicada` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9734` | Yes (`fe2db3ad...`) |
+| `CYCLE-20261121-IR05` | `2026-11-21T06:14:00.245Z` | `slatedb/slatedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9735` | Yes (`cc33051d...`) |

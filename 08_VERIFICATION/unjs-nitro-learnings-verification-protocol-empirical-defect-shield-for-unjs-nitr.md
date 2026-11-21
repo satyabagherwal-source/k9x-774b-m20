@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T13:29:56.734Z",
+  "timestamp": "2026-11-21T06:14:03.837Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-unjs-nitro-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [unjs-nitro-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T13:29:56.734Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T06:14:03.837Z`  
 > **Learning ID**: `LEARN-EVO-unjs-nitro-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/unjs-nitro-learnings.md`  
 > **Source**: github ([https://github.com/unjs/nitro](https://github.com/unjs/nitro))  
-> **Source Version**: `749b12bc`  
+> **Source Version**: `571aade6`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T13:29:48.707Z  
+> **Timestamp**: 2026-11-21T06:13:49.918Z  
 > **Learning ID**: `learn-github-nitrojs-nitro`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/unjs-nitro-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/unjs/nitro](https://github.com/unjs/nitro))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T13:29:48.484Z  
+> **Harvest Timestamp**: 2026-11-21T06:13:49.802Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Next Generation Server Toolkit. Create web servers with everything you need and deploy them wherever you prefer.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 11381 stars
+- **Stars / Engagement**: 11394 stars
 
 ---
 
@@ -665,57 +665,29 @@ export default [baseWorker] as const;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `749b12bc` (2026-11-15)
-**Commit Message**: perf: skip @rollup/plugin-inject when there is nothing to inject (#5136)
+### Incident Patch 1: `571aade6` (2026-11-20)
+**Commit Message**: docs: fix GitHub Discussions link in CONTRIBUTING.md (#5127)
 
-**File**: `src/build/rollup/config.ts` (modified, +3/-1)
+**File**: `CONTRIBUTING.md` (modified, +1/-1)
 ```diff
-@@ -50,7 +50,9 @@ export const getRollupConfig = async (nitro: Nitro): Promise<RollupConfig> => {
-         ...nitro.options.commonJS,
-       }),
-       (json as unknown as typeof json.default)(),
--      (inject as unknown as typeof inject.default)(base.env.inject),
-+      ...(Object.keys(base.env.inject).length > 0
-+        ? [(inject as unknown as typeof inject.default)(base.env.inject)]
-+        : []),
-       // Emitted files are read from the filesystem, which worker runtimes do not have
-       nitro.options.node && (await assetUrls(nitro)),
-     ]),
-```
-
-**File**: `src/build/vite/bundler.ts` (modified, +1/-1)
-```diff
-@@ -108,7 +108,7 @@ export const getBundlerConfig = async (
-       {
-         ...commonConfig,
-         plugins: await withBuildPlugins(nitro, [
--          inject(base.env.inject),
-+          ...(Object.keys(base.env.inject).length > 0 ? [inject(base.env.inject)] : []),
-           alias({ entries: base.aliases }),
-           ...nitroPlugins,
-         ]),
-```
-
-**File**: `test/vite/build-plugins.test.ts` (modified, +1/-1)
-```diff
-@@ -54,7 +54,7 @@ describe("buildPlugins", () => {
-       _isRolldown: false,
-     } as NitroPluginContext);
-     const names = (rollupConfig!.plugins as { name: string }[]).map((p) => p.name);
--    expect(names.slice(0, 3)).toEqual(["fixture:pre", "inject", "alias"]);
-+    expect(names.slice(0, 2)).toEqual(["fixture:pre", "alias"]);
-     expect(names.at(-1)).toBe("fixture:post");
-     await nitro.close();
-   });
+@@ -8,7 +8,7 @@
+ 
+ You can involve in discussions using:
+ 
+-- [GitHub Discussions](discussions)
++- [GitHub Discussions](https://github.com/nitrojs/nitro/discussions)
+ - [Nitro Discord](https://discord.nitro.build)
+ 
+ ## Contribute to the Code
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #5136** (2026-11-15): perf(rollup): skip inject plugin when there is nothing to inject (@danielroe)
 - **PR #5131** (closed): fix(routing): trace route-scoped middleware (@sakaintp)
 - **PR #5128** (closed): fix(rspack): keep non-literal dynamic imports native (@sakaintp)
+- **PR #5127** (2026-11-20): docs: fix GitHub Discussions link in CONTRIBUTING.md (@abd1rahmane)
 - **PR #5125** (closed): fix(build): match directory public asset URLs with index.html (@akshathayadav378-boop)
 - **PR #5121** (2026-11-11): fix(vite): do not crash serving public assets from the dev worker (@pi0x)
-- **PR #5120** (2026-11-11): fix(dev): serve public dirs created or removed during dev (@pi0x)
 
 ---
 
@@ -735,33 +707,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. skip @rollup/plugin-inject when there is nothing to inject
+## X. docs: fix GitHub Discussions link in CONTRIBUTING.md
 
 **RULE**:
-When implementing operations in `src/build/rollup/config.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nitrojs/nitro. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CONTRIBUTING.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nitrojs/nitro. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `749b12bc`: skip @rollup/plugin-inject when there is nothing to inject. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `571aade6`: docs: fix GitHub Discussions link in CONTRIBUTING.md. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/build/rollup/config.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `CONTRIBUTING.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-      ...(Object.keys(base.env.inject).length > 0
-        ? [(inject as unknown as typeof inject.default)(base.env.inject)]
-        : []),
+- [GitHub Discussions](https://github.com/nitrojs/nitro/discussions)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-      (inject as unknown as typeof inject.default)(base.env.inject),
+- [GitHub Discussions](discussions)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `749b12bc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `571aade6` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

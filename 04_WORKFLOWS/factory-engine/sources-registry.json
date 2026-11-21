@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-21T06:01:33.278Z",
-    "lastVerified": "2026-11-21T06:01:33.278Z",
+    "lastChecked": "2026-11-21T06:14:03.417Z",
+    "lastVerified": "2026-11-21T06:14:03.417Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -253,9 +253,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-21T04:48:35.793Z",
+    "lastChecked": "2026-11-21T06:13:58.702Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-21T04:48:35.793Z"
+    "lastVerified": "2026-11-21T06:13:58.702Z"
   },
   "herdrdev-herdr": {
     "name": "herdrdev/herdr",
@@ -1748,8 +1748,8 @@
     "officialUrl": "https://github.com/sigstore/cosign",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-21T00:08:55.803Z",
-    "lastVerified": "2026-11-21T00:08:55.803Z",
+    "lastChecked": "2026-11-21T06:13:53.826Z",
+    "lastVerified": "2026-11-21T06:13:53.826Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sigstore-cosign",
@@ -4724,12 +4724,12 @@
     "officialUrl": "https://github.com/slatedb/slatedb",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T03:32:36.487Z",
-    "lastVerified": "2026-11-20T03:32:36.487Z",
+    "lastChecked": "2026-11-21T06:13:59.240Z",
+    "lastVerified": "2026-11-21T06:13:59.240Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-slatedb-slatedb",
-    "contentHash": "3585b2d9260a7de769e5d37798419c48b0e189621e4a70df1e1aa5ecae6a956e",
+    "contentHash": "cc33051d14522be6f4db927fbf2c410fba1630ccfa273bd8a75689a43d469632",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -5458,9 +5458,9 @@
   "goss-org-goss": {
     "name": "goss",
     "officialUrl": "https://github.com/goss-org/goss",
-    "lastChecked": "2026-11-20T04:48:26.531Z",
+    "lastChecked": "2026-11-21T06:13:51.300Z",
     "revisionIdentifier": "dcd065d9",
-    "lastVerified": "2026-11-20T04:48:26.531Z"
+    "lastVerified": "2026-11-21T06:13:51.300Z"
   },
   "arangodb-arangodb": {
     "name": "arangodb/arangodb",
@@ -8732,9 +8732,9 @@
   "yyjeqhc-webcodex": {
     "name": "webcodex",
     "officialUrl": "https://github.com/yyjeqhc/webcodex",
-    "lastChecked": "2026-11-19T19:30:57.793Z",
+    "lastChecked": "2026-11-21T06:13:43.691Z",
     "revisionIdentifier": "ea81bd89",
-    "lastVerified": "2026-11-19T19:30:57.793Z"
+    "lastVerified": "2026-11-21T06:13:43.691Z"
   },
   "addy0-com-free-open-technical-seo-crawler": {
     "name": "free-open-technical-SEO-crawler",
@@ -11857,6 +11857,40 @@
     "contentHash": "920b683d00799a4630e8c22d079a6a51c8f99d1e595f706c24cad9177d3141f6",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "unjs-nitro": {
+    "name": "nitrojs/nitro",
+    "officialUrl": "https://github.com/unjs/nitro",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-11-21T06:13:49.802Z",
+    "lastVerified": "2026-11-21T06:13:49.802Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-nitrojs-nitro",
+    "contentHash": "cb29821f90f2e9fba487fbd541913c96fcb2498b099aebb35c0518e496e1c752",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "wquguru-cicada": {
+    "name": "wquguru/cicada",
+    "officialUrl": "https://github.com/wquguru/cicada",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-11-21T06:13:52.356Z",
+    "lastVerified": "2026-11-21T06:13:52.356Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-wquguru-cicada",
+    "contentHash": "fe2db3ad11a1aa22a8bf8016a6f770e8a6b64bef8eab9f2c44bfe4e4e96ada86",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 18,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

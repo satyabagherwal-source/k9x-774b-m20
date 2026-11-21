@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T06:01:27.199Z",
-  "total_cycles_completed": 11174,
-  "total_learnings_persisted": 11174,
-  "total_rules_promoted": 10530,
+  "last_updated": "2026-11-21T06:14:00.254Z",
+  "total_cycles_completed": 11177,
+  "total_learnings_persisted": 11177,
+  "total_rules_promoted": 10533,
   "history": [
-    {
-      "timestamp": "2026-11-20T10:44:16.831Z",
-      "repository": "kucherenko/jscpd",
-      "learningId": "learn-github-kucherenko-jscpd",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T11:08:49.880Z",
-      "repository": "Kianuni/Erosion-CN",
-      "learningId": "learn-github-kianuni-erosion-cn",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T11:08:55.121Z",
-      "repository": "joreilly/Confetti",
-      "learningId": "learn-github-joreilly-confetti",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-20T11:08:57.960Z",
       "repository": "prometheus/prometheus",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-21T06:01:27.199Z",
       "repository": "ShiftHackZ/SDAI-KMP",
       "learningId": "learn-github-shifthackz-sdai-kmp",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T06:13:50.940Z",
+      "repository": "nitrojs/nitro",
+      "learningId": "learn-github-nitrojs-nitro",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T06:13:53.384Z",
+      "repository": "wquguru/cicada",
+      "learningId": "learn-github-wquguru-cicada",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T06:14:00.254Z",
+      "repository": "slatedb/slatedb",
+      "learningId": "learn-github-slatedb-slatedb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

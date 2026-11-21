@@ -4,22 +4,22 @@
 {
   "source_repository": "wquguru/cicada",
   "source_url": "https://github.com/wquguru/cicada",
-  "source_version": "d8ed8ca6",
+  "source_version": "8450cb9d",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-16T18:55:45.317Z",
+  "timestamp": "2026-11-21T06:13:53.597Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-wquguru-cicada",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [wquguru/cicada](https://github.com/wquguru/cicada) (Revision: `d8ed8ca6`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-16T18:55:45.317Z`  
+> **Provenance**: Harvested from [wquguru/cicada](https://github.com/wquguru/cicada) (Revision: `8450cb9d`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-21T06:13:53.597Z`  
 > **Learning ID**: `learn-github-wquguru-cicada`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `wquguru/cicada` (Commit: `d8ed8ca6`)
+- **Target Repository**: `wquguru/cicada` (Commit: `8450cb9d`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/wquguru-cicada-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/wquguru/cicada](https://github.com/wquguru/cicada))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T18:55:44.300Z  
+> **Harvest Timestamp**: 2026-11-21T06:13:52.356Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: 知了 Cicada · 任何会议和直播的实时字幕、同声传译、AI 会议纪要，Mac、Windows、Linux、Android 免费开源。Live subtitles, interpreting and meeting notes for any call or stream, on Mac, Windows, Linux and Android.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2352 stars
+- **Stars / Engagement**: 2436 stars
 
 ---
 
@@ -1800,15 +1800,11 @@ class LingClient(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #32** (2026-11-14): **Windows: 同传声音加「我自己的声音」（把 Mac 的 VoiceOption.clone/ Ming 克隆移植过来）**
-  *Symptoms*: Windows 1.9.0 的同传声音只有 Ming 手挑的 3 个英文 / 4 个中文音色，没有 Mac 已经上线的「我自己的声音」（Sources/Cicada/Voices.swift 的 VoiceOption.clone + VoiceReference）。 Windows 侧缺两点：windows/src/Cicada.Core/Speak.cs 的 VoiceCatalog.Ming() 没有这一项；Ling.cs 的 Speech() 不发 references，有样本也发不出去。 请照 Mac 的实现移植。一个建议：样本限制在 10–15 秒（无状态克隆每句都要重传样本，太长会让出声慢半拍）。
-  **Post-Mortem & Fix Analysis**:
-  > 已在 1.10.0 发布：https://github.com/wquguru/cicada/releases/tag/v1.10.0  Windows 的同声传译现在可以用你自己的声音说译文：在「设置 › 同声传译」里点「我自己的声音」旁的「录制」，照着一段话读 10 到 15 秒（按你的建议限制了时长），先试听像不像再保存。  - 需要 Ling key；比自带声音晚约 3 秒出声。 - 录音只存在这台电脑上，可随时删除；换成别的 AI 服务时自动用回默认声音。 - 录音结尾停顿太久、克隆出来的声音几乎没声的问题也一起修了。  谢谢建议！用起来有问题欢迎在这里继续反馈。 
+- **Issue #38** (2026-11-18): **Feat(site): the website is available in Vietnamese at /vi/**
+  *Symptoms*: Adds a Vietnamese version of cicada.indaloop.app at `/vi/` (home, download, setup and share pages).  - `site/i18n/vi.json`: all 401 keys translated from `en.json`. The demo follows the ja/ko pattern: an English meeting with Vietnamese subtitles, and you speak Vietnamese so the room hears English. - `scripts/site.py`: `vi` added to `LANGS`, `SAMPLE_FOR` (English sample) and `STATIC` (`og-vi.png`). - `site/header.html`: the language suggestion bar can offer Vietnamese. - `server/src/page.js`: shared meetings serve the `/vi/share/` shell and a Vietnamese link preview. - `scripts/site-og.html` + `site/og-vi.png`: Vietnamese share card, rendered with the same Chrome command as `scripts/site-images.sh` (other cards not re-rendered). - `site/img/start/vi-*.jpg`: copies of the English screenshots, because the app has no `vi.lproj` yet. - README links point to the English README; they can move to `README.vi.md` once #37 is merged.  Checked: `python3 scripts/site.py` builds with no missing keys; `/vi/` and `/vi/start/` render correctly in Chrome; `scripts/check-agents.py` passes. Not run: the server tests against `wrangler dev`.
 
-- **Issue #31** (2026-11-14): **我做了一个 Windows 版本的**
-  *Symptoms*: https://github.com/LingyiChen-AI/huiyi
-  **Post-Mortem & Fix Analysis**:
-  > 谢谢分享，看到大家用知了的思路做自己的版本很开心！知了官方也有 Windows 版，在 [Releases](https://github.com/wquguru/cicada/releases/latest) 里下载。这里不是待处理的问题，先关闭了；有想合进知了的改进，欢迎提 PR 或新开 issue 讨论。
+- **Issue #37** (2026-11-18): **Docs: Vietnamese README**
+  *Symptoms*: Adds a Vietnamese translation of the README.  - `README.vi.md`: full translation of `README.md`, same 10 sections. UI names stay in English since the app has no Vietnamese localization yet; site links point to `/en/` pages. - Language switcher in all READMEs now links **Tiếng Việt**. - `scripts/polish-copy.py`: `vi` added to `LANGS` / `READMES` so release-time retranslation keeps it in step. - `AGENTS.md` and the release skill mention the fifth README.  `scripts/check-agents.py` passes.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1825,223 +1821,581 @@ class LingClient(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `058b2339` (2026-11-14)
-**Commit Message**: fix(windows): a notice says why listening stopped, and a disconnected room mic shows as off
+### Incident Patch 1: `26248cff` (2026-11-17)
+**Commit Message**: fix(ios): the Dynamic Island shows when listening is paused instead of a clock still running
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `windows/src/Cicada/App.cs` (modified, +7/-2)
+**File**: `ios/LiveActivity/CicadaLive.swift` (modified, +16/-8)
 ```diff
-@@ -511,8 +511,9 @@ void StartRoomSide()
-                     Toast(L("听会议室要先允许麦克风"), L("电脑声音照常在记"), () => Open("ms-settings:privacy-microphone"));
+@@ -122,13 +122,16 @@ struct ListenLiveActivity: Widget {
+                 DynamicIslandExpandedRegion(.leading) {
+                     HStack(spacing: 8) {
+                         LiveLogo(size: 26)
+-                        Text("正在听").font(.footnote.weight(.semibold)).foregroundStyle(LiveInk.accent)
++                        Text(context.state.paused ? "已暂停" : "正在听").font(.footnote.weight(.semibold))
++                            .foregroundStyle(context.state.paused ? .white.opacity(0.6) : LiveInk.accent)
+                     }
+                     .padding(.leading, 4)
                  }
-                 else if (reason == "none") Toast(L("没有可用的麦克风"), L("电脑声音照常在记"));
--                _ = StopRoomSide();
--                Changed();
-+                else Toast(L("会议室的麦克风断开了"), L("电脑声音照常在记"));
-+                // The mic is really off now: say so in the tray and the menu, not only stop hearing it.
-+                if (reason == "denied") { _ = StopRoomSide(); Changed(); } else SetMic(false);
-             });
-         };
-         HybridMicDenied = false;
-@@ -543,6 +544,10 @@ IAudioSource Watch(IAudioSource source)
-                     Toast(L("听会议室要先允许麦克风"), L("Windows 不让知了用麦克风：设置 › 隐私和安全性 › 麦克风"), () => Open("ms-settings:privacy-microphone"));
-                 else if (source is GatedSource && reason == "none")
-                     Toast(L("没有可用的麦克风"), L("插上麦克风后再开始听。"));
-+                else if (source is GatedSource)
-+                    Toast(L("会议室的麦克风断开了"), L("已停止记录；插好麦克风后再开始听。"));
-+                else
-+                    Toast(L("听不到电脑的声音了"), L("已停止记录；稍后再开始听，或重启电脑后再试。"));
-                 _ = StopListening();
-             });
-         };
-```
-
-**File**: `windows/src/Cicada/Strings/en.lproj/Windows.strings` (modified, +4/-0)
-```diff
-@@ -365,3 +365,7 @@
- "换个文件夹，或在它的属性里允许写入" = "Pick another folder, or allow writing in its Properties";
- "在文件资源管理器中显示" = "Show in File Explorer";
- "听起来不像或有杂音？换个安静的地方重录一次。录音仅保存在本机，可随时删除。" = "Doesn't sound like you, or noisy? Record again somewhere quiet. The recording stays on this PC and can be deleted anytime.";
-+"会议室的麦克风断开了" = "The room microphone disconnected";
-+"已停止记录；插好麦克风后再开始听。" = "Stopped recording. Plug the microphone back in, then start listening.";
-+"听不到电脑的声音了" = "Can't hear the PC's audio anymore";
-+"已停止记录；稍后再开始听，或重启电脑后再试。" = "Stopped recording. Start listening again in a moment, or restart the PC and try again.";
-```
-
-**File**: `windows/src/Cicada/Strings/ja.lproj/Windows.strings` (modified, +4/-0)
-```diff
-@@ -365,3 +365,7 @@
- "换个文件夹，或在它的属性里允许写入" = "別のフォルダを選ぶか、フォルダのプロパティで書き込みを許可してください";
- "在文件资源管理器中显示" = "エクスプローラーで表示";
- "听起来不像或有杂音？换个安静的地方重录一次。录音仅保存在本机，可随时删除。" = "似ていない、またはノイズがありますか？静かな場所で録り直してください。録音はこのPCにのみ保存され、いつでも削除できます。";
-+"会议室的麦克风断开了" = "会議室のマイクが切断されました";
-+"已停止记录；插好麦克风后再开始听。" = "記録を停止しました。マイクを接続し直してから聞き取りを開始してください。";
-+"听不到电脑的声音了" = "PC の音声を取得できなくなりました";
-+"已停止记录；稍后再开始听，或重启电脑后再试。" = "記録を停止しました。少し待ってから聞き取りを再開するか、PC を再起動してお試しください。";
-```
-
-**File**: `windows/src/Cicada/Strings/ko.lproj/Windows.strings` (modified, +4/-0)
-```diff
-@@ -365,3 +365,7 @@
- "换个文件夹，或在它的属性里允许写入" = "다른 폴더를 고르거나 폴더 속성에서 쓰기를 허용하세요";
- "在文件资源管理器中显示" = "파일 탐색기에서 보기";
- "听起来不像或有杂音？换个安静的地方重录一次。录音仅保存在本机，可随时删除。" = "내 목소리 같지 않거나 잡음이 있나요? 조용한 곳에서 다시 녹음해 보세요. 녹음은 이 PC에만 저장되며 언제든 삭제할 수 있습니다.";
-+"会议室的麦克风断开了" = "회의실 마이크 연결이 끊겼습니다";
-+"已停止记录；插好麦克风后再开始听。" = "기록을 멈췄습니다. 마이크를 다시 연결한 뒤 듣기를 시작하세요.";
-+"听不到电脑的声音了" = "PC 소리를 더 이상 들을 수 없습니다";
-+"已停止记录；稍后再开始听，或重启电脑后再试。" = "기록을 멈췄습니다. 잠시 후 다시 듣기를 시작하거나 PC를 다시 시작한 뒤 시도하세요.";
+                 DynamicIslandExpandedRegion(.trailing) {
+-                    Elapsed(since: context.attributes.startedAt).font(.footnote.weight(.semibold))
+-                        .foregroundStyle(.white).frame(maxWidth: 64, alignment: .trailing).padding(.trailing, 4)
++                    if !context.state.paused {
++                        Elapsed(since: context.attributes.startedAt).font(.footnote.weight(.semibold))
++                            .foregroundStyle(.white).frame(maxWidth: 64, alignment: .trailing).padding(.trailing, 4)
++                    }
+                 }
+                 DynamicIslandExpandedRegion(.bottom) {
+                     VStack(alignment: .leading, spacing: 4) {
+@@ -143,15 +146,20 @@ struct ListenLiveActivity: Widget {
+                 }
+             } compactLeading: {
+                 HStack(spacing: 5) {
+-                    Circle().fill(LiveInk.accent).frame(width: 7, height: 7)
++                    Circle().fill(context.state.paused ? LiveInk.grey : LiveInk.accent).frame(width: 7, height: 7)
+                     LiveLogo(size: 20)
+                 }
+             } compactTrailing: {
+-                Elapsed(since: context.attributes.startedAt)
+-                    .font(.caption.weight(.semibold)).foregroundStyle(LiveInk.accent)
+-                    .frame(maxWidth: 46)
++                // Paused: a still pause mark, not a clock that keeps running as if it were listening.
++                if context.state.paused {
++                    Image(systemName: "pause.fill").font(.caption.weight(.semibold)).foregroundStyle(.white.opacity(0.6))
++                } else {
++                    Elapsed(since: context.attributes.startedAt)
++                        .font(.caption.weight(.semibold)).foregroundStyle(LiveInk.accent)
++                        .frame(maxWidth: 46)
++                }
+             } minimal: {
+-                Circle().fill(LiveInk.accent).frame(width: 9, height: 9)
++                Circle().fill(context.state.paused ? LiveInk.grey : LiveInk.accent).frame(width: 9, height: 9)
+             }
+             .keylineTint(LiveInk.accent)
+         }
 ```
 
 ---
 
-### Incident Patch 2: `61eac690` (2026-11-14)
-**Commit Message**: docs: changelog for the Windows listening fixes
+### Incident Patch 2: `187524f1` (2026-11-17)
+**Commit Message**: build(ios): device builds, signed with a profile, plus the icon, privacy manifest and scripts for provisioning and TestFlight
+
+DEVICE=1 ios/scripts/build.sh builds for an iPhone and signs each bundle with its profile's
+entitlements. CicadaIcon --ios draws the full-bleed opaque iOS icon (the Mac icon is unchanged),
+compiled by actool. ios/tools/provision.py makes App IDs, devices, certificates and profiles
+through the App Store Connect API (openssl-signed JWT, no packages); ios/scripts/device.sh
+installs on a connected device; ios/scripts/testflight.sh packs and uploads the .ipa.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `site/changelog.json` (modified, +34/-1)
+**File**: `Sources/CicadaIcon/main.swift` (modified, +30/-10)
 ```diff
-@@ -1,9 +1,42 @@
- [
-+  {
-+    "version": "1.10.1",
-+    "date": null,
-+    "title": "Windows 听电脑声音更稳了",
-+    "summary": "声卡或音频服务重置后会自动接上，听不下去时会告诉你原因。",
-+    "image": null,
-+    "items": [
-+      {
-+        "kind": "fixed",
-+        "platforms": [
-+          "windows"
-+        ],
-+        "title": "音频服务重启、拔插扩展坞或驱动重置后，知了会自动重新接上电脑的声音。",
-+        "text": "以前出了这种情况，会议看着还在记，其实之后一个字都没录上，过十分钟被当成没人说话自动结束。现在会自动重新接上；一直接不上才停下，并告诉你原因。"
-+      },
-+      {
-+        "kind": "fixed",
-+        "platforms": [
-+          "windows"
-+        ],
-+        "title": "听不下去时会弹出提示说明原因，不再一声不响地停下。",
-+        "text": "听不到电脑声音、会议室的麦克风断开时都会提示。电脑和会议室一起听时麦克风断开，托盘里的麦克风也会跟着显示为关闭，电脑声音照常在记。"
-+      },
-+      {
-+        "kind": "fixed",
-+        "platforms": [
-+          "windows"
-+        ],
-+        "title": "允许过麦克风但从没用过的应用，不再被当成正在通话。",
-+        "text": "这类应用会让知了以为一直在开会，没人说话时也不自动结束。"
-+      }
-+    ]
-+  },
-   {
-     "version": "1.10.0",
-     "date": "2026-11-14",
-     "title": "同传用你自己的声音，各端都有了",
--    "summary": "Windows、Linux 的同声传译和 Android 的面对面都能用你自己的声音说译文；Android 还能给每种语言选声音。Android 面对面也能听到隔着桌子正常说话的人了。 Mac 能记住认识的人、手动改纪要、用录音重新转写。",
-+    "summary": "Windows、Linux 的同声传译和 Android 的面对面都能用你自己的声音说译文；Android 还能给每种语言选声音。Android 面对面也能听到隔着桌子正常说话的人了。Mac 能记住认识的人、手动改纪要、用录音重新转写。",
-     "image": null,
-     "items": [
-       {
+@@ -82,21 +82,28 @@ enum CicadaLogo {
+     }
+ }
+ 
+-func render(_ px: Int, dev: Bool) -> Data {
++/// `ios`: the iPhone and iPad icon, a full-bleed opaque square (the system draws the corners and
++/// App Store Connect refuses an alpha channel); otherwise the macOS grid with its margin and shadow.
++func render(_ px: Int, dev: Bool, ios: Bool = false) -> Data {
+     let rep = NSBitmapImageRep(bitmapDataPlanes: nil, pixelsWide: px, pixelsHigh: px, bitsPerSample: 8,
+                                samplesPerPixel: 4, hasAlpha: true, isPlanar: false, colorSpaceName: .deviceRGB,
+                                bytesPerRow: 0, bitsPerPixel: 0)!
+     NSGraphicsContext.saveGraphicsState()
+     NSGraphicsContext.current = NSGraphicsContext(bitmapImageRep: rep)
+     let s = CGFloat(px) / 1024
+     // macOS icon grid: an 824 pt body inset 100 pt, corner ≈ 185 pt.
+-    let body = NSRect(x: 100 * s, y: 100 * s, width: 824 * s, height: 824 * s)
+-    let squircle = NSBezierPath(roundedRect: body, xRadius: 185 * s, yRadius: 185 * s)
+-    let shadow = NSShadow()
+-    shadow.shadowBlurRadius = 20 * s
+-    shadow.shadowOffset = NSSize(width: 0, height: -8 * s)
+-    shadow.shadowColor = NSColor.black.withAlphaComponent(0.25)
+-    shadow.set()
++    // iOS: the body overflows the canvas by 80 pt a side, so the logo's own rounded tile reaches
++    // past every corner and the system's mask is the only rounding.
++    let body = ios ? NSRect(x: -80 * s, y: -80 * s, width: 1184 * s, height: 1184 * s) : NSRect(x: 100 * s, y: 100 * s, width: 824 * s, height: 824 * s)
++    let squircle = ios ? NSBezierPath(rect: NSRect(x: 0, y: 0, width: 1024 * s, height: 1024 * s))
++        : NSBezierPath(roundedRect: body, xRadius: 185 * s, yRadius: 185 * s)
++    if !ios {
++        let shadow = NSShadow()
++        shadow.shadowBlurRadius = 20 * s
++        shadow.shadowOffset = NSSize(width: 0, height: -8 * s)
++        shadow.shadowColor = NSColor.black.withAlphaComponent(0.25)
++        shadow.set()
++    }
+     orange.setFill()
+     squircle.fill()
+     NSShadow().set()
+@@ -115,21 +122,34 @@ func render(_ px: Int, dev: Bool) -> Data {
+         NSGraphicsContext.saveGraphicsState()
+         squircle.addClip()
+         ink.setFill()
+-        NSRect(x: body.minX, y: body.minY, width: body.width, height: 170 * s).fill()
++        let band = ios ? NSRect(x: 0, y: 0, width: 1024 * s, height: 190 * s) : NSRect(x: body.minX, y: body.minY, width: body.width, height: 170 * s)
++        band.fill()
+         let font = NSFont.systemFont(ofSize: 110 * s, weight: .heavy)
+         let text = NSAttributedString(string: "DEV", attributes: [
+             .font: font, .foregroundColor: NSColor.white, .kern: 14 * s,
+         ])
+         let size = text.size()
+-        text.draw(at: NSPoint(x: body.midX - size.width / 2 + 7 * s, y: body.minY + (170 * s - size.height) / 2 + 6 * s))
++        text.draw(at: NSPoint(x: band.midX - size.width / 2 + 7 * s, y: band.minY + (band.height - size.height) / 2 + 6 * s))
+         NSGraphicsContext.restoreGraphicsState()
+     }
+     NSGraphicsContext.restoreGraphicsState()
++    if ios, let image = rep.cgImage,
++       let opaque = CGContext(data: nil, width: px, height: px, bitsPerComponent: 8, bytesPerRow: 0,
++                              space: CGColorSpaceCreateDeviceRGB(), bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue) {
++        // Drawn again without an alpha channel: a fully opaque RGBA PNG is still refused.
++        opaque.draw(image, in: CGRect(x: 0, y: 0, width: px, height: px))
++        if let flat = opaque.makeImage() { return NSBitmapImageRep(cgImage: flat).representation(using: .png, properties: [:])! }
++    }
+     return rep.representation(using: .png, properties: [:])!
+ }
+ 
+ let args = Array(CommandLine.arguments.dropFirst())
+ let dev = args.contains("--dev")
++// --ios <file.png>: the 1024 px iOS icon only (ios/scripts/build.sh).
++if let i = args.firstIndex(of: "--ios"), i + 1 < args.count {
++    try render(1024, dev: dev, ios: true).write(to: URL(fileURLWithPath: args[i + 1]))
++    exit(0)
++}
+ let out = URL(fileURLWithPath: args.first { $0 != "--dev" } ?? "AppIcon.iconset")
+ try FileManager.default.createDirectory(at: out, withIntermediateDirectories: true)
+ for size in [16, 32, 128, 256, 512] {
+```
+
+**File**: `ios/Resources/Info.plist` (modified, +2/-0)
+```diff
+@@ -32,6 +32,8 @@
+ 	<array>
+ 		<string>iPhoneSimulator</string>
+ 	</array>
++	<key>ITSAppUsesNonExemptEncryption</key>
++	<false/>
+ 	<key>LSRequiresIPhoneOS</key>
+ 	<true/>
+ 	<key>MinimumOSVersion</key>
+```
+
+**File**: `ios/Resources/PrivacyInfo.xcprivacy` (added, +34/-0)
+```diff
+@@ -0,0 +1,34 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
++<!-- The app's privacy manifest (App Store Connect refuses builds without one that use these APIs).
++     UserDefaults: the app's own settings (CA92.1). File timestamps: of files in the app's container,
++     an imported copy's date and the voice clip's age (C617.1). No tracking. -->
++<plist version="1.0">
++<dict>
++	<key>NSPrivacyTracking</key>
++	<false/>
++	<key>NSPrivacyTrackingDomains</key>
++	<array/>
++	<key>NSPrivacyCollectedDataTypes</key>
++	<array/>
++	<key>NSPrivacyAccessedAPITypes</key>
++	<array>
++		<dict>
++			<key>NSPrivacyAccessedAPIType</key>
++			<string>NSPrivacyAccessedAPICategoryUserDefaults</string>
++			<key>NSPrivacyAccessedAPITypeReasons</key>
++			<array>
++				<string>CA92.1</string>
++			</array>
++		</dict>
++		<dict>
++			<key>NSPrivacyAccessedAPIType</key>
++			<string>NSPrivacyAccessedAPICategoryFileTimestamp</string>
++			<key>NSPrivacyAccessedAPITypeReasons</key>
++			<array>
++				<string>C617.1</string>
++			</array>
++		</dict>
++	</array>
++</dict>
++</plist>
+```
+
+**File**: `ios/scripts/build.sh` (modified, +66/-12)
+```diff
+@@ -1,13 +1,26 @@
+ #!/usr/bin/env bash
+-# Builds ios/build/Cicada.app for the iOS simulator: the shared Mac sources (ios/shared-sources.txt)
+-# and ios/Sources in one module, bundled by hand like the Mac's scripts/build.sh (no .xcodeproj).
++# Builds Cicada.app: the shared Mac sources (ios/shared-sources.txt) and ios/Sources in one module,
++# bundled by hand like the Mac's scripts/build.sh (no .xcodeproj).
+ # Without RELEASE=1 it is a dev build: "Cicada Dev", bundle id com.wquguru.cicada.dev, cicada-dev:// commands.
++#   ios/scripts/build.sh                 the simulator: ios/build/Cicada.app, signed ad hoc
++#   DEVICE=1 ios/scripts/build.sh        an iPhone or iPad: ios/build/device/Cicada.app, signed with
++#                                        SIGN_IDENTITY and the profiles PROFILE (app) and PROFILE_LIVE
++#                                        (the extension); ios/scripts/provision.sh makes them
++# BUILD_NUMBER sets CFBundleVersion (TestFlight wants it to grow); default: the commit count.
+ set -euo pipefail
+ cd "$(dirname "$0")/../.."
+ 
+-SDK=iphonesimulator
+-TARGET=arm64-apple-ios26.0-simulator
+-APP=ios/build/Cicada.app
++if [[ "${DEVICE:-}" == 1 ]]; then
++  SDK=iphoneos
++  TARGET=arm64-apple-ios26.0
++  APP=ios/build/device/Cicada.app
++  PLATFORM=iPhoneOS
++else
++  SDK=iphonesimulator
++  TARGET=arm64-apple-ios26.0-simulator
++  APP=ios/build/Cicada.app
++  PLATFORM=iPhoneSimulator
++fi
+ rm -rf "$APP"
+ mkdir -p "$APP"
+ 
+@@ -45,6 +58,20 @@ xcrun --sdk "$SDK" swiftc -O -swift-version 5 -parse-as-library -module-name Cic
+ intents_metadata Cicada "$APP" "$APP/Cicada" "${files[@]}"
+ 
+ cp ios/Resources/Info.plist "$APP/Info.plist"
++cp ios/Resources/PrivacyInfo.xcprivacy "$APP/"
++# The home screen icon: the Mac's renderer draws the full-bleed iOS square (no alpha), actool
++# compiles it into Assets.car and says which Info.plist keys point at it.
++ICON_TOOL=.build/release/CicadaIcon
++[[ -x $ICON_TOOL ]] || swift build -c release --product CicadaIcon >/dev/null
++mkdir -p "$WORK/Assets.xcassets/AppIcon.appiconset"
++"$ICON_TOOL" --ios "$WORK/Assets.xcassets/AppIcon.appiconset/icon.png" $([[ "${RELEASE:-}" == 1 ]] || echo --dev)
++printf '%s' '{"images":[{"filename":"icon.png","idiom":"universal","platform":"ios","size":"1024x1024"}],"info":{"author":"xcode","version":1}}' \
++  > "$WORK/Assets.xcassets/AppIcon.appiconset/Contents.json"
++printf '%s' '{"info":{"author":"xcode","version":1}}' > "$WORK/Assets.xcassets/Contents.json"
++xcrun actool "$WORK/Assets.xcassets" --compile "$APP" --platform "$SDK" --minimum-deployment-target 26.0 \
++  --app-icon AppIcon --target-device iphone --target-device ipad \
++  --output-partial-info-plist "$WORK/assets.plist" --output-format human-readable-text >/dev/null
++/usr/libexec/PlistBuddy -c "Merge $WORK/assets.plist" "$APP/Info.plist" >/dev/null
+ # UI text is the Mac's: the Chinese source is the key, the other languages translate it.
+ for d in Resources/*.lproj; do
+   mkdir -p "$APP/$(basename "$d")"
+@@ -56,8 +83,6 @@ cp Resources/sample/sample.m4a "$APP/"
+ cp -R Resources/models/SpeakerEmbedding.mlpackage "$APP/"
+ # The logo on the 听会议室 card: the Mac's own icon renderer (Sources/CicadaIcon), not a fourth
+ # copy of the geometry. It is a host tool, built once.
+-ICON_TOOL=.build/release/CicadaIcon
+-[[ -x $ICON_TOOL ]] || swift build -c release --product CicadaIcon >/dev/null
+ ICONS=$(mktemp -d)
+ "$ICON_TOOL" "$ICONS/logo.iconset" >/dev/null
+ cp "$ICONS/logo.iconset/icon_128x128@2x.png" "$APP/logo.png"
+@@ -80,7 +105,22 @@ cp "$APP/logo.png" "$APPEX/"
+ for d in "$APP"/*.lproj; do cp -R "$d" "$APPEX/"; done
+ 
+ PLIST="$APP/Info.plist"
+-/usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $(tr -d '[:space:]' < VERSION)" "$PLIST"
++BUILD=${BUILD_NUMBER:-$(git rev-list --count HEAD 2>/dev/null || echo 1)}
++for p in "$PLIST" "$APPEX/Info.plist"; do
++  /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $(tr -d '[:space:]' < VERSION)" \
++    -c "Set :CFBundleVersion $BUILD" -c "Set :CFBundleSupportedPlatforms:0 $PLATFORM" "$p"
++done
++# What Xcode writes into every bundle it builds; App Store Connect checks them.
++SDKVER=$(xcrun --sdk "$SDK" --show-sdk-version)
++SDKBUILD=$(xcrun --sdk "$SDK" --show-sdk-build-version)
++XCBUILD=$(xcodebuild -version | awk '/Build version/{print $3}')
++XCVER=$(xcodebuild -version | awk '/^Xcode/{split($2,v,"."); printf "%d%d%d0", v[1], v[2], v[3]}')
++for p in "$PLIST" "$APPEX/Info.plist"; do
++  /usr/libexec/PlistBuddy -c "Add :DTPlatformName string $SDK" -c "Add :DTPlatformVersion string $SDKVER" \
++    -c "Add :DTPlatformBuild string $SDKBUILD" -c "Add :DTSDKName string $SDK$SDKVER" -c "Add :DTSDKBuild string $SDKBUILD" \
++    -c "Add :DTXcode string $XCVER" -c "Add :DTXcodeBuild string $XCBUILD" \
++    -c "Add :DTCompiler string com.apple.compilers.llvm.clang.1_0" -c "Add :BuildMachineOSBuild string $(sw_vers -buildVersion)" "$p"
++done
+ if [[ "${RELEASE:-}" != 1 ]]; then
+   STAMP="$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo local) @ $(git 
+```
+
+**File**: `ios/scripts/device.sh` (added, +16/-0)
+```diff
+@@ -0,0 +1,16 @@
++#!/usr/bin/env bash
++# Builds the dev app for a connected iPhone or iPad, installs and opens it.
++#   ios/scripts/device.sh [<device name or UDID>]
++# Signing: the variables ios/tools/provision.py development prints, read from
++# ~/.cicada-signing/ios-development.env (run provision.py once and save its output there).
++set -euo pipefail
++cd "$(dirname "$0")/../.."
++ENV=~/.cicada-signing/ios-development.env
++[[ -f $ENV ]] || { echo "no $ENV: ios/tools/provision.py development > $ENV"; exit 1; }
++# shellcheck disable=SC1090
++source "$ENV"
++DEVICE=1 ios/scripts/build.sh
++TARGET=${1:-$(xcrun devicectl list devices | grep -E 'available \(paired\)|connected' | grep -v simulated | grep -oE '[0-9A-F]{8}-[0-9A-F]{16}' | head -1)}
++[[ -n $TARGET ]] || { echo "no iPhone or iPad connected"; exit 1; }
++xcrun devicectl device install app --device "$TARGET" ios/build/device/Cicada.app
++xcrun devicectl device process launch --device "$TARGET" com.wquguru.cicada.dev
+```
+
+**File**: `ios/scripts/testflight.sh` (added, +26/-0)
+```diff
+@@ -0,0 +1,26 @@
++#!/usr/bin/env bash
++# Builds the release app for the App Store, packs it as an .ipa and uploads it to App Store Connect,
++# where it shows up in TestFlight after processing (10–30 min).
++#   ios/scripts/testflight.sh            build, pack and upload
++#   ios/scripts/testflight.sh --no-upload
++# Signing: ~/.cicada-signing/ios-appstore.env (ios/tools/provision.py appstore > that file).
++# Upload: ASC_KEY_ID and ASC_ISSUER_ID, with the key's .p8 in ~/.cicada-signing (altool looks there
++# through API_PRIVATE_KEYS_DIR). The app's record must exist in App Store Connect first.
++set -euo pipefail
++cd "$(dirname "$0")/../.."
++ENV=~/.cicada-signing/ios-appstore.env
++[[ -f $ENV ]] || { echo "no $ENV: ios/tools/provision.py appstore > $ENV"; exit 1; }
++# shellcheck disable=SC1090
++source "$ENV"
++RELEASE=1 DEVICE=1 ios/scripts/build.sh
++OUT=ios/build/testflight
++rm -rf "$OUT" && mkdir -p "$OUT/Payload"
++cp -R ios/build/device/Cicada.app "$OUT/Payload/"
++(cd "$OUT" && zip -qry Cicada.ipa Payload)
++echo "Packed $OUT/Cicada.ipa"
++[[ "${1:-}" == --no-upload ]] && exit 0
++: "${ASC_KEY_ID:?}" "${ASC_ISSUER_ID:?}"
++API_PRIVATE_KEYS_DIR=~/.cicada-signing xcrun altool --validate-app -f "$OUT/Cicada.ipa" -t ios \
++  --apiKey "$ASC_KEY_ID" --apiIssuer "$ASC_ISSUER_ID"
++API_PRIVATE_KEYS_DIR=~/.cicada-signing xcrun altool --upload-app -f "$OUT/Cicada.ipa" -t ios \
++  --apiKey "$ASC_KEY_ID" --apiIssuer "$ASC_ISSUER_ID"
+```
+
+**File**: `ios/tools/asc.py` (added, +69/-0)
+```diff
+@@ -0,0 +1,69 @@
++#!/usr/bin/env python3
++"""App Store Connect API for iOS signing, without Xcode's account sign-in and without third-party
++packages: the JWT is signed with openssl (ES256), requests go through urllib.
++
++Credentials come from the environment (never from the repo):
++  ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_PATH (the .p8, e.g. ~/.cicada-signing/AuthKey_<id>.p8)
++
++  ios/tools/asc.py get <path>                  e.g. /v1/bundleIds?filter[identifier]=com.wquguru.cicada
++  ios/tools/asc.py post <path> <json>
++  ios/tools/asc.py delete <path>
++Prints the JSON reply. ios/scripts/provision.sh builds on it.
++"""
++import base64, json, os, subprocess, sys, tempfile, time, urllib.error, urllib.request
++
++BASE = "https://api.appstoreconnect.apple.com"
++
++
++def b64url(b: bytes) -> str:
++    return base64.urlsafe_b64encode(b).rstrip(b"=").decode()
++
++
++def der_to_raw(der: bytes) -> bytes:
++    """openssl's ECDSA signature is DER (SEQUENCE of two INTEGERs); a JWT wants r || s, 32 bytes each."""
++    def read_int(buf, i):
++        assert buf[i] == 0x02
++        n = buf[i + 1]
++        v = buf[i + 2:i + 2 + n]
++        return v.lstrip(b"\x00").rjust(32, b"\x00"), i + 2 + n
++    assert der[0] == 0x30
++    i = 2 if der[1] < 0x80 else 2 + (der[1] & 0x7F)
++    r, i = read_int(der, i)
++    s, _ = read_int(der, i)
++    return r + s
++
++
++def token() -> str:
++    key_id, issuer, path = os.environ["ASC_KEY_ID"], os.environ["ASC_ISSUER_ID"], os.path.expanduser(os.environ["ASC_KEY_PATH"])
++    now = int(time.time())
++    head = b64url(json.dumps({"alg": "ES256", "kid": key_id, "typ": "JWT"}).encode())
++    body = b64url(json.dumps({"iss": issuer, "iat": now, "exp": now + 1100, "aud": "appstoreconnect-v1"}).encode())
++    signing = f"{head}.{body}".encode()
++    der = subprocess.run(["openssl", "dgst", "-sha256", "-sign", path], input=signing, capture_output=True, check=True).stdout
++    return f"{head}.{body}.{b64url(der_to_raw(der))}"
++
++
++def call(method: str, path: str, data=None):
++    req = urllib.request.Request(BASE + path, method=method,
++                                 data=json.dumps(data).encode() if data is not None else None,
++                                 headers={"Authorization": f"Bearer {token()}", "Content-Type": "application/json"})
++    try:
++        with urllib.request.urlopen(req, timeout=60) as r:
++            raw = r.read()
++            return r.status, json.loads(raw) if raw else {}
++    except urllib.error.HTTPError as e:
++        raw = e.read()
++        try:
++            return e.code, json.loads(raw)
++        except ValueError:
++            return e.code, {"raw": raw.decode(errors="replace")}
++
++
++if __name__ == "__main__":
++    if len(sys.argv) < 3:
++        sys.exit(__doc__)
++    method, path = sys.argv[1].upper(), sys.argv[2]
++    data = json.loads(sys.argv[3]) if len(sys.argv) > 3 else None
++    status, reply = call(method, path, data)
++    print(json.dumps({"status": status, **reply} if isinstance(reply, dict) else {"status": status, "data": reply}, ensure_ascii=False, indent=1))
++    sys.exit(0 if status < 400 else 1)
+```
+
+**File**: `ios/tools/provision.py` (added, +120/-0)
+```diff
+@@ -0,0 +1,120 @@
++#!/usr/bin/env python3
++"""Makes what a signed iOS build needs, through the App Store Connect API (ios/tools/asc.py):
++the App IDs, the connected devices, a certificate whose private key is on this Mac, and the two
++provisioning profiles (the app and the CicadaLive extension). Prints the variables
++ios/scripts/build.sh signs with. Safe to run again: it reuses what is there.
++
++  ios/tools/provision.py development        Apple Development, the dev bundle ids, this Mac's devices
++  ios/tools/provision.py appstore           Apple Distribution, the release bundle ids (TestFlight)
++
++Needs ASC_KEY_ID, ASC_ISSUER_ID, ASC_KEY_PATH for a key that may manage Certificates,
++Identifiers & Profiles (Admin, or App Manager with that access). Keys and certificates live in
++~/.cicada-signing (0700); the certificate goes into the login keychain, usable by codesign only.
++"""
++import base64, json, os, re, subprocess, sys
++sys.path.insert(0, os.path.dirname(__file__))
++from asc import call
++
++HOME = os.path.expanduser("~/.cicada-signing")
++KIND = sys.argv[1] if len(sys.argv) > 1 else "development"
++DEV = KIND == "development"
++APP_ID = "com.wquguru.cicada.dev" if DEV else "com.wquguru.cicada"
++IDS = {APP_ID: "Cicada Dev" if DEV else "Cicada", APP_ID + ".live": "Cicada Dev Live" if DEV else "Cicada Live"}
++CERT_TYPE = "DEVELOPMENT" if DEV else "DISTRIBUTION"
++PROFILE_TYPE = "IOS_APP_DEVELOPMENT" if DEV else "IOS_APP_STORE"
++
++
++def ok(status, reply, what):
++    if status >= 400:
++        sys.exit(f"{what} failed ({status}): {json.dumps(reply.get('errors', reply), ensure_ascii=False)}")
++    return reply
++
++
++def run(*cmd, **kw):
++    return subprocess.run(cmd, check=True, capture_output=True, text=True, **kw).stdout
++
++
++def bundle_id(identifier, name):
++    _, r = call("GET", f"/v1/bundleIds?filter[identifier]={identifier}&fields[bundleIds]=identifier,platform")
++    found = [b for b in r.get("data", []) if b["attributes"]["identifier"] == identifier]
++    if found:
++        return found[0]["id"]
++    r = ok(*call("POST", "/v1/bundleIds", {"data": {"type": "bundleIds", "attributes": {
++        "identifier": identifier, "name": name, "platform": "IOS"}}}), f"register {identifier}")
++    print(f"registered App ID {identifier}", file=sys.stderr)
++    return r["data"]["id"]
++
++
++def devices():
++    """Physical devices this Mac is paired with, registered if they aren't yet."""
++    out = run("xcrun", "devicectl", "list", "devices")
++    udids = {m.group(2): m.group(1).strip() for m in re.finditer(r"^(\S.*?)\s{2,}.*?([0-9A-F]{8}-[0-9A-F]{16}) \(UDID\)", out, re.M)}
++    _, r = call("GET", "/v1/devices?limit=200&fields[devices]=udid,name,status")
++    known = {d["attributes"]["udid"]: d["id"] for d in r.get("data", [])}
++    ids = []
++    for udid, name in udids.items():
++        if udid not in known:
++            r2 = ok(*call("POST", "/v1/devices", {"data": {"type": "devices", "attributes": {
++                "name": name, "udid": udid, "platform": "IOS"}}}), f"register device {name}")
++            known[udid] = r2["data"]["id"]
++            print(f"registered device {name} {udid}", file=sys.stderr)
++        ids.append(known[udid])
++    if not ids:
++        sys.exit("no iPhone or iPad connected (xcrun devicectl list devices)")
++    return ids
++
++
++def certificate():
++    """A certificate of this kind whose private key is in ~/.cicada-signing; made if there is none."""
++    key, cer = f"{HOME}/ios-{KIND}.key", f"{HOME}/ios-{KIND}.cer"
++    _, r = call("GET", f"/v1/certificates?filter[certificateType]={CERT_TYPE}&fields[certificates]=certificateContent,serialNumber,expirationDate")
++    if os.path.exists(key) and os.path.exists(cer):
++        mine = run("openssl", "x509", "-inform", "der", "-in", cer, "-noout", "-serial").split("=")[1].strip().upper()
++        for c in r.get("data", []):
++            if c["attributes"]["serialNumber"].upper().lstrip("0") == mine.lstrip("0"):
++                return c["id"], cer
++    os.makedirs(HOME, mode=0o700, exist_ok=True)
++    run("openssl", "genrsa", "-out", key, "2048")
++    os.chmod(key, 0o600)
++    csr = run("openssl", "req", "-new", "-key", key, "-subj", f"/CN=Cicada iOS {KIND}/O=Indaloop LLC")
++    r = ok(*call("POST", "/v1/certificates", {"data": {"type": "certificates", "attributes": {
++        "certificateType": CERT_TYPE, "csrContent": csr}}}), f"create {CERT_TYPE} certificate")
++    with open(cer, "wb") as f:
++        f.write(base64.b64decode(r["data"]["attributes"]["certificateContent"]))
++    # Into the login keychain, the key usable by codesign without a prompt.
++    p12, password = f"{HOME}/ios-{KIND}.p12", base64.b64encode(os.urandom(18)).decode()
++    pem = run("openssl", "x509", "-inform", "der", "-in", cer)
++    run("openssl", "pkcs12", "-export", "-legacy", "-inkey", key, "-out", p12, "-passout", f"pass:{password}", input=pem)
++    run("security", "import", p12, "-k", os.path.expanduser("~/Library/Keychains/login.keychain-db"),
++        "-P", password, "-T
 ```
 
 ---
 
-### Incident Patch 3: `97c4416e` (2026-11-14)
-**Commit Message**: docs: changelog, READMEs and debug commands for editing notes in place
+### Incident Patch 3: `55a395d2` (2026-11-17)
+**Commit Message**: fix(ios): AI service and key pages check the key again when opened after a failure, with a Check again button and pull to refresh
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `README.ja.md` (modified, +1/-1)
+**File**: `ios/Sources/Cicada/AIServicePage.swift` (modified, +13/-0)
 ```diff
-@@ -78,7 +78,7 @@ Mac では「設定 › 同時通訳」で「キーを押さずに」もオン
+@@ -138,6 +138,8 @@ struct AIServicePage: View {
+         }
+         .background(Ink.ground)
+         .navigationTitle(Text("AI 服务"))
++        .onAppear { ling.recheckIfFailed() }
++        .refreshable { await ling.check() }
+         .navigationBarTitleDisplayMode(.inline)
+     }
  
- 二か国語の記録、メモ、元の録音はすべて端末内に保存されます。任意の文をクリックするとその位置から再生でき、文字がハイライトされて自動でスクロールします。端末内の声紋モデルが話者を自動で区別し（Ling キーがあれば名前も補完）、間違っていればいつでも名前の変更や統合ができます。Mac では話者に名前を付けて「この声を記憶」を押すと（先に相手の了承を得てください）、以降の会議で自動的に判別します。声紋はこの Mac にだけ保存され、「設定 › 一般 › 話者を記憶」で管理・削除できます。現在、記録内の「あなた」に含まれるのは話すキーを押して話した内容のみで、会議でそのまま話した分については[ロードマップ](#ロードマップ)をご覧ください。
+@@ -194,6 +196,17 @@ struct AIServicePage: View {
+     }
+ }
  
--会議後にメモを追加生成したり、メインウインドウの「メモを編集」で手直ししたり、言語を間違えたときは録音から「もう一度文字起こし」したり、Markdown、Word、SRT 字幕にエクスポートしたり、「ファイル › 録音・動画を読み込む…」から手元の音声や動画を文字起こししたりできます。Mac の「議事メモをコピー」（⇧⌘C）は、Feishu・Notion・Word に貼ると見出し・箇条書き・フィッシュボーン図がそのまま入り、チャットには Markdown で貼られます。「設定 › 一般 › フォルダに保存」をオンにすると、会議ごとに Markdown（先頭にエージェント向けの frontmatter 付き）が Obsidian の保管庫などのフォルダに自動保存され、名前の変更や再整理に合わせてファイルも更新されます。
-+会議後にメモを追加生成したり、メインウインドウで要約・結論・ToDo をクリックしてその場で直したり、言語を間違えたときは録音から「もう一度文字起こし」したり、Markdown、Word、SRT 字幕にエクスポートしたり、「ファイル › 録音・動画を読み込む…」から手元の音声や動画を文字起こししたりできます。Mac の「議事メモをコピー」（⇧⌘C）は、Feishu・Notion・Word に貼ると見出し・箇条書き・フィッシュボーン図がそのまま入り、チャットには Markdown で貼られます。「設定 › 一般 › フォルダに保存」をオンにすると、会議ごとに Markdown（先頭にエージェント向けの frontmatter 付き）が Obsidian の保管庫などのフォルダに自動保存され、名前の変更や再整理に合わせてファイルも更新されます。
- 
- 「共有…」でメモのリンク（任意で二か国語の全文付き）を作成でき、有効期限とパスワードの設定に対応しています。アップロード前にはキーや未公開の社内情報などの機密内容を自動でブロックします。
- 
++extension LingClient {
++    /// Opening AI 服务 after a failed check asks again: what was wrong may have been fixed on the
++    /// service's side (a key's model list, its credit) without anything changing here.
++    func recheckIfFailed() {
++        switch keyState {
++        case .invalid, .unreachable, .unchecked: Task { await check() }
++        default: break
++        }
++    }
++}
++
+ extension AppModel {
+     /// The service, its address or a model changed: LingClient checks again and 面对面 takes the
+     /// service's voices.
 ```
 
-**File**: `README.ko.md` (modified, +1/-1)
+**File**: `ios/Sources/Cicada/SettingsView.swift` (modified, +4/-1)
 ```diff
-@@ -78,7 +78,7 @@ Mac에서는 "설정 › 동시통역"에서 "키 없이 말하기"를 켤 수
+@@ -313,7 +313,9 @@ struct KeyPage: View {
+                 }
+                 if ling.key != nil && !editing {
+                     HStack {
+-                        if case .unreachable = ling.keyState { Button("重试") { Task { await ling.check() } } }
++                        // Any state: a key fixed on the service's side (its model list, its credit) is checked again here.
++                        Button("重新检查") { Task { await ling.check() } }
++                            .disabled(ling.keyState == .checking)
+                         Spacer()
+                         Button("移除", role: .destructive) { ling.removeKey() }
+                     }
+@@ -327,6 +329,7 @@ struct KeyPage: View {
+         }
+         .background(Ink.ground)
+         .navigationTitle(Text(verbatim: ling.provider.id == .custom ? "Key" : "\(ling.provider.name) key"))
++        .onAppear { ling.recheckIfFailed() }
+         .navigationBarTitleDisplayMode(.inline)
+     }
  
- 이중 언어 기록, 회의록, 원본 녹음은 모두 기기에 저장됩니다. 아무 문장이나 클릭하면 그 위치부터 다시 들을 수 있고, 글자가 강조되며 함께 스크롤됩니다. 기기 내 성문 모델이 화자를 자동으로 구분하며(Ling 키가 있으면 이름도 채움), 잘못 구분되면 언제든 이름을 바꾸거나 합칠 수 있습니다. Mac에서는 화자에게 이름을 붙이고 "이 목소리 기억"을 누르면(먼저 상대에게 알려 주세요) 이후 회의에서 바로 알아봅니다. 성문은 이 Mac에만 저장되며 "설정 › 일반 › 발화자 기억"에서 관리하거나 삭제할 수 있습니다. 현재 기록에 남는 내 발언은 말하기 키를 누르고 말한 내용뿐이며, 회의에서 바로 말한 부분은 [로드맵](#로드맵)을 참고하세요.
- 
--회의 후 회의록을 추가로 생성하거나 메인 창의 "메모 편집"으로 직접 고치고, 언어를 잘못 골랐다면 녹음으로 "다시 받아쓰기"를 할 수 있으며, Markdown, Word, SRT 자막으로 내보내거나, "파일 › 녹음 또는 동영상 가져오기…"로 로컬 오디오·비디오를 변환할 수 있습니다. Mac의 "회의록 복사하기"(⇧⌘C)는 Feishu, Notion, Word에 붙이면 제목·목록·피시본 다이어그램이 그대로 들어가고, 채팅창에는 Markdown으로 붙습니다. "설정 › 일반 › 폴더에 저장"을 켜면 회의마다 Markdown(앞부분에 에이전트용 frontmatter 포함)으로 Obsidian 보관함 등의 폴더에 자동 저장되고, 이름을 바꾸거나 다시 정리하면 파일도 함께 갱신됩니다.
-+회의 후 회의록을 추가로 생성하거나 메인 창에서 요약·결론·할 일을 클릭해 바로 고치고, 언어를 잘못 골랐다면 녹음으로 "다시 받아쓰기"를 할 수 있으며, Markdown, Word, SRT 자막으로 내보내거나, "파일 › 녹음 또는 동영상 가져오기…"로 로컬 오디오·비디오를 변환할 수 있습니다. Mac의 "회의록 복사하기"(⇧⌘C)는 Feishu, Notion, Word에 붙이면 제목·목록·피시본 다이어그램이 그대로 들어가고, 채팅창에는 Markdown으로 붙습니다. "설정 › 일반 › 폴더에 저장"을 켜면 회의마다 Markdown(앞부분에 에이전트용 frontmatter 포함)으로 Obsidian 보관함 등의 폴더에 자동 저장되고, 이름을 바꾸거나 다시 정리하면 파일도 함께 갱신됩니다.
- 
- "공유…"를 누르면 회의록 링크(선택 시 이중 언어 전문 포함)를 만들 수 있으며, 유효 기간과 비밀번호 설정을 지원합니다. 업로드 전에는 키나 미공개 회사 정보 같은 민감한 내용을 자동으로 차단합니다.
- 
-```
-
-**File**: `README.md` (modified, +1/-1)
-```diff
-@@ -78,7 +78,7 @@ Turning on interpreting switches the system microphone to BlackHole 2ch, a virtu
- 
- Bilingual transcripts, notes, and raw audio recordings are saved on your device. Click any line to play from that point while the text highlights and scrolls along. The on-device voiceprint model automatically separates speakers (and fills in their names when a Ling key is set), and you can rename or merge them anytime if someone is misidentified. On the Mac, name a speaker and click **Remember this voice** (check with them first) and later meetings recognize them; the voiceprint stays on this Mac, and **Settings › General › Remember speakers** manages or deletes it. Right now "you" in the record only covers what you say while holding the talk key; capturing what you say directly in the meeting is on the [roadmap](#roadmap).
- 
--After a meeting, you can generate notes retroactively, fix them by hand with **Edit Notes** in the main window, use **Transcribe Again** on the recording if the wrong language was picked, export to Markdown, Word, and SRT subtitles, or transcribe local audio and video files via **File › Import Recording or Video…**. On the Mac, **Copy Notes** (⇧⌘C) pastes into Feishu, Notion or Word with its headings, lists and fishbone picture, and as Markdown into a chat. Turn on **Settings › General › Save to folder** and each meeting is also automatically saved as Markdown (with frontmatter at the top for agents) into an Obsidian vault or another folder, updating automatically whenever you rename it or regenerate its notes.
-+After a meeting, you can generate notes retroactively, click the summary, a conclusion or a to-do in the main window to fix it in place, use **Transcribe Again** on the recording if the wrong language was picked, export to Markdown, Word, and SRT subtitles, or transcribe local audio and video files via **File › Import Recording or Video…**. On the Mac, **Copy Notes** (⇧⌘C) pastes into Feishu, Notion or Word with its headings, lists and fishbone picture, and as Markdown into a chat. Turn on **Settings › General › Save to folder** and each meeting is also automatically saved as Markdown (with frontmatter at the top for agents) into an Obsidian vault or another folder, updating automatically whenever you rename it or regenerate its notes.
- 
- Click **Share…** to generate a link to the notes (optionally including the full bilingual transcript) with an expiration time and password; before uploading, it automatically blocks keys, unpublished company info, and other sensitive content.
- 
-```
-
-**File**: `README.zh-CN.md` (modified, +1/-1)
-```diff
-@@ -78,7 +78,7 @@ Mac 上还能在“设置 › 同声传译”打开“不用按键”：听会
- 
- 双语记录、纪要和原始录音都存在本机。点任意一句就能从那儿回放，文字跟着高亮滚动。本机声纹模型会自动区分说话人（填了 Ling key 会填上名字），认错了随时改名或合并。Mac 上给说话人写上名字后点“记住这个声音”（先确认对方知道），以后的会议会直接认出这个人；声纹只存在本机，可在“设置 › 通用 › 记住说话人”里管理和删除。目前记录里的你只包含按住说话键说的话，会上直接开口的部分见[路线图](#路线图)。
- 
--会后可以补生成纪要，在主窗口“编辑纪要”手动改，语言选错了用录音“重新转写”，导出 Markdown、Word 和 SRT 字幕，或者点“文件 › 导入录音或视频…”转写本地音视频。Mac 上“复制纪要”（⇧⌘C）贴进飞书、Notion、Word 时标题、列表和鱼骨图都在，贴进聊天框是 Markdown。打开“设置 › 通用 › 存到文件夹”后，每场会议还会自动存成 Markdown（开头带给 agent 读的 frontmatter）放进 Obsidian 库等文件夹，改名或重新整理后文件跟着更新。
-+会后可以补生成纪要，在主窗口点一下总结、结论或待办直接改，语言选错了用录音“重新转写”，导出 Markdown、Word 和 SRT 字幕，或者点“文件 › 导入录音或视频…”转写本地音视频。Mac 上“复制纪要”（⇧⌘C）贴进飞书、Notion、Word 时标题、列表和鱼骨图都在，贴进聊天框是 Markdown。打开“设置 › 通用 › 存到文件夹”后，每场会议还会自动存成 Markdown（开头带给 agent 读的 frontmatter）放进 Obsidian 库等文件夹，改名或重新整理后文件跟着更新。
- 
- 点“分享…”能生成纪要链接（可选带上双语全文），支持设有效期和密码，上传前会自动拦截密钥、未公开公司信息等敏感内容。
- 
-```
-
-**File**: `site/changelog.json` (modified, +2/-2)
-```diff
-@@ -45,8 +45,8 @@
-         "platforms": [
-           "mac"
-         ],
--        "title": "会议结束后可以手动改纪要。",
--        "text": "在主窗口的会议记录里点“编辑纪要”，改摘要、议题、结论、人名和术语；把识别错的写法填进“听成”，以后整理纪要也会按对的写。"
-+        "title": "会议结束后，纪要里的总结、结论和待办可以直接改。",
-+        "text": "在主窗口的会议记录里点一下某条结论、待办或总结，就地改字，回车保存，Esc 取消；待办还能改负责人，清空一条就是删掉。"
-       },
-       {
-         "kind": "new",
-```
-
-**File**: `tools/README.md` (modified, +1/-1)
-```diff
-@@ -29,7 +29,7 @@
-   - 显示与字幕：`display:<notes|bar|none>`、`subtitles:<both|translation|original>`、`meetingSubtitles:<…>`、`overlayState`、`overlayToggle`、`pillClick`（等于点主窗口顶部的“正在听”）、`overlayAuto[:off]`、`hideAfter:<秒>`
-   - 纪要：`notesLang:<mine|source>`、`meetingNotesLang:<…>`、`notesRegenerate:<id>=<mine|source>`、`notesWindow[:x,y,w,h]`、`notesClose`、`notesMinimize`、`notesFrame`、`notesNow`、`notesState`、`notesShow:<id>`、`notesReplay:<id>[,<每次几句>]`（按会议时的节奏重写一遍纪要，默认每次 4 句；回复被 max_tokens 截断时日志写 `cut at max_tokens`）、`notesCapturable[:off]`（只改窗口能否被截屏）、`notesShare:<on|off>`（改“共享屏幕时让对方看到”这个设置，等于点图标或开关）
-   - 结束会议：`endSim:<应用名>[,…]` 假装这些会议应用在通话（`endSim:` 全部挂断，`endSim:off` 回到真实情况），`endTimes:<静默秒>,<倒计时秒>,<挂断宽限秒>` 缩短等待（`endTimes:` 回到设置），`endKeep` 等于点“继续记录”，`endState` 写进日志
--  - 渲染（不需要录屏权限）：`panelRender:<png>`（菜单栏面板，离屏画）、`windowsRender:<目录>`、`settingsRender:<栏目>=<png>`、`notesRender:<png>`、`mainShow:<id>[,transcript]`、`mainWindow:x,y,宽,高`（摆好主窗口并暂时浮在最上层，方便模拟点击；不带参数恢复）、`mainRender:<png>`、`speakTestRender:<png>`；`peopleShow`（人员库）、`notesEditShow:<会议 id>`（编辑纪要）单独开成窗口，用 `winall` + `screencapture -l` 截
-+  - 渲染（不需要录屏权限）：`panelRender:<png>`（菜单栏面板，离屏画）、`windowsRender:<目录>`、`settingsRender:<栏目>=<png>`、`notesRender:<png>`、`mainShow:<id>[,transcript]`、`mainWindow:x,y,宽,高`（摆好主窗口并暂时浮在最上层，方便模拟点击；不带参数恢复）、`mainRender:<png>`、`speakTestRender:<png>`；`peopleShow`（人员库）单独开成窗口，用 `winall` + `screencapture -l` 截；纪要原地编辑：`noteEdit:<会议 id>=<summary|N>` 打开一处（N 按结论再待办从 1 数，`noteEdit:` 收起），`noteSave:<会议 id>=<summary|N>|<文字>[|<负责人>]` 等于回车保存，文字为空就删掉这条
-   - AI：`aiKeyFile:<路径>`（从 0600 文件读 key，不经过日志；测完就删掉文件）、`aiCheck`、`aiRemove`、`aiHide:<on|off>`（只在内存里当作没有 key，文件不动；用于截图）、`aiState`、`lingSimulate:<429|hijack|timeout|off>`、`translateFail:<n>`（接下来 n 句在所有翻译来源都失败，用来测重试）、`googleDown:<on|off>`（Google 翻译当作连不上，测提示和暂停）
-   - 声音：`voice:<语言>[=<id>]`、`voicePreview:<语言>=<id>`、`voiceCloneFile:<wav>`、`voicePicker:<on|off>`
-   - 诊断：`diagnostics:<on|off>`、`diagReport`
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #38** (closed): Feat(site): the website is available in Vietnamese at /vi/ (@tms-anhnguyen1)
+- **PR #37** (closed): Docs: Vietnamese README (@tms-anhnguyen1)
 - **PR #29** (2026-11-14): feat(speakers): remember known voices across meetings (@clementchen816-svg)
 - **PR #21** (2026-11-09): Add meeting microphone selection on macOS (@Ali1995A)
 - **PR #18** (closed): Feature/lark task sync (@lmjmt)
 - **PR #17** (2026-11-06): fix(audio): dynamically query default output sample rate and support LarkSuite app (@lmjmt)
-- **PR #13** (2026-11-06): fix: prevent push-to-talk crashes after switching microphones (@philo-veritas)
-- **PR #10** (2026-11-05): feat: support Intel Macs with cloud speech recognition (@longshines)
 
 ---
 
@@ -2061,38 +2415,53 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. windows): a notice says why listening stopped, and a disconnected room mic shows
+## X. ios): the Dynamic Island shows when listening is paused instead of a clock still
 
 **RULE**:
-When implementing operations in `windows/src/Cicada/App.cs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in wquguru/cicada. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ios/LiveActivity/CicadaLive.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in wquguru/cicada. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `058b2339`: windows): a notice says why listening stopped, and a disconnected room mic shows as off. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `26248cff`: ios): the Dynamic Island shows when listening is paused instead of a clock still running. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `windows/src/Cicada/App.cs`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `ios/LiveActivity/CicadaLive.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-                else Toast(L("会议室的麦克风断开了"), L("电脑声音照常在记"));
-                // The mic is really off now: say so in the tray and the menu, not only stop hearing it.
-                if (reason == "denied") { _ = StopRoomSide(); Changed(); } else SetMic(false);
-                else if (source is GatedSource)
-                    Toast(L("会议室的麦克风断开了"), L("已停止记录；插好麦克风后再开始听。"));
-                else
-                    Toast(L("听不到电脑的声音了"), L("已停止记录；稍后再开始听，或重启电脑后再试。"));
+                        Text(context.state.paused ? "已暂停" : "正在听").font(.footnote.weight(.semibold))
+                            .foregroundStyle(context.state.paused ? .white.opacity(0.6) : LiveInk.accent)
+                    if !context.state.paused {
+                        Elapsed(since: context.attributes.startedAt).font(.footnote.weight(.semibold))
+                            .foregroundStyle(.white).frame(maxWidth: 64, alignment: .trailing).padding(.trailing, 4)
+                    }
+                    Circle().fill(context.state.paused ? LiveInk.grey : LiveInk.accent).frame(width: 7, height: 7)
+                // Paused: a still pause mark, not a clock that keeps running as if it were listening.
+                if context.state.paused {
+                    Image(systemName: "pause.fill").font(.caption.weight(.semibold)).foregroundStyle(.white.opacity(0.6))
+                } else {
+                    Elapsed(since: context.attributes.startedAt)
+                        .font(.caption.weight(.semibold)).foregroundStyle(LiveInk.accent)
+                        .frame(maxWidth: 46)
+                }
+                Circle().fill(context.state.paused ? LiveInk.grey : LiveInk.acc
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Induced defect failure mode:
-                _ = StopRoomSide();
-                Changed();
+                        Text("正在听").font(.footnote.weight(.semibold)).foregroundStyle(LiveInk.accent)
+                    Elapsed(since: context.attributes.startedAt).font(.footnote.weight(.semibold))
+                        .foregroundStyle(.white).frame(maxWidth: 64, alignment: .trailing).padding(.trailing, 4)
+                    Circle().fill(LiveInk.accent).frame(width: 7, height: 7)
+                Elapsed(since: context.attributes.startedAt)
+                    .font(.caption.weight(.semibold)).foregroundStyle(LiveInk.accent)
+                    .frame(maxWidth: 46)
+                Circle().fill(LiveInk.accent).frame(width: 9, height: 9)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `058b2339` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `26248cff` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
