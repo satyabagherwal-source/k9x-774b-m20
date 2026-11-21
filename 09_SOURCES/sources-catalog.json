@@ -3453,10 +3453,10 @@
     "repository": "projectdiscovery/nuclei",
     "platform": "github",
     "sourceUrl": "https://github.com/projectdiscovery/nuclei",
-    "sourceVersion": "9bd87c68",
+    "sourceVersion": "e169d3bb",
     "license": "MIT",
-    "contentHash": "dc25d572074d8105bf86002a9ccdb0cb022c7175c2778708824ee342f7e38860",
-    "lastHarvestedAt": "2026-11-21T00:32:45.834Z",
+    "contentHash": "e77e8120f752543e92e7751ab50589ac13b2fbb48d6609933c04ff45a406af54",
+    "lastHarvestedAt": "2026-11-21T22:56:56.521Z",
     "learningId": "learn-github-projectdiscovery-nuclei"
   },
   "okteto-okteto": {
@@ -4503,10 +4503,10 @@
     "repository": "BuilderIO/builder",
     "platform": "github",
     "sourceUrl": "https://github.com/BuilderIO/builder",
-    "sourceVersion": "2c87a393",
+    "sourceVersion": "9e133430",
     "license": "MIT",
-    "contentHash": "e91cb66231a5e62979643d56394d0723d1141428e42c982615745c00918461f2",
-    "lastHarvestedAt": "2026-11-18T17:36:36.020Z",
+    "contentHash": "098bb5b58dfa8b42a5abb1951c6af3fbb74021f8aa98f4f5b9b456b1c449c489",
+    "lastHarvestedAt": "2026-11-21T22:56:52.221Z",
     "learningId": "learn-github-builderio-builder"
   },
   "gocrane-crane": {
@@ -11665,8 +11665,8 @@
     "sourceUrl": "https://huggingface.co/Edge0/Audio8-TTS-Realistic-0.6b",
     "sourceVersion": "hf-edge0-audio8-tts-realistic-0.6b",
     "license": "Open-Source",
-    "contentHash": "1f461fb5197df286cf1e679d720e3d0fae602ac804029978d6d6bdf12e840e9d",
-    "lastHarvestedAt": "2026-11-14T05:05:33.402Z",
+    "contentHash": "0e208e0e602ed7adc8860dd171b2c5745c6ce120919e36fa0dcf250c3eaaf4d8",
+    "lastHarvestedAt": "2026-11-21T22:56:43.826Z",
     "learningId": "learn-huggingface-edge0-audio8-tts-realistic-0-6b"
   },
   "dagoste-squadra": {
@@ -13148,5 +13148,15 @@
     "contentHash": "5f1b7e0e933f655ee99869c84972e8c6bc77e262b1a59a903725af5ca9bdc9f6",
     "lastHarvestedAt": "2026-11-21T17:28:05.647Z",
     "learningId": "learn-huggingface-atomicchat-inkling-2-mini-uncensored-gguf"
+  },
+  "hf-sulphurai-sulphur-3": {
+    "repository": "SulphurAI/Sulphur-3",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/SulphurAI/Sulphur-3",
+    "sourceVersion": "hf-sulphurai-sulphur-3",
+    "license": "Open-Source",
+    "contentHash": "2ea5f4010de33f37c3a13f7e7ba6f3d2018e817854a34f49634bb6a7f517aedb",
+    "lastHarvestedAt": "2026-11-21T22:56:41.035Z",
+    "learningId": "learn-huggingface-sulphurai-sulphur-3"
   }
 }

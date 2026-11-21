@@ -11959,3 +11959,9 @@ Every entry in this ledger must capture:
 | `learn-github-authzed-spicedb` | `https://github.com/authzed/spicedb` | `c77bad6d` | Multi-dimensional audit evidence | 2026-11-21T22:40:14.182Z |
 | `learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf` | `https://huggingface.co/AtomicChat/LFM3-1.7B-Uncensored-GGUF` | `hf-atomicc` | Multi-dimensional audit evidence | 2026-11-21T22:48:21.599Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `778227f6` | Multi-dimensional audit evidence | 2026-11-21T22:48:38.311Z |
+| `learn-huggingface-sulphurai-sulphur-3` | `https://huggingface.co/SulphurAI/Sulphur-3` | `hf-sulphur` | Multi-dimensional audit evidence | 2026-11-21T22:56:41.035Z |
+| `learn-huggingface-edge0-audio8-tts-realistic-0-6b` | `https://huggingface.co/Edge0/Audio8-TTS-Realistic-0.6b` | `hf-edge0-a` | Multi-dimensional audit evidence | 2026-11-21T22:56:43.826Z |
+| `learn-github-builderio-builder` | `https://github.com/BuilderIO/builder` | `9e133430` | Multi-dimensional audit evidence | 2026-11-21T22:56:52.221Z |
+| `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `e169d3bb` | Multi-dimensional audit evidence | 2026-11-21T22:56:56.521Z |
+| `learn-dom-d-3cf395c7` | `project://hf-sulphurai-sulphur-3` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-sulphurai-sulphur-3-learnings.md` | 2026-11-21T22:57:27.047Z |
+| `learn-dom-d-8372cbcd` | `project://hf-edge0-audio8-tts-realistic-0.6b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-edge0-audio8-tts-realistic-0.6b-learnings.md` | 2026-11-21T22:57:57.568Z |

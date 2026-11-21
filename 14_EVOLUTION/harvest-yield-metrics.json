@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T22:48:38.316Z",
-  "total_cycles_completed": 11347,
-  "total_learnings_persisted": 11347,
-  "total_rules_promoted": 10665,
+  "last_updated": "2026-11-21T22:56:56.526Z",
+  "total_cycles_completed": 11351,
+  "total_learnings_persisted": 11351,
+  "total_rules_promoted": 10667,
   "history": [
-    {
-      "timestamp": "2026-11-21T03:15:35.061Z",
-      "repository": "faker-js/faker",
-      "learningId": "learn-github-faker-js-faker",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T03:15:36.458Z",
-      "repository": "Saffsanity/sill",
-      "learningId": "learn-github-saffsanity-sill",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T03:15:39.207Z",
-      "repository": "pulumi/pulumi",
-      "learningId": "learn-github-pulumi-pulumi",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T03:28:36.260Z",
-      "repository": "astral-sh/uv",
-      "learningId": "learn-github-astral-sh-uv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T03:28:41.625Z",
       "repository": "gauthierpiarrette/highball",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-21T22:48:38.316Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T22:56:41.040Z",
+      "repository": "SulphurAI/Sulphur-3",
+      "learningId": "learn-huggingface-sulphurai-sulphur-3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T22:56:43.831Z",
+      "repository": "Edge0/Audio8-TTS-Realistic-Air",
+      "learningId": "learn-huggingface-edge0-audio8-tts-realistic-0-6b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T22:56:52.226Z",
+      "repository": "BuilderIO/builder",
+      "learningId": "learn-github-builderio-builder",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T22:56:56.526Z",
+      "repository": "projectdiscovery/nuclei",
+      "learningId": "learn-github-projectdiscovery-nuclei",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

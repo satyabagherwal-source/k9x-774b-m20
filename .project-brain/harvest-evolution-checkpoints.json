@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T22:48:44.653Z",
+  "last_updated": "2026-11-21T22:57:59.056Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-21T21:58:03.324Z",
@@ -2428,7 +2428,7 @@
       "staged_for_review": 0
     },
     "builderio-builder-learnings.md": {
-      "processed_at": "2026-11-18T17:41:33.178Z",
+      "processed_at": "2026-11-21T22:57:58.069Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3676,9 +3676,19 @@
       "processed_at": "2026-11-21T21:58:02.868Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-sulphurai-sulphur-3-learnings.md": {
+      "processed_at": "2026-11-21T22:57:27.047Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
+    },
+    "hf-edge0-audio8-tts-realistic-0.6b-learnings.md": {
+      "processed_at": "2026-11-21T22:57:57.569Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 2916,
-  "total_canonical_promoted": 457,
-  "total_staged_for_review": 2235
+  "total_dossiers_evaluated": 2919,
+  "total_canonical_promoted": 459,
+  "total_staged_for_review": 2236
 }

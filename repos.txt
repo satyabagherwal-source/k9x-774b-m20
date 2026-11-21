@@ -5290,3 +5290,7 @@ https://huggingface.co/openai/clip-vit-large-patch14
 # --- Automatically Discovered by AI Scout Engine [2026-11-21T17:27:59.256Z] ---
 # [HUGGINGFACE-AI-MODELS] AtomicChat/Inkling-2-Mini-Uncensored-GGUF (3270 score) - Verified Hugging Face Model: AtomicChat/Inkling-2-Mini-Uncensored-GGUF (127 like
 https://huggingface.co/AtomicChat/Inkling-2-Mini-Uncensored-GGUF
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-21T22:56:34.530Z] ---
+# [HUGGINGFACE-AI-MODELS] SulphurAI/Sulphur-3 (7766 score) - Verified Hugging Face Model: SulphurAI/Sulphur-3 (658 likes, 1186 downloads)
+https://huggingface.co/SulphurAI/Sulphur-3

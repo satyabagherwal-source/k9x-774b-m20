@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T22:48:44.347Z",
-  "total_records": 2286,
+  "last_updated": "2026-11-21T22:57:58.698Z",
+  "total_records": 2291,
   "domains": {
     "A": {
       "total": 17,
@@ -59,7 +59,7 @@
       ]
     },
     "D": {
-      "total": 899,
+      "total": 904,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -959,7 +959,12 @@
         "domain_intelligence-research-knowledge-intelligence-hf-oliviarossi-minimax-h3_singularity-x-10eros-m",
         "domain_intelligence-research-knowledge-intelligence-erkamyaman-rust-anything-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-erkamyaman-rust-anything-learnings-core-invarian",
-        "DOM-D-DB0D402F"
+        "DOM-D-DB0D402F",
+        "domain_intelligence-research-knowledge-intelligence-sulphurai-sulphur-3-core-invariants",
+        "DOM-D-3CF395C7",
+        "domain_intelligence-research-knowledge-intelligence-hf-sulphurai-sulphur-3-learnings-core-invariants",
+        "DOM-D-8372CBCD",
+        "domain_intelligence-research-knowledge-intelligence-hf-edge0-audio8-tts-realistic-0-6b-learnings-cor"
       ]
     },
     "E": {
@@ -13976,8 +13981,8 @@
       "title": "Architecture Intelligence: BuilderIO/builder Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-builderio-builder-architecture-intelligence-builderio-builder-core-invariants.md",
       "repository": "BuilderIO/builder",
-      "content_hash": "9410c11e997c10da9e404fe5315bdbd541ce8452f09ebd622c08a4d6caacca95",
-      "created_at": "2026-11-18T17:36:36.434Z"
+      "content_hash": "ed9ce68b09c81eca669a0a22d140d92acaca1fd859b2d09f66625f730740444e",
+      "created_at": "2026-11-21T22:56:52.649Z"
     },
     "domain_intelligence-technical-construction-intelligence-pixeltable-pixeltable-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-pixeltable-pixeltable-core-invariants",
@@ -14045,8 +14050,8 @@
       "title": "Architecture Intelligence: builderio-builder-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-builderio-builder-learnings-architecture-intelligence-builderio-builder-learning.md",
       "repository": "builderio-builder-learnings",
-      "content_hash": "5e8125022ac0356fc50351f97cec183e2e27d279458d5aca986aff2514ef0dfa",
-      "created_at": "2026-11-18T17:41:33.709Z"
+      "content_hash": "92bf67e07c645b5453da9d88c0608cd31f294d86e7fcd48a446fa2b19a1bf429",
+      "created_at": "2026-11-21T22:57:58.698Z"
     },
     "domain_intelligence-technical-construction-intelligence-pixeltable-pixeltable-learnings-core-invaria": {
       "record_id": "domain_intelligence-technical-construction-intelligence-pixeltable-pixeltable-learnings-core-invaria",
@@ -15635,8 +15640,8 @@
       "title": "Architecture Intelligence: projectdiscovery/nuclei Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-projectdiscovery-nuclei-architecture-intelligence-projectdiscovery-nuclei-core-i.md",
       "repository": "projectdiscovery/nuclei",
-      "content_hash": "465fa2bfffd212b68cfac773a4169aa94ea371fe3e19a04da20c6832695371f3",
-      "created_at": "2026-11-21T00:32:46.152Z"
+      "content_hash": "6e5124bc60099a1ef85b6913f2ad859b37895e0e62544e43a48b29d1bb8fb9b1",
+      "created_at": "2026-11-21T22:56:56.911Z"
     },
     "domain_intelligence-architecture-intelligence-agent-of-empires-agent-of-empires-learnings-core-invar": {
       "record_id": "domain_intelligence-architecture-intelligence-agent-of-empires-agent-of-empires-learnings-core-invar",
@@ -20524,10 +20529,10 @@
       "record_id": "domain_intelligence-research-knowledge-intelligence-edge0-audio8-tts-realistic-air-core-invariants",
       "domain_letter": "D",
       "title": "Research & Knowledge Intelligence: Edge0/Audio8-TTS-Realistic-Air Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-edge0-audio8-tts-realistic-air-research-knowledge-intelligence-edge0-audio8-t.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-edge0-audio8-tts-realistic-0-6b-research-knowledge-intelligence-edge0-audio8-.md",
       "repository": "Edge0/Audio8-TTS-Realistic-Air",
-      "content_hash": "cd4a84c819f27972e7745a5088918f86212d7e5abd82d2570d5a0a485b5d08e6",
-      "created_at": "2026-11-15T07:41:47.398Z"
+      "content_hash": "2ba7439befdb80203b2cf51a2bdebc0863d773decc5d4708b11e00d69924b38a",
+      "created_at": "2026-11-21T22:56:44.052Z"
     },
     "domain_intelligence-architecture-intelligence-mrkai77-loop-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-mrkai77-loop-core-invariants",
@@ -38444,6 +38449,117 @@
       "confidence": 0.6,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-21T22:30:46.046Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-sulphurai-sulphur-3-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-sulphurai-sulphur-3-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: SulphurAI/Sulphur-3 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sulphurai-sulphur-3-research-knowledge-intelligence-sulphurai-sulphur-3-core-.md",
+      "repository": "SulphurAI/Sulphur-3",
+      "content_hash": "1c50505f2e4e1ce5074eb9cbced0fd736262b4d52a5ee286ce369df7d9581c93",
+      "created_at": "2026-11-21T22:56:41.269Z"
+    },
+    "DOM-D-3CF395C7": {
+      "record_id": "DOM-D-3CF395C7",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): SulphurAI/Sulphur-3",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-sulphurai-sulphur-3-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/SulphurAI/Sulphur-3](https://huggingface.co/SulphurAI/Sulphur-3))  \n> **Source Version**: `hf-sulphurai`  \n> **License**: Open-Source  \n> **Synthesized By",
+      "content_hash": "f0e29b1b52009542c0c349cc3a986c4a4a7479719883dd35f7530e0197c18e43",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-sulphurai-sulphur-3-learnings.md`  \n> **Source**: huggingface ([https://huggingfa -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-sulphurai-sulphur-3-learnings.md`  \n> **Source**: huggingface ([https://huggingfa",
+      "provenance": {
+        "source_uri": "project://hf-sulphurai-sulphur-3/hf-sulphurai-sulphur-3-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-21T22:56:59.864Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-sulphurai-sulphur-3)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-sulphurai-sulphur-3"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-21T22:57:27.014Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-sulphurai-sulphur-3-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-sulphurai-sulphur-3-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-sulphurai-sulphur-3-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sulphurai-sulphur-3-learnings-research-knowledge-intelligence-hf-sulphurai-su.md",
+      "repository": "hf-sulphurai-sulphur-3-learnings",
+      "content_hash": "25b70434725675f33c69fe218555396a969b572a67876218d243775a18381911",
+      "created_at": "2026-11-21T22:57:27.354Z"
+    },
+    "DOM-D-8372CBCD": {
+      "record_id": "DOM-D-8372CBCD",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): Edge0/Audio8-TTS-Realistic-Air",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-edge0-audio8-tts-realistic-0.6b-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/Edge0/Audio8-TTS-Realistic-0.6b](https://huggingface.co/Edge0/Audio8-TTS-Realistic-0.6b))  \n> **Source Version**: `hf-edge0-aud`  \n> **License",
+      "content_hash": "73ad2c2a14c13e910bd60359e2d46dfc78d2d66c15ef0d50103858f3bb839713",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-edge0-audio8-tts-realistic-0.6b-learnings.md`  \n> **Source**: huggingface ([https -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-edge0-audio8-tts-realistic-0.6b-learnings.md`  \n> **Source**: huggingface ([https",
+      "provenance": {
+        "source_uri": "project://hf-edge0-audio8-tts-realistic-0.6b/hf-edge0-audio8-tts-realistic-0.6b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-21T22:57:27.556Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-edge0-audio8-tts-realistic-0.6b)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-edge0-audio8-tts-realistic-0.6b"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-21T22:57:57.535Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-edge0-audio8-tts-realistic-0-6b-learnings-cor": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-edge0-audio8-tts-realistic-0-6b-learnings-cor",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-edge0-audio8-tts-realistic-0.6b-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-edge0-audio8-tts-realistic-0-6b-learnings-research-knowledge-intelligence-hf-.md",
+      "repository": "hf-edge0-audio8-tts-realistic-0.6b-learnings",
+      "content_hash": "ee0d3bca15a97b6c6cda63a6b6931a2fd4ffda273cb0fc0fe468460e1a6599e1",
+      "created_at": "2026-11-21T22:57:57.809Z"
     }
   }
 }

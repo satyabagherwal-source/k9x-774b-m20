@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-21T22:48:42.786Z",
+  "updated_at": "2026-11-21T22:57:58.257Z",
   "stats": {
-    "total_discovered": 7375,
-    "approved_pending_harvest": 6977,
+    "total_discovered": 7377,
+    "approved_pending_harvest": 6979,
     "harvested_count": 0,
     "rejected_count": 398,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6957,
+      "COMMUNITY_AND_EXPERT": 6959,
       "OFFICIAL_DOCUMENTATION": 240,
       "STANDARDS_AND_SPECIFICATIONS": 122,
       "ENGINEERING_BLOGS": 5,
@@ -159487,6 +159487,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
         "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-8215948B632D": {
+      "id": "SRC-8215948B632D",
+      "url": "https://huggingface.co/SulphurAI/Sulphur-3",
+      "title": "https://huggingface.co/SulphurAI/Sulphur-3",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T22:57:27.080Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-sulphurai-sulphur-3-learnings.md",
+        "fileName": "hf-sulphurai-sulphur-3-learnings.md"
+      }
+    },
+    "SRC-9612FBB7AD21": {
+      "id": "SRC-9612FBB7AD21",
+      "url": "https://github.com/BuilderIO/builder/actions/runs/44511201007",
+      "title": "https://github.com/BuilderIO/builder/actions/runs/44511201007",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T22:57:58.257Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/builderio-builder-learnings.md",
+        "fileName": "builderio-builder-learnings.md"
       }
     }
   }

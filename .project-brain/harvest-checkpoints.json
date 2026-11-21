@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-21T22:48:38.320Z",
+  "last_updated": "2026-11-21T22:56:56.530Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5301,14 +5301,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-projectdiscovery-nuclei",
-      "content_hash": "dc25d572074d8105bf86002a9ccdb0cb022c7175c2778708824ee342f7e38860",
-      "verified_at": "2026-11-21T00:32:45.841Z",
+      "content_hash": "e77e8120f752543e92e7751ab50589ac13b2fbb48d6609933c04ff45a406af54",
+      "verified_at": "2026-11-21T22:56:56.529Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T00:32:45.841Z"
+      "last_updated": "2026-11-21T22:56:56.529Z"
     },
     "okteto/okteto": {
       "repository": "okteto/okteto",
@@ -6876,14 +6876,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-builderio-builder",
-      "content_hash": "e91cb66231a5e62979643d56394d0723d1141428e42c982615745c00918461f2",
-      "verified_at": "2026-11-18T17:36:36.031Z",
+      "content_hash": "098bb5b58dfa8b42a5abb1951c6af3fbb74021f8aa98f4f5b9b456b1c449c489",
+      "verified_at": "2026-11-21T22:56:52.229Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T17:36:36.031Z"
+      "last_updated": "2026-11-21T22:56:52.229Z"
     },
     "gocrane/crane": {
       "repository": "gocrane/crane",
@@ -17585,15 +17585,15 @@
       "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-edge0-audio8-tts-realistic-air",
-      "content_hash": "3bb2af68d457fd360dbf72782a9b379d30b5621d0611dadfe0ff9d430e59c288",
-      "verified_at": "2026-11-15T07:41:47.239Z",
+      "learning_id": "learn-huggingface-edge0-audio8-tts-realistic-0-6b",
+      "content_hash": "0e208e0e602ed7adc8860dd171b2c5745c6ce120919e36fa0dcf250c3eaaf4d8",
+      "verified_at": "2026-11-21T22:56:43.834Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T07:41:47.239Z"
+      "last_updated": "2026-11-21T22:56:43.834Z"
     },
     "OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated": {
       "repository": "OBLITERATUS/DeepSeek-V4.1-Flash-1017-obliterated",
@@ -19814,6 +19814,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-21T17:28:05.658Z"
+    },
+    "SulphurAI/Sulphur-3": {
+      "repository": "SulphurAI/Sulphur-3",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-sulphurai-sulphur-3",
+      "content_hash": "2ea5f4010de33f37c3a13f7e7ba6f3d2018e817854a34f49634bb6a7f517aedb",
+      "verified_at": "2026-11-21T22:56:41.043Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-21T22:56:41.043Z"
     }
   },
   "repos": {

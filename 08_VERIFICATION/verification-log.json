@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261119-FO5D",
-    "timestamp": "2026-11-19T19:12:05.377Z",
-    "repository": "beclab/Olares",
-    "learningId": "learn-github-beclab-olares",
-    "contentHash": "18f33b37e4d8da54c10af60e1e75a99c09a67b57a00d4f73e60589e37b0359f7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-FOWF",
-    "timestamp": "2026-11-19T19:12:06.351Z",
-    "repository": "DefGuard/defguard",
-    "learningId": "learn-github-defguard-defguard",
-    "contentHash": "9a9ac3f6811ad73bb29edd3791ee514d4c6fbeba82db30f019fae3dc7e816b68",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-FQZ7",
-    "timestamp": "2026-11-19T19:12:09.043Z",
-    "repository": "Ontos-AI/knowhere",
-    "learningId": "learn-github-ontos-ai-knowhere",
-    "contentHash": "1e310de5cc99ac57f5a58c0875cfc5cabacb3f458477459ae0f7b0a3a156727a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-U0VO",
-    "timestamp": "2026-11-19T19:23:15.060Z",
-    "repository": "tencent/Hy-Memory-30B-A3B",
-    "learningId": "learn-huggingface-tencent-hy-memory-30b-a3b",
-    "contentHash": "06b384aee3f30f62e689a6cba1c9093097c92a6a5b8dc92bee60475d0db89855",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261119-U2Q0",
     "timestamp": "2026-11-19T19:23:17.448Z",
     "repository": "matthart1983/netwatch",
@@ -7490,6 +7430,66 @@
     "repository": "dathere/qsv",
     "learningId": "learn-github-dathere-qsv",
     "contentHash": "1b7c00ff9946028a37bfede9c49bf0a294647cb047541d1c7d65bd11154fe3cb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-C7D2",
+    "timestamp": "2026-11-21T22:56:41.030Z",
+    "repository": "SulphurAI/Sulphur-3",
+    "learningId": "learn-huggingface-sulphurai-sulphur-3",
+    "contentHash": "2ea5f4010de33f37c3a13f7e7ba6f3d2018e817854a34f49634bb6a7f517aedb",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-C9IM",
+    "timestamp": "2026-11-21T22:56:43.822Z",
+    "repository": "Edge0/Audio8-TTS-Realistic-Air",
+    "learningId": "learn-huggingface-edge0-audio8-tts-realistic-0-6b",
+    "contentHash": "0e208e0e602ed7adc8860dd171b2c5745c6ce120919e36fa0dcf250c3eaaf4d8",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-CFZT",
+    "timestamp": "2026-11-21T22:56:52.217Z",
+    "repository": "BuilderIO/builder",
+    "learningId": "learn-github-builderio-builder",
+    "contentHash": "098bb5b58dfa8b42a5abb1951c6af3fbb74021f8aa98f4f5b9b456b1c449c489",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-CJB9",
+    "timestamp": "2026-11-21T22:56:56.517Z",
+    "repository": "projectdiscovery/nuclei",
+    "learningId": "learn-github-projectdiscovery-nuclei",
+    "contentHash": "e77e8120f752543e92e7751ab50589ac13b2fbb48d6609933c04ff45a406af54",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

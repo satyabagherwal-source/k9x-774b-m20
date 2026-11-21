@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-21T22:30:46.077Z",
+  "updated_at": "2026-11-21T22:57:57.566Z",
   "statistics": {
-    "total_nodes": 455,
-    "total_edges": 196,
+    "total_nodes": 457,
+    "total_edges": 197,
     "domain_distribution": {
-      "D": 281,
+      "D": 283,
       "M": 1,
       "H": 76,
       "J": 22,
@@ -20,7 +20,7 @@
       "I": 8
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 193,
+      "CONSTRAINED_BY_ARCHITECTURE": 194,
       "VERIFIED_BY_TEST": 2,
       "STYLED_BY_DESIGN": 1
     }
@@ -10168,6 +10168,51 @@
       ],
       "created_at": "2026-11-21T22:30:46.077Z",
       "updated_at": "2026-11-21T22:30:46.077Z"
+    },
+    "DOM-D-3CF395C7": {
+      "id": "DOM-D-3CF395C7",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): SulphurAI/Sulphur-3",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-sulphurai-sulphur-3-learnings.md`  \n> **Source**: huggingface ([https://huggingfa -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-sulphurai-sulphur-3-learnings.md`  \n> **Source**: huggingface ([https://huggingfa",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-sulphurai-sulphur-3/hf-sulphurai-sulphur-3-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-21T22:56:59.864Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-sulphurai-sulphur-3)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-21T22:57:27.044Z",
+      "updated_at": "2026-11-21T22:57:27.044Z"
+    },
+    "DOM-D-8372CBCD": {
+      "id": "DOM-D-8372CBCD",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): Edge0/Audio8-TTS-Realistic-Air",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-edge0-audio8-tts-realistic-0.6b-learnings.md`  \n> **Source**: huggingface ([https -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-edge0-audio8-tts-realistic-0.6b-learnings.md`  \n> **Source**: huggingface ([https",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-edge0-audio8-tts-realistic-0.6b/hf-edge0-audio8-tts-realistic-0.6b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-21T22:57:27.556Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-edge0-audio8-tts-realistic-0.6b)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-21T22:57:57.566Z",
+      "updated_at": "2026-11-21T22:57:57.566Z"
     }
   },
   "edges": [
@@ -12130,6 +12175,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-H-2D29E63D [H] with Domain D",
       "created_at": "2026-11-21T21:40:59.685Z"
+    },
+    {
+      "id": "EDGE-283549E9D512",
+      "sourceId": "DOM-D-3CF395C7",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-3CF395C7 [D] with Domain M",
+      "created_at": "2026-11-21T22:57:27.044Z"
     }
   ]
 }

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T22:48:44.188Z",
+  "last_updated": "2026-11-21T22:57:58.519Z",
   "directives": [
     {
       "id": "CD-001",
@@ -44041,6 +44041,39 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-9C0D3B-android-skip-explicit-kotlin-plugin-when.md",
       "staged_date": "2026-11-21"
+    },
+    {
+      "id": "CD-CG6Q",
+      "directive_title": "add repository field for npm provenance publish",
+      "source_repo": "BuilderIO/builder",
+      "source_commit": "9e133430",
+      "staged_file": "11_INBOX/candidate-directives/CD-CG6Q-add-repository-field-for-npm-provenance-publish.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-21",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-CJHV",
+      "directive_title": "run one task at a time for -c, -headc and -bs below 1",
+      "source_repo": "projectdiscovery/nuclei",
+      "source_commit": "e169d3bb",
+      "staged_file": "11_INBOX/candidate-directives/CD-CJHV-run-one-task-at-a-time-for-c-headc-and-bs-below-1.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-21",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-DV5J",
+      "directive_title": "utils): add repository field for npm provenance publish",
+      "source_repo": "builderio-builder-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-DV5J-utils-add-repository-field-for-npm-provenance-publish.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "D"
     }
   ]
 }

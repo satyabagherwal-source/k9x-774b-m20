@@ -4,22 +4,22 @@
 {
   "source_repository": "projectdiscovery/nuclei",
   "source_url": "https://github.com/projectdiscovery/nuclei",
-  "source_version": "9bd87c68",
+  "source_version": "e169d3bb",
   "license": "MIT",
-  "timestamp": "2026-11-21T00:32:46.018Z",
+  "timestamp": "2026-11-21T22:56:56.757Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-projectdiscovery-nuclei",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei) (Revision: `9bd87c68`).  
-> **License**: MIT | **Timestamp**: `2026-11-21T00:32:46.018Z`  
+> **Provenance**: Harvested from [projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei) (Revision: `e169d3bb`).  
+> **License**: MIT | **Timestamp**: `2026-11-21T22:56:56.757Z`  
 > **Learning ID**: `learn-github-projectdiscovery-nuclei`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `projectdiscovery/nuclei` (Commit: `9bd87c68`)
+- **Target Repository**: `projectdiscovery/nuclei` (Commit: `e169d3bb`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/projectdiscovery/nuclei](https://github.com/projectdiscovery/nuclei))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T00:32:44.877Z  
+> **Harvest Timestamp**: 2026-11-21T22:56:55.425Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Nuclei is a fast, customizable vulnerability scanner powered by the global security community and built on a simple YAML-based DSL, enabling collaboration to tackle trending vulnerabilities on the internet. It helps you find vulnerabilities in your applications, APIs, networks, DNS, and cloud configurations.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 33156 stars
+- **Stars / Engagement**: 33179 stars
 
 ---
 
@@ -613,8 +613,14 @@ func (e *Engine) executeTemplateSpray(ctx context.Context, templatesList []*temp
 // executeHostSpray executes scan using host spray strategy where templates are iterated over each target
 func (e *Engine) executeHostSpray(ctx context.Context, templatesList []*templates.Template, target provider.InputProvider) *atomic.Bool {
 	results := &atomic.Bool{}
-	wp, _ := syncutil.New(syncutil.WithSize(e.options.BulkSize + e.options.HeadlessBulkSize))
-	defer wp.Wait()
+	wp := newPool(e.options.BulkSize + e.options.HeadlessBulkSize) //nolint:varnamelen // wp names the pool throughout
+
+	// Targets are the positions here, and each target runs every template. A
+	// resumed scan skips the targets before the lowest one in flight at the
+	// interrupt, as the template-spray loop does for each template.
+	currentInfo, resumeFromInfo := e.hostSprayResumeInfo()
+
+	var index uint32
 
 	target.Iterate(func(value *contextargs.MetaInput) bool {
 		select {
@@ -623,6 +629,20 @@ func (e *Engine) executeHostSpray(ctx context.Context, templatesList []*template
 		default:
 		}
 
+		position := index
+		index++
+
+		if resumeFromInfo.IsCompleted() || position < resumeFromInfo.GetSkipUnder() {
+			e.options.Logger.Debug().Msgf("Skipping %q: Resume - Target already processed", value.Input)
+			e.tasksDone(int64(getSelectedCount(templatesList, e.selectionFor(value))))
+
+			return true
+		}
+
+		currentInfo.Lock()
+		currentInfo.InFlight[position] = struct{}{}
+		currentInfo.Unlock()
+
 		if err := wp.AddWithContext(ctx); err != nil {
 			return false
 		}
@@ -630,11 +650,33 @@ func (e *Engine) executeHostSpray(ctx context.Context, templatesList []*template
 		go func(targetval *contextargs.MetaInput) {
 			defer wp.Done()
 			e.executeTemplatesOnTarget(ctx, templatesList, targetval, results)
+
+			// A target that cancellation cut off didn't finish. It stays in flight,
+			// so the resumed scan runs it again.
+			if ctx.Err() == nil {
+				currentInfo.Lock()
+				delete(currentInfo.InFlight, position)
+				currentInfo.Unlock()
+			}
 		}(value)
 		return true
 	})
+	wp.Wait()
+
+	// A cancelled loop never took the remaining targets, so the scan isn't
+	// complete.
+	if ctx.Err() == nil {
+		currentInfo.Lock()
+		currentInfo.Completed = true
+		currentInfo.Unlock()
+	}
+
 	return results
 }
+
+// hostSprayResumeID keys the progress of a host-spray scan among the template
+// IDs of the resume file. A template ID can't hold an @, so it never collides.
+const hostSprayResumeID = "@host-spray"
 
 // clusterTemplates merges templates that send identical requests unless
 // noCluster is set, and returns the templates to run with the number merged.
@@ -696,19 +738,7 @@ func getRequestCount(templates []*templates.Template) int {
 func getSelectedRequestCount(templates []*templates.Template, selection protocols.TemplateSelection) int {
 	count := 0
 	for _, template := range templates {
-		// ignore requests in workflows as total requests in workflow
-		// depends on what templates will be called in workflow
-		if len(template.Workflows) > 0 {
-			continue
-		}
-		if selection != nil && !template.SelectedBy(selection) {
-			continue
-		}
-		count += template.TotalRequests
-	}
-	return count
-}
-
+		// igno
 ```
 
 ### Core Architecture Module: `pkg/core/executors.go`
@@ -791,29 +821,13 @@ func (e *Engine) executeTemplateWithTargets(ctx context.Context, template *templ
 		e.workPool = e.GetWorkPool()
 	}
 	// Bounded worker pool using input concurrency
-	pool := e.workPool.InputPool(template.Type())
-	workerCount := 1
-	if pool != nil && pool.Size > 0 {
-		workerCount = pool.Size
-	}
+	workerCount := e.workPool.InputPool(template.Type()).Size
 
 	var (
 		index uint32
 	)
 
-	e.executerOpts.ResumeCfg.Lock()
-	currentInfo, ok := e.executerOpts.ResumeCfg.Current[template.ID]
-	if !ok {
-		currentInfo = &generalTypes.ResumeInfo{}
-		e.executerOpts.ResumeCfg.Current[template.ID] = currentInfo
-	}
-	currentInfo.InitInFlight()
-	resumeFromInfo, ok := e.executerOpts.ResumeCfg.ResumeFrom[template.ID]
-	if !ok {
-		resumeFromInfo = &generalTypes.ResumeInfo{}
-		e.executerOpts.ResumeCfg.ResumeFrom[template.ID] = resumeFromInfo
-	}
-	e.executerOpts.ResumeCfg.Unlock()
+	currentInfo, resumeFromInfo := e.resumeInfo(template.ID)
 
 	// track progression
 	cleanupInFlight := func(index uint32) {
@@ -837,7 +851,13 @@ func (e *Engine) executeTemplateWithTargets(ctx context.Context, template *templ
 			defer workersWg.Done()
 			for t := range tasks {
 				func() {
-					defer cleanupInFlight(t.index)
+					// A target that cancellation cut off didn't finish. It stays in
+					// flight, so the resumed scan runs it again.
+					defer func() {
+						if ctx.Err() == nil {
+							cleanupInFlight(t.index)
+						}
+					}()
 					select {
 					case <-ctx.Done():
 						return
@@ -888,9 +908,14 @@ func (e *Engine) executeTemplateWithTargets(ctx context.Context, template *templ
 			skip = true
 		}
 
-		currentInfo.Lock()
-		currentInfo.InFlight[index] = struct{}{}
-		currentInfo.Unlock()
+		// A skipped position never runs, so cancellation can't cut it off. Marking
+		// it would let an interrupt save it as unfinished, below the progress this
+		// scan loaded, and the next scan would repeat targets that are done.
+		if !skip {
+			currentInfo.Lock()
+			currentInfo.InFlight[index] = struct{}{}
+			currentInfo.Unlock()
+		}
 
 		// Skip if the host has had errors
 		var hostDown bool
@@ -935,10 +960,80 @@ func (e *Engine) executeTemplateWithTargets(ctx context.Context, template *templ
 	close(tasks)
 	workersWg.Wait()
 
+	// A cancelled loop never took the remaining targets, so the template isn't
+	// complete.
+	if ctx.Err() != nil {
+		return
+	}
+
 	// on completion marks the template as completed
 	currentInfo.Lock()
 	currentInfo.Completed = true
 	currentInfo.Unlock()
+}
+
+// resumeInfo returns the progress under key in this scan and in the scan it
+// resumes from, and creates the ones that don't exist yet.
+func (e *Engine) resumeInfo(key string) (*generalTypes.ResumeInfo, *generalTypes.ResumeInfo) {
+	cfg := e.executerOpts.ResumeCfg
+	cfg.Lock()
+	defer cfg.Unlock()
+
+	return resumeInfoLocked(cfg, key)
+}
+
+// resumeInfoLocked is resumeInfo for a caller that holds cfg's lock.
+func resumeInfoLocked(cfg *generalTypes.ResumeCfg, key string) (*generalTypes.ResumeInfo, *generalTypes.ResumeInfo) {
+	current, exists := cfg.Current[key]
+	if !exists {
+		current = new(generalTypes.ResumeInfo)
+		cfg.Current[key] = current
+	}
+
+	current.InitInFlight()
+
+	resumeFrom, exists := cfg.ResumeFrom[key]
+	if !exists {
+		resumeFrom = new(generalTypes.ResumeInfo)
+		cfg.ResumeFrom[key] = resumeFrom
+	}
+
+	return current, resumeFrom
+}
+
+// hostSprayResumeInfo returns the progress of a host-spray run in this scan and
+// in the scan it resumes from.
+//
+// The resume file has one entry for host-spray, but an engine runs host-spray
+// once per ExecuteScanWithOpts call, as -auto-tech does, and the engines of -as
+// share one resume config. The progress of one run can't stand for the others,
+// and a finished run would mark the entry as completed for a run still going.
+// Only the first run tracks. A later run gets progress that no one saves and
+// resets the entry to an empty one in both maps, so a resumed scan starts from
+// the first target, as it did before host-spray saved progress. The entry in
+// Current stays, because a missing one would let a third run track again. The
+// one in ResumeFrom is reset too, because a scan that saves what it loaded for
+// the entries it left idle would otherwise save a stale loaded one, such as a
+// completed one, in every file it writes.
+func (e *Engine) hostSprayResumeInfo() (*generalTypes.ResumeInfo, *generalTypes.ResumeInfo) {
+	cfg := e.executerOpts.ResumeCfg
+	cfg.Lock()
+	defer cfg.Unlock()
+
+	if _, taken := cfg.Current[hostSprayResumeID]; !taken {
+		return resumeInfoLocked(cfg, hostSprayResumeID)
+	}
+
+	empty := func() *generalTypes.ResumeInfo {
+		info := new(generalTypes.ResumeInfo)
+		info.InitInFlight()
+
+		return info
+	}
+	cfg.Current[hostSprayResumeID] = empty()
+	cfg.ResumeFrom[hostSprayResumeID] = empty()
+
+	return empty(), empty()
 }
 
 // executeTemplatesOnTarget execute given templates on given single target
@@ -949,93 +1044,7 @@ func (e *Engine) executeTemplatesOnTarget(ctx context.Context, alltemplates []*t
 	// headless and non-headless templates
 	// global waitgroup should not be used here
 	wp := e.GetWorkPool()
-	defer wp.Wait()
-
-	// reported is set once a skip event stands for the target's own address
-	var reported bool
-
-	for _, tpl := range alltemplates {
-		select {
-		case <-ctx.Done():
-			return
-		default:
-		}
-
-		if !e.inScope(tpl, target) {
-			continue
-		}
-
-		// A target whose own address is down gets one event, not one per
-		// template (#7049). That address stays down, so after the event only a
-		// template that may send elsewhere is checked.
-		if reported && !sendsElsewhere(tpl) {
-			e.tasksDone(1)
-
-			continue
-		}
-
-		// Check whether the target has already been marked as permanently
-		// unresponsive by HostErrorsCache before spawning another goroutine.
-		if down, perTemplate := e.hostDown(ctx, tpl, target); down {
-			reported = reported || !perTemplate
-
-			skipEvent := &output.ResultEvent{
-				TemplateID:    tpl.ID,
-				TemplatePath:  tpl.Path,
-				Info:          tpl.Info,
-				Type:          tpl.Type().String(),
-				Host:          target.Input,
-				MatcherStatus: false,
-				Error:         "host was skipped as it was found unresponsive",
-				Timestamp:     time.Now(),
-			}
-			if e.Callback != nil {
-				e.Callback(skipEvent)
-			} else if e.executerOpts.Output != nil {
-				_ = e.executerOpts.Output.Write(skipEvent)
-			}
-
-			e.tasksDone(1)
-
-			continue
-		}
-
-		// resize check point - nop if there are no changes
-		wp.RefreshWithConfigContext(ctx, e.GetWorkPoolConfig())
-
-		var sg *syncutil.AdaptiveWaitGroup
-		if tpl.Type() == types.HeadlessProtocol {
-			sg = wp.Headless
-		} else {
-			sg = wp.Default
-		}
-		if err := sg.AddWithContext(ctx); err != nil {
-			return
-		}
-		usesSharedTemplateBudget := tpl.Type() != types.HeadlessProtocol
-		if usesSharedTemplateBudget {
-			if err := e.options.AcquireTemplateThread(ctx); err != nil {
-				sg.Done()
-				return
-			}
-		}
-		go func(template *templates.Template, value *contextargs.MetaInput, wg *syncutil.AdaptiveWaitGroup, sharedBudget bool) {
-			defer wg.Done()
-			if sharedBudget {
-				defer e.options.ReleaseTemplateThread()
-			}
-
-			match, err := e.executeTemplateOnInput(ctx, template, value)
-			if err != nil {
-				e.options.Logger.Warning().Msgf("[%s] Could not execute step on %s: %s\n", template.ID, value.Input, err)
-			}
-			results.CompareAndSwap(false, match)
-		}(tpl, target, sg, usesSharedTemplateBudget)
-	}
-}
-
-// hostDown reports whether the host errors cache marks value unresponsive for
-// template, and wh
+	defer wp.Wai
 ```
 
 ### Core Architecture Module: `pkg/core/plan.go`
@@ -1272,11 +1281,12 @@ func (e *Engine) executeWorkflow(ctx *scan.ScanContext, w *workflows.Workflow) b
 
 	// we can know the nesting level only at runtime, so the best we can do here is increase template threads by one unit in case it's equal to 1 to allow
 	// at least one subtemplate to go through, which it's idempotent to one in-flight template as the parent one is in an idle state
-	templateThreads := w.Options.Options.TemplateThreads
+	templateThreads := max(w.Options.Options.TemplateThreads, 1)
 	if templateThreads == 1 {
 		templateThreads++
 	}
-	swg, _ := syncutil.New(syncutil.WithSize(templateThreads))
+
+	swg := newPool(templateThreads)
 	// pending tracks every started step until it returns. swg only limits
 	// concurrency and its slots can be released early, so completion is
 	// tracked here instead.
@@ -1507,6 +1517,7 @@ package core
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/projectdiscovery/gologger"
 	"github.com/projectdiscovery/nuclei/v3/pkg/templates/types"
@@ -1538,14 +1549,27 @@ type WorkPoolConfig struct {
 
 // NewWorkPool returns a new WorkPool instance
 func NewWorkPool(config WorkPoolConfig) *WorkPool {
-	headlessWg, _ := syncutil.New(syncutil.WithSize(config.HeadlessTypeConcurrency))
-	defaultWg, _ := syncutil.New(syncutil.WithSize(config.TypeConcurrency))
-
 	return &WorkPool{
 		config:   config,
-		Headless: headlessWg,
-		Default:  defaultWg,
+		Headless: newPool(config.HeadlessTypeConcurrency),
+		Default:  newPool(config.TypeConcurrency),
 	}
+}
+
+// newPool returns a pool of size, or of one when size is below 1.
+// syncutil.New returns a nil pool for a size below 1, which the scan would
+// dereference.
+func newPool(size int) *syncutil.AdaptiveWaitGroup {
+	size = max(size, 1)
+
+	pool, err := syncutil.New(syncutil.WithSize(size))
+	if err != nil {
+		// The size is at least 1, so this cannot happen. Stopping here beats
+		// handing the scan a nil pool.
+		panic(fmt.Sprintf("could not create work pool of size %d: %s", size, err))
+	}
+
+	return pool
 }
 
 // Wait waits for all the work pool wait groups to finish
@@ -1562,8 +1586,8 @@ func (w *WorkPool) InputPool(templateType types.ProtocolType) *syncutil.Adaptive
 	} else {
 		count = w.config.InputConcurrency
 	}
-	swg, _ := syncutil.New(syncutil.WithSize(count))
-	return swg
+
+	return newPool(count)
 }
 
 func (w *WorkPool) RefreshWithConfig(config WorkPoolConfig) {
@@ -1587,13 +1611,20 @@ func (w *WorkPool) RefreshWithConfigContext(ctx context.Context, config WorkPool
 }
 
 func (w *WorkPool) Refresh(ctx context.Context) {
-	if w.Default.Size != w.config.TypeConcurrency {
-		if err := w.Default.Resize(ctx, w.config.TypeConcurrency); err != nil {
+	// newPool sized the pools to at least 1, so compare against the same bound.
+	typeConcurrency := max(w.config.TypeConcurrency, 1)
+	headlessTypeConcurrency := max(w.config.HeadlessTypeConcurrency, 1)
+
+	if w.Default.Size != typeConcurrency {
+		err := w.Default.Resize(ctx, typeConcurrency)
+		if err != nil {
 			gologger.Warning().Msgf("Could not resize workpool: %s\n", err)
 		}
 	}
-	if w.Headless.Size != w.config.HeadlessTypeConcurrency {
-		if err := w.Headless.Resize(ctx, w.config.HeadlessTypeConcurrency); err != nil {
+
+	if w.Headless.Size != headlessTypeConcurrency {
+		err := w.Headless.Resize(ctx, headlessTypeConcurrency)
+		if err != nil {
 			gologger.Warning().Msgf("Could not resize workpool: %s\n", err)
 		}
 	}
@@ -1638,473 +1669,835 @@ type ipOptions struct {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c58ce114` (2026-11-20)
-**Commit Message**: fix(whois): use upstream RDAP with pooled client locking
+### Incident Patch 1: `93d9fd57` (2026-11-21)
+**Commit Message**: fix: run one task at a time for -c, -headc and -bs below 1
 
-Codex-Session: codex resume 01a1c1de-e73c-7622-949e-fbbbd741b6c5
+NewWorkPool, executeWorkflow and executeHostSpray built their pools
+with syncutil.New and dropped its error. syncutil.New rejects a size
+below 1 and returns a nil pool, so -c or -headc below 1 left a nil
+default or headless pool that Refresh and Wait dereferenced, a workflow
+with a subtemplate dereferenced its nil pool on AddWithContext, and
+host-spray with -bs plus -hbs below 1 dereferenced its nil host pool.
+Nuclei exited with a nil pointer panic and sent no request. InputPool
+dropped the error too, but its caller fell back to one worker, so -bs
+and -hbs below 1 already ran with the default strategy.
 
-**File**: `go.mod` (modified, +4/-5)
+Build every pool in pkg/core through newPool, which clamps the size to
+at least 1. A value below 1 now runs one task at a time instead of
+crashing. Refresh compares against the same bound, so it does not try
+to resize a one-slot pool to 0 and warn for every template. The
+workflow pool clamps before its existing bump from 1 to 2, so the guard
+against the #8074 deadlock still holds. newPool panics on an error from
+syncutil.New, which cannot happen for a size of 1 or more, instead of
+passing on a nil pool. InputPool never retu
+
+**File**: `internal/runner/inputs.go` (modified, +4/-1)
 ```diff
-@@ -74,6 +74,7 @@ require (
- 	github.com/miekg/dns v1.1.73
- 	github.com/oiweiwei/go-msrpc v1.2.12
- 	github.com/olekukonko/tablewriter v1.0.8
-+	github.com/openrdap/rdap v0.10.2
- 	github.com/ory/dockertest/v3 v3.12.0
- 	github.com/pkg/errors v0.9.1
- 	github.com/praetorian-inc/fingerprintx v1.1.15
-@@ -98,7 +99,6 @@ require (
- 	github.com/projectdiscovery/networkpolicy v0.1.58
- 	github.com/projectdiscovery/ratelimit v0.0.95
- 	github.com/projectdiscovery/rawhttp v0.3.1
--	github.com/projectdiscovery/rdap v0.9.1-0.20221108103045-9865884d1917
- 	github.com/projectdiscovery/retryabledns v1.0.118
- 	github.com/projectdiscovery/retryablehttp-go v1.3.34
- 	github.com/projectdiscovery/sarif v0.1.0
-@@ -174,8 +174,8 @@ require (
- 	github.com/STARRY-S/zip v0.2.3 // indirect
- 	github.com/VividCortex/ewma v1.2.0 // indirect
- 	github.com/akrylysov/pogreb v0.10.2 // indirect
--	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751 // indirect
--	github.com/alecthomas/units v0.0.0-20211218093645-b94a6e3cc137 // indirect
-+	github.com/alecthomas/kingpin/v2 v2.4.0 // indirect
-+	github.com/alecthomas/units v0.0.0-20240927000941-0f3dac36c52b // indirect
- 	github.com/andybalholm/cascadia v1.3.4 // indirect
- 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 // indirect
- 	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.8 // indirect
-@@ -309,7 +309,6 @@ require (
- 	github.com/imdario/mergo v0.3.16 // indirect
- 	github.com/indece-official/go-ebcdic v1.2.0 // indirect
- 	github.com/itchyny/timefmt-go v0.1.6 // indirect
--	github.com/jarcoal/httpmock v1.3.0 // indirect
- 	github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 // indirect
- 	github.com/jcmturner/aescts/v2 v2.0.0 // indirect
- 	github.com/jcmturner/dnsutils/v2 v2.0.0 // indirect
-@@ -423,6 +422,7 @@ require (
- 	github.com/xeipuuv/gojsonpointer v0.0.0-20190905194746-02993c407bfb // indirect
- 	github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415 // indirect
- 	github.com/xeipuuv/gojsonschema v1.2.0 // indirect
-+	github.com/xhit/go-str2duration/v2 v2.1.0 // indirect
- 	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
- 	github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78 // indirect
- 	github.com/ysmood/fetchup v0.2.3 // indirect
-@@ -462,7 +462,6 @@ require (
- 	google.golang.org/genproto v0.0.0-20260128011058-8636f8732409 // indirect
- 	google.golang.org/genproto/googleapis/api v0.0.0-20260526163538-3dc84a4a5aaa // indirect
- 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260526163538-3dc84a4a5aaa // indirect
--	gopkg.in/alecthomas/kingpin.v2 v2.2.6 // indirect
- 	gopkg.in/corvus-ch/zbase32.v1 v1.0.0 // indirect
- 	gopkg.in/ini.v1 v1.67.0 // indirect
- 	gopkg.in/warnings.v0 v0.1.2 // indirect
-```
-
-**File**: `go.sum` (modified, +10/-8)
-```diff
-@@ -148,16 +148,18 @@ github.com/alecthomas/assert/v2 v2.11.0/go.mod h1:Bze95FyfUr7x34QZrjL+XP+0qgp/zg
- github.com/alecthomas/chroma/v2 v2.27.0 h1:FodwmyOBgJULFYmDqibcp9pvfDLWdtPRh9v/r5BXYZs=
- github.com/alecthomas/chroma/v2 v2.27.0/go.mod h1:NjJ3ciIgrqBNeIkWZ4e46nseoLDslxU1LmfCoL+wcY8=
- github.com/alecthomas/kingpin/v2 v2.3.1/go.mod h1:oYL5vtsvEHZGHxU7DMp32Dvx+qL+ptGn6lWaot2vCNE=
-+github.com/alecthomas/kingpin/v2 v2.4.0 h1:f48lwail6p8zpO1bC4TxtqACaGqHYA22qkHjHpqDjYY=
-+github.com/alecthomas/kingpin/v2 v2.4.0/go.mod h1:0gyi0zQnjuFk8xrkNKamJoyUo382HRL7ATRpFZCw6tE=
- github.com/alecthomas/repr v0.5.2 h1:SU73FTI9D1P5UNtvseffFSGmdNci/O6RsqzeXJtP0Qs=
- github.com/alecthomas/repr v0.5.2/go.mod h1:Fr0507jx4eOXV7AlPV6AVZLYrLIuIeSOWtW57eE/O/4=
- github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc/go.mod h1:LOuyumcjzFXgccqObfd/Ljyb9UuFJ6TxHnclSeseNhc=
--github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751 h1:JYp7IbQjafoB+tBA3gMyHYHrpOtNuDiK/uB5uXxq5wM=
- github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751/go.mod h1:LOuyumcjzFXgccqObfd/Ljyb9UuFJ6TxHnclSeseNhc=
- github.com/alecthomas/units v0.0.0-20151022065526-2efee857e7cf/go.mod h1:ybxpYRFXyAe+OPACYpWeL0wqObRcbAqCMya13uyzqw0=
- github.com/alecthomas/units v0.0.0-20190717042225-c3de453c63f4/go.mod h1:ybxpYRFXyAe+OPACYpWeL0wqObRcbAqCMya13uyzqw0=
- github.com/alecthomas/units v0.0.0-20190924025748-f65c72e2690d/go.mod h1:rBZYJk541a8SKzHPHnH3zbiI+7dagKZ0cgpgrD7Fyho=
--github.com/alecthomas/units v0.0.0-20211218093645-b94a6e3cc137 h1:s6gZFSlWYmbqAuRjVTiNNhvNRfY2Wxp9nhfyel4rklc=
- github.com/alecthomas/units v0.0.0-20211218093645-b94a6e3cc137/go.mod h1:OMCwj8VM1Kc9e19TLln2VL61YJF0x1XFtfdL4JdbSyE=
-+github.com/alecthomas/units v0.0.0-20240927000941-0f3dac36c52b h1:mimo19zliBX/vSQ6PWWSL9lK8qwHozUj03+zLoEB8O0=
-+github.com/alecthomas/units v0.0.0-20240927000941-0f3dac36c52b/go.mod h1:fvzegU4vN3H1qMT+8wDmzjAcDONcgo2/SZ/TyfdUOFs=
- github.com/alexbrainman/sspi v0.0.0-20250919150558-7d374ff0d59e h1:4dAU9FXIyQktpoUAgOJK3OTFc/xug0PCXYCqU0FgDKI=
- github.com/alexbrainman/sspi v0.0.0-20250919150558-7d374ff0d59e/go.mod h1:cEWa1LVoE5KvSD9ONXsZrj0z6KqySlCCNKHlLzbqAt4=
- github.com/alexsnet/go-vnc v0.1.0 h1:vBCwPNy79WEL8V/Z5A0ngEFCvTWBAjmS048lkR2rdmY=
-@@ -694,9 +696,8 @@ github.com/itchyny/gojq v0.12.17 h1:8av8eGduDb5+rvEdaOO+zQUjA04MS0m3Ps8HiD+fceg=
- github.com/itchyny/gojq v0.12.17/go.mod h1:WBrEMkgAfAGO1LUcGOckBl5O726KPp+OlkKug0I/FEY=
- github.com/itchyny/timefmt-go v0.1.6 h1:ia3s54iciXDdzWzwaVKXZPbiXzxxnv1SPGFfM/myJ5Q=
- github.com/itchyny/timefmt-go v0.1.6/go.mod h1:RRDZYC5s9ErkjQvTvvU7keJjxUYzIISJGxm9/mAERQg=
--github.com/jarcoal/httpmock v1.0.4/go.mod h1:ATjnClrvW/3tijVmpL/va5Z3aAyGvqU3gCT8nX0Txik=
--github.com/jarcoal/httpmock v1.3.0 h1:2RJ8GP0IIaWwcC9Fp2BmVi8Kog3v2Hn7VXM3fTd+nuc=
--github.com/jarcoal/httpmock v1.3.0/go.mod h1:3yb8rc4BI7TCBhFY8ng0gjuLKJNquuDNiPaZjnENuYg=
-+github.com/jarcoal/httpmock v1.4.2 h1:dKwiP/9zITCPfBLsDn3kchbSOu16JrnxtVEmL0fPRcI=
-+github.com/jarcoal/httpmock v1.4.2/go.mod h1:ftW1xULwo+j0R0JJkJIIi7UKigZUXCLLanykgjwBXL0=
- github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 h1:BQSFePA1RWJOlocH6Fxy8MmwDt+yVQYULKfN0RoTN8A=
- github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99/go.mod h1:1lJo3i6rXxKeerYnT8Nvf0QmHCRC1n8sfWVwXF2Frvo=
- github.com/jcmturner/aescts/v2 v2.0.0 h1:9YKLH6ey7H4eDBXW8khjYslgyqG2xZikXP0EQFKrle8=
-@@ -896,6 +897,8 @@ github.com/opencontainers/image-spec v1.1.1 h1:y0fUlFfIZhPF1W537XOLg0/fcx6zcHCJw
- github.com/opencontainers/image-spec v1.1.1/go.mod h1:qpqAh3Dmcf36wStyyWU+kCeDgrGnAve2nCC8+7h8Q0M=
- github.com/opencontainers/runc v1.3.6 h1:SLGIymCtsk80iNPWgbc8dtjI30r+5mTVV+4dN8/17Sk=
- github.com/opencontainers/runc v1.3.6/go.mod h1:o1wyv76EDlTkcf0KTFgN8bMWLPvgF/HfX709lDv+rr4=
-+github.com/openrdap/rdap v0.10.2 h1:dAP3rvrn9uInV6eBg1c6LNoEeWAKkgdqm09MRgKDpWo=
-+github.com/openrdap/rdap v0.10.2/go.mod h1:3XWb3R5cdN59jD6MlxzwmAQw1MMio2QDH7+pwpgb5jY=
- github.com/orisano/pixelmatch v0.0.0-20220722002657-fb0b55479cde/go.mod h1:nZgzbfBr3hhjoZnS66nKrHmduYNpc34ny7RK4z5/HM0=
- github.com/ory/dockertest/v3 v3.12.0 h1:3oV9d0sDzlSQfHtIaB5k6ghUCVMVLpAY8hwrqoCyRCw=
- github.com/ory/dockertest/v3 v3.12.0/go.mod h1:aKNDTva3cp8dwOWwb9cWuX84aH5akkxXRvO7KCwWVjE=
-@@ -974,8 +977,6 @@ github.com/projectdiscovery/ratelimit v0.0.95 h1:/vwnXSuVz9di/nJ2x/ebX9d1Hd320nU
- github.com/projectdiscovery/ratelimit v0.0.95/go.mod h1:QCzQMpdcjlXZNhfy1UJFp6vdPk2E3DaGKxKhFZ3dI48=
- github.com/projectdiscovery/rawhttp v0.3.1 h1:utudlS3qCAZYa+DU+WK0Q0uuiUxgYXfLwxWIs9dd1Bc=
- github.com/projectdiscovery/rawhttp v0.3.1/go.mod h1:ezbLgLuzFC3EunY4OqptRunQb6QUM7z78gOBL8DrWYY=
--github.com/projectdiscovery/rdap v0.9.1-0.20221108103045-9865884d1917 h1:m03X4gBVSorSzvmm0bFa7gDV4QNSOWPL/fgZ4kTXBxk=
--github.com/projectdiscovery/rdap v0.9.1-0.20221108103045-9865884d1917/go.mod h1:JxXtZC9e195awe7EynrcnBJmFoad/BNDzW9mzFkK8Sg=
- github.com/projectdiscovery/retryabledns v1.0.118 h1:vrWzUgjRyD5fg2QiPF0boDuSL/QYuoxPftgpYQv2MiQ=
- github.com/projectdiscovery/retryabledns v
-```
-
-**File**: `pkg/protocols/whois/rdapclientpool/clientpool.go` (modified, +20/-7)
-```diff
-@@ -7,18 +7,29 @@ import (
- 	"net/http"
- 	"sync"
- 
-+	"github.com/openrdap/rdap"
-+	"github.com/openrdap/rdap/bootstrap"
- 	"github.com/projectdiscovery/gologger"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/protocolstate"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/types"
--	"github.com/projectdiscovery/rdap"
--	"github.com/projectdiscovery/rdap/bootstrap"
- )
- 
- // clients holds one client per execution, because each one dials with the
- // network policy of its execution.
--var clients = map[string]*rdap.Client{}
-+var clients = map[string]*Client{}
- var m sync.Mutex
- 
-+type Client struct {
-+	mu     sync.Mutex
-+	client *rdap.Client
-+}
-+
-+func (c *Client) Do(request *rdap.Request) (*rdap.Response, error) {
-+	c.mu.Lock()
-+	defer c.mu.Unlock()
-+	return c.client.Do(request)
-+}
-+
- // Init initializes the client pool implementation
- func Init(options *types.Options) error {
- 	_, err := Get(options, nil)
-@@ -28,7 +39,7 @@ func Init(options *types.Options) error {
- // newClient returns an rdap client whose requests, bootstrap lookups and
- // redirects all dial through the fastdialer of the execution, so every
- // address it connects to is checked against the network policy.
--func newClient(options *types.Options) *rdap.Client {
-+func newClient(options *types.Options) *Client {
- 	executionID := options.ExecutionId
- 	httpClient := &http.Client{
- 		Transport: &http.Transport{
-@@ -51,7 +62,7 @@ func newClient(options *types.Options) *rdap.Client {
- 			gologger.Debug().Msgf("rdap: %s", text)
- 		}
+@@ -74,7 +74,10 @@ func (r *Runner) initializeTemplatesHTTPInput(templateCount int64) (*hybrid.Hybr
  	}
--	return client
-+	return &Client{client: client}
- }
  
- // Configuration contains the custom configuration options for a client - placeholder
-@@ -63,7 +74,7 @@ func (c *Configuration) Hash() string {
- }
- 
- // Get creates or gets the client of the execution
--func Get(options *types.Options, configuration *Configuration) (*rdap.Client, error) {
-+func Get(options *types.Options, configuration *Configuration) (*Client, error) {
- 	m.Lock()
- 	defer m.Unlock()
- 	if client, ok := clients[options.ExecutionId]; ok {
-@@ -81,6 +92,8 @@ func Close(executionID string) {
- 	delete(clients, executionID)
- 	m.Unlock()
- 	if client != nil {
--		client.HTTP.CloseIdleConnections()
-+		client.mu.Lock()
-+		client.client.HTTP.CloseIdleConnections()
-+		client.mu.Unlock()
+ 	// Probe the non-standard URLs and store them in cache
+-	swg, err := syncutil.New(syncutil.WithSize(r.options.BulkSize))
++	// syncutil.New rejects a size below 1, so a -bs below 1 probes one at a time.
++	bulkSize := max(r.options.BulkSize, 1)
++
++	swg, err := syncutil.New(syncutil.WithSize(bulkSize))
+ 	if err != nil {
+ 		return nil, errors.Wrap(err, "could not create adaptive group")
  	}
- }
 ```
 
-**File**: `pkg/protocols/whois/rdapclientpool/clientpool_test.go` (modified, +36/-1)
+**File**: `pkg/core/execute_options.go` (modified, +1/-1)
 ```diff
-@@ -4,12 +4,13 @@ import (
- 	"net/http"
- 	"net/http/httptest"
- 	"net/url"
-+	"sync"
- 	"sync/atomic"
- 	"testing"
+@@ -153,7 +153,7 @@ func (e *Engine) executeTemplateSpray(ctx context.Context, templatesList []*temp
+ // executeHostSpray executes scan using host spray strategy where templates are iterated over each target
+ func (e *Engine) executeHostSpray(ctx context.Context, templatesList []*templates.Template, target provider.InputProvider) *atomic.Bool {
+ 	results := &atomic.Bool{}
+-	wp, _ := syncutil.New(syncutil.WithSize(e.options.BulkSize + e.options.HeadlessBulkSize))
++	wp := newPool(e.options.BulkSize + e.options.HeadlessBulkSize) //nolint:varnamelen // wp names the pool throughout
  
-+	"github.com/openrdap/rdap"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/protocolstate"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/types"
--	"github.com/projectdiscovery/rdap"
- 	"github.com/stretchr/testify/require"
- )
+ 	// Targets are the positions here, and each target runs every template. A
+ 	// resumed scan skips the targets before the lowest one in flight at the
+```
+
+**File**: `pkg/core/executors.go` (modified, +1/-5)
+```diff
+@@ -76,11 +76,7 @@ func (e *Engine) executeTemplateWithTargets(ctx context.Context, template *templ
+ 		e.workPool = e.GetWorkPool()
+ 	}
+ 	// Bounded worker pool using input concurrency
+-	pool := e.workPool.InputPool(template.Type())
+-	workerCount := 1
+-	if pool != nil && pool.Size > 0 {
+-		workerCount = pool.Size
+-	}
++	workerCount := e.workPool.InputPool(template.Type()).Size
  
-@@ -32,6 +33,7 @@ func rdapOptions(t *testing.T, executionID string, excludeTargets []string) *typ
- 	require.NoError(t, protocolstate.Init(options))
- 	t.Cleanup(func() { protocolstate.Close(options.ExecutionId) })
- 	require.NoError(t, Init(options))
-+	t.Cleanup(func() { Close(options.ExecutionId) })
- 	return options
- }
+ 	var (
+ 		index uint32
+```
+
+**File**: `pkg/core/workflow_execute.go` (modified, +3/-2)
+```diff
+@@ -28,11 +28,12 @@ func (e *Engine) executeWorkflow(ctx *scan.ScanContext, w *workflows.Workflow) b
  
-@@ -64,3 +66,36 @@ func TestClientObeysExecutionNetworkPolicy(t *testing.T) {
- 	require.Error(t, err)
- 	require.Equal(t, int32(1), hits.Load(), "rdap request reached a denied address")
- }
+ 	// we can know the nesting level only at runtime, so the best we can do here is increase template threads by one unit in case it's equal to 1 to allow
+ 	// at least one subtemplate to go through, which it's idempotent to one in-flight template as the parent one is in an idle state
+-	templateThreads := w.Options.Options.TemplateThreads
++	templateThreads := max(w.Options.Options.TemplateThreads, 1)
+ 	if templateThreads == 1 {
+ 		templateThreads++
+ 	}
+-	swg, _ := syncutil.New(syncutil.WithSize(templateThreads))
 +
-+func TestClientDoConcurrent(t *testing.T) {
-+	var hits atomic.Int32
-+	server := newRdapServer(t, &hits)
-+	options := rdapOptions(t, t.Name(), nil)
-+	client, err := Get(options, nil)
-+	require.NoError(t, err)
-+	serverURL, err := url.Parse(server.URL)
-+	require.NoError(t, err)
-+
-+	const requests = 32
-+	start := make(chan struct{})
-+	errs := make(chan error, requests)
-+	var wg sync.WaitGroup
-+	for range requests {
-+		wg.Add(1)
-+		go func() {
-+			defer wg.Done()
-+			<-start
-+			request := rdap.NewAutoRequest("example.com")
-+			request.Server = serverURL
-+			_, err := client.Do(request)
-+			errs <- err
-+		}()
-+	}
-+	close(start)
-+	wg.Wait()
-+	close(errs)
-+	for err := range errs {
-+		require.NoError(t, err)
-+	}
-+	require.Equal(t, int32(requests), hits.Load())
-+}
++	swg := newPool(templateThreads)
+ 	// pending tracks every started step until it returns. swg only limits
+ 	// concurrency and its slots can be released early, so completion is
+ 	// tracked here instead.
 ```
 
-**File**: `pkg/protocols/whois/whois.go` (modified, +2/-2)
+**File**: `pkg/core/workpool.go` (modified, +32/-11)
 ```diff
-@@ -5,6 +5,7 @@ import (
- 	"strings"
- 	"time"
- 
-+	"github.com/openrdap/rdap"
- 	"github.com/pkg/errors"
- 	"github.com/projectdiscovery/gologger"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/operators"
-@@ -24,7 +25,6 @@ import (
- 	templateTypes "github.com/projectdiscovery/nuclei/v3/pkg/templates/types"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/types"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/utils/json"
--	"github.com/projectdiscovery/rdap"
- )
- 
- // Request is a request for the WHOIS protocol
-@@ -47,7 +47,7 @@ type Request struct {
- 	//   Otherwise, nil enables bootstrapping
- 	Server string `yaml:"server,omitempty" json:"server,omitempty" jsonschema:"title=server url to execute the WHOIS request on,description=Server contains the server url to execute the WHOIS request on"`
- 	// cache any variables that may be needed for operation.
--	client          *rdap.Client
-+	client          *rdapclientpool.Client
- 	options         *protocols.ExecutorOptions
- 	parsedServerURL *url.URL
- }
-```
-
----
-
-### Incident Patch 2: `11020e36` (2026-11-20)
-**Commit Message**: fix(whois): preserve existing registrar server response key
-
-Codex-Session: codex resume 01a1c1de-e73c-7622-949e-fbbbd741b6c5
-
-**File**: `pkg/protocols/whois/whois.go` (modified, +9/-0)
-```diff
-@@ -145,6 +145,15 @@ func (request *Request) ExecuteWithResults(input *contextargs.Context, dynamicVa
- 	case rdap.DomainRequest:
- 		// convert the rdap response to a whois style response (for domain request type only)
- 		whoisResp := res.ToWhoisStyleResponse()
-+		if servers, ok := whoisResp.Data["WHOIS Server"]; ok {
-+			delete(whoisResp.Data, "WHOIS Server")
-+			whoisResp.Data["Registrar WHOIS Server"] = servers
-+			for i, key := range whoisResp.KeyDisplayOrder {
-+				if key == "WHOIS Server" {
-+					whoisResp.KeyDisplayOrder[i] = "Registrar WHOIS Server"
-+				}
-+			}
-+		}
- 		for k, v := range whoisResp.Data {
- 			data[strings.ToLower(k)] = strings.Join(v, ",")
- 		}
-```
-
-**File**: `pkg/protocols/whois/whois_test.go` (modified, +21/-0)
-```diff
-@@ -2,6 +2,7 @@ package whois
+@@ -2,6 +2,7 @@ package core
  
  import (
  	"context"
-+	"encoding/json"
- 	"fmt"
- 	"net/http"
- 	"net/http/httptest"
-@@ -18,6 +19,26 @@ import (
- 	templateTypes "github.com/projectdiscovery/nuclei/v3/pkg/templates/types"
- )
++	"fmt"
  
-+func TestWhoisPreservesRegistrarWhoisServer(t *testing.T) {
-+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		require.Equal(t, "/domain/example.com", r.URL.Path)
-+		w.Header().Set("Content-Type", "application/rdap+json")
-+		_, _ = fmt.Fprint(w, `{"objectClassName":"domain","ldhName":"example.com","port43":"whois.example.com"}`)
-+	}))
-+	t.Cleanup(server.Close)
+ 	"github.com/projectdiscovery/gologger"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/templates/types"
+@@ -33,16 +34,29 @@ type WorkPoolConfig struct {
+ 
+ // NewWorkPool returns a new WorkPool instance
+ func NewWorkPool(config WorkPoolConfig) *WorkPool {
+-	headlessWg, _ := syncutil.New(syncutil.WithSize(config.HeadlessTypeConcurrency))
+-	defaultWg, _ := syncutil.New(syncutil.WithSize(config.TypeConcurrency))
+-
+ 	return &WorkPool{
+ 		config:   config,
+-		Headless: headlessWg,
+-		Default:  defaultWg,
++		Headless: newPool(config.HeadlessTypeConcurrency),
++		Default:  newPool(config.TypeConcurrency),
+ 	}
+ }
+ 
++// newPool returns a pool of size, or of one when size is below 1.
++// syncutil.New returns a nil pool for a size below 1, which the scan would
++// dereference.
++func newPool(size int) *syncutil.AdaptiveWaitGroup {
++	size = max(size, 1)
 +
-+	_, event, _ := runWhoisDurationRequest(t, "example.com", server.URL)
-+	require.Equal(t, "whois.example.com", event["registrar whois server"])
-+	var response struct {
-+		Data            map[string][]string
-+		KeyDisplayOrder []string
++	pool, err := syncutil.New(syncutil.WithSize(size))
++	if err != nil {
++		// The size is at least 1, so this cannot happen. Stopping here beats
++		// handing the scan a nil pool.
++		panic(fmt.Sprintf("could not create work pool of size %d: %s", size, err))
 +	}
-+	require.NoError(t, json.Unmarshal([]byte(event["response"].(string)), &response))
-+	require.Equal(t, []string{"whois.example.com"}, response.Data["Registrar WHOIS Server"])
-+	require.Contains(t, response.KeyDisplayOrder, "Registrar WHOIS Server")
-+	require.NotContains(t, response.KeyDisplayOrder, "WHOIS Server")
++
++	return pool
 +}
 +
- func TestWhoisDuration(t *testing.T) {
- 	tests := []struct {
- 		name         string
+ // Wait waits for all the work pool wait groups to finish
+ func (w *WorkPool) Wait() {
+ 	w.Default.Wait()
+@@ -57,8 +71,8 @@ func (w *WorkPool) InputPool(templateType types.ProtocolType) *syncutil.Adaptive
+ 	} else {
+ 		count = w.config.InputConcurrency
+ 	}
+-	swg, _ := syncutil.New(syncutil.WithSize(count))
+-	return swg
++
++	return newPool(count)
+ }
+ 
+ func (w *WorkPool) RefreshWithConfig(config WorkPoolConfig) {
+@@ -82,13 +96,20 @@ func (w *WorkPool) RefreshWithConfigContext(ctx context.Context, config WorkPool
+ }
+ 
+ func (w *WorkPool) Refresh(ctx context.Context) {
+-	if w.Default.Size != w.config.TypeConcurrency {
+-		if err := w.Default.Resize(ctx, w.config.TypeConcurrency); err != nil {
++	// newPool sized the pools to at least 1, so compare against the same bound.
++	typeConcurrency := max(w.config.TypeConcurrency, 1)
++	headlessTypeConcurrency := max(w.config.HeadlessTypeConcurrency, 1)
++
++	if w.Default.Size != typeConcurrency {
++		err := w.Default.Resize(ctx, typeConcurrency)
++		if err != nil {
+ 			gologger.Warning().Msgf("Could not resize workpool: %s\n", err)
+ 		}
+ 	}
+-	if w.Headless.Size != w.config.HeadlessTypeConcurrency {
+-		if err := w.Headless.Resize(ctx, w.config.HeadlessTypeConcurrency); err != nil {
++
++	if w.Headless.Size != headlessTypeConcurrency {
++		err := w.Headless.Resize(ctx, headlessTypeConcurrency)
++		if err != nil {
+ 			gologger.Warning().Msgf("Could not resize workpool: %s\n", err)
+ 		}
+ 	}
+```
+
+**File**: `pkg/core/workpool_test.go` (added, +174/-0)
+```diff
+@@ -0,0 +1,174 @@
++package core //nolint:testpackage // it builds engines through the unexported newTaskEngine
++
++//nolint:depguard // No depguard rules are configured, so its default list allows only the standard library.
++import (
++	"context"
++	"fmt"
++	"strconv"
++	"sync"
++	"testing"
++	"time"
++
++	"github.com/stretchr/testify/require"
++
++	"github.com/projectdiscovery/nuclei/v3/pkg/operators"
++	"github.com/projectdiscovery/nuclei/v3/pkg/output"
++	"github.com/projectdiscovery/nuclei/v3/pkg/progress"
++	"github.com/projectdiscovery/nuclei/v3/pkg/protocols"
++	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/contextargs"
++	"github.com/projectdiscovery/nuclei/v3/pkg/templates"
++	tmpltypes "github.com/projectdiscovery/nuclei/v3/pkg/templates/types"
++	"github.com/projectdiscovery/nuclei/v3/pkg/types"
++	"github.com/projectdiscovery/nuclei/v3/pkg/types/scanstrategy"
++	"github.com/projectdiscovery/nuclei/v3/pkg/workflows"
++)
++
++// A concurrency below 1 must run with one worker, not leave a nil pool for
++// the scan to dereference.
++//
++//nolint:paralleltest,exhaustruct,exhaustruct_v5 // engines share the default logger; fixtures keep zero values
++func TestScanRunsWithConcurrencyBelowOne(t *testing.T) {
++	tests := []struct {
++		name     string
++		workflow bool
++		values   func(value int) (bulk, headlessBulk, threads, headlessThreads int)
++	}{
++		{"-c", false, func(v int) (int, int, int, int) { return 2, 1, v, 1 }},
++		{"-c with a workflow", true, func(v int) (int, int, int, int) { return 2, 1, v, 1 }},
++		{"-headc", false, func(v int) (int, int, int, int) { return 2, 1, 2, v }},
++		{"-bs and -hbs", false, func(v int) (int, int, int, int) { return v, v, 2, 1 }},
++		// -bs plus the default -hbs of 10 is below 1 while -bs is not.
++		{"-bs with -hbs 10", false, func(v int) (int, int, int, int) { return v - 10, 10, 2, 1 }},
++	}
++
++	for _, strategy := range []scanstrategy.ScanStrategy{scanstrategy.TemplateSpray, scanstrategy.HostSpray} {
++		for _, test := range tests {
++			for _, value := range []int{0, -1} {
++				t.Run(fmt.Sprintf("%s/%s=%d", strategy, test.name, value), func(t *testing.T) {
++					engine, _ := newTaskEngine(strategy, nil, nil, nil)
++					bulk, headlessBulk, threads, headlessThreads := test.values(value)
++					engine.options.BulkSize = bulk
++					engine.options.HeadlessBulkSize = headlessBulk
++					engine.options.TemplateThreads = threads
++					engine.options.HeadlessTemplateThreads = headlessThreads
++					engine.workPool = engine.GetWorkPool()
++
++					var (
++						runsMu sync.Mutex
++						runs   []string
++					)
++
++					templatesList := scanTemplates(test.workflow, engine.options, &runsMu, &runs)
++
++					// A workflow clones its input, which needs the input's mutex.
++					targets := &fakeTargetProvider{}
++
++					for _, input := range []string{"a", "b"} {
++						target := contextargs.NewMetaInput()
++						target.Input = input
++						targets.values = append(targets.values, target)
++					}
++
++					ctx, cancel := context.WithTimeout(t.Context(), 10*time.Second)
++					defer cancel()
++
++					require.NotPanics(t, func() {
++						engine.ExecuteScanWithOpts(ctx, templatesList, targets, true)
++					})
++					require.Len(t, runs, 4, "every template, or the workflow and its subtemplate, runs on every target")
++				})
++			}
++		}
++	}
++}
++
++// NewWorkPool builds every pool even when the configured size is below 1, and
++// refreshing it with the same size leaves the pools usable.
++//
++//nolint:paralleltest // keeps the file's tests together
++func TestNewWorkPoolClampsSizeToOne(t *testing.T) {
++	for _, size := range []int{0, -1} {
++		t.Run(strconv.Itoa(size), func(t *testing.T) {
++			config := WorkPoolConfig{
++				InputConcurrency:         size,
++				TypeConcurrency:          size,
++				HeadlessInputConcurrency: size,
++				HeadlessTypeConcurrency:  size,
++			}
++			pool := NewWorkPool(config)
++			require.NotNil(t, pool.Default)
++			require.NotNil(t, pool.Headless)
++			require.Equal(t, 1, pool.Default.Size)
++			require.Equal(t, 1, pool.Headless.Size)
++			require.Equal(t, 1, pool.InputPool(tmpltypes.HTTPProtocol).Size)
++			require.Equal(t, 1, pool.InputPool(tmpltypes.HeadlessProtocol).Size)
++
++			pool.RefreshWithConfig(config)
++			require.Equal(t, 1, pool.Default.Size)
++			require.Equal(t, 1, pool.Headless.Size)
++			pool.Wait()
++		})
++	}
++}
++
++// workflowTemplate returns a workflow of one step and one subtemplate. The
++// step matches, so the subtemplate runs.
++//
++//nolint:exhaustruct,exhaustruct_v5 // fixtures keep zero-value defaults
++func workflowTemplate(options *types.Options, runsMu *sync.Mutex, runs *[]string) *templates.Template {
++	progressBar, _ := progress.NewStatsTicker(0, false, false, false, 0)
++	step := func(name string, outputs ...*output.InternalWrappedEvent) *workflows.WorkflowTemplate {
++		return &workflows.WorkflowTemplate{Executers: []*workflows.ProtocolExecuterPair{{
++			Executer: &mockExecuter{
++				result: true,
++				executeHook: func(input *contextargs.MetaInput) {
++					runsMu.Lock()
++					d
+```
+
+**File**: `pkg/protocols/common/automaticscan/automaticscan.go` (modified, +13/-2)
+```diff
+@@ -130,7 +130,10 @@ func (s *Service) Execute(ctx context.Context) error {
+ 		s.opts.Progress.AddToTotal(int64(getRequestCount(s.techTemplates)) * s.target.Count())
+ 	}
+ 	// setup host concurrency
+-	sg, err := syncutil.New(syncutil.WithSize(s.opts.Options.BulkSize))
++	// syncutil.New rejects a size below 1, so a -bs below 1 scans one host at a time.
++	bulkSize := max(s.opts.Options.BulkSize, 1)
++
++	sg, err := syncutil.New(syncutil.WithSize(bulkSize)) //nolint:varnamelen // sg names the group throughout
+ 	if err != nil {
+ 		return err
+ 	}
+@@ -269,7 +272,15 @@ func (s *Service) getTagsUsingDetectionTemplates(ctx context.Context, input *con
+ 	// execute tech detection templates on target
+ 	tags := map[string]struct{}{}
+ 	m := &sync.Mutex{}
+-	sg, _ := syncutil.New(syncutil.WithSize(s.opts.Options.TemplateThreads))
++	// syncutil.New rejects a size below 1, so a -c below 1 runs one template at a time.
++	templateThreads := max(s.opts.Options.TemplateThreads, 1)
++
++	sg, err := syncutil.New(syncutil.WithSize(templateThreads)) //nolint:varnamelen // sg names the group throughout
++	if err != nil {
++		gologger.Error().Msgf("Could not create detection template group for %v: %s\n", input.Input, err)
++
++		return nil, 0
++	}
+ 	counter := atomic.Uint32{}
+ 
+ 	for _, t := range s.techTemplates {
+```
+
+**File**: `pkg/protocols/common/automaticscan/automaticscan_test.go` (modified, +60/-0)
+```diff
+@@ -1,9 +1,20 @@
+ package automaticscan
+ 
++//nolint:depguard // No depguard rules are configured, so its default list allows only the standard library.
+ import (
++	"strconv"
++	"sync/atomic"
+ 	"testing"
+ 
+ 	"github.com/stretchr/testify/require"
++
++	"github.com/projectdiscovery/nuclei/v3/pkg/input/provider"
++	"github.com/projectdiscovery/nuclei/v3/pkg/output"
++	"github.com/projectdiscovery/nuclei/v3/pkg/protocols"
++	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/contextargs"
++	"github.com/projectdiscovery/nuclei/v3/pkg/scan"
++	"github.com/projectdiscovery/nuclei/v3/pkg/templates"
++	"github.com/projectdiscovery/nuclei/v3/pkg/types"
+ )
+ 
+ func TestNormalizeAppName(t *testing.T) {
+@@ -13,3 +24,52 @@ func TestNormalizeAppName(t *testing.T) {
+ 	appName = normalizeAppName("JBoss:2.3.5")
+ 	require.Equal(t, "jboss", appName, "could not get normalized name")
+ }
++
++// countingExecuter counts the runs of a detection template.
++type countingExecuter struct {
++	runs atomic.Int32
++}
++
++func (c *countingExecuter) Compile() error { return nil }
++func (c *countingExecuter) Requests() int  { return 1 }
++func (c *countingExecuter) Execute(*scan.ScanContext) (bool, error) {
++	c.runs.Add(1)
++
++	return false, nil
++}
++func (c *countingExecuter) ExecuteWithResults(*scan.ScanContext) ([]*output.ResultEvent, error) {
++	c.runs.Add(1)
++
++	return nil, nil
++}
++
++// A -c or -bs below 1 must not make the service fail or dereference a nil
++// pool; it runs one task at a time.
++//
++//nolint:exhaustruct,exhaustruct_v5,paralleltest // fixtures keep zero-value defaults
++func TestServiceRunsWithConcurrencyBelowOne(t *testing.T) {
++	for _, value := range []int{0, -1} {
++		t.Run("-c="+strconv.Itoa(value), func(t *testing.T) {
++			executer := &countingExecuter{}
++			service := &Service{
++				opts:          &protocols.ExecutorOptions{Options: &types.Options{TemplateThreads: value}},
++				techTemplates: []*templates.Template{{ID: "tech-detect", Executer: executer}},
++			}
++
++			input := contextargs.NewMetaInput()
++			input.Input = "http://127.0.0.1"
++
++			require.NotPanics(t, func() { service.getTagsUsingDetectionTemplates(t.Context(), input) })
++			require.EqualValues(t, 1, executer.runs.Load(), "the detection template runs once")
++		})
++
++		t.Run("-bs="+strconv.Itoa(value), func(t *testing.T) {
++			service := &Service{
++				opts:   &protocols.ExecutorOptions{Options: &types.Options{BulkSize: value}},
++				target: provider.NewSimpleInputProvider(),
++			}
++
++			require.NoError(t, service.Execute(t.Context()))
++		})
++	}
++}
 ```
 
 ---
 
-### Incident Patch 3: `2a8cd431` (2026-11-20)
-**Commit Message**: fix(whois): align RDAP bootstrap module types
+### Incident Patch 2: `a3514df6` (2026-11-21)
+**Commit Message**: Merge pull request #8293 from projectdiscovery/dwisiswant0/fix/templates/keep-race-blocks-out-of-clustering
 
-Codex-Session: codex resume 01a1c1de-e73c-7622-949e-fbbbd741b6c5
+fix(templates): keep race blocks out of clustering
 
-**File**: `go.mod` (modified, +2/-3)
+**File**: `pkg/protocols/http/cluster.go` (modified, +7/-1)
 ```diff
-@@ -74,7 +74,6 @@ require (
- 	github.com/miekg/dns v1.1.73
- 	github.com/oiweiwei/go-msrpc v1.2.12
- 	github.com/olekukonko/tablewriter v1.0.8
--	github.com/openrdap/rdap v0.9.1
- 	github.com/ory/dockertest/v3 v3.12.0
- 	github.com/pkg/errors v0.9.1
- 	github.com/praetorian-inc/fingerprintx v1.1.15
-@@ -99,7 +98,7 @@ require (
- 	github.com/projectdiscovery/networkpolicy v0.1.58
- 	github.com/projectdiscovery/ratelimit v0.0.95
- 	github.com/projectdiscovery/rawhttp v0.3.1
--	github.com/projectdiscovery/rdap v0.9.0
-+	github.com/projectdiscovery/rdap v0.9.1-0.20221108103045-9865884d1917
- 	github.com/projectdiscovery/retryabledns v1.0.118
- 	github.com/projectdiscovery/retryablehttp-go v1.3.34
- 	github.com/projectdiscovery/sarif v0.1.0
-@@ -175,7 +174,6 @@ require (
- 	github.com/STARRY-S/zip v0.2.3 // indirect
- 	github.com/VividCortex/ewma v1.2.0 // indirect
- 	github.com/akrylysov/pogreb v0.10.2 // indirect
--	github.com/alecthomas/kingpin/v2 v2.4.0 // indirect
- 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751 // indirect
- 	github.com/alecthomas/units v0.0.0-20211218093645-b94a6e3cc137 // indirect
- 	github.com/andybalholm/cascadia v1.3.4 // indirect
-@@ -311,6 +309,7 @@ require (
- 	github.com/imdario/mergo v0.3.16 // indirect
- 	github.com/indece-official/go-ebcdic v1.2.0 // indirect
- 	github.com/itchyny/timefmt-go v0.1.6 // indirect
-+	github.com/jarcoal/httpmock v1.3.0 // indirect
- 	github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 // indirect
- 	github.com/jcmturner/aescts/v2 v2.0.0 // indirect
- 	github.com/jcmturner/dnsutils/v2 v2.0.0 // indirect
-```
-
-**File**: `go.sum` (modified, +3/-9)
-```diff
-@@ -148,8 +148,6 @@ github.com/alecthomas/assert/v2 v2.11.0/go.mod h1:Bze95FyfUr7x34QZrjL+XP+0qgp/zg
- github.com/alecthomas/chroma/v2 v2.27.0 h1:FodwmyOBgJULFYmDqibcp9pvfDLWdtPRh9v/r5BXYZs=
- github.com/alecthomas/chroma/v2 v2.27.0/go.mod h1:NjJ3ciIgrqBNeIkWZ4e46nseoLDslxU1LmfCoL+wcY8=
- github.com/alecthomas/kingpin/v2 v2.3.1/go.mod h1:oYL5vtsvEHZGHxU7DMp32Dvx+qL+ptGn6lWaot2vCNE=
--github.com/alecthomas/kingpin/v2 v2.4.0 h1:f48lwail6p8zpO1bC4TxtqACaGqHYA22qkHjHpqDjYY=
--github.com/alecthomas/kingpin/v2 v2.4.0/go.mod h1:0gyi0zQnjuFk8xrkNKamJoyUo382HRL7ATRpFZCw6tE=
- github.com/alecthomas/repr v0.5.2 h1:SU73FTI9D1P5UNtvseffFSGmdNci/O6RsqzeXJtP0Qs=
- github.com/alecthomas/repr v0.5.2/go.mod h1:Fr0507jx4eOXV7AlPV6AVZLYrLIuIeSOWtW57eE/O/4=
- github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc/go.mod h1:LOuyumcjzFXgccqObfd/Ljyb9UuFJ6TxHnclSeseNhc=
-@@ -696,6 +694,7 @@ github.com/itchyny/gojq v0.12.17 h1:8av8eGduDb5+rvEdaOO+zQUjA04MS0m3Ps8HiD+fceg=
- github.com/itchyny/gojq v0.12.17/go.mod h1:WBrEMkgAfAGO1LUcGOckBl5O726KPp+OlkKug0I/FEY=
- github.com/itchyny/timefmt-go v0.1.6 h1:ia3s54iciXDdzWzwaVKXZPbiXzxxnv1SPGFfM/myJ5Q=
- github.com/itchyny/timefmt-go v0.1.6/go.mod h1:RRDZYC5s9ErkjQvTvvU7keJjxUYzIISJGxm9/mAERQg=
-+github.com/jarcoal/httpmock v1.0.4/go.mod h1:ATjnClrvW/3tijVmpL/va5Z3aAyGvqU3gCT8nX0Txik=
- github.com/jarcoal/httpmock v1.3.0 h1:2RJ8GP0IIaWwcC9Fp2BmVi8Kog3v2Hn7VXM3fTd+nuc=
- github.com/jarcoal/httpmock v1.3.0/go.mod h1:3yb8rc4BI7TCBhFY8ng0gjuLKJNquuDNiPaZjnENuYg=
- github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 h1:BQSFePA1RWJOlocH6Fxy8MmwDt+yVQYULKfN0RoTN8A=
-@@ -897,8 +896,6 @@ github.com/opencontainers/image-spec v1.1.1 h1:y0fUlFfIZhPF1W537XOLg0/fcx6zcHCJw
- github.com/opencontainers/image-spec v1.1.1/go.mod h1:qpqAh3Dmcf36wStyyWU+kCeDgrGnAve2nCC8+7h8Q0M=
- github.com/opencontainers/runc v1.3.6 h1:SLGIymCtsk80iNPWgbc8dtjI30r+5mTVV+4dN8/17Sk=
- github.com/opencontainers/runc v1.3.6/go.mod h1:o1wyv76EDlTkcf0KTFgN8bMWLPvgF/HfX709lDv+rr4=
--github.com/openrdap/rdap v0.9.1 h1:Rv6YbanbiVPsKRvOLdUmlU1AL5+2OFuEFLjFN+mQsCM=
--github.com/openrdap/rdap v0.9.1/go.mod h1:vKSiotbsENrjM/vaHXLddXbW8iQkBfa+ldEuYEjyLTQ=
- github.com/orisano/pixelmatch v0.0.0-20220722002657-fb0b55479cde/go.mod h1:nZgzbfBr3hhjoZnS66nKrHmduYNpc34ny7RK4z5/HM0=
- github.com/ory/dockertest/v3 v3.12.0 h1:3oV9d0sDzlSQfHtIaB5k6ghUCVMVLpAY8hwrqoCyRCw=
- github.com/ory/dockertest/v3 v3.12.0/go.mod h1:aKNDTva3cp8dwOWwb9cWuX84aH5akkxXRvO7KCwWVjE=
-@@ -977,8 +974,8 @@ github.com/projectdiscovery/ratelimit v0.0.95 h1:/vwnXSuVz9di/nJ2x/ebX9d1Hd320nU
- github.com/projectdiscovery/ratelimit v0.0.95/go.mod h1:QCzQMpdcjlXZNhfy1UJFp6vdPk2E3DaGKxKhFZ3dI48=
- github.com/projectdiscovery/rawhttp v0.3.1 h1:utudlS3qCAZYa+DU+WK0Q0uuiUxgYXfLwxWIs9dd1Bc=
- github.com/projectdiscovery/rawhttp v0.3.1/go.mod h1:ezbLgLuzFC3EunY4OqptRunQb6QUM7z78gOBL8DrWYY=
--github.com/projectdiscovery/rdap v0.9.0 h1:wPhHx5pQ2QI+WGhyNb2PjhTl0NtB39Nk7YFZ9cp8ZGA=
--github.com/projectdiscovery/rdap v0.9.0/go.mod h1:zk4yrJFQ2Hy36Aqk+DvotYQxYAeALaCJ5ORySkff36Q=
-+github.com/projectdiscovery/rdap v0.9.1-0.20221108103045-9865884d1917 h1:m03X4gBVSorSzvmm0bFa7gDV4QNSOWPL/fgZ4kTXBxk=
-+github.com/projectdiscovery/rdap v0.9.1-0.20221108103045-9865884d1917/go.mod h1:JxXtZC9e195awe7EynrcnBJmFoad/BNDzW9mzFkK8Sg=
- github.com/projectdiscovery/retryabledns v1.0.118 h1:vrWzUgjRyD5fg2QiPF0boDuSL/QYuoxPftgpYQv2MiQ=
- github.com/projectdiscovery/retryabledns v1.0.118/go.mod h1:qHuxflnN8BWWqQ+N+TIe9OTqmaMpE/G2+36chAcFQhg=
- github.com/projectdiscovery/retryablehttp-go v1.3.34 h1:tp45jp3yAtXunuIPeOB1k4L/9vq4Tn9Lm0wkRHRKMnI=
-@@ -1194,10 +1191,7 @@ github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415 h1:EzJWgHo
- github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415/go.mod h1:GwrjFmJcFw6At/Gs6z4yjiIwzuJ1/+UwLxMQDVQXShQ=
- github.com/xeipuuv/gojsonschema v1.2.0 h1:LhYJRs+L4fBtjZUfuSZIKGeVu0QRy8e5Xi7D17UxZ74=
- github.com/xeipuuv/gojsonschema v1.2.0/go.mod h1:anYRn/JVcOK2ZgGU+IjEV4nwlhoK5sQluxsYJ78Id3Y=
--github.com/xhit/go-str2duration v1.2.0 h1:BcV5u025cITWxEQKGWr1URRzrcXtu7uk8+luz3Yuhwc=
- github.com/xhit/go-str2duration v1.2.0/go.mod h1:3cPSlfZlUHVlneIVfePFWcJZsuwf+P1v2SRTV4cUmp4=
--github.com/xhit/go-str2duration/v2 v2.1.0 h1:lxklc02Drh6ynqX+DdPyp5pCKLUQpRT8bp8Ydu2Bstc=
--github.com/xhit/go-str2duration/v2 v2.1.0/go.mod h1:ohY8p+0f07DiV6Em5LKB0s2YpLtXVyJfNt1+BlmyAsU=
- github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e h1:JVG44RsyaB9T2KIHavMF/ppJZNG9ZpyihvCd0w101no=
- github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e/go.mod h1:RbqR21r5mrJuqunuUZ/Dhy/avygyECGrLceyNeo4LiM=
- github.com/xyproto/randomstring v1.0.5 h1:YtlWPoRdgMu3NZtP45drfy1GKoojuR7hmRcnhZqKjWU=
-```
-
-**File**: `pkg/protocols/whois/rdapclientpool/clientpool.go` (modified, +1/-1)
-```diff
-@@ -7,11 +7,11 @@ import (
- 	"net/http"
- 	"sync"
+@@ -16,7 +16,13 @@ func (request *Request) TmplClusterKey() uint64 {
+ }
  
--	"github.com/openrdap/rdap/bootstrap"
- 	"github.com/projectdiscovery/gologger"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/protocolstate"
- 	"github.com/projectdiscovery/nuclei/v3/pkg/types"
- 	"github.com/projectdiscovery/rdap"
-+	"github.com/projectdiscovery/rdap/bootstrap"
+ // IsClusterable returns true if the request is eligible to be clustered.
++// A cluster sends its first member's request for every member, so a block that
++// sends race_count copies would force its count on the others, or lose it to a
++// plain first member (#8280). Without race_count, race sends what a plain block
++// sends. A pipelined block is never clustered: the pipeline client writes its
++// request differently from a plain block's, so a cluster would send one kind
++// for the other.
+ func (request *Request) IsClusterable() bool {
+ 	//nolint
+-	return !(len(request.Payloads) > 0 || len(request.Fuzzing) > 0 || len(request.Raw) > 0 || len(request.Body) > 0 || request.Unsafe || request.NeedsRequestCondition() || request.Name != "" || request.readsRawResponse)
++	return !(len(request.Payloads) > 0 || len(request.Fuzzing) > 0 || len(request.Raw) > 0 || len(request.Body) > 0 || request.Unsafe || request.Pipeline || request.NeedsRequestCondition() || request.Name != "" || request.readsRawResponse || request.sendsRaceCopies())
+ }
+```
+
+**File**: `pkg/protocols/http/cluster_test.go` (modified, +38/-0)
+```diff
+@@ -94,6 +94,44 @@ func TestIsClusterable(t *testing.T) {
+ 	})
+ }
+ 
++// A cluster sends its first member's request for every member, so a race block
++// would force its race_count on the others, or lose it to a plain one (#8280).
++//
++//nolint:exhaustruct,exhaustruct_v5 // fixtures keep zero-value defaults
++func TestIsClusterableRace(t *testing.T) {
++	t.Parallel()
++
++	tests := []struct {
++		name        string
++		race        bool
++		count       int
++		pipeline    bool
++		clusterable bool
++	}{
++		{name: "race with race_count is not clusterable", race: true, count: 5},
++		// without race_count, race runs as any other block
++		{name: "race without race_count is clusterable", race: true, clusterable: true},
++		// a pipelined block sends its request differently from a plain one
++		{name: "race with race_count in a pipeline is not clusterable", race: true, count: 5, pipeline: true},
++		{name: "pipeline is not clusterable", pipeline: true},
++		{name: "race_count without race is clusterable", count: 5, clusterable: true},
++	}
++	for _, test := range tests {
++		t.Run(test.name, func(t *testing.T) {
++			t.Parallel()
++
++			req := &Request{
++				Path:               []string{"{{BaseURL}}"},
++				Method:             HTTPMethodTypeHolder{MethodType: HTTPGet},
++				Race:               test.race,
++				RaceNumberRequests: test.count,
++				Pipeline:           test.pipeline,
++			}
++			require.Equal(t, test.clusterable, req.IsClusterable())
++		})
++	}
++}
++
+ func TestTmplClusterKeyIdempotent(t *testing.T) {
+ 	req := &Request{
+ 		Path:         []string{"{{BaseURL}}/admin"},
+```
+
+**File**: `pkg/templates/cluster.go` (modified, +1/-0)
+```diff
+@@ -41,6 +41,7 @@ import (
+ //
+ // Cases where clustering is not performed (request is considered different)
+ //   - If request contains payloads,raw,body,unsafe,req-condition,name attributes
++//   - If an HTTP request sends race copies (race with a race_count above 0, outside a pipeline)
+ //   - If request methods,max-redirects,disable-cookie,redirects are not equal
+ //   - If request paths aren't identical.
+ //   - If request headers aren't identical
+```
+
+**File**: `pkg/templates/cluster_test.go` (modified, +47/-0)
+```diff
+@@ -78,3 +78,50 @@ func TestClusterTemplates(t *testing.T) {
+ 		require.ElementsMatch(t, got, expected)
+ 	})
+ }
++
++// A cluster sends its first member's request for every member, so a race block
++// would force its race_count on the others, or lose it to a plain one (#8280).
++//
++//nolint:exhaustruct,exhaustruct_v5,paralleltest // fixtures keep zero-value defaults; testutils state is shared
++func TestClusterTemplatesRaceBlocksRunOnTheirOwn(t *testing.T) {
++	execOptions := testutils.NewMockExecuterOptions(testutils.DefaultOptions, &testutils.TemplateInfo{
++		ID:   "templateID",
++		Info: model.Info{SeverityHolder: severity.Holder{Severity: severity.Low}, Name: "test"},
++	})
++	member := func(path string, race bool, count int) *Template {
++		tmpl := &Template{Path: path, RequestsHTTP: []*http.Request{{
++			Path:               []string{"{{BaseURL}}/same"},
++			Race:               race,
++			RaceNumberRequests: count,
++		}}}
++		tmpl.Options = execOptions
++
++		return tmpl
++	}
++	plain, otherPlain := member("a-plain.yaml", false, 0), member("b-plain.yaml", false, 0)
++	race, otherRace := member("c-race.yaml", true, 5), member("d-race.yaml", true, 3)
++	// without race_count the block runs as any other
++	raceOnly := member("e-race-only.yaml", true, 0)
++	// clusters lists each cluster's template paths, so a failure prints names
++	// and not whole templates
++	clusters := func(members ...*Template) [][]string {
++		clustered := Cluster(members)
++		got := make([][]string, 0, len(clustered))
++
++		for _, cluster := range clustered {
++			paths := make([]string, 0, len(cluster))
++			for _, tmpl := range cluster {
++				paths = append(paths, tmpl.Path)
++			}
++
++			got = append(got, paths)
++		}
++
++		return got
++	}
++
++	require.ElementsMatch(t, [][]string{{race.Path}, {plain.Path}}, clusters(race, plain), "race with plain")
++	require.ElementsMatch(t, [][]string{{race.Path}, {otherRace.Path}}, clusters(race, otherRace), "two race")
++	require.ElementsMatch(t, [][]string{{plain.Path, otherPlain.Path}}, clusters(plain, otherPlain), "two plain")
++	require.ElementsMatch(t, [][]string{{plain.Path, raceOnly.Path}}, clusters(plain, raceOnly), "no race_count")
++}
+```
+
+**File**: `pkg/templates/cluster_total_test.go` (modified, +2/-8)
+```diff
+@@ -16,7 +16,8 @@ import (
+ const clusterTotalName = "cluster"
+ 
+ // A cluster runs the request of its first template, so its total is that
+-// request's: a race request sends race_count copies (#8257).
++// request's, not one per member: a request with several paths sends each.
++// A block that sends race copies doesn't cluster (#8280), so none is here.
+ //
+ //nolint:exhaustruct,exhaustruct_v5,paralleltest // fixtures keep zero-value defaults; testutils.Init state is shared
+ func TestClusterTotalIsTheRequestsTotal(t *testing.T) {
+@@ -25,13 +26,6 @@ func TestClusterTotalIsTheRequestsTotal(t *testing.T) {
+ 		request func() *httpprotocol.Request
+ 		total   int
+ 	}{
+-		{
+-			name: "race",
+-			request: func() *httpprotocol.Request {
+-				return &httpprotocol.Request{Path: []string{"{{BaseURL}}/race"}, Race: true, RaceNumberRequests: 5}
+-			},
+-			total: 5,
+-		},
+ 		{
+ 			name: "one path",
+ 			request: func() *httpprotocol.Request {
+```
+
+---
+
+### Incident Patch 3: `c13d2589` (2026-11-21)
+**Commit Message**: Merge pull request #8284 from projectdiscovery/dwisiswant0/fix/http/end-a-pipelined-block-at-its-first-match-during-a
+
+fix(http): end a pipelined block at its first match during a budget wait
+
+**File**: `pkg/protocols/http/request.go` (modified, +14/-1)
+```diff
+@@ -688,9 +688,22 @@ func (request *Request) executeTurboHTTP(input *contextargs.Context, dynamicValu
+ 			break
+ 		}
+ 
+-		ctx := input.Context()
++		// The handler's context ends the wait for budget at the first match, and
++		// with the input's cancel, as executeParallelHTTP's workerCtx does.
++		ctx := spmHandler.Context()
+ 		generatedHttpRequest, reservation, err := request.makeReserved(ctx, generator, input, inputData, payloads, dynamicValues)
+ 		if err != nil {
++			// A first match, or an unresponsive address, cancels the handler and
++			// ends the wait. The block then ends as at the check above, noting
++			// the skip when the address is down. The handler's context derives
++			// from the input's, so an input cancel has to be told apart first:
++			// it stays an error.
++			if input.Context().Err() == nil && spmHandler.Cancelled() {
++				request.skipUnresponsive(input, &skipped)
++
++				break
++			}
++
+ 			// The requests already started deliver their results first, as in executeParallelHTTP.
+ 			spmHandler.Wait()
+ 
+```
+
+**File**: `pkg/protocols/http/request_pipeline_test.go` (modified, +212/-0)
+```diff
+@@ -4,8 +4,10 @@ package http_test
+ import (
+ 	"bufio"
+ 	"context"
++	"io"
+ 	"net"
+ 	"net/http"
++	"net/http/httptest"
+ 	"sync"
+ 	"sync/atomic"
+ 	"testing"
+@@ -15,6 +17,9 @@ import (
+ 
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/output"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/contextargs"
++	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/hosterrorscache"
++	httpprotocol "github.com/projectdiscovery/nuclei/v3/pkg/protocols/http"
++	"github.com/projectdiscovery/nuclei/v3/pkg/utils/httpbody"
  )
  
- // clients holds one client per execution, because each one dials with the
+ // holdingServer reads pipelined requests and answers each one only after
+@@ -108,3 +113,210 @@ func TestPipelineCancelWaitsForSentRequests(t *testing.T) {
+ 	// The loop took the second request but did not send it.
+ 	require.EqualValues(t, 1, events.Load(), "results reported before the block returns")
+ }
++
++// serverReadingBodies serves skipOK after it reads the request body, and counts
++// the requests it gets.
++func serverReadingBodies(t *testing.T) (*httptest.Server, *atomic.Int32) {
++	t.Helper()
++
++	var received atomic.Int32
++
++	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		_, _ = io.Copy(io.Discard, r.Body)
++
++		received.Add(1)
++
++		_, _ = io.WriteString(w, skipOK)
++	}))
++	t.Cleanup(server.Close)
++
++	return server, &received
++}
++
++// pipelinedBudgetBlock returns a pipelined block that stops at its first
++// match and sends 3 requests with a body that waits for the body budget.
++//
++//nolint:exhaustruct,exhaustruct_v5 // fixtures keep zero-value defaults
++func pipelinedBudgetBlock(id string) *httpprotocol.Request {
++	return &httpprotocol.Request{
++		ID: id, Pipeline: true, StopAtFirstMatch: true, Operators: matchStatusOK(),
++		Payloads: map[string]any{"p": numberedPayloads(3)},
++		Raw: []string{"POST /?p={{p}} HTTP/1.1\nHost: {{Hostname}}\nConnection: keep-alive\n" +
++			"Content-Length: 1048576\n\n{{repeat(\"A\", 1048576)}}"},
++	}
++}
++
++// A pipelined block that finds its first match ends there, although another
++// block's request holds the body budget that the block's next request waits
++// for (#8256).
++//
++//nolint:paralleltest // testutils.Init state is shared
++func TestPipelineEndsAtFirstMatchWhileWaitingForBudget(t *testing.T) {
++	const size = httpbody.MinBudgetedBody
++
++	server, received := serverReadingBodies(t)
++	request := pipelinedBudgetBlock("pipe-budget")
++	budget := httpbody.NewBudget(size)
++	compileWithBudget(t, request, newDownHostErrorsCache(false), budget)
++
++	// Another block holds the whole budget, and queues its next request
++	// ahead of the pipelined block's second one.
++	releaseHeld, err := budget.Acquire(t.Context(), size)
++	require.NoError(t, err)
++
++	matched := make(chan struct{}, 8)
++	done := make(chan error, 1)
++
++	go func() {
++		done <- request.ExecuteWithResults(contextargs.NewWithInput(t.Context(), server.URL),
++			make(output.InternalEvent), make(output.InternalEvent),
++			func(event *output.InternalWrappedEvent) {
++				if event.HasOperatorResult() {
++					matched <- struct{}{}
++				}
++			})
++	}()
++
++	// The first request is built and waits for the budget.
++	time.Sleep(300 * time.Millisecond)
++
++	next := make(chan func(), 1)
++
++	go func() {
++		release, err := budget.Acquire(t.Context(), size)
++		if err == nil {
++			next <- release
++		}
++	}()
++
++	time.Sleep(300 * time.Millisecond)
++	// The first request gets the budget, is sent and matches, and then the
++	// other block's next request gets it.
++	releaseHeld()
++
++	var releaseNext func()
++
++	select {
++	case <-matched:
++		releaseNext = sync.OnceFunc(<-next)
++	case <-time.After(10 * time.Second):
++		t.Fatal("the first request did not match")
++	}
++
++	// The block's second request now waits for budget that stays held.
++	defer releaseNext()
++
++	select {
++	case err := <-done:
++		require.NoError(t, err)
++	case <-time.After(5 * time.Second):
++		releaseNext()
++
++		err := <-done
++		t.Fatalf("the block waited for the budget after its first match, until it returned %v", err)
++	}
++
++	require.EqualValues(t, 1, received.Load(), "requests sent")
++}
++
++// A pipelined block that waits for body budget still returns the input's
++// cancel as an error, though a stop-at-first-match handler that derives from
++// the input also reports that cancel as a first match (#8256).
++//
++//nolint:paralleltest // testutils.Init state is shared
++func TestPipelineCancelWhileWaitingForBudget(t *testing.T) {
++	const size = httpbody.MinBudgetedBody
++
++	server, received := serverCountingHits(t)
++	request := pipelinedBudgetBlock("pipe-budget-cancel")
++	budget := httpbody.NewBudget(size)
++	compileWithBudget(t, request, newDownHostErrorsCache(false), budget)
++
++	// Another block holds the whole budget, so the first request waits for it.
++	releaseHeld, err := budget.Acquire(t.Context(), size)
++	require.NoError(t, err)
++
++	t.Cleanup(releaseHeld)
++
++	ctx, cancel := context.WithCancel(t.Context())
++	defer cancel()
++
++	input := contextargs.NewWithInput(ctx, server.URL)
++	done := make(chan error, 1)
++
+```
+
+**File**: `pkg/protocols/http/request_unresponsive_test.go` (modified, +17/-1)
+```diff
+@@ -24,6 +24,7 @@ import (
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/contextargs"
+ 	"github.com/projectdiscovery/nuclei/v3/pkg/protocols/common/hosterrorscache"
+ 	httpprotocol "github.com/projectdiscovery/nuclei/v3/pkg/protocols/http"
++	"github.com/projectdiscovery/nuclei/v3/pkg/utils/httpbody"
+ 	"github.com/projectdiscovery/ratelimit"
+ )
+ 
+@@ -141,9 +142,19 @@ func (c *downHostErrorsCache) IsPermanentErr(*contextargs.Context, error) bool {
+ 
+ // compileWithCache compiles request with cache as its host errors cache and a
+ // progress that counts.
++func compileWithCache(t *testing.T, request *httpprotocol.Request, cache *downHostErrorsCache) *skipProgress {
++	t.Helper()
++
++	return compileWithBudget(t, request, cache, nil)
++}
++
++// compileWithBudget is compileWithCache with budget as the request-body
++// budget, unless it is nil.
+ //
+ //nolint:exhaustruct,exhaustruct_v5 // fixtures keep zero-value defaults
+-func compileWithCache(t *testing.T, request *httpprotocol.Request, cache *downHostErrorsCache) *skipProgress {
++func compileWithBudget(
++	t *testing.T, request *httpprotocol.Request, cache *downHostErrorsCache, budget *httpbody.Budget,
++) *skipProgress {
+ 	t.Helper()
+ 
+ 	options := testutils.DefaultOptions.Copy()
+@@ -160,6 +171,11 @@ func compileWithCache(t *testing.T, request *httpprotocol.Request, cache *downHo
+ 	progress := &skipProgress{}
+ 	executerOpts.Progress = progress
+ 	executerOpts.HostErrorsCache = cache
++
++	if budget != nil {
++		executerOpts.RequestBodyBudget = budget
++	}
++
+ 	require.NoError(t, request.Compile(executerOpts))
+ 
+ 	return progress
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8219** (2026-11-20): fix(whois): use upstream RDAP safely in concurrent scans (@knakul853)
-- **PR #8210** (2026-11-20): fix(http): count a failed request as one error (@dwisiswant0)
-- **PR #8209** (2026-11-20): fix(http): count a request that stops at its first match once (@dwisiswant0)
-- **PR #8206** (2026-11-20): fix(core): run http templates that send to another port of a down target (@dwisiswant0)
-- **PR #8205** (2026-11-20): fix(http): report requests skipped for an unresponsive address (@dwisiswant0)
-- **PR #8195** (2026-11-20): fix(http): end the stop-at-first-match goroutine on every return (@dwisiswant0)
+- **PR #8300** (2026-11-21): fix(resume): keep the loaded progress of templates not yet reached (@dwisiswant0)
+- **PR #8299** (2026-11-21): fix(input): let a template port replace a reserved port in a URL target (@dwisiswant0)
+- **PR #8297** (2026-11-21): fix(http): dump a pipelined request as the pipeline client writes it (@dwisiswant0)
+- **PR #8296** (2026-11-21): fix(network): dial a tls:// entry that repeats a plain address (@dwisiswant0)
+- **PR #8295** (2026-11-21): fix(network): write no trace entry when the final read ends (@dwisiswant0)
+- **PR #8294** (2026-11-21): fix: run one task at a time for -c, -headc and -bs below 1 (@dwisiswant0)
 
 ---
 
@@ -2124,38 +2517,34 @@ Codex-Session: codex resume 01a1c1de-e73c-7622-949e-fbbbd741b6c5
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. whois): use upstream RDAP with pooled client locking
+## X. run one task at a time for -c, -headc and -bs below 1
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/runner/inputs.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectdiscovery/nuclei. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c58ce114`: whois): use upstream RDAP with pooled client locking. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `93d9fd57`: run one task at a time for -c, -headc and -bs below 1. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/runner/inputs.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/openrdap/rdap v0.10.2
-	github.com/alecthomas/kingpin/v2 v2.4.0 // indirect
-	github.com/alecthomas/units v0.0.0-20240927000941-0f3dac36c52b // indirect
-	github.com/xhit/go-str2duration/v2 v2.1.0 // indirect
+	// syncutil.New rejects a size below 1, so a -bs below 1 probes one at a time.
+	bulkSize := max(r.options.BulkSize, 1)
+
+	swg, err := syncutil.New(syncutil.WithSize(bulkSize))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	github.com/projectdiscovery/rdap v0.9.1-0.20221108103045-9865884d1917
-	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751 // indirect
-	github.com/alecthomas/units v0.0.0-20211218093645-b94a6e3cc137 // indirect
-	github.com/jarcoal/httpmock v1.3.0 // indirect
-	gopkg.in/alecthomas/kingpin.v2 v2.2.6 // indirect
+	swg, err := syncutil.New(syncutil.WithSize(r.options.BulkSize))
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c58ce114` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `93d9fd57` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

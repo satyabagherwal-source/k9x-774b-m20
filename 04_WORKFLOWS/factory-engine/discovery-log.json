@@ -21877,5 +21877,17 @@
     "downloads": 9540,
     "qualityScore": 3270,
     "discoveredAt": "2026-11-21T17:25:51.351Z"
+  },
+  {
+    "name": "SulphurAI/Sulphur-3",
+    "fullName": "SulphurAI/Sulphur-3",
+    "url": "https://huggingface.co/SulphurAI/Sulphur-3",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: SulphurAI/Sulphur-3 (658 likes, 1186 downloads)",
+    "likes": 658,
+    "downloads": 1186,
+    "qualityScore": 7766,
+    "discoveredAt": "2026-11-21T22:54:26.494Z"
   }
 ]

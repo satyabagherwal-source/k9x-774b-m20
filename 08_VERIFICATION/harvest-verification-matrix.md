@@ -11926,3 +11926,9 @@
 | `CYCLE-20261121-R1WI` | `2026-11-21T22:40:14.178Z` | `authzed/spicedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9856` | Yes (`df5bd163...`) |
 | `CYCLE-20261121-1HZU` | `2026-11-21T22:48:21.594Z` | `AtomicChat/LFM3-1.7B-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-atomicchat-lfm3-1.7b-uncensored-gguf-learnings.md` | Yes (`d9b8a89a...`) |
 | `CYCLE-20261121-1UW3` | `2026-11-21T22:48:38.307Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9857` | Yes (`1b7c00ff...`) |
+| `CYCLE-20261121-C7D2` | `2026-11-21T22:56:41.030Z` | `SulphurAI/Sulphur-3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sulphurai-sulphur-3-learnings.md` | Yes (`2ea5f401...`) |
+| `CYCLE-20261121-C9IM` | `2026-11-21T22:56:43.822Z` | `Edge0/Audio8-TTS-Realistic-Air` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-edge0-audio8-tts-realistic-0.6b-learnings.md` | Yes (`0e208e0e...`) |
+| `CYCLE-20261121-CFZT` | `2026-11-21T22:56:52.217Z` | `BuilderIO/builder` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9858` | Yes (`098bb5b5...`) |
+| `CYCLE-20261121-CJB9` | `2026-11-21T22:56:56.517Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9859` | Yes (`e77e8120...`) |
+| `CYCLE-2026-11-21-PROJ-EVOLVE` | `2026-11-21T22:57:27.047Z` | `hf-sulphurai-sulphur-3` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-3CF395C7` [Domain D] | Yes (`f0e29b1b...`) |
+| `CYCLE-2026-11-21-PROJ-EVOLVE` | `2026-11-21T22:57:57.568Z` | `hf-edge0-audio8-tts-realistic-0.6b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-8372CBCD` [Domain D] | Yes (`73ad2c2a...`) |

@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-21T22:48:41.675Z",
-    "lastVerified": "2026-11-21T22:48:41.675Z",
+    "lastChecked": "2026-11-21T22:56:59.737Z",
+    "lastVerified": "2026-11-21T22:56:59.737Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -254,9 +254,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-21T22:16:26.982Z",
+    "lastChecked": "2026-11-21T22:56:55.321Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-21T22:16:26.982Z"
+    "lastVerified": "2026-11-21T22:56:55.321Z"
   },
   "herdrdev-herdr": {
     "name": "herdrdev/herdr",
@@ -1050,9 +1050,9 @@
   "chroma-core-chroma": {
     "name": "chroma",
     "officialUrl": "https://github.com/chroma-core/chroma",
-    "lastChecked": "2026-11-20T18:27:22.677Z",
+    "lastChecked": "2026-11-21T22:56:52.932Z",
     "revisionIdentifier": "1a3ac2c7",
-    "lastVerified": "2026-11-20T18:27:22.677Z"
+    "lastVerified": "2026-11-21T22:56:52.932Z"
   },
   "burntsushi-ripgrep": {
     "name": "BurntSushi/ripgrep",
@@ -1976,22 +1976,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "projectdiscovery-nuclei": {
-    "name": "nuclei",
+    "name": "projectdiscovery/nuclei",
     "officialUrl": "https://github.com/projectdiscovery/nuclei",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-21T16:40:08.867Z",
-    "lastVerified": "2026-11-21T16:40:08.867Z",
+    "lastChecked": "2026-11-21T22:56:55.425Z",
+    "lastVerified": "2026-11-21T22:56:55.425Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-projectdiscovery-nuclei",
-    "contentHash": "dc25d572074d8105bf86002a9ccdb0cb022c7175c2778708824ee342f7e38860",
+    "contentHash": "e77e8120f752543e92e7751ab50589ac13b2fbb48d6609933c04ff45a406af54",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 18,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "9bd87c68"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "lancedb-lancedb": {
     "name": "lancedb/lancedb",
@@ -2594,9 +2593,9 @@
   "goodrain-rainbond": {
     "name": "rainbond",
     "officialUrl": "https://github.com/goodrain/rainbond",
-    "lastChecked": "2026-11-20T20:14:52.875Z",
+    "lastChecked": "2026-11-21T22:56:47.817Z",
     "revisionIdentifier": "5508cd38",
-    "lastVerified": "2026-11-20T20:14:52.875Z"
+    "lastVerified": "2026-11-21T22:56:47.817Z"
   },
   "crate-crate": {
     "name": "crate",
@@ -3825,14 +3824,14 @@
     "officialUrl": "https://github.com/BuilderIO/builder",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-18T17:36:34.825Z",
-    "lastVerified": "2026-11-18T17:36:34.825Z",
+    "lastChecked": "2026-11-21T22:56:51.148Z",
+    "lastVerified": "2026-11-21T22:56:51.148Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-builderio-builder",
-    "contentHash": "e91cb66231a5e62979643d56394d0723d1141428e42c982615745c00918461f2",
+    "contentHash": "098bb5b58dfa8b42a5abb1951c6af3fbb74021f8aa98f4f5b9b456b1c449c489",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -13048,6 +13047,40 @@
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf",
     "contentHash": "d9b8a89ac7c770e41d9c08a27924ae83d1afe815b9070f9f5e0d0f91984a72ff",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-sulphurai-sulphur-3": {
+    "name": "SulphurAI/Sulphur-3",
+    "officialUrl": "https://huggingface.co/SulphurAI/Sulphur-3",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-21T22:56:40.378Z",
+    "lastVerified": "2026-11-21T22:56:40.378Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-sulphurai-sulphur-3",
+    "contentHash": "2ea5f4010de33f37c3a13f7e7ba6f3d2018e817854a34f49634bb6a7f517aedb",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-edge0-audio8-tts-realistic-0.6b": {
+    "name": "Edge0/Audio8-TTS-Realistic-Air",
+    "officialUrl": "https://huggingface.co/Edge0/Audio8-TTS-Realistic-0.6b",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-21T22:56:43.304Z",
+    "lastVerified": "2026-11-21T22:56:43.304Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-edge0-audio8-tts-realistic-0-6b",
+    "contentHash": "0e208e0e602ed7adc8860dd171b2c5745c6ce120919e36fa0dcf250c3eaaf4d8",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
