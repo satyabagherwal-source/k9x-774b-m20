@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T06:34:03.978Z",
+  "timestamp": "2026-11-21T18:23:11.550Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-clickhouse-clickhouse-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [clickhouse-clickhouse-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T06:34:03.978Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T18:23:11.550Z`  
 > **Learning ID**: `LEARN-EVO-clickhouse-clickhouse-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md`  
 > **Source**: github ([https://github.com/ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse))  
-> **Source Version**: `92fdcb78`  
+> **Source Version**: `a2126dbc`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T06:30:22.155Z  
+> **Timestamp**: 2026-11-21T18:23:04.509Z  
 > **Learning ID**: `learn-github-clickhouse-clickhouse`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T06:30:20.784Z  
+> **Harvest Timestamp**: 2026-11-21T18:23:04.504Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: ClickHouse® is a real-time analytics database management system
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 51008 stars
+- **Stars / Engagement**: 51055 stars
 
 ---
 
@@ -1342,11 +1342,11 @@ private:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #132344** (2026-11-18): **timeSeriesGroupArrayIf ignores UInt8 conditions greater than 1 for array inputs**
-  *Symptoms*: ### Describe what's wrong  With array-shaped timestamp and value inputs, `timeSeriesGroupArrayIf` treats a raw `UInt8` condition of `2` as false, even though nonzero conditions should be selected by the `If` combinator. This silently omits data from the aggregate. It reproduces on ClickHouse 26.8.10.6 and 26.9.1.1629 on linux/amd64.  ### Does it reproduce on the most recent release?  Yes  ### How to reproduce  Run with `clickhouse-client --multiquery`:  ```sql SET allow_experimental_time_series_aggregate_functions = 1;  DROP TABLE IF EXISTS t SYNC; CREATE TABLE t (     timestamps Array(DateTime64(3, 'UTC')),     values Array(Float64),     condition UInt8 ) ENGINE = Memory;  INSERT INTO t VALUES     ([toDateTime64(100, 3, 'UTC')], [7.0], 1),     ([toDateTime64(200, 3, 'UTC')], [9.0], 2);  SELECT     timeSeriesGroupArrayIf(timestamps, values, condition) AS actual,     timeSeriesGroupArrayIf(timestamps, values, condition != 0) AS normalized,     actual = normalized AS oracle_equal FROM t FORMAT TSVRaw; ```  The query returns:  ```text [('1970-01-01 00:01:40.000',7)]	[('1970-01-01 00:01:40.000',7),('1970-01-01 00:03:20.000',9)]	0 ```  The raw condition omits the row whose condition is `2`, while explicitly normalizing the same condition with `condition != 0` retains both rows.  ### Expected behavior  Both aggregates should return `[('1970-01-01 00:01:40.000',7),('1970-01-01 00:03:20.000',9)]`, and `oracle_equal` should be `1`. The `If` combinator should select every row whose `UI
+- **Issue #132739** (2026-11-19): **ColumnObject::deserializeDynamicPathsAndSharedDataFromArena does not validate unique/sorted paths invariant, allowing corrupted subcolumn sizes and LOGICAL_ERROR exceptions**
+  *Symptoms*: ### Company or project name  IBM  ### Describe what's wrong  Found during review of https://github.com/ClickHouse/ClickHouse/pull/128069  When serializing dynamic paths and shared data into an arena in ColumnObject::serializeDynamicPathsAndSharedDataIntoArena, paths are guaranteed to be serialized in strictly increasing, sorted, and unique order.  However, the matching deserializer ColumnObject::deserializeDynamicPathsAndSharedDataFromArena does not enforce this invariant. If a serialized payload contains duplicate path entries (e.g., num_paths = 2 with two entries for path a in the same row):  1. The reader processes the first entry for a, deserializing a value and appending it to dynamic subcolumn a (increasing its size from current_size to current_size + 1). 2. The reader processes the second entry for a, appending another value to dynamic subcolumn a (increasing its size to current_size + 2). 3. After the path loop finishes, shared_data offsets advance by only 1 row.  Because deserialization consumes all bytes, end-of-buffer checks pass and deserialization returns successfully, but leaves the resulting ColumnObject in an invalid state where individual subcolumns disagree on their row count.  Attempting to read or extract the corrupted subcolumn later throws a LOGICAL_ERROR exception.   ### Does it reproduce on the most recent release?  Yes  ### How to reproduce  A record with num_paths = 2 and two entries for a appends twice to that dynamic subcolumn but only once to shar
 
-- **Issue #132274** (2026-11-18): **addDays/addMonths/addSeconds/... read a constant UInt64 count >= 2^63 as negative when the date is a column, but throw "Numeric overflow" when the date is a constant**
-  *Symptoms*: ### Company or project name  _No response_  ### Describe what's wrong   The date-arithmetic functions (`addDays`, `addWeeks`, `addMonths`, `addYears`, `addSeconds`, ..., `subtract*`, `date_add`) take a `(U)Int*` count, and `FunctionDateOrDateTimeAddInterval.h` converts it to `Int64` with `checkOverflow()`, which throws `DECIMAL_OVERFLOW` "Numeric overflow" for a `UInt64` that does not fit ([`#L879-L886`](https://github.com/ClickHouse/ClickHouse/blob/7b28c8d6edfea6f7e7667f6a709d8844cd4f77b0/src/Functions/FunctionDateOrDateTimeAddInterval.h#L879-L886)). That works when the date is a constant or the count is a column: `vectorVector` and `constantVector` call `checkOverflow(delta.getData()[i])` on the count in its own type ([`#L888-L955`](https://github.com/ClickHouse/ClickHouse/blob/7b28c8d6edfea6f7e7667f6a709d8844cd4f77b0/src/Functions/FunctionDateOrDateTimeAddInterval.h#L888-L955)).  When the **date is a column and the count a constant**, the constant is first read with `ColumnConst::getInt(0)` ([`#L999-L1000`](https://github.com/ClickHouse/ClickHouse/blob/7b28c8d6edfea6f7e7667f6a709d8844cd4f77b0/src/Functions/FunctionDateOrDateTimeAddInterval.h#L999-L1000)):  ```cpp if (const auto * delta_const_column = typeid_cast<const ColumnConst *>(&delta_column))     processor.template vectorConstant<FromDataType>(*sources, *col_to, delta_const_column->getInt(0), time_zone, scale, input_rows_count); ```  `getInt(0)` turns a `UInt64` >= 2^63 into a negative `Int64`, and `vectorConstant(..
+- **Issue #132436** (2026-11-19): **clickhouse-client prints secrets of a failed query to stderr in non-interactive mode, while the server hides them**
+  *Symptoms*: ### Company or project name  Running ClickHouse in production on Kubernetes (LLM trace store), with native BACKUP to S3 from a CronJob.  ### Describe what's wrong  In non-interactive mode (`--query`, stdin, `--queries-file`, `--ignore-error`), when a query fails, `clickhouse-client` appends the original query text to the error on stderr as `(query: ...)`. Secrets in the query are printed in clear. The server hides the same values in `system.query_log` and in its own logs.  Affected, when the statement fails: `CREATE USER` / `ALTER USER ... IDENTIFIED BY '...'`, `CREATE NAMED COLLECTION`, `BACKUP`/`RESTORE ... S3(url, key, secret)`, and the `s3()` and `mysql()` table functions. `clickhouse-local --ignore-error` does the same.  Non-interactive use is how backup jobs and migrations run, and their stderr usually goes to a log store. I found it when a failed nightly `BACKUP ... TO S3(...)` put the S3 secret key into our central logs while the server logs were clean.  `--echo` printing the query is requested by the user and is not part of this report.  ### Does it reproduce on the most recent release?  Yes  ### How to reproduce  ClickHouse 26.10.4.207 and master 26.11.1.2601 (official Docker images), default config:  ```bash clickhouse-client --query "ALTER USER no_such_user IDENTIFIED WITH plaintext_password BY 'MySecretPassword123'" ```  ``` Received exception from server (version 26.11.1): Code: 192. DB::Exception: Received from localhost:9000. DB::Exception: There is no user `n
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1363,564 +1363,280 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `92fdcb78` (2026-11-19)
-**Commit Message**: Merge pull request #132795 from ClickHouse/fix-pow-far-overflow-sign
+### Incident Patch 1: `b9d4d482` (2026-11-21)
+**Commit Message**: Fix flaky test IOTestAwsS3Client.AssumeRoleRefreshInConcurrentFibers
 
-Fix `pow` returning -inf or garbage on a far overflow or underflow
+The data-plane mock of the test had the default 16 server threads for
+4 * hardware_concurrency + 1 concurrent GET requests (129 on a 32-CPU CI
+host). Poco's TCPServerDispatcher::enqueue does not queue a connection
+when no dispatcher thread waits on the queue and fewer than maxThreads
+dispatcher threads run: it asks the pool for a new thread, and when the
+pool has no idle PooledThread (a dispatcher thread that has just left
+run() is not idle yet) it closes the connection unread and counts it in
+refusedConnections(). Both attempts a GetObject gets in this test
+(s3_slow_all_threads_after_retryable_error -> SDK max_retries = 1,
+max_single_read_retries = 1) can be refused about 1 ms apart, so the
+fiber fails with "No message received" / "Connection reset by peer",
+returns EIO (5) from FiberContext::main, and its request is never
+counted: the CI failure "futures[i].wait() Which is: 5" and
+"127 vs 129", with exactly one AssumeRole and no request signed with
+other credentials.
 
-**File**: `contrib/llvm-project` (modified, +1/-1)
+Give the mock a thread per fiber, as the sibling test
+RequestsFromConcurrentFibersDoNotBlockSchedulerThreads already does:
+with as many pool thre
+
+**File**: `src/IO/S3/tests/gtest_aws_s3_client.cpp` (modified, +4/-3)
 ```diff
-@@ -1 +1 @@
--Subproject commit 6afdc580684c9dbcfc1859bdcc54e1989d1d264c
-+Subproject commit 55541575edec2cc4e9dc3fb182e17d77b807e199
-```
-
-**File**: `tests/queries/0_stateless/05830_pow_far_overflow_sign.reference` (added, +4/-0)
-```diff
-@@ -0,0 +1,4 @@
-+inf	inf	inf	inf	inf
-+0	0	0	0	0
-+0	inf	inf	0
-+3000	3000
-```
-
-**File**: `tests/queries/0_stateless/05830_pow_far_overflow_sign.sql` (added, +9/-0)
-```diff
-@@ -0,0 +1,9 @@
-+-- `pow` must return inf or 0 with the right sign when the result is far out of the `Float64` range,
-+-- not -inf or a finite garbage value.
-+
-+SELECT pow(10, 1e19), pow(1.5, 1e19), pow(10, 4e15), pow(10, 1.3e16), pow(10, 1e300);
-+SELECT pow(10, -1e19), pow(1.5, -1e19), pow(10, -4e15), pow(10, -1.3e16), pow(10, -1e300);
-+SELECT pow(0.1, 1e19), pow(0.5, -1e19), pow(-10, 1e19), pow(-10, -1e19);
-+
-+SELECT countIf(isInfinite(pow(10, y)) AND pow(10, y) > 0), countIf(pow(10, -y) = 0)
-+FROM (SELECT exp10(3 + number / 10) AS y FROM numbers(3000));
-```
-
----
-
-### Incident Patch 2: `b5018731` (2026-11-18)
-**Commit Message**: Merge remote-tracking branch 'origin/master' into fix-pow-far-overflow-sign
-
-Resolve the `contrib/llvm-project` conflict by pinning the submodule to the tip of
-`ClickHouse/release-23.x` (55541575edec), the merge commit of
-https://github.com/ClickHouse/llvm-project/pull/161. It contains both the fix
-from this PR and the commits that master picked up.
-
-**File**: `.github/workflows/master.yml` (modified, +0/-53)
-```diff
-@@ -1204,58 +1204,6 @@ jobs:
-           . ./ci/tmp/praktika_setup_env.sh
-           PYTHONUNBUFFERED=1 python3 -m praktika run 'Build (amd_compat)' --workflow "MasterCI" --ci --timestamp
+@@ -1940,7 +1940,7 @@ class FunctionHTTPServer
+ public:
+     explicit FunctionHTTPServer(HTTPHandlerFunction handler, int max_threads = 16)
+         : thread_pool(std::make_unique<Poco::ThreadPool>(/* minCapacity = */ 2, max_threads))
+-        , server_socket(std::make_unique<Poco::Net::ServerSocket>(0))
++        , server_socket(std::make_unique<Poco::Net::ServerSocket>(/* port = */ 0, /* backlog = */ std::max(64, max_threads)))
+         , server(std::make_unique<Poco::Net::HTTPServer>(
+               new Factory(std::move(handler)), *thread_pool, *server_socket, makeServerParams(max_threads)))
+     {
+@@ -2532,16 +2532,18 @@ TEST(IOTestAwsS3Client, AssumeRoleRefreshInConcurrentFibers)
+         MockStsRequestHandler(request_info, role_access_key, "role_secret_key").handleRequest(request, response);
+     });
  
--  build_amd_musl:
--    runs-on: [self-hosted, arm-medium-cpu]
--    needs:
--    - build_amd_asan_ubsan
--    - build_amd_binary
--    - build_amd_debug
--    - build_amd_msan
--    - build_amd_tsan
--    - build_arm_asan_ubsan
--    - build_arm_binary
--    - build_arm_debug
--    - build_arm_msan
--    - build_arm_tidy_1_4
--    - build_arm_tidy_2_4
--    - build_arm_tidy_3_4
--    - build_arm_tidy_4_4
--    - build_arm_tsan
--    - config_workflow
--    - dockers_build_amd
--    - dockers_build_arm
--    - dockers_build_multiplatform_manifest
--    if: ${{ !cancelled() && !contains(needs.*.outputs.pipeline_status, 'failure') && !contains(needs.*.outputs.pipeline_status, 'undefined') && !contains(fromJson(needs.config_workflow.outputs.data).workflow_config.cache_success_base64, 'QnVpbGQgKGFtZF9tdXNsKQ==') }}
--    name: "Build (amd_musl)"
--    outputs:
--      data: ${{ steps.run.outputs.DATA }}
--      pipeline_status: ${{ steps.run.outputs.pipeline_status || 'undefined' }}
--    steps:
--      - name: Checkout code
--        uses: actions/checkout@v6
--        with:
--          ref: ${{ env.CHECKOUT_REF }}
--      - name: Prepare env script
--        run: |
--          rm -rf ./ci/tmp
--          mkdir -p ./ci/tmp
--          cat > ./ci/tmp/praktika_setup_env.sh << 'ENV_SETUP_SCRIPT_EOF'
--          export PYTHONPATH=.:./ci
--
--          cat > ./ci/tmp/workflow_job.json << 'EOF'
--          ${{ toJson(job) }}
--          EOF
--          cat > ./ci/tmp/workflow_status.json << 'EOF'
--          ${{ toJson(needs) }}
--          EOF
--          ENV_SETUP_SCRIPT_EOF
--
--      - name: Run
--        id: run
--        run: |
--          . ./ci/tmp/praktika_setup_env.sh
--          PYTHONUNBUFFERED=1 python3 -m praktika run 'Build (amd_musl)' --workflow "MasterCI" --ci --timestamp
--
-   build_riscv64:
-     runs-on: [self-hosted, arm-medium-cpu]
-     needs:
-@@ -6486,7 +6434,6 @@ jobs:
-     - build_amd_freebsd
-     - build_amd_illumos
-     - build_amd_msan
--    - build_amd_musl
-     - build_amd_release
-     - build_amd_release_performance_reference
-     - build_amd_tsan
-```
-
-**File**: `.github/workflows/merge_queue.yml` (modified, +0/-38)
-```diff
-@@ -638,43 +638,6 @@ jobs:
-           . ./ci/tmp/praktika_setup_env.sh
-           PYTHONUNBUFFERED=1 python3 -m praktika run 'Build (amd_compat)' --workflow "MergeQueueCI" --ci --timestamp
++    const size_t fiber_count = getFiberCountAboveSchedulerThreads();
+     std::atomic<size_t> requests_signed_with_refreshed_credentials = 0;
+     std::atomic<size_t> other_requests = 0;
++    /// A thread per fiber: the server closes, instead of queueing, a connection that finds no idle thread in its pool.
+     FunctionHTTPServer http([&](Poco::Net::HTTPServerRequest & request, Poco::Net::HTTPServerResponse & response)
+     {
+         if (getCredentialString(request).starts_with("Credential=refreshed_role_access_key/"))
+             ++requests_signed_with_refreshed_credentials;
+         else
+             ++other_requests;
+         sendHTTPBody(response, Poco::Net::HTTPResponse::HTTP_OK, "");
+-    });
++    }, /* max_threads = */ static_cast<int>(fiber_count));
  
--  build_amd_musl:
--    runs-on: [self-hosted, arm-medium-cpu]
--    needs:
--    - config_workflow
--    - dockers_build_amd
--    - dockers_build_arm
--    if: ${{ !cancelled() && !contains(needs.*.outputs.pipeline_status, 'failure') && !contains(needs.*.outputs.pipeline_status, 'undefined') && !contains(fromJson(needs.config_workflow.outputs.data).workflow_config.cache_success_base64, 'QnVpbGQgKGFtZF9tdXNsKQ==') }}
--    name: "Build (amd_musl)"
--    outputs:
--      data: ${{ steps.run.outputs.DATA }}
--      pipeline_status: ${{ steps.run.outputs.pipeline_status || 'undefined' }}
--    steps:
--      - name: Checkout code
--        uses: actions/checkout@v6
--        with:
--          ref: ${{ env.CHECKOUT_REF }}
--      - name: Prepare env script
--        run: |
--          rm -rf ./ci/tmp
--          mkdir -p ./ci/tmp
--          cat > ./ci/tmp/praktika_setup_env.sh << 'ENV_SETUP_SCRIPT_EOF'
--          export PYTHONPATH=.:./ci
--
--          cat > ./ci/tmp/workflow_job.json << 'EOF'
--          ${{ toJson(job) }}
--          EOF
--          cat > ./ci/tmp/workflow_status.json << 'EOF'
--          ${{ toJson(needs) }}
--          EOF
--          ENV_SETUP_SCRIPT_EOF
--
--      - name: Run
--        id: run
--        run: |
--          . ./ci/tmp/praktika_setup_env.sh
--          PYTHONUNBUFFERED=1 python3 -m praktika run 'Build (amd_musl)' --workflow "MergeQueueCI" --ci --timestamp
--
-   build_riscv64:
-     runs-on: [self-hosted, arm-medium-cpu]
-     needs:
-@@ -794,7 +757,6 @@ jobs:
-     - build_amd_darwin
-     - build_amd_freebsd
-     - build_amd_illumos
--    - build_amd_musl
-     - build_arm_v80compat
-     - build_loongarch64
-     - build_ppc64le
-```
-
-**File**: `CMakeLists.txt` (modified, +16/-8)
-```diff
-@@ -257,7 +257,11 @@ option(OMIT_HEAVY_DEBUG_SYMBOLS
-     "Do not generate debugger info for heavy modules (ClickHouse functions and dictionaries, some contrib)"
-     ${OMIT_HEAVY_DEBUG_SYMBOLS_DEFAULT})
+     const DB::S3::URI uri(http.getUrl() + "/IOTestAwsS3ClientAssumeRoleRefreshInConcurrentFibers/test.txt");
+     /// The role is unique, so the provider is not shared with other tests through the credentials cache.
+@@ -2561,7 +2563,6 @@ TEST(IOTestAwsS3Client, AssumeRoleRefreshInConcurrentFibers)
+     release.reset();
+     const size_t sts_requests_before = sts_requests;
  
--option(BUILD_STANDALONE_KEEPER "Build keeper as small standalone binary" OFF)
-+option(BUILD_STANDALONE_KEEPER "Deprecated: build keeper as a separate binary instead of a symlink to clickhouse" OFF)
-+if (BUILD_STANDALONE_KEEPER)
-+    message (WARNING "BUILD_STANDALONE_KEEPER is deprecated and will be removed: `clickhouse-keeper` is a symlink to the `clickhouse` binary, "
-+        "which runs Keeper in the same way, and a separate binary costs another full ThinLTO link in every build.")
-+endif ()
+-    const size_t fiber_count = getFiberCountAboveSchedulerThreads();
+     runFibersAndReleaseWhenAllStarted(fiber_count, release, [&](size_t) { doReadRequest(client, uri); });
  
- # Create BuildID when using lld. For other linkers it is created by default.
- # (NOTE: LINKER_NAME can be either path or name, and in different variants)
-@@ -463,6 +467,9 @@ endif ()
- # Clang turns a call to `sincos` into the `llvm.sincos` intrinsic, and for a musl target LLVM lowers that intrinsic
- # to separate `sin` and `cos` calls again (it assumes `sincos` only in glibc, Fuchsia and Android). Our musl links
- # llvm-libc's `sincos`, which shares one argument reduction between the two, so keep the call as it is written.
-+#
-+# Under sanitizers compiler-rt intercepts `sincos`; `__real_sincos` is bound to llvm-libc's `sincos` as well
-+# (see contrib/libllvmlibc-cmake), so the bits match `sin` and `cos` in every build.
- if (USE_MUSL)
-     set (COMPILER_FLAGS "${COMPILER_FLAGS} -fno-builtin-sincos")
- endif ()
-@@ -674,7 +681,9 @@ option(ENABLE_LIBRARIES "Enable all external libraries by default" ON)
- # Increase stack size on Musl. We need big stack for our recursive-descend parser
- # and for analyzer passes that recurse on deeply-nested join trees (e.g.
- # 1000-join queries). Match glibc's 8 MiB default; musl reads this from
--# PT_GNU_STACK and clamps it to DEFAULT_STACK_MAX (also 8 MiB).
-+# PT_GNU_STACK and clamps it to DEFAULT_STACK_MAX (also 8 MiB). Our musl fork,
-+# like glibc, uses a finite RLIMIT_STACK soft limit instead, so this only
-+# applies when the limit is unlimited.
- if (USE_MUSL)
-     set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-z,stack-size=8388608")
- endif ()
-@@ -773,8 +782,8 @@ endif ()
- 
- # Full RELRO (relocation read-only): '-z now' resolves all dynamic relocations at startup and '-z relro'
- # then maps the global offset table read-only, so an arbitrary write cannot redirect a call through it.
--# Resolving everything at startup costs nothing here because we link dynamically only against libc
--# and we forbid dlopen (see programs/main.cpp).
-+# Resolving everything at startup costs nothing here because we link statically (musl) or dynamically
-+# only against libc, and we forbid dlopen (see programs/main.cpp).
- # Not on Darwin: ld64 does not accept '-z' options.
- # The native SunOS linker supports '-z now' but not '-z relro'; LLD supports both.
- if (NOT OS_DARWIN)
-@@ -964,9 +973,9 @@ if (FUZZER)
-                 # Targets compiled with -fno-sanitize=all must never be instrumented:
-                 # a later -fsanitize=fuzzer-no-link overrides it and re-enables
-                 # SanitizerCoverage. That is fatal for the in-tree libc and sanitizer
--                # runtimes (musl, clang_rt_*): their startup code (CRT, __init_libc)
--                # runs before any coverage runtime exists, so every executable would
--                # crash at startup.
-+                # runtimes (musl, clang_rt_*): their startup code (rcrt1 self-relocation,
-+                # __init_libc) runs before relocations are applied and before any
-+                # coverage runtime exists, so every executable would crash at startup.
-                 #
-                 # The PC table that -fsanitize=fuzzer-no-link implies is left out. `clickhouse_fuzzer`
-                 # links every `src/` library into a single image that keeps outgrowing the 2 GiB reach of
-@@ -1020,7 +1029,6 @@ if (NATIVE_BUILD_TARGETS
-     AND NOT(
-         CMAKE_HOST_SYSTEM_NAME STREQUAL CMAKE_SYSTEM_NAME
-         AND CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL CMAKE_SYSTEM_PROCESSOR
--        AND NOT USE_MUSL
-     )
- )
-     message (STATUS "Building native targets: ${NATIVE_BUILD_TARGETS}")
-```
-
-**File**: `ci/defs/defs.py` (modified, +0/-3)
-```diff
-@@ -432,7 +432,6 @@ class BuildTypes(metaclass=MetaClasses.WithIter):
-     AMD_ILLUMOS = "amd_illumos"
-     PPC64LE = "ppc64le"
-     AMD_COMPAT = "amd_compat"
--    AMD_MUSL = "amd_musl"
-     RISCV64 = "riscv64"
-     S390X = "s390x"
-     LOONGARCH64 = "loongarch64"
-@@ -569,7 +568,6 @@ class ArtifactNames:
-     CH_AMD_ILLUMOS = "CH_AMD_ILLUMOS_BIN"
-     CH_PPC64LE = "CH_PPC64LE_BIN"
-     CH_AMD_COMPAT = "CH_AMD_COMPAT_BIN"
--    CH_AMD_MUSL = "CH_AMD_MUSL_BIN"
-     CH_RISCV64 = "CH_RISCV64_BIN"
-     CH_S390X = "CH_S390X_BIN"
-     CH_LOONGARCH64 = "CH_LOONGARCH64_BIN"
-@@ -746,7 +744,6 @@ class ArtifactConfigs:
-             ArtifactNames.CH_AMD_FREEBSD,
-             ArtifactNames.CH_PPC64LE,
-             ArtifactNames.CH_AMD_COMPAT,
--            ArtifactNames.CH_AMD_MUSL,
-             ArtifactNames.CH_RISCV64,
-             ArtifactNames.CH_S390X,
-             ArtifactNames.CH_LOONGARCH64,
-```
-
-**File**: `ci/defs/job_configs.py` (modified, +0/-6)
-```diff
-@@ -353,7 +353,6 @@ def dind_containment_env(job_mem):
-     BuildTypes.AMD_ILLUMOS,
-     BuildTypes.PPC64LE,
-     BuildTypes.AMD_COMPAT,
--    BuildTypes.AMD_MUSL,
-     BuildTypes.RISCV64,
-     BuildTypes.S390X,
-     BuildTypes.LOONGARCH64,
-@@ -694,11 +693,6 @@ class JobConfigs:
-             provides=[ArtifactNames.CH_AMD_COMPAT],
-             runs_on=RunnerLabels.ARM_MEDIUM_CPU,
-         ),
--        Job.ParamSet(
--            parameter=BuildTypes.AMD_MUSL,
--            provides=[ArtifactNames.CH_AMD_MUSL],
--            runs_on=RunnerLabels.ARM_MEDIUM_CPU,
--        ),
-         Job.ParamSet(
-             parameter=BuildTypes.RISCV64,
-             provides=[ArtifactNames.CH_RISCV64],
-```
-
-**File**: `ci/jobs/auto_release_job.py` (modified, +3/-0)
-```diff
-@@ -179,12 +179,15 @@ def _release_build_artifacts_ready(release_branch: str, commit_sha: str) -> bool
-     print(f"   signed macOS artifacts expected: {with_signed_macos}")
-     with_illumos = release_packages.commit_has_illumos_build(commit_sha)
-     print(f"   illumos artifacts expected: {with_illumos}")
-+    packages = release_packages.commit_packages(commit_sha)
-+    print(f"   packages expected: {', '.join(packages)}")
-     return release_packages.release_build_artifacts_ready(
-         S3,
-         os.getenv("S3_BUILDS_BUCKET", Settings.S3_ARTIFACT_BUCKET),
-         release_branch,
-         commit_sha,
-         version,
-+        packages,
-         with_signed_macos,
-         with_illumos,
-     )
-```
-
-**File**: `ci/jobs/build_clickhouse.py` (modified, +78/-3)
-```diff
-@@ -2,6 +2,7 @@
- import hashlib
- import json
- import os
-+import shlex
- import shutil
- import subprocess
- 
-@@ -22,12 +23,12 @@
- 
- BUILD_TYPE_TO_CMAKE = {
-     BuildTypes.AMD_DEBUG: f"    cmake --debug-trycompile -DCMAKE_VERBOSE_MAKEFILE=1 -LA -DCMAKE_BUILD_TYPE=Debug -DENABLE_THINLTO=0 -DSANITIZE=          -DENABLE_CHECK_HEAVY_BUILDS=1 -DBUILD_STRIPPED_BINARY=1 -DENABLE_CLICKHOUSE_SELF_EXTRACTING=1 -DCMAKE_C_COMPILER={ToolSet.COMPILER_C} -DCMAKE_CXX_COMPILER={ToolSet.COMPILER_CPP} -DCOMPILER_CACHE={ToolSet.COMPILER_CACHE}        -DCMAKE_TOOLCHAIN_FILE={repo_path_normalized}/cmake/linux/toolchain-x86_64.cmake -DENABLE_BUILD_PROFILING=1 -DENABLE_TESTS=1 -DENABLE_LEXER_TEST=1 -DENABLE_UTILS=0 -DCMAKE_FIND_PACKAGE_NO_PACKAGE_REGISTRY=ON -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_SYSCONFDIR=/etc -DCMAKE_INSTALL_LOCALSTATEDIR=/var -DCMAKE_SKIP_INSTALL_ALL_DEPENDENCY=ON -DENABLE_BUZZHOUSE=1",
--    BuildTypes.AMD_RELEASE: f"  cmake --debug-trycompile -DCMAKE_VERBOSE_MAKEFILE=1 -LA -DCMAKE_BUILD_TYPE=None  -DENABLE_THINLTO=1 -DSANITIZE=          -DENABLE_CHECK_HEAVY_BUILDS=1 -DBUILD_STRIPPED_BINARY=1 -DENABLE_CLICKHOUSE_SELF_EXTRACTING=1 -DCMAKE_C_COMPILER={ToolSet.COMPILER_C} -DCMAKE_CXX_COMPILER={ToolSet.COMPILER_CPP} -DCOMPILER_CACHE={ToolSet.COMPILER_CACHE}        -DCMAKE_TOOLCHAIN_FILE={repo_path_normalized}/cmake/linux/toolchain-x86_64.cmake -DENABLE_BUILD_PROFILING=1 -DENABLE_TESTS=0 -DENABLE_LEXER_TEST=0 -DENABLE_UTILS=0 -DCMAKE_FIND_PACKAGE_NO_PACKAGE_REGISTRY=ON -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_SYSCONFDIR=/etc -DCMAKE_INSTALL_LOCALSTATEDIR=/var -DCMAKE_SKIP_INSTALL_ALL_DEPENDENCY=ON -DSPLIT_DEBUG_SYMBOLS=ON -DSYMBOL_SECTIONS=compact -DBUILD_STANDALONE_KEEPER=1",
-+    BuildTypes.AMD_RELEASE: f"  cmake --debug-trycompile -DCMAKE_VERBOSE_MAKEFILE=1 -LA -DCMAKE_BUILD_TYPE=None  -DENABLE_THINLTO=1 -DSANITIZE=          -DENABLE_CHECK_HEAVY_BUILDS=1 -DBUILD_STRIPPED_BINARY=1 -DENABLE_CLICKHOUSE_SELF_EXTRACTING=1 -DCMAKE_C_COMPILER={ToolSet.COMPILER_C} -DCMAKE_CXX_COMPILER={ToolSet.COMPILER_CPP} -DCOMPILER_CACHE={ToolSet.COMPILER_CACHE}        -DCMAKE_TOOLCHAIN_FILE={repo_path_normalized}/cmake/linux/toolchain-x86_64.cmake -DENABLE_BUILD_PROFILING=1 -DENABLE_TESTS=0 -DENABLE_LEXER_TEST=0 -DENABLE_UTILS=0 -DCMAKE_FIND_PACKAGE_NO_PACKAGE_REGISTRY=ON -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_SYSCONFDIR=/etc -DCMAKE_INSTALL_LOCALSTATEDIR=/var -DCMAKE_SKIP_INSTALL_ALL_DEPENDENCY=ON -DSPLIT_DEBUG_SYMBOLS=ON -DSYMBOL_SECTIONS=compact",
-     BuildTypes.AMD_BINARY: f"   cmake --debug-trycompile -DCMAKE_VERBOSE_MAKEFILE=1 -LA -DCMAKE_BUILD_TYPE=None  -DENABLE_THINLTO=0 -DSANITIZE=          -DENABLE_CHECK_HEAVY_BUILDS=1 -DBUILD_STRIPPED_BINARY=1 -DENABLE_CLICKHOUSE_SELF_EXTRACTING=1 -DCMAKE_C_COMPILER={ToolSet.COMPILER_C} -DCMAKE_CXX_COMPILER={ToolSet.COMPILER_CPP} -DCOMPILER_CACHE={ToolSet.COMPILER_CACHE}        -DCMAKE_TOOLCHAIN_FILE={repo_path_normalized}/cmake/linux/toolchain-x86_64.cmake -DENABLE_BUILD_PROFILING=1 -DENABLE_TESTS=0 -DENABLE_LEXER_TEST=0 -DENABLE_UTILS=0 -DCMAKE_FIND_PACKAGE_NO_PACKAGE_REGISTRY=ON",
-     BuildTypes.AMD_ASAN_UBSAN: f"  cmake --debug-trycompile -DCMAKE_VERBOSE_MAKEFILE=1 -LA -DCMAKE_BUILD_TYPE=None  -DENABLE_THINLTO=0 -DSANITIZE=address,undefined -DENABLE_CHECK_HEAVY_BUILDS=1 -DBUILD_STRIPPED_BINARY=1 -DENABLE_CLICKHOUSE_SELF_EXTRACTING=1 -DCMAKE_C_COMPILER={ToolSet.COMPILER_C} -DCMAKE_CXX_COMPILER={ToolSet.COMPILER_CPP} -DCOMPILER_CACHE={ToolSet.COMPILER_CACHE}        -DCMAKE_TOOLCHAIN_FILE={repo_path_normalized}/cmake/linux/toolchain-x86_64.cmake -DENABLE_BUILD_PROFILING=1 -DENABLE_TESTS=1 -DENABLE_LEXER_TEST=1 -DENABLE_UTILS=0 -DCMAKE_FIND_PACKAGE_NO_PACKAGE_REGISTRY=ON -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_SYSCONFDIR=/etc -DCMAKE_INSTALL_LOCALSTATEDIR=/var -DCMAKE_SKIP_INSTALL_ALL_DEPENDENCY=ON -DENABLE_BUZZHOUSE=1",
-     BuildTypes.AMD_TSAN: f"     cmake --debug-trycompile -DCMAKE_VERBOSE_MAKEFILE=1 -LA -DCMAKE_BUILD_TYPE=None  -DENABLE_THINLTO=0 -DSANITIZE=thread    -DENABLE_CHECK_HEAVY_BUILDS=1 -DBUILD_STRIPPED_BINARY=1 -DENABLE_CLICKHOUSE_SELF_EXTRACTING=1 -DCMAKE_C_COMPILER={ToolSet.COMPILER_C} -DCMAKE_CXX_COMPILER={ToolSet.COMPILER_CPP} -DCOMPILER_CACHE={ToolSet.COMPILER_CACHE}        -DCMAKE_TOOLCHAIN_FILE={repo_path_normalized}/cmake/linux/toolchain-x86_64.cmake -DENABLE_BUILD_PROFILING=1 -DENABLE_TESTS=1 -DENABLE_LEXER_TEST=1 -DENABLE_UTILS=0 -DCMAKE_FIND_PACKAGE_NO_PACKAGE_REGISTRY=ON -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_SYSCONFDIR=/etc -DCMAKE_INSTALL_LOCALSTATEDIR=/var -DCMAKE_SKIP_INSTALL_ALL_DEPENDENCY=ON -DENABLE_BUZZHOUSE=1",
-     BuildTypes.AMD_MSAN: f"     cmake --debug-trycompile -DCMAKE_VERBOSE_MAKEFILE=1 -LA -DCMAKE_BUILD_TYPE=None  -DENABLE_THINLTO=0 -DSANITIZE=memory    -DENABLE_CHECK_HEAVY_BUILDS=1 -DBUILD_STRIPPED_BINARY=1 -DENABLE_CLICKHOUSE_SELF_EXTRACTING=1 -DCMAKE_C_COMPILER={ToolSet.COMPILER_C} -DCMAKE_CXX_COMPILER={ToolSet.COMPILER_CPP} -DCOMPILER_CACHE={ToolSet.COMPILER_CACHE}        -DCMAKE_TOOLCHAIN_FILE={repo_path_normalized}/
-```
-
-**File**: `ci/jobs/compatibility_check.py` (modified, +46/-93)
-```diff
-@@ -1,65 +1,48 @@
- import argparse
-+import json
- import re
- import struct
- from pathlib import Path
- 
--from pip._vendor.packaging.version import Version
--
--from ci.praktika.info import Info
- from ci.praktika.result import Result
- from ci.praktika.utils import Shell, Utils
- 
--IMAGE_UBUNTU = "clickhouse/test-old-ubuntu"
--IMAGE_CENTOS = "clickhouse/test-old-centos"
--DOWNLOAD_RETRIES_COUNT = 5
--
- temp_path = Path(f"{Utils.cwd()}/ci/tmp")
- 
--
--def process_glibc_check():
--    # See https://sourceware.org/glibc/wiki/Glibc%20Timeline
--    if Utils.is_amd():
--        max_glibc_version = "2.4"
--    elif Utils.is_arm():
--        max_glibc_version = "2.18"  # because of build with newer sysroot?
--    else:
--        raise RuntimeError("Can't determine max glibc version")
--
--    commands = (
--        [
--            f"readelf -s --wide {temp_path}/clickhouse | grep '@GLIBC_' > {temp_path}/glibc.log",
--            # FIXME: odbc bridge is not present in the deb package
--            # f"readelf -s --wide {temp_path}/clickhouse-odbc-bridge | grep '@GLIBC_' >> {temp_path}/glibc.log",
--            # FIXME: library bridge is not present in the deb package
--            # f"readelf -s --wide {temp_path}/clickhouse-library-bridge | grep '@GLIBC_' >> {temp_path}/glibc.log",
--        ],
-+# The release binary is statically linked against the bundled musl, so the glibc
-+# symbol-version audit and the "does it start on an ancient distribution" checks
-+# that this job used to run are settled at link time (see the `readelf` assertion
-+# in the build job). What remains worth checking at runtime is rseq: the bundled
-+# libc registers a per-thread rseq area with the kernel itself, and `sched_getcpu`
-+# (hence the per-CPU counters) falls back to a slower path when that fails. The
-+# warning in `system.warnings` is the observable signal, so exercise both sides:
-+# registration succeeds regardless of the distribution's own libc, and a kernel
-+# that refuses the syscall is reported.
-+RSEQ_WARNING_QUERY = "select count() as warnings from system.warnings where message like '%rseq%'"
-+
-+# Docker seccomp profile that makes the `rseq` syscall fail with ENOSYS, which is
-+# what a pre-4.18 kernel or a restrictive sandbox looks like to the process.
-+SECCOMP_NO_RSEQ = {
-+    "defaultAction": "SCMP_ACT_ALLOW",
-+    "syscalls": [{"names": ["rseq"], "action": "SCMP_ACT_ERRNO", "errnoRet": 38}],
-+}
-+
-+
-+def rseq_check(image: str, expect_rseq: bool, extra_args: str = "") -> str:
-+    # The condition is over the column of the one-row subquery: an outer `count()` would count that
-+    # row and always be 1.
-+    condition = "warnings" if expect_rseq else "not(warnings)"
-+    return (
-+        f"docker run --rm --volume={temp_path}/clickhouse:/clickhouse {extra_args} {image} "
-+        f'/clickhouse local --tmp --query "select throwIf({condition}) from ({RSEQ_WARNING_QUERY})"'
-     )
- 
--    for command in commands:
--        Shell.check(command, verbose=True, strict=True)
--
--    ok = True
--    with open(f"{temp_path}/glibc.log", "r", encoding="utf-8") as log:
--        for line in log:
--            if line.strip():
--                columns = line.strip().split(" ")
--                symbol_with_glibc = columns[-2]  # sysconf@GLIBC_2.2.5
--                _, version = symbol_with_glibc.split("@GLIBC_")
--                if version == "PRIVATE":
--                    print(f"FAILED: PRIVATE version: {symbol_with_glibc}")
--                    ok = False
--                elif Version(version) > Version(max_glibc_version):
--                    print(
--                        f"FAILED: version is more than max version [{max_glibc_version}]: [{symbol_with_glibc}]"
--                    )
--                    ok = False
--    return ok
--
- 
- def process_pie_check():
-     # Nothing in the build fails when the binary comes out position dependent: -fPIE only makes the
-     # code relocatable, and whether the executable itself is position independent is the linker's
--    # decision, so it is checked on the packaged binary instead.
-+    # decision, so it is checked on the packaged binary instead. A static-PIE is `DYN` with
-+    # `DF_1_PIE` set just like a dynamically linked one, so the check is the same as on glibc.
-     header = Shell.get_output(
-         f"readelf -h --wide {temp_path}/clickhouse", verbose=True, strict=True
-     )
-@@ -132,14 +115,6 @@ def parse_args():
- def main():
-     stopwatch = Utils.Stopwatch()
- 
--    check_name = Info().job_name
--    assert check_name
--    check_glibc = True
--    # currently hardcoded to x86, don't enable for AARCH64
--    check_old_distributions = (
--        "aarch64" not in check_name.lower() and "arm" not in check_name.lower()
--    )
--
-     for package in temp_path.iterdir():
-         if package.suffix == ".deb":
-             Shell.check(
-@@ -152,17 +127,11 @@ def main():
-         verbose=True,
-         strict=True,
-     )
--    # Shell.check(f"chmod +x {temp_path}/clickhouse", verbose=True, strict=True)
- 
--    test_results = []
-+    seccom
+     EXPECT_EQ(sts_requests, sts_requests_before + 1);
 ```
 
 ---
 
-### Incident Patch 3: `7f139800` (2026-11-18)
-**Commit Message**: Merge pull request #132221 from groeneai/fix-04659-pool-wait-from-client-logs
+### Incident Patch 2: `d01926b3` (2026-11-21)
+**Commit Message**: Address review: introspection does not reveal the memory layout
 
-Fix flaky `04659_connection_pool_zero_wait_blocks`: count the pool wait lines from the waiter's own server logs, not `text_log`
+The "Multi-user scenarios" section of the `clickhouse-local` documentation
+said that the introspection functions reveal the memory layout of the process.
+This is wrong: `StackTrace::resolveAddressForStorage` stores the addresses of
+stack traces as offsets inside the executable, and `addressToSymbol` and
+`addressToLine` accept only such offsets, in `clickhouse-local` as well.
 
-**File**: `tests/queries/0_stateless/04659_connection_pool_zero_wait_blocks.sh` (modified, +23/-33)
+Say what is exposed instead: the stack traces of the process, such as the ones
+in `system.stack_trace`, can be resolved to symbol names and source locations.
+
+Checked on a running `clickhouse-local`: the values in `system.stack_trace` are
+below the runtime base of the executable, `addressToSymbol` returns an empty
+string for a runtime address, and both functions resolve the stored offsets.
+
+Review: https://github.com/ClickHouse/ClickHouse/pull/133407#pullrequestreview-6006243429
+Related: https://github.com/ClickHouse/ClickHouse/pull/133407
+
+Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
+
+**File**: `docs/concepts/features/tools-and-utilities/clickhouse-local.mdx` (modified, +1/-1)
 ```diff
-@@ -10,17 +10,16 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
- # With connection_pool_max_wait_ms = 0 the waiter must block on the pool instead of retrying with a
- # zero length wait, which is what the "Waiting 0 ms." line below would report.
+@@ -451,7 +451,7 @@ The listeners of `clickhouse-local` are meant for a single user: the one who sta
+ - **Run commands.** `clickhouse-server` accepts dictionaries with the [`EXECUTABLE`](/reference/statements/create/dictionary/sources/executable-file) and [`EXECUTABLE_POOL`](/reference/statements/create/dictionary/sources/executable-pool) sources only from the configuration files written by the administrator, and refuses to create them with a query. `clickhouse-local` allows `CREATE DICTIONARY ... SOURCE(EXECUTABLE(COMMAND '...'))`, and the command is run by the shell, so a query can run an arbitrary program.
+ - **Act as the administrator.** Unless users are configured with `users_config`, the only user is `default`: it has no password, is allowed to connect from any address, and has the privileges of an administrator, including access management. Every connection can read, change, and delete all the data of the instance, change any setting (there are no settings constraints or quotas), see the queries of other sessions in `system.processes` and kill them, close the listeners, and terminate the process with `SYSTEM SHUTDOWN`. It can also create users, which are saved in the data directory, when it is persistent, and remain after a restart.
+ - **Connect to any host.** The [`remote_url_allow_hosts`](/reference/settings/server-settings/settings/remote#remote_url_allow_hosts) restriction is not applied in `clickhouse-local`, so the table functions and engines for external sources, such as `url`, `s3`, `remote`, `mysql`, and `postgresql`, can send requests from your machine to any address, including the services on the loopback interface and in the internal network.
+-- **Inspect the process.** The [introspection functions](/reference/functions/regular-functions/introspection) are enabled by default (see [`allow_introspection_functions`](/reference/settings/session-settings/allow#allow_introspection_functions)), which reveals the stack traces and the memory layout of the process.
++- **Use the introspection functions.** The [introspection functions](/reference/functions/regular-functions/introspection) are enabled by default (see [`allow_introspection_functions`](/reference/settings/session-settings/allow#allow_introspection_functions)), so a client can resolve the stack traces of the process, such as the ones in `system.stack_trace`, to symbol names and source locations.
  
--# The suffix and the per-call start time below keep one run's log rows out of another's. A test
--# database is not enough on its own: the stress threads pass a fixed --database, so rows from an
--# earlier run could satisfy the lower bound without this run ever waiting, and could also push the
--# upper bound over its limit.
-+# The suffix keeps one run's query ids, pool user and log files apart from another's. A test database is not
-+# enough on its own: the stress threads pass a fixed --database, so an earlier run's query_log rows would be
-+# counted with this run's.
- QUERY_PREFIX="04659_${CLICKHOUSE_DATABASE}_$(random_str 8)"
+ Configuring users with passwords and limited privileges adds authentication, but does not bring these restrictions back. A user granted the access to files (`READ` and `WRITE` on `FILE`) gets the whole filesystem instead of a dedicated directory and, together with the `CREATE DICTIONARY` grant, the ability to run commands. The `file` function does not check the grants at all, so even a user without any grant on files can read every file.
  
- # The pool is keyed on host, port, user and pool size, so a user of its own keeps concurrent runs out
- # of each other's pool.
- POOL_USER="u_${QUERY_PREFIX}"
- ${CLICKHOUSE_CLIENT} --query "CREATE USER ${POOL_USER} IDENTIFIED WITH no_password"
--trap '${CLICKHOUSE_CLIENT} --query "DROP USER IF EXISTS ${POOL_USER}"' EXIT
-+trap '${CLICKHOUSE_CLIENT} --query "DROP USER IF EXISTS ${POOL_USER}"; rm -f "${CLICKHOUSE_TMP}/${QUERY_PREFIX}"_*_waiter.log' EXIT
+```
+
+---
+
+### Incident Patch 3: `1baff789` (2026-11-21)
+**Commit Message**: Merge pull request #132720 from Algunenano/read-by-layers-prefix-columns
+
+Read only the used sorting key prefix in a read split into layers
+
+**File**: `src/Processors/QueryPlan/ReadFromMergeTree.cpp` (modified, +24/-28)
+```diff
+@@ -39,11 +39,9 @@
+ #include <Interpreters/DatabaseCatalog.h>
+ #include <Storages/StorageProxy.h>
+ #include <Interpreters/ExpressionActions.h>
+-#include <Interpreters/ExpressionAnalyzer.h>
+ #include <Interpreters/extractStringValueFilters.h>
+ #include <Interpreters/InterpreterSelectQuery.h>
+ #include <Interpreters/PredicateStatisticsLog.h>
+-#include <Interpreters/TreeRewriter.h>
+ #include <Interpreters/ClusterProxy/executeQuery.h>
+ #include <Parsers/ASTFunction.h>
+ #include <Parsers/ASTIdentifier.h>
+@@ -1461,6 +1459,19 @@ struct PartRangesReadInfo
  
- function running() {
-     ${CLICKHOUSE_CLIENT} --query "SELECT count() FROM system.processes WHERE query_id IN (${1})"
-@@ -49,7 +48,13 @@ function wait_holding() {
-     return 1
  }
  
--# Runs one pair of queries at the given connection_pool_max_wait_ms and leaves the log rows the
-+# Counts the pool wait lines of one shape in a waiter's own server logs. These come over its connection,
-+# while system.text_log drops lines when the async logger's queue is full.
-+function pool_wait_lines() {
-+    grep -c -E "ConnectionPool .*: No free connections in pool\. Waiting $2( \(skipped [0-9]+ similar messages\))?\$" "${CLICKHOUSE_TMP}/${QUERY_PREFIX}_$1_waiter.log"
++/// The expression of the first `prefix_size` sorting key columns. It keeps its input columns.
++/// It is cut from the analyzed sorting key, whose column names the sort descriptions use: analyzing the key again in
++/// the query context can name them differently, e.g. `nullIn` instead of `in` with `transform_null_in`.
++static ExpressionActionsPtr getSortingKeyPrefixExpression(const StorageMetadataPtr & metadata, size_t prefix_size)
++{
++    const auto & sorting_key = metadata->getSortingKey();
++    auto dag = sorting_key.expression->getActionsDAG().clone();
++    dag.removeUnusedActions(Names(sorting_key.column_names.begin(), sorting_key.column_names.begin() + prefix_size));
++    for (const auto * input : dag.getInputs())
++        dag.addOrReplaceInOutputs(*input);
++    return std::make_shared<ExpressionActions>(std::move(dag), sorting_key.expression->getSettings());
 +}
 +
-+# Runs one pair of queries at the given connection_pool_max_wait_ms and leaves the waiter's log the
- # assertion below reads. The holder does not finish on its own: it is killed only once the arm's own
- # expected event has been observed, so the pool is full for the whole of the waiter's wait and no
- # attempt has to be repeated to land that overlap.
-@@ -58,10 +63,6 @@ function contend() {
-     local holder="${QUERY_PREFIX}_${label}_holder" waiter="${QUERY_PREFIX}_${label}_waiter"
-     local holder_pid waiter_pid
+ Pipe ReadFromMergeTree::readByLayers(
+     const RangesInDataParts & parts_with_ranges,
+     SplitPartsByRanges split_parts,
+@@ -1482,38 +1493,29 @@ Pipe ReadFromMergeTree::readByLayers(
  
--    # Read the clock from the server the log rows come from, so the predicate needs no clock
--    # alignment.
--    CONTEND_START=$(${CLICKHOUSE_CLIENT} --query "SELECT toString(now64(6))")
--
-     # Sleeps far longer than the handshake below needs, so the connection stays held until the kill
-     # frees it. The per block sleep cap is what bounds the row count.
-     timeout 60 ${CLICKHOUSE_CLIENT} --query_id "${holder}" --query "
-@@ -74,7 +75,11 @@ function contend() {
-     # Only the holder can free the connection, so the waiter starts once the holder owns it.
-     wait_holding "${holder}" || echo "the holder never started, so the pool was never full"
- 
--    timeout 60 ${CLICKHOUSE_CLIENT} --query_id "${waiter}" --query "
-+    # The client creates the file only once a line arrives, so a waiter that logged nothing still leaves one to count.
-+    local waiter_log="${CLICKHOUSE_TMP}/${waiter}.log"
-+    : > "${waiter_log}"
+     if (reader_settings.read_in_order)
+     {
++        /// Only the prefix of the sorting key that the streams of a layer are merged by and the layers are filtered by
++        /// is computed, so that the other sorting key columns are not read.
++        size_t prefix_size = input_order_info->used_prefix_of_sorting_key_size;
++        for (const auto & border : split_parts.borders)
++            prefix_size = std::max(prefix_size, border.size());
++        auto sorting_expr = getSortingKeyPrefixExpression(storage_snapshot->metadata, prefix_size);
++        const auto sorting_key_prefix_columns = sorting_expr->getRequiredColumns();
 +
-+    timeout 60 ${CLICKHOUSE_CLIENT} --query_id "${waiter}" --send_logs_level=information --server_logs_file="${waiter_log}" --query "
-         SELECT count() FROM remote('127.0.0.1:${CLICKHOUSE_PORT_TCP}', numbers(1), '${POOL_USER}', '') WHERE sleepEachRow(1)
-         SETTINGS prefer_localhost_replica = 0, distributed_connections_pool_size = 1,
-                  connection_pool_max_wait_ms = ${wait_ms}, function_sleep_max_microseconds_per_block = 60000000
-@@ -131,21 +136,14 @@ function contend() {
- 
- contend 0 zero succeeds
- 
--${CLICKHOUSE_CLIENT} --query "SYSTEM FLUSH LOGS text_log"
+         /// `PREWHERE` runs before the sorting expression added below and may have removed an input
+         /// column that the sorting key needs. Prohibit removing those inputs; the sorting expression
+         /// keeps them, and they are dropped when the pipe header is converted to the step header.
+         /// Same reasoning as in `spreadMarkRangesAmongStreamsWithOrder`.
+         if (query_info.prewhere_info || query_info.row_level_filter)
+         {
+-            NameSet sorting_key_columns;
+-            for (const auto & column : storage_snapshot->metadata->getSortingKey().expression->getRequiredColumnsWithTypes())
+-                sorting_key_columns.insert(column.name);
 -
- # The waiter has to reach the pool once, and then stay there: a wait that returned immediately and
- # re-entered the loop would report the same line many times over (measured in the thousands when the
- # blocking wait is replaced by a short one), so the count is bounded on both sides rather than
- # reduced to whether it happened at all.
--${CLICKHOUSE_CLIENT} --query "
--    SELECT
--        countIf(message_format_string = 'No free connections in pool. Waiting indefinitely.') BETWEEN 1 AND 20 AS blocked_once,
--        countIf(message_format_string = 'No free connections in pool. Waiting {} ms.') AS spun
--    FROM system.text_log
--    WHERE event_date >= yesterday() AND event_time_microseconds >= toDateTime64('${CONTEND_START}', 6)
--      AND query_id LIKE '${QUERY_PREFIX}_zero_%'
--      AND logger_name LIKE 'ConnectionPool%'
--"
-+indefinitely=$(pool_wait_lines zero 'indefinitely\.')
-+blocked_once=$(( indefinitely >= 1 &&
++            NameSet sorting_key_columns(sorting_key_prefix_columns.begin(), sorting_key_prefix_columns.end());
+             restorePrewhereInputs(query_info.row_level_filter.get(), query_info.prewhere_info.get(), sorting_key_columns);
+         }
+ 
+         NameSet column_names_set(column_names.begin(), column_names.end());
+         in_order_column_names_to_read = column_names;
+ 
+-        /// Only the prefix of the sorting key that the merge of a layer and the range filters of the layers use
+-        /// has to be computed: reading the rest of the key would read and decode columns the query does not need.
+-        size_t sorting_key_prefix_size = input_order_info->used_prefix_of_sorting_key_size;
+-        if (!split_parts.borders.empty())
+-            sorting_key_prefix_size = std::max(sorting_key_prefix_size, split_parts.borders.front().size());
+-
+-        auto sorting_key_prefix_ast = storage_snapshot->metadata->getSortingKey().expression_list_ast->clone();
+-        sorting_key_prefix_ast->children.resize(sorting_key_prefix_size);
+-        auto syntax_result = TreeRewriter(context).analyze(
+-            sorting_key_prefix_ast,
+-            storage_snapshot->metadata->getColumns().get(GetColumnsOptions(GetColumnsOptions::AllPhysical).withSubcolumns()));
+-        auto sorting_expr = std::make_shared<ExpressionActions>(
+-            ExpressionAnalyzer(sorting_key_prefix_ast, syntax_result, context).getActionsDAG(false));
+-
+         /// Add columns needed to calculate the sorting expression
+-        for (const auto & column_name : sorting_expr->getRequiredColumns())
++        for (const auto & column_name : sorting_key_prefix_columns)
+         {
+             if (column_names_set.contains(column_name))
+                 continue;
+@@ -2511,11 +2513,7 @@ Pipe ReadFromMergeTree::spreadMarkRangesAmongStreamsWithOrder(
+     if (need_preliminary_merge || output_each_partition_through_separate_port)
+     {
+         size_t prefix_size = input_order_info->used_prefix_of_sorting_key_size;
+-        auto order_key_prefix
+```
+
+**File**: `tests/queries/0_stateless/05829_read_by_layers_reads_only_key_prefix.reference` (added, +10/-0)
+```diff
+@@ -0,0 +1,10 @@
++1
++100000
++1
++400000
++05829_join	1
++05829_uniq_exact	1
++500
++500
++0	40
++0
+```
+
+**File**: `tests/queries/0_stateless/05829_read_by_layers_reads_only_key_prefix.sql` (added, +50/-0)
+```diff
+@@ -0,0 +1,50 @@
++-- A read in order split into layers by a prefix of the sorting key reads only the columns of that prefix and of the query,
++-- not the other columns of the sorting key.
++
++DROP TABLE IF EXISTS t_layers_prefix;
++CREATE TABLE t_layers_prefix (k UInt32 CODEC(Delta, LZ4), s String) ENGINE = MergeTree ORDER BY (k, s)
++SETTINGS index_granularity = 1024, min_bytes_for_wide_part = 0;
++
++SYSTEM STOP MERGES t_layers_prefix;
++INSERT INTO t_layers_prefix SELECT number, hex(sipHash128(toString(number))) FROM numbers(100000);
++INSERT INTO t_layers_prefix SELECT number, hex(sipHash128(toString(number + 1000000))) FROM numbers(100000);
++
++-- Without the caches that skip the read of compressed data, which `ReadCompressedBytes` counts.
++SET max_threads = 4, enable_parallel_replicas = 0, use_uncompressed_cache = 0, use_columns_cache = 0;
++
++-- A single `uniqExact` of the first sorting key column, counted in order.
++SET optimize_aggregation_in_order = 1;
++SELECT count() > 0 FROM (EXPLAIN PIPELINE SELECT count(DISTINCT k) FROM t_layers_prefix) WHERE explain LIKE '%FilterSortedStreamByRange%';
++SELECT count(DISTINCT k) FROM t_layers_prefix SETTINGS log_comment = '05829_uniq_exact';
++
++-- A merge join of reads in order, joined by ranges of the primary key.
++SET join_algorithm = 'full_sorting_merge', query_plan_join_shard_by_pk_ranges = 1, optimize_read_in_order = 1;
++SELECT count() > 0 FROM (EXPLAIN PIPELINE SELECT count() FROM t_layers_prefix AS l JOIN t_layers_prefix AS r ON l.k = r.k) WHERE explain LIKE '%FilterSortedStreamByRange%';
++SELECT count() FROM t_layers_prefix AS l JOIN t_layers_prefix AS r ON l.k = r.k SETTINGS log_comment = '05829_join';
++
++SYSTEM FLUSH LOGS query_log;
++SELECT log_comment, ProfileEvents['ReadCompressedBytes'] < (SELECT data_compressed_bytes FROM system.columns WHERE database = currentDatabase() AND table = 't_layers_prefix' AND name = 's') / 10
++FROM system.query_log
++WHERE current_database = currentDatabase() AND log_comment IN ('05829_uniq_exact', '05829_join') AND type = 'QueryFinish' AND event_date >= yesterday()
++ORDER BY log_comment;
++
++DROP TABLE t_layers_prefix;
++
++-- The sorting key keeps its own names when the query settings would name its expressions differently: `IN` is `nullIn`
++-- with `transform_null_in`. The first key column is fixed by the condition, so the read is in order of `k`, in layers
++-- with several threads and by merging the parts with one.
++DROP TABLE IF EXISTS t_layers_prefix_in;
++CREATE TABLE t_layers_prefix_in (a UInt32, k UInt32, s String) ENGINE = MergeTree ORDER BY (a IN (1, 2), k, s)
++SETTINGS index_granularity = 128;
++
++SYSTEM STOP MERGES t_layers_prefix_in;
++INSERT INTO t_layers_prefix_in SELECT 1, number % 500, toString(number) FROM numbers(10000);
++INSERT INTO t_layers_prefix_in SELECT 1, number % 500, toString(number) FROM numbers(10000);
++
++SET transform_null_in = 1, read_in_order_two_level_merge_threshold = 1;
++SELECT uniqExact(k) FROM t_layers_prefix_in WHERE a = 1 SETTINGS max_threads = 4;
++SELECT uniqExact(k) FROM t_layers_prefix_in WHERE a = 1 SETTINGS max_threads = 1;
++SELECT k, count() FROM t_layers_prefix_in WHERE a = 1 GROUP BY k ORDER BY k LIMIT 1 SETTINGS max_threads = 1;
++SELECT k FROM t_layers_prefix_in WHERE a = 1 ORDER BY k LIMIT 1 SETTINGS max_threads = 1;
++
++DROP TABLE t_layers_prefix_in;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #132870** (2026-11-19): Backport #128077 to 26.10: Do not let a derived `indexHint` keep `HAVING` above `GROUPING SETS` (@robot-ch-test-poll)
-- **PR #132853** (2026-11-19): Backport #129671 to 26.10: Refactor: share the traversal of ActionsDAG nodes between its walks (@robot-clickhouse-ci-2)
-- **PR #132836** (closed): Update PGO+BOLT toolchain to 1989cbc2 (@clickhouse-gh[bot])
-- **PR #132829** (2026-11-19): Document the musl Rust target in the build guide (@thevar1able)
-- **PR #132828** (2026-11-19): Backport #126176 to 26.8: Do not correct the global memory tracker below jemalloc `stats.allocated` (@robot-clickhouse)
-- **PR #132824** (2026-11-19): Backport #117894 to 26.10: Do not claim injectivity for a function that collapses varying arguments to `Nothing` (@robot-clickhouse-ci-2)
+- **PR #133407** (2026-11-21): Document that `clickhouse-local` is not for multi-user scenarios (@alexey-milovidov)
+- **PR #133396** (2026-11-21): Do not install the Rust documentation in the fasttest image (@groeneai)
+- **PR #133389** (2026-11-21): Fix flaky test IOTestAwsS3Client.AssumeRoleRefreshInConcurrentFibers (@groeneai)
+- **PR #133386** (2026-11-21): Docs: regenerate reference documentation from source (@clickhouse-gh[bot])
+- **PR #133352** (2026-11-21): Backport #113397 to 26.3: Fix a table permanently stuck in the drop queue after a failed materialized-CTE query (@robot-ch-test-poll)
+- **PR #133328** (2026-11-21): Fix flaky test 05045_query_plan_json_in_query_log (@groeneai)
 
 ---
 
@@ -1940,31 +1656,36 @@ Fix flaky `04659_connection_pool_zero_wait_blocks`: count the pool wait lines fr
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in llvm-project
+## X. flaky test IOTestAwsS3Client.AssumeRoleRefreshInConcurrentFibers
 
 **RULE**:
-When implementing operations in `contrib/llvm-project`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/IO/S3/tests/gtest_aws_s3_client.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `92fdcb78`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b9d4d482`: flaky test IOTestAwsS3Client.AssumeRoleRefreshInConcurrentFibers. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `contrib/llvm-project`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/IO/S3/tests/gtest_aws_s3_client.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-Subproject commit 55541575edec2cc4e9dc3fb182e17d77b807e199
+        , server_socket(std::make_unique<Poco::Net::ServerSocket>(/* port = */ 0, /* backlog = */ std::max(64, max_threads)))
+    const size_t fiber_count = getFiberCountAboveSchedulerThreads();
+    /// A thread per fiber: the server closes, instead of queueing, a connection that finds no idle thread in its pool.
+    }, /* max_threads = */ static_cast<int>(fiber_count));
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-Subproject commit 6afdc580684c9dbcfc1859bdcc54e1989d1d264c
+        , server_socket(std::make_unique<Poco::Net::ServerSocket>(0))
+    });
+    const size_t fiber_count = getFiberCountAboveSchedulerThreads();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `92fdcb78` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b9d4d482` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

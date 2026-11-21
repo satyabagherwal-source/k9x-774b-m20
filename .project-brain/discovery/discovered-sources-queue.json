@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-21T17:50:10.584Z",
+  "updated_at": "2026-11-21T18:23:11.358Z",
   "stats": {
-    "total_discovered": 7299,
-    "approved_pending_harvest": 6901,
+    "total_discovered": 7304,
+    "approved_pending_harvest": 6906,
     "harvested_count": 0,
     "rejected_count": 398,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6881,
+      "COMMUNITY_AND_EXPERT": 6886,
       "OFFICIAL_DOCUMENTATION": 240,
       "STANDARDS_AND_SPECIFICATIONS": 122,
       "ENGINEERING_BLOGS": 5,
@@ -157815,6 +157815,116 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/openreplay-openreplay-learnings.md",
         "fileName": "openreplay-openreplay-learnings.md"
+      }
+    },
+    "SRC-0458DF625FED": {
+      "id": "SRC-0458DF625FED",
+      "url": "https://pkg.go.dev/golang.org/x/exp",
+      "title": "https://pkg.go.dev/golang.org/x/exp",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T18:23:09.842Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gardener-gardener-learnings.md",
+        "fileName": "gardener-gardener-learnings.md"
+      }
+    },
+    "SRC-2079D2F623C5": {
+      "id": "SRC-2079D2F623C5",
+      "url": "https://github.com/ary1992",
+      "title": "https://github.com/ary1992",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T18:23:09.918Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gardener-gardener-learnings.md",
+        "fileName": "gardener-gardener-learnings.md"
+      }
+    },
+    "SRC-0D5F5C0BD4AE": {
+      "id": "SRC-0D5F5C0BD4AE",
+      "url": "https://github.com/kostov6",
+      "title": "https://github.com/kostov6",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T18:23:10.050Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gardener-gardener-learnings.md",
+        "fileName": "gardener-gardener-learnings.md"
+      }
+    },
+    "SRC-ED7A8BF7376A": {
+      "id": "SRC-ED7A8BF7376A",
+      "url": "https://github.com/ClickHouse/ClickHouse/pull/128069",
+      "title": "https://github.com/ClickHouse/ClickHouse/pull/128069",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T18:23:11.304Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
+        "fileName": "clickhouse-clickhouse-learnings.md"
+      }
+    },
+    "SRC-FB51C836ABE6": {
+      "id": "SRC-FB51C836ABE6",
+      "url": "https://github.com/ClickHouse/ClickHouse/pull/133407",
+      "title": "https://github.com/ClickHouse/ClickHouse/pull/133407",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T18:23:11.358Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
+        "fileName": "clickhouse-clickhouse-learnings.md"
       }
     }
   }

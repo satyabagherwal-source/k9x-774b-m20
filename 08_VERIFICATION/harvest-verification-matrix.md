@@ -11864,3 +11864,7 @@
 | `CYCLE-20261121-DQGN` | `2026-11-21T17:49:56.663Z` | `openreplay/openreplay` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9814` | Yes (`bb82497f...`) |
 | `CYCLE-20261121-DRSB` | `2026-11-21T17:49:58.379Z` | `kube-rs/kube` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9815` | Yes (`55c73f6a...`) |
 | `CYCLE-20261121-DWBN` | `2026-11-21T17:50:04.259Z` | `duckdb/duckdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9816` | Yes (`f18cc8e2...`) |
+| `CYCLE-20261121-K5A9` | `2026-11-21T18:22:55.425Z` | `baidu/Unlimited-OCR-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-2-learnings.md` | Yes (`e46a489a...`) |
+| `CYCLE-20261121-K8OK` | `2026-11-21T18:22:59.828Z` | `gardener/gardener` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9817` | Yes (`11050f99...`) |
+| `CYCLE-20261121-KD3J` | `2026-11-21T18:23:05.551Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9818` | Yes (`2c8a5b5e...`) |
+| `CYCLE-20261121-KDBE` | `2026-11-21T18:23:05.834Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9819` | Yes (`d69d2760...`) |

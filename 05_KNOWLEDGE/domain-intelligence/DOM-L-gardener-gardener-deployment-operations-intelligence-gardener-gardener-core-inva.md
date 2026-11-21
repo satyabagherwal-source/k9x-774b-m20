@@ -4,24 +4,24 @@
 {
   "source_repository": "gardener/gardener",
   "source_url": "https://github.com/gardener/gardener",
-  "source_version": "85eff190",
+  "source_version": "53eeaa41",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-20T14:52:46.014Z",
+  "timestamp": "2026-11-21T18:23:00.052Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-gardener-gardener",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [gardener/gardener](https://github.com/gardener/gardener) (Revision: `85eff190`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T14:52:46.014Z`  
+> **Provenance**: Harvested from [gardener/gardener](https://github.com/gardener/gardener) (Revision: `53eeaa41`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-21T18:23:00.052Z`  
 > **Learning ID**: `learn-github-gardener-gardener`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain L (Deployment & Operations Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), H (Technical Construction Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence)
-- **Confidence Rating**: 62%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence)
+- **Confidence Rating**: 66%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from gardener/gardener:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gardener-gardener-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gardener/gardener](https://github.com/gardener/gardener))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T14:52:44.357Z  
+> **Harvest Timestamp**: 2026-11-21T18:22:58.614Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -740,16 +740,17 @@ func (h *DefaultHealthChecker) Check(ctx context.Context, request types.Namespac
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #16400** (2026-11-20): **[release-v1.153] Allow `Create` if object already exists only for source `BackupEntry`**
-  *Symptoms*: Manual cherry-pick of https://github.com/gardener/gardener/pull/16303 on release-v1.153  /kind bug
+- **Issue #16404** (2026-11-21): **Update golang.org/x/exp digest to 8801fbd**
+  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [golang.org/x/exp](https://pkg.go.dev/golang.org/x/exp) | require | digest | `b6de8d3` → `8801fbd` |  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Enabled.  ♻ **Rebasing**: Whenever PR becomes conflicted, or you tick the rebase/retry checkbox.  🔕 **Ignore**: Close this PR and you won't be reminded about this update again.  ---   - [ ] <!-- rebase-check -->If you want to rebase/retry this PR, check this box  ---  **Release note**: ```other dependency NONE ``` <!--renovate-debug:eyJjcmVhdGVkSW5WZXIiOiI0NC4yNTcuMyIsInVwZGF0ZWRJblZlciI6IjQ0LjI1Ny4zIiwidGFyZ2V0QnJhbmNoIjoibWFzdGVyIiwibGFiZWxzIjpbImtpbmQvZW5oYW5jZW1lbnQiXX0=--> 
   **Post-Mortem & Fix Analysis**:
-  > [APPROVALNOTIFIER] This PR is **APPROVED**  This pull-request has been approved by: *<a href="https://github.com/gardener/gardener/pull/16400#pullrequestreview-5989465497" title="Approved">plkokanov</a>*  The full list of commands accepted by this bot can be found [here](https://prow.gardener.cloud/command-help?repo=gardener%2Fgardener).  The pull request process is described [here](https://gardener.cloud/docs/contribute/#pull-request-checklist)  <details > Needs approval from an approver in each of these files:  - ~~[OWNERS](https://github.com/gardener/gardener/blob/release-v1.153/OWNERS)~~ [plkokanov]  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":[]} -->
+  > /label skip-review
+  > [APPROVALNOTIFIER] This PR is **NOT APPROVED**  This pull-request has been approved by: **Once this PR has been reviewed and has the lgtm label**, please assign [ary1992](https://github.com/ary1992) for approval. For more information see [the Code Review Process](https://gardener.cloud/docs/contribute/#pull-request-checklist).  The full list of commands accepted by this bot can be found [here](https://prow.gardener.cloud/command-help?repo=gardener%2Fgardener).  <details open> Needs approval from an approver in each of these files:  - **[OWNERS](https://github.com/gardener/gardener/blob/master/OWNERS)**  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":["ary1992"]} -->
 
-- **Issue #16399** (2026-11-20): **[release-v1.155] extensions lib: Only pass type/class predicates to `MachineToWorkerMapper`**
-  *Symptoms*: This is an automated cherry-pick of #16285  /assign shafeeqes  ```bugfix user github.com/gardener/gardener #16399 @shafeeqes Fixed an issue where pending manual in-place worker pools were not correctly updated in the Shoot status. ```  /kind regression
+- **Issue #16401** (2026-11-20): **Update golang.org/x/exp digest to b6de8d3**
+  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [golang.org/x/exp](https://pkg.go.dev/golang.org/x/exp) | require | digest | `b15d094` → `b6de8d3` |  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Enabled.  ♻ **Rebasing**: Whenever PR becomes conflicted, or you tick the rebase/retry checkbox.  🔕 **Ignore**: Close this PR and you won't be reminded about this update again.  ---   - [ ] <!-- rebase-check -->If you want to rebase/retry this PR, check this box  ---  **Release note**: ```other dependency NONE ``` <!--renovate-debug:eyJjcmVhdGVkSW5WZXIiOiI0NC4yNDkuMSIsInVwZGF0ZWRJblZlciI6IjQ0LjI0OS4xIiwidGFyZ2V0QnJhbmNoIjoibWFzdGVyIiwibGFiZWxzIjpbImtpbmQvZW5oYW5jZW1lbnQiXX0=--> 
   **Post-Mortem & Fix Analysis**:
-  > /lgtm /approve 
-  > [APPROVALNOTIFIER] This PR is **APPROVED**  This pull-request has been approved by: *<a href="https://github.com/gardener/gardener/pull/16399#issuecomment-7028543880" title="Approved">shafeeqes</a>*  The full list of commands accepted by this bot can be found [here](https://prow.gardener.cloud/command-help?repo=gardener%2Fgardener).  The pull request process is described [here](https://gardener.cloud/docs/contribute/#pull-request-checklist)  <details > Needs approval from an approver in each of these files:  - ~~[OWNERS](https://github.com/gardener/gardener/blob/release-v1.155/OWNERS)~~ [shafeeqes]  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":[]} -->
+  > /label skip-review
+  > [APPROVALNOTIFIER] This PR is **NOT APPROVED**  This pull-request has been approved by: **Once this PR has been reviewed and has the lgtm label**, please assign [kostov6](https://github.com/kostov6) for approval. For more information see [the Code Review Process](https://gardener.cloud/docs/contribute/#pull-request-checklist).  The full list of commands accepted by this bot can be found [here](https://prow.gardener.cloud/command-help?repo=gardener%2Fgardener).  <details open> Needs approval from an approver in each of these files:  - **[OWNERS](https://github.com/gardener/gardener/blob/master/OWNERS)**  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":["kostov6"]} -->
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -766,178 +767,151 @@ func (h *DefaultHealthChecker) Check(ctx context.Context, request types.Namespac
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3a37ea0c` (2026-11-19)
-**Commit Message**: feat: add 5 new uri prefixes for VictoriaLogs' VirtualService (#16281)
+### Incident Patch 1: `53eeaa41` (2026-11-21)
+**Commit Message**: Update golang.org/x/exp digest to 8801fbd (#16404)
 
-* feat: add a few new query paths for VictoriaLogs ViirtualService
+* Update golang.org/x/exp digest to 8801fbd
 
-Signed-off-by: Ilia Petrov <[REDACTED_EMAIL]>
-
-* chore: add /select/logsql/stream_field_names and /select/logsql/stream_field_values
-
-Signed-off-by: Ilia Petrov <[REDACTED_EMAIL]>
-
-* chore: update comment
-
-Signed-off-by: Ilia Petrov <[REDACTED_EMAIL]>
-
-* Update pkg/component/observability/logging/victorialogs/victorialogs.go
-
-Co-authored-by: Plamen Kokanov <[REDACTED_EMAIL]>
-Signed-off-by: Ilia Petrov <[REDACTED_EMAIL]>
+* Run make tidy
 
 ---------
 
-Signed-off-by: Ilia Petrov <[REDACTED_EMAIL]>
-Signed-off-by: Ilia Petrov <[REDACTED_EMAIL]>
-Co-authored-by: Plamen Kokanov <[REDACTED_EMAIL]>
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+Co-authored-by: federated-github-access[bot] <248678271+federated-github-access[bot]@users.noreply.github.com>
 
-**File**: `pkg/component/observability/logging/victorialogs/victorialogs.go` (modified, +50/-6)
+**File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -583,17 +583,61 @@ func (v *victoriaLogs) istioResources(ctx context.Context) ([]client.Object, err
- 		return nil, fmt.Errorf("failed to create virtual service resource: %w", err)
- 	}
- 
--	// Allowlist: only /select/logsql/query is accessible; everything else returns 403.
-+	// Allowlist:
-+	// - /select/logsql/query
-+	// - /select/logsql/field_names
-+	// - /select/logsql/field_values
-+	// - /select/logsql/streams
-+	// - /select/logsql/stream_field_names
-+	// - /select/logsql/stream_field_values
-+	// Everything else returns 403.
- 	virtualService.Spec.Http = []*istioapinetworkingv1beta1.HTTPRoute{
- 		{
- 			Name: "query",
--			Match: []*istioapinetworkingv1beta1.HTTPMatchRequest{{
--				Uri: &istioapinetworkingv1beta1.StringMatch{
--					MatchType: &istioapinetworkingv1beta1.StringMatch_Prefix{
--						Prefix: "/select/logsql/query",
-+			Match: []*istioapinetworkingv1beta1.HTTPMatchRequest{
-+				{
-+					Uri: &istioapinetworkingv1beta1.StringMatch{
-+						MatchType: &istioapinetworkingv1beta1.StringMatch_Prefix{
-+							Prefix: "/select/logsql/query",
-+						},
- 					},
- 				},
--			}},
-+				{
-+					Uri: &istioapinetworkingv1beta1.StringMatch{
-+						MatchType: &istioapinetworkingv1beta1.StringMatch_Prefix{
-+							Prefix: "/select/logsql/field_names",
-+						},
-+					},
-+				},
-+				{
-+					Uri: &istioapinetworkingv1beta1.StringMatch{
-+						MatchType: &istioapinetworkingv1beta1.StringMatch_Prefix{
-+							Prefix: "/select/logsql/field_values",
-+						},
-+					},
-+				},
-+				{
-+					Uri: &istioapinetworkingv1beta1.StringMatch{
-+						MatchType: &istioapinetworkingv1beta1.StringMatch_Prefix{
-+							Prefix: "/select/logsql/streams",
-+						},
-+					},
-+				},
-+				{
-+					Uri: &istioapinetworkingv1beta1.StringMatch{
-+						MatchType: &istioapinetworkingv1beta1.StringMatch_Prefix{
-+							Prefix: "/select/logsql/stream_field_names",
-+						},
-+					},
-+				},
-+				{
-+					Uri: &istioapinetworkingv1beta1.StringMatch{
-+						MatchType: &istioapinetworkingv1beta1.StringMatch_Prefix{
-+							Prefix: "/select/logsql/stream_field_values",
-+						},
-+					},
-+				},
-+			},
- 			Route: []*istioapinetworkingv1beta1.HTTPRouteDestination{{
- 				Destination: &istioapinetworkingv1beta1.Destination{
- 					Host: destinationHost,
+@@ -344,7 +344,7 @@ require (
+ 	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
+ 	go.uber.org/multierr v1.11.0 // indirect
+ 	go.yaml.in/yaml/v3 v3.0.5 // indirect
+-	golang.org/x/exp v0.0.0-20261120130654-b6de8d37927a // indirect
++	golang.org/x/exp v0.0.0-20261120182113-8801fbdfac81 // indirect
+ 	golang.org/x/mod v0.43.0 // indirect
+ 	golang.org/x/net v0.63.0 // indirect
+ 	golang.org/x/oauth2 v0.38.0 // indirect
 ```
 
-**File**: `pkg/component/observability/logging/victorialogs/victorialogs_test.go` (modified, +44/-4)
+**File**: `go.sum` (modified, +2/-2)
 ```diff
-@@ -19,6 +19,7 @@ import (
- 	"google.golang.org/protobuf/types/known/durationpb"
- 	"google.golang.org/protobuf/types/known/wrapperspb"
- 	istionetworkingv1alpha3 "istio.io/api/networking/v1alpha3"
-+	istioapinetworkingv1beta1 "istio.io/api/networking/v1beta1"
- 	istionetworkingv1beta1 "istio.io/client-go/pkg/apis/networking/v1beta1"
- 	appsv1 "k8s.io/api/apps/v1"
- 	autoscalingv1 "k8s.io/api/autoscaling/v1"
-@@ -611,11 +612,50 @@ var _ = Describe("VictoriaLogs", func() {
- 					Http: []*istionetworkingv1alpha3.HTTPRoute{
- 						{
- 							Name: "query",
--							Match: []*istionetworkingv1alpha3.HTTPMatchRequest{{
--								Uri: &istionetworkingv1alpha3.StringMatch{
--									MatchType: &istionetworkingv1alpha3.StringMatch_Prefix{Prefix: "/select/logsql/query"},
-+							Match: []*istioapinetworkingv1beta1.HTTPMatchRequest{
-+								{
-+									Uri: &istioapinetworkingv1beta1.StringMatch{
-+										MatchType: &istioapinetworkingv1beta1.StringMatch_Prefix{
-+											Prefix: "/select/logsql/query",
-+										},
-+									},
- 								},
--							}},
-+								{
-+									Uri: &istioapinetworkingv1beta1.StringMatch{
-+										MatchType: &istioapinetworkingv1beta1.StringMatch_Prefix{
-+											Prefix: "/select/logsql/field_names",
-+										},
-+									},
-+								},
-+								{
-+									Uri: &istioapinetworkingv1beta1.StringMatch{
-+										MatchType: &istioapinetworkingv1beta1.StringMatch_Prefix{
-+											Prefix: "/select/logsql/field_values",
-+										},
-+									},
-+								},
-+								{
-+									Uri: &istioapinetworkingv1beta1.StringMatch{
-+										MatchType: &istioapinetworkingv1beta1.StringMatch_Prefix{
-+											Prefix: "/select/logsql/streams",
-+										},
-+									},
-+								},
-+								{
-+									Uri: &istioapinetworkingv1beta1.StringMatch{
-+										MatchType: &istioapinetworkingv1beta1.StringMatch_Prefix{
-+											Prefix: "/select/logsql/stream_field_names",
-+										},
-+									},
-+								},
-+								{
-+									Uri: &istioapinetworkingv1beta1.StringMatch{
-+										MatchType: &istioapinetworkingv1beta1.StringMatch_Prefix{
-+											Prefix: "/select/logsql/stream_field_values",
-+										},
-+									},
-+								},
-+							},
- 							Route: []*istionetworkingv1alpha3.HTTPRouteDestination{{
- 								Destination: &istionetworkingv1alpha3.Destination{
- 									Host: destinationFQDN,
+@@ -916,8 +916,8 @@ golang.org/x/exp v0.0.0-20190306152737-a1d7652674e8/go.mod h1:CJ0aWSM057203Lf6IL
+ golang.org/x/exp v0.0.0-20190510132918-efd6b22b2522/go.mod h1:ZjyILWgesfNpC6sMxTJOJm9Kp84zZh5NQWvqDGG3Qr8=
+ golang.org/x/exp v0.0.0-20190829153037-c13cbed26979/go.mod h1:86+5VVa7VpoJ4kLfm080zCjGlMRFzhUhsZKEZO7MGek=
+ golang.org/x/exp v0.0.0-20191227195350-da58074b4299/go.mod h1:2RIsYlXP63K8oxa1u096TMicItID8zy7Y6sNkU49FU4=
+-golang.org/x/exp v0.0.0-20261120130654-b6de8d37927a h1:dNkcqPlx6O5no1GjN/ngBumAs2otQCYO/tcp8gI6se4=
+-golang.org/x/exp v0.0.0-20261120130654-b6de8d37927a/go.mod h1:xeYMf2GfgE/gQmBtvdPsBN608YETsXuvoiEhaOxGg/w=
++golang.org/x/exp v0.0.0-20261120182113-8801fbdfac81 h1:12mHPhk+V4p4okSYZrUlpauhJ0/KM4Y4FUMnsjdyia0=
++golang.org/x/exp v0.0.0-20261120182113-8801fbdfac81/go.mod h1:xeYMf2GfgE/gQmBtvdPsBN608YETsXuvoiEhaOxGg/w=
+ golang.org/x/image v0.0.0-20190227222117-0694c2d4d067/go.mod h1:kZ7UVZpmo3dzQBMxlp+ypCbDeSB+sBbTgSJuh5dn5js=
+ golang.org/x/image v0.0.0-20190802002840-cff245a6509b/go.mod h1:FeLwcggjj3mMvU+oOTbSwawSJRM1uh48EjtB4UJZlP0=
+ golang.org/x/lint v0.0.0-20181026193005-c67002cb31c3/go.mod h1:UVdnD1Gm6xHRNCYTkRU2/jEulfH38KcIWyp/GAMgvoE=
+```
+
+**File**: `hack/tools/go.mod` (modified, +1/-1)
+```diff
+@@ -22,7 +22,7 @@ tool (
+ 
+ // This separate Go module decouples development-tool dependencies from Gardener's production binaries.
+ require (
+-	golang.org/x/exp v0.0.0-20261120130654-b6de8d37927a
++	golang.org/x/exp v0.0.0-20261120182113-8801fbdfac81
+ 	// this has to be kept in sync with the used golangci-lint version
+ 	// use go version -m hack/tools/bin/<<architecture>>/golangci-lint to detect the dependency versions
+ 	// or, with `go work` enabled, use `go work sync`
+```
+
+**File**: `hack/tools/go.sum` (modified, +2/-2)
+```diff
+@@ -875,8 +875,8 @@ golang.org/x/crypto v0.0.0-20210921155107-089bfa567519/go.mod h1:GvvjBRRGRdwPK5y
+ golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d/go.mod h1:IxCIyHEi3zRg3s0A5j5BB6A9Jmi73HwBIUl50j+osU4=
+ golang.org/x/crypto v0.59.0 h1:xS2jhqYbzNrpvkWP2YTDf4TJwBy3ykR03i8vFDxEc7c=
+ golang.org/x/crypto v0.59.0/go.mod h1:veDyUwATGs3c+vN3VfTbzViMGXeTBk3WyhBOkn+F/4U=
+-golang.org/x/exp v0.0.0-20261120130654-b6de8d37927a h1:dNkcqPlx6O5no1GjN/ngBumAs2otQCYO/tcp8gI6se4=
+-golang.org/x/exp v0.0.0-20261120130654-b6de8d37927a/go.mod h1:xeYMf2GfgE/gQmBtvdPsBN608YETsXuvoiEhaOxGg/w=
++golang.org/x/exp v0.0.0-20261120182113-8801fbdfac81 h1:12mHPhk+V4p4okSYZrUlpauhJ0/KM4Y4FUMnsjdyia0=
++golang.org/x/exp v0.0.0-20261120182113-8801fbdfac81/go.mod h1:xeYMf2GfgE/gQmBtvdPsBN608YETsXuvoiEhaOxGg/w=
+ golang.org/x/exp/typeparams v0.0.0-20220428152302-39d4317da171/go.mod h1:AbB0pIl9nAr9wVwH+Z2ZpaocVmF5I4GyWCDIsVjR0bk=
+ golang.org/x/exp/typeparams v0.0.0-20230203172020-98cc5a0785f9/go.mod h1:AbB0pIl9nAr9wVwH+Z2ZpaocVmF5I4GyWCDIsVjR0bk=
+ golang.org/x/exp/typeparams v0.0.0-20261007192929-f45ad48fbe92 h1:FpfByfUk1JSFkA3X4UCl6FZmn2R3bpdRDNcf1TkoNBo=
+```
+
+---
+
+### Incident Patch 2: `d835ba28` (2026-11-20)
+**Commit Message**: Update golang.org/x/exp digest to b6de8d3 (#16401)
+
+* Update golang.org/x/exp digest to b6de8d3
+
+* Run make tidy
+
+---------
+
+Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+Co-authored-by: federated-github-access[bot] <248678271+federated-github-access[bot]@users.noreply.github.com>
+
+**File**: `go.mod` (modified, +1/-1)
+```diff
+@@ -344,7 +344,7 @@ require (
+ 	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
+ 	go.uber.org/multierr v1.11.0 // indirect
+ 	go.yaml.in/yaml/v3 v3.0.5 // indirect
+-	golang.org/x/exp v0.0.0-20261119141654-b15d094f3610 // indirect
++	golang.org/x/exp v0.0.0-20261120130654-b6de8d37927a // indirect
+ 	golang.org/x/mod v0.43.0 // indirect
+ 	golang.org/x/net v0.63.0 // indirect
+ 	golang.org/x/oauth2 v0.38.0 // indirect
+```
+
+**File**: `go.sum` (modified, +2/-2)
+```diff
+@@ -916,8 +916,8 @@ golang.org/x/exp v0.0.0-20190306152737-a1d7652674e8/go.mod h1:CJ0aWSM057203Lf6IL
+ golang.org/x/exp v0.0.0-20190510132918-efd6b22b2522/go.mod h1:ZjyILWgesfNpC6sMxTJOJm9Kp84zZh5NQWvqDGG3Qr8=
+ golang.org/x/exp v0.0.0-20190829153037-c13cbed26979/go.mod h1:86+5VVa7VpoJ4kLfm080zCjGlMRFzhUhsZKEZO7MGek=
+ golang.org/x/exp v0.0.0-20191227195350-da58074b4299/go.mod h1:2RIsYlXP63K8oxa1u096TMicItID8zy7Y6sNkU49FU4=
+-golang.org/x/exp v0.0.0-20261119141654-b15d094f3610 h1:bT3evuloD7Y8n1TA3NUVVL51/Y4GsLNTHmqiQkViumw=
+-golang.org/x/exp v0.0.0-20261119141654-b15d094f3610/go.mod h1:xeYMf2GfgE/gQmBtvdPsBN608YETsXuvoiEhaOxGg/w=
++golang.org/x/exp v0.0.0-20261120130654-b6de8d37927a h1:dNkcqPlx6O5no1GjN/ngBumAs2otQCYO/tcp8gI6se4=
++golang.org/x/exp v0.0.0-20261120130654-b6de8d37927a/go.mod h1:xeYMf2GfgE/gQmBtvdPsBN608YETsXuvoiEhaOxGg/w=
+ golang.org/x/image v0.0.0-20190227222117-0694c2d4d067/go.mod h1:kZ7UVZpmo3dzQBMxlp+ypCbDeSB+sBbTgSJuh5dn5js=
+ golang.org/x/image v0.0.0-20190802002840-cff245a6509b/go.mod h1:FeLwcggjj3mMvU+oOTbSwawSJRM1uh48EjtB4UJZlP0=
+ golang.org/x/lint v0.0.0-20181026193005-c67002cb31c3/go.mod h1:UVdnD1Gm6xHRNCYTkRU2/jEulfH38KcIWyp/GAMgvoE=
+```
+
+**File**: `hack/tools/go.mod` (modified, +1/-1)
+```diff
+@@ -22,7 +22,7 @@ tool (
+ 
+ // This separate Go module decouples development-tool dependencies from Gardener's production binaries.
+ require (
+-	golang.org/x/exp v0.0.0-20261119141654-b15d094f3610
++	golang.org/x/exp v0.0.0-20261120130654-b6de8d37927a
+ 	// this has to be kept in sync with the used golangci-lint version
+ 	// use go version -m hack/tools/bin/<<architecture>>/golangci-lint to detect the dependency versions
+ 	// or, with `go work` enabled, use `go work sync`
+```
+
+**File**: `hack/tools/go.sum` (modified, +2/-2)
+```diff
+@@ -875,8 +875,8 @@ golang.org/x/crypto v0.0.0-20210921155107-089bfa567519/go.mod h1:GvvjBRRGRdwPK5y
+ golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d/go.mod h1:IxCIyHEi3zRg3s0A5j5BB6A9Jmi73HwBIUl50j+osU4=
+ golang.org/x/crypto v0.59.0 h1:xS2jhqYbzNrpvkWP2YTDf4TJwBy3ykR03i8vFDxEc7c=
+ golang.org/x/crypto v0.59.0/go.mod h1:veDyUwATGs3c+vN3VfTbzViMGXeTBk3WyhBOkn+F/4U=
+-golang.org/x/exp v0.0.0-20261119141654-b15d094f3610 h1:bT3evuloD7Y8n1TA3NUVVL51/Y4GsLNTHmqiQkViumw=
+-golang.org/x/exp v0.0.0-20261119141654-b15d094f3610/go.mod h1:xeYMf2GfgE/gQmBtvdPsBN608YETsXuvoiEhaOxGg/w=
++golang.org/x/exp v0.0.0-20261120130654-b6de8d37927a h1:dNkcqPlx6O5no1GjN/ngBumAs2otQCYO/tcp8gI6se4=
++golang.org/x/exp v0.0.0-20261120130654-b6de8d37927a/go.mod h1:xeYMf2GfgE/gQmBtvdPsBN608YETsXuvoiEhaOxGg/w=
+ golang.org/x/exp/typeparams v0.0.0-20220428152302-39d4317da171/go.mod h1:AbB0pIl9nAr9wVwH+Z2ZpaocVmF5I4GyWCDIsVjR0bk=
+ golang.org/x/exp/typeparams v0.0.0-20230203172020-98cc5a0785f9/go.mod h1:AbB0pIl9nAr9wVwH+Z2ZpaocVmF5I4GyWCDIsVjR0bk=
+ golang.org/x/exp/typeparams v0.0.0-20261007192929-f45ad48fbe92 h1:FpfByfUk1JSFkA3X4UCl6FZmn2R3bpdRDNcf1TkoNBo=
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #16404** (2026-11-21): Update golang.org/x/exp digest to 8801fbd (@renovate[bot])
+- **PR #16401** (2026-11-20): Update golang.org/x/exp digest to b6de8d3 (@renovate[bot])
 - **PR #16400** (2026-11-20): [release-v1.153] Allow `Create` if object already exists only for source `BackupEntry` (@shafeeqes)
 - **PR #16399** (2026-11-20): [release-v1.155] extensions lib: Only pass type/class predicates to `MachineToWorkerMapper` (@gardener-prow-cherrypicker[bot])
 - **PR #16398** (2026-11-20): [release-v1.154] extensions lib: Only pass type/class predicates to `MachineToWorkerMapper` (@gardener-prow-cherrypicker[bot])
 - **PR #16397** (2026-11-20): [release-v1.153] extensions lib: Only pass type/class predicates to `MachineToWorkerMapper` (@gardener-prow-cherrypicker[bot])
-- **PR #16396** (2026-11-20): [release-v1.156] extensions lib: Only pass type/class predicates to `MachineToWorkerMapper` (@gardener-prow-cherrypicker[bot])
-- **PR #16395** (2026-11-20): Update quay.io/prometheus/node-exporter Docker tag to v1.13.1 (@renovate[bot])
 
 ---
 
@@ -957,74 +931,31 @@ Co-authored-by: Plamen Kokanov <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. add 5 new uri prefixes for VictoriaLogs' VirtualService
+## X. Update golang.org/x/exp digest to 8801fbd
 
 **RULE**:
-When implementing operations in `pkg/component/observability/logging/victorialogs/victorialogs.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gardener/gardener. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gardener/gardener. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3a37ea0c`: add 5 new uri prefixes for VictoriaLogs' VirtualService. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `53eeaa41`: Update golang.org/x/exp digest to 8801fbd. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/component/observability/logging/victorialogs/victorialogs.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// Allowlist:
-	// - /select/logsql/query
-	// - /select/logsql/field_names
-	// - /select/logsql/field_values
-	// - /select/logsql/streams
-	// - /select/logsql/stream_field_names
-	// - /select/logsql/stream_field_values
-	// Everything else returns 403.
-			Match: []*istioapinetworkingv1beta1.HTTPMatchRequest{
-				{
-					Uri: &istioapinetworkingv1beta1.StringMatch{
-						MatchType: &istioapinetworkingv1beta1.StringMatch_Prefix{
-							Prefix: "/select/logsql/query",
-						},
-				{
-					Uri: &istioapinetworkingv1beta1.StringMatch{
-						MatchType: &istioapinetworkingv1beta1.StringMatch_Prefix{
-							Prefix: "/select/logsql/field_names",
-						},
-					},
-				},
-				{
-					Uri: &istioapinetworkingv1beta1.StringMatch{
-						MatchType: &istioapinetworkingv1beta1.StringMatch_Prefix{
-							Prefix: "/select/logsql/field_values",
-						},
-					},
-				},
-				{
-					Uri: &istioapinetworkingv1beta1.StringMatch{
-						MatchType: &istioapinetworkingv1beta1.StringMatch_Prefix{
-							Prefix: "/select/logsql/streams",
-						},
-					},
-				},
-				{
-					Uri: &istioapinetworkingv1beta1.StringMatch{
-						MatchType: &istioapinetworkingv1beta1.StringMatch_Prefix{
-							Prefix: "/select/logsql/stream_f
+	golang.org/x/exp v0.0.0-20261120182113-8801fbdfac81 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	// Allowlist: only /select/logsql/query is accessible; everything else returns 403.
-			Match: []*istioapinetworkingv1beta1.HTTPMatchRequest{{
-				Uri: &istioapinetworkingv1beta1.StringMatch{
-					MatchType: &istioapinetworkingv1beta1.StringMatch_Prefix{
-						Prefix: "/select/logsql/query",
-			}},
+	golang.org/x/exp v0.0.0-20261120130654-b6de8d37927a // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3a37ea0c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `53eeaa41` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

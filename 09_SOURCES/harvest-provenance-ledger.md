@@ -11897,3 +11897,7 @@ Every entry in this ledger must capture:
 | `learn-github-openreplay-openreplay` | `https://github.com/openreplay/openreplay` | `fc6d0e45` | Multi-dimensional audit evidence | 2026-11-21T17:49:56.667Z |
 | `learn-github-kube-rs-kube` | `https://github.com/kube-rs/kube` | `6f9fddb2` | Multi-dimensional audit evidence | 2026-11-21T17:49:58.384Z |
 | `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `87d96b77` | Multi-dimensional audit evidence | 2026-11-21T17:50:04.263Z |
+| `learn-huggingface-baidu-unlimited-ocr-2` | `https://huggingface.co/baidu/Unlimited-OCR-2` | `hf-baidu-u` | Multi-dimensional audit evidence | 2026-11-21T18:22:55.429Z |
+| `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `53eeaa41` | Multi-dimensional audit evidence | 2026-11-21T18:22:59.832Z |
+| `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `a2126dbc` | Multi-dimensional audit evidence | 2026-11-21T18:23:05.555Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `b17474d2` | Multi-dimensional audit evidence | 2026-11-21T18:23:05.838Z |

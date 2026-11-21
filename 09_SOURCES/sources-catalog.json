@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "ef2aebe1",
+    "sourceVersion": "b17474d2",
     "license": "NOASSERTION",
-    "contentHash": "71e39d67cd2f34e648a5bb53454acd73ed49356f367c87f2bec50f265252a304",
-    "lastHarvestedAt": "2026-11-21T16:18:59.641Z",
+    "contentHash": "d69d276017e6bc2343b921801bb9d3314894c935687d4781d8395f72f54afa97",
+    "lastHarvestedAt": "2026-11-21T18:23:05.838Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -6073,10 +6073,10 @@
     "repository": "ClickHouse/ClickHouse",
     "platform": "github",
     "sourceUrl": "https://github.com/ClickHouse/ClickHouse",
-    "sourceVersion": "9c89de48",
+    "sourceVersion": "a2126dbc",
     "license": "Apache-2.0",
-    "contentHash": "157b2e6dc980518a86f078026975acc0411fb9c3ff067537a5aa83aaeb0c5380",
-    "lastHarvestedAt": "2026-11-20T13:08:32.560Z",
+    "contentHash": "2c8a5b5e90132b903a11c5026b22df38b1e3a2f8f6071cd36673778b5efacf91",
+    "lastHarvestedAt": "2026-11-21T18:23:05.555Z",
     "learningId": "learn-github-clickhouse-clickhouse"
   },
   "dockview-dockview": {
@@ -6893,10 +6893,10 @@
     "repository": "gardener/gardener",
     "platform": "github",
     "sourceUrl": "https://github.com/gardener/gardener",
-    "sourceVersion": "85eff190",
+    "sourceVersion": "53eeaa41",
     "license": "Apache-2.0",
-    "contentHash": "e86e61ce3824a54d21b76d8dc6cdb6fea08f438ddf97877432116c3874bba166",
-    "lastHarvestedAt": "2026-11-20T14:52:45.726Z",
+    "contentHash": "11050f995581b96687ceb775c05fd8c080f56ba3c00bee4e2a4fa8f8eb7b46fb",
+    "lastHarvestedAt": "2026-11-21T18:22:59.832Z",
     "learningId": "learn-github-gardener-gardener"
   },
   "nirdiamant-rag_techniques": {
@@ -10915,8 +10915,8 @@
     "sourceUrl": "https://huggingface.co/baidu/Unlimited-OCR-2",
     "sourceVersion": "hf-baidu-unlimited-ocr-2",
     "license": "Open-Source",
-    "contentHash": "d5f5961c767fa865a66fa13fdbf04dec03dbb4b8e05bf77c5ab2fab31561b7ad",
-    "lastHarvestedAt": "2026-11-17T19:27:21.088Z",
+    "contentHash": "e46a489a53681d249b11be78ad8cd73f5ac609c4559dcdc5b823c650525dbd2e",
+    "lastHarvestedAt": "2026-11-21T18:22:55.429Z",
     "learningId": "learn-huggingface-baidu-unlimited-ocr-2"
   },
   "joooook-12306-mcp": {

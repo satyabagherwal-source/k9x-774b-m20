@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md`  
 > **Source**: github ([https://github.com/ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse))  
-> **Source Version**: `9c89de48`  
+> **Source Version**: `a2126dbc`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T13:08:31.529Z  
+> **Timestamp**: 2026-11-21T18:23:04.509Z  
 > **Learning ID**: `learn-github-clickhouse-clickhouse`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T13:08:31.523Z  
+> **Harvest Timestamp**: 2026-11-21T18:23:04.504Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ClickHouse® is a real-time analytics database management system
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 51038 stars
+- **Stars / Engagement**: 51055 stars
 
 ---
 
@@ -1338,641 +1338,280 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9a8a1a79` (2026-11-20)
-**Commit Message**: Merge pull request #127107 from JayPokale/pretty-truncate-name-overflow
+### Incident Patch 1: `b9d4d482` (2026-11-21)
+**Commit Message**: Fix flaky test IOTestAwsS3Client.AssumeRoleRefreshInConcurrentFibers
 
-Fix overflow in truncateName for a huge output_format_pretty_max_column_name_width_cut_to
+The data-plane mock of the test had the default 16 server threads for
+4 * hardware_concurrency + 1 concurrent GET requests (129 on a 32-CPU CI
+host). Poco's TCPServerDispatcher::enqueue does not queue a connection
+when no dispatcher thread waits on the queue and fewer than maxThreads
+dispatcher threads run: it asks the pool for a new thread, and when the
+pool has no idle PooledThread (a dispatcher thread that has just left
+run() is not idle yet) it closes the connection unread and counts it in
+refusedConnections(). Both attempts a GetObject gets in this test
+(s3_slow_all_threads_after_retryable_error -> SDK max_retries = 1,
+max_single_read_retries = 1) can be refused about 1 ms apart, so the
+fiber fails with "No message received" / "Connection reset by peer",
+returns EIO (5) from FiberContext::main, and its request is never
+counted: the CI failure "futures[i].wait() Which is: 5" and
+"127 vs 129", with exactly one AssumeRole and no request signed with
+other credentials.
 
-**File**: `src/Formats/PrettyFormatHelpers.cpp` (modified, +2/-1)
+Give the mock a thread per fiber, as the sibling test
+RequestsFromConcurrentFibersDoNotBlockSchedulerThreads already does:
+with as many pool thre
+
+**File**: `src/IO/S3/tests/gtest_aws_s3_client.cpp` (modified, +4/-3)
 ```diff
-@@ -264,7 +264,8 @@ std::pair<String, size_t> truncateName(String name, size_t cut_to, size_t hyster
- {
-     size_t length = UTF8::computeWidth(reinterpret_cast<const UInt8 *>(name.data()), name.size());
- 
--    if (!cut_to || length <= cut_to + hysteresis || isValidIdentifier(name))
-+    /// `cut_to + hysteresis` could overflow for a huge `cut_to`, turning short names into names "cut" to that width.
-+    if (!cut_to || length <= cut_to || length - cut_to <= hysteresis || isValidIdentifier(name))
-         return {name, length};
- 
-     /// We cut characters in the middle and insert filler there.
-```
-
-**File**: `tests/queries/0_stateless/05442_pretty_name_cut_to_overflow.reference` (added, +18/-0)
-```diff
-@@ -0,0 +1,18 @@
-+   ┌─'hello world'─┐
-+1. │ hello world   │
-+   └───────────────┘
-+Row 1:
-+──────
-+x:             1
-+'hello world': hello world
-+Row 1:
-+──────
-+x:             1
-+'hello world': hello world
-+   ┌─t t────────────────────────────┐
-+   ├─first element─┬─second element─┤
-+1. │             1 │ a              │
-+   └───────────────┴────────────────┘
-+   ┌─a lo⋯cut─┐
-+1. │        1 │
-+   └──────────┘
-```
-
-**File**: `tests/queries/0_stateless/05442_pretty_name_cut_to_overflow.sql` (added, +10/-0)
-```diff
-@@ -0,0 +1,10 @@
-+-- `output_format_pretty_max_column_name_width_cut_to` near the `UInt64` maximum used to overflow `cut_to + hysteresis`
-+-- in `truncateName`: short names were reported as that wide, which broke `Pretty*` and `Vertical` output.
-+
-+SET output_format_pretty_color = 0;
-+
-+SELECT 'hello world' FORMAT PrettyCompact SETTINGS output_format_pretty_max_column_name_width_cut_to = 18446744073709551615;
-+SELECT 1 AS x, 'hello world' FORMAT Vertical SETTINGS output_format_pretty_max_column_name_width_cut_to = 18446744073709551615;
-+SELECT 1 AS x, 'hello world' FORMAT Vertical SETTINGS output_format_pretty_max_column_name_width_cut_to = 18446744073709551612;
-+SELECT tuple(1, 'a')::Tuple(`first element` UInt8, `second element` String) AS `t t` FORMAT PrettyCompact SETTINGS output_format_pretty_max_column_name_width_cut_to = 18446744073709551615;
-+SELECT 1 AS `a long name that gets cut` FORMAT PrettyCompact SETTINGS output_format_pretty_max_column_name_width_cut_to = 8, output_format_pretty_max_column_name_width_min_chars_to_cut = 4;
-```
-
----
-
-### Incident Patch 2: `a5b4d1a6` (2026-11-20)
-**Commit Message**: Merge pull request #124032 from groeneai/fix-hung-check-dead-server-verdict
-
-Report a crashed server as `Server died` in functional tests
-
-**File**: `ci/jobs/fast_test.py` (modified, +11/-1)
-```diff
-@@ -12,7 +12,10 @@
- from ci.defs.defs import ToolSet
- from ci.jobs.scripts.clickhouse_proc import ClickHouseProc
- from ci.jobs.scripts.find_tests import Targeting
--from ci.jobs.scripts.functional_tests_results import FTResultsProcessor
-+from ci.jobs.scripts.functional_tests_results import (
-+    ABORTED_RUN_EXIT_CODES,
-+    FTResultsProcessor,
-+)
- from ci.praktika.info import Info
- from ci.praktika.result import Result
- from ci.praktika.settings import Settings
-@@ -433,6 +436,13 @@ def main():
-         test_results = FTResultsProcessor(wd=Settings.OUTPUT_DIR).run(
-             runner_exit_code=test_exit_code,
-         )
-+        if test_exit_code in ABORTED_RUN_EXIT_CODES:
-+            # The crash that aborted the run is only in the server logs.
-+            crash_results = [
-+                r for r in CH.check_fatal_messages_in_logs() if r.is_failure()
-+            ]
-+            if crash_results:
-+                test_results.extend_sub_results(crash_results)
-         fail_slow_new_tests(test_results, info.get_kv_data("new_stateless_test_files"))
-         if test_exit_code != 0:
-             attach_debug = True
-```
-
-**File**: `tests/clickhouse-test` (modified, +50/-40)
-```diff
-@@ -136,10 +136,12 @@ def forget_test_process_group(pgid: int) -> None:
- 
- # Exit code returned by `clickhouse-test` when the run was aborted early via
- # `stop_testing` and no more specific cause was claimed - an observed server death
--# or a generic catastrophic abort; a failed liveness probe uses
--# `HUNG_CHECK_EXIT_CODE` instead. Distinct from the generic failure code 1 so the
--# job side can populate the synthetic "Server died" leaf without fragile log-line
--# matching. Kept in sync with `ci/jobs/scripts/functional_tests_results.py`.
-+# (a `<Fatal>` line, or a failed liveness probe with nothing listening on the
-+# probed port any more) or a generic catastrophic abort; any other failed
-+# liveness probe uses `HUNG_CHECK_EXIT_CODE`. Distinct from the generic failure
-+# code 1 so the job side can populate the synthetic "Server died" leaf without
-+# fragile log-line matching. Kept in sync with
-+# `ci/jobs/scripts/functional_tests_results.py`.
- STOP_TESTING_EXIT_CODE = 2
- 
- # Exit code returned when the run stopped *gracefully* because the global time
-@@ -160,7 +162,8 @@ GLOBAL_TIME_LIMIT_EXIT_CODE = 3
- MAX_FAILURES_EXIT_CODE = 4
- 
- # Exit code returned when the run stopped because a `check_server_liveness`
--# probe failed. The probe establishes only that the check failed - it also fails
-+# probe failed while the probed listener was still held or its state could not
-+# be told. The probe establishes only that the check failed - it also fails
- # on a non-200 *response* - so this must NOT be conflated with
- # `STOP_TESTING_EXIT_CODE`, which the job side reports as "Server died". Kept in
- # sync with `HUNG_CHECK_EXIT_CODE` in
-@@ -4137,11 +4140,10 @@ class TestCase:
-                         or "Attempt to read after eof" in stderr
-                     )
-                     and "Received exception from server" not in stderr
-+                ):
-                     # Only a server that is really gone stops the whole run: a
-                     # stalled but live server keeps the plain exit-code failure.
--                    and probed_server_is_gone(self.args)
--                ):
--                    reason = FailureReason.LIVENESS_CHECK_FAILED
-+                    reason = probed_server_failure(self.args) or reason
- 
-                 if os.path.isfile(self.stdout_file):
-                     description += ", result:\n\n"
-@@ -4664,13 +4666,16 @@ class TestCase:
-                     # A server that is unresponsive but still holds its
-                     # listening socket is stalled, not dead - do not stop the
-                     # run for it; the parent hung check owns that verdict.
--                    if probed_server_is_gone(self.args):
-+                    reason = probed_server_failure(self.args)
-+                    if reason is not None:
-                         return TestResult(
-                             self.name,
-                             TestStatus.FAIL,
--                            FailureReason.LIVENESS_CHECK_FAILED,
-+                            reason,
-                             0.0,
--                            "\nServer liveness check failed\n",
-+                            "\nServer died\n"
-+                            if reason == FailureReason.SERVER_DIED
-+                            else "\nServer liveness check failed\n",
-                         )
- 
-             self.runs_count += 1
-@@ -4811,20 +4816,13 @@ class TestCase:
-             exc_description = self.add_info_about_settings(
-                 self.get_description_from_exception_info(sys.exc_info())
-             )
--            if probed_server_is_gone(self.args):
--                return TestResult(
--                    self.name,
--                    TestStatus.FAIL,
--                    FailureReason.LIVENESS_CHECK_FAILED,
--                    total_time,
--                    exc_description,
--                )
--            # Server is alive (answering, or silent but still holding its
--            # listening socket) - this was a transient network error or a stall.
-+            reason = probed_server_failure(self.args)
-             return TestResult(
-                 self.name,
-                 TestStatus.FAIL,
--                FailureReason.CONNECTION_ERROR,
-+                # Server is alive (answering, or silent but still holding its
-+                # listening socket) - this was a transient network error or a stall.
-+                reason or FailureReason.CONNECTION_ERROR,
-                 total_time,
-                 exc_description,
-             )
-@@ -4865,7 +4863,7 @@ class TestCase:
-             # outer handler in run() classifies it as CONNECTION_ERROR — a
-             # silent swallow would let a test stay OK while leaving its
-             # database behind, hiding the bug.
--            if not probed_server_is_gone(args):
-+            if probed_server_failure(args) is None:
-                 raise
-             # Server died between the test finishing and cleanup running.
-             # The test's database is moot
-```
-
----
-
-### Incident Patch 3: `9c91e34a` (2026-11-20)
-**Commit Message**: Merge pull request #133124 from nihalzp/top-k-pruning-nullable-keys
-
-Top-K pruning of `GROUP BY` over `Nullable` keys
-
-**File**: `src/Interpreters/AdaptiveAggregation/AdaptiveAggregation.cpp` (modified, +25/-0)
-```diff
-@@ -340,6 +340,17 @@ void Aggregator::finishAdaptiveProducer(AggregatedDataVariants & local_variants,
-         estimated_merge_work += collectAdaptiveTableStatistics(
-             local_variants, count_bins, max_count_per_bucket, table_threshold ? &*table_threshold : nullptr);
- 
-+    /// The NULL key of a method that keeps it in a slot of its own is a group outside the cells, which the
-+    /// count bins and the table's floor do not rank (see `keeps_null_key_slot`). The statistics above rank
-+    /// the groups only for a descending top-K with the pruning, while the session needs the NULL key's rank
-+    /// for every top-K (see `AdaptiveTopKNullKey`), so the producer reads it here. The rank joins the table's
-+    /// floor like the rank of a cell, and goes to the session.
-+    std::optional<UInt64> null_key_rank;
-+    if (params.bucket_top_k)
-+        null_key_rank = adaptiveNullKeyRank(local_variants);
-+    if (null_key_rank && table_threshold)
-+        table_threshold->offer({&*null_key_rank, 1});
-+
-     const UInt64 top_k_floor = table_threshold ? table_threshold->current() : 0;
- 
-     std::optional<AdaptiveTopKPruning::ProducerBins> bins;
-@@ -368,6 +379,8 @@ void Aggregator::finishAdaptiveProducer(AggregatedDataVariants & local_variants,
-     ++shared.finished_producers;
-     shared.table_cells += local_variants.sizeWithoutOverflowRow();
-     shared.top_k_floor = std::max(shared.top_k_floor, top_k_floor);
-+    if (null_key_rank)
-+        shared.top_k_null_key.addProducerRank(*null_key_rank);
-     if (froze)
+@@ -1940,7 +1940,7 @@ class FunctionHTTPServer
+ public:
+     explicit FunctionHTTPServer(HTTPHandlerFunction handler, int max_threads = 16)
+         : thread_pool(std::make_unique<Poco::ThreadPool>(/* minCapacity = */ 2, max_threads))
+-        , server_socket(std::make_unique<Poco::Net::ServerSocket>(0))
++        , server_socket(std::make_unique<Poco::Net::ServerSocket>(/* port = */ 0, /* backlog = */ std::max(64, max_threads)))
+         , server(std::make_unique<Poco::Net::HTTPServer>(
+               new Factory(std::move(handler)), *thread_pool, *server_socket, makeServerParams(max_threads)))
      {
-         ++shared.frozen_producers;
-@@ -390,7 +403,12 @@ void Aggregator::prepareAdaptiveTopK(
-     if (pruning)
+@@ -2532,16 +2532,18 @@ TEST(IOTestAwsS3Client, AssumeRoleRefreshInConcurrentFibers)
+         MockStsRequestHandler(request_info, role_access_key, "role_secret_key").handleRequest(request, response);
+     });
+ 
++    const size_t fiber_count = getFiberCountAboveSchedulerThreads();
+     std::atomic<size_t> requests_signed_with_refreshed_credentials = 0;
+     std::atomic<size_t> other_requests = 0;
++    /// A thread per fiber: the server closes, instead of queueing, a connection that finds no idle thread in its pool.
+     FunctionHTTPServer http([&](Poco::Net::HTTPServerRequest & request, Poco::Net::HTTPServerResponse & response)
      {
-         if (mergePrunesByTopK(shared, *pruning, producers, external_merge, collects_statistics))
-+        {
-+            /// Bucket 0 holds the NULL key outside the bins. Every producer counted, so its upper bound
-+            /// holds.
-+            pruning->raiseBucketBound(0, shared.top_k_null_key.upperBound());
-             pruning->orderBuckets();
-+        }
+         if (getCredentialString(request).starts_with("Credential=refreshed_role_access_key/"))
+             ++requests_signed_with_refreshed_credentials;
          else
-             pruning.reset();
-     }
-@@ -411,6 +429,13 @@ void Aggregator::prepareAdaptiveTopK(
-         best_possible_rank = bucket_top_k_min_rank;
-     shared.top_k_threshold = std::make_unique<AdaptiveTopKThreshold>(
-         params.bucket_top_k, params.bucket_top_k_ascending, best_possible_rank, shared.top_k_floor);
-+
-+    /// The producers' tables bound the NULL key's rank, so the threshold takes it before the merge.
-+    shared.top_k_null_key.offerBeforeMerge(
-+        *shared.top_k_threshold,
-+        params.bucket_top_k_ascending,
-+        /*exact_ranks=*/bucket_top_k_rank != BucketTopKRank::FinalizedResult,
-+        /*every_producer_finished=*/shared.finished_producers == producers);
+             ++other_requests;
+         sendHTTPBody(response, Poco::Net::HTTPResponse::HTTP_OK, "");
+-    });
++    }, /* max_threads = */ static_cast<int>(fiber_count));
+ 
+     const DB::S3::URI uri(http.getUrl() + "/IOTestAwsS3ClientAssumeRoleRefreshInConcurrentFibers/test.txt");
+     /// The role is unique, so the provider is not shared with other tests through the credentials cache.
+@@ -2561,7 +2563,6 @@ TEST(IOTestAwsS3Client, AssumeRoleRefreshInConcurrentFibers)
+     release.reset();
+     const size_t sts_requests_before = sts_requests;
+ 
+-    const size_t fiber_count = getFiberCountAboveSchedulerThreads();
+     runFibersAndReleaseWhenAllStarted(fiber_count, release, [&](size_t) { doReadRequest(client, uri); });
+ 
+     EXPECT_EQ(sts_requests, sts_requests_before + 1);
+```
+
+---
+
+### Incident Patch 2: `d01926b3` (2026-11-21)
+**Commit Message**: Address review: introspection does not reveal the memory layout
+
+The "Multi-user scenarios" section of the `clickhouse-local` documentation
+said that the introspection functions reveal the memory layout of the process.
+This is wrong: `StackTrace::resolveAddressForStorage` stores the addresses of
+stack traces as offsets inside the executable, and `addressToSymbol` and
+`addressToLine` accept only such offsets, in `clickhouse-local` as well.
+
+Say what is exposed instead: the stack traces of the process, such as the ones
+in `system.stack_trace`, can be resolved to symbol names and source locations.
+
+Checked on a running `clickhouse-local`: the values in `system.stack_trace` are
+below the runtime base of the executable, `addressToSymbol` returns an empty
+string for a runtime address, and both functions resolve the stored offsets.
+
+Review: https://github.com/ClickHouse/ClickHouse/pull/133407#pullrequestreview-6006243429
+Related: https://github.com/ClickHouse/ClickHouse/pull/133407
+
+Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
+
+**File**: `docs/concepts/features/tools-and-utilities/clickhouse-local.mdx` (modified, +1/-1)
+```diff
+@@ -451,7 +451,7 @@ The listeners of `clickhouse-local` are meant for a single user: the one who sta
+ - **Run commands.** `clickhouse-server` accepts dictionaries with the [`EXECUTABLE`](/reference/statements/create/dictionary/sources/executable-file) and [`EXECUTABLE_POOL`](/reference/statements/create/dictionary/sources/executable-pool) sources only from the configuration files written by the administrator, and refuses to create them with a query. `clickhouse-local` allows `CREATE DICTIONARY ... SOURCE(EXECUTABLE(COMMAND '...'))`, and the command is run by the shell, so a query can run an arbitrary program.
+ - **Act as the administrator.** Unless users are configured with `users_config`, the only user is `default`: it has no password, is allowed to connect from any address, and has the privileges of an administrator, including access management. Every connection can read, change, and delete all the data of the instance, change any setting (there are no settings constraints or quotas), see the queries of other sessions in `system.processes` and kill them, close the listeners, and terminate the process with `SYSTEM SHUTDOWN`. It can also create users, which are saved in the data directory, when it is persistent, and remain after a restart.
+ - **Connect to any host.** The [`remote_url_allow_hosts`](/reference/settings/server-settings/settings/remote#remote_url_allow_hosts) restriction is not applied in `clickhouse-local`, so the table functions and engines for external sources, such as `url`, `s3`, `remote`, `mysql`, and `postgresql`, can send requests from your machine to any address, including the services on the loopback interface and in the internal network.
+-- **Inspect the process.** The [introspection functions](/reference/functions/regular-functions/introspection) are enabled by default (see [`allow_introspection_functions`](/reference/settings/session-settings/allow#allow_introspection_functions)), which reveals the stack traces and the memory layout of the process.
++- **Use the introspection functions.** The [introspection functions](/reference/functions/regular-functions/introspection) are enabled by default (see [`allow_introspection_functions`](/reference/settings/session-settings/allow#allow_introspection_functions)), so a client can resolve the stack traces of the process, such as the ones in `system.stack_trace`, to symbol names and source locations.
+ 
+ Configuring users with passwords and limited privileges adds authentication, but does not bring these restrictions back. A user granted the access to files (`READ` and `WRITE` on `FILE`) gets the whole filesystem instead of a dedicated directory and, together with the `CREATE DICTIONARY` grant, the ability to run commands. The `file` function does not check the grants at all, so even a user without any grant on files can read every file.
+ 
+```
+
+---
+
+### Incident Patch 3: `1baff789` (2026-11-21)
+**Commit Message**: Merge pull request #132720 from Algunenano/read-by-layers-prefix-columns
+
+Read only the used sorting key prefix in a read split into layers
+
+**File**: `src/Processors/QueryPlan/ReadFromMergeTree.cpp` (modified, +24/-28)
+```diff
+@@ -39,11 +39,9 @@
+ #include <Interpreters/DatabaseCatalog.h>
+ #include <Storages/StorageProxy.h>
+ #include <Interpreters/ExpressionActions.h>
+-#include <Interpreters/ExpressionAnalyzer.h>
+ #include <Interpreters/extractStringValueFilters.h>
+ #include <Interpreters/InterpreterSelectQuery.h>
+ #include <Interpreters/PredicateStatisticsLog.h>
+-#include <Interpreters/TreeRewriter.h>
+ #include <Interpreters/ClusterProxy/executeQuery.h>
+ #include <Parsers/ASTFunction.h>
+ #include <Parsers/ASTIdentifier.h>
+@@ -1461,6 +1459,19 @@ struct PartRangesReadInfo
+ 
  }
  
- bool Aggregator::mergePrunesByTopK(
-```
-
-**File**: `src/Interpreters/AdaptiveAggregation/AdaptiveAggregationImpl.h` (modified, +7/-0)
-```diff
-@@ -17,6 +17,7 @@
- #include <DataTypes/IDataType.h>
- #include <Interpreters/AdaptiveAggregation/AdaptiveAggregation.h>
- #include <Interpreters/AdaptiveAggregation/AdaptivePartitionLayout.h>
-+#include <Interpreters/AdaptiveAggregation/AdaptiveTopKNullKey.h>
- #include <Interpreters/AdaptiveAggregation/AdaptiveTopKPruning.h>
- #include <Interpreters/AdaptiveAggregation/AdaptiveTopKThreshold.h>
- #include <Interpreters/AdaptiveAggregation/StagedRecords.h>
-@@ -244,6 +245,12 @@ struct AdaptiveAggregationSession
-     /// mutex.
-     UInt64 top_k_floor = 0;
++/// The expression of the first `prefix_size` sorting key columns. It keeps its input columns.
++/// It is cut from the analyzed sorting key, whose column names the sort descriptions use: analyzing the key again in
++/// the query context can name them differently, e.g. `nullIn` instead of `in` with `transform_null_in`.
++static ExpressionActionsPtr getSortingKeyPrefixExpression(const StorageMetadataPtr & metadata, size_t prefix_size)
++{
++    const auto & sorting_key = metadata->getSortingKey();
++    auto dag = sorting_key.expression->getActionsDAG().clone();
++    dag.removeUnusedActions(Names(sorting_key.column_names.begin(), sorting_key.column_names.begin() + prefix_size));
++    for (const auto * input : dag.getInputs())
++        dag.addOrReplaceInOutputs(*input);
++    return std::make_shared<ExpressionActions>(std::move(dag), sorting_key.expression->getSettings());
++}
++
+ Pipe ReadFromMergeTree::readByLayers(
+     const RangesInDataParts & parts_with_ranges,
+     SplitPartsByRanges split_parts,
+@@ -1482,38 +1493,29 @@ Pipe ReadFromMergeTree::readByLayers(
  
-+    /// The NULL key of a top-K over a method that keeps it in a slot of its own (see `AdaptiveTopKNullKey`).
-+    /// The producers that hold the NULL key add their ranks under the same mutex (see
-+    /// `Aggregator::finishAdaptiveProducer`), and `Aggregator::prepareAdaptiveTopK` offers it to
-+    /// `top_k_threshold`.
-+    AdaptiveTopKNullKey top_k_null_key;
+     if (reader_settings.read_in_order)
+     {
++        /// Only the prefix of the sorting key that the streams of a layer are merged by and the layers are filtered by
++        /// is computed, so that the other sorting key columns are not read.
++        size_t prefix_size = input_order_info->used_prefix_of_sorting_key_size;
++        for (const auto & border : split_parts.borders)
++            prefix_size = std::max(prefix_size, border.size());
++        auto sorting_expr = getSortingKeyPrefixExpression(storage_snapshot->metadata, prefix_size);
++        const auto sorting_key_prefix_columns = sorting_expr->getRequiredColumns();
 +
-     /// The staged records the producers spilled over the external-aggregation threshold (see
-     /// `Aggregator::spillAdaptivePartitions`): one raw stream per partition, shared by the producers and created by the
-     /// first spill into it, so that a merge unit reads back the records of its own partitions only. A stream is a
-```
-
-**File**: `src/Interpreters/AdaptiveAggregation/AdaptiveTopKNullKey.cpp` (added, +40/-0)
-```diff
-@@ -0,0 +1,40 @@
-+#include <Interpreters/AdaptiveAggregation/AdaptiveTopKNullKey.h>
-+
-+#include <Interpreters/AdaptiveAggregation/AdaptiveTopKThreshold.h>
-+
-+namespace DB
-+{
-+
-+void AdaptiveTopKNullKey::offerBeforeMerge(
-+    AdaptiveTopKThreshold & threshold, bool ascending_, bool exact_ranks, bool every_producer_finished)
-+{
-+    ascending = ascending_;
-+    if (!held)
-+        return;
-+    if (!ascending)
-+        offered = exact_ranks ? rank_sum : rank_max;
-+    else if (exact_ranks && every_producer_finished)
-+        offered = rank_sum;
-+    if (offered)
-+        threshold.offer({&*offered, 1});
-+}
-+
-+bool AdaptiveTopKNullKey::canReachTop(const AdaptiveTopKThreshold & threshold, bool pruned) const
-+{
-+    if (pruned)
-+        return rank_sum >= threshold.current();
-+    if (ascending && offered)
-+        return *offered <= threshold.current();
-+    return !threshold.settled();
-+}
-+
-+bool AdaptiveTopKNullKey::replaceOffer(AdaptiveTopKThreshold & threshold, UInt64 rank) const
-+{
-+    if (!offered)
-+        return false;
-+    if (rank != *offered)
-+        threshold.replaceOffer(*offered, rank);
-+    return true;
-+}
-+
-+}
-```
-
-**File**: `src/Interpreters/AdaptiveAggregation/AdaptiveTopKNullKey.h` (added, +72/-0)
-```diff
-@@ -0,0 +1,72 @@
-+#pragma once
-+
-+#include <algorithm>
-+#include <optional>
-+
-+#include <base/types.h>
-+
-+namespace DB
-+{
-+
-+class AdaptiveTopKThreshold;
-+
-+/// The NULL key of a top-K (see `Aggregator::Params::bucket_top_k`) over a method that keeps the NULL key in
-+/// a slot of its own (see `keeps_null_key_slot`). The NULL key is a group outside the cells of the table, and
-+/// it has no hash, so no count bin bounds it (see `AdaptiveTopKPruning`). Its ranks in the producers' tables
-+/// bound its final rank instead: the final rank of a `count` is the sum of these ranks once every producer
-+/// finished, and a `uniqExact` merges to at least the largest and at most the sum of them, because a union
-+/// has no more elements than its parts together. By these bounds, the merge takes the NULL key into the top-K
-+/// like a group of the bins: the threshold takes a rank of it before any unit is converted
-+/// (`offerBeforeMerge`), the unit that holds it merges it only while it can reach the top (`canReachTop`),
-+/// and its exact rank replaces the offered one once its unit is converted (`replaceOffer`). The rules of the
-+/// three share one invariant: the threshold counts the offered rank only while the unit would still merge the
-+/// NULL key.
-+class AdaptiveTopKNullKey
-+{
-+public:
-+    /// Adds the rank of the NULL key in a producer's table. The caller holds the session's
-+    /// `producer_buffers_mutex`.
-+    void addProducerRank(UInt64 rank)
-+    {
-+        held = true;
-+        rank_sum += rank;
-+        rank_max = std::max(rank_max, rank);
-+    }
-+
-+    /// A rank that the NULL key does not exceed once every producer finished: the sum of its ranks in the
-+    /// producers' tables, 0 when no producer held it.
-+    [[nodiscard]] UInt64 upperBound() const { return rank_sum; }
-+
-+    /// Offers `threshold` a rank of the NULL key before the merge, so the threshold rises before any unit is
-+    /// converted, and a large NULL key drops more of the units that the merge tasks merge first. A descending
-+    /// order takes a bound from below: the sum of the counts, which is the exact count once every producer
-+    /// finished, or the largest distinct count in one table. An ascending order takes only the exact count,
-+    /// the sum of the counts once every producer finished, because `canReachTop` judges an ascending NULL key
-+    /// by its offered rank. A producer without the adaptive context, another aggregator of a mixed projection
-+    /// pipeline, does not add its NULL key. The caller calls it once, after the finish barrier and before the
-+    /// merge starts.
-+    void offerBeforeMerge(AdaptiveTopKThreshold & threshold, bool ascending_, bool exact_ranks, bool every_producer_finished);
-+
-+    /// Whether the unit that holds the NULL key merges it, at the threshold of the moment. With the count
-+    /// bins of a descending order (`pruned`), it can reach the top while its upper bound reaches the
-+    /// threshold. The threshold counts the exact rank that an ascending order offered, so the NULL key must
-+    /// reach the output while that rank is not worse than the threshold, even once the threshold settled.
-+    /// Otherwise it is merged unless a settled threshold skips every unit left.
-+    [[nodiscard]] bool canReachTop(const AdaptiveTopKThreshold & threshold, bool pruned) const;
-+
-+    /// Replaces the rank offered before the merge by `rank`, the exact rank of the NULL key in the output of
-+    /// its unit (see `AdaptiveTopKThreshold::replaceOffer`). Returns whether the NULL key had an offered
-+    /// rank: the caller then leaves the NULL key out of the unit's offer, because an offer counts a group
-+    /// once.
-+    bool replaceOffer(AdaptiveTopKThreshold & threshold, UInt64 rank) const;
-+
-+private:
-+    bool held = false;
-+    bool ascending = false;
-+    UInt64 rank_sum = 0;
-+    UInt64 rank_max = 0;
-+    /// The rank that `offerBeforeMerge` offered.
-+    std::optional<UInt64> offered;
-+};
-+
-+}
-```
-
-**File**: `src/Interpreters/AdaptiveAggregation/AdaptiveTopKPruning.h` (modified, +12/-3)
-```diff
-@@ -166,6 +166,14 @@ class AdaptiveTopKPruning
-     /// merge starts.
-     [[nodiscard]] bool countsEveryProducer(size_t producers) const { return producer_bins.size() + merge_counted_tables.size() == producers; }
- 
-+    /// Raises the bound of `bucket` to `bound`, a rank that a group of the bucket outside the bins does not
-+    /// exceed, such as the NULL key that bucket 0 holds for a method that keeps it in a slot of its own (see
-+    /// `AdaptiveTopKNullKey`). Called after the finish barrier, before `orderBuckets`.
-+    void raiseBucketBound(size_t bucket, UInt64 bound)
-+    {
-+        count_bound_per_bucket[bucket] = std::max(count_bound_per_bucket[bucket], bound);
-+    }
-+
-     /// Orders the buckets for the merge by their bounds, `count_bound_per_bucket`. A table without the
-     /// largest counts of its buckets is not in this order, which only lets the threshold rise later. Called
-     /// once, after the finish barrier and before the merge starts.
-@@ -210,9 +218,10 @@ class AdaptiveTopKPruning
-     /// `boundsForBucket`).
-     std::vector<AdaptiveTopKCountBins> producer_bins;
-     std::vector<const AggregatedDataVariants *> merge_counted_tables;
--    /// The sum of every producer's largest bin in each bucket and of the bucket's largest count in every table
--    /// that the merge counts and that brought it. It orders the buckets for the merge (see `orderBuckets`), and it
--    /// bounds the ranks of the groups of every bucket but those of `bucket_is_unbounded` (see `bucketBound`).
-+    /// The sum of every producer's largest bin in each bucket and of the bucket's largest count in every
-+    /// table that the merge counts and that brought it, raised by `raiseBucketBound`. It orders the buckets
-+    /// for the merge (see `orderBuckets`), and it bounds the ranks of the groups of every bucket but those of
-+    /// `bucket_is_unbounded` (see `bucketBound`).
-     std::array<UInt64, ADAPTIVE_AGGREGATION_NUM_BUCKETS> count_bound_per_bucket{};
-     std::array<bool, ADAPTIVE_AGGREGATION_NUM_BUCKETS> bucket_is_unbounded{};
-     std::array<UInt8, ADAPTIVE_AGGREGATION_NUM_BUCKETS> bucket_order{};
-```
-
-**File**: `src/Interpreters/AdaptiveAggregation/AdaptiveTopKThreshold.cpp` (modified, +13/-0)
-```diff
-@@ -29,6 +29,19 @@ void AdaptiveTopKThreshold::offer(std::span<const UInt64> ranks)
-         offerImpl<std::greater<>>(ranks);
- }
- 
-+void AdaptiveTopKThreshold::replaceOffer(UInt64 offered, UInt64 rank)
-+{
-+    {
-+        std::lock_guard lock(mutex);
-+        if (const auto kept_offered = std::ranges::find(kept, offered); kept_offered != kept.end())
-+        {
-+            *kept_offered = rank;
-+            return;
-+        }
-+    }
-+    offer({&rank, 1});
-+}
-+
- template <typename Better>
- void AdaptiveTopKThreshold::offerImpl(std::span<const UInt64> ranks)
- {
-```
-
-**File**: `src/Interpreters/AdaptiveAggregation/AdaptiveTopKThreshold.h` (modified, +20/-5)
-```diff
-@@ -64,13 +64,28 @@ class AdaptiveTopKThreshold
-     /// Whether the threshold reached `best_possible_rank`, so that the merge can skip every unit left.
-     [[nodiscard]] bool settled() const { return best_possible_rank && current() == *best_possible_rank; }
- 
--    /// Offers the ranks of groups, each group at most once: the threshold is the worst of the `limit` best ranks
--    /// offered. The merge offers the ranks of the groups that a converted unit output, and guarantees that each is
--    /// the final rank of its group, merged from every source, and that the group reaches the output: that is what
--    /// lets it drop the groups ranked worse than the threshold. A producer offers the ranks that the groups have in
--    /// its own table, which only bound the final ranks from below.
-+    /// Offers the ranks of groups, each group at most once: the threshold is the worst of the `limit` best
-+    /// ranks offered. The merge offers the ranks of the groups that a converted unit output, and guarantees
-+    /// that each is the final rank of its group, merged from every source, and that the group reaches the
-+    /// output: that is what lets it drop the groups ranked worse than the threshold. A producer offers the
-+    /// ranks that the groups have in its own table, which only bound the final ranks from below. Before any
-+    /// unit is converted, the merge also offers the NULL key of a method that keeps it in a slot of its own
-+    /// (see `AdaptiveTopKNullKey`), with a rank no better than its final one, which the conversion of its
-+    /// unit replaces later (see `replaceOffer`). While the threshold keeps that rank, the threshold is no
-+    /// better than the NULL key's final rank, so neither the bound check of its unit nor a conversion drops
-+    /// the NULL key, and the selection of its unit drops it only behind `limit` output groups that rank at
-+    /// least as well. Once a selection drops the offered rank, the threshold no longer counts the NULL key.
-     void offer(std::span<const UInt64> ranks);
- 
-+    /// Replaces `offered`, the rank with which `offer` took a group before its final rank was known, with
-+    /// `rank`, the final rank. The caller guarantees that `offered` is no better than `rank`, so the group
-+    /// stays counted once, with a rank at least as good. For example, the merge offers the NULL key of a
-+    /// descending top-K by `uniqExact` with its largest distinct count in one table before any unit is
-+    /// converted, and replaces it with the merged distinct count when its unit is converted. A kept `offered`
-+    /// is replaced in place: every kept rank is at least as good as the threshold, so `rank` is too. When a
-+    /// selection has already dropped `offered`, `rank` is offered as a new rank.
-+    void replaceOffer(UInt64 offered, UInt64 rank);
-+
- private:
-     template <typename Better>
-     void offerImpl(std::span<const UInt64> ranks);
-```
-
-**File**: `src/Interpreters/AdaptiveAggregation/Merge.cpp` (modified, +143/-30)
-```diff
-@@ -570,6 +570,10 @@ namespace
-             }
+         /// `PREWHERE` runs before the sorting expression added below and may have removed an input
+         /// column that the sorting key needs. Prohibit removing those inputs; the sorting expression
+         /// keeps them, and they are dropped when the pipe header is converted to the step header.
+         /// Same reasoning as in `spreadMarkRangesAmongStreamsWithOrder`.
+         if (query_info.prewhere_info || query_info.row_level_filter)
+         {
+-            NameSet sorting_key_columns;
+-            for (const auto & column : storage_snapshot->metadata->getSortingKey().expression->getRequiredColumnsWithTypes())
+-                sorting_key_columns.insert(column.name);
+-
++            NameSet sorting_key_columns(sorting_key_prefix_columns.begin(), sorting_key_prefix_columns.end());
+             restorePrewhereInputs(query_info.row_level_filter.get(), query_info.prewhere_info.get(), sorting_key_columns);
          }
  
-+        /// Whether some source holds the NULL key in its slot for `unit` (see
-+        /// `forEachSourceTableWithNullKey`).
-+        [[nodiscard]] bool hasNullKeys(size_t unit) const { return unit == 0 && !null_key_sources.empty(); }
-+
-         /// How many source cells `unit` has, counting the NULL key of every source that holds it as one.
-         [[nodiscard]] size_t count(size_t unit) const
+         NameSet column_names_set(column_names.begin(), column_names.end());
+         in_order_column_names_to_read = column_names;
+ 
+-        /// Only the prefix of the sorting key that the merge of a layer and the range filters of the layers use
+-        /// has to be computed: reading the rest of the key would read and decode columns the query does not need.
+-        size_t sorting_key_prefix_size = input_order_info->used_prefix_of_sorting_key_size;
+-        if (!split_parts.borders.empty())
+-            sorting_key_prefix_size = std::max(sorting_key_prefix_size, split_parts.borders.front().size());
+-
+-        auto sorting_key_prefix_ast = storage_snapshot->metadata->getSortingKey().expression_list_ast->clone();
+-        sorting_key_prefix_ast->children.resize(sorting_key_prefix_size);
+-        auto syntax_result = TreeRewriter(context).analyze(
+-            sorting_key_prefix_ast,
+-            storage_snapshot->metadata->getColumns().get(GetColumnsOptions(GetColumnsOptions::AllPhysical).withSubcolumns()));
+-        auto sorting_expr = std::make_shared<ExpressionActions>(
+-            ExpressionAnalyzer(sorting_key_prefix_ast, syntax_result, context).getActionsDAG(false));
+-
+         /// Add columns needed to calculate the sorting expression
+-        for (const auto & column_name : sorting_expr->getRequiredColumns())
++        for (const auto & column_name : sorting_key_prefix_columns)
          {
-@@ -895,27 +899,40 @@ void Aggregator::adoptSourceNullKeys(Table & table, const ForEachSourceTable & f
-     });
- }
- 
-+template <typename Method, typename ForEachSourceTable>
-+void Aggregator::discardSourceNullKeys(const ForEachSourceTable & for_each_source_table) const
-+{
-+    for_each_source_table([&](auto & source)
-+    {
-+        if constexpr (MapAggregationMethod<Method>)
-+            discardAdaptiveSourceState(source.getNullKeyData());
-+        source.hasNullKeyData() = false;
-+    });
-+}
+             if (column_names_set.contains(column_name))
+                 continue;
+@@ -2511,11 +2513,7 @@ Pipe ReadFromMergeTree::spreadMarkRangesAmongStreamsWithOrder(
+     if (need_preliminary_merge || output_each_partition_through_separate_port)
+     {
+         size_t prefix_size = input_order_info->used_prefix_of_sorting_key_size;
+-        auto order_key_prefix
+```
+
+**File**: `tests/queries/0_stateless/05829_read_by_layers_reads_only_key_prefix.reference` (added, +10/-0)
+```diff
+@@ -0,0 +1,10 @@
++1
++100000
++1
++400000
++05829_join	1
++05829_uniq_exact	1
++500
++500
++0	40
++0
+```
+
+**File**: `tests/queries/0_stateless/05829_read_by_layers_reads_only_key_prefix.sql` (added, +50/-0)
+```diff
+@@ -0,0 +1,50 @@
++-- A read in order split into layers by a prefix of the sorting key reads only the columns of that prefix and of the query,
++-- not the other columns of the sorting key.
 +
- template <
-     typename Method,
-     typename Table,
-     typename ForEachCell,
-     typename TopK,
-     typename ForEachInMemoryPartition,
-     typename ForEachSpilledBlock>
--size_t Aggregator::selectCountFirstBestGroups(
-+Aggregator::CountFirstSelection Aggregator::selectCountFirstBestGroups(
-     Table & counting_table,
-     const ForEachCell & for_each_cell,
-     const bool * alive_bins,
-     TopK * top_k,
-     const AdaptiveTopKThreshold & threshold,
-     const ForEachInMemoryPartition & for_each_in_memory_partition,
-     const ForEachSpilledBlock & for_each_spilled_block,
-+    std::optional<UInt64> null_key_count,
-     Arena * arena,
-     AdaptiveMergeTask & task,
-     size_t & pruned_records) const
- {
-     using Key = AdaptiveRecordKey<Method>;
-     const size_t rank_offset = offsets_of_aggregate_states[params.bucket_top_k_rank_index];
-+    CountFirstSelection selection;
- 
-     /// The groups are counted in the table, each count kept in the mapped value as a lone `count()` keeps it: a source
-     /// cell adds its count state, a record one row. With a descending order, the top takes every grown count and keeps
-@@ -970,9 +987,28 @@ size_t Aggregator::selectCountFirstBestGroups(
-     {
-         /// A group counted below the threshold, a floor, cannot reach the top.
-         const UInt64 min_count = threshold.current();
--        for (const auto & group : top_k->getGroups())
-+        const auto & groups = top_k->getGroups();
-+        for (const auto & group : groups)
-             if (group.count >= min_count)
-                 best_hashes.push_back(group.hash);
-+        /// The NULL key, which the counting table does not hold, joins the best groups by its count. A full
-+        /// top gives up its group of the smallest count when the NULL key's count beats it.
-+        if (null_key_count && *null_key_count >= min_count)
-+        {
-+            if (best_hashes.size() < params.bucket_top_k)
-+            {
-+                selection.keeps_null_key = true;
-+            }
-+            else
-+            {
-+                const auto worst = std::ranges::min_element(groups, {}, [](const auto & group) { return group.count; });
-+                if (*null_key_count > worst->count)
-+                {
-+                    selection.keeps_null_key = true;
-+                    best_hashes.erase(std::ranges::find(best_hashes, worst->hash));
-+                }
-+            }
-+        }
-     }
-     else
-     {
-@@ -1002,10 +1038,25 @@ size_t Aggregator::selectCountFirstBestGroups(
-                     std::push_heap(best.begin(), best.end(), by_count);
-                 }
-             });
-+        /// The NULL key joins the smallest counts as a group would.
-+        if (null_key_count && *null_key_count <= max_count)
-+        {
-+            if (best.size() < params.bucket_top_k)
-+            {
-+                selection.keeps_null_key = true;
-+            }
-+            else if (*null_key_count < best.front().first)
-+            {
-+                selection.keeps_null_key = true;
-+                std::pop_heap(best.begin(), best.end(), by_count);
-+                best.pop_back();
-+            }
-+        }
-         for (const auto & [count, hash] : best)
-             best_hashes.push_back(hash);
-     }
--    return counting_table.size();
-+    selection.groups = counting_table.size() + null_key_count.has_value();
-+    return selection;
- }
- 
- template <typename Record>
-@@ -1085,19 +1136,6 @@ void Aggregator::executeStagedArguments(
-         use_compiled_functions);
- }
- 
--ALWAYS_INLINE UInt64 Aggregator::adaptiveRankCount(AggregateDataPtr & mapped, IColumn * scratch, Arena * arena) const
--{
--    switch (bucket_top_k_rank)
--    {
--        case BucketTopKRank::InlineCount:
--            return getInlineCountState(mapped);
--        case BucketTopKRank::CountState:
--            return getCountState(mapped + offsets_of_aggregate_states[params.bucket_top_k_rank_index]);
--        case BucketTopKRank::FinalizedResult:
--            return finalizeBucketTopKRank(mapped, *scratch, are
++DROP TABLE IF EXISTS t_layers_prefix;
++CREATE TABLE t_layers_prefix (k UInt32 CODEC(Delta, LZ4), s String) ENGINE = MergeTree ORDER BY (k, s)
++SETTINGS index_granularity = 1024, min_bytes_for_wide_part = 0;
++
++SYSTEM STOP MERGES t_layers_prefix;
++INSERT INTO t_layers_prefix SELECT number, hex(sipHash128(toString(number))) FROM numbers(100000);
++INSERT INTO t_layers_prefix SELECT number, hex(sipHash128(toString(number + 1000000))) FROM numbers(100000);
++
++-- Without the caches that skip the read of compressed data, which `ReadCompressedBytes` counts.
++SET max_threads = 4, enable_parallel_replicas = 0, use_uncompressed_cache = 0, use_columns_cache = 0;
++
++-- A single `uniqExact` of the first sorting key column, counted in order.
++SET optimize_aggregation_in_order = 1;
++SELECT count() > 0 FROM (EXPLAIN PIPELINE SELECT count(DISTINCT k) FROM t_layers_prefix) WHERE explain LIKE '%FilterSortedStreamByRange%';
++SELECT count(DISTINCT k) FROM t_layers_prefix SETTINGS log_comment = '05829_uniq_exact';
++
++-- A merge join of reads in order, joined by ranges of the primary key.
++SET join_algorithm = 'full_sorting_merge', query_plan_join_shard_by_pk_ranges = 1, optimize_read_in_order = 1;
++SELECT count() > 0 FROM (EXPLAIN PIPELINE SELECT count() FROM t_layers_prefix AS l JOIN t_layers_prefix AS r ON l.k = r.k) WHERE explain LIKE '%FilterSortedStreamByRange%';
++SELECT count() FROM t_layers_prefix AS l JOIN t_layers_prefix AS r ON l.k = r.k SETTINGS log_comment = '05829_join';
++
++SYSTEM FLUSH LOGS query_log;
++SELECT log_comment, ProfileEvents['ReadCompressedBytes'] < (SELECT data_compressed_bytes FROM system.columns WHERE database = currentDatabase() AND table = 't_layers_prefix' AND name = 's') / 10
++FROM system.query_log
++WHERE current_database = currentDatabase() AND log_comment IN ('05829_uniq_exact', '05829_join') AND type = 'QueryFinish' AND event_date >= yesterday()
++ORDER BY log_comment;
++
++DROP TABLE t_layers_prefix;
++
++-- The sorting key keeps its own names when the query settings would name its expressions differently: `IN` is `nullIn`
++-- with `transform_null_in`. The first key column is fixed by the condition, so the read is in order of `k`, in layers
++-- with several threads and by merging the parts with one.
++DROP TABLE IF EXISTS t_layers_prefix_in;
++CREATE TABLE t_layers_prefix_in (a UInt32, k UInt32, s String) ENGINE = MergeTree ORDER BY (a IN (1, 2), k, s)
++SETTINGS index_granularity = 128;
++
++SYSTEM STOP MERGES t_layers_prefix_in;
++INSERT INTO t_layers_prefix_in SELECT 1, number % 500, toString(number) FROM numbers(10000);
++INSERT INTO t_layers_prefix_in SELECT 1, number % 500, toString(number) FROM numbers(10000);
++
++SET transform_null_in = 1, read_in_order_two_level_merge_threshold = 1;
++SELECT uniqExact(k) FROM t_layers_prefix_in WHERE a = 1 SETTINGS max_threads = 4;
++SELECT uniqExact(k) FROM t_layers_prefix_in WHERE a = 1 SETTINGS max_threads = 1;
++SELECT k, count() FROM t_layers_prefix_in WHERE a = 1 GROUP BY k ORDER BY k LIMIT 1 SETTINGS max_threads = 1;
++SELECT k FROM t_layers_prefix_in WHERE a = 1 ORDER BY k LIMIT 1 SETTINGS max_threads = 1;
++
++DROP TABLE t_layers_prefix_in;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #133205** (2026-11-20): Backport #125828 to 26.10: Fix wrong results and `NOT_FOUND_COLUMN_IN_BLOCK` for a `GROUP BY` key inside an `if` chain or an `ORDER BY` tuple (@robot-clickhouse-ci-2)
-- **PR #133204** (2026-11-20): Backport #125828 to 26.9: Fix wrong results and `NOT_FOUND_COLUMN_IN_BLOCK` for a `GROUP BY` key inside an `if` chain or an `ORDER BY` tuple (@robot-clickhouse-ci-2)
-- **PR #133199** (2026-11-20): Backport #132755 to 26.10: Fix double destroy of aggregate states when `create` throws after `destroy` (@robot-clickhouse-ci-2)
-- **PR #133198** (2026-11-20): Backport #132755 to 26.9: Fix double destroy of aggregate states when `create` throws after `destroy` (@robot-clickhouse-ci-2)
-- **PR #133197** (2026-11-20): Backport #132755 to 26.8: Fix double destroy of aggregate states when `create` throws after `destroy` (@robot-clickhouse-ci-2)
-- **PR #133192** (2026-11-20): Backport #131928 to 26.11: Fix `Merge` over `Distributed` dropping a column that the query selects twice (@robot-ch-test-poll2)
+- **PR #133407** (2026-11-21): Document that `clickhouse-local` is not for multi-user scenarios (@alexey-milovidov)
+- **PR #133396** (2026-11-21): Do not install the Rust documentation in the fasttest image (@groeneai)
+- **PR #133389** (2026-11-21): Fix flaky test IOTestAwsS3Client.AssumeRoleRefreshInConcurrentFibers (@groeneai)
+- **PR #133386** (2026-11-21): Docs: regenerate reference documentation from source (@clickhouse-gh[bot])
+- **PR #133352** (2026-11-21): Backport #113397 to 26.3: Fix a table permanently stuck in the drop queue after a failed materialized-CTE query (@robot-ch-test-poll)
+- **PR #133328** (2026-11-21): Fix flaky test 05045_query_plan_json_in_query_log (@groeneai)
 
 ---
 
@@ -1992,29 +1631,33 @@ Top-K pruning of `GROUP BY` over `Nullable` keys
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in PrettyFormatHelpers.cpp
+## X. flaky test IOTestAwsS3Client.AssumeRoleRefreshInConcurrentFibers
 
 **RULE**:
-When implementing operations in `src/Formats/PrettyFormatHelpers.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/IO/S3/tests/gtest_aws_s3_client.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9a8a1a79`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b9d4d482`: flaky test IOTestAwsS3Client.AssumeRoleRefreshInConcurrentFibers. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/Formats/PrettyFormatHelpers.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/IO/S3/tests/gtest_aws_s3_client.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-    /// `cut_to + hysteresis` could overflow for a huge `cut_to`, turning short names into names "cut" to that width.
-    if (!cut_to || length <= cut_to || length - cut_to <= hysteresis || isValidIdentifier(name))
+        , server_socket(std::make_unique<Poco::Net::ServerSocket>(/* port = */ 0, /* backlog = */ std::max(64, max_threads)))
+    const size_t fiber_count = getFiberCountAboveSchedulerThreads();
+    /// A thread per fiber: the server closes, instead of queueing, a connection that finds no idle thread in its pool.
+    }, /* max_threads = */ static_cast<int>(fiber_count));
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-    if (!cut_to || length <= cut_to + hysteresis || isValidIdentifier(name))
+        , server_socket(std::make_unique<Poco::Net::ServerSocket>(0))
+    });
+    const size_t fiber_count = getFiberCountAboveSchedulerThreads();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9a8a1a79` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b9d4d482` are properly handled with clean fallback behavior.

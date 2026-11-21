@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T17:50:10.962Z",
+  "last_updated": "2026-11-21T18:23:11.895Z",
   "total_records": 2267,
   "domains": {
     "A": {
@@ -8268,8 +8268,8 @@
       "title": "Technical Construction Intelligence: ClickHouse/ClickHouse Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-clickhouse-clickhouse-technical-construction-intelligence-clickhouse-clickhouse-.md",
       "repository": "ClickHouse/ClickHouse",
-      "content_hash": "37f86b065798b48133594bcd596f046c08438ce662865a10816ee11c89e55550",
-      "created_at": "2026-11-20T13:08:32.949Z"
+      "content_hash": "345e2fc10afb5d0a519c288749f650d1d83860735a38828ddf6001935de0d58a",
+      "created_at": "2026-11-21T18:23:05.983Z"
     },
     "DOM-D-303E5CE5": {
       "record_id": "DOM-D-303E5CE5",
@@ -11856,8 +11856,8 @@
       "title": "Deployment & Operations Intelligence: gardener/gardener Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-gardener-gardener-deployment-operations-intelligence-gardener-gardener-core-inva.md",
       "repository": "gardener/gardener",
-      "content_hash": "e0bea3c845fa4ca92afa64b97a9e6d09b1cdf856afc8f31432a1490512237492",
-      "created_at": "2026-11-20T14:52:46.207Z"
+      "content_hash": "a2a7e7f508f1a9befd8168754b9bfb1ad10b9c9fe160c07e00f6abd76870444b",
+      "created_at": "2026-11-21T18:23:00.227Z"
     },
     "domain_intelligence-design-intelligence-openai-whisper-large-v3-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-openai-whisper-large-v3-core-invariants",
@@ -11951,8 +11951,8 @@
       "title": "Deployment & Operations Intelligence: gardener-gardener-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-gardener-gardener-learnings-deployment-operations-intelligence-gardener-gardener.md",
       "repository": "gardener-gardener-learnings",
-      "content_hash": "558904d8a13c299083115050dcf16ddce6293b64433791d643897c8a81630098",
-      "created_at": "2026-11-20T14:52:56.341Z"
+      "content_hash": "5983d90c0d26478117c8dc50237ec62cf74507407e8ee2b0b2ed8b79c2e9220e",
+      "created_at": "2026-11-21T18:23:10.612Z"
     },
     "domain_intelligence-research-knowledge-intelligence-atomicchat-lfm3-1-7b-uncensored-gguf-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-atomicchat-lfm3-1-7b-uncensored-gguf-core-invari",
@@ -12324,8 +12324,8 @@
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "repository": "dathere/qsv",
-      "content_hash": "dea080294db783c60bd5be6a7fdc7ae3330198455706e5dfdb2d6599ce4d4ef2",
-      "created_at": "2026-11-21T16:19:00.047Z"
+      "content_hash": "f3747c25b6543d00731fadb8b77a0ddc9c60fb8b6de8bfa6462674ea581b3f0d",
+      "created_at": "2026-11-21T18:23:06.286Z"
     },
     "DOM-D-F5645095": {
       "record_id": "DOM-D-F5645095",
@@ -18509,8 +18509,8 @@
       "title": "Technical Construction Intelligence: clickhouse-clickhouse-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-clickhouse-clickhouse-learnings-technical-construction-intelligence-clickhouse-c.md",
       "repository": "clickhouse-clickhouse-learnings",
-      "content_hash": "3ed52a281b8e09687ae808c012dd42e15efea54c4cbfbc137c892b8b1e7a8a36",
-      "created_at": "2026-11-19T06:34:04.195Z"
+      "content_hash": "7a1e0206b341cdc8dfa11a4f66ea23fff8df080af78cb8f511132f4054b00e96",
+      "created_at": "2026-11-21T18:23:11.895Z"
     },
     "domain_intelligence-research-knowledge-intelligence-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-",
@@ -28836,8 +28836,8 @@
       "title": "Research & Knowledge Intelligence: baidu/Unlimited-OCR-2 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-baidu-unlimited-ocr-2-research-knowledge-intelligence-baidu-unlimited-ocr-2-c.md",
       "repository": "baidu/Unlimited-OCR-2",
-      "content_hash": "f2e0831cde0638e31c05cee0e7a71f2660631eda3bbb4078b8d9ce8a7e5672fa",
-      "created_at": "2026-11-17T19:27:21.266Z"
+      "content_hash": "e5fd1a261f7eb41b9c415a349dba67cb0595334fc23cd80bf8d1a9c4d1aa4149",
+      "created_at": "2026-11-21T18:22:55.650Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-baidu-unlimited-ocr-2-learnings-core-invarian": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-baidu-unlimited-ocr-2-learnings-core-invarian",
@@ -28845,8 +28845,8 @@
       "title": "Research & Knowledge Intelligence: hf-baidu-unlimited-ocr-2-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-baidu-unlimited-ocr-2-learnings-research-knowledge-intelligence-hf-baidu-unli.md",
       "repository": "hf-baidu-unlimited-ocr-2-learnings",
-      "content_hash": "daaa5f5f8ec2e8d84eaa2897d6eb65829ece4b943c9a404caa6088dec90a3cfc",
-      "created_at": "2026-11-17T19:27:40.107Z"
+      "content_hash": "f12b6a8cfc4257f2ab4500b0feaa3744aca5384fe0e1cc3c864563e65c30fa6f",
+      "created_at": "2026-11-21T18:23:09.555Z"
     },
     "domain_intelligence-research-knowledge-intelligence-ccore-qwen3-5-4b-3d-coder-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-ccore-qwen3-5-4b-3d-coder-core-invariants",

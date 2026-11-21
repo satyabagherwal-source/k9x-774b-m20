@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-21T17:50:07.490Z",
-    "lastVerified": "2026-11-21T17:50:07.491Z",
+    "lastChecked": "2026-11-21T18:23:09.153Z",
+    "lastVerified": "2026-11-21T18:23:09.153Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -149,9 +149,9 @@
   "microsoft-security-101": {
     "name": "Security-101",
     "officialUrl": "https://github.com/microsoft/Security-101",
-    "lastChecked": "2026-11-21T09:23:49.173Z",
+    "lastChecked": "2026-11-21T18:22:54.810Z",
     "revisionIdentifier": "b0a31ff7",
-    "lastVerified": "2026-11-21T09:23:49.173Z"
+    "lastVerified": "2026-11-21T18:22:54.810Z"
   },
   "meilisearch-meilisearch": {
     "name": "meilisearch/meilisearch",
@@ -171,22 +171,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dathere-qsv": {
-    "name": "qsv",
+    "name": "dathere/qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-21T17:15:34.573Z",
-    "lastVerified": "2026-11-21T17:15:34.573Z",
+    "lastChecked": "2026-11-21T18:23:04.723Z",
+    "lastVerified": "2026-11-21T18:23:04.723Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "71e39d67cd2f34e648a5bb53454acd73ed49356f367c87f2bec50f265252a304",
+    "contentHash": "d69d276017e6bc2343b921801bb9d3314894c935687d4781d8395f72f54afa97",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "ef2aebe1"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -872,14 +871,14 @@
     "officialUrl": "https://github.com/gardener/gardener",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-20T14:52:44.357Z",
-    "lastVerified": "2026-11-20T14:52:44.357Z",
+    "lastChecked": "2026-11-21T18:22:58.614Z",
+    "lastVerified": "2026-11-21T18:22:58.614Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gardener-gardener",
-    "contentHash": "e86e61ce3824a54d21b76d8dc6cdb6fea08f438ddf97877432116c3874bba166",
+    "contentHash": "11050f995581b96687ceb775c05fd8c080f56ba3c00bee4e2a4fa8f8eb7b46fb",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2517,9 +2516,9 @@
   "alibaba-formily": {
     "name": "formily",
     "officialUrl": "https://github.com/alibaba/formily",
-    "lastChecked": "2026-11-18T14:24:08.337Z",
+    "lastChecked": "2026-11-21T18:22:49.967Z",
     "revisionIdentifier": "d9a46442",
-    "lastVerified": "2026-11-18T14:24:08.337Z"
+    "lastVerified": "2026-11-21T18:22:49.967Z"
   },
   "nats-io-nats.go": {
     "name": "nats.go",
@@ -2867,9 +2866,9 @@
   "rigellute-spotify-tui": {
     "name": "spotify-tui",
     "officialUrl": "https://github.com/Rigellute/spotify-tui",
-    "lastChecked": "2026-11-20T03:21:39.448Z",
+    "lastChecked": "2026-11-21T18:22:44.925Z",
     "revisionIdentifier": "c4dcf6b9",
-    "lastVerified": "2026-11-20T03:21:39.448Z"
+    "lastVerified": "2026-11-21T18:22:44.925Z"
   },
   "hf-xiaomimimo-mimo-v2.6-pro-rl": {
     "name": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
@@ -7031,14 +7030,14 @@
     "officialUrl": "https://github.com/ClickHouse/ClickHouse",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-20T13:08:31.523Z",
-    "lastVerified": "2026-11-20T13:08:31.523Z",
+    "lastChecked": "2026-11-21T18:23:04.504Z",
+    "lastVerified": "2026-11-21T18:23:04.504Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-clickhouse-clickhouse",
-    "contentHash": "157b2e6dc980518a86f078026975acc0411fb9c3ff067537a5aa83aaeb0c5380",
+    "contentHash": "2c8a5b5e90132b903a11c5026b22df38b1e3a2f8f6071cd36673778b5efacf91",
     "promotedRulesCount": 1,
-    "recentFixesCount": 11,
+    "recentFixesCount": 10,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -12656,6 +12655,23 @@
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-fastvideo-fasth3-omni-comfy",
     "contentHash": "702ce0bda670fe18299d9499ee7d755fdf54bd3289b5b5e963a83398acba1466",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-baidu-unlimited-ocr-2": {
+    "name": "baidu/Unlimited-OCR-2",
+    "officialUrl": "https://huggingface.co/baidu/Unlimited-OCR-2",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-21T18:22:47.675Z",
+    "lastVerified": "2026-11-21T18:22:47.675Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-baidu-unlimited-ocr-2",
+    "contentHash": "e46a489a53681d249b11be78ad8cd73f5ac609c4559dcdc5b823c650525dbd2e",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

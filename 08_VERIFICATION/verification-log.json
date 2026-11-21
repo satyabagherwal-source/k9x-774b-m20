@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261119-Y78X",
-    "timestamp": "2026-11-19T15:42:33.009Z",
-    "repository": "SimonSchubert/LinuxCommandLibrary",
-    "learningId": "learn-github-simonschubert-linuxcommandlibrary",
-    "contentHash": "cd1069458d85c8a2a5a557245e9ea631dc1edfa488c62ddb2e91a4a829941350",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-Y90T",
-    "timestamp": "2026-11-19T15:42:35.309Z",
-    "repository": "zama-ai/tfhe-rs",
-    "learningId": "learn-github-zama-ai-tfhe-rs",
-    "contentHash": "5cb08fe69155aba9daff4604809fab8b59024091b8b57f909a5b66fe2f0cfd6f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-YC1S",
-    "timestamp": "2026-11-19T15:42:39.232Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "dade5f3be01e570c5df0444750bb9a78a19a57956ff2757b0f91dc385b637cc1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-8RS1",
-    "timestamp": "2026-11-19T15:50:46.177Z",
-    "repository": "LiquidAI/LFM2.5-24B-A2B",
-    "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
-    "contentHash": "1d1721cf6a37eb47aaa43bf4872fbf641ae2eef259cf8a75ab830d902734478d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261119-8V6L",
     "timestamp": "2026-11-19T15:50:50.589Z",
     "repository": "biomejs/biome",
@@ -7490,6 +7430,66 @@
     "repository": "duckdb/duckdb",
     "learningId": "learn-github-duckdb-duckdb",
     "contentHash": "f18cc8e24aeb8ee4d7287bd633e71fb5976cda559fc2ff257978bc96e8be311a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-K5A9",
+    "timestamp": "2026-11-21T18:22:55.425Z",
+    "repository": "baidu/Unlimited-OCR-2",
+    "learningId": "learn-huggingface-baidu-unlimited-ocr-2",
+    "contentHash": "e46a489a53681d249b11be78ad8cd73f5ac609c4559dcdc5b823c650525dbd2e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-K8OK",
+    "timestamp": "2026-11-21T18:22:59.828Z",
+    "repository": "gardener/gardener",
+    "learningId": "learn-github-gardener-gardener",
+    "contentHash": "11050f995581b96687ceb775c05fd8c080f56ba3c00bee4e2a4fa8f8eb7b46fb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-KD3J",
+    "timestamp": "2026-11-21T18:23:05.551Z",
+    "repository": "ClickHouse/ClickHouse",
+    "learningId": "learn-github-clickhouse-clickhouse",
+    "contentHash": "2c8a5b5e90132b903a11c5026b22df38b1e3a2f8f6071cd36673778b5efacf91",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-KDBE",
+    "timestamp": "2026-11-21T18:23:05.834Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "d69d276017e6bc2343b921801bb9d3314894c935687d4781d8395f72f54afa97",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

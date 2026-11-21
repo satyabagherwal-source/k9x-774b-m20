@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-21T17:50:04.272Z",
+  "last_updated": "2026-11-21T18:23:05.850Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "71e39d67cd2f34e648a5bb53454acd73ed49356f367c87f2bec50f265252a304",
-      "verified_at": "2026-11-21T16:18:59.650Z",
+      "content_hash": "d69d276017e6bc2343b921801bb9d3314894c935687d4781d8395f72f54afa97",
+      "verified_at": "2026-11-21T18:23:05.849Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T16:18:59.650Z"
+      "last_updated": "2026-11-21T18:23:05.849Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -9231,14 +9231,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clickhouse-clickhouse",
-      "content_hash": "157b2e6dc980518a86f078026975acc0411fb9c3ff067537a5aa83aaeb0c5380",
-      "verified_at": "2026-11-20T13:08:32.569Z",
+      "content_hash": "2c8a5b5e90132b903a11c5026b22df38b1e3a2f8f6071cd36673778b5efacf91",
+      "verified_at": "2026-11-21T18:23:05.564Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T13:08:32.569Z"
+      "last_updated": "2026-11-21T18:23:05.564Z"
     },
     "dockview/dockview": {
       "repository": "dockview/dockview",
@@ -10401,14 +10401,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gardener-gardener",
-      "content_hash": "e86e61ce3824a54d21b76d8dc6cdb6fea08f438ddf97877432116c3874bba166",
-      "verified_at": "2026-11-20T14:52:45.739Z",
+      "content_hash": "11050f995581b96687ceb775c05fd8c080f56ba3c00bee4e2a4fa8f8eb7b46fb",
+      "verified_at": "2026-11-21T18:22:59.842Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T14:52:45.739Z"
+      "last_updated": "2026-11-21T18:22:59.842Z"
     },
     "NirDiamant/RAG_Techniques": {
       "repository": "NirDiamant/RAG_Techniques",
@@ -16401,14 +16401,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-baidu-unlimited-ocr-2",
-      "content_hash": "d5f5961c767fa865a66fa13fdbf04dec03dbb4b8e05bf77c5ab2fab31561b7ad",
-      "verified_at": "2026-11-17T19:27:21.097Z",
+      "content_hash": "e46a489a53681d249b11be78ad8cd73f5ac609c4559dcdc5b823c650525dbd2e",
+      "verified_at": "2026-11-21T18:22:55.438Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T19:27:21.097Z"
+      "last_updated": "2026-11-21T18:22:55.438Z"
     },
     "Joooook/12306-mcp": {
       "repository": "Joooook/12306-mcp",
