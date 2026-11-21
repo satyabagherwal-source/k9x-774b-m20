@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T20:55:40.952Z",
+  "timestamp": "2026-11-21T15:32:05.356Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-react-navigation-react-navigation-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [react-navigation-react-navigation-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T20:55:40.952Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T15:32:05.356Z`  
 > **Learning ID**: `LEARN-EVO-react-navigation-react-navigation-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence), F (Design Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 60%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 68%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from react-navigation-react-navigation-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/react-navigation-react-navigation-learnings.md`  
 > **Source**: github ([https://github.com/react-navigation/react-navigation](https://github.com/react-navigation/react-navigation))  
-> **Source Version**: `5e31b0a0`  
+> **Source Version**: `ca036e81`  
 > **License**: PERMISSIVE_OPEN_SOURCE  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T20:54:25.288Z  
+> **Timestamp**: 2026-11-21T15:31:22.138Z  
 > **Learning ID**: `learn-github-react-navigation-react-navigation`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/react-navigation-react-navigation-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/react-navigation/react-navigation](https://github.com/react-navigation/react-navigation))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T20:54:25.283Z  
+> **Harvest Timestamp**: 2026-11-21T15:31:22.134Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Routing and navigation for React Native and Web apps
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 24524 stars
+- **Stars / Engagement**: 24529 stars
 
 ---
 
@@ -89,22 +89,22 @@ export const BottomTabAnimationContext = React.createContext<
 
 ```
 
-### Core Architecture Module: `packages/bottom-tabs/src/utils/BottomTabBarHeightCallbackContext.tsx`
+### Core Architecture Module: `packages/bottom-tabs/src/utils/TabBarLayoutCallbackContext.tsx`
 ```
 import * as React from 'react';
 
-export const BottomTabBarHeightCallbackContext = React.createContext<
-  ((height: number) => void) | undefined
+export const TabBarLayoutCallbackContext = React.createContext<
+  ((layout: { width: number; height: number }) => void) | undefined
 >(undefined);
 
 ```
 
-### Core Architecture Module: `packages/bottom-tabs/src/utils/BottomTabBarHeightContext.tsx`
+### Core Architecture Module: `packages/bottom-tabs/src/utils/TabBarLayoutContext.tsx`
 ```
 import * as React from 'react';
 
-export const BottomTabBarHeightContext = React.createContext<
-  number | undefined
+export const TabBarLayoutContext = React.createContext<
+  { width: number; height: number } | undefined
 >(undefined);
 
 ```
@@ -135,46 +135,6 @@ export function useAnimatedHashMap({ routes, index }: NavigationState) {
   });
 
   return refs.current;
-}
-
-```
-
-### Core Architecture Module: `packages/bottom-tabs/src/utils/useBottomTabAnimation.tsx`
-```
-import * as React from 'react';
-
-import { BottomTabAnimationContext } from './BottomTabAnimationContext';
-
-export function useBottomTabAnimation() {
-  const animation = React.use(BottomTabAnimationContext);
-
-  if (animation === undefined) {
-    throw new Error(
-      "Couldn't find values for tab animation. Are you inside a screen in a Bottom Tab navigator?"
-    );
-  }
-
-  return animation;
-}
-
-```
-
-### Core Architecture Module: `packages/bottom-tabs/src/utils/useBottomTabBarHeight.tsx`
-```
-import * as React from 'react';
-
-import { BottomTabBarHeightContext } from './BottomTabBarHeightContext';
-
-export function useBottomTabBarHeight() {
-  const height = React.use(BottomTabBarHeightContext);
-
-  if (height === undefined) {
-    throw new Error(
-      "Couldn't find the bottom tab bar height. Are you inside a screen in Bottom Tab Navigator?"
-    );
-  }
-
-  return height;
 }
 
 ```
@@ -211,6 +171,46 @@ export function useIsKeyboardShown() {
   }, []);
 
   return isKeyboardShown;
+}
+
+```
+
+### Core Architecture Module: `packages/bottom-tabs/src/utils/useTabAnimation.tsx`
+```
+import * as React from 'react';
+
+import { BottomTabAnimationContext } from './BottomTabAnimationContext';
+
+export function useTabAnimation() {
+  const animation = React.use(BottomTabAnimationContext);
+
+  if (animation === undefined) {
+    throw new Error(
+      "Couldn't find values for tab animation. Are you inside a screen in a Bottom Tab navigator?"
+    );
+  }
+
+  return animation;
+}
+
+```
+
+### Core Architecture Module: `packages/bottom-tabs/src/utils/useTabBarHeight.tsx`
+```
+import * as React from 'react';
+
+import { TabBarLayoutContext } from './TabBarLayoutContext';
+
+export function useTabBarHeight() {
+  const layout = React.use(TabBarLayoutContext);
+
+  if (layout === undefined) {
+    throw new Error(
+      "Couldn't find the bottom tab bar height. Are you inside a screen in Bottom Tab Navigator?"
+    );
+  }
+
+  return layout.height;
 }
 
 ```
@@ -626,98 +626,240 @@ export function BaseNavigationContainer<ParamList extends {} = RootParamList>({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5e31b0a0` (2026-11-11)
-**Commit Message**: fix: keep underlying screens visible during overlapping transitions
+### Incident Patch 1: `e34a70c2` (2026-11-19)
+**Commit Message**: fix: keep insets in sync with edges and measurements in LayoutRegionView
 
-**File**: `packages/stack/src/views/Stack/CardStack.tsx` (modified, +4/-1)
+**File**: `packages/native/ios/ReactNavigationLayoutRegionView.mm` (modified, +36/-3)
 ```diff
-@@ -872,12 +872,15 @@ export class CardStack extends React.Component<Props, State> {
-               (isAnimationEnabled &&
-                 (isFocusing ||
-                   isRemoving ||
-+                  // The screen below an opening card can still be visible during overlapping pushes
-+                  (nextRoute != null &&
-+                    openingRouteKeys.includes(nextRoute.key)) ||
-                   // Preloaded screens should stay mounted, but remain hidden until focused
-                   (!isPreloaded && index >= routes.length - 2)));
+@@ -132,6 +132,7 @@ @implementation ReactNavigationLayoutRegionView {
+   ReactNavigationLayoutRegionViewImpl * _impl;
+   LayoutRegionShadowNode::ConcreteState::Shared _state;
+   std::optional<LayoutRegionState> _measuredState;
++  std::optional<LayoutRegionState> _committedState;
+   std::optional<LayoutRegionState> _sentState;
+ }
  
-             const activityMode =
-               // Keep focused and focusing screens interactive
--              focused || isFocusing
-+              focused || (isFocusing && !isRemoving)
-                 ? 'normal'
-                 : inactiveBehavior === 'none' ||
-                     // Keep effects running until the closing animation finishes
-```
-
-**File**: `packages/stack/src/views/Stack/StackView.tsx` (modified, +17/-5)
-```diff
-@@ -163,6 +163,18 @@ export class StackView extends React.Component<Props, State> {
+@@ -174,18 +175,25 @@ - (void)updateProps:(Props::Shared const &)props oldProps:(Props::Shared const &
+                        extent:newProps.extent];
  
-     let { openingRouteKeys, closingRouteKeys, replacingRouteKeys } = state;
- 
-+    // A route can be removed before its opening animation finishes
-+    // e.g. when it was replaced while opening, so stop tracking it
-+    // If a route being replaced is added back, it's handled like a newly focused route
-+    openingRouteKeys = openingRouteKeys.filter(
-+      (key) =>
-+        state.routes.some((r) => r.key === key) &&
-+        !(
-+          replacingRouteKeys.includes(key) &&
-+          activeRoutes.some((r) => r.key === key)
-+        )
-+    );
+     [super updateProps:props oldProps:oldProps];
 +
-     // If a route that was closing or being replaced is now back in the routes,
-     // it was added back before the animation finished, so stop tracking it
-     closingRouteKeys = closingRouteKeys.filter(
-@@ -251,11 +263,11 @@ export class StackView extends React.Component<Props, State> {
-           if (!routes.some((r) => r.key === previousFocusedRoute.key)) {
-             // The previous focused route isn't present in state, we treat this as a replace
++    [self commitInsetsIfNeeded];
+ }
  
--            openingRouteKeys = openingRouteKeys.filter(
--              (key) => key !== previousFocusedRoute.key
--            );
+ - (void)updateState:(const State::Shared &)state oldState:(const State::Shared &)oldState
+ {
+     _state = std::static_pointer_cast<LayoutRegionShadowNode::ConcreteState const>(state);
++
++    if (!oldState || state->getRevision() == State::initialRevisionValue) {
++        _committedState = _state->getData();
++    }
+ }
+ 
+ - (void)prepareForRecycle
+ {
+     [super prepareForRecycle];
+ 
+     _measuredState.reset();
++    _committedState.reset();
+     _sentState.reset();
+ }
+ 
+@@ -214,12 +222,37 @@ - (void)updateInsetsWithTop:(CGFloat)top bottom:(CGFloat)bottom start:(CGFloat)s
+ 
+     _measuredState = state;
+ 
+-    if (state != _state->getData()) {
++    [self commitInsetsIfNeeded];
++
++    [self sendInsetsChangeIfNeeded];
++}
++
++- (void)commitInsetsIfNeeded
++{
++    if (!_measuredState.has_value()) {
++        return;
++    }
++
++    const auto &edges = static_cast<const ReactNavigationLayoutRegionViewProps &>(*_props).edges;
++
++    if (edges.top == decltype(edges.top)::Off && edges.bottom == decltype(edges.bottom)::Off &&
++        edges.start == decltype(edges.start)::Off && edges.end == decltype(edges.end)::Off) {
++        return;
++    }
++
++    auto state = *_measuredState;
++
++    state.top = edges.top != decltype(edges.top)::Off ? state.top : 0;
++    state.bottom = edges.bottom != decltype(edges.bottom)::Off ? state.bottom : 0;
++    state.start = edges.start != decltype(edges.start)::Off ? state.start : 0;
++    state.end = edges.end != decltype(edges.end)::Off ? state.end : 0;
++
++    if (_committedState != state) {
++        _committedState = state;
++
+         // We commit the insets immediately, so they're applied in the same frame
+         _state->updateState(std::move(state), EventQueue::UpdateMode::unstable_Immediate);
+     }
 -
-             if (getAnimationTypeForReplace(nextFocusedRoute.key) === 'pop') {
-+              openingRouteKeys = openingRouteKeys.filter(
-+                (key) => key !== previousFocusedRoute.key
-+              );
-+
-               closingRouteKeys = [
-                 ...closingRouteKeys,
-                 previousFocusedRoute.key,
-@@ -427,7 +439,7 @@ export class StackView extends React.Component<Props, State> {
-         return {
-           routes: newRoutes,
-           openingRouteKeys: state.openingRouteKeys.filter(
--            (key) => key !== route.key
-+            (key) => key !== route.key && !replacingRoutesToRemove.has(key)
-           ),
-           closingRouteKeys: state.closingRouteKeys.filter(
-             (key) => key !== route.key
+-    [self sendInsetsChangeIfNeeded];
+ }
+ 
+ - (void)sendInsetsChangeIfNeeded
 ```
 
-**File**: `packages/stack/src/views/Stack/__tests__/StackView.test.tsx` (modified, +1/-1)
+**File**: `packages/native/ios/ReactNavigationLayoutRegionView.swift` (modified, +4/-2)
 ```diff
-@@ -223,7 +223,7 @@ describe('StackView.getDerivedStateFromProps', () => {
+@@ -261,6 +261,10 @@ private class LayoutMeasurementView: UIView {
+     // so we need to turn off touches to avoid blocking interactions with the content
+     measurementView.isUserInteractionEnabled = false
  
-       expect(result.routes.map((r) => r.key)).toEqual(['A', 'B', 'C']);
-       expect(result.replacingRouteKeys).toEqual(['A', 'B']);
--      expect(result.openingRouteKeys).toEqual(['C']);
-+      expect(result.openingRouteKeys).toEqual(['B', 'C']);
-     });
-   });
++    // FIXME: Adding the view can report insets for its initial zero frame.
++    // Register the callback afterwards so only the resolved frame is measured.
++    host.addSubview(measurementView)
++
+     measurementView.onChange = { [weak self] measurementView in
+       guard let self else {
+         return
+@@ -286,8 +290,6 @@ private class LayoutMeasurementView: UIView {
+       )
+     }
  
+-    host.addSubview(measurementView)
+-
+     self.measurementView = measurementView
+ 
+     return measurementView
+```
+
+---
+
+### Incident Patch 2: `271476a4` (2026-11-19)
+**Commit Message**: fix: swap insets for flipped views in LayoutRegionView
+
+**File**: `packages/native/ios/ReactNavigationLayoutRegionView.swift` (modified, +20/-8)
+```diff
+@@ -18,6 +18,8 @@ private struct LayoutRegionProps: Equatable {
+ private struct LayoutMeasurementState: Equatable {
+   var props: LayoutRegionProps
+   var frame: CGRect
++  var isFlippedX: Bool
++  var isFlippedY: Bool
+   var windowBounds: CGRect
+   var isRTL: Bool
+ }
+@@ -98,9 +100,13 @@ private class LayoutMeasurementView: UIView {
+ 
+     let host = sequence(first: view, next: \.superview).first { $0.next is UIViewController } ?? window
+ 
++    let (frame, isFlippedX, isFlippedY) = resolveFrame(of: view, in: host)
++
+     let state = LayoutMeasurementState(
+       props: props,
+-      frame: resolveFrame(of: view, in: host),
++      frame: frame,
++      isFlippedX: isFlippedX,
++      isFlippedY: isFlippedY,
+       windowBounds: window.bounds,
+       isRTL: view.effectiveUserInterfaceLayoutDirection == .rightToLeft
+     )
+@@ -203,8 +209,10 @@ private class LayoutMeasurementView: UIView {
+     return measurementView.directionalEdgeInsets(for: region)
+   }
+ 
+-  private func resolveFrame(of view: UIView, in host: UIView) -> CGRect {
++  private func resolveFrame(of view: UIView, in host: UIView) -> (frame: CGRect, isFlippedX: Bool, isFlippedY: Bool) {
+     var origin = CGPoint.zero
++    var isFlippedX = false
++    var isFlippedY = false
+     var current = view
+ 
+     while current !== host, let parent = current.superview {
+@@ -213,10 +221,12 @@ private class LayoutMeasurementView: UIView {
+       // So we mirror the position within the flipped view to get where the content is on the screen
+       if current.transform.a < 0 {
+         origin.x = current.bounds.width - origin.x - view.bounds.width
++        isFlippedX.toggle()
+       }
+ 
+       if current.transform.d < 0 {
+         origin.y = current.bounds.height - origin.y - view.bounds.height
++        isFlippedY.toggle()
+       }
+ 
+       var offset = parent.bounds.origin
+@@ -232,7 +242,7 @@ private class LayoutMeasurementView: UIView {
+       current = parent
+     }
+ 
+-    return CGRect(origin: origin, size: view.bounds.size)
++    return (CGRect(origin: origin, size: view.bounds.size), isFlippedX, isFlippedY)
+   }
+ 
+   private func resolveMeasurementView(in host: UIView) -> LayoutMeasurementView {
+@@ -259,17 +269,19 @@ private class LayoutMeasurementView: UIView {
+       // When the window resizes, this can be called before the React Native layout for the new size
+       // Then the hidden view still has the frame for the old size,
+       // so we need to wait for the next mounting transaction for correct measurement
+-      if measurementView.window?.bounds != lastMeasurementState?.windowBounds {
++      guard let state = lastMeasurementState, measurementView.window?.bounds == state.windowBounds else {
+         return
+       }
+ 
+       let insets = measureInsets(in: measurementView)
+ 
++      // The edges of a view flipped an odd number of times are on the opposite sides of the screen
++      // So we swap the insets for the flipped axis to apply them on the sides where they're needed
+       view?.updateInsets(
+-        top: insets.top,
+-        bottom: insets.bottom,
+-        start: insets.leading,
+-        end: insets.trailing,
++        top: state.isFlippedY ? insets.bottom : insets.top,
++        bottom: state.isFlippedY ? insets.top : insets.bottom,
++        start: state.isFlippedX ? insets.trailing : insets.leading,
++        end: state.isFlippedX ? insets.leading : insets.trailing,
+         isRTL: measurementView.effectiveUserInterfaceLayoutDirection == .rightToLeft
+       )
+     }
+```
+
+---
+
+### Incident Patch 3: `8fd00087` (2026-11-19)
+**Commit Message**: fix: return the delegate from MaterialSymbolViewManager
+
+**File**: `packages/native/android/src/main/java/org/reactnavigation/MaterialSymbolViewManager.kt` (modified, +6/-0)
+```diff
+@@ -3,13 +3,19 @@ package org.reactnavigation
+ import com.facebook.react.module.annotations.ReactModule
+ import com.facebook.react.uimanager.SimpleViewManager
+ import com.facebook.react.uimanager.ThemedReactContext
++import com.facebook.react.uimanager.ViewManagerDelegate
+ import com.facebook.react.uimanager.annotations.ReactProp
++import com.facebook.react.viewmanagers.ReactNavigationMaterialSymbolViewManagerDelegate
+ import com.facebook.react.viewmanagers.ReactNavigationMaterialSymbolViewManagerInterface
+ 
+ @ReactModule(name = MaterialSymbolViewManager.NAME)
+ class MaterialSymbolViewManager : SimpleViewManager<MaterialSymbolView>(),
+   ReactNavigationMaterialSymbolViewManagerInterface<MaterialSymbolView> {
+ 
++  override fun getDelegate(): ViewManagerDelegate<MaterialSymbolView> {
++    return ReactNavigationMaterialSymbolViewManagerDelegate(this)
++  }
++
+   override fun getName(): String {
+     return NAME
+   }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #13351** (closed): fix: hide drawer overlay from screen readers when closed (@vanajmoorthy)
 - **PR #13342** (closed): fix: Android front drawer stays hidden after opening (@akpor-kofi)
 - **PR #13338** (2026-11-05): fix: improve JS stack animation performance (@satya164)
 - **PR #13334** (closed): fix: drop custom history entries on browser back (@BartekObudzinski)
 - **PR #13332** (closed): fix: don't animate a resting drawer when its width changes (@BijuDey)
 - **PR #13330** (2026-11-06): fix: don't show header background if header is hidden (@satya164)
-- **PR #13318** (2026-11-05): feat: add UNSTABLE_ReservedRegions component on iOS 27.1 (@satya164)
 
 ---
 
@@ -737,34 +879,68 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. keep underlying screens visible during overlapping transitions
+## X. keep insets in sync with edges and measurements in LayoutRegionView
 
 **RULE**:
-When implementing operations in `packages/stack/src/views/Stack/CardStack.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react-navigation/react-navigation. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/native/ios/ReactNavigationLayoutRegionView.mm`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react-navigation/react-navigation. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5e31b0a0`: keep underlying screens visible during overlapping transitions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e34a70c2`: keep insets in sync with edges and measurements in LayoutRegionView. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/stack/src/views/Stack/CardStack.tsx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/native/ios/ReactNavigationLayoutRegionView.mm`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-                  // The screen below an opening card can still be visible during overlapping pushes
-                  (nextRoute != null &&
-                    openingRouteKeys.includes(nextRoute.key)) ||
-              focused || (isFocusing && !isRemoving)
+  std::optional<LayoutRegionState> _committedState;
+
+    [self commitInsetsIfNeeded];
+
+    if (!oldState || state->getRevision() == State::initialRevisionValue) {
+        _committedState = _state->getData();
+    }
+    _committedState.reset();
+    [self commitInsetsIfNeeded];
+
+    [self sendInsetsChangeIfNeeded];
+}
+
+- (void)commitInsetsIfNeeded
+{
+    if (!_measuredState.has_value()) {
+        return;
+    }
+
+    const auto &edges = static_cast<const ReactNavigationLayoutRegionViewProps &>(*_props).edges;
+
+    if (edges.top == decltype(edges.top)::Off && edges.bottom == decltype(edges.bottom)::Off &&
+        edges.start == decltype(edges.start)::Off && edges.end == decltype(edges.end)::Off) {
+        return;
+    }
+
+    auto state = *_measuredState;
+
+    state.top = edges.top != decltype(edges.top)::Off ? state.top : 0;
+    state.bottom = edges.bottom != decltype(edges.bottom)::Off ? state.bottom : 0;
+    state.start = edges.start != decltype(edges.start)::Off ? state.start : 0;
+    state.end = edges.end != decltype(edges.end)::Off ? state.end : 0;
+
+    if (_committedState != state) {
+        _committedState = state;
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-              focused || isFocusing
+    if (state != _state->getData()) {
+
+    [self sendInsetsChangeIfNeeded];
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5e31b0a0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e34a70c2` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

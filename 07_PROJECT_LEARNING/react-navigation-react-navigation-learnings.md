@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/react-navigation-react-navigation-learnings.md`  
 > **Source**: github ([https://github.com/react-navigation/react-navigation](https://github.com/react-navigation/react-navigation))  
-> **Source Version**: `3820f31f`  
+> **Source Version**: `ca036e81`  
 > **License**: PERMISSIVE_OPEN_SOURCE  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T11:40:38.107Z  
+> **Timestamp**: 2026-11-21T15:31:22.138Z  
 > **Learning ID**: `learn-github-react-navigation-react-navigation`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/react-navigation-react-navigation-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/react-navigation/react-navigation](https://github.com/react-navigation/react-navigation))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T11:40:38.102Z  
+> **Harvest Timestamp**: 2026-11-21T15:31:22.134Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Routing and navigation for React Native and Web apps
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 24527 stars
+- **Stars / Engagement**: 24529 stars
 
 ---
 
@@ -61,22 +61,22 @@ export const BottomTabAnimationContext = React.createContext<
 
 ```
 
-### Core Architecture Module: `packages/bottom-tabs/src/utils/BottomTabBarHeightCallbackContext.tsx`
+### Core Architecture Module: `packages/bottom-tabs/src/utils/TabBarLayoutCallbackContext.tsx`
 ```
 import * as React from 'react';
 
-export const BottomTabBarHeightCallbackContext = React.createContext<
-  ((height: number) => void) | undefined
+export const TabBarLayoutCallbackContext = React.createContext<
+  ((layout: { width: number; height: number }) => void) | undefined
 >(undefined);
 
 ```
 
-### Core Architecture Module: `packages/bottom-tabs/src/utils/BottomTabBarHeightContext.tsx`
+### Core Architecture Module: `packages/bottom-tabs/src/utils/TabBarLayoutContext.tsx`
 ```
 import * as React from 'react';
 
-export const BottomTabBarHeightContext = React.createContext<
-  number | undefined
+export const TabBarLayoutContext = React.createContext<
+  { width: number; height: number } | undefined
 >(undefined);
 
 ```
@@ -107,46 +107,6 @@ export function useAnimatedHashMap({ routes, index }: NavigationState) {
   });
 
   return refs.current;
-}
-
-```
-
-### Core Architecture Module: `packages/bottom-tabs/src/utils/useBottomTabAnimation.tsx`
-```
-import * as React from 'react';
-
-import { BottomTabAnimationContext } from './BottomTabAnimationContext';
-
-export function useBottomTabAnimation() {
-  const animation = React.use(BottomTabAnimationContext);
-
-  if (animation === undefined) {
-    throw new Error(
-      "Couldn't find values for tab animation. Are you inside a screen in a Bottom Tab navigator?"
-    );
-  }
-
-  return animation;
-}
-
-```
-
-### Core Architecture Module: `packages/bottom-tabs/src/utils/useBottomTabBarHeight.tsx`
-```
-import * as React from 'react';
-
-import { BottomTabBarHeightContext } from './BottomTabBarHeightContext';
-
-export function useBottomTabBarHeight() {
-  const height = React.use(BottomTabBarHeightContext);
-
-  if (height === undefined) {
-    throw new Error(
-      "Couldn't find the bottom tab bar height. Are you inside a screen in Bottom Tab Navigator?"
-    );
-  }
-
-  return height;
 }
 
 ```
@@ -183,6 +143,46 @@ export function useIsKeyboardShown() {
   }, []);
 
   return isKeyboardShown;
+}
+
+```
+
+### Core Architecture Module: `packages/bottom-tabs/src/utils/useTabAnimation.tsx`
+```
+import * as React from 'react';
+
+import { BottomTabAnimationContext } from './BottomTabAnimationContext';
+
+export function useTabAnimation() {
+  const animation = React.use(BottomTabAnimationContext);
+
+  if (animation === undefined) {
+    throw new Error(
+      "Couldn't find values for tab animation. Are you inside a screen in a Bottom Tab navigator?"
+    );
+  }
+
+  return animation;
+}
+
+```
+
+### Core Architecture Module: `packages/bottom-tabs/src/utils/useTabBarHeight.tsx`
+```
+import * as React from 'react';
+
+import { TabBarLayoutContext } from './TabBarLayoutContext';
+
+export function useTabBarHeight() {
+  const layout = React.use(TabBarLayoutContext);
+
+  if (layout === undefined) {
+    throw new Error(
+      "Couldn't find the bottom tab bar height. Are you inside a screen in Bottom Tab Navigator?"
+    );
+  }
+
+  return layout.height;
 }
 
 ```
@@ -598,519 +598,240 @@ export function BaseNavigationContainer<ParamList extends {} = RootParamList>({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cbd71f9b` (2026-11-13)
-**Commit Message**: fix: restore focused input after going back in stack
+### Incident Patch 1: `e34a70c2` (2026-11-19)
+**Commit Message**: fix: keep insets in sync with edges and measurements in LayoutRegionView
 
-fixes #10706
-
-**File**: `packages/stack/src/utils/__tests__/useKeyboardManager.test.tsx` (modified, +689/-161)
+**File**: `packages/native/ios/ReactNavigationLayoutRegionView.mm` (modified, +36/-3)
 ```diff
-@@ -1,223 +1,751 @@
--import { describe, expect, jest, test } from '@jest/globals';
--import { act, renderHook } from '@testing-library/react-native';
--import type { RefObject } from 'react';
-+import { afterEach, expect, jest, test } from '@jest/globals';
-+import { act, render, renderHook } from '@testing-library/react-native';
-+import { Activity, createRef, type RefObject } from 'react';
- import {
-   type HostInstance,
-   Keyboard,
-   type KeyboardEvent,
-   type KeyboardEventName,
-+  Platform,
-   TextInput,
- } from 'react-native';
+@@ -132,6 +132,7 @@ @implementation ReactNavigationLayoutRegionView {
+   ReactNavigationLayoutRegionViewImpl * _impl;
+   LayoutRegionShadowNode::ConcreteState::Shared _state;
+   std::optional<LayoutRegionState> _measuredState;
++  std::optional<LayoutRegionState> _committedState;
+   std::optional<LayoutRegionState> _sentState;
+ }
  
- import { useKeyboardManager } from '../useKeyboardManager';
+@@ -174,18 +175,25 @@ - (void)updateProps:(Props::Shared const &)props oldProps:(Props::Shared const &
+                        extent:newProps.extent];
  
- jest.useFakeTimers();
- 
--const contentRef = {
--  current: null,
--} satisfies RefObject<HostInstance | null>;
-+afterEach(() => {
-+  jest.restoreAllMocks();
-+});
- 
- type Props = {
-+  active: boolean;
-   enabled: boolean;
-   focused: boolean;
-   contentRef: RefObject<HostInstance | null>;
- };
- 
--describe('useKeyboardManager', () => {
--  describe('onPageChangeConfirm', () => {
--    test('calls onPageChangeCancel when closing is false', async () => {
--      const { result } = await renderHook(
--        (props: Props) => useKeyboardManager(props),
--        { initialProps: { enabled: true, focused: true, contentRef } }
--      );
--
--      const blurMock = jest.fn();
--      const input = { blur: blurMock } as any;
--
--      jest
--        .spyOn(TextInput.State, 'currentlyFocusedInput')
--        .mockReturnValue(input);
--
--      await act(() => result.current.onPageChangeStart());
--      await act(() =>
--        result.current.onPageChangeConfirm({
--          gesture: false,
--          active: true,
--          closing: false,
--        })
--      );
--
--      expect(blurMock).toHaveBeenCalledTimes(1);
--    });
-+test('focuses input again when confirming an opening transition', async () => {
-+  const contentRef = createRef<HostInstance>();
+     [super updateProps:props oldProps:oldProps];
 +
-+  const { result } = await renderHook(
-+    (props: Props) => useKeyboardManager(props),
-+    {
-+      initialProps: {
-+        active: true,
-+        enabled: true,
-+        focused: true,
-+        contentRef,
-+      },
++    [self commitInsetsIfNeeded];
+ }
+ 
+ - (void)updateState:(const State::Shared &)state oldState:(const State::Shared &)oldState
+ {
+     _state = std::static_pointer_cast<LayoutRegionShadowNode::ConcreteState const>(state);
++
++    if (!oldState || state->getRevision() == State::initialRevisionValue) {
++        _committedState = _state->getData();
 +    }
-+  );
+ }
+ 
+ - (void)prepareForRecycle
+ {
+     [super prepareForRecycle];
+ 
+     _measuredState.reset();
++    _committedState.reset();
+     _sentState.reset();
+ }
+ 
+@@ -214,12 +222,37 @@ - (void)updateInsetsWithTop:(CGFloat)top bottom:(CGFloat)bottom start:(CGFloat)s
+ 
+     _measuredState = state;
+ 
+-    if (state != _state->getData()) {
++    [self commitInsetsIfNeeded];
 +
-+  const focusMock = jest.fn();
-+  const input = { blur: jest.fn(), focus: focusMock } as any;
++    [self sendInsetsChangeIfNeeded];
++}
 +
-+  jest.spyOn(TextInput.State, 'currentlyFocusedInput').mockReturnValue(input);
-+
-+  await act(() => result.current.onPageChangeStart());
-+  await act(() =>
-+    result.current.onPageChangeConfirm({
-+      gesture: false,
-+      active: true,
-+      closing: false,
-+    })
-+  );
-+
-+  await act(() => jest.runAllTimers());
-+
-+  expect(focusMock).toHaveBeenCalledTimes(1);
-+});
- 
--    test('dismisses keyboard when closing without gesture', async () => {
--      const dismissSpy = jest.spyOn(Keyboard, 'dismiss');
-+test('dismisses keyboard when closing without gesture', async () => {
-+  const contentRef = createRef<HostInstance>();
-+
-+  const dismissSpy = jest.spyOn(Keyboard, 'dismiss');
-+
-+  const { result } = await renderHook(
-+    (props: Props) => useKeyboardManager(props),
-+    {
-+      initialProps: {
-+        active: true,
-+        enabled: true,
-+        focused: true,
-+        contentRef,
-+      },
-+    }
-+  );
-+
-+  await act(() =>
-+    result.current.onPageChangeConfirm({
-+      gesture: false,
-+      active: false,
-+      closing: true,
-+    })
-+  );
-+
-+  expect(dismissSpy).toHaveBeenCalled();
-+});
- 
--      const { result } = await renderHook(
--        (props: Props) => useKeyboardManager(props),
--        { initialProps: { enabled: true, focused: true, contentRef } }
--      );
-+test('blurs previously focused input when closing with gesture and active', async () => {
-+  const contentRef = createRef<HostInstance>();
- 
--      await act(() =>
--        result.current.onPageChangeConfirm({
--          gesture: false,
--          active: false,
--          closing: true,
--        })
--      );
-+  const { result } = await renderHook(
-+    (props: Props) => useKeyboardManager(props),
-+    {
-+      initialProps: {
-+        active: true,
-+        enabled: true,
-+        focused: true,
-+        contentRef,
-+      },
-+    }
-+  );
- 
--      expect(dismissSpy).toHaveBeenCalled();
-+  const blurMock = jest.fn();
-+  const input = { blur: blurMock } as any;
- 
--      dismissSpy.mockRestore();
--    });
-+  jest.spyOn(TextInput.State, 'currentlyFocusedInput').mockReturnValue(input);
- 
--    test('blurs previously focused input when closing with gesture and active', async () => {
--      const { result } = await renderHook(
--        (props: Props) => useKeyboardManager(props),
--        { initialProps: { enabled: true, focused: true, contentRef } }
--      );
-+  await act(() => result.current.onPageChangeStart());
- 
--      const blurMock = jest.fn();
--      const input = { blur: blurMock } as any;
-+  blurMock.mockClear();
- 
--      jest
--        .spyOn(TextInput.State, 'currentlyFocusedInput')
--        .mockReturnValue(input);
-+  await act(() =>
-+    result.current.onPageChangeConfirm({
-+      gesture: true,
-+      active: true,
-+      closing: true,
-+    })
-+  );
- 
--      await act(() => result.c
-```
-
-**File**: `packages/stack/src/utils/useKeyboardManager.tsx` (modified, +72/-5)
-```diff
-@@ -1,18 +1,20 @@
- import * as React from 'react';
--import { type HostInstance, Keyboard, TextInput } from 'react-native';
-+import { type HostInstance, Keyboard, Platform, TextInput } from 'react-native';
- 
- export function useKeyboardManager({
-+  active,
-   enabled,
-   focused,
-   contentRef,
- }: {
-+  active: boolean;
-   enabled: boolean;
-   focused: boolean;
-   contentRef: React.RefObject<HostInstance | null>;
- }) {
--  // Numeric id of the previously focused text input
--  // When a gesture didn't change the tab, we can restore the focused input with this
-   const previouslyFocusedTextInputRef = React.useRef<HostInstance>(undefined);
-+  const unfocusedScreenTextInputRef = React.useRef<HostInstance>(undefined);
-+  const closingGestureRef = React.useRef(false);
-   const startTimestampRef = React.useRef<number>(0);
-   const keyboardTimeoutRef =
-     React.useRef<ReturnType<typeof setTimeout>>(undefined);
-@@ -33,6 +35,12 @@ export function useKeyboardManager({
- 
-     clearKeyboardTimeout();
- 
-+    // On Android, back button hides keyboard without blurring input,
-+    // so we need to check if the keyboard is actually visible.
-+    if (Platform.OS === 'android' && !Keyboard.isVisible()) {
-+      return;
++- (void)commitInsetsIfNeeded
++{
++    if (!_measuredState.has_value()) {
++        return;
 +    }
 +
-     const input = TextInput.State.currentlyFocusedInput();
- 
-     // When a page change begins, blur the currently focused input
-@@ -90,6 +98,14 @@ export function useKeyboardManager({
-       }
- 
-       if (!closing) {
-+        // If the screen was reopened without losing focus,
-+        // e.g. the swipe was blocked by preventing removal
-+        // We should clear the saved input to avoid refocusing it incorrectly later.
-+        if (closingGestureRef.current) {
-+          unfocusedScreenTextInputRef.current = undefined;
-+          closingGestureRef.current = false;
-+        }
++    const auto &edges = static_cast<const ReactNavigationLayoutRegionViewProps &>(*_props).edges;
 +
-         onPageChangeCancel();
-         return;
-       }
-@@ -109,6 +125,15 @@ export function useKeyboardManager({
-         input?.blur();
-       }
- 
-+      // If a closing swipe already blurred the input,
-+      // we can't get it using currentlyFocusedInput() anymore.
-+      // So we need to use the input that was saved before the blur.
-+      if (gesture) {
-+        unfocusedScreenTextInputRef.current =
-+          previouslyFocusedTextInputRef.current;
-+        closingGestureRef.current = true;
-+      }
++    if (edges.top == decltype(edges.top)::Off && edges.bottom == decltype(edges.bottom)::Off &&
++        edges.start == decltype(edges.start)::Off && edges.end == decltype(edges.end)::Off) {
++        return;
++    }
 +
-       // Cleanup the ID on successful page change
-       previouslyFocusedTextInputRef.current = undefined;
-     },
-@@ -119,10 +144,48 @@ export function useKeyboardManager({
-   // This handles the "navigate forward" case so we don't dismiss the new screen's
-   // auto-focused input from handleTransition.
-   React.useLayoutEffect(() => {
--    if (enabledRef.current && !focused) {
-+    if (
-+      enabledRef.current &&
-+      // Check the previous focus value so we only dismiss when focus is lost,
-+      // and not if the effect re-runs (e.g. because of StrictMode, Activity etc.)
-+      focusedRef.current &&
-+      !focused
-+    ) {
-+      closingGestureRef.current = false;
++    auto state = *_measuredState;
 +
-+      if (
-+        Platform.OS !== 'web' &&
-+        // On Android, back button hides keyboard without blurring input,
-+        // so we need to check if the keyboard is actually visible.
-+        (Platform.OS !== 'android' || Keyboard.isVisible())
-+      ) {
-+        const input = TextInput.State.currentlyFocusedInput();
++    state.top = edges.top != decltype(edges.top)::Off ? state.top : 0;
++    state.bottom = edges.bottom != decltype(edges.bottom)::Off ? state.bottom : 0;
++    state.start = edges.start != decltype(edges.start)::Off ? state.start : 0;
++    state.end = edges.end != decltype(edges.end)::Off ? state.end : 0;
 +
-+        if (input && contentRef.current?.contains(input)) {
-+          unfocusedScreenTextInputRef.current = input;
-+        }
-+      }
++    if (_committedState != state) {
++        _committedState = state;
 +
-       Keyboard.dismiss();
+         // We commit the insets immediately, so they're applied in the same frame
+         _state->updateState(std::move(state), EventQueue::UpdateMode::unstable_Immediate);
      }
--  }, [focused]);
-+  }, [contentRef, focused]);
-+
-+  React.useEffect(() => {
-+    if (Platform.OS !== 'web' && focused && active) {
-+      const input = unfocusedScreenTextInputRef.current;
-+
-+      if (
-+        enabledRef.current &&
-+        input &&
-+        contentRef.current?.contains(input) &&
-+        !TextInput.State.currentlyFocusedInput()
-+      ) {
-+        input.focus();
-+      }
-+
-+      unfocusedScreenTextInputRef.current = undefined;
-+    }
-+  }, [active, contentRef, focused]);
+-
+-    [self sendInsetsChangeIfNeeded];
+ }
  
-   // Dismiss keyboard if native focus is restored to an input in an unfocused screen.
-   // This can happen after dismissing a native alert when `autoFocus` is used on iOS.
-@@ -150,6 +213,10 @@ export function useKeyboardManager({
-   }, [contentRef]);
- 
-   React.useLayoutEffect(() => {
-+    if (!enabled) {
-+      unfocusedScreenTextInputRef.current = undefined;
-+    }
-+
-     enabledRef.current = enabled;
-     focusedRef.current = focused;
-   });
+ - (void)sendInsetsChangeIfNeeded
 ```
 
-**File**: `packages/stack/src/views/Stack/CardContainer.tsx` (modified, +1/-0)
+**File**: `packages/native/ios/ReactNavigationLayoutRegionView.swift` (modified, +4/-2)
 ```diff
-@@ -105,6 +105,7 @@ function CardContainerInner({
+@@ -261,6 +261,10 @@ private class LayoutMeasurementView: UIView {
+     // so we need to turn off touches to avoid blocking interactions with the content
+     measurementView.isUserInteractionEnabled = false
  
-   const { onPageChangeStart, onPageChangeCancel, onPageChangeConfirm } =
-     useKeyboardManager({
-+      active,
-       enabled,
-       focused,
-       contentRef,
++    // FIXME: Adding the view can report insets for its initial zero frame.
++    // Register the callback afterwards so only the resolved frame is measured.
++    host.addSubview(measurementView)
++
+     measurementView.onChange = { [weak self] measurementView in
+       guard let self else {
+         return
+@@ -286,8 +290,6 @@ private class LayoutMeasurementView: UIView {
+       )
+     }
+ 
+-    host.addSubview(measurementView)
+-
+     self.measurementView = measurementView
+ 
+     return measurementView
 ```
 
 ---
 
-### Incident Patch 2: `feb7da53` (2026-11-13)
-**Commit Message**: fix: ensure interpolator checks don't break due to minification
+### Incident Patch 2: `271476a4` (2026-11-19)
+**Commit Message**: fix: swap insets for flipped views in LayoutRegionView
 
-**File**: `packages/stack/src/views/Stack/CardStack.tsx` (modified, +19/-15)
+**File**: `packages/native/ios/ReactNavigationLayoutRegionView.swift` (modified, +20/-8)
 ```diff
-@@ -123,7 +123,11 @@ const NAMED_TRANSITIONS_PRESETS = {
-   slide_from_bottom: ModalSlideFromBottomIOS,
- } as const satisfies Record<StackAnimationName, TransitionPreset>;
+@@ -18,6 +18,8 @@ private struct LayoutRegionProps: Equatable {
+ private struct LayoutMeasurementState: Equatable {
+   var props: LayoutRegionProps
+   var frame: CGRect
++  var isFlippedX: Bool
++  var isFlippedY: Bool
+   var windowBounds: CGRect
+   var isRTL: Bool
+ }
+@@ -98,9 +100,13 @@ private class LayoutMeasurementView: UIView {
  
--const GESTURE_DISABLED_INTERPOLATORS = [
-+const MODAL_PRESENTATION_INTERPOLATORS = {
-+  forModalPresentationIOS,
-+};
+     let host = sequence(first: view, next: \.superview).first { $0.next is UIViewController } ?? window
+ 
++    let (frame, isFlippedX, isFlippedY) = resolveFrame(of: view, in: host)
 +
-+const GESTURE_DISABLED_INTERPOLATORS = {
-   forCrossDissolveIOS,
-   forDialogAndroid,
-   forFadeFromBottomAndroid,
-@@ -132,12 +136,12 @@ const GESTURE_DISABLED_INTERPOLATORS = [
-   forRevealFromBottomAndroid,
-   forScaleFromCenterAndroid,
-   forVerticalIOS,
--];
-+};
+     let state = LayoutMeasurementState(
+       props: props,
+-      frame: resolveFrame(of: view, in: host),
++      frame: frame,
++      isFlippedX: isFlippedX,
++      isFlippedY: isFlippedY,
+       windowBounds: window.bounds,
+       isRTL: view.effectiveUserInterfaceLayoutDirection == .rightToLeft
+     )
+@@ -203,8 +209,10 @@ private class LayoutMeasurementView: UIView {
+     return measurementView.directionalEdgeInsets(for: region)
+   }
  
--const SCREEN_HEADER_INTERPOLATORS = [
-+const SCREEN_HEADER_INTERPOLATORS = {
-   ...GESTURE_DISABLED_INTERPOLATORS,
-   forBottomSheetAndroid,
--];
-+};
+-  private func resolveFrame(of view: UIView, in host: UIView) -> CGRect {
++  private func resolveFrame(of view: UIView, in host: UIView) -> (frame: CGRect, isFlippedX: Bool, isFlippedY: Bool) {
+     var origin = CGPoint.zero
++    var isFlippedX = false
++    var isFlippedY = false
+     var current = view
  
- const HIDDEN_HEADER_HEIGHT = { measured: false, value: 0 };
+     while current !== host, let parent = current.superview {
+@@ -213,10 +221,12 @@ private class LayoutMeasurementView: UIView {
+       // So we mirror the position within the flipped view to get where the content is on the screen
+       if current.transform.a < 0 {
+         origin.x = current.bounds.width - origin.x - view.bounds.width
++        isFlippedX.toggle()
+       }
  
-@@ -169,27 +173,27 @@ const getInterpolationIndex = (scenes: Scene[], index: number) => {
+       if current.transform.d < 0 {
+         origin.y = current.bounds.height - origin.y - view.bounds.height
++        isFlippedY.toggle()
+       }
  
- const getIsModalPresentation = (
-   cardStyleInterpolator: StackCardStyleInterpolator
--) => {
--  return (
--    cardStyleInterpolator === forModalPresentationIOS ||
--    cardStyleInterpolator.name === forModalPresentationIOS.name
-+) =>
-+  Object.entries(MODAL_PRESENTATION_INTERPOLATORS).some(
-+    ([name, interpolator]) =>
-+      cardStyleInterpolator === interpolator ||
-+      cardStyleInterpolator.name === name
-   );
--};
+       var offset = parent.bounds.origin
+@@ -232,7 +242,7 @@ private class LayoutMeasurementView: UIView {
+       current = parent
+     }
  
- const getIsGestureEnabledByDefault = (
-   cardStyleInterpolator: StackCardStyleInterpolator
- ) =>
--  !GESTURE_DISABLED_INTERPOLATORS.some(
--    (interpolator) =>
-+  !Object.entries(GESTURE_DISABLED_INTERPOLATORS).some(
-+    ([name, interpolator]) =>
-       cardStyleInterpolator === interpolator ||
--      cardStyleInterpolator.name === interpolator.name
-+      cardStyleInterpolator.name === name
-   );
+-    return CGRect(origin: origin, size: view.bounds.size)
++    return (CGRect(origin: origin, size: view.bounds.size), isFlippedX, isFlippedY)
+   }
  
- const getIsScreenHeader = (cardStyleInterpolator: StackCardStyleInterpolator) =>
--  SCREEN_HEADER_INTERPOLATORS.some(
--    (interpolator) =>
-+  Object.entries(SCREEN_HEADER_INTERPOLATORS).some(
-+    ([name, interpolator]) =>
-       cardStyleInterpolator === interpolator ||
--      cardStyleInterpolator.name === interpolator.name
-+      cardStyleInterpolator.name === name
-   );
+   private func resolveMeasurementView(in host: UIView) -> LayoutMeasurementView {
+@@ -259,17 +269,19 @@ private class LayoutMeasurementView: UIView {
+       // When the window resizes, this can be called before the React Native layout for the new size
+       // Then the hidden view still has the frame for the old size,
+       // so we need to wait for the next mounting transaction for correct measurement
+-      if measurementView.window?.bounds != lastMeasurementState?.windowBounds {
++      guard let state = lastMeasurementState, measurementView.window?.bounds == state.windowBounds else {
+         return
+       }
  
- const getIsInModalPresentation = (
+       let insets = measureInsets(in: measurementView)
+ 
++      // The edges of a view flipped an odd number of times are on the opposite sides of the screen
++      // So we swap the insets for the flipped axis to apply them on the sides where they're needed
+       view?.updateInsets(
+-        top: insets.top,
+-        bottom: insets.bottom,
+-        start: insets.leading,
+-        end: insets.trailing,
++        top: state.isFlippedY ? insets.bottom : insets.top,
++        bottom: state.isFlippedY ? insets.top : insets.bottom,
++        start: state.isFlippedX ? insets.trailing : insets.leading,
++        end: state.isFlippedX ? insets.leading : insets.trailing,
+         isRTL: measurementView.effectiveUserInterfaceLayoutDirection == .rightToLeft
+       )
+     }
 ```
 
 ---
 
-### Incident Patch 3: `5203da6e` (2026-11-13)
-**Commit Message**: fix: don't render native header items with a custom header
+### Incident Patch 3: `8fd00087` (2026-11-19)
+**Commit Message**: fix: return the delegate from MaterialSymbolViewManager
 
-fixes #12061
-
-**File**: `packages/native-stack/src/__tests__/index.test.tsx` (modified, +46/-1)
+**File**: `packages/native/android/src/main/java/org/reactnavigation/MaterialSymbolViewManager.kt` (modified, +6/-0)
 ```diff
-@@ -6,7 +6,7 @@ import {
-   jest,
-   test,
- } from '@jest/globals';
--import { useHeaderHeight } from '@react-navigation/elements';
-+import { getHeaderTitle, useHeaderHeight } from '@react-navigation/elements';
- import {
-   CommonActions,
-   createNavigationContainerRef,
-@@ -356,6 +356,51 @@ test('renders a native-stack navigator with screens', async () => {
-   expect(isHiddenFromAccessibility(screen.getByText('Screen B'))).toBe(false);
- });
+@@ -3,13 +3,19 @@ package org.reactnavigation
+ import com.facebook.react.module.annotations.ReactModule
+ import com.facebook.react.uimanager.SimpleViewManager
+ import com.facebook.react.uimanager.ThemedReactContext
++import com.facebook.react.uimanager.ViewManagerDelegate
+ import com.facebook.react.uimanager.annotations.ReactProp
++import com.facebook.react.viewmanagers.ReactNavigationMaterialSymbolViewManagerDelegate
+ import com.facebook.react.viewmanagers.ReactNavigationMaterialSymbolViewManagerInterface
  
-+test('renders a custom header with left and right buttons', async () => {
-+  const Stack = createNativeStackNavigator<StackParamList>();
-+
-+  const user = userEvent.setup();
-+
-+  const onPressLeft = jest.fn();
-+  const onPressRight = jest.fn();
-+
-+  await render(
-+    <NavigationContainer>
-+      <Stack.Navigator>
-+        <Stack.Screen
-+          name="A"
-+          options={{
-+            header: ({ options, route, back }) => (
-+              <View>
-+                {options.headerLeft?.({ canGoBack: back != null })}
-+                <Text>{getHeaderTitle(options, route.name)}</Text>
-+                {options.headerRight?.({ canGoBack: back != null })}
-+              </View>
-+            ),
-+            headerTitle: 'Edit profile',
-+            headerLeft: () => <Button title="Cancel" onPress={onPressLeft} />,
-+            headerRight: () => <Button title="Save" onPress={onPressRight} />,
-+          }}
-+        >
-+          {() => <Text>Profile</Text>}
-+        </Stack.Screen>
-+      </Stack.Navigator>
-+    </NavigationContainer>
-+  );
-+
-+  expect(screen.getByText('Edit profile')).toBeOnTheScreen();
-+  expect(screen.getByText('Cancel')).toBeOnTheScreen();
-+  expect(screen.getByText('Save')).toBeOnTheScreen();
-+
-+  await user.press(screen.getByText('Cancel'));
-+
-+  expect(onPressLeft).toHaveBeenCalledTimes(1);
-+
-+  await user.press(screen.getByText('Save'));
-+
-+  expect(onPressRight).toHaveBeenCalledTimes(1);
-+});
-+
- test('inactiveBehavior="unmount" keeps screens with nested navigators mounted', async () => {
-   const Stack = createNativeStackNavigator<ParentStackParamList>();
-   const NestedStack = createNativeStackNavigator<ChildStackParamList>();
-```
-
-**File**: `packages/native-stack/src/views/useHeaderConfigProps.tsx` (modified, +2/-1)
-```diff
-@@ -207,6 +207,7 @@ const getMenuItem = (
- };
+ @ReactModule(name = MaterialSymbolViewManager.NAME)
+ class MaterialSymbolViewManager : SimpleViewManager<MaterialSymbolView>(),
+   ReactNavigationMaterialSymbolViewManagerInterface<MaterialSymbolView> {
  
- export function useHeaderConfigProps({
-+  header,
-   headerBackIcon,
-   headerBackButtonDisplayMode,
-   headerBackButtonMenuEnabled,
-@@ -576,7 +577,7 @@ export function useHeaderConfigProps({
-     disableBottomInsetApplication:
-       headerInsets?.bottom !== undefined ? !headerInsets.bottom : undefined,
-     translucent: translucent === true,
--    children,
-+    children: header === undefined ? children : null,
-     headerLeftBarButtonItems: processBarButtonItems(leftItems, colors, fonts),
-     headerRightBarButtonItems: processBarButtonItems(rightItems, colors, fonts),
-     experimental_userInterfaceStyle: dark ? 'dark' : 'light',
++  override fun getDelegate(): ViewManagerDelegate<MaterialSymbolView> {
++    return ReactNavigationMaterialSymbolViewManagerDelegate(this)
++  }
++
+   override fun getName(): String {
+     return NAME
+   }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #13351** (closed): fix: hide drawer overlay from screen readers when closed (@vanajmoorthy)
 - **PR #13342** (closed): fix: Android front drawer stays hidden after opening (@akpor-kofi)
 - **PR #13338** (2026-11-05): fix: improve JS stack animation performance (@satya164)
 - **PR #13334** (closed): fix: drop custom history entries on browser back (@BartekObudzinski)
 - **PR #13332** (closed): fix: don't animate a resting drawer when its width changes (@BijuDey)
 - **PR #13330** (2026-11-06): fix: don't show header background if header is hidden (@satya164)
-- **PR #13318** (2026-11-05): feat: add UNSTABLE_ReservedRegions component on iOS 27.1 (@satya164)
 
 ---
 
@@ -1130,104 +851,65 @@ fixes #12061
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. restore focused input after going back in stack
+## X. keep insets in sync with edges and measurements in LayoutRegionView
 
 **RULE**:
-When implementing operations in `packages/stack/src/utils/__tests__/useKeyboardManager.test.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react-navigation/react-navigation. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/native/ios/ReactNavigationLayoutRegionView.mm`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react-navigation/react-navigation. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cbd71f9b`: restore focused input after going back in stack. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e34a70c2`: keep insets in sync with edges and measurements in LayoutRegionView. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/stack/src/utils/__tests__/useKeyboardManager.test.tsx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/native/ios/ReactNavigationLayoutRegionView.mm`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-import { afterEach, expect, jest, test } from '@jest/globals';
-import { act, render, renderHook } from '@testing-library/react-native';
-import { Activity, createRef, type RefObject } from 'react';
-  Platform,
-afterEach(() => {
-  jest.restoreAllMocks();
-});
-  active: boolean;
-test('focuses input again when confirming an opening transition', async () => {
-  const contentRef = createRef<HostInstance>();
+  std::optional<LayoutRegionState> _committedState;
 
-  const { result } = await renderHook(
-    (props: Props) => useKeyboardManager(props),
-    {
-      initialProps: {
-        active: true,
-        enabled: true,
-        focused: true,
-        contentRef,
-      },
+    [self commitInsetsIfNeeded];
+
+    if (!oldState || state->getRevision() == State::initialRevisionValue) {
+        _committedState = _state->getData();
     }
-  );
+    _committedState.reset();
+    [self commitInsetsIfNeeded];
 
-  const focusMock = jest.fn();
-  const input = { blur: jest.fn(), focus: focusMock } as any;
+    [self sendInsetsChangeIfNeeded];
+}
 
-  jest.spyOn(TextInput.State, 'currentlyFocusedInput').mockReturnValue(input);
+- (void)commitInsetsIfNeeded
+{
+    if (!_measuredState.has_value()) {
+        return;
+    }
 
-  await act(() => result.current.onPageChangeStart());
-  await act(() =>
-    result.current.onPageChangeConfirm({
-      gesture: false,
-      active: true,
-      closing: false,
-    })
-  );
+    const auto &edges = static_cast<const ReactNavigationLayoutRegionViewProps &>(*_props).edges;
 
-  await act(() => jest.runAllTimers());
+    if (edges.top == decltype(edges.top)::Off && edges.bottom == decltype(edges.bottom)::Off &&
+        edges.start == decltype(edges.start)::Off && edges.end == decltype(edges.end)::Off) {
+        return;
+    }
 
-  expect(focusMock).toHaveBeenCalledTimes(1);
-});
-test('dismisses keyboard when closing without gesture', async () => {
-  const contentRef = createRef<HostInstance>
+    auto state = *_measuredState;
+
+    state.top = edges.top != decltype(edges.top)::Off ? state.top : 0;
+    state.bottom = edges.bottom != decltype(edges.bottom)::Off ? state.bottom : 0;
+    state.start = edges.start != decltype(edges.start)::Off ? state.start : 0;
+    state.end = edges.end != decltype(edges.end)::Off ? state.end : 0;
+
+    if (_committedState != state) {
+        _committedState = state;
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-import { describe, expect, jest, test } from '@jest/globals';
-import { act, renderHook } from '@testing-library/react-native';
-import type { RefObject } from 'react';
-const contentRef = {
-  current: null,
-} satisfies RefObject<HostInstance | null>;
-describe('useKeyboardManager', () => {
-  describe('onPageChangeConfirm', () => {
-    test('calls onPageChangeCancel when closing is false', async () => {
-      const { result } = await renderHook(
-        (props: Props) => useKeyboardManager(props),
-        { initialProps: { enabled: true, focused: true, contentRef } }
-      );
+    if (state != _state->getData()) {
 
-      const blurMock = jest.fn();
-      const input = { blur: blurMock } as any;
-
-      jest
-        .spyOn(TextInput.State, 'currentlyFocusedInput')
-        .mockReturnValue(input);
-
-      await act(() => result.current.onPageChangeStart());
-      await act(() =>
-        result.current.onPageChangeConfirm({
-          gesture: false,
-          active: true,
-          closing: false,
-        })
-      );
-
-      expect(blurMock).toHaveBeenCalledTimes(1);
-    });
-    test('dismisses keyboard when closing without gesture', async () => {
-      const dismissSpy = jest.spyOn(Keyboard, 'dismiss');
-      const { result } =
+    [self sendInsetsChangeIfNeeded];
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cbd71f9b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e34a70c2` are properly handled with clean fallback behavior.

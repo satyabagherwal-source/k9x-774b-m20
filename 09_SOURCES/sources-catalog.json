@@ -2733,10 +2733,10 @@
     "repository": "react-navigation/react-navigation",
     "platform": "github",
     "sourceUrl": "https://github.com/react-navigation/react-navigation",
-    "sourceVersion": "3820f31f",
+    "sourceVersion": "ca036e81",
     "license": "PERMISSIVE_OPEN_SOURCE",
-    "contentHash": "1b927e3d957e80155fd7f97e6b0cedd0fc89470b99cfaf1ffe6349c36990ffa9",
-    "lastHarvestedAt": "2026-11-17T11:40:38.993Z",
+    "contentHash": "16eb5f6dbee0360d3d8bd9dfec7a19257965a012c5c51993338dbeecd8bc88ef",
+    "lastHarvestedAt": "2026-11-21T15:31:23.072Z",
     "learningId": "learn-github-react-navigation-react-navigation"
   },
   "easegress-io-easegress": {
@@ -3073,10 +3073,10 @@
     "repository": "unhappychoice/gitlogue",
     "platform": "github",
     "sourceUrl": "https://github.com/unhappychoice/gitlogue",
-    "sourceVersion": "1f875b5b",
+    "sourceVersion": "8d02655f",
     "license": "ISC",
-    "contentHash": "4eff7a1010567610113737479fe9dbfc50099feb956a8b347240110b0867b76a",
-    "lastHarvestedAt": "2026-11-18T04:57:17.190Z",
+    "contentHash": "55c0a2a34d69eac2846ce19d56cefb8cd3fc48dd40e55add9fac74364365544f",
+    "lastHarvestedAt": "2026-11-21T15:31:17.716Z",
     "learningId": "learn-github-unhappychoice-gitlogue"
   },
   "faridsafi-react-native-gifted-chat": {
@@ -5623,10 +5623,10 @@
     "repository": "ytsaurus/ytsaurus",
     "platform": "github",
     "sourceUrl": "https://github.com/ytsaurus/ytsaurus",
-    "sourceVersion": "1b712cf0",
+    "sourceVersion": "847a2b36",
     "license": "Apache-2.0",
-    "contentHash": "a384e31d5b5e5cfad446e8f3cf93f1046c6f40bde43783491419cf4764b2e388",
-    "lastHarvestedAt": "2026-11-20T08:38:43.460Z",
+    "contentHash": "f1720c8b05d50df51968f166eaf4f55110432579a5c2cc5df0811d4efcfbaadb",
+    "lastHarvestedAt": "2026-11-21T15:31:35.696Z",
     "learningId": "learn-github-ytsaurus-ytsaurus"
   },
   "franken-ui-ui": {
@@ -11443,10 +11443,10 @@
     "repository": "fabio-rovai/open-ontologies",
     "platform": "github",
     "sourceUrl": "https://github.com/fabio-rovai/open-ontologies",
-    "sourceVersion": "17ef05b9",
+    "sourceVersion": "c2b64e1b",
     "license": "MIT",
-    "contentHash": "079cb7008f85d94f92e6e9c7d7e939281396da52bed046b0746b08d1c4afd9a2",
-    "lastHarvestedAt": "2026-11-20T11:30:49.164Z",
+    "contentHash": "d6e5f2e38511b789cd59c086387bbbea68394ef5b88eb44c8b39fb08f6da781f",
+    "lastHarvestedAt": "2026-11-21T15:31:25.371Z",
     "learningId": "learn-github-fabio-rovai-open-ontologies"
   },
   "hf-liquidai-lfm3-vl-2b": {

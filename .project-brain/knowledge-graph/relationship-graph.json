@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-21T12:38:41.416Z",
+  "updated_at": "2026-11-21T15:32:05.177Z",
   "statistics": {
-    "total_nodes": 445,
+    "total_nodes": 446,
     "total_edges": 192,
     "domain_distribution": {
       "D": 279,
       "M": 1,
-      "H": 71,
+      "H": 72,
       "J": 22,
       "K": 27,
       "L": 8,
@@ -9944,6 +9944,28 @@
       ],
       "created_at": "2026-11-21T12:38:41.416Z",
       "updated_at": "2026-11-21T12:38:41.416Z"
+    },
+    "DOM-H-1565C815": {
+      "id": "DOM-H-1565C815",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "keep insets in sync with edges and measurements in LayoutRegionView",
+      "summary": "Prevents defects observed in production commit `e34a70c2`: keep insets in sync with edges and measurements in LayoutRegionView. Unvalidated  -> When implementing operations in `packages/native/ios/ReactNavigationLayoutRegionView.mm`, engineers MUST enforce rigorous boundary validatio",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://react-navigation-react-navigation/react-navigation-react-navigation-learnings.md",
+        "source_version": "ca036e81",
+        "observed_at": "2026-11-21T15:31:22.138Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (react-navigation-react-navigation)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-21T15:32:05.177Z",
+      "updated_at": "2026-11-21T15:32:05.177Z"
     }
   },
   "edges": [

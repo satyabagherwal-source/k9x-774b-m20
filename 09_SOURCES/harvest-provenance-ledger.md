@@ -11856,3 +11856,8 @@ Every entry in this ledger must capture:
 | `learn-github-metalbear-co-mirrord` | `https://github.com/metalbear-co/mirrord` | `7f23826a` | Multi-dimensional audit evidence | 2026-11-21T15:17:38.945Z |
 | `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `06170caa` | Multi-dimensional audit evidence | 2026-11-21T15:17:45.792Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `6d77feaf` | Multi-dimensional audit evidence | 2026-11-21T15:17:53.155Z |
+| `learn-github-unhappychoice-gitlogue` | `https://github.com/unhappychoice/gitlogue` | `8d02655f` | Multi-dimensional audit evidence | 2026-11-21T15:31:17.716Z |
+| `learn-github-react-navigation-react-navigation` | `https://github.com/react-navigation/react-navigation` | `ca036e81` | Multi-dimensional audit evidence | 2026-11-21T15:31:23.072Z |
+| `learn-github-fabio-rovai-open-ontologies` | `https://github.com/fabio-rovai/open-ontologies` | `c2b64e1b` | Multi-dimensional audit evidence | 2026-11-21T15:31:25.371Z |
+| `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `847a2b36` | Multi-dimensional audit evidence | 2026-11-21T15:31:35.696Z |
+| `learn-dom-h-1565c815` | `project://react-navigation-react-navigation` | `ca036e81` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-navigation-react-navigation-learnings.md` | 2026-11-21T15:32:05.180Z |

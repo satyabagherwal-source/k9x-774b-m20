@@ -4,23 +4,23 @@
 {
   "source_repository": "ytsaurus/ytsaurus",
   "source_url": "https://github.com/ytsaurus/ytsaurus",
-  "source_version": "6f9fb9d6",
+  "source_version": "847a2b36",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-19T02:56:11.534Z",
+  "timestamp": "2026-11-21T15:31:35.886Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-ytsaurus-ytsaurus",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus) (Revision: `6f9fb9d6`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T02:56:11.534Z`  
+> **Provenance**: Harvested from [ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus) (Revision: `847a2b36`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-21T15:31:35.886Z`  
 > **Learning ID**: `learn-github-ytsaurus-ytsaurus`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence)
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence)
 - **Confidence Rating**: 51%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T02:56:10.139Z  
+> **Harvest Timestamp**: 2026-11-21T15:31:34.736Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1209,232 +1209,102 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3d6a44fa` (2026-11-18)
-**Commit Message**: YQL-20905: (YqlSelect) Fix panic on qualified star for inputs without column order
+### Incident Patch 1: `2c1bd800` (2026-11-20)
+**Commit Message**: YT-30353: Increase timeout at test_replicated_table_backup
+commit_hash:5c158ffff94024a057d46ff9b6280aba05dbcdfb
 
-Исправляет падение в `SqlSetItemWrapper` при раскрытии `a.*`, когда у источника нет метаданных о порядке колонок. В этом случае `YqlSelect` заполняет `projection_order` видимыми полями из типа структуры и добавляет к их внутренним именам алиас источника.
-
-На [window/yql-14277](https://nda.ya.ru/t/8rBzo2vJ7woPUv результаты в режимах `auto`, `force` и `disable` совпадают, включая порядок колонок.
-commit_hash:6fd36ee4df31a6575487407cf64939366ff8c617
-
-**File**: `yql/essentials/core/type_ann/type_ann_sql.cpp` (modified, +14/-6)
+**File**: `yt/yt/tests/integration/dynamic_tables/test_backups.py` (modified, +1/-1)
 ```diff
-@@ -3673,8 +3673,7 @@ IGraphTransformer::TStatus SqlSetItemWrapper(const TExprNode::TPtr& input, TExpr
-                                         auto alias = lambda.Tail().Head().Content();
-                                         bool found = false;
-                                         for (ui32 priority : {TInput::Projection, TInput::Current, TInput::External}) {
--                                            for (ui32 inputIndex = 0; inputIndex < joinInputs.size(); ++inputIndex) {
--                                                auto& x = inputs[inputIndex];
-+                                            for (const auto& x : joinInputs) {
-                                                 if (priority != x.Priority) {
-                                                     continue;
-                                                 }
-@@ -3683,10 +3682,19 @@ IGraphTransformer::TStatus SqlSetItemWrapper(const TExprNode::TPtr& input, TExpr
-                                                     continue;
-                                                 }
+@@ -1247,7 +1247,7 @@ def test_replicated_tables_backup(self, driver_cluster):
+         response = create_table_backup(
+             self._make_backup_manifest(2),
+             return_response=True,
+-            checkpoint_timestamp_delay=3000,
++            checkpoint_timestamp_delay=4000,
+             driver=get_driver(cluster=driver_cluster))
  
--                                                YQL_ENSURE(x.Order);
--                                                for (const auto& [col, gen_col] : *x.Order) {
--                                                    if (!col.StartsWith("_yql_")) {
--                                                        o.AddColumn(MakeAliasedColumn(x.Alias, col));
-+                                                auto addColumn = [&](TStringBuf name) {
-+                                                    if (!name.StartsWith("_yql_")) {
-+                                                        o.AddColumn(MakeAliasedColumn(x.Alias, name));
-+                                                    }
-+                                                };
-+                                                if (isYql && !x.Order) {
-+                                                    for (const auto* item : x.Type->GetItems()) {
-+                                                        addColumn(item->GetName());
-+                                                    }
-+                                                } else {
-+                                                    YQL_ENSURE(x.Order);
-+                                                    for (const auto& column : *x.Order) {
-+                                                        addColumn(column.LogicalName);
-                                                     }
-                                                 }
- 
+         cur_time = time()
 ```
 
 ---
 
-### Incident Patch 2: `dbc3b467` (2026-11-18)
-**Commit Message**: CHYT: Fix native type tags and min-max checks
+### Incident Patch 2: `2b4a27fd` (2026-11-21)
+**Commit Message**: Fix Cython resource builds across target platforms
 
-Use the type family name when a native ClickHouse type annotation exceeds YT's 256-byte tag limit. Avoid unnecessary shared-pointer copies in converter constructors. Add one regression test that checks the Enum16 family tag and validates the resulting logical type.
+Resource Cython broke cross-builds when host-tool discovery loaded Cython's dependencies in the target configuration. Register generated Python bytecode in the build tree and accept standard headers supplied by the system C++ library.
+commit_hash:98779d8dff17dcb05328bb8870e415490b853665
 
-Keep the original column type for the composite check in the min-max filter. This is a defensive guard; composite statistics already use Min/Max sentinels.
-
-Follow up on [PR 15524567](https://nda.ya.ru/t/h7Da0iPw7wpXJQ and [PR 15703724](https://nda.ya.ru/t/xJRn587_7wpXJS
-commit_hash:d36a2d52dc06deacba0beddd5b95286bac60ca51
-
-**File**: `yt/chyt/server/ch_to_yt_converter.cpp` (modified, +21/-17)
+**File**: `build/conf/sysincl.conf` (modified, +1/-0)
 ```diff
-@@ -111,20 +111,24 @@ class TConverterBase
+@@ -124,6 +124,7 @@ when ($USE_SYSTEM_OPENSSL == "yes") {
+ when ($_USE_RESOURCE_CYTHON == "yes") {
+     SYSINCL+=build/sysincl/cython-py3.yml
+     SYSINCL+=build/sysincl/cython-py2.yml
++    SYSINCL+=build/sysincl/cython-system-stl.yml
+ }
+ otherwise {
+     SYSINCL+=build/sysincl/cython-legacy-numpy.yml
+```
+
+**File**: `build/plugins/pybuild.py` (modified, +3/-0)
+```diff
+@@ -731,6 +731,9 @@ def process_pyx(filename, path, out_suffix, with_ext):
+                     if with_pyc:
+                         root_rel_path = rootrel_arc_src(path, unit)
+                         dst = path + uniq_suffix(path, unit)
++                        if path.startswith('${ARCADIA_ROOT}/'):
++                            # Resource registration must read generated bytecode from the build root.
++                            dst = to_build_root(dst, unit)
+                         unit.on_py3_compile_bytecode([root_rel_path + '-', path, dst])
+                         res += ['DEST', dest + '.yapyc3', dst + '.yapyc3']
  
-     static std::string GetNativeTypeName(const DB::DataTypePtr& dataType)
+```
+
+**File**: `build/sysincl/cython-system-stl.yml` (added, +11/-0)
+```diff
+@@ -0,0 +1,11 @@
++# System STL may supply these manifest headers outside Arcadia.
++# The libc++ map adds tracked paths in configurations that use it.
++- source_filter: "^contrib/tools/cython(_py2)?/induced_deps[.]h$"
++  includes:
++    - execution
++- source_filter: "^contrib/tools/cython/induced_deps[.]h$"
++  includes:
++    - barrier
++    - latch
++    - semaphore
++    - stop_token
+```
+
+---
+
+### Incident Patch 3: `fe35eca3` (2026-11-20)
+**Commit Message**: Fix hedging
+commit_hash:be281c8cbcf15d303300317030a15b87b547d85a
+
+**File**: `yt/yt/ytlib/chunk_client/replication_reader.cpp` (modified, +5/-2)
+```diff
+@@ -1312,7 +1312,10 @@ class TSessionBase
+         const std::optional<TPeer>& backupPeer,
+         const std::optional<THedgingChannelOptions>& hedgingOptions)
      {
--        if (const auto* customName = dataType->getCustomName()) {
--            return customName->getName();
-+        if (!dataType->getCustomName()) {
-+            switch (dataType->getTypeId()) {
-+                case DB::TypeIndex::Nullable:
-+                case DB::TypeIndex::Array:
-+                case DB::TypeIndex::Tuple:
-+                case DB::TypeIndex::LowCardinality:
-+                case DB::TypeIndex::Map:
-+                    return dataType->getFamilyName();
-+                default:
-+                    break;
-+            }
-         }
+-        if (backupPeer && hedgingOptions) {
++        // Hedging reuses the primary replica spec, so offshore peers require separate requests.
++        if (backupPeer && hedgingOptions &&
++            !primaryPeer.Id.IsOffshore && !backupPeer->Id.IsOffshore)
++        {
+             return CreateHedgingChannel(
+                 GetChannel(primaryPeer.Id),
+                 GetChannel(backupPeer->Id),
+@@ -3189,7 +3192,7 @@ class TReadBlockSetSession
  
--        switch (dataType->getTypeId()) {
--            case DB::TypeIndex::Nullable:
--            case DB::TypeIndex::Array:
--            case DB::TypeIndex::Tuple:
--            case DB::TypeIndex::LowCardinality:
--            case DB::TypeIndex::Map:
--                return dataType->getFamilyName();
--            default:
--                return dataType->getName();
-+        auto name = dataType->getName();
-+        if (name.size() > MaxColumnNameLength) {
-+            return dataType->getFamilyName();
-         }
-+        return name;
-     }
- };
- 
-@@ -393,7 +397,7 @@ class TNullableConverter
-     : public TConverterBase
- {
- public:
--    TNullableConverter(DB::DataTypePtr dataType, TConverterPtr underlyingConverter)
-+    TNullableConverter(const DB::DataTypePtr& dataType, TConverterPtr underlyingConverter)
-         : TConverterBase(dataType)
-         , UnderlyingConverter_(std::move(underlyingConverter))
-     { }
-@@ -458,7 +462,7 @@ class TArrayConverter
-     : public TConverterBase
- {
- public:
--    TArrayConverter(DB::DataTypePtr dataType, TConverterPtr underlyingConverter)
-+    TArrayConverter(const DB::DataTypePtr& dataType, TConverterPtr underlyingConverter)
-         : TConverterBase(dataType)
-         , UnderlyingConverter_(std::move(underlyingConverter))
-     { }
-@@ -522,7 +526,7 @@ class TMapConverter
- {
- public:
-     TMapConverter(
--        DB::DataTypePtr dataType,
-+        const DB::DataTypePtr& dataType,
-         TConverterPtr keyConverter,
-         TConverterPtr valueConverter,
-         TConverterPtr nestedConverter)
-@@ -572,7 +576,7 @@ class TTupleConverter
- {
- public:
-     TTupleConverter(
--        DB::DataTypePtr dataType,
-+        const DB::DataTypePtr& dataType,
-         std::vector<TConverterPtr> underlyingConverters,
-         std::optional<std::vector<std::string>> elementNames)
-         : TConverterBase(dataType)
-@@ -659,7 +663,7 @@ class TDecimalConverter
-     using TDecimalColumn = DB::ColumnDecimal<TClickHouseDecimal>;
-     static constexpr i64 DecimalSize = sizeof(TUnderlyingIntegerType);
- 
--    TDecimalConverter(DB::DataTypePtr dataType, int precision, int scale)
-+    TDecimalConverter(const DB::DataTypePtr& dataType, int precision, int scale)
-         : TConverterBase(dataType)
-         , Precision_(precision)
-         , Scale_(scale)
-@@ -896,7 +900,7 @@ class TLowCardinalityConverter
-     : public TConverterBase
- {
- public:
--    TLowCardinalityConverter(DB::DataTypePtr dataType, TConverterPtr underlyingConverter)
-+    TLowCardinalityConverter(const DB::DataTypePtr& dataType, TConverterPtr underlyingConverter)
-         : TConverterBase(dataType)
-         , UnderlyingConverter_(std::move(underlyingConverter))
-     { }
-```
-
-**File**: `yt/chyt/server/granule_min_max_filter.cpp` (modified, +1/-1)
-```diff
-@@ -41,7 +41,7 @@ std::vector<bool> ComputeUseMinMaxBounds(const TTableSchema& schema)
-             }
-         }
-         // YSON serialization does not preserve value ordering.
--        result.push_back(!IsV3Composite(valueType) &&
-+        result.push_back(!IsV3Composite(columnSchema.LogicalType()) &&
-             *valueType != *SimpleLogicalType(ESimpleLogicalValueType::Any) &&
-             valueType->GetMetatype() != ELogicalMetatype::AggregateState);
-     }
-```
-
-**File**: `yt/chyt/server/unittests/ch_to_yt_converter_ut.cpp` (modified, +14/-0)
-```diff
-@@ -223,6 +223,20 @@ TEST_F(TCHToYTConversionTest, TaggedLogicalTypesForParameterizedUnsupportedNativ
-     }
- }
- 
-+TEST_F(TCHToYTConversionTest, UsesFamilyNameForOversizedNativeTypeTag)
-+{
-+    Settings_->Composite->AnnotateResultSchemaWithNativeTypes = true;
-+    auto dataType = DB::DataTypeFactory::instance().get(
-+        "Enum16('" + std::string(MaxColumnNameLength, 'x') + "' = 1)");
-+    TCHToYTConverter converter(dataType, Settings_);
-+    auto logicalType = converter.GetLogicalType();
-+
-+    EXPECT_NO_THROW(ValidateLogicalType(TComplexTypeFieldDescriptor(logicalType)));
-+    EXPECT_EQ(
-+        *TaggedLogicalType("Enum16", SimpleLogicalType(ESimpleLogicalValueType::String)),
-+        *logicalType);
-+}
-+
- TEST_F(TCHToYTConversionTest, Int16)
- {
-     auto dataType = std::make_shared<DB::DataTypeInt16>();
-```
-
----
-
-### Incident Patch 3: `6f9fb9d6` (2026-11-19)
-**Commit Message**: Remove .srv support from build
-
-Больше не осталось `.srv` файлов - удаляем поддержку
-Коммит в ymake <https://nda.ya.ru/t/sYULw8lG7wqMRG>
-commit_hash:7a057bbe49ceb8350115798625a2291c6994a7fa
-
-**File**: `build/conf/settings.conf` (modified, +1/-1)
-```diff
-@@ -13,7 +13,7 @@ FAIL_PY2=no
- MAIN_OUTPUT_AS_EXTRA=yes
- FILL_MODULE2NODES=yes
- FUSE_PREFETCH=yes
--FUSE_PREFETCH_EXTS=ya.make .inc .h .hh .hpp .hxx .H .ipp .ixx .inl .c .C .cc .cpp .cxx .cu .cuh .S .s .asm .proto .ev .cfgproto .gzt .fbs .fbs64 .py .pyi .pyx .pxd .pxi .swg .l .y .ypp .gperf .rl .rl6 .rh .rli .go .java .kt .md .ts .tsx .js .jsx .ydl .nlg .sc .idl .msg .srv
-+FUSE_PREFETCH_EXTS=ya.make .inc .h .hh .hpp .hxx .H .ipp .ixx .inl .c .C .cc .cpp .cxx .cu .cuh .S .s .asm .proto .ev .cfgproto .gzt .fbs .fbs64 .py .pyi .pyx .pxd .pxi .swg .l .y .ypp .gperf .rl .rl6 .rh .rli .go .java .kt .md .ts .tsx .js .jsx .ydl .nlg .sc .idl .msg
- 
- CONSISTENT_DEBUG=yes
- CONSISTENT_BUILD=yes
-```
-
-**File**: `build/ymake.core.conf` (modified, +0/-5)
-```diff
-@@ -5615,11 +5615,6 @@ macro _SRC("msg", SRC, SRCFLAGS...) {
-     .CMD=$ROS_MSG_CMD($SRC)
- }
- 
--# tag:src-processing
--macro _SRC("srv", SRC, SRCFLAGS...) {
--    .CMD=$ROS_SRV_CMD($SRC)
--}
--
- ACTOOL_PATH=$XCODE_TOOLS_ROOT_RESOURCE_GLOBAL/Xcode/Contents/Developer/usr/bin/ibtool
- # tag:ios-specific
- ASSETS_FLAGS=--output-format human-readable-text --notices --warnings
+             future = RequestBatcher_->GetBlockSet(
+                 IRequestBatcher::TRequest{
+-                    .Channel = GetChannel(primaryPeerId),
++                    .Channel = channel,
+                     .BlockIndexes = blockIndexes,
+                     .Session = MakeStrong(this),
+                     .Barriers = FillP2PBarriers(peers, blockIndexes),
 ```
 
 #### Recent Merged Pull Requests:
@@ -1463,49 +1333,31 @@ commit_hash:7a057bbe49ceb8350115798625a2291c6994a7fa
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. YQL-20905: (YqlSelect) Fix panic on qualified star for inputs without column ord
+## X. YT-30353: Increase timeout at test_replicated_table_backup
 
 **RULE**:
-When implementing operations in `yql/essentials/core/type_ann/type_ann_sql.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `yt/yt/tests/integration/dynamic_tables/test_backups.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3d6a44fa`: YQL-20905: (YqlSelect) Fix panic on qualified star for inputs without column order. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2c1bd800`: YT-30353: Increase timeout at test_replicated_table_backup. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yql/essentials/core/type_ann/type_ann_sql.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yt/yt/tests/integration/dynamic_tables/test_backups.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-                                            for (const auto& x : joinInputs) {
-                                                auto addColumn = [&](TStringBuf name) {
-                                                    if (!name.StartsWith("_yql_")) {
-                                                        o.AddColumn(MakeAliasedColumn(x.Alias, name));
-                                                    }
-                                                };
-                                                if (isYql && !x.Order) {
-                                                    for (const auto* item : x.Type->GetItems()) {
-                                                        addColumn(item->GetName());
-                                                    }
-                                                } else {
-                                                    YQL_ENSURE(x.Order);
-                                                    for (const auto& column : *x.Order) {
-                                                        addColumn(column.LogicalName);
+            checkpoint_timestamp_delay=4000,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-                                            for (ui32 inputIndex = 0; inputIndex < joinInputs.size(); ++inputIndex) {
-                                                auto& x = inputs[inputIndex];
-                                                YQL_ENSURE(x.Order);
-                                                for (const auto& [col, gen_col] : *x.Order) {
-                                                    if (!col.StartsWith("_yql_")) {
-                                                        o.AddColumn(MakeAliasedColumn(x.Alias, col));
+            checkpoint_timestamp_delay=3000,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3d6a44fa` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2c1bd800` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

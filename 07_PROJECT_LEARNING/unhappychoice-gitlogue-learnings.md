@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/unhappychoice-gitlogue-learnings.md`  
 > **Source**: github ([https://github.com/unhappychoice/gitlogue](https://github.com/unhappychoice/gitlogue))  
-> **Source Version**: `1f875b5b`  
+> **Source Version**: `8d02655f`  
 > **License**: ISC  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T04:57:16.563Z  
+> **Timestamp**: 2026-11-21T15:31:17.055Z  
 > **Learning ID**: `learn-github-unhappychoice-gitlogue`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/unhappychoice-gitlogue-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/unhappychoice/gitlogue](https://github.com/unhappychoice/gitlogue))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T04:57:16.555Z  
+> **Harvest Timestamp**: 2026-11-21T15:31:16.927Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A cinematic Git commit replay tool for the terminal, turning your Git history into a living, animated story.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 5275 stars
+- **Stars / Engagement**: 5279 stars
 
 ---
 
@@ -2505,69 +2505,88 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1f875b5b` (2026-11-17)
-**Commit Message**: Merge pull request #262 from unhappychoice/dependabot/cargo/tree-sitter-scala-0.26.13
+### Incident Patch 1: `8d02655f` (2026-11-20)
+**Commit Message**: Merge pull request #263 from unhappychoice/dependabot/cargo/rand-0.10.4
 
-chore(deps): bump tree-sitter-scala from 0.26.9 to 0.26.13
+chore(deps): bump rand from 0.10.3 to 0.10.4
 
-**File**: `Cargo.lock` (modified, +2/-2)
+**File**: `Cargo.lock` (modified, +3/-3)
 ```diff
-@@ -2308,9 +2308,9 @@ dependencies = [
+@@ -699,7 +699,7 @@ dependencies = [
+  "dirs",
+  "git2",
+  "globset",
+- "rand 0.10.3",
++ "rand 0.10.4",
+  "ratatui",
+  "serde",
+  "streaming-iterator",
+@@ -1428,9 +1428,9 @@ dependencies = [
  
  [[package]]
- name = "tree-sitter-scala"
--version = "0.26.9"
-+version = "0.26.13"
+ name = "rand"
+-version = "0.10.3"
++version = "0.10.4"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "cf3d726ede1e8272fd16c91c6718089e06b04f9243a47026d792debc8831ec34"
-+checksum = "3a50564a8d499f956174da3bdff36b32d99c3cf713cd8e44337a61f8fc46b60d"
+-checksum = "65c9fb96cbc91e3478eaae79a69fcd3f1ae4ad052e471fe6732fff548984b4af"
++checksum = "8f6fa277c67e6ea590466f04c3fe82cb509f0864fe470643e5570de9514a9b11"
  dependencies = [
-  "cc",
-  "tree-sitter-language",
+  "chacha20",
+  "getrandom 0.4.1",
 ```
 
 ---
 
-### Incident Patch 2: `de57c9d8` (2026-11-17)
-**Commit Message**: chore(deps): bump tree-sitter-scala from 0.26.9 to 0.26.13
+### Incident Patch 2: `99291b49` (2026-11-19)
+**Commit Message**: chore(deps): bump rand from 0.10.3 to 0.10.4
 
-Bumps [tree-sitter-scala](https://github.com/tree-sitter/tree-sitter-scala) from 0.26.9 to 0.26.13.
-- [Release notes](https://github.com/tree-sitter/tree-sitter-scala/releases)
-- [Commits](https://github.com/tree-sitter/tree-sitter-scala/compare/v0.26.9...v0.26.13)
+Bumps [rand](https://github.com/rust-random/rand) from 0.10.3 to 0.10.4.
+- [Release notes](https://github.com/rust-random/rand/releases)
+- [Changelog](https://github.com/rust-random/rand/blob/master/CHANGELOG.md)
+- [Commits](https://github.com/rust-random/rand/compare/0.10.3...0.10.4)
 
 ---
 updated-dependencies:
-- dependency-name: tree-sitter-scala
-  dependency-version: 0.26.13
+- dependency-name: rand
+  dependency-version: 0.10.4
   dependency-type: direct:production
   update-type: version-update:semver-patch
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
-**File**: `Cargo.lock` (modified, +2/-2)
+**File**: `Cargo.lock` (modified, +3/-3)
 ```diff
-@@ -2308,9 +2308,9 @@ dependencies = [
+@@ -699,7 +699,7 @@ dependencies = [
+  "dirs",
+  "git2",
+  "globset",
+- "rand 0.10.3",
++ "rand 0.10.4",
+  "ratatui",
+  "serde",
+  "streaming-iterator",
+@@ -1428,9 +1428,9 @@ dependencies = [
  
  [[package]]
- name = "tree-sitter-scala"
--version = "0.26.9"
-+version = "0.26.13"
+ name = "rand"
+-version = "0.10.3"
++version = "0.10.4"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "cf3d726ede1e8272fd16c91c6718089e06b04f9243a47026d792debc8831ec34"
-+checksum = "3a50564a8d499f956174da3bdff36b32d99c3cf713cd8e44337a61f8fc46b60d"
+-checksum = "65c9fb96cbc91e3478eaae79a69fcd3f1ae4ad052e471fe6732fff548984b4af"
++checksum = "8f6fa277c67e6ea590466f04c3fe82cb509f0864fe470643e5570de9514a9b11"
  dependencies = [
-  "cc",
-  "tree-sitter-language",
+  "chacha20",
+  "getrandom 0.4.1",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #263** (2026-11-20): chore(deps): bump rand from 0.10.3 to 0.10.4 (@dependabot[bot])
 - **PR #262** (2026-11-17): chore(deps): bump tree-sitter-scala from 0.26.9 to 0.26.13 (@dependabot[bot])
 - **PR #261** (closed): chore(deps): bump tree-sitter-scala from 0.26.9 to 0.26.12 (@dependabot[bot])
 - **PR #260** (2026-11-11): chore(deps): bump tree-sitter-scala from 0.26.7 to 0.26.9 (@dependabot[bot])
 - **PR #259** (2026-11-10): chore(deps): bump tree-sitter-scala from 0.26.4 to 0.26.7 (@dependabot[bot])
 - **PR #258** (2026-11-05): chore(deps): bump tree-sitter-scala from 0.26.3 to 0.26.4 (@dependabot[bot])
-- **PR #256** (2026-11-02): chore(deps): bump unicode-width from 0.2.2 to 0.2.3 (@dependabot[bot])
 
 ---
 
@@ -2593,7 +2612,7 @@ Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in unhappychoice/gitlogue. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1f875b5b`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8d02655f`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
@@ -2601,16 +2620,18 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "0.26.13"
-checksum = "3a50564a8d499f956174da3bdff36b32d99c3cf713cd8e44337a61f8fc46b60d"
+ "rand 0.10.4",
+version = "0.10.4"
+checksum = "8f6fa277c67e6ea590466f04c3fe82cb509f0864fe470643e5570de9514a9b11"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-version = "0.26.9"
-checksum = "cf3d726ede1e8272fd16c91c6718089e06b04f9243a47026d792debc8831ec34"
+ "rand 0.10.3",
+version = "0.10.3"
+checksum = "65c9fb96cbc91e3478eaae79a69fcd3f1ae4ad052e471fe6732fff548984b4af"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1f875b5b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8d02655f` are properly handled with clean fallback behavior.

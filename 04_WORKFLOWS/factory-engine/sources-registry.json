@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-21T15:17:56.732Z",
-    "lastVerified": "2026-11-21T15:17:56.732Z",
+    "lastChecked": "2026-11-21T15:31:38.817Z",
+    "lastVerified": "2026-11-21T15:31:38.817Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -252,9 +252,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-21T13:53:42.240Z",
+    "lastChecked": "2026-11-21T15:31:28.585Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-21T13:53:42.240Z"
+    "lastVerified": "2026-11-21T15:31:28.585Z"
   },
   "herdrdev-herdr": {
     "name": "herdrdev/herdr",
@@ -1529,9 +1529,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-11-21T05:01:24.315Z",
+    "lastChecked": "2026-11-21T15:31:23.764Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-11-21T05:01:24.315Z"
+    "lastVerified": "2026-11-21T15:31:23.764Z"
   },
   "seaql-sea-orm": {
     "name": "sea-orm",
@@ -1593,11 +1593,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "react-navigation-react-navigation": {
-    "name": "react-navigation",
+    "name": "react-navigation/react-navigation",
     "officialUrl": "https://github.com/react-navigation/react-navigation",
-    "lastChecked": "2026-11-18T12:42:39.832Z",
-    "revisionIdentifier": "3820f31f",
-    "lastVerified": "2026-11-18T12:42:39.832Z"
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-11-21T15:31:22.134Z",
+    "lastVerified": "2026-11-21T15:31:22.134Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-react-navigation-react-navigation",
+    "contentHash": "16eb5f6dbee0360d3d8bd9dfec7a19257965a012c5c51993338dbeecd8bc88ef",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 3,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "nats-io-nats-server": {
     "name": "nats-io/nats-server",
@@ -2152,11 +2162,21 @@
     "lastVerified": "2026-11-20T21:38:55.228Z"
   },
   "unhappychoice-gitlogue": {
-    "name": "gitlogue",
+    "name": "unhappychoice/gitlogue",
     "officialUrl": "https://github.com/unhappychoice/gitlogue",
-    "lastChecked": "2026-11-20T01:12:31.804Z",
-    "revisionIdentifier": "1f875b5b",
-    "lastVerified": "2026-11-20T01:12:31.804Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-21T15:31:16.927Z",
+    "lastVerified": "2026-11-21T15:31:16.927Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-unhappychoice-gitlogue",
+    "contentHash": "55c0a2a34d69eac2846ce19d56cefb8cd3fc48dd40e55add9fac74364365544f",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf": {
     "name": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -6280,14 +6300,14 @@
     "officialUrl": "https://github.com/ytsaurus/ytsaurus",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-20T08:28:41.227Z",
-    "lastVerified": "2026-11-20T08:28:41.227Z",
+    "lastChecked": "2026-11-21T15:31:34.736Z",
+    "lastVerified": "2026-11-21T15:31:34.736Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-ytsaurus-ytsaurus",
-    "contentHash": "a384e31d5b5e5cfad446e8f3cf93f1046c6f40bde43783491419cf4764b2e388",
+    "contentHash": "f1720c8b05d50df51968f166eaf4f55110432579a5c2cc5df0811d4efcfbaadb",
     "promotedRulesCount": 1,
-    "recentFixesCount": 10,
+    "recentFixesCount": 6,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7046,14 +7066,14 @@
     "officialUrl": "https://github.com/fabio-rovai/open-ontologies",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T11:30:48.136Z",
-    "lastVerified": "2026-11-20T11:30:48.136Z",
+    "lastChecked": "2026-11-21T15:31:24.413Z",
+    "lastVerified": "2026-11-21T15:31:24.413Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-fabio-rovai-open-ontologies",
-    "contentHash": "079cb7008f85d94f92e6e9c7d7e939281396da52bed046b0746b08d1c4afd9a2",
+    "contentHash": "d6e5f2e38511b789cd59c086387bbbea68394ef5b88eb44c8b39fb08f6da781f",
     "promotedRulesCount": 1,
-    "recentFixesCount": 6,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -12424,5 +12444,12 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-ista-daslab-deepseek-v4.1-flash-1017-gsq-rco-gguf": {
+    "name": "DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
+    "officialUrl": "https://huggingface.co/ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
+    "lastChecked": "2026-11-21T15:31:15.983Z",
+    "revisionIdentifier": "hf-ista-dasl",
+    "lastVerified": "2026-11-21T15:31:15.983Z"
   }
 }

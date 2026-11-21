@@ -11823,3 +11823,8 @@
 | `CYCLE-20261121-XVR0` | `2026-11-21T15:17:38.940Z` | `metalbear-co/mirrord` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9794` | Yes (`e6a25db4...`) |
 | `CYCLE-20261121-Y117` | `2026-11-21T15:17:45.787Z` | `prometheus/prometheus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9795` | Yes (`b013df4c...`) |
 | `CYCLE-20261121-Y6PQ` | `2026-11-21T15:17:53.150Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9796` | Yes (`43a1a0a6...`) |
+| `CYCLE-20261121-FFIO` | `2026-11-21T15:31:17.712Z` | `unhappychoice/gitlogue` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8012` | Yes (`55c0a2a3...`) |
+| `CYCLE-20261121-FJNH` | `2026-11-21T15:31:23.069Z` | `react-navigation/react-navigation` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9797` | Yes (`16eb5f6d...`) |
+| `CYCLE-20261121-FLFC` | `2026-11-21T15:31:25.368Z` | `fabio-rovai/open-ontologies` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9798` | Yes (`d6e5f2e3...`) |
+| `CYCLE-20261121-FTE4` | `2026-11-21T15:31:35.692Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9799` | Yes (`f1720c8b...`) |
+| `CYCLE-2026-11-21-PROJ-EVOLVE` | `2026-11-21T15:32:05.180Z` | `react-navigation-react-navigation` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-1565C815` [Domain H] | Yes (`dc1770d1...`) |

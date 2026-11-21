@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-21T15:17:59.844Z",
-  "total_records": 2252,
+  "last_updated": "2026-11-21T15:32:06.443Z",
+  "total_records": 2255,
   "domains": {
     "A": {
       "total": 17,
@@ -1433,7 +1433,7 @@
       ]
     },
     "H": {
-      "total": 536,
+      "total": 537,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1970,11 +1970,12 @@
         "DOM-H-B5356809",
         "DOM-H-D52613BE",
         "domain_intelligence-technical-construction-intelligence-linkerd-linkerd2-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-linkerd-linkerd2-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-linkerd-linkerd2-learnings-core-invariants",
+        "DOM-H-1565C815"
       ]
     },
     "I": {
-      "total": 121,
+      "total": 123,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -2096,7 +2097,9 @@
         "domain_intelligence-content-information-intelligence-shiguangschedule-shiguangschedule-core-invarian",
         "domain_intelligence-content-information-intelligence-shiguangschedule-shiguangschedule-learnings-cor",
         "domain_intelligence-content-information-intelligence-infracost-infracost-core-invariants",
-        "domain_intelligence-content-information-intelligence-infracost-infracost-learnings-core-invariants"
+        "domain_intelligence-content-information-intelligence-infracost-infracost-learnings-core-invariants",
+        "domain_intelligence-content-information-intelligence-fabio-rovai-open-ontologies-core-invariants",
+        "domain_intelligence-content-information-intelligence-fabio-rovai-open-ontologies-learnings-core-inva"
       ]
     },
     "J": {
@@ -10695,8 +10698,8 @@
       "title": "Architecture Intelligence: react-navigation/react-navigation Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-react-navigation-react-navigation-architecture-intelligence-react-navigation-rea.md",
       "repository": "react-navigation/react-navigation",
-      "content_hash": "38dcc92122ce92121d01db6b4963627b5e6c4ef1a763cd3f2eb9fbf3179743b1",
-      "created_at": "2026-11-13T20:54:26.411Z"
+      "content_hash": "9a7e98d3bf479826afe019c526f103b883a538933f727ae33b3471b056a2036d",
+      "created_at": "2026-11-21T15:31:23.414Z"
     },
     "domain_intelligence-technical-construction-intelligence-envoyproxy-envoy-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-envoyproxy-envoy-core-invariants",
@@ -10815,8 +10818,8 @@
       "title": "Architecture Intelligence: react-navigation-react-navigation-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-react-navigation-react-navigation-learnings-architecture-intelligence-react-navi.md",
       "repository": "react-navigation-react-navigation-learnings",
-      "content_hash": "f5b7cf5bbcf8e48568fef899c537c0eca5f6a7a35538200a129d649c4372b433",
-      "created_at": "2026-11-13T20:55:41.212Z"
+      "content_hash": "f9609d8e9c3937bcec3f7da2a7a6bdffd316a1fa5556ce8d6bc3648ebc8cb8d3",
+      "created_at": "2026-11-21T15:32:05.638Z"
     },
     "domain_intelligence-technical-construction-intelligence-envoyproxy-envoy-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-envoyproxy-envoy-learnings-core-invariants",
@@ -17668,8 +17671,8 @@
       "title": "Architecture Intelligence: ytsaurus/ytsaurus Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ytsaurus-ytsaurus-architecture-intelligence-ytsaurus-ytsaurus-core-invariants.md",
       "repository": "ytsaurus/ytsaurus",
-      "content_hash": "12e19d69324732713cd9f935f17493bcd6c7daf7588ce2f06aad3b14812311e3",
-      "created_at": "2026-11-19T02:56:11.722Z"
+      "content_hash": "80e1d1e2c38bec5ef008caa827f003157d6d9514f6e4aa49b49a154fdbd8cd6b",
+      "created_at": "2026-11-21T15:31:36.028Z"
     },
     "DOM-D-CC7591B7": {
       "record_id": "DOM-D-CC7591B7",
@@ -29949,8 +29952,8 @@
       "title": "Design Intelligence: unhappychoice/gitlogue Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-unhappychoice-gitlogue-design-intelligence-unhappychoice-gitlogue-core-invariant.md",
       "repository": "unhappychoice/gitlogue",
-      "content_hash": "6a87b10f16bae8a09f023b19a5853109da9dd27ea6d64337a90e391d375592bb",
-      "created_at": "2026-11-18T04:57:17.501Z"
+      "content_hash": "aa33f66033b3c4884cf990e6c8f89d79ea163b5874755046fc1d1759347e1d94",
+      "created_at": "2026-11-21T15:31:18.058Z"
     },
     "domain_intelligence-design-intelligence-unhappychoice-gitlogue-learnings-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-unhappychoice-gitlogue-learnings-core-invariants",
@@ -29958,8 +29961,8 @@
       "title": "Design Intelligence: unhappychoice-gitlogue-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-unhappychoice-gitlogue-learnings-design-intelligence-unhappychoice-gitlogue-lear.md",
       "repository": "unhappychoice-gitlogue-learnings",
-      "content_hash": "5f0aac9ae39465a9c976d5e29d97d8445ba341ee78aa7edebf2387a8d1608164",
-      "created_at": "2026-11-18T04:57:30.523Z"
+      "content_hash": "26b5a6e4a3e5a3ad1744f08b141402aad37bbb80a0aef60563ca80f67d243378",
+      "created_at": "2026-11-21T15:31:39.605Z"
     },
     "domain_intelligence-technical-construction-intelligence-spartan-ng-spartan-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-spartan-ng-spartan-core-invariants",
@@ -37786,6 +37789,66 @@
       "repository": "watchexec-watchexec-learnings",
       "content_hash": "a9987cef35ff8a884945680d798fe95d625112608ffb46b381f044bc3f106d98",
       "created_at": "2026-11-21T13:53:49.318Z"
+    },
+    "domain_intelligence-content-information-intelligence-fabio-rovai-open-ontologies-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-fabio-rovai-open-ontologies-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: fabio-rovai/open-ontologies Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-fabio-rovai-open-ontologies-content-information-intelligence-fabio-rovai-open-on.md",
+      "repository": "fabio-rovai/open-ontologies",
+      "content_hash": "76e269e2e15336f0be0c3abbcf63b9630b9d4756f8e7919f5541a2b1eef13ab1",
+      "created_at": "2026-11-21T15:31:25.704Z"
+    },
+    "DOM-H-1565C815": {
+      "record_id": "DOM-H-1565C815",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "H",
+          "id": "technical_construction",
+          "name": "Technical Construction Intelligence"
+        }
+      ],
+      "title": "keep insets in sync with edges and measurements in LayoutRegionView",
+      "content": "When implementing operations in `packages/native/ios/ReactNavigationLayoutRegionView.mm`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react-navigation/react-navigation. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "dc1770d155c65bab5cf39bba163ec70c58ac7b6bb0d30590acbc34ef94f318ff",
+      "summary": "Prevents defects observed in production commit `e34a70c2`: keep insets in sync with edges and measurements in LayoutRegionView. Unvalidated  -> When implementing operations in `packages/native/ios/ReactNavigationLayoutRegionView.mm`, engineers MUST enforce rigorous boundary validatio",
+      "provenance": {
+        "source_uri": "project://react-navigation-react-navigation/react-navigation-react-navigation-learnings.md",
+        "source_version": "ca036e81",
+        "observed_at": "2026-11-21T15:31:22.138Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (react-navigation-react-navigation)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of react-navigation-react-navigation"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "H"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-21T15:32:05.154Z"
+    },
+    "domain_intelligence-content-information-intelligence-fabio-rovai-open-ontologies-learnings-core-inva": {
+      "record_id": "domain_intelligence-content-information-intelligence-fabio-rovai-open-ontologies-learnings-core-inva",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: fabio-rovai-open-ontologies-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-fabio-rovai-open-ontologies-learnings-content-information-intelligence-fabio-rov.md",
+      "repository": "fabio-rovai-open-ontologies-learnings",
+      "content_hash": "d319c488373b2a6c97e889be6c3b4bc69734d569f2e0f21c05ca708ff5cb4392",
+      "created_at": "2026-11-21T15:32:06.443Z"
     }
   }
 }

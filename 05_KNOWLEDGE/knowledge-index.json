@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T15:18:00.045Z",
+  "last_updated": "2026-11-21T15:32:06.592Z",
   "total_verified_learnings": 9060,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23131,
+  "total_items": 23139,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -215644,8 +215644,8 @@
       "slug": "react-navigation-react-navigation",
       "platform": "github",
       "source_url": "https://github.com/react-navigation/react-navigation",
-      "source_version": "3820f31f",
-      "content_hash": "1b927e3d957e80155fd7f97e6b0cedd0fc89470b99cfaf1ffe6349c36990ffa9",
+      "source_version": "ca036e81",
+      "content_hash": "16eb5f6dbee0360d3d8bd9dfec7a19257965a012c5c51993338dbeecd8bc88ef",
       "dossier_path": "07_PROJECT_LEARNING/react-navigation-react-navigation-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react-navigation-react-navigation-learnings.md",
       "promoted_rules": [
@@ -215658,6 +215658,11 @@
           "number": 8960,
           "title": "restore focused input after going back in stack",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9797,
+          "title": "keep insets in sync with edges and measurements in LayoutRegionView",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -215665,7 +215670,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T11:40:38.827Z",
+      "verified_at": "2026-11-21T15:31:22.896Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -215707,10 +215712,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-react-navigation-react-navigation-architecture-intelligence-react-navigation-rea.md",
       "title": "Architecture Intelligence: react-navigation/react-navigation Core Invariants",
       "repository": "react-navigation/react-navigation",
-      "source_version": "5e31b0a0",
-      "content_hash": "38dcc92122ce92121d01db6b4963627b5e6c4ef1a763cd3f2eb9fbf3179743b1",
+      "source_version": "ca036e81",
+      "content_hash": "9a7e98d3bf479826afe019c526f103b883a538933f727ae33b3471b056a2036d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-13T20:54:26.411Z"
+      "persisted_at": "2026-11-21T15:31:23.414Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-react-navigation-react-navigat": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-react-navigation-react-navigat",
@@ -215720,9 +215725,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for react-navigation-react-navigation-learnings",
       "repository": "react-navigation-react-navigation-learnings",
       "source_version": "HEAD",
-      "content_hash": "c739900a75622686694cb25c037f87fc543bf178ebb57fb5512df0353ac61937",
+      "content_hash": "7869fc0fe60d1566febdccba9fc6d3f7b3783f811355a299c2e8be1ba62a05ef",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T11:41:16.510Z"
+      "persisted_at": "2026-11-21T15:32:05.813Z"
     },
     "learn-github-envoyproxy-envoy": {
       "learning_id": "learn-github-envoyproxy-envoy",
@@ -215955,26 +215960,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 8012,
       "title": "Empirical Invariant Guard in Cargo.lock",
-      "source_url": "https://github.com/ProvableHQ/snarkOS",
-      "source_version": "ffa93916",
+      "source_url": "https://github.com/unhappychoice/gitlogue",
+      "source_version": "8d02655f",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-21T13:30:39.488Z"
+      "verified_at": "2026-11-21T15:31:17.527Z"
     },
     "candidate_directive-empirical-invariant-guard-in-cargo-lock": {
       "item_id": "candidate_directive-empirical-invariant-guard-in-cargo-lock",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-4AS6-empirical-invariant-guard-in-cargo-lock.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-FWAW-empirical-invariant-guard-in-cargo-lock.md",
       "title": "Empirical Invariant Guard in Cargo.lock",
-      "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "ffa93916",
-      "content_hash": "44c957f9ad6dee57b533121fcb62b174a477686d2394c50c60d7960512817811",
+      "repository": "unhappychoice-gitlogue-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d356592d5a20d1379596f16f9c9a125edcf29270e0877b71a9ff1c4cdce71f89",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T13:30:39.897Z"
+      "persisted_at": "2026-11-21T15:31:39.468Z"
     },
     "learn-github-langchain4j-langchain4j": {
       "learning_id": "learn-github-langchain4j-langchain4j",
@@ -216104,9 +216109,9 @@
       "title": "Architecture Intelligence: react-navigation-react-navigation-learnings Core Invariants",
       "repository": "react-navigation-react-navigation-learnings",
       "source_version": "HEAD",
-      "content_hash": "f5b7cf5bbcf8e48568fef899c537c0eca5f6a7a35538200a129d649c4372b433",
+      "content_hash": "f9609d8e9c3937bcec3f7da2a7a6bdffd316a1fa5556ce8d6bc3648ebc8cb8d3",
       "domain_letter": "G",
-      "persisted_at": "2026-11-13T20:55:41.212Z"
+      "persisted_at": "2026-11-21T15:32:05.638Z"
     },
     "domain_intelligence-technical-construction-intelligence-envoyproxy-envoy-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-envoyproxy-envoy-learnings-core-invariants",
@@ -236476,8 +236481,8 @@
       "slug": "ytsaurus-ytsaurus",
       "platform": "github",
       "source_url": "https://github.com/ytsaurus/ytsaurus",
-      "source_version": "1b712cf0",
-      "content_hash": "a384e31d5b5e5cfad446e8f3cf93f1046c6f40bde43783491419cf4764b2e388",
+      "source_version": "847a2b36",
+      "content_hash": "f1720c8b05d50df51968f166eaf4f55110432579a5c2cc5df0811d4efcfbaadb",
       "dossier_path": "07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
       "promoted_rules": [
@@ -236505,6 +236510,11 @@
           "number": 9544,
           "title": "Fixes from babenko's review of merged shuffle, chunk format, chunk session pool",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9799,
+          "title": "Increase timeout at test_replicated_table_backup",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -236512,7 +236522,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T08:38:43.262Z",
+      "verified_at": "2026-11-21T15:31:35.507Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -236554,10 +236564,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ytsaurus-ytsaurus-architecture-intelligence-ytsaurus-ytsaurus-core-invariants.md",
       "title": "Architecture Intelligence: ytsaurus/ytsaurus Core Invariants",
       "repository": "ytsaurus/ytsaurus",
-      "source_version": "6f9fb9d6",
-      "content_hash": "12e19d69324732713cd9f935f17493bcd6c7daf7588ce2f06aad3b14812311e3",
+      "source_version": "847a2b36",
+      "content_hash": "80e1d1e2c38bec5ef008caa827f003157d6d9514f6e4aa49b49a154fdbd8cd6b",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T02:56:11.722Z"
+      "persisted_at": "2026-11-21T15:31:36.028Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-ytsaurus-ytsaurus": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-ytsaurus-ytsaurus",
@@ -236566,10 +236576,10 @@
       "relative_path": "08_VERIFICATION/ytsaurus-ytsaurus-verification-protocol-empirical-defect-shield-for-ytsaurus-yts.md",
       "title": "Verification Protocol: Empirical Defect Shield for ytsaurus/ytsaurus",
       "repository": "ytsaurus/ytsaurus",
-      "source_version": "1b712cf0",
-      "content_hash": "a8ef5a80a482643b8c81ca40dd2cd176ea74aeb1d9268e0cf7567c190c19e47d",
+      "source_version": "847a2b36",
+      "content_hash": "cd1e9d505aa5ae0e61b37726d24cec4414c8cc2a963c0c1c72750e82fbc797ff",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T08:38:43.957Z"
+      "persisted_at": "2026-11-21T15:31:36.168Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-autotrust-gev-26b-decide-nvfp4-learnings-core": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-autotrust-gev-26b-decide-nvfp4-learnings-core",
@@ -251058,8 +251068,8 @@
       "slug": "fabio-rovai-open-ontologies",
       "platform": "github",
       "source_url": "https://github.com/fabio-rovai/open-ontologies",
-      "source_version": "17ef05b9",
-      "content_hash": "079cb7008f85d94f92e6e9c7d7e939281396da52bed046b0746b08d1c4afd9a2",
+      "source_version": "c2b64e1b",
+      "content_hash": "d6e5f2e38511b789cd59c086387bbbea68394ef5b88eb44c8b39fb08f6da781f",
       "dossier_path": "07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md",
       "promoted_rules": [
@@ -251077,6 +251087,11 @@
           "number": 9560,
           "title": "join newly derived edges during incremental transitivity",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9798,
+          "title": "Merge fix/428-figure-real-forgery: the README figure's red edge is a forgery oo-",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -251084,7 +251099,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T11:30:48.970Z",
+      "verified_at": "2026-11-21T15:31:25.183Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -251138,10 +251153,10 @@
       "relative_path": "08_VERIFICATION/fabio-rovai-open-ontologies-verification-protocol-empirical-defect-shield-for-fa.md",
       "title": "Verification Protocol: Empirical Defect Shield for fabio-rovai/open-ontologies",
       "repository": "fabio-rovai/open-ontologies",
-      "source_version": "17ef05b9",
-      "content_hash": "e4eb74dce0a1c9f06e3524773b1b96adce206e4b04ab32357df3868bfefc8b56",
+      "source_version": "c2b64e1b",
+      "content_hash": "f4348b82b7083ce78bbd8d9fd1eb55d36e5d68ab7516f7ba5c863302ec9a3ed3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T11:30:49.677Z"
+      "persisted_at": "2026-11-21T15:31:25.848Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-conwayresearch-underdog-woof-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-conwayresearch-underdog-woof-learnings-core-i",
@@ -251175,9 +251190,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for fabio-rovai-open-ontologies-learnings",
       "repository": "fabio-rovai-open-ontologies-learnings",
       "source_version": "HEAD",
-      "content_hash": "e7e35e4e682811ff45906070b76c27275dfcd4cd18ed89ba010fbf1d7c8a9bc4",
+      "content_hash": "2d11c61146c597ca0e631cdf121a7ab3d73b01523e7d76311b235e7fa4db9e68",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T04:05:50.345Z"
+      "persisted_at": "2026-11-21T15:32:06.592Z"
     },
     "learn-huggingface-cactus-compute-mirage": {
       "learning_id": "learn-huggingface-cactus-compute-mirage",
@@ -284376,8 +284391,8 @@
       "slug": "unhappychoice-gitlogue",
       "platform": "github",
       "source_url": "https://github.com/unhappychoice/gitlogue",
-      "source_version": "1f875b5b",
-      "content_hash": "4eff7a1010567610113737479fe9dbfc50099feb956a8b347240110b0867b76a",
+      "source_version": "8d02655f",
+      "content_hash": "55c0a2a34d69eac2846ce19d56cefb8cd3fc48dd40e55add9fac74364365544f",
       "dossier_path": "07_PROJECT_LEARNING/unhappychoice-gitlogue-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/unhappychoice-gitlogue-learnings.md",
       "promoted_rules": [
@@ -284392,7 +284407,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T04:57:17.028Z",
+      "verified_at": "2026-11-21T15:31:17.527Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -284408,10 +284423,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-unhappychoice-gitlogue-design-intelligence-unhappychoice-gitlogue-core-invariant.md",
       "title": "Design Intelligence: unhappychoice/gitlogue Core Invariants",
       "repository": "unhappychoice/gitlogue",
-      "source_version": "1f875b5b",
-      "content_hash": "6a87b10f16bae8a09f023b19a5853109da9dd27ea6d64337a90e391d375592bb",
+      "source_version": "8d02655f",
+      "content_hash": "aa33f66033b3c4884cf990e6c8f89d79ea163b5874755046fc1d1759347e1d94",
       "domain_letter": "F",
-      "persisted_at": "2026-11-18T04:57:17.501Z"
+      "persisted_at": "2026-11-21T15:31:18.058Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-unhappychoice-gitlogue": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-unhappychoice-gitlogue",
@@ -284420,10 +284435,10 @@
       "relative_path": "08_VERIFICATION/unhappychoice-gitlogue-verification-protocol-empirical-defect-shield-for-unhappy.md",
       "title": "Verification Protocol: Empirical Defect Shield for unhappychoice/gitlogue",
       "repository": "unhappychoice/gitlogue",
-      "source_version": "1f875b5b",
-      "content_hash": "938bdbb39e65443600342dd24d0f2adb1faeb196d2da0a0c8ed88c8451546e8c",
+      "source_version": "8d02655f",
+      "content_hash": "2a5bf444f61dc6ed69aa800b28ebe69c61c50f4dba3e684997244dafff53be7a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T04:57:17.623Z"
+      "persisted_at": "2026-11-21T15:31:18.203Z"
     },
     "rule-9126": {
       "learning_id": "rule-9126",
@@ -284485,9 +284500,9 @@
       "title": "Design Intelligence: unhappychoice-gitlogue-learnings Core Invariants",
       "repository": "unhappychoice-gitlogue-learnings",
       "source_version": "HEAD",
-      "content_hash": "5f0aac9ae39465a9c976d5e29d97d8445ba341ee78aa7edebf2387a8d1608164",
+      "content_hash": "26b5a6e4a3e5a3ad1744f08b141402aad37bbb80a0aef60563ca80f67d243378",
       "domain_letter": "F",
-      "persisted_at": "2026-11-18T04:57:30.523Z"
+      "persisted_at": "2026-11-21T15:31:39.605Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-unhappychoice-gitlogue-learnin": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-unhappychoice-gitlogue-learnin",
@@ -284497,9 +284512,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for unhappychoice-gitlogue-learnings",
       "repository": "unhappychoice-gitlogue-learnings",
       "source_version": "HEAD",
-      "content_hash": "3dbd6beeecc2bfedba58f14f0cb00083b33544cb41f30950c931ca016aa64c0a",
+      "content_hash": "519af91d763cb36831ae987a88d365aa3f07e8ff278dedf895193a10bf26f788",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T04:57:30.652Z"
+      "persisted_at": "2026-11-21T15:31:39.739Z"
     },
     "learn-huggingface-efficient-large-model-open-h3-regenerate-2k": {
       "learning_id": "learn-huggingface-efficient-large-model-open-h3-regenerate-2k",
@@ -314292,6 +314307,108 @@
       "content_hash": "ac3ffc52c021a712bb905672e1d77c0d6b5755ec0f27bcd489e82c853bc23c1f",
       "domain_letter": "G",
       "persisted_at": "2026-11-21T15:17:53.435Z"
+    },
+    "rule-9797": {
+      "learning_id": "rule-9797",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9797,
+      "title": "keep insets in sync with edges and measurements in LayoutRegionView",
+      "source_url": "https://github.com/react-navigation/react-navigation",
+      "source_version": "ca036e81",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T15:31:22.896Z"
+    },
+    "candidate_directive-keep-insets-in-sync-with-edges-and-measurements-in-layoutregionview": {
+      "item_id": "candidate_directive-keep-insets-in-sync-with-edges-and-measurements-in-layoutregionview",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GGD8-keep-insets-in-sync-with-edges-and-measurements-in-layoutregionview.md",
+      "title": "keep insets in sync with edges and measurements in LayoutRegionView",
+      "repository": "react-navigation-react-navigation-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4bf8637c70d3f1e032f2eabababa1f146297dd44b41c6c3a8ff7556ad25e0ab7",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T15:32:05.468Z"
+    },
+    "rule-9798": {
+      "learning_id": "rule-9798",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9798,
+      "title": "Merge fix/428-figure-real-forgery: the README figure's red edge is a forgery oo-",
+      "source_url": "https://github.com/fabio-rovai/open-ontologies",
+      "source_version": "c2b64e1b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T15:31:25.183Z"
+    },
+    "candidate_directive-merge-fix-428-figure-real-forgery-the-readme-figure-s-red-edge-is-a-forgery-oo": {
+      "item_id": "candidate_directive-merge-fix-428-figure-real-forgery-the-readme-figure-s-red-edge-is-a-forgery-oo",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GGZP-merge-fix-428-figure-real-forgery-the-readme-figure-s-red-edge-is-a-forgery-oo.md",
+      "title": "Merge fix/428-figure-real-forgery: the README figure's red edge is a forgery oo-",
+      "repository": "fabio-rovai-open-ontologies-learnings",
+      "source_version": "HEAD",
+      "content_hash": "62c38b175d310bea274ac2455e0241258ac6bcd8791c155fa254709cbffe5e7a",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-21T15:32:06.285Z"
+    },
+    "domain_intelligence-content-information-intelligence-fabio-rovai-open-ontologies-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-fabio-rovai-open-ontologies-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-fabio-rovai-open-ontologies-content-information-intelligence-fabio-rovai-open-on.md",
+      "title": "Content & Information Intelligence: fabio-rovai/open-ontologies Core Invariants",
+      "repository": "fabio-rovai/open-ontologies",
+      "source_version": "c2b64e1b",
+      "content_hash": "76e269e2e15336f0be0c3abbcf63b9630b9d4756f8e7919f5541a2b1eef13ab1",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-21T15:31:25.704Z"
+    },
+    "rule-9799": {
+      "learning_id": "rule-9799",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9799,
+      "title": "Increase timeout at test_replicated_table_backup",
+      "source_url": "https://github.com/ytsaurus/ytsaurus",
+      "source_version": "847a2b36",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T15:31:35.507Z"
+    },
+    "candidate_directive-increase-timeout-at-test_replicated_table_backup": {
+      "item_id": "candidate_directive-increase-timeout-at-test_replicated_table_backup",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-FTJH-increase-timeout-at-test_replicated_table_backup.md",
+      "title": "Increase timeout at test_replicated_table_backup",
+      "repository": "ytsaurus/ytsaurus",
+      "source_version": "847a2b36",
+      "content_hash": "5b38185199eca6019f50f51f11e7c157aa8a8d31fc4462ff967689e08f79f1df",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-21T15:31:35.886Z"
+    },
+    "domain_intelligence-content-information-intelligence-fabio-rovai-open-ontologies-learnings-core-inva": {
+      "item_id": "domain_intelligence-content-information-intelligence-fabio-rovai-open-ontologies-learnings-core-inva",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-fabio-rovai-open-ontologies-learnings-content-information-intelligence-fabio-rov.md",
+      "title": "Content & Information Intelligence: fabio-rovai-open-ontologies-learnings Core Invariants",
+      "repository": "fabio-rovai-open-ontologies-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d319c488373b2a6c97e889be6c3b4bc69734d569f2e0f21c05ca708ff5cb4392",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-21T15:32:06.443Z"
     }
   },
   "ai-builder-brain": {

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T04:05:50.006Z",
+  "timestamp": "2026-11-21T15:32:06.166Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-fabio-rovai-open-ontologies-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [fabio-rovai-open-ontologies-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T04:05:50.006Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-21T15:32:06.166Z`  
 > **Learning ID**: `LEARN-EVO-fabio-rovai-open-ontologies-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md`  
 > **Source**: github ([https://github.com/fabio-rovai/open-ontologies](https://github.com/fabio-rovai/open-ontologies))  
-> **Source Version**: `1ed99ac1`  
+> **Source Version**: `c2b64e1b`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T04:05:44.023Z  
+> **Timestamp**: 2026-11-21T15:31:24.418Z  
 > **Learning ID**: `learn-github-fabio-rovai-open-ontologies`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/fabio-rovai/open-ontologies](https://github.com/fabio-rovai/open-ontologies))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T04:05:44.018Z  
+> **Harvest Timestamp**: 2026-11-21T15:31:24.413Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Plan, apply and roll back changes to a production ontology, with a blast radius report and a proof an auditor can re-check.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2913 stars
+- **Stars / Engagement**: 2939 stars
 
 ---
 
@@ -1751,11 +1751,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #406** (2026-11-16): **clinical and drift read language-tagged labels as Dog"@en: trim_matches('"') on the N-Triples form**
-  *Symptoms*: ## What happens  Two more places read `rdfs:label` values out of `sparql_select`'s JSON with `trim_matches('"')`. Language-tagged labels come out mangled there, the same defect `src/language.rs` describes for the alignment engine and #404 fixes for `onto_embed`.  - `src/clinical.rs:155`, `ClinicalCrosswalks::validate_clinical` - `src/drift.rs:259`, the label pass of the vocabulary snapshot  Both run:  ```rust label.trim_matches('"').split("^^").next().unwrap_or("").trim_matches('"') ```  on the N-Triples form of the literal. For a tagged literal there is no `^^` to split on, so the tag and the closing quote stay:  | Literal in the store | `sparql_select` renders | After the expression | | --- | --- | --- | | `"Myocardial infarction"@en` | `"Myocardial infarction"@en` | `Myocardial infarction"@en` | | `"Dog"@en-GB` | `"Dog"@en-GB` | `Dog"@en-GB` | | `"A \"quoted\" label"` | `"A \"quoted\" label"` | `A \"quoted\" label` (escapes kept) |  ## Expected  The literal's lexical value: `Myocardial infarction`, `Dog`, `A "quoted" label`.  ## Effect  `validate_clinical` searches the crosswalk for `Myocardial infarction"@en`, finds nothing, and reports every language-tagged class label as unmatched. The drift snapshot records the mangled string as the label, so any label comparison it feeds compares `Dog"@en` with whatever the other version holds.  ## Suggested fix  Parse with `crate::language::parse_literal`, which already handles tags, datatypes and escapes, or read terms rather than s
+- **Issue #428** (2026-11-20): **README figure draws a genuinely certified edge as 'forged, the checker exited 1'; no forged line is ever checked**
+  *Symptoms*: ## What happens  `docs/assets/knowledge-graph.py` builds the README figure from a certified run over ies-core. Its fifth beat says "a line is forged, and the same checker refuses", and its legend row for the red edge says "forged. the checker exited 1 and named the rule".  The red edge is not a forgery. In "Which claim is the forged one" (around line 580 on main), the script takes one of the DERIVED subClassOf edges, all of which `oo-cert` accepted, picks it by where it lands in the layout, and relabels it `rejected`. No forged line is written and no checker is run on one, so the figure shows a true, certified entailment as refused, and states a refusal that never happened.  ## Expected  The red edge is a claim that really was forged and refused, drawn beside the certified ones rather than in place of one. `demo/build_certified_graph.py` (from #425's fix) already does this for the Studio replay: it appends a copy of a derived line with its conclusion changed to a class the closure does not reach, and requires `oo-cert` to exit 1 naming the rule (and `oo-horn` and the Isabelle checker to refuse the same forgery in the Horn certificate) before writing anything. The figure can take its forged edge from that run, and `tests/knowledge_graph_asset_test.rs` can require the red edge to be absent from the certificate's conclusions. 
 
-- **Issue #398** (2026-11-13): **MCP handshake reports serverInfo as rmcp 3.9.0 instead of open-ontologies and its version**
-  *Symptoms*: ## What happens  Over MCP the server introduces itself as `rmcp`, with rmcp's version, instead of as Open Ontologies. `ServerHandler::get_info` in `src/server.rs` builds its `ServerConfig` without setting the server's name and version, so rmcp fills in its own crate name and version.  ## Repro  Start `open-ontologies serve` and send over stdio:  ```json {"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"probe","version":"1"}}} ```  ## Expected  `result.serverInfo` names this server and its release, for example `{"name":"open-ontologies","version":"2.1.0"}`.  ## Actual  On `fe1e32b8`, release build, default features:  ```json {"name":"rmcp","version":"3.9.0"} ```  ## Why it matters  Clients show this name in their server lists and logs, and a bug report that quotes the handshake carries the SDK's version, not the engine's. Nothing in `src/` or `tests/` mentions `serverInfo`, so nothing would catch a change either way.  ## Suggested fix  Set the implementation name to `open-ontologies` and the version to `env!("CARGO_PKG_VERSION")` in `get_info`, and add a handshake test that pins both. 
+- **Issue #427** (2026-11-20): **reason --certificate writes a different derivations.tsv on every run over the same store (premises and line order vary)**
+  *Symptoms*: ## What happens  Two runs of the built-in certificate over the same file produce different `derivations.tsv` bytes. The conclusions are the same set every time; the premises recorded for an `rdfs11` step (which intermediate class justifies a transitive subClassOf) and the line order change from run to run. The Horn certificate over the built-in table does not have this problem: `horn.tsv` is byte-identical across runs, as `src/reason.rs` documents for that writer ("does not depend on hash iteration order").  ## Reproduce (main at 13bd71e3)  ```sh for i in 1 2 3; do   printf 'load benchmark/reference/ies-core.ttl\nreason --profile rdfs --certificate /tmp/det%s\n' $i \     | open-ontologies --data-dir /tmp/d$i batch - --no-connect >/dev/null   shasum -a 256 /tmp/det$i/derivations.tsv              # differs every run   sort /tmp/det$i/derivations.tsv | shasum -a 256       # still differs: premises differ   cut -f1-4 /tmp/det$i/derivations.tsv | sort | shasum -a 256   # same: conclusions agree done ```  Example of one conclusion with two different premise sets across runs: `rdfs11 AccountClosure subClassOf FusionOfIntegralParts`, justified through a different intermediate class.  Every run's certificate is accepted by `oo-cert`, so this is not a soundness defect.  ## Why it matters  A certificate cannot be pinned by digest, compared between two machines, or regenerated as a byte-identical artefact (a committed certificate, a pack, a demo bundle that records its certificate's dige
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1772,928 +1772,632 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `df254aff` (2026-11-16)
-**Commit Message**: fix(shacl): hide provenance from scoped prebound union queries
+### Incident Patch 1: `2154f1bb` (2026-11-20)
+**Commit Message**: Merge fix/428-figure-real-forgery: the README figure's red edge is a forgery oo-cert really refused (#428)
 
-Route AllGraphs prebound SELECTs through the existing filtered union
-query path, matching non-prebound scoped reads. A union default graph
-has no explicit graph list for hide_ledger to filter, which let internal
-provenance records reach SHACL-SPARQL constraints in tracked stores.
-Keep explicitly scoped datasets and per-focus variable substitution intact.
+# Conflicts:
+#	CHANGELOG.md
 
-Add regressions for tracked and untracked SHACL validation, including
-unscoped and all-versions requests, a ledger probe and a positive control
-on inferred data. Cover default and named graph boundaries, explicit and
-variable GRAPH access to the ledger, and multiple prebound focus terms.
-Update the existing Unreleased changelog entry.
-
-Both new regressions fail before the fix; the SHACL reproduction reports
-16 violations instead of the expected one. After the fix, 529 Rust tests
-and the Python source-citation guard pass. Linux CI and the full optional
-feature matrix were not run locally.
-Clippy --all-targets with warnings denied also passes.
-
-**File**: `CHANGELOG.md` (modified, +2/-1)
+**File**: `CHANGELOG.md` (modified, +24/-0)
 ```diff
-@@ -211,7 +211,8 @@ All notable changes to Open Ontologies are documented here.
-   the Rust `sparql_update_with_retraction` API, or HTTP `/api/update` with
-   `retract_inferences: true` opt in to support-based retraction. Independent
-   proofs survive withdrawal; unsupported cycles do not. The reserved ledger
--  stays outside query datasets, including `GRAPH ?g`. Dataset backups retain
-+  stays outside query datasets, including `GRAPH ?g` and SHACL-SPARQL
-+  constraints evaluated over all graphs. Dataset backups retain
-   it, and old single-literal backups migrate on restore or persistent open.
-   Provenance reports retain evidence, rule versions and withdrawal history;
-   proof forests remain exportable to the existing independent oo-cert checker.
+@@ -216,6 +216,30 @@ All notable changes to Open Ontologies are documented here.
+   `tests/certificate_determinism_test.rs` certifies one store three times in
+   three processes, under each profile, and requires identical bytes.
+ 
++- **The README figure's red edge is a forged claim, and the refusal it
++  reports is a real run of `oo-cert`** (#428). `docs/assets/knowledge-graph.py`
++  took one of the derived subClassOf edges, every one of which `oo-cert`
++  accepts, chose it by where it landed in the layout and drew it as the
++  forgery, so the figure painted a certified entailment red and stated a
++  refusal no checker had made. It now forges a new claim `s subClassOf X`, X a
++  class the closure does not reach from s, as `demo/build_certified_graph.py`
++  does: a derived line of s is copied with its conclusion changed to X,
++  appended to a copy of the certificate, and `oo-cert` is run on it
++  (`--oo-cert PATH`, default `lean/.lake/build/bin/oo-cert`). Nothing is
++  written unless `oo-cert` accepts the certificate and exits 1 on the copy,
++  naming the forged line and its rule, and the rule and exit code on the
++  figure are read from that report. On ies-core the forgery is
++  `SetOfRepresentations subClassOf Sign`, refused at line 265 as an `rdfs11`
++  step, drawn beside the 257 derived edges, which all stay certified. The
++  legend counts the ontology's edges only, as the Studio legend has since
++  #425: 420 asserted, 257 certified, 1 rejected, where it read 426 and 259 by
++  taking in the pipeline's arrows. The certificate row states the 265 lines
++  `oo-cert` read. Edges are sorted before the layout, so two certificates that
++  differ only in premises (#427) draw byte-identical figures. Both languages'
++  SVG, scene and WebP are regenerated, and
++  `tests/knowledge_graph_asset_test.rs` checks the red edge and the certified
++  edges against a live certificate.
++
+ - **The replay demo's 3D legend is true of the graph under it** (#425). The
+   legend reads "ies-core.ttl · 1,083 triples" and names three warrants
+   (asserted, certified under `OOCert.certificate_sound`, forged and refused),
 ```
 
-**File**: `src/graph.rs` (modified, +4/-0)
+**File**: `README.md` (modified, +3/-3)
 ```diff
-@@ -1621,6 +1621,10 @@ impl GraphStore {
-         terms: &[Term],
-         scope: &ReadScope,
-     ) -> anyhow::Result<Vec<Vec<std::collections::HashMap<String, String>>>> {
-+        if scope.is_all_graphs() {
-+            // Match the non-prebound path: the union must exclude the ledger.
-+            return self.sparql_select_union_prebound(query, var, terms);
-+        }
-         let store = &self.store;
-         let mut prepared = SparqlEvaluator::new().parse_query(query)?;
-         scope.apply(prepared.dataset_mut())?;
+@@ -59,9 +59,9 @@
+ </p>
+ 
+ <p align="center">
+-  <sub><b>426 asserted, 259 certified, 1 rejected.</b> The engine derived the green edges. A Lean 4
+-  checker then <i>proved</i> them. One certificate holds all 259, and one run of the checker accepts it.
+-  The red edge is a forged line. The same checker refused that line, gave exit 1, and named the rule.
++  <sub><b>420 asserted, 257 certified, 1 rejected.</b> The engine derived the green edges. A Lean 4
++  checker then <i>proved</i> them. One certificate holds all 257, and one run of the checker accepts it.
++  The red edge is a forged line. The same checker refused that line, gave exit 1, and named the rule (rdfs11).
+   The run supplies each count. Nobody writes a count into the caption.</sub>
+ </p>
+ 
 ```
 
-**File**: `tests/shacl_provenance_isolation_test.rs` (added, +161/-0)
+**File**: `README.zh-CN.md` (modified, +3/-3)
 ```diff
-@@ -0,0 +1,161 @@
-+// SPDX-FileCopyrightText: 2026 Fabio Rovai
-+// SPDX-License-Identifier: MIT
+@@ -57,9 +57,9 @@
+ </p>
+ 
+ <p align="center">
+-  <sub><b>426 条断言，259 条已认证，1 条被拒绝。</b>绿色边由引擎推导得出。随后一个 Lean 4
+-  检查器<i>证明</i>了它们。一份证书涵盖全部 259 条，检查器一次运行即可接受它。
+-  红色边是一行伪造的内容。同一个检查器拒绝了它，以 exit 1 退出，并指出了规则。
++  <sub><b>420 条断言，257 条已认证，1 条被拒绝。</b>绿色边由引擎推导得出。随后一个 Lean 4
++  检查器<i>证明</i>了它们。一份证书涵盖全部 257 条，检查器一次运行即可接受它。
++  红色边是一行伪造的内容。同一个检查器拒绝了它，以 exit 1 退出，并指出了规则（rdfs11）。
+   每个数字都来自运行结果。没有人把数字写进说明文字。</sub>
+ </p>
+ 
+```
+
+**File**: `docs/assets/hand-drawn/hero.js` (modified, +5/-1)
+```diff
+@@ -189,7 +189,7 @@ function layout(){
+     const f=S.labels.forged;
+     const b=placeIn([textBox(mx+rx-10,my-ry-10,f,28,FONT.body),textBox(mx-rx+10-measure(f,28,FONT.body),my-ry-10,f,28,FONT.body),
+                      textBox(mx-measure(f,28,FONT.body)/2,my+ry+34,f,28,FONT.body)],'the forged-line note');
+-    FORGED={mx,my,rx,ry,x:b[0]+4,y:b[3]-28*0.26};
++    FORGED={mx,my,rx,ry,x:b[0]+4,y:b[3]-28*0.26,b};
+     const li=S.nodes.findIndex(n=>n.kind==='lean'), lab=LABELS.find(l=>l.i===li);
+     const rb=pick([textBox(lab.b[0]+4,P[li].y+48,S.labels.refused,24,FONT.body)],'the refusal');
+     REFUSED={x:rb[0]+4,y:P[li].y+48,li};
+@@ -394,6 +394,10 @@ function drawAt(t){
+   // beat 5: the forged line is named, and the checker refuses the certificate carrying it
+   if(litF>0&&FORGED){ const {mx,my,rx,ry}=FORGED;
+     circleAround(mx,my,rx,ry,PAL.red,clamp((t-F.t0)/0.7),litF);
++    // paper under the note, as under beat six's: the forged line is wherever
++    // the closure leaves room for one, and the note can land on the cloud
++    const fb=FORGED.b;
++    wash(ctx,[[fb[0],fb[1]],[fb[2],fb[1]],[fb[2],fb[3]],[fb[0],fb[3]]],PAL.paper,{alpha:0.9*litF,spread:2});
+     hand(ctx,S.labels.forged,FORGED.x,FORGED.y,28,{font:FONT.body,c:PAL.red,alpha:litF});
+     const li=REFUSED.li, cx=P[li].x, cy=P[li].y, st=clamp((t-F.t0-1.2)/0.4);
+     if(st>0){ const s=27*(1.25-0.25*st);
+```
+
+**File**: `docs/assets/knowledge-graph.py` (modified, +280/-63)
+```diff
+@@ -2,10 +2,18 @@
+ """Regenerate docs/assets/knowledge-graph.svg from a real certified run.
+ 
+ Run:
++    cargo build --release
++    (cd lean && lake build oo-cert)
+     printf 'load benchmark/reference/ies-core.ttl\nreason --profile rdfs --certificate DIR\n' \
+-        | open-ontologies batch - --no-connect
++        | target/release/open-ontologies batch - --no-connect
+     python3 docs/assets/knowledge-graph.py DIR/asserted.tsv DIR/derivations.tsv \
+-        docs/assets/knowledge-graph.svg
++        docs/assets/knowledge-graph.svg docs/assets/kgcert/prove.json docs/assets/kgcert/mu.json en
++    python3 docs/assets/knowledge-graph.py DIR/asserted.tsv DIR/derivations.tsv \
++        docs/assets/knowledge-graph.zh-CN.svg docs/assets/kgcert/prove.json docs/assets/kgcert/mu.json zh
 +
-+//! SHACL-SPARQL reads user data, including inferred facts, but not the ledger.
++`--oo-cert PATH` names the checker; it defaults to lean/.lake/build/bin/oo-cert.
++The figure cannot be drawn without it, because the fifth beat is a run of it
++(see "The forgery" below).
+ 
+ `reason` takes no positional file. It reasons over the loaded store, so the
+ graph has to be loaded first and the two have to be one batch: a second process
+@@ -33,6 +41,17 @@
+ the edges cross in front of and behind one another the way they do on screen.
+ Drawn far to near, painter's algorithm, because SVG has no z-buffer.
+ 
++THE FORGERY IS FORGED, AND THE REFUSAL IS A RUN. The red edge is a claim
++`s subClassOf X` that the closure does not reach (not asserted, not derived),
++drawn beside the certified edges and never in place of one. The generator
++copies a derived line of `s`, changes its conclusion to X, appends it to a copy
++of the certificate and runs `oo-cert` on that copy. Nothing is written unless
++`oo-cert` accepts the honest certificate, then exits 1 on the forged one with
++`ok: false`, the forged line as `first_rejected` and its rule named. The rule
++and the exit code on the figure are read from that report. Until #428 the red
++edge was one of the derived edges, all of which `oo-cert` accepts, relabelled
++`rejected`: a true entailment painted red, and a refusal that never happened.
 +
-+use open_ontologies::graph::{GraphStore, ReadScope};
-+use open_ontologies::reason::{InferenceTarget, Reasoner};
-+use open_ontologies::shacl::ShaclValidator;
-+use open_ontologies::temporal::ScopeRequest;
-+use open_ontologies::truth_maintenance::LEDGER_GRAPH;
-+use oxigraph::model::{NamedNode, Term};
-+use std::sync::Arc;
+ It is also ANIMATED, in four beats on one 14-second clock: the asserted graph
+ arrives, the engine derives, Lean sweeps the derived edges, and a forged edge is
+ drawn and then refused. That order is the argument the README makes, and a still
+@@ -55,9 +74,15 @@
+ gives the same picture and a regeneration is a diff a reader can check rather
+ than a new arrangement of the same facts.
+ """
++import argparse
++import json
+ import math
++import os
+ import random
++import shutil
++import subprocess
+ import sys
++import tempfile
+ 
+ SUBCLASS = "<http://www.w3.org/2000/01/rdf-schema#subClassOf>"
+ TYPE = "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>"
+@@ -71,6 +96,8 @@
+ LINKING = (SUBCLASS, TYPE, DOMAIN, RANGE)
+ W, H = 1100, 780
+ SEED = 20260919
++ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
++OO_CERT = os.path.join(ROOT, "lean", ".lake", "build", "bin", "oo-cert")
+ 
+ 
+ def text_width(s, size):
+@@ -135,9 +162,57 @@ def read(path):
+ 
+ 
+ 
+-# Every word on the drawing, in each language it is published in. The NUMBERS
+-# stay out of this table: they are computed from the run and formatted into
+-# these strings, so a translation cannot state a count the data does not carry.
++def oo_cert(checker, asserted_path, derivations_path):
++    """Run the checker on one certificate: (exit code, its JSON report)."""
++    proc = subprocess.run([checker, asserted_path, derivations_path],
++                          capture_output=True, text=True)
++    for line in reversed(proc.stdout.splitlines()):
++        line = line.strip()
++        if line.startswith("{"):
++            return proc.returncode, json.loads(line)
++    raise SystemExit(f"{checker} printed no JSON report (exit {proc.returncode}):\n"
++                     f"{proc.stdout}{proc.stderr}")
 +
-+const DATA: &str = r#"
-+    @prefix ex: <http://example.org/> .
-+    @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-+    ex:A rdfs:subClassOf ex:B .
-+    ex:x a ex:A ; ex:p ex:y .
-+"#;
 +
-+const SHAPES: &str = r#"
-+    @prefix sh: <http://www.w3.org/ns/shacl#> .
-+    @prefix ex: <http://example.org/> .
-+    ex:LedgerProbe a sh:NodeShape ; sh:targetClass ex:A ;
-+        sh:sparql [ sh:message "ledger is visible" ;
-+            sh:select """SELECT $this ?p WHERE {
-+                ?s ?p ?o .
-+                FILTER(STRSTARTS(STR(?p), "https://open-ontologies.org/provenance#"))
-+            }""" ] .
-+    ex:Control a sh:NodeShape ; sh:targetClass ex:B ;
-+        sh:sparql [ sh:message "control: ex:p is present" ;
-+            sh:select "SELECT $this WHERE { $this <http://example.org/p> ?o }" ] .
-+"#;
++def forge(checker, asserted_path, derivations_path, line, forged_to):
++    """Run the checker on the certificate as the engine wrote it, then on a copy
++    with one forged line appended: `line`, a derived line of the certificate,
++    with its conclusion changed to `forged_to` and its rule and premises kept.
 +
-+fn store(tracked: bool) -> Arc<GraphStore> {
++    Refuses to go on unless the checker accepts the certificate and exits 1 on
++    the copy, with `ok: false`, the appended line as `first_rejected` and that
++    line's rule named. Returns both reports, which is where every word the
++    figure says about the refusal comes from."""
++    code_h, honest = oo_cert(checker, asserted_path, derivations_path)
++    if not (code_h == 0 and honest.get("ok") is True
++            and honest.get("theorem") == "OOCert.certificate_sound"):
++        raise SystemExit(f"refusing to draw: oo-cert did not accept the certificate "
++                         f"(exit {code_h}): {honest}")
++    with open(derivations_path) as f:
++        body = f.read()
++    if body and not body.endswith("\n"):
++        body += "\n"
++    work = tempfile.mkdtemp(prefix="oo-kg-forged-")
+```
+
+**File**: `tests/knowledge_graph_asset_test.rs` (modified, +253/-0)
+```diff
+@@ -19,6 +19,12 @@
+ //! implementation of the same projection agreeing with the first says very
+ //! little. The asserted and derived totals are the load-bearing numbers and
+ //! they come straight from the engine.
++//!
++//! One projection is re-derived all the same, since #428: which edges are
++//! green and which one is red. The generator once took a certified edge and
++//! drew it as the forgery, and every count it printed stayed self-consistent
++//! while it did. So the green edges are compared with the certificate's
++//! subClassOf conclusions, and the red edge has to be absent from them.
+ 
+ use open_ontologies::graph::GraphStore;
+ use open_ontologies::reason::{InferenceTarget, Reasoner};
+@@ -839,3 +845,250 @@ fn the_hand_drawn_animation_is_drawn_from_the_svgs_own_scene() {
+         );
+     }
+ }
++
++// ── The red edge is a forgery, drawn beside the certified edges ─────────
++//
++// The fifth beat says "a line is forged, and the same checker refuses", and the
++// legend's REJECTED row says the checker exited 1 and named the rule. Until
++// #428 neither was true. The generator took one of the DERIVED subClassOf
++// edges, every one of which `oo-cert` accepts, chose it by where it landed in
++// the layout, and relabelled it `rejected`. No forged line was written and no
++// checker ran on one, so the figure painted a certified entailment red and
++// reported a refusal that never happened.
++//
++// So the certificate is the referee here, not the generator: this test writes
++// one from a live run and holds every published scene to it.
++
++const SUBCLASS: &str = "<http://www.w3.org/2000/01/rdf-schema#subClassOf>";
++
++/// The certificate a live run writes over ies-core: the rows of `asserted.tsv`
++/// and of `derivations.tsv`, as `reason --profile rdfs --certificate` writes
++/// them and as `docs/assets/knowledge-graph.py` reads them.
++fn certificate_rows(tag: &str) -> (Vec<Vec<String>>, Vec<Vec<String>>) {
++    let ttl = std::fs::read_to_string(
++        repo()
++            .join("benchmark")
++            .join("reference")
++            .join("ies-core.ttl"),
++    )
++    .expect("read ies-core.ttl");
 +    let graph = Arc::new(GraphStore::new());
-+    graph.load_turtle(DATA, None).unwrap();
-+    Reasoner::run_scoped_with_tracking(
++    graph
++        .load_turtle(&ttl, None)
++        .expect("ies-core.ttl must parse");
++    let dir = std::env::temp_dir().join(format!("oo-kg-{tag}-{}", std::process::id()));
++    let _ = std::fs::remove_dir_all(&dir);
++    std::fs::create_dir_all(&dir).expect("scratch dir");
++    Reasoner::run_full(
 +        &graph,
 +        "rdfs",
-+        true,
++        false,
 +        InferenceTarget::DefaultGraph,
-+        None,
-+        &ScopeRequest::Unscoped,
-+        tracked,
++        Some(dir.as_path()),
 +    )
-+    .unwrap();
-+    assert_eq!(graph.ledger().unwrap().is_some(), tracked);
-+    graph
++    .expect("reason over ies-core.ttl");
++    let rows = |name: &str| -> Vec<Vec<String>> {
++        std::fs::read_to_string(dir.join(name))
++            .unwrap_or_else(|_| panic!("the run wrote no {name}"))
++            .lines()
++            .filter(|l| !l.is_empty())
++            .map(|l| l.split('\t').map(str::to_string).collect())
++            .collect()
++    };
++    let out = (rows("asserted.tsv"), rows("derivations.tsv"));
++    let _ = std::fs::remove_dir_all(&dir);
++    out
 +}
 +
 +#[test]
-+fn tracking_does_not_add_shacl_sparql_violations() {
-+    for tracked in [false, true] {
-+        let graph = store(tracked);
-+        for request in [ScopeRequest::Unscoped, ScopeRequest::AllVersions] {
-+            let report: serde_json::Value = serde_json::from_str(
-+                &ShaclValidator::validate_scoped(&graph, SHAPES, &request).unwrap(),
-+            )
-+            .unwrap();
-+            assert_eq!(report["conforms"], false, "tracked={tracked}: {report}");
-+            assert_eq!(report["violation_count"], 1, "tracked={tracked}: {report}");
-+            assert_eq!(
-+                report["violations"][0]["message"],
-+                "control: ex:p is present"
-+            );
-+            assert_eq!(
-+                report["violations"][0]["focus_node"],
-+                "http://example.org/x"
-+            );
-+            assert!(report["skipped_constraints"].is_null(), "{report}");
-+        }
-+    }
-+}
-+
-+#[test]
-+fn scoped_prebinding_hides_metadata_and_keeps_user_graph_boundaries() {
-+    let graph = store(true);
-+    graph
-+        .sparql_update(
-+            "INSERT DATA { GRAPH <http://example.org/source> {
-+                <http://example.org/x> <http://example.org/p> <http://example.org/z>
-+            } }",
-+        )
-+        .unwrap();
-+    let terms: Vec<Term> = ["http://example.org/x", "http://example.org/absent"]
-+        .into_iter()
-+        .map(|iri| NamedNode::new(iri).unwrap().into())
++fn the_red_edge_is_forged_beside_the_certified_ones_and_refused_by_a_real_run() {
++    use std::collections::HashSet;
++    let (asserted, derivations) = certificate_rows("forged");
++    let derived: HashSet<(String, String)> = derivations
++        .iter()
++        .filter(|r| r.len() >= 4 && r[2] == SUBCLASS)
++        .map(|r| (r[1].clone(), r[3].clone()))
 +        .collect();
-+    let source = "http://example.org/source".to_string();
-+    let scopes = [
-+        (ReadScope::AllGraphs, vec!["y", "z"]),
-+        (
-+            ReadScope::Graphs {
-+                default_graph: true,
-+                named: vec![],
-+            },
-+            vec!["y"],
-+        ),
-+        (
-+            ReadScope::Graphs {
-+                default_graph: false,
-+                named: vec![source.clone()],
-+            },
-+            vec!["z"],
-+        ),
-+        (
-+            ReadScope::Graphs {
-+                default_graph: true,
-+                named: vec![source, LEDGER_GRAPH.into()],
-+            },
-+            vec!["y", "z"],
-+        ),
-+        (
-+            ReadScope::Graphs {
-+                default_graph: false,
-+                named: vec![LEDGER_GRAPH.into()],
-+            },
-+            vec![],
-+        ),
-+    ];
-+    let probes = [
-+        "SELECT $this WHERE { ?s ?p ?o FILTER(STRSTARTS(STR(?p), 'https://open-ontologies.org/provenance#')) }".to_string(),
-+        format!("SELECT $this WHERE {{ GRAPH <{LEDGER_GRAPH}> {{ ?s ?p ?o }} }}"),
-+        format!("SELECT $this WHERE {{ GRAPH ?g {{ ?s ?p ?o }} FILTER(?g = <{LEDGER_GRAPH}>) }}"),
-+    ];
-+    for (scope, expected) in scopes {
-+        let rows = graph
-+            .sparql_select_scoped_prebound(
-+                "SELECT $this ?o WHERE { $this <http://example.org/p> ?o }",
-+                "this",
-+                &terms,
-+                &scope,
-+            )
-+            .unwrap();
-+        assert_eq!(rows.len(), terms.len());
-+        assert!(
-+            rows[1].is_empty(),
-+            "the absent focus node must have no matches"
-+        );
-+        let mut actual: Vec<_> = rows[0].iter().map(|row| row["o"].clone()).collect();
-+    
-```
-
----
-
-### Incident Patch 2: `79ea65fe` (2026-11-16)
-**Commit Message**: Merge origin/main into fix/explicit-provenance-truth-maintenance
-
-Integrate upstream main at 214e948 after syncing the fork. Resolve the
-Unreleased changelog conflict by retaining all upstream fixes and the
-PR's opt-in durable provenance entry.
-
-Apply the existing ledger-free query dataset to the newly introduced
-RDF-term union query API. Preserve upstream label handling and user named
-graphs while preventing internal provenance records from leaking through
-union queries or explicit GRAPH selections. Add regression coverage for
-these cases.
-
-Keep the existing provenance, update and concurrent reasoning fixes.
-
-Validation: cargo check and clippy for all targets (-D warnings); 543 Rust
-tests and 13 Python checks passed using the existing Windows toolchain.
-Linux CI and the full optional-feature matrix were not run locally.
-
-**File**: `CHANGELOG.md` (modified, +31/-4)
-```diff
-@@ -189,6 +189,28 @@ All notable changes to Open Ontologies are documented here.
-   The CLI help and reasoning guide disclose tracking's time and storage costs,
-   including the maintainer's LUBM1 measurements.
- 
-+- **`onto_embed` uses the lexical value of an RDF label** (#404). Language
-+  tags and escaped quotes are no longer passed to the embedding model as part
-+  of the label text.
++    let asserted_sc: HashSet<(String, String)> = asserted
++        .iter()
++        .filter(|r| r.len() >= 3 && r[1] == SUBCLASS)
++        .map(|r| (r[0].clone(), r[2].clone()))
++        .collect();
++    assert!(
++        !derived.is_empty(),
++        "the run derived no subClassOf edge, so this test checks nothing"
++    );
 +
-+- **Loading an ontology and unloading another by name no longer race**
-+  (#405). `unload_named` checked which ontology was active, released the
-+  lock, then unloaded whatever was active by then, so a load landing in that
-+  gap was cleared from the store while still marked active. Loads,
-+  recompiles, reloads, eviction and unloads now take one lifecycle lock.
-+
-+- **`stats` counts individuals by their type vocabulary, in both engines**
-+  (#399, #395). A node counts when it is typed `owl:NamedIndividual` or
-+  `owl:Thing`, or has a type outside the RDF, RDFS and OWL vocabularies.
-+  Restrictions, property characteristics such as `owl:TransitiveProperty`,
-+  annotation properties, datatypes, `owl:AllDisjointClasses` and `owl:Axiom`
-+  nodes no longer inflate the count. The Rust engine and
-+  `open-ontologies-lite` apply the same rule.
-+
-+- **The MCP `initialize` reply names the server** (#400, #398). `serverInfo`
-+  reported rmcp's crate name and version (`rmcp`, `3.9.0`); it now reports
-+  `open-ontologies` and the release version.
-+
- - **`onto_repo_list` reports cache and active status for the matching file**
-   (#386). Multiple repository directories can contain the same filename stem;
-   status flags now match the cached and active source paths instead of marking
-@@ -241,10 +263,15 @@ All notable changes to Open Ontologies are documented here.
-   Names that were already valid local names, including non-ASCII letters and
-   a leading digit, keep the IRIs they had.
- 
--- **CSV ingestion rejects a repeated header instead of dropping a column**
--  (#382). Each row became a map keyed by header, so a later column with the
--  same header overwrote the earlier one. The error names the header and its
--  column number.
-+- **CSV and XLSX ingestion reject a repeated header instead of dropping a
-+  column** (#382, #402). Each row became a map keyed by header, so a later
-+  column with the same header overwrote the earlier one. The error names the
-+  header and its column number. A blank header names no column, so blank
-+  headers are not duplicates: a file whose lines end in empty columns, as
-+  spreadsheet exports such as `name,,` do, still loads, with the empty
-+  columns skipped and left out of the column list that mapping generation
-+  reads. A value under a blank header has no name to go under and is refused
-+  with its column number.
- 
- - **OWL-DL reports name `owl:NegativePropertyAssertion` as unmodelled**
-   (#376). The tableau never read negative property assertions, so a
-```
-
-**File**: `funding.json` (modified, +1/-1)
-```diff
-@@ -14,7 +14,7 @@
-     {
-       "guid": "open-ontologies",
-       "name": "Open Ontologies",
--      "description": "Open Ontologies is a Rust MCP (Model Context Protocol) server and desktop Studio for AI-native ontology engineering. It exposes 116 tools that let an LLM client build, validate, query, diff, lint, version, reason over, align, plan, certify and govern RDF/OWL ontologies against an in-memory Oxigraph triple store. All 116 ship in a default build, and 8 of them require an optional Cargo feature (embeddings, plugins, postgres or duckdb). It ships as a single binary with no JVM and no Protege dependency, and covers OWL 2 profile checking, SHACL validation, SPARQL, OWL-RL reasoning, ontology diffing, a marketplace of 33 standard ontologies, IES (Information Exchange Standard) support for UK defence and government data, semantic embeddings in builds compiled with the embeddings feature, PDDL planning, and a full lineage audit trail. The design is deliberately MCP-native: the server provides validation, scaffolding and proof, while the connected model supplies the intelligence. There are no embedded LLM clients, no API keys and no provider lock-in, so the same engine runs offline and in air-gapped environments. Open Ontologies is the verification engine behind a public programme of register-integrity audits, where every published finding is re-checked by an independent path before release. Funding supports maintenance, cross-platform release engineering, the reasoning and planner layers, and continued free distribution.",
-+      "description": "Open Ontologies is a Rust MCP (Model Context Protocol) server and desktop Studio for AI-native ontology engineering. It exposes 116 tools that let an LLM client build, validate, query, diff, lint, version, reason over, align, plan, certify and govern RDF/OWL ontologies against an in-memory Oxigraph triple store. All 116 ship in a default build, and a further 8 require an optional Cargo feature (embeddings, plugins, postgres or duckdb). It ships as a single binary with no JVM and no Protege dependency, and covers OWL 2 profile checking, SHACL validation, SPARQL, OWL-RL reasoning, ontology diffing, a marketplace of 33 standard ontologies, IES (Information Exchange Standard) support for UK defence and government data, semantic embeddings in builds compiled with the embeddings feature, PDDL planning, and a full lineage audit trail. The design is deliberately MCP-native: the server provides validation, scaffolding and proof, while the connected model supplies the intelligence. There are no embedded LLM clients, no API keys and no provider lock-in, so the same engine runs offline and in air-gapped environments. Open Ontologies is the verification engine behind a public programme of register-integrity audits, where every published finding is re-checked by an independent path before release. Funding supports maintenance, cross-platform release engineering, the reasoning and planner layers, and continued free distribution.",
-       "webpageUrl": {
-         "url": "https://github.com/fabio-rovai/open-ontologies"
-       },
-```
-
-**File**: `python/src/open_ontologies_lite/engine.py` (modified, +14/-2)
-```diff
-@@ -41,7 +41,18 @@
-     for name in ("ObjectProperty", "DatatypeProperty", "AnnotationProperty")
- )
- _PROPERTY_VALUES = " ".join(f"<{iri}>" for iri in _PROPERTY_TYPES)
--_SCHEMA_TYPES = (OWL_CLASS, RDFS_CLASS) + _PROPERTY_TYPES
-+# An individual has a type outside the RDF, RDFS and OWL vocabularies, or is
-+# declared owl:NamedIndividual or owl:Thing. Everything else typed only from
-+# those vocabularies (restrictions, property characteristics, datatypes, axiom
-+# nodes) is part of the ontology's structure. Same rule as GraphStore::get_stats
-+# in the Rust engine (#395).
-+_INDIVIDUAL_TYPE_FILTER = (
-+    "FILTER(?t IN (<http://www.w3.org/2002/07/owl#NamedIndividual>, "
-+    "<http://www.w3.org/2002/07/owl#Thing>) || ("
-+    '!STRSTARTS(STR(?t), "http://www.w3.org/1999/02/22-rdf-syntax-ns#") && '
-+    '!STRSTARTS(STR(?t), "http://www.w3.org/2000/01/rdf-schema#") && '
-+    '!STRSTARTS(STR(?t), "http://www.w3.org/2002/07/owl#")))'
-+)
- 
- 
- def resolve_format(name: str) -> ox.RdfFormat:
-@@ -122,7 +133,8 @@ def stats(self) -> dict[str, int]:
-             ),
-             "individuals": self._count(
-                 "SELECT (COUNT(DISTINCT ?i) AS ?n) WHERE { ?i a ?t "
--                "FILTER(?t NOT IN (" + ", ".join(f"<{iri}>" for iri in _SCHEMA_TYPES) + ")) }"
-+                + _INDIVIDUAL_TYPE_FILTER
-+                + " }"
-             ),
-         }
- 
-```
-
-**File**: `python/tests/test_engine.py` (modified, +28/-0)
-```diff
-@@ -35,6 +35,34 @@ def test_load_and_stats():
-     assert s["individuals"] == 1      # rex
- 
- 
-+def test_stats_counts_individuals_by_type_vocabulary():
-+    # The Rust engine's regression for #395, same file. Property
-+    # characteristics, annotation properties, datatypes, restrictions and
-+    # axiom nodes are vocabulary, not individuals: only ex:Alice counts.
-+    e = OntologyEngine()
-+    e.load("""
-+        @prefix ex: <https://example.org/> .
-+        @prefix owl: <http://www.w3.org/2002/07/owl#> .
-+        @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-+
-+        ex:Person a owl:Class ;
-+            rdfs:subClassOf [ a owl:Restriction ;
-+                owl:onProperty ex:partOf ;
-+                owl:someValuesFrom ex:Org ] .
-+        ex:Org a owl:Class .
-+        ex:partOf a owl:ObjectProperty, owl:TransitiveProperty .
-+        ex:hasId a owl:DatatypeProperty, owl:FunctionalProperty .
-+        ex:note a owl:AnnotationProperty .
-+        ex:Code a rdfs:Datatype .
-+        [] a owl:AllDisjointClasses ; owl:members ( ex:Person ex:Org ) .
-+        [] a owl:Axiom ; owl:annotatedSource ex:Person ;
-+            owl:annotatedProperty rdfs:subClassOf ;
-+            owl:annotatedTarget ex:Org ; rdfs:comment "an annotated axiom" .
-+        ex:Alice a owl:NamedIndividual, ex:Person .
-+    """)
-+    assert e.stats()["individuals"] == 1
-+
-+
- def test_query_select():
-     e = OntologyEngine()
-     e.load(ONT)
-```
-
-**File**: `src/graph.rs` (modified, +42/-1)
-```diff
-@@ -974,6 +974,40 @@ impl GraphStore {
-         self.select_with_dataset(query, true)
-     }
- 
-+    /// Run a SELECT over the union dataset and return its RDF terms without
-+    /// serialising them to display strings. Callers that consume lexical values
-+    /// (for example, labels used as embedding input) must not parse RDF syntax
-+    /// back out of `Term::to_string()`.
-+    pub fn sparql_select_union_terms(
-+        &self,
-+        query: &str,
-+    ) -> anyhow::Result<Vec<std::collections::HashMap<String, Term>>> {
-+        let store = &self.store;
-+        let mut prepared = SparqlEvaluator::new().parse_query(query)?;
-+        self.union_without_ledger(prepared.dataset_mut())?;
-+        let QueryResults::Solutions(solutions) = prepared.on_store(store).execute()? else {
-+            anyhow::bail!("term selection needs a SELECT query");
++    for v in &VARIANTS {
++        let scene: serde_json::Value = serde_json::from_slice(&asset(v.scene))
++            .unwrap_or_else(|_| panic!("{} is not JSON", v.scene));
++        let nodes = scene["nodes"].as_array().expect("nodes");
++        let edges = scene["edges"].as_array().expect("edges");
++        let name = |i: &serde_json::Value| -> String {
++            nodes[i.as_u64().expect("node index") as usize]["name"]
++                .as_str()
++                .expect("node name")
++                .to_string()
 +        };
++        let is_class =
++            |i: &serde_json::Value| nodes[i.as_u64().unwrap() as usize]["kind"] == "class";
 +
-+        let vars: Vec<String> = solutions
-+            .variables()
++        // 1. The red edge is not a conclusion the certificate carries, nor an
++        //    asserted subclass edge: a claim the closure does not reach.
++        let red: Vec<(usize, String, String)> = edges
 +            .iter()
-+            .map(|v| v.as_str().to_string())
++            .enumerate()
++            .filter(|(_, e)| e[2] == "rejected")
++            .map(|(k, e)| (k, name(&e[0]), name(&e[1])))
 +            .collect();
-+        let mut rows = Vec::new();
-+        for solution in solutions {
-+            let solution = solution?;
-+            let mut row = std::collections::HashMap::new();
-+            for var in &vars {
-+                if let Some(term) = solution.get(var.as_str()) {
-+                    row.insert(var.clone(), term.clone());
-+                }
-+            }
-+            rows.push(row);
-+        }
-+        Ok(rows)
-+    }
-+
-     /// Run a SELECT once per term, with `var` pre-bound to that term, over the
-     /// union dataset. Returns the solutions per term, in the order given.
-     ///
-@@ -1279,7 +1313,14 @@ impl GraphStore {
-                 && !STRSTARTS(STR(?p), \"http://www.w3.org/2000/01/rdf-schema#\")
-                 && !STRSTARTS(STR(?p), \"http://www.w3.org/2002/07/owl#\"))
-         }";
--        let individual_query = "SELECT (COUNT(DISTINCT ?i) AS ?count) WHERE { ?i a ?c . FILTER(?c != <http://www.w3.org/2002/07/owl#Class> && ?c != <http://www.w3.org/2000/01/rdf-schema#Class> && ?c != <http://www.w3.org/2002/07/owl#ObjectProperty> && ?c != <http://www.w3.org/2002/07/owl#DatatypeProperty> && ?c != <http://www.w3.org/2002/07/owl#Ontology> && ?c != <http://www.w3.org/2002/07/owl#Restriction>) }";
-+        let individual_query = "SELECT (COUNT(DISTINCT ?i) AS ?count) WHERE {
-+            ?i a ?c .
-+            FILTER(?c = <http://www.w3.org/2002/07/owl#NamedIndividual>
-+                || ?c = <http://www.w3.org/2002/07/owl#Thing>
-+                || (!STRSTARTS(STR(?c), \"http://www.w3.org/1999/02/22-rdf-syntax-ns#\")
-+                    && !STRSTARTS(STR(?c), \"http://www.w3.org/2000/01/rdf-schema#\")
-+                    && !STRSTARTS(STR(?c), \"http://www.w3.org/2002/07/owl#\")))
-+        }";
- 
-         let count_from_query = |q: &str| -> usize {
-             let Ok(prepared) = SparqlEvaluator::new().parse_query(q) else { return 0 };
++        assert_eq!(
++            red.len(),
++            1,
++            "{} draws {} red edges; the figure forges one",
++        
 ```
 
-**File**: `src/ingest.rs` (modified, +56/-14)
+**File**: `tests/readme_simplified_english_test.rs` (modified, +1/-1)
 ```diff
-@@ -51,28 +51,62 @@ impl DataIngester {
-             .map(|h| h.to_string())
-             .collect();
- 
-+        Self::check_headers("CSV", &headers)?;
-+
-+        let mut rows = Vec::new();
-+        for result in reader.records() {
-+            let record = result.context("Failed to read CSV record")?;
-+            let mut row = HashMap::new();
-+            for (i, value) in record.iter().enumerate() {
-+                Self::put_cell(&mut row, "CSV", &headers, i, value.to_string())?;
-+            }
-+            rows.push(row);
-+        }
-+        Ok(rows)
-+    }
-+
-+    /// A named column may appear once in a header row (#382, #402). A blank
-+    /// header names nothing, so two blank headers are not a duplicate:
-+    /// spreadsheet exports end lines with commas for columns that were
-+    /// formatted but never filled, and those files have to load.
-+    fn check_headers(kind: &str, headers: &[String]) -> Result<()> {
-         let mut unique_headers = HashSet::with_capacity(headers.len());
-         for (index, header) in headers.iter().enumerate() {
-+            if header.trim().is_empty() {
-+                continue;
-+            }
-             if !unique_headers.insert(header) {
-                 anyhow::bail!(
--                    "Duplicate CSV header {header:?} at column {}; CSV columns must be unique",
-+                    "Duplicate {kind} header {header:?} at column {}; {kind} columns must be unique",
-                     index + 1
-                 );
-             }
-         }
-+        Ok(())
-+    }
- 
--        let mut rows = Vec::new();
--        for result in reader.records() {
--            let record = result.context("Failed to read CSV record")?;
--            let mut row = HashMap::new();
--            for (i, value) in record.iter().enumerate() {
--                if let Some(key) = headers.get(i) {
--                    row.insert(key.clone(), value.to_string());
--                }
-+    /// Put one cell into its row under its column's header. An empty cell
-+    /// under a blank header is skipped. A value under a blank header has no
-+    /// name to go under, so it is refused by column rather than stored under
-+    /// an empty key, where a second unnamed column would overwrite it.
-+    fn put_cell(
-+        row: &mut HashMap<String, String>,
-+        kind: &str,
-+        headers: &[String],
-+        index: usize,
-+        value: String,
-+    ) -> Result<()> {
-+        match headers.get(index) {
-+            Some(header) if !header.trim().is_empty() => {
-+                row.insert(header.clone(), value);
-             }
--            rows.push(row);
-+            Some(_) if !value.trim().is_empty() => anyhow::bail!(
-+                "{kind} column {} has a value ({value:?}) but no header; name the column or clear it",
-+                index + 1
-+            ),
-+            _ => {}
-         }
--        Ok(rows)
-+        Ok(())
+@@ -339,7 +339,7 @@ fn the_translated_page_carries_the_same_structure() {
+         assert!(zh.contains(link), "the translated page is missing {link:?}");
      }
- 
-     /// Parse a JSON string. Accepts a JSON array of objects or a single object.
-@@ -300,13 +334,13 @@ impl DataIngester {
-             .map(Self::calamine_cell_to_string)
-             .collect();
- 
-+        Self::check_headers("XLSX", &headers)?;
-+
-         let mut rows = Vec::new();
-         for data_row in row_iter {
-             let mut row = HashMap::new();
-             for (i, cell) in data_row.iter().enumerate() {
--                if let Some(key) = headers.get(i) {
--                    row.insert(key.clone(), Self::calamine_cell_to_string(cell));
--                }
-+                Self::put_cell(&mut row, "XLSX", &headers, i, Self::calamine_cell_to_string(cell))?;
-             }
-             rows.push(row);
-         }
-@@ -536,6 +570,14 @@ impl DataIngester {
-             .ok(),
-             _ => None,
-         };
-+        // A blank header names no column (see check_headers), so it is not a
-+        // column here either; mapping generation would make it a property
-+        // with an empty name.
-+        let ordered = ordered.map(|h| {
-+            h.into_iter()
-+                .filter(|name| !name.trim().is_empty())
-+                .collect::<Vec<_>>()
-+        });
-         match ordered {
-             Some(h) if !h.is_empty() => {
-                 // The file's order for the columns it names, then any key a
-```
-
-**File**: `src/registry.rs` (modified, +29/-8)
-```diff
-@@ -70,8 +70,8 @@ pub struct OntologyRegistry {
-     /// `Mutex<Option<ActiveEntry>>` — at most one entry is "active" at a time
-     /// in this minimal model. Multi-slot extension is future work.
-     active: Mutex<Option<ActiveEntry>>,
--    /// Per-name reload mutex to prevent thundering-herd reloads.
--    reload_lock: Mutex<()>,
-+    /// Serializes graph lifecycle operations with active-slot changes.
-+    lifecycle_lock: Mutex<()>,
- }
- 
- impl OntologyRegistry {
-@@ -83,7 +83,7 @@ impl OntologyRegistry {
-             cache,
-             config,
-             active: Mutex::new(None),
--            reload_lock: Mutex::new(()),
-+            lifecycle_lock: Mutex::new(()),
-         })
-     }
- 
-@@ -97,6 +97,14 @@ impl OntologyRegistry {
- 
-     /// Load an RDF file into the graph, using the compile cache when valid.
-     pub fn load_file(&self, path: &str, opts: LoadOptions) -> Result<LoadResult> {
-+        // Keep graph replacement and the active-slot update atomic with respect
-+        // to unload/reload operations. Otherwise an unload can clear the graph
-+        // while a concurrent load is still waiting to publish its active slot.
-+        let _lifecycle = self.lifecycle_lock.lock().unwrap();
-+        self.load_file_locked(path, opts)
-+    }
-+
-+    fn load_file_locked(&self, path: &str, opts: LoadOptions) -> Result<LoadResult> {
-         let path_obj = Path::new(path);
-         if !path_obj.exists() {
-             return Err(anyhow!("file not found: {}", path));
-@@ -186,8 +194,8 @@ impl OntologyRegistry {
-     /// If the store was evicted, reload from cache (or source on refresh).
-     /// No-op if no active entry exists.
-     pub fn ensure_loaded(&self) -> Result<()> {
--        // Single-flight guard.
--        let _g = self.reload_lock.lock().unwrap();
-+        // Serialize graph reloads with loads, unloads and eviction.
-+        let _lifecycle = self.lifecycle_lock.lock().unwrap();
- 
-         // Snapshot needed fields (avoid holding the active lock across reload).
-         let needs_reload;
-@@ -272,6 +280,7 @@ impl OntologyRegistry {
-     /// Evict the active entry if idle longer than `idle_ttl_secs`.
-     /// Returns `true` when an eviction took place.
-     pub fn evictor_tick(&self) -> Result<bool> {
-+        let _lifecycle = self.lifecycle_lock.lock().unwrap();
-         if !self.config.enabled || self.config.idle_ttl_secs == 0 {
-             return Ok(false);
-         }
-@@ -329,6 +338,11 @@ impl OntologyRegistry {
-     /// Manually unload the active ontology (clear graph + drop active slot).
-     /// The cache file is preserved unless `delete_cache` is true.
-     pub fn unload(&self, delete_cache: bool) -> Result<Option<String>> {
-+        let _lifecycle = self.lifecycle_lock.lock().unwrap();
-+        self.unload_active_locked(delete_cache)
-+    }
-+
-+    fn unload_active_locked(&self, delete_cache: bool) -> Result<Option<String>> {
-         let mut active = self.active.lock().unwrap();
-         let Some(name) = active.as_ref().map(|entry| entry.name.clone()) else {
-             return Ok(None);
-@@ -352,9 +366,10 @@ impl OntologyRegistry {
-     ///
-     /// Returns `Ok(true)` if anything was actually changed.
-     pub fn unload_named(&self, name: &str, delete_cache: bool) -> Result<bool> {
-+        let _lifecycle = self.lifecycle_lock.lock().unwrap();
-         let active_name = self.active.lock().unwrap().as_ref().map(|e| e.name.clone());
-         if active_name.as_deref() == Some(name) {
--            return Ok(self.unload(delete_cache)?.is_some());
-+            return Ok(self.unload_active_locked(delete_cache)?.is_some());
-         }
-         // Not active. The graph isn't holding it, so there's nothing to clear
-         // in memory. Touch the cache only if requested.
-@@ -375,14 +390,19 @@ impl OntologyRegistry {
- 
-     /// Force recompile the active ontology from source (used by `onto_recompile`).
-     pub fn recompile(&self) -> Result<LoadResult> {
-+        let _lifecycle = self.lifecycle_lock.lock().unwrap();
-+        self.recompile_active_locked()
-+    }
-+
-+    fn recompile_active_locked(&self) -> Result<LoadResult> {
-         let (path, name, auto_refresh) = {
-             let active = self.active.lock().unwrap();
-             let entry = active
-                 .as_ref()
-                 .ok_or_else(|| anyhow!("no active ontology to recompile"))?;
-             (entry.source_path.clone(), entry.name.clone(), entry.auto_refresh)
-         };
--        self.load_file(
-+        self.load_file_locked(
-             &path,
-             LoadOptions {
-                 name: Some(name),
-@@ -402,9 +422,10 @@ impl OntologyRegistry {
-     ///   left completely untouched. This makes it safe to refresh background
-     ///   ontologies without disturbing whatever is currently being queried.
-     pub fn recompile_named(&self, name: &str) -> Result<LoadResult> {
-+        let _lifecycle = self.lifecycle_lock.lock().unwrap();
-         let active_name = self.active.lock().unwrap().as_ref().map(|e| e.name.clone());
-  
-```
-
-**File**: `src/server.rs` (modified, +25/-22)
-```diff
-@@ -3,12 +3,14 @@
- 
- use std::sync::Arc;
- 
-+#[cfg(feature = "embeddings")]
-+use oxigraph::model::Term;
- use rmcp::{
-     ServerHandler, tool, tool_handler, tool_router,
-     prompt, prompt_handler, prompt_router,
-     handler::server::{tool::ToolRouter, router::prompt::PromptRouter, wrapper::Parameters},
-     model::{
--        ServerCapabilities, ServerConfig, Tool,
-+        Implementation, ServerCapabilities, ServerConfig, Tool,
-         PromptMessage, Role, GetPromptResult, ProtocolVersion,
-     },
- };
-@@ -3238,31 +3240,28 @@ impl OpenOntologiesServer {
- 
-         // Enumerating the store's classes is a question about the whole store,
-         // so read the union of all graphs, not the default graph alone.
--        let result = match self.graph.sparql_select_union(classes_query) {
--            Ok(r) => r,
--            Err(e) => return Self::err_json(e),
--        };
--
--        let parsed: serde_json::Value = match serde_json::from_str(&result) {
--            Ok(v) => v,
-+        let rows = match self.graph.sparql_select_union_terms(classes_query) {
-+            Ok(rows) => rows,
-             Err(e) => return Self::err_json(e),
-         };
- 
-         let mut class_labels: std::collections::HashMap<String, String> = std::collections::HashMap::new();
--        if let Some(rows) = parsed["results"].as_array() {
--            for row in rows {
--                if let Some(iri) = row["class"].as_str() {
--                    let iri = iri.trim_matches(|c| c == '<' || c == '>').to_string();
--                    let label = row["label"].as_str()
--                        .map(|s| s.trim_matches('"').to_string())
--                        .unwrap_or_else(|| {
--                            iri.rsplit_once('#').or_else(|| iri.rsplit_once('/'))
--                                .map(|(_, n)| n.to_string())
--                                .unwrap_or_else(|| iri.clone())
--                        });
--                    class_labels.insert(iri, label);
--                }
--            }
-+        for row in rows {
-+            let Some(Term::NamedNode(class)) = row.get("class") else {
-+                continue;
-+            };
-+            let iri = class.as_str().to_string();
-+            let fallback = || {
-+                iri.rsplit_once('#').or_else(|| iri.rsplit_once('/'))
-+                    .map(|(_, n)| n.to_string())
-+                    .unwrap_or_else(|| iri.clone())
-+            };
-+            let label = match row.get("label") {
-+                Some(Term::Literal(label)) => label.value().to_string(),
-+                Some(other) => other.to_string(),
-+                None => fallback(),
-+            };
-+            class_labels.insert(iri, label);
-         }
- 
-         let trainer = crate::structembed::StructuralTrainer::new(struct_dim, struct_epochs, 0.01);
-@@ -3687,6 +3686,10 @@ impl ServerHandler for OpenOntologiesServer {
-                  {advertised} tools and 6 workflow prompts for ontology engineering, validation, \
-                  comparison, alignment, data ingestion, and exploration.{tail}{profile_tail}"
-             ))
-+            .with_server_info(Implementation::new(
-+                "open-ontologies",
-+                env!("CARGO_PKG_VERSION"),
-+            ))
-     }
- }
- 
+     // The headline numbers are digits in both languages, so they can be compared.
+-    for n in ["426", "259", "901", "23", "12", "13", "190", "39"] {
++    for n in ["420", "257", "901", "23", "12", "13", "190", "39"] {
+         assert!(
+             zh.contains(n),
+             "the translated page does not state {n}, and the English page does. A number \
 ```
 
 ---
 
-### Incident Patch 3: `1ed99ac1` (2026-11-16)
-**Commit Message**: Merge pull request #365 from Gqqqqgg/fix/explicit-provenance-truth-maintenance
+### Incident Patch 2: `6f423fe2` (2026-11-20)
+**Commit Message**: Merge pull request #430 from fabio-rovai/fix/427-deterministic-certificate
 
-Fix/explicit provenance truth maintenance
+Certificates are byte-stable across runs (#427); the README figure's red edge is a forgery oo-cert really refused (#428)
 
-**File**: `CHANGELOG.md` (modified, +25/-0)
+**File**: `CHANGELOG.md` (modified, +48/-0)
 ```diff
-@@ -194,6 +194,31 @@ All notable changes to Open Ontologies are documented here.
-   reported rmcp's crate name and version (`rmcp`, `3.9.0`); it now reports
-   `open-ontologies` and the release version.
+@@ -192,6 +192,54 @@ All notable changes to Open Ontologies are documented here.
  
-+- **Durable RDFS/OWL-RL provenance is opt-in** (#365). CLI and batch
-+  `reason --track-derivations`, or MCP `track_derivations: true`, persist
-+  evidence and rule instances in the existing materialisation transaction.
-+  Incremental reasoning accepts the same MCP option. Ordinary reasoning keeps
-+  its previous materialisation behaviour and does not capture derivations.
-+  Evidence, derivations, output locations and changes now use separate RDF
-+  records with dependency indexes, instead of one growing JSON literal.
-+  Loads and updates reconcile the affected dependency component without
-+  scanning or copying the dataset to track changes. Returned counts use actual
-+  data deltas. Stores without a ledger use Oxigraph's native SPARQL UPDATE
-+  executor, avoiding provenance journaling for ordinary bulk updates.
-+  Tracked publication uses a constant-size generation guard; untracked
-+  reasoning retains snapshot materialisation when a concurrent write occurs.
-+  Ordinary SPARQL DELETE retains inferred RDF. Explicit assertion withdrawal,
-+  the Rust `sparql_update_with_retraction` API, or HTTP `/api/update` with
-+  `retract_inferences: true` opt in to support-based retraction. Independent
-+  proofs survive withdrawal; unsupported cycles do not. The reserved ledger
-+  stays outside query datasets, including `GRAPH ?g` and SHACL-SPARQL
-+  constraints evaluated over all graphs. Dataset backups retain
-+  it, and old single-literal backups migrate on restore or persistent open.
-+  Provenance reports retain evidence, rule versions and withdrawal history;
-+  proof forests remain exportable to the existing independent oo-cert checker.
-+  The CLI help and reasoning guide disclose tracking's time and storage costs,
-+  including the maintainer's LUBM1 measurements.
+ ### Fixed
+ 
++- **`reason --certificate` writes the same `derivations.tsv` on every run over
++  the same store** (#427). The conclusions were always the same set, but the
++  premises a step recorded (which intermediate class justifies a transitive
++  `rdfs11` step) and the order of the lines changed from run to run: the
++  fixpoint walked its closure as a `HashSet` and recorded the first derivation
++  it met, so three runs over `benchmark/reference/ies-core.ttl` wrote three
++  different files. Every rule now walks a sorted copy of the closure, kept
++  sorted by merging each round's new triples into it, which is how `run_horn`
++  already kept `horn.tsv` stable, so the first derivation met is a function of
++  the store. All three profiles had the defect and all three are fixed. The
++  derivation DAG `onto_justify` and `onto_provenance` read, the derivation
++  prefix of a `refutation.tsv` and `sample_inferences` follow the same order.
++  Over the tracked corpus (307 files, three profiles, 921 certificates) the old
++  binary wrote different bytes on two runs for 139 certificates and the fixed
++  one for none, with the same conclusion set and line count as before for all
++  921. It is faster, not slower: on LUBM(10) with a certificate, owl-rl-ext
++  reasons in 6.3 s against 8.4 s, owl-rl in 4.4 s against 5.2 s and rdfs in
++  3.3 s against 3.9 s. A file with anonymous blank nodes is still a new store
++  on each load, because the parser mints fresh labels for them. The
++  `onto_justify` caveat about its one non-monotone corner now says the value
++  read is chosen by the engine's term numbering, not by hash order.
++  `tests/certificate_determinism_test.rs` certifies one store three times in
++  three processes, under each profile, and requires identical bytes.
 +
- - **`onto_repo_list` reports cache and active status for the matching file**
-   (#386). Multiple repository directories can contain the same filename stem;
-   status flags now match the cached and active source paths instead of marking
++- **The README figure's red edge is a forged claim, and the refusal it
++  reports is a real run of `oo-cert`** (#428). `docs/assets/knowledge-graph.py`
++  took one of the derived subClassOf edges, every one of which `oo-cert`
++  accepts, chose it by where it landed in the layout and drew it as the
++  forgery, so the figure painted a certified entailment red and stated a
++  refusal no checker had made. It now forges a new claim `s subClassOf X`, X a
++  class the closure does not reach from s, as `demo/build_certified_graph.py`
++  does: a derived line of s is copied with its conclusion changed to X,
++  appended to a copy of the certificate, and `oo-cert` is run on it
++  (`--oo-cert PATH`, default `lean/.lake/build/bin/oo-cert`). Nothing is
++  written unless `oo-cert` accepts the certificate and exits 1 on the copy,
++  naming the forged line and its rule, and the rule and exit code on the
++  figure are read from that report. On ies-core the forgery is
++  `SetOfRepresentations subClassOf Sign`, refused at line 265 as an `rdfs11`
++  step, drawn beside the 257 derived edges, which all stay certified. The
++  legend counts the ontology's edges only, as the Studio legend has since
++  #425: 420 asserted, 257 certified, 1 rejected, where it read 426 and 259 by
++  taking in the pipeline's arrows. The certificate row states the 265 lines
++  `oo-cert` read. Edges are sorted before the layout, so two certificates that
++  differ only in premises (#427) draw byte-identical figures. Both languages'
++  SVG, scene and WebP are regenerated, and
++  `tests/knowledge_graph_asset_test.rs` checks the red edge and the certified
++  edges against a live certificate.
++
+ - **The replay demo's 3D legend is true of the graph under it** (#425). The
+   legend reads "ies-core.ttl · 1,083 triples" and names three warrants
+   (asserted, certified under `OOCert.certificate_sound`, forged and refused),
 ```
 
-**File**: `Cargo.lock` (modified, +1/-0)
+**File**: `README.md` (modified, +3/-3)
 ```diff
-@@ -2783,6 +2783,7 @@ dependencies = [
-  "serde_json",
-  "serde_yaml",
-  "sha2 0.10.9",
-+ "spargebra",
-  "sqlx",
-  "tempfile",
-  "thiserror",
+@@ -59,9 +59,9 @@
+ </p>
+ 
+ <p align="center">
+-  <sub><b>426 asserted, 259 certified, 1 rejected.</b> The engine derived the green edges. A Lean 4
+-  checker then <i>proved</i> them. One certificate holds all 259, and one run of the checker accepts it.
+-  The red edge is a forged line. The same checker refused that line, gave exit 1, and named the rule.
++  <sub><b>420 asserted, 257 certified, 1 rejected.</b> The engine derived the green edges. A Lean 4
++  checker then <i>proved</i> them. One certificate holds all 257, and one run of the checker accepts it.
++  The red edge is a forged line. The same checker refused that line, gave exit 1, and named the rule (rdfs11).
+   The run supplies each count. Nobody writes a count into the caption.</sub>
+ </p>
+ 
 ```
 
-**File**: `Cargo.toml` (modified, +2/-0)
+**File**: `README.zh-CN.md` (modified, +3/-3)
 ```diff
-@@ -49,6 +49,8 @@ tower-http = { version = "0.6", features = ["cors"] }
- tokio-util = "0.7"
- tokio = { version = "1", features = ["full"] }
- oxigraph = "0.5"
-+# Reuse the parser already locked by Oxigraph to journal affected update quads.
-+spargebra = { git = "https://github.com/fabio-rovai/oxigraph.git", rev = "37db8e1522585ed2f9aa994be6c5c716859af5c8" }
- rusqlite = { version = "0.41", features = ["bundled"] }
- reqwest = { version = "0.12", features = ["json"] }
- schemars = "1"
+@@ -57,9 +57,9 @@
+ </p>
+ 
+ <p align="center">
+-  <sub><b>426 条断言，259 条已认证，1 条被拒绝。</b>绿色边由引擎推导得出。随后一个 Lean 4
+-  检查器<i>证明</i>了它们。一份证书涵盖全部 259 条，检查器一次运行即可接受它。
+-  红色边是一行伪造的内容。同一个检查器拒绝了它，以 exit 1 退出，并指出了规则。
++  <sub><b>420 条断言，257 条已认证，1 条被拒绝。</b>绿色边由引擎推导得出。随后一个 Lean 4
++  检查器<i>证明</i>了它们。一份证书涵盖全部 257 条，检查器一次运行即可接受它。
++  红色边是一行伪造的内容。同一个检查器拒绝了它，以 exit 1 退出，并指出了规则（rdfs11）。
+   每个数字都来自运行结果。没有人把数字写进说明文字。</sub>
+ </p>
+ 
 ```
 
-**File**: `docs/reasoning.md` (modified, +22/-0)
+**File**: `demo/build_certified_graph.py` (modified, +4/-4)
 ```diff
-@@ -61,6 +61,28 @@ result as a statement about the whole ontology.
- | `owl-rl-ext` | + someValuesFrom, allValuesFrom, hasValue, intersectionOf, unionOf. All 29 |
- | `owl-dl` | SHIQ tableaux: satisfiability, classification, ABox reasoning. Nominals are not implemented and datatype ranges are skipped |
- 
-+## Durable derivation tracking
-+
-+RDFS/OWL-RL materialisation can persist source evidence and rule instances with
-+`reason --track-derivations` (CLI or batch), or `track_derivations: true` on the
-+MCP reasoning tools. Tracking is disabled by default. Recorded dependencies
-+support explicit assertion withdrawal and proof export; ordinary SPARQL DELETE
-+does not automatically retract inferred triples.
-+
-+Tracking has a substantial cost in reasoning time and storage. In the
-+maintainer's [PR #365 benchmark](https://github.com/fabio-rovai/open-ontologies/pull/365),
-+release builds on LUBM1 (100,866 input triples, RDFS) took 4.4 to 6.7 seconds
-+with tracking, compared with 0.41 seconds without it. The tracked store held
-+694,543 metadata quads, about 5.5 per data triple after materialisation; its
-+N-Quads dataset dump was about 328 MB for 126,760 data triples. These are
-+workload-specific measurements, not fixed overhead ratios or performance
-+guarantees. Rule applications and alternative supports determine ledger size.
-+
-+A tracked run rejects publication if a concurrent write changes its source
-+generation. Retry against the current dataset in that case. Untracked runs
-+retain the original snapshot materialisation behaviour, and updates on stores
-+without a ledger use Oxigraph's native SPARQL UPDATE executor.
-+
- ## Tools
- 
- | Tool | Purpose |
+@@ -278,10 +278,10 @@ def node(iri_term: str) -> dict:
+                     "derivations": len(derivations),
+                     "by_rule": dict(sorted(by_rule.items())),
+                     "asserted_sha256": sha256(b_dir / "asserted.tsv"),
+-                    # Not the digest of derivations.tsv itself: the engine
+-                    # records a different premise for some rdfs11 steps, in a
+-                    # different order, on every run (#427). The conclusions
+-                    # are the same set every time, so this digests those.
++                    # The digest of each step's rule and conclusion, sorted,
++                    # not of derivations.tsv itself, so this record does not
++                    # depend on the order the engine writes its lines in or
++                    # on which premises it records for a step.
+                     "conclusions_sha256": hashlib.sha256("".join(
+                         sorted("\t".join(r[:4]) + "\n" for r in derivations)).encode()).hexdigest(),
+                     "oo_cert": {"exit": 0, "ok": True, "theorem": cert["theorem"]},
 ```
 
-**File**: `python/src/open_ontologies_lite/horn/reason.py` (modified, +1/-1)
+**File**: `docs/assets/hand-drawn/hero.js` (modified, +5/-1)
 ```diff
-@@ -248,7 +248,7 @@ def _facts(store, graphs) -> tuple[list[Fact], list[str]]:
-     The default is the DEFAULT GRAPH ALONE, which is where `OntologyEngine.load()`
-     puts everything, so this package's own users lose nothing by it. The Rust
-     engine flattens every named graph here EXCEPT the inferred one
--    (`src/reason.rs:3371`, `graph.triples_in_scope(&scope)`). Before
-+    (`src/reason.rs:3423`, `graph.triples_in_scope(&scope)`). Before
-     15 September 2026 it excepted nothing, which was the defect above: a store
-     holding a prior materialisation turned derived triples into assertions.
-     """
+@@ -189,7 +189,7 @@ function layout(){
+     const f=S.labels.forged;
+     const b=placeIn([textBox(mx+rx-10,my-ry-10,f,28,FONT.body),textBox(mx-rx+10-measure(f,28,FONT.body),my-ry-10,f,28,FONT.body),
+                      textBox(mx-measure(f,28,FONT.body)/2,my+ry+34,f,28,FONT.body)],'the forged-line note');
+-    FORGED={mx,my,rx,ry,x:b[0]+4,y:b[3]-28*0.26};
++    FORGED={mx,my,rx,ry,x:b[0]+4,y:b[3]-28*0.26,b};
+     const li=S.nodes.findIndex(n=>n.kind==='lean'), lab=LABELS.find(l=>l.i===li);
+     const rb=pick([textBox(lab.b[0]+4,P[li].y+48,S.labels.refused,24,FONT.body)],'the refusal');
+     REFUSED={x:rb[0]+4,y:P[li].y+48,li};
+@@ -394,6 +394,10 @@ function drawAt(t){
+   // beat 5: the forged line is named, and the checker refuses the certificate carrying it
+   if(litF>0&&FORGED){ const {mx,my,rx,ry}=FORGED;
+     circleAround(mx,my,rx,ry,PAL.red,clamp((t-F.t0)/0.7),litF);
++    // paper under the note, as under beat six's: the forged line is wherever
++    // the closure leaves room for one, and the note can land on the cloud
++    const fb=FORGED.b;
++    wash(ctx,[[fb[0],fb[1]],[fb[2],fb[1]],[fb[2],fb[3]],[fb[0],fb[3]]],PAL.paper,{alpha:0.9*litF,spread:2});
+     hand(ctx,S.labels.forged,FORGED.x,FORGED.y,28,{font:FONT.body,c:PAL.red,alpha:litF});
+     const li=REFUSED.li, cx=P[li].x, cy=P[li].y, st=clamp((t-F.t0-1.2)/0.4);
+     if(st>0){ const s=27*(1.25-0.25*st);
 ```
 
-**File**: `python/tests/test_horn_differential.py` (modified, +1/-1)
+**File**: `docs/assets/knowledge-graph.py` (modified, +280/-63)
 ```diff
-@@ -26,7 +26,7 @@
- The assertion is SET EQUALITY OF DERIVED TRIPLES against the Rust `run_horn`, over
- the same `builtin_rules.tsv`. Byte identity of the two `horn.tsv` files is NOT a
- goal and must not be asserted: the Rust emitter sorts interned `u32` triples
--(`src/reason.rs:3441`, `all.sort_unstable()` over `Vec<(u32,u32,u32)>`), so its
-+(`src/reason.rs:3493`, `all.sort_unstable()` over `Vec<(u32,u32,u32)>`), so its
- line order is first-appearance order in the store, not lexicographic order.
- Reproducing it from Python would mean reimplementing the interner and betting on
- identical store-iteration order across two bindings, to buy nothing the set
+@@ -2,10 +2,18 @@
+ """Regenerate docs/assets/knowledge-graph.svg from a real certified run.
+ 
+ Run:
++    cargo build --release
++    (cd lean && lake build oo-cert)
+     printf 'load benchmark/reference/ies-core.ttl\nreason --profile rdfs --certificate DIR\n' \
+-        | open-ontologies batch - --no-connect
++        | target/release/open-ontologies batch - --no-connect
+     python3 docs/assets/knowledge-graph.py DIR/asserted.tsv DIR/derivations.tsv \
+-        docs/assets/knowledge-graph.svg
++        docs/assets/knowledge-graph.svg docs/assets/kgcert/prove.json docs/assets/kgcert/mu.json en
++    python3 docs/assets/knowledge-graph.py DIR/asserted.tsv DIR/derivations.tsv \
++        docs/assets/knowledge-graph.zh-CN.svg docs/assets/kgcert/prove.json docs/assets/kgcert/mu.json zh
++
++`--oo-cert PATH` names the checker; it defaults to lean/.lake/build/bin/oo-cert.
++The figure cannot be drawn without it, because the fifth beat is a run of it
++(see "The forgery" below).
+ 
+ `reason` takes no positional file. It reasons over the loaded store, so the
+ graph has to be loaded first and the two have to be one batch: a second process
+@@ -33,6 +41,17 @@
+ the edges cross in front of and behind one another the way they do on screen.
+ Drawn far to near, painter's algorithm, because SVG has no z-buffer.
+ 
++THE FORGERY IS FORGED, AND THE REFUSAL IS A RUN. The red edge is a claim
++`s subClassOf X` that the closure does not reach (not asserted, not derived),
++drawn beside the certified edges and never in place of one. The generator
++copies a derived line of `s`, changes its conclusion to X, appends it to a copy
++of the certificate and runs `oo-cert` on that copy. Nothing is written unless
++`oo-cert` accepts the honest certificate, then exits 1 on the forged one with
++`ok: false`, the forged line as `first_rejected` and its rule named. The rule
++and the exit code on the figure are read from that report. Until #428 the red
++edge was one of the derived edges, all of which `oo-cert` accepts, relabelled
++`rejected`: a true entailment painted red, and a refusal that never happened.
++
+ It is also ANIMATED, in four beats on one 14-second clock: the asserted graph
+ arrives, the engine derives, Lean sweeps the derived edges, and a forged edge is
+ drawn and then refused. That order is the argument the README makes, and a still
+@@ -55,9 +74,15 @@
+ gives the same picture and a regeneration is a diff a reader can check rather
+ than a new arrangement of the same facts.
+ """
++import argparse
++import json
+ import math
++import os
+ import random
++import shutil
++import subprocess
+ import sys
++import tempfile
+ 
+ SUBCLASS = "<http://www.w3.org/2000/01/rdf-schema#subClassOf>"
+ TYPE = "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>"
+@@ -71,6 +96,8 @@
+ LINKING = (SUBCLASS, TYPE, DOMAIN, RANGE)
+ W, H = 1100, 780
+ SEED = 20260919
++ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
++OO_CERT = os.path.join(ROOT, "lean", ".lake", "build", "bin", "oo-cert")
+ 
+ 
+ def text_width(s, size):
+@@ -135,9 +162,57 @@ def read(path):
+ 
+ 
+ 
+-# Every word on the drawing, in each language it is published in. The NUMBERS
+-# stay out of this table: they are computed from the run and formatted into
+-# these strings, so a translation cannot state a count the data does not carry.
++def oo_cert(checker, asserted_path, derivations_path):
++    """Run the checker on one certificate: (exit code, its JSON report)."""
++    proc = subprocess.run([checker, asserted_path, derivations_path],
++                          capture_output=True, text=True)
++    for line in reversed(proc.stdout.splitlines()):
++        line = line.strip()
++        if line.startswith("{"):
++            return proc.returncode, json.loads(line)
++    raise SystemExit(f"{checker} printed no JSON report (exit {proc.returncode}):\n"
++                     f"{proc.stdout}{proc.stderr}")
++
++
++def forge(checker, asserted_path, derivations_path, line, forged_to):
++    """Run the checker on the certificate as the engine wrote it, then on a copy
++    with one forged line appended: `line`, a derived line of the certificate,
++    with its conclusion changed to `forged_to` and its rule and premises kept.
++
++    Refuses to go on unless the checker accepts the certificate and exits 1 on
++    the copy, with `ok: false`, the appended line as `first_rejected` and that
++    line's rule named. Returns both reports, which is where every word the
++    figure says about the refusal comes from."""
++    code_h, honest = oo_cert(checker, asserted_path, derivations_path)
++    if not (code_h == 0 and honest.get("ok") is True
++            and honest.get("theorem") == "OOCert.certificate_sound"):
++        raise SystemExit(f"refusing to draw: oo-cert did not accept the certificate "
++                         f"(exit {code_h}): {honest}")
++    with open(derivations_path) as f:
++        body = f.read()
++    if body and not body.endswith("\n"):
++        body += "\n"
++    work = tempfile.mkdtemp(prefix="oo-kg-forged-")
 ```
 
-**File**: `python/tests/test_horn_fixpoint_and_scope.py` (modified, +1/-1)
+**File**: `docs/concurrency-inventory.md` (modified, +1/-1)
 ```diff
-@@ -24,7 +24,7 @@
- ASSERTIONS. The checker could not detect it: the soundness theorem is conditional
- on the assertions, and it is TOLD what they are, so the result was a green
- absolute verdict about a graph nobody asserted. It now reads
--`src/reason.rs:3371`, `graph.triples_in_scope(&scope)`, and the
-+`src/reason.rs:3423`, `graph.triples_in_scope(&scope)`, and the
- inferred graph is out of scope.
+@@ -259,7 +259,7 @@ A disables it again.
  
- The two engines still differ in HOW, and the difference is deliberate. Rust
+ ### Defect D: the store can drift between hashing and reasoning. KNOWN, DOCUMENTED, OPEN.
+ 
+-`Reasoner::run_horn` takes `&Arc<GraphStore>` (`src/reason.rs:3107`) and reads the store at line 3134.
++`Reasoner::run_horn` takes `&Arc<GraphStore>` (`src/reason.rs:3460`) and reads the store at line 3488.
+ This is already
+ [decision 0010](decisions/0010-the-input-is-a-value-and-not-a-store.md), which names it, calls the
+ window a race in as many words, and specifies `CertifiedInput` to dissolve it by copying once. It is
 ```
 
-**File**: `python/tests/test_horn_three_way_differential.py` (modified, +21/-3)
+**File**: `docs/explanation.md` (modified, +3/-3)
 ```diff
-@@ -148,6 +148,22 @@ def case_files(name):
-     return [str(f) for f in files]
+@@ -68,9 +68,9 @@ and still minimal, both re-run. It is an incomplete one, and it says so.
+ Reiter's construction is complete for a monotone oracle. The rule table is monotone, in that no rule reads
+ the ABSENCE of a triple, but two places in `src/reason.rs` are not. `owl:onProperty`,
+ `owl:someValuesFrom`, `owl:allValuesFrom`, `owl:hasValue`, `rdf:first` and `rdf:rest` are read into
+-maps keyed by the node, so a node carrying TWO values for one of them contributes one, chosen by
+-hash order. Removing a triple can therefore change which value is read rather than only removing
+-consequences.
++maps keyed by the node, so a node carrying TWO values for one of them contributes one: the value the
++engine's term numbering puts last, which follows store order (it was hash order until #427). Removing
++a triple can therefore change which value is read rather than only removing consequences.
  
- 
-+def test_relative_iris_resolve_from_an_escaped_file_uri(tmp_path):
-+    import pyoxigraph as ox
-+
-+    folder = tmp_path / "folder with # and %"
-+    folder.mkdir()
-+    source = folder / "source.ttl"
-+    source.write_text("<> <http://example.org/linksTo> <target.ttl> .", encoding="utf-8")
-+    store = ox.Store()
-+    store.load(
-+        path=str(source), format=ox.RdfFormat.TURTLE, base_iri=tool().base_iri_for(source)
-+    )
-+    (quad,) = store
-+    assert quad.subject.value == source.as_uri()
-+    assert quad.object.value == (folder / "target.ttl").as_uri()
-+
-+
- def run(module, name, patch=None):
-     """One case through all three implementations, optionally with the Python engine
-     sabotaged. The patch is applied to the module attribute rather than to the import in
-@@ -223,7 +239,8 @@ def dropping(store, **kwargs):
-             result = real(store, **kwargs)
-             horn = Path(kwargs["certificate_dir"]) / "horn.tsv"
-             lines = [line for line in horn.read_text("utf-8").split("\n") if line]
--            horn.write_text("\n".join(lines[:-1]) + "\n", "utf-8")
-+            # Remove only the final step; preserve LF bytes on Windows too.
-+            horn.write_text("\n".join(lines[:-1]) + "\n", encoding="utf-8", newline="\n")
-             return result
- 
-         return dropping
-@@ -249,7 +266,7 @@ def forging(store, **kwargs):
-             at = 2 + 2 * int(fields[1])
-             fields[at + 2] = "<http://example.org/FORGED>"
-             lines[0] = "\t".join(fields)
--            horn.write_text("\n".join(lines) + "\n", "utf-8")
-+            horn.write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
-             return result
- 
-         return forging
-@@ -269,7 +286,8 @@ def ghosting(store, **kwargs):
-             asserted.write_text(
-                 asserted.read_text("utf-8")
-                 + "<http://example.org/ghost>\t<http://example.org/p>\t<http://example.org/o>\n",
--                "utf-8",
-+                encoding="utf-8",
-+                newline="\n",
-             )
-             return result
- 
+ Where that bites, the tree can MISS a justification. It cannot report a false one, because every
+ reported set is verified by re-running the engine over it and over each of its subsets.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #408** (2026-11-16): Clinical validation and drift read a tagged label by its text (fixes #406) (@fabio-rovai)
-- **PR #407** (2026-11-15): Land #404 and #405 from @dajiaohuang (@fabio-rovai)
-- **PR #405** (2026-11-15): Serialize ontology load and unload transitions (@dajiaohuang)
-- **PR #404** (2026-11-15): Fix embedded label extraction (@dajiaohuang)
-- **PR #403** (2026-11-15): Land #402 from @dajiaohuang; blank headers are not duplicates (@fabio-rovai)
-- **PR #402** (2026-11-15): Reject duplicate XLSX headers (@dajiaohuang)
+- **PR #431** (2026-11-20): README front page shows the dark knowledge-graph figure; the hand-drawn version is linked (@fabio-rovai)
+- **PR #430** (2026-11-20): Certificates are byte-stable across runs (#427); the README figure's red edge is a forgery oo-cert really refused (#428) (@fabio-rovai)
+- **PR #429** (2026-11-20): The replay's 3D legend is true of its graph: a certified ies-core run three checkers judged (#425) (@fabio-rovai)
+- **PR #426** (2026-11-20): Errors are valid JSON everywhere; Studio refresh, findings, auto-save and live 3D fixes (#420 to #424) (@fabio-rovai)
+- **PR #419** (2026-11-20): Land #410, #412, #415, #417, #418 and the Studio fixes for #413 and #414 (@fabio-rovai)
+- **PR #418** (2026-11-20): Execute every SHACL 2.3.1 property path form (@MatthewYe)
 
 ---
 
@@ -2713,13 +2417,13 @@ Fix/explicit provenance truth maintenance
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. shacl): hide provenance from scoped prebound union queries
+## X. Merge fix/428-figure-real-forgery: the README figure's red edge is a forgery oo-
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fabio-rovai/open-ontologies. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `df254aff`: shacl): hide provenance from scoped prebound union queries. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2154f1bb`: Merge fix/428-figure-real-forgery: the README figure's red edge is a forgery oo-cert really refused. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2727,18 +2431,33 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  stays outside query datasets, including `GRAPH ?g` and SHACL-SPARQL
-  constraints evaluated over all graphs. Dataset backups retain
+- **The README figure's red edge is a forged claim, and the refusal it
+  reports is a real run of `oo-cert`** (#428). `docs/assets/knowledge-graph.py`
+  took one of the derived subClassOf edges, every one of which `oo-cert`
+  accepts, chose it by where it landed in the layout and drew it as the
+  forgery, so the figure painted a certified entailment red and stated a
+  refusal no checker had made. It now forges a new claim `s subClassOf X`, X a
+  class the closure does not reach from s, as `demo/build_certified_graph.py`
+  does: a derived line of s is copied with its conclusion changed to X,
+  appended to a copy of the certificate, and `oo-cert` is run on it
+  (`--oo-cert PATH`, default `lean/.lake/build/bin/oo-cert`). Nothing is
+  written unless `oo-cert` accepts the certificate and exits 1 on the copy,
+  naming the forged line and its rule, and the rule and exit code on the
+  figure are read from that report. On ies-core the forgery is
+  `SetOfRepresentations subClassOf Sign`, refused at line 265 as an `rdfs11`
+  step, drawn beside the 257 derived edges, which all stay certified. The
+  legend counts the ontology's edges only, as the Studio legend has since
+  #425: 420 asserted, 25
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-  stays outside query datasets, including `GRAPH ?g`. Dataset backups retain
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `df254aff` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2154f1bb` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

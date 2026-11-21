@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T15:17:53.161Z",
-  "total_cycles_completed": 11254,
-  "total_learnings_persisted": 11254,
-  "total_rules_promoted": 10598,
+  "last_updated": "2026-11-21T15:31:35.701Z",
+  "total_cycles_completed": 11258,
+  "total_learnings_persisted": 11258,
+  "total_rules_promoted": 10602,
   "history": [
-    {
-      "timestamp": "2026-11-20T18:41:44.376Z",
-      "repository": "clockworklabs/SpacetimeDB",
-      "learningId": "learn-github-clockworklabs-spacetimedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T19:06:37.271Z",
-      "repository": "golutra/golutra",
-      "learningId": "learn-github-golutra-golutra",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T19:06:52.503Z",
-      "repository": "kubeedge/kubeedge",
-      "learningId": "learn-github-kubeedge-kubeedge",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-20T19:11:33.619Z",
-      "repository": "sigstore/cosign",
-      "learningId": "learn-github-sigstore-cosign",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-20T19:11:46.169Z",
       "repository": "tursodatabase/turso",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-21T15:17:53.161Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T15:31:17.721Z",
+      "repository": "unhappychoice/gitlogue",
+      "learningId": "learn-github-unhappychoice-gitlogue",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T15:31:23.077Z",
+      "repository": "react-navigation/react-navigation",
+      "learningId": "learn-github-react-navigation-react-navigation",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T15:31:25.376Z",
+      "repository": "fabio-rovai/open-ontologies",
+      "learningId": "learn-github-fabio-rovai-open-ontologies",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T15:31:35.701Z",
+      "repository": "ytsaurus/ytsaurus",
+      "learningId": "learn-github-ytsaurus-ytsaurus",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

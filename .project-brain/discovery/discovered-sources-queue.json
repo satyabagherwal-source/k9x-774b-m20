@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-21T15:17:59.370Z",
+  "updated_at": "2026-11-21T15:31:39.260Z",
   "stats": {
-    "total_discovered": 7215,
-    "approved_pending_harvest": 6817,
+    "total_discovered": 7219,
+    "approved_pending_harvest": 6821,
     "harvested_count": 0,
     "rejected_count": 398,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6798,
+      "COMMUNITY_AND_EXPERT": 6802,
       "OFFICIAL_DOCUMENTATION": 240,
       "STANDARDS_AND_SPECIFICATIONS": 122,
       "ENGINEERING_BLOGS": 5,
@@ -155967,6 +155967,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
         "fileName": "prometheus-prometheus-learnings.md"
+      }
+    },
+    "SRC-5456B95C425E": {
+      "id": "SRC-5456B95C425E",
+      "url": "https://github.com/rust-random/rand",
+      "title": "https://github.com/rust-random/rand",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T15:31:39.117Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/unhappychoice-gitlogue-learnings.md",
+        "fileName": "unhappychoice-gitlogue-learnings.md"
+      }
+    },
+    "SRC-88FEBD6332F6": {
+      "id": "SRC-88FEBD6332F6",
+      "url": "https://github.com/rust-random/rand/releases",
+      "title": "https://github.com/rust-random/rand/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T15:31:39.166Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/unhappychoice-gitlogue-learnings.md",
+        "fileName": "unhappychoice-gitlogue-learnings.md"
+      }
+    },
+    "SRC-1037AA072B8E": {
+      "id": "SRC-1037AA072B8E",
+      "url": "https://github.com/rust-random/rand/blob/master/CHANGELOG.md",
+      "title": "https://github.com/rust-random/rand/blob/master/CHANGELOG.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T15:31:39.209Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/unhappychoice-gitlogue-learnings.md",
+        "fileName": "unhappychoice-gitlogue-learnings.md"
+      }
+    },
+    "SRC-9ACBC0F4AD12": {
+      "id": "SRC-9ACBC0F4AD12",
+      "url": "https://github.com/rust-random/rand/compare/0.10.3...0.10.4",
+      "title": "https://github.com/rust-random/rand/compare/0.10.3...0.10.4",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T15:31:39.260Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/unhappychoice-gitlogue-learnings.md",
+        "fileName": "unhappychoice-gitlogue-learnings.md"
       }
     }
   }

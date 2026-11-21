@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-21T15:17:53.166Z",
+  "last_updated": "2026-11-21T15:31:35.704Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4236,14 +4236,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-react-navigation-react-navigation",
-      "content_hash": "1b927e3d957e80155fd7f97e6b0cedd0fc89470b99cfaf1ffe6349c36990ffa9",
-      "verified_at": "2026-11-17T11:40:39.001Z",
+      "content_hash": "16eb5f6dbee0360d3d8bd9dfec7a19257965a012c5c51993338dbeecd8bc88ef",
+      "verified_at": "2026-11-21T15:31:23.079Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T11:40:39.001Z"
+      "last_updated": "2026-11-21T15:31:23.079Z"
     },
     "easegress-io/easegress": {
       "repository": "easegress-io/easegress",
@@ -4731,14 +4731,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-unhappychoice-gitlogue",
-      "content_hash": "4eff7a1010567610113737479fe9dbfc50099feb956a8b347240110b0867b76a",
-      "verified_at": "2026-11-18T04:57:17.197Z",
+      "content_hash": "55c0a2a34d69eac2846ce19d56cefb8cd3fc48dd40e55add9fac74364365544f",
+      "verified_at": "2026-11-21T15:31:17.723Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T04:57:17.197Z"
+      "last_updated": "2026-11-21T15:31:17.723Z"
     },
     "FaridSafi/react-native-gifted-chat": {
       "repository": "FaridSafi/react-native-gifted-chat",
@@ -8556,14 +8556,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ytsaurus-ytsaurus",
-      "content_hash": "a384e31d5b5e5cfad446e8f3cf93f1046c6f40bde43783491419cf4764b2e388",
-      "verified_at": "2026-11-20T08:38:43.468Z",
+      "content_hash": "f1720c8b05d50df51968f166eaf4f55110432579a5c2cc5df0811d4efcfbaadb",
+      "verified_at": "2026-11-21T15:31:35.703Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T08:38:43.468Z"
+      "last_updated": "2026-11-21T15:31:35.703Z"
     },
     "franken-ui/ui": {
       "repository": "franken-ui/ui",
@@ -17211,14 +17211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fabio-rovai-open-ontologies",
-      "content_hash": "079cb7008f85d94f92e6e9c7d7e939281396da52bed046b0746b08d1c4afd9a2",
-      "verified_at": "2026-11-20T11:30:49.172Z",
+      "content_hash": "d6e5f2e38511b789cd59c086387bbbea68394ef5b88eb44c8b39fb08f6da781f",
+      "verified_at": "2026-11-21T15:31:25.379Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T11:30:49.172Z"
+      "last_updated": "2026-11-21T15:31:25.379Z"
     },
     "LiquidAI/LFM3-VL-2B": {
       "repository": "LiquidAI/LFM3-VL-2B",

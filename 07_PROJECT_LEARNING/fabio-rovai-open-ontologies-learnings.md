@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md`  
 > **Source**: github ([https://github.com/fabio-rovai/open-ontologies](https://github.com/fabio-rovai/open-ontologies))  
-> **Source Version**: `17ef05b9`  
+> **Source Version**: `c2b64e1b`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T11:30:48.141Z  
+> **Timestamp**: 2026-11-21T15:31:24.418Z  
 > **Learning ID**: `learn-github-fabio-rovai-open-ontologies`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/fabio-rovai-open-ontologies-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/fabio-rovai/open-ontologies](https://github.com/fabio-rovai/open-ontologies))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T11:30:48.136Z  
+> **Harvest Timestamp**: 2026-11-21T15:31:24.413Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Plan, apply and roll back changes to a production ontology, with a blast radius report and a proof an auditor can re-check.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2935 stars
+- **Stars / Engagement**: 2939 stars
 
 ---
 
@@ -1726,11 +1726,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #425** (2026-11-20): **Studio replay demo: 3D legend says 'ies-core.ttl · 1,083 triples' over a bundle of 28 DCAT-US classes with no warrants**
-  *Symptoms*: ## What happens  The replay (web) build of Studio draws `demo/precomputed/bundle.json`. Its graph is 28 classes (`Address`, `Agent`, `Attribution`, `Author`, `Catalog`, ...), 69 properties and 682 edges, and no edge carries a `warrant`. The 3D legend over it reads:  - "PROOF-CARRYING INFERENCE · ies-core.ttl · 1,083 triples" - ASSERTED: "read from ies-core.ttl. claimed by a person" - CERTIFIED 0 and REJECTED 0, plus the Lean 4 / Isabelle footer  None of that describes the bundle. The replay empty state also points to a "Documents panel" the replay tabs do not have.  #414 kept the replay text unchanged on the premise that replay is built from ies-core; the bundle shows it is not.  ## Where  `studio/src/lib/graph-legend.ts` (the `REPLAY` constant and `legendParts` for `kind: 'replay'`), `studio/src/lib/graph3d-model.ts` / `Graph3D.tsx` (empty-state text).  ## Expected  The replay legend describes the bundle it draws: the corpus it came from and counts taken from the bundle, and the proof-carrying rows and footer only when the bundle carries warrants (the rule live mode now follows). If the replay is meant to show proof-carrying inference, the bundle needs regenerating with warrants instead. 
+- **Issue #428** (2026-11-20): **README figure draws a genuinely certified edge as 'forged, the checker exited 1'; no forged line is ever checked**
+  *Symptoms*: ## What happens  `docs/assets/knowledge-graph.py` builds the README figure from a certified run over ies-core. Its fifth beat says "a line is forged, and the same checker refuses", and its legend row for the red edge says "forged. the checker exited 1 and named the rule".  The red edge is not a forgery. In "Which claim is the forged one" (around line 580 on main), the script takes one of the DERIVED subClassOf edges, all of which `oo-cert` accepted, picks it by where it lands in the layout, and relabels it `rejected`. No forged line is written and no checker is run on one, so the figure shows a true, certified entailment as refused, and states a refusal that never happened.  ## Expected  The red edge is a claim that really was forged and refused, drawn beside the certified ones rather than in place of one. `demo/build_certified_graph.py` (from #425's fix) already does this for the Studio replay: it appends a copy of a derived line with its conclusion changed to a class the closure does not reach, and requires `oo-cert` to exit 1 naming the rule (and `oo-horn` and the Isabelle checker to refuse the same forgery in the Horn certificate) before writing anything. The figure can take its forged edge from that run, and `tests/knowledge_graph_asset_test.rs` can require the red edge to be absent from the certificate's conclusions. 
 
-- **Issue #424** (2026-11-20): **Studio 3D in live mode still shows replay-only legend rows, footer and empty-state text, and tints classes named like tool nodes**
-  *Symptoms*: Follow-up to #414, which makes the legend name the loaded file and its triple count.  ## What happens  `studio/src/components/Graph3D.tsx` was written for the replay demo, and in live mode:  - the legend still lists CERTIFIED and REJECTED rows (always 0 in live mode, which carries no warrants) and the Lean 4 / Isabelle footer; - the empty state reads "Build the knowledge graph first (Documents panel)" (around line 248), but live mode has no Documents panel; - `TOOL_NODES` (around line 54) matches nodes by display name, so a live class whose label or local name is exactly `E`, `Z3`, `Vampire`, `certificate` and so on is pulled out of its component and tinted as a verification-layer tool node.  ## Expected  The proof-carrying parts of the legend render only when the graph carries warrant data, the empty-state text fits the mode, and tool nodes are recognised by something the replay bundle sets (a kind or a namespace) rather than by name. 
+- **Issue #427** (2026-11-20): **reason --certificate writes a different derivations.tsv on every run over the same store (premises and line order vary)**
+  *Symptoms*: ## What happens  Two runs of the built-in certificate over the same file produce different `derivations.tsv` bytes. The conclusions are the same set every time; the premises recorded for an `rdfs11` step (which intermediate class justifies a transitive subClassOf) and the line order change from run to run. The Horn certificate over the built-in table does not have this problem: `horn.tsv` is byte-identical across runs, as `src/reason.rs` documents for that writer ("does not depend on hash iteration order").  ## Reproduce (main at 13bd71e3)  ```sh for i in 1 2 3; do   printf 'load benchmark/reference/ies-core.ttl\nreason --profile rdfs --certificate /tmp/det%s\n' $i \     | open-ontologies --data-dir /tmp/d$i batch - --no-connect >/dev/null   shasum -a 256 /tmp/det$i/derivations.tsv              # differs every run   sort /tmp/det$i/derivations.tsv | shasum -a 256       # still differs: premises differ   cut -f1-4 /tmp/det$i/derivations.tsv | sort | shasum -a 256   # same: conclusions agree done ```  Example of one conclusion with two different premise sets across runs: `rdfs11 AccountClosure subClassOf FusionOfIntegralParts`, justified through a different intermediate class.  Every run's certificate is accepted by `oo-cert`, so this is not a soundness defect.  ## Why it matters  A certificate cannot be pinned by digest, compared between two machines, or regenerated as a byte-identical artefact (a committed certificate, a pack, a demo bundle that records its certificate's dige
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1747,1007 +1747,632 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b639a6c3` (2026-11-18)
-**Commit Message**: fix(reasoning): join newly derived edges during incremental transitivity
+### Incident Patch 1: `2154f1bb` (2026-11-20)
+**Commit Message**: Merge fix/428-figure-real-forgery: the README figure's red edge is a forgery oo-cert really refused (#428)
 
-Fix #416 by joining the persisted closure with an in-memory index of
-transitive edges from the current incremental run. Index both directions
-and expose each round's inferred edges to subsequent joins, so subproperty
-and inverse consequences can compose before final materialisation.
+# Conflicts:
+#	CHANGELOG.md
 
-Keep targeted store queries, scan and iteration limits, dry-run behaviour,
-and the existing transactional publication and durable support capture.
-Deduplicate neighbours shared by the stored and in-memory graphs.
-
-Add nine regression tests covering tracked and untracked inference, inverse
-rules, multiple rounds, named graphs, batch-size invariance, dry runs,
-alternative supports and withdrawal of ungrounded cycles. Update CHANGELOG.
-All nine new tests fail against the previous implementation and pass after
-the fix.
-
-Validation on the existing Windows GNU toolchain:
-- cargo build --offline --locked
-- Five incremental unit tests and nine related integration suites: 110 tests
-  exercised successfully; one release-provenance test skipped without Git tags.
-- cargo clippy --offline --locked --all-targets -- -D warnings
-
-Linux CI and th
-
-**File**: `CHANGELOG.md` (modified, +9/-0)
+**File**: `CHANGELOG.md` (modified, +24/-0)
 ```diff
-@@ -165,6 +165,15 @@ All notable changes to Open Ontologies are documented here.
+@@ -216,6 +216,30 @@ All notable changes to Open Ontologies are documented here.
+   `tests/certificate_determinism_test.rs` certifies one store three times in
+   three processes, under each profile, and requires identical bytes.
  
- ### Fixed
- 
-+- **Incremental transitivity joins edges derived in the same run** (#416).
-+  Subproperty and inverse rules could produce two connected edges without
-+  their transitive consequence, while the response reported `complete: true`.
-+  Targeted joins now include an in-memory index of the current run's edges
-+  alongside the stored closure. Materialisation still happens after inference,
-+  and tracked runs retain alternative supports and dependency-based withdrawal.
-+  Regression tests cover tracked and untracked runs, multiple rounds, named
-+  graphs, dry runs, batching, and withdrawal of alternative or cyclic support.
++- **The README figure's red edge is a forged claim, and the refusal it
++  reports is a real run of `oo-cert`** (#428). `docs/assets/knowledge-graph.py`
++  took one of the derived subClassOf edges, every one of which `oo-cert`
++  accepts, chose it by where it landed in the layout and drew it as the
++  forgery, so the figure painted a certified entailment red and stated a
++  refusal no checker had made. It now forges a new claim `s subClassOf X`, X a
++  class the closure does not reach from s, as `demo/build_certified_graph.py`
++  does: a derived line of s is copied with its conclusion changed to X,
++  appended to a copy of the certificate, and `oo-cert` is run on it
++  (`--oo-cert PATH`, default `lean/.lake/build/bin/oo-cert`). Nothing is
++  written unless `oo-cert` accepts the certificate and exits 1 on the copy,
++  naming the forged line and its rule, and the rule and exit code on the
++  figure are read from that report. On ies-core the forgery is
++  `SetOfRepresentations subClassOf Sign`, refused at line 265 as an `rdfs11`
++  step, drawn beside the 257 derived edges, which all stay certified. The
++  legend counts the ontology's edges only, as the Studio legend has since
++  #425: 420 asserted, 257 certified, 1 rejected, where it read 426 and 259 by
++  taking in the pipeline's arrows. The certificate row states the 265 lines
++  `oo-cert` read. Edges are sorted before the layout, so two certificates that
++  differ only in premises (#427) draw byte-identical figures. Both languages'
++  SVG, scene and WebP are regenerated, and
++  `tests/knowledge_graph_asset_test.rs` checks the red edge and the certified
++  edges against a live certificate.
 +
- - **Clinical validation and drift detection read a tagged label by its text**
-   (#406). Both stripped quotes from the N-Triples form of the literal, so
-   `"Dog"@en` became `Dog"@en`. Clinical validation searched the crosswalk for
+ - **The replay demo's 3D legend is true of the graph under it** (#425). The
+   legend reads "ies-core.ttl · 1,083 triples" and names three warrants
+   (asserted, certified under `OOCert.certificate_sound`, forged and refused),
 ```
 
-**File**: `src/reason_incremental.rs` (modified, +58/-5)
+**File**: `README.md` (modified, +3/-3)
 ```diff
-@@ -89,6 +89,36 @@ struct Schema {
-     truncated: bool,
+@@ -59,9 +59,9 @@
+ </p>
+ 
+ <p align="center">
+-  <sub><b>426 asserted, 259 certified, 1 rejected.</b> The engine derived the green edges. A Lean 4
+-  checker then <i>proved</i> them. One certificate holds all 259, and one run of the checker accepts it.
+-  The red edge is a forged line. The same checker refused that line, gave exit 1, and named the rule.
++  <sub><b>420 asserted, 257 certified, 1 rejected.</b> The engine derived the green edges. A Lean 4
++  checker then <i>proved</i> them. One certificate holds all 257, and one run of the checker accepts it.
++  The red edge is a forged line. The same checker refused that line, gave exit 1, and named the rule (rdfs11).
+   The run supplies each count. Nobody writes a count into the caption.</sub>
+ </p>
+ 
+```
+
+**File**: `README.zh-CN.md` (modified, +3/-3)
+```diff
+@@ -57,9 +57,9 @@
+ </p>
+ 
+ <p align="center">
+-  <sub><b>426 条断言，259 条已认证，1 条被拒绝。</b>绿色边由引擎推导得出。随后一个 Lean 4
+-  检查器<i>证明</i>了它们。一份证书涵盖全部 259 条，检查器一次运行即可接受它。
+-  红色边是一行伪造的内容。同一个检查器拒绝了它，以 exit 1 退出，并指出了规则。
++  <sub><b>420 条断言，257 条已认证，1 条被拒绝。</b>绿色边由引擎推导得出。随后一个 Lean 4
++  检查器<i>证明</i>了它们。一份证书涵盖全部 257 条，检查器一次运行即可接受它。
++  红色边是一行伪造的内容。同一个检查器拒绝了它，以 exit 1 退出，并指出了规则（rdfs11）。
+   每个数字都来自运行结果。没有人把数字写进说明文字。</sub>
+ </p>
+ 
+```
+
+**File**: `docs/assets/hand-drawn/hero.js` (modified, +5/-1)
+```diff
+@@ -189,7 +189,7 @@ function layout(){
+     const f=S.labels.forged;
+     const b=placeIn([textBox(mx+rx-10,my-ry-10,f,28,FONT.body),textBox(mx-rx+10-measure(f,28,FONT.body),my-ry-10,f,28,FONT.body),
+                      textBox(mx-measure(f,28,FONT.body)/2,my+ry+34,f,28,FONT.body)],'the forged-line note');
+-    FORGED={mx,my,rx,ry,x:b[0]+4,y:b[3]-28*0.26};
++    FORGED={mx,my,rx,ry,x:b[0]+4,y:b[3]-28*0.26,b};
+     const li=S.nodes.findIndex(n=>n.kind==='lean'), lab=LABELS.find(l=>l.i===li);
+     const rb=pick([textBox(lab.b[0]+4,P[li].y+48,S.labels.refused,24,FONT.body)],'the refusal');
+     REFUSED={x:rb[0]+4,y:P[li].y+48,li};
+@@ -394,6 +394,10 @@ function drawAt(t){
+   // beat 5: the forged line is named, and the checker refuses the certificate carrying it
+   if(litF>0&&FORGED){ const {mx,my,rx,ry}=FORGED;
+     circleAround(mx,my,rx,ry,PAL.red,clamp((t-F.t0)/0.7),litF);
++    // paper under the note, as under beat six's: the forged line is wherever
++    // the closure leaves room for one, and the note can land on the cloud
++    const fb=FORGED.b;
++    wash(ctx,[[fb[0],fb[1]],[fb[2],fb[1]],[fb[2],fb[3]],[fb[0],fb[3]]],PAL.paper,{alpha:0.9*litF,spread:2});
+     hand(ctx,S.labels.forged,FORGED.x,FORGED.y,28,{font:FONT.body,c:PAL.red,alpha:litF});
+     const li=REFUSED.li, cx=P[li].x, cy=P[li].y, st=clamp((t-F.t0-1.2)/0.4);
+     if(st>0){ const s=27*(1.25-0.25*st);
+```
+
+**File**: `docs/assets/knowledge-graph.py` (modified, +280/-63)
+```diff
+@@ -2,10 +2,18 @@
+ """Regenerate docs/assets/knowledge-graph.svg from a real certified run.
+ 
+ Run:
++    cargo build --release
++    (cd lean && lake build oo-cert)
+     printf 'load benchmark/reference/ies-core.ttl\nreason --profile rdfs --certificate DIR\n' \
+-        | open-ontologies batch - --no-connect
++        | target/release/open-ontologies batch - --no-connect
+     python3 docs/assets/knowledge-graph.py DIR/asserted.tsv DIR/derivations.tsv \
+-        docs/assets/knowledge-graph.svg
++        docs/assets/knowledge-graph.svg docs/assets/kgcert/prove.json docs/assets/kgcert/mu.json en
++    python3 docs/assets/knowledge-graph.py DIR/asserted.tsv DIR/derivations.tsv \
++        docs/assets/knowledge-graph.zh-CN.svg docs/assets/kgcert/prove.json docs/assets/kgcert/mu.json zh
++
++`--oo-cert PATH` names the checker; it defaults to lean/.lake/build/bin/oo-cert.
++The figure cannot be drawn without it, because the fifth beat is a run of it
++(see "The forgery" below).
+ 
+ `reason` takes no positional file. It reasons over the loaded store, so the
+ graph has to be loaded first and the two have to be one batch: a second process
+@@ -33,6 +41,17 @@
+ the edges cross in front of and behind one another the way they do on screen.
+ Drawn far to near, painter's algorithm, because SVG has no z-buffer.
+ 
++THE FORGERY IS FORGED, AND THE REFUSAL IS A RUN. The red edge is a claim
++`s subClassOf X` that the closure does not reach (not asserted, not derived),
++drawn beside the certified edges and never in place of one. The generator
++copies a derived line of `s`, changes its conclusion to X, appends it to a copy
++of the certificate and runs `oo-cert` on that copy. Nothing is written unless
++`oo-cert` accepts the honest certificate, then exits 1 on the forged one with
++`ok: false`, the forged line as `first_rejected` and its rule named. The rule
++and the exit code on the figure are read from that report. Until #428 the red
++edge was one of the derived edges, all of which `oo-cert` accepts, relabelled
++`rejected`: a true entailment painted red, and a refusal that never happened.
++
+ It is also ANIMATED, in four beats on one 14-second clock: the asserted graph
+ arrives, the engine derives, Lean sweeps the derived edges, and a forged edge is
+ drawn and then refused. That order is the argument the README makes, and a still
+@@ -55,9 +74,15 @@
+ gives the same picture and a regeneration is a diff a reader can check rather
+ than a new arrangement of the same facts.
+ """
++import argparse
++import json
+ import math
++import os
+ import random
++import shutil
++import subprocess
+ import sys
++import tempfile
+ 
+ SUBCLASS = "<http://www.w3.org/2000/01/rdf-schema#subClassOf>"
+ TYPE = "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>"
+@@ -71,6 +96,8 @@
+ LINKING = (SUBCLASS, TYPE, DOMAIN, RANGE)
+ W, H = 1100, 780
+ SEED = 20260919
++ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
++OO_CERT = os.path.join(ROOT, "lean", ".lake", "build", "bin", "oo-cert")
+ 
+ 
+ def text_width(s, size):
+@@ -135,9 +162,57 @@ def read(path):
+ 
+ 
+ 
+-# Every word on the drawing, in each language it is published in. The NUMBERS
+-# stay out of this table: they are computed from the run and formatted into
+-# these strings, so a translation cannot state a count the data does not carry.
++def oo_cert(checker, asserted_path, derivations_path):
++    """Run the checker on one certificate: (exit code, its JSON report)."""
++    proc = subprocess.run([checker, asserted_path, derivations_path],
++                          capture_output=True, text=True)
++    for line in reversed(proc.stdout.splitlines()):
++        line = line.strip()
++        if line.startswith("{"):
++            return proc.returncode, json.loads(line)
++    raise SystemExit(f"{checker} printed no JSON report (exit {proc.returncode}):\n"
++                     f"{proc.stdout}{proc.stderr}")
++
++
++def forge(checker, asserted_path, derivations_path, line, forged_to):
++    """Run the checker on the certificate as the engine wrote it, then on a copy
++    with one forged line appended: `line`, a derived line of the certificate,
++    with its conclusion changed to `forged_to` and its rule and premises kept.
++
++    Refuses to go on unless the checker accepts the certificate and exits 1 on
++    the copy, with `ok: false`, the appended line as `first_rejected` and that
++    line's rule named. Returns both reports, which is where every word the
++    figure says about the refusal comes from."""
++    code_h, honest = oo_cert(checker, asserted_path, derivations_path)
++    if not (code_h == 0 and honest.get("ok") is True
++            and honest.get("theorem") == "OOCert.certificate_sound"):
++        raise SystemExit(f"refusing to draw: oo-cert did not accept the certificate "
++                         f"(exit {code_h}): {honest}")
++    with open(derivations_path) as f:
++        body = f.read()
++    if body and not body.endswith("\n"):
++        body += "\n"
++    work = tempfile.mkdtemp(prefix="oo-kg-forged-")
+```
+
+**File**: `tests/knowledge_graph_asset_test.rs` (modified, +253/-0)
+```diff
+@@ -19,6 +19,12 @@
+ //! implementation of the same projection agreeing with the first says very
+ //! little. The asserted and derived totals are the load-bearing numbers and
+ //! they come straight from the engine.
++//!
++//! One projection is re-derived all the same, since #428: which edges are
++//! green and which one is red. The generator once took a certified edge and
++//! drew it as the forgery, and every count it printed stayed self-consistent
++//! while it did. So the green edges are compared with the certificate's
++//! subClassOf conclusions, and the red edge has to be absent from them.
+ 
+ use open_ontologies::graph::GraphStore;
+ use open_ontologies::reason::{InferenceTarget, Reasoner};
+@@ -839,3 +845,250 @@ fn the_hand_drawn_animation_is_drawn_from_the_svgs_own_scene() {
+         );
+     }
  }
- 
-+/// Transitive edges from this run, indexed before the next round joins them.
-+/// They are published only after inference finishes, with their recorded support.
-+#[derive(Default)]
-+struct TransitiveEdges {
-+    outgoing: HashMap<(String, String), HashSet<String>>,
-+    incoming: HashMap<(String, String), HashSet<String>>,
-+}
 +
-+impl TransitiveEdges {
-+    fn insert(&mut self, (s, p, o): &Triple) {
-+        self.outgoing
-+            .entry((p.clone(), s.clone()))
-+            .or_default()
-+            .insert(o.clone());
-+        self.incoming
-+            .entry((p.clone(), o.clone()))
-+            .or_default()
-+            .insert(s.clone());
-+    }
++// ── The red edge is a forgery, drawn beside the certified edges ─────────
++//
++// The fifth beat says "a line is forged, and the same checker refuses", and the
++// legend's REJECTED row says the checker exited 1 and named the rule. Until
++// #428 neither was true. The generator took one of the DERIVED subClassOf
++// edges, every one of which `oo-cert` accepts, chose it by where it landed in
++// the layout, and relabelled it `rejected`. No forged line was written and no
++// checker ran on one, so the figure painted a certified entailment red and
++// reported a refusal that never happened.
++//
++// So the certificate is the referee here, not the generator: this test writes
++// one from a live run and holds every published scene to it.
 +
-+    fn neighbours(&self, term: &str, pred: &str, forward: bool) -> Option<&HashSet<String>> {
-+        let index = if forward {
-+            &self.outgoing
-+        } else {
-+            &self.incoming
-+        };
-+        index.get(&(pred.to_owned(), term.to_owned()))
-+    }
-+}
++const SUBCLASS: &str = "<http://www.w3.org/2000/01/rdf-schema#subClassOf>";
 +
- /// The row cap on every internally-authored scan here. A scan that returns
- /// exactly this many rows is reported as possibly truncated rather than assumed
- /// complete.
-@@ -382,7 +412,11 @@ impl IncrementalReasoner {
-         // that lead into it. Only asked for transitive properties, and only
-         // about terms the delta actually mentions.
-         let neighbours_truncated = std::cell::Cell::new(false);
--        let neighbours = |term: &str, pred: &str, forward: bool| -> anyhow::Result<Vec<String>> {
-+        let neighbours = |term: &str,
-+                          pred: &str,
-+                          forward: bool,
-+                          local: &TransitiveEdges|
-+         -> anyhow::Result<HashSet<String>> {
-             let q = if forward {
-                 format!("SELECT ?x WHERE {{ {term} {pred} ?x }} LIMIT 10000")
-             } else {
-@@ -398,15 +432,26 @@ impl IncrementalReasoner {
-             if rows.len() >= 10000 {
-                 neighbours_truncated.set(true);
-             }
--            rows.iter()
-+            let mut found = rows
-+                .iter()
-                 .map(|row| {
-                     row["x"].as_str().map(str::to_owned).ok_or_else(|| {
-                         anyhow::anyhow!("incremental neighbour query returned an unbound term")
-                     })
-                 })
--                .collect()
-+                .collect::<anyhow::Result<HashSet<_>>>()?;
-+            if let Some(neighbours) = local.neighbours(term, pred, forward) {
-+                found.extend(neighbours.iter().cloned());
-+            }
-+            Ok(found)
-         };
- 
-+        let mut local_edges = TransitiveEdges::default();
-+        for triple in delta {
-+            if schema.transitive.contains(&triple.1) {
-+                local_edges.insert(triple);
-+            }
-+        }
-         let mut derived: HashSet<Triple> = HashSet::new();
-         let mut frontier: Vec<Triple> = delta.to_vec();
-         let mut rounds = 0usize;
-@@ -547,7 +592,7 @@ impl IncrementalReasoner {
-                         }
-                     }
-                     if schema.transitive.contains(p) {
--                        for far in neighbours(o, p, true)? {
-+                        for far in neighbours(o, p, true, &local_edges)? {
-                             emit(
-                                 (s.clone(), p.clone(), far.clone()),
-                                 "prp-trp",
-@@ -563,7 +608,7 @@ impl IncrementalReasoner {
-                                 &mut next,
-                             );
-                         }
--                        for near in neighbours(s, p, false)? {
-+                        for near in neighbours(s, p, false, &local_edges)? {
-                             emit(
-                                 (near.clone(), p.clone(), o.clone()),
-                                 "prp-trp",
-@@ -597,6 +642,14 @@ impl IncrementalReasoner {
-                     // forward chainer that only one of two entry points runs.
-                 }
-             }
-+            // Joins must also see edges derived in earlier rounds of THIS run.
-+            // Querying only the store misses new-new joins and can falsely
-+            // report a complete closure when the frontier becomes empty (#416).
-+            for triple in &next {
-+                if schema.transitive.contains(&triple.1) {
-+                    local_edges.insert(triple);
-+                }
-+            }
-             frontier = next;
-         }
- 
-```
-
-**File**: `tests/incremental_transitive_join_test.rs` (added, +246/-0)
-```diff
-@@ -0,0 +1,246 @@
-+// SPDX-FileCopyrightText: 2026 Gqqqqgg
-+// SPDX-License-Identifier: MIT
-+
-+//! Newly inferred edges must participate in the same incremental closure (#416).
-+
-+use open_ontologies::graph::GraphStore;
-+use open_ontologies::reason::{InferenceTarget, Reasoner, Spelled};
-+use open_ontologies::reason_incremental::IncrementalReasoner;
-+use open_ontologies::temporal::ScopeRequest;
-+use serde_json::Value;
-+use std::collections::BTreeSet;
-+use std::sync::Arc;
-+
-+const PREFIXES: &str = "@prefix : <http://example.org/> .
-+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-+@prefix owl: <http://www.w3.org/2002/07/owl#> .";
-+const SCHEMA: &str = ":q rdfs:subPropertyOf :p . :p a owl:TransitiveProperty .";
-+
-+fn edge(s: &str, p: &str, o: &str) -> Spelled {
-+    (
-+        format!("<http://example.org/{s}>"),
-+        format!("<http://example.org/{p}>"),
-+        format!("<http://example.org/{o}>"),
++/// The certificate a live run writes over ies-core: the rows of `asserted.tsv`
++/// and of `derivations.tsv`, as `reason --profile rdfs --certificate` writes
++/// them and as `docs/assets/knowledge-graph.py` reads them.
++fn certificate_rows(tag: &str) -> (Vec<Vec<String>>, Vec<Vec<String>>) {
++    let ttl = std::fs::read_to_string(
++        repo()
++            .join("benchmark")
++            .join("reference")
++            .join("ies-core.ttl"),
 +    )
-+}
-+
-+fn ntriples(edges: &[Spelled]) -> String {
-+    edges
-+        .iter()
-+        .map(|(s, p, o)| format!("{s} {p} {o} .\n"))
-+        .collect()
-+}
-+
-+fn prepared_graph(schema: &str, tracking: bool) -> Arc<GraphStore> {
++    .expect("read ies-core.ttl");
 +    let graph = Arc::new(GraphStore::new());
 +    graph
-+        .load_turtle(&format!("{PREFIXES}\n{schema}"), None)
-+        .unwrap();
-+    Reasoner::run_scoped_with_tracking(
++        .load_turtle(&ttl, None)
++        .expect("ies-core.ttl must parse");
++    let dir = std::env::temp_dir().join(format!("oo-kg-{tag}-{}", std::process::id()));
++    let _ = std::fs::remove_dir_all(&dir);
++    std::fs::create_dir_all(&dir).expect("scratch dir");
++    Reasoner::run_full(
 +        &graph,
-+        "owl-rl",
-+        true,
++        "rdfs",
++        false,
 +        InferenceTarget::DefaultGraph,
-+        None,
-+        &ScopeRequest::Unscoped,
-+        tracking,
++        Some(dir.as_path()),
 +    )
-+    .unwrap();
-+    graph
++    .expect("reason over ies-core.ttl");
++    let rows = |name: &str| -> Vec<Vec<String>> {
++        std::fs::read_to_string(dir.join(name))
++            .unwrap_or_else(|_| panic!("the run wrote no {name}"))
++            .lines()
++            .filter(|l| !l.is_empty())
++            .map(|l| l.split('\t').map(str::to_string).collect())
++            .collect()
++    };
++    let out = (rows("asserted.tsv"), rows("derivations.tsv"));
++    let _ = std::fs::remove_dir_all(&dir);
++    out
 +}
 +
-+fn incremental(graph: &Arc<GraphStore>, delta: &[Spelled], tracking: bool) -> Value {
-+    graph.load_ntriples(&ntriples(delta)).unwrap();
-+    let report: Value = serde_json::from_str(
-+        &IncrementalReasoner::run_scoped_with_tracking(graph, delta, true, false, tracking)
-+            .unwrap(),
-+    )
-+    .unwrap();
-+    assert_eq!(report["ok"], true, "{report}");
-+    assert_eq!(report["complete"], true, "{report}");
-+    report
-+}
-+
-+fn triples(graph: &GraphStore) -> BTreeSet<Spelled> {
-+    graph.all_triples().unwrap().into_iter().collect()
-+}
-+
-+fn check_subproperty_join(tracking: bool) {
-+    let graph = prepared_graph(SCHEMA, tracking);
-+    let report = incremental(
-+        &graph,
-+        &[edge("a", "q", "b"), edge("b", "q", "c")],
-+        tracking,
-+    );
++#[test]
++fn the_red_edge_is_forged_beside_the_certified_ones_and_refused_by_a_real_run() {
++    use std::collections::HashSet;
++    let (asserted, derivations) = certificate_rows("forged");
++    let derived: HashSet<(String, String)> = derivations
++        .iter()
++        .filter(|r| r.len() >= 4 && r[2] == SUBCLASS)
++        .map(|r| (r[1].clone(), r[3].clone()))
++        .collect();
++    let asserted_sc: HashSet<(String, String)> = asserted
++        .iter()
++        .filter(|r| r.len() >= 3 && r[1] == SUBCLASS)
++        .map(|r| (r[0].clone(), r[2].clone()))
++        .collect();
 +    assert!(
-+        triples(&graph).contains(&edge("a", "p", "c")),
-+        "a completed incremental run omitted the transitive consequence: {report}"
++        !derived.is_empty(),
++        "the run derived no subClassOf edge, so this test checks nothing"
 +    );
-+    assert_eq!(report["inferred_count"], 3);
-+    if tracking {
-+        assert!(
-+            graph
-+                .ledger()
-+                .unwrap()
-+                .unwrap()
-+                .grounded()
-+                .contains(&edge("a", "p", "c"))
-+        );
-+    }
-+}
 +
-+#[test]
-+fn new_subproperty_edges_join_in_one_untracked_run() {
-+    check_subproperty_join(false);
-+}
++    for v in &VARIANTS {
++        let scene: serde_json::Value = serde_json::from_slice(&asset(v.scene))
++            .unwrap_or_else(|_| panic!("{} is not JSON", v.scene));
++        let nodes = scene["nodes"].as_array().expect("nodes");
++        let edges = scene["edges"].as_array().expect("edges");
++        let name = |i: &serde_json::Value| -> String {
++            nodes[i.as_u64().expect("node index") as usize]["name"]
++                .as_str()
++                .expect("node name")
++                .to_string()
++        };
++        let is_class =
++            |i: &serde_json::Value| nodes[i.as_u64().unwrap() as usize]["kind"] == "class";
 +
-+#[test]
-+fn new_subproperty_edges_join_in_one_tracked_run() {
-+    check_subproperty_join(true);
-+}
-+
-+#[test]
-+fn new_inverse_edges_join_in_one_run() {
-+    for tracking in [false, true] {
-+        let graph = prepared_graph(
-+            ":q owl:inverseOf :p . :p a owl:TransitiveProperty .",
-+            tracking,
-+        );
-+        incremental(
-+            &graph,
-+            &[edge("b", "q", "a"), edge("c", "q", "b")],
-+            tracking,
-+        );
-+        assert!(triples(&graph).contains(&edge("a", "p", "c")));
-+    }
-+}
-+
-+#[test]
-+fn several_rounds_join_new_edges_with_both_sides_of_the_stored_closure() {
-+    for tracking in [false, true] {
-+        let schema = format!("{SCHEMA} :left :p :a . :e :p :right .");
-+        let graph = prepared_graph(&schema, tracking);
-+        incremental(
-+            &graph,
-+            &[
-+                edge("a", "q", "b"),
-+                edge("b", "q", "c"),
-+                edge("c", "q", "d"),
-+                edge("d", "q", "e"),
-+                edge("right", "other", "unrelated"),
-+            ],
-+            tracking,
-+        );
-+        let actual = triples(&graph);
-+        assert!(actual.contains(&edge("left", "p", "right")));
-+        assert!(!actual.contains(&edge("left", "p", "unrelated")));
-+
-+        let expected = prepared_graph(&schema, tracking);
-+        expected
-+            .load_ntriples(&ntriples(&[
-+                edge("a", "q", "b"),
-+                edge("b", "q", "c"),
-+                edge("c", "q", "d"),
-+                edge("d", "q", "e"),
-+                edge("right", "other", "unrelated"),
-+            ]))
-+            .unwrap();
-+        Reasoner::run(&expected, "owl-rl", true).unwrap();
-+        assert_eq!(actual, triples(&expected));
-+    }
-+}
-+
-+#[test]
-+fn dry_run_reports_the_new_join_without_publishing_data_or_support() {
-+    let graph = prepared_graph(SCHEMA, false);
-+    let delta = [edge("a", "q", "b"), edge("b", "q", "c")];
-+    graph.load_ntriples(&ntriples(&delta)).unwrap();
-+    let before = graph.snapshot("nquads").unwrap();
-+    let report: Value = serde_json::from_str(
++        // 1. The red edge is not a conclusion the certificate carries, nor an
++        //    asserted subclass edge: a claim the closure does not reach.
++        let red: Vec<(usize, String, String)> = edges
++            .iter()
++            .enumerate()
++            .filter(|(_, e)| e[2] == "rejected")
++            .map(|(k, e)| (k, name(&e[0]), name(&e[1])))
++            .collect();
++        assert_eq!(
++            red.len(),
++            1,
++            "{} draws {} red edges; the figure forges one",
 +        
 ```
 
----
-
-### Incident Patch 2: `8ce22770` (2026-11-20)
-**Commit Message**: An error is valid JSON whatever its message contains, so the REST routes no longer answer null (#420)
-
-The serve-http /api routes, several CLI commands and batch built
-{"error": ...} with format!, so a message carrying a double quote, a
-backslash or a newline came out as invalid JSON. The REST routes parsed their
-own output, failed, and answered null with HTTP 200. lint, diff, defects,
-drift and vocab-check printed the broken text and exited 0, because their exit
-code is read from an error key they could no longer parse. batch kept the text
-only under raw. /api/save did the same on success when the path needed
-escaping, which is every Windows path.
-
-open_ontologies::output::error_json now builds the object with serde_json, and
-all 36 sites (26 in main.rs, 10 in batch.rs) use it; /api/save's success body
-is built the same way. tests/api_error_json_test.rs drives a real serve-http
-child and the CLI with a SPARQL query and a Turtle file whose parse errors
-quote a quote and a backslash, a caller-supplied format containing each, and a
-save path that needs escaping. All five tests failed before the change (null
-bodies, unparseable CLI output, lint exit 0) and pass after it.
-
-Co-Authored-
-
-**File**: `CHANGELOG.md` (modified, +12/-0)
+**File**: `tests/readme_simplified_english_test.rs` (modified, +1/-1)
 ```diff
-@@ -192,6 +192,18 @@ All notable changes to Open Ontologies are documented here.
- 
- ### Fixed
- 
-+- **An error is valid JSON whatever its message contains** (#420). The
-+  `serve-http` REST routes, several CLI commands and `batch` wrote
-+  `{"error": ...}` by string formatting, so a message carrying a double quote,
-+  a backslash or a newline (a SPARQL or Turtle parse error quoting the
-+  offending character, a format name the caller supplied, any Windows path)
-+  was invalid JSON. `/api/query`, `/api/save` and the other `/api` routes
-+  then answered `null` with HTTP 200; `lint`, `diff`, `defects`, `drift` and
-+  `vocab-check` printed the broken text and exited 0; `batch` kept it only
-+  under `raw`. `/api/save` also answered `null` on success when the saved path
-+  needed escaping, which is every Windows path. All 36 sites now build the
-+  object with `serde_json`.
-+
- - **Studio's 3D legend names the ontology live mode has loaded** (#414). The
-   legend read "ies-core.ttl · 1,083 triples", and its ASSERTED row "read from
-   ies-core.ttl", in both builds. That is true of the replay demo, which is
-```
-
-**File**: `src/batch.rs` (modified, +10/-10)
-```diff
-@@ -312,7 +312,7 @@ impl BatchRunner {
-         match crate::graph::GraphStore::read_as_turtle(input) {
-             Ok(content) => {
-                 let result = OntologyService::lint_with_feedback(&content, Some(&self.db))
--                    .unwrap_or_else(|e| format!(r#"{{"error":"{}"}}"#, e));
-+                    .unwrap_or_else(crate::output::error_json);
-                 serde_json::from_str(&result).unwrap_or(json!({"raw": result}))
-             }
-             Err(e) => json!({"error": e.to_string()}),
-@@ -1067,7 +1067,7 @@ impl BatchRunner {
-         match crate::graph::GraphStore::read_as_turtle(data_path) {
-             Ok(data) => {
-                 let result = crate::vocab_check::check_data_vocab(&self.graph, &data, &extra)
--                    .unwrap_or_else(|e| format!(r#"{{"error":"{}"}}"#, e));
-+                    .unwrap_or_else(crate::output::error_json);
-                 serde_json::from_str(&result).unwrap_or(json!({"raw": result}))
-             }
-             Err(e) => json!({"error": e.to_string()}),
-@@ -1088,7 +1088,7 @@ impl BatchRunner {
-             Err(e) => return json!({"error": format!("reading {}: {}", args[1], e)}),
-         };
-         let result = OntologyService::diff(&old, &new)
--            .unwrap_or_else(|e| format!(r#"{{"error":"{}"}}"#, e));
-+            .unwrap_or_else(crate::output::error_json);
-         serde_json::from_str(&result).unwrap_or(json!({"raw": result}))
+@@ -339,7 +339,7 @@ fn the_translated_page_carries_the_same_structure() {
+         assert!(zh.contains(link), "the translated page is missing {link:?}");
      }
- 
-@@ -1142,7 +1142,7 @@ impl BatchRunner {
-         let pack = args.first().map(|s| s.as_str()).unwrap_or("generic");
-         let enforcer = crate::enforce::Enforcer::new(self.db.clone(), self.graph.clone());
-         let result = enforcer.enforce_with_feedback(pack, Some(&self.db))
--            .unwrap_or_else(|e| format!(r#"{{"error":"{}"}}"#, e));
-+            .unwrap_or_else(crate::output::error_json);
-         serde_json::from_str(&result).unwrap_or(json!({"raw": result}))
-     }
- 
-@@ -1207,7 +1207,7 @@ impl BatchRunner {
-                     logic: !args.iter().any(|a| a == "--no-logic-check"),
-                 };
-                 let result = planner.plan_with(&turtle, checks)
--                    .unwrap_or_else(|e| format!(r#"{{"error":"{}"}}"#, e));
-+                    .unwrap_or_else(crate::output::error_json);
-                 serde_json::from_str(&result).unwrap_or(json!({"raw": result}))
-             }
-             Err(e) => json!({"error": e.to_string()}),
-@@ -1223,7 +1223,7 @@ impl BatchRunner {
-             .unwrap_or("safe");
-         let planner = crate::plan::Planner::new(self.db.clone(), self.graph.clone());
-         let result = planner.apply_plan(plan_id.as_deref(), mode)
--            .unwrap_or_else(|e| format!(r#"{{"error":"{}"}}"#, e));
-+            .unwrap_or_else(crate::output::error_json);
-         serde_json::from_str(&result).unwrap_or(json!({"raw": result}))
-     }
- 
-@@ -1234,14 +1234,14 @@ impl BatchRunner {
-             None => return json!({"error": "version requires a label"}),
-         };
-         let result = OntologyService::save_version(&self.db, &self.graph, label)
--            .unwrap_or_else(|e| format!(r#"{{"error":"{}"}}"#, e));
-+            .unwrap_or_else(crate::output::error_json);
-         serde_json::from_str(&result).unwrap_or(json!({"raw": result}))
-     }
- 
-     fn exec_history(&self) -> Value {
-         use crate::ontology::OntologyService;
-         let result = OntologyService::list_versions(&self.db)
--            .unwrap_or_else(|e| format!(r#"{{"error":"{}"}}"#, e));
-+            .unwrap_or_else(crate::output::error_json);
-         serde_json::from_str(&result).unwrap_or(json!({"raw": result}))
-     }
- 
-@@ -1252,7 +1252,7 @@ impl BatchRunner {
-             None => return json!({"error": "rollback requires a label"}),
-         };
-         let result = OntologyService::rollback_version(&self.db, &self.graph, label)
--            .unwrap_or_else(|e| format!(r#"{{"error":"{}"}}"#, e));
-+            .unwrap_or_else(crate::output::error_json);
-         serde_json::from_str(&result).unwrap_or(json!({"raw": result}))
-     }
- 
-@@ -1431,7 +1431,7 @@ impl BatchRunner {
-         };
-         let detector = crate::drift::DriftDetector::new(self.db.clone());
-         let result = detector.detect(&v1, &v2)
--            .unwrap_or_else(|e| format!(r#"{{"error":"{}"}}"#, e));
-+            .unwrap_or_else(crate::output::error_json);
-         serde_json::from_str(&result).unwrap_or(json!({"raw": result}))
-     }
- 
-```
-
-**File**: `src/main.rs` (modified, +27/-27)
-```diff
-@@ -2563,7 +2563,7 @@ async fn async_main() -> anyhow::Result<()> {
-                     let g = sg_stats.clone();
-                     async move {
-                         axum::Json(serde_json::from_str::<serde_json::Value>(
--                            &g.get_stats().unwrap_or_else(|e| format!(r#"{{"error":"{}"}}"#, e))
-+                            &g.get_stats().unwrap_or_else(open_ontologies::output::error_json)
-                         ).unwrap_or_default())
-                     }
-                 }))
-@@ -2572,7 +2572,7 @@ async fn async_main() -> anyhow::Result<()> {
-                     async move {
-                         let query = body.0["query"].as_str().unwrap_or("").to_string();
-                         axum::Json(serde_json::from_str::<serde_json::Value>(
--                            &g.sparql_select(&query).unwrap_or_else(|e| format!(r#"{{"error":"{}"}}"#, e))
-+                            &g.sparql_select(&query).unwrap_or_else(open_ontologies::output::error_json)
-                         ).unwrap_or_default())
-                     }
-                 }))
-@@ -2583,7 +2583,7 @@ async fn async_main() -> anyhow::Result<()> {
-                         axum::Json(serde_json::from_str::<serde_json::Value>(
-                             &match g.sparql_update_with_retraction(&query, body.0["retract_inferences"].as_bool().unwrap_or(false)) {
-                                 Ok(n)  => format!(r#"{{"ok":true,"affected":{}}}"#, n),
--                                Err(e) => format!(r#"{{"error":"{}"}}"#, e),
-+                                Err(e) => open_ontologies::output::error_json(e),
-                             }
-                         ).unwrap_or_default())
-                     }
-@@ -2596,7 +2596,7 @@ async fn async_main() -> anyhow::Result<()> {
-                         axum::Json(serde_json::from_str::<serde_json::Value>(
-                             &match g.load_file(&path) {
-                                 Ok(n)  => format!(r#"{{"ok":true,"triples_loaded":{}}}"#, n),
--                                Err(e) => format!(r#"{{"error":"{}"}}"#, e),
-+                                Err(e) => open_ontologies::output::error_json(e),
-                             }
-                         ).unwrap_or_default())
-                     }
-@@ -2609,7 +2609,7 @@ async fn async_main() -> anyhow::Result<()> {
-                         axum::Json(serde_json::from_str::<serde_json::Value>(
-                             &match g.load_turtle(&turtle, base.as_deref()) {
-                                 Ok(n)  => format!(r#"{{"ok":true,"triples_loaded":{}}}"#, n),
--                                Err(e) => format!(r#"{{"error":"{}"}}"#, e),
-+                                Err(e) => open_ontologies::output::error_json(e),
-                             }
-                         ).unwrap_or_default())
-                     }
-@@ -2622,8 +2622,8 @@ async fn async_main() -> anyhow::Result<()> {
-                         let path = open_ontologies::config::expand_tilde(&path);
-                         axum::Json(serde_json::from_str::<serde_json::Value>(
-                             &match g.save_file(&path, &format) {
--                                Ok(_)  => format!(r#"{{"ok":true,"path":"{}"}}"#, path),
--                                Err(e) => format!(r#"{{"error":"{}"}}"#, e),
-+                                Ok(_)  => serde_json::json!({ "ok": true, "path": path }).to_string(),
-+                                Err(e) => open_ontologies::output::error_json(e),
-                             }
-                         ).unwrap_or_default())
-                     }
-@@ -2989,7 +2989,7 @@ async fn async_main() -> anyhow::Result<()> {
-             let (_db, graph) = setup(&cli.data_dir)?;
-             let stats_json = graph
-                 .get_stats()
--                .unwrap_or_else(|e| format!(r#"{{"error":"{}"}}"#, e));
-+                .unwrap_or_else(open_ontologies::output::error_json);
-             output_result(&stats_json, cli.pretty);
-         }
-         Commands::Query { query } => {
-@@ -3003,7 +3003,7 @@ async fn async_main() -> anyhow::Result<()> {
-             };
-             let result = graph
-                 .sparql_select(&query_str)
--                .unwrap_or_else(|e| format!(r#"{{"error":"{}"}}"#, e));
-+                .unwrap_or_else(open_ontologies::output::error_json);
-             output_result(&result, cli.pretty);
-         }
-         Commands::Diff { old_path, new_path } => {
-@@ -3025,7 +3025,7 @@ async fn async_main() -> anyhow::Result<()> {
-             let old = read(&old_path);
-             let new = read(&new_path);
-             let result = OntologyService::diff(&old, &new)
--                .unwrap_or_else(|e| format!(r#"{{"error":"{}"}}"#, e));
-+                .unwrap_or_else(open_ontologies::output::error_json);
-             output_result_checked(&result, cli.pretty);
-         }
-         Commands::Defects { input, limit } => {
-@@ -3069,7 +3069,7 @@ async fn async_main() -> anyhow::Re
-```
-
-**File**: `src/output.rs` (modified, +13/-0)
-```diff
-@@ -21,6 +21,19 @@
- 
- use serde_json::Value;
- 
-+/// `{"error": "<message>"}` as JSON text, with the message escaped.
-+///
-+/// Call sites used to write `format!(r#"{{"error":"{}"}}"#, e)`, which is
-+/// invalid JSON whenever the message carries a double quote, a backslash or a
-+/// newline: a parse error quoting the offending character, a format name the
-+/// caller supplied, any Windows path. The REST routes then parsed their own
-+/// output, failed and answered `null`; the CLI printed the broken text and,
-+/// where the exit code is read from the `error` key, exited 0; batch kept it
-+/// only as `{"raw": ...}` (#420).
-+pub fn error_json(message: impl std::fmt::Display) -> String {
-+    serde_json::json!({ "error": message.to_string() }).to_string()
-+}
-+
- /// The whole human-readable text for one command's result.
- pub type Renderer = fn(&Value) -> String;
- 
-```
-
-**File**: `tests/api_error_json_test.rs` (added, +190/-0)
-```diff
-@@ -0,0 +1,190 @@
-+// SPDX-FileCopyrightText: 2026 Fabio Rovai
-+// SPDX-License-Identifier: MIT
-+
-+//! An error is valid JSON whatever its message contains (#420).
-+//!
-+//! The REST routes under `serve-http`'s `/api` and several CLI commands built
-+//! `{"error": ...}` by string formatting. A message carrying a double quote or
-+//! a backslash (a SPARQL or Turtle parse error quoting the offending
-+//! character, a format name the caller supplied, any Windows path) produced
-+//! invalid JSON. The REST routes then parsed their own output, failed, and
-+//! answered `null` with HTTP 200; the CLI printed the broken text and, for the
-+//! commands that set their exit code from the `error` key, exited 0.
-+
-+use serde_json::{Value, json};
-+use std::io::{Read, Write};
-+use std::net::{SocketAddr, TcpStream};
-+use std::process::{Child, Command, Stdio};
-+use std::time::{Duration, Instant};
-+
-+/// A SPARQL query whose parse error quotes `"` and `\` back to the caller.
-+const BAD_QUERY: &str = r#"SELECT * WHERE { ?s ?p "\q" }"#;
-+
-+fn oo(dir: &tempfile::TempDir) -> Command {
-+    let mut cmd = Command::new(env!("CARGO_BIN_EXE_open-ontologies"));
-+    cmd.arg("--data-dir").arg(dir.path());
-+    cmd.env_remove("OPEN_ONTOLOGIES_TOKEN")
-+        .env_remove("OPEN_ONTOLOGIES_STORAGE_MODE")
-+        .env_remove("GOVERNANCE_WEBHOOK")
-+        .env("NO_PROXY", "127.0.0.1,localhost")
-+        .env("no_proxy", "127.0.0.1,localhost")
-+        .env("RUST_LOG", "warn");
-+    cmd
-+}
-+
-+struct Server(Child);
-+impl Drop for Server {
-+    fn drop(&mut self) {
-+        let _ = self.0.kill();
-+        let _ = self.0.wait();
-+    }
-+}
-+
-+fn start_server(dir: &tempfile::TempDir) -> (Server, SocketAddr) {
-+    let config = dir.path().join("config.toml");
-+    std::fs::write(&config, "[storage]\nmode = 'memory'\n").unwrap();
-+    let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
-+    let addr = listener.local_addr().unwrap();
-+    drop(listener);
-+    let mut cmd = oo(dir);
-+    cmd.env("OPEN_ONTOLOGIES_STORAGE_MODE", "memory")
-+        .arg("serve-http")
-+        .arg("--config")
-+        .arg(&config)
-+        .args(["--host", "127.0.0.1", "--port", &addr.port().to_string()])
-+        .stdout(Stdio::null())
-+        .stderr(Stdio::null());
-+    let mut server = Server(cmd.spawn().unwrap());
-+    let deadline = Instant::now() + Duration::from_secs(30);
-+    loop {
-+        assert!(
-+            server.0.try_wait().unwrap().is_none(),
-+            "HTTP server exited before binding"
-+        );
-+        if TcpStream::connect(addr).is_ok() {
-+            break;
-+        }
-+        assert!(Instant::now() < deadline, "HTTP server did not bind");
-+        std::thread::sleep(Duration::from_millis(20));
-+    }
-+    (server, addr)
-+}
-+
-+/// One HTTP/1.1 POST over a plain socket, so the test needs no HTTP client.
-+fn post(addr: SocketAddr, path: &str, body: &Value) -> (u16, Value) {
-+    let body = body.to_string();
-+    let mut stream = TcpStream::connect(addr).unwrap();
-+    stream
-+        .set_read_timeout(Some(Duration::from_secs(60)))
-+        .unwrap();
-+    write!(
-+        stream,
-+        "POST {path} HTTP/1.1\r\nHost: 127.0.0.1\r\nContent-Type: application/json\r\n\
-+         Content-Length: {}\r\nConnection: close\r\n\r\n{body}",
-+        body.len()
-+    )
-+    .unwrap();
-+    let mut response = String::new();
-+    stream.read_to_string(&mut response).unwrap();
-+    let (head, payload) = response
-+        .split_once("\r\n\r\n")
-+        .expect("an HTTP response with a header block");
-+    let status = head
-+        .split_whitespace()
-+        .nth(1)
-+        .and_then(|s| s.parse().ok())
-+        .expect("a status code");
-+    let value = serde_json::from_str(payload)
-+        .unwrap_or_else(|e| panic!("response body is not JSON ({e}): {payload}"));
-+    (status, value)
-+}
-+
-+fn error_text(value: &Value) -> &str {
-+    value["error"]
-+        .as_str()
-+        .unwrap_or_else(|| panic!("expected an error object, got {value}"))
-+}
-+
-+#[test]
-+fn api_query_parse_error_quoting_a_quote_and_a_backslash_is_an_error_object() {
-+    let dir = tempfile::tempdir().unwrap();
-+    let (_server, addr) = start_server(&dir);
-+    let (status, body) = post(addr, "/api/query", &json!({ "query": BAD_QUERY }));
-+    assert_eq!(status, 200);
-+    let message = error_text(&body);
-+    assert!(message.contains('"') && message.contains('\\'), "{message}");
-+}
-+
-+#[test]
-+fn api_save_reports_a_caller_supplied_format_that_contains_a_quote_or_backslash() {
-+    let dir = tempfile::tempdir().unwrap();
-+    let (_server, addr) = start_server(&dir);
-+    let out = dir.path().join("out.ttl");
-+    for format in ["ya\"ml", "ya\\ml"] {
-+        let (_, body) = post(
-+            addr,
-+            "/api/save",
-+            &json!({ "path": out.to_str().unwrap(), "format": format }),
-+        );
-+        let message = error_text(&body);
-+        assert!(message.contains(format), "{message}");
-+    }
-+}
-+
-+#[test]
-+fn api_save_success_names_a_path_
+     // The headline numbers are digits in both languages, so they can be compared.
+-    for n in ["426", "259", "901", "23", "12", "13", "190", "39"] {
++    for n in ["420", "257", "901", "23", "12", "13", "190", "39"] {
+         assert!(
+             zh.contains(n),
+             "the translated page does not state {n}, and the English page does. A number \
 ```
 
 ---
 
-### Incident Patch 3: `3d0795c0` (2026-11-18)
-**Commit Message**: fix(shacl): expand SPARQL constraint message templates
+### Incident Patch 2: `6f423fe2` (2026-11-20)
+**Commit Message**: Merge pull request #430 from fabio-rovai/fix/427-deterministic-certificate
 
-Expand {?name} and {$name} in fallback sh:message text using each SELECT
-solution. Render literals by lexical value and preserve RDF notation for
-IRIs and blank nodes. Leave unbound placeholders untouched and never
-rescan inserted values.
+Certificates are byte-stable across runs (#427); the README figure's red edge is a forgery oo-cert really refused (#428)
 
-Write the expanded message to JSON, Turtle and N-Triples reports while
-preserving the template literal's language tag or datatype. Keep bound
-?message precedence, default messages, result values and query evaluation
-unchanged.
-
-Add regression coverage for the issue example, per-solution bindings,
-repeated placeholders, unbound variables, literal braces, escaping,
-blank-node focus nodes and existing override/default behavior. Record the
-user-facing fix in CHANGELOG.md.
-
-Fixes #411
-
-**File**: `CHANGELOG.md` (modified, +8/-0)
+**File**: `CHANGELOG.md` (modified, +48/-0)
 ```diff
-@@ -165,6 +165,14 @@ All notable changes to Open Ontologies are documented here.
+@@ -192,6 +192,54 @@ All notable changes to Open Ontologies are documented here.
  
  ### Fixed
  
-+- **SHACL-SPARQL message templates substitute solution variables** (#411).
-+  Fallback `sh:message` text now expands `{?name}` and `{$name}` for each
-+  result, including the pre-bound focus node. Literals use their lexical
-+  values, while IRIs and blank nodes retain their RDF form. Unbound variables
-+  stay as written, and inserted values are not expanded again. JSON, Turtle
-+  and N-Triples reports carry the expanded message; RDF reports preserve its
-+  language tag or datatype. A bound `?message` keeps its existing precedence.
++- **`reason --certificate` writes the same `derivations.tsv` on every run over
++  the same store** (#427). The conclusions were always the same set, but the
++  premises a step recorded (which intermediate class justifies a transitive
++  `rdfs11` step) and the order of the lines changed from run to run: the
++  fixpoint walked its closure as a `HashSet` and recorded the first derivation
++  it met, so three runs over `benchmark/reference/ies-core.ttl` wrote three
++  different files. Every rule now walks a sorted copy of the closure, kept
++  sorted by merging each round's new triples into it, which is how `run_horn`
++  already kept `horn.tsv` stable, so the first derivation met is a function of
++  the store. All three profiles had the defect and all three are fixed. The
++  derivation DAG `onto_justify` and `onto_provenance` read, the derivation
++  prefix of a `refutation.tsv` and `sample_inferences` follow the same order.
++  Over the tracked corpus (307 files, three profiles, 921 certificates) the old
++  binary wrote different bytes on two runs for 139 certificates and the fixed
++  one for none, with the same conclusion set and line count as before for all
++  921. It is faster, not slower: on LUBM(10) with a certificate, owl-rl-ext
++  reasons in 6.3 s against 8.4 s, owl-rl in 4.4 s against 5.2 s and rdfs in
++  3.3 s against 3.9 s. A file with anonymous blank nodes is still a new store
++  on each load, because the parser mints fresh labels for them. The
++  `onto_justify` caveat about its one non-monotone corner now says the value
++  read is chosen by the engine's term numbering, not by hash order.
++  `tests/certificate_determinism_test.rs` certifies one store three times in
++  three processes, under each profile, and requires identical bytes.
 +
- - **Clinical validation and drift detection read a tagged label by its text**
-   (#406). Both stripped quotes from the N-Triples form of the literal, so
-   `"Dog"@en` became `Dog"@en`. Clinical validation searched the crosswalk for
++- **The README figure's red edge is a forged claim, and the refusal it
++  reports is a real run of `oo-cert`** (#428). `docs/assets/knowledge-graph.py`
++  took one of the derived subClassOf edges, every one of which `oo-cert`
++  accepts, chose it by where it landed in the layout and drew it as the
++  forgery, so the figure painted a certified entailment red and stated a
++  refusal no checker had made. It now forges a new claim `s subClassOf X`, X a
++  class the closure does not reach from s, as `demo/build_certified_graph.py`
++  does: a derived line of s is copied with its conclusion changed to X,
++  appended to a copy of the certificate, and `oo-cert` is run on it
++  (`--oo-cert PATH`, default `lean/.lake/build/bin/oo-cert`). Nothing is
++  written unless `oo-cert` accepts the certificate and exits 1 on the copy,
++  naming the forged line and its rule, and the rule and exit code on the
++  figure are read from that report. On ies-core the forgery is
++  `SetOfRepresentations subClassOf Sign`, refused at line 265 as an `rdfs11`
++  step, drawn beside the 257 derived edges, which all stay certified. The
++  legend counts the ontology's edges only, as the Studio legend has since
++  #425: 420 asserted, 257 certified, 1 rejected, where it read 426 and 259 by
++  taking in the pipeline's arrows. The certificate row states the 265 lines
++  `oo-cert` read. Edges are sorted before the layout, so two certificates that
++  differ only in premises (#427) draw byte-identical figures. Both languages'
++  SVG, scene and WebP are regenerated, and
++  `tests/knowledge_graph_asset_test.rs` checks the red edge and the certified
++  edges against a live certificate.
++
+ - **The replay demo's 3D legend is true of the graph under it** (#425). The
+   legend reads "ies-core.ttl · 1,083 triples" and names three warrants
+   (asserted, certified under `OOCert.certificate_sound`, forged and refused),
 ```
 
-**File**: `src/shacl.rs` (modified, +40/-4)
+**File**: `README.md` (modified, +3/-3)
 ```diff
-@@ -4,7 +4,7 @@
- use crate::graph::{GraphStore, ReadScope};
- use crate::temporal::{ScopeManifest, ScopeRequest};
- use oxigraph::io::{RdfFormat, RdfParser};
--use oxigraph::model::{Term, Variable};
-+use oxigraph::model::{Literal, Term, Variable};
- use oxigraph::sparql::{QueryResults, SparqlEvaluator};
- use oxigraph::store::Store;
- use std::collections::{HashMap, HashSet};
-@@ -2118,13 +2118,16 @@ impl ShaclValidator {
-                                     if message.is_empty() {
-                                         "SPARQL constraint violated".to_string()
-                                     } else {
--                                        message.clone()
-+                                        expand_message_template(&message, &row)
-                                     }
-                                 });
-                                 let rdf = RdfTerms::new(
-                                     constraint.get("severity").cloned(),
-                                     bound_message.cloned().or_else(|| {
--                                        constraint.get("message").cloned().filter(|_| !message.is_empty())
-+                                        constraint
-+                                            .get("message")
-+                                            .filter(|_| !message.is_empty())
-+                                            .map(|raw| message_literal_with_text(raw, &msg))
-                                     }),
-                                 );
-                                 let mut v = serde_json::json!({
-@@ -3258,7 +3261,8 @@ fn attribute(
- /// `core/misc/message-001` declares `"Test message"@en`, and the language tag
- /// is gone. SHACL 3.6.2 makes `sh:resultSeverity` the shape's
- /// `sh:severity` and `sh:resultMessage` a copy of its `sh:message`, so the
--/// writer needs the terms as written. They travel inside each violation under
-+/// writer needs the terms as written (with SPARQL message templates expanded).
-+/// They travel inside each violation under
- /// [`crate::shacl_report::RDF_TERMS_KEY`] and the JSON renderer removes them.
- ///
- /// `message` is `None` whenever the result carries this engine's default text,
-@@ -3524,6 +3528,38 @@ fn strip_quotes(s: &str) -> String {
-     }
- }
+@@ -59,9 +59,9 @@
+ </p>
  
-+/// SHACL 5.3.2: expand `{?name}` and `{$name}` in a fallback `sh:message`.
-+/// Literals use their lexical value; IRIs and blank nodes keep their RDF form.
-+/// Unbound names stay as written. Only the template is scanned, so braces in
-+/// an inserted value cannot trigger another substitution.
-+fn expand_message_template(template: &str, row: &HashMap<String, String>) -> String {
-+    let mut expanded = String::with_capacity(template.len());
-+    for part in template.split_inclusive('}') {
-+        if let Some((prefix, name)) = part.strip_suffix('}').and_then(|s| s.rsplit_once('{'))
-+            && let Some(name) = name.strip_prefix('?').or_else(|| name.strip_prefix('$'))
-+            && let Some(value) = row.get(name)
-+        {
-+            expanded.push_str(prefix);
-+            expanded.push_str(&strip_quotes(value));
-+        } else {
-+            expanded.push_str(part);
-+        }
-+    }
-+    expanded
-+}
-+
-+/// Keep the RDF message's language tag or datatype when its text is expanded.
-+fn message_literal_with_text(raw: &str, text: &str) -> String {
-+    let Ok(Term::Literal(lit)) = raw.parse::<Term>() else {
-+        return raw.to_string();
-+    };
-+    let expanded = match lit.language() {
-+        Some(lang) => Literal::new_language_tagged_literal_unchecked(text, lang),
-+        None => Literal::new_typed_literal(text, lit.datatype().into_owned()),
-+    };
-+    expanded.to_string()
-+}
-+
- /// Read a cardinality bound (`sh:minCount`, `sh:maxCount` and the qualified
- /// pair), or record it in `skipped` and return None.
- ///
+ <p align="center">
+-  <sub><b>426 asserted, 259 certified, 1 rejected.</b> The engine derived the green edges. A Lean 4
+-  checker then <i>proved</i> them. One certificate holds all 259, and one run of the checker accepts it.
+-  The red edge is a forged line. The same checker refused that line, gave exit 1, and named the rule.
++  <sub><b>420 asserted, 257 certified, 1 rejected.</b> The engine derived the green edges. A Lean 4
++  checker then <i>proved</i> them. One certificate holds all 257, and one run of the checker accepts it.
++  The red edge is a forged line. The same checker refused that line, gave exit 1, and named the rule (rdfs11).
+   The run supplies each count. Nobody writes a count into the caption.</sub>
+ </p>
+ 
 ```
 
-**File**: `tests/shacl_sparql_message_template_test.rs` (added, +205/-0)
+**File**: `README.zh-CN.md` (modified, +3/-3)
 ```diff
-@@ -0,0 +1,205 @@
-+// SPDX-FileCopyrightText: 2026 Fabio Rovai
-+// SPDX-License-Identifier: MIT
+@@ -57,9 +57,9 @@
+ </p>
+ 
+ <p align="center">
+-  <sub><b>426 条断言，259 条已认证，1 条被拒绝。</b>绿色边由引擎推导得出。随后一个 Lean 4
+-  检查器<i>证明</i>了它们。一份证书涵盖全部 259 条，检查器一次运行即可接受它。
+-  红色边是一行伪造的内容。同一个检查器拒绝了它，以 exit 1 退出，并指出了规则。
++  <sub><b>420 条断言，257 条已认证，1 条被拒绝。</b>绿色边由引擎推导得出。随后一个 Lean 4
++  检查器<i>证明</i>了它们。一份证书涵盖全部 257 条，检查器一次运行即可接受它。
++  红色边是一行伪造的内容。同一个检查器拒绝了它，以 exit 1 退出，并指出了规则（rdfs11）。
+   每个数字都来自运行结果。没有人把数字写进说明文字。</sub>
+ </p>
+ 
+```
+
+**File**: `demo/build_certified_graph.py` (modified, +4/-4)
+```diff
+@@ -278,10 +278,10 @@ def node(iri_term: str) -> dict:
+                     "derivations": len(derivations),
+                     "by_rule": dict(sorted(by_rule.items())),
+                     "asserted_sha256": sha256(b_dir / "asserted.tsv"),
+-                    # Not the digest of derivations.tsv itself: the engine
+-                    # records a different premise for some rdfs11 steps, in a
+-                    # different order, on every run (#427). The conclusions
+-                    # are the same set every time, so this digests those.
++                    # The digest of each step's rule and conclusion, sorted,
++                    # not of derivations.tsv itself, so this record does not
++                    # depend on the order the engine writes its lines in or
++                    # on which premises it records for a step.
+                     "conclusions_sha256": hashlib.sha256("".join(
+                         sorted("\t".join(r[:4]) + "\n" for r in derivations)).encode()).hexdigest(),
+                     "oo_cert": {"exit": 0, "ok": True, "theorem": cert["theorem"]},
+```
+
+**File**: `docs/assets/hand-drawn/hero.js` (modified, +5/-1)
+```diff
+@@ -189,7 +189,7 @@ function layout(){
+     const f=S.labels.forged;
+     const b=placeIn([textBox(mx+rx-10,my-ry-10,f,28,FONT.body),textBox(mx-rx+10-measure(f,28,FONT.body),my-ry-10,f,28,FONT.body),
+                      textBox(mx-measure(f,28,FONT.body)/2,my+ry+34,f,28,FONT.body)],'the forged-line note');
+-    FORGED={mx,my,rx,ry,x:b[0]+4,y:b[3]-28*0.26};
++    FORGED={mx,my,rx,ry,x:b[0]+4,y:b[3]-28*0.26,b};
+     const li=S.nodes.findIndex(n=>n.kind==='lean'), lab=LABELS.find(l=>l.i===li);
+     const rb=pick([textBox(lab.b[0]+4,P[li].y+48,S.labels.refused,24,FONT.body)],'the refusal');
+     REFUSED={x:rb[0]+4,y:P[li].y+48,li};
+@@ -394,6 +394,10 @@ function drawAt(t){
+   // beat 5: the forged line is named, and the checker refuses the certificate carrying it
+   if(litF>0&&FORGED){ const {mx,my,rx,ry}=FORGED;
+     circleAround(mx,my,rx,ry,PAL.red,clamp((t-F.t0)/0.7),litF);
++    // paper under the note, as under beat six's: the forged line is wherever
++    // the closure leaves room for one, and the note can land on the cloud
++    const fb=FORGED.b;
++    wash(ctx,[[fb[0],fb[1]],[fb[2],fb[1]],[fb[2],fb[3]],[fb[0],fb[3]]],PAL.paper,{alpha:0.9*litF,spread:2});
+     hand(ctx,S.labels.forged,FORGED.x,FORGED.y,28,{font:FONT.body,c:PAL.red,alpha:litF});
+     const li=REFUSED.li, cx=P[li].x, cy=P[li].y, st=clamp((t-F.t0-1.2)/0.4);
+     if(st>0){ const s=27*(1.25-0.25*st);
+```
+
+**File**: `docs/assets/knowledge-graph.py` (modified, +280/-63)
+```diff
+@@ -2,10 +2,18 @@
+ """Regenerate docs/assets/knowledge-graph.svg from a real certified run.
+ 
+ Run:
++    cargo build --release
++    (cd lean && lake build oo-cert)
+     printf 'load benchmark/reference/ies-core.ttl\nreason --profile rdfs --certificate DIR\n' \
+-        | open-ontologies batch - --no-connect
++        | target/release/open-ontologies batch - --no-connect
+     python3 docs/assets/knowledge-graph.py DIR/asserted.tsv DIR/derivations.tsv \
+-        docs/assets/knowledge-graph.svg
++        docs/assets/knowledge-graph.svg docs/assets/kgcert/prove.json docs/assets/kgcert/mu.json en
++    python3 docs/assets/knowledge-graph.py DIR/asserted.tsv DIR/derivations.tsv \
++        docs/assets/knowledge-graph.zh-CN.svg docs/assets/kgcert/prove.json docs/assets/kgcert/mu.json zh
 +
-+//! SHACL 5.3.2 message templates are expanded for each solution (#411).
++`--oo-cert PATH` names the checker; it defaults to lean/.lake/build/bin/oo-cert.
++The figure cannot be drawn without it, because the fifth beat is a run of it
++(see "The forgery" below).
+ 
+ `reason` takes no positional file. It reasons over the loaded store, so the
+ graph has to be loaded first and the two have to be one batch: a second process
+@@ -33,6 +41,17 @@
+ the edges cross in front of and behind one another the way they do on screen.
+ Drawn far to near, painter's algorithm, because SVG has no z-buffer.
+ 
++THE FORGERY IS FORGED, AND THE REFUSAL IS A RUN. The red edge is a claim
++`s subClassOf X` that the closure does not reach (not asserted, not derived),
++drawn beside the certified edges and never in place of one. The generator
++copies a derived line of `s`, changes its conclusion to X, appends it to a copy
++of the certificate and runs `oo-cert` on that copy. Nothing is written unless
++`oo-cert` accepts the honest certificate, then exits 1 on the forged one with
++`ok: false`, the forged line as `first_rejected` and its rule named. The rule
++and the exit code on the figure are read from that report. Until #428 the red
++edge was one of the derived edges, all of which `oo-cert` accepts, relabelled
++`rejected`: a true entailment painted red, and a refusal that never happened.
 +
-+use open_ontologies::graph::GraphStore;
-+use open_ontologies::shacl::{ShaclReport, ShaclValidator};
-+use open_ontologies::shacl_report::ReportFormat;
-+use open_ontologies::temporal::ScopeRequest;
-+use oxigraph::io::{RdfFormat, RdfParser};
-+use oxigraph::model::{Literal, Term};
-+use serde_json::Value;
-+use std::io::Cursor;
-+use std::sync::Arc;
+ It is also ANIMATED, in four beats on one 14-second clock: the asserted graph
+ arrives, the engine derives, Lean sweeps the derived edges, and a forged edge is
+ drawn and then refused. That order is the argument the README makes, and a still
+@@ -55,9 +74,15 @@
+ gives the same picture and a regeneration is a diff a reader can check rather
+ than a new arrangement of the same facts.
+ """
++import argparse
++import json
+ import math
++import os
+ import random
++import shutil
++import subprocess
+ import sys
++import tempfile
+ 
+ SUBCLASS = "<http://www.w3.org/2000/01/rdf-schema#subClassOf>"
+ TYPE = "<http://www.w3.org/1999/02/22-rdf-syntax-ns#type>"
+@@ -71,6 +96,8 @@
+ LINKING = (SUBCLASS, TYPE, DOMAIN, RANGE)
+ W, H = 1100, 780
+ SEED = 20260919
++ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
++OO_CERT = os.path.join(ROOT, "lean", ".lake", "build", "bin", "oo-cert")
+ 
+ 
+ def text_width(s, size):
+@@ -135,9 +162,57 @@ def read(path):
+ 
+ 
+ 
+-# Every word on the drawing, in each language it is published in. The NUMBERS
+-# stay out of this table: they are computed from the run and formatted into
+-# these strings, so a translation cannot state a count the data does not carry.
++def oo_cert(checker, asserted_path, derivations_path):
++    """Run the checker on one certificate: (exit code, its JSON report)."""
++    proc = subprocess.run([checker, asserted_path, derivations_path],
++                          capture_output=True, text=True)
++    for line in reversed(proc.stdout.splitlines()):
++        line = line.strip()
++        if line.startswith("{"):
++            return proc.returncode, json.loads(line)
++    raise SystemExit(f"{checker} printed no JSON report (exit {proc.returncode}):\n"
++                     f"{proc.stdout}{proc.stderr}")
 +
-+fn report(data: &str, message: &str, select: &str) -> ShaclReport {
-+    let graph = Arc::new(GraphStore::new());
-+    graph.load_turtle(data, None).unwrap();
-+    let shapes = format!(
-+        r#"
-+        @prefix ex: <http://example.org/> .
-+        @prefix sh: <http://www.w3.org/ns/shacl#> .
-+        ex:S a sh:NodeShape ; sh:targetClass ex:Item ;
-+            sh:sparql [ {message} sh:select """{select}""" ] .
-+        "#
-+    );
-+    ShaclValidator::report_scoped(&graph, &shapes, &ScopeRequest::Unscoped).unwrap()
-+}
 +
-+fn messages(report: &ShaclReport) -> Vec<String> {
-+    let json: Value = serde_json::from_str(&report.to_json_string()).unwrap();
-+    assert_eq!(json["conforms"], false, "{json}");
-+    assert!(json["skipped_constraints"].is_null(), "{json}");
-+    let mut messages: Vec<_> = json["violations"]
-+        .as_array()
-+        .unwrap()
-+        .iter()
-+        .map(|v| v["message"].as_str().unwrap().to_string())
-+        .collect();
-+    messages.sort();
-+    messages
-+}
++def forge(checker, asserted_path, derivations_path, line, forged_to):
++    """Run the checker on the certificate as the engine wrote it, then on a copy
++    with one forged line appended: `line`, a derived line of the certificate,
++    with its conclusion changed to `forged_to` and its rule and premises kept.
 +
-+const DATA: &str = r#"
-+    @prefix ex: <http://example.org/> .
-+    ex:a a ex:Item ; ex:v 5 .
-+"#;
-+
-+const SELECT_VALUE: &str =
-+    "SELECT $this ?value WHERE { $this <http://example.org/v> ?value . FILTER(?value > 3) }";
-+
-+fn assert_rdf_message(report: &ShaclReport, expected: Literal) {
-+    for (format, parser_format) in [
-+        (ReportFormat::Turtle, RdfFormat::Turtle),
-+        (ReportFormat::NTriples, RdfFormat::NTriples),
-+    ] {
-+        let rendered = report.render(format).unwrap();
-+        let found: Vec<_> = RdfParser::from_format(parser_format)
-+            .for_reader(Cursor::new(rendered.as_bytes()))
-+            .map(Result::unwrap)
-+            .filter(|q| q.predicate.as_str() == "http://www.w3.org/ns/shacl#resultMessage")
-+            .map(|q| q.object)
-+            .collect();
-+        assert_eq!(found, vec![Term::Literal(expected.clone())], "{rendered}");
-+    }
-+}
-+
-+#[test]
-+fn the_issue_example_expands_value_and_focus_without_changing_the_result_value() {
-+    let r = report(
-+        DATA,
-+        r#"sh:message "value too big: {?value} (focus {$this})" ;"#,
-+        SELECT_VALUE,
-+    );
-+    assert_eq!(
-+        messages(&r),
-+        ["value too big: 5 (focus <http://example.org/a>)"]
-+    );
-+    let json: Value = serde_json::from_str(&r.to_json_string()).unwrap();
-+    assert_eq!(json["violation_count"], 1);
-+    assert_eq!(
-+        json["violations"][0]["value"],
-+        "\"5\"^^<http://www.w3.org/2001/XMLSchema#integer>"
-+    );
-+    assert_rdf_message(
-+        &r,
-+        Literal::new_simple_literal("value too big: 5 (focus <http://example.org/a>)"),
-+    );
-+}
-+
-+#[test]
-+fn each_solution_expands_both_variable_markers_and_repeated_names() {
-+    let data = r#"
-+        @prefix ex: <http://example.org/> .
-+        ex:a a ex:Item ; ex:v 5, 9 .
-+        ex:b a ex:Item ; ex:v 7 .
-+    "#;
-+    let r = report(
-+        data,
-+        r#"sh:message "{?this}: {?value}/{$value}/{?value}; {$label}" ;"#,
-+        r#"SELECT $this ?value ("large" AS ?label) WHERE { $this <http://example.org/v> ?value }"#,
-+    );
-+    assert_eq!(
-+        messages(&r),
-+        [
-+            "<http://example.org/a>: 5/5/5; large",
-+            "<http://example.org/a>: 9/9/9; large",
-+            "<http://example.org/b>: 7/7/7; large",
-+        ]
-+    );
-+}
-+
-+#[test]
-+fn unbound_variables_and_ordinary_braces_remain_literal_text() {
-+    let r = report(
-+        DATA,
-+        r#"sh:message "{?missing} {$missing} {value} {?} { ?value} {?value!} {ordinary {?value}} {?value" ;"#,
-+        "SELECT $this ?value ?missing WHERE { $this <http://example.org/v> ?value }",
-+    );
-+    assert_eq!(
-+        messages(&r),
-+        ["{?missing} {$missing} {value} {?} { ?value} {?value!} {ordinary 5} {?value"]
-+    );
-+}
-+
-+#[test]
-+fn inserted_literal_values_are_not_expanded_again() {
-+    let data = r#"
-+        @prefix ex: <http://example.org/> .
-+        ex:a a ex:Item ; ex:v "{$this} and {?other}" .
-+    "#;
-+    let r = report(
-+        data,
-+        r#"sh:message "{?value} / {$other}" ;"#,
-+        r#"SELECT $this ?value ("done" AS ?other) WHERE { $this <http://example.org/v> ?value }"#,
-+    );
-+    assert_eq!(messages(&r), ["{$this} and {?other} / done"]);
-+}
-+
-+#[test]
-+fn blank_node_focus_and_iri_values_keep_their_rdf_form() {
-+    let data = r#"
-+        @prefix ex: <http://example.org/> .
-+        _:item a ex:Item ; ex:v ex:value .
-+    "#;
-+    let r = report(
-+        data,
-+        r#"sh:
++    Refuses to go on unless the checker accepts the certificate and exits 1 on
++    the copy, with `ok: false`, the appended line as `first_rejected` and that
++    line's rule named. Returns both reports, which is where every word the
++    figure says about the refusal comes from."""
++    code_h, honest = oo_cert(checker, asserted_path, derivations_path)
++    if not (code_h == 0 and honest.get("ok") is True
++            and honest.get("theorem") == "OOCert.certificate_sound"):
++        raise SystemExit(f"refusing to draw: oo-cert did not accept the certificate "
++                         f"(exit {code_h}): {honest}")
++    with open(derivations_path) as f:
++        body = f.read()
++    if body and not body.endswith("\n"):
++        body += "\n"
++    work = tempfile.mkdtemp(prefix="oo-kg-forged-")
+```
+
+**File**: `docs/concurrency-inventory.md` (modified, +1/-1)
+```diff
+@@ -259,7 +259,7 @@ A disables it again.
+ 
+ ### Defect D: the store can drift between hashing and reasoning. KNOWN, DOCUMENTED, OPEN.
+ 
+-`Reasoner::run_horn` takes `&Arc<GraphStore>` (`src/reason.rs:3107`) and reads the store at line 3134.
++`Reasoner::run_horn` takes `&Arc<GraphStore>` (`src/reason.rs:3460`) and reads the store at line 3488.
+ This is already
+ [decision 0010](decisions/0010-the-input-is-a-value-and-not-a-store.md), which names it, calls the
+ window a race in as many words, and specifies `CertifiedInput` to dissolve it by copying once. It is
+```
+
+**File**: `docs/explanation.md` (modified, +3/-3)
+```diff
+@@ -68,9 +68,9 @@ and still minimal, both re-run. It is an incomplete one, and it says so.
+ Reiter's construction is complete for a monotone oracle. The rule table is monotone, in that no rule reads
+ the ABSENCE of a triple, but two places in `src/reason.rs` are not. `owl:onProperty`,
+ `owl:someValuesFrom`, `owl:allValuesFrom`, `owl:hasValue`, `rdf:first` and `rdf:rest` are read into
+-maps keyed by the node, so a node carrying TWO values for one of them contributes one, chosen by
+-hash order. Removing a triple can therefore change which value is read rather than only removing
+-consequences.
++maps keyed by the node, so a node carrying TWO values for one of them contributes one: the value the
++engine's term numbering puts last, which follows store order (it was hash order until #427). Removing
++a triple can therefore change which value is read rather than only removing consequences.
+ 
+ Where that bites, the tree can MISS a justification. It cannot report a false one, because every
+ reported set is verified by re-running the engine over it and over each of its subsets.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #431** (2026-11-20): README front page shows the dark knowledge-graph figure; the hand-drawn version is linked (@fabio-rovai)
+- **PR #430** (2026-11-20): Certificates are byte-stable across runs (#427); the README figure's red edge is a forgery oo-cert really refused (#428) (@fabio-rovai)
 - **PR #429** (2026-11-20): The replay's 3D legend is true of its graph: a certified ies-core run three checkers judged (#425) (@fabio-rovai)
 - **PR #426** (2026-11-20): Errors are valid JSON everywhere; Studio refresh, findings, auto-save and live 3D fixes (#420 to #424) (@fabio-rovai)
 - **PR #419** (2026-11-20): Land #410, #412, #415, #417, #418 and the Studio fixes for #413 and #414 (@fabio-rovai)
 - **PR #418** (2026-11-20): Execute every SHACL 2.3.1 property path form (@MatthewYe)
-- **PR #417** (2026-11-20): fix(reasoning): join newly derived edges during incremental transitivity (@Gqqqqgg)
-- **PR #415** (2026-11-20): Studio: 2D Graph view (schema and instance neighbourhood) (@fabio-rovai)
 
 ---
 
@@ -2767,13 +2392,13 @@ Fixes #411
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. reasoning): join newly derived edges during incremental transitivity
+## X. Merge fix/428-figure-real-forgery: the README figure's red edge is a forgery oo-
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fabio-rovai/open-ontologies. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b639a6c3`: reasoning): join newly derived edges during incremental transitivity. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2154f1bb`: Merge fix/428-figure-real-forgery: the README figure's red edge is a forgery oo-cert really refused. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2781,15 +2406,23 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **Incremental transitivity joins edges derived in the same run** (#416).
-  Subproperty and inverse rules could produce two connected edges without
-  their transitive consequence, while the response reported `complete: true`.
-  Targeted joins now include an in-memory index of the current run's edges
-  alongside the stored closure. Materialisation still happens after inference,
-  and tracked runs retain alternative supports and dependency-based withdrawal.
-  Regression tests cover tracked and untracked runs, multiple rounds, named
-  graphs, dry runs, batching, and withdrawal of alternative or cyclic support.
-
+- **The README figure's red edge is a forged claim, and the refusal it
+  reports is a real run of `oo-cert`** (#428). `docs/assets/knowledge-graph.py`
+  took one of the derived subClassOf edges, every one of which `oo-cert`
+  accepts, chose it by where it landed in the layout and drew it as the
+  forgery, so the figure painted a certified entailment red and stated a
+  refusal no checker had made. It now forges a new claim `s subClassOf X`, X a
+  class the closure does not reach from s, as `demo/build_certified_graph.py`
+  does: a derived line of s is copied with its conclusion changed to X,
+  appended to a copy of the certificate, and `oo-cert` is run on it
+  (`--oo-cert PATH`, default `lean/.lake/build/bin/oo-cert`). Nothing is
+  written unless `oo-cert` accepts the certificate and exits 1 on the copy,
+  naming the forged line and its rule, and the rule and exit code on the
+  figure are read from that report. On ies-core the forgery is
+  `SetOfRepresentations subClassOf Sign`, refused at line 265 as an `rdfs11`
+  step, drawn beside the 257 derived edges, which all stay certified. The
+  legend counts the ontology's edges only, as the Studio legend has since
+  #425: 420 asserted, 25
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2799,4 +2432,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b639a6c3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2154f1bb` are properly handled with clean fallback behavior.

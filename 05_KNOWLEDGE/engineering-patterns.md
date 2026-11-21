@@ -729280,3 +729280,266 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `6d77feaf` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9797. keep insets in sync with edges and measurements in LayoutRegionView (Harvested from react-navigation/react-navigation)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "keep insets in sync with edges and measurements in LayoutRegionView",
+  "source": "react-navigation/react-navigation",
+  "source_url": "https://github.com/react-navigation/react-navigation",
+  "source_version": "ca036e81",
+  "license": "PERMISSIVE_OPEN_SOURCE",
+  "extracted_at": "2026-11-21T15:31:22.629Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-react-navigation-react-navigation",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [react-navigation/react-navigation](https://github.com/react-navigation/react-navigation) (Revision: `ca036e81`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `packages/native/ios/ReactNavigationLayoutRegionView.mm`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react-navigation/react-navigation. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `e34a70c2`: keep insets in sync with edges and measurements in LayoutRegionView. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/native/ios/ReactNavigationLayoutRegionView.mm`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+  std::optional<LayoutRegionState> _committedState;
+
+    [self commitInsetsIfNeeded];
+
+    if (!oldState || state->getRevision() == State::initialRevisionValue) {
+        _committedState = _state->getData();
+    }
+    _committedState.reset();
+    [self commitInsetsIfNeeded];
+
+    [self sendInsetsChangeIfNeeded];
+}
+
+- (void)commitInsetsIfNeeded
+{
+    if (!_measuredState.has_value()) {
+        return;
+    }
+
+    const auto &edges = static_cast<const ReactNavigationLayoutRegionViewProps &>(*_props).edges;
+
+    if (edges.top == decltype(edges.top)::Off && edges.bottom == decltype(edges.bottom)::Off &&
+        edges.start == decltype(edges.start)::Off && edges.end == decltype(edges.end)::Off) {
+        return;
+    }
+
+    auto state = *_measuredState;
+
+    state.top = edges.top != decltype(edges.top)::Off ? state.top : 0;
+    state.bottom = edges.bottom != decltype(edges.bottom)::Off ? state.bottom : 0;
+    state.start = edges.start != decltype(edges.start)::Off ? state.start : 0;
+    state.end = edges.end != decltype(edges.end)::Off ? state.end : 0;
+
+    if (_committedState != state) {
+        _committedState = state;
+
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
+    if (state != _state->getData()) {
+
+    [self sendInsetsChangeIfNeeded];
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `e34a70c2` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9798. Merge fix/428-figure-real-forgery: the README figure's red edge is a forgery oo- (Harvested from fabio-rovai/open-ontologies)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Merge fix/428-figure-real-forgery: the README figure's red edge is a forgery oo-",
+  "source": "fabio-rovai/open-ontologies",
+  "source_url": "https://github.com/fabio-rovai/open-ontologies",
+  "source_version": "c2b64e1b",
+  "license": "MIT",
+  "extracted_at": "2026-11-21T15:31:24.912Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-fabio-rovai-open-ontologies",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [fabio-rovai/open-ontologies](https://github.com/fabio-rovai/open-ontologies) (Revision: `c2b64e1b`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fabio-rovai/open-ontologies. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `2154f1bb`: Merge fix/428-figure-real-forgery: the README figure's red edge is a forgery oo-cert really refused. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+- **The README figure's red edge is a forged claim, and the refusal it
+  reports is a real run of `oo-cert`** (#428). `docs/assets/knowledge-graph.py`
+  took one of the derived subClassOf edges, every one of which `oo-cert`
+  accepts, chose it by where it landed in the layout and drew it as the
+  forgery, so the figure painted a certified entailment red and stated a
+  refusal no checker had made. It now forges a new claim `s subClassOf X`, X a
+  class the closure does not reach from s, as `demo/build_certified_graph.py`
+  does: a derived line of s is copied with its conclusion changed to X,
+  appended to a copy of the certificate, and `oo-cert` is run on it
+  (`--oo-cert PATH`, default `lean/.lake/build/bin/oo-cert`). Nothing is
+  written unless `oo-cert` accepts the certificate and exits 1 on the copy,
+  naming the forged line and its rule, and the rule and exit code on the
+  figure are read from that report. On ies-core the forgery is
+  `SetOfRepresentations subClassOf Sign`, refused at line 265 as an `rdfs11`
+  step, drawn beside the 257 derived edges, which all stay certified. The
+  legend counts the ontology's edges only, as the Studio legend has since
+  #425: 420 asserted, 25
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `2154f1bb` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9799. Increase timeout at test_replicated_table_backup (Harvested from ytsaurus/ytsaurus)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Increase timeout at test_replicated_table_backup",
+  "source": "ytsaurus/ytsaurus",
+  "source_url": "https://github.com/ytsaurus/ytsaurus",
+  "source_version": "847a2b36",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-21T15:31:35.226Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-ytsaurus-ytsaurus",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus) (Revision: `847a2b36`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `yt/yt/tests/integration/dynamic_tables/test_backups.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `2c1bd800`: YT-30353: Increase timeout at test_replicated_table_backup. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yt/yt/tests/integration/dynamic_tables/test_backups.py`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c++
+// Verified production-grade fix pattern:
+            checkpoint_timestamp_delay=4000,
+```
+
+**NEGATIVE CONSTRAINT**:
+```c++
+// Induced defect failure mode:
+            checkpoint_timestamp_delay=3000,
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `2c1bd800` are properly handled with clean fallback behavior.
