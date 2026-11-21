@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-21T16:18:59.650Z",
+  "last_updated": "2026-11-21T16:31:24.966Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -16041,14 +16041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf",
-      "content_hash": "a6826f66f5a267da2f488d1ecff7663ee63d6220be098f0dc0330312d32e6418",
-      "verified_at": "2026-11-17T18:18:28.642Z",
+      "content_hash": "4dc9f70cb5e89ec68ee2e3aef2e1fac5ad6ee4f3e822bf8cf3d8a7b2f08ae72a",
+      "verified_at": "2026-11-21T16:31:24.965Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T18:18:28.642Z"
+      "last_updated": "2026-11-21T16:31:24.965Z"
     },
     "makecindy/cindy": {
       "repository": "makecindy/cindy",

@@ -11871,3 +11871,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-ornith-ai-ornith-1-5-122b` | `https://huggingface.co/ornith-ai/Ornith-1.5-122B` | `hf-ornith-` | Multi-dimensional audit evidence | 2026-11-21T16:18:41.754Z |
 | `learn-github-flox-flox` | `https://github.com/flox/flox` | `2130d6d7` | Multi-dimensional audit evidence | 2026-11-21T16:18:44.991Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `ef2aebe1` | Multi-dimensional audit evidence | 2026-11-21T16:18:59.641Z |
+| `learn-huggingface-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf` | `https://huggingface.co/orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-11-21T16:31:24.957Z |

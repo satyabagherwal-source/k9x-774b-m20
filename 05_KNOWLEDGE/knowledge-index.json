@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T16:19:05.773Z",
+  "last_updated": "2026-11-21T16:31:30.111Z",
   "total_verified_learnings": 9060,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "e1d63232b1f5dba17da3404e1ea5abef8a321a19e15f5d122dd638a6f6297f7f",
+      "content_hash": "78f763cd6a34c0eb316e9a24a7dd2e8caa25ec2e03c403a441b2857cbbfef6a1",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T10:37:45.952Z"
+      "persisted_at": "2026-11-21T16:31:28.981Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "348819117de8e763cf8e6f72115db05c7d518d2578ca086a4764d90377705c3c",
+      "content_hash": "fd0cfeed5b1011e3d70ccdffd7baebba7ae8791d844278cdf803e467eec0c8f0",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T10:37:46.104Z"
+      "persisted_at": "2026-11-21T16:31:29.130Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "60ad80a202490d8eadbcd29ddf584388614644de9e51e22c064454f80f40ad2f",
+      "content_hash": "2146f59917bfc7f3dce7f790e50e779830f811b75877251d9cb24c3a7f4402ee",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T10:37:46.237Z"
+      "persisted_at": "2026-11-21T16:31:29.259Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -236956,9 +236956,9 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "repository": "zleap-ai-sag-learnings",
       "source_version": "HEAD",
-      "content_hash": "d96b3dc95dd6cacf0bc65703b3fab53e56f9156cdd947b4a69df4ee37ab03695",
+      "content_hash": "c20f6c7c71030a7572c5d3a1399bc51b6260ec3a655e453f326fc17d80950896",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T20:49:52.410Z"
+      "persisted_at": "2026-11-21T16:31:30.111Z"
     },
     "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b": {
       "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
@@ -278068,7 +278068,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
       "source_version": "hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf",
-      "content_hash": "a6826f66f5a267da2f488d1ecff7663ee63d6220be098f0dc0330312d32e6418",
+      "content_hash": "4dc9f70cb5e89ec68ee2e3aef2e1fac5ad6ee4f3e822bf8cf3d8a7b2f08ae72a",
       "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf-learnings.md",
       "promoted_rules": [],
@@ -278077,7 +278077,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T18:18:28.384Z",
+      "verified_at": "2026-11-21T16:31:24.766Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -278094,9 +278094,9 @@
       "title": "Research & Knowledge Intelligence: orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF Core Invariants",
       "repository": "orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
       "source_version": "hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf",
-      "content_hash": "793bfca7afbf06bdc70f70ab8cb6a170e51fbd39f9c91e7d2e51c8907bf09185",
+      "content_hash": "98deca60a9ae4d5a3c4c0fba520fe59aaa71a6c299ceb953b0f00c82487103db",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T18:18:28.853Z"
+      "persisted_at": "2026-11-21T16:31:25.152Z"
     },
     "rule-9026": {
       "learning_id": "rule-9026",
@@ -278132,9 +278132,9 @@
       "title": "Research & Knowledge Intelligence: hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf-learnings Core Invariants",
       "repository": "hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "8773c03e8fe23dd645513f04426f69ffced8ee3729ca7457f231251ea5f52e7c",
+      "content_hash": "0efeef17a7c0391db6827eafac03f3307965ee3f28fbb2ad5a5bd3e01c96c080",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T18:18:43.724Z"
+      "persisted_at": "2026-11-21T16:31:28.188Z"
     },
     "learn-huggingface-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf": {
       "learning_id": "learn-huggingface-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf",
@@ -308965,13 +308965,13 @@
       "item_id": "candidate_directive-benchmarks-report-gold-coverage-across-retrieval-stages",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-XY2S-benchmarks-report-gold-coverage-across-retrieval-stages.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-KTVF-benchmarks-report-gold-coverage-across-retrieval-stages.md",
       "title": "benchmarks): report Gold coverage across retrieval stages",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "c1bd85f95505a6e5d4a150ad453dac189d3a403379f1bd72cf546949db9f0348",
+      "content_hash": "620e71b7df326424b42c95c77dbc9dcdce81f359af41cbb7356e0ee15caf06e7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T10:37:45.799Z"
+      "persisted_at": "2026-11-21T16:31:28.829Z"
     },
     "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it": {
       "item_id": "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it",

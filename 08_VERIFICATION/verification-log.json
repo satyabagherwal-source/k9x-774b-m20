@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261119-XHDR",
-    "timestamp": "2026-11-19T13:22:01.407Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "9e788b3191342b30ee27cdaa9d8bd0d1f1964465df9ed318351bfd5f366ec892",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261119-EI5O",
     "timestamp": "2026-11-19T13:35:15.564Z",
     "repository": "facebook/sam3",
@@ -7492,6 +7477,21 @@
     "contentHash": "71e39d67cd2f34e648a5bb53454acd73ed49356f367c87f2bec50f265252a304",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-KQVT",
+    "timestamp": "2026-11-21T16:31:24.953Z",
+    "repository": "orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
+    "learningId": "learn-huggingface-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf",
+    "contentHash": "4dc9f70cb5e89ec68ee2e3aef2e1fac5ad6ee4f3e822bf8cf3d8a7b2f08ae72a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-21T16:19:02.906Z",
-    "lastVerified": "2026-11-21T16:19:02.906Z",
+    "lastChecked": "2026-11-21T16:31:27.838Z",
+    "lastVerified": "2026-11-21T16:31:27.838Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -221,9 +221,9 @@
   "bitnami-sealed-secrets": {
     "name": "sealed-secrets",
     "officialUrl": "https://github.com/bitnami/sealed-secrets",
-    "lastChecked": "2026-11-20T12:50:17.769Z",
+    "lastChecked": "2026-11-21T16:31:10.634Z",
     "revisionIdentifier": "53625dfe",
-    "lastVerified": "2026-11-20T12:50:17.769Z"
+    "lastVerified": "2026-11-21T16:31:10.634Z"
   },
   "microsoft-agent-governance-toolkit": {
     "name": "agent-governance-toolkit",
@@ -253,9 +253,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-21T15:31:28.585Z",
+    "lastChecked": "2026-11-21T16:31:18.114Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-21T15:31:28.585Z"
+    "lastVerified": "2026-11-21T16:31:18.114Z"
   },
   "herdrdev-herdr": {
     "name": "herdrdev/herdr",
@@ -1881,8 +1881,8 @@
     "officialUrl": "https://github.com/cilium/cilium",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-21T06:27:56.035Z",
-    "lastVerified": "2026-11-21T06:27:56.035Z",
+    "lastChecked": "2026-11-21T16:31:13.270Z",
+    "lastVerified": "2026-11-21T16:31:13.270Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cilium-cilium",
@@ -1939,9 +1939,9 @@
   "streetwriters-notesnook": {
     "name": "notesnook",
     "officialUrl": "https://github.com/streetwriters/notesnook",
-    "lastChecked": "2026-11-18T13:17:18.482Z",
+    "lastChecked": "2026-11-21T16:31:08.168Z",
     "revisionIdentifier": "8bb25559",
-    "lastVerified": "2026-11-18T13:17:18.482Z"
+    "lastVerified": "2026-11-21T16:31:08.168Z"
   },
   "moby-buildkit": {
     "name": "moby/buildkit",
@@ -2481,9 +2481,9 @@
   "tach-org-tach": {
     "name": "tach",
     "officialUrl": "https://github.com/tach-org/tach",
-    "lastChecked": "2026-11-20T01:53:49.967Z",
+    "lastChecked": "2026-11-21T16:31:03.349Z",
     "revisionIdentifier": "7c27c816",
-    "lastVerified": "2026-11-20T01:53:49.967Z"
+    "lastVerified": "2026-11-21T16:31:03.349Z"
   },
   "hf-akhilaaa3-jev-omni": {
     "name": "akhilaaa3/Jev-Omni",
@@ -6549,9 +6549,9 @@
   "mariadb-server": {
     "name": "server",
     "officialUrl": "https://github.com/MariaDB/server",
-    "lastChecked": "2026-11-20T10:34:22.528Z",
+    "lastChecked": "2026-11-21T16:31:15.683Z",
     "revisionIdentifier": "39281811",
-    "lastVerified": "2026-11-20T10:34:22.528Z"
+    "lastVerified": "2026-11-21T16:31:15.683Z"
   },
   "graphprotocol-graph-node": {
     "name": "graph-node",
@@ -12497,6 +12497,23 @@
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-ornith-ai-ornith-1-5-122b",
     "contentHash": "1bd0261b92b7ac1a55d6106390160064576f90a03b4b7545dc61b8dc0f5082e0",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-orcarouter-deepseek-v4.1-flash-1017-abliterated-gguf": {
+    "name": "orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
+    "officialUrl": "https://huggingface.co/orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-21T16:31:05.965Z",
+    "lastVerified": "2026-11-21T16:31:05.965Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf",
+    "contentHash": "4dc9f70cb5e89ec68ee2e3aef2e1fac5ad6ee4f3e822bf8cf3d8a7b2f08ae72a",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
