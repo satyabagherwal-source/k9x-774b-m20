@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261119-30EV",
-    "timestamp": "2026-11-19T18:06:15.511Z",
-    "repository": "google/tcmalloc",
-    "learningId": "learn-github-google-tcmalloc",
-    "contentHash": "6c1b379a6793e79a21ed89dbda22ef506f484ff3b14b213d90c98b556de42a12",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-3718",
-    "timestamp": "2026-11-19T18:06:24.092Z",
-    "repository": "karmada-io/karmada",
-    "learningId": "learn-github-karmada-io-karmada",
-    "contentHash": "2616dec24f231a040fef8b8755cf2ff83646a4422f72ecff70abf96da490a0ba",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261119-388D",
     "timestamp": "2026-11-19T18:06:25.645Z",
     "repository": "openziti/zrok",
@@ -7490,6 +7460,36 @@
     "repository": "milvus-io/milvus",
     "learningId": "learn-github-milvus-io-milvus",
     "contentHash": "197886a287ce2801e107fa34dee9769adb901de224b29faaf3f0c91c834f057f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-X1NR",
+    "timestamp": "2026-11-21T21:48:54.567Z",
+    "repository": "LiquidAI/LFM3-Audio-2B",
+    "learningId": "learn-huggingface-liquidai-lfm3-audio-2b",
+    "contentHash": "699671e8c539a2389b322a6c5e5654ce419c1ee69f84824ea065fd7cc27483ca",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261121-XC6Q",
+    "timestamp": "2026-11-21T21:49:08.210Z",
+    "repository": "VectifyAI/PageIndex",
+    "learningId": "learn-github-vectifyai-pageindex",
+    "contentHash": "fa3baea4422c72c2fa85a2e20f1ecbc5097007d251f83a541a03d6ef5ea1c105",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

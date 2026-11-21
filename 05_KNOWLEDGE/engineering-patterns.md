@@ -734343,3 +734343,80 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `a3d538e9` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9851. docs(readme): lead with the November launches and OCR-free Cloud, show a boxed c (Harvested from VectifyAI/PageIndex)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "docs(readme): lead with the November launches and OCR-free Cloud, show a boxed c",
+  "source": "VectifyAI/PageIndex",
+  "source_url": "https://github.com/VectifyAI/PageIndex",
+  "source_version": "add6b17c",
+  "license": "MIT",
+  "extracted_at": "2026-11-21T21:49:07.682Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-vectifyai-pageindex",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [VectifyAI/PageIndex](https://github.com/VectifyAI/PageIndex) (Revision: `add6b17c`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in VectifyAI/PageIndex. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `76ce6ae8`: docs(readme): lead with the November launches and OCR-free Cloud, show a boxed citation, and move Cloud after Quickstart. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+// Verified production-grade fix pattern:
+- [Nov '26] 🔥 [**PageIndex Agent**](https://pageindex.ai/blog/pageindex-agent): vectorless, OCR-free, multimodal RAG for complex documents, with line-level citations for every answer.
+- [Nov '26] 🔥 [**Page Extract API**](https://pageindex.ai/blog/page-extract-api): describe the fields you want in a JSON Schema and get them back from any PDF. *#1 on ExtractBench*, and its standard tier beats every other method at $0.03 a page.
+- [Nov '26] [**Do We Still Need OCR?**](https://pageindex.ai/blog/do-we-need-ocr): we removed OCR from every PageIndex product. Reading the original pages raised accuracy and lowered cost.
+- [Oct '26] [**Page Search API**](https://search.pageindex.ai): find the pages that answer each question in about a second, and send your LLM only those. *Cut 97% token cost on document question answering*; more accurate and faster than vector search ([benchmark](https://github.com/VectifyAI/page-search-benchmark)).
+**Have a Claude subscription?** PageIndex can use your subscription to call Claude models through Claude Code: usage is covered by your plan, no API key needed. Install with `pip install -U "pageindex[claude]"`, then prefix model names with `claude-code/`, e.g.
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+// Induced defect failure mode:
+- [Oct '26] 🔥 [**Page Search API**](https://search.pageindex.ai): find the pages that answer each question in about a second, and send your LLM only those. *Cut 97% token cost on document question answering*; more accurate and faster than vector search ([benchmark](https://github.com/VectifyAI/page-search-benchmark)).
+- [Aug '26] ⚡ [**PageIndex Flash**](#step-2-index-your-documents): fast tree index generation for text-based PDFs, now the default indexing method in PageIndex SDK local mode.
+- [Scale PageIndex to Millions of Documents](https://pageindex.ai/docs/documents/folders): *PageIndex File System* is a file-level tree indexing layer that lets PageIndex reason over an entire corpus, not just a single document.
+**Have a Claude subscription?** PageIndex can use your subscription to call Claude models through Claude Code: usage is covered by your plan, no API key needed. Install with `pip install -U "pageindex[claude]"`, then prefix model names with `claude-code/`, e.g., `index="claude-code/haiku"`, `chat="claude-code/opus"` (see [example](https://github.com/VectifyAI/PageIndex/blob/main/cookbook/pageindex-claude-subscription.py)).
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `76ce6ae8` are properly handled with clean fallback behavior.

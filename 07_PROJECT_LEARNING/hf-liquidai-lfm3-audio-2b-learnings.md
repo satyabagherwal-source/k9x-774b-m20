@@ -3,7 +3,7 @@
 > **Source Version**: `hf-liquidai-`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T16:21:37.576Z  
+> **Timestamp**: 2026-11-21T21:48:54.065Z  
 > **Learning ID**: `learn-huggingface-liquidai-lfm3-audio-2b`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-liquidai-lfm3-audio-2b-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/LiquidAI/LFM3-Audio-2B](https://huggingface.co/LiquidAI/LFM3-Audio-2B))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T16:21:37.476Z  
+> **Harvest Timestamp**: 2026-11-21T21:48:53.877Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: any-to-any
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 14828 downloads | 270 likes
+- **Stars / Engagement**: 18173 downloads | 273 likes
 
 ---
 

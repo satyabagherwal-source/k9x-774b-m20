@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T21:40:28.746Z",
-  "total_cycles_completed": 11332,
-  "total_learnings_persisted": 11332,
-  "total_rules_promoted": 10658,
+  "last_updated": "2026-11-21T21:49:08.219Z",
+  "total_cycles_completed": 11334,
+  "total_learnings_persisted": 11334,
+  "total_rules_promoted": 10659,
   "history": [
-    {
-      "timestamp": "2026-11-21T01:51:32.395Z",
-      "repository": "biomejs/biome",
-      "learningId": "learn-github-biomejs-biome",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T01:51:36.132Z",
-      "repository": "software-mansion/react-native-screens",
-      "learningId": "learn-github-software-mansion-react-native-screens",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T02:00:32.843Z",
       "repository": "oxc-project/oxc",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-21T21:40:28.746Z",
       "repository": "milvus-io/milvus",
       "learningId": "learn-github-milvus-io-milvus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T21:48:54.577Z",
+      "repository": "LiquidAI/LFM3-Audio-2B",
+      "learningId": "learn-huggingface-liquidai-lfm3-audio-2b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-21T21:49:08.219Z",
+      "repository": "VectifyAI/PageIndex",
+      "learningId": "learn-github-vectifyai-pageindex",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

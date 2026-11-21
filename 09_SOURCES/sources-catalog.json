@@ -6613,10 +6613,10 @@
     "repository": "VectifyAI/PageIndex",
     "platform": "github",
     "sourceUrl": "https://github.com/VectifyAI/PageIndex",
-    "sourceVersion": "614cb815",
+    "sourceVersion": "add6b17c",
     "license": "MIT",
-    "contentHash": "8cba45fb2fdb832ffaaf073fcacbb734f17b56407477c69d2f0ff6157d38c10e",
-    "lastHarvestedAt": "2026-11-20T17:12:19.891Z",
+    "contentHash": "fa3baea4422c72c2fa85a2e20f1ecbc5097007d251f83a541a03d6ef5ea1c105",
+    "lastHarvestedAt": "2026-11-21T21:49:08.214Z",
     "learningId": "learn-github-vectifyai-pageindex"
   },
   "epicweb-dev-advanced-react-patterns": {
@@ -11565,8 +11565,8 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/LFM3-Audio-2B",
     "sourceVersion": "hf-liquidai-lfm3-audio-2b",
     "license": "Open-Source",
-    "contentHash": "fa61a25d94de1d1069507ff1bc4730e797e246a9362e7b1bf86032943070d81c",
-    "lastHarvestedAt": "2026-11-16T16:21:37.947Z",
+    "contentHash": "699671e8c539a2389b322a6c5e5654ce419c1ee69f84824ea065fd7cc27483ca",
+    "lastHarvestedAt": "2026-11-21T21:48:54.571Z",
     "learningId": "learn-huggingface-liquidai-lfm3-audio-2b"
   },
   "mobile-next-mobile-mcp": {

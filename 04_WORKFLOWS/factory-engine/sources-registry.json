@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-21T21:40:31.925Z",
-    "lastVerified": "2026-11-21T21:40:31.925Z",
+    "lastChecked": "2026-11-21T21:49:11.512Z",
+    "lastVerified": "2026-11-21T21:49:11.512Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -353,12 +353,12 @@
     "lastVerified": "2026-11-21T21:31:41.682Z"
   },
   "nucleoidai-nucleoid": {
-    "name": "NucleoidAI/Nucleoid",
+    "name": "Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-21T21:04:45.169Z",
-    "lastVerified": "2026-11-21T21:04:45.169Z",
+    "lastChecked": "2026-11-21T21:49:05.819Z",
+    "lastVerified": "2026-11-21T21:49:05.819Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -367,7 +367,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "d0e53bdc"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -544,14 +545,14 @@
     "officialUrl": "https://github.com/VectifyAI/PageIndex",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-20T17:12:19.411Z",
-    "lastVerified": "2026-11-20T17:12:19.411Z",
+    "lastChecked": "2026-11-21T21:49:07.103Z",
+    "lastVerified": "2026-11-21T21:49:07.103Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-vectifyai-pageindex",
-    "contentHash": "8cba45fb2fdb832ffaaf073fcacbb734f17b56407477c69d2f0ff6157d38c10e",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 2,
+    "contentHash": "fa3baea4422c72c2fa85a2e20f1ecbc5097007d251f83a541a03d6ef5ea1c105",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1395,8 +1396,8 @@
     "officialUrl": "https://github.com/RustCrypto/hashes",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-21T14:49:36.892Z",
-    "lastVerified": "2026-11-21T14:49:36.892Z",
+    "lastChecked": "2026-11-21T21:49:00.880Z",
+    "lastVerified": "2026-11-21T21:49:00.880Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustcrypto-hashes",
@@ -2054,8 +2055,8 @@
     "officialUrl": "https://github.com/higress-group/higress",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-20T18:16:55.358Z",
-    "lastVerified": "2026-11-20T18:16:55.358Z",
+    "lastChecked": "2026-11-21T21:48:58.322Z",
+    "lastVerified": "2026-11-21T21:48:58.322Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-higress-group-higress",
@@ -3373,9 +3374,9 @@
   "oblador-react-native-animatable": {
     "name": "react-native-animatable",
     "officialUrl": "https://github.com/oblador/react-native-animatable",
-    "lastChecked": "2026-11-18T16:31:31.119Z",
+    "lastChecked": "2026-11-21T21:48:55.994Z",
     "revisionIdentifier": "dfd74137",
-    "lastVerified": "2026-11-18T16:31:31.119Z"
+    "lastVerified": "2026-11-21T21:48:55.994Z"
   },
   "skyhook-io-radar": {
     "name": "skyhook-io/radar",
@@ -3842,9 +3843,9 @@
   "vi-websocat": {
     "name": "websocat",
     "officialUrl": "https://github.com/vi/websocat",
-    "lastChecked": "2026-11-20T05:51:25.622Z",
+    "lastChecked": "2026-11-21T21:48:50.919Z",
     "revisionIdentifier": "097582e3",
-    "lastVerified": "2026-11-20T05:51:25.622Z"
+    "lastVerified": "2026-11-21T21:48:50.919Z"
   },
   "hf-google-t5-t5-small": {
     "name": "google-t5/t5-small",
@@ -12905,6 +12906,23 @@
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-pika-labs-pika-h3-flex",
     "contentHash": "271ff6d88115eb8a15cc688051af7bd9ac9c33f02631b70692dd07a4e644f972",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-liquidai-lfm3-audio-2b": {
+    "name": "LiquidAI/LFM3-Audio-2B",
+    "officialUrl": "https://huggingface.co/LiquidAI/LFM3-Audio-2B",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-21T21:48:53.877Z",
+    "lastVerified": "2026-11-21T21:48:53.877Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-liquidai-lfm3-audio-2b",
+    "contentHash": "699671e8c539a2389b322a6c5e5654ce419c1ee69f84824ea065fd7cc27483ca",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

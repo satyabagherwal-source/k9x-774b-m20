@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-21T21:40:28.749Z",
+  "last_updated": "2026-11-21T21:49:08.224Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9996,14 +9996,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vectifyai-pageindex",
-      "content_hash": "8cba45fb2fdb832ffaaf073fcacbb734f17b56407477c69d2f0ff6157d38c10e",
-      "verified_at": "2026-11-20T17:12:19.926Z",
+      "content_hash": "fa3baea4422c72c2fa85a2e20f1ecbc5097007d251f83a541a03d6ef5ea1c105",
+      "verified_at": "2026-11-21T21:49:08.223Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T17:12:19.926Z"
+      "last_updated": "2026-11-21T21:49:08.223Z"
     },
     "dalance/procs": {
       "repository": "dalance/procs",
@@ -17391,14 +17391,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-liquidai-lfm3-audio-2b",
-      "content_hash": "fa61a25d94de1d1069507ff1bc4730e797e246a9362e7b1bf86032943070d81c",
-      "verified_at": "2026-11-16T16:21:37.955Z",
+      "content_hash": "699671e8c539a2389b322a6c5e5654ce419c1ee69f84824ea065fd7cc27483ca",
+      "verified_at": "2026-11-21T21:48:54.580Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T16:21:37.956Z"
+      "last_updated": "2026-11-21T21:48:54.580Z"
     },
     "mobile-next/mobile-mcp": {
       "repository": "mobile-next/mobile-mcp",

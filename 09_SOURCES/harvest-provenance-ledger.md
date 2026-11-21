@@ -11943,3 +11943,5 @@ Every entry in this ledger must capture:
 | `learn-github-moby-buildkit` | `https://github.com/moby/buildkit` | `dd75b495` | Multi-dimensional audit evidence | 2026-11-21T21:40:22.606Z |
 | `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `8bcbb077` | Multi-dimensional audit evidence | 2026-11-21T21:40:28.741Z |
 | `learn-dom-h-2d29e63d` | `project://i18next-react-i18next` | `def28df2` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/i18next-react-i18next-learnings.md` | 2026-11-21T21:40:59.688Z |
+| `learn-huggingface-liquidai-lfm3-audio-2b` | `https://huggingface.co/LiquidAI/LFM3-Audio-2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-21T21:48:54.571Z |
+| `learn-github-vectifyai-pageindex` | `https://github.com/VectifyAI/PageIndex` | `add6b17c` | Multi-dimensional audit evidence | 2026-11-21T21:49:08.214Z |

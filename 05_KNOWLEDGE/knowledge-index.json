@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-21T21:41:01.518Z",
+  "last_updated": "2026-11-21T21:49:14.250Z",
   "total_verified_learnings": 9062,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23297,
+  "total_items": 23299,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113706,13 +113706,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-ZT1Y-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-XGKY-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "d155216b0734130f8742dd1585426b64ab2f58ef7ee0b036c1ffca841665a91b",
+      "content_hash": "26189718b6fcde7fe15bbca3792f8f418468e4d06721498411ff5ea46edb20e6",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T21:23:03.769Z"
+      "persisted_at": "2026-11-21T21:49:13.911Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "88fa35530d448a1d38f3be700478475e63cda9e5b38b8cadf6ae680a903ece00",
+      "content_hash": "1793bb0b1b64b2c91f0a859e8a5fdbbe5ae1273cd9c3559125d0e1fdb59fcfc8",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T21:23:03.926Z"
+      "persisted_at": "2026-11-21T21:49:14.079Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "5022d81a7e3746cbecd542adc140a0d914a90f4ffabe9d018f11781caa9c0929",
+      "content_hash": "1979b8a25fdcb68508cf1f63f8eace5d401e4c0f67388c69425aab8c27a233a9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T21:23:04.099Z"
+      "persisted_at": "2026-11-21T21:49:14.250Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -242364,8 +242364,8 @@
       "slug": "vectifyai-pageindex",
       "platform": "github",
       "source_url": "https://github.com/VectifyAI/PageIndex",
-      "source_version": "614cb815",
-      "content_hash": "8cba45fb2fdb832ffaaf073fcacbb734f17b56407477c69d2f0ff6157d38c10e",
+      "source_version": "add6b17c",
+      "content_hash": "fa3baea4422c72c2fa85a2e20f1ecbc5097007d251f83a541a03d6ef5ea1c105",
       "dossier_path": "07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md",
       "promoted_rules": [
@@ -242393,6 +242393,11 @@
           "number": 9373,
           "title": "extract(file) uploads the file again when the stored document it waited for fail",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9851,
+          "title": "docs(readme): lead with the November launches and OCR-free Cloud, show a boxed c",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -242400,7 +242405,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T17:12:19.680Z",
+      "verified_at": "2026-11-21T21:49:07.978Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -242454,10 +242459,10 @@
       "relative_path": "08_VERIFICATION/vectifyai-pageindex-verification-protocol-empirical-defect-shield-for-vectifyai-.md",
       "title": "Verification Protocol: Empirical Defect Shield for VectifyAI/PageIndex",
       "repository": "VectifyAI/PageIndex",
-      "source_version": "614cb815",
-      "content_hash": "5ae2ec6557a4c4e088d3474b4bca4bf2fbc2ed44d4dda5975ff3921eb388f3d1",
+      "source_version": "add6b17c",
+      "content_hash": "310f74099f751c3bd78493d8dbe444cc438756bf2befab920fa087aeefeb9fbc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T17:12:20.420Z"
+      "persisted_at": "2026-11-21T21:49:08.811Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-3-image-klein-learning": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-3-image-klein-learning",
@@ -257914,10 +257919,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-vectifyai-pageindex-content-information-intelligence-vectifyai-pageindex-core-in.md",
       "title": "Content & Information Intelligence: VectifyAI/PageIndex Core Invariants",
       "repository": "VectifyAI/PageIndex",
-      "source_version": "614cb815",
-      "content_hash": "c6579b6dc4d59feb23c149bd47fc19037441fd5c4b563067e665277f09b22615",
+      "source_version": "add6b17c",
+      "content_hash": "2d457d9231bbb24fc4badf71d004dcc201486c1ce488a27bf84d6a0318388270",
       "domain_letter": "I",
-      "persisted_at": "2026-11-20T17:12:20.270Z"
+      "persisted_at": "2026-11-21T21:49:08.636Z"
     },
     "rule-8745": {
       "learning_id": "rule-8745",
@@ -257965,9 +257970,9 @@
       "title": "Content & Information Intelligence: vectifyai-pageindex-learnings Core Invariants",
       "repository": "vectifyai-pageindex-learnings",
       "source_version": "HEAD",
-      "content_hash": "647514883341287e20d777c45dc21442d48d0aebd7b40bdf8c801feb96339283",
+      "content_hash": "68c97dea793f6a49e99d65fd3dd3963d9a4ff333660e53082d11b95a2762000d",
       "domain_letter": "I",
-      "persisted_at": "2026-11-20T17:12:57.495Z"
+      "persisted_at": "2026-11-21T21:49:12.995Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-vectifyai-pageindex-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-vectifyai-pageindex-learnings",
@@ -257977,9 +257982,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for vectifyai-pageindex-learnings",
       "repository": "vectifyai-pageindex-learnings",
       "source_version": "HEAD",
-      "content_hash": "c061cae36982ad05d40cb56cd79d1d8b5131634ad70077dbd7857bd81dd59d18",
+      "content_hash": "2c24e7494ff6b0e4c37f6a69752d48cd253fcf487baf60e7a97cae2db23edf7d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T17:12:57.661Z"
+      "persisted_at": "2026-11-21T21:49:13.168Z"
     },
     "rule-8746": {
       "learning_id": "rule-8746",
@@ -259302,7 +259307,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/LiquidAI/LFM3-Audio-2B",
       "source_version": "hf-liquidai-lfm3-audio-2b",
-      "content_hash": "fa61a25d94de1d1069507ff1bc4730e797e246a9362e7b1bf86032943070d81c",
+      "content_hash": "699671e8c539a2389b322a6c5e5654ce419c1ee69f84824ea065fd7cc27483ca",
       "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-lfm3-audio-2b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-lfm3-audio-2b-learnings.md",
       "promoted_rules": [],
@@ -259311,7 +259316,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T16:21:37.781Z",
+      "verified_at": "2026-11-21T21:48:54.345Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -259328,9 +259333,9 @@
       "title": "Research & Knowledge Intelligence: LiquidAI/LFM3-Audio-2B Core Invariants",
       "repository": "LiquidAI/LFM3-Audio-2B",
       "source_version": "hf-liquidai-lfm3-audio-2b",
-      "content_hash": "72e473a0d4313cd3162f711dcd6ca7ea3f4824c7fb22362c8cb3f3bb471a4be9",
+      "content_hash": "be3a4e7c9ccbc15ddb821f26b30d04b04926426afd967b6846c50a584ba27e0c",
       "domain_letter": "D",
-      "persisted_at": "2026-11-16T16:21:38.113Z"
+      "persisted_at": "2026-11-21T21:48:54.797Z"
     },
     "learn-github-rtk-ai-rtk": {
       "learning_id": "learn-github-rtk-ai-rtk",
@@ -259503,9 +259508,9 @@
       "title": "Research & Knowledge Intelligence: hf-liquidai-lfm3-audio-2b-learnings Core Invariants",
       "repository": "hf-liquidai-lfm3-audio-2b-learnings",
       "source_version": "HEAD",
-      "content_hash": "24f2ff8678fffcda47d2fa0f72813974160d5ca8bf1520c8c5f5fa2037fd10bf",
+      "content_hash": "cf9e80693757f7dcea58d10305fc08086e4c8f028eda0b51319ce563ffc658a8",
       "domain_letter": "D",
-      "persisted_at": "2026-11-16T16:21:54.602Z"
+      "persisted_at": "2026-11-21T21:49:11.893Z"
     },
     "candidate_directive-nuc-108-list-and-population-partitions": {
       "item_id": "candidate_directive-nuc-108-list-and-population-partitions",
@@ -316706,6 +316711,32 @@
       "content_hash": "380abb28379acd642d01e610cfad7a2338d7f6b4a9753c16a9a7c16a5c3ce044",
       "domain_letter": "H",
       "persisted_at": "2026-11-21T21:40:28.955Z"
+    },
+    "rule-9851": {
+      "learning_id": "rule-9851",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9851,
+      "title": "docs(readme): lead with the November launches and OCR-free Cloud, show a boxed c",
+      "source_url": "https://github.com/VectifyAI/PageIndex",
+      "source_version": "add6b17c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-21T21:49:07.978Z"
+    },
+    "candidate_directive-docs-readme-lead-with-the-november-launches-and-ocr-free-cloud-show-a-boxed-c": {
+      "item_id": "candidate_directive-docs-readme-lead-with-the-november-launches-and-ocr-free-cloud-show-a-boxed-c",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-XFQ6-docs-readme-lead-with-the-november-launches-and-ocr-free-cloud-show-a-boxed-c.md",
+      "title": "docs(readme): lead with the November launches and OCR-free Cloud, show a boxed c",
+      "repository": "vectifyai-pageindex-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0cc79ad0e5532b6f2801aff7009a0ce9dfb2484cfb93048d2fa7bcfcd6f701f2",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-21T21:49:12.803Z"
     }
   },
   "ai-builder-brain": {

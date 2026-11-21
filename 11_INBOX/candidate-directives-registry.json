@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-21T21:41:01.175Z",
+  "last_updated": "2026-11-21T21:49:13.911Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4835,11 +4835,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-ZT1Y",
+      "id": "CD-XGKY",
       "directive_title": "editor): add scoped ios account deletion",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-ZT1Y-editor-add-scoped-ios-account-deletion.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-XGKY-editor-add-scoped-ios-account-deletion.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-21",
@@ -43833,6 +43833,35 @@
       "source_repo": "moby-buildkit",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-8D7E7D-empirical-invariant-guard-in-azurite-go.md",
+      "staged_date": "2026-11-21"
+    },
+    {
+      "id": "CD-XFQ6",
+      "directive_title": "docs(readme): lead with the November launches and OCR-free Cloud, show a boxed c",
+      "source_repo": "vectifyai-pageindex-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-XFQ6-docs-readme-lead-with-the-november-launches-and-ocr-free-cloud-show-a-boxed-c.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-21",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-REV-DB2350",
+      "directive_title": "docs(readme): lead with the November launches and OCR-free Cloud, show a boxed c",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "vectifyai-pageindex",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-DB2350-docs-readme-lead-with-the-november-launc.md",
+      "staged_date": "2026-11-21"
+    },
+    {
+      "id": "CD-REV-93EF8B",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-93EF8B-editor-add-scoped-ios-account-deletion.md",
       "staged_date": "2026-11-21"
     }
   ]

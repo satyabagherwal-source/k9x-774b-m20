@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-21T21:40:59.868Z",
+  "updated_at": "2026-11-21T21:49:12.450Z",
   "stats": {
-    "total_discovered": 7358,
-    "approved_pending_harvest": 6960,
+    "total_discovered": 7363,
+    "approved_pending_harvest": 6965,
     "harvested_count": 0,
     "rejected_count": 398,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6940,
+      "COMMUNITY_AND_EXPERT": 6945,
       "OFFICIAL_DOCUMENTATION": 240,
       "STANDARDS_AND_SPECIFICATIONS": 122,
       "ENGINEERING_BLOGS": 5,
@@ -159113,6 +159113,116 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/i18next-react-i18next-learnings.md",
         "fileName": "i18next-react-i18next-learnings.md"
+      }
+    },
+    "SRC-94F4005A3584": {
+      "id": "SRC-94F4005A3584",
+      "url": "https://pageindex.ai/docs/cookbook/citations",
+      "title": "https://pageindex.ai/docs/cookbook/citations",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T21:49:12.189Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md",
+        "fileName": "vectifyai-pageindex-learnings.md"
+      }
+    },
+    "SRC-27736DE57CBC": {
+      "id": "SRC-27736DE57CBC",
+      "url": "https://pageindex.ai/docs/sdk/chat",
+      "title": "https://pageindex.ai/docs/sdk/chat",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T21:49:12.240Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md",
+        "fileName": "vectifyai-pageindex-learnings.md"
+      }
+    },
+    "SRC-9BCD7DEB6771": {
+      "id": "SRC-9BCD7DEB6771",
+      "url": "https://pageindex.ai/blog/pageindex-agent",
+      "title": "https://pageindex.ai/blog/pageindex-agent",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T21:49:12.346Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md",
+        "fileName": "vectifyai-pageindex-learnings.md"
+      }
+    },
+    "SRC-42BFAB77E5D3": {
+      "id": "SRC-42BFAB77E5D3",
+      "url": "https://pageindex.ai/blog/page-extract-api",
+      "title": "https://pageindex.ai/blog/page-extract-api",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T21:49:12.394Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md",
+        "fileName": "vectifyai-pageindex-learnings.md"
+      }
+    },
+    "SRC-301E5C9CD72D": {
+      "id": "SRC-301E5C9CD72D",
+      "url": "https://pageindex.ai/blog/do-we-need-ocr",
+      "title": "https://pageindex.ai/blog/do-we-need-ocr",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-21T21:49:12.450Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md",
+        "fileName": "vectifyai-pageindex-learnings.md"
       }
     }
   }
