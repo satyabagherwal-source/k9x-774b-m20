@@ -12019,3 +12019,4 @@ Every entry in this ledger must capture:
 | `learn-github-dosco-deeporg` | `https://github.com/dosco/graphjin` | `85c58cdb` | Multi-dimensional audit evidence | 2026-11-22T02:40:18.506Z |
 | `learn-huggingface-prunaai-p-h3-image-comfy` | `https://huggingface.co/PrunaAI/P-H3-Image-Comfy` | `hf-prunaai` | Multi-dimensional audit evidence | 2026-11-22T02:42:05.499Z |
 | `learn-dom-h-f5caa699` | `project://hf-prunaai-p-h3-image-comfy` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-prunaai-p-h3-image-comfy-learnings.md` | 2026-11-22T02:42:32.154Z |
+| `learn-huggingface-nvidia-nvidia-nemotronlabs-re-use` | `https://huggingface.co/nvidia/NVIDIA-NemotronLabs-RE-USE` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-22T02:53:11.664Z |

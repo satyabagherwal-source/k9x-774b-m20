@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-22T02:42:08.918Z",
-    "lastVerified": "2026-11-22T02:42:08.918Z",
+    "lastChecked": "2026-11-22T02:53:23.095Z",
+    "lastVerified": "2026-11-22T02:53:23.095Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -176,8 +176,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-22T02:09:13.903Z",
-    "lastVerified": "2026-11-22T02:09:13.903Z",
+    "lastChecked": "2026-11-22T02:53:23.083Z",
+    "lastVerified": "2026-11-22T02:53:23.083Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1324,9 +1324,9 @@
   "cryfs-cryfs": {
     "name": "cryfs",
     "officialUrl": "https://github.com/cryfs/cryfs",
-    "lastChecked": "2026-11-21T21:40:19.088Z",
+    "lastChecked": "2026-11-22T02:53:18.111Z",
     "revisionIdentifier": "e2da97b1",
-    "lastVerified": "2026-11-21T21:40:19.088Z"
+    "lastVerified": "2026-11-22T02:53:18.111Z"
   },
   "neondatabase-neon": {
     "name": "neon",
@@ -2604,8 +2604,8 @@
     "officialUrl": "https://github.com/crate/crate",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-20T22:39:44.906Z",
-    "lastVerified": "2026-11-20T22:39:44.906Z",
+    "lastChecked": "2026-11-22T02:53:20.587Z",
+    "lastVerified": "2026-11-22T02:53:20.587Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-crate-crate",
@@ -3780,9 +3780,9 @@
   "alibaba-sentinel-golang": {
     "name": "sentinel-golang",
     "officialUrl": "https://github.com/alibaba/sentinel-golang",
-    "lastChecked": "2026-11-20T23:29:52.583Z",
+    "lastChecked": "2026-11-22T02:53:15.554Z",
     "revisionIdentifier": "f7a7f957",
-    "lastVerified": "2026-11-20T23:29:52.583Z"
+    "lastVerified": "2026-11-22T02:53:15.554Z"
   },
   "parthsarthi03-raptor": {
     "name": "raptor",
@@ -4994,9 +4994,9 @@
   "react-native-modal-react-native-modal": {
     "name": "react-native-modal",
     "officialUrl": "https://github.com/react-native-modal/react-native-modal",
-    "lastChecked": "2026-11-18T22:03:23.057Z",
+    "lastChecked": "2026-11-22T02:53:13.212Z",
     "revisionIdentifier": "3e413c4c",
-    "lastVerified": "2026-11-18T22:03:23.057Z"
+    "lastVerified": "2026-11-22T02:53:13.212Z"
   },
   "saltstack-salt": {
     "name": "salt",
@@ -5399,9 +5399,9 @@
   "async-rs-async-std": {
     "name": "async-std",
     "officialUrl": "https://github.com/async-rs/async-std",
-    "lastChecked": "2026-11-20T15:43:46.832Z",
+    "lastChecked": "2026-11-22T02:53:08.085Z",
     "revisionIdentifier": "844b5525",
-    "lastVerified": "2026-11-20T15:43:46.832Z"
+    "lastVerified": "2026-11-22T02:53:08.085Z"
   },
   "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw": {
     "name": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
@@ -13425,6 +13425,23 @@
     "learningId": "learn-huggingface-prunaai-p-h3-image-comfy",
     "contentHash": "85823549651172920a845ad97bde0d3f6ffdd99d326535c4ae80766081eb0999",
     "promotedRulesCount": 2,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-nvidia-nvidia-nemotronlabs-re-use": {
+    "name": "nvidia/NVIDIA-NemotronLabs-RE-USE",
+    "officialUrl": "https://huggingface.co/nvidia/NVIDIA-NemotronLabs-RE-USE",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-22T02:53:10.794Z",
+    "lastVerified": "2026-11-22T02:53:10.794Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-nvidia-nvidia-nemotronlabs-re-use",
+    "contentHash": "7950e424f9c7d33c1dd4cd6a5f900f71e56ed28a4df707dc40a179805ec4e631",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

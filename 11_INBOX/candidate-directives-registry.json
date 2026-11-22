@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T02:42:34.202Z",
+  "last_updated": "2026-11-22T02:53:25.834Z",
   "directives": [
     {
       "id": "CD-001",
@@ -5336,14 +5336,14 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-1ZFD",
+      "id": "CD-SNUY",
       "directive_title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "source_repo": "zoontek-react-native-permissions-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-1ZFD-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-SNUY-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
-      "date_staged": "2026-11-21",
+      "date_staged": "2026-11-22",
       "domain_letter": "H"
     },
     {
@@ -39760,14 +39760,14 @@
       "domain_letter": "D"
     },
     {
-      "id": "CD-VPZ8",
+      "id": "CD-SMTV",
       "directive_title": "benchmarks): report Gold coverage across retrieval stages",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-VPZ8-benchmarks-report-gold-coverage-across-retrieval-stages.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-SMTV-benchmarks-report-gold-coverage-across-retrieval-stages.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
-      "date_staged": "2026-11-21",
+      "date_staged": "2026-11-22",
       "domain_letter": "H"
     },
     {
@@ -44734,6 +44734,24 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-262FD7-test-collab-write-trust-fixtures-with-ex.md",
+      "staged_date": "2026-11-22"
+    },
+    {
+      "id": "CD-REV-F053B3",
+      "directive_title": "benchmarks): report Gold coverage across retrieval stages",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-F053B3-benchmarks-report-gold-coverage-across-r.md",
+      "staged_date": "2026-11-22"
+    },
+    {
+      "id": "CD-REV-2B5BBD",
+      "directive_title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-permissions",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-2B5BBD-android-skip-explicit-kotlin-plugin-when.md",
       "staged_date": "2026-11-22"
     }
   ]

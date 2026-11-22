@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261120-9O4C",
-    "timestamp": "2026-11-20T00:43:20.796Z",
-    "repository": "zarf-dev/zarf",
-    "learningId": "learn-github-zarf-dev-zarf",
-    "contentHash": "944a135a51a550d764d7ef796700441aa684db74b46a596c1adf4309410139f6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261120-9TNI",
     "timestamp": "2026-11-20T00:43:27.966Z",
     "repository": "risingwavelabs/risingwave",
@@ -7492,6 +7477,21 @@
     "contentHash": "85823549651172920a845ad97bde0d3f6ffdd99d326535c4ae80766081eb0999",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-SCX7",
+    "timestamp": "2026-11-22T02:53:11.659Z",
+    "repository": "nvidia/NVIDIA-NemotronLabs-RE-USE",
+    "learningId": "learn-huggingface-nvidia-nvidia-nemotronlabs-re-use",
+    "contentHash": "7950e424f9c7d33c1dd4cd6a5f900f71e56ed28a4df707dc40a179805ec4e631",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
