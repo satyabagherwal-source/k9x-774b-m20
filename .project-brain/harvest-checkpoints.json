@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T12:19:20.075Z",
+  "last_updated": "2026-11-22T12:37:34.803Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -11226,14 +11226,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nativescript-nativescript",
-      "content_hash": "45651c2f09dfca00320505909044bacfd270c20a4c15f872742b058cc0bdec25",
-      "verified_at": "2026-11-15T03:48:10.790Z",
+      "content_hash": "511feaeec034d4dfa13fafa766214e13e2770f756e53a352c28d52dd220965d4",
+      "verified_at": "2026-11-22T12:37:25.747Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T03:48:10.790Z"
+      "last_updated": "2026-11-22T12:37:25.747Z"
     },
     "oramasearch/orama": {
       "repository": "oramasearch/orama",
@@ -19251,14 +19251,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-minimaxai-minimax-h3-image-pe",
-      "content_hash": "46a9d839ec2eacb07ce92bc48884e8776c2e506e05c6fad4ba236fb5005b4827",
-      "verified_at": "2026-11-17T12:24:44.494Z",
+      "content_hash": "24c873ac57ad005c77023b404865fc55479795566ef2a3ce416723ba5829d466",
+      "verified_at": "2026-11-22T12:37:34.803Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T12:24:44.494Z"
+      "last_updated": "2026-11-22T12:37:34.803Z"
     },
     "internlm/Sage-S2.1-Flash": {
       "repository": "internlm/Sage-S2.1-Flash",

@@ -12085,3 +12085,5 @@
 | `CYCLE-20261122-W376` | `2026-11-22T11:47:58.386Z` | `sqlpage/SQLPage` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9927` | Yes (`b38ef501...`) |
 | `CYCLE-20261122-0E9E` | `2026-11-22T12:19:18.962Z` | `maxwell-model/Maxwell-V1-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-maxwell-model-maxwell-v1-flash-learnings.md` | Yes (`af21d8cb...`) |
 | `CYCLE-20261122-0F3Z` | `2026-11-22T12:19:20.063Z` | `agent-of-empires/agent-of-empires` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9928` | Yes (`29a5a62a...`) |
+| `CYCLE-20261122-NOTJ` | `2026-11-22T12:37:25.735Z` | `NativeScript/NativeScript` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9929` | Yes (`511feaee...`) |
+| `CYCLE-20261122-NVT3` | `2026-11-22T12:37:34.791Z` | `MiniMaxAI/MiniMax-H3-Image-PE` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-image-pe-learnings.md` | Yes (`24c873ac...`) |

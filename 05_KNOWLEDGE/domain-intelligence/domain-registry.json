@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T12:19:32.764Z",
-  "total_records": 2352,
+  "last_updated": "2026-11-22T12:37:39.384Z",
+  "total_records": 2354,
   "domains": {
     "A": {
       "total": 19,
@@ -1491,7 +1491,7 @@
       ]
     },
     "H": {
-      "total": 564,
+      "total": 566,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2056,7 +2056,9 @@
         "domain_intelligence-technical-construction-intelligence-nezhahq-nezha-learnings-core-invariants",
         "DOM-H-1273A85F",
         "domain_intelligence-technical-construction-intelligence-apache-maka-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-apache-maka-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-apache-maka-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-nativescript-nativescript-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-nativescript-nativescript-learnings-core-inv"
       ]
     },
     "I": {
@@ -9085,8 +9087,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "1360e19c411c96bd4e391cf43a64b6885f1d0610496378b1477e6f50007ebbbb",
-      "created_at": "2026-11-22T09:35:22.656Z"
+      "content_hash": "96470cdaa9c3baad7033c2626bb988f0a4bb93f78adff6cebb6e7e706381249c",
+      "created_at": "2026-11-22T12:37:39.384Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -27615,8 +27617,8 @@
       "title": "Research & Knowledge Intelligence: MiniMaxAI/MiniMax-H3-Image-PE Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-minimaxai-minimax-h3-image-pe-research-knowledge-intelligence-minimaxai-minim.md",
       "repository": "MiniMaxAI/MiniMax-H3-Image-PE",
-      "content_hash": "761a4f27e5800576890f6b58925ff04c33b4fd858e5cac1f21a5ff35edee8a56",
-      "created_at": "2026-11-17T12:24:44.671Z"
+      "content_hash": "542adea244ae02629a379a18704f5c9edf3e1bd0842e660607f5f97adeee103e",
+      "created_at": "2026-11-22T12:37:34.991Z"
     },
     "domain_intelligence-research-knowledge-intelligence-internlm-sage-s2-1-flash-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-internlm-sage-s2-1-flash-core-invariants",
@@ -27684,8 +27686,8 @@
       "title": "Research & Knowledge Intelligence: hf-minimaxai-minimax-h3-image-pe-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-minimaxai-minimax-h3-image-pe-learnings-research-knowledge-intelligence-hf-mi.md",
       "repository": "hf-minimaxai-minimax-h3-image-pe-learnings",
-      "content_hash": "28a271c6ad63a21b118b4de83903739712938f5bc378ca484fa0135ef05a228d",
-      "created_at": "2026-11-17T12:25:35.717Z"
+      "content_hash": "0f28cd157596aad30246349a0ab53c1b96f58a9e26e494dcade132977a0b8fb9",
+      "created_at": "2026-11-22T12:37:38.007Z"
     },
     "DOM-D-84284456": {
       "record_id": "DOM-D-84284456",
@@ -39608,6 +39610,24 @@
       "repository": "tw93-mole-learnings",
       "content_hash": "50faf9b26a46eb2f7de35c8bd1a4f7587d409310f0ddb703dc0a33ecc63dbefc",
       "created_at": "2026-11-22T11:48:03.068Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-nativescript-nativescript-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-nativescript-nativescript-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: NativeScript/NativeScript Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nativescript-nativescript-technical-construction-intelligence-nativescript-nativ.md",
+      "repository": "NativeScript/NativeScript",
+      "content_hash": "5175e2614441bc8cc2a7da80f517a3fc5bcc80c745b680ace988906aa95f656d",
+      "created_at": "2026-11-22T12:37:26.123Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-nativescript-nativescript-learnings-core-inv": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-nativescript-nativescript-learnings-core-inv",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: nativescript-nativescript-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nativescript-nativescript-learnings-technical-construction-intelligence-nativesc.md",
+      "repository": "nativescript-nativescript-learnings",
+      "content_hash": "ab8d9ffce57118703c9f38fa838e2d4cc597e56e6ced4fdcbfbc8d103e451068",
+      "created_at": "2026-11-22T12:37:38.669Z"
     }
   }
 }

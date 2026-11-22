@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T12:19:33.060Z",
+  "last_updated": "2026-11-22T12:37:39.540Z",
   "total_verified_learnings": 9071,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23574,
+  "total_items": 23579,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "1360e19c411c96bd4e391cf43a64b6885f1d0610496378b1477e6f50007ebbbb",
+      "content_hash": "96470cdaa9c3baad7033c2626bb988f0a4bb93f78adff6cebb6e7e706381249c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T09:35:22.656Z"
+      "persisted_at": "2026-11-22T12:37:39.384Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "603fb890f07a0814f67ba8c3740541c5bb62fe4277b1ab0eff0658776c403d14",
+      "content_hash": "224affae1ea9a6a499619e477bf3466d7b71346b6accf38ad9994701c74c3e4a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T09:35:22.825Z"
+      "persisted_at": "2026-11-22T12:37:39.540Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -243061,14 +243061,19 @@
       "slug": "nativescript-nativescript",
       "platform": "github",
       "source_url": "https://github.com/NativeScript/NativeScript",
-      "source_version": "283eb0c5",
-      "content_hash": "45651c2f09dfca00320505909044bacfd270c20a4c15f872742b058cc0bdec25",
+      "source_version": "b1fdbd5b",
+      "content_hash": "511feaeec034d4dfa13fafa766214e13e2770f756e53a352c28d52dd220965d4",
       "dossier_path": "07_PROJECT_LEARNING/nativescript-nativescript-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nativescript-nativescript-learnings.md",
       "promoted_rules": [
         {
           "number": 8573,
           "title": "never re-attach torn-down ListView item views",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9929,
+          "title": "keep source map positions in native-class loaders",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -243077,7 +243082,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T03:48:10.607Z",
+      "verified_at": "2026-11-22T12:37:25.536Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -243131,10 +243136,10 @@
       "relative_path": "08_VERIFICATION/nativescript-nativescript-verification-protocol-empirical-defect-shield-for-nati.md",
       "title": "Verification Protocol: Empirical Defect Shield for NativeScript/NativeScript",
       "repository": "NativeScript/NativeScript",
-      "source_version": "283eb0c5",
-      "content_hash": "9971b93d4698d66a176d41c3297a29b4bab03ec0e55bd31d9baed9a6b7f6c8e0",
+      "source_version": "b1fdbd5b",
+      "content_hash": "2329a91d5626e46c8e4231363945918398a9e489bb24def449f327041289e8ed",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T03:48:11.225Z"
+      "persisted_at": "2026-11-22T12:37:26.293Z"
     },
     "rule-8574": {
       "learning_id": "rule-8574",
@@ -243206,9 +243211,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nativescript-nativescript-learnings",
       "repository": "nativescript-nativescript-learnings",
       "source_version": "HEAD",
-      "content_hash": "6fbe01ed7701bc97b6f84b31a4bb90ea69ddcb2c1fe393a48f61d62aa5d4069a",
+      "content_hash": "e765ed37e3dd0f55d07f83b667f7b0d0740de924fe63f4ceaa80ee1fd11157d3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T03:48:47.459Z"
+      "persisted_at": "2026-11-22T12:37:38.824Z"
     },
     "domain_intelligence-architecture-intelligence-rook-rook-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-rook-rook-learnings-core-invariants",
@@ -273938,7 +273943,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/MiniMaxAI/MiniMax-H3-Image-PE",
       "source_version": "hf-minimaxai-minimax-h3-image-pe",
-      "content_hash": "46a9d839ec2eacb07ce92bc48884e8776c2e506e05c6fad4ba236fb5005b4827",
+      "content_hash": "24c873ac57ad005c77023b404865fc55479795566ef2a3ce416723ba5829d466",
       "dossier_path": "07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-image-pe-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-image-pe-learnings.md",
       "promoted_rules": [],
@@ -273947,7 +273952,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T12:24:44.267Z",
+      "verified_at": "2026-11-22T12:37:34.576Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -273964,9 +273969,9 @@
       "title": "Research & Knowledge Intelligence: MiniMaxAI/MiniMax-H3-Image-PE Core Invariants",
       "repository": "MiniMaxAI/MiniMax-H3-Image-PE",
       "source_version": "hf-minimaxai-minimax-h3-image-pe",
-      "content_hash": "761a4f27e5800576890f6b58925ff04c33b4fd858e5cac1f21a5ff35edee8a56",
+      "content_hash": "542adea244ae02629a379a18704f5c9edf3e1bd0842e660607f5f97adeee103e",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T12:24:44.671Z"
+      "persisted_at": "2026-11-22T12:37:34.991Z"
     },
     "learn-huggingface-internlm-sage-s2-1-flash": {
       "learning_id": "learn-huggingface-internlm-sage-s2-1-flash",
@@ -274136,9 +274141,9 @@
       "title": "Research & Knowledge Intelligence: hf-minimaxai-minimax-h3-image-pe-learnings Core Invariants",
       "repository": "hf-minimaxai-minimax-h3-image-pe-learnings",
       "source_version": "HEAD",
-      "content_hash": "28a271c6ad63a21b118b4de83903739712938f5bc378ca484fa0135ef05a228d",
+      "content_hash": "0f28cd157596aad30246349a0ab53c1b96f58a9e26e494dcade132977a0b8fb9",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T12:25:35.717Z"
+      "persisted_at": "2026-11-22T12:37:38.007Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-internlm-sage-s2-1-flash-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-internlm-sage-s2-1-flash-learnings-core-invar",
@@ -318358,13 +318363,13 @@
       "item_id": "candidate_directive-test-collab-write-trust-fixtures-with-explicit-0644-permissions",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-5KDX-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-NZ82-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "bfbbf91939e144d16985468abe76d18e884343e4f4f8ade3f425722a6a073db0",
+      "content_hash": "3183b0b3c137ac56046f477d086a1eaa0e65f67da1642c71db296a9f43f5dba7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T09:35:22.488Z"
+      "persisted_at": "2026-11-22T12:37:39.222Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants",
@@ -320725,6 +320730,68 @@
       "content_hash": "43aa5adc144d4e855549c5d046715887230581d819243736588a0d9981ef9089",
       "domain_letter": "G",
       "persisted_at": "2026-11-22T12:19:31.324Z"
+    },
+    "rule-9929": {
+      "learning_id": "rule-9929",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9929,
+      "title": "keep source map positions in native-class loaders",
+      "source_url": "https://github.com/NativeScript/NativeScript",
+      "source_version": "b1fdbd5b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T12:37:25.536Z"
+    },
+    "candidate_directive-keep-source-map-positions-in-native-class-loaders": {
+      "item_id": "candidate_directive-keep-source-map-positions-in-native-class-loaders",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-NOZN-keep-source-map-positions-in-native-class-loaders.md",
+      "title": "keep source map positions in native-class loaders",
+      "repository": "NativeScript/NativeScript",
+      "source_version": "b1fdbd5b",
+      "content_hash": "5cff03b458f34b2561d9b856b4f3cc26dfad9b5f323be141c8bc9fa854bff0ba",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-22T12:37:25.956Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-nativescript-nativescript-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-nativescript-nativescript-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nativescript-nativescript-technical-construction-intelligence-nativescript-nativ.md",
+      "title": "Technical Construction Intelligence: NativeScript/NativeScript Core Invariants",
+      "repository": "NativeScript/NativeScript",
+      "source_version": "b1fdbd5b",
+      "content_hash": "5175e2614441bc8cc2a7da80f517a3fc5bcc80c745b680ace988906aa95f656d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T12:37:26.123Z"
+    },
+    "candidate_directive-webpack-keep-source-map-positions-in-native-class-loaders": {
+      "item_id": "candidate_directive-webpack-keep-source-map-positions-in-native-class-loaders",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-NYOH-webpack-keep-source-map-positions-in-native-class-loaders.md",
+      "title": "webpack): keep source map positions in native-class loaders",
+      "repository": "nativescript-nativescript-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c0a1bb1315659708dd09d5f10168efe9a6fa551aa05ec387cefe953646f199c5",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-22T12:37:38.514Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-nativescript-nativescript-learnings-core-inv": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-nativescript-nativescript-learnings-core-inv",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nativescript-nativescript-learnings-technical-construction-intelligence-nativesc.md",
+      "title": "Technical Construction Intelligence: nativescript-nativescript-learnings Core Invariants",
+      "repository": "nativescript-nativescript-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ab8d9ffce57118703c9f38fa838e2d4cc597e56e6ced4fdcbfbc8d103e451068",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T12:37:38.669Z"
     }
   },
   "ai-builder-brain": {

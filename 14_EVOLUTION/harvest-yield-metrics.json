@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T12:19:20.072Z",
-  "total_cycles_completed": 11490,
-  "total_learnings_persisted": 11490,
-  "total_rules_promoted": 10743,
+  "last_updated": "2026-11-22T12:37:34.800Z",
+  "total_cycles_completed": 11492,
+  "total_learnings_persisted": 11492,
+  "total_rules_promoted": 10744,
   "history": [
-    {
-      "timestamp": "2026-11-21T17:50:04.269Z",
-      "repository": "duckdb/duckdb",
-      "learningId": "learn-github-duckdb-duckdb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T18:22:55.435Z",
-      "repository": "baidu/Unlimited-OCR-2",
-      "learningId": "learn-huggingface-baidu-unlimited-ocr-2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T18:22:59.838Z",
       "repository": "gardener/gardener",
@@ -1403,6 +1389,20 @@
       "repository": "agent-of-empires/agent-of-empires",
       "learningId": "learn-github-agent-of-empires-agent-of-empires",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T12:37:25.745Z",
+      "repository": "NativeScript/NativeScript",
+      "learningId": "learn-github-nativescript-nativescript",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T12:37:34.800Z",
+      "repository": "MiniMaxAI/MiniMax-H3-Image-PE",
+      "learningId": "learn-huggingface-minimaxai-minimax-h3-image-pe",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

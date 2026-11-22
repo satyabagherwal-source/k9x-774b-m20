@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261120-8H6F",
-    "timestamp": "2026-11-20T12:50:15.159Z",
-    "repository": "grpc/grpc-rust",
-    "learningId": "learn-github-grpc-grpc-rust",
-    "contentHash": "00e832b487fe833b2b8833c5de785b6b3bc2046fcec78a75336ff80d42cdb497",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-8JAA",
-    "timestamp": "2026-11-20T12:50:17.890Z",
-    "repository": "scrapy/scrapy",
-    "learningId": "learn-github-scrapy-scrapy",
-    "contentHash": "d38a8d4ecd879da9fb60d3bd29f9aff35327d68915ee786a2497a85c595b1acb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261120-8R4D",
     "timestamp": "2026-11-20T12:50:28.045Z",
     "repository": "duckdb/duckdb",
@@ -7492,6 +7462,36 @@
     "contentHash": "29a5a62a679671f98a4da488312165eb70a1d81e8f5fb812bd481b4c821492a7",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-NOTJ",
+    "timestamp": "2026-11-22T12:37:25.735Z",
+    "repository": "NativeScript/NativeScript",
+    "learningId": "learn-github-nativescript-nativescript",
+    "contentHash": "511feaeec034d4dfa13fafa766214e13e2770f756e53a352c28d52dd220965d4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-NVT3",
+    "timestamp": "2026-11-22T12:37:34.791Z",
+    "repository": "MiniMaxAI/MiniMax-H3-Image-PE",
+    "learningId": "learn-huggingface-minimaxai-minimax-h3-image-pe",
+    "contentHash": "24c873ac57ad005c77023b404865fc55479795566ef2a3ce416723ba5829d466",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

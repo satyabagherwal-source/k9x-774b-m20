@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nativescript-nativescript-learnings.md`  
 > **Source**: github ([https://github.com/NativeScript/NativeScript](https://github.com/NativeScript/NativeScript))  
-> **Source Version**: `283eb0c5`  
+> **Source Version**: `b1fdbd5b`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T03:48:09.783Z  
+> **Timestamp**: 2026-11-22T12:37:24.718Z  
 > **Learning ID**: `learn-github-nativescript-nativescript`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nativescript-nativescript-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NativeScript/NativeScript](https://github.com/NativeScript/NativeScript))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T03:48:09.777Z  
+> **Harvest Timestamp**: 2026-11-22T12:37:24.574Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ⚡ Write Native with TypeScript ✨ Best of all worlds (TypeScript, Swift, Objective C, Kotlin, Java, Dart). Use what you love ❤️ Angular, React, Solid, Svelte, Vue with: iOS (UIKit, SwiftUI), Android (View, Jetpack Compose), Flutter and you name it compatible.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 25706 stars
+- **Stars / Engagement**: 25710 stars
 
 ---
 
@@ -944,441 +944,661 @@ export function getTimeInFrameBase(): number;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ce4102b0` (2026-11-14)
-**Commit Message**: fix(ios): never re-attach torn-down ListView item views (#11642)
+### Incident Patch 1: `2f70ec8e` (2026-11-21)
+**Commit Message**: fix(webpack): keep source map positions in native-class loaders (#11647)
 
-When a cell leaves the table, ListView tears its item view down but kept
-the cell's WeakRef to it and left the dead native root in the cell's
-contentView. A later prepare of that cell re-attached the torn-down view,
-whose graph was no longer rooted, so native parts of it (such as the
-UIColor cached by a CSS Color) could already be released; the resulting
-exception made the data source return a nil cell and UIKit abort. UIKit
-also puts removed cells back into the table without asking for them
-again, and those rows stayed blank. Both happen constantly while an
-accessibility client (XCUITest, VoiceOver) disables cell reuse.
+The strip and downlevel loaders rewrite @NativeClass classes before
+ts-loader runs but returned no source map. The module's map then described
+the rewritten text: it embedded the ES5 output as the file's source, and
+every line after a native class resolved to the wrong line (11 lines off in
+a real 1000-line file). The strip loader also changed the line count when
+the decorator sat at the start of the file or after blank lines.
 
-- detach the item's native root from the cell on teardown
-- clear the cell's reference so the next prepare builds a new view
-- prepare a cell that is back in the table without content, from
-  didMoveToSuperview and from willDisplay; cells UIKit announces after
-  taking them out of the table are left alone, since preparing them
-  would keep them in the ListView's map for good
-- the same teardown changes for sticky header views
-
-**File**: `apps/automated/src/ui/list-view/list-view-tests.ts` (modified, +31/-0)
-```diff
-@@ -177,6 +177,37 @@ export class ListViewTest extends UITest<ListView> {
- 		}
- 	}
- 
-+	// UIKit can take a cell out of the table and display it again without asking for it in
-+	// tableView:cellForRowAtIndexPath: (constantly while an accessibility client disables cell reuse).
-+	public test_cell_displayed_again_after_teardown_gets_new_content_ios() {
-+		if (__APPLE__) {
-+			const listView = this.testView;
-+			listView.on(ListView.itemLoadingEvent, this.loadViewWithItemNumber);
-+			listView.items = FEW_ITEMS;
-+			this.waitUntilListViewReady();
-+
-+			const tableView = <UITableView>listView.ios;
-+			const indexPath = NSIndexPath.indexPathForRowInSection(1, 0);
-+			const cell = <any>tableView.cellForRowAtIndexPath(indexPath);
-+			const tableContent = cell.superview;
-+			const tornDownView = cell.view;
-+			TKUnit.assertNotNull(tornDownView, 'cell has an item view');
-+
-+			cell.removeFromSuperview();
-+			TKUnit.assertEqual(cell.contentView.subviews.count, 0, 'the torn-down item view is detached from the cell');
-+			TKUnit.assertNull(cell.view, 'the cell no longer refers to the torn-down item view');
-+
-+			tableView.delegate.tableViewWillDisplayCellForRowAtIndexPath(tableView, cell, indexPath);
-+			TKUnit.assertNull(cell.view, 'a cell outside the table is not prepared');
-+
-+			tableContent.addSubview(cell);
-+			TKUnit.assertEqual(cell.contentView.subviews.count, 1, 'the cell has exactly one item view again');
-+			TKUnit.assertNotEqual(cell.view, tornDownView, 'the torn-down item view is not re-attached');
-+			TKUnit.assertEqual(cell.view.parent, listView, 'the new item view is a child of the ListView');
-+			TKUnit.assertEqual((<Label>cell.view).text, 'item 1', 'the new item view shows the row');
-+		}
-+	}
-+
- 	public test_set_items_to_array_creates_native_views() {
- 		var listView = this.testView;
- 		listView.on(ListView.itemLoadingEvent, this.loadViewWithItemNumber);
-```
-
-**File**: `packages/core/ui/list-view/index.ios.ts` (modified, +60/-16)
-```diff
-@@ -60,11 +60,25 @@ class ListViewCell extends UITableViewCell {
- 		}
- 	}
- 
-+	public didMoveToSuperview(): void {
-+		super.didMoveToSuperview();
-+
-+		// UIKit can put a cell back into the table without asking for it in tableView:cellForRowAtIndexPath:.
-+		const listView = this.listView?.deref();
-+		if (this.superview && listView && !listView._hasCellContent(this)) {
-+			const indexPath = (listView.nativeViewProtected as UITableView)?.indexPathForCell(this);
-+			if (indexPath) {
-+				listView._prepareCellForDisplay(this, indexPath);
-+			}
-+		}
-+	}
-+
- 	public get view(): View {
- 		return this.owner ? this.owner.deref() : null;
- 	}
- 
- 	public owner: WeakRef<View>;
-+	public listView: WeakRef<ListView>;
- }
- 
- @NativeClass
-@@ -166,18 +180,7 @@ class DataSource extends NSObject implements UITableViewDataSource {
- 		if (owner) {
- 			const template = owner.sectioned ? owner._getItemTemplateInSection(indexPath.section, indexPath.row) : owner._getItemTemplate(indexPath.row);
- 			cell = <ListViewCell>(tableView.dequeueReusableCellWithIdentifier(template.key) || ListViewCell.initWithEmptyBackground());
--			owner._prepareCell(cell, indexPath);
--
--			const cellView: View = cell.view;
--			if (cellView && cellView.isLayoutRequired) {
--				// Arrange cell views. We do it here instead of _layoutCell because _layoutCell is called
--				// from 'tableViewHeightForRowAtIndexPath' method too (in iOS 7.1) and we don't want to arrange the fake cell.
--				const width = layout.getMeasureSpecSize(owner.widthMeasureSpec);
--				const rowHeight = owner._effectiveRowHeight;
--				const cellHeight = rowHeight > 0 ? rowHeight : owner.getHeight(indexPath.row, indexPath.section);
--				cellView.iosOverflowSafeAreaEnabled = false;
--				View.layoutChild(owner, cellView, 0, 0, width, cellHeight);
--			}
-+			owner._prepareCellForDisplay(cell, indexPath);
- 		} else {
- 			cell = <ListViewCell>ListViewCell.initWithEmptyBackground();
- 		}
-@@ -204,6 +207,11 @@ class UITableViewDelegateImpl extends NSObject implements UITableViewDelegate {
- 
- 	public tableViewWillDisplayCellForRowAtIndexPath(tableView: UITableView, cell: UITableViewCell, indexPath: NSIndexPath) {
- 		const owner = this._owner?.deref();
-+		// UIKit also announces cells it has already taken out of the table and will drop; preparing
-+		// those would keep them and their item views in the ListView's map for good.
-+		if (owner && cell instanceof ListViewCell && cell.superview && !owner._hasCellContent(cell)) {
-+			owner._prepareCellForDisplay(cell, indexPath);
-+		}
- 		if (owner && indexPath.row === owner.items.length - 1) {
- 			owner.notify(<EventData>{
- 				eventName: LOADMOREITEMS,
-@@ -315,6 +323,11 @@ class UITableViewRowHeightDelegateImpl extends NSObject implements UITableViewDe
- 
- 	public tableViewWillDisplayCellForRowAtIndexPath(tableView: UITableView, cell: UITableViewCell, indexPath: NSIndexPath) {
- 		const owner = this._owner?.deref();
-+		// UIKit also announces cells it has already taken out of the table and will drop; preparing
-+		// those would keep them and their item views in the ListView's map for good.
-+		if (owner && cell instanceof ListViewCell && cell.superview && !owner._hasCellContent(cell)) {
-+			owner._prepareCellForDisplay(cell, indexPath);
-+		}
- 		if (owner && indexPath.row === owner.items.length - 1) {
- 			owner.notify(<EventData>{
- 				eventName: LOADMOREITEMS,
-@@ -867,8 +880,6 @@ export class ListView extends ListViewBase {
- 			if (!cell.view) {
- 				cell.owner = new WeakRef(view);
- 			} else if (cell.view !== view) {
--				// Remove view from super view now as nativeViewProtected will be null afterwards
--				(<UIView>cell.view.nativeViewProtected)?.removeFromSuperview();
- 				this._removeContainer(cell);
- 				cell.owner = new WeakRef(view);
- 			}
-@@ -882,6 +893,9 @@ export class ListView extends ListViewBase {
- 				view._listViewItemIndex = indexPath.row;
- 			}
- 			this._map.set(cell, view);
-+			if (cell.listView?.deref() !== this) {
-+				cell.listView = new WeakRef(this);
-+			}
- 
- 			// We expect that views returned from itemLoading are new (e.g. not reused).
- 			if (view && !view.parent) {
-@@ -897,8 +911,33 @@ export class ListView extends ListViewBase {
- 		return cellHeight;
- 	}
- 
-+	public _hasCellContent(cell: ListViewCell): boolean {
-+		const view = cell.view;
-+
-+		return !!view && this._map.get(cell) === view;
-+	}
-+
-+	public _prepareCellForDisplay(cell: ListViewCell, indexPath: NSIndexPath): void {
-+		this._prepareCell(cell, indexPath);
-+
-+		const cellView: View = cell.view;
-+		if (cellView && cellView.isLayoutRequired) {
-+			// Arrange cell views. We do it here instead of _layoutCell because _layoutCell is called
-+			// from 'tableViewHeightForRowAtIndexPath' method too (in iOS 7.1) and we don't want to arrange the fake cell.
-+			const width = layout.getMeasureSpecSize(this.widthMeasureSpec);
-+			const rowHeight = this._effectiveRowHeight;
-+			const cellHeight = rowHeight > 0 ? rowHeight : this.getHeight(indexPath.row, indexPath.section);
-+			cellView.iosOverf
-```
-
----
-
-### Incident Patch 2: `9875c2ee` (2026-11-12)
-**Commit Message**: fix(ios): raise orientationChanged from scene geometry updates (#11638)
+The strip loader now keeps every newline it replaces and returns an exact
+map through webpack's ReplaceSource. The downlevel loader maps untouched
+code to itself and each downleveled class through the ES5 transpile's own
+map, so ts-loader composes a map back to the original file, including
+lines inside the class. Emitted code is unchanged.
 
 [skip ci]
 
-**File**: `packages/core/application/application.ios.ts` (modified, +12/-6)
+**File**: `packages/webpack5/__tests__/loaders/native-class-loaders.spec.ts` (modified, +3/-0)
 ```diff
-@@ -617,6 +617,17 @@ class SceneDelegate extends UIResponder implements UIWindowSceneDelegate {
- 		deliverUserActivity(windowScene, Application.ios._getWindowForScene(windowScene), userActivity);
- 	}
- 
-+	// Scene-based apps get rotation here rather than through the status bar orientation notification.
-+	// iOS 26+ calls both callbacks per rotation, earlier versions only the coordinate-space one;
-+	// _setOrientation drops the repeat.
-+	windowSceneDidUpdateEffectiveGeometry(windowScene: UIWindowScene, previousEffectiveGeometry: UIWindowSceneGeometry): void {
-+		Application.ios._getWindowForScene(windowScene)?._syncOrientation();
-+	}
-+
-+	windowSceneDidUpdateCoordinateSpaceInterfaceOrientationTraitCollection(windowScene: UIWindowScene, previousCoordinateSpace: UICoordinateSpace, previousInterfaceOrientation: UIInterfaceOrientation, previousTraitCollection: UITraitCollection): void {
-+		Application.ios._getWindowForScene(windowScene)?._syncOrientation();
-+	}
-+
- 	windowScenePerformActionForShortcutItemCompletionHandler(windowScene: UIWindowScene, shortcutItem: UIApplicationShortcutItem, completionHandler: (p1: boolean) => void): void {
- 		deliverShortcutAction(windowScene, Application.ios._getWindowForScene(windowScene), shortcutItem, completionHandler);
- 	}
-@@ -1382,12 +1393,7 @@ export class iOSApplication extends ApplicationCommon implements IiOSApplication
- 		// The notification is app-wide, but scenes rotate independently, so every attached
- 		// window is refreshed from its own scene.
- 		for (const nativeWindow of this._windows) {
--			if (nativeWindow.state !== 'attached') {
--				continue;
--			}
--
--			const orientation = nativeWindow.ios?.scene?.interfaceOrientation ?? UIApplication.sharedApplication.statusBarOrientation;
--			nativeWindow._setOrientation(this.getOrientationValue(orientation));
-+			(nativeWindow as IOSNativeWindow)._syncOrientation();
- 		}
- 	}
+@@ -23,6 +23,9 @@ function createDownlevelContext(
+ 			if (err) throw err;
+ 			onDone(source || '', warnings);
+ 		},
++		async() {
++			return this.callback.bind(this);
++		},
+ 	} as any;
+ }
  
 ```
 
-**File**: `packages/core/application/scene-orientation.ios.spec.ts` (added, +61/-0)
+**File**: `packages/webpack5/__tests__/loaders/native-class-sourcemap.spec.ts` (added, +144/-0)
 ```diff
-@@ -0,0 +1,61 @@
-+import { describe, it, expect, afterEach, vi } from 'vitest';
-+import { Application } from './application.ios';
-+import { IOSNativeWindow } from '../native-window/native-window.ios';
+@@ -0,0 +1,144 @@
++import ts from 'typescript';
++import { SourceMapConsumer, SourceMapGenerator } from 'source-map';
 +
-+function createScene(interfaceOrientation: number, effectiveOrientation?: number): any {
-+	return {
-+		session: {},
-+		interfaceOrientation,
-+		effectiveGeometry: effectiveOrientation === undefined ? undefined : { interfaceOrientation: effectiveOrientation },
-+	};
++import stripLoader from '../../src/loaders/native-class-strip-loader';
++import downlevelLoader from '../../src/loaders/native-class-downlevel-loader';
++
++const RESOURCE = '/app/delegate.ts';
++
++const SOURCE = [
++	"import { Observable } from '@nativescript/core';",
++	'',
++	'',
++	'@NativeClass()',
++	'class Delegate extends NSObject {',
++	'\tstatic ObjCProtocols = [];',
++	'',
++	'\tvalue = 1;',
++	'',
++	'\trun(): number {',
++	'\t\treturn this.value + 1;',
++	'\t}',
++	'}',
++	'',
++	'export function afterClass(): number {',
++	'\treturn (Delegate.new() as Delegate).run();',
++	'}',
++	'',
++	'export const observable = new Observable();',
++].join('\n');
++
++interface LoaderOutput {
++	code: string;
++	map?: any;
 +}
 +
-+function createSceneDelegate(): any {
-+	return new (global as any).SceneDelegate();
++function runLoader(loader: Function, content: string, map?: any) {
++	return new Promise<LoaderOutput>((resolve, reject) => {
++		const done = (err: Error | null, code?: string, outputMap?: any) =>
++			err ? reject(err) : resolve({ code: code ?? '', map: outputMap });
++		loader.call(
++			{
++				resourcePath: RESOURCE,
++				emitWarning: () => {},
++				callback: done,
++				async: () => done,
++			},
++			content,
++			map,
++		);
++	});
 +}
 +
-+describe('iOS scene orientation', () => {
-+	afterEach(() => {
-+		vi.restoreAllMocks();
++// Compiles like ts-loader: its own map, composed with the incoming one.
++async function compileLikeTsLoader({ code, map }: LoaderOutput) {
++	const output = ts.transpileModule(code, {
++		fileName: RESOURCE,
++		compilerOptions: {
++			module: ts.ModuleKind.ESNext,
++			target: ts.ScriptTarget.ES2020,
++			sourceMap: true,
++		},
 +	});
-+
-+	it('reads the effective geometry orientation when the scene provides one', () => {
-+		const window = new IOSNativeWindow(createScene(UIInterfaceOrientation.Portrait, UIInterfaceOrientation.LandscapeLeft), {} as UIWindow);
-+
-+		expect(window.orientation()).toBe('landscape');
++	const tsMap = Object.assign(JSON.parse(output.sourceMapText), {
++		sources: [RESOURCE],
++		sourcesContent: [code],
 +	});
-+
-+	it('falls back to the scene interface orientation without effective geometry', () => {
-+		const window = new IOSNativeWindow(createScene(UIInterfaceOrientation.LandscapeRight), {} as UIWindow);
-+
-+		expect(window.orientation()).toBe('landscape');
-+	});
-+
-+	for (const callback of ['windowSceneDidUpdateEffectiveGeometry', 'windowSceneDidUpdateCoordinateSpaceInterfaceOrientationTraitCollection']) {
-+		it(`raises orientationChanged from ${callback}`, () => {
-+			const scene = createScene(UIInterfaceOrientation.Portrait, UIInterfaceOrientation.Portrait);
-+			const window = new IOSNativeWindow(scene, {} as UIWindow);
-+			vi.spyOn(Application.ios, '_getWindowForScene').mockImplementation((s) => (s === scene ? window : undefined));
-+
-+			expect(window.orientation()).toBe('portrait');
-+
-+			const changes: string[] = [];
-+			window.on('orientationChanged', (args: any) => changes.push(args.newValue));
-+
-+			scene.effectiveGeometry.interfaceOrientation = UIInterfaceOrientation.LandscapeLeft;
-+			createSceneDelegate()[callback](scene, null, null, null);
-+
-+			expect(changes).toEqual(['landscape']);
-+
-+			createSceneDelegate()[callback](scene, null, null, null);
-+
-+			expect(changes).toEqual(['landscape']);
-+		});
++	if (!map) {
++		return { code: output.outputText, map: tsMap };
 +	}
++	const tsConsumer = await new SourceMapConsumer(tsMap);
++	const inputConsumer = await new SourceMapConsumer({ ...map, file: RESOURCE });
++	const generator = SourceMapGenerator.fromSourceMap(tsConsumer);
++	generator.applySourceMap(inputConsumer);
++	tsConsumer.destroy();
++	inputConsumer.destroy();
++	return { code: output.outputText, map: generator.toJSON() };
++}
 +
-+	it('ignores geometry updates for a scene with no window', () => {
-+		vi.spyOn(Application.ios, '_getWindowForScene').mockReturnValue(undefined);
++async function build(source: string) {
++	const stripped = await runLoader(stripLoader, source);
++	const downleveled = await runLoader(
++		downlevelLoader,
++		stripped.code,
++		stripped.map,
++	);
++	return { downleveled, compiled: await compileLikeTsLoader(downleveled) };
++}
 +
-+		expect(() => createSceneDelegate().windowSceneDidUpdateEffectiveGeometry(createScene(UIInterfaceOrientation.Portrait), null)).not.toThrow();
++async function originalLine(output: LoaderOutput, needle: string) {
++	const lines = output.code.split('\n');
++	const line = lines.findIndex((text) => text.includes(needle));
++	expect(line).toBeGreaterThanOrEqual(0);
++	const consumer = await new SourceMapConsumer(output.map);
++	try {
++		return consumer.originalPositionFor({
++			line: line + 1,
++			column: lines[line].indexOf(needle),
++		}).line;
++	} finally {
++		consumer.destroy();
++	}
++}
++
++describe('native-class loaders source maps', () => {
++	it('maps code inside and after a downleveled class to its original line', async () => {
++		const { downleveled, compiled } = await build(SOURCE);
++
++		expect(downleveled.code).not.toContain('class Delegate');
++		expect(await originalLine(compiled, 'this.value + 1')).toBe(11);
++		expect(await originalLine(compiled, 'afterClass')).toBe(15);
++		expect(await originalLine(compiled, 'Delegate.new()')).toBe(16);
++		expect(await originalLine(compiled, 'new Observable()')).toBe(19);
++	});
++
++	it('embeds the original source in the composed map', async () => {
++		const { compiled } = await build(SOURCE);
++
++		expect(compiled.map.sourcesContent).toEqual([SOURCE]);
++	});
++
++	it('keeps the line count when stripping the decorator', async () => {
++		const atStart = [
++			'@NativeClass',
++			'class A extends NSObject {}',
++			'export const a = 1;',
++		].join('\n');
++		const afterBlankLines = [
++			'const x = 1;',
++			'',
++			'',
++			'@NativeClass({',
++			'\tprotocols: [],',
++			'})',
++			'class B extends NSObject {}',
++		].join('\n');
++
++		for (const source of [atStart, afterBlankLines]) {
++			const stripped = await runLoader(stripLoader, source);
++			expect(stripped.code).toContain('/*__NativeClass__*/');
++			expect(stripped.code).not.toContain('@NativeClass');
++			expect(stripped.code.split('\n').length).toBe(source.split('\n').length);
++		}
 +	});
 +});
 ```
 
-**File**: `packages/core/native-window/native-window.ios.ts` (modified, +10/-1)
+**File**: `packages/webpack5/src/loaders/native-class-downlevel-loader/index.ts` (modified, +313/-79)
 ```diff
-@@ -123,11 +123,20 @@ export class IOSNativeWindow extends NativeWindow {
- 			return this._getOrientationValue(NativeScriptEmbedder.sharedInstance().windowScene?.interfaceOrientation);
- 		}
- 		if (this._scene) {
--			return this._getOrientationValue(this._scene.interfaceOrientation);
-+			return this._getOrientationValue(this._scene.effectiveGeometry?.interfaceOrientation ?? this._scene.interfaceOrientation);
- 		}
- 		return this._getOrientationValue(UIApplication.sharedApplication.statusBarOrientation);
- 	}
+@@ -1,5 +1,6 @@
+ import type { LoaderContext } from 'webpack';
+ import ts from 'typescript';
++import { SourceMapConsumer, SourceMapGenerator } from 'source-map';
  
-+	/**
-+	 * @internal – re-reads the native orientation and raises `orientationChanged` if it moved.
-+	 */
-+	_syncOrientation(): void {
-+		if (this.state === 'attached') {
-+			this._setOrientation(this._getOrientation());
+ // Downlevels ONLY classes marked with /*__NativeClass__*/ to ES5 IIFE pattern.
+ // Operates textually before ts-loader, preserving modern syntax elsewhere.
+@@ -9,6 +10,269 @@ import ts from 'typescript';
+ //  - transpileModule(snippet, { target: ES5, module: ESNext, noEmitHelpers: true, useDefineForClassFields: false })
+ //  - Force enumerable: true on defineProperty outputs (compat with NativeScript expectations)
+ //  - Replace original snippet with downleveled JS
++// The returned source map maps the output back to the loader's input, so
++// ts-loader can compose it and stack traces point at the original lines.
++
++interface Candidate {
++	start: number;
++	fullStart: number;
++	end: number;
++}
++
++interface DownleveledClass {
++	code: string;
++	map: any;
++	// Lines added in front of the transpiled class (the IIFE wrapper).
++	leadingLines: number;
++}
++
++interface Position {
++	line: number;
++	column: number;
++}
++
++const SOURCE_MAPPING_URL_RE = /\n?\/\/# sourceMappingURL=[^\n]*\s*$/;
++
++function downlevelClass(
++	loader: LoaderContext<any>,
++	snippet: string,
++): DownleveledClass {
++	// strip marker ONLY, preserve surrounding newline to avoid commenting out the next line
++	const stripped = snippet.replace(/\/\*__NativeClass__\*\//m, '');
++	const transpileResult = ts.transpileModule(stripped, {
++		compilerOptions: {
++			module: ts.ModuleKind.ESNext,
++			target: ts.ScriptTarget.ES5,
++			noEmitHelpers: true,
++			experimentalDecorators: true,
++			emitDecoratorMetadata: false,
++			useDefineForClassFields: false,
++			sourceMap: true,
++		},
++		fileName: loader.resourcePath.endsWith('.ts')
++			? loader.resourcePath
++			: `${loader.resourcePath}.ts`,
++		reportDiagnostics: true,
++	});
++	if (process.env.NATIVECLASS_DEBUG && transpileResult.diagnostics?.length) {
++		const diag = transpileResult.diagnostics[0];
++		loader.emitWarning(
++			new Error(
++				`[native-class-downlevel-loader] transpile diagnostics in ${loader.resourcePath}: ${diag?.messageText}`,
++			),
++		);
++	}
++	const transpiledRaw = transpileResult.outputText.replace(
++		SOURCE_MAPPING_URL_RE,
++		'\n',
++	);
++	// force enumerable:true
++	let transpiled = transpiledRaw.replace(
++		/(Object\.defineProperty\(.*?{.*?)(enumerable:\s*false)(.*?}\))/gs,
++		'$1enumerable: true$3',
++	);
++
++	if (
++		process.env.NATIVECLASS_DEBUG &&
++		/page-transition\.android\.ts$/.test(loader.resourcePath)
++	) {
++		const head = stripped.slice(0, 200).replace(/\n/g, '\\n');
++		const outHead = transpiled.slice(0, 200).replace(/\n/g, '\\n');
++		loader.emitWarning(
++			new Error(
++				`[native-class-downlevel-loader] debug ${loader.resourcePath} snippetHead="${head}" -> outHead="${outHead}"`,
++			),
++		);
++	}
++	let leadingLines = 0;
++	// Safety: parse transpiled snippet to ensure no top-level return statements leaked.
++	// (Would indicate a slicing bug causing constructor body to escape.)
++	try {
++		const checkSource = ts.createSourceFile(
++			'check.js',
++			transpiled,
++			ts.ScriptTarget.ES2017,
++			true,
++			ts.ScriptKind.JS,
++		);
++		const hasTopLevelReturn = checkSource.statements.some(
++			(s) => s.kind === ts.SyntaxKind.ReturnStatement,
++		);
++		if (hasTopLevelReturn) {
++			// Wrap in an IIFE to retain semantics and avoid syntax error
++			transpiled = `(function(){\n${transpiled}\n})();`;
++			leadingLines = 1;
++		}
++	} catch (e) {
++		// ignore parsing safety guard failures – fallback to raw transpiled
++	}
++	if (process.env.NATIVECLASS_DEBUG) {
++		loader.emitWarning(
++			new Error(
++				`[native-class-downlevel-loader] transformed class snippet from ${loader.resourcePath} (bytes: ${snippet.length} -> ${transpiled.length})`,
++			),
++		);
++	}
++	return {
++		code: transpiled,
++		map: JSON.parse(transpileResult.sourceMapText),
++		leadingLines,
++	};
++}
++
++function snippetFor(content: string, { fullStart, end }: Candidate) {
++	// include trailing semicolon if immediately follows class (defensive – TS sometimes emits one when rebundled)
++	return /^;/.test(content.slice(end, end + 2))
++		? content.slice(fullStart, end) + ';'
++		: content.slice(fullStart, end);
++}
++
++function lineStartsOf(text: string) {
++	const starts = [0];
++	for (let i = 0; i < text.length; i++) {
++		if (text[i] === '\n') {
++			starts.push(i + 1);
 +		}
 +	}
++	return starts;
++}
 +
- 	protected _getSystemAppearance(): 'light' | 'dark' | null {
- 		if (!__VISIONOS__ && SDK_VERSION <= 11) {
- 			return null;
++function positionAt(lineStarts: number[], offset: number): Position {
++	let low = 0;
++	let high = lineStarts.length - 1;
++	while (low < high) {
++		const mid = (low + high + 1) >> 1;
++		if (lineStarts[mid] <= offset) {
++			low = mid;
++		} else {
++			high = mid - 1;
++		}
++	}
++	return { line: low + 1, column: offset - lineStarts[low] };
++}
++
++class OutputBuilder {
++	code = '';
++	private line = 1;
++	private column = 0;
++
++	constructor(
++		private readonly generator: SourceMapGenerator,
++		private readonly source: string,
++	) {}
++
++	get position(): Position {
++		return { line: this.line, column
+```
+
+**File**: `packages/webpack5/src/loaders/native-class-strip-loader/index.ts` (modified, +23/-5)
+```diff
+@@ -1,4 +1,4 @@
+-import type { LoaderContext } from 'webpack';
++import { sources, type LoaderContext } from 'webpack';
+ 
+ // Extremely conservative textual pre-pass to neutralize any top-level '@NativeClass' decorator
+ // before TypeScript compilation while leaving a marker for the transformer to detect and
+@@ -29,10 +29,28 @@ export default function nativeClassStripLoader(
+ 	}
+ 
+ 	// We only want to neutralize the decorator and leave a detectable marker for the transformer.
+-	const stripped = content.replace(
+-		DECORATOR_SINGLE_RE,
+-		(m, prefix) => `${prefix || '\n'}/*__NativeClass__*/\n`,
++	// Every newline of the match is kept, so later lines keep their positions.
++	const source = new sources.ReplaceSource(
++		map
++			? new sources.SourceMapSource(content, this.resourcePath, map)
++			: new sources.OriginalSource(content, this.resourcePath),
+ 	);
++	let changed = false;
++	for (const match of content.matchAll(DECORATOR_SINGLE_RE)) {
++		const [m, prefix] = match;
++		const newlines = m.slice(prefix.length).split('\n').length - 1;
++		source.replace(
++			match.index + prefix.length,
++			match.index + m.length - 1,
++			`/*__NativeClass__*/${'\n'.repeat(newlines)}`,
++		);
++		changed = true;
++	}
+ 
+-	this.callback(null, stripped, map);
++	if (!changed) {
++		this.callback(null, content, map);
++		return;
++	}
++	const { source: stripped, map: strippedMap } = source.sourceAndMap();
++	this.callback(null, stripped as string, strippedMap as any);
+ }
 ```
 
 ---
 
-### Incident Patch 3: `ff081de9` (2026-11-14)
-**Commit Message**: fix(core): register touch animations once per view (#11641)
+### Incident Patch 2: `587460b1` (2026-11-21)
+**Commit Message**: fix(webpack): keep source map positions in app-css-loader (#11646)
 
-**File**: `packages/core/ui/gestures/touch-manager.ts` (modified, +98/-52)
+app-css-loader prepends two lines to the app entry module (a comment and
+the app css import) but passed the incoming source map through unchanged.
+Every position in the entry file was then resolved against a map for the
+unprefixed code, so stack frames and breakpoints in it landed a few lines
+off. Offset the map with webpack's ConcatSource/SourceMapSource instead,
+and stop running the module code through ts-dedent.
+
+[skip ci]
+
+**File**: `packages/webpack5/__tests__/loaders/app-css-loader.spec.ts` (added, +96/-0)
 ```diff
-@@ -26,6 +26,34 @@ export type VisionHoverOptions = {
- 	shapeCornerRadius?: number;
- };
- 
-+/**
-+ * What TouchManager.addAnimations has wired for a view. Kept on the view, so it lives exactly as long as the view does.
-+ */
-+const touchState = Symbol('touchState');
-+type TouchState = {
-+	/** The down animation is hooked to the view's touchDown event. */
-+	down?: boolean;
-+	/** The up animation is hooked to the view's touchUp event. */
-+	up?: boolean;
-+	/** The gesture that raises touchDown/touchUp is attached: touch on Android, long press on iOS views that are not a UIControl. */
-+	gesture?: boolean;
-+	/** Target of the UIControl events. Held here because a UIControl does not retain its targets. */
-+	handler?: any /* TouchControlHandler */;
-+	/** The handler is registered with the current native view for down. */
-+	nativeDown?: boolean;
-+	/** The handler is registered with the current native view for up. */
-+	nativeUp?: boolean;
-+	disposeHook?: boolean;
-+};
+@@ -0,0 +1,96 @@
++import ts from 'typescript';
++import { SourceMapConsumer } from 'source-map';
 +
-+function getTouchState(view: View): TouchState {
-+	const holder = view as unknown as { [touchState]?: TouchState };
-+	if (!holder[touchState]) {
-+		holder[touchState] = {};
-+	}
-+	return holder[touchState];
++import appCssLoader from '../../src/loaders/app-css-loader';
++
++const SOURCE = [
++	"import { Application } from '@nativescript/core';",
++	'',
++	'declare const unused: number;',
++	'',
++	'function fail(): never {',
++	"\tthrow new Error('boom');",
++	'}',
++	'',
++	"Application.run({ moduleName: 'app-root' });",
++].join('\n');
++
++interface LoaderResult {
++	code: string;
++	map?: any;
 +}
 +
++function transpile() {
++	const output = ts.transpileModule(SOURCE, {
++		fileName: '/app/app.ts',
++		compilerOptions: {
++			module: ts.ModuleKind.ESNext,
++			target: ts.ScriptTarget.ES2020,
++			sourceMap: true,
++		},
++	});
++	return { code: output.outputText, map: JSON.parse(output.sourceMapText) };
++}
++
++function runLoader(
++	content: string,
++	map: any,
++	cssFile: string | null,
++): Promise<LoaderResult> {
++	return new Promise((resolve, reject) => {
++		const context = {
++			context: '/app',
++			resourcePath: '/app/app.ts',
++			getOptions: () => ({ platform: 'ios' }),
++			getResolve:
++				() =>
++				(_context: string, _request: string, done: (err, res?) => void) =>
++					cssFile ? done(null, cssFile) : done(new Error('not found')),
++			async: () => (err: Error | null, code: string, outputMap?: any) =>
++				err ? reject(err) : resolve({ code, map: outputMap }),
++		};
++		appCssLoader.call(context, content, map);
++	});
++}
++
++async function originalLine(result: LoaderResult, needle: string) {
++	const lines = result.code.split('\n');
++	const line = lines.findIndex((text) => text.includes(needle));
++	const consumer = await new SourceMapConsumer(result.map);
++	try {
++		return consumer.originalPositionFor({
++			line: line + 1,
++			column: lines[line].indexOf(needle),
++		}).line;
++	} finally {
++		consumer.destroy();
++	}
++}
++
++describe('app-css-loader', () => {
++	it('imports the app css and keeps source map positions', async () => {
++		const { code, map } = transpile();
++		const result = await runLoader(code, map, '/app/app.css');
++
++		expect(result.code).toContain('import "./app.css";');
++		expect(await originalLine(result, 'throw new Error')).toBe(6);
++		expect(await originalLine(result, 'Application.run')).toBe(9);
++	});
++
++	it('passes content and map through when there is no app css', async () => {
++		const { code, map } = transpile();
++		const result = await runLoader(code, map, null);
++
++		expect(result.code).toBe(code);
++		expect(result.map).toBe(map);
++	});
++
++	it('imports the app css without a map when none is given', async () => {
++		const { code } = transpile();
++		const result = await runLoader(code, undefined, '/app/app.scss');
++
++		expect(result.code).toContain('import "./app.scss";');
++		expect(result.code).toContain(code);
++		expect(result.map).toBeUndefined();
++	});
++});
+```
+
+**File**: `packages/webpack5/src/loaders/app-css-loader/index.ts` (modified, +12/-7)
+```diff
+@@ -1,5 +1,6 @@
+-import { dedent } from 'ts-dedent';
+ import { basename } from 'path';
++import { sources } from 'webpack';
++
  /**
-  * Manage interactivity in your apps easily with TouchManager.
-  * Store reusable down/up animation settings for touches as well as optionally enable automatic tap (down/up) animations for your app.
-@@ -66,8 +94,7 @@ export class TouchManager {
- 	// }
- 	static animations: TouchAnimationOptions;
- 	/**
--	 * Native Touch handlers (iOS only) registered with the view through the TouchManager.
--	 * The TouchManager uses this internally but makes public for other versatility if needed.
-+	 * @deprecated No longer populated. The native touch handler (iOS only) is kept with its view and released with it.
- 	 */
- 	static touchHandlers: Array<{ view: View; handler: any /* UIGestureRecognizer */ }>;
- 	/**
-@@ -84,59 +111,74 @@ export class TouchManager {
- 		const handleDown = (view?.touchAnimation && (<TouchAnimationOptions>view?.touchAnimation).down) || (TouchManager.animations && TouchManager.animations.down);
- 		const handleUp = (view?.touchAnimation && (<TouchAnimationOptions>view?.touchAnimation).up) || (TouchManager.animations && TouchManager.animations.up);
+  * This loader tries to load an `app.scss` or and `app.css` relative to the main entry
+  */
+@@ -17,12 +18,16 @@ export default function loader(content: string, map: any) {
+ 			return callback(null, content, map);
+ 		}
  
-+		// View.onLoaded calls this on every load, not only the first one, and a view can gain a
-+		// direction between two loads. Down and up are tracked separately so each is wired once:
-+		// the listeners per view, the control target per native view.
-+		const state = getTouchState(view);
-+		const wireDown = !!handleDown && !state.down;
-+		const wireUp = !!handleUp && !state.up;
-+		if (wireDown) {
-+			state.down = true;
+-		const code = dedent`
+-			// Added by app-css-loader
+-			import "./${basename(res)}";
+-			${content}
+-		`;
++		const prefix = `// Added by app-css-loader\nimport "./${basename(res)}";\n`;
++		if (!map) {
++			return callback(null, prefix + content);
 +		}
-+		if (wireUp) {
-+			state.up = true;
+ 
+-		callback(null, code, map);
++		// The prefix shifts every line, so the incoming map must be offset too.
++		const { source, map: outputMap } = new sources.ConcatSource(
++			new sources.RawSource(prefix),
++			new sources.SourceMapSource(content, this.resourcePath, map),
++		).sourceAndMap();
++		callback(null, source, outputMap);
+ 	});
+ }
+```
+
+---
+
+### Incident Patch 3: `85830dbf` (2026-11-21)
+**Commit Message**: fix(core): preserve unknown and deprecated media query types (#11644)
+
+**File**: `packages/core/css-mediaquery/index.spec.ts` (modified, +46/-0)
+```diff
+@@ -18,6 +18,22 @@ describe('css-mediaquery', () => {
+ 					features: [],
+ 				},
+ 			]);
++
++			expect(parseQuery('TV')).toEqual([
++				{
++					inverse: false,
++					type: 'tv',
++					features: [],
++				},
++			]);
++
++			expect(parseQuery('not speech')).toEqual([
++				{
++					inverse: true,
++					type: 'speech',
++					features: [],
++				},
++			]);
+ 		});
+ 
+ 		it('should throw a SyntaxError when a media query is invalid', () => {
+@@ -128,5 +144,35 @@ describe('css-mediaquery', () => {
+ 				expect(matchQuery('not screen and (min-width: 48px)', { width: 24 })).toBe(true);
+ 			});
+ 		});
++
++		describe('Unknown and deprecated media types', () => {
++			it('should return false for unknown and deprecated media types', () => {
++				expect(matchQuery('tv', { type: MediaQueryType.screen })).toBe(false);
++				expect(matchQuery('speech', { type: MediaQueryType.screen })).toBe(false);
++				expect(matchQuery('handheld', { type: MediaQueryType.screen })).toBe(false);
++				expect(matchQuery('projection', { type: MediaQueryType.screen })).toBe(false);
++				expect(matchQuery('unknown', { type: MediaQueryType.screen })).toBe(false);
++				expect(matchQuery('only tv', { type: MediaQueryType.screen })).toBe(false);
++				expect(matchQuery('tv and (min-width: 100px)', { type: MediaQueryType.screen, width: 800 })).toBe(false);
++			});
++
++			it('should return true when negating unknown or deprecated media types with `not`', () => {
++				expect(matchQuery('not tv', { type: MediaQueryType.screen })).toBe(true);
++				expect(matchQuery('not speech', { type: MediaQueryType.screen })).toBe(true);
++				expect(matchQuery('not unknown', { type: MediaQueryType.screen })).toBe(true);
++				expect(matchQuery('not tv and (min-width: 100px)', { type: MediaQueryType.screen, width: 800 })).toBe(true);
++			});
++
++			it('should treat reserved media type keywords as never-matching (`not all`)', () => {
++				expect(matchQuery('not only', { type: MediaQueryType.screen })).toBe(false);
++				expect(matchQuery('not not', { type: MediaQueryType.screen })).toBe(false);
++				expect(matchQuery('not and', { type: MediaQueryType.screen })).toBe(false);
++				expect(matchQuery('not or', { type: MediaQueryType.screen })).toBe(false);
++				expect(matchQuery('not layer', { type: MediaQueryType.screen })).toBe(false);
++				expect(matchQuery('and', { type: MediaQueryType.screen })).toBe(false);
++				expect(matchQuery('or', { type: MediaQueryType.screen })).toBe(false);
++				expect(matchQuery('layer', { type: MediaQueryType.screen })).toBe(false);
++			});
++		});
+ 	});
+ });
+```
+
+**File**: `packages/core/css-mediaquery/index.ts` (modified, +9/-2)
+```diff
+@@ -17,6 +17,8 @@ const RE_MEDIA_QUERY = /^(?:(only|not)?\s*([_a-z][_a-z0-9-]*)|(\([^\)]+\)))(?:\s
+ 	RE_LENGTH_UNIT = /(em|rem|px|cm|mm|in|pt|pc)?\s*$/,
+ 	RE_RESOLUTION_UNIT = /(dpi|dpcm|dppx)?\s*$/;
+ 
++const RESERVED_MEDIA_TYPES = new Set(['only', 'not', 'and', 'or', 'layer']);
++
+ export enum MediaQueryType {
+ 	all = 'all',
+ 	print = 'print',
+@@ -37,7 +39,7 @@ export interface MediaQueryEnvironmentParams {
+ 
+ export interface MediaQueryExpression {
+ 	inverse: boolean;
+-	type: MediaQueryType;
++	type: MediaQueryType | string;
+ 	features: MediaQueryFeature[];
+ }
+ 
+@@ -135,9 +137,14 @@ export function parseQuery(mediaQuery: string): MediaQueryExpression[] {
+ 		const type = captures[2];
+ 		const featureString = ((captures[3] || '') + (captures[4] || '')).trim();
+ 
++		const mediaType = type ? type.toLowerCase() : MediaQueryType.all;
++		if (RESERVED_MEDIA_TYPES.has(mediaType)) {
++			return { inverse: true, type: MediaQueryType.all, features: [] };
 +		}
 +
- 		if (__APPLE__) {
- 			if (view?.ios?.addTargetActionForControlEvents) {
- 				// can use UIControlEvents
--				if (!TouchManager.touchHandlers) {
--					TouchManager.touchHandlers = [];
-+				if (!state.handler) {
-+					state.handler = TouchControlHandler.initWithOwner(new WeakRef(view));
-+				}
-+				if (handleDown && !state.nativeDown) {
-+					state.nativeDown = true;
-+					(<UIControl>view.ios).addTargetActionForControlEvents(state.handler, GestureEvents.touchDown, UIControlEvents.TouchDown | UIControlEvents.TouchDragEnter);
-+				}
-+				if (handleUp && !state.nativeUp) {
-+					state.nativeUp = true;
-+					(<UIControl>view.ios).addTargetActionForControlEvents(state.handler, GestureEvents.touchUp, UIControlEvents.TouchDragExit | UIControlEvents.TouchCancel | UIControlEvents.TouchUpInside | UIControlEvents.TouchUpOutside);
- 				}
--				TouchManager.touchHandlers.push({
--					view,
--					handler: TouchControlHandler.initWithOwner(new WeakRef(view)),
--				});
+ 		const expression: MediaQueryExpression = {
+ 			inverse: !!modifier && modifier.toLowerCase() === 'not',
+-			type: MediaQueryType[type ? type.toLowerCase() : 'all'] ?? 'all',
++			type: mediaType,
+ 			features: [],
+ 		};
  
--				if (handleDown) {
--					(<UIControl>view.ios).addTargetActionForControlEvents(TouchManager.touchHandlers[TouchManager.touchHandlers.length - 1].handler, GestureEvents.touchDown, UIControlEvents.TouchDown | UIControlEvents.TouchDragEnter);
-+				if (wireDown) {
- 					view.on(GestureEvents.touchDown, (args) => {
- 						TouchManager.startAnimationForType(view, TouchAnimationTypes.down);
- 					});
- 				}
--				if (handleUp) {
--					(<UIControl>view.ios).addTargetActionForControlEvents(TouchManager.touchHandlers[TouchManager.touchHandlers.length - 1].handler, GestureEvents.touchUp, UIControlEvents.TouchDragExit | UIControlEvents.TouchCancel | UIControlEvents.TouchUpInside | UIControlEvents.TouchUpOutside);
-+				if (wireUp) {
- 					view.on(GestureEvents.touchUp, (args) => {
- 						TouchManager.startAnimationForType(view, TouchAnimationTypes.up);
- 					});
- 				}
--			} else {
--				if (handleDown || handleUp) {
--					view.on(GestureEvents.gestureAttached, (args: GestureEventData) => {
--						if (args.type === GestureTypes.longPress) {
--							(<UILongPressGestureRecognizer>args.ios).minimumPressDuration = (<View>args.object)?.touchDelay || 0;
--						}
--					});
--					view.on(GestureTypes[GestureTypes.longPress], (args: GestureEventDataWithState) => {
--						switch (args.state) {
--			
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #11663** (2026-11-21): fix(windows): send content headers with the request body (@triniwiz)
+- **PR #11647** (2026-11-21): fix(webpack): keep source map positions in native-class loaders (@edusperoni)
+- **PR #11646** (2026-11-21): fix(webpack): keep source map positions in app-css-loader (@edusperoni)
+- **PR #11644** (2026-11-21): fix(core): preserve unknown and deprecated media query types (@amirthn6533)
 - **PR #11642** (2026-11-14): fix(ios): never re-attach torn-down ListView item views (@edusperoni)
 - **PR #11641** (2026-11-14): fix(core): register touch animations once per view (@edusperoni)
-- **PR #11640** (2026-11-13): fix(android): resume Frame navigation after early Activity attachment (@NathanWalker)
-- **PR #11638** (2026-11-12): fix(ios): raise orientationChanged from scene geometry updates (@NathanWalker)
-- **PR #11637** (closed): fix(ios): keep ListView item views attached when UIKit removes their cell (@NathanWalker)
-- **PR #11633** (2026-11-10): fix(webpack): find ExternalModuleFactoryPlugin where webpack 5.112 moved it (@edusperoni)
 
 ---
 
@@ -1398,44 +1618,23 @@ accessibility client (XCUITest, VoiceOver) disables cell reuse.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ios): never re-attach torn-down ListView item views
+## X. webpack): keep source map positions in native-class loaders
 
 **RULE**:
-When implementing operations in `apps/automated/src/ui/list-view/list-view-tests.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NativeScript/NativeScript. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/webpack5/__tests__/loaders/native-class-loaders.spec.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NativeScript/NativeScript. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ce4102b0`: ios): never re-attach torn-down ListView item views. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2f70ec8e`: webpack): keep source map positions in native-class loaders. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/automated/src/ui/list-view/list-view-tests.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/webpack5/__tests__/loaders/native-class-loaders.spec.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-	// UIKit can take a cell out of the table and display it again without asking for it in
-	// tableView:cellForRowAtIndexPath: (constantly while an accessibility client disables cell reuse).
-	public test_cell_displayed_again_after_teardown_gets_new_content_ios() {
-		if (__APPLE__) {
-			const listView = this.testView;
-			listView.on(ListView.itemLoadingEvent, this.loadViewWithItemNumber);
-			listView.items = FEW_ITEMS;
-			this.waitUntilListViewReady();
-
-			const tableView = <UITableView>listView.ios;
-			const indexPath = NSIndexPath.indexPathForRowInSection(1, 0);
-			const cell = <any>tableView.cellForRowAtIndexPath(indexPath);
-			const tableContent = cell.superview;
-			const tornDownView = cell.view;
-			TKUnit.assertNotNull(tornDownView, 'cell has an item view');
-
-			cell.removeFromSuperview();
-			TKUnit.assertEqual(cell.contentView.subviews.count, 0, 'the torn-down item view is detached from the cell');
-			TKUnit.assertNull(cell.view, 'the cell no longer refers to the torn-down item view');
-
-			tableView.delegate.tableViewWillDisplayCellForRowAtIndexPath(tableView, cell, indexPath);
-			TKUnit.assertNull(cell.view, 'a cell outside the table is not prepared');
-
-			tableContent.addSub
+		async() {
+			return this.callback.bind(this);
+		},
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1445,4 +1644,4 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ce4102b0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2f70ec8e` are properly handled with clean fallback behavior.

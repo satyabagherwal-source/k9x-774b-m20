@@ -7453,10 +7453,10 @@
     "repository": "NativeScript/NativeScript",
     "platform": "github",
     "sourceUrl": "https://github.com/NativeScript/NativeScript",
-    "sourceVersion": "283eb0c5",
+    "sourceVersion": "b1fdbd5b",
     "license": "MIT",
-    "contentHash": "45651c2f09dfca00320505909044bacfd270c20a4c15f872742b058cc0bdec25",
-    "lastHarvestedAt": "2026-11-15T03:48:10.781Z",
+    "contentHash": "511feaeec034d4dfa13fafa766214e13e2770f756e53a352c28d52dd220965d4",
+    "lastHarvestedAt": "2026-11-22T12:37:25.740Z",
     "learningId": "learn-github-nativescript-nativescript"
   },
   "oramasearch-orama": {
@@ -12775,8 +12775,8 @@
     "sourceUrl": "https://huggingface.co/MiniMaxAI/MiniMax-H3-Image-PE",
     "sourceVersion": "hf-minimaxai-minimax-h3-image-pe",
     "license": "Open-Source",
-    "contentHash": "46a9d839ec2eacb07ce92bc48884e8776c2e506e05c6fad4ba236fb5005b4827",
-    "lastHarvestedAt": "2026-11-17T12:24:44.484Z",
+    "contentHash": "24c873ac57ad005c77023b404865fc55479795566ef2a3ce416723ba5829d466",
+    "lastHarvestedAt": "2026-11-22T12:37:34.795Z",
     "learningId": "learn-huggingface-minimaxai-minimax-h3-image-pe"
   },
   "hf-internlm-sage-s2.1-flash": {
