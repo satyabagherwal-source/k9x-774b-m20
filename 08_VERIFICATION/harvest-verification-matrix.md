@@ -12028,3 +12028,4 @@
 | `CYCLE-20261122-L4XM` | `2026-11-22T06:03:32.026Z` | `MiniMaxAI/MiniMax-H3-Image` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-image-learnings.md` | Yes (`d3c4fc0f...`) |
 | `CYCLE-20261122-V2F3` | `2026-11-22T06:11:15.327Z` | `Comfy-Org/MiniMax-H3-Image` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-image-learnings.md` | Yes (`caa0bf8c...`) |
 | `CYCLE-20261122-VFG8` | `2026-11-22T06:11:32.216Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9900` | Yes (`a7c0633a...`) |
+| `CYCLE-20261122-5HRK` | `2026-11-22T06:19:21.776Z` | `mradermacher/gemma-4-31B-it-ARA-heretic-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf-learnings.md` | Yes (`7b048fea...`) |

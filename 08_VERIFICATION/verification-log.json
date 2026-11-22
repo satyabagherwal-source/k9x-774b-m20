@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261120-GXOC",
-    "timestamp": "2026-11-20T05:28:55.932Z",
-    "repository": "zoontek/react-native-bootsplash",
-    "learningId": "learn-github-zoontek-react-native-bootsplash",
-    "contentHash": "d25a83eea902f50d8a09d3b1281a913a01e82fe3bf9ddcbf28eb72b0d5907457",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261120-H3DU",
     "timestamp": "2026-11-20T05:29:03.330Z",
     "repository": "apple/foundationdb",
@@ -7492,6 +7477,21 @@
     "contentHash": "a7c0633a94f1ce7546515fd93a9630429b0ded2949859f8bfb34377c413987e7",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-5HRK",
+    "timestamp": "2026-11-22T06:19:21.776Z",
+    "repository": "mradermacher/gemma-4-31B-it-ARA-heretic-GGUF",
+    "learningId": "learn-huggingface-mradermacher-gemma-4-31b-it-ara-heretic-gguf",
+    "contentHash": "7b048fea474a6d7750ef86947c6201c8a9fd037e8556352a56378ad1b0b3f8ba",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

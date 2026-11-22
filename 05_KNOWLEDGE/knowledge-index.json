@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T06:11:37.866Z",
+  "last_updated": "2026-11-22T06:19:35.742Z",
   "total_verified_learnings": 9068,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "26339aa1111ef2ef236da78801b891bae0e77bb1228fa96870a5cd2366b1f0d5",
+      "content_hash": "aab37f7f7ea6fc63b4f3762640915b6c65e342aaaf6c3d63e175c4b0641a432b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T06:11:37.547Z"
+      "persisted_at": "2026-11-22T06:19:34.525Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "72933436b8425ff5f2e98ccdf07258eb3c7f4154f0e22de0b433685c682db66c",
+      "content_hash": "1c164626534116c9759de62887a995d09d02eba9f2ebd25697c47b58873bc105",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T06:11:37.717Z"
+      "persisted_at": "2026-11-22T06:19:34.694Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "f2573dfd5040dfc623c5fdc83fd0f846ca218114e0dde5a358f525519733f5ba",
+      "content_hash": "943bb31ea1a7c7ddf54ab52f1ca1c210cb18b77d65d1cc05de976c2e24bc9654",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T06:11:37.866Z"
+      "persisted_at": "2026-11-22T06:19:34.834Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -237207,9 +237207,9 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "repository": "zleap-ai-sag-learnings",
       "source_version": "HEAD",
-      "content_hash": "23ab46febc440ef665649766fd2e1e2a3ced11f3b5beb0d7028e6d036bcf9a21",
+      "content_hash": "3bde3174ed10206f929ab061a83794f842e1d946fe97f558393a6a91cabb2f6a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T03:54:19.336Z"
+      "persisted_at": "2026-11-22T06:19:35.742Z"
     },
     "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b": {
       "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
@@ -251267,7 +251267,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/mradermacher/gemma-4-31B-it-ARA-heretic-GGUF",
       "source_version": "hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf",
-      "content_hash": "ea2c5f9b232e71c2f3691f9453616373bfc043fcc34c919322e64223d02421cd",
+      "content_hash": "7b048fea474a6d7750ef86947c6201c8a9fd037e8556352a56378ad1b0b3f8ba",
       "dossier_path": "07_PROJECT_LEARNING/hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf-learnings.md",
       "promoted_rules": [],
@@ -251276,7 +251276,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T21:41:40.701Z",
+      "verified_at": "2026-11-22T06:19:21.561Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -251293,9 +251293,9 @@
       "title": "Research & Knowledge Intelligence: mradermacher/gemma-4-31B-it-ARA-heretic-GGUF Core Invariants",
       "repository": "mradermacher/gemma-4-31B-it-ARA-heretic-GGUF",
       "source_version": "hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf",
-      "content_hash": "905c5243357fadddf52789ae901d960467682ac50488bb1cdc492e709f4771a8",
+      "content_hash": "996bfab4de1f28e6c9cc45962bfc08041417aba5f266aa5749d21b4b27edda71",
       "domain_letter": "D",
-      "persisted_at": "2026-11-15T21:41:41.058Z"
+      "persisted_at": "2026-11-22T06:19:21.984Z"
     },
     "rule-8656": {
       "learning_id": "rule-8656",
@@ -251431,9 +251431,9 @@
       "title": "Research & Knowledge Intelligence: hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf-learnings Core Invariants",
       "repository": "hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "26b3f138acad8914cc0db2850490d8f43e7d29085b90ab3efa4bccfc1f9a3ffd",
+      "content_hash": "10c35e2ffd514bd3f1ecaa217ceb57d9ecd960a6cf41be7d44727b61e1404d93",
       "domain_letter": "D",
-      "persisted_at": "2026-11-15T21:45:22.835Z"
+      "persisted_at": "2026-11-22T06:19:33.685Z"
     },
     "learn-huggingface-conwayresearch-underdog-woof": {
       "learning_id": "learn-huggingface-conwayresearch-underdog-woof",
@@ -309445,13 +309445,13 @@
       "item_id": "candidate_directive-benchmarks-report-gold-coverage-across-retrieval-stages",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-VJFP-benchmarks-report-gold-coverage-across-retrieval-stages.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-5RH8-benchmarks-report-gold-coverage-across-retrieval-stages.md",
       "title": "benchmarks): report Gold coverage across retrieval stages",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "5a495cf2b49bf571c6ecf6b11fa7cbb6358fd48fdcdc98e84112261b9e215391",
+      "content_hash": "400a32e1263637e6e5c408cf8f3f5b606d6af9f92ad79f3c2a7d584b005549c9",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T06:11:37.384Z"
+      "persisted_at": "2026-11-22T06:19:34.367Z"
     },
     "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it": {
       "item_id": "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it",

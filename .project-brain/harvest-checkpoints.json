@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T06:11:32.229Z",
+  "last_updated": "2026-11-22T06:19:21.789Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -18501,14 +18501,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-mradermacher-gemma-4-31b-it-ara-heretic-gguf",
-      "content_hash": "ea2c5f9b232e71c2f3691f9453616373bfc043fcc34c919322e64223d02421cd",
-      "verified_at": "2026-11-15T21:41:40.905Z",
+      "content_hash": "7b048fea474a6d7750ef86947c6201c8a9fd037e8556352a56378ad1b0b3f8ba",
+      "verified_at": "2026-11-22T06:19:21.788Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T21:41:40.905Z"
+      "last_updated": "2026-11-22T06:19:21.788Z"
     },
     "yyjeqhc/webcodex": {
       "repository": "yyjeqhc/webcodex",

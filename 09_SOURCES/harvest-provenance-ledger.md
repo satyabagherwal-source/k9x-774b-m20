@@ -12061,3 +12061,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-minimaxai-minimax-h3-image` | `https://huggingface.co/MiniMaxAI/MiniMax-H3-Image` | `hf-minimax` | Multi-dimensional audit evidence | 2026-11-22T06:03:32.030Z |
 | `learn-huggingface-comfy-org-minimax-h3-image` | `https://huggingface.co/Comfy-Org/MiniMax-H3-Image` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-22T06:11:15.331Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `008cc5b3` | Multi-dimensional audit evidence | 2026-11-22T06:11:32.221Z |
+| `learn-huggingface-mradermacher-gemma-4-31b-it-ara-heretic-gguf` | `https://huggingface.co/mradermacher/gemma-4-31B-it-ARA-heretic-GGUF` | `hf-mraderm` | Multi-dimensional audit evidence | 2026-11-22T06:19:21.780Z |
