@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T17:35:40.355Z",
+  "last_updated": "2026-11-22T17:44:43.167Z",
   "total_records": 2368,
   "domains": {
     "A": {
@@ -8138,8 +8138,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "b0f6e8d5d58bd4a78c4113891fa77ed9ab63006076d8fb3299b78ef14da7156b",
-      "created_at": "2026-11-22T17:14:14.143Z"
+      "content_hash": "a5aca2d79289f3459dd1e971f62b01644a2549bcd807963d42da27621d4bfa5e",
+      "created_at": "2026-11-22T17:44:43.167Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -17721,8 +17721,8 @@
       "title": "Technical Construction Intelligence: tw93/Pake Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tw93-pake-technical-construction-intelligence-tw93-pake-core-invariants.md",
       "repository": "tw93/Pake",
-      "content_hash": "6b3d744ab0ec8f95879734afea6e58a3d0b6d5a146f0681889c7287e283fc33b",
-      "created_at": "2026-11-21T04:48:26.547Z"
+      "content_hash": "7ffd899f61e8a76fa92881b91015895fea20c6681263c995198d6700128aee2f",
+      "created_at": "2026-11-22T17:44:31.794Z"
     },
     "domain_intelligence-technical-construction-intelligence-aquasecurity-trivy-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-aquasecurity-trivy-core-invariants",
@@ -17739,8 +17739,8 @@
       "title": "Technical Construction Intelligence: tw93-pake-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tw93-pake-learnings-technical-construction-intelligence-tw93-pake-learnings-core.md",
       "repository": "tw93-pake-learnings",
-      "content_hash": "16248a1549ad60c1dda07f05fb2ee0bd0b6cc9e6909b28d598686b7d3b339b81",
-      "created_at": "2026-11-21T04:48:36.433Z"
+      "content_hash": "7dd3cb3ac3428fe0533b0eda165bb91c693d74805bf65efb1e32f13a204f21e1",
+      "created_at": "2026-11-22T17:44:41.696Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf",
@@ -29372,8 +29372,8 @@
       "title": "Research & Knowledge Intelligence: deepseek-ai/DeepSeek-R1 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-deepseek-ai-deepseek-r1-research-knowledge-intelligence-deepseek-ai-deepseek-.md",
       "repository": "deepseek-ai/DeepSeek-R1",
-      "content_hash": "381277702eefef993684fea5a135ec0db2aa7c684197e62339e6b57e65fa2701",
-      "created_at": "2026-11-18T11:06:39.418Z"
+      "content_hash": "73d1c0da11c3b8f8ed7df1c6810487b999bd83be8823ffdcbd5e938b9e8a5914",
+      "created_at": "2026-11-22T17:44:29.856Z"
     },
     "domain_intelligence-quality-verification-intelligence-xerj-org-xerj-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-xerj-org-xerj-core-invariants",
@@ -29390,8 +29390,8 @@
       "title": "Research & Knowledge Intelligence: hf-deepseek-ai-deepseek-r1-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-deepseek-ai-deepseek-r1-learnings-research-knowledge-intelligence-hf-deepseek.md",
       "repository": "hf-deepseek-ai-deepseek-r1-learnings",
-      "content_hash": "037da1f091ad421289b5051797de4ff5f0daee66b4ecff9c5c557f24e536f051",
-      "created_at": "2026-11-18T11:06:58.137Z"
+      "content_hash": "aad097b7b9b372461c028f6eb667d0ad8d1bc5fc7c0dc1d33b4f0fba3b9c21fd",
+      "created_at": "2026-11-22T17:44:42.243Z"
     },
     "domain_intelligence-technical-construction-intelligence-jithin-sabu-purge-app-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-jithin-sabu-purge-app-core-invariants",

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T17:35:34.294Z",
+  "last_updated": "2026-11-22T17:44:31.405Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -290,14 +290,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-deepseek-ai-deepseek-r1",
-      "content_hash": "482de0a7c8b845b531276c496b7cbd4b76c89a27a09143dac6bcb22cb5b6f69c",
-      "verified_at": "2026-11-18T11:06:39.250Z",
+      "content_hash": "8521ff169a3365f3254bdd002ae0dd7186df839977c62ae0b9396c230e58daf2",
+      "verified_at": "2026-11-22T17:44:29.647Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T11:06:39.250Z"
+      "last_updated": "2026-11-22T17:44:29.647Z"
     },
     "moonshotai/Kimi-K3": {
       "repository": "moonshotai/Kimi-K3",
@@ -2691,14 +2691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tw93-pake",
-      "content_hash": "00dbe6c0e3355d2ee15d146b0e541250f6e68e272720b5c76325cff16e95a102",
-      "verified_at": "2026-11-21T04:48:26.202Z",
+      "content_hash": "0b70be0ecdf95a2d4c6126df237814c7592effebe64797588aa4e7a148a2baec",
+      "verified_at": "2026-11-22T17:44:31.405Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T04:48:26.202Z"
+      "last_updated": "2026-11-22T17:44:31.405Z"
     },
     "datalab-to/indra-ocr": {
       "repository": "datalab-to/indra-ocr",

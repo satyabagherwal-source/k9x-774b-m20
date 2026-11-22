@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T17:35:40.167Z",
+  "last_updated": "2026-11-22T17:44:42.993Z",
   "directives": [
     {
       "id": "CD-001",
@@ -39760,11 +39760,11 @@
       "domain_letter": "D"
     },
     {
-      "id": "CD-JNS5",
+      "id": "CD-MV3I",
       "directive_title": "benchmarks): report Gold coverage across retrieval stages",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-JNS5-benchmarks-report-gold-coverage-across-retrieval-stages.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-MV3I-benchmarks-report-gold-coverage-across-retrieval-stages.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-22",
@@ -46847,6 +46847,35 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-22",
       "domain_letter": "H"
+    },
+    {
+      "id": "CD-MTYI",
+      "directive_title": "never send a sign-in popup home from the menu or the shortcut",
+      "source_repo": "tw93-pake-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-MTYI-never-send-a-sign-in-popup-home-from-the-menu-or-the-shortcut.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-22",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-0649E9",
+      "directive_title": "never send a sign-in popup home from the menu or the shortcut",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "tw93-pake",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0649E9-never-send-a-sign-in-popup-home-from-the.md",
+      "staged_date": "2026-11-22"
+    },
+    {
+      "id": "CD-REV-1C015C",
+      "directive_title": "benchmarks): report Gold coverage across retrieval stages",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-1C015C-benchmarks-report-gold-coverage-across-r.md",
+      "staged_date": "2026-11-22"
     }
   ]
 }

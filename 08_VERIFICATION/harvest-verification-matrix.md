@@ -12136,3 +12136,5 @@
 | `CYCLE-20261122-AVAH` | `2026-11-22T17:35:23.369Z` | `thaw-app/Thaw` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9963` | Yes (`e7a5095d...`) |
 | `CYCLE-20261122-AZD7` | `2026-11-22T17:35:28.651Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING` | Yes (`69da9d65...`) |
 | `CYCLE-20261122-B3PI` | `2026-11-22T17:35:34.278Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9964` | Yes (`bd6fdaed...`) |
+| `CYCLE-20261122-MKSI` | `2026-11-22T17:44:29.634Z` | `deepseek-ai/DeepSeek-R1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-r1-learnings.md` | Yes (`8521ff16...`) |
+| `CYCLE-20261122-MM5C` | `2026-11-22T17:44:31.392Z` | `tw93/Pake` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9965` | Yes (`0b70be0e...`) |

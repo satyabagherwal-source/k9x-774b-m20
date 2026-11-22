@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-22T17:35:37.629Z",
-    "lastVerified": "2026-11-22T17:35:37.629Z",
+    "lastChecked": "2026-11-22T17:44:41.120Z",
+    "lastVerified": "2026-11-22T17:44:41.120Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -354,12 +354,12 @@
     "lastVerified": "2026-11-21T21:31:41.682Z"
   },
   "nucleoidai-nucleoid": {
-    "name": "NucleoidAI/Nucleoid",
+    "name": "Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-22T16:57:38.794Z",
-    "lastVerified": "2026-11-22T16:57:38.794Z",
+    "lastChecked": "2026-11-22T17:44:41.110Z",
+    "lastVerified": "2026-11-22T17:44:41.110Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -368,7 +368,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "57a7a48c"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -507,12 +508,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "kubernetes-sigs-aws-load-balancer-controller": {
-    "name": "kubernetes-sigs/aws-load-balancer-controller",
+    "name": "aws-load-balancer-controller",
     "officialUrl": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-21T17:15:30.830Z",
-    "lastVerified": "2026-11-21T17:15:30.830Z",
+    "lastChecked": "2026-11-22T17:44:33.716Z",
+    "lastVerified": "2026-11-22T17:44:33.716Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
@@ -521,7 +522,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "741e1637"
   },
   "nolabs-ai-nono": {
     "name": "nono",
@@ -840,12 +842,12 @@
     "officialUrl": "https://huggingface.co/deepseek-ai/DeepSeek-R1",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-18T11:06:38.632Z",
-    "lastVerified": "2026-11-18T11:06:38.632Z",
+    "lastChecked": "2026-11-22T17:44:28.932Z",
+    "lastVerified": "2026-11-22T17:44:28.932Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-r1",
-    "contentHash": "482de0a7c8b845b531276c496b7cbd4b76c89a27a09143dac6bcb22cb5b6f69c",
+    "contentHash": "8521ff169a3365f3254bdd002ae0dd7186df839977c62ae0b9396c230e58daf2",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -1983,8 +1985,8 @@
     "officialUrl": "https://github.com/projectdiscovery/nuclei",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-22T09:35:16.604Z",
-    "lastVerified": "2026-11-22T09:35:16.604Z",
+    "lastChecked": "2026-11-22T17:44:36.201Z",
+    "lastVerified": "2026-11-22T17:44:36.201Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-projectdiscovery-nuclei",
@@ -6488,9 +6490,9 @@
   "apache-incubator-pegasus": {
     "name": "incubator-pegasus",
     "officialUrl": "https://github.com/apache/incubator-pegasus",
-    "lastChecked": "2026-11-21T15:48:51.912Z",
+    "lastChecked": "2026-11-22T17:44:38.690Z",
     "revisionIdentifier": "31da6f5e",
-    "lastVerified": "2026-11-21T15:48:51.912Z"
+    "lastVerified": "2026-11-22T17:44:38.690Z"
   },
   "sentrux-sentrux": {
     "name": "sentrux",
@@ -8468,9 +8470,9 @@
   "gao-sun-eul": {
     "name": "eul",
     "officialUrl": "https://github.com/gao-sun/eul",
-    "lastChecked": "2026-11-19T16:16:49.506Z",
+    "lastChecked": "2026-11-22T17:44:31.340Z",
     "revisionIdentifier": "b5c3bd0a",
-    "lastVerified": "2026-11-19T16:16:49.506Z"
+    "lastVerified": "2026-11-22T17:44:31.340Z"
   },
   "tokio-rs-tokio": {
     "name": "tokio-rs/tokio",
@@ -8816,14 +8818,14 @@
     "officialUrl": "https://github.com/tw93/Pake",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-21T04:48:24.995Z",
-    "lastVerified": "2026-11-21T04:48:24.995Z",
+    "lastChecked": "2026-11-22T17:44:30.222Z",
+    "lastVerified": "2026-11-22T17:44:30.222Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tw93-pake",
-    "contentHash": "00dbe6c0e3355d2ee15d146b0e541250f6e68e272720b5c76325cff16e95a102",
+    "contentHash": "0b70be0ecdf95a2d4c6126df237814c7592effebe64797588aa4e7a148a2baec",
     "promotedRulesCount": 1,
-    "recentFixesCount": 11,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

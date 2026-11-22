@@ -12169,3 +12169,5 @@ Every entry in this ledger must capture:
 | `learn-github-thaw-app-thaw` | `https://github.com/thaw-app/Thaw` | `50b2558d` | Multi-dimensional audit evidence | 2026-11-22T17:35:23.373Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `b613df15` | Multi-dimensional audit evidence | 2026-11-22T17:35:28.656Z |
 | `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `0a2b3145` | Multi-dimensional audit evidence | 2026-11-22T17:35:34.283Z |
+| `learn-huggingface-deepseek-ai-deepseek-r1` | `https://huggingface.co/deepseek-ai/DeepSeek-R1` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-11-22T17:44:29.639Z |
+| `learn-github-tw93-pake` | `https://github.com/tw93/Pake` | `0df927f6` | Multi-dimensional audit evidence | 2026-11-22T17:44:31.396Z |

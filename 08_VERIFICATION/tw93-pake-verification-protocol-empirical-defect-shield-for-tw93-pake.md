@@ -4,22 +4,22 @@
 {
   "source_repository": "tw93/Pake",
   "source_url": "https://github.com/tw93/Pake",
-  "source_version": "002c958a",
+  "source_version": "0df927f6",
   "license": "GPL-3.0",
-  "timestamp": "2026-11-21T04:48:26.393Z",
+  "timestamp": "2026-11-22T17:44:31.622Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-tw93-pake",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [tw93/Pake](https://github.com/tw93/Pake) (Revision: `002c958a`).  
-> **License**: GPL-3.0 | **Timestamp**: `2026-11-21T04:48:26.393Z`  
+> **Provenance**: Harvested from [tw93/Pake](https://github.com/tw93/Pake) (Revision: `0df927f6`).  
+> **License**: GPL-3.0 | **Timestamp**: `2026-11-22T17:44:31.622Z`  
 > **Learning ID**: `learn-github-tw93-pake`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `tw93/Pake` (Commit: `002c958a`)
+- **Target Repository**: `tw93/Pake` (Commit: `0df927f6`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tw93-pake-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tw93/Pake](https://github.com/tw93/Pake))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T04:48:24.995Z  
+> **Harvest Timestamp**: 2026-11-22T17:44:30.222Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Turn any website into a lightweight desktop app with one command, on macOS, Windows and Linux.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 63883 stars
+- **Stars / Engagement**: 63929 stars
 
 ---
 
@@ -949,385 +949,201 @@ export function getDefaultLinuxTargets(): string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c44435aa` (2026-11-20)
-**Commit Message**: fix: apply hiding exceptions to their own rules instead of hiding the selector everywhere
+### Incident Patch 1: `5a37d382` (2026-11-22)
+**Commit Message**: fix: never send a sign-in popup home from the menu or the shortcut
 
-With ad blocking on, a Mac or Linux app hid every svg on every site: Google
-lost its logo and all its icons. EasyList and the unbreak list carry hiding
-exceptions such as `redtube.com#@#svg` (do not hide svg on that site), and
-adblock's content-blocking conversion writes each one as a rule that hides the
-selector on every site but the named one. 112 of the 464 exceptions in the
-ads selection name a selector no list hides everywhere, `iframe[style]` and
-`[style*="base64"]` among them; for the other 352 the exception itself never
-held, since the generic rule still matched.
+269c057c kept Ctrl+Shift+H out of a popup only in event.js, but the macOS Go Home menu item (Cmd+Shift+H) acts on the focused window through navigate_home, so in a Google sign-in popup it still replaced the popup's page with the app's home and lost the sign-in. navigate_home now skips windows labelled pake-popup-, which covers the menu, the shortcut and the IPC command on all three platforms. The new test fails when the check is removed; cargo test 133, fmt, and clippy with and without runtime-template pass on macOS. Not pressed in a real popup. Roll back with git revert.
 
-The exceptions are now taken out of the text before the conversion and applied
-to the converted rules: a rule for named sites loses the excepted ones, a rule
-for every site gets them as unless-domain. The compiled list's identifier
-takes a conversion revision, so an app does not keep the list the old
-conversion made. Windows was not affected: it reads only rules with no site
-condition from the conversion and asks the engine per page.
-
-Verified: an_exception_for_one_site_hides_nothing_on_the_others fails on the
-old conversion
-
-**File**: `src-tauri/src/app/content_blocking.rs` (modified, +233/-2)
+**File**: `src-tauri/src/app/navigation.rs` (modified, +19/-1)
 ```diff
-@@ -58,6 +58,7 @@ fn gunzip(bytes: &[u8]) -> Option<String> {
-     Some(text)
+@@ -2,7 +2,7 @@
+ //! Blank error shells have no JS context, so `eval("history.back()")` and
+ //! `location.reload()` are dead exactly when the user is stuck.
+ 
+-use crate::app::window::MultiWindowState;
++use crate::app::window::{MultiWindowState, POPUP_WINDOW_LABEL_PREFIX};
+ use tauri::{Manager, WebviewWindow};
+ 
+ /// Reload the current document via the native webview API.
+@@ -39,10 +39,21 @@ pub fn home_url(app: &tauri::AppHandle) -> Option<tauri::Url> {
+     resolve_home_url(&window_config.url_type, &window_config.url)
  }
  
-+#[cfg(target_os = "windows")]
- fn filter_set(groups: &[&str], rule_types: RuleTypes, debug: bool) -> FilterSet {
-     let mut set = FilterSet::new(debug);
-     for bytes in list_bytes(groups) {
-@@ -77,6 +78,12 @@ fn filter_set(groups: &[&str], rule_types: RuleTypes, debug: bool) -> FilterSet
-     set
- }
- 
-+/// Names how the lists become WebKit rules. WebKit keeps a compiled list by
-+/// its identifier, so a change to the conversion has to change this, or apps
-+/// go on using the list the old conversion made.
-+#[cfg(any(target_os = "macos", target_os = "linux", test))]
-+const CONVERSION: &str = "unhide-2";
++/// A window a page opened, such as a sign-in popup, is not the app's: going
++/// home there would throw the sign-in away. Every way home (the macOS menu's
++/// Cmd+Shift+H, Ctrl+Shift+H on Windows and Linux, the IPC command) ends in
++/// `navigate_home`, so it is checked here once.
++pub fn goes_home(label: &str) -> bool {
++    !label.starts_with(POPUP_WINDOW_LABEL_PREFIX)
++}
 +
- /// FNV-1a, enough to tell one selection of embedded lists from another.
- #[cfg(any(target_os = "macos", target_os = "linux", test))]
- fn fingerprint(groups: &[&str]) -> u64 {
-@@ -88,6 +95,7 @@ fn fingerprint(groups: &[&str]) -> u64 {
+ /// Navigate the webview to the packaged home URL. Native navigation works
+ /// from a blank error page, where eval cannot run, and sends a local-file app
+ /// to its bundled asset instead of a path on the current origin.
+ pub fn navigate_home(window: &WebviewWindow) {
++    if !goes_home(window.label()) {
++        return;
++    }
+     match home_url(window.app_handle()) {
+         Some(url) => {
+             if let Err(error) = window.navigate(url) {
+@@ -189,6 +200,13 @@ mod tests {
+         assert!(resolve_home_url("bogus", "whatever").is_none());
+     }
+ 
++    #[test]
++    fn a_window_the_page_opened_never_goes_home() {
++        assert!(goes_home("pake"));
++        assert!(goes_home("pake-2"), "a Cmd+N clone is the app's own window");
++        assert!(!goes_home("pake-popup-3"), "a sign-in popup keeps its page");
++    }
++
+     #[test]
+     fn a_home_url_with_a_path_keeps_it() {
+         assert_eq!(
+```
+
+---
+
+### Incident Patch 2: `346d2f43` (2026-11-22)
+**Commit Message**: fix: drop the em dash from the WebView2 loader success line
+
+The Windows build's success line for the copied WebView2Loader.dll read 'copied beside it — keep them together'; a comma reads the same without the dash. dist/cli.js rebuilt with pnpm run cli:build and matches; vitest 940 pass.
+
+**File**: `bin/builders/WinBuilder.ts` (modified, +1/-1)
+```diff
+@@ -133,7 +133,7 @@ export default class WinBuilder extends BaseBuilder {
+     await this.recordArtifact(this.keptLoaderDllPath, 'dll');
+     if (logSuccess) {
+       logger.success(
+-        `✔ ${WEBVIEW2_LOADER_DLL} copied beside it — keep them together`,
++        `✔ ${WEBVIEW2_LOADER_DLL} copied beside it, keep them together`,
+       );
+     }
+   }
+```
+
+**File**: `dist/cli.js` (modified, +1/-1)
+```diff
+@@ -2618,7 +2618,7 @@ class WinBuilder extends BaseBuilder {
+             return;
+         await this.recordArtifact(this.keptLoaderDllPath, 'dll');
+         if (logSuccess) {
+-            logger.success(`✔ ${WEBVIEW2_LOADER_DLL} copied beside it — keep them together`);
++            logger.success(`✔ ${WEBVIEW2_LOADER_DLL} copied beside it, keep them together`);
          }
-     };
-     feed(env!("CARGO_PKG_VERSION").as_bytes());
-+    feed(CONVERSION.as_bytes());
-     for group in groups {
-         feed(group.as_bytes());
      }
-@@ -122,10 +130,160 @@ fn webkit_identifier(groups: &[&str], unit: &str) -> String {
- /// The rules of one WebKit unit, ready to serialize.
- #[cfg(any(target_os = "macos", target_os = "linux", test))]
- fn webkit_rules(groups: &[&str], rule_types: RuleTypes) -> Vec<adblock::content_blocking::CbRule> {
--    filter_set(groups, rule_types, true)
-+    let mut set = FilterSet::new(true);
-+    let mut unhide = Unhide::default();
-+    for bytes in list_bytes(groups) {
-+        let Some(text) = gunzip(bytes) else {
-+            eprintln!("[Pake] A built-in filter list could not be read");
-+            continue;
+ }
+```
+
+---
+
+### Incident Patch 3: `269c057c` (2026-11-21)
+**Commit Message**: fix: leave Ctrl+Shift+H alone in a window the page opened
+
+A sign-in popup runs the same shortcut script, so the key sent the popup itself to the app's home page. pakeConfig carries page_popup for such a window and the shortcut skips it. vitest 920, cargo test 132 and clippy with and without runtime-template pass on macOS; not pressed in a real popup.
+
+**File**: `src-tauri/src/app/window.rs` (modified, +21/-6)
+```diff
+@@ -807,7 +807,11 @@ fn build_window(
+ 
+     let config_script = format!(
+         "window.pakeConfig = {}",
+-        page_config(window_config, extensions_run(config))
++        page_config(
++            window_config,
++            extensions_run(config),
++            new_window_features.is_some()
++        )
+     );
+     // A host-provided marker avoids relying on a site's overridden user agent.
+     #[cfg(target_os = "windows")]
+@@ -1648,12 +1652,18 @@ fn extensions_run(config: &PakeConfig) -> bool {
+ /// `window.pakeConfig` for the page. An extension that restyles the site turns
+ /// the runtime's own tweaks off (`site_styles`), but where it does not run they
+ /// stay, so the site never ends up with neither.
+-fn page_config(window_config: &WindowConfig, extensions_run: bool) -> String {
++///
++/// `page_popup` marks a window a page opened, such as a sign-in popup: it is
++/// not the app's window, so the shortcut that goes home leaves it alone.
++fn page_config(window_config: &WindowConfig, extensions_run: bool, page_popup: bool) -> String {
+     let mut value = serde_json::to_value(window_config).unwrap_or_default();
+-    if !extensions_run {
+-        if let Some(object) = value.as_object_mut() {
++    if let Some(object) = value.as_object_mut() {
++        if !extensions_run {
+             object.insert("site_styles".into(), true.into());
+         }
++        if page_popup {
++            object.insert("page_popup".into(), true.into());
++        }
+     }
+     serde_json::to_string(&value).unwrap_or_else(|_| "{}".to_string())
+ }
+@@ -1668,9 +1678,14 @@ mod site_style_tests {
+         let config: PakeConfig = serde_json::from_str(include_str!("../../pake.json")).unwrap();
+         let mut window = config.windows[0].clone();
+         window.site_styles = false;
+-        let page =
+-            |run| serde_json::from_str::<serde_json::Value>(&page_config(&window, run)).unwrap();
++        let page = |run| {
++            serde_json::from_str::<serde_json::Value>(&page_config(&window, run, false)).unwrap()
 +        };
-+        set.add_filter_list(
-+            unhide.take_from(&text),
-+            ParseOptions {
-+                rule_types,
-+                ..ParseOptions::default()
-+            },
-+        );
-+    }
-+    let rules = set
-         .into_content_blocking()
-         .map(|(rules, _)| rules)
--        .unwrap_or_default()
-+        .unwrap_or_default();
-+    unhide.apply(rules)
-+}
-+
-+/// The lists' hiding exceptions (`example.com#@#.ad`: do not hide `.ad` on
-+/// example.com), kept away from adblock's conversion and applied here. The
-+/// conversion writes each one as "hide the selector on every site but that
-+/// one", which hid every `svg`, Google's logo and icons among them, on all
-+/// sites for the sake of one site's exception.
-+#[cfg(any(target_os = "macos", target_os = "linux", test))]
-+#[derive(Default)]
-+struct Unhide {
-+    /// Selector to the sites that keep it; an empty list is every site.
-+    sites: std::collections::HashMap<String, Vec<String>>,
-+}
-+
-+/// Where a hiding exception holds.
-+#[cfg(any(target_os = "macos", target_os = "linux", test))]
-+enum Sites {
-+    Every,
-+    Named(Vec<String>),
-+}
-+
-+#[cfg(any(target_os = "macos", target_os = "linux", test))]
-+impl Unhide {
-+    /// `text` without its hiding exceptions, which are remembered.
-+    fn take_from(&mut self, text: &str) -> String {
-+        let mut kept = String::with_capacity(text.len());
-+        for line in text.lines() {
-+            match Self::exception(line) {
-+                Some((Sites::Every, selector)) => {
-+                    self.sites.insert(selector.to_owned(), vec![String::new()]);
-+                }
-+                Some((Sites::Named(sites), selector)) => {
-+                    if sites.is_empty() {
-+                        continue;
-+                    }
-+                    let entry = self.sites.entry(selector.to_owned()).or_default();
-+                    if entry.first().is_none_or(|site| !site.is_empty()) {
-+                        entry.extend(sites);
-+                    }
-+                }
-+                None => {
-+                    kept.push_str(line);
-+                    kept.push('\n');
-+                }
-+            }
-+        }
-+        kept
-+    }
-+
-+    /// The sites and selector of a hiding exception, or `None` for any other
-+    /// line. An exception whose sites cannot be told to WebKit (`~site`,
-+    /// `site.*`, a non-ASCII name) is still taken, with those sites left out.
-+    fn exception(line: &str) -> Option<(Sites, &str)> {
-+        let line = line.trim();
-+        if line.starts_with('!') {
-+            return None;
-+        }
-+        let (at, mark) = ["#@#", "#@?#"]
-+            .iter()
-+            .filter_map(|mark| line.find(mark).map(|at| (at, *mark)))
-+            .min()?;
-+        if line[..at].contains('#') {
-+            return None;
-+        }
-+        let selector = line[at + mark.len()..].trim();
-+        if selector.is_empty() || selector.starts_with("+js(") {
-+            return None;
-+        }
-+        let named = line[..at]
-+            .split(',')
-+            .map(str::trim)
-+            .filter(|s| !s.is_empty());
-+        if named.clone().count() == 0 {
-+            return Some((Sites::Every, selector));
-+        }
-+        let sites = named
-+            .filter(
-```
-
----
-
-### Incident Patch 2: `d612863f` (2026-11-20)
-**Commit Message**: fix: keep the lists' page exceptions and reach subdomains with site hiding rules
-
-A sweep of the conversion after I-23 for the same fault, a list's meaning
-changed on the way to the engine. Three more held on every platform's hiding:
-
-- adblock writes a hiding rule's site as a bare name, which WebKit reads as
-  that host alone: `example.com##.ad` never applied on www.example.com, so
-  most site hiding rules did nothing on macOS and Linux. Measured in a
-  WKWebView: a rule for google.com hid nothing on www.google.com, the same
-  rule for *google.com did. Every site now carries the `*`.
-- `@@||site^$generichide`, `$elemhide` and `$document` were dropped or read as
-  exceptions for requests to the site, so about 370 sites the lists keep
-  generic hiding off (bing.com and duckduckgo.com search among them) still got
-  it. They are now ignore-previous-rules entries by site: the rules for every
-  site come first, then the sites that take none of them, then the rules for
-  named sites, then the sites that take no hiding. WebKit cannot cancel hiding
-  by page address (measured), so an exception for a path covers its site and
-  one without a plain host (`google.*`, `://localhost`) is left ou
-
-**File**: `src-tauri/src/app/content_blocking.rs` (modified, +231/-34)
-```diff
-@@ -82,7 +82,7 @@ fn filter_set(groups: &[&str], rule_types: RuleTypes, debug: bool) -> FilterSet
- /// its identifier, so a change to the conversion has to change this, or apps
- /// go on using the list the old conversion made.
- #[cfg(any(target_os = "macos", target_os = "linux", test))]
--const CONVERSION: &str = "unhide-2";
-+const CONVERSION: &str = "exceptions-3";
- 
- /// FNV-1a, enough to tell one selection of embedded lists from another.
- #[cfg(any(target_os = "macos", target_os = "linux", test))]
-@@ -127,16 +127,18 @@ fn webkit_identifier(groups: &[&str], unit: &str) -> String {
-     format!("{IDENTIFIER_PREFIX}{unit}-{:016x}", fingerprint(groups))
- }
- 
--/// The rules of one WebKit unit, ready to serialize.
--#[cfg(any(target_os = "macos", target_os = "linux", test))]
-+/// The rules of one WebKit unit, ready to serialize. Windows builds its
-+/// generic hiding from the same rules, so the three platforms agree.
- fn webkit_rules(groups: &[&str], rule_types: RuleTypes) -> Vec<adblock::content_blocking::CbRule> {
-     let mut set = FilterSet::new(true);
-     let mut unhide = Unhide::default();
-+    let mut allowed = Allowed::default();
-     for bytes in list_bytes(groups) {
-         let Some(text) = gunzip(bytes) else {
-             eprintln!("[Pake] A built-in filter list could not be read");
-             continue;
-         };
-+        allowed.take_from(&text);
-         set.add_filter_list(
-             unhide.take_from(&text),
-             ParseOptions {
-@@ -149,29 +151,123 @@ fn webkit_rules(groups: &[&str], rule_types: RuleTypes) -> Vec<adblock::content_
-         .into_content_blocking()
-         .map(|(rules, _)| rules)
-         .unwrap_or_default();
--    unhide.apply(rules)
-+    if matches!(rule_types, RuleTypes::CosmeticOnly) {
-+        allowed.order(unhide.apply(rules))
-+    } else {
-+        allowed.after_requests(rules)
-+    }
-+}
-+
-+/// The lists' page exceptions: `@@||site^$generichide` keeps the rules for
-+/// every site off a site, `$elemhide` every hiding rule, `$document` blocking
-+/// too. adblock's conversion drops the first two and reads the third as an
-+/// exception for requests to the site, so none of them held; EasyList keeps
-+/// generic hiding off about 350 sites this way. WebKit can only be told a
-+/// site, not a page: an exception for a path (`||bing.com/search?`) covers
-+/// its whole site, and one with no plain host is left out.
-+#[derive(Default)]
-+struct Allowed {
-+    generic_hiding: Vec<String>,
-+    hiding: Vec<String>,
-+    requests: Vec<String>,
-+}
-+
-+impl Allowed {
-+    fn take_from(&mut self, text: &str) {
-+        for line in text.lines() {
-+            let Some(rest) = line.trim().strip_prefix("@@||") else {
-+                continue;
-+            };
-+            let Some((pattern, options)) = rest.rsplit_once('$') else {
-+                continue;
-+            };
-+            let host = pattern
-+                .split(['/', '^', '|', ':', '?'])
-+                .next()
-+                .unwrap_or_default()
-+                .to_ascii_lowercase();
-+            let plain = host.contains('.')
-+                && host
-+                    .bytes()
-+                    .all(|b| b.is_ascii_alphanumeric() || b == b'.' || b == b'-');
-+            if !plain {
-+                continue;
-+            }
-+            let entry = format!("*{host}");
-+            for option in options.split(',') {
-+                let lists: &mut [&mut Vec<String>] = match option.trim() {
-+                    "generichide" | "ghide" => &mut [&mut self.generic_hiding],
-+                    "elemhide" | "ehide" => &mut [&mut self.hiding],
-+                    "document" | "doc" => &mut [&mut self.hiding, &mut self.requests],
-+                    _ => continue,
-+                };
-+                for list in lists.iter_mut() {
-+                    if !list.contains(&entry) {
-+                        list.push(entry.clone());
-+                    }
-+                }
-+            }
-+        }
-+    }
-+
-+    fn ignore(sites: &[String]) -> Option<adblock::content_blocking::CbRule> {
-+        use adblock::content_blocking::{CbAction, CbRule, CbTrigger, CbType};
-+        (!sites.is_empty()).then(|| CbRule {
-+            action: CbAction {
-+                typ: CbType::IgnorePreviousRules,
-+                selector: None,
-+            },
-+            trigger: CbTrigger {
-+                url_filter: ".*".to_owned(),
-+                if_domain: Some(sites.to_vec()),
-+                ..CbTrigger::default()
-+            },
-+        })
-+    }
-+
-+    /// Hiding rules for every site, the sites that take none of those, the
-+    /// rules for named sites, then the sites that take no hiding at all.
-+    fn order(
-+        &self,
-+        rules: Vec<adblock::content_blocking::CbRule>,
-+    ) -> Vec<adblock::content_blocking::CbRule> {
-+        let (specific, generic): (Vec<_>, Vec<_>) = rules
-+            .into_iter()
-+            .partition(|rule| rule.trigger.if_domain.is_some());
-+        generic
-+            .into_
-```
-
----
-
-### Incident Patch 3: `5adffb7c` (2026-11-21)
-**Commit Message**: chore: update the built-in filter lists to 2026-11-21
-
-The lists were six days old. tests/blocking/run.mjs on them: 59 of 60 pages covered, none failed; lib tests pass (141).
-
-**File**: `filters/sources.json` (modified, +11/-11)
-```diff
-@@ -1,45 +1,45 @@
- {
--  "fetched": "2026-11-15",
-+  "fetched": "2026-11-21",
-   "lists": [
-     {
-       "group": "ads",
-       "title": "EasyList",
--      "version": "202611150427",
-+      "version": "202611210107",
-       "url": "https://easylist.to/easylist/easylist.txt",
-       "license": "https://easylist.to/pages/licence.html",
--      "lines": 78503
-+      "lines": 78770
-     },
-     {
-       "group": "trackers",
-       "title": "EasyPrivacy",
--      "version": "202611150427",
-+      "version": "202611210107",
-       "url": "https://easylist.to/easylist/easyprivacy.txt",
-       "license": "https://easylist.to/pages/licence.html",
--      "lines": 57428
-+      "lines": 57545
-     },
-     {
-       "group": "cookies",
-       "title": "AdGuard Cookie Notices filter",
--      "version": "2.0.99.53",
-+      "version": "2.1.0.12",
-       "url": "https://filters.adtidy.org/extension/ublock/filters/18.txt",
-       "license": "https://github.com/AdguardTeam/AdguardFilters/blob/master/LICENSE",
--      "lines": 23869
-+      "lines": 23954
-     },
-     {
-       "group": "china",
-       "title": "EasyList China",
--      "version": "202611150422",
-+      "version": "202611210112",
-       "url": "https://easylist-downloads.adblockplus.org/easylistchina.txt",
-       "license": "https://easylist.to/pages/licence.html",
--      "lines": 17961
-+      "lines": 18014
-     },
-     {
-       "group": "unbreak",
-       "title": "uBlock filters – Unbreak",
--      "version": "Sat, 14 Nov 2026 04:57:45 +0000",
-+      "version": "Fri, 20 Nov 2026 11:05:13 +0000",
-       "url": "https://ublockorigin.github.io/uAssets/filters/unbreak.txt",
-       "license": "https://github.com/uBlockOrigin/uAssets/blob/master/LICENSE",
--      "lines": 6116
-+      "lines": 6088
+         assert_eq!(page(true)["site_styles"], false);
+         assert_eq!(page(false)["site_styles"], true);
++        assert!(page(true).get("page_popup").is_none());
++        let popup: serde_json::Value =
++            serde_json::from_str(&page_config(&window, true, true)).unwrap();
++        assert_eq!(popup["page_popup"], true);
      }
-   ]
  }
+```
+
+**File**: `src-tauri/src/inject/event.js` (modified, +4/-1)
+```diff
+@@ -169,7 +169,10 @@ function handleWindowShortcut(event) {
+     !event.altKey &&
+     !event.metaKey
+   ) {
+-    action = shiftShortcuts[event.key?.toLowerCase?.()];
++    // A window the page opened, such as a sign-in popup, is not the app's.
++    action = window.pakeConfig?.page_popup
++      ? undefined
++      : shiftShortcuts[event.key?.toLowerCase?.()];
+   } else if (
+     event.altKey &&
+     !event.ctrlKey &&
+```
+
+**File**: `tests/unit/event-fullscreen-shortcuts.test.js` (modified, +11/-0)
+```diff
+@@ -344,6 +344,17 @@ describe("event fullscreen shortcuts", () => {
+     expect(context.navigateCalls).toEqual([]);
+   });
+ 
++  it("leaves Ctrl+Shift+H alone in a window the page opened", () => {
++    const context = loadEventHelpers();
++    context.window.pakeConfig.page_popup = true;
++    const event = createKeyEvent("h", { ctrlKey: true, shiftKey: true });
++
++    getWindowShortcutHandler(context)(event);
++
++    expect(context.navigateCalls).toEqual([]);
++    expect(event.preventDefault).not.toHaveBeenCalled();
++  });
++
+   it("goes home by address from a page that has no IPC", async () => {
+     const press = async (config, platform) => {
+       const context = loadEventHelpers(platform ? { platform } : {});
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1442** (closed): merge (@prathamesh-2007)
 - **PR #1441** (2026-11-21): Added whatsapp to Gallery (@MalikHw)
 - **PR #1440** (2026-11-21): fix: return home shortcut to packaged URL (@thishakyawmh)
 - **PR #1439** (2026-11-21): fix: reject a bad --inject file before the build instead of dropping settings (@visveshkhanna)
 - **PR #1437** (closed): Update contributors and formatting (@alperenalbay)
 - **PR #1436** (2026-11-14): feat: accept macOS Icon Composer .icon files (#1433) (@adamsiwiec1)
-- **PR #1435** (2026-11-14): fix(cli): cancel in-flight icon downloads with builds (@yuxino)
 
 ---
 
@@ -1347,63 +1163,49 @@ The lists were six days old. tests/blocking/run.mjs on them: 59 of 60 pages cove
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. apply hiding exceptions to their own rules instead of hiding the selector everyw
+## X. never send a sign-in popup home from the menu or the shortcut
 
 **RULE**:
-When implementing operations in `src-tauri/src/app/content_blocking.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tw93/Pake. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src-tauri/src/app/navigation.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tw93/Pake. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c44435aa`: apply hiding exceptions to their own rules instead of hiding the selector everywhere. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5a37d382`: never send a sign-in popup home from the menu or the shortcut. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src-tauri/src/app/content_blocking.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src-tauri/src/app/navigation.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-#[cfg(target_os = "windows")]
-/// Names how the lists become WebKit rules. WebKit keeps a compiled list by
-/// its identifier, so a change to the conversion has to change this, or apps
-/// go on using the list the old conversion made.
-#[cfg(any(target_os = "macos", target_os = "linux", test))]
-const CONVERSION: &str = "unhide-2";
-
-    feed(CONVERSION.as_bytes());
-    let mut set = FilterSet::new(true);
-    let mut unhide = Unhide::default();
-    for bytes in list_bytes(groups) {
-        let Some(text) = gunzip(bytes) else {
-            eprintln!("[Pake] A built-in filter list could not be read");
-            continue;
-        };
-        set.add_filter_list(
-            unhide.take_from(&text),
-            ParseOptions {
-                rule_types,
-                ..ParseOptions::default()
-            },
-        );
-    }
-    let rules = set
-        .unwrap_or_default();
-    unhide.apply(rules)
+use crate::app::window::{MultiWindowState, POPUP_WINDOW_LABEL_PREFIX};
+/// A window a page opened, such as a sign-in popup, is not the app's: going
+/// home there would throw the sign-in away. Every way home (the macOS menu's
+/// Cmd+Shift+H, Ctrl+Shift+H on Windows and Linux, the IPC command) ends in
+/// `navigate_home`, so it is checked here once.
+pub fn goes_home(label: &str) -> bool {
+    !label.starts_with(POPUP_WINDOW_LABEL_PREFIX)
 }
 
-/// The lists' hiding exceptions (`example.com#@#.ad`: do not hide `.ad` on
-/// example.com), kept away from adblock's conversion and applied here. The
-/// conversion writes each one as "hide the selector on every site but that
-/// one", which hid every `svg`, Google's logo and icons among 
+    if !goes_home(window.label()) {
+        return;
+    }
+    #[test]
+    fn a_window_the_page_opened_never_goes_home() {
+        assert!(goes_home("pake"));
+        assert!(goes_home("pake-2"), "a Cmd+N clone is the app's own window");
+        assert!(!goes_home("pake-popup-3"), "a sign-in popup keeps its page");
+    }
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    filter_set(groups, rule_types, true)
-        .unwrap_or_default()
+use crate::app::window::MultiWindowState;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c44435aa` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5a37d382` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

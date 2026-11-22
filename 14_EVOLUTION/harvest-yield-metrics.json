@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T17:35:34.290Z",
-  "total_cycles_completed": 11539,
-  "total_learnings_persisted": 11539,
-  "total_rules_promoted": 10780,
+  "last_updated": "2026-11-22T17:44:31.402Z",
+  "total_cycles_completed": 11541,
+  "total_learnings_persisted": 11541,
+  "total_rules_promoted": 10781,
   "history": [
-    {
-      "timestamp": "2026-11-21T22:16:22.034Z",
-      "repository": "berty/berty",
-      "learningId": "learn-github-berty-berty",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T22:29:51.200Z",
-      "repository": "Comfy-Org/Wan-2.2",
-      "learningId": "learn-huggingface-comfy-org-wan-2-2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T22:29:58.643Z",
       "repository": "keybase/client",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-22T17:35:34.290Z",
       "repository": "ytsaurus/ytsaurus",
       "learningId": "learn-github-ytsaurus-ytsaurus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T17:44:29.644Z",
+      "repository": "deepseek-ai/DeepSeek-R1",
+      "learningId": "learn-huggingface-deepseek-ai-deepseek-r1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T17:44:31.402Z",
+      "repository": "tw93/Pake",
+      "learningId": "learn-github-tw93-pake",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
