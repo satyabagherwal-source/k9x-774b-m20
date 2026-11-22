@@ -5306,3 +5306,7 @@ https://huggingface.co/Lakonik/pi-H3
 # --- Automatically Discovered by AI Scout Engine [2026-11-22T11:14:06.602Z] ---
 # [MOBILE-CROSS-PLATFORM] abue-ammar/tinycast (5284 score) - A native macOS launcher for everyday productivity. Lightweight and open source.
 https://github.com/abue-ammar/tinycast
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-22T18:00:08.264Z] ---
+# [AI-AGENTS] BaaRai/ARTEX (10107 score) - ARTEX - AI autonomous penetration testing system (English translation; upstream:
+https://github.com/BaaRai/ARTEX

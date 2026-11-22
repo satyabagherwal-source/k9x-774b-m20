@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T17:53:05.368Z",
-  "total_cycles_completed": 11542,
-  "total_learnings_persisted": 11542,
-  "total_rules_promoted": 10781,
+  "last_updated": "2026-11-22T18:00:29.010Z",
+  "total_cycles_completed": 11546,
+  "total_learnings_persisted": 11546,
+  "total_rules_promoted": 10784,
   "history": [
-    {
-      "timestamp": "2026-11-21T22:30:08.061Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T22:40:04.298Z",
-      "repository": "Efficient-Large-Model/Open-H3-Regenerate-2K",
-      "learningId": "learn-huggingface-efficient-large-model-open-h3-regenerate-2k",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T22:40:14.188Z",
-      "repository": "authzed/spicedb",
-      "learningId": "learn-github-authzed-spicedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T22:48:21.604Z",
-      "repository": "AtomicChat/LFM3-1.7B-Uncensored-GGUF",
-      "learningId": "learn-huggingface-atomicchat-lfm3-1-7b-uncensored-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T22:48:38.316Z",
       "repository": "dathere/qsv",
@@ -1403,6 +1375,34 @@
       "repository": "moonshotai/Kimi-K3",
       "learningId": "learn-huggingface-moonshotai-kimi-k3",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T18:00:13.689Z",
+      "repository": "BaaRai/ARTEX",
+      "learningId": "learn-github-baarai-artex",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T18:00:17.624Z",
+      "repository": "stabilityai/stable-diffusion-xl-base-1.0",
+      "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T18:00:24.478Z",
+      "repository": "darrylmorley/whatcable",
+      "learningId": "learn-github-darrylmorley-whatcable",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T18:00:29.010Z",
+      "repository": "tailscale/tailscale",
+      "learningId": "learn-github-tailscale-tailscale",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

@@ -12139,3 +12139,7 @@
 | `CYCLE-20261122-MKSI` | `2026-11-22T17:44:29.634Z` | `deepseek-ai/DeepSeek-R1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-r1-learnings.md` | Yes (`8521ff16...`) |
 | `CYCLE-20261122-MM5C` | `2026-11-22T17:44:31.392Z` | `tw93/Pake` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9965` | Yes (`0b70be0e...`) |
 | `CYCLE-20261122-XMQ5` | `2026-11-22T17:53:05.357Z` | `moonshotai/Kimi-K3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-moonshotai-kimi-k3-learnings.md` | Yes (`04aeb1d2...`) |
+| `CYCLE-20261122-6T82` | `2026-11-22T18:00:13.682Z` | `BaaRai/ARTEX` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9966` | Yes (`8c22086c...`) |
+| `CYCLE-20261122-6W9D` | `2026-11-22T18:00:17.617Z` | `stabilityai/stable-diffusion-xl-base-1.0` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-xl-base-1.0-learnings.md` | Yes (`584a00c2...`) |
+| `CYCLE-20261122-71JL` | `2026-11-22T18:00:24.465Z` | `darrylmorley/whatcable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9967` | Yes (`702bb03d...`) |
+| `CYCLE-20261122-751N` | `2026-11-22T18:00:29.003Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9968` | Yes (`0121c05d...`) |

@@ -4,24 +4,24 @@
 {
   "source_repository": "darrylmorley/whatcable",
   "source_url": "https://github.com/darrylmorley/whatcable",
-  "source_version": "6dcd0c37",
+  "source_version": "0a49393d",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-19T16:33:22.034Z",
+  "timestamp": "2026-11-22T18:00:24.659Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-darrylmorley-whatcable",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [darrylmorley/whatcable](https://github.com/darrylmorley/whatcable) (Revision: `6dcd0c37`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-19T16:33:22.034Z`  
+> **Provenance**: Harvested from [darrylmorley/whatcable](https://github.com/darrylmorley/whatcable) (Revision: `0a49393d`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-22T18:00:24.659Z`  
 > **Learning ID**: `learn-github-darrylmorley-whatcable`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain D (Research & Knowledge Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), H (Technical Construction Intelligence), E (Creative Intelligence), B (Product Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 62%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), E (Creative Intelligence), B (Product Intelligence), A (Human & Need Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 77%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from darrylmorley/whatcable:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/darrylmorley-whatcable-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/darrylmorley/whatcable](https://github.com/darrylmorley/whatcable))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T16:33:20.825Z  
+> **Harvest Timestamp**: 2026-11-22T18:00:23.643Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: macOS menu bar app that tells you, in plain English, what each USB-C cable plugged into your Mac can actually do
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 9141 stars
+- **Stars / Engagement**: 9150 stars
 
 ---
 
@@ -1720,13 +1720,16 @@ public enum ConnectedDeviceTree {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #650** (2026-11-19): **[Bug] Separate controller information from cable information**
+  *Symptoms*: ### What's wrong  I have a cable plugged in and this software identifies it simultaneously as 10 GB and 40 GB and 80 GB.  Please separate out:  - Controller information and speed (put next to port information at top) - Cable information (keep in the cable notes) - Link information (put below next to the monitor connection)  ### Mac model  M4 Pro MacBook Pro  ### macOS version  16  ### WhatCable version  0.5.14  ### Cable  Apple Thunderbolt 3 cable  ### What's plugged into the other end?  Viewsonic 24" TB monitor  ### `whatcable --json --raw` output  ```shell NONE ```  ### System Information cross-check (optional)  _No response_  ### How often does this happen?  Every time  ### Anything else  <img width="1512" height="949" alt="Image" src="https://github.com/user-attachments/assets/08ce31d9-8f88-44b0-9a74-8d5c6a170745" /> <img width="821" height="396" alt="Image" src="https://github.com/user-attachments/assets/7f48aa68-1f8b-4682-a6fe-a882b81cf60b" />
+  **Post-Mortem & Fix Analysis**:
+  > I mean... I sort of see your point, but all of those details you mentioned _are_ cable details. Technically. They're just a bit jumbled.  The cable is: * Capable of USB connections at up to 10 Gbps * Capable of Thunderbolt links at up to 80 Gbps * Currently serving as a 40 Gbps Thunderbolt link  All three of those things can be true at the same time. Arguably, a couple of them could be reworded. (like, "Cable Speed: USB 3.2 Gen 2 (10 Gbps)" doesn't make it clear enough that that's _only_ the USB speed rating for the cable, not the overall speed rating — of which there isn't just a single one.)  But it's not really any different from the details (also present in that same list) that the cable: * Is rated for up to 100W USB PD * Is connected to a charger advertising 97 W * Has negotiated a 97 W USB power transfer  And more crucially, the fact that the monitor advertises 40 Gbps, and the fact that the cable is currently CARRYING 40 Gbps, are completely different things that shouldn't be c
+  > Today I learned that a cable can support a USB data rate and a thunderbolt sat rate and those are two independent numbers which can go up and down per cable.   ---  When I installed the software, my goal was:  1. Plug-in cable. 2. Identify capabilities of cable. 3. Print sticker.  The name of the software made me think that's what it would do. But actually, it does not.
+
 - **Issue #641** (2026-10-10): **[Bug] A blank settings window opens at launch**
   *Symptoms*: ### What's wrong  On app launch a blank setting window opens: <img width="1042" height="625" alt="Image" src="https://github.com/user-attachments/assets/48bc5eb8-5e79-47f9-8490-9eef89653330" />  ### Mac model  Mac Studio M5 Max  ### macOS version  27.0.1  ### WhatCable version  1.5.0b9  ### Cable  _No response_  ### What's plugged into the other end?  _No response_  ### `whatcable --json --raw` output  ```shell N/A ```  ### System Information cross-check (optional)  _No response_  ### How often does this happen?  Every time  ### Anything else  _No response_
   **Post-Mortem & Fix Analysis**:
   > Hi @i0ntempest, this should be fixed in beta 10, just shipped along with improvements to power diagnostics.
-
-- **Issue #611** (2026-09-14): **[Bug] new brew Warnings!**
-  *Symptoms*: ### What's wrong  FYI: new brew v7.0 says this warnings:  Warning: Calling the `verified` parameter in the `url` stanza is deprecated! Use the default URL verification behaviour instead. Please report this issue to the darrylmorley/homebrew-whatcable tap (not Homebrew/* repositories), or even better, submit a PR to fix it:   /opt/homebrew/Library/Taps/darrylmorley/homebrew-whatcable/Casks/whatcable.rb:5 . . .  ### Mac model  M4 MacBook  ### macOS version  15.7.9  ### WhatCable version  1.4  ### Cable  _No response_  ### What's plugged into the other end?  _No response_  ### `whatcable --json --raw` output  ```shell - ```  ### System Information cross-check (optional)  _No response_  ### How often does this happen?  Every time  ### Anything else  _No response_
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1743,420 +1746,382 @@ public enum ConnectedDeviceTree {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6dcd0c37` (2026-11-16)
-**Commit Message**: Mirror from private (dbb642d1)
+### Incident Patch 1: `0a49393d` (2026-11-21)
+**Commit Message**: Mirror from private (27bc7b2d)
 
-**File**: `Package.resolved` (modified, +1/-1)
+**File**: `Sources/WhatCableCore/Display/DisplayDiagnostic.swift` (modified, +10/-9)
 ```diff
-@@ -6,7 +6,7 @@
-       "location" : "https://github.com/darrylmorley/TUIkit.git",
-       "state" : {
-         "branch" : "main",
--        "revision" : "18246360bbdefd5ad7e5eab47955d47eac9d824f"
-+        "revision" : "c86e48dacbaf6ebcb002dbfa28164b6705282406"
-       }
+@@ -87,18 +87,19 @@ public struct DisplayDiagnostic {
+         public let preferredHeight: Int?
+         public let preferredRefreshHz: Int?
+         /// Refresh of the display's TOP MODE, as `resolveTopMode` resolved
+-        /// it: the highest-clock entry in the EDID's declared list, or the
++        /// it: the top-ranked entry in the EDID's declared list (highest
++        /// active pixel rate: `EDIDInfo.isHigherPriority`), or the
+         /// mode macOS reports when no declared entry matches it. **Not** the
+         /// 0xFD scan-range ceiling, which is the range of signals the panel
+         /// accepts rather than a mode it has (issue #596). The name is kept
+         /// because the Pro Display screen and the tests read it. nil only
+         /// when there is no readable EDID.
+         public let maxRefreshHz: Int?
+         /// Resolution of that same top mode, so a label never pairs one
+-        /// mode's refresh with another mode's resolution. `EDIDInfo.topMode`
+-        /// is max-by-pixel-clock, and a panel whose fastest timing is
+-        /// 1920x1080@240 while its preferred mode is 2560x1440 (Samsung
+-        /// Odyssey G60SD) has no 2560x1440@240 mode to label. nil exactly when
++        /// mode's refresh with another mode's resolution: a panel's highest
++        /// refresh and its largest picture are often different modes (the
++        /// Samsung Odyssey G60SD runs 240 Hz only at 1920x1080 and has no
++        /// 2560x1440@240 mode to label). nil exactly when
+         /// `maxRefreshHz` is nil.
+         public let topModeWidth: Int?
+         public let topModeHeight: Int?
+@@ -806,7 +807,7 @@ extension DisplayDiagnostic {
      }
-   ],
+ 
+     /// The highest-priority entry of `modes` by `EDIDInfo`'s own tie-break
+-    /// chain (pixel clock, area, refresh, then list order), admitting the
++    /// chain (picture pixel rate, area, refresh, clock, then list order), admitting the
+     /// same candidates `EDIDInfo.topMode` admits: every dimension above zero.
+     /// nil when nothing qualifies.
+     static func highestPriority(_ modes: [EDIDMode]) -> EDIDMode? {
+@@ -890,7 +891,7 @@ extension DisplayDiagnostic {
+     ///
+     /// Five steps, in order, and no other branch:
+     /// 1. The declared full-colour candidates, ranked by `EDIDInfo.topMode`'s
+-    ///    own chain (pixel clock, area, refresh, list order) over the same
++    ///    own chain (picture pixel rate, area, refresh, clock, list order) over the same
+     ///    list minus the `ycbcr420Only` entries (`isYCbCr420Only`).
+     ///    `preferredMode` plays no part in the ranking: it is the EDID's
+     ///    stated default, not its top, and may be absent.
+@@ -911,7 +912,7 @@ extension DisplayDiagnostic {
+     /// 2. No max mode from CoreGraphics, or one with no readable refresh:
+     ///    that candidate.
+     /// 3. The max mode matches a declared entry (`declaredMode(matching:in:)`):
+-    ///    that entry when its pixel clock is at least the candidate's, so a
++    ///    that entry unless the candidate outranks it on the same chain, so a
+     ///    max mode that IS a declared entry is labelled from that entry;
+     ///    otherwise the candidate. A max mode may only raise the top, never
+     ///    lower it: CoreGraphics builds its mode list from what the trained
+@@ -950,7 +951,7 @@ extension DisplayDiagnostic {
+         // 3. The max mode is a declared entry: label it from that entry, but
+         //    never let it lower the top.
+         if let matched = Self.declaredMode(matching: maxMode, in: edid) {
+-            if matched.pixelClockHz >= panelTop.pixelClockHz { return TopMode(declared: matched) }
++            if !EDIDInfo.isHigherPriority(panelTop, than: matched) { return TopMode(declared: matched) }
+             return TopMode(declared: panelTop)
+         }
+         // 4. Not declared anywhere: above the list it is macOS's fact alone,
 ```
 
-**File**: `Sources/WhatCableCore/Resources/de.lproj/Localizable.strings` (modified, +53/-2)
+**File**: `Sources/WhatCableCore/Display/EDIDInfo.swift` (modified, +26/-6)
 ```diff
-@@ -407,10 +407,10 @@
+@@ -80,8 +80,9 @@ public struct EDIDInfo: Hashable, Sendable {
+     /// CTA Video Format Preference entries that name a VIC, in preference order. A preference, not a mode source.
+     public let ctaPreferredVICs: [Int]
  
- /* Session monitor verdicts. */
- "Battery full, not drawing power" = "Battery full, not drawing power";
--"Performing as expected" = "Performing as expected";
-+"Performing as expected" = "Funktioniert wie erwartet";
- "No problems seen while watching this cable." = "No problems seen while watching this cable.";
- "Saw a brief drop or a single high reading. Not conclusive; still watching." = "Saw a brief drop or a single high reading. Not conclusive; still watching.";
--"Not performing as expected" = "Not performing as expected";
-+"Not performing as expected" = "Funktioniert nicht wie erwartet";
- "Isn't performing as expected" = "Isn't performing as expected";
+-    /// The entry with the highest pixel clock; ties broken by the larger picture (width * height),
+-    /// then the higher refresh, then the earlier entry in `modes`. Only entries with `width`,
++    /// The entry with the most picture pixels per second (width * height * refresh rounded to
++    /// whole hertz, blanking left out); ties broken by the larger picture, the higher refresh,
++    /// the higher pixel clock, then the earlier entry in `modes` (`isHigherPriority`). Only entries with `width`,
+     /// `height`, `hTotal` and `vTotal` all above zero are candidates: a descriptor with no
+     /// picture or no total (a 128x0 CTA DTD is a real corpus shape, and edid-decode prints it
+     /// with an `inf` refresh) is a declared fact that stays in `modes`, but it is not
+@@ -99,15 +100,34 @@ public struct EDIDInfo: Hashable, Sendable {
+         return best
+     }
  
- /* Power Monitor system power source indicator. */
-@@ -844,3 +844,54 @@
- "Thunderbolt devices disconnected" = "Thunderbolt-Geräte getrennt";
- "Wattage not reported" = "Wattzahl nicht gemeldet";
- "%@ (%@)" = "%1$@ (%2$@)";
-+
-+/* ===== Pro terminal dashboard (whatcable --dashboard). Fixed-width
-+   terminal UI: keep translations short. The key letters in the footer
-+   hints (Tab, r, c, q, the arrows, enter) are what the user presses,
-+   so they stay as they are. ===== */
-+"Tab switch  r refresh  c report  q quit  ↑↓ select  enter expand/collapse" = "Tab wechseln  r aktualisieren  c melden  q beenden  ↑↓ auswählen  enter auf-/zuklappen";
-+"Tab switch  r refresh  q quit  ↑↓ scroll" = "Tab wechseln  r aktualisieren  q beenden  ↑↓ blättern";
-+"Tab switch  r refresh  q quit" = "Tab wechseln  r aktualisieren  q beenden";
-+"Overview" = "Übersicht";
-+"Negotiation" = "Aushandlung";
-+"WhatCable Dashboard - %@" = "WhatCable-Dashboard - %@";
-+"Updated: %@" = "Aktualisiert: %@";
-+"waiting..." = "Warten...";
-+"No active connections" = "Keine aktiven Verbindungen";
-+"Live power per port. System totals at the top." = "Live-Leistung pro Anschluss. Systemsummen oben.";
-+"System" = "System";
-+"Desktop Mac (no battery)" = "Desktop-Mac (kein Akku)";
-+"Adapter: %@" = "Netzteil: %@";
-+"No charger" = "Kein Ladegerät";
-+"No active power ports" = "Keine aktiven Stromanschlüsse";
-+"no live draw  contract up to %@" = "keine Live-Messung  Vertrag bis zu %@";
-+"Waiting for telemetry..." = "Warte auf Telemetrie...";
-+"Contract: %@" = "Vertrag: %@";
-+"VConn: %@  %@" = "VConn: %1$@  %2$@";
-+"Resistance: %@" = "Widerstand: %@";
-+"Health: %@" = "Zustand: %@";
-+"no live draw to chart" = "keine Live-Messung für das Diagramm";
-+"Draw  (%@)" = "Verbrauch  (%@)";
-+"last %llds" = "letzte %llds";
-+"last %lldm" = "letzte %lldm";
-+"last %lldm %llds" = "letzte %1$lldm %2$llds";
-+"Worth keeping an eye on" = "Im Auge behalten";
-+"Signal conflict detected" = "Signalkonflikt erkannt";
-+"Cable e-marker says %@ but controller reads %@." = "Der e-marker des Kabels meldet %1$@, der Controller liest aber %2$@.";
-+"The controller's reading is used." = "Der Wert des Controllers wird verwendet.";
-+"Ports" = "Anschlüsse";
-+"Data: %@" = "Daten: %@";
-+"Charging: %@" = "Laden: %@";
-+"Battery: fully charged" = "Akku: vollständig geladen";
-+"Charging path: %@" = "Ladepfad: %@";
-+"No active power sources" = "Keine aktiven Stromquellen";
-+"Port %lld" = "Anschluss %lld";
-+"measuring (%@)" = "Messung läuft (%@)";
-+"~%lld mOhm path est. (%@, %@ A span, R2 %@)" = "~%1$lld mOhm Pfad geschätzt (%2$@, %3$@ A Spanne, R2 %4$@)";
-+"No Thunderbolt controller" = "Kein Thunderbolt-Controller";
-+"%@, up to %lld Gb/s" = "%1$@, bis zu %2$lld Gbit/s";
-+"No data-capable ports" = "Keine datenfähigen Anschlüsse";
-+/* Thunderbolt panel: a link (%1$@, such as "USB4 40 Gb/s") to the device at its far end (%2$@). Not a range: never reuse for "from A to B". */
-+"%@ to %@ (Thunderbolt link to a device)" = "%1$@ an %2$@";
-+"Power adapter" = "Netzteil";
-+"error: %@" = "Fehler: %@";
+-    /// `a` beats `b` on the `topMode` tie-break chain: pixel clock, then picture area, then
+-    /// refresh. A full tie returns false, which keeps whichever of the two `topMode`'s scan
+-    /// already holds, so the earlier entry in `modes` wins ties.
++    /// `a` beats `b` on the `topMode` chain, compared field by field in this order:
++    /// 1. picture pixels per second at the refresh rounded to whole hertz
++    ///    (width x height x rounded refresh, halved for interlaced; blanking left out),
++    /// 2. picture area,
++    /// 3. rounded refresh,
++    /// 4. pixel clock,
++    /// 5. exact refresh.
++    /// Not the clock first: it counts blanking, so the same picture at a lower refresh can
++    /// carry the higher clock (CTA 4K50 at 594 MHz against CVT-RB 4K60 at 533.25 MHz, issue
++    /// #677). Not area first: a super-ultrawide's 4K scaler entry has more pixels than its
++    /// native picture (Odyssey Neo G9, 3840x2160@60 against 5120x1440@120). Refresh is
++    /// rounded so that two entries for one mode (a 60.001 Hz reduced-blanking DTD and CTA
++    /// VIC 97 at 60.000) are told apart by clock, not by thousandths of a hertz; rounding,
++    /// rather than a "within 0.5 Hz" test, keeps the chain a strict ordering, so the top never
++    /// depends on the order of `modes`. A full tie returns false, which keeps whichever of the
++    /// two `topMode`'s scan already holds, so the earlier entry in `modes` wins ties.
+     /// Internal rather than private: `DisplayDiagnostic` ranks a filtered list with this same chain.
+     static func isHigherPriority(_ a: EDIDMode, than b: EDIDMode) -> Bool {
+-        if a.pixelClockHz != b.pixelClockHz { return a.pixelClockHz > b.pixelClockHz }
++        let aRefresh = a.refreshHz.rounded()
++        let bRefresh = b.refreshHz.rounded()
++        let aRate = Double(a.width * a.height) * aRefresh / (a.interlaced ? 2 : 1)
++        let bRate = Double(b.width * b.height) * bRefresh / (b.interlaced ? 2 : 1)
++        if aRate != bRate { return aRate > bRate }
+         let aArea = a.width * a.height
+         let bArea = b.width * b.height
+         if aArea != bArea { return aArea > bArea }
++        if aRefresh != bRefresh { return aRefresh > bRefresh }
++        if a.pixelClockHz != b.pixelClockHz { return a.pixelClockHz > b.pixelClockHz }
+         if a.refreshHz != b.refreshHz { return a.refreshHz > b.refreshHz }
+         return false
+     }
 ```
 
-**File**: `Sources/WhatCableCore/Resources/de.lproj/Localizable.stringsdict` (modified, +33/-0)
+**File**: `Sources/WhatCableCore/Output/JSONFormatter.swift` (modified, +1/-1)
 ```diff
-@@ -50,5 +50,38 @@
- 			<string>%lld Hubs anzeigen</string>
+@@ -1013,7 +1013,7 @@ private struct DisplayDTO: Codable {
+     /// The display's highest mode from CoreGraphics, EDID-free.
+     let maxMode: CurrentModeDTO?
+     /// The display's top mode as `DisplayDiagnostic.resolveTopMode` resolved
+-    /// it: the highest-clock declared entry, or the CoreGraphics-only mode
++    /// it: the top-ranked declared entry, or the CoreGraphics-only mode
+     /// when nothing declared matches. nil exactly when `edid` is nil.
+     let topMode: TopModeDTO?
+     /// The full parsed EDID: every declared mode, in every format the EDID
+```
+
+**File**: `Sources/WhatCableCore/Resources/it.lproj/Localizable.strings` (modified, +1/-1)
+```diff
+@@ -188,7 +188,7 @@
+ "Could not load the device list. Try again later." = "Impossibile caricare l'elenco dei dispositivi. Riprova più tardi.";
+ "Could not reach the licence server. Check your internet connection and try again." = "Impossibile raggiungere il server delle licenze. Controlla la connessione internet e riprova.";
+ "I2C error count" = "Conteggio errori I2C";
+-"Inactive" = "Non attivo";
++"Inactive" = "Inattivo";
+ "Invalid licence key. Check the key and try again." = "Chiave di licenza non valida. Controlla la chiave e riprova.";
+ "Lanes" = "Lane";
+ "Licence…" = "Licenza…";
+```
+
+**File**: `Sources/WhatCableCore/Resources/it.lproj/Localizable.stringsdict` (modified, +2/-2)
+```diff
+@@ -78,9 +78,9 @@
+ 			<key>NSStringFormatValueTypeKey</key>
+ 			<string>lld</string>
+ 			<key>one</key>
+-			<string>%lld porta non attiva</string>
++			<string>%lld porta inattiva</string>
+ 			<key>other</key>
+-			<string>%lld porte non attive</string>
++			<string>%lld porte inattive</string>
  		</dict>
  	</dict>
-+	<!-- Pro terminal dashboard, the CLI dashboard flag. -->
-+	<key>%lld samples</key>
-+	<dict>
-+		<key>NSStringLocalizedFormatKey</key>
-+		<string>%#@count@</string>
-+		<key>count</key>
-+		<dict>
-+			<key>NSStringFormatSpecTypeKey</key>
-+			<string>NSStringPluralRuleType</string>
-+			<key>NSStringFormatValueTypeKey</key>
-+			<string>lld</string>
-+			<key>one</key>
-+			<string>%lld Messwert</string>
-+			<key>other</key>
-+			<string>%lld Messwerte</string>
-+		</dict>
-+	</dict>
-+	<key>%lld ports idle</key>
-+	<dict>
-+		<key>NSStringLocalizedFormatKey</key>
-+		<string>%#@count@</string>
-+		<key>count</key>
-+		<dict>
-+			<key>NSStringFormatSpecTypeKey</key>
-+			<string>NSStringPluralRuleType</string>
-+			<key>NSStringFormatValueTypeKey</key>
-+			<string>lld</string>
-+			<key>one</key>
-+			<string>%lld Anschluss inaktiv</string>
-+			<key>other</key>
-+			<string>%lld Anschlüsse inaktiv</string>
-+		</dict>
-+	</dict>
  </dict>
- </plist>
 ```
 
-**File**: `Sources/WhatCableCore/Resources/en.lproj/Localizable.strings` (modified, +51/-0)
+**File**: `Tests/WhatCableCoreTests/DisplayDiagnosticTests.swift` (modified, +14/-12)
 ```diff
-@@ -848,3 +848,54 @@
- "Thunderbolt devices disconnected" = "Thunderbolt devices disconnected";
- "Wattage not reported" = "Wattage not reported";
- "%@ (%@)" = "%@ (%@)";
+@@ -1084,7 +1084,7 @@ struct DisplayDiagnosticTests {
+ 
+     @Test("No max mode: the declared top stands")
+     func noMaxModeTheDeclaredTopStands() throws {
+-        // No CoreGraphics data at all. The highest-clock declared entry is
++        // No CoreGraphics data at all. The top-ranked declared entry is
+         // the top mode, and the 0xFD envelope is ignored even though it sits
+         // well above it. (The issue #596 regression fixture, expectation
+         // unchanged.)
+@@ -1188,7 +1188,7 @@ struct DisplayDiagnosticTests {
+ 
+     /// Samsung Odyssey G60SD's shape, from customer probe `m5_macos27.0_p`:
+     /// preferred 2560x1440@60, and a fastest timing of 1920x1080@240 that
+-    /// wins `topMode` on pixel clock. There is no 2560x1440@240
++    /// wins `topMode` on picture pixel rate. There is no 2560x1440@240
+     /// mode, so a heading reading "2560 x 1440 · up to 240Hz" names a mode
+     /// the panel does not have. Ten corpus panels share the shape.
+     private let odysseyG60SD = EDIDInfo.fixture(
+@@ -1802,14 +1802,15 @@ struct DisplayDiagnosticTests {
+ 
+     @Test("Ruling 41: a scaler entry the node never lists is skipped and the listed entry below it is the top (the 1600x1200 DMT on a 1080p Dell)")
+     func scalerTopIsSkippedForTheEntryTheNodeLists() throws {
+-        // A 1080p panel whose EDID's highest-clock entry is a 1600x1200 standard timing; the node lists 1080p only.
++        // A 1080p panel whose EDID's top-ranked entry is a 1600x1200@75 standard timing (VESA DMT, 202.5 MHz:
++        // 144 M picture pixels/s against 1080p60's 124.4 M); the node lists 1080p only.
+         let panel = EDIDInfo.fixture(name: "DELL P2219H", version: (1, 4),
+                                      preferred: EDIDInfo.mode(1920, 1080, hTotal: 2200, vTotal: 1125, pixelClockHz: 148_500_000),
+-                                     modes: [EDIDInfo.mode(1600, 1200, hTotal: 2160, vTotal: 1250, pixelClockHz: 162_000_000, source: .detailedTiming(block: 0, index: 1))])
+-        // (On the real panel the 1600x1200 is a standard timing; the source plays no part in the resolver, which reads the clock.)
++                                     modes: [EDIDInfo.mode(1600, 1200, hTotal: 2160, vTotal: 1250, pixelClockHz: 202_500_000, source: .detailedTiming(block: 0, index: 1))])
++        // (On the real panel the 1600x1200 is a standard timing; the source plays no part in the resolver's ranking.)
+         let live = DisplayCurrentMode(width: 1920, height: 1080, refreshHz: 60, bitsPerComponent: 8, pixelClockHz: 148_500_000, pixelEncoding: .rgb444)
+         let statement = Self.offering([Self.listing(1920, 1080, 60.0, 148_500_000)])
+-        // Without the statement the resolver still picks the 162 MHz entry (as today).
++        // Without the statement the resolver still picks the 1600x1200@75 entry (as today).
+         let declaredOnly = try #require(DisplayDiagnostic.resolveTopMode(maxMode: nil, edid: panel))
+         #expect(declaredOnly.width == 1600, "fixture guard: the declared top is the scaler entry")
+         // With it, step 1b walks past the entry the node never lists.
+@@ -1949,7 +1950,7 @@ struct DisplayDiagnosticTests {
+ 
+     @Test("DisplayID Type IV and Type VIII entries are code lists, like the two bitmap tags: a picture-only one is skipped, not kept as a link-limited native mode (PR #665 gate fix round 4, item 1)")
+     func displayIDCodeListTypesAreNotNativeDeclarations() throws {
+-        // A 1080p panel whose EDID carries a 1600x1200@60 entry through a DisplayID code list; the node
++        // A 1080p panel whose EDID carries a 1600x1200@75 entry through a DisplayID code list; the node
+         // lists 1600x1200 at 30 Hz only beside the native 1080p60. A Type I entry of that shape is the
+         // ruling's accepted cost (it stays, not offered); the four code-list types must be skipped and
+         // the top must stay the listed 1080p60.
+@@ -1958,7 +1959,7 @@ struct DisplayDiagnosticTests {
+         for type in [EDIDMode.DisplayIDTimingType.typeIV, .typeVIII, .vesaDMTBitmap, .ctaVICBitmap] {
+             let panel = EDIDInfo.fixture(name: "DELL P2219H", version: (1, 4),
+                                          preferred: EDIDInfo.mode(1920, 1080, hTotal: 2200, vTotal: 1125, pixelClockHz: 148_500_000),
+-                                         modes: [EDIDInfo.mode(1600, 1200, hTotal: 2160, vTotal: 1250, pixelClockHz: 162_000_000,
++                                         modes: [EDIDInfo.mode(1600, 1200, hTotal: 2160, vTotal: 1250, pixelClockHz: 202_500_000,
+                                                                source: .displayID(block: 1, type: type, index: 0, embeddedInCTA: false))])
+             let codeList = try #require(DisplayDiagnostic.resolveTopMode(maxMode: nil, edid: panel, statement: statement))
+             #expect(codeList.width == 1920 && codeList.height == 1080, "\(type): a code-list entry listed at 30 only is a scaler entry, got \(codeList.width)x\(codeList.height)")
+```
+
+**File**: `Tests/WhatCableCoreTests/EDIDInfoTests.swift` (modified, +87/-0)
+```diff
+@@ -2113,4 +2113,91 @@ struct EDIDInfoTests {
+         #expect(edid.blocks[0].kind == .base)
+         #expect(edid.blocks[1].kind == .cta861)
+     }
 +
-+/* ===== Pro terminal dashboard (whatcable --dashboard). Fixed-width
-+   terminal UI: keep translations short. The key letters in the footer
-+   hints (Tab, r, c, q, the arrows, enter) are what the user presses,
-+   so they stay as they are. ===== */
-+"Tab switch  r refresh  c report  q quit  ↑↓ select  enter expand/collapse" = "Tab switch  r refresh  c report  q quit  ↑↓ select  enter expand/collapse";
-+"Tab switch  r refresh  q quit  ↑↓ scroll" = "Tab switch  r refresh  q quit  ↑↓ scroll";
-+"Tab switch  r refresh  q quit" = "Tab switch  r refresh  q quit";
-+"Overview" = "Overview";
-+"Negotiation" = "Negotiation";
-+"WhatCable Dashboard - %@" = "WhatCable Dashboard - %@";
-+"Updated: %@" = "Updated: %@";
-+"waiting..." = "waiting...";
-+"No active connections" = "No active connections";
-+"Live power per port. System totals at the top." = "Live power per port. System totals at the top.";
-+"System" = "System";
-+"Desktop Mac (no battery)" = "Desktop Mac (no battery)";
-+"Adapter: %@" = "Adapter: %@";
-+"No charger" = "No charger";
-+"No active power ports" = "No active power ports";
-+"no live draw  contract up to %@" = "no live draw  contract up to %@";
-+"Waiting for telemetry..." = "Waiting for telemetry...";
-+"Contract: %@" = "Contract: %@";
-+"VConn: %@  %@" = "VConn: %1$@  %2$@";
-+"Resistance: %@" = "Resistance: %@";
-+"Health: %@" = "Health: %@";
-+"no live draw to chart" = "no live draw to chart";
-+"Draw  (%@)" = "Draw  (%@)";
-+"last %llds" = "last %llds";
-+"last %lldm" = "last %lldm";
-+"last %lldm %llds" = "last %1$lldm %2$llds";
-+"Worth keeping an eye on" = "Worth keeping an eye on";
-+"Signal conflict detected" = "Signal conflict detected";
-+"Cable e-marker says %@ but controller reads %@." = "Cable e-marker says %1$@ but controller reads %2$@.";
-+"The controller's reading is used." = "The controller's reading is used.";
-+"Ports" = "Ports";
-+"Data: %@" = "Data: %@";
-+"Charging: %@" = "Charging: %@";
-+"Battery: fully charged" = "Battery: fully charged";
-+"Charging path: %@" = "Charging path: %@";
-+"No active power sources" = "No active power sources";
-+"Port %lld" = "Port %lld";
-+"measuring (%@)" = "measuring (%@)";
-+"~%lld mOhm path est. (%@, %@ A span, R2 %@)" = "~%1$lld mOhm path est. (%2$@, %3$@ A span, R2 %4$@)";
-+"No Thunderbolt controller" = "No Thunderbolt controller";
-+"%@, up to %lld Gb/s" = "%1$@, up to %2$lld Gb/s";
-+"No data-capable ports" = "No data-capable ports";
-+/* Thunderbolt panel: a link (%1$@, such as "USB4 40 Gb/s") to the device at its far end (%2$@). Not a range: never reuse for "from A to B". */
-+"%@ to %@ (Thunderbolt link to a device)" = "%1$@ to %2$@";
-+"Power adapter" = "Power adapter";
-+"error: %@" = "error: %@";
++    // MARK: Issue #677: a CTA 4K50 must not outrank a reduced-blanking 4K60
++
++    /// The two 4K entries from the Mi Monitor in issue #677 (public
++    /// darrylmorley/whatcable#677). The base DTD is 3840x2160 at 60 Hz with
++    /// CVT reduced blanking (4000 x 2222 totals, 533.25 MHz); CTA VIC 96 is
++    /// 3840x2160 at 50 Hz with standard CTA blanking (5280 x 2250 totals,
++    /// 594 MHz). The 50 Hz entry has the higher clock only because it carries
++    /// more blanking: it is the lesser picture.
++    static let mi4K60RB = EDIDMode(
++        width: 3840, height: 2160, hTotal: 4000, vTotal: 2222,
++        pixelClockHz: 533_250_000, interlaced: false,
++        source: .detailedTiming(block: 0, index: 0))
++    static let mi4K50CTA = EDIDMode(
++        width: 3840, height: 2160, hTotal: 5280, vTotal: 2250,
++        pixelClockHz: 594_000_000, interlaced: false,
++        source: .ctaVIC(block: 1, vic: 96, native: false, ycbcr420Only: false))
++
++    static func miMonitorEDID() -> EDIDInfo {
++        EDIDInfo(
++            monitorName: "Mi Monitor", versionMajor: 1, versionMinor: 4,
++            continuousFrequency: nil, preferredMode: mi4K60RB,
++            modes: [mi4K60RB, mi4K50CTA], undecodedStandardTimings: [],
++            rangeLimits: nil, displayIDRangeLimits: nil, dynamicRangeLimits: nil,
++            blocks: [], declaredExtensionCount: 1, tiledTopology: nil,
++            ctaPreferredVICs: [])
++    }
++
++    @Test("#677: the same picture at a higher refresh is the top mode, whatever the blanking")
++    func topModePrefersRefreshOverClock() throws {
++        let top = try #require(Self.miMonitorEDID().topMode)
++        #expect(top.width == 3840)
++        #expect(top.height == 2160)
++        #expect(Int(top.refreshHz.rounded()) == 60)
++        #expect(top.pixelClockHz == 533_250_000)
++    }
++
++    @Test("#677: macOS's 4K60 max mode is the resolved top, not the CTA 4K50")
++    func resolveTopModeKeepsMacOSMaxMode() throws {
++        let maxMode = DisplayCurrentMode(width: 3840, height: 2160, refreshHz: 60, pixelClockHz: 533_250_000)
++        let top = try #require(DisplayDiagnostic.resolveTopMode(maxMode: maxMode, edid: Self.miMonitorEDID()))
++        #expect(top.width == 3840)
++        #expect(top.height == 2160)
++        #expect(Int(top.refreshHz.rounded()) == 60)
++    }
++
++    @Test("#677 review: two entries for the same 4K60 are one mode, so the clock picks the entry, not 0.001 Hz")
++    func sameModeTwinsRankByClock() throws {
++        // BenQ PD2700U shape (corpus m4_macos26.5.2_ao): a reduced-blanking DTD that computes to
++        // 60.001 Hz beside CTA VIC 97 at exactly 60.000 Hz. Ranking on refresh would pick the DTD
++        // for this panel and the VIC for one whose DTD computes to 59.997 Hz.
++        let dtd = EDIDMode(width: 3840, height: 2160, hTotal: 4000, vTotal: 2222,
++                           pixelClockHz: 533_290_000, interlaced: false,
++                           source: .detailedTiming(block: 0, index: 0))
++        let vic97 = EDIDMode(width: 3840, height: 2160, hTotal: 4400, vTotal: 2250,
++                             pixelClockHz: 594_000_000, interlaced: false,
++                             source: .ctaVIC(block: 1, vic: 97, native: false, ycbcr420Only: false))
++        #expect(dtd.refreshHz > vic97.refreshHz, "fixture guard: the DTD computes the higher refresh")
++        let edid = EDIDInfo(
++            monitorName: "PD2700U", versionMajor: 1, versionMinor: 4,
++            continuousFrequency: nil, preferredMode: dtd,
++            modes: [dtd, vic97], undecodedStandardTimings: [],
++            rangeLimits: nil, displayIDRangeLimits: nil, dynamicRangeLimits: nil,
++            blocks: [], declaredExtensionCount: 1, tiledTopology: nil,
++            ctaPreferredVICs: [])
++        #expect(edid.topMode == vic97)
++    }
++
++    @Test("#677 review: the top never depends on the order of the declared list")
++    func topModeIsOrderIndependent() throws {
++        // Three 1080p entries whose refreshes sit within 0.5 Hz of their neighbours but not of
++        // each other. A "within 0.5 Hz is the same mode" rule ranked them in a circle
++        // (59.6 over 60.0 by clock, 60.0 over 60.4 by clock, 60.4 over 59.6 by rate), so each
++        // rotation of the list returned a different top.
++        let a = EDIDMode(width: 1920, height: 1080, hTotal: 2200, vTotal: 1350, pixelClockHz: 177_012_000, interlaced: false, source: .detailedTiming(block: 0, index: 0))
++        let b = EDIDMode(width: 1920, height: 1080, hTotal: 2200, vTotal: 1125, pixelClockHz: 148_500_000, interlaced: false, source: .detailedTiming(block: 0, index: 1))
++        let c = EDIDMode(width: 1920, height: 1080, hTotal: 2080, vTotal: 1111, pixelClockHz: 139_577_000, interlaced: false, source: .detailedTiming(block: 0, index: 2))
++        #expect(abs(a.refreshHz - 59.6)
 ```
 
-**File**: `Sources/WhatCableCore/Resources/en.lproj/Localizable.stringsdict` (modified, +33/-0)
+**File**: `Tests/WhatCableCoreTests/EDIDModeTests.swift` (modified, +2/-2)
 ```diff
-@@ -50,5 +50,38 @@
- 			<string>Show %lld hubs</string>
+@@ -9,13 +9,13 @@ struct EDIDModeTests {
+         let m = EDIDInfo.mode(1920, 1080, hTotal: 2200, vTotal: 1125, pixelClockHz: 74_250_000, interlaced: true)
+         #expect(abs(m.refreshHz - 60.0) < 0.001)
+     }
+-    @Test("topMode is the highest pixel clock, then the larger picture, then the higher refresh")
++    @Test("topMode is the highest picture pixel rate (width x height x refresh): 1440p180 outranks the preferred 4K60")
+     func topModeOrder() {
+         let a = EDIDInfo.mode(3840, 2160, hTotal: 4400, vTotal: 2250, pixelClockHz: 594_000_000)
+         let b = EDIDInfo.mode(2560, 1440, hTotal: 2720, vTotal: 1525, pixelClockHz: 746_640_000, source: .displayID(block: 2, type: .typeI, index: 0, embeddedInCTA: false))
+         let c = EDIDInfo.mode(1920, 1080, hTotal: 2200, vTotal: 1125, pixelClockHz: 148_500_000, source: .ctaVIC(block: 1, vic: 16, native: true, ycbcr420Only: false))
+         let e = EDIDInfo.fixture(preferred: a, modes: [a, c, b])
+-        #expect(e.topMode == b)
++        #expect(e.topMode == b, "1440p180 is 663.6 M picture pixels/s against 4K60's 497.7 M")
+         #expect(e.modes.count == 3)
+         #expect(e.preferredWidth == 3840)
+     }
+```
+
+---
+
+### Incident Patch 2: `78993515` (2026-11-21)
+**Commit Message**: Italian language update (#675)
+
+* Update Localizable.strings
+
+* Update Localizable.stringsdict
+
+**File**: `Sources/WhatCableCore/Resources/it.lproj/Localizable.strings` (modified, +1/-1)
+```diff
+@@ -188,7 +188,7 @@
+ "Could not load the device list. Try again later." = "Impossibile caricare l'elenco dei dispositivi. Riprova più tardi.";
+ "Could not reach the licence server. Check your internet connection and try again." = "Impossibile raggiungere il server delle licenze. Controlla la connessione internet e riprova.";
+ "I2C error count" = "Conteggio errori I2C";
+-"Inactive" = "Inattivo";
++"Inactive" = "Non attivo";
+ "Invalid licence key. Check the key and try again." = "Chiave di licenza non valida. Controlla la chiave e riprova.";
+ "Lanes" = "Lane";
+ "Licence…" = "Licenza…";
+```
+
+**File**: `Sources/WhatCableCore/Resources/it.lproj/Localizable.stringsdict` (modified, +2/-2)
+```diff
+@@ -78,9 +78,9 @@
+ 			<key>NSStringFormatValueTypeKey</key>
+ 			<string>lld</string>
+ 			<key>one</key>
+-			<string>%lld porta inattiva</string>
++			<string>%lld porta non attiva</string>
+ 			<key>other</key>
+-			<string>%lld porte inattive</string>
++			<string>%lld porte non attive</string>
  		</dict>
  	</dict>
-+	<!-- Pro terminal dashboard, the CLI dashboard flag. -->
-+	<key>%lld samples</key>
-+	<dict>
-+		<key>NSStringLocalizedFormatKey</key>
-+		<string>%#@count@</string>
-+		<key>count</key>
-+		<dict>
-+			<key>NSStringFormatSpecTypeKey</key>
-+			<string>NSStringPluralRuleType</string>
-+			<key>NSStringFormatValueTypeKey</key>
-+			<string>lld</string>
-+			<key>one</key>
-+			<string>%lld sample</string>
-+			<key>other</key>
-+			<string>%lld samples</string>
-+		</dict>
-+	</dict>
-+	<key>%lld ports idle</key>
-+	<dict>
-+		<key>NSStringLocalizedFormatKey</key>
-+		<string>%#@count@</string>
-+		<key>count</key>
-+		<dict>
-+			<key>NSStringFormatSpecTypeKey</key>
-+			<string>NSStringPluralRuleType</string>
-+			<key>NSStringFormatValueTypeKey</key>
-+			<string>lld</string>
-+			<key>one</key>
-+			<string>%lld port idle</string>
-+			<key>other</key>
-+			<string>%lld ports idle</string>
-+		</dict>
-+	</dict>
  </dict>
- </plist>
-```
-
-**File**: `Sources/WhatCableCore/Resources/es.lproj/Localizable.strings` (modified, +53/-2)
-```diff
-@@ -407,10 +407,10 @@
- 
- /* Session monitor verdicts. */
- "Battery full, not drawing power" = "Battery full, not drawing power";
--"Performing as expected" = "Performing as expected";
-+"Performing as expected" = "Funciona como se esperaba";
- "No problems seen while watching this cable." = "No problems seen while watching this cable.";
- "Saw a brief drop or a single high reading. Not conclusive; still watching." = "Saw a brief drop or a single high reading. Not conclusive; still watching.";
--"Not performing as expected" = "Not performing as expected";
-+"Not performing as expected" = "No funciona como se esperaba";
- "Isn't performing as expected" = "Isn't performing as expected";
- 
- /* Power Monitor system power source indicator. */
-@@ -844,3 +844,54 @@
- "Thunderbolt devices disconnected" = "Dispositivos Thunderbolt desconectados";
- "Wattage not reported" = "Potencia no reportada";
- "%@ (%@)" = "%1$@ (%2$@)";
-+
-+/* ===== Pro terminal dashboard (whatcable --dashboard). Fixed-width
-+   terminal UI: keep translations short. The key letters in the footer
-+   hints (Tab, r, c, q, the arrows, enter) are what the user presses,
-+   so they stay as they are. ===== */
-+"Tab switch  r refresh  c report  q quit  ↑↓ select  enter expand/collapse" = "Tab cambiar  r actualizar  c informar  q salir  ↑↓ seleccionar  enter expandir/contraer";
-+"Tab switch  r refresh  q quit  ↑↓ scroll" = "Tab cambiar  r actualizar  q salir  ↑↓ desplazar";
-+"Tab switch  r refresh  q quit" = "Tab cambiar  r actualizar  q salir";
-+"Overview" = "Resumen";
-+"Negotiation" = "Negociación";
-+"WhatCable Dashboard - %@" = "Panel de WhatCable - %@";
-+"Updated: %@" = "Actualizado: %@";
-+"waiting..." = "esperando...";
-+"No active connections" = "No hay conexiones activas";
-+"Live power per port. System totals at the top." = "Alimentación en vivo por puerto. Totales del sistema arriba.";
-+"System" = "Sistema";
-+"Desktop Mac (no battery)" = "Mac de escritorio (sin batería)";
-+"Adapter: %@" = "Adaptador: %@";
-+"No charger" = "Sin cargador";
-+"No active power ports" = "No hay puertos de alimentación activos";
-+"no live draw  contract up to %@" = "sin consumo en vivo  contrato hasta %@";
-+"Waiting for telemetry..." = "Esperando telemetría...";
-+"Contract: %@" = "Contrato: %@";
-+"VConn: %@  %@" = "VConn: %1$@  %2$@";
-+"Resistance: %@" = "Resistencia: %@";
-+"Health: %@" = "Estado: %@";
-+"no live draw to chart" = "sin consumo en vivo que graficar";
-+"Draw  (%@)" = "Consumo  (%@)";
-+"last %llds" = "últimos %llds";
-+"last %lldm" = "últimos %lldm";
-+"last %lldm %llds" = "últimos %1$lldm %2$llds";
-+"Worth keeping an eye on" = "Conviene vigilarlo";
-+"Signal conflict detected" = "Conflicto de señales detectado";
-+"Cable e-marker says %@ but controller reads %@." = "El e-marker del cable indica %1$@, pero el controlador lee %2$@.";
-+"The controller's reading is used." = "Se usa la lectura del controlador.";
-+"Ports" = "Puertos";
-+"Data: %@" = "Datos: %@";
-+"Charging: %@" = "Carga: %@";
-+"Battery: fully charged" = "Batería: carga completa";
-+"Charging path: %@" = "Ruta de carga: %@";
-+"No active power sources" = "No hay fuentes de alimentación activas";
-+"Port %lld" = "Puerto %lld";
-+"measuring (%@)" = "midiendo (%@)";
-+"~%lld mOhm path est. (%@, %@ A span, R2 %@)" = "~%1$lld mOhm ruta est. (%2$@, rango %3$@ A, R2 %4$@)";
-+"No Thunderbolt controller" = "Sin controlador Thunderbolt";
-+"%@, up to %lld Gb/s" = "%1$@, hasta %2$lld Gb/s";
-+"No data-capable ports" = "No hay puertos con datos";
-+/* Thunderbolt panel: a link (%1$@, such as "USB4 40 Gb/s") to the device at its far end (%2$@). Not a range: never reuse for "from A to B". */
-+"%@ to %@ (Thunderbolt link to a device)" = "%1$@ a %2$@";
-+"Power adapter" = "Adaptador de corriente";
-+"error: %@" = "Error: %@";
-```
-
-**File**: `Sources/WhatCableCore/Resources/es.lproj/Localizable.stringsdict` (modified, +33/-0)
-```diff
-@@ -50,5 +50,38 @@
- 			<string>Mostrar %lld hubs</string>
- 		</dict>
- 	</dict>
-+	<!-- Pro terminal dashboard, the CLI dashboard flag. -->
-+	<key>%lld samples</key>
-+	<dict>
-+		<key>NSStringLocalizedFormatKey</key>
-+		<string>%#@count@</string>
-+		<key>count</key>
-+		<dict>
-+			<key>NSStringFormatSpecTypeKey</key>
-+			<string>NSStringPluralRuleType</string>
-+			<key>NSStringFormatValueTypeKey</key>
-+			<string>lld</string>
-+			<key>one</key>
-+			<string>%lld muestra</string>
-+			<key>other</key>
-+			<string>%lld muestras</string>
-+		</dict>
-+	</dict>
-+	<key>%lld ports idle</key>
-+	<dict>
-+		<key>NSStringLocalizedFormatKey</key>
-+		<string>%#@count@</string>
-+		<key>count</key>
-+		<dict>
-+			<key>NSStringFormatSpecTypeKey</key>
-+			<string>NSStringPluralRuleType</string>
-+			<key>NSStringFormatValueTypeKey</key>
-+			<string>lld</string>
-+			<key>one</key>
-+			<string>%lld puerto inactivo</string>
-+			<key>other</key>
-+			<string>%lld puertos inactivos</string>
-+		</dict>
-+	</dict>
- </dict>
- </plist>
-```
-
-**File**: `Sources/WhatCableCore/Resources/fa.lproj/Localizable.strings` (modified, +51/-0)
-```diff
-@@ -848,3 +848,54 @@
- "Thunderbolt devices disconnected" = "دستگاه‌های Thunderbolt جدا شدند";
- "Wattage not reported" = "توان گزارش نشده است";
- "%@ (%@)" = "%1$@ (%2$@)";
-+
-+/* ===== Pro terminal dashboard (whatcable --dashboard). Fixed-width
-+   terminal UI: keep translations short. The key letters in the footer
-+   hints (Tab, r, c, q, the arrows, enter) are what the user presses,
-+   so they stay as they are. ===== */
-+"Tab switch  r refresh  c report  q quit  ↑↓ select  enter expand/collapse" = "Tab تعویض  r تازه‌سازی  c گزارش  q خروج  ↑↓ انتخاب  enter باز/بسته کردن";
-+"Tab switch  r refresh  q quit  ↑↓ scroll" = "Tab تعویض  r تازه‌سازی  q خروج  ↑↓ پیمایش";
-+"Tab switch  r refresh  q quit" = "Tab تعویض  r تازه‌سازی  q خروج";
-+"Overview" = "نمای کلی";
-+"Negotiation" = "مذاکره";
-+"WhatCable Dashboard - %@" = "داشبورد WhatCable - %@";
-+"Updated: %@" = "به‌روزرسانی: %@";
-+"waiting..." = "در انتظار...";
-+"No active connections" = "اتصال فعالی وجود ندارد";
-+"Live power per port. System totals at the top." = "توان زنده برای هر درگاه. مجموع سیستم در بالا.";
-+"System" = "سیستم";
-+"Desktop Mac (no battery)" = "Mac رومیزی (بدون باتری)";
-+"Adapter: %@" = "آداپتور: %@";
-+"No charger" = "بدون شارژر";
-+"No active power ports" = "درگاه توان فعالی وجود ندارد";
-+"no live draw  contract up to %@" = "مصرف زنده‌ای نیست  قرارداد تا %@";
-+"Waiting for telemetry..." = "در انتظار تله‌متری...";
-+"Contract: %@" = "قرارداد: %@";
-+"VConn: %@  %@" = "VConn: %1$@  %2$@";
-+"Resistance: %@" = "مقاومت: %@";
-+"Health: %@" = "سلامت: %@";
-+"no live draw to chart" = "مصرف زنده‌ای برای نمودار نیست";
-+"Draw  (%@)" = "مصرف  (%@)";
-+"last %llds" = "%lld ثانیهٔ اخیر";
-+"last %lldm" = "%lld دقیقهٔ اخیر";
-+"last %lldm %llds" = "%1$lld دقیقه و %2$lld ثانیهٔ اخیر";
-+"Worth keeping an eye on" = "بهتر است زیر نظر باشد";
-+"Signal conflict detected" = "تعارض سیگنال شناسایی شد";
-+"Cable e-marker says %@ but controller reads %@." = "e-marker کابل %1$@ را گزارش می‌کند، اما کنترلر %2$@ را می‌خواند.";
-+"The controller's reading is used." = "مقدار خوانده‌شده توسط کنترلر استفاده می‌شود.";
-+"Ports" = "درگاه‌ها";
-+"Data: %@" = "داده: %@";
-+"Charging: %@" = "شارژ: %@";
-+"Battery: fully charged" = "باتری: کاملاً شارژ شده";
-+"Charging path: %@" = "مسیر شارژ: %@";
-+"No active power sources" = "منبع توان فعالی وجود ندارد";
-+"Port %lld" = "درگاه %lld";
-+"measuring (%@)" = "در حال اندازه‌گیری (%@)";
-+"~%lld mOhm path est. (%@, %@ A span, R2 %@)" = "~%1$lld mOhm برآورد مسیر (%2$@، بازهٔ %3$@ A، R2 %4$@)";
-+"No Thunderbolt controller" = "کنترلر Thunderbolt وجود ندارد";
-+"%@, up to %lld Gb/s" = "%1$@، تا %2$lld Gb/s";
-+"No data-capable ports" = "درگاه دارای قابلیت داده وجود ندارد";
-+/* Thunderbolt panel: a link (%1$@, such as "USB4 40 Gb/s") to the device at its far end (%2$@). Not a range: never reuse for "from A to B". */
-+"%@ to %@ (Thunderbolt link to a device)" = "%1$@ به %2$@";
-+"Power adapter" = "آداپتور برق";
-+"error: %@" = "خطا: %@";
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #675** (2026-11-21): Italian language update (@bovirus)
 - **PR #668** (2026-11-12): Remove markdown rendering from cable report template (@salt-lick)
 - **PR #660** (2026-11-12): README: Update usbee[hive] details (@ferdnyc)
 - **PR #646** (2026-11-10): Traditional Chinese language update (@jimmyorz)
 - **PR #645** (2026-11-10): Update Italian language (@bovirus)
 - **PR #644** (2026-11-10): Add Persian (fa) translation (@aliafshany)
-- **PR #643** (2026-10-13): Traditional Chinese language update (@jimmyorz)
 
 ---
 
@@ -2176,31 +2141,48 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Mirror from private (dbb642d1)
+## X. Mirror from private (27bc7b2d)
 
 **RULE**:
-When implementing operations in `Package.resolved`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in darrylmorley/whatcable. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Sources/WhatCableCore/Display/DisplayDiagnostic.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in darrylmorley/whatcable. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6dcd0c37`: Mirror from private (dbb642d1). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0a49393d`: Mirror from private (27bc7b2d). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Package.resolved`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Sources/WhatCableCore/Display/DisplayDiagnostic.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-        "revision" : "c86e48dacbaf6ebcb002dbfa28164b6705282406"
+        /// it: the top-ranked entry in the EDID's declared list (highest
+        /// active pixel rate: `EDIDInfo.isHigherPriority`), or the
+        /// mode's refresh with another mode's resolution: a panel's highest
+        /// refresh and its largest picture are often different modes (the
+        /// Samsung Odyssey G60SD runs 240 Hz only at 1920x1080 and has no
+        /// 2560x1440@240 mode to label). nil exactly when
+    /// chain (picture pixel rate, area, refresh, clock, then list order), admitting the
+    ///    own chain (picture pixel rate, area, refresh, clock, list order) over the same
+    ///    that entry unless the candidate outranks it on the same chain, so a
+            if !EDIDInfo.isHigherPriority(panelTop, than: matched) { return TopMode(declared: matched) }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Induced defect failure mode:
-        "revision" : "18246360bbdefd5ad7e5eab47955d47eac9d824f"
+        /// it: the highest-clock entry in the EDID's declared list, or the
+        /// mode's refresh with another mode's resolution. `EDIDInfo.topMode`
+        /// is max-by-pixel-clock, and a panel whose fastest timing is
+        /// 1920x1080@240 while its preferred mode is 2560x1440 (Samsung
+        /// Odyssey G60SD) has no 2560x1440@240 mode to label. nil exactly when
+    /// chain (pixel clock, area, refresh, then list order), admitting the
+    ///    own chain (pixel clock, area, refresh, list order) over the same
+    ///    that entry when its pixel clock is at least the candidate's, so a
+            if matched.pixelClockHz >= panelTop.pixelClockHz { return TopMode(declared: matched) }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6dcd0c37` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0a49393d` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

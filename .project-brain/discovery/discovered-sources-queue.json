@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-22T17:35:39.793Z",
+  "updated_at": "2026-11-22T18:00:33.275Z",
   "stats": {
-    "total_discovered": 7599,
-    "approved_pending_harvest": 7196,
+    "total_discovered": 7603,
+    "approved_pending_harvest": 7200,
     "harvested_count": 0,
     "rejected_count": 403,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7173,
+      "COMMUNITY_AND_EXPERT": 7177,
       "OFFICIAL_DOCUMENTATION": 246,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 5,
@@ -164380,6 +164380,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md",
         "fileName": "cilium-cilium-learnings.md"
+      }
+    },
+    "SRC-D613713582A8": {
+      "id": "SRC-D613713582A8",
+      "url": "https://github.com/BaaRai/ARTEX",
+      "title": "https://github.com/BaaRai/ARTEX",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T18:00:32.228Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/baarai-artex-learnings.md",
+        "fileName": "baarai-artex-learnings.md"
+      }
+    },
+    "SRC-EE6D6655519B": {
+      "id": "SRC-EE6D6655519B",
+      "url": "https://github.com/BaaRai/Norma",
+      "title": "https://github.com/BaaRai/Norma",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T18:00:32.264Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/baarai-artex-learnings.md",
+        "fileName": "baarai-artex-learnings.md"
+      }
+    },
+    "SRC-336D2A1F3D97": {
+      "id": "SRC-336D2A1F3D97",
+      "url": "https://github.com/user-attachments/assets/08ce31d9-8f88-44b0-9a74-8d5c6a170745",
+      "title": "https://github.com/user-attachments/assets/08ce31d9-8f88-44b0-9a74-8d5c6a170745",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T18:00:33.237Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/darrylmorley-whatcable-learnings.md",
+        "fileName": "darrylmorley-whatcable-learnings.md"
+      }
+    },
+    "SRC-607EBBBED37A": {
+      "id": "SRC-607EBBBED37A",
+      "url": "https://github.com/user-attachments/assets/7f48aa68-1f8b-4682-a6fe-a882b81cf60b",
+      "title": "https://github.com/user-attachments/assets/7f48aa68-1f8b-4682-a6fe-a882b81cf60b",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T18:00:33.275Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/darrylmorley-whatcable-learnings.md",
+        "fileName": "darrylmorley-whatcable-learnings.md"
       }
     }
   }

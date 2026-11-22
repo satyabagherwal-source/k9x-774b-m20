@@ -285,8 +285,8 @@
     "sourceUrl": "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0",
     "sourceVersion": "hf-stabilityai-stable-diffusion-xl-base-1.0",
     "license": "Open-Source",
-    "contentHash": "82d20587c9cc6137deee8ab5aa1eac57ad5a7d18fa554cb7c1406541a5cfdf63",
-    "lastHarvestedAt": "2026-11-18T11:33:13.035Z",
+    "contentHash": "584a00c2e588eb4d0a2724ba8f770f4b392dd4b031c7f3eb6ce4c627b328f698",
+    "lastHarvestedAt": "2026-11-22T18:00:17.620Z",
     "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0"
   },
   "hf-meta-llama-llama-3.1-8b-instruct": {
@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "a3309793",
+    "sourceVersion": "87b3a5ff",
     "license": "BSD-3-Clause",
-    "contentHash": "f6a3d75136744cba29efffc62063de319f633017f8f6ee1b32eaa2373b15f87f",
-    "lastHarvestedAt": "2026-11-22T10:03:53.403Z",
+    "contentHash": "0121c05d0bbcadf9b2a173d4269f60bb77a950c8f8481892ac7e309f80699b5c",
+    "lastHarvestedAt": "2026-11-22T18:00:29.006Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
@@ -7893,10 +7893,10 @@
     "repository": "darrylmorley/whatcable",
     "platform": "github",
     "sourceUrl": "https://github.com/darrylmorley/whatcable",
-    "sourceVersion": "6dcd0c37",
+    "sourceVersion": "0a49393d",
     "license": "NOASSERTION",
-    "contentHash": "a414be723b0e7ed5dcfef6a851ff48c98c8f898d5ead3160bafe3f0c1d21c3b9",
-    "lastHarvestedAt": "2026-11-19T16:33:21.842Z",
+    "contentHash": "702bb03d3a7965d838b5973518fc235812e1007b22be4c682518b5e882735e38",
+    "lastHarvestedAt": "2026-11-22T18:00:24.473Z",
     "learningId": "learn-github-darrylmorley-whatcable"
   },
   "xcodesorg-xcodesapp": {
@@ -13188,5 +13188,15 @@
     "contentHash": "7a2fa35dee8ed7a427981124efdfcec0ab92532d19ace20fd350bab362b01f7c",
     "lastHarvestedAt": "2026-11-22T11:14:17.231Z",
     "learningId": "learn-github-abue-ammar-tinycast"
+  },
+  "baarai-artex": {
+    "repository": "BaaRai/ARTEX",
+    "platform": "github",
+    "sourceUrl": "https://github.com/BaaRai/ARTEX",
+    "sourceVersion": "94757c5d",
+    "license": "AGPL-3.0",
+    "contentHash": "8c22086c9cc29a3156a278aac7548c783d97f140e71d9027a754c222e5be46d2",
+    "lastHarvestedAt": "2026-11-22T18:00:13.685Z",
+    "learningId": "learn-github-baarai-artex"
   }
 }

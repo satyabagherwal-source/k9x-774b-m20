@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T17:53:20.107Z",
+  "last_updated": "2026-11-22T18:00:33.843Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-22T17:53:17.348Z",
@@ -623,7 +623,7 @@
       "staged_for_review": 1
     },
     "darrylmorley-whatcable-learnings.md": {
-      "processed_at": "2026-11-19T16:33:34.152Z",
+      "processed_at": "2026-11-22T18:00:33.183Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1798,7 +1798,7 @@
       "staged_for_review": 1
     },
     "hf-stabilityai-stable-diffusion-xl-base-1.0-learnings.md": {
-      "processed_at": "2026-11-18T11:33:26.342Z",
+      "processed_at": "2026-11-22T18:00:32.869Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3716,9 +3716,14 @@
       "processed_at": "2026-11-22T11:14:27.459Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "baarai-artex-learnings.md": {
+      "processed_at": "2026-11-22T18:00:32.205Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3165,
+  "total_dossiers_evaluated": 3168,
   "total_canonical_promoted": 475,
-  "total_staged_for_review": 2402
+  "total_staged_for_review": 2404
 }

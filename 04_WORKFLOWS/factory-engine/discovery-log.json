@@ -21931,5 +21931,20 @@
     "qualityScore": 5284,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-22T11:12:08.902Z"
+  },
+  {
+    "name": "ARTEX",
+    "fullName": "BaaRai/ARTEX",
+    "url": "https://github.com/BaaRai/ARTEX",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "ARTEX - AI autonomous penetration testing system (English translation; upstream: Autumn-27/ARTEX, AGPL-3.0)",
+    "stars": 15939,
+    "forks": 6033,
+    "openIssues": 39,
+    "language": "Go",
+    "qualityScore": 10107,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-22T17:56:50.264Z"
   }
 ]

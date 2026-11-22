@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T17:53:05.373Z",
+  "last_updated": "2026-11-22T18:00:29.013Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -320,14 +320,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
-      "content_hash": "82d20587c9cc6137deee8ab5aa1eac57ad5a7d18fa554cb7c1406541a5cfdf63",
-      "verified_at": "2026-11-18T11:33:13.045Z",
+      "content_hash": "584a00c2e588eb4d0a2724ba8f770f4b392dd4b031c7f3eb6ce4c627b328f698",
+      "verified_at": "2026-11-22T18:00:17.627Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T11:33:13.045Z"
+      "last_updated": "2026-11-22T18:00:17.627Z"
     },
     "meta-llama/Llama-3.1-8B-Instruct": {
       "repository": "meta-llama/Llama-3.1-8B-Instruct",
@@ -5496,14 +5496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tailscale-tailscale",
-      "content_hash": "f6a3d75136744cba29efffc62063de319f633017f8f6ee1b32eaa2373b15f87f",
-      "verified_at": "2026-11-22T10:03:53.413Z",
+      "content_hash": "0121c05d0bbcadf9b2a173d4269f60bb77a950c8f8481892ac7e309f80699b5c",
+      "verified_at": "2026-11-22T18:00:29.013Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T10:03:53.413Z"
+      "last_updated": "2026-11-22T18:00:29.013Z"
     },
     "dingodb/dingo": {
       "repository": "dingodb/dingo",
@@ -11871,14 +11871,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-darrylmorley-whatcable",
-      "content_hash": "a414be723b0e7ed5dcfef6a851ff48c98c8f898d5ead3160bafe3f0c1d21c3b9",
-      "verified_at": "2026-11-19T16:33:21.850Z",
+      "content_hash": "702bb03d3a7965d838b5973518fc235812e1007b22be4c682518b5e882735e38",
+      "verified_at": "2026-11-22T18:00:24.480Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T16:33:21.850Z"
+      "last_updated": "2026-11-22T18:00:24.480Z"
     },
     "XcodesOrg/XcodesApp": {
       "repository": "XcodesOrg/XcodesApp",
@@ -19904,6 +19904,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-22T11:14:17.239Z"
+    },
+    "BaaRai/ARTEX": {
+      "repository": "BaaRai/ARTEX",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-baarai-artex",
+      "content_hash": "8c22086c9cc29a3156a278aac7548c783d97f140e71d9027a754c222e5be46d2",
+      "verified_at": "2026-11-22T18:00:13.692Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-22T18:00:13.692Z"
     }
   },
   "repos": {

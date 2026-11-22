@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T17:53:19.513Z",
-  "total_records": 2368,
+  "last_updated": "2026-11-22T18:00:33.594Z",
+  "total_records": 2370,
   "domains": {
     "A": {
       "total": 19,
@@ -1099,7 +1099,7 @@
       ]
     },
     "G": {
-      "total": 395,
+      "total": 397,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1495,7 +1495,9 @@
         "domain_intelligence-architecture-intelligence-oven-sh-bun-core-invariants",
         "domain_intelligence-architecture-intelligence-oven-sh-bun-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-google-tcmalloc-core-invariants",
-        "domain_intelligence-architecture-intelligence-google-tcmalloc-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-google-tcmalloc-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-baarai-artex-core-invariants",
+        "domain_intelligence-architecture-intelligence-baarai-artex-learnings-core-invariants"
       ]
     },
     "H": {
@@ -8255,8 +8257,8 @@
       "title": "Architecture Intelligence: tailscale/tailscale Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-architecture-intelligence-tailscale-tailscale-core-invariant.md",
       "repository": "tailscale/tailscale",
-      "content_hash": "1c62d9a4c617a8f66568d85f44d575d0289a13ecb7a6a363160f13864a00184c",
-      "created_at": "2026-11-22T10:03:53.838Z"
+      "content_hash": "618b30d6ad5fba1ebded274026d8d460768f6a0e4c45b81032c04515639966e8",
+      "created_at": "2026-11-22T18:00:29.316Z"
     },
     "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants",
@@ -21175,8 +21177,8 @@
       "title": "Research & Knowledge Intelligence: darrylmorley/whatcable Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-darrylmorley-whatcable-research-knowledge-intelligence-darrylmorley-whatcable-co.md",
       "repository": "darrylmorley/whatcable",
-      "content_hash": "2c813c06300db1a16f0802869f755b7c011817861c84a563422e8f970df768a8",
-      "created_at": "2026-11-19T16:33:22.182Z"
+      "content_hash": "82bc95a75e84fa06f9cd678019571a9e6a72cd8cb3d7daf0935fa7c032da8e9e",
+      "created_at": "2026-11-22T18:00:24.790Z"
     },
     "domain_intelligence-architecture-intelligence-paradedb-paradedb-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-paradedb-paradedb-core-invariants",
@@ -21337,8 +21339,8 @@
       "title": "Research & Knowledge Intelligence: darrylmorley-whatcable-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-darrylmorley-whatcable-learnings-research-knowledge-intelligence-darrylmorley-wh.md",
       "repository": "darrylmorley-whatcable-learnings",
-      "content_hash": "51defe8ed54f571a18915337bebbd35a7e6b6b90919e0bed5029d21b62cf3ee7",
-      "created_at": "2026-11-19T16:33:34.554Z"
+      "content_hash": "d723b6d98cbbc6a8005fed856d1fcbdb8249dc78e0172aaf170fa7cf4c5a686e",
+      "created_at": "2026-11-22T18:00:33.594Z"
     },
     "domain_intelligence-architecture-intelligence-nasiko-labs-nasiko-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-nasiko-labs-nasiko-core-invariants",
@@ -31278,8 +31280,8 @@
       "title": "Research & Knowledge Intelligence: stabilityai/stable-diffusion-xl-base-1.0 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-stabilityai-stable-diffusion-xl-base-1-0-research-knowledge-intelligence-stab.md",
       "repository": "stabilityai/stable-diffusion-xl-base-1.0",
-      "content_hash": "6ae0b52d6bf3dd9e11533d0cd38abaef48620d848c74e7b9923c9b80768b839e",
-      "created_at": "2026-11-18T11:33:13.292Z"
+      "content_hash": "49642a08d2914f2a3136ce15444ff1ca07d9a8b5765ae47d3834069d154fa3a0",
+      "created_at": "2026-11-22T18:00:17.799Z"
     },
     "domain_intelligence-architecture-intelligence-mattermost-mattermost-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-mattermost-mattermost-core-invariants",
@@ -31305,8 +31307,8 @@
       "title": "Research & Knowledge Intelligence: hf-stabilityai-stable-diffusion-xl-base-1.0-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-stabilityai-stable-diffusion-xl-base-1-0-learnings-research-knowledge-intelli.md",
       "repository": "hf-stabilityai-stable-diffusion-xl-base-1.0-learnings",
-      "content_hash": "8fac0ef38b54a7bb83e606856ae520f9145e2fb2c68331ff5d85413c3eecfbc3",
-      "created_at": "2026-11-18T11:33:26.586Z"
+      "content_hash": "44cc4b8b696e3671d6e988b6f939471025b7a0f0ab68396dea49ac83b1e86c40",
+      "created_at": "2026-11-22T18:00:33.044Z"
     },
     "domain_intelligence-architecture-intelligence-mattermost-mattermost-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-mattermost-mattermost-learnings-core-invariants",
@@ -39826,6 +39828,24 @@
       "repository": "thaw-app-thaw-learnings",
       "content_hash": "087d186fb1904e1317b3caa68647429edde3afbd982e49e5dedf55b195b2cbd4",
       "created_at": "2026-11-22T17:35:38.919Z"
+    },
+    "domain_intelligence-architecture-intelligence-baarai-artex-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-baarai-artex-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: BaaRai/ARTEX Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-baarai-artex-architecture-intelligence-baarai-artex-core-invariants.md",
+      "repository": "BaaRai/ARTEX",
+      "content_hash": "735216c6d0eddf977ce175911407942ae97a8b9c01bf3c643613622bb7f69781",
+      "created_at": "2026-11-22T18:00:14.012Z"
+    },
+    "domain_intelligence-architecture-intelligence-baarai-artex-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-baarai-artex-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: baarai-artex-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-baarai-artex-learnings-architecture-intelligence-baarai-artex-learnings-core-inv.md",
+      "repository": "baarai-artex-learnings",
+      "content_hash": "0324e0e5c5972823642bf8b5db54b6cda12bd25aef1ef73789453dcaf7c9cf9f",
+      "created_at": "2026-11-22T18:00:32.614Z"
     }
   }
 }

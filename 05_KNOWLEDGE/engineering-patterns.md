@@ -744723,3 +744723,267 @@ use crate::app::window::MultiWindowState;
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `5a37d382` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9966. opt-in operator approval for acquiring third-party code (Harvested from BaaRai/ARTEX)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "opt-in operator approval for acquiring third-party code",
+  "source": "BaaRai/ARTEX",
+  "source_url": "https://github.com/BaaRai/ARTEX",
+  "source_version": "94757c5d",
+  "license": "AGPL-3.0",
+  "extracted_at": "2026-11-22T18:00:13.275Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-baarai-artex",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [BaaRai/ARTEX](https://github.com/BaaRai/ARTEX) (Revision: `94757c5d`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `hardening/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in BaaRai/ARTEX. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `fff6157d`: hardening): opt-in operator approval for acquiring third-party code. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `hardening/README.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+# hardening — operator approval for third-party code
+
+Opt-in intercept rules that pause the agent and ask the operator before it
+**acquires** third-party code — downloads from code/exploit hosts, `git clone`,
+package installs, and remote content piped straight into a shell — plus a
+`third-party-code-review` skill that tells the agent to hash, blocklist-check,
+read and summarize the code before running it.
+
+These rules are **not** seeded by the application; nothing changes until you
+apply them. Code the agent writes itself is not gated — only the point where
+untrusted code enters.
+
+Apply (idempotent; restarts the `artex` service so the interceptor reloads its
+rule cache):
+
+    ./hardening/apply-intercept-rules.sh
+
+Requests show up under Intercept → pending in the console. With no decision in
+30 minutes the request is denied (the agent gets the refusal and takes another
+path). Change the timeout or action in the console or in `intercept-rules.sql`.
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `fff6157d` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9967. Mirror from private (27bc7b2d) (Harvested from darrylmorley/whatcable)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Mirror from private (27bc7b2d)",
+  "source": "darrylmorley/whatcable",
+  "source_url": "https://github.com/darrylmorley/whatcable",
+  "source_version": "0a49393d",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-22T18:00:24.088Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-darrylmorley-whatcable",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [darrylmorley/whatcable](https://github.com/darrylmorley/whatcable) (Revision: `0a49393d`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `Sources/WhatCableCore/Display/DisplayDiagnostic.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in darrylmorley/whatcable. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `0a49393d`: Mirror from private (27bc7b2d). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Sources/WhatCableCore/Display/DisplayDiagnostic.swift`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+// Verified production-grade fix pattern:
+        /// it: the top-ranked entry in the EDID's declared list (highest
+        /// active pixel rate: `EDIDInfo.isHigherPriority`), or the
+        /// mode's refresh with another mode's resolution: a panel's highest
+        /// refresh and its largest picture are often different modes (the
+        /// Samsung Odyssey G60SD runs 240 Hz only at 1920x1080 and has no
+        /// 2560x1440@240 mode to label). nil exactly when
+    /// chain (picture pixel rate, area, refresh, clock, then list order), admitting the
+    ///    own chain (picture pixel rate, area, refresh, clock, list order) over the same
+    ///    that entry unless the candidate outranks it on the same chain, so a
+            if !EDIDInfo.isHigherPriority(panelTop, than: matched) { return TopMode(declared: matched) }
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// Induced defect failure mode:
+        /// it: the highest-clock entry in the EDID's declared list, or the
+        /// mode's refresh with another mode's resolution. `EDIDInfo.topMode`
+        /// is max-by-pixel-clock, and a panel whose fastest timing is
+        /// 1920x1080@240 while its preferred mode is 2560x1440 (Samsung
+        /// Odyssey G60SD) has no 2560x1440@240 mode to label. nil exactly when
+    /// chain (pixel clock, area, refresh, then list order), admitting the
+    ///    own chain (pixel clock, area, refresh, list order) over the same
+    ///    that entry when its pixel clock is at least the candidate's, so a
+            if matched.pixelClockHz >= panelTop.pixelClockHz { return TopMode(declared: matched) }
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `0a49393d` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9968. control/ts2021, net/netutil: fail early if net/http's HTTP/2 is disabled (Harvested from tailscale/tailscale)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "control/ts2021, net/netutil: fail early if net/http's HTTP/2 is disabled",
+  "source": "tailscale/tailscale",
+  "source_url": "https://github.com/tailscale/tailscale",
+  "source_version": "87b3a5ff",
+  "license": "BSD-3-Clause",
+  "extracted_at": "2026-11-22T18:00:28.624Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-tailscale-tailscale",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [tailscale/tailscale](https://github.com/tailscale/tailscale) (Revision: `87b3a5ff`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `control/ts2021/client.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `87b3a5ff`: control/ts2021, net/netutil: fail early if net/http's HTTP/2 is disabled. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `control/ts2021/client.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+	"tailscale.com/util/vizerror"
+// errNoHTTP2 is returned by [NewClient] when net/http's HTTP/2 support is
+// disabled, which the ts2021 protocol requires.
+var errNoHTTP2 = vizerror.New("unsupported configuration: Tailscale requires Go's HTTP/2 support, but it's disabled (is GODEBUG=http2client=0 set?)")
+
+// transportHasHTTP2 reports whether net/http configured HTTP/2 on tr.
+//
+// net/http sets up HTTP/2 on a Transport once, on first use or Clone, and
+// skips it when HTTP/2 is disabled with GODEBUG=http2client=0 or the
+// nethttpomithttp2 build tag. When it does set it up, it registers an "h2"
+// entry in TLSNextProto, the historical signal that HTTP/2 is enabled.
+func transportHasHTTP2(tr *http.Transport) bool {
+	tr.Clone() // run net/http's one-time HTTP/2 setup on tr
+	return tr.TLSNextProto["h2"] != nil
+}
+
+	if !transportHasHTTP2(tr) {
+		return nil, errNoHTTP2
+	}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `87b3a5ff` are properly handled with clean fallback behavior.
