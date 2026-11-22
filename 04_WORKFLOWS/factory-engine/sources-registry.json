@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-22T02:09:19.682Z",
-    "lastVerified": "2026-11-22T02:09:19.682Z",
+    "lastChecked": "2026-11-22T02:18:12.228Z",
+    "lastVerified": "2026-11-22T02:18:12.228Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -255,9 +255,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-22T01:32:33.526Z",
+    "lastChecked": "2026-11-22T02:18:12.213Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-22T01:32:33.526Z"
+    "lastVerified": "2026-11-22T02:18:12.213Z"
   },
   "herdrdev-herdr": {
     "name": "herdrdev/herdr",
@@ -1045,9 +1045,9 @@
   "mimblewimble-grin": {
     "name": "grin",
     "officialUrl": "https://github.com/mimblewimble/grin",
-    "lastChecked": "2026-11-21T21:04:36.898Z",
+    "lastChecked": "2026-11-22T02:18:07.183Z",
     "revisionIdentifier": "dbaff34f",
-    "lastVerified": "2026-11-21T21:04:36.898Z"
+    "lastVerified": "2026-11-22T02:18:07.183Z"
   },
   "chroma-core-chroma": {
     "name": "chroma",
@@ -2406,9 +2406,9 @@
   "volcengine-minecontext": {
     "name": "MineContext",
     "officialUrl": "https://github.com/volcengine/MineContext",
-    "lastChecked": "2026-11-20T22:07:22.844Z",
+    "lastChecked": "2026-11-22T02:18:09.831Z",
     "revisionIdentifier": "171c7a9e",
-    "lastVerified": "2026-11-20T22:07:22.844Z"
+    "lastVerified": "2026-11-22T02:18:09.831Z"
   },
   "flox-flox": {
     "name": "flox/flox",
@@ -3597,12 +3597,12 @@
     "officialUrl": "https://github.com/PeerDB-io/peerdb",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-20T23:05:31.539Z",
-    "lastVerified": "2026-11-20T23:05:31.539Z",
+    "lastChecked": "2026-11-22T02:18:07.945Z",
+    "lastVerified": "2026-11-22T02:18:07.945Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-peerdb-io-peerdb",
-    "contentHash": "969daa4f4c7371a00518595a1f1cb7a11c8a9e0ec05e83fa79d7e07ceb7a1df0",
+    "contentHash": "2d77a7ba9a995acc16bbd34b97d33e2857dee7148b9d12e6284536b152f85ea8",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -4776,11 +4776,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "czy0729-bangumi": {
-    "name": "Bangumi",
+    "name": "czy0729/Bangumi",
     "officialUrl": "https://github.com/czy0729/Bangumi",
-    "lastChecked": "2026-11-18T21:33:44.640Z",
-    "revisionIdentifier": "ad576e32",
-    "lastVerified": "2026-11-18T21:33:44.640Z"
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-11-22T02:18:06.878Z",
+    "lastVerified": "2026-11-22T02:18:06.878Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-czy0729-bangumi",
+    "contentHash": "e278f9799d92a572e861c287d008b3be494cf07c77215bb1dbd9de730b9a5a26",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 3,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hashicorp-terraform": {
     "name": "hashicorp/terraform",
@@ -5202,9 +5212,9 @@
   "tokio-rs-console": {
     "name": "console",
     "officialUrl": "https://github.com/tokio-rs/console",
-    "lastChecked": "2026-11-20T14:52:31.195Z",
+    "lastChecked": "2026-11-22T02:17:57.138Z",
     "revisionIdentifier": "b59758e5",
-    "lastVerified": "2026-11-20T14:52:31.195Z"
+    "lastVerified": "2026-11-22T02:17:57.138Z"
   },
   "hf-baidu-unlimited-ocr": {
     "name": "baidu/Unlimited-OCR",
@@ -13363,6 +13373,23 @@
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-moonshotai-kimi-k3-1-pro",
     "contentHash": "e3f190a4e4f84536f900f3b5c330dba5d702c20e8f3c1ab664ab6c6ad5915442",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-nvidia-deepseek-v4.1-flash-1017-nvfp4": {
+    "name": "nvidia/DeepSeek-V4.1-Flash-1017-NVFP4",
+    "officialUrl": "https://huggingface.co/nvidia/DeepSeek-V4.1-Flash-1017-NVFP4",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-22T02:17:59.690Z",
+    "lastVerified": "2026-11-22T02:17:59.690Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-nvidia-deepseek-v4-1-flash-1017-nvfp4",
+    "contentHash": "30227d296abd04c6d7e7d32799cd1686ff2c74860b6278fa60e95a3e83c1ccb2",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

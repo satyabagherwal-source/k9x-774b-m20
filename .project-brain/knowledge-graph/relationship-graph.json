@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-22T01:44:40.943Z",
+  "updated_at": "2026-11-22T02:18:39.546Z",
   "statistics": {
-    "total_nodes": 464,
+    "total_nodes": 465,
     "total_edges": 200,
     "domain_distribution": {
-      "D": 285,
+      "D": 286,
       "M": 1,
       "H": 78,
       "J": 22,
@@ -10370,6 +10370,28 @@
       ],
       "created_at": "2026-11-22T01:44:40.943Z",
       "updated_at": "2026-11-22T01:44:40.943Z"
+    },
+    "DOM-D-60FE0061": {
+      "id": "DOM-D-60FE0061",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): czy0729/Bangumi",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/czy0729-bangumi-learnings.md`  \n> **Source**: github ([https://github.com/czy0729/Ba -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/czy0729-bangumi-learnings.md`  \n> **Source**: github ([https://github.com/czy0729/Ba",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://czy0729-bangumi/czy0729-bangumi-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-22T02:18:12.730Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (czy0729-bangumi)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-22T02:18:39.546Z",
+      "updated_at": "2026-11-22T02:18:39.546Z"
     }
   },
   "edges": [

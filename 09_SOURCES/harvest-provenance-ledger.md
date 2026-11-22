@@ -12008,3 +12008,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-moonshotai-kimi-k3-1-pro` | `https://huggingface.co/moonshotai/Kimi-K3.1-Pro` | `hf-moonsho` | Multi-dimensional audit evidence | 2026-11-22T02:09:02.126Z |
 | `learn-github-zseven-w-openpencil` | `https://github.com/ZSeven-W/openpencil` | `4110b3e0` | Multi-dimensional audit evidence | 2026-11-22T02:09:09.110Z |
 | `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `82d66f9e` | Multi-dimensional audit evidence | 2026-11-22T02:09:16.603Z |
+| `learn-huggingface-nvidia-deepseek-v4-1-flash-1017-nvfp4` | `https://huggingface.co/nvidia/DeepSeek-V4.1-Flash-1017-NVFP4` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-22T02:18:00.274Z |
+| `learn-github-czy0729-bangumi` | `https://github.com/czy0729/Bangumi` | `81c1e12a` | Multi-dimensional audit evidence | 2026-11-22T02:18:07.368Z |
+| `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `78271fc2` | Multi-dimensional audit evidence | 2026-11-22T02:18:08.969Z |
+| `learn-dom-d-60fe0061` | `project://czy0729-bangumi` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/czy0729-bangumi-learnings.md` | 2026-11-22T02:18:39.549Z |

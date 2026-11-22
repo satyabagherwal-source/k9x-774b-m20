@@ -11975,3 +11975,7 @@
 | `CYCLE-20261122-7KIZ` | `2026-11-22T02:09:02.123Z` | `moonshotai/Kimi-K3.1-Pro` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-moonshotai-kimi-k3.1-pro-learnings.md` | Yes (`e3f190a4...`) |
 | `CYCLE-20261122-7PWJ` | `2026-11-22T02:09:09.091Z` | `ZSeven-W/openpencil` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9879` | Yes (`6c8f5d65...`) |
 | `CYCLE-20261122-7VP4` | `2026-11-22T02:09:16.600Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9880` | Yes (`ea7bef09...`) |
+| `CYCLE-20261122-J3RH` | `2026-11-22T02:18:00.269Z` | `nvidia/DeepSeek-V4.1-Flash-1017-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-deepseek-v4.1-flash-1017-nvfp4-learnings.md` | Yes (`30227d29...`) |
+| `CYCLE-20261122-J98K` | `2026-11-22T02:18:07.364Z` | `czy0729/Bangumi` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/czy0729-bangumi-learnings.md` | Yes (`e278f979...`) |
+| `CYCLE-20261122-JAH0` | `2026-11-22T02:18:08.964Z` | `PeerDB-io/peerdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9881` | Yes (`2d77a7ba...`) |
+| `CYCLE-2026-11-22-PROJ-EVOLVE` | `2026-11-22T02:18:39.549Z` | `czy0729-bangumi` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-60FE0061` [Domain D] | Yes (`22b37053...`) |

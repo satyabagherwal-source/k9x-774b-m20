@@ -4,24 +4,24 @@
 {
   "source_repository": "czy0729/Bangumi",
   "source_url": "https://github.com/czy0729/Bangumi",
-  "source_version": "ad576e32",
+  "source_version": "81c1e12a",
   "license": "MIT",
-  "timestamp": "2026-11-17T20:25:33.257Z",
+  "timestamp": "2026-11-22T02:18:07.587Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-czy0729-bangumi",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [czy0729/Bangumi](https://github.com/czy0729/Bangumi) (Revision: `ad576e32`).  
-> **License**: MIT | **Timestamp**: `2026-11-17T20:25:33.257Z`  
+> **Provenance**: Harvested from [czy0729/Bangumi](https://github.com/czy0729/Bangumi) (Revision: `81c1e12a`).  
+> **License**: MIT | **Timestamp**: `2026-11-22T02:18:07.587Z`  
 > **Learning ID**: `learn-github-czy0729-bangumi`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), E (Creative Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 67%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), F (Design Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence)
+- **Confidence Rating**: 65%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from czy0729/Bangumi:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/czy0729-bangumi-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/czy0729/Bangumi](https://github.com/czy0729/Bangumi))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T20:25:32.368Z  
+> **Harvest Timestamp**: 2026-11-22T02:18:06.878Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: :electron: An unofficial https://bgm.tv ui first app client for Android and iOS, built with React Native. 一个无广告、以爱好为驱动、不以盈利为目的、专门做 ACG 的类似豆瓣的追番记录，bgm.tv 第三方客户端。为移动端重新设计，内置大量加强的网页端难以实现的功能，且提供了相当的自定义选项。 目前已适配 iOS / Android。
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json
-- **Stars / Engagement**: 6255 stars
+- **Stars / Engagement**: 6270 stars
 
 ---
 
@@ -1052,7 +1052,7 @@ export function getExpandTarget(expand: boolean, hiddenTranslateY: number) {
  * @Author: czy0729
  * @Date: 2026-08-12 06:40:00
  * @Last Modified by: czy0729
- * @Last Modified time: 2026-10-08 22:47:21
+ * @Last Modified time: 2026-11-22 00:14:19
  */
 import { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { interpolate, useAnimatedStyle, useSharedValue } from 'react-native-reanimated'
@@ -1077,6 +1077,9 @@ export const useActionSheet = (
 ) => {
   const progress = useSharedValue(show ? 1 : 0)
   const [showValue, setShow] = useState(show)
+
+  /** 收起中 (关闭起点即为 true, 不等动画结束); 与 closingRef 双轨: state 驱动渲染, ref 做同步互斥 */
+  const [closing, setClosing] = useState(false)
   const closingRef = useRef(false)
 
   const navigation = useContext(NavigationContext)
@@ -1104,6 +1107,7 @@ export const useActionSheet = (
     // (withTiming 被打断后 finished 为 false, 收起完成回调不会执行, 因此不会误调 onClose 也不会闪一下再展开)
     if (closingRef.current) {
       closingRef.current = false
+      setClosing(false)
       animateTo(1)
       return
     }
@@ -1122,11 +1126,16 @@ export const useActionSheet = (
     if (!showValue || closingRef.current) return
 
     closingRef.current = true
+    // 关闭起点同步提交触摸禁用: 若关闭动画途中发生 push, freezeOnBlur 会冻结本页 React 树,
+    // 动画结束后的 setShow(false) (卸载) 会被推迟到解冻, 全屏遮罩以透明态残留并吃掉整个页面的触摸;
+    // pointerEvents 在关闭起点 (尚未冻结时) 已落为 none, 残留遮罩不再拦截触摸 (仅 App 端生效)
+    setClosing(true)
     animateTo(0, () => {
       // 收起途中被重新展开 (handleShow 已清掉标志) 时不再执行收起收尾, 避免刚展开又被卸载并误调 onClose
       if (!closingRef.current) return
 
       closingRef.current = false
+      setClosing(false)
       setShow(false)
       onClose?.()
     })
@@ -1134,6 +1143,8 @@ export const useActionSheet = (
 
   useEffect(() => {
     if (show) {
+      // 兜底: 收起回调未执行时 closing 可能残留, 重新展开前复位, 否则面板会整层不可触摸
+      setClosing(false)
       handleShow()
       return
     }
@@ -1190,6 +1201,9 @@ export const useActionSheet = (
     /** 关闭并处理收起动画 */
     handleClose,
 
+    /** 是否处于收起中 (关闭起点即为 true, 卸载前恒为 true) */
+    closing,
+
     /** 计算内容高度（用于进出场位移） */
     calcHeight,
 
@@ -1243,767 +1257,807 @@ export const useActionSheet = (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ad576e32` (2026-11-17)
-**Commit Message**: refactor: 统一空状态展示并整理通用工具
+### Incident Patch 1: `713001b7` (2026-11-19)
+**Commit Message**: - [UI] 修复 iOS 回复面板与收藏弹窗透过毛玻璃显出灰底的问题，统一各处毛玻璃的明暗表现
 
-**File**: `jest/setup.js` (modified, +9/-0)
+**File**: `src/components/@/ds.ts` (removed, +0/-16)
 ```diff
-@@ -17,6 +17,15 @@ jest.mock('expo-constants', () => ({
-   getWebViewUserAgentAsync: jest.fn()
- }))
- jest.mock('expo-haptics', () => ({}))
-+// 覆盖真实 expo-device: 其副作用加载 expo/build/Expo.fx 需要 RN 的 ErrorUtils 全局, node 环境没有;
-+// 字段覆盖 src/constants/env.ts 与 home/v2 store 的全部读取
-+jest.mock('expo-device', () => ({
-+  brand: 'test',
-+  deviceYearClass: 2026,
-+  modelId: 'test',
-+  modelName: 'test',
-+  osVersion: '1.0'
-+}))
- jest.mock('mobx', () => ({
-   isObservableArray: () => false
- }))
+@@ -1,16 +0,0 @@
+-/*
+- * @Author: czy0729
+- * @Date: 2024-06-28 13:12:00
+- * @Last Modified by: czy0729
+- * @Last Modified time: 2026-03-17 06:22:29
+- */
+-import { Platform } from 'react-native'
+-import Constants from 'expo-constants'
+-
+-const IOS = Platform.OS === 'ios'
+-
+-const IOS_IPA = Platform.OS === 'ios' && Constants.appOwnership !== 'expo'
+-
+-export const BLURVIEW_TINT_LIGHT = IOS && !IOS_IPA ? 'extraLight' : 'light'
+-
+-export const BLURVIEW_TINT_DARK = 'dark'
 ```
 
-**File**: `src/components/@/react-native-render-html/src/utils.ts` (modified, +2/-5)
+**File**: `src/components/blur-view/ds.ts` (modified, +1/-2)
 ```diff
-@@ -4,6 +4,7 @@
-  * @Last Modified by: czy0729
-  * @Last Modified time: 2026-09-01 03:00:01
+@@ -6,13 +6,12 @@
   */
-+import { mapStringLeaves } from '@utils/utils'
- import { syncSpacing } from '@utils/async'
+ import { rc } from '@utils/dev'
+ import { IOS } from '@constants'
+-import { IOS_IPA } from '@src/config'
+ import { COMPONENT as PARENT } from '../ds'
  
- import type { ReactElement } from 'react'
-@@ -24,9 +25,5 @@ export function optimizeComputeTextStyles(styles: TextStyle) {
- export function formatSpacing(
-   children: SpacingChild | SpacingChild[]
- ): SpacingChild | SpacingChild[] {
--  if (typeof children === 'string') return syncSpacing(children)
--
--  if (Array.isArray(children)) return children.map(formatSpacing)
--
--  return children
-+  return mapStringLeaves(children, syncSpacing) as SpacingChild | SpacingChild[]
- }
+ import type { Props } from './types'
+ 
+ export const COMPONENT = rc(PARENT, 'BlurView')
+ 
+-export const BLURVIEW_TINT_LIGHT = (IOS && !IOS_IPA ? 'extraLight' : 'light') as Props['tint']
++export const BLURVIEW_TINT_LIGHT = (IOS ? 'extraLight' : 'light') as Props['tint']
+ 
+ export const BLURVIEW_TINT_DARK = 'dark' as Props['tint']
 ```
 
-**File**: `src/components/text/__tests__/utils.test.ts` (modified, +9/-2)
+**File**: `src/components/fixed-textarea/container/index.tsx` (modified, +12/-7)
+```diff
+@@ -2,8 +2,11 @@
+  * @Author: czy0729
+  * @Date: 2023-08-01 19:19:14
+  * @Last Modified by: czy0729
+- * @Last Modified time: 2026-09-10 00:33:48
++ * @Last Modified time: 2026-11-20 00:00:00
++ *
++ * iOS 面板底色由自身提供, 毛玻璃只负责模糊, 不依赖背后画面的明暗
+  */
++import { StyleSheet, View } from 'react-native'
+ import { observer } from 'mobx-react'
+ import { BlurView } from 'expo-blur'
+ import { _ } from '@stores'
+@@ -19,13 +22,15 @@ function Container({ children }: Props) {
+ 
+   if (IOS || WEB) {
+     return (
+-      <BlurView
+-        style={styles.container}
+-        tint={_.select(BLURVIEW_TINT_LIGHT, BLURVIEW_TINT_DARK)}
+-        intensity={100}
+-      >
++      <View style={[styles.container, styles.base]}>
++        <BlurView
++          style={StyleSheet.absoluteFill}
++          tint={_.select(BLURVIEW_TINT_LIGHT, BLURVIEW_TINT_DARK)}
++          intensity={100}
++          pointerEvents='none'
++        />
+         {children}
+-      </BlurView>
++      </View>
+     )
+   }
+ 
+```
+
+**File**: `src/components/fixed-textarea/container/styles.ts` (modified, +4/-1)
 ```diff
 @@ -2,7 +2,7 @@
   * @Author: czy0729
-  * @Date: 2026-08-18 16:30:00
+  * @Date: 2023-08-01 19:19:30
   * @Last Modified by: czy0729
-- * @Last Modified time: 2026-08-18 16:30:00
-+ * @Last Modified time: 2026-11-17 06:08:00
+- * @Last Modified time: 2026-03-30 01:26:42
++ * @Last Modified time: 2026-11-20 05:33:08
   */
- 
- // 可变的 theme / setting 状态, 便于用例切换
-@@ -70,9 +70,16 @@ jest.mock('@constants', () => ({
-   WEB: false
- }))
- 
-+const mockMapStringLeaves = (children, transform) => {
-+  if (typeof children === 'string') return transform(children)
-+  if (Array.isArray(children)) return children.map(item => mockMapStringLeaves(item, transform))
-+  return children
-+}
-+
- jest.mock('@utils', () => ({
-   setDefaultProps: jest.fn(),
--  titleCase: str => (str ? str[0].toUpperCase() + str.slice(1) : str)
-+  titleCase: str => (str ? str[0].toUpperCase() + str.slice(1) : str),
-+  mapStringLeaves: mockMapStringLeaves
- }))
- 
- jest.mock('@utils/thirdParty/open-cc', () => ({
-```
-
-**File**: `src/components/text/utils.ts` (modified, +3/-11)
-```diff
-@@ -6,7 +6,7 @@
-  */
- import { Text, TextInput } from 'react-native'
  import { _ } from '@stores'
--import { setDefaultProps, titleCase } from '@utils'
-+import { mapStringLeaves, setDefaultProps, titleCase } from '@utils'
- import { s2t } from '@utils/thirdParty/open-cc'
- import { spacing } from '@utils/thirdParty/pangu-lite'
- import { IOS, WEB } from '@constants'
-@@ -43,20 +43,12 @@ export function computedLineHeight(
  
- /** 文字递归简转繁 */
- export function formatS2T(children: TextProps['children']): ReactNode {
--  if (typeof children === 'string') return s2t(children)
--
--  if (Array.isArray(children)) return (children as ReactNode[]).map(item => formatS2T(item))
--
--  return children
-+  return mapStringLeaves(children, s2t)
- }
- 
- /** 文字递归文案排版 */
- export function formatSpacing(children: TextProps['children']): ReactNode {
--  if (typeof children === 'string') return spacing(children)
--
--  if (Array.isArray(children)) return (children as ReactNode[]).map(item => formatSpacing(item))
--
--  return children
-+  return mapStringLeaves(children, spacing)
- }
- 
- /**
+@@ -21,6 +21,9 @@ export const memoStyles = _.memoStyles(() => ({
+     border: 0,
+     borderRadius: 0
+   },
++  base: {
++    backgroundColor: _.select('rgba(255, 255, 255, 0.64)', 'rgba(255, 255, 255, 0.08)')
++  },
+   plain: {
+     backgroundColor: _.select(_.colorPlain, _._colorDarkModeLevel1),
+     borderTopWidth: _.select(_.hairlineWidth, 0),
 ```
 
-**File**: `src/config/app.ts` (modified, +3/-0)
+**File**: `src/components/input/styles.main.ts` (modified, +4/-2)
 ```diff
-@@ -18,6 +18,9 @@ export const INIT_DEV_DARK = ''
- /** BottomTabNavigator 初始路由 */
- export const INIT_ROUTE = 'Home'
- 
-+/** 根 Stack 首屏名 (包裹 BottomTabNavigator, 由 native-stacks 注册) */
-+export const ROUTE_HOME_TAB = 'HomeTab'
-+
- /** 是否带字体打包 */
- export const FONT_FAMILY = true
- 
-```
-
-**File**: `src/config/routes.ts` (modified, +2/-2)
-```diff
-@@ -8,11 +8,11 @@
-  */
- import type { Configs } from '@types'
- 
--import { DEV } from './dev'
-+import { ROUTE_HOME_TAB } from './app'
- 
- /** 路由覆盖配置 */
- const CONFIGS: Configs = {
--  initialRouteName: DEV ? 'HomeTab' : 'HomeTab',
-+  initialRouteName: ROUTE_HOME_TAB,
-   initialRouteParams: {
-     // subjectId: 552533
-     // topicId: 'group/438017'
-```
-
-**File**: `src/navigations/bottom-tab-navigator/utils.tsx` (modified, +28/-39)
-```diff
-@@ -4,56 +4,45 @@
+@@ -2,21 +2,23 @@
+  * @Author: czy0729
+  * @Date: 2022-05-04 14:04:00
   * @Last Modified by: czy0729
-  * @Last Modified time: 2025-03-06 17:47:41
+- * @Last Modified time: 2026-07-08 04:19:55
++ * @Last Modified time: 2026-11-20 05:28:36
   */
--import React from 'react'
- import { systemStore } from '@stores'
- import { Discovery, Home, Rakuen, Timeline, Tinygrail, User } from '@screens'
-+import { INIT_ROUTE } from '@src/config'
- import TabBar from '../tab-bar'
-+import { BOTTOM_TABS } from '../tab-bar/config'
+ import { _ } from '@stores'
  
- export const renderTabBar = (props: any) => <TabBar {...props} />
- 
-+/** Tab 名 → 屏幕组件 */
-+const TAB_COMPONENTS = {
-+  Discovery,
-+  Timeline,
-+  Home,
-+  Rakuen,
-+  User,
-+  Tinygrail
-+}
-+
- /** 启动默认 BottomTab 路由 */
- export function getInitialRouteName() {
--  const initialPage = systemStore.setting.initialPage || 'Home'
-+  const initialPage = systemStore.setting.initialPage || INIT_ROUTE
-   let initialRouteName = systemStore.setting.homeRenderTabs.includes(initialPage)
-     ? initialPage
--    : 'Home'
--  if (!systemStore.setting.tinygrail && initialRouteName === 'Tinygrail') initialRouteName = 'Home'
-+    : INIT_ROUTE
-+  if (!systemStore.setting.tinygrail && initialRouteName === 'Tinygrail') {
-+    initialRouteName = INIT_ROUTE
-+  }
-   return initialRouteName
- }
- 
--export const getTabConfig = (isTinygrailEnabled: boolean) => [
--  {
--    name: 'Discovery',
--    component: Discovery,
--    showCondition: (homeRenderTabs: string[]) => homeRenderTabs.includes('Discovery')
--  },
--  {
--    name: 'Timeline',
--    component: Timeline,
--    showCondition: (homeRenderTabs: string[]) => homeRenderTabs.includes('Timeline')
--  },
--  {
--    name: 'Home',
--    component: Home,
--    showCondition: () => true
--  },
--  {
--    name: 'Rakuen',
--    component: Rakuen,
--    showCondition: (homeRenderTabs: string[]) => homeRenderTabs.includes('Rakuen')
--  },
--  {
--    name: 'User',
--    component: User,
--    showCondition: () => true
--  },
--  {
--    name: 'Tinygrail',
--    component: Tinygrail,
-+/** 由 BOTTOM_TABS 派生屏幕挂载配置 (顺序即展示顺序, 显示条件与初始参数在此层注入) */
-+export const getTabConfig = (isTinygrailEnabled: boolean) =>
-+  BOTTOM_TABS.map(tab => ({
-+    name: tab.name,
-+    component: TAB_COMPONENTS[tab.name],
-     showCondition: (homeRenderTabs: string[]) =>
--      homeRenderTabs.includes('Tinygrail') && isTinygrailEnabled,
--    initialParams: {
--      fromBottomTab: true
--    }
--  }
--]
-+      tab.fixed ||
-+      (tab.name === 'Tinygrail'
-+        ? homeRenderTabs.includes(tab.name) && isTinygrailEnabled
-+        : homeRenderTabs.includes(tab.name)),
-+    initialParams: tab.name === 'Tinygrail' ? { fromBottomTab: true } : undefined
-+  }))
+ export const memoStyles = _.memoStyles(() => ({
+   input: {
+     fontFamily: _.fontBoldFamily,
++    borderWidth: _.select(_.hairlineWidth, 0),
++    borderColor: _.colorBorder,
+     borderRadius: _.radiusXs
+   },
+   multiline: {
+     width: '100%',
+     paddingVertical: 8,
+     paddingHorizontal: 12,
+     backgroundColor: _.select(_.colorPlain, _._colorDarkModeLevel2),
+-    borderWidth: _.select(1, 0),
++    borderWidth: _.select(_.hairlineWidth, 0),
+     borderColor: _.colorBorder,
+     borderRadius: _.radiusXs,
+     overflow: 'hidden'
 ```
 
-**File**: `src/navigations/native-stacks/index.tsx` (modified, +3/-3)
+**File**: `src/components/toast/blur-view/ds.ts` (modified, +2/-7)
 ```diff
-@@ -12,7 +12,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
- import { urlStringify } from '@utils'
- import { DEV } from '@constants'
- import * as Screens from '@screens'
--import navigationsParams from '@src/config'
-+import navigationsParams, { ROUTE_HOME_TAB } from '@src/config'
- import BottomTabNavigator from '../bottom-tab-navigator'
- import NavigationContainer from '../navigation-container'
- import { getOptions, getScreenOptions, Placeholder, useAutoHideSplashScreen } from './utils'
-@@ -30,7 +30,7 @@ function NativeStacks({ isLoadingComplete }: { isLoadingComplete: boolean }) {
-   const isReady = isLoadingComplete && hideSplashScreen
+@@ -2,11 +2,6 @@
+  * @Author: czy0729
+  * @Date: 2024-07-09 08:00:36
+  * @Last Modified by: czy0729
+- * @Last Modified time: 2024-07-09 08:00:36
++ * @Last Modified time: 2026-11-20 05:09:40
+  */
+-import { IOS } from '@constants/env'
+-import { IOS_IPA } from '@src/config'
+-
+-export const BLURVIEW_TINT_LIGHT = IOS && !IOS_IPA ? 'extraLight' : 'light'
+-
+-export const BLURVIEW_TINT_DARK = 'dark'
++export { BLURVIEW_TINT_DARK, BLURVIEW_TINT_LIGHT } from '../../blur-view/ds'
+```
+
+**File**: `src/screens/_/base/manage-modal/styles.ts` (modified, +3/-2)
+```diff
+@@ -2,15 +2,16 @@
+  * @Author: czy0729
+  * @Date: 2022-06-14 15:54:25
+  * @Last Modified by: czy0729
+- * @Last Modified time: 2026-08-14 22:00:55
++ * @Last Modified time: 2026-11-20 05:29:51
+  */
+ import { _ } from '@stores'
  
-   /** 开发环境且初始路由不是首页 */
--  const isDevNonHomeStart = DEV && initialRouteName !== 'HomeTab'
-+  const isDevNonHomeStart = DEV && initialRouteName !== ROUTE_HOME_TAB
+ export const memoStyles = _.memoStyles(() => ({
+   modal: {
+     width: _.r(_.window.width - 2 * (_.wind - 4)),
+     maxWidth: _.device(408, 560),
+-    marginTop: _.isSmallDevice ? -24 : 0
++    marginTop: _.isSmallDevice ? -24 : 0,
++    backgroundColor: _.select('rgba(255, 255, 255, 0.64)', 'rgba(255, 255, 255, 0.08)')
+   },
+   container: {
+     minHeight: _.device(380, 448),
+```
+
+**File**: `src/screens/_/base/manage-modal/submit/index.tsx` (modified, +2/-2)
+```diff
+@@ -2,7 +2,7 @@
+  * @Author: czy0729
+  * @Date: 2024-07-28 05:05:11
+  * @Last Modified by: czy0729
+- * @Last Modified time: 2026-11-16 10:20:00
++ * @Last Modified time: 2026-11-20 05:24:10
+  */
+ import { observer } from 'mobx-react'
+ import { Button, Flex, Iconfont } from '@components'
+@@ -38,7 +38,7 @@ function Submit({
  
-   /** 开发时跳过首页注册 (此时不能 navigate 到 HomeTab) */
-   const skipHomeTab = isDevNonHomeStart && !!initialRouteName
-@@ -69,7 +69,7 @@ function NativeStacks({ isLoadingComplete }: { isLoadingComplete: boolean }) {
-         screenOptions={getScreenOptions(isFullScreen)}
-         initialRouteName={initialRouteName}
-       >
--        {!skipHomeTab && <Stack.Screen name='HomeTab' getComponent={handleGetComponent} />}
-+        {!skipHomeTab && <Stack.Screen name={ROUTE_HOME_TAB} getComponent={handleGetComponent} />}
-         {elScreens}
-       </Stack.Navigator>
-     </NavigationContainer>
+       <Button
+         style={styles.privacy}
+-        type={isPrivate ? 'ghostPlain' : 'ghostMain'}
++        type={isPrivate ? 'plain' : 'ghostMain'}
+         extra={
+           isPrivate && (
+             <Iconfont style={_.ml.xs} name='md-visibility-off' color={_.colorSub} size={16} />
 ```
 
 ---
 
-### Incident Patch 2: `1ab2ce0b` (2026-11-17)
-**Commit Message**: - [安卓] Passkey 登录在 ECH 代理下改为弹窗引导切换直连，并修复部分机型校验失败的问题
+### Incident Patch 2: `9b049fcb` (2026-11-19)
+**Commit Message**: - [UX] 统一登录与授权过期提示，失败时说明原因和下一步，设置说明与停用功能入口一并改成用户会说的词
 
-**File**: `android/app/src/main/java/com/czy0729/bangumi/passkey/BangumiPasskeyModule.java` (modified, +2/-1)
+**File**: `src/screens/_/base/folder-manage-modal/subjects/index.tsx` (modified, +1/-1)
 ```diff
-@@ -115,7 +115,8 @@ public void onSuccess(String json) {
-                             return;
-                         }
-                         try {
--                            String verified = PasskeyProtocol.validateResponse(json, operation.request);
-+                            String verified = PasskeyProtocol.validateResponse(
-+                                    json, operation.request, getReactApplicationContext().getPackageName());
-                             finish(operation, verified, null);
-                         } catch (Exception ignored) {
-                             finish(operation, null, "E_PASSKEY_INVALID_RESPONSE");
+@@ -85,7 +85,7 @@ function Subjects({
+       renderItem={handleRenderItem}
+       footerNoMoreDataComponent={
+         <Text style={_.mt.md} type={_.select('sub', 'icon')} size={12} align='center'>
+-          - 到底了 -
++          - 到底啦 -
+         </Text>
+       }
+     />
 ```
 
-**File**: `android/app/src/main/java/com/czy0729/bangumi/passkey/PasskeyProtocol.java` (modified, +11/-5)
+**File**: `src/screens/_/base/login-notice/index.tsx` (modified, +1/-1)
 ```diff
-@@ -110,7 +110,7 @@ static Request parseRequest(String json) throws Exception {
-     }
- 
-     /** Does not verify the signature: that must be verified by bgm.tv, which owns the public key. */
--    static String validateResponse(String json, Request request) throws Exception {
-+    static String validateResponse(String json, Request request, String packageName) throws Exception {
-         JSONObject credential = object(json);
-         require("public-key".equals(string(credential, "type")));
-         String id = canonical(string(credential, "id"));
-@@ -156,13 +156,19 @@ static String validateResponse(String json, Request request) throws Exception {
-         require(ORIGIN.equals(string(clientData, "origin")));
-         if (clientData.has("crossOrigin")) require(Boolean.FALSE.equals(clientData.get("crossOrigin")));
-         require(!clientData.has("topOrigin"));
-+
-+        // Keyguard includes the calling package even when signing our supplied clientDataHash.
-+        // Check the runtime package name, including any build variant suffix.
-+        if (clientData.has("androidPackageName")) {
-+            require(string(clientData, "androidPackageName").equals(packageName));
-+        }
-+
-         if (!MessageDigest.isEqual(sha256(clientDataBytes), request.clientDataHash)) {
--            // Provider may sign the caller-supplied hash while returning its own serialization.
--            // Only the exact bytes handed to the provider keep that signature valid, so restore
--            // them, and only when the returned document has no field we did not generate.
-+            // Providers may sign our supplied hash while returning a different serialization.
-+            // Restore the exact bytes after checking all fields, including the optional package.
-             Iterator<String> clientDataKeys = clientData.keys();
-             while (clientDataKeys.hasNext()) {
--                require(Arrays.asList("type", "challenge", "origin", "crossOrigin")
-+                require(Arrays.asList("type", "challenge", "origin", "crossOrigin", "androidPackageName")
-                         .contains(clientDataKeys.next()));
+@@ -54,7 +54,7 @@ export const LoginNotice = observer(() => {
+           <Flex.Item>
+             <Link style={styles.touch} path='LoginV2'>
+               <Text type='sub' size={12} bold>
+-                检测到授权信息过期，点击{i18n.login()}，或者下拉刷新试试
++                登录状态已过期，点击{i18n.login()}
+               </Text>
+             </Link>
+           </Flex.Item>
+```
+
+**File**: `src/screens/_/base/manage-modal/utils.ts` (modified, +1/-1)
+```diff
+@@ -52,7 +52,7 @@ export async function openCollection({
+     if (result?.error && result?.error?.includes?.('token')) {
+       // 提前告知授权信息失效
+       const navigation = navigationReference()
+-      const content = `获取收藏信息失败：${result.error}，授权信息可能过期了`
++      const content = '登录状态已过期，请重新登录'
+       if (navigation) {
+         confirm(
+           content,
+```
+
+**File**: `src/screens/_/base/recommend-topic/index.tsx` (modified, +1/-1)
+```diff
+@@ -27,7 +27,7 @@ export const RecommendTopic = observer(
+     loading,
+     data,
+     iconSize = 11,
+-    footerNoMoreText = '- 到底了 -',
++    footerNoMoreText = '- 到底啦 -',
+     openWebBrowser = false,
+     onShow,
+     onHide,
+```
+
+**File**: `src/screens/_/item/post/icon-extra/index.tsx` (modified, +1/-1)
+```diff
+@@ -183,7 +183,7 @@ function IconExtra({
+                   t('帖子.绝交')
+                 },
+                 () => {
+-                  info('添加失败，可能授权信息过期')
++                  info('操作失败，或登录状态已过期')
+                 }
+               )
              }
-             response.put("clientDataJSON", encode(request.clientDataJson.getBytes(StandardCharsets.UTF_8)));
 ```
 
-**File**: `src/screens/login/v2/passkey/direct.ts` (added, +59/-0)
+**File**: `src/screens/discovery/catalog/component/list/index.tsx` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,59 @@
+@@ -39,7 +39,7 @@ function List() {
+         <View style={styles.container}>
+           {show &&
+             (!!isLoaded && !list.length ? (
+-              <Empty text='到底了' />
++              <Empty text='到底啦' />
+             ) : (
+               list
+                 .filter(item => {
+```
+
+**File**: `src/screens/discovery/like/store/fetch.ts` (modified, +8/-11)
+```diff
+@@ -2,7 +2,7 @@
+  * @Author: czy0729
+  * @Date: 2024-11-11 10:06:26
+  * @Last Modified by: czy0729
+- * @Last Modified time: 2026-10-15 12:00:00
++ * @Last Modified time: 2026-11-19 23:01:57
+  *
+  * 猜你喜欢数据请求
+  */
+@@ -31,16 +31,13 @@ export default class Fetch extends Computed {
+     const data = await this.fetchCollectionsQueue()
+     if (!data.length) {
+       setTimeout(() => {
+-        confirm(
+-          '没有获取到任何该类型的收藏数据，可能是您的授权信息过期了，也有可能是服务崩了，尝试重新自动授权后再次获取？',
+-          async () => {
+-            await userStore.reOauth()
+-
+-            setTimeout(() => {
+-              this.getList(true)
+-            }, 0)
+-          }
+-        )
++        confirm('没有获取到收藏数据，可能登录状态已过期，是否重新登录后再试？', async () => {
++          await userStore.reOauth()
++
++          setTimeout(() => {
++            this.getList(true)
++          }, 0)
++        })
+       }, 0)
+       return false
+     }
+```
+
+**File**: `src/screens/discovery/word-cloud/component/cavans/index.tsx` (modified, +1/-1)
+```diff
+@@ -26,7 +26,7 @@ function Cavans() {
+     return (
+       <Flex style={styles.empty} justify='center'>
+         <Text style={styles.transparent} type='__plain__' bold>
+-          没有足够的数据，或者授权过期
++          没有足够的数据，或登录状态已过期
+         </Text>
+       </Flex>
+     )
+```
+
+---
+
+### Incident Patch 3: `b83ff7e7` (2026-11-19)
+**Commit Message**: - [UX] 统一目录编辑与新建的操作体验，并收敛进度、时间胶囊等页面叫法，减少误操作和认知负担
+
+**File**: `src/constants/data/index.ts` (modified, +1/-0)
+```diff
+@@ -14,5 +14,6 @@ export * from './menu'
+ export * from './scroll'
+ export * from './size'
+ export * from './site'
++export * from './tab'
+ export * from './time'
+ export * from './timezone'
+```
+
+**File**: `src/constants/data/tab.ts` (added, +16/-0)
+```diff
+@@ -0,0 +1,16 @@
 +/*
 + * @Author: czy0729
-+ * @Date: 2026-11-17
-+ *
-+ * Passkey 登录的直连辅助：默认模式切换与临时直连窗口
-+ */
-+import { systemStore } from '@stores'
-+import { feedback } from '@utils'
-+import {
-+  disableEchProxy,
-+  enableEchProxy,
-+  isEchProxyRunning,
-+  setEchAutoRestorePaused
-+} from '@utils/proxy/ech'
-+
-+/** 空恢复函数 (无需变更网络时使用) */
-+const noopRestore = async () => {}
-+
-+/**
-+ * 把默认代理模式切换为直连 (永久, 可在「设置 → 代理」改回)
-+ * 行为对齐设置页 useProxyMode.setProxyMode('disabled'), 但不依赖组件
-+ */
-+export async function switchDefaultToDirect(): Promise<void> {
-+  feedback(true)
-+
-+  if (systemStore.setting.echProxyEnabled) {
-+    await disableEchProxy()
-+    systemStore.switchSetting('echProxyEnabled')
-+  }
-+
-+  if (!systemStore.setting.workerProxyDisabled) {
-+    systemStore.switchSetting('workerProxyDisabled')
-+  }
-+}
-+
-+/**
-+ * 开启临时直连窗口, 登录结束自动恢复, 不修改默认设置
-+ * - ECH 接管中: 先暂停生命周期自动重建再停掉本地代理, 请求才能直达 bgm.tv
-+ * - 仅镜像 / 反代开启: direct 请求本来不经它, 无需变更网络
-+ *
-+ * 返回恢复函数, 无论登录成败都必须调用一次
-+ */
-+export async function beginTempDirect(): Promise<() => Promise<void>> {
-+  const wasRunning = isEchProxyRunning()
-+  const echSettingEnabled = systemStore.setting.echProxyEnabled === true
-+
-+  if (!wasRunning && !echSettingEnabled) return noopRestore
-+
-+  // 暂停自动重建, 防止切后台选凭据回来时代理被中途拉起
-+  setEchAutoRestorePaused(true)
-+
-+  if (wasRunning) await disableEchProxy()
-+
-+  return async () => {
-+    // enable 失败时内部自行回滚并返回 0, 下次回前台由生命周期自动重建
-+    if (wasRunning) await enableEchProxy()
-+    setEchAutoRestorePaused(false)
-+  }
-+}
-```
-
-**File**: `src/screens/login/v2/passkey/guard.ts` (modified, +27/-7)
-```diff
-@@ -1,11 +1,12 @@
- /*
-  * @Author: Q16KBreak
-  * @Date: 2026-11-11
-- * @Last Modified by: Q16KBreak
-- * @Last Modified time: 2026-11-11 23:10:00
++ * @Date: 2026-11-19
 + * @Last Modified by: czy0729
-+ * @Last Modified time: 2026-11-17
-  *
-  * Passkey 登录的直连门禁：请求必须直达 bgm.tv，不能被节点反代改写地址或请求头
-  */
-+import { syncSystemStore } from '@utils/async'
- import { getProxyStrategy } from '@utils/proxy'
- import { passkeyFailure } from './errors'
- 
-@@ -16,22 +17,41 @@ type DirectState = {
- 
-   /** 策略读取是否失败 */
-   failed: boolean
-+
-+  /** ECH 本地代理是否接管中 (临时直连需要停掉它) */
-+  echRunning: boolean
- }
- 
- /** 读取当前代理策略 */
- function readDirectState(): DirectState {
-   try {
-     const { disabled, ech } = getProxyStrategy()
-+    // 设置态也算非直连: echProxyEnabled 开但进程没起来时, 生命周期可能在登录中途把代理拉起
-+    const echSettingEnabled = syncSystemStore()?.setting?.echProxyEnabled === true
- 
--    return { direct: disabled && !ech, failed: false }
-+    return {
-+      direct: disabled && !ech && !echSettingEnabled,
-+      failed: false,
-+      echRunning: ech
-+    }
-   } catch {
--    return { direct: false, failed: true }
-+    return { direct: false, failed: true, echRunning: false }
-   }
- }
- 
--/** 非直连模式拒绝发起登录 */
--export function assertPasskeyDirect() {
-+/** 读取 Passkey 登录的直连状态 (不抛错, 供 UI 询问用户) */
-+export function getPasskeyDirectState(): DirectState {
-+  return readDirectState()
-+}
-+
-+/**
-+ * 非直连模式拒绝发起登录
++ * @Last Modified time: 2026-11-19
 + *
-+ * @param options.tempDirect 临时直连窗口内跳过模式检查
-+ * (ECH 已停掉; 镜像 / 反代只改写 axiosWithProxy 路径, direct 请求本来不经它)
++ * 底部 Tab 文案 (config 与 useDomTitle 共用)
 + */
-+export function assertPasskeyDirect(options: { tempDirect?: boolean } = {}) {
-   const { direct, failed } = readDirectState()
-   if (failed) throw passkeyFailure('E_PASSKEY_FAILED')
--  if (!direct) throw passkeyFailure('E_PASSKEY_PROXY')
-+  if (!direct && !options.tempDirect) throw passkeyFailure('E_PASSKEY_PROXY')
- }
++export const BOTTOM_TAB_LABEL = {
++  Discovery: '发现',
++  Timeline: '时间胶囊',
++  Home: '进度',
++  Rakuen: '超展开',
++  User: '时光机',
++  Tinygrail: '小圣杯'
++} as const
 ```
 
-**File**: `src/screens/login/v2/passkey/hooks.ts` (modified, +99/-28)
+**File**: `src/navigations/tab-bar/config.ts` (modified, +10/-8)
 ```diff
-@@ -2,12 +2,16 @@
-  * @Author: Q16KBreak
-  * @Date: 2026-11-01
+@@ -2,11 +2,13 @@
+  * @Author: czy0729
+  * @Date: 2022-03-10 02:30:40
   * @Last Modified by: czy0729
-- * @Last Modified time: 2026-11-11 21:16:27
-+ * @Last Modified time: 2026-11-17 00:00:00
-  *
-  * Passkey 登录编排：独立会话、单次用户交互、取消和离页后作废
+- * @Last Modified time: 2025-11-13 12:20:42
++ * @Last Modified time: 2026-11-19 12:00:00
   */
- import { useCallback, useEffect, useRef, useState } from 'react'
-+import { Alert } from 'react-native'
-+import { syncS2T } from '@utils/async'
-+import { switchDefaultToDirect } from './direct'
- import { passkeyErrorMessage, passkeyFailure } from './errors'
-+import { getPasskeyDirectState } from './guard'
- import { cancelPasskeyAssertion, canUsePasskey, isPasskeyModuleAvailable } from './native'
- import { runPasskeyLogin } from './run'
  
-@@ -74,38 +78,105 @@ export function usePasskeyLogin(params: PasskeyLoginParams): PasskeyLoginView {
-         throw passkeyFailure('E_PASSKEY_CANCELLED')
-       }
-     }
-+    const release = () => {
-+      if (runId.current !== id) return
-+      busy.current = false
-+      latest.current.loginLock.current = false
-+      if (mounted.current) setLoading(false)
-+    }
++import { BOTTOM_TAB_LABEL } from '@constants/data/tab'
 +
-+    const startRun = async (tempDirect: boolean) => {
-+      // 弹窗期间可能已离页或取消, 失效则只释放占用的锁
-+      if (!mounted.current || runId.current !== id) {
-+        release()
-+        return
-+      }
-+      setMessage('正在准备 Passkey 登录...')
-+
-+      try {
-+        await runPasskeyLogin({
-+          assertActive,
-+          getContext: () => latest.current,
-+          onProgress: text => {
-+            assertActive()
-+            setMessage(text)
-+          },
-+          onNativeRequest: pending => {
-+            if (runId.current === id) nativeRun.current = pending ? id : null
-+          },
-+          onSuccess: () => {
-+            if (runId.current === id) {
-+              done.current = true
-+              setMessage('')
-+            }
-+          },
-+          tempDirect
-+        })
-+      } catch (error) {
-+        if (mounted.current && runId.current === id) {
-+          setMessage(passkeyErrorMessage(error))
-+        }
-+      } finally {
-+        release()
-+      }
-+    }
-+
-+    // 先置 loading, 弹窗期间密码登录按钮呈禁用态, 避免静默无响应
-     setLoading(true)
--    setMessage('正在准备 Passkey 登录...')
--
--    try {
--      await runPasskeyLogin({
--        assertActive,
--        getContext: () => latest.current,
--        onProgress: text => {
--          assertActive()
--          setMessage(text)
-+
-+    const { direct, failed, echRunning } = getPasskeyDirectState()
-+    if (direct || failed) {
-+      await startRun(false)
-+      return
-+    }
-+
-+    // 无需弹窗的非直连场景, 静默以临时直连放行:
-+    // - 仅镜像 / 反代: 它只改写 axiosWithProxy 路径, direct 请求本来直达 bgm.tv
-+    // - ECH 设置开但进程没起来: 网络层已是直连, beginTempDirect 会暂停生命周期防止登录中途拉起
-+    if (!echRunning) {
-+      await startRun(true)
-+      return
-+    }
-+
-+    // ECH 接管中: OkHttp 全局接管, 必须临时停掉本地代理, 询问本次登录方式
-+    setMessage('请在弹窗中选择本次登录方式。')
-+    Alert.alert(
-+      syncS2T('提示'),
-+      syncS2T(
-+        'Passkey 登录需要请求直达 bgm.tv，当前处于 ECH 模式。\n' +
-+          '\n「本次直连验证」仅在本次登录临时停用 ECH，结束后自动恢复。' +
-+          '\n「切换为直连模式」会修改默认设置，可随时在「设置 → 代理」改回。'
-+      ),
-+      [
-+        {
-+          text: syncS2T('取消'),
-+          style: 'cancel',
-+          onPress: () => {
-+            release()
-+            if (mounted.current) setMessage('')
-+          }
-         },
--        onNativeRequest: pending => {
--          if (runId.current === id) nativeRun.current = pending ? id : null
-+        {
-+          text: syncS2T('本次直连验证'),
-+          onPress: () => {
-+            void startRun(true)
-+          }
-         },
--        onSuccess: () => {
--          if (runId.current === id) {
--            done.current = true
--            setMessage('')
-+        {
-+          text: syncS2T('切换为直连模式'),
-+          onPress: () => {
-+            void (async () => {
-+              await switchDefaultToDirect()
-+              if (mounted.current && runId.current === id) {
-+                await startRun(false)
-+              } else {
-+                release()
-+              }
-+            })()
-           }
-         }
--      })
--    } catch (error) {
--      if (mounted.current && runId.current === id) {
--        setMessage(passkeyErrorMessage(error))
--      }
--    } finally {
--      if (runId.current === id) {
--        busy.current = false
--        latest.current.loginLock.current = false
--        if (mounted.current) setLoading(false)
--      }
--    }
-+      ]
-+    )
-   }, [])
- 
-   return {
-```
-
-**File**: `src/screens/login/v2/passkey/run.ts` (modified, +45/-28)
-```diff
-@@ -2,11 +2,12 @@
-  * @Author: Q16KBreak
-  * @Date: 2026-11-01
-  * @Last Modified by: czy0729
-- * @Last Modified time: 2026-11-11 21:15:55
-+ * @Last Modified time: 2026-11-17 00:00:00
-  *
-  * 单次 Passkey 登录管线：可独立测试，完成全部授权后才提交用户状态
+ /**
+- * 底部 Tab 唯一配置源
++ * 底部 Tab 结构与顺序配置 (文案见 constants/data/tab)
+  *  - 顺序即展示顺序 (bottom-tab-navigator 按此派生屏幕挂载)
+  *  - fixed: true 不受 homeRenderTabs 设置控制, 恒显示
   */
- import { saveLoginResult } from '../utils'
-+import { beginTempDirect } from './direct'
- import { passkeyFailure } from './errors'
- import { assertPasskeyDirect } from './guard'
- import { canUsePasskey, getPasskeyAssertion, isPasskeyAvailable, isPasskeyOS } from './native'
-@@ -21,44 +22,60 @@ import type { PasskeyRunParams } from './types'
-  * @param getContext 延迟读取的页面上下文
-  * @param onProgress 流程提示
-  * @param onNativeRequest 原生凭据 UI 状态回调
-+ * @param tempDirect 临时直连窗口内登录 (绕过门禁, 结束后恢复原代理模式)
-  */
- export async function runPasskeyLogin({
-   assertActive,
-   getContext,
-   onProgress,
-   onNativeRequest,
--  onSuccess
-+  onSuccess,
-+  tempDirect = false
- }: PasskeyRunParams): Promise<void> {
-   assertActive()
-   if (!canUsePasskey()) throw passkeyFailure('E_PASSKEY_UNSUPPORTED')
-   if (!isPasskeyOS()) throw passkeyFailure('E_PASSKEY_UNSUPPORTED')
--  assertPasskeyDirect()
-+  assertPasskeyDirect({ tempDirect })
-   if (!(await isPasskeyAvailable())) throw passkeyFailure('E_PASSKEY_PROVIDER')
-   assertActive()
--  const service = new PasskeyLoginService(assertActive)
--  const options = await service.prepare()
--  assertActive()
--  onProgress('请在凭据管理器中信任本应用，选择 bgm.tv 的 Passkey 并完成验证。')
--  onNativeRequest(true)
--  let assertion: string
--  try {
--    assertion = await getPasskeyAssertion(options)
--  } finally {
--    onNativeRequest(false)
-+
-+  const execute = async (): Promise<void> => {
-+    const service = new PasskeyLoginService(assertActive)
-+    const options = await service.prepare()
-+    assertActive()
-+    onProgress('请在凭据管理器中信任本应用，选择 bgm.tv 的 Passkey 并完成验证。')
-+    onNativeRequest(true)
-+    let assertion: string
-+    try {
-+      assertion = await getPasskeyAssertion(options)
-+    } finally {
-+      onNativeRequest(false)
-+    }
-+    assertActive()
-+    onProgress('正在向主站验证 Passkey...')
-+    await service.verify(assertion)
-+    assertActive()
-+    onProgress('正在完成客户端授权...')
-+    await service.finish()
-+    assertActive()
-+    onSuccess()
-+    saveLoginResult({
-+      cookie: service.cookieString,
-+      userAgent: service.userAgent,
-+      accessToken: service.accessToken,
-+      navigation: getContext().navigation,
-+      isSyncSetting: () => getContext().isSyncSetting
-+    })
-+  }
-+
-+  if (tempDirect) {
-+    const restore = await beginTempDirect()
-+    try {
-+      await execute()
-+    } finally {
-+      await restore()
-+    }
-+  } else {
-+    await execute()
+@@ -15,42 +17,42 @@ export const BOTTOM_TABS = [
+     name: 'Discovery',
+     icon: 'home',
+     size: 19,
+-    label: '发现',
++    label: BOTTOM_TAB_LABEL.Discovery,
+     fixed: false
+   },
+   {
+     name: 'Timeline',
+     icon: 'md-access-time',
+     size: 21,
+-    label: '时间胶囊',
++    label: BOTTOM_TAB_LABEL.Timeline,
+     fixed: false
+   },
+   {
+     name: 'Home',
+     icon: 'md-star-outline',
+     size: undefined,
+-    label: '收藏',
++    label: BOTTOM_TAB_LABEL.Home,
+     fixed: true
+   },
+   {
+     name: 'Rakuen',
+     icon: 'md-chat-bubble-outline',
+     size: 19,
+-    label: '超展开',
++    label: BOTTOM_TAB_LABEL.Rakuen,
+     fixed: false
+   },
+   {
+     name: 'User',
+     icon: 'md-person-outline',
+     size: undefined,
+-    label: '时光机',
++    label: BOTTOM_TAB_LABEL.User,
+     fixed: true
+   },
+   {
+     name: 'Tinygrail',
+     icon: 'trophy',
+     size: 19,
+-    label: '小圣杯',
++    label: BOTTOM_TAB_LABEL.Tinygrail,
+     fixed: false
    }
--  assertActive()
--  onProgress('正在向主站验证 Passkey...')
--  await service.verify(assertion)
--  assertActive()
--  onProgress('正在完成客户端授权...')
--  await service.finish()
--  assertActive()
--  onSuccess()
--  saveLoginResult({
--    cookie: service.cookieString,
--    userAgent: service.userAgent,
--    accessToken: service.accessToken,
--    navigation: getContext().navigation,
--    isSyncSetting: () => getContext().isSyncSetting
--  })
+ ] as const
+```
+
+**File**: `src/screens/_/base/folder-manage-modal/catalog/edit-form.tsx` (removed, +0/-46)
+```diff
+@@ -1,46 +0,0 @@
+-/*
+- * @Author: czy0729
+- * @Date: 2026-11-02 14:00:00
+- * @Last Modified by: czy0729
+- * @Last Modified time: 2026-11-02 14:00:00
+- *
+- * 目录编辑表单 (标题 / 介绍 / 隐私)
+- */
+-import { View } from 'react-native'
+-import { observer } from 'mobx-react'
+-import { Input, Text, TextareaItem } from '@components'
+-import { _ } from '@stores'
+-import PrivacyRow from '../privacy'
+-import { memoStyles } from './styles'
+-
+-import type { EditFormProps } from './types'
+-
+-function EditForm({ title, desc, privacy, onChange }: EditFormProps) {
+-  const styles = memoStyles()
+-
+-  return (
+-    <View style={_.mb.sm}>
+-      <Text bold>编辑目录</Text>
+-      <Input
+-        style={styles.textarea}
+-        defaultValue={title}
+-        placeholder='输入标题'
+-        showClear
+-        onChangeText={text => onChange(text, 'title')}
+-      />
+-      <TextareaItem
+-        style={styles.textarea}
+-        defaultValue={desc}
+-        placeholder='输入介绍'
+-        placeholderTextColor={_.colorDisabled}
+-        rows={4}
+-        selectionColor={_.colorMain}
+-        clear
+-        onChange={text => onChange(text, 'desc')}
+-      />
+-      <PrivacyRow value={privacy} onChange={value => onChange(value, 'privacy')} />
+-    </View>
+-  )
+-}
+-
+-export default observer(EditForm)
+```
+
+**File**: `src/screens/_/base/folder-manage-modal/catalog/index.tsx` (modified, +24/-66)
+```diff
+@@ -2,72 +2,50 @@
+  * @Author: czy0729
+  * @Date: 2023-03-07 16:06:36
+  * @Last Modified by: czy0729
+- * @Last Modified time: 2026-11-02 04:00:00
++ * @Last Modified time: 2026-11-19 20:55:23
+  */
+-import { View } from 'react-native'
+ import { observer } from 'mobx-react'
+ import { Flex, Iconfont, Text, Touchable } from '@components'
+ import { _ } from '@stores'
+ import { CONTROL_DS } from '../ds'
+ import { IconTouchable } from '../../../icon'
+ import { Popover } from '../../popover'
+ import { decodeContent } from '../utils'
+-import EditForm from './edit-form'
+-import { memoStyles } from './styles'
++import { styles } from './styles'
+ 
+ import type { Props } from './types'
+ 
+-function Catalog({
+-  id,
+-  expand,
+-  create,
+-  edit,
+-  desc,
+-  privacy,
+-  item,
+-  detail,
+-  onChange,
+-  onExpand,
+-  onToggle,
+-  onControl,
+-  onCreate,
+-  onSubmitCatalog
+-}: Props) {
+-  const styles = memoStyles()
++function Catalog({ id, expand, edit, item, detail, onExpand, onToggle, onControl }: Props) {
+   const isIn = detail?.list?.some(i => i.id == id)
+   const date = item.time?.split(' ')[0]?.replace('创建于:', '') || ''
+ 
+   return (
+-    <Flex style={styles.catalog}>
++    <Flex style={[styles.catalog, { padding: _.device(_.sm, _.md) }]}>
+       <Flex.Item>
+-        {create == item.id ? (
+-          <EditForm title={item.title} desc={desc} privacy={privacy} onChange={onChange} />
+-        ) : (
+-          <Touchable onPress={() => onExpand(item)}>
+-            <Flex>
+-              <Text bold>
+-                {item.title}
+-                <Text size={11} lineHeight={14} type='sub' bold>
+-                  {' '}
+-                  ({detail.list.length})
+-                </Text>
++        <Touchable onPress={() => onExpand(item)}>
++          <Flex>
++            <Text bold>
++              {item.title}
++              <Text size={11} lineHeight={14} type='sub' bold>
++                {' '}
++                ({detail.list.length})
+               </Text>
+-              <Iconfont
+-                name={expand.includes(item.id) ? 'md-keyboard-arrow-down' : 'md-navigate-next'}
+-                size={20}
+-                lineHeight={24}
+-              />
+-            </Flex>
+-            <Text style={_.mt.xs} type='sub' size={10} lineHeight={11} bold numberOfLines={2}>
+-              {date}
+-              {detail.content ? ' · ' : ''}
+-              {decodeContent(detail.content)}
+             </Text>
+-          </Touchable>
+-        )}
++            <Iconfont
++              name={expand.includes(item.id) ? 'md-keyboard-arrow-down' : 'md-navigate-next'}
++              size={20}
++              lineHeight={24}
++            />
++          </Flex>
++          <Text style={_.mt.xs} type='sub' size={10} lineHeight={11} bold numberOfLines={2}>
++            {date}
++            {detail.content ? ' · ' : ''}
++            {decodeContent(detail.content)}
++          </Text>
++        </Touchable>
+       </Flex.Item>
+       <Flex style={styles.control} justify='end'>
+-        {!edit && !create && (
++        {!edit && (
+           <>
+             {!!id && (
+               <IconTouchable
+@@ -89,26 +67,6 @@ function Catalog({
+             </Popover>
+           </>
+         )}
+-        {item.id == create && (
+-          <>
+-            <View style={styles.cancel}>
+-              <IconTouchable
+-                name='md-close'
+-                size={22}
+-                color={_.colorSub}
+-                onPress={() => onCreate(false)}
+-              />
+-            </View>
+-            <View style={styles.submit}>
+-              <IconTouchable
+-                name='md-check'
+-                size={22}
+-                color={_.colorSub}
+-                onPress={onSubmitCatalog}
+-              />
+-            </View>
+-          </>
+-        )}
+       </Flex>
+     </Flex>
+   )
+```
+
+**File**: `src/screens/_/base/folder-manage-modal/catalog/styles.ts` (modified, +3/-28)
+```diff
+@@ -2,28 +2,15 @@
+  * @Author: czy0729
+  * @Date: 2023-03-07 16:11:36
+  * @Last Modified by: czy0729
+- * @Last Modified time: 2025-03-20 16:04:35
++ * @Last Modified time: 2026-11-19 20:25:43
+  */
+ import { _ } from '@stores'
+ 
+-export const memoStyles = _.memoStyles(() => ({
++export const styles = _.create({
+   catalog: {
+-    padding: _.device(_.sm, _.md),
+     paddingRight: 0,
+     marginBottom: _.sm
+   },
+-  textarea: {
+-    padding: _.sm,
+-    marginTop: _.md,
+-    marginBottom: -4,
+-    color: _.colorDesc,
+-    ..._.fontSize10,
+-    backgroundColor: _.select(_.colorPlain, _._colorDarkModeLevel1),
+-    borderWidth: 1,
+-    borderColor: _.select(_.colorIcon, _.colorBorder),
+-    borderRadius: _.radiusXs,
+-    overflow: 'hidden'
+-  },
+   control: {
+     minWidth: 48,
+     height: '100%'
+@@ -41,17 +28,5 @@ export const memoStyles = _.memoStyles(() => ({
+   touch: {
+     width: 38,
+     height: 38
+-  },
+-  cancel: {
+-    position: 'absolute',
+-    zIndex: 1,
+-    top: 0,
+-    right: -4
+-  },
+-  submit: {
+-    position: 'absolute',
+-    zIndex: 1,
+-    right: -4,
+-    bottom: -4
+   }
+-}))
++})
+```
+
+**File**: `src/screens/_/base/folder-manage-modal/catalog/types.ts` (modified, +1/-24)
+```diff
+@@ -2,16 +2,13 @@
+  * @Author: czy0729
+  * @Date: 2025-03-20 14:36:47
+  * @Last Modified by: czy0729
+- * @Last Modified time: 2026-03-19 16:48:51
++ * @Last Modified time: 2026-11-19 20:25:48
+  */
+ import type {
+   CatalogDetail,
+   CatalogsItem,
+-  HandleChange,
+   HandleControl,
+-  HandleCreate,
+   HandleExpand,
+-  HandleSubmitCatalog,
+   HandleToggle,
+   Props as ComponentProps,
+   State as ComponentState
+@@ -20,30 +17,10 @@ import type {
+ export type Props = {
+   id: ComponentProps['id']
+   expand: ComponentState['expand']
+-  create: ComponentState['create']
+   edit: ComponentState['edit']
+-  desc: ComponentState['desc']
+-  privacy: ComponentState['privacy']
+   item: CatalogsItem
+   detail: CatalogDetail
+-  onChange: HandleChange
+   onExpand: HandleExpand
+   onToggle: HandleToggle
+   onControl: HandleControl
+-  onCreate: HandleCreate
+-  onSubmitCatalog: HandleSubmitCatalog
+-}
+-
+-/** 目录编辑表单参数 */
+-export type EditFormProps = {
+-  /** 目录标题 */
+-  title: string
+-
+-  /** 目录介绍 */
+-  desc: string
+-
+-  /** 隐私设置 */
+-  privacy: ComponentState['privacy']
+-
+-  onChange: HandleChange
  }
 ```
 
-**File**: `src/screens/login/v2/passkey/types.ts` (modified, +3/-0)
+**File**: `src/screens/_/base/folder-manage-modal/create/index.tsx` (modified, +26/-17)
 ```diff
-@@ -94,6 +94,9 @@ export type PasskeyRunParams = {
-   /** 延迟读取导航和同步选项，避免异步闭包过期 */
-   getContext: () => Pick<PasskeyLoginParams, 'navigation' | 'isSyncSetting'>
+@@ -2,15 +2,15 @@
+  * @Author: czy0729
+  * @Date: 2023-03-07 16:47:48
+  * @Last Modified by: czy0729
+- * @Last Modified time: 2026-11-01 16:30:50
++ * @Last Modified time: 2026-11-19 10:00:00
+  *
+  * 目录表单
+  */
+ import { View } from 'react-native'
+ import { observer } from 'mobx-react'
+-import { Input, Text, TextareaItem } from '@components'
++import { Button, Flex, Input, Text, TextareaItem } from '@components'
+ import { _ } from '@stores'
+-import { IconTouchable } from '../../../icon'
++import { info } from '@utils'
+ import PrivacyRow from '../privacy'
+ import { memoStyles } from './styles'
  
-+  /** 临时直连窗口内登录: 绕过直连门禁, 结束后自动恢复原代理模式 */
-+  tempDirect?: boolean
-+
-   /** 更新不包含敏感数据的流程提示 */
-   onProgress: (message: string) => void
+@@ -28,13 +28,14 @@ function Create({
+   onSubmitCatalog
+ }: Props) {
+   const styles = memoStyles()
++  const canSubmit = !!title && !!desc
  
-```
-
-**File**: `src/utils/proxy/ech/index.ts` (modified, +12/-0)
-```diff
-@@ -24,6 +24,9 @@ let _running = false
- /** 生命周期监听是否已注册 */
- let _lifecycleSetup = false
- 
-+/** 是否暂停后台回前台时的自动重建 (临时直连窗口期间使用) */
-+let _autoRestorePaused = false
-+
- /**
-  * 启动 ECH 代理
-  * - 在 Android 上启动本地 HTTP 代理进程 (ECH + DoH)
-@@ -119,6 +122,14 @@ export async function getEchProxyLogs(): Promise<EchProxyLog[]> {
-   return nativeGetLogs()
+   return (
+     <View style={styles.create}>
+       {showTitle && <Text bold>{titleText}</Text>}
+       <Input
+         style={styles.textarea}
+-        defaultValue={title}
++        value={title}
+         placeholder='输入标题'
+         showClear
+         onChangeText={text => onChange(text, 'title')}
+@@ -52,19 +53,27 @@ function Create({
+       {!!privacy && (
+         <PrivacyRow value={privacy} onChange={value => onChange(value, 'privacy')} />
+       )}
+-      {showCancel && (
+-        <View style={styles.cancel}>
+-          <IconTouchable
+-            name='md-close'
+-            size={22}
+-            color={_.colorSub}
+-            onPress={() => onCreate(false)}
+-          />
+-        </View>
+-      )}
+-      <View style={styles.submit}>
+-        <IconTouchable name='md-check' size={22} color={_.colorSub} onPress={onSubmitCatalog} />
+-      </View>
++      <Flex style={_.mt.md}>
++        {showCancel && (
++          <Flex.Item style={_.mr.sm}>
++            <Button type='ghostPlain' onPress={() => onCreate(false)}>
++              取消
++            </Button>
++          </Flex.Item>
++        )}
++        <Flex.Item>
++          <Button
++            type={canSubmit ? 'main' : 'disabled'}
++            onPress={
++              canSubmit
++                ? onSubmitCatalog
++                : () => info(!title ? '请填写目录标题' : '请填写目录介绍')
++            }
++          >
++            确定
++          </Button>
++        </Flex.Item>
++      </Flex>
+     </View>
+   )
  }
- 
-+/**
-+ * 暂停 / 恢复后台回前台时的代理自动重建
-+ * - 临时直连窗口 (如 Passkey 登录) 期间暂停, 防止切后台选凭据回来时代理被中途拉起
-+ */
-+export function setEchAutoRestorePaused(paused: boolean): void {
-+  _autoRestorePaused = paused
-+}
-+
- /**
-  * 注册 AppState 生命周期监听
-  * - 后台→前台时自动检查 ECH 代理状态，已死则重建
-@@ -131,6 +142,7 @@ export function setupEchLifecycle(): void {
- 
-   AppState.addEventListener('change', (state: string) => {
-     if (state !== 'active') return
-+    if (_autoRestorePaused) return
- 
-     const setting = syncSystemStore()?.setting
-     if (!setting?.echProxyEnabled) return
 ```
 
 #### Recent Merged Pull Requests:
@@ -2026,45 +2080,6 @@ Observed empirical fixes and code patches:
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. 统一空状态展示并整理通用工具
-
-**RULE**:
-When implementing operations in `jest/setup.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in czy0729/Bangumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `ad576e32`: 统一空状态展示并整理通用工具. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `jest/setup.js`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```typescript
-// Verified production-grade fix pattern:
-// 覆盖真实 expo-device: 其副作用加载 expo/build/Expo.fx 需要 RN 的 ErrorUtils 全局, node 环境没有;
-// 字段覆盖 src/constants/env.ts 与 home/v2 store 的全部读取
-jest.mock('expo-device', () => ({
-  brand: 'test',
-  deviceYearClass: 2026,
-  modelId: 'test',
-  modelName: 'test',
-  osVersion: '1.0'
-}))
-```
-
-**NEGATIVE CONSTRAINT**:
-```typescript
-// Induced defect failure mode:
-// Defect-prone omission of boundary validation
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ad576e32` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

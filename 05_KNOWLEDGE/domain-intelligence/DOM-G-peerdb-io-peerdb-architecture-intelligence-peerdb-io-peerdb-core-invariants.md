@@ -4,24 +4,24 @@
 {
   "source_repository": "PeerDB-io/peerdb",
   "source_url": "https://github.com/PeerDB-io/peerdb",
-  "source_version": "469e73c6",
+  "source_version": "78271fc2",
   "license": "AGPL-3.0",
-  "timestamp": "2026-11-20T23:05:32.790Z",
+  "timestamp": "2026-11-22T02:18:09.192Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-peerdb-io-peerdb",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb) (Revision: `469e73c6`).  
-> **License**: AGPL-3.0 | **Timestamp**: `2026-11-20T23:05:32.790Z`  
+> **Provenance**: Harvested from [PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb) (Revision: `78271fc2`).  
+> **License**: AGPL-3.0 | **Timestamp**: `2026-11-22T02:18:09.192Z`  
 > **Learning ID**: `learn-github-peerdb-io-peerdb`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 79%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 78%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from PeerDB-io/peerdb:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T23:05:31.539Z  
+> **Harvest Timestamp**: 2026-11-22T02:18:07.945Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1893,372 +1893,52 @@ func getChainedRoleSessionName() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `469e73c6` (2026-11-20)
-**Commit Message**: clickhouse: treat lowercase JSON destination types as JSON (#5098)
+### Incident Patch 1: `78271fc2` (2026-11-20)
+**Commit Message**: improve claude review to remind author to check public documentations (#5105)
 
-Fixes
-[DBI-1306](https://linear.app/clickhouse/issue/DBI-1306/recognise-parameterised-and-lowercase-json-destination-types).
+Instruct review bot to remind author to also check and update public
+documentations when there is a conflict.
 
-ClickHouse accepts lowercase JSON types like `json` and `Array(json)`,
-and validation lets them through, but PeerDB only recognised the
-uppercase spellings. With an `Array(json)` override, CDC landed every
-array as `[]`.
+The code-review command allows only gh issue, gh search, and gh pr
+commands. Those commands cannot read a file from ClickHouse/ClickHouse.
+So do a sparse checkout of the relevant docs so review bot can verify
+code against it.
 
-`qvalue.ConvertJSONTypeToUppercase` now uppercases the type of JSON
-columns before the wrap gates, the normalize query and the snapshot
-casts check it. The DDL keeps the user's spelling.
-
-Parameterised types like `JSON(max_dynamic_paths=256)` are out of scope:
-validation already rejects them.
-
-**Testing:** unit tests, plus e2e `Test_JSON_CH_JSONOverride_Lowercase`
-and `Test_JSON_CH_Array_OverrideLowercase`, passing locally.
-
----------
-
-Co-authored-by: Pablo Francisco Pérez Hidalgo <[REDACTED_EMAIL]>
-
-**File**: `flow/connectors/clickhouse/normalize_query.go` (modified, +1/-0)
+**File**: `.claude/REVIEW.md` (modified, +1/-0)
 ```diff
-@@ -146,6 +146,7 @@ func (t *NormalizeQueryGenerator) BuildQuery(ctx context.Context) (string, error
- 		if err != nil {
- 			return "", fmt.Errorf("error while converting column type to clickhouse type: %w", err)
- 		}
-+		clickHouseType = qvalue.ConvertJSONTypeToUppercase(clickHouseType)
- 
- 		switch clickHouseType {
- 		case "Time64(6)", "Nullable(Time64(6))":
+@@ -1,3 +1,4 @@
+ - High severity: Changes should not include addition of outputs through stdout, stderr or logs that might contain PII or Secret information. Play special attention to printing passwords and access tokens.
+ - High severity: When changes are bumping dependencies (this is often the case when the PR author is `app/renovate`), check whether the version bump brings regressions. For this: Read the upstream release notes and commit log for the bumped range in the library repository. Highlight your findings in the PR review.
+ - High severity: For changed files under a path listed in `docs/tricky-areas.md`, read that area's section and check the change against its "What to watch for in a PR" points. Name the section in the finding. If the change fixes a trap or contradicts the section, ask for the section to be updated in the same PR.
++- High severity: Catch changes that make the public ClickPipes docs stale, so that the author remembers to update them. The docs are checked out at `clickhouse-docs/docs/integrations/clickpipes/`. If the change makes a statement in them false (for example about a setting, a default, a limit, a supported type or version, or what can be edited after creation), post a reminder: quote the sentence, link it at `https://github.com/ClickHouse/ClickHouse/blob/master/docs/integrations/clickpipes/<path>`, and say what changed. This is a reminder, not a blocker. Do not flag missing docs for new behavior.
 ```
 
-**File**: `flow/connectors/clickhouse/normalize_query_test.go` (modified, +19/-4)
+**File**: `.github/workflows/claude-code-review.yml` (modified, +8/-0)
 ```diff
-@@ -103,6 +103,7 @@ func TestBuildQueryArrayOfJSON(t *testing.T) {
- 			{Name: "id", Type: string(types.QValueKindString), TypeModifier: -1},
- 			{Name: "docs", Type: string(types.QValueKindArrayJSON), TypeModifier: -1, Nullable: true},
- 			{Name: "docs_strict", Type: string(types.QValueKindArrayJSON), TypeModifier: -1, Nullable: true},
-+			{Name: "docs_lower", Type: string(types.QValueKindArrayJSON), TypeModifier: -1, Nullable: true},
- 		},
- 	}
- 	tableMapping := &protos.TableMapping{
-@@ -111,6 +112,8 @@ func TestBuildQueryArrayOfJSON(t *testing.T) {
- 		Columns: []*protos.ColumnSetting{
- 			{SourceName: "docs", DestinationType: "Array(Nullable(JSON))"},
- 			{SourceName: "docs_strict", DestinationType: "Array(JSON)"},
-+			// ClickHouse stores Array(json) as Array(JSON), so it is extracted the same way
-+			{SourceName: "docs_lower", DestinationType: "Array(json)"},
- 		},
- 	}
+@@ -26,6 +26,14 @@ jobs:
+         with:
+           fetch-depth: 1
  
-@@ -129,6 +132,9 @@ func TestBuildQueryArrayOfJSON(t *testing.T) {
- 	require.Contains(t, query,
- 		`arrayMap(x -> ifNull(x, CAST('{}', 'JSON')), JSONExtract(JSONExtractString(_peerdb_data, 'docs_strict'), 'Array(Nullable(JSON))'))`+
- 			" AS `docs_strict`")
-+	require.Contains(t, query,
-+		`arrayMap(x -> ifNull(x, CAST('{}', 'JSON')), JSONExtract(JSONExtractString(_peerdb_data, 'docs_lower'), 'Array(Nullable(JSON))'))`+
-+			" AS `docs_lower`")
- }
- 
- // TestBuildQueryNullableJSON checks the projection for native JSON columns.
-@@ -209,6 +215,13 @@ func TestBuildQueryNullableJSON(t *testing.T) {
- 		require.Contains(t, query, nullableProjection)
- 		require.Contains(t, query, nullableUpdate)
- 		require.NotContains(t, query, "Nullable(Nullable(")
++      - name: Checkout ClickPipes docs
++        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
++        with:
++          repository: ClickHouse/ClickHouse
++          path: clickhouse-docs
++          fetch-depth: 1
++          sparse-checkout: docs/integrations/clickpipes
 +
-+		// lowercase overrides, which ClickHouse stores as JSON, take the same projection
-+		for _, destinationType := range []string{"json", "Nullable(json)"} {
-+			query = build(t, newSchema(true), newMapping(destinationType), true, nil)
-+			require.Contains(t, query, nullableProjection, destinationType)
-+			require.Contains(t, query, nullableUpdate, destinationType)
-+		}
- 	})
- 
- 	t.Run("non-nullable JSON column writes {} on empty", func(t *testing.T) {
-@@ -218,9 +231,11 @@ func TestBuildQueryNullableJSON(t *testing.T) {
- 		require.NotContains(t, query, "Nullable(JSON)")
- 		require.True(t, peerdb_clickhouse.QueryCastsToJSON(query))
- 
--		query = build(t, newSchema(false), newMapping("JSON"), true, nil)
--		require.Contains(t, query, plainProjection)
--		require.Contains(t, query, plainUpdate)
--		require.NotContains(t, query, "Nullable(JSON)")
-+		for _, destinationType := range []string{"JSON", "json"} {
-+			query = build(t, newSchema(false), newMapping(destinationType), true, nil)
-+			require.Contains(t, query, plainProjection, destinationType)
-+			require.Contains(t, query, plainUpdate, destinationType)
-+			require.NotContains(t, query, "Nullable(JSON)", destinationType)
-+		}
- 	})
- }
-```
-
-**File**: `flow/connectors/clickhouse/table_function.go` (modified, +3/-2)
-```diff
-@@ -52,7 +52,8 @@ func jsonFieldExpressionConverter(
- 	castToJSON := qvalue.ShouldUseNativeJSONType(ctx, config.config.Env, config.connector.chVersion)
- 	for _, column := range config.config.GetColumns() {
- 		if column.SourceName == field.Name && column.DestinationType != "" {
--			castToJSON = column.DestinationType == "JSON" || column.DestinationType == "Nullable(JSON)"
-+			dstType := qvalue.ConvertJSONTypeToUppercase(column.DestinationType)
-+			castToJSON = dstType == "JSON" || dstType == "Nullable(JSON)"
- 			break
- 		}
- 	}
-@@ -120,7 +121,7 @@ func arrayJSONFieldExpressionConverter(
- 		return sourceFieldIdentifier, nil
- 	}
- 	colSetting := findColumnSetting(field.Name, config.config.GetColumns())
--	dstType := colSetting.GetDestinationType()
-+	dstType := qvalue.ConvertJSONTypeToUppercase(colSetting.GetDestinationType())
- 	if dstType == "" && qvalue.ShouldUseArrayJSONType(
- 		ctx, config.config.Env, config.connector.chVersion, config.config.Version, config.config.SourceType,
- 	) {
-```
-
-**File**: `flow/e2e/clickhouse_json_suite.go` (modified, +28/-7)
-```diff
-@@ -65,7 +65,19 @@ func (s ClickHouseSuite) Test_JSON_CH_JSONOverride() {
- 	emptyObject := "{}"
- 	s.testJSONColumns(jsonColumnMirrorConfig{
- 		tableName:          "test_json_override",
--		overrideToJSON:     true,
-+		overrideType:       "JSON",
-+		expectedColumnType: "JSON",
-+		sourceNullLandsAs:  &emptyObject,
-+	})
-+}
-+
-+// Test_JSON_CH_JSONOverride_Lowercase pins the JSON columns to json, which ClickHouse stores as JSON: the readers
-+// and normalize must treat it as JSON too.
-+func (s ClickHouseSuite) Test_JSON_CH_JSONOverride_Lowercase() {
-+	emptyObject := "{}"
-+	s.testJSONColumns(jsonColumnMirrorConfig{
-+		tableName:          "test_json_override_lower",
-+		overrideType:       "json",
- 		expectedColumnType: "JSON",
- 		sourceNullLandsAs:  &emptyObject,
- 	})
-@@ -245,7 +257,7 @@ func (s ClickHouseSuite) testJSONColumns(cfg jsonColumnMirrorConfig) {
- 		},
- 	}
- 	// with native JSON on, or the columns pinned to JSON, the readers wrap non-object documents
--	wrapNonObjects := cfg.nativeJSON || cfg.overrideToJSON
-+	wrapNonObjects := cfg.nativeJSON || cfg.overrideType != ""
- 
- 	srcTableName := cfg.tableName
- 	srcFullName := s.attachSchemaSuffix(srcTableName)
-@@ -288,10 +300,10 @@ func (s ClickHouseSuite) testJSONColumns(cfg jsonColumnMirrorConfig) {
- 	if cfg.nativeJSON {
- 		flowConnConfig.Env["PEERDB_CLICKHOUSE_ENABLE_JSON"] = "true"
- 	}
--	if cfg.overrideToJSON {
-+	if cfg.overrideType != "" {
- 		for _, column := range jsonColumns {
- 			flowConnConfig.TableMappings[0].Columns = append(flowConnConfig.TableMappings[0].Columns,
--				&protos.ColumnSetting{SourceName: column, DestinationType: "JSON"})
-+				&protos.ColumnSetting{SourceName: column, DestinationType: cfg.overrideType})
- 		}
- 	}
- 	if cfg.disableFastProcessJSONColumns {
-@@ -337,11 +349,11 @@ type jsonColumnMirrorConfig struct {
- 	sourceNullLandsAs  *string
- 	tableName          string
- 	expectedColumnType string
--	nativeJSON         bool
-+	// overrideType is given to every JSON column as its destination type through the column settings; a JSON type
-+	overrideType string
-+	nativeJSON   bool
- 	// nullableDestinationColumns sets PEERDB_NULLABLE, so nullable source columns get Nullable(...) on the destination
- 	nullableDestinationColumns bool
--	// overrideToJSON gives every JSON column the destination type JSON through its column settings
--	overrideToJSON bool
- 	// disableFastProcessJSONColumns sets PEERDB_POSTGRES_FAST_PROCESS_JSON_COLUMNS to false, so the Postgres reader
- 	// takes the unmarshal/marshal path instead of the token walk; Postgres only
- 	disableFastProcessJSONColumns bool
-@@ -692,6 +704,15 @@ func (s ClickHouseSuite) Test_JSON_CH_Array_OverrideNullable() {
- 	})
- }
- 
-+// Test_JSON_CH_Array_OverrideLowercase: Array(json), which ClickHouse stores as Array(JSON), behaves as Array(JSON).
-+func (s ClickHouseSuite) Test_JSON_CH_Array_OverrideLowercase() {
-+	s.testJSONArrayColumns(jsonArrayMirrorConfig{
-+		tableName:          "test_json_arr_override_lower",
-+		overrideType:       "Array(json)",
-+		expectedColumnType: "Array(JSON)",
-+	})
-+}
-+
- // Test_JSON_CH_Array_OverrideNullable_ClassicReader: the same with fast JSON processing off.
- func (s ClickHouseSuite) Test_JSON_CH_Array_OverrideNullable_ClassicReader() {
- 	s.testJSONArrayColumns(jsonArrayMirrorConfig{
-```
-
-**File**: `flow/model/qvalue/json.go` (modified, +14/-2)
-```diff
-@@ -21,14 +21,26 @@ func WrapNonObjectJSON(doc string) string {
- 	return `{"_value":` + doc + `}`
- }
- 
-+// ConvertJSONTypeToUppercase returns JSON, Nullable(JSON), Array(JSON) or Array(Nullable(JSON)) when
-+// destinationType is one of them written in another case, like Array(json), which ClickHouse accepts and
-+// stores as Array(JSON). Any other type is returned unchanged.
-+func ConvertJSONTypeToUppercase(destinationType string) string {
-+	for _, jsonType := range []string{"JSON", "Nullable(JSON)", "Array(JSON)", "Array(Nullable(JSON))"} {
-+		if strings.EqualFold(destinationType, jsonType) {
-+			return jsonType
-+		}
-+	}
-+	return destinationType
-+}
-+
- // ShouldWrapNonObjectJSON reports whether a JSON column with the given explicit destination type, "" for
- // none, lands in native ClickHouse JSON on this mirror and so has its non-object values wrapped. nativeJSONEnabled
- // is PEERDB_CLICKHOUSE_ENABLE_JSON, which the readers look up once per pull.
- func ShouldWrapNonObjectJSON(flags []string, version uint32, nativeJSONEnabled bool, destinationType string) bool {
- 	if version < shared.InternalVersion_WrapNonObjectJSON {
- 		return false
- 	}
--	switch destinationType {
-+	switch ConvertJSONTypeToUppercase(destinationType) {
- 	case "":
- 		return nativeJSONEnabled && slices.Contains(flags, shared.Flag_ClickHouseJSONSupported)
- 	case "JSON", "Nullable(JSON)":
-@@ -43,7 +55,7 @@ func ShouldWrapJSONArrayElements(flags []string, version uint32, nativeJSONEnabl
- 	if version < shared.InternalVersion_WrapJSONArrayElements || !slices.Contains(flags, shared.Flag_ClickHouseJSONSupported) {
- 		return false
- 	}
--	switch destinationType {
-+	switch ConvertJSONTypeToUppercase(destinationType) {
- 	case "":
- 		return version >= shared.InternalVersion_JSONArrayAsArrayJSON && nativeJSONEnabled
- 	case "Array(JSON)", "Array(Nullable(JSON))":
-```
-
-**File**: `flow/model/qvalue/json_test.go` (modified, +29/-0)
-```diff
-@@ -31,6 +31,29 @@ func TestWrapNonObjectJSON(t *testing.T) {
- 	}
- }
- 
-+func TestConvertJSONTypeToUppercase(t *testing.T) {
-+	for _, tc := range []struct {
-+		in   string
-+		want string
-+	}{
-+		{"JSON", "JSON"},
-+		{"json", "JSON"},
-+		{"Json", "JSON"},
-+		{"Nullable(json)", "Nullable(JSON)"},
-+		{"Array(json)", "Array(JSON)"},
-+		{"Array(Nullable(json))", "Array(Nullable(JSON))"},
-+		// other types, and JSON with parameters, are returned unchanged
-+		{"", ""},
-+		{"String", "String"},
-+		{"Nullable(String)", "Nullable(String)"},
-+		{"Array(String)", "Array(String)"},
-+		{"JSON(max_dynamic_paths=256)", "JSON(max_dynamic_paths=256)"},
-+		{"Array(Array(JSON))", "Array(Array(JSON))"},
-+	} {
-+		require.Equal(t, tc.want, ConvertJSONTypeToUppercase(tc.in), "in=%q", tc.in)
-+	}
-+}
-+
- func TestShouldWrapJSONArrayElements(t *testing.T) {
- 	// a ClickHouse with the JSON type
- 	clickhouse := []string{shared.Flag_ClickHouseTime64Enabled, shared.Flag_ClickHouseJSONSupported}
-@@ -54,6 +77,9 @@ func TestShouldWrapJSONArrayElements(t *testing.T) {
- 		// an explicit array type selects it from the wrapping version on, whatever the setting
- 		{flags: clickhouse, version: shared.InternalVersion_WrapJSONArrayElements, destinationType: "Array(JSON)", want: true},
- 		{flags: clickhouse, version: latest, destinationType: "Array(Nullable(JSON))", want: true},
-+		// in any case, as ClickHouse stores Array(json) as Array(JSON)
-+		{flags: clickhouse, version: latest, destinationType: "Array(json)", want: true},
-+		{flags: clickhouse, version: latest, destinationType: "Array(Nullable(json))", want: true},
- 		{flags: clickhouse, version: shared.InternalVersion_WrapJSONArrayElements - 1, destinationType: "Array(JSON)", want: false},
- 		{flags: otherDestination, version: latest, destinationType: "Array(JSON)", want: false},
- 		// other explicit types never wrap
-@@ -89,6 +115,9 @@ func TestShouldWrapNonObjectJSON(t *testing.T) {
- 		{flags: clickhouse, version: shared.InternalVersion_Latest, nativeJSONEnabled: true, destinationType: "Nullable(String)", want: false},
- 		{flags: clickhouse, version: shared.InternalVersion_Latest, destinationType: "JSON", want: true},
- 		{flags: clickhouse, version: shared.InternalVersion_Latest, destinationType: "Nullable(JSON)", want: true},
-+		// in any case, as ClickHouse stores json as JSON
-+		{flags: clickhouse, version: shared.InternalVersion_Latest, destinationType: "json", want: true},
-+		{flags: clickhouse, version: shared.InternalVersion_Latest, destinationType: "Nullable(json)", want: true},
- 		{flags: clickhouse, version: shared.InternalVersion_WrapNonObjectJSON - 1, destinationType: "JSON", want: false},
- 		// an explicit JSON type is only honoured where the destination has the type
- 		{flags: otherDestination, version: shared.InternalVersion_Latest, nativeJSONEnabled: true, destinationType: "JSON", want: false},
-```
-
----
-
-### Incident Patch 2: `fe1374ec` (2026-11-20)
-**Commit Message**: feat: upgrade `docker-compose.yml` stable image tags (#5101)
-
-Co-authored-by: ilidemi <[REDACTED_EMAIL]>
-
-**File**: `docker-compose.yml` (modified, +6/-6)
-```diff
-@@ -115,7 +115,7 @@ services:
-   # applies catalog schema migrations and exits
-   flow-migrate:
-     container_name: flow-migrate
--    image: ghcr.io/peerdb-io/flow-api:stable-v0.37.15
-+    image: ghcr.io/peerdb-io/flow-api:stable-v0.37.17
-     entrypoint: ["/home/peerdb/peer-flow", "migrate"]
-     environment:
-       <<: *catalog-config
-@@ -125,7 +125,7 @@ services:
- 
-   flow-api:
-     container_name: flow_api
--    image: ghcr.io/peerdb-io/flow-api:stable-v0.37.15
-+    image: ghcr.io/peerdb-io/flow-api:stable-v0.37.17
-     restart: unless-stopped
-     ports:
-       - 8112:8112
-@@ -143,7 +143,7 @@ services:
- 
-   flow-snapshot-worker:
-     container_name: flow-snapshot-worker
--    image: ghcr.io/peerdb-io/flow-snapshot-worker:stable-v0.37.15
-+    image: ghcr.io/peerdb-io/flow-snapshot-worker:stable-v0.37.17
-     restart: unless-stopped
-     environment:
-       <<: [*catalog-config, *flow-worker-env, *minio-config]
-@@ -155,7 +155,7 @@ services:
- 
-   flow-worker:
-     container_name: flow-worker
--    image: ghcr.io/peerdb-io/flow-worker:stable-v0.37.15
-+    image: ghcr.io/peerdb-io/flow-worker:stable-v0.37.17
-     restart: unless-stopped
-     environment:
-       <<: [*catalog-config, *flow-worker-env, *minio-config]
-@@ -170,7 +170,7 @@ services:
-   peerdb:
-     container_name: peerdb-server
-     stop_signal: SIGINT
--    image: ghcr.io/peerdb-io/peerdb-server:stable-v0.37.15
-+    image: ghcr.io/peerdb-io/peerdb-server:stable-v0.37.17
-     restart: unless-stopped
-     environment:
-       <<: *catalog-config
-@@ -187,7 +187,7 @@ services:
- 
-   peerdb-ui:
-     container_name: peerdb-ui
--    image: ghcr.io/peerdb-io/peerdb-ui:stable-v0.37.15
-+    image: ghcr.io/peerdb-io/peerdb-ui:stable-v0.37.17
-     restart: unless-stopped
-     ports:
-       - 3000:3000
+       - name: Run Claude Code Review
+         id: claude-review
+         uses: anthropics/claude-code-action@be7b93b1907a4abad570368f3c74b6fe3807510b # v1
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5105** (2026-11-20): improve claude review to remind author to check public documentations (@jgao54)
 - **PR #5101** (2026-11-20): feat: upgrade `docker-compose.yml` stable image tags (@github-actions[bot])
 - **PR #5100** (2026-11-19): Default to lax nullable behavior (@ilidemi)
 - **PR #5098** (2026-11-20): clickhouse: treat lowercase JSON destination types as JSON (@gheorghepucea)
 - **PR #5097** (closed): ci: build debug docker images for PRs via build-docker-image label (@masterashu)
 - **PR #5094** (2026-11-19): Optimize CI speed and reduce cost further (@ilidemi)
-- **PR #5093** (2026-11-19): flow.yml/flow-tilt.yml Add Telemetry tracing, introduce cached build step, use smaller runners (@Jeremyyang920)
 
 ---
 
@@ -2278,21 +1958,21 @@ Co-authored-by: ilidemi <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. clickhouse: treat lowercase JSON destination types as JSON
+## X. improve claude review to remind author to check public documentations
 
 **RULE**:
-When implementing operations in `flow/connectors/clickhouse/normalize_query.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/REVIEW.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `469e73c6`: clickhouse: treat lowercase JSON destination types as JSON. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `78271fc2`: improve claude review to remind author to check public documentations. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `flow/connectors/clickhouse/normalize_query.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/REVIEW.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		clickHouseType = qvalue.ConvertJSONTypeToUppercase(clickHouseType)
+- High severity: Catch changes that make the public ClickPipes docs stale, so that the author remembers to update them. The docs are checked out at `clickhouse-docs/docs/integrations/clickpipes/`. If the change makes a statement in them false (for example about a setting, a default, a limit, a supported type or version, or what can be edited after creation), post a reminder: quote the sentence, link it at `https://github.com/ClickHouse/ClickHouse/blob/master/docs/integrations/clickpipes/<path>`, and say what changed. This is a reminder, not a blocker. Do not flag missing docs for new behavior.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2302,7 +1982,7 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `469e73c6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `78271fc2` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

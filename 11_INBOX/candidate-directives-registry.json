@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T02:09:21.013Z",
+  "last_updated": "2026-11-22T02:18:40.478Z",
   "directives": [
     {
       "id": "CD-001",
@@ -44610,6 +44610,26 @@
       "source_repo": "paradedb-paradedb",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-026369-solve-aggregatescan-parameters-before-en.md",
+      "staged_date": "2026-11-22"
+    },
+    {
+      "id": "CD-JYS4",
+      "directive_title": "improve claude review to remind author to check public documentations",
+      "source_repo": "peerdb-io-peerdb-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-JYS4-improve-claude-review-to-remind-author-to-check-public-documentations.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-22",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-C31134",
+      "directive_title": "improve claude review to remind author to check public documentations",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "peerdb-io-peerdb",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C31134-improve-claude-review-to-remind-author-t.md",
       "staged_date": "2026-11-22"
     }
   ]

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T02:09:16.610Z",
+  "last_updated": "2026-11-22T02:18:08.977Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5481,14 +5481,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-peerdb-io-peerdb",
-      "content_hash": "969daa4f4c7371a00518595a1f1cb7a11c8a9e0ec05e83fa79d7e07ceb7a1df0",
-      "verified_at": "2026-11-20T23:05:32.584Z",
+      "content_hash": "2d77a7ba9a995acc16bbd34b97d33e2857dee7148b9d12e6284536b152f85ea8",
+      "verified_at": "2026-11-22T02:18:08.976Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T23:05:32.584Z"
+      "last_updated": "2026-11-22T02:18:08.976Z"
     },
     "tailscale/tailscale": {
       "repository": "tailscale/tailscale",
@@ -8076,14 +8076,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-czy0729-bangumi",
-      "content_hash": "5dd2d236e81f639b77d596357ed11e5ac9a6c2f96a75e4c76c8d2c55bcd46bfe",
-      "verified_at": "2026-11-17T20:25:33.115Z",
+      "content_hash": "e278f9799d92a572e861c287d008b3be494cf07c77215bb1dbd9de730b9a5a26",
+      "verified_at": "2026-11-22T02:18:07.376Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T20:25:33.115Z"
+      "last_updated": "2026-11-22T02:18:07.376Z"
     },
     "aquasecurity/tfsec": {
       "repository": "aquasecurity/tfsec",
@@ -17886,14 +17886,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-nvidia-deepseek-v4-1-flash-1017-nvfp4",
-      "content_hash": "65827916522e551442f2d31fb2ad27bc24931724f2c747dd3a7536199a4e3b99",
-      "verified_at": "2026-11-17T15:23:49.637Z",
+      "content_hash": "30227d296abd04c6d7e7d32799cd1686ff2c74860b6278fa60e95a3e83c1ccb2",
+      "verified_at": "2026-11-22T02:18:00.282Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T15:23:49.637Z"
+      "last_updated": "2026-11-22T02:18:00.282Z"
     },
     "moonshotai/Kimi-K3.1-Pro": {
       "repository": "moonshotai/Kimi-K3.1-Pro",

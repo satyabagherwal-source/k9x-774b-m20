@@ -3573,10 +3573,10 @@
     "repository": "PeerDB-io/peerdb",
     "platform": "github",
     "sourceUrl": "https://github.com/PeerDB-io/peerdb",
-    "sourceVersion": "469e73c6",
+    "sourceVersion": "78271fc2",
     "license": "AGPL-3.0",
-    "contentHash": "969daa4f4c7371a00518595a1f1cb7a11c8a9e0ec05e83fa79d7e07ceb7a1df0",
-    "lastHarvestedAt": "2026-11-20T23:05:32.575Z",
+    "contentHash": "2d77a7ba9a995acc16bbd34b97d33e2857dee7148b9d12e6284536b152f85ea8",
+    "lastHarvestedAt": "2026-11-22T02:18:08.969Z",
     "learningId": "learn-github-peerdb-io-peerdb"
   },
   "tailscale-tailscale": {
@@ -5303,10 +5303,10 @@
     "repository": "czy0729/Bangumi",
     "platform": "github",
     "sourceUrl": "https://github.com/czy0729/Bangumi",
-    "sourceVersion": "ad576e32",
+    "sourceVersion": "81c1e12a",
     "license": "MIT",
-    "contentHash": "5dd2d236e81f639b77d596357ed11e5ac9a6c2f96a75e4c76c8d2c55bcd46bfe",
-    "lastHarvestedAt": "2026-11-17T20:25:33.109Z",
+    "contentHash": "e278f9799d92a572e861c287d008b3be494cf07c77215bb1dbd9de730b9a5a26",
+    "lastHarvestedAt": "2026-11-22T02:18:07.368Z",
     "learningId": "learn-github-czy0729-bangumi"
   },
   "aquasecurity-tfsec": {
@@ -11885,8 +11885,8 @@
     "sourceUrl": "https://huggingface.co/nvidia/DeepSeek-V4.1-Flash-1017-NVFP4",
     "sourceVersion": "hf-nvidia-deepseek-v4.1-flash-1017-nvfp4",
     "license": "Open-Source",
-    "contentHash": "65827916522e551442f2d31fb2ad27bc24931724f2c747dd3a7536199a4e3b99",
-    "lastHarvestedAt": "2026-11-17T15:23:49.604Z",
+    "contentHash": "30227d296abd04c6d7e7d32799cd1686ff2c74860b6278fa60e95a3e83c1ccb2",
+    "lastHarvestedAt": "2026-11-22T02:18:00.274Z",
     "learningId": "learn-huggingface-nvidia-deepseek-v4-1-flash-1017-nvfp4"
   },
   "hf-moonshotai-kimi-k3.1-pro": {

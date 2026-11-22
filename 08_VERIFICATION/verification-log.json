@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261119-4N9A",
-    "timestamp": "2026-11-19T23:43:27.166Z",
-    "repository": "krakend/krakend-ce",
-    "learningId": "learn-github-krakend-krakend-ce",
-    "contentHash": "d1f2d02ea81de209641bc5580bc09beadc3dd367dcc257fdb2c51346eaa3d8bd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-4PLL",
-    "timestamp": "2026-11-19T23:43:30.201Z",
-    "repository": "tailscale/tailscale",
-    "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "00869492f11257255c8c18e102a7e64e9e6eca8d091f1332aa7e5389eef6817e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-YFAF",
-    "timestamp": "2026-11-20T00:06:36.519Z",
-    "repository": "vinceglb/FileKit",
-    "learningId": "learn-github-vinceglb-filekit",
-    "contentHash": "d4a82bbb7641636a59756160cc28e42bb4142daf4076318e261f5574362e07b4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261120-YGUJ",
     "timestamp": "2026-11-20T00:06:38.539Z",
     "repository": "Agent-Field/agentfield",
@@ -7490,6 +7445,51 @@
     "repository": "paradedb/paradedb",
     "learningId": "learn-github-paradedb-paradedb",
     "contentHash": "ea7bef097757f303d61d7fe42df1fa2321a8f3bec6676a41df2917e669ddd502",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-J3RH",
+    "timestamp": "2026-11-22T02:18:00.269Z",
+    "repository": "nvidia/DeepSeek-V4.1-Flash-1017-NVFP4",
+    "learningId": "learn-huggingface-nvidia-deepseek-v4-1-flash-1017-nvfp4",
+    "contentHash": "30227d296abd04c6d7e7d32799cd1686ff2c74860b6278fa60e95a3e83c1ccb2",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-J98K",
+    "timestamp": "2026-11-22T02:18:07.364Z",
+    "repository": "czy0729/Bangumi",
+    "learningId": "learn-github-czy0729-bangumi",
+    "contentHash": "e278f9799d92a572e861c287d008b3be494cf07c77215bb1dbd9de730b9a5a26",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-JAH0",
+    "timestamp": "2026-11-22T02:18:08.964Z",
+    "repository": "PeerDB-io/peerdb",
+    "learningId": "learn-github-peerdb-io-peerdb",
+    "contentHash": "2d77a7ba9a995acc16bbd34b97d33e2857dee7148b9d12e6284536b152f85ea8",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

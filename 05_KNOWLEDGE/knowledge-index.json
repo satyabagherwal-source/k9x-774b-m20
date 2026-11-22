@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T02:09:21.262Z",
+  "last_updated": "2026-11-22T02:18:40.842Z",
   "total_verified_learnings": 9065,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23399,
+  "total_items": 23401,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -230060,8 +230060,8 @@
       "slug": "czy0729-bangumi",
       "platform": "github",
       "source_url": "https://github.com/czy0729/Bangumi",
-      "source_version": "ad576e32",
-      "content_hash": "5dd2d236e81f639b77d596357ed11e5ac9a6c2f96a75e4c76c8d2c55bcd46bfe",
+      "source_version": "81c1e12a",
+      "content_hash": "e278f9799d92a572e861c287d008b3be494cf07c77215bb1dbd9de730b9a5a26",
       "dossier_path": "07_PROJECT_LEARNING/czy0729-bangumi-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/czy0729-bangumi-learnings.md",
       "promoted_rules": [
@@ -230081,7 +230081,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T20:25:32.968Z",
+      "verified_at": "2026-11-22T02:18:07.172Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -230123,10 +230123,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-czy0729-bangumi-technical-construction-intelligence-czy0729-bangumi-core-invaria.md",
       "title": "Technical Construction Intelligence: czy0729/Bangumi Core Invariants",
       "repository": "czy0729/Bangumi",
-      "source_version": "ad576e32",
-      "content_hash": "dc499df86b1767397359229840cfac1107d5abbaf6e44a1b90b2becf7fba80af",
+      "source_version": "81c1e12a",
+      "content_hash": "a4e2b1a9fa254c280f323b30061f50539d563be54662a1cc246f965db3d64269",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T20:25:33.358Z"
+      "persisted_at": "2026-11-22T02:18:07.589Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-czy0729-bangumi": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-czy0729-bangumi",
@@ -230148,8 +230148,8 @@
       "slug": "peerdb-io-peerdb",
       "platform": "github",
       "source_url": "https://github.com/PeerDB-io/peerdb",
-      "source_version": "469e73c6",
-      "content_hash": "969daa4f4c7371a00518595a1f1cb7a11c8a9e0ec05e83fa79d7e07ceb7a1df0",
+      "source_version": "78271fc2",
+      "content_hash": "2d77a7ba9a995acc16bbd34b97d33e2857dee7148b9d12e6284536b152f85ea8",
       "dossier_path": "07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
       "promoted_rules": [
@@ -230177,6 +230177,11 @@
           "number": 9655,
           "title": "treat lowercase JSON destination types as JSON",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9881,
+          "title": "improve claude review to remind author to check public documentations",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -230184,7 +230189,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T23:05:32.367Z",
+      "verified_at": "2026-11-22T02:18:08.761Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -230238,10 +230243,10 @@
       "relative_path": "08_VERIFICATION/peerdb-io-peerdb-verification-protocol-empirical-defect-shield-for-peerdb-io-pee.md",
       "title": "Verification Protocol: Empirical Defect Shield for PeerDB-io/peerdb",
       "repository": "PeerDB-io/peerdb",
-      "source_version": "469e73c6",
-      "content_hash": "2e3902b8f5112f07bf64f95da444923f10532dd855968cebbe99ba9d1c9f2b75",
+      "source_version": "78271fc2",
+      "content_hash": "54d6ca13bac52ff753acb15f93c4d623f5ab34b0e3aab52888e1fa34a9afcda0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T23:05:33.095Z"
+      "persisted_at": "2026-11-22T02:18:09.548Z"
     },
     "domain_intelligence-deployment-operations-intelligence-bahdotsh-wrkflw-learnings-core-invariants": {
       "item_id": "domain_intelligence-deployment-operations-intelligence-bahdotsh-wrkflw-learnings-core-invariants",
@@ -230299,9 +230304,9 @@
       "title": "Technical Construction Intelligence: czy0729-bangumi-learnings Core Invariants",
       "repository": "czy0729-bangumi-learnings",
       "source_version": "HEAD",
-      "content_hash": "6583cb5f061114da9fa7eaa14681ab5fdcbb1d12cda007a14f776de6dcd9bbb8",
+      "content_hash": "feb318205afa5612c435ee708adb986f44b7c6fe395afd2c4ee598981a60631b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T20:25:43.153Z"
+      "persisted_at": "2026-11-22T02:18:39.930Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-czy0729-bangumi-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-czy0729-bangumi-learnings",
@@ -275503,7 +275508,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nvidia/DeepSeek-V4.1-Flash-1017-NVFP4",
       "source_version": "hf-nvidia-deepseek-v4.1-flash-1017-nvfp4",
-      "content_hash": "65827916522e551442f2d31fb2ad27bc24931724f2c747dd3a7536199a4e3b99",
+      "content_hash": "30227d296abd04c6d7e7d32799cd1686ff2c74860b6278fa60e95a3e83c1ccb2",
       "dossier_path": "07_PROJECT_LEARNING/hf-nvidia-deepseek-v4.1-flash-1017-nvfp4-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nvidia-deepseek-v4.1-flash-1017-nvfp4-learnings.md",
       "promoted_rules": [],
@@ -275512,7 +275517,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T15:23:49.449Z",
+      "verified_at": "2026-11-22T02:18:00.047Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -275529,9 +275534,9 @@
       "title": "Research & Knowledge Intelligence: nvidia/DeepSeek-V4.1-Flash-1017-NVFP4 Core Invariants",
       "repository": "nvidia/DeepSeek-V4.1-Flash-1017-NVFP4",
       "source_version": "hf-nvidia-deepseek-v4.1-flash-1017-nvfp4",
-      "content_hash": "c19b140332aafa0b674b70fe30a3a214c89d192080e47c106c1637c395ee25c8",
+      "content_hash": "de79aff8185e469e4bf79b9cacea6f8c70ef869bf0b50a8d8f1d288a9f240ce5",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T15:23:49.784Z"
+      "persisted_at": "2026-11-22T02:18:00.477Z"
     },
     "rule-8986": {
       "learning_id": "rule-8986",
@@ -275567,9 +275572,9 @@
       "title": "Research & Knowledge Intelligence: hf-nvidia-deepseek-v4.1-flash-1017-nvfp4-learnings Core Invariants",
       "repository": "hf-nvidia-deepseek-v4.1-flash-1017-nvfp4-learnings",
       "source_version": "HEAD",
-      "content_hash": "1b04c348c8657a4be6169f07fd209991dfa76e36e3208c564e25b9be044535c2",
+      "content_hash": "daac5f1e6d4be96ba3decd55dbdcf5c357fe7a12e1943b4ed63be05e3520343b",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T15:24:03.033Z"
+      "persisted_at": "2026-11-22T02:18:12.563Z"
     },
     "learn-huggingface-meta-models-muse-spark-open-816b-a42b-nvfp4": {
       "learning_id": "learn-huggingface-meta-models-muse-spark-open-816b-a42b-nvfp4",
@@ -283590,10 +283595,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-peerdb-io-peerdb-architecture-intelligence-peerdb-io-peerdb-core-invariants.md",
       "title": "Architecture Intelligence: PeerDB-io/peerdb Core Invariants",
       "repository": "PeerDB-io/peerdb",
-      "source_version": "469e73c6",
-      "content_hash": "8df92ab62e2468d76651e89f79cea7e22ebb2c812f03a07faeca45ca6bbe74a3",
+      "source_version": "78271fc2",
+      "content_hash": "cbc420c54fe6d3af596c55927ef6667c44fb56c4f1dc60ed8ecb37011d469327",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T23:05:32.945Z"
+      "persisted_at": "2026-11-22T02:18:09.355Z"
     },
     "candidate_directive-postgres-keep-sql-null-elements-of-a-json-add-column-default-as-null-on-nulla": {
       "item_id": "candidate_directive-postgres-keep-sql-null-elements-of-a-json-add-column-default-as-null-on-nulla",
@@ -283615,9 +283620,9 @@
       "title": "Architecture Intelligence: peerdb-io-peerdb-learnings Core Invariants",
       "repository": "peerdb-io-peerdb-learnings",
       "source_version": "HEAD",
-      "content_hash": "d69b5a3be1f798a9c5368b15fd1feafb4a173fee91cf0091bab89ab884cfbba6",
+      "content_hash": "0a9119a8226fd68d780c5d817511a4c3961cad31436282f2748fd1ff638f8fac",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T23:05:40.498Z"
+      "persisted_at": "2026-11-22T02:18:40.644Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-peerdb-io-peerdb-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-peerdb-io-peerdb-learnings",
@@ -283627,9 +283632,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for peerdb-io-peerdb-learnings",
       "repository": "peerdb-io-peerdb-learnings",
       "source_version": "HEAD",
-      "content_hash": "6287dfb6bc9004d96e45103677d8b412b161665cb5f109578dcab13d497ace7c",
+      "content_hash": "a0a87f42db0f493440e14087782addb481e9044dbfeabe4ca0d8ba11aef5af33",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T23:05:40.644Z"
+      "persisted_at": "2026-11-22T02:18:40.842Z"
     },
     "learn-huggingface-comfy-org-wan-2-2": {
       "learning_id": "learn-huggingface-comfy-org-wan-2-2",
@@ -318188,6 +318193,32 @@
       "content_hash": "61716c42b68d96f6db47d297baacad9bb8b4c6e829b1eed0dfc3e65edeb67559",
       "domain_letter": "H",
       "persisted_at": "2026-11-22T02:09:21.013Z"
+    },
+    "rule-9881": {
+      "learning_id": "rule-9881",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9881,
+      "title": "improve claude review to remind author to check public documentations",
+      "source_url": "https://github.com/PeerDB-io/peerdb",
+      "source_version": "78271fc2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T02:18:08.761Z"
+    },
+    "candidate_directive-improve-claude-review-to-remind-author-to-check-public-documentations": {
+      "item_id": "candidate_directive-improve-claude-review-to-remind-author-to-check-public-documentations",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-JYS4-improve-claude-review-to-remind-author-to-check-public-documentations.md",
+      "title": "improve claude review to remind author to check public documentations",
+      "repository": "peerdb-io-peerdb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b03cd052d1ed86f4947289fec9c6af92bbac0d08c82bd49d638e3891ccce7ca8",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-22T02:18:40.478Z"
     }
   },
   "ai-builder-brain": {

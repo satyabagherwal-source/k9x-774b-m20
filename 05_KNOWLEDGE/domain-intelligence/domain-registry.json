@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T02:09:21.134Z",
-  "total_records": 2309,
+  "last_updated": "2026-11-22T02:18:40.644Z",
+  "total_records": 2310,
   "domains": {
     "A": {
       "total": 17,
@@ -60,7 +60,7 @@
       ]
     },
     "D": {
-      "total": 908,
+      "total": 909,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -969,7 +969,8 @@
         "domain_intelligence-research-knowledge-intelligence-obliteratus-deepseek-v4-1-flash-1017-obliterated",
         "domain_intelligence-research-knowledge-intelligence-hf-obliteratus-deepseek-v4-1-flash-1017-oblitera",
         "DOM-D-6EECDBA7",
-        "DOM-D-7F03EC79"
+        "DOM-D-7F03EC79",
+        "DOM-D-60FE0061"
       ]
     },
     "E": {
@@ -15544,8 +15545,8 @@
       "title": "Technical Construction Intelligence: czy0729/Bangumi Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-czy0729-bangumi-technical-construction-intelligence-czy0729-bangumi-core-invaria.md",
       "repository": "czy0729/Bangumi",
-      "content_hash": "dc499df86b1767397359229840cfac1107d5abbaf6e44a1b90b2becf7fba80af",
-      "created_at": "2026-11-17T20:25:33.358Z"
+      "content_hash": "a4e2b1a9fa254c280f323b30061f50539d563be54662a1cc246f965db3d64269",
+      "created_at": "2026-11-22T02:18:07.589Z"
     },
     "domain_intelligence-content-information-intelligence-peerdb-io-peerdb-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-peerdb-io-peerdb-core-invariants",
@@ -15622,8 +15623,8 @@
       "title": "Technical Construction Intelligence: czy0729-bangumi-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-czy0729-bangumi-learnings-technical-construction-intelligence-czy0729-bangumi-le.md",
       "repository": "czy0729-bangumi-learnings",
-      "content_hash": "6583cb5f061114da9fa7eaa14681ab5fdcbb1d12cda007a14f776de6dcd9bbb8",
-      "created_at": "2026-11-17T20:25:43.153Z"
+      "content_hash": "feb318205afa5612c435ee708adb986f44b7c6fe395afd2c4ee598981a60631b",
+      "created_at": "2026-11-22T02:18:39.930Z"
     },
     "domain_intelligence-research-knowledge-intelligence-intfloat-multilingual-e5-small-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-intfloat-multilingual-e5-small-core-invariants",
@@ -28055,8 +28056,8 @@
       "title": "Research & Knowledge Intelligence: nvidia/DeepSeek-V4.1-Flash-1017-NVFP4 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nvidia-deepseek-v4-1-flash-1017-nvfp4-research-knowledge-intelligence-nvidia-.md",
       "repository": "nvidia/DeepSeek-V4.1-Flash-1017-NVFP4",
-      "content_hash": "c19b140332aafa0b674b70fe30a3a214c89d192080e47c106c1637c395ee25c8",
-      "created_at": "2026-11-17T15:23:49.784Z"
+      "content_hash": "de79aff8185e469e4bf79b9cacea6f8c70ef869bf0b50a8d8f1d288a9f240ce5",
+      "created_at": "2026-11-22T02:18:00.477Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-nvidia-deepseek-v4-1-flash-1017-nvfp4-learnin": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-nvidia-deepseek-v4-1-flash-1017-nvfp4-learnin",
@@ -28064,8 +28065,8 @@
       "title": "Research & Knowledge Intelligence: hf-nvidia-deepseek-v4.1-flash-1017-nvfp4-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nvidia-deepseek-v4-1-flash-1017-nvfp4-learnings-research-knowledge-intelligen.md",
       "repository": "hf-nvidia-deepseek-v4.1-flash-1017-nvfp4-learnings",
-      "content_hash": "1b04c348c8657a4be6169f07fd209991dfa76e36e3208c564e25b9be044535c2",
-      "created_at": "2026-11-17T15:24:03.033Z"
+      "content_hash": "daac5f1e6d4be96ba3decd55dbdcf5c357fe7a12e1943b4ed63be05e3520343b",
+      "created_at": "2026-11-22T02:18:12.563Z"
     },
     "domain_intelligence-research-knowledge-intelligence-meta-models-muse-spark-open-816b-a42b-nvfp4-core": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-meta-models-muse-spark-open-816b-a42b-nvfp4-core",
@@ -29847,8 +29848,8 @@
       "title": "Architecture Intelligence: PeerDB-io/peerdb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-peerdb-io-peerdb-architecture-intelligence-peerdb-io-peerdb-core-invariants.md",
       "repository": "PeerDB-io/peerdb",
-      "content_hash": "8df92ab62e2468d76651e89f79cea7e22ebb2c812f03a07faeca45ca6bbe74a3",
-      "created_at": "2026-11-20T23:05:32.945Z"
+      "content_hash": "cbc420c54fe6d3af596c55927ef6667c44fb56c4f1dc60ed8ecb37011d469327",
+      "created_at": "2026-11-22T02:18:09.355Z"
     },
     "domain_intelligence-architecture-intelligence-peerdb-io-peerdb-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-peerdb-io-peerdb-learnings-core-invariants",
@@ -29856,8 +29857,8 @@
       "title": "Architecture Intelligence: peerdb-io-peerdb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-peerdb-io-peerdb-learnings-architecture-intelligence-peerdb-io-peerdb-learnings-.md",
       "repository": "peerdb-io-peerdb-learnings",
-      "content_hash": "d69b5a3be1f798a9c5368b15fd1feafb4a173fee91cf0091bab89ab884cfbba6",
-      "created_at": "2026-11-20T23:05:40.498Z"
+      "content_hash": "0a9119a8226fd68d780c5d817511a4c3961cad31436282f2748fd1ff638f8fac",
+      "created_at": "2026-11-22T02:18:40.644Z"
     },
     "domain_intelligence-architecture-intelligence-amir1376-ab-download-manager-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-amir1376-ab-download-manager-core-invariants",
@@ -38955,6 +38956,48 @@
       "repository": "ZSeven-W/openpencil",
       "content_hash": "3e68038ae8a3746c8707c7f637a85b90f49cd2522d57a38378b7da67edc9d231",
       "created_at": "2026-11-22T02:09:09.418Z"
+    },
+    "DOM-D-60FE0061": {
+      "record_id": "DOM-D-60FE0061",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): czy0729/Bangumi",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/czy0729-bangumi-learnings.md`  \n> **Source**: github ([https://github.com/czy0729/Bangumi](https://github.com/czy0729/Bangumi))  \n> **Source Version**: `81c1e12a`  \n> **License**: MIT  \n> **Synthesized By**: zero-clone-structural-synthesizer",
+      "content_hash": "22b370535d2a99e72e1f3128ebe07703acdd6c818b80e31b540b148dae44152a",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/czy0729-bangumi-learnings.md`  \n> **Source**: github ([https://github.com/czy0729/Ba -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/czy0729-bangumi-learnings.md`  \n> **Source**: github ([https://github.com/czy0729/Ba",
+      "provenance": {
+        "source_uri": "project://czy0729-bangumi/czy0729-bangumi-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-22T02:18:12.730Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (czy0729-bangumi)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of czy0729-bangumi"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-22T02:18:39.522Z"
     }
   }
 }

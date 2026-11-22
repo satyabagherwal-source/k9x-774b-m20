@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-22T02:09:20.841Z",
+  "updated_at": "2026-11-22T02:18:40.246Z",
   "stats": {
-    "total_discovered": 7397,
-    "approved_pending_harvest": 6998,
+    "total_discovered": 7398,
+    "approved_pending_harvest": 6999,
     "harvested_count": 0,
     "rejected_count": 399,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6978,
+      "COMMUNITY_AND_EXPERT": 6979,
       "OFFICIAL_DOCUMENTATION": 240,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 5,
@@ -159964,6 +159964,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
         "fileName": "paradedb-paradedb-learnings.md"
+      }
+    },
+    "SRC-0746FF6B813B": {
+      "id": "SRC-0746FF6B813B",
+      "url": "https://github.com/ClickHouse/ClickHouse/blob/master/docs/integrations/clickpipes",
+      "title": "https://github.com/ClickHouse/ClickHouse/blob/master/docs/integrations/clickpipes",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T02:18:40.246Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
+        "fileName": "peerdb-io-peerdb-learnings.md"
       }
     }
   }

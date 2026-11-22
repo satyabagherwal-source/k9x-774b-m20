@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T02:09:16.608Z",
-  "total_cycles_completed": 11387,
-  "total_learnings_persisted": 11387,
-  "total_rules_promoted": 10690,
+  "last_updated": "2026-11-22T02:18:08.974Z",
+  "total_cycles_completed": 11390,
+  "total_learnings_persisted": 11390,
+  "total_rules_promoted": 10691,
   "history": [
-    {
-      "timestamp": "2026-11-21T07:58:47.785Z",
-      "repository": "MetrolistGroup/Metrolist",
-      "learningId": "learn-github-metrolistgroup-metrolist",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T07:58:55.130Z",
-      "repository": "sfu-db/connector-x",
-      "learningId": "learn-github-sfu-db-connector-x",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T07:58:57.080Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T08:24:26.536Z",
       "repository": "openai/clip-vit-large-patch14",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-22T02:09:16.608Z",
       "repository": "paradedb/paradedb",
       "learningId": "learn-github-paradedb-paradedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T02:18:00.280Z",
+      "repository": "nvidia/DeepSeek-V4.1-Flash-1017-NVFP4",
+      "learningId": "learn-huggingface-nvidia-deepseek-v4-1-flash-1017-nvfp4",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T02:18:07.374Z",
+      "repository": "czy0729/Bangumi",
+      "learningId": "learn-github-czy0729-bangumi",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T02:18:08.974Z",
+      "repository": "PeerDB-io/peerdb",
+      "learningId": "learn-github-peerdb-io-peerdb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
