@@ -12116,3 +12116,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-nex-agi-nex-n2-6` | `https://huggingface.co/nex-agi/Nex-N2.6` | `hf-nex-agi` | Multi-dimensional audit evidence | 2026-11-22T11:47:43.221Z |
 | `learn-github-tw93-mole` | `https://github.com/tw93/Mole` | `d3b743e0` | Multi-dimensional audit evidence | 2026-11-22T11:47:50.676Z |
 | `learn-github-sqlpage-sqlpage` | `https://github.com/sqlpage/SQLPage` | `d65bda49` | Multi-dimensional audit evidence | 2026-11-22T11:47:58.390Z |
+| `learn-huggingface-maxwell-model-maxwell-v1-flash` | `https://huggingface.co/maxwell-model/Maxwell-V1-Flash` | `hf-maxwell` | Multi-dimensional audit evidence | 2026-11-22T12:19:18.966Z |
+| `learn-github-agent-of-empires-agent-of-empires` | `https://github.com/agent-of-empires/agent-of-empires` | `33d69d93` | Multi-dimensional audit evidence | 2026-11-22T12:19:20.067Z |

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T11:47:58.396Z",
-  "total_cycles_completed": 11488,
-  "total_learnings_persisted": 11488,
-  "total_rules_promoted": 10742,
+  "last_updated": "2026-11-22T12:19:20.072Z",
+  "total_cycles_completed": 11490,
+  "total_learnings_persisted": 11490,
+  "total_rules_promoted": 10743,
   "history": [
-    {
-      "timestamp": "2026-11-21T17:49:56.672Z",
-      "repository": "openreplay/openreplay",
-      "learningId": "learn-github-openreplay-openreplay",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T17:49:58.390Z",
-      "repository": "kube-rs/kube",
-      "learningId": "learn-github-kube-rs-kube",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T17:50:04.269Z",
       "repository": "duckdb/duckdb",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-22T11:47:58.396Z",
       "repository": "sqlpage/SQLPage",
       "learningId": "learn-github-sqlpage-sqlpage",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T12:19:18.972Z",
+      "repository": "maxwell-model/Maxwell-V1-Flash",
+      "learningId": "learn-huggingface-maxwell-model-maxwell-v1-flash",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T12:19:20.072Z",
+      "repository": "agent-of-empires/agent-of-empires",
+      "learningId": "learn-github-agent-of-empires-agent-of-empires",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

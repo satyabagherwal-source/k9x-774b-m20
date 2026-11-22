@@ -3,7 +3,7 @@
 > **Source Version**: `hf-maxwell-m`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T11:25:25.035Z  
+> **Timestamp**: 2026-11-22T12:19:18.513Z  
 > **Learning ID**: `learn-huggingface-maxwell-model-maxwell-v1-flash`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-maxwell-model-maxwell-v1-flash-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/maxwell-model/Maxwell-V1-Flash](https://huggingface.co/maxwell-model/Maxwell-V1-Flash))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T11:25:25.032Z  
+> **Harvest Timestamp**: 2026-11-22T12:19:18.407Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 287 downloads | 96 likes
+- **Stars / Engagement**: 3317 downloads | 332 likes
 
 ---
 

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T11:48:04.845Z",
+  "last_updated": "2026-11-22T12:19:33.060Z",
   "total_verified_learnings": 9071,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23571,
+  "total_items": 23574,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "b73af2c51801edb2f1da0afb188010d7f5b688f788e436aa91d1bf640e75ec9f",
+      "content_hash": "589fc4d41fa00aa11d403ad1291ad8fc6a8a7b256fee17464d055add429c938c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T10:55:08.618Z"
+      "persisted_at": "2026-11-22T12:19:32.764Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "6e41a6aa8c36e429c379cc7d0138201dfaf1e0381bf3fe6784547d41dc20f64f",
+      "content_hash": "8aa6292f172a4b1bff93a8307c17178be91ba12537bef7c3a3c017188f822fb5",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T10:55:08.820Z"
+      "persisted_at": "2026-11-22T12:19:32.926Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "f6ef46076d8ca655f24a61918f06d5557e97eb751f8d6d2ed667a8285592b9a4",
+      "content_hash": "d916f1f587cf3d694db468e70a64c676a498844e7f637aeb25c670ef770b4d7a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T10:55:08.988Z"
+      "persisted_at": "2026-11-22T12:19:33.060Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -230489,8 +230489,8 @@
       "slug": "agent-of-empires-agent-of-empires",
       "platform": "github",
       "source_url": "https://github.com/agent-of-empires/agent-of-empires",
-      "source_version": "08946a21",
-      "content_hash": "7940db42cb9e68e2ed864bf33c2702ff069232d7fb87562f8f67bf81c4043ae4",
+      "source_version": "33d69d93",
+      "content_hash": "29a5a62a679671f98a4da488312165eb70a1d81e8f5fb812bd481b4c821492a7",
       "dossier_path": "07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
       "promoted_rules": [
@@ -230518,6 +230518,11 @@
           "number": 9683,
           "title": "pressing R again in Connections opens the Web dashboard",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9928,
+          "title": "keep main push runs, cancel stale cachix builds, drop separate npm ci",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -230525,7 +230530,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T00:51:55.551Z",
+      "verified_at": "2026-11-22T12:19:19.870Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -230567,10 +230572,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-agent-of-empires-agent-of-empires-architecture-intelligence-agent-of-empires-age.md",
       "title": "Architecture Intelligence: agent-of-empires/agent-of-empires Core Invariants",
       "repository": "agent-of-empires/agent-of-empires",
-      "source_version": "08946a21",
-      "content_hash": "05281376ba7148883e0673c2d4991403924f89b818783a2be702622d7eb4e8cc",
+      "source_version": "33d69d93",
+      "content_hash": "44bf1bad3d3c961af95a864fe9a242031c099f945fb89d020443ee15233b30be",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T00:51:56.253Z"
+      "persisted_at": "2026-11-22T12:19:20.443Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-agent-of-empires-agent-of-empi": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-agent-of-empires-agent-of-empi",
@@ -230580,9 +230585,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for agent-of-empires-agent-of-empires-learnings",
       "repository": "agent-of-empires-agent-of-empires-learnings",
       "source_version": "HEAD",
-      "content_hash": "dccaf7f3817845839c2bd4e718fd6eba61959e76df3ac961722676ac8483d20b",
+      "content_hash": "e7d3c4add010c1f9a56092d73f1a38a326d3c4a4a2ce22b62b1da053c13bfb7f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T00:52:12.950Z"
+      "persisted_at": "2026-11-22T12:19:31.645Z"
     },
     "learn-github-koderover-zadig": {
       "learning_id": "learn-github-koderover-zadig",
@@ -230877,9 +230882,9 @@
       "title": "Architecture Intelligence: agent-of-empires-agent-of-empires-learnings Core Invariants",
       "repository": "agent-of-empires-agent-of-empires-learnings",
       "source_version": "HEAD",
-      "content_hash": "8cd0163242beae2e409977af894dc61c80f413bc0d77495baa11e35b07d11b2b",
+      "content_hash": "4cb73d7228a6d084b6a3457be132e089d725daeb13073f1459c84eae67f4012f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T00:52:12.774Z"
+      "persisted_at": "2026-11-22T12:19:31.483Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-intfloat-multilingual-e5-small-learnings-core": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-intfloat-multilingual-e5-small-learnings-core",
@@ -273589,7 +273594,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/maxwell-model/Maxwell-V1-Flash",
       "source_version": "hf-maxwell-model-maxwell-v1-flash",
-      "content_hash": "20114d4e199021e13656054101acf9bb26d5ecc5f579c7d7fee39ea906cb92f3",
+      "content_hash": "af21d8cb936515816ae1ec028e6b37deef92a65527f4e39c918be0dfdee1eacb",
       "dossier_path": "07_PROJECT_LEARNING/hf-maxwell-model-maxwell-v1-flash-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-maxwell-model-maxwell-v1-flash-learnings.md",
       "promoted_rules": [],
@@ -273598,7 +273603,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T11:25:25.260Z",
+      "verified_at": "2026-11-22T12:19:18.760Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -273615,9 +273620,9 @@
       "title": "Research & Knowledge Intelligence: maxwell-model/Maxwell-V1-Flash Core Invariants",
       "repository": "maxwell-model/Maxwell-V1-Flash",
       "source_version": "hf-maxwell-model-maxwell-v1-flash",
-      "content_hash": "026295e458d58804e5518c5870ac3e66127e4ae1beca8b67d44afbc5214a41db",
+      "content_hash": "7813aaf5afa87338ae5a074e4aeb279db890a6323099eac0e8a92d76051f0f84",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T11:25:25.619Z"
+      "persisted_at": "2026-11-22T12:19:19.186Z"
     },
     "candidate_directive-build-deps-ui-bump-filesize-in-server-src-main-webapp-web-inf-rails": {
       "item_id": "candidate_directive-build-deps-ui-bump-filesize-in-server-src-main-webapp-web-inf-rails",
@@ -273675,9 +273680,9 @@
       "title": "Research & Knowledge Intelligence: hf-maxwell-model-maxwell-v1-flash-learnings Core Invariants",
       "repository": "hf-maxwell-model-maxwell-v1-flash-learnings",
       "source_version": "HEAD",
-      "content_hash": "63920ed04173dcd1c3ba91d1e5e595508b9a8da175deb0b4e192b2b7727cd146",
+      "content_hash": "c3baefdeee68ed7bf9de6c10108ca386e9b1dd13a9eab9bc3cd0a41e602d0c27",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T11:27:16.988Z"
+      "persisted_at": "2026-11-22T12:19:31.974Z"
     },
     "rule-8959": {
       "learning_id": "rule-8959",
@@ -309571,13 +309576,13 @@
       "item_id": "candidate_directive-benchmarks-report-gold-coverage-across-retrieval-stages",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-057Z-benchmarks-report-gold-coverage-across-retrieval-stages.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-0OS3-benchmarks-report-gold-coverage-across-retrieval-stages.md",
       "title": "benchmarks): report Gold coverage across retrieval stages",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "7444981b7d9fb3be2aa18a17d3fa778892762360f860d460e082a49c47891a09",
+      "content_hash": "220589c0a7dc1217d8d2ceebd741c1fe6ed3bea7c1708ff771e4b4b8c7004d29",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T10:55:08.405Z"
+      "persisted_at": "2026-11-22T12:19:32.598Z"
     },
     "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it": {
       "item_id": "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it",
@@ -320682,6 +320687,44 @@
       "content_hash": "50faf9b26a46eb2f7de35c8bd1a4f7587d409310f0ddb703dc0a33ecc63dbefc",
       "domain_letter": "A",
       "persisted_at": "2026-11-22T11:48:03.068Z"
+    },
+    "rule-9928": {
+      "learning_id": "rule-9928",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9928,
+      "title": "keep main push runs, cancel stale cachix builds, drop separate npm ci",
+      "source_url": "https://github.com/agent-of-empires/agent-of-empires",
+      "source_version": "33d69d93",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T12:19:19.870Z"
+    },
+    "candidate_directive-keep-main-push-runs-cancel-stale-cachix-builds-drop-separate-npm-ci": {
+      "item_id": "candidate_directive-keep-main-push-runs-cancel-stale-cachix-builds-drop-separate-npm-ci",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-0F9Y-keep-main-push-runs-cancel-stale-cachix-builds-drop-separate-npm-ci.md",
+      "title": "keep main push runs, cancel stale cachix builds, drop separate npm ci",
+      "repository": "agent-of-empires/agent-of-empires",
+      "source_version": "33d69d93",
+      "content_hash": "36780a3e079abeacb9013aa0ad631c7449dbe128dcdeb49084f9e667ff50473f",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-22T12:19:20.281Z"
+    },
+    "candidate_directive-ci-keep-main-push-runs-cancel-stale-cachix-builds-drop-separate-npm-ci": {
+      "item_id": "candidate_directive-ci-keep-main-push-runs-cancel-stale-cachix-builds-drop-separate-npm-ci",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-0NSP-ci-keep-main-push-runs-cancel-stale-cachix-builds-drop-separate-npm-ci.md",
+      "title": "ci: keep main push runs, cancel stale cachix builds, drop separate npm ci",
+      "repository": "agent-of-empires-agent-of-empires-learnings",
+      "source_version": "HEAD",
+      "content_hash": "43aa5adc144d4e855549c5d046715887230581d819243736588a0d9981ef9089",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-22T12:19:31.324Z"
     }
   },
   "ai-builder-brain": {

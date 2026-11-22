@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-22T11:48:04.219Z",
+  "updated_at": "2026-11-22T12:19:31.108Z",
   "stats": {
-    "total_discovered": 7528,
-    "approved_pending_harvest": 7127,
+    "total_discovered": 7529,
+    "approved_pending_harvest": 7128,
     "harvested_count": 0,
     "rejected_count": 401,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7103,
+      "COMMUNITY_AND_EXPERT": 7104,
       "OFFICIAL_DOCUMENTATION": 246,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 5,
@@ -162832,6 +162832,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
         "fileName": "sqlpage-sqlpage-learnings.md"
+      }
+    },
+    "SRC-B1587295FD0D": {
+      "id": "SRC-B1587295FD0D",
+      "url": "https://claude.ai/code/session_01PF9AYwjLPtgfNgQbW4hNm6",
+      "title": "https://claude.ai/code/session_01PF9AYwjLPtgfNgQbW4hNm6",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T12:19:31.108Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
+        "fileName": "agent-of-empires-agent-of-empires-learnings.md"
       }
     }
   }

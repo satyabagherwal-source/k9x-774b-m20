@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T00:52:12.458Z",
+  "timestamp": "2026-11-22T12:19:31.208Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-agent-of-empires-agent-of-empires-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [agent-of-empires-agent-of-empires-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T00:52:12.458Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T12:19:31.208Z`  
 > **Learning ID**: `LEARN-EVO-agent-of-empires-agent-of-empires-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 56%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 62%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from agent-of-empires-agent-of-empires-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md`  
 > **Source**: github ([https://github.com/agent-of-empires/agent-of-empires](https://github.com/agent-of-empires/agent-of-empires))  
-> **Source Version**: `08946a21`  
+> **Source Version**: `33d69d93`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T00:51:54.711Z  
+> **Timestamp**: 2026-11-22T12:19:19.062Z  
 > **Learning ID**: `learn-github-agent-of-empires-agent-of-empires`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/agent-of-empires/agent-of-empires](https://github.com/agent-of-empires/agent-of-empires))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T00:51:54.505Z  
+> **Harvest Timestamp**: 2026-11-22T12:19:19.056Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Manage multiple Claude Code, OpenCode agents from either TUI or Web for easy access on mobile. Also supports Mistral Vibe, Codex CLI, Gemini CLI, Pi.dev, Copilot CLI, Factory Droid Coding.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4593 stars
+- **Stars / Engagement**: 4661 stars
 
 ---
 
@@ -1787,11 +1787,11 @@ impl ConfigOptionDescriptor {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #5917** (2026-11-21): **aoe-darwin-arm64 release binary requires Homebrew liblzma**
+  *Symptoms*: ### What happened?  The `aoe-darwin-arm64` release binary does not start on a Mac without Homebrew:  ``` dyld: Library not loaded: /opt/homebrew/opt/xz/lib/liblzma.5.dylib   Reason: tried: '/opt/homebrew/opt/xz/lib/liblzma.5.dylib' (no such file) ```  `otool -L` shows the dependency in every arm64 release I checked: v1.22.3, v1.23.0, v1.24.0, v1.25.0 and nightly-20261120. v1.21.0 runs. The `aoe-darwin-amd64` build has no Homebrew dependency.  **Steps:** on an Apple Silicon Mac with no Homebrew (MacPorts in my case), download `aoe-darwin-arm64.tar.gz` from v1.25.0, extract, run `./aoe-darwin-arm64 --version`.  **Expected:** the binary prints its version, as v1.21.0 does.  **Actual:** dyld aborts with the error above.  **Cause:** `xz2` (added for tar.xz support) builds `lzma-sys`, which uses pkg-config to find a system liblzma. The `macos-latest` runner is arm64 and has Homebrew `xz`, so the native arm64 build links `/opt/homebrew/opt/xz/lib/liblzma.5.dylib` dynamically. The amd64 job cross-compiles, pkg-config finds nothing usable, and lzma-sys falls back to building liblzma statically. The `vendored` feature already bundles OpenSSL and SQLite for this reason, but it leaves out `xz2/static`.  **Workaround:** `install_name_tool -change /opt/homebrew/opt/xz/lib/liblzma.5.dylib /opt/local/lib/liblzma.5.dylib aoe` followed by `codesign --force -s - aoe`.  ### aoe version and OS  aoe v1.25.0 (aoe-darwin-arm64), macOS 26 (Darwin 25.5.0), Apple Silicon, no Homebrew  ### AI usage  Inv
+
 - **Issue #5913** (2026-11-21): **TUI: Live send refuses an agent pane whose status is Unknown**
   *Symptoms*: ### Problem  Live send fails with `Live send failed / Prepared target no longer matches the applied snapshot` on an agent pane that is alive and correctly identified. The receipt is valid; the snapshot status is `Unknown`.  `Unknown` is a normal live state: `crate::session::instance::pane_status` reports it when the pane is alive but the screen cannot be classified, and it is what any agent-pane adapter that has not reported yet looks like. Two independent gates treat it as death:  - `drain_command_errors` (`src/tui/session_feed.rs`) allows only `Running | Waiting | Idle | Starting` to attach, in both the Restart and Terminal arms, so the receipt is discarded and the modal claims the target is stale. - `agent_pane_is_warm` (`src/tui/home/live_send_prep.rs`) has the same allowlist, so live send also pays the revive-toast path.  ### Impact  Any agent whose status adapter is delayed, restarted, or absent cannot be live-sent to, even though its pane is alive and its identity matches. The error names a snapshot mismatch, so it hides the real cause and sends the reader looking for a target change that never happened.  ### Expected  Attachment should be gated on the receipt identity (generation, profile, tmux name) and the snapshot pane observation, with status only ruling out rows that are stopped, failed, or mid-teardown. `Stopped`, `Error`, `Deleting`, and `Creating` must keep failing; a genuinely changed target must keep failing.  ### Proposal  One shared `status_allows_attachme
-
-- **Issue #5887** (2026-11-20): **test(acp): agent-switch stop test times out when codex-acp is installed**
-  *Symptoms*: `worker_stopping_acp_endpoints_wait_for_an_in_flight_submission` fails on any host where `codex-acp` resolves (PATH, or the fixed `/usr/bin` and `/usr/local/bin` scan). The switch case then spawns the test binary as `__acp-runner`. That never opens the control socket, so the dial waits the full 10s `runner_socket_deadline`, equal to the test's own 10s bound. CI passes only because `codex-acp` is absent there and the spawn fails fast.  Repro, with `codex-acp` installed:  ``` cargo test --lib server::api::acp::tests::worker_stopping_acp_endpoints_wait_for_an_in_flight_submission ```  Fails at `src/server/api/acp/mod.rs:669`: "switch must finish once the submission releases". Passes with `AOE_ACP_RUNNER_SOCKET_TIMEOUT_MS=1000`.  _Note: this issue was drafted by Claude Opus 5.5 via back-and-forth with @njbrake. The reasoning and decisions are his; the prose is Claude's._ 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1808,1444 +1808,228 @@ impl ConfigOptionDescriptor {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1e4c41e5` (2026-11-20)
-**Commit Message**: fix(tui): pressing R again in Connections opens the Web dashboard (#5832)
+### Incident Patch 1: `6641e673` (2026-11-22)
+**Commit Message**: ci: keep main push runs, cancel stale cachix builds, drop separate npm ci (#5912)
 
-* fix(tui): the Serve key opens the Web dashboard from Connections
+* ci: stop cancelling main push runs in CI
 
-Since #4972 R opens the Connections hub, which ignored R. Pressing the
-Serve binding again (R, or Ctrl+R with strict hotkeys) now does what
-Enter on the Web dashboard row does, from any row. The offline and
-outdated takeovers keep only r and q.
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
-Closes #5766
+* ci: stop cancelling main push runs in Tests
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
-* docs(web): the second Serve press opens the dashboard controls
+* ci(cachix): cancel an older build when a newer push lands
 
-Pressing the Serve key again in Connections opens the Web dashboard
-controls, where a server is started; it doesn't start one itself.
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+* ci(tests): let build.rs install web deps in playwright-live
 
-* fix(tui): the second Serve press in Connections must be a separate press
+build.rs maybe_install_web_deps runs npm ci during cargo build when node_modules is missing, so the separate step only serialized npm before cargo.
 
-A held R (Ctrl+R with strict hotkeys) used to open Connections, submit it
-on a repeat, and carry later repeats into the Serve screen, where the same
-key requests and confirms a restart or reset. Connections now ignores the
-Serve chord until 700 ms after the last one, longer than common OS
-key-repeat delays, or until another key arrives.
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+* ci(cachix): let a manual run wait instead of cancelling a main build
 
-* docs(tui): don't link 
+Addresses review comment from CodeRabbit on #5912.
 
-**File**: `docs/guides/web-dashboard.md` (modified, +2/-2)
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+* ci(cachix): keep manual builds out of the main coalescing group
+
+Addresses review comment from @jerome-benoit on #5912.
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+* ci(cachix): skip cancelled runs when finding the previous main run
+
+Addresses review comments from @jerome-benoit and CodeRabbit on #5912.
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDA
+
+**File**: `.github/workflows/cachix-push.yml` (modified, +8/-3)
 ```diff
-@@ -25,7 +25,7 @@ aoe serve --open                # Open the URL in a browser when ready
- aoe serve --remote --read-only  # Monitor without sending keystrokes
- ```
- 
--From the TUI, press `R` (`Ctrl+R` with strict hotkeys), shown as `R Web` in the shortcut bar, to open Connections, then Enter on **Web dashboard** to start a background server on your network or over a tunnel. While it runs, the entry reads `R ● Web` in green. When the Daemon needs attention, the entry shows that instead, in red for a problem (`R ● Runtime outcome unknown`) or dim for a limit (`R ● Unavailable`), and Connections lists the Daemon with what it means. If the Daemon goes offline, Connections replaces the home screen, with `r` to reconnect.
-+From the TUI, press `R` (`Ctrl+R` with strict hotkeys), shown as `R Web` in the shortcut bar, to open Connections. Press the same key again after a short pause, or Enter on **Web dashboard**, to open the dashboard controls, where you can start a background server on your network or over a tunnel. While it runs, the entry reads `R ● Web` in green. When the Daemon needs attention, the entry shows that instead, in red for a problem (`R ● Runtime outcome unknown`) or dim for a limit (`R ● Unavailable`), and Connections lists the Daemon with what it means. If the Daemon goes offline, Connections replaces the home screen, with `r` to reconnect.
- 
- Connections also replaces the home screen when the local Daemon answers but can't be used, and the Daemon row gives the state:
- 
-@@ -87,7 +87,7 @@ Availability, provider and restart checks run in the background. Current links,
- 
- If error recovery could not discover the Daemon identity, `P` and the available Funnel reset `R` retry discovery before making changes. Failed startup retains the Daemon identity or absence observed before launch; it never acquires another Client's Daemon for recovery. Neither control silently refreshes a known stale identity. `S` superseding a provider retry cancels its unadmitted work or follows its admitted stop, never issuing a second stop or retargeting a replacement. Failure or timeout can leave changes uncertain: inspect `aoe serve --status` and, for a Funnel reset, `tailscale funnel status` before retrying.
- 
--To restart, press `R`, wait for the assessment and confirmation, then press `R` again. The confirmation window applies to the second keypress, not the background assessment's duration. The second confirmation checks current effects again and asks again if they changed. Both `R` and `G` remain bound to the observed Daemon. If another Client replaces it before admission, the TUI refuses before changing the replacement or saved defaults. Recovery controls retain that identity after failure, including when the failed launch is first shown after reopening; close and reopen Remote Access again to observe the replacement before retrying.
-+To restart, press `R`; `G` gives a new passphrase. It asks once it has checked what a restart would change. Press Enter once it asks. An Enter pressed while it checks does nothing, and the check then shows what a restart would change without asking: press `R` (or `G`) to check again. Any other key cancels, and so does waiting 3 seconds after it asks. Pressing `R` again only asks again, so a held key never restarts, and the `R` that opened the dashboard controls from Connections does nothing there until you press another key. Enter checks the current effects again; if they changed, it says so and shows them without asking, and `R` checks again. On a Funnel error, `R` then Enter turns off Funnel on its port. Both `R` and `G` remain bound to the observed Daemon. If another Client replaces it before admission, the TUI refuses before changing the replacement or saved defaults. Recovery controls retain that identity after failure, including when the failed launch is first shown after reopening; close and reopen Remote Access again to observe the replacement before retrying.
- 
- A degraded runtime can still provide its last complete canonical list read-only. Owner diagnostics name the file that actually failed, without displaying its contents. If the failing source changes while the list stays unchanged, an already-connected owner TUI updates the diagnostic without inventing a new list revision. Repair that file and wait for a fresh healthy snapshot before writing. A runtime protocol mismatch requires `aoe serve --restart`; reconnecting does not silently replace a live incompatible Daemon.
- 
+@@ -34,6 +34,10 @@ jobs:
+   cachix:
+     name: Build and push (${{ matrix.os }})
+     runs-on: ${{ matrix.os }}
++    # Job level: the matrix context is not available at workflow level.
++    concurrency:
++      group: cachix-push-${{ matrix.os }}-${{ github.event_name }}-${{ github.ref }}
++      cancel-in-progress: true
+     permissions:
+       contents: read
+     strategy:
+@@ -84,9 +88,10 @@ jobs:
+           RUN_ID: ${{ github.run_id }}
+         run: |
+           set -euo pipefail
+-          PREVIOUS=$(gh run list --repo "$REPO" --workflow cachix-push.yml --branch main \
+-            --status completed --limit 5 --json databaseId,conclusion \
+-            --jq "[.[] | select(.databaseId != $RUN_ID)][0].conclusion // \"\"")
++          # No earlier non-cancelled push run in the window is inconclusive: alert.
++          PREVIOUS=$(gh run list --repo "$REPO" --workflow cachix-push.yml --branch main --event push \
++            --status completed --limit 100 --json databaseId,conclusion \
++            --jq "[.[] | select(.databaseId < $RUN_ID and .conclusion != \"cancelled\")][0].conclusion // \"failure\"")
+           # --build-step must match the build step's `name:` above.
+           gh api "repos/$REPO/actions/runs/$RUN_ID/jobs" \
+             | python3 .github/scripts/classify-cachix-failure.py \
 ```
 
-**File**: `src/tui/app.rs` (modified, +96/-0)
+**File**: `.github/workflows/ci.yml` (modified, +3/-1)
 ```diff
-@@ -5187,6 +5187,102 @@ mod tests {
-         );
-     }
+@@ -13,7 +13,9 @@ on:
+ # Queue generations have distinct refs; cancel-obsolete-queue-runs handles them.
+ concurrency:
+   group: ci-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }}
+-  cancel-in-progress: true
++  # A push to main runs to completion so macOS results and kache seeds land;
++  # a newer push waits as the single pending run.
++  cancel-in-progress: ${{ github.event_name != 'push' }}
  
-+    /// #5766: the Serve key that opened Connections opens the Web dashboard from any row, in
-+    /// either mode, but a held key stays in Connections. On the offline and outdated takeovers,
-+    /// where only r and q act, it does nothing. Hold timing is `ConnectionsView`'s own test;
-+    /// this one checks the hub is opened at the opening press's time.
-+    #[tokio::test]
-+    #[serial_test::serial]
-+    async fn the_serve_key_in_connections_opens_the_web_dashboard_except_on_a_takeover() {
-+        use crate::tui::dialogs::{ConnectionsView, DaemonAttention as A, DialogResult, WebState};
-+        use crate::tui::session_feed::SidebarSource;
-+        let _home = crate::session::test_support::isolate_app_dir();
-+        crate::session::get_profile_dir("test").unwrap();
-+        for (strict, key) in [
-+            (
-+                false,
-+                KeyEvent::new(KeyCode::Char('R'), KeyModifiers::SHIFT),
-+            ),
-+            (
-+                true,
-+                KeyEvent::new(KeyCode::Char('r'), KeyModifiers::CONTROL),
-+            ),
-+        ] {
-+            let mut app = App::new(
-+                "test",
-+                AvailableTools::with_tools(&[]),
-+                true,
-+                false,
-+                crate::file_watch::FileWatchService::noop(),
-+            )
-+            .unwrap();
-+            app.home.strict_hotkeys = strict;
-+            // A held key opens Connections, then never reaches the Serve screen, whose restart
-+            // and reset use the same key. Times come from `before`, not the wall clock, so a
-+            // stalled test can't make the hold look like a separate press.
-+            let before = std::time::Instant::now();
-+            app.home.handle_key(key, None);
-+            let hub = app
-+                .home
-+                .connections_view
-+                .as_mut()
-+                .expect("the key opens Connections");
-+            let later = |ms| before + std::time::Duration::from_millis(ms);
-+            assert!(
-+                matches!(
-+                    hub.handle_key(key, strict, later(150)),
-+                    DialogResult::Continue
-+                ),
-+                "strict={strict}: a repeat just after the opening press stays"
-+            );
-+            let repeat = KeyEvent::new_with_kind(key.code, key.modifiers, KeyEventKind::Repeat);
-+            for _ in 0..30 {
-+                app.home.handle_key(repeat, None);
-+            }
-+            assert!(app.home.connections_view.is_some(), "strict={strict}: held");
-+            assert!(app.home.serve_view.is_none(), "strict={strict}: held");
-+            // The Daemon row comes first and is selected, so Enter would do nothing here.
-+            app.home.connections_view =
-+                Some(ConnectionsView::new(Some(A::ReadOnly), WebState::Off));
-+            app.home.handle_key(key, None);
-+            assert!(app.home.connections_view.is_none(), "strict={strict}");
-+            assert!(
-+                app.home.serve_view.is_some(),
-+                "strict={strict}: opens the Web dashboard"
-+            );
-+
-+            for attention in [
-+                A::Offline,
-+                A::Outdated(crate::daemon::DaemonIncarnation::sample("old")),
-+            ] {
-+                let case = format!("strict={strict} {attention:?}");
-+                app.home.serve_view = None;
-+                app.home.sidebar_source = SidebarSource::Disconnected;
-+                app.home.offline_attention = attention;
-+                assert!(!app.handle_runtime_gate_key(key), "{case}");
-+                assert!(app.home.serve_view.is_none(), "{case}");
-+                assert!(app.home.connections_view.is_none(), "{case}");
-+                assert!(app.daemon_restart.is_none(), "{case}");
-+                assert_eq!(
-+                    app.home.sidebar_source,
-+                    SidebarSource::Disconnected,
-+                    "{case}"
-+                );
-+                assert!(
-+                    matches!(
-+                        ConnectionsView::offline(attention, None, false).handle_key(
-+                            key,
-+                            strict,
-+                            std::time::Instant::now()
-+                        ),
-+                        DialogResult::Continue
-+                    ),
-+                    "{case}: the takeover view ignores it"
-+                );
-+            }
-+        }
-+    }
-+
-     #[tokio::test]
-     #[serial_test::serial]
-     async fn r_restarts_only_a_restartable_daemon_and_reports_the_outcome() {
+ env:
+   CARGO_TERM_COLOR: always
 ```
 
-**File**: `src/tui/components/help.rs` (modified, +1/-1)
+**File**: `.github/workflows/tests.yml` (modified, +3/-4)
 ```diff
-@@ -428,7 +428,7 @@ mod tests {
-                 if cfg!(feature = "web") {
-                     "Web dashboard"
-                 } else {
--                    "Connections: API server"
-+                    "API server"
-                 },
-                 "R",
-                 "Ctrl+R",
-```
-
-**File**: `src/tui/dialogs/connections.rs` (modified, +103/-4)
-```diff
-@@ -1,13 +1,20 @@
- //! The Connections hub behind R: this computer's Web dashboard, plus its Daemon whenever the
- //! Daemon needs attention. While the Daemon is offline it is also the home screen's takeover.
+@@ -11,7 +11,9 @@ on:
+ # Queue generations have distinct refs; cancel-obsolete-queue-runs handles them.
+ concurrency:
+   group: tests-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }}
+-  cancel-in-progress: true
++  # A push to main runs to completion so macOS results and kache seeds land;
++  # a newer push waits as the single pending run.
++  cancel-in-progress: ${{ github.event_name != 'push' }}
  
--use crossterm::event::{KeyCode, KeyEvent};
-+use std::time::{Duration, Instant};
-+
-+use crossterm::event::{KeyCode, KeyEvent, KeyEventKind};
- use ratatui::prelude::*;
- use ratatui::widgets::*;
- 
- use super::DialogResult;
-+use crate::tui::home::bindings::{self, ActionId};
- use crate::tui::styles::Theme;
- 
-+/// How long after a Serve chord the next one still counts as the same press. Above the common
-+/// OS key-repeat delays (225 to 660 ms), so a held key's first repeat falls inside it.
-+const SEPARATE_PRESS: Duration = Duration::from_millis(700);
-+
- /// Why the Daemon row is listed. A healthy Daemon has no row.
- #[derive(Debug, Clone, Copy, PartialEq, Eq)]
- pub enum DaemonAttention {
-@@ -154,6 +161,9 @@ pub struct ConnectionsView {
-     web: WebState,
-     selected: usize,
-     row_rects: Vec<(Row, Rect)>,
-+    /// The last Serve chord while no other key has arrived, starting with the one that opened
-+    /// the hub; a held key keeps renewing it.
-+    last_serve: Option<Instant>,
- }
- 
- impl ConnectionsView {
-@@ -165,6 +175,7 @@ impl ConnectionsView {
-             web,
-             selected: 0,
-             row_rects: Vec::new(),
-+            last_serve: None,
-         };
-         // A failed launch opens on its row, so Enter shows why at once.
-         if view.web == WebState::Failed {
-@@ -191,6 +202,14 @@ impl ConnectionsView {
-         }
-     }
- 
-+    /// Opened by the Serve chord at `now`, which a second press must be separate from.
-+    pub fn opened_by_serve(self, now: Instant) -> Self {
-+        Self {
-+            last_serve: Some(now),
-+            ..self
-+        }
-+    }
-+
-     /// Follow the Daemon and Web dashboard while open, keeping the selected row.
-     pub fn refresh(&mut self, daemon: Option<DaemonAttention>, web: WebState) {
-         let selected = self.rows().get(self.selected).copied();
-@@ -220,9 +239,24 @@ impl ConnectionsView {
-         self.daemon.is_some_and(DaemonAttention::is_takeover)
-     }
- 
--    /// Enter on the Web dashboard row submits; the Daemon row has nothing to open.
--    pub fn handle_key(&mut self, key: KeyEvent) -> DialogResult<()> {
-+    /// Enter on the Web dashboard row submits; the Daemon row has nothing to open. The Serve
-+    /// key that opened the hub submits from any row, except on a takeover, once it is a
-+    /// separate press: 700 ms after the last one, or after any other key. A key-repeat event
-+    /// never counts.
-+    pub fn handle_key(&mut self, key: KeyEvent, strict: bool, now: Instant) -> DialogResult<()> {
-         let rows = self.rows();
-+        if !self.offline_takeover() && bindings::is_bound(ActionId::Serve, strict, &key) {
-+            let held = key.kind == KeyEventKind::Repeat
-+                || self
-+                    .last_serve
-+                    .is_some_and(|last| now.saturating_duration_since(last) < SEPARATE_PRESS);
-+            if !held {
-+                return DialogResult::Submit(());
-+            }
-+            self.last_serve = Some(now);
-+            return DialogResult::Continue;
-+        }
-+        self.last_serve = None;
-         match key.code {
-             KeyCode::Esc | KeyCode::Char('q') => DialogResult::Cancel,
-             KeyCode::Up => {
-@@ -621,10 +655,75 @@ mod tests {
-         }
-     }
- 
-+    /// #5832: the second Serve chord must be a separate press, in either mode. Times are
-+    /// offsets from the chord that opened the hub.
-+    #[test]
-+    fn the_second_serve_chord_opens_the_dashboard_only_as_a_separate_press() {
-+        let ms = Duration::from_millis;
-+        let down = KeyEvent::new(KeyCode::Down, KeyModifiers::NONE);
-+        let repeat =
-+            |key: KeyEvent| KeyEvent::new_with_kind(key.code, key.modifiers, KeyEventKind::Repeat);
-+        // A held key: the first repeat after a 500 ms OS delay, then one every 33 ms for 2 s.
-+        let held: Vec<Duration> = std::iter::once(ms(500))
-+            .chain((1..=60).map(|i| ms(500 + 33 * i)))
-+            .collect();
-+        for (strict, serve) in [
-+            (
-+                false,
-+                KeyEvent::new(KeyCode::Char('R'), KeyModifiers::SHIFT),
-+            ),
-+            (
-+                true,
-+                KeyEvent::new(KeyCode::Char('r'), KeyModifiers::CONTROL),
-+            ),
-+        ] {
-+            let cases: Vec<(&str, Vec<(Duration, KeyEvent)>, bool)> = vec![
-+                ("inside the gap", vec![(ms(150), serve)], false),
-+                ("after the gap", vec![(SEPARATE_PRESS, serve)], true),
-+                (
-+                    "a held key",
-+                    held.iter().map(|&at| (at, serve)).collect(),
-+                    false,
-+                ),
-+                (
-+                    "another key between",
-+                    vec![(ms(50), down), (ms(100), serve)],
-+              
-```
-
-**File**: `src/tui/dialogs/serve/mod.rs` (modified, +117/-18)
-```diff
-@@ -768,11 +768,43 @@ fn is_funnel_link(url: &str) -> bool {
-     link_host(url).is_some_and(|host| host.ends_with(".ts.net"))
- }
- 
-+fn is_restart_key(code: KeyCode) -> bool {
-+    matches!(code, KeyCode::Char('r' | 'R'))
-+}
-+
-+/// A key that may still be held down from before a boundary. The TUI gets no release events,
-+/// so a held key's repeats arrive as presses; it stays inert until a different key arrives.
-+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
-+enum HeldKey {
-+    /// The R that opened this screen from Connections.
-+    Restart,
-+    /// An Enter pressed during a restart check, or the Enter that confirmed one.
-+    Enter,
-+}
-+
-+impl HeldKey {
-+    fn matches(self, code: KeyCode) -> bool {
-+        match self {
-+            Self::Restart => is_restart_key(code),
-+            Self::Enter => code == KeyCode::Enter,
-+        }
-+    }
-+}
-+
-+/// Why a landed check shows its effects without asking.
-+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
-+enum Unasked {
-+    /// Enter was pressed during the first check.
-+    EarlyEnter,
-+    /// The check after a confirm found different effects.
-+    Changed,
-+}
-+
- fn funnel_reset_applies(mode: ServeMode, transport: Option<TunnelTransport>) -> bool {
-     mode == ServeMode::Tunnel && transport == Some(TunnelTransport::Tailscale)
- }
- 
--/// A destructive action awaiting a second press of its key.
-+/// A destructive action its key armed, awaiting Enter.
- #[derive(Debug, Clone, Copy, PartialEq, Eq)]
- enum PendingConfirm {
-     NewPassphrase,
-@@ -845,6 +877,11 @@ pub struct ServeView {
-     state: ServeViewState,
-     pending_passphrase: String,
-     pending_confirm: Option<(PendingConfirm, Instant)>,
-+    /// The error screen's Funnel reset, armed by R and awaiting Enter.
-+    funnel_reset_armed: Option<Instant>,
-+    held_key: Option<HeldKey>,
-+    /// A landed check that shows its effects without asking, until the next key.
-+    unasked: Option<(PendingConfirm, Unasked)>,
-     show_help: bool,
-     mouse: RefCell<ServeMouse>,
-     copied: Option<(&'static str, Instant)>,
-@@ -954,6 +991,9 @@ impl ServeView {
-             state,
-             pending_passphrase: String::new(),
-             pending_confirm: None,
-+            funnel_reset_armed: None,
-+            held_key: None,
-+            unasked: None,
-             show_help: false,
-             mouse: RefCell::default(),
-             copied: None,
-@@ -1041,7 +1081,22 @@ impl ServeView {
-         mouse.hover.update(col, row, &rects)
-     }
- 
-+    /// Opened from Connections by `key`: when it was R, its hold may carry over.
-+    pub fn opened_by(&mut self, key: &KeyEvent) {
-+        self.held_key = is_restart_key(key.code).then_some(HeldKey::Restart);
-+    }
-+
-     pub fn handle_key(&mut self, key: KeyEvent) -> ServeAction {
-+        self.handle_key_at(key, Instant::now())
-+    }
-+
-+    /// [`Self::handle_key`] at `now`, the clock the confirm window is read against.
-+    fn handle_key_at(&mut self, key: KeyEvent, now: Instant) -> ServeAction {
-+        if self.held_key.is_some_and(|held| held.matches(key.code)) {
-+            return ServeAction::Continue;
-+        }
-+        self.held_key = None;
-+        self.unasked = None;
-         if matches!(key.code, KeyCode::Esc | KeyCode::Char('q')) && !self.show_help {
-             self.pending = None;
-             self.pending_confirm = None;
-@@ -1106,7 +1161,7 @@ impl ServeView {
-                 KeyCode::Esc | KeyCode::Char('q') => ServeAction::Close,
-                 _ => ServeAction::Continue,
-             },
--            ServeViewState::Active { .. } => self.active_key(key.code),
-+            ServeViewState::Active { .. } => self.active_key(key.code, now),
-             ServeViewState::Error { .. } => self.error_key(key.code),
-         }
-     }
-@@ -1126,7 +1181,13 @@ impl ServeView {
-                 self.request_picker(selected);
-                 true
-             }
-+            // Only an Enter on a prompt counts, so one during either check neither confirms nor
-+            // cancels: a bounce can't undo a confirm.
-             PendingJob::Restart { intent, .. } => {
-+                if code == KeyCode::Enter && matches!(intent, RestartIntent::Confirm(_)) {
-+                    self.held_key = Some(HeldKey::Enter);
-+                    return true;
-+                }
-                 let repeated = match intent {
-                     RestartIntent::Confirm(PendingConfirm::Restart) => {
-                         matches!(code, KeyCode::Char('r' | 'R'))
-@@ -1315,6 +1376,7 @@ impl ServeView {
-     }
- 
-     fn prepare_launch(&mut self, request: ServeLaunchRequest) {
-+        self.unasked = None;
-         self.pending_confirm = None;
-         self.show_help = false;
-         self.launch_in_flight = true;
-@@ -1388,6 +1450,7 @@ impl ServeView {
- 
-     pub(crate) fn refuse_stop(&mut self) {
-         self.pending = None;
-+        self.funnel_reset_armed = None;
-         self.stop_requested = false;
-         let (mode, transport) = self.context();
-         self.fail_work(
-@
-```
-
-**File**: `src/tui/dialogs/serve/render.rs` (modified, +83/-21)
-```diff
-@@ -9,7 +9,7 @@ use crossterm::event::{KeyCode, KeyEvent};
- 
- use super::{
-     funnel_reset_applies, Flash, LinkChange, Logins, PendingConfirm, RestartEffect, ServeMode,
--    ServeMouse, ServeView, ServeViewState, TransportStatus, TunnelTransport, FLASH_TTL,
-+    ServeMouse, ServeView, ServeViewState, TransportStatus, TunnelTransport, Unasked, FLASH_TTL,
- };
- use crate::tui::components::hint_buttons::scan_spaced_hints;
- use crate::tui::components::hover::paint_hover_bg;
-@@ -121,7 +121,7 @@ pub(super) fn render(view: &ServeView, frame: &mut Frame, area: Rect, theme: &Th
-                 &mut mouse,
-                 message,
-                 view.control_error.as_deref(),
--                &error_recovery_keys(*mode, *transport),
-+                &error_keys(*mode, *transport, view.funnel_reset_armed.is_some()),
-             ),
-         }
-     }
-@@ -592,7 +592,7 @@ fn render_active(
-             mouse,
-             "Daemon started but no URL available yet.",
-             None,
--            &[],
-+            &error_keys(ServeMode::Local, None, false),
-         );
-         return;
-     };
-@@ -775,8 +775,12 @@ fn render_active(
-         .border_style(Style::default().fg(theme.border));
-     let footer_inner = footer_block.inner(footer);
-     frame.render_widget(footer_block, footer);
--    let footer_text = match view.pending_confirm.map(|(action, _)| action) {
--        Some(action) => {
-+    let asking = view
-+        .pending_confirm
-+        .map(|(action, _)| (action, None))
-+        .or(view.unasked.map(|(action, why)| (action, Some(why))));
-+    let footer_text = match asking {
-+        Some((action, unasked)) => {
-             let effect = RestartEffect::of(
-                 *mode,
-                 urls,
-@@ -786,14 +790,14 @@ fn render_active(
-             );
-             let (first, effect_text) = match action {
-                 PendingConfirm::NewPassphrase => (
--                    "Press G again for a new passphrase.",
-+                    "Press Enter for a new passphrase.",
-                     "Every Device signs out.",
-                 ),
-                 PendingConfirm::Restart if effect.link == LinkChange::Replaced => {
--                    ("Press R again to restart.", "Agents keep running.")
-+                    ("Press Enter to restart.", "Agents keep running.")
-                 }
-                 PendingConfirm::Restart => (
--                    "Press R again to restart.",
-+                    "Press Enter to restart.",
-                     match effect.logins {
-                         Logins::Kept => "Devices stay signed in; agents keep running.",
-                         Logins::Lost => "Every Device signs out; agents keep running.",
-@@ -813,15 +817,35 @@ fn render_active(
-             let funnel_back = (action == PendingConfirm::Restart && effect.retakes_funnel).then_some(
-                 "The Funnel link comes back only if no other server holds it; otherwise the Daemon stops and says why.",
-             );
-+            let again = match action {
-+                PendingConfirm::NewPassphrase => "Press G to check again.",
-+                PendingConfirm::Restart => "Press R to check again.",
-+            };
-+            let (lead, first, cancels) = match unasked {
-+                None => (None, first, Some("Any other key cancels.")),
-+                Some(Unasked::EarlyEnter) => {
-+                    (Some("Enter was pressed before this asked. "), again, None)
-+                }
-+                // Only a restart re-checks its effects; a new passphrase always signs everyone out.
-+                Some(Unasked::Changed) => (
-+                    Some("What a restart would change is different now. "),
-+                    again,
-+                    None,
-+                ),
-+            };
-             let rest = [effect_text]
-                 .into_iter()
-                 .chain(link)
-                 .chain(funnel_back)
--                .chain(["Any other key cancels."]);
--            let mut spans = vec![Span::styled(
-+                .chain(cancels);
-+            let mut spans: Vec<_> = lead
-+                .map(|lead| Span::styled(lead, dimmed))
-+                .into_iter()
-+                .collect();
-+            spans.push(Span::styled(
-                 first,
-                 Style::default().fg(theme.waiting).bold(),
--            )];
-+            ));
-             spans.extend(rest.map(|s| Span::styled(format!(" {s}"), dimmed)));
-             Text::from(Line::from(spans))
-         }
-@@ -975,15 +999,30 @@ fn split_url_and_token(url: &str) -> (String, Option<&str>) {
- }
- 
- /// The keys `error_key` handles for this failure, shown before the way out.
--fn error_recovery_keys(mode: ServeMode, transport: Option<TunnelTransport>) -> Vec<&'static str> {
--    let mut keys = Vec::new();
-+struct ErrorKeys {
-+    recovery: Vec<&'static str>,
-+    rest: &'static [&'static str],
-+}
-+
-+fn error_keys(mode: ServeMode, transport: Option<TunnelTransport>, reset_armed: bool) -> ErrorKeys {
-+    /
-```
-
-**File**: `src/tui/dialogs/serve/tests.rs` (modified, +369/-23)
-```diff
-@@ -11,6 +11,10 @@ fn key(code: char) -> KeyEvent {
-     KeyEvent::from(KeyCode::Char(code))
- }
- 
-+fn enter() -> KeyEvent {
-+    KeyEvent::from(KeyCode::Enter)
-+}
-+
- fn picker_state() -> ServeViewState {
-     ServeViewState::ModePicker {
-         selected: ServeMode::Tunnel,
-@@ -67,6 +71,18 @@ fn starting() -> ServeViewState {
-     }
- }
- 
-+/// [`wait_for`], with every tick read at `now`.
-+#[track_caller]
-+fn wait_for_at(view: &mut ServeView, now: Instant, predicate: impl Fn(&ServeView) -> bool) {
-+    let deadline = Instant::now() + Duration::from_secs(10);
-+    while !predicate(view) {
-+        view.tick_at(now);
-+        assert!(Instant::now() < deadline, "Serve transition did not finish");
-+        std::thread::yield_now();
-+    }
-+}
-+
-+#[track_caller]
- fn wait_for(view: &mut ServeView, predicate: impl Fn(&ServeView) -> bool) {
-     let deadline = Instant::now() + Duration::from_secs(10);
-     while !predicate(view) {
-@@ -76,15 +92,19 @@ fn wait_for(view: &mut ServeView, predicate: impl Fn(&ServeView) -> bool) {
-     }
- }
- 
-+/// Whether a restart check, or the launch context a confirm reads, is still running.
-+fn assessing(view: &ServeView) -> bool {
-+    view.pending.as_ref().is_some_and(|pending| {
-+        matches!(
-+            pending.kind,
-+            PendingJob::Restart { .. } | PendingJob::LaunchContext(_)
-+        )
-+    })
-+}
-+
-+#[track_caller]
- fn wait_assessment(view: &mut ServeView) {
--    wait_for(view, |view| {
--        !view.pending.as_ref().is_some_and(|pending| {
--            matches!(
--                pending.kind,
--                PendingJob::Restart { .. } | PendingJob::LaunchContext(_)
--            )
--        })
--    });
-+    wait_for(view, |view| !assessing(view));
- }
- 
- fn snapshot() -> JobResult {
-@@ -399,7 +419,7 @@ fn requesting_a_new_passphrase_does_not_overwrite_saved_credentials() {
-     view.target = Some(crate::cli::serve::tui_control_target().unwrap());
-     view.handle_key(key('G'));
-     wait_assessment(&mut view);
--    view.handle_key(key('G'));
-+    view.handle_key(enter());
-     wait_assessment(&mut view);
-     assert!(view.take_launch().is_some());
-     assert_ne!(view.pending_passphrase, "running daemon phrase");
-@@ -434,14 +454,11 @@ fn restart_requires_an_uninterrupted_confirmation() {
-         if expired {
-             view.pending_confirm = Some((PendingConfirm::Restart, Instant::now() - CONFIRM_TTL));
-         }
--        view.handle_key(key('R'));
-+        view.handle_key(enter());
-         wait_assessment(&mut view);
-         if cancelled || expired {
-             assert!(view.take_launch().is_none());
--            assert!(matches!(
--                view.pending_confirm,
--                Some((PendingConfirm::Restart, _))
--            ));
-+            assert!(view.pending_confirm.is_none());
-             assert!(matches!(view.state, ServeViewState::Active { .. }));
-         } else {
-             assert!(view.take_launch().is_some());
-@@ -478,7 +495,7 @@ fn token_age_counts_only_under_token_auth() {
- 
- #[test]
- #[serial_test::serial]
--fn second_restart_key_reprobes_and_reconfirms_when_the_effect_changed() {
-+fn a_changed_recheck_shows_its_effects_and_asks_only_after_another_r() {
-     let _home = crate::session::test_support::isolate_app_dir();
-     let token = crate::session::get_app_dir().unwrap().join("serve.token");
-     let mut jobs = ServeJobs::default();
-@@ -498,14 +515,28 @@ fn second_restart_key_reprobes_and_reconfirms_when_the_effect_changed() {
-     wait_assessment(&mut view);
-     assert_eq!(view.restart_probe.local_token, TokenWindow::Boundary);
-     write_token(Duration::from_secs(24 * 60 * 60 + 60));
--    view.handle_key(key('R'));
-+    view.handle_key(enter());
-     wait_assessment(&mut view);
-     assert_eq!(view.restart_probe.local_token, TokenWindow::Renews);
-+    assert!(view.take_launch().is_none(), "a changed re-check restarted");
-+    // The confirming Enter may still be held, so the re-check doesn't ask again.
-+    assert!(view.pending_confirm.is_none(), "a changed re-check asked");
-+    assert_eq!(
-+        view.unasked,
-+        Some((PendingConfirm::Restart, Unasked::Changed))
-+    );
-+    view.handle_key(enter());
-+    assert!(!assessing(&view), "Enter after a changed re-check");
-     assert!(view.take_launch().is_none());
--    assert!(view.pending_confirm.is_some());
-     view.handle_key(key('R'));
-     wait_assessment(&mut view);
--    assert!(view.take_launch().is_some());
-+    assert!(view.pending_confirm.is_some());
-+    view.handle_key(enter());
-+    wait_assessment(&mut view);
-+    assert!(
-+        view.take_launch().is_some(),
-+        "R, then Enter, after a changed re-check"
-+    );
- }
- 
- #[test]
-@@ -553,6 +584,9 @@ fn held_work_leaves_keys_clicks_ticks_and_render_usable() {
-                 }
-                 _ => {
-                     view.handle_key(KeyEvent::from(code.unwrap()));
-+                    if held == Held::Reset {
-+                        view.handle_key(enter());
-+                    }
-                 }
-
-```
-
-**File**: `src/tui/home/bindings.rs` (modified, +2/-2)
-```diff
-@@ -947,9 +947,9 @@ pub static BINDINGS: &[Binding] = &[
-         help: Some(HelpMeta {
-             section: HelpSection::Other,
-             desc: if cfg!(feature = "web") {
--                "Connections: Web dashboard (browser / phone)"
-+                "Connections; twice for the Web dashboard"
-             } else {
--                "Connections: API server (LAN / Tunnel)"
-+                "Connections; twice for the API server"
-             },
-         }),
-         palette: Some(PaletteMeta {
+ env:
+   CARGO_TERM_COLOR: always
+@@ -618,9 +620,6 @@ jobs:
+           node-version: '22'
+           cache: npm
+           cache-dependency-path: web/package-lock.json
+-      - name: Install web deps
+-        working-directory: web
+-        run: npm ci
+       - uses: ./.github/actions/rust-toolchain
+       - uses: ./.github/actions/kache
+         with:
 ```
 
 ---
 
-### Incident Patch 2: `b0b4c0df` (2026-11-20)
-**Commit Message**: fix(acp): refuse Terminal switch when command session flag conflicts (#5758)
+### Incident Patch 2: `9f1bed1f` (2026-11-22)
+**Commit Message**: fix(deps): update url for RUSTSEC-2026-0592 (#5947)
 
-* fix(acp): refuse a Terminal switch the command's session flag would leave owed
+url 2.5.8 recurses without limit in Url::origin() on nested blob: URLs,
+so cargo-deny's advisories check fails on every PR. 2.5.9 is the patched
+release; it requires form_urlencoded 1.2.3, which comes with it.
 
-A Session whose command carries its own native session selector while AoE
-also holds a conversation for it can never launch: the launch refuses the
-two together. The switch to Terminal view retired the Structured runner
-first and then left the handoff owed, retrying the same refused launch.
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-The check and the switch now refuse such a switch before retirement with
-the new `command_selector_conflict` reason. A handoff already owed from
-before this change ends instead of retrying: the Session stays in Terminal
-view with an error naming the fix, and its reservation is free, so a
-restart with the flag removed launches.
-
-Fixes #5727
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* fix(acp): don't judge a pending rebind by the old command's session flag
-
-Retirement replaces a pending terminal rebind's command and conversation,
-so the old command's native session selector never reaches the launch.
-The selector check judged it anyway and refused a switch that would
-launch. Skip it for a pending rebind.
-
-Reword the deferred cove
-
-**File**: `docs/guides/session-resume.md` (modified, +1/-1)
+**File**: `Cargo.lock` (modified, +4/-4)
 ```diff
-@@ -34,7 +34,7 @@ Sandbox config and conversation stores are staged per AoE instance, including cu
+@@ -1620,9 +1620,9 @@ checksum = "00b0228411908ca8685dba7fc2cdd70ec9990a6e753e89b6ac91a84c40fbaf4b"
  
- A conflicting built-in tool and command, such as tool `claude` with command `codex`, is rejected for managed resume and fork. An opaque wrapper requires both `session.agent_execution_as` and `session.agent_config_dir` in trusted global or profile configuration. This asserts that the wrapper invokes that native agent, forwards native arguments unchanged, and uses only the declared store and working-directory/filesystem context. Repository overrides are refused because a repository must not grant itself access to another native conversation store.
+ [[package]]
+ name = "form_urlencoded"
+-version = "1.2.2"
++version = "1.2.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf"
++checksum = "afa489199eaffb1211795df1c6236ce1ad0d41a6fa45250add73e3b02420f06e"
+ dependencies = [
+  "percent-encoding",
+ ]
+@@ -5599,9 +5599,9 @@ checksum = "8ecb6da28b8a351d773b68d5825ac39017e680750f980f3a1a85cd8dd28a47c1"
  
--A bare, non-path wrapper mapped by `agent_detect_as` can still start fresh and capture its pane-scoped published ID without the execution contract. AoE does not preassign a native ID from a status alias alone, including after an explicit fresh choice or disabled `auto_resume_on_restart`. Resuming a published ID still requires the contract. A native selector supplied by the user remains user-owned only when the row has no AoE-managed conversation state; AoE does not inject another selector. A known conversation can still be tried after an external working-directory or store move on Default when native execution resolves and its target checks pass; its old binding remains authoritative until a qualified observation updates it.
-+A bare, non-path wrapper mapped by `agent_detect_as` can still start fresh and capture its pane-scoped published ID without the execution contract. AoE does not preassign a native ID from a status alias alone, including after an explicit fresh choice or disabled `auto_resume_on_restart`. Resuming a published ID still requires the contract. A native selector supplied by the user remains user-owned only when the row has no AoE-managed conversation state; AoE does not inject another selector. A conversation cleared with `set-session-id <session> ""` isn't AoE-managed state: the command runs as written, and the clear still applies. With AoE-managed state, the launch is refused, and so is a [switch to Terminal view](../structured-view.md#choosing-the-view-per-session). A known conversation can still be tried after an external working-directory or store move on Default when native execution resolves and its target checks pass; its old binding remains authoritative until a qualified observation updates it.
- 
- Shell pipelines, remote launchers, redirections, expansion, and unrecognized context-changing arguments are not supported managed invocations. The program, routing environment, and native namespace arguments are fixed from one validated launch snapshot and restored after the login shell.
- Literal leading `NAME=value` assignments and a shell-quoted executable are supported for direct commands. The assignments are included when resolving the executable and its native store.
-```
-
-**File**: `docs/structured-view.md` (modified, +1/-1)
-```diff
-@@ -145,7 +145,7 @@ It exits 1 if Node is missing, 2 if some agents are unreachable, else 0. Pass `-
- 
- - **Web wizard and TUI dialog:** `acp.structured_view = "auto"` defaults to structured in the web wizard and terminal in the TUI. Set it to `terminal` or `structured` to preselect that view in both, or `off` to hide the option. The per-session choice wins.
- - **CLI:** defaults to the terminal view; opt in with `--structured-view` or `--agent`.
--- Either way, an existing active session can switch views: the web sidebar's right-click menu (**Switch to terminal** / **Switch to structured view**) or the TUI's right-click context menu (requires a healthy runtime; archived, trashed, and still-creating rows are excluded until they leave that state). Both surfaces confirm first. The worktree, open files, and commits are always preserved. For a **claude** session, the conversation is kept in both directions only when AoE can resolve a shared native store. A terminal switch whose store cannot be resolved, or which the structured worker does not share, is refused with HTTP 409 and `set-session-id --store` recovery guidance. Every other agent starts fresh on the target surface.
-+- Either way, an existing active session can switch views: the web sidebar's right-click menu (**Switch to terminal** / **Switch to structured view**) or the TUI's right-click context menu (requires a healthy runtime; archived, trashed, and still-creating rows are excluded until they leave that state). Both surfaces confirm first. The worktree, open files, and commits are always preserved. For a **claude** session, the conversation is kept in both directions only when AoE can resolve a shared native store. A terminal switch whose store cannot be resolved, or which the structured worker does not share, is refused with HTTP 409 and `set-session-id --store` recovery guidance. Every other agent starts fresh on the target surface. A session whose command or arguments carry the agent's own session flag (`--resume <id>`, for example) lets that flag pick the conversation. A switch that also chooses a conversation is refused with 409 `command_selects_conversation`, and one where AoE also holds a conversation for the session with 409 `command_selector_conflict`; remove the flag to switch. A switch owed from before that refusal ends in Terminal view with the session in Error: restart it with the flag removed, or run `aoe session set-session-id <session> ""` and restart it to run its command as written.
- 
- If the agent cannot resume a prior conversation, the transcript reports a context reset before assigning a fresh conversation. Recorded terminal context and an explicitly selected conversation count as prior context. Reattaching to the same live conversation does not add a reset.
- 
-```
-
-**File**: `src/acp/protocol.rs` (modified, +6/-1)
-```diff
-@@ -298,10 +298,13 @@ pub enum TerminalSwitchReason {
-     NotStructured,
-     /// With `command_decides`: the launch command carries a native session selector.
-     CommandSelectsConversation,
-+    /// With `blocked`: the command's native session selector and AoE's own conversation
-+    /// would both reach the launch, which refuses them together.
-+    CommandSelectorConflict,
- }
- 
- impl TerminalSwitchReason {
--    pub const ALL: [Self; 11] = [
-+    pub const ALL: [Self; 12] = [
-         Self::AgentNotResumable,
-         Self::NoConversationYet,
-         Self::EarlierConversation,
-@@ -313,6 +316,7 @@ impl TerminalSwitchReason {
-         Self::SessionChanged,
-         Self::NotStructured,
-         Self::CommandSelectsConversation,
-+        Self::CommandSelectorConflict,
-     ];
- 
-     pub const fn as_str(self) -> &'static str {
-@@ -328,6 +332,7 @@ impl TerminalSwitchReason {
-             Self::SessionChanged => "session_changed",
-             Self::NotStructured => "not_structured",
-             Self::CommandSelectsConversation => "command_selects_conversation",
-+            Self::CommandSelectorConflict => "command_selector_conflict",
-         }
-     }
- }
-```
-
-**File**: `src/daemon/error.rs` (modified, +1/-0)
-```diff
-@@ -391,6 +391,7 @@ mod tests {
-                 CommandSelectsConversation => {
-                     ("command_selects_conversation", StatusCode::CONFLICT)
-                 }
-+                CommandSelectorConflict => ("command_selector_conflict", StatusCode::CONFLICT),
-             };
-             assert_eq!(reason.as_str(), wire);
-             let code = ApiErrorCode::TerminalSwitchRefused(reason);
-```
-
-**File**: `src/migrations/v048_terminal_handoffs.rs` (modified, +1/-0)
-```diff
-@@ -187,6 +187,7 @@ mod tests {
-             terminal: None,
-             launch_required: false,
-             launch_started: false,
-+            selector_ended: false,
-             launch: None,
-         };
-         let mut pending = serde_json::to_value(&row)?;
-```
-
-**File**: `src/server/api/acp/view.rs` (modified, +847/-57)
-```diff
-@@ -585,6 +585,19 @@ fn switch_unavailable(error: &anyhow::Error, message: &'static str) -> Response
- 
- const CHECK_UNAVAILABLE: &str = "Couldn't check the switch to Terminal view; retry shortly";
- const SWITCH_UNAVAILABLE: &str = "Couldn't start the switch to Terminal view; retry shortly";
-+const COMMAND_SELECTOR_CONFLICT: &str = "This Session's command picks a conversation with its own session flag, and AoE holds one for it too; remove the session flag from its command or arguments to switch";
-+/// Ends a handoff owed from before the refusal above: its launch can never start. Clearing AoE's
-+/// id is a way out only here, in Terminal view; Structured view refuses that clear.
-+fn command_selector_ended(session_id: &str) -> String {
-+    format!(
-+        "Terminal view couldn't start this Session: its command picks a conversation with its own session flag, and AoE holds one for it too. Restart the Session with the session flag removed from its command or arguments, or run `aoe session set-session-id {session_id} \"\"` and restart it to run its command as written."
-+    )
-+}
-+
-+/// A handoff whose launch the command's own session selector refused; it ended in Terminal view.
-+#[derive(Debug, thiserror::Error)]
-+#[error("{}", command_selector_ended(.0))]
-+struct CommandSelectorEnded(String);
- 
- /// A coded refusal, so a client can show the matching dialog state. The body
- /// stays plain text because the current web client shows it as it is.
-@@ -611,6 +624,7 @@ fn terminal_refusal(reason: TerminalSwitchReason, agent: &str) -> Response {
-         CommandSelectsConversation => {
-             "This Session's command picks its own conversation; switch without a choice, or remove the session flag from its command".into()
-         }
-+        CommandSelectorConflict => COMMAND_SELECTOR_CONFLICT.into(),
-     };
-     crate::server::api::text_error_with_code_header(
-         crate::daemon::ApiErrorCode::TerminalSwitchRefused(reason),
-@@ -720,13 +734,33 @@ async fn terminal_plan(
-     let plan = agent_terminal_plan(state, id, instance, agent, source_event_seq).await?;
-     Ok(match plan {
-         TerminalPlan::Blocked(_) => plan,
-+        // Retirement replaces a pending rebind's command and conversation, so the old command's
-+        // selector never reaches the launch.
-+        plan if instance.terminal_rebind_pending => plan,
-         plan if instance.command_session_selector().is_some() => {
--            TerminalPlan::CommandDecides(Box::new(plan))
-+            // The launch refuses the selector beside AoE's own conversation, so refuse before
-+            // retirement rather than leave the switch owed. A row that can't start owes no launch.
-+            if instance.ensure_startable().is_ok()
-+                && command_selector_conflicts(
-+                    instance,
-+                    matches!(plan, TerminalPlan::Continues { .. }),
-+                )
-+            {
-+                TerminalPlan::Blocked(TerminalSwitchReason::CommandSelectorConflict)
-+            } else {
-+                TerminalPlan::CommandDecides(Box::new(plan))
-+            }
-         }
-         plan => plan,
-     })
- }
- 
-+/// Whether the launch refuses `row`'s command selector beside AoE's own conversation. A switch
-+/// that `keeps_target` commits one; otherwise the row's own state decides.
-+fn command_selector_conflicts(row: &Instance, keeps_target: bool) -> bool {
-+    row.command_session_selector().is_some() && (keeps_target || row.conversation_state().resumes())
-+}
-+
- async fn agent_terminal_plan(
-     state: &Arc<AppState>,
-     id: &str,
-@@ -1076,6 +1110,7 @@ fn reserve_handoff_in(
-             }),
-             launch_required: row.ensure_startable().is_ok(),
-             launch_started: false,
-+            selector_ended: false,
-             launch: None,
-         }));
-         Ok(HandoffKey {
-@@ -1256,11 +1291,26 @@ fn commit_terminal_in(
-     })
- }
- 
-+/// A session id whose next `finish_handoff_in` runs this hook before canonical adoption.
-+#[cfg(test)]
-+type FinishAdoptionHook = (String, Box<dyn FnOnce() + Send>);
-+#[cfg(test)]
-+static BEFORE_FINISH_ADOPTION: std::sync::Mutex<Option<FinishAdoptionHook>> =
-+    std::sync::Mutex::new(None);
-+
- fn finish_handoff_in(
-     native: &crate::server::session_store::NativeSessionStore,
-     session_id: &str,
-     key: HandoffKey,
- ) -> anyhow::Result<()> {
-+    #[cfg(test)]
-+    {
-+        let mut armed = BEFORE_FINISH_ADOPTION.lock().unwrap();
-+        if armed.as_ref().is_some_and(|(id, _)| id == session_id) {
-+            let (_, hook) = armed.take().unwrap();
-+            crate::server::session_store::before_next_adoption_for_test(hook);
-+        }
-+    }
-     use crate::session::{LifecycleOperation, LifecycleReservationError, TerminalHandoffStage};
-     let profile = native.storage().profile();
-     let profile_identity = native.storage().bound_profile_identity()?;
-@@ -1462,7 +1512,15 @@ async fn terminal_handoff_request(
-             tracing::info!(target: "acp.switch", session =
-```
-
-**File**: `src/session/instance/mod.rs` (modified, +4/-0)
-```diff
-@@ -299,6 +299,10 @@ pub(crate) struct TerminalHandoffIntent {
-     pub(crate) launch_required: bool,
-     pub(crate) launch_started: bool,
-     pub(crate) launch: Option<TerminalHandoffLaunch>,
-+    /// The owed launch was refused for the command's own session selector, so the switch ended
-+    /// without a pane. Missing on rows from before the refusal, which never ended this way.
-+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
-+    pub(crate) selector_ended: bool,
- }
- 
- #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-```
-
-**File**: `src/session/instance/session_id.rs` (modified, +29/-6)
-```diff
-@@ -850,16 +850,16 @@ impl Instance {
-             .then(|| self.existing_session_selector(&parsed_command.words, agent))
-             .flatten()
-         {
--            let aoe_has_state = self.agent_session_id.is_some()
--                || matches!(
--                    self.resume_intent,
--                    ResumeIntent::Use(_) | ResumeIntent::Fork { .. }
--                );
--            if aoe_has_state {
-+            if self.conversation_state().resumes() {
-                 anyhow::bail!(
-                     "{context} command already contains native session selector {selector}; remove it or clear the AoE-managed resume state before launching"
-                 );
-             }
-+            // The early return skips acquisition, which applies a clear.
-+            if matches!(self.resume_intent, ResumeIntent::Cleared) {
-+                self.set_agent_conversation(None, None, None);
-+                self.resume_probe_failed_sid = None;
-+            }
-             tracing::info!(target: "session.store", %context, %selector,
-                 "command supplies its own native session selector; skipping AoE session injection");
-             return Ok(false);
-@@ -2313,6 +2313,29 @@ work-opencode = "opencode"
-                 );
-                 assert!(error.contains("clear the AoE-managed resume state"));
-             }
-+            // A cleared id isn't AoE's conversation: the command runs as written and the clear
-+            // still applies, since the selector skips acquisition.
-+            let mut cleared = tool_instance("claude", "/tmp/x");
-+            cleared.agent_session_id = Some(sid.to_string());
-+            cleared.resume_intent = ResumeIntent::Cleared;
-+            let mut actual = command.to_string();
-+            assert!(!cleared
-+                .apply_session_flags(
-+                    &mut actual,
-+                    None,
-+                    None,
-+                    &super::execution::AgentLaunchContext::host(
-+                        cleared.default_selector_agent(),
-+                        cleared
-+                            .default_selector_agent()
-+                            .and_then(|agent| cleared.host_agent_command(agent, None))
-+                            .as_ref()
-+                    ),
-+                    &mut cleared.conversation_state()
-+                )
-+                .unwrap());
-+            assert_eq!(actual, command);
-+            assert!(cleared.agent_session_id.is_none(), "{command}");
-         }
-     }
- 
+ [[package]]
+ name = "url"
+-version = "2.5.8"
++version = "2.5.9"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ff67a8a4397373c3ef660812acab3268222035010ab8680ec4215f38ba3d0eed"
++checksum = "f00cd2407bb42c0ef17be88d4cf020f5cceffd121665bac9b8b9493a369b3b1a"
+ dependencies = [
+  "form_urlencoded",
+  "idna",
 ```
 
 ---
 
-### Incident Patch 3: `08946a21` (2026-11-21)
-**Commit Message**: fix(tui): attach live send to an alive pane whose status is unknown (#5915)
+### Incident Patch 3: `cf140862` (2026-11-21)
+**Commit Message**: fix: link liblzma statically in vendored builds (#5918)
 
-An agent pane that is alive but whose screen the detector cannot classify
-reports Unknown. Live send treated that as a stale target: the receipt was
-discarded and the modal claimed the snapshot had changed, which both blocked
-the send and misdirected the reader.
+The macos-latest runner is arm64 and has Homebrew xz, so lzma-sys found
+it through pkg-config and the aoe-darwin-arm64 release linked
+/opt/homebrew/opt/xz/lib/liblzma.5.dylib. The binary failed to start on
+Macs without Homebrew. Add xz2/static to the vendored feature, and fail
+the macOS release build when the binary links any non-system dylib.
 
-Gate attachment on the receipt identity and the pane observation instead,
-keeping Stopped, Error, Deleting, and Creating refused. Both arms share one
-allowlist so they cannot drift, and Unknown counts as warm so the revive
-toast no longer claims a frame for a pane that needs no work.
+Fixes #5917
 
-Fixes #5913
+Claude-Session: https://claude.ai/code/session_01PF9AYwjLPtgfNgQbW4hNm6
 
-Co-authored-by: deepseek/deepseek-v4.1-flash-1017 <[REDACTED_EMAIL]>
-
-**File**: `src/tui/home/live_send_prep.rs` (modified, +6/-0)
+**File**: `.github/workflows/build-binaries.yml` (modified, +16/-0)
 ```diff
-@@ -8,6 +8,11 @@ impl HomeView {
-     /// revive cascade (`ensure_pane_ready` / `prepare_live_send`) is expected
-     /// to be a fast no-op.
-     ///
-+    /// `Unknown` counts: it is what an agent-pane adapter that has not
-+    /// classified the screen yet reports, and those panes are exactly the ones
-+    /// live send now attaches. Liveness still comes from `exists()`, so a
-+    /// stale cache can only cost the toast.
-+    ///
-     /// The `EnterLiveSend` / `SendMessage` handlers use this to skip the
-     /// "Reviving session..." toast frame for warm sessions: the toast claims a
-     /// bottom bar row, and for the frame(s) it is on screen the bottom-anchored
-@@ -31,6 +36,7 @@ impl HomeView {
-             crate::session::Status::Running
-                 | crate::session::Status::Waiting
-                 | crate::session::Status::Idle
-+                | crate::session::Status::Unknown
-         ) {
-             return false;
-         }
-```
-
-**File**: `src/tui/home/tests/live_send_mode.rs` (modified, +20/-1)
-```diff
-@@ -737,11 +737,14 @@ fn warm_predicates_stay_cold_without_a_live_pane() {
-     assert!(!env.view.agent_pane_is_warm(&id));
+@@ -166,6 +166,22 @@ jobs:
+               exit 1
+           fi
  
-     // Non-live statuses are cold regardless of pane state.
-+    let cache = crate::tmux::SessionCacheGuard::capture();
-+    let inst = env.view.get_instance(&id).unwrap().clone();
-+    let tmux_name = crate::tmux::Session::generate_name(&inst.id, &inst.title);
-+    cache.force_present(&[tmux_name.as_str()]);
-     for status in [
-         crate::session::Status::Stopped,
-         crate::session::Status::Starting,
-         crate::session::Status::Error,
--        crate::session::Status::Unknown,
-     ] {
-         env.view.set_instance_status(&id, status);
-         assert!(
-@@ -750,6 +753,22 @@ fn warm_predicates_stay_cold_without_a_live_pane() {
-         );
-     }
++      - name: Verify macOS binary links only system libraries
++        if: runner.os == 'macOS'
++        run: |
++          # The runner has Homebrew, so a C dependency that finds a Homebrew
++          # library through pkg-config links against /opt/homebrew and the
++          # release binary fails to start on Macs without it. Fail the
++          # release if any dylib outside the OS is referenced.
++          BIN="target/${{ matrix.target }}/release/aoe"
++          otool -L "$BIN"
++          NON_SYSTEM=$(otool -L "$BIN" | tail -n +2 | awk '{print $1}' \
++              | grep -vE '^(/usr/lib/|/System/Library/)' || true)
++          if [ -n "$NON_SYSTEM" ]; then
++              echo "::error::Binary links non-system libraries: $NON_SYSTEM"
++              exit 1
++          fi
++
+       - name: Package
+         run: |
+           mkdir -p dist
+```
+
+**File**: `Cargo.toml` (modified, +4/-4)
+```diff
+@@ -181,8 +181,8 @@ agent-client-protocol = { version = "5", features = ["unstable_end_turn_token_us
+ semver = "1"
  
-+    // An unclassified status with the pane actually up is warm: that is the
-+    // steady state of an agent whose status adapter has not classified its
-+    // screen, and live send attaches those rows.
-+    for status in [
-+        crate::session::Status::Unknown,
-+        crate::session::Status::Idle,
-+        crate::session::Status::Waiting,
-+        crate::session::Status::Running,
-+    ] {
-+        env.view.set_instance_status(&id, status);
-+        assert!(
-+            env.view.agent_pane_is_warm(&id),
-+            "status {status:?} with a live pane must count as warm"
-+        );
-+    }
-+
-     use crate::session::{AuxiliaryObservation, AuxiliaryTarget, PanePresence};
-     env.view
-         .set_instance_status(&id, crate::session::Status::Stopped);
-```
-
-**File**: `src/tui/home/tests/session_feed_tests.rs` (modified, +90/-0)
-```diff
-@@ -1443,6 +1443,14 @@ fn restart_attachment_waits_for_its_receipt_and_lifecycle_generation() {
-             "test",
-             true,
-         ),
-+        (
-+            "Unknown",
-+            PanePresence::Alive,
-+            5,
-+            Some("restarted-agent"),
-+            "test",
-+            true,
-+        ),
-         (
-             "Starting",
-             PanePresence::Alive,
-@@ -1589,6 +1597,88 @@ fn restart_attachment_waits_for_its_receipt_and_lifecycle_generation() {
-     }
- }
- 
-+/// Live send into an agent whose status adapter has not classified its screen
-+/// yet must attach: the daemon confirms the pane by identity, and the snapshot
-+/// reports that same pane alive. A status the row is not in (stopped) still
-+/// refuses the attachment.
-+#[test]
-+#[serial]
-+fn live_send_attaches_an_agent_pane_whose_status_is_unclassified() {
-+    use crate::daemon::{RuntimeCursor, TerminalTarget, TerminalTargetStatus};
-+    use crate::session::{PaneObservation, PanePresence};
-+    use crate::tui::home::live_send::LiveSendTarget;
-+    use crate::tui::home::panes::PaneIntent;
-+
-+    for (reflected_status, attach) in [("Unknown", true), ("Stopped", false)] {
-+        let mut env = create_test_env_with_sessions(1);
-+        let id = env.view.instance_at(0).id.clone();
-+        env.view.select_session_by_id(&id);
-+        let mut row = daemon_row(env.view.get_instance(&id).unwrap(), "Unknown");
-+        row.view = crate::session::View::Terminal;
-+        row.lifecycle_generation = 4;
-+        row.agent_pane = PaneObservation {
-+            state: PanePresence::Alive,
-+            tmux_session: Some("agent-4".into()),
-+            legacy_tool: None,
-+        };
-+        let SessionFeedResult::Snapshot(mut snapshot) = snapshot_of(vec![row]) else {
-+            unreachable!()
-+        };
-+        env.view
-+            .session_feed
-+            .publish_for_test(SessionFeedResult::Snapshot(snapshot.clone()));
-+        env.view.apply_session_feed();
-+        let mut respond = env.view.session_feed.engagement_native_driver_for_test();
-+        env.view
-+            .prepare_live_send_target(&id, LiveSendTarget::Agent, None)
-+            .unwrap();
-+        assert!(matches!(
-+            respond(
-+                Ok(RuntimeCursor {
-+                    epoch: "test".into(),
-+                    revision: 2,
-+                }),
-+                Some(TerminalTarget {
-+                    tmux_session: "agent-4".into(),
-+                    status: TerminalTargetStatus::Alive,
-+                    lifecycle_generation: 4,
-+                    profile: "test".into(),
-+                }),
-+            ),
-+            Some(crate::tui::session_feed::SessionRequest::EnsureAgent { .. })
-+        ));
-+        env.view.apply_session_feed();
-+        assert!(
-+            env.view.take_native_attachment().is_none(),
-+            "{reflected_status}: the receipt alone is not canonical application"
-+        );
-+
-+        let committed = std::sync::Arc::make_mut(&mut snapshot);
-+        committed.cursor.revision = 2;
-+        committed.contents.sessions[0].status = reflected_status.into();
-+        env.view
-+            .session_feed
-+            .publish_for_test(SessionFeedResult::Snapshot(snapshot));
-+        env.view.apply_session_feed();
-+        let attachment = env.view.take_native_attachment();
-+        if attach {
-+            let attachment = attachment.expect("an unclassified but live pane must go live");
-+            assert_eq!(attachment.id, id);
-+            assert_eq!(attachment.tmux_name, "agent-4");
-+            assert!(matches!(
-+                attachment.intent,
-+                PaneIntent::LiveSend(LiveSendTarget::Agent)
-+            ));
-+        } else {
-+            assert!(
-+                attachment.is_none(),
-+                "{reflected_status}: a stopped row must not attach"
-+            );
-+        }
-+        assert!(env.view.take_native_attachment().is_none());
-+    }
-+}
-+
- /// A complete runtime row, with deliberate canonical changes for the scenario.
- fn canonical_row(
-     instance: &Instance,
-```
-
-**File**: `src/tui/session_feed.rs` (modified, +95/-5)
-```diff
-@@ -382,6 +382,22 @@ struct PendingCreation {
-     receipt: Option<Box<MutationReceipt<crate::daemon::SessionResponse>>>,
- }
- 
-+/// Whether a snapshot status may accompany a confirmed agent-pane receipt.
-+///
-+/// Readiness comes from the receipt's identity (generation, profile, tmux
-+/// name) and the snapshot's pane observation, so status only has to rule out a
-+/// row that is stopped, failed, or mid-teardown. `Unknown` is the live state of
-+/// a pane that is alive but whose screen the detector cannot classify (see
-+/// `crate::session::instance::pane_status`), which is exactly what an agent
-+/// whose status adapter has not reported yet looks like; it is not evidence the
-+/// pane is gone.
-+fn status_allows_attachment(status: &str) -> bool {
-+    matches!(
-+        status,
-+        "Running" | "Waiting" | "Idle" | "Starting" | "Unknown"
-+    )
-+}
-+
- fn set_grant(grant: &AtomicU64, allowed: bool) {
-     // Renamed to try_update in the standard library; the MSRV this builds against
-     // does not have it yet. Upstream carries the same allowance.
-@@ -1853,15 +1869,13 @@ impl SessionFeed {
-                                             && row.agent_pane.state == crate::session::PanePresence::Alive
-                                             && receipt.outcome.target.as_ref().is_some_and(|target|
-                                                 row.agent_pane.tmux_session.as_deref() == Some(target.tmux_session.as_str()))
--                                            && matches!(row.status.as_str(), "Running" | "Waiting" | "Idle" | "Starting"),
-+                                            && status_allows_attachment(row.status.as_str()),
-                                         CommandReply::Terminal(receipt) => {
-                                             let identity_matches = row.lifecycle_generation
-                                                 == receipt.outcome.lifecycle_generation
-                                                 && row.profile == receipt.outcome.profile;
--                                            let status_ok = matches!(
--                                                row.status.as_str(),
--                                                "Running" | "Waiting" | "Idle" | "Starting"
--                                            );
-+                                            let status_ok =
-+                                                status_allows_attachment(row.status.as_str());
-                                             let pane_ok = match row.agent_pane.state {
-                                                 crate::session::PanePresence::Alive => {
-                                                     row.agent_pane.tmux_session.as_deref()
-@@ -4502,6 +4516,82 @@ mod tests {
-         assert!(feed.drain_command_errors().is_empty());
-         assert!(prepared.result.try_recv().unwrap().is_ok());
-     }
-+
-+    /// An agent whose screen the detector cannot classify keeps its pane alive
-+    /// and alive-pane identity is what the receipt confirms, so the row must
-+    /// attach instead of failing as a stale target. A stopped or failed row is
-+    /// still refused.
-+    #[test]
-+    fn ensure_agent_accepts_an_unclassified_status_only_with_the_same_live_pane() {
-+        use crate::session::PanePresence;
-+        for (status, pane, tmux_session, generation, attach) in [
-+            ("Unknown", PanePresence::Alive, Some("agent-4"), 4, true),
-+            ("Idle", PanePresence::Alive, Some("agent-4"), 4, true),
-+            ("Stopped", PanePresence::Alive, Some("agent-4"), 4, false),
-+            ("Error", PanePresence::Alive, Some("agent-4"), 4, false),
-+            ("Deleting", PanePresence::Alive, Some("agent-4"), 4, false),
-+            (
-+                "Unknown",
-+                PanePresence::Alive,
-+                Some("another-agent"),
-+                4,
-+                false,
-+            ),
-+            ("Unknown", PanePresence::Alive, Some("agent-4"), 5, false),
-+            ("Unknown", PanePresence::Dead, Some("agent-4"), 4, false),
-+            ("Unknown", PanePresence::Absent, Some("agent-4"), 4, false),
-+        ] {
-+            let mut row: crate::daemon::SessionResponse =
-+                serde_json::from_value(serde_json::json!({
-+                    "id": "session",
-+                    "profile": "test",
-+                    "lifecycle_generation": 4,
-+                    "status": status,
-+                    "agent_pane": {"state": "alive", "tmux_session": "agent-4"},
-+                }))
-+                .unwrap();
-+            row.agent_pane.state = pane;
-+            row.agent_pane.tmux_session = tmux_session.map(str::to_owned);
-+            let mut initial = snapshot("test", 1);
-+            Arc::make_mut(&mut initial).contents.sessions.push(row);
-+            let mut feed =
-+                SessionFeed::seeded_for_test(SessionFeedResult::Snapshot(initial.clone()));
-+            feed.mark_snapshot_applied(initial.clone());
-+            let (comm
-```
-
-**File**: `tests/e2e/live_send_paste_e2e.rs` (modified, +1/-1)
-```diff
-@@ -43,7 +43,7 @@ default_attach_mode = "live_send"
-     std::fs::write(config_dir.join("config.toml"), config_content).expect("write live-send config");
- }
- 
--fn agent_session_on(socket: &std::path::Path) -> String {
-+pub(crate) fn agent_session_on(socket: &std::path::Path) -> String {
-     let output = Command::new("tmux")
-         .arg("-S")
-         .arg(socket)
-```
-
-**File**: `tests/e2e/live_send_unknown_status_e2e.rs` (added, +142/-0)
-```diff
-@@ -0,0 +1,142 @@
-+//! e2e coverage for live send attaching a pane whose status is unclassified.
-+//!
-+//! An agent pane can be alive while its screen is unreadable to the status
-+//! detector: a custom command runs through a wrapper script, so the pane never
-+//! matches an agent manifest, and until the program paints enough content the
-+//! legacy detector lands on `Status::Unknown`. That is a live pane, but the
-+//! receipt gate used to accept only `Running | Waiting | Idle | Starting`, so
-+//! the TUI refused the attachment it had just prepared with
-+//! "Prepared target no longer matches the applied snapshot".
-+//!
-+//! Unit tests pin the allowlist; only an e2e proves the whole keystroke path --
-+//! real binary, real tmux, a real daemon polling a real pane -- reaches the
-+//! agent. The pane must be pre-launched so its status is genuinely `Unknown` at
-+//! Enter: a cold start reports `Starting`, which was already allowed, and would
-+//! make this test pass on the broken build.
-+
-+use serial_test::parallel;
-+use std::time::Duration;
-+
-+use crate::harness::{app_dir_in, require_tmux, wait_until, TuiTestHarness};
-+
-+/// Route activation into live-send and make `quiet` the only launchable agent,
-+/// so the created session takes the unclassified-status path.
-+fn write_unclassified_config(h: &TuiTestHarness, agent: &std::path::Path) {
-+    let config_dir = app_dir_in(h.home_path());
-+    let config_content = format!(
-+        r#"[updates]
-+update_check_mode = "off"
-+
-+[app_state]
-+has_seen_welcome = true
-+has_responded_to_telemetry = true
-+last_seen_version = "{version}"
-+has_acknowledged_agent_hooks = true
-+
-+[session]
-+default_attach_mode = "live_send"
-+default_tool = "quiet"
-+custom_agents = {{ quiet = {agent:?} }}
-+
-+{systemd_off}"#,
-+        version = env!("CARGO_PKG_VERSION"),
-+        agent = agent.to_str().expect("agent stub path"),
-+        systemd_off = crate::harness::SYSTEMD_OFF,
-+    );
-+    std::fs::write(config_dir.join("config.toml"), config_content).expect("write config");
-+}
-+
-+/// An unclassified pane must still take live input, and must take it exactly
-+/// once: a retry that duplicated the keystrokes would show up as a doubled
-+/// marker in the pane, which is the failure mode that makes a "works on my
-+/// machine" fix dangerous.
-+#[test]
-+#[parallel]
-+fn live_send_attaches_a_pane_whose_status_is_unclassified() {
-+    require_tmux!();
-+
-+    // `new_in_tmp` keeps the home under `/tmp`: this test lets the CLI autostart
-+    // a daemon, and its unix socket path overflows Darwin's 104-byte `sun_path`
-+    // when the home sits under `/var/folders/.../TmpDir`.
-+    let mut h = TuiTestHarness::new_in_tmp("live_send_unknown_status");
-+
-+    // Stand in for an agent whose TUI the detector cannot read yet: it echoes
-+    // what it receives and never enables bracketed paste, so the marker text
-+    // lands verbatim and can be counted. The file name shares no word with the
-+    // tool name, so echoing the marker cannot make the pane look like the agent
-+    // and flip the status away from `Unknown`.
-+    let agent = h.home_path().join("agent-stub.sh");
-+    crate::harness::write_executable(
-+        &agent,
-+        "#!/bin/sh\nstty -echo -icanon min 1 time 0 2>/dev/null\nexec cat -v\n",
-+    );
-+    write_unclassified_config(&h, &agent);
-+
-+    let project = h.project_path();
-+    let add = h.run_cli(&[
-+        "add",
-+        project.to_str().unwrap(),
-+        "-t",
-+        "Unclassified",
-+        "--tool",
-+        "quiet",
-+        "--launch",
-+    ]);
-+    assert!(
-+        add.status.success(),
-+        "aoe add failed.\nstdout: {}\nstderr: {}",
-+        String::from_utf8_lossy(&add.stdout),
-+        String::from_utf8_lossy(&add.stderr),
-+    );
-+
-+    // The premise of the test: the pane is up and its status is unclassified.
-+    // A detour into `idle` (pane content the detector can read) or `stopped`
-+    // (the stub exited) would exercise a different branch, so fail loudly here
-+    // instead of asserting something weaker further down.
-+    wait_until(Duration::from_secs(30), Duration::from_millis(100), || {
-+        let sessions = h.try_read_sessions();
-+        let status = sessions
-+            .as_array()
-+            .and_then(|rows| {
-+                rows.iter()
-+                    .find(|row| row["title"].as_str() == Some("Unclassified"))
-+            })
-+            .and_then(|row| row["status"].as_str())
-+            .map(str::to_owned);
-+        match status.as_deref() {
-+            Some("unknown") => Ok(()),
-+            other => Err(format!("status is {other:?}, not an unclassified pane")),
-+        }
-+    });
-+
-+    h.spawn_tui();
-+    h.wait_for_runtime_ready();
-+    h.wait_for("Unclassified");
-+    h.send_keys("Enter");
-+
-+    // Entry only completes once the receipt's snapshot satisfies the gate; a
-+    // refusal paints "Live send failed" over the home view instead.
-+    h.wait_for_timeout("LIVE", Duration::from_secs(10));
-+    h.assert_screen_not_contain
-```
-
-**File**: `tests/e2e/main.rs` (modified, +1/-0)
-```diff
-@@ -42,6 +42,7 @@ mod hide_stopped;
- mod intro;
- mod kiro_launch;
- mod live_send_paste_e2e;
-+mod live_send_unknown_status_e2e;
- mod live_takeover;
- mod live_terminal_swap_e2e;
- mod logs;
+ # Tar stream handling: the structured view's bundled-Node fallback (with xz2
+-# for tar.xz) and external plugin install (with flate2 for tar.gz). xz2 needs
+-# system liblzma.
++# for tar.xz) and external plugin install (with flate2 for tar.gz). The
++# `vendored` feature builds liblzma from source and links it statically.
+ tar = "0.4"
+ flate2 = "1"
+ xz2 = "0.1"
+@@ -212,8 +212,8 @@ core-foundation-sys = "0.8.7"
+ # dashboard bundle, which is what invokes npm; released binaries are built
+ # `--features web`, so every distributed binary ships the dashboard.
+ default = ["default-plugins", "vendored"]
+-# OpenSSL and SQLite vendoring for portable builds.
+-vendored = ["git2/vendored-openssl", "rusqlite/bundled"]
++# OpenSSL, SQLite and liblzma vendoring for portable builds.
++vendored = ["git2/vendored-openssl", "rusqlite/bundled", "xz2/static"]
+ # Compatibility flag for default plugin selection.
+ default-plugins = []
+ # Gates the `e2e` test target (tests/e2e/main.rs). Off by default so CI can run
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5948** (closed): fix(deps): bump url to 2.5.9 for RUSTSEC-2026-0592 (@Seluj78)
+- **PR #5947** (2026-11-22): fix(deps): update url for RUSTSEC-2026-0592 (@klubrake)
+- **PR #5933** (2026-11-21): fix(web): reject sandbox port mappings above 65535 (@cwrau)
+- **PR #5929** (2026-11-22): perf(server): project once per status tick and cache claude settings (@Seluj78)
+- **PR #5918** (2026-11-21): fix: link liblzma statically in vendored builds (@skalinets)
 - **PR #5915** (2026-11-21): fix(tui): attach live send to an alive pane whose status is unknown (@athal7)
-- **PR #5890** (2026-11-20): fix(process): read a group scan's process stats as bytes (@klubrake)
-- **PR #5888** (2026-11-20): test(acp): stub the launcher in the agent-switch stop test (@njbrake)
-- **PR #5886** (2026-11-20): fix(server): queue sandbox login notices so a burst cannot drop one (@cwrau)
-- **PR #5881** (2026-11-19): chore(plugins): pin agent-of-empires.github 2.5.0 (@athal7)
-- **PR #5876** (2026-11-20): fix(migrations): skip mounted children when sweeping the legacy hook dir (@cwrau)
 
 ---
 
@@ -3265,33 +2049,40 @@ Co-authored-by: deepseek/deepseek-v4.1-flash-1017 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. tui): pressing R again in Connections opens the Web dashboard
+## X. ci: keep main push runs, cancel stale cachix builds, drop separate npm ci
 
 **RULE**:
-When implementing operations in `docs/guides/web-dashboard.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in agent-of-empires/agent-of-empires. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/cachix-push.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in agent-of-empires/agent-of-empires. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1e4c41e5`: tui): pressing R again in Connections opens the Web dashboard. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6641e673`: ci: keep main push runs, cancel stale cachix builds, drop separate npm ci. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/guides/web-dashboard.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/cachix-push.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-From the TUI, press `R` (`Ctrl+R` with strict hotkeys), shown as `R Web` in the shortcut bar, to open Connections. Press the same key again after a short pause, or Enter on **Web dashboard**, to open the dashboard controls, where you can start a background server on your network or over a tunnel. While it runs, the entry reads `R ● Web` in green. When the Daemon needs attention, the entry shows that instead, in red for a problem (`R ● Runtime outcome unknown`) or dim for a limit (`R ● Unavailable`), and Connections lists the Daemon with what it means. If the Daemon goes offline, Connections replaces the home screen, with `r` to reconnect.
-To restart, press `R`; `G` gives a new passphrase. It asks once it has checked what a restart would change. Press Enter once it asks. An Enter pressed while it checks does nothing, and the check then shows what a restart would change without asking: press `R` (or `G`) to check again. Any other key cancels, and so does waiting 3 seconds after it asks. Pressing `R` again only asks again, so a held key never restarts, and the `R` that opened the dashboard controls from Connections does nothing there until you press another key. Enter checks the curre
+    # Job level: the matrix context is not available at workflow level.
+    concurrency:
+      group: cachix-push-${{ matrix.os }}-${{ github.event_name }}-${{ github.ref }}
+      cancel-in-progress: true
+          # No earlier non-cancelled push run in the window is inconclusive: alert.
+          PREVIOUS=$(gh run list --repo "$REPO" --workflow cachix-push.yml --branch main --event push \
+            --status completed --limit 100 --json databaseId,conclusion \
+            --jq "[.[] | select(.databaseId < $RUN_ID and .conclusion != \"cancelled\")][0].conclusion // \"failure\"")
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-From the TUI, press `R` (`Ctrl+R` with strict hotkeys), shown as `R Web` in the shortcut bar, to open Connections, then Enter on **Web dashboard** to start a background server on your network or over a tunnel. While it runs, the entry reads `R ● Web` in green. When the Daemon needs attention, the entry shows that instead, in red for a problem (`R ● Runtime outcome unknown`) or dim for a limit (`R ● Unavailable`), and Connections lists the Daemon with what it means. If the Daemon goes offline, Connections replaces the home screen, with `r` to reconnect.
-To restart, press `R`, wait for the assessment and confirmation, then press `R` again. The confirmation window applies to the second keypress, not the background assessment's duration. The second confirmation checks current effects again and asks again if they changed. Both `R` and `G` remain bound to the observed Daemon. If another Client replaces it before admission, the TUI refuses before changing the replacement or saved defaults. Recovery controls retain that identity after failure, including when the failed launch is first shown after reopening; close and reopen Remote Access again to observe the replacement before retrying.
+          PREVIOUS=$(gh run list --repo "$REPO" --workflow cachix-push.yml --branch main \
+            --status completed --limit 5 --json databaseId,conclusion \
+            --jq "[.[] | select(.databaseId != $RUN_ID)][0].conclusion // \"\"")
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1e4c41e5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6641e673` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction
