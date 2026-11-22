@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-22T02:42:33.221Z",
+  "updated_at": "2026-11-22T03:03:32.201Z",
   "stats": {
-    "total_discovered": 7402,
-    "approved_pending_harvest": 7003,
+    "total_discovered": 7406,
+    "approved_pending_harvest": 7007,
     "harvested_count": 0,
     "rejected_count": 399,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6983,
+      "COMMUNITY_AND_EXPERT": 6987,
       "OFFICIAL_DOCUMENTATION": 240,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 5,
@@ -160074,6 +160074,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
         "fileName": "dosco-graphjin-learnings.md"
+      }
+    },
+    "SRC-34231D07E30B": {
+      "id": "SRC-34231D07E30B",
+      "url": "https://github.com/react/react-native/pull/60206",
+      "title": "https://github.com/react/react-native/pull/60206",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T03:03:31.402Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-metro-learnings.md",
+        "fileName": "react-metro-learnings.md"
+      }
+    },
+    "SRC-9363534B6634": {
+      "id": "SRC-9363534B6634",
+      "url": "https://api-staging.knowhereto.ai/v1/internal/s3-events",
+      "title": "https://api-staging.knowhereto.ai/v1/internal/s3-events",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T03:03:32.111Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md",
+        "fileName": "ontos-ai-knowhere-learnings.md"
+      }
+    },
+    "SRC-1368CBFB1652": {
+      "id": "SRC-1368CBFB1652",
+      "url": "https://api-staging.knowhereto.ai/api/v1",
+      "title": "https://api-staging.knowhereto.ai/api/v1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T03:03:32.158Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md",
+        "fileName": "ontos-ai-knowhere-learnings.md"
+      }
+    },
+    "SRC-C627A5CB343C": {
+      "id": "SRC-C627A5CB343C",
+      "url": "https://qstash-us-east-1.upstash.io/",
+      "title": "https://qstash-us-east-1.upstash.io/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T03:03:32.201Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md",
+        "fileName": "ontos-ai-knowhere-learnings.md"
       }
     }
   }

@@ -11987,3 +11987,6 @@
 | `CYCLE-20261122-E2WO` | `2026-11-22T02:42:05.496Z` | `PrunaAI/P-Image-OSS-Comfy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9885, Rule 9886` | Yes (`85823549...`) |
 | `CYCLE-2026-11-22-PROJ-EVOLVE` | `2026-11-22T02:42:32.154Z` | `hf-prunaai-p-h3-image-comfy` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-F5CAA699` [Domain H] | Yes (`0da41542...`) |
 | `CYCLE-20261122-SCX7` | `2026-11-22T02:53:11.659Z` | `nvidia/NVIDIA-NemotronLabs-RE-USE` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotronlabs-re-use-learnings.md` | Yes (`7950e424...`) |
+| `CYCLE-20261122-58T1` | `2026-11-22T03:03:12.853Z` | `ricursiveAI/Ripple-65B-Preview` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ricursiveai-ripple-65b-preview-learnings.md` | Yes (`26c0d218...`) |
+| `CYCLE-20261122-5DAP` | `2026-11-22T03:03:18.673Z` | `react/metro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9887` | Yes (`24402591...`) |
+| `CYCLE-20261122-5K1L` | `2026-11-22T03:03:27.417Z` | `Ontos-AI/knowhere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9888` | Yes (`f4dcce4a...`) |

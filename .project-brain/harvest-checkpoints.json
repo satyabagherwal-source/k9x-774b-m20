@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T02:53:11.676Z",
+  "last_updated": "2026-11-22T03:03:27.430Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3576,14 +3576,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ontos-ai-knowhere",
-      "content_hash": "1e310de5cc99ac57f5a58c0875cfc5cabacb3f458477459ae0f7b0a3a156727a",
-      "verified_at": "2026-11-19T19:12:09.056Z",
+      "content_hash": "f4dcce4a0d5152910fa33b9e7d9220d1d44aae1d97a8df8a7acda8d1f2401546",
+      "verified_at": "2026-11-22T03:03:27.429Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T19:12:09.056Z"
+      "last_updated": "2026-11-22T03:03:27.429Z"
     },
     "Bitterbot-AI/bitterbot-desktop": {
       "repository": "Bitterbot-AI/bitterbot-desktop",
@@ -8361,14 +8361,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-react-metro",
-      "content_hash": "46aa0fcd6106144a6dac30d8de76ec82c7460c2f88ca723b44d86f6c2c2a137f",
-      "verified_at": "2026-11-18T22:14:35.789Z",
+      "content_hash": "244025917ff9a48e793188dedd3016d2064139875cee915ad27862dcb7e3a41f",
+      "verified_at": "2026-11-22T03:03:18.684Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T22:14:35.789Z"
+      "last_updated": "2026-11-22T03:03:18.684Z"
     },
     "Checkmarx/kics": {
       "repository": "Checkmarx/kics",
@@ -17991,14 +17991,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-ricursiveai-ripple-65b-preview",
-      "content_hash": "1acf871590ba5b06e6124dcf1ecbbd044a5b60a4999be52ff10090ccd28120e5",
-      "verified_at": "2026-11-14T00:25:00.783Z",
+      "content_hash": "26c0d21874ec70e0bdb5c99187f1571d6d6b8d8fdd3f826602a97f9ad23f4d84",
+      "verified_at": "2026-11-22T03:03:12.865Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T00:25:00.783Z"
+      "last_updated": "2026-11-22T03:03:12.865Z"
     },
     "apache/pinot": {
       "repository": "apache/pinot",

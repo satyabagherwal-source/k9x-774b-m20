@@ -12020,3 +12020,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-prunaai-p-h3-image-comfy` | `https://huggingface.co/PrunaAI/P-H3-Image-Comfy` | `hf-prunaai` | Multi-dimensional audit evidence | 2026-11-22T02:42:05.499Z |
 | `learn-dom-h-f5caa699` | `project://hf-prunaai-p-h3-image-comfy` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-prunaai-p-h3-image-comfy-learnings.md` | 2026-11-22T02:42:32.154Z |
 | `learn-huggingface-nvidia-nvidia-nemotronlabs-re-use` | `https://huggingface.co/nvidia/NVIDIA-NemotronLabs-RE-USE` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-22T02:53:11.664Z |
+| `learn-huggingface-ricursiveai-ripple-65b-preview` | `https://huggingface.co/ricursiveAI/Ripple-65B-Preview` | `hf-ricursi` | Multi-dimensional audit evidence | 2026-11-22T03:03:12.857Z |
+| `learn-github-react-metro` | `https://github.com/react/metro` | `136bb79d` | Multi-dimensional audit evidence | 2026-11-22T03:03:18.677Z |
+| `learn-github-ontos-ai-knowhere` | `https://github.com/Ontos-AI/knowhere` | `cf789c7b` | Multi-dimensional audit evidence | 2026-11-22T03:03:27.422Z |

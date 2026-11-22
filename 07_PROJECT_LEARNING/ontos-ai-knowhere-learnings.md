@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md`  
 > **Source**: github ([https://github.com/Ontos-AI/knowhere](https://github.com/Ontos-AI/knowhere))  
-> **Source Version**: `3352f322`  
+> **Source Version**: `cf789c7b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T19:12:08.387Z  
+> **Timestamp**: 2026-11-22T03:03:26.425Z  
 > **Learning ID**: `learn-github-ontos-ai-knowhere`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Ontos-AI/knowhere](https://github.com/Ontos-AI/knowhere))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T19:12:08.382Z  
+> **Harvest Timestamp**: 2026-11-22T03:03:26.420Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Knowhere extracts, parses, and outputs structured chunks ready for AI Agents and RAG.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 4072 stars
+- **Stars / Engagement**: 4084 stars
 
 ---
 
@@ -1002,364 +1002,609 @@ class ApiTelemetryMiddleware:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3352f322` (2026-11-19)
-**Commit Message**: Merge pull request #574 from Ontos-AI/feat/wuchengke/2026-11-19
+### Incident Patch 1: `cf789c7b` (2026-11-21)
+**Commit Message**: Merge pull request #577 from Ontos-AI/fix/wangbinqi/terminal-initial-ingestion-failure
 
-Remove text-track PDF leftovers and stale parser TODOs
+Prepare initial publication and retry retirement for release
 
-**File**: `README.md` (modified, +3/-1)
+**File**: `.github/workflows/build-images.yml` (modified, +1/-0)
 ```diff
-@@ -49,6 +49,7 @@ Knowhere parses files along their native hierarchy (headings, if any) and uses f
- 
- ## 📢 News
- 
-+- **November 2026**: 📽️ **Better PowerPoint parsing.** Slide decks now get a section hierarchy built from their agenda and divider slides, and embedded audio and video are transcribed and searchable alongside their slides.
- - **November 2026**: ⏩ **Progressive ingestion.** `ingestion_mode=progressive` publishes a readable baseline first, then enriches the rest in the background. MinerU is no longer required by default.
- - **November 2026**: 🧰 **Agent retrieval tools exposed through the API.** Corpus navigation tools are exposed to built-in and external agents alike.
- - **November 2026**: 🖼️ **More image formats.** `.gif`, `.webp`, `.bmp`, `.tif`/`.tiff`, and `.heic`/`.heif` are now supported.
-@@ -170,7 +171,7 @@ Agents using Knowhere outperform those working from raw documents, Markitdown, U
- 
- **✅ Supported**
- 
--- [x] `.pdf` `.pptx` — vision parsing
-+- [x] `.pdf` `.pptx` — vision parsing (`.pptx` also transcribes embedded audio and video)
- - [x] `.doc` `.docx` `.xls` `.xlsx` `.csv` `.tsv`
- - [x] `.jpg` `.jpeg` `.png` `.gif` `.webp` `.bmp` `.tif` `.tiff` `.heic` `.heif`
- - [x] `.md` `.txt` `.html` `.htm` `.json`
-@@ -211,6 +212,7 @@ cp apps/worker/.env.example apps/worker/.env
- - S3-compatible storage credentials
- - at least one LLM provider key: `DS_KEY`, `ALI_API_KEYS`, `GPT_API_KEY`, or `GLM_API_KEY`
- - `VERCEL_KEY` for page-image and query embeddings
-+- `ALI_API_KEYS` (DashScope Fun-ASR) if you want audio and video embedded in presentations transcribed
- - a vision-capable model provider for PDF/PowerPoint parsing, page understanding, image summaries, OCR, atlas classification, or image-aware retrieval
- - `MINERU_API_KEYS` only if you turn on the optional MinerU fine-stage page-text extractor
- - any optional billing or webhook providers you want to enable
+@@ -572,6 +572,7 @@ jobs:
+           API_WEBHOOK_ENDPOINT: https://api-staging.knowhereto.ai/v1/internal/s3-events
+           SNS_TOPIC_ARN: arn:aws:sns:us-east-1:107424103509:knowhere-staging-s3-events
+           QSTASH_CALLBACK_BASE_URL: https://api-staging.knowhereto.ai/api/v1
++          QSTASH_BASE_URL: https://qstash-us-east-1.upstash.io
+           API_CPU: "256"
+           API_MEMORY: "1024"
+           WORKER_CPU: "2048"
 ```
 
-**File**: `apps/worker/app/services/document_agent/calibration/orchestrator.py` (modified, +6/-0)
+**File**: `GLOSSARY.md` (modified, +88/-80)
 ```diff
-@@ -34,6 +34,12 @@ def anchor_hierarchy(
-         page_count=page_count,
+@@ -7,23 +7,23 @@ retrieval service.
+ ## Language
+ 
+ **Document**:
+-A document with a stable identity within its owner's namespace. Replacing
+-its source file or parsing it again can produce a new revision without
+-changing that identity.
+-_Avoid_: Parsing job, source filename
++A document with a stable identity within its owner's namespace. Parsing
++publishes a new document. It does not replace the content of an existing
++document. Different content is a new document; deleting the previous
++document is the caller's own action.
++_Avoid_: Parsing job, source filename, in-place update
+ 
+ **Archived Document**:
+-A document excluded from retrieval by archival. Ongoing work cannot return
+-it to the searchable corpus, and it is ineligible for indexing retry.
+-Retained parsing results and processing history follow existing retention
+-rules.
++A document excluded from new retrievals by archival. A retrieval already
++in progress may use bodies it read before archival committed. Ongoing work
++cannot return the document to the searchable corpus. Retained parsing results
++and processing history follow existing retention rules.
+ _Avoid_: Failed parsing job, permanently deleted data
+ 
+ **Document Revision**:
+-One immutable parsing result belonging to a document. Replacing the source
+-file or parsing it again produces another revision of the same document
+-when the operation explicitly targets that document.
+-_Avoid_: Separate document, indexing retry
++The one immutable parsing result of a document. The baseline and later
++enrichment are representations of this same result.
++_Avoid_: Separate document, in-place replacement, indexing retry
+ 
+ **Retrieval Unit**:
+ A piece of a document revision considered as one candidate during lexical
+@@ -32,32 +32,18 @@ is distinct from the number of source pages or words in that revision.
+ _Avoid_: Word, page, whole document
+ 
+ **Published Revision**:
+-The document revision currently selected for default retrieval. It remains
+-selected while a replacement is prepared and changes only when the
+-replacement is ready for retrieval and activated.
+-_Avoid_: Latest parsed revision
++The document revision whose baseline index is available for retrieval.
++Enrichment does not publish another revision in its place.
++_Avoid_: Latest parsed revision, activated replacement
+ 
+ **Latest Parsed Revision**:
+-The newest successfully parsed revision of a document, selected for default
+-document-content reads even if its indexing is pending or failed. It may
+-differ from the published revision used for retrieval.
+-_Avoid_: Latest submitted revision, published revision
+-
+-**Candidate Revision**:
+-A document revision targeted by the current update, awaiting search readiness
+-and activation. Its parsing result can already be available while an earlier
+-published revision remains selected for retrieval.
+-_Avoid_: Published revision, separate document
+-
+-**Superseded Candidate**:
+-A candidate revision whose update has been replaced by a later accepted
+-update to the same document. It is no longer eligible for indexing retry or
+-activation, while its retained parsing result remains accessible.
+-_Avoid_: Published revision, retryable candidate
++The document's stored parsing result. Workers can retain it before initial
++indexing finishes. A retained result from a failed ingestion remains internal.
++_Avoid_: Latest submitted revision, a second revision of the same document
+ 
+ **Primary Lexical Backend**:
+-The selected service that supplies lexical retrieval. A candidate revision
+-becomes search-ready only after publication to this backend succeeds.
++The selected service that supplies lexical retrieval. Publishing the
++initial index to this backend is required for Parsing Completion.
+ _Avoid_: Rollback copy, whichever backend responds first
+ 
+ **Migration Rollback Copy**:
+@@ -80,46 +66,27 @@ readiness requirements. Retiring that path follows a separate decision
+ after stability is confirmed.
+ _Avoid_: Automatic failover period, stability guaranteed by elapsed time
+ 
+-**Search Readiness**:
+-The state indicating whether a particular document revision is available for
+-retrieval. Completing document parsing alone does not establish search
+-readiness.
+-_Avoid_: Parsing completion, generic namespace health
+-
+ **Parsing Completion**:
+-The milestone at which a document revision's parsing result is complete and
+-available to the caller for display or download. It does not require the
+-revision to be ready for retrieval.
+-_Avoid_: Job completion, search readiness
++The sole successful outcome visible to a caller for a document-processing
++job. The initial parsing result and its searchable index are available.
++Full ingestion publishes the complete result. Progressive ingestion
++publishes the baseline. A new progressive PDF or PPTX baseline includes
++coarse chapters and an initial directory.
++_Avoid_: Search completion, indexing completion, enrichment completion
+ 
+ **Indexing**:
+ The phase of a document-processing job that makes 
+```
+
+**File**: `apps/api/alembic/versions/b1243d5e6f70_add_enrichment_publications.py` (added, +61/-0)
+```diff
+@@ -0,0 +1,61 @@
++"""Keep enrichment bodies and outcomes alongside the published baseline."""
++
++from collections.abc import Sequence
++
++import sqlalchemy as sa
++from alembic import op
++
++revision: str = "b1243d5e6f70"
++down_revision: str | None = "b0132c4d5e6f"
++branch_labels: Sequence[str] | None = None
++depends_on: Sequence[str] | None = None
++
++
++def upgrade() -> None:
++    op.create_table(
++        "document_enrichment_publications",
++        sa.Column("id", sa.String(36), primary_key=True),
++        sa.Column("document_id", sa.String(36), sa.ForeignKey("documents.document_id", ondelete="CASCADE"), nullable=False),
++        sa.Column("job_result_id", sa.String(36), sa.ForeignKey("job_results.id", ondelete="CASCADE"), nullable=False),
++        sa.Column("user_id", sa.Text(), nullable=False),
++        sa.Column("namespace", sa.String(255), nullable=False),
++        sa.Column("scope_id", sa.String(64), nullable=False),
++        sa.Column("state", sa.String(16), nullable=False),
++        sa.Column("expected_index_count", sa.Integer(), nullable=True),
++        sa.Column("raw_prefix", sa.Text(), nullable=True),
++        sa.Column("index_uuid", sa.String(128), nullable=True),
++        sa.Column("cleanup_after", sa.DateTime(timezone=True), nullable=True),
++        sa.CheckConstraint("state IN ('writing', 'published', 'failed')", name="ck_enrichment_publication_state"),
++    )
++    op.create_index("ix_enrichment_publication_revision", "document_enrichment_publications", ["job_result_id", "state"])
++    op.create_index("ix_enrichment_publication_cleanup", "document_enrichment_publications", ["cleanup_after"])
++    op.add_column("document_chunks", sa.Column(
++        "enrichment_attempt_id", sa.String(36),
++        sa.ForeignKey("document_enrichment_publications.id", name="fk_document_chunks_enrichment_attempt", ondelete="CASCADE"),
++    ))
++    op.create_index("ix_document_chunks_enrichment_attempt_id", "document_chunks", ["enrichment_attempt_id"])
++    op.create_index(
++        "uq_document_chunks_baseline_path", "document_chunks",
++        ["document_id", "job_result_id", "source_chunk_path"], unique=True,
++        postgresql_where=sa.text("enrichment_attempt_id IS NULL"),
++    )
++    op.create_unique_constraint(
++        "uq_document_chunks_attempt_path", "document_chunks", ["enrichment_attempt_id", "source_chunk_path"],
++    )
++    op.drop_constraint("uq_document_chunks_revision_path", "document_chunks", type_="unique")
++
++
++def downgrade() -> None:
++    # Preserve references to retained enrichment bodies across an application rollback.
++    if op.get_bind().scalar(sa.text("SELECT EXISTS (SELECT 1 FROM document_enrichment_publications)")):
++        raise RuntimeError("Cannot remove retained document enrichment publications")
++    op.create_unique_constraint(
++        "uq_document_chunks_revision_path", "document_chunks",
++        ["document_id", "job_result_id", "source_chunk_path"],
++    )
++    op.drop_constraint("uq_document_chunks_attempt_path", "document_chunks", type_="unique")
++    op.drop_index("uq_document_chunks_baseline_path", table_name="document_chunks")
++    op.drop_index("ix_document_chunks_enrichment_attempt_id", table_name="document_chunks")
++    op.drop_constraint("fk_document_chunks_enrichment_attempt", "document_chunks", type_="foreignkey")
++    op.drop_column("document_chunks", "enrichment_attempt_id")
++    op.drop_table("document_enrichment_publications")
+```
+
+**File**: `apps/api/alembic/versions/b2354e6f7081_schedule_archived_document_cleanup.py` (added, +22/-0)
+```diff
+@@ -0,0 +1,22 @@
++"""Schedule exact native cleanup after the archived state commits."""
++
++from collections.abc import Sequence
++
++import sqlalchemy as sa
++from alembic import op
++
++revision: str = "b2354e6f7081"
++down_revision: str | None = "b1243d5e6f70"
++branch_labels: Sequence[str] | None = None
++depends_on: Sequence[str] | None = None
++
++
++def upgrade() -> None:
++    op.add_column("documents", sa.Column("index_cleanup_after", sa.DateTime(timezone=True), nullable=True))
++    op.create_index("ix_documents_due_index_cleanup", "documents", ["index_cleanup_after"],
++        postgresql_where=sa.text("index_cleanup_after IS NOT NULL"))
++
++
++def downgrade() -> None:
++    op.drop_index("ix_documents_due_index_cleanup", table_name="documents")
++    op.drop_column("documents", "index_cleanup_after")
+```
+
+**File**: `apps/api/app/api/v1/routes/jobs.py` (modified, +1/-13)
+```diff
+@@ -16,7 +16,7 @@
+     list_jobs_for_user,
+ )
+ from app.services.rate_limit.data_structures import CurrentUser
+-from fastapi import APIRouter, Depends, Query, Response
++from fastapi import APIRouter, Depends, Query
+ from sqlalchemy.ext.asyncio import AsyncSession
+ 
+ from shared.core.database import get_db
+@@ -32,18 +32,6 @@
+ _document_ingestion_service = DocumentIngestionService()
+ 
+ 
+-@router.post("/{job_id}/indexing/retry", response_model=JobResultResponse, summary="Retry indexing without parsing or charging again")
+-async def retry_indexing(
+-    job_id: str,
+-    response: Response,
+-    current_user: CurrentUser = Depends(with_current_user),
+-    _write_permission: None = Depends(require_write_permission),
+-    db: AsyncSession = Depends(get_db),
+-) -> JobResultResponse:
+-    from app.services.jobs.indexing_retry_service import retryIndexing
+-    return await retryIndexing(db, jobId=job_id, userId=current_user.user_id, response=response)
+-
+-
+ # ==================== Shared Helpers ====================
+ 
+ 
+```
+
+**File**: `apps/api/app/api/v2/routes/jobs.py` (modified, +2/-28)
+```diff
+@@ -14,7 +14,7 @@
+     list_jobs_for_user,
+ )
+ from app.services.rate_limit.data_structures import CurrentUser
+-from fastapi import APIRouter, Depends, Query, Response
++from fastapi import APIRouter, Depends, Query
+ from sqlalchemy.ext.asyncio import AsyncSession
+ 
+ from shared.core.database import get_db
+@@ -25,10 +25,7 @@
+     JobResponse,
+     JobResultResponse,
+ )
+-from shared.models.schemas.progressive_ingestion import (
+-    EnhancementRetryResponse,
+-    SnapshotObjectAccessRequest,
+-)
++from shared.models.schemas.progressive_ingestion import SnapshotObjectAccessRequest
+ 
+ router = APIRouter(tags=["Jobs"])
+ _document_ingestion_service = DocumentIngestionService()
+@@ -76,29 +73,6 @@ async def get_snapshot_object_access(
      )
-     if phase1.status == "failed" and not phase1.regimes:
-+        # TODO(uncalibrated-toc): With no offset, every page-numbered TOC node is
-+        # pruned and the skeleton usually falls back to Root; a pending TOC that
-+        # fails calibration is skipped (``_calibrate_one_pending_toc``). In both
-+        # cases the TOC titles/levels are lost. Discuss keeping them as a
-+        # degraded hierarchy hint (e.g. fine-stage level-resolver context)
-+        # without moving section starts or fixing offsets.
-         return anchor_hierarchy_from_offset(
-             nodes=nodes,
-             offset_hint=None,
+ 
+ 
+-@router.post("/{job_id}/enrichment/retry", response_model=EnhancementRetryResponse, status_code=202, summary="Retry failed search enhancement")
+-async def retry_enrichment(
+-    job_id: str,
+-    current_user: CurrentUser = Depends(with_current_user),
+-    _write_permission: None = Depends(require_write_permission),
+-    db: AsyncSession = Depends(get_db),
+-) -> EnhancementRetryResponse:
+-    from app.services.jobs.enrichment_retry_service import retry_job_enrichment
+-    return await retry_job_enrichment(db, user_id=current_user.user_id, job_id=job_id)
+-
+-
+-@router.post("/{job_id}/indexing/retry", response_model=JobResultResponse, summary="Retry indexing without parsing or charging again")
+-async def retry_indexing(
+-    job_id: str,
+-    response: Response,
+-    current_user: CurrentUser = Depends(with_current_user),
+-    _write_permission: None = Depends(require_write_permission),
+-    db: AsyncSession = Depends(get_db),
+-) -> JobResultResponse:
+-    from app.services.jobs.indexing_retry_service import retryIndexing
+-    return await retryIndexing(db, jobId=job_id, userId=current_user.user_id, response=response)
+-
+-
+ @router.post("", response_model=JobResponse, summary="Create a v2 parsing job")
+ @router.post("/", include_in_schema=False)
+ async def create_job(  # pyright: ignore[reportGeneralTypeIssues]
 ```
 
-**File**: `apps/worker/app/services/document_agent/tools/vlm_toc_extractor.py` (modified, +0/-19)
+**File**: `apps/api/app/repositories/document_repository.py` (modified, +39/-4)
 ```diff
-@@ -314,25 +314,6 @@ def build_toc_tree(entries: list[dict[str, Any]]) -> dict[str, Any]:
-     return root
+@@ -4,13 +4,14 @@
+ 
+ from __future__ import annotations
+ 
++from shared.services.retrieval.lexical.additivevisibility import AdditiveVisibility
+ from shared.services.retrieval.corpus_storage import CorpusStorage
+ from app.services.demo.revision_reader import resolve_demo_revision
+ 
+ from datetime import datetime, timezone
+ from typing import Sequence, cast
+ 
+-from sqlalchemy import func, select, true
++from sqlalchemy import ColumnElement, SQLColumnExpression, func, or_, select, true
+ from sqlalchemy.ext.asyncio import AsyncSession
+ from sqlalchemy.orm import noload
+ 
+@@ -22,6 +23,13 @@
+ DocumentJobRevisionRow = tuple[Document, JobResult, Job]
  
  
--def build_toc_with_level_md(entries: list[dict[str, Any]]) -> str:
--    """Build a compact Markdown table of TOC entries (heading + level only).
--
--    Accepts both raw VLM entries (key='title') and stored toc_with_level
--    dicts (key='heading'). Call this dynamically at consumption time rather
--    than persisting the MD string.
--    """
--    if not entries:
--        return ""
--    lines = ["| heading | level |", "|---------|-------|"]
--    for entry in entries:
--        heading = str(
--            entry.get("heading") or entry.get("title") or ""
--        ).strip().replace("|", "\\|")
--        level = entry.get("level", 1)
--        lines.append(f"| {heading} | {level} |")
--    return "\n".join(lines)
--
--
- def vlm_entries_to_toc_hierarchies(
-     entries: list[dict[str, Any]],
-     *,
++def _allows_job_result_delivery(corpus_storage: CorpusStorage) -> ColumnElement[bool]:
++    """Apply the job result delivery policy in the same query as the artifact."""
++    if corpus_storage.usesAdditivePublication():
++        return Job.status == "done"
++    return or_(Job.status != "failed", Job.failure_stage != "indexing", Job.failure_stage.is_(None))
++
++
+ class DocumentRepository:
+     async def list_by_user_namespace(
+         self,
+@@ -95,16 +103,23 @@ async def get_current_document_job_revision(
+             document, result = await resolve_demo_revision(db, document_id=document_id, job_result_id=job_result_id)
+             job = (await db.execute(select(Job).where(Job.job_id == result.job_id))).scalar_one()
+             return document, result, job
++        default_revision: SQLColumnExpression[str | None] = corpusStorage.Document.current_job_result_id
++        if not corpusStorage.usesAdditivePublication():
++            default_revision = func.coalesce(
++                corpusStorage.Document.latest_parsed_job_result_id, default_revision
++            )
+         stmt = (
+             select(corpusStorage.Document, JobResult, Job)
+-            .join(JobResult, JobResult.id == (job_result_id or func.coalesce(
+-                corpusStorage.Document.latest_parsed_job_result_id, corpusStorage.Document.current_job_result_id)))
++            .select_from(corpusStorage.Document)
++            .join(JobResult, JobResult.id == (job_result_id or default_revision))
+             .join(Job, Job.job_id == JobResult.job_id)
+             .where(corpusStorage.Document.document_id == document_id)
+             .where(corpusStorage.Document.user_id == corpusStorage.resolve_owner(user_id))
+             .where(JobResult.document_id == corpusStorage.Document.document_id)
+             .where(Job.user_id == user_id)
+-            .where(corpusStorage.Document.status != "archived")
++            .where(_allows_job_result_delivery(corpusStorage))
++            .where((corpusStorage.Document.status != "archived")
++                if job_result_id is None or not corpusStorage.usesAdditivePublication() else true())
+             .limit(1)
+         )
+ 
+@@ -136,6 +151,16 @@ async def count_current_document_chunks(
+             .where(corpusStorage.DocumentChunk.document_id == document_id)
+             .where(corpusStorage.DocumentChunk.job_result_id == job_result_id)
+         )
++        if corpusStorage.usesAdditivePublication():
++            stmt = stmt.where(select(corpusStorage.Document.document_id).where(
++                corpusStorage.Document.document_id == corpusStorage.DocumentChunk.document_id,
++                corpusStorage.Document.current_job_result_id == corpusStorage.DocumentChunk.job_result_id,
++                corpusStorage.Document.status == "active",
++            ).correlate(corpusStorage.DocumentChunk).exists(), AdditiveVisibility.allowsChunk())
++        elif not corpusStorage.is_demo:
++            stmt = stmt.join(JobResult, JobResult.id == corpusStorage.DocumentChunk.job_result_id).join(
++                Job, Job.job_id == JobResult.job_id
++            ).where(_allows_job_result_delivery(corpusStorage))
+         if chunk_type is not None:
+             stmt = stmt.where(func.lower(corpusStorage.DocumentChunk.chunk_type) == chunk_type)
+ 
+@@ -170,6 +195,14 @@ async def list_current_document_chunks(
+             .limit(limit)
+             .offset(offset)
+         )
++        if corpusStorage.usesAdditivePublication():
++            stmt = stmt.where(select(corpusStorage.Document.document_id).where(
++                corpusStorage.Document.document_id == corpusStorage.DocumentChunk.document_id,
++                corpusStorage.Document.current_job_result_id == corpusStorage.DocumentChunk.job_result_id,
++                corpusStorage.Document.status == "active",
++            ).correlate(corpusStorage.DocumentChunk).exists(), AdditiveVisibility.allowsChunk())
++        elif not corpusStorage.is_demo:
++            stmt = stmt.join(Job, Job.job_id == JobResult.job_id).where(_allows_job_result_delivery(corpusStorage))
+         if chunk_type is not None:
+             stmt = stmt.where(func.lower(corpusStorage.DocumentChunk.chunk_type) == chunk_type)
+ 
+@@ -197,6 +230,8 @@ async def get_current_document_chunk(
+             .where(corpusStorage.DocumentChunk.id == document_chunk_id)
+        
 ```
 
-**File**: `apps/worker/app/services/document_parser/formats/docx/block_stream.py` (modified, +5/-84)
+**File**: `apps/api/app/services/document_ingestion/service.py` (modified, +43/-27)
 ```diff
-@@ -154,14 +154,10 @@ def iter_block_items(doc_data):
-                     )
-                     ele_num += 1
- 
--                # TODO: Re-evaluate VML group extraction strategy. 
--                # Complex VML composite images (<v:group>) are currently skipped because extracting 
--                # <v:imagedata> piece-by-piece loses textual overlay and positioning. 
--                # Future plan: Use LibreOffice headless conversion to render the entire document 
--                # and map the perfectly rendered images back to the layout via text anchors.
--                #
--                # Temporary: detect VML-only paragraphs and inject a placeholder so the
--                # paragraph isn't silently swallowed, leaving its parent section empty.
-+                # Complex VML composite images (<v:group>) are skipped because extracting
-+                # <v:imagedata> piece-by-piece loses textual overlay and positioning.
-+                # VML-only paragraphs get a placeholder so the paragraph isn't silently
-+                # swallowed, leaving its parent section empty.
-                 if not text and not seen_rids:
-                     # No text and no DrawingML images — check for VML content
-                     vml_groups = elem.xpath(".//v:group", namespaces=ns)
-@@ -174,44 +170,6 @@ def iter_block_items(doc_data):
-                             f"Injected VML placeholder for paragraph with "
-                             f"{len(vml_groups)} v:group, {len(vml_images_check)} v:imagedata"
-                         )
--                """
--                # images (VML: <v:imagedata>) — convert to PNG
--                from PIL import Image as PILImage
--
--                vml_images = elem.xpath(".//v:imagedata", namespaces=ns)
--                for v in vml_images:
--                    rid = v.get(f"{r_ns}id")
--                    if not rid or rid in seen_rids:
--                        continue
--                    target = rel_map.get(rid)
--                    if not target or not target.startswith("media/"):
--                        continue
--                    seen_rids.add(rid)
--                    raw_data = docx.read("word/" + target)
--                    # Convert to PNG for uniform downstream handling
--                    try:
--                        pil_img = PILImage.open(io.BytesIO(raw_data))
--                        png_buf = io.BytesIO()
--                        pil_img.save(png_buf, format="PNG")
--                        png_data = png_buf.getvalue()
--                    except Exception as e:
--                        logger.warning(f"Failed to convert VML image to PNG: {e}")
--                        continue
--                    orig_name = target.split("/")[-1]
--                    png_name = os.path.splitext(orig_name)[0] + ".png"
--                    yield (
--                        ele_num,
--                        None,
--                        "IMAGE",
--                        {
--                            "image_name": png_name,
--                            "from": "paragraph_vml",
--                            "size": len(png_data),
--                            "data": png_data,
--                        },
--                    )
--                    ele_num += 1
--                """
-                 map_index += 1
- 
-                 if toc_info["is_field_end"]:
-@@ -250,44 +208,7 @@ def iter_block_items(doc_data):
-                                     "size": len(data),
-                                 }
-                             )
--                        # TODO: VML in tables is temporarily skipped to avoid extracting 
--                        # fragmented textless background images. (Same as paragraph VML logic)
--                        """
--                        # VML images in cell — convert to PNG
--                        from PIL import Image as PILImage
--
--                        vml_in_cell = tc.xpath(".//v:imagedata", namespaces=ns)
--                        for v in vml_in_cell:
--                            rid = v.get(f"{r_ns}id")
--                            if not rid or rid in cell_seen_rids:
--                                continue
--                            target = rel_map.get(rid)
--                            if not target or not target.startswith("media/"):
--                                continue
--                            cell_seen_rids.add(rid)
--                            raw_data = docx.read("word/" + target)
--                            try:
--                                pil_img = PILImage.open(io.BytesIO(raw_data))
--                                png_buf = io.BytesIO()
--                                pil_img.save(png_buf, format="PNG")
--                                png_data = png_buf.getvalue()
--                            except Exception as e:
--                                logger.warning(
--                                    f"Failed to convert VML cell image to PNG: {e}"
--                                )
--                           
-```
-
-**File**: `apps/worker/app/services/document_parser/formats/docx/parser.py` (modified, +1/-2)
-```diff
-@@ -604,7 +604,6 @@ def parse_docx(
-             current_heading = last_heading_before_block
- 
-         elif label == "TABLE":
--            # TODO: handle cross-page tables
-             headings_stack = asset_accumulator.append_table(
-                 block,
-                 headings_stack,
-@@ -613,7 +612,7 @@ def parse_docx(
+@@ -334,7 +334,13 @@ async def _resolve_scope(
+                 ingestion_mode=command.ingestion_mode,
+             ),
+         )
+-        if CorpusStorage.resolve_namespace(payload.namespace).is_demo:
++        corpus_storage: CorpusStorage = CorpusStorage.resolve_namespace(payload.namespace)
++        if corpus_storage.is_demo:
++            if payload.replaces_document_id is not None:
++                raise ValidationException(
++                    user_message="Private document replacement requires a private namespace.",
++                    violations=[{"field": "replaces_document_id", "description": "Private documents only"}],
++                )
+             documentId: str = await resolve_demo_scope(db, user_id=current_user.user_id, payload=payload)
+             JobMetadataHelper.set_document_scope(job_metadata, document_id=documentId, namespace=DEMO_NAMESPACE)
+             job_metadata["corpus_target"] = "DEMO"
+@@ -345,40 +351,50 @@ async def _resolve_scope(
+         if payload.demo_category_id is not None:
+             raise ValidationException(user_message="demo_category_id applies only to the reserved demo namespace.", violations=[{"field": "demo_category_id", "description": "Use namespace __knowhere_demo__"}])
+         job_metadata["corpus_target"] = "PRIVATE"
+-        requested_document_id = JobMetadataHelper.get_document_id(job_metadata)
+-        if requested_document_id:
+-            active_job = await find_active_job_for_document(
++        requested_namespace: str | None = payload.namespace
++        native_publication: bool = corpus_storage.usesAdditivePublication()
++        if payload.document_id is not None:
++            user_message: str = "Private ingestion creates a new document."
++            if native_publication:
++                user_message = "Create a replacement job with replaces_document_id."
++            raise ValidationException(
++                user_message=user_message,
++                violations=[{"field": "document_id", "description": "Private ingestion creates a new document"}],
++            )
++        if payload.replaces_document_id is not None:
++            if not native_publication:
++                raise ValidationException(
++                    user_message="Private document replacement requires the OpenSearch backend.",
++                    violations=[{"field": "replaces_document_id", "description": "Replacement requires OpenSearch"}],
++                )
++            if CorpusStorage.resolve_document(payload.replaces_document_id).is_demo:
++                raise ValidationException(
++                    user_message="The replacement target must be a private document.",
++                    violations=[{"field": "replaces_document_id", "description": "Private documents only"}],
++                )
++            replaces_document_id, requested_namespace = await resolve_effective_document_scope(
+                 db,
+                 user_id=current_user.user_id,
+-                document_id=requested_document_id,
++                document_id=payload.replaces_document_id,
++                requested_namespace=requested_namespace,
              )
-             current_heading = last_heading_before_block
- 
--        else:  # TODO: handle latex, etc.
-+        else:  # TOC-AREA blocks are TOC entries, not body content.
-             pass
- 
-     asset_accumulator.finalize()
-```
-
-**File**: `apps/worker/app/services/document_parser/formats/markdown/parser.py` (modified, +0/-9)
-```diff
-@@ -119,7 +119,6 @@ def eval_md_headings(
-     smart_parse=False,
-     model_name=None,
-     output_dir=None,
--    layout_json_path=None,
- ):
-     """Evaluate markdown headings with optional TOC hierarchies context"""
-     heading_preds = predict_heading_hierarchy(
-@@ -131,7 +130,6 @@ def eval_md_headings(
-             smart_parse=smart_parse,
-             model_name=model_name,
-             output_dir=output_dir,
--            layout_json_path=layout_json_path,
+-            if active_job is not None:
+-                raise_document_ingestion_conflict(
+-                    document_id=requested_document_id,
+-                    active_job_id=active_job.job_id,
+-                )
+-
+-        (
+-            effective_document_id,
+-            effective_namespace,
+-        ) = await resolve_effective_document_scope(
++            job_metadata["replaces_document_id"] = replaces_document_id
++        effective_document_id, effective_namespace = await resolve_effective_document_scope(
+             db,
+             user_id=current_user.user_id,
+-            document_id=requested_document_id,
+-            requested_namespace=cast(str | None, payload.namespace),
++            document_id=None,
++            requested_namespace=requested_namespace,
          )
-     )
- 
-@@ -281,12 +279,6 @@ def parse_md(
-             json.dump(toc_hierarchies, f, ensure_ascii=False, indent=2)
-         logger.info(f"Saved TOC hierarchies to {toc_json_path}")
- 
--    # Find layout.json path
--    layout_json_path = os.path.join(output_dir, "layout.json")
--    if not os.path.exists(layout_json_path):
--        layout_json_path = None
--        logger.debug("layout.json not found, META features will not be added")
 -
-     # estimate hierarchies with toc_hierarchies context
-     with stage_timer(
-         "md.predict_headings",
-@@ -301,7 +293,6 @@ def parse_md(
-             smart_parse=base_llm_paras["smart_title_parse"],
-             model_name=hierarchy_model_name,
-             output_dir=output_dir,
--            layout_json_path=layout_json_path,
-         )
+-        if not requested_document_id:
+-            active_job = await find_active_job_for_document(
+-                db,
+-                user_id=current_user.user_id,
++        active_job = await find_active_job_for_document(
++            db,
++            user_id=current_user.user_id,
++            document_id=effective_document_id,
++        )
++        if active_job is not None:
++            raise_document_ingestion_conflict(
+                 document_id=effective_document_id,
++                active_job_id=active_job.job_id,
+             )
+-            if active_job is not None:
+-                raise_document_ingestion_conflict(
+-                    document_id=effective_document_id,
+-                    active_job_id=active_job.job_id,
+-                )
  
-     # ── Phase B: MarkdownParseState traversal ──
-```
-
-**File**: `apps/worker/app/services/document_parser/formats/text/parser.py` (modified, +0/-1)
-```diff
-@@ -110,7 +110,6 @@ def postprocess_leaf_dics(
-     merge_df["path"] = merge_df["path_identifier"].apply(split_escaped_document_path)
-     merge_df = merge_df[["path", "content_lst", "path_identifier"]]
- 
--    # TODO rough dividing of contents (need more smart dividing)
-     df_with_divides = pd.DataFrame(columns=["path", "content_lst", "path_identifier"])
-     for i, row in merge_df.iterrows():
-         local_contents = row["content_lst"]
-```
-
-**File**: `apps/worker/app/services/document_parser/structure/heading_candidates.py` (modified, +5/-23)
-```diff
-@@ -158,19 +158,7 @@ def md_heading_match(line, as_is: bool = True):
- _ZERO_NEG_CODE = remove_by_conditions("")
- 
- 
--def filter_markdown_headings(
--    md_lines: list[str],
--    layout_json_path: str | None = None,
--) -> pd.DataFrame:
--    meta_ctx = None
--    if layout_json_path:
--        try:
--            from app.services.document_parser.structure.metadata_extractor import MetadataContext
--
--            meta_ctx = MetadataContext(md_lines, layout_json_path)
--        except Exception as exc:
--            logger.warning(f"Failed to create MetadataContext: {exc}")
--
-+def filter_markdown_headings(md_lines: list[str]) -> pd.DataFrame:
-     raw_candidates = []
-     for line_index, line in enumerate(md_lines):
-         line = line.strip()
-@@ -180,11 +168,9 @@ def filter_markdown_headings(
-         if _is_non_heading_markdown_line(line):
-             est_level = -1
-             reason = f"POS {_ZERO_POS_CODE} NEG {_ZERO_NEG_CODE}"
--            if meta_ctx:
--                reason += " META [0, 0, 0]"
-             line = "Figure/Image"
-         else:
--            est_level, reason, line = _estimate_markdown_heading_level(line, meta_ctx)
-+            est_level, reason, line = _estimate_markdown_heading_level(line)
- 
-         raw_candidates.append((line_index, line, est_level, reason))
- 
-@@ -275,8 +261,8 @@ def _is_non_heading_markdown_line(line: str) -> bool:
-     )
- 
- 
--def _estimate_markdown_heading_level(line: str, meta_ctx: Any | None):
--    from app.services.document_parser.structure.metadata_extractor import detect_and_strip_md_bold
-+def _estimate_markdown_heading_level(line: str):
-+    from app.services.document_parser.structure.markdown_heading_text import detect_and_strip_md_bold
- 
-     line_clean, hash_level = md_heading_match(line, as_is=False)
-     stripped_line, is_full_bold = detect_and_strip_md_bold(line_clean)
-@@ -293,11 +279,7 @@ def _estimate_markdown_heading_level(line: str, meta_ctx: Any | None):
-         code_level = -1
-         code_reason = f"POS {pos_code} NEG {neg_code}"
- 
--    if meta_ctx:
--        size_rank, occurrence = meta_ctx.get_meta_for_line(line_clean)
--        bold_value = 1 if is_full_bold else 0
--        code_reason += meta_ctx.format_meta_suffix(size_rank, occurrence, bold_value)
--    elif is_full_bold:
-+    if is_full_bold:
-         code_reason += " META [0, 0, 1]"
- 
-     if hash_level <= 0:
+         JobMetadataHelper.set_document_scope(
+             job_metadata,
 ```
 
 ---
 
-### Incident Patch 2: `f4f4b954` (2026-11-19)
-**Commit Message**: Note PowerPoint structure and embedded media transcription in README
+### Incident Patch 2: `6e745027` (2026-11-21)
+**Commit Message**: Fix pinned page citation source lookup
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `README.md` (modified, +3/-1)
+**File**: `apps/api/app/repositories/document_repository.py` (modified, +1/-0)
 ```diff
-@@ -49,6 +49,7 @@ Knowhere parses files along their native hierarchy (headings, if any) and uses f
+@@ -98,6 +98,7 @@ async def get_current_document_job_revision(
+             return document, result, job
+         stmt = (
+             select(corpusStorage.Document, JobResult, Job)
++            .select_from(corpusStorage.Document)
+             .join(JobResult, JobResult.id == (job_result_id or func.coalesce(
+                 corpusStorage.Document.latest_parsed_job_result_id, corpusStorage.Document.current_job_result_id)))
+             .join(Job, Job.job_id == JobResult.job_id)
+```
+
+**File**: `apps/api/tests/contract/test_documents_contract.py` (modified, +47/-2)
+```diff
+@@ -7,7 +7,7 @@
+ from uuid import uuid4
  
- ## 📢 News
+ import pytest
+-from httpx import AsyncClient
++from httpx import AsyncClient, Response
+ from sqlalchemy import text
+ from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
  
-+- **November 2026**: 📽️ **Better PowerPoint parsing.** Slide decks now get a section hierarchy built from their agenda and divider slides, and embedded audio and video are transcribed and searchable alongside their slides.
- - **November 2026**: ⏩ **Progressive ingestion.** `ingestion_mode=progressive` publishes a readable baseline first, then enriches the rest in the background. MinerU is no longer required by default.
- - **November 2026**: 🧰 **Agent retrieval tools exposed through the API.** Corpus navigation tools are exposed to built-in and external agents alike.
- - **November 2026**: 🖼️ **More image formats.** `.gif`, `.webp`, `.bmp`, `.tif`/`.tiff`, and `.heic`/`.heif` are now supported.
-@@ -170,7 +171,7 @@ Agents using Knowhere outperform those working from raw documents, Markitdown, U
+@@ -762,6 +762,48 @@ async def test_should_return_page_citation_source_for_page_memory_document(
+     assert response_json["expires_at"]
  
- **✅ Supported**
  
--- [x] `.pdf` `.pptx` — vision parsing
-+- [x] `.pdf` `.pptx` — vision parsing (`.pptx` also transcribes embedded audio and video)
- - [x] `.doc` `.docx` `.xls` `.xlsx` `.csv` `.tsv`
- - [x] `.jpg` `.jpeg` `.png` `.gif` `.webp` `.bmp` `.tif` `.tiff` `.heic` `.heif`
- - [x] `.md` `.txt` `.html` `.htm` `.json`
-@@ -211,6 +212,7 @@ cp apps/worker/.env.example apps/worker/.env
- - S3-compatible storage credentials
- - at least one LLM provider key: `DS_KEY`, `ALI_API_KEYS`, `GPT_API_KEY`, or `GLM_API_KEY`
- - `VERCEL_KEY` for page-image and query embeddings
-+- `ALI_API_KEYS` (DashScope Fun-ASR) if you want audio and video embedded in presentations transcribed
- - a vision-capable model provider for PDF/PowerPoint parsing, page understanding, image summaries, OCR, atlas classification, or image-aware retrieval
- - `MINERU_API_KEYS` only if you turn on the optional MinerU fine-stage page-text extractor
- - any optional billing or webhook providers you want to enable
++@pytest.mark.asyncio
++@pytest.mark.parametrize("document_status", ["active", "archived"])
++async def test_should_return_pinned_page_citation_source_for_private_opensearch_document(
++    developer_api_client_factory: Callable[
++        [], AbstractAsyncContextManager[AsyncClient]
++    ],
++    monkeypatch: pytest.MonkeyPatch,
++    document_status: str,
++) -> None:
++    document_id: str = f"doc_{uuid4().hex[:12]}"
++    route: str = f"/api/v2/documents/{document_id}/files/page-citation-source"
++
++    async with developer_api_client_factory() as api_client:
++        from shared.core.config import settings
++
++        monkeypatch.setattr(settings, "KNOWHERE_LEXICAL_BACKEND", "opensearch")
++        revision: dict[str, str] = await _insert_document_revision_with_chunks(
++            document_id=document_id,
++            parse_track="page_memory",
++            status=document_status,
++            chunks=[],
++        )
++        _upload_page_citation_source(job_id=revision["job_id"])
++
++        unpinned: Response = await api_client.get(route)
++        assert unpinned.status_code == (200 if document_status == "active" else 404)
++
++        pinned: Response = await api_client.get(
++            route, params={"job_result_id": revision["job_result_id"]}
++        )
++        assert pinned.status_code == 200
++        payload: dict[str, object] = cast(dict[str, object], pinned.json())
++        assert payload["job_result_id"] == revision["job_result_id"]
++        assert payload["file_name"] == "source.pdf"
++        assert payload["content_type"] == "application/pdf"
++
++        missing: Response = await api_client.get(
++            route, params={"job_result_id": str(uuid4())}
++        )
++        assert missing.status_code == 404
++
++
+ @pytest.mark.asyncio
+ async def test_should_return_not_found_for_chunk_document_page_citation_source(
+     developer_api_client_factory: Callable[
+@@ -855,10 +897,12 @@ async def test_should_return_not_found_for_archived_page_citation_source(
+ 
+ 
+ @pytest.mark.asyncio
++@pytest.mark.parametrize("pin_revision", [False, True])
+ async def test_should_return_not_found_for_other_users_page_citation_source(
+     developer_api_client_factory: Callable[
+         [], AbstractAsyncContextManager[AsyncClient]
+     ],
++    pin_revision: bool,
+ ) -> None:
+     document_id = f"doc_{uuid4().hex[:12]}"
+     other_user_id = f"contract-user-{uuid4().hex[:12]}"
+@@ -882,7 +926,8 @@ async def test_should_return_not_found_for_other_users_page_citation_source(
+         )
+         _upload_page_citation_source(job_id=revision["job_id"])
+         response = await api_client.get(
+-            f"/api/v2/documents/{document_id}/files/page-citation-source"
++            f"/api/v2/documents/{document_id}/files/page-citation-source",
++            params={"job_result_id": revision["job_result_id"]} if pin_revision else None,
+         )
+ 
+     assert response.status_code == 404
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #577** (2026-11-21): Prepare initial publication and retry retirement for release (@suguanYang)
+- **PR #576** (2026-11-21): chore: promote main to staging (evidence downloads off the event loop, temp file cleanup, parser leftovers) (@EricNGOntos)
+- **PR #575** (2026-11-21): Download retrieval evidence off the event loop and remove its temp files (@EricNGOntos)
 - **PR #574** (2026-11-19): Remove text-track PDF leftovers and stale parser TODOs (@EricNGOntos)
 - **PR #573** (2026-11-19): chore: promote main to staging (PDF TOC nesting tree, unnumbered TOC pages, demo catalog categories) (@EricNGOntos)
 - **PR #572** (2026-11-19): PDF TOC: page screen, TOC nesting tree, and unnumbered TOC pages (@EricNGOntos)
-- **PR #571** (closed): chore: promote main to staging (Official Library from stored demo categories) (@suguanYang)
-- **PR #570** (2026-11-19): List demo documents in the Official Library by their stored category (@suguanYang)
-- **PR #569** (2026-11-18): chore: promote main to staging (worker CJK fonts, document-page limit) (@EricNGOntos)
 
 ---
 
@@ -1379,30 +1624,28 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in README.md
+## X. Empirical Invariant Guard in build-images.yml
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Ontos-AI/knowhere. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/build-images.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Ontos-AI/knowhere. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3352f322`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cf789c7b`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/build-images.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- **November 2026**: 📽️ **Better PowerPoint parsing.** Slide decks now get a section hierarchy built from their agenda and divider slides, and embedded audio and video are transcribed and searchable alongside their slides.
-- [x] `.pdf` `.pptx` — vision parsing (`.pptx` also transcribes embedded audio and video)
-- `ALI_API_KEYS` (DashScope Fun-ASR) if you want audio and video embedded in presentations transcribed
+          QSTASH_BASE_URL: https://qstash-us-east-1.upstash.io
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-- [x] `.pdf` `.pptx` — vision parsing
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3352f322` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cf789c7b` are properly handled with clean fallback behavior.

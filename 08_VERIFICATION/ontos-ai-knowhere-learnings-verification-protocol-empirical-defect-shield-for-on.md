@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-15T13:09:11.006Z",
+  "timestamp": "2026-11-22T03:03:32.295Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-ontos-ai-knowhere-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [ontos-ai-knowhere-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-15T13:09:11.006Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T03:03:32.295Z`  
 > **Learning ID**: `LEARN-EVO-ontos-ai-knowhere-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md`  
 > **Source**: github ([https://github.com/Ontos-AI/knowhere](https://github.com/Ontos-AI/knowhere))  
-> **Source Version**: `208f3fc1`  
+> **Source Version**: `cf789c7b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T13:09:05.861Z  
+> **Timestamp**: 2026-11-22T03:03:26.425Z  
 > **Learning ID**: `learn-github-ontos-ai-knowhere`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Ontos-AI/knowhere](https://github.com/Ontos-AI/knowhere))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T13:09:05.856Z  
+> **Harvest Timestamp**: 2026-11-22T03:03:26.420Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Knowhere extracts, parses, and outputs structured chunks ready for AI Agents and RAG.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 4027 stars
+- **Stars / Engagement**: 4084 stars
 
 ---
 
@@ -1027,1029 +1027,609 @@ class ApiTelemetryMiddleware:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e3c5db47` (2026-11-14)
-**Commit Message**: Potential fix for pull request finding 'CodeQL / Statement has no effect'
+### Incident Patch 1: `cf789c7b` (2026-11-21)
+**Commit Message**: Merge pull request #577 from Ontos-AI/fix/wangbinqi/terminal-initial-ingestion-failure
 
-Co-authored-by: Copilot Autofix powered by AI <62310815+github-advanced-security[bot]@users.noreply.github.com>
+Prepare initial publication and retry retirement for release
 
-**File**: `deploy/opensearch/metrics_recorder.py` (modified, +2/-1)
+**File**: `.github/workflows/build-images.yml` (modified, +1/-0)
 ```diff
-@@ -63,7 +63,8 @@
- 
- 
- class _Reader(Protocol):
--    def get(self, path: str) -> object: ...
-+    def get(self, path: str) -> object:
-+        raise NotImplementedError
- 
- 
- @dataclass(frozen=True)
+@@ -572,6 +572,7 @@ jobs:
+           API_WEBHOOK_ENDPOINT: https://api-staging.knowhereto.ai/v1/internal/s3-events
+           SNS_TOPIC_ARN: arn:aws:sns:us-east-1:107424103509:knowhere-staging-s3-events
+           QSTASH_CALLBACK_BASE_URL: https://api-staging.knowhereto.ai/api/v1
++          QSTASH_BASE_URL: https://qstash-us-east-1.upstash.io
+           API_CPU: "256"
+           API_MEMORY: "1024"
+           WORKER_CPU: "2048"
 ```
 
----
-
-### Incident Patch 2: `7345e319` (2026-11-13)
-**Commit Message**: fix: grant OpenSearch build cleanup and check live application roles
-
-Worker build cleanup runs _delete_by_query?refresh=true, which scrolls,
-bulk-deletes and refreshes. The rendered worker role lacked the scroll,
-delete and refresh actions, so every retired build failed with HTTP 403 and
-was never collected.
-
-Application roles on the shared node are maintained by hand, and a missing
-action only shows up as a 403 on the path that needs it. The new
-`manage.py application-roles` command compares a saved role listing with the
-rendered API and worker roles and exits 1 while any action is missing. The
-cutover runbook runs it before Release 2.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `deploy/opensearch/README.md` (modified, +12/-0)
+**File**: `GLOSSARY.md` (modified, +88/-80)
 ```diff
-@@ -377,6 +377,18 @@ publication. The existing compatible PostgreSQL
- rollback uses its own reviewed task definitions and source coverage verification.
- It preserves additive schema, parsed results, charges and logical events.
+@@ -7,23 +7,23 @@ retrieval service.
+ ## Language
  
-+Application roles on the shared node are maintained by hand, so check them
-+against the rendered roles before Release 2 and after any role change. Save the
-+security API's `GET /_plugins/_security/api/roles` response with the admin
-+certificate, then run
-+`manage.py application-roles --roles <saved-response> --index-prefix <prefix> --role-prefix <knowhere_prod_|knowhere_>`.
-+It lists every rendered action that a live API or worker role does not grant
-+and exits 1 until none are missing. Both roles write: the API publishes builds
-+when it retries indexing and writes a manifest when it archives a document, and
-+the worker's build cleanup scrolls, bulk-deletes and refreshes. A missing action
-+shows up only as HTTP 403 on that path, for example retrieval returning 503 or
-+retired builds that are never collected.
-+
- Use `launch-issuer.py --kind operator` with the `release` child command shown
- by `operator.py --help`. Review separate plans for `phase:"prepare"`,
- `"forward"` and `"rollback"`. Each plan binds `account_id`, exact source hash,
+ **Document**:
+-A document with a stable identity within its owner's namespace. Replacing
+-its source file or parsing it again can produce a new revision without
+-changing that identity.
+-_Avoid_: Parsing job, source filename
++A document with a stable identity within its owner's namespace. Parsing
++publishes a new document. It does not replace the content of an existing
++document. Different content is a new document; deleting the previous
++document is the caller's own action.
++_Avoid_: Parsing job, source filename, in-place update
+ 
+ **Archived Document**:
+-A document excluded from retrieval by archival. Ongoing work cannot return
+-it to the searchable corpus, and it is ineligible for indexing retry.
+-Retained parsing results and processing history follow existing retention
+-rules.
++A document excluded from new retrievals by archival. A retrieval already
++in progress may use bodies it read before archival committed. Ongoing work
++cannot return the document to the searchable corpus. Retained parsing results
++and processing history follow existing retention rules.
+ _Avoid_: Failed parsing job, permanently deleted data
+ 
+ **Document Revision**:
+-One immutable parsing result belonging to a document. Replacing the source
+-file or parsing it again produces another revision of the same document
+-when the operation explicitly targets that document.
+-_Avoid_: Separate document, indexing retry
++The one immutable parsing result of a document. The baseline and later
++enrichment are representations of this same result.
++_Avoid_: Separate document, in-place replacement, indexing retry
+ 
+ **Retrieval Unit**:
+ A piece of a document revision considered as one candidate during lexical
+@@ -32,32 +32,18 @@ is distinct from the number of source pages or words in that revision.
+ _Avoid_: Word, page, whole document
+ 
+ **Published Revision**:
+-The document revision currently selected for default retrieval. It remains
+-selected while a replacement is prepared and changes only when the
+-replacement is ready for retrieval and activated.
+-_Avoid_: Latest parsed revision
++The document revision whose baseline index is available for retrieval.
++Enrichment does not publish another revision in its place.
++_Avoid_: Latest parsed revision, activated replacement
+ 
+ **Latest Parsed Revision**:
+-The newest successfully parsed revision of a document, selected for default
+-document-content reads even if its indexing is pending or failed. It may
+-differ from the published revision used for retrieval.
+-_Avoid_: Latest submitted revision, published revision
+-
+-**Candidate Revision**:
+-A document revision targeted by the current update, awaiting search readiness
+-and activation. Its parsing result can already be available while an earlier
+-published revision remains selected for retrieval.
+-_Avoid_: Published revision, separate document
+-
+-**Superseded Candidate**:
+-A candidate revision whose update has been replaced by a later accepted
+-update to the same document. It is no longer eligible for indexing retry or
+-activation, while its retained parsing result remains accessible.
+-_Avoid_: Published revision, retryable candidate
++The document's stored parsing result. Workers can retain it before initial
++indexing finishes. A retained result from a failed ingestion remains internal.
++_Avoid_: Latest submitted revision, a second revision of the same document
+ 
+ **Primary Lexical Backend**:
+-The selected service that supplies lexical retrieval. A candidate revision
+-becomes search-ready only after publication to this backend succeeds.
++The selected service that supplies lexical retrieval. Publishing the
++initial index to this backend is required for Parsing Completion.
+ _Avoid_: Rollback copy, whichever backend responds first
+ 
+ **Migration Rollback Copy**:
+@@ -80,46 +66,27 @@ readiness requirements. Retiring that path follows a separate decision
+ after stability is confirmed.
+ _Avoid_: Automatic failover period, stability guaranteed by elapsed time
+ 
+-**Search Readiness**:
+-The state indicating whether a particular document revision is available for
+-retrieval. Completing document parsing alone does not establish search
+-readiness.
+-_Avoid_: Parsing completion, generic namespace health
+-
+ **Parsing Completion**:
+-The milestone at which a document revision's parsing result is complete and
+-available to the caller for display or download. It does not require the
+-revision to be ready for retrieval.
+-_Avoid_: Job completion, search readiness
++The sole successful outcome visible to a caller for a document-processing
++job. The initial parsing result and its searchable index are available.
++Full ingestion publishes the complete result. Progressive ingestion
++publishes the baseline. A new progressive PDF or PPTX baseline includes
++coarse chapters and an initial directory.
++_Avoid_: Search completion, indexing completion, enrichment completion
+ 
+ **Indexing**:
+ The phase of a document-processing job that makes 
 ```
 
-**File**: `deploy/opensearch/manage.py` (modified, +9/-2)
+**File**: `apps/api/alembic/versions/b1243d5e6f70_add_enrichment_publications.py` (added, +61/-0)
 ```diff
-@@ -320,7 +320,11 @@ def _parseArguments() -> argparse.Namespace:
-     release.add_argument("--first-impact", required=True)
-     release.add_argument("--restoration-seconds", required=True, type=int)
-     release.add_argument("--margin-seconds", required=True, type=int)
--    for command in (preflight, cost, snapshot, cycle, bootstrap, verify, retention, restore, recovery, alerts, release):
-+    roles = commands.add_parser("application-roles", help="Compare live API and worker roles with the rendered roles")
-+    roles.add_argument("--roles", required=True, type=Path, help="GET /_plugins/_security/api/roles response")
-+    roles.add_argument("--index-prefix", required=True)
-+    roles.add_argument("--role-prefix", required=True, choices=("knowhere_", "knowhere_prod_"))
-+    for command in (preflight, cost, snapshot, cycle, bootstrap, verify, retention, restore, recovery, alerts, release, roles):
-         command.add_argument("--output", type=Path)
-     return parser.parse_args()
- 
-@@ -387,10 +391,13 @@ def _main() -> int:
-         previous: dict[str, object] = _requireObject(_readJson(arguments.state)) if arguments.state.exists() else {}
-         result = OpenSearchOperations.evaluateAlerts(_readJson(arguments.metrics), previous, nowSeconds=int(datetime.now(timezone.utc).timestamp()), repeatSeconds=arguments.repeat_seconds)
-         _writeJson(arguments.state, result["state"], replace=arguments.state.exists())
-+    elif command == "application-roles":
-+        result = OpenSearchOperations.checkApplicationRoles(_readJson(arguments.roles),
-+            indexPrefix=arguments.index_prefix, rolePrefix=arguments.role_prefix)
-     else:
-         result = OpenSearchOperations.planRelease(datetime.fromisoformat(arguments.first_impact), restorationSeconds=arguments.restoration_seconds, marginSeconds=arguments.margin_seconds)
-     _emit(result, arguments.output)
--    return 0
-+    return 1 if command == "application-roles" and not result["passed"] else 0
- 
- 
- if __name__ == "__main__":
+@@ -0,0 +1,61 @@
++"""Keep enrichment bodies and outcomes alongside the published baseline."""
++
++from collections.abc import Sequence
++
++import sqlalchemy as sa
++from alembic import op
++
++revision: str = "b1243d5e6f70"
++down_revision: str | None = "b0132c4d5e6f"
++branch_labels: Sequence[str] | None = None
++depends_on: Sequence[str] | None = None
++
++
++def upgrade() -> None:
++    op.create_table(
++        "document_enrichment_publications",
++        sa.Column("id", sa.String(36), primary_key=True),
++        sa.Column("document_id", sa.String(36), sa.ForeignKey("documents.document_id", ondelete="CASCADE"), nullable=False),
++        sa.Column("job_result_id", sa.String(36), sa.ForeignKey("job_results.id", ondelete="CASCADE"), nullable=False),
++        sa.Column("user_id", sa.Text(), nullable=False),
++        sa.Column("namespace", sa.String(255), nullable=False),
++        sa.Column("scope_id", sa.String(64), nullable=False),
++        sa.Column("state", sa.String(16), nullable=False),
++        sa.Column("expected_index_count", sa.Integer(), nullable=True),
++        sa.Column("raw_prefix", sa.Text(), nullable=True),
++        sa.Column("index_uuid", sa.String(128), nullable=True),
++        sa.Column("cleanup_after", sa.DateTime(timezone=True), nullable=True),
++        sa.CheckConstraint("state IN ('writing', 'published', 'failed')", name="ck_enrichment_publication_state"),
++    )
++    op.create_index("ix_enrichment_publication_revision", "document_enrichment_publications", ["job_result_id", "state"])
++    op.create_index("ix_enrichment_publication_cleanup", "document_enrichment_publications", ["cleanup_after"])
++    op.add_column("document_chunks", sa.Column(
++        "enrichment_attempt_id", sa.String(36),
++        sa.ForeignKey("document_enrichment_publications.id", name="fk_document_chunks_enrichment_attempt", ondelete="CASCADE"),
++    ))
++    op.create_index("ix_document_chunks_enrichment_attempt_id", "document_chunks", ["enrichment_attempt_id"])
++    op.create_index(
++        "uq_document_chunks_baseline_path", "document_chunks",
++        ["document_id", "job_result_id", "source_chunk_path"], unique=True,
++        postgresql_where=sa.text("enrichment_attempt_id IS NULL"),
++    )
++    op.create_unique_constraint(
++        "uq_document_chunks_attempt_path", "document_chunks", ["enrichment_attempt_id", "source_chunk_path"],
++    )
++    op.drop_constraint("uq_document_chunks_revision_path", "document_chunks", type_="unique")
++
++
++def downgrade() -> None:
++    # Preserve references to retained enrichment bodies across an application rollback.
++    if op.get_bind().scalar(sa.text("SELECT EXISTS (SELECT 1 FROM document_enrichment_publications)")):
++        raise RuntimeError("Cannot remove retained document enrichment publications")
++    op.create_unique_constraint(
++        "uq_document_chunks_revision_path", "document_chunks",
++        ["document_id", "job_result_id", "source_chunk_path"],
++    )
++    op.drop_constraint("uq_document_chunks_attempt_path", "document_chunks", type_="unique")
++    op.drop_index("uq_document_chunks_baseline_path", table_name="document_chunks")
++    op.drop_index("ix_document_chunks_enrichment_attempt_id", table_name="document_chunks")
++    op.drop_constraint("fk_document_chunks_enrichment_attempt", "document_chunks", type_="foreignkey")
++    op.drop_column("document_chunks", "enrichment_attempt_id")
++    op.drop_table("document_enrichment_publications")
 ```
 
-**File**: `deploy/opensearch/operations.py` (modified, +74/-16)
+**File**: `apps/api/alembic/versions/b2354e6f7081_schedule_archived_document_cleanup.py` (added, +22/-0)
 ```diff
-@@ -9,14 +9,19 @@
- from __future__ import annotations
- 
- from datetime import datetime, timedelta
-+from fnmatch import fnmatchcase
- from hashlib import sha256
- import json
-+import re
- from typing import Literal, Self
- 
- from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
- 
- __all__: list[str] = ["OpenSearchOperations"]
- _DAY_MILLISECONDS: int = 86_400_000
-+_CLUSTER_READ: tuple[str, ...] = ("cluster:monitor/main", "cluster:monitor/state", "cluster:monitor/health")
-+_SEARCH: str = "indices:data/read/search*"
-+_INDEX_READ: tuple[str, ...] = (_SEARCH, "indices:admin/get", "indices:monitor/settings/get", "indices:monitor/stats")
- 
- 
- class _Installation(BaseModel):
-@@ -93,6 +98,25 @@ class _Fence(BaseModel):
-     proof_sha256: str = Field(pattern="^[a-f0-9]{64}$")
- 
- 
-+class _LiveIndexPermission(BaseModel):
-+    # The security API adds DLS, FLS and masking fields that this check does not use.
-+    model_config = ConfigDict(extra="ignore", frozen=True)
-+    index_patterns: list[str] = Field(default_factory=list)
-+    allowed_actions: list[str] = Field(default_factory=list)
+@@ -0,0 +1,22 @@
++"""Schedule exact native cleanup after the archived state commits."""
 +
-+    def grants(self, index: str, action: str) -> bool:
-+        return any(fnmatchcase(action, granted) for granted in self.allowed_actions) and any(
-+            re.fullmatch(pattern[1:-1], index) is not None if pattern.startswith("/") and pattern.endswith("/")
-+            else fnmatchcase(index, pattern)
-+            for pattern in self.index_patterns)
++from collections.abc import Sequence
++
++import sqlalchemy as sa
++from alembic import op
++
++revision: str = "b2354e6f7081"
++down_revision: str | None = "b1243d5e6f70"
++branch_labels: Sequence[str] | None = None
++depends_on: Sequence[str] | None = None
 +
 +
-+class _LiveRole(BaseModel):
-+    model_config = ConfigDict(extra="ignore", frozen=True)
-+    cluster_permissions: list[str] = Field(default_factory=list)
-+    index_permissions: list[_LiveIndexPermission] = Field(default_factory=list)
++def upgrade() -> None:
++    op.add_column("documents", sa.Column("index_cleanup_after", sa.DateTime(timezone=True), nullable=True))
++    op.create_index("ix_documents_due_index_cleanup", "documents", ["index_cleanup_after"],
++        postgresql_where=sa.text("index_cleanup_after IS NOT NULL"))
 +
 +
- class _Shard(BaseModel):
-     stage: str
- 
-@@ -307,30 +331,37 @@ def renderBundle(value: object) -> dict[str, object]:
-         }
- 
-     @staticmethod
--    def _renderRoles(installation: _Installation, *, isIndependent: bool = False) -> dict[str, object]:
--        clusterRead: list[str] = ["cluster:monitor/main", "cluster:monitor/state", "cluster:monitor/health"]
--        search: str = "indices:data/read/search*"
--        indexRead: list[str] = [search, "indices:admin/get", "indices:monitor/settings/get", "indices:monitor/stats"]
-+    def _renderApplicationRoles(indexPrefix: str) -> dict[str, dict[str, list]]:
-+        """Render the API and worker roles; both processes read and publish builds and manifests."""
-         publication: list[str] = ["indices:admin/create", "indices:admin/open", "indices:admin/close", "indices:data/write/bulk*", "indices:data/write/index", "indices:data/read/count"]
--        scoped: str = installation.index_prefix + "-*"
-+        # Build cleanup runs _delete_by_query?refresh=true, which scrolls, bulk-deletes and then refreshes.
-+        cleanup: list[str] = ["indices:data/write/delete/byquery", "indices:data/write/delete", "indices:admin/refresh"]
-         # Namespace indexes use a 48-character fingerprint. Keep their actions off the manifest index.
--        namespacePattern: str = f"/{installation.index_prefix}-[a-f0-9]{{48}}/"
--        manifestIndex: str = f"{installation.index_prefix}-published-manifests"
-+        namespacePattern: str = f"/{indexPrefix}-[a-f0-9]{{48}}/"
-+        manifestIndex: str = f"{indexPrefix}-published-manifests"
-         # OpenSearch authorizes _create through the same index action as _doc.
-         manifestActions: list[str] = ["indices:admin/create", "indices:data/read/get", "indices:data/write/index"]
--        deploymentProbe: str = f"{installation.index_prefix}-deployment-probe"
--        applicationCluster: list[str] = [*clusterRead, "indices:data/write/bulk"]
--        roles: dict[str, object] = {"_meta": {"type": "roles", "config_version": 2},
-+        deploymentProbe: str = f"{indexPrefix}-deployment-probe"
-+        applicationCluster: list[str] = [*_CLUSTER_READ, "indices:data/write/bulk"]
-+        return {
-             "knowhere_api": {"cluster_permissions": applicationCluster, "index_permissions": [
--                {"index_patterns": [namespacePattern], "allowed_actions": [*indexRead, *publication]},
-+                {"index_patterns": [namespacePattern], "allowed_actions": [*_INDEX_READ, *publication]},
-                 {"index_patterns": [manifestIndex], "allowed_actions": manifestActions},
--                {"index_patterns": [deploymentProbe], "allowed_actions": [search]},
-+                {"index_patterns": [deploymentProbe], "allowed_actions": [_SEARCH]},
-             ]},
--            "knowhere_worker": {"cluster_permissions": applicationCluster, "index_permissions": [
--                {"index_patterns": [namespacePattern], "allowed_actions": [*indexRead, *publication, "indices:data/write/delete/byquery"]},
-+            "knowhere_worker": {"cluster_permissions": [*applicationCluster, "indices:data/read/scroll"], "index_permissions": [
-+                {"index_patterns": [namespacePattern], "allowed_actions": [*_INDEX_READ, *publication, *cleanup]},
-
++def downgrade() -> None:
++    op.drop_index("ix_documents_due_index_cleanup", table_name="documents")
++    op.drop_column("documents", "index_cleanup_after")
 ```
 
-**File**: `deploy/opensearch/tests/test_command.py` (modified, +20/-0)
+**File**: `apps/api/app/api/v1/routes/jobs.py` (modified, +1/-13)
 ```diff
-@@ -57,3 +57,23 @@ def test_installer_defaults_to_command_plan_without_root_or_artifacts(tmp_path:
-     assert plan["mode"] == "dry-run"
-     assert plan["formats_volume"] is False
-     assert plan["starts_service"] is False
-+
-+
-+def test_application_roles_exits_non_zero_when_live_roles_miss_actions(tmp_path: Path) -> None:
-+    manifest: Path = tmp_path / "manifest.json"
-+    manifest.write_text(json.dumps(createManifest()))
-+    bundle: Path = tmp_path / "bundle"
-+    assert runCommand("render", "--manifest", str(manifest), "--directory", str(bundle)).returncode == 0
-+    complete: dict[str, object] = json.loads((bundle / "roles.yml").read_text())
-+    roles: Path = tmp_path / "roles.json"
-+    arguments: list[str] = ["application-roles", "--roles", str(roles), "--index-prefix", "knowhere-lexical-v1", "--role-prefix", "knowhere_"]
-+
-+    roles.write_text(json.dumps(complete))
-+    result = runCommand(*arguments)
-+    assert result.returncode == 0, result.stderr
-+    assert json.loads(result.stdout)["passed"] is True
-+
-+    roles.write_text(json.dumps({**complete, "knowhere_worker": {}}))
-+    result = runCommand(*arguments)
-+    assert result.returncode == 1, result.stderr
-+    assert json.loads(result.stdout)["missing"]["knowhere_worker"]
-```
-
-**File**: `deploy/opensearch/tests/test_operations.py` (modified, +83/-3)
-```diff
-@@ -138,17 +138,97 @@ def test_preserves_namespace_publication_and_deployment_probe_search(roleName: s
-         "indices:monitor/stats", "indices:admin/create", "indices:admin/open", "indices:admin/close",
-         "indices:data/write/bulk*", "indices:data/write/index", "indices:data/read/count",
-     }
-+    expectedClusterActions: set[str] = {
-+        "cluster:monitor/main", "cluster:monitor/state", "cluster:monitor/health", "indices:data/write/bulk",
-+    }
-     if roleName == "knowhere_worker":
--        expectedNamespaceActions.add("indices:data/write/delete/byquery")
-+        # Build cleanup is _delete_by_query?refresh=true: scroll, bulk delete, then refresh.
-+        expectedNamespaceActions |= {
-+            "indices:data/write/delete/byquery", "indices:data/write/delete", "indices:admin/refresh",
-+        }
-+        expectedClusterActions.add("indices:data/read/scroll")
- 
-     assert getIndexActions(role, f"{prefix}-{namespaceSuffix}") == expectedNamespaceActions
-     assert getIndexActions(role, f"{prefix}-deployment-probe") == {"indices:data/read/search*"}
-     assert getIndexActions(role, f"knowhere-prod-lexical-v1-{namespaceSuffix}") == set()
--    assert set(role["cluster_permissions"]) == {
--        "cluster:monitor/main", "cluster:monitor/state", "cluster:monitor/health", "indices:data/write/bulk",
-+    assert set(role["cluster_permissions"]) == expectedClusterActions
-+
-+
-+def createSharedNodeRole(prefix: str, cluster: list[str], actions: list[str]) -> dict[str, object]:
-+    """A hand-maintained role on the shared node: one wildcard over the environment prefix."""
-+    return {"reserved": False, "cluster_permissions": cluster, "tenant_permissions": [], "index_permissions": [
-+        {"index_patterns": [f"{prefix}-*"], "allowed_actions": actions, "dls": "", "fls": [], "masked_fields": []},
-+    ]}
-+
-+
-+def test_application_role_check_passes_the_rendered_roles() -> None:
-+    operations: type = loadOperations()
-+    prefix: str = "knowhere-staging-lexical-v1"
-+    roles: dict[str, object] = cast(dict[str, object], operations.renderBundle({**createManifest(), "index_prefix": prefix})["roles.yml"])
-+
-+    result: dict[str, object] = operations.checkApplicationRoles(roles, indexPrefix=prefix, rolePrefix="knowhere_")
-+
-+    assert result["passed"] is True
-+    assert result["missing"] == {"knowhere_api": [], "knowhere_worker": []}
-+
-+
-+def test_application_role_check_reports_the_read_only_production_api_role() -> None:
-+    operations: type = loadOperations()
-+    prefix: str = "knowhere-prod-lexical-v1"
-+    namespace: str = f"{prefix}-{'0' * 48}"
-+    manifest: str = f"{prefix}-published-manifests"
-+    roles: dict[str, object] = {
-+        "knowhere_prod_api": createSharedNodeRole(prefix,
-+            ["cluster:monitor/main", "cluster:monitor/state", "cluster:monitor/health"],
-+            ["indices:data/read/search*", "indices:admin/get", "indices:monitor/settings/get",
-+                "indices:monitor/stats", "indices:data/read/count"]),
-+        "knowhere_prod_worker": createSharedNodeRole(prefix,
-+            ["cluster:monitor/main", "cluster:monitor/state", "cluster:monitor/health",
-+                "indices:data/write/bulk", "indices:data/read/scroll"],
-+            ["indices:data/read/search*", "indices:admin/get", "indices:monitor/settings/get",
-+                "indices:monitor/stats", "indices:admin/create", "indices:admin/open", "indices:admin/close",
-+                "indices:data/write/bulk*", "indices:data/write/index", "indices:data/read/count",
-+                "indices:data/write/delete/byquery", "indices:data/write/delete", "indices:admin/refresh"]),
-+    }
-+
-+    result: dict[str, object] = operations.checkApplicationRoles(roles, indexPrefix=prefix, rolePrefix="knowhere_prod_")
-+
-+    assert result["passed"] is False
-+    assert result["missing"] == {
-+        "knowhere_prod_api": [
-+            "cluster indices:data/write/bulk",
-+            f"{namespace} indices:admin/create", f"{namespace} indices:admin/open",
-+            f"{namespace} indices:admin/close", f"{namespace} indices:data/write/bulk*",
-+            f"{namespace} indices:data/write/index",
-+            f"{manifest} indices:admin/create", f"{manifest} indices:data/read/get",
-+            f"{manifest} indices:data/write/index",
-+        ],
-+        "knowhere_prod_worker": [f"{manifest} indices:data/read/get"],
-     }
- 
- 
-+def test_application_role_check_reports_a_missing_role_and_a_non_matching_regex() -> None:
-+    operations: type = loadOperations()
-+    prefix: str = "knowhere-staging-lexical-v1"
-+    roles: dict[str, object] = cast(dict[str, object], operations.renderBundle({**createManifest(), "index_prefix": prefix})["roles.yml"])
-+    worker: dict[str, object] = cast(dict[str, object], roles["knowhere_worker"])
-+    # A pattern for 47-character fingerprints never matches a namespace index.
-+    narrowed: list[dict[str, object]] = [
-+        {**permission, "index_patterns": [f"/{prefix}-[a-f0-9]{{47}}/"]}
-
-```
-
----
-
-### Incident Patch 3: `61f67726` (2026-11-13)
-**Commit Message**: fix: settle guarded uploads using stored object evidence
-
-Confirmation and expiry previously used processing time and could fail an on-time upload before its storage notification arrived. Verify the original and its storage timestamp before advancing or failing the waiting job. Persist definitive integrity failures and give verified uploads time to reach the worker after a short upload window.
-
-**File**: `apps/api/app/services/document_ingestion/creation_service.py` (modified, +2/-2)
-```diff
-@@ -19,7 +19,6 @@
- from sqlalchemy.exc import IntegrityError
+@@ -16,7 +16,7 @@
+     list_jobs_for_user,
+ )
+ from app.services.rate_limit.data_structures import CurrentUser
+-from fastapi import APIRouter, Depends, Query, Response
++from fastapi import APIRouter, Depends, Query
  from sqlalchemy.ext.asyncio import AsyncSession
  
--from shared.core.config import settings
- from shared.core.exceptions.domain_exceptions import (
-     JobOperationException,
-     ValidationException,
-@@ -28,6 +27,7 @@
- from shared.models.database.job import Job
- from shared.models.schemas.job import JobCreateBase, JobCreateV2, JobResponse
- from shared.models.schemas.job_metadata import JobMetadataHelper
-+from shared.services.jobs.source_upload_deadline import get_guarded_source_upload_lifetime_seconds
- from shared.services.redis import JobInfoRedisService, RedisServiceFactory
- from shared.services.redis.job_metadata_service import JobMetadataService
- from shared.services.storage.file_upload_service import FileUploadService
-@@ -172,7 +172,7 @@ async def _create_file_job(
-                 storage_key=s3_key,
-                 file_extension=file_extension,
-                 source_integrity=source_integrity,
--                expiration=settings.JOB_WAITING_EXPIRE_SECONDS,
-+                expiration=get_guarded_source_upload_lifetime_seconds(),
-             )
+ from shared.core.database import get_db
+@@ -32,18 +32,6 @@
+ _document_ingestion_service = DocumentIngestionService()
  
-         job = await self._create_waiting_job(
+ 
+-@router.post("/{job_id}/indexing/retry", response_model=JobResultResponse, summary="Retry indexing without parsing or charging again")
+-async def retry_indexing(
+-    job_id: str,
+-    response: Response,
+-    current_user: CurrentUser = Depends(with_current_user),
+-    _write_permission: None = Depends(require_write_permission),
+-    db: AsyncSession = Depends(get_db),
+-) -> JobResultResponse:
+-    from app.services.jobs.indexing_retry_service import retryIndexing
+-    return await retryIndexing(db, jobId=job_id, userId=current_user.user_id, response=response)
+-
+-
+ # ==================== Shared Helpers ====================
+ 
+ 
 ```
 
-**File**: `apps/api/app/services/document_ingestion/handoff_service.py` (modified, +54/-34)
+**File**: `apps/api/app/api/v2/routes/jobs.py` (modified, +2/-28)
 ```diff
-@@ -1,8 +1,5 @@
- from __future__ import annotations
+@@ -14,7 +14,7 @@
+     list_jobs_for_user,
+ )
+ from app.services.rate_limit.data_structures import CurrentUser
+-from fastapi import APIRouter, Depends, Query, Response
++from fastapi import APIRouter, Depends, Query
+ from sqlalchemy.ext.asyncio import AsyncSession
  
--from app.services.document_ingestion.source_upload_deadline import (
--    get_remaining_source_upload_seconds,
+ from shared.core.database import get_db
+@@ -25,10 +25,7 @@
+     JobResponse,
+     JobResultResponse,
+ )
+-from shared.models.schemas.progressive_ingestion import (
+-    EnhancementRetryResponse,
+-    SnapshotObjectAccessRequest,
 -)
- from app.services.document_ingestion.worker_dispatcher import (
-     DocumentIngestionWorkerDispatcher,
- )
-@@ -21,6 +18,13 @@
- from shared.models.database.job import Job
- from shared.models.schemas.job_metadata import JobMetadataHelper
- from shared.models.schemas.source_integrity import SourceIntegrity
-+from shared.services.jobs.source_upload_deadline import (
-+    UPLOAD_EXPIRED_CODE,
-+    UPLOAD_EXPIRED_MESSAGE,
-+    UPLOAD_INTEGRITY_MISMATCH_CODE,
-+    UPLOAD_INTEGRITY_MISMATCH_MESSAGE,
-+    classify_guarded_source_upload,
-+)
- from shared.services.jobs.upload_parse_dispatch import UploadParseOutbox
- from shared.services.storage.file_upload_service import FileUploadService
++from shared.models.schemas.progressive_ingestion import SnapshotObjectAccessRequest
  
-@@ -141,24 +145,25 @@ async def _verify_guarded_source(
-         self, db: AsyncSession, *, job: Job, source_integrity: SourceIntegrity
-     ) -> bool:
-         job_id = job.job_id
--        created_at = job.created_at
--        result = None
--        if get_remaining_source_upload_seconds(created_at) > 0:
--            if not job.s3_key:
--                raise ValidationException(
--                    user_message="Job is missing S3 key information",
--                    violations=[{"field": "s3_key", "description": "S3 key not set for this job"}],
--                )
--            result = await FileUploadService().verify_upload_integrity(
--                job.s3_key, source_integrity
-+        if not job.s3_key:
-+            raise ValidationException(
-+                user_message="Job is missing S3 key information",
-+                violations=[{"field": "s3_key", "description": "S3 key not set for this job"}],
-             )
-+        verification = await FileUploadService().verify_upload_integrity(
-+            job.s3_key, source_integrity
-+        )
-+        result = classify_guarded_source_upload(job.created_at, verification)
+ router = APIRouter(tags=["Jobs"])
+ _document_ingestion_service = DocumentIngestionService()
+@@ -76,29 +73,6 @@ async def get_snapshot_object_access(
+     )
  
--        # HEAD can run without a lock. Serialize the deadline decision and
--        # waiting-file transition after verification against concurrent triggers.
--        if not await self._lock_waiting_job(db, job_id):
-+        # Storage checks happen outside the row lock. The terminal decision and
-+        # parse handoff both recheck waiting-file under that same lock.
-+        locked_job = await self._lock_waiting_job(db, job_id)
-+        if locked_job is None:
-             return False
--        if get_remaining_source_upload_seconds(created_at) == 0:
--            await self._mark_locked_upload_expired(db, job_id)
-+        if result == "expired":
-+            await self._mark_locked_upload_failed(
-+                db, job=locked_job, code=UPLOAD_EXPIRED_CODE, message=UPLOAD_EXPIRED_MESSAGE
-+            )
-             raise ConflictException(
-                 user_message="The source upload has expired.",
-                 reason="ABORTED",
-@@ -170,9 +175,15 @@ async def _verify_guarded_source(
-                 user_message="S3 file does not exist, please upload the file first",
-                 violations=[{"field": "file", "description": "File not found in S3"}],
-             )
--        if result != "matched":
-+        if result == "mismatch":
-+            await self._mark_locked_upload_failed(
-+                db,
-+                job=locked_job,
-+                code=UPLOAD_INTEGRITY_MISMATCH_CODE,
-+                message=UPLOAD_INTEGRITY_MISMATCH_MESSAGE,
-+            )
-             raise ValidationException(
--                user_message="The uploaded file does not match the expected original",
-+                user_message=UPLOAD_INTEGRITY_MISMATCH_MESSAGE,
-                 violations=[{
-                     "field": "source_integrity",
-                     "description": "Stored length or SHA-256 does not match",
-@@ -181,33 +192,42 @@ async def _verify_guarded_source(
-         return True
  
-     @staticmethod
--    async def _lock_waiting_job(db: AsyncSession, job_id: str) -> bool:
--        locked_job = await db.scalar(
--            select(Job.job_id)
-+    async def _lock_waiting_job(db: AsyncSession, job_id: str) -> Job | None:
-+        return await db.scalar(
-+            select(Job)
-             .where(Job.job_id == job_id, Job.status == JobStatus.WAITING_FILE.value)
-             .with_for_update()
-         )
--        return locked_job is not None
- 
-     async def mark_upload_expired(self, db: AsyncSession, *, job: Job) -> None:
--        if await self._lock_waiting_job(db, job.job_id):
--            await self._mark_locked_upload_expired(db, job.job_id)
-+        locked_job = await self._lock_waiting_job(db, job.job_id)
-+        if locked_job is not None:
-+            await self._mark_locked_upload_failed(
-+                db, job=locked_job, code=UPLOAD_EXPIRED_CODE, message=UPLOAD_EXPIRED_MESSAGE
-+            )
- 
--    async def _mark_locked_upload_expired(
--        self,
--        db: AsyncSession,
--        job_id: str,
-+    async def
+-@router.post("/{job_id}/enrichment/retry", response_model=EnhancementRetryResponse, status_code=202, summary="Retry failed search enhancement")
+-async def retry_enrichment(
+-    job_id: str,
+-    current_user: CurrentUser = Depends(with_current_user),
+-    _write_permission: None = Depends(require_write_permission),
+-    db: AsyncSession = Depends(get_db),
+-) -> EnhancementRetryResponse:
+-    from app.services.jobs.enrichment_retry_service import retry_job_enrichment
+-    return await retry_job_enrichment(db, user_id=current_user.user_id, job_id=job_id)
+-
+-
+-@router.post("/{job_id}/indexing/retry", response_model=JobResultResponse, summary="Retry indexing without parsing or charging again")
+-async def retry_indexing(
+-    job_id: str,
+-    response: Response,
+-    current_user: CurrentUser = Depends(with_current_user),
+-    _write_permission: None = Depends(require_write_permission),
+-    db: AsyncSession = Depends(get_db),
+-) -> JobResultResponse:
+-    from app.services.jobs.indexing_retry_service import retryIndexing
+-    return await retryIndexing(db, jobId=job_id, userId=current_user.user_id, response=response)
+-
+-
+ @router.post("", response_model=JobResponse, summary="Create a v2 parsing job")
+ @router.post("/", include_in_schema=False)
+ async def create_job(  # pyright: ignore[reportGeneralTypeIssues]
 ```
 
-**File**: `apps/api/app/services/document_ingestion/source_upload_deadline.py` (removed, +0/-14)
+**File**: `apps/api/app/repositories/document_repository.py` (modified, +39/-4)
 ```diff
-@@ -1,14 +0,0 @@
--from datetime import datetime, timedelta, timezone
--
--from shared.core.config import settings
--
--
--def get_remaining_source_upload_seconds(created_at: datetime) -> int:
--    """Give guarded uploads one lifetime across initial signing, renewal and handoff."""
--    created_utc = (
--        created_at
--        if created_at.tzinfo is not None
--        else created_at.replace(tzinfo=timezone.utc)
--    )
--    deadline = created_utc + timedelta(seconds=settings.JOB_WAITING_EXPIRE_SECONDS)
--    return max(0, int((deadline - datetime.now(timezone.utc)).total_seconds()))
-```
-
-**File**: `apps/api/app/services/jobs/source_upload_service.py` (modified, +1/-1)
-```diff
-@@ -5,7 +5,6 @@
- import asyncio
- from typing import Any
+@@ -4,13 +4,14 @@
  
--from app.services.document_ingestion.source_upload_deadline import get_remaining_source_upload_seconds
- from sqlalchemy import select
+ from __future__ import annotations
+ 
++from shared.services.retrieval.lexical.additivevisibility import AdditiveVisibility
+ from shared.services.retrieval.corpus_storage import CorpusStorage
+ from app.services.demo.revision_reader import resolve_demo_revision
+ 
+ from datetime import datetime, timezone
+ from typing import Sequence, cast
+ 
+-from sqlalchemy import func, select, true
++from sqlalchemy import ColumnElement, SQLColumnExpression, func, or_, select, true
  from sqlalchemy.ext.asyncio import AsyncSession
+ from sqlalchemy.orm import noload
  
-@@ -15,6 +14,7 @@
- )
- from shared.models.database.job import Job
- from shared.models.schemas.job_metadata import JobMetadataHelper
-+from shared.services.jobs.source_upload_deadline import get_remaining_source_upload_seconds
- from shared.services.retrieval.demo_job_scope import validate_job_corpus
- from shared.services.storage.file_upload_service import FileUploadService
- from shared.services.storage.job_file_storage import JobFileStorage
+@@ -22,6 +23,13 @@
+ DocumentJobRevisionRow = tuple[Document, JobResult, Job]
+ 
+ 
++def _allows_job_result_delivery(corpus_storage: CorpusStorage) -> ColumnElement[bool]:
++    """Apply the job result delivery policy in the same query as the artifact."""
++    if corpus_storage.usesAdditivePublication():
++        return Job.status == "done"
++    return or_(Job.status != "failed", Job.failure_stage != "indexing", Job.failure_stage.is_(None))
++
++
+ class DocumentRepository:
+     async def list_by_user_namespace(
+         self,
+@@ -95,16 +103,23 @@ async def get_current_document_job_revision(
+             document, result = await resolve_demo_revision(db, document_id=document_id, job_result_id=job_result_id)
+             job = (await db.execute(select(Job).where(Job.job_id == result.job_id))).scalar_one()
+             return document, result, job
++        default_revision: SQLColumnExpression[str | None] = corpusStorage.Document.current_job_result_id
++        if not corpusStorage.usesAdditivePublication():
++            default_revision = func.coalesce(
++                corpusStorage.Document.latest_parsed_job_result_id, default_revision
++            )
+         stmt = (
+             select(corpusStorage.Document, JobResult, Job)
+-            .join(JobResult, JobResult.id == (job_result_id or func.coalesce(
+-                corpusStorage.Document.latest_parsed_job_result_id, corpusStorage.Document.current_job_result_id)))
++            .select_from(corpusStorage.Document)
++            .join(JobResult, JobResult.id == (job_result_id or default_revision))
+             .join(Job, Job.job_id == JobResult.job_id)
+             .where(corpusStorage.Document.document_id == document_id)
+             .where(corpusStorage.Document.user_id == corpusStorage.resolve_owner(user_id))
+             .where(JobResult.document_id == corpusStorage.Document.document_id)
+             .where(Job.user_id == user_id)
+-            .where(corpusStorage.Document.status != "archived")
++            .where(_allows_job_result_delivery(corpusStorage))
++            .where((corpusStorage.Document.status != "archived")
++                if job_result_id is None or not corpusStorage.usesAdditivePublication() else true())
+             .limit(1)
+         )
+ 
+@@ -136,6 +151,16 @@ async def count_current_document_chunks(
+             .where(corpusStorage.DocumentChunk.document_id == document_id)
+             .where(corpusStorage.DocumentChunk.job_result_id == job_result_id)
+         )
++        if corpusStorage.usesAdditivePublication():
++            stmt = stmt.where(select(corpusStorage.Document.document_id).where(
++                corpusStorage.Document.document_id == corpusStorage.DocumentChunk.document_id,
++                corpusStorage.Document.current_job_result_id == corpusStorage.DocumentChunk.job_result_id,
++                corpusStorage.Document.status == "active",
++            ).correlate(corpusStorage.DocumentChunk).exists(), AdditiveVisibility.allowsChunk())
++        elif not corpusStorage.is_demo:
++            stmt = stmt.join(JobResult, JobResult.id == corpusStorage.DocumentChunk.job_result_id).join(
++                Job, Job.job_id == JobResult.job_id
++            ).where(_allows_job_result_delivery(corpusStorage))
+         if chunk_type is not None:
+             stmt = stmt.where(func.lower(corpusStorage.DocumentChunk.chunk_type) == chunk_type)
+ 
+@@ -170,6 +195,14 @@ async def list_current_document_chunks(
+             .limit(limit)
+             .offset(offset)
+         )
++        if corpusStorage.usesAdditivePublication():
++            stmt = stmt.where(select(corpusStorage.Document.document_id).where(
++                corpusStorage.Document.document_id == corpusStorage.DocumentChunk.document_id,
++                corpusStorage.Document.current_job_result_id == corpusStorage.DocumentChunk.job_result_id,
++                corpusStorage.Document.status == "active",
++            ).correlate(corpusStorage.DocumentChunk).exists(), AdditiveVisibility.allowsChunk())
++        elif not corpusStorage.is_demo:
++            stmt = stmt.join(Job, Job.job_id == JobResult.job_id).where(_allows_job_result_delivery(corpusStorage))
+         if chunk_type is not None:
+             stmt = stmt.where(func.lower(corpusStorage.DocumentChunk.chunk_type) == chunk_type)
+ 
+@@ -197,6 +230,8 @@ async def get_current_document_chunk(
+             .where(corpusStorage.DocumentChunk.id == document_chunk_id)
+        
 ```
 
-**File**: `apps/api/tests/contract/test_guarded_upload_deadline_contract.py` (added, +156/-0)
+**File**: `apps/api/app/services/document_ingestion/service.py` (modified, +43/-27)
 ```diff
-@@ -0,0 +1,156 @@
-+from __future__ import annotations
-+
-+from base64 import b64encode
-+from collections.abc import Callable
-+from contextlib import AbstractAsyncContextManager
-+from datetime import datetime, timedelta, timezone
-+from hashlib import sha256
-+
-+import boto3
-+import pytest
-+from botocore.stub import Stubber
-+from httpx import AsyncClient
-+
-+from tests.support.contract_database import ContractDatabase
-+
-+_ORIGINAL = b"original upload bytes"
-+_DIGEST = sha256(_ORIGINAL).digest()
-+_CREATE_JOB = {
-+    "namespace": "guarded-deadline",
-+    "source_type": "file",
-+    "file_name": "original.pdf",
-+    "source_integrity": {"size_bytes": len(_ORIGINAL), "sha256": _DIGEST.hex()},
-+}
-+
-+
+@@ -334,7 +334,13 @@ async def _resolve_scope(
+                 ingestion_mode=command.ingestion_mode,
+             ),
+         )
+-        if CorpusStorage.resolve_namespace(payload.namespace).is_demo:
++        corpus_storage: CorpusStorage = CorpusStorage.resolve_namespace(payload.namespace)
++        if corpus_storage.is_demo:
++            if payload.replaces_document_id is not None:
++                raise ValidationException(
++                    user_message="Private document replacement requires a private namespace.",
++                    violations=[{"field": "replaces_document_id", "description": "Private documents only"}],
++                )
+             documentId: str = await resolve_demo_scope(db, user_id=current_user.user_id, payload=payload)
+             JobMetadataHelper.set_document_scope(job_metadata, document_id=documentId, namespace=DEMO_NAMESPACE)
+             job_metadata["corpus_target"] = "DEMO"
+@@ -345,40 +351,50 @@ async def _resolve_scope(
+         if payload.demo_category_id is not None:
+             raise ValidationException(user_message="demo_category_id applies only to the reserved demo namespace.", violations=[{"field": "demo_category_id", "description": "Use namespace __knowhere_demo__"}])
+         job_metadata["corpus_target"] = "PRIVATE"
+-        requested_document_id = JobMetadataHelper.get_document_id(job_metadata)
+-        if requested_document_id:
+-            active_job = await find_active_job_for_document(
++        requested_namespace: str | None = payload.namespace
++        native_publication: bool = corpus_storage.usesAdditivePublication()
++        if payload.document_id is not None:
++            user_message: str = "Private ingestion creates a new document."
++            if native_publication:
++                user_message = "Create a replacement job with replaces_document_id."
++            raise ValidationException(
++                user_message=user_message,
++                violations=[{"field": "document_id", "description": "Private ingestion creates a new document"}],
++            )
++        if payload.replaces_document_id is not None:
++            if not native_publication:
++                raise ValidationException(
++                    user_message="Private document replacement requires the OpenSearch backend.",
++                    violations=[{"field": "replaces_document_id", "description": "Replacement requires OpenSearch"}],
++                )
++            if CorpusStorage.resolve_document(payload.replaces_document_id).is_demo:
++                raise ValidationException(
++                    user_message="The replacement target must be a private document.",
++                    violations=[{"field": "replaces_document_id", "description": "Private documents only"}],
++                )
++            replaces_document_id, requested_namespace = await resolve_effective_document_scope(
+                 db,
+                 user_id=current_user.user_id,
+-                document_id=requested_document_id,
++                document_id=payload.replaces_document_id,
++                requested_namespace=requested_namespace,
+             )
+-            if active_job is not None:
+-                raise_document_ingestion_conflict(
+-                    document_id=requested_document_id,
+-                    active_job_id=active_job.job_id,
+-                )
+-
+-        (
+-            effective_document_id,
+-            effective_namespace,
+-        ) = await resolve_effective_document_scope(
++            job_metadata["replaces_document_id"] = replaces_document_id
++        effective_document_id, effective_namespace = await resolve_effective_document_scope(
+             db,
+             user_id=current_user.user_id,
+-            document_id=requested_document_id,
+-            requested_namespace=cast(str | None, payload.namespace),
++            document_id=None,
++            requested_namespace=requested_namespace,
+         )
+-
+-        if not requested_document_id:
+-            active_job = await find_active_job_for_document(
+-                db,
+-                user_id=current_user.user_id,
++        active_job = await find_active_job_for_document(
++            db,
++            user_id=current_user.user_id,
++            document_id=effective_document_id,
++        )
++        if active_job is not None:
++            raise_document_ingestion_conflict(
+                 document_id=effective_document_id,
++                active_job_id=active_job.job_id,
+             )
+-            if active_job is not None:
+-                raise_document_ingestion_conflict(
+-                    document_id=effective_document_id,
+-                    active_job_id=active_job.job_id,
+-                )
+ 
+         JobMetadataHelper.set_document_scope(
+             job_metadata,
+```
+
+---
+
+### Incident Patch 2: `6e745027` (2026-11-21)
+**Commit Message**: Fix pinned page citation source lookup
+
+**File**: `apps/api/app/repositories/document_repository.py` (modified, +1/-0)
+```diff
+@@ -98,6 +98,7 @@ async def get_current_document_job_revision(
+             return document, result, job
+         stmt = (
+             select(corpusStorage.Document, JobResult, Job)
++            .select_from(corpusStorage.Document)
+             .join(JobResult, JobResult.id == (job_result_id or func.coalesce(
+                 corpusStorage.Document.latest_parsed_job_result_id, corpusStorage.Document.current_job_result_id)))
+             .join(Job, Job.job_id == JobResult.job_id)
+```
+
+**File**: `apps/api/tests/contract/test_documents_contract.py` (modified, +47/-2)
+```diff
+@@ -7,7 +7,7 @@
+ from uuid import uuid4
+ 
+ import pytest
+-from httpx import AsyncClient
++from httpx import AsyncClient, Response
+ from sqlalchemy import text
+ from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
+ 
+@@ -762,6 +762,48 @@ async def test_should_return_page_citation_source_for_page_memory_document(
+     assert response_json["expires_at"]
+ 
+ 
 +@pytest.mark.asyncio
-+@pytest.mark.parametrize("trigger", ["notification", "confirm"])
-+@pytest.mark.parametrize(
-+    ("upload_delay", "is_checksum_valid", "expected_error", "confirm_status"),
-+    [
-+        (timedelta(hours=1), True, None, 200),
-+        (timedelta(hours=2, minutes=30), True, "UPLOAD_EXPIRED", 409),
-+        (timedelta(hours=1), False, "UPLOAD_INTEGRITY_MISMATCH", 400),
-+    ],
-+    ids=["on-time-original", "late-original", "on-time-mismatch"],
-+)
-+async def test_guarded_upload_uses_storage_evidence_after_deadline(
++@pytest.mark.parametrize("document_status", ["active", "archived"])
++async def test_should_return_pinned_page_citation_source_for_private_opensearch_document(
 +    developer_api_client_factory: Callable[
 +        [], AbstractAsyncContextManager[AsyncClient]
 +    ],
 +    monkeypatch: pytest.MonkeyPatch,
-+    trigger: str,
-+    upload_delay: timedelta,
-+    is_checksum_valid: bool,
-+    expected_error: str | None,
-+    confirm_status: int,
++    document_status: str,
 +) -> None:
-+    async with developer_api_client_factory() as client:
-+        from app.services.document_ingestion.worker_dispatcher import (
-+            DocumentIngestionWorkerDispatcher,
-+        )
++    document_id: str = f"doc_{uuid4().hex[:12]}"
++    route: str = f"/api/v2/documents/{document_id}/files/page-citation-source"
++
++    async with developer_api_client_factory() as api_client:
 +        from shared.core.config import settings
-+        from shared.services.storage import job_file_storage
-+        from shared.services.storage.adapters.s3_adapter import S3StorageAdapter
 +
-+        monkeypatch.setattr(settings, "S3_TYPE", "s3")
-+        monkeypatch.setattr(settings, "S3_USE_SSL", True)
-+        s3 = boto3.client(
-+            "s3",
-+            region_name="us-west-1",
-+            aws_access_key_id="test",
-+            aws_secret_access_key="test",
++        monkeypatch.setattr(settings, "KNOWHERE_LEXICAL_BACKEND", "opensearch")
++        revision: dict[str, str] = await _insert_document_revision_with_chunks(
++            document_id=document_id,
++            parse_track="page_memory",
++            status=document_status,
++            chunks=[],
 +        )
-+        bucket = settings.S3_BUCKET_NAME
-+        adapter = S3StorageAdapter(s3, bucket)
-+        monkeypatch.setattr(
-+            job_file_storage, "get_cached_storage_adapter", lambda: adapter
++        _upload_page_citation_source(job_id=revision["job_id"])
++
++        unpinned: Response = await api_client.get(route)
++        assert unpinned.status_code == (200 if document_status == "active" else 404)
++
++        pinned: Response = await api_client.get(
++            route, params={"job_result_id": revision["job_result_id"]}
 +        )
-+        published_jobs: list[str] = []
++        assert pinned.status_code == 200
++        payload: dict[str, object] = cast(dict[str, object], pinned.json())
++        assert payload["job_result_id"] == revision["job_result_id"]
++        assert payload["file_name"] == "source.pdf"
++        assert payload["content_type"] == "application/pdf"
 +
-+        async def publish(self: object, *, job_id: str, user_id: str) -> str:
-+            published_jobs.append(job_id)
-+            return "test-task"
-+
-+        monkeypatch.setattr(
-+            DocumentIngestionWorkerDispatcher, "start_uploaded_file_parse", publish
++        missing: Response = await api_client.get(
++            route, params={"job_result_id": str(uuid4())}
 +        )
-+
-+        created = await client.post("/api/v2/jobs", json=_CREATE_JOB)
-+        assert created.status_code == 200
-+        job_id: str = created.json()["job_id"]
-+        key = f"uploads/{job_id}.pdf"
-+        created_at = datetime.now(timezone.utc) - timedelta(hours=3)
-+        uploaded_at = created_at + upload_delay
-+        await ContractDatabase.execute(
-+            "UPDATE jobs SET created_at = :created_at, updated_at = :created_at WHERE job_id = :job_id",
-+            {"job_id": job_id, "created_at": created_at.replace(tzinfo=None)},
-+        )
-+        event = {
-+            "Records": [
-+                {
-+                    "eventVersion": "2.1",
-+                    "eventSource": "aws:s3",
-+                    "awsRegion": "us-west-1",
-+                    # A notification timestamp alone cannot admit an object whose HEAD is late.
-+                    "eventTime": (created_at + timedelta(hours=1)).isoformat(),
-+                    "eventName": "ObjectCreated:Put",
-+                    "s3": {"bucket": {"name": bucket}, "object": {"key": key}},
-+                }
-+            ]
-+        }
-+
-+        with Stubber(s3) as stubber:
-+            stubber.add_response(
-+                "head_object",
-+                {
-+                    "ContentLength": len(_ORIGINAL),
-+                    "ChecksumSHA256": b64encode(
-+                        _DIGEST if is_checksum_valid else bytes(32)
-+                    ).decode("ascii"),
-+                    "LastModified": uploaded_at,
-+                },
-+                {"Bucket": bucket, "Key": key, "ChecksumMode": "ENABLED"},
-+            )
-+            if trigger == "notification":
-+                response = await client.post("/api/v1/internal/s3-events", json=event)
-+            else:
-+                response = await client.post(f"/api/v2/jobs/{job_id}/confirm-upload")
-+            job = await ContractDatabase.fetch_job(job_id)
-+            assert job is not None
-+            assert job["error_code"] == expected_error
-+            if expected_error is None:
-+                assert job["status"] == "pending"
-+                assert published_jobs == [job_id]
-+            else:
-+                assert job["status"] == "failed"
-+                assert publishe
-```
-
-**File**: `apps/api/tests/contract/test_verified_source_upload_contract.py` (modified, +146/-70)
-```diff
-@@ -3,13 +3,14 @@
- from base64 import b64encode
- from collections.abc import Callable
- from contextlib import AbstractAsyncContextManager
-+from datetime import datetime, timezone
- from hashlib import sha256
- from urllib.parse import parse_qs, urlsplit
- 
- import boto3
- import pytest
- from botocore.stub import Stubber
--from httpx import AsyncClient
-+from httpx import AsyncClient, Response
- 
- from tests.support.contract_database import ContractDatabase
- 
-@@ -51,6 +52,24 @@ def _stub_uploaded_object(monkeypatch: pytest.MonkeyPatch) -> tuple[Stubber, str
-     return Stubber(client), bucket
- 
- 
-+def _upload_event(bucket: str, key: str) -> dict[str, object]:
-+    return {
-+        "Records": [
-+            {
-+                "eventVersion": "2.1",
-+                "eventSource": "aws:s3",
-+                "awsRegion": "us-west-1",
-+                "eventTime": datetime.now(timezone.utc).isoformat(),
-+                "eventName": "ObjectCreated:Put",
-+                "s3": {
-+                    "bucket": {"name": bucket},
-+                    "object": {"key": key, "size": len(_ORIGINAL)},
-+                },
-+            }
-+        ],
-+    }
++        assert missing.status_code == 404
 +
 +
- def _check_signed_upload(result: dict[str, object]) -> None:
-     assert result["upload_headers"] == {
-         "Content-Type": "application/pdf",
-@@ -139,7 +158,7 @@ async def test_integrity_requires_valid_file_metadata_and_supported_storage(
+ @pytest.mark.asyncio
+ async def test_should_return_not_found_for_chunk_document_page_citation_source(
+     developer_api_client_factory: Callable[
+@@ -855,10 +897,12 @@ async def test_should_return_not_found_for_archived_page_citation_source(
+ 
  
  @pytest.mark.asyncio
- @pytest.mark.parametrize("trigger", ["manual", "s3"])
--async def test_handoff_requires_the_expected_stored_checksum_and_size(
-+async def test_unavailable_or_missing_upload_remains_waiting_until_verified(
++@pytest.mark.parametrize("pin_revision", [False, True])
+ async def test_should_return_not_found_for_other_users_page_citation_source(
      developer_api_client_factory: Callable[
          [], AbstractAsyncContextManager[AsyncClient]
      ],
-@@ -167,94 +186,140 @@ async def _publish(self: object, *, job_id: str, user_id: str) -> str:
-         job_id: str = created.json()["job_id"]
-         key = f"uploads/{job_id}.pdf"
-         confirm_url = f"/api/v2/jobs/{job_id}/confirm-upload"
--        event = {
--            "Records": [
--                {
--                    "eventVersion": "2.1",
--                    "eventSource": "aws:s3",
--                    "awsRegion": "us-west-1",
--                    "eventTime": "2026-04-26T00:00:00.000Z",
--                    "eventName": "ObjectCreated:Put",
--                    "s3": {
--                        "bucket": {"name": bucket},
--                        "object": {"key": key, "size": len(_ORIGINAL)},
--                    },
--                }
--            ],
--        }
--
-+        event = _upload_event(bucket, key)
-         expected_head = {"Bucket": bucket, "Key": key, "ChecksumMode": "ENABLED"}
--        if trigger == "manual":
-+        for code in (403, 404):
-             stubber.add_client_error(
-                 "head_object",
--                service_error_code="403",
--                http_status_code=403,
-+                service_error_code=str(code),
-+                http_status_code=code,
-                 expected_params=expected_head,
-             )
--            stubber.add_client_error(
--                "head_object",
--                service_error_code="404",
--                http_status_code=404,
--                expected_params=expected_head,
--            )
--        for metadata in (
--            {
--                "ContentLength": len(_ORIGINAL),
--                "ChecksumSHA256": b64encode(bytes(32)).decode("ascii"),
--            },
--            {
--                "ContentLength": len(_ORIGINAL) + 1,
--                "ChecksumSHA256": b64encode(_DIGEST).decode("ascii"),
--            },
--            {"ContentLength": len(_ORIGINAL)},
-+        stubber.add_response(
-+            "head_object",
-             {
-                 "ContentLength": len(_ORIGINAL),
-                 "ChecksumSHA256": b64encode(_DIGEST).decode("ascii"),
-+                "LastModified": datetime.now(timezone.utc),
-             },
--        ):
--            stubber.add_response("head_object", metadata, expected_head)
--
--        async def _confirm(expected_violation: str | None = None) -> None:
--            response = (
--                await api_client.post(confirm_url)
--                if trigger == "manual"
--                else await api_client.post(
--                    "/api/v1/internal/s3-events",
--                    json=event,
--                )
--            )
--            if trigger == "s3":
--                assert response.status_code == 200
--            elif expected_violation is not None:
--                assert response.status_code == 400
--                assert (
--                    response.json()["error"]["details"]["violations"][0]["field"]
--                    == expected_violation
--                )
--            else:
--                assert response.status_code == 200
-+            expected_head,
-+        )
++    pin_revision: bool,
+ ) -> None:
+     document_id = f"doc_{uuid4().hex[:12]}"
+     other_user_id = f"contract-user-{uuid4().hex[:12]}"
+@@ -882,7 +926,8 @@ async def test_should_return_not_found_for_other_users_page_citation_source(
+         )
+         _upload_page_citation_source(job_id=revision["job_id"])
+         response = await api_client.get(
+-            f"/api/v2/documents/{document_id}/files/page-citation-source"
++            f"/api/v2/documents/{document_id}/files/page-citation-source",
++            params={"job_result_id": revision["job_result_id"]} if pin_revision else None,
+         )
  
--        with stubber:
--            rejected_fields = ["source_integrity"] * 3
-+        async def _confirm() -> Response:
-             if trigger == "manual":
--                unavailable 
-```
-
-**File**: `apps/worker/app/core/tasks/stale_job_sweeper.py` (modified, +65/-71)
-```diff
-@@ -1,12 +1,15 @@
- """
- Stale Job Sweeper — periodic Celery Beat task.
- 
--Scans for jobs stuck in any active state (pending, waiting-file, running, converting)
--beyond the global JOB_EXPIRE_SECONDS threshold and marks them as failed.
-+Settles overdue guarded uploads and expires other stale active Jobs.
- """
- 
--from datetime import datetime, timedelta, timezone
-+from datetime import datetime, timedelta
- 
-+from app.services.document_ingestion.guarded_upload_sweeper import (
-+    guarded_waiting_upload,
-+    sweep_guarded_uploads,
-+)
- from loguru import logger
- from sqlalchemy import and_, or_
- from sqlalchemy import select as sa_select
-@@ -20,8 +23,10 @@
-     JobStatus,
- )
- from shared.models.database.job import Job
-+from shared.services.jobs.upload_parse_dispatch import within_upload_parse_dispatch_window
- from shared.services.redis.periodic_task_lock import periodic_task_lock
- from shared.services.retrieval.lexical.settlement import IndexingSettlement
-+from shared.utils.utc_now import utc_now_naive
- 
- celery_app = get_celery_app()
- 
-@@ -36,7 +41,7 @@
- 
- @celery_app.task(name="app.core.tasks.stale_job_sweeper.expire_stale_jobs")
- def expire_stale_jobs() -> dict:
--    """Expire jobs stuck in non-terminal states beyond ``JOB_EXPIRE_SECONDS``.
-+    """Settle overdue uploads and expire stale parser Jobs.
- 
-     Runs every 30 minutes via Celery Beat. Uses ``SyncStateMachineService``
-     for CAS-protected state transitions and proper audit logging.
-@@ -58,74 +63,17 @@ def expire_stale_jobs() -> dict:
-         waiting_max_age: int = settings.JOB_WAITING_EXPIRE_SECONDS
-         processing_max_age: int = settings.JOB_PROCESSING_EXPIRE_SECONDS
- 
--        if waiting_max_age <= 0 or processing_max_age <= 0:
--            return {"status": "success", "reason": "Parser expiration config <= 0", "indexing": indexing}
--
--        # Timeouts: 4 hours (default) for processing, 2 hours (default) for waiting
--        now = datetime.now(timezone.utc).replace(tzinfo=None)
--        long_cutoff = now - timedelta(seconds=processing_max_age)
--        default_cutoff = now - timedelta(seconds=waiting_max_age)
--
--        expired_count = 0
--        skipped_count = 0
--
-+        now = utc_now_naive()
-+        legacy_expiration_enabled = waiting_max_age > 0 and processing_max_age > 0
-         try:
--            state_machine = SyncStateMachineService()
--
--            with get_sync_db_context() as db:
--                stmt = (
--                    sa_select(Job)
--                    .where(
--                        Job.status.notin_(TERMINAL_STATES),
--                        Job.parsing_status != "completed",
--                        or_(
--                            and_(
--                                Job.status.in_(
--                                    [
--                                        JobStatus.RUNNING.value,
--                                        JobStatus.CONVERTING.value,
--                                    ]
--                                ),
--                                Job.updated_at < long_cutoff,
--                            ),
--                            and_(
--                                Job.status.notin_(
--                                    [
--                                        JobStatus.RUNNING.value,
--                                        JobStatus.CONVERTING.value,
--                                    ]
--                                ),
--                                Job.updated_at < default_cutoff,
--                            ),
--                        ),
--                    )
--                    .order_by(Job.updated_at)
--                    .limit(200)
--                )
--                expired_jobs = db.execute(stmt).scalars().all()
--
--                if not expired_jobs:
--                    logger.debug("Stale job sweeper: no expired jobs found")
--                    return {"status": "success", "expired": 0, "skipped": 0, "indexing": indexing}
--
--                for job in expired_jobs:
--                    outcome = state_machine.mark_failed_outcome(
--                        db,
--                        job.job_id,
--                        error_message=JOB_EXPIRED_ERROR_MESSAGE,
--                        error_code=JOB_EXPIRED_ERROR_CODE,
--                        metadata={"sweeper": True, "stale_status": job.status},
--                    )
--                    if outcome.succeeded:
--                        expired_count += 1
--                        logger.info(
--                            f"Expired stale job {job.job_id} (was {job.status})"
--                        )
--                    else:
--                        skipped_count += 1
--                        logger.debug(
--                            f"Job {job.job_id} was not expired: reason={outcome.reason}"
--                        )
-+            expired_count, skipped_count = (
-+                _expire_other_stale_jobs(now, waiting_max_age, processing_max_age)
-+                if legacy_expiration_enabled
-+            
-```
-
-**File**: `apps/worker/app/services/document_ingestion/guarded_upload_sweeper.py` (added, +142/-0)
-```diff
-@@ -0,0 +1,142 @@
-+"""Settle overdue guarded PUTs using the same storage evidence as confirmation."""
-+
-+from __future__ import annotations
-+
-+from datetime import datetime, timedelta
-+from time import monotonic
-+
-+from loguru import logger
-+from pydantic import ValidationError
-+from sqlalchemy import and_, select
-+
-+from shared.core.database_sync import get_sync_db_context
-+from shared.core.exceptions.domain_exceptions import (
-+    StorageServiceException,
-+    UnavailableException,
-+)
-+from shared.core.state_machine.service_sync import SyncStateMachineService
-+from shared.core.state_machine.states import JobStatus
-+from shared.models.database.job import Job
-+from shared.models.schemas.job_metadata import JobMetadataHelper
-+from shared.services.jobs.source_upload_deadline import (
-+    UPLOAD_EXPIRED_CODE,
-+    UPLOAD_EXPIRED_MESSAGE,
-+    UPLOAD_INTEGRITY_MISMATCH_CODE,
-+    UPLOAD_INTEGRITY_MISMATCH_MESSAGE,
-+    classify_guarded_source_upload,
-+    get_guarded_source_upload_lifetime_seconds,
-+)
-+from shared.services.jobs.upload_parse_dispatch import UploadParseOutbox, has_source_integrity
-+from shared.services.storage.job_file_storage import JobFileStorage
-+from shared.utils.utc_now import utc_now_naive
-+
-+_MAX_GUARDED_JOBS_PER_SWEEP = 32
-+_SWEEP_BUDGET_SECONDS = 60
-+
-+guarded_waiting_upload = and_(
-+    Job.status == JobStatus.WAITING_FILE.value,
-+    has_source_integrity,
-+)
-+
-+
-+def sweep_guarded_uploads(now: datetime) -> tuple[int, int]:
-+    cutoff = now - timedelta(seconds=get_guarded_source_upload_lifetime_seconds())
-+    with get_sync_db_context() as db:
-+        candidates = db.scalars(
-+            select(Job)
-+            .where(guarded_waiting_upload, Job.created_at <= cutoff)
-+            .order_by(Job.updated_at, Job.job_id)
-+            .limit(_MAX_GUARDED_JOBS_PER_SWEEP)
-+        ).all()
-+
-+    state_machine = SyncStateMachineService()
-+    storage = JobFileStorage()
-+    expires_at = monotonic() + _SWEEP_BUDGET_SECONDS
-+    expired_count = 0
-+    skipped_count = 0
-+    for candidate in candidates:
-+        if monotonic() >= expires_at:
-+            break
-+        try:
-+            expired = _settle_guarded_upload(state_machine, storage, candidate)
-+        except Exception as exc:
-+            logger.warning(
-+                "Guarded upload sweep will retry job {} after {}",
-+                candidate.job_id,
-+                type(exc).__name__,
-+            )
-+            expired = None
-+        expired_count += expired is True
-+        skipped_count += expired is None
-+    return expired_count, skipped_count
-+
-+
-+def _settle_guarded_upload(
-+    state_machine: SyncStateMachineService, storage: JobFileStorage, candidate: Job
-+) -> bool | None:
-+    """Return True if failed, False if recovered, or None if deferred or raced."""
-+    try:
-+        integrity = JobMetadataHelper.get_source_integrity(candidate.job_metadata)
-+        if integrity is None:
-+            return None
-+        if candidate.s3_key:
-+            verification = storage.verify_upload_integrity(candidate.s3_key, integrity)
-+            verdict = classify_guarded_source_upload(candidate.created_at, verification)
-+        else:
-+            verdict = "expired"
-+    except (StorageServiceException, UnavailableException, ValidationError) as exc:
-+        logger.warning(
-+            "Guarded upload sweep could not verify job {} ({})",
-+            candidate.job_id,
-+            type(exc).__name__,
-+        )
-+        verdict = "deferred"
-+
-+    with get_sync_db_context() as db:
-+        job = db.scalar(
-+            select(Job)
-+            .where(
-+                Job.job_id == candidate.job_id,
-+                Job.status == JobStatus.WAITING_FILE.value,
-+                Job.version == candidate.version,
-+            )
-+            .with_for_update(skip_locked=True)
-+        )
-+        if job is None:
-+            return None
-+        if verdict in {"missing", "deferred"}:
-+            # Rotate temporary failures behind other overdue jobs. The deadline
-+            # is based on created_at, so this only changes sweep ordering.
-+            job.updated_at = utc_now_naive()
-+            return None
-+
-+        is_failed = verdict != "matched"
-+        status = JobStatus.FAILED.value if is_failed else JobStatus.PENDING.value
-+        metadata = {"sweeper": True, "stale_status": JobStatus.WAITING_FILE.value}
-+        if is_failed:
-+            code, message = (
-+                (UPLOAD_INTEGRITY_MISMATCH_CODE, UPLOAD_INTEGRITY_MISMATCH_MESSAGE)
-+                if verdict == "mismatch"
-+                else (UPLOAD_EXPIRED_CODE, UPLOAD_EXPIRED_MESSAGE)
-+            )
-+            job.error_code = code
-+            job.error_message = message
-+            metadata.update(error_code=code, error_message=message)
-+
-+        transition = state_machine.transition_outcome(
-+            db,
-+            candidate.job_id,
-+            status,
-+            "mark_failed" if is_failed else "guarded_upload_recovered",
-+            metad
+     assert response.status_code == 404
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #562** (2026-11-15): feat: release a stopped shadow backfill issuer while PostgreSQL serves (@suguanYang)
-- **PR #561** (2026-11-15): chore: promote the OpenSearch open-index limit, recorder and issuer recovery to main (@suguanYang)
-- **PR #560** (2026-11-14): feat: record shared OpenSearch node metrics every 30 minutes (@suguanYang)
-- **PR #559** (2026-11-14): feat: raise the production OpenSearch open-index limit to 600 (@suguanYang)
-- **PR #558** (2026-11-14): feat: make the OpenSearch open-index limit configurable (@suguanYang)
-- **PR #557** (2026-11-14): chore: promote main to staging (verified uploads) (@suguanYang)
+- **PR #577** (2026-11-21): Prepare initial publication and retry retirement for release (@suguanYang)
+- **PR #576** (2026-11-21): chore: promote main to staging (evidence downloads off the event loop, temp file cleanup, parser leftovers) (@EricNGOntos)
+- **PR #575** (2026-11-21): Download retrieval evidence off the event loop and remove its temp files (@EricNGOntos)
+- **PR #574** (2026-11-19): Remove text-track PDF leftovers and stale parser TODOs (@EricNGOntos)
+- **PR #573** (2026-11-19): chore: promote main to staging (PDF TOC nesting tree, unnumbered TOC pages, demo catalog categories) (@EricNGOntos)
+- **PR #572** (2026-11-19): PDF TOC: page screen, TOC nesting tree, and unnumbered TOC pages (@EricNGOntos)
 
 ---
 
@@ -2069,32 +1649,31 @@ Confirmation and expiry previously used processing time and could fail an on-tim
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Potential fix for pull request finding 'CodeQL / Statement has no effect'
+## X. Empirical Invariant Guard in build-images.yml
 
 **RULE**:
-When implementing operations in `deploy/opensearch/metrics_recorder.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Ontos-AI/knowhere. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/build-images.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Ontos-AI/knowhere. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e3c5db47`: Potential fix for pull request finding 'CodeQL / Statement has no effect'. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cf789c7b`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `deploy/opensearch/metrics_recorder.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/build-images.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-    def get(self, path: str) -> object:
-        raise NotImplementedError
+          QSTASH_BASE_URL: https://qstash-us-east-1.upstash.io
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-    def get(self, path: str) -> object: ...
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e3c5db47` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cf789c7b` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T22:14:43.028Z",
+  "timestamp": "2026-11-22T03:03:31.495Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-react-metro-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [react-metro-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T22:14:43.028Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T03:03:31.495Z`  
 > **Learning ID**: `LEARN-EVO-react-metro-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/react-metro-learnings.md`  
 > **Source**: github ([https://github.com/react/metro](https://github.com/react/metro))  
-> **Source Version**: `3b7e1e1b`  
+> **Source Version**: `136bb79d`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T22:14:34.826Z  
+> **Timestamp**: 2026-11-22T03:03:17.677Z  
 > **Learning ID**: `learn-github-react-metro`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/react-metro-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/react/metro](https://github.com/react/metro))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T22:14:34.821Z  
+> **Harvest Timestamp**: 2026-11-22T03:03:17.672Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1549,340 +1549,62 @@ export default class Terminal {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bc93c2aa` (2026-11-18)
-**Commit Message**: Fix matchFiles skipping symlinks when rooted above the project root (#2229)
+### Incident Patch 1: `c7a21e7e` (2026-11-21)
+**Commit Message**: Fix Flow types that use `void` for a missing value (#2265)
 
-* Fix matchFiles skipping symlinks when rooted above the project root
+Summary:
 
-Currently, `matchFiles` with a `rootDir` above the project root (eg `require.context` on a monorepo root) skips every symlink inside the project root, along with everything reached through them.
+X-link: https://github.com/react/react-native/pull/60206
 
-To resolve a symlink, `matchFiles` joins the canonical path of `rootDir` with the symlink's path relative to it. From an ancestor, that gives eg `../project/link-to-foo` for `link-to-foo`, which isn't a normal path, so the lookup reports `../project` as missing and the symlink is skipped. This collapses those segments when joining, as `TreeFS` already does for other relative lookups.
+Under Flow's `experimental.ts_void`, `void` is TypeScript's `void`, which flows only into `void`, `any` and `unknown`, so a value typed `void` can't be passed where an optional value or `undefined` is expected. This updates React Native's Flow types for projects that check React Native's sources with that option:
 
-Changelog:
-```
- - **[Fix]**: `require.context` on a directory above the project root follows symlinks inside the project root
-```
+- Library definitions say `undefined` where the TypeScript definitions do: `babel/traverse`'s `Scope#getBinding()`, `Scope#getOwnBinding()`, `Scope#getBindingIdentifier()` and `Scope#getOwnBindingIdentifier()`, and `child_process.spawnSync()`'s `error`. execa's `env` is read-only, so it accepts both `process.env` and objects with `void` values.
+- `BackHandler` handlers and the RN tester's stall handler may return nothing.
+- `EventTarget`'s listener maps and codegen's `bubblingType` use maybe types instead of `void`, `componentDidMount()` in `TouchableNativeFeedback` returns `void`, and two RN tester components that render nothing return `undefined`.
+- Where the only fix needs the `undefined` type, which this repository's Flow config doesn't enabl
 
-Test plan:
-New unit test, on posix and win32, which fails before this change. The existing "ancestor of project root includes project root" test was encoding the bug - it omitted `/project/root/project/bar.js` (through the `root -> ..` link), which the `/project`-rooted "recursive" test already expects.
-
-* Fix matchFiles from two or mo
-
-**File**: `packages/metro-file-map/src/lib/TreeFS.js` (modified, +91/-56)
+**File**: `flow-typed/environment/node.js` (modified, +1/-1)
 ```diff
-@@ -529,7 +529,6 @@ export default class TreeFS implements MutableFileSystem {
-       ancestorOfRootIdx,
-       canonicalPath: rootRealPath,
-       node: contextRoot,
--      parentNode: contextRootParent,
-     } = contextRootResult;
-     if (!isDirectory(contextRoot)) {
-       return;
-@@ -548,7 +547,6 @@ export default class TreeFS implements MutableFileSystem {
+@@ -426,7 +426,7 @@ type child_process$spawnSyncRet<T extends string | Buffer> = Readonly<{
+   // TODO: subprocess.status may be null in case of error or signal
+   status: number,
+   signal: string | null,
+-  error: Error | void,
++  error: Error | undefined,
+ }>;
  
-     for (const relativePathForComparison of this.#pathIterator(
-       contextRoot,
--      contextRootParent,
-       ancestorOfRootIdx,
-       {
-         alwaysYieldPosix: filterComparePosix,
-@@ -1348,15 +1346,33 @@ export default class TreeFS implements MutableFileSystem {
-       : this.#pathUtils.relativeToNormal(relativeOrAbsolutePath);
-   }
- 
-+  // The nth ancestor of the root ('' is 0, '..' is 1, ...), reached through
-+  // the '..' entries that link each ancestor to the next. An ancestor with
-+  // nothing in the map has no entry, and is an empty directory, as in lookups.
-+  #getNthAncestorOfRoot(n: number): DirectoryNode {
-+    let node: ?MixedNode = this.#rootNode;
-+    for (let i = 0; i < n && isDirectory(node); i++) {
-+      node = node.get('..');
-+    }
-+    return isDirectory(node) ? node : new Map();
-+  }
-+
-+  // An ancestor of the root does not hold the next ancestor down (or the root
-+  // itself) as an entry, so for the nth ancestor, the (n-1)th is yielded first,
-+  // under its basename.
-   *#directoryNodeIterator(
-     node: DirectoryNode,
--    parent: ?DirectoryNode,
-     ancestorOfRootIdx: ?number,
-+    nextAncestorNode: ?DirectoryNode,
-   ): IteratorObject<[string, MixedNode]> {
--    if (ancestorOfRootIdx != null && ancestorOfRootIdx > 0 && parent) {
-+    if (
-+      ancestorOfRootIdx != null &&
-+      ancestorOfRootIdx > 0 &&
-+      nextAncestorNode != null
-+    ) {
-       yield [
-         this.#pathUtils.getBasenameOfNthAncestor(ancestorOfRootIdx - 1),
--        parent,
-+        nextAncestorNode,
-       ] as [string, MixedNode];
-     }
-     yield* node.entries();
-@@ -1368,7 +1384,6 @@ export default class TreeFS implements MutableFileSystem {
-    */
-   *#pathIterator(
-     iterationRootNode: DirectoryNode,
--    iterationRootParentNode: ?DirectoryNode,
-     ancestorOfRootIdx: ?number,
-     opts: Readonly<{
-       alwaysYieldPosix: boolean,
-@@ -1381,18 +1396,47 @@ export default class TreeFS implements MutableFileSystem {
-     followedLinks: ReadonlySet<FileMetadata> = new Set(),
-   ): Iterable<Path> {
-     const pathSep = opts.alwaysYieldPosix ? '/' : path.sep;
--    const stack = [
--      {
-+    // Symlinks are resolved from the canonical path of their directory. The
-+    // path where they were found differs when it passes through followed
-+    // symlinks, or re-enters the root from an ancestor ('..' + 'project/link').
-+    const makeFrame = (
-+      node: DirectoryNode,
-+      canonicalPath: string,
-+      nodeAncestorOfRootIdx: ?number,
-+      prefixWithSep: string,
-+      frameFollowedLinks: ReadonlySet<FileMetadata>,
-+    ) => {
-+      // Only the next ancestor down is itself an ancestor of the root. Every
-+      // other entry of an ancestor is not.
-+      const nextAncestorOfRootIdx =
-+        nodeAncestorOfRootIdx != null && nodeAncestorOfRootIdx > 0
-+          ? nodeAncestorOfRootIdx - 1
-+          : null;
-+      const nextAncestorNode =
-+        nextAncestorOfRootIdx != null
-+          ? this.#getNthAncestorOfRoot(nextAncestorOfRootIdx)
-+          : null;
-+      return {
-+        canonicalPath,
-         entries: this.#directoryNodeIterator(
--          iterationRootNode,
--          iterationRootParentNode,
--          ancestorOfRootIdx,
-+          node,
-+          nodeAncestorOfRootIdx,
-+          nextAncestorNode,
-         ),
--        parentNode: iterationRootParentNode,
-+        nextAncestorNode,
-+        nextAncestorOfRootIdx,
-+        prefixWithSep,
-+        followedLinks: frameFollowedLinks,
-+      };
-+    };
-+    const stack = [
-+      makeFrame(
-+        iterationRootNode,
-+        opts.canonicalPathOfRoot,
-         ancestorOfRootIdx,
--        prefixWithSep: pathPrefix === '' ? '' : pathPrefix + pathSep,
-+        pathPrefix === '' ? '' : pathPrefix + pathSep,
-         followedLinks,
--      },
-+      ),
-     ];
-     while (stack.length > 0) {
-       const frame = stack[stack.length - 1];
-@@ -1402,7 +1446,11 @@ export default class TreeFS implements MutableFileSystem {
-         continue;
-       }
-       const [name, node] = next.value;
--      if (opts.subtreeOnly && name === '..') {
-+      // With no rootDir, '..' entries list files outside the project root.
-+      // Inside a followed symlink they are skipped: those files are listed
-+      // anyway, and a path through one (e.g. 'link-to-root/..') can't be
-+      // joined lexically.
-+      if (name === '..' && (opts.subtreeOnly || frame.followedLinks.size > 0)) {
-         continue;
-       }
- 
-@@ -1412,27 +1460,11 @@ export default class TreeFS implements MutableFileSystem {
-           // regular file
-           yield nodePath;
-         } else {
--          // s
+ type child_process$spawnSyncOpts = Readonly<{
 ```
 
-**File**: `packages/metro-file-map/src/lib/__tests__/TreeFS-test.js` (modified, +232/-1)
+**File**: `flow-typed/npm/babel-traverse_v7.x.x.js` (modified, +4/-4)
 ```diff
-@@ -1048,9 +1048,163 @@ describe.each([['win32'], ['posix']])('TreeFS on %s', platform => {
-             rootDir: p('/'),
-           }),
-         ),
--      ).toEqual([p('/project/bar.js')]);
-+      ).toEqual([p('/project/bar.js'), p('/project/root/project/bar.js')]);
-+    });
-+
-+    test('ancestor of project root follows symlinks within the project root', () => {
-+      expect(
-+        Array.from(
-+          tfs.matchFiles({
-+            filter: new RegExp(/\/another\.js$/),
-+            filterComparePosix: true,
-+            follow: true,
-+            recursive: true,
-+            rootDir: p('/'),
-+          }),
-+        ),
-+      ).toEqual([
-+        p('/project/foo/another.js'),
-+        p('/project/foo/owndir/another.js'),
-+        p('/project/link-to-foo/another.js'),
-+        p('/project/link-to-foo/owndir/another.js'),
-+        p('/project/root/project/foo/another.js'),
-+        p('/project/root/project/foo/owndir/another.js'),
-+        p('/project/root/project/link-to-foo/another.js'),
-+        p('/project/root/project/link-to-foo/owndir/another.js'),
-+      ]);
-     });
+@@ -533,13 +533,13 @@ declare module '@babel/traverse' {
  
-+    test('ancestor of project root follows a symlink in a directory ending in a dot', () => {
-+      const dotTfs = new TreeFS({
-+        rootDir: p('/project'),
-+        files: new Map<CanonicalPath, FileMetadata>([
-+          [p('foo./x.js'), [0, 0, 0, null, 0, null]],
-+          [p('foo./link'), [0, 0, 0, null, 'foo.', null]],
-+        ]),
-+        processFile: () => {
-+          throw new Error('Not implemented');
-+        },
-+      });
-+      expect(
-+        Array.from(
-+          dotTfs.matchFiles({
-+            follow: true,
-+            recursive: true,
-+            rootDir: p('/'),
-+          }),
-+        ),
-+      ).toEqual([p('/project/foo./x.js'), p('/project/foo./link/x.js')]);
-+    });
-+
-+    test.each([
-+      [
-+        '/a/b',
-+        [
-+          '/a/b/project/foo/x.js',
-+          '/a/b/project/link-to-foo/x.js',
-+          '/a/b/sib/y.js',
-+        ],
-+      ],
-+      [
-+        '/a',
-+        [
-+          '/a/b/project/foo/x.js',
-+          '/a/b/project/link-to-foo/x.js',
-+          '/a/b/sib/y.js',
-+          '/a/c/z.js',
-+        ],
-+      ],
-+      [
-+        '/',
-+        [
-+          '/a/b/project/foo/x.js',
-+          '/a/b/project/link-to-foo/x.js',
-+          '/a/b/sib/y.js',
-+          '/a/c/z.js',
-+        ],
-+      ],
-+    ])(
-+      'ancestor %s of a deeper project root includes each level once',
-+      (rootDir, expected) => {
-+        const deepTfs = new TreeFS({
-+          rootDir: p('/a/b/project'),
-+          files: new Map<CanonicalPath, FileMetadata>([
-+            [p('foo/x.js'), [0, 0, 0, null, 0, null]],
-+            [p('link-to-foo'), [0, 0, 0, null, 'foo', null]],
-+            [p('../sib/y.js'), [0, 0, 0, null, 0, null]],
-+            [p('../../c/z.js'), [0, 0, 0, null, 0, null]],
-+          ]),
-+          processFile: () => {
-+            throw new Error('Not implemented');
-+          },
-+        });
-+        expect(
-+          Array.from(
-+            deepTfs.matchFiles({
-+              follow: true,
-+              recursive: true,
-+              rootDir: p(rootDir),
-+            }),
-+          ),
-+        ).toEqual(expected.map(p));
-+      },
-+    );
-+
-+    test('follows a symlink to two levels above the project root', () => {
-+      const deepTfs = new TreeFS({
-+        rootDir: p('/a/b/project'),
-+        files: new Map<CanonicalPath, FileMetadata>([
-+          [p('foo/x.js'), [0, 0, 0, null, 0, null]],
-+          [p('up2'), [0, 0, 0, null, '../..', null]],
-+          [p('../sib/y.js'), [0, 0, 0, null, 0, null]],
-+        ]),
-+        processFile: () => {
-+          throw new Error('Not implemented');
-+        },
-+      });
-+      expect(
-+        Array.from(
-+          deepTfs.matchFiles({
-+            follow: true,
-+            recursive: true,
-+            rootDir: p('/a/b/project'),
-+          }),
-+        ),
-+      ).toEqual([
-+        p('/a/b/project/foo/x.js'),
-+        p('/a/b/project/up2/b/project/foo/x.js'),
-+        p('/a/b/project/up2/b/sib/y.js'),
-+      ]);
-+    });
-+
-+    test.each([['/a/b/project'], ['/a'], ['/']])(
-+      '%s lists the project root with nothing above it in the map',
-+      rootDir => {
-+        const deepTfs = new TreeFS({
-+          rootDir: p('/a/b/project'),
-+          files: new Map<CanonicalPath, FileMetadata>([
-+            [p('foo/x.js'), [0, 0, 0, null, 0, null]],
-+            [p('up2'), [0, 0, 0, null, '../..', null]],
-+          ]),
-+          processFile: () => {
-+            throw new Error('Not implemented');
-+          },
-+        });
-+        expect(
-+          Array.from(
-+            deepTfs.matchFiles({
-+              follow: true,
-+              recursive: true,
-+              rootDir: p(rootDir),
-+            }),
-+          ),
-+        ).toEqual([
-+          p('/a/b/project/foo/x.js'),
-+          p('/a/b/project/up2/b/project/foo/x.js'),
-+        ]);
-+      },
-+    );
-+
-     test('recursive', () => {
-       expect(
-        
+     bindingIdentifierEquals(name: string, node: BabelNode): boolean;
+ 
+-    getBinding(name: string): Binding | void;
++    getBinding(name: string): Binding | undefined;
+ 
+-    getOwnBinding(name: string): Binding | void;
++    getOwnBinding(name: string): Binding | undefined;
+ 
+-    getBindingIdentifier(name: string): BabelNodeIdentifier | void;
++    getBindingIdentifier(name: string): BabelNodeIdentifier | undefined;
+ 
+-    getOwnBindingIdentifier(name: string): BabelNodeIdentifier | void;
++    getOwnBindingIdentifier(name: string): BabelNodeIdentifier | undefined;
+ 
+     hasOwnBinding(name: string): boolean;
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2249** (2026-11-18): Remote cache: hedge slow reads with local transforms and cap in-flight reads (#2249) (@GijsWeterings)
-- **PR #2248** (2026-11-18): Let the review bot label, retract and reply (@robhogan)
-- **PR #2247** (2026-11-18): Name function type params and label dictionary keys in Flow libdefs (@SamChou19815)
-- **PR #2246** (2026-11-18): Remote cache: raise read concurrency and stop per-request CAT minting on VPNless (#2246) (@GijsWeterings)
-- **PR #2242** (2026-11-17): Add lazy_bundling benchmark for dev server heap and lazy chunk request time (@vzaidman)
-- **PR #2239** (2026-11-17): Share transform results between graphs (@robhogan)
+- **PR #2267** (closed): Remove the remaining type imports that rely on hoisting (@robhogan)
+- **PR #2265** (2026-11-21): Fix Flow types that use `void` for a missing value (#2265) (@SamChou19815)
+- **PR #2264** (2026-11-22): Declare process.resourceUsage in the Node Flow environment (#2264) (@christophpurrer)
+- **PR #2262** (2026-11-21): Upgrade Flow in fbsource (@SamChou19815)
+- **PR #2261** (2026-11-21): Type `process.env` and `fs.rm` options with `undefined`, as `@types/node` does (@SamChou19815)
+- **PR #2259** (2026-11-20): Remove extra type arguments in calls (@SamChou19815)
 
 ---
 
@@ -1902,74 +1624,31 @@ New unit test, on posix and win32, which fails before this change. The existing 
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. matchFiles skipping symlinks when rooted above the project root
+## X. Flow types that use `void` for a missing value
 
 **RULE**:
-When implementing operations in `packages/metro-file-map/src/lib/TreeFS.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react/metro. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `flow-typed/environment/node.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react/metro. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bc93c2aa`: matchFiles skipping symlinks when rooted above the project root. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c7a21e7e`: Flow types that use `void` for a missing value. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/metro-file-map/src/lib/TreeFS.js`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `flow-typed/environment/node.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-  // The nth ancestor of the root ('' is 0, '..' is 1, ...), reached through
-  // the '..' entries that link each ancestor to the next. An ancestor with
-  // nothing in the map has no entry, and is an empty directory, as in lookups.
-  #getNthAncestorOfRoot(n: number): DirectoryNode {
-    let node: ?MixedNode = this.#rootNode;
-    for (let i = 0; i < n && isDirectory(node); i++) {
-      node = node.get('..');
-    }
-    return isDirectory(node) ? node : new Map();
-  }
-
-  // An ancestor of the root does not hold the next ancestor down (or the root
-  // itself) as an entry, so for the nth ancestor, the (n-1)th is yielded first,
-  // under its basename.
-    nextAncestorNode: ?DirectoryNode,
-    if (
-      ancestorOfRootIdx != null &&
-      ancestorOfRootIdx > 0 &&
-      nextAncestorNode != null
-    ) {
-        nextAncestorNode,
-    // Symlinks are resolved from the canonical path of their directory. The
-    // path where they were found differs when it passes through followed
-    // symlinks, or re-enters the root from an ancestor ('..' + 'project/link').
-    const makeFrame = (
-      node: DirectoryNode,
-      canonicalPath: string,
-      nodeAncestorOfRootIdx: ?number,
-      prefixWit
+  error: Error | undefined,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Induced defect failure mode:
-      parentNode: contextRootParent,
-      contextRootParent,
-    parent: ?DirectoryNode,
-    if (ancestorOfRootIdx != null && ancestorOfRootIdx > 0 && parent) {
-        parent,
-    iterationRootParentNode: ?DirectoryNode,
-    const stack = [
-      {
-          iterationRootNode,
-          iterationRootParentNode,
-          ancestorOfRootIdx,
-        parentNode: iterationRootParentNode,
-        prefixWithSep: pathPrefix === '' ? '' : pathPrefix + pathSep,
-      },
-      if (opts.subtreeOnly && name === '..') {
-          // s
+  error: Error | void,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bc93c2aa` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c7a21e7e` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

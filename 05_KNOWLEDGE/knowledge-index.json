@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T02:53:26.314Z",
+  "last_updated": "2026-11-22T03:03:32.733Z",
   "total_verified_learnings": 9065,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23421,
+  "total_items": 23427,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -219404,8 +219404,8 @@
       "slug": "ontos-ai-knowhere",
       "platform": "github",
       "source_url": "https://github.com/Ontos-AI/knowhere",
-      "source_version": "3352f322",
-      "content_hash": "1e310de5cc99ac57f5a58c0875cfc5cabacb3f458477459ae0f7b0a3a156727a",
+      "source_version": "cf789c7b",
+      "content_hash": "f4dcce4a0d5152910fa33b9e7d9220d1d44aae1d97a8df8a7acda8d1f2401546",
       "dossier_path": "07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md",
       "promoted_rules": [
@@ -219433,6 +219433,11 @@
           "number": 9246,
           "title": "Install CJK fonts in the worker image so rendered PDFs show Chinese text",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9888,
+          "title": "Empirical Invariant Guard in build-images.yml",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -219440,7 +219445,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T19:12:08.859Z",
+      "verified_at": "2026-11-22T03:03:27.226Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -219494,10 +219499,10 @@
       "relative_path": "08_VERIFICATION/ontos-ai-knowhere-verification-protocol-empirical-defect-shield-for-ontos-ai-kno.md",
       "title": "Verification Protocol: Empirical Defect Shield for Ontos-AI/knowhere",
       "repository": "Ontos-AI/knowhere",
-      "source_version": "3352f322",
-      "content_hash": "f70103c9e7b17561eda6c4e1863117f49322b30653c3a014203ac68915b07997",
+      "source_version": "cf789c7b",
+      "content_hash": "c8dbbdaaca68b4a49d73ee86d2c840826aefd1362592139e308579b9f28f5065",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T19:12:09.525Z"
+      "persisted_at": "2026-11-22T03:03:27.956Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-meta-llama-3-8b-learnings-core-inv": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-meta-llama-3-8b-learnings-core-inv",
@@ -219531,9 +219536,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for ontos-ai-knowhere-learnings",
       "repository": "ontos-ai-knowhere-learnings",
       "source_version": "HEAD",
-      "content_hash": "9ed46360c8e8487626cc7f7483fdd14a555deb2c359657842bd4213645af2b2d",
+      "content_hash": "13f029d274401418586a05f3f485946eef18ce36ba03134aac5059e081612c45",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T13:09:11.286Z"
+      "persisted_at": "2026-11-22T03:03:32.733Z"
     },
     "learn-github-gardener-gardener": {
       "learning_id": "learn-github-gardener-gardener",
@@ -220168,7 +220173,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ricursiveAI/Ripple-65B-Preview",
       "source_version": "hf-ricursiveai-ripple-65b-preview",
-      "content_hash": "1acf871590ba5b06e6124dcf1ecbbd044a5b60a4999be52ff10090ccd28120e5",
+      "content_hash": "26c0d21874ec70e0bdb5c99187f1571d6d6b8d8fdd3f826602a97f9ad23f4d84",
       "dossier_path": "07_PROJECT_LEARNING/hf-ricursiveai-ripple-65b-preview-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ricursiveai-ripple-65b-preview-learnings.md",
       "promoted_rules": [],
@@ -220177,7 +220182,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T00:25:00.600Z",
+      "verified_at": "2026-11-22T03:03:12.640Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -220194,9 +220199,9 @@
       "title": "Research & Knowledge Intelligence: ricursiveAI/Ripple-65B-Preview Core Invariants",
       "repository": "ricursiveAI/Ripple-65B-Preview",
       "source_version": "hf-ricursiveai-ripple-65b-preview",
-      "content_hash": "b2ed9792f0668fea79ec3e5ab870b27f7577a15cf2b4aa4ac5f28f9a82103380",
+      "content_hash": "056e939ff4101e59063d3bcd6d1da4b4e7fe3ef9da2efcc31453f48b3e6b553b",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T00:25:00.974Z"
+      "persisted_at": "2026-11-22T03:03:13.058Z"
     },
     "learn-github-yvgude-lean-ctx": {
       "learning_id": "learn-github-yvgude-lean-ctx",
@@ -220565,9 +220570,9 @@
       "title": "Research & Knowledge Intelligence: hf-ricursiveai-ripple-65b-preview-learnings Core Invariants",
       "repository": "hf-ricursiveai-ripple-65b-preview-learnings",
       "source_version": "HEAD",
-      "content_hash": "a04d3f16afb580b12db6baf811c900ac16b5b71e0f6d67971d4c5359abb49d7e",
+      "content_hash": "e1ed21b8aae826db61aa5bba3577bd1b531f4101ab1408bfc9d50e389ede4ba2",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T00:25:49.643Z"
+      "persisted_at": "2026-11-22T03:03:30.963Z"
     },
     "domain_intelligence-technical-construction-intelligence-invertase-react-native-firebase-learnings-co": {
       "item_id": "domain_intelligence-technical-construction-intelligence-invertase-react-native-firebase-learnings-co",
@@ -231127,8 +231132,8 @@
       "slug": "react-metro",
       "platform": "github",
       "source_url": "https://github.com/react/metro",
-      "source_version": "3b7e1e1b",
-      "content_hash": "46aa0fcd6106144a6dac30d8de76ec82c7460c2f88ca723b44d86f6c2c2a137f",
+      "source_version": "136bb79d",
+      "content_hash": "244025917ff9a48e793188dedd3016d2064139875cee915ad27862dcb7e3a41f",
       "dossier_path": "07_PROJECT_LEARNING/react-metro-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react-metro-learnings.md",
       "promoted_rules": [
@@ -231146,6 +231151,11 @@
           "number": 9290,
           "title": "matchFiles skipping symlinks when rooted above the project root",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9887,
+          "title": "Flow types that use `void` for a missing value",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -231153,7 +231163,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T22:14:35.601Z",
+      "verified_at": "2026-11-22T03:03:18.479Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -231195,10 +231205,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-react-metro-technical-construction-intelligence-react-metro-core-invariants.md",
       "title": "Technical Construction Intelligence: react/metro Core Invariants",
       "repository": "react/metro",
-      "source_version": "3b7e1e1b",
-      "content_hash": "b0f1471c879afc1b8f5f67ca1c47bf1b13347c846a553e00bfd00b1263a80ed3",
+      "source_version": "136bb79d",
+      "content_hash": "5bf0c1d260a3fbb514d5a0f660a0cd021bcb3a8766685b436f27332c70106677",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T22:14:36.124Z"
+      "persisted_at": "2026-11-22T03:03:19.034Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-react-metro": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-react-metro",
@@ -231207,10 +231217,10 @@
       "relative_path": "08_VERIFICATION/react-metro-verification-protocol-empirical-defect-shield-for-react-metro.md",
       "title": "Verification Protocol: Empirical Defect Shield for react/metro",
       "repository": "react/metro",
-      "source_version": "3b7e1e1b",
-      "content_hash": "8269854b392acf1ab0b705415e85d282cc14731185c7b8ea6c1b4f3e1aeeb758",
+      "source_version": "136bb79d",
+      "content_hash": "e07fe0e792945e32085550eac0175ec31efaad71a72b50b89e06384844a1f1f6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T22:14:36.274Z"
+      "persisted_at": "2026-11-22T03:03:19.190Z"
     },
     "learn-huggingface-google-vit-base-patch16-224": {
       "learning_id": "learn-huggingface-google-vit-base-patch16-224",
@@ -231309,9 +231319,9 @@
       "title": "Technical Construction Intelligence: react-metro-learnings Core Invariants",
       "repository": "react-metro-learnings",
       "source_version": "HEAD",
-      "content_hash": "8b3d56310bafa21d674dac77c31afa4df4e0b787f9a67305be60b25523f10a82",
+      "content_hash": "78d7c94b8c6413a038684b6088e3418c1836ea356ef148bb75566f36c13a5c87",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T22:14:43.279Z"
+      "persisted_at": "2026-11-22T03:03:31.762Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-react-metro-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-react-metro-learnings",
@@ -231321,9 +231331,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for react-metro-learnings",
       "repository": "react-metro-learnings",
       "source_version": "HEAD",
-      "content_hash": "41427417f1261f5d4d724974244810dfb8100a0a357cac60cbb3e0adb06f9a5a",
+      "content_hash": "8a1c8aef65bc540346e4d223c7cbef8ec1da25d2563287c2d4fe6243caac98c1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T22:14:43.405Z"
+      "persisted_at": "2026-11-22T03:03:31.918Z"
     },
     "candidate_directive-clippy-unnecessary-to-owned": {
       "item_id": "candidate_directive-clippy-unnecessary-to-owned",
@@ -318495,6 +318505,82 @@
       "content_hash": "17e8225dc916669bf756f9b781a3d194846039424dec8e3a0a992893ed50db0c",
       "domain_letter": "D",
       "persisted_at": "2026-11-22T02:42:33.469Z"
+    },
+    "rule-9887": {
+      "learning_id": "rule-9887",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9887,
+      "title": "Flow types that use `void` for a missing value",
+      "source_url": "https://github.com/react/metro",
+      "source_version": "136bb79d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T03:03:18.479Z"
+    },
+    "candidate_directive-flow-types-that-use-void-for-a-missing-value": {
+      "item_id": "candidate_directive-flow-types-that-use-void-for-a-missing-value",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5NA0-flow-types-that-use-void-for-a-missing-value.md",
+      "title": "Flow types that use `void` for a missing value",
+      "repository": "react-metro-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2f7ab8fd64781636b0472fbdc9ff77cc5bfb9d7511f672211f77a9fdc4c1b63d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T03:03:31.609Z"
+    },
+    "rule-9888": {
+      "learning_id": "rule-9888",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9888,
+      "title": "Empirical Invariant Guard in build-images.yml",
+      "source_url": "https://github.com/Ontos-AI/knowhere",
+      "source_version": "cf789c7b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T03:03:27.226Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-build-images-yml": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-build-images-yml",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5NW4-empirical-invariant-guard-in-build-images-yml.md",
+      "title": "Empirical Invariant Guard in build-images.yml",
+      "repository": "ontos-ai-knowhere-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4f9a7bec4b2ecb92bd3c277fe5ecf0d353a8d976ea4a5f8c59489d2ea2a0a28e",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-22T03:03:32.407Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-ontos-ai-knowhere-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-ontos-ai-knowhere-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ontos-ai-knowhere-technical-construction-intelligence-ontos-ai-knowhere-core-inv.md",
+      "title": "Technical Construction Intelligence: Ontos-AI/knowhere Core Invariants",
+      "repository": "Ontos-AI/knowhere",
+      "source_version": "cf789c7b",
+      "content_hash": "c11f4119a9963232304e8d26818c3677a97d5a086835e01dc700e219d324d83e",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T03:03:27.790Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-ontos-ai-knowhere-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-ontos-ai-knowhere-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ontos-ai-knowhere-learnings-technical-construction-intelligence-ontos-ai-knowher.md",
+      "title": "Technical Construction Intelligence: ontos-ai-knowhere-learnings Core Invariants",
+      "repository": "ontos-ai-knowhere-learnings",
+      "source_version": "HEAD",
+      "content_hash": "38c5fa77c3ee19413208dc6068d125522802a4e3a1e52d3788deab3b3e0d8af7",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T03:03:32.562Z"
     }
   },
   "ai-builder-brain": {

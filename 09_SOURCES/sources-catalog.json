@@ -2293,10 +2293,10 @@
     "repository": "Ontos-AI/knowhere",
     "platform": "github",
     "sourceUrl": "https://github.com/Ontos-AI/knowhere",
-    "sourceVersion": "3352f322",
+    "sourceVersion": "cf789c7b",
     "license": "Apache-2.0",
-    "contentHash": "1e310de5cc99ac57f5a58c0875cfc5cabacb3f458477459ae0f7b0a3a156727a",
-    "lastHarvestedAt": "2026-11-19T19:12:09.048Z",
+    "contentHash": "f4dcce4a0d5152910fa33b9e7d9220d1d44aae1d97a8df8a7acda8d1f2401546",
+    "lastHarvestedAt": "2026-11-22T03:03:27.422Z",
     "learningId": "learn-github-ontos-ai-knowhere"
   },
   "bitterbot-ai-bitterbot-desktop": {
@@ -5493,10 +5493,10 @@
     "repository": "react/metro",
     "platform": "github",
     "sourceUrl": "https://github.com/react/metro",
-    "sourceVersion": "3b7e1e1b",
+    "sourceVersion": "136bb79d",
     "license": "MIT",
-    "contentHash": "46aa0fcd6106144a6dac30d8de76ec82c7460c2f88ca723b44d86f6c2c2a137f",
-    "lastHarvestedAt": "2026-11-18T22:14:35.782Z",
+    "contentHash": "244025917ff9a48e793188dedd3016d2064139875cee915ad27862dcb7e3a41f",
+    "lastHarvestedAt": "2026-11-22T03:03:18.677Z",
     "learningId": "learn-github-react-metro"
   },
   "checkmarx-kics": {
@@ -11955,8 +11955,8 @@
     "sourceUrl": "https://huggingface.co/ricursiveAI/Ripple-65B-Preview",
     "sourceVersion": "hf-ricursiveai-ripple-65b-preview",
     "license": "Open-Source",
-    "contentHash": "1acf871590ba5b06e6124dcf1ecbbd044a5b60a4999be52ff10090ccd28120e5",
-    "lastHarvestedAt": "2026-11-14T00:25:00.772Z",
+    "contentHash": "26c0d21874ec70e0bdb5c99187f1571d6d6b8d8fdd3f826602a97f9ad23f4d84",
+    "lastHarvestedAt": "2026-11-22T03:03:12.857Z",
     "learningId": "learn-huggingface-ricursiveai-ripple-65b-preview"
   },
   "apache-pinot": {

@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-22T02:53:23.095Z",
-    "lastVerified": "2026-11-22T02:53:23.095Z",
+    "lastChecked": "2026-11-22T03:03:30.613Z",
+    "lastVerified": "2026-11-22T03:03:30.613Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -255,9 +255,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-22T02:18:12.213Z",
+    "lastChecked": "2026-11-22T03:03:24.792Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-22T02:18:12.213Z"
+    "lastVerified": "2026-11-22T03:03:24.792Z"
   },
   "herdrdev-herdr": {
     "name": "herdrdev/herdr",
@@ -1399,8 +1399,8 @@
     "officialUrl": "https://github.com/RustCrypto/hashes",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-21T21:49:00.880Z",
-    "lastVerified": "2026-11-21T21:49:00.880Z",
+    "lastChecked": "2026-11-22T03:03:19.857Z",
+    "lastVerified": "2026-11-22T03:03:19.857Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustcrypto-hashes",
@@ -2666,22 +2666,21 @@
     "lastVerified": "2026-11-21T23:06:04.108Z"
   },
   "ontos-ai-knowhere": {
-    "name": "knowhere",
+    "name": "Ontos-AI/knowhere",
     "officialUrl": "https://github.com/Ontos-AI/knowhere",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-20T22:49:28.276Z",
-    "lastVerified": "2026-11-20T22:49:28.276Z",
+    "lastChecked": "2026-11-22T03:03:26.420Z",
+    "lastVerified": "2026-11-22T03:03:26.420Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-ontos-ai-knowhere",
-    "contentHash": "1e310de5cc99ac57f5a58c0875cfc5cabacb3f458477459ae0f7b0a3a156727a",
+    "contentHash": "f4dcce4a0d5152910fa33b9e7d9220d1d44aae1d97a8df8a7acda8d1f2401546",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "3352f322"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "sharkdp-hyperfine": {
     "name": "hyperfine",
@@ -3846,9 +3845,9 @@
   "go-dev-frame-sponge": {
     "name": "sponge",
     "officialUrl": "https://github.com/go-dev-frame/sponge",
-    "lastChecked": "2026-11-20T23:39:45.106Z",
+    "lastChecked": "2026-11-22T03:03:17.263Z",
     "revisionIdentifier": "beef9eec",
-    "lastVerified": "2026-11-20T23:39:45.106Z"
+    "lastVerified": "2026-11-22T03:03:17.263Z"
   },
   "llphant-llphant": {
     "name": "LLPhant",
@@ -5063,12 +5062,12 @@
     "officialUrl": "https://github.com/react/metro",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-11-18T22:14:34.821Z",
-    "lastVerified": "2026-11-18T22:14:34.821Z",
+    "lastChecked": "2026-11-22T03:03:17.672Z",
+    "lastVerified": "2026-11-22T03:03:17.672Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-react-metro",
-    "contentHash": "46aa0fcd6106144a6dac30d8de76ec82c7460c2f88ca723b44d86f6c2c2a137f",
+    "contentHash": "244025917ff9a48e793188dedd3016d2064139875cee915ad27862dcb7e3a41f",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
@@ -5454,9 +5453,9 @@
   "datadog-glommio": {
     "name": "glommio",
     "officialUrl": "https://github.com/DataDog/glommio",
-    "lastChecked": "2026-11-20T16:23:19.023Z",
+    "lastChecked": "2026-11-22T03:03:09.782Z",
     "revisionIdentifier": "84348159",
-    "lastVerified": "2026-11-20T16:23:19.023Z"
+    "lastVerified": "2026-11-22T03:03:09.782Z"
   },
   "hf-pablodawson-minimax-h3-360-orbit-lora": {
     "name": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
@@ -13441,6 +13440,23 @@
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-nvidia-nvidia-nemotronlabs-re-use",
     "contentHash": "7950e424f9c7d33c1dd4cd6a5f900f71e56ed28a4df707dc40a179805ec4e631",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-ricursiveai-ripple-65b-preview": {
+    "name": "ricursiveAI/Ripple-65B-Preview",
+    "officialUrl": "https://huggingface.co/ricursiveAI/Ripple-65B-Preview",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-22T03:03:12.280Z",
+    "lastVerified": "2026-11-22T03:03:12.280Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-ricursiveai-ripple-65b-preview",
+    "contentHash": "26c0d21874ec70e0bdb5c99187f1571d6d6b8d8fdd3f826602a97f9ad23f4d84",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

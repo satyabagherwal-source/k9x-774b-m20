@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T02:53:11.671Z",
-  "total_cycles_completed": 11397,
-  "total_learnings_persisted": 11397,
-  "total_rules_promoted": 10697,
+  "last_updated": "2026-11-22T03:03:27.427Z",
+  "total_cycles_completed": 11400,
+  "total_learnings_persisted": 11400,
+  "total_rules_promoted": 10699,
   "history": [
-    {
-      "timestamp": "2026-11-21T09:23:44.300Z",
-      "repository": "nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
-      "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T09:47:28.974Z",
-      "repository": "apache/shardingsphere",
-      "learningId": "learn-github-apache-shardingsphere",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T09:47:30.677Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T09:52:22.247Z",
       "repository": "storybookjs/storybook",
@@ -1403,6 +1382,27 @@
       "repository": "nvidia/NVIDIA-NemotronLabs-RE-USE",
       "learningId": "learn-huggingface-nvidia-nvidia-nemotronlabs-re-use",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T03:03:12.862Z",
+      "repository": "ricursiveAI/Ripple-65B-Preview",
+      "learningId": "learn-huggingface-ricursiveai-ripple-65b-preview",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T03:03:18.682Z",
+      "repository": "react/metro",
+      "learningId": "learn-github-react-metro",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T03:03:27.427Z",
+      "repository": "Ontos-AI/knowhere",
+      "learningId": "learn-github-ontos-ai-knowhere",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
