@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T05:04:29.223Z",
+  "last_updated": "2026-11-22T05:12:30.131Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -18366,14 +18366,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic-i1-gguf",
-      "content_hash": "9694a4b4d1f35829a72892db1bbe1f917e0d9f070a88a84c607a754836810fb8",
-      "verified_at": "2026-11-18T01:02:29.319Z",
+      "content_hash": "d64740fe0096f3b7f74fc65e7f8951115d38e33b817e6106f1ae1723bf62eb41",
+      "verified_at": "2026-11-22T05:12:30.130Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T01:02:29.319Z"
+      "last_updated": "2026-11-22T05:12:30.130Z"
     },
     "Scantist/GLM-5.3-SLIM-GGUF": {
       "repository": "Scantist/GLM-5.3-SLIM-GGUF",

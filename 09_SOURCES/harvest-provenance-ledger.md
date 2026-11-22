@@ -12048,3 +12048,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-viggle-viggle-remake` | `https://huggingface.co/Viggle/Viggle-Remake` | `hf-viggle-` | Multi-dimensional audit evidence | 2026-11-22T04:51:56.747Z |
 | `learn-huggingface-audio-cpp-audio-cpp-gguf` | `https://huggingface.co/audio-cpp/audio.cpp-gguf` | `hf-audio-c` | Multi-dimensional audit evidence | 2026-11-22T05:04:28.181Z |
 | `learn-github-dicklesworthstone-destructive_command_guard` | `https://github.com/Dicklesworthstone/destructive_command_guard` | `2f372957` | Multi-dimensional audit evidence | 2026-11-22T05:04:29.163Z |
+| `learn-huggingface-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic-i1-gguf` | `https://huggingface.co/mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF` | `hf-mraderm` | Multi-dimensional audit evidence | 2026-11-22T05:12:30.121Z |

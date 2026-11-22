@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261120-CDKN",
-    "timestamp": "2026-11-20T04:29:24.023Z",
-    "repository": "gocd/gocd",
-    "learningId": "learn-github-gocd-gocd",
-    "contentHash": "3bc738b0cda0f12e8ea19f218aee7af8e5648925a989448ae39feb7f1a12cbfc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261120-CERC",
     "timestamp": "2026-11-20T04:29:25.560Z",
     "repository": "sigstore/cosign",
@@ -7492,6 +7477,21 @@
     "contentHash": "0004a3e985cf0471201f294b4865d778ca6f0cd0714f2aa26932869f320365de",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-RICL",
+    "timestamp": "2026-11-22T05:12:30.117Z",
+    "repository": "mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF",
+    "learningId": "learn-huggingface-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic-i1-gguf",
+    "contentHash": "d64740fe0096f3b7f74fc65e7f8951115d38e33b817e6106f1ae1723bf62eb41",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

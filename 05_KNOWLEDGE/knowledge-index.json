@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T05:04:43.218Z",
+  "last_updated": "2026-11-22T05:12:44.161Z",
   "total_verified_learnings": 9068,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23466,
+  "total_items": 23468,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "342e28437e774abaf5a5058fb5658b7266348ec955d066da522177a41501abcf",
+      "content_hash": "8561df1c5e4ef20b22d7456dfba1c996db1bff87bbae3b8308138ebf251cfbea",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T04:39:45.230Z"
+      "persisted_at": "2026-11-22T05:12:44.161Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "b9ef20ac9ff195550ca2efde3ee6f7fee4584c224817f199336a377db1d8c57a",
+      "content_hash": "4f1c8e24ad96165d65c6a9871cbc20c96cfc3314337b54826ac73644a59355f8",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T02:42:34.353Z"
+      "persisted_at": "2026-11-22T05:12:42.935Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "e21deca53093bdebaf75670ba83249a5bfcdef2318b60d9df288824bccd354d5",
+      "content_hash": "afc8914862856325ee8c23f67cd3251348a40a8ca2684cc9c4fc3db3d5984802",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T02:42:34.521Z"
+      "persisted_at": "2026-11-22T05:12:43.128Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -282639,7 +282639,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF",
       "source_version": "hf-mradermacher-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-i1-gguf",
-      "content_hash": "9694a4b4d1f35829a72892db1bbe1f917e0d9f070a88a84c607a754836810fb8",
+      "content_hash": "d64740fe0096f3b7f74fc65e7f8951115d38e33b817e6106f1ae1723bf62eb41",
       "dossier_path": "07_PROJECT_LEARNING/hf-mradermacher-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-i1-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-mradermacher-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-i1-gguf-learnings.md",
       "promoted_rules": [
@@ -282659,7 +282659,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T01:02:29.141Z",
+      "verified_at": "2026-11-22T05:12:29.861Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -318207,13 +318207,13 @@
       "item_id": "candidate_directive-test-collab-write-trust-fixtures-with-explicit-0644-permissions",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-EP1O-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-RS3G-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "4ac121e962f041f1e4bf27d87a239ffbb19a9fb2d56d2a2b87a9bf9776eb39cb",
+      "content_hash": "1fe042a1489752f94e2ab408f0189988b09f8b6d2e3672967f9df32211b602d8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T02:42:34.202Z"
+      "persisted_at": "2026-11-22T05:12:42.754Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants",
@@ -319157,6 +319157,30 @@
       "content_hash": "c49334013df382dc75dec0d2a8e14dc6c70e66317107997dd5a81608d027b5ba",
       "domain_letter": "G",
       "persisted_at": "2026-11-22T05:04:40.936Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensor": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensor",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic-i1-gguf-research-k.md",
+      "title": "Research & Knowledge Intelligence: mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF Core Invariants",
+      "repository": "mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF",
+      "source_version": "hf-mradermacher-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-i1-gguf",
+      "content_hash": "93be238974f573964d5e702ecd212e34091ea5c90b301f6fb28a0e57b85452c2",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-22T05:12:30.353Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncen": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncen",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic-i1-gguf-learnings-.md",
+      "title": "Research & Knowledge Intelligence: hf-mradermacher-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-i1-gguf-learnings Core Invariants",
+      "repository": "hf-mradermacher-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-i1-gguf-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ca742b1ba99989e0afff6cffaaf729e5d06485f4a79c4beecaf1c306cda3c630",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-22T05:12:42.224Z"
     }
   },
   "ai-builder-brain": {

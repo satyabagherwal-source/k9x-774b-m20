@@ -12015,3 +12015,4 @@
 | `CYCLE-20261122-12O7` | `2026-11-22T04:51:56.743Z` | `Viggle/Viggle-Remake` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-viggle-viggle-remake-learnings.md` | Yes (`57fa81f5...`) |
 | `CYCLE-20261122-H6HB` | `2026-11-22T05:04:28.175Z` | `audio-cpp/audio.cpp-gguf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-audio-cpp-audio.cpp-gguf-learnings.md` | Yes (`ea4b7856...`) |
 | `CYCLE-20261122-H78M` | `2026-11-22T05:04:29.158Z` | `Dicklesworthstone/destructive_command_guard` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0004a3e9...`) |
+| `CYCLE-20261122-RICL` | `2026-11-22T05:12:30.117Z` | `mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-mradermacher-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-i1-gguf-learnings.md` | Yes (`d64740fe...`) |

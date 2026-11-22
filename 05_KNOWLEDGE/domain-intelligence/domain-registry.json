@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T05:04:42.787Z",
-  "total_records": 2327,
+  "last_updated": "2026-11-22T05:12:44.161Z",
+  "total_records": 2329,
   "domains": {
     "A": {
       "total": 17,
@@ -60,7 +60,7 @@
       ]
     },
     "D": {
-      "total": 913,
+      "total": 915,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -974,7 +974,9 @@
         "domain_intelligence-research-knowledge-intelligence-dosco-deeporg-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-prunaai-p-image-oss-core-invariants",
         "DOM-D-03750A38",
-        "domain_intelligence-research-knowledge-intelligence-dosco-deeporg-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-dosco-deeporg-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensor",
+        "domain_intelligence-research-knowledge-intelligence-hf-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncen"
       ]
     },
     "E": {
@@ -8142,8 +8144,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "342e28437e774abaf5a5058fb5658b7266348ec955d066da522177a41501abcf",
-      "created_at": "2026-11-22T04:39:45.230Z"
+      "content_hash": "8561df1c5e4ef20b22d7456dfba1c996db1bff87bbae3b8308138ebf251cfbea",
+      "created_at": "2026-11-22T05:12:44.161Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -9060,8 +9062,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "b9ef20ac9ff195550ca2efde3ee6f7fee4584c224817f199336a377db1d8c57a",
-      "created_at": "2026-11-22T02:42:34.353Z"
+      "content_hash": "4f1c8e24ad96165d65c6a9871cbc20c96cfc3314337b54826ac73644a59355f8",
+      "created_at": "2026-11-22T05:12:42.935Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -39259,6 +39261,24 @@
       "repository": "dosco-deeporg-learnings",
       "content_hash": "f40dc9afb84ec7857b792bcdb60e00a5fe00a068bb217a42b136a366ff90246a",
       "created_at": "2026-11-22T04:52:01.009Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensor": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensor",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic-i1-gguf-research-k.md",
+      "repository": "mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF",
+      "content_hash": "93be238974f573964d5e702ecd212e34091ea5c90b301f6fb28a0e57b85452c2",
+      "created_at": "2026-11-22T05:12:30.353Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncen": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncen",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-mradermacher-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-i1-gguf-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic-i1-gguf-learnings-.md",
+      "repository": "hf-mradermacher-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-i1-gguf-learnings",
+      "content_hash": "ca742b1ba99989e0afff6cffaaf729e5d06485f4a79c4beecaf1c306cda3c630",
+      "created_at": "2026-11-22T05:12:42.224Z"
     }
   }
 }

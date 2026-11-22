@@ -12205,8 +12205,8 @@
     "sourceUrl": "https://huggingface.co/mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF",
     "sourceVersion": "hf-mradermacher-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-i1-gguf",
     "license": "Open-Source",
-    "contentHash": "9694a4b4d1f35829a72892db1bbe1f917e0d9f070a88a84c607a754836810fb8",
-    "lastHarvestedAt": "2026-11-18T01:02:29.311Z",
+    "contentHash": "d64740fe0096f3b7f74fc65e7f8951115d38e33b817e6106f1ae1723bf62eb41",
+    "lastHarvestedAt": "2026-11-22T05:12:30.121Z",
     "learningId": "learn-huggingface-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic-i1-gguf"
   },
   "hf-scantist-glm-5.3-slim-gguf": {
