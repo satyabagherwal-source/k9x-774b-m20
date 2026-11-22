@@ -335,8 +335,8 @@
     "sourceUrl": "https://huggingface.co/nvidia/Nemotron-3-Diarization",
     "sourceVersion": "hf-nvidia-nemotron-3-diarization",
     "license": "Open-Source",
-    "contentHash": "dc3273c0cd95cd615a9d3f46afbf7eb173580e8c2d523330cb1a2128e9aceeb2",
-    "lastHarvestedAt": "2026-11-18T12:23:50.001Z",
+    "contentHash": "d2729c573a0a76cecbe2ec0963fe956160b27eb28bc2ea3909934401b636de3d",
+    "lastHarvestedAt": "2026-11-22T19:01:34.119Z",
     "learningId": "learn-huggingface-nvidia-nemotron-3-diarization"
   },
   "hf-lightricks-ltx-2.5": {
@@ -6123,10 +6123,10 @@
     "repository": "dragonflydb/dragonfly",
     "platform": "github",
     "sourceUrl": "https://github.com/dragonflydb/dragonfly",
-    "sourceVersion": "66de9e68",
+    "sourceVersion": "24104b84",
     "license": "NOASSERTION",
-    "contentHash": "dc1d52a31c2c46c9ecd04c66890772bde3e43ed13a2f7598c6d3899d99b030ed",
-    "lastHarvestedAt": "2026-11-21T17:42:01.481Z",
+    "contentHash": "cfcf0f4b19dae7c40824e8b53fb2d1f215b23aa6baf285656512b4423ee0a293",
+    "lastHarvestedAt": "2026-11-22T19:01:47.553Z",
     "learningId": "learn-github-dragonflydb-dragonfly"
   },
   "danielpetho-fancy": {
@@ -7843,10 +7843,10 @@
     "repository": "rtk-ai/rtk",
     "platform": "github",
     "sourceUrl": "https://github.com/rtk-ai/rtk",
-    "sourceVersion": "ef0b734b",
+    "sourceVersion": "762708cd",
     "license": "Apache-2.0",
-    "contentHash": "0afe18311557c238e35f0e916671700c6f23842c179689df060754f8da9076c7",
-    "lastHarvestedAt": "2026-11-21T07:10:31.560Z",
+    "contentHash": "e144b1b4edb21ab40a44798e6e30d17f85e6fdf0e0cf7c1f5f33fbf392799bd4",
+    "lastHarvestedAt": "2026-11-22T19:01:35.505Z",
     "learningId": "learn-github-rtk-ai-rtk"
   },
   "gao-sun-eul": {

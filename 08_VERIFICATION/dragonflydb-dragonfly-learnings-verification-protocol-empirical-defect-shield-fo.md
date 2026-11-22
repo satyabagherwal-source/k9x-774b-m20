@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T12:15:56.413Z",
+  "timestamp": "2026-11-22T19:01:53.125Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-dragonflydb-dragonfly-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [dragonflydb-dragonfly-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T12:15:56.413Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T19:01:53.125Z`  
 > **Learning ID**: `LEARN-EVO-dragonflydb-dragonfly-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md`  
 > **Source**: github ([https://github.com/dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly))  
-> **Source Version**: `db656d41`  
+> **Source Version**: `24104b84`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T12:15:28.490Z  
+> **Timestamp**: 2026-11-22T19:01:46.261Z  
 > **Learning ID**: `learn-github-dragonflydb-dragonfly`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T12:15:28.485Z  
+> **Harvest Timestamp**: 2026-11-22T19:01:46.253Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: A modern replacement for Redis and Memcached
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 31895 stars
+- **Stars / Engagement**: 31903 stars
 
 ---
 
@@ -2346,582 +2346,38 @@ class Segment {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ee352cbf` (2026-11-19)
-**Commit Message**: fix(search): reply with RESP3 maps and sets in search commands (#8836)
+### Incident Patch 1: `24104b84` (2026-11-22)
+**Commit Message**: fix(tests): expect the bare user name from ACL WHOAMI in ExternalAuth (#8862)
 
-Under RESP3, FT.SEARCH, FT.AGGREGATE and FT.INFO replied with flat RESP2 arrays, and each
-FT.HYBRID result was a flat array, so RESP3 clients could not read them as maps. Client libraries
-that speak RESP3 by default failed in their search, aggregate and info helpers.
+ServerFamilyTest.ExternalAuth came with #8768 while ACL WHOAMI still replied "User is <name>".
+#8857 made WHOAMI reply with the user name only, and its CI ran on a merge commit that did not
+include #8768, so both landed on main and the test fails there now.
 
-Under RESP3:
-- FT.SEARCH and FT.AGGREGATE reply with a map of attributes, format, results, total_results and
-  warning. A search result is a map of id, score (a double), payload, sortkey, extra_attributes
-  and values; an aggregate row has extra_attributes and values.
-- FT.PROFILE SEARCH and AGGREGATE reply with a map of Results and Profile.
-- FT.INFO replies with a map, and each attribute is a map with its flags under flags. WEIGHT
-  and epsilon are doubles.
-- FT.HYBRID results are maps, and execution_time is a double.
-- FT._LIST replies with a set, FT.SYNDUMP and FT.CONFIG HELP with maps.
+Signed-off-by: Volodymyr Yavdoshenko <[REDACTED_EMAIL]>
 
-Under RESP2, three replies change: FT.INFO sends the integer attribute parameters (dim, M,
-ef_construction, initial_cap, ef_runtime, blocksize) as integers, FT.CONFIG GET returns each name
-and value as a pair, and FT.HYBRID writes execution_time in its shortes
-
-**File**: `src/facade/facade_test.h` (modified, +13/-0)
+**File**: `src/server/server_family_test.cc` (modified, +2/-2)
 ```diff
-@@ -87,6 +87,19 @@ template <typename... Args> auto RespElementsAre(const Args&... matchers) {
-   return RespArray(::testing::ElementsAre(matchers...));
- }
- 
-+// RESP3 arrays, maps and sets all arrive as ARRAY; these check which one was sent.
-+MATCHER(IsResp3ArrayKind, "is a RESP3 array") {
-+  return arg.type == RespExpr::ARRAY && arg.agg == RespExpr::Agg::kArray;
-+}
-+
-+MATCHER(IsResp3MapKind, "is a RESP3 map") {
-+  return arg.type == RespExpr::ARRAY && arg.agg == RespExpr::Agg::kMap;
-+}
-+
-+MATCHER(IsResp3SetKind, "is a RESP3 set") {
-+  return arg.type == RespExpr::ARRAY && arg.agg == RespExpr::Agg::kSet;
-+}
-+
- inline bool operator==(const RespExpr& left, std::string_view s) {
-   return left.type == RespExpr::STRING && ToSV(left.GetBuf()) == s;
- }
-```
-
-**File**: `src/facade/resp_expr.h` (modified, +4/-0)
-```diff
-@@ -22,9 +22,13 @@ class RespExpr {
- 
-   enum Type : uint8_t { STRING, ARRAY, INT64, DOUBLE, NIL, NIL_ARRAY, ERROR };
- 
-+  // RESP3 maps and sets arrive as an ARRAY of their flat contents; this tells them apart.
-+  enum class Agg : uint8_t { kArray, kMap, kSet };
-+
-   using Vec = std::vector<RespExpr>;
-   Type type;
-   bool has_support;  // whether pointers in this item are supported by the external storage.
-+  Agg agg = Agg::kArray;
- 
-   std::variant<int64_t, double, Buffer, Vec*> u;
- 
-```
-
-**File**: `src/facade/resp_expr_test_utils.cc` (modified, +4/-0)
-```diff
-@@ -68,6 +68,10 @@ RespExpr RespExprBuilder::BuildNode(const RESPObj& obj) {
-           expr.u.emplace<RespExpr::Vec*>(nullptr);
-         } else {
-           expr.type = RespExpr::ARRAY;
-+          if (obj.GetType() == RESPObj::Type::MAP)
-+            expr.agg = RespExpr::Agg::kMap;
-+          else if (obj.GetType() == RESPObj::Type::SET)
-+            expr.agg = RespExpr::Agg::kSet;
-           auto vec = std::make_unique<RespExpr::Vec>();
-           vec->resize(arr->Size());
-           expr.u = vec.get();
-```
-
-**File**: `src/server/search/search_family.cc` (modified, +268/-114)
-```diff
-@@ -1364,6 +1364,92 @@ float GlobalMaxTextScore(absl::Span<const SearchResult> results) {
-   return max_it == results.end() ? 0.0f : max_it->max_text_score;
- }
- 
-+// RESP3 replies of FT.SEARCH and FT.AGGREGATE are maps: the results come first, the total after.
-+void StartResp3Reply(size_t results, RedisReplyBuilder* rb) {
-+  rb->StartCollection(5, CollectionType::MAP);
-+  rb->SendSimpleString("attributes");
-+  rb->SendEmptyArray();
-+  rb->SendSimpleString("format");
-+  rb->SendSimpleString("STRING");
-+  rb->SendSimpleString("results");
-+  rb->StartArray(results);
-+}
-+
-+void EndResp3Reply(size_t total, RedisReplyBuilder* rb) {
-+  rb->SendSimpleString("total_results");
-+  rb->SendLong(total);
-+  rb->SendSimpleString("warning");
-+  rb->SendEmptyArray();
-+}
-+
-+void SendSortKey(const search::SortableValue& value, RedisReplyBuilder* rb) {
-+  Overloaded sortable_value_sender{
-+      [rb](monostate) { rb->SendNull(); },
-+      [rb](double d) { rb->SendBulkString(absl::StrFormat("#%.17g", d)); },
-+      [rb](const string& s) { rb->SendBulkString(absl::StrCat("$", s)); },
-+  };
-+  visit(sortable_value_sender, value);
-+}
-+
-+void SendSearchResultsResp2(const SearchParams& params, size_t total_hits,
-+                            absl::Span<SerializedSearchDoc* const> docs, RedisReplyBuilder* rb) {
-+  const bool reply_with_ids_only = params.IdsOnly();
-+  const size_t items_per_field = (reply_with_ids_only ? 1 : 2) + params.with_sortkeys +
-+                                 params.with_scores + params.with_payloads;
-+  rb->StartArray(docs.size() * items_per_field + 1);
-+  rb->SendLong(total_hits);
-+  for (const auto* doc : docs) {
-+    rb->SendBulkString(doc->key);
-+    if (params.with_scores)
-+      rb->SendBulkString(absl::StrCat(doc->text_score));
-+    if (params.with_payloads)  // Documents have no payloads.
-+      rb->SendNull();
-+    if (params.with_sortkeys)
-+      SendSortKey(doc->sort_score, rb);
-+    if (!reply_with_ids_only)
-+      SendSerializedDoc(*doc, rb);
-+  }
-+}
-+
-+// RESP3 makes each result a map and names its parts.
-+void SendSearchResultsResp3(const SearchParams& params, size_t total_hits,
-+                            absl::Span<SerializedSearchDoc* const> docs, RedisReplyBuilder* rb) {
-+  const bool reply_with_ids_only = params.IdsOnly();
-+  const size_t parts_per_result = (reply_with_ids_only ? 2 : 3) + params.with_sortkeys +
-+                                  params.with_scores + params.with_payloads;
-+  StartResp3Reply(docs.size(), rb);
-+  for (const auto* doc : docs) {
-+    rb->StartCollection(parts_per_result, CollectionType::MAP);
-+    rb->SendSimpleString("id");
-+    rb->SendBulkString(doc->key);
-+    if (params.with_scores) {
-+      rb->SendSimpleString("score");
-+      rb->SendDouble(doc->text_score);
-+    }
-+    if (params.with_payloads) {  // Documents have no payloads.
-+      rb->SendSimpleString("payload");
-+      rb->SendNull();
-+    }
-+    if (params.with_sortkeys) {
-+      rb->SendSimpleString("sortkey");
-+      SendSortKey(doc->sort_score, rb);
-+    }
-+    if (!reply_with_ids_only) {
-+      rb->SendSimpleString("extra_attributes");
-+      SendSerializedDoc(*doc, rb);
-+    }
-+    rb->SendSimpleString("values");
-+    rb->SendEmptyArray();
-+  }
-+  EndResp3Reply(total_hits, rb);
-+}
-+
-+void SendSearchResultsResp(const SearchParams& params, size_t total_hits,
-+                           absl::Span<SerializedSearchDoc* const> docs, RedisReplyBuilder* rb) {
-+  auto* reply = rb->IsResp3() ? &SendSearchResultsResp3 : &SendSearchResultsResp2;
-+  reply(params, total_hits, docs, rb);
-+}
-+
- void SearchReply(const SearchParams& params,
-                  std::optional<search::KnnScoreSortOption> knn_sort_option,
-                  std::string_view inject_score_alias, absl::Span<SearchResult> results,
-@@ -1431,41 +1517,18 @@ void SearchReply(const SearchParams& params,
-   if (params.sort_option && !ignore_sort)
-     PartialSortBySortScore(absl::MakeSpan(docs), end, params.sort_option->order);
- 
--  const bool reply_with_ids_only = params.IdsOnly();
-+  const auto page = absl::MakeConstSpan(docs).subspan(offset, limit);
-+  if (knn_score_ret_field && !params.IdsOnly()) {
-+    for (auto* doc : page)
-+      doc->values[*knn_score_ret_field] = doc->knn_score;
-+  }
-   auto* rb = static_cast<RedisReplyBuilder*>(builder);
--  const size_t items_per_field = (reply_with_ids_only ? 1 : 2) + params.with_sortkeys +
--                                 params.with_scores + params.with_payloads;
-+
-   // Batch the reply so temporary sortkeys are copied into the batching buffer instead of referenced
-   // past their lifetime — a >kMaxInlineSize bulk string enqueued by reference under a reply scope
-   // is copied only when the scope ends, after the "$" + s temporary is gone (use-after-free).
-   SinkReplyBuilder::ReplyAggregator agg{rb};
--  rb->StartArray(limit * items_per_field + 1);
--
--  Overloaded sortable_value_sender{
--      [rb](monostate) { rb->SendNull(); },
--      [rb](double d) { rb->SendBulkString(absl::StrFormat("#%
-```
-
-**File**: `src/server/search/search_family_test.cc` (modified, +118/-30)
-```diff
-@@ -351,6 +351,24 @@ template <typename... Args> auto IsMap(Args... args) {
-   return IsMapMatcher(std::make_tuple(args...));
- }
- 
-+template <typename... Args> auto IsResp3Array(Args... args) {
-+  return AllOf(IsResp3ArrayKind(), IsArray(args...));
-+}
-+
-+template <typename... Args> auto IsResp3Map(Args... args) {
-+  return AllOf(IsResp3MapKind(), IsMap(args...));
-+}
-+
-+template <typename... Args> auto IsResp3Set(Args... args) {
-+  return AllOf(IsResp3SetKind(), IsUnordArray(args...));
-+}
-+
-+// The RESP3 envelope of FT.SEARCH and FT.AGGREGATE replies.
-+template <typename Results> auto IsResp3Reply(Results results, int64_t total) {
-+  return IsResp3Map("attributes", IsResp3Array(), "format", "STRING", "results", results,
-+                    "total_results", IntArg(total), "warning", IsResp3Array());
-+}
-+
- MATCHER_P(IsMapWithSizeMatcher, expected, "") {
-   if (arg.type != RespExpr::ARRAY) {
-     *result_listener << "Wrong response type: " << arg.type;
-@@ -2676,6 +2694,12 @@ TEST_F(SearchFamilyTest, FtProfile) {
-   // Test LIMITED throws no errors
-   resp = Run({"ft.profile", "i1", "search", "limited", "query", "(a | b) c d"});
-   ASSERT_ARRAY_OF_TWO_ARRAYS(resp);
-+
-+  // RESP3 names both parts, and the results are a search reply map.
-+  Run({"HELLO", "3"});
-+  EXPECT_THAT(Run({"ft.profile", "i1", "search", "query", "(a | b) c d"}),
-+              IsResp3Map("Results", IsResp3Reply(IsResp3Array(), 0), "Profile",
-+                         AllOf(IsResp3ArrayKind(), ArrLen(shard_set->size() + 1))));
- }
- 
- TEST_F(SearchFamilyTest, FtProfileInvalidQuery) {
-@@ -4305,6 +4329,13 @@ TEST_F(SearchFamilyTest, SynonymManagement) {
-   EXPECT_THAT(resp, IsUnordArray("cub", IsArray("3"), "cute", IsArray("2"), "adorable",
-                                  IsArray("2"), "kitty", IsArray("1", "2", "3"), "feline",
-                                  IsArray("1"), "tiger", IsArray("3"), "cat", IsArray("1")));
-+
-+  // RESP3 maps each term to its groups.
-+  Run({"HELLO", "3"});
-+  EXPECT_THAT(Run({"FT.SYNDUMP", "my_idx"}),
-+              IsResp3Map("cub", IsResp3Array("3"), "cute", IsResp3Array("2"), "adorable",
-+                         IsResp3Array("2"), "kitty", IsResp3Array("1", "2", "3"), "feline",
-+                         IsResp3Array("1"), "tiger", IsResp3Array("3"), "cat", IsResp3Array("1")));
- }
- 
- TEST_F(SearchFamilyTest, SynonymCommandsResolveAliases) {
-@@ -5388,7 +5419,7 @@ TEST_F(SearchFamilyTest, SchemaOptionOrders) {
-               IsArray(IsArray("identifier", "a", "attribute", "a", "type", "TEXT", "WEIGHT", "1",
-                               "SORTABLE", "UNF", "NOSTEM", "INDEXEMPTY", "INDEXMISSING"),
-                       IsArray("identifier", "weight", "attribute", "weight", "type", "NUMERIC",
--                              "blocksize", "10000", "SORTABLE", "UNF"),
-+                              "blocksize", IntArg(10000), "SORTABLE", "UNF"),
-                       IsArray("identifier", "b", "attribute", "b", "type", "TEXT", "WEIGHT", "2",
-                               "SORTABLE", "NOSTEM", "NOINDEX", "WITHSUFFIXTRIE", "INDEXEMPTY"),
-                       IsArray("identifier", "nostem", "attribute", "nostem", "type", "TAG",
-@@ -5597,9 +5628,9 @@ TEST_F(SearchFamilyTest, BlockSizeOptionFtCreate) {
-   resp = Run({"FT.INFO", "index"});
-   EXPECT_THAT(resp, IsArray(_, _, _, _, _, _, "attributes",
-                             IsUnordArray(IsArray("identifier", "number1", "attribute", "number1",
--                                                 "type", "NUMERIC", "blocksize", "2"),
-+                                                 "type", "NUMERIC", "blocksize", IntArg(2)),
-                                          IsArray("identifier", "number2", "attribute", "number2",
--                                                 "type", "NUMERIC", "blocksize", "1024")),
-+                                                 "type", "NUMERIC", "blocksize", IntArg(1024))),
-                             "num_docs", IntArg(0), _, _, _, _));
- 
-   // Add a document to the index
-@@ -6153,7 +6184,7 @@ TEST_F(SearchFamilyTest, MAXSEARCHRESULTS) {
-   WaitForIndexReady("memes");
- 
-   auto resp = Run({"FT.CONFIG", "GET", "MAXSEARCHRESULTS"});
--  EXPECT_THAT(resp, IsArray("MAXSEARCHRESULTS", "1000000"));
-+  EXPECT_THAT(resp, IsArray(IsArray("MAXSEARCHRESULTS", "1000000")));
- 
-   resp = Run({"FT.SEARCH", "memes", "@phrase:(hello world)", "NOCONTENT"});
-   EXPECT_THAT(resp, RespElementsAre(IntArg(3), _, _, _));
-@@ -6171,7 +6202,7 @@ TEST_F(SearchFamilyTest, MAXSEARCHRESULTS) {
-   EXPECT_THAT(resp, ErrArg("LIMIT exceeds maximum of 1"));
- 
-   resp = Run({"FT.CONFIG", "GET", "MAXSEARCHRESULTS"});
--  EXPECT_THAT(resp, IsArray("MAXSEARCHRESULTS", "1"));
-+  EXPECT_THAT(resp, IsArray(IsArray("MAXSEARCHRESULTS", "1")));
- 
-   resp = Run({"FT.CONFIG", "HELP", "MAXSEARCHRESULTS"});
-   EXPECT_THAT(resp, RespElementsAre(IsArray("MAXSEARCHRESULTS", "Description",
-@@ -6180,15 +6211,23 @@ TEST_F(SearchFamilyTest, MAXSEARCHRESULTS) {
- 
-   resp = Run({"FT.CONFIG",
-```
-
-**File**: `tests/dragonfly/search_test.py` (modified, +7/-7)
-```diff
-@@ -306,7 +306,7 @@ async def test_management(async_client: aioredis.Redis):
-             "type",
-             "NUMERIC",
-             "blocksize",
--            "10000",
-+            10000,
-             "SORTABLE",
-             "UNF",
-         ],
-@@ -331,7 +331,7 @@ async def test_management(async_client: aioredis.Redis):
-             "type",
-             "NUMERIC",
-             "blocksize",
--            "10000",
-+            10000,
-             "SORTABLE",
-             "UNF",
-             "NOINDEX",
-@@ -349,17 +349,17 @@ async def test_management(async_client: aioredis.Redis):
-             "data_type",
-             "FLOAT32",
-             "dim",
--            "1",
-+            1,
-             "distance_metric",
-             "L2",
-             "initial_cap",
--            "100",
-+            100,
-             "M",
--            "16",
-+            16,
-             "ef_construction",
--            "200",
-+            200,
-             "ef_runtime",
--            "10",
-+            10,
-             "epsilon",
-             "0.01",
-         ],
-```
-
----
-
-### Incident Patch 2: `ba9dbfb1` (2026-11-20)
-**Commit Message**: fix: match RESP3 reply shapes of JSON and probabilistic commands (#8845)
-
-Under RESP3, several JSON commands sent array shapes that RESP3 clients do not expect: a legacy
-path got a one-element array, JSON.TYPE nested each match on its own, JSON.NUMINCRBY/NUMMULTBY
-sent only the last match of a legacy path as a bare value, and JSON.RESP dropped the [ marker of
-an array. BF, CF and TOPK membership replies were integers, and the INFO replies were flat arrays.
-
-- The reply builder gets SendBool: #t/#f under RESP3, 1/0 under RESP2. Captured replies keep it,
-  and scripts still get integers.
-- JSON: a legacy path answers with the bare value; JSON.TYPE wraps its whole reply in one more
-  array; JSON.NUMINCRBY and JSON.NUMMULTBY send the new value of every match, null where a match
-  is not a number, also for a legacy path; JSON.RESP keeps the [ marker under RESP3 too. A legacy
-  path that changes no number still fails in the shard, so it stays out of the journal.
-- BF.ADD/EXISTS/MADD/MEXISTS, CF.ADD/ADDNX/EXISTS/MEXISTS/DEL/INSERT and TOPK.QUERY answer with
-  booleans; CF.INSERT reports a full filter as false.
-- BF, CF, CMS and TOPK.INFO reply with a map with simple-string keys; BF.INFO w
-
-**File**: `src/facade/facade.cc` (modified, +5/-0)
-```diff
-@@ -151,6 +151,8 @@ const char* RespExpr::TypeName(Type t) {
-       return "nil";
-     case ERROR:
-       return "error";
-+    case BOOL:
-+      return "bool";
-   }
-   ABSL_UNREACHABLE();
- }
-@@ -222,6 +224,9 @@ ostream& operator<<(ostream& os, const facade::RespExpr& e) {
-     case RespExpr::ERROR:
-       os << "e(" << ToSV(get<RespExpr::Buffer>(e.u)) << ")";
-       break;
-+    case RespExpr::BOOL:
-+      os << (get<int64_t>(e.u) ? "true" : "false");
-+      break;
-   }
- 
-   return os;
-```
-
-**File**: `src/facade/facade_test.cc` (modified, +4/-1)
-```diff
-@@ -44,7 +44,7 @@ bool RespMatcher::MatchAndExplain(RespExpr e, MatchResultListener* listener) con
-       *listener << "\nActual string: " << actual;
-       return false;
-     }
--  } else if (type_ == RespExpr::INT64) {
-+  } else if (type_ == RespExpr::INT64 || type_ == RespExpr::BOOL) {
-     auto actual = get<int64_t>(e.u);
-     if (exp_int_ != actual) {
-       *listener << "\nActual : " << actual << " expected: " << exp_int_;
-@@ -84,6 +84,9 @@ void RespMatcher::DescribeTo(std::ostream* os) const {
-     case RespExpr::DOUBLE:
-       *os << exp_double_;
-       break;
-+    case RespExpr::BOOL:
-+      *os << (exp_int_ ? "true" : "false");
-+      break;
-     default:
-       *os << "TBD";
-       break;
-```
-
-**File**: `src/facade/facade_test.h` (modified, +4/-0)
-```diff
-@@ -69,6 +69,10 @@ inline ::testing::PolymorphicMatcher<RespMatcher> DoubleArg(double_t dval) {
-   return ::testing::MakePolymorphicMatcher(RespMatcher(dval));
- }
- 
-+inline ::testing::PolymorphicMatcher<RespMatcher> BoolArg(bool val) {
-+  return ::testing::MakePolymorphicMatcher(RespMatcher(int64_t{val}, RespExpr::BOOL));
-+}
-+
- inline ::testing::PolymorphicMatcher<RespMatcher> ArrLen(size_t len) {
-   return ::testing::MakePolymorphicMatcher(RespMatcher((int64_t)len, RespExpr::ARRAY));
- }
-```
-
-**File**: `src/facade/reply_builder.cc` (modified, +10/-0)
-```diff
-@@ -40,6 +40,8 @@ constexpr char kDoublePref[] = ",";
- constexpr char kLongPref[] = ":";
- constexpr char kNullStringR2[] = "$-1\r\n";
- constexpr char kNullStringR3[] = "_\r\n";
-+constexpr char kTrueR3[] = "#t\r\n";
-+constexpr char kFalseR3[] = "#f\r\n";
- 
- template <typename T> size_t piece_size(const T& v) {
-   if constexpr (is_array_v<T>)
-@@ -410,6 +412,14 @@ void RedisReplyBuilderBase::SendDouble(double val) {
-   WritePieces(kDoublePref, val_str, kCRLF);
- }
- 
-+void RedisReplyBuilderBase::SendBool(bool val) {
-+  if (!IsResp3())
-+    return SendLong(val);
-+
-+  ReplyScope scope(this);
-+  val ? WritePieces(kTrueR3) : WritePieces(kFalseR3);
-+}
-+
- void RedisReplyBuilderBase::SendNullArray() {
-   ReplyScope scope(this);
-   IsResp3() ? WritePieces(kNullStringR3) : WritePieces("*-1", kCRLF);
-```
-
-**File**: `src/facade/reply_builder.h` (modified, +1/-0)
-```diff
-@@ -253,6 +253,7 @@ class RedisReplyBuilderBase : public SinkReplyBuilder {
- 
-   void SendLong(long val) override;
-   virtual void SendDouble(double val);  // RESP: Number
-+  virtual void SendBool(bool val);      // RESP3: Boolean, RESP2: Integer 1 or 0
- 
-   virtual void SendNullArray();
-   virtual void StartCollection(unsigned len, CollectionType ct);
-```
-
-**File**: `src/facade/reply_builder_test.cc` (modified, +20/-0)
-```diff
-@@ -786,6 +786,24 @@ TEST_F(RedisReplyBuilderTest, Resp3Double) {
-   ASSERT_EQ(str(), ",5.5\r\n");
- }
- 
-+TEST_F(RedisReplyBuilderTest, Bool) {
-+  builder_->SendBool(true);
-+  builder_->SendBool(false);
-+  ASSERT_TRUE(NoErrors());
-+  ASSERT_EQ(TakePayload(), ":1\r\n:0\r\n");
-+
-+  builder_->SetRespVersion(RespVersion::kResp3);
-+  builder_->SendBool(true);
-+  builder_->SendBool(false);
-+  ASSERT_TRUE(NoErrors());
-+  ASSERT_EQ(TakePayload(), "#t\r\n#f\r\n");
-+
-+  // A RESP2 capture keeps the integer.
-+  CapturingReplyBuilder crb;
-+  crb.SendBool(true);
-+  EXPECT_TRUE(holds_alternative<long>(crb.Take()));
-+}
-+
- TEST_F(RedisReplyBuilderTest, Resp3NullString) {
-   builder_->SetRespVersion(RespVersion::kResp3);
-   builder_->SendNull();
-@@ -912,6 +930,8 @@ TEST_F(RedisReplyBuilderTest, BasicCapture) {
-       [](RRB* r) { r->SendNull(); },
-       [](RRB* r) { r->SendLong(1L); },
-       [](RRB* r) { r->SendDouble(6.7); },
-+      [](RRB* r) { r->SendBool(true); },
-+      [](RRB* r) { r->SendBool(false); },
-       [](RRB* r) { r->SendSimpleString("ok"); },
-       [](RRB* r) { r->SendVerbatimString("A simple string!", RRB::VerbatimFormat::TXT); },
-       [](RRB* r) { r->SendVerbatimString("# Title\nbody", RRB::VerbatimFormat::MARKDOWN); },
-```
-
-**File**: `src/facade/reply_capture.cc` (modified, +13/-0)
-```diff
-@@ -45,6 +45,15 @@ void CapturingReplyBuilder::SendDouble(double val) {
-   Capture(val);
- }
- 
-+void CapturingReplyBuilder::SendBool(bool val) {
-+  // RESP2 has no booleans, so keep the integer that a RESP2 reply would carry.
-+  if (!IsResp3())
-+    return SendLong(val);
-+
-+  SKIP_LESS(ReplyMode::FULL);
-+  Capture(Bool{val});
-+}
-+
- void CapturingReplyBuilder::SendSimpleString(std::string_view str) {
-   SKIP_LESS(ReplyMode::FULL);
-   Capture(SimpleString{string{str}});
-@@ -133,6 +142,10 @@ struct CaptureVisitor {
-     static_cast<RedisReplyBuilder*>(rb)->SendDouble(v);
-   }
- 
-+  void operator()(payload::Bool b) {
-+    static_cast<RedisReplyBuilder*>(rb)->SendBool(b.val);
-+  }
-+
-   void operator()(const payload::SimpleString& ss) {
-     rb->SendSimpleString(ss);
-   }
-```
-
-**File**: `src/facade/reply_capture.h` (modified, +1/-0)
-```diff
-@@ -29,6 +29,7 @@ class CapturingReplyBuilder : public RedisReplyBuilder {
- 
-   void SendLong(long val) override;
-   void SendDouble(double val) override;
-+  void SendBool(bool val) override;
-   void SendSimpleString(std::string_view str) override;
-   void SendBulkString(std::string_view str) override;
-   using RedisReplyBuilderBase::SendBulkString;  // keep the guarded rvalue overload visible
-```
-
----
-
-### Incident Patch 3: `6dc87ac3` (2026-11-20)
-**Commit Message**: fix(acl): test_acl_load_updates_default_user_connections (#8855)
-
-**File**: `tests/dragonfly/acl_family_test.py` (modified, +1/-2)
-```diff
-@@ -419,7 +419,7 @@ async def subscribe(channel):
-     dropped_reader, dropped_writer = await subscribe("secret")
- 
-     with open(acl, "w") as f:
--        f.write("user default on nopass ~* &news -@all +ping\n" + admin_rule)
-+        f.write("user default on nopass ~* &news -@all +ping +publish\n" + admin_rule)
-     admin = df.client()
-     await admin.execute_command("AUTH admin pass")
-     await admin.execute_command("ACL LOAD")
-@@ -441,7 +441,6 @@ async def get_denied():
-         assert await dropped_reader.read() == b""
- 
-     publisher = df.client()
--    await publisher.execute_command("AUTH admin pass")
-     await publisher.execute_command("PUBLISH news hello")
-     async with async_timeout.timeout(5):
-         await kept_reader.readuntil(b"hello\r\n")
+@@ -1426,9 +1426,9 @@ TEST_F(ServerFamilyTest, ExternalAuth) {
+   EXPECT_THAT(Run("ldap", {"AUTH", "directory-user", "local"}),
+               ErrArg("WRONGPASS invalid username-password pair or user is disabled."));
+   EXPECT_THAT(Run("ldap", {"AUTH", "directory-user", password}), "OK");
+-  EXPECT_THAT(Run("ldap", {"ACL", "WHOAMI"}), "User is alice");
++  EXPECT_THAT(Run("ldap", {"ACL", "WHOAMI"}), "alice");
+   EXPECT_THAT(Run("token", {"AUTH", token}), "OK");
+-  EXPECT_THAT(Run("token", {"ACL", "WHOAMI"}), "User is alice");
++  EXPECT_THAT(Run("token", {"ACL", "WHOAMI"}), "alice");
+   absl::SetFlag(&FLAGS_auth_validate_url, "");
+   EXPECT_THAT(Run("ldap", {"AUTH", "directory-user", "local"}),
+               ErrArg("WRONGPASS invalid username-password pair or user is disabled."));
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8862** (2026-11-22): fix(tests): expect the bare user name from ACL WHOAMI in ExternalAuth (@vyavdoshenko)
+- **PR #8857** (2026-11-20): fix: correct connection replies and client tracking (@vyavdoshenko)
 - **PR #8855** (2026-11-20): fix(acl): test_acl_load_updates_default_user_connections (@kostasrim)
 - **PR #8847** (2026-11-19): fix(acl): apply reloaded default user rules on ACL LOAD (@kostasrim)
 - **PR #8845** (2026-11-20): fix: match RESP3 reply shapes of JSON and probabilistic commands (@vyavdoshenko)
 - **PR #8844** (2026-11-19): fix: stack smashing in journal (@BorysTheDev)
-- **PR #8837** (2026-11-19): fix(acl): apply ACL updates to connections on memcache listener (@kostasrim)
-- **PR #8836** (2026-11-19): fix(search): reply with RESP3 maps and sets in search commands (@vyavdoshenko)
 
 ---
 
@@ -2941,43 +2397,33 @@ an array. BF, CF and TOPK membership replies were integers, and the INFO replies
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. search): reply with RESP3 maps and sets in search commands
+## X. tests): expect the bare user name from ACL WHOAMI in ExternalAuth
 
 **RULE**:
-When implementing operations in `src/facade/facade_test.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflydb/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/server/server_family_test.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflydb/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ee352cbf`: search): reply with RESP3 maps and sets in search commands. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `24104b84`: tests): expect the bare user name from ACL WHOAMI in ExternalAuth. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/facade/facade_test.h`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/server/server_family_test.cc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-// RESP3 arrays, maps and sets all arrive as ARRAY; these check which one was sent.
-MATCHER(IsResp3ArrayKind, "is a RESP3 array") {
-  return arg.type == RespExpr::ARRAY && arg.agg == RespExpr::Agg::kArray;
-}
-
-MATCHER(IsResp3MapKind, "is a RESP3 map") {
-  return arg.type == RespExpr::ARRAY && arg.agg == RespExpr::Agg::kMap;
-}
-
-MATCHER(IsResp3SetKind, "is a RESP3 set") {
-  return arg.type == RespExpr::ARRAY && arg.agg == RespExpr::Agg::kSet;
-}
-
+  EXPECT_THAT(Run("ldap", {"ACL", "WHOAMI"}), "alice");
+  EXPECT_THAT(Run("token", {"ACL", "WHOAMI"}), "alice");
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+  EXPECT_THAT(Run("ldap", {"ACL", "WHOAMI"}), "User is alice");
+  EXPECT_THAT(Run("token", {"ACL", "WHOAMI"}), "User is alice");
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ee352cbf` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `24104b84` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

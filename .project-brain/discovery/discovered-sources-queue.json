@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-22T18:52:57.391Z",
+  "updated_at": "2026-11-22T19:01:51.388Z",
   "stats": {
-    "total_discovered": 7634,
+    "total_discovered": 7635,
     "approved_pending_harvest": 7231,
     "harvested_count": 0,
-    "rejected_count": 403,
+    "rejected_count": 404,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7208,
+      "COMMUNITY_AND_EXPERT": 7209,
       "OFFICIAL_DOCUMENTATION": 246,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 5,
@@ -165150,6 +165150,21 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/redisearch-redisearch-learnings.md",
         "fileName": "redisearch-redisearch-learnings.md"
+      }
+    },
+    "SRC-6B049C270DDB": {
+      "id": "SRC-6B049C270DDB",
+      "url": "http://loc/",
+      "title": "http://loc/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-22T19:01:51.388Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
+        "fileName": "rtk-ai-rtk-learnings.md"
       }
     }
   }

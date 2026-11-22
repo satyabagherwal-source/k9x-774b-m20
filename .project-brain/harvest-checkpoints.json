@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T18:52:51.113Z",
+  "last_updated": "2026-11-22T19:01:47.565Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -395,14 +395,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-nvidia-nemotron-3-diarization",
-      "content_hash": "dc3273c0cd95cd615a9d3f46afbf7eb173580e8c2d523330cb1a2128e9aceeb2",
-      "verified_at": "2026-11-18T12:23:50.009Z",
+      "content_hash": "d2729c573a0a76cecbe2ec0963fe956160b27eb28bc2ea3909934401b636de3d",
+      "verified_at": "2026-11-22T19:01:34.130Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T12:23:50.009Z"
+      "last_updated": "2026-11-22T19:01:34.130Z"
     },
     "Lightricks/LTX-2.5": {
       "repository": "Lightricks/LTX-2.5",
@@ -9306,14 +9306,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dragonflydb-dragonfly",
-      "content_hash": "dc1d52a31c2c46c9ecd04c66890772bde3e43ed13a2f7598c6d3899d99b030ed",
-      "verified_at": "2026-11-21T17:42:01.489Z",
+      "content_hash": "cfcf0f4b19dae7c40824e8b53fb2d1f215b23aa6baf285656512b4423ee0a293",
+      "verified_at": "2026-11-22T19:01:47.564Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T17:42:01.489Z"
+      "last_updated": "2026-11-22T19:01:47.564Z"
     },
     "danielpetho/fancy": {
       "repository": "danielpetho/fancy",
@@ -11796,14 +11796,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rtk-ai-rtk",
-      "content_hash": "0afe18311557c238e35f0e916671700c6f23842c179689df060754f8da9076c7",
-      "verified_at": "2026-11-21T07:10:31.568Z",
+      "content_hash": "e144b1b4edb21ab40a44798e6e30d17f85e6fdf0e0cf7c1f5f33fbf392799bd4",
+      "verified_at": "2026-11-22T19:01:35.516Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T07:10:31.568Z"
+      "last_updated": "2026-11-22T19:01:35.516Z"
     },
     "gao-sun/eul": {
       "repository": "gao-sun/eul",

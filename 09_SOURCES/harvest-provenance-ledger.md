@@ -12189,3 +12189,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-contrastive-lm-clm-v0-1-8b` | `https://huggingface.co/Contrastive-LM/CLM-v0.1-8B` | `hf-contras` | Multi-dimensional audit evidence | 2026-11-22T18:52:36.756Z |
 | `learn-github-folkbench-folkbench` | `https://github.com/Folkbench/folkbench` | `f0856c35` | Multi-dimensional audit evidence | 2026-11-22T18:52:38.838Z |
 | `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `3357e86a` | Multi-dimensional audit evidence | 2026-11-22T18:52:51.104Z |
+| `learn-huggingface-nvidia-nemotron-3-diarization` | `https://huggingface.co/nvidia/Nemotron-3-Diarization` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-22T19:01:34.119Z |
+| `learn-github-rtk-ai-rtk` | `https://github.com/rtk-ai/rtk` | `762708cd` | Multi-dimensional audit evidence | 2026-11-22T19:01:35.505Z |
+| `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `24104b84` | Multi-dimensional audit evidence | 2026-11-22T19:01:47.553Z |

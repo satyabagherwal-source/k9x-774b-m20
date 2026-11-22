@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T18:52:57.956Z",
+  "last_updated": "2026-11-22T19:01:53.698Z",
   "total_verified_learnings": 9072,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23712,
+  "total_items": 23715,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112245,10 +112245,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dragonflydb-dragonfly-technical-construction-intelligence-dragonflydb-dragonfly-.md",
       "title": "Technical Construction Intelligence: dragonflydb/dragonfly Core Invariants",
       "repository": "dragonflydb/dragonfly",
-      "source_version": "66de9e68",
-      "content_hash": "fc0aee7dcf5969d7da4e26071425a132cf763352d74f4489f7d76862e4d45fb1",
+      "source_version": "24104b84",
+      "content_hash": "df3d524f88992de6c79c08b777c90f45cd0f791f53dde71adb046a09c40307f9",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T17:42:01.851Z"
+      "persisted_at": "2026-11-22T19:01:48.081Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-dragonflydb-dragonfly": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dragonflydb-dragonfly",
@@ -112257,10 +112257,10 @@
       "relative_path": "08_VERIFICATION/dragonflydb-dragonfly-verification-protocol-empirical-defect-shield-for-dragonfl.md",
       "title": "Verification Protocol: Empirical Defect Shield for dragonflydb/dragonfly",
       "repository": "dragonflydb/dragonfly",
-      "source_version": "66de9e68",
-      "content_hash": "7df86512a464a4e42a47a663a32a588ce8684efae7f18224c4e62a6e73979b21",
+      "source_version": "24104b84",
+      "content_hash": "dbfb29da27263a8ff5fd3231c484b9c3c81b4c2dd63526860045c467187b6c9c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T17:42:02.012Z"
+      "persisted_at": "2026-11-22T19:01:48.305Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-supersoniclabs-julia-1-learnings-core-invaria": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-supersoniclabs-julia-1-learnings-core-invaria",
@@ -112282,9 +112282,9 @@
       "title": "Technical Construction Intelligence: dragonflydb-dragonfly-learnings Core Invariants",
       "repository": "dragonflydb-dragonfly-learnings",
       "source_version": "HEAD",
-      "content_hash": "5e25c3db503e3d45db78499552cfc8b6a5fe1cb359c6d88e7411d485606c8f43",
+      "content_hash": "d32b65ecfc854d413bcfd35e0612c9a20267ec98aab2bf63b8325ace994e06a9",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T12:15:56.749Z"
+      "persisted_at": "2026-11-22T19:01:53.472Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-dragonflydb-dragonfly-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dragonflydb-dragonfly-learning",
@@ -112294,9 +112294,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dragonflydb-dragonfly-learnings",
       "repository": "dragonflydb-dragonfly-learnings",
       "source_version": "HEAD",
-      "content_hash": "f098a3dd860913de600e27c856f038d6b0de9d8046d0ff4aa47faa9e5c33e469",
+      "content_hash": "e3cbe63c348353de20c613aaf639619513d550280eaa400f49b8b56483d3af50",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T12:15:56.885Z"
+      "persisted_at": "2026-11-22T19:01:53.698Z"
     },
     "domain_intelligence-research-knowledge-intelligence-comfy-org-wan-2-2-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-comfy-org-wan-2-2-core-invariants",
@@ -213145,26 +213145,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 7938,
       "title": "Empirical Invariant Guard in mod.rs",
-      "source_url": "https://github.com/embassy-rs/embassy",
-      "source_version": "a96b178b",
+      "source_url": "https://github.com/rtk-ai/rtk",
+      "source_version": "762708cd",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-13T19:39:50.927Z"
+      "verified_at": "2026-11-22T19:01:35.218Z"
     },
     "candidate_directive-empirical-invariant-guard-in-mod-rs": {
       "item_id": "candidate_directive-empirical-invariant-guard-in-mod-rs",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-WJ1C-empirical-invariant-guard-in-mod-rs.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-E2MK-empirical-invariant-guard-in-mod-rs.md",
       "title": "Empirical Invariant Guard in mod.rs",
-      "repository": "meilisearch-meilisearch-learnings",
+      "repository": "rtk-ai-rtk-learnings",
       "source_version": "HEAD",
-      "content_hash": "8d7d5ff6a8667337e89df1f19a2d797a559ad20656cf950604dbc0cfeafd993a",
+      "content_hash": "59c87950319209eadd874290b7eae4ecbcb961528e9df259a30b1f16fa999a72",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T16:05:54.146Z"
+      "persisted_at": "2026-11-22T19:01:51.699Z"
     },
     "domain_intelligence-architecture-intelligence-embassy-rs-embassy-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-embassy-rs-embassy-core-invariants",
@@ -239027,8 +239027,8 @@
       "slug": "dragonflydb-dragonfly",
       "platform": "github",
       "source_url": "https://github.com/dragonflydb/dragonfly",
-      "source_version": "66de9e68",
-      "content_hash": "dc1d52a31c2c46c9ecd04c66890772bde3e43ed13a2f7598c6d3899d99b030ed",
+      "source_version": "24104b84",
+      "content_hash": "cfcf0f4b19dae7c40824e8b53fb2d1f215b23aa6baf285656512b4423ee0a293",
       "dossier_path": "07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md",
       "promoted_rules": [
@@ -239061,6 +239061,11 @@
           "number": 9812,
           "title": "correct connection replies and client tracking",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9976,
+          "title": "expect the bare user name from ACL WHOAMI in ExternalAuth",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -239068,7 +239073,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T17:42:01.270Z",
+      "verified_at": "2026-11-22T19:01:47.287Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -259874,11 +259879,16 @@
       "slug": "rtk-ai-rtk",
       "platform": "github",
       "source_url": "https://github.com/rtk-ai/rtk",
-      "source_version": "ef0b734b",
-      "content_hash": "0afe18311557c238e35f0e916671700c6f23842c179689df060754f8da9076c7",
+      "source_version": "762708cd",
+      "content_hash": "e144b1b4edb21ab40a44798e6e30d17f85e6fdf0e0cf7c1f5f33fbf392799bd4",
       "dossier_path": "07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
       "promoted_rules": [
+        {
+          "number": 7938,
+          "title": "Empirical Invariant Guard in mod.rs",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
         {
           "number": 8760,
           "title": "docs(guide): bring the embedding page in line with rtk 1.2.0",
@@ -259920,7 +259930,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T07:10:31.358Z",
+      "verified_at": "2026-11-22T19:01:35.218Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -259962,10 +259972,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-rtk-ai-rtk-quality-verification-intelligence-rtk-ai-rtk-core-invariants.md",
       "title": "Quality & Verification Intelligence: rtk-ai/rtk Core Invariants",
       "repository": "rtk-ai/rtk",
-      "source_version": "ef0b734b",
-      "content_hash": "218e891b89d3fe9a6c3553a55db0cf2d3e6ce305ec681e24b052ec72abb8747f",
+      "source_version": "762708cd",
+      "content_hash": "ad19baec11cf1a822772e474a6b23dd20b100645860e4611f40d2127b85237a8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T07:10:31.924Z"
+      "persisted_at": "2026-11-22T19:01:36.060Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-rtk-ai-rtk": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rtk-ai-rtk",
@@ -259974,10 +259984,10 @@
       "relative_path": "08_VERIFICATION/rtk-ai-rtk-verification-protocol-empirical-defect-shield-for-rtk-ai-rtk.md",
       "title": "Verification Protocol: Empirical Defect Shield for rtk-ai/rtk",
       "repository": "rtk-ai/rtk",
-      "source_version": "ef0b734b",
-      "content_hash": "1254d3cc60ee439f4db1d50d7177ce948fff7144a867e8cc5ac975a8fbb9f3ed",
+      "source_version": "762708cd",
+      "content_hash": "4278c794083387f16e7bc4026da295de944dfea75347e8ef966131d2a9304c4c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T07:10:32.080Z"
+      "persisted_at": "2026-11-22T19:01:36.285Z"
     },
     "rule-8761": {
       "learning_id": "rule-8761",
@@ -260013,9 +260023,9 @@
       "title": "Quality & Verification Intelligence: rtk-ai-rtk-learnings Core Invariants",
       "repository": "rtk-ai-rtk-learnings",
       "source_version": "HEAD",
-      "content_hash": "94a4e5bda49cfe827e250aa3959fcd4a93fa4d13e088ce77358ff6864202c554",
+      "content_hash": "866999014a1f6fbbf957ba707d28ee3b9f75eafe7754f2c6af85f26043755c3a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T07:10:35.599Z"
+      "persisted_at": "2026-11-22T19:01:51.917Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-rtk-ai-rtk-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rtk-ai-rtk-learnings",
@@ -260025,9 +260035,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for rtk-ai-rtk-learnings",
       "repository": "rtk-ai-rtk-learnings",
       "source_version": "HEAD",
-      "content_hash": "1088ad5b5617b4f533e5a510610b9235f36fe84cb7ede74619201c158d92385b",
+      "content_hash": "e1e67abe0535c2be7e7adca1ab5e1ee923d1988dbe6bf71b550d5b38a671f7b6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T07:10:35.767Z"
+      "persisted_at": "2026-11-22T19:01:52.144Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-audio-2b-learnings-core-invaria": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-audio-2b-learnings-core-invaria",
@@ -283331,7 +283341,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nvidia/Nemotron-3-Diarization",
       "source_version": "hf-nvidia-nemotron-3-diarization",
-      "content_hash": "dc3273c0cd95cd615a9d3f46afbf7eb173580e8c2d523330cb1a2128e9aceeb2",
+      "content_hash": "d2729c573a0a76cecbe2ec0963fe956160b27eb28bc2ea3909934401b636de3d",
       "dossier_path": "07_PROJECT_LEARNING/hf-nvidia-nemotron-3-diarization-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nvidia-nemotron-3-diarization-learnings.md",
       "promoted_rules": [],
@@ -283340,7 +283350,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T12:23:49.796Z",
+      "verified_at": "2026-11-22T19:01:33.821Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -283357,9 +283367,9 @@
       "title": "Research & Knowledge Intelligence: nvidia/Nemotron-3-Diarization Core Invariants",
       "repository": "nvidia/Nemotron-3-Diarization",
       "source_version": "hf-nvidia-nemotron-3-diarization",
-      "content_hash": "fbd271769906f3b35f1bd23ce61e879c22d57c09cade32d479e6d0b253eed601",
+      "content_hash": "7456224a5a9f448b8cf1cfced77d5eeafa6117daef0aae8120783b988a4a698b",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T12:23:50.177Z"
+      "persisted_at": "2026-11-22T19:01:34.400Z"
     },
     "rule-9100": {
       "learning_id": "rule-9100",
@@ -283395,9 +283405,9 @@
       "title": "Research & Knowledge Intelligence: hf-nvidia-nemotron-3-diarization-learnings Core Invariants",
       "repository": "hf-nvidia-nemotron-3-diarization-learnings",
       "source_version": "HEAD",
-      "content_hash": "ca36b7b65a887a985e109f48aed56f35d8e9f2f70b179954f414563060e3e320",
+      "content_hash": "e0a084257c9e338f15b563673b1447edab6f953458c6b8c922f5b4c91f8b8be3",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T12:24:04.802Z"
+      "persisted_at": "2026-11-22T19:01:52.611Z"
     },
     "candidate_directive-android-dispatch-helper-taps-and-keys-without-the-global-animation-wait": {
       "item_id": "candidate_directive-android-dispatch-helper-taps-and-keys-without-the-global-animation-wait",
@@ -322728,6 +322738,44 @@
       "content_hash": "9b0d97df18158c1a9ad32eba32c2be70d9cc36a6efc87da0635c71da6939e405",
       "domain_letter": "H",
       "persisted_at": "2026-11-22T18:52:57.603Z"
+    },
+    "rule-9976": {
+      "learning_id": "rule-9976",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9976,
+      "title": "expect the bare user name from ACL WHOAMI in ExternalAuth",
+      "source_url": "https://github.com/dragonflydb/dragonfly",
+      "source_version": "24104b84",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T19:01:47.287Z"
+    },
+    "candidate_directive-expect-the-bare-user-name-from-acl-whoami-in-externalauth": {
+      "item_id": "candidate_directive-expect-the-bare-user-name-from-acl-whoami-in-externalauth",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-DZO0-expect-the-bare-user-name-from-acl-whoami-in-externalauth.md",
+      "title": "expect the bare user name from ACL WHOAMI in ExternalAuth",
+      "repository": "dragonflydb/dragonfly",
+      "source_version": "24104b84",
+      "content_hash": "3122382b31ce8d08b370d53303e982b282acf3ee6f935645dce52dca58225fea",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-22T19:01:47.863Z"
+    },
+    "candidate_directive-tests-expect-the-bare-user-name-from-acl-whoami-in-externalauth": {
+      "item_id": "candidate_directive-tests-expect-the-bare-user-name-from-acl-whoami-in-externalauth",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-E3TS-tests-expect-the-bare-user-name-from-acl-whoami-in-externalauth.md",
+      "title": "tests): expect the bare user name from ACL WHOAMI in ExternalAuth",
+      "repository": "dragonflydb-dragonfly-learnings",
+      "source_version": "HEAD",
+      "content_hash": "080865ace1f3c8a63457384a73143449c148ded428bdb5435629d0cefd7b0838",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-22T19:01:53.254Z"
     }
   },
   "ai-builder-brain": {

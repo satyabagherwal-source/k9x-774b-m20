@@ -12156,3 +12156,6 @@
 | `CYCLE-20261122-26FJ` | `2026-11-22T18:52:36.751Z` | `Contrastive-LM/CLM-v0.1-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-contrastive-lm-clm-v0.1-8b-learnings.md` | Yes (`b7310708...`) |
 | `CYCLE-20261122-281D` | `2026-11-22T18:52:38.833Z` | `Folkbench/folkbench` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9974` | Yes (`66deb77a...`) |
 | `CYCLE-20261122-2HI3` | `2026-11-22T18:52:51.099Z` | `RediSearch/RediSearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9975` | Yes (`68199002...`) |
+| `CYCLE-20261122-DP2A` | `2026-11-22T19:01:34.114Z` | `nvidia/Nemotron-3-Diarization` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nemotron-3-diarization-learnings.md` | Yes (`d2729c57...`) |
+| `CYCLE-20261122-DQ4S` | `2026-11-22T19:01:35.500Z` | `rtk-ai/rtk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7938` | Yes (`e144b1b4...`) |
+| `CYCLE-20261122-DZFG` | `2026-11-22T19:01:47.548Z` | `dragonflydb/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9976` | Yes (`cfcf0f4b...`) |

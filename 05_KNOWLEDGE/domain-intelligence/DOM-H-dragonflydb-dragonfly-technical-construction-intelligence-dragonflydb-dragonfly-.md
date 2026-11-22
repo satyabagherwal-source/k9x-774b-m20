@@ -4,24 +4,24 @@
 {
   "source_repository": "dragonflydb/dragonfly",
   "source_url": "https://github.com/dragonflydb/dragonfly",
-  "source_version": "66de9e68",
+  "source_version": "24104b84",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-21T17:42:01.687Z",
+  "timestamp": "2026-11-22T19:01:47.857Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-dragonflydb-dragonfly",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly) (Revision: `66de9e68`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-21T17:42:01.687Z`  
+> **Provenance**: Harvested from [dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly) (Revision: `24104b84`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-22T19:01:47.857Z`  
 > **Learning ID**: `learn-github-dragonflydb-dragonfly`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence), I (Content & Information Intelligence)
-- **Confidence Rating**: 74%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), G (Architecture Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 50%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from dragonflydb/dragonfly:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T17:42:00.415Z  
+> **Harvest Timestamp**: 2026-11-22T19:01:46.253Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: A modern replacement for Redis and Memcached
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 31899 stars
+- **Stars / Engagement**: 31903 stars
 
 ---
 
@@ -2335,866 +2335,38 @@ class Segment {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2c56bc98` (2026-11-20)
-**Commit Message**: fix: correct connection replies and client tracking (#8857)
+### Incident Patch 1: `24104b84` (2026-11-22)
+**Commit Message**: fix(tests): expect the bare user name from ACL WHOAMI in ExternalAuth (#8862)
 
-A bare HELLO switched a RESP3 connection back to RESP2, a user without @connection could not run
-AUTH or HELLO, an unnamed connection reported its id as its name, CLIENT INFO flags used a letter
-that client parsers reject, and client tracking lost or delayed invalidations.
+ServerFamilyTest.ExternalAuth came with #8768 while ACL WHOAMI still replied "User is <name>".
+#8857 made WHOAMI reply with the user name only, and its CI ran on a merge commit that did not
+include #8768, so both landed on main and the test fails there now.
 
-- HELLO without arguments keeps the current protocol.
-- AUTH, HELLO, QUIT and RESET are not checked against the user's command rules, also in
-  ACL DRYRUN.
-- CLIENT INFO is a verbatim string under RESP3. Flags use the letters clients parse: A closing,
-  P pub/sub, b blocked, t tracking, N none; the async-dispatch letter a is gone.
-- A connection has no name until it sets one, and RESET clears it. ACL WHOAMI replies with the
-  user name only.
-- CLIENT TRACKING NOLOOP tracks keys again and skips only the invalidations of changes made by
-  the connection's own command. Active expiry sends its invalidations instead of leaving them for
-  the next command on the shard. EVAL_RO and EVALSHA_RO track the keys their commands read;
-  tracking the script itself crashed debug builds.
-- SendBool writes the RESP3 literal with one WritePieces call.
+Signed-off-by: Volodymyr Yavdoshenko <[REDACTED_EMAIL]>
 
-RESPObj and the te
-
-**File**: `src/facade/dragonfly_connection.cc` (modified, +4/-3)
+**File**: `src/server/server_family_test.cc` (modified, +2/-2)
 ```diff
-@@ -1074,7 +1074,7 @@ void Connection::OnPostMigrateThread() {
- }
- 
- void Connection::OnConnectionStart() {
--  SetName(absl::StrCat(id_));
-+  SetName({});
- 
-   // is null in unit-tests.
-   if (const Listener* lsnr = static_cast<Listener*>(listener()); lsnr) {
-@@ -1361,7 +1361,7 @@ ClientInfo Connection::BuildClientInfo(unsigned thread_id) const {
-     else if (ctx_info.is_scheduled)
-       phase_name = "scheduled";
-     ci.db = ctx_info.db_index;
--    // ctx_info.Format() returns "db=N" or "db=N flags=X"; extract flags only.
-+    // ctx_info.Format() returns "db=N flags=X"; extract flags only.
-     size_t flags_pos = ctx_info.Format().find(" flags=");
-     if (flags_pos != string::npos)
-       ci.flags = ctx_info.Format().substr(flags_pos + sizeof(" flags=") - 1);
-@@ -1407,7 +1407,8 @@ bool Connection::IsMainOrMemcache() const {
- }
- 
- void Connection::SetName(string name) {
--  util::ThisFiber::SetName(absl::StrCat("DflyConn_", name));
-+  // An unnamed connection keeps its id in the fiber name.
-+  util::ThisFiber::SetName(absl::StrCat("DflyConn_", name.empty() ? absl::StrCat(id_) : name));
-   name_ = std::move(name);
- }
- 
-```
-
-**File**: `src/facade/facade.cc` (modified, +5/-0)
-```diff
-@@ -153,6 +153,8 @@ const char* RespExpr::TypeName(Type t) {
-       return "error";
-     case BOOL:
-       return "bool";
-+    case VERB:
-+      return "verbatim";
-   }
-   ABSL_UNREACHABLE();
- }
-@@ -227,6 +229,9 @@ ostream& operator<<(ostream& os, const facade::RespExpr& e) {
-     case RespExpr::BOOL:
-       os << (get<int64_t>(e.u) ? "true" : "false");
-       break;
-+    case RespExpr::VERB:
-+      os << "v'" << ToSV(get<RespExpr::Buffer>(e.u)) << "'";
-+      break;
-   }
- 
-   return os;
-```
-
-**File**: `src/facade/facade_test.cc` (modified, +3/-2)
-```diff
-@@ -32,15 +32,15 @@ bool RespMatcher::MatchAndExplain(RespExpr e, MatchResultListener* listener) con
-     }
-   }
- 
--  if (type_ == RespExpr::STRING || type_ == RespExpr::ERROR) {
-+  if (type_ == RespExpr::STRING || type_ == RespExpr::ERROR || type_ == RespExpr::VERB) {
-     RespExpr::Buffer ebuf = e.GetBuf();
-     std::string_view actual{reinterpret_cast<const char*>(ebuf.data()), ebuf.size()};
- 
-     if (type_ == RespExpr::ERROR && !absl::StrContains(actual, exp_str_)) {
-       *listener << "Actual does not contain '" << exp_str_ << "'";
-       return false;
-     }
--    if (type_ == RespExpr::STRING && exp_str_ != actual) {
-+    if (type_ != RespExpr::ERROR && exp_str_ != actual) {
-       *listener << "\nActual string: " << actual;
-       return false;
-     }
-@@ -72,6 +72,7 @@ void RespMatcher::DescribeTo(std::ostream* os) const {
-   switch (type_) {
-     case RespExpr::STRING:
-     case RespExpr::ERROR:
-+    case RespExpr::VERB:
-       *os << exp_str_;
-       break;
- 
-```
-
-**File**: `src/facade/reply_builder.cc` (modified, +1/-1)
-```diff
-@@ -417,7 +417,7 @@ void RedisReplyBuilderBase::SendBool(bool val) {
-     return SendLong(val);
- 
-   ReplyScope scope(this);
--  val ? WritePieces(kTrueR3) : WritePieces(kFalseR3);
-+  WritePieces(val ? kTrueR3 : kFalseR3);
- }
- 
- void RedisReplyBuilderBase::SendNullArray() {
-```
-
-**File**: `src/facade/reply_builder_test.cc` (modified, +5/-0)
-```diff
-@@ -1006,6 +1006,11 @@ TEST_F(RedisReplyBuilderTest, VerbatimString) {
-   builder_->SetRespVersion(RespVersion::kResp3);
-   builder_->SendVerbatimString(str, RedisReplyBuilder::VerbatimFormat::TXT);
-   ASSERT_TRUE(NoErrors());
-+
-+  // Tests read the text without its format prefix and compare it.
-+  auto parsed = Parse();
-+  EXPECT_THAT(parsed.args, ElementsAre(RespMatcher(str, RespExpr::VERB)));
-+  EXPECT_THAT(parsed.args, ElementsAre(Not(RespMatcher("A simple", RespExpr::VERB))));
-   ASSERT_EQ(TakePayload(), "=20\r\ntxt:A simple string!\r\n") << "Resp3 VerbatimString TXT failed.";
- 
-   builder_->SetRespVersion(RespVersion::kResp3);
-```
-
-**File**: `src/facade/resp_expr.h` (modified, +1/-1)
-```diff
-@@ -20,7 +20,7 @@ class RespExpr {
-  public:
-   using Buffer = absl::Span<const uint8_t>;
- 
--  enum Type : uint8_t { STRING, ARRAY, INT64, DOUBLE, NIL, NIL_ARRAY, ERROR, BOOL };
-+  enum Type : uint8_t { STRING, ARRAY, INT64, DOUBLE, NIL, NIL_ARRAY, ERROR, BOOL, VERB };
- 
-   // RESP3 maps and sets arrive as an ARRAY of their flat contents; this tells them apart.
-   enum class Agg : uint8_t { kArray, kMap, kSet };
-```
-
-**File**: `src/facade/resp_expr_test_utils.cc` (modified, +5/-0)
-```diff
-@@ -62,6 +62,11 @@ RespExpr RespExprBuilder::BuildNode(const RESPObj& obj) {
-       SetStringPayload(obj, &expr);
-       break;
-     }
-+    case RESPObj::Type::VERB: {
-+      expr.type = RespExpr::VERB;
-+      SetStringPayload(obj, &expr);
-+      break;
-+    }
-     case RESPObj::Type::ARRAY:
-     case RESPObj::Type::MAP:
-     case RESPObj::Type::SET: {
-```
-
-**File**: `src/facade/resp_parser.cc` (modified, +2/-0)
-```diff
-@@ -181,6 +181,8 @@ std::ostream& operator<<(std::ostream& os, const RESPObj& obj) {
-     }
-     case RESPObj::Type::STRING:
-       [[fallthrough]];
-+    case RESPObj::Type::VERB:
-+      [[fallthrough]];
-     case RESPObj::Type::NIL:
-       [[fallthrough]];
-     case RESPObj::Type::ERROR:
-```
-
----
-
-### Incident Patch 2: `dd86999d` (2026-11-20)
-**Commit Message**: fix(zset): reply with score pairs for ZUNION/ZINTER WITHSCORES in RESP3 (#8841)
-
-fix(zset): reply with [member, score] pairs for ZUNION/ZINTER WITHSCORES in RESP3
-
-The non-store branch of ZBooleanOperation always wrote a flat member/score list, so RESP3
-clients such as redis-py 8 failed to unpack zunion/zinter(withscores=True). Reply like
-SendScoredArray does: one [member, score] array per member under RESP3, flat otherwise.
-
-Fixes #8839
-
-Signed-off-by: Pratik-Kumar-Dhakar <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `src/server/zset_family.cc` (modified, +6/-1)
-```diff
-@@ -1620,8 +1620,13 @@ void ZBooleanOperation(CmdArgParser parser, string_view cmd, bool is_union, bool
-     // We can't use SendScoredArray because it expects strings, not string_views
-     // TOOD: Not longer relevant with new io, use scoping
-     auto* rb = static_cast<RedisReplyBuilder*>(builder);
--    rb->StartArray(smvec.size() * (op_args->with_scores ? 2 : 1));
-+
-+    // Like SendScoredArray: RESP3 replies with a [member, score] pair per member.
-+    const bool score_pairs = op_args->with_scores && rb->IsResp3();
-+    rb->StartArray((op_args->with_scores && !score_pairs) ? smvec.size() * 2 : smvec.size());
-     for (const auto& elem : smvec) {
-+      if (score_pairs)
-+        rb->StartArray(2);
-       rb->SendBulkString(elem.second);
-       if (op_args->with_scores) {
-         rb->SendDouble(elem.first);
-```
-
-**File**: `src/server/zset_family_test.cc` (modified, +16/-0)
-```diff
-@@ -1249,6 +1249,22 @@ TEST_F(ZSetFamilyTest, Resp3) {
-   ASSERT_THAT(resp, ArrLen(2));
-   ASSERT_THAT(resp.GetVec()[0].GetVec(), ElementsAre("a", DoubleArg(1)));
-   ASSERT_THAT(resp.GetVec()[1].GetVec(), ElementsAre("b", DoubleArg(2)));
-+
-+  // ZUNION and ZINTER reply with [member, score] pairs too.
-+  Run({"zadd", "y", "3", "b", "4", "c"});
-+  resp = Run({"zunion", "2", "x", "y", "WITHSCORES"});
-+  ASSERT_THAT(resp, ArrLen(3));
-+  EXPECT_THAT(resp.GetVec()[0].GetVec(), ElementsAre("a", DoubleArg(1)));
-+  EXPECT_THAT(resp.GetVec()[1].GetVec(), ElementsAre("c", DoubleArg(4)));
-+  EXPECT_THAT(resp.GetVec()[2].GetVec(), ElementsAre("b", DoubleArg(5)));
-+
-+  resp = Run({"zinter", "2", "x", "y", "WITHSCORES"});
-+  ASSERT_THAT(resp, ArrLen(1));
-+  EXPECT_THAT(resp.GetVec()[0].GetVec(), ElementsAre("b", DoubleArg(5)));
-+
-+  // Without WITHSCORES they stay a flat list of members.
-+  resp = Run({"zunion", "2", "x", "y"});
-+  EXPECT_THAT(resp.GetVec(), ElementsAre("a", "c", "b"));
- }
- 
- TEST_F(ZSetFamilyTest, BlockingIsReleased) {
-```
-
----
-
-### Incident Patch 3: `66de9e68` (2026-11-20)
-**Commit Message**: refactor(core): Simplify memory accounting (#8820)
-
-* feat(core): Simplify memory accounting
-
-- Move the accounting to core
-- Remove need for callbacks for future PRs or handlers/hooks in core
-- Simplify accounting, by using a running total accounted for bytes
-- Scopes no longer adjust parent/deduct parent scope values
-- Reduce number of adhoc calculation points to just one point
-
-Signed-off-by: Abhijat Malviya <[REDACTED_EMAIL]>
-
-**File**: `src/core/CMakeLists.txt` (modified, +1/-1)
-```diff
-@@ -25,7 +25,7 @@ add_subdirectory(page_usage)
- 
- add_library(dfly_core allocation_tracker.cc bloom.cc topk.cc compact_object.cc cms.cc cuckoo.cc dense_set.cc
-     dragonfly_core.cc extent_tree.cc lua_internals.cc
--    interpreter.cc glob_matcher.cc mi_memory_resource.cc qlist.cc dict_builder.cc sds_utils.cc
-+    interpreter.cc glob_matcher.cc memory_accounting.cc mi_memory_resource.cc qlist.cc dict_builder.cc sds_utils.cc
-     segment_allocator.cc score_map.cc small_string.cc sorted_map.cc stream_node.cc task_queue.cc
-     tx_queue.cc string_set.cc string_map.cc tiering_types.cc top_keys.cc
-     detail/bitpacking.cc detail/listpack_wrap.cc detail/listpack.cc
-```
-
-**File**: `src/core/compact_object.cc` (modified, +10/-16)
-```diff
-@@ -31,6 +31,7 @@ extern "C" {
- #include "core/cms.h"
- #include "core/cuckoo.h"
- #include "core/detail/bitpacking.h"
-+#include "core/memory_accounting.h"
- #include "core/oah_set.h"
- #include "core/page_usage/page_usage_stats.h"
- #include "core/qlist.h"
-@@ -507,7 +508,6 @@ struct TL {
-   string tmp_str;
-   size_t small_str_bytes;
-   PinnedMap pin_map;
--  CompactObj::TypeReplacementHook type_replacement_hook = nullptr;
- };
- 
- // Callback function used in redis/t_stream.cc implementation to
-@@ -619,13 +619,8 @@ auto CompactObj::GetStatsThreadLocal() -> Stats {
-   return res;
- }
- 
--void CompactObj::SetTypeReplacementHook(TypeReplacementHook hook) {
--  tl.type_replacement_hook = hook;
--}
--
- void CompactObj::InitThreadLocal(MemoryResource* mr) {
-   tl.local_mr = mr;
--  tl.type_replacement_hook = nullptr;
-   tl.tmp_buf = base::PODArray<uint8_t>{mr};
-   cmn::BorrowedStringOps::Set(&g_borrow_ops);
- }
-@@ -1496,22 +1491,21 @@ std::pair<bool, bool> CompactObj::SetByteAtIndex(size_t idx, uint8_t val) {
- }
- 
- void CompactObj::SetMeta(uint8_t taglen, uint8_t mask, CompactObjType replacement_type) {
--  if (HasAllocated()) {
-+  if (!HasAllocated()) {
-+    memset(u_.inline_str, 0, kInlineLen);
-+  } else if (is_key_ || !MemoryAccountingEnabled()) {
-+    // AccountObjectMemory charges key frees separately as OBJ_KEY.
-+    Free();
-+  } else {
-     const auto old_type = ObjType();
--    if (tl.type_replacement_hook && replacement_type == kInvalidCompactObjType)
-+    if (replacement_type == kInvalidCompactObjType)
-       replacement_type = TypeForTag(taglen);
--
--    if (tl.type_replacement_hook && old_type != replacement_type) {
--      const auto& resource = *static_cast<MiMemoryResource*>(tl.local_mr);
--      const int64_t before = UsedMemoryThreadLocal(resource);
-+    if (old_type != replacement_type) {
-+      AtomicMemoryScope scope(old_type);
-       Free();
--      const int64_t after = UsedMemoryThreadLocal(resource);
--      tl.type_replacement_hook(old_type, after - before);
-     } else {
-       Free();
-     }
--  } else {
--    memset(u_.inline_str, 0, kInlineLen);
-   }
-   taglen_ = taglen;
-   mask_ = mask;
-```
-
-**File**: `src/core/compact_object.h` (modified, +0/-4)
-```diff
-@@ -474,10 +474,6 @@ class CompactObj {
- 
-   static Stats GetStatsThreadLocal();
- 
--  // Receives the allocator delta from freeing a value replaced by a different type.
--  // The hook runs synchronously and must not suspend.
--  using TypeReplacementHook = void (*)(CompactObjType old_type, int64_t delta);
--  static void SetTypeReplacementHook(TypeReplacementHook hook);
-   static void InitThreadLocal(MemoryResource* mr);
-   static void ClearThreadLocalStats();
- 
-```
-
-**File**: `src/core/compact_object_test.cc` (modified, +134/-29)
-```diff
-@@ -18,6 +18,7 @@
- #include "base/logging.h"
- #include "core/cuckoo.h"
- #include "core/detail/bitpacking.h"
-+#include "core/memory_accounting.h"
- #include "core/mi_memory_resource.h"
- #include "core/page_usage/page_usage_stats.h"
- #include "core/string_map.h"
-@@ -1514,53 +1515,157 @@ TEST_F(CompactObjectTest, StreamSizeDoesNotWrap) {
- }
- 
- TEST_F(CompactObjectTest, TypeReplacementAccounting) {
--  static thread_local vector<pair<CompactObjType, int64_t>> deltas;
--  deltas.clear();
--  CompactObj::SetTypeReplacementHook(
--      [](CompactObjType type, int64_t delta) { deltas.emplace_back(type, delta); });
--  absl::Cleanup restore_hook = [] { CompactObj::SetTypeReplacementHook(nullptr); };
-+  auto& resource = *static_cast<MiMemoryResource*>(CompactObj::memory_resource());
-+  InitMemoryAccounting(resource);
-+  absl::Cleanup shutdown = [] { ShutdownMemoryAccounting(); };
-+
-+  auto attributed = [] { return GetTypeAttributedMemory(); };
- 
-   for (size_t size : {32u, 4096u}) {
-     SCOPED_TRACE(size);
-     cobj_.SetString(string(size, '\x80'));
-     int64_t string_bytes = cobj_.MallocUsed();
--    intset* is = intsetNew();
--    int64_t set_bytes = zmalloc_usable_size(is);
--    cobj_.InitRobj(OBJ_SET, kEncodingIntSet, is);
--    ASSERT_FALSE(deltas.empty());
--    EXPECT_EQ(deltas.back(), make_pair(CompactObjType{OBJ_STRING}, -string_bytes));
-+    auto before = attributed();
-+    int64_t set_bytes;
-+    {
-+      AtomicMemoryScope scope(OBJ_SET);
-+      intset* is = intsetNew();
-+      set_bytes = zmalloc_usable_size(is);
-+      cobj_.InitRobj(OBJ_SET, kEncodingIntSet, is);
-+    }
-+    auto expected = before;
-+    expected[OBJ_STRING] -= string_bytes;
-+    expected[OBJ_SET] += set_bytes;
-+    EXPECT_EQ(attributed(), expected);
- 
-+    before = attributed();
-     cobj_.SetString("42");
--    EXPECT_EQ(deltas.back(), make_pair(CompactObjType{OBJ_SET}, -set_bytes));
-+    EXPECT_EQ(attributed()[OBJ_SET] - before[OBJ_SET], -set_bytes);
-   }
--  ASSERT_EQ(deltas.size(), 4);
- 
--  // Encoding changes, tiering, resets and destruction are not cross-type replacements.
-+  // Same-type replacement is accounted for by the enclosing scope.
-   cobj_.SetString(string(32, '\x80'));
--  cobj_.SetString(string(4096, '\x80'));
--  cobj_.SetExternal(0, 4096, CompactObj::ExternalRep::STRING);
--  CompactValue external_hash;
--  external_hash.InitRobj(OBJ_HASH, kEncodingStrMap2, CompactObj::AllocateMR<StringMap>());
--  external_hash.SetExternal(4096, 128, CompactObj::ExternalRep::SERIALIZED_MAP);
--  external_hash.Reset();
--  external_hash.SetString("inline");
-+  auto expected = attributed();
-+  int64_t old_bytes = cobj_.MallocUsed();
-   {
--    CompactValue value;
--    value.SetString(string(32, '\x80'));
--    value.Reset();
--    value.SetString(string(4096, '\x80'));
-+    AtomicMemoryScope scope(OBJ_STRING);
-+    cobj_.SetString(string(4096, '\x80'));
-   }
--  EXPECT_EQ(deltas.size(), 4);
-+  expected[OBJ_STRING] += static_cast<int64_t>(cobj_.MallocUsed()) - old_bytes;
-+  EXPECT_EQ(attributed(), expected);
-+
-+  // Key accounting is separate.
-+  CompactKey key(string(4096, '\x80'));
-+  key.SetString("inline");
-+  EXPECT_EQ(attributed(), expected);
- 
--  cobj_.Reset();
--  cobj_.SetString(string(4096, '\x80'));
-   int64_t string_bytes = cobj_.MallocUsed();
-+  const auto before_move = attributed();
-+  CompactValue external_hash;
-   external_hash.SetExternal(4096, 128, CompactObj::ExternalRep::SERIALIZED_MAP);
-   cobj_ = std::move(external_hash);
--  ASSERT_EQ(deltas.size(), 5);
--  EXPECT_EQ(deltas.back(), make_pair(CompactObjType{OBJ_STRING}, -string_bytes));
-+  EXPECT_EQ(attributed()[OBJ_STRING] - before_move[OBJ_STRING], -string_bytes);
-   EXPECT_EQ(cobj_.ObjType(), OBJ_HASH);
-   EXPECT_TRUE(cobj_.IsExternal());
-+
-+  // Same-type offloading leaves accounting to the caller.
-+  cobj_.Reset();
-+  cobj_.SetString(string(4096, '\x80'));
-+  const auto before_offload = attributed();
-+  cobj_.SetExternal(4096, 4096, CompactObj::ExternalRep::STRING);
-+  EXPECT_EQ(attributed(), before_offload);
-+}
-+
-+TEST_F(CompactObjectTest, MemoryAccountingScopesAndCharges) {
-+  auto& resource = *static_cast<MiMemoryResource*>(CompactObj::memory_resource());
-+  InitMemoryAccounting(resource);
-+  absl::Cleanup shutdown = [] { ShutdownMemoryAccounting(); };
-+
-+  void* outer = nullptr;
-+  void* middle = nullptr;
-+  void* inner = nullptr;
-+  void* direct = nullptr;
-+  void* untracked = nullptr;
-+  {
-+    AtomicMemoryScope string_scope{OBJ_STRING};
-+    outer = resource.allocate(64);
-+    {
-+      AtomicMemoryScope nested_string_scope{OBJ_STRING};
-+      middle = resource.allocate(32);
-+      {
-+        AtomicMemoryScope hash_scope{OBJ_HASH};
-+        inner = resource.allocate(16);
-+        direct = resource.allocate(64);
-+        ChargeMemory(OBJ_KEY, mi_usable_size(direct));
-+        untracked = resource.allocate(64);
-+        ChargeMemory(kUntrackedMemory, mi_usable_size(untracked));
-+      }
-+    }
-+  }
-+
-+  TypeAttributedMemory expected{};
-+  expected[OBJ_STRING] = mi_usable_size(o
-```
-
-**File**: `src/core/memory_accounting.cc` (added, +122/-0)
-```diff
-@@ -0,0 +1,122 @@
-+// Copyright 2026, DragonflyDB authors.  All rights reserved.
-+// See LICENSE for licensing terms.
-+//
-+
-+#include "core/memory_accounting.h"
-+
-+#include "base/logging.h"
-+#include "core/mi_memory_resource.h"
-+
-+namespace dfly {
-+using namespace util;
-+
-+namespace {
-+
-+struct MemoryAccountingState {
-+  // A live resource enables accounting for this thread
-+  MiMemoryResource* resource = nullptr;
-+
-+  // Cumulative signed charges from ChargeMemory form A in U - A accounting
-+  ssize_t charged_total = 0;
-+  TypeAttributedMemory by_type{};
-+};
-+
-+thread_local MemoryAccountingState accounting;
-+
-+// The transaction retains ownership while its fiber is suspended.
-+thread_local TxMemoryScope* tl_tx_scope = nullptr;
-+
-+}  // namespace
-+
-+void InitMemoryAccounting(MiMemoryResource& resource) {
-+  DCHECK_EQ(accounting.resource, nullptr);
-+  accounting.resource = &resource;
-+}
-+
-+void ShutdownMemoryAccounting() {
-+  accounting = {};
-+}
-+
-+bool MemoryAccountingEnabled() {
-+  return accounting.resource != nullptr;
-+}
-+
-+const TypeAttributedMemory& GetTypeAttributedMemory() {
-+  return accounting.by_type;
-+}
-+
-+ssize_t UnattributedMemory() {
-+  if (!MemoryAccountingEnabled())
-+    return 0;
-+
-+  const ssize_t used = UsedMemoryThreadLocal(*accounting.resource);
-+  return used - accounting.charged_total;
-+}
-+
-+void ChargeMemory(int category, ssize_t delta) {
-+  DCHECK_GE(category, 0);
-+  DCHECK_LE(category, kUntrackedMemory);
-+  if (!MemoryAccountingEnabled())
-+    return;
-+
-+  accounting.charged_total += delta;
-+  accounting.by_type[category] += delta;
-+}
-+
-+AtomicMemoryScope::AtomicMemoryScope(int category)
-+    : category_(category), baseline_(UnattributedMemory()) {
-+  DCHECK_GE(category, 0);
-+  DCHECK_LE(category, kUntrackedMemory);
-+}
-+
-+AtomicMemoryScope::~AtomicMemoryScope() {
-+  ChargeMemory(category_, UnattributedMemory() - baseline_);
-+}
-+
-+TxMemoryScope::TxMemoryScope(int obj_type)
-+    : obj_type_(obj_type), enabled_(MemoryAccountingEnabled()) {
-+  if (!enabled_)
-+    return;
-+
-+  CHECK_EQ(tl_tx_scope, nullptr) << "tx scope created while another tx scope exists";
-+  DCHECK_GE(obj_type_, 0);
-+  DCHECK_LT(obj_type_, OBJ_TYPE_MAX);
-+  mem_baseline_ = UnattributedMemory();
-+  tl_tx_scope = this;
-+  prev_hook_ = ThisFiber::SetSwitchHook({MemTrackerHook});
-+}
-+
-+TxMemoryScope::~TxMemoryScope() {
-+  if (!enabled_)
-+    return;
-+
-+  CHECK_EQ(tl_tx_scope, this) << "tx scope destroyed without owning the tracking pointer";
-+  DCHECK(!suspended_);
-+  ThisFiber::SetSwitchHook(prev_hook_);
-+  tl_tx_scope = nullptr;
-+
-+  ChargeMemory(obj_type_, UnattributedMemory() - mem_baseline_);
-+}
-+
-+void TxMemoryScope::MemTrackerHook(fb2::FiberSwitchHookEvent event) noexcept {
-+  DCHECK_NE(tl_tx_scope, nullptr);
-+  auto& scope = *tl_tx_scope;
-+
-+  using enum fb2::FiberSwitchHookEvent;
-+  switch (event) {
-+    case SUSPEND:
-+      DCHECK(!scope.suspended_);
-+      ChargeMemory(scope.obj_type_, UnattributedMemory() - scope.mem_baseline_);
-+      scope.suspended_ = true;
-+      break;
-+    case RESUME:
-+      DCHECK(scope.suspended_);
-+
-+      // Start a fresh interval after other fibers may have changed memory usage.
-+      scope.mem_baseline_ = UnattributedMemory();
-+      scope.suspended_ = false;
-+      break;
-+  }
-+}
-+
-+}  // namespace dfly
-```
-
-**File**: `src/core/memory_accounting.h` (added, +128/-0)
-```diff
-@@ -0,0 +1,128 @@
-+// Copyright 2026, DragonflyDB authors.  All rights reserved.
-+// See LICENSE for licensing terms.
-+//
-+
-+#pragma once
-+
-+#include <array>
-+
-+#include "util/fibers/fibers.h"
-+
-+extern "C" {
-+#include "redis/redis_aux.h"
-+}
-+
-+namespace dfly {
-+
-+class MiMemoryResource;
-+
-+// Internal memory such as tiered storage wrappers and mcflag tables is counted in this slot.
-+inline constexpr int kUntrackedMemory = OBJ_TYPE_MAX;
-+
-+using TypeAttributedMemory = std::array<ssize_t, kUntrackedMemory + 1>;
-+
-+// memory resource must outlive accounting sessions
-+void InitMemoryAccounting(MiMemoryResource& resource);
-+
-+// All accounting scopes on this thread must have ended
-+void ShutdownMemoryAccounting();
-+
-+bool MemoryAccountingEnabled();
-+
-+// Returns the current thread's cumulative charges split into types
-+const TypeAttributedMemory& GetTypeAttributedMemory();
-+
-+// Memory sources of truth:
-+//
-+// Total used memory: from UsedMemoryThreadLocal
-+//   Reported by mimalloc and thread-local counters.
-+//   Up to date on every call and read-only.
-+//   Referred to as "used".
-+//
-+// Accounted-for memory: from MemoryAccountingState::charged_total
-+//   Running counter, only updated by ChargeMemory.
-+//   Read when calculating the baseline and written after a scope ends.
-+//   Total of the memory tracked by this accounting system. Running total of allocations and frees
-+//   tracked by scopes and attributed to object types such as list, string, etc. Referred to as
-+//   "accounted".
-+//
-+// Memory usage broken down by type: MemoryAccountingState::by_type
-+//   Array of per-type counters, breaking down the "accounted" total.
-+//   Written only by accounting code and read by metrics.
-+//
-+// Relation:
-+//   Sum of memory usage by types is equal to accounted memory
-+//
-+// Lifecycle of a scope:
-+//   At the start, calculate baseline = used - accounted.
-+//   This is the memory not accounted for yet, whose changes come from allocations and frees during
-+//   the operation.
-+//
-+//   At the end, calculate used - accounted again as baseline'.
-+//   delta = baseline' - baseline is the change in unaccounted memory due to the scope's type.
-+//   Attribute this delta to the scope's type in accounting.by_type[category].
-+//
-+//   Crucially, we also add this delta to the accounted total: accounted += delta.
-+//   This step is critical for nested scope handling. All outer scopes can use change in this
-+//   accounted total, to excloude changes from inner scopes if any. The nested scopes don't need to
-+//   know about each other, they just refer to these two values: used and accounted.
-+//
-+// Nested scopes:
-+//   Outer scope A (STRING) starts: used=10, accounted=5, baseline=10-5=5.
-+//     A allocates 1: used=11.
-+//     Inner scope B (HASH) starts: used=11, accounted=5, baseline=11-5=6.
-+//       B allocates 1: used=12.
-+//       B ends: baseline' = used - accounted = 12 - 5 = 7.
-+//         delta = baseline' - baseline = 7 - 6 = 1.
-+//         usage for HASH += 1.
-+//         accounted += 1, so accounted=6.
-+//     A ends: baseline' = used - accounted = 12 - 6 = 6.
-+//       delta = baseline' - baseline = 6 - 5 = 1.
-+//       usage for STRING += 1.
-+//       accounted += 1, so accounted=7.
-+//
-+// Nested scopes update "accounted" so enclosing scopes can compute the difference.
-+
-+// Returns used - accounted
-+ssize_t UnattributedMemory();
-+
-+// updates accounted total, and by type. delta is added to both
-+void ChargeMemory(int category, ssize_t delta);
-+
-+// Attributes allocator delta over this scope's non-yielding lifetime
-+class AtomicMemoryScope {
-+ public:
-+  explicit AtomicMemoryScope(int category);
-+  ~AtomicMemoryScope();
-+
-+  AtomicMemoryScope(const AtomicMemoryScope&) = delete;
-+  AtomicMemoryScope& operator=(const AtomicMemoryScope&) = delete;
-+
-+ private:
-+  util::FiberAtomicGuard guard_;
-+  int category_;
-+  ssize_t baseline_;
-+};
-+
-+// Attributes allocator delta during the owning fiber's running intervals for this scope's lifetime
-+// Memory tracking is turned off for the durations when fiber is suspended.
-+class TxMemoryScope {
-+ public:
-+  // An enabled transaction scope exclusively owns the thread's tracking hook until destruction.
-+  explicit TxMemoryScope(int obj_type);
-+  ~TxMemoryScope();
-+
-+  TxMemoryScope(const TxMemoryScope&) = delete;
-+  TxMemoryScope& operator=(const TxMemoryScope&) = delete;
-+
-+ private:
-+  static void MemTrackerHook(util::fb2::FiberSwitchHookEvent event) noexcept;
-+
-+  int obj_type_;
-+  ssize_t mem_baseline_ = 0;
-+  util::fb2::FiberSwitchHook prev_hook_;
-+  bool enabled_ = false;
-+  bool suspended_ = false;
-+};
-+
-+}  // namespace dfly
-```
-
-**File**: `src/server/db_slice.cc` (modified, +5/-3)
-```diff
-@@ -9,6 +9,7 @@
- #include <ranges>
- 
- #include "core/dense_set.h"
-+#include "core/memory_accounting.h"
- #include "core/oah_set.h"
- #include "core/qlist.h"
- #include "strings/human_readable.h"
-@@ -29,7 +30,6 @@ extern "C" {
- #include "server/engine_shard_set.h"
- #include "server/error.h"
- #include "server/journal/journal.h"
--#include "server/memory_scope.h"
- #include "server/namespaces.h"
- #include "server/server_state.h"
- #include "server/tiered_storage.h"
-@@ -430,7 +430,7 @@ void AccountObjectMemory(string_view key, unsigned type, int64_t delta, DbTable*
- 
-   db->stats.AddTypeMemoryUsage(type, delta);
-   if (type == OBJ_KEY)
--    EngineShard::tlocal()->AddTypeMemDelta(OBJ_KEY, delta);
-+    ChargeMemory(OBJ_KEY, delta);
-   UpdateSlotStat(key, delta, db, &SlotStats::memory_bytes, "memory usage", type, slot);
- }
- 
-@@ -950,7 +950,9 @@ OpResult<DbSlice::ItAndUpdater> DbSlice::AddOrFind(const Context& cntx, string_v
- 
-   events_.mutations++;
-   ssize_t table_increase = db.prime.mem_usage() - table_before;
--  DeductFromTxScope(table_increase);
-+
-+  // Table storage is shared infrastructure rather than object memory.
-+  ChargeMemory(kUntrackedMemory, table_increase);
-   memory_budget_ -= table_increase;
- 
-   table_memory_ += table_increase;
-```
-
-**File**: `src/server/engine_shard.cc` (modified, +8/-15)
-```diff
-@@ -11,6 +11,7 @@
- #include <memory>
- 
- #include "base/flags.h"
-+#include "core/memory_accounting.h"
- #include "core/page_usage/page_usage_stats.h"
- #include "core/qlist.h"
- #include "core/search/stateless_allocator.h"
-@@ -25,7 +26,6 @@ extern "C" {
- #include "server/engine_shard_set.h"
- #include "server/journal/aof_streamer.h"
- #include "server/journal/journal.h"
--#include "server/memory_scope.h"
- #include "server/namespaces.h"
- #include "server/search/doc_index.h"
- #include "server/server_state.h"
-@@ -36,6 +36,8 @@ extern "C" {
- 
- using namespace std;
- 
-+ABSL_FLAG(bool, enable_scope_based_mem_track, false, "Enable scope based memory metric");
-+
- ABSL_FLAG(float, mem_defrag_threshold, 0.7,
-           "Minimum percentage of used memory relative to maxmemory cap before running "
-           "defragmentation");
-@@ -516,14 +518,10 @@ void EngineShard::InitThreadLocal(ProactorBase* pb) {
-   shard_ = new (ptr) EngineShard(pb, data_heap);
- 
-   CompactObj::InitThreadLocal(shard_->memory_resource());
--  if (MemoryScopeEnabled()) {
--    CompactObj::SetTypeReplacementHook([](CompactObjType old_type, int64_t delta) {
--      EngineShard::tlocal()->AddTypeMemDelta(old_type, delta);
--      DeductFromTxScope(delta);
--    });
--  }
-   SmallString::InitThreadLocal(data_heap);
-   InitTLStatelessAllocMR(shard_->memory_resource());
-+  if (GetFlag(FLAGS_enable_scope_based_mem_track))
-+    InitMemoryAccounting(shard_->mi_resource_);
- 
-   shard_->shard_search_indices_ = std::make_unique<ShardDocIndices>();
- }
-@@ -552,6 +550,9 @@ void EngineShard::DestroyThreadLocal() {
- 
-   QList::ShutdownThread();
-   detail::InternedString::ResetPool();
-+
-+  // End accounting while the shard's memory resource is still alive.
-+  ShutdownMemoryAccounting();
-   shard_->~EngineShard();
-   CleanupStatelessAllocMR();
- 
-@@ -1196,12 +1197,4 @@ EngineShard::CompactTableStats EngineShard::CompactTable(double threshold, DbInd
-   return stats;
- }
- 
--void EngineShard::AddTypeMemDelta(size_t type, int64_t delta) {
--  if (delta == 0)
--    return;
--
--  DCHECK_LT(type, type_attributed_memory_.size());
--  type_attributed_memory_[type] += delta;
--}
--
- }  // namespace dfly
+@@ -1426,9 +1426,9 @@ TEST_F(ServerFamilyTest, ExternalAuth) {
+   EXPECT_THAT(Run("ldap", {"AUTH", "directory-user", "local"}),
+               ErrArg("WRONGPASS invalid username-password pair or user is disabled."));
+   EXPECT_THAT(Run("ldap", {"AUTH", "directory-user", password}), "OK");
+-  EXPECT_THAT(Run("ldap", {"ACL", "WHOAMI"}), "User is alice");
++  EXPECT_THAT(Run("ldap", {"ACL", "WHOAMI"}), "alice");
+   EXPECT_THAT(Run("token", {"AUTH", token}), "OK");
+-  EXPECT_THAT(Run("token", {"ACL", "WHOAMI"}), "User is alice");
++  EXPECT_THAT(Run("token", {"ACL", "WHOAMI"}), "alice");
+   absl::SetFlag(&FLAGS_auth_validate_url, "");
+   EXPECT_THAT(Run("ldap", {"AUTH", "directory-user", "local"}),
+               ErrArg("WRONGPASS invalid username-password pair or user is disabled."));
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8862** (2026-11-22): fix(tests): expect the bare user name from ACL WHOAMI in ExternalAuth (@vyavdoshenko)
 - **PR #8857** (2026-11-20): fix: correct connection replies and client tracking (@vyavdoshenko)
 - **PR #8855** (2026-11-20): fix(acl): test_acl_load_updates_default_user_connections (@kostasrim)
 - **PR #8847** (2026-11-19): fix(acl): apply reloaded default user rules on ACL LOAD (@kostasrim)
 - **PR #8845** (2026-11-20): fix: match RESP3 reply shapes of JSON and probabilistic commands (@vyavdoshenko)
 - **PR #8844** (2026-11-19): fix: stack smashing in journal (@BorysTheDev)
-- **PR #8841** (2026-11-20): fix(zset): reply with score pairs for ZUNION/ZINTER WITHSCORES in RESP3 (@Pratik-Kumar-Dhakar)
 
 ---
 
@@ -3214,36 +2386,33 @@ Signed-off-by: Abhijat Malviya <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. correct connection replies and client tracking
+## X. tests): expect the bare user name from ACL WHOAMI in ExternalAuth
 
 **RULE**:
-When implementing operations in `src/facade/dragonfly_connection.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflydb/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/server/server_family_test.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflydb/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2c56bc98`: correct connection replies and client tracking. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `24104b84`: tests): expect the bare user name from ACL WHOAMI in ExternalAuth. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/facade/dragonfly_connection.cc`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/server/server_family_test.cc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-  SetName({});
-    // ctx_info.Format() returns "db=N flags=X"; extract flags only.
-  // An unnamed connection keeps its id in the fiber name.
-  util::ThisFiber::SetName(absl::StrCat("DflyConn_", name.empty() ? absl::StrCat(id_) : name));
+  EXPECT_THAT(Run("ldap", {"ACL", "WHOAMI"}), "alice");
+  EXPECT_THAT(Run("token", {"ACL", "WHOAMI"}), "alice");
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-  SetName(absl::StrCat(id_));
-    // ctx_info.Format() returns "db=N" or "db=N flags=X"; extract flags only.
-  util::ThisFiber::SetName(absl::StrCat("DflyConn_", name));
+  EXPECT_THAT(Run("ldap", {"ACL", "WHOAMI"}), "User is alice");
+  EXPECT_THAT(Run("token", {"ACL", "WHOAMI"}), "User is alice");
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2c56bc98` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `24104b84` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction
