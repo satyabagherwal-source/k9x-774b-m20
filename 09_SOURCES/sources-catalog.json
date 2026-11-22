@@ -515,8 +515,8 @@
     "sourceUrl": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
     "sourceVersion": "hf-deepseek-ai-deepseek-v4.1-flash",
     "license": "Open-Source",
-    "contentHash": "6ad69861f0aa451f0eebc9b1a7de1d696cd9a2e1215d35c1a751f16ef3cae024",
-    "lastHarvestedAt": "2026-11-18T14:48:30.009Z",
+    "contentHash": "bf3d2640ecf5256794b1d0f622e0d42697c3adfbb702b39650098987098e821b",
+    "lastHarvestedAt": "2026-11-22T21:48:53.401Z",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash"
   },
   "hf-akatz-ai-minimax-h3-character-swap-lora": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "e0086dfb",
+    "sourceVersion": "920ad6aa",
     "license": "Apache-2.0",
-    "contentHash": "82c32f3c28e51c2c38f78a6c397850c19b0117d40919977867abd39315b0e716",
-    "lastHarvestedAt": "2026-11-22T20:17:09.467Z",
+    "contentHash": "f56b473a036a880fc27b016e06036d27524852eeb6c659917a04182e5595ce03",
+    "lastHarvestedAt": "2026-11-22T21:49:09.974Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -8123,10 +8123,10 @@
     "repository": "vanniktech/gradle-maven-publish-plugin",
     "platform": "github",
     "sourceUrl": "https://github.com/vanniktech/gradle-maven-publish-plugin",
-    "sourceVersion": "fc64b6e6",
+    "sourceVersion": "4530ec6c",
     "license": "Apache-2.0",
-    "contentHash": "2e3bd503e9293496ac4cd2ffd34f8fbc454723e3894e91392c8f36f278cd3bc3",
-    "lastHarvestedAt": "2026-11-19T22:36:09.010Z",
+    "contentHash": "cb4d12643ff9b468f410cb4f0c87d5f17554f2b00ef328700f62a9c32b2c175d",
+    "lastHarvestedAt": "2026-11-22T21:48:59.829Z",
     "learningId": "learn-github-vanniktech-gradle-maven-publish-plugin"
   },
   "mohamedrejeb-calf": {

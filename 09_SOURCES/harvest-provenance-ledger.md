@@ -12234,3 +12234,6 @@ Every entry in this ledger must capture:
 | `learn-github-ajeetdsouza-zoxide` | `https://github.com/ajeetdsouza/zoxide` | `daf56a37` | Multi-dimensional audit evidence | 2026-11-22T21:31:58.543Z |
 | `learn-huggingface-inclusionai-ming-image-0-1-design` | `https://huggingface.co/inclusionAI/Ming-Image-0.1-Design` | `hf-inclusi` | Multi-dimensional audit evidence | 2026-11-22T21:40:48.899Z |
 | `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `09c8c207` | Multi-dimensional audit evidence | 2026-11-22T21:41:02.918Z |
+| `learn-huggingface-deepseek-ai-deepseek-v4-1-flash` | `https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-11-22T21:48:53.401Z |
+| `learn-github-vanniktech-gradle-maven-publish-plugin` | `https://github.com/vanniktech/gradle-maven-publish-plugin` | `4530ec6c` | Multi-dimensional audit evidence | 2026-11-22T21:48:59.829Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `920ad6aa` | Multi-dimensional audit evidence | 2026-11-22T21:49:09.974Z |

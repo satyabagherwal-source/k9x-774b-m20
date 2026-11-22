@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T21:41:02.923Z",
-  "total_cycles_completed": 11601,
-  "total_learnings_persisted": 11601,
-  "total_rules_promoted": 10817,
+  "last_updated": "2026-11-22T21:49:09.980Z",
+  "total_cycles_completed": 11604,
+  "total_learnings_persisted": 11604,
+  "total_rules_promoted": 10819,
   "history": [
-    {
-      "timestamp": "2026-11-22T03:11:25.786Z",
-      "repository": "NVIDIA/cuda-rust",
-      "learningId": "learn-github-nvidia-cuda-rust",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T03:11:38.506Z",
-      "repository": "giancarloerra/SocratiCode",
-      "learningId": "learn-github-giancarloerra-socraticode",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T03:11:40.105Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-22T03:24:53.096Z",
       "repository": "microsoft/Florence-2-base",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-22T21:41:02.923Z",
       "repository": "milvus-io/milvus",
       "learningId": "learn-github-milvus-io-milvus",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T21:48:53.406Z",
+      "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
+      "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T21:48:59.834Z",
+      "repository": "vanniktech/gradle-maven-publish-plugin",
+      "learningId": "learn-github-vanniktech-gradle-maven-publish-plugin",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T21:49:09.980Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

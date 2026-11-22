@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T21:41:08.129Z",
+  "last_updated": "2026-11-22T21:49:15.240Z",
   "total_records": 2384,
   "domains": {
     "A": {
@@ -9324,8 +9324,8 @@
       "title": "Research & Knowledge Intelligence: deepseek-ai/DeepSeek-V4.1-Flash Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-deepseek-ai-deepseek-v4-1-flash-research-knowledge-intelligence-deepseek-ai-d.md",
       "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
-      "content_hash": "d556ff21c770b0cffeb36e43979e0f77e1a73f5438d998713d6167a1ec9ca586",
-      "created_at": "2026-11-18T14:48:30.174Z"
+      "content_hash": "9084419478d7f1eceef0df9b7d22413142f2a223d38e01214c27e4a210fe3d30",
+      "created_at": "2026-11-22T21:48:53.604Z"
     },
     "domain_intelligence-technical-construction-intelligence-react-react-native-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-react-react-native-core-invariants",
@@ -9393,8 +9393,8 @@
       "title": "Research & Knowledge Intelligence: hf-deepseek-ai-deepseek-v4.1-flash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-deepseek-ai-deepseek-v4-1-flash-learnings-research-knowledge-intelligence-hf-.md",
       "repository": "hf-deepseek-ai-deepseek-v4.1-flash-learnings",
-      "content_hash": "954b7c50cde93acb5d3cbfeceeabacd62e3df04cd2f5dacae9b3b9bf2513249d",
-      "created_at": "2026-11-18T14:48:46.449Z"
+      "content_hash": "1e6dc47d72ccb05aaeb7fd8322a24312dfe67260880f74bf6639c872ec8b93f1",
+      "created_at": "2026-11-22T21:49:13.582Z"
     },
     "domain_intelligence-research-knowledge-intelligence-efficient-large-model-open-h3-regenerate-2k-core": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-efficient-large-model-open-h3-regenerate-2k-core",
@@ -15463,8 +15463,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "8ca43bc58b564541fbdf297c953e32a35af9bad077d90d3846cc1ec2e4c216f2",
-      "created_at": "2026-11-22T20:17:09.852Z"
+      "content_hash": "ed7c0982f32a4185a555ef51cbfe48f6896d8ad539cc9ef1f54bdfb07c36172b",
+      "created_at": "2026-11-22T21:49:10.373Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -15913,8 +15913,8 @@
       "title": "Architecture Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-learnings-architecture-intelligence-nucleoidai-nucleoid-lear.md",
       "repository": "nucleoidai-nucleoid-learnings",
-      "content_hash": "252711d47956399ad4d1bd104d245df50a79072cdd1ccb82981441a65f4007ce",
-      "created_at": "2026-11-22T13:01:55.556Z"
+      "content_hash": "2e77fb11ba4d877af3da7fe3c6f1055ae6c4319aca756bae1c0bcdcffe815b28",
+      "created_at": "2026-11-22T21:49:15.240Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants",
@@ -34480,8 +34480,8 @@
       "title": "Deployment & Operations Intelligence: vanniktech/gradle-maven-publish-plugin Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-vanniktech-gradle-maven-publish-plugin-deployment-operations-intelligence-vannik.md",
       "repository": "vanniktech/gradle-maven-publish-plugin",
-      "content_hash": "24f3f587bae01570cf5c200108b126f48cd433491435bd18c0d931ff259facd9",
-      "created_at": "2026-11-19T22:36:09.356Z"
+      "content_hash": "f2273452adc2f595e871857065d8364b21cd0d47321c6318840c2d6580d312c2",
+      "created_at": "2026-11-22T21:49:00.208Z"
     },
     "domain_intelligence-quality-verification-intelligence-sigstore-cosign-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-sigstore-cosign-core-invariants",
@@ -34498,8 +34498,8 @@
       "title": "Deployment & Operations Intelligence: vanniktech-gradle-maven-publish-plugin-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-vanniktech-gradle-maven-publish-plugin-learnings-deployment-operations-intellige.md",
       "repository": "vanniktech-gradle-maven-publish-plugin-learnings",
-      "content_hash": "8f407fe3f5936bc268d5d508db6fadbf291d9a511046eac1f4040cf081c431f2",
-      "created_at": "2026-11-19T22:36:21.772Z"
+      "content_hash": "87874e36338437c08a4271700c18ac18e6510a48560cd3359b0bd4df838a33e5",
+      "created_at": "2026-11-22T21:49:14.302Z"
     },
     "domain_intelligence-quality-verification-intelligence-sigstore-cosign-learnings-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-sigstore-cosign-learnings-core-invariants",

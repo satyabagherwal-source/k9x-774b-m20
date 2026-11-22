@@ -12201,3 +12201,6 @@
 | `CYCLE-20261122-R4CP` | `2026-11-22T21:31:58.537Z` | `ajeetdsouza/zoxide` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9995` | Yes (`00895328...`) |
 | `CYCLE-20261122-2HKV` | `2026-11-22T21:40:48.895Z` | `inclusionAI/Ming-Image-0.1-Design` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.1-design-learnings.md` | Yes (`67f1055c...`) |
 | `CYCLE-20261122-2SEA` | `2026-11-22T21:41:02.914Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9996` | Yes (`b20e55d6...`) |
+| `CYCLE-20261122-CVF9` | `2026-11-22T21:48:53.397Z` | `deepseek-ai/DeepSeek-V4.1-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-learnings.md` | Yes (`bf3d2640...`) |
+| `CYCLE-20261122-D0DT` | `2026-11-22T21:48:59.825Z` | `vanniktech/gradle-maven-publish-plugin` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9997` | Yes (`cb4d1264...`) |
+| `CYCLE-20261122-D87M` | `2026-11-22T21:49:09.970Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING` | Yes (`f56b473a...`) |

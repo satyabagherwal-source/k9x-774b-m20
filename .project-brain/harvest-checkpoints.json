@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T21:41:02.926Z",
+  "last_updated": "2026-11-22T21:49:09.983Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -635,14 +635,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
-      "content_hash": "6ad69861f0aa451f0eebc9b1a7de1d696cd9a2e1215d35c1a751f16ef3cae024",
-      "verified_at": "2026-11-18T14:48:30.016Z",
+      "content_hash": "bf3d2640ecf5256794b1d0f622e0d42697c3adfbb702b39650098987098e821b",
+      "verified_at": "2026-11-22T21:48:53.408Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T14:48:30.016Z"
+      "last_updated": "2026-11-22T21:48:53.408Z"
     },
     "akatz-ai/MiniMax-H3-Character-Swap-LoRA": {
       "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "82c32f3c28e51c2c38f78a6c397850c19b0117d40919977867abd39315b0e716",
-      "verified_at": "2026-11-22T20:17:09.475Z",
+      "content_hash": "f56b473a036a880fc27b016e06036d27524852eeb6c659917a04182e5595ce03",
+      "verified_at": "2026-11-22T21:49:09.982Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T20:17:09.475Z"
+      "last_updated": "2026-11-22T21:49:09.982Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -12216,14 +12216,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vanniktech-gradle-maven-publish-plugin",
-      "content_hash": "2e3bd503e9293496ac4cd2ffd34f8fbc454723e3894e91392c8f36f278cd3bc3",
-      "verified_at": "2026-11-19T22:36:09.019Z",
+      "content_hash": "cb4d12643ff9b468f410cb4f0c87d5f17554f2b00ef328700f62a9c32b2c175d",
+      "verified_at": "2026-11-22T21:48:59.837Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T22:36:09.019Z"
+      "last_updated": "2026-11-22T21:48:59.837Z"
     },
     "MohamedRejeb/Calf": {
       "repository": "MohamedRejeb/Calf",
