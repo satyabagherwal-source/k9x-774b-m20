@@ -12220,3 +12220,6 @@ Every entry in this ledger must capture:
 | `learn-github-twostraws-controlroom` | `https://github.com/twostraws/ControlRoom` | `9f063621` | Multi-dimensional audit evidence | 2026-11-22T20:27:36.849Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `ef68e680` | Multi-dimensional audit evidence | 2026-11-22T20:27:43.134Z |
 | `learn-github-apache-pinot` | `https://github.com/apache/pinot` | `1b1094b3` | Multi-dimensional audit evidence | 2026-11-22T20:27:44.978Z |
+| `learn-huggingface-orcarouter-orcasaq-2-27b` | `https://huggingface.co/orcarouter/OrcaSAQ-2-27B` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-11-22T20:35:35.295Z |
+| `learn-github-burntsushi-ripgrep` | `https://github.com/BurntSushi/ripgrep` | `b6744106` | Multi-dimensional audit evidence | 2026-11-22T20:35:36.576Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `dbfadb1c` | Multi-dimensional audit evidence | 2026-11-22T20:35:47.598Z |

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T20:27:51.242Z",
+  "last_updated": "2026-11-22T20:35:53.041Z",
   "total_verified_learnings": 9075,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23765,
+  "total_items": 23769,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113314,9 +113314,9 @@
       "title": "Research & Knowledge Intelligence: orcarouter/OrcaSAQ-2-27B Core Invariants",
       "repository": "orcarouter/OrcaSAQ-2-27B",
       "source_version": "hf-orcarouter-orcasaq-2-27b",
-      "content_hash": "ae15c3b8fc26e57d271608dd8317654b0f4576a508871f01f73350dbd5ff8bc6",
+      "content_hash": "a010577c7b1d2fe3a1bfb3d0cbeec9d73b180fe02c8d31d597d6a01012d44eaf",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T13:56:48.755Z"
+      "persisted_at": "2026-11-22T20:35:35.503Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-orcasaq-2-27b-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-orcasaq-2-27b-learnings-core-invar",
@@ -113326,9 +113326,9 @@
       "title": "Research & Knowledge Intelligence: hf-orcarouter-orcasaq-2-27b-learnings Core Invariants",
       "repository": "hf-orcarouter-orcasaq-2-27b-learnings",
       "source_version": "HEAD",
-      "content_hash": "81c3a3fc1f623b04018e41bcf920353d1f045847c58138175c17fbe28eec9afc",
+      "content_hash": "b82c6fed6908711d275244ccda771533e6dcbf3ceba4c6942a84f26f9facac81",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T13:57:07.997Z"
+      "persisted_at": "2026-11-22T20:35:52.323Z"
     },
     "domain_intelligence-architecture-intelligence-gauthierpiarrette-highball-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-gauthierpiarrette-highball-learnings-core-invariants",
@@ -114657,10 +114657,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "repository": "freenet/freenet-core",
-      "source_version": "52922483",
-      "content_hash": "87ed43b185be2bf84a8ac9d44595a89b7a6b29accd3f8953dec9ce53ae17bc8e",
+      "source_version": "dbfadb1c",
+      "content_hash": "0cfc1cc9bff74a281c63d4744ef5cbdb59194efe5dbca7cb331e1c50b99adb5b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T15:37:16.186Z"
+      "persisted_at": "2026-11-22T20:35:47.981Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core",
@@ -114669,10 +114669,10 @@
       "relative_path": "08_VERIFICATION/freenet-freenet-core-verification-protocol-empirical-defect-shield-for-freenet-f.md",
       "title": "Verification Protocol: Empirical Defect Shield for freenet/freenet-core",
       "repository": "freenet/freenet-core",
-      "source_version": "52922483",
-      "content_hash": "cacaca2364e377e45316d2842978750247feba7a9be55efbdb99174116c8cbcd",
+      "source_version": "dbfadb1c",
+      "content_hash": "19ac35695bb34eeaa2c06bd7d2075f559abcbb66fb7d2af6db60cb29380648fe",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T15:37:16.370Z"
+      "persisted_at": "2026-11-22T20:35:48.152Z"
     },
     "candidate_directive-update-remove-stored-files-no-document-points-at-sdk-1541-6674": {
       "item_id": "candidate_directive-update-remove-stored-files-no-document-points-at-sdk-1541-6674",
@@ -114754,9 +114754,9 @@
       "title": "Technical Construction Intelligence: freenet-freenet-core-learnings Core Invariants",
       "repository": "freenet-freenet-core-learnings",
       "source_version": "HEAD",
-      "content_hash": "2d66bf126dcfb51afffd84f86a84465a1332110cfaf60f98787560ebfab8ce73",
+      "content_hash": "4caf3f7d4c920b82505a4dc41626db6638f6aa8dc133cd983a9137883e05bbed",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T15:42:42.890Z"
+      "persisted_at": "2026-11-22T20:35:52.878Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core-learnings",
@@ -114766,9 +114766,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for freenet-freenet-core-learnings",
       "repository": "freenet-freenet-core-learnings",
       "source_version": "HEAD",
-      "content_hash": "1ccb643b965eb269dd03fbc9605b6aebe8a38766bc3427ae1896024e18bedabc",
+      "content_hash": "a0cf1ccd6987a208e0278197c1e314dee6a8e355a860ff7a5f6f407e9f73ca95",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T15:42:43.074Z"
+      "persisted_at": "2026-11-22T20:35:53.041Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
@@ -220431,8 +220431,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "52922483",
-      "content_hash": "0145ea19275db4eea15a973c6bad065c8cf68f389b9e4c12766b2744d544037f",
+      "source_version": "dbfadb1c",
+      "content_hash": "88b28e538b8c9e42e8e5a6931c7bea19a380cd127d421865b73ccf29181af6c7",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -220535,6 +220535,11 @@
           "number": 9941,
           "title": "name the refused request in hosted rate-limit rejections; raise burst to 500",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9989,
+          "title": "run the egress cap on VirtualTime for a simulated QUIC node",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -220542,7 +220547,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T15:37:15.531Z",
+      "verified_at": "2026-11-22T20:35:47.397Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -284628,7 +284633,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/orcarouter/OrcaSAQ-2-27B",
       "source_version": "hf-orcarouter-orcasaq-2-27b",
-      "content_hash": "ffb077a81cf5bc87ecdab6573ffca4cbdec2413d8f238a90a07165d659b569a2",
+      "content_hash": "a4c4734149db5ec1697adfdca838d6e13b41e9100edbcd72e8ba37fbc5b0a942",
       "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md",
       "promoted_rules": [],
@@ -284637,7 +284642,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T13:56:48.153Z",
+      "verified_at": "2026-11-22T20:35:35.071Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -300730,8 +300735,8 @@
       "slug": "burntsushi-ripgrep",
       "platform": "github",
       "source_url": "https://github.com/BurntSushi/ripgrep",
-      "source_version": "4e588dd8",
-      "content_hash": "f75b07675977a1b88583fc9ccd2acd3670df1e1c8ee5d2e7acd35926aa18ffc4",
+      "source_version": "b6744106",
+      "content_hash": "735c81297c08f59793bd95c6ce358496f06e3b7163a06187f2065b891baf89c0",
       "dossier_path": "07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md",
       "promoted_rules": [
@@ -300744,6 +300749,11 @@
           "number": 9773,
           "title": "bound alternate nesting depth to prevent stack overflow",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": "EXISTING",
+          "title": "fix release",
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -300751,7 +300761,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T11:55:19.981Z",
+      "verified_at": "2026-11-22T20:35:36.358Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -300793,10 +300803,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-burntsushi-ripgrep-architecture-intelligence-burntsushi-ripgrep-core-invariants.md",
       "title": "Architecture Intelligence: BurntSushi/ripgrep Core Invariants",
       "repository": "BurntSushi/ripgrep",
-      "source_version": "4e588dd8",
-      "content_hash": "69fc3587371b74d7ff82d8c06df8e5c54df7dc60ff83225c8a7ae9ddd3d49438",
+      "source_version": "b6744106",
+      "content_hash": "7d08cdbb8541c720f03f992c6ac9b0c2864dd33e6d0718140edbddd9bf9e42a7",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T11:55:20.557Z"
+      "persisted_at": "2026-11-22T20:35:36.990Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-burntsushi-ripgrep": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-burntsushi-ripgrep",
@@ -300805,10 +300815,10 @@
       "relative_path": "08_VERIFICATION/burntsushi-ripgrep-verification-protocol-empirical-defect-shield-for-burntsushi-.md",
       "title": "Verification Protocol: Empirical Defect Shield for BurntSushi/ripgrep",
       "repository": "BurntSushi/ripgrep",
-      "source_version": "4e588dd8",
-      "content_hash": "092bf1024ed1589b8c5b0ed107e26e85b59d8dd097dfb86faa6394ebcaedfb14",
+      "source_version": "b6744106",
+      "content_hash": "363771c2d7e16b2e35d58970af084f4e43399e3bf8e79092aef7061c81af99bf",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T11:55:20.712Z"
+      "persisted_at": "2026-11-22T20:35:37.162Z"
     },
     "rule-9465": {
       "learning_id": "rule-9465",
@@ -300844,9 +300854,9 @@
       "title": "Architecture Intelligence: burntsushi-ripgrep-learnings Core Invariants",
       "repository": "burntsushi-ripgrep-learnings",
       "source_version": "HEAD",
-      "content_hash": "6bd04528880753c6a41b2e3483a510eb731820f320d5b4a1d63636a9c2ba7b4b",
+      "content_hash": "4ffb58838739e669e51d05a5b21c7ecddf700bf60cfc59bb257596d32f66ec1b",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T11:55:38.914Z"
+      "persisted_at": "2026-11-22T20:35:51.808Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-burntsushi-ripgrep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-burntsushi-ripgrep-learnings",
@@ -300856,9 +300866,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for burntsushi-ripgrep-learnings",
       "repository": "burntsushi-ripgrep-learnings",
       "source_version": "HEAD",
-      "content_hash": "efa4d6a53e4c4cad289a5610bf532c3df0d23995bad81f35384221b4a593fc31",
+      "content_hash": "0aef16ef59be9a0bd9122edb39134ce85693b3d4504a410a3bf04003cba3a0d1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T11:55:39.064Z"
+      "persisted_at": "2026-11-22T20:35:51.970Z"
     },
     "rule-9466": {
       "learning_id": "rule-9466",
@@ -323506,6 +323516,56 @@
       "content_hash": "a9a0499d9be77eb9584073d3949c32cba4d35cc32ffdfc00b263f53309aa0a40",
       "domain_letter": "K",
       "persisted_at": "2026-11-22T20:27:49.986Z"
+    },
+    "candidate_directive-fix-release": {
+      "item_id": "candidate_directive-fix-release",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-QYFY-fix-release.md",
+      "title": "fix release",
+      "repository": "burntsushi-ripgrep-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b4cb941ec6c7b6d16115fc6c29b118328c6b0e620c159f016f46b0cdf11ce8df",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-22T20:35:51.647Z"
+    },
+    "rule-9989": {
+      "learning_id": "rule-9989",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9989,
+      "title": "run the egress cap on VirtualTime for a simulated QUIC node",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "dbfadb1c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T20:35:47.397Z"
+    },
+    "candidate_directive-run-the-egress-cap-on-virtualtime-for-a-simulated-quic-node": {
+      "item_id": "candidate_directive-run-the-egress-cap-on-virtualtime-for-a-simulated-quic-node",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-QVHH-run-the-egress-cap-on-virtualtime-for-a-simulated-quic-node.md",
+      "title": "run the egress cap on VirtualTime for a simulated QUIC node",
+      "repository": "freenet/freenet-core",
+      "source_version": "dbfadb1c",
+      "content_hash": "8369cf3a1edc5a508ef87c61ae098bc720ed086d585e35a7ad08edbbf9dc0393",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T20:35:47.816Z"
+    },
+    "candidate_directive-transport-run-the-egress-cap-on-virtualtime-for-a-simulated-quic-node": {
+      "item_id": "candidate_directive-transport-run-the-egress-cap-on-virtualtime-for-a-simulated-quic-node",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-QZ9L-transport-run-the-egress-cap-on-virtualtime-for-a-simulated-quic-node.md",
+      "title": "transport): run the egress cap on VirtualTime for a simulated QUIC node",
+      "repository": "freenet-freenet-core-learnings",
+      "source_version": "HEAD",
+      "content_hash": "35fb86c0ea2fadd97c342c741ae0fea1e6ceb02903086c90b5054799962a2dee",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T20:35:52.716Z"
     }
   },
   "ai-builder-brain": {

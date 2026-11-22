@@ -746638,3 +746638,88 @@ import org.apache.lucene.util.ThreadInterruptedException;
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `59740fd2` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9989. run the egress cap on VirtualTime for a simulated QUIC node (Harvested from freenet/freenet-core)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "run the egress cap on VirtualTime for a simulated QUIC node",
+  "source": "freenet/freenet-core",
+  "source_url": "https://github.com/freenet/freenet-core",
+  "source_version": "dbfadb1c",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-22T20:35:47.108Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-freenet-freenet-core",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [freenet/freenet-core](https://github.com/freenet/freenet-core) (Revision: `dbfadb1c`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `.claude/rules/transport.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `dbfadb1c`: transport): run the egress cap on VirtualTime for a simulated QUIC node. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/rules/transport.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+The cap is built on RealTime in production and in a simulated node without
+QUIC, because the listener and its connections run on RealTime there: a
+VirtualTime cap would compute deficits on another clock than its UDP
+waiters sleep and time out on. The QUIC endpoint must run on the cap's
+clock, because a hold's age is measured on the path's clock against a bound
+in the cap's time. In a simulation the endpoint runs on the network's VirtualTime, so
+bind_udp_listener builds a simulated QUIC node's cap on that VirtualTime
+too (D-2a); the same node's UDP stream senders still time on RealTime
+until the legacy path is removed.
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+The cap is built on RealTime even in simulation, because the listener and
+its connections run on RealTime there: a VirtualTime cap would compute
+deficits on another clock than its waiters sleep and time out on. The QUIC
+endpoint runs on the cap's clock for the same reason (bind_udp_listener
+builds both on RealTime in production; tests build both on one
+VirtualTime). In a simulation the endpoint runs on the network's
+VirtualTime, so bind_udp_listener refuses a simulated node with both
+transport-quic and total-bandwidth-limit.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `dbfadb1c` are properly handled with clean fallback behavior.

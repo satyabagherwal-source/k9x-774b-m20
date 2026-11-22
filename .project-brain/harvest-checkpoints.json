@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T20:27:44.990Z",
+  "last_updated": "2026-11-22T20:35:47.606Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -545,14 +545,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-orcarouter-orcasaq-2-27b",
-      "content_hash": "ffb077a81cf5bc87ecdab6573ffca4cbdec2413d8f238a90a07165d659b569a2",
-      "verified_at": "2026-11-18T13:56:48.504Z",
+      "content_hash": "a4c4734149db5ec1697adfdca838d6e13b41e9100edbcd72e8ba37fbc5b0a942",
+      "verified_at": "2026-11-22T20:35:35.303Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T13:56:48.504Z"
+      "last_updated": "2026-11-22T20:35:35.303Z"
     },
     "TaichuAI/ZDTaichu5.0-9B": {
       "repository": "TaichuAI/ZDTaichu5.0-9B",
@@ -3831,14 +3831,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-burntsushi-ripgrep",
-      "content_hash": "f75b07675977a1b88583fc9ccd2acd3670df1e1c8ee5d2e7acd35926aa18ffc4",
-      "verified_at": "2026-11-21T11:55:20.206Z",
+      "content_hash": "735c81297c08f59793bd95c6ce358496f06e3b7163a06187f2065b891baf89c0",
+      "verified_at": "2026-11-22T20:35:36.585Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T11:55:20.206Z"
+      "last_updated": "2026-11-22T20:35:36.585Z"
     },
     "cosscom/coss": {
       "repository": "cosscom/coss",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "0145ea19275db4eea15a973c6bad065c8cf68f389b9e4c12766b2744d544037f",
-      "verified_at": "2026-11-22T15:37:15.778Z",
+      "content_hash": "88b28e538b8c9e42e8e5a6931c7bea19a380cd127d421865b73ccf29181af6c7",
+      "verified_at": "2026-11-22T20:35:47.605Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T15:37:15.778Z"
+      "last_updated": "2026-11-22T20:35:47.605Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",

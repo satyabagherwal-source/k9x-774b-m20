@@ -445,8 +445,8 @@
     "sourceUrl": "https://huggingface.co/orcarouter/OrcaSAQ-2-27B",
     "sourceVersion": "hf-orcarouter-orcasaq-2-27b",
     "license": "Open-Source",
-    "contentHash": "ffb077a81cf5bc87ecdab6573ffca4cbdec2413d8f238a90a07165d659b569a2",
-    "lastHarvestedAt": "2026-11-18T13:56:48.490Z",
+    "contentHash": "a4c4734149db5ec1697adfdca838d6e13b41e9100edbcd72e8ba37fbc5b0a942",
+    "lastHarvestedAt": "2026-11-22T20:35:35.295Z",
     "learningId": "learn-huggingface-orcarouter-orcasaq-2-27b"
   },
   "hf-taichuai-zdtaichu5.0-9b": {
@@ -2463,10 +2463,10 @@
     "repository": "BurntSushi/ripgrep",
     "platform": "github",
     "sourceUrl": "https://github.com/BurntSushi/ripgrep",
-    "sourceVersion": "4e588dd8",
+    "sourceVersion": "b6744106",
     "license": "Unlicense",
-    "contentHash": "f75b07675977a1b88583fc9ccd2acd3670df1e1c8ee5d2e7acd35926aa18ffc4",
-    "lastHarvestedAt": "2026-11-21T11:55:20.196Z",
+    "contentHash": "735c81297c08f59793bd95c6ce358496f06e3b7163a06187f2065b891baf89c0",
+    "lastHarvestedAt": "2026-11-22T20:35:36.576Z",
     "learningId": "learn-github-burntsushi-ripgrep"
   },
   "cosscom-coss": {
@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "52922483",
+    "sourceVersion": "dbfadb1c",
     "license": "NOASSERTION",
-    "contentHash": "0145ea19275db4eea15a973c6bad065c8cf68f389b9e4c12766b2744d544037f",
-    "lastHarvestedAt": "2026-11-22T15:37:15.769Z",
+    "contentHash": "88b28e538b8c9e42e8e5a6931c7bea19a380cd127d421865b73ccf29181af6c7",
+    "lastHarvestedAt": "2026-11-22T20:35:47.598Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {

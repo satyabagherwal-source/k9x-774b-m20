@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T15:42:42.572Z",
+  "timestamp": "2026-11-22T20:35:52.603Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-freenet-freenet-core-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [freenet-freenet-core-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T15:42:42.572Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T20:35:52.603Z`  
 > **Learning ID**: `LEARN-EVO-freenet-freenet-core-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source**: github ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
-> **Source Version**: `52922483`  
+> **Source Version**: `dbfadb1c`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T15:37:14.563Z  
+> **Timestamp**: 2026-11-22T20:35:46.557Z  
 > **Learning ID**: `learn-github-freenet-freenet-core`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T15:37:14.395Z  
+> **Harvest Timestamp**: 2026-11-22T20:35:46.551Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1763,11 +1763,11 @@ pub mod streaming_buffer;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6309** (2026-11-22): **fix: name the refused request in hosted rate-limit rejections; raise burst to 500**
-  *Symptoms*: ## Problem On a hosted node (try.freenet.org) a normal River page load sends ~135 ops in its first 1.3 s (startup delegate reads plus a legacy-delegate migration sweep). The per-user token bucket (10/s, burst 100) rejected 17 of them with `operation rate limit exceeded; retry shortly`. The rejection did not name the contract or delegate it refused, so the client could not match it to a pending request and each waited out a 10 s timeout. Nothing arrived between 1.3 s and 11.4 s.  ## Approach - The rejection text now names its target: `operation rate limit exceeded for contract <id>; retry shortly` / `for delegate <key>`. The error stays an `OperationError`, so there is no wire-format change. The old `operation rate limit exceeded` prefix is kept. Node queries have no target and keep the plain message. - Default `--per-user-op-burst` 100 -> 500. That is ~3.7x the measured 135-op load, since heavier accounts (more rooms, more legacy delegates) send more. The sustained rate (10/s) stays the flood cap for one identity, and a drained bucket needs 50 s idle to refill. Downstream, the per-contract queue (100) still sheds a burst aimed at a single contract; an app load spreads over many keys.  Limits worth knowing: - The stdlib API has no request ids, so a rejection names the key, not which of several in-flight requests to that key it was. - River maps `OperationError` to a generic error and does not yet parse the key out of the text; the client-side half is separate. The burst raise 
+- **Issue #6314** (2026-11-22): **feat(transport): run the egress cap on VirtualTime for a simulated QUIC node**
+  *Symptoms*: ## Problem  Simulations write `transport_quic = off` (`node/testing_impl.rs`), partly because `bind_udp_listener` refused a simulated node that had both `transport-quic` and `total-bandwidth-limit`: the egress cap was always built on `RealTime` while a simulated QUIC endpoint runs on the network's `VirtualTime`, and the endpoint must share the cap's clock. D-2b (flip the simulation default to QUIC) needs that restriction lifted. Part of D-2 in `PHASE-D-PLAN.md`.  ## Approach  When the node has a QUIC endpoint and its network registered a `VirtualTime`, the egress cap is built on that `VirtualTime` (same instance as the endpoint). `EgressCap` already type-erases its clock and uses cancelable sleeps, so nothing else changes. The refusal error is removed.  Unchanged: production (no registered `VirtualTime`) and simulated nodes without QUIC keep a `RealTime` cap. A simulated QUIC node's UDP stream senders still sleep on `RealTime` until the legacy path goes; that residual is noted in `.claude/rules/transport.md`. The default is not flipped here.  Test-only hooks: a per-address egress cap probe in `in_memory_socket.rs` (`#[cfg(test)]`), `SimNetwork::with_node_total_bandwidth_limit`, `egress_cap_reading`, `egress_cap_take`.  ## Testing  - `a_simulated_node_with_quic_runs_its_egress_cap_on_virtual_time` (replaces the refusal test): all four QUIC/cap combinations bind; the QUIC cap reads the simulated clock and moves exactly 100 s when it advances 100 s; a non-QUIC cap stays on `Real
 
-- **Issue #6308** (2026-11-20): **build: release 0.2.162**
-  *Symptoms*: **Automated release PR**  - freenet: → **0.2.162** - fdev: → **0.3.324**  This PR will auto-merge once GitHub CI passes. Generated by: `.github/workflows/release.yml` 
+- **Issue #6313** (2026-11-22): **feat(config): warn that UDP-only transport keys stop applying once legacy UDP is removed**
+  *Symptoms*: ## Problem  Phase D removes the legacy UDP transport. Five config keys only tune it: `streaming-threshold`, `ledbat-min-ssthresh`, `congestion-control`, `bbr-startup-rate`, `min-bandwidth-per-connection`. They must stay parseable after D (a rollback reinstalls the previous binary, which must never meet an unknown key in a file a newer binary wrote), and operators who set them should hear in advance that they stop applying. This is D-1 of `PHASE-D-PLAN.md`; it has to be in a release before D.  ## Approach  No behaviour change: all five keys keep their current effect, since UDP still exists. A node given a non-default value for any of them logs one startup warning naming the keys and saying a future release accepts and ignores them.  - `NetworkApiConfig::udp_only_settings_in_use()` lists the keys set to a non-default value (config file, flag or env, after the existing merge). A node that never set them hears nothing. A value explicitly set to the default is indistinguishable from unset in the file mirror, so it is not reported; that is harmless since it is also the default after D. - `Config::log_udp_only_settings()` emits the warning. It is called in `bin/freenet.rs` right after `set_logger`, like `log_network_address_migration`, because `build()` runs before any subscriber exists and would drop the message.  Difference from the D-1 text: it says to keep parsing and warn; this PR does exactly that and leaves the keys' effect in place (D-8 removes the effect, D-9e removes the k
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1784,186 +1784,578 @@ pub mod streaming_buffer;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `52922483` (2026-11-22)
-**Commit Message**: fix: name the refused request in hosted rate-limit rejections; raise burst to 500 (#6309)
+### Incident Patch 1: `dbfadb1c` (2026-11-22)
+**Commit Message**: feat(transport): run the egress cap on VirtualTime for a simulated QUIC node (#6314)
 
-**File**: `crates/core/src/client_events/user_op_rate_limit.rs` (modified, +18/-7)
+**File**: `.claude/rules/transport.md` (modified, +9/-8)
 ```diff
-@@ -54,13 +54,24 @@ pub const DEFAULT_PER_USER_OP_RATE_LIMIT: u64 = 10;
- /// who has been idle can issue up to this many ops back-to-back before being
- /// throttled to the sustained [`DEFAULT_PER_USER_OP_RATE_LIMIT`].
- ///
--/// Set generously (100): a heavy-room hosted user's app-load — room list +
--/// per-room state + member lists + delegate secret reads across many rooms —
--/// can plausibly burst past 50 ops in the first second after page load. A
--/// false-positive throttle there breaks the UX worse than allowing a slightly
--/// larger ONE-TIME burst; the sustained [`DEFAULT_PER_USER_OP_RATE_LIMIT`]
--/// (10/sec) is the real flood cap, the burst is just the initial allowance.
--pub const DEFAULT_PER_USER_OP_BURST: u64 = 100;
-+/// Set generously (500). Measured on try.freenet.org: one River page load sends
-+/// 135 operations in its first 1.3 s (startup delegate reads plus a
-+/// legacy-delegate migration sweep), and the previous default of 100 rejected 17
-+/// of them. The count grows with the number of rooms and legacy delegates an
-+/// account has, so 500 leaves ~3.7x headroom over that measurement. A
-+/// false-positive throttle during app load stalls the whole UI, while a larger
-+/// ONE-TIME burst costs little: the sustained [`DEFAULT_PER_USER_OP_RATE_LIMIT`]
-+/// (10/sec) is the real flood cap for one identity, and a drained bucket takes
-+/// `burst / rate` = 50 s of idleness to refill. The burst is per token, and a
-+/// fresh token starts with a full bucket, so it also sets how many ops each
-+/// newly minted token gets for free; that token-rotation gap exists at any
-+/// burst (see [`MAX_TRACKED_USERS`]) and is not closed by this limiter.
-+///
-+/// Downstream queues still bound a burst aimed at one contract: the contract
-+/// handler's per-contract queue (`MAX_QUEUED_PER_CONTRACT`, 100) sheds the excess
-+/// of a single-contract flood, while an app load spreads its ops over many
-+/// contracts and delegates.
-+pub const DEFAULT_PER_USER_OP_BURST: u64 = 500;
+@@ -278,14 +278,15 @@ try_take and sends with DemuxSocket::try_send_to_paced, so its datagram is
+ charged once, by the take. Every take is at most one datagram, within the
+ burst (QUIC: one segment per transmit, debug-asserted), so the bound above
+ holds exactly.
+-The cap is built on RealTime even in simulation, because the listener and
+-its connections run on RealTime there: a VirtualTime cap would compute
+-deficits on another clock than its waiters sleep and time out on. The QUIC
+-endpoint runs on the cap's clock for the same reason (bind_udp_listener
+-builds both on RealTime in production; tests build both on one
+-VirtualTime). In a simulation the endpoint runs on the network's
+-VirtualTime, so bind_udp_listener refuses a simulated node with both
+-transport-quic and total-bandwidth-limit.
++The cap is built on RealTime in production and in a simulated node without
++QUIC, because the listener and its connections run on RealTime there: a
++VirtualTime cap would compute deficits on another clock than its UDP
++waiters sleep and time out on. The QUIC endpoint must run on the cap's
++clock, because a hold's age is measured on the path's clock against a bound
++in the cap's time. In a simulation the endpoint runs on the network's VirtualTime, so
++bind_udp_listener builds a simulated QUIC node's cap on that VirtualTime
++too (D-2a); the same node's UDP stream senders still time on RealTime
++until the legacy path is removed.
+ Tests assert on per-cap EgressCap::stats(), never the global counters.
+ ```
  
- /// Minimum seconds between hosted-export downloads per user (export is far more
- /// expensive than a single op, so it gets a separate, tighter limit). `0`
 ```
 
-**File**: `crates/core/src/client_events/websocket.rs` (modified, +221/-1)
+**File**: `crates/core/src/node/testing_impl.rs` (modified, +148/-0)
 ```diff
-@@ -2227,6 +2227,33 @@ fn is_rate_limited_op(req: &ClientRequest<'_>) -> bool {
-     )
+@@ -2221,6 +2221,44 @@ impl SimNetwork {
+         self
+     }
+ 
++    /// Sets `total-bandwidth-limit` (bytes per second, node-wide egress cap)
++    /// on the node `label` only. Call before the simulation starts.
++    #[cfg(test)]
++    pub fn with_node_total_bandwidth_limit(
++        &mut self,
++        label: &NodeLabel,
++        bytes_per_sec: usize,
++    ) -> &mut Self {
++        let config = self.node_config_mut(label);
++        Arc::make_mut(&mut config.config)
++            .network_api
++            .total_bandwidth_limit = Some(bytes_per_sec);
++        self
++    }
++
++    /// What the egress cap of the node `label` reads: `None` if the node has
++    /// not bound its socket, `Some(None)` if it has no cap.
++    #[cfg(test)]
++    pub(crate) fn egress_cap_reading(
++        &self,
++        label: &NodeLabel,
++    ) -> Option<Option<crate::transport::in_memory_socket::EgressCapReading>> {
++        let addr = *self.node_addresses.get(label)?;
++        crate::transport::in_memory_socket::egress_cap_reading(&self.name, addr)
++    }
++
++    /// Takes `bytes` from the egress cap of the node `label` as one
++    /// datagram's send would; see `in_memory_socket::egress_cap_take`.
++    #[cfg(test)]
++    pub(crate) fn egress_cap_take(
++        &self,
++        label: &NodeLabel,
++        bytes: usize,
++    ) -> Option<Result<(), Duration>> {
++        let addr = *self.node_addresses.get(label)?;
++        crate::transport::in_memory_socket::egress_cap_take(&self.name, addr, bytes)
++    }
++
+     /// Makes the node `label` advertise `version` in its transport
+     /// handshakes instead of this binary's version, so its peers treat it as
+     /// that (older) release in every version gate, e.g. `(0, 2, 148)` for a
+@@ -8727,6 +8765,116 @@ mod tests {
+         assert!(!sim.quic_accept_loop_started(&labels[1]));
+     }
+ 
++    /// In a running simulation a node with `transport-quic` and a
++    /// `total-bandwidth-limit` runs its egress cap on the network's
++    /// `VirtualTime` (the clock of its QUIC endpoint): the cap's clock is the
++    /// simulated clock, the node's sends are charged to it, and over the run
++    /// the bytes charged stay within `burst + rate * elapsed` of simulated
++    /// time. A node without QUIC keeps its cap on `RealTime`.
++    #[tokio::test(flavor = "current_thread")]
++    async fn a_simulated_quic_node_runs_its_egress_cap_on_virtual_time() {
++        use crate::simulation::TimeSource;
++        const NETWORK: &str = "quic-sim-egress-cap-d2a";
++        const RATE: usize = 128 * 1024;
++        let mut sim = SimNetwork::new(NETWORK, 1, 2, 7, 3, 6, 2, 0xD2A0_0001).await;
++        let labels = labels_in_order(&sim);
++        sim.with_transport_quic("prefer")
++            .with_node_transport_quic(&labels[2], "off");
++        for label in &labels {
++            sim.with_node_total_bandwidth_limit(label, RATE);
++        }
++        let _handles = sim
++            .start_with_rand_gen::<rand::rngs::SmallRng>(0xD2A0_0001, 1, 1)
++            .await;
++        let started = sim.virtual_time().now_nanos();
++        // Run until 30 simulated seconds have passed and both QUIC nodes
++        // have sent something (their connections formed), however long the
++        // host takes in wall time; the deadline only ends a stuck run.
++        let deadline = std::time::Instant::now() + Duration::from_secs(600);
++        loop {
++            sim.advance_time(Duration::from_millis(100));
++            tokio::time::sleep(Duration::from_millis(10)).await;
++            let charged = labels[..2].iter().all(|label| {
++                sim.egress_cap_reading(label)
++                    .flatten()
++                    .is_some_and(|cap| cap.charged_bytes > 0)
++            });
++            if charged && sim.virtual_time().now_nanos() - started >= 30_000_000_000 {
++                break;
++            }
++            assert!(
++                std::time::Instant::now() < deadline,
++                "the QUIC nodes never sent anything"
++            );
++        }
++        let elapsed_ns = sim.virtual_time().now_nanos() - started;
++        assert!(elapsed_ns >= 30_000_000_000, "{elapsed_ns} ns elapsed");
++        for label in &labels[..2] {
++            let cap = sim
++                .egress_cap_reading(label)
++                .expect("the node bound its socket")
++                .unwrap_or_else(|| panic!("{label} has no egress cap"));
++            assert_eq!(cap.rate_bytes_per_sec, RATE as u64);
++            assert_eq!(
++                cap.now_nanos,
++                sim.virtual_time().now_nanos(),
++                "{label}: the cap reads the simulated clock"
++            );
++            assert!(cap.charged_bytes > 0, "{label}: its sends are charged");
++            assert!(
++                cap.charged_bytes as u128
++                    <= cap.burst_bytes as u128
++                        + RATE as u128 * u128::from(elapsed_ns) / 1_000_000_000,
++                "{label}: {} bytes charged in {elapsed_ns} ns",
++                cap.charged_by
+```
+
+**File**: `crates/core/src/transport/connection_handler.rs` (modified, +30/-23)
+```diff
+@@ -390,37 +390,44 @@ pub(super) async fn bind_udp_listener<S: Socket>(
+     // The node-wide egress cap exists only when `total-bandwidth-limit` is
+     // set and not 0 (`global_bandwidth` is set; the node builds no pool for a
+     // total of 0, `NetworkApiConfig::global_bandwidth_manager`), so a node
+-    // without it pays nothing. The cap runs
+-    // on `RealTime`, as the listener built below does, in production and in
+-    // simulation alike; waiters sleep on their own connection's time
+-    // source. A cap on the network's `VirtualTime` would compute deficits on
+-    // one clock for stream senders that sleep and time out on another.
++    // without it pays nothing.
+     //
+-    // The QUIC endpoint must run on the cap's clock (see
+-    // `QuicEndpoint::bind`), and in simulation it runs on `VirtualTime`, so
+-    // a simulated node that has both a cap and QUIC is refused rather than
+-    // run on two clocks.
+-    let egress_cap = config.global_bandwidth.as_ref().and_then(|manager| {
+-        super::egress_cap::EgressCap::from_total_limit(manager.total_limit(), RealTime::new())
+-    });
+-    if quic_virtual_time.is_some() && egress_cap.is_some() {
+-        return Err(TransportError::Other(anyhow::anyhow!(
+-            "simulated node at {bind_addr} sets both transport-quic and \
+-             total-bandwidth-limit: the egress cap runs on RealTime and the \
+-             simulated QUIC endpoint on VirtualTime, so they cannot share a clock"
+-        )));
+-    }
++    // The QUIC endpoint must run on the cap's clock: a hold's age is
++    // measured on the path's clock against a bound in the cap's time (see
++    // `QuicEndpoint::bind`). So a simulated node with QUIC builds the cap
++    // on the same `VirtualTime` as its endpoint; the cap's clock and its
++    // cancelable timers are then simulated time, and a seeded run repeats.
++    // If the endpoint then fails to bind (`bind_or_warn`), the cap stays on
++    // `VirtualTime` with no endpoint. Everywhere else, in production and in a simulated node
++    // without QUIC, the cap runs on `RealTime`, as the listener built below
++    // does: UDP stream senders sleep and time out on the connection's own
++    // time source, and a cap on `VirtualTime` would compute their deficits
++    // on another clock.
++    let egress_cap =
++        config
++            .global_bandwidth
++            .as_ref()
++            .and_then(|manager| match quic_virtual_time.clone() {
++                Some(time) => {
++                    super::egress_cap::EgressCap::from_total_limit(manager.total_limit(), time)
++                }
++                None => super::egress_cap::EgressCap::from_total_limit(
++                    manager.total_limit(),
++                    RealTime::new(),
++                ),
++            });
+     let socket = Arc::new(
+         bind_socket_with_retry::<DemuxSocket<S>>(bind_addr, SOCKET_BIND_MAX_RETRIES)
+             .await?
+             .with_egress_cap(egress_cap),
+     );
++    #[cfg(test)]
++    super::in_memory_socket::record_egress_cap_probe(bind_addr, Arc::downgrade(&socket));
+     // With `transport-quic` off nothing is built and no QUIC ingress is
+     // enabled, so QUIC-class datagrams stay `quic_ingress_no_ingress`. With
+-    // it on the endpoint runs on the egress cap's clock (`RealTime`, see
+-    // above; the simulation's `VirtualTime` in a simulation, which has no
+-    // cap), authenticates with this node's transport key, and has an empty
+-    // allow-set: nothing reaches it until an upgrade path allows a peer.
++    // it on the endpoint runs on the egress cap's clock (`RealTime`, or the
++    // simulation's `VirtualTime` in a simulation, see above), authenticates
++    // with this node's transport key, and has an empty allow-set: nothing reaches it until an upgrade path allows a peer.
+     // Each QUIC connection's window is capped at the rate the UDP token
+     // bucket paces a connection at (`quic::recycle::CappedCubic`).
+     let quic_settings = config
+```
+
+**File**: `crates/core/src/transport/in_memory_socket.rs` (modified, +100/-0)
+```diff
+@@ -252,6 +252,104 @@ pub(crate) fn quic_endpoint_clock(network: &str, addr: SocketAddr) -> Option<&'s
+         .map(|clock| *clock)
  }
  
-+/// The contract or delegate a rate-limited request targets, for the rejection
-+/// text (`contract <id>` / `delegate <key>`). `None` for requests with no single
-+/// target, such as node queries.
-+fn rate_limited_target(req: &ClientRequest<'_>) -> Option<String> {
-+    match req {
-+        ClientRequest::ContractOp(op) => match op {
-+            ContractRequest::Put { contract, .. } => {
-+                Some(format!("contract {}", contract.key().id()))
-+            }
-+            ContractRequest::Update { key, .. } => Some(format!("contract {}", key.id())),
-+            ContractRequest::Get { key, .. } | ContractRequest::Subscribe { key, .. } => {
-+                Some(format!("contract {key}"))
-+            }
-+            // `ContractRequest` is `#[non_exhaustive]`, so a variant added in
-+            // freenet-stdlib lands here and falls back to the unnamed message.
-+            _ => None,
-+        },
-+        ClientRequest::DelegateOp(op) => Some(format!("delegate {}", op.key())),
-+        ClientRequest::Disconnect { .. }
-+        | ClientRequest::Authenticate { .. }
-+        | ClientRequest::NodeQueries(_)
-+        | ClientRequest::Close
-+        | ClientRequest::StreamChunk { .. }
-+        | _ => None,
++/// What a simulated node's egress cap reads, for a test.
++#[cfg(test)]
++#[derive(Debug, Clone, Copy)]
++pub(crate) struct EgressCapReading {
++    pub(crate) rate_bytes_per_sec: u64,
++    pub(crate) burst_bytes: u64,
++    /// The cap's own clock, nanoseconds.
++    pub(crate) now_nanos: u64,
++    /// Bytes charged to the cap since it was built.
++    pub(crate) charged_bytes: u64,
++}
++
++/// What a test asks of a node's cap: read it, or take `bytes` from its bucket
++/// as a sender would (charged on success).
++#[cfg(test)]
++enum EgressCapAsk {
++    Read,
++    Take(usize),
++}
++
++#[cfg(test)]
++enum EgressCapAnswer {
++    Reading(EgressCapReading),
++    Taken(Result<(), Duration>),
++}
++
++#[cfg(test)]
++type EgressCapProbe = Box<dyn Fn(EgressCapAsk) -> Option<Option<EgressCapAnswer>> + Send + Sync>;
++
++/// A reader of the egress cap of the node at each `(network, address)`.
++/// `None` once the node's socket is gone; `Some(None)` for a node with no cap.
++#[cfg(test)]
++static EGRESS_CAP_PROBES: LazyLock<DashMap<(String, SocketAddr), EgressCapProbe>> =
++    LazyLock::new(DashMap::new);
++
++/// Records a reader of the egress cap of the socket bound at `addr`, if
++/// `addr` belongs to a simulation network (keyed as
++/// [`record_quic_endpoint_clock`] is).
++#[cfg(test)]
++pub(crate) fn record_egress_cap_probe<S: crate::transport::Socket>(
++    addr: SocketAddr,
++    socket: std::sync::Weak<S>,
++) {
++    if let Ok(network) = resolve_address_network(&addr) {
++        EGRESS_CAP_PROBES.insert(
++            (network, addr),
++            Box::new(move |ask| {
++                let socket = socket.upgrade()?;
++                Some(socket.egress_cap().map(|cap| {
++                    match ask {
++                        EgressCapAsk::Read => EgressCapAnswer::Reading(EgressCapReading {
++                            rate_bytes_per_sec: cap.rate_bytes_per_sec(),
++                            burst_bytes: cap.burst_bytes(),
++                            now_nanos: cap.now_nanos(),
++                            charged_bytes: cap.stats().bytes,
++                        }),
++                        EgressCapAsk::Take(bytes) => EgressCapAnswer::Taken(
++                            cap.try_take(bytes, Duration::ZERO)
++                                .map(|take| take.sent(bytes)),
++                        ),
++                    }
++                }))
++            }),
++        );
 +    }
 +}
 +
- #[allow(clippy::too_many_arguments)]
- async fn process_client_request(
-     client_id: ClientId,
-@@ -2441,8 +2468,22 @@ async fn process_client_request(
-                 user_id = ?user_context.user_id(),
-                 "Rejecting operation: per-user operation rate limit exceeded"
-             );
-+            // Name the refused request's target so the client can match the
-+            // rejection to the request it sent. Without it a client with many
-+            // requests in flight cannot tell which one to retry, and each
-+            // rejected request sits out its own timeout (River on
-+            // try.freenet.org: nothing arrived for 10 s). The key is in the
-+            // message text, the same way `missing delegate <key>` and the
-+            // delegate backoff error carry theirs, so the error stays an
-+            // `OperationError` and no wire format changes.
-+            let cause = match rate_limited_target(&req) {
-+                Some(target) => {
-+                    format!("operation rate limit exceeded for {target}; retry shortly")
-+                }
-+                None => "operation rate limit exceeded; retry shortly".to_string(),
-+            };
-             let error: ClientError = ErrorKind::OperationError {
--                cause: std::borrow::Cow::Borrowed("operation rate limit exceeded; retry shortly"),
-+                cause: std::borrow::Cow::Owned(cause),
-             }
-             .into();
-             let serialized = match conn_state.encoding_protoc {
-@@ -5687,6 +5728,185 @@ mod tests {
-         }
-     }
- 
-+    /// Drive one already-encoded request through `process_client_request` with
-+    /// a limiter whose bucket is already empty, and return the text of the
-+    /// rate-limit rejection the client receives.
-+    async fn rejection_text(msg: Message) -> String {
-+        let limiter = UserOpRateLimiter::new(10, 1, 0);
-+        let ctx = test_user_context(b"rejection-text-user");
-+        // Spend the single burst token so `msg` is the over-rate request.
-+        assert!(drive_msg(encoded_get_op(), Some(&ctx), Some(&limiter)).await);
++/// The reading of the egress cap of the node at `addr` in `network`: `None`
++/// if no socket is bound there, `Some(None)` if it has no cap.
++#[cfg(test)]
++pub(crate) fn egress_cap_reading(
++    network: &str,
++    addr: SocketAddr,
++) -> Option<Option<EgressCapReading>> {
++    let probe = EGRESS_CAP_PROBES.get(&(network.to_string(), addr))?;
++    Some(match probe(EgressCapAsk::Read)? {
++        Some(EgressCapAnswer::Reading(reading)) => Some(reading),
++        _ => None,
++    })
++}
 +
-+        let (tx, _rx) = mpsc::channel::<ClientConnection>(64);
-+        let mut delegate_rate_limiter = DelegateRateLimiter::new();
-+        let mut conn_state = test_conn_state(EncodingProtocol::Native);
-+        let mut auth_token: Option<AuthToken> = None;
-+        let out = process_client_request(
-+            ClientId::next(),
-+            Ok(msg),
-+            &tx,
-+            &mut auth_token,
-+            None,
-+            ConnectionScope::Local,
-+            Some(&ctx),
-+            Some(&limiter),
-+            None,
-+            ApiVersion::V1,
-+            &mut delegate_rate_limiter,
-+            &mut conn_state,
-+        )
-+        .await
-+        .expect("process_client_request should not error on a valid request")
-+        .expect("an over-rate request must be answered with a rejection");
-+        let Message::Binary(bytes) = out else {
-+            panic!("unexpected non-binary response: {out:?}");
-+        };
-+        let decoded: Result<HostResponse, ClientError> =
-+            bincode::deserialize(&bytes).expect("rejection must be a native error frame");
-+        let err = decoded.expect_err("rejection frame must be an Err");
-+        assert!(
-+            matches!(err.kind(), ErrorKind::OperationError { .. }),
-+            "the rejection stays an OperationError (wire-compatible), got {:?}",
-+            err.kind()
-+        );
-+        err.to_string()
++/// Takes `bytes` from the egress cap of the node at `addr` in `network`, as
++/// one datagram's send would: `Ok(())` if the bucket held them (they are
++/// charged), else the wait the bucket asks for, in the cap's time. `None` if
++/// no socket is bound there or it has no cap.
++#[cfg(test)]
++pub(crate) fn egress_cap_take(
++    network: &str,
++    addr: SocketAddr,
++    bytes: usize,
++) -> Option<Result<(), Duration>> {
++    let probe = EGRESS_CAP_PROBES.get(&(network.to_string(), addr))?;
++    match probe(EgressCapAsk::Take(bytes))?? {
++        EgressCapAnswer::Taken(taken) => Some(taken),
++        EgressCapAnswer::Reading(_) => None,
 +    }
++}
 +
-+    /// A rate-limit rejection must name the request it refused, or a client with
-+    /// many requests in flight cannot tell which one to ret
+ /// The simulated nodes whose transport started its QUIC endpoint's accept
+ /// loop, keyed like [`QUIC_ENDPOINT_CLOCKS`]. Written by the transport when
+ /// it starts the loop; read by tests to check the node passes its task
+@@ -327,6 +425,8 @@ pub(crate) fn clear_quic_endpoint_clocks(network: &str) {
+     crate::operations::connect::native_wire_trace::remove(network);
+     QUIC_ACCEPT_LOOPS.retain(|(owner, _)| owner != network);
+     QUIC_ENDPOINT_CLOCKS.retain(|(owner, _), _| owner != network);
++    #[cfg(test)]
++    EGRESS_CAP_PROBES.retain(|(owner, _), _| owner != network);
+ }
+ 
+ /// Clears all network time sources, for EVERY network in the process.
 ```
 
-**File**: `crates/core/src/config.rs` (modified, +2/-2)
+**File**: `crates/core/src/transport/quic/tests.rs` (modified, +40/-24)
 ```diff
-@@ -3632,7 +3632,7 @@ pub struct WebsocketApiArgs {
+@@ -3525,29 +3525,32 @@ fn the_transport_endpoint_runs_on_virtual_time_only_in_simulation() {
+     })
+ }
  
-     /// Per-user operation burst capacity for hosted mode: how many operations an
-     /// idle user can issue back to back before being throttled to
--    /// `--per-user-op-rate-limit`. Default: 100. Only meaningful when operation
-+    /// `--per-user-op-rate-limit`. Default: 500. Only meaningful when operation
-     /// rate limiting is on.
-     // Internal: #4561.
-     #[arg(long = "per-user-op-burst", env = "PER_USER_OP_BURST")]
-@@ -4002,7 +4002,7 @@ pub struct WebsocketApiConfig {
+-/// A simulated node with both `transport-quic` and an egress cap is
+-/// refused: the cap runs on `RealTime` and the simulated endpoint on
+-/// `VirtualTime`. Either one alone binds, and so does QUIC with
+-/// `total-bandwidth-limit = 0`, which builds no cap.
++/// The clock of a simulated node's egress cap. With `transport-quic` the cap
++/// runs on the network's `VirtualTime`, the clock of the node's endpoint, so
++/// the node binds and advancing the simulated clock moves the cap's. Without
++/// QUIC the cap keeps `RealTime`, which a simulated clock does not move. QUIC
++/// with `total-bandwidth-limit = 0` builds no cap.
+ #[test]
+-fn a_simulated_node_with_quic_and_an_egress_cap_is_refused() {
++fn a_simulated_node_with_quic_runs_its_egress_cap_on_virtual_time() {
+     bounded(|| async move {
+         use crate::transport::connection_handler::{UdpTransportConfig, bind_udp_listener};
+         use crate::transport::global_bandwidth::GlobalBandwidthManager;
++        use crate::transport::in_memory_socket::egress_cap_reading;
++        const RATE: usize = 1_000_000;
+         let network = "quic-sim-egress-cap";
+         let time = VirtualTime::new();
+         let _clock = Registration::time_source(network, time.clone());
+         let cap = |limit| Some(Arc::new(GlobalBandwidthManager::new(limit, None)));
+-        for (port, quic, global_bandwidth, refused) in [
+-            (5000, Some(settings()), cap(1_000_000), true),
+-            (5001, Some(settings()), None, false),
+-            (5002, None, cap(1_000_000), false),
+-            (5003, Some(settings()), cap(0), false),
++        for (port, quic, global_bandwidth, expected) in [
++            (5000, Some(settings()), cap(RATE), Some(true)),
++            (5001, Some(settings()), None, None),
++            (5002, None, cap(RATE), Some(false)),
++            (5003, Some(settings()), cap(0), None),
+         ] {
+             let net = crate::transport::test_net::subnet();
+             let local = net.addr_port(1, port);
+             let _registered = Registration::address(local, network);
+-            let bound = bind_udp_listener::<SimulationSocket>(
++            let (_, _, listener) = bind_udp_listener::<SimulationSocket>(
+                 crate::transport::TransportKeypair::new(),
+                 local.ip(),
+                 port,
+@@ -3558,21 +3561,34 @@ fn a_simulated_node_with_quic_and_an_egress_cap_is_refused() {
+                     ..UdpTransportConfig::default()
+                 },
+             )
+-            .await;
+-            match bound {
+-                Ok((_, _, listener)) => {
+-                    assert!(!refused, "port {port}: QUIC plus a cap must be refused");
+-                    listener.abort();
+-                }
+-                Err(error) => {
+-                    assert!(refused, "port {port}: refused: {error}");
+-                    let text = error.to_string();
+-                    assert!(
+-                        text.contains("transport-quic") && text.contains("total-bandwidth-limit"),
+-                        "the error names both settings: {text}"
+-                    );
++            .await
++            .unwrap_or_else(|error| panic!("port {port}: {error}"));
++            let before = egress_cap_reading(network, local)
++                .unwrap_or_else(|| panic!("port {port}: no socket"));
++            match expected {
++                None => assert!(before.is_none(), "port {port}: no cap is built"),
++                Some(on_virtual_time) => {
++                    let before = before.unwrap_or_else(|| panic!("port {port}: no cap"));
++                    assert_eq!(before.rate_bytes_per_sec, RATE as u64);
++                    time.advance(Duration::from_secs(100));
++                    let after = egress_cap_reading(network, local).unwrap().unwrap();
++                    let moved = after.now_nanos.saturating_sub(before.now_nanos);
++                    if on_virtual_time {
++                        assert_eq!(
++                            after.now_nanos,
++                            time.now_nanos(),
++                            "port {port}: the cap reads the simulated clock"
++                        );
++                        assert_eq!(moved, 100_000_000_000, "port {port}");
++                    } else {
++                        assert!(
++                            moved < 50_000_000_000,
++                            "port {port}: a cap without QUIC stays on RealTime"
++                        );
++                    }
+                 }
+             }
++            listener.abort();
+         }
+     })
+ }
+```
+
+---
+
+### Incident Patch 2: `a73f5e45` (2026-11-22)
+**Commit Message**: chore(release): ship the QUIC-native wire variants in 0.2.163 (#6312)
+
+**File**: `crates/core/src/node/network_bridge/p2p_protoc.rs` (modified, +16/-7)
+```diff
+@@ -1218,8 +1218,8 @@ use crate::operations::connect::native::NativeWire;
+ /// one, so `connect::wire::encode_for_peer` emits them only to a peer whose
+ /// negotiated version is known and at least this; every other encode emits
+ /// today's variants without the fields. Per the wire-gated-floor rule in
+-/// `docs/RELEASING.md`, this is the release that first ships the decoder, then
+-/// frozen. Bias HIGH: too low closes connections to the release below it, too
++/// `docs/RELEASING.md`, the floor is the first release that emits them (the
++/// decoder itself shipped in 0.2.157), then frozen. Bias HIGH: too low closes connections to the release below it, too
+ /// high only delays the offer.
+ /// Raised from 0.2.158 to 0.2.159 by the QUIC data ramp PR (#6224): 0.2.158
+ /// starts the data ramp, and turning on the native connect offer in the same
+@@ -1228,20 +1228,29 @@ use crate::operations::connect::native::NativeWire;
+ /// for 0.2.160: native connect is still off (`QUIC_NATIVE_PERCENT` is 0) and
+ /// its wire fields may change before it is enabled, so no release is frozen
+ /// as the floor yet. Raised to 0.2.162 for 0.2.161 for the same reasons, and
+-/// to 0.2.163 for 0.2.162.
++/// to 0.2.163 for 0.2.162. Frozen at 0.2.163: that release ships the variants
++/// (`QUIC_NATIVE_SHIPPED_IN`), with every offer at percent 0, so a later
++/// release can turn the native path on. Do not raise it again.
+ pub(crate) const QUIC_NATIVE_MIN_VERSION: (u8, u8, u16) = (0, 2, 163);
  
-     /// Per-user operation burst capacity for hosted mode (#4561). Max ops a
-     /// previously-idle user may issue back-to-back before being throttled to
--    /// the sustained rate. Default 100.
-+    /// the sustained rate. Default 500.
-     #[serde(default = "default_per_user_op_burst", rename = "per-user-op-burst")]
-     pub per_user_op_burst: u64,
+-/// Has the decoder for the QUIC-native `ConnectMsg` variants shipped, and in
+-/// which release?
++/// Has the release that first emits the QUIC-native `ConnectMsg` variants
++/// shipped, and which one is it?
+ ///
+ /// Same contract as [`HASH_FIRST_SHIPPED_IN`], checked by
+ /// `quic_native_floor_tracks_the_shipping_release`: `None` means
+ /// [`QUIC_NATIVE_MIN_VERSION`] is a prediction that must stay strictly ABOVE
+-/// the crate version; `Some(v)` means it shipped in `v`, which must equal the
++/// the crate version; `Some(v)` means it ships in `v`, which must equal the
+ /// floor. Write the literal release when it ships, not
+ /// `Some(QUIC_NATIVE_MIN_VERSION)`, which would compare the floor with itself.
++///
++/// `Some((0, 2, 163))`: 0.2.163 is the release that first puts the V2 variants
++/// on the wire (every offer at percent 0). Unlike the hash-first test, this
++/// tracker test accepts the marker one release ahead of the crate version, so
++/// it holds both on the 0.2.162 main that precedes the release bump and on
++/// 0.2.163 itself. Only the test reads this constant; the emission gate reads
++/// the floor.
+ #[cfg_attr(not(test), allow(dead_code))]
+-pub(crate) const QUIC_NATIVE_SHIPPED_IN: Option<(u8, u8, u16)> = None;
++pub(crate) const QUIC_NATIVE_SHIPPED_IN: Option<(u8, u8, u16)> = Some((0, 2, 163));
  
+ /// Upper bound on the number of hosted contracts examined per new-peer
+ /// migration trigger. Each examined contract may emit a best-effort
+```
+
+**File**: `crates/core/src/node/testing_impl.rs` (modified, +3/-2)
+```diff
+@@ -2253,9 +2253,10 @@ impl SimNetwork {
+ 
+     /// Lowers the QUIC-native wire floor to `floor` on every node, so the
+     /// native connect variants go to any peer whose negotiated version is at
+-    /// least `floor`. Until the release that ships them the production floor
++    /// least `floor`. Before the release that ships them the production floor
+     /// is above this binary's version, so without this call no simulation can
+-    /// put them on the wire. Call before the simulation starts.
++    /// put them on the wire; from that release the default already does. Call
++    /// before the simulation starts.
+     #[cfg(any(test, feature = "testing"))]
+     pub fn with_quic_native_floor(&mut self, floor: (u8, u8, u16)) -> &mut Self {
+         for label in self.pending_labels() {
+```
+
+**File**: `crates/core/src/operations/connect/wire.rs` (modified, +2/-2)
+```diff
+@@ -210,8 +210,8 @@ pub(crate) fn native_wire_allowed(remote: Option<(u8, u8, u16)>, floor: (u8, u8,
+ /// The one encode that may emit the appended `ConnectMsg` variants, and only
+ /// when [`native_wire_allowed`]. `floor` is
+ /// [`crate::node::QUIC_NATIVE_MIN_VERSION`] in production; a test passes a
+-/// lower one, since until the shipping release the real floor is above every
+-/// version a test can run.
++/// different one to put the variants on the wire (or keep them off) regardless
++/// of the version the test binary reports.
+ pub(crate) fn encode_for_peer<T: Serialize>(
+     msg: &T,
+     remote_version: Option<(u8, u8, u16)>,
+```
+
+**File**: `crates/core/tests/simulation_integration.rs` (modified, +2/-2)
+```diff
+@@ -23169,8 +23169,8 @@ fn run_native_wire_sim(
+     NativeWireRun { trace, mesh, nodes }
+ }
+ 
+-/// A floor every node of this binary passes, injected because the real one
+-/// is above this binary until the release that ships the decoder.
++/// A floor every node of this binary passes, injected so the test does not
++/// depend on the real floor relative to this binary's version.
+ fn native_floor_for_tests() -> (u8, u8, u16) {
+     SimNetwork::min_compatible_protocol_version()
+ }
+```
+
+**File**: `docs/RELEASING.md` (modified, +10/-10)
+```diff
+@@ -494,16 +494,16 @@ Current wire-gated floors:
+   and `ResponseNative` at indices 5 and 6 of
+   `operations/connect/wire.rs::ConnectMsgWire`, #5940).
+ 
+-  Set to **`(0, 2, 160)`**, the release intended to first ship the decoder,
+-  and guarded by `QUIC_NATIVE_SHIPPED_IN`, currently `None`, checked by
+-  `p2p_protoc::quic_native_floor_tests::quic_native_floor_tracks_the_shipping_release`.
+-  0.2.157, 0.2.158 and 0.2.159 carry the decoder but were cut with the floor
+-  raised past them, so they never emit the native variants. 0.2.158 is the
+-  QUIC data ramp release (#6224), and 0.2.159 ships while the ramp is still
+-  under watch; each raised the floor so that the native offer does not start
+-  in the same release. When the 0.2.160 bump fails that test, set the marker
+-  to the literal `Some((0, 2, 160))` if the release carries the decoder and
+-  should start the native offer, otherwise raise the floor. Same failure mode as the
++  Set to **`(0, 2, 163)`**, the release that first ships the variants on the
++  wire, and frozen there: `QUIC_NATIVE_SHIPPED_IN` is `Some((0, 2, 163))`,
++  checked by
++  `p2p_protoc::quic_native_floor_tests::quic_native_floor_tracks_the_shipping_release`
++  (which accepts the marker one release ahead of the crate version, so it
++  holds on 0.2.162 main and on 0.2.163). 0.2.157 to 0.2.162 carry the decoder
++  but were cut with the floor raised past them, so they never emitted the
++  native variants. In 0.2.163 every offer carries percent 0
++  (`QUIC_NATIVE_PERCENT` 0, `NATIVE_DIAL_READY` false); the step that turns
++  the native path on is a later release. Do not raise the floor again unless the V2 layout itself has to change. Same failure mode as the
+   application-message floors above: a peer at
+   or above the floor without the decoder closes the connection on the variant,
+   so bias high. Only `connect::wire::encode_for_peer`, at the one peer-bound
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6314** (2026-11-22): feat(transport): run the egress cap on VirtualTime for a simulated QUIC node (@sanity)
+- **PR #6313** (2026-11-22): feat(config): warn that UDP-only transport keys stop applying once legacy UDP is removed (@sanity)
+- **PR #6312** (2026-11-22): chore(release): ship the QUIC-native wire variants in 0.2.163 (@sanity)
+- **PR #6311** (2026-11-22): test(transport): a dead native connection leaves no entry at this end (@sanity)
 - **PR #6309** (2026-11-22): fix: name the refused request in hosted rate-limit rejections; raise burst to 500 (@sanity)
 - **PR #6308** (2026-11-20): build: release 0.2.162 (@sanity)
-- **PR #6307** (2026-11-20): chore(release): raise the QUIC-native wire floor to 0.2.163 (@sanity)
-- **PR #6306** (2026-11-20): fix(server): raise web archive unpack limits to admit existing sites (@sanity)
-- **PR #6303** (2026-11-20): fix(server): say why a web archive was refused; warn on large sites in fdev (@sanity)
-- **PR #6302** (2026-11-20): fix(transport): count QUIC inbound bytes in cumulative_bytes_received (@sanity)
 
 ---
 
@@ -1983,54 +2375,46 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. name the refused request in hosted rate-limit rejections; raise burst to 500
+## X. transport): run the egress cap on VirtualTime for a simulated QUIC node
 
 **RULE**:
-When implementing operations in `crates/core/src/client_events/user_op_rate_limit.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/rules/transport.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `52922483`: name the refused request in hosted rate-limit rejections; raise burst to 500. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dbfadb1c`: transport): run the egress cap on VirtualTime for a simulated QUIC node. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/src/client_events/user_op_rate_limit.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/rules/transport.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// Set generously (500). Measured on try.freenet.org: one River page load sends
-/// 135 operations in its first 1.3 s (startup delegate reads plus a
-/// legacy-delegate migration sweep), and the previous default of 100 rejected 17
-/// of them. The count grows with the number of rooms and legacy delegates an
-/// account has, so 500 leaves ~3.7x headroom over that measurement. A
-/// false-positive throttle during app load stalls the whole UI, while a larger
-/// ONE-TIME burst costs little: the sustained [`DEFAULT_PER_USER_OP_RATE_LIMIT`]
-/// (10/sec) is the real flood cap for one identity, and a drained bucket takes
-/// `burst / rate` = 50 s of idleness to refill. The burst is per token, and a
-/// fresh token starts with a full bucket, so it also sets how many ops each
-/// newly minted token gets for free; that token-rotation gap exists at any
-/// burst (see [`MAX_TRACKED_USERS`]) and is not closed by this limiter.
-///
-/// Downstream queues still bound a burst aimed at one contract: the contract
-/// handler's per-contract queue (`MAX_QUEUED_PER_CONTRACT`, 100) sheds the excess
-/// of a single-contract flood, while an app load spreads its ops over many
-/// contracts and delegates.
-pu
+The cap is built on RealTime in production and in a simulated node without
+QUIC, because the listener and its connections run on RealTime there: a
+VirtualTime cap would compute deficits on another clock than its UDP
+waiters sleep and time out on. The QUIC endpoint must run on the cap's
+clock, because a hold's age is measured on the path's clock against a bound
+in the cap's time. In a simulation the endpoint runs on the network's VirtualTime, so
+bind_udp_listener builds a simulated QUIC node's cap on that VirtualTime
+too (D-2a); the same node's UDP stream senders still time on RealTime
+until the legacy path is removed.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-/// Set generously (100): a heavy-room hosted user's app-load — room list +
-/// per-room state + member lists + delegate secret reads across many rooms —
-/// can plausibly burst past 50 ops in the first second after page load. A
-/// false-positive throttle there breaks the UX worse than allowing a slightly
-/// larger ONE-TIME burst; the sustained [`DEFAULT_PER_USER_OP_RATE_LIMIT`]
-/// (10/sec) is the real flood cap, the burst is just the initial allowance.
-pub const DEFAULT_PER_USER_OP_BURST: u64 = 100;
+The cap is built on RealTime even in simulation, because the listener and
+its connections run on RealTime there: a VirtualTime cap would compute
+deficits on another clock than its waiters sleep and time out on. The QUIC
+endpoint runs on the cap's clock for the same reason (bind_udp_listener
+builds both on RealTime in production; tests build both on one
+VirtualTime). In a simulation the endpoint runs on the network's
+VirtualTime, so bind_udp_listener refuses a simulated node with both
+transport-quic and total-bandwidth-limit.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `52922483` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dbfadb1c` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

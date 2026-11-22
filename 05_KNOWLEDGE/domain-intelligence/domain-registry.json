@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T20:27:50.833Z",
+  "last_updated": "2026-11-22T20:35:52.878Z",
   "total_records": 2380,
   "domains": {
     "A": {
@@ -8783,8 +8783,8 @@
       "title": "Research & Knowledge Intelligence: orcarouter/OrcaSAQ-2-27B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-orcarouter-orcasaq-2-27b-research-knowledge-intelligence-orcarouter-orcasaq-2.md",
       "repository": "orcarouter/OrcaSAQ-2-27B",
-      "content_hash": "ae15c3b8fc26e57d271608dd8317654b0f4576a508871f01f73350dbd5ff8bc6",
-      "created_at": "2026-11-18T13:56:48.755Z"
+      "content_hash": "a010577c7b1d2fe3a1bfb3d0cbeec9d73b180fe02c8d31d597d6a01012d44eaf",
+      "created_at": "2026-11-22T20:35:35.503Z"
     },
     "DOM-D-1FD73085": {
       "record_id": "DOM-D-1FD73085",
@@ -8834,8 +8834,8 @@
       "title": "Research & Knowledge Intelligence: hf-orcarouter-orcasaq-2-27b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-orcarouter-orcasaq-2-27b-learnings-research-knowledge-intelligence-hf-orcarou.md",
       "repository": "hf-orcarouter-orcasaq-2-27b-learnings",
-      "content_hash": "81c3a3fc1f623b04018e41bcf920353d1f045847c58138175c17fbe28eec9afc",
-      "created_at": "2026-11-18T13:57:07.997Z"
+      "content_hash": "b82c6fed6908711d275244ccda771533e6dcbf3ceba4c6942a84f26f9facac81",
+      "created_at": "2026-11-22T20:35:52.323Z"
     },
     "domain_intelligence-architecture-intelligence-gauthierpiarrette-highball-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-gauthierpiarrette-highball-learnings-core-invariants",
@@ -9746,8 +9746,8 @@
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "repository": "freenet/freenet-core",
-      "content_hash": "87ed43b185be2bf84a8ac9d44595a89b7a6b29accd3f8953dec9ce53ae17bc8e",
-      "created_at": "2026-11-22T15:37:16.186Z"
+      "content_hash": "0cfc1cc9bff74a281c63d4744ef5cbdb59194efe5dbca7cb331e1c50b99adb5b",
+      "created_at": "2026-11-22T20:35:47.981Z"
     },
     "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants",
@@ -9824,8 +9824,8 @@
       "title": "Technical Construction Intelligence: freenet-freenet-core-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-learnings-technical-construction-intelligence-freenet-freen.md",
       "repository": "freenet-freenet-core-learnings",
-      "content_hash": "2d66bf126dcfb51afffd84f86a84465a1332110cfaf60f98787560ebfab8ce73",
-      "created_at": "2026-11-22T15:42:42.890Z"
+      "content_hash": "4caf3f7d4c920b82505a4dc41626db6638f6aa8dc133cd983a9137883e05bbed",
+      "created_at": "2026-11-22T20:35:52.878Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
@@ -34512,8 +34512,8 @@
       "title": "Architecture Intelligence: BurntSushi/ripgrep Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-burntsushi-ripgrep-architecture-intelligence-burntsushi-ripgrep-core-invariants.md",
       "repository": "BurntSushi/ripgrep",
-      "content_hash": "69fc3587371b74d7ff82d8c06df8e5c54df7dc60ff83225c8a7ae9ddd3d49438",
-      "created_at": "2026-11-21T11:55:20.557Z"
+      "content_hash": "7d08cdbb8541c720f03f992c6ac9b0c2864dd33e6d0718140edbddd9bf9e42a7",
+      "created_at": "2026-11-22T20:35:36.990Z"
     },
     "domain_intelligence-architecture-intelligence-burntsushi-ripgrep-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-burntsushi-ripgrep-learnings-core-invariants",
@@ -34521,8 +34521,8 @@
       "title": "Architecture Intelligence: burntsushi-ripgrep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-burntsushi-ripgrep-learnings-architecture-intelligence-burntsushi-ripgrep-learni.md",
       "repository": "burntsushi-ripgrep-learnings",
-      "content_hash": "6bd04528880753c6a41b2e3483a510eb731820f320d5b4a1d63636a9c2ba7b4b",
-      "created_at": "2026-11-21T11:55:38.914Z"
+      "content_hash": "4ffb58838739e669e51d05a5b21c7ecddf700bf60cfc59bb257596d32f66ec1b",
+      "created_at": "2026-11-22T20:35:51.808Z"
     },
     "DOM-D-34CA9B71": {
       "record_id": "DOM-D-34CA9B71",

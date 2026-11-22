@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T20:27:51.426Z",
+  "last_updated": "2026-11-22T20:35:53.179Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-22T19:31:30.338Z",
@@ -313,7 +313,7 @@
       "staged_for_review": 0
     },
     "burntsushi-ripgrep-learnings.md": {
-      "processed_at": "2026-11-21T11:55:38.498Z",
+      "processed_at": "2026-11-22T20:35:50.963Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -603,7 +603,7 @@
       "staged_for_review": 1
     },
     "freenet-freenet-core-learnings.md": {
-      "processed_at": "2026-11-22T15:42:42.450Z",
+      "processed_at": "2026-11-22T20:35:52.506Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1968,7 +1968,7 @@
       "staged_for_review": 1
     },
     "hf-orcarouter-orcasaq-2-27b-learnings.md": {
-      "processed_at": "2026-11-18T13:57:07.759Z",
+      "processed_at": "2026-11-22T20:35:52.129Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3733,7 +3733,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3213,
+  "total_dossiers_evaluated": 3216,
   "total_canonical_promoted": 476,
-  "total_staged_for_review": 2432
+  "total_staged_for_review": 2434
 }

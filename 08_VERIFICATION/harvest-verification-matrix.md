@@ -12187,3 +12187,6 @@
 | `CYCLE-20261122-GCNG` | `2026-11-22T20:27:36.844Z` | `twostraws/ControlRoom` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8826` | Yes (`8f16a21c...`) |
 | `CYCLE-20261122-GHI1` | `2026-11-22T20:27:43.129Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8826` | Yes (`909e6d02...`) |
 | `CYCLE-20261122-GIX9` | `2026-11-22T20:27:44.973Z` | `apache/pinot` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9988` | Yes (`708cb774...`) |
+| `CYCLE-20261122-QLTM` | `2026-11-22T20:35:35.290Z` | `orcarouter/OrcaSAQ-2-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md` | Yes (`a4c47341...`) |
+| `CYCLE-20261122-QMT8` | `2026-11-22T20:35:36.572Z` | `BurntSushi/ripgrep` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING` | Yes (`735c8129...`) |
+| `CYCLE-20261122-QVBD` | `2026-11-22T20:35:47.593Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9989` | Yes (`88b28e53...`) |
