@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T04:29:15.297Z",
+  "last_updated": "2026-11-22T04:39:44.114Z",
   "directives": [
     {
       "id": "CD-001",
@@ -45025,6 +45025,35 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-00AD23-benchmarks-report-gold-coverage-across-r.md",
+      "staged_date": "2026-11-22"
+    },
+    {
+      "id": "CD-LCU5",
+      "directive_title": "Empirical Invariant Guard in ComfyUIGen.js",
+      "source_repo": "lioensky-vcptoolbox-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-LCU5-empirical-invariant-guard-in-comfyuigen-js.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-22",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-REV-249CDB",
+      "directive_title": "Empirical Invariant Guard in ComfyUIGen.js",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "lioensky-vcptoolbox",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-249CDB-empirical-invariant-guard-in-comfyuigen-.md",
+      "staged_date": "2026-11-22"
+    },
+    {
+      "id": "CD-REV-39A864",
+      "directive_title": "Forensic Learning Record (Deep Inspection): zulip/zulip",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "A",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-39A864-forensic-learning-record-deep-inspection.md",
       "staged_date": "2026-11-22"
     }
   ]

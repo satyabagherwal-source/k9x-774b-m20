@@ -12040,3 +12040,6 @@ Every entry in this ledger must capture:
 | `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `34a14c0d` | Multi-dimensional audit evidence | 2026-11-22T04:05:07.194Z |
 | `learn-huggingface-nousresearch-arete-27b` | `https://huggingface.co/NousResearch/Arete-27B` | `hf-nousres` | Multi-dimensional audit evidence | 2026-11-22T04:29:01.649Z |
 | `learn-github-nezhahq-nezha` | `https://github.com/nezhahq/nezha` | `22f2184e` | Multi-dimensional audit evidence | 2026-11-22T04:29:03.652Z |
+| `learn-huggingface-prunaai-p-h3-image` | `https://huggingface.co/PrunaAI/P-H3-Image` | `hf-prunaai` | Multi-dimensional audit evidence | 2026-11-22T04:38:57.160Z |
+| `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `7131e7e4` | Multi-dimensional audit evidence | 2026-11-22T04:39:04.752Z |
+| `learn-dom-d-03750a38` | `project://hf-prunaai-p-h3-image` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-prunaai-p-h3-image-learnings.md` | 2026-11-22T04:39:42.430Z |

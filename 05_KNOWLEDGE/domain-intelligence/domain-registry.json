@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T04:29:15.441Z",
-  "total_records": 2324,
+  "last_updated": "2026-11-22T04:39:45.230Z",
+  "total_records": 2326,
   "domains": {
     "A": {
       "total": 17,
@@ -60,7 +60,7 @@
       ]
     },
     "D": {
-      "total": 910,
+      "total": 912,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -971,7 +971,9 @@
         "DOM-D-6EECDBA7",
         "DOM-D-7F03EC79",
         "DOM-D-60FE0061",
-        "domain_intelligence-research-knowledge-intelligence-dosco-deeporg-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-dosco-deeporg-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-prunaai-p-image-oss-core-invariants",
+        "DOM-D-03750A38"
       ]
     },
     "E": {
@@ -8139,8 +8141,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "8d82ccccd9a39a2da4a487a87904de367250af5f6d8b787d92e858f61d0c726d",
-      "created_at": "2026-11-22T01:59:01.202Z"
+      "content_hash": "342e28437e774abaf5a5058fb5658b7266348ec955d066da522177a41501abcf",
+      "created_at": "2026-11-22T04:39:45.230Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -12582,8 +12584,8 @@
       "title": "Technical Construction Intelligence: lioensky/VCPToolBox Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lioensky-vcptoolbox-technical-construction-intelligence-lioensky-vcptoolbox-core.md",
       "repository": "lioensky/VCPToolBox",
-      "content_hash": "184fbbf422900f77ba9323947e6f7b4e8c7d83135d2772b74c9fc01ecf376f6c",
-      "created_at": "2026-11-20T23:56:26.888Z"
+      "content_hash": "0ef21b6d83b9ad0b1962a7be599fa151b2b13eadf8887a60c4505101001568a5",
+      "created_at": "2026-11-22T04:39:05.247Z"
     },
     "domain_intelligence-deployment-operations-intelligence-graphprotocol-graph-node-learnings-core-invar": {
       "record_id": "domain_intelligence-deployment-operations-intelligence-graphprotocol-graph-node-learnings-core-invar",
@@ -21702,8 +21704,8 @@
       "title": "Technical Construction Intelligence: lioensky-vcptoolbox-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lioensky-vcptoolbox-learnings-technical-construction-intelligence-lioensky-vcpto.md",
       "repository": "lioensky-vcptoolbox-learnings",
-      "content_hash": "c4e90c0b7042e8ac4478f96cd16adfbc199e10bb718ed63084e11e9f2b95ad9b",
-      "created_at": "2026-11-20T23:57:54.203Z"
+      "content_hash": "ccf192e17a772845db066a7e3386f6de0f9d947a6461413212ce725851f28a07",
+      "created_at": "2026-11-22T04:39:43.648Z"
     },
     "domain_intelligence-research-knowledge-intelligence-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf-core-i": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf-core-i",
@@ -25326,8 +25328,8 @@
       "title": "Research & Knowledge Intelligence: hf-prunaai-p-h3-image-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-prunaai-p-h3-image-learnings-research-knowledge-intelligence-hf-prunaai-p-h3-.md",
       "repository": "hf-prunaai-p-h3-image-learnings",
-      "content_hash": "a9f70efc59cf7e3887d4b79a17cf45c226a1161ea7ce8cab42272c5481794de5",
-      "created_at": "2026-11-17T00:38:46.553Z"
+      "content_hash": "2ecc7b9cefd274306f314e3987f3d566495159b1eafa8d6ec668bc37bd890038",
+      "created_at": "2026-11-22T04:39:42.740Z"
     },
     "domain_intelligence-technical-construction-intelligence-1jehuang-jcode-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-1jehuang-jcode-core-invariants",
@@ -39196,6 +39198,57 @@
       "repository": "nezhahq-nezha-learnings",
       "content_hash": "747dff4844f540856666374c6ff69561316517712f2fc07ad7c5d07b189a2f69",
       "created_at": "2026-11-22T04:29:14.214Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-prunaai-p-image-oss-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-prunaai-p-image-oss-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: PrunaAI/P-Image-OSS Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-prunaai-p-h3-image-research-knowledge-intelligence-prunaai-p-image-oss-core-i.md",
+      "repository": "PrunaAI/P-Image-OSS",
+      "content_hash": "e6ff11d0d35ee50a8364a0acc4888e3af74fd0b0a78cfdb1cddb0e73e3fd88ca",
+      "created_at": "2026-11-22T04:38:57.418Z"
+    },
+    "DOM-D-03750A38": {
+      "record_id": "DOM-D-03750A38",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): PrunaAI/P-Image-OSS",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-prunaai-p-h3-image-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/PrunaAI/P-H3-Image](https://huggingface.co/PrunaAI/P-H3-Image))  \n> **Source Version**: `hf-prunaai-p`  \n> **License**: Open-Source  \n> **Synthesized By**:",
+      "content_hash": "292e8454d8a22b38492c129bc3ddd3a40be26e7f1a40780537c72a15f2da48c6",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-prunaai-p-h3-image-learnings.md`  \n> **Source**: huggingface ([https://huggingfac -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-prunaai-p-h3-image-learnings.md`  \n> **Source**: huggingface ([https://huggingfac",
+      "provenance": {
+        "source_uri": "project://hf-prunaai-p-h3-image/hf-prunaai-p-h3-image-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-22T04:39:08.371Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-prunaai-p-h3-image)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-prunaai-p-h3-image"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-22T04:39:42.393Z"
     }
   }
 }

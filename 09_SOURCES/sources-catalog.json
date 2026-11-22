@@ -2993,10 +2993,10 @@
     "repository": "lioensky/VCPToolBox",
     "platform": "github",
     "sourceUrl": "https://github.com/lioensky/VCPToolBox",
-    "sourceVersion": "09a25ded",
+    "sourceVersion": "7131e7e4",
     "license": "NOASSERTION",
-    "contentHash": "c9c965d1ff4d95851120f0593160151e8ecd999ffad6540b8f013ae471c23688",
-    "lastHarvestedAt": "2026-11-20T23:56:26.413Z",
+    "contentHash": "6c2cdba6c6baaedf49bc533be6ae5726ad07a144516fedee38207dce40e832f3",
+    "lastHarvestedAt": "2026-11-22T04:39:04.752Z",
     "learningId": "learn-github-lioensky-vcptoolbox"
   },
   "megabit-blazorise": {
@@ -12120,13 +12120,13 @@
     "learningId": "learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic"
   },
   "hf-prunaai-p-h3-image": {
-    "repository": "PrunaAI/P-H3-Image",
+    "repository": "PrunaAI/P-Image-OSS",
     "platform": "huggingface",
     "sourceUrl": "https://huggingface.co/PrunaAI/P-H3-Image",
     "sourceVersion": "hf-prunaai-p-h3-image",
     "license": "Open-Source",
-    "contentHash": "2ccfc904b80a0370270ed352e3d86355be0921ab288f83189c58212964b314c6",
-    "lastHarvestedAt": "2026-11-17T00:38:27.974Z",
+    "contentHash": "cb5546f06b66d9f4bb01a37f98d0e73dfaa60f3ef58de06a616da1167e7ff071",
+    "lastHarvestedAt": "2026-11-22T04:38:57.160Z",
     "learningId": "learn-huggingface-prunaai-p-h3-image"
   },
   "hf-nousresearch-arete-27b": {

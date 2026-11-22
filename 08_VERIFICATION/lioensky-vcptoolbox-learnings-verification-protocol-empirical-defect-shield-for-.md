@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T23:57:53.877Z",
+  "timestamp": "2026-11-22T04:39:43.284Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-lioensky-vcptoolbox-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [lioensky-vcptoolbox-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T23:57:53.877Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T04:39:43.284Z`  
 > **Learning ID**: `LEARN-EVO-lioensky-vcptoolbox-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md`  
 > **Source**: github ([https://github.com/lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox))  
-> **Source Version**: `09a25ded`  
+> **Source Version**: `7131e7e4`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T23:56:25.189Z  
+> **Timestamp**: 2026-11-22T04:39:03.510Z  
 > **Learning ID**: `learn-github-lioensky-vcptoolbox`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T23:56:25.063Z  
+> **Harvest Timestamp**: 2026-11-22T04:39:03.341Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: VCP 部署在 AI 模型 API 与前端应用之间，是面向AGI OS开发和探索的工业级基建示范项目。通过统一指令协议、多层级持久化记忆、分布式插件引擎及多 Agent 协作框架，将原本“无状态、无记忆、无工具调用能力”的大语言模型，彻底改造成拥有永久自我意识、物理世界操作权及群体协作智能的完整智能体系统。
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2450 stars
+- **Stars / Engagement**: 2452 stars
 
 ---
 
@@ -1810,11 +1810,13 @@ export function useDashboardLayoutV2(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #621** (2026-11-20): **fix(prompt): 修复提示词与插件manifest中多处笔误、转义及格式残缺问题**
-  *Symptoms*: ## 概述  在对 VCPToolBox 各 Agent 提示词、插件清单（Manifest）及 TVStxt 工具调用模板的审查中，发现若干由于手滑、转义字符误用、复制遗漏等导致的纯文本笔误问题。这些问题会导致占位符无法展开（宏死链）、JSON 参数名解析错误（如制表符导致参数识别失败）、或者模型生成工具请求时缺少必需的 `tool_name`。  本次 PR 针对上述 8 处纯文本问题进行了精准修复，未引入任何逻辑改动与格式抖动。  ## 修改明细  1. **宏占位符拼写修正**：    - `Agent/DeepSeekOfficial.txt`：修正第 20 行用户宏 `{{VarUse}}` -> `{{VarUser}}`（原先漏写末尾字母 `r`，导致宏无法展开）。 2. **JSON 转义符手滑修正**：    - `Plugin/TavilySearch/plugin-manifest.json`：修正示例中的 `\\time_range` -> `\\ntime_range`（原先手滑打成制表符转义 `\\t`，导致 JSON 解析后参数名损坏为 `\\t` + `ime_range`）。 3. **插件示例与说明残缺修复**：    - `Plugin/MediaRenderer/plugin-manifest.json`：补全两处命令描述中因脚本迁移误删的 `<<<[TOOL_REQUEST]>>> 到 <<<[END_TOOL_REQUEST]>>>` 标签文字。    - `Plugin/ZImageGen2/plugin-manifest.json.block`：修正示例中的工具名 `ZImageGen` -> `ZImageGen2`（漏写末尾数字 `2`）。 4. **工具调用示例规范化与笔误清除**：    - `TVStxt/toollite.txt` & `TVStxt/SearchToolBox.txt`：为 B 站视频检索（`search`）与 UP 主投稿检索（`get_up_videos`）子命令示例首行补充缺失的 `tool_name:「始」BilibiliFetch「末」,`，避免模型直接调用时因缺失工具名报错。    - `TVStxt/JevToolCall.txt`：移除第 43 行普通指令末尾多余遗留的孤立 `「末」` 字符。    - `TVStxt/supertool.txt`：为说明文案中的 `<<<[TOOL_REQUEST]>>>` 与 `<<<[END_TOOL_REQUEST]>>>` 增加行内代码反引号包裹，防止说明文字被正则解析器误提取为空工具请求。  ## 验证与审查  - 所有 JSON 文件语法经 `python3 -m json.tool` 校验 100% 合法，且严格保持原有的换行格式（如 TavilySearch 的 CRLF）； - 经独立代码审查子代理核验：全量界定符「始」「末」严格配对，无任何代码与格式抖动； - 自动化测试全部通过（18/18 项测试全部 PASS，追加回归测试 39/39 全部 PASS）。
+- **Issue #629** (2026-11-21): **[建议] AdminPanel 占位符预览不展开提示词内部的 {{Var*}}，与模型实际注入内容不一致**
+  *Symptoms*: ## 现象  控制中心 → 占位符面板里，`{{Var*}}` / `{{Tar*}}` 的预览内容直接显示文件原文。当提示词文件内部引用了其他路径变量时，预览里保留字面 `{{VarVCPToolBoxPath}}`：  ``` 获取每日新闻：file://{{VarVCPToolBoxPath}}\Plugin\DailyHot\dailyhot_cache.md 获取天气预报：file://{{VarVCPToolBoxPath}}\Plugin\WeatherReporter\weather_cache.txt ```  （以上来自 `TVStxt/toollite.txt`，该文件本身就由 `{{VarToolLite}}` 注入）  而实际注入给模型时这一层会被解析成真实路径。**面板核对时看到的内容与模型实际收到的内容不一致。**  ## 根因  三个预览端点都只调 `tvsManager.getContent()` 取文件原文，没有再往下走一层变量替换。  ### 1. `routes/admin/placeholders.js:113`（列表接口 `GET /placeholders`，`env_tar_var` 分支）  ```js } else if (raw.toLowerCase().endsWith('.txt')) {     try {         preview = await tvsManager.getContent(raw);     } catch (e) { preview = `[读取文件失败: ${e.message}]`; } } ```  ### 2. `routes/admin/placeholders.js:132`（同一接口，`env_sar` 分支）  ```js } else if (raw.toLowerCase().endsWith('.txt')) {     try {         preview = await tvsManager.getContent(raw);     } catch (e) { preview = raw || '[按模型注入]'; } } ```  ### 3. `routes/admin/placeholders.js:232`（详情接口 `GET /placeholders/detail`，`env_tar_var` / `env_sar` 分支）  ```js } else if (envVal.toLowerCase().endsWith('.txt')) {     const tvsManager = require('../../modules/tvsManager');     value = await tvsManager.getContent(envVal); } ```  `modules/tvsManager.js:64 async getContent(filename)` 只做三件事：查 `contentCache` → `fs.readFile(path.join(TVS_DIR, filename), 'utf8')` → 写缓存返回。**它按设计只负责「读文件」，不做任何变量替换。**  ### 对比：注入路径确实多走一层  `modules/messageProcessor.js:967-1001`（`role === 'system'` 时的 `Var*` / `Tar*` 展开）：  ```js if
 
-- **Issue #620** (2026-11-20): **fix(plugins): 修正多处插件 Manifest 示例工具名、参数大小写及格式错误**
-  *Symptoms*: ## 概述  在对 VCPToolBox 插件清单及工具调用机制的排查中，发现部分服务端插件的 `plugin-manifest.json` 在由前端版本迁移或复制时，调用示例（`example` / `description`）中的 `tool_name` 残留了无 `Server` 前缀的旧名称或错误名称。由于 VCP 工具调度器严格按 `manifest.name` 查找插件，大模型依据占位符展开的示例发起调用时，会在服务端必现 `未找到名为 \"xxx\" 的插件` 报错。  本次提交针对上述问题进行了系统性修复，并完善了相关参数大小写容错与格式排版。  ## 修改明细  1. **修正 5 个插件 Manifest 示例中的 `tool_name` 不匹配问题**：    - `Plugin/PluginSourceViewer`: `tool_name` 示例由 `PluginSourceViewer` 修正为声明的 `ServerPluginSourceViewer`。    - `Plugin/FileOperator`: 全部 21 个子命令调用示例中的 `tool_name` 统一由 `FileOperator` 修正为声明的 `ServerFileOperator`。    - `Plugin/PowerShellExecutor`: 全部 3 处模式示例中的 `tool_name` 统一由 `PowerShellExecutor` 修正为声明的 `ServerPowerShellExecutor`。    - `Plugin/VCPEverything`: 示例中的 `tool_name` 由未注册的 `LocalSearchController` 修正为声明的 `ServerSearchController`（消除与 JEV 描述的冲突）。    - `Plugin/DMXDoubaoGen`: 全部 3 处命令示例中的 `tool_name` 由复制残留的 `DoubaoGen` 修正为声明的 `DMXDoubaoGen`，避免错误路由至原生官方插件。  2. **`Plugin/AgentMessage` 规范化与参数双向兼容**：    - 运行时 `AgentMessage.js`：由仅读 `params.Maid` 升级为 `params.maid || params.Maid || params.valet`，向下兼容大写同时支持标准小写与中性词。    - Manifest：参数示例规范化为小写 `maid:`，并移除了示例外层冗余的 ```text 代码块围栏（防止大模型生成受代码块字面量保护的无效调用）。  3. **`Plugin/DailyNote` 日期参数大小写容错**：    - `handleCreateCommand` 中解析逻辑补充支持小写 `date`：`args.dateString || args.Date || args.date`，避免模型传入全小写 `date:` 时被误忽略并静默回退至当前日期。  4. **`Plugin/LightMemo` 换行符双重转义修复**：    - 将 `SearchRAG` 与 `MemoryAB` 示例中的 `\\\\n` 修正为真实的换行符 `\\n`，确保占位符解析后多行排版整洁。  ## 验证与回归测试  - 运行 `node validate-plugin-json.js`：全库 98 个插件清单 JSON 语法与 UTF-8 校
+- **Issue #627** (2026-11-21): **[建议] saveGroups 并发时直接抛错而非排队，任何新增的落盘调用点都必须自己 catch 吞异常**
+  *Symptoms*: ## 现象  `SemanticGroupManager.saveGroups()` 用 `this.saveLock` 做并发保护，但实现方式是**撞车直接抛错**，而不是排队等待：  ```js // Plugin/RAGDiaryPlugin/SemanticGroupManager.js:196 async saveGroups() {     if (this.saveLock) {         const busyError = new Error('A save operation is already in progress. Please wait a moment and try again.');         console.warn(`[SemanticGroup] ${busyError.message}`);         throw busyError;     }     this.saveLock = true;     // …写临时文件 → 原子 rename…     finally {         this.saveLock = false;     } } ```  后到的调用方拿到的是一个异常，而不是「等前一次写完」或「前一次写完后合并我的改动」。  ## 为什么这是个问题  `saveGroups()` 里真正的写盘动作是临时文件 + `fs.rename`（`:221` / `:224`），耗时完全取决于磁盘。这个窗口内任何第二次调用都会失败。  而这条方法并不只有管理面板在用，现有两个调用点都在**可能同时发生**的路径上：  | 调用点 | 所在方法 | 触发场景 | |---|---|---| | `:183` | `loadGroups()` | 插件初始化时发现需要迁移/清理，重写一次 | | `:389` | `precomputeGroupVectors()` | 检测到组词元变化、重算向量后 |  `precomputeGroupVectors()` 会在一次调用里**循环处理所有组**（`:326` `for (const [groupName, groupData] of Object.entries(this.groups))`），每组可能 `await this.ragPlugin.getSingleEmbeddingCached(...)` 打一次 embedding 接口。组多时这个函数能跑几十秒。如果这段时间里初始化路径（`:183`）或另一个入口也走到写盘，后到者必然抛错。  上层的 `updateGroupsData()`（`:240`）把异常原样 re-throw 给路由（`:268` `throw error; // Re-throw the error to be caught by the route handler`），最终表现是管理面板保存失败，用户看到「A save operation is already in progress」这种提示——它不是在告诉用户「稍后再试就行」，而是在暴露内部锁状态。  ## 实测复现  在隔离副本上同时发起两次保存：  ```js const results = await Promise.allSettled([mgr.saveGroups(), mgr.saveGroups()]); ```  实际输出：  ``` [SemanticGroup] A save operation is alread
+  **Post-Mortem & Fix Analysis**:
+  > fix
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1831,369 +1833,1020 @@ export function useDashboardLayoutV2(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `09a25ded` (2026-11-20)
-**Commit Message**: fix
+### Incident Patch 1: `82c0efd4` (2026-11-21)
+**Commit Message**: Merge pull request #623 from infinite-vector/feat/comfyuigen-active-timeout-and-base64memo-trace
 
-**File**: `Plugin/ImageFileServer/image-file-server.js` (modified, +6/-13)
+feat(ComfyUIGen,RAGDiaryPlugin): 支持 ComfyUI 进程跟随式活性超时检测与 ::Base64Memo 超栈路径溯源及自适应图像压缩
+
+**File**: `Plugin/ComfyUIGen/ComfyUIGen.js` (modified, +165/-17)
 ```diff
-@@ -567,25 +567,18 @@ function registerRoutes(app, pluginConfig, projectBasePath) {
-     console.log(`  - 允许的文件格式: ${SECURITY_CONFIG.ALLOWED_FILE_EXTENSIONS.join(', ')}`);
+@@ -16,6 +16,8 @@ async function loadConfiguration() {
+         COMFYUI_BASE_URL: 'http://localhost:8188',
+         COMFYUI_API_KEY: '',
+         DEBUG_MODE: false,
++        COMFYUI_MAX_WAIT_MINUTES: 30,
++        COMFYUI_MISSING_QUEUE_TOLERANCE: 5,
+         workflow: 'text2img_basic'
+     };
+     
+@@ -29,6 +31,9 @@ async function loadConfiguration() {
+             if (userSettings.serverUrl) config.COMFYUI_BASE_URL = userSettings.serverUrl;
+             if (userSettings.apiKey) config.COMFYUI_API_KEY = userSettings.apiKey;
+             if (userSettings.workflow) config.workflow = userSettings.workflow;
++            if (userSettings.maxWaitMinutes !== undefined) {
++                config.COMFYUI_MAX_WAIT_MINUTES = resolveNumericArg(userSettings.maxWaitMinutes, config.COMFYUI_MAX_WAIT_MINUTES);
++            }
+             
+             // Store all user settings for parameter processing
+             config.userSettings = userSettings;
+@@ -43,6 +48,12 @@ async function loadConfiguration() {
+     config.COMFYUI_BASE_URL = process.env.COMFYUI_BASE_URL || config.COMFYUI_BASE_URL;
+     config.COMFYUI_API_KEY = process.env.COMFYUI_API_KEY || config.COMFYUI_API_KEY;
+     config.DEBUG_MODE = (process.env.DEBUG_MODE || config.DEBUG_MODE || 'false').toLowerCase() === 'true';
++    if (process.env.COMFYUI_MAX_WAIT_MINUTES !== undefined && process.env.COMFYUI_MAX_WAIT_MINUTES !== '') {
++        config.COMFYUI_MAX_WAIT_MINUTES = resolveNumericArg(process.env.COMFYUI_MAX_WAIT_MINUTES, config.COMFYUI_MAX_WAIT_MINUTES);
++    }
++    if (process.env.COMFYUI_MISSING_QUEUE_TOLERANCE !== undefined && process.env.COMFYUI_MISSING_QUEUE_TOLERANCE !== '') {
++        config.COMFYUI_MISSING_QUEUE_TOLERANCE = Math.max(1, Math.floor(resolveNumericArg(process.env.COMFYUI_MISSING_QUEUE_TOLERANCE, 5)));
++    }
+     
+     // Required system environment variables
+     config.PROJECT_BASE_PATH = process.env.PROJECT_BASE_PATH;
+@@ -128,7 +139,7 @@ function fillWorkflowParameters(workflow, args, config) {
+     if (JSON.stringify(workflow).includes('{{FACE_PROMPT}}') && typeof facePrompt !== 'string') {
+         throw new Error('face_prompt must be a string.');
+     }
+-
++    
+     // 构建LoRA字符串
+     const lorasString = buildLoRAsString(settings.loras || []);
+     
+@@ -387,32 +398,161 @@ async function queuePrompt(workflow, config) {
+     };
  }
  
--// 优雅关闭处理
--process.on('SIGINT', () => {
--    console.log('[ImageServerPlugin] 正在关闭安全管理器...');
-+// 进程信号由宿主处理；插件只释放自身资源。
-+function shutdown() {
-     securityManager.stopCleanupTimer();
--    process.exit(0);
--});
--
--process.on('SIGTERM', () => {
--    console.log('[ImageServerPlugin] 正在关闭安全管理器...');
--    securityManager.stopCleanupTimer();
--    process.exit(0);
--});
-+}
+-// 检查队列状态
++// 检查历史完成状态
+ async function checkQueueStatus(promptId, config) {
+     const comfyuiAxios = axios.create({
+         baseURL: config.COMFYUI_BASE_URL,
++        headers: config.COMFYUI_API_KEY ? { 'Authorization': `Bearer ${config.COMFYUI_API_KEY}` } : {},
+         timeout: 10000
+     });
+     
+     const response = await comfyuiAxios.get(`/history/${promptId}`);
+-    return response.data[promptId] || null;
++    return (response.data && response.data[promptId]) ? response.data[promptId] : null;
+ }
  
- module.exports = {
-     registerRoutes,
-     // 导出纯路径判定函数，供安全回归测试复用
-     containsParentDirectorySegment,
--    // 供测试或宿主优雅卸载时停止定时器，避免模块句柄阻止进程退出
--    stopSecurityManager: () => securityManager.stopCleanupTimer(),
-+    shutdown,
-+    // 保留既有清理入口，供调用方和测试使用。
-+    stopSecurityManager: shutdown,
-     // 导出安全管理器供外部查询（可选）
-     getSecurityStats: () => securityManager.getAccessStats(),
-     // 手动触发锁定（紧急情况下使用）
+-// 等待生成完成
+-async function waitForCompletion(promptId, config, maxAttempts = 60, interval = 3000) {
+-    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+-        debugLog(`Checking queue status, attempt ${attempt + 1}/${maxAttempts}`);
+-        
+-        const history = await checkQueueStatus(promptId, config);
+-        if (history && history.status && history.status.completed) {
+-            debugLog('Generation completed!');
+-            return history;
++// 检查 ComfyUI 实时运行队列 (/queue)，判断 promptId 是否仍在 running 或 pending 中推进
++async function checkActiveQueue(promptId, config) {
++    const comfyuiAxios = axios.create({
++        baseURL: config.COMFYUI_BASE_URL,
++        headers: config.COMFYUI_API_KEY ? { 'Authorization': `Bearer ${config.COMFYUI_API_KEY}` } : {},
++        timeout: 10000
++    });
++
++    const response = await comfyuiAxios.get('/queue');
++    const data = response.data || {};
++    const runningList = Array.isArray(data.queue_running) ? data.queue_running : [];
++    const pendingList = Array.isArray(data.queue_pending) ? data.queue_pending : [];
++
++    const matchesPromptId = (item) => {
++        if (!item) return false;
++        if (Array.isArray(item)) return item[1] === promptId || item.includes(promptId);
++        if (typeof item === 'object') return item.prompt_id === promptId || item.id === promptId;
++        return item === promptId;
++    };
++
++    const inRunning = runningList.some(matchesPromptId);
++    const inPending = pendingList.some(matchesPromptId);
++
++    return {
++        inRunning,
++        inPending,
++        isActive: inRunning || inPending,
++        runningCount: runningList.length,
++        pendingCount: pendingList.length
++    };
++}
++
++// 从 ComfyUI history.status 中提取节点执行错误详情
++function extractHistoryError(history) {
++    if (!history || !history.status) return null;
++    const status = history.status;
++    const isError = status.status_str === 'error' ||
++        (Array.isArray(status.messages) && status.messages.some(m => Array.isArray(m) && (m[0] === 'execution_error' || m[0] === 'execution_interrupted')));
++    if (!isError) return null;
++
++    if (Array.isA
 ```
 
-**File**: `tests/imageFileServerShutdown.test.js` (added, +67/-0)
+**File**: `Plugin/ComfyUIGen/config.env.example` (modified, +3/-0)
 ```diff
-@@ -0,0 +1,67 @@
+@@ -22,6 +22,9 @@
+ # 调试模式（显示详细日志）
+ # DEBUG_MODE=false
+ 
++# ComfyUI 绘图进程处于活跃推进态(/queue running/pending)时的最大兜底等待分钟数（默认 30 分钟；重型视频工作流可设为 60~120，设为 0 则只要 ComfyUI 仍在推进便不超时）
++# COMFYUI_MAX_WAIT_MINUTES=30
++
+ # ==========================================
+ # 用户配置通过前端界面管理，包括：
+ # - LoRA模型选择和强度设置
+```
+
+**File**: `Plugin/ComfyUIGen/plugin-manifest.json.block` (modified, +7/-2)
+```diff
+@@ -12,7 +12,7 @@
+   },
+   "communication": {
+     "protocol": "stdio",
+-    "timeout": 300000
++    "timeout": 7200000
+   },
+   "configSchema": {
+     "COMFYUI_BASE_URL": {
+@@ -29,13 +29,18 @@
+       "type": "boolean",
+       "description": "是否启用调试模式，显示详细执行日志",
+       "default": false
++    },
++    "COMFYUI_MAX_WAIT_MINUTES": {
++      "type": "number",
++      "description": "ComfyUI 处于活跃排队或生图推进时的最大兜底等待分钟数（默认30分钟，长视频工作流可调至60-120，设为0则只要进程活跃永不超时）",
++      "default": 30
+     }
+   },
+   "capabilities": {
+     "invocationCommands": [
+       {
+         "commandIdentifier": "ComfyUIGenerateImage",
+-        "description": "调用此工具通过 ComfyUI 生成图像，支持配置默认值及单次调用参数覆盖。\n\n📋 **调用格式**:\n\n\n⚠️ **覆盖规则**:\n- 单次调用参数优先于 comfyui-settings.json 默认值。\n- `lora_name` 不传：保留工作流内置的 LoraLoader 设置。\n- `lora_name` 传实际文件名：替换节点式 LoRA，并可用权重参数控制。\n- `lora_name` 显式传空字符串：自动绕过并移除工作流中的 LoraLoader。\n- 用户配置中的 loras 数组仍会作为提示词 token 拼接；它与节点式 LoraLoader 是两套机制。",
++        "description": "调用此工具通过 ComfyUI 生成或超分图像，支持配置默认值及单次调用参数覆盖。\n\n📋 **调用格式与覆盖规则**:\n- 单次调用参数优先于 comfyui-settings.json 默认值。\n- `workflow`: 支持 `AnimaEZGen`(极速直出)、`AnimaEnhanced`(4x超分+FaceDetailer面修)、`AnimeSharp`(免prompt纯图片超分，需传 `image` 与可选 `resize_scale`)、`qwen21gen`、`qwen21edit` 等。\n- `resize_scale`: 缩放倍率（AnimaEnhanced 默认 1，AnimeSharp 默认 2，可传 1.5、2、4 等正数）。\n- `face_prompt`: AnimaEnhanced 专用独立面部重绘提示词（默认 detailed glassy eyes, smooth porcelain skin）。\n- `lora_name`: 不传保留内置设置；传文件名替换 LoRA；显式传空字符串 \"\" 自动绕过并移除 LoraLoader。",
+         "example": "<<<[TOOL_REQUEST]>>>\nmaid:「始」CreativeAssistant「末」,\ntool_name:「始」ComfyUIGen「末」,\nworkflow:「始」AnimaEZGen「末」,\nprompt:「始」1girl, silver hair, blue eyes, cinematic anime illustration「末」,\nnegative_prompt:「始」bad hands, blurry「末」,\nwidth:「始」1024「末」,\nheight:「始」1024「末」,\nsteps:「始」24「末」,\ncfg:「始」4「末」,\nsampler:「始」euler_ancestral「末」,\nscheduler:「始」simple「末」,\nseed:「始」-1「末」,\nlora_name:「始」anima_rendering_detailer_base10.safetensors「末」,\nlora_strength:「始」0.4「末」,\nlora_clip_strength:「始」1.0「末」\n<<<[END_TOOL_REQUEST]>>>"
+       }
+     ]
+```
+
+**File**: `Plugin/RAGDiaryPlugin/AttachmentMemoUtils.js` (modified, +238/-10)
+```diff
+@@ -4,6 +4,22 @@ const fs = require('fs').promises;
+ const axios = require('axios');
+ const mime = require('mime-types');
+ 
++let sharpModule = null;
++function getSharp() {
++    if (sharpModule !== null) return sharpModule;
++    try {
++        sharpModule = require('sharp');
++    } catch {
++        sharpModule = false;
++    }
++    return sharpModule || null;
++}
++
++const DEFAULT_MAX_SIZE_MB = 20;
++const DEFAULT_COMPRESS_THRESHOLD_MB = 4;
++const DEFAULT_COMPRESS_MAX_DIMENSION = 2048;
++const DEFAULT_COMPRESS_QUALITY = 85;
++
+ /**
+  * 从召回文本中提取可作为 Base64Memo 注入的附件链接。
+  * 支持 http / https / file 协议，并排除表情包、emoji、sticker 路径。
+@@ -29,49 +45,261 @@ function extractAttachments(text) {
+ }
+ 
+ /**
+- * 获取链接内容并转为 data URI base64。
++ * 规范化日记来源路径为 file:/// 超栈追踪格式。
++ *
++ * @param {object} entry
++ * @param {string} [fallbackDiaryName]
++ * @returns {{ sourcePath: string, diaryName: string }}
++ */
++function resolveEntrySourceMeta(entry, fallbackDiaryName = '') {
++    const rawPath = entry?.fullPath || entry?.sourceFile || entry?.path || '';
++    const diaryName = String(entry?.dbName || fallbackDiaryName || '').trim();
++    if (!rawPath) {
++        return { sourcePath: '', diaryName };
++    }
++    const normalized = String(rawPath).replace(/\\/g, '/').trim();
++    const sourcePath = normalized.startsWith('file://')
++        ? normalized
++        : `file:///${normalized.replace(/^\/+/, '')}`;
++    return { sourcePath, diaryName };
++}
++
++/**
++ * 从结构化检索结果数组或格式化文本中提取带日记来源路径的附件列表。
++ *
++ * @param {Array<object>} results
++ * @param {string} [fallbackText]
++ * @param {string} [diaryName]
++ * @returns {Array<{ url: string, sourcePath: string, diaryName: string }>}
++ */
++function extractAttachmentsFromResults(results, fallbackText = '', diaryName = '') {
++    const items = [];
++    const seenInBatch = new Set();
++
++    if (Array.isArray(results) && results.length > 0) {
++        for (const entry of results) {
++            const entryText = entry?.text || '';
++            const urls = extractAttachments(entryText);
++            if (urls.length === 0) continue;
++            const { sourcePath, diaryName: resolvedDiary } = resolveEntrySourceMeta(entry, diaryName);
++            for (const url of urls) {
++                if (seenInBatch.has(url)) continue;
++                seenInBatch.add(url);
++                items.push({
++                    url,
++                    sourcePath,
++                    diaryName: resolvedDiary
++                });
++            }
++        }
++    }
++
++    if (items.length === 0 && fallbackText) {
++        // 回退：从格式化后的文本块中按段落匹配紧随其后的 [路径: file:///...]
++        const lines = String(fallbackText).split(/\r?\n/);
++        let pendingUrls = [];
++        for (const line of lines) {
++            const pathMatch = line.match(/\[路径:\s*(file:\/\/\/[^\]]+)\]/i);
++            if (pathMatch && pendingUrls.length > 0) {
++                const sourcePath = pathMatch[1].trim();
++                for (const url of pendingUrls) {
++                    if (seenInBatch.has(url)) continue;
++                    seenInBatch.add(url);
++                    items.push({ url, sourcePath, diaryName: String(diaryName || '').trim() });
++                }
++                pendingUrls = [];
++                continue;
++            }
++            const lineUrls = extractAttachments(line);
++            if (lineUrls.length > 0) {
++                pendingUrls.push(...lineUrls);
++            }
++        }
++        for (const url of pendingUrls) {
++            if (seenInBatch.has(url)) continue;
++            seenInBatch.add(url);
++            items.push({ url, sourcePath: '', diaryName: String(diaryName || '').trim() });
++        }
++    }
++
++    return items;
++}
++
++function formatSizeMB(bytes) {
++    return `${(bytes / (1024 * 1024)).toFixed(2)}MB`;
++}
++
++/**
++ * 构建紧邻附件图片的日记溯源与压缩说明文本。
++ *
++ * @param {object} meta
++ * @param {string} [meta.sourcePath]
++ * @param {string} [meta.diaryName]
++ * @param {boolean} [meta.compressed]
++ * @param {number} [meta.originalBytes]
++ * @param {number} [meta.finalBytes]
++ * @param {number} [meta.index]
++ * @param {number} [meta.total]
++ * @returns {string}
++ */
++function formatAttachmentSourceNote(meta = {}) {
++    const indexPrefix = (Number.isFinite(meta.index) && Number.isFinite(meta.total) && meta.total > 1)
++        ? `(${meta.index}/${meta.total}) `
++        : '';
++    const diaryLabel = meta.diaryName ? `《${meta.diaryName}》` : '';
++    const pathLabel = meta.sourcePath
++        ? `${diaryLabel ? ' ' : ''}${meta.sourcePath}`
++        : (diaryLabel || '日记记忆库');
++    const compressClause = (meta.compressed && Number.isFinite(meta.originalBytes) && Number.isFinite(meta.finalBytes))
++        ? `，原图 ${formatSizeMB(meta.originalBytes)} 已自适应压缩至 ${formatSizeMB(meta.finalBytes)}`
++        : '';
++
++    return `[日记召回附件图片${indexPrefix}：源自 ${diaryLabel}${pathLabel}${compressClause}]`;
++}
++
++/**
++ * 获取附件内容，执行硬上限检查（默认 20MB）与自适应图像瘦身（默认 >4MB 触发压缩），返回详细元数据。
+  *
+  * @param {string} url
+  * @param {object} [options]
+  * @param {Console} [op
+```
+
+**File**: `Plugin/RAGDiaryPlugin/RAGDiaryPlugin.js` (modified, +75/-27)
+```diff
+@@ -1748,23 +1748,40 @@ class RAGDiaryPlugin {
+                 }
+             }
+ 
+-            // 🌟 V7: 处理收集到的多模态附件
++            // 🌟 V7: 处理收集到的多模态附件（支持超栈路径溯源、20MB硬上限与4MB自适应压缩紧邻注入）
+             if (collectedAttachments.length > 0) {
+                 // 限制数量，优先最近的（collectedAttachments 是按召回顺序添加的，通常 RAG 结果已经按相关性/时间排序）
+                 const limit = parseInt(process.env.BASE64_MEMO_LIMIT) || this.ragParams?.RAGDiaryPlugin?.base64MemoLimit || 5;
+-                const uniqueAttachments = [...new Set(collectedAttachments)].slice(0, limit);
+-                const base64DataArray = [];
++                const uniqueAttachmentMap = new Map();
++                for (const item of collectedAttachments) {
++                    const entryObj = typeof item === 'string'
++                        ? { url: item, sourcePath: '', diaryName: '' }
++                        : (item && typeof item.url === 'string' ? item : null);
++                    if (!entryObj || !entryObj.url) continue;
++                    if (!uniqueAttachmentMap.has(entryObj.url)) {
++                        uniqueAttachmentMap.set(entryObj.url, entryObj);
++                    } else {
++                        const existing = uniqueAttachmentMap.get(entryObj.url);
++                        if (!existing.sourcePath && entryObj.sourcePath) existing.sourcePath = entryObj.sourcePath;
++                        if (!existing.diaryName && entryObj.diaryName) existing.diaryName = entryObj.diaryName;
++                    }
++                }
++                const uniqueAttachments = Array.from(uniqueAttachmentMap.values()).slice(0, limit);
++                const resolvedAttachments = [];
+ 
+                 console.log(`[RAGDiaryPlugin] 🌟 V7: 开始处理 ${uniqueAttachments.length} 个多模态附件 (限制: ${limit})`);
+ 
+-                for (const url of uniqueAttachments) {
+-                    const b64 = await this._fetchAsBase64(url);
+-                    if (b64) {
+-                        base64DataArray.push(b64);
++                for (const item of uniqueAttachments) {
++                    const fetched = await this._fetchAttachmentWithMeta(item.url);
++                    if (fetched && fetched.dataUri) {
++                        resolvedAttachments.push({
++                            ...item,
++                            ...fetched
++                        });
+                     }
+                 }
+ 
+-                if (base64DataArray.length > 0) {
++                if (resolvedAttachments.length > 0) {
+                     // 找到第一个用户消息（楼层最上面那个）。若它此前未因占位符
+                     // 处理而克隆，此处按需克隆，保持输入 messages 完全不可变。
+                     const firstUserIndex = newMessages.findIndex(m => m.role === 'user');
+@@ -1775,28 +1792,43 @@ class RAGDiaryPlugin {
+                             };
+                         }
+                         const firstUserMsg = newMessages[firstUserIndex];
+-                        const note = `[召回${base64DataArray.length}个日记多模态数据]`;
+ 
+                         if (typeof firstUserMsg.content === 'string') {
+-                            const originalText = firstUserMsg.content;
+                             firstUserMsg.content = [
+-                                { type: 'text', text: originalText + ' ' + note }
++                                { type: 'text', text: firstUserMsg.content }
+                             ];
+                         } else if (Array.isArray(firstUserMsg.content)) {
+-                            firstUserMsg.content = this._replaceTextInContent(firstUserMsg.content, (text) => {
+-                                const trimmed = (text || '').trim();
+-                                return trimmed ? `${trimmed} ${note}` : note;
+-                            });
++                            firstUserMsg.content = firstUserMsg.content.slice();
++                        } else if (firstUserMsg.content && typeof firstUserMsg.content === 'object' && typeof firstUserMsg.content.text === 'string') {
++                            firstUserMsg.content = [
++                                { ...firstUserMsg.content, type: 'text' }
++                            ];
++                        } else {
++                            firstUserMsg.content = [];
+                         }
+ 
+-                        // 添加 base64 数据到 content 数组
+-                        for (const b64 of base64DataArray) {
++                        // 紧邻注入：每张召回附件前紧跟一条标明日记 file:/// 超栈来源路径与半句压缩情形的文本说明
++                        const totalCount = resolvedAttachments.length;
++                        resolvedAttachments.forEach((att, idx) => {
++                            const sourceNote = AttachmentMemoUtils.formatAttachmentSourceNote({
++                                sourcePath: att.sourcePath,
++                                diaryName: att.diaryName,
++                                compressed: att.compressed,
++                                originalBytes: att.originalBytes,
++                                finalBytes: att.finalBytes,
++                                inde
+```
+
+**File**: `Plugin/RAGDiaryPlugin/config.env.example` (modified, +4/-0)
+```diff
+@@ -81,6 +81,10 @@ NativeRerankTimeoutMs=3000
+ 
+ # ::Base64Memo 语法召回多模态附件的最大数量限制，默认 5
+ BASE64_MEMO_LIMIT=5
++# ::Base64Memo 单张召回附件体积硬上限（单位 MB，默认 20；超过该体积的附件将直接取消召回以节省 Token，设为 0 则不限制）
++BASE64_MEMO_MAX_SIZE_MB=20
++# ::Base64Memo 静态图片自适应瘦身阈值（单位 MB，默认 4；超过该阈值且未超硬上限的图片将自动压缩为高清 WebP 并附带半句压缩情形说明，设为 0 则关闭压缩）
++BASE64_MEMO_COMPRESS_THRESHOLD_MB=4
+ 
+ # 上下文折叠 SQLite 迷你数据库存储上限
+ # 最大保存条目数，默认 200；达到上限时按 updated_at 最旧优先 LRU 淘汰
+```
+
+---
+
+### Incident Patch 2: `7131e7e4` (2026-11-21)
+**Commit Message**: fix3
+
+**File**: `Plugin/RAGDiaryPlugin/RAGDiaryPlugin.js` (modified, +3/-1)
+```diff
+@@ -645,6 +645,7 @@ class RAGDiaryPlugin {
+         this.cacheManager.startCleanup('embedding');
+         this.cacheManager.startCleanup('aimemo');
+ 
++        this.semanticGroups.resumeStatsFlush();
+         console.log('[RAGDiaryPlugin] 插件初始化完成，统一缓存系统已启动');
+     }
+ 
+@@ -6277,7 +6278,7 @@ class RAGDiaryPlugin {
+         });
+     }
+ 
+-    shutdown() {
++    async shutdown() {
+         if (this.ragParamsReloadTimer) {
+             clearTimeout(this.ragParamsReloadTimer);
+             this.ragParamsReloadTimer = null;
+@@ -6302,6 +6303,7 @@ class RAGDiaryPlugin {
+             this.foldingStore = null;
+         }
+ 
++        await this.semanticGroups.shutdown();
+         console.log(`[RAGDiaryPlugin] 插件已关闭`);
+     }
+ }
+```
+
+**File**: `Plugin/RAGDiaryPlugin/SemanticGroupManager.js` (modified, +56/-11)
+```diff
+@@ -4,17 +4,23 @@ const fs = require('fs').promises;
+ const path = require('path');
+ const crypto = require('crypto');
+ 
++const STATS_FLUSH_INTERVAL_MS = 60_000;
++
+ class SemanticGroupManager {
+     constructor(ragPlugin) {
+         this.ragPlugin = ragPlugin; // 引用 RAGDiaryPlugin 实例
+         this.groups = {};
+         this.config = {};
+         this.groupVectorCache = new Map(); // 使用 Map 存储向量缓存
+-        this.saveLock = false; // 添加保存锁以防止并发写入
++        this._saveTail = Promise.resolve();
++        this._statsRevision = 0;
++        this._savedStatsRevision = 0;
++        this._statsFlushTimer = null;
++        this._stopping = false;
+         this.groupsFilePath = path.join(__dirname, 'semantic_groups.json');
+         this.vectorsDirPath = path.join(__dirname, 'semantic_vectors');
+         this.editFilePath = path.join(__dirname, 'semantic_groups.edit.json');
+-        this.initialize();
++        this._ready = this.initialize();
+     }
+ 
+     async initialize() {
+@@ -193,13 +199,15 @@ class SemanticGroupManager {
+         }
+     }
+ 
+-    async saveGroups() {
+-        if (this.saveLock) {
+-            const busyError = new Error('A save operation is already in progress. Please wait a moment and try again.');
+-            console.warn(`[SemanticGroup] ${busyError.message}`);
+-            throw busyError;
+-        }
+-        this.saveLock = true;
++    saveGroups() {
++        const save = this._saveTail.then(() => this._writeGroups());
++        // 当前调用者仍收到原始失败；失败的写入不能阻塞后续保存。
++        this._saveTail = save.catch(() => {});
++        return save;
++    }
++
++    async _writeGroups() {
++        const statsRevision = this._statsRevision;
+ 
+         const tempFilePath = this.groupsFilePath + `.${crypto.randomUUID()}.tmp`;
+         try {
+@@ -219,6 +227,7 @@ class SemanticGroupManager {
+ 
+             // 2. 成功后，重命名临时文件以原子方式替换原文件
+             await fs.rename(tempFilePath, this.groupsFilePath);
++            this._savedStatsRevision = statsRevision;
+ 
+             console.log('[SemanticGroup] 语义组配置已通过原子写入操作更新并保存。');
+         } catch (error) {
+@@ -232,8 +241,6 @@ class SemanticGroupManager {
+                 }
+             }
+             throw error; // 将原始错误重新抛出，以便API路由可以捕获它
+-        } finally {
+-            this.saveLock = false;
+         }
+     }
+ 
+@@ -306,9 +313,47 @@ class SemanticGroupManager {
+         if (this.groups[groupName]) {
+             this.groups[groupName].last_activated = new Date().toISOString();
+             this.groups[groupName].activation_count = (this.groups[groupName].activation_count || 0) + 1;
++            this._statsRevision++;
++            this._scheduleStatsFlush();
+         }
+     }
+ 
++    _scheduleStatsFlush() {
++        if (this._stopping || this._statsFlushTimer || this._statsRevision === this._savedStatsRevision) return;
++
++        this._statsFlushTimer = setTimeout(async () => {
++            this._statsFlushTimer = null;
++            try {
++                await this._ready;
++                if (!this._stopping && this._statsRevision !== this._savedStatsRevision) {
++                    await this.saveGroups();
++                }
++            } catch (error) {
++                console.warn('[SemanticGroup] 激活统计刷盘失败，将在下个周期重试:', error.message);
++            } finally {
++                this._scheduleStatsFlush();
++            }
++        }, STATS_FLUSH_INTERVAL_MS);
++        this._statsFlushTimer.unref();
++    }
++
++    resumeStatsFlush() {
++        this._stopping = false;
++        this._scheduleStatsFlush();
++    }
++
++    async shutdown() {
++        this._stopping = true;
++        clearTimeout(this._statsFlushTimer);
++        this._statsFlushTimer = null;
++        await this._saveTail;
++        if (this._statsRevision === this._savedStatsRevision) return;
++
++        await this._ready;
++        while (this._statsRevision !== this._savedStatsRevision) {
++            await this.saveGroups();
++        }
++    }
+     // ============ 预计算组向量 ============
+     _getWordsHash(words) {
+         if (!words || words.length === 0) {
+```
+
+**File**: `tests/semanticGroupPersistence.test.js` (added, +176/-0)
+```diff
+@@ -0,0 +1,176 @@
++'use strict';
++
++const test = require('node:test');
 +const assert = require('node:assert/strict');
-+const { spawnSync } = require('node:child_process');
-+const fs = require('node:fs');
++const fs = require('node:fs/promises');
 +const os = require('node:os');
 +const path = require('node:path');
-+const test = require('node:test');
++const vm = require('node:vm');
 +
-+const imageModule = require.resolve('../Plugin/ImageFileServer/image-file-server.js');
-+const storeModule = require.resolve('../Plugin/VTrade/core/store.cjs');
++const sourcePath = path.join(__dirname, '../Plugin/RAGDiaryPlugin/SemanticGroupManager.js');
 +
-+for (const signal of ['SIGINT', 'SIGTERM']) {
-+    test(`ImageFileServer leaves ${signal} shutdown to the host`, (t) => {
-+        const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'vcp-shutdown-'));
-+        t.after(() => fs.rmSync(directory, { recursive: true, force: true }));
++async function fixture(t) {
++    const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'semantic-group-stats-'));
++    t.after(() => fs.rm(dir, { recursive: true, force: true }));
++    const groupsPath = path.join(dir, 'semantic_groups.json');
++    const editPath = path.join(dir, 'semantic_groups.edit.json');
++    const timers = new Set();
++    const io = { ...fs };
++    const mod = { exports: {} };
++    vm.runInNewContext(await fs.readFile(sourcePath, 'utf8'), {
++        __dirname: dir,
++        module: mod,
++        require: name => name === 'fs' ? { promises: io } : require(name),
++        console: { log() {}, warn() {}, error() {} },
++        setTimeout(callback, delay) {
++            const timer = { callback, delay, referenced: true, unref() { this.referenced = false; } };
++            timers.add(timer);
++            return timer;
++        },
++        clearTimeout: timer => timers.delete(timer)
++    }, { filename: sourcePath });
 +
-+        const child = spawnSync(process.execPath, ['-e', `
-+            const assert = require('node:assert/strict');
-+            const fs = require('node:fs/promises');
-+            const path = require('node:path');
-+            const [imageModule, storeModule, directory, signal] = process.argv.slice(1);
-+            const { Store } = require(storeModule);
++    async function open() {
++        const manager = new mod.exports({ getSingleEmbeddingCached: async () => [1, 0] });
++        await manager._ready;
++        return manager;
++    }
 +
-+            async function run() {
-+                const store = new Store(directory);
-+                await store.open();
-+                const lockFile = path.join(directory, 'writer.lock');
-+                assert.equal(await fs.readFile(lockFile, 'utf8'), String(process.pid));
-+
-+                // Mirror the host contract, without booting a real server or touching its data.
-+                let hostShutdown;
-+                let image;
-+                process.once(signal, () => {
-+                    hostShutdown = (async () => {
-+                        await new Promise(resolve => setImmediate(resolve));
-+                        await image.shutdown();
-+                        await store.close();
-+                    })();
-+                });
-+                const signals = ['SIGINT', 'SIGTERM'];
-+                const before = signals.map(name => process.listeners(name));
-+                image = require(imageModule);
-+                assert.deepEqual(signals.map(name => process.listeners(name)), before);
-+                assert.equal(image.shutdown, image.stopSecurityManager);
-+
-+                // Emitting in-process works on Windows too; no OS signal is sent.
-+                process.emit(signal);
-+                assert.ok(hostShutdown);
-+                await hostShutdown;
-+                await assert.rejects(fs.access(lockFile), { code: 'ENOENT' });
-+                const reopened = new Store(directory);
-+                await reopened.open();
-+                await reopened.close();
-+                console.log('host shutdown completed');
-+            }
-+
-+            run().catch(error => {
-+                console.error(error);
-+                process.exit(1);
-+            });
-+        `, imageModule, storeModule, directory, signal], { encoding: 'utf8', timeout: 8000 });
-+
-+        assert.ifError(child.error);
-+        assert.equal(child.status, 0, child.stderr);
-+        assert.match(child.stdout, /host shutdown completed/);
-+        assert.equal(fs.existsSync(path.join(directory, 'writer.lock')), false);
-+    });
++    const manager = await open();
++    manager.groups = {
++        fruit: { words: ['apple', 'pear'], activation_count: 5, last_activated: '2000-01-01T00:00:00.000Z' }
++    };
++    await manager.saveGroups();
++    return {
++        manager, groupsPath, editPath, timers, io, open,
++        read: async () => JSON.parse(await fs.readFile(groupsPath, 'utf8')),
++        async flush() {
++            assert.equal(timers.size, 1);
++            const [timer] = timers;
++            timers.delete(timer);
++            await timer.callback();
++        }
++    };
 +}
-\ No newline at end of file
++
++test('activation uses one unrefed 60s window; counts survive restart and edit-file sync', async t => {
++    const f = await fixture(t);
++    assert.equal(f.manager.detectAndActivateGroups('nothing').size, 0);
++    assert.equal(f.timers.size, 0);
++    let renames = 0;
++    f.io.rename = (...args) => { renames++; return fs.rename(...args); };
++    assert.equal(f.manager.detectAndActivateGroups('apple').get('fruit').strength, 0.5);
++    const [timer] = f.timers;
++    for (let i = 0; i < 19; i++) f.manager.detectAndActivateGroups('apple and pear');
++    assert.deepEqual([...f.timers], [timer]);
++    assert.equal(timer.delay, 60_000);
++    assert.equal(timer.referenced, false);
++    assert.equal((await f.read()).groups.fruit.activation_count, 5);
++    await f.flush();
++    assert.equal(renames, 1);
++    assert.equal(f.timers.size, 0);
++    const saved = (await f.read()).groups.fruit;
++    assert.equal(saved.activation_count, 25);
++    assert.notEqual(saved.last_activated, '2000-01-01T00:00:00.000Z');
++    assert.equal(saved.last_activated, f.manager.groups.fruit.last_activated);
++
++    await fs.writeFile(f.editPath, JSON.stringify({ groups: { fruit: { words: ['apple', 'plum'], weight: 2 } } }));
++    const reopened = await f.open();
++    assert.equal(reopened.groups.fruit.activation_count, 25);
++    assert.equal(reopened.groups.fruit.last_activated, saved.last_activated);
++    assert.equal(reopened.groups.fruit.weight, 2);
++    assert.deepEqual([...reopened.groups.fruit.words], ['apple', 'plum']);
++});
++
++test('queued saves wait for rename, then capture current data; an intervening activation is not lost', async t => {
++    const f = await fixture(t);
++    let unblock;
++    let entered;
++    const gate = new Promise(resolve => { unblock = resolve; });
++    const started = new Promise(resolve => { entered = resolve; });
++    let writes = 0;
++    f.io.writeFile = (...args) => { writes++; return fs.writeFile(...args); };
++    f.io.rename = async (...args) => {
++        if (writes === 1) {
++            entered();
++            await gate;
++        }
++        await fs.rename(...args);
++    };
++
++    const first = f.manager.saveGroups();
++    await started;
++    let finished = false;
++    const second = f.manager.saveGroups().then(() => { finished = true; });
++    try {
++        f.manager.config = { edited: true };
++        f.manager.detectAndActivateGroups('pear');
++        await Promise.resolve();
++        assert.equal(writes, 1);
++        assert.equal(finished, false);
++        assert.equal((await f.read()).groups.fruit.activation_count, 5);
++    } finally {
++        unblock();
++        await Promise.all([first, second]);
++    }
++    const saved = await f.read();
++    assert.deepEqual(saved.config, { edited: true });
++    assert.equal(saved.groups.fruit.activation_count, 6);
++    await f.flush();
++    assert.equal(writes, 2, 'a regular save already persisted the dirty stats');
++});
++
++test('a failed ex
 ```
 
 ---
 
-### Incident Patch 2: `cbe119cc` (2026-11-20)
-**Commit Message**: Merge pull request #621 from InSciTech/fix/prompt-and-manifest-typos
+### Incident Patch 3: `eec525c5` (2026-11-21)
+**Commit Message**: fix4
 
-fix(prompt): 修复提示词与插件manifest中多处笔误、转义及格式残缺问题
-
-**File**: `Agent/DeepSeekOfficial.txt` (modified, +1/-1)
+**File**: `docs/CONFIGURATION.md` (modified, +1/-1)
 ```diff
-@@ -17,7 +17,7 @@
+@@ -36,7 +36,7 @@
  
- 当前工作环境VCPToolbox，一个强大的AGI-Runtime工作运行时环境。
- 今天是{{Date}},{{Today}},{{Festival}}。当前天气{{VCPWeatherInfoNow}}。
--用户是{{VarUse}}，你的主人。
-+用户是{{VarUser}}，你的主人。
- 
- 核心指令
- {{VarToolList}}
+ | 文件名 | 位置 | 用途 |
+ |--------|------|------|
+-| `tag-processor-config.env` | 根目录 | Tag 批量处理工具配置 |
++| `config.env`（Tag 批量处理工具） | 仓库根目录；独立部署时为脚本同目录 | `tag-processor-config.env.example` 是模板，不是运行时读取的文件名 |
+ | `Plugin/*/config.env` | 插件目录 | 各插件专属配置 |
+ | `docker-compose.yml` | 根目录 | Docker Compose 部署配置 |
+ | `Dockerfile` | 根目录 | Docker 镜像构建配置 |
 ```
 
-**File**: `Plugin/MediaRenderer/plugin-manifest.json` (modified, +2/-2)
+**File**: `docs/DIARY_TAG_BATCH_PROCESSOR.md` (modified, +7/-25)
 ```diff
-@@ -46,13 +46,13 @@
-       {
-         "command": "RenderImage",
-         "commandIdentifier": "RenderImage",
--        "description": "将 HTML 或 SVG 渲染为 PNG、JPG、WebP 静态图片。\n\n推荐素材写法：直接在源码中使用 URL，不要为普通图片、视频或字体构造 assets JSON。例如 `<img src=\"file:///D:/media/photo.png\">`、`<img src=\"https://example.com/photo.png\">`、`<video src=\"http://127.0.0.1/demo.mp4\">`，或在 CSS 中写 `@font-face{src:url('file:///D:/fonts/title.woff2')}`。插件会在 Node.js 侧提取这些 data:、file://、HTTP/HTTPS 地址，逐跳执行安全校验和大小限制，读取或下载后改写为 Data URI；Chromium 不直接获得本地文件或任意网络访问能力。`src`、`srcset`、`poster`、SVG href/xlink:href 和 CSS url() 均受支持。\n\n内置脚本库（Anime.js / Three.js / Pixi.js）：可直接输出 jsDelivr、unpkg、cdnjs 常见 CDN 标签，插件只识别符合白名单规则的路径并自动重写注入本地内置版本，不会真正联网请求 CDN。其他外部脚本一律禁止执行。\n- Anime.js：`<script src=\"https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js\"></script>`，提供全局 `window.anime`。\n- Three.js：`<script src=\"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js\"></script>`，提供全局 `window.THREE`。\n- Pixi.js（v8 版本）：`<script src=\"https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.js\"></script>`，提供全局 `window.PIXI`。\n  * PixiJS v8 关键规则（严防旧版语法报错）：\n    1. 必须异步初始化：`const app = new PIXI.Application(); await app.init({ width, height, preference: 'webgl' }); document.body.appendChild(app.canvas);`。严禁使用 v6/v7 的 `new PIXI.Application({...})` 同步初始化！\n    2. 访问 Canvas 画布建议使用 `app.canvas`（兼容 `app.view`）。\n    3. 异步初始化和图元渲染完成后必须调用 `window.__MEDIA_RENDERER__.setReady()`，并传参 `readyMode=signal`。\n\n主要参数：\n- html/svg：二选一，填写完整文档或片段。\n- width/height：必需，64-4096，总像素不超过 4096×4096。\n- format：png、jpg、webp；默认透明时 png，否则 jpg。\n- transparent：默认 false；true 只令根画布透明，不移除源码元素自己的背景。JPEG 不支持透明，请用 PNG/WebP。\n- background：非透明输出的 Alpha 合成底色，默认 #ffffff。\n- quality：JPG/WebP 质量 1-100，默认 90。\n- allowJavaScript：静态图默认 false；源码使用受支持 CDN 库时自动开启。\n- readyMode：load、auto、signal；signal 要求初始化后调用 window.__MEDIA_RENDERER__.setReady()。\n- waitMs：截图前额外等待 0-10000ms。\n- timeoutMs：单步总超时 1000-120000ms，默认 45000。\n- fileName：输出文件名主体。\n- sourceImage：旧的单底图便捷参数，需在源码用 {{SOURCE_IMAGE}}；新调用优先直接写 `<img src=\"URL\">`。\n- assets：旧版兼容参数；仅旧调用的 {{ASSET:id}} 或 audioAssetId 需要，普通源码素材不应使用。\n\n安全限制：单资源最大 50MB，所有资源合计最大 100MB，每步最多 24 个资源，源码最大 2MB，最多串行 16 步。HTTP 重定向逐跳校验，云元数据地址始终禁止，未写入源码的运行时网络请求仍被阻断。\n\nAI 调用格式（必须遵守）：\n必须输出完整的  工具块；每个参数都使用中文边界符「始」「末」，参数之间用英文逗号分隔。html 或 svg 源码必须整体放在同一对「始」「末」内，不要使用 Markdown 代码围栏，不要只输出 HTML，也不要省略 tool_name 和 command。\n\n完整调用示例：\n",
-+        "description": "将 HTML 或 SVG 渲染为 PNG、JPG、WebP 静态图片。\n\n推荐素材写法：直接在源码中使用 URL，不要为普通图片、视频或字体构造 assets JSON。例如 `<img src=\"file:///D:/media/photo.png\">`、`<img src=\"https://example.com/photo.png\">`、`<video src=\"http://127.0.0.1/demo.mp4\">`，或在 CSS 中写 `@font-face{src:url('file:///D:/fonts/title.woff2')}`。插件会在 Node.js 侧提取这些 data:、file://、HTTP/HTTPS 地址，逐跳执行安全校验和大小限制，读取或下载后改写为 Data URI；Chromium 不直接获得本地文件或任意网络访问能力。`src`、`srcset`、`poster`、SVG href/xlink:href 和 CSS url() 均受支持。\n\n内置脚本库（Anime.js / Three.js / Pixi.js）：可直接输出 jsDelivr、unpkg、cdnjs 常见 CDN 标签，插件只识别符合白名单规则的路径并自动重写注入本地内置版本，不会真正联网请求 CDN。其他外部脚本一律禁止执行。\n- Anime.js：`<script src=\"https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js\"></script>`，提供全局 `window.anime`。\n- Three.js：`<script src=\"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js\"></script>`，提供全局 `window.THREE`。\n- Pixi.js（v8 版本）：`<script src=\"https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.js\"></script>`，提供全局 `window.PIXI`。\n  * PixiJS v8 关键规则（严防旧版语法报错）：\n    1. 必须异步初始化：`const app = new PIXI.Application(); await app.init({ width, height, preference: 'webgl' }); document.body.appendChild(app.canvas);`。严禁使用 v6/v7 的 `new PIXI.Application({...})` 同步初始化！\n    2. 访问 Canvas 画布建议使用 `app.canvas`（兼容 `app.view`）。\n    3. 异步初始化和图元渲染完成后必须调用 `window.__MEDIA_RENDERER__.setReady()`，并传参 `readyMode=signal`。\n\n主要参数：\n- html/svg：二选一，填写完整文档或片段。\n- width/height：必需，64-4096，总像素不超过 4096×4096。\n- format：png、jpg、webp；默认透明时 png，否则 jpg。\n- transparent：默认 false；true 只令根画布透明，不移除源码元素自己的背景。JPEG 不支持透明，请用 PNG/WebP。\n- background：非透明输出的 Alpha 合成底色，默认 #ffffff。\n- quality：JPG/WebP 质量 1-100，默认 90。\n- allowJavaScript：静态图默认 false；源码使用受支持 CDN 库时自动开启。\n- readyMode：load、auto、signal；signal 要求初始化后调用 window.__MEDIA_RENDERER__.setReady()。\n- waitMs：截图前额外等待 0-10000ms。\n- timeoutMs：单步总超时 1000-120000ms，默认 45000。\n- fileName：输出文件名主体。\n- sourceImage：旧的单底图便捷参数，需在源码用 {{SOURCE_IMAGE}}；新调用优先直接写 `<img src=\"URL\">`。\n- assets：旧版兼容参数；仅旧调用的 {{ASSET:id}} 或 audioAssetId 需要，普通源码素材不应使用。\n\n安全限制：单资源最大 50MB，所有资源合计最大 100MB，每步最多 24 个资源，源码最大 2MB，最多串行 16 步。HTTP 重定向逐跳校验，云元数据地址始终禁止，未写入源码的运行时网络请求仍被阻断。\n\nAI 调用格式（必须遵守）：\n必须输出完整的 <<<[TOOL_REQUEST]>>> 到 <<<[END_TOOL_REQUEST]>>> 工具块；每个参数都使用中文边界符「始」「末」，参数之间用英文逗号分隔。html 或 svg 源码必须整体放在同一对「始」「末」内，不要使用 Markdown 代码围栏，不要只输出 HTML，也不要省略 tool_name 和 command。\n\n完整调用示例：\n",
-         "example": "<<<[TOOL_REQUEST]>>>\ntool_name:「始」MediaRenderer「末」,\ncommand:「始」RenderImage「末」,\nhtml:「始」<!doctype html><style>@font-face{font-family:Title;src:url('file:///D:/fonts/title.woff2')}html,body{margin:0;width:100%;height:100%;background:#08111f}.card{height:100%;display:grid;
+@@ -108,7 +108,7 @@ npm install
+ 
+ #### 步骤4：配置
+ 
+-创建 `config.env`（参考 [`tag-processor-config.env.example`](tag-processor-config.env.example:1)）：
++在脚本同目录创建 `config.env`（参考 [`tag-processor-config.env.example`](../tag-processor-config.env.example)）：
+ 
+ ```env
+ API_Key=your_api_key_here
+@@ -132,14 +132,14 @@ node diary-tag-batch-processor.js /path/to/your/diaries
+ 
+ ### 配置文件
+ 
+-需要在VCP根目录的 `config.env` 中配置API：
++在 VCP 仓库中运行时，脚本读取仓库根目录的 `config.env`，不读取 `scripts/config.env`。独立部署时读取脚本同目录的 `config.env`。已设置的进程环境变量优先于文件中的值。
+ 
+ ```env
+ # API配置（必需）
+ API_Key=your_api_key_here
+ API_URL=http://127.0.0.1:3000
+ 
+-# 可选：在 Plugin/DailyNoteWrite/config.env 中配置Tag模型
++# 可选：在同一份 config.env 中配置 Tag 模型
+ TagModel=gemini-2.5-flash-preview-09-2025-thinking
+ TagModelMaxTokens=40000
+ TagModelPrompt=TagMaster.txt
+@@ -422,18 +422,16 @@ DebugMode=true
+ 
+ 本工具可以通过独立的配置文件在其他项目中使用。以下提供完整的配置模板，可直接复制使用。
+ 
+-### 配置文件：`tag-processor-config.env`
++### 配置文件模板：保存为 `config.env`
+ 
+ ```env
+ # ============================================================
+ # VCP Tag处理器独立配置文件
+ # ============================================================
+ #
+ # 用途：为日记批量打Tag工具提供配置
+-# 位置：可放在任意目录，通过 --config 参数指定
+-#
+-# 使用示例：
+-#   node diary-tag-batch-processor.js --config ./tag-processor-config.env ./my-diaries
++# 位置：仓库根目录，或独立部署时的脚本同目录
++# 文件名：config.env
+ #
+ # ============================================================
+ 
+@@ -522,23 +520,7 @@ DAILY_NOTE_EXTENSION=txt
+ 
+ ### 如何使用独立配置
+ 
+-#### 方法1：替换主配置（简单）
+-
+-将上述配置内容保存为 `config.env`，放在VCP根目录：
+-
+-```bash
+-# 配置会自动加载
+-node diary-tag-batch-processor.js ./my-diaries
+-```
+-
+-#### 方法2：使用自定义路径（高级）
+-
+-如果需要在其他项目中使用，可以修改工具代码加载配置路径：
+-
+-```javascript
+-// 在 diary-tag-batch-processor.js 开头修改
+-require('dotenv').config({ path: '/path/to/your/tag-processor-config.env' });
+-```
++在仓库中运行时，请将所需配置项加入现有根目录 `config.env`，不要用模板覆盖服务器配置。独立部署时，将模板复制为脚本同目录的 `config.env`。脚本不提供 `--config` 参数。
+ 
+ ### 最小配置示例
+ 
 ```
 
-**File**: `Plugin/TavilySearch/plugin-manifest.json` (modified, +1/-1)
+**File**: `scripts/diary-tag-batch-processor.js` (modified, +8/-5)
 ```diff
-@@ -22,7 +22,7 @@
-       {
-         "commandIdentifier": "TavilySearch",
-         "description": "调用此工具使用 Tavily API 进行高级网络搜索。默认启用高级搜索模式并返回图片链接。重要提示：请优先使用中文词作为检索词，并带上即时信息（如当前年份、月份等）进行检索，以获得更准确的结果。请在您的回复中，使用以下精确格式来请求搜索，确保所有参数值都用「始」和「末」准确包裹：\n\n\n重要提示给AI：\n当此工具执行完毕后，您将收到包含搜索结果的JSON对象。请基于这些结果回答用户的问题或完成相关任务。\n请优先使用中文词作为检索词，并带上即时信息（如当前年份、月份等）进行检索，以获得更准确的结果。",
--        "example": "```text\n<<<[TOOL_REQUEST]>>>\ntool_name:「始」TavilySearch「末」,\nquery:「始」最近一周的AI技术进展「末」,\nsearch_depth:「始」advanced「末」,\ntopic:「始」technology「末」,\nmax_results:「始」5「末」,\time_range:「始」d「末」\n<<<[END_TOOL_REQUEST]>>>\n```"
-+        "example": "```text\n<<<[TOOL_REQUEST]>>>\ntool_name:「始」TavilySearch「末」,\nquery:「始」最近一周的AI技术进展「末」,\nsearch_depth:「始」advanced「末」,\ntopic:「始」technology「末」,\nmax_results:「始」5「末」,\ntime_range:「始」d「末」\n<<<[END_TOOL_REQUEST]>>>\n```"
-       }
-     ]
-   }
+@@ -13,15 +13,19 @@
+  *   node diary-tag-batch-processor.js [目标文件夹路径]
+  * 
+  * 配置：
+- *   通过根目录的 config.env 文件配置API密钥和模型参数
++ *   在 VCP 仓库中读取根目录的 config.env；独立部署时读取脚本同目录的 config.env。
+  */
+ 
+ const fs = require('fs').promises;
+ const path = require('path');
+ const { existsSync } = require('fs');
+ 
+-// 加载环境变量（独立应用配置）
+-require('dotenv').config({ path: path.join(__dirname, 'config.env') });
++// 用仓库里的工具包模板识别源码布局，不根据配置文件是否存在切换来源。
++const vcpRoot = path.resolve(__dirname, '..');
++const inVcpRepo = path.basename(__dirname) === 'scripts'
++    && existsSync(path.join(vcpRoot, 'diary-tag-processor-package.json'));
++const configPath = path.join(inVcpRepo ? vcpRoot : __dirname, 'config.env');
++require('dotenv').config({ path: configPath });
+ 
+ // --- 配置 ---
+ const TAG_MODEL = process.env.TagModel || 'gemini-2.5-flash-preview-09-2025-thinking';
+@@ -400,8 +404,7 @@ async function main() {
+     
+     // 检查API配置
+     if (!API_KEY || !API_URL) {
+-        error('API configuration missing in config.env!');
+-        error('请在根目录的 config.env 中配置 API_Key 和 API_URL');
++        error(`缺少 API 配置：请在 ${configPath} 中配置 API_Key 和 API_URL，或通过环境变量提供。`);
+         process.exit(1);
+     }
+     
 ```
 
-**File**: `Plugin/ZImageGen2/plugin-manifest.json.block` (modified, +1/-1)
+**File**: `tests/approvalFeedbackPassthrough.test.js` (modified, +1/-1)
 ```diff
-@@ -22,7 +22,7 @@
-       {
-         "commandIdentifier": "ZImageGenerate",
-         "description": "调用此工具通过 Z-Image-Base 模型生成高质量图片。支持中英文提示词。请在您的回复中，使用以下精确格式来请求图片生成，确保所有参数值都用「始」和「末」准确包裹：\n\n\n重要提示给AI：\n当此工具执行完毕后，您将收到包含以下信息的结果：\n1. 生成图片的公开访问URL。\n2. 图片在服务器上的存储相对路径 (例如：image/zimage/图片名.png)。\n3. 图片的文件名和使用的Seed。\n4. 如果showbase64设置为true，还会包含base64格式的图片数据供AI查看。\n请在您的最终回复中，使用返回的【图片URL】为用户生成一个HTML的 `<img>` 标签来直接展示图片，例如：`<img src=\"[此处填写图片URL]\" alt=\"[此处可填写部分prompt作为描述]\" width=\"300\">`。请确保替换占位符，并可调整 `width` 属性（建议200-500像素）。",
--        "example": "```text\n<<<[TOOL_REQUEST]>>>\ntool_name:「始」ZImageGen「末」,\nprompt:「始」一位穿着精美汉服的中国古典美女，站在江南水乡的石桥上，手持油纸伞，背景是烟雨蒙蒙的白墙黑瓦建筑「末」,\nresolution:「始」1024x1024「末」,\nshowbase64:「始」false「末」\n<<<[END_TOOL_REQUEST]>>>\n```"
-+        "example": "```text\n<<<[TOOL_REQUEST]>>>\ntool_name:「始」ZImageGen2「末」,\nprompt:「始」一位穿着精美汉服的中国古典美女，站在江南水乡的石桥上，手持油纸伞，背景是烟雨蒙蒙的白墙黑瓦建筑「末」,\nresolution:「始」1024x1024「末」,\nshowbase64:「始」false「末」\n<<<[END_TOOL_REQUEST]>>>\n```"
-       }
-     ]
-   }
+@@ -420,7 +420,7 @@ test('流式/非流式模型请求：多模态回执不损坏，免回执仅传
+                 if (name.includes('roleDivider')) return { process: messages => messages };
+                 return require(name.startsWith('../') ? path.join(__dirname, '..', 'modules', name.slice(3)) : name);
+             },
+-            console, Buffer, setTimeout, clearTimeout, setInterval, clearInterval
++            console, Buffer, setTimeout, clearTimeout, setInterval, clearInterval, process: { env: {} }
+         });
+         const Handler = moduleStub.exports;
+         for (const scenario of ['normal', 'archery', 'silent']) {
 ```
 
-**File**: `TVStxt/JevToolCall.txt` (modified, +1/-1)
+**File**: `vcp-installer-source/src/installer/config_gen.rs` (modified, +33/-12)
 ```diff
-@@ -40,7 +40,7 @@ B站截图默认仅获取画面；需要组合内容时，在句子或 [] 中明
- 联络[Grok]，告诉它【我是Nova，我想问问2026年10月推特上的ai热点新闻】，并使用[临时通讯]。
- 睡眠[10分钟]，醒来后提醒【重新检查异步任务状态】。
- 请使用 {图片生成}，生成【一只坐在窗边的猫，电影感】，画面需要[适合手机壁纸]。
--请使用 {图片生成}，参考图片[file:///C:/images/person.png]，把人物修改成【雨夜霓虹风格】，并使用[2K]清晰度。「末」
-+请使用 {图片生成}，参考图片[file:///C:/images/person.png]，把人物修改成【雨夜霓虹风格】，并使用[2K]清晰度。
- 请使用 {图片生成} 中的 `GPT生图`，生成【一张细节丰富的科幻城市概念图】，并采用[横版高清]画幅。
- 请使用 {物联网控制} 中的 `TableLampRemote`，执行【打开台灯】
- 读取[file://{{VarVCPToolBoxPath}}\Plugin\DailyHot\dailyhot_cache.md]获得每日热点新闻。
+@@ -78,38 +78,58 @@ pub fn generate_config_env(
+     Ok(())
+ }
+ 
++// Both backend launchers resolve Node after entering VCPToolBox.
++const BACKEND_NODE_SETUP: &str = "REM Resolve the service interpreter in this launcher, not in the PM2 daemon.\r\n\
++if not defined VCP_NODE_INTERPRETER if exist \"..\\runtimes\\node\\node.exe\" set \"VCP_NODE_INTERPRETER=..\\runtimes\\node\\node.exe\"\r\n\
++if not defined VCP_NODE_INTERPRETER for %%I in (node.exe) do set \"VCP_NODE_INTERPRETER=%%~$PATH:I\"\r\n\
++if defined VCP_NODE_INTERPRETER for %%I in (\"%VCP_NODE_INTERPRETER%\") do set \"VCP_NODE_INTERPRETER=%%~fI\"\r\n\
++if not exist \"%VCP_NODE_INTERPRETER%\" (\r\n\
++    echo [ERROR] Node interpreter not found: \"%VCP_NODE_INTERPRETER%\". Set VCP_NODE_INTERPRETER to node.exe.\r\n\
++    pause\r\n\
++    exit /b 1\r\n\
++)\r\n\
++\"%VCP_NODE_INTERPRETER%\" --version >nul 2>&1\r\n\
++if errorlevel 1 (\r\n\
++    echo [ERROR] Cannot run Node interpreter: \"%VCP_NODE_INTERPRETER%\".\r\n\
++    pause\r\n\
++    exit /b 1\r\n\
++)\r\n\
++echo [Runtime] Node interpreter: \"%VCP_NODE_INTERPRETER%\"\r\n\
++\r\n";
++
+ /// 生成 start-backend.bat（安装根目录版本，PM2 双进程）
+ pub fn generate_start_backend_bat(
+     install_dir: &Path,
+ ) -> Result<()> {
+     // bat不能包含中文（Rust写UTF-8，cmd用GBK读取会乱码）
+     // pm2必须加CALL（bat调.cmd不加CALL控制流一去不返）
+-    let content = "@echo off\r\n\
+-setlocal\r\n\
++    let content = format!("@echo off\r\n\
++setlocal DisableDelayedExpansion\r\n\
+ chcp 65001 >nul\r\n\
+ echo ==========================================\r\n\
+ echo   VCP Backend Launcher (PM2)\r\n\
+ echo ==========================================\r\n\
+ echo.\r\n\
+ set \"PATH=%~dp0runtimes\\node;%~dp0runtimes\\git\\cmd;%~dp0runtimes\\python;%~dp0runtimes\\python\\Scripts;%PATH%\"\r\n\
+-cd /d \"%~dp0VCPToolBox\"\r\n\
++cd /d \"%~dp0VCPToolBox\" || exit /b 1\r\n\
+ if not exist \"server.js\" (\r\n\
+     echo [VCP] server.js not found. Please check VCPToolBox installation.\r\n\
+     pause\r\n\
+     exit /b 1\r\n\
+ )\r\n\
++{BACKEND_NODE_SETUP}\
+ echo [VCP] Cleaning old processes...\r\n\
+ CALL pm2 delete vcp-main 2>nul\r\n\
+ CALL pm2 delete vcp-admin 2>nul\r\n\
+ CALL pm2 delete server 2>nul\r\n\
+ echo.\r\n\
+ echo [VCP] Starting main service (vcp-main)...\r\n\
+-CALL pm2 start server.js --name \"vcp-main\" --no-autorestart --max-memory-restart 1500M --kill-timeout 15000\r\n\
++CALL pm2 start server.js --name \"vcp-main\" --no-autorestart --max-memory-restart 1500M --kill-timeout 15000 --interpreter \"%%VCP_NODE_INTERPRETER%%\"\r\n\
+ echo [VCP] Waiting for initialization (8s)...\r\n\
+ ping -n 9 127.0.0.1 >nul\r\n\
+ echo.\r\n\
+ echo [VCP] Starting admin panel (vcp-admin)...\r\n\
+-CALL pm2 start adminServer.js --name \"vcp-admin\" --no-autorestart --max-memory-restart 512M --kill-timeout 5000\r\n\
++CALL pm2 start adminServer.js --name \"vcp-admin\" --no-autorestart --max-memory-restart 512M --kill-timeout 5000 --interpreter \"%%VCP_NODE_INTERPRETER%%\"\r\n\
+ echo.\r\n\
+ echo ==========================================\r\n\
+ echo   VCP Backend Started\r\n\
+@@ -123,7 +143,7 @@ echo   pm2 logs              View realtime logs\r\n\
+ echo   pm2 restart vcp-main  Restart main service\r\n\
+ echo   pm2 stop all          Stop all services\r\n\
+ echo.\r\n\
+-pause\r\n";
++pause\r\n");
+ 
+     let script_path = install_dir.join("start-backend.bat");
+     fs::write(&script_path, content)
+@@ -170,32 +190,33 @@ pub fn generate_inner_start_bat(
+     let chat_dir = install_dir.join("VCPChat");
+ 
+     // start_server.bat — VCPToolBox内部，PM2双进程 + 向上一级找runtimes
+-    let content = "@echo off\r\n\
+-setlocal\r\n\
++    let content = format!("@echo off\r\n\
++setlocal DisableDelayedExpansion\r\n\
+ chcp 65001 >nul\r\n\
+ echo ==========================================\r\n\
+ echo   VCP Backend Launcher (PM2)\r\n\
+ echo ==========================================\r\n\
+ echo.\r\n\
+ set \"PATH=%~dp0..\\runtimes\\node;%~dp0..\\runtimes\\git\\cmd;%~dp0..\\runtimes\\python;%~dp0..\\runtimes\\python\\Scripts;%PATH%\"\r\n\
+-cd /d \"%~dp0\"\r\n\
++cd /d \"%~dp0\" || exit /b 1\r\n\
+ if not exist \"server.js\" (\r\n\
+     echo [VCP] server.js not found. Please check VCPToolBox installation.\r\n\
+     pause\r\n\
+     exit /b 1\r\n\
+ )\r\n\
++{BACKEND_NODE_SETUP}\
+ echo [VCP] Cleaning old processes...\r\n\
+ CALL pm2 delete vcp-main 2>nul\r\n\
+ CALL pm2 delete vcp-admin 2>nul\r\n\
+ CALL pm2 delete server 2>nul\r\n\
+ echo.\r\n\
+ echo [VCP] Starting main service (vcp-main)...\r\n\
+-CALL pm2 start server.js --name \"vcp-main\" --no-autorestart --max-memory-restart 1500M --kill-timeout 15000\r\n\
++CALL pm2 start server.js --name \"vcp-main\" --no-autorestart --max-memory-restart 1500M --kill-timeout 15000 --interpreter \"%%VCP_NODE_INTERPRETER%%\"\r\n\
+ echo [VCP] Waiting for initialization (8s)...\r\n\
+ ping -n 9 127.0.0.1 >nul\r\n\
+ echo.\r\n\
+ echo [VCP] Starting admin panel (vcp-admin)...\r\n\
+-CALL pm2 start adminServer.js --name \"vcp-admin\" --no-autorestart --max-memory-restart 512M --kill-timeout 5000\r\n\
++CALL pm2 start adminServer.
 ```
 
-**File**: `TVStxt/SearchToolBox.txt` (modified, +2/-0)
+**File**: `一键启动服务器start_server.bat` (modified, +21/-4)
 ```diff
-@@ -34,11 +34,13 @@ need_subs:「始」(可选) 提供截图时间点时默认 false，普通获取
- need_pbp:「始」(可选) 提供截图时间点时默认 false，普通获取默认 true「末」,
+@@ -1,6 +1,23 @@
+ @echo off
+-setlocal enabledelayedexpansion
+-cd /d "%~dp0"
++setlocal DisableDelayedExpansion
++cd /d "%~dp0" || exit /b 1
++
++REM Resolve the service interpreter in this launcher, not in the PM2 daemon.
++if not defined VCP_NODE_INTERPRETER if exist "..\runtimes\node\node.exe" set "VCP_NODE_INTERPRETER=..\runtimes\node\node.exe"
++if not defined VCP_NODE_INTERPRETER for %%I in (node.exe) do set "VCP_NODE_INTERPRETER=%%~$PATH:I"
++if defined VCP_NODE_INTERPRETER for %%I in ("%VCP_NODE_INTERPRETER%") do set "VCP_NODE_INTERPRETER=%%~fI"
++if not exist "%VCP_NODE_INTERPRETER%" (
++    echo [ERROR] Node interpreter not found: "%VCP_NODE_INTERPRETER%". Set VCP_NODE_INTERPRETER to node.exe.
++    pause
++    exit /b 1
++)
++"%VCP_NODE_INTERPRETER%" --version >nul 2>&1
++if errorlevel 1 (
++    echo [ERROR] Cannot run Node interpreter: "%VCP_NODE_INTERPRETER%".
++    pause
++    exit /b 1
++)
++echo [Runtime] Node interpreter: "%VCP_NODE_INTERPRETER%"
  
- ### 检索 B 站视频/UP主
-+tool_name:「始」BilibiliFetch「末」,
- action:「始」search「末」,
- keyword:「始」搜索词「末」,
- search_type:「始」'video' 或 'bili_user'「末」
+ echo ============================================
+ echo   VCPToolBox - Starting Services via PM2
+@@ -41,7 +58,7 @@ REM Do NOT set --max-memory-restart here. Global Tag index staging, Pairwise ass
+ REM EPA/IR and TagMemo rebuilds have legitimate temporary memory peaks above 1500 MB.
+ REM A low PM2 RSS limit can restart the main process in the middle of a maintenance
+ REM transaction and overlap two cold-start index recoveries against the same SQLite.
+-call pm2 start server.js --name "vcp-main" --kill-timeout 15000
++call pm2 start server.js --name "vcp-main" --kill-timeout 15000 --interpreter "%%VCP_NODE_INTERPRETER%%"
  
- ### 调查 UP 主投稿列表
-+tool_name:「始」BilibiliFetch「末」,
- action:「始」get_up_videos「末」,
- mid:「始」用户 ID「末」,
- pn:「始」1「末」
-```
-
-**File**: `TVStxt/supertool.txt` (modified, +1/-1)
-```diff
-@@ -7,7 +7,7 @@ command:「始」工具参数「末」, //具体视不同工具需求而定
- content:「始ESCAPE」这是一个优先正则保护字段，内部可以输入<<<[TOOL_REQUEST]>>>和「始」从而不会被破坏解析器「末ESCAPE」, // 任意字段都可以使用「始ESCAPE」来传递内部的vcp解析字段
- <<<[END_TOOL_REQUEST]>>>
+ echo.
+ echo Waiting 8 seconds for main service to initialize...
+@@ -51,7 +68,7 @@ REM 3. Start Admin Panel
+ echo [2/2] Starting Admin Panel (vcp-admin)...
+ REM Keep PM2 memory restart limits disabled for both processes while diagnosing
+ REM legitimate maintenance/build memory peaks and unexpected overlapping restarts.
+-call pm2 start adminServer.js --name "vcp-admin" --kill-timeout 5000
++call pm2 start adminServer.js --name "vcp-admin" --kill-timeout 5000 --interpreter "%%VCP_NODE_INTERPRETER%%"
  
--<<<[TOOL_REQUEST]>>>到<<<[END_TOOL_REQUEST]>>>来表示一次完整调用。使用「始」「末」包裹参数来兼容富文本识别。
-+`<<<[TOOL_REQUEST]>>>` 到 `<<<[END_TOOL_REQUEST]>>>` 来表示一次完整调用。使用「始」「末」包裹参数来兼容富文本识别。
- 主动判断当前需求，灵活使用各类工具调用，服务器支持一次调用多个工具和连续调用。
- 
- —— VCP 全局高级修饰字段 (支持所有工具与JevCall，正交可组合) ——
-```
-
-**File**: `TVStxt/toollite.txt` (modified, +2/-0)
-```diff
-@@ -97,11 +97,13 @@ need_subs:「始」(可选) 提供截图时间点时默认 false，普通获取
- need_pbp:「始」(可选) 提供截图时间点时默认 false，普通获取默认 true「末」,
- 
- ### 检索 B 站视频/UP主
-+tool_name:「始」BilibiliFetch「末」,
- action:「始」search「末」,
- keyword:「始」搜索词「末」,
- search_type:「始」'video' 或 'bili_user'「末」
- 
- ### 调查 UP 主投稿列表
-+tool_name:「始」BilibiliFetch「末」,
- action:「始」get_up_videos「末」,
- mid:「始」用户 ID「末」,
- pn:「始」1「末」
-```
-
----
-
-### Incident Patch 3: `19552763` (2026-11-20)
-**Commit Message**: fix(prompt): 修复提示词与插件manifest中多处笔误、转义及格式残缺问题
-
-- Agent/DeepSeekOfficial.txt: 修正用户宏占位符 {{VarUse}} -> {{VarUser}}
-- Plugin/TavilySearch: 修正示例 JSON 中的换行转义字符 \time_range -> \ntime_range
-- TVStxt/toollite.txt, SearchToolBox.txt: 为 B 站子检索示例补充缺失的 tool_name:「始」BilibiliFetch「末」
-- TVStxt/JevToolCall.txt: 移除末尾孤立的「末」字符
-- TVStxt/supertool.txt: 为说明文本中的 TOOL_REQUEST 标签添加反引号避免解析器误匹配
-- Plugin/MediaRenderer: 补全说明文字中被误删的 <<<[TOOL_REQUEST]>>> 标签描述
-- Plugin/ZImageGen2: 修正示例中的工具名 ZImageGen -> ZImageGen2
-
-**File**: `Agent/DeepSeekOfficial.txt` (modified, +1/-1)
-```diff
-@@ -17,7 +17,7 @@
- 
- 当前工作环境VCPToolbox，一个强大的AGI-Runtime工作运行时环境。
- 今天是{{Date}},{{Today}},{{Festival}}。当前天气{{VCPWeatherInfoNow}}。
--用户是{{VarUse}}，你的主人。
-+用户是{{VarUser}}，你的主人。
- 
- 核心指令
- {{VarToolList}}
-```
-
-**File**: `Plugin/MediaRenderer/plugin-manifest.json` (modified, +2/-2)
-```diff
-@@ -46,13 +46,13 @@
-       {
-         "command": "RenderImage",
-         "commandIdentifier": "RenderImage",
--        "description": "将 HTML 或 SVG 渲染为 PNG、JPG、WebP 静态图片。\n\n推荐素材写法：直接在源码中使用 URL，不要为普通图片、视频或字体构造 assets JSON。例如 `<img src=\"file:///D:/media/photo.png\">`、`<img src=\"https://example.com/photo.png\">`、`<video src=\"http://127.0.0.1/demo.mp4\">`，或在 CSS 中写 `@font-face{src:url('file:///D:/fonts/title.woff2')}`。插件会在 Node.js 侧提取这些 data:、file://、HTTP/HTTPS 地址，逐跳执行安全校验和大小限制，读取或下载后改写为 Data URI；Chromium 不直接获得本地文件或任意网络访问能力。`src`、`srcset`、`poster`、SVG href/xlink:href 和 CSS url() 均受支持。\n\n内置脚本库（Anime.js / Three.js / Pixi.js）：可直接输出 jsDelivr、unpkg、cdnjs 常见 CDN 标签，插件只识别符合白名单规则的路径并自动重写注入本地内置版本，不会真正联网请求 CDN。其他外部脚本一律禁止执行。\n- Anime.js：`<script src=\"https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js\"></script>`，提供全局 `window.anime`。\n- Three.js：`<script src=\"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js\"></script>`，提供全局 `window.THREE`。\n- Pixi.js（v8 版本）：`<script src=\"https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.js\"></script>`，提供全局 `window.PIXI`。\n  * PixiJS v8 关键规则（严防旧版语法报错）：\n    1. 必须异步初始化：`const app = new PIXI.Application(); await app.init({ width, height, preference: 'webgl' }); document.body.appendChild(app.canvas);`。严禁使用 v6/v7 的 `new PIXI.Application({...})` 同步初始化！\n    2. 访问 Canvas 画布建议使用 `app.canvas`（兼容 `app.view`）。\n    3. 异步初始化和图元渲染完成后必须调用 `window.__MEDIA_RENDERER__.setReady()`，并传参 `readyMode=signal`。\n\n主要参数：\n- html/svg：二选一，填写完整文档或片段。\n- width/height：必需，64-4096，总像素不超过 4096×4096。\n- format：png、jpg、webp；默认透明时 png，否则 jpg。\n- transparent：默认 false；true 只令根画布透明，不移除源码元素自己的背景。JPEG 不支持透明，请用 PNG/WebP。\n- background：非透明输出的 Alpha 合成底色，默认 #ffffff。\n- quality：JPG/WebP 质量 1-100，默认 90。\n- allowJavaScript：静态图默认 false；源码使用受支持 CDN 库时自动开启。\n- readyMode：load、auto、signal；signal 要求初始化后调用 window.__MEDIA_RENDERER__.setReady()。\n- waitMs：截图前额外等待 0-10000ms。\n- timeoutMs：单步总超时 1000-120000ms，默认 45000。\n- fileName：输出文件名主体。\n- sourceImage：旧的单底图便捷参数，需在源码用 {{SOURCE_IMAGE}}；新调用优先直接写 `<img src=\"URL\">`。\n- assets：旧版兼容参数；仅旧调用的 {{ASSET:id}} 或 audioAssetId 需要，普通源码素材不应使用。\n\n安全限制：单资源最大 50MB，所有资源合计最大 100MB，每步最多 24 个资源，源码最大 2MB，最多串行 16 步。HTTP 重定向逐跳校验，云元数据地址始终禁止，未写入源码的运行时网络请求仍被阻断。\n\nAI 调用格式（必须遵守）：\n必须输出完整的  工具块；每个参数都使用中文边界符「始」「末」，参数之间用英文逗号分隔。html 或 svg 源码必须整体放在同一对「始」「末」内，不要使用 Markdown 代码围栏，不要只输出 HTML，也不要省略 tool_name 和 command。\n\n完整调用示例：\n",
-+        "description": "将 HTML 或 SVG 渲染为 PNG、JPG、WebP 静态图片。\n\n推荐素材写法：直接在源码中使用 URL，不要为普通图片、视频或字体构造 assets JSON。例如 `<img src=\"file:///D:/media/photo.png\">`、`<img src=\"https://example.com/photo.png\">`、`<video src=\"http://127.0.0.1/demo.mp4\">`，或在 CSS 中写 `@font-face{src:url('file:///D:/fonts/title.woff2')}`。插件会在 Node.js 侧提取这些 data:、file://、HTTP/HTTPS 地址，逐跳执行安全校验和大小限制，读取或下载后改写为 Data URI；Chromium 不直接获得本地文件或任意网络访问能力。`src`、`srcset`、`poster`、SVG href/xlink:href 和 CSS url() 均受支持。\n\n内置脚本库（Anime.js / Three.js / Pixi.js）：可直接输出 jsDelivr、unpkg、cdnjs 常见 CDN 标签，插件只识别符合白名单规则的路径并自动重写注入本地内置版本，不会真正联网请求 CDN。其他外部脚本一律禁止执行。\n- Anime.js：`<script src=\"https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js\"></script>`，提供全局 `window.anime`。\n- Three.js：`<script src=\"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js\"></script>`，提供全局 `window.THREE`。\n- Pixi.js（v8 版本）：`<script src=\"https://cdn.jsdelivr.net/npm/pixi.js@8/dist/pixi.min.js\"></script>`，提供全局 `window.PIXI`。\n  * PixiJS v8 关键规则（严防旧版语法报错）：\n    1. 必须异步初始化：`const app = new PIXI.Application(); await app.init({ width, height, preference: 'webgl' }); document.body.appendChild(app.canvas);`。严禁使用 v6/v7 的 `new PIXI.Application({...})` 同步初始化！\n    2. 访问 Canvas 画布建议使用 `app.canvas`（兼容 `app.view`）。\n    3. 异步初始化和图元渲染完成后必须调用 `window.__MEDIA_RENDERER__.setReady()`，并传参 `readyMode=signal`。\n\n主要参数：\n- html/svg：二选一，填写完整文档或片段。\n- width/height：必需，64-4096，总像素不超过 4096×4096。\n- format：png、jpg、webp；默认透明时 png，否则 jpg。\n- transparent：默认 false；true 只令根画布透明，不移除源码元素自己的背景。JPEG 不支持透明，请用 PNG/WebP。\n- background：非透明输出的 Alpha 合成底色，默认 #ffffff。\n- quality：JPG/WebP 质量 1-100，默认 90。\n- allowJavaScript：静态图默认 false；源码使用受支持 CDN 库时自动开启。\n- readyMode：load、auto、signal；signal 要求初始化后调用 window.__MEDIA_RENDERER__.setReady()。\n- waitMs：截图前额外等待 0-10000ms。\n- timeoutMs：单步总超时 1000-120000ms，默认 45000。\n- fileName：输出文件名主体。\n- sourceImage：旧的单底图便捷参数，需在源码用 {{SOURCE_IMAGE}}；新调用优先直接写 `<img src=\"URL\">`。\n- assets：旧版兼容参数；仅旧调用的 {{ASSET:id}} 或 audioAssetId 需要，普通源码素材不应使用。\n\n安全限制：单资源最大 50MB，所有资源合计最大 100MB，每步最多 24 个资源，源码最大 2MB，最多串行 16 步。HTTP 重定向逐跳校验，云元数据地址始终禁止，未写入源码的运行时网络请求仍被阻断。\n\nAI 调用格式（必须遵守）：\n必须输出完整的 <<<[TOOL_REQUEST]>>> 到 <<<[END_TOOL_REQUEST]>>> 工具块；每个参数都使用中文边界符「始」「末」，参数之间用英文逗号分隔。html 或 svg 源码必须整体放在同一对「始」「末」内，不要使用 Markdown 代码围栏，不要只输出 HTML，也不要省略 tool_name 和 command。\n\n完整调用示例：\n",
-         "example": "<<<[TOOL_REQUEST]>>>\ntool_name:「始」MediaRenderer「末」,\ncommand:「始」RenderImage「末」,\nhtml:「始」<!doctype html><style>@font-face{font-family:Title;src:url('file:///D:/fonts/title.woff2')}html,body{margin:0;width:100%;height:100%;background:#08111f}.card{height:100%;display:grid;
-```
-
-**File**: `Plugin/TavilySearch/plugin-manifest.json` (modified, +1/-1)
-```diff
-@@ -22,7 +22,7 @@
-       {
-         "commandIdentifier": "TavilySearch",
-         "description": "调用此工具使用 Tavily API 进行高级网络搜索。默认启用高级搜索模式并返回图片链接。重要提示：请优先使用中文词作为检索词，并带上即时信息（如当前年份、月份等）进行检索，以获得更准确的结果。请在您的回复中，使用以下精确格式来请求搜索，确保所有参数值都用「始」和「末」准确包裹：\n\n\n重要提示给AI：\n当此工具执行完毕后，您将收到包含搜索结果的JSON对象。请基于这些结果回答用户的问题或完成相关任务。\n请优先使用中文词作为检索词，并带上即时信息（如当前年份、月份等）进行检索，以获得更准确的结果。",
--        "example": "```text\n<<<[TOOL_REQUEST]>>>\ntool_name:「始」TavilySearch「末」,\nquery:「始」最近一周的AI技术进展「末」,\nsearch_depth:「始」advanced「末」,\ntopic:「始」technology「末」,\nmax_results:「始」5「末」,\time_range:「始」d「末」\n<<<[END_TOOL_REQUEST]>>>\n```"
-+        "example": "```text\n<<<[TOOL_REQUEST]>>>\ntool_name:「始」TavilySearch「末」,\nquery:「始」最近一周的AI技术进展「末」,\nsearch_depth:「始」advanced「末」,\ntopic:「始」technology「末」,\nmax_results:「始」5「末」,\ntime_range:「始」d「末」\n<<<[END_TOOL_REQUEST]>>>\n```"
-       }
-     ]
-   }
-```
-
-**File**: `Plugin/ZImageGen2/plugin-manifest.json.block` (modified, +1/-1)
-```diff
-@@ -22,7 +22,7 @@
-       {
-         "commandIdentifier": "ZImageGenerate",
-         "description": "调用此工具通过 Z-Image-Base 模型生成高质量图片。支持中英文提示词。请在您的回复中，使用以下精确格式来请求图片生成，确保所有参数值都用「始」和「末」准确包裹：\n\n\n重要提示给AI：\n当此工具执行完毕后，您将收到包含以下信息的结果：\n1. 生成图片的公开访问URL。\n2. 图片在服务器上的存储相对路径 (例如：image/zimage/图片名.png)。\n3. 图片的文件名和使用的Seed。\n4. 如果showbase64设置为true，还会包含base64格式的图片数据供AI查看。\n请在您的最终回复中，使用返回的【图片URL】为用户生成一个HTML的 `<img>` 标签来直接展示图片，例如：`<img src=\"[此处填写图片URL]\" alt=\"[此处可填写部分prompt作为描述]\" width=\"300\">`。请确保替换占位符，并可调整 `width` 属性（建议200-500像素）。",
--        "example": "```text\n<<<[TOOL_REQUEST]>>>\ntool_name:「始」ZImageGen「末」,\nprompt:「始」一位穿着精美汉服的中国古典美女，站在江南水乡的石桥上，手持油纸伞，背景是烟雨蒙蒙的白墙黑瓦建筑「末」,\nresolution:「始」1024x1024「末」,\nshowbase64:「始」false「末」\n<<<[END_TOOL_REQUEST]>>>\n```"
-+        "example": "```text\n<<<[TOOL_REQUEST]>>>\ntool_name:「始」ZImageGen2「末」,\nprompt:「始」一位穿着精美汉服的中国古典美女，站在江南水乡的石桥上，手持油纸伞，背景是烟雨蒙蒙的白墙黑瓦建筑「末」,\nresolution:「始」1024x1024「末」,\nshowbase64:「始」false「末」\n<<<[END_TOOL_REQUEST]>>>\n```"
-       }
-     ]
-   }
-```
-
-**File**: `TVStxt/JevToolCall.txt` (modified, +1/-1)
-```diff
-@@ -40,7 +40,7 @@ B站截图默认仅获取画面；需要组合内容时，在句子或 [] 中明
- 联络[Grok]，告诉它【我是Nova，我想问问2026年10月推特上的ai热点新闻】，并使用[临时通讯]。
- 睡眠[10分钟]，醒来后提醒【重新检查异步任务状态】。
- 请使用 {图片生成}，生成【一只坐在窗边的猫，电影感】，画面需要[适合手机壁纸]。
--请使用 {图片生成}，参考图片[file:///C:/images/person.png]，把人物修改成【雨夜霓虹风格】，并使用[2K]清晰度。「末」
-+请使用 {图片生成}，参考图片[file:///C:/images/person.png]，把人物修改成【雨夜霓虹风格】，并使用[2K]清晰度。
- 请使用 {图片生成} 中的 `GPT生图`，生成【一张细节丰富的科幻城市概念图】，并采用[横版高清]画幅。
- 请使用 {物联网控制} 中的 `TableLampRemote`，执行【打开台灯】
- 读取[file://{{VarVCPToolBoxPath}}\Plugin\DailyHot\dailyhot_cache.md]获得每日热点新闻。
-```
-
-**File**: `TVStxt/SearchToolBox.txt` (modified, +2/-0)
-```diff
-@@ -34,11 +34,13 @@ need_subs:「始」(可选) 提供截图时间点时默认 false，普通获取
- need_pbp:「始」(可选) 提供截图时间点时默认 false，普通获取默认 true「末」,
- 
- ### 检索 B 站视频/UP主
-+tool_name:「始」BilibiliFetch「末」,
- action:「始」search「末」,
- keyword:「始」搜索词「末」,
- search_type:「始」'video' 或 'bili_user'「末」
- 
- ### 调查 UP 主投稿列表
-+tool_name:「始」BilibiliFetch「末」,
- action:「始」get_up_videos「末」,
- mid:「始」用户 ID「末」,
- pn:「始」1「末」
-```
-
-**File**: `TVStxt/supertool.txt` (modified, +1/-1)
-```diff
-@@ -7,7 +7,7 @@ command:「始」工具参数「末」, //具体视不同工具需求而定
- content:「始ESCAPE」这是一个优先正则保护字段，内部可以输入<<<[TOOL_REQUEST]>>>和「始」从而不会被破坏解析器「末ESCAPE」, // 任意字段都可以使用「始ESCAPE」来传递内部的vcp解析字段
- <<<[END_TOOL_REQUEST]>>>
- 
--<<<[TOOL_REQUEST]>>>到<<<[END_TOOL_REQUEST]>>>来表示一次完整调用。使用「始」「末」包裹参数来兼容富文本识别。
-+`<<<[TOOL_REQUEST]>>>` 到 `<<<[END_TOOL_REQUEST]>>>` 来表示一次完整调用。使用「始」「末」包裹参数来兼容富文本识别。
- 主动判断当前需求，灵活使用各类工具调用，服务器支持一次调用多个工具和连续调用。
- 
- —— VCP 全局高级修饰字段 (支持所有工具与JevCall，正交可组合) ——
-```
-
-**File**: `TVStxt/toollite.txt` (modified, +2/-0)
-```diff
-@@ -97,11 +97,13 @@ need_subs:「始」(可选) 提供截图时间点时默认 false，普通获取
- need_pbp:「始」(可选) 提供截图时间点时默认 false，普通获取默认 true「末」,
- 
- ### 检索 B 站视频/UP主
-+tool_name:「始」BilibiliFetch「末」,
- action:「始」search「末」,
- keyword:「始」搜索词「末」,
- search_type:「始」'video' 或 'bili_user'「末」
- 
- ### 调查 UP 主投稿列表
-+tool_name:「始」BilibiliFetch「末」,
- action:「始」get_up_videos「末」,
- mid:「始」用户 ID「末」,
- pn:「始」1「末」
+ echo.
+ echo ============================================
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #623** (2026-11-21): feat(ComfyUIGen,RAGDiaryPlugin): 支持 ComfyUI 进程跟随式活性超时检测与 ::Base64Memo 超栈路径溯源及自适应图像压缩 (@infinite-vector)
 - **PR #621** (2026-11-20): fix(prompt): 修复提示词与插件manifest中多处笔误、转义及格式残缺问题 (@InSciTech)
 - **PR #620** (2026-11-20): fix(plugins): 修正多处插件 Manifest 示例工具名、参数大小写及格式错误 (@InSciTech)
 - **PR #619** (2026-11-19): fix(vexus-lite,server): 统一GlobalChunks与ReadPool单向锁序DAG根治并发死锁，并修复关机Phase2/Phase8阻塞 (@infinite-vector)
 - **PR #618** (2026-11-18): # feat(WarpedFieldAtlas): 读取 Tag 和 Chunk 双曲场训练快照，支持按节点或对话消息查询近邻 (@CI-IISATO)
 - **PR #617** (2026-11-18): fix: 出站请求中降级无法投递的 Markdown data: 图片（避免上游 415/500） (@RoxyAsahi)
-- **PR #616** (2026-11-18): feat(memo): 1% 阈值训练对纯追加窗口按依赖复用 Tag 局部残差 (@CI-IISATO)
 
 ---
 
@@ -2213,48 +2866,60 @@ fix(prompt): 修复提示词与插件manifest中多处笔误、转义及格式�
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in image-file-server.js
+## X. Empirical Invariant Guard in ComfyUIGen.js
 
 **RULE**:
-When implementing operations in `Plugin/ImageFileServer/image-file-server.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lioensky/VCPToolBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Plugin/ComfyUIGen/ComfyUIGen.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lioensky/VCPToolBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `09a25ded`: fix. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `82c0efd4`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `Plugin/ImageFileServer/image-file-server.js`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `Plugin/ComfyUIGen/ComfyUIGen.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-// 进程信号由宿主处理；插件只释放自身资源。
-function shutdown() {
-}
-    shutdown,
-    // 保留既有清理入口，供调用方和测试使用。
-    stopSecurityManager: shutdown,
+        COMFYUI_MAX_WAIT_MINUTES: 30,
+        COMFYUI_MISSING_QUEUE_TOLERANCE: 5,
+            if (userSettings.maxWaitMinutes !== undefined) {
+                config.COMFYUI_MAX_WAIT_MINUTES = resolveNumericArg(userSettings.maxWaitMinutes, config.COMFYUI_MAX_WAIT_MINUTES);
+            }
+    if (process.env.COMFYUI_MAX_WAIT_MINUTES !== undefined && process.env.COMFYUI_MAX_WAIT_MINUTES !== '') {
+        config.COMFYUI_MAX_WAIT_MINUTES = resolveNumericArg(process.env.COMFYUI_MAX_WAIT_MINUTES, config.COMFYUI_MAX_WAIT_MINUTES);
+    }
+    if (process.env.COMFYUI_MISSING_QUEUE_TOLERANCE !== undefined && process.env.COMFYUI_MISSING_QUEUE_TOLERANCE !== '') {
+        config.COMFYUI_MISSING_QUEUE_TOLERANCE = Math.max(1, Math.floor(resolveNumericArg(process.env.COMFYUI_MISSING_QUEUE_TOLERANCE, 5)));
+    }
+    
+// 检查历史完成状态
+        headers: config.COMFYUI_API_KEY ? { 'Authorization': `Bearer ${config.COMFYUI_API_KEY}` } : {},
+    return (response.data && response.data[promptId]) ? response.data[promptId] : null;
+// 检查 ComfyUI 实时运行队列 (/queue)，判断 promptId 是否仍在 running 或 pending 中推进
+async function checkActiveQueue(promptId, config) {
+    const comfyuiAxios = axios.create({
+        baseURL: config.C
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Induced defect failure mode:
-// 优雅关闭处理
-process.on('SIGINT', () => {
-    console.log('[ImageServerPlugin] 正在关闭安全管理器...');
-    process.exit(0);
-});
 
-process.on('SIGTERM', () => {
-    console.log('[ImageServerPlugin] 正在关闭安全管理器...');
-    securityManager.stopCleanupTimer();
-    process.exit(0);
-});
-    // 供测试或宿主优雅卸载时停止定时器，避免模块句柄阻止进程退出
-    stopSecurityManager: () => securityManager.stopCleanupTimer(),
+// 检查队列状态
+    return response.data[promptId] || null;
+// 等待生成完成
+async function waitForCompletion(promptId, config, maxAttempts = 60, interval = 3000) {
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+        debugLog(`Checking queue status, attempt ${attempt + 1}/${maxAttempts}`);
+        
+        const history = await checkQueueStatus(promptId, config);
+        if (history && history.status && history.status.completed) {
+            debugLog('Generation completed!');
+            return history;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `09a25ded` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `82c0efd4` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

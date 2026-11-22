@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T00:38:46.428Z",
+  "timestamp": "2026-11-22T04:39:42.618Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-prunaai-p-h3-image-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-prunaai-p-h3-image-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T00:38:46.428Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T04:39:42.618Z`  
 > **Learning ID**: `LEARN-EVO-hf-prunaai-p-h3-image-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-prunaai-p`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T00:38:27.460Z  
+> **Timestamp**: 2026-11-22T04:38:56.547Z  
 > **Learning ID**: `learn-huggingface-prunaai-p-h3-image`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -40,22 +40,22 @@ The following architectural invariants have been empirically discovered and reco
 
 ---
 
-# Forensic Learning Record (Deep Inspection): PrunaAI/P-H3-Image
+# Forensic Learning Record (Deep Inspection): PrunaAI/P-Image-OSS
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-prunaai-p-h3-image-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/PrunaAI/P-H3-Image](https://huggingface.co/PrunaAI/P-H3-Image))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T00:38:27.324Z  
+> **Harvest Timestamp**: 2026-11-22T04:38:48.999Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
 
 ## 1. Context & Architectural Overview
-- **Repository / Resource**: `PrunaAI/P-H3-Image`
+- **Repository / Resource**: `PrunaAI/P-Image-OSS`
 - **Description**: text-to-image
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 2104 downloads | 370 likes
+- **Stars / Engagement**: 3054 downloads | 323 likes
 
 ---
 

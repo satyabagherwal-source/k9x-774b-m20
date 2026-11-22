@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261120-MAL4",
-    "timestamp": "2026-11-20T03:13:07.864Z",
-    "repository": "1jehuang/jcode",
-    "learningId": "learn-github-1jehuang-jcode",
-    "contentHash": "30d3e1860ecd607709e31066a9f83f90ed8acbbf8d3a69b7b53e772c219c842f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-B4HD",
-    "timestamp": "2026-11-20T03:32:26.353Z",
-    "repository": "Orange-OpenSource/hurl",
-    "learningId": "learn-github-orange-opensource-hurl",
-    "contentHash": "e285aa2128a4e61b1a83addcab11b40e1f26cd3fa30d06d3d0553a746213b52a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261120-BD21",
     "timestamp": "2026-11-20T03:32:37.465Z",
     "repository": "slatedb/slatedb",
@@ -7490,6 +7460,36 @@
     "repository": "nezhahq/nezha",
     "learningId": "learn-github-nezhahq-nezha",
     "contentHash": "a8c23559bca0012c2f33b70dd0eb5aa851e920dc34bf2c6bc1c0e8fc6ece65af",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-KD4Z",
+    "timestamp": "2026-11-22T04:38:57.155Z",
+    "repository": "PrunaAI/P-Image-OSS",
+    "learningId": "learn-huggingface-prunaai-p-h3-image",
+    "contentHash": "cb5546f06b66d9f4bb01a37f98d0e73dfaa60f3ef58de06a616da1167e7ff071",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-KIZW",
+    "timestamp": "2026-11-22T04:39:04.748Z",
+    "repository": "lioensky/VCPToolBox",
+    "learningId": "learn-github-lioensky-vcptoolbox",
+    "contentHash": "6c2cdba6c6baaedf49bc533be6ae5726ad07a144516fedee38207dce40e832f3",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

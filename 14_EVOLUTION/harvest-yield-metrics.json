@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T04:29:03.657Z",
-  "total_cycles_completed": 11416,
-  "total_learnings_persisted": 11416,
-  "total_rules_promoted": 10705,
+  "last_updated": "2026-11-22T04:39:04.759Z",
+  "total_cycles_completed": 11418,
+  "total_learnings_persisted": 11418,
+  "total_rules_promoted": 10706,
   "history": [
-    {
-      "timestamp": "2026-11-21T11:55:35.197Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T12:19:35.435Z",
-      "repository": "lodestones/Kromoss",
-      "learningId": "learn-huggingface-lodestones-kromoss",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T12:19:37.459Z",
       "repository": "sharkdp/bat",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-22T04:29:03.657Z",
       "repository": "nezhahq/nezha",
       "learningId": "learn-github-nezhahq-nezha",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T04:38:57.166Z",
+      "repository": "PrunaAI/P-Image-OSS",
+      "learningId": "learn-huggingface-prunaai-p-h3-image",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T04:39:04.759Z",
+      "repository": "lioensky/VCPToolBox",
+      "learningId": "learn-github-lioensky-vcptoolbox",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

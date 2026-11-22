@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T04:29:15.849Z",
+  "last_updated": "2026-11-22T04:39:45.474Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-22T01:59:00.350Z",
+      "processed_at": "2026-11-22T04:39:44.123Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -913,8 +913,8 @@
       "staged_for_review": 1
     },
     "hf-prunaai-p-h3-image-learnings.md": {
-      "processed_at": "2026-11-17T00:38:46.347Z",
-      "promoted_canonical": 0,
+      "processed_at": "2026-11-22T04:39:42.430Z",
+      "promoted_canonical": 1,
       "staged_for_review": 0
     },
     "zarf-dev-zarf-learnings.md": {
@@ -1398,7 +1398,7 @@
       "staged_for_review": 1
     },
     "lioensky-vcptoolbox-learnings.md": {
-      "processed_at": "2026-11-20T23:57:53.474Z",
+      "processed_at": "2026-11-22T04:39:43.007Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3703,7 +3703,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 3000,
-  "total_canonical_promoted": 469,
-  "total_staged_for_review": 2289
+  "total_dossiers_evaluated": 3003,
+  "total_canonical_promoted": 470,
+  "total_staged_for_review": 2291
 }

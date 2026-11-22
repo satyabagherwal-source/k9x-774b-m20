@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-22T04:29:13.841Z",
+  "updated_at": "2026-11-22T04:39:43.082Z",
   "stats": {
-    "total_discovered": 7442,
+    "total_discovered": 7443,
     "approved_pending_harvest": 7043,
     "harvested_count": 0,
-    "rejected_count": 399,
+    "rejected_count": 400,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7021,
+      "COMMUNITY_AND_EXPERT": 7022,
       "OFFICIAL_DOCUMENTATION": 242,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 5,
@@ -160954,6 +160954,21 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nezhahq-nezha-learnings.md",
         "fileName": "nezhahq-nezha-learnings.md"
+      }
+    },
+    "SRC-84DB77FEB321": {
+      "id": "SRC-84DB77FEB321",
+      "url": "http://localhost:8188/",
+      "title": "http://localhost:8188/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-22T04:39:43.081Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
+        "fileName": "lioensky-vcptoolbox-learnings.md"
       }
     }
   }

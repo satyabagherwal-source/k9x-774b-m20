@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T04:29:03.660Z",
+  "last_updated": "2026-11-22T04:39:04.763Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4611,14 +4611,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lioensky-vcptoolbox",
-      "content_hash": "c9c965d1ff4d95851120f0593160151e8ecd999ffad6540b8f013ae471c23688",
-      "verified_at": "2026-11-20T23:56:26.425Z",
+      "content_hash": "6c2cdba6c6baaedf49bc533be6ae5726ad07a144516fedee38207dce40e832f3",
+      "verified_at": "2026-11-22T04:39:04.763Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T23:56:26.425Z"
+      "last_updated": "2026-11-22T04:39:04.763Z"
     },
     "Megabit/Blazorise": {
       "repository": "Megabit/Blazorise",
@@ -19844,6 +19844,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-22T02:42:05.506Z"
+    },
+    "PrunaAI/P-Image-OSS": {
+      "repository": "PrunaAI/P-Image-OSS",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-prunaai-p-h3-image",
+      "content_hash": "cb5546f06b66d9f4bb01a37f98d0e73dfaa60f3ef58de06a616da1167e7ff071",
+      "verified_at": "2026-11-22T04:38:57.170Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-22T04:38:57.170Z"
     }
   },
   "repos": {

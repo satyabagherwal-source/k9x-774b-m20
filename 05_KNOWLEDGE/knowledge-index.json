@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T04:29:15.729Z",
+  "last_updated": "2026-11-22T04:39:45.230Z",
   "total_verified_learnings": 9067,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23458,
+  "total_items": 23461,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "8d82ccccd9a39a2da4a487a87904de367250af5f6d8b787d92e858f61d0c726d",
+      "content_hash": "342e28437e774abaf5a5058fb5658b7266348ec955d066da522177a41501abcf",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T01:59:01.202Z"
+      "persisted_at": "2026-11-22T04:39:45.230Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -221662,8 +221662,8 @@
       "slug": "lioensky-vcptoolbox",
       "platform": "github",
       "source_url": "https://github.com/lioensky/VCPToolBox",
-      "source_version": "09a25ded",
-      "content_hash": "c9c965d1ff4d95851120f0593160151e8ecd999ffad6540b8f013ae471c23688",
+      "source_version": "7131e7e4",
+      "content_hash": "6c2cdba6c6baaedf49bc533be6ae5726ad07a144516fedee38207dce40e832f3",
       "dossier_path": "07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
       "promoted_rules": [
@@ -221701,6 +221701,11 @@
           "number": 9665,
           "title": "Empirical Invariant Guard in image-file-server.js",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9895,
+          "title": "Empirical Invariant Guard in ComfyUIGen.js",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -221708,7 +221713,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T23:56:26.158Z",
+      "verified_at": "2026-11-22T04:39:04.501Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -221750,10 +221755,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lioensky-vcptoolbox-technical-construction-intelligence-lioensky-vcptoolbox-core.md",
       "title": "Technical Construction Intelligence: lioensky/VCPToolBox Core Invariants",
       "repository": "lioensky/VCPToolBox",
-      "source_version": "09a25ded",
-      "content_hash": "184fbbf422900f77ba9323947e6f7b4e8c7d83135d2772b74c9fc01ecf376f6c",
+      "source_version": "7131e7e4",
+      "content_hash": "0ef21b6d83b9ad0b1962a7be599fa151b2b13eadf8887a60c4505101001568a5",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T23:56:26.888Z"
+      "persisted_at": "2026-11-22T04:39:05.247Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-lioensky-vcptoolbox": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-lioensky-vcptoolbox",
@@ -221762,10 +221767,10 @@
       "relative_path": "08_VERIFICATION/lioensky-vcptoolbox-verification-protocol-empirical-defect-shield-for-lioensky-v.md",
       "title": "Verification Protocol: Empirical Defect Shield for lioensky/VCPToolBox",
       "repository": "lioensky/VCPToolBox",
-      "source_version": "09a25ded",
-      "content_hash": "920ce779a73063ceb308403235433d3aad738e3722f88abd80b91cced7c1800e",
+      "source_version": "7131e7e4",
+      "content_hash": "922ad02f16c9fc04e94420412f2e62f31d5695ff1eb60d0e9a8ca98d1122052b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T23:56:27.087Z"
+      "persisted_at": "2026-11-22T04:39:05.457Z"
     },
     "candidate_directive-gnd-don-t-unset-nullable-primitive-fields-set-to-0-or-false": {
       "item_id": "candidate_directive-gnd-don-t-unset-nullable-primitive-fields-set-to-0-or-false",
@@ -248404,9 +248409,9 @@
       "title": "Technical Construction Intelligence: lioensky-vcptoolbox-learnings Core Invariants",
       "repository": "lioensky-vcptoolbox-learnings",
       "source_version": "HEAD",
-      "content_hash": "c4e90c0b7042e8ac4478f96cd16adfbc199e10bb718ed63084e11e9f2b95ad9b",
+      "content_hash": "ccf192e17a772845db066a7e3386f6de0f9d947a6461413212ce725851f28a07",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T23:57:54.203Z"
+      "persisted_at": "2026-11-22T04:39:43.648Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-lioensky-vcptoolbox-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-lioensky-vcptoolbox-learnings",
@@ -248416,9 +248421,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for lioensky-vcptoolbox-learnings",
       "repository": "lioensky-vcptoolbox-learnings",
       "source_version": "HEAD",
-      "content_hash": "a80485f8871a9343aef4133b254c80e01680df9a4e0690bc6673dbf126017d60",
+      "content_hash": "87fd25d4d893dba55b3ff5e739329fa045e5bc224bc58e69be3e3bdec4d7b4c9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T23:57:54.427Z"
+      "persisted_at": "2026-11-22T04:39:43.893Z"
     },
     "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf": {
       "learning_id": "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf",
@@ -264493,13 +264498,13 @@
     "learn-huggingface-prunaai-p-h3-image": {
       "learning_id": "learn-huggingface-prunaai-p-h3-image",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "source": "PrunaAI/P-H3-Image",
-      "repository": "PrunaAI/P-H3-Image",
+      "source": "PrunaAI/P-Image-OSS",
+      "repository": "PrunaAI/P-Image-OSS",
       "slug": "hf-prunaai-p-h3-image",
       "platform": "huggingface",
       "source_url": "https://huggingface.co/PrunaAI/P-H3-Image",
       "source_version": "hf-prunaai-p-h3-image",
-      "content_hash": "2ccfc904b80a0370270ed352e3d86355be0921ab288f83189c58212964b314c6",
+      "content_hash": "cb5546f06b66d9f4bb01a37f98d0e73dfaa60f3ef58de06a616da1167e7ff071",
       "dossier_path": "07_PROJECT_LEARNING/hf-prunaai-p-h3-image-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-prunaai-p-h3-image-learnings.md",
       "promoted_rules": [],
@@ -264508,7 +264513,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T00:38:27.754Z",
+      "verified_at": "2026-11-22T04:38:56.879Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -264713,9 +264718,9 @@
       "title": "Research & Knowledge Intelligence: hf-prunaai-p-h3-image-learnings Core Invariants",
       "repository": "hf-prunaai-p-h3-image-learnings",
       "source_version": "HEAD",
-      "content_hash": "a9f70efc59cf7e3887d4b79a17cf45c226a1161ea7ce8cab42272c5481794de5",
+      "content_hash": "2ecc7b9cefd274306f314e3987f3d566495159b1eafa8d6ec668bc37bd890038",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T00:38:46.553Z"
+      "persisted_at": "2026-11-22T04:39:42.740Z"
     },
     "candidate_directive-ci-persist-ui-and-console-image-caches-across-runners": {
       "item_id": "candidate_directive-ci-persist-ui-and-console-image-caches-across-runners",
@@ -319027,6 +319032,44 @@
       "content_hash": "747dff4844f540856666374c6ff69561316517712f2fc07ad7c5d07b189a2f69",
       "domain_letter": "H",
       "persisted_at": "2026-11-22T04:29:14.214Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-prunaai-p-image-oss-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-prunaai-p-image-oss-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-prunaai-p-h3-image-research-knowledge-intelligence-prunaai-p-image-oss-core-i.md",
+      "title": "Research & Knowledge Intelligence: PrunaAI/P-Image-OSS Core Invariants",
+      "repository": "PrunaAI/P-Image-OSS",
+      "source_version": "hf-prunaai-p-h3-image",
+      "content_hash": "e6ff11d0d35ee50a8364a0acc4888e3af74fd0b0a78cfdb1cddb0e73e3fd88ca",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-22T04:38:57.418Z"
+    },
+    "rule-9895": {
+      "learning_id": "rule-9895",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9895,
+      "title": "Empirical Invariant Guard in ComfyUIGen.js",
+      "source_url": "https://github.com/lioensky/VCPToolBox",
+      "source_version": "7131e7e4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T04:39:04.501Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-comfyuigen-js": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-comfyuigen-js",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-LCU5-empirical-invariant-guard-in-comfyuigen-js.md",
+      "title": "Empirical Invariant Guard in ComfyUIGen.js",
+      "repository": "lioensky-vcptoolbox-learnings",
+      "source_version": "HEAD",
+      "content_hash": "812d197aeec565f44524b35e4db941eb9fae1a0d0ef59777189143bdc5989845",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-22T04:39:43.434Z"
     }
   },
   "ai-builder-brain": {

@@ -12007,3 +12007,6 @@
 | `CYCLE-20261122-CUT1` | `2026-11-22T04:05:07.189Z` | `xerj-org/xerj` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9893` | Yes (`3360cd51...`) |
 | `CYCLE-20261122-7LN1` | `2026-11-22T04:29:01.645Z` | `NousResearch/Arete-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nousresearch-arete-27b-learnings.md` | Yes (`06ca667a...`) |
 | `CYCLE-20261122-7N6O` | `2026-11-22T04:29:03.648Z` | `nezhahq/nezha` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9894` | Yes (`a8c23559...`) |
+| `CYCLE-20261122-KD4Z` | `2026-11-22T04:38:57.155Z` | `PrunaAI/P-Image-OSS` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-prunaai-p-h3-image-learnings.md` | Yes (`cb5546f0...`) |
+| `CYCLE-20261122-KIZW` | `2026-11-22T04:39:04.748Z` | `lioensky/VCPToolBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9895` | Yes (`6c2cdba6...`) |
+| `CYCLE-2026-11-22-PROJ-EVOLVE` | `2026-11-22T04:39:42.430Z` | `hf-prunaai-p-h3-image` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-03750A38` [Domain D] | Yes (`292e8454...`) |
