@@ -82,8 +82,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-22T22:37:29.303Z",
-    "lastVerified": "2026-11-22T22:37:29.303Z",
+    "lastChecked": "2026-11-22T22:49:36.965Z",
+    "lastVerified": "2026-11-22T22:49:36.965Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -177,8 +177,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-22T22:06:30.565Z",
-    "lastVerified": "2026-11-22T22:06:30.565Z",
+    "lastChecked": "2026-11-22T22:49:36.953Z",
+    "lastVerified": "2026-11-22T22:49:36.953Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -987,9 +987,9 @@
   "influxdata-influxdb": {
     "name": "influxdb",
     "officialUrl": "https://github.com/influxdata/influxdb",
-    "lastChecked": "2026-11-21T22:48:30.698Z",
+    "lastChecked": "2026-11-22T22:49:34.544Z",
     "revisionIdentifier": "185688a5",
-    "lastVerified": "2026-11-21T22:48:30.698Z"
+    "lastVerified": "2026-11-22T22:49:34.544Z"
   },
   "eclipse-theia-theia": {
     "name": "eclipse-theia/theia",
@@ -2265,8 +2265,8 @@
     "officialUrl": "https://github.com/mitmproxy/mitmproxy",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-22T18:12:28.834Z",
-    "lastVerified": "2026-11-22T18:12:28.834Z",
+    "lastChecked": "2026-11-22T22:49:31.966Z",
+    "lastVerified": "2026-11-22T22:49:31.966Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mitmproxy-mitmproxy",
@@ -2300,14 +2300,14 @@
     "officialUrl": "https://github.com/fallow-rs/fallow",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-21T15:48:43.951Z",
-    "lastVerified": "2026-11-21T15:48:43.951Z",
+    "lastChecked": "2026-11-22T22:49:26.778Z",
+    "lastVerified": "2026-11-22T22:49:26.778Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-fallow-rs-fallow",
-    "contentHash": "de002ed2640e98ef18cf29629cf43a0b21be4fc8fe36cdd0e57b45892de9fe60",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 24,
+    "contentHash": "fd1618c791cee11374a4eca9ae6cc3e265d19970e13bbd75c32a0da52781ed09",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 29,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2937,9 +2937,9 @@
   "litmuschaos-litmus": {
     "name": "litmus",
     "officialUrl": "https://github.com/litmuschaos/litmus",
-    "lastChecked": "2026-11-21T23:55:35.382Z",
+    "lastChecked": "2026-11-22T22:49:29.531Z",
     "revisionIdentifier": "97a397fb",
-    "lastVerified": "2026-11-21T23:55:35.382Z"
+    "lastVerified": "2026-11-22T22:49:29.531Z"
   },
   "pingcap-autoflow": {
     "name": "autoflow",
@@ -3102,12 +3102,12 @@
     "officialUrl": "https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-18T15:42:51.432Z",
-    "lastVerified": "2026-11-18T15:42:51.432Z",
+    "lastChecked": "2026-11-22T22:49:24.509Z",
+    "lastVerified": "2026-11-22T22:49:24.509Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
-    "contentHash": "cc3fcea5fecbd7dc5c382ab5178af05b652dae580364e74b8221d81ce5fc037e",
+    "contentHash": "37dd007266816de8620d7e66e644e1a58920a499f1687710435ce0746dc4b90a",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -9371,12 +9371,12 @@
     "lastVerified": "2026-11-20T00:06:27.593Z"
   },
   "vinceglb-filekit": {
-    "name": "vinceglb/FileKit",
+    "name": "FileKit",
     "officialUrl": "https://github.com/vinceglb/FileKit",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-20T00:06:35.027Z",
-    "lastVerified": "2026-11-20T00:06:35.027Z",
+    "lastChecked": "2026-11-22T22:49:27.008Z",
+    "lastVerified": "2026-11-22T22:49:27.008Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-vinceglb-filekit",
@@ -9385,7 +9385,8 @@
     "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "b1f3c7f0"
   },
   "turbopress-x-seo-auditing-software": {
     "name": "seo-auditing-software",

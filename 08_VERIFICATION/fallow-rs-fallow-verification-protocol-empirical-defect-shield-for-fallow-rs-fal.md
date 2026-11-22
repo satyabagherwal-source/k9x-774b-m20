@@ -4,22 +4,22 @@
 {
   "source_repository": "fallow-rs/fallow",
   "source_url": "https://github.com/fallow-rs/fallow",
-  "source_version": "ad1c3d5b",
+  "source_version": "a01bf36e",
   "license": "MIT",
-  "timestamp": "2026-11-21T15:49:15.431Z",
+  "timestamp": "2026-11-22T22:49:27.585Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-fallow-rs-fallow",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [fallow-rs/fallow](https://github.com/fallow-rs/fallow) (Revision: `ad1c3d5b`).  
-> **License**: MIT | **Timestamp**: `2026-11-21T15:49:15.431Z`  
+> **Provenance**: Harvested from [fallow-rs/fallow](https://github.com/fallow-rs/fallow) (Revision: `a01bf36e`).  
+> **License**: MIT | **Timestamp**: `2026-11-22T22:49:27.585Z`  
 > **Learning ID**: `learn-github-fallow-rs-fallow`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `fallow-rs/fallow` (Commit: `ad1c3d5b`)
+- **Target Repository**: `fallow-rs/fallow` (Commit: `a01bf36e`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/fallow-rs/fallow](https://github.com/fallow-rs/fallow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T15:48:43.951Z  
+> **Harvest Timestamp**: 2026-11-22T22:49:26.778Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -570,11 +570,11 @@ export const serveOverlay = (overlayPath) => {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4986** (2026-11-21): **includeEntryExports misses exports that an entry file re-exports with export ***
-  *Symptoms*: ## Problem  With `includeEntryExports: true`, fallow does not report an unused export that a package entry file re-exports with `export * from`. The same export is reported when the entry file re-exports it by name.  A maintainer of a large public pnpm monorepo found this during a review of the fallow gate. The entry file of its contracts package has 77 `export *` lines, so most exports of that package have no unused-export check.  Measured on fallow 3.45.0.  ## Reproduction  ``` package.json                  {"name":"root","private":true,"workspaces":["packages/*"]} packages/lib/package.json     {"name":"@p/lib","private":true,"exports":{".":"./src/index.ts"}} packages/lib/src/index.ts     export * from "./a.ts"; packages/lib/src/a.ts         export const used = 1;                               export const unusedStar = () => 2; packages/app/package.json     {"name":"@p/app","private":true,"main":"src/main.ts","dependencies":{"@p/lib":"workspace:*"}} packages/app/src/main.ts      import { used } from "@p/lib"; console.log(used); .fallowrc.json                {"workspaces":{"settings":{"packages/*":{"includeEntryExports":true}}}} ```  `fallow dead-code --unused-exports` reports nothing. The root-level `"includeEntryExports": true` gives the same result.  Change `index.ts` to `export { used, unusedStar } from "./a.ts";` and fallow reports `unusedStar (re-export)`.  ## Expected  With `includeEntryExports: true`, each name that an entry file exposes needs a consumer, also a name
+- **Issue #5024** (2026-11-22): **security --gate new passes a .server import that a change adds to a transitive module**
+  *Symptoms*: `fallow security --gate new` passes when a change adds a `.server` import to an existing module that a route imports. The candidate points at the route module, and the added import is only an `intermediate` hop of the trace. #4881 fixed the direct case in v3.46.0. This case comes from a comment on #4881 that arrived after the close.  ## Reproduction (fallow 3.46.0)  ```sh mkdir rr-server-only-repro && cd rr-server-only-repro && mkdir -p app/routes app/components app/utils cat > package.json <<'JSON' { "name": "rr-server-only-repro", "private": true, "type": "module",   "dependencies": { "react": "^19.0.0", "react-router": "^7.0.0" },   "devDependencies": { "@react-router/dev": "^7.0.0" } } JSON printf "import { index, type RouteConfig } from '@react-router/dev/routes'\n\nexport default [index('routes/home.tsx')] satisfies RouteConfig\n" > app/routes.ts printf "import { Outlet } from 'react-router'\n\nexport default function App() {\n\treturn <Outlet />\n}\n" > app/root.tsx printf "export function getConfig() {\n\treturn { region: 'nz' }\n}\n" > app/utils/config.server.ts printf "export function Banner() {\n\treturn <p>Banner</p>\n}\n" > app/components/banner.tsx printf "import { Banner } from '../components/banner'\n\nexport default function Home() {\n\treturn <Banner />\n}\n" > app/routes/home.tsx git init -q -b main && git add -A && git commit -qm base && git checkout -q -b change printf "import { getConfig } from '../utils/config.server'\n\nexport function Banner() {\n\tre
 
-- **Issue #4963** (2026-11-21): **fix: removing an unused enum member can change the value of a kept member**
-  *Symptoms*: ## Problem  `fallow fix` removes each unused enum member. When a kept member after the removed member has no initializer, its value counts on from the member before it. The removal then changes the runtime value of the kept member, and no compile error shows it.  ```ts export enum Level {   Low,      // unused, removed by `fallow fix`   Medium,   // was 1, becomes 0   High,     // was 2, becomes 1 } ```  A value that a program stores, sends or compares as a number then changes meaning. `fallow fix` has had this behavior since the enum member fixer exists. The edit rule of the fixer is now built from syntax spans, so the case is easy to detect: the engine index marks a member whose deletion changes the next value (`MemberSpan::deletion_keeps_values` in `crates/engine/src/source_edits.rs`).  The `suggestion` blocks of the GitHub and GitLab review comments already refuse this case.  ## Decision needed  Which behavior should `fallow fix` have for a member whose removal shifts a kept value?  - A: keep the member and report it with a `skip_reason`. This is safe, but it adds a value to the fix JSON contract, and many enum fixes of numeric enums stop. - B: keep the member and write no record, as for an edit that the index refuses. This is safe and needs no contract change, but the finding stays in each report without an explanation. - C: keep the current behavior and document it.  ## Where  - `crates/cli/src/fix/enum_members.rs`: `enum_member_edits` - `crates/engine/src/source_edits.
+- **Issue #5007** (2026-11-21): **viz: --output-file writes an empty file and the map goes to fallow-viz.html**
+  *Symptoms*: ## Problem  `fallow viz` accepts the global `--output-file` flag, but the flag does not set the map path. The command writes an empty file at the given path and writes the HTML map to the default `fallow-viz.html` in the project root. The exit code is 0. The flag that sets the map path is `--out`.  A user who expects `--output-file` to work like in the other commands gets an empty file and no error.  ## Reproduction (fallow 3.43.2)  ```bash mkdir -p p/src && cd p echo 'export const a = 1;' > src/index.ts echo '{"name":"p","main":"src/index.ts"}' > package.json fallow viz --no-open --output-file out.html ls -la *.html ```  Result:  ``` fallow-viz.html   (the map) out.html          (0 bytes) ```  ## Expected  One of these:  - `fallow viz` treats `--output-file` as `--out`, or - `fallow viz` rejects `--output-file` with exit 2 and names `--out`.  ## Notes  The empty file comes from the global report writer: `viz` prints no report on stdout, so the writer writes nothing to the file. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -591,810 +591,1309 @@ export const serveOverlay = (overlayPath) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cdac7ade` (2026-11-21)
-**Commit Message**: test: give test fixtures one git command builder and strict harness helpers (#4997)
+### Incident Patch 1: `f614bba7` (2026-11-22)
+**Commit Message**: fix(vscode): keep a verified binary through a failed upgrade and confirm a fix before saving (#5051)
 
-* refactor(engine): add one git command builder for test fixtures
+* fix(vscode): keep a verified binary through a failed upgrade and confirm a fix before saving
 
-The new git_fixture module builds a git command that removes the ambient repository variables, ignores the global and system config, and uses a fixed identity. The module exists only for tests and for the testing feature.
+A managed upgrade that could not replace the binary, for example because a
+sibling window on Windows runs the old fallow-lsp, deleted the signature and
+target marker of the old binary. The next start then removed that binary as
+untrusted. The installer now moves the old sidecars aside and puts them back
+when the upgrade fails.
 
-Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
+The startup cleanup of crashed downloads removed the temp files of every other
+process, also of a window whose download still ran. It now removes only the
+temp files of a process that no longer runs.
 
-* refactor(api): re-export the git fixture module for test crates
-
-The LSP and MCP crates do not depend on the engine. Their tests take the fixture git commands from fallow-api.
-
-Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
-
-* test(cli): build harness git commands with the engine fixture module
-
-The CLI test harness keeps the names git, git_capture and git_command. Each one calls the engine fixture module.
-
-Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
-
-* test(api): build integration fixtures with the isolated git command
-
-The old helper read the global git config. A global hooks path or commit signing then reached the fixture commits and made the tests fail.
+Fallow: Fix saved all editors before it asked for confirmation, ignored a
+failed save, and restarted the language server also after a No. The command
+now saves after the confirmation, stops when a file cannot be saved, and
+refreshes only after a fix run.
 
 Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
 
-* test(api): use the isolated git command
+* fix(vscode): back up sidecars by copy and keep files of a running install
 
-**File**: `crates/api/src/audit_run/tests.rs` (modified, +1/-22)
+The installer now copies each old sidecar before it publishes the new one.
+A process t
+
+**File**: `changelog.d/fix-vscode-upgrade-and-fix-command.md` (added, +5/-0)
 ```diff
-@@ -1,6 +1,5 @@
- use std::fs;
- use std::path::{Path, PathBuf};
--use std::process::Command;
- 
- use fallow_types::output_dead_code::{UnusedDependencyFinding, UnusedExportFinding};
- use fallow_types::results::{DependencyLocation, UnusedDependency, UnusedExport};
-@@ -9,27 +8,7 @@ use rustc_hash::FxHashSet;
- use super::base_files::{is_analysis_input, is_non_behavioral_doc, js_ts_tokens_equivalent};
- use super::*;
- 
--fn git(dir: &Path, args: &[&str]) {
--    let output = Command::new("git")
--        .args(args)
--        .current_dir(dir)
--        .env_remove("GIT_DIR")
--        .env_remove("GIT_WORK_TREE")
--        .env("GIT_CONFIG_GLOBAL", "/dev/null")
--        .env("GIT_CONFIG_SYSTEM", "/dev/null")
--        .env("GIT_AUTHOR_NAME", "test")
--        .env("GIT_AUTHOR_EMAIL", "test@test.com")
--        .env("GIT_COMMITTER_NAME", "test")
--        .env("GIT_COMMITTER_EMAIL", "test@test.com")
--        .output()
--        .expect("git command failed");
--    assert!(
--        output.status.success(),
--        "git {:?} failed\nstderr:\n{}",
--        args,
--        String::from_utf8_lossy(&output.stderr)
--    );
--}
-+use fallow_engine::git_fixture::fixture_git as git;
- 
- /// A git repository with one commit that holds `README.md` = `seed\n`.
- fn seeded_repo(parent: &Path) -> PathBuf {
+@@ -0,0 +1,5 @@
++### Fixed
++
++- **A failed upgrade of the VS Code managed binary keeps the installed binary usable.** On Windows, a sibling window that runs the old `fallow-lsp` locks the file, so the new binary cannot replace it. The extension then deleted the signature and target marker of the old binary, and the next start removed that binary as untrusted. The extension now puts the old signature and target marker back.
++- **A second VS Code window no longer deletes the download of the first window.** Each window removes the temp files of crashed downloads when it starts. It removed the temp files of every other process, also of a window whose download still ran, and that download then failed its signature check. The extension now removes only the temp files of a process that no longer runs.
++- **`Fallow: Fix` saves and refreshes only after you confirm.** The command saved all dirty editors before it asked for confirmation, and it restarted the language server and ran a new analysis also after you answered No. The command now saves after the confirmation, applies no fix when a file cannot be saved, and refreshes only after a fix run.
 ```
 
-**File**: `crates/api/src/lib.rs` (modified, +4/-0)
+**File**: `editors/vscode/src/commands.ts` (modified, +37/-1)
 ```diff
-@@ -144,6 +144,10 @@ pub use fallow_engine::change_scope::{
-     ChangeScope, ChangeScopeOwner, ChangeScopeRequest, first_package_baselines,
-     package_baseline_statuses,
+@@ -643,6 +643,23 @@ const confirmApplyFixes = async (): Promise<boolean> => {
+   return confirm === "Yes";
  };
-+/// Git commands for test fixtures. The LSP and MCP crates do not depend on
-+/// the engine, so their tests take the commands from here.
-+#[cfg(any(test, feature = "testing"))]
-+pub use fallow_engine::git_fixture;
- /// Engine-owned per-workspace Git baseline state used by analysis surfaces.
- pub use fallow_engine::package_baselines::{PackageBaselineError, PackageChangeScope};
- /// Byte spans of the export statements of a file, for a surface that edits
-```
-
-**File**: `crates/api/src/list_runtime.rs` (modified, +1/-9)
-```diff
-@@ -648,7 +648,6 @@ fn logical_group_info_to_output(group: &LogicalGroupInfo) -> BoundariesListLogic
  
- #[cfg(test)]
- mod tests {
--    use std::process::Command;
- 
-     use fallow_config::ResolvedZone;
-     use fallow_types::discover::FileId;
-@@ -725,14 +724,7 @@ mod tests {
-             .collect()
-     }
- 
--    fn git(project: &Path, args: &[&str]) {
--        let status = fallow_engine::changed_files::clear_ambient_git_env(&mut Command::new("git"))
--            .args(args)
--            .current_dir(project)
--            .status()
--            .expect("git command should run");
--        assert!(status.success(), "git {args:?} failed");
--    }
-+    use fallow_engine::git_fixture::fixture_git as git;
- 
-     fn setup_changed_boundary_project() -> tempfile::TempDir {
-         let project = tempfile::tempdir().expect("project");
-```
-
-**File**: `crates/api/src/mutation/e2e_tests.rs` (modified, +2/-11)
-```diff
-@@ -1,20 +1,12 @@
- use std::fs;
--use std::process::Command;
- 
--use fallow_engine::changed_files::clear_ambient_git_env;
- use std::path::{Path, PathBuf};
- use std::time::Duration;
- 
- use crate::mutation::{MutationRunOptions, MutationRunScope};
- use crate::{AnalysisOptions, plan_mutation, run_mutation};
- 
--fn git(root: &Path, args: &[&str]) {
--    let mut command = Command::new("git");
--    command.args(args).current_dir(root);
--    clear_ambient_git_env(&mut command);
--    let output = command.output().expect("git runs");
--    assert!(output.status.success(), "git {args:?}: {output:?}");
--}
-+use fallow_engine::git_fixture::fixture_git as git;
- 
- fn commit_all(root: &Path) {
-     git(root, &["init", "-q"]);
-@@ -436,9 +428,8 @@ fn the_last_report_is_saved_in_the_ignored_cache() {
-     let saved: serde_json::Value =
-         serde_json::from_slice(&fs::read(&path).expect("read")).expect("json");
-     assert_eq!(saved["kind"], "mutation");
--    let status = Command::new("git")
-+    let status = fallow_engine::git_fixture::fixture_git_command(project.path())
-         .args(["status", "--porcelain", "--untracked-files=all"])
--        .current_dir(project.path())
-         .output()
-         .expect("git status");
-     assert_eq!(
-```
-
-**File**: `crates/api/src/mutation/worktree.rs` (modified, +1/-10)
-```diff
-@@ -255,19 +255,10 @@ pub fn snapshot(
- 
- #[cfg(test)]
- mod tests {
--    use std::process::Command;
--
--    use fallow_engine::changed_files::clear_ambient_git_env;
- 
-     use super::*;
- 
--    fn git(root: &Path, args: &[&str]) {
--        let mut command = Command::new("git");
--        command.args(args).current_dir(root);
--        clear_ambient_git_env(&mut command);
--        let output = command.output().expect("git runs");
--        assert!(output.status.success(), "git {args:?}: {output:?}");
--    }
-+    use fallow_engine::git_fixture::fixture_git as git;
- 
-     fn repo() -> tempfile::TempDir {
-         let dir = tempfile::tempdir().expect("dir");
-```
-
-**File**: `crates/api/src/runtime/audit.rs` (modified, +2/-11)
-```diff
-@@ -986,7 +986,6 @@ mod orphaned_tests;
- 
- #[cfg(test)]
- mod tests {
--    use std::process::Command;
- 
-     use fallow_config::{AuditGate, FallowConfig, HealthConfig};
-     use fallow_types::output_format::OutputFormat;
-@@ -1667,14 +1666,7 @@ mod tests {
-         project
-     }
- 
--    fn git(root: &Path, args: &[&str]) {
--        let status = fallow_engine::changed_files::clear_ambient_git_env(&mut Command::new("git"))
--            .args(args)
--            .current_dir(root)
--            .status()
--            .expect("git command");
--        assert!(status.success(), "git {args:?} failed");
--    }
-+    use fallow_engine::git_fixture::fixture_git as git;
- 
-     /// #2699: the auto-detect fallthrough gets the same ref validation as the
-     /// explicit and environment paths, so a malformed detection surfaces as a
-@@ -1731,9 +1723,8 @@ mod tests {
-     }
- 
-     fn registered_worktree_count(root: &Path) -> usize {
--        let output = fallow_engine::changed_files::clear_ambient_git_env(&mut Command::new("git"))
-+        let output = fallow_engine::git_fixture::fixture_git_command(root)
-             .args(["worktree", "list", "--porcelain"])
--            .current_dir(root)
-             .output()
-             .expect("git worktree list");
-         assert!(output.status.success(), "git worktree list failed");
-```
-
-**File**: `crates/api/src/runtime/audit_orphaned_tests.rs` (modified, +1/-9)
-```diff
-@@ -2,21 +2,13 @@
- //! changed files, as `fallow audit --gate new-only` does.
- 
- use std::path::Path;
--use std::process::Command;
- 
- use fallow_config::AuditGate;
- 
- use super::run_audit;
- use crate::{AnalysisOptions, AuditOptions, AuditVerdict};
- 
--fn git(root: &Path, args: &[&str]) {
--    let status = fallow_engine::changed_files::clear_ambient_git_env(&mut Command::new("git"))
--        .args(args)
--        .current_dir(root)
--        .status()
--        .expect("git command");
--    assert!(status.success(), "git {args:?} failed");
--}
-+use fallow_engine::git_fixture::fixture_git as git;
- 
- fn commit(root: &Path) {
-     git(root, &["add", "."]);
-```
-
-**File**: `crates/api/src/runtime/decision_surface.rs` (modified, +1/-8)
-```diff
-@@ -556,12 +556,5 @@ mod tests {
-         );
-     }
- 
--    fn git(root: &Path, args: &[&str]) {
--        let status = fallow_engine::changed_files::clear_ambient_git_env(&mut Command::new("git"))
--            .args(args)
--            .current_dir(root)
--            .status()
--            .expect("git command");
--        assert!(status.success(), "git {args:?} failed");
--    }
-+    use fallow_engine::git_fixture::fixture_git as git;
- }
-```
-
----
-
-### Incident Patch 2: `ab098ba2` (2026-11-21)
-**Commit Message**: fix(ci): offer a suggestion block only for an edit that the parser confirms (#4962)
-
-* fix(ci): offer a suggestion block only for an edit that the parser confirms
-
-The `suggestion` blocks of the GitHub and GitLab review comments used a line rule. They turned a re-export into `{ a } from './x'` and `export default thing;` into `thing;`, deleted only the first line of a method over several lines, and deleted two enum members when one was unused.
-
-The engine index now also gives the span of each class element and enum member. The export and member suggestions parse the file and give a block only when the one-line edit changes exactly the statement or the member of the finding. In each other case the comment keeps its text without a block.
-
-Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
-
-* docs(ci): describe the parser-checked suggestion blocks in the changelog
-
-Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
-
-* fix(ci): offer a member deletion only when the other members keep their text
-
-A deleted class member could join its neighbours when the member above has no semicolon, as in `count = 0` followed by `[Symbol.iterator]() {}`. A deleted enum member shifted the value of the n
-
-**File**: `changelog.d/ci-suggestion-from-syntax.md` (added, +3/-0)
-```diff
-@@ -0,0 +1,3 @@
-+### Fixed
-+
-+- **GitHub and GitLab review comments no longer offer an unsafe `suggestion` block.** The block that removes an unused export or deletes an unused member used a line rule. It turned `export { a } from './x'` into `{ a } from './x'` and `export default thing;` into `thing;`, deleted only the first line of a method over several lines, and deleted two enum members when one was unused. A delete block for an enum member could also change the value of the next member, and a delete block for a class member could join the members around it when a semicolon was missing. The block is now offered only when the parser confirms that the one-line edit changes exactly the export or the member of the finding. In each other case the comment keeps its text and its fix intent, without a `suggestion` block.
-```
-
-**File**: `crates/cli/src/report/ci/suggestion.rs` (modified, +235/-50)
-```diff
-@@ -1,5 +1,6 @@
--use std::path::PathBuf;
-+use std::path::{Path, PathBuf};
- 
-+use fallow_engine::source_edits::SourceEditIndex;
- use fallow_output::{CiIssue, CiProvider as Provider};
- use fallow_types::output_dead_code::description_carries_caveat;
- 
-@@ -19,10 +20,13 @@ pub fn suggestion_block(provider: Provider, issue: &CiIssue) -> Option<String> {
-     let Some(source) = std::fs::read_to_string(path).ok() else {
-         return (!block.is_empty()).then_some(block);
-     };
--    let Some(line) = source.lines().nth(issue.line.saturating_sub(1) as usize) else {
--        return (!block.is_empty()).then_some(block);
--    };
--    if let Some(suggestion) = suggestion_or_withheld_hint(provider, issue, line) {
-+    if let Some(suggestion) = suggestion_or_withheld_hint(
-+        provider,
-+        issue,
-+        Path::new(&issue.path),
-+        &source,
-+        u32::try_from(issue.line).unwrap_or(u32::MAX),
-+    ) {
-         block.push_str(&suggestion);
-     }
-     (!block.is_empty()).then_some(block)
-@@ -37,8 +41,14 @@ pub fn suggestion_block(provider: Provider, issue: &CiIssue) -> Option<String> {
- /// announcing a withheld one-click fix there would invent a fix that never
- /// existed, which is the same overclaiming in the other direction.
- #[must_use]
--fn suggestion_or_withheld_hint(provider: Provider, issue: &CiIssue, line: &str) -> Option<String> {
--    let suggestion = suggestion_block_for_issue_line(provider, &issue.rule_id, line)?;
-+fn suggestion_or_withheld_hint(
-+    provider: Provider,
-+    issue: &CiIssue,
-+    path: &Path,
-+    source: &str,
-+    line: u32,
-+) -> Option<String> {
-+    let suggestion = suggestion_block_for_issue_line(provider, &issue.rule_id, path, source, line)?;
-     Some(if description_carries_caveat(&issue.description) {
-         withheld_suggestion_hint()
-     } else {
-@@ -65,22 +75,127 @@ fn fix_intent_block(intent: &str) -> String {
-     format!("\n\n**Fix:** {intent}")
- }
- 
-+/// The `suggestion` block for the finding of `rule_id` on the 1-based `line`
-+/// of the file at `path` with the text `source`.
-+///
-+/// The export and member rules parse the file. They give a block only when
-+/// the parser confirms that the edit of the one line changes exactly the
-+/// statement or the member of the finding.
- #[must_use]
- pub fn suggestion_block_for_issue_line(
-     provider: Provider,
-     rule_id: &str,
--    line: &str,
-+    path: &Path,
-+    source: &str,
-+    line: u32,
- ) -> Option<String> {
-+    let line_text = source.lines().nth(line.checked_sub(1)? as usize)?;
-     if rule_id.contains("unused-import") {
--        return unused_import_suggestion(provider, line);
-+        return unused_import_suggestion(provider, line_text);
-+    }
-+    let is_member_rule =
-+        rule_id.contains("unused-enum-member") || rule_id.contains("unused-class-member");
-+    let is_export_rule = rule_id.contains("unused-export") || rule_id.contains("unused-type");
-+    if !is_member_rule && !is_export_rule {
-+        return None;
-     }
--    if rule_id.contains("unused-enum-member") || rule_id.contains("unused-class-member") {
--        return delete_line_suggestion(provider, line);
-+    let index = SourceEditIndex::parse(path, source)?;
-+    let line_start = line_start(source, line)?;
-+    if is_member_rule {
-+        let deletable = member_line_is_deletable(&index, source, line, line_start, line_text)
-+            && deletion_keeps_other_members(path, &index, source, line_start, line_text);
-+        return deletable.then(|| delete_line_suggestion(provider));
-+    }
-+    let fixed = unused_export_line(&index, line, line_start, line_text)?;
-+    Some(match provider {
-+        Provider::Github => format!("\n\n```suggestion\n{fixed}\n```"),
-+        Provider::Gitlab => format!("\n\n```suggestion:-0+0\n{fixed}\n```"),
-+    })
-+}
-+
-+/// The byte offset of the start of the 1-based `line` of `source`.
-+fn line_start(source: &str, line: u32) -> Option<usize> {
-+    let index = line.checked_sub(1)? as usize;
-+    if index == 0 {
-+        return Some(0);
-+    }
-+    source
-+        .match_indices('\n')
-+        .nth(index - 1)
-+        .map(|(offset, _)| offset + 1)
-+}
-+
-+/// The text of `line` without the `export` of its one statement, when the
-+/// line holds one complete edit: one export statement starts at the line
-+/// start, no other statement covers the line, the statement exports one
-+/// name, and its keyword edit ends on the line.
-+fn unused_export_line<'a>(
-+    index: &SourceEditIndex,
-+    line: u32,
-+    line_start: usize,
-+    line_text: &'a str,
-+) -> Option<&'a str> {
-+    let mut on_line = index.export_statements_on_line(line);
-+    let (Some(statement), None) = (on_line.next(), on_line.next()) else {
-+        return None;
-+    };
-+    let line_idx = line.saturating_sub(1) as usize;
-+    let covered_by_another = index.statements().iter().any(|other| {
-+        let (first, last) = index.line_range(other.start, other.end);
-+        other.start != statement.start && (first..=last).contains(&line_idx
-```
-
-**File**: `crates/cli/src/report/ci/suggestion_syntax_tests.rs` (added, +120/-0)
-```diff
-@@ -0,0 +1,120 @@
-+use super::*;
-+
-+const EXPORT: &str = "fallow/unused-export";
-+const ENUM_MEMBER: &str = "fallow/unused-enum-member";
-+const CLASS_MEMBER: &str = "fallow/unused-class-member";
-+const DELETE_GITHUB: &str = "\n\n```suggestion\n\n```";
-+
-+/// The suggestion for the finding of `rule_id` on the 1-based `line` of a
-+/// file `src/dead.ts` with `source`.
-+fn suggest(provider: Provider, rule_id: &str, source: &str, line: u32) -> Option<String> {
-+    suggestion_block_for_issue_line(provider, rule_id, Path::new("src/dead.ts"), source, line)
-+}
-+
-+#[test]
-+fn no_suggestion_for_a_re_export() {
-+    for provider in [Provider::Github, Provider::Gitlab] {
-+        assert_eq!(
-+            suggest(provider, EXPORT, "export { a } from './x';\n", 1),
-+            None
-+        );
-+    }
-+}
-+
-+#[test]
-+fn no_suggestion_for_a_method_over_several_lines() {
-+    let source = "class C {\n  legacy() {\n    return null;\n  }\n}\n";
-+    assert_eq!(suggest(Provider::Github, CLASS_MEMBER, source, 2), None);
-+    let one_line = "class C {\n  legacy() { return null; }\n}\n";
-+    assert_eq!(
-+        suggest(Provider::Github, CLASS_MEMBER, one_line, 2).as_deref(),
-+        Some(DELETE_GITHUB)
-+    );
-+}
-+
-+#[test]
-+fn no_suggestion_for_a_default_export_without_a_name() {
-+    for source in ["export default function () {}\n", "export default thing;\n"] {
-+        assert_eq!(
-+            suggest(Provider::Github, EXPORT, source, 1),
-+            None,
-+            "{source}"
-+        );
-+    }
-+}
-+
-+#[test]
-+fn no_suggestion_for_a_line_with_two_enum_members() {
-+    let source = "enum E {\n  A, B,\n  C\n}\n";
-+    assert_eq!(suggest(Provider::Github, ENUM_MEMBER, source, 2), None);
-+    assert_eq!(
-+        suggest(Provider::Github, ENUM_MEMBER, source, 3).as_deref(),
-+        Some(DELETE_GITHUB)
-+    );
-+}
-+
-+#[test]
-+fn no_suggestion_for_a_line_with_two_exports() {
-+    for source in [
-+        "export const a = 1; export const b = 2;\n",
-+        "export const a = 1, b = 2;\n",
-+        "export const a = 1;\nconst = ;\n",
-+    ] {
-+        assert_eq!(
-+            suggest(Provider::Github, EXPORT, source, 1),
-+            None,
-+            "{source}"
-+        );
-+    }
-+}
-+
-+#[test]
-+fn no_suggestion_when_the_deletion_joins_two_class_members() {
-+    for source in [
-+        "class C {\n  count = 0\n  legacy() {}\n  [Symbol.iterator]() {}\n}\n",
-+        "class C {\n  a = 1\n  legacy() {}\n  [b] = 2\n}\n",
-+    ] {
-+        assert_eq!(
-+            suggest(Provider::Github, CLASS_MEMBER, source, 3),
-+            None,
-+            "{source}"
-+        );
-+    }
-+    let with_semicolons = "class C {\n  count = 0;\n  legacy() {}\n  [Symbol.iterator]() {}\n}\n";
-+    assert_eq!(
-+        suggest(Provider::Github, CLASS_MEMBER, with_semicolons, 3).as_deref(),
-+        Some(DELETE_GITHUB)
-+    );
-+}
-+
-+#[test]
-+fn no_suggestion_when_the_deletion_shifts_an_enum_value() {
-+    let source = "enum E {\n  A,\n  Deprecated,\n  Kept,\n}\n";
-+    assert_eq!(suggest(Provider::Github, ENUM_MEMBER, source, 3), None);
-+    let explicit = "enum E {\n  A,\n  Deprecated,\n  Kept = 5,\n}\n";
-+    assert_eq!(
-+        suggest(Provider::Github, ENUM_MEMBER, explicit, 3).as_deref(),
-+        Some(DELETE_GITHUB)
-+    );
-+}
-+
-+#[test]
-+fn no_suggestion_for_one_declaration_of_an_overloaded_name() {
-+    let source = "export function f(a: string): void;\nexport function f(a: any) {}\n";
-+    assert_eq!(suggest(Provider::Github, EXPORT, source, 1), None);
-+}
-+
-+#[test]
-+fn no_suggestion_for_an_overloaded_method() {
-+    let source = "class C {\n  m(a: string): void;\n  m(a: number): void;\n  m(a: any) {}\n}\n";
-+    assert_eq!(suggest(Provider::Github, CLASS_MEMBER, source, 4), None);
-+}
-+
-+#[test]
-+fn a_crlf_file_gets_the_same_member_suggestion() {
-+    let source = "class C {\r\n  count = 0;\r\n  legacy() {}\r\n}\r\n";
-+    assert_eq!(
-+        suggest(Provider::Github, CLASS_MEMBER, source, 3).as_deref(),
-+        Some(DELETE_GITHUB)
-+    );
-+}
-```
-
-**File**: `crates/engine/src/source_edits.rs` (modified, +206/-21)
-```diff
-@@ -10,7 +10,10 @@
- 
- use std::path::Path;
- 
--use oxc_ast::ast::{Declaration, ExportDefaultDeclarationKind, Program, Statement};
-+use oxc_ast::ast::{
-+    ClassBody, Declaration, ExportDefaultDeclarationKind, Program, Statement, TSEnumBody,
-+};
-+use oxc_ast_visit::Visit;
- use oxc_span::{GetSpan, SourceType};
- 
- /// One replacement of a byte range of the source text.
-@@ -77,9 +80,27 @@ impl ExportStatement {
-     }
- }
- 
--/// The export statements of one file text.
-+/// One class element or enum member.
-+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-+pub struct MemberSpan {
-+    /// The byte offset of the first byte of the member.
-+    pub start: u32,
-+    /// The byte offset after the last byte of the member.
-+    pub end: u32,
-+    /// False for an enum member whose deletion changes the value of the next
-+    /// member: the next member has no initializer, so its value counts on
-+    /// from this member. Always true for a class element.
-+    pub deletion_keeps_values: bool,
-+    /// True for a class element whose static key another element of the same
-+    /// class also has, such as an overload signature, its implementation, or
-+    /// one half of a getter and setter pair. Always false for an enum member.
-+    pub shares_its_key: bool,
-+}
-+
-+/// The export statements and the class and enum members of one file text.
- pub struct SourceEditIndex {
-     statements: Vec<ExportStatement>,
-+    members: Vec<MemberSpan>,
-     source: String,
-     line_starts: Vec<u32>,
- }
-@@ -95,7 +116,10 @@ impl SourceEditIndex {
-     /// or when a block does not parse without an error.
-     #[must_use]
-     pub fn parse(path: &Path, source: &str) -> Option<Self> {
--        let statements = parse_statements(path, source)?;
-+        let Parsed {
-+            statements,
-+            members,
-+        } = parse_file(path, source)?;
-         let line_starts = std::iter::once(0)
-             .chain(
-                 source
-@@ -105,6 +129,7 @@ impl SourceEditIndex {
-             .collect();
-         Some(Self {
-             statements,
-+            members,
-             source: source.to_owned(),
-             line_starts,
-         })
-@@ -161,6 +186,31 @@ impl SourceEditIndex {
-         &self.statements
-     }
- 
-+    /// The statements whose `export` keyword is on the 1-based `line`.
-+    pub fn export_statements_on_line(&self, line: u32) -> impl Iterator<Item = &ExportStatement> {
-+        let line_idx = line.saturating_sub(1) as usize;
-+        self.statements
-+            .iter()
-+            .filter(move |statement| self.line_of(statement.start) == line_idx)
-+    }
-+
-+    /// The class elements and enum members whose first byte is on the
-+    /// 1-based `line`, at each depth of the file.
-+    pub fn members_on_line(&self, line: u32) -> impl Iterator<Item = &MemberSpan> {
-+        let line_idx = line.saturating_sub(1) as usize;
-+        self.members
-+            .iter()
-+            .filter(move |member| self.line_of(member.start) == line_idx)
-+    }
-+
-+    /// Each class element and enum member of the file. The elements of one
-+    /// class body or enum body are in source order, and each body comes
-+    /// before the members nested inside it.
-+    #[must_use]
-+    pub fn members(&self) -> &[MemberSpan] {
-+        &self.members
-+    }
-+
-     /// The statement whose `export` keyword is at byte `start`.
-     #[must_use]
-     pub fn statement_at(&self, start: u32) -> Option<&ExportStatement> {
-@@ -172,12 +222,16 @@ impl SourceEditIndex {
-     /// The 0-based first and last line of the bytes `start..end`.
-     #[must_use]
-     pub fn line_range(&self, start: u32, end: u32) -> (usize, usize) {
--        let line_of = |offset: u32| {
--            self.line_starts
--                .partition_point(|line_start| *line_start <= offset)
--                .saturating_sub(1)
--        };
--        (line_of(start), line_of(end.saturating_sub(1).max(start)))
-+        (
-+            self.line_of(start),
-+            self.line_of(end.saturating_sub(1).max(start)),
-+        )
-+    }
-+
-+    fn line_of(&self, offset: u32) -> usize {
-+        self.line_starts
-+            .partition_point(|line_start| *line_start <= offset)
-+            .saturating_sub(1)
-     }
- 
-     /// True when no other text shares the lines of `start..end`: only white
-@@ -198,7 +252,14 @@ impl SourceEditIndex {
-     }
- }
- 
--fn parse_statements(path: &Path, source: &str) -> Option<Vec<ExportStatement>> {
-+/// The statements and members of a file or of its script blocks.
-+#[derive(Default)]
-+struct Parsed {
-+    statements: Vec<ExportStatement>,
-+    members: Vec<MemberSpan>,
-+}
-+
-+fn parse_file(path: &Path, source: &str) -> Option<Parsed> {
-     if fallow_extract::is_sfc_file(path) {
-         let scripts = fallow_extract::extract_sfc_scripts(source);
-         return parse_blocks(source, scripts.iter().filter(|script| script.src.is_none()));
-@@ -217,8 +278,8 @@ fn parse_statements(path: &Path, source: &str) -> Option<Vec<ExportStatement>> {
- fn parse_blocks<'a>(
-     file: &str,
-   
-```
-
----
-
-### Incident Patch 3: `ad1c3d5b` (2026-11-21)
-**Commit Message**: fix(security): read every sink call through one canonical call (#4993)
-
-* fix(security): read every sink call through one canonical call
-
-fallow security missed four usual forms of a sink call:
-new Handlebars.SafeString(x), this.sanitizer.bypassSecurityTrustHtml(x),
-$("#p").html(x) and console.log("login", secret). Each sink shape
-flattened its callee in its own way, and a matcher row matched one shape
-and one argument position.
-
-CanonicalCall (crates/extract/src/visitor/canonical_call.rs) now holds
-the receiver chain of a callee with this and call-result segments, the
-form (call or new), and every argument with its kind. The call and new
-sinks, member assignments, tagged templates, security controls and
-framework request sources read callees through it. The method allowlists
-and the second flattener are removed. A call of a method of the class
-itself (this.query(x)) gives no sink site. One receiver chain holds at
-most eight call results, so the work on a fluent chain stays linear.
-
-A matcher row now says which forms it accepts (forms) and which
-arguments it reads (arguments: index, variadic or any-non-literal).
-template-escape-bypass accepts new, and the secret-pii-log rows read
-e
-
-**File**: `changelog.d/fix-security-canonical-call.md` (added, +3/-0)
-```diff
-@@ -0,0 +1,3 @@
-+### Fixed
-+
-+- **`fallow security` reports the usual forms of a sink call.** These calls now give a candidate: `new Handlebars.SafeString(x)` (`template-escape-bypass`), `this.sanitizer.bypassSecurityTrustHtml(x)` (`angular-trusted-html`), `$("#p").html(x)` (`jquery-html`) and `console.log("login", secret)` (`secret-pii-log`). The extractor now reads each call and `new` expression in one way, so a sink behind `this.`, a call result or a local alias gets the same candidate as the plain form. A matcher row now says which call forms it accepts (`forms`) and which arguments it reads (`arguments`). Log rows read every non-literal argument. A call of a member of `this` itself (`this.query(x)`) matches only the rows that set the new `this_receiver` field: the raw SQL methods (`this.$queryRawUnsafe(x)`, `this.whereRaw(x)`) and the markup parsers (`this.insertAdjacentHTML(x)`), as before. A member of a field (`this.db.query(x)`) matches every row. A long fluent chain keeps the candidate of a sink at its end. A member that a destructuring takes from a `require()` binding of a Node.js module (`const { exec } = cp`) now resolves to the module path. Security controls and framework request sources also read callees behind `this.` and call results, so `this.router.get("/", handler)` now marks `req` as request input. Projects can get new candidates, and fewer calls show as unresolved callees. The cache version changes, so the first run after the update parses each file again. (#4940)
-```
-
-**File**: `crates/api/rule-examples/angular-trusted-html/files/src/comment-html.ts` (modified, +7/-2)
-```diff
-@@ -4,5 +4,10 @@ interface Comment {
-   body: string;
- }
- 
--export const trustCommentHtml = (sanitizer: DomSanitizer, comment: Comment): SafeHtml =>
--  sanitizer.bypassSecurityTrustHtml(comment.body);
-+export class CommentHtml {
-+  constructor(private readonly sanitizer: DomSanitizer) {}
-+
-+  trust(comment: Comment): SafeHtml {
-+    return this.sanitizer.bypassSecurityTrustHtml(comment.body);
++/**
++ * Ask for confirmation, then save all editors. The fix reads the files on
++ * disk, so it must not run over unsaved edits.
++ */
++const confirmAndSaveForFix = async (): Promise<boolean> => {
++  if (!(await confirmApplyFixes())) {
++    return false;
 +  }
-+}
-```
-
-**File**: `crates/api/rule-examples/jquery-html/files/src/preview.ts` (modified, +1/-2)
-```diff
-@@ -5,6 +5,5 @@ interface Comment {
- }
- 
- export const showPreview = (comment: Comment): void => {
--  const preview = $("#preview");
--  preview.html(comment.body);
-+  $("#preview").html(comment.body);
++  if (await vscode.workspace.saveAll(false)) {
++    return true;
++  }
++  void vscode.window.showWarningMessage(
++    "Fallow: not all files could be saved. No fixes were applied.",
++  );
++  return false;
++};
++
+ const openFixLocation = async (root: string, fix: FixAction | undefined): Promise<void> => {
+   if (!fix) {
+     return;
+@@ -1092,17 +1109,23 @@ export const runInspectActiveSymbol = async (
+   return runInspectActiveFile(context, outputChannel, symbol);
  };
+ 
++/**
++ * Run `fallow fix`. An apply run asks for confirmation and saves all editors
++ * first. `afterRun` runs once the CLI was started, also when it failed, since
++ * a failed apply run can have changed files before it stopped.
++ */
+ export const runFix = async (
+   context: vscode.ExtensionContext,
+   dryRun: boolean,
++  afterRun?: () => Promise<void>,
+ ): Promise<FallowFixResult | null> => {
+   const root = getWorkspaceRoot();
+   if (!root) {
+     void vscode.window.showWarningMessage("Fallow: no workspace folder open.");
+     return null;
+   }
+ 
+-  if (!dryRun && !(await confirmApplyFixes())) {
++  if (!dryRun && !(await confirmAndSaveForFix())) {
+     return null;
+   }
+ 
+@@ -1141,9 +1164,22 @@ export const runFix = async (
+     const message = err instanceof Error ? err.message : String(err);
+     void vscode.window.showErrorMessage(`Fallow fix failed: ${message}`);
+     return null;
++  } finally {
++    await afterRun?.();
+   }
+ };
+ 
++/**
++ * Apply fixes, then call `refresh` when the CLI ran. A declined confirmation
++ * or a failed save changes no file on disk, so it skips the refresh.
++ */
++export const applyFixes = async (
++  context: vscode.ExtensionContext,
++  refresh: () => Promise<void>,
++): Promise<void> => {
++  await runFix(context, false, refresh);
++};
++
+ /**
+  * Whether the per-session "no workspace folder" warning has already been shown
+  * for the Health view. The Health view re-spawns on every reveal until it
 ```
 
-**File**: `crates/api/rule-examples/secret-pii-log/files/src/server.ts` (modified, +1/-1)
+**File**: `editors/vscode/src/download.ts` (modified, +101/-39)
 ```diff
-@@ -4,7 +4,7 @@ const app = express();
- app.use(express.json());
+@@ -244,16 +244,34 @@ export const httpsDownload = (url: string, dest: string, signal?: AbortSignal):
+ // solely by the download path, so a match is never a valid installed binary.
+ const ORPHAN_TEMP_RE = /^\..+\.(\d+)\.\d+\.tmp(?:\.sig|\.sha256|\.target)?$/;
  
- app.post("/login", (req, res) => {
--  console.log(`login ${req.body.email} ${req.body.password}`);
-+  console.log("login", req.body.email, req.body.password);
-   res.sendStatus(204);
++/**
++ * Whether a process with this pid runs on this host. `kill(pid, 0)` sends no
++ * signal: it fails with ESRCH for a pid that does not exist, and with EPERM for
++ * a process of another user, which still runs. Pid 0 addresses the process
++ * group, so it never names a download. The windows that share one global
++ * storage folder run on one host, so their pids are comparable.
++ */
++const isProcessRunning = (pid: number): boolean => {
++  if (pid <= 0) {
++    return false;
++  }
++  try {
++    process.kill(pid, 0);
++    return true;
++  } catch (err) {
++    return (err as NodeJS.ErrnoException).code === "EPERM";
++  }
++};
++
+ /**
+  * Remove temp files left behind by a download that died (SIGKILL / crash /
+  * reboot) between writing the temp file and renaming it into place. The
+  * try/catch cleanup in `downloadAsset` only runs when the JS runtime reaches it,
+- * so a hard kill leaks the temp permanently. Skip temps tagged with the current
+- * pid: those may be a live in-flight download in this same process (sweeping
+- * runs outside the install lock), and a running pid is never a crash orphan.
++ * so a hard kill leaks the temp permanently. The sweep runs outside the install
++ * lock, so it spares each temp whose owner pid still runs: that temp can be a
++ * live download of this window or of a sibling window.
+  */
+ export const sweepOrphanTempFiles = (dir: string): void => {
+-  const livePid = String(process.pid);
+   let entries: string[];
+   try {
+     entries = fs.readdirSync(dir);
+@@ -263,7 +281,7 @@ export const sweepOrphanTempFiles = (dir: string): void => {
+   }
+   for (const entry of entries) {
+     const match = ORPHAN_TEMP_RE.exec(entry);
+-    if (!match || match[1] === livePid) {
++    if (!match || isProcessRunning(Number(match[1]))) {
+       continue;
+     }
+     try {
+@@ -340,6 +358,12 @@ const isInstallLockStale = (lockPath: string): boolean => {
+   }
+ };
+ 
++/** An install in this window or a sibling window holds a live lock on this folder. */
++const isInstallInProgress = (dir: string): boolean => {
++  const lockPath = getLockPath(dir);
++  return fs.existsSync(lockPath) && !isInstallLockStale(lockPath);
++};
++
+ /**
+  * Run `fn` while holding the cross-process install lock. Waits for a live sibling
+  * to finish, steals a stale or long-overdue lock to guarantee progress, and
+@@ -398,6 +422,39 @@ const publishSidecar = (tempPath: string, finalPath: string): void => {
+   fs.renameSync(tempPath, finalPath);
+ };
+ 
++/**
++ * Copy a published sidecar before an upgrade replaces it. A copy, not a move,
++ * keeps the installed binary verifiable if the process dies before the publish.
++ */
++const backUpSidecar = (finalPath: string, backupPath: string): void => {
++  if (fs.existsSync(finalPath)) {
++    fs.copyFileSync(finalPath, backupPath);
++  }
++};
++
++const readBytes = (filePath: string): Buffer => Buffer.from(fs.readFileSync(filePath));
++
++/**
++ * Undo the publish of one sidecar after the binary failed to land. Without a
++ * backup, no sidecar existed before, so the new one describes a binary that
++ * is not there. A sibling window that installs at the same time (after a
++ * stolen lock) can have published its own sidecar since; that one stays.
++ */
++const restoreSidecar = (backupPath: string, finalPath: string, published: Buffer): void => {
++  try {
++    if (fs.existsSync(finalPath) && !readBytes(finalPath).equals(published)) {
++      return;
++    }
++    if (fs.existsSync(backupPath)) {
++      publishSidecar(backupPath, finalPath);
++    } else if (fs.existsSync(finalPath)) {
++      fs.unlinkSync(finalPath);
++    }
++  } catch {
++    // Best-effort: an untrusted leftover only triggers a fresh download.
++  }
++};
++
+ /**
+  * Atomically move a verified temp binary onto its final path. If the rename fails
+  * because the target is locked (a sibling window's running LSP on Windows) but the
+@@ -426,23 +483,27 @@ const getDigestPath = (binaryPath: string): string => `${binaryPath}${SHA256_SUF
+ 
+ const getTargetPath = (binaryPath: string): string => `${binaryPath}${TARGET_SUFFIX}`;
+ 
+-const purgeManagedBinary = (binaryPath: string): void => {
+-  for (const candidate of [
+-    binaryPath,
+-    getSignaturePath(binaryPath),
+-    getDigestPath(binaryPath),
+-    getTargetPath(binaryPath),
+-  ]) {
++const removeFiles = (paths: string[]): void => {
++  for (const candidate of paths) {
+     try {
+       if (fs.existsSync(candidate)) {
+         fs.unlinkSync(candidate);
+       }
+     } catch {
+-      // Best-effort cleanup.
++      // Best-effort: a leftover temp file matches ORPHAN_TEMP_RE, so the next
++      // orphan cleanup removes it.
+     }
+   }
+ };
+ 
++const purgeManagedBinary = (binaryPath: string): void =>
++  removeFiles([
++    binaryPath,
++    getSignaturePath(b
+```
+
+**File**: `editors/vscode/src/extension.ts` (modified, +9/-10)
+```diff
+@@ -34,6 +34,7 @@ import {
+   type ComplexityToggleTarget,
+ } from "./complexityLens.js";
+ import {
++  applyFixes,
+   runAnalysis,
+   runAudit,
+   runFix,
+@@ -864,16 +865,14 @@ export const activate = async (context: vscode.ExtensionContext): Promise<Extens
+   });
+ 
+   context.subscriptions.push(
+-    vscode.commands.registerCommand("fallow.fix", async () => {
+-      // Save dirty editors first so the fix works on up-to-date content
+-      await vscode.workspace.saveAll(false);
+-      await runFix(context, false);
+-      // Restart LSP to force fresh analysis. The fix modified files on disk
+-      // bypassing VS Code's editor, so did_save never fires for those files
+-      await restartClient(context, outputChannel, diagnosticFilter, onAnalysisComplete);
+-      // Re-run CLI analysis for tree views
+-      cliAnalysisRan = await triggerCliAnalysis({ force: true });
+-    }),
++    vscode.commands.registerCommand("fallow.fix", () =>
++      applyFixes(context, async () => {
++        // Restart LSP to force fresh analysis. The fix modified files on disk
++        // bypassing VS Code's editor, so did_save never fires for those files
++        await restartClient(context, outputChannel, diagnosticFilter, onAnalysisComplete);
++        cliAnalysisRan = await triggerCliAnalysis({ force: true });
++      }),
++    ),
+   );
+ 
+   context.subscriptions.push(
+```
+
+**File**: `editors/vscode/test/commands.test.ts` (modified, +115/-0)
+```diff
+@@ -68,6 +68,7 @@ vi.mock("vscode", () => ({
+   },
+   workspace: {
+     workspaceFolders: undefined,
++    saveAll: vi.fn(async () => true),
+     getWorkspaceFolder: vi.fn((uri: { readonly fsPath: string }) => {
+       const workspace = mockWorkspace as {
+         readonly workspaceFolders:
+@@ -160,6 +161,7 @@ import {
+   runAnalysis,
+   runAudit,
+   runFix,
++  applyFixes,
+   runHealthAnalysis,
+   resetHealthNoWorkspaceWarning,
+   healthInputKey,
+@@ -1149,6 +1151,119 @@ describe("runAudit type-aware compatibility", () => {
+   });
  });
  
-```
-
-**File**: `crates/api/rule-examples/template-escape-bypass/example.json` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+{"hidden":["package.json"]}
-```
-
-**File**: `crates/api/rule-examples/template-escape-bypass/files/package.json` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+{"name":"example","private":true,"main":"src/profile.ts","dependencies":{"handlebars":"^4.0.0"}}
-```
-
-**File**: `crates/api/rule-examples/template-escape-bypass/files/src/profile.ts` (added, +8/-0)
-```diff
-@@ -0,0 +1,8 @@
-+import Handlebars from "handlebars";
++describe("applyFixes", () => {
++  const writeFixScript = async (dir: string, logPath: string): Promise<string> => {
++    const script = join(dir, "fallow-cli.js");
++    await writeFile(
++      script,
++      [
++        "#!/usr/bin/env node",
++        'const fs = require("node:fs");',
++        `fs.appendFileSync(${JSON.stringify(logPath)}, JSON.stringify({ args: process.argv.slice(2) }) + "\\n");`,
++        "process.stdout.write(JSON.stringify({ dry_run: false, fixes: [], total_fixed: 0 }));",
++      ].join("\n"),
++      "utf8",
++    );
++    await chmod(script, 0o755);
++    return script;
++  };
 +
-+interface Profile {
-+  bio: string;
++  const withFixWorkspace = async (body: (logPath: string) => Promise<void>): Promise<void> => {
++    const dir = await mkdtemp(join(tmpdir(), "fallow-vscode-apply-fix-"));
++    const logPath = join(dir, "spawn.log");
++    try {
++      const script = await writeFixScript(dir, logPath);
++      mockPathBinary = script;
++      mockBinaryVersions = { [script]: "3.9.2" };
++      setWorkspaceRoot(dir);
++      await body(logPath);
++    } finally {
++      setWorkspaceRoot(null);
++      await rm(dir, { recursive: true, force: true });
++    }
++  };
++
++  const spawnCount = async (logPath: string): Promise<number> =>
++    (await readFile(logPath, "utf8").catch(() => "")).split("\n").filter(Boolean).length;
++
++  beforeEach(() => {
++    mockLspPath = "";
++    mockLocalBinary = null;
++    mockPathBinary = null;
++    mockInstalledCli = null;
++    mockDownloadedCli = null;
++    mockExtensionVersion = null;
++    mockBinaryVersions = {};
++    mockAutoDownload = false;
++    resetBinarySkewToast();
++    vi.clearAllMocks();
++  });
++
++  it("saves nothing and refreshes nothing when the user declines", async () => {
++    await withFixWorkspace(async (logPath) => {
++      vi.mocked(mockWindow.showWarningMessage).mockResolvedValueOnce("No" as never);
++      const refresh = vi.fn(async () => undefined);
++
++      await applyFixes(workspaceContext, refresh);
++
++      expect(mockWorkspace.saveAll).not.toHaveBeenCalled();
++      expect(await spawnCount(logPath)).toBe(0);
++      expect(refresh).not.toHaveBeenCalled();
++    });
++  });
++
++  it("applies no fix and refreshes nothing when a file cannot be saved", async () => {
++    await withFixWorkspace(async (logPath) => {
++      vi.mocked(mockWindow.showWarningMessage).mockResolvedValueOnce("Yes" as never);
++      vi.mocked(mockWorkspace.saveAll).mockResolvedValueOnce(false);
++      const refresh = vi.fn(async () => undefined);
++
++      await applyFixes(workspaceContext, refresh);
++
++      expect(await spawnCount(logPath)).toBe(0);
++      expect(refresh).not.toHaveBeenCalled();
++      expect(mockWindow.showWarningMessage).toHaveBeenLastCalledWith(
++        "Fallow: not all files could be saved. No fixes were applied.",
++      );
++    });
++  });
++
++  it("refreshes after a fix run that failed, since it can have changed files", async () => {
++    const dir = await mkdtemp(join(tmpdir(), "fallow-vscode-apply-fix-fail-"));
++    try {
++      const script = join(dir, "fallow-cli.js");
++      await writeFile(script, "#!/usr/bin/env node\nprocess.stdout.write('not json');\n", "utf8");
++      await chmod(script, 0o755);
++      mockPathBinary = script;
++      mockBinaryVersions = { [script]: "3.9.2" };
++      setWorkspaceRoot(dir);
++      vi.mocked(mockWindow.showWarningMessage).mockResolvedValueOnce("Yes" as never);
++      const refresh = vi.fn(async () => undefined);
++
++      await applyFixes(workspaceContext, refresh);
++
++      expect(mockWindow.showErrorMessage).toHaveBeenCalledOnce();
++      expect(refresh).toHaveBeenCalledOnce();
++    } finally {
++      setWorkspaceRoot(null);
++      await rm(dir, { recursive: true, force: true });
++    }
++  });
++
++  it("saves, applies the fix, and refreshes after the user confirms", async () => {
++    await withFixWorkspace(async (logPath) => {
++      vi.mocked(mockWindow.showWarningMessage).mockResolvedValueOnce("Yes" as never);
++      const refresh = vi.fn(async () => undefined);
++
++      await applyFixes(workspaceContext, refresh);
++
++      expect(mockWorkspace.saveAll).toHaveBeenCalledWith(false);
++      expect(await spawnCount(logPath)).toBe(1);
++      expect(refresh).toHaveBeenCalledOnce();
++    });
++  });
++});
++
+ describe("runFix type-aware integration", () => {
+   beforeEach(() => {
+     mockLspPath = "";
+```
+
+**File**: `editors/vscode/test/download-libc.test.ts` (modified, +3/-0)
+```diff
+@@ -32,6 +32,9 @@ vi.mock("node:fs", () => ({
+   unlinkSync: (p: string) => {
+     delete mockFiles[p];
+   },
++  copyFileSync: (from: string, to: string) => {
++    mockFiles[to] = mockFiles[from];
++  },
+   renameSync: (from: string, to: string) => {
+     mockFiles[to] = mockFiles[from];
+     delete mockFiles[from];
+```
+
+**File**: `editors/vscode/test/download-release-gap.test.ts` (modified, +3/-0)
+```diff
+@@ -29,6 +29,9 @@ vi.mock("node:fs", () => ({
+   unlinkSync: (p: string) => {
+     delete mockFiles[p];
+   },
++  copyFileSync: (from: string, to: string) => {
++    mockFiles[to] = mockFiles[from];
++  },
+   renameSync: (from: string, to: string) => {
+     mockFiles[to] = mockFiles[from];
+     delete mockFiles[from];
+```
+
+**File**: `editors/vscode/test/download-upgrade.test.ts` (added, +278/-0)
+```diff
+@@ -0,0 +1,278 @@
++import { EventEmitter } from "node:events";
++import * as path from "node:path";
++import { beforeEach, describe, expect, it, vi } from "vitest";
++
++// A rename onto a locked path fails, as on Windows when a running process
++// holds the binary open. An upgrade that cannot replace the binary must leave
++// the installed binary and its verification data intact.
++
++let files: Record<string, string | Buffer> = {};
++let lockedPaths = new Set<string>();
++// Runs when a rename onto a locked path fails, to model a sibling window.
++let onLockedRename: () => void = () => {};
++let servedSignature = "";
++
++const errno = (code: string): NodeJS.ErrnoException =>
++  Object.assign(new Error(code), { code }) as NodeJS.ErrnoException;
++
++vi.mock("node:os", async (importOriginal) => ({
++  ...(await importOriginal<typeof import("node:os")>()),
++  platform: () => "linux",
++  arch: () => "x64",
++}));
++
++vi.mock("../src/libc.js", () => ({ hostLinuxLibc: () => "gnu" }));
++
++vi.mock("node:fs", () => ({
++  existsSync: (p: string) => p in files,
++  readFileSync: (p: string) => {
++    if (p in files) return files[p];
++    throw errno("ENOENT");
++  },
++  writeFileSync: (p: string, content: string | Buffer) => {
++    files[p] = content;
++  },
++  unlinkSync: (p: string) => {
++    if (!(p in files)) throw errno("ENOENT");
++    delete files[p];
++  },
++  copyFileSync: (from: string, to: string) => {
++    files[to] = files[from];
++  },
++  renameSync: (from: string, to: string) => {
++    if (!(from in files)) throw errno("ENOENT");
++    if (lockedPaths.has(to)) {
++      onLockedRename();
++      throw errno("EPERM");
++    }
++    files[to] = files[from];
++    delete files[from];
++  },
++  chmodSync: () => {},
++  mkdirSync: () => {},
++  openSync: () => 3,
++  writeSync: () => {},
++  closeSync: () => {},
++  statSync: () => ({ mtimeMs: Date.now() }),
++  readdirSync: () => [],
++  createWriteStream: (p: string) => {
++    const chunks: Buffer[] = [];
++    const stream = new EventEmitter() as EventEmitter & {
++      write: (chunk: Buffer) => boolean;
++      end: () => void;
++      close: (cb?: () => void) => void;
++      destroy: () => void;
++    };
++    stream.write = (chunk: Buffer) => {
++      chunks.push(chunk);
++      return true;
++    };
++    stream.end = () => {
++      files[p] = Buffer.concat(chunks);
++      queueMicrotask(() => stream.emit("finish"));
++    };
++    stream.close = (cb?: () => void) => cb?.();
++    stream.destroy = () => {};
++    return stream;
++  },
++}));
++
++// The binary bytes carry their version, so the version probe reads them.
++vi.mock("node:child_process", () => ({
++  execFile: (...args: unknown[]) => {
++    const cb = args[args.length - 1] as (
++      err: Error | null,
++      result?: { stdout: string; stderr: string },
++    ) => void;
++    const bytes = files[String(args[0])]?.toString() ?? "";
++    cb(null, { stdout: `fallow ${bytes.split("@")[1] ?? "0.0.0"}\n`, stderr: "" });
++  },
++}));
++
++// A signature is valid only for the binary whose bytes it names.
++vi.mock("node:crypto", () => ({
++  createPublicKey: () => ({ type: "mock-public-key" }),
++  createHash: () => {
++    let input = "";
++    return {
++      update(data: string | Buffer) {
++        input = data.toString();
++        return this;
++      },
++      digest: () => Buffer.from(input).toString("hex").padEnd(64, "0").slice(0, 64),
++    };
++  },
++  verify: (_algorithm: null, data: Buffer, _key: unknown, signature: Buffer) =>
++    signature.toString() === `sig:${data.toString()}`,
++}));
++
++const respond = (body: Buffer) => {
++  const response = new EventEmitter() as EventEmitter & {
++    statusCode: number;
++    headers: Record<string, string>;
++    complete: boolean;
++    resume: () => void;
++    destroy: () => void;
++    pipe: (dest: { write: (c: Buffer) => boolean; end: () => void }) => void;
++  };
++  response.statusCode = 200;
++  response.headers = {};
++  response.complete = false;
++  response.resume = () => {};
++  response.destroy = () => {};
++  response.pipe = (dest) => {
++    dest.write(body);
++    dest.end();
++  };
++  queueMicrotask(() => {
++    response.emit("data", body);
++    response.complete = true;
++    response.emit("end");
++  });
++  return response;
++};
++
++const NEW_BINARY = "fallow@2.26.0";
++const ASSET = "fallow-linux-x64-gnu";
++
++vi.mock("node:https", () => ({
++  get: (url: string, _options: unknown, cb: (response: unknown) => void) => {
++    const request = new EventEmitter() as EventEmitter & {
++      setTimeout: () => void;
++      destroy: () => void;
++    };
++    request.setTimeout = () => {};
++    request.destroy = () => {};
++    queueMicrotask(() => {
++      if (url.includes("/releases/")) {
++        const release = {
++          tag_name: "v2.26.0",
++          assets: [ASSET, `${ASSET}.sig`].map((name) => ({
++            name,
++            browser_download_url: `https://example.invalid/${name}`,
++          })),
++        };
++        cb(respond(Buffer.from(JSON.stringify(release))));
++        return;
++      }
++      cb(respo
+```
+
+---
+
+### Incident Patch 2: `d0430d37` (2026-11-22)
+**Commit Message**: fix(security): fail the new gate on an import added to a transitive leak hop (#5057)
+
+fallow security --gate new passed when a change added a .server import,
+or the import of a module that reads a secret, to an existing module that
+a route or a "use client" file imports. The client-server-leak candidate
+points at the client boundary, and the added import is the line of an
+intermediate trace hop. The gate did not check that hop.
+
+Each non-terminal hop of a client-server-leak trace is the import of the
+next module. The gate now keeps such a candidate when the line of an
+intermediate hop is on an added line. The intermediate hop of a taint
+trace stays a pass-through hop. The gate has no base graph, so an edit of
+an import line that already existed also keeps the candidate.
+
+No finding_id, stable_finding_id, JSON field, SARIF field or suppression
+position changes.
+
+Closes #5024
+
+Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
+
+**File**: `changelog.d/fix-security-gate-new-transitive-hop.md` (added, +3/-0)
+```diff
+@@ -0,0 +1,3 @@
++### Fixed
++
++- **`fallow security --gate new` fails when a change adds an import that makes client code reach a server-only module or a secret reader.** Before, the gate passed when a change added a `.server` import or the import of a module that reads a secret to an existing module that a route or a `"use client"` file imports. The gate now keeps a `client-server-leak` candidate when the import line of an `intermediate` trace hop is on an added line. An edit of such an import line, for example a new imported name, also keeps the candidate. The candidate still points at the client boundary. No `finding_id`, `stable_finding_id`, JSON field, SARIF field or suppression position changes. ([#5024](https://github.com/fallow-rs/fallow/issues/5024))
+```
+
+**File**: `crates/cli/src/check/filtering.rs` (modified, +18/-2)
+```diff
+@@ -40,8 +40,16 @@ pub use fallow_engine::diff_scope::filter_dead_code_by_diff as filter_results_by
+ ///   an untouched sink the moment any env-config file is touched). The gate
+ ///   keeps a `SecretSource` hop only when a secret read of the hop
+ ///   (`secret_reads`, or the hop line) is on an added line, and
+-/// - the `Intermediate` / `ClientBoundary` pass-through hop lines (editing an
+-///   unrelated line in a transit module is not new exposure).
++/// - the `Intermediate` / `ClientBoundary` pass-through hop lines of a taint
++///   trace (editing an unrelated line in a transit module is not new exposure).
++///
++/// A `client-server-leak` trace is different: each non-terminal hop line is the
++/// import of the next module. An added import on an `Intermediate` hop joins
++/// the client cone to the secret reader or the server-only module, so the gate
++/// keeps the candidate when that hop line is on an added line (issue #5024).
++/// The gate has no base graph, so an edit of an import line that already
++/// existed also keeps the candidate. The finding keeps its anchor on the
++/// client boundary, so its `finding_id` and suppression position stay the same.
+ ///
+ /// It KEEPS the sink anchor on an added line (a genuinely new sink) AND an
+ /// `UntrustedSource` / `ModuleSource` / `Sink` trace hop on an added line (a
+@@ -84,8 +92,16 @@ pub fn retain_gate_new(
+                     .any(|read| line_in_diff(&hop.path, read.line)))
+     };
+ 
++    let leak_edge_added = |f: &fallow_types::results::SecurityFinding| -> bool {
++        f.kind == fallow_types::results::SecurityFindingKind::ClientServerLeak
++            && f.trace.iter().any(|hop| {
++                hop.role == TraceHopRole::Intermediate && line_in_diff(&hop.path, hop.line)
++            })
++    };
++
+     results.security_findings.retain(|f| {
+         line_in_diff(&f.path, f.line)
++            || leak_edge_added(f)
+             || f.trace
+                 .iter()
+                 .any(|hop| taint_hop_added(&hop.path, hop.line, hop.role) || secret_read_added(hop))
+```
+
+**File**: `crates/cli/src/check/filtering_gate_tests.rs` (modified, +155/-0)
+```diff
+@@ -283,3 +283,158 @@ fn gate_drops_intermediate_hop_pass_through() {
+ 
+     assert!(results.security_findings.is_empty());
+ }
++
++fn transitive_leak(category: &str, terminal: TraceHop) -> SecurityFinding {
++    SecurityFinding {
++        kind: SecurityFindingKind::ClientServerLeak,
++        category: Some(category.into()),
++        cwe: None,
++        path: PathBuf::from("/project/app/routes/home.tsx"),
++        line: 1,
++        col: 9,
++        trace: vec![
++            TraceHop::new(
++                PathBuf::from("/project/app/routes/home.tsx"),
++                1,
++                9,
++                TraceHopRole::ClientBoundary,
++            ),
++            TraceHop::new(
++                PathBuf::from("/project/app/components/banner.tsx"),
++                1,
++                9,
++                TraceHopRole::Intermediate,
++            ),
++            terminal,
++        ],
++        ..sample_security_finding()
++    }
 +}
 +
-+export const profileBio = (profile: Profile): Handlebars.SafeString =>
-+  new Handlebars.SafeString(profile.bio);
++fn banner_diff(hunk: &str) -> crate::report::ci::diff_filter::DiffIndex {
++    build_diff(&format!(
++        "diff --git a/app/components/banner.tsx b/app/components/banner.tsx\n\
++         --- a/app/components/banner.tsx\n\
++         +++ b/app/components/banner.tsx\n\
++         {hunk}"
++    ))
++}
++
++#[test]
++fn gate_keeps_server_only_import_added_to_transitive_module() {
++    let diff = banner_diff(
++        "@@ -0,0 +1,2 @@\n\
++         +import { getConfig } from '../utils/config.server'\n\
++         +\n",
++    );
++    let mut results = AnalysisResults::default();
++    results.security_findings.push(transitive_leak(
++        "server-only-import",
++        TraceHop::new(
++            PathBuf::from("/project/app/utils/config.server.ts"),
++            1,
++            0,
++            TraceHopRole::Sink,
++        ),
++    ));
++
++    retain_gate_new(&mut results, &diff, Path::new("/project"));
++
++    assert_eq!(results.security_findings.len(), 1);
++}
++
++#[test]
++fn gate_keeps_secret_reader_import_added_to_transitive_module() {
++    let diff = banner_diff(
++        "@@ -0,0 +1,1 @@\n\
++         +import { key } from '../utils/keys'\n",
++    );
++    let mut results = AnalysisResults::default();
++    results.security_findings.push(transitive_leak(
++        "client-server-leak",
++        TraceHop {
++            path: PathBuf::from("/project/app/utils/keys.ts"),
++            line: 1,
++            col: 0,
++            role: TraceHopRole::SecretSource,
++            secret_reads: vec![TraceSecretRead {
++                name: "process.env.API_SECRET_KEY".to_owned(),
++                line: 1,
++                col: 0,
++            }],
++        },
++    ));
++
++    retain_gate_new(&mut results, &diff, Path::new("/project"));
++
++    assert_eq!(results.security_findings.len(), 1);
++}
++
++#[test]
++fn gate_drops_transitive_leak_when_another_line_of_the_transit_module_changes() {
++    let diff = banner_diff(
++        "@@ -4,1 +4,1 @@\n\
++         +\treturn <p>Banner text</p>\n",
++    );
++    let mut results = AnalysisResults::default();
++    results.security_findings.push(transitive_leak(
++        "server-only-import",
++        TraceHop::new(
++            PathBuf::from("/project/app/utils/config.server.ts"),
++            1,
++            0,
++            TraceHopRole::Sink,
++        ),
++    ));
++
++    retain_gate_new(&mut results, &diff, Path::new("/project"));
++
++    assert!(results.security_findings.is_empty());
++}
++
++#[test]
++fn gate_keeps_transitive_leak_when_an_existing_import_line_of_the_transit_module_changes() {
++    // The gate has no base graph, so an edited import line counts as added.
++    let diff = banner_diff(
++        "@@ -1,1 +1,1 @@\n\
++         +import { getConfig, getRegion } from '../utils/config.server'\n",
++    );
++    let mut results = AnalysisResults::default();
++    results.security_findings.push(transitive_leak(
++        "server-only-import",
++        TraceHop::new(
++            PathBuf::from("/project/app/utils/config.server.ts"),
++            1,
++            0,
++            TraceHopRole::Sink,
++        ),
++    ));
++
++    retain_gate_new(&mut results, &diff, Path::new("/project"));
++
++    assert_eq!(results.security_findings.len(), 1);
++}
++
++#[test]
++fn gate_keeps_transitive_leak_whose_intermediate_hop_is_outside_root() {
++    let diff = banner_diff(
++        "@@ -4,1 +4,1 @@\n\
++         +\treturn <p>Banner text</p>\n",
++    );
++    let mut finding = transitive_leak(
++        "server-only-import",
++        TraceHop::new(
++            PathBuf::from("/project/app/utils/config.server.ts"),
++            1,
++            0,
++            TraceHopRole::Sink,
++        ),
++    );
++    finding.trace[1].path = PathBuf::from("/elsewhere/shared/banner.tsx");
++    let mut results = AnalysisResults::default();
++    results.security_findings.push(finding);
++
++    retain_gate_new(&mut results, &diff, Path::new("/project"));
++
++    assert_eq!(results.security_findings.len(), 1);
++}
 ```
 
-**File**: `crates/api/src/explain_examples_table.rs` (modified, +9/-0)
+**File**: `crates/cli/tests/integration/security_env_read_location_tests.rs` (modified, +85/-0)
 ```diff
-@@ -818,6 +818,15 @@ pub(super) const RULE_EXAMPLES: &[RuleExample] = &[
-             file!("stale-suppression", "files", "src/money.ts", false),
-         ],
-     },
-+    RuleExample {
-+        rule: "template-escape-bypass",
-+        args: &[],
-+        base: &[],
-+        files: &[
-+            file!("template-escape-bypass", "files", "package.json", true),
-+            file!("template-escape-bypass", "files", "src/profile.ts", false),
-+        ],
-+    },
-     RuleExample {
-         rule: "test-only-branch",
-         args: &[],
+@@ -256,3 +256,88 @@ fn a_destructured_secret_read_in_client_code_points_at_the_key() {
+     assert_eq!(finding["line"], 2);
+     assert_eq!(finding["col"], 9);
+ }
++
++/// A route that imports `app/components/banner.tsx`, and a change that makes
++/// the banner import `target`. The issue #5024 reproduction.
++fn transitive_import_repo(
++    target_path: &'static str,
++    target: &'static str,
++    banner_import: &'static str,
++) -> tempfile::TempDir {
++    let mut base = react_router_base(
++        "import { Banner } from '../components/banner'\n\n\
++         export default function Home() {\n\treturn <Banner />\n}\n",
++    );
++    base.push((
++        "app/components/banner.tsx",
++        "export function Banner() {\n\treturn <p>Banner</p>\n}\n",
++    ));
++    base.push((target_path, target));
++    repo(&base, &[("app/components/banner.tsx", banner_import)])
++}
++
++#[test]
++fn gate_fails_on_a_server_only_import_added_to_a_transitive_module() {
++    let dir = transitive_import_repo(
++        "app/utils/config.server.ts",
++        "export function getConfig() {\n\treturn { region: 'nz' }\n}\n",
++        "import { getConfig } from '../utils/config.server'\n\n\
++         export function Banner() {\n\treturn <p>{getConfig().region}</p>\n}\n",
++    );
++
++    let (code, json) = gate_new(dir.path());
++    assert_eq!(code, 8, "{json:#}");
++    let finding = only_finding(&json);
++    assert_eq!(finding["category"], "server-only-import");
++    assert_eq!(finding["path"], "app/routes/home.tsx");
++    assert_eq!(finding["line"], 1);
++    let hop = &finding["trace"][1];
++    assert_eq!(hop["role"], "intermediate");
++    assert_eq!(hop["path"], "app/components/banner.tsx");
++    assert_eq!(hop["line"], 1);
++}
++
++#[test]
++fn gate_fails_on_a_secret_reader_import_added_to_a_transitive_module() {
++    let dir = transitive_import_repo(
++        "app/utils/keys.ts",
++        "export const key = process.env.API_SECRET_KEY\n",
++        "import { key } from '../utils/keys'\n\n\
++         export function Banner() {\n\treturn <p>{key}</p>\n}\n",
++    );
++
++    let (code, json) = gate_new(dir.path());
++    assert_eq!(code, 8, "{json:#}");
++    let finding = only_finding(&json);
++    assert_eq!(finding["category"], "client-server-leak");
++    assert_eq!(finding["trace"][2]["role"], "secret-source");
++}
++
++#[test]
++fn gate_passes_when_a_change_leaves_an_old_transitive_import_alone() {
++    let mut base = react_router_base(
++        "import { Banner } from '../components/banner'\n\n\
++         export default function Home() {\n\treturn <Banner />\n}\n",
++    );
++    base.push((
++        "app/utils/config.server.ts",
++        "export function getConfig() {\n\treturn { region: 'nz' }\n}\n",
++    ));
++    base.push((
++        "app/components/banner.tsx",
++        "import { getConfig } from '../utils/config.server'\n\n\
++         export function Banner() {\n\treturn <p>{getConfig().region}</p>\n}\n",
++    ));
++    let dir = repo(
++        &base,
++        &[(
++            "app/components/banner.tsx",
++            "import { getConfig } from '../utils/config.server'\n\n\
++             export function Banner() {\n\treturn <p>Region {getConfig().region}</p>\n}\n",
++        )],
++    );
++
++    let (code, json) = gate_new(dir.path());
++    assert_eq!(code, 0, "{json:#}");
++    assert_eq!(json["gate"]["new_count"], 0);
++}
+```
+
+**File**: `docs/reference/detection-internals.md` (modified, +8/-0)
+```diff
+@@ -513,6 +513,14 @@ error by suppressing a downstream detector.
+   module, or at its first server-only import. The `secret-source` trace hop
+   lists every read in `secret_reads`, and `fallow security --gate new` keeps
+   the finding when one of these lines is added.
++- A non-terminal hop of a `client-server-leak` trace points at the import of
++  the next hop. `fallow security --gate new` keeps the finding when the line
++  of an `intermediate` hop is on an added line, because an added import there
++  joins the client cone to the sink. The gate has no base graph, so an edit
++  of an import line that already existed also keeps the finding. The finding
++  stays on the client boundary, so its
++  `finding_id` does not change. The `intermediate` hop of a taint trace stays
++  a pass-through hop for the gate.
+ - A route module is a file that the route config names, the root route, a
+   file directly in a route directory, a `route.*` file, or a deeper file
+   that exports a route module export and is not in a folder with a
+```
+
+---
+
+### Incident Patch 3: `0da01aae` (2026-11-22)
+**Commit Message**: fix(sidecar): lock the model cache during setup and read wildcard exports as Node does (#5059)
+
+* fix(sidecar): lock the model cache during setup and read wildcard exports as Node does
+
+Two similar-code setup runs on one model cache wrote the same partial,
+manifest and backup files. One run removed the partial file of the other,
+and that run then failed to install its artifact. Setup now holds an
+exclusive file lock on the cache folder of the model revision. The second
+run waits, then finds the installed model and downloads nothing. The
+operating system releases the lock when a process exits, so a crashed run
+leaves no stale lock.
+
+The type-aware sidecar reads entry points from package.json when fallow
+sends none. Its wildcard pattern matched each star against one path segment
+on its own. A target such as `./src/*.ts` then missed `src/nested/deep.ts`,
+and `./src/*/*.ts` accepted two different values. Every star now stands for
+the same value, and that value can contain a slash, as in the core rule of
+`wildcard_entries.rs`. A target with its first star at the package root
+keeps a capture of one segment.
+
+Signed-off-by: Bart Waardenburg <[REDACTED_EMAIL]>
+
+* fix(sidecar): escape the w
+
+**File**: `changelog.d/fix-sidecar-wildcard-and-cache-lock.md` (added, +4/-0)
+```diff
+@@ -0,0 +1,4 @@
++### Fixed
++
++- **Two `fallow similar-code setup --local` runs on one model cache no longer break each other.** Both runs wrote the same partial, manifest and backup files, so one run removed the download of the other, and that run failed. Setup now holds a lock on the cache folder of the model revision. The second run prints that it waits, then finds the installed model and downloads nothing. On a file system without file locks, setup runs without the lock, as before.
++- **The type-aware sidecar reads wildcard package exports as Node does.** When fallow sent no entry points, the sidecar read the entry points from `package.json`. A target such as `./src/*.ts` then matched only files directly in `src`, and a target with two `*` accepted two different values. Each `*` of a target now stands for the same value, and that value can contain `/`. A build output target with a `*` in its first path segment, such as `./*.js`, still matches one path segment.
+```
+
+**File**: `tools/similar-code-sidecar/src/setup.rs` (modified, +118/-1)
+```diff
+@@ -1,4 +1,4 @@
+-use std::fs::{self, File};
++use std::fs::{self, File, TryLockError};
+ use std::io::{self, Read};
+ use std::path::Path;
+ use std::time::Duration;
+@@ -13,6 +13,7 @@ pub trait ArtifactDownloader {
+     fn open(&self, url: &str) -> Result<Box<dyn Read>, String>;
+ }
+ 
++const INSTALL_LOCK_FILE: &str = ".install.lock";
+ const DNS_TIMEOUT: Duration = Duration::from_secs(15);
+ const CONNECT_TIMEOUT: Duration = Duration::from_secs(30);
+ const RESPONSE_HEADER_TIMEOUT: Duration = Duration::from_secs(30);
+@@ -129,6 +130,12 @@ pub fn install_with(
+ 
+     fs::create_dir_all(&paths.directory)
+         .map_err(|error| format!("failed to create the model cache: {error}"))?;
++    let _lock = lock_install(paths)?;
++    // Check again under the lock, so a setup that waited for another one
++    // reuses its result instead of a second download.
++    if artifacts == ARTIFACTS && inspect_cache(paths).ready {
++        return Ok(SetupResult { downloaded: false });
++    }
+     let mut network_used = false;
+     for artifact in artifacts {
+         network_used |= install_artifact(paths, *artifact, downloader)?;
+@@ -139,6 +146,31 @@ pub fn install_with(
+     })
+ }
+ 
++/// Hold an exclusive lock on the revision directory for one install. The
++/// partial, manifest and backup files have fixed names, so two setups on one
++/// cache must not write them at the same time. The operating system releases
++/// the lock when the process exits, so a crashed setup leaves no stale lock.
++fn lock_install(paths: &ModelPaths) -> Result<Option<File>, String> {
++    let file = File::options()
++        .create(true)
++        .truncate(false)
++        .write(true)
++        .open(paths.directory.join(INSTALL_LOCK_FILE))
++        .map_err(|error| format!("failed to open the model cache lock: {error}"))?;
++    let locked = match file.try_lock() {
++        Ok(()) => Ok(()),
++        Err(TryLockError::WouldBlock) => {
++            eprintln!("Waiting for another model setup on this cache to finish.");
++            file.lock()
++        }
++        Err(TryLockError::Error(error)) => Err(error),
++    };
++    // A file system without file locks (for example NFS without a lock
++    // daemon) reports an error here. Setup still installs each verified
++    // artifact with a rename, so it proceeds without the lock.
++    Ok(locked.is_ok().then_some(file))
++}
++
+ fn install_artifact(
+     paths: &ModelPaths,
+     artifact: ArtifactSpec,
+@@ -206,6 +238,7 @@ mod tests {
+     use std::collections::BTreeMap;
+     use std::io::{Cursor, Write};
+     use std::net::TcpListener;
++    use std::sync::mpsc;
+     use std::thread;
+ 
+     use sha2::{Digest, Sha256};
+@@ -311,6 +344,90 @@ mod tests {
+         assert!(!paths.config.with_extension("download-partial").exists());
+     }
+ 
++    /// Yields the first byte, then waits until `resume` fires or a second
++    /// passes, so a test can start a second install while this one writes.
++    struct PausedReader {
++        bytes: Vec<u8>,
++        position: usize,
++        started: Option<mpsc::Sender<()>>,
++        resume: mpsc::Receiver<()>,
++    }
++
++    impl Read for PausedReader {
++        fn read(&mut self, buffer: &mut [u8]) -> io::Result<usize> {
++            if self.position == 1 {
++                if let Some(started) = self.started.take() {
++                    let _ = started.send(());
++                }
++                let _ = self.resume.recv_timeout(Duration::from_secs(1));
++            }
++            let end = if self.position == 0 {
++                1
++            } else {
++                self.bytes.len()
++            };
++            let count = (end - self.position).min(buffer.len());
++            buffer[..count].copy_from_slice(&self.bytes[self.position..self.position + count]);
++            self.position += count;
++            Ok(count)
++        }
++    }
++
++    struct PausedDownloader(std::sync::Mutex<Option<PausedReader>>);
++
++    impl ArtifactDownloader for PausedDownloader {
++        fn open(&self, _url: &str) -> Result<Box<dyn Read>, String> {
++            let reader = self
++                .0
++                .lock()
++                .expect("downloader lock")
++                .take()
++                .ok_or_else(|| "the paused artifact was opened twice".to_string())?;
++            Ok(Box::new(reader))
++        }
++    }
++
++    #[test]
++    fn concurrent_setups_on_one_cache_both_succeed() {
++        let directory = tempfile::tempdir().expect("tempdir");
++        let paths = ModelPaths::from_cache_root(directory.path());
++        let bytes = b"config-bytes".to_vec();
++        let artifacts = [spec("config.json", &bytes)];
++        let (started_tx, started_rx) = mpsc::channel();
++        let (resume_tx, resume_rx) = mpsc::channel();
++        let paused = PausedDownloader(std::sync::Mutex::new(Some(PausedReader {
++            bytes: bytes.clone(),
++            position: 0,
++            started: Some(started_tx),
++            resume: resume_rx,
++        })));
++
++        let first = thread::scope(|scope|
+```
+
+**File**: `tools/type-aware-sidecar/src/project-package.mjs` (modified, +26/-0)
+```diff
+@@ -35,3 +35,29 @@ export const packagePathTargets = (project, packageJson) => {
+   if (typeof packageName !== "string") return [];
+   return projectCompilerOptions(project).paths?.[packageName] ?? [];
+ };
++
++// JavaScript output suffixes of a build, as in the core rule.
++const OUTPUT_SUFFIX = /(?:\.d\.[cm]?ts|\.[cm]?js|\.jsx)$/u;
++
++/**
++ * A regular expression for the source files of a wildcard package target.
++ * Every `*` of a Node subpath pattern stands for the same substring, and that
++ * substring can contain `/`: `./src/*.ts` matches `src/nested/deep.ts`. A
++ * build output target with a `*` in its first path segment, such as `./*.js`,
++ * keeps a capture of one path segment, so it does not make every test and
++ * config file of the package an entry.
++ */
++export const wildcardPattern = (target) => {
++  const relative = target.replace(/^\.\//u, "");
++  const sourceTarget = relative
++    .replace(/^dist\//u, "src/")
++    .replace(/(?:\.d)?\.[cm]?[jt]sx?$/u, ".ts");
++  const rootOutput = relative.split("/")[0].includes("*") && OUTPUT_SUFFIX.test(relative);
++  const capture = rootOutput ? "([^/]+)" : "(.+)";
++  const escaped = sourceTarget
++    .split("*")
++    .map((part) => part.replace(/[\\^$.*+?()[\]{}|]/gu, "\\$&"))
++    .map((part, index) => (index === 0 ? part : `${index === 1 ? capture : "(?:\\1)"}${part}`))
++    .join("");
++  return new RegExp(`^${escaped}$`, "u");
++};
+```
+
+**File**: `tools/type-aware-sidecar/src/semantic.mjs` (modified, +1/-11)
+```diff
+@@ -6,7 +6,7 @@ import { accessorPairExists, countsAsAccessorUse } from "./accessor-direction.mj
+ import { ast, createApi as createBackendApi, heritageTypeName, sync } from "./backend.mjs";
+ 
+ import { canonicalFileIdentity, resetFileIdentityCache } from "./file-identity.mjs";
+-import { packagePathTargets, projectPackage } from "./project-package.mjs";
++import { packagePathTargets, projectPackage, wildcardPattern } from "./project-package.mjs";
+ import { projectResult, projectState } from "./project-state.mjs";
+ import {
+   declarationName,
+@@ -1197,16 +1197,6 @@ const sourceCandidatesForTarget = (root, target) => {
+     .map((entry) => path.resolve(root, entry));
+ };
+ 
+-const wildcardPattern = (target) => {
+-  const normalized = target.replace(/^\.\//u, "").replace(/^dist\//u, "src/");
+-  const sourceTarget = normalized.replace(/(?:\.d)?\.[cm]?[jt]sx?$/u, ".ts");
+-  const escaped = sourceTarget
+-    .split("*")
+-    .map((part) => part.replace(/[\\^$.*+?()[\]{}|]/gu, "\\$&"))
+-    .join("[^/]+");
+-  return new RegExp(`^${escaped}$`, "u");
+-};
+-
+ const ancestorRoots = (root, start) => {
+   const normalizedRoot = path.resolve(root);
+   const roots = [];
+```
+
+**File**: `tools/type-aware-sidecar/test/sidecar.test.mjs` (modified, +89/-0)
+```diff
+@@ -995,6 +995,95 @@ incremented.value++;
+   }
+ });
+ 
++const discoveredEntryNames = (root, exportsField, files) => {
++  write(
++    root,
++    "tsconfig.json",
++    JSON.stringify({ compilerOptions: { strict: true }, include: ["src/**/*.ts"] }),
++  );
++  write(root, "package.json", JSON.stringify({ exports: exportsField }));
++  for (const [file, name] of Object.entries(files)) {
++    write(root, file, `export interface ${name} { value: string }\n`);
++  }
++  const request = semanticRequest(root, [
++    { id: 0, operation: "api-surface", entry_points: [], private_leak_candidates: [] },
++  ]);
++  return analyzeSemanticQueries(parseRequest(request))
++    .results[0].data.entries.map((entry) => entry.exposed.exported_name)
++    .toSorted();
++};
++
++test("package wildcard entries let one capture span directories, as Node does", () => {
++  const root = makeProject();
++  try {
++    assert.deepEqual(
++      discoveredEntryNames(
++        root,
++        { "./*": "./src/*.ts" },
++        { "src/top.ts": "Top", "src/nested/deep.ts": "Deep" },
++      ),
++      ["Deep", "Top"],
++    );
++  } finally {
++    rmSync(root, { recursive: true, force: true });
++  }
++});
++
++test("package wildcard entries accept a digit right after a repeated star", () => {
++  const root = makeProject();
++  try {
++    assert.deepEqual(
++      discoveredEntryNames(
++        root,
++        { "./*": "./src/*/*2x.ts" },
++        { "src/icon/icon2x.ts": "Icon", "src/icon/other2x.ts": "Other" },
++      ),
++      ["Icon"],
++    );
++  } finally {
++    rmSync(root, { recursive: true, force: true });
++  }
++});
++
++test("package wildcard entries keep a root output target to one segment", () => {
++  const root = makeProject();
++  try {
++    write(
++      root,
++      "tsconfig.json",
++      JSON.stringify({ compilerOptions: { strict: true }, include: ["**/*.ts"] }),
++    );
++    write(root, "package.json", JSON.stringify({ exports: { "./*": "./part-*.js" } }));
++    write(root, "part-top.ts", "export interface Top { value: string }\n");
++    write(root, "part-nested/deep.ts", "export interface Deep { value: string }\n");
++    const request = semanticRequest(root, [
++      { id: 0, operation: "api-surface", entry_points: [], private_leak_candidates: [] },
++    ]);
++    const names = analyzeSemanticQueries(parseRequest(request))
++      .results[0].data.entries.map((entry) => entry.exposed.exported_name)
++      .toSorted();
++    assert.deepEqual(names, ["Top"]);
++  } finally {
++    rmSync(root, { recursive: true, force: true });
++  }
++});
++
++test("package wildcard entries give every star of a target the same capture", () => {
++  const root = makeProject();
++  try {
++    assert.deepEqual(
++      discoveredEntryNames(
++        root,
++        { "./*": "./src/*/*.ts" },
++        { "src/alpha/alpha.ts": "Same", "src/alpha/beta.ts": "Mismatched" },
++      ),
++      ["Same"],
++    );
++  } finally {
++    rmSync(root, { recursive: true, force: true });
++  }
++});
++
+ test("protocol v7 maps public API leaks and project-local public-signature coupling", () => {
+   const root = makeProject();
+   try {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4998** (2026-11-21): fix(audit): key the base snapshot on the inputs of the base pass (@BartWaardenburg)
-- **PR #4997** (2026-11-21): test: give test fixtures one git command builder and strict harness helpers (@BartWaardenburg)
-- **PR #4996** (2026-11-21): fix(dead-code): check the members of an entry file export under includeEntryExports (@BartWaardenburg)
-- **PR #4995** (2026-11-21): feat(health): add a threshold override comment for one function (@BartWaardenburg)
-- **PR #4994** (2026-11-21): fix(effect): accept a schema that a function call builds (@BartWaardenburg)
-- **PR #4993** (2026-11-21): fix(security): read every sink call through one canonical call (@BartWaardenburg)
+- **PR #5077** (2026-11-22): fix: keep route brackets in Windows JSON paths and retry a blocked run dir move (@BartWaardenburg)
+- **PR #5076** (2026-11-22): fix(extract): derive the Effect Schema members that give a schema (@BartWaardenburg)
+- **PR #5074** (2026-11-22): fix(fix): keep the module load of a re-export whose names all go (@BartWaardenburg)
+- **PR #5072** (2026-11-22): fix(agent): keep the root and the excluded steps in follow-up commands (@BartWaardenburg)
+- **PR #5071** (2026-11-22): fix(lsp): put a file suppression below the hashbang (@BartWaardenburg)
+- **PR #5070** (2026-11-22): fix(config): keep an ignoreFindings pattern that sets the mode out of the unmatched note (@BartWaardenburg)
 
 ---
 
@@ -1414,52 +1913,35 @@ e
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test: give test fixtures one git command builder and strict harness helpers
+## X. vscode): keep a verified binary through a failed upgrade and confirm a fix befor
 
 **RULE**:
-When implementing operations in `crates/api/src/audit_run/tests.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fallow-rs/fallow. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog.d/fix-vscode-upgrade-and-fix-command.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in fallow-rs/fallow. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cdac7ade`: test: give test fixtures one git command builder and strict harness helpers. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f614bba7`: vscode): keep a verified binary through a failed upgrade and confirm a fix before saving. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/api/src/audit_run/tests.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/fix-vscode-upgrade-and-fix-command.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use fallow_engine::git_fixture::fixture_git as git;
+### Fixed
+
+- **A failed upgrade of the VS Code managed binary keeps the installed binary usable.** On Windows, a sibling window that runs the old `fallow-lsp` locks the file, so the new binary cannot replace it. The extension then deleted the signature and target marker of the old binary, and the next start removed that binary as untrusted. The extension now puts the old signature and target marker back.
+- **A second VS Code window no longer deletes the download of the first window.** Each window removes the temp files of crashed downloads when it starts. It removed the temp files of every other process, also of a window whose download still ran, and that download then failed its signature check. The extension now removes only the temp files of a process that no longer runs.
+- **`Fallow: Fix` saves and refreshes only after you confirm.** The command saved all dirty editors before it asked for confirmation, and it restarted the language server and ran a new analysis also after you answered No. The command now saves after the confirmation, applies no fix when a file cannot be saved, and refreshes only after a fix run.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-use std::process::Command;
-fn git(dir: &Path, args: &[&str]) {
-    let output = Command::new("git")
-        .args(args)
-        .current_dir(dir)
-        .env_remove("GIT_DIR")
-        .env_remove("GIT_WORK_TREE")
-        .env("GIT_CONFIG_GLOBAL", "/dev/null")
-        .env("GIT_CONFIG_SYSTEM", "/dev/null")
-        .env("GIT_AUTHOR_NAME", "test")
-        .env("GIT_AUTHOR_EMAIL", "test@test.com")
-        .env("GIT_COMMITTER_NAME", "test")
-        .env("GIT_COMMITTER_EMAIL", "test@test.com")
-        .output()
-        .expect("git command failed");
-    assert!(
-        output.status.success(),
-        "git {:?} failed\nstderr:\n{}",
-        args,
-        String::from_utf8_lossy(&output.stderr)
-    );
-}
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cdac7ade` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f614bba7` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

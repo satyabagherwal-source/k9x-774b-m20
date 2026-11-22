@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T22:37:31.885Z",
+  "last_updated": "2026-11-22T22:49:39.081Z",
   "directives": [
     {
       "id": "CD-001",
@@ -39760,11 +39760,11 @@
       "domain_letter": "D"
     },
     {
-      "id": "CD-3EFF",
+      "id": "CD-J0G4",
       "directive_title": "benchmarks): report Gold coverage across retrieval stages",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-3EFF-benchmarks-report-gold-coverage-across-retrieval-stages.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-J0G4-benchmarks-report-gold-coverage-across-retrieval-stages.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-22",
@@ -47861,6 +47861,37 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-AA1454-test-collab-write-trust-fixtures-with-ex.md",
+      "staged_date": "2026-11-22"
+    },
+    {
+      "id": "CD-IRKS",
+      "directive_title": "keep a verified binary through a failed upgrade and confirm a fix befor",
+      "source_repo": "fallow-rs/fallow",
+      "source_commit": "a01bf36e",
+      "staged_file": "11_INBOX/candidate-directives/CD-IRKS-keep-a-verified-binary-through-a-failed-upgrade-and-confirm-a-fix-befor.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-22",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-IZ7K",
+      "directive_title": "vscode): keep a verified binary through a failed upgrade and confirm a fix befor",
+      "source_repo": "fallow-rs-fallow-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-IZ7K-vscode-keep-a-verified-binary-through-a-failed-upgrade-and-confirm-a-fix-befor.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-22",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-76B599",
+      "directive_title": "benchmarks): report Gold coverage across retrieval stages",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-76B599-benchmarks-report-gold-coverage-across-r.md",
       "staged_date": "2026-11-22"
     }
   ]

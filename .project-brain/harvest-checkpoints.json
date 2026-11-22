@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T22:37:17.609Z",
+  "last_updated": "2026-11-22T22:49:27.350Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -725,14 +725,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
-      "content_hash": "cc3fcea5fecbd7dc5c382ab5178af05b652dae580364e74b8221d81ce5fc037e",
-      "verified_at": "2026-11-18T15:42:52.142Z",
+      "content_hash": "37dd007266816de8620d7e66e644e1a58920a499f1687710435ce0746dc4b90a",
+      "verified_at": "2026-11-22T22:49:25.256Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T15:42:52.142Z"
+      "last_updated": "2026-11-22T22:49:25.256Z"
     },
     "PSRben/VisionHOPE": {
       "repository": "PSRben/VisionHOPE",
@@ -4896,14 +4896,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fallow-rs-fallow",
-      "content_hash": "de002ed2640e98ef18cf29629cf43a0b21be4fc8fe36cdd0e57b45892de9fe60",
-      "verified_at": "2026-11-21T15:49:15.199Z",
+      "content_hash": "fd1618c791cee11374a4eca9ae6cc3e265d19970e13bbd75c32a0da52781ed09",
+      "verified_at": "2026-11-22T22:49:27.349Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T15:49:15.199Z"
+      "last_updated": "2026-11-22T22:49:27.349Z"
     },
     "expo/create-react-native-app": {
       "repository": "expo/create-react-native-app",

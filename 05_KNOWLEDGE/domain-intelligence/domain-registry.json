@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T22:37:32.098Z",
+  "last_updated": "2026-11-22T22:49:39.256Z",
   "total_records": 2384,
   "domains": {
     "A": {
@@ -8154,8 +8154,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "06621e1c2e4c4ef3e8f4058c669d7c8d09a0da9ccbd96b221f93edbe366839b5",
-      "created_at": "2026-11-22T22:37:30.919Z"
+      "content_hash": "5c01720b934218f6fce107abd08ef6e00e6e05de75cbf20d6ed24e56b25f3393",
+      "created_at": "2026-11-22T22:49:39.256Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -9978,8 +9978,8 @@
       "title": "Research & Knowledge Intelligence: ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-research-knowledge-intelligence-uki.md",
       "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
-      "content_hash": "c58160845b42efd40de422c4d5f5818b307eeedae8e3e02ce38a323b64f1fc32",
-      "created_at": "2026-11-18T15:42:52.366Z"
+      "content_hash": "0c9a60640dd344734b05c897f251c092023e8723cf06f729c179d2beea239350",
+      "created_at": "2026-11-22T22:49:25.477Z"
     },
     "domain_intelligence-technical-construction-intelligence-react-hook-form-react-hook-form-core-invaria": {
       "record_id": "domain_intelligence-technical-construction-intelligence-react-hook-form-react-hook-form-core-invaria",
@@ -10038,8 +10038,8 @@
       "title": "Research & Knowledge Intelligence: hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-learnings-research-knowledge-intell.md",
       "repository": "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings",
-      "content_hash": "6e177afdbf955b32fd79559d0e9648ce1293af13a317317edaa31b42135ab0f3",
-      "created_at": "2026-11-18T15:43:04.386Z"
+      "content_hash": "315f60563fcb3b5eb29423a5ee7766330da8d0220e7587e15c31211a139d8d66",
+      "created_at": "2026-11-22T22:49:38.291Z"
     },
     "domain_intelligence-research-knowledge-intelligence-psrben-visionhope-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-psrben-visionhope-core-invariants",
@@ -19520,8 +19520,8 @@
       "title": "Technical Construction Intelligence: fallow-rs/fallow Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-fallow-rs-fallow-technical-construction-intelligence-fallow-rs-fallow-core-invar.md",
       "repository": "fallow-rs/fallow",
-      "content_hash": "4cb7ea57f2eca2f8aca0a875da01f5b181c284c695d5269b90046cdc5a03b030",
-      "created_at": "2026-11-20T01:22:59.169Z"
+      "content_hash": "ab9ee4a14e79e67a8ee8cb6587de20de3082b0d15cf2919ceb626825bdabc2b3",
+      "created_at": "2026-11-22T22:49:27.781Z"
     },
     "domain_intelligence-technical-construction-intelligence-liquidai-lfm2-5-24b-a2b-gguf-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-liquidai-lfm2-5-24b-a2b-gguf-core-invariants",
@@ -19538,8 +19538,8 @@
       "title": "Technical Construction Intelligence: fallow-rs-fallow-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-fallow-rs-fallow-learnings-technical-construction-intelligence-fallow-rs-fallow-.md",
       "repository": "fallow-rs-fallow-learnings",
-      "content_hash": "e5a9d60b81cea03cd1436bed1bac325e2d62cdffc9a9e2721f67c4e1b3fb5abc",
-      "created_at": "2026-11-20T01:23:29.949Z"
+      "content_hash": "536456ab2553b228c173a6705783348117c832a663f350d0f5064f9f01f10679",
+      "created_at": "2026-11-22T22:49:37.681Z"
     },
     "domain_intelligence-technical-construction-intelligence-hf-liquidai-lfm2-5-24b-a2b-gguf-learnings-co": {
       "record_id": "domain_intelligence-technical-construction-intelligence-hf-liquidai-lfm2-5-24b-a2b-gguf-learnings-co",

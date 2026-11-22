@@ -575,8 +575,8 @@
     "sourceUrl": "https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
     "sourceVersion": "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf",
     "license": "Open-Source",
-    "contentHash": "cc3fcea5fecbd7dc5c382ab5178af05b652dae580364e74b8221d81ce5fc037e",
-    "lastHarvestedAt": "2026-11-18T15:42:52.132Z",
+    "contentHash": "37dd007266816de8620d7e66e644e1a58920a499f1687710435ce0746dc4b90a",
+    "lastHarvestedAt": "2026-11-22T22:49:25.247Z",
     "learningId": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf"
   },
   "hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2": {
@@ -3183,10 +3183,10 @@
     "repository": "fallow-rs/fallow",
     "platform": "github",
     "sourceUrl": "https://github.com/fallow-rs/fallow",
-    "sourceVersion": "ad1c3d5b",
+    "sourceVersion": "a01bf36e",
     "license": "MIT",
-    "contentHash": "de002ed2640e98ef18cf29629cf43a0b21be4fc8fe36cdd0e57b45892de9fe60",
-    "lastHarvestedAt": "2026-11-21T15:49:15.189Z",
+    "contentHash": "fd1618c791cee11374a4eca9ae6cc3e265d19970e13bbd75c32a0da52781ed09",
+    "lastHarvestedAt": "2026-11-22T22:49:27.306Z",
     "learningId": "learn-github-fallow-rs-fallow"
   },
   "expo-create-react-native-app": {

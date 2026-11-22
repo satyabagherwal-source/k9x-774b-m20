@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261121-BWUF",
-    "timestamp": "2026-11-21T00:32:45.831Z",
-    "repository": "projectdiscovery/nuclei",
-    "learningId": "learn-github-projectdiscovery-nuclei",
-    "contentHash": "dc25d572074d8105bf86002a9ccdb0cb022c7175c2778708824ee342f7e38860",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261121-Q0W5",
-    "timestamp": "2026-11-21T00:43:44.261Z",
-    "repository": "bahdotsh/wrkflw",
-    "learningId": "learn-github-bahdotsh-wrkflw",
-    "contentHash": "9dbf5f68dc51b9745069dc4d43f1a30f9e5456a8fc01f7d88a4c2b03af0756d5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261121-Q2H3",
     "timestamp": "2026-11-21T00:43:46.311Z",
     "repository": "preactjs/preact",
@@ -7490,6 +7460,36 @@
     "repository": "Alissonerdx/BFS-Best-Face-Swap",
     "learningId": "learn-huggingface-alissonerdx-bfs-best-face-swap",
     "contentHash": "5977c9c00cd82e436f39735613eade89c6804c7911a2579179ee0857f6fbf519",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-IPRV",
+    "timestamp": "2026-11-22T22:49:25.243Z",
+    "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+    "learningId": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
+    "contentHash": "37dd007266816de8620d7e66e644e1a58920a499f1687710435ce0746dc4b90a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-IRD1",
+    "timestamp": "2026-11-22T22:49:27.302Z",
+    "repository": "fallow-rs/fallow",
+    "learningId": "learn-github-fallow-rs-fallow",
+    "contentHash": "fd1618c791cee11374a4eca9ae6cc3e265d19970e13bbd75c32a0da52781ed09",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

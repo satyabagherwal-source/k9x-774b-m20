@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-22T22:06:38.338Z",
+  "updated_at": "2026-11-22T22:49:37.227Z",
   "stats": {
-    "total_discovered": 7689,
-    "approved_pending_harvest": 7283,
+    "total_discovered": 7691,
+    "approved_pending_harvest": 7285,
     "harvested_count": 0,
     "rejected_count": 406,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7263,
+      "COMMUNITY_AND_EXPERT": 7265,
       "OFFICIAL_DOCUMENTATION": 246,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 5,
@@ -166339,6 +166339,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md",
         "fileName": "cilium-cilium-learnings.md"
+      }
+    },
+    "SRC-9E5B83309A24": {
+      "id": "SRC-9E5B83309A24",
+      "url": "https://example.invalid/$%7Bname",
+      "title": "https://example.invalid/$%7Bname",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T22:49:37.172Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
+        "fileName": "fallow-rs-fallow-learnings.md"
+      }
+    },
+    "SRC-3A30037C8E64": {
+      "id": "SRC-3A30037C8E64",
+      "url": "https://github.com/fallow-rs/fallow/issues/5024",
+      "title": "https://github.com/fallow-rs/fallow/issues/5024",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T22:49:37.227Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
+        "fileName": "fallow-rs-fallow-learnings.md"
       }
     }
   }
