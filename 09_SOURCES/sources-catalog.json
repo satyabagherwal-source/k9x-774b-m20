@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "1a4f4eb6",
+    "sourceVersion": "a3309793",
     "license": "BSD-3-Clause",
-    "contentHash": "7a4bff03771cc94046938f084832151354dab410144f1cee7f7be1085977d191",
-    "lastHarvestedAt": "2026-11-22T04:51:26.455Z",
+    "contentHash": "f6a3d75136744cba29efffc62063de319f633017f8f6ee1b32eaa2373b15f87f",
+    "lastHarvestedAt": "2026-11-22T10:03:53.403Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
@@ -4573,10 +4573,10 @@
     "repository": "slatedb/slatedb",
     "platform": "github",
     "sourceUrl": "https://github.com/slatedb/slatedb",
-    "sourceVersion": "c7c7976b",
+    "sourceVersion": "864e081b",
     "license": "Apache-2.0",
-    "contentHash": "cc33051d14522be6f4db927fbf2c410fba1630ccfa273bd8a75689a43d469632",
-    "lastHarvestedAt": "2026-11-21T06:14:00.249Z",
+    "contentHash": "2ede2fd8407f597ffdb893e599dc335d4bf698a62fcb30fb0eba7f7b8b86fa46",
+    "lastHarvestedAt": "2026-11-22T10:03:56.574Z",
     "learningId": "learn-github-slatedb-slatedb"
   },
   "react-component-slider": {
@@ -12605,8 +12605,8 @@
     "sourceUrl": "https://huggingface.co/Abiray/MiniMax-H3-Image-GGUF",
     "sourceVersion": "hf-abiray-minimax-h3-image-gguf",
     "license": "Open-Source",
-    "contentHash": "b0a7f55bab89eec331e9727ff2d676e21a5a566c44a5cebc3b7a528ed2592b45",
-    "lastHarvestedAt": "2026-11-15T11:12:30.217Z",
+    "contentHash": "3a7c056720d0350344298e9ee85667a854a130f723f223e433f62e5f52496a1a",
+    "lastHarvestedAt": "2026-11-22T10:03:41.781Z",
     "learningId": "learn-huggingface-abiray-minimax-h3-image-gguf"
   },
   "tencent-loopforge": {

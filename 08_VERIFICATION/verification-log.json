@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261120-4ETW",
-    "timestamp": "2026-11-20T09:59:07.796Z",
-    "repository": "chrisbanes/skills",
-    "learningId": "learn-github-chrisbanes-skills",
-    "contentHash": "f2ef466a784148d647e22c372d98af24293d73e8c54f90d2068bf7b12756a2f4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-4GZ9",
-    "timestamp": "2026-11-20T09:59:10.581Z",
-    "repository": "envoyproxy/envoy",
-    "learningId": "learn-github-envoyproxy-envoy",
-    "contentHash": "449e090d0167cf85ce9e9101f3d90347646744a04ed0713f0df03dc24db09f94",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-DP9J",
-    "timestamp": "2026-11-20T10:34:20.839Z",
-    "repository": "kamgurgul/cpu-info",
-    "learningId": "learn-github-kamgurgul-cpu-info",
-    "contentHash": "0bc4c5841003aee9074a621ebe0f9c955a45cf105a7f7b94bcc5d2af7bec0570",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261120-DRHO",
     "timestamp": "2026-11-20T10:34:23.724Z",
     "repository": "k3s-io/k3s",
@@ -7490,6 +7445,51 @@
     "repository": "necolas/react-native-web",
     "learningId": "learn-github-necolas-react-native-web",
     "contentHash": "9ae4ebfe744ca8de8bc6f7c5028c645ac2ff25622c0869f45ff18f86d4eaaca2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-5ZKG",
+    "timestamp": "2026-11-22T10:03:41.776Z",
+    "repository": "Abiray/MiniMax-H3-Image-GGUF",
+    "learningId": "learn-huggingface-abiray-minimax-h3-image-gguf",
+    "contentHash": "3a7c056720d0350344298e9ee85667a854a130f723f223e433f62e5f52496a1a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-68JB",
+    "timestamp": "2026-11-22T10:03:53.399Z",
+    "repository": "tailscale/tailscale",
+    "learningId": "learn-github-tailscale-tailscale",
+    "contentHash": "f6a3d75136744cba29efffc62063de319f633017f8f6ee1b32eaa2373b15f87f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-6AZD",
+    "timestamp": "2026-11-22T10:03:56.569Z",
+    "repository": "slatedb/slatedb",
+    "learningId": "learn-github-slatedb-slatedb",
+    "contentHash": "2ede2fd8407f597ffdb893e599dc335d4bf698a62fcb30fb0eba7f7b8b86fa46",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

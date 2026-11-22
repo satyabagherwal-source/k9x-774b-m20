@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T09:47:33.364Z",
-  "total_cycles_completed": 11470,
-  "total_learnings_persisted": 11470,
-  "total_rules_promoted": 10731,
+  "last_updated": "2026-11-22T10:03:56.580Z",
+  "total_cycles_completed": 11473,
+  "total_learnings_persisted": 11473,
+  "total_rules_promoted": 10733,
   "history": [
-    {
-      "timestamp": "2026-11-21T16:40:10.544Z",
-      "repository": "callstack/react-native-paper",
-      "learningId": "learn-github-callstack-react-native-paper",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T16:40:17.265Z",
-      "repository": "vespa-engine/vespa",
-      "learningId": "learn-github-vespa-engine-vespa",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T17:05:46.882Z",
-      "repository": "zeronsh/zeron",
-      "learningId": "learn-github-zeronsh-zeron",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T17:05:51.451Z",
       "repository": "FaridSafi/react-native-gifted-chat",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-22T09:47:33.364Z",
       "repository": "necolas/react-native-web",
       "learningId": "learn-github-necolas-react-native-web",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T10:03:41.787Z",
+      "repository": "Abiray/MiniMax-H3-Image-GGUF",
+      "learningId": "learn-huggingface-abiray-minimax-h3-image-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T10:03:53.410Z",
+      "repository": "tailscale/tailscale",
+      "learningId": "learn-github-tailscale-tailscale",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T10:03:56.580Z",
+      "repository": "slatedb/slatedb",
+      "learningId": "learn-github-slatedb-slatedb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T09:47:40.781Z",
+  "last_updated": "2026-11-22T10:04:02.488Z",
   "total_records": 2344,
   "domains": {
     "A": {
@@ -8231,8 +8231,8 @@
       "title": "Architecture Intelligence: tailscale/tailscale Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-architecture-intelligence-tailscale-tailscale-core-invariant.md",
       "repository": "tailscale/tailscale",
-      "content_hash": "686496935fbd805d191cb25d29dec5535a33a4af84f088c3828125468fde01e3",
-      "created_at": "2026-11-22T04:51:26.943Z"
+      "content_hash": "1c62d9a4c617a8f66568d85f44d575d0289a13ecb7a6a363160f13864a00184c",
+      "created_at": "2026-11-22T10:03:53.838Z"
     },
     "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants",
@@ -13258,8 +13258,8 @@
       "title": "Architecture Intelligence: tailscale-tailscale-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-learnings-architecture-intelligence-tailscale-tailscale-lear.md",
       "repository": "tailscale-tailscale-learnings",
-      "content_hash": "71a61953d69cc0c891ab2db88fb2a1bb46a94cbafe7086eb184ebd2cbd77904c",
-      "created_at": "2026-11-22T04:52:02.005Z"
+      "content_hash": "37f0a815be3e4f986fc6d16feb9d8060e76d50a60cbb00f8286f6dadd8816ef8",
+      "created_at": "2026-11-22T10:04:01.024Z"
     },
     "domain_intelligence-research-knowledge-intelligence-stabilityai-stable-diffusion-3-medium-core-invar": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-stabilityai-stable-diffusion-3-medium-core-invar",
@@ -15414,8 +15414,8 @@
       "title": "Architecture Intelligence: slatedb/slatedb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-slatedb-slatedb-architecture-intelligence-slatedb-slatedb-core-invariants.md",
       "repository": "slatedb/slatedb",
-      "content_hash": "47e680e353162a458077ccae9333c24fc40a0f33e47a297021998e5efdd71318",
-      "created_at": "2026-11-21T06:14:00.609Z"
+      "content_hash": "c9360fc841f38afdf9c4db0c066700cd7fa5aa86acac929b3bd884b0cbc83c57",
+      "created_at": "2026-11-22T10:03:57.013Z"
     },
     "domain_intelligence-architecture-intelligence-nucleoidai-nucleoid-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-nucleoidai-nucleoid-core-invariants",
@@ -21133,8 +21133,8 @@
       "title": "Research & Knowledge Intelligence: Abiray/MiniMax-H3-Image-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-abiray-minimax-h3-image-gguf-research-knowledge-intelligence-abiray-minimax-h.md",
       "repository": "Abiray/MiniMax-H3-Image-GGUF",
-      "content_hash": "2757b11aee94b9ce65deaa52969dd6188062387da99d5ce70205a9ad877358c4",
-      "created_at": "2026-11-15T11:12:30.391Z"
+      "content_hash": "d38df608fbd680a347eee7e0309c5ab3c7ef6f7c0ed5c150feec6f7f637a9130",
+      "created_at": "2026-11-22T10:03:42.017Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomi-research-xiaomi-ocr-0-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomi-research-xiaomi-ocr-0-core-invariants",
@@ -21211,8 +21211,8 @@
       "title": "Research & Knowledge Intelligence: hf-abiray-minimax-h3-image-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-abiray-minimax-h3-image-gguf-learnings-research-knowledge-intelligence-hf-abi.md",
       "repository": "hf-abiray-minimax-h3-image-gguf-learnings",
-      "content_hash": "c032c3993ae9930792efb48dd30c2c4c14b099fdd1e3685dd8bd385cf4867547",
-      "created_at": "2026-11-15T11:13:18.874Z"
+      "content_hash": "4e591fc85c74ad7a2bb2e91c3308f350a882533447967f3421623a79ef586985",
+      "created_at": "2026-11-22T10:04:00.323Z"
     },
     "DOM-D-29746EF6": {
       "record_id": "DOM-D-29746EF6",
@@ -22784,8 +22784,8 @@
       "title": "Architecture Intelligence: slatedb-slatedb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-slatedb-slatedb-learnings-architecture-intelligence-slatedb-slatedb-learnings-co.md",
       "repository": "slatedb-slatedb-learnings",
-      "content_hash": "cf3d5cba355a2e405c3a60bde6a0df39d058b34b06e81b4f0bf14227fb46c7b3",
-      "created_at": "2026-11-21T06:14:05.539Z"
+      "content_hash": "23b1202cfc8847a2a200771f0d9bc113ae9e2759f6fb1cfd594a526130bc31b5",
+      "created_at": "2026-11-22T10:04:02.488Z"
     },
     "domain_intelligence-architecture-intelligence-dicklesworthstone-destructive_command_guard-learnings-": {
       "record_id": "domain_intelligence-architecture-intelligence-dicklesworthstone-destructive_command_guard-learnings-",

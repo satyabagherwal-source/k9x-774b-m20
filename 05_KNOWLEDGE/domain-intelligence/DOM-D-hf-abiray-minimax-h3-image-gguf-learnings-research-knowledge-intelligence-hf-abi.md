@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-15T11:13:18.783Z",
+  "timestamp": "2026-11-22T10:04:00.224Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-abiray-minimax-h3-image-gguf-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-abiray-minimax-h3-image-gguf-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-15T11:13:18.783Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T10:04:00.224Z`  
 > **Learning ID**: `LEARN-EVO-hf-abiray-minimax-h3-image-gguf-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-abiray-mi`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T11:12:29.757Z  
+> **Timestamp**: 2026-11-22T10:03:41.225Z  
 > **Learning ID**: `learn-huggingface-abiray-minimax-h3-image-gguf`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-abiray-minimax-h3-image-gguf-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Abiray/MiniMax-H3-Image-GGUF](https://huggingface.co/Abiray/MiniMax-H3-Image-GGUF))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T11:12:29.531Z  
+> **Harvest Timestamp**: 2026-11-22T10:03:41.047Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-to-image
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 127803 downloads | 218 likes
+- **Stars / Engagement**: 288737 downloads | 359 likes
 
 ---
 

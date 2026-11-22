@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-22T09:47:38.939Z",
-    "lastVerified": "2026-11-22T09:47:38.939Z",
+    "lastChecked": "2026-11-22T10:03:59.918Z",
+    "lastVerified": "2026-11-22T10:03:59.918Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -255,9 +255,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-22T09:04:38.596Z",
+    "lastChecked": "2026-11-22T10:03:53.372Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-22T09:04:38.596Z"
+    "lastVerified": "2026-11-22T10:03:53.372Z"
   },
   "herdrdev-herdr": {
     "name": "herdrdev/herdr",
@@ -2162,12 +2162,12 @@
     "officialUrl": "https://github.com/tailscale/tailscale",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-22T04:51:25.210Z",
-    "lastVerified": "2026-11-22T04:51:25.210Z",
+    "lastChecked": "2026-11-22T10:03:52.310Z",
+    "lastVerified": "2026-11-22T10:03:52.310Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "7a4bff03771cc94046938f084832151354dab410144f1cee7f7be1085977d191",
+    "contentHash": "f6a3d75136744cba29efffc62063de319f633017f8f6ee1b32eaa2373b15f87f",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -4897,14 +4897,14 @@
     "officialUrl": "https://github.com/slatedb/slatedb",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-21T06:13:59.240Z",
-    "lastVerified": "2026-11-21T06:13:59.240Z",
+    "lastChecked": "2026-11-22T10:03:55.423Z",
+    "lastVerified": "2026-11-22T10:03:55.423Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-slatedb-slatedb",
-    "contentHash": "cc33051d14522be6f4db927fbf2c410fba1630ccfa273bd8a75689a43d469632",
+    "contentHash": "2ede2fd8407f597ffdb893e599dc335d4bf698a62fcb30fb0eba7f7b8b86fa46",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6041,9 +6041,9 @@
   "architect-architect": {
     "name": "architect",
     "officialUrl": "https://github.com/architect/architect",
-    "lastChecked": "2026-11-21T08:20:34.819Z",
+    "lastChecked": "2026-11-22T10:03:45.910Z",
     "revisionIdentifier": "9924cd0a",
-    "lastVerified": "2026-11-21T08:20:34.819Z"
+    "lastVerified": "2026-11-22T10:03:45.910Z"
   },
   "yugabyte-yugabyte-db": {
     "name": "yugabyte/yugabyte-db",
@@ -7382,9 +7382,9 @@
   "jetbrains-kotlinconf-app": {
     "name": "kotlinconf-app",
     "officialUrl": "https://github.com/JetBrains/kotlinconf-app",
-    "lastChecked": "2026-11-19T07:37:21.352Z",
+    "lastChecked": "2026-11-22T10:03:43.540Z",
     "revisionIdentifier": "146e891c",
-    "lastVerified": "2026-11-19T07:37:21.352Z"
+    "lastVerified": "2026-11-22T10:03:43.540Z"
   },
   "tickernelz-opencode-mem": {
     "name": "opencode-mem",
@@ -7809,9 +7809,9 @@
   "str4d-rage": {
     "name": "rage",
     "officialUrl": "https://github.com/str4d/rage",
-    "lastChecked": "2026-11-20T23:47:38.092Z",
+    "lastChecked": "2026-11-22T10:03:38.389Z",
     "revisionIdentifier": "b5b68c4f",
-    "lastVerified": "2026-11-20T23:47:38.092Z"
+    "lastVerified": "2026-11-22T10:03:38.389Z"
   },
   "hf-phocinae-phocinae-largha-150m-v1": {
     "name": "Phocinae/Phocinae-Largha-150M-v1",
@@ -14131,6 +14131,23 @@
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-conceptcountry-qwen-concept-27b",
     "contentHash": "ed6d992f03f5357c408e622bbd573043bd9c8a33a17ae3fb1ad5b0c4edce0fb4",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-abiray-minimax-h3-image-gguf": {
+    "name": "Abiray/MiniMax-H3-Image-GGUF",
+    "officialUrl": "https://huggingface.co/Abiray/MiniMax-H3-Image-GGUF",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-22T10:03:41.047Z",
+    "lastVerified": "2026-11-22T10:03:41.047Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-abiray-minimax-h3-image-gguf",
+    "contentHash": "3a7c056720d0350344298e9ee85667a854a130f723f223e433f62e5f52496a1a",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

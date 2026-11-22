@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T09:47:40.606Z",
+  "last_updated": "2026-11-22T10:04:02.306Z",
   "directives": [
     {
       "id": "CD-001",
@@ -45825,6 +45825,46 @@
       "source_repo": "zoontek-react-native-permissions",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-E6D067-android-skip-explicit-kotlin-plugin-when.md",
+      "staged_date": "2026-11-22"
+    },
+    {
+      "id": "CD-6E9X",
+      "directive_title": "net/dnsfallback, net/captivedetection: drop decommissioned DERP 6a, make test he",
+      "source_repo": "tailscale-tailscale-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-6E9X-net-dnsfallback-net-captivedetection-drop-decommissioned-derp-6a-make-test-he.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-22",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-6FEL",
+      "directive_title": "Remove WarpBuild microbenchmark jobs from nightly workflow",
+      "source_repo": "slatedb-slatedb-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-6FEL-remove-warpbuild-microbenchmark-jobs-from-nightly-workflow.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-22",
+      "domain_letter": "A"
+    },
+    {
+      "id": "CD-REV-31E3B4",
+      "directive_title": "net/dnsfallback, net/captivedetection: drop decommissioned DERP 6a, make test he",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "tailscale-tailscale",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-31E3B4-net-dnsfallback-net-captivedetection-dro.md",
+      "staged_date": "2026-11-22"
+    },
+    {
+      "id": "CD-REV-60BB42",
+      "directive_title": "Remove WarpBuild microbenchmark jobs from nightly workflow",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "slatedb-slatedb",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-60BB42-remove-warpbuild-microbenchmark-jobs-fro.md",
       "staged_date": "2026-11-22"
     }
   ]

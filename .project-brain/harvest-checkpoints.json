@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T09:47:33.368Z",
+  "last_updated": "2026-11-22T10:03:56.584Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5496,14 +5496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tailscale-tailscale",
-      "content_hash": "7a4bff03771cc94046938f084832151354dab410144f1cee7f7be1085977d191",
-      "verified_at": "2026-11-22T04:51:26.465Z",
+      "content_hash": "f6a3d75136744cba29efffc62063de319f633017f8f6ee1b32eaa2373b15f87f",
+      "verified_at": "2026-11-22T10:03:53.413Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T04:51:26.465Z"
+      "last_updated": "2026-11-22T10:03:53.413Z"
     },
     "dingodb/dingo": {
       "repository": "dingodb/dingo",
@@ -6981,14 +6981,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-slatedb-slatedb",
-      "content_hash": "cc33051d14522be6f4db927fbf2c410fba1630ccfa273bd8a75689a43d469632",
-      "verified_at": "2026-11-21T06:14:00.257Z",
+      "content_hash": "2ede2fd8407f597ffdb893e599dc335d4bf698a62fcb30fb0eba7f7b8b86fa46",
+      "verified_at": "2026-11-22T10:03:56.584Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T06:14:00.257Z"
+      "last_updated": "2026-11-22T10:03:56.584Z"
     },
     "react-component/slider": {
       "repository": "react-component/slider",
@@ -19011,14 +19011,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-abiray-minimax-h3-image-gguf",
-      "content_hash": "b0a7f55bab89eec331e9727ff2d676e21a5a566c44a5cebc3b7a528ed2592b45",
-      "verified_at": "2026-11-15T11:12:30.226Z",
+      "content_hash": "3a7c056720d0350344298e9ee85667a854a130f723f223e433f62e5f52496a1a",
+      "verified_at": "2026-11-22T10:03:41.791Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T11:12:30.226Z"
+      "last_updated": "2026-11-22T10:03:41.791Z"
     },
     "Tencent/LoopForge": {
       "repository": "Tencent/LoopForge",

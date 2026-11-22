@@ -4,24 +4,24 @@
 {
   "source_repository": "tailscale/tailscale",
   "source_url": "https://github.com/tailscale/tailscale",
-  "source_version": "1a4f4eb6",
+  "source_version": "a3309793",
   "license": "BSD-3-Clause",
-  "timestamp": "2026-11-22T04:51:26.731Z",
+  "timestamp": "2026-11-22T10:03:53.649Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-tailscale-tailscale",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [tailscale/tailscale](https://github.com/tailscale/tailscale) (Revision: `1a4f4eb6`).  
-> **License**: BSD-3-Clause | **Timestamp**: `2026-11-22T04:51:26.731Z`  
+> **Provenance**: Harvested from [tailscale/tailscale](https://github.com/tailscale/tailscale) (Revision: `a3309793`).  
+> **License**: BSD-3-Clause | **Timestamp**: `2026-11-22T10:03:53.649Z`  
 > **Learning ID**: `learn-github-tailscale-tailscale`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 56%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 54%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from tailscale/tailscale:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T04:51:25.210Z  
+> **Harvest Timestamp**: 2026-11-22T10:03:52.310Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 39438 stars
+- **Stars / Engagement**: 39448 stars
 
 ---
 
@@ -837,233 +837,153 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1a4f4eb6` (2026-11-07)
-**Commit Message**: net/netmon: don't hold mu while closing the OS monitor
+### Incident Patch 1: `a3309793` (2026-11-22)
+**Commit Message**: net/dnsfallback, net/captivedetection: drop decommissioned DERP 6a, make test hermetic
 
-On Windows, winMon.Close unregisters the route/address/interface change
-callbacks and waits for in-flight ones to return. Those callbacks call
-Monitor.isActive, which takes m.mu. Monitor.Close held m.mu across
-om.Close, so a change notification arriving during Close deadlocked
-with it, and the test binary hung until the timeout.
+The static fallback DERP map embedded in net/dnsfallback still lists
+node 6a at 68.183.90.120 (an old Bangalore DigitalOcean IP). That IP
+is no longer a Tailscale DERP server: it now belongs to an unrelated
+nginx host that either times out or answers /generate_204 with "404
+Not Found". Captive portal detection treats any 404 as a captive
+portal.
 
-Release m.mu before calling om.Close. m.closed is already set under the
-lock, so late callbacks see the monitor as inactive and return.
+This is a production bug, not just a test bug: a client without a
+DERP map yet (fresh start, no on-disk cache) falls back to this static
+map, so a detection that picks 6a wrongly warns the user about a
+captive portal. It also made TestDetectCaptivePortalReturnsFalse,
+which probed five random nodes from that map, flaky whenever 6a was
+picked and nginx happened to answer.
 
-This is also the root cause of the Windows "ipnlocal: watchdog timeout"
-panics that kill the ipn/ipnlocal and wgengine/netstack test binaries.
+Region 6's only node, 6a, is dead, so remove region 6 entirely. The
+DERP server at that IP was retired when region 6 moved from
+DigitalOcean Bangalore to Linode Mumbai (tailscale/corp#50435,
+tailscale/corp#51314). Region 6 still exists in the control-sent DERP
+map, but its new nodes are deliberately not added here: the list is
+not regenerated or grown, as we're moving away from DERP ser
 
-Add TestMonitorCloseWaitsForOSCallback, which uses a fake osMon whose
-Close, like winipcfg's Unregister, waits for a callback that needs
-m.mu. That reproduces the deadlock on any OS.
-
-flakestress TestMonitorCloseWaitsForOSCallback, -p 4, linux:
-  before: 16/16 runs deadlocked
-  after:  0/135569 runs
-
-Fixes #22228
-Fixes #22548
-
-Change-Id: Ibe7740ca23a1ab375d37c280838942f49b4a6a8f
-Signed-off-by: Nick Khyl <[REDACTED_EMAIL]>
-Signed-off-by: Brad Fitzpatrick <[REDACTED_EMAIL]>
-
-**File**: `net/netmon/netmon.go` (modified, +8/-4)
+**File**: `net/captivedetection/captivedetection_test.go` (modified, +59/-1)
 ```diff
-@@ -49,6 +49,10 @@ type message interface {
- 
- // osMon is the interface that each operating system-specific
- // implementation of the link monitor must implement.
-+//
-+// Lock order: Monitor.mu is acquired after any osMon lock. An osMon
-+// may acquire Monitor.mu (e.g. winMon calls Monitor.isActive from OS
-+// callbacks); Monitor must not call osMon methods while holding it.
- type osMon interface {
- 	Close() error
- 
-@@ -72,7 +76,7 @@ type Monitor struct {
- 	b       *eventbus.Client
- 	changed *eventbus.Publisher[ChangeDelta]
- 
--	om     osMon         // nil means not supported on this platform
-+	om     osMon         // nil means not supported on this platform; its methods must not be called with mu held
- 	change chan bool     // send false to wake poller, true to also force ChangeDeltas be sent
- 	stop   chan struct{} // closed on Stop
- 	static bool          // static Monitor that doesn't actually monitor
-@@ -526,15 +530,15 @@ func (m *Monitor) Close() error {
- 	if m.wallTimer != nil {
- 		m.wallTimer.Stop()
- 	}
-+	started := m.started
-+	m.mu.Unlock()
- 
-+	// Close the OS monitor without holding m.mu; see the osMon lock order.
- 	var err error
- 	if m.om != nil {
- 		err = m.om.Close()
- 	}
- 
--	started := m.started
--	m.mu.Unlock()
--
- 	if started {
- 		m.goroutines.Wait()
- 	}
-```
-
-**File**: `net/netmon/netmon_test.go` (modified, +49/-0)
-```diff
-@@ -4,11 +4,13 @@
- package netmon
+@@ -5,6 +5,8 @@ package captivedetection
  
  import (
-+	"errors"
- 	"flag"
- 	"net"
- 	"net/netip"
- 	"reflect"
- 	"strings"
-+	"sync"
- 	"sync/atomic"
- 	"testing"
- 	"time"
-@@ -32,6 +34,53 @@ func TestMonitorStartClose(t *testing.T) {
+ 	"context"
++	"fmt"
++	"net"
+ 	"net/http"
+ 	"net/http/httptest"
+ 	"net/url"
+@@ -18,6 +20,7 @@ import (
+ 	"tailscale.com/derp/derpserver"
+ 	"tailscale.com/net/netmon"
+ 	"tailscale.com/syncs"
++	"tailscale.com/tailcfg"
+ 	"tailscale.com/tstest/nettest"
+ 	"tailscale.com/util/must"
+ )
+@@ -37,12 +40,67 @@ func TestAvailableEndpointsAlwaysAtLeastTwo(t *testing.T) {
  	}
  }
  
-+// callbackWaitingOSMon is an osMon whose Close, like the Windows
-+// winipcfg Unregister methods, waits for an in-flight OS callback
-+// that needs the Monitor's mutex.
-+type callbackWaitingOSMon struct {
-+	m      *Monitor
-+	closed chan struct{}
-+}
-+
-+func (om *callbackWaitingOSMon) Close() error {
-+	close(om.closed)
-+	var wg sync.WaitGroup
-+	wg.Go(func() { om.m.InterfaceState() })
-+	wg.Wait()
-+	return nil
-+}
-+
-+func (om *callbackWaitingOSMon) Receive() (message, error) {
-+	<-om.closed
-+	return nil, errors.New("closed")
-+}
-+
-+func TestMonitorCloseWaitsForOSCallback(t *testing.T) {
-+	bus := eventbus.New()
-+	defer bus.Close()
-+
-+	mon, err := New(bus, t.Logf)
-+	if err != nil {
-+		t.Fatal(err)
++// localDERPMap returns a DERPMap whose nodes are local HTTP servers using
++// the given handlers, and a counter of requests they received.
++// Callers pass at least five handlers so that detectOnInterface never
++// reaches the non-hermetic Tailscale endpoints sorted after DERP nodes.
++func localDERPMap(t *testing.T, handlers ...http.HandlerFunc) (*tailcfg.DERPMap, *atomic.Int64) {
++	if len(handlers) < 5 {
++		t.Fatalf("got %d handlers; want at least 5", len(handlers))
 +	}
-+	if err := mon.om.Close(); err != nil {
-+		t.Fatal(err)
-+	}
-+	mon.om = &callbackWaitingOSMon{m: mon, closed: make(chan struct{})}
-+	mon.Start()
-+
-+	done := make(chan error, 1)
-+	go func() { done <- mon.Close() }()
-+	select {
-+	case err := <-done:
-+		if err != nil {
-+			t.Fatal(err)
++	var hits atomic.Int64
++	dm := &tailcfg.DERPMap{Regions: map[tailcfg.DERPRegionID]*tailcfg.DERPRegion{}}
++	for i, h := range handlers {
++		s := httptest.NewUnstartedServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++			hits.Add(1)
++			h(w, r)
++		}))
++		// Endpoints are IPv4-only, so don't let httptest fall back to [::1].
++		s.Listener.Close()
++		s.Listener = must.Get(net.Listen("tcp4", "127.0.0.1:0"))
++		s.Start()
++		t.Cleanup(s.Close)
++		rid := tailcfg.DERPRegionID(i + 1)
++		dm.Regions[rid] = &tailcfg.DERPRegion{
++			RegionID: rid,
++			Nodes: []*tailcfg.DERPNode{{
++				Name:      fmt.Sprintf("%da", rid),
++				RegionID:  rid,
++				IPv4:      s.Listener.Addr().String(),
++				CanPort80: true,
++			}},
 +		}
-+	case <-time.After(10 * time.Second):
-+		t.Fatal("Monitor.Close deadlocked waiting for OS callback")
++	}
++	return dm, &hits
++}
++
+ func TestDetectCaptivePortalReturnsFalse(t *testing.T) {
++	ok := derpserver.ServeNoContent
++	dm, hits := localDERPMap(t, ok, ok, ok, ok, ok)
+ 	d := NewDetector(t.Logf)
+-	found := d.Detect(context.Background(), netmon.NewStatic(), nil, 0)
++	found := d.Detect(t.Context(), netmon.NewStatic(), dm, 0)
+ 	if found {
+ 		t.Errorf("DetectCaptivePortal returned true, expected false.")
+ 	}
++	if hits.Load() == 0 {
++		t.Skip("no endpoint was reached; no usable non-loopback interface?")
 +	}
 +}
 +
- func TestMonitorJustClose(t *testing.T) {
- 	bus := eventbus.New()
- 	defer bus.Close()
-```
-
----
-
-### Incident Patch 2: `1cc8632a` (2026-11-21)
-**Commit Message**: go.mod: bump github.com/tailscale/wireguard-go
-
-* github.com/tailscale/wireguard-go: https://github.com/tailscale/wireguard-go/compare/330f55178f24...a8c4fbf26d6c
-
-Triggered by @raggi via the bumpdep workflow.
-
-Updates #22475
-
-Signed-off-by: Dep Updater <[REDACTED_EMAIL]>
-
-**File**: `flake.nix` (modified, +1/-1)
-```diff
-@@ -172,4 +172,4 @@
-     });
-   };
++func TestDetectCaptivePortalReturnsTrue(t *testing.T) {
++	notFound := func(w http.ResponseWriter, r *http.Request) {
++		http.Error(w, "404 Not Found", http.StatusNotFound)
++	}
++	ok := derpserver.ServeNoContent
++	dm, hits := localDERPMap(t, ok, ok, ok, ok, notFound)
++	d := NewDetector(t.Logf)
++	found := d.Detect(t.Context(), netmon.NewStatic(), dm, 0)
++	if hits.Load() == 0 {
++		t.Skip("no endpoint was reached; no usable non-loopback interface?")
++	}
++	if !found {
++		t.Errorf("DetectCaptivePortal returned false, expected true.")
++	}
  }
--# nix-direnv cache busting line: sha256-BqLElx5MlGtEXEkh+2PTo3A38vQjHsQWjHLrXK1K7Zg=
-+# nix-direnv cache busting line: sha256-nOGMprgdGfL3xU7R3La0aHEJNpVYkP9Inc0Fs8+KfiI=
+ 
+ func TestEndpointsAreUpAndReturnExpectedResponse(t *testing.T) {
 ```
 
-**File**: `flakehashes.json` (modified, +2/-2)
+**File**: `net/dnsfallback/dns-fallback-servers.json` (modified, +0/-15)
 ```diff
-@@ -4,7 +4,7 @@
-     "sri": "sha256-Qmy06FkeFkjqCo1FLSD9dO7hTvdo/gC2VACJniuiQBU="
-   },
-   "vendor": {
--    "goModSum": "sha256-q9yKYr8Hs+m30TEtGIfZ0BXTrKz576ZtGnXEw2XRfmc=",
--    "sri": "sha256-BqLElx5MlGtEXEkh+2PTo3A38vQjHsQWjHLrXK1K7Zg="
-+    "goModSum": "sha256-QP1as7ifhlOtEVS1hZaWhNQ1HMDQRKve2PEZMziRxCQ=",
-+    "sri": "sha256-nOGMprgdGfL3xU7R3La0aHEJNpVYkP9Inc0Fs8+KfiI="
-   }
- }
-```
-
-**File**: `go.mod` (modified, +1/-1)
-```diff
-@@ -125,7 +125,7 @@ require (
- 	github.com/tailscale/ts-gokrazy v0.0.0-20260630224145-b83088f2e52e
- 	github.com/tailscale/web-client-prebuilt v0.0.0-20260917222731-e0ed2d0d0fea
- 	github.com/tailscale/wf v0.0.0-20240214030419-6fbb0a674ee6
--	github.com/tailscale/wireguard-go v0.0.0-20261119191353-330f55178f24
-+	github.com/tailscale/wireguard-go v0.0.0-20261121000637-a8c4fbf26d6c
- 	github.com/tailscale/xnet v0.0.0-20240729143630-8497ac4dab2e
- 	github.com/tc-hib/winres v0.3.1
- 	github.com/tcnksm/go-httpstat v0.2.0
-```
-
-**File**: `go.sum` (modified, +2/-2)
-```diff
-@@ -1152,8 +1152,8 @@ github.com/tailscale/web-client-prebuilt v0.0.0-20260917222731-e0ed2d0d0fea h1:a
- github.com/tailscale/web-client-prebuilt v0.0.0-20260917222731-e0ed2d0d0fea/go.mod h1:agQPE6y6ldqCOui2gkIh7ZMztTkIQKH049tv8siLuNQ=
- github.com/tailscale/wf v0.0.0-20240214030419-6fbb0a674ee6 h1:l10Gi6w9jxvinoiq15g8OToDdASBni4CyJOdHY1Hr8M=
- github.com/tailscale/wf v0.0.0-20240214030419-6fbb0a674ee6/go.mod h1:ZXRML051h7o4OcI0d3AaILDIad/Xw0IkXaHM17dic1Y=
--github.com/tailscale/wireguard-go v0.0.0-20261119191353-330f55178f24 h1:znSXvacbd0ocSc2jmRIf0WL7PuvAnohnKbNlBffdppM=
--github.com/tailscale/wireguard-go v0.0.0-20261119191353-330f55178f24/go.mod h1:Hl7pyu83xNjc1LY5e9apq2mWm8Hl76wRtJbwZ2XISqY=
-+github.com/tailscale/wireguard-go v0.0.0-20261121000637-a8c4fbf26d6c h1:hLTbcmifu309AoHUdjK+x5mFv/rp2kC01JHkdhCS48A=
-+github.com/tailscale/wireguard-go v0.0.0-20261121000637-a8c4fbf26d6c/go.mod h1:Hl7pyu83xNjc1LY5e9apq2mWm8Hl76wRtJbwZ2XISqY=
- github.com/tailscale/xnet v0.0.0-20240729143630-8497ac4dab2e h1:zOGKqN5D5hHhiYUp091JqK7DPCqSARyUfduhGUY8Bek=
- github.com/tailscale/xnet v0.0.0-20240729143630-8497ac4dab2e/go.mod h1:orPd6JZXXRyuDusYilywte7k094d7dycXXU5YnWsrwg=
- github.com/tc-hib/winres v0.3.1 h1:CwRjEGrKdbi5CvZ4ID+iyVhgyfatxFoizjPhzez9Io4=
-```
-
-**File**: `shell.nix` (modified, +1/-1)
-```diff
-@@ -16,4 +16,4 @@
- ) {
-   src =  ./.;
- }).shellNix
--# nix-direnv cache busting line: sha256-BqLElx5MlGtEXEkh+2PTo3A38vQjHsQWjHLrXK1K7Zg=
-+# nix-direnv cache busting line: sha256-nOGMprgdGfL3xU7R3La0aHEJNpVYkP9Inc0Fs8+KfiI=
+@@ -184,21 +184,6 @@
+ 				}
+ 			]
+ 		},
+-		"6": {
+-			"RegionID": 6,
+-			"RegionCode": "r6",
+-			"RegionName": "r6",
+-			"Nodes": [
+-				{
+-					"Name": "6a",
+-					"RegionID": 6,
+-					"HostName": "derp6.tailscale.com",
+-					"IPv4": "68.183.90.120",
+-					"IPv6": "2400:6180:100:d0::982:d001",
+-					"CanPort80": true
+-				}
+-			]
+-		},
+ 		"7": {
+ 			"RegionID": 7,
+ 			"RegionCode": "r7",
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #22556** (closed): go.mod: bump github.com/tailscale/wireguard-go (@tailscale-code-updater[bot])
 - **PR #22555** (closed): net/netmon: don't hold Monitor.mu while closing the OS monitor (@bradfitz)
+- **PR #22554** (2026-11-22): net/dnsfallback, net/captivedetection: drop decommissioned DERP 6a, make test hermetic (@bradfitz)
 - **PR #22544** (2026-11-21): ipn/ipnlocal: deflake TestServeAppCapsConcurrentStreams on Windows (@bradfitz)
 - **PR #22542** (2026-11-21): .github: use gomodfs for the Go module cache on Windows CI (@bradfitz)
 - **PR #22537** (2026-11-21): go.mod: bump github.com/tailscale/wireguard-go (@tailscale-code-updater[bot])
-- **PR #22535** (2026-11-20): magicsock,tstun: add gauges for the number of open queues and sockets (@illotum)
 
 ---
 
@@ -1083,41 +1003,61 @@ Signed-off-by: Dep Updater <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. net/netmon: don't hold mu while closing the OS monitor
+## X. net/dnsfallback, net/captivedetection: drop decommissioned DERP 6a, make test he
 
 **RULE**:
-When implementing operations in `net/netmon/netmon.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `net/captivedetection/captivedetection_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1a4f4eb6`: net/netmon: don't hold mu while closing the OS monitor. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a3309793`: net/dnsfallback, net/captivedetection: drop decommissioned DERP 6a, make test hermetic. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `net/netmon/netmon.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `net/captivedetection/captivedetection_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-//
-// Lock order: Monitor.mu is acquired after any osMon lock. An osMon
-// may acquire Monitor.mu (e.g. winMon calls Monitor.isActive from OS
-// callbacks); Monitor must not call osMon methods while holding it.
-	om     osMon         // nil means not supported on this platform; its methods must not be called with mu held
-	started := m.started
-	m.mu.Unlock()
-	// Close the OS monitor without holding m.mu; see the osMon lock order.
+	"fmt"
+	"net"
+	"tailscale.com/tailcfg"
+// localDERPMap returns a DERPMap whose nodes are local HTTP servers using
+// the given handlers, and a counter of requests they received.
+// Callers pass at least five handlers so that detectOnInterface never
+// reaches the non-hermetic Tailscale endpoints sorted after DERP nodes.
+func localDERPMap(t *testing.T, handlers ...http.HandlerFunc) (*tailcfg.DERPMap, *atomic.Int64) {
+	if len(handlers) < 5 {
+		t.Fatalf("got %d handlers; want at least 5", len(handlers))
+	}
+	var hits atomic.Int64
+	dm := &tailcfg.DERPMap{Regions: map[tailcfg.DERPRegionID]*tailcfg.DERPRegion{}}
+	for i, h := range handlers {
+		s := httptest.NewUnstartedServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			hits.Add(1)
+			h(w, r)
+		}))
+		// Endpoints are IPv4-only, so don't let httptest fall back to [::1].
+		s.Listener.Close()
+		s.Listener = must.Get(net.Listen("tcp4", "127.0.0.1:0"))
+		s.Start()
+		t.Cleanup(s.Close)
+		rid := tailcfg.DERPRegionID(i + 1)
+		dm.Regions[rid] = &tailcfg.DERPRegion{
+			RegionID: rid,
+			Nodes: []*tailcfg.DERPNode{{
+				Name:      fmt.Sprintf("%da", rid),
+				RegionID:  rid,
+				IPv4:      s.Listener.Addr().String(),
+				CanPor
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	om     osMon         // nil means not supported on this platform
-	started := m.started
-	m.mu.Unlock()
-
+	found := d.Detect(context.Background(), netmon.NewStatic(), nil, 0)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1a4f4eb6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a3309793` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

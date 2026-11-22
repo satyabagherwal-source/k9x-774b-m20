@@ -12065,3 +12065,6 @@
 | `CYCLE-20261122-5AS9` | `2026-11-22T09:35:10.041Z` | `higurashi-ai/Haru-4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-higurashi-ai-haru-4b-learnings.md` | Yes (`2d7f6f7d...`) |
 | `CYCLE-20261122-L3SM` | `2026-11-22T09:47:27.478Z` | `ConceptCountry/qwen-concept-27b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-conceptcountry-qwen-concept-27b-learnings.md` | Yes (`ed6d992f...`) |
 | `CYCLE-20261122-L8BU` | `2026-11-22T09:47:33.354Z` | `necolas/react-native-web` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9916` | Yes (`9ae4ebfe...`) |
+| `CYCLE-20261122-5ZKG` | `2026-11-22T10:03:41.776Z` | `Abiray/MiniMax-H3-Image-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-abiray-minimax-h3-image-gguf-learnings.md` | Yes (`3a7c0567...`) |
+| `CYCLE-20261122-68JB` | `2026-11-22T10:03:53.399Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9917` | Yes (`f6a3d751...`) |
+| `CYCLE-20261122-6AZD` | `2026-11-22T10:03:56.569Z` | `slatedb/slatedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9918` | Yes (`2ede2fd8...`) |

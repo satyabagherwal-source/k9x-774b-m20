@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-22T07:56:47.732Z",
+  "updated_at": "2026-11-22T10:04:02.060Z",
   "stats": {
-    "total_discovered": 7471,
-    "approved_pending_harvest": 7070,
+    "total_discovered": 7480,
+    "approved_pending_harvest": 7079,
     "harvested_count": 0,
     "rejected_count": 401,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7049,
-      "OFFICIAL_DOCUMENTATION": 243,
+      "COMMUNITY_AND_EXPERT": 7057,
+      "OFFICIAL_DOCUMENTATION": 244,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 5,
       "SECURITY_ADVISORIES": 42,
@@ -161578,6 +161578,204 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gocd-gocd-learnings.md",
         "fileName": "gocd-gocd-learnings.md"
+      }
+    },
+    "SRC-36EB72435E35": {
+      "id": "SRC-36EB72435E35",
+      "url": "https://github.com/polarsignals/pprofme/releases/latest/download/$%7BPPROFME_BINARY",
+      "title": "https://github.com/polarsignals/pprofme/releases/latest/download/$%7BPPROFME_BINARY",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T10:04:01.610Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
+        "fileName": "slatedb-slatedb-learnings.md"
+      }
+    },
+    "SRC-12064CCEF0C6": {
+      "id": "SRC-12064CCEF0C6",
+      "url": "https://github.com/polarsignals/pprofme/releases/latest/download/pprofme_checksums.txt",
+      "title": "https://github.com/polarsignals/pprofme/releases/latest/download/pprofme_checksums.txt",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T10:04:01.665Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
+        "fileName": "slatedb-slatedb-learnings.md"
+      }
+    },
+    "SRC-0D918886EB24": {
+      "id": "SRC-0D918886EB24",
+      "url": "https://pprof.me/[a-zA-Z0-9",
+      "title": "https://pprof.me/[a-zA-Z0-9",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T10:04:01.721Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
+        "fileName": "slatedb-slatedb-learnings.md"
+      }
+    },
+    "SRC-9DB76101A38D": {
+      "id": "SRC-9DB76101A38D",
+      "url": "https://github.com/slatedb/slatedb/tree/main/slatedb/benches",
+      "title": "https://github.com/slatedb/slatedb/tree/main/slatedb/benches",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T10:04:01.773Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
+        "fileName": "slatedb-slatedb-learnings.md"
+      }
+    },
+    "SRC-94903BC45DCB": {
+      "id": "SRC-94903BC45DCB",
+      "url": "https://github.com/slatedb/slatedb/actions/workflows/nightly.yaml",
+      "title": "https://github.com/slatedb/slatedb/actions/workflows/nightly.yaml",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T10:04:01.830Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
+        "fileName": "slatedb-slatedb-learnings.md"
+      }
+    },
+    "SRC-F33A851866DC": {
+      "id": "SRC-F33A851866DC",
+      "url": "https://warpbuild.com/",
+      "title": "https://warpbuild.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T10:04:01.882Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
+        "fileName": "slatedb-slatedb-learnings.md"
+      }
+    },
+    "SRC-AECB821D1675": {
+      "id": "SRC-AECB821D1675",
+      "url": "https://docs.warpbuild.com/cloud-runners",
+      "title": "https://docs.warpbuild.com/cloud-runners",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T10:04:01.938Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
+        "fileName": "slatedb-slatedb-learnings.md"
+      }
+    },
+    "SRC-086546C5A90E": {
+      "id": "SRC-086546C5A90E",
+      "url": "https://github.com/tikv/pprof-rs",
+      "title": "https://github.com/tikv/pprof-rs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T10:04:01.990Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
+        "fileName": "slatedb-slatedb-learnings.md"
+      }
+    },
+    "SRC-4101534DE3B8": {
+      "id": "SRC-4101534DE3B8",
+      "url": "https://pprof.me/",
+      "title": "https://pprof.me/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T10:04:02.060Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
+        "fileName": "slatedb-slatedb-learnings.md"
       }
     }
   }
