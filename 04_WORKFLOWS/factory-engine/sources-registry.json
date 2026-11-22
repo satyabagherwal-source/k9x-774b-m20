@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-22T16:12:36.706Z",
-    "lastVerified": "2026-11-22T16:12:36.706Z",
+    "lastChecked": "2026-11-22T16:29:04.496Z",
+    "lastVerified": "2026-11-22T16:29:04.496Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -172,22 +172,21 @@
     "revisionIdentifier": "9a44a8e8"
   },
   "dathere-qsv": {
-    "name": "qsv",
+    "name": "dathere/qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-22T15:09:16.600Z",
-    "lastVerified": "2026-11-22T15:09:16.600Z",
+    "lastChecked": "2026-11-22T16:28:25.745Z",
+    "lastVerified": "2026-11-22T16:28:25.745Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "dff9a27778f0d013a0c8706670e8ffeb1828e177a9f6390dc33b7d3d9530c65d",
+    "contentHash": "702c971e8c21b1a184f127131d7ed4e44d3d94f8b9530ff406c519a135a399a2",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "598cce81"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -281,12 +280,12 @@
     "officialUrl": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-18T09:57:11.185Z",
-    "lastVerified": "2026-11-18T09:57:11.185Z",
+    "lastChecked": "2026-11-22T16:28:10.184Z",
+    "lastVerified": "2026-11-22T16:28:10.184Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
-    "contentHash": "c6266a0e873d799cbd8708bf605ec54271a4657928d00ddbfc9b9babcf5e09e2",
+    "contentHash": "6b3ff9c82f2b218919a9b7bd7b0e20fce3b1bdb974a3a53bc882811ec4fa61e6",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -1501,9 +1500,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-11-22T07:56:40.072Z",
+    "lastChecked": "2026-11-22T16:28:17.527Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-11-22T07:56:40.072Z"
+    "lastVerified": "2026-11-22T16:28:17.527Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -6122,12 +6121,12 @@
     "lastVerified": "2026-11-22T10:17:59.325Z"
   },
   "greptimeteam-greptimedb": {
-    "name": "GreptimeTeam/greptimedb",
+    "name": "greptimedb",
     "officialUrl": "https://github.com/GreptimeTeam/greptimedb",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-21T13:30:41.962Z",
-    "lastVerified": "2026-11-21T13:30:41.962Z",
+    "lastChecked": "2026-11-22T16:28:20.010Z",
+    "lastVerified": "2026-11-22T16:28:20.010Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-greptimeteam-greptimedb",
@@ -6136,7 +6135,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "87875513"
   },
   "dicklesworthstone-destructive_command_guard": {
     "name": "Dicklesworthstone/destructive_command_guard",
@@ -7273,9 +7273,9 @@
   "aquasecurity-trivy-operator": {
     "name": "trivy-operator",
     "officialUrl": "https://github.com/aquasecurity/trivy-operator",
-    "lastChecked": "2026-11-21T15:48:46.832Z",
+    "lastChecked": "2026-11-22T16:28:15.099Z",
     "revisionIdentifier": "689215dd",
-    "lastVerified": "2026-11-21T15:48:46.832Z"
+    "lastVerified": "2026-11-22T16:28:15.099Z"
   },
   "tursodatabase-limbo": {
     "name": "tursodatabase/turso",
@@ -8192,9 +8192,9 @@
   "pointfreeco-swift-composable-architecture": {
     "name": "swift-composable-architecture",
     "officialUrl": "https://github.com/pointfreeco/swift-composable-architecture",
-    "lastChecked": "2026-11-19T15:03:21.887Z",
+    "lastChecked": "2026-11-22T16:28:12.510Z",
     "revisionIdentifier": "bf66bd83",
-    "lastVerified": "2026-11-19T15:03:21.887Z"
+    "lastVerified": "2026-11-22T16:28:12.510Z"
   },
   "veirt-weathr": {
     "name": "weathr",
@@ -8569,14 +8569,14 @@
     "officialUrl": "https://github.com/astral-sh/uv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-21T03:28:35.018Z",
-    "lastVerified": "2026-11-21T03:28:35.018Z",
+    "lastChecked": "2026-11-22T16:28:10.816Z",
+    "lastVerified": "2026-11-22T16:28:10.816Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-astral-sh-uv",
-    "contentHash": "bf5bbb36d6cddd67decbae0326403fb5c528949a0524eb793c6d5e5b9996cab0",
+    "contentHash": "76afbf48c90c1020b68d8897223f29e55f4b218a11c9ec30de689785f6cf38df",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

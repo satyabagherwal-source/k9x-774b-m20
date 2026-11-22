@@ -4,22 +4,22 @@
 {
   "source_repository": "dathere/qsv",
   "source_url": "https://github.com/dathere/qsv",
-  "source_version": "598cce81",
+  "source_version": "a129ffd9",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-22T00:24:51.828Z",
+  "timestamp": "2026-11-22T16:28:27.366Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-dathere-qsv",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `598cce81`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-22T00:24:51.828Z`  
+> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `a129ffd9`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-22T16:28:27.366Z`  
 > **Learning ID**: `learn-github-dathere-qsv`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `dathere/qsv` (Commit: `598cce81`)
+- **Target Repository**: `dathere/qsv` (Commit: `a129ffd9`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T00:24:50.760Z  
+> **Harvest Timestamp**: 2026-11-22T16:28:25.745Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Blazing-fast, Neuro-symbolic Data-Wrangling toolkit
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3838 stars
+- **Stars / Engagement**: 3843 stars
 
 ---
 
@@ -2235,464 +2235,48 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `598cce81` (2026-11-22)
-**Commit Message**: feat(synthesize): correlated relationships take categorical members as strata (#5093)
+### Incident Patch 1: `a129ffd9` (2026-11-22)
+**Commit Message**: build(deps): bump anthropics/claude-code-action from 1.0.276 to 1.0.278 (#5079)
 
-* feat(synthesize): correlated relationships take categorical members as strata
+Bumps [anthropics/claude-code-action](https://github.com/anthropics/claude-code-action) from 1.0.276 to 1.0.278.
+- [Release notes](https://github.com/anthropics/claude-code-action/releases)
+- [Commits](https://github.com/anthropics/claude-code-action/compare/f3b070c88125d33dbae5653df5f143101d4ea9dc...cc98b3ae241b0fcfb6a42a2690751afffecb4452)
 
-A `correlated` group may now name categorical columns (up to 50 values; not
-dates or fakers). Each source combination of their values seen at least
---min-count times is a stratum, drawn by its share of the rows; the numeric
-members are drawn from that stratum's own quantile buckets, coupled by a
-Gaussian copula fitted on ranks within strata. A frequency-order latent
-copula, the earlier plan, kept 1-60% of the association on the 311
-fixtures; strata keep it whole.
+---
+updated-dependencies:
+- dependency-name: anthropics/claude-code-action
+  dependency-version: 1.0.278
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
 
-- A `joint` group sharing a categorical member joins the strata, so its
-  tuples stay real. A tuple too rare to print counts toward the kept
-  tuples sharing its categorical value, keeping each value's share and
-  numeric range (NYC: Queens' many rare cities).
-- A stratum with too few values for buckets of its own (2k-1) uses its
-  categorical value's, then the column's.
-- Categorical members stay when the strata explain some numeric member by
-  a rank-based correlation ratio >= --correlation-threshold; otherwise the
-  numeric members fall back to a plain c
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `.claude/skills/qsv/qsv-synthesize.json` (modified, +1/-1)
+**File**: `.github/workflows/claude-code-review.yml` (modified, +1/-1)
 ```diff
-@@ -22,7 +22,7 @@
-       {
-         "flag": "--correlation-threshold",
-         "type": "number",
--        "description": "Minimum absolute Spearman correlation for a pair of columns to stay in a `correlated` relationship. Weakly-correlated members are dropped.",
-+        "description": "Minimum absolute Spearman correlation for a pair of columns to stay in a `correlated` relationship. Weakly-correlated members are dropped. Categorical members are kept when the strata explain some numeric member by a rank-based correlation ratio at least this high.",
-         "default": 0.3
-       },
-       {
+@@ -34,7 +34,7 @@ jobs:
+ 
+       - name: Run Claude Code Review
+         id: claude-review
+-        uses: anthropics/claude-code-action@f3b070c88125d33dbae5653df5f143101d4ea9dc # v1.0.276
++        uses: anthropics/claude-code-action@cc98b3ae241b0fcfb6a42a2690751afffecb4452 # v1.0.278
+         with:
+           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+           plugin_marketplaces: 'https://github.com/anthropics/claude-code.git'
 ```
 
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `.github/workflows/claude.yml` (modified, +1/-1)
 ```diff
-@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- ## [Unreleased]
+@@ -34,7 +34,7 @@ jobs:
  
- ### Added
-+- `synthesize`: `correlated` relationships may now take categorical members (up to 50 values; not dates or faker columns), e.g. `{"kind": "correlated", "members": ["borough", "latitude", "longitude"]}`. The rows split into strata, one per source combination of the categorical values seen at least `--min-count` times. Each stratum keeps its share of rows, and the numeric members are drawn from that stratum's own quantile buckets, coupled by a copula fitted within strata, so each borough keeps its own coordinates. A `joint` group sharing a categorical member joins the strata, so its tuples stay real, provided no other relationship names its columns (otherwise the usual first-relationship-wins order applies); the rows of a tuple too rare to print count toward the kept tuples sharing its categorical value, which draw that share of their numbers from the rare rows' own buckets, so each value keeps its share and its numeric range (a row printed as a kept city may then carry a rarer city's numbers in the same borough). A stratum too small for buckets of its own (fewer than 2 × `--min-count` − 1 values) uses its categorical value's, then the column's. Categorical members stay only when the strata explain some numeric member by a rank-based correlation ratio at or above `--correlation-threshold`, and a numeric member stays when the strata explain it or it correlates with another member within strata; otherwise the numeric members fall back to a plain `correlated` group and the `joint` groups it took in resolve on their own (or the run aborts under `--strict-relationships`). `--discover-relationships` proposes such members at a correlation ratio of 0.7 or more: on `NYC311-500.csv`, `Borough` joins `Incident Zip`, `BBL`, both State Plane coordinates, `Latitude` and `Longitude` in one group, and synthetic Latitude and Longitude keep Borough's correlation ratio (0.894 and 0.892, vs 0.892 and 0.878 in the source) and their 5th-95th percentiles. A discovered group holds up to 8 of its own members; the `joint` columns its strata take in don't count toward it. Groups without categorical members write the same bytes as before, and save the same model. [#5093](https://github.com/dathere/qsv/pull/5093)
- - `synthesize`: new `--discover-relationships <file>` finds `joint`, `correlated` and `ordered` groups in the source, uses them in the same run, and writes them, each with a score, to `<file>` for review. `<file>` is the `--dictionary` (or the `--infer-content-type` dictionary, or `{"fields": []}` without one) with the groups appended to its `relationships`, so a rerun with `--dictionary <file>` writes the same bytes, as does a `--model` saved from the run. Relationships the dictionary declares win, and discovery leaves their columns alone. Pairs score by bias-corrected Cramér's V for `joint` (raw V is near 1 for any many-valued column) and by Spearman's rho for `correlated` (numeric columns) and `ordered` (dates), at 0.7 or more. Only columns that would sample an enumerated pool of 2 to 50 values can join a `joint` group, and it must keep 80% of rows in tuples seen at least `--min-count` times. An `ordered` pair also needs the later date to come first in at most 1% of the sampled rows holding both (the fit clamps those, as for a declared group), overlapping ranges, and the same dictionary date format, or none on either (it writes every member in its anchor's format). Columns with a faker content type, filler, constant and all-unique integer columns, and the `--target` are never proposed; groups don't share columns and hold up to 8. Scores are read from at most 100,000 rows (a fixed stride beyond) and 64 columns of each family, with no RNG, so the result is the same at any `--jobs`. On NYC 311 data it finds X/Longitude and Y/Latitude, Borough/Park Borough with City, and Agency/Agency Name. It can't be combined with `--no-relationships`, `--strict-relationships` or `--model`. Without the flag, output, saved models and reports are unchanged. ([#5085](https://github.com/dathere/qsv/pull/5085))
- - `synthesize`: new `--target <col>` generates the other columns conditionally on the class of `<col>`, e.g. a label to train a classifier on. Each synthetic row first draws a class by its share of the input's rows, then fills every other column from that class's own profile, so each column keeps its distribution within each class (on a 10%-positive label whose positive rows have a 10x larger `amount`, the synthetic positives' mean `amount` was 499 against the source's 499, and 116 without `--target`). A column with at most 50 distinct (trimmed) values is split by value, an empty value being a class of its own (not counted toward the 50); a numeric column with more is split by its own quantile buckets (`--quantiles`), each class drawn at the share of rows its bucket holds, and each value from the written values tha
-```
-
-**File**: `docs/help/synthesize.md` (modified, +15/-7)
-```diff
-@@ -64,7 +64,15 @@ combinations, and at the rates, the source shows them;
- those left filled stay in order.
- * correlated — numeric columns whose correlation should be preserved. A
- Gaussian copula couples the columns while leaving each
--column's own distribution unchanged.
-+column's own distribution unchanged. Categorical members
-+(up to 50 values; not dates or fakers) split the rows into
-+strata, one per source combination of their values seen at
-+least the --min-count times: each keeps its share of rows,
-+and the numeric members their distributions within it. A
-+`joint` group sharing a categorical member joins the strata:  
-+its values stay real, but its numbers follow the member it
-+shares (a city's, its borough's). Name a column as a member
-+for numbers of its own.
+       - name: Run Claude Code
+         id: claude
+-        uses: anthropics/claude-code-action@f3b070c88125d33dbae5653df5f143101d4ea9dc # v1.0.276
++        uses: anthropics/claude-code-action@cc98b3ae241b0fcfb6a42a2690751afffecb4452 # v1.0.278
+         with:
+           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
  
- Relationships are read from the dictionary's `relationships` array — inferred
- by `describegpt`, hand-authored, or found in <input> with the option
-@@ -73,10 +81,10 @@ still generated independently. Pass --no-relationships to disable relationship
- modeling entirely.
- 
- Privacy note: synthetic output is not anonymized. It can contain real values
--and real value combinations copied from <input>. By default, values and
--`joint` tuples seen fewer than 5 times in <input> are dropped from the real
--values that columns and joint groups sample from (see the --min-count
--option). The count is of rows, not people, so in data with many rows per
-+and real value combinations copied from <input>. By default, values,
-+`joint` tuples and `correlated` strata seen fewer than 5 times in <input>
-+are dropped from the real values that columns and groups sample from (see
-+the --min-count option). The count is of rows, not people, so in data with many rows per
- person one person's value can still pass it. That limits copying but does
- not stop it:  
- 
-@@ -236,9 +244,9 @@ qsv synthesize --help
- | &nbsp;`‑‑stats‑options`&nbsp; | string | Extra options appended to the internal `stats` run. Note: cardinality, quartiles and date inference are always enabled — do not re-specify them here. Column selection (--select/-s) and --weight are rejected; run `qsv select` on <input> first. |  |
- | &nbsp;`‑‑consistent‑fakes`&nbsp; | flag | For structured-faker columns with bounded cardinality (cardinality fully captured by `frequency`), build a stable source-value -> fake-value mapping so the same source value always produces the same fake in the output. Preserves the source frequency distribution and overrides the default "emit real values when frequency-enumerated" behavior for structured fakers (names, emails, addresses, etc.). Has no effect on unstructured columns (lorem_*, free_text, unknown), all-unique columns, or non-faker columns. Useful for deidentified synthesis where you want stable joins on the faked columns. |  |
- | &nbsp;`‑‑no‑relationships`&nbsp; | flag | Disable inter-column relationship modeling. Every column is generated independently even when the dictionary declares a `relationships` array. |  |
--| &nbsp;`‑‑discover‑relationships`&nbsp; | string | Find relationships in <input>, use them in this run, and write them to <file> for review. <file> holds the dictionary (from --dictionary, or from --infer-content-type) with the found groups appended to its `relationships`, each with a score; without a dictionary, it holds only those groups. Rerunning with <file> as the dictionary gives the same output. Declared relationships keep their columns, which discovery leaves out. A pair scores 0.7 or more by bias-corrected Cramer's V for `joint` (columns with 2 to 50 enumerated values; a group must keep 80% of rows in tuples seen at least the --min-count times), or by \|Spearman\| for `correlated` (numeric) and `ordered` (dates with the same dictionary date format, or none, where the later comes first in at most 1% of the sampled rows holding both, and their ranges overlap). Groups don't share columns and hold up to 8 each. Columns with a faker content type, and free-text, constant and all-unique integer columns are never proposed, nor is the target. Scores read up to 100,000 rows (at a fixed stride beyond) and up to 64 columns of each family. With the --shard option, every slice finds the same groups and writes the same <file>. Not allowed with --no-relationships, nor with the --strict-relationships option, which would abort on a found group the source only nearly satisfies. |  |
-+| &nbsp;`‑‑discover‑relationships`&nbsp; | string | Find relationships in <input>, use them in this run, and write them to <file> for review. <file> holds the dictionary (from --dictionary, or from --infer-content-type) with the found groups appended to its `relationships`, each with a score; without a dictionary, it holds only those groups. Rerunning with <file> as the dictionary gives the same output. Declared relationships keep their columns, which discovery leaves out. A pair scores 0.7 or more by bias-corrected Cramer's V for `joint` (columns with 2 to 50 enumerated values; a group must ke
-```
-
-**File**: `src/cmd/synthesize/discover.rs` (modified, +143/-3)
-```diff
-@@ -15,7 +15,10 @@ use super::{
-     dictionary::SynthRelationship,
-     faker_map,
-     generator::{ColumnGenerator, parse_f64, parse_source_epoch},
--    relationships::{EmitUnit, ScheduleParams, pearson, source_cell},
-+    relationships::{
-+        EmitUnit, ScheduleParams, correlation_ratio_of_ranks, is_stratum_candidate, pearson,
-+        ranks_of, source_cell,
-+    },
- };
- use crate::{CliResult, config::Config};
- 
-@@ -162,7 +165,12 @@ pub(crate) fn discover(
-     }
-     joint.truncate(MAX_CANDIDATES);
-     numeric.truncate(MAX_CANDIDATES);
--    if joint.len() < 2 && numeric.len() < 2 {
-+    // Nothing to pair: no two columns of one family, and no categorical and
-+    // numeric column to pair across them.
-+    if joint.len() < 2
-+        && numeric.len() < 2
-+        && (joint.is_empty() || !numeric.iter().any(|&(_, d)| d == Domain::Numeric))
-+    {
-         return Ok(Vec::new());
-     }
- 
-@@ -369,7 +377,139 @@ pub(crate) fn discover(
-             _ => {},
-         }
-     }
--    Ok(groups)
-+
-+    // --- categorical members of correlated groups ----------------------------
-+    // A categorical column whose values explain a numeric column's (η) joins
-+    // that column's `correlated` group as a stratum. One already in a `joint`
-+    // group stays there too: the fit takes the whole `joint` group into the
-+    // strata, so each of its tuples keeps its own numeric distributions.
-+    let mut mixed_edges: Vec<(f64, usize, usize)> = Vec::new();
-+    let candidates: Vec<(usize, usize)> = joint
-+        .iter()
-+        .enumerate()
-+        .filter(|&(_, &cat)| is_stratum_candidate(cat, params))
-+        .map(|(a, &cat)| (a, cat))
-+        .collect();
-+    // Each numeric column is ranked once, over the sampled rows holding a
-+    // value, and scored against every categorical candidate (blank is a
-+    // category) before the next; with no candidate, nothing is ranked.
-+    for (k, &(num, domain)) in numeric.iter().enumerate() {
-+        if candidates.is_empty() || domain != Domain::Numeric {
-+            continue;
-+        }
-+        let rows: Vec<usize> = (0..sampled).filter(|&r| values[k][r].is_some()).collect();
-+        if (rows.len() as u64) < min_pairs {
-+            continue;
-+        }
-+        let present: Vec<f64> = rows
-+            .iter()
-+            .map(|&r| values[k][r].unwrap_or_default())
-+            .collect();
-+        let ranks = ranks_of(&present);
-+        for &(a, cat) in &candidates {
-+            let groups_of: Vec<u32> = rows.iter().map(|&r| codes[a][r]).collect();
-+            let eta = correlation_ratio_of_ranks(&groups_of, codebooks[a].len(), &ranks);
-+            if eta >= THRESHOLD {
-+                mixed_edges.push((eta, cat, num));
-+            }
-+        }
-+    }
-+    sort_edges(&mut mixed_edges);
-+    // The correlated group a `joint` group's columns are strata of.
-+    let mut attached: Vec<Option<usize>> = vec![None; groups.len()];
-+    let mut dead = vec![false; groups.len()];
-+    // `joint` groups are settled by now, so each column's stays fixed below.
-+    let joint_owner: Vec<Option<usize>> = owner
-+        .iter()
-+        .map(|o| o.filter(|&g| groups[g].kind == "joint"))
-+        .collect();
-+    let joint_of = |c: usize| joint_owner[c];
-+    for (score, cat, num) in mixed_edges {
-+        let group_of_cat = match owner[cat] {
-+            Some(g) if groups[g].kind == "correlated" => Some(g),
-+            Some(g) if groups[g].kind == "joint" => attached[g],
-+            _ => None,
-+        };
-+        let group_of_num = owner[num];
-+        if group_of_num.is_some() && group_of_num == group_of_cat {
-+            continue;
-+        }
-+        // The group's members after this edge, and any group it swallows.
-+        let (target, mut members, swallowed) = match (group_of_cat, group_of_num) {
-+            (None, None) => (None, vec![cat, num], None),
-+            (None, Some(h)) => (
-+                Some(h),
-+                [groups[h].members.as_slice(), &[cat]].concat(),
-+                None,
-+            ),
-+            (Some(h), None) => (
-+                Some(h),
-+                [groups[h].members.as_slice(), &[num]].concat(),
-+                None,
-+            ),
-+            (Some(h1), Some(h2)) => (
-+                Some(h1),
-+                [groups[h1].members.as_slice(), groups[h2].members.as_slice()].concat(),
-+                Some(h2),
-+            ),
-+        };
-+        members.sort_unstable();
-+        members.dedup();
-+        // Strata: the group's categorical members plus every `joint` group
-+        // attached to it, or about to be.
-+        let mut strata: Vec<usize> = members
-+            .iter()
-+            .copied()
-+            .filter(|&c| numeric_pos[c].is_none())
-+            .collect();
-+        for g in 0..groups.len() {
-+            let joins = attached[g].is_some_and(|h| Some(h) == target || Some(h) == swallowed)
-+                || members.iter().any(|&c| joint_of(c) == Some(g));
-+            if joins {
-+              
-```
-
-**File**: `src/cmd/synthesize/group_generator.rs` (modified, +80/-12)
-```diff
-@@ -88,26 +88,67 @@ pub(crate) enum GroupGenerator {
-     /// Gaussian-copula generation for a set of correlated numeric columns. Each
-     /// column keeps its own quartile-bucket marginal exactly; the copula only
-     /// couples them, reproducing the source's rank (Spearman) correlation.
-+    ///
-+    /// With categorical members, each row first draws a stratum (one source
-+    /// combination of their values) by its share of the source rows, then
-+    /// draws the numeric members from that stratum's own buckets, so each
-+    /// category keeps its own numeric distributions.
-     Correlated {
--        /// Output column index per member, in member declared order.
--        col_indices: Vec<usize>,
-+        /// Output column index per member: the numeric members, in member
-+        /// declared order, then the categorical (stratum) members.
-+        col_indices:       Vec<usize>,
-         /// Row-normalized lower-triangular Cholesky factor of the correlation
--        /// matrix; `cholesky_l[i][j]` is used for `j <= i`.
--        cholesky_l:  Vec<Vec<f64>>,
-+        /// matrix of the numeric members (within strata, when there are
-+        /// any); `cholesky_l[i][j]` is used for `j <= i`.
-+        cholesky_l:        Vec<Vec<f64>>,
-         /// Per-member quantile buckets — a piecewise-uniform inverse CDF that
-         /// maps a uniform draw back onto the column's own distribution.
--        marginals:   Vec<Vec<(f64, f64)>>,
--        /// Per-member flag: round the emitted value to an integer.
--        is_int:      Vec<bool>,
--        /// Per-member decimal places a Float member is rounded to; `None`
--        /// for Integer and unrounded members.
--        decimals:    Vec<Option<u32>>,
-+        /// Empty when the group has strata, which carry their own.
-+        marginals:         Vec<Vec<(f64, f64)>>,
-+        /// Per numeric member flag: round the emitted value to an integer.
-+        is_int:            Vec<bool>,
-+        /// Per numeric member decimal places a Float member is rounded to;
-+        /// `None` for Integer and unrounded members.
-+        decimals:          Vec<Option<u32>>,
-         /// Per-member null ratio. Each member draws null independently, so its
-         /// marginal null ratio is preserved and nulls do not all co-occur.
--        null_ratios: Vec<f64>,
-+        /// Empty when the group has strata, which carry their own.
-+        null_ratios:       Vec<f64>,
-+        /// The source combinations of the categorical members, sorted.
-+        #[serde(default, skip_serializing_if = "Vec::is_empty")]
-+        strata:            Vec<Stratum>,
-+        /// Normalized cumulative weights of `strata`, ascending, last element
-+        /// == 1.0.
-+        #[serde(default, skip_serializing_if = "Vec::is_empty")]
-+        strata_cumulative: Vec<f64>,
-     },
- }
- 
-+/// One combination of a `Correlated` group's categorical members, with the
-+/// numeric members' distributions in the source rows holding it.
-+#[derive(Serialize, Deserialize)]
-+pub(crate) struct Stratum {
-+    /// The categorical members' values, in `col_indices` order.
-+    pub(crate) values:      Vec<String>,
-+    /// Per numeric member quantile buckets within this stratum.
-+    pub(crate) marginals:   Vec<Vec<(f64, f64)>>,
-+    /// Per numeric member share of this stratum's rows left blank.
-+    pub(crate) null_ratios: Vec<f64>,
-+    /// The rows of rare combinations sharing this stratum's declared
-+    /// categorical value, which it prints in their place.
-+    #[serde(default, skip_serializing_if = "Option::is_none")]
-+    pub(crate) rest:        Option<StratumRest>,
-+}
-+
-+/// The share of a stratum's draws that stand in for rows of rare combinations
-+/// it can't print, and those rows' numeric distributions.
-+#[derive(Serialize, Deserialize)]
-+pub(crate) struct StratumRest {
-+    pub(crate) share:       f64,
-+    pub(crate) marginals:   Vec<Vec<(f64, f64)>>,
-+    pub(crate) null_ratios: Vec<f64>,
-+}
-+
- impl GroupGenerator {
-     /// The output column indices this group is responsible for.
-     pub(crate) fn col_indices(&self) -> &[usize] {
-@@ -225,8 +266,27 @@ impl GroupGenerator {
-                 is_int,
-                 decimals,
-                 null_ratios,
-+                strata,
-+                strata_cumulative,
-             } => {
--                let k = col_indices.len();
-+                // A group with no categorical members draws only the copula,
-+                // as it always has.
-+                let stratum = (!strata.is_empty()).then(|| {
-+                    let r = rng.random_range(0.0..1.0);
-+                    &strata[strata_cumulative
-+                        .partition_point(|&c| c < r)
-+                        .min(strata.len() - 1)]
-+                });
-+                let (marginals, null_ratios) = match stratum {
-+                    None => (marginals, null_ratios),
-+                    Some(s) => match &s.rest {
-+                        Some(rest) if rng.random_range(0.0..1.0) < rest.share => {
-
-```
-
-**File**: `src/cmd/synthesize/mod.rs` (modified, +23/-7)
-```diff
-@@ -52,7 +52,15 @@ generated *jointly* so inter-column structure survives into each output row:
-                  those left filled stay in order.
-   * correlated — numeric columns whose correlation should be preserved. A
-                  Gaussian copula couples the columns while leaving each
--                 column's own distribution unchanged.
-+                 column's own distribution unchanged. Categorical members
-+                 (up to 50 values; not dates or fakers) split the rows into
-+                 strata, one per source combination of their values seen at
-+                 least the --min-count times: each keeps its share of rows,
-+                 and the numeric members their distributions within it. A
-+                 `joint` group sharing a categorical member joins the strata:
-+                 its values stay real, but its numbers follow the member it
-+                 shares (a city's, its borough's). Name a column as a member
-+                 for numbers of its own.
- 
- Relationships are read from the dictionary's `relationships` array — inferred
- by `describegpt`, hand-authored, or found in <input> with the option
-@@ -61,10 +69,10 @@ still generated independently. Pass --no-relationships to disable relationship
- modeling entirely.
- 
- Privacy note: synthetic output is not anonymized. It can contain real values
--and real value combinations copied from <input>. By default, values and
--`joint` tuples seen fewer than 5 times in <input> are dropped from the real
--values that columns and joint groups sample from (see the --min-count
--option). The count is of rows, not people, so in data with many rows per
-+and real value combinations copied from <input>. By default, values,
-+`joint` tuples and `correlated` strata seen fewer than 5 times in <input>
-+are dropped from the real values that columns and groups sample from (see
-+the --min-count option). The count is of rows, not people, so in data with many rows per
- person one person's value can still pass it. That limits copying but does
- not stop it:
- 
-@@ -370,8 +378,13 @@ synthesize options:
-                            `correlated` (numeric) and `ordered` (dates with the
-                            same dictionary date format, or none, where the
-                            later comes first in at most 1% of the sampled rows
--                           holding both, and their ranges overlap). Groups
--                           don't share columns and hold up to 8 each. Columns with a faker content type,
-+                           holding both, and their ranges overlap). A `joint`
-+                           candidate joins a `correlated` group as a stratum
-+                           when its values explain a member's by a rank-based
-+                           correlation ratio of 0.7 or more, and stays in its
-+                           own `joint` group too. Otherwise groups don't share
-+                           columns. Each holds up to 8 of its own members.
-+                           Columns with a faker content type,
-                            and free-text, constant and all-unique integer
-                            columns are never proposed, nor is the target.
-                            Scores read up to 100,000 rows (at a fixed stride
-@@ -390,6 +403,9 @@ synthesize options:
-     --correlation-threshold <f>  Minimum absolute Spearman correlation for a
-                            pair of columns to stay in a `correlated`
-                            relationship. Weakly-correlated members are dropped.
-+                           Categorical members are kept when the strata explain
-+                           some numeric member by a rank-based correlation
-+                           ratio at least this high.
-                            [default: 0.3]
-     --strict-relationships  Abort instead of warning-and-degrading when a
-                            declared relationship fails validation.
-```
-
-**File**: `src/cmd/synthesize/model.rs` (modified, +34/-6)
-```diff
-@@ -281,15 +281,43 @@ fn check_group(group: &GroupGenerator) -> Result<(), String> {
-             is_int,
-             decimals,
-             null_ratios,
-+            strata,
-+            strata_cumulative,
-         } => {
--            let k = col_indices.len();
--            if cholesky_l.len() != k
-+            let k = cholesky_l.len();
-+            let inconsistent = k == 0
-                 || cholesky_l.iter().enumerate().any(|(i, row)| row.len() <= i)
--                || marginals.len() != k
--                || marginals.iter().any(Vec::is_empty)
-                 || is_int.len() != k
--                || decimals.len() != k
--                || null_ratios.len() != k
-+                || decimals.len() != k;
-+            if strata.is_empty() {
-+                if inconsistent
-+                    || col_indices.len() != k
-+                    || marginals.len() != k
-+                    || marginals.iter().any(Vec::is_empty)
-+                    || null_ratios.len() != k
-+                {
-+                    return bad("a correlated group with inconsistent members");
-+                }
-+                return Ok(());
-+            }
-+            check_weighted(strata, strata_cumulative)?;
-+            let m = col_indices.len().saturating_sub(k);
-+            if inconsistent
-+                || m == 0
-+                || !marginals.is_empty()
-+                || !null_ratios.is_empty()
-+                || strata.iter().any(|s| {
-+                    s.values.len() != m
-+                        || s.marginals.len() != k
-+                        || s.marginals.iter().any(Vec::is_empty)
-+                        || s.null_ratios.len() != k
-+                        || s.rest.as_ref().is_some_and(|r| {
-+                            !(0.0..1.0).contains(&r.share)
-+                                || r.marginals.len() != k
-+                                || r.marginals.iter().any(Vec::is_empty)
-+                                || r.null_ratios.len() != k
-+                        })
-+                })
-             {
-                 return bad("a correlated group with inconsistent members");
-             }
-```
-
-**File**: `src/cmd/synthesize/output.rs` (modified, +10/-1)
-```diff
-@@ -120,11 +120,20 @@ pub(crate) fn resolve_types(
-             EmitUnit::Group(GroupGenerator::Correlated {
-                 col_indices,
-                 is_int,
-+                strata,
-                 ..
-             }) => {
--                for (k, &col) in col_indices.iter().enumerate() {
-+                let (numeric, categorical) = col_indices.split_at(is_int.len());
-+                for (k, &col) in numeric.iter().enumerate() {
-                     types[col] = number_type(is_int[k]);
-                 }
-+                for (k, &col) in categorical.iter().enumerate() {
-+                    types[col] = pooled_type(
-+                        stats_types[col],
-+                        strata.iter().map(|s| s.values[k].as_str()),
-+                        prefer_dmy,
-+                    );
-+                }
-             },
-         }
-     }
 ```
 
 #### Recent Merged Pull Requests:
@@ -2721,31 +2305,31 @@ fixtures; strata keep it whole.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. synthesize): correlated relationships take categorical members as strata
+## X. build(deps): bump anthropics/claude-code-action from 1.0.276 to 1.0.278
 
 **RULE**:
-When implementing operations in `.claude/skills/qsv/qsv-synthesize.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/claude-code-review.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `598cce81`: synthesize): correlated relationships take categorical members as strata. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a129ffd9`: build(deps): bump anthropics/claude-code-action from 1.0.276 to 1.0.278. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/qsv/qsv-synthesize.json`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/claude-code-review.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        "description": "Minimum absolute Spearman correlation for a pair of columns to stay in a `correlated` relationship. Weakly-correlated members are dropped. Categorical members are kept when the strata explain some numeric member by a rank-based correlation ratio at least this high.",
+        uses: anthropics/claude-code-action@cc98b3ae241b0fcfb6a42a2690751afffecb4452 # v1.0.278
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        "description": "Minimum absolute Spearman correlation for a pair of columns to stay in a `correlated` relationship. Weakly-correlated members are dropped.",
+        uses: anthropics/claude-code-action@f3b070c88125d33dbae5653df5f143101d4ea9dc # v1.0.276
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `598cce81` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a129ffd9` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

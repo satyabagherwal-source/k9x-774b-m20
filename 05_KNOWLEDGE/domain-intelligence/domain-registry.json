@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T16:12:39.513Z",
-  "total_records": 2361,
+  "last_updated": "2026-11-22T16:29:45.005Z",
+  "total_records": 2362,
   "domains": {
     "A": {
       "total": 19,
@@ -1493,7 +1493,7 @@
       ]
     },
     "H": {
-      "total": 569,
+      "total": 570,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2063,7 +2063,8 @@
         "domain_intelligence-technical-construction-intelligence-nativescript-nativescript-learnings-core-inv",
         "domain_intelligence-technical-construction-intelligence-comfy-org-minimax-h3-core-invariants",
         "DOM-H-833AC1DF",
-        "domain_intelligence-technical-construction-intelligence-hf-comfy-org-minimax-h3-learnings-core-invar"
+        "domain_intelligence-technical-construction-intelligence-hf-comfy-org-minimax-h3-learnings-core-invar",
+        "DOM-H-17797BC1"
       ]
     },
     "I": {
@@ -12418,8 +12419,8 @@
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "repository": "dathere/qsv",
-      "content_hash": "085989f6fc61a3e443be3897b1f8d768d8853d877de35739537c057ff81708c2",
-      "created_at": "2026-11-22T00:24:51.976Z"
+      "content_hash": "331b550c90379efed077386be8a4fa187b6d93af654fa05b3af0f5103d671eb2",
+      "created_at": "2026-11-22T16:28:27.642Z"
     },
     "DOM-D-F5645095": {
       "record_id": "DOM-D-F5645095",
@@ -12487,8 +12488,8 @@
       "title": "Architecture Intelligence: dathere-qsv-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-learnings-architecture-intelligence-dathere-qsv-learnings-core-invar.md",
       "repository": "dathere-qsv-learnings",
-      "content_hash": "99940291b3fc872a4591833eed2d9f8172c3f265e7c926d1978b1006d3aeb4e3",
-      "created_at": "2026-11-22T00:24:56.510Z"
+      "content_hash": "511c2a107d4df9dbac00a47f24fc632554432ca18f7ac13209217e2728cb2eff",
+      "created_at": "2026-11-22T16:29:45.005Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants",
@@ -17138,8 +17139,8 @@
       "title": "Architecture Intelligence: astral-sh/uv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-astral-sh-uv-architecture-intelligence-astral-sh-uv-core-invariants.md",
       "repository": "astral-sh/uv",
-      "content_hash": "8828075087a38a5a9254035ac745a0139c3db050dcb752e4f799c099ba46ab8c",
-      "created_at": "2026-11-21T03:28:36.615Z"
+      "content_hash": "2231644f4041875cdba35a8142069368f258205c2e409eefb1365d9e73f493c2",
+      "created_at": "2026-11-22T16:28:12.906Z"
     },
     "domain_intelligence-technical-construction-intelligence-callstack-agent-device-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-callstack-agent-device-core-invariants",
@@ -17165,8 +17166,8 @@
       "title": "Architecture Intelligence: astral-sh-uv-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-astral-sh-uv-learnings-architecture-intelligence-astral-sh-uv-learnings-core-inv.md",
       "repository": "astral-sh-uv-learnings",
-      "content_hash": "701e49eda144d586e34af7fdcf7396167015446b210f32dfa44b5cceee4fe6f5",
-      "created_at": "2026-11-21T03:28:54.455Z"
+      "content_hash": "685095743a49536d133a145762a705dc46690bd65cdbfef614dbb327bb023a51",
+      "created_at": "2026-11-22T16:29:05.273Z"
     },
     "DOM-D-CCF89F8A": {
       "record_id": "DOM-D-CCF89F8A",
@@ -18760,10 +18761,10 @@
       "record_id": "domain_intelligence-research-knowledge-intelligence-abenzerps-qwen-image-2-1-turbo-quantized-core-in",
       "domain_letter": "D",
       "title": "Research & Knowledge Intelligence: abenzerps/Qwen-Image-2.1-Turbo-Quantized Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-abenzerps-qwen-image-2-1-turbo-quantized-research-knowledge-intelligence-aben.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-abenzerps-qwen-image-2-1-uncensored-gguf-research-knowledge-intelligence-aben.md",
       "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
-      "content_hash": "270c793de3ba3c34805908dd7ebac04dfc298ff887e0ee04c5a0d08a318cfdf7",
-      "created_at": "2026-11-22T01:32:21.897Z"
+      "content_hash": "59ddec342c1461ce12ed555c30bb79361547830bbbfec33b0250de5873577879",
+      "created_at": "2026-11-22T16:29:01.734Z"
     },
     "domain_intelligence-architecture-intelligence-dnscontrol-dnscontrol-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-dnscontrol-dnscontrol-core-invariants",
@@ -29092,8 +29093,8 @@
       "title": "Research & Knowledge Intelligence: hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-abenzerps-qwen-image-2-1-uncensored-gguf-learnings-research-knowledge-intelli.md",
       "repository": "hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings",
-      "content_hash": "f64d190e80973f57bfc40784f003e80b1d6922797a73a593ccc5fc096825d5e6",
-      "created_at": "2026-11-18T09:57:32.894Z"
+      "content_hash": "0e0f6d3bfcceca49b73461e3ad65c3801f9bdc2b87ce5773edfa216dee28c6bd",
+      "created_at": "2026-11-22T16:29:05.968Z"
     },
     "domain_intelligence-research-knowledge-intelligence-sentence-transformers-all-minilm-l6-v2-core-inva": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-sentence-transformers-all-minilm-l6-v2-core-inva",
@@ -39723,6 +39724,48 @@
       "repository": "oven-sh-bun-learnings",
       "content_hash": "70a442b87c94522578e4bad2c0320fbf5d2a4b136eecb8af969c01c6d1417d07",
       "created_at": "2026-11-22T16:12:37.571Z"
+    },
+    "DOM-H-17797BC1": {
+      "record_id": "DOM-H-17797BC1",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "H",
+          "id": "technical_construction",
+          "name": "Technical Construction Intelligence"
+        }
+      ],
+      "title": "build(deps): bump anthropics/claude-code-action from 1.0.276 to 1.0.278",
+      "content": "When implementing operations in `.github/workflows/claude-code-review.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "e7eabd2a4c97ab4b390a1b9ce71c7ce177a8ef87fd70052986e0871843a572db",
+      "summary": "Prevents defects observed in production commit `a129ffd9`: build(deps): bump anthropics/claude-code-action from 1.0.276 to 1.0.278. Unvalida -> When implementing operations in `.github/workflows/claude-code-review.yml`, engineers MUST enforce rigorous boundary validation, safe state ",
+      "provenance": {
+        "source_uri": "project://dathere-qsv/dathere-qsv-learnings.md",
+        "source_version": "a129ffd9",
+        "observed_at": "2026-11-22T16:28:25.752Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (dathere-qsv)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of dathere-qsv"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "H"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-22T16:29:43.698Z"
     }
   }
 }

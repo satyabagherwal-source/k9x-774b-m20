@@ -12148,3 +12148,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-edge0-audio8-asr-infinite` | `https://huggingface.co/Edge0/Audio8-ASR-Infinite` | `hf-edge0-a` | Multi-dimensional audit evidence | 2026-11-22T16:12:17.978Z |
 | `learn-github-oven-sh-bun` | `https://github.com/oven-sh/bun` | `25c4fca9` | Multi-dimensional audit evidence | 2026-11-22T16:12:20.756Z |
 | `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `8a4e65a1` | Multi-dimensional audit evidence | 2026-11-22T16:12:33.209Z |
+| `learn-github-astral-sh-uv` | `https://github.com/astral-sh/uv` | `264d8b4a` | Multi-dimensional audit evidence | 2026-11-22T16:28:12.334Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `a129ffd9` | Multi-dimensional audit evidence | 2026-11-22T16:28:27.086Z |
+| `learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-11-22T16:29:01.483Z |
+| `learn-dom-h-17797bc1` | `project://dathere-qsv` | `a129ffd9` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md` | 2026-11-22T16:29:43.747Z |

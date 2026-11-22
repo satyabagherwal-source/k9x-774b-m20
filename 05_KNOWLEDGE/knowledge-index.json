@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T16:12:39.736Z",
+  "last_updated": "2026-11-22T16:29:45.268Z",
   "total_verified_learnings": 9071,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23643,
+  "total_items": 23647,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112137,10 +112137,10 @@
       "relative_path": "08_VERIFICATION/dathere-qsv-verification-protocol-empirical-defect-shield-for-dathere-qsv.md",
       "title": "Verification Protocol: Empirical Defect Shield for dathere/qsv",
       "repository": "dathere/qsv",
-      "source_version": "598cce81",
-      "content_hash": "54f5100fd6946d4566bb76737fe79a82b2c0d20cfa3358906b8a091f0e6eac78",
+      "source_version": "a129ffd9",
+      "content_hash": "fbbc9a5452eff63ac4fbb3ea7585538a32217010b8bc826cf0b8e566dc159a88",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T00:24:52.116Z"
+      "persisted_at": "2026-11-22T16:28:27.877Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i",
@@ -112174,9 +112174,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dathere-qsv-learnings",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "a9ab5ae7fa85bca6e6fa33fdf45087f67b31f05c6fc7fe6a8e8ebe6010c889fb",
+      "content_hash": "983dd6773604a4910de8fb86a79d3b9d1d29f4016a89b4d4d5fa3ed5e842876e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T00:24:56.671Z"
+      "persisted_at": "2026-11-22T16:29:45.268Z"
     },
     "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels": {
       "item_id": "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels",
@@ -219924,8 +219924,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "598cce81",
-      "content_hash": "dff9a27778f0d013a0c8706670e8ffeb1828e177a9f6390dc33b7d3d9530c65d",
+      "source_version": "a129ffd9",
+      "content_hash": "702c971e8c21b1a184f127131d7ed4e44d3d94f8b9530ff406c519a135a399a2",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -220093,6 +220093,11 @@
           "number": 9873,
           "title": "correlated relationships take categorical members as strata",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9953,
+          "title": "build(deps): bump anthropics/claude-code-action from 1.0.276 to 1.0.278",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -220100,7 +220105,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T00:24:51.460Z",
+      "verified_at": "2026-11-22T16:28:26.801Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -221081,10 +221086,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "repository": "dathere/qsv",
-      "source_version": "598cce81",
-      "content_hash": "085989f6fc61a3e443be3897b1f8d768d8853d877de35739537c057ff81708c2",
+      "source_version": "a129ffd9",
+      "content_hash": "331b550c90379efed077386be8a4fa187b6d93af654fa05b3af0f5103d671eb2",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T00:24:51.976Z"
+      "persisted_at": "2026-11-22T16:28:27.642Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant",
@@ -221154,9 +221159,9 @@
       "title": "Architecture Intelligence: dathere-qsv-learnings Core Invariants",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "99940291b3fc872a4591833eed2d9f8172c3f265e7c926d1978b1006d3aeb4e3",
+      "content_hash": "511c2a107d4df9dbac00a47f24fc632554432ca18f7ac13209217e2728cb2eff",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T00:24:56.510Z"
+      "persisted_at": "2026-11-22T16:29:45.005Z"
     },
     "learn-huggingface-qwen-qwen3-8-flash-next": {
       "learning_id": "learn-huggingface-qwen-qwen3-8-flash-next",
@@ -234421,8 +234426,8 @@
       "slug": "astral-sh-uv",
       "platform": "github",
       "source_url": "https://github.com/astral-sh/uv",
-      "source_version": "ac154af9",
-      "content_hash": "bf5bbb36d6cddd67decbae0326403fb5c528949a0524eb793c6d5e5b9996cab0",
+      "source_version": "264d8b4a",
+      "content_hash": "76afbf48c90c1020b68d8897223f29e55f4b218a11c9ec30de689785f6cf38df",
       "dossier_path": "07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
       "promoted_rules": [
@@ -234450,6 +234455,11 @@
           "number": 9713,
           "title": "Use GPT-6.2 Astra for pull request security reviews",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9952,
+          "title": "Skip distribution selection for packages excluded from installation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -234457,7 +234467,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T03:28:36.027Z",
+      "verified_at": "2026-11-22T16:28:12.015Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -234499,10 +234509,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-astral-sh-uv-architecture-intelligence-astral-sh-uv-core-invariants.md",
       "title": "Architecture Intelligence: astral-sh/uv Core Invariants",
       "repository": "astral-sh/uv",
-      "source_version": "ac154af9",
-      "content_hash": "8828075087a38a5a9254035ac745a0139c3db050dcb752e4f799c099ba46ab8c",
+      "source_version": "264d8b4a",
+      "content_hash": "2231644f4041875cdba35a8142069368f258205c2e409eefb1365d9e73f493c2",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T03:28:36.615Z"
+      "persisted_at": "2026-11-22T16:28:12.906Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-astral-sh-uv": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-astral-sh-uv",
@@ -234511,10 +234521,10 @@
       "relative_path": "08_VERIFICATION/astral-sh-uv-verification-protocol-empirical-defect-shield-for-astral-sh-uv.md",
       "title": "Verification Protocol: Empirical Defect Shield for astral-sh/uv",
       "repository": "astral-sh/uv",
-      "source_version": "ac154af9",
-      "content_hash": "7e389de6a6b8d76f65274d16b85cc58aac03bd72201fa1747264af386f98bbcc",
+      "source_version": "264d8b4a",
+      "content_hash": "1f743ad76519bb9bab540758f66ca7d0fa11cd3970829e9de885d1643d758296",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T03:28:36.773Z"
+      "persisted_at": "2026-11-22T16:28:13.136Z"
     },
     "learn-github-callstack-agent-device": {
       "learning_id": "learn-github-callstack-agent-device",
@@ -234742,9 +234752,9 @@
       "title": "Architecture Intelligence: astral-sh-uv-learnings Core Invariants",
       "repository": "astral-sh-uv-learnings",
       "source_version": "HEAD",
-      "content_hash": "701e49eda144d586e34af7fdcf7396167015446b210f32dfa44b5cceee4fe6f5",
+      "content_hash": "685095743a49536d133a145762a705dc46690bd65cdbfef614dbb327bb023a51",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T03:28:54.455Z"
+      "persisted_at": "2026-11-22T16:29:05.273Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-astral-sh-uv-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-astral-sh-uv-learnings",
@@ -234754,9 +234764,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for astral-sh-uv-learnings",
       "repository": "astral-sh-uv-learnings",
       "source_version": "HEAD",
-      "content_hash": "208656a38146e240a82a458914a5733607d2e6c25fe8772e9de9e82ae6241e71",
+      "content_hash": "72b5293f4852641e2320f167e044ee3d23ba72778312ee56d8a914f75cacc719",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T03:28:54.624Z"
+      "persisted_at": "2026-11-22T16:29:05.508Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-google-embeddinggemma-2-learnings-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-google-embeddinggemma-2-learnings-core-invari",
@@ -240156,13 +240166,13 @@
       "item_id": "domain_intelligence-research-knowledge-intelligence-abenzerps-qwen-image-2-1-turbo-quantized-core-in",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-abenzerps-qwen-image-2-1-turbo-quantized-research-knowledge-intelligence-aben.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-abenzerps-qwen-image-2-1-uncensored-gguf-research-knowledge-intelligence-aben.md",
       "title": "Research & Knowledge Intelligence: abenzerps/Qwen-Image-2.1-Turbo-Quantized Core Invariants",
       "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
-      "source_version": "hf-abenzerps-qwen-image-2.1-turbo-quantized",
-      "content_hash": "270c793de3ba3c34805908dd7ebac04dfc298ff887e0ee04c5a0d08a318cfdf7",
+      "source_version": "hf-abenzerps-qwen-image-2.1-uncensored-gguf",
+      "content_hash": "59ddec342c1461ce12ed555c30bb79361547830bbbfec33b0250de5873577879",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T01:32:21.897Z"
+      "persisted_at": "2026-11-22T16:29:01.734Z"
     },
     "learn-github-dnscontrol-dnscontrol": {
       "learning_id": "learn-github-dnscontrol-dnscontrol",
@@ -280853,7 +280863,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
       "source_version": "hf-abenzerps-qwen-image-2.1-uncensored-gguf",
-      "content_hash": "c6266a0e873d799cbd8708bf605ec54271a4657928d00ddbfc9b9babcf5e09e2",
+      "content_hash": "6b3ff9c82f2b218919a9b7bd7b0e20fce3b1bdb974a3a53bc882811ec4fa61e6",
       "dossier_path": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md",
       "promoted_rules": [],
@@ -280862,7 +280872,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T09:57:11.639Z",
+      "verified_at": "2026-11-22T16:29:01.171Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -280931,9 +280941,9 @@
       "title": "Research & Knowledge Intelligence: hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings Core Invariants",
       "repository": "hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "f64d190e80973f57bfc40784f003e80b1d6922797a73a593ccc5fc096825d5e6",
+      "content_hash": "0e0f6d3bfcceca49b73461e3ad65c3801f9bdc2b87ce5773edfa216dee28c6bd",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T09:57:32.894Z"
+      "persisted_at": "2026-11-22T16:29:05.968Z"
     },
     "rule-9062": {
       "learning_id": "rule-9062",
@@ -321716,6 +321726,58 @@
       "content_hash": "70a442b87c94522578e4bad2c0320fbf5d2a4b136eecb8af969c01c6d1417d07",
       "domain_letter": "G",
       "persisted_at": "2026-11-22T16:12:37.571Z"
+    },
+    "rule-9952": {
+      "learning_id": "rule-9952",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9952,
+      "title": "Skip distribution selection for packages excluded from installation",
+      "source_url": "https://github.com/astral-sh/uv",
+      "source_version": "264d8b4a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T16:28:12.015Z"
+    },
+    "candidate_directive-skip-distribution-selection-for-packages-excluded-from-installation": {
+      "item_id": "candidate_directive-skip-distribution-selection-for-packages-excluded-from-installation",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-XLLJ-skip-distribution-selection-for-packages-excluded-from-installation.md",
+      "title": "Skip distribution selection for packages excluded from installation",
+      "repository": "astral-sh-uv-learnings",
+      "source_version": "HEAD",
+      "content_hash": "31d1b14b0504d1b4b1d6fc0f7a53d057cd1bfd175e869814427680e62788d127",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-22T16:29:05.051Z"
+    },
+    "rule-9953": {
+      "learning_id": "rule-9953",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9953,
+      "title": "build(deps): bump anthropics/claude-code-action from 1.0.276 to 1.0.278",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "a129ffd9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T16:28:26.801Z"
+    },
+    "candidate_directive-build-deps-bump-anthropics-claude-code-action-from-1-0-276-to-1-0-278": {
+      "item_id": "candidate_directive-build-deps-bump-anthropics-claude-code-action-from-1-0-276-to-1-0-278",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-YG7J-build-deps-bump-anthropics-claude-code-action-from-1-0-276-to-1-0-278.md",
+      "title": "build(deps): bump anthropics/claude-code-action from 1.0.276 to 1.0.278",
+      "repository": "dathere-qsv-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6e470acf6769a4171e1f2d1bc3e8077190f2c4bcd20fb10a8ed83681c7e09a29",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-22T16:29:44.730Z"
     }
   },
   "ai-builder-brain": {

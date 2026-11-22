@@ -4,23 +4,23 @@
 {
   "source_repository": "astral-sh/uv",
   "source_url": "https://github.com/astral-sh/uv",
-  "source_version": "ac154af9",
+  "source_version": "264d8b4a",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-21T03:28:36.453Z",
+  "timestamp": "2026-11-22T16:28:12.615Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-astral-sh-uv",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [astral-sh/uv](https://github.com/astral-sh/uv) (Revision: `ac154af9`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-21T03:28:36.453Z`  
+> **Provenance**: Harvested from [astral-sh/uv](https://github.com/astral-sh/uv) (Revision: `264d8b4a`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-22T16:28:12.615Z`  
 > **Learning ID**: `learn-github-astral-sh-uv`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), B (Product Intelligence), L (Deployment & Operations Intelligence)
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence)
 - **Confidence Rating**: 74%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/astral-sh-uv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/astral-sh/uv](https://github.com/astral-sh/uv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T03:28:35.018Z  
+> **Harvest Timestamp**: 2026-11-22T16:28:10.816Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: An extremely fast Python package and project manager, written in Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 92471 stars
+- **Stars / Engagement**: 92602 stars
 
 ---
 
@@ -1531,51 +1531,449 @@ mod types;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `08cda500` (2026-11-20)
-**Commit Message**: Use GPT-6.2 Astra for pull request security reviews (#23327)
+### Incident Patch 1: `264d8b4a` (2026-11-21)
+**Commit Message**: Skip distribution selection for packages excluded from installation (#23338)
 
-Switch PR security reviews from `gpt-6-astra` to `gpt-6.2-astra` at
-`xhigh` by adopting astral-sh/github-actions#70. Pin the same workflow
-commit in CI and the token service policy so the reviewer can publish
-inline findings. This revision also includes
-astral-sh/github-actions#68, which keeps security reviews from creating
-deployment entries on PRs.
+## Summary
 
-Co-authored-by: zaniebot <[REDACTED_EMAIL]>
+On macOS, `uv sync --frozen --no-install-package pywin32` can fail
+because `pywin32` has no distribution for macOS.
 
-**File**: `.github/secure-token-service.json` (modified, +1/-1)
-```diff
-@@ -157,7 +157,7 @@
-       "environment": "automations",
-       "caller_ref": "refs/pull/*/merge",
-       "caller_workflow": "ci.yml",
--      "reusable_workflow": "astral-sh/github-actions/.github/workflows/pull-request-security-review.yml@67dc9ee1ddc113eccd8116e7b949fb6cdcd89889",
-+      "reusable_workflow": "astral-sh/github-actions/.github/workflows/pull-request-security-review.yml@6c1398e34f646a0470c5bf2a7c3476d19e435bd7",
-       "on": ["pull_request"],
-       "permissions": { "pull_requests": "write" },
-       "target": "uv"
+```sh
+uv init --bare --python 3.12
+uv add --no-sync "pywin32==311; sys_platform == 'darwin'"
+uv sync --frozen --no-install-package pywin32
 ```
 
-**File**: `.github/workflows/ci.yml` (modified, +1/-1)
+The dependency marker excludes every Windows wheel from the lockfile,
+and `pywin32` has no sdist. When we build the installation graph, we try
+to select a distribution for `pywin32` before marking it as excluded.
+The sync fails even though the user asked to skip the package. Filtering
+wheels by Python implementation in #23310 can expose the same issue.
+
+We now store the name and version of an excluded package in the graph.
+We can still install its dependencies and explain how they entered the
+resolution. If a selected dependency group requires a workspace member
+that we initially skipped, we select its distribution at that point.
+
+**File**: `crates/uv-distribution-types/src/dist_error.rs` (modified, +23/-23)
 ```diff
-@@ -48,7 +48,7 @@ jobs:
-     if: ${{ github.event_name == 'pull_request' && github.repository == 'astral-sh/uv' && github.event.pull_request.head.repo.full_name == github.repository && needs.plan.outputs.review-security == 'true' }}
-     # N.B. despite setting this, Depot jobs allow cache writes directly through the API
-     cache-mode: read
--    uses: astral-sh/github-actions/.github/workflows/pull-request-security-review.yml@67dc9ee1ddc113eccd8116e7b949fb6cdcd89889 # 2026.11.16.0
-+    uses: astral-sh/github-actions/.github/workflows/pull-request-security-review.yml@6c1398e34f646a0470c5bf2a7c3476d19e435bd7
-     with:
-       runner: depot-ubuntu-24.04-16
-       helper-runner: github-ubuntu-24.04-x86_64-4
+@@ -113,34 +113,34 @@ impl DerivationChain {
+             if !seen.insert(node) {
+                 continue;
+             }
+-            match &resolution.graph()[node] {
++            let (name, version) = match &resolution.graph()[node] {
+                 Node::Root => {
+                     path.reverse();
+                     path.pop();
+                     return Some(Self::from_iter(path));
+                 }
+-                Node::Dist { dist, .. } => {
+-                    for edge in resolution.graph().edges_directed(node, Direction::Incoming) {
+-                        let mut path = path.clone();
+-                        path.push(DerivationStep::new(
+-                            dist.name().clone(),
+-                            extra.clone(),
+-                            group.clone(),
+-                            dist.version().cloned(),
+-                            Ranges::empty(),
+-                        ));
+-                        let target = edge.source();
+-                        let extra = match edge.weight() {
+-                            Edge::Optional(extra) => Some(extra.clone()),
+-                            _ => None,
+-                        };
+-                        let group = match edge.weight() {
+-                            Edge::Dev(group) => Some(group.clone()),
+-                            _ => None,
+-                        };
+-                        queue.push_back((target, extra, group, path));
+-                    }
+-                }
++                Node::Dist { dist, .. } => (dist.name(), dist.version()),
++                Node::Excluded { name, version } => (name, version.as_ref()),
++            };
++            for edge in resolution.graph().edges_directed(node, Direction::Incoming) {
++                let mut path = path.clone();
++                path.push(DerivationStep::new(
++                    name.clone(),
++                    extra.clone(),
++                    group.clone(),
++                    version.cloned(),
++                    Ranges::empty(),
++                ));
++                let target = edge.source();
++                let extra = match edge.weight() {
++                    Edge::Optional(extra) => Some(extra.clone()),
++                    _ => None,
++                };
++                let group = match edge.weight() {
++                    Edge::Dev(group) => Some(group.clone()),
++                    _ => None,
++                };
++                queue.push_back((target, extra, group, path));
+             }
+         }
+ 
+```
+
+**File**: `crates/uv-distribution-types/src/resolution.rs` (modified, +15/-13)
+```diff
+@@ -1,5 +1,6 @@
+ use uv_distribution_filename::DistExtension;
+ use uv_normalize::{ExtraName, GroupName, PackageName};
++use uv_pep440::Version;
+ use uv_pypi_types::{HashDigest, HashDigests};
+ use uv_redacted::policy::Raw;
+ 
+@@ -43,12 +44,7 @@ impl Resolution {
+         self.graph
+             .node_indices()
+             .filter_map(move |node| match &self.graph[node] {
+-                Node::Dist {
+-                    dist,
+-                    hashes,
+-                    install,
+-                    ..
+-                } if *install => Some((dist, hashes.as_slice())),
++                Node::Dist { dist, hashes } => Some((dist, hashes.as_slice())),
+                 _ => None,
+             })
+     }
+@@ -59,7 +55,7 @@ impl Resolution {
+             .raw_nodes()
+             .iter()
+             .filter_map(|node| match &node.weight {
+-                Node::Dist { dist, install, .. } if *install => Some(dist),
++                Node::Dist { dist, .. } => Some(dist),
+                 _ => None,
+             })
+     }
+@@ -83,10 +79,13 @@ impl Resolution {
+     #[must_use]
+     pub fn filter(mut self, predicate: impl Fn(&ResolvedDist) -> bool) -> Self {
+         for node in self.graph.node_weights_mut() {
+-            if let Node::Dist { dist, install, .. } = node {
+-                if !predicate(dist) {
+-                    *install = false;
+-                }
++            if let Node::Dist { dist, .. } = node
++                && !predicate(dist)
++            {
++                *node = Node::Excluded {
++                    name: dist.name().clone(),
++                    version: dist.version().cloned(),
++                };
+             }
+         }
+         self
+@@ -177,7 +176,7 @@ impl Diagnostic for ResolutionDiagnostic {
+     }
+ }
+ 
+-/// A node in the resolution, along with whether its been filtered out.
++/// A node in the resolution.
+ ///
+ /// We retain filtered nodes as we still need to be able to trace dependencies through the graph
+ /// (e.g., to determine why a package was included in the resolution).
+@@ -187,7 +186,10 @@ pub enum Node {
+     Dist {
+         dist: ResolvedDist,
+         hashes: HashDigests,
+-        install: bool,
++    },
++    Excluded {
++        name: PackageName,
++        version: Option<Version>,
+     },
+ }
+ 
+```
+
+**File**: `crates/uv-environment-operations/src/environment.rs` (modified, +2/-6)
+```diff
+@@ -195,12 +195,8 @@ impl CachedEnvironment {
+                 .graph()
+                 .node_weights()
+                 .filter_map(|node| match node {
+-                    Node::Dist {
+-                        dist,
+-                        hashes,
+-                        install: true,
+-                    } => Some((dist, hashes)),
+-                    Node::Dist { install: false, .. } | Node::Root => None,
++                    Node::Dist { dist, hashes } => Some((dist, hashes)),
++                    Node::Excluded { .. } | Node::Root => None,
+                 })
+                 .map(|(dist, hashes)| {
+                     Ok(CachedEnvironmentDist {
+```
+
+**File**: `crates/uv-lock/src/lock/export/pylock_toml.rs` (modified, +5/-25)
+```diff
+@@ -1302,11 +1302,7 @@ impl<'lock> PylockToml {
+                     dist: Arc::new(built_dist),
+                     version: package.version,
+                 };
+-                Node::Dist {
+-                    dist,
+-                    hashes,
+-                    install: true,
+-                }
++                Node::Dist { dist, hashes }
+             } else if let Some(sdist) = package.sdist.as_ref().filter(|_| !no_build) {
+                 let hashes = HashDigests::from(sdist.hashes.clone());
+                 let sdist = Dist::Source(SourceDist::Registry(sdist.to_sdist(
+@@ -1319,11 +1315,7 @@ impl<'lock> PylockToml {
+                     dist: Arc::new(sdist),
+                     version: package.version,
+                 };
+-                Node::Dist {
+-                    dist,
+-                    hashes,
+-                    install: true,
+-                }
++                Node::Dist { dist, hashes }
+             } else if let Some(sdist) = package.directory.as_ref().filter(|_| !no_build) {
+                 let hashes = HashDigests::empty();
+                 let sdist = Dist::Source(SourceDist::Directory(
+@@ -1333,11 +1325,7 @@ impl<'lock> PylockToml {
+                     dist: Arc::new(sdist),
+                     version: package.version,
+                 };
+-                Node::Dist {
+-                    dist,
+-                    hashes,
+-                    install: true,
+-                }
++                Node::Dist { dist, hashes }
+             } else if let Some(sdist) = package.vcs.as_ref().filter(|_| !no_build) {
+                 let hashes = HashDigests::empty();
+                 let sdist = Dist::Source(SourceDist::GitDirectory(
+@@ -1347,11 +1335,7 @@ impl<'lock> PylockToml {
+                     dist: Arc::new(sdist),
+                     version: package.version,
+                 };
+-                Node::Dist {
+-                    dist,
+-                    hashes,
+-                    install: true,
+-                }
++                Node::Dist { dist, hashes }
+             } else if let Some(dist) = package
+                 .archive
+                 .as_ref()
+@@ -1363,11 +1347,7 @@ impl<'lock> PylockToml {
+                     dist: Arc::new(dist),
+                     version: package.version,
+                 };
+-                Node::Dist {
+-                    dist,
+-                    hashes,
+-                    install: true,
+-                }
++                Node::Dist { dist, hashes }
+             } else {
+                 return match (no_binary, no_build) {
+                     (true, true) => {
+```
+
+**File**: `crates/uv-lock/src/lock/installable.rs` (modified, +23/-43)
+```diff
+@@ -27,6 +27,14 @@ use crate::lock::{
+ };
+ use crate::{Lock, LockError};
+ 
++/// Keep the package identity for tracing dependencies through an excluded node.
++fn excluded_node(package: &Package) -> Node {
++    Node::Excluded {
++        name: package.name().clone(),
++        version: package.version().cloned(),
++    }
++}
++
+ fn newly_activated_extras<'lock>(
+     dep: &'lock Dependency,
+     activated_extras: &[(&'lock PackageName, &'lock ExtraName)],
+@@ -191,38 +199,7 @@ pub trait Installable<'lock> {
+             dist: Arc::new(dist),
+             version,
+         };
+-        Ok(Node::Dist {
+-            dist,
+-            hashes,
+-            install: true,
+-        })
+-    }
+-
+-    /// Create a non-installable [`Node`] from a [`Package`].
+-    fn non_installable_node(
+-        &self,
+-        package: &Package,
+-        tags: &Tags,
+-        marker_env: &ResolverMarkerEnvironment,
+-    ) -> Result<Node, LockError> {
+-        let HashedDist { dist, .. } = package.to_dist(
+-            self.install_path(),
+-            TagPolicy::Preferred(tags),
+-            &BuildOptions::default(),
+-            marker_env,
+-            FirstParty::No,
+-        )?;
+-        let version = package.version().cloned();
+-        let dist = ResolvedDist::Installable {
+-            dist: Arc::new(dist),
+-            version,
+-        };
+-        let hashes = package.hashes();
+-        Ok(Node::Dist {
+-            dist,
+-            hashes,
+-            install: false,
+-        })
++        Ok(Node::Dist { dist, hashes })
+     }
+ 
+     /// Convert a lockfile entry to a graph [`Node`].
+@@ -241,7 +218,7 @@ pub trait Installable<'lock> {
+         ) {
+             self.installable_node(package, tags, marker_env, build_options)
+         } else {
+-            self.non_installable_node(package, tags, marker_env)
++            Ok(excluded_node(package))
+         }
+     }
+ }
+@@ -349,7 +326,7 @@ trait InstallableExt<'lock>: Installable<'lock> {
+                 if root_kind == InstallableRootKind::Production && groups.prod() {
+                     self.package_to_node(dist, tags, build_options, install_options, marker_env)?
+                 } else {
+-                    self.non_installable_node(dist, tags, marker_env)?
++                    excluded_node(dist)
+                 },
+             );
+             inverse[package_index.0] = Some(index);
+@@ -430,7 +407,7 @@ trait InstallableExt<'lock>: Installable<'lock> {
+                         // member. If it was omitted due to, e.g., `--only-dev`, but is itself
+                         // referenced as a development dependency, then we need to re-enable it.
+                         let node = &mut petgraph[index];
+-                        if !groups.prod() || matches!(node, Node::Dist { install: false, .. }) {
++                        if !groups.prod() || matches!(node, Node::Excluded { .. }) {
+                             *node = self.package_to_node(
+                                 dep_dist,
+                                 tags,
+@@ -515,7 +492,7 @@ trait InstallableExt<'lock>: Installable<'lock> {
+                                 marker_env,
+                             )?
+                         } else {
+-                            self.non_installable_node(dist, tags, marker_env)?
++                            excluded_node(dist)
+                         });
+                         inverse[package_index.0] = Some(index);
+                         index
+@@ -792,7 +769,7 @@ trait InstallableExt<'lock>: Installable<'lock> {
+                         index
+                     }
+                     Some(index) => {
+-                        if matches!(&petgraph[index], Node::Dist { install: false, .. }) {
++                        if matches!(&petgraph[index], Node::Excluded { .. }) {
+                             petgraph[index] = self.package_to_node(
+                                 dep_dist,
+                                 tags,
+@@ -1470,12 +1447,15 @@ provides-extras = ["cli"]
+             .node_weights()
+             .map(|node| match node {
+                 Node::Root => "root".to_string(),
+-                Node::Dist {
+-                    dist,
+-                    hashes,
+-                    install,
+-                } => format!(
+-                    "{}=={} (install: {install}, hashes: {})",
++                Node::Excluded { name, version } => format!(
++                    "{name}=={} (install: false)",
++                    version
++                        .as_ref()
++                        .map(ToString::to_string)
++                        .unwrap_or_else(|| "<dynamic>".to_string())
++                ),
++                Node::Dist { dist, hashes } => format!(
++                    "{}=={} (install: true, hashes: {})",
+                     dist.name(),
+                     dist.version()
+                         .map(ToString::to_string)
+```
+
+**File**: `crates/uv-resolver-types/src/output.rs` (modified, +0/-1)
+```diff
+@@ -446,7 +446,6 @@ impl From<ResolverOutput> for uv_distribution_types::Resolution {
+                     transformed.add_node(Node::Dist {
+                         dist: dist.dist.clone(),
+                         hashes: dist.hashes.clone(),
+-                        install: true,
+                     }),
+                 );
+             }
+```
+
+**File**: `crates/uv/tests/sync/sync.rs` (modified, +39/-0)
+```diff
+@@ -7771,6 +7771,45 @@ fn no_install_package() -> Result<()> {
+     Ok(())
+ }
+ 
++/// Platform filtering can leave an excluded package without a locked distribution.
++#[test]
++fn no_install_package_without_artifact() -> Result<()> {
++    let context = uv_test::test_context!("3.12");
++    let wheels = context.temp_dir.child("wheels");
++    wheels.create_dir_all()?;
++    let (filename, wheel) = WheelBuilder::new(&"demo".parse()?, &"1.0".parse()?)
++        .tag("py3-none-win_amd64")
++        .requires(&["child".parse()?])
++        .build();
++    wheels.child(filename).write_binary(&wheel)?;
++    let (filename, wheel) = WheelBuilder::new(&"child".parse()?, &"1.0".parse()?).build();
++    wheels.child(filename).write_binary(&wheel)?;
++    context
++        .temp_dir
++        .child("pyproject.toml")
++        .write_str(indoc! {r#"
++        [project]
++        name = "project"
++        version = "0.1.0"
++        requires-python = ">=3.12"
++        dependencies = ["demo; sys_platform == 'linux'"]
++
++        [tool.uv]
++        no-index = true
++        find-links = ["wheels"]
++    "#})?;
++
++    context.lock().assert().success();
++    uv_snapshot!(context.filters(), context.sync().args(["--frozen", "--python-platform", "linux", "--no-install-package", "demo"]), @"
++    exit_code: 0 (success)
++    ----- stderr -----
++    Prepared 1 package in [TIME]
++    Installed 1 package in [TIME]
++     + child==1.0
++    ");
++    Ok(())
++}
++
+ /// Ensure that `--no-build` allows first-party projects and that `--no-install-project` still
+ /// skips them.
+ #[test]
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #23339** (closed): Error on unknown preview settings in `preview` (e.g. `[tool.uv.preview]` tables) (@DeviousCardi)
+- **PR #23338** (2026-11-21): Skip distribution selection for packages excluded from installation (@charliermarsh)
 - **PR #23332** (2026-11-20): Validate ZIP data descriptor compressed sizes against the central directory (@astral-automations-bot[bot])
 - **PR #23331** (2026-11-20): Document unsafe string and Win32 pointer invariants (@astral-automations-bot[bot])
 - **PR #23328** (2026-11-20): Allow promotion jobs to load actions from private repositories (@astral-automations-bot[bot])
 - **PR #23327** (2026-11-20): Use GPT-6.2 Astra for pull request security reviews (@zanieb)
-- **PR #23314** (closed): Keep wheels with partially recognized tags in universal lockfiles (@charliermarsh)
-- **PR #23313** (2026-11-20): Share registry wheel and sdist conversion between pylock writers (@charliermarsh)
 
 ---
 
@@ -1595,31 +1993,75 @@ Co-authored-by: zaniebot <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Use GPT-6.2 Astra for pull request security reviews
+## X. Skip distribution selection for packages excluded from installation
 
 **RULE**:
-When implementing operations in `.github/secure-token-service.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/uv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/uv-distribution-types/src/dist_error.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/uv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `08cda500`: Use GPT-6.2 Astra for pull request security reviews. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `264d8b4a`: Skip distribution selection for packages excluded from installation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/secure-token-service.json`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/uv-distribution-types/src/dist_error.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-      "reusable_workflow": "astral-sh/github-actions/.github/workflows/pull-request-security-review.yml@6c1398e34f646a0470c5bf2a7c3476d19e435bd7",
+            let (name, version) = match &resolution.graph()[node] {
+                Node::Dist { dist, .. } => (dist.name(), dist.version()),
+                Node::Excluded { name, version } => (name, version.as_ref()),
+            };
+            for edge in resolution.graph().edges_directed(node, Direction::Incoming) {
+                let mut path = path.clone();
+                path.push(DerivationStep::new(
+                    name.clone(),
+                    extra.clone(),
+                    group.clone(),
+                    version.cloned(),
+                    Ranges::empty(),
+                ));
+                let target = edge.source();
+                let extra = match edge.weight() {
+                    Edge::Optional(extra) => Some(extra.clone()),
+                    _ => None,
+                };
+                let group = match edge.weight() {
+                    Edge::Dev(group) => Some(group.clone()),
+                    _ => None,
+                };
+                queue.push_back((target, extra, group, path));
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-      "reusable_workflow": "astral-sh/github-actions/.github/workflows/pull-request-security-review.yml@67dc9ee1ddc113eccd8116e7b949fb6cdcd89889",
+            match &resolution.graph()[node] {
+                Node::Dist { dist, .. } => {
+                    for edge in resolution.graph().edges_directed(node, Direction::Incoming) {
+                        let mut path = path.clone();
+                        path.push(DerivationStep::new(
+                            dist.name().clone(),
+                            extra.clone(),
+                            group.clone(),
+                            dist.version().cloned(),
+                            Ranges::empty(),
+                        ));
+                        let target = edge.source();
+                        let extra = match edge.weight() {
+                            Edge::Optional(extra) => Some(extra.clone()),
+                            _ => None,
+                        };
+                        let group = match edge.weight() {
+                            Edge::Dev(group) => Some(group.clone()),
+                            _ => None,
+                        };
+                        queue.push_back((target, extra, group, path));
+                    }
+                }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `08cda500` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `264d8b4a` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -135,8 +135,8 @@
     "sourceUrl": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
     "sourceVersion": "hf-abenzerps-qwen-image-2.1-uncensored-gguf",
     "license": "Open-Source",
-    "contentHash": "c6266a0e873d799cbd8708bf605ec54271a4657928d00ddbfc9b9babcf5e09e2",
-    "lastHarvestedAt": "2026-11-18T09:57:11.907Z",
+    "contentHash": "6b3ff9c82f2b218919a9b7bd7b0e20fce3b1bdb974a3a53bc882811ec4fa61e6",
+    "lastHarvestedAt": "2026-11-22T16:29:01.483Z",
     "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf"
   },
   "hf-sentence-transformers-all-minilm-l6-v2": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "598cce81",
+    "sourceVersion": "a129ffd9",
     "license": "NOASSERTION",
-    "contentHash": "dff9a27778f0d013a0c8706670e8ffeb1828e177a9f6390dc33b7d3d9530c65d",
-    "lastHarvestedAt": "2026-11-22T00:24:51.631Z",
+    "contentHash": "702c971e8c21b1a184f127131d7ed4e44d3d94f8b9530ff406c519a135a399a2",
+    "lastHarvestedAt": "2026-11-22T16:28:27.086Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -7823,10 +7823,10 @@
     "repository": "astral-sh/uv",
     "platform": "github",
     "sourceUrl": "https://github.com/astral-sh/uv",
-    "sourceVersion": "ac154af9",
+    "sourceVersion": "264d8b4a",
     "license": "Apache-2.0",
-    "contentHash": "bf5bbb36d6cddd67decbae0326403fb5c528949a0524eb793c6d5e5b9996cab0",
-    "lastHarvestedAt": "2026-11-21T03:28:36.255Z",
+    "contentHash": "76afbf48c90c1020b68d8897223f29e55f4b218a11c9ec30de689785f6cf38df",
+    "lastHarvestedAt": "2026-11-22T16:28:12.334Z",
     "learningId": "learn-github-astral-sh-uv"
   },
   "thaw-app-thaw": {

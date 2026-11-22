@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T16:12:39.925Z",
+  "last_updated": "2026-11-22T16:29:45.489Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-22T14:17:31.887Z",
@@ -93,7 +93,7 @@
       "staged_for_review": 1
     },
     "astral-sh-uv-learnings.md": {
-      "processed_at": "2026-11-21T03:28:54.036Z",
+      "processed_at": "2026-11-22T16:29:04.699Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -748,9 +748,9 @@
       "staged_for_review": 1
     },
     "dathere-qsv-learnings.md": {
-      "processed_at": "2026-11-22T00:24:55.892Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-22T16:29:43.748Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "dragonflyoss-dragonfly-learnings.md": {
       "processed_at": "2026-11-19T21:24:15.601Z",
@@ -1723,7 +1723,7 @@
       "staged_for_review": 1
     },
     "hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md": {
-      "processed_at": "2026-11-18T09:57:32.636Z",
+      "processed_at": "2026-11-22T16:29:05.722Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3718,7 +3718,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3141,
-  "total_canonical_promoted": 474,
-  "total_staged_for_review": 2387
+  "total_dossiers_evaluated": 3144,
+  "total_canonical_promoted": 475,
+  "total_staged_for_review": 2388
 }

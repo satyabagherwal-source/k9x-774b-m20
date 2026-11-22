@@ -12115,3 +12115,7 @@
 | `CYCLE-20261122-C0J5` | `2026-11-22T16:12:17.969Z` | `Edge0/Audio8-ASR-Infinite` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-edge0-audio8-asr-infinite-learnings.md` | Yes (`ad47f7cf...`) |
 | `CYCLE-20261122-C2OF` | `2026-11-22T16:12:20.751Z` | `oven-sh/bun` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9950` | Yes (`ccfea3d5...`) |
 | `CYCLE-20261122-CCAC` | `2026-11-22T16:12:33.204Z` | `yugabyte/yugabyte-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9951` | Yes (`37354a61...`) |
+| `CYCLE-20261122-WGX5` | `2026-11-22T16:28:12.329Z` | `astral-sh/uv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9952` | Yes (`76afbf48...`) |
+| `CYCLE-20261122-WSAX` | `2026-11-22T16:28:27.081Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9953` | Yes (`702c971e...`) |
+| `CYCLE-20261122-XIUE` | `2026-11-22T16:29:01.478Z` | `abenzerps/Qwen-Image-2.1-Turbo-Quantized` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md` | Yes (`6b3ff9c8...`) |
+| `CYCLE-2026-11-22-PROJ-EVOLVE` | `2026-11-22T16:29:43.747Z` | `dathere-qsv` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-17797BC1` [Domain H] | Yes (`e7eabd2a...`) |
