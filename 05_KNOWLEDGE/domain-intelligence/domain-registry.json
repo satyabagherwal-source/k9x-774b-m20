@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T21:14:47.872Z",
+  "last_updated": "2026-11-22T21:32:11.813Z",
   "total_records": 2384,
   "domains": {
     "A": {
@@ -9117,8 +9117,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "49b1725eb60b785a7ff842cdb66b3f831fddded6492f32f704aeeea075756c0f",
-      "created_at": "2026-11-22T20:46:59.392Z"
+      "content_hash": "e87947cf57e0029107d6c6174629d3710c82d32fd9d14567c5afae51f45fcfaf",
+      "created_at": "2026-11-22T21:32:11.813Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -9126,8 +9126,8 @@
       "title": "Research & Knowledge Intelligence: XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-research-knowledge-intelligence-xiaomimi.md",
       "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
-      "content_hash": "180232ac6df3192263a290ceb9afb2d30647aaccfdea6efb4d7ce20ba18f0ce4",
-      "created_at": "2026-11-18T14:32:00.716Z"
+      "content_hash": "aab10d1e66706238eae9db2bf30d39f9a38fa8179251dfdf55ae54be645aaf7f",
+      "created_at": "2026-11-22T21:31:58.023Z"
     },
     "domain_intelligence-architecture-intelligence-nolabs-ai-nono-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-nolabs-ai-nono-core-invariants",
@@ -9195,8 +9195,8 @@
       "title": "Research & Knowledge Intelligence: hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-learnings-research-knowledge-intelligenc.md",
       "repository": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings",
-      "content_hash": "153b465cec6a711b68b3fbd82d0a4df32f2afcf5fe0ec72da16b7c1ec6694ce3",
-      "created_at": "2026-11-18T14:32:19.884Z"
+      "content_hash": "85d916f643e20fdd8c61e9f18618da75cd99a68fff239b257319c8e6d99b10ac",
+      "created_at": "2026-11-22T21:32:10.952Z"
     },
     "domain_intelligence-architecture-intelligence-nolabs-ai-nono-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-nolabs-ai-nono-learnings-core-invariants",
@@ -31507,8 +31507,8 @@
       "title": "Technical Construction Intelligence: ajeetdsouza/zoxide Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ajeetdsouza-zoxide-technical-construction-intelligence-ajeetdsouza-zoxide-core-i.md",
       "repository": "ajeetdsouza/zoxide",
-      "content_hash": "045e17c5ac2e49cb8354811406d8ddbbe87d57b1cc22966a74059b047e647082",
-      "created_at": "2026-11-18T12:42:41.025Z"
+      "content_hash": "dc92dafd1223e725edc7a37bbb2a0ff965952ce228c641ec50757075ade1cafc",
+      "created_at": "2026-11-22T21:31:59.101Z"
     },
     "domain_intelligence-technical-construction-intelligence-ajeetdsouza-zoxide-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-ajeetdsouza-zoxide-learnings-core-invariants",
@@ -31516,8 +31516,8 @@
       "title": "Technical Construction Intelligence: ajeetdsouza-zoxide-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ajeetdsouza-zoxide-learnings-technical-construction-intelligence-ajeetdsouza-zox.md",
       "repository": "ajeetdsouza-zoxide-learnings",
-      "content_hash": "c621af2e0f780c527c33da0ffd837970414c1647c876a6e3cda7aeba32d61945",
-      "created_at": "2026-11-18T12:43:18.246Z"
+      "content_hash": "a1bb716f3df74c833342c8d2ab846eabce3f198db08979402ae53e162248fdfe",
+      "created_at": "2026-11-22T21:32:10.212Z"
     },
     "DOM-H-50457654": {
       "record_id": "DOM-H-50457654",

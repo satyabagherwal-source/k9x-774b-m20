@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T21:13:17.219Z",
-  "total_cycles_completed": 11597,
-  "total_learnings_persisted": 11597,
-  "total_rules_promoted": 10815,
+  "last_updated": "2026-11-22T21:31:58.551Z",
+  "total_cycles_completed": 11599,
+  "total_learnings_persisted": 11599,
+  "total_rules_promoted": 10816,
   "history": [
-    {
-      "timestamp": "2026-11-22T03:03:12.862Z",
-      "repository": "ricursiveAI/Ripple-65B-Preview",
-      "learningId": "learn-huggingface-ricursiveai-ripple-65b-preview",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T03:03:18.682Z",
-      "repository": "react/metro",
-      "learningId": "learn-github-react-metro",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-22T03:03:27.427Z",
       "repository": "Ontos-AI/knowhere",
@@ -1403,6 +1389,20 @@
       "repository": "akhilaaa3/Jev-Omni",
       "learningId": "learn-huggingface-akhilaaa3-jev-omni",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T21:31:57.704Z",
+      "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+      "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T21:31:58.551Z",
+      "repository": "ajeetdsouza/zoxide",
+      "learningId": "learn-github-ajeetdsouza-zoxide",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

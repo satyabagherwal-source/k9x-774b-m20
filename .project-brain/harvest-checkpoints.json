@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T21:13:17.223Z",
+  "last_updated": "2026-11-22T21:31:58.556Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -605,14 +605,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
-      "content_hash": "d2b2bd055fa5e88d57ef69a4ce79288cf854d4e7797d71f59a00d0a522ef62b4",
-      "verified_at": "2026-11-18T14:32:00.526Z",
+      "content_hash": "441eebfe5d3035eb69980f45c148729653f2b9bfd36b479d8dbe2c3145ccfd25",
+      "verified_at": "2026-11-22T21:31:57.708Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T14:32:00.526Z"
+      "last_updated": "2026-11-22T21:31:57.708Z"
     },
     "inclusionAI/Ming-Image-0.1-Design": {
       "repository": "inclusionAI/Ming-Image-0.1-Design",
@@ -4131,14 +4131,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ajeetdsouza-zoxide",
-      "content_hash": "bb162008c94b9168737f2f3fe9273b2cc783e65bf01fdbb1b86a40871ddd8ed0",
-      "verified_at": "2026-11-18T12:42:40.723Z",
+      "content_hash": "00895328165f1e2fe51797237bb518a7cae52dff30edcf17bc80670d9dc4873b",
+      "verified_at": "2026-11-22T21:31:58.555Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T12:42:40.723Z"
+      "last_updated": "2026-11-22T21:31:58.555Z"
     },
     "react-native-elements/react-native-elements": {
       "repository": "react-native-elements/react-native-elements",

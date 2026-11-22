@@ -495,8 +495,8 @@
     "sourceUrl": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
     "sourceVersion": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
     "license": "Open-Source",
-    "contentHash": "d2b2bd055fa5e88d57ef69a4ce79288cf854d4e7797d71f59a00d0a522ef62b4",
-    "lastHarvestedAt": "2026-11-18T14:32:00.517Z",
+    "contentHash": "441eebfe5d3035eb69980f45c148729653f2b9bfd36b479d8dbe2c3145ccfd25",
+    "lastHarvestedAt": "2026-11-22T21:31:57.696Z",
     "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b"
   },
   "hf-inclusionai-ming-image-0.1-design": {
@@ -2663,10 +2663,10 @@
     "repository": "ajeetdsouza/zoxide",
     "platform": "github",
     "sourceUrl": "https://github.com/ajeetdsouza/zoxide",
-    "sourceVersion": "2f4bceba",
+    "sourceVersion": "daf56a37",
     "license": "MIT",
-    "contentHash": "bb162008c94b9168737f2f3fe9273b2cc783e65bf01fdbb1b86a40871ddd8ed0",
-    "lastHarvestedAt": "2026-11-18T12:42:40.716Z",
+    "contentHash": "00895328165f1e2fe51797237bb518a7cae52dff30edcf17bc80670d9dc4873b",
+    "lastHarvestedAt": "2026-11-22T21:31:58.543Z",
     "learningId": "learn-github-ajeetdsouza-zoxide"
   },
   "react-native-elements-react-native-elements": {

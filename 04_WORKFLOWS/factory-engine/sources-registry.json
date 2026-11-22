@@ -82,8 +82,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-22T21:13:21.159Z",
-    "lastVerified": "2026-11-22T21:13:21.159Z",
+    "lastChecked": "2026-11-22T21:32:09.296Z",
+    "lastVerified": "2026-11-22T21:32:09.296Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -177,8 +177,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-22T20:35:46.845Z",
-    "lastVerified": "2026-11-22T20:35:46.845Z",
+    "lastChecked": "2026-11-22T21:32:09.283Z",
+    "lastVerified": "2026-11-22T21:32:09.283Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -361,9 +361,9 @@
   "run-llama-llama_index": {
     "name": "llama_index",
     "officialUrl": "https://github.com/run-llama/llama_index",
-    "lastChecked": "2026-11-21T21:31:41.682Z",
+    "lastChecked": "2026-11-22T21:32:06.745Z",
     "revisionIdentifier": "99d7433f",
-    "lastVerified": "2026-11-21T21:31:41.682Z"
+    "lastVerified": "2026-11-22T21:32:06.745Z"
   },
   "nucleoidai-nucleoid": {
     "name": "Nucleoid",
@@ -1566,9 +1566,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-11-22T16:48:10.950Z",
+    "lastChecked": "2026-11-22T21:32:04.248Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-11-22T16:48:10.950Z"
+    "lastVerified": "2026-11-22T21:32:04.248Z"
   },
   "seaql-sea-orm": {
     "name": "sea-orm",
@@ -1595,22 +1595,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "ajeetdsouza-zoxide": {
-    "name": "zoxide",
+    "name": "ajeetdsouza/zoxide",
     "officialUrl": "https://github.com/ajeetdsouza/zoxide",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-21T12:48:37.714Z",
-    "lastVerified": "2026-11-21T12:48:37.714Z",
+    "lastChecked": "2026-11-22T21:31:57.164Z",
+    "lastVerified": "2026-11-22T21:31:57.164Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-ajeetdsouza-zoxide",
-    "contentHash": "bb162008c94b9168737f2f3fe9273b2cc783e65bf01fdbb1b86a40871ddd8ed0",
+    "contentHash": "00895328165f1e2fe51797237bb518a7cae52dff30edcf17bc80670d9dc4873b",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "2f4bceba"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-prism-ml-ternary-bonsai-2-27b-gguf": {
     "name": "prism-ml/Ternary-Bonsai-2-27B-gguf",
@@ -2421,9 +2420,9 @@
   "alexellis-k3sup": {
     "name": "k3sup",
     "officialUrl": "https://github.com/alexellis/k3sup",
-    "lastChecked": "2026-11-21T22:29:55.132Z",
+    "lastChecked": "2026-11-22T21:32:01.850Z",
     "revisionIdentifier": "07ee3911",
-    "lastVerified": "2026-11-21T22:29:55.132Z"
+    "lastVerified": "2026-11-22T21:32:01.850Z"
   },
   "volcengine-minecontext": {
     "name": "MineContext",
@@ -2595,12 +2594,12 @@
     "officialUrl": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-18T14:31:59.903Z",
-    "lastVerified": "2026-11-18T14:31:59.903Z",
+    "lastChecked": "2026-11-22T21:31:56.846Z",
+    "lastVerified": "2026-11-22T21:31:56.846Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
-    "contentHash": "d2b2bd055fa5e88d57ef69a4ce79288cf854d4e7797d71f59a00d0a522ef62b4",
+    "contentHash": "441eebfe5d3035eb69980f45c148729653f2b9bfd36b479d8dbe2c3145ccfd25",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -9239,9 +9238,9 @@
   "lottie-react-native-lottie-react-native": {
     "name": "lottie-react-native",
     "officialUrl": "https://github.com/lottie-react-native/lottie-react-native",
-    "lastChecked": "2026-11-19T22:19:40.328Z",
+    "lastChecked": "2026-11-22T21:31:59.538Z",
     "revisionIdentifier": "b0960c1d",
-    "lastVerified": "2026-11-19T22:19:40.328Z"
+    "lastVerified": "2026-11-22T21:31:59.538Z"
   },
   "seo-skills-seo-audit-skill": {
     "name": "seo-skills/seo-audit-skill",

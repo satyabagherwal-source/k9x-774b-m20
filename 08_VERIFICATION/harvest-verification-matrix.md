@@ -12197,3 +12197,5 @@
 | `CYCLE-20261122-334N` | `2026-11-22T21:13:17.207Z` | `akhilaaa3/Jev-Omni` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9992, Rule 9993, Rule 9994` | Yes (`8e0c0994...`) |
 | `CYCLE-2026-11-22-PROJ-EVOLVE` | `2026-11-22T21:14:00.100Z` | `hf-akhilaaa3-jev-omni` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-892076A7` [Domain F] | Yes (`81ac23b0...`) |
 | `CYCLE-2026-11-22-PROJ-EVOLVE` | `2026-11-22T21:14:45.153Z` | `hf-akhilaaa3-jev-omni` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-7A8AC6A4` [Domain H] | Yes (`f5d7f8b5...`) |
+| `CYCLE-20261122-R3P6` | `2026-11-22T21:31:57.690Z` | `XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings.md` | Yes (`441eebfe...`) |
+| `CYCLE-20261122-R4CP` | `2026-11-22T21:31:58.537Z` | `ajeetdsouza/zoxide` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9995` | Yes (`00895328...`) |

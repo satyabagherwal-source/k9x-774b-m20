@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T21:14:48.340Z",
+  "last_updated": "2026-11-22T21:32:12.048Z",
   "total_verified_learnings": 9075,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23785,
+  "total_items": 23788,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "49b1725eb60b785a7ff842cdb66b3f831fddded6492f32f704aeeea075756c0f",
+      "content_hash": "e87947cf57e0029107d6c6174629d3710c82d32fd9d14567c5afae51f45fcfaf",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T20:46:59.392Z"
+      "persisted_at": "2026-11-22T21:32:11.813Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "98dfd28a46349ef4f6236506b9cbf3030614c9212e1558b03e660f8f9add9df4",
+      "content_hash": "110cb38cd1e3d1c01a2a68cc2f5353c0b9e01b5ef66726672bddcde4357ba0f5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T20:46:59.606Z"
+      "persisted_at": "2026-11-22T21:32:12.048Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -113842,9 +113842,9 @@
       "title": "Research & Knowledge Intelligence: hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings Core Invariants",
       "repository": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings",
       "source_version": "HEAD",
-      "content_hash": "153b465cec6a711b68b3fbd82d0a4df32f2afcf5fe0ec72da16b7c1ec6694ce3",
+      "content_hash": "85d916f643e20fdd8c61e9f18618da75cd99a68fff239b257319c8e6d99b10ac",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T14:32:19.884Z"
+      "persisted_at": "2026-11-22T21:32:10.952Z"
     },
     "domain_intelligence-architecture-intelligence-nolabs-ai-nono-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-nolabs-ai-nono-learnings-core-invariants",
@@ -285177,7 +285177,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
       "source_version": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
-      "content_hash": "d2b2bd055fa5e88d57ef69a4ce79288cf854d4e7797d71f59a00d0a522ef62b4",
+      "content_hash": "441eebfe5d3035eb69980f45c148729653f2b9bfd36b479d8dbe2c3145ccfd25",
       "dossier_path": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings.md",
       "promoted_rules": [],
@@ -285186,7 +285186,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T14:32:00.313Z",
+      "verified_at": "2026-11-22T21:31:57.381Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -290094,14 +290094,19 @@
       "slug": "ajeetdsouza-zoxide",
       "platform": "github",
       "source_url": "https://github.com/ajeetdsouza/zoxide",
-      "source_version": "2f4bceba",
-      "content_hash": "bb162008c94b9168737f2f3fe9273b2cc783e65bf01fdbb1b86a40871ddd8ed0",
+      "source_version": "daf56a37",
+      "content_hash": "00895328165f1e2fe51797237bb518a7cae52dff30edcf17bc80670d9dc4873b",
       "dossier_path": "07_PROJECT_LEARNING/ajeetdsouza-zoxide-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ajeetdsouza-zoxide-learnings.md",
       "promoted_rules": [
         {
           "number": 9219,
           "title": "keep the permissions of db.txt when saving",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9995,
+          "title": "quote the current directory in init, z and zi",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -290110,7 +290115,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T12:42:40.532Z",
+      "verified_at": "2026-11-22T21:31:58.277Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -290152,10 +290157,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ajeetdsouza-zoxide-technical-construction-intelligence-ajeetdsouza-zoxide-core-i.md",
       "title": "Technical Construction Intelligence: ajeetdsouza/zoxide Core Invariants",
       "repository": "ajeetdsouza/zoxide",
-      "source_version": "2f4bceba",
-      "content_hash": "045e17c5ac2e49cb8354811406d8ddbbe87d57b1cc22966a74059b047e647082",
+      "source_version": "daf56a37",
+      "content_hash": "dc92dafd1223e725edc7a37bbb2a0ff965952ce228c641ec50757075ade1cafc",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T12:42:41.025Z"
+      "persisted_at": "2026-11-22T21:31:59.101Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-ajeetdsouza-zoxide": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-ajeetdsouza-zoxide",
@@ -290164,10 +290169,10 @@
       "relative_path": "08_VERIFICATION/ajeetdsouza-zoxide-verification-protocol-empirical-defect-shield-for-ajeetdsouza.md",
       "title": "Verification Protocol: Empirical Defect Shield for ajeetdsouza/zoxide",
       "repository": "ajeetdsouza/zoxide",
-      "source_version": "2f4bceba",
-      "content_hash": "1dc764b063febd5c8e6bb41f1a886b4a2b5812b4d79828227af736c4697e5b29",
+      "source_version": "daf56a37",
+      "content_hash": "13c8638173aedd043b011c945db515a10745cee84332d67323916a68ca680557",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T12:42:41.158Z"
+      "persisted_at": "2026-11-22T21:31:59.344Z"
     },
     "rule-9220": {
       "learning_id": "rule-9220",
@@ -290215,9 +290220,9 @@
       "title": "Technical Construction Intelligence: ajeetdsouza-zoxide-learnings Core Invariants",
       "repository": "ajeetdsouza-zoxide-learnings",
       "source_version": "HEAD",
-      "content_hash": "c621af2e0f780c527c33da0ffd837970414c1647c876a6e3cda7aeba32d61945",
+      "content_hash": "a1bb716f3df74c833342c8d2ab846eabce3f198db08979402ae53e162248fdfe",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T12:43:18.246Z"
+      "persisted_at": "2026-11-22T21:32:10.212Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-ajeetdsouza-zoxide-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-ajeetdsouza-zoxide-learnings",
@@ -290227,9 +290232,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for ajeetdsouza-zoxide-learnings",
       "repository": "ajeetdsouza-zoxide-learnings",
       "source_version": "HEAD",
-      "content_hash": "85963665645438d2eb185f24f58bf188be316559ed3b95a480bda57d97bbdf3a",
+      "content_hash": "b0f7359ec598e9f6b998f8618a3097447f6e3bcd8433404a6499ea0a4c589989",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T12:43:18.371Z"
+      "persisted_at": "2026-11-22T21:32:10.465Z"
     },
     "rule-9221": {
       "learning_id": "rule-9221",
@@ -318681,13 +318686,13 @@
       "item_id": "candidate_directive-test-collab-write-trust-fixtures-with-explicit-0644-permissions",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-59ID-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-REES-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "f42a36b46cf12368a0174d2a36c7fe23500f9f60c43d0b688f9175f20a5338b7",
+      "content_hash": "066a86ac163ab5786887405b1a4283d6d4342e93bbaf834799804a5476d77ad0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T20:46:59.179Z"
+      "persisted_at": "2026-11-22T21:32:11.578Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants",
@@ -323794,6 +323799,44 @@
       "content_hash": "8cac8a0bdc863c99f3559c71ecefa3b6edd0c83151c00c09bfa57f680883695e",
       "domain_letter": "K",
       "persisted_at": "2026-11-22T21:14:46.525Z"
+    },
+    "rule-9995": {
+      "learning_id": "rule-9995",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9995,
+      "title": "quote the current directory in init, z and zi",
+      "source_url": "https://github.com/ajeetdsouza/zoxide",
+      "source_version": "daf56a37",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T21:31:58.277Z"
+    },
+    "candidate_directive-quote-the-current-directory-in-init-z-and-zi": {
+      "item_id": "candidate_directive-quote-the-current-directory-in-init-z-and-zi",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-R4L9-quote-the-current-directory-in-init-z-and-zi.md",
+      "title": "quote the current directory in init, z and zi",
+      "repository": "ajeetdsouza/zoxide",
+      "source_version": "daf56a37",
+      "content_hash": "ca7639c1d789da5cfacbefa8a70722bd5de941cad4477458900163d913b71bdc",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T21:31:58.846Z"
+    },
+    "candidate_directive-tcsh-quote-the-current-directory-in-init-z-and-zi": {
+      "item_id": "candidate_directive-tcsh-quote-the-current-directory-in-init-z-and-zi",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-RD6I-tcsh-quote-the-current-directory-in-init-z-and-zi.md",
+      "title": "Tcsh: quote the current directory in init, z and zi",
+      "repository": "ajeetdsouza-zoxide-learnings",
+      "source_version": "HEAD",
+      "content_hash": "606693e564cdb69adc678f1d1ad7286e5ff67915e25ec8cc3bf02edba1fff099",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T21:32:09.979Z"
     }
   },
   "ai-builder-brain": {
