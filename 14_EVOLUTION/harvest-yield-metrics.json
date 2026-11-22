@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T04:51:56.754Z",
-  "total_cycles_completed": 11421,
-  "total_learnings_persisted": 11421,
-  "total_rules_promoted": 10708,
+  "last_updated": "2026-11-22T05:04:29.218Z",
+  "total_cycles_completed": 11423,
+  "total_learnings_persisted": 11423,
+  "total_rules_promoted": 10709,
   "history": [
-    {
-      "timestamp": "2026-11-21T12:29:18.957Z",
-      "repository": "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
-      "learningId": "learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T12:29:19.488Z",
-      "repository": "sharkdp/fd",
-      "learningId": "learn-github-sharkdp-fd",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T12:29:25.269Z",
       "repository": "react-hook-form/react-hook-form",
@@ -1403,6 +1389,20 @@
       "repository": "Viggle/Viggle-Remake",
       "learningId": "learn-huggingface-viggle-viggle-remake",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T05:04:28.188Z",
+      "repository": "audio-cpp/audio.cpp-gguf",
+      "learningId": "learn-huggingface-audio-cpp-audio-cpp-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T05:04:29.218Z",
+      "repository": "Dicklesworthstone/destructive_command_guard",
+      "learningId": "learn-github-dicklesworthstone-destructive_command_guard",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

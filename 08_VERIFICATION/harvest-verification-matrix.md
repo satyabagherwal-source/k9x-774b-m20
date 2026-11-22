@@ -12013,3 +12013,5 @@
 | `CYCLE-20261122-0D4U` | `2026-11-22T04:51:23.646Z` | `dosco/deeporg` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9884` | Yes (`9584104f...`) |
 | `CYCLE-20261122-0FAQ` | `2026-11-22T04:51:26.450Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9896` | Yes (`7a4bff03...`) |
 | `CYCLE-20261122-12O7` | `2026-11-22T04:51:56.743Z` | `Viggle/Viggle-Remake` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-viggle-viggle-remake-learnings.md` | Yes (`57fa81f5...`) |
+| `CYCLE-20261122-H6HB` | `2026-11-22T05:04:28.175Z` | `audio-cpp/audio.cpp-gguf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-audio-cpp-audio.cpp-gguf-learnings.md` | Yes (`ea4b7856...`) |
+| `CYCLE-20261122-H78M` | `2026-11-22T05:04:29.158Z` | `Dicklesworthstone/destructive_command_guard` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0004a3e9...`) |

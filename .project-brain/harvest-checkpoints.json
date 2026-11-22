@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T04:51:56.758Z",
+  "last_updated": "2026-11-22T05:04:29.223Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9336,14 +9336,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dicklesworthstone-destructive_command_guard",
-      "content_hash": "8afe8e4cf6ba7d434209546581a5c5441575599dc1b84cd80a183c8d5e914904",
-      "verified_at": "2026-11-19T01:47:08.578Z",
+      "content_hash": "0004a3e985cf0471201f294b4865d778ca6f0cd0714f2aa26932869f320365de",
+      "verified_at": "2026-11-22T05:04:29.222Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T01:47:08.578Z"
+      "last_updated": "2026-11-22T05:04:29.222Z"
     },
     "xinthink/react-native-material-kit": {
       "repository": "xinthink/react-native-material-kit",
@@ -18351,14 +18351,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-audio-cpp-audio-cpp-gguf",
-      "content_hash": "93f748a7b6a07b7c9fc1ae90436ef05b2a56e1a0e7728f594a62c871d6efacb5",
-      "verified_at": "2026-11-17T22:10:59.592Z",
+      "content_hash": "ea4b785610ed95d818ef82800be44dedc263ac6ded6f10e9b5e2708f2abb104b",
+      "verified_at": "2026-11-22T05:04:28.191Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T22:10:59.592Z"
+      "last_updated": "2026-11-22T05:04:28.191Z"
     },
     "mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF": {
       "repository": "mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF",

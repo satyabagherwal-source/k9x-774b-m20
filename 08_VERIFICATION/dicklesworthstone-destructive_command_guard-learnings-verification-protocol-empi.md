@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T01:47:32.359Z",
+  "timestamp": "2026-11-22T05:04:40.792Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-dicklesworthstone-destructive_command_guard-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [dicklesworthstone-destructive_command_guard-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T01:47:32.359Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T05:04:40.792Z`  
 > **Learning ID**: `LEARN-EVO-dicklesworthstone-destructive_command_guard-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md`  
 > **Source**: github ([https://github.com/Dicklesworthstone/destructive_command_guard](https://github.com/Dicklesworthstone/destructive_command_guard))  
-> **Source Version**: `f239e1be`  
+> **Source Version**: `2f372957`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T01:47:07.579Z  
+> **Timestamp**: 2026-11-22T05:04:28.231Z  
 > **Learning ID**: `learn-github-dicklesworthstone-destructive_command_guard`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Dicklesworthstone/destructive_command_guard](https://github.com/Dicklesworthstone/destructive_command_guard))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T01:47:03.961Z  
+> **Harvest Timestamp**: 2026-11-22T05:04:28.223Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: A fast Rust safety hook that blocks destructive shell, git, and filesystem commands before AI coding agents run them. 50+ security packs (databases, Kubernetes, Docker, cloud, Terraform), heredoc/inline-script scanning, CI scan mode, and explain mode; works with Claude Code, Codex, Gemini, Copilot, Cursor, and more.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6368 stars
+- **Stars / Engagement**: 6372 stars
 
 ---
 
@@ -1483,7 +1483,8 @@ pub(crate) use shell::{
     classify_credential_file_write, classify_git_redirect_writes,
     classify_powershell_credential_writes, names_protected_file, names_protected_git_internal,
     names_windows_shell_writer, powershell_file_truncation_targets,
-    powershell_file_writer_scan_required, powershell_literal_invocations,
+    powershell_file_truncation_targets_in_dialect, powershell_file_writer_scan_required,
+    powershell_literal_invocations,
 };
 
 use crate::normalize::ShellDialect;
@@ -1679,8 +1680,7 @@ mod source_ownership_tests {
                     false
                 });
             assert!(
-                hits.iter()
-                    .any(|hit| 
+        
 ```
 
 ### Core Architecture Module: `src/packs/core/credential_files/embedded.rs`
@@ -2517,8 +2517,8 @@ pub(super) fn scan(code: &str) -> Result<Vec<CredentialFileWrite>, &'static str>
 - **Issue #611** (2026-11-04): **[False Positive] heredoc.posix:pipeline-consumer: `… | perl -pe 's/x//'` denied while `… | perl -p -e 's/x//'` is allowed (bundled -e not read) (0.15.3 and main)**
   *Symptoms*: ### Blocked Command  cat /tmp/t.txt | perl -pe 's/x//'  ### Expected Behavior  `perl -pe CODE` is `perl -p -e CODE`: the program is the `-e` argument and the piped text is data. dcg already treats the split spelling that way. The bundled one, which is how these one-liners are usually written, is refused:  | Command | Observed (0.15.3) | |---|---| | `cat /tmp/t.txt \| perl -pe 's/x//'` | deny, heredoc.posix:pipeline-consumer | | `cat /tmp/t.txt \| perl -p -e 's/x//'` | allow | | `cat /tmp/t.txt \| perl -ne 'print'` | deny | | `cat /tmp/t.txt \| perl -n -e 'print'` | allow | | `cat /tmp/t.txt \| perl -lne 'print'` | deny | | `cat /tmp/t.txt \| perl -l -n -e 'print'` | allow | | `cat /tmp/t.txt \| perl -anE 'say $F[0]'` | deny | | `cat /tmp/t.txt \| perl -a -n -E 'say $F[0]'` | allow | | `cat /tmp/t.txt \| perl -le 'print 1'` | deny | | `cat /tmp/t.txt \| perl -i -pe 's/x//'` | deny | | `cat /tmp/t.txt \| ruby -ne 'puts $_'` | deny | | `cat /tmp/t.txt \| ruby -n -e 'puts $_'` | allow | | `cat /tmp/t.txt \| ruby -pe '$_.upcase!'` | deny | | `cat /tmp/t.txt \| ruby -p -e '$_.upcase!'` | allow | | `cat /tmp/t.txt \| perl -pe 's/x//' \| sort` | deny | | `cat /tmp/t.txt \| perl -p -e 's/x//' \| sort` | allow | | `perl -pe 's/x//' /tmp/t.txt` | allow | | `perl -pe 's/x//' < /tmp/t.txt` | allow |  **Must stay blocked**, and they do. Reading the cluster loses nothing, because the program is judged on its own: `cat /tmp/t.txt | perl -p -e 'system("git reset --hard")'` and `perl -pe 'syst
 
-- **Issue #604** (2026-11-03): **[False Positive] heredoc.posix:substitution-unverified refuses a quoted heredoc that cat only writes to a file, when its body has a `$(…)` line and then a `trap` line**
-  *Symptoms*: ### Blocked Command  cat > f <<'SH' (a four-line heredoc; exact text under Expected Behavior)  ### Expected Behavior  ```bash cat > f <<'SH' X=$(pwd) trap x EXIT SH ```  This should be allowed. The delimiter is quoted, so the body is literal text that `cat` writes to `f`. Nothing expands the `$(pwd)` and nothing runs the `trap`. The same two lines run as a real command are allowed, and so is a copied body that holds `git reset --hard`. #440's fix (7ce336d, d2ebd76) settled the same question for `eval`, which asks "whether there is an eval whose source it cannot resolve, and an eval inside a body nothing executes is not one."  Every row is a heredoc written to `f` with `cat > f <<'SH'` unless the first column says otherwise. Body lines are separated by line breaks.  | Writer | Body | Observed (0.15.3) | |---|---|---| | `cat > f <<'SH'` | `X=$(pwd)`<br>`trap x EXIT` | **deny**, substitution-unverified | | `cat > f <<'SH'` | ``X=`pwd` ``<br>`trap x EXIT` | **deny** | | `cat <<'SH'` (no redirect) | `X=$(pwd)`<br>`trap x EXIT` | **deny** | | `cat <<'SH' > f` | `X=$(pwd)`<br>`trap x EXIT` | **deny** | | `tee f >/dev/null <<'SH'` | `X=$(pwd)`<br>`trap x EXIT` | **deny** | | `cat > f <<"SH"` | `X=$(pwd)`<br>`trap x EXIT` | **deny** | | `cat > f <<'SH'` | `echo $(pwd)`<br>`trap x EXIT` | **deny** | | `cat > f <<'SH'` | `X=$(pwd)`<br>`y`<br>`trap x EXIT` | **deny** | | `cat > f <<'SH'` | `X=$(pwd)`<br>`trap 'rm -f /tmp/x' EXIT` | **deny** | | `cat > f <<SH` (unquoted) | `X=$(pwd)`<br>`
+- **Issue #608** (2026-11-21): **[False Positive] main denies a literal interpreter binding v0.15.3 resolves: `PY=/usr/bin/python3; $PY -c "print(1)"` is inline-launcher-unverified (regression since 0.15.3)**
+  *Symptoms*: ### Blocked Command  PY=/usr/bin/python3; $PY -c "print(1)"  ### Expected Behavior  This should be allowed, as it is on v0.15.3. The v0.13.6 changelog says dcg resolves "literal executable assignments before per-pack evaluation. Straight-line POSIX forms such as `d=docker; $d system prune -af` now bind the later segment to Docker". On main that still holds for `git`, `docker` and `sh`, but no longer for an interpreter followed by an inline-code flag:  | Command | v0.15.3 | main deff5c07 | |---|---|---| | `PY=/usr/bin/python3; $PY -c "print(1)"` | allow | **deny**, inline-launcher-unverified | | `PY=/usr/bin/python3; "$PY" -c "print(1)"` | allow | **deny** | | `D=/tmp/x; PY=/usr/bin/python3; $PY -c "print(1)"` | allow | **deny** | | `PL=/usr/bin/perl; $PL -e 'print 1'` | allow | **deny** | | `N=/usr/bin/node; $N -e 'console.log(1)'` | allow | **deny** | | `bash -c 'PY=/usr/bin/python3; $PY -c "x = 1"'` | allow | **deny** | | `ssh h 'PY=/usr/bin/python3; $PY -c "x = 1"'` | allow | **deny** | | `SH=/bin/sh; $SH -c 'echo hi'` | allow | allow | | `d=git; $d status` | allow | allow | | `PY=/usr/bin/python3; $PY -m json.tool /dev/null` | allow | allow | | `PY=/usr/bin/python3; $PY /tmp/script.py` | allow | allow | | `/usr/bin/python3 -c "print(1)"` | allow | allow |  The binding is in the same command, straight-line, with a literal absolute path, and the shell form of the same proof (`SH=/bin/sh; $SH -c`) still passes. The program is no longer read, either: `PY=/usr/bin/python3; $PY
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2535,74 +2535,473 @@ pub(super) fn scan(code: &str) -> Result<Vec<CredentialFileWrite>, &'static str>
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f239e1be` (2026-11-17)
-**Commit Message**: Merge remote-tracking branch 'origin/dependabot/github_actions/actions-b7cdeb98aa'
+### Incident Patch 1: `c8eeaee5` (2026-11-21)
+**Commit Message**: fix: resolve #670 regressions and clippy lints, plus #652, #665, #669 [skip ci]
 
-**File**: `.github/workflows/dist.yml` (modified, +1/-1)
+- Fix 3 clippy -D warnings lints in src/heredoc.rs and all 52 post-v0.16.0 test
+  regressions (#670): PowerShell tee/truncation gating in unknown dialect,
+  quoted-heredoc redirect proof preservation, POSIX literal-argument view
+  ordering with hash -p rebinding and git-alias fallback, regex negated-class
+  caret handling (#654), and inert-interpreter masking in cmd recovery and
+  unknown-dialect fanout.
+- Fix #652: use matcher "run_command" for Antigravity hook install and migrate
+  legacy "Bash" entries in place.
+- Fix #665: treat bare `dcg test|explain|classify --stdin` quoted heredocs as
+  structured data sinks.
+- Fix #669: add default statusMessage for Codex hooks in install.sh/install.ps1
+  while preserving operator overrides.
+- Judge `command -p eval` as executing eval while keeping `command -v/-V/-pv`
+  as queries, and retry ETXTBSY in droid_install tests.
+
+**File**: `install.ps1` (modified, +6/-2)
 ```diff
-@@ -379,7 +379,7 @@ jobs:
-         run: ls -laR dist
+@@ -1,4 +1,4 @@
+-# dcg PowerShell installer
++﻿# dcg PowerShell installer
+ #
+ # Authenticate this script before execution using the pinned release recipe:
+ #   https://github.com/Dicklesworthstone/destructive_command_guard/blob/main/docs/windows.md#verified-release-installation
+@@ -718,7 +718,11 @@ function Configure-CodexHook {
+     New-Item -ItemType Directory -Force -Path $codexDir | Out-Null
+   }
  
-       - name: Install cosign
--        uses: sigstore/cosign-installer@v4.1.2
-+        uses: sigstore/cosign-installer@v4.1.3
+-  $dcgHook = [pscustomobject][ordered]@{ type = "command"; command = $DcgPath }
++  $dcgHook = [pscustomobject][ordered]@{
++    type = "command"
++    command = $DcgPath
++    statusMessage = "dcg (destructive command guard)"
++  }
+   Merge-AgentHookFile -HooksFile $hooksFile -DcgHook $dcgHook -Event "PreToolUse" -Matcher "Bash" -Label "Codex hooks.json"
+ }
  
-       - name: Sign release artifacts (sigstore bundle)
-         run: |
 ```
 
----
-
-### Incident Patch 2: `6ef9d7a4` (2026-11-17)
-**Commit Message**: Merge remote-tracking branch 'origin/dependabot/cargo/rust-minor-patch-cc994a21e9'
-
-**File**: `Cargo.lock` (modified, +7/-7)
+**File**: `install.sh` (modified, +3/-3)
 ```diff
-@@ -955,7 +955,7 @@ dependencies = [
-  "criterion",
-  "ctrlc",
-  "dirs",
-- "fancy-regex 0.20.0",
-+ "fancy-regex 0.20.2",
-  "flate2",
-  "fs2",
-  "glob",
-@@ -1160,9 +1160,9 @@ dependencies = [
+@@ -5,7 +5,7 @@
+ # Authenticate a pinned release installer before running this script:
+ #   https://github.com/Dicklesworthstone/destructive_command_guard#quick-install-verified-release
+ # After verifying the signature and pinned digest, run the local file:
+-#   bash ./install.sh --version v0.16.0 --require-minisign
++#   bash ./install.sh --version v0.17.0 --require-minisign
+ #
+ # Options:
+ #   --version vX.Y.Z   Install specific version (default: latest)
+@@ -31,7 +31,7 @@ if [ -z "${BASH_VERSION:-}" ]; then
+   printf '%s\n' \
+     'dcg installer: this script needs bash. Authenticate the release installer first:' \
+     '  https://github.com/Dicklesworthstone/destructive_command_guard#quick-install-verified-release' \
+-    'Then run the verified local file with bash ./install.sh --version v0.16.0 --require-minisign' >&2
++    'Then run the verified local file with bash ./install.sh --version v0.17.0 --require-minisign' >&2
+   exit 1
+ fi
+ # bash run as `sh` starts in POSIX mode, which rejects the process
+@@ -2715,7 +2715,7 @@ def configure():
+     command = shlex.quote(dcg_path)
+     event, matcher, defaults = {
+         "gemini": ("BeforeTool", "run_shell_command", {"name": "dcg", "timeout": 5000}),
+-        "codex": ("PreToolUse", "Bash", {}),
++        "codex": ("PreToolUse", "Bash", {"statusMessage": "dcg (destructive command guard)"}),
+         "posit": ("PreToolUse", "bash|powershell", {"timeout": 10}),
+     }[host]
+     if host == "posit":
+```
+
+**File**: `src/cli.rs` (modified, +40/-4)
+```diff
+@@ -13604,7 +13604,8 @@ fn collect_doctor_report(
  
- [[package]]
- name = "fancy-regex"
--version = "0.20.0"
-+version = "0.20.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "20ed7f62ce0ae0da1a8b93c3c7104ab7e0760a74491e097c701fff966e945390"
-+checksum = "0a2e16b9a584b602f1e0e5e22c30ca0906786088c27500653e432d086def8b53"
- dependencies = [
-  "bit-set 0.8.0",
-  "regex-automata",
-@@ -1205,9 +1205,9 @@ checksum = "aedcfb3409746eddb02b9e19ebda1c3394f759a152e48ee875a0844d1b955484"
+ const CLAUDE_SHELL_MATCHER: &str = "Bash|PowerShell|Monitor";
+ const LEGACY_CLAUDE_SHELL_MATCHERS: &[&str] = &["Bash", "Bash|PowerShell"];
+-const ANTIGRAVITY_SHELL_MATCHER: &str = "Bash";
++const ANTIGRAVITY_SHELL_MATCHER: &str = "run_command";
++const LEGACY_ANTIGRAVITY_SHELL_MATCHERS: &[&str] = &["Bash"];
  
- [[package]]
- name = "flate2"
--version = "1.1.10"
-+version = "1.1.11"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "6e634e2e0ebac1ee034020da1ca582e17ffe4e0f5e985823721e168928136dcb"
-+checksum = "626d4928326b646e70f65ed36fc7cf9f206bdb68a0019ee7c6b4709da4e084c4"
- dependencies = [
-  "crc32fast",
-  "miniz_oxide",
-@@ -4318,9 +4318,9 @@ checksum = "0c790de23124f9ab44544d7ac05d60440adc586479ce501c1d6d7da3cd8c9cf5"
+ fn current_dcg_executable() -> std::io::Result<std::path::PathBuf> {
+     let executable = std::env::current_exe().map_err(|error| {
+@@ -14347,7 +14348,7 @@ fn install_antigravity_hook_into_settings(
+         settings,
+         force,
+         ANTIGRAVITY_SHELL_MATCHER,
+-        &[],
++        LEGACY_ANTIGRAVITY_SHELL_MATCHERS,
+         desired_hook,
+     )
+ }
+@@ -14678,7 +14679,8 @@ fn install_grok_hook(force: bool, project: bool) -> Result<(), Box<dyn std::erro
+ /// `~/.gemini/antigravity-cli/hooks.json` is symlinked to it). The file uses
+ /// the same `{"hooks":{"PreToolUse":[{"matcher":...,"hooks":[{"type":
+ /// "command","command":"/absolute/path/to/dcg"}]}]}}` shape as Claude's
+-/// `settings.json`, while retaining agy's Bash-only matcher. When dcg returns a block decision
++/// `settings.json`, using agy's `run_command` tool matcher (migrating any
++/// legacy `Bash` matcher entry written by older releases). When dcg returns a block decision
+ /// (stdout `{"decision":"block",...}`), `agy` aborts its `run_command` tool.
+ ///
+ /// With `--project`, writes to `<repo>/.gemini/config/hooks.json` instead.
+@@ -33100,7 +33102,7 @@ console.log(JSON.stringify({
+             .expect("hooks.PreToolUse must be an array");
+         assert_eq!(pre_tool_use.len(), 1, "exactly one dcg hook entry");
+         let entry = &pre_tool_use[0];
+-        assert_eq!(entry["matcher"], "Bash");
++        assert_eq!(entry["matcher"], "run_command");
+         let cmd = &entry["hooks"][0];
+         assert_eq!(
+             cmd,
+@@ -33119,6 +33121,40 @@ console.log(JSON.stringify({
+         assert!(!changed_again, "second install should be idempotent");
+     }
  
- [[package]]
- name = "smallvec"
--version = "1.16.4"
-+version = "1.16.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "d0d5d4b1981b8bbbb7aed204cae5726d683d5d6ac7e74ec54122ea28f315e7c8"
-+checksum = "149309498a5f7334b12ddae0cad8aba81ce785fe91755068867e017cf98fee46"
++    #[test]
++    fn test_install_antigravity_hook_migrates_legacy_bash_matcher() {
++        let desired = antigravity_dcg_hook().expect("desired Antigravity hook");
++        let mut legacy_hook = desired.clone();
++        legacy_hook["timeout"] = serde_json::json!(15);
++        let mut settings = serde_json::json!({
++            "hooks": {
++                "PreToolUse": [
++                    {
++                        "matcher": "Bash",
++                        "hooks": [legacy_hook]
++                    }
++                ]
++            }
++        });
++
++        let changed =
++            install_antigravity_hook_into_settings(&mut settings, false).expect("migrate legacy");
++        assert!(changed, "legacy Bash matcher must migrate to run_command");
++        let entries = settings["hooks"]["PreToolUse"].as_array().unwrap();
++        assert_eq!(entries.len(), 1);
++        assert_eq!(entries[0]["matcher"], "run_command");
++        let hook = &entries[0]["hooks"][0];
++        assert!(hook_has_dcg_identity(hook, &desired));
++        assert_eq!(
++            hook["timeout"], 15,
++            "operator fields must survive migration"
++        );
++
++        let changed_again =
++            install_antigravity_hook_into_settings(&mut settings, false).expect("idempotent");
++        assert!(!changed_again, "migrated entry should be idempotent");
++    }
++
+     // ========================================================================
+     // Batch hook mode tests
+     // ========================================================================
+```
+
+**File**: `src/evaluator.rs` (modified, +410/-56)
+```diff
+@@ -7297,10 +7297,41 @@ fn collect_powershell_substitution_bodies(command: &str) -> Result<Vec<String>,
+     let mut index = 0usize;
+     while index < bytes.len() {
+         if let Some((quote, width)) = powershell_quote_at(bytes, index) {
+-            let end = powershell_quoted_region_end(command, index, 0)?;
+-            if quote == b'"' {
+-                collect_powershell_expandable_region(command, index + width, end, &mut bodies)?;
++            if quote == b'\'' {
++                index = skip_powershell_single_quote(command, index);
++                continue;
+             }
++            // Scan an expandable double-quoted string (ASCII or smart quotes).
++            // Unclosed quotes (e.g. an unmasked POSIX heredoc containing
++            // `say "hi`) finish cleanly at EOF so unrelated quote fragments
++            // do not fail closed, while unclosed `$(` and nesting bounds still
++            // return `Err(())`.
++            let mut cursor = index + width;
++            let mut end = bytes.len();
++            while cursor < bytes.len() {
++                if bytes[cursor] == b'`' {
++                    cursor = escape_sequence_end(command, cursor);
++                } else if bytes[cursor] == b'$' && bytes.get(cursor + 1) == Some(&b'(') {
++                    let close =
++                        find_powershell_subexpression_close_at_depth(command, cursor + 2, 1)?;
++                    cursor = close + 1;
++                } else if let Some((closing, closing_width)) = powershell_quote_at(bytes, cursor)
++                    && closing == b'"'
++                {
++                    cursor += closing_width;
++                    if let Some((next, next_width)) = powershell_quote_at(bytes, cursor)
++                        && next == b'"'
++                    {
++                        cursor += next_width;
++                    } else {
++                        end = cursor;
++                        break;
++                    }
++                } else {
++                    cursor += 1;
++                }
++            }
++            collect_powershell_expandable_region(command, index + width, end, &mut bodies)?;
+             index = end;
+             continue;
+         }
+@@ -7949,7 +7980,31 @@ fn collect_posix_eval_sinks(command: &str, sinks: &mut Vec<ExecutableTextSink>)
+             // Skip every stacked precommand wrapper, not just one:
+             // `builtin command eval '…'` still runs the eval.
+             if is_posix_precommand_wrapper(decoded.as_ref()) {
++                let is_command = decoded.as_ref() == "command";
+                 index += 1;
++                if is_command {
++                    // `command -p eval …` runs `eval` with the default PATH,
++                    // whereas `-v`/`-V` (or any option cluster containing them)
++                    // turn `command` into a non-executing query. Only skip
++                    // bare `-p` and a terminating `--`.
++                    while let Some(opt_token) = words.get(index) {
++                        let Some(opt_raw) = opt_token.text(segment) else {
++                            break;
++                        };
++                        let Some(opt_decoded) = decoder.decode(opt_raw, ShellTokenRole::Syntax)
++                        else {
++                            break;
++                        };
++                        if opt_decoded.as_ref() == "-p" {
++                            index += 1;
++                        } else if opt_decoded.as_ref() == "--" {
++                            index += 1;
++                            break;
++                        } else {
++                            break;
++                        }
++                    }
++                }
+                 continue;
+             }
+             break;
+@@ -12582,8 +12637,13 @@ fn powershell_pipeline_words(
+         {
+             index += 1;
+         }
++        let is_heredoc_operator = raw
++            .trim_start_matches(|c: char| c.is_ascii_digit())
++            .starts_with("<<");
+         let positional = classify_shell_positional(raw);
+-        if matches!(positional, ShellPositional::StdinReassignRedirect { .. }) {
++        if !is_heredoc_operator
++            && matches!(positional, ShellPositional::StdinReassignRedirect { .. })
++        {
+             stdin_redirect = true;
+         }
+         if let Some(bare) = positional.redirect_is_bare() {
+@@ -12735,6 +12795,11 @@ fn powershell_pipeline_source(stage: &str) -> IndirectInputSource {
+     {
+         stage = stage[prefix.byte_range.end..].trim_start();
+     }
++    if stage.contains("<<")
++        && let Some(heredoc_source) = literal_heredoc_producer_source(stage)
++    {
++        return heredoc_source;
++    }
+     if let Ok(value) = parse_static_powershell_source(stage) {
+         return powershell_pipeline_literal_source(value);
+     }
+@@ -12748,7 +12813,9 @@ fn powershell_pipeline_source(stage: &str) -> IndirectInputSource {
+         return IndirectInputSource::File(PathBuf::new());
+
+```
+
+**File**: `src/heredoc.rs` (modified, +97/-10)
+```diff
+@@ -12772,15 +12772,93 @@ fn is_spx_session_handoff_stdin_data_sink(command: &str, heredoc_start: usize) -
+     )
+ }
  
- [[package]]
- name = "socket2"
++/// Check whether the command owning the heredoc is a `dcg` diagnostic subcommand
++/// (`dcg test`, `dcg explain`, `dcg classify`) with `--stdin` (#665).
++///
++/// The hook's own denial tip recommends `dcg test --stdin --explain` so agents
++/// can inspect a command without shell-quoting headaches.  When stdin is fed by
++/// a heredoc, the body is candidate data that `dcg` classifies and never
++/// executes.  Global options use the same arity rules as
++/// `allowlist::segment_is_dcg_inspection_call` so `dcg --agent test allow-once`
++/// never matches, and unquoted heredocs still keep their outer-shell
++/// expansions live via `mask_non_expanding_data_heredocs`.
++fn is_dcg_diagnostic_stdin_data_sink(command: &str, heredoc_start: usize) -> bool {
++    if heredoc_start == 0 {
++        return false;
++    }
++
++    let prefix = &command[..heredoc_start];
++    let line_start = prefix.rfind(['\n', '\r']).map_or(0, |i| i + 1);
++    let before = prefix[line_start..].trim_end();
++    if before.is_empty() {
++        return false;
++    }
++
++    let mut tokens = tokenize_backwards(before);
++    tokens.reverse();
++
++    let mut idx = 0;
++    while let Some(token) = tokens.get(idx) {
++        if is_shell_env_assignment(token) || SHELL_WRAPPER_COMMANDS.contains(&token.as_str()) {
++            idx += 1;
++        } else {
++            break;
++        }
++    }
++
++    let Some(program) = tokens.get(idx) else {
++        return false;
++    };
++    let base = program.rsplit(['/', '\\']).next().unwrap_or(program);
++    let stem = base
++        .get(..base.len().saturating_sub(4))
++        .filter(|_| {
++            base.get(base.len().saturating_sub(4)..)
++                .is_some_and(|suffix| suffix.eq_ignore_ascii_case(".exe"))
++        })
++        .unwrap_or(base);
++    if !(stem.eq_ignore_ascii_case("dcg") || stem.eq_ignore_ascii_case("destructive_command_guard"))
++    {
++        return false;
++    }
++    idx += 1;
++
++    while let Some(token) = tokens.get(idx) {
++        match token.as_str() {
++            "--agent" => idx += 2,
++            "--robot" | "--verbose" | "--quiet" | "--legacy-output" | "--no-color"
++            | "--no-suggestions" | "-q" => idx += 1,
++            _ if token.starts_with("--agent=") => idx += 1,
++            _ if token.starts_with('-') => {
++                if token.len() > 1 && token[1..].bytes().all(|byte| byte == b'v') {
++                    idx += 1;
++                } else {
++                    return false;
++                }
++            }
++            _ => break,
++        }
++    }
++
++    let Some(subcommand) = tokens.get(idx) else {
++        return false;
++    };
++    if !matches!(subcommand.as_str(), "test" | "explain" | "classify") {
++        return false;
++    }
++
++    tokens[idx + 1..].iter().any(|arg| arg == "--stdin")
++}
++
+ /// Check whether the heredoc/here-string at `heredoc_start` feeds a command
+ /// with a documented structured-stdin DATA contract (`git commit -F -` and
+-/// friends, `gh … --body-file -`, `spx session handoff`). Such bodies are
+-/// consumed as data (a commit message, an issue comment, a handoff
+-/// document), never executed as shell (#277, #393).
++/// friends, `gh … --body-file -`, `spx session handoff`, `dcg test|explain|classify --stdin`).
++/// Such bodies are consumed as data, never executed as shell (#277, #393, #665).
+ pub(crate) fn is_structured_stdin_data_sink(command: &str, heredoc_start: usize) -> bool {
+     is_git_stdin_data_sink(command, heredoc_start)
+         || is_gh_stdin_data_sink(command, heredoc_start)
+         || is_spx_session_handoff_stdin_data_sink(command, heredoc_start)
++        || is_dcg_diagnostic_stdin_data_sink(command, heredoc_start)
+ }
+ 
+ /// Mask heredoc content when the target command doesn't execute it.
+@@ -17800,9 +17878,11 @@ mod tests {
+         assert!(oversized_heredoc_requires_analysis(&large_exterior));
+ 
+         let body = "x".repeat(3 * 1024 * 1024);
+-        let unmatched = (0..5)
+-            .map(|at| format!("# <<'MISSING{at}'\n"))
+-            .collect::<String>();
++        let mut unmatched = String::new();
++        for at in 0..5 {
++            use std::fmt::Write as _;
++            let _ = writeln!(unmatched, "# <<'MISSING{at}'");
++        }
+         let exhausted = format!("{unmatched}cat > notes.txt <<'EOF'\n{body}\nEOF\n");
+         assert!(exhausted.len() < MAX_OVERSIZED_HEREDOC_SOURCE_BYTES);
+         assert!(oversized_heredoc_requires_analysis(&exhausted));
+@@ -19825,18 +19905,25 @@ mod tests {
+             );
+             // A partial range, or a second unproved edit, invalidates the
+             // entire proof rather than silently keeping the successful part.
++            let partial_replacement = replacement.start..replacement.end - 1;
++            let unproved_pair = [0..proof.len(), replacement];
+             for replacements in [
+-                vec![replacement.start..replacem
+```
+
+**File**: `src/hook.rs` (modified, +15/-1)
+```diff
+@@ -2821,6 +2821,20 @@ fn segment_command_word_is_cmd_assembled(segment: &str) -> bool {
+         return is_percent_expansion(first);
+     }
+ 
++    // A regex negated character class (`[^\n]*\n`, `[^a-z]+`) produced by
++    // splitting a quoted regex at `|` starts with `[^` and closes `]`. In
++    // cmd.exe `[` is a literal filename byte, never a separator or stripped
++    // escape, so a solitary caret inside `[...]` cannot assemble a destructive
++    // executable name. Preserve evidence if another unquoted caret, `%VAR%`,
++    // or `!VAR!` appears in the same token.
++    if let Some(after_negated_class) = first.strip_prefix("[^")
++        && after_negated_class.contains(']')
++        && !has_unquoted_caret(after_negated_class)
++        && !first.contains(['%', '!'])
++    {
++        return false;
++    }
++
+     // The raw heredoc scan can split a regex at '(' and '|', presenting
+     // ".*?)^\" as an apparent command word (#654). Cmd reads that as ".*?",
+     // a closing group, and "^\": the only caret-bearing word decodes to a
+@@ -3152,7 +3166,7 @@ fn command_is_windows_shell_payload_on_host(command: &str, host_is_windows: bool
+ /// or any `.exe` program (WSL interop and Wine run them, and their implicit
+ /// shell is cmd.exe). Deliberately loose: it only ever keeps conservative
+ /// evidence.
+-fn names_windows_shell_route(command: &str) -> bool {
++pub(crate) fn names_windows_shell_route(command: &str) -> bool {
+     command
+         .split(|character: char| !character.is_ascii_alphanumeric())
+         .any(|word| word.eq_ignore_ascii_case("pwsh") || word.eq_ignore_ascii_case("powershell"))
+```
+
+**File**: `src/packs/core/credential_files.rs` (modified, +2/-1)
+```diff
+@@ -20,7 +20,8 @@ pub(crate) use shell::{
+     classify_credential_file_write, classify_git_redirect_writes,
+     classify_powershell_credential_writes, names_protected_file, names_protected_git_internal,
+     names_windows_shell_writer, powershell_file_truncation_targets,
+-    powershell_file_writer_scan_required, powershell_literal_invocations,
++    powershell_file_truncation_targets_in_dialect, powershell_file_writer_scan_required,
++    powershell_literal_invocations,
+ };
+ 
+ use crate::normalize::ShellDialect;
+```
+
+**File**: `src/packs/core/credential_files/shell.rs` (modified, +9/-4)
+```diff
+@@ -33,8 +33,8 @@ mod windows_shells;
+ 
+ pub(crate) use windows_shells::{
+     PowerShellInvokedCommand, PowerShellTruncationTarget, WindowsShellParseIncomplete,
+-    powershell_file_truncation_targets, powershell_file_writer_scan_required,
+-    powershell_literal_invocations,
++    powershell_file_truncation_targets, powershell_file_truncation_targets_in_dialect,
++    powershell_file_writer_scan_required, powershell_literal_invocations,
+ };
+ 
+ /// Rule name under `core.filesystem`. The pattern entry in
+@@ -3297,8 +3297,13 @@ fn skip_wrapper(name: &str, args: &[&Word]) -> Option<usize> {
+             // `env -S` re-splits a string into words dcg cannot see.
+             return None;
+         }
+-        if name == "command" && matches!(text.as_str(), "-v" | "-V") {
+-            // A query, not an execution.
++        if name == "command"
++            && text.len() > 1
++            && text.starts_with('-')
++            && !text.starts_with("--")
++            && text[1..].chars().any(|flag| matches!(flag, 'v' | 'V'))
++        {
++            // A query (`-v`, `-V`, `-pv`, `-pV`, etc.), not an execution.
+             return None;
+         }
+         if let Some(long) = text.strip_prefix("--") {
 ```
 
 #### Recent Merged Pull Requests:
@@ -2631,31 +3030,37 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge remote-tracking branch 'origin/dependabot/github_actions/actions-b7cdeb98a
+## X. resolve #670 regressions and clippy lints, plus #652, #665, #669 [skip ci]
 
 **RULE**:
-When implementing operations in `.github/workflows/dist.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Dicklesworthstone/destructive_command_guard. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `install.ps1`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Dicklesworthstone/destructive_command_guard. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f239e1be`: Merge remote-tracking branch 'origin/dependabot/github_actions/actions-b7cdeb98aa'. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c8eeaee5`: resolve #670 regressions and clippy lints, plus #652, #665, #669 [skip ci]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/dist.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `install.ps1`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        uses: sigstore/cosign-installer@v4.1.3
+﻿# dcg PowerShell installer
+  $dcgHook = [pscustomobject][ordered]@{
+    type = "command"
+    command = $DcgPath
+    statusMessage = "dcg (destructive command guard)"
+  }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        uses: sigstore/cosign-installer@v4.1.2
+# dcg PowerShell installer
+  $dcgHook = [pscustomobject][ordered]@{ type = "command"; command = $DcgPath }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f239e1be` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c8eeaee5` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

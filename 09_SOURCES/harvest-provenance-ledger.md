@@ -12046,3 +12046,5 @@ Every entry in this ledger must capture:
 | `learn-github-dosco-deeporg` | `https://github.com/dosco/deeporg` | `85c58cdb` | Multi-dimensional audit evidence | 2026-11-22T04:51:23.651Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `1a4f4eb6` | Multi-dimensional audit evidence | 2026-11-22T04:51:26.455Z |
 | `learn-huggingface-viggle-viggle-remake` | `https://huggingface.co/Viggle/Viggle-Remake` | `hf-viggle-` | Multi-dimensional audit evidence | 2026-11-22T04:51:56.747Z |
+| `learn-huggingface-audio-cpp-audio-cpp-gguf` | `https://huggingface.co/audio-cpp/audio.cpp-gguf` | `hf-audio-c` | Multi-dimensional audit evidence | 2026-11-22T05:04:28.181Z |
+| `learn-github-dicklesworthstone-destructive_command_guard` | `https://github.com/Dicklesworthstone/destructive_command_guard` | `2f372957` | Multi-dimensional audit evidence | 2026-11-22T05:04:29.163Z |

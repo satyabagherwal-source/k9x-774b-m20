@@ -46,8 +46,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-22T04:05:04.111Z",
-    "lastVerified": "2026-11-22T04:05:04.111Z",
+    "lastChecked": "2026-11-22T05:04:39.797Z",
+    "lastVerified": "2026-11-22T05:04:39.797Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-22T04:51:59.758Z",
-    "lastVerified": "2026-11-22T04:51:59.758Z",
+    "lastChecked": "2026-11-22T05:04:39.809Z",
+    "lastVerified": "2026-11-22T05:04:39.809Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -2243,8 +2243,8 @@
     "officialUrl": "https://github.com/mitmproxy/mitmproxy",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-21T23:39:44.183Z",
-    "lastVerified": "2026-11-21T23:39:44.183Z",
+    "lastChecked": "2026-11-22T05:04:34.831Z",
+    "lastVerified": "2026-11-22T05:04:34.831Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mitmproxy-mitmproxy",
@@ -3273,9 +3273,9 @@
   "vasu-devs-justhireme": {
     "name": "JustHireMe",
     "officialUrl": "https://github.com/vasu-devs/JustHireMe",
-    "lastChecked": "2026-11-21T00:24:44.491Z",
+    "lastChecked": "2026-11-22T05:04:37.263Z",
     "revisionIdentifier": "accdcdb5",
-    "lastVerified": "2026-11-21T00:24:44.491Z"
+    "lastVerified": "2026-11-22T05:04:37.263Z"
   },
   "o2sh-onefetch": {
     "name": "o2sh/onefetch",
@@ -4384,9 +4384,9 @@
   "sealerio-sealer": {
     "name": "sealer",
     "officialUrl": "https://github.com/sealerio/sealer",
-    "lastChecked": "2026-11-21T01:08:21.707Z",
+    "lastChecked": "2026-11-22T05:04:32.431Z",
     "revisionIdentifier": "e426153a",
-    "lastVerified": "2026-11-21T01:08:21.707Z"
+    "lastVerified": "2026-11-22T05:04:32.431Z"
   },
   "trailbaseio-trailbase": {
     "name": "trailbaseio/trailbase",
@@ -5694,9 +5694,9 @@
   "tiajinsha-jkvideo": {
     "name": "JKVideo",
     "officialUrl": "https://github.com/tiajinsha/JKVideo",
-    "lastChecked": "2026-11-19T00:31:23.455Z",
+    "lastChecked": "2026-11-22T05:04:29.914Z",
     "revisionIdentifier": "3592d036",
-    "lastVerified": "2026-11-19T00:31:23.455Z"
+    "lastVerified": "2026-11-22T05:04:29.914Z"
   },
   "diggerhq-digger": {
     "name": "digger",
@@ -6129,22 +6129,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dicklesworthstone-destructive_command_guard": {
-    "name": "destructive_command_guard",
+    "name": "Dicklesworthstone/destructive_command_guard",
     "officialUrl": "https://github.com/Dicklesworthstone/destructive_command_guard",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T18:41:25.145Z",
-    "lastVerified": "2026-11-20T18:41:25.145Z",
+    "lastChecked": "2026-11-22T05:04:28.223Z",
+    "lastVerified": "2026-11-22T05:04:28.223Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dicklesworthstone-destructive_command_guard",
-    "contentHash": "8afe8e4cf6ba7d434209546581a5c5441575599dc1b84cd80a183c8d5e914904",
+    "contentHash": "0004a3e985cf0471201f294b4865d778ca6f0cd0714f2aa26932869f320365de",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "f239e1be"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-nomic-ai-nomic-embed-text-v1.5": {
     "name": "nomic-ai/nomic-embed-text-v1.5",
@@ -13631,6 +13630,23 @@
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-viggle-viggle-remake",
     "contentHash": "57fa81f5621ce675d4d6b2907168b268a202269b52c9be5f0da99c3cb208550b",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-audio-cpp-audio.cpp-gguf": {
+    "name": "audio-cpp/audio.cpp-gguf",
+    "officialUrl": "https://huggingface.co/audio-cpp/audio.cpp-gguf",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-22T05:04:27.351Z",
+    "lastVerified": "2026-11-22T05:04:27.351Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-audio-cpp-audio-cpp-gguf",
+    "contentHash": "ea4b785610ed95d818ef82800be44dedc263ac6ded6f10e9b5e2708f2abb104b",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

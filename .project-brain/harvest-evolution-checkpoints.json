@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T04:52:02.397Z",
+  "last_updated": "2026-11-22T05:04:43.409Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-22T04:39:44.123Z",
@@ -8,7 +8,7 @@
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-22T04:29:14.846Z",
+      "processed_at": "2026-11-22T05:04:41.902Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1768,7 +1768,7 @@
       "staged_for_review": 1
     },
     "hf-audio-cpp-audio.cpp-gguf-learnings.md": {
-      "processed_at": "2026-11-17T22:11:15.551Z",
+      "processed_at": "2026-11-22T05:04:39.981Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3073,7 +3073,7 @@
       "staged_for_review": 0
     },
     "dicklesworthstone-destructive_command_guard-learnings.md": {
-      "processed_at": "2026-11-19T01:47:32.257Z",
+      "processed_at": "2026-11-22T05:04:40.566Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3703,7 +3703,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 3006,
+  "total_dossiers_evaluated": 3009,
   "total_canonical_promoted": 470,
-  "total_staged_for_review": 2293
+  "total_staged_for_review": 2295
 }

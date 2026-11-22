@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T22:11:15.657Z",
+  "timestamp": "2026-11-22T05:04:40.126Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-audio-cpp-audio.cpp-gguf-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-audio-cpp-audio.cpp-gguf-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T22:11:15.657Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T05:04:40.126Z`  
 > **Learning ID**: `LEARN-EVO-hf-audio-cpp-audio.cpp-gguf-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-audio-cpp`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T22:10:59.046Z  
+> **Timestamp**: 2026-11-22T05:04:27.482Z  
 > **Learning ID**: `learn-huggingface-audio-cpp-audio-cpp-gguf`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-audio-cpp-audio.cpp-gguf-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/audio-cpp/audio.cpp-gguf](https://huggingface.co/audio-cpp/audio.cpp-gguf))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T22:10:58.910Z  
+> **Harvest Timestamp**: 2026-11-22T05:04:27.351Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-to-speech
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 9512144 downloads | 331 likes
+- **Stars / Engagement**: 9842687 downloads | 338 likes
 
 ---
 
