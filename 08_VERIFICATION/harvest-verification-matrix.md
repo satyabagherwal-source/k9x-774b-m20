@@ -12138,3 +12138,4 @@
 | `CYCLE-20261122-B3PI` | `2026-11-22T17:35:34.278Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9964` | Yes (`bd6fdaed...`) |
 | `CYCLE-20261122-MKSI` | `2026-11-22T17:44:29.634Z` | `deepseek-ai/DeepSeek-R1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-r1-learnings.md` | Yes (`8521ff16...`) |
 | `CYCLE-20261122-MM5C` | `2026-11-22T17:44:31.392Z` | `tw93/Pake` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9965` | Yes (`0b70be0e...`) |
+| `CYCLE-20261122-XMQ5` | `2026-11-22T17:53:05.357Z` | `moonshotai/Kimi-K3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-moonshotai-kimi-k3-learnings.md` | Yes (`04aeb1d2...`) |

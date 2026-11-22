@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T17:44:43.500Z",
+  "last_updated": "2026-11-22T17:53:19.927Z",
   "total_verified_learnings": 9071,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "a5aca2d79289f3459dd1e971f62b01644a2549bcd807963d42da27621d4bfa5e",
+      "content_hash": "934e5e9da12cb211815e46fcea3c186e68ac64699324b04d1ff4c1d930ed03dd",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T17:44:43.167Z"
+      "persisted_at": "2026-11-22T17:53:19.513Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "4d6dc8963f96c5ee9bce43a36cd6837899e00a25026b8e88431dc9338e9fc0f3",
+      "content_hash": "f66558b91fff20d3a73e09460f7bab66347f556fbe4e09a264aaa430e94839ed",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T17:44:43.341Z"
+      "persisted_at": "2026-11-22T17:53:19.751Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "cfe3cf4c05520ae6b38cf260866f581c9abe56d78fc6a5e7e282c1e9264b9d6b",
+      "content_hash": "8f883a94031fab052f3c26d798342ee775bf226d06aeb7aea100185c3740814a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T17:44:43.500Z"
+      "persisted_at": "2026-11-22T17:53:19.927Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "b264eb20274ea1655b3296b4f06532003faf536807e141c348009cdccf9c651b",
+      "content_hash": "ca49145cbff80aa3480b566eddc940e72937c2ce177e17268013ecda56a4c170",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T14:17:32.629Z"
+      "persisted_at": "2026-11-22T17:53:18.363Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -282129,7 +282129,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/moonshotai/Kimi-K3",
       "source_version": "hf-moonshotai-kimi-k3",
-      "content_hash": "f6916cdbb1f8b0e96435bec96acd0f1f5b7079aa97ce60f085e309ccafaf5c79",
+      "content_hash": "04aeb1d2b2541d78eea88179c00860a56bede92c68a6a66e77f899f497c9f669",
       "dossier_path": "07_PROJECT_LEARNING/hf-moonshotai-kimi-k3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-moonshotai-kimi-k3-learnings.md",
       "promoted_rules": [],
@@ -282138,7 +282138,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T11:22:30.799Z",
+      "verified_at": "2026-11-22T17:53:05.082Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -282155,9 +282155,9 @@
       "title": "Research & Knowledge Intelligence: moonshotai/Kimi-K3 Core Invariants",
       "repository": "moonshotai/Kimi-K3",
       "source_version": "hf-moonshotai-kimi-k3",
-      "content_hash": "1ecbd108399a14d41074e85540029088fa079f51f17405af76e6f99d55987246",
+      "content_hash": "231958c289d2fb88ec0e2d5fb183eaad21cf144ab2ce36b188ed728a6f5c3581",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T11:22:31.268Z"
+      "persisted_at": "2026-11-22T17:53:05.646Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-moonshotai-kimi-k3-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-moonshotai-kimi-k3-learnings-core-invariants",
@@ -282167,9 +282167,9 @@
       "title": "Research & Knowledge Intelligence: hf-moonshotai-kimi-k3-learnings Core Invariants",
       "repository": "hf-moonshotai-kimi-k3-learnings",
       "source_version": "HEAD",
-      "content_hash": "4f7ba60febc378da1e4f3a52897fb8984401bbe986dd90b6523acff11f5d8786",
+      "content_hash": "c4a675794338378a9b19ab64f9a608ffb37657276b6d281f1ced5e01a79c405c",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T11:22:47.814Z"
+      "persisted_at": "2026-11-22T17:53:17.102Z"
     },
     "domain_intelligence-technical-construction-intelligence-jithin-sabu-purge-app-learnings-core-invaria": {
       "item_id": "domain_intelligence-technical-construction-intelligence-jithin-sabu-purge-app-learnings-core-invaria",
@@ -309763,13 +309763,13 @@
       "item_id": "candidate_directive-benchmarks-report-gold-coverage-across-retrieval-stages",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-MV3I-benchmarks-report-gold-coverage-across-retrieval-stages.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-XXHB-benchmarks-report-gold-coverage-across-retrieval-stages.md",
       "title": "benchmarks): report Gold coverage across retrieval stages",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "8e0e00c5b33adb1f9c278dee8724b220a0ee8fae80e48877bcc6de7dbf633be5",
+      "content_hash": "683c2f4c43a41e1a7812bf3219d5c21e42d0e9e28948c1870459a6161d2ef412",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T17:44:42.993Z"
+      "persisted_at": "2026-11-22T17:53:19.301Z"
     },
     "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it": {
       "item_id": "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it",

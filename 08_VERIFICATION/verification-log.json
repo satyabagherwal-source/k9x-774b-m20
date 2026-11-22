@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261120-74XH",
-    "timestamp": "2026-11-20T17:29:08.789Z",
-    "repository": "fb55/css-select",
-    "learningId": "learn-github-fb55-css-select",
-    "contentHash": "2bf86db4f7c725d8b036b3157f90f41f8e0e2fc4866592fcad664943e9bb0b7e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261120-7AZU",
     "timestamp": "2026-11-20T17:29:16.650Z",
     "repository": "freenet/freenet-core",
@@ -7492,6 +7477,21 @@
     "contentHash": "0b70be0ecdf95a2d4c6126df237814c7592effebe64797588aa4e7a148a2baec",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-XMQ5",
+    "timestamp": "2026-11-22T17:53:05.357Z",
+    "repository": "moonshotai/Kimi-K3",
+    "learningId": "learn-huggingface-moonshotai-kimi-k3",
+    "contentHash": "04aeb1d2b2541d78eea88179c00860a56bede92c68a6a66e77f899f497c9f669",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

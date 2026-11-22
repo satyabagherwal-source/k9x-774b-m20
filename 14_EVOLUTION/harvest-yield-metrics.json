@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T17:44:31.402Z",
-  "total_cycles_completed": 11541,
-  "total_learnings_persisted": 11541,
+  "last_updated": "2026-11-22T17:53:05.368Z",
+  "total_cycles_completed": 11542,
+  "total_learnings_persisted": 11542,
   "total_rules_promoted": 10781,
   "history": [
-    {
-      "timestamp": "2026-11-21T22:29:58.643Z",
-      "repository": "keybase/client",
-      "learningId": "learn-github-keybase-client",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T22:30:08.061Z",
       "repository": "NucleoidAI/Nucleoid",
@@ -1403,6 +1396,13 @@
       "repository": "tw93/Pake",
       "learningId": "learn-github-tw93-pake",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T17:53:05.368Z",
+      "repository": "moonshotai/Kimi-K3",
+      "learningId": "learn-huggingface-moonshotai-kimi-k3",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
