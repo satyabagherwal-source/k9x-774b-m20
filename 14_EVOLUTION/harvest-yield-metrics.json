@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T21:49:09.980Z",
-  "total_cycles_completed": 11604,
-  "total_learnings_persisted": 11604,
-  "total_rules_promoted": 10819,
+  "last_updated": "2026-11-22T21:57:07.900Z",
+  "total_cycles_completed": 11606,
+  "total_learnings_persisted": 11606,
+  "total_rules_promoted": 10820,
   "history": [
-    {
-      "timestamp": "2026-11-22T03:24:53.096Z",
-      "repository": "microsoft/Florence-2-base",
-      "learningId": "learn-huggingface-microsoft-florence-2-base",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T03:37:44.049Z",
-      "repository": "webAI-Official/TwIL-8B",
-      "learningId": "learn-huggingface-webai-official-twil-8b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-22T03:37:50.234Z",
       "repository": "lingodotdev/lingo.dev",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-22T21:49:09.980Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T21:56:56.045Z",
+      "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
+      "learningId": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T21:57:07.900Z",
+      "repository": "sigstore/cosign",
+      "learningId": "learn-github-sigstore-cosign",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

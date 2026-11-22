@@ -525,8 +525,8 @@
     "sourceUrl": "https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA",
     "sourceVersion": "hf-akatz-ai-minimax-h3-character-swap-lora",
     "license": "Open-Source",
-    "contentHash": "b03275639391dd82384e34bea441b4e03dba5b822239747fabb31727e2b70a43",
-    "lastHarvestedAt": "2026-11-18T14:56:51.492Z",
+    "contentHash": "8cc5e186676ab25a1f096d199a6752d7ee28c79a7bba9ded5bd631b5fe1404aa",
+    "lastHarvestedAt": "2026-11-22T21:56:56.040Z",
     "learningId": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora"
   },
   "hf-unsloth-qwen-image-2.1-gguf": {
@@ -3523,10 +3523,10 @@
     "repository": "sigstore/cosign",
     "platform": "github",
     "sourceUrl": "https://github.com/sigstore/cosign",
-    "sourceVersion": "b612e741",
+    "sourceVersion": "19c90f91",
     "license": "Apache-2.0",
-    "contentHash": "8166aefaae3ff87f9a65543c18e8a2000108e554a22bc0084a386af8f995a906",
-    "lastHarvestedAt": "2026-11-20T19:11:33.613Z",
+    "contentHash": "5abeb9d6fabfc3103187b8043923c20410d937ab136ebbbcf760ba922803281b",
+    "lastHarvestedAt": "2026-11-22T21:57:07.895Z",
     "learningId": "learn-github-sigstore-cosign"
   },
   "llphant-llphant": {

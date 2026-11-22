@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T21:49:15.240Z",
+  "last_updated": "2026-11-22T21:57:12.986Z",
   "total_records": 2384,
   "domains": {
     "A": {
@@ -9117,8 +9117,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "e87947cf57e0029107d6c6174629d3710c82d32fd9d14567c5afae51f45fcfaf",
-      "created_at": "2026-11-22T21:32:11.813Z"
+      "content_hash": "7636ebddf40bd7535bba67a2ee91c140588c21fe2c0da7a57cfd12b1415bc486",
+      "created_at": "2026-11-22T21:57:12.986Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -9480,8 +9480,8 @@
       "title": "Research & Knowledge Intelligence: akatz-ai/MiniMax-H3-Character-Swap-LoRA Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-akatz-ai-minimax-h3-character-swap-lora-research-knowledge-intelligence-akatz.md",
       "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
-      "content_hash": "a61a6c33d798defb656ac2840695a09302710a4a996d3885574767396c16ac74",
-      "created_at": "2026-11-18T14:56:51.731Z"
+      "content_hash": "68f347c0cf511d7ba4715f0045b9d5ab8fed72c9ec29e414d04a95b47c114592",
+      "created_at": "2026-11-22T21:56:56.255Z"
     },
     "domain_intelligence-technical-construction-intelligence-storybookjs-storybook-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-storybookjs-storybook-core-invariants",
@@ -9540,8 +9540,8 @@
       "title": "Research & Knowledge Intelligence: hf-akatz-ai-minimax-h3-character-swap-lora-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-akatz-ai-minimax-h3-character-swap-lora-learnings-research-knowledge-intellig.md",
       "repository": "hf-akatz-ai-minimax-h3-character-swap-lora-learnings",
-      "content_hash": "05c1215d9a7a9f04522b259fd96fe118e83ad8fd63a71090c6d3c8247d536350",
-      "created_at": "2026-11-18T14:57:07.772Z"
+      "content_hash": "35fa353da312f2ceb8a608989955d4296903f6e6d8b98e42c4c4030ac1bc95c5",
+      "created_at": "2026-11-22T21:57:11.458Z"
     },
     "domain_intelligence-technical-construction-intelligence-storybookjs-storybook-learnings-core-invaria": {
       "record_id": "domain_intelligence-technical-construction-intelligence-storybookjs-storybook-learnings-core-invaria",
@@ -25170,8 +25170,8 @@
       "title": "Content & Information Intelligence: sigstore/cosign Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-sigstore-cosign-content-information-intelligence-sigstore-cosign-core-invariants.md",
       "repository": "sigstore/cosign",
-      "content_hash": "ec0d1152e61363fdfff130c63e88d93236e186982e3446e3b0d10f2a2be4e4c8",
-      "created_at": "2026-11-20T19:11:33.988Z"
+      "content_hash": "6b9b1f7beb125d93ee44ebffa173a00f38588d25e419dd99d64a1a244ce65734",
+      "created_at": "2026-11-22T21:57:08.280Z"
     },
     "domain_intelligence-technical-construction-intelligence-urllib3-urllib3-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-urllib3-urllib3-learnings-core-invariants",
@@ -25188,8 +25188,8 @@
       "title": "Content & Information Intelligence: sigstore-cosign-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-sigstore-cosign-learnings-content-information-intelligence-sigstore-cosign-learn.md",
       "repository": "sigstore-cosign-learnings",
-      "content_hash": "ee52ec913c11035b926e4fd6d287b4fb951705767c2f7e9d875500ec493b3905",
-      "created_at": "2026-11-20T19:11:52.080Z"
+      "content_hash": "7af0a3c55d815288453de56d285f4701851b88b856ca96f85528187c22a9234f",
+      "created_at": "2026-11-22T21:57:12.207Z"
     },
     "domain_intelligence-content-information-intelligence-encode-httpx-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-encode-httpx-core-invariants",

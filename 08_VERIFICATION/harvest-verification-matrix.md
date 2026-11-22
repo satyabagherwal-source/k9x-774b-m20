@@ -12204,3 +12204,5 @@
 | `CYCLE-20261122-CVF9` | `2026-11-22T21:48:53.397Z` | `deepseek-ai/DeepSeek-V4.1-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-learnings.md` | Yes (`bf3d2640...`) |
 | `CYCLE-20261122-D0DT` | `2026-11-22T21:48:59.825Z` | `vanniktech/gradle-maven-publish-plugin` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9997` | Yes (`cb4d1264...`) |
 | `CYCLE-20261122-D87M` | `2026-11-22T21:49:09.970Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING` | Yes (`f56b473a...`) |
+| `CYCLE-20261122-N7TV` | `2026-11-22T21:56:56.035Z` | `akatz-ai/MiniMax-H3-Character-Swap-LoRA` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md` | Yes (`8cc5e186...`) |
+| `CYCLE-20261122-NGZ7` | `2026-11-22T21:57:07.891Z` | `sigstore/cosign` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9998` | Yes (`5abeb9d6...`) |

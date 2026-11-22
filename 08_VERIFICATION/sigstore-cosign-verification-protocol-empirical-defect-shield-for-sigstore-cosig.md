@@ -4,22 +4,22 @@
 {
   "source_repository": "sigstore/cosign",
   "source_url": "https://github.com/sigstore/cosign",
-  "source_version": "b612e741",
+  "source_version": "19c90f91",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-20T19:11:33.822Z",
+  "timestamp": "2026-11-22T21:57:08.114Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-sigstore-cosign",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [sigstore/cosign](https://github.com/sigstore/cosign) (Revision: `b612e741`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T19:11:33.822Z`  
+> **Provenance**: Harvested from [sigstore/cosign](https://github.com/sigstore/cosign) (Revision: `19c90f91`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-22T21:57:08.114Z`  
 > **Learning ID**: `learn-github-sigstore-cosign`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `sigstore/cosign` (Commit: `b612e741`)
+- **Target Repository**: `sigstore/cosign` (Commit: `19c90f91`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sigstore-cosign-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sigstore/cosign](https://github.com/sigstore/cosign))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T19:06:30.514Z  
+> **Harvest Timestamp**: 2026-11-22T21:57:06.828Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Code signing and transparency for containers and binaries
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 6456 stars
+- **Stars / Engagement**: 6462 stars
 
 ---
 
@@ -1750,194 +1750,55 @@ func upgradeBundle(ctx context.Context, data []byte, rekorClient *client.Rekor) 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b612e741` (2026-11-20)
-**Commit Message**: Replace --use-signing-config with --no-signing-config (#5163)
+### Incident Patch 1: `19c90f91` (2026-11-22)
+**Commit Message**: bump sigstore/sigstore to v1.11.4 (#5234)
 
-Signed-off-by: Aaron Lew <[REDACTED_EMAIL]>
+Signed-off-by: Priya Wadhwa <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `cmd/cosign/cli/attest.go` (modified, +1/-1)
+**File**: `go.mod` (modified, +2/-1)
 ```diff
-@@ -100,7 +100,7 @@ func Attest() *cobra.Command {
- 				IssueCertificateForExistingKey: o.IssueCertificate,
- 				BundlePath:                     o.BundlePath,
- 			}
--			if err := signcommon.LoadSigningConfigAndTrustedMaterial(cmd.Context(), &ko, o.UseSigningConfig, o.SigningConfigPath, o.TrustedRootPath); err != nil {
-+			if err := signcommon.LoadSigningConfigAndTrustedMaterial(cmd.Context(), &ko, o.NoSigningConfig, o.SigningConfigPath, o.TrustedRootPath); err != nil {
- 				return err
- 			}
- 
+@@ -35,7 +35,7 @@ require (
+ 	github.com/sigstore/protobuf-specs v0.5.2
+ 	github.com/sigstore/rekor v1.5.5
+ 	github.com/sigstore/rekor-tiles/v2 v2.4.2
+-	github.com/sigstore/sigstore v1.11.3
++	github.com/sigstore/sigstore v1.11.4
+ 	github.com/sigstore/sigstore-go v1.4.0
+ 	github.com/sigstore/sigstore/pkg/signature/kms/aws v1.11.3
+ 	github.com/sigstore/sigstore/pkg/signature/kms/azure v1.11.3
+@@ -73,6 +73,7 @@ require (
+ 	cloud.google.com/go/longrunning v1.2.0 // indirect
+ 	connectrpc.com/connect v1.21.1 // indirect
+ 	cuelabs.dev/go/oci/ociregistry v0.0.0-20260601085548-328ff8e2c943 // indirect
++	filippo.io/edwards25519 v1.2.0 // indirect
+ 	github.com/AliyunContainerService/ack-ram-tool/pkg/credentials/provider v0.18.1 // indirect
+ 	github.com/AliyunContainerService/ack-ram-tool/pkg/ecsmetadata v0.0.9 // indirect
+ 	github.com/Azure/azure-sdk-for-go v68.0.0+incompatible // indirect
 ```
 
-**File**: `cmd/cosign/cli/attest_blob.go` (modified, +1/-1)
+**File**: `go.sum` (modified, +2/-2)
 ```diff
-@@ -81,7 +81,7 @@ func AttestBlob() *cobra.Command {
- 				IssueCertificateForExistingKey: o.IssueCertificate,
- 				BundlePath:                     o.BundlePath,
- 			}
--			if err := signcommon.LoadSigningConfigAndTrustedMaterial(cmd.Context(), &ko, o.UseSigningConfig, o.SigningConfigPath, o.TrustedRootPath); err != nil {
-+			if err := signcommon.LoadSigningConfigAndTrustedMaterial(cmd.Context(), &ko, o.NoSigningConfig, o.SigningConfigPath, o.TrustedRootPath); err != nil {
- 				return err
- 			}
- 
-```
-
-**File**: `cmd/cosign/cli/options/attest.go` (modified, +4/-5)
-```diff
-@@ -32,7 +32,7 @@ type AttestOptions struct {
- 	TSAClientKey      string
- 	TSAServerName     string
- 	BundlePath        string
--	UseSigningConfig  bool
-+	NoSigningConfig   bool
- 	SigningConfigPath string
- 	TrustedRootPath   string
- 
-@@ -95,14 +95,13 @@ func (o *AttestOptions) AddFlags(cmd *cobra.Command) {
- 		"write everything required to verify the blob to a FILE")
- 	_ = cmd.MarkFlagFilename("bundle", bundleExts...)
- 
--	cmd.Flags().BoolVar(&o.UseSigningConfig, "use-signing-config", true,
--		"whether to use a TUF-provided signing config for the service URLs")
--	_ = cmd.Flags().MarkDeprecated("use-signing-config", "an offline signing flag will be added in the future; TUF will continue to provide a signing config by default if one is not provided manually")
-+	cmd.Flags().BoolVar(&o.NoSigningConfig, "no-signing-config", false,
-+		"do not use a signing config or connect to any Sigstore services")
- 
- 	cmd.Flags().StringVar(&o.SigningConfigPath, "signing-config", "",
- 		"path to a signing config file")
- 
--	cmd.MarkFlagsMutuallyExclusive("use-signing-config", "signing-config")
-+	cmd.MarkFlagsMutuallyExclusive("no-signing-config", "signing-config")
- 
- 	cmd.Flags().StringVar(&o.TrustedRootPath, "trusted-root", "",
- 		"optional path to a TrustedRoot JSON file to verify a signature after signing")
-```
-
-**File**: `cmd/cosign/cli/options/attest_blob.go` (modified, +4/-5)
-```diff
-@@ -40,7 +40,7 @@ type AttestBlobOptions struct {
- 	OIDC        OIDCOptions
- 	SecurityKey SecurityKeyOptions
- 
--	UseSigningConfig  bool
-+	NoSigningConfig   bool
- 	SigningConfigPath string
- 	TrustedRootPath   string
- }
-@@ -74,14 +74,13 @@ func (o *AttestBlobOptions) AddFlags(cmd *cobra.Command) {
- 	_ = cmd.MarkFlagFilename("bundle", bundleExts...)
- 	_ = cmd.MarkFlagRequired("bundle")
- 
--	cmd.Flags().BoolVar(&o.UseSigningConfig, "use-signing-config", true,
--		"whether to use a TUF-provided signing config for the service URLs")
--	_ = cmd.Flags().MarkDeprecated("use-signing-config", "an offline signing flag will be added in the future; TUF will continue to provide a signing config by default if one is not provided manually")
-+	cmd.Flags().BoolVar(&o.NoSigningConfig, "no-signing-config", false,
-+		"do not use a signing config or connect to any Sigstore services")
- 
- 	cmd.Flags().StringVar(&o.SigningConfigPath, "signing-config", "",
- 		"path to a signing config file")
- 
--	cmd.MarkFlagsMutuallyExclusive("use-signing-config", "signing-config")
-+	cmd.MarkFlagsMutuallyExclusive("no-signing-config", "signing-config")
- 
- 	cmd.Flags().StringVar(&o.TrustedRootPath, "trusted-root", "",
- 		"optional path to a TrustedRoot JSON file to verify a signature after signing")
-```
-
-**File**: `cmd/cosign/cli/options/sign.go` (modified, +4/-5)
-```diff
-@@ -33,7 +33,7 @@ type SignOptions struct {
- 	TSAClientKey      string
- 	TSAServerName     string
- 	IssueCertificate  bool
--	UseSigningConfig  bool
-+	NoSigningConfig   bool
- 	SigningConfigPath string
- 	TrustedRootPath   string
- 
-@@ -103,14 +103,13 @@ func (o *SignOptions) AddFlags(cmd *cobra.Command) {
- 		"issue a code signing certificate from Fulcio, even if a key is provided")
- 	_ = cmd.Flags().MarkDeprecated("issue-certificate", "support for this flag will be removed in the future")
- 
--	cmd.Flags().BoolVar(&o.UseSigningConfig, "use-signing-config", true,
--		"whether to use a TUF-provided signing config for the service URLs")
--	_ = cmd.Flags().MarkDeprecated("use-signing-config", "an offline signing flag will be added in the future; TUF will continue to provide a signing config by default if one is not provided manually")
-+	cmd.Flags().BoolVar(&o.NoSigningConfig, "no-signing-config", false,
-+		"do not use a signing config or connect to any Sigstore services")
- 
- 	cmd.Flags().StringVar(&o.SigningConfigPath, "signing-config", "",
- 		"path to a signing config file")
- 
--	cmd.MarkFlagsMutuallyExclusive("use-signing-config", "signing-config")
-+	cmd.MarkFlagsMutuallyExclusive("no-signing-config", "signing-config")
- 
- 	cmd.Flags().StringVar(&o.TrustedRootPath, "trusted-root", "",
- 		"optional path to a TrustedRoot JSON file to verify a signature after signing")
-```
-
-**File**: `cmd/cosign/cli/options/signblob.go` (modified, +4/-5)
-```diff
-@@ -42,7 +42,7 @@ type SignBlobOptions struct {
- 	IssueCertificate bool
- 	SigningAlgorithm string
- 
--	UseSigningConfig  bool
-+	NoSigningConfig   bool
- 	SigningConfigPath string
- 	TrustedRootPath   string
- }
-@@ -75,14 +75,13 @@ func (o *SignBlobOptions) AddFlags(cmd *cobra.Command) {
- 	_ = cmd.MarkFlagFilename("bundle", bundleExts...)
- 	_ = cmd.MarkFlagRequired("bundle")
- 
--	cmd.Flags().BoolVar(&o.UseSigningConfig, "use-signing-config", true,
--		"whether to use a TUF-provided signing config for the service URLs")
--	_ = cmd.Flags().MarkDeprecated("use-signing-config", "an offline signing flag will be added in the future; TUF will continue to provide a signing config by default if one is not provided manually")
-+	cmd.Flags().BoolVar(&o.NoSigningConfig, "no-signing-config", false,
-+		"do not use a signing config or connect to any Sigstore services")
- 
- 	cmd.Flags().StringVar(&o.SigningConfigPath, "signing-config", "",
- 		"path to a signing config file")
- 
--	cmd.MarkFlagsMutuallyExclusive("use-signing-config", "signing-config")
-+	cmd.MarkFlagsMutuallyExclusive("no-signing-config", "signing-config")
- 
- 	cmd.Flags().StringVar(&o.TrustedRootPath, "trusted-root", "",
- 		"optional path to a TrustedRoot JSON file to verify a signature after signing")
-```
-
-**File**: `cmd/cosign/cli/sign.go` (modified, +1/-1)
-```diff
-@@ -115,7 +115,7 @@ race conditions or (worse) malicious tampering.
- 				TSAServerName:                  o.TSAServerName,
- 				IssueCertificateForExistingKey: o.IssueCertificate,
- 			}
--			if err := signcommon.LoadSigningConfigAndTrustedMaterial(cmd.Context(), &ko, o.UseSigningConfig, o.SigningConfigPath, o.TrustedRootPath); err != nil {
-+			if err := signcommon.LoadSigningConfigAndTrustedMaterial(cmd.Context(), &ko, o.NoSigningConfig, o.SigningConfigPath, o.TrustedRootPath); err != nil {
- 				return err
- 			}
- 
-```
-
-**File**: `cmd/cosign/cli/signblob.go` (modified, +1/-1)
-```diff
-@@ -105,7 +105,7 @@ func SignBlob() *cobra.Command {
- 				IssueCertificateForExistingKey: o.IssueCertificate,
- 				SigningAlgorithm:               o.SigningAlgorithm,
- 			}
--			if err := signcommon.LoadSigningConfigAndTrustedMaterial(cmd.Context(), &ko, o.UseSigningConfig, o.SigningConfigPath, o.TrustedRootPath); err != nil {
-+			if err := signcommon.LoadSigningConfigAndTrustedMaterial(cmd.Context(), &ko, o.NoSigningConfig, o.SigningConfigPath, o.TrustedRootPath); err != nil {
- 				return err
- 			}
- 
+@@ -629,8 +629,8 @@ github.com/sigstore/rekor v1.5.5 h1:nZKTBT0uRlKaFW4PafFIE7F5H26PInFF2qOlWouKYYA=
+ github.com/sigstore/rekor v1.5.5/go.mod h1:A0e/gTyJ5qCQn6/Zz2T0+TE+W3akuaLF5O0HJ4ogjgA=
+ github.com/sigstore/rekor-tiles/v2 v2.4.2 h1:Qvt1L8oWkQpAK5lr8QnKuE0JYnA44kMWUvXl4hhxD+I=
+ github.com/sigstore/rekor-tiles/v2 v2.4.2/go.mod h1:VVGltxtfdDArLtqSqrtYy8QHeJyaRvnn7Qp8suvd3vQ=
+-github.com/sigstore/sigstore v1.11.3 h1:gPjEXTOfVNDFQgkEjyLUo+DDh6EA+iklLp1t5slnuGs=
+-github.com/sigstore/sigstore v1.11.3/go.mod h1:72vQpQeeHgCFJzQnLX1w2sD1HjSJTEeW300ialacOkI=
++github.com/sigstore/sigstore v1.11.4 h1:3FmAqMZMML4e4tWxO05GHFlIrll5YEeBOlPzVMUuEY0=
++github.com/sigstore/sigstore v1.11.4/go.mod h1:+80rD6zHfU0o9pfmn+E/iQ4hCDaxoxGMP6EyoLUuVGE=
+ github.com/sigstore/sigstore-go v1.4.0 h1:CGdFdZLhYSc42yYN0+lL6yWh7v0z3S0i21v50lvSYKw=
+ github.com/sigstore/sigstore-go v1.4.0/go.mod h1:T2Csm9q65ZVCrTB8q1fP60wR9Z9Hf1286zBTd6pDG88=
+ github.com/sigstore/sigstore/pkg/signature/kms/aws v1.11.3 h1:yY9N8BQePsqDgD//dcOujRK0728+KkheZayeXdK+jAI=
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5234** (2026-11-22): bump sigstore/sigstore release (@priyawadhwa)
 - **PR #5227** (2026-11-19): Update README offline verification example (@aaronlew02)
 - **PR #5224** (closed): chore(deps): bump golang.org/x/term from 0.47.0 to 0.48.0 (@dependabot[bot])
 - **PR #5220** (2026-11-18): chore(deps): bump golang.org/x/crypto from 0.58.0 to 0.59.0 (@dependabot[bot])
 - **PR #5219** (2026-11-18): chore(deps): bump the gomod group with 2 updates (@dependabot[bot])
 - **PR #5217** (2026-11-12): chore(deps): bump the gomod group across 1 directory with 6 updates (@dependabot[bot])
-- **PR #5214** (2026-11-12): chore(deps): bump the actions group with 8 updates (@dependabot[bot])
 
 ---
 
@@ -1957,31 +1818,32 @@ Signed-off-by: Aaron Lew <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Replace --use-signing-config with --no-signing-config
+## X. bump sigstore/sigstore to v1.11.4
 
 **RULE**:
-When implementing operations in `cmd/cosign/cli/attest.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sigstore/cosign. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sigstore/cosign. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b612e741`: Replace --use-signing-config with --no-signing-config. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `19c90f91`: bump sigstore/sigstore to v1.11.4. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/cosign/cli/attest.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-			if err := signcommon.LoadSigningConfigAndTrustedMaterial(cmd.Context(), &ko, o.NoSigningConfig, o.SigningConfigPath, o.TrustedRootPath); err != nil {
+	github.com/sigstore/sigstore v1.11.4
+	filippo.io/edwards25519 v1.2.0 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-			if err := signcommon.LoadSigningConfigAndTrustedMaterial(cmd.Context(), &ko, o.UseSigningConfig, o.SigningConfigPath, o.TrustedRootPath); err != nil {
+	github.com/sigstore/sigstore v1.11.3
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b612e741` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `19c90f91` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

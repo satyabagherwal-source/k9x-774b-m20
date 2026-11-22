@@ -12237,3 +12237,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-deepseek-ai-deepseek-v4-1-flash` | `https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-11-22T21:48:53.401Z |
 | `learn-github-vanniktech-gradle-maven-publish-plugin` | `https://github.com/vanniktech/gradle-maven-publish-plugin` | `4530ec6c` | Multi-dimensional audit evidence | 2026-11-22T21:48:59.829Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `920ad6aa` | Multi-dimensional audit evidence | 2026-11-22T21:49:09.974Z |
+| `learn-huggingface-akatz-ai-minimax-h3-character-swap-lora` | `https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA` | `hf-akatz-a` | Multi-dimensional audit evidence | 2026-11-22T21:56:56.040Z |
+| `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `19c90f91` | Multi-dimensional audit evidence | 2026-11-22T21:57:07.895Z |

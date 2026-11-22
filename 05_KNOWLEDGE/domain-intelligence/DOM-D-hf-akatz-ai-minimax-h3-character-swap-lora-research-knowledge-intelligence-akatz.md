@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA",
   "source_version": "hf-akatz-ai-minimax-h3-character-swap-lora",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T14:56:51.730Z",
+  "timestamp": "2026-11-22T21:56:56.254Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [akatz-ai/MiniMax-H3-Character-Swap-LoRA](https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA) (Revision: `hf-akatz-a`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T14:56:51.730Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T21:56:56.254Z`  
 > **Learning ID**: `learn-huggingface-akatz-ai-minimax-h3-character-swap-lora`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA](https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T14:56:50.752Z  
+> **Harvest Timestamp**: 2026-11-22T21:56:55.375Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: video-to-video
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 136577 downloads | 1080 likes
+- **Stars / Engagement**: 128111 downloads | 990 likes
 
 ---
 

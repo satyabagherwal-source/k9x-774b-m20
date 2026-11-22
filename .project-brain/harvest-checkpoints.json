@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T21:49:09.983Z",
+  "last_updated": "2026-11-22T21:57:07.904Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -650,14 +650,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
-      "content_hash": "b03275639391dd82384e34bea441b4e03dba5b822239747fabb31727e2b70a43",
-      "verified_at": "2026-11-18T14:56:51.502Z",
+      "content_hash": "8cc5e186676ab25a1f096d199a6752d7ee28c79a7bba9ded5bd631b5fe1404aa",
+      "verified_at": "2026-11-22T21:56:56.048Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T14:56:51.502Z"
+      "last_updated": "2026-11-22T21:56:56.048Z"
     },
     "unsloth/Qwen-Image-2.1-GGUF": {
       "repository": "unsloth/Qwen-Image-2.1-GGUF",
@@ -5406,14 +5406,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sigstore-cosign",
-      "content_hash": "8166aefaae3ff87f9a65543c18e8a2000108e554a22bc0084a386af8f995a906",
-      "verified_at": "2026-11-20T19:11:33.622Z",
+      "content_hash": "5abeb9d6fabfc3103187b8043923c20410d937ab136ebbbcf760ba922803281b",
+      "verified_at": "2026-11-22T21:57:07.903Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T19:11:33.622Z"
+      "last_updated": "2026-11-22T21:57:07.903Z"
     },
     "LLPhant/LLPhant": {
       "repository": "LLPhant/LLPhant",
