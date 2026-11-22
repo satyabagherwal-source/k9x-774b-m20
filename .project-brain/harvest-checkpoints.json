@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T05:12:30.131Z",
+  "last_updated": "2026-11-22T05:19:57.125Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9276,14 +9276,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-callstack-agent-device",
-      "content_hash": "cbd705d794d94682c6cfd82bdd3477bdc21f655e269213a53d2457a8dc7b7edb",
-      "verified_at": "2026-11-19T00:49:47.666Z",
+      "content_hash": "cde4236acf8612949faf0f080ef7644a6ea74fe0ce16d195fa796e5d7f979e53",
+      "verified_at": "2026-11-22T05:19:57.124Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T00:49:47.666Z"
+      "last_updated": "2026-11-22T05:19:57.124Z"
     },
     "open-policy-agent/opa": {
       "repository": "open-policy-agent/opa",
@@ -18381,14 +18381,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-scantist-glm-5-3-slim-gguf",
-      "content_hash": "9a3f76b15d179917816cb706e3bd608a59a636830639cbdb317ca1bbf7b3f49d",
-      "verified_at": "2026-11-14T00:48:30.536Z",
+      "content_hash": "85815755a85899d6e138308e59158f603f8f7a71f538e72a693e9d9d37ca5e60",
+      "verified_at": "2026-11-22T05:19:49.594Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T00:48:30.536Z"
+      "last_updated": "2026-11-22T05:19:49.594Z"
     },
     "wquguru/cicada": {
       "repository": "wquguru/cicada",

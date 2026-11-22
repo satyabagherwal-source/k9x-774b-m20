@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T05:12:44.161Z",
+  "last_updated": "2026-11-22T05:20:03.113Z",
   "total_records": 2329,
   "domains": {
     "A": {
@@ -11720,8 +11720,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "216c1d5bd5642cc5d38aaa32c5d132e4411f0f0374b527229e10a990b0814a99",
-      "created_at": "2026-11-22T02:53:26.070Z"
+      "content_hash": "86174b8a7a7645800731d8dbb3d1e3e55f23c730617505632ac91b3fa166cc6e",
+      "created_at": "2026-11-22T05:20:03.113Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
@@ -12308,8 +12308,8 @@
       "title": "Research & Knowledge Intelligence: Scantist/GLM-5.3-SLIM-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-scantist-glm-5-3-slim-gguf-research-knowledge-intelligence-scantist-glm-5-3-s.md",
       "repository": "Scantist/GLM-5.3-SLIM-GGUF",
-      "content_hash": "d53fbd82a3058765c4bc06093e9ecf2aaf89c2d5525116b5fbc6ed110c7589c2",
-      "created_at": "2026-11-14T00:48:30.686Z"
+      "content_hash": "bba369e4ddef28161d0b0edd1ea4168056b81367b8ebb37b6e8c04540a094110",
+      "created_at": "2026-11-22T05:19:49.757Z"
     },
     "DOM-D-0C0C2CB4": {
       "record_id": "DOM-D-0C0C2CB4",
@@ -12359,8 +12359,8 @@
       "title": "Research & Knowledge Intelligence: hf-scantist-glm-5.3-slim-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-scantist-glm-5-3-slim-gguf-learnings-research-knowledge-intelligence-hf-scant.md",
       "repository": "hf-scantist-glm-5.3-slim-gguf-learnings",
-      "content_hash": "64326af889262212952692ebfb2527c79471326a02f962dc76c8ad51712a56f2",
-      "created_at": "2026-11-14T00:49:23.700Z"
+      "content_hash": "7166b0b1bcddc2fba0e4b3e3327490272225187e67708acd7988adbf0c6283b4",
+      "created_at": "2026-11-22T05:20:01.743Z"
     },
     "domain_intelligence-research-knowledge-intelligence-minimaxai-minimax-h3-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-minimaxai-minimax-h3-core-invariants",
@@ -17115,8 +17115,8 @@
       "title": "Technical Construction Intelligence: callstack/agent-device Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-callstack-agent-device-technical-construction-intelligence-callstack-agent-devic.md",
       "repository": "callstack/agent-device",
-      "content_hash": "ac07298327f3783bb08794b169c85b9265cd70c0ac5b2a2f31547dd661dee1e4",
-      "created_at": "2026-11-19T00:49:48.011Z"
+      "content_hash": "17cf4462e1809d3c00717dde097291a3894c806c40c457b5ad455328abf159bd",
+      "created_at": "2026-11-22T05:19:57.471Z"
     },
     "domain_intelligence-content-information-intelligence-apache-pinot-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-apache-pinot-core-invariants",
@@ -17193,8 +17193,8 @@
       "title": "Technical Construction Intelligence: callstack-agent-device-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-callstack-agent-device-learnings-technical-construction-intelligence-callstack-a.md",
       "repository": "callstack-agent-device-learnings",
-      "content_hash": "f082f87604bddef80ae33b2c98d87d48db8d0a011343273e22acd41f0e7a2bb9",
-      "created_at": "2026-11-19T00:50:28.303Z"
+      "content_hash": "a1417dd9b23bca4aa81b73c9f8bf6c92d33b6c9950ca22a404e5e3ab07ed0c59",
+      "created_at": "2026-11-22T05:20:02.401Z"
     },
     "domain_intelligence-research-knowledge-intelligence-canberkkkkkk-ema-lightning-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-canberkkkkkk-ema-lightning-core-invariants",

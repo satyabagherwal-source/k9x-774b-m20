@@ -6103,10 +6103,10 @@
     "repository": "callstack/agent-device",
     "platform": "github",
     "sourceUrl": "https://github.com/callstack/agent-device",
-    "sourceVersion": "6e18ea33",
+    "sourceVersion": "d6767e09",
     "license": "MIT",
-    "contentHash": "cbd705d794d94682c6cfd82bdd3477bdc21f655e269213a53d2457a8dc7b7edb",
-    "lastHarvestedAt": "2026-11-19T00:49:47.658Z",
+    "contentHash": "cde4236acf8612949faf0f080ef7644a6ea74fe0ce16d195fa796e5d7f979e53",
+    "lastHarvestedAt": "2026-11-22T05:19:57.118Z",
     "learningId": "learn-github-callstack-agent-device"
   },
   "open-policy-agent-opa": {
@@ -12215,8 +12215,8 @@
     "sourceUrl": "https://huggingface.co/Scantist/GLM-5.3-SLIM-GGUF",
     "sourceVersion": "hf-scantist-glm-5.3-slim-gguf",
     "license": "Open-Source",
-    "contentHash": "9a3f76b15d179917816cb706e3bd608a59a636830639cbdb317ca1bbf7b3f49d",
-    "lastHarvestedAt": "2026-11-14T00:48:30.527Z",
+    "contentHash": "85815755a85899d6e138308e59158f603f8f7a71f538e72a693e9d9d37ca5e60",
+    "lastHarvestedAt": "2026-11-22T05:19:49.587Z",
     "learningId": "learn-huggingface-scantist-glm-5-3-slim-gguf"
   },
   "wquguru-cicada": {

@@ -4,17 +4,17 @@
 {
   "source_repository": "callstack/agent-device",
   "source_url": "https://github.com/callstack/agent-device",
-  "source_version": "6e18ea33",
+  "source_version": "d6767e09",
   "license": "MIT",
-  "timestamp": "2026-11-19T00:49:47.863Z",
+  "timestamp": "2026-11-22T05:19:57.306Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-callstack-agent-device",
   "canonical_classification": "agent_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [callstack/agent-device](https://github.com/callstack/agent-device) (Revision: `6e18ea33`).  
-> **License**: MIT | **Timestamp**: `2026-11-19T00:49:47.863Z`  
+> **Provenance**: Harvested from [callstack/agent-device](https://github.com/callstack/agent-device) (Revision: `d6767e09`).  
+> **License**: MIT | **Timestamp**: `2026-11-22T05:19:57.306Z`  
 > **Learning ID**: `learn-github-callstack-agent-device`
 
 
@@ -29,7 +29,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/callstack-agent-device-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/callstack/agent-device](https://github.com/callstack/agent-device))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T00:49:46.681Z  
+> **Harvest Timestamp**: 2026-11-22T05:19:56.329Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -39,7 +39,7 @@ PROVENANCE_END -->
 - **Description**: Open source device layer for AI coding agents: a CLI, MCP server, and typed Node.js API to control mobile, web, TV, and desktop apps on devices and simulators, locally or in the cloud.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 5443 stars
+- **Stars / Engagement**: 5476 stars
 
 ---
 
@@ -564,6 +564,7 @@ export async function prepareLocalIosRunner(
   // runner the loop's killed child was building meets a closed gate instead (#3220).
   const startAdmission = openRunnerStartLoopAdmission(device.id);
   let recoveryReason: string | undefined;
+  let suspect: SuspectCachedArtifact | undefined;
   try {
     for (let attempt = 1; attempt <= PREPARE_RUNNER_HEALTH_MAX_SESSION_ATTEMPTS; attempt += 1) {
       const result = await runPrepareAttempt({
@@ -573,9 +574,11 @@ export async function prepareLocalIosRunner(
         signal,
         attempt,
         recoveryReason,
+        suspect,
       });
       if (result.kind === 'prepared') return result.result;
       recoveryReason = result.recoveryReason;
+      suspect = result.suspect;
     }
   } finally {
     finishRunnerStartAdmission(startAdmission);
@@ -585,9 +588,19 @@ export async function prepareLocalIosRunner(
   throw new AppError('COMMAND_FAILED', 'iOS runner prepare failed');
 }
 
+type RestoredRunnerSession = RunnerSession & {
+  xctestrunArtifact: NonNullable<RunnerSession['xctestrunArtifact']>;
+};
+
+/** A restored artifact that a failed attempt indicted, and the failure that indicted it. */
+type SuspectCachedArtifact = Readonly<{
+  artifact: RestoredRunnerSession['xctestrunArtifact'];
+  reason: string;
+}>;
+
 type PrepareAttemptResult =
   | { kind: 'prepared'; result: PrepareIosRunnerResult }
-  | { kind: 'retry'; recoveryReason: string };
+  | { kind: 'retry'; recoveryReason: string; suspect: SuspectCachedArtifact | undefined };
 
 async function runPrepareAttempt(params: {
   device: DeviceInfo;
@@ -596,14 +609,24 @@ async function runPrepareAttempt(params: {
   signal: AbortSignal | undefined;
   attempt: number;
   recoveryReason: string | undefined;
+  suspect: SuspectCachedArtifact | undefined;
 }): Promise<PrepareAttemptResult> {
-  const { device, command, options, signal, attempt, recoveryReason } = params;
+  const { device, command, options, signal, attempt, recoveryReason, suspect } = params;
   const connectStartedAt = Date.now();
   assertRunnerStartAdmitsPreparation(device.id, options.startAdmission);
+  let sessionPhaseTimeouts: PrepareDeadlinePhaseTimeouts;
+  try {
+    sessionPhaseTimeouts = readPrepareDeadlinePhaseTimeouts(options, 'runner_session');
+  } catch (error) {
+    // The indicted attempt spent the deadline, so no rebuild fits in this prepare. Cleaning the
+    // artifact makes the next prepare build a fresh one.
+    if (suspect) await markRunnerXctestrunArtifactBadForRun(suspect.artifact, suspect.reason);
+    throw error;
+  }
   const session = await ensureRunnerSession(device, {
     ...options,
     cleanStaleBundles: attempt > 1 ? true : options.cleanStaleBundles,
-    ...readPrepareDeadlinePhaseTimeouts(options, 'runner_session'),
+    ...sessionPhaseTimeouts,
   });
   assertExpectedRunnerSession(session, options.expectedRunnerSessionId);
   const connectMs = Date.now() - connectStartedAt;
@@ -629,6 +652,7 @@ async function runPrepareAttempt(params: {
       signal,
       attempt,
       error,
+      suspect,
     });
   }
 }
@@ -641,6 +665,7 @@ async function handlePrepareHealthFailure(params: {
   signal: AbortSignal | undefined;
   attempt: number;
   error: unknown;
+  suspect: SuspectCachedArtifact | undefined;
 }): Promise<PrepareAttemptResult> {
   const { device, session, command, options, signal, attempt, error } = params;
   assertRunnerStartAdmitsPreparation(device.id, options.startAdmission);
@@ -651,7 +676,10 @@ async function handlePrepareHealthFailure(params: {
     throw error;
   }
   if (shouldRetainRunnerSession(appErr)) throw error;
-  if (attempt === 1 && shouldRecoverBadCachedRunnerArtifact(appErr, session)) {
+  // A slow boot on a loaded host fails the same way as a corrupt artifact, and the rebuild cleans
+  // a cache that concurrent sessions read. The first indictment retries on the cache; a retry that
+  // also fails, in any way, rebuilds it (#4689).
+  if (params.suspect && hasRestoredRunnerArtifact(session)) {
     return {
       kind: 'prepared',
       result: await recoverBadCachedRunnerArtifact({
@@ -660,7 +688,7 @@ async function handlePrepareHealthFailure(params: {
         command,
         options,
         signal,
-        error: appErr,
+        reason: params.suspect.reason,
       }),
     };
   }
@@ -687,21 +715,24 @@ async function handlePrepareHealthFailure(params: {
       reason,
     },
   });
-  return { kind: 'retry', recoveryReason: reason };
+  return {
+    kind: 'retry',
+    recoveryReason: reason,
+    suspect: shouldRecoverBadCachedRunnerArtifact(appErr, session)
+      ? { artifact: session.xctestrunArtifact, reason }
+      : undefined,
+  };
 }
 
 async function recoverBadCachedRunnerArtifact(params: {
   device: DeviceInfo;
-  session: RunnerSession & {
-    xctestrunArtifact: NonNullable<RunnerSession['xctestrunArtifact']>;
-  };
+  session: RestoredRunnerSession;
   command: RunnerCommand;
   options: PrepareIosRunnerOptions;
   signal: AbortSignal | undefined;
-  error: AppError;
+  reason: string;
 }): Promise<PrepareIosRunnerResult> {
-  const { device, session, command, options, signal, error } = params;
-  const reason = error.message || 'runner_health_failed';
+  const { device, session, command, options, signal, reason } = params;
   await invalidateRunnerSession(session, 'prepare_cached_runner_health_failed');
   await markRunnerXctestrunArtifactBadForRun(session.xctestrunArtifact, reason);
   const connectStartedAt = Date.now();
@@ -743,44 +774,7 @@ async function recoverBadCachedRunnerArtifact(params: {
       buildMs: rebuiltSession.xctestrunArtifact?.buildMs,
       connectMs,
       healthCheckMs: 0,
-      xctestrunPath: rebuiltSession.xctestrunArtifact?.xctestrunPath,
-      failureReason: wrapped.message,
-    });
-    throw wrapped;
-  }
-}
-
-async function invalidateRunnerSessionBestEffort(
-  session: RunnerSession,
-  reason: Parameters<typeof invalidateRunnerSession>[1],
-): Promise<void> {
-  try {
-    await invalidateRunnerSession(session, reason);
-  } catch {}
-}
-
-function shouldRetryPrepareRunnerHealthFailure(error: AppError): boolean {
-  if (isRequestCanceledError(error)) return false;
-  return isRetryableRunnerError(error) || shouldRetryRunnerConnectError(error);
-}
-
-/**
- * Runs one runner command and discloses `dispatched: no` on a failure raised before the command
- * reached the exchange, or classified as a pre-send refusal by the recovery table.
- */
-export async function executeRunnerCommand(
-  device: DeviceInfo,
-  command: RunnerCommand,
-  options: AppleRunnerCommandOptions,
-): Promise<Record<string, unknown>> {
-  const exchange = { entered: false };
-  try {
-    return await executeRunnerCommandAttempt(device, command, options, exchange);
-  } catch (error) {
-    const failure = asAppError(error);
-    if (!exchange.entered) throw discloseDispatch(failure, 'no');
-    if (isRunnerPreSendRefusal(failure)) throw discloseUnclassifiedDispatch(failure, 'no');
-    thro
+      xctestrunPath: r
 ```
 
 ### Core Architecture Module: `packages/capture-kit/src/capture-admission/session-state-slice.ts`
@@ -1761,13 +1755,11 @@ function representativesAreValid(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4643** (2026-11-17): **An explicit --udid re-reads the simulator inventory on every command (~256 ms)**
-  *Symptoms*: ## Purpose  A command that names its device with `--udid` (or `--serial`) pays about 256 ms on every call, because the daemon re-reads the simulator inventory to resolve the device, even when the session is already bound to that device. `snapshot` skips this cost; other commands do not. Callers that always pass an explicit device, such as Expo Explore against a local simulator, pay it on every command of a run.  ## Observed (while measuring #4641; iPhone 17e simulator, iOS 27.0, warm daemon, n=8, wall-clock medians)  | Command | With `--udid` | Session only | | --- | --- | --- | | `keyboard status` (branch of #4642) | 476 ms | 232 ms | | `snapshot` | 320 ms | 300 ms |  The 256 ms comes from `resolveCommandDevice` (`packages/daemon/src/resources/session-device-resolution.ts`) re-reading the inventory.  ## Required behavior  - When an explicit selector matches the device the session is already bound to, resolve it from the session without an inventory read. This is what `snapshot` effectively gets today; find out why it differs and use one path. - Keep today's refusals: a selector that names a different device than the session's still refuses as it does now, and the device-claim rules stay unchanged. - Re-read the inventory only when the selector does not match the bound device, or when there is no session.  ## Done when  - Per-command timings with and without `--udid` are within noise of each other for a bound session, measured on a simulator for at least `keyboard status`, `p
+- **Issue #4901** (2026-11-21): **Android smoke: plain close fails with 'com.android.settings process remained running after close' since #4881**
+  *Symptoms*: ## Purpose  Since #4881 (merged 2026-11-21, `0525c45`), a plain `close` closes the session app and fails when the app does not exit. The Android emulator smoke replay `test/integration/replays/android/emulator/01-settings.ad` now fails intermittently at that step, and the failure is not retried:  ``` ⨯ 01-settings.ad   failed at: Android app com.android.settings process remained running after close ```  Seen three times in about 10 minutes on unrelated PR branches: runs 44913451859 and 44913878501 (#4897, an iOS-only change) and 44913308426 (`refactor/0.22-limrun-provider-plugin`). Main passed once at `721adbc`. Any PR can fail this lane.  ## Required behavior  - Find why the Settings process is still present after the close fence (for example a system restart of `com.android.settings`, a fence that checks too early, or a pid read that catches a new process). - Fix it at the owner of the Android app-close fence, using typed evidence (process identity, not just "a process with that name exists"). Do not add retries or longer sleeps as the fix, and do not revert #4881's behavior. - A device-free regression for the identified cause, and the smoke replay green across several CI runs. 
 
-- **Issue #4641** (2026-11-17): **iOS keyboard status takes ~1.4 s, about 5x a snapshot**
-  *Symptoms*: ## Purpose  `keyboard status` on iOS takes about 1.4 s per call, roughly 5× a full `snapshot` of the same screen. Callers that want to ask "is the keyboard up, and what is its return key" before acting pay more than a snapshot would cost them. Expo Explore kept its accessibility-tree heuristics for this reason.  ## Observed (0.21.39, iPhone Air simulator, iOS 27.0, warm daemon, keyboard up, wall clock per CLI call including node start)  - `keyboard status`: median 1397 ms, range 1367–1539 ms (n=8). - `snapshot`: median 260 ms, range 241–331 ms (n=8).  ## Required behavior  - Find where the time goes: runner query strategy, extra settle or idle waits, repeated tree reads. Include a timing breakdown in the PR. - Bring `keyboard status` to at most snapshot cost on the same screen, or explain the floor with evidence. - Keep the output contract (`visible`, `returnKey`, `returnKeyLabel`) unchanged.  ## Done when  Before/after timings at the same n on a simulator are recorded in the PR, and the iOS keyboard tests pass. 
-  **Post-Mortem & Fix Analysis**:
-  > ## Apex Sentinel · Issue review  **Suggested label:** `bug`  It reports existing CLI performance as too slow with concrete timings, environment, and a measurable target, making it an actionable performance defect rather than a new capability request.  ### Required sections - [ ] Steps to reproduce (missing) - [ ] Expected and actual behavior (missing) - [ ] Version or environment (missing)  <!-- apex-sentinel:issue-review -->
+- **Issue #4862** (2026-11-21): **0.22: route web and Vega plugin process spawns and diagnostics through the plugin host**
+  *Symptoms*: Found in the review of #4857 (https://github.com/callstack/agent-device/pull/4857#issuecomment-7049407779). #4857 fixes it for HarmonyOS only; the same fault is in the two platform plugins already merged into `0.22` (#4792 web, #4828 Vega).  ## Problem  A managed platform plugin bundles its own copy of `@agent-device/host-kit` (`deps.alwaysBundle` matches `/^@agent-device\//`). A runtime import of `@agent-device/host-kit/command` or `@agent-device/host-kit/diagnostics` inside the plugin therefore uses a second `AsyncLocalStorage` scope that the daemon's `withCommandHost(...)` never enters. In the packed plugin:  - spawned tools inherit `process.env`, not the captured `host.env` (cwd and environment of the daemon host); - exec traces and timers go to the plugin's own diagnostics store, so `--debug` logs lose them.  Workspace tests resolve the plugin from `src`, where host-kit is one instance, so they do not see it.  Runtime import sites reported by #4857:  - `packages/platform-web/src`: `agent-browser-install.ts`, `agent-browser-lifecycle.ts`, `agent-browser-process-record.ts`, `agent-browser-provider.ts`, `agent-browser-tool.ts`, `interactor.ts` - `packages/platform-vega/src`: `app-lifecycle.ts`, `input-actions.ts`, `inventory.ts`, `tool-provider.ts`, `vega-executable.ts` - `packages/provider-limrun/src` has one such import on #4846; check whether a provider plugin has the same fault.  ## Required behavior  Every process a managed platform plugin spawns and every diagnostic i
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1784,1166 +1776,1099 @@ function representativesAreValid(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ada87a3b` (2026-11-18)
-**Commit Message**: fix: judge a save-script destination another local user can steer (#4584)
+### Incident Patch 1: `64d7fc75` (2026-11-20)
+**Commit Message**: fix(remote): write record stop output only to request-named destinations (#4724)
 
-* fix(host-kit): refuse a script destination another local user can steer
+* fix(capture): bind remote capture output authority to a client-minted grant ID per start attempt (#4518)
 
-A publish resolved the destination by name, so a second local user who
-could write any directory on the way to it could replace that component,
-or leave a symbolic link there before the entry was created, and move the
-saved script wherever they chose.
+Corrected record slice of the reviewed defensive candidate (shared object
+1685076dd5cb8c02c2151664991ad48fedc085c3, preserved untouched on
+t3/defensive-capture-grants).
 
-`publishScriptFileSync` now asks first: `assertPrivateScriptDestination`
-walks each component with `lstat` and refuses the chain under
-`script_ancestor_untrusted` when a directory is writable by other, or by
-a group that is not this user's own private group, unless the sticky bit
-cancels the exposure. A symbolic link whose own directory others can
-create entries in is refused whatever it points at. Ubuntu and Debian set
-up every home directory as group-writable and owned by the user's private
-group, so that shape is admitted, and `privateGroupIds` is exported so
-the membership rule is testable on its own.
+A remote response no longer establishes a local write destination on a finishing
+capture action. The client mints one distinct grant ID per record start attempt and
+persists the caller-named destination under the existing remote-connections state
+owner BEFORE the request is dispatched — keyed by the immutable ID, never a
+latest-slot overwrite and never created from the response. The daemon admits the
+optional meta.captureGrantId on public record starts only (record-only scope; trace
+and perf keep their existing paths), binds it to the accepted capture in the producer
+lifecycle envelope metadata, and the matching stop echoes it from that capture's
+durable record; the internal fencing token never leaves the envelope.
 
-The caller also captures the parent's `dev:ino` before staging, and the
-publish compares it before the link or rename, so a parent swapped out by
-name while the file was written refus
+A persisted start destination is authorized EXCLUSIVELY by the producer-echoed grant
+ID matched against the persis
 
-**File**: `docs/adr/0016-active-session-script-publication.md` (modified, +38/-2)
+**File**: `docs/agents/security.md` (modified, +1/-1)
 ```diff
-@@ -24,6 +24,11 @@ This section is a normative summary.
- - Publication requires exactly one initial recorded `open`, a portable selector-`wait` destination guard after the last descriptor-classified mutating action, and no unresolved session-local `@ref`.
-   Since #1349, the `target-v1` annotation of the guard must be `verification: "verified"`.
-   Every refusal happens before filesystem work and names its recovery.
-+- The destination a caller names with `--save-script=<path>` is judged before anything is created.
-+  It must be absolute, and every directory the walk looks a name up in must be one no other non-root local user can change.
-+  What is missing is created one level at a time at 0700, inside the directory the walk just judged, and the script file is 0600.
-+  The rule is POSIX-only, and a refused destination leaves nothing behind.
-+  The daemon's own state-directory chain is outside this decision (#4649).
- - Repair transactions (ADR 0012) are disjoint from this lifecycle.
-   A session with `saveScriptBoundary` set refuses this action without a change to repair state.
- - A remote recording is delivered, not published (#4511 amendment).
-@@ -179,7 +184,7 @@ A change to that answer is a behavior change, not a derivation.
- **Amendment (#4511, shipped).** A remote caller cannot read the daemon target, so a remote `open --save-script=<path>` delivers its recording to the caller.
- It adds no state name, command, or flag:
+@@ -2,7 +2,7 @@
  
--- Before it sends the open, the client mints a random publication ID and records the destination and the `--force` grant under it in its state directory (`remote-connections/session-scripts/`), keyed by the endpoint, the tenant, the session, and that ID.
-+- Before it sends the open, the client mints a random publication ID and records the destination and the `--force` grant under it in its state directory (`remote-connections/session-scripts/`), keyed by the endpoint, the tenant, the session, and that ID. That directory is the client's own private state, not a script destination: the client creates it the way it always did, with one recursive `mkdir` that forces nothing on a directory that already stands, and the only file ever written there is the client's own record. The script itself is published by the daemon to its own sessions directory; the client's own copy goes to the caller's destination, judged by the rule under [Caller-named destination](#caller-named-destination).
-   The open carries the ID in `meta.scriptPublicationId` and never the caller path.
-   A daemon answer that does not name the ID removes the record.
-   A failed open may still have armed the recording, so it keeps its record.
-@@ -207,7 +212,35 @@ It adds no state name, command, or flag:
-   A batch whose steps record or close an armed remote recording is not refused. The daemon collects the versions and the close that the batch's steps wrote, and delivers them on the batch response as one `scriptDeliveryReceipt` (#4595).
- - The daemon reports the `script-artifacts` capability in `/health`, through a proxy in its upstream health; the client refuses a remote `--save-script` before dispatch without it.
+ The CLI client trusts its caller to choose local destinations.
+ The client trusts a remote daemon for data and validated identifiers.
+-Script publication takes no path from the daemon. Capture delivery still can (#4518).
++Scripts and remote record stop reject daemon paths (#4518). Trace and perf take them.
+ The daemon admits its state directory. Nobody trusts the network or other local users.
+ Out of scope: same uid, hostile root, ACLs, mounts, untrusted filesystems.
  
--The destination keeps local `--save-script` semantics: the client creates a missing parent directory and checks no ancestor ownership, so another local user who can write an ancestor directory can redirect the file, locally and remotely alike (#4565).
-+### Caller-named destination
-+
-+A destination a caller names — `--save-script=<path>` on the local route, or the same path in the remote client's publication record (#4511 amendment) — is judged before anything is created. Both routes expand the caller's path to an absolute one before asking host-kit, and host-kit refuses a relative one at its entry (`relative_destination`) on every platform. Walking a relative name would put the process's working directory in the judged chain, and Node answers that name from the first query after the last `chdir`, so it can be stale while the process stands elsewhere. Host-kit owns the whole sequence as ONE call — walk, refuse, create what is missing at 0700 inside the judged directory, judge again, answer with the judged directory and its identity — and both publishers make that one call before staging. The rule closes the window with PERMISSIONS, not with timing. It is POSIX-only: on Windows the walk does not run, owners, mode bits and link shape are not read, `chmod` toggles only the read-only bit, creation is a recursive `mkdir`, and access there is the ACL of the directory the operator chose.
-+A destination is accepted only when no other non-root local user can modify any directory the publish traverses. Each directory must be owned by the current user or by root, and its mode must keep its contents closed to others. Once that holds, nobody can swap a component out or plant one, so the path that was judged is the path the publish reaches, and nothing depends on when a directory was judged.
-+The walk emulates the kernel's own path
 ```
 
-**File**: `packages/daemon/src/__tests__/support/script-staging-failure.ts` (added, +27/-0)
+**File**: `packages/command-surface/src/schema/command-overrides.ts` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,27 @@
-+import fs from 'node:fs';
-+import { vi } from 'vitest';
-+import { isPublishTemporarySiblingOf } from '@agent-device/test-kit';
-+
-+/**
-+ * Makes the staging write of a script publication fail, and only that write.
-+ *
-+ * A publication stages the recording in a private temp sibling of the destination and moves it into place,
-+ * so the seam where the filesystem can refuse a script is that one write. `test-kit`'s temp-path predicate
-+ * says which write it is, so the fixture does not have to know how the name is built.
-+ *
-+ * This replaces a fixture that made the destination's directory `0500`. That one asked the HOST whether a
-+ * write into it is allowed, and a caller the mode bits do not bind — root — writes straight through it, so
-+ * the write succeeded and the test that expected a failure failed with it. The failure injected here is the
-+ * fixture's own, which makes the outcome the same for every caller.
-+ */
-+export function failScriptStagingWrite(destination: string): void {
-+  const failure: NodeJS.ErrnoException = Object.assign(
-+    new Error(`EACCES: permission denied, open '${destination}'`),
-+    { code: 'EACCES', errno: -13, syscall: 'open', path: destination },
-+  );
-+  const realWriteFileSync = fs.writeFileSync;
-+  vi.spyOn(fs, 'writeFileSync').mockImplementation(((file: fs.PathLike | number, ...rest) => {
-+    if (isPublishTemporarySiblingOf(file, destination)) throw failure;
-+    return (realWriteFileSync as (...args: unknown[]) => unknown)(file, ...rest);
-+  }) as typeof fs.writeFileSync);
-+}
-```
-
-**File**: `packages/daemon/src/core/__tests__/session-script-writer-ancestry.test.ts` (added, +494/-0)
-```diff
-@@ -0,0 +1,494 @@
-+import { afterEach, expect, test, vi } from 'vitest';
-+import fs from 'node:fs';
-+import path from 'node:path';
-+import {
-+  FOREIGN_UID,
-+  createLiveTestHostEnvironment,
-+  mkdtempForTestSync,
-+  serveHostOwnership,
-+} from '@agent-device/test-kit';
-+import { SessionScriptWriter } from '../session-script-writer.ts';
-+import { makeAuthoringSession } from '../../__tests__/support/session-factories.ts';
-+
-+const hostCwd = createLiveTestHostEnvironment().cwd;
-+const skipOnWindows = process.platform === 'win32' ? test.skip : test;
-+
-+/** This process's ids. Windows has neither, and every test that uses them is skipped there. */
-+const currentUid = process.getuid?.() ?? -1;
-+const currentGid = process.getgid?.() ?? -1;
-+
-+afterEach(() => {
-+  vi.restoreAllMocks();
-+});
-+
-+function action(command: string): {
-+  ts: number;
-+  command: string;
-+  positionals: string[];
-+  flags: Record<string, unknown>;
-+} {
-+  return { ts: Date.now(), command, positionals: ['Demo'], flags: {} };
-+}
-+
-+function recordingTo(destination: string) {
-+  return makeAuthoringSession('journey', {
-+    scriptPublication: {
-+      kind: 'authoring',
-+      status: 'armed',
-+      target: { kind: 'explicit', path: destination, force: false },
-+    },
-+    actions: [action('open')],
-+  });
-+}
-+
-+function root(): string {
-+  return fs.realpathSync(mkdtempForTestSync('agent-device-script-ancestry-'));
-+}
-+
-+function sharedDirectory(directory: string, mode: number): string {
-+  fs.mkdirSync(directory);
-+  fs.chmodSync(directory, mode);
-+  return directory;
-+}
-+
-+/** A scratch directory in this host's own primary group, at `mode`. */
-+function homeDirectory(directory: string, mode: number): string {
-+  fs.mkdirSync(directory);
-+  fs.chownSync(directory, currentUid, currentGid);
-+  fs.chmodSync(directory, mode);
-+  return directory;
-+}
-+
-+function writerFor(directory: string): SessionScriptWriter {
-+  return new SessionScriptWriter(path.join(directory, 'sessions'), hostCwd);
-+}
-+
-+function refusal(result: ReturnType<SessionScriptWriter['write']>): Record<string, unknown> {
-+  expect(result.written).toBe(false);
-+  if (result.written || !result.error) throw new Error('expected a refused write');
-+  return result.error.details as Record<string, unknown>;
-+}
-+
-+skipOnWindows('an ordinary recording saves under a chain only this user can write', () => {
-+  const directory = root();
-+  const destination = path.join(directory, 'workflows', 'journey.ad');
-+
-+  const result = writerFor(directory).write(recordingTo(destination));
-+
-+  expect(result.written).toBe(true);
-+  expect(fs.readFileSync(destination, 'utf8')).toContain('open');
-+});
-+
-+skipOnWindows('a recording saves a script no other local user can read', () => {
-+  const directory = root();
-+  const destination = path.join(directory, 'workflows', 'journey.ad');
-+
-+  const result = writerFor(directory).write(recordingTo(destination));
-+
-+  expect(result.written).toBe(true);
-+  expect(fs.lstatSync(destination).mode & 0o777).toBe(0o600);
-+});
-+
-+skipOnWindows('a recording refuses a destination under a world-writable directory', () => {
-+  const directory = root();
-+  const shared = sharedDirectory(path.join(directory, 'shared'), 0o777);
-+  const destination = path.join(shared, 'journey.ad');
-+
-+  const details = refusal(writerFor(directory).write(recordingTo(destination)));
-+
-+  expect(details).toMatchObject({
-+    reason: 'script_ancestor_untrusted',
-+    exposure: 'world_writable',
-+  });
-+  expect(fs.existsSync(destination)).toBe(false);
-+});
-+
-+skipOnWindows('a refused destination with a missing parent leaves no directories behind', () => {
-+  // `close --save-script /shared/recordings/journey.ad` where `recordings` is absent. Creating the missing
-+  // parent is what the caller asked for, so it cannot be judged only once it exists: a `mkdir -p` that runs
-+  // first leaves `recordings` standing in the open directory after the publish refuses, which is a
-+  // directory this user made in ground another local user owns the naming of. The chain that exists is
-+  // therefore asked about BEFORE anything is created, and again afterwards.
-+  const directory = root();
-+  const shared = sharedDirectory(path.join(directory, 'shared'), 0o777);
-+  const destination = path.join(shared, 'recordings', 'journey.ad');
-+
-+  const details = refusal(writerFor(directory).write(recordingTo(destination)));
-+
-+  expect(details).toMatchObject({
-+    reason: 'script_ancestor_untrusted',
-+    exposure: 'world_writable',
-+    ancestor: shared,
-+  });
-+  expect(fs.readdirSync(shared)).toEqual([]);
-+});
-+
-+skipOnWindows(
-+  'a recording that steps back out of a missing directory leaves no directories behind',
-+  () => {
-+    // `<private>/missing/../../shared/recordings/journey.ad`. The walk ends at `missing`, so `shared` is
-+    // never judged, and the `mkdir -p` this route runs resolves the two steps up as TEXT and builds
-+    // `<root>/shared/recordings` — the entry would be created in a world-writa
-```
-
-**File**: `packages/daemon/src/core/__tests__/session-script-writer.test.ts` (modified, +11/-4)
-```diff
-@@ -15,6 +15,7 @@ import { markRepairTransactionComplete } from '../session-replay-transaction.ts'
- import { NO_SCRIPT_PUBLICATION, scriptTargetPath } from '../session-script-publication-state.ts';
- import { parseReplayScriptDetailed, resolveReplayAction } from '@agent-device/ad-script';
- import { createLiveTestHostEnvironment, mkdtempForTestSync } from '@agent-device/test-kit';
-+import { failScriptStagingWrite } from '../../__tests__/support/script-staging-failure.ts';
- 
- const hostCwd = createLiveTestHostEnvironment().cwd;
- 
-@@ -554,7 +555,10 @@ test('write(session) without { force: true } still refuses, even when a prior wr
- // concurrent race correctly without any lock — first writer wins, the loser
- // sees `EEXIST` and is refused.
- test('two writers racing on the SAME ABSENT target: exactly one linkSync wins, the other is refused (no lock involved)', () => {
--  const root = mkdtempForTestSync('agent-device-script-writer-race-');
-+  // Realpath'ed because the publish creates the entry in the directory the ancestry walk ANSWERED, and on
-+  // macOS `mkdtemp` spells the scratch root through the `/var` alias: this spy compares the entry's path
-+  // with the one it expects to see.
-+  const root = fs.realpathSync(mkdtempForTestSync('agent-device-script-writer-race-'));
-   const writer = new SessionScriptWriter(path.join(root, 'sessions'), hostCwd);
-   const healedPath = path.join(root, 'flows', 'login.healed.ad');
-   fs.mkdirSync(path.dirname(healedPath), { recursive: true });
-@@ -696,9 +700,12 @@ test('an ordinary (non-repair) recording now refuses an existing target too (beh
- test('an ordinary recording returns a filesystem write failure as a typed error, never a quiet skip', () => {
-   const root = mkdtempForTestSync('agent-device-script-writer-ordinary-fs-failure-');
-   const writer = new SessionScriptWriter(path.join(root, 'sessions'), hostCwd);
--  const blocker = path.join(root, 'blocker');
--  fs.writeFileSync(blocker, '');
--  const outPath = path.join(blocker, 'flow.ad');
-+  // The staging write of the publication is made to fail, so the failure the caller sees is the
-+  // filesystem's own and not an ancestry verdict. A directory the mode bits deny this user is not used
-+  // for that: mode bits do not bind root, so under a root caller the write would succeed and this test
-+  // would be reporting the host's permission model instead of the writer's error handling.
-+  const outPath = path.join(root, 'flow.ad');
-+  failScriptStagingWrite(outPath);
-   const session = makeAuthoringSession('default', {
-     scriptPublication: authoringPublication('armed', { path: outPath }),
-     actions: [action({ command: 'click', positionals: ['id="new"'] })],
-```
-
-**File**: `packages/daemon/src/core/__tests__/session-store-teardown-script.test.ts` (modified, +3/-2)
-```diff
-@@ -81,7 +81,8 @@ test.skipIf(process.platform === 'win32')(
-       expect(fs.statSync(result.path).mode & 0o777).toBe(0o600);
-     }
-     expect(localWrite).toMatchObject({ written: true, path: local });
--    const umask = process.umask();
--    expect(fs.statSync(local).mode & 0o777).toBe(0o666 & ~umask);
-+    // A target the caller names is published by host-kit's destination rule, which SAYS 0600 on the file
-+    // rather than asking for it, so the recording opens to nobody but its owner whatever the umask says.
-+    expect(fs.statSync(local).mode & 0o777).toBe(0o600);
-   },
- );
-```
-
-**File**: `packages/daemon/src/core/session-script-writer.ts` (modified, +25/-5)
-```diff
-@@ -19,7 +19,7 @@ import {
-   stripRecordedRefGeneration,
- } from '@agent-device/ad-script';
- import { expandSessionPath, safeSessionName } from '@agent-device/host-kit/session-paths';
--import { publishFileSync } from '@agent-device/host-kit/file';
-+import { publishFileSync, publishScriptFileSync } from '@agent-device/host-kit/file';
- import type { SessionState } from './session-state.ts';
- import {
-   NO_SCRIPT_PUBLICATION,
-@@ -133,8 +133,16 @@ export class SessionScriptWriter {
-       const remote =
-         session.scriptPublication?.kind === 'authoring' && session.scriptPublication.remoteDelivery;
-       scriptPath = remote ? this.remoteScriptPath() : this.resolveScriptPath(session);
--      const scriptDir = path.dirname(scriptPath);
--      if (!fs.existsSync(scriptDir)) fs.mkdirSync(scriptDir, { recursive: true });
-+      // A destination the CALLER named is the caller's own, and host-kit's destination rule is what judges it:
-+      // that route walks the chain, creates nothing outside what it judged, and writes the file at 0600. A path
-+      // of this daemon's own is made the way it has always been made (#4565).
-+      const callerOwnsDestination =
-+        !remote &&
-+        scriptTargetPath(session.scriptPublication ?? NO_SCRIPT_PUBLICATION) !== undefined;
-+      if (!callerOwnsDestination) {
-+        const scriptDir = path.dirname(scriptPath);
-+        if (!fs.existsSync(scriptDir)) fs.mkdirSync(scriptDir, { recursive: true });
-+      }
-       // #1258: `options.force` is the caller's already-merged decision
-       // (`effectiveWriteForce` — a live flag or the per-target grant), not
-       // read from `session` directly here, so this stays a pure
-@@ -143,6 +151,7 @@ export class SessionScriptWriter {
-         scriptPath,
-         script: prepared.script,
-         force: options?.force,
-+        callerOwnsDestination,
-         ...(remote ? { mode: 0o600 } : {}),
-       });
-       // COMMITTED: idempotent guard above + teardown's abort/tombstone routing.
-@@ -264,7 +273,6 @@ function toRepairCommitFailure(error: unknown, scriptPath: string | undefined):
+@@ -160,7 +160,7 @@ const SCHEMA_ONLY_CLI_COMMAND_SCHEMAS = {
+     text: {
+       summary: 'Expose a local daemon through an HTTP tunnel',
+       description:
+-        'Expose the local daemon HTTP contract through a tunnel-friendly reverse proxy.\n\nRun this on the host that has access to simulators/devices, expose the printed local proxy URL through a tunnel, then point another machine at the tunnel URL with connect proxy.\n\nThe proxy starts or reuses a local HTTP daemon, accepts /health, /rpc, /upload and resumable /upload/* routes, and /artifacts plus /artifacts/*, and also accepts the same routes under /agent-device/*. Health is unauthenticated for reachability probes. Other routes require the generated bearer token printed at startup, or the explicit --daemon-auth-token value when provided. The proxy rewrites authorized client requests to the upstream daemon token instead of exposing the local daemon token.\n\nFor a TLS-terminated tunnel, set --public-origin to the public HTTP(S) origin, for example --public-origin https://public.example:8443. Forwarded and X-Forwarded-* headers do not select upload ticket origins. For an ephemeral tunnel, obtain its public name first, then configure and restart the proxy. Without a fixed origin, Node uses the actual socket scheme and validated Host.\n\nUse the /agent-device base path when connecting through cloudflared, ngrok, or another shared origin. Treat the bearer token as a secret; anyone with it can control the proxied daemon. This direct proxy flow does not use agent-device auth.\n\nRemote captures write generated artifacts on the daemon. Screenshot, recording, performance, and trace paths select downloads on the client; they never select host files. Direct RPC callers download returned artifact IDs through /artifacts/<id>. Remote requests ignore client cwd and refuse host tooling paths and --launch-console. A fresh open --save-script=<path> arms recording; after each recorded action the client refreshes that caller file, and close writes the final script there. Remote session save-script, close/replay --save-script, and --save-script in batch steps remain refused.\n\nExamples:\n  cloudflared tunnel --url http://127.0.0.1:4310\n  agent-device proxy --port 4310 --public-origin https://example.trycloudflare.com\n  agent-device connect proxy --daemon-base-url https://example.trycloudflare.com/agent-device --daemon-auth-token <token>',
++        'Expose the local daemon HTTP contract through a tunnel-friendly reverse proxy.\n\nRun this on the host that has access to simulators/devices, expose the printed local proxy URL through a tunnel, then point another machine at the tunnel URL with connect proxy.\n\nThe proxy starts or reuses a local HTTP daemon, accepts /health, /rpc, /upload and resumable /upload/* routes, and /artifacts plus /artifacts/*, and also accepts the same routes under /agent-device/*. Health is unauthenticated for reachability probes. Other routes require the generated bearer token printed at startup, or the explicit --daemon-auth-token value when provided. The proxy rewrites authorized client requests to the upstream daemon token instead of exposing the local daemon token.\n\nFor a TLS-terminated tunnel, set --public-origin to the public HTTP(S) origin, for example --public-origin https://public.example:8443. Forwarded and X-Forwarded-* headers do not select upload ticket origins. For an ephemeral tunnel, obtain its public name first, then configure and restart the proxy. Without a fixed origin, Node uses the actual socket scheme and validated Host.\n\nUse the /agent-device base path when connecting through cloudflared, ngrok, or another shared origin. Treat the bearer token as a secret; anyone with it can control the proxied daemon. This direct proxy flow does not use agent-device auth.\n\nRemote captures write generated artifacts on the daemon. Screenshot, performance, and trace paths select downloads on the client; they never select host files. A remote recording downloads to the path named by the record stop request, or otherwise to the working directory with a warning. Direct RPC callers download returned artifact IDs through /artifacts/<id>. Remote requests ignore client cwd and refuse host tooling paths and --launch-console. A fresh open --save-script=<path> arms recording; after each recorded action the client refreshes that caller file, and close writes the final script there. Remote session save-script, close/replay --save-script, and --save-script in batch steps remain refused.\n\nExamples:\n  cloudflared tunnel --url http://127.0.0.1:4310\n  agent-device proxy --port 4310 --public-origin https://example.trycloudflare.com\n  agent-device connect proxy --daemon-base-url https://example.trycloudflare.com/agent-device --daemon-auth-token <token>',
      },
-   );
- }
--
- /**
-  * ADR 0012 decision 6, no-clobber (maintainer-approved simplification):
-  * publishes `script` to `scriptPath` atomically, refusing ANY pre-existing
-@@ -302,9 +310,21 @@ function publishHealedScriptAtomically(params: {
-   script: string;
-   force?: boolean;
-   mode?: number;
-+  callerOwnsDestination: boolean;
- }): void {
--  const { scriptPath, script, force, mode } = params;
-+  const { scriptPath, script, force, mode, callerOwnsDestination } = params;
-   try {
-+    if (callerOwnsDestination) {
-+      // host-kit owns this route's whole sequence (#4565): it walks the destination's chain, refuses a
-+      // destination another local user can steer BEFORE creating anything, creates what is missing one level
-+      // at a time at 0700 inside the directory it judged, and writes the script itself at 0600.
-+      publishScriptFileSync({
-+        destination: scriptPath,
-+        contents: script,
-+        publish: force ? 'replace' : 'link-exclusive',
-+      });
-+      return;
-+    }
-     publishFileSync({
-       destination: scriptPath,
-       contents: script,
+     listUsageOverride: 'proxy',
+     allowedFlags: ['proxyHost', 'proxyPort', 'publicOrigin', 'daemonAuthToken', 'stateDir'],
 ```
 
-**File**: `packages/daemon/src/server/__tests__/atomic-publish-ownership.test.ts` (modified, +1/-1)
+**File**: `packages/remote/src/__tests__/daemon-artifacts-capture.test.ts` (modified, +0/-7)
 ```diff
-@@ -23,7 +23,7 @@ const PROCESS_LOCK_SOURCE = new URL(
- test('simple same-directory publishers use the shared atomic publish owner', () => {
-   for (const sourcePath of SIMPLE_PUBLISHERS) {
-     const source = fs.readFileSync(sourcePath, 'utf8');
--    assert.match(source, /publishFileSync/);
-+    assert.match(source, /publish(?:Script)?FileSync/);
-     assert.doesNotMatch(source, /fs\.(?:writeFileSync|renameSync)\s*\(/);
+@@ -98,13 +98,6 @@ test.for<MaterializationCase>([
+     fileName: '../../x',
+     expected: 'cwd/x',
+   },
+-  {
+-    name: 'a record stop accepts the echo of its start destination',
+-    command: 'record',
+-    localPath: 'client/clip.mp4',
+-    fileName: 'clip.mp4',
+-    expected: 'client/clip.mp4',
+-  },
+   {
+     name: 'a close does not authorize an unrelated response artifact destination',
+     command: 'close',
+```
+
+**File**: `packages/remote/src/__tests__/daemon-artifacts-record-download.test.ts` (added, +178/-0)
+```diff
+@@ -0,0 +1,178 @@
++import fs from 'node:fs';
++import http from 'node:http';
++import path from 'node:path';
++import type { DaemonArtifact } from '@agent-device/kernel/contracts';
++import { expect, test, type TestContext } from 'vitest';
++import {
++  closeLoopbackServer,
++  createTestHostEnvironment,
++  listenOnLoopback,
++  mkdtempForTestSync,
++  skipWhenLoopbackUnavailable,
++} from '@agent-device/test-kit';
++import { materializeRemoteArtifacts } from '../daemon-artifacts.ts';
++
++async function withRecordingServer(
++  t: TestContext,
++  run: (cwd: string, stop: ReturnType<typeof recordStop>) => Promise<void>,
++): Promise<void> {
++  if (await skipWhenLoopbackUnavailable(t, 'remote recording download')) return;
++  const root = mkdtempForTestSync('agent-device-record-download-');
++  const cwd = path.join(root, 'cwd');
++  fs.mkdirSync(cwd);
++  // Each artifact's bytes are its own id, served as binary so the body is never read as HTML.
++  const server = http.createServer((req, res) => {
++    res.writeHead(200, { 'content-type': 'application/octet-stream' });
++    res.end(path.basename(req.url ?? ''));
++  });
++  try {
++    const port = await listenOnLoopback(server);
++    await run(cwd, recordStop(`http://127.0.0.1:${port}`, cwd, path.join(root, 'state')));
++  } finally {
++    await closeLoopbackServer(server);
++  }
++}
++
++function recordStop(baseUrl: string, cwd: string, stateDir: string) {
++  return async (artifacts: DaemonArtifact[], requested?: string, chunks?: unknown) => {
++    const response = await materializeRemoteArtifacts(
++      { baseUrl, token: 'secret' },
++      {
++        token: 'secret',
++        command: 'record',
++        session: 'capture',
++        positionals: requested ? ['stop', requested] : ['stop'],
++        meta: { cwd },
++      },
++      { ok: true, data: { artifacts, chunks, outPath: '/daemon/other.mp4' } },
++      createTestHostEnvironment(),
++      stateDir,
++    );
++    if (!response.ok) throw new Error(response.error.message);
++    return response.data;
++  };
++}
++
++const video = {
++  artifactId: 'video',
++  field: 'outPath',
++  artifactType: 'screen-recording',
++  path: '/daemon/clip.mp4',
++  fileName: 'clip.mp4',
++} satisfies DaemonArtifact;
++
++test('record stop ignores the daemon localPath and warns about the cwd download', async (t) => {
++  await withRecordingServer(t, async (cwd, stop) => {
++    const hostile = path.resolve(cwd, '../hostile.mp4');
++    const data = await stop([{ ...video, localPath: hostile }]);
++    const fallback = path.join(cwd, 'clip.mp4');
++    expect(fs.existsSync(hostile)).toBe(false);
++    expect(fs.readFileSync(fallback, 'utf8')).toBe('video');
++    expect(data).toMatchObject({
++      outPath: fallback,
++      recordingDestinationWarnings: [
++        { reason: 'recording_destination_not_requested', field: 'outPath', path: fallback },
++      ],
++      warnings: [expect.stringContaining(fallback)],
++    });
++  });
++});
++
++test('record stop uses the destination named in the current request', async (t) => {
++  await withRecordingServer(t, async (cwd, stop) => {
++    const hostile = path.resolve(cwd, '../hostile.mp4');
++    const data = await stop([{ ...video, localPath: hostile }], '../requested.mp4');
++    const requested = path.resolve(cwd, '../requested.mp4');
++    expect(fs.existsSync(hostile)).toBe(false);
++    expect(fs.readFileSync(requested, 'utf8')).toBe('video');
++    expect(data?.outPath).toBe(requested);
++    expect(data?.recordingDestinationWarnings).toBeUndefined();
++  });
++});
++
++test('record stop replaces a destination symlink without writing through it', async (t) => {
++  await withRecordingServer(t, async (cwd, stop) => {
++    const destination = path.join(cwd, 'clip.mp4');
++    const target = path.resolve(cwd, '../target');
++    fs.writeFileSync(target, 'original');
++    fs.symlinkSync(target, destination);
++    await stop([video]);
++    expect(fs.readFileSync(target, 'utf8')).toBe('original');
++    expect(fs.lstatSync(destination).isFile()).toBe(true);
++    expect(fs.readFileSync(destination, 'utf8')).toBe('video');
++    expect(fs.readdirSync(cwd)).toEqual(['clip.mp4']);
++  });
++});
++
++test.for([
++  'C:foo.mp4',
++  'clip.mp4:stream',
++  '..',
++  'CON.mp4',
++  'nested/clip.mp4',
++  String.raw`x\clip.mp4`,
++  'x\n.mp4',
++])('record stop generates a name in cwd for %j', async (fileName, t) => {
++  await withRecordingServer(t, async (cwd, stop) => {
++    const data = await stop([{ ...video, fileName }]);
++    const names = fs.readdirSync(cwd);
++    expect(names).toHaveLength(1);
++    expect(names).not.toContain(fileName);
++    expect(names).not.toContain(path.posix.basename(fileName));
++    expect(names).not.toContain(path.win32.basename(fileName));
++    const destination = path.join(cwd, names[0]!);
++    expect(data?.outPath).toBe(destination);
++    expect(fs.readFileSync(destination, 'utf8')).toBe('video');
++    expect(data?.recordingDestinationWarnings).toEqual([
++      { reason: 'recording_destination_not_requested', field: 'outPath', pat
+```
+
+**File**: `packages/remote/src/artifact-download.ts` (modified, +29/-0)
+```diff
+@@ -32,13 +32,24 @@ export type RemoteArtifactDownload = RemoteArtifactRequest & {
+   destinationPath: string;
+   /** Whether `destinationPath` is a caller-owned root rather than one file to create. */
+   isDirectory?: boolean;
++  stagedFile?: boolean;
+ };
+ 
+ /** An artifact held in memory, stopped once it crosses `maxBytes`, whatever `Content-Length` announced. */
+ export type RemoteArtifactFetch = RemoteArtifactRequest & { maxBytes: number };
+ 
+ function buildDownloadDestination(params: RemoteArtifactDownload) {
+   const { destinationPath } = params;
++  if (params.stagedFile) {
++    return {
++      prepare: async () => {
++        await fs.promises.mkdir(path.dirname(destinationPath), { recursive: true });
++      },
++      cleanupOnError: async () => {},
++      materialize: (res: http.IncomingMessage, signal: AbortSignal) =>
++        materializeStagedFile(res, destinationPath, signal),
++    };
++  }
+   if (params.isDirectory) {
+     return {
+       prepare: async () => {
+@@ -63,6 +74,24 @@ function buildDownloadDestination(params: RemoteArtifactDownload) {
+   };
+ }
+ 
++async function materializeStagedFile(
++  res: http.IncomingMessage,
++  destinationPath: string,
++  signal: AbortSignal,
++): Promise<string> {
++  const parent = await fs.promises.realpath(path.dirname(destinationPath));
++  const staging = await fs.promises.mkdtemp(path.join(parent, '.agent-device-download-'));
++  const staged = path.join(staging, 'artifact');
++  try {
++    await pipeline(res, fs.createWriteStream(staged, { flags: 'wx', mode: 0o600 }), { signal });
++    signal.throwIfAborted();
++    await fs.promises.rename(staged, path.join(parent, path.basename(destinationPath)));
++    return destinationPath;
++  } finally {
++    await fs.promises.rm(staging, { recursive: true, force: true });
++  }
++}
++
+ /** Fetches one artifact into memory. Nothing reaches the disk, so a failure leaves nothing behind. */
+ export async function fetchRemoteArtifactFromUrl(params: RemoteArtifactFetch): Promise<Buffer> {
+   return await requestRemoteArtifact(params, {
+```
+
+**File**: `packages/remote/src/daemon-artifacts.ts` (modified, +82/-15)
+```diff
+@@ -535,6 +535,7 @@ async function downloadResponseArtifacts(
+   if (artifacts.length === 0) return data === response.data ? response : { ok: true, data };
+   const nextData: Record<string, unknown> = { ...(data ?? {}) };
+   const nextArtifacts: DaemonArtifact[] = [];
++  const recording = isRecordStop(req) ? recordingDelivery() : undefined;
+   for (const artifact of artifacts) {
+     if (isSessionScriptArtifact(artifact)) {
+       await scripts?.publish(artifact, nextData, nextArtifacts);
+@@ -545,18 +546,20 @@ async function downloadResponseArtifacts(
+       continue;
+     }
+     if (typeof artifact.field !== 'string' || isClientOwnedResponseField(artifact.field)) continue;
+-    const downloadPath = resolveMaterializedArtifactPath(artifact, req, host);
++    const destination = resolveMaterializedArtifactPath(artifact, req, host);
+     const materializedPath = await downloadRemoteArtifact({
+       ...endpoint,
+       artifactId: artifact.artifactId,
+-      destinationPath: downloadPath,
++      destinationPath: destination.path,
+       requestScope: req.meta,
+       // #2246: `test-artifacts` is the one directory-shaped artifact type today — known from the
+       // response, before any bytes arrive, so cleanup-on-error can be decided up front instead of
+       // racing the response headers (a directory destination must never be `rm`'d wholesale; see
+       // `downloadRemoteArtifact`).
+-      isDirectory: artifact.artifactType === 'test-artifacts',
++      isDirectory: recording === undefined && artifact.artifactType === 'test-artifacts',
++      stagedFile: recording !== undefined,
+     });
++    recording?.add(artifact.field, materializedPath, destination.fallback);
+     // Directory artifacts download into a caller-owned root, then atomically publish their one
+     // top-level entry beneath it. Use the path the download actually published rather than the
+     // root hint sent over the wire; otherwise `artifactsDir` loses its suite invocation segment.
+@@ -567,9 +570,56 @@ async function downloadResponseArtifacts(
+     });
+   }
+   nextData.artifacts = nextArtifacts;
++  recording?.report(nextData);
+   return { ok: true, data: nextData };
+ }
+ 
++const RECORDING_DESTINATION_REASONS = {
++  notRequested: 'recording_destination_not_requested',
++} as const;
++
++type RecordingDestinationWarning = {
++  reason: typeof RECORDING_DESTINATION_REASONS.notRequested;
++  field: string;
++  path: string;
++};
++
++function recordingDelivery() {
++  const destinationWarnings: RecordingDestinationWarning[] = [];
++  const recordingPaths: string[] = [];
++  return {
++    add(field: string, written: string, fallback: boolean): void {
++      if (fallback) {
++        destinationWarnings.push({
++          reason: RECORDING_DESTINATION_REASONS.notRequested,
++          field,
++          path: written,
++        });
++      }
++      if (field === 'outPath' || field === 'chunkPath') recordingPaths.push(written);
++    },
++    report(data: Record<string, unknown>): void {
++      if (destinationWarnings.length > 0) {
++        data.recordingDestinationWarnings = destinationWarnings;
++        data.warnings = [
++          ...(Array.isArray(data.warnings) ? data.warnings : []),
++          ...destinationWarnings.map(
++            ({ path: written }) =>
++              `Saved remote recording file to ${written} in the current directory because this request named no destination.`,
++          ),
++        ];
++      }
++      // The daemon lists the first video and subsequent chunk artifacts in chunk order.
++      if (Array.isArray(data.chunks) && recordingPaths.length === data.chunks.length) {
++        data.chunks = data.chunks.map((chunk, index) => ({
++          ...chunk,
++          path: recordingPaths[index],
++        }));
++      }
++    },
++  };
++}
++
+ function hasDownloadableArtifactId(
+   artifact: DaemonArtifact | undefined,
+ ): artifact is DaemonArtifact & { artifactId: string } {
+@@ -604,15 +654,12 @@ function withoutScriptFieldOwner(
+ }
+ 
+ /**
+- * Whether this request finishes a capture whose destination this client named in an EARLIER
+- * request (`record start`, a perf or trace start with an output path). The daemon echoes that
+- * destination, and the paths it derives from it, as `localPath`, because this process kept no
+- * record of it. The finishing actions mirror the daemon's own (`request-finalization.ts`).
++ * Whether this request finishes a trace or perf capture whose destination the daemon echoes
++ * from an earlier request. The finishing actions mirror `request-finalization.ts`.
+  */
+ function finishesEarlierClientCapture(req: DaemonWireRequest): boolean {
+   const [first, second, third] = (req.positionals ?? []).map((value) => value.toLowerCase());
+   switch (req.command) {
+-    case 'record':
+     case 'trace':
+       return first === 'stop';
+     case 'perf':
+@@ -622,27 +669,46 @@ function finishesEarlierClientCapture(req: DaemonWireRequest): boolean {
+   }
+ }
+ 
++function isRecordStop(req: DaemonWireRequest): boolean {
++  return req.comm
+```
+
+**File**: `test/integration/provider-scenarios/remote-daemon-client.test.ts` (modified, +19/-4)
+```diff
+@@ -47,6 +47,7 @@ type RemoteClient = ReturnType<typeof createAgentDeviceClient>;
+ type RemotePaths = {
+   screenshotPath: string;
+   recordingPath: string;
++  cwd: string;
+   localApkPath: string;
+   localInstallSourcePath: string;
+ };
+@@ -547,10 +548,18 @@ async function assertRecordingArtifactRoundTrip(
+   assert.equal(start.recording, 'started');
+   assert.equal(fs.existsSync(paths.recordingPath), false);
+ 
++  // #4518: a remote stop never writes to the daemon's localPath echo. It lands in the client cwd
++  // under the daemon's file name and reports that fallback.
+   const stop = await client.recording.record({ action: 'stop' });
+   assert.equal(stop.recording, 'stopped');
+-  assert.equal(stop.outPath, paths.recordingPath);
+-  assert.deepEqual(fs.readFileSync(paths.recordingPath), RECORDING_BYTES);
++  const landed = path.join(paths.cwd, 'remote-recording.mp4');
++  assert.equal(stop.outPath, landed);
++  assert.deepEqual(fs.readFileSync(landed), RECORDING_BYTES);
++  assert.equal(fs.existsSync(paths.recordingPath), false);
++  assert.deepEqual(
++    (stop as { recordingDestinationWarnings?: unknown }).recordingDestinationWarnings,
++    [{ reason: 'recording_destination_not_requested', field: 'outPath', path: landed }],
++  );
+ 
+   const recordStartRpc = rpcRequests.at(-2);
+   assert.equal(recordStartRpc?.params?.command, 'record');
+@@ -631,14 +640,19 @@ test('Provider-backed integration remote daemon client materializes artifacts an
+     return;
+   }
+ 
+-  const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), 'agent-device-remote-client-'));
++  const stateDir = fs.realpathSync(
++    fs.mkdtempSync(path.join(os.tmpdir(), 'agent-device-remote-client-')),
++  );
++  const cwd = path.join(stateDir, 'cwd');
++  fs.mkdirSync(cwd);
+   const screenshotPath = path.join(stateDir, 'remote-shot.png');
+-  const recordingPath = path.join(stateDir, 'remote-recording.mp4');
++  const recordingPath = path.join(stateDir, 'clips', 'remote-recording.mp4');
+   const localApkPath = path.join(stateDir, 'demo.apk');
+   const localInstallSourcePath = path.join(stateDir, 'source.apk');
+   fs.writeFileSync(localApkPath, 'fake-apk');
+   fs.writeFileSync(localInstallSourcePath, 'fake-source-apk');
+   const paths = {
++    cwd,
+     screenshotPath,
+     recordingPath,
+     localApkPath,
+@@ -656,6 +670,7 @@ test('Provider-backed integration remote daemon client materializes artifacts an
+       daemonBaseUrl: `http://127.0.0.1:${port}`,
+       daemonAuthToken: 'remote-token',
+       stateDir,
++      cwd,
+     });
+ 
+     await assertScreenshotRoundTrip(client, paths, rpcRequests);
+```
+
+**File**: `test/wire-compat/ledger.json` (modified, +15/-10)
+```diff
+@@ -147,15 +147,15 @@
+     "packages/daemon/src/server/upload-http.ts#resolveUploadHttpRoute": "sha256:d744044d036a46221c3b8220179cc30e1e66b8619a4e5cd3f7dd5f8582817aba",
+     "packages/daemon/src/server/upload-http.ts#sendJson": "sha256:c2317b4b14a10731684c9160038005965856150f05f8923765a3fa833d2ecae9",
+     "packages/daemon/src/server/upload-http.ts#sendUploadedArtifactResponse": "sha256:8a8873eb6437a32f7045c87a7b16226a48ff7fc4d61c5de459809e2558758768",
+-    "packages/remote/src/artifact-download.ts#RemoteArtifactDownload": "sha256:6230fb1efacc0bdb7223ce4d66bc2dc754fdaca475268fe75ada0facd4e734ac",
++    "packages/remote/src/artifact-download.ts#RemoteArtifactDownload": "sha256:d3eeaf9a072123004d868a0261067456793a7121836d6f6b354fcd65aa0826bd",
+     "packages/remote/src/artifact-download.ts#downloadRemoteArtifactFromUrl": "sha256:4772ec65900be31f0ac6fb889967a9f35a4a565f6bb87e72458e3ab6e54cc941",
+     "packages/remote/src/daemon-artifacts.ts#DaemonArtifactEndpoint": "sha256:45226717ac52c0af2a62f74e91549582d95f4a4abc49be87989e026291a88c82",
+-    "packages/remote/src/daemon-artifacts.ts#DownloadRemoteArtifactParams": "sha256:ba6d2f6ac51e05ccc5e0c940b355d62374e018b1ae6f6f744becf6e1760cbb63",
++    "packages/remote/src/daemon-artifacts.ts#DownloadRemoteArtifactParams": "sha256:bb02635a5576176a12b70c25a74a2443e0ae7344b0050dd07b153da9cbfe5ae6",
+     "packages/remote/src/daemon-artifacts.ts#buildDaemonArtifactUrl": "sha256:06dcde057809b507f70f7bb5cdef9bde6515be84b67e45865cf19e70b8636208",
+     "packages/remote/src/daemon-artifacts.ts#downloadRemoteArtifact": "sha256:3f3b6c01601c54ab2c76c8cb0946de623da4d24ba32254c75ae8a3993f66adcf",
+     "packages/remote/src/daemon-artifacts.ts#isRemoteDaemon": "sha256:0f6a714c5f60ce4e8548d811b516d8b6241eca9f7e5414733732da395b8a00e7",
+     "packages/remote/src/daemon-artifacts.ts#materializeRemoteArtifacts": "sha256:6d9aba219e6fafbdbcef76d30ed99fbb4f61dcc525242a0a76c3dc1bdacd24e2",
+-    "packages/remote/src/daemon-artifacts.ts#resolveMaterializedArtifactPath": "sha256:660320cd62dfaeb4da80b86d6c072a5bcdbce3399723d43208a22d70b6e4a243",
++    "packages/remote/src/daemon-artifacts.ts#resolveMaterializedArtifactPath": "sha256:f8edfda6b7f3172392f7649ee68edd87ac1f489da57c0c0e5cb57347803bb184",
+     "packages/remote/src/remote-request-diagnostics.ts#RemoteDaemonErrorPayload": "sha256:8fbcbcdf4bae7b66a08e465a72593794f36364759f18f1a814cd39dfdb76f309",
+     "packages/remote/src/remote-request-diagnostics.ts#RemoteDiagnosticsEndpoint": "sha256:c1d5fe2fe90c425502cf8b7c87d6606374d6af65b4e9faf942a416f683930bdc",
+     "packages/remote/src/remote-request-diagnostics.ts#buildRemoteRequestDiagnosticsUrl": "sha256:30a1a9bf0df24d3564a616699916a3bb4360c2b4d21c4ad0562fb0c1e738d0a9",
+@@ -212,7 +212,7 @@
+     "packages/daemon-contracts/src/daemon-resolution.ts#DAEMON_CAPABILITIES": "sha256:3478986d0e7b0e55e965c087a7b1dfd3cc018abdb372dba256cf90d27e63ed0b",
+     "packages/daemon-contracts/src/daemon-resolution.ts#DaemonCapability": "sha256:2a5acf280a72e3d54c5ad7b52aece3ced37a30e4e721ef106a98e3bbd18ddbc3",
+     "packages/daemon-contracts/src/daemon-resolution.ts#readDaemonCapabilities": "sha256:e410d36be74d307f7e5d8ddae63af5aae77f8eef77951ce9eeb7724f2fefae88",
+-    "packages/remote/src/daemon-artifacts.ts#downloadResponseArtifacts": "sha256:bc620e6f98821fdfe7e65eb63404eb175ffd583730cb877fa5a5f9f4e80c9fe0",
++    "packages/remote/src/daemon-artifacts.ts#downloadResponseArtifacts": "sha256:aa3ea996bdd1329d88570ba87c03026946dd33f34172c0eccd5a6ac3d38e9884",
+     "packages/remote/src/session-script-destination.ts#SessionScriptDelivery": "sha256:741fafbb8e2b43e2e967b2f4206f1d60017a636f63e3cde68b6258fd4efefa18",
+     "packages/remote/src/script-version-publisher.ts#publishScriptVersion": "sha256:b37b9391d20f535ca9c0858f92ed37943297c7acbf1fb10f8cad5cd5b53423eb",
+     "packages/remote/src/script-version-publisher.ts#PublishOutcome": "sha256:a4ae6fc3298d3c560719591372edddbfa83ce749f4cf3f3e2ed1d8369313bd2d",
+@@ -499,8 +499,8 @@
+     },
+     {
+       "declaration": "packages/remote/src/daemon-artifacts.ts#resolveMaterializedArtifactPath",
+-      "digest": "sha256:660320cd62dfaeb4da80b86d6c072a5bcdbce3399723d43208a22d70b6e4a243",
+-      "rationale": "The client, not the response, chooses the local download path: a destination it registered in this request wins, a response localPath is accepted only on a record or trace stop or a perf stop or report, and any other artifact lands in cwd under the basename of its fileName. A released daemon echoes localPath equal to the registered destination for screenshot and test, and echoes an earlier destination only on those stop and report actions, so its artifacts land where they did before. The wire shape is unchanged."
++      "digest": "sha256:f8edfda6b7f3172392f7649ee68edd87ac1f489da57c0c0e5cb57347803bb184",
++      "rationale": "#4518 client-side only. Remote record stop uses a destination from the current request. Without one, it uses one plain file name or a generated name in cwd. Trac
+```
+
+---
+
+### Incident Patch 2: `4075dd11` (2026-11-21)
+**Commit Message**: fix(host-kit): pin ps lstart reads to the C locale so daemon stop finds a live daemon (#4682)
+
+* fix(host-kit): pin ps lstart reads to the C locale
+
+ps -o lstart prints weekday and month names in the caller's locale, so a
+daemon and a client under different LC_TIME compared one start time as
+different lifetimes and daemon stop orphaned a live daemon on macOS.
+Run the ps identity reads with LC_ALL=C and treat a C-form start time
+against a localized one as unknown instead of reassigned.
+
+Fixes #4656
+
+* fix(host-kit): pin only lstart-bearing ps reads and keep legacy timestamps unverified
+
+Addresses the blocking review on #4682:
+
+- The LC_ALL=C pin now applies only to ps reads whose output carries
+  lstart (HOST_PROCESS_IDENTITY_PS_ARGS sync/async and
+  readProcessField('lstart=')). The pid=,command= batch read and
+  readProcessField('command='/'state=') keep the caller's locale, so
+  command text reads with one encoding from every host-kit caller,
+  matching the unpinned listHostProcesses scan. BSD/macOS ps escapes
+  non-ASCII argv bytes under LC_ALL=C (/tmp/é-ü -> /tmp/M-CM-)-M-CM-<),
+  which broke managed-process ownership for non-ASCII paths.
+- The pin is a final override on top of
+
+**File**: `packages/daemon-client/src/__tests__/daemon-client-lifecycle.test.ts` (modified, +5/-4)
+```diff
+@@ -13,6 +13,7 @@ import {
+   mkdtempForTestSync,
+   startHttpDaemonFixture,
+   skipWhenLoopbackUnavailable,
++  staleBirthTokenLike,
+ } from '@agent-device/test-kit';
+ import {
+   planRegisteredDaemonLaunches,
+@@ -382,10 +383,10 @@ test('daemon acquisition reclaims a proven reused owner before publication', asy
+   const paths = resolveDaemonPaths(stateDir);
+   const daemon = await startHttpDaemonFixture({ via: 'fresh-daemon' });
+   vi.stubEnv('AGENT_DEVICE_STATE_DIR', stateDir);
+-  const staleStartTime =
+-    process.platform === 'linux'
+-      ? 'linux:00000000-0000-0000-0000-000000000000:0'
+-      : 'stale-start-time';
++  // A proven reuse needs a stale value in the same provenanced format as the live read of this
++  // pid; a raw legacy rendering would be unknown, not proof.
++  const liveStartTime = readProcessStartTime(process.pid);
++  const staleStartTime = staleBirthTokenLike(liveStartTime);
+   const stale = tryAcquireProcessLock({
+     lockDirPath: paths.lockPath,
+     owner: { pid: process.pid, startTime: staleStartTime, acquiredAtMs: Date.now() },
+```
+
+**File**: `packages/daemon-contracts/src/daemon-process-takeover.test.ts` (modified, +74/-5)
+```diff
+@@ -5,7 +5,12 @@ import fs from 'node:fs';
+ import os from 'node:os';
+ import path from 'node:path';
+ import { afterEach, test } from 'vitest';
+-import { isProcessAlive, readProcessStartTime } from '@agent-device/host-kit/process';
++import {
++  isProcessAlive,
++  readProcessCommand,
++  readProcessStartTime,
++} from '@agent-device/host-kit/process';
++import { staleBirthTokenLike } from '@agent-device/test-kit';
+ import { isAgentDeviceDaemonProcess, stopDaemonProcess } from './daemon-process.ts';
+ 
+ const TAKEOVER_TIMEOUTS = { termTimeoutMs: 5_000, killTimeoutMs: 2_000 };
+@@ -35,13 +40,13 @@ afterEach(async () => {
    }
  });
+ 
+-/** A daemon entry from a branch-named checkout, whose path has no project-name marker. */
+-function spawnFakeDaemonFromBranchNamedCheckout(): { pid: number; entryPath: string } {
++/** A daemon entry from a checkout under `prefix`, whose path has no project-name marker. */
++function spawnFakeDaemon(prefix: string): { pid: number; entryPath: string } {
+   // Vitest redirects `os.tmpdir()` under a worktree-named run directory. Use
+   // the host temp root so this path itself cannot accidentally contain the
+   // project name and mask the worktree identity regression.
+   const tempRoot = process.platform === 'win32' ? os.tmpdir() : '/tmp';
+-  const root = fs.realpathSync.native(fs.mkdtempSync(path.join(tempRoot, 'repair-evidence-')));
++  const root = fs.realpathSync.native(fs.mkdtempSync(path.join(tempRoot, prefix)));
+   spawnedRoots.push(root);
+   const entryPath = path.join(root, 'dist', 'src', 'internal', 'daemon.js');
+   fs.mkdirSync(path.dirname(entryPath), { recursive: true });
+@@ -56,6 +61,11 @@ function spawnFakeDaemonFromBranchNamedCheckout(): { pid: number; entryPath: str
+   return { pid, entryPath };
+ }
+ 
++/** A daemon entry from a branch-named checkout, whose path has no project-name marker. */
++function spawnFakeDaemonFromBranchNamedCheckout(): { pid: number; entryPath: string } {
++  return spawnFakeDaemon('repair-evidence-');
++}
++
+ // #1545: a reachable daemon with a code-signature mismatch is replaced. If a
+ // branch-named worktree is rejected as "not ours", replacement leaves the old
+ // daemon alive and the next request reaches a fresh empty session store.
+@@ -96,7 +106,9 @@ test('does not stop a branch-named daemon when the pid belongs to a different pr
+ 
+   const actualStartTime = readProcessStartTime(pid);
+   assert.ok(actualStartTime, 'expected the spawned daemon to report a start time');
+-  const staleStartTime = `${actualStartTime}-previous-lifetime`;
++  // A proven reuse needs a stale value in the same verified format as the live read; a legacy
++  // token would be unverified rather than proof.
++  const staleStartTime = staleBirthTokenLike(actualStartTime);
+   assert.equal(isAgentDeviceDaemonProcess(pid, staleStartTime), false);
+ 
+   const result = await stopDaemonProcess(
+@@ -110,3 +122,60 @@ test('does not stop a branch-named daemon when the pid belongs to a different pr
+   });
+   assert.equal(isProcessAlive(pid), true);
+ });
++
++// #4656: a record written before the provenance pin holds a raw `lstart` rendering — fr_FR prints
++// `mar. 17 nov. 19:42:27 2026`, locales that omit HH:mm:ss print no clock, and an earlier pinned
++// build stored the raw C form. All are unqualified, so at the daemon stop boundary they yield
++// unverified identity — never `already-exited`, and never a signal — so a live daemon is not
++// retired while it still runs.
++test.skipIf(process.platform !== 'darwin')(
++  'a legacy raw record yields unverified identity at daemon stop, not an exited daemon',
++  async () => {
++    const { pid } = spawnFakeDaemonFromBranchNamedCheckout();
++    const startTime = readProcessStartTime(pid);
++    assert.ok(startTime, 'expected the spawned daemon to report a start time');
++    assert.ok(startTime.startsWith('posix:'), `expected a posix birth token, got ${startTime}`);
++
++    for (const legacy of [
++      'mar. 17 nov. 19:42:27 2026',
++      '17 nov. 2026',
++      'Tue Nov 17 19:42:27 2026',
++    ]) {
++      const result = await stopDaemonProcess(
++        { pid, startTime: legacy },
++        { mode: 'graceful', termTimeoutMs: 200, killTimeoutMs: 100 },
++      );
++      assert.equal(result.status, 'retained', `legacy record ${legacy} must not retire the daemon`);
++      if (result.status === 'retained') {
++        assert.equal(result.reason, 'identity-unverified');
++      }
++      assert.equal(
++        isProcessAlive(pid),
++        true,
++        'no signal may reach a daemon the legacy record cannot verify',
++      );
++    }
++  },
++);
++
++test.skipIf(process.platform === 'win32')(
++  'the stop route reads a non-ASCII daemon argv as UTF-8, not as C-locale escapes',
++  async () => {
++    const { pid, entryPath } = spawnFakeDaemon('utf8-é-ü-');
++    assert.ok(entryPath.includes('é-ü'));
++
++    const command = readProcessCommand(pid);
++    assert.ok(command?.includes('é-ü'), `expected the UTF-8 argv, got ${JSON.stringify(command)}`);
++    const startTime =
 ```
 
-**File**: `packages/daemon/src/sessions/session-lifecycle/internal/__tests__/session-close-script.test.ts` (modified, +7/-4)
+**File**: `packages/daemon-contracts/src/daemon-registration-status.test.ts` (modified, +3/-1)
 ```diff
-@@ -16,6 +16,7 @@ import {
- } from '../session-close-script.ts';
- import { createLiveTestHostEnvironment, mkdtempForTestSync } from '@agent-device/test-kit';
- import { flushSessionEventLogWrites } from '@agent-device/session-journal/session-event-log';
-+import { failScriptStagingWrite } from '../../../../__tests__/support/script-staging-failure.ts';
+@@ -119,7 +119,9 @@ test('a record whose process is gone or was replaced is not a running daemon', (
+     processStartTime:
+       process.platform === 'linux'
+         ? 'linux:00000000-0000-0000-0000-000000000000:0'
+-        : 'Thu Jan  1 00:00:00 1970',
++        : process.platform === 'win32'
++          ? '000000000000000000000'
++          : 'posix:1000',
+     plugins: [ACTIVE],
+   });
+   expect(readDaemonStatus(resolveDaemonPaths(stateDir)).state).toBe('stopped');
+```
+
+**File**: `packages/daemon-contracts/src/daemon-registration.test.ts` (modified, +52/-5)
+```diff
+@@ -7,7 +7,12 @@ import {
+   readRegisteredDaemonIdentity,
+   readRegisteredDaemonOwnership,
+ } from './daemon-registration.ts';
+-import { mkdtempForTestSync, publishDaemonRegistration } from '@agent-device/test-kit';
++import {
++  LIFETIME_TOKEN,
++  LEGACY_RAW_START_TIME,
++  mkdtempForTestSync,
++  publishDaemonRegistration,
++} from '@agent-device/test-kit';
  
  const roots: string[] = [];
  
-@@ -195,10 +196,12 @@ test('#1533: an ordinary armed authoring session still publishes on bare close',
- test('ordinary close reports a filesystem failure of its script write instead of a quiet success', () => {
-   const root = mkdtempForTestSync('agent-device-session-close-script-fs-');
-   roots.push(root);
--  // A regular file where the target directory must be: publishing into it fails with ENOTDIR.
--  const blocker = path.join(root, 'blocker');
--  fs.writeFileSync(blocker, '');
--  const targetPath = path.join(blocker, 'flow.ad');
-+  // The publication's staging write is made to fail, so the caller sees the filesystem's own failure and
-+  // not an ancestry refusal. A directory whose mode denies this user is not used for that: mode bits do
-+  // not bind root, so under a root caller the write would succeed and this test would be measuring the
-+  // host's permission model instead of what close does with a failure.
-+  const targetPath = path.join(root, 'flow.ad');
-+  failScriptStagingWrite(targetPath);
-   const { req, ref, sessionStore } = setup(
-     'fs-failure',
-     makeIosSession('fs-failure', {
-```
-
----
-
-### Incident Patch 2: `aa600e98` (2026-11-18)
-**Commit Message**: docs: write down trust boundaries, security review scope, and startup-path gates (#4679)
-
-* docs(agents): drop duplicated guidance
-
-Each removed line is already owned elsewhere: the AGENTS.md task router,
-another agent doc, code comments, type declarations, tests, or
-CONTRIBUTING.md. This makes room for security guidance within the
-agent-docs byte budget.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* docs(agents): add security boundaries and a trust-boundary review trigger
-
-Write down who is trusted for which filesystem decision, the rules for
-a file written at a path another party chooses, and the destination
-classes. Add a design-review trigger and a scope rule to the review
-guide, and the startup-path and wire checks to the gates guide.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* docs(adr): shorten ADR 0016's caller-named destination section
-
-Group the walk into labeled rules, move the path-shape examples into one
-case table with owning tests, and list the rejected alternatives. Record
-that the local file is exactly 0600 while the remote client requests
-0600 under the umask, and that resolveUserPath folds relative and ~/
-spellings before the walk. Point #4649
-
-**File**: `AGENTS.md` (modified, +13/-12)
-```diff
-@@ -5,12 +5,12 @@ The daemon owns sessions. Registry declarations route commands to platform runti
- 
- ## Task routing
- 
--Read each applicable row. Follow other links only when they apply.
-+Read each applicable row. Follow other links only as needed.
- 
- | When the task involves | Read |
- | --- | --- |
- | Domain vocabulary | `CONTEXT.md` |
--| Read architecture decisions | `docs/adr/README.md` |
-+| Architecture decisions | `docs/adr/README.md` |
- | Write or amend an ADR | `docs/adr/FORMAT.md` |
- | Source, package boundaries, routing, diagnostics, CI | `docs/agents/code-ownership.md` |
- | Checks or a failed gate | `docs/agents/testing.md` |
-@@ -22,42 +22,43 @@ Read each applicable row. Follow other links only when they apply.
- | A new or changed CLI flag | `docs/agents/cli-flags.md` |
- | A PR to open or update | `docs/agents/pull-requests.md` |
- | A change to review | `docs/agents/review.md` |
-+| Trust boundaries, untrusted paths, security review | `docs/agents/security.md` |
- | Device-facing changes or manual device verification | `docs/agents/device-verification.md` |
- | Issues, PRDs, or triage labels | `docs/agents/issue-tracker.md`, `docs/agents/triage-labels.md` |
- | Web backend setup or diagnostics | `docs/agents/web-backend.md` |
- 
- A device-facing change affects live device behavior: dispatch, capture, interaction, app lifecycle, or native execution.
--If a daemon edit changes none of these, a device run is not required.
-+A daemon edit that changes none of these needs no device run.
- 
- The versioned CLI help owns command semantics. To drive an app, start with the skill's routing card.
- 
- ## Working rules
- 
--- Keep edits in the requested command family or module group. Examine other platforms only when the task requires it.
-+- Keep edits in the requested command family or module group. Examine other platforms only when the task needs it.
- - Fix a recurring failure at the owning type, registry, or construction path. Do not rebuild another owner's state.
- - Use typed reasons and details for behavior. Do not match error text.
- - Add compatibility or fallback behavior only on explicit request or approval. During a migration, remove superseded paths.
- - Encode invariants in names, types, and boundaries. Write comments only for public APIs, tool directives, or constraints that code cannot show.
- - Resolve a gate failure at the reported invariant. Do not suppress it. Do not add an allowlist to get a pass.
- - Use `@agent-device/selectors` to parse and match selectors. For other shared owners, see `docs/agents/code-ownership.md`.
--- Keep skills as routing cards. Keep `CONTEXT.md` as a glossary only. When behavior changes, update the owning help and user docs.
-+- Keep skills as routing cards. Keep `CONTEXT.md` a glossary only. When behavior changes, update the owning help and user docs.
- 
- ## Worktree setup
- 
- - Use `pnpm`. Use OXC to lint and format. Run `pnpm format` on the full repository.
--- In a new worktree, run `pnpm install --frozen-lockfile && pnpm build` before you test.
-+- In a new worktree, run `pnpm install --frozen-lockfile && pnpm build` before testing.
- - Do not change other worktrees, devices, sessions, dirty files, or experiments. Do not use `git stash`; all worktrees share it.
--- Do not copy `.env` into a worktree. For host credentials, source the main checkout's file by its absolute path.
--- Give each parallel worker different files and a different device. `pnpm check:affected --run`, `pnpm check`, and heavy `pnpm gate` ids share one lock.
-+- Do not copy `.env` into a worktree. For host credentials, source the main checkout's file by absolute path.
-+- Give each parallel worker different files and devices. `pnpm check:affected --run`, `pnpm check`, and heavy `pnpm gate` ids share one lock.
- - The layering scan reads only tracked files. Stage new modules before you trust its result.
- - When you rename a file, move its Fallow baseline entry. Do not regenerate unrelated baselines.
- 
--The validation lock automatically reclaims provably dead owners. An unknown owner continues to block.
--If the wait times out, report the printed owner and the lock state. Do not remove the lock manually.
-+The validation lock reclaims provably dead owners. An unknown owner blocks.
-+If the wait times out, report the printed owner and lock state. Do not remove the lock manually.
- 
- ## Agent docs
- 
--Write agent docs in ASD-STE100. Write one instruction in each sentence.
-+Write agent docs in ASD-STE100. Write one instruction per sentence.
- Put the condition before the instruction. Use one term for one concept.
--Keep commands and domain terms exact. Put specialized rules and new shared constraints in the owning task document, not in agent memory.
-+Keep commands and domain terms exact. Put specialized rules and new shared constraints in the owning task document, not agent memory.
- Before you add a reminder, delete duplicate or enforced rules.
-```
-
-**File**: `docs/adr/0016-active-session-script-publication.md` (modified, +53/-23)
-```diff
-@@ -25,9 +25,11 @@ This section is a normative summary.
-   Since #1349, the `target-v1` annotation of the guard must be `verification: "verified"`.
-   Every refusal happens before filesystem work and names its recovery.
- - The destination a caller names with `--save-script=<path>` is judged before anything is created.
--  It must be absolute, and every directory the walk looks a name up in must be one no other non-root local user can change.
--  What is missing is created one level at a time at 0700, inside the directory the walk just judged, and the script file is 0600.
--  The rule is POSIX-only, and a refused destination leaves nothing behind.
-+  Host-kit requires it absolute; `resolveUserPath` folds a relative or `~/` spelling lexically before that.
-+  Every directory the walk looks a name up in must be owned by the current user or root, and must be either closed to entries from others or sticky.
-+  What is missing is created one level at a time at 0700, inside the directory the walk just judged.
-+  The local file is exactly 0600. The remote client requests 0600, and the umask can narrow it.
-+  The rule is POSIX-only. A refusal before creation leaves nothing behind; a refusal after creation starts can leave the empty directories already created.
-   The daemon's own state-directory chain is outside this decision (#4649).
- - Repair transactions (ADR 0012) are disjoint from this lifecycle.
-   A session with `saveScriptBoundary` set refuses this action without a change to repair state.
-@@ -191,12 +193,12 @@ It adds no state name, command, or flag:
- - The daemon arms the recording under that ID, which `open` and `close` name in `scriptPublicationId`.
-   After each successful request that records into the ARMED recording, the daemon writes the recording so far, without a terminal `close`, and returns it as a `session-script` artifact with the ID and a growing `scriptRevision`.
-   The close-time write is the final version and has the highest revision; close takes it from the close-time write itself, so a capture that close stops first never hides recorded actions.
--  Each version, the final one included, is a fresh 0600 file in a 0700 directory under the daemon's sessions directory, and is downloaded once.
-+  Each version, the final one included, is a fresh file, requested at 0600 through the generic publisher, in a 0700 directory under the daemon's sessions directory, and is downloaded once.
-   It registers for download for the tenant that opened the recording, whatever the tenant, capture filters, or network marker of the request that recorded it.
- - The client writes a version only to the destination of a record that matches its ID and scope, and only when its revision is newer than the last published one.
-   The `savedScript` field and the `session-script` type are reserved for this path, so a script artifact under another field writes nothing.
-   Thus, a daemon response never establishes a destination, and another publication's or another session's version writes nothing.
--  The download streams, capped at 8 MiB, into a new 0600 file, created exclusively and never through a symbolic link, in a 0700 staging directory beside the destination.
-+  The download streams, capped at 8 MiB, into a new file requested at 0600, created exclusively and never through a symbolic link, in a staging directory beside the destination that is requested at 0700; the umask can narrow both modes.
-   Under the record lock, the record names the version and the staged file's device and inode before the rename or link, and the next version settles that entry from the destination's identity.
-   A second name keeps the staged inode, and its staging directory, on disk while the record may name it, so no later file can reuse that inode; settling or retiring the entry removes the staging directory.
-   The record lists each staging directory before a download writes to it, so retiring or sweeping the record also removes the staging that a crashed download left behind.
-@@ -214,32 +216,60 @@ It adds no state name, command, or flag:
- 
- ### Caller-named destination
- 
--A destination a caller names — `--save-script=<path>` on the local route, or the same path in the remote client's publication record (#4511 amendment) — is judged before anything is created. Both routes expand the caller's path to an absolute one before asking host-kit, and host-kit refuses a relative one at its entry (`relative_destination`) on every platform. Walking a relative name would put the process's working directory in the judged chain, and Node answers that name from the first query after the last `chdir`, so it can be stale while the process stands elsewhere. Host-kit owns the whole sequence as ONE call — walk, refuse, create what is missing at 0700 inside the judged directory, judge again, answer with the judged directory and its identity — and both publishers make that one call before staging. The rule closes the window with PERMISSIONS, not with timing. It is POSIX-o
-```
-
-**File**: `docs/adr/0027-descriptor-root-vs-eager-closure-budget.md` (modified, +1/-0)
-```diff
-@@ -14,6 +14,7 @@ Rename canonicalization preserves a `git mv` of a module already inside the base
- It does not exempt a pre-existing external module moved into the closure.
- `scripts/__tests__/closure-growth-rule.ts` owns the rule.
- `scripts/__tests__/closure-growth-rule.test.ts` plants violations in every failing direction.
-+To check a change, stage new entry files, fetch `origin/main`, and run `pnpm exec vitest run --project unit-core scripts/__tests__/eager-closure-budgets.test.ts`.
- The hard ADR-0019 checks remain unchanged: façade exactness and no platform implementation before binding.
- The tolerance relaxes the module-count proxy, never the loading property.
- 
-```
-
-**File**: `docs/agents/cli-flags.md` (modified, +0/-5)
-```diff
-@@ -8,9 +8,6 @@ Pass a flag only through layers that consume it:
-    Update the command family metadata/schema that exposes the flag.
-    To find the owner, run `rg -n "<command>|helpDescription|summary|supportedFlags|allowedFlags" packages/command-surface/src src/commands src/cli/parser`.
-    For schema-only CLI commands, use `SCHEMA_ONLY_CLI_COMMAND_SCHEMAS` in `packages/command-surface/src/schema/command-overrides.ts`.
--   Each flag declaration requires `projectConfig` and `recorded`.
--   `projectConfig` permits a project `agent-device.json` to set the flag.
--   `recorded` makes the session recorder copy it into `SessionAction.flags`.
-    Only when repository control is safe, set `projectConfig: true`. Otherwise, a new flag is operator-only.
-    Only when a `.ad` recording must carry the flag, set `recorded: true`.
- 2. In `packages/command-surface/src/cli-grammar/*`, read the CLI flag into command input.
-@@ -31,7 +28,6 @@ Pass a flag only through layers that consume it:
- ## Where CLI help and schema live
- 
- - Long help prose is in `src/commands/schema/cli-help.ts`.
--  CLI input readers are in `packages/command-surface/src/cli-grammar/`.
- - `src/commands/schema/usage.ts` generates the synopsis `[label]` flag tail from `allowedFlags`.
-   Only when the command synopsis names fewer options, declare `usageFlags`.
-   For pure grammar or grammar with its own mutually-exclusive brackets, use `[]`.
-@@ -45,4 +41,3 @@ Pass a flag only through layers that consume it:
-   The parser rejects only options in rows. If it rejected `--json`, it would reject the command.
- - Keep command-specific usage/flag metadata with the command family metadata that owns the command.
- - Keep argument parsing in `src/cli/parser/`. Keep help rendering in `src/commands/schema/`.
--  Command schema metadata derives from command metadata, family declarations, and the schema-only merge in `packages/command-surface/src/schema/command-overrides.ts`.
-```
-
-**File**: `docs/agents/gates.md` (modified, +2/-2)
-```diff
-@@ -1,7 +1,5 @@
- # Maintain gates
- 
--For execution, read [validation](testing.md).
--
- `CHECK_CATALOG` in `scripts/check-affected/checks.ts` owns checks and commands.
- CI declares ownership through the shared `run-gate` action with a literal gate id.
- For a new check, update the catalog and executable model.
-@@ -28,3 +26,5 @@ Generate it or fetch evidence artifacts.
- Versioned corpora, schemas, fixtures, and golden tables remain source inputs.
- If TypeScript helpers cannot load, plain `.mjs` packaging fixtures keep child-process use local.
- Prefer `execFile`.
-+
-+For a startup-path import, follow ADR 0027. For a wire change, follow `test/wire-compat/README.md`.
-```
-
-**File**: `docs/agents/issue-tracker.md` (modified, +0/-2)
-```diff
-@@ -15,8 +15,6 @@ conditions, and dependencies. For a boundary change, include an API, data shape,
- If sandboxed `gh` fails with an authentication error, run the same command with host access, if permitted.
- Do not reconfigure credentials. If it fails again, report the command and blocker.
- 
--For label meanings and state flow, see `docs/agents/triage-labels.md`.
--
- ## Current state
- 
- When you change a decision or the scope of your issue, post a comment that starts with `Decision: <topic>:`.
-```
-
-**File**: `docs/agents/review.md` (modified, +5/-1)
-```diff
-@@ -18,7 +18,6 @@ Reopen a resolved concern only when new evidence changes the conclusion.
- - Routing and surfaces: trace through daemon and backend to the affected entrypoints.
-   Helper tests that bypass the router do not prove dispatch.
- - Typed errors: follow reasons from producers through normalization, transport, and consumers.
--  Never replace them with text matching.
- - Interaction paths: verify the claims in `packages/contracts/src/interaction-guarantees.ts` against native code.
-   Error-path delegation does not prove success-path parity.
-   Before you compare performance, prove that both paths are reachable.
-@@ -33,6 +32,11 @@ Reopen a resolved concern only when new evidence changes the conclusion.
- - Changed code: flag dead code, redundant guards, casts, narrating comments, and competing owners.
- - Help and user docs: trace changed behavior claims to code paths.
-   Block unsupported claims.
-+- New trust boundary: before you write code, get a rule and a case table reviewed.
-+  The table names who chooses the path, what the kernel resolves, what can change between checks, where bytes are first written, which failures keep the action result, and the accepted cases.
-+  If prose, tests, configuration, or dependencies change the security contract, review again.
-+  Fix a regression that this change introduces at every entry point.
-+  For an unrelated finding, link an existing independent issue.
- - Bulk prose rewrites (docs, ADRs, help): get a review from another model provider.
-   The reviewer compares each changed sentence with the base. A self-review is not evidence.
- 
-```
-
-**File**: `docs/agents/security.md` (added, +21/-0)
-```diff
-@@ -0,0 +1,21 @@
-+# Security boundaries
-+
-+The CLI client trusts its caller to choose local destinations.
-+The client trusts a remote daemon for data and validated identifiers.
-+Script publication takes no path from the daemon. Capture delivery still can (#4518).
-+The daemon trusts its state directory. Nobody trusts the network or other local users.
-+Out of scope: same uid, hostile root, ACLs, mounts, untrusted filesystems.
-+
-+## Applied today
-+
-+ADR 0016 judges caller-named script destinations on POSIX against the writing process's uid.
-+Both script publishers stage and commit inside the judged directory.
-+Remote script delivery caps bytes as they arrive.
-+
-+## Proposed in #4669; applies once approved
-+
-+- For caller output, judge each directory as ADR 0016 does.
-+- For a peer-named entry under a local root, validate the single-entry name before filesystem work.
-+
-+ADR 0016's staging and byte-cap rules are candidates for that migration.
-+Screenshot `--out`, contact sheets, the JUnit reporter, trace and recording outputs, client state, and daemon state do not follow these rules yet (#4669).
-```
-
----
-
-### Incident Patch 3: `6e18ea33` (2026-11-18)
-**Commit Message**: fix(replay): verify recorded targets through the request's own capture (#4705)
-
-* refactor(daemon): name the observation capture owner for every route, not just settle
-
-The capture a post-action observation polls is admitted for any route whose own action
-binding carries none. `--settle` was the first such route and the owner was named after
-it; the owner is the route's, not the flag's. Renamed to `observation-capture.ts` with
-`resolveObservationCapture` and the `observation_capture_unavailable` phase.
-
-No behavior change: same plan, same admit-once/bind-once, same degradation and disclosure.
-
-* fix(replay): verify recorded targets through the request's own capture
-
-Replay captured its target-verification tree through the legacy interactor, while the
-commands the replay dispatches, and so the recording itself, capture through the request-
-bound runtime. On an iOS simulator those are two projections of one screen: the XCTest
-runner's tree wraps the screen's content in an `other "<screen title>"` node the
-Simulator AX bridge's tree does not have. `target-v1` ancestry therefore disagreed with
-itself and an unchanged screen replayed as `identity-mismatch` on `ancestry[...]`.
-
-Replay no
-
-**File**: `packages/daemon/src/__tests__/support/handlers/session-command-harness.ts` (modified, +3/-1)
-```diff
-@@ -76,6 +76,7 @@ export const mockBindDeviceRuntime = vi.fn(
-   async (
-     device: DeviceInfo,
-     use,
-+    _cache?: 'bypass',
-     loadLifecycleOperations: LifecycleOperationsLoader = applicationLifecycleRuntimeFixture,
-   ) => narrowDeviceBinding(await readinessBinding(device, loadLifecycleOperations), use),
- );
-@@ -128,7 +129,8 @@ export async function handleSessionCommands(
-       params.bindDevice ??
-       (lifecycleOperationsLoader === undefined
-         ? mockBindDeviceRuntime
--        : (device, use) => mockBindDeviceRuntime(device, use, lifecycleOperationsLoader)),
-+        : (device, use, cache) =>
-+            mockBindDeviceRuntime(device, use, cache, lifecycleOperationsLoader)),
-     platformResourceCleanup: params.platformResourceCleanup ?? platformResourceCleanupFixture(),
-     reconcileOrphanedDeviceClaim: async () => ({
-       status: 'retained',
-```
-
-**File**: `packages/daemon/src/core/__tests__/observation-capture.test.ts` (renamed, +64/-22)
-```diff
-@@ -3,7 +3,7 @@ import { IOS_SIMULATOR } from '@agent-device/test-kit';
- import { makeIosSession } from '../../__tests__/support/session-factories.ts';
- import { daemonPlatformServicesFixture } from '../../__tests__/support/platform-services-fixture.ts';
- import { selectorCaptureFixture } from '../../__tests__/support/selector-capture-fixture.ts';
--import { resolveSettleObservationCapture } from '../settle-observation-capture.ts';
-+import { resolveObservationCapture } from '../observation-capture.ts';
- import { emitDiagnostic } from '@agent-device/host-kit/diagnostics';
- 
- vi.mock('@agent-device/host-kit/diagnostics', async (importOriginal) => {
-@@ -14,18 +14,20 @@ vi.mock('@agent-device/host-kit/diagnostics', async (importOriginal) => {
- // #3510: the capture a `--settle` observation polls on a route whose action runtime use carries
- // none. The guarantee it owes is producer identity with the command the caller runs next; the one it
- // must not break is that settling never fails the action it follows. These pin which plan gets
--// admitted, how often, and that every way an observation capture goes away degrades to no capture
--// while disclosing its typed reason.
-+// admitted, how often, and that the owner itself discloses each of its three outcomes: a bound
-+// capture (admitted + bound), a declared refusal, or a retryable failure of its own machinery.
- 
--const unavailablePhase = ['settle_observation_capture_unavailable'];
--
--/** Level included: a degrade the caller cannot see must not be info-only, which success drops. */
--function disclosures(): { level: string | undefined; data: Record<string, unknown> }[] {
-+/** Everything the owner discloses, with level: a loss on an ok-answering route must not be info-only. */
-+function disclosures(): {
-+  level: string | undefined;
-+  phase: string;
-+  data: Record<string, unknown>;
-+}[] {
-   return vi
-     .mocked(emitDiagnostic)
-     .mock.calls.flatMap(([event]) =>
--      event.phase === unavailablePhase[0] && event.data
--        ? [{ level: event.level, data: event.data }]
-+      event.phase?.startsWith('observation_capture_') && event.data
-+        ? [{ level: event.level, phase: event.phase, data: event.data }]
-         : [],
-     );
- }
-@@ -37,20 +39,34 @@ beforeEach(() => {
- test('an available plan inspects once and binds once for the whole observation', async () => {
-   const fixture = selectorCaptureFixture();
- 
--  const capture = await resolveSettleObservationCapture({
-+  const outcome = await resolveObservationCapture({
-     command: 'back',
-     session: makeIosSession('settle', { appBundleId: 'com.example.app' }),
-     inspectFacts: fixture.inspectFacts,
-     platformServices: daemonPlatformServicesFixture(),
-     bindDevice: fixture.bindDevice,
-   });
--  if (!capture) throw new Error('expected an admitted capture');
-+  if (outcome.kind !== 'captured') throw new Error('expected an admitted capture');
- 
-   expect(fixture.inspections).toEqual([IOS_SIMULATOR]);
-   expect(fixture.binds).toEqual([IOS_SIMULATOR]);
-+  // The success path is observable on the request's own record: one admitted and one bound entry
-+  // name the cell that reached a runtime capture, so a live trace counts binds without a fake.
-+  expect(disclosures()).toEqual([
-+    {
-+      level: 'info',
-+      phase: 'observation_capture_admitted',
-+      data: { command: 'back', plan: 'selector-active-app', deviceId: IOS_SIMULATOR.id },
-+    },
-+    {
-+      level: 'info',
-+      phase: 'observation_capture_bound',
-+      data: { command: 'back', plan: 'selector-active-app', deviceId: IOS_SIMULATOR.id },
-+    },
-+  ]);
- 
--  await capture({});
--  await capture({});
-+  await outcome.capture({});
-+  await outcome.capture({});
-   expect(fixture.binds).toEqual([IOS_SIMULATOR]);
-   expect(fixture.captures).toHaveLength(2);
+@@ -55,14 +60,56 @@ test('a different published pid proves the owner no longer serves its state dir'
+   assert.equal(isSupersededDaemonOwner({ stateDir, pid: 4141, startTime: 'owner-start' }), true);
  });
-@@ -79,25 +95,33 @@ test.each([
-   async ({ refusal, session, operation, reason }) => {
-     const fixture = selectorCaptureFixture(refusal);
  
--    const capture = await resolveSettleObservationCapture({
-+    const outcome = await resolveObservationCapture({
-       command: 'back',
-       session: session(),
-       inspectFacts: fixture.inspectFacts,
-       platformServices: daemonPlatformServicesFixture(),
-       bindDevice: fixture.bindDevice,
-     });
+-test('a published start time proves supersession only when both sides are readable', () => {
++test('a published start time proves supersession only when both sides are provenanced', () => {
+   const stateDir = useStateDir();
+-  publishDaemonRegistration(stateDir, { pid: 4242, startTime: 'successor-start' });
+-  assert.equal(isSupersededDaemonOwner({ stateDir, pid: 4242, startTime: 'owner-start' }), true);
++  // Two `posix:` tokens with different values are the same provenanced format, so the difference
++  // proves the pid changed hands.
++  publishDaemonRegistration(stateDir, { pid: 4242, startTime: 'posix:1763493001000' });
++  assert.equal(
++    isSupersededDaemonOwner({ stateDir, pid: 4242, startTime: 'posix:1763493000000' }),
++    true,
++  );
++  // Raw historical renderings — a localized one, and even the C form — are unqualified, so they
++  // are unverified, never a proved supersession.
++  assert.equal(
++    isSupersededDaemonOwner({ stateDir, pid: 4242, startTime: 'mar. 17 nov. 19:42:28 2026' }),
++    false,
++  );
++  assert.equal(
++    isSupersededDaemonOwner({ stateDir, pid: 4242, startTime: 'Tue Nov 17 19:42:27 2026' }),
++    false,
++  );
+   // An unreadable start time on either side leaves the identity unproven.
+   assert.equal(isSupersededDaemonOwner({ stateDir, pid: 4242, startTime: null }), false);
+   publishDaemonRegistration(stateDir, { pid: 4242, startTime: null });
+-  assert.equal(isSupersededDaemonOwner({ stateDir, pid: 4242, startTime: 'owner-start' }), false);
++  assert.equal(
++    isSupersededDaemonOwner({ stateDir, pid: 4242, startTime: 'posix:1763493000000' }),
++    false,
++  );
++});
++
++test('a record from an older release (a raw ps start time) is never treated as replaced', () => {
++  const stateDir = useStateDir();
++  publishDaemonRegistration(stateDir, { pid: 4242, startTime: LEGACY_RAW_START_TIME });
++
++  const identity = readRegisteredDaemonIdentity(infoPathOf(stateDir));
++  assert.equal(identity?.startTime, LEGACY_RAW_START_TIME);
++  // Raw record vs canonical live read: unknown, so not superseded — unresolved, not reassignment.
++  assert.equal(
++    isSupersededDaemonOwner({
++      stateDir,
++      pid: 4242,
++      startTime: LIFETIME_TOKEN,
++    }),
++    false,
++  );
++  assert.equal(
++    readRegisteredDaemonOwnership(infoPathOf(stateDir), {
++      pid: 4242,
++      startTime: LIFETIME_TOKEN,
++    }).state,
++    'unproven',
++  );
+ });
  
--    expect(capture).toBeUndefined();
-+    // The discriminated kind is all a caching caller reads: `refused` is stable until its plan
-+    // changes, and the owner discloses why.
-+    expect(outcome).toEqual({ kind: 'refused' });
-     expect(fixture.binds).toEqual([]);
-     expect(disclosures()).toEqual([
--      { level: 'warn', data: { command: 'back', outcome: 'refused', operation, reason } },
-+      {
-+        level: 'warn',
-+        phase: 'observation_capture_unavailable',
-+        data: { command: 'back', outcome: 'refused', operation, reason },
-+      },
-     ]);
-   },
- );
- 
--// The two ways the owner's own machinery can fail the observation after a valid plan. Both are
--// best-effort by contract: the command
+ test('the published owner itself is never superseded, and absence is not proof', () => {
 ```
 
-**File**: `packages/daemon/src/core/observation-capture.ts` (added, +127/-0)
+**File**: `packages/daemon-contracts/src/device-claim-settlement.test.ts` (modified, +6/-3)
 ```diff
-@@ -0,0 +1,127 @@
-+import type { BoundSnapshotCapture } from './snapshot-runtime-binding.ts';
-+import { bindAdmittedSnapshotCapture } from './snapshot-runtime-binding.ts';
-+import { admitRuntimePlan } from './session-runtime-admission.ts';
-+import {
-+  resolveSelectorCaptureRuntimePlan,
-+  type SelectorCaptureRuntimePlan,
-+} from '@agent-device/contracts/platform-runtime-operations';
-+import { emitDiagnostic } from '@agent-device/host-kit/diagnostics';
-+import type { RuntimeOperationUnavailability } from '@agent-device/contracts/platform-runtime';
-+import type { RuntimeAdmissionBindings } from './request-runtime-binding.ts';
-+import type { SessionState } from './session-state.ts';
+@@ -246,7 +246,7 @@ test('a renewal through a migrated record’s own token writes back the shape th
+       workspace: '/worktrees/legacy',
+       stateDir: root,
+       ownerPid: process.pid,
+-      ownerStartTime: 'test-process-start-time',
++      ownerStartTime: 'Tue Nov 17 19:42:27 2026',
+       ownerToken: 'legacy-token',
+       createdAtMs: 1,
+       updatedAtMs: 1,
+@@ -258,7 +258,7 @@ test('a renewal through a migrated record’s own token writes back the shape th
+       deviceKey: canonicalLocalDeviceKey(device),
+       ownerToken: 'legacy-token',
+       ownerPid: process.pid,
+-      ownerStartTime: 'test-process-start-time',
++      ownerStartTime: 'Tue Nov 17 19:42:27 2026',
+     },
+     process.env,
+   );
+@@ -380,7 +380,10 @@ test('PID reuse is uncertain ownership and never authorizes reconciliation', asy
+     stateDir: root,
+   });
+   const stored = JSON.parse(fs.readFileSync(claimPath(root), 'utf8')) as Record<string, unknown>;
+-  fs.writeFileSync(claimPath(root), JSON.stringify({ ...stored, ownerStartTime: 'other-start' }));
++  fs.writeFileSync(
++    claimPath(root),
++    JSON.stringify({ ...stored, ownerStartTime: 'posix:1763493001000' }),
++  );
+   const reconcile = vi.fn(async () => ({ status: 'reconciled' as const }));
+ 
+   const result = await acquireDeviceClaim({
+```
+
+**File**: `packages/daemon/src/resources/device/__tests__/device-claims.test.ts` (modified, +6/-2)
+```diff
+@@ -681,8 +681,12 @@ test('release names the exact refusal for uncertain owners and misnamed claim fi
+   });
+   assert.equal(acquired.status, 'acquired');
+   const stored = JSON.parse(fs.readFileSync(claimPath(root), 'utf8')) as Record<string, unknown>;
+-  // Same PID, different recorded start time: PID reuse, uncertain ownership.
+-  fs.writeFileSync(claimPath(root), JSON.stringify({ ...stored, ownerStartTime: 'other-start' }));
++  // Same PID, different recorded start time in the same provenanced format: PID reuse,
++  // uncertain ownership. A raw legacy rendering would be unverified, not reuse.
++  fs.writeFileSync(
++    claimPath(root),
++    JSON.stringify({ ...stored, ownerStartTime: 'posix:1763493001000' }),
++  );
+   // A dead-owner claim stored under a name that is not the hash of its own
+   // device key: the claim lock protects a different path, so release refuses.
+   fs.writeFileSync(
+```
+
+**File**: `packages/daemon/src/server/http/daemon-metadata-loss.test.ts` (modified, +19/-9)
+```diff
+@@ -11,7 +11,8 @@ import {
+ 
+ const OWN_PID = process.pid;
+ const FOREIGN_PID = 999_999_999;
+-const OWN = { pid: OWN_PID, startTime: 'own-start' } as const;
++// A provenanced POSIX birth token: the verified format, so a different token proves a recycle.
++const OWN = { pid: OWN_PID, startTime: 'posix:1763493000000' } as const;
+ 
+ function scratch(): { stateDir: string; infoPath: string } {
+   const stateDir = mkdtempForTestSync('agent-device-daemon-metadata-loss-');
+@@ -25,7 +26,7 @@ function publish(stateDir: string, pid: number, startTime: string | null): void
+ describe('readDaemonMetadataLoss', () => {
+   test('a registration naming this daemon is not a loss', () => {
+     const { stateDir, infoPath } = scratch();
+-    publish(stateDir, OWN_PID, 'own-start');
++    publish(stateDir, OWN_PID, OWN.startTime);
+ 
+     assert.equal(readDaemonMetadataLoss({ infoPath, stateDir, owner: OWN }), undefined);
+   });
+@@ -42,7 +43,7 @@ describe('readDaemonMetadataLoss', () => {
+ 
+   test('a record recycling this pid under a different start time is a loss', () => {
+     const { stateDir, infoPath } = scratch();
+-    publish(stateDir, OWN_PID, 'recycled-start');
++    publish(stateDir, OWN_PID, 'posix:1763493001000');
+ 
+     assert.deepEqual(readDaemonMetadataLoss({ infoPath, stateDir, owner: OWN }), {
+       state: 'replaced',
+@@ -52,7 +53,7 @@ describe('readDaemonMetadataLoss', () => {
+ 
+   test('a registration deleted while the state dir stands is an absent loss', () => {
+     const { stateDir, infoPath } = scratch();
+-    publish(stateDir, OWN_PID, 'own-start');
++    publish(stateDir, OWN_PID, OWN.startTime);
+     fs.rmSync(infoPath);
+ 
+     assert.deepEqual(readDaemonMetadataLoss({ infoPath, stateDir, owner: OWN }), {
+@@ -63,7 +64,7 @@ describe('readDaemonMetadataLoss', () => {
+   test('a state dir that was pruned away entirely is not a loss this daemon should report', () => {
+     // Reporting one would write a `daemon.log` back into the directory the operator just removed.
+     const { stateDir, infoPath } = scratch();
+-    publish(stateDir, OWN_PID, 'own-start');
++    publish(stateDir, OWN_PID, OWN.startTime);
+     fs.rmSync(stateDir, { recursive: true, force: true });
+ 
+     assert.equal(readDaemonMetadataLoss({ infoPath, stateDir, owner: OWN }), undefined);
+@@ -74,7 +75,7 @@ describe('readDaemonMetadataLoss', () => {
+     () => {
+       // A root-owned CI host reads mode 000 anyway, so the case only binds as a non-root process.
+       const { stateDir, infoPath } = scratch();
+-      publish(stateDir, OWN_PID, 'own-start');
++      publish(stateDir, OWN_PID, OWN.startTime);
+       fs.chmodSync(infoPath, 0o000);
+       try {
+         assert.equal(readDaemonMetadataLoss({ infoPath, stateDir, owner: OWN }), undefined);
+@@ -94,6 +95,15 @@ describe('readDaemonMetadataLoss', () => {
+     assert.equal(readDaemonMetadataLoss({ infoPath, stateDir, owner: OWN }), undefined);
+   });
+ 
++  test('a legacy raw record under this pid is unverified, not a reported loss', () => {
++    // A record written before the provenance pin holds a raw `lstart` rendering, which cannot
++    // prove a different lifetime, so the daemon does not announce a takeover on it.
++    const { stateDir, infoPath } = scratch();
++    publish(stateDir, OWN_PID, 'Tue Nov 17 19:42:27 2026');
++
++    assert.equal(readDaemonMetadataLoss({ infoPath, stateDir, owner: OWN }), undefined);
++  });
++
+   test('a corrupt record is not evidence that the registration was taken', () => {
+     const { stateDir, infoPath } = scratch();
+     fs.writeFileSync(infoPath, '{not json');
+@@ -123,7 +133,7 @@ describe('watchDaemonMetadataLoss', () => {
+     vi.useFakeTimers();
+     try {
+       const { stateDir, infoPath } = scratch();
+-      publish(stateDir, OWN_PID, 'own-start');
++      publish(stateDir, OWN_PID, OWN.startTime);
+       const watch = startWatch(stateDir, infoPath);
+       try {
+         watch.advance();
+@@ -145,7 +155,7 @@ describe('watchDaemonMetadataLoss', () => {
+     vi.useFakeTimers();
+     try {
+       const { stateDir, infoPath } = scratch();
+-      publish(stateDir, OWN_PID, 'own-start');
++      publish(stateDir, OWN_PID, OWN.startTime);
+       const watch = startWatch(stateDir, infoPath);
+ 
+       fs.rmSync(stateDir, { recursive: true, force: true });
+@@ -167,7 +177,7 @@ describe('watchDaemonMetadataLoss', () => {
+     vi.useFakeTimers();
+     try {
+       const { stateDir, infoPath } = scratch();
+-      publish(stateDir, OWN_PID, 'own-start');
++      publish(stateDir, OWN_PID, OWN.startTime);
+       const watch = startWatch(stateDir, infoPath);
+       watch.cancel();
+       watch.cancel();
+```
+
+**File**: `packages/host-kit/src/internal/exec.test.ts` (modified, +25/-0)
+```diff
+@@ -319,6 +319,31 @@ test('a request command env reaches spawned commands; outside it they inherit th
+   assert.equal(hostOnly.stdout, '/daemon/Developer');
+ });
+ 
++const PRINT_TZ_AND_LOCALE = [
++  '-e',
++  'process.stdout.write(`${process.env.TZ ?? ""}|${process.env.LC_ALL ?? ""}`)',
++];
++
++test('envOverrides are the final word over the bound host environment, keeping TZ under a locale pin', async () => {
++  // Overrides merge over the effective child env instead of replacing it, so an `LC_ALL=C` pin
++  // alone still lets `TZ` through; the lstart probe itself pins `TZ=UTC` on top (host-process).
++  const host = hostWith({ TZ: 'Pacific/Kiritimati' });
++  const [pinned, requestEnvOverridden] = await Promise.all([
++    withCommandHost({ host, requestEnv: undefined }, async () =>
++      runCmd(process.execPath, PRINT_TZ_AND_LOCALE, { envOverrides: { LC_ALL: 'C' } }),
++    ),
++    withCommandHost({ host, requestEnv: { LC_ALL: 'fr_FR.UTF-8' } }, async () =>
++      runCmd(process.execPath, PRINT_TZ_AND_LOCALE, { envOverrides: { LC_ALL: 'C' } }),
++    ),
++  ]);
++  assert.equal(pinned.stdout, 'Pacific/Kiritimati|C');
++  assert.equal(
++    requestEnvOverridden.stdout,
++    'Pacific/Kiritimati|C',
++    'the override is the final word, ahead of the request env too',
++  );
++});
++
+ test.runIf(process.platform !== 'win32')(
+   'xcrun tool-not-found failures name the developer dir and how to change it',
+   async () => {
+```
+
+---
+
+### Incident Patch 3: `b233d672` (2026-11-21)
+**Commit Message**: fix(daemon-client): bound the judge-again loop on a clock, not on a wait count (#4899)
+
+`ENSURE_ATTEMPTS` divided the teardown grace by the judge-again delay, so a contended
+`ensureDaemon` always ran 300 judgements. A wait count understates what the call can
+spend: the work inside a judgement is not waited for, so a state directory another
+process keeps replacing held the call for 300 judgements plus what each judgement cost.
+The budget is now one teardown grace of elapsed time on the monotonic clock the
+package's other budgets use, each wait clamped to what is left; one grace of waits
+backstops the deadline, which a clock that stops cannot pass.
+
+`daemon-client-ensure-explicit-lifecycle.test.ts` mocked `sleep` and still ran those 300
+iterations of real work, which is what pushed it past the test timeout on a busy host. It
+now moves the budget clock, as the startup-budget and drain suites move theirs, so the
+grace passes in five judgements. Production timing is unchanged, and the waits are still
+asked for at the production cadence, so the budget assertion pins it.
+
+**File**: `packages/daemon-client/src/__tests__/daemon-client-ensure-explicit-lifecycle.test.ts` (modified, +46/-17)
+```diff
+@@ -39,9 +39,9 @@ vi.mock('@agent-device/host-kit/retry', async (importOriginal) => ({
+   sleep: vi.fn(async () => {}),
+ }));
+ // Reading the registration judges its lock owner, and one judgement runs one process-table snapshot.
+-// The contention budget is 300 judgements of a registration that does not change under the client,
+-// so its inspection is read once from the real host and replayed for the rest of the loop. The seam
+-// answers only that one lock path, and `afterEach` clears it.
++// A contention budget judges a registration these cases keep alive and unchanged, so its inspection is
++// read once from the real host and replayed for the rest of the loop. The seam answers only that one
++// lock path, and `afterEach` clears it.
+ let recordedRegistrationLock:
+   | { readonly lockPath: string; readonly inspection: ProcessLockInspection }
+   | undefined;
+@@ -69,6 +69,10 @@ const spawn = vi.mocked(runCmdDetachedMonitored);
+ const actualRetry = await vi.importActual<typeof import('@agent-device/host-kit/retry')>(
+   '@agent-device/host-kit/retry',
+ );
++// `JUDGE_AGAIN_DELAY_MS` in `daemon-client-ensure.ts`.
++const JUDGE_AGAIN_DELAY_MS = 250;
++// Held before any test replaces `performance.now`, so a moved clock still starts from real elapsed time.
++const realNow = performance.now.bind(performance);
+ 
+ afterEach(async () => {
+   vi.restoreAllMocks();
+@@ -83,8 +87,8 @@ afterEach(async () => {
+ /**
+  * Leaves the lock inspection of this registration at what the host really says right now. A daemon
+  * that keeps changing under `ensureDaemon` is judged once per attempt and one judgement runs one
+- * process-table snapshot, so a full budget is 300 snapshots of a registration these cases keep
+- * alive and unchanged. The first snapshot is the host's own answer, taken here.
++ * process-table snapshot, so the whole budget is snapshots of a registration these cases keep alive
++ * and unchanged. The first snapshot is the host's own answer, taken here.
+  */
+ function registrationLockStaysAsRecorded(
+   paths: ReturnType<typeof stateDirAndPaths>['paths'],
+@@ -98,20 +102,43 @@ function registrationLockStaysAsRecorded(
+ }
+ 
+ /**
+- * The attempt budget, through the waits it asks for: the judge-again waits must just cover the
+- * teardown grace, so one fewer wait falls short of it. Halving the loop halves this total.
++ * The budget clock, moved by this file: every wait advances it by `stepMs` while the loop keeps asking
++ * for its own delay, so the teardown grace passes in a few judgements instead of the hundreds it costs
++ * at the real cadence. The loop reads `performance.now()`, the clock this package budgets on, and it is
++ * a per-test spy rather than `Date.now`: lock-guard ages are judged off real file mtimes and `Date.now`
++ * in the same window.
+  */
+-function assertJudgedAgainForTheFullBudget(): void {
++function judgeAgainBudgetOnMovedClock(stepMs: number): { waitedMs(): number } {
++  const startedAtMs = realNow();
++  let waitedMs = 0;
++  vi.spyOn(performance, 'now').mockImplementation(() => startedAtMs + waitedMs);
++  vi.mocked(sleep).mockImplementation(async () => {
++    waitedMs += stepMs;
++  });
++  return { waitedMs: () => waitedMs };
++}
 +
 +/**
-+ * The request-bound capture for an internal observation, on a request whose own action binding
-+ * carries none: a coordinate-targeted `press`/`fill` (whose point use declares none) or a
-+ * generic-route action (#3510). Those routes polled the legacy interactor while the commands the
-+ * caller runs next read the request-bound runtime, and on an iOS simulator those are two projections
-+ * of one tree.
-+ *
-+ * Admitting the `capture-only` plan the selector family polls under closes the split; where both
-+ * paths already reached the same tree, the admitted operation resolves to the implementation used
-+ * before. Observing is best-effort by contract, so nothing here may fail or cancel the work it
-+ * follows: the result is one of three mutually exclusive kinds — a bound `capture`, a `refused`
-+ * fact about the owner's declared support, or a `retryable` probe or bind failure. A caller that
-+ * reuses the answer across observations keeps `refused` until its plan changes and re-probes only
-+ * on `retryable`; it never restates what a probe or bind cost the observation. Every kind is
-+ * disclosed where it is decided: `admitted` and `bound` at info, so a request's own record shows
-+ * which cells reached a runtime capture, and the loss kinds at `warn` — an info-only degrade on a
-+ * route that answers `ok: true` is dropped on the success path, which is the passing-unnoticed the
-+ * loss disclosures guard against. Admitting through the side-effect-free facts probe and binding
-+ * only on admission keeps an optional observation from building a command-facing refusal response,
-+ * whose Apple branch live-probes the booted simulator set for a hint nothing shows.
++ * The budget, through the clock it counts: every wait is asked for at the production cadence, and the
++ * loop stopped once that cadence had covered the teardown grace on the clock it reads — one fewer wait
++ * falls short of it. Halving the grace or the cadence stops the loop earlier and fails this.
 + */
-+export async function resolveObservationCapture(
-+  params: Readonly<{ command: string; session: SessionState }> & RuntimeAdmissionBindings,
-+): Promise<ObservationCaptureOutcome> {
-+  const plan = resolveSelectorCaptureRuntimePlan({
-+    hasActiveApp: params.session.appBundleId !== undefined,
-+    intent: 'capture-only',
-+  });
-+  const admission = await admitObservationCapturePlan(params, plan);
-+  if (admission === undefined) return { kind: 'retryable' };
-+  if (!admission.admitted) {
-+    return refused({
-+      command: params.command,
-+      operation: admission.operation,
-+      reason: admission.fact.reason,
-+    });
-+  }
-+  emitDiagnostic({
-+    level: 'info',
-+    phase: 'observation_capture_admitted',
-+    data: { command: params.command, plan: plan.kind, deviceId: params.session.device.id },
-+  });
-+  try {
-+    const capture = await bindAdmittedSnapshotCapture({
-+      admission,
-+      bindDevice: params.bindDevice,
-+      platformServices: params.platformServices,
-+    });
-+    emitDiagnostic({
-+      level: 'info',
-+      phase: 'observation_capture_bound',
-+      data: { command: params.command, plan: plan.kind, deviceId: params.session.device.id },
-+    });
-+    return { kind: 'captured', capture };
-+  } catch (error) {
-+    return retryable({ command: params.command, failure: 'bind-failed', error });
-+  }
-+}
-+
-+/** A failed facts probe is the owner's own machinery failing: the retryable kind, disclosed once here. */
-+async function admitObservationCapturePlan(
-+  params: Readonly<{ command: string; session: SessionState }> & RuntimeAdmissionBindings,
-+  plan: SelectorCaptureRuntimePlan,
-+) {
-+  try {
-+    return await admitRuntimePlan({
-+      device: params.session.device,
-+      plan,
-+      inspectFacts: params.inspectFacts,
-+    });
-+  } catch (error) {
-+    retryable({ command: params.command, failure: 'admission-probe-failed', error });
-+    return undefined;
-+  }
-+}
-+
-+/** The three mutually exclusive answers; each carries only what its own branch decided. */
-+export type ObservationCaptureOutcome =
-+  | Readonly<{ kind: 'captured'; capture: BoundSnapshotCapture }>
-+  | Readonly<{ kind: 'refused' }>
-+  | Readonly<{ kind: 'retryable' }>;
-+
-+/** Discloses the declared refusal; the caller keeps it while its plan is unchanged. */
-+function refused(detail: {
-+  command: string;
-+  operation: string;
-+  reason: RuntimeOperationUnavailability['reason'];
-+}): Readonly<{ kind: 'refused' }> {
-+  emitDiagnostic({
-+    level: 'warn',
-+    phase: 'observation_capture_unavailable',
-+    data: { ...detail, outcome: 'refused' },
-+  });
-+  return { kind: '
-```
-
-**File**: `packages/daemon/src/core/request-runtime-binding.ts` (modified, +15/-6)
-```diff
-@@ -32,6 +32,7 @@ export type BindDeviceRuntime = <
- >(
-   device: DeviceInfo,
-   use: RuntimeUse<PlatformRuntimeOperations, Required, Preferred, Conditional>,
-+  cache?: 'bypass',
- ) => Promise<
-   BoundDeviceRuntime<RuntimeUse<PlatformRuntimeOperations, Required, Preferred, Conditional>>
- >;
-@@ -125,16 +126,24 @@ export function createRequestRuntimeBindings(params: {
-     return binding;
-   };
- 
--  const bindDevice: BindDeviceRuntime = async (device, use) => {
-+  const bindOrdinary = (device: DeviceInfo) =>
-+    params.gateway
-+      .bind({ device, intent: { kind: 'ordinary' }, scope: params.scope })
-+      .then(async (binding) => await adoptBinding(cleanups, binding, params.scope))
-+      .then(admitBinding);
-+
-+  const bindDevice: BindDeviceRuntime = async (device, use, cache) => {
-     params.admitDevice?.(device);
-+    if (cache === 'bypass') {
-+      return recordBoundMutations(
-+        narrowDeviceBinding(await bindOrdinary(device), use),
-+        params.dispatchLedger,
-+      );
-+    }
-     const key = JSON.stringify([deviceIdentityKey(deviceIdentity(device)), device.booted === true]);
-     let bindingPromise = bindings.get(key);
-     if (!bindingPromise) {
--      const intent: DeviceBindingIntent = { kind: 'ordinary' };
--      bindingPromise = params.gateway
--        .bind({ device, intent, scope: params.scope })
--        .then(async (binding) => await adoptBinding(cleanups, binding, params.scope))
--        .then(admitBinding);
-+      bindingPromise = bindOrdinary(device);
-       bindings.set(key, bindingPromise);
-       void bindingPromise.catch(() => {
-         if (bindings.get(key) === bindingPromise) bindings.delete(key);
-```
-
-**File**: `packages/daemon/src/core/settle-observation-capture.ts` (removed, +0/-100)
-```diff
-@@ -1,100 +0,0 @@
--import type { BoundSnapshotCapture } from './snapshot-runtime-binding.ts';
--import { bindAdmittedSnapshotCapture } from './snapshot-runtime-binding.ts';
--import { admitRuntimePlan } from './session-runtime-admission.ts';
--import {
--  resolveSelectorCaptureRuntimePlan,
--  type SelectorCaptureRuntimePlan,
--} from '@agent-device/contracts/platform-runtime-operations';
--import { emitDiagnostic } from '@agent-device/host-kit/diagnostics';
--import type { RuntimeOperationUnavailability } from '@agent-device/contracts/platform-runtime';
--import type { RuntimeAdmissionBindings } from './request-runtime-binding.ts';
--import type { SessionState } from './session-state.ts';
--
--/**
-- * The capture a post-action observation (`--settle`) polls, for a request whose own action binding
-- * carries none: a coordinate-targeted `press`/`fill` (whose point use declares none) or a
-- * generic-route action (#3510). Those routes polled the legacy interactor while the commands the
-- * caller runs next read the request-bound runtime, and on an iOS simulator those are two projections
-- * of one tree.
-- *
-- * Admitting the `capture-only` plan the selector family polls under closes the split; where both
-- * paths already reached the same tree, the admitted operation resolves to the implementation used
-- * before. Settling is best-effort by contract, so nothing here may fail or cancel the action it
-- * follows: every unavailability degrades to `undefined`, leaving the observation on the owner's own
-- * snapshot path, and discloses its typed reason. Admitting through the side-effect-free facts probe
-- * and binding only on admission keeps an optional observation from building a command-facing refusal
-- * response, whose Apple branch live-probes the booted simulator set for a hint nothing shows.
-- */
--export async function resolveSettleObservationCapture(
--  params: Readonly<{ command: string; session: SessionState }> & RuntimeAdmissionBindings,
--): Promise<BoundSnapshotCapture | undefined> {
--  const plan = resolveSelectorCaptureRuntimePlan({
--    hasActiveApp: params.session.appBundleId !== undefined,
--    intent: 'capture-only',
--  });
--  const admission = await admitObservationCapturePlan(params, plan);
--  if (admission === undefined) return undefined;
--  if (!admission.admitted) {
--    return unavailable({
--      command: params.command,
--      outcome: 'refused',
--      operation: admission.operation,
--      reason: admission.fact.reason,
--    });
--  }
--  try {
--    return await bindAdmittedSnapshotCapture({
--      admission,
--      bindDevice: params.bindDevice,
--      platformServices: params.platformServices,
--    });
--  } catch (error) {
--    return unavailable({ command: params.command, outcome: 'bind-failed', error });
--  }
--}
--
--/** `undefined` means the owner's facts probe failed: the caller degrades like any other refusal. */
--async function admitObservationCapturePlan(
--  params: Readonly<{ command: string; session: SessionState }> & RuntimeAdmissionBindings,
--  plan: SelectorCaptureRuntimePlan,
--) {
--  try {
--    return await admitRuntimePlan({
--      device: params.session.device,
--      plan,
--      inspectFacts: params.inspectFacts,
--    });
--  } catch (error) {
--    return unavailable({ command: params.command, outcome: 'admission-probe-failed', error });
--  }
--}
--
--/** Why the observation has to go without a capture, as one typed fact the caller can read. */
--type ObservationCaptureUnavailable = Readonly<{ command: string }> &
--  (
--    | Readonly<{
--        outcome: 'refused';
--        operation: string;
--        reason: RuntimeOperationUnavailability['reason'];
--      }>
--    | Readonly<{ outcome: 'admission-probe-failed' | 'bind-failed'; error: unknown }>
--  );
--
--function unavailable(detail: ObservationCaptureUnavailable): undefined {
--  emitDiagnostic({
--    // `warn`, not the default `info`: a degrade that answers `ok: true` is dropped at info level on
--    // the success path, which is the passing-unnoticed this discloses against.
--    level: 'warn',
--    phase: 'settle_observation_capture_unavailable',
--    // The error's name travels, never its message: request diagnostics keep user input out.
--    data:
--      detail.outcome === 'refused'
--        ? { ...detail }
--        : {
--            command: detail.command,
--            outcome: detail.outcome,
--            errorName: (detail.error as Error | undefined)?.name,
--          },
--  });
--  return undefined;
--}
-```
-
-**File**: `packages/daemon/src/execution/generic-settle.ts` (modified, +3/-3)
-```diff
-@@ -20,7 +20,7 @@ import {
- import type { BoundContextFromFlags } from '../core/context.ts';
- import type { RuntimeAdmissionBindings } from '../core/request-runtime-binding.ts';
- import type { DaemonPlatformServices } from '../core/platform-services.ts';
--import { resolveSettleObservationCapture } from '../core/settle-observation-capture.ts';
-+import { resolveObservationCapture } from '../core/observation-capture.ts';
- import { isOutdatedObservation, refFrameTree } from '../core/ref-frame.ts';
- import { issueSettleRefs } from './session-snapshot.ts';
- import type { SessionStore } from '../core/session-store.ts';
-@@ -156,7 +156,7 @@ async function createGenericSettleRuntime(
-   context: GenericSettleContext,
- ): Promise<Awaited<ReturnType<typeof createInteractionRuntime>> | undefined> {
-   try {
--    const boundCapture = await resolveSettleObservationCapture({
-+    const outcome = await resolveObservationCapture({
-       command: context.req.command,
-       session: context.session,
-       inspectFacts: context.inspectFacts,
-@@ -173,7 +173,7 @@ async function createGenericSettleRuntime(
-       contextFromFlags: context.contextFromFlags,
-       platformServices: context.platformServices,
-       captureSnapshotForSession,
--      settleObservationCapture: boundCapture,
-+      settleObservationCapture: outcome.kind === 'captured' ? outcome.capture : undefined,
-     });
-   } catch {
-     return undefined;
-```
-
-**File**: `packages/daemon/src/execution/interaction/internal/interaction-runtime.ts` (modified, +1/-1)
-```diff
-@@ -192,7 +192,7 @@ export function finalizeTouchInteraction(params: FinalizeTouchInteractionInput):
- /**
-  * The capture implementation every observation on this request reads the screen through: the action
-  * binding's own capture when its runtime use carries one, otherwise the capture the request admitted
-- * for its observations (`settle-observation-capture.ts`). Resolved once, at construction, so a route
-+ * for its observations (`observation-capture.ts`). Resolved once, at construction, so a route
-  * cannot answer one capture from the request-bound runtime and the next from the legacy path. Which
-  * backend a bound capture presents stays per-capture: the settle loop pins it once it sees a
-  * `private-ax` verdict.
-```
-
-**File**: `packages/daemon/src/execution/interaction/internal/interaction-touch-prepare.ts` (modified, +5/-4)
-```diff
-@@ -7,7 +7,7 @@ import {
- } from '../../../core/touch-runtime.ts';
- import { readSettleRequest } from './interaction-flags.ts';
- import type { BoundSnapshotCapture } from '../../../core/snapshot-runtime-binding.ts';
--import { resolveSettleObservationCapture } from '../../../core/settle-observation-capture.ts';
-+import { resolveObservationCapture } from '../../../core/observation-capture.ts';
- import type { InteractionRouteInput } from '../../../core/interaction/internal/types.ts';
- import type { DaemonFailureResponse } from '@agent-device/kernel/contracts';
- import { refusedBeforeDispatch } from '../../request-dispatch-disclosure.ts';
-@@ -51,8 +51,8 @@ export async function prepareTouchDispatch(
-   const owesObservationCapture =
-     touchExecutor.captureSnapshot === undefined &&
-     readSettleRequest(params.req.flags) !== undefined;
--  const settleObservationCapture = owesObservationCapture
--    ? await resolveSettleObservationCapture({
-+  const settleObservationOutcome = owesObservationCapture
-+    ? await resolveObservationCapture({
-         command: params.req.command,
-         session,
-         inspectFacts: params.inspectFacts,
-@@ -63,6 +63,7 @@ export async function prepareTouchDispatch(
-   return {
-     ok: true,
-     touchExecutor,
--    settleObservationCapture,
-+    settleObservationCapture:
-+      settleObservationOutcome?.kind === 'captured' ? settleObservationOutcome.capture : undefined,
-   };
++function assertJudgedAgainForTheFullBudget(clock: { waitedMs(): number }, stepMs: number): void {
+   const waits = vi.mocked(sleep).mock.calls.map(([ms]) => Number(ms));
+   assert.ok(waits.length > 0, 'a contended ensure judged again at least once');
+-  const delays = [...new Set(waits)];
+-  assert.equal(delays.length, 1, `every attempt judged again with one delay, saw ${delays}`);
+-  const [delay] = delays;
+-  assert.ok(delay !== undefined && delay > 0, `a judge-again wait must be positive, saw ${delay}`);
+-  const totalMs = waits.reduce((total, ms) => total + ms, 0);
++  assert.deepEqual(
++    [...new Set(waits)],
++    [JUDGE_AGAIN_DELAY_MS],
++    'every attempt judged again after one production wait, whatever the clock says since',
++  );
++  const { waitedMs } = clock;
++  assert.ok(
++    waitedMs() >= DAEMON_TEARDOWN_GRACE_MS && waitedMs() - stepMs < DAEMON_TEARDOWN_GRACE_MS,
++    `${waits.length} judge-again waits must just cover the ${DAEMON_TEARDOWN_GRACE_MS}ms teardown grace (${waitedMs()}ms)`,
++  );
+   assert.ok(
+-    totalMs >= DAEMON_TEARDOWN_GRACE_MS && totalMs - delay < DAEMON_TEARDOWN_GRACE_MS,
+-    `${waits.length} judge-again waits of ${delay}ms must just cover the ${DAEMON_TEARDOWN_GRACE_MS}ms teardown grace (${totalMs}ms)`,
++    waits.length < Math.ceil(DAEMON_TEARDOWN_GRACE_MS / JUDGE_AGAIN_DELAY_MS),
++    `the clock, not the wait ceiling, ended the loop: ${waits.length} waits`,
+   );
  }
+ 
+@@ -608,14 +635,15 @@ test('ensureDaemon reports contentio
+```
+
+**File**: `packages/daemon-client/src/daemon-client-ensure.ts` (modified, +19/-14)
+```diff
+@@ -36,10 +36,6 @@ import {
+ // a daemon this call quiesced can still be leaving. A judgement that went stale is made again after
+ // a short wait, for as long as a drain can take.
+ const JUDGE_AGAIN_DELAY_MS = 250;
+-// The budget is counted in waits, not on a clock: each attempt that judges again waits once, so the
+-// waits alone add up to the teardown grace. The work inside an attempt is not counted, so a state
+-// directory that another process keeps replacing can hold this call for longer.
+-const ENSURE_ATTEMPTS = Math.ceil(DAEMON_TEARDOWN_GRACE_MS / JUDGE_AGAIN_DELAY_MS);
+ const DRAIN_POLL_MS = 250;
+ 
+ type EnsureStep =
+@@ -61,18 +57,27 @@ export async function ensureDaemon(
+   host: HostEnvironment = captureHostEnvironment(process),
+ ): Promise<DaemonConnection> {
+   const settings = resolveLocalDaemonSettings(options, host);
+-  for (let attempt = 1; attempt <= ENSURE_ATTEMPTS; attempt += 1) {
++  // The budget is one teardown grace of elapsed time: a state directory another process keeps
++  // replacing holds this call for the grace, not for a grace of judgements plus what each judgement
++  // cost. `maxWaits` backstops the deadline, which cannot end the loop on a clock that stops. The
++  // deadline is monotonic, like the transport and lifecycle budgets: a wall-clock step would shorten
++  // the grace, and `sleep` itself counts waiting monotonically.
++  const deadlineAtMs = performance.now() + DAEMON_TEARDOWN_GRACE_MS;
++  const maxWaits = Math.ceil(DAEMON_TEARDOWN_GRACE_MS / JUDGE_AGAIN_DELAY_MS);
++  for (let waits = 0; ; waits += 1) {
+     const step = await ensureOnce(settings, options.onStart);
+-    if (step.kind === 'judge-again') {
+-      await sleep(JUDGE_AGAIN_DELAY_MS);
+-      continue;
++    if (step.kind === 'connected') {
++      await assertDaemonPolicyMatches(step.daemon.info, settings.paths.baseDir, host);
++      return {
++        stateDir: settings.paths.baseDir,
++        daemon: daemonIdentityOf(step.daemon.info),
++        started: step.started,
++      };
+     }
+-    await assertDaemonPolicyMatches(step.daemon.info, settings.paths.baseDir, host);
+-    return {
+-      stateDir: settings.paths.baseDir,
+-      daemon: daemonIdentityOf(step.daemon.info),
+-      started: step.started,
+-    };
++    if (waits >= maxWaits) break;
++    const remainingMs = deadlineAtMs - performance.now();
++    if (remainingMs <= 0) break;
++    await sleep(Math.min(JUDGE_AGAIN_DELAY_MS, remainingMs));
+   }
+   throw new AppError('COMMAND_FAILED', 'The daemon kept changing while it was being ensured.', {
+     reason: 'daemon-lifecycle-contended',
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4712** (closed): revert(ci): run the Android smoke lane on four vCPU again (@thymikee)
-- **PR #4711** (2026-11-18): fix(test-app): handle sign-in cancellation and duplicate taps (@thymikee)
-- **PR #4708** (2026-11-18): test(test-app): add a sign-in sheet lab for the hosted web auth surface (@thymikee)
-- **PR #4707** (2026-11-18): chore(contracts): remove dead exports (@thymikee)
-- **PR #4706** (2026-11-18): chore(scripts): wire check-provider-plugin into package.json scripts (@thymikee)
-- **PR #4705** (2026-11-18): fix(replay): verify recorded targets through the request's own capture (@thymikee)
+- **PR #4926** (2026-11-21): fix(harmonyos): label snapshot nodes with their visible text (@thymikee)
+- **PR #4924** (2026-11-21): refactor(reasons): declare the R3 platform-apple reasons in ReasonTable rows (@thymikee)
+- **PR #4918** (2026-11-21): chore(release): publish the managed platform plugins (@thymikee)
+- **PR #4915** (2026-11-21): docs(commands): regenerate the close --shutdown help row (@thymikee)
+- **PR #4904** (2026-11-21): refactor(reasons): declare published reasons in ReasonTable rows beside their classifiers (@thymikee)
+- **PR #4902** (2026-11-21): fix(android): end close once the pre-close processes are gone (@thymikee)
 
 ---
 
@@ -2963,37 +2888,31 @@ Replay no
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. judge a save-script destination another local user can steer
+## X. remote): write record stop output only to request-named destinations
 
 **RULE**:
-When implementing operations in `docs/adr/0016-active-session-script-publication.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in callstack/agent-device. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/agents/security.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in callstack/agent-device. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ada87a3b`: judge a save-script destination another local user can steer. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `64d7fc75`: remote): write record stop output only to request-named destinations. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/adr/0016-active-session-script-publication.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/agents/security.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-- The destination a caller names with `--save-script=<path>` is judged before anything is created.
-  It must be absolute, and every directory the walk looks a name up in must be one no other non-root local user can change.
-  What is missing is created one level at a time at 0700, inside the directory the walk just judged, and the script file is 0600.
-  The rule is POSIX-only, and a refused destination leaves nothing behind.
-  The daemon's own state-directory chain is outside this decision (#4649).
-- Before it sends the open, the client mints a random publication ID and records the destination and the `--force` grant under it in its state directory (`remote-connections/session-scripts/`), keyed by the endpoint, the tenant, the session, and that ID. That directory is the client's own private state, not a script destination: the client creates it the way it always did, with one recursive `mkdir` that forces nothing on a directory that already stands, and the only file ever written there is the client's own record. The script itself is published by the daemon to its own sessions directory; the client's own copy goes to the caller's destination, judged by the rule under [Caller-named de
+Scripts and remote record stop reject daemon paths (#4518). Trace and perf take them.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-- Before it sends the open, the client mints a random publication ID and records the destination and the `--force` grant under it in its state directory (`remote-connections/session-scripts/`), keyed by the endpoint, the tenant, the session, and that ID.
-The destination keeps local `--save-script` semantics: the client creates a missing parent directory and checks no ancestor ownership, so another local user who can write an ancestor directory can redirect the file, locally and remotely alike (#4565).
+Script publication takes no path from the daemon. Capture delivery still can (#4518).
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ada87a3b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `64d7fc75` are properly handled with clean fallback behavior.
 
 
 ## 3. Decision Protocol & Boundary Restrictions

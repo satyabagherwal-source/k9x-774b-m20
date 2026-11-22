@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T05:12:44.342Z",
+  "last_updated": "2026-11-22T05:20:03.365Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-22T05:12:43.304Z",
@@ -43,7 +43,7 @@
       "staged_for_review": 0
     },
     "zoontek-react-native-permissions-learnings.md": {
-      "processed_at": "2026-11-22T02:53:25.495Z",
+      "processed_at": "2026-11-22T05:20:02.776Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -53,7 +53,7 @@
       "staged_for_review": 1
     },
     "callstack-agent-device-learnings.md": {
-      "processed_at": "2026-11-19T00:50:27.919Z",
+      "processed_at": "2026-11-22T05:20:01.896Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2288,8 +2288,8 @@
       "staged_for_review": 0
     },
     "hf-scantist-glm-5.3-slim-gguf-learnings.md": {
-      "processed_at": "2026-11-14T00:49:23.505Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-22T05:20:01.563Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "hf-minimaxai-minimax-h3-learnings.md": {
@@ -3703,7 +3703,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 3012,
+  "total_dossiers_evaluated": 3015,
   "total_canonical_promoted": 470,
-  "total_staged_for_review": 2298
+  "total_staged_for_review": 2300
 }

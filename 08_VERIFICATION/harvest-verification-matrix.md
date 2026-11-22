@@ -12016,3 +12016,5 @@
 | `CYCLE-20261122-H6HB` | `2026-11-22T05:04:28.175Z` | `audio-cpp/audio.cpp-gguf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-audio-cpp-audio.cpp-gguf-learnings.md` | Yes (`ea4b7856...`) |
 | `CYCLE-20261122-H78M` | `2026-11-22T05:04:29.158Z` | `Dicklesworthstone/destructive_command_guard` | Commit diff / Patch analysis | `VERIFIED` | `Rule null` | Yes (`0004a3e9...`) |
 | `CYCLE-20261122-RICL` | `2026-11-22T05:12:30.117Z` | `mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-mradermacher-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-i1-gguf-learnings.md` | Yes (`d64740fe...`) |
+| `CYCLE-20261122-0XG0` | `2026-11-22T05:19:49.584Z` | `Scantist/GLM-5.3-SLIM-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-scantist-glm-5.3-slim-gguf-learnings.md` | Yes (`85815755...`) |
+| `CYCLE-20261122-1397` | `2026-11-22T05:19:57.115Z` | `callstack/agent-device` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9897` | Yes (`cde4236a...`) |

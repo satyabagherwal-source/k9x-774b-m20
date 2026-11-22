@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T05:12:30.127Z",
-  "total_cycles_completed": 11424,
-  "total_learnings_persisted": 11424,
-  "total_rules_promoted": 10709,
+  "last_updated": "2026-11-22T05:19:57.122Z",
+  "total_cycles_completed": 11426,
+  "total_learnings_persisted": 11426,
+  "total_rules_promoted": 10710,
   "history": [
-    {
-      "timestamp": "2026-11-21T12:37:54.119Z",
-      "repository": "orcarouter/OrcaCyber-Nano-1.0",
-      "learningId": "learn-huggingface-orcarouter-orcacyber-nano-1-0",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T12:37:57.318Z",
-      "repository": "codewhale-hq/Codewhale",
-      "learningId": "learn-github-codewhale-hq-codewhale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T12:38:02.858Z",
       "repository": "open-policy-agent/opa",
@@ -1403,6 +1389,20 @@
       "repository": "mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF",
       "learningId": "learn-huggingface-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic-i1-gguf",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T05:19:49.592Z",
+      "repository": "Scantist/GLM-5.3-SLIM-GGUF",
+      "learningId": "learn-huggingface-scantist-glm-5-3-slim-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T05:19:57.122Z",
+      "repository": "callstack/agent-device",
+      "learningId": "learn-github-callstack-agent-device",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

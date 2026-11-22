@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T05:12:44.161Z",
+  "last_updated": "2026-11-22T05:20:03.248Z",
   "total_verified_learnings": 9068,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23468,
+  "total_items": 23471,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -218925,13 +218925,13 @@
       "item_id": "candidate_directive-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-SNUY-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-17S3-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "ddb006cdbc8eb956a285e8d5f99d8a195e953a1214e0a78192cd970913b98238",
+      "content_hash": "4e260e3de207e4f3a4aaeace646177250140dbf23f7e43ae8711528d4c6cf971",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T02:53:25.834Z"
+      "persisted_at": "2026-11-22T05:20:02.979Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c",
@@ -218941,9 +218941,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "216c1d5bd5642cc5d38aaa32c5d132e4411f0f0374b527229e10a990b0814a99",
+      "content_hash": "86174b8a7a7645800731d8dbb3d1e3e55f23c730617505632ac91b3fa166cc6e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T02:53:26.070Z"
+      "persisted_at": "2026-11-22T05:20:03.113Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -218953,9 +218953,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "29df67742bdf418fab2058ff479926357b9411085853c6bde420bc3bf5c5c1d1",
+      "content_hash": "ebdc9f19279e61ae30c310fc89cbd759bbfb37ff136ef10bc20e7c91c79a21e4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T02:53:26.314Z"
+      "persisted_at": "2026-11-22T05:20:03.248Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -220785,7 +220785,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Scantist/GLM-5.3-SLIM-GGUF",
       "source_version": "hf-scantist-glm-5.3-slim-gguf",
-      "content_hash": "9a3f76b15d179917816cb706e3bd608a59a636830639cbdb317ca1bbf7b3f49d",
+      "content_hash": "85815755a85899d6e138308e59158f603f8f7a71f538e72a693e9d9d37ca5e60",
       "dossier_path": "07_PROJECT_LEARNING/hf-scantist-glm-5.3-slim-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-scantist-glm-5.3-slim-gguf-learnings.md",
       "promoted_rules": [],
@@ -220794,7 +220794,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T00:48:30.356Z",
+      "verified_at": "2026-11-22T05:19:49.419Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -220811,9 +220811,9 @@
       "title": "Research & Knowledge Intelligence: Scantist/GLM-5.3-SLIM-GGUF Core Invariants",
       "repository": "Scantist/GLM-5.3-SLIM-GGUF",
       "source_version": "hf-scantist-glm-5.3-slim-gguf",
-      "content_hash": "d53fbd82a3058765c4bc06093e9ecf2aaf89c2d5525116b5fbc6ed110c7589c2",
+      "content_hash": "bba369e4ddef28161d0b0edd1ea4168056b81367b8ebb37b6e8c04540a094110",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T00:48:30.686Z"
+      "persisted_at": "2026-11-22T05:19:49.757Z"
     },
     "rule-8413": {
       "learning_id": "rule-8413",
@@ -220849,9 +220849,9 @@
       "title": "Research & Knowledge Intelligence: hf-scantist-glm-5.3-slim-gguf-learnings Core Invariants",
       "repository": "hf-scantist-glm-5.3-slim-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "64326af889262212952692ebfb2527c79471326a02f962dc76c8ad51712a56f2",
+      "content_hash": "7166b0b1bcddc2fba0e4b3e3327490272225187e67708acd7988adbf0c6283b4",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T00:49:23.700Z"
+      "persisted_at": "2026-11-22T05:20:01.743Z"
     },
     "candidate_directive-deps-dev-bump-the-build-tooling-group-across-1-directory-with-2-updates": {
       "item_id": "candidate_directive-deps-dev-bump-the-build-tooling-group-across-1-directory-with-2-updates",
@@ -234367,8 +234367,8 @@
       "slug": "callstack-agent-device",
       "platform": "github",
       "source_url": "https://github.com/callstack/agent-device",
-      "source_version": "6e18ea33",
-      "content_hash": "cbd705d794d94682c6cfd82bdd3477bdc21f655e269213a53d2457a8dc7b7edb",
+      "source_version": "d6767e09",
+      "content_hash": "cde4236acf8612949faf0f080ef7644a6ea74fe0ce16d195fa796e5d7f979e53",
       "dossier_path": "07_PROJECT_LEARNING/callstack-agent-device-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/callstack-agent-device-learnings.md",
       "promoted_rules": [
@@ -234386,6 +234386,11 @@
           "number": 9311,
           "title": "judge a save-script destination another local user can steer",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9897,
+          "title": "write record stop output only to request-named destinations",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -234393,7 +234398,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T00:49:47.467Z",
+      "verified_at": "2026-11-22T05:19:56.964Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -234435,10 +234440,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-callstack-agent-device-technical-construction-intelligence-callstack-agent-devic.md",
       "title": "Technical Construction Intelligence: callstack/agent-device Core Invariants",
       "repository": "callstack/agent-device",
-      "source_version": "6e18ea33",
-      "content_hash": "ac07298327f3783bb08794b169c85b9265cd70c0ac5b2a2f31547dd661dee1e4",
+      "source_version": "d6767e09",
+      "content_hash": "17cf4462e1809d3c00717dde097291a3894c806c40c457b5ad455328abf159bd",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T00:49:48.011Z"
+      "persisted_at": "2026-11-22T05:19:57.471Z"
     },
     "agent_contract-agent-contract-callstack-agent-device-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-callstack-agent-device-autonomous-specialist-persona",
@@ -234447,10 +234452,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/callstack-agent-device-agent-contract-callstack-agent-device-autonomous-speciali.md",
       "title": "Agent Contract: callstack/agent-device Autonomous Specialist Persona",
       "repository": "callstack/agent-device",
-      "source_version": "6e18ea33",
-      "content_hash": "c4f04d9d5e93ccb2b3a50f3b8491daf4534f240b580c85d92c0e42883db2ec2e",
+      "source_version": "d6767e09",
+      "content_hash": "a89f41c54a6378644b01b1c129537da23381722cec55f6b1af7f9c2bd65ed704",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T00:49:48.292Z"
+      "persisted_at": "2026-11-22T05:19:57.624Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-callstack-agent-device": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-callstack-agent-device",
@@ -234459,10 +234464,10 @@
       "relative_path": "08_VERIFICATION/callstack-agent-device-verification-protocol-empirical-defect-shield-for-callsta.md",
       "title": "Verification Protocol: Empirical Defect Shield for callstack/agent-device",
       "repository": "callstack/agent-device",
-      "source_version": "6e18ea33",
-      "content_hash": "84bf3a36b7f993fd065a81484ba744c0bb5ec1897f76bd2aea340d2ae2f7c845",
+      "source_version": "d6767e09",
+      "content_hash": "16262e1daa32f710fa6ce1165d279089326d1f799177b17d39553183ca1639eb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T00:49:48.447Z"
+      "persisted_at": "2026-11-22T05:19:57.764Z"
     },
     "learn-github-apache-pinot": {
       "learning_id": "learn-github-apache-pinot",
@@ -234628,9 +234633,9 @@
       "title": "Technical Construction Intelligence: callstack-agent-device-learnings Core Invariants",
       "repository": "callstack-agent-device-learnings",
       "source_version": "HEAD",
-      "content_hash": "f082f87604bddef80ae33b2c98d87d48db8d0a011343273e22acd41f0e7a2bb9",
+      "content_hash": "a1417dd9b23bca4aa81b73c9f8bf6c92d33b6c9950ca22a404e5e3ab07ed0c59",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T00:50:28.303Z"
+      "persisted_at": "2026-11-22T05:20:02.401Z"
     },
     "agent_contract-agent-contract-callstack-agent-device-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-callstack-agent-device-learnings-autonomous-specialist-persona",
@@ -234640,9 +234645,9 @@
       "title": "Agent Contract: callstack-agent-device-learnings Autonomous Specialist Persona",
       "repository": "callstack-agent-device-learnings",
       "source_version": "HEAD",
-      "content_hash": "a600f7674ef2e1d1c96b36a8820e01dce24e108768e9d591aa0ed65ee5b4533c",
+      "content_hash": "0463ddf259325a15f20dea0975e42e78bbcb1762c27d7d5a479ddc4005346e35",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T00:50:28.590Z"
+      "persisted_at": "2026-11-22T05:20:02.533Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-callstack-agent-device-learnin": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-callstack-agent-device-learnin",
@@ -234652,9 +234657,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for callstack-agent-device-learnings",
       "repository": "callstack-agent-device-learnings",
       "source_version": "HEAD",
-      "content_hash": "c0b5e204b9b9c7e49eb642ad0ce2ab49bdbb271d45f6e4142f60ce1ef2d9ed7b",
+      "content_hash": "c2605b1f01fb893b44d97e61a59075fcf69b4593d60af4b7dc86f9f5814411b4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T00:50:28.733Z"
+      "persisted_at": "2026-11-22T05:20:02.644Z"
     },
     "learn-huggingface-canberkkkkkk-ema-lightning": {
       "learning_id": "learn-huggingface-canberkkkkkk-ema-lightning",
@@ -319181,6 +319186,44 @@
       "content_hash": "ca742b1ba99989e0afff6cffaaf729e5d06485f4a79c4beecaf1c306cda3c630",
       "domain_letter": "D",
       "persisted_at": "2026-11-22T05:12:42.224Z"
+    },
+    "rule-9897": {
+      "learning_id": "rule-9897",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9897,
+      "title": "write record stop output only to request-named destinations",
+      "source_url": "https://github.com/callstack/agent-device",
+      "source_version": "d6767e09",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T05:19:56.964Z"
+    },
+    "candidate_directive-write-record-stop-output-only-to-request-named-destinations": {
+      "item_id": "candidate_directive-write-record-stop-output-only-to-request-named-destinations",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-13EE-write-record-stop-output-only-to-request-named-destinations.md",
+      "title": "write record stop output only to request-named destinations",
+      "repository": "callstack/agent-device",
+      "source_version": "d6767e09",
+      "content_hash": "12a869d6c05dbcc5456d5045f8a8160ebf0d192dc3f61f65598e766f7673f2ce",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T05:19:57.307Z"
+    },
+    "candidate_directive-remote-write-record-stop-output-only-to-request-named-destinations": {
+      "item_id": "candidate_directive-remote-write-record-stop-output-only-to-request-named-destinations",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-178F-remote-write-record-stop-output-only-to-request-named-destinations.md",
+      "title": "remote): write record stop output only to request-named destinations",
+      "repository": "callstack-agent-device-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0fd7f77d26172a8417e8032270441dfe8ee385b712bfcd8e1c9b80b6a1e3ea92",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T05:20:02.276Z"
     }
   },
   "ai-builder-brain": {

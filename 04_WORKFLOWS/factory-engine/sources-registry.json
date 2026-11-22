@@ -20,9 +20,9 @@
   "gravitl-netmaker": {
     "name": "netmaker",
     "officialUrl": "https://github.com/gravitl/netmaker",
-    "lastChecked": "2026-11-21T23:55:37.811Z",
+    "lastChecked": "2026-11-22T05:19:56.481Z",
     "revisionIdentifier": "098d26a7",
-    "lastVerified": "2026-11-21T23:55:37.811Z"
+    "lastVerified": "2026-11-22T05:19:56.481Z"
   },
   "mintplex-labs-anything-llm": {
     "name": "Mintplex-Labs/anything-llm",
@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-22T05:12:41.843Z",
-    "lastVerified": "2026-11-22T05:12:41.843Z",
+    "lastChecked": "2026-11-22T05:20:01.457Z",
+    "lastVerified": "2026-11-22T05:20:01.457Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -255,9 +255,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-22T04:39:01.050Z",
+    "lastChecked": "2026-11-22T05:20:01.448Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-22T04:39:01.050Z"
+    "lastVerified": "2026-11-22T05:20:01.448Z"
   },
   "herdrdev-herdr": {
     "name": "herdrdev/herdr",
@@ -3413,12 +3413,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "neuron-core-neuron-ai": {
-    "name": "neuron-core/neuron-ai",
+    "name": "neuron-ai",
     "officialUrl": "https://github.com/neuron-core/neuron-ai",
     "sourceType": "github",
     "technology": "PHP",
-    "lastChecked": "2026-11-21T00:43:54.806Z",
-    "lastVerified": "2026-11-21T00:43:54.806Z",
+    "lastChecked": "2026-11-22T05:19:59.055Z",
+    "lastVerified": "2026-11-22T05:19:59.055Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-neuron-core-neuron-ai",
@@ -3427,7 +3427,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "f6ba920a"
   },
   "gitoxidelabs-gitoxide": {
     "name": "GitoxideLabs/gitoxide",
@@ -4518,9 +4519,9 @@
   "gocrane-crane": {
     "name": "crane",
     "officialUrl": "https://github.com/gocrane/crane",
-    "lastChecked": "2026-11-21T01:24:57.280Z",
+    "lastChecked": "2026-11-22T05:19:53.969Z",
     "revisionIdentifier": "2b0ddae8",
-    "lastVerified": "2026-11-21T01:24:57.280Z"
+    "lastVerified": "2026-11-22T05:19:53.969Z"
   },
   "typedb-typedb": {
     "name": "typedb",
@@ -5829,14 +5830,14 @@
     "officialUrl": "https://github.com/callstack/agent-device",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-19T00:49:46.681Z",
-    "lastVerified": "2026-11-19T00:49:46.681Z",
+    "lastChecked": "2026-11-22T05:19:56.329Z",
+    "lastVerified": "2026-11-22T05:19:56.329Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-callstack-agent-device",
-    "contentHash": "cbd705d794d94682c6cfd82bdd3477bdc21f655e269213a53d2457a8dc7b7edb",
+    "contentHash": "cde4236acf8612949faf0f080ef7644a6ea74fe0ce16d195fa796e5d7f979e53",
     "promotedRulesCount": 1,
-    "recentFixesCount": 12,
+    "recentFixesCount": 20,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6319,9 +6320,9 @@
   "yvgude-lean-ctx": {
     "name": "lean-ctx",
     "officialUrl": "https://github.com/yvgude/lean-ctx",
-    "lastChecked": "2026-11-20T19:24:56.059Z",
+    "lastChecked": "2026-11-22T05:19:46.491Z",
     "revisionIdentifier": "9701b374",
-    "lastVerified": "2026-11-20T19:24:56.059Z"
+    "lastVerified": "2026-11-22T05:19:46.491Z"
   },
   "hf-argmaxinc-whisperkit-coreml": {
     "name": "argmaxinc/whisperkit-coreml",
@@ -13666,6 +13667,23 @@
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic-i1-gguf",
     "contentHash": "d64740fe0096f3b7f74fc65e7f8951115d38e33b817e6106f1ae1723bf62eb41",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-scantist-glm-5.3-slim-gguf": {
+    "name": "Scantist/GLM-5.3-SLIM-GGUF",
+    "officialUrl": "https://huggingface.co/Scantist/GLM-5.3-SLIM-GGUF",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-22T05:19:49.093Z",
+    "lastVerified": "2026-11-22T05:19:49.093Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-scantist-glm-5-3-slim-gguf",
+    "contentHash": "85815755a85899d6e138308e59158f603f8f7a71f538e72a693e9d9d37ca5e60",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

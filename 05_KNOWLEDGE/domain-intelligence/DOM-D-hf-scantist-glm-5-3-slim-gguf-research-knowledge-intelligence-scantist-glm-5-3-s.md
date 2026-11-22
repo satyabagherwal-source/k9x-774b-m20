@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/Scantist/GLM-5.3-SLIM-GGUF",
   "source_version": "hf-scantist-glm-5.3-slim-gguf",
   "license": "Open-Source",
-  "timestamp": "2026-11-14T00:48:30.686Z",
+  "timestamp": "2026-11-22T05:19:49.756Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-scantist-glm-5-3-slim-gguf",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [Scantist/GLM-5.3-SLIM-GGUF](https://huggingface.co/Scantist/GLM-5.3-SLIM-GGUF) (Revision: `hf-scantis`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-14T00:48:30.686Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T05:19:49.756Z`  
 > **Learning ID**: `learn-huggingface-scantist-glm-5-3-slim-gguf`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-scantist-glm-5.3-slim-gguf-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Scantist/GLM-5.3-SLIM-GGUF](https://huggingface.co/Scantist/GLM-5.3-SLIM-GGUF))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T00:48:29.992Z  
+> **Harvest Timestamp**: 2026-11-22T05:19:49.093Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 18066 downloads | 1373 likes
+- **Stars / Engagement**: 26940 downloads | 794 likes
 
 ---
 

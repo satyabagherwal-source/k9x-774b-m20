@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T05:12:43.297Z",
+  "last_updated": "2026-11-22T05:20:02.979Z",
   "directives": [
     {
       "id": "CD-001",
@@ -5336,11 +5336,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-SNUY",
+      "id": "CD-17S3",
       "directive_title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "source_repo": "zoontek-react-native-permissions-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-SNUY-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-17S3-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-22",
@@ -45139,6 +45139,37 @@
       "source_repo": "zulip-zulip",
       "domain_letter": "A",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-12ABB5-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-22"
+    },
+    {
+      "id": "CD-13EE",
+      "directive_title": "write record stop output only to request-named destinations",
+      "source_repo": "callstack/agent-device",
+      "source_commit": "d6767e09",
+      "staged_file": "11_INBOX/candidate-directives/CD-13EE-write-record-stop-output-only-to-request-named-destinations.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-22",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-178F",
+      "directive_title": "remote): write record stop output only to request-named destinations",
+      "source_repo": "callstack-agent-device-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-178F-remote-write-record-stop-output-only-to-request-named-destinations.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-22",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-5D3C9B",
+      "directive_title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-permissions",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-5D3C9B-android-skip-explicit-kotlin-plugin-when.md",
       "staged_date": "2026-11-22"
     }
   ]

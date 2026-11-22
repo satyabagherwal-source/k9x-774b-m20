@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-22T05:04:40.640Z",
+  "updated_at": "2026-11-22T05:20:02.084Z",
   "stats": {
-    "total_discovered": 7445,
-    "approved_pending_harvest": 7045,
+    "total_discovered": 7450,
+    "approved_pending_harvest": 7049,
     "harvested_count": 0,
-    "rejected_count": 400,
+    "rejected_count": 401,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7024,
+      "COMMUNITY_AND_EXPERT": 7029,
       "OFFICIAL_DOCUMENTATION": 242,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 5,
@@ -161013,6 +161013,109 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dicklesworthstone-destructive_command_guard-learnings.md",
         "fileName": "dicklesworthstone-destructive_command_guard-learnings.md"
+      }
+    },
+    "SRC-4A69C975BECA": {
+      "id": "SRC-4A69C975BECA",
+      "url": "https://github.com/callstack/agent-device/pull/4857",
+      "title": "https://github.com/callstack/agent-device/pull/4857",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T05:20:01.938Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/callstack-agent-device-learnings.md",
+        "fileName": "callstack-agent-device-learnings.md"
+      }
+    },
+    "SRC-03663DE3FF64": {
+      "id": "SRC-03663DE3FF64",
+      "url": "https://public.example:8443/",
+      "title": "https://public.example:8443/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T05:20:01.975Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/callstack-agent-device-learnings.md",
+        "fileName": "callstack-agent-device-learnings.md"
+      }
+    },
+    "SRC-7881A368AA2E": {
+      "id": "SRC-7881A368AA2E",
+      "url": "http://127.0.0.1:4310/n",
+      "title": "http://127.0.0.1:4310/n",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-22T05:20:02.013Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/callstack-agent-device-learnings.md",
+        "fileName": "callstack-agent-device-learnings.md"
+      }
+    },
+    "SRC-2316639B13B7": {
+      "id": "SRC-2316639B13B7",
+      "url": "https://example.trycloudflare.com/n",
+      "title": "https://example.trycloudflare.com/n",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T05:20:02.047Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/callstack-agent-device-learnings.md",
+        "fileName": "callstack-agent-device-learnings.md"
+      }
+    },
+    "SRC-04F7064906CA": {
+      "id": "SRC-04F7064906CA",
+      "url": "https://example.trycloudflare.com/agent-device",
+      "title": "https://example.trycloudflare.com/agent-device",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T05:20:02.084Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/callstack-agent-device-learnings.md",
+        "fileName": "callstack-agent-device-learnings.md"
       }
     }
   }
