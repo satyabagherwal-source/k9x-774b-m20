@@ -12224,3 +12224,5 @@ Every entry in this ledger must capture:
 | `learn-github-burntsushi-ripgrep` | `https://github.com/BurntSushi/ripgrep` | `b6744106` | Multi-dimensional audit evidence | 2026-11-22T20:35:36.576Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `dbfadb1c` | Multi-dimensional audit evidence | 2026-11-22T20:35:47.598Z |
 | `learn-huggingface-taichuai-zdtaichu5-0-9b` | `https://huggingface.co/TaichuAI/ZDTaichu5.0-9B` | `hf-taichua` | Multi-dimensional audit evidence | 2026-11-22T20:46:47.448Z |
+| `learn-huggingface-comfy-org-qwen-image-2-1` | `https://huggingface.co/Comfy-Org/Qwen-Image-2.1` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-22T20:55:59.677Z |
+| `learn-github-chaos-mesh-chaos-mesh` | `https://github.com/chaos-mesh/chaos-mesh` | `fdb9684b` | Multi-dimensional audit evidence | 2026-11-22T20:56:10.698Z |

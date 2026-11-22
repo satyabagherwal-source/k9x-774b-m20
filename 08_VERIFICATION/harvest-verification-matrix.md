@@ -12191,3 +12191,5 @@
 | `CYCLE-20261122-QMT8` | `2026-11-22T20:35:36.572Z` | `BurntSushi/ripgrep` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING` | Yes (`735c8129...`) |
 | `CYCLE-20261122-QVBD` | `2026-11-22T20:35:47.593Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9989` | Yes (`88b28e53...`) |
 | `CYCLE-20261122-50GJ` | `2026-11-22T20:46:47.443Z` | `TaichuAI/ZDTaichu5.0-9B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md` | Yes (`bcb3546d...`) |
+| `CYCLE-20261122-GUK7` | `2026-11-22T20:55:59.671Z` | `Comfy-Org/Qwen-Image-2.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-qwen-image-2.1-learnings.md` | Yes (`577f5fcb...`) |
+| `CYCLE-20261122-H32D` | `2026-11-22T20:56:10.693Z` | `chaos-mesh/chaos-mesh` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9990` | Yes (`7256a660...`) |

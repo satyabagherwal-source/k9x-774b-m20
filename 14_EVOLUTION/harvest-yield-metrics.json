@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T20:46:47.455Z",
-  "total_cycles_completed": 11593,
-  "total_learnings_persisted": 11593,
-  "total_rules_promoted": 10810,
+  "last_updated": "2026-11-22T20:56:10.704Z",
+  "total_cycles_completed": 11595,
+  "total_learnings_persisted": 11595,
+  "total_rules_promoted": 10811,
   "history": [
-    {
-      "timestamp": "2026-11-22T02:29:34.107Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T02:40:18.511Z",
-      "repository": "dosco/deeporg",
-      "learningId": "learn-github-dosco-deeporg",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-22T02:42:05.503Z",
       "repository": "PrunaAI/P-Image-OSS-Comfy",
@@ -1403,6 +1389,20 @@
       "repository": "TaichuAI/ZDTaichu5.0-9B",
       "learningId": "learn-huggingface-taichuai-zdtaichu5-0-9b",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T20:55:59.683Z",
+      "repository": "Comfy-Org/Qwen-Image-2.1",
+      "learningId": "learn-huggingface-comfy-org-qwen-image-2-1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T20:56:10.704Z",
+      "repository": "chaos-mesh/chaos-mesh",
+      "learningId": "learn-github-chaos-mesh-chaos-mesh",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

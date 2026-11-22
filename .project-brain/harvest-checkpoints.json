@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T20:46:47.460Z",
+  "last_updated": "2026-11-22T20:56:10.709Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -575,14 +575,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-comfy-org-qwen-image-2-1",
-      "content_hash": "0674ed2f6662ba765dcd92641b15dfadae02dbfe8975d5acdf45ccc7eb03673e",
-      "verified_at": "2026-11-18T14:15:43.850Z",
+      "content_hash": "577f5fcb9472a09fabd7712d310df0df908d626b4f2d38d30b1536c56bd2f734",
+      "verified_at": "2026-11-22T20:55:59.687Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T14:15:43.850Z"
+      "last_updated": "2026-11-22T20:55:59.687Z"
     },
     "akhilaaa3/Jev-Omni": {
       "repository": "akhilaaa3/Jev-Omni",
@@ -3651,14 +3651,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-chaos-mesh-chaos-mesh",
-      "content_hash": "4b6c754346c6664710654047641abe49b21db9bcf181469b87a0d1507af9a42d",
-      "verified_at": "2026-11-21T22:06:30.803Z",
+      "content_hash": "7256a66047c0283109c84d18fcde2393dd8c0b2a6c4f45338847ea5719e4c63b",
+      "verified_at": "2026-11-22T20:56:10.708Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T22:06:30.803Z"
+      "last_updated": "2026-11-22T20:56:10.708Z"
     },
     "nolabs-ai/nono": {
       "repository": "nolabs-ai/nono",

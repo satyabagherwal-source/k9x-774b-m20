@@ -475,8 +475,8 @@
     "sourceUrl": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1",
     "sourceVersion": "hf-comfy-org-qwen-image-2.1",
     "license": "Open-Source",
-    "contentHash": "0674ed2f6662ba765dcd92641b15dfadae02dbfe8975d5acdf45ccc7eb03673e",
-    "lastHarvestedAt": "2026-11-18T14:15:43.841Z",
+    "contentHash": "577f5fcb9472a09fabd7712d310df0df908d626b4f2d38d30b1536c56bd2f734",
+    "lastHarvestedAt": "2026-11-22T20:55:59.677Z",
     "learningId": "learn-huggingface-comfy-org-qwen-image-2-1"
   },
   "hf-akhilaaa3-jev-omni": {
@@ -2343,10 +2343,10 @@
     "repository": "chaos-mesh/chaos-mesh",
     "platform": "github",
     "sourceUrl": "https://github.com/chaos-mesh/chaos-mesh",
-    "sourceVersion": "da9a3583",
+    "sourceVersion": "fdb9684b",
     "license": "Apache-2.0",
-    "contentHash": "4b6c754346c6664710654047641abe49b21db9bcf181469b87a0d1507af9a42d",
-    "lastHarvestedAt": "2026-11-21T22:06:30.797Z",
+    "contentHash": "7256a66047c0283109c84d18fcde2393dd8c0b2a6c4f45338847ea5719e4c63b",
+    "lastHarvestedAt": "2026-11-22T20:56:10.698Z",
     "learningId": "learn-github-chaos-mesh-chaos-mesh"
   },
   "nolabs-ai-nono": {

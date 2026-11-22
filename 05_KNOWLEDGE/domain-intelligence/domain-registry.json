@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T20:47:00.830Z",
+  "last_updated": "2026-11-22T20:56:17.954Z",
   "total_records": 2380,
   "domains": {
     "A": {
@@ -8150,8 +8150,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "8348e4b857b2e75665b3ff624568545df6020164fda3ab77a276b0bd0b6c9693",
-      "created_at": "2026-11-22T19:31:32.214Z"
+      "content_hash": "828bfd356b4cdd844f2faca7e71a093df4289c1ffb4d76014ae4b964bf5545f5",
+      "created_at": "2026-11-22T20:56:17.954Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -8939,8 +8939,8 @@
       "title": "Research & Knowledge Intelligence: Comfy-Org/Qwen-Image-2.1 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-qwen-image-2-1-research-knowledge-intelligence-comfy-org-qwen-image.md",
       "repository": "Comfy-Org/Qwen-Image-2.1",
-      "content_hash": "04ce3699536a2aa39722199a64f73a45fa362f1acf72c444f54b14da845e8c52",
-      "created_at": "2026-11-18T14:15:44.026Z"
+      "content_hash": "9bdb7ffe72afaf61998738456c1c1946043f25a1eb6852d5a722ec166c42b32e",
+      "created_at": "2026-11-22T20:55:59.958Z"
     },
     "domain_intelligence-technical-construction-intelligence-makecindy-cindy-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-makecindy-cindy-core-invariants",
@@ -9008,8 +9008,8 @@
       "title": "Research & Knowledge Intelligence: hf-comfy-org-qwen-image-2.1-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-qwen-image-2-1-learnings-research-knowledge-intelligence-hf-comfy-o.md",
       "repository": "hf-comfy-org-qwen-image-2.1-learnings",
-      "content_hash": "7c871cca9d52ed5befcd559e3fc3e51ab35347ffad6fc21a9ea1d5bc5af154b6",
-      "created_at": "2026-11-18T14:16:03.075Z"
+      "content_hash": "f725d04e50e986c5ed439e25b28784e9b338c6650ef6058c1e90b78025ba6579",
+      "created_at": "2026-11-22T20:56:14.635Z"
     },
     "domain_intelligence-technical-construction-intelligence-makecindy-cindy-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-makecindy-cindy-learnings-core-invariants",
@@ -33792,8 +33792,8 @@
       "title": "Quality & Verification Intelligence: chaos-mesh/chaos-mesh Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-chaos-mesh-chaos-mesh-quality-verification-intelligence-chaos-mesh-chaos-mesh-co.md",
       "repository": "chaos-mesh/chaos-mesh",
-      "content_hash": "1e3a2d92ea137cfd45752a85e3e6b1c40234abfcb54bc84092c9463e03085d74",
-      "created_at": "2026-11-21T22:06:31.092Z"
+      "content_hash": "9deaacfc6f0fefb4ce0d89604d983071dba0c255a1208b76a9fbfe998c9d2f79",
+      "created_at": "2026-11-22T20:56:11.231Z"
     },
     "DOM-D-66709892": {
       "record_id": "DOM-D-66709892",
@@ -36629,8 +36629,8 @@
       "title": "Quality & Verification Intelligence: chaos-mesh-chaos-mesh-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-chaos-mesh-chaos-mesh-learnings-quality-verification-intelligence-chaos-mesh-cha.md",
       "repository": "chaos-mesh-chaos-mesh-learnings",
-      "content_hash": "3ba9de1b2c8eae67d0ac5f568e28766f446a6ff68371375f9f2bbc1e52bb1022",
-      "created_at": "2026-11-21T22:06:34.690Z"
+      "content_hash": "7c0e9905393ff855a37851d6d140eb0a6dd9db887a1f2f6e6ffd5792034699d6",
+      "created_at": "2026-11-22T20:56:16.578Z"
     },
     "domain_intelligence-content-information-intelligence-golutra-golutra-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-golutra-golutra-core-invariants",
