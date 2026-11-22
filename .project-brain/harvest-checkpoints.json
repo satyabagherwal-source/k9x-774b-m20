@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T20:08:59.955Z",
+  "last_updated": "2026-11-22T20:17:09.475Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2541,14 +2541,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-volcengine-openviking",
-      "content_hash": "cc047c904745f51d1536fc057b13c4b5aeb9932c16998d2f74db04acba808c9a",
-      "verified_at": "2026-11-21T20:10:56.174Z",
+      "content_hash": "daa3c3843550a679dc6d2432d40e14a332ea6c772bf4d277eb64e333c9636db8",
+      "verified_at": "2026-11-22T20:17:06.434Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T20:10:56.174Z"
+      "last_updated": "2026-11-22T20:17:06.434Z"
     },
     "Saffsanity/sill": {
       "repository": "Saffsanity/sill",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "8cfaba65bd1f624a0c1156d23ea15c23fec98332fe7b9ac67967b66990106aa2",
-      "verified_at": "2026-11-22T19:43:27.314Z",
+      "content_hash": "82c32f3c28e51c2c38f78a6c397850c19b0117d40919977867abd39315b0e716",
+      "verified_at": "2026-11-22T20:17:09.475Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T19:43:27.314Z"
+      "last_updated": "2026-11-22T20:17:09.475Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -3621,14 +3621,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-max-sixty-worktrunk",
-      "content_hash": "bb2fe2c44e137dfc6918b19a1efa32fd74b7784fd7cc69677c2548765dbdd632",
-      "verified_at": "2026-11-21T11:16:31.630Z",
+      "content_hash": "6458bf61ed5c1383cd133a3faca0c4de21753524945136657adae806bcb79b21",
+      "verified_at": "2026-11-22T20:16:54.395Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T11:16:31.630Z"
+      "last_updated": "2026-11-22T20:16:54.395Z"
     },
     "mattermost/mattermost": {
       "repository": "mattermost/mattermost",
@@ -12096,14 +12096,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tableproapp-tablepro",
-      "content_hash": "792d8525e75b9f28bd89bdccbdb9c429528986a5ac57495178f8dc3f8772f963",
-      "verified_at": "2026-11-19T20:24:20.728Z",
+      "content_hash": "c9d24a114bf34c67a6d3133641afcf40a149dd091222807a276ae77c0a164f97",
+      "verified_at": "2026-11-22T20:16:59.752Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T20:24:20.728Z"
+      "last_updated": "2026-11-22T20:16:59.752Z"
     },
     "twostraws/ControlRoom": {
       "repository": "twostraws/ControlRoom",
@@ -15636,14 +15636,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-altworld-hemmingway-1",
-      "content_hash": "390893a460e02b6ff744bd5a3705990d4245f20ece55cd6db8a3b5a2b77b8045",
-      "verified_at": "2026-11-18T13:34:10.682Z",
+      "content_hash": "6fcb9e01cb5887a492a9d0afe175bde1b05cc2a4e6c4408a0351da76d5246b49",
+      "verified_at": "2026-11-22T20:16:52.976Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T13:34:10.682Z"
+      "last_updated": "2026-11-22T20:16:52.976Z"
     },
     "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16": {
       "repository": "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",

@@ -415,8 +415,8 @@
     "sourceUrl": "https://huggingface.co/Altworld/Hemmingway-1",
     "sourceVersion": "hf-altworld-hemmingway-1",
     "license": "Open-Source",
-    "contentHash": "390893a460e02b6ff744bd5a3705990d4245f20ece55cd6db8a3b5a2b77b8045",
-    "lastHarvestedAt": "2026-11-18T13:34:10.674Z",
+    "contentHash": "6fcb9e01cb5887a492a9d0afe175bde1b05cc2a4e6c4408a0351da76d5246b49",
+    "lastHarvestedAt": "2026-11-22T20:16:52.968Z",
     "learningId": "learn-huggingface-altworld-hemmingway-1"
   },
   "hf-fastino-gliner2.5-decide": {
@@ -1603,10 +1603,10 @@
     "repository": "volcengine/OpenViking",
     "platform": "github",
     "sourceUrl": "https://github.com/volcengine/OpenViking",
-    "sourceVersion": "1efb03a3",
+    "sourceVersion": "e6dc9714",
     "license": "AGPL-3.0",
-    "contentHash": "cc047c904745f51d1536fc057b13c4b5aeb9932c16998d2f74db04acba808c9a",
-    "lastHarvestedAt": "2026-11-21T20:10:56.164Z",
+    "contentHash": "daa3c3843550a679dc6d2432d40e14a332ea6c772bf4d277eb64e333c9636db8",
+    "lastHarvestedAt": "2026-11-22T20:17:06.396Z",
     "learningId": "learn-github-volcengine-openviking"
   },
   "saffsanity-sill": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "fe38c7a5",
+    "sourceVersion": "e0086dfb",
     "license": "Apache-2.0",
-    "contentHash": "8cfaba65bd1f624a0c1156d23ea15c23fec98332fe7b9ac67967b66990106aa2",
-    "lastHarvestedAt": "2026-11-22T19:43:27.260Z",
+    "contentHash": "82c32f3c28e51c2c38f78a6c397850c19b0117d40919977867abd39315b0e716",
+    "lastHarvestedAt": "2026-11-22T20:17:09.467Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -2323,10 +2323,10 @@
     "repository": "max-sixty/worktrunk",
     "platform": "github",
     "sourceUrl": "https://github.com/max-sixty/worktrunk",
-    "sourceVersion": "ad139302",
+    "sourceVersion": "5a427391",
     "license": "Apache-2.0",
-    "contentHash": "bb2fe2c44e137dfc6918b19a1efa32fd74b7784fd7cc69677c2548765dbdd632",
-    "lastHarvestedAt": "2026-11-21T11:16:31.622Z",
+    "contentHash": "6458bf61ed5c1383cd133a3faca0c4de21753524945136657adae806bcb79b21",
+    "lastHarvestedAt": "2026-11-22T20:16:54.387Z",
     "learningId": "learn-github-max-sixty-worktrunk"
   },
   "mattermost-mattermost": {
@@ -8043,10 +8043,10 @@
     "repository": "TableProApp/TablePro",
     "platform": "github",
     "sourceUrl": "https://github.com/TableProApp/TablePro",
-    "sourceVersion": "0b0c7243",
+    "sourceVersion": "2507448a",
     "license": "AGPL-3.0",
-    "contentHash": "792d8525e75b9f28bd89bdccbdb9c429528986a5ac57495178f8dc3f8772f963",
-    "lastHarvestedAt": "2026-11-19T20:24:20.721Z",
+    "contentHash": "c9d24a114bf34c67a6d3133641afcf40a149dd091222807a276ae77c0a164f97",
+    "lastHarvestedAt": "2026-11-22T20:16:59.745Z",
     "learningId": "learn-github-tableproapp-tablepro"
   },
   "twostraws-controlroom": {

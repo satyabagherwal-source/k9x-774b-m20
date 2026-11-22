@@ -4,24 +4,24 @@
 {
   "source_repository": "volcengine/OpenViking",
   "source_url": "https://github.com/volcengine/OpenViking",
-  "source_version": "1efb03a3",
+  "source_version": "e6dc9714",
   "license": "AGPL-3.0",
-  "timestamp": "2026-11-21T20:10:56.433Z",
+  "timestamp": "2026-11-22T20:17:06.639Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-volcengine-openviking",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [volcengine/OpenViking](https://github.com/volcengine/OpenViking) (Revision: `1efb03a3`).  
-> **License**: AGPL-3.0 | **Timestamp**: `2026-11-21T20:10:56.433Z`  
+> **Provenance**: Harvested from [volcengine/OpenViking](https://github.com/volcengine/OpenViking) (Revision: `e6dc9714`).  
+> **License**: AGPL-3.0 | **Timestamp**: `2026-11-22T20:17:06.639Z`  
 > **Learning ID**: `learn-github-volcengine-openviking`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), A (Human & Need Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 71%
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), D (Research & Knowledge Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 64%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from volcengine/OpenViking:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/volcengine-openviking-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/volcengine/OpenViking](https://github.com/volcengine/OpenViking))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T20:10:54.927Z  
+> **Harvest Timestamp**: 2026-11-22T20:17:05.929Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Self-evolving Context Database for AI Agents. Unify Agent Memory, Knowledge RAG and Skills.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 42564 stars
+- **Stars / Engagement**: 42608 stars
 
 ---
 
@@ -1509,195 +1509,14 @@ class AsyncProgressTracker:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a0c00a4f` (2026-11-21)
-**Commit Message**: fix(crypto): reject malformed local root key files (#8126)
+### Incident Patch 1: `e6dc9714` (2026-11-22)
+**Commit Message**: perf(ui): load deep-link previews alongside the tree (#8185)
 
-LocalFileProvider read the root key file and accepted any valid hex
-string. A truncated or hand-edited file (for example 16 bytes instead of
-32) silently became the root key: HKDF then derived account keys from it,
-so newly encrypted files were sealed under a key the real 32-byte root
-key can never open, while existing ciphertext fails to decrypt. The
-inline root_key configuration already enforces 32 bytes; apply the same
-rule to the file path.
+* perf(ui): load deep-link previews alongside the tree
 
-Co-authored-by: Kiko0301 <[REDACTED_EMAIL]>
+* fix(react): keep known file reads independent of stat
 
-**File**: `openviking/crypto/providers.py` (modified, +9/-1)
-```diff
-@@ -247,9 +247,17 @@ async def _load_or_create_root_key(self) -> bytes:
-             with open(self.key_file, "r") as f:
-                 hex_key = f.read().strip()
-             try:
--                return bytes.fromhex(hex_key)
-+                root_key = bytes.fromhex(hex_key)
-             except ValueError:
-                 raise ConfigError(f"Invalid root key format in {self.key_file}")
-+            # A truncated or hand-edited key file must not silently become a
-+            # shorter root key: the account keys derived from it would encrypt
-+            # new files under a key the real 32-byte root key cannot open.
-+            if len(root_key) != 32:
-+                raise ConfigError(
-+                    f"Invalid root key in {self.key_file}: expected 32 bytes, got {len(root_key)}"
-+                )
-+            return root_key
-         else:
-             # Create new key
-             root_key = secrets.token_bytes(32)
-```
-
-**File**: `tests/unit/crypto/test_local_provider_root_key_validation.py` (added, +41/-0)
-```diff
-@@ -0,0 +1,41 @@
-+# Copyright (c) 2026 Beijing Volcano Engine Technology Co., Ltd.
-+# SPDX-License-Identifier: AGPL-3.0
-+"""The local root-key file must hold exactly one 32-byte root key."""
-+
-+import secrets
-+
-+import pytest
-+
-+from openviking.crypto.exceptions import ConfigError
-+from openviking.crypto.providers import LocalFileProvider
-+
-+
-+async def test_short_root_key_file_is_rejected(tmp_path):
-+    key_file = tmp_path / "master.key"
-+    # 16 valid hex bytes: parseable, but not a 256-bit root key.
-+    key_file.write_text("ab" * 16)
-+
-+    provider = LocalFileProvider(key_file=str(key_file))
-+
-+    with pytest.raises(ConfigError):
-+        await provider.get_root_key()
-+
-+
-+async def test_long_root_key_file_is_rejected(tmp_path):
-+    key_file = tmp_path / "master.key"
-+    key_file.write_text("cd" * 64)
-+
-+    provider = LocalFileProvider(key_file=str(key_file))
-+
-+    with pytest.raises(ConfigError):
-+        await provider.get_root_key()
-+
-+
-+async def test_valid_root_key_file_still_loads(tmp_path):
-+    root_key = secrets.token_bytes(32)
-+    key_file = tmp_path / "master.key"
-+    key_file.write_text(root_key.hex())
-+
-+    provider = LocalFileProvider(key_file=str(key_file))
-+
-+    assert await provider.get_root_key() == root_key
-```
-
----
-
-### Incident Patch 2: `1efb03a3` (2026-11-21)
-**Commit Message**: fix(compile): persist cancellation of queued runs (#8166)
-
-Co-authored-by: fujiajie.168 <[REDACTED_EMAIL]>
-
-**File**: `openviking/server/routers/tasks.py` (modified, +10/-1)
-```diff
-@@ -12,9 +12,10 @@
- from fastapi import APIRouter, Depends, Query
- 
- from openviking.server.auth import get_request_context
-+from openviking.server.dependencies import get_service
- from openviking.server.identity import RequestContext, Role
- from openviking.server.models import Response
--from openviking.service.task_domain import TaskRecord
-+from openviking.service.task_domain import TaskRecord, TaskStatus
- from openviking.service.task_store import SYSTEM_TASK_ACCOUNT_ID, SYSTEM_TASK_USER_ID
- from openviking.service.task_tracker import get_task_tracker
- from openviking_cli.exceptions import (
-@@ -93,6 +94,14 @@ async def cancel_task(
-             code="NOT_FOUND",
-             details={"resource": task_id, "type": "task"},
-         )
-+    if (
-+        task.task_type == "compile"
-+        and task.status == TaskStatus.CANCELLED
-+        and task.stage == "queued"
-+    ):
-+        lifecycle = get_service().compile.lifecycle
-+        if lifecycle is not None:
-+            await lifecycle.store.cancel_queued_run(task)
-     return Response(status="ok", result=task.to_dict())
- 
- 
-```
-
-**File**: `openviking/service/compile_targets.py` (modified, +16/-1)
-```diff
-@@ -52,7 +52,7 @@
- )
- from openviking.server.identity import RequestContext, Role
- from openviking.service.external_task_service import SUBMIT_EXHAUSTED, ExternalTaskSnapshot
--from openviking.service.task_domain import TaskPatch, TaskStatus, sanitize_error
-+from openviking.service.task_domain import TaskPatch, TaskRecord, TaskStatus, sanitize_error
- from openviking.service.task_tracker_concurrency import run_to_completion
- from openviking.storage.errors import LockAcquisitionError, ResourceBusyError
- from openviking.storage.pathlock_recovery import (
-@@ -242,6 +242,7 @@ async def list_runs(
-     async def put_run(
-         self, account_id: str, owner_user_id: str, compile_name: str, run: dict
-     ) -> None: ...
-+    async def cancel_queued_run(self, task: TaskRecord) -> None: ...
-     def lock_run(
-         self, account_id: str, owner_user_id: str, compile_name: str, task_id: str
-     ) -> Any: ...
-@@ -488,6 +489,20 @@ async def put_run(
-         async with self.locked(path) as lease:
-             await self.write_json(path, run, lease)
- 
-+    async def cancel_queued_run(self, task: TaskRecord) -> None:
-+        """Finalize an unstarted Run using the Task's persisted cancellation time."""
-+        compile_meta = (task.meta.get("request") or {}).get("compile") or {}
-+        owner = compile_meta.get("owner_user_id")
-+        name = compile_meta.get("compile_name")
-+        if task.account_id is None or not owner or not name:
-+            return
-+        path = self._run_path(task.account_id, owner, name, task.task_id)
-+        async with self.locked(path) as lease:
-+            run = await self.read_json(path)
-+            if run is not None and run["status"] == "queued" and run["started_at"] is None:
-+                run.update(status="cancelled", finished_at=task.updated_at)
-+                await self.write_json(path, run, lease)
-+
-     async def list_runs(
-         self,
-         account_id: str,
-```
-
-**File**: `tests/server/test_compile_configurations.py` (modified, +10/-0)
-```diff
-@@ -339,6 +339,16 @@ async def test_same_name_configuration_and_runs_are_user_scoped(service, app, cl
-         ]["runs"]
-         assert [r["task_id"] for r in runs] == [task_ids[-1]]
-         assert runs[0]["params"]["instruction"] == actor.user.user_id
-+        assert runs[0]["status"] == "queued"
-+        cancel_path = f"/api/v1/tasks/{task_ids[-1]}/cancel"
-+        cancelled = await client.post(cancel_path)
-+        assert cancelled.status_code == 200, cancelled.text
-+        task = cancelled.json()["result"]
-+        run = await service.compile.get_run(name, task_ids[-1], actor)
-+        assert task["status"] == run["status"] == "cancelled"
-+        assert run["finished_at"] == task["updated_at"]
-+        assert (await client.post(cancel_path)).status_code == 200
-+        assert await service.compile.get_run(name, task_ids[-1], actor) == run
-     assert task_ids[0] != task_ids[1]
-     foreign_run = await client.get(
-         f"/api/v1/compile/runs/{task_ids[0]}", params={"compile_name": name}
-```
-
----
-
-### Incident Patch 3: `000f0765` (2026-11-21)
-**Commit Message**: fix(react): refresh preview permissions with file tree (#8156)
-
-**File**: `frontend/.changeset/file-browser-refresh-permissions.md` (added, +11/-0)
+**File**: `frontend/.changeset/fast-file-preview-deep-links.md` (added, +11/-0)
 ```diff
 @@ -0,0 +1,11 @@
 +---
@@ -1706,250 +1525,1029 @@ Co-authored-by: fujiajie.168 <[REDACTED_EMAIL]>
 +
 +## en-US
 +
-+Refresh the active resource's permission label and edit action when the file tree is refreshed, including grants changed elsewhere. Outdated permission responses from earlier refreshes cannot overwrite the latest result.
++Start a controlled file or directory preview while the root tree is still loading, so direct links no longer serialize independent tree and preview requests.
 +
 +## zh-CN
 +
-+刷新目录树时同步重新查询当前资源权限，使外部授权变更可更新权限标签和编辑入口。旧刷新请求的响应不会覆盖最新权限。
++受控文件或目录预览不再等待根目录树加载完成，直达链接会并行请求目录树与预览内容。
 ```
 
-**File**: `frontend/docs/docs/_demos/file-browser-acl.tsx` (modified, +2/-5)
+**File**: `frontend/packages/react/src/modules/file-browser/use-file-browser.ts` (modified, +14/-12)
 ```diff
-@@ -12,14 +12,13 @@ export default function FileBrowserAclDemo() {
-   const locale = useLang() === 'zh' ? 'zh-CN' : 'en-US';
-   const zh = locale === 'zh-CN';
-   const [demo] = useState(createAclDemo);
--  const [revision, setRevision] = useState(0);
-   const [hideDeniedEntries, setHideDeniedEntries] = useState(false);
-   return (
-     <div lang={locale}>
-       <p>
-         {zh
--          ? '离线模拟数据 · 不修改真实授权。'
--          : 'Offline simulation · no real grants are changed.'}
-+          ? '离线模拟数据 · 切换当前权限后点击刷新，不修改真实授权。'
-+          : 'Offline simulation · change the permission, then click Refresh. No real grants are changed.'}
-       </p>
-       <div
-         style={{ display: 'flex', flexWrap: 'wrap', gap: 16, marginBottom: 16 }}
-@@ -49,7 +48,6 @@ export default function FileBrowserAclDemo() {
-             onChange={([value]) => {
-               if (value === undefined) return;
-               demo.setLevel(value);
--              setRevision((value) => value + 1);
-             }}
-           >
-             <SelectOption value="manage">
-@@ -67,7 +65,6 @@ export default function FileBrowserAclDemo() {
-       <div style={{ height: 580 }}>
-         <OpenVikingProvider fetch={demo.fetch} accountId="demo" userId="alice">
-           <FileBrowser
--            key={revision}
-             acl
-             hideDeniedEntries={hideDeniedEntries}
-             locale={locale}
-```
-
-**File**: `frontend/docs/docs/en/modules/file-browser.mdx` (modified, +1/-1)
-```diff
-@@ -517,7 +517,7 @@ All fields are optional, and omitted fields follow `locale`.
- - The dashboard tab is hidden while editing a file and returns after saving or cancelling.
- - Saving a Wiki file shows a progress notice in the upper right, followed by a success notice if the write succeeds. Wiki saves send `use_snapshot: true` to preserve version history and `resolve_conflicts: true` so the server preserves and updates conflict records. Ordinary text saves leave snapshots disabled by default.
- - All YAML frontmatter, ordinary HTML comments and fenced Markdown examples survive. In a Markdown file with confirmed scope, an unclosed reserved trailer starting on its own line is hidden through the end of the file; markers quoted in YAML frontmatter, code fences or inline examples survive.
--- The refresh button reloads the expanded directories and the current preview.
-+- The refresh button reloads the expanded directories, the current preview and its effective permissions.
+@@ -9,6 +9,7 @@ import { dashboardKey, mergeDashboardTab } from './dashboard-model.js';
+ import { useBrowserDashboards } from './use-browser-dashboards.js';
+ import { useFsTree } from './use-fs-tree.js';
+ import { useFileBrowserTreeActions } from './use-file-browser-tree-actions.js';
++import { useStableCallback } from './use-stable-callback.js';
+ import { findSelectedRowId } from './fs-uri.js';
+ import type {
+   FileBrowserActions,
+@@ -116,22 +117,19 @@ export function useFileBrowser({
+   // a host passing an inline arrow function changes it every render, which would
+   // change this callback, and the preview's loading effect depends on it — so every
+   // commit would re-run the effect and cancel the previous request, turning one
+-  // selection into an endless reload. A ref carries the latest notification and
+-  // only the tree operations remain as dependencies.
++  // selection into an endless reload. Refs carry the latest notification and tree
++  // operations while the callback identity stays fixed.
+   const { open: openTree, toggleExpand, cancelReveal } = tree;
+   const notifyUriChange = useRef(onUriChange);
+   notifyUriChange.current = onUriChange;
+   const notifySelect = useRef(onSelect);
+   notifySelect.current = onSelect;
+-  const openParent = useMemo(
+-    () => async (uri: string) => {
+-      cancelReveal();
+-      setPendingUri(uri);
+-      notifyUriChange.current(uri);
+-      await openTree(uri);
+-    },
+-    [cancelReveal, openTree],
+-  );
++  const openParent = useStableCallback(async (uri: string) => {
++    cancelReveal();
++    setPendingUri(uri);
++    notifyUriChange.current(uri);
++    await openTree(uri);
++  });
  
- ### Open and reveal a resource
- 
-```
-
-**File**: `frontend/docs/docs/zh/modules/file-browser.mdx` (modified, +1/-1)
-```diff
-@@ -517,7 +517,7 @@ import '@openviking/react/modules/file-browser/style.css';
- - 编辑文件时隐藏看板页签，保存或取消后恢复显示。
- - 保存 Wiki 文件时，右上角显示保存进度，写入成功后显示「保存成功」。请求携带 `use_snapshot: true` 创建历史快照，并通过 `resolve_conflicts: true` 交由服务端保留、更新冲突记录；普通文本保存默认不创建快照。
- - 所有 YAML 头、普通 HTML 注释和 Markdown 代码围栏中的示例保留；已确认作用域的 Markdown 文件中，独占一行的未闭合保留尾注隐藏至文件末尾；YAML 头、代码围栏和行内示例中的标记保留。
--- 刷新按钮重新加载已展开的目录和当前预览。
-+- 刷新按钮重新加载已展开的目录、当前预览及其有效权限。
- 
- ### 打开并定位资源
- 
-```
-
-**File**: `frontend/packages/react/src/modules/file-browser/acl/use-acl-manager.ts` (modified, +5/-3)
-```diff
-@@ -4,12 +4,14 @@ import type { FileBrowserAclLevel } from '../acl-types.js';
- /** Revalidate the active resource before opening its permission manager. */
- export function useAclManager({
-   key,
-+  revision,
-   uri,
-   loadPermission,
-   onLevel,
-   onError,
- }: {
-   key: string;
-+  revision: number;
-   uri: string | null;
-   loadPermission: (
-     uri: string,
-@@ -19,14 +21,14 @@ export function useAclManager({
-   onError: () => void;
- }) {
-   const pending = useRef<AbortController | null>(null);
--  // The probe outlives its click. Abort on resource/request scope changes or
--  // unmount so an old account cannot open a manager in the new scope.
-+  // The probe outlives its click. Abort on a new server-permission revision,
-+  // resource/request scope change or unmount so stale access cannot reopen it.
-   useEffect(
-     () => () => {
-       pending.current?.abort();
-       pending.current = null;
-     },
--    [key, loadPermission],
-+    [key, revision, loadPermission],
-   );
-   return async () => {
-     if (!uri || pending.current) return;
-```
-
-**File**: `frontend/packages/react/src/modules/file-browser/file-browser-content.tsx` (modified, +3/-3)
-```diff
-@@ -91,7 +91,6 @@ export const FileBrowserContent: FileBrowserComponent = forwardRef<
-   // rather than discarded, so the tree returns to where it was dragged once the
-   // container widens again.
-   const treeMaxWidth = resolveTreeMaxWidth(width);
--  const treeWidth = Math.min(preferredTreeWidth, treeMaxWidth);
- 
-   // Keep preview and summary copy stable until locale or host overrides change.
-   const { summaryLabels, previewLabels } = useMemo(
-@@ -128,6 +127,7 @@ export const FileBrowserContent: FileBrowserComponent = forwardRef<
-     locale,
-     labels: labels?.acl,
-     requestOptions,
-+    refreshGeneration: browser.refreshGeneration,
-     refresh: browser.actions.refresh,
+   const { rows, openPath, reveal } = tree;
+   const openResource = useMemo(
+@@ -168,7 +166,11 @@ export function useFileBrowser({
    });
-   const pack = usePackImportPicker(layoutRef, text, locale, permissions);
-@@ -158,7 +158,7 @@ export const FileBrowserContent: FileBrowserComponent = forwardRef<
-             // 分隔条是独立一列，树宽只作用在自己身上，两者相加才是左栏占用。
-             // The divider is its own column: the tree width applies to the tree alone
-             // and the two together are what the left side occupies.
--            '--ov-file-browser-tree-width': `${treeWidth}px`,
-+            '--ov-file-browser-tree-width': `${Math.min(preferredTreeWidth, treeMaxWidth)}px`,
-           } as CSSProperties
-         }
-       >
-@@ -194,7 +194,7 @@ export const FileBrowserContent: FileBrowserComponent = forwardRef<
-             label={text.resizeTree}
-             min={TREE_MIN_WIDTH}
-             max={treeMaxWidth}
--            value={treeWidth}
-+            value={Math.min(preferredTreeWidth, treeMaxWidth)}
-             onResize={setPreferredTreeWidth}
-             className="ov-file-browser__resizer"
-           />
+ 
+   const { setActiveKey, ...preview } = useFsPreview({
+-    client: tree.isReady ? client : null,
++    // A controlled deep link already identifies the preview target. Let the preview
++    // resolve its type and body while the root tree loads instead of serializing the
++    // two independent requests. The preview lookup owns cancellation and stale-result
++    // isolation; the tree can still replace the unknown type once its listing lands.
++    client,
+     // 非受控模式下 currentUri 是 null，真正选中的是 pendingUri；预览要跟着
+     // 实际选中的资源走，否则内部维护的选中永远不会加载预览。
+     //
 ```
 
-**File**: `frontend/packages/react/src/modules/file-browser/file-browser-state-types.ts` (modified, +2/-0)
+**File**: `frontend/packages/react/src/modules/file-browser/use-fs-preview.ts` (modified, +4/-7)
 ```diff
-@@ -36,6 +36,8 @@ export interface FileBrowserApi {
-   currentUri: string | null;
-   /** 刷新是否进行中。Whether a refresh is running. */
-   refreshing: boolean;
-+  /** 树和当前预览共用的刷新次数。Refresh revision shared by the tree and active preview. */
-+  refreshGeneration: number;
-   /** 预览字符数文案。Localized preview character count. */
-   previewFooter?: string;
-   /** 当前资源的更新时间（ISO 8601）。Update time of the current resource (ISO 8601). */
-```
-
-**File**: `frontend/packages/react/src/modules/file-browser/use-file-browser-acl.tsx` (modified, +11/-9)
-```diff
-@@ -28,6 +28,7 @@ export function useFileBrowserAcl({
-   locale,
-   labels,
-   requestOptions,
-+  refreshGeneration: revision,
-   refresh,
- }: {
-   uri: string | null;
-@@ -36,6 +37,7 @@ export function useFileBrowserAcl({
-   locale: Locale;
-   labels?: FileBrowserAclLabels;
-   requestOptions?: OvRequestOptions;
-+  refreshGeneration: number;
-   refresh: () => Promise<void>;
- }) {
-   const client = useOvClient();
-@@ -45,7 +47,7 @@ export function useFileBrowserAcl({
-   const signal = requestOptions?.signal ?? inheritedSignal;
-   const options = typeof acl === 'object' ? acl : undefined;
-   const key = scopeKeyOf(client, requestOptions, uri ?? undefined);
--  const [permission, setPermission] = useState<{
-+  const [access, setPermission] = useState<{
-     key: string;
-     level?: FileBrowserAclLevel;
-     error?: boolean;
-@@ -112,9 +114,10 @@ export function useFileBrowserAcl({
-     },
-     [aclEnabled, loadPermission, readOnly],
-   );
--  // Sync the active resource with the permission service, including navigation
--  // and account changes that do not originate in a click. Abort on scope change
--  // or unmount; aborted responses never publish a permission for the next scope.
-+  // Sync the active resource with the permission service on navigation, account
-+  // changes and explicit refresh, even when the selected URI stays the same.
-+  // The server owns grants, so rendering cannot derive them. Abort on refresh,
-+  // scope change or unmount so an older response cannot publish stale access.
+@@ -90,7 +90,7 @@ export function useFsPreview({
+ 
+   // useEffect 必要性：按 URI、资源类型与请求配置同步远端正文和目录摘要。
+   // URI 也会由宿主属性改变，点击事件无法覆盖这些变化，渲染本身不能发请求。
+-  // 依赖变化与卸载中止请求并忽略过期结果；摘要层级与文案仅影响展示。
++  // 依赖变化与卸载中止请求并忽略过期结果。
    useEffect(() => {
-     if (!enabled || !uri) return;
-     const controller = new AbortController();
-@@ -129,15 +132,15 @@ export function useFileBrowserAcl({
+     const { client, uri, wikiSave } = lookup;
+     if (resourceType !== 'unknown') setStatType(undefined);
+@@ -136,17 +136,14 @@ export function useFsPreview({
+     // 集合只覆盖已加载的层，宿主直接传一个尚未展开过的目录 URI 时它就是空的，
+     // 于是目录会被读成正文、丢掉 L0/L1 摘要。缺失的是元数据，不是「它是文件」的
+     // 证据，因此先查再决定。
+-    //
+     // An unknown type is resolved with one `fs/stat` call first. Treating "not in the
+     // known directory set" as a file is wrong: the set only covers loaded levels, so a
+     // directory URI the host passes directly, before it was ever expanded, is simply
+     // absent — and the directory would be read as content and lose its L0/L1 summary.
+     // What is missing is metadata, not evidence that it is a file.
+     const read = (async () => {
+-      const isDir =
+-        resourceType === 'unknown'
+-          ? (await metadata)?.isDirectory
+-          : resourceType === 'directory';
++      const stat = resourceType === 'unknown' ? await metadata : undefined;
++      const isDir = stat?.isDirectory ?? resourceType === 'directory';
+       if (signal.aborted) throw abortError();
+       if (resourceType === 'unknown' && isDir !== undefined) {
+         const type = isDir ? 'directory' : 'file';
+@@ -167,7 +164,7 @@ export function useFsPreview({
+         },
+         onStatus,
+         readDashboardHint,
+-        bodyCache,
++        bodyCache ?? lookup.bodyCacheFor(uri, stat?.updatedAt),
+       );
+     })();
+ 
+```
+
+**File**: `frontend/packages/react/src/modules/file-browser/use-preview-lookup.ts` (modified, +18/-16)
+```diff
+@@ -48,11 +48,18 @@ export function usePreviewLookup({
+     listed.current = listedUpdatedAt;
+   }, [listedUpdatedAt]);
+ 
+-  return useMemo(
+-    () => ({
++  return useMemo(() => {
++    const canCacheBody = (target: string) =>
++      isMemoryUri(target) && /\.md$/i.test(target) && cacheableIdentity;
++    const bodyCacheFor = (target: string, updatedAt?: string) =>
++      canCacheBody(target) && updatedAt !== undefined
++        ? cache.body.forFile(target, updatedAt)
++        : undefined;
++    return {
+       client,
+       uri,
+       wikiSave,
++      bodyCacheFor,
+       prepareFileRead(
+         api: OvClient,
+         target: string,
+@@ -66,21 +73,16 @@ export function usePreviewLookup({
+           previous.scope === cache.scope &&
+           (previous.generation !== cache.generation ||
+             previous.saveGeneration !== cache.saveGeneration);
++        const metadata =
++          unknownType || reload || !updatedAt
++            ? readPreviewStat(api, target, options)
++            : undefined;
++        const bodyCache = bodyCacheFor(target, updatedAt);
+         return {
+-          metadata:
+-            unknownType || reload || !updatedAt
+-              ? readPreviewStat(api, target, options)
+-              : undefined,
+-          bodyCache:
+-            isMemoryUri(target) &&
+-            /\.md$/i.test(target) &&
+-            updatedAt !== undefined &&
+-            cacheableIdentity
+-              ? cache.body.forFile(target, updatedAt)
+-              : undefined,
++          metadata,
++          bodyCache,
+         };
        },
-     );
-     return () => controller.abort();
--  }, [enabled, key, uri, signal, generation, loadPermission]);
--  const level =
--    enabled && permission?.key === key ? permission.level : undefined;
-+  }, [enabled, key, uri, signal, generation, revision, loadPermission]);
-+  const level = enabled && access?.key === key ? access.level : undefined;
-   const text = aclLabels(locale, labels);
-   // Pending saves may finish after the host changes its locale or labels.
-   const currentText = useRef(text);
-   currentText.current = text;
-   const openManager = useAclManager({
-     key,
-+    revision,
+-    }),
+-    [client, uri, wikiSave, cache, cacheableIdentity],
+-  );
++    };
++  }, [client, uri, wikiSave, cache, cacheableIdentity]);
+ }
+```
+
+**File**: `frontend/packages/react/src/modules/file-browser/use-stable-callback.ts` (added, +9/-0)
+```diff
+@@ -0,0 +1,9 @@
++import { useCallback, useRef } from 'react';
++
++export function useStableCallback<Args extends unknown[], Result>(
++  callback: (...args: Args) => Result,
++) {
++  const current = useRef(callback);
++  current.current = callback;
++  return useCallback((...args: Args) => current.current(...args), []);
++}
+```
+
+**File**: `frontend/packages/react/test/file-browser-preview-priority.test.mjs` (modified, +70/-2)
+```diff
+@@ -50,7 +50,7 @@ test('listed memory Markdown reads once, reuses the body and invalidates on refr
+   try {
+     assert.equal(tab().source.content, 'Original profile');
+     assert.equal(browser.previewUpdatedAt, modTime);
+-    assert.equal(fetch.countOf('/api/v1/fs/stat'), 0);
++    assert.equal(fetch.countOf('/api/v1/fs/stat'), 1);
+     assert.equal(fetch.countOf('/api/v1/fs/attrs'), 0);
+     assert.equal(reads(), 1);
+ 
+@@ -84,6 +84,72 @@ test('listed memory Markdown reads once, reuses the body and invalidates on refr
+ 
+ const fileTime = '2026-11-11T22:10:00.123Z';
+ 
++test('a controlled deep link reads its preview while the root tree is pending', async () => {
++  const root = 'viking://resources';
++  const uri = `${root}/chapter.md`;
++  const listing = deferred();
++  const fetch = recordingFetch(({ path }) => {
++    if (path.endsWith('/fs/ls')) return listing.promise;
++    if (path.endsWith('/fs/stat')) return ok({ isDir: false });
++    if (path.endsWith('/content/read')) return ok('Chapter text');
++    return ok({});
++  });
++  let browser;
++  function Probe() {
++    browser = useFileBrowser({
++      rootUri: root,
++      controlled: true,
++      currentUri: uri,
++    });
++    return null;
++  }
++  const view = await mount(h(OpenVikingProvider, { fetch }, h(Probe)));
++  try {
++    assert.equal(fetch.countOf('/api/v1/fs/ls'), 1);
++    assert.equal(fetch.countOf('/api/v1/fs/stat'), 1);
++    assert.equal(fetch.countOf('/api/v1/content/read'), 1);
++    assert.equal(browser.previewTabs?.[0]?.source?.content, 'Chapter text');
++
++    await act(async () =>
++      listing.resolve(await ok([{ uri, isDir: false, modTime: fileTime }])),
++    );
++    await settle();
++    assert.equal(fetch.countOf('/api/v1/content/read'), 1);
++  } finally {
++    await view.unmount();
++  }
++});
++
++test('a listed file reads its body while optional stat metadata is pending', async () => {
++  const root = 'viking://resources';
++  const uri = `${root}/chapter.md`;
++  const stat = deferred();
++  const fetch = recordingFetch(({ path }) => {
++    if (path.endsWith('/fs/ls')) return ok([{ uri, isDir: false }]);
++    if (path.endsWith('/fs/stat')) return stat.promise;
++    if (path.endsWith('/content/read')) return ok('Chapter text');
++    return ok({});
++  });
++  let browser;
++  function Probe() {
++    browser = useFileBrowser({
++      rootUri: root,
++      controlled: true,
++      currentUri: uri,
++    });
++    return null;
++  }
++  const view = await mount(h(OpenVikingProvider, { fetch }, h(Probe)));
++  try {
++    assert.equal(fetch.countOf('/api/v1/fs/stat') > 0, true);
++    assert.equal(fetch.countOf('/api/v1/content/read'), 1);
++    assert.equal(browser.previewTabs?.[0]?.source?.content, 'Chapter text');
++    await act(async () => stat.resolve(await ok({ isDir: false })));
++  } finally {
++    await view.unmount();
++  }
++});
++
+ test('a listed Markdown file reads its body while Wiki attrs are pending', async () => {
+   const root = 'viking://resources';
+   const uri = `${root}/chapter.md`;
+@@ -93,6 +159,8 @@ test('a listed Markdown file reads its body while Wiki attrs are pending', async
+       return ok([{ uri, isDir: false, modTime: fileTime }]);
+     if (path.endsWith('/fs/attrs')) return attrs.promise;
+     if (path.endsWith('/content/read')) return ok('Chapter text');
++    if (path.endsWith('/fs/stat'))
++      return ok({ isDir: false, modTime: fileTime });
+     return ok({});
+   });
+   let browser;
+@@ -110,7 +178,7 @@ test('a listed Markdown file reads its body while Wiki attrs are pending', async
+     assert.equal(fetch.countOf('/api/v1/fs/attrs'), 1);
+     assert.equal(body(), 'Chapter text');
+     assert.equal(browser.previewUpdatedAt, fileTime);
+-    assert.equal(fetch.countOf('/api/v1/fs/stat'), 0);
++    assert.equal(fetch.countOf('/api/v1/fs/stat'), 1);
+     await act(async () =>
+       attrs.resolve(
+         await ok({ uri, attrs: { tags: ['compile_target=true'] } }),
+```
+
+---
+
+### Incident Patch 2: `6a0fd463` (2026-11-22)
+**Commit Message**: fix(react): 优化 JSON 预览与 VikingBot 记忆文案 (#8176)
+
+* fix(react): clarify VikingBot memory extraction states
+
+* fix(react): correct JSON preview lines and folds
+
+* fix(react): bound JSON preview formatting
+
+* fix(react): disable folds for source fallback
+
+* fix(react): align JSON preview conventions
+
+**File**: `frontend/.changeset/json-preview-lines-and-folds.md` (added, +11/-0)
+```diff
+@@ -0,0 +1,11 @@
++---
++'@openviking/react': patch
++---
++
++## en-US
++
++Show formatted line numbers in ordinary JSON previews and keep nested fold state when a parent is collapsed and reopened.
++
++## zh-CN
++
++普通 JSON 预览按格式化后的内容显示连续行号，并在父节点折叠后重新展开时保留各子节点自身的折叠状态。
+```
+
+**File**: `frontend/.changeset/vikingbot-memory-extraction-copy.md` (added, +11/-0)
+```diff
+@@ -0,0 +1,11 @@
++---
++'@openviking/react': patch
++---
++
++## en-US
++
++Describe the VikingBot session action as extracting long-term memory in every state.
++
++## zh-CN
++
++将 VikingBot 会话动作统一表述为抽取长期记忆，并明确完成状态。
+```
+
+**File**: `frontend/packages/react/src/components/file-preview/file-preview-labels.ts` (modified, +6/-0)
+```diff
+@@ -1,6 +1,8 @@
+ import { useLocale } from '../../shared/locale-context.js';
+ import { renderErrors as renderEn } from './locales/en-US.js';
+ import { renderErrors as renderZh } from './locales/zh-CN.js';
++import { jsonPreviewLabels as jsonPreviewEn } from './locales/en-US.js';
++import { jsonPreviewLabels as jsonPreviewZh } from './locales/zh-CN.js';
+ import type { FilePreviewLabels } from './types.js';
+ import { resolveLocale, type Locale } from '../../shared/locale.js';
+ import enUS from './locales/en-US.js';
+@@ -21,3 +23,7 @@ export function resolveFilePreviewLabels(
+ export function useRenderErrors(locale?: Parameters<typeof useLocale>[0]) {
+   return useLocale(locale) === 'zh-CN' ? renderZh : renderEn;
+ }
++
++export function resolveJsonPreviewLabels(locale?: Locale) {
++  return locale === 'zh-CN' ? jsonPreviewZh : jsonPreviewEn;
++}
+```
+
+**File**: `frontend/packages/react/src/components/file-preview/json-preview-model.ts` (added, +165/-0)
+```diff
+@@ -0,0 +1,165 @@
++export interface JsonPreviewLine {
++  closeLine?: number;
++  collapsedText?: string;
++  depth: number;
++  lineNumber: number;
++  parentOpen?: number;
++  text: string;
++}
++
++export interface JsonPreviewModel {
++  defaultCollapsed: ReadonlySet<number>;
++  identity: string;
++  lines: readonly JsonPreviewLine[];
++  text: string;
++}
++
++export const MAX_FORMATTED_JSON_PREVIEW_LENGTH = 1_000_000;
++
++function jsonPreviewIdentity(content: string) {
++  let hash = 2_166_136_261;
++  for (let index = 0; index < content.length; index += 1) {
++    hash ^= content.charCodeAt(index);
++    hash = Math.imul(hash, 16_777_619);
++  }
++  return `${content.length}:${hash >>> 0}`;
++}
++
++interface JsonPreviewFormatResult {
++  foldable: boolean;
++  text: string;
++}
++
++/** Format JSON without parsing numbers back through JavaScript and losing source tokens. */
++function formatJsonPreview(
++  content: string,
++): JsonPreviewFormatResult | undefined {
++  if (!content.trim()) return { foldable: true, text: '' };
++  try {
++    JSON.parse(content);
++  } catch {
++    return undefined;
++  }
++
++  let formatted = '';
++  let depth = 0;
++  let inString = false;
++  let escaped = false;
++  const indent = () => '  '.repeat(depth);
++  const append = (value: string) => {
++    if (formatted.length + value.length > MAX_FORMATTED_JSON_PREVIEW_LENGTH)
++      return false;
++    formatted += value;
++    return true;
++  };
++
++  for (let index = 0; index < content.length; index += 1) {
++    const character = content[index]!;
++    if (inString) {
++      if (!append(character)) return { foldable: false, text: content };
++      if (escaped) escaped = false;
++      else if (character === '\\') escaped = true;
++      else if (character === '"') inString = false;
++      continue;
++    }
++    if (character === '"') {
++      inString = true;
++      if (!append(character)) return { foldable: false, text: content };
++      continue;
++    }
++    if (/\s/.test(character)) continue;
++    if (character === '{' || character === '[') {
++      let next = index + 1;
++      while (next < content.length && /\s/.test(content[next]!)) next += 1;
++      const closing = character === '{' ? '}' : ']';
++      if (content[next] === closing) {
++        if (!append(`${character}${closing}`))
++          return { foldable: false, text: content };
++        index = next;
++      } else {
++        depth += 1;
++        if (!append(`${character}\n${indent()}`))
++          return { foldable: false, text: content };
++      }
++      continue;
++    }
++    if (character === '}' || character === ']') {
++      depth -= 1;
++      if (!append(`\n${indent()}${character}`))
++        return { foldable: false, text: content };
++      continue;
++    }
++    if (character === ',') {
++      if (!append(`,\n${indent()}`)) return { foldable: false, text: content };
++      continue;
++    }
++    if (!append(character === ':' ? ': ' : character))
++      return { foldable: false, text: content };
++  }
++  return { foldable: true, text: formatted };
++}
++
++export function formatJsonPreviewContent(content: string) {
++  const result = formatJsonPreview(content);
++  return result?.text;
++}
++
++export function createJsonPreviewModel(
++  content: string,
++  defaultExpandDepth = 4,
++): JsonPreviewModel | undefined {
++  const formatted = formatJsonPreview(content);
++  if (formatted === undefined) return undefined;
++  const { foldable, text } = formatted;
++  const lines: JsonPreviewLine[] = [];
++  const openLines: number[] = [];
++  const defaultCollapsed = new Set<number>();
++
++  for (const [index, value] of text.split('\n').entries()) {
++    const trimmed = value.trim();
++    const closes = /^[}\]](?:,)?$/.test(trimmed);
++    const parentOpen = openLines.at(-1);
++    const line: JsonPreviewLine = {
++      depth: Math.floor((value.length - value.trimStart().length) / 2),
++      lineNumber: index + 1,
++      parentOpen,
++      text: value,
++    };
++    lines.push(line);
++
++    if (foldable && closes) {
++      const opening = openLines.pop();
++      if (opening !== undefined) {
++        const openLine = lines[opening]!;
++        openLine.closeLine = index;
++        openLine.collapsedText = `${openLine.text} … ${trimmed}`;
++      }
++      continue;
++    }
++    if (foldable && /[{[]$/.test(trimmed)) {
++      if (line.depth >= defaultExpandDepth) defaultCollapsed.add(index);
++      openLines.push(index);
++    }
++  }
++
++  return {
++    defaultCollapsed,
++    identity: jsonPreviewIdentity(content),
++    lines,
++    text,
++  };
++}
++
++export function visibleJsonPreviewLines(
++  model: JsonPreviewModel,
++  collapsed: ReadonlySet<number>,
++) {
++  return model.lines.filter((line) => {
++    let ancestor = line.parentOpen;
++    while (ancestor !== undefined) {
++      if (collapsed.has(ancestor)) return false;
++      ancestor = model.lines[ancestor]?.parentOpen;
++    }
++    return true;
++  });
++}
+```
+
+**File**: `frontend/packages/react/src/components/file-preview/json-preview.css` (added, +67/-0)
+```diff
+@@ -0,0 +1,67 @@
++.ov-file-preview__json {
++  box-sizing: border-box;
++  block-size: 100%;
++  min-block-size: 0;
++  overflow: auto;
++  padding-block: 12px;
++  background: var(--ov-ui-color-bg-1, var(--ov-ui-bg-1-default));
++  color: var(--ov-ui-color-text-1, var(--ov-ui-text-1-default));
++  font-family:
++    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
++    monospace;
++  font-size: 13px;
++  line-height: 22px;
++}
++
++.ov-file-preview__json-line {
++  display: flex;
++  min-inline-size: max-content;
++  padding-inline-end: 20px;
++  white-space: pre;
++}
++
++.ov-file-preview__json-gutter {
++  box-sizing: border-box;
++  inline-size: 48px;
++  flex: 0 0 48px;
++  padding-inline-end: 10px;
++  color: var(--ov-ui-color-text-3, var(--ov-ui-text-3-default));
++  text-align: end;
++  user-select: none;
++}
++
++.ov-file-preview__json-toggle,
++.ov-file-preview__json-toggle-spacer {
++  box-sizing: border-box;
++  inline-size: 20px;
++  block-size: 22px;
++  flex: 0 0 20px;
++}
++
++.ov-file-preview__json-toggle {
++  border: 0;
++  padding: 0;
++  background: transparent;
++  color: var(--ov-ui-color-text-2, var(--ov-ui-text-2-default));
++  cursor: pointer;
++}
++
++.ov-file-preview__json-toggle > span {
++  display: inline-block;
++  transform: rotate(90deg);
++  transition: transform 120ms ease;
++}
++
++.ov-file-preview__json-toggle[aria-expanded='false'] > span {
++  transform: rotate(0deg);
++}
++
++.ov-file-preview__json-toggle:focus-visible {
++  border-radius: 3px;
++  outline: 2px solid var(--ov-ui-color-primary, var(--ov-ui-primary-default));
++  outline-offset: -2px;
++}
++
++.ov-file-preview__json-code {
++  font: inherit;
++}
+```
+
+**File**: `frontend/packages/react/src/components/file-preview/json-preview.tsx` (added, +93/-0)
+```diff
+@@ -0,0 +1,93 @@
++import { useEffect, useMemo, useState } from 'react';
++import type { ContentRendererProps } from '@ark-design/ui/file-viewer/core';
++import { resolveJsonPreviewLabels } from './file-preview-labels.js';
++import {
++  visibleJsonPreviewLines,
++  type JsonPreviewModel,
++} from './json-preview-model.js';
++
++export function JsonPreview({
++  fileName,
++  locale,
++  model,
++  onLoadingChange,
++  onViewerStateChange,
++  registerHandle,
++}: Pick<
++  ContentRendererProps,
++  | 'fileName'
++  | 'locale'
++  | 'onLoadingChange'
++  | 'onViewerStateChange'
++  | 'registerHandle'
++> & {
++  model: JsonPreviewModel;
++}) {
++  const [collapsed, setCollapsed] = useState(
++    () => new Set(model.defaultCollapsed),
++  );
++  // useEffect 必要性：自定义渲染器需在 DOM 提交后把就绪状态和空句柄同步给 Ark FileViewer；
++  // 渲染阶段调用会更新父组件，且没有可替代的声明式接口。回调不建立订阅或资源，依赖变化时
++  // 重新上报即可，卸载时无需清理。
++  useEffect(() => {
++    onLoadingChange?.(null);
++    onViewerStateChange({ viewMode: 'preview' });
++    registerHandle(null);
++  }, [onLoadingChange, onViewerStateChange, registerHandle]);
++  const lines = useMemo(
++    () => visibleJsonPreviewLines(model, collapsed),
++    [collapsed, model],
++  );
++  const labels = resolveJsonPreviewLabels(locale);
++  const action = (expanded: boolean, lineNumber: number) =>
++    expanded ? labels.collapseLine(lineNumber) : labels.expandLine(lineNumber);
++
++  return (
++    <div
++      aria-label={fileName}
++      className="ov-file-preview__json"
++      data-file-preview-json="true"
++      role="region"
++    >
++      {lines.map((line) => {
++        const index = line.lineNumber - 1;
++        const foldable = line.closeLine !== undefined;
++        const isCollapsed = collapsed.has(index);
++        return (
++          <div
++            className="ov-file-preview__json-line"
++            data-line={line.lineNumber}
++            key={line.lineNumber}
++          >
++            <span aria-hidden="true" className="ov-file-preview__json-gutter">
++              {line.lineNumber}
++            </span>
++            {foldable ? (
++              <button
++                aria-label={action(!isCollapsed, line.lineNumber)}
++                aria-expanded={!isCollapsed}
++                className="ov-file-preview__json-toggle"
++                onClick={() =>
++                  setCollapsed((current) => {
++                    const next = new Set(current);
++                    if (next.has(index)) next.delete(index);
++                    else next.add(index);
++                    return next;
++                  })
++                }
++                type="button"
++              >
++                <span aria-hidden="true">›</span>
++              </button>
++            ) : (
++              <span className="ov-file-preview__json-toggle-spacer" />
++            )}
++            <code className="ov-file-preview__json-code">
++              {isCollapsed ? line.collapsedText : line.text || ' '}
++            </code>
++          </div>
++        );
++      })}
++    </div>
++  );
++}
+```
+
+**File**: `frontend/packages/react/src/components/file-preview/locales/en-US.ts` (modified, +5/-0)
+```diff
+@@ -49,3 +49,8 @@ export const renderErrors = {
+   content: 'Tab content could not be displayed.',
+   editor: 'File editor could not be displayed.',
+ };
++
++export const jsonPreviewLabels = {
++  collapseLine: (lineNumber: number) => `Collapse line ${lineNumber}`,
++  expandLine: (lineNumber: number) => `Expand line ${lineNumber}`,
++};
+```
+
+**File**: `frontend/packages/react/src/components/file-preview/locales/zh-CN.ts` (modified, +9/-0)
+```diff
+@@ -1,4 +1,5 @@
+ import type { renderErrors as EnglishRenderErrors } from './en-US.js';
++import type { jsonPreviewLabels as EnglishJsonPreviewLabels } from './en-US.js';
+ import type { FilePreviewLabels } from '../types.js';
+ 
+ const messages = {
+@@ -49,3 +50,11 @@ export const renderErrors = {
+   content: '页签内容显示失败',
+   editor: '文件编辑器显示失败',
+ } satisfies Record<keyof typeof EnglishRenderErrors, string>;
++
++export const jsonPreviewLabels = {
++  collapseLine: (lineNumber: number) => `折叠第 ${lineNumber} 行`,
++  expandLine: (lineNumber: number) => `展开第 ${lineNumber} 行`,
++} satisfies Record<
++  keyof typeof EnglishJsonPreviewLabels,
++  (lineNumber: number) => string
++>;
+```
+
+---
+
+### Incident Patch 3: `e1233b3b` (2026-11-22)
+**Commit Message**: fix(react): keep restored file previews stable (#8173)
+
+* fix(react): keep restored file previews stable
+
+A directory listing can confirm the same resource type after its preview has already resolved fs/stat. Keep that preview request and avoid rereading the same body when the type agrees.
+
+* refactor(react): keep preview options with module types
+
+* fix(react): prioritize file preview content
+
+Read Markdown while Wiki attributes resolve and reuse timestamps from loaded tree entries.
+Cache short memory previews within their request scope and invalidate on save or refresh.
+
+* test(react): verify preview request order at the data boundary
+
+* fix(react): isolate preview cache by stable identity
+
+**File**: `frontend/.changeset/steady-file-preview.md` (added, +15/-0)
+```diff
+@@ -0,0 +1,15 @@
++---
++'@openviking/react': patch
++---
++
++## en-US
++
++Keep file previews visible when a restored directory tree confirms the resource type already returned by the server.
++
++Read Markdown before optional Wiki attributes resolve. Reuse directory timestamps and briefly cache ordinary memory previews within the current request scope.
++
++## zh-CN
++
++恢复目录树时，如果目录列表确认了服务端已返回的资源类型，保留已显示的文件预览，避免重复读取。
++
++Markdown 正文优先读取，Wiki 属性在后台加载。复用目录列表的更新时间，并在当前请求作用域内短时缓存普通记忆正文。
+```
+
+**File**: `frontend/packages/react/src/client/managed-client.ts` (modified, +15/-0)
+```diff
+@@ -30,6 +30,21 @@ interface Configuration {
+ }
+ const configurations = new WeakMap<OvClient, Configuration>();
+ 
++const identityFields = ['apiKey', 'accountId', 'userId', 'resourceId'] as const;
++
++/** Whether an effective identity is re-evaluated for every request. */
++export function hasDynamicIdentity(
++  client: OvClient,
++  local: OvRequestOptions | undefined,
++): boolean {
++  const defaults = configurations.get(client)?.options;
++  return identityFields.some((field) => {
++    const override = local?.[field];
++    const value = override === undefined ? defaults?.[field] : override;
++    return typeof value === 'function';
++  });
++}
++
+ /** Transport decorators retain the same identity, scheduler and cache scope. */
+ export function inheritClientConfiguration(
+   client: OvClient,
+```
+
+**File**: `frontend/packages/react/src/modules/file-browser/fs-directories.ts` (modified, +17/-1)
+```diff
+@@ -3,6 +3,7 @@ import { useCallback, useMemo } from 'react';
+ 
+ import { toEntryRow } from '../../shared/directory-tree/rows.js';
+ import type { DirState } from '../../shared/directory-tree/types.js';
++import { isoTimestamp } from './fs-stat.js';
+ /**
+  * 树已知的目录 URI 集合：根目录，加上每一层已加载条目里标记为目录的那些。
+  *
+@@ -109,10 +110,25 @@ export function useTreeMetadata(
+     },
+     [metadataRows, identifyUri],
+   );
++  const listedUpdatedAtOf = (uri: string | null) => {
++    if (!uri) return;
++    const name = identifyUri(uri);
++    for (const dir of Object.values(dirs)) {
++      const entry = dir.entries.find((item) => identifyUri(item.uri) === name);
++      if (entry) return isoTimestamp(entry.modTime);
++    }
++  };
+   const resourceTypeOf = (uri: string | null) => {
+     if (uri === null) return 'file';
+     if (directoryUris.has(identifyUri(uri))) return 'directory';
+     return isKnownFile(uri) ? 'file' : 'unknown';
+   };
+-  return { directoryUris, metadataRows, accessOf, identifyUri, resourceTypeOf };
++  return {
++    directoryUris,
++    metadataRows,
++    accessOf,
++    identifyUri,
++    resourceTypeOf,
++    listedUpdatedAtOf,
++  };
+ }
+```
+
+**File**: `frontend/packages/react/src/modules/file-browser/fs-file-editing.ts` (modified, +12/-1)
+```diff
+@@ -6,6 +6,7 @@ import { isSystemUri } from '../../shared/resource-uri.js';
+ import { isSummaryUri } from './preview-policy.js';
+ import { readFileContent } from './fs-read-content.js';
+ import { parseWikiFileConflicts } from './wiki-conflicts.js';
++import type { ReadDashboardHint } from './dashboard-resource.js';
+ 
+ const EDITABLE_TEXT = /\.(?:md|json|jsonl|txt|yaml|yml)$/i;
+ 
+@@ -20,6 +21,7 @@ export function createFileEditing(
+   onSave?: () => void,
+   isWiki = false,
+   onWikiSaveStatus?: (status?: WikiSaveStatus) => void,
++  readHint?: ReadDashboardHint,
+ ): FilePreviewEditing | undefined {
+   if (
+     !EDITABLE_TEXT.test(name) ||
+@@ -30,7 +32,16 @@ export function createFileEditing(
+     return undefined;
+   let wiki = isWiki;
+   const read = async () => {
+-    const result = await readFileContent(client, uri, options, -1, wiki);
++    const hint = !wiki ? await readHint?.()?.catch(() => undefined) : undefined;
++    const tagged = hint?.tags.includes('compile_target=true') ?? false;
++    const result = await readFileContent(
++      client,
++      uri,
++      options,
++      -1,
++      wiki || tagged,
++      hint ? () => Promise.resolve(hint) : undefined,
++    );
+     wiki = result.wiki;
+     return result;
+   };
+```
+
+**File**: `frontend/packages/react/src/modules/file-browser/fs-read-content.ts` (modified, +16/-3)
+```diff
+@@ -6,6 +6,7 @@ import { splitWikiMetadata } from './wiki-metadata.js';
+ import { isCompileOwnedFile } from './dashboard-data.js';
+ import type { ReadDashboardHint } from './dashboard-resource.js';
+ import { isOvClientError } from '../../client/errors.js';
++import type { CachedPreviewBody } from './preview-body-cache.js';
+ 
+ /** Read and project text once for preview, editing and Wiki business data. */
+ export async function readFileContent(
+@@ -16,6 +17,7 @@ export async function readFileContent(
+   isWiki = false,
+   readHint?: ReadDashboardHint,
+   deferWiki = false,
++  cache?: CachedPreviewBody,
+ ) {
+   const read = async (lineLimit: number) => {
+     const value = await client.request<string>({
+@@ -29,8 +31,11 @@ export async function readFileContent(
+   };
+   const memory = isMemoryUri(uri);
+   const markdown = /\.md$/i.test(uri);
+-  const first = await read(limit);
++  const cached = cache?.read();
++  const first = cached ?? (await read(limit));
+   const reachedCap = limit >= 0 && splitLines(first).length >= limit;
++  if (cached === undefined && !reachedCap && !options.signal?.aborted)
++    cache?.write(first);
+   const candidate =
+     !memory && markdown && splitWikiMetadata(first).payloads.length > 0;
+   const format = markdown
+@@ -71,13 +76,21 @@ export async function readFileContent(
+     return { ...(await readWiki()), resolveWiki: undefined };
+   const resolveWiki = async () => {
+     try {
++      let knownWiki = isWiki;
++      const readOwnershipHint =
++        readHint &&
++        (async () => {
++          const hint = await readHint();
++          knownWiki ||= hint?.tags.includes('compile_target=true') ?? false;
++          return hint;
++        });
+       if (
+         isWiki ||
+-        (await isCompileOwnedFile(client, uri, options, readHint))
++        (await isCompileOwnedFile(client, uri, options, readOwnershipHint))
+       ) {
+         const result = await readWiki();
+         // Directory ownership alone does not turn a manual file into a Wiki draft.
+-        if (!deferWiki || isWiki || result.hasWikiTrailer) return result;
++        if (!deferWiki || knownWiki || result.hasWikiTrailer) return result;
+         return;
+       }
+     } catch (error) {
+```
+
+**File**: `frontend/packages/react/src/modules/file-browser/fs-read-file.ts` (modified, +5/-2)
+```diff
+@@ -9,6 +9,7 @@ import { createFileEditing, type WikiSaveStatus } from './fs-file-editing.js';
+ import { nameFromUri } from '../../shared/directory-tree/rows.js';
+ import { toFileTab } from './fs-model.js';
+ import type { ReadDashboardHint } from './dashboard-resource.js';
++import type { CachedPreviewBody } from './preview-body-cache.js';
+ 
+ /** 读取正文的行数上限；读满即按截断处理。The line cap; a full read counts as truncated. */
+ export const MAX_LINES = 2000;
+@@ -28,9 +29,9 @@ export async function readFile(
+   options: OvRequestOptions,
+   openParent?: (uri: string) => Promise<void>,
+   onSave?: () => void,
+-  isWiki = false,
+   onWikiSaveStatus?: (status?: WikiSaveStatus) => void,
+   readHint?: ReadDashboardHint,
++  cache?: CachedPreviewBody,
+ ): Promise<{
+   tab: FilePreviewFileTab & { compileOutput?: boolean };
+   resolveWikiTab?: () => Promise<
+@@ -60,9 +61,10 @@ export async function readFile(
      uri,
-     loadPermission,
-     onLevel: (current) => {
-@@ -158,7 +161,7 @@ export function useFileBrowserAcl({
-     canDelete: !enabled || level === 'manage',
-     canEdit: !enabled || level === 'write' || level === 'manage',
-     titleExtra:
--      enabled && permission?.key === key && permission.error ? (
-+      enabled && access?.key === key && access.error ? (
-         <AclPermissionError
-           text={text}
-           onRetry={() => setGeneration((value) => value + 1)}
-@@ -198,7 +201,6 @@ export function useFileBrowserAcl({
-                 options?.onChange?.(report);
-               } catch {
-                 // A host notification cannot undo a successful server mutation.
--                return;
-               }
-             }}
-           />
+     options,
+     MAX_LINES,
+-    isWiki,
++    false,
+     readHint,
+     true,
++    cache,
+   );
+   const resolveImage = createPreviewImageResolver(client, uri, false, options);
+   const toTab = ({
+@@ -82,6 +84,7 @@ export async function readFile(
+       onSave,
+       wiki,
+       onWikiSaveStatus,
++      readHint,
+     ),
+   });
+   const resolveWiki = result.resolveWiki;
+```
+
+**File**: `frontend/packages/react/src/modules/file-browser/fs-stat.ts` (modified, +1/-1)
+```diff
+@@ -10,7 +10,7 @@ interface StatResult {
+   updateTime?: string | number;
+ }
+ 
+-function isoTimestamp(value: string | number | undefined) {
++export function isoTimestamp(value: string | number | undefined) {
+   if (value == null || (typeof value === 'string' && !value.trim())) return;
+   const numeric = Number(value);
+   if (numeric === 0) return;
+```
+
+**File**: `frontend/packages/react/src/modules/file-browser/preview-body-cache.ts` (added, +33/-0)
+```diff
+@@ -0,0 +1,33 @@
++const MAX_AGE_MS = 30_000;
++const MAX_ENTRIES = 12;
++const MAX_BODY_LENGTH = 128 * 1024;
++
++export function createPreviewBodyCache() {
++  const entries = new Map<string, { body: string; storedAt: number }>();
++  return {
++    forFile(uri: string, updatedAt: string | undefined) {
++      const key = JSON.stringify([uri, updatedAt]);
++      return {
++        read() {
++          const entry = entries.get(key);
++          if (entry && Date.now() - entry.storedAt < MAX_AGE_MS)
++            return entry.body;
++          entries.delete(key);
++        },
++        write(body: string) {
++          if (body.length > MAX_BODY_LENGTH) return;
++          entries.delete(key);
++          if (entries.size >= MAX_ENTRIES) {
++            const oldest = entries.keys().next().value;
++            if (oldest !== undefined) entries.delete(oldest);
++          }
++          entries.set(key, { body, storedAt: Date.now() });
++        },
++      };
++    },
++  };
++}
++
++export type CachedPreviewBody = ReturnType<
++  ReturnType<typeof createPreviewBodyCache>['forFile']
++>;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8185** (2026-11-22): perf(ui): load deep-link previews alongside the tree (@yufeng201)
+- **PR #8176** (2026-11-22): fix(react): 优化 JSON 预览与 VikingBot 记忆文案 (@yufeng201)
+- **PR #8173** (2026-11-22): fix(react): keep restored file previews stable (@yufeng201)
 - **PR #8166** (2026-11-21): fix(compile): persist cancellation of queued runs (@FuJiaJie123)
 - **PR #8156** (2026-11-21): fix(react): refresh preview permissions with file tree (@leowld)
 - **PR #8152** (2026-11-21): fix(react): distinguish compile and experience dashboard colors (@leowld)
-- **PR #8146** (2026-11-21): fix(storage): backport effective file access metadata to v0.5.5 (@leowld)
-- **PR #8141** (2026-11-21): fix(react): only offer ovpack export for directories (@leowld)
-- **PR #8140** (2026-11-21): fix(react): keep ACL search placeholder stable (@leowld)
 
 ---
 
@@ -1969,39 +2567,41 @@ Co-authored-by: fujiajie.168 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. crypto): reject malformed local root key files
+## X. ui): load deep-link previews alongside the tree
 
 **RULE**:
-When implementing operations in `openviking/crypto/providers.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `frontend/.changeset/fast-file-preview-deep-links.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a0c00a4f`: crypto): reject malformed local root key files. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e6dc9714`: ui): load deep-link previews alongside the tree. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `openviking/crypto/providers.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `frontend/.changeset/fast-file-preview-deep-links.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-                root_key = bytes.fromhex(hex_key)
-            # A truncated or hand-edited key file must not silently become a
-            # shorter root key: the account keys derived from it would encrypt
-            # new files under a key the real 32-byte root key cannot open.
-            if len(root_key) != 32:
-                raise ConfigError(
-                    f"Invalid root key in {self.key_file}: expected 32 bytes, got {len(root_key)}"
-                )
-            return root_key
+---
+'@openviking/react': patch
+---
+
+## en-US
+
+Start a controlled file or directory preview while the root tree is still loading, so direct links no longer serialize independent tree and preview requests.
+
+## zh-CN
+
+受控文件或目录预览不再等待根目录树加载完成，直达链接会并行请求目录树与预览内容。
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-                return bytes.fromhex(hex_key)
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a0c00a4f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e6dc9714` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

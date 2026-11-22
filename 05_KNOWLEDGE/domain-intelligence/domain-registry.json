@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T20:09:11.607Z",
+  "last_updated": "2026-11-22T20:17:14.423Z",
   "total_records": 2377,
   "domains": {
     "A": {
@@ -8561,8 +8561,8 @@
       "title": "Research & Knowledge Intelligence: HemmingwayAI/Hemmingway-1 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-altworld-hemmingway-1-research-knowledge-intelligence-hemmingwayai-hemmingway.md",
       "repository": "HemmingwayAI/Hemmingway-1",
-      "content_hash": "fd5b4179c94c1da9683e1ef0dfd0e2f642c4bb3b56d7bcfd575bc1d71d5ab990",
-      "created_at": "2026-11-18T13:34:10.855Z"
+      "content_hash": "57cb35defafee8f9a7f971d22331e0f55289b5dc4e705ddddabfb08a006b2328",
+      "created_at": "2026-11-22T20:16:53.183Z"
     },
     "domain_intelligence-quality-verification-intelligence-saffsanity-sill-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-saffsanity-sill-core-invariants",
@@ -8639,8 +8639,8 @@
       "title": "Research & Knowledge Intelligence: hf-altworld-hemmingway-1-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-altworld-hemmingway-1-learnings-research-knowledge-intelligence-hf-altworld-h.md",
       "repository": "hf-altworld-hemmingway-1-learnings",
-      "content_hash": "894d36b8c4b581e84fb7519504067f99383371b4f36ee9aa9733ff614e9fd391",
-      "created_at": "2026-11-18T13:34:26.568Z"
+      "content_hash": "ec47574dc26fcd99f78df0420aef41f0e652e11edbbf67bd77073e33e3ea5c2e",
+      "created_at": "2026-11-22T20:17:13.787Z"
     },
     "domain_intelligence-quality-verification-intelligence-saffsanity-sill-learnings-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-saffsanity-sill-learnings-core-invariants",
@@ -8954,8 +8954,8 @@
       "title": "Technical Construction Intelligence: volcengine/OpenViking Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-volcengine-openviking-technical-construction-intelligence-volcengine-openviking-.md",
       "repository": "volcengine/OpenViking",
-      "content_hash": "a211dbc144271af518f952b7e439eb2d9482d500132d33638a11705edb8e9368",
-      "created_at": "2026-11-21T20:10:56.643Z"
+      "content_hash": "3c54492a72ad37f30898f0decf0bc5f0011a19ba919a58d00e63c9353b1a7437",
+      "created_at": "2026-11-22T20:17:06.795Z"
     },
     "DOM-D-E243BB51": {
       "record_id": "DOM-D-E243BB51",
@@ -15456,8 +15456,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "96eefcd210231c96e7b573b2bc73dc85c92dc7331653191fd6e38d297d810024",
-      "created_at": "2026-11-22T18:21:34.504Z"
+      "content_hash": "8ca43bc58b564541fbdf297c953e32a35af9bad077d90d3846cc1ec2e4c216f2",
+      "created_at": "2026-11-22T20:17:09.852Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -18334,8 +18334,8 @@
       "title": "Research & Knowledge Intelligence: max-sixty/worktrunk Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-max-sixty-worktrunk-research-knowledge-intelligence-max-sixty-worktrunk-core-inv.md",
       "repository": "max-sixty/worktrunk",
-      "content_hash": "601c350356f5357183392b56a6c076ca36b88b150cb1bc87d45c2bb46dd604b7",
-      "created_at": "2026-11-21T11:16:31.994Z"
+      "content_hash": "4d1d9578b211ff89098d8d4ac453fe7b9b99c7e504c247482953eb1d2e5e3fdc",
+      "created_at": "2026-11-22T20:16:54.774Z"
     },
     "domain_intelligence-research-knowledge-intelligence-max-sixty-worktrunk-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-max-sixty-worktrunk-learnings-core-invariants",
@@ -18343,8 +18343,8 @@
       "title": "Research & Knowledge Intelligence: max-sixty-worktrunk-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-max-sixty-worktrunk-learnings-research-knowledge-intelligence-max-sixty-worktrun.md",
       "repository": "max-sixty-worktrunk-learnings",
-      "content_hash": "f522155eba8957338190ea3a7445c8e419dff41df861944177d4c3c8b2c9e4ca",
-      "created_at": "2026-11-21T11:16:51.203Z"
+      "content_hash": "781034dd48013818de942790c232b8dbec37d170f6334e36228b753d189362ab",
+      "created_at": "2026-11-22T20:17:13.292Z"
     },
     "DOM-D-88E5B240": {
       "record_id": "DOM-D-88E5B240",
@@ -21773,8 +21773,8 @@
       "title": "Architecture Intelligence: TableProApp/TablePro Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tableproapp-tablepro-architecture-intelligence-tableproapp-tablepro-core-invaria.md",
       "repository": "TableProApp/TablePro",
-      "content_hash": "43d829fdab21f0e837c8789850f6a785db2463babd2f7d56534ebadc84c29078",
-      "created_at": "2026-11-15T16:07:08.049Z"
+      "content_hash": "66c979fd905bfc245d0466864390c6ba67f804b0bee1c5dacbc1eecf1263c1f5",
+      "created_at": "2026-11-22T20:17:00.094Z"
     },
     "DOM-D-3B7C0B67": {
       "record_id": "DOM-D-3B7C0B67",
@@ -21833,8 +21833,8 @@
       "title": "Architecture Intelligence: tableproapp-tablepro-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tableproapp-tablepro-learnings-architecture-intelligence-tableproapp-tablepro-le.md",
       "repository": "tableproapp-tablepro-learnings",
-      "content_hash": "dec10081debb595590760738be49a3eb5bc80f2a2a01c5b96199daee4d08b1b2",
-      "created_at": "2026-11-15T16:07:38.153Z"
+      "content_hash": "5159d47769106420fc40ce3f2e1e372da00792a4414043b5a2294c4eb6f65944",
+      "created_at": "2026-11-22T20:17:14.423Z"
     },
     "domain_intelligence-technical-construction-intelligence-jarvis322-macos-sysdata-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-jarvis322-macos-sysdata-core-invariants",

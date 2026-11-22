@@ -12178,3 +12178,8 @@
 | `CYCLE-20261122-HDPM` | `2026-11-22T20:00:25.258Z` | `siteline/swiftui-introspect` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9983` | Yes (`b60993a3...`) |
 | `CYCLE-20261122-SCV8` | `2026-11-22T20:08:57.380Z` | `fastino/GLiNER2.5-Decide` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md` | Yes (`18614aec...`) |
 | `CYCLE-20261122-SEUA` | `2026-11-22T20:08:59.938Z` | `Automattic/harper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9984` | Yes (`5826b727...`) |
+| `CYCLE-20261122-2JTW` | `2026-11-22T20:16:52.964Z` | `HemmingwayAI/Hemmingway-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md` | Yes (`6fcb9e01...`) |
+| `CYCLE-20261122-2KXB` | `2026-11-22T20:16:54.383Z` | `max-sixty/worktrunk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9985` | Yes (`6458bf61...`) |
+| `CYCLE-20261122-2P25` | `2026-11-22T20:16:59.741Z` | `TableProApp/TablePro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9986` | Yes (`c9d24a11...`) |
+| `CYCLE-20261122-2U6W` | `2026-11-22T20:17:06.392Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/volcengine-openviking-learnings.md` | Yes (`daa3c384...`) |
+| `CYCLE-20261122-2WK6` | `2026-11-22T20:17:09.462Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9987` | Yes (`82c32f3c...`) |

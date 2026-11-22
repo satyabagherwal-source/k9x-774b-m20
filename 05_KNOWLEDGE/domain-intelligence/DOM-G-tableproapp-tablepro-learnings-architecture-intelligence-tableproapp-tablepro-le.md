@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-15T16:07:37.947Z",
+  "timestamp": "2026-11-22T20:17:14.154Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-tableproapp-tablepro-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [tableproapp-tablepro-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-15T16:07:37.947Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T20:17:14.154Z`  
 > **Learning ID**: `LEARN-EVO-tableproapp-tablepro-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), F (Design Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 56%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 60%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from tableproapp-tablepro-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tableproapp-tablepro-learnings.md`  
 > **Source**: github ([https://github.com/TableProApp/TablePro](https://github.com/TableProApp/TablePro))  
-> **Source Version**: `e3ca8837`  
+> **Source Version**: `2507448a`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T16:07:06.983Z  
+> **Timestamp**: 2026-11-22T20:16:58.767Z  
 > **Learning ID**: `learn-github-tableproapp-tablepro`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tableproapp-tablepro-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/TableProApp/TablePro](https://github.com/TableProApp/TablePro))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T16:07:06.977Z  
+> **Harvest Timestamp**: 2026-11-22T20:16:58.762Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Free, open-source native database client for macOS, Linux, iPhone and iPad.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6471 stars
+- **Stars / Engagement**: 6519 stars
 
 ---
 
@@ -422,6 +422,7 @@ let package = Package(
         .library(name: "TableProR2SQLCore", targets: ["TableProR2SQLCore"]),
         .library(name: "TableProConnectionLibrary", targets: ["TableProConnectionLibrary"]),
         .library(name: "TableProSQLGrammar", targets: ["TableProSQLGrammar"]),
+        .library(name: "TableProSQLFile", targets: ["TableProSQLFile"]),
         .library(name: "TableProSQLQuoting", targets: ["TableProSQLQuoting"]),
         .library(name: "TableProProcess", targets: ["TableProProcess"]),
         .library(name: "TableProSQLVocabulary", targets: ["TableProSQLVocabulary"]),
@@ -443,6 +444,7 @@ let package = Package(
         .library(name: "TableProKafkaCore", targets: ["TableProKafkaCore"]),
         .library(name: "TableProCassandraCore", targets: ["TableProCassandraCore"]),
         .library(name: "TableProEtcdCore", targets: ["TableProEtcdCore"]),
+        .library(name: "TableProElasticsearchCore", targets: ["TableProElasticsearchCore"]),
         .library(name: "TableProDuckDBCore", targets: ["TableProDuckDBCore"])
     ],
     // Kafka brokers hand back whatever codec the producer stored, and macOS has no zstd.
@@ -581,12 +583,7 @@ let package = Package(
         ),
         // Only the plugin links this; the app tiers statements with TableProWeaviateCore alone.
         .target(
-            name: "TableProWeaviateClient",
-            dependencies: ["TableProWeaviateCore"],
-            path: "Sources/TableProWeaviateClient"
-        ),
-        .target(
-   
+            
 ```
 
 ### Core Architecture Module: `apple/Packages/TableProCore/Sources/CSQLite/include/sqlite3.h`
@@ -1819,13 +1816,11 @@ public enum MongoVocabulary {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4268** (2026-11-14): **Edits and transactions: remaining audit items**
-  *Symptoms*: ### What happened?  Items left from the 2026-11-10 and 2026-11-12 audits.  - [ ] DL-02: after a reconnect loses a transaction, temp tables or SET values, the refusal also blocks the app's own work on that database, not only the user's next SQL - [ ] GE-06: switching tabs drops the data undo history while the edits stay pending - [ ] QT-09: one window-wide `DataChangeManager`, swapped by snapshot, is the root of the edit-loss bugs - [ ] WD-2: on Windows, a forced shutdown through Restart Manager still ends the app with pending edits and an open transaction  ### Expected behavior  Pending edits and open transactions are never lost without asking.  ### TablePro version  main after 0.87.0-beta.1  ### Platform  macOS, Windows 
+- **Issue #4389** (2026-11-21): **sqlite:// URL reads its query parameters as part of the file path**
+  *Symptoms*: ### What happened?  Opening a `sqlite://` URL with query parameters reads the parameters as part of the file path. `sqlite:///path/to/shop.sqlite?name=Shop` opens `/path/to/shop.sqlite?name=Shop`, a file that does not exist, so the driver creates an empty database under that name. The window title reads `SQLite //path/to/shop.sqlite?name=Shop`.  Without parameters the title is still `SQLite //path/to/shop.sqlite`. `duckdb://` and `beancount://` file URLs behave the same.  ### Steps to reproduce  1. Run `open 'sqlite:///path/to/shop.sqlite?name=Shop'`. 2. Click Connect. 3. The window title shows `SQLite //path/to/shop.sqlite?name=Shop` and the sidebar shows an empty database.  ### Expected behavior  The URL's path is the file, and `name` and the other documented parameters apply the way they do on server URLs. The window is titled `Shop`, or the file name when the URL has no `name`, as when the file itself is opened.  ### Database type  SQLite  ### TablePro version  0.88.0-beta.2  ### Platform  macOS 
 
-- **Issue #4106** (2026-11-12): **Linux: the MCP token's locked-keyring message has no default-keyring step**
-  *Symptoms*: With no default keyring, the MCP status row in Preferences reads "The keyring is locked, so the access token cannot be read. Unlock it and try again." Unlocking does not help when there is no default keyring.  - Where: `linux/crates/app/src/ui/preferences_dialog/mcp_page.rs:309`. - Expected: the same recovery as the Remember Password toast from #4105 (troubleshooting.md, Flatpak connections: create a default keyring in Passwords and Keys). - Left out of #4105, which fixed the save paths.
-  **Post-Mortem & Fix Analysis**:
-  > The shared message for Locked and UnlockDismissed only suggested unlocking and retrying. It omitted the missing-default-keyring case that can occur with GNOME automatic login.  The message now covers accepting the unlock prompt and creating a default keyring in Passwords and Keys. Added tests cover both errors, the recovery text, retry visibility, disabled client controls, and the transition back to Off.  https://github.com/TableProApp/TablePro/pull/4234
+- **Issue #4388** (2026-11-21): **SQLite export suggests the database file's full path as the file name**
+  *Symptoms*: ### What happened?  Exporting tables from a SQLite connection suggests the database file's full path as the file name. With `/path/to/shop.sqlite` open, the save panel's name field reads `/path/to/shop.sqlite.csv`. The export dialog also lists the database row under its full path.  It happens whenever the export does not start from exactly one table: no table or several tables selected in the sidebar. Every format is affected.  ### Steps to reproduce  1. Open a SQLite file, for example `/path/to/shop.sqlite`. 2. Make sure no table is selected in the sidebar. 3. File > Export > Export Tables…, keep CSV, click Export. 4. The save panel suggests `/path/to/shop.sqlite.csv`.  ### Expected behavior  A short name, the way a server database gets its database name: `shop.csv`.  ### Database type  SQLite  ### TablePro version  0.88.0-beta.2  ### Platform  macOS 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1842,1150 +1837,507 @@ public enum MongoVocabulary {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2aca62ea` (2026-11-15)
-**Commit Message**: fix(duckdb): keep DuckDB's expression recursion within the stacks it runs on (#4293)
+### Incident Patch 1: `7b2ba0f2` (2026-11-22)
+**Commit Message**: build(release): ship per-arch builds and a per-arch appcast (#4414)
 
-**File**: `.github/workflows/core.yml` (modified, +3/-0)
+**File**: `.claude/skills/release/SKILL.md` (modified, +1/-1)
 ```diff
-@@ -99,6 +99,9 @@ jobs:
-       # The sign-in's loopback listener and the token's file on each platform.
-       - name: Account unit tests
-         run: cargo test --locked --target "$TARGET" -p tablepro-account --lib
-+      # DuckDB recurses on threads whose stack each platform sizes (core/docs/decisions/0031-duckdb-expression-depth.md).
-+      - name: DuckDB's deepest expressions
-+        run: cargo test --locked --target "$TARGET" -p tablepro-driver-duckdb --test deep_expressions
-       # The Arm64 image has no OpenSSH Server, and installing it takes about 20 minutes, so Arm64 runs these nightly.
-       - name: Start Windows' OpenSSH Server
-         id: sshd
+@@ -62,5 +62,5 @@ Run `apple/RELEASING.md`: Cutting a beta, or Cutting a stable or patch with its
+ 
+ - `apple/scripts/release/tag.sh <tag> <commit>` tags and watches the tag's run. Hold merges and pull request pushes around it as Tagging says, since release jobs get no runner priority.
+ - The forward-port goes once the tag's App and Plugins jobs start, not after publishing, so the next beta.1 need not wait for the stable (Forward-port).
+-- Then check the source: `gh api -H 'Accept: application/vnd.github.raw' 'repos/TableProApp/TablePro/contents/appcast.xml?ref=gh-pages' | grep -c '<sparkle:shortVersionString>X.Y.Z<'` prints 1; `gh release view vX.Y.Z --json assets -q '.assets | length'` is 4 plus `python3 apple/scripts/release/registry.py targets | wc -l`.
++- Then check the source: `gh api -H 'Accept: application/vnd.github.raw' 'repos/TableProApp/TablePro/contents/appcast.xml?ref=gh-pages' | grep -c '<sparkle:shortVersionString>X.Y.Z<'` prints 2, one item per arch; `gh release view vX.Y.Z --json assets -q '.assets | length'` is 7 plus `python3 apple/scripts/release/registry.py targets | wc -l`. A line whose `apple/scripts/release/feed.py` has no `ARCHES` ships universal: 1 item and 4 plus `python3 apple/scripts/release/registry.py targets | wc -l`.
+ - After an X.Y.0, the `announce` skill in TableProApp/web is next.
 ```
 
-**File**: `apple/Plugins/DuckDBDriverPlugin/DuckDBConnection.swift` (modified, +12/-0)
+**File**: `.github/workflows/release.yml` (modified, +15/-8)
 ```diff
-@@ -38,6 +38,9 @@ enum DuckDBReleaseOutcome: Equatable {
- actor DuckDBConnectionActor {
-     private static let logger = Logger(subsystem: "com.TablePro", category: "DuckDBConnectionActor")
+@@ -85,17 +85,23 @@ jobs:
+           retention-days: 30
  
-+    private let executor = DuckDBStackExecutor(name: "com.TablePro.duckdb")
-+    nonisolated var unownedExecutor: UnownedSerialExecutor { executor.asUnownedSerialExecutor() }
-+
-     private var database: duckdb_database?
-     private var connection: duckdb_connection?
-     // Renders the rows of a result the session's own connection is still producing.
-@@ -279,6 +282,15 @@ actor DuckDBConnectionActor {
-                 String(localized: "This build of DuckDB does not accept the storage version that keeps files readable by DuckDB 1.x")
-             )
-         }
-+        guard duckdb_set_config(
-+            config,
-+            DuckDBExpressionDepth.configurationOption,
-+            DuckDBExpressionDepth.limit
-+        ) != DuckDBError else {
-+            throw DuckDBPluginError.connectionFailed(
-+                String(localized: "This build of DuckDB does not accept a limit on how deep an expression nests")
-+            )
-+        }
-         if !spec.allowsPersistentSecrets {
-             guard duckdb_set_config(config, "allow_persistent_secrets", "false") != DuckDBError else {
-                 throw DuckDBPluginError.connectionFailed(
+   app:
+-    name: App
++    name: App (${{ matrix.arch }})
+     needs: verify
+     runs-on: xcode-27
+     environment: signing
+-    # The archive alone took 138 minutes for v0.84.0-beta.1; signing and two notarizations come on top.
++    # One arch per leg, the two in parallel. The universal archive, both arches in one job, took 138 minutes
++    # for v0.84.0-beta.1; signing and two notarizations come on top.
+     timeout-minutes: 240
++    strategy:
++      fail-fast: false
++      matrix:
++        arch: [arm64, x86_64]
+     permissions:
+       contents: read
+     env:
+       VERSION: ${{ needs.verify.outputs.version }}
+       BUILD: ${{ needs.verify.outputs.build }}
++      ARCH: ${{ matrix.arch }}
+     defaults:
+       run:
+         working-directory: apple
+@@ -130,20 +136,20 @@ jobs:
+           asc-key-p8: ${{ secrets.ASC_KEY_P8 }}
+ 
+       - name: Build the app
+-        run: scripts/release/build.sh app
++        run: scripts/release/build.sh app "$ARCH"
+ 
+       - name: Notarize the app
+-        run: scripts/release/notarize.sh build/release/TablePro.app
++        run: scripts/release/notarize.sh "build/release/$ARCH/TablePro.app"
+ 
+       - name: Package the app
+-        run: scripts/release/package.sh app
++        run: scripts/release/package.sh app "$ARCH"
+ 
+       - name: Notarize the disk image
+-        run: scripts/release/notarize.sh "dist/TablePro-$VERSION.dmg"
++        run: scripts/release/notarize.sh "dist/TablePro-$VERSION-$ARCH.dmg"
+ 
+       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+         with:
+-          name: app
++          name: app-${{ matrix.arch }}
+           path: apple/dist/
+           if-no-files-found: error
+           retention-days: 30
+@@ -230,7 +236,8 @@ jobs:
+ 
+       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+         with:
+-          name: app
++          pattern: app-*
++          merge-multiple: true
+           path: dist
+ 
+       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
 ```
 
-**File**: `apple/Plugins/DuckDBDriverPlugin/DuckDBExpressionDepth.swift` (added, +117/-0)
+**File**: `apple/CONTRIBUTING.md` (modified, +2/-2)
 ```diff
-@@ -0,0 +1,117 @@
-+//
-+//  DuckDBExpressionDepth.swift
-+//  DuckDBDriverPlugin
-+//
-+
-+import CDuckDB
-+import Foundation
-+
-+// DuckDB binds about 1 KiB of stack per level of an expression, also on threads of its own that get 512 KiB on macOS
-+// and iOS, where its default limit of 1,000 overflows them (core/docs/decisions/0031-duckdb-expression-depth.md).
-+nonisolated enum DuckDBExpressionDepth {
-+    static let configurationOption = "max_expression_depth"
-+    static let limit = "250"
-+
-+    // DuckDB reads a file's expressions at open and ATTACH, prints them and writes them back with no limit of its
-+    // own, about 0.84 KiB a level: the stack its command line runs on, where a cooperative thread has 512 KiB.
-+    static let stackSize = 8 << 20
-+
-+    static func open(
-+        _ path: String,
-+        config: duckdb_config?
-+    ) -> (state: duckdb_state, database: duckdb_database?, error: UnsafeMutablePointer<CChar>?) {
-+        nonisolated(unsafe) let config = config
-+        return onStack {
-+            var database: duckdb_database?
-+            var error: UnsafeMutablePointer<CChar>?
-+            let state = duckdb_open_ext(path, &database, config, &error)
-+            return (state: state, database: database, error: error)
-+        } ?? (state: DuckDBError, database: nil, error: nil)
-+    }
-+
-+    static func close(_ database: inout duckdb_database?) {
-+        nonisolated(unsafe) let closing = database
-+        _ = onStack {
-+            var closed = closing
-+            duckdb_close(&closed)
-+        }
-+        database = nil
-+    }
-+
-+    static func onStack<Value>(_ body: @escaping @Sendable () -> Value) -> Value? {
-+        nonisolated(unsafe) var value: Value?
-+        let finished = DispatchSemaphore(value: 0)
-+        let thread = Thread {
-+            value = body()
-+            finished.signal()
-+        }
-+        thread.stackSize = stackSize
-+        thread.start()
-+        finished.wait()
-+        return value
-+    }
-+}
-+
-+// An actor's jobs, in order, on one thread of its own with DuckDB's stack.
-+nonisolated final class DuckDBStackExecutor: SerialExecutor, @unchecked Sendable {
-+    private let pending = DuckDBPendingJobs()
-+
-+    init(name: String) {
-+        let pending = pending
-+        let thread = Thread { pending.run() }
-+        thread.name = name
-+        thread.stackSize = DuckDBExpressionDepth.stackSize
-+        thread.qualityOfService = .userInitiated
-+        thread.start()
-+    }
-+
-+    deinit {
-+        pending.stop()
-+    }
-+
-+    // The ExecutorJob form needs macOS 14 and the app runs on 13.
-+    func enqueue(_ job: UnownedJob) {
-+        pending.add(job, on: asUnownedSerialExecutor())
-+    }
-+
-+    func asUnownedSerialExecutor() -> UnownedSerialExecutor {
-+        UnownedSerialExecutor(ordinary: self)
-+    }
-+}
-+
-+private nonisolated final class DuckDBPendingJobs: @unchecked Sendable {
-+    private let condition = NSCondition()
-+    private var jobs: [(job: UnownedJob, executor: UnownedSerialExecutor)] = []
-+    private var stopped = false
-+
-+    func add(_ job: UnownedJob, on executor: UnownedSerialExecutor) {
-+        condition.lock()
-+        jobs.append((job: job, executor: executor))
-+        condition.signal()
-+        condition.unlock()
-+    }
-+
-+    // The executor goes with its actor, which has no job left by then.
-+    func stop() {
-+        condition.lock()
-+        stopped = true
-+        condition.signal()
-+        condition.unlock()
-+    }
-+
-+    func run() {
-+        while true {
-+            condition.lock()
-+            while jobs.isEmpty && !stopped {
-+                condition.wait()
-+            }
-+            guard !jobs.isEmpty else {
-+                condition.unlock()
-+                return
-+            }
-+            let next = jobs.removeFirst()
-+            condition.unlock()
-+            next.job.runSynchronously(on: next.executor)
-+        }
-+    }
-+}
+@@ -61,7 +61,7 @@ xcodebuild build -project TablePro.xcodeproj -scheme AllPlugins -destination 'pl
+ 
+ ### A Release build
+ 
+-`scripts/release/build.sh` builds the app and the registry plugins the way a tag does, universal, into `build/release/`; `package.sh` writes the assets to `dist/`. The nightly's Release Build job runs the same:
++`scripts/release/build.sh` builds the app and the registry plugins the way a tag does: the app once per arch into `build/release/<arch>/`, the plugins universal into `build/release/plugins`; `package.sh` writes the assets to `dist/`. The nightly's Release Build job runs the same:
+ 
+ ```bash
+ export VERSION=0.0.0-dev BUILD=9999999
+@@ -72,7 +72,7 @@ scripts/release/build.sh plugins --unsigned && scripts/release/package.sh plugin
+ 
+ Signed: drop `--unsigned`, with the Developer ID identity and the provisioning profile `scripts/release/ExportOptions.plist` names. `scripts/release/notarize.sh <path>...` needs the profile `xcrun notarytool store-credentials TablePro --key <p8> --key-id <id> --issuer <issuer>` creates.
+ 
+-The disk image opens to the window `scripts/release/dmg.DS_Store` describes, a file Finder wrote. To change it, edit the Finder settings in `scripts/release/dmg.sh`, run `scripts/release/dmg.sh layout build/release/TablePro.app` on a Mac with a logged-in session, and open a disk image built with the new file before committing it.
++The disk image opens to the window `scripts/release/dmg.DS_Store` describes, a file Finder wrote. To change it, edit the Finder settings in `scripts/release/dmg.sh`, run `scripts/release/dmg.sh layout build/release/arm64/TablePro.app` on a Mac with a logged-in session, and open a disk image built with the new file before committing it.
+ 
+ ### Clean builds
+ 
 ```
 
-**File**: `apple/Plugins/DuckDBDriverPlugin/DuckDBIsolatedImport.swift` (modified, +22/-13)
+**File**: `apple/RELEASING.md` (modified, +3/-0)
 ```diff
-@@ -13,6 +13,7 @@ enum DuckDBIsolatedImport {
-         ("autoinstall_known_extensions", "false"),
-         ("autoload_known_extensions", "false"),
-         ("allow_community_extensions", "false"),
-+        (DuckDBExpressionDepth.configurationOption, DuckDBExpressionDepth.limit),
-     ]
+@@ -5,6 +5,9 @@ The macOS app, its registry plugins, the static libraries and the manual iOS flo
+ ## Channels
  
-     // duckdb_set_config rejects allowed_directories, and DuckDB refuses to change it once external access is off.
-@@ -47,14 +48,14 @@ enum DuckDBIsolatedImport {
-             throw DuckDBPluginError.connectionFailed("DuckDB rejected \(option.name) = \(option.value)")
-         }
+ - One EdDSA-signed appcast, `https://updates.tablepro.app/appcast.xml`, carries stable and beta items. The app takes betas only while Settings > General > Get beta updates is on.
++- Each version ships per arch: `TablePro-<ver>-arm64` and `-x86_64`, each a `.dmg`, a `.tar.xz` and a `-dSYMs.zip`. Earlier versions from 0.82.0 shipped one universal app as one item.
++- The feed carries two items per version: arm64 first, gated by `sparkle:hardwareRequirements`, then x86_64 ungated. Sparkle takes the first of two equal versions, and an Intel Mac skips the gated one. `generate_appcast` refuses two archives of one version, so `feed.py` runs it once per arch and puts the arm64 item before the x86_64 one.
++- `build.sh`/`package.sh` take an arch (none builds both) and `release.yml`'s App job is an `arm64`/`x86_64` matrix.
+ - A stable rolls out in phases of 21600 s. A beta is not phased and is a GitHub prerelease.
+ - Critical means a security fix or data loss, nothing else: ` [CRITICAL]` on the version's `CHANGELOG.md` heading, never on a beta. Later stables carry it forward.
+ - The legacy `appcast.xml` on `main`, the feed of apps up to 0.81, ends at 0.82.0. No release writes it.
+```
+
+**File**: `apple/scripts/benchmark-app-paths.sh` (modified, +3/-2)
+```diff
+@@ -39,8 +39,9 @@ while [ $# -gt 0 ]; do
+ done
  
--        var database: duckdb_database?
--        var openError: UnsafeMutablePointer<CChar>?
--        guard duckdb_open_ext(file, &database, config, &openError) != DuckDBError else {
--            let detail = openError.map { String(cString: $0) } ?? "unknown error"
--            duckdb_free(openError)
-+        let opened = DuckDBExpressionDepth.open(file, config: config)
-+        var database = opened.database
-+        guard opened.state != DuckDBError else {
-+            let detail = opened.error.map { String(cString: $0) } ?? "unknown error"
-+            duckdb_free(opened.error)
-             throw DuckDBPluginError.connectionFailed("Failed to open DuckDB database at '\(file)': \(detail)")
-         }
--        defer { duckdb_close(&database) }
-+        defer { DuckDBExpressionDepth.close(&database) }
+ if [ -z "$APP" ]; then
+-    (cd "$ROOT" && scripts/release/build.sh app --unsigned)
+-    APP="$ROOT/build/release/TablePro.app"
++    arch="$(uname -m)"
++    (cd "$ROOT" && scripts/release/build.sh app "$arch" --unsigned)
++    APP="$ROOT/build/release/$arch/TablePro.app"
+ fi
+ [ -d "$APP/Contents/MacOS" ] || { echo "not an app bundle: $APP" >&2; exit 2; }
  
-         var handle: duckdb_connection?
-         guard duckdb_connect(database, &handle) != DuckDBError, let connection = handle else {
-@@ -67,14 +68,22 @@ enum DuckDBIsolatedImport {
-         }
-         if Task.isCancelled { throw CancellationError() }
+```
+
+**File**: `apple/scripts/benchmark-large-catalog.sh` (modified, +3/-2)
+```diff
+@@ -42,8 +42,9 @@ while [ $# -gt 0 ]; do
+ done
  
--        // IMPORT DATABASE expands into the folder's statements, which duckdb_prepare refuses.
--        for statement in lockdownStatements(allowing: folder) + [importStatement(folder: folder)] {
--            var result = duckdb_result()
--            defer { duckdb_destroy_result(&result) }
--            guard duckdb_query(connection, statement, &result) != DuckDBError else {
--                let message = duckdb_result_error(&result).map { String(cString: $0) } ?? "Unknown DuckDB error"
--                throw DuckDBPluginError.queryFailed(message)
-+        // IMPORT DATABASE expands into the folder's statements, which duckdb_prepare refuses. An ATTACH among them
-+        // reads that file's expressions too.
-+        nonisolated(unsafe) let importing = connection
-+        let statements = lockdownStatements(allowing: folder) + [importStatement(folder: folder)]
-+        let failure = DuckDBExpressionDepth.onStack { () -> String? in
-+            for statement in statements {
-+                var result = duckdb_result()
-+                defer { duckdb_destroy_result(&result) }
-+                guard duckdb_query(importing, statement, &result) != DuckDBError else {
-+                    return duckdb_result_error(&result).map { String(cString: $0) } ?? "Unknown DuckDB error"
-+                }
-             }
-+            return nil
-+        } ?? "DuckDB did not run the import"
-+        if let failure {
-+            throw DuckDBPluginError.queryFailed(failure)
-         }
-     }
+ if [ -z "$APP" ]; then
+-    (cd "$ROOT" && scripts/release/build.sh app --unsigned)
+-    APP="$ROOT/build/release/TablePro.app"
++    arch="$(uname -m)"
++    (cd "$ROOT" && scripts/release/build.sh app "$arch" --unsigned)
++    APP="$ROOT/build/release/$arch/TablePro.app"
+ fi
+ [ -d "$APP/Contents/MacOS" ] || { echo "not an app bundle: $APP" >&2; exit 2; }
+ 
+```
+
+**File**: `apple/scripts/ci/verify-plugin-loads.sh` (modified, +28/-3)
+```diff
+@@ -3,13 +3,25 @@ set -euo pipefail
+ 
+ # Loads every built .tableplugin with dlopen and fails naming any that will not load.
+ #
+-# Usage: verify-plugin-loads.sh <directory-with-tableplugins> [more-directories...]
++# Usage: verify-plugin-loads.sh [--arch <arch>] <directory-with-tableplugins> [more-directories...]
+ #
+ # dlopen resolves the binary and every library and framework it links, the dyld path behind
+ # "Bundle failed to load executable". It does not instantiate the principal class. PluginKit ABI:
+ # .claude/rules/plugin-system.md, ABI, checked with `verify.sh abi`.
++#
++# --arch builds the probe for a single-arch build's slice. dlopen refuses a wrong-arch binary, so an
++# x86_64 build is checked with an x86_64 probe (Rosetta runs it on Apple Silicon). Default: host arch.
++# A Mac that cannot run that arch skips the check, except in CI.
+ 
+-[ $# -gt 0 ] || { echo "Usage: $0 <directory-with-tableplugins>..." >&2; exit 2; }
++ARCH_FLAGS=()
++ARCH="$(uname -m)"
++if [ "${1:-}" = --arch ]; then
++    [ $# -ge 2 ] || { echo "$0: --arch needs an arch" >&2; exit 2; }
++    ARCH="$2"
++    ARCH_FLAGS=(-arch "$2")
++    shift 2
++fi
++[ $# -gt 0 ] || { echo "Usage: $0 [--arch <arch>] <directory-with-tableplugins>..." >&2; exit 2; }
+ 
+ WORK="$(mktemp -d)"
+ trap 'rm -rf "$WORK"' EXIT
+@@ -28,7 +40,20 @@ int main(int argc, char **argv) {
+     return 0;
  }
+ PROBE
+-clang -o "$WORK/probe" "$WORK/probe.c"
++clang ${ARCH_FLAGS[@]+"${ARCH_FLAGS[@]}"} -o "$WORK/probe" "$WORK/probe.c"
++
++# With no argument the probe exits 2; anything else means this Mac cannot run it: an Intel Mac for
++# arm64, Apple silicon without Rosetta for x86_64.
++runs=0
++"$WORK/probe" > /dev/null 2>&1 || runs=$?
++if [ "$runs" -ne 2 ]; then
++    if [ "${CI:-}" = true ]; then
++        echo "verify-plugin-loads.sh: this runner cannot run $ARCH code; x86_64 needs Rosetta 2" >&2
++        exit 1
++    fi
++    echo "verify-plugin-loads.sh: this Mac cannot run $ARCH code, so the $ARCH plugins are not load-checked here" >&2
++    exit 0
++fi
+ 
+ # The plugins link the app's frameworks, which sit beside them in the products directory. Without
+ # these dyld cannot resolve TableProPluginKit and every plugin would "fail" for the wrong reason.
 ```
 
-**File**: `apple/TablePro/Resources/Localizable.xcstrings` (modified, +4/-0)
+**File**: `apple/scripts/release/build.sh` (modified, +42/-16)
 ```diff
-@@ -201485,6 +201485,10 @@
-       "extractionState" : "manual",
-       "generatesSymbol" : false
-     },
-+    "This build of DuckDB does not accept a limit on how deep an expression nests" : {
-+      "extractionState" : "manual",
-+      "generatesSymbol" : false
-+    },
-     "This build of DuckDB does not accept a read-only access mode" : {
-       "extractionState" : "manual",
-       "generatesSymbol" : false,
-```
-
-**File**: `apple/TableProMobile/TableProMobile/Drivers/DuckDBDriver.swift` (modified, +3/-2)
-```diff
-@@ -168,9 +168,9 @@ nonisolated final class DuckDBInterruptHandle: @unchecked Sendable {
- actor DuckDBActor {
-     static let maxRows = 100_000
+@@ -1,12 +1,13 @@
+ #!/usr/bin/env bash
+ set -euo pipefail
  
--    private let queue = DispatchSerialQueue(label: "com.TablePro.duckdb")
-+    private let executor = DuckDBStackExecutor(name: "com.TablePro.duckdb")
+-# Usage: build.sh app|plugins [--unsigned]
++# Usage: build.sh app [arm64|x86_64]|plugins [--unsigned]
+ # VERSION and BUILD, when set, become MARKETING_VERSION and CURRENT_PROJECT_VERSION.
+-# Writes build/release/TablePro.app and its archive, or build/release/plugins and plugins-dSYMs.
++# The app builds one arch into build/release/<arch>/TablePro.app and its archive; with no arch it
++# builds both. plugins writes build/release/plugins and plugins-dSYMs (universal).
  
--    nonisolated var unownedExecutor: UnownedSerialExecutor { queue.asUnownedSerialExecutor() }
-+    nonisolated var unownedExecutor: UnownedSerialExecutor { executor.asUnownedSerialExecutor() }
- 
-     nonisolated let interruptHandle = DuckDBInterruptHandle()
-     private var database: duckdb_database?
-@@ -191,6 +191,7 @@ actor DuckDBActor {
-         ("storage_compatibility_version", "v0.10.2"),
-         ("autoinstall_known_extensions", "false"),
-         ("autoload_known_extensions", "false"),
-+        (DuckDBExpressionDepth.configurationOption, DuckDBExpressionDepth.limit),
-     ]
- 
-     func open(path: String) throws {
-```
-
-**File**: `apple/TableProMobile/TableProMobileTests/Drivers/DuckDBDriverTests.swift` (modified, +71/-0)
-```diff
-@@ -1,3 +1,5 @@
-+import CDuckDB
-+import Foundation
- import TableProDatabase
- @testable import TableProMobile
- import TableProModels
-@@ -532,3 +534,72 @@ struct DuckDBNulTextTests {
-         #expect(after.rows == [["k", "other"], [key, "x\u{0}y"]])
-     }
+ usage() {
+-    echo "Usage: build.sh app|plugins [--unsigned]" >&2
++    echo "Usage: build.sh app [arm64|x86_64]|plugins [--unsigned]" >&2
+     exit 2
  }
-+
-+// Built past DuckDB's default limit on a stack that holds it, as another program could.
-+private actor DeepDuckDBFileWriter {
-+    private let executor = DuckDBStackExecutor(name: "DeepDuckDBFileWriter")
-+    nonisolated var unownedExecutor: UnownedSerialExecutor { executor.asUnownedSerialExecutor() }
-+
-+    func create(_ path: String, check: String) -> Bool {
-+        var config: duckdb_config?
-+        var database: duckdb_database?
-+        var connection: duckdb_connection?
-+        defer {
-+            duckdb_disconnect(&connection)
-+            duckdb_close(&database)
-+            duckdb_destroy_config(&config)
-+        }
-+        guard duckdb_create_config(&config) != DuckDBError,
-+              duckdb_set_config(config, "max_expression_depth", "100000") != DuckDBError,
-+              duckdb_open_ext(path, &database, config, nil) != DuckDBError,
-+              duckdb_connect(database, &connection) != DuckDBError
-+        else { return false }
-+        var result = duckdb_result()
-+        defer { duckdb_destroy_result(&result) }
-+        return duckdb_query(connection, "CREATE TABLE t (a INTEGER CHECK (\(check) > 0)); CHECKPOINT", &result)
-+            != DuckDBError
-+    }
+ 
+@@ -16,15 +17,18 @@ die() {
+ }
+ 
+ KIND=""
++ARCH=""
+ SIGNED=true
+ for arg in "$@"; do
+     case "$arg" in
+         app | plugins) [ -z "$KIND" ] || usage; KIND="$arg" ;;
++        arm64 | x86_64) [ -z "$ARCH" ] || usage; ARCH="$arg" ;;
+         --unsigned) SIGNED=false ;;
+         *) usage ;;
+     esac
+ done
+ [ -n "$KIND" ] || usage
++[ "$KIND" = app ] || [ -z "$ARCH" ] || die "an arch applies only to the app build"
+ case "${BUILD:-}" in
+     *[!0-9]*) echo "build.sh: BUILD must be an integer, got '$BUILD'" >&2; exit 2 ;;
+ esac
+@@ -81,35 +85,51 @@ check_universal() {
+     done
+ }
+ 
++check_arch() {
++    local app="$1" arch="$2" other binary
++    case "$arch" in arm64) other=x86_64 ;; x86_64) other=arm64 ;; *) die "unknown arch $arch" ;; esac
++    for binary in "$app/Contents/MacOS"/*; do
++        lipo "$binary" -verify_arch "$arch" || die "$binary has no $arch slice: $(lipo -archs "$binary")"
++        ! lipo "$binary" -verify_arch "$other" 2> /dev/null \
++            || die "$binary has an $other slice too: $(lipo -archs "$binary")"
++    done
 +}
 +
-+struct DuckDBDeepExpressionTests {
-+    private func deepFile(in directory: URL) async throws -> URL {
-+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
-+        let file = directory.appendingPathComponent("deep.duckdb")
-+        let check = String(repeating: "(", count: 900) + "a" + String(repeating: " + 1)", count: 900)
-+        #expect(await DeepDuckDBFileWriter().create(file.path, check: check))
-+        return file
-+    }
-+
-+    @Test("A CHECK nested 900 deep opens, and reading its table's keys fails at the depth limit instead of overflowing")
-+    func deepCheckOpensAndItsKeysAreRefused() async throws {
-+        let directory = FileManager.default.temporaryDirectory
-+            .appendingPathComponent("duckdb-deep-\(UUID().uuidString)", isDirectory: true)
-+        defer { try? FileManager.default.removeItem(at: directory) }
-+        let file = try await deepFile(in: directory)
-+
-+        let driver = DuckDBDriver(source: .file(file))
-+        try await driver.connect()
-+        let refusal = await #expect(throws: DuckDBDriverError.self) {
-+            try await driver.fetchColumns(table: "t", schema: nil)
-+        }
-+        try await driver.disconnect()
-+
-+        #expect(refusal?.localizedDescription.contains("Max expression depth limit of 250 exceeded") == true)
-+    }
-+
-+    @Test("An ATTACH of a file nested 900 deep reads its catalog without overflowing")
-+    func deepFileAttaches() async throws {
-+        let directory = FileManager.default.temporaryDirectory
-+            .appendingPathComponent("duckdb-deep-attach-\(UUID().uuidString)", isDirectory: true)
-+        defer { try? FileManager.default.removeItem(at: directory) }
-+        let file = try await deepFile(in: directory)
-+
-+        let driver = DuckDBDriver(source: .inMemory)
-+        try await driver.connect()
-+        _ = try await driver.execute(query: "ATTACH '\(file.path)' AS deep (READ_ONLY)")
-+        let tables = try await driver.execute(query: "SELECT table_name FROM duckdb_tables() WHERE database_name = 'deep'")
-+        try await driver.disconnect()
-+
-+        #expect(tables.rows == [["t"]])
-+    }
-+}
-```
-
-**File**: `apple/TableProMobile/project.yml` (modified, +2/-0)
-```diff
-@@ -77,6 +77,8 @@ targets:
-       # The socket key a Mac connection stores, so iOS refuses exactly what the Mac driver dials
-       # through a socket.
-       - ../Plugins/MySQLDriverPlugin/MySQLLocalSocket.swift
-+      # The expression depth limit and the open's stack both apps open a DuckDB file with.
-+      - ../Plugins/DuckDBDriverPlugin/DuckDBExpressionDepth.swift
-       - ../Plugins/Shared/PluginQueryTimeout.swift
-       # The toolbar glyph rule both apps follow on and before the 26 releases.
-       - ../TablePro/Core/Services/Infrastructure/Toolbar/ToolbarSymbols.swift
+ build_app() {
+-    local archive="$OUT/TablePro.xcarchive" app="$OUT/TablePro.app" name profile=()
+-    rm -rf "$archive" "$app" "$OUT/export"
++    local arch="$1"
++    local out="$OUT/$arch"
++    local archive="$out/TablePro.xcarchive" app="$out/TablePro.app" exported="$out/export" name profile=()
++    # Per-arch so a both-arch build keeps each arch's intermediates apart; xcodebuild_project reads it.
++    local DERIVED="$out/DerivedData"
++    rm -rf "$out"
++    mkdir -p "$out"
+     if [ "$SIGNED" = true ]; then
+         [ -f "$EXPORT_OPTIONS" ] || die "$EXPORT_OPTIONS is missing"
+         name="$(/usr/libexec/PlistBuddy -c 'Print :provisioningProfiles:com.TablePro' "$EXPORT_OPTIONS")"
+         profile=("TABLEPRO_PROVISIONING_PROFILE=$name")
+     fi
+ 
+-    # One task at a time: the app module's arm64 and x86_64 whole-module compiles at once outgrow
+-    # a 7 GB hosted runner and swap, 237 min against 105 min measured in run 42617599195.
+-    xcodebuild_project archive-app archive -jobs 1 -scheme TablePro -archivePath "$archive" \
+-        ${profile[@]+"${profile[@]}"}
++    # One arch per build: the app module's whole-module compile for both arches at once outgrew a
++    # 7 GB hosted runner and swapped (237 min against 105 min, run 42617599195). -jobs 1 still caps
++    # the peak within the single arch.
++    xcodebuild_project "archive-app-$arch" archive -jobs 1 -scheme TablePro -archivePath "$archive" \
++        ARCHS="$arch" ONLY_ACTIVE_ARCH=NO ${profile[@]+"${profile[@]}"}
+     # -exportArchive refuses a generic archive, which is what any other installed product makes it.
+     [ "$(plutil -extract ApplicationProperties.ApplicationPath raw -o - "$archive/Info.plist" 2> /dev/null)" \
+         = "Applications/TablePro.app" ] || die "$archive is not an app archive: $(find "$archive/Products" -mindepth 2 -maxdepth 3)"
+ 
+     if [ "$SIGNED" = true ]; then
+-        run_xcodebuild export-app -exportArchive -archivePath "$archive" -exportPath "$OUT/export" \
++        run_xcodebuild "export-app-$arch" -exportArchive -archivePath "$archive" -exportPath "$exported" \
+             -exportOptionsPlist "$EXPORT_OPTIONS"
+-        mv "$OUT/export/TablePro.app" "$app"
+-        rm -rf "$OUT/export"
++        mv "$exported/TablePro.app" "$app"
++        rm -rf "$exported"
+     else
+         ditto "$archive/Products/Applications/TablePro.app" "$app"
+     fi
+ 
+-    check_universal "$app"
+-    scripts/ci/verify-plugin-loads.sh "$app/Contents/PlugIns" "$app/Contents/Frameworks"
+-    echo "Built $app ($(plutil -extract CFBundleShortVersionString raw -o - "$app/Contents/Info.plist"))"
++    check_arch "$app" "$arch"
++    scripts/ci/verify-plugin-loads.sh --arch "$arch" "$app/Contents/PlugIns" "$app/Contents/Frameworks"
++    echo "Built $app ($arch, $(plutil -extract CFBundleShortVersionString raw -o - "$app/Contents/Info.plist"))"
+ }
+ 
+ build_plugins() {
+@@ -136,4 +156,10 @@ build_plugins() {
+     echo "Built $(wc -l < "$targets" | tr -d ' ') plugins in $OUT/plugins"
+ }
+ 
+-"build_$KIND"
++if [ "$KIND" = plugins ]; then
++    build_plugins
++elif [ -n "$ARCH" ]; then
++    build_app "$ARCH"
++else
++    for ARCH in arm64 x86_64; do build_app "$ARCH"; done
++fi
 ```
 
 ---
 
-### Incident Patch 2: `1c03bcd7` (2026-11-15)
-**Commit Message**: fix(core): bound what a SQLite or DuckDB catalog read holds (#4287)
+### Incident Patch 2: `9d0d481c` (2026-11-22)
+**Commit Message**: build(plugins): correct DuckDB size comment, note ParquetExport needs force_load (#4412)
 
-**File**: `core/ARCHITECTURE.md` (modified, +1/-1)
+**File**: `apple/project.yml` (modified, +3/-1)
 ```diff
-@@ -128,7 +128,7 @@ How an app reaches a database: the contract in `tablepro-core`, a transport that
- 
- ### The contract
- 
--`DatabaseDriver` describes an engine before any connection exists, through `DriverCapabilities`, and opens a `Connection`. The `Connection` serves the workspace from a pool; every call takes `CallOptions` (a deadline and a cancel token) and runs on a task the connection owns (`OwnedCalls`), so a stop reaches the server instead of leaving the statement running. Saves report what they left in the database through a `WriteLedger`. Each editor tab gets an `EditorSession` of its own that streams results into a `ResultSink`, and the `Session` that opens it puts a `ByteLimitSink` in front of that sink, so a run stops keeping rows once they pass `RunOptions::byte_limit` bytes across its results, the row that crosses it kept whole ([ADR 0020](docs/decisions/0020-a-run-keeps-a-byte-limit-of-rows.md)). [docs/adding-drivers.md](../linux/docs/adding-drivers.md) is the full contract, [ADR 0016](../linux/docs/decisions/0016-driver-contract-v2.md) the reasons for it, and the engine pages say how each driver meets it: [PostgreSQL](../linux/docs/drivers/postgresql.md), [MySQL and MariaDB](../linux/docs/drivers/mysql.md), [SQLite](../linux/docs/drivers/sqlite.md), [DuckDB](../linux/docs/drivers/duckdb.md), [SQL Server](../linux/docs/drivers/sql-server.md), [ClickHouse](../linux/docs/drivers/clickhouse.md), [Cassandra and ScyllaDB](../linux/docs/drivers/cassandra.md), [Redis](../linux/docs/drivers/redis.md), [MongoDB](../linux/docs/drivers/mongodb.md). An engine without SQL says so through `DriverCapabilities::data_model`: the workspace lists a key-value engine's keys and opens them in key tabs ([ADR 0021](../linux/docs/decisions/0021-engines-without-sql.md)), and opens a document engine's collections in table tabs whose statements are the engine's shell calls ([ADR 0026](../linux/docs/decisions/0026-documents-in-the-table-tab.md)).
-+`DatabaseDriver` describes an engine before any connection exists, through `DriverCapabilities`, and opens a `Connection`. The `Connection` serves the workspace from a pool; every call takes `CallOptions` (a deadline and a cancel token) and runs on a task the connection owns (`OwnedCalls`), so a stop reaches the server instead of leaving the statement running. Saves report what they left in the database through a `WriteLedger`. Each editor tab gets an `EditorSession` of its own that streams results into a `ResultSink`, and the `Session` that opens it puts a `ByteLimitSink` in front of that sink, so a run stops keeping rows once they pass `RunOptions::byte_limit` bytes across its results, the row that crosses it kept whole ([ADR 0020](docs/decisions/0020-a-run-keeps-a-byte-limit-of-rows.md)). A file engine's catalog read holds at most `ByteLimit::CATALOG_DEFAULT` bytes of names and definitions through `CatalogBudget`, and fails `DriverError::CatalogTooLarge` past it ([ADR 0029](docs/decisions/0029-a-catalog-read-keeps-a-byte-budget.md)). [docs/adding-drivers.md](../linux/docs/adding-drivers.md) is the full contract, [ADR 0016](../linux/docs/decisions/0016-driver-contract-v2.md) the reasons for it, and the engine pages say how each driver meets it: [PostgreSQL](../linux/docs/drivers/postgresql.md), [MySQL and MariaDB](../linux/docs/drivers/mysql.md), [SQLite](../linux/docs/drivers/sqlite.md), [DuckDB](../linux/docs/drivers/duckdb.md), [SQL Server](../linux/docs/drivers/sql-server.md), [ClickHouse](../linux/docs/drivers/clickhouse.md), [Cassandra and ScyllaDB](../linux/docs/drivers/cassandra.md), [Redis](../linux/docs/drivers/redis.md), [MongoDB](../linux/docs/drivers/mongodb.md). An engine without SQL says so through `DriverCapabilities::data_model`: the workspace lists a key-value engine's keys and opens them in key tabs ([ADR 0021](../linux/docs/decisions/0021-engines-without-sql.md)), and opens a document engine's collections in table tabs whose statements are the engine's shell calls ([ADR 0026](../linux/docs/decisions/0026-documents-in-the-table-tab.md)).
- 
- ### SQL scripts
- 
-```
-
-**File**: `core/crates/core/src/byte_limit.rs` (modified, +2/-0)
-```diff
-@@ -9,6 +9,8 @@ pub struct ByteLimit(NonZeroU64);
- impl ByteLimit {
-     // SI bytes, as the Linux banner prints them: "256.0 MB".
-     pub const EDITOR_DEFAULT: Self = Self(NonZeroU64::new(256_000_000).expect("256 MB is not zero"));
-+    // About a thousand times the largest real table's columns, keys and indexes, and a million table names.
-+    pub const CATALOG_DEFAULT: Self = Self(NonZeroU64::new(64_000_000).expect("64 MB is not zero"));
- 
-     pub fn new(bytes: u64) -> Option<Self> {
-         NonZeroU64::new(bytes).map(Self)
-```
-
-**File**: `core/crates/core/src/catalog_budget.rs` (added, +142/-0)
-```diff
-@@ -0,0 +1,142 @@
-+use crate::byte_limit::ByteLimit;
-+use crate::error::DriverError;
-+
-+// A file's catalog can repeat one long name across thousands of keys; counted as `retained_bytes` counts text.
-+#[derive(Debug)]
-+pub struct CatalogBudget {
-+    limit: u64,
-+    held: u64,
-+}
-+
-+impl CatalogBudget {
-+    pub fn new(limit: ByteLimit) -> Self {
-+        Self {
-+            limit: limit.get(),
-+            held: 0,
-+        }
-+    }
-+
-+    pub fn charge(&mut self, bytes: usize) -> Result<(), DriverError> {
-+        self.held = self.held.saturating_add(u64::try_from(bytes).unwrap_or(u64::MAX));
-+        match self.held > self.limit {
-+            true => Err(DriverError::CatalogTooLarge {
-+                limit_bytes: self.limit,
-+            }),
-+            false => Ok(()),
-+        }
-+    }
-+
-+    // For work the engine does and lets go of within the read, such as a statement it compiles: it has to fit beside
-+    // what the read holds, and holds nothing after.
-+    pub fn fits(&self, bytes: usize) -> Result<(), DriverError> {
-+        match self.held.saturating_add(u64::try_from(bytes).unwrap_or(u64::MAX)) > self.limit {
-+            true => Err(DriverError::CatalogTooLarge {
-+                limit_bytes: self.limit,
-+            }),
-+            false => Ok(()),
-+        }
-+    }
-+
-+    pub fn charge_text(&mut self, text: &str) -> Result<(), DriverError> {
-+        self.charge(text_bytes(text))
-+    }
-+
-+    pub fn keep(&mut self, text: String) -> Result<String, DriverError> {
-+        self.charge_text(&text)?;
-+        Ok(text)
-+    }
-+
-+    pub fn keep_optional(&mut self, text: Option<String>) -> Result<Option<String>, DriverError> {
-+        text.map(|text| self.keep(text)).transpose()
-+    }
-+
-+    pub fn charge_texts<'a>(&mut self, texts: impl IntoIterator<Item = &'a String>) -> Result<(), DriverError> {
-+        texts.into_iter().try_for_each(|text| self.charge_text(text))
-+    }
-+
-+    // For what the read drops before it reads the next, such as each child's CREATE TABLE.
-+    pub fn release(&mut self, bytes: usize) {
-+        self.held = self.held.saturating_sub(u64::try_from(bytes).unwrap_or(u64::MAX));
-+    }
-+
-+    pub fn release_text(&mut self, text: &str) {
-+        self.release(text_bytes(text));
-+    }
-+}
-+
-+impl Default for CatalogBudget {
-+    fn default() -> Self {
-+        Self::new(ByteLimit::CATALOG_DEFAULT)
-+    }
-+}
-+
-+fn text_bytes(text: &str) -> usize {
-+    size_of::<String>().saturating_add(text.len())
-+}
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+
-+    const SLOT: usize = size_of::<String>();
-+
-+    fn budget(bytes: u64) -> CatalogBudget {
-+        CatalogBudget::new(ByteLimit::new(bytes).unwrap())
-+    }
-+
-+    #[test]
-+    fn a_text_costs_its_slot_and_its_length() {
-+        let mut budget = budget((SLOT + 5) as u64);
-+
-+        assert_eq!(budget.keep("héll".to_owned()).as_deref(), Ok("héll"));
-+        assert_eq!(
-+            budget.charge_text("x"),
-+            Err(DriverError::CatalogTooLarge {
-+                limit_bytes: (SLOT + 5) as u64
-+            })
-+        );
-+    }
-+
-+    #[test]
-+    fn the_limit_itself_still_fits() {
-+        let mut budget = budget(100);
-+
-+        assert_eq!(budget.charge(100), Ok(()));
-+        assert!(budget.charge(1).is_err());
-+    }
-+
-+    #[test]
-+    fn a_released_text_makes_room_again() {
-+        let mut budget = budget((SLOT * 2 + 8) as u64);
-+        let text = "a".repeat(8);
-+
-+        budget.charge_text(&text).unwrap();
-+        budget.release_text(&text);
-+        budget.charge_text(&text).unwrap();
-+        assert_eq!(budget.keep_optional(Some(String::new())), Ok(Some(String::new())));
-+        assert!(budget.charge_texts([&"b".to_owned()]).is_err());
-+    }
-+
-+    #[test]
-+    fn work_that_fits_beside_what_is_held_holds_nothing_after() {
-+        let mut budget = budget(100);
-+        budget.charge(60).unwrap();
-+
-+        assert_eq!(budget.fits(40), Ok(()));
-+        assert!(budget.fits(41).is_err());
-+        assert_eq!(budget.charge(40), Ok(()), "fits charged nothing");
-+    }
-+
-+    #[test]
-+    fn the_default_is_the_catalog_limit() {
-+        let mut budget = CatalogBudget::default();
-+
-+        assert_eq!(budget.charge(64_000_000), Ok(()));
-+        assert_eq!(
-+            budget.charge(1),
-+            Err(DriverError::CatalogTooLarge {
-+                limit_bytes: 64_000_000
-+            })
-+        );
-+    }
-+}
-```
-
-**File**: `core/crates/core/src/error.rs` (modified, +12/-1)
-```diff
-@@ -143,6 +143,10 @@ pub enum DriverError {
- 
-     #[error("this engine has no {feature}")]
-     Unsupported { feature: UnsupportedFeature },
-+
-+    // A crafted file can repeat a long name across thousands of keys, so a catalog read stops at a byte budget.
-+    #[error("the catalog read would hold more than {limit_bytes} bytes")]
-+    CatalogTooLarge { limit_bytes: u64 },
- }
- 
- impl DriverError {
-@@ -176,6 +180,7 @@ impl DriverError {
-             Self::Decode { .. } => "driver.decode",
-             Self::Protocol(..) => "driver.protocol",
-             Self::Unsupported { .. } => "driver.unsupported",
-+            Self::CatalogTooLarge { .. } => "driver.catalog_too_large",
-         }
-     }
- }
-@@ -216,7 +221,9 @@ impl DriverError {
-             | Self::FileIo { .. } => ErrorCategory::File,
-             Self::Busy(_) | Self::EditorSessionBusy => ErrorCategory::Busy,
-             Self::Config(_) | Self::Unsupported { .. } | Self::DatabaseNotFound { .. } => ErrorCategory::Configuration,
--            Self::GuardUnsupported { .. } | Self::Decode { .. } | Self::Protocol(_) => ErrorCategory::Internal,
-+            Self::GuardUnsupported { .. } | Self::Decode { .. } | Self::Protocol(_) | Self::CatalogTooLarge { .. } => {
-+                ErrorCategory::Internal
-+            }
-         }
-     }
- 
-@@ -366,6 +373,10 @@ mod tests {
-             (DriverError::Cancelled.code(), "driver.cancelled"),
-             (DriverError::auth(None).code(), "driver.auth"),
-             (DriverError::server("no such table").code(), "driver.server"),
-+            (
-+                DriverError::CatalogTooLarge { limit_bytes: 1 }.code(),
-+                "driver.catalog_too_large",
-+            ),
-             (DriverError::Config(ConfigError::EmptyHost).code(), "driver.config"),
-             (ConfigError::EmptyHost.code(), "config.empty_host"),
-             (
-```
-
-**File**: `core/crates/core/src/lib.rs` (modified, +2/-0)
-```diff
-@@ -7,6 +7,7 @@ mod byte_limit;
- mod byte_limited_sink;
- mod call_options;
- mod capabilities;
-+mod catalog_budget;
- mod certificate_file_problem;
- mod client_identity;
- pub mod column;
-@@ -114,6 +115,7 @@ pub use capabilities::{
-     CommitResolutionSupport, DataModel, DriverCapabilities, EndpointKind, EstimateQuality, ReadOnlyEnforcement,
-     ScriptExecution, StatementStop,
- };
-+pub use catalog_budget::CatalogBudget;
- pub use certificate_file_problem::CertificateFileProblem;
- pub use client_identity::ClientIdentity;
- pub use column::ColumnInfo;
-```
-
-**File**: `core/crates/drivers/duckdb/src/catalog/mod.rs` (modified, +280/-98)
-```diff
-@@ -6,7 +6,7 @@
- 
- mod declared_columns;
- 
--use std::collections::HashSet;
-+use std::collections::{HashMap, HashSet};
- 
- use tablepro_core::column::{ColumnDefault, ColumnInfo, ColumnType, SqlExpression};
- use tablepro_core::ddl::{
-@@ -21,7 +21,7 @@ use tablepro_core::meta::{
- };
- use tablepro_core::sql_syntax::{LiteralToken, MAX_EXPRESSION_LEN, SqlGrammar, parse_expression};
- use tablepro_core::value::Value;
--use tablepro_core::{DriverError, ForeignKeyInfo};
-+use tablepro_core::{CatalogBudget, DriverError, ForeignKeyInfo};
- 
- use self::declared_columns::declared_columns;
- use crate::duck_type::column_type_from_text;
-@@ -40,7 +40,12 @@ fn schema_of(table: &TableRef) -> &str {
- }
- 
- /// Rows of a catalogue query whose columns are all text or NULL.
--fn text_rows(link: &Link, sql: &str, params: &[&str]) -> Result<Vec<Vec<Option<String>>>, DriverError> {
-+fn text_rows(
-+    link: &Link,
-+    sql: &str,
-+    params: &[&str],
-+    budget: &mut CatalogBudget,
-+) -> Result<Vec<Vec<Option<String>>>, DriverError> {
-     let mut statement = link.connection.prepare(sql).map_err(map_error)?;
-     let mut rows = statement
-         .query(duckdb::params_from_iter(params.iter()))
-@@ -50,17 +55,88 @@ fn text_rows(link: &Link, sql: &str, params: &[&str]) -> Result<Vec<Vec<Option<S
-     while let Some(row) = rows.next().map_err(map_error)? {
-         let mut values = Vec::with_capacity(width);
-         for index in 0..width {
--            values.push(row.get::<_, Option<String>>(index).map_err(map_error)?);
-+            values.push(budget.keep_optional(row.get::<_, Option<String>>(index).map_err(map_error)?)?);
-         }
-         read.push(values);
-     }
-     Ok(read)
- }
- 
-+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-+enum Constraints {
-+    Own,
-+    Referencing,
-+}
-+
-+// A table's constraints: REFERENCES, CHECK, UNIQUE and PRIMARY in its text, and a NOT NULL per column. DOUBLE, since
-+// the file chooses the numbers.
-+const CONSTRAINT_COUNT: &str = "CAST((strlen(lower(t.sql)) - strlen(replace(lower(t.sql), 'references', ''))) / 10 \
-+       + (strlen(lower(t.sql)) - strlen(replace(lower(t.sql), 'check', ''))) / 5 \
-+       + (strlen(lower(t.sql)) - strlen(replace(lower(t.sql), 'unique', ''))) / 6 \
-+       + (strlen(lower(t.sql)) - strlen(replace(lower(t.sql), 'primary', ''))) / 7 + t.column_count + 1 AS DOUBLE)";
-+
-+// Beside its table's name, a constraint row's own words. Not `duckdb_columns()`, which repeats each table's name on
-+// every column row it builds, for every table, before a filter.
-+const ROW_BYTES: &str = "512";
-+
-+// DuckDB builds every table's constraint rows, 2,048 to a chunk across tables, before a query filters them, and holds
-+// the whole result before its first row; it names each constraint after its table. A read runs only once the result,
-+// its table's name `names` times a row and four copies of the text, and the costliest 2,048 rows of any tables fit.
-+fn constraint_bounds(names: &str, tables: &str) -> String {
-+    format!(
-+        "SELECT \
-+           (SELECT sum({CONSTRAINT_COUNT} * ({names} * strlen(t.table_name) + {ROW_BYTES}) + 4 * strlen(t.sql)) \
-+            FROM duckdb_tables() t WHERE {tables}), \
-+           (SELECT coalesce(sum(bytes * greatest(0, least(rows, 2048 - (upto - rows)))), 0) FROM \
-+             (SELECT rows, bytes, sum(rows) OVER (ORDER BY bytes DESC ROWS UNBOUNDED PRECEDING) AS upto FROM \
-+               (SELECT least({CONSTRAINT_COUNT}, 2048) AS rows, 2 * strlen(t.table_name) + {ROW_BYTES} AS bytes \
-+                FROM duckdb_tables() t))) \
-+           + 3 * coalesce((SELECT sum(b) FROM (SELECT CAST(strlen(sql) AS DOUBLE) AS b FROM duckdb_tables() \
-+             ORDER BY b DESC LIMIT 2048)), 0)"
-+    )
-+}
-+
-+fn constraints_fit(
-+    link: &Link,
-+    catalog: &str,
-+    table: &TableRef,
-+    from: Constraints,
-+    budget: &CatalogBudget,
-+) -> Result<(), DriverError> {
-+    // A constraint's name holds its table's, and the keys into a table also read the child's name.
-+    let (names, tables) = match from {
-+        Constraints::Own => ("1", "t.database_name = ? AND t.schema_name = ? AND t.table_name = ?"),
-+        Constraints::Referencing => (
-+            "2",
-+            "t.table_oid IN (SELECT d.refobjid FROM duckdb_dependencies() d \
-+             JOIN duckdb_tables() p ON d.objid = p.table_oid \
-+             WHERE p.database_name = ? AND p.schema_name = ? AND p.table_name = ?)",
-+        ),
-+    };
-+    let (kept, built): (Option<f64>, Option<f64>) = link
-+        .connection
-+        .query_row(
-+            &constraint_bounds(names, tables),
-+            duckdb::params![catalog, schema_of(table), table.name],
-+            |row| Ok((row.get(0)?, row.get(1)?)),
-+        )
-+        .map_err(map_error)?;
-+    let bytes = kept.unwrap_or(0.0) + built.unwrap_or(0.0);
-+    budget.fits(match bytes < usize::MAX as f64 {
-+        true => bytes as usize,
-+        false => usize::MAX,
-+    })
-+}
-+
- fn text(row: &[Option<String>], index: usize) -> String {
-  
-```
-
-**File**: `core/crates/drivers/duckdb/src/connection.rs` (modified, +9/-9)
-```diff
-@@ -8,7 +8,7 @@ use tablepro_core::dump::{DumpCatalog, DumpScope};
- use tablepro_core::meta::{IndexInfo, ObjectInfo, ObjectScope, RowIdentity, SchemaInfo, TableEstimate, TableRef};
- use tablepro_core::statement::Statement;
- use tablepro_core::{
--    CallOptions, ColumnInfo, CommitResolution, CommitToken, Connection, DriverError, EditorSession,
-+    CallOptions, CatalogBudget, ColumnInfo, CommitResolution, CommitToken, Connection, DriverError, EditorSession,
-     EditorSessionOptions, FileEndpoint, ForeignKeyInfo, LinkState, LinkWatch, LivenessPolicy, LossPhase, OwnedCalls,
-     QueryResult, ReadOnlyRefusal, ReadStatement, ResultSink, RowLimit, ServerInfo, SinkFlow, StopRequest,
-     StreamSummary, TimeoutPhase, WorkspaceSettings, WriteAtomicity, WriteBatch, WriteKind, WriteLedger, WriteReport,
-@@ -269,23 +269,23 @@ impl Connection for DuckDbConnection {
-     async fn list_objects(&self, scope: &ObjectScope, options: CallOptions) -> Result<Vec<ObjectInfo>, DriverError> {
-         let scope = scope.clone();
-         self.read(options, move |link, catalog| {
--            catalog::list_objects(link, catalog, &scope)
-+            catalog::list_objects(link, catalog, &scope, &mut CatalogBudget::default())
-         })
-         .await
-     }
- 
-     async fn fetch_columns(&self, table: &TableRef, options: CallOptions) -> Result<Vec<ColumnInfo>, DriverError> {
-         let table = table.clone();
-         self.read(options, move |link, catalog| {
--            catalog::fetch_columns(link, catalog, &table)
-+            catalog::fetch_columns(link, catalog, &table, &mut CatalogBudget::default())
-         })
-         .await
-     }
- 
-     async fn fetch_indexes(&self, table: &TableRef, options: CallOptions) -> Result<Vec<IndexInfo>, DriverError> {
-         let table = table.clone();
-         self.read(options, move |link, catalog| {
--            catalog::fetch_indexes(link, catalog, &table)
-+            catalog::fetch_indexes(link, catalog, &table, &mut CatalogBudget::default())
-         })
-         .await
-     }
-@@ -297,7 +297,7 @@ impl Connection for DuckDbConnection {
-     ) -> Result<Vec<ForeignKeyInfo>, DriverError> {
-         let table = table.clone();
-         self.read(options, move |link, catalog| {
--            catalog::fetch_foreign_keys(link, catalog, &table)
-+            catalog::fetch_foreign_keys(link, catalog, &table, &mut CatalogBudget::default())
-         })
-         .await
-     }
-@@ -309,7 +309,7 @@ impl Connection for DuckDbConnection {
-     ) -> Result<Vec<OutboundForeignKey>, DriverError> {
-         let table = table.clone();
-         self.read(options, move |link, catalog| {
--            catalog::outbound_foreign_keys(link, catalog, &table)
-+            catalog::outbound_foreign_keys(link, catalog, &table, &mut CatalogBudget::default())
-         })
-         .await
-     }
-@@ -321,7 +321,7 @@ impl Connection for DuckDbConnection {
-     ) -> Result<Vec<InboundForeignKey>, DriverError> {
-         let table = table.clone();
-         self.read(options, move |link, catalog| {
--            catalog::inbound_foreign_keys(link, catalog, &table)
-+            catalog::inbound_foreign_keys(link, catalog, &table, &mut CatalogBudget::default())
-         })
-         .await
-     }
-@@ -335,7 +335,7 @@ impl Connection for DuckDbConnection {
-         // One transaction, so the parts come from the same moment.
-         self.read(options, move |link, catalog| {
-             batch(link, "BEGIN TRANSACTION READ ONLY")?;
--            let definition = catalog::fetch_table_definition(link, catalog, &table);
-+            let definition = catalog::fetch_table_definition(link, catalog, &table, &mut CatalogBudget::default());
-             link.hold_stops();
-             batch(link, "ROLLBACK")?;
-             definition
-@@ -359,7 +359,7 @@ impl Connection for DuckDbConnection {
-     async fn row_identity(&self, table: &TableRef, options: CallOptions) -> Result<RowIdentity, DriverError> {
-         let table = table.clone();
-         self.read(options, move |link, catalog| {
--            catalog::row_identity(link, catalog, &table)
-+            catalog::row_identity(link, catalog, &table, &mut CatalogBudget::default())
-         })
-         .await
-     }
-```
-
-**File**: `core/crates/drivers/duckdb/src/dump.rs` (modified, +35/-21)
-```diff
-@@ -4,6 +4,8 @@
- //! triggers EXPORT leaves out. Names carry their schema and never the
- //! catalog, which is the file's own name.
- 
-+use std::collections::HashMap;
-+
- use duckdb::types::Value as DuckValue;
- use tablepro_core::DriverError;
- use tablepro_core::dialect::SqlDialect;
-@@ -61,9 +63,12 @@ const TABLES_SQL: &str = "SELECT schema_name, table_name, sql FROM duckdb_tables
-      ORDER BY schema_name, table_name";
- 
- /// DuckDB keeps a foreign key's parent in the child's schema.
--const FOREIGN_KEYS_SQL: &str = "SELECT schema_name, table_name, referenced_table FROM duckdb_constraints() \
-+// One row per child: one per key would repeat the child's name.
-+const FOREIGN_KEYS_SQL: &str = "SELECT schema_name, table_name, \
-+            list(referenced_table ORDER BY constraint_index) \
-+     FROM duckdb_constraints() \
-      WHERE database_name = ? AND (? IS NULL OR schema_name = ?) AND constraint_type = 'FOREIGN KEY' \
--     ORDER BY schema_name, table_name, constraint_index";
-+     GROUP BY schema_name, table_name ORDER BY schema_name, table_name";
- 
- /// The index behind a PRIMARY KEY or UNIQUE has no text: its table's
- /// CREATE makes it.
-@@ -321,7 +326,7 @@ fn add_tables(reader: &Reader<'_>, dump: &mut DumpCatalog) -> Result<(), DriverE
-         Ok((
-             row.get::<_, String>(0)?,
-             row.get::<_, String>(1)?,
--            row.get::<_, Option<String>>(2)?,
-+            texts(row.get(2)?).into_iter().flatten().collect(),
-         ))
-     })?;
-     let listed: Vec<&Named> = tables.iter().filter(|table| table.text().is_some()).collect();
-@@ -341,22 +346,31 @@ fn add_tables(reader: &Reader<'_>, dump: &mut DumpCatalog) -> Result<(), DriverE
- /// DuckDB checks a foreign key as each statement ends, and has no way
- /// to add one after the rows, so a table's rows follow its parents', and
- /// a table whose key points at itself takes a row per statement.
--fn dump_tables(tables: &[&Named], keys: &[(String, String, Option<String>)]) -> Vec<DumpTable> {
-+fn dump_tables(tables: &[&Named], keys: &[(String, String, Vec<String>)]) -> Vec<DumpTable> {
-+    let parents_of: HashMap<(&str, &str), &[String]> = keys
-+        .iter()
-+        .map(|(schema, child, parents)| ((schema.as_str(), child.as_str()), parents.as_slice()))
-+        .collect();
-+    // A key keeps its parent as the CREATE spelled it, and DuckDB folds the case of names.
-+    let mut declared_names: HashMap<(&str, String), &str> = HashMap::new();
-+    for table in tables {
-+        declared_names
-+            .entry((table.schema.as_str(), table.name.to_ascii_lowercase()))
-+            .or_insert(table.name.as_str());
-+    }
-     tables
-         .iter()
-         .map(|table| {
-             let mut dumped = DumpTable::new(TableRef::new(Some(table.schema.clone()), table.name.clone()));
--            let parents = keys
--                .iter()
--                .filter(|(schema, child, _)| *schema == table.schema && *child == table.name)
--                .filter_map(|(_, _, parent)| parent.as_deref());
-+            let parents = parents_of
-+                .get(&(table.schema.as_str(), table.name.as_str()))
-+                .copied()
-+                .unwrap_or_default();
-             for parent in parents {
--                // A key keeps its parent as the CREATE spelled it, and
--                // DuckDB folds the case of names.
--                let declared = tables
--                    .iter()
--                    .find(|other| other.schema == table.schema && other.name.eq_ignore_ascii_case(parent))
--                    .map_or(parent, |other| other.name.as_str());
-+                let declared = declared_names
-+                    .get(&(table.schema.as_str(), parent.to_ascii_lowercase()))
-+                    .copied()
-+                    .unwrap_or(parent.as_str());
-                 if declared == table.name {
-                     dumped.one_row_per_insert = true;
-                     continue;
-@@ -503,8 +517,12 @@ mod tests {
-         }
-     }
- 
--    fn key(schema: &str, child: &str, parent: &str) -> (String, String, Option<String>) {
--        (schema.to_owned(), child.to_owned(), Some(parent.to_owned()))
-+    fn key(schema: &str, child: &str, parents: &[&str]) -> (String, String, Vec<String>) {
-+        (
-+            schema.to_owned(),
-+            child.to_owned(),
-+            parents.iter().map(|parent| (*parent).to_owned()).collect(),
-+        )
-     }
- 
-     #[test]
-@@ -544,11 +562,7 @@ mod tests {
-     fn a_table_follows_its_parents_and_a_self_reference_loads_a_row_at_a_time() {
-         let (parent, child, other) = (named("app", "parent"), named("app", "child"), named("main", "parent"));
-         let tables = [&child, &parent, &other];
--        let keys = [
--            key("app", "child", "Parent"),
--            key("app", "child", "parent"),
--            key("app", "child", "child"),
--        ];
-+        let keys = [key("app", "child", &["Parent", "parent", "child"])];
- 
-         let dumped = dump_tables(&tables, &keys);
- 
+@@ -736,7 +736,9 @@ targets:
+         PRODUCT_BUNDLE_IDENTIFIER: com.TablePro.ParquetExportPlugin
+         # DuckDB does the Parquet encoding, so this links the same static library the
+         # DuckDB driver does. That is why the plugin is registry-only rather than bundled:
+-        # 149MB universal is not worth adding to every app download for one export format.
++        # 226MB universal is not worth adding to every app download for one export format.
++        # force_load is required: the static parquet and core_functions extensions register
++        # through an autoregister constructor nothing references, which a plain link drops.
+         HEADER_SEARCH_PATHS:
+           - $(inherited)
+           - $(SRCROOT)/Plugins/DuckDBDriverPlugin/CDuckDB/include
 ```
 
 ---
 
-### Incident Patch 3: `1b1ad094` (2026-11-15)
-**Commit Message**: fix(windows): ask a question that comes while the last dialog is still closing (#4290)
+### Incident Patch 3: `3722c097` (2026-11-22)
+**Commit Message**: test(bench): loaded-RSS/wide/big-text paths; fix data-files module chain (#4411)
 
-**File**: `windows/docs/decisions/0004-app-shell.md` (modified, +2/-1)
+**File**: `apple/scripts/benchmark-data-files.sh` (modified, +5/-3)
 ```diff
-@@ -128,7 +128,7 @@ On 2026-11-14 the roadmap's Phase 2 added a production cue (W-08), a database sw
- - Table tabs page as macOS pages a table: a page is the default page size long (Settings, Pagination: 100, 500, 1,000, 5,000 or 10,000 rows, 1,000 unless changed, as macOS); First, Previous, Next and Last sit in the tab's `CommandBar`, and its one status words the page as the macOS status bar does, with the run's time: "1,001-2,000 of 3,503 rows · 15 ms", or "Rows 1,001-2,000 · 15 ms" until the count lands. A table that fits one page keeps "Rows: 347 · 12 ms". The core writes each page (`table_query` takes an offset, over `build_page`'s `PagePosition::Offset`) and counts the table (`table_row_count`, `build_count` as the Linux pager counts), in the background after the first full page; until the count lands, Next stays while pages come back full. Before it counts, it reads the engine's estimate (`table_row_estimate`, over `Connection::table_estimate`, as the Linux pager does), and decides as macOS does: an exact count the engine keeps is the total; under the threshold (Settings, Pagination, Count rows if estimate less than: 1,000, 10,000, 100,000, 1,000,000 or Always count, 100,000 unless changed, as macOS), or with no estimate, the server counts; from the threshold on nothing is counted, the status says "1-1,000 of about 2,000,000 rows" (no total under a filter), and Count rows in the command bar counts on request. Last page, Go to page and All rows wait for an exact count. A sort or a refresh goes back to the first page, and a refresh counts again. An engine that pages on the server (Cassandra) cannot seek by offset: Next resumes from the paging state the page before handed back (`TablePageRead::next_page`), Previous from the one kept for that page, and a page with none kept is read through the rows before it, as the Linux pager does; the server saying no row follows ends Next even on a full page. Count rows, Last page, Go to page and All rows stay off there, since each reads through the whole table. A sort, a filter, a page size or a refresh drops the kept states (`core/docs/decisions/0022-browsing-through-the-ffi.md`).
- - Rows per page: a "1,000 rows" button before First page opens the macOS sizes, 5, 10, 20, 100, 500 and 1,000, as `RadioMenuFlyoutItem`s, then All rows..., which asks first and needs the count, and Custom..., up to 1,000,000. A new size keeps the page that holds the first row shown, as macOS does. The size belongs to the tab: `session.json` keeps it with the tab's page, and Reopen closed tab brings both back.
- - Go to page: between Previous and Next, "Page 3 of 36" opens a flyout with a `NumberBox` from 1 to the page count, as macOS asks in a popover. It is offered once the table is counted, as on macOS, and the box keeps a typed number inside that range (`InvalidInputOverwritten`).
--- An open transaction: each run's `Finished` event carries the transaction the editor's connection is left in (the core's `RunSummary.transaction_state`). The tab that holds one shows a Warning `InfoBar` above its results, "Transaction open", with Roll back, which asks first, and Commit, hidden on a read-only connection; a failed one is an Error bar with Roll back only. Both send COMMIT or ROLLBACK as typed SQL, EXEC or DISCARD for a key-value engine, as the Linux app does. Over the tabs, a bar names another tab that holds one, with Show; macOS shows its bar above every tab of the connection, and here the owning tab carries the actions, since the transaction lives on that tab's own connection. Closing a tab that holds one asks first, since closing rolls it back. Window close and Exit confirm every affected held transaction before closing any tabs; cancelling keeps them open. Then one dialog lists every query tab still running, as macOS asks before it quits, and says closing rolls back a transaction a run has open; a table tab loading a page is not asked about. Exit then hides the windows and closes every connection, each tab stopping its run, for up to 5 seconds before the process ends. While any tab holds a transaction or unsaved changes, the primary window registers a reason with `ShutdownBlockReasonCreate` ("Table changes are not saved.", "A transaction is open.") and answers `WM_QUERYENDSESSION` with FALSE once it has written the session file: a sign-out or a restart then lists TablePro with its reason and the user can cancel and save, and a Restart Manager request, as from an installer, is cancelled ([Application Shutdown Changes in Windows Vista](https://learn.microsoft.com/en-us/previous-versions/windows/desktop/ms700677(v=vs.85)); Restart Manager, [Guidelines for Applications](https://learn.microsoft.com/en-us/windows/win32/rstmgr/guidelines-for-applications)). A running query does not hold it, since stopping it is the default. A forced end cannot be held: "Sign out anyway" (`ENDSESSION_CRITICAL`) goes on to `WM_ENDSESSION`, which writes the session file again, and a forced Restart Manager close, as 
-```
-
-**File**: `windows/src/TablePro.App/Services/CredentialDialogs.cs` (modified, +1/-1)
-```diff
-@@ -137,7 +137,7 @@ internal async Task<bool> RecoverHostKeyAsync(
-                 DefaultButton = trust ? ContentDialogButton.Close : ContentDialogButton.Primary,
-             };
-             AutomationProperties.SetAutomationId(dialog, "CredentialDialog");
--            var shown = WindowDialogs.ShowAsync(dialog, owner);
-+            var shown = WindowDialogs.ShowAsync(dialog, owner, cancellationToken);
-             using var registration = cancellationToken.Register(() => owner.DispatcherQueue.TryEnqueue(dialog.Hide));
-             var result = await shown;
-             cancellationToken.ThrowIfCancellationRequested();
-```
-
-**File**: `windows/src/TablePro.App/Services/WindowDialogs.cs` (modified, +73/-10)
-```diff
-@@ -8,8 +8,12 @@ namespace TablePro.App.Services;
- internal static class WindowDialogs
- {
-     private static readonly HashSet<XamlRoot> OpenRoots = [];
--    private static TaskCompletionSource? _free;
-+    // Answered dialogs still playing their closing transition, and questions asked during one.
-+    private static int _closing;
-+    private static int _waiting;
-+    private static TaskCompletionSource? _changed;
- 
-+    // An answered dialog no longer counts as open, though it still plays its closing transition.
-     public static bool IsOpen(XamlRoot? root) => root is not null && OpenRoots.Contains(root);
- 
-     // A dialog nobody asked for just then, as a link from another launch, waits for the window and any open dialog.
-@@ -23,14 +27,13 @@ public static async Task<ContentDialogResult> ShowWhenFreeAsync(ContentDialog di
-             {
-                 await LoadedAsync(owner).ConfigureAwait(true);
-             }
--            else if (OpenRoots.Count > 0)
-+            else if (OpenRoots.Count > 0 || _closing > 0 || _waiting > 0)
-             {
--                await (_free ??= new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously)).Task
--                    .ConfigureAwait(true);
-+                await ChangedAsync().ConfigureAwait(true);
-             }
-             else
-             {
--                return await ShowAsync(dialog, owner).ConfigureAwait(true);
-+                return await ShowNowAsync(dialog, owner).ConfigureAwait(true);
-             }
-         }
-     }
-@@ -48,16 +51,59 @@ void OnLoaded(object sender, RoutedEventArgs args)
-         return loaded.Task;
-     }
- 
--    public static async Task<ContentDialogResult> ShowAsync(ContentDialog dialog, FrameworkElement owner)
-+    // A question asked during the last answer's closing transition, as a click right after Cancel, waits its turn.
-+    public static async Task<ContentDialogResult> ShowAsync(
-+        ContentDialog dialog, FrameworkElement owner, CancellationToken cancellationToken = default)
-+    {
-+        if (OpenRoots.Count == 0 && _closing > 0)
-+        {
-+            _waiting++;
-+            try
-+            {
-+                while (OpenRoots.Count > 0 || _closing > 0)
-+                {
-+                    await ChangedAsync().WaitAsync(cancellationToken).ConfigureAwait(true);
-+                }
-+            }
-+            catch (OperationCanceledException)
-+            {
-+                return ContentDialogResult.None;
-+            }
-+            finally
-+            {
-+                _waiting--;
-+                Changed();
-+            }
-+        }
-+
-+        return cancellationToken.IsCancellationRequested
-+            ? ContentDialogResult.None
-+            : await ShowNowAsync(dialog, owner).ConfigureAwait(true);
-+    }
-+
-+    private static async Task<ContentDialogResult> ShowNowAsync(ContentDialog dialog, FrameworkElement owner)
-     {
-         if (owner.XamlRoot is not { } root || OpenRoots.Count > 0)
-         {
-             return ContentDialogResult.None;
-         }
- 
-         OpenRoots.Add(root);
-+        var answered = false;
-+        void OnClosing(ContentDialog sender, ContentDialogClosingEventArgs args)
-+        {
-+            if (!args.Cancel && !answered)
-+            {
-+                answered = true;
-+                _closing++;
-+                OpenRoots.Remove(root);
-+                Changed();
-+            }
-+        }
-+
-         // Closing or moving the owner must dismiss its prompt before that root is gone.
-         void OnUnloaded(object sender, RoutedEventArgs args) => dialog.Hide();
-+        dialog.Closing += OnClosing;
-         owner.Unloaded += OnUnloaded;
-         try
-         {
-@@ -71,13 +117,30 @@ public static async Task<ContentDialogResult> ShowAsync(ContentDialog dialog, Fr
-         }
-         finally
-         {
-+            dialog.Closing -= OnClosing;
-             owner.Unloaded -= OnUnloaded;
--            OpenRoots.Remove(root);
--            if (OpenRoots.Count == 0 && _free is { } free)
-+            if (answered)
-             {
--                _free = null;
--                free.TrySetResult();
-+                _closing--;
-             }
-+            else
-+            {
-+                OpenRoots.Remove(root);
-+            }
-+
-+            Changed();
-+        }
-+    }
-+
-+    private static Task ChangedAsync() =>
-+        (_changed ??= new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously)).Task;
-+
-+    private static void Changed()
-+    {
-+        if (_changed is { } changed)
-+        {
-+            _changed = null;
-+            changed.TrySetResult();
-         }
-     }
+@@ -39,10 +39,12 @@ compile_module() {
+         -emit-module-path "$WORK/$name.swiftmodule" -o "$WORK/lib$name.dylib" 2>> "$WORK/compile.log"
  }
+ 
+-if ! compile_module TableProTabularIO "$PACKAGE"/TableProTabularIO/*.swift \
+-    || ! compile_module TableProTabular -lTableProTabularIO "$PACKAGE"/TableProTabular/*.swift \
++if ! compile_module TableProWireIO "$PACKAGE"/TableProWireIO/*.swift \
++    || ! compile_module TableProNumberFormatting "$PACKAGE"/TableProNumberFormatting/*.swift \
++    || ! compile_module TableProTabularIO -lTableProWireIO "$PACKAGE"/TableProTabularIO/*.swift \
++    || ! compile_module TableProTabular -lTableProTabularIO -lTableProNumberFormatting "$PACKAGE"/TableProTabular/*.swift \
+     || ! xcrun swiftc -O -parse-as-library -module-name DataFilesBenchmark -I "$WORK" -L "$WORK" \
+-        -lTableProTabularIO -lTableProTabular -Xlinker -rpath -Xlinker "$WORK" \
++        -lTableProTabular -lTableProTabularIO -lTableProNumberFormatting -lTableProWireIO -Xlinker -rpath -Xlinker "$WORK" \
+         "$HERE/main.swift" -o "$WORK/benchmark" 2>> "$WORK/compile.log"; then
+     cat "$WORK/compile.log" >&2
+     exit 1
 ```
 
-**File**: `windows/tests/TablePro.App.UITests/AppSession.cs` (modified, +5/-3)
+**File**: `apple/scripts/benchmark/app-paths/benchmark.py` (modified, +192/-9)
 ```diff
-@@ -268,11 +268,13 @@ public void Check(AutomationElement row, bool isChecked = true)
-         row.Click();
-     }
+@@ -2,6 +2,7 @@
+ # Driver for scripts/benchmark-app-paths.sh, which builds and signs the app first.
  
--    // The ContentDialog template names its primary button PrimaryButton.
--    public void PressDialogButton()
-+    // The ContentDialog template names its primary button PrimaryButton; a name tells it from a dialog still closing.
-+    public void PressDialogButton(string? name = null)
-     {
-         var button = Retry.WhileNull(
--                () => Window.FindFirstDescendant(condition => condition.ByAutomationId("PrimaryButton")),
-+                () => Window.FindFirstDescendant(condition => name is null
-+                    ? condition.ByAutomationId("PrimaryButton")
-+                    : condition.ByAutomationId("PrimaryButton").And(condition.ByName(name))),
-                 Wait,
-                 throwOnTimeout: false).Result
-             ?? throw Failure("No dialog opened.", screen: true);
-```
-
-**File**: `windows/tests/TablePro.App.UITests/TabWindowTests.cs` (modified, +27/-0)
-```diff
-@@ -245,6 +245,33 @@ public void CancellingCloseSelectsTheConnectionWhoseTransactionWasShown(string t
-         app.PressDialogButton();
-     }
+ import argparse
++import ctypes
+ import datetime
+ import json
+ import math
+@@ -30,6 +31,39 @@
+ SETTLE_SECONDS = 0.5
+ BENCH_DATABASE = "tablepro_bench"
  
-+    // The cancelled prompt is still playing its closing transition when Roll back asks.
-+    [Theory]
-+    [MemberData(nameof(Themes))]
-+    public void RollBackRightAfterCancellingCloseStillAsks(string theme)
-+    {
-+        var folder = AppSession.NewDataFolder(theme);
-+        var state = new
-+        {
-+            connections = new[]
-+            {
-+                new { filePath = AppSession.SampleDatabase(folder), name = "First", engineId = "sqlite",
-+                    tabs = new[] { new { kind = "Query", title = "Query 1", sql = "BEGIN" } } },
-+            },
-+            front = 0,
-+        };
-+        File.WriteAllText(Path.Combine(folder, "session.json"), JsonSerializer.Serialize(state));
-+        using var app = AppSession.Relaunch(folder, theme);
-+        app.Find("SqlEditor");
-+        app.Chord(() => app.TryFind("CommitButton") is { IsOffscreen: false }, VirtualKeyShort.CONTROL, VirtualKeyShort.ENTER);
-+        app.Chord(() => app.TryFind("PrimaryButton") is not null, VirtualKeyShort.ALT, VirtualKeyShort.F4);
-+        app.CloseDialog();
-+        app.Find("RollBackButton").AsButton().Invoke();
-+        app.PressDialogButton("Roll back");
-+        Assert.True(Retry.WhileFalse(() => app.TryFind("CommitButton") is null or { IsOffscreen: true },
-+            AppSession.Wait, throwOnTimeout: false).Success);
-+    }
++# Wide and big-text fixtures for the opt-in footprint and wide-row paths.
++WIDE_COLUMNS = int(os.environ.get("BENCH_COLUMNS") or 7)
++WIDE_ROWS = 2000
++WIDE_TABLE = "bench_wide"
++BIGTEXT_ROWS = 300
++BIGTEXT_TABLE = "bench_bigtext"
 +
-     private static void OpenTrack(AppSession app)
-     {
-         app.Click(app.Find("SampleCard"), () => app.TryFind("Rail_Chinook (Sample)") is not null);
++# proc_pid_rusage backs RunningApp.footprint_mb and cpu_ms.
++LIBPROC = ctypes.CDLL("/usr/lib/libSystem.B.dylib")
++
++
++class RusageInfo(ctypes.Structure):
++    _fields_ = [("uuid", ctypes.c_uint8 * 16)] + [(name, ctypes.c_uint64) for name in (
++        "user_time", "system_time", "pkg_idle_wkups", "interrupt_wkups", "pageins", "wired_size",
++        "resident_size", "phys_footprint", "proc_start_abstime", "proc_exit_abstime")]
++
++
++class MachTimebase(ctypes.Structure):
++    _fields_ = [("numer", ctypes.c_uint32), ("denom", ctypes.c_uint32)]
++
++
++def _mach_timebase():
++    tb = MachTimebase()
++    LIBPROC.mach_timebase_info(ctypes.byref(tb))
++    return (tb.numer or 1, tb.denom or 1)
++
++
++# ri_user_time/ri_system_time are Mach ticks, not ns; scale by numer/denom.
++MACH_TIMEBASE = _mach_timebase()
++
++
++# Opt-in: named in --paths, but kept out of a default run and the baseline until then.
++OPTIONAL_PATHS = ["table-sqlite-footprint", "table-sqlite-wide", "table-sqlite-bigtext"]
+ PATHS = [
+     "launch-welcome",
+     "launch-restore",
+@@ -38,7 +72,8 @@
+     "table-postgresql",
+     "tabs-next",
+     "tabs-recent",
+-]
++] + OPTIONAL_PATHS
++DEFAULT_PATHS = [name for name in PATHS if name not in OPTIONAL_PATHS]
+ 
+ LAUNCH_DONE = re.compile(r"^\s+firstFramePresented\s+([0-9.]+)", re.M)
+ TAB_SWITCH = re.compile(
+@@ -197,6 +232,88 @@ def prepare_postgres(server):
+     """.format(rows=TABLE_ROWS), BENCH_DATABASE)
+ 
+ 
++# A few typed columns, the rest padded as colNNNN, for whichever engine opens the wide table.
++def wide_columns(engine, count):
++    if engine == "mysql":
++        concat = lambda *parts: "CONCAT(%s)" % ", ".join(parts)
++        id_type, text_type, email_type, amount_type, pad_type = (
++            "INT PRIMARY KEY", "VARCHAR(64)", "VARCHAR(128)", "DECIMAL(12,2)", "TEXT")
++        counter = "n"
++    elif engine == "postgres":
++        concat = lambda *parts: " || ".join(parts)
++        id_type, text_type, email_type, amount_type, pad_type = (
++            "INT PRIMARY KEY", "TEXT", "TEXT", "NUMERIC(12,2)", "TEXT")
++        counter = "n"
++    else:
++        concat = lambda *parts: " || ".join(parts)
++        id_type, text_type, email_type, amount_type, pad_type = (
++            "INTEGER PRIMARY KEY", "TEXT", "TEXT", "REAL", "TEXT")
++        counter = "i"
++    typed = [
++        ("id", id_type, counter),
++        ("name", text_type, concat("'name '", counter)),
++        ("email", email_type, concat("'user'", counter, "'@example.com'")),
++        ("amount", amount_type, "(%s %% 100000) / 100.0" % counter),
++    ]
++    columns = list(typed[:count])
++    for place in range(len(columns), count):
++        columns.append(("col%04d" % (place - len(typed) + 1), pad_type, concat("'v'", counter)))
++    return columns
++
++
++def mysql_numbers(rows):
++    places = max(1, len(str(rows)))
++    digits = ", ".join("%s d%d" % (MYSQL_DIGITS, place) for place in range(places))
++    number = " + ".join("d%d.d * %d" % (place, 10 ** place) for place in range(places)) + " + 1"
++    return "(SELECT {number} AS n FROM {digits}) numbers".format(number=number, digits=digits)
++
++
++def wide_table_sql(engine, table, count, rows):
++    columns = wide_columns(engine, count)
++    defs = ", ".join("%s %s" % (name, type_) for name, type_, _ in columns)
++    exprs = ", ".join(expr for _, _, expr in columns)
++    if engine == "mysql":
++        return ("CREATE TABLE IF NOT EXISTS {table} ({defs});\n"
++                "INSERT INTO {table} SELECT {exprs} FROM {source} WHERE n <= {rows};").format(
++            table=table, defs=defs, exprs=exprs, source=mysql_numbers(rows), rows=rows)
++    if engine == "postgres":
++        return ("CREATE TABLE IF NOT EXISTS {table} ({defs});\n"
++                "INSERT INTO {table} SELECT {exprs} FROM generate_series(1, {rows}) AS n;").format(
++            table=table, defs=defs, exprs=exprs, rows=rows)
++    return ("CREATE TABLE {table} ({defs});\n"
++            "WITH RECURSIVE n(i) AS (SELECT 1 UNION ALL SELECT i + 1 FROM n WHERE i < {rows})\n"
++            "INSERT INTO {table} SELECT {exprs} FROM n;").format(
++        table=table, defs=defs, exprs=exprs, rows=rows)
++
++
++def make_sqlite_wide(path, columns, rows):
++    if path.exists():
++        path.unlink()
++    connection = sqlite3.connect(str(path))
++    try:
++        connection.executescript(sqlite_rows_sql("bench_small", 3))
++        connection.executescript(wide_table_sql("sqlite", WIDE_TABLE, columns, rows))
++        connection.commit()
++    finally:
++        connection.close()
++
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4296** (2026-11-15): ci: run the jobs that need Python 3.9 on ubuntu-24.04 (@datlechin)
-- **PR #4294** (2026-11-15): refactor(macos): pass the caller's schema to DDL generators, drop the driver adapter downcasts and move the parts pane behind a plugin capability (@datlechin)
-- **PR #4293** (2026-11-15): fix(duckdb): keep DuckDB's expression recursion within the stacks it runs on (@datlechin)
-- **PR #4292** (2026-11-15): docs(roadmap): tick the Windows items #4282, #4285 and #4288 shipped (@datlechin)
-- **PR #4290** (2026-11-15): fix(windows): ask a question that comes while the last dialog is still closing (@datlechin)
-- **PR #4289** (2026-11-15): refactor(sql): read every SQL span through SQLNonCodeSpan and run one shared script corpus against the core (@datlechin)
+- **PR #4416** (2026-11-22): docs(release): move the Homebrew cask to per-arch DMGs on the first per-arch stable (@datlechin)
+- **PR #4414** (2026-11-22): build(release): ship per-arch builds and a per-arch appcast (@datlechin)
+- **PR #4413** (2026-11-22): feat(settings): native macOS Settings sidebar with pushed pages and history (@datlechin)
+- **PR #4412** (2026-11-22): build(plugins): correct DuckDB size comment, note ParquetExport needs force_load (@datlechin)
+- **PR #4411** (2026-11-22): test(bench): loaded-RSS/wide/big-text paths; fix data-files module chain (@datlechin)
+- **PR #4410** (2026-11-22): refactor(connection-form): show General by default, rest behind disclosures (@datlechin)
 
 ---
 
@@ -3005,33 +2357,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. duckdb): keep DuckDB's expression recursion within the stacks it runs on
+## X. build(release): ship per-arch builds and a per-arch appcast
 
 **RULE**:
-When implementing operations in `.github/workflows/core.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TableProApp/TablePro. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/skills/release/SKILL.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TableProApp/TablePro. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2aca62ea`: duckdb): keep DuckDB's expression recursion within the stacks it runs on. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7b2ba0f2`: build(release): ship per-arch builds and a per-arch appcast. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/core.yml`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/release/SKILL.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-      # DuckDB recurses on threads whose stack each platform sizes (core/docs/decisions/0031-duckdb-expression-depth.md).
-      - name: DuckDB's deepest expressions
-        run: cargo test --locked --target "$TARGET" -p tablepro-driver-duckdb --test deep_expressions
+- Then check the source: `gh api -H 'Accept: application/vnd.github.raw' 'repos/TableProApp/TablePro/contents/appcast.xml?ref=gh-pages' | grep -c '<sparkle:shortVersionString>X.Y.Z<'` prints 2, one item per arch; `gh release view vX.Y.Z --json assets -q '.assets | length'` is 7 plus `python3 apple/scripts/release/registry.py targets | wc -l`. A line whose `apple/scripts/release/feed.py` has no `ARCHES` ships universal: 1 item and 4 plus `python3 apple/scripts/release/registry.py targets | wc -l`.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+- Then check the source: `gh api -H 'Accept: application/vnd.github.raw' 'repos/TableProApp/TablePro/contents/appcast.xml?ref=gh-pages' | grep -c '<sparkle:shortVersionString>X.Y.Z<'` prints 1; `gh release view vX.Y.Z --json assets -q '.assets | length'` is 4 plus `python3 apple/scripts/release/registry.py targets | wc -l`.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2aca62ea` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7b2ba0f2` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

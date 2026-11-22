@@ -4,24 +4,24 @@
 {
   "source_repository": "NucleoidAI/Nucleoid",
   "source_url": "https://github.com/NucleoidAI/Nucleoid",
-  "source_version": "4c1f0dba",
+  "source_version": "e0086dfb",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-22T18:21:34.323Z",
+  "timestamp": "2026-11-22T20:17:09.689Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nucleoidai-nucleoid",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `4c1f0dba`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-22T18:21:34.323Z`  
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `e0086dfb`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-22T20:17:09.689Z`  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence)
-- **Confidence Rating**: 69%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 67%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from NucleoidAI/Nucleoid:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T18:21:32.910Z  
+> **Harvest Timestamp**: 2026-11-22T20:17:08.440Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1234,6 +1234,7 @@ export async function declarations({ train }) {
 
 export async function instances({ train, pair_number }) {
   const [{ input_matrix, output_matrix }] = train.dataset;
+
   milestone.segmenting_training_objects({
     pair_number,
     input_matrix,
@@ -1241,6 +1242,7 @@ export async function instances({ train, pair_number }) {
   });
 
   const { result: instances } = await llm.generate({
+    grammar: true,
     messages: [
       {
         role: "user",
@@ -1593,73 +1595,108 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4c1f0dba` (2026-11-22)
-**Commit Message**: Draft NUC 134 Ruby Collection Method Aliases
+### Incident Patch 1: `e0086dfb` (2026-11-22)
+**Commit Message**: Resume NUC 134 Ruby Collection Method Aliases
 
-Category: Language compatibility. Add Ruby collect(callback) and select(callback) as exact aliases of accepted map(callback) and filter(callback) on lists and class populations. Continuous live-registry draw selected index 4 of five eligible categories; no strategy learning or advisory scoring was configured.
+Resume the paused preserving revision of allocation 4c1f0dba951d33a5a0cdc13de09660bdd2c1b4c5 after 1.91 hours. R1 independently passed every hard criterion but stays isolated: accepted NUC 133 now owns its synth.95 path and IDs. Pin this empty claim for a fresh proposer/evaluator pair that preserves all accepted NUC 133 changes; keep NUC 134, the Language compatibility draw and continuous mode.
 
 Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
+
+
+---
+
+### Incident Patch 2: `d0894711` (2026-11-22)
+**Commit Message**: Draft NUC 135 Kotlin Negated Membership Operator
+
+Category: Language compatibility, drawn uniformly at random (index 4
+of the five eligible categories in NUC 1's registry, p = 1/5, no
+redraw, at 14:41:26) for a continuous /nuc-proposal cycle, so the
+token comparison is categorically skipped.
+
+Requested change: a membership test gains Kotlin's negated spelling
+A !in B, an exact alias of NUC 97's accepted A not in B. The parser
+reads ! directly followed by the keyword in, with nothing between
+them, wherever it reads not in, and builds the same not in node, so
+evaluation, liveness, rendering and errors are the accepted ones. At
+the accepted revision every such program fails to parse (for example
+SyntaxError("Unexpected keyword 'in'") or "Expected ']' but found
+'!'"), and only those programs change; inside a template
+interpolation, which ends before the operator, the accepted reading
+stays, and ! in with whitespace keeps its parse error. No keyword,
+lexer token, error or syntax-tree variant is added.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01AJtz8e8dqMwocimNqgffMq
+
 **File**: `docs/nuc-0000.md` (modified, +2/-0)
 ```diff
-@@ -177,6 +177,7 @@ Created: 31-Jul-2026
- | [122](nuc-0122.md) | Python-Style Except Clauses | Accepted |
+@@ -178,6 +178,7 @@ Created: 31-Jul-2026
  | [131](nuc-0131.md) | Reversal Method Aliases | Accepted |
  | [132](nuc-0132.md) | Rust String Boundary Method Aliases | Accepted |
-+| [134](nuc-0134.md) | Ruby Collection Method Aliases | Draft |
+ | [134](nuc-0134.md) | Ruby Collection Method Aliases | Draft |
++| [135](nuc-0135.md) | Kotlin Negated Membership Operator | Draft |
  
  ### Documentation
  
-@@ -321,6 +322,7 @@ Created: 31-Jul-2026
- | [131](nuc-0131.md) | Reversal Method Aliases | Standards Track | Language compatibility | Accepted |
+@@ -323,6 +324,7 @@ Created: 31-Jul-2026
  | [132](nuc-0132.md) | Rust String Boundary Method Aliases | Standards Track | Language compatibility | Accepted |
- | [133](nuc-0133.md) | Edge Lists of Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
-+| [134](nuc-0134.md) | Ruby Collection Method Aliases | Standards Track | Language compatibility | Draft |
+ | [133](nuc-0133.md) | Edge Lists of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
+ | [134](nuc-0134.md) | Ruby Collection Method Aliases | Standards Track | Language compatibility | Draft |
++| [135](nuc-0135.md) | Kotlin Negated Membership Operator | Standards Track | Language compatibility | Draft |
  
  ## Copyright
  
 ```
 
-**File**: `docs/nuc-0134.md` (added, +60/-0)
+**File**: `docs/nuc-0135.md` (added, +68/-0)
 ```diff
-@@ -0,0 +1,60 @@
-+# NUC 134 -- Ruby Collection Method Aliases
+@@ -0,0 +1,68 @@
++# NUC 135 -- Kotlin Negated Membership Operator
 +
 +```
-+NUC: 134
-+Title: Ruby Collection Method Aliases
-+Author: Copilot <223556219+Copilot@users.noreply.github.com>
++NUC: 135
++Title: Kotlin Negated Membership Operator
++Author: Can Mingir <canmingir@gmail.com>
 +Status: Draft
 +Type: Standards Track
 +Category: Language compatibility
 +Created: 22-Nov-2026
-+Requires: 8, 61
++Requires: 97
 +```
 +
 +## Abstract
 +
-+- Add Ruby's `collect(callback)` and `select(callback)` names to lists and
-+  class instance lists as exact aliases of the accepted `map(callback)` and
-+  `filter(callback)` operations.
-+- Share the accepted callback validation, evaluation order, result ordering,
-+  dependency tracking and errors. Preserve every accepted spelling, property
-+  reading and other receiver's dispatch.
-+- Add no implicit Ruby blocks, enumerators, in-place variants, keywords,
-+  parser changes, configuration or dependencies.
-+- This open-ended invocation uses continuous mode. One unbiased draw from
-+  NUC 1's live registry selected Language compatibility, index 4 among five
-+  eligible categories; its token comparison is categorically skipped.
++- A membership test gains Kotlin's negated spelling `A !in B`, an exact
++  alias of the accepted `A not in B` of [NUC 97](nuc-0097.md). The parser
++  reads `!` directly followed by the keyword `in`, with nothing between
++  them, wherever it reads `not in`, and builds the same `not in` node, so
++  evaluation, liveness, rendering and errors are the accepted ones. After
++  `xs = [1, 2, 3]`, `[2 !in xs, 4 !in xs]` gives `[false, true]`, as
++  `[2 not in xs, 4 not in xs]` does.
++- At the accepted revision, every program in which `!` directly precedes
++  `in` where a membership operator can stand fails to parse, with errors
++  such as `SyntaxError("Unexpected keyword 'in'")` and
++  `SyntaxError("Expected ']' but found '!'")`, and only those programs
++  change. Inside a template interpolation, which ends before `not in` as it
++  ends before `!in`, the accepted reading stays, and `! in` with whitespace
++  between the two keeps its parse error. No keyword, lexer token, error or
++  syntax-tree variant is added.
 +
 +## Motivation
 +
-+- Ruby programmers and language models use `items.collect(callback)` and
-+  `items.select(callback)` to transform and filter collections. Nucleoid
-+  already implements both operations under `map` and `filter`, but these
-+  familiar names currently raise a method-call `TypeError`.
-+- Exact aliases advance the language-superset aspiration without reserving
-+  identifiers, changing existing operations or introducing another callback
-+  implementation. This is a bounded spelling addition, not full Ruby
-+  compatibility.
++- Kotlin writes negated membership as `!in`: `x !in xs`,
++  `name !in reserved`, `"z" !in word`. Programmers, and the language models
++  that write world models with Nucleoid, use it as readily as Python's
++  `not in`, and Nucleoid already accepts both `in` and `not in` with the
++  meaning Kotlin's `in` and `!in` have for lists, strings and class
++  populations. Today each `!in` fails to parse, so a model's otherwise valid
++  rule, such as `$Order.flagged = $Order.status !in approved`, stops the
++  whole program before any statement runs.
++- An alias keeps one membership operator in the runtime and one canonical
++  spelling in rendered rules, as the accepted `===`, `!==`, `elif` and
++  `->` aliases do, and advances the language-superset aspiration of NUC 1's
++  Language compatibility category without changing any accepted form.
 +
 +## Rationale
 +
@@ -1675,7 +1712,7 @@ Co-authored-by: Copilot <[REDACTED_EMAIL]>
 +
 +## Reference Implementation
 +
-+- Pending: the proposer completes this section in an isolated candidate.
++- Pending: the proposer completes this section.
 +
 +## Copyright
 +
@@ -1684,23 +1721,6 @@ Co-authored-by: Copilot <[REDACTED_EMAIL]>
 +This document is licensed under the Apache License, Version 2.0. See
 +[LICENSE](../LICENSE) for the full text.
 ```
-
----
-
-### Incident Patch 2: `fe5ffc0f` (2026-11-22)
-**Commit Message**: Resume NUC 133 Edge Lists of Reasoning Selections
-
-Renews the claim on NUC 133, which this continuous /nuc-proposal cycle
-allocated in 008cc5b3 (Draft NUC 133 Edge Lists of Reasoning
-Selections, 22-Nov-2026 00:41:27 -05:00) and is still completing: the
-frozen candidate is under independent evaluation. The allocation was
-12 h 29 min old at this claim, past the 12-hour renewal point. The claim
-changes no file.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01AJtz8e8dqMwocimNqgffMq
-
-
 
 #### Recent Merged Pull Requests:
 - **PR #72** (closed): Bump the npm_and_yarn group with 2 updates (@dependabot[bot])
@@ -1728,13 +1748,13 @@ Claude-Session: https://claude.ai/code/session_01AJtz8e8dqMwocimNqgffMq
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Draft NUC 134 Ruby Collection Method Aliases
+## X. Draft NUC 135 Kotlin Negated Membership Operator
 
 **RULE**:
 When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4c1f0dba`: Draft NUC 134 Ruby Collection Method Aliases. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d0894711`: Draft NUC 135 Kotlin Negated Membership Operator. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
@@ -1742,8 +1762,8 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| [134](nuc-0134.md) | Ruby Collection Method Aliases | Draft |
-| [134](nuc-0134.md) | Ruby Collection Method Aliases | Standards Track | Language compatibility | Draft |
+| [135](nuc-0135.md) | Kotlin Negated Membership Operator | Draft |
+| [135](nuc-0135.md) | Kotlin Negated Membership Operator | Standards Track | Language compatibility | Draft |
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1753,7 +1773,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4c1f0dba` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d0894711` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

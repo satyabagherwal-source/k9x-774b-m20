@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T20:08:59.950Z",
-  "total_cycles_completed": 11580,
-  "total_learnings_persisted": 11580,
-  "total_rules_promoted": 10802,
+  "last_updated": "2026-11-22T20:17:09.472Z",
+  "total_cycles_completed": 11585,
+  "total_learnings_persisted": 11585,
+  "total_rules_promoted": 10805,
   "history": [
-    {
-      "timestamp": "2026-11-22T01:44:02.061Z",
-      "repository": "skyhook-io/radar",
-      "learningId": "learn-github-skyhook-io-radar",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T01:44:08.862Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T01:58:41.693Z",
-      "repository": "Qwen/Qwen3-Embedding-0.6B",
-      "learningId": "learn-huggingface-qwen-qwen3-embedding-0-6b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T01:58:55.539Z",
-      "repository": "databendlabs/databend",
-      "learningId": "learn-github-databendlabs-databend",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T02:09:02.130Z",
-      "repository": "moonshotai/Kimi-K3.1-Pro",
-      "learningId": "learn-huggingface-moonshotai-kimi-k3-1-pro",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-22T02:09:09.114Z",
       "repository": "ZSeven-W/openpencil",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-11-22T20:08:59.950Z",
       "repository": "Automattic/harper",
       "learningId": "learn-github-automattic-harper",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T20:16:52.973Z",
+      "repository": "HemmingwayAI/Hemmingway-1",
+      "learningId": "learn-huggingface-altworld-hemmingway-1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T20:16:54.392Z",
+      "repository": "max-sixty/worktrunk",
+      "learningId": "learn-github-max-sixty-worktrunk",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T20:16:59.749Z",
+      "repository": "TableProApp/TablePro",
+      "learningId": "learn-github-tableproapp-tablepro",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T20:17:06.431Z",
+      "repository": "volcengine/OpenViking",
+      "learningId": "learn-github-volcengine-openviking",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T20:17:09.472Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

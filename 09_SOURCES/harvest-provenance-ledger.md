@@ -12211,3 +12211,8 @@ Every entry in this ledger must capture:
 | `learn-github-siteline-swiftui-introspect` | `https://github.com/siteline/swiftui-introspect` | `ddf68494` | Multi-dimensional audit evidence | 2026-11-22T20:00:25.261Z |
 | `learn-huggingface-fastino-gliner2-5-decide` | `https://huggingface.co/fastino/GLiNER2.5-Decide` | `hf-fastino` | Multi-dimensional audit evidence | 2026-11-22T20:08:57.385Z |
 | `learn-github-automattic-harper` | `https://github.com/Automattic/harper` | `6cb8d82a` | Multi-dimensional audit evidence | 2026-11-22T20:08:59.943Z |
+| `learn-huggingface-altworld-hemmingway-1` | `https://huggingface.co/Altworld/Hemmingway-1` | `hf-altworl` | Multi-dimensional audit evidence | 2026-11-22T20:16:52.968Z |
+| `learn-github-max-sixty-worktrunk` | `https://github.com/max-sixty/worktrunk` | `5a427391` | Multi-dimensional audit evidence | 2026-11-22T20:16:54.387Z |
+| `learn-github-tableproapp-tablepro` | `https://github.com/TableProApp/TablePro` | `2507448a` | Multi-dimensional audit evidence | 2026-11-22T20:16:59.745Z |
+| `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `e6dc9714` | Multi-dimensional audit evidence | 2026-11-22T20:17:06.396Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `e0086dfb` | Multi-dimensional audit evidence | 2026-11-22T20:17:09.467Z |

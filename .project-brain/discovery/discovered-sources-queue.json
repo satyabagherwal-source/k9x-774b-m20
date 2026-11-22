@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-22T20:09:09.326Z",
+  "updated_at": "2026-11-22T20:17:14.063Z",
   "stats": {
-    "total_discovered": 7646,
-    "approved_pending_harvest": 7241,
+    "total_discovered": 7647,
+    "approved_pending_harvest": 7242,
     "harvested_count": 0,
     "rejected_count": 405,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7220,
+      "COMMUNITY_AND_EXPERT": 7221,
       "OFFICIAL_DOCUMENTATION": 246,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 5,
@@ -165400,6 +165400,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/automattic-harper-learnings.md",
         "fileName": "automattic-harper-learnings.md"
+      }
+    },
+    "SRC-AE21CF9D0387": {
+      "id": "SRC-AE21CF9D0387",
+      "url": "https://updates.tablepro.app/appcast.xml%60",
+      "title": "https://updates.tablepro.app/appcast.xml%60",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T20:17:14.063Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tableproapp-tablepro-learnings.md",
+        "fileName": "tableproapp-tablepro-learnings.md"
       }
     }
   }

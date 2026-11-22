@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tableproapp-tablepro-learnings.md`  
 > **Source**: github ([https://github.com/TableProApp/TablePro](https://github.com/TableProApp/TablePro))  
-> **Source Version**: `0b0c7243`  
+> **Source Version**: `2507448a`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T20:24:19.716Z  
+> **Timestamp**: 2026-11-22T20:16:58.767Z  
 > **Learning ID**: `learn-github-tableproapp-tablepro`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tableproapp-tablepro-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/TableProApp/TablePro](https://github.com/TableProApp/TablePro))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T20:24:19.579Z  
+> **Harvest Timestamp**: 2026-11-22T20:16:58.762Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Free, open-source native database client for macOS, Linux, iPhone and iPad.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6491 stars
+- **Stars / Engagement**: 6519 stars
 
 ---
 
@@ -1788,13 +1788,11 @@ public enum MongoVocabulary {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4268** (2026-11-14): **Edits and transactions: remaining audit items**
-  *Symptoms*: ### What happened?  Items left from the 2026-11-10 and 2026-11-12 audits.  - [ ] DL-02: after a reconnect loses a transaction, temp tables or SET values, the refusal also blocks the app's own work on that database, not only the user's next SQL - [ ] GE-06: switching tabs drops the data undo history while the edits stay pending - [ ] QT-09: one window-wide `DataChangeManager`, swapped by snapshot, is the root of the edit-loss bugs - [ ] WD-2: on Windows, a forced shutdown through Restart Manager still ends the app with pending edits and an open transaction  ### Expected behavior  Pending edits and open transactions are never lost without asking.  ### TablePro version  main after 0.87.0-beta.1  ### Platform  macOS, Windows 
+- **Issue #4389** (2026-11-21): **sqlite:// URL reads its query parameters as part of the file path**
+  *Symptoms*: ### What happened?  Opening a `sqlite://` URL with query parameters reads the parameters as part of the file path. `sqlite:///path/to/shop.sqlite?name=Shop` opens `/path/to/shop.sqlite?name=Shop`, a file that does not exist, so the driver creates an empty database under that name. The window title reads `SQLite //path/to/shop.sqlite?name=Shop`.  Without parameters the title is still `SQLite //path/to/shop.sqlite`. `duckdb://` and `beancount://` file URLs behave the same.  ### Steps to reproduce  1. Run `open 'sqlite:///path/to/shop.sqlite?name=Shop'`. 2. Click Connect. 3. The window title shows `SQLite //path/to/shop.sqlite?name=Shop` and the sidebar shows an empty database.  ### Expected behavior  The URL's path is the file, and `name` and the other documented parameters apply the way they do on server URLs. The window is titled `Shop`, or the file name when the URL has no `name`, as when the file itself is opened.  ### Database type  SQLite  ### TablePro version  0.88.0-beta.2  ### Platform  macOS 
 
-- **Issue #4106** (2026-11-12): **Linux: the MCP token's locked-keyring message has no default-keyring step**
-  *Symptoms*: With no default keyring, the MCP status row in Preferences reads "The keyring is locked, so the access token cannot be read. Unlock it and try again." Unlocking does not help when there is no default keyring.  - Where: `linux/crates/app/src/ui/preferences_dialog/mcp_page.rs:309`. - Expected: the same recovery as the Remember Password toast from #4105 (troubleshooting.md, Flatpak connections: create a default keyring in Passwords and Keys). - Left out of #4105, which fixed the save paths.
-  **Post-Mortem & Fix Analysis**:
-  > The shared message for Locked and UnlockDismissed only suggested unlocking and retrying. It omitted the missing-default-keyring case that can occur with GNOME automatic login.  The message now covers accepting the unlock prompt and creating a default keyring in Passwords and Keys. Added tests cover both errors, the recovery text, retry visibility, disabled client controls, and the transition back to Off.  https://github.com/TableProApp/TablePro/pull/4234
+- **Issue #4388** (2026-11-21): **SQLite export suggests the database file's full path as the file name**
+  *Symptoms*: ### What happened?  Exporting tables from a SQLite connection suggests the database file's full path as the file name. With `/path/to/shop.sqlite` open, the save panel's name field reads `/path/to/shop.sqlite.csv`. The export dialog also lists the database row under its full path.  It happens whenever the export does not start from exactly one table: no table or several tables selected in the sidebar. Every format is affected.  ### Steps to reproduce  1. Open a SQLite file, for example `/path/to/shop.sqlite`. 2. Make sure no table is selected in the sidebar. 3. File > Export > Export Tables…, keep CSV, click Export. 4. The save panel suggests `/path/to/shop.sqlite.csv`.  ### Expected behavior  A short name, the way a server database gets its database name: `shop.csv`.  ### Database type  SQLite  ### TablePro version  0.88.0-beta.2  ### Platform  macOS 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1811,1624 +1809,507 @@ public enum MongoVocabulary {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `68da8db7` (2026-11-19)
-**Commit Message**: fix(duckdb): run DuckDB's tasks on 8 MiB threads so a deep ATTACH cannot overflow (#4354)
+### Incident Patch 1: `7b2ba0f2` (2026-11-22)
+**Commit Message**: build(release): ship per-arch builds and a per-arch appcast (#4414)
 
-**File**: `apple/Plugins/DuckDBDriverPlugin/DuckDBConnection.swift` (modified, +13/-0)
+**File**: `.claude/skills/release/SKILL.md` (modified, +1/-1)
 ```diff
-@@ -42,6 +42,7 @@ actor DuckDBConnectionActor {
-     nonisolated var unownedExecutor: UnownedSerialExecutor { executor.asUnownedSerialExecutor() }
+@@ -62,5 +62,5 @@ Run `apple/RELEASING.md`: Cutting a beta, or Cutting a stable or patch with its
  
-     private var database: duckdb_database?
-+    private var taskThreads: DuckDBTaskThreads?
-     private var connection: duckdb_connection?
-     // Renders the rows of a result the session's own connection is still producing.
-     private var renderConnection: duckdb_connection?
-@@ -291,6 +292,12 @@ actor DuckDBConnectionActor {
-                 String(localized: "This build of DuckDB does not accept a limit on how deep an expression nests")
-             )
-         }
-+        for option in DuckDBTaskThreads.sessionOptions
-+            where duckdb_set_config(config, option.name, option.value) == DuckDBError {
-+            throw DuckDBPluginError.connectionFailed(
-+                String(localized: "This build of DuckDB does not accept running its tasks on threads TablePro starts")
-+            )
-+        }
-         if !spec.allowsPersistentSecrets {
-             guard duckdb_set_config(config, "allow_persistent_secrets", "false") != DuckDBError else {
-                 throw DuckDBPluginError.connectionFailed(
-@@ -365,6 +372,7 @@ actor DuckDBConnectionActor {
-             throw error
-         }
-         database = db
-+        taskThreads = DuckDBTaskThreads(database: openedDB)
-         connection = conn
-         renderConnection = renderConn
-         renderSettings = [:]
-@@ -382,6 +390,8 @@ actor DuckDBConnectionActor {
-             duckdb_disconnect(&connection)
-             connection = nil
-         }
-+        taskThreads?.close()
-+        taskThreads = nil
-         if database != nil {
-             duckdb_close(&database)
-             database = nil
-@@ -559,6 +569,9 @@ actor DuckDBConnectionActor {
- 
-         var result = duckdb_result()
-         let state = streams ? duckdb_execute_prepared_streaming(stmt, &result) : duckdb_execute_prepared(stmt, &result)
-+        if !DuckDBTaskThreads.keepsCount(statementType) {
-+            taskThreads?.followCount()
-+        }
-         guard state != DuckDBError else {
-             let message = Self.errorMessage(from: &result)
-             duckdb_destroy_result(&result)
+ - `apple/scripts/release/tag.sh <tag> <commit>` tags and watches the tag's run. Hold merges and pull request pushes around it as Tagging says, since release jobs get no runner priority.
+ - The forward-port goes once the tag's App and Plugins jobs start, not after publishing, so the next beta.1 need not wait for the stable (Forward-port).
+-- Then check the source: `gh api -H 'Accept: application/vnd.github.raw' 'repos/TableProApp/TablePro/contents/appcast.xml?ref=gh-pages' | grep -c '<sparkle:shortVersionString>X.Y.Z<'` prints 1; `gh release view vX.Y.Z --json assets -q '.assets | length'` is 4 plus `python3 apple/scripts/release/registry.py targets | wc -l`.
++- Then check the source: `gh api -H 'Accept: application/vnd.github.raw' 'repos/TableProApp/TablePro/contents/appcast.xml?ref=gh-pages' | grep -c '<sparkle:shortVersionString>X.Y.Z<'` prints 2, one item per arch; `gh release view vX.Y.Z --json assets -q '.assets | length'` is 7 plus `python3 apple/scripts/release/registry.py targets | wc -l`. A line whose `apple/scripts/release/feed.py` has no `ARCHES` ships universal: 1 item and 4 plus `python3 apple/scripts/release/registry.py targets | wc -l`.
+ - After an X.Y.0, the `announce` skill in TableProApp/web is next.
 ```
 
-**File**: `apple/Plugins/DuckDBDriverPlugin/DuckDBExpressionDepth.swift` (modified, +150/-0)
+**File**: `.github/workflows/release.yml` (modified, +15/-8)
 ```diff
-@@ -52,6 +52,156 @@ nonisolated enum DuckDBExpressionDepth {
-     }
+@@ -85,17 +85,23 @@ jobs:
+           retention-days: 30
+ 
+   app:
+-    name: App
++    name: App (${{ matrix.arch }})
+     needs: verify
+     runs-on: xcode-27
+     environment: signing
+-    # The archive alone took 138 minutes for v0.84.0-beta.1; signing and two notarizations come on top.
++    # One arch per leg, the two in parallel. The universal archive, both arches in one job, took 138 minutes
++    # for v0.84.0-beta.1; signing and two notarizations come on top.
+     timeout-minutes: 240
++    strategy:
++      fail-fast: false
++      matrix:
++        arch: [arm64, x86_64]
+     permissions:
+       contents: read
+     env:
+       VERSION: ${{ needs.verify.outputs.version }}
+       BUILD: ${{ needs.verify.outputs.build }}
++      ARCH: ${{ matrix.arch }}
+     defaults:
+       run:
+         working-directory: apple
+@@ -130,20 +136,20 @@ jobs:
+           asc-key-p8: ${{ secrets.ASC_KEY_P8 }}
+ 
+       - name: Build the app
+-        run: scripts/release/build.sh app
++        run: scripts/release/build.sh app "$ARCH"
+ 
+       - name: Notarize the app
+-        run: scripts/release/notarize.sh build/release/TablePro.app
++        run: scripts/release/notarize.sh "build/release/$ARCH/TablePro.app"
+ 
+       - name: Package the app
+-        run: scripts/release/package.sh app
++        run: scripts/release/package.sh app "$ARCH"
+ 
+       - name: Notarize the disk image
+-        run: scripts/release/notarize.sh "dist/TablePro-$VERSION.dmg"
++        run: scripts/release/notarize.sh "dist/TablePro-$VERSION-$ARCH.dmg"
+ 
+       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+         with:
+-          name: app
++          name: app-${{ matrix.arch }}
+           path: apple/dist/
+           if-no-files-found: error
+           retention-days: 30
+@@ -230,7 +236,8 @@ jobs:
+ 
+       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+         with:
+-          name: app
++          pattern: app-*
++          merge-multiple: true
+           path: dist
+ 
+       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+```
+
+**File**: `apple/CONTRIBUTING.md` (modified, +2/-2)
+```diff
+@@ -61,7 +61,7 @@ xcodebuild build -project TablePro.xcodeproj -scheme AllPlugins -destination 'pl
+ 
+ ### A Release build
+ 
+-`scripts/release/build.sh` builds the app and the registry plugins the way a tag does, universal, into `build/release/`; `package.sh` writes the assets to `dist/`. The nightly's Release Build job runs the same:
++`scripts/release/build.sh` builds the app and the registry plugins the way a tag does: the app once per arch into `build/release/<arch>/`, the plugins universal into `build/release/plugins`; `package.sh` writes the assets to `dist/`. The nightly's Release Build job runs the same:
+ 
+ ```bash
+ export VERSION=0.0.0-dev BUILD=9999999
+@@ -72,7 +72,7 @@ scripts/release/build.sh plugins --unsigned && scripts/release/package.sh plugin
+ 
+ Signed: drop `--unsigned`, with the Developer ID identity and the provisioning profile `scripts/release/ExportOptions.plist` names. `scripts/release/notarize.sh <path>...` needs the profile `xcrun notarytool store-credentials TablePro --key <p8> --key-id <id> --issuer <issuer>` creates.
+ 
+-The disk image opens to the window `scripts/release/dmg.DS_Store` describes, a file Finder wrote. To change it, edit the Finder settings in `scripts/release/dmg.sh`, run `scripts/release/dmg.sh layout build/release/TablePro.app` on a Mac with a logged-in session, and open a disk image built with the new file before committing it.
++The disk image opens to the window `scripts/release/dmg.DS_Store` describes, a file Finder wrote. To change it, edit the Finder settings in `scripts/release/dmg.sh`, run `scripts/release/dmg.sh layout build/release/arm64/TablePro.app` on a Mac with a logged-in session, and open a disk image built with the new file before committing it.
+ 
+ ### Clean builds
+ 
+```
+
+**File**: `apple/RELEASING.md` (modified, +3/-0)
+```diff
+@@ -5,6 +5,9 @@ The macOS app, its registry plugins, the static libraries and the manual iOS flo
+ ## Channels
+ 
+ - One EdDSA-signed appcast, `https://updates.tablepro.app/appcast.xml`, carries stable and beta items. The app takes betas only while Settings > General > Get beta updates is on.
++- Each version ships per arch: `TablePro-<ver>-arm64` and `-x86_64`, each a `.dmg`, a `.tar.xz` and a `-dSYMs.zip`. Earlier versions from 0.82.0 shipped one universal app as one item.
++- The feed carries two items per version: arm64 first, gated by `sparkle:hardwareRequirements`, then x86_64 ungated. Sparkle takes the first of two equal versions, and an Intel Mac skips the gated one. `generate_appcast` refuses two archives of one version, so `feed.py` runs it once per arch and puts the arm64 item before the x86_64 one.
++- `build.sh`/`package.sh` take an arch (none builds both) and `release.yml`'s App job is an `arm64`/`x86_64` matrix.
+ - A stable rolls out in phases of 21600 s. A beta is not phased and is a GitHub prerelease.
+ - Critical means a security fix or data loss, nothing else: ` [CRITICAL]` on the version's `CHANGELOG.md` heading, never on a beta. Later stables carry it forward.
+ - The legacy `appcast.xml` on `main`, the feed of apps up to 0.81, ends at 0.82.0. No release writes it.
+```
+
+**File**: `apple/scripts/benchmark-app-paths.sh` (modified, +3/-2)
+```diff
+@@ -39,8 +39,9 @@ while [ $# -gt 0 ]; do
+ done
+ 
+ if [ -z "$APP" ]; then
+-    (cd "$ROOT" && scripts/release/build.sh app --unsigned)
+-    APP="$ROOT/build/release/TablePro.app"
++    arch="$(uname -m)"
++    (cd "$ROOT" && scripts/release/build.sh app "$arch" --unsigned)
++    APP="$ROOT/build/release/$arch/TablePro.app"
+ fi
+ [ -d "$APP/Contents/MacOS" ] || { echo "not an app bundle: $APP" >&2; exit 2; }
+ 
+```
+
+**File**: `apple/scripts/benchmark-large-catalog.sh` (modified, +3/-2)
+```diff
+@@ -42,8 +42,9 @@ while [ $# -gt 0 ]; do
+ done
+ 
+ if [ -z "$APP" ]; then
+-    (cd "$ROOT" && scripts/release/build.sh app --unsigned)
+-    APP="$ROOT/build/release/TablePro.app"
++    arch="$(uname -m)"
++    (cd "$ROOT" && scripts/release/build.sh app "$arch" --unsigned)
++    APP="$ROOT/build/release/$arch/TablePro.app"
+ fi
+ [ -d "$APP/Contents/MacOS" ] || { echo "not an app bundle: $APP" >&2; exit 2; }
+ 
+```
+
+**File**: `apple/scripts/ci/verify-plugin-loads.sh` (modified, +28/-3)
+```diff
+@@ -3,13 +3,25 @@ set -euo pipefail
+ 
+ # Loads every built .tableplugin with dlopen and fails naming any that will not load.
+ #
+-# Usage: verify-plugin-loads.sh <directory-with-tableplugins> [more-directories...]
++# Usage: verify-plugin-loads.sh [--arch <arch>] <directory-with-tableplugins> [more-directories...]
+ #
+ # dlopen resolves the binary and every library and framework it links, the dyld path behind
+ # "Bundle failed to load executable". It does not instantiate the principal class. PluginKit ABI:
+ # .claude/rules/plugin-system.md, ABI, checked with `verify.sh abi`.
++#
++# --arch builds the probe for a single-arch build's slice. dlopen refuses a wrong-arch binary, so an
++# x86_64 build is checked with an x86_64 probe (Rosetta runs it on Apple Silicon). Default: host arch.
++# A Mac that cannot run that arch skips the check, except in CI.
+ 
+-[ $# -gt 0 ] || { echo "Usage: $0 <directory-with-tableplugins>..." >&2; exit 2; }
++ARCH_FLAGS=()
++ARCH="$(uname -m)"
++if [ "${1:-}" = --arch ]; then
++    [ $# -ge 2 ] || { echo "$0: --arch needs an arch" >&2; exit 2; }
++    ARCH="$2"
++    ARCH_FLAGS=(-arch "$2")
++    shift 2
++fi
++[ $# -gt 0 ] || { echo "Usage: $0 [--arch <arch>] <directory-with-tableplugins>..." >&2; exit 2; }
+ 
+ WORK="$(mktemp -d)"
+ trap 'rm -rf "$WORK"' EXIT
+@@ -28,7 +40,20 @@ int main(int argc, char **argv) {
+     return 0;
+ }
+ PROBE
+-clang -o "$WORK/probe" "$WORK/probe.c"
++clang ${ARCH_FLAGS[@]+"${ARCH_FLAGS[@]}"} -o "$WORK/probe" "$WORK/probe.c"
++
++# With no argument the probe exits 2; anything else means this Mac cannot run it: an Intel Mac for
++# arm64, Apple silicon without Rosetta for x86_64.
++runs=0
++"$WORK/probe" > /dev/null 2>&1 || runs=$?
++if [ "$runs" -ne 2 ]; then
++    if [ "${CI:-}" = true ]; then
++        echo "verify-plugin-loads.sh: this runner cannot run $ARCH code; x86_64 needs Rosetta 2" >&2
++        exit 1
++    fi
++    echo "verify-plugin-loads.sh: this Mac cannot run $ARCH code, so the $ARCH plugins are not load-checked here" >&2
++    exit 0
++fi
+ 
+ # The plugins link the app's frameworks, which sit beside them in the products directory. Without
+ # these dyld cannot resolve TableProPluginKit and every plugin would "fail" for the wrong reason.
+```
+
+**File**: `apple/scripts/release/build.sh` (modified, +42/-16)
+```diff
+@@ -1,12 +1,13 @@
+ #!/usr/bin/env bash
+ set -euo pipefail
+ 
+-# Usage: build.sh app|plugins [--unsigned]
++# Usage: build.sh app [arm64|x86_64]|plugins [--unsigned]
+ # VERSION and BUILD, when set, become MARKETING_VERSION and CURRENT_PROJECT_VERSION.
+-# Writes build/release/TablePro.app and its archive, or build/release/plugins and plugins-dSYMs.
++# The app builds one arch into build/release/<arch>/TablePro.app and its archive; with no arch it
++# builds both. plugins writes build/release/plugins and plugins-dSYMs (universal).
+ 
+ usage() {
+-    echo "Usage: build.sh app|plugins [--unsigned]" >&2
++    echo "Usage: build.sh app [arm64|x86_64]|plugins [--unsigned]" >&2
+     exit 2
  }
  
-+// DuckDB runs a statement's tasks on the caller and on threads of its own, which get 512 KiB on macOS and iOS, and an
-+// ATTACH or read_duckdb() reads the other file's expressions inside one. With external_threads at the thread count
-+// DuckDB starts none, and these run its tasks with its command line's stack instead.
-+nonisolated final class DuckDBTaskThreads {
-+    // DuckDB's own default, std::thread::hardware_concurrency().
-+    static let count = max(ProcessInfo.processInfo.processorCount, 1)
-+    static let openOptions: [(name: String, value: String)] = [
-+        (name: "threads", value: String(count)),
-+        (name: "external_threads", value: String(count)),
+@@ -16,15 +17,18 @@ die() {
+ }
+ 
+ KIND=""
++ARCH=""
+ SIGNED=true
+ for arg in "$@"; do
+     case "$arg" in
+         app | plugins) [ -z "$KIND" ] || usage; KIND="$arg" ;;
++        arm64 | x86_64) [ -z "$ARCH" ] || usage; ARCH="$arg" ;;
+         --unsigned) SIGNED=false ;;
+         *) usage ;;
+     esac
+ done
+ [ -n "$KIND" ] || usage
++[ "$KIND" = app ] || [ -z "$ARCH" ] || die "an arch applies only to the app build"
+ case "${BUILD:-}" in
+     *[!0-9]*) echo "build.sh: BUILD must be an integer, got '$BUILD'" >&2; exit 2 ;;
+ esac
+@@ -81,35 +85,51 @@ check_universal() {
+     done
+ }
+ 
++check_arch() {
++    local app="$1" arch="$2" other binary
++    case "$arch" in arm64) other=x86_64 ;; x86_64) other=arm64 ;; *) die "unknown arch $arch" ;; esac
++    for binary in "$app/Contents/MacOS"/*; do
++        lipo "$binary" -verify_arch "$arch" || die "$binary has no $arch slice: $(lipo -archs "$binary")"
++        ! lipo "$binary" -verify_arch "$other" 2> /dev/null \
++            || die "$binary has an $other slice too: $(lipo -archs "$binary")"
++    done
++}
++
+ build_app() {
+-    local archive="$OUT/TablePro.xcarchive" app="$OUT/TablePro.app" name profile=()
+-    rm -rf "$archive" "$app" "$OUT/export"
++    local arch="$1"
++    local out="$OUT/$arch"
++    local archive="$out/TablePro.xcarchive" app="$out/TablePro.app" exported="$out/export" name profile=()
++    # Per-arch so a both-arch build keeps each arch's intermediates apart; xcodebuild_project reads it.
++    local DERIVED="$out/DerivedData"
++    rm -rf "$out"
++    mkdir -p "$out"
+     if [ "$SIGNED" = true ]; then
+         [ -f "$EXPORT_OPTIONS" ] || die "$EXPORT_OPTIONS is missing"
+         name="$(/usr/libexec/PlistBuddy -c 'Print :provisioningProfiles:com.TablePro' "$EXPORT_OPTIONS")"
+         profile=("TABLEPRO_PROVISIONING_PROFILE=$name")
+     fi
+ 
+-    # One task at a time: the app module's arm64 and x86_64 whole-module compiles at once outgrow
+-    # a 7 GB hosted runner and swap, 237 min against 105 min measured in run 42617599195.
+-    xcodebuild_project archive-app archive -jobs 1 -scheme TablePro -archivePath "$archive" \
+-        ${profile[@]+"${profile[@]}"}
++    # One arch per build: the app module's whole-module compile for both arches at once outgrew a
++    # 7 GB hosted runner and swapped (237 min against 105 min, run 42617599195). -jobs 1 still caps
++    # the peak within the single arch.
++    xcodebuild_project "archive-app-$arch" archive -jobs 1 -scheme TablePro -archivePath "$archive" \
++        ARCHS="$arch" ONLY_ACTIVE_ARCH=NO ${profile[@]+"${profile[@]}"}
+     # -exportArchive refuses a generic archive, which is what any other installed product makes it.
+     [ "$(plutil -extract ApplicationProperties.ApplicationPath raw -o - "$archive/Info.plist" 2> /dev/null)" \
+         = "Applications/TablePro.app" ] || die "$archive is not an app archive: $(find "$archive/Products" -mindepth 2 -maxdepth 3)"
+ 
+     if [ "$SIGNED" = true ]; then
+-        run_xcodebuild export-app -exportArchive -archivePath "$archive" -exportPath "$OUT/export" \
++        run_xcodebuild "export-app-$arch" -exportArchive -archivePath "$archive" -exportPath "$exported" \
+             -exportOptionsPlist "$EXPORT_OPTIONS"
+-        mv "$OUT/export/TablePro.app" "$app"
+-        rm -rf "$OUT/export"
++        mv "$exported/TablePro.app" "$app"
++        rm -rf "$exported"
+     else
+         ditto "$archive/Products/Applications/TablePro.app" "$app"
+     fi
+ 
+-    check_universal "$app"
+-    scripts/ci/verify-plugin-loads.sh "$app/Contents/PlugIns" "$app/Contents/Frameworks"
+-    echo "Built $app ($(plutil -extract CFBundleShortVersionString raw -o - "$app/Contents/Info.plist"))"
++    check_arch "$app" "$arch"
++    scripts/ci/verify-plugin-loads.sh --arch "$arch" "$app/Contents/PlugIns" "$app/Contents/Frameworks"
++    echo "Built $app ($arch, $(plutil -extract CFBundleShortVersionString raw -o - "$app/Contents/Info.plist"))"
+ }
+ 
+ build_plugins() {
+@@ -136,4 +156,10 @@ build_plugins() {
+     echo "Built $(wc -l < "$targets" | tr -d ' ') plugins in $OUT/plugins"
+ }
+ 
+-"build_$KIND"
++if [ "$KIND" = plugins ]; then
++    build_plugins
++elif [ -n "$ARCH" ]; then
++    build_app "$ARCH"
++else
++    for ARCH in arm64 x86_64; do build_app "$ARCH"; done
++fi
+```
+
+---
+
+### Incident Patch 2: `9d0d481c` (2026-11-22)
+**Commit Message**: build(plugins): correct DuckDB size comment, note ParquetExport needs force_load (#4412)
+
+**File**: `apple/project.yml` (modified, +3/-1)
+```diff
+@@ -736,7 +736,9 @@ targets:
+         PRODUCT_BUNDLE_IDENTIFIER: com.TablePro.ParquetExportPlugin
+         # DuckDB does the Parquet encoding, so this links the same static library the
+         # DuckDB driver does. That is why the plugin is registry-only rather than bundled:
+-        # 149MB universal is not worth adding to every app download for one export format.
++        # 226MB universal is not worth adding to every app download for one export format.
++        # force_load is required: the static parquet and core_functions extensions register
++        # through an autoregister constructor nothing references, which a plain link drops.
+         HEADER_SEARCH_PATHS:
+           - $(inherited)
+           - $(SRCROOT)/Plugins/DuckDBDriverPlugin/CDuckDB/include
+```
+
+---
+
+### Incident Patch 3: `3722c097` (2026-11-22)
+**Commit Message**: test(bench): loaded-RSS/wide/big-text paths; fix data-files module chain (#4411)
+
+**File**: `apple/scripts/benchmark-data-files.sh` (modified, +5/-3)
+```diff
+@@ -39,10 +39,12 @@ compile_module() {
+         -emit-module-path "$WORK/$name.swiftmodule" -o "$WORK/lib$name.dylib" 2>> "$WORK/compile.log"
+ }
+ 
+-if ! compile_module TableProTabularIO "$PACKAGE"/TableProTabularIO/*.swift \
+-    || ! compile_module TableProTabular -lTableProTabularIO "$PACKAGE"/TableProTabular/*.swift \
++if ! compile_module TableProWireIO "$PACKAGE"/TableProWireIO/*.swift \
++    || ! compile_module TableProNumberFormatting "$PACKAGE"/TableProNumberFormatting/*.swift \
++    || ! compile_module TableProTabularIO -lTableProWireIO "$PACKAGE"/TableProTabularIO/*.swift \
++    || ! compile_module TableProTabular -lTableProTabularIO -lTableProNumberFormatting "$PACKAGE"/TableProTabular/*.swift \
+     || ! xcrun swiftc -O -parse-as-library -module-name DataFilesBenchmark -I "$WORK" -L "$WORK" \
+-        -lTableProTabularIO -lTableProTabular -Xlinker -rpath -Xlinker "$WORK" \
++        -lTableProTabular -lTableProTabularIO -lTableProNumberFormatting -lTableProWireIO -Xlinker -rpath -Xlinker "$WORK" \
+         "$HERE/main.swift" -o "$WORK/benchmark" 2>> "$WORK/compile.log"; then
+     cat "$WORK/compile.log" >&2
+     exit 1
+```
+
+**File**: `apple/scripts/benchmark/app-paths/benchmark.py` (modified, +192/-9)
+```diff
+@@ -2,6 +2,7 @@
+ # Driver for scripts/benchmark-app-paths.sh, which builds and signs the app first.
+ 
+ import argparse
++import ctypes
+ import datetime
+ import json
+ import math
+@@ -30,6 +31,39 @@
+ SETTLE_SECONDS = 0.5
+ BENCH_DATABASE = "tablepro_bench"
+ 
++# Wide and big-text fixtures for the opt-in footprint and wide-row paths.
++WIDE_COLUMNS = int(os.environ.get("BENCH_COLUMNS") or 7)
++WIDE_ROWS = 2000
++WIDE_TABLE = "bench_wide"
++BIGTEXT_ROWS = 300
++BIGTEXT_TABLE = "bench_bigtext"
++
++# proc_pid_rusage backs RunningApp.footprint_mb and cpu_ms.
++LIBPROC = ctypes.CDLL("/usr/lib/libSystem.B.dylib")
++
++
++class RusageInfo(ctypes.Structure):
++    _fields_ = [("uuid", ctypes.c_uint8 * 16)] + [(name, ctypes.c_uint64) for name in (
++        "user_time", "system_time", "pkg_idle_wkups", "interrupt_wkups", "pageins", "wired_size",
++        "resident_size", "phys_footprint", "proc_start_abstime", "proc_exit_abstime")]
++
++
++class MachTimebase(ctypes.Structure):
++    _fields_ = [("numer", ctypes.c_uint32), ("denom", ctypes.c_uint32)]
++
++
++def _mach_timebase():
++    tb = MachTimebase()
++    LIBPROC.mach_timebase_info(ctypes.byref(tb))
++    return (tb.numer or 1, tb.denom or 1)
++
++
++# ri_user_time/ri_system_time are Mach ticks, not ns; scale by numer/denom.
++MACH_TIMEBASE = _mach_timebase()
++
++
++# Opt-in: named in --paths, but kept out of a default run and the baseline until then.
++OPTIONAL_PATHS = ["table-sqlite-footprint", "table-sqlite-wide", "table-sqlite-bigtext"]
+ PATHS = [
+     "launch-welcome",
+     "launch-restore",
+@@ -38,7 +72,8 @@
+     "table-postgresql",
+     "tabs-next",
+     "tabs-recent",
+-]
++] + OPTIONAL_PATHS
++DEFAULT_PATHS = [name for name in PATHS if name not in OPTIONAL_PATHS]
+ 
+ LAUNCH_DONE = re.compile(r"^\s+firstFramePresented\s+([0-9.]+)", re.M)
+ TAB_SWITCH = re.compile(
+@@ -197,6 +232,88 @@ def prepare_postgres(server):
+     """.format(rows=TABLE_ROWS), BENCH_DATABASE)
+ 
+ 
++# A few typed columns, the rest padded as colNNNN, for whichever engine opens the wide table.
++def wide_columns(engine, count):
++    if engine == "mysql":
++        concat = lambda *parts: "CONCAT(%s)" % ", ".join(parts)
++        id_type, text_type, email_type, amount_type, pad_type = (
++            "INT PRIMARY KEY", "VARCHAR(64)", "VARCHAR(128)", "DECIMAL(12,2)", "TEXT")
++        counter = "n"
++    elif engine == "postgres":
++        concat = lambda *parts: " || ".join(parts)
++        id_type, text_type, email_type, amount_type, pad_type = (
++            "INT PRIMARY KEY", "TEXT", "TEXT", "NUMERIC(12,2)", "TEXT")
++        counter = "n"
++    else:
++        concat = lambda *parts: " || ".join(parts)
++        id_type, text_type, email_type, amount_type, pad_type = (
++            "INTEGER PRIMARY KEY", "TEXT", "TEXT", "REAL", "TEXT")
++        counter = "i"
++    typed = [
++        ("id", id_type, counter),
++        ("name", text_type, concat("'name '", counter)),
++        ("email", email_type, concat("'user'", counter, "'@example.com'")),
++        ("amount", amount_type, "(%s %% 100000) / 100.0" % counter),
 +    ]
-+    // A statement that raises the count and locks the configuration, as IMPORT DATABASE can, still lets these take
-+    // DuckDB's threads over.
-+    static let sessionOptions = openOptions + [(name: "allowed_configs", value: "[external_threads]")]
++    columns = list(typed[:count])
++    for place in range(len(columns), count):
++        columns.append(("col%04d" % (place - len(typed) + 1), pad_type, concat("'v'", counter)))
++    return columns
++
++
++def mysql_numbers(rows):
++    places = max(1, len(str(rows)))
++    digits = ", ".join("%s d%d" % (MYSQL_DIGITS, place) for place in range(places))
++    number = " + ".join("d%d.d * %d" % (place, 10 ** place) for place in range(places)) + " + 1"
++    return "(SELECT {number} AS n FROM {digits}) numbers".format(number=number, digits=digits)
++
++
++def wide_table_sql(engine, table, count, rows):
++    columns = wide_columns(engine, count)
++    defs = ", ".join("%s %s" % (name, type_) for name, type_, _ in columns)
++    exprs = ", ".join(expr for _, _, expr in columns)
++    if engine == "mysql":
++        return ("CREATE TABLE IF NOT EXISTS {table} ({defs});\n"
++                "INSERT INTO {table} SELECT {exprs} FROM {source} WHERE n <= {rows};").format(
++            table=table, defs=defs, exprs=exprs, source=mysql_numbers(rows), rows=rows)
++    if engine == "postgres":
++        return ("CREATE TABLE IF NOT EXISTS {table} ({defs});\n"
++                "INSERT INTO {table} SELECT {exprs} FROM generate_series(1, {rows}) AS n;").format(
++            table=table, defs=defs, exprs=exprs, rows=rows)
++    return ("CREATE TABLE {table} ({defs});\n"
++            "WITH RECURSIVE n(i) AS (SELECT 1 UNION ALL SELECT i + 1 FROM n WHERE i < {rows})\n"
++            "INSERT INTO {table} SELECT {exprs} FROM n;").format(
++        table=table, defs=defs, exprs=exprs, rows=rows)
++
++
++def make_sqlite_wide(path, columns, rows):
++    if path.exists():
++        path.unlink()
++    connection = sqlite3.connect(str(path))
++    try:
++        connection.executescript(sqlite_rows_sql("bench_small", 3))
++        connection.executescript(wide_table_sql("sqlite", WIDE_TABLE, columns, rows))
++        connection.commit()
++    finally:
++        connection.close()
 +
-+    private let database: duckdb_database
-+    // Its own, so a cancel or an aborted transaction on a session cannot stop a change of the count halfway.
-+    private var connection: duckdb_connection?
-+    private var state: duckdb_task_state?
-+    private var workers = 0
-+    // threads and external_threads as these last set them; nil once DuckDB keeps threads of its own.
-+    private var pinned: Int? = DuckDBTaskThreads.count
-+    private let running = DispatchGroup()
-+
-+    // Without its connection it starts no thread, and every task runs on the caller's.
-+    init(database: duckdb_database) {
-+        self.database = database
-+        guard duckdb_connect(database, &connection) != DuckDBError else {
-+            connection = nil
-+            return
-+        }
-+        start(Self.count - 1)
-+    }
-+
-+    // Before duckdb_close: a connection left open keeps the file.
-+    func close() {
-+        stop()
-+        if connection != nil {
-+            duckdb_disconnect(&connection)
-+        }
-+    }
-+
-+    // DuckDB refuses a count below external_threads. One above it makes DuckDB start threads of its own, which these
-+    // take over before anything else runs: a later change ends them with one wake-up each through the semaphore these
-+    // wait on too, and a wake-up one of these took leaves DuckDB's join waiting for good (measured).
-+    func followCount() {
-+        guard !pinnedStillHolds() else { return }
-+        retake()
-+    }
-+
-+    static func keepsCount(_ type: duckdb_statement_type) -> Bool {
-+        switch type {
-+        case DUCKDB_STATEMENT_TYPE_SELECT, DUCKDB_STATEMENT_TYPE_INSERT, DUCKDB_STATEMENT_TYPE_UPDATE,
-+             DUCKDB_STATEMENT_TYPE_DELETE, DUCKDB_STATEMENT_TYPE_TRANSACTION:
-+            return true
-+        default:
-+            return false
-+        }
-+    }
-+
-+    private func pinnedStillHolds() -> Bool {
-+        guard let pinned, let connection, let counts = Self.counts(on: connection) else { return false }
-+        return counts.threads == pinned && counts.external == pinned
-+    }
-+
-+    private func retake() {
-+        stop()
-+        pinned = nil
-+        guard let connection, let threads = Self.counts(on: connection)?.threads,
-+              Self.run("SET external_threads = \(threads)", on: connection) else { return }
-+        pinned = threads
-+        start(threads - 1)
-+    }
-+
-+    private func stop() {
-+        guard let state else { return }
-+        // A thread DuckDB started itself, after a statement raised the count, can take the wake-up meant for one of these.
-+        repeat {
-+            duckdb_finish_execution(state)
-+        } while running.wait(timeout: .now() + .milliseconds(10)) == .timedOut
-+        duckdb_destroy_task_state(state)
-+        self.state = nil
-+        workers = 0
-+    }
-+
-+    private func start(_ count: Int) {
-+        guard count > 0, let state = duckdb_create_task_state(database) else { return }
-+        self.state = state
-+        var attributes = pthread_attr_t()
-+        pthread_attr_init(&attributes)
-+        defer { pthread_attr_destroy(&attributes) }
-+        pthread_attr_setstacksize(&attributes, DuckDBExpressionDepth.stackSize)
-+        pthread_attr_setdetachstate(&attributes, PTHREAD_CREATE_DETACHED)
-+        pthread_attr_set_qos_class_np(&attributes, QOS_CLASS_USER_INITIATED, 0)
-+        for _ in 0..<count {
-+            let worker = Unmanaged.passRetained(DuckDBTaskWorker(state: state, running: running)).toOpaque()
-+            running.enter()
-+            var thread: pthread_t?
-+            let created = pthread_create(&thread, &attributes, { context in
-+                let worker = Unmanaged<DuckDBTaskWorker>.fromOpaque(context).takeRetainedValue()
-+                pthread_setname_np("com.TablePro.duckdb.task")
-+                duckdb_execute_tasks_state(worker.state)
-+                worker.running.leave()
-+                return nil
-+            }, worker)
-+            // DuckDB stops starting threads at the system's li
-```
-
-**File**: `apple/Plugins/DuckDBDriverPlugin/DuckDBIsolatedImport.swift` (modified, +3/-1)
-```diff
-@@ -14,7 +14,7 @@ enum DuckDBIsolatedImport {
-         ("autoload_known_extensions", "false"),
-         ("allow_community_extensions", "false"),
-         (DuckDBExpressionDepth.configurationOption, DuckDBExpressionDepth.limit),
--    ]
-+    ] + DuckDBTaskThreads.openOptions
- 
-     // duckdb_set_config rejects allowed_directories, and DuckDB refuses to change it once external access is off.
-     static func lockdownStatements(allowing folder: String) -> [String] {
-@@ -56,6 +56,8 @@ enum DuckDBIsolatedImport {
-             throw DuckDBPluginError.connectionFailed("Failed to open DuckDB database at '\(file)': \(detail)")
-         }
-         defer { DuckDBExpressionDepth.close(&database) }
-+        let taskThreads = database.map { DuckDBTaskThreads(database: $0) }
-+        defer { taskThreads?.close() }
- 
-         var handle: duckdb_connection?
-         guard duckdb_connect(database, &handle) != DuckDBError, let connection = handle else {
-```
-
-**File**: `apple/TablePro/Resources/Localizable.xcstrings` (modified, +4/-0)
-```diff
-@@ -201534,6 +201534,10 @@
-         }
-       }
-     },
-+    "This build of DuckDB does not accept running its tasks on threads TablePro starts" : {
-+      "extractionState" : "manual",
-+      "generatesSymbol" : false
-+    },
-     "This build of DuckDB does not accept the storage version that keeps files readable by DuckDB 1.x" : {
-       "extractionState" : "manual",
-       "generatesSymbol" : false
-```
-
-**File**: `apple/TableProMobile/TableProMobile/Drivers/DuckDBDriver+Transfer.swift` (modified, +4/-3)
-```diff
-@@ -189,8 +189,7 @@ extension DuckDBActor {
-         }
-         var result = duckdb_result()
-         guard !parameters.isEmpty else {
--            if duckdb_query(connection, sql, &result) == DuckDBError {
--                let message = duckdb_result_error(&result).map { String(cString: $0) } ?? "Unknown DuckDB error"
-+            if let message = run(sql, on: connection, into: &result) {
-                 duckdb_destroy_result(&result)
-                 throw DuckDBDriverError.queryFailed(message)
-             }
-@@ -204,7 +203,9 @@ extension DuckDBActor {
-         }
-         defer { duckdb_destroy_prepare(&statement) }
-         try Self.bind(parameters, to: prepared)
--        if duckdb_execute_prepared(prepared, &result) == DuckDBError {
-+        let state = duckdb_execute_prepared(prepared, &result)
-+        followThreadCount(after: duckdb_prepared_statement_type(prepared))
-+        if state == DuckDBError {
-             let message = duckdb_result_error(&result).map { String(cString: $0) } ?? "Unknown DuckDB error"
-             duckdb_destroy_result(&result)
-             throw DuckDBDriverError.queryFailed(message)
-```
-
-**File**: `apple/TableProMobile/TableProMobile/Drivers/DuckDBDriver.swift` (modified, +72/-3)
-```diff
-@@ -3,6 +3,7 @@ import Dispatch
- import Foundation
- import TableProDatabase
- import TableProModels
-+import TableProSQLGrammar
- import TableProSQLQuoting
- 
- nonisolated final class DuckDBDriver: DatabaseDriver, CatalogQuerying, ExportRowStreaming,
-@@ -196,6 +197,7 @@ actor DuckDBActor {
-     nonisolated let interruptHandle = DuckDBInterruptHandle()
-     private(set) var database: duckdb_database?
-     var connection: duckdb_connection?
-+    private var taskThreads: DuckDBTaskThreads?
-     // The transfer connections on `database`, which `close()` ends before the database.
-     var transferLanes: [UInt64: DuckDBTransferLane] = [:]
-     var lastTransferLane: UInt64 = 0
-@@ -216,7 +218,7 @@ actor DuckDBActor {
-         ("autoinstall_known_extensions", "false"),
-         ("autoload_known_extensions", "false"),
-         (DuckDBExpressionDepth.configurationOption, DuckDBExpressionDepth.limit),
--    ]
-+    ] + DuckDBTaskThreads.sessionOptions
- 
-     func open(path: String) throws {
-         _ = Self.registeredExtensions
-@@ -256,6 +258,7 @@ actor DuckDBActor {
- 
-         database = db
-         connection = conn
-+        if let db { taskThreads = DuckDBTaskThreads(database: db) }
-         if let conn { interruptHandle.attach(conn) }
-     }
- 
-@@ -275,6 +278,8 @@ actor DuckDBActor {
-             duckdb_disconnect(&connection)
-             connection = nil
-         }
-+        taskThreads?.close()
-+        taskThreads = nil
-         if database != nil {
-             duckdb_close(&database)
-             database = nil
-@@ -294,8 +299,7 @@ actor DuckDBActor {
-         let startTime = Date()
-         var result = duckdb_result()
- 
--        if duckdb_query(connection, sql, &result) == DuckDBError {
--            let message = duckdb_result_error(&result).map { String(cString: $0) } ?? "Unknown DuckDB error"
-+        if let message = run(sql, on: connection, into: &result) {
-             duckdb_destroy_result(&result)
-             throw DuckDBDriverError.queryFailed(message)
-         }
-@@ -342,6 +346,71 @@ actor DuckDBActor {
-         return Self.decodeMaterialized(&result, plan: plan, rowsChanged: rowsChanged, startTime: startTime)
-     }
- 
-+    // Several statements run one at a time, split as the editor splits them, so a count one raises is taken over
-+    // before the next runs, and a text DuckDB cannot parse runs none of them. The result is the one duckdb_query
-+    // gives: the first with rows, else the last. Returns the error.
-+    func run(_ sql: String, on connection: duckdb_connection, into result: inout duckdb_result) -> String? {
-+        guard let taskThreads else {
-+            return duckdb_query(connection, sql, &result) == DuckDBError ? Self.error(of: &result) : nil
-+        }
-+        var extracted: duckdb_extracted_statements?
-+        defer { duckdb_destroy_extracted(&extracted) }
-+        let count = duckdb_extract_statements(connection, sql, &extracted)
-+        if let error = duckdb_extract_statements_error(extracted) {
-+            return String(cString: error)
-+        }
-+        guard count > 1 else { return Self.run(sql, on: connection, taskThreads, into: &result) }
-+        let statements = SQLStatementScanner.executableStatements(in: sql, grammar: Self.grammar)
-+        guard statements.count == count else {
-+            return "DuckDB reads \(count) statements here where TablePro splits \(statements.count); run them one at a time"
-+        }
-+        var kept: duckdb_result?
-+        var keptHasRows = false
-+        for statement in statements {
-+            var current = duckdb_result()
-+            if let failure = Self.run(statement.sql, on: connection, taskThreads, into: &current) {
-+                duckdb_destroy_result(&current)
-+                if var kept { duckdb_destroy_result(&kept) }
-+                return failure
-+            }
-+            if kept != nil, keptHasRows {
-+                duckdb_destroy_result(&current)
-+                continue
-+            }
-+            if var earlier = kept { duckdb_destroy_result(&earlier) }
-+            keptHasRows = duckdb_result_return_type(current) == DUCKDB_RESULT_TYPE_QUERY_RESULT
-+            kept = current
-+        }
-+        if let kept { result = kept }
-+        return nil
-+    }
-+
-+    func followThreadCount(after type: duckdb_statement_type) {
-+        guard !DuckDBTaskThreads.keepsCount(type) else { return }
-+        taskThreads?.followCount()
-+    }
-+
-+    private static let grammar = SQLLexicalReadings.resolve(
-+        databaseTypeId: DatabaseType.duckdb.rawValue, declared: nil, session: nil
-+    ).execution
-+
-+    private static func run(
-+        _ sql: String,
-+        on connection: duckdb_connection,
-+        _ taskThreads: DuckDBTaskThreads,
-+        into result: inout duckdb_result
-+    ) -> String? {
-+        let state = duckdb_query(connection, sql, &result)
-+        if !DuckDBTaskThreads.keepsCount(duckdb_result_statement_type(result)) {
-+            taskThreads.followCount()
-+        }
-+        return state == DuckDBErro
-```
-
-**File**: `apple/TableProMobile/TableProMobileTests/Drivers/DuckDBDriverTests.swift` (modified, +185/-0)
-```diff
-@@ -602,4 +602,189 @@ struct DuckDBDeepExpressionTests {
- 
-         #expect(tables.rows == [["t"]])
-     }
-+
-+    @Test("A file nested 900 deep attaches a hundred times, each read on a thread with DuckDB's stack")
-+    func deepFileAttachesRepeatedly() async throws {
-+        let directory = FileManager.default.temporaryDirectory
-+            .appendingPathComponent("duckdb-deep-reattach-\(UUID().uuidString)", isDirectory: true)
-+        defer { try? FileManager.default.removeItem(at: directory) }
-+        let file = try await deepFile(in: directory)
-+
-+        let driver = DuckDBDriver(source: .inMemory)
-+        try await driver.connect()
-+        for _ in 0..<100 {
-+            _ = try await driver.execute(query: "ATTACH '\(file.path)' AS deep (READ_ONLY)")
-+            _ = try await driver.execute(query: "DETACH deep")
-+        }
-+        let threads = try await driver.execute(query: "SELECT current_setting('threads'), current_setting('external_threads')")
-+        try await driver.disconnect()
-+
-+        let count = String(ProcessInfo.processInfo.processorCount)
-+        #expect(threads.rows == [[count, count]])
-+    }
-+
-+    @Test(
-+        "A raised thread count is taken over, a deep file still attaches, and a count below it is refused",
-+        .timeLimit(.minutes(1))
-+    )
-+    func raisedThreadCountIsTakenOver() async throws {
-+        let directory = FileManager.default.temporaryDirectory
-+            .appendingPathComponent("duckdb-deep-threads-\(UUID().uuidString)", isDirectory: true)
-+        defer { try? FileManager.default.removeItem(at: directory) }
-+        let file = try await deepFile(in: directory)
-+
-+        let driver = DuckDBDriver(source: .inMemory)
-+        try await driver.connect()
-+        let base = ProcessInfo.processInfo.processorCount
-+        var counts: [[String?]] = []
-+        for statement in [
-+            "SET threads = \(base + 8)", "PRAGMA threads = \(base + 16)", "EXPLAIN ANALYZE SET threads = \(base + 24)",
-+        ] {
-+            _ = try await driver.execute(query: statement)
-+            for _ in 0..<20 {
-+                _ = try await driver.execute(query: "ATTACH '\(file.path)' AS deep (READ_ONLY)")
-+                _ = try await driver.execute(query: "DETACH deep")
-+            }
-+            counts += try await driver.execute(
-+                query: "SELECT current_setting('threads'), current_setting('external_threads')"
-+            ).rows
-+        }
-+        let lowering = await #expect(throws: DuckDBDriverError.self) {
-+            try await driver.execute(query: "SET threads = \(base)")
-+        }
-+        try await driver.disconnect()
-+
-+        let raised = [base + 8, base + 16, base + 24].map { [String($0), String($0)] as [String?] }
-+        #expect(counts == raised)
-+        #expect(lowering?.localizedDescription.contains("external threads") == true)
-+    }
-+
-+    @Test(
-+        "A text of several statements takes each raised count over before the next statement reads a deep file",
-+        .timeLimit(.minutes(1))
-+    )
-+    func threadCountFollowsSetsInOneText() async throws {
-+        let directory = FileManager.default.temporaryDirectory
-+            .appendingPathComponent("duckdb-deep-text-\(UUID().uuidString)", isDirectory: true)
-+        defer { try? FileManager.default.removeItem(at: directory) }
-+        let file = try await deepFile(in: directory)
-+
-+        let driver = DuckDBDriver(source: .inMemory)
-+        try await driver.connect()
-+        let base = ProcessInfo.processInfo.processorCount
-+        let selected = try await driver.execute(
-+            query: "SET threads = \(base + 8); SET threads = \(base + 16); SELECT 42"
-+        )
-+        var threads = base + 16
-+        for _ in 0..<20 {
-+            threads += 1
-+            _ = try await driver.execute(
-+                query: "SET threads = \(threads); ATTACH '\(file.path)' AS deep (READ_ONLY); DETACH deep"
-+            )
-+        }
-+        _ = try await driver.execute(query: "SET threads = \(base + 48); SET lock_configuration = true")
-+        for _ in 0..<20 {
-+            _ = try await driver.execute(query: "ATTACH '\(file.path)' AS deep (READ_ONLY); DETACH deep")
-+        }
-+        let counts = try await driver.execute(query: "SELECT current_setting('threads'), current_setting('external_threads')")
-+        try await driver.disconnect()
-+
-+        #expect(selected.rows == [["42"]])
-+        #expect(counts.rows == [[String(base + 48), String(base + 48)]])
-+    }
-+
-+    @Test("A text DuckDB cannot parse runs none of its statements")
-+    func unparsedTextRunsNothing() async throws {
-+        let driver = DuckDBDriver(source: .inMemory)
-+        try await driver.connect()
-+        await #expect(throws: DuckDBDriverError.self) {
-+            try await driver.execute(query: "SET threads = 64; CREATE TABLE never (i INTEGER); SELEC 1")
-+        }
-+        let counts = try await driver.execute(query: "SELECT current_setting('threads'), current_setting('external_threads'
-```
-
-**File**: `apple/changelog.d/4354.changed.md` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+DuckDB connections now refuse SET threads below the number of processors.
-```
-
----
-
-### Incident Patch 2: `7c310aed` (2026-11-19)
-**Commit Message**: fix(sync): apply changes and deletions to library records a build cannot read by id and standing (#4345)
-
-**File**: `.claude/rules/data-sync-storage.md` (modified, +5/-1)
-```diff
-@@ -147,6 +147,7 @@ This path holds user data. A silent wrong answer here looks exactly like an empt
- 
- - **A synced CKRecord type or field reaches CloudKit Production before anything writes it.** Both apps pin the container to Production, where nothing is auto-created, and CloudKit rejects a whole record that carries an undeclared field. Write fields only through `record.fields(SomeSyncField.self)`, never `record["..."]`. To ship one: add it in Development, deploy to Production in the Console, run `apple/scripts/export-cloudkit-schema.sh`, commit `apple/CloudKit/production-schema.ckdb`, then add it to the matching `verifiedInProduction`. `ProductionSchemaParityTests` checks code against the snapshot in both directions, not against the server, so never edit the snapshot by hand: `apple/scripts/export-cloudkit-schema.sh --check` compares it with Production. A tag's `app` job runs `--check-deployed` instead, which fails only on a record type, field, field type, index, role or grant the tag's snapshot has and Production lacks.
- - **A storage format stays readable by the previous stable.** Sparkle never downgrades, and a beta user can turn betas off (`apple/RELEASING.md`, Storage check). The one exception is a value the previous stable has no field for, such as a theme color in a slot added after it: that file and its synced record are written at the oldest schema that holds it, and everything else keeps the old format (`.claude/rules/theme.md`, Model and Sync).
-+- **A record this build cannot read meets sync by its id and its standing, never by its payload.** CloudKit hands a deletion over as a record ID and type alone, and a save starts from the last known server record, so a field this build does not know survives on the server. Here: a library record that does not decode is never re-encoded or written over (a save carrying its id is refused); a pulled change to it is held and kept out of the record cache (a Local only one takes none), and a build that reads the copy fetches that record by id, never by resetting the change token, which would drop the deletions a delta still carries; a deletion removes it by id when its standing says it syncs, with the device-only Keychain items its id owns (macOS finds them by the id they end with), leaves a Local only one, and waits for a build that reads it when no standing was recorded; its dirty mark is held, not dropped; an import treats its id as taken. Standing is written by id whenever the store reads a record, because a Local only connection keeps its iCloud copy and cached server record. Profiles, groups and tags always sync, except that a profile's deletion waits for a build that reads it, since unlinking its connections needs it.
- - **Persist, then notify.** `SyncChangeTracker.markDeleted()` runs after the storage write, because its notification can start a sync that re-uploads the record from the stale file.
- - **Concurrent schema loads await the one in-flight `loadTask`** in `SQLSchemaProvider`; never guard with a flag that returns without data.
- - **Every metadata read goes through `DatabaseManager.withMetadataDriver`**, never `MetadataConnectionPool.shared` directly, so an embedded engine with `supportsConnectionPooling = false` (DuckDB, PGlite) stays on its session driver; a second connection to it is a different, empty database.
-@@ -188,7 +189,10 @@ This path holds user data. A silent wrong answer here looks exactly like an empt
- | `connections.json` and `credentialProfiles.json` as last saved, copied with the tag after each save, restored when the file no longer parses. A save that moves secrets out first drops the old copy and the damaged file, or writes nothing | `<file>.backup` and `<file>.backup.hmac` beside the file, device-local, never synced | `IntegrityStampedFileStore` |
- | A `connections.json` or `credentialProfiles.json` that no longer parsed, set aside when its backup was restored; the next one replaces it | `<file>.unreadable` beside the file, device-local, never synced | `IntegrityStampedFileStore` |
- | Records this build cannot read from a file changed outside TablePro, which a save would otherwise sign; added to, never replaced | `<file>.unreadable-records` beside the file, device-local, never synced | `IntegrityStampedFileStore` |
--| iOS: `connections.json`, `groups.json` and `tags.json` as last saved, copied after each save, restored when the file no longer parses; the damaged file is kept and the next one replaces it. A save that moves secrets out first drops the old copy and the damaged file, or writes nothing. Records the build cannot read stay in the file until a save writes a record with their id, and their ids keep their Keychain items, files and preferences, and keep what they own off iCloud | `<file>.backup` and `<file>.unreadable` beside the file, device-local, never synced | `LibraryFile` |
-+| iOS: `connections.json`, `groups.json` and `tags.json` as last saved, copied after each save, restored when the file no longer parses; th
-```
-
-**File**: `apple/Packages/TableProCore/Sources/TableProConnectionLibrary/LibraryFileRecords.swift` (modified, +13/-6)
-```diff
-@@ -27,19 +27,26 @@ public struct LibraryFileRecords<Element: Decodable> {
-     }
- }
- 
-+public enum LibraryFileError: Error, Equatable {
-+    case idHeldByUnreadableRecord(UUID)
-+}
-+
- public extension LibraryFileRecords where Element: Encodable {
--    // A kept record gives way to a saved one with its id, such as the same connection pulled again by sync,
--    // so the file never holds two records for one id.
-+    // A kept record is never written over, since this build would re-encode it without what it cannot read: a save
-+    // carrying its id is refused. `removing` drops kept records by id, as a deletion another device made does.
-     static func encoded(
-         _ elements: [Element],
-         keeping unreadable: [UnreadableLibraryRecord],
-+        removing removedIds: Set<UUID> = [],
-         using encoder: JSONEncoder = JSONEncoder()
-     ) throws -> (data: Data, kept: [UnreadableLibraryRecord]) {
--        var kept = unreadable
--        if !kept.isEmpty {
-+        let kept = unreadable.filter { record in record.id.map { !removedIds.contains($0) } ?? true }
-+        let keptIds = Set(kept.compactMap(\.id))
-+        if !keptIds.isEmpty {
-             let saved = try JSONDecoder().decode([UnreadableLibraryRecord].self, from: encoder.encode(elements))
--            let savedIds = Set(saved.compactMap(\.id))
--            kept.removeAll { $0.id.map(savedIds.contains) ?? false }
-+            if let taken = saved.lazy.compactMap(\.id).first(where: keptIds.contains) {
-+                throw LibraryFileError.idHeldByUnreadableRecord(taken)
-+            }
-         }
-         let data = try encoder.encode(elements.map(LibraryFileEntry.decoded) + kept.map(LibraryFileEntry.unreadable))
-         return (data, kept)
-```
-
-**File**: `apple/Packages/TableProCore/Sources/TableProSyncTransport/CloudKitSyncEngine.swift` (modified, +19/-3)
-```diff
-@@ -242,10 +242,26 @@ public actor CloudKitSyncEngine {
-     public func fetch(recordIDs: [CKRecord.ID]) async throws -> [CKRecord.ID: CKRecord] {
-         guard !recordIDs.isEmpty else { return [:] }
-         guard let database else { throw Self.unavailable }
--        let results = try await withRetry {
--            try await database.records(for: recordIDs)
-+        var records: [CKRecord.ID: CKRecord] = [:]
-+        for start in stride(from: 0, to: recordIDs.count, by: Self.refetchBatchSize) {
-+            let batch = Array(recordIDs[start..<min(start + Self.refetchBatchSize, recordIDs.count)])
-+            records.merge(try await fetch(batch, from: database)) { _, last in last }
-+        }
-+        return records
-+    }
-+
-+    // CloudKit asks a request it finds too large to be split in half and sent again.
-+    private func fetch(_ batch: [CKRecord.ID], from database: CKDatabase) async throws -> [CKRecord.ID: CKRecord] {
-+        do {
-+            let results = try await withRetry {
-+                try await database.records(for: batch)
-+            }
-+            return results.compactMapValues { try? $0.get() }
-+        } catch let error as CKError where error.code == .limitExceeded && batch.count > 1 {
-+            let middle = batch.count / 2
-+            let first = try await fetch(Array(batch[..<middle]), from: database)
-+            return first.merging(try await fetch(Array(batch[middle...]), from: database)) { _, last in last }
-         }
--        return results.compactMapValues { try? $0.get() }
-     }
- 
-     public func pull(since token: CKServerChangeToken?) async throws -> PullResult {
-```
-
-**File**: `apple/Packages/TableProCore/Sources/TableProSyncTransport/SyncMetadataStorage.swift` (modified, +116/-0)
-```diff
-@@ -14,6 +14,13 @@ public struct Tombstone: Codable, Equatable, Sendable {
-     }
- }
- 
-+// A record's part in sync as this device last read it, for a copy it can no longer read.
-+public enum SyncStanding: Equatable, Sendable {
-+    case syncs
-+    case keptOff
-+    case unknown
-+}
-+
- public enum SyncAccountChange: Equatable, Sendable {
-     case firstSeen
-     case unchanged
-@@ -209,6 +216,97 @@ public final class SyncMetadataStorage: @unchecked Sendable {
-         }
-     }
- 
-+    // MARK: - Copies This Device Cannot Read
-+
-+    // Record names a pull changed while this device's copy could not be read. Not applied, since a re-encode by
-+    // this build would drop what it cannot read, so a build that reads the copy fetches those records by id.
-+    public var changesHeldForUnreadableCopies: Set<String> {
-+        get { stringSet("changesHeldForUnreadableCopies") }
-+        set { saveStringSet(newValue, key: "changesHeldForUnreadableCopies") }
-+    }
-+
-+    // Record names of unread copies a pull deleted, removed by the next save of their file; the account that sent
-+    // the deletion owns it, like the rest of the server position.
-+    public var removalsPendingForUnreadableCopies: Set<String> {
-+        get { stringSet("removalsPendingForUnreadableCopies") }
-+        set { saveStringSet(newValue, key: "removalsPendingForUnreadableCopies") }
-+    }
-+
-+    // Record names a pull deleted while this device could not tell whether its unreadable copy syncs.
-+    public var deletionsHeldForUnreadableCopies: Set<String> {
-+        get { stringSet("deletionsHeldForUnreadableCopies") }
-+        set { saveStringSet(newValue, key: "deletionsHeldForUnreadableCopies") }
-+    }
-+
-+    // The held changes to fetch by id, since a delta never resends them: those whose copy reads now. One whose copy is
-+    // gone, or no longer syncs, is dropped. `syncing` names every stored copy that syncs, read or not.
-+    public func readableHeldChanges(syncing: Set<String>, unreadable: Set<String>) -> Set<String> {
-+        let held = changesHeldForUnreadableCopies.intersection(syncing)
-+        if held != changesHeldForUnreadableCopies {
-+            changesHeldForUnreadableCopies = held
-+        }
-+        return held.subtracting(unreadable)
-+    }
-+
-+    // A held deletion is due once its copy reads; one whose record the server sent again was saved after it, so it
-+    // settles without applying. The caller removes what it settled once the pull is saved.
-+    public func heldDeletions(live: Set<String>, unreadable: Set<String>) -> (due: Set<String>, settled: Set<String>) {
-+        let held = deletionsHeldForUnreadableCopies
-+        guard !held.isEmpty else { return ([], []) }
-+        let due = held.subtracting(live).subtracting(unreadable)
-+        return (due, due.union(held.intersection(live)))
-+    }
-+
-+    // MARK: - Connection Standing
-+
-+    // Whether each connection takes part in sync, by id and outside the record, so one the store can no longer read
-+    // keeps the standing it last had: a Local only copy shares its id with a record iCloud may still hold.
-+    public func connectionsKnownToSync() -> Set<UUID> {
-+        Set(stringSet("connectionsKnownToSync").compactMap(UUID.init(uuidString:)))
-+    }
-+
-+    public func connectionsKeptOffSync() -> Set<UUID> {
-+        Set(stringSet("connectionsKeptOffSync").compactMap(UUID.init(uuidString:)))
-+    }
-+
-+    public func standing(ofConnection id: UUID) -> SyncStanding {
-+        if connectionsKeptOffSync().contains(id) { return .keptOff }
-+        return connectionsKnownToSync().contains(id) ? .syncs : .unknown
-+    }
-+
-+    // Of the unread copies a deletion names, the ones to remove: those that sync. A Local only one stays, and one with
-+    // no standing recorded waits in the held deletions for a build that reads it.
-+    public func unreadableConnectionsRemoved(byDeletionOf ids: Set<UUID>) -> Set<UUID> {
-+        var removed: Set<UUID> = []
-+        var held: Set<String> = []
-+        for id in ids {
-+            switch standing(ofConnection: id) {
-+            case .syncs:
-+                removed.insert(id)
-+            case .keptOff:
-+                continue
-+            case .unknown:
-+                held.insert(SyncRecordType.connection.recordName(for: id.uuidString))
-+            }
-+        }
-+        if !held.isEmpty {
-+            deletionsHeldForUnreadableCopies.formUnion(held)
-+        }
-+        return removed
-+    }
-+
-+    // Read records set their standing, an unread one keeps its last, and one no longer stored loses it.
-+    public func recordConnectionStanding(syncing: Set<UUID>, keptOff: Set<UUID>, unreadable: Set<UUID>) {
-+        let known = syncing.union(connectionsKnownToSync().intersection(unreadable))
-+        let off = keptOff.union(connectionsKeptOffSync().intersection(unreadable))
-+        if known != connectionsKnownToSync() {
-+            saveStringSet(Set(known.map(\.uuidString)), key: "connectionsKnownToSync")
-+        }
-+        if o
-```
-
-**File**: `apple/Packages/TableProCore/Tests/TableProConnectionLibraryTests/LibraryFileRecordsTests.swift` (modified, +11/-8)
-```diff
-@@ -32,22 +32,25 @@ struct LibraryFileRecordsTests {
-         #expect(try LibraryFileRecords<Row>(decoding: written).elements == [Row(id: 1, name: "One")])
-     }
- 
--    @Test("A kept record gives way to a saved record with its id")
--    func savedRecordSupersedesKeptOne() throws {
-+    @Test("A save never writes over a kept record: one carrying its id is refused, and removing it by id is how it goes")
-+    func keptRecordKeepsItsId() throws {
-         struct Named: Codable, Equatable {
-             let id: UUID
-             let name: String
-         }
--        let superseded = UUID()
-+        let held = UUID()
-         let other = UUID()
--        let data = Data(#"[{"id":"\#(superseded.uuidString)","name":7},{"id":"\#(other.uuidString)","name":8}]"#.utf8)
-+        let data = Data(#"[{"id":"\#(held.uuidString)","name":7},{"id":"\#(other.uuidString)","name":8}]"#.utf8)
-         let records = try LibraryFileRecords<Named>(decoding: data)
--        #expect(records.unreadable.map(\.id) == [superseded, other])
-+        #expect(records.unreadable.map(\.id) == [held, other])
- 
--        let saved = try LibraryFileRecords.encoded([Named(id: superseded, name: "Pulled")], keeping: records.unreadable)
-+        #expect(throws: LibraryFileError.idHeldByUnreadableRecord(held)) {
-+            try LibraryFileRecords.encoded([Named(id: held, name: "Pulled")], keeping: records.unreadable)
-+        }
- 
--        #expect(saved.kept.map(\.id) == [other])
--        let rows = try #require(try JSONSerialization.jsonObject(with: saved.data) as? [NSDictionary])
-+        let removed = try LibraryFileRecords.encoded([Named(id: held, name: "Pulled")], keeping: records.unreadable, removing: [held])
-+        #expect(removed.kept.map(\.id) == [other])
-+        let rows = try #require(try JSONSerialization.jsonObject(with: removed.data) as? [NSDictionary])
-         #expect(rows.count == 2)
-         #expect(rows.first?["name"] as? String == "Pulled")
-         #expect(rows.last?["name"] as? Int == 8)
-```
-
-**File**: `apple/Packages/TableProCore/Tests/TableProSyncTests/SyncMetadataStorageTests.swift` (modified, +72/-0)
-```diff
-@@ -302,4 +302,76 @@ struct SyncMetadataStorageTests {
-         #expect(defaults.data(forKey: "com.TablePro.sync.tombstones.Connection") != nil)
-         #expect(defaults.string(forKey: "com.TablePro.sync.lastAccountId") == "account")
-     }
-+
-+    // MARK: - Copies this device cannot read
-+
-+    @Test("A connection's standing follows the last read of it, is kept while it cannot be read, and goes with it")
-+    func connectionStandingFollowsReads() throws {
-+        let storage = makeStorage()
-+        let synced = UUID()
-+        let localOnly = UUID()
-+        let never = UUID()
-+        storage.recordConnectionStanding(syncing: [synced], keptOff: [localOnly], unreadable: [])
-+
-+        storage.recordConnectionStanding(syncing: [], keptOff: [], unreadable: [synced, localOnly, never])
-+
-+        #expect(storage.standing(ofConnection: synced) == .syncs)
-+        #expect(storage.standing(ofConnection: localOnly) == .keptOff)
-+        #expect(storage.standing(ofConnection: never) == .unknown)
-+
-+        storage.recordConnectionStanding(syncing: [], keptOff: [], unreadable: [])
-+        #expect(storage.standing(ofConnection: synced) == .unknown)
-+        #expect(storage.standing(ofConnection: localOnly) == .unknown)
-+    }
-+
-+    @Test("A deletion removes an unread copy that syncs, leaves a Local only one, and holds one with no standing")
-+    func deletionOfUnreadCopiesFollowsStanding() {
-+        let storage = makeStorage()
-+        let synced = UUID()
-+        let localOnly = UUID()
-+        let unknown = UUID()
-+        storage.recordConnectionStanding(syncing: [synced], keptOff: [localOnly], unreadable: [])
-+
-+        let removed = storage.unreadableConnectionsRemoved(byDeletionOf: [synced, localOnly, unknown])
-+
-+        #expect(removed == [synced])
-+        #expect(storage.deletionsHeldForUnreadableCopies == [SyncRecordType.connection.recordName(for: unknown.uuidString)])
-+    }
-+
-+    @Test("A held change is fetched once its copy reads, and dropped once its copy is gone or no longer syncs")
-+    func heldChangesWaitForAReadableCopy() {
-+        let storage = makeStorage()
-+        storage.changesHeldForUnreadableCopies = ["Connection_A", "Connection_B", "Connection_C"]
-+
-+        let readable = storage.readableHeldChanges(syncing: ["Connection_A", "Connection_B"], unreadable: ["Connection_B"])
-+
-+        #expect(readable == ["Connection_A"])
-+        #expect(storage.changesHeldForUnreadableCopies == ["Connection_A", "Connection_B"])
-+    }
-+
-+    @Test("Records held for unread copies belong to the account that sent them, so switching accounts drops them")
-+    func heldRecordsGoWithTheAccount() {
-+        let storage = makeStorage()
-+        _ = storage.adoptAccount("first")
-+        storage.changesHeldForUnreadableCopies = ["Connection_A"]
-+        storage.deletionsHeldForUnreadableCopies = ["Connection_B"]
-+        storage.removalsPendingForUnreadableCopies = ["Connection_C"]
-+
-+        _ = storage.adoptAccount("second")
-+
-+        #expect(storage.changesHeldForUnreadableCopies.isEmpty)
-+        #expect(storage.deletionsHeldForUnreadableCopies.isEmpty)
-+        #expect(storage.removalsPendingForUnreadableCopies.isEmpty)
-+    }
-+
-+    @Test("A held deletion falls due once its copy reads, and settles unapplied when the server sent the record again")
-+    func heldDeletionsFallDueWhenReadable() {
-+        let storage = makeStorage()
-+        storage.deletionsHeldForUnreadableCopies = ["Connection_A", "Connection_B", "Connection_C"]
-+
-+        let held = storage.heldDeletions(live: ["Connection_C"], unreadable: ["Connection_B"])
-+
-+        #expect(held.due == ["Connection_A"])
-+        #expect(held.settled == ["Connection_A", "Connection_C"])
-+    }
- }
-```
-
-**File**: `apple/TablePro/Core/Services/Import/MacImportLibraryStore.swift` (modified, +2/-1)
-```diff
-@@ -103,8 +103,9 @@ internal struct MacImportLibraryStore: ImportLibraryStore {
-         return write
-     }
- 
-+    // With the records this build cannot read, which keep their ids.
-     func existingConnectionIds() -> Set<UUID> {
--        Set(connections.loadConnections().map(\.id))
-+        Set(connections.loadConnections().map(\.id)).union(connections.unreadableConnectionIds)
-     }
- 
-     // A file's credential is the secret itself: a key document given as a path would read a key file on this Mac.
-```
-
-**File**: `apple/TablePro/Core/Storage/ConnectionStorage.swift` (modified, +42/-5)
-```diff
-@@ -108,6 +108,11 @@ final class ConnectionStorage {
-         let connections = storedConnections.map { stored in
-             stored.toConnection()
-         }
-+        syncTracker.recordConnectionStanding(
-+            syncing: Set(connections.filter(\.participatesInSync).map(\.id)),
-+            keptOff: Set(connections.filter { !$0.participatesInSync }.map(\.id)),
-+            unreadable: file.unreadableIds
-+        )
- 
-         let migrated = Self.numberingUnrankedGroups(connections)
-         if migrated != connections, storeIsTrusted {
-@@ -129,21 +134,39 @@ final class ConnectionStorage {
- 
-     // False refuses dependent writes (sync marks, keychain items), or a password goes while its record stays.
-     // `byUser` false is a write the app makes itself, which never clears a failed integrity check.
-+    // `removingUnreadable` drops records this build cannot read, by id, as a deletion another device made does.
-     @discardableResult
--    func saveConnections(_ connections: [DatabaseConnection], byUser: Bool = true, removingSecrets: Bool = false) -> Bool {
-+    func saveConnections(
-+        _ connections: [DatabaseConnection],
-+        byUser: Bool = true,
-+        removingSecrets: Bool = false,
-+        removingUnreadable removedIds: Set<UUID> = []
-+    ) -> Bool {
-         let previous = loadConnections()
-         guard !lastLoadFailed else {
-             Self.logger.error("Refused to save over connections.json: it could not be read")
-             return false
-         }
--        guard persist(connections, byUser: byUser, removingSecrets: removingSecrets) else { return false }
-+        guard persist(connections, byUser: byUser, removingSecrets: removingSecrets, removingUnreadable: removedIds) else {
-+            return false
-+        }
-         moveSecretsWhoseScopeChanged(from: previous, to: connections)
-         return true
-     }
- 
-     @discardableResult
--    private func persist(_ connections: [DatabaseConnection], byUser: Bool = true, removingSecrets: Bool = false) -> Bool {
--        guard file.save(connections.map { StoredConnection(from: $0) }, byUser: byUser, removingSecrets: removingSecrets) else {
-+    private func persist(
-+        _ connections: [DatabaseConnection],
-+        byUser: Bool = true,
-+        removingSecrets: Bool = false,
-+        removingUnreadable removedIds: Set<UUID> = []
-+    ) -> Bool {
-+        guard file.save(
-+            connections.map { StoredConnection(from: $0) },
-+            byUser: byUser,
-+            removingSecrets: removingSecrets,
-+            removingUnreadable: removedIds
-+        ) else {
-             return false
-         }
-         fileWriteCount += 1
-@@ -211,7 +234,8 @@ final class ConnectionStorage {
-             replaced.append(updated)
-         }
- 
--        var knownIds = Set(connections.map(\.id))
-+        // A record this build cannot read keeps its id, so the import leaves it alone.
-+        var knownIds = Set(connections.map(\.id)).union(file.unreadableIds)
-         var added: [DatabaseConnection] = []
-         for incoming in adding {
-             guard knownIds.insert(incoming.id).inserted else { continue }
-@@ -805,6 +829,19 @@ final class ConnectionStorage {
-             + fieldIds.map { "com.TablePro.plugin.\($0).\(id)" }
-     }
- 
-+    // Found by the id they end with: naming a plugin's secure fields needs the type the record no longer gives, and
-+    // one left behind would reach whatever later saves a record with that id. Device-only, as for a remote delete.
-+    func deleteSecrets(ofUnreadable ids: Set<UUID>) {
-+        for id in ids {
-+            let keys = keychain.deviceOnlyKeys(endingWith: ".\(id.uuidString)").filter { key in
-+                key.hasPrefix("com.TablePro.") && !key.hasPrefix(CredentialProfileStorage.secretKeyPrefix)
-+            }
-+            for key in keys {
-+                keychain.delete(forKey: key, deviceOnly: true)
-+            }
-+        }
-+    }
-+
-     // Removing an iCloud Keychain item removes it from every device, so only a delete the other devices follow does.
-     // One from another device leaves it to that device. A Local only delete cannot tell whether another device still
-     // syncs the row, so it keeps it.
-```
-
----
-
-### Incident Patch 3: `e4a09da3` (2026-11-19)
-**Commit Message**: fix(macos): make Vim mode's operators, motions, paste and marks match Vim (#4347)
-
-**File**: `apple/TablePro/Core/Vim/VimEngine+Characters.swift` (modified, +11/-0)
-```diff
-@@ -29,4 +29,15 @@ extension VimEngine {
-         }
-         return max(position, limit)
-     }
-+
-+    // A character's class is its first scalar's, so a variation selector or mark never splits it.
-+    func wordClass(at offset: Int, in buffer: VimTextBuffer) -> VimWordScanner.CharacterClass {
-+        let base = characterStart(at: offset, in: buffer)
-+        let trail = base + 1 < buffer.length ? buffer.character(at: base + 1) : nil
-+        return VimWordScanner.characterClass(lead: buffer.character(at: base), trail: trail)
-+    }
-+
-+    func isWordCharacter(at offset: Int, in buffer: VimTextBuffer) -> Bool {
-+        wordClass(at: offset, in: buffer) == .word
-+    }
- }
-```
-
-**File**: `apple/TablePro/Core/Vim/VimEngine+InsertReplace.swift` (modified, +12/-4)
-```diff
-@@ -94,25 +94,33 @@ extension VimEngine {
- 
-     func processCommandLine(_ char: Character, buffer commandBuffer: String) -> Bool {
-         switch char {
-+        // Leaving the command line ends the command it is part of, an operator typed before it included.
-         case "\u{1B}":
-+            cancelPendingCommand()
-             setMode(.normal)
-             return true
-         case "\r", "\n":
-             let prefix = commandBuffer.first
-             let body = String(commandBuffer.dropFirst())
-             setMode(.normal)
--            if prefix == "/" {
--                runSearch(pattern: body, forward: true)
--            } else if prefix == "?" {
--                runSearch(pattern: body, forward: false)
-+            if prefix == "/" || prefix == "?" {
-+                // A search after an operator is its motion, as `d/foo` deletes up to foo.
-+                if pendingOperator != nil, let buffer {
-+                    let target = searchTarget(pattern: body, forward: prefix == "/", count: searchCount, in: buffer)
-+                    applyMotion(to: target, kind: .exclusive, in: buffer)
-+                } else {
-+                    runSearch(pattern: body, forward: prefix == "/", count: searchCount)
-+                }
-             } else {
-                 onCommand?(body)
-             }
-+            cancelPendingCommand()
-             return true
-         case "\u{7F}", "\u{08}":
-             if (commandBuffer as NSString).length > 1 {
-                 setMode(.commandLine(buffer: String(commandBuffer.dropLast())))
-             } else {
-+                cancelPendingCommand()
-                 setMode(.normal)
-             }
-             return true
-```
-
-**File**: `apple/TablePro/Core/Vim/VimEngine+Motions.swift` (modified, +124/-120)
-```diff
-@@ -34,47 +34,29 @@ extension VimEngine {
-     }
- 
-     func moveDown(_ count: Int, in buffer: VimTextBuffer) {
--        let pos = buffer.selectedRange().location
--        let (line, col) = buffer.lineAndColumn(forOffset: pos)
--        if goalColumn == nil { goalColumn = col }
--        let targetLine = min(buffer.lineCount - 1, line + count)
--        let newPos = buffer.offset(forLine: targetLine, column: goalColumn ?? col)
--        if let op = pendingOperator {
--            let startLineRange = buffer.lineRange(forOffset: pos)
--            let endLineRange = buffer.lineRange(forOffset: newPos)
--            let rangeStart = min(startLineRange.location, endLineRange.location)
--            let rangeEnd = max(
--                startLineRange.location + startLineRange.length,
--                endLineRange.location + endLineRange.length
--            )
--            let opRange = NSRange(location: rangeStart, length: rangeEnd - rangeStart)
--            executeOperatorOnRange(op, range: opRange, linewise: true, in: buffer)
--            pendingOperator = nil
--        } else {
--            buffer.setSelectedRange(NSRange(location: newPos, length: 0))
--        }
-+        moveVertically(by: count, in: buffer)
-     }
- 
-     func moveUp(_ count: Int, in buffer: VimTextBuffer) {
-+        moveVertically(by: -count, in: buffer)
-+    }
-+
-+    // An operator takes the lines whole; on the first or last line it has nothing to take and the command ends.
-+    private func moveVertically(by delta: Int, in buffer: VimTextBuffer) {
-         let pos = buffer.selectedRange().location
-         let (line, col) = buffer.lineAndColumn(forOffset: pos)
-         if goalColumn == nil { goalColumn = col }
--        let targetLine = max(0, line - count)
-+        let targetLine = min(max(0, line + delta), buffer.lineCount - 1)
-         let newPos = buffer.offset(forLine: targetLine, column: goalColumn ?? col)
--        if let op = pendingOperator {
--            let startLineRange = buffer.lineRange(forOffset: newPos)
--            let endLineRange = buffer.lineRange(forOffset: pos)
--            let rangeStart = min(startLineRange.location, endLineRange.location)
--            let rangeEnd = max(
--                startLineRange.location + startLineRange.length,
--                endLineRange.location + endLineRange.length
--            )
--            let opRange = NSRange(location: rangeStart, length: rangeEnd - rangeStart)
--            executeOperatorOnRange(op, range: opRange, linewise: true, in: buffer)
--            pendingOperator = nil
--        } else {
-+        guard let op = pendingOperator else {
-             buffer.setSelectedRange(NSRange(location: newPos, length: 0))
-+            return
-+        }
-+        guard targetLine != line else {
-+            cancelPendingCommand()
-+            return
-         }
-+        operate(op, from: pos, to: newPos, kind: .linewise, in: buffer)
-     }
- 
-     func moveToLineStart(in buffer: VimTextBuffer) {
-@@ -118,28 +100,51 @@ extension VimEngine {
-         buffer.setSelectedRange(NSRange(location: offset, length: 0))
-     }
- 
--    func wordForward(_ count: Int, in buffer: VimTextBuffer) {
-+    // `cw` on a word changes to its end, as `ce` does; elsewhere `w` and `W` go to the next word's start.
-+    func wordMotion(_ count: Int, bigWord: Bool, in buffer: VimTextBuffer) {
-+        let pos = buffer.selectedRange().location
-+        if pendingOperator == .change, pos < buffer.length, !isBlank(buffer.character(at: pos)) {
-+            let end: (Int) -> Int = { bigWord ? buffer.bigWordEnd(from: $0) : buffer.wordEnd(from: $0) }
-+            var target = end(pos - 1)
-+            for _ in 1..<max(1, count) { target = end(target) }
-+            applyMotion(to: target, kind: .inclusive, in: buffer)
-+            return
-+        }
-+        applyMotion(to: wordForwardTarget(count, bigWord: bigWord, in: buffer), kind: .exclusive, in: buffer)
-+    }
-+
-+    // After an operator the last word stops at the end of its line, and from an empty line at the next line's
-+    // start, which `:help exclusive` turns into the empty line.
-+    func wordForwardTarget(_ count: Int, bigWord: Bool, in buffer: VimTextBuffer) -> Int? {
-         var pos = buffer.selectedRange().location
-         let isOperator = pendingOperator != nil
-         for i in 0..<count {
--            let prev = pos
--            let next = buffer.wordBoundary(forward: true, from: pos)
-+            let next = bigWord
-+                ? buffer.bigWordBoundary(forward: true, from: pos)
-+                : buffer.wordBoundary(forward: true, from: pos)
-             if isOperator && i == count - 1 {
--                let prevLineRange = buffer.lineRange(forOffset: prev)
--                let nextLineRange = buffer.lineRange(forOffset: min(next, buffer.length))
--                if prevLineRange.location != nextLineRange.location {
--                    let lineEnd = prevLineRange.location + prevLineRange.length
--                    let contentEnd = lineEnd > prevLineRange.locat
-```
-
-**File**: `apple/TablePro/Core/Vim/VimEngine+NormalMode.swift` (modified, +150/-94)
-```diff
-@@ -6,72 +6,81 @@
- import Foundation
- 
- extension VimEngine {
--    func processNormal(_ char: Character, shift: Bool) -> Bool { // swiftlint:disable:this function_body_length cyclomatic_complexity
-+    func processNormal(_ char: Character, shift: Bool) -> Bool {
-         guard let buffer else { return false }
-+        if char == "\u{1B}" {
-+            cancelPendingCommand()
-+            return true
-+        }
-+        if pendingRegisterSelect {
-+            pendingRegisterSelect = false
-+            // `""` names the unnamed register.
-+            selectedRegister = char == "\"" ? nil : char
-+            return true
-+        }
-+        if !takesCharacterArgument, char.isASCII, let digit = char.wholeNumberValue, countPrefix > 0 || digit > 0 {
-+            if countPrefix <= 99_999 { countPrefix = countPrefix * 10 + digit }
-+            return true
-+        }
-+        let consumed = processNormalCommand(char, shift: shift, in: buffer)
-+        // A finished command drops the count and register typed for it, used or not.
-+        if !hasPendingCommand {
-+            countPrefix = 0
-+            operatorCount = 0
-+            selectedRegister = nil
-+        }
-+        return consumed
-+    }
-+
-+    private var takesCharacterArgument: Bool {
-+        pendingFindChar != nil || pendingReplaceChar || pendingMarkSet || pendingMarkJumpExact != nil || pendingZ
-+            || pendingTextObject || pendingMacroTarget != nil || pendingBracket != nil
-+    }
- 
-+    private func processNormalCommand(_ char: Character, shift: Bool, in buffer: VimTextBuffer) -> Bool { // swiftlint:disable:this function_body_length
-         if let req = pendingFindChar {
-             pendingFindChar = nil
--            if char == "\u{1B}" { return true }
-             return executeFindChar(char, request: req, in: buffer)
-         }
-         if pendingReplaceChar {
-             pendingReplaceChar = false
--            if char == "\u{1B}" { return true }
-             return executeReplaceChar(char, in: buffer)
-         }
-         if pendingMarkSet {
-             pendingMarkSet = false
--            if char == "\u{1B}" { return true }
--            marks[char] = buffer.selectedRange().location
-+            setMark(char, at: buffer.selectedRange().location, in: buffer)
-             return true
-         }
-         if let exact = pendingMarkJumpExact {
-             pendingMarkJumpExact = nil
--            if char == "\u{1B}" { return true }
-             jumpToMark(char, exact: exact, in: buffer)
-             return true
-         }
--        if pendingRegisterSelect {
--            pendingRegisterSelect = false
--            if char == "\u{1B}" { return true }
--            selectedRegister = char
--            return true
--        }
-         if pendingZ {
-             pendingZ = false
-             return true
-         }
-         if pendingTextObject {
-             pendingTextObject = false
--            if char == "\u{1B}" {
--                pendingOperator = nil
--                return true
--            }
-             return executeTextObject(char, around: pendingTextObjectAround, in: buffer)
-         }
-         if let kind = pendingMacroTarget {
-             pendingMacroTarget = nil
--            if char == "\u{1B}" { return true }
-             handleMacroTarget(kind: kind, register: char)
-             return true
-         }
-         if let bracketKind = pendingBracket {
-             pendingBracket = nil
--            if char == "\u{1B}" { return true }
-+            let count = consumeCount()
-             switch (bracketKind, char) {
--            case (.openBracket, "["): sectionBackward(in: buffer); return true
--            case (.closeBracket, "]"): sectionForward(in: buffer); return true
--            default: return true
--            }
--        }
--
--        if char.isNumber {
--            let digit = char.wholeNumberValue ?? 0
--            if countPrefix > 0 || digit > 0 {
--                guard countPrefix <= 99_999 else { return true }
--                countPrefix = countPrefix * 10 + digit
--                return true
-+            case (.openBracket, "["):
-+                applyMotion(to: sectionTarget(forward: false, count: count, in: buffer), kind: .exclusive, jump: true, in: buffer)
-+            case (.closeBracket, "]"):
-+                applyMotion(to: sectionTarget(forward: true, count: count, in: buffer), kind: .exclusive, jump: true, in: buffer)
-+            default:
-+                cancelPendingCommand()
-             }
-+            return true
-         }
- 
-         if pendingG {
-@@ -83,6 +92,13 @@ extension VimEngine {
-             return true
-         }
- 
-+        // A key that is not a motion, a text object or the operator doubled ends the command, as Vim's operators
-+        // accept nothing else.
-+        if let op = pendingOperator, !acceptsAfterOperator(char, op) {
-+            cancelPendingCommand()
-+            return true
-+        }
-+
-         switch char {
-         case "h":
-             let count = consumeCount()
-@@ -101,13 +117,14 @
-```
-
-**File**: `apple/TablePro/Core/Vim/VimEngine+Operators.swift` (modified, +98/-46)
-```diff
-@@ -16,16 +16,73 @@ extension VimEngine {
-         let startPos = buffer.selectedRange().location
-         motion()
-         let endPos = buffer.selectedRange().location
-+        operate(op, from: startPos, to: endPos, kind: inclusive ? .inclusive : .exclusive, in: buffer)
-+    }
- 
--        let rangeStart = min(startPos, endPos)
--        var rangeEnd = max(startPos, endPos)
--        if inclusive && rangeEnd < buffer.length && buffer.character(at: rangeEnd) != 0x0A {
--            rangeEnd = characterEnd(at: rangeEnd, in: buffer)
-+    func operate(_ op: VimOperator, from origin: Int, to target: Int, kind: VimMotionKind, in buffer: VimTextBuffer) {
-+        pendingOperator = nil
-+        let start = min(origin, target)
-+        let end = max(origin, target)
-+        if kind == .linewise {
-+            executeOperatorOnRange(op, range: wholeLines(from: start, through: end, in: buffer), linewise: true, in: buffer)
-+            return
-+        }
-+        var rangeEnd = end
-+        if kind == .inclusive, end < buffer.length, buffer.character(at: end) != 0x0A {
-+            rangeEnd = characterEnd(at: end, in: buffer)
-+        }
-+        let startsInIndent = isInIndent(start, in: buffer)
-+        // `:help exclusive`: an exclusive motion that ends at the start of a later line stops at the end of the line
-+        // before, and takes whole lines when it starts in the indent.
-+        if kind == .exclusive, end > start, buffer.lineRange(forOffset: end).location == end {
-+            if startsInIndent {
-+                executeOperatorOnRange(op, range: wholeLines(from: start, through: end - 1, in: buffer), linewise: true, in: buffer)
-+                return
-+            }
-+            rangeEnd = characterStart(at: end - 1, in: buffer)
-+        }
-+        // `>` and `<` shift the lines the motion covers whatever its kind.
-+        if op == .indent || op == .outdent {
-+            let lines = wholeLines(from: start, through: max(start, rangeEnd - 1), in: buffer)
-+            executeOperatorOnRange(op, range: lines, linewise: true, in: buffer)
-+            return
-         }
--        let range = NSRange(location: rangeStart, length: rangeEnd - rangeStart)
-+        // A delete over several lines from the indent to the end of a line takes the lines, as Vim's `d` does.
-+        if op == .delete, startsInIndent, rangeEnd > start,
-+           buffer.lineRange(forOffset: start).location != buffer.lineRange(forOffset: rangeEnd - 1).location,
-+           isBlankToLineEnd(from: rangeEnd, in: buffer) {
-+            executeOperatorOnRange(op, range: wholeLines(from: start, through: rangeEnd - 1, in: buffer), linewise: true, in: buffer)
-+            return
-+        }
-+        executeOperatorOnRange(op, range: NSRange(location: start, length: rangeEnd - start), linewise: false, in: buffer)
-+    }
- 
--        executeOperatorOnRange(op, range: range, linewise: false, in: buffer)
--        pendingOperator = nil
-+    func wholeLines(from start: Int, through end: Int, in buffer: VimTextBuffer) -> NSRange {
-+        let first = buffer.lineRange(forOffset: start).location
-+        let last = NSMaxRange(buffer.lineRange(forOffset: max(start, end)))
-+        return NSRange(location: first, length: last - first)
-+    }
-+
-+    // Only blanks come before `offset` on its line.
-+    func isInIndent(_ offset: Int, in buffer: VimTextBuffer) -> Bool {
-+        var scan = buffer.lineRange(forOffset: offset).location
-+        while scan < offset {
-+            let ch = buffer.character(at: scan)
-+            guard ch == 0x20 || ch == 0x09 else { return false }
-+            scan += 1
-+        }
-+        return true
-+    }
-+
-+    func isBlankToLineEnd(from offset: Int, in buffer: VimTextBuffer) -> Bool {
-+        let lineEnd = contentEnd(ofLineAt: offset, in: buffer)
-+        var scan = offset
-+        while scan < lineEnd {
-+            let ch = buffer.character(at: scan)
-+            guard ch == 0x20 || ch == 0x09 || ch == 0x0D else { return false }
-+            scan += 1
-+        }
-+        return true
-     }
- 
-     func executeOperatorOnRange(_ op: VimOperator, range proposed: NSRange, linewise: Bool, in buffer: VimTextBuffer) {
-@@ -39,17 +96,20 @@ extension VimEngine {
-             let text = buffer.string(in: range)
-             writeToActiveRegister(text: text, linewise: linewise, asDelete: true)
-             buffer.replaceCharacters(in: range, with: "")
--            adjustMarksForEdit(in: range, replacementLength: 0)
--            buffer.setSelectedRange(NSRange(location: clampToContentPosition(range.location, in: buffer), length: 0))
-+            let landing = linewise ? firstNonBlankOffset(from: range.location, in: buffer) : range.location
-+            buffer.setSelectedRange(NSRange(location: clampToContentPosition(landing, in: buffer), length: 0))
-         case .yank:
-             let text = buffer.string(in: range)
-             writeToActiveRegister(text: text, linewise: linewise, asDelete: false)
-             buffer.setSelectedRange(NSRange(
-```
-
-**File**: `apple/TablePro/Core/Vim/VimEngine+RegistersMarks.swift` (modified, +274/-33)
-```diff
-@@ -13,9 +13,12 @@ struct VimDocumentMarks {
-     var lastVisualLinewise = false
-     var lastJumpOrigin: Int?
-     var lastInsertOffset: Int?
-+    var markColumns: [Character: Int] = [:]
-+    var editJournal: [VimEditRecord] = []
- 
-     var isEmpty: Bool {
-         marks.isEmpty && lastVisualStart == nil && lastVisualEnd == nil && lastJumpOrigin == nil && lastInsertOffset == nil
-+            && editJournal.isEmpty
-     }
- }
- 
-@@ -27,12 +30,17 @@ extension VimEngine {
-             lastVisualEnd: lastVisualEnd,
-             lastVisualLinewise: lastVisualLinewise,
-             lastJumpOrigin: lastJumpOrigin,
--            lastInsertOffset: lastInsertOffset
-+            lastInsertOffset: lastInsertOffset,
-+            markColumns: markColumns,
-+            editJournal: editJournal
-         )
-     }
- 
-     func restoreDocumentMarks(_ saved: VimDocumentMarks) {
-         marks = saved.marks
-+        markColumns = saved.markColumns
-+        editJournal = saved.editJournal
-+        editJournalTextLength = saved.editJournal.reduce(0) { $0 + $1.textLength }
-         lastVisualStart = saved.lastVisualStart
-         lastVisualEnd = saved.lastVisualEnd
-         lastVisualLinewise = saved.lastVisualLinewise
-@@ -81,39 +89,32 @@ extension VimEngine {
-         return register
-     }
- 
-+    // `'` goes to the first non-blank of the mark's line and takes whole lines after an operator; `` ` `` goes to
-+    // the mark itself. An unset mark ends the command.
-     func jumpToMark(_ name: Character, exact: Bool, in buffer: VimTextBuffer) {
--        if name == "'" || name == "`" {
--            if let origin = lastJumpOrigin {
--                let originPos = buffer.selectedRange().location
--                let clamped = min(max(0, origin), buffer.length)
--                buffer.setSelectedRange(NSRange(location: clamped, length: 0))
--                lastJumpOrigin = originPos
--            }
--            return
-+        let offset: Int?
-+        switch name {
-+        case "'", "`": offset = lastJumpOrigin
-+        case "<": offset = lastVisualStart
-+        case ">": offset = lastVisualEnd
-+        default: offset = marks[name]
-         }
--        if name == "<", let start = lastVisualStart {
--            let originPos = buffer.selectedRange().location
--            buffer.setSelectedRange(NSRange(location: min(max(0, start), buffer.length), length: 0))
--            lastJumpOrigin = originPos
-+        guard let offset else {
-+            applyMotion(to: nil, kind: .exclusive, in: buffer)
-             return
-         }
--        if name == ">", let end = lastVisualEnd {
--            let originPos = buffer.selectedRange().location
--            buffer.setSelectedRange(NSRange(location: min(max(0, end), buffer.length), length: 0))
--            lastJumpOrigin = originPos
--            return
-+        var clamped = min(max(0, offset), buffer.length)
-+        if let column = markColumns[name] {
-+            let lineStart = buffer.lineRange(forOffset: clamped).location
-+            let lastCharacter = max(lineStart, contentEnd(ofLineAt: clamped, in: buffer) - 1)
-+            clamped = min(lineStart + column, lastCharacter)
-         }
--        guard let offset = marks[name] else { return }
--        let originPos = buffer.selectedRange().location
--        let clamped = min(max(0, offset), buffer.length)
-         if exact {
--            buffer.setSelectedRange(NSRange(location: clamped, length: 0))
-+            applyMotion(to: clamped, kind: .exclusive, jump: true, in: buffer)
-         } else {
-             let lineStart = buffer.lineRange(forOffset: clamped).location
--            let target = firstNonBlankOffset(from: lineStart, in: buffer)
--            buffer.setSelectedRange(NSRange(location: target, length: 0))
-+            applyMotion(to: firstNonBlankOffset(from: lineStart, in: buffer), kind: .linewise, jump: true, in: buffer)
-         }
--        lastJumpOrigin = originPos
-     }
- 
-     func recordVisualSelection(linewise: Bool, in buffer: VimTextBuffer) {
-@@ -144,15 +145,255 @@ extension VimEngine {
-         }
-     }
- 
--    func adjustMarksForEdit(in editRange: NSRange, replacementLength: Int) {
--        let delta = replacementLength - editRange.length
--        guard delta != 0 else { return }
--        for (key, offset) in marks {
--            if offset >= editRange.location + editRange.length {
--                marks[key] = offset + delta
--            } else if offset >= editRange.location {
--                marks[key] = editRange.location
-+    func setMark(_ name: Character, at offset: Int, in buffer: VimTextBuffer) {
-+        marks[name] = offset
-+        markColumns[name] = offset - buffer.lineRange(forOffset: offset).location
-+    }
-+
-+    var positionSnapshot: VimPositionSnapshot {
-+        VimPositionSnapshot(
-+            marks: marks,
-+            markColumns: markColumns,
-+            lastJumpOrigin: lastJumpOrigin,
-+            lastInsertOffset: lastInsertOffset,
-+            lastVisualStart: lastVisualStart,
-+            lastV
-```
-
-**File**: `apple/TablePro/Core/Vim/VimEngine+Search.swift` (modified, +41/-28)
-```diff
-@@ -6,43 +6,62 @@
- import Foundation
- 
- extension VimEngine {
--    func runSearch(pattern: String, forward: Bool) {
--        guard !pattern.isEmpty, let buffer else { return }
--        lastSearchPattern = pattern
--        lastSearchForward = forward
-+    func runSearch(pattern: String, forward: Bool, count: Int = 1) {
-+        guard let buffer else { return }
-         let origin = buffer.selectedRange().location
--        if let target = findPattern(pattern, from: origin, forward: forward, wholeWord: false, in: buffer) {
-+        if let target = searchTarget(pattern: pattern, forward: forward, count: count, in: buffer) {
-             buffer.setSelectedRange(NSRange(location: target, length: 0))
-             lastJumpOrigin = origin
-         }
-     }
- 
--    func searchNext(in buffer: VimTextBuffer, reverseDirection: Bool) {
--        guard let pattern = lastSearchPattern else { return }
-+    // Remembers the pattern for `n` and `N`, as a search does even when nothing matches.
-+    func searchTarget(pattern: String, forward: Bool, count: Int = 1, in buffer: VimTextBuffer) -> Int? {
-+        guard !pattern.isEmpty else { return nil }
-+        lastSearchPattern = pattern
-+        lastSearchForward = forward
-+        var position = buffer.selectedRange().location
-+        for _ in 0..<max(1, count) {
-+            guard let next = findPattern(pattern, from: position, forward: forward, wholeWord: false, in: buffer) else {
-+                return nil
-+            }
-+            position = next
-+        }
-+        return position
-+    }
-+
-+    func searchNextTarget(count: Int, reverseDirection: Bool, in buffer: VimTextBuffer) -> Int? {
-+        guard let pattern = lastSearchPattern else { return nil }
-         let forward = reverseDirection ? !lastSearchForward : lastSearchForward
--        let origin = buffer.selectedRange().location
--        if let target = findPattern(pattern, from: origin, forward: forward, wholeWord: false, in: buffer) {
--            buffer.setSelectedRange(NSRange(location: target, length: 0))
--            lastJumpOrigin = origin
-+        var position = buffer.selectedRange().location
-+        for _ in 0..<max(1, count) {
-+            guard let next = findPattern(pattern, from: position, forward: forward, wholeWord: false, in: buffer) else {
-+                return nil
-+            }
-+            position = next
-         }
-+        return position
-     }
- 
--    func searchWordUnderCursor(forward: Bool, in buffer: VimTextBuffer) {
-+    func searchWordUnderCursorTarget(forward: Bool, count: Int, in buffer: VimTextBuffer) -> Int? {
-         let pos = buffer.selectedRange().location
--        guard pos < buffer.length else { return }
-+        guard pos < buffer.length else { return nil }
-         var start = pos
--        while start > 0 && isWordChar(buffer.character(at: start - 1)) { start -= 1 }
-+        while start > 0 && isWordCharacter(at: start - 1, in: buffer) { start -= 1 }
-         var end = pos
--        while end < buffer.length && isWordChar(buffer.character(at: end)) { end += 1 }
--        guard end > start else { return }
-+        while end < buffer.length && isWordCharacter(at: end, in: buffer) { end += 1 }
-+        guard end > start else { return nil }
-         let word = buffer.string(in: NSRange(location: start, length: end - start))
-         lastSearchPattern = word
-         lastSearchForward = forward
--        let origin = pos
--        if let target = findPattern(word, from: origin, forward: forward, wholeWord: true, in: buffer) {
--            buffer.setSelectedRange(NSRange(location: target, length: 0))
--            lastJumpOrigin = origin
-+        var position = pos
-+        for _ in 0..<max(1, count) {
-+            guard let next = findPattern(word, from: position, forward: forward, wholeWord: true, in: buffer) else {
-+                return nil
-+            }
-+            position = next
-         }
-+        return position
-     }
- 
-     func findPattern(
-@@ -62,9 +81,9 @@ extension VimEngine {
-             let candidate = nsBuffer.substring(with: NSRange(location: idx, length: needle.length))
-             guard candidate == pattern else { return false }
-             if !wholeWord { return true }
--            let beforeOk = idx == 0 || !self.isWordChar(nsBuffer.character(at: idx - 1))
-+            let beforeOk = idx == 0 || VimWordScanner.characterClass(at: idx - 1, in: nsBuffer) != .word
-             let afterIdx = idx + needle.length
--            let afterOk = afterIdx >= total || !self.isWordChar(nsBuffer.character(at: afterIdx))
-+            let afterOk = afterIdx >= total || VimWordScanner.characterClass(at: afterIdx, in: nsBuffer) != .word
-             return beforeOk && afterOk
-         }
- 
-@@ -95,10 +114,4 @@ extension VimEngine {
-         }
-         return nil
-     }
--
--    func isWordChar(_ ch: unichar) -> Bool {
--        if ch == 0x5F { return true }
--        guard let scalar = UnicodeScalar(ch) else { return false }
--        return CharacterSet.alphanumerics.contains(sc
-```
-
-**File**: `apple/TablePro/Core/Vim/VimEngine+TextObjects.swift` (modified, +37/-34)
-```diff
-@@ -12,12 +12,18 @@ extension VimEngine {
-             pendingOperator = nil
-             return true
-         }
-+        // A paragraph is whole lines, every other object characters, and Visual mode takes the object's kind.
-+        let linewise = key == "p"
-         if mode.isVisual {
--            buffer.setSelectedRange(range)
-+            // The object's start becomes Visual's anchor and its end the cursor, so the next motion extends it.
-+            guard range.length > 0 else { return true }
-+            if linewise != mode.isVisualLinewise { setMode(.visual(linewise: linewise)) }
-+            visualAnchor = range.location
-+            updateVisualSelection(cursorPos: NSMaxRange(range) - 1, linewise: linewise, in: buffer)
-             return true
-         }
-         if let op = pendingOperator {
--            executeOperatorOnRange(op, range: range, linewise: false, in: buffer)
-+            executeOperatorOnRange(op, range: range, linewise: linewise, in: buffer)
-             pendingOperator = nil
-         }
-         return true
-@@ -41,20 +47,22 @@ extension VimEngine {
- 
-     func wordObject(at cursor: Int, bigWord: Bool, around: Bool, in buffer: VimTextBuffer) -> NSRange? {
-         guard buffer.length > 0 else { return nil }
--        let pos = min(max(0, cursor), buffer.length - 1)
--        let classifier: (unichar) -> Int = { ch in
--            if ch == 0x20 || ch == 0x09 || ch == 0x0A || ch == 0x0D { return 0 }
--            if bigWord { return 1 }
--            if ch == 0x5F { return 1 }
--            if let scalar = UnicodeScalar(ch), CharacterSet.alphanumerics.contains(scalar) { return 1 }
--            return 2
-+        let pos = characterStart(at: min(max(0, cursor), buffer.length - 1), in: buffer)
-+        let classOf: (Int) -> VimWordScanner.CharacterClass = { offset in
-+            let cls = self.wordClass(at: offset, in: buffer)
-+            return bigWord && cls != .whitespace ? .word : cls
-         }
--        let startClass = classifier(buffer.character(at: pos))
-+        let startClass = classOf(pos)
-         var start = pos
--        while start > 0 && classifier(buffer.character(at: start - 1)) == startClass { start -= 1 }
--        var end = pos
--        while end < buffer.length - 1 && classifier(buffer.character(at: end + 1)) == startClass { end += 1 }
--        var rangeEnd = end + 1
-+        while start > 0 {
-+            let previous = characterStart(at: start - 1, in: buffer)
-+            guard classOf(previous) == startClass else { break }
-+            start = previous
-+        }
-+        var rangeEnd = characterEnd(at: pos, in: buffer)
-+        while rangeEnd < buffer.length && classOf(rangeEnd) == startClass {
-+            rangeEnd = characterEnd(at: rangeEnd, in: buffer)
-+        }
-         if around {
-             var trail = rangeEnd
-             while trail < buffer.length {
-@@ -219,32 +227,27 @@ extension VimEngine {
-         return NSRange(location: oe + 1, length: closeStart - oe - 1)
-     }
- 
-+    // Whole lines: the run of paragraph or blank lines at the cursor. `ap` adds the blank lines after a paragraph,
-+    // or the paragraph after blank lines, and with nothing after it the blank lines before.
-     func paragraphObject(at cursor: Int, around: Bool, in buffer: VimTextBuffer) -> NSRange? {
--        let (currentLine, _) = buffer.lineAndColumn(forOffset: cursor)
-+        let lineCount = buffer.lineCount
-+        let currentLine = buffer.lineAndColumn(forOffset: cursor).line
-+        let blank = lineIsWhite(currentLine, in: buffer)
-         var startLine = currentLine
--        while startLine > 0 && !lineIsBlank(startLine - 1, in: buffer) {
--            startLine -= 1
--        }
-+        while startLine > 0 && lineIsWhite(startLine - 1, in: buffer) == blank { startLine -= 1 }
-         var endLine = currentLine
--        while endLine < buffer.lineCount - 1 && !lineIsBlank(endLine + 1, in: buffer) {
--            endLine += 1
--        }
--        let start = buffer.offset(forLine: startLine, column: 0)
--        let lastContentLineRange = buffer.lineRange(forOffset: buffer.offset(forLine: endLine, column: 0))
--        var end = lastContentLineRange.location + lastContentLineRange.length
--        if !around && end > start {
--            end -= 1
--        }
-+        while endLine < lineCount - 1 && lineIsWhite(endLine + 1, in: buffer) == blank { endLine += 1 }
-         if around {
--            var trailing = endLine
--            while trailing < buffer.lineCount - 1 && lineIsBlank(trailing + 1, in: buffer) {
--                trailing += 1
--            }
--            if trailing > endLine {
--                let trailingRange = buffer.lineRange(forOffset: buffer.offset(forLine: trailing, column: 0))
--                end = trailingRange.location + trailingRange.length
-+            var next = endLine
-+            while next < lineCount - 1 && lineIsWhite(next + 1, in: buffer) != blank { next += 1 }
-+            if next > endLine {
-+                endLine = next
-+            } else i
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4358** (2026-11-19): docs(roadmap): tick the items #4326 shipped (@datlechin)
-- **PR #4357** (2026-11-19): perf(schema): open a table from the shared column catalog (@datlechin)
-- **PR #4356** (2026-11-19): perf(import): send a SQL import's writes to PostgreSQL in pipelined batches (@datlechin)
-- **PR #4355** (2026-11-19): perf(export): read a PostgreSQL dump's index, comment, sequence and enum DDL once per schema (@datlechin)
-- **PR #4354** (2026-11-19): fix(duckdb): run DuckDB's tasks on 8 MiB threads so a deep ATTACH cannot overflow (@datlechin)
-- **PR #4353** (2026-11-19): ci(deps): bump taiki-e/install-action from 2.90.1 to 2.90.3 in the actions group across 1 directory (@dependabot[bot])
+- **PR #4416** (2026-11-22): docs(release): move the Homebrew cask to per-arch DMGs on the first per-arch stable (@datlechin)
+- **PR #4414** (2026-11-22): build(release): ship per-arch builds and a per-arch appcast (@datlechin)
+- **PR #4413** (2026-11-22): feat(settings): native macOS Settings sidebar with pushed pages and history (@datlechin)
+- **PR #4412** (2026-11-22): build(plugins): correct DuckDB size comment, note ParquetExport needs force_load (@datlechin)
+- **PR #4411** (2026-11-22): test(bench): loaded-RSS/wide/big-text paths; fix data-files module chain (@datlechin)
+- **PR #4410** (2026-11-22): refactor(connection-form): show General by default, rest behind disclosures (@datlechin)
 
 ---
 
@@ -3448,40 +2329,28 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. duckdb): run DuckDB's tasks on 8 MiB threads so a deep ATTACH cannot overflow
+## X. build(release): ship per-arch builds and a per-arch appcast
 
 **RULE**:
-When implementing operations in `apple/Plugins/DuckDBDriverPlugin/DuckDBConnection.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TableProApp/TablePro. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/skills/release/SKILL.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TableProApp/TablePro. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `68da8db7`: duckdb): run DuckDB's tasks on 8 MiB threads so a deep ATTACH cannot overflow. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7b2ba0f2`: build(release): ship per-arch builds and a per-arch appcast. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `apple/Plugins/DuckDBDriverPlugin/DuckDBConnection.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/release/SKILL.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-    private var taskThreads: DuckDBTaskThreads?
-        for option in DuckDBTaskThreads.sessionOptions
-            where duckdb_set_config(config, option.name, option.value) == DuckDBError {
-            throw DuckDBPluginError.connectionFailed(
-                String(localized: "This build of DuckDB does not accept running its tasks on threads TablePro starts")
-            )
-        }
-        taskThreads = DuckDBTaskThreads(database: openedDB)
-        taskThreads?.close()
-        taskThreads = nil
-        if !DuckDBTaskThreads.keepsCount(statementType) {
-            taskThreads?.followCount()
-        }
+- Then check the source: `gh api -H 'Accept: application/vnd.github.raw' 'repos/TableProApp/TablePro/contents/appcast.xml?ref=gh-pages' | grep -c '<sparkle:shortVersionString>X.Y.Z<'` prints 2, one item per arch; `gh release view vX.Y.Z --json assets -q '.assets | length'` is 7 plus `python3 apple/scripts/release/registry.py targets | wc -l`. A line whose `apple/scripts/release/feed.py` has no `ARCHES` ships universal: 1 item and 4 plus `python3 apple/scripts/release/registry.py targets | wc -l`.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+- Then check the source: `gh api -H 'Accept: application/vnd.github.raw' 'repos/TableProApp/TablePro/contents/appcast.xml?ref=gh-pages' | grep -c '<sparkle:shortVersionString>X.Y.Z<'` prints 1; `gh release view vX.Y.Z --json assets -q '.assets | length'` is 4 plus `python3 apple/scripts/release/registry.py targets | wc -l`.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `68da8db7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7b2ba0f2` are properly handled with clean fallback behavior.

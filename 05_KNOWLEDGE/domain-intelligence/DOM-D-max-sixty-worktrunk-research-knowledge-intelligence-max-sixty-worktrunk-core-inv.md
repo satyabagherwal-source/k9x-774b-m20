@@ -4,24 +4,24 @@
 {
   "source_repository": "max-sixty/worktrunk",
   "source_url": "https://github.com/max-sixty/worktrunk",
-  "source_version": "ad139302",
+  "source_version": "5a427391",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-21T11:16:31.833Z",
+  "timestamp": "2026-11-22T20:16:54.610Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-max-sixty-worktrunk",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [max-sixty/worktrunk](https://github.com/max-sixty/worktrunk) (Revision: `ad139302`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-21T11:16:31.833Z`  
+> **Provenance**: Harvested from [max-sixty/worktrunk](https://github.com/max-sixty/worktrunk) (Revision: `5a427391`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-22T20:16:54.610Z`  
 > **Learning ID**: `learn-github-max-sixty-worktrunk`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain D (Research & Knowledge Intelligence)
-- **Secondary Corroborating Domains**: A (Human & Need Intelligence), G (Architecture Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 61%
+- **Secondary Corroborating Domains**: A (Human & Need Intelligence), G (Architecture Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 66%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from max-sixty/worktrunk:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/max-sixty/worktrunk](https://github.com/max-sixty/worktrunk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T11:11:29.776Z  
+> **Harvest Timestamp**: 2026-11-22T20:16:53.294Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Worktrunk is a CLI for Git worktree management, designed for parallel AI agent workflows
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 12677 stars
+- **Stars / Engagement**: 12697 stars
 
 ---
 
@@ -2030,733 +2030,352 @@ fn no_matching_commands_error(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `76f6952f` (2026-11-21)
-**Commit Message**: fix: refuse removing a worktree that contains another, and finish picker removals before exit (#4861)
+### Incident Patch 1: `7c94fe65` (2026-11-21)
+**Commit Message**: fix(approvals): don't suggest clear --stale when there is no project config (#4873)
 
-Three removal-safety fixes. Together they replace #4458 and #4463,
-fixing the same failures in far less code.
+In a worktree whose branch has no `.config/wt.toml`, `wt config
+approvals list` lists every approval recorded for the project as "no
+longer in project config" and ends with `↳ To clear stale approvals, run
+wt config approvals clear --stale`. That command always fails there:
+`clear_approvals` deliberately refuses `--stale` without a project
+config, because approvals are keyed per repo while the config is
+resolved per worktree, so a branch that merely lacks the file must not
+wipe them. The listing still shows those approvals, but the hint now
+appears only when a project config exists, so it no longer points at a
+command that is guaranteed to fail.
 
-**`wt remove` and `wt step prune` deleted a checkout nested inside the
-target.** `wt remove`, `wt remove --force` and `wt step prune` moved the
-target into trash along with any checkout nested inside it, deleting
-that checkout's uncommitted files at exit 0. An ignored nested checkout
-is invisible to the dirty gate, and `--force` waives only the target's
-own changes. Only `wt merge` refused this (#4360). Planning now refuses
-such a target on every removal path:
+The `list_approvals_stale_only` snapshot covers this case. Its hint line
+is removed, so on the old code the snapshot fails.
+`list_approvals_mixed` still shows the hint for a stale approval when a
+config is present. The JSON output is unchanged.
 
-- `wt remove` fails with a hint to remove the nested worktree first.
-- `wt step prune` prints `Skipped <branch> (contains worktree @ <path>)`
-and removes the rest.
+Co-authored-by: worktrunk-bot <[REDACTED_EMAIL]>
 
-The guard is `Repository::worktree_nested_in`. It canonicalizes each
-registered checkout once per inventory read and answers each target with
-one range lookup, so prune adds no per-target path resolution (#3954). A
-checkout nested during `wt remove`'s approval prompt or `pre-remove`
-hook still isn't caught; only merge rechecks after them.
-
-**Leaving the
-
-**File**: `src/commands/picker/mod.rs` (modified, +26/-8)
+**File**: `src/commands/config/approvals.rs` (modified, +16/-11)
 ```diff
-@@ -124,7 +124,9 @@ use worktrunk::HookType;
- use worktrunk::config::{Approvals, CommitGenerationConfig};
- use worktrunk::git::{ErrorExt, Repository, current_or_recover};
- use worktrunk::path::format_path_for_display;
--use worktrunk::styling::{eprintln, error_message, hint_message, info_message, warning_message};
-+use worktrunk::styling::{
-+    eprintln, error_message, hint_message, info_message, progress_message, warning_message,
-+};
+@@ -92,10 +92,11 @@ pub fn list_approvals(format: SwitchFormat) -> anyhow::Result<()> {
  
- use crate::output::print_json;
- 
-@@ -2175,6 +2177,7 @@ pub fn handle_picker(
-     // in flight, and process exit terminates the thread (its `gh`/`glab`
-     // subprocess is read-only).
-     drop(prs_handle);
-+    join_removals();
- 
-     // Skim has released the terminal — emit any warnings that collect's bg
-     // thread stashed during the run. Late warnings (e.g. drain timeouts)
-@@ -2192,11 +2195,8 @@ pub fn handle_picker(
-     // fails like any other, and stashes that failure as a warning. Cancelling
-     // first would drain a spurious "couldn't fetch PRs" onto the user.
-     //
--    // Not everything running here is discardable — an `alt-x` removal is
--    // dispatched to its own thread and can still be mid-`git worktree remove`
--    // if the user pressed Enter straight after. Removal threads are spawned
--    // through `spawn_removal`, which marks them `uninterruptible` and lets
--    // them run to completion; this reaches only speculative work.
-+    // `join_removals` has already finished every `alt-x` removal, so this
-+    // reaches only speculative work.
-     worktrunk::shell_exec::cancel_background_commands();
- 
-     // `run_skim` returns Err only on a genuine TUI init / event-loop failure;
-@@ -2461,9 +2461,27 @@ fn spawn_removal<F>(name: String, work: F)
- where
-     F: FnOnce() + Send + 'static,
- {
--    let _ = std::thread::Builder::new()
-+    if let Ok(handle) = std::thread::Builder::new()
-         .name(name)
--        .spawn(move || worktrunk::shell_exec::uninterruptible(work));
-+        .spawn(move || worktrunk::shell_exec::uninterruptible(work))
-+    {
-+        REMOVALS.lock().unwrap().push(handle);
-+    }
-+}
-+
-+/// Requested removals not yet joined. Returning from `main` would end them
-+/// midway, with the row already gone and nothing to say the worktree survived.
-+static REMOVALS: Mutex<Vec<std::thread::JoinHandle<()>>> = Mutex::new(Vec::new());
-+
-+/// Wait for every requested removal, once skim has released the terminal.
-+fn join_removals() {
-+    let removals = std::mem::take(&mut *REMOVALS.lock().unwrap());
-+    if removals.iter().any(|removal| !removal.is_finished()) {
-+        eprintln!("{}", progress_message("Finishing worktree removal..."));
-+    }
-+    for removal in removals {
-+        let _ = removal.join();
-+    }
- }
- 
- /// Run a row shortcut's OS action on a named background thread, logging any
-```
-
-**File**: `src/commands/repository_ext.rs` (modified, +19/-1)
-```diff
-@@ -6,7 +6,7 @@ use color_print::cformat;
- use worktrunk::config::StageMode;
- use worktrunk::git::{
-     BranchDeletionMode, GitError, IntegrationReason, RefSnapshot, Repository, WorkingTree,
--    WorktreeInfo, parse_porcelain_z, parse_untracked_files,
-+    WorktreeInfo, parse_porcelain_z, parse_untracked_files, path_dir_name,
- };
- use worktrunk::path::format_path_for_display;
- use worktrunk::styling::{eprintln, format_with_gutter, hint_message, warning_message};
-@@ -280,6 +280,24 @@ impl RepositoryCliExt for Repository {
-             return Err(GitError::CannotRemoveMainWorktree.into());
-         }
- 
-+        // `--force` waives this worktree's changes, never another checkout's,
-+        // and an ignored nested checkout is invisible to the dirty gate.
-+        if let Resolved::Worktree {
-+            ref path,
-+            ref branch,
-+            ..
-+        } = resolved
-+            && let Some(nested) = self.worktree_nested_in(path)?
-+        {
-+            return Err(GitError::WorktreeContainsWorktree {
-+                name: branch
-+                    .clone()
-+                    .unwrap_or_else(|| path_dir_name(path).to_string()),
-+                nested,
-+            }
-+            .into());
-+        }
-+
-         // Phase 3: Branch-level validation (applies to ALL paths).
-         let branch_name = match &resolved {
-             Resolved::Worktree { branch, .. } => branch.as_deref(),
-```
-
-**File**: `src/commands/step/promote.rs` (modified, +14/-5)
-```diff
-@@ -228,7 +228,8 @@ fn check_leftover_staging(staging_path: &Path) -> anyhow::Result<()> {
-     let display = format_path_for_display(staging_path);
-     Err(anyhow::anyhow!(
-         "Files may need manual recovery from: {display}\n\
--         Remove it to retry: rm -rf {display}"
-+         a/ holds the main worktree's ignored files; b/ holds the other worktree's\n\
-+         Once recovered, to retry, run: rm -rf {display}"
-     )
-     .context("Found leftover staging directory from an interrupted promote"))
- }
-@@ -415,15 +416,23 @@ pub fn handle_promote(branch: Option<&str>) -> anyhow::Result<PromoteResult> {
-         None
-     };
- 
--    // Exchange branches (detach both, then switch to swapped branches).
--    // Failure is near-impossible (both worktrees verified clean, branches exist).
--    // If it somehow fails, stale staging detection recovers on next run.
-+    // Exchange branches (detach both, then switch to swapped branches). Both
-+    // worktrees are clean and both branches exist, but a failing `post-checkout`
-+    // hook still fails `git switch`. That leaves the ignored files staged, so the
-+    // error names where they are.
-     exchange_branches(
-         &main_working_tree,
-         &main_branch,
-         &target_working_tree,
-         &target_branch,
--    )?;
-+    )
-+    .map_err(|error| match &staged {
-+        Some((staging_dir, _)) => error.context(format!(
-+            "Failed to exchange branches. Staged files may be recoverable from: {}",
-+            format_path_for_display(staging_dir)
-+        )),
-+        None => error,
-+    })?;
- 
-     // Distribute staged files to their new worktrees (after branch exchange)
-     let swapped = if let Some((ref staging_dir, _)) = staged {
-```
-
-**File**: `src/commands/step/prune.rs` (modified, +62/-20)
-```diff
-@@ -37,7 +37,7 @@ use rayon::prelude::*;
- use worktrunk::HookType;
- use worktrunk::config::{Approvals, ProjectConfig, ProjectId, UserConfig};
- use worktrunk::git::{
--    BranchDeletionMode, IntegrationReason, RefSnapshot, Repository, WorktreeInfo,
-+    BranchDeletionMode, GitError, IntegrationReason, RefSnapshot, Repository, WorktreeInfo,
- };
- use worktrunk::path::format_path_for_display;
- use worktrunk::styling::{
-@@ -421,6 +421,9 @@ struct CheckOutcome {
-     plan: Option<RemovalPlan>,
-     /// Whether the item passed the removability gate (see `plan`).
-     removable: bool,
-+    /// The checkout that made planning refuse this item. Unlike dirty or
-+    /// locked, `wt list` doesn't show it, so the scan reports the skip.
-+    contains_worktree: Option<PathBuf>,
-     /// What the removal takes, carried onto [`Candidate::deletes_branch`].
-     deletes_branch: bool,
-     /// `Some(_)` if `min_age` is set and the age could be resolved; the
-@@ -450,6 +453,7 @@ fn check_one(
-             reason,
-             plan: None,
-             removable: false,
-+            contains_worktree: None,
-             deletes_branch: false,
-             age: None,
-         });
-@@ -465,20 +469,18 @@ fn check_one(
-         }
-         _ => None,
-     };
--    let plan = if stale_detached.is_some() {
-+    let planned = if stale_detached.is_some() {
-         None
-     } else {
--        match &item.source {
--            CheckSource::Orphan => repo
--                .prepare_worktree_removal(
--                    RemoveTarget::BranchOnly(item.integration_ref.clone()),
--                    BranchDeletionMode::SafeDelete,
--                    false,
--                    current_path,
--                    Some(worktrees),
--                    Some(snapshot),
--                )
--                .ok(),
-+        Some(match &item.source {
-+            CheckSource::Orphan => repo.prepare_worktree_removal(
-+                RemoveTarget::BranchOnly(item.integration_ref.clone()),
-+                BranchDeletionMode::SafeDelete,
-+                false,
-+                current_path,
-+                Some(worktrees),
-+                Some(snapshot),
-+            ),
-             CheckSource::Linked { wt_idx } | CheckSource::Prunable { wt_idx } => {
-                 let wt = &worktrees[*wt_idx];
-                 repo.prepare_worktree_removal(
-@@ -496,10 +498,17 @@ fn check_one(
-                     Some(worktrees),
-                     Some(snapshot),
-                 )
--                .ok()
-             }
--        }
-+        })
-     };
-+    let contains_worktree = planned
+     // A missing project config just means zero configured commands — recorded
+     // approvals for the project still list (as stale), so this never errors.
+-    let commands = match repo.load_project_config()? {
+-        Some(cfg) => collect_approvable_commands(&cfg),
+-        None => Vec::new(),
+-    };
++    let project_config = repo.load_project_config()?;
++    let commands = project_config
 +        .as_ref()
-+        .and_then(|planned| planned.as_ref().err())
-+        .and_then(|error| match error.downcast_ref::<GitError>() {
-+            Some(GitError::WorktreeContainsWorktree { nested, .. }) => Some(nested.clone()),
-+            _ => None,
-+        });
-+    let plan = planned.and_then(Result::ok);
-     let removable = match stale_detached {
-         Some(wt) => matches!(repo.stale_worktree_work(&wt.path), Ok(None)),
-         None => plan.is_some(),
-@@ -524,6 +533,7 @@ fn check_one(
-         reason,
-         plan,
-         removable,
-+        contains_worktree,
-         deletes_branch,
-         age,
-     })
-@@ -840,11 +850,21 @@ fn mtime_epoch(path: &Path) -> anyhow::Result<Option<u64>> {
-     }
- }
++        .map(collect_approvable_commands)
++        .unwrap_or_default();
  
-+/// The `Skipped` line for an item whose checkout holds another worktree.
-+fn nesting_skip(label: &str, nested: &Path) -> String {
-+    info_message(cformat!(
-+        "Skipped <bold>{label}</> (contains worktree @ {})",
-+        format_path_for_display(nested)
-+    ))
-+    .to_string()
-+}
-+
- /// Render dry-run output (text or JSON) and the `Skipped (younger than ...)`
- /// trailer. Returns once printing is complete; the caller exits early.
- fn render_dry_run(
-     mut dry_run_info: Vec<(Candidate, DryRunInfo)>,
-     mut skipped_young: Vec<String>,
-+    mut skipped_nesting: Vec<String>,
-     min_age: &str,
-     format: crate::cli::SwitchFormat,
- ) -> anyhow::Result<()> {
-@@ -902,9 +922,13 @@ fn render_dry_run(
-             info_message(format!("Skipped {names} (younger than {min_age})"))
-         );
-     }
-+    skipped_nesting.sort();
-+    for line in &skipped_nesting {
-+        eprintln!("{line}");
-+    }
- 
-     if dry_candidates.is_empty() {
--        if skipped_young.is_empty() {
-+        if skipped_young.is_empty() && skipped_nesting.is_empty() {
-             eprintln!("{}", info_message("No merged worktrees to remove"));
+     let templates: Vec<&str> = commands
+         .iter()
+@@ -174,13 +175,17 @@ pub fn list_approvals(format: SwitchFormat) -> anyhow::Result<()> {
+         for command in &stale {
+             writeln!(out, "{}", format_bash_with_gutter(command))?;
          }
-         return Ok(());
-@@ -1034,6 +1058,7 @@ pub fn step_prune(
-         RefWriteTimes::capture(&repo, &check_items).context("reading ref write times")?;
+-        writeln!(
+-            out,
+-            "{}",
+-            hint_message(cformat!(
+-                "To clear stale approvals, run <underline>wt config approvals clear --stale</>"
+-            ))
+-        )?;
++        // `clear --stale` refuses to run without a project config (see
++        // `clear_approvals`), so only suggest it where it can succeed.
++        if project_config.is_some() {
++            writeln!(
++                out,
++                "{}",
++                hint_message(cformat!(
++                    "To clear stale approvals, run <underline>wt config approvals clear --stale</>"
++                ))
++            )?;
++        }
+     }
  
-     let mut skipped_young: Vec<String> = Vec::new();
-+    let mut skipped_nesting: Vec<String> = Vec::new();
- 
-     // Streaming dry-run path: scans run in parallel, results are collected and
-     // sorted for deterministic output. No removals, no approval — just print.
-@@ -1077,10 +1102,14 @@ pub fn step_prune(
-                 let Some(reason) = outcome.reason else {
-            
+     // Human-oriented sectioned output, plausibly more than a screen — page it
 ```
 
-**File**: `src/git/error.rs` (modified, +23/-0)
+**File**: `tests/integration_tests/approvals.rs` (modified, +3/-1)
 ```diff
-@@ -591,6 +591,11 @@ pub enum GitError {
-         path: PathBuf,
-         reason: Option<String>,
-     },
-+    WorktreeContainsWorktree {
-+        /// The target's branch, or its directory name when detached.
-+        name: String,
-+        nested: PathBuf,
-+    },
- 
-     // Merge/push errors
-     ConflictingChanges {
-@@ -966,6 +971,11 @@ impl GitError {
-                 cformat!("Cannot remove <bold>{branch}</>, worktree is locked{reason_text}")
-             }
- 
-+            GitError::WorktreeContainsWorktree { name, nested } => {
-+                let nested = format_path_for_display(nested);
-+                cformat!("Cannot remove <bold>{name}</>; contains worktree @ <bold>{nested}</>")
-+            }
-+
-             GitError::ConflictingChanges { target_branch, .. } => cformat!(
-                 "Can't push to local <bold>{target_branch}</> branch: conflicting uncommitted changes"
-             ),
-@@ -1468,6 +1478,19 @@ impl GitError {
-                 )
-             }
- 
-+            GitError::WorktreeContainsWorktree { nested, .. } => {
-+                let title = self.title();
-+                let nested = format_path_for_display(nested);
-+                write!(
-+                    f,
-+                    "{}\n{}",
-+                    error_message(&title),
-+                    hint_message(cformat!(
-+                        "To remove the nested worktree first, run <underline>wt remove {nested}</>"
-+                    ))
-+                )
-+            }
-+
-             GitError::ConflictingChanges {
-                 files,
-                 worktree_path,
-```
-
-**File**: `src/git/remove.rs` (modified, +6/-30)
-```diff
-@@ -547,38 +547,14 @@ pub fn stage_worktree_removal(
-     Ok(rename_into_trash(repo, worktree_path, &git_dir))
+@@ -177,7 +177,9 @@ fn test_list_approvals_all_approved(repo: TestRepo) {
  }
  
--/// Find a registered worktree contained in `worktree_path`, using a fresh
--/// registry read. Ignored nested worktrees are invisible to `ensure_clean`,
--/// but renaming or removing their parent would destroy their independent work.
--/// Canonical paths catch registrations made through symlinks; a missing entry
--/// has no directory to protect, while other resolution errors fail closed.
-+/// [`Repository::worktree_nested_in`] against a fresh registry read.
- ///
--/// Called only by merge cleanup: once while deciding whether to remove, then
--/// again after approved pre-remove hooks and before the final removal gates.
--/// Keep this live registry read out of `stage_worktree_removal`: batch prune
--/// staging must not wait for another removal's registry teardown (#3954).
-+/// Planning asks its own inventory. Merge cleanup also asks after approved
-+/// pre-remove hooks, before the final removal gates, which is why this reads
-+/// afresh. Keep this live registry read out of `stage_worktree_removal`: batch
-+/// prune staging must not wait for another removal's registry teardown (#3954).
- pub fn nested_worktree(repo: &Repository, worktree_path: &Path) -> anyhow::Result<Option<PathBuf>> {
--    let root =
--        dunce::canonicalize(worktree_path).context("Failed to resolve worktree for removal")?;
--    let fresh_repo = Repository::at(repo.discovery_path())?;
--    for worktree in fresh_repo.list_worktrees()? {
--        let path = match dunce::canonicalize(&worktree.path) {
--            Ok(path) => path,
--            Err(error) if error.kind() == std::io::ErrorKind::NotFound => continue,
--            Err(error) => {
--                return Err(error).with_context(|| {
--                    format!(
--                        "Failed to resolve worktree @ {}",
--                        format_path_for_display(&worktree.path)
--                    )
--                });
--            }
--        };
--        if path != root && path.starts_with(&root) {
--            return Ok(Some(path));
+ /// Without a project config there is nothing to require approval, but
+-/// approvals already on record still list — all as stale.
++/// approvals already on record still list — all as stale. The listing does not
++/// suggest `clear --stale`, which refuses to run without a project config
++/// (`test_clear_approvals_stale_no_config`).
+ #[rstest]
+ fn test_list_approvals_stale_only(repo: TestRepo) {
+     repo.run_git(&["remote", "remove", "origin"]);
+```
+
+**File**: `tests/snapshots/integration__integration_tests__approvals__list_approvals_stale_only.snap` (modified, +0/-1)
+```diff
+@@ -62,6 +62,5 @@ exit_code: 0
+ ----- stdout -----
+ [33m▲[39m [33mApproved commands no longer in project config:[39m
+ [107m [0m [2m[0m[2m[34morphan[0m[2m command[0m
+-[2m↳[22m [2mTo clear stale approvals, run [4mwt config approvals clear --stale[24m[22m
+ 
+ ----- stderr -----
+```
+
+---
+
+### Incident Patch 2: `2de291c0` (2026-11-22)
+**Commit Message**: refactor(git): build parse_untracked_files on porcelain_entries_z (#4880)
+
+`parse_untracked_files` had its own loop over `git status --porcelain
+-z` records, including the rule that skips a rename's or copy's source
+field. `porcelain_entries_z`, added in #4699, already implements that
+walk. `parse_untracked_files` now keeps that iterator's `??` records and
+drops its own copy. Behavior is unchanged, and the existing
+`parse_untracked_files` unit tests, including the rename-source case,
+pass unmodified. Its only caller is the auto-staging warning in
+`warn_about_untracked_files`.
+
+`parse_porcelain_z` still walks the records itself, because it returns
+rename source paths too and the shared iterator drops them.
+
+Co-authored-by: worktrunk-bot <[REDACTED_EMAIL]>
+
+**File**: `src/git/parse.rs` (modified, +5/-28)
+```diff
+@@ -189,35 +189,12 @@ pub fn parse_porcelain_z(output: &[u8]) -> Vec<Vec<u8>> {
+     files
+ }
+ 
+-/// Parse untracked files from `git status --porcelain -z` output.
+-///
+-/// Format: "XY path\0" where XY is the status code and path follows a space.
+-/// Untracked files have status "??".
++/// Untracked paths (`??` records) from `git status --porcelain -z` output.
+ pub fn parse_untracked_files(status_output: &str) -> Vec<String> {
+-    let mut files = Vec::new();
+-    let mut entries = status_output.split('\0').filter(|s| !s.is_empty());
+-
+-    while let Some(entry) = entries.next() {
+-        // Format: "XY PATH" where XY is 2 status chars, space, then path
+-        if entry.len() < 3 {
+-            continue;
+-        }
+-
+-        let status = &entry[0..2];
+-        let path = &entry[3..];
+-
+-        // Only collect untracked files
+-        if status == "??" {
+-            files.push(path.to_string());
+-        }
+-
+-        // Skip old path for renames/copies (we don't care about them here)
+-        if status.contains(['R', 'C']) {
+-            entries.next();
 -        }
 -    }
--    Ok(None)
-+    Repository::at(repo.discovery_path())?.worktree_nested_in(worktree_path)
+-
+-    files
++    porcelain_entries_z(status_output.as_bytes())
++        .filter(|entry| entry.starts_with(b"??"))
++        .map(|entry| String::from_utf8_lossy(&entry[3..]).into_owned())
++        .collect()
  }
  
- /// Rename a worktree into `<git-common-dir>/wt/trash/` and prune git metadata.
-```
-
-**File**: `src/git/repository/mod.rs` (modified, +4/-0)
-```diff
-@@ -340,6 +340,10 @@ pub(super) struct RepoCache {
-     /// `collect::collect` pass hits memory instead of respawning the
-     /// subprocess on the critical path to skeleton.
-     pub(super) worktrees: OnceCell<Vec<WorktreeInfo>>,
-+    /// Canonical paths of the checkouts in [`Self::worktrees`] still on disk,
-+    /// resolved once per inventory. Populated lazily via
-+    /// [`Repository::worktree_nested_in`].
-+    pub(super) checkout_paths: OnceCell<std::collections::BTreeSet<PathBuf>>,
-     /// In-memory branch diff stats cache: (base_sha, head_sha) -> LineDiff.
-     /// Sits in front of the persistent `sha_cache` to prevent parallel tasks
-     /// from racing through the file-based cache for the same SHA pair.
-```
-
-**File**: `src/git/repository/worktrees.rs` (modified, +42/-0)
-```diff
-@@ -101,6 +101,48 @@ impl Repository {
-             .map(Vec::as_slice)
-     }
- 
-+    /// A registered checkout inside `path`, from this repository's inventory
-+    /// ([`Self::list_worktrees`]). Ignored nested checkouts are invisible to the
-+    /// dirty gate, but renaming or removing their parent destroys their work.
-+    /// Canonical paths catch registrations made through symlinks; a checkout
-+    /// whose directory is gone has nothing to protect, while any other
-+    /// resolution error fails closed.
-+    ///
-+    /// Each checkout is resolved once per inventory, so a batch of removals
-+    /// planned against one inventory resolves N paths, not N per target.
-+    pub fn worktree_nested_in(&self, path: &Path) -> anyhow::Result<Option<PathBuf>> {
-+        use std::ops::Bound::{Excluded, Unbounded};
-+
-+        let root = canonicalize(path).context("Failed to resolve worktree for removal")?;
-+        let checkouts = self.cache.checkout_paths.get_or_try_init(|| {
-+            let mut checkouts = std::collections::BTreeSet::new();
-+            for worktree in self.list_worktrees()? {
-+                match canonicalize(&worktree.path) {
-+                    Ok(path) => {
-+                        checkouts.insert(path);
-+                    }
-+                    Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
-+                    Err(error) => {
-+                        return Err(error).with_context(|| {
-+                            format!(
-+                                "Failed to resolve worktree @ {}",
-+                                format_path_for_display(&worktree.path)
-+                            )
-+                        });
-+                    }
-+                }
-+            }
-+            anyhow::Ok(checkouts)
-+        })?;
-+        // `Path` orders by component, so the paths inside `root` sort directly
-+        // after it: the next one either lies inside or nothing does.
-+        Ok(checkouts
-+            .range::<Path, _>((Excluded(root.as_path()), Unbounded))
-+            .next()
-+            .filter(|next| next.starts_with(&root))
-+            .cloned())
-+    }
-+
-     /// Find the worktree path for a given branch, if one exists.
-     ///
-     /// A branch normally maps to at most one worktree, but `git worktree add
+ #[cfg(test)]
 ```
 
 ---
 
-### Incident Patch 2: `319b80d8` (2026-11-20)
-**Commit Message**: fix: skip unchanged switch-history writes to the shared git config (#4866)
+### Incident Patch 3: `7a72ec28` (2026-11-22)
+**Commit Message**: fix(git): scrub inherited Git context from worktree diffs (#4879)
 
-`record_switch_source` wrote `worktrunk.history` and
-`worktrunk.history-path` on every worktree-changing `wt switch`, even
-when they already held the same values — for example, repeated `wt
-switch -c` from the primary worktree. Each write takes the shared
-`.git/config.lock`, so a concurrent config writer in another worktree
-could fail on the lock. Each key is now compared against a fresh read of
-the shared config (one `git config --null --get-regexp` for both keys)
-and written, or unset for a detached source, only when it changes. When
-the write is skipped, the fresh value is still copied into this
-`Repository`'s config snapshot, so `switch_previous()` on the same
-instance agrees with what's on disk.
+`WorkingTree::prepare_diff`, `prepare_staged_diff` and
+`prepare_commit_diff` run `diff-index`/`diff-tree` in a worktree
+Worktrunk picked, but they kept inherited `GIT_DIR`, `GIT_WORK_TREE` and
+`GIT_INDEX_FILE`. When `wt` runs from a Git hook or a `!wt` alias in a
+different worktree, those diffs read the invoking worktree's index and
+HEAD. So `wt step commit --branch <b>` built its stats line and LLM
+prompt from the wrong worktree's staged changes. The picker's diff
+preview and the summary diff had the same problem.
 
-The fresh read matters because the process-lifetime snapshot can be out
-of date: another `wt` may have recorded a different source since this
-process loaded its config, and comparing against the snapshot would skip
-a restore that's needed.
+AGENTS.md requires this scrub for worktree-local plumbing, and the
+sibling paths already apply it (`WorkingTree::run_command` and
+`TempIndex::command`). This PR applies `scrub_git_discovery_env()` to
+the three `WorkingTree` diff constructors. `Repository::prepare_diff` is
+repo-level and keeps the inherited context, as `Repository::run_command`
+does. `with_object_store_env` still runs after the scrub, so a
+redirected repository's own `GIT_OBJECT_DIRECTORY` survives.
 
-Three unit tests cover this:
+The new
+`test_step_commit_show_prompt_branch_ignores_inherited_git_context`
+stages a file in each of two worktrees. It runs `wt step commit
 
-- `test_record_switch_source_skips_unchanged_values` holds `config.lock`
-and re-records the same source. Before the change it fails with `git
 
-
-**File**: `src/git/repository/config.rs` (modified, +140/-16)
+**File**: `src/git/repository/diff.rs` (modified, +37/-8)
 ```diff
-@@ -94,15 +94,31 @@ impl Repository {
-     /// behind a stale duplicate under the literal form.
-     pub(super) fn set_config_value(&self, key: &str, value: &str) -> anyhow::Result<()> {
-         self.run_command(&["config", key, value])?;
--        if let Some(lock) = self.cache.all_config.get() {
--            let canonical = super::canonical_config_key(key);
--            lock.write()
--                .unwrap()
--                .insert(canonical, vec![value.to_string()]);
--        }
-+        self.cache_config_value(key, Some(value));
-         Ok(())
-     }
+@@ -13,7 +13,14 @@ use super::working_tree::{TempIndex, WorkingTree, path_to_logging_context};
+ use super::{DiffStats, LineDiff, Repository};
  
-+    /// Mirror a known on-disk value for `key` into the bulk config map, if
-+    /// populated: `Some` replaces its values, `None` removes the key.
-+    fn cache_config_value(&self, key: &str, value: Option<&str>) {
-+        let Some(lock) = self.cache.all_config.get() else {
-+            return;
-+        };
-+        let canonical = super::canonical_config_key(key);
-+        let mut map = lock.write().unwrap();
-+        match value {
-+            Some(value) => {
-+                map.insert(canonical, vec![value.to_string()]);
-+            }
-+            // `shift_remove` preserves remaining order (swap_remove would
-+            // reorder); order matters for `primary_remote` which picks the
-+            // first remote with a configured URL.
-+            None => {
-+                map.shift_remove(&canonical);
-+            }
-+        }
-+    }
-+
-     /// Unset every value for a config key and keep the bulk config map coherent.
-     ///
-     /// Returns `true` if the key was cleared, `false` if it didn't exist.
-@@ -123,13 +139,7 @@ impl Repository {
-         } else {
-             return Err(CommandError::from_failed_output("git", &args, &output).into());
-         };
--        if let Some(lock) = self.cache.all_config.get() {
--            // `shift_remove` preserves remaining order (swap_remove would
--            // reorder); order matters for `primary_remote` which picks the
--            // first remote with a configured URL.
--            let canonical = super::canonical_config_key(key);
--            lock.write().unwrap().shift_remove(&canonical);
--        }
-+        self.cache_config_value(key, None);
-         Ok(existed)
-     }
+ enum DiffSource<'a> {
+-    Repository { repo: &'a Repository, path: PathBuf },
++    /// Git runs at `path`. A `worktree_local` diff reads a worktree `wt`
++    /// resolved, so it scrubs inherited Git discovery variables the way
++    /// [`WorkingTree::run_command`] does; a repo-level diff keeps them.
++    Repository {
++        repo: &'a Repository,
++        path: PathBuf,
++        worktree_local: bool,
++    },
+     TempIndex(&'a TempIndex),
+ }
  
-@@ -317,14 +327,40 @@ impl Repository {
-     /// path can. A detached worktree clears the branch, so the two keys always
-     /// describe the same worktree, which is what
-     /// [`switch_previous_worktree`](Self::switch_previous_worktree) checks.
-+    ///
-+    /// Each key is written only when its value changes: the keys live in the
-+    /// repository's shared config, and a redundant write still takes
-+    /// `config.lock`, failing a concurrent config writer in another worktree.
-+    /// The comparison reads the shared config fresh rather than the
-+    /// process-lifetime snapshot, which another `wt` may have outdated by
-+    /// recording a different source since this process loaded it. A skipped
-+    /// write still refreshes this instance's snapshot with the fresh value.
-     pub fn record_switch_source(&self, path: &Path, branch: Option<&str>) -> anyhow::Result<()> {
-+        let recorded = self.config_regexp_entries(r"^worktrunk\.history(-path)?$")?;
-+        let recorded_value = |key: &str| {
-+            recorded
-+                .iter()
-+                .rev()
-+                .find(|(k, _)| k == key)
-+                .map(|(_, v)| v.as_str())
-+        };
-+        let recorded_branch = recorded_value("worktrunk.history");
-         match branch {
--            Some(branch) => self.set_config_value("worktrunk.history", branch)?,
--            None => {
-+            Some(branch) if recorded_branch != Some(branch) => {
-+                self.set_config_value("worktrunk.history", branch)?
-+            }
-+            None if recorded_branch.is_some() => {
-                 self.unset_config("worktrunk.history")?;
-             }
-+            _ => self.cache_config_value("worktrunk.history", branch),
-+        }
-+        let path = path.to_string_lossy();
-+        if recorded_value("worktrunk.history-path") != Some(&*path) {
-+            self.set_config_value("worktrunk.history-path", &path)?;
-+        } else {
-+            self.cache_config_value("worktrunk.history-path", Some(&path));
+@@ -47,21 +54,35 @@ pub struct PreparedDiff<'a> {
+ }
+ 
+ impl<'a> PreparedDiff<'a> {
+-    fn new(repo: &'a Repository, path: PathBuf, sides: DiffSides) -> Self {
++    fn new(repo: &'a Repository, path: PathBuf, worktree_local: bool, sides: DiffSides) -> Self {
+         Self {
+-            source: DiffSource::Repository { repo, path },
++            source: DiffSource::Repository {
++                repo,
++                path,
++                worktree_local,
++            },
+             sides,
          }
--        self.set_config_value("worktrunk.history-path", &path.to_string_lossy())
-+        Ok(())
      }
  
-     /// Set the previous branch outright (`wt config state previous-branch
-@@ -1127,6 +1163,94 @@ mod tests {
-     use super::*;
-     use crate::testing::TestRepo;
- 
-+    #[test]
-+    fn test_record_switch_source_skips_unchanged_values() {
-+        // A repeated switch from the same worktree must not rewrite the shared
-+        // config: parallel worktrees contend for `config.lock`. A held lock
-+        // makes any write fail, so success proves no write was attempted.
-+        let test = TestRepo::with_initial_commit();
-+        let repo = Repository::at(test.root_path()).unwrap();
-+        let path = test.root_path().to_pat
-```
-
----
-
-### Incident Patch 3: `593360b0` (2026-11-20)
-**Commit Message**: fix(shell): read nushell wrapper temp files past a user open alias (#4865)
-
-A `config.nu` alias or custom command named `open` is in scope when
-Nushell parses the wrapper from vendor autoload, so the wrapper's `open
-$cd_file --raw` and `open $stdout_file --raw` ran the user's command
-instead of reading the files. With `alias open = ^open` (common on
-macOS), `wt switch` printed "Switched" and the shell stayed put. The
-wrapper now runs `hide open` at the top of its body. That restores the
-builtin for the wrapper only: the user's alias still applies outside it,
-and with no alias defined `hide open` is a no-op (checked on nu 0.117).
-
-`test_nu_wrapper_reads_survive_open_alias` defines `alias open = ^echo
-ALIASED` before the wrapper, then runs `wt switch --create` and `wt
-config show`. Before the change it failed with `Directory not found …
-'ALIASED /tmp/tmp.… --raw' does not exist`. It now passes, along with
-the other `nu_wrapper` tests and the `init_nu` snapshot, which picks up
-the new lines.
-
-The `rm` cleanup got the same protection in #3730. The wrapper's other
-bare builtins (`cd`, `mktemp`, `print`) are unchanged.
-
-Closes #4862 — automated triage
-
-Co-authored-by: worktrunk-bot <[RED
-
-**File**: `src/shell/snapshots/worktrunk__shell__tests__init_nu.snap` (modified, +4/-0)
-```diff
-@@ -72,6 +72,10 @@ export def "nu-complete wt" [place] {
- # arrives quoted. See nushell/nushell#18128 for upstream tracking.
- @complete "nu-complete wt"
- export def --env --wrapped wt [...args] {
-+    # A user's `alias open = ^open` (or custom `open`) from config.nu is in
-+    # scope here; hiding it restores the builtin for this body only.
-+    hide open
-+
-     let worktrunk_bin = if ($env.WORKTRUNK_BIN? | is-not-empty) {
-         $env.WORKTRUNK_BIN
-     } else {
-```
-
-**File**: `templates/nushell.nu` (modified, +4/-0)
-```diff
-@@ -68,6 +68,10 @@ export def "nu-complete {{ cmd }}" [place] {
- # arrives quoted. See nushell/nushell#18128 for upstream tracking.
- @complete "nu-complete {{ cmd }}"
- export def --env --wrapped {{ cmd }} [...args] {
-+    # A user's `alias open = ^open` (or custom `open`) from config.nu is in
-+    # scope here; hiding it restores the builtin for this body only.
-+    hide open
-+
-     let worktrunk_bin = if ($env.WORKTRUNK_BIN? | is-not-empty) {
-         $env.WORKTRUNK_BIN
-     } else {
-```
-
-**File**: `tests/integration_tests/shell_wrapper.rs` (modified, +34/-0)
-```diff
-@@ -1082,6 +1082,40 @@ mod unix_tests {
-         );
+     fn command(&self, args: &[String]) -> Cmd {
+         match &self.source {
+-            DiffSource::Repository { repo, path } => repo.with_object_store_env(
+-                Cmd::new("git")
++            DiffSource::Repository {
++                repo,
++                path,
++                worktree_local,
++            } => {
++                let cmd = Cmd::new("git")
+                     .args(args.iter().cloned())
+                     .current_dir(path)
+-                    .context(path_to_logging_context(path)),
+-            ),
++                    .context(path_to_logging_context(path));
++                let cmd = if *worktree_local {
++                    cmd.scrub_git_discovery_env()
++                } else {
++                    cmd
++                };
++                repo.with_object_store_env(cmd)
++            }
+             DiffSource::TempIndex(index) => index.command(args.iter().cloned()),
+         }
      }
+@@ -149,6 +170,7 @@ impl Repository {
+         PreparedDiff::new(
+             self,
+             self.discovery_path().to_path_buf(),
++            false,
+             DiffSides::Commits(from.into(), to.into()),
+         )
+     }
+@@ -160,6 +182,7 @@ impl<'repo> WorkingTree<'repo> {
+         PreparedDiff::new(
+             self.repo,
+             self.path.clone(),
++            true,
+             DiffSides::WorkingTree(base.into()),
+         )
+     }
+@@ -183,6 +206,7 @@ impl<'repo> WorkingTree<'repo> {
+         PreparedDiff::new(
+             self.repo,
+             self.path.clone(),
++            true,
+             DiffSides::Commits(from.into(), to.into()),
+         )
+     }
+@@ -191,7 +215,12 @@ impl<'repo> WorkingTree<'repo> {
+     ///
+     /// For the changes a commit would record, `base` is [`Self::index_base`].
+     pub fn prepare_staged_diff(&self, base: impl Into<String>) -> PreparedDiff<'repo> {
+-        PreparedDiff::new(self.repo, self.path.clone(), DiffSides::Staged(base.into()))
++        PreparedDiff::new(
++            self.repo,
++            self.path.clone(),
++            true,
++            DiffSides::Staged(base.into()),
++        )
+     }
+ }
  
-+    /// A user's `alias open = ^open` (macOS users add it to reach the system
-+    /// `open`) must not intercept the nushell wrapper's temp-file reads.
-+    ///
-+    /// Same parse-time scoping as the `rm` alias above. Before the fix the
-+    /// wrapper ran the aliased command on the cd file instead of reading it,
-+    /// so `switch` reported success and the shell stayed where it was.
-+    #[rstest]
-+    fn test_nu_wrapper_reads_survive_open_alias(repo: TestRepo) {
-+        let mut script = String::new();
-+        // Must precede the wrapper's `def`: alias resolution is parse-time.
-+        script.push_str("alias open = ^echo ALIASED\n");
-+        append_wrapper_setup(&mut script, "nu", &repo);
-+        script.push_str("wt switch --create open-alias-target\n");
-+        script.push_str("print $\"PWD_AFTER:($env.PWD | path basename)\"\n");
-+        script.push_str("let out = (wt config show)\n");
-+        script.push_str("print $\"WRAPPER_STDOUT_ALIASED:($out | str contains ALIASED)\"\n");
+```
+
+**File**: `src/shell_exec.rs` (modified, +2/-1)
+```diff
+@@ -763,7 +763,8 @@ pub fn apply_cd_directive_env(cmd: &mut std::process::Command, cd_file: &std::pa
+ ///   one repository, and every worktree-scoped answer routes through
+ ///   [`crate::git::WorkingTree`], which scrubs.
+ ///   **Worktree-local** plumbing — [`crate::git::WorkingTree::run_command`],
+-///   `TempIndex::command`, `list_ignored_entries` — relocates git into a
++///   `TempIndex::command`, `WorkingTree`'s prepared diffs,
++///   `list_ignored_entries` — relocates git into a
+ ///   worktree `wt` resolved, so it scrubs, the same way hooks and `for-each`
+ ///   do. Otherwise a `!wt` alias from a linked worktree (`GIT_DIR` pinned to
+ ///   that worktree's private gitdir) makes `status` / `read-tree` on a
+```
+
+**File**: `tests/integration_tests/merge.rs` (modified, +31/-0)
+```diff
+@@ -4377,6 +4377,37 @@ fn test_step_commit_show_prompt_branch_previews_target_worktree(mut repo: TestRe
+     );
+ }
+ 
++/// Run from a Git hook or a `!wt` alias, `wt` inherits `GIT_DIR` and
++/// `GIT_INDEX_FILE` naming the invoking worktree. The staged diff of the
++/// `--branch` worktree must still read that worktree's index and HEAD.
++#[rstest]
++fn test_step_commit_show_prompt_branch_ignores_inherited_git_context(mut repo: TestRepo) {
++    let feature_wt = repo.add_worktree("feature");
++    fs::write(feature_wt.join("feature_only.txt"), "line one\n").unwrap();
++    repo.run_git_in(&feature_wt, &["add", "feature_only.txt"]);
++    fs::write(repo.root_path().join("caller_only.txt"), "caller\n").unwrap();
++    repo.run_git(&["add", "caller_only.txt"]);
 +
-+        let config_path = repo.test_config_path().to_string_lossy().to_string();
-+        let approvals_path = repo.test_approvals_path().to_string_lossy().to_string();
-+        let env_vars = build_test_env_vars(&config_path, &approvals_path);
-+        let (combined, exit_code) =
-+            exec_in_pty_interactive("nu", &script, repo.root_path(), &env_vars, &[]);
++    let git_dir = repo.root_path().join(".git");
++    let output = make_snapshot_cmd(
++        &repo,
++        "step",
++        &["commit", "--show-prompt", "--branch", "feature"],
++        None,
++    )
++    .env("GIT_DIR", &git_dir)
++    .env("GIT_WORK_TREE", repo.root_path())
++    .env("GIT_INDEX_FILE", git_dir.join("index"))
++    .output()
++    .expect("wt step commit --show-prompt --branch failed to spawn");
++    let stdout = String::from_utf8_lossy(&output.stdout);
++    assert!(output.status.success(), "{output:?}");
++    assert!(
++        stdout.contains("feature_only.txt") && !stdout.contains("caller_only.txt"),
++        "the preview must diff the target worktree's index; got:\n{stdout}"
++    );
++}
 +
-+        assert_eq!(exit_code, 0, "Output:\n{combined}");
-+        assert!(
-+            combined.contains("PWD_AFTER:repo.open-alias-target"),
-+            "wrapper did not cd into the new worktree.\nOutput:\n{combined}"
-+        );
-+        assert!(
-+            combined.contains("WRAPPER_STDOUT_ALIASED:false"),
-+            "wrapper stdout came from the alias, not the captured file.\nOutput:\n{combined}"
-+        );
-+    }
-+
-     #[rstest]
-     fn test_nu_wrapper_ignores_execute_flags_after_argument_boundary(repo: TestRepo) {
-         let mut script = String::new();
+ // =============================================================================
+ // step rebase tests
+ // =============================================================================
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4872** (closed): ci: package LICENSE-MIT and LICENSE-APACHE into PyPI wheels (@worktrunk-bot)
-- **PR #4871** (2026-11-21): chore: update tend workflows (0.3.27 → 0.3.28) (@worktrunk-bot)
-- **PR #4870** (2026-11-21): ci(release): remove the dispatch recovery path (@max-sixty)
-- **PR #4869** (2026-11-21): skills(running-tend): drop the proportionality rule Tend's review now owns (@max-sixty)
-- **PR #4868** (2026-11-20): skills(running-tend): open each feedback digest as its own issue and file its confirmed bugs for triage (@worktrunk-bot)
-- **PR #4867** (2026-11-20): fix(picker): keep the preview at half the width when the terminal is resized (@worktrunk-bot)
+- **PR #4887** (2026-11-22): docs(copy-ignored): warn that the node_modules symlink recipe needs an unslashed .gitignore pattern (@worktrunk-bot)
+- **PR #4884** (2026-11-22): skills(running-tend): track the aqua registry's copy of Worktrunk's release config (@worktrunk-bot)
+- **PR #4883** (2026-11-22): ci: bump cargo-llvm-cov pin to 0.9.2 and worktrunk pin to 0.83.0 (@worktrunk-bot)
+- **PR #4880** (2026-11-22): refactor(git): build parse_untracked_files on porcelain_entries_z (@worktrunk-bot)
+- **PR #4879** (2026-11-22): fix(git): scrub inherited Git context from worktree diffs (@worktrunk-bot)
+- **PR #4878** (2026-11-21): chore: move typos config into Cargo.toml (@max-sixty)
 
 ---
 
@@ -2776,63 +2395,56 @@ Co-authored-by: worktrunk-bot <[RED
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. refuse removing a worktree that contains another, and finish picker removals bef
+## X. approvals): don't suggest clear --stale when there is no project config
 
 **RULE**:
-When implementing operations in `src/commands/picker/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in max-sixty/worktrunk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/commands/config/approvals.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in max-sixty/worktrunk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `76f6952f`: refuse removing a worktree that contains another, and finish picker removals before exit. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7c94fe65`: approvals): don't suggest clear --stale when there is no project config. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/commands/picker/mod.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/commands/config/approvals.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use worktrunk::styling::{
-    eprintln, error_message, hint_message, info_message, progress_message, warning_message,
-};
-    join_removals();
-    // `join_removals` has already finished every `alt-x` removal, so this
-    // reaches only speculative work.
-    if let Ok(handle) = std::thread::Builder::new()
-        .spawn(move || worktrunk::shell_exec::uninterruptible(work))
-    {
-        REMOVALS.lock().unwrap().push(handle);
-    }
-}
-
-/// Requested removals not yet joined. Returning from `main` would end them
-/// midway, with the row already gone and nothing to say the worktree survived.
-static REMOVALS: Mutex<Vec<std::thread::JoinHandle<()>>> = Mutex::new(Vec::new());
-
-/// Wait for every requested removal, once skim has released the terminal.
-fn join_removals() {
-    let removals = std::mem::take(&mut *REMOVALS.lock().unwrap());
-    if removals.iter().any(|removal| !removal.is_finished()) {
-        eprintln!("{}", progress_message("Finishing worktree removal..."));
-    }
-    for removal in removals {
-        let _ = removal.join();
-    }
+    let project_config = repo.load_project_config()?;
+    let commands = project_config
+        .as_ref()
+        .map(collect_approvable_commands)
+        .unwrap_or_default();
+        // `clear --stale` refuses to run without a project config (see
+        // `clear_approvals`), so only suggest it where it can succeed.
+        if project_config.is_some() {
+            writeln!(
+                out,
+                "{}",
+                hint_message(cformat!(
+                    "To clear stale approvals, run <underline>wt config approvals clear --stale</>"
+                ))
+            )?;
+        }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-use worktrunk::styling::{eprintln, error_message, hint_message, info_message, warning_message};
-    // Not everything running here is discardable — an `alt-x` removal is
-    // dispatched to its own thread and can still be mid-`git worktree remove`
-    // if the user pressed Enter straight after. Removal threads are spawned
-    // through `spawn_removal`, which marks them `uninterruptible` and lets
-    // them run to completion; this reaches only speculative work.
-    let _ = std::thread::Builder::new()
-        .spawn(move || worktrunk::shell_exec::uninterruptible(work));
+    let commands = match repo.load_project_config()? {
+        Some(cfg) => collect_approvable_commands(&cfg),
+        None => Vec::new(),
+    };
+        writeln!(
+            out,
+            "{}",
+            hint_message(cformat!(
+                "To clear stale approvals, run <underline>wt config approvals clear --stale</>"
+            ))
+        )?;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `76f6952f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7c94fe65` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

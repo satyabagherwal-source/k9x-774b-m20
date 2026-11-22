@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T20:09:11.826Z",
+  "last_updated": "2026-11-22T20:17:14.579Z",
   "total_verified_learnings": 9074,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23749,
+  "total_items": 23757,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112906,9 +112906,9 @@
       "title": "Research & Knowledge Intelligence: HemmingwayAI/Hemmingway-1 Core Invariants",
       "repository": "HemmingwayAI/Hemmingway-1",
       "source_version": "hf-altworld-hemmingway-1",
-      "content_hash": "fd5b4179c94c1da9683e1ef0dfd0e2f642c4bb3b56d7bcfd575bc1d71d5ab990",
+      "content_hash": "57cb35defafee8f9a7f971d22331e0f55289b5dc4e705ddddabfb08a006b2328",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T13:34:10.855Z"
+      "persisted_at": "2026-11-22T20:16:53.183Z"
     },
     "candidate_directive-full-screen-s-plan-and-step-file-the-live-loopback-gate-s-result": {
       "item_id": "candidate_directive-full-screen-s-plan-and-step-file-the-live-loopback-gate-s-result",
@@ -113038,9 +113038,9 @@
       "title": "Research & Knowledge Intelligence: hf-altworld-hemmingway-1-learnings Core Invariants",
       "repository": "hf-altworld-hemmingway-1-learnings",
       "source_version": "HEAD",
-      "content_hash": "894d36b8c4b581e84fb7519504067f99383371b4f36ee9aa9733ff614e9fd391",
+      "content_hash": "ec47574dc26fcd99f78df0420aef41f0e652e11edbbf67bd77073e33e3ea5c2e",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T13:34:26.568Z"
+      "persisted_at": "2026-11-22T20:17:13.787Z"
     },
     "domain_intelligence-quality-verification-intelligence-saffsanity-sill-learnings-core-invariants": {
       "item_id": "domain_intelligence-quality-verification-intelligence-saffsanity-sill-learnings-core-invariants",
@@ -113541,10 +113541,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-volcengine-openviking-technical-construction-intelligence-volcengine-openviking-.md",
       "title": "Technical Construction Intelligence: volcengine/OpenViking Core Invariants",
       "repository": "volcengine/OpenViking",
-      "source_version": "1efb03a3",
-      "content_hash": "a211dbc144271af518f952b7e439eb2d9482d500132d33638a11705edb8e9368",
+      "source_version": "e6dc9714",
+      "content_hash": "3c54492a72ad37f30898f0decf0bc5f0011a19ba919a58d00e63c9353b1a7437",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T20:10:56.643Z"
+      "persisted_at": "2026-11-22T20:17:06.795Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-volcengine-openviking": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-volcengine-openviking",
@@ -113553,10 +113553,10 @@
       "relative_path": "08_VERIFICATION/volcengine-openviking-verification-protocol-empirical-defect-shield-for-volcengi.md",
       "title": "Verification Protocol: Empirical Defect Shield for volcengine/OpenViking",
       "repository": "volcengine/OpenViking",
-      "source_version": "1efb03a3",
-      "content_hash": "4f3489b79fcc3f882b15447b95c8acc4b0dbcac1616e6b4c88a350807d3f70f6",
+      "source_version": "e6dc9714",
+      "content_hash": "a9e0ec44198708f2cf9452297c665353cdc50a1c5014b49423954034bd399186",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T20:10:56.853Z"
+      "persisted_at": "2026-11-22T20:17:06.964Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-qwen-image-2-1-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-qwen-image-2-1-learnings-core-invar",
@@ -229704,8 +229704,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "fe38c7a5",
-      "content_hash": "8cfaba65bd1f624a0c1156d23ea15c23fec98332fe7b9ac67967b66990106aa2",
+      "source_version": "e0086dfb",
+      "content_hash": "82c32f3c28e51c2c38f78a6c397850c19b0117d40919977867abd39315b0e716",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -229938,6 +229938,11 @@
           "number": 9971,
           "title": "Draft NUC 134 Ruby Collection Method Aliases",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9987,
+          "title": "Draft NUC 135 Kotlin Negated Membership Operator",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -229945,7 +229950,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T19:43:27.001Z",
+      "verified_at": "2026-11-22T20:17:09.267Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -229987,10 +229992,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "4c1f0dba",
-      "content_hash": "96eefcd210231c96e7b573b2bc73dc85c92dc7331653191fd6e38d297d810024",
+      "source_version": "e0086dfb",
+      "content_hash": "8ca43bc58b564541fbdf297c953e32a35af9bad077d90d3846cc1ec2e4c216f2",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T18:21:34.504Z"
+      "persisted_at": "2026-11-22T20:17:09.852Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid",
@@ -229999,10 +230004,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "fe38c7a5",
-      "content_hash": "697b6810ff4f36eacaf4a147b7253688c897126f7cfa4b7520e7421f500a0679",
+      "source_version": "e0086dfb",
+      "content_hash": "d2ec3643ea6ef8f2bd5293be6a37ed97986437eb792285b5477a743c7fd46857",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T19:43:28.118Z"
+      "persisted_at": "2026-11-22T20:17:10.019Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -238753,8 +238758,8 @@
       "slug": "max-sixty-worktrunk",
       "platform": "github",
       "source_url": "https://github.com/max-sixty/worktrunk",
-      "source_version": "ad139302",
-      "content_hash": "bb2fe2c44e137dfc6918b19a1efa32fd74b7784fd7cc69677c2548765dbdd632",
+      "source_version": "5a427391",
+      "content_hash": "6458bf61ed5c1383cd133a3faca0c4de21753524945136657adae806bcb79b21",
       "dossier_path": "07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
       "promoted_rules": [
@@ -238787,6 +238792,11 @@
           "number": 9769,
           "title": "refuse removing a worktree that contains another, and finish picker removals bef",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9985,
+          "title": "don't suggest clear --stale when there is no project config",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -238794,7 +238804,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T11:16:31.416Z",
+      "verified_at": "2026-11-22T20:16:54.175Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -238836,10 +238846,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-max-sixty-worktrunk-research-knowledge-intelligence-max-sixty-worktrunk-core-inv.md",
       "title": "Research & Knowledge Intelligence: max-sixty/worktrunk Core Invariants",
       "repository": "max-sixty/worktrunk",
-      "source_version": "ad139302",
-      "content_hash": "601c350356f5357183392b56a6c076ca36b88b150cb1bc87d45c2bb46dd604b7",
+      "source_version": "5a427391",
+      "content_hash": "4d1d9578b211ff89098d8d4ac453fe7b9b99c7e504c247482953eb1d2e5e3fdc",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T11:16:31.994Z"
+      "persisted_at": "2026-11-22T20:16:54.774Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-max-sixty-worktrunk": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-max-sixty-worktrunk",
@@ -238848,10 +238858,10 @@
       "relative_path": "08_VERIFICATION/max-sixty-worktrunk-verification-protocol-empirical-defect-shield-for-max-sixty-.md",
       "title": "Verification Protocol: Empirical Defect Shield for max-sixty/worktrunk",
       "repository": "max-sixty/worktrunk",
-      "source_version": "ad139302",
-      "content_hash": "1bd3835320506ac5adcce9e5ed567e7e63d7f47f3d635272bdff696d7b03ad4f",
+      "source_version": "5a427391",
+      "content_hash": "91fedeb4da2b3d8f42c2bff3b95b54ccadc135f5057321bfc73cf9eb57b74a61",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T11:16:32.151Z"
+      "persisted_at": "2026-11-22T20:16:54.940Z"
     },
     "candidate_directive-state-stop-a-branch-s-vars-from-including-a-dotted-branch-s-vars": {
       "item_id": "candidate_directive-state-stop-a-branch-s-vars-from-including-a-dotted-branch-s-vars",
@@ -238873,9 +238883,9 @@
       "title": "Research & Knowledge Intelligence: max-sixty-worktrunk-learnings Core Invariants",
       "repository": "max-sixty-worktrunk-learnings",
       "source_version": "HEAD",
-      "content_hash": "f522155eba8957338190ea3a7445c8e419dff41df861944177d4c3c8b2c9e4ca",
+      "content_hash": "781034dd48013818de942790c232b8dbec37d170f6334e36228b753d189362ab",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T11:16:51.203Z"
+      "persisted_at": "2026-11-22T20:17:13.292Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-max-sixty-worktrunk-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-max-sixty-worktrunk-learnings",
@@ -238885,9 +238895,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for max-sixty-worktrunk-learnings",
       "repository": "max-sixty-worktrunk-learnings",
       "source_version": "HEAD",
-      "content_hash": "48d5c73ce7953e9ebe75c40bfb6016cd7ac22c2f0ab48bcb9d0f90dc017fa65d",
+      "content_hash": "d6027ccaa9998b08ac8c7eb7a21a02425a85c613d0b905e943f67063779d5e2f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T11:16:51.385Z"
+      "persisted_at": "2026-11-22T20:17:13.448Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-microsoft-frognano-4b-2609-learnings-core-inv": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-microsoft-frognano-4b-2609-learnings-core-inv",
@@ -241024,8 +241034,8 @@
       "slug": "volcengine-openviking",
       "platform": "github",
       "source_url": "https://github.com/volcengine/OpenViking",
-      "source_version": "1efb03a3",
-      "content_hash": "cc047c904745f51d1536fc057b13c4b5aeb9932c16998d2f74db04acba808c9a",
+      "source_version": "e6dc9714",
+      "content_hash": "daa3c3843550a679dc6d2432d40e14a332ea6c772bf4d277eb64e333c9636db8",
       "dossier_path": "07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
       "promoted_rules": [
@@ -241060,7 +241070,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T20:10:55.911Z",
+      "verified_at": "2026-11-22T20:17:06.213Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -248835,8 +248845,8 @@
       "slug": "tableproapp-tablepro",
       "platform": "github",
       "source_url": "https://github.com/TableProApp/TablePro",
-      "source_version": "0b0c7243",
-      "content_hash": "792d8525e75b9f28bd89bdccbdb9c429528986a5ac57495178f8dc3f8772f963",
+      "source_version": "2507448a",
+      "content_hash": "c9d24a114bf34c67a6d3133641afcf40a149dd091222807a276ae77c0a164f97",
       "dossier_path": "07_PROJECT_LEARNING/tableproapp-tablepro-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tableproapp-tablepro-learnings.md",
       "promoted_rules": [
@@ -248849,6 +248859,11 @@
           "number": 9436,
           "title": "run DuckDB's tasks on 8 MiB threads so a deep ATTACH cannot overflow",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9986,
+          "title": "build(release): ship per-arch builds and a per-arch appcast",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -248856,7 +248871,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T20:24:20.522Z",
+      "verified_at": "2026-11-22T20:16:59.557Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -248898,10 +248913,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tableproapp-tablepro-architecture-intelligence-tableproapp-tablepro-core-invaria.md",
       "title": "Architecture Intelligence: TableProApp/TablePro Core Invariants",
       "repository": "TableProApp/TablePro",
-      "source_version": "e3ca8837",
-      "content_hash": "43d829fdab21f0e837c8789850f6a785db2463babd2f7d56534ebadc84c29078",
+      "source_version": "2507448a",
+      "content_hash": "66c979fd905bfc245d0466864390c6ba67f804b0bee1c5dacbc1eecf1263c1f5",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T16:07:08.049Z"
+      "persisted_at": "2026-11-22T20:17:00.094Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tableproapp-tablepro": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tableproapp-tablepro",
@@ -248910,10 +248925,10 @@
       "relative_path": "08_VERIFICATION/tableproapp-tablepro-verification-protocol-empirical-defect-shield-for-tableproa.md",
       "title": "Verification Protocol: Empirical Defect Shield for TableProApp/TablePro",
       "repository": "TableProApp/TablePro",
-      "source_version": "0b0c7243",
-      "content_hash": "370b7d4be499f5c65bc520129a0b70a0a6a408a46b234e235443351a1debf59f",
+      "source_version": "2507448a",
+      "content_hash": "8ddbe5342cba15ee07c462af4ff1f6ad0755c1e92663ea4c3deba38b0b01c229",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T20:24:21.222Z"
+      "persisted_at": "2026-11-22T20:17:00.243Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf-lea": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf-lea",
@@ -248947,9 +248962,9 @@
       "title": "Architecture Intelligence: tableproapp-tablepro-learnings Core Invariants",
       "repository": "tableproapp-tablepro-learnings",
       "source_version": "HEAD",
-      "content_hash": "dec10081debb595590760738be49a3eb5bc80f2a2a01c5b96199daee4d08b1b2",
+      "content_hash": "5159d47769106420fc40ce3f2e1e372da00792a4414043b5a2294c4eb6f65944",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T16:07:38.153Z"
+      "persisted_at": "2026-11-22T20:17:14.423Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tableproapp-tablepro-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tableproapp-tablepro-learnings",
@@ -248959,9 +248974,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tableproapp-tablepro-learnings",
       "repository": "tableproapp-tablepro-learnings",
       "source_version": "HEAD",
-      "content_hash": "1b61066e683d36deb0c55391219918c7b7b1c19a6e60a09958e82b4d4519f635",
+      "content_hash": "10c00037b99dfd6a87a6d7eec09faf20ad7fc246703d7b9d805467dd1c662d7b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T20:34:30.925Z"
+      "persisted_at": "2026-11-22T20:17:14.579Z"
     },
     "learn-github-jarvis322-macos-sysdata": {
       "learning_id": "learn-github-jarvis322-macos-sysdata",
@@ -284323,7 +284338,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
       "source_version": "hf-altworld-hemmingway-1",
-      "content_hash": "390893a460e02b6ff744bd5a3705990d4245f20ece55cd6db8a3b5a2b77b8045",
+      "content_hash": "6fcb9e01cb5887a492a9d0afe175bde1b05cc2a4e6c4408a0351da76d5246b49",
       "dossier_path": "07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md",
       "promoted_rules": [],
@@ -284332,7 +284347,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T13:34:10.462Z",
+      "verified_at": "2026-11-22T20:16:52.775Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -323265,6 +323280,108 @@
       "content_hash": "9085a755b524def1af84e5513b7efa1d469cd898002b5c8b1bf68c3678bb3442",
       "domain_letter": "K",
       "persisted_at": "2026-11-22T20:09:09.614Z"
+    },
+    "rule-9985": {
+      "learning_id": "rule-9985",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9985,
+      "title": "don't suggest clear --stale when there is no project config",
+      "source_url": "https://github.com/max-sixty/worktrunk",
+      "source_version": "5a427391",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T20:16:54.175Z"
+    },
+    "candidate_directive-don-t-suggest-clear-stale-when-there-is-no-project-config": {
+      "item_id": "candidate_directive-don-t-suggest-clear-stale-when-there-is-no-project-config",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-2L3M-don-t-suggest-clear-stale-when-there-is-no-project-config.md",
+      "title": "don't suggest clear --stale when there is no project config",
+      "repository": "max-sixty/worktrunk",
+      "source_version": "5a427391",
+      "content_hash": "ca323212322711bc15ada34d3b61edf8494cec0622656f59874a6c99b4a114ca",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-22T20:16:54.613Z"
+    },
+    "rule-9986": {
+      "learning_id": "rule-9986",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9986,
+      "title": "build(release): ship per-arch builds and a per-arch appcast",
+      "source_url": "https://github.com/TableProApp/TablePro",
+      "source_version": "2507448a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T20:16:59.557Z"
+    },
+    "candidate_directive-build-release-ship-per-arch-builds-and-a-per-arch-appcast": {
+      "item_id": "candidate_directive-build-release-ship-per-arch-builds-and-a-per-arch-appcast",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-309N-build-release-ship-per-arch-builds-and-a-per-arch-appcast.md",
+      "title": "build(release): ship per-arch builds and a per-arch appcast",
+      "repository": "tableproapp-tablepro-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3af8b644669f6af6f0d88b0c312fab84223c6edd410d5bf1c88b6f0d32517244",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-22T20:17:14.270Z"
+    },
+    "candidate_directive-load-deep-link-previews-alongside-the-tree": {
+      "item_id": "candidate_directive-load-deep-link-previews-alongside-the-tree",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-2UDR-load-deep-link-previews-alongside-the-tree.md",
+      "title": "load deep-link previews alongside the tree",
+      "repository": "volcengine/OpenViking",
+      "source_version": "e6dc9714",
+      "content_hash": "40f20b93f6d1ffa873db60064b6de099682b4dd1b7c178236ef5d3ac7238f3b7",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T20:17:06.642Z"
+    },
+    "rule-9987": {
+      "learning_id": "rule-9987",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9987,
+      "title": "Draft NUC 135 Kotlin Negated Membership Operator",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "e0086dfb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T20:17:09.267Z"
+    },
+    "candidate_directive-draft-nuc-135-kotlin-negated-membership-operator": {
+      "item_id": "candidate_directive-draft-nuc-135-kotlin-negated-membership-operator",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-2WQH-draft-nuc-135-kotlin-negated-membership-operator.md",
+      "title": "Draft NUC 135 Kotlin Negated Membership Operator",
+      "repository": "NucleoidAI/Nucleoid",
+      "source_version": "e0086dfb",
+      "content_hash": "cb7c815ee896c27f56ada8cc15314e371ac92f5110301d9091365b236c982d3e",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-22T20:17:09.690Z"
+    },
+    "candidate_directive-approvals-don-t-suggest-clear-stale-when-there-is-no-project-config": {
+      "item_id": "candidate_directive-approvals-don-t-suggest-clear-stale-when-there-is-no-project-config",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-2ZE0-approvals-don-t-suggest-clear-stale-when-there-is-no-project-config.md",
+      "title": "approvals): don't suggest clear --stale when there is no project config",
+      "repository": "max-sixty-worktrunk-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7658e5213ce8a5f69597445ce46cbdd81a37294665ee9cf8ad8a4dd1904e11c1",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-22T20:17:13.131Z"
     }
   },
   "ai-builder-brain": {
