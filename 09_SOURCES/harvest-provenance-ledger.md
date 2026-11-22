@@ -12133,3 +12133,5 @@ Every entry in this ledger must capture:
 | `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `4ce60f1a` | Multi-dimensional audit evidence | 2026-11-22T14:40:45.607Z |
 | `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `5f59f4a1` | Multi-dimensional audit evidence | 2026-11-22T14:40:47.893Z |
 | `learn-huggingface-harness-hub-qwen3-8-27b-pi-adapted` | `https://huggingface.co/harness-hub/Qwen3.8-27B-pi-adapted` | `hf-harness` | Multi-dimensional audit evidence | 2026-11-22T14:45:34.926Z |
+| `learn-github-oxc-project-oxc` | `https://github.com/oxc-project/oxc` | `f9e90dec` | Multi-dimensional audit evidence | 2026-11-22T14:56:19.541Z |
+| `learn-huggingface-apple-fastframes-l` | `https://huggingface.co/apple/FastFrames-L` | `hf-apple-f` | Multi-dimensional audit evidence | 2026-11-22T15:01:13.745Z |

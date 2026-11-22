@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T14:45:34.931Z",
-  "total_cycles_completed": 11505,
-  "total_learnings_persisted": 11505,
-  "total_rules_promoted": 10752,
+  "last_updated": "2026-11-22T15:01:13.753Z",
+  "total_cycles_completed": 11507,
+  "total_learnings_persisted": 11507,
+  "total_rules_promoted": 10753,
   "history": [
-    {
-      "timestamp": "2026-11-21T19:32:19.297Z",
-      "repository": "prithivMLmods/Gender-Classifier-Mini",
-      "learningId": "learn-huggingface-prithivmlmods-gender-classifier-mini",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T19:44:56.553Z",
-      "repository": "pingcap/tidb",
-      "learningId": "learn-github-pingcap-tidb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T19:47:26.757Z",
       "repository": "openbmb/MiniCPM-OCR-1.0",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-22T14:45:34.931Z",
       "repository": "harness-hub/Qwen3.8-27B-pi-adapted",
       "learningId": "learn-huggingface-harness-hub-qwen3-8-27b-pi-adapted",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T14:56:19.548Z",
+      "repository": "oxc-project/oxc",
+      "learningId": "learn-github-oxc-project-oxc",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T15:01:13.753Z",
+      "repository": "apple/FastFrames-L",
+      "learningId": "learn-huggingface-apple-fastframes-l",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

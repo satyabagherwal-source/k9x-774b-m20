@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261120-BBED",
-    "timestamp": "2026-11-20T13:48:26.869Z",
-    "repository": "Open-Source-Legal/OpenContracts",
-    "learningId": "learn-github-open-source-legal-opencontracts",
-    "contentHash": "2f67dd81d46d48d5488c3a492ad4aee658186d9d857da7faecf60267b6527665",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-VKKN",
-    "timestamp": "2026-11-20T14:04:11.879Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "330a3b21ce5abbdbf4094c91795e53b83d98b881c10344721157157b0d4bf0b5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261120-ZT5S",
     "timestamp": "2026-11-20T14:07:29.632Z",
     "repository": "Sentinel7/h3",
@@ -7490,6 +7460,36 @@
     "repository": "harness-hub/Qwen3.8-27B-pi-adapted",
     "learningId": "learn-huggingface-harness-hub-qwen3-8-27b-pi-adapted",
     "contentHash": "7ded80e004fe294f6371c72d554f948ad957f31c56dda61f8d60825b9074748b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-MB7Z",
+    "timestamp": "2026-11-22T14:56:19.535Z",
+    "repository": "oxc-project/oxc",
+    "learningId": "learn-github-oxc-project-oxc",
+    "contentHash": "92ad7b55934638591571f8fa54b669dab12fc21dda1cfdc81dc11d73df50d7c7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-SM8B",
+    "timestamp": "2026-11-22T15:01:13.739Z",
+    "repository": "apple/FastFrames-L",
+    "learningId": "learn-huggingface-apple-fastframes-l",
+    "contentHash": "6afa59671dbef263914e01b42be9846d2e7b17af747763cca85cd40373ecf66b",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

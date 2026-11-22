@@ -12100,3 +12100,5 @@
 | `CYCLE-20261122-2ALF` | `2026-11-22T14:40:45.603Z` | `rustls/rustls` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9936` | Yes (`61946723...`) |
 | `CYCLE-20261122-2CCX` | `2026-11-22T14:40:47.889Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9937` | Yes (`6d8d652b...`) |
 | `CYCLE-20261122-8HU2` | `2026-11-22T14:45:34.922Z` | `harness-hub/Qwen3.8-27B-pi-adapted` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-harness-hub-qwen3.8-27b-pi-adapted-learnings.md` | Yes (`7ded80e0...`) |
+| `CYCLE-20261122-MB7Z` | `2026-11-22T14:56:19.535Z` | `oxc-project/oxc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9938` | Yes (`92ad7b55...`) |
+| `CYCLE-20261122-SM8B` | `2026-11-22T15:01:13.739Z` | `apple/FastFrames-L` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-apple-fastframes-l-learnings.md` | Yes (`6afa5967...`) |

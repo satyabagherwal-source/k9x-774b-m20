@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T14:45:40.283Z",
+  "last_updated": "2026-11-22T15:01:20.356Z",
   "total_verified_learnings": 9071,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23597,
+  "total_items": 23600,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "31ea91588a4124f38a44e081b86bdb531850d594e6e31453bfa4af9a60cb65d0",
+      "content_hash": "b49ada535a629dc591808705a14fd1c9df1278565325129b675b092bfcdb7de5",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T13:20:38.882Z"
+      "persisted_at": "2026-11-22T15:01:20.111Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "4e06e61e1271ebdf2024d062ec4e01a8772cac707033996ed2a11c6550268918",
+      "content_hash": "d19b5a2d903b89ae66dce9d2505aaa335e481659864d76b2d6340e1ae6739c72",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T13:20:39.103Z"
+      "persisted_at": "2026-11-22T15:01:20.356Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -232933,8 +232933,8 @@
       "slug": "oxc-project-oxc",
       "platform": "github",
       "source_url": "https://github.com/oxc-project/oxc",
-      "source_version": "209f078b",
-      "content_hash": "146a2101958332d2e3b2372c02d29689b6bd69fe60dcb5396ba6e3b965eeacf6",
+      "source_version": "f9e90dec",
+      "content_hash": "92ad7b55934638591571f8fa54b669dab12fc21dda1cfdc81dc11d73df50d7c7",
       "dossier_path": "07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
       "promoted_rules": [
@@ -232962,6 +232962,11 @@
           "number": 9696,
           "title": "keep correct keys on leftover fields with setPublicClassFields",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9938,
+          "title": "keep TypeScript assign semantics for preserved classes",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -232969,7 +232974,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T02:00:32.537Z",
+      "verified_at": "2026-11-22T14:56:19.247Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -233023,10 +233028,10 @@
       "relative_path": "08_VERIFICATION/oxc-project-oxc-verification-protocol-empirical-defect-shield-for-oxc-project-ox.md",
       "title": "Verification Protocol: Empirical Defect Shield for oxc-project/oxc",
       "repository": "oxc-project/oxc",
-      "source_version": "209f078b",
-      "content_hash": "049603d323f6bf62956f77a895d0310add3108be38053a9874c440ac10d66680",
+      "source_version": "f9e90dec",
+      "content_hash": "ac971d5472195a8bb2dbb73675a34cb53b3d369f25fa3a2fd1cbae87bb3e40cc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T02:00:33.609Z"
+      "persisted_at": "2026-11-22T14:56:20.330Z"
     },
     "learn-github-agent-field-agentfield": {
       "learning_id": "learn-github-agent-field-agentfield",
@@ -233301,9 +233306,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for oxc-project-oxc-learnings",
       "repository": "oxc-project-oxc-learnings",
       "source_version": "HEAD",
-      "content_hash": "0163423624d8b8403a57929b72f7a00648e4c047507aa3ee4315053f7b7449d7",
+      "content_hash": "d34fcc9db8588c1f6ecaffbe19e67ed6d7d6a80aa0a2dd2b401c1ebee11e402f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T02:00:43.092Z"
+      "persisted_at": "2026-11-22T15:01:18.738Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-zai-org-glm-5-3-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-zai-org-glm-5-3-learnings-core-invariants",
@@ -257249,10 +257254,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-oxc-project-oxc-technical-construction-intelligence-oxc-project-oxc-core-invaria.md",
       "title": "Technical Construction Intelligence: oxc-project/oxc Core Invariants",
       "repository": "oxc-project/oxc",
-      "source_version": "209f078b",
-      "content_hash": "01c6fc0f1d74b7c3a7d308abbc1b8b9fa9a3f2c5f87239236f4d40bfbbfe109a",
+      "source_version": "f9e90dec",
+      "content_hash": "08757e713148bde6ef94fa47f07241244de11c49453b55cc88521ee8cbc46eef",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T02:00:33.357Z"
+      "persisted_at": "2026-11-22T14:56:20.090Z"
     },
     "domain_intelligence-technical-construction-intelligence-oxc-project-oxc-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-oxc-project-oxc-learnings-core-invariants",
@@ -257262,9 +257267,9 @@
       "title": "Technical Construction Intelligence: oxc-project-oxc-learnings Core Invariants",
       "repository": "oxc-project-oxc-learnings",
       "source_version": "HEAD",
-      "content_hash": "1988e4209dd092699a0f8a2d7c24d8b4c12ec78840dda137de6ad7d7210c3401",
+      "content_hash": "6092e21e9e0aa2bce3d19c4925c438832b095ee60cedbed7aafd32dbf3a60ebd",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T02:00:42.852Z"
+      "persisted_at": "2026-11-22T15:01:18.504Z"
     },
     "rule-8727": {
       "learning_id": "rule-8727",
@@ -284516,7 +284521,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/apple/FastFrames-L",
       "source_version": "hf-apple-fastframes-l",
-      "content_hash": "3d12a966d3be4e37b46954ed1eb190d33fd3395ef4dcf90bc1241484fda64250",
+      "content_hash": "6afa59671dbef263914e01b42be9846d2e7b17af747763cca85cd40373ecf66b",
       "dossier_path": "07_PROJECT_LEARNING/hf-apple-fastframes-l-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-apple-fastframes-l-learnings.md",
       "promoted_rules": [],
@@ -284525,7 +284530,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T04:20:38.714Z",
+      "verified_at": "2026-11-22T15:01:13.408Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -284542,9 +284547,9 @@
       "title": "Research & Knowledge Intelligence: apple/FastFrames-L Core Invariants",
       "repository": "apple/FastFrames-L",
       "source_version": "hf-apple-fastframes-l",
-      "content_hash": "50e6f0b37594dac898606ccf4b19613bf277135abac7514a8f1aee0f3dfbe2f2",
+      "content_hash": "318ac172816be3c2b7b621e7e0186afca62c427b5581be597aceb49349f1c388",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T04:20:39.047Z"
+      "persisted_at": "2026-11-22T15:01:14.026Z"
     },
     "learn-huggingface-comfy-org-qwen-image-2-1": {
       "learning_id": "learn-huggingface-comfy-org-qwen-image-2-1",
@@ -284659,9 +284664,9 @@
       "title": "Research & Knowledge Intelligence: hf-apple-fastframes-l-learnings Core Invariants",
       "repository": "hf-apple-fastframes-l-learnings",
       "source_version": "HEAD",
-      "content_hash": "267b50017c898e020fded27bb27b6cc5f8cfe8d3ca559f4a6d2555d5a3207286",
+      "content_hash": "ce892b88f297db76e8b9fdf82b3595ca1ec70f8dbbc13579c86ba84851d76660",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T04:21:21.643Z"
+      "persisted_at": "2026-11-22T15:01:19.237Z"
     },
     "candidate_directive-eventbus-add-clientadvertise-to-the-jetstream-eventbus": {
       "item_id": "candidate_directive-eventbus-add-clientadvertise-to-the-jetstream-eventbus",
@@ -318403,13 +318408,13 @@
       "item_id": "candidate_directive-test-collab-write-trust-fixtures-with-explicit-0644-permissions",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-79J8-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-SQYK-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "f5d6683ddfac4aad8f9a3b5fcf512a401a7d9a6c5f19e240198a8679dbc13b8c",
+      "content_hash": "42de8945178b6b271fcab1f6835b57633d0b241e21eec54c3fac007353257545",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T13:20:38.666Z"
+      "persisted_at": "2026-11-22T15:01:19.872Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants",
@@ -321064,6 +321069,44 @@
       "content_hash": "21adaa62dcef49d21596d3c77ea1ff4489418c2a9b88bf84fd763402e8cfa6fd",
       "domain_letter": "I",
       "persisted_at": "2026-11-22T14:45:39.967Z"
+    },
+    "rule-9938": {
+      "learning_id": "rule-9938",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9938,
+      "title": "keep TypeScript assign semantics for preserved classes",
+      "source_url": "https://github.com/oxc-project/oxc",
+      "source_version": "f9e90dec",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T14:56:19.247Z"
+    },
+    "candidate_directive-keep-typescript-assign-semantics-for-preserved-classes": {
+      "item_id": "candidate_directive-keep-typescript-assign-semantics-for-preserved-classes",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MBGO-keep-typescript-assign-semantics-for-preserved-classes.md",
+      "title": "keep TypeScript assign semantics for preserved classes",
+      "repository": "oxc-project/oxc",
+      "source_version": "f9e90dec",
+      "content_hash": "d65fd0af3202a378b643f6a4e5159be9604a243cd677a2d6f54ff01c00268895",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T14:56:19.853Z"
+    },
+    "candidate_directive-transformer-keep-typescript-assign-semantics-for-preserved-classes": {
+      "item_id": "candidate_directive-transformer-keep-typescript-assign-semantics-for-preserved-classes",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-SPPU-transformer-keep-typescript-assign-semantics-for-preserved-classes.md",
+      "title": "transformer): keep TypeScript assign semantics for preserved classes",
+      "repository": "oxc-project-oxc-learnings",
+      "source_version": "HEAD",
+      "content_hash": "40671b392cafa623de16a86557444b36ca133e03e9f8afe36fc3e36bcb3b4766",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T15:01:18.263Z"
     }
   },
   "ai-builder-brain": {

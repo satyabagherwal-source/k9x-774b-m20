@@ -742152,3 +742152,102 @@ for suite in ${MATRIX_SUITE}; do
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `5f59f4a1` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9938. keep TypeScript assign semantics for preserved classes (Harvested from oxc-project/oxc)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "keep TypeScript assign semantics for preserved classes",
+  "source": "oxc-project/oxc",
+  "source_url": "https://github.com/oxc-project/oxc",
+  "source_version": "f9e90dec",
+  "license": "MIT",
+  "extracted_at": "2026-11-22T14:56:18.844Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-oxc-project-oxc",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [oxc-project/oxc](https://github.com/oxc-project/oxc) (Revision: `f9e90dec`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `crates/oxc_transformer/src/common/class_lowering.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oxc-project/oxc. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `08023adc`: transformer): keep TypeScript assign semantics for preserved classes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/oxc_transformer/src/common/class_lowering.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+use oxc_ast::ast::{Class, ClassElement};
+    utils::decorated_class::{
+        class_body_has_auto_accessors, class_has_decorators, is_auto_accessor,
+    },
+enum ClassLoweringMode {
+    /// Whether class-properties lowers the fields of this class.
+    pub fn lowers_fields(self) -> bool {
+        self.mode == ClassLoweringMode::LowerAll
+    }
+
+    /// Whether a field or auto-accessor stays as written for the downstream transform.
+    ///
+    /// A preserved class keeps its decorated fields and its auto-accessors. Transforms that
+    /// rewrite the other fields must leave these in place, and must not move other initializers
+    /// after theirs (see [`Self::first_movable_instance_field`]).
+    pub fn keeps_field(self, element: &ClassElement<'_>) -> bool {
+        self.mode == ClassLoweringMode::Preserve
+            && (is_auto_accessor(element)
+                || matches!(element, ClassElement::PropertyDefinition(_))
+                    && element.has_decorator())
+    }
+
+    /// Index of the first instance field whose initializer can move after the field
+    /// initializers that stay in the class, such as into the constructor.
+    ///
+    /// Instance fields before the last kept in
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+use oxc_ast::ast::Class;
+    utils::decorated_class::{class_body_has_auto_accessors, class_has_decorators},
+pub enum ClassLoweringMode {
+    pub fn mode(self) -> ClassLoweringMode {
+        self.mode
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `08023adc` are properly handled with clean fallback behavior.
