@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T15:42:43.074Z",
+  "last_updated": "2026-11-22T15:59:05.611Z",
   "total_verified_learnings": 9071,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23621,
+  "total_items": 23636,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "589fc4d41fa00aa11d403ad1291ad8fc6a8a7b256fee17464d055add429c938c",
+      "content_hash": "a120d57295af2a7c4bdfc58a9652948ebb8d6c32971edbdf1c8d1ec0fed3b139",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T12:19:32.764Z"
+      "persisted_at": "2026-11-22T15:59:05.203Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "8aa6292f172a4b1bff93a8307c17178be91ba12537bef7c3a3c017188f822fb5",
+      "content_hash": "4ce1c2d35fa7a0e3baa531651652d6d4115f7c5209a83d1611a659bc6d623de5",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T12:19:32.926Z"
+      "persisted_at": "2026-11-22T15:59:05.430Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "d916f1f587cf3d694db468e70a64c676a498844e7f637aeb25c670ef770b4d7a",
+      "content_hash": "5290c2c40990b0a94b0c714cb4debbbde9eec72c9b6f953b8da66fd65d7b2aaa",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T12:19:33.060Z"
+      "persisted_at": "2026-11-22T15:59:05.611Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -233872,8 +233872,8 @@
       "slug": "tokio-rs-tokio",
       "platform": "github",
       "source_url": "https://github.com/tokio-rs/tokio",
-      "source_version": "717c508f",
-      "content_hash": "5f7884f1c48fe1e312339ebd75f021bf0cb28b3995780d86715255e3650c5774",
+      "source_version": "675ba816",
+      "content_hash": "a5272a2235f450c8f80cd1c771912448a8d2d1ff017bbe56cf32ce9d1be438f1",
       "dossier_path": "07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md",
       "promoted_rules": [
@@ -233896,6 +233896,11 @@
           "number": 9705,
           "title": "Merge 'tokio-1.54.x' into 'master'",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9946,
+          "title": "update `lib.rs` docs to mention `wasm32-wasip3` support",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -233903,7 +233908,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T02:57:41.468Z",
+      "verified_at": "2026-11-22T15:55:52.889Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -233945,10 +233950,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tokio-rs-tokio-technical-construction-intelligence-tokio-rs-tokio-core-invariant.md",
       "title": "Technical Construction Intelligence: tokio-rs/tokio Core Invariants",
       "repository": "tokio-rs/tokio",
-      "source_version": "717c508f",
-      "content_hash": "6642803c08256624bf4f3bb77285a82e7e4a3f24a22ca06138df1864de456367",
+      "source_version": "675ba816",
+      "content_hash": "7b21876ec05abbf36c9b7f38ece6a92f67bdd99da5e753d4f2bb7418207edebc",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T02:57:42.037Z"
+      "persisted_at": "2026-11-22T15:55:53.685Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tokio-rs-tokio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tokio-rs-tokio",
@@ -233957,10 +233962,10 @@
       "relative_path": "08_VERIFICATION/tokio-rs-tokio-verification-protocol-empirical-defect-shield-for-tokio-rs-tokio.md",
       "title": "Verification Protocol: Empirical Defect Shield for tokio-rs/tokio",
       "repository": "tokio-rs/tokio",
-      "source_version": "717c508f",
-      "content_hash": "8276f81470f5fed1a1399fe7d92384e091a4cec41ddb174d5a7d93f578dd66a9",
+      "source_version": "675ba816",
+      "content_hash": "8ede386a2cd8d85db3700aef00916260c3f4fbd2bf006362d39421940469840e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T02:57:42.195Z"
+      "persisted_at": "2026-11-22T15:55:53.914Z"
     },
     "learn-github-starrocks-starrocks": {
       "learning_id": "learn-github-starrocks-starrocks",
@@ -234165,9 +234170,9 @@
       "title": "Technical Construction Intelligence: tokio-rs-tokio-learnings Core Invariants",
       "repository": "tokio-rs-tokio-learnings",
       "source_version": "HEAD",
-      "content_hash": "9bc13a30d2c20f42d824a050e454bc821f1bc5501df7ccf247f9c354a13f171f",
+      "content_hash": "5aef0c9fac4323a281c574ff0a7de96afd29cd21bb0c5b366fa81f396bfbaf28",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T02:57:53.888Z"
+      "persisted_at": "2026-11-22T15:59:02.297Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tokio-rs-tokio-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tokio-rs-tokio-learnings",
@@ -234177,9 +234182,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tokio-rs-tokio-learnings",
       "repository": "tokio-rs-tokio-learnings",
       "source_version": "HEAD",
-      "content_hash": "8956acb70b38b1a2c083834b60adbf199a6353c594299ea458ad1c3137ae60e3",
+      "content_hash": "671ffa91a698273273c2fcb686814e28b3061b5e0d9d8403dca22f00de9bf85b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T02:57:54.049Z"
+      "persisted_at": "2026-11-22T15:59:02.519Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-autotrust-jev-27b-vl-learnings-core-invariant": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-autotrust-jev-27b-vl-learnings-core-invariant",
@@ -280504,16 +280509,32 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/convaiinnovations/laya",
       "source_version": "hf-convaiinnovations-laya",
-      "content_hash": "36bb164c2f04b79e2b4d5e8a10dfcab0d46abce3ccc0ba4132dda83a27e34917",
+      "content_hash": "b896dc9713cda126bc410a4ca85032a781120d52977957da4fb578f4a70d817d",
       "dossier_path": "07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 9947,
+          "title": "Finite-Sample Risk-Bounded Conformal Abstention Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9948,
+          "title": "Strictly Proper Scoring Loss Invariant for Autonomous Calibration",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9949,
+          "title": "Out-of-Distribution Geometric Unbound Quarantine Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T09:28:25.992Z",
+      "verified_at": "2026-11-22T15:58:56.854Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -309662,13 +309683,13 @@
       "item_id": "candidate_directive-benchmarks-report-gold-coverage-across-retrieval-stages",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-0OS3-benchmarks-report-gold-coverage-across-retrieval-stages.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-V0NL-benchmarks-report-gold-coverage-across-retrieval-stages.md",
       "title": "benchmarks): report Gold coverage across retrieval stages",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "220589c0a7dc1217d8d2ceebd741c1fe6ed3bea7c1708ff771e4b4b8c7004d29",
+      "content_hash": "c8142cbe156f455882b8aafb7c4575120e2de063231cf4157f81847cb5cd20af",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T12:19:32.598Z"
+      "persisted_at": "2026-11-22T15:59:04.983Z"
     },
     "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it": {
       "item_id": "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it",
@@ -321409,6 +321430,194 @@
       "content_hash": "3c6f4117bbf2547f57b8159809f453413f0dad5d47c75fead860db75d5d8921c",
       "domain_letter": "K",
       "persisted_at": "2026-11-22T15:42:42.267Z"
+    },
+    "rule-9946": {
+      "learning_id": "rule-9946",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9946,
+      "title": "update `lib.rs` docs to mention `wasm32-wasip3` support",
+      "source_url": "https://github.com/tokio-rs/tokio",
+      "source_version": "675ba816",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T15:55:52.889Z"
+    },
+    "candidate_directive-update-lib-rs-docs-to-mention-wasm32-wasip3-support": {
+      "item_id": "candidate_directive-update-lib-rs-docs-to-mention-wasm32-wasip3-support",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-QWVG-update-lib-rs-docs-to-mention-wasm32-wasip3-support.md",
+      "title": "update `lib.rs` docs to mention `wasm32-wasip3` support",
+      "repository": "tokio-rs/tokio",
+      "source_version": "675ba816",
+      "content_hash": "832c1811ee3d210ecde32f9b94f5786932b6d641d96e83777be27c1a091bde64",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T15:55:53.458Z"
+    },
+    "rule-9947": {
+      "learning_id": "rule-9947",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9947,
+      "title": "Finite-Sample Risk-Bounded Conformal Abstention Invariant",
+      "source_url": "https://huggingface.co/convaiinnovations/laya",
+      "source_version": "hf-convaiinnovations-laya",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T15:58:56.854Z"
+    },
+    "rule-9948": {
+      "learning_id": "rule-9948",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9948,
+      "title": "Strictly Proper Scoring Loss Invariant for Autonomous Calibration",
+      "source_url": "https://huggingface.co/convaiinnovations/laya",
+      "source_version": "hf-convaiinnovations-laya",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T15:58:56.854Z"
+    },
+    "rule-9949": {
+      "learning_id": "rule-9949",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9949,
+      "title": "Out-of-Distribution Geometric Unbound Quarantine Invariant",
+      "source_url": "https://huggingface.co/convaiinnovations/laya",
+      "source_version": "hf-convaiinnovations-laya",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T15:58:56.854Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-convaiinnovations-laya-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-convaiinnovations-laya-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-hf-convaiinnovations-laya-quality-verification-intelligence-convaiinnovations-la.md",
+      "title": "Quality & Verification Intelligence: convaiinnovations/laya Core Invariants",
+      "repository": "convaiinnovations/laya",
+      "source_version": "hf-convaiinnovations-laya",
+      "content_hash": "27fd79969864441915f798da338e6224501a14e51d8ed2c075aa41238d060c60",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-22T15:58:57.746Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-convaiinnovations-laya": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-convaiinnovations-laya",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-hf-convaiinnovations-laya-adr-subsystem-boundary-modular-decoupling-in-convaiinn.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in convaiinnovations/laya",
+      "repository": "convaiinnovations/laya",
+      "source_version": "hf-convaiinnovations-laya",
+      "content_hash": "f466af27130c6fe3363437600b73d15e308ac94f323dd7653b962611ae51b3ab",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-22T15:58:57.977Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-convaiinnovations-laya": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-convaiinnovations-laya",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/hf-convaiinnovations-laya-verification-protocol-empirical-defect-shield-for-conv.md",
+      "title": "Verification Protocol: Empirical Defect Shield for convaiinnovations/laya",
+      "repository": "convaiinnovations/laya",
+      "source_version": "hf-convaiinnovations-laya",
+      "content_hash": "2ca8c2a716d0fa13ce4a76247092fed021e954f45068084e7cea1bf32635d6b1",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-22T15:58:58.173Z"
+    },
+    "candidate_directive-wasm-update-lib-rs-docs-to-mention-wasm32-wasip3-support": {
+      "item_id": "candidate_directive-wasm-update-lib-rs-docs-to-mention-wasm32-wasip3-support",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-UYEP-wasm-update-lib-rs-docs-to-mention-wasm32-wasip3-support.md",
+      "title": "wasm: update `lib.rs` docs to mention `wasm32-wasip3` support",
+      "repository": "tokio-rs-tokio-learnings",
+      "source_version": "HEAD",
+      "content_hash": "91d93723bd743fe959eade903e9215c3f7848d2a73b4c53432de933072ad0197",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T15:59:02.071Z"
+    },
+    "candidate_directive-finite-sample-risk-bounded-conformal-abstention-invariant": {
+      "item_id": "candidate_directive-finite-sample-risk-bounded-conformal-abstention-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-UZ4I-finite-sample-risk-bounded-conformal-abstention-invariant.md",
+      "title": "Finite-Sample Risk-Bounded Conformal Abstention Invariant",
+      "repository": "hf-convaiinnovations-laya-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ea59d8afc237695b2339228b00be2007a599438fde720493d85a7c571f5987b2",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-22T15:59:02.996Z"
+    },
+    "candidate_directive-strictly-proper-scoring-loss-invariant-for-autonomous-calibration": {
+      "item_id": "candidate_directive-strictly-proper-scoring-loss-invariant-for-autonomous-calibration",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-UZ4I-strictly-proper-scoring-loss-invariant-for-autonomous-calibration.md",
+      "title": "Strictly Proper Scoring Loss Invariant for Autonomous Calibration",
+      "repository": "hf-convaiinnovations-laya-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5fa7409dff473e131dd80651917ab350a2a8ce4ae23ec208cd146e6508bebbeb",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-22T15:59:03.217Z"
+    },
+    "candidate_directive-out-of-distribution-geometric-unbound-quarantine-invariant": {
+      "item_id": "candidate_directive-out-of-distribution-geometric-unbound-quarantine-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-UZ4J-out-of-distribution-geometric-unbound-quarantine-invariant.md",
+      "title": "Out-of-Distribution Geometric Unbound Quarantine Invariant",
+      "repository": "hf-convaiinnovations-laya-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ae1f18f4d332df5f49a2511271b5b9be69fd1fce39556928f11f915403d39a1c",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-22T15:59:03.435Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-hf-convaiinnovations-laya-learnings-core-invar": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-hf-convaiinnovations-laya-learnings-core-invar",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-hf-convaiinnovations-laya-learnings-quality-verification-intelligence-hf-convaii.md",
+      "title": "Quality & Verification Intelligence: hf-convaiinnovations-laya-learnings Core Invariants",
+      "repository": "hf-convaiinnovations-laya-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a5659ffadb119825ff1cc78e7008d27c1fb18faf48344fbd8b139361ba747ce3",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-22T15:59:03.656Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-hf-convaiinnovations-laya-learnings": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-hf-convaiinnovations-laya-learnings",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-hf-convaiinnovations-laya-learnings-adr-subsystem-boundary-modular-decoupling-in.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in hf-convaiinnovations-laya-learnings",
+      "repository": "hf-convaiinnovations-laya-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c219eb336caa0a0a6e163f21eed7b6dcd6ed15fa33061caafcb7c30889605c79",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-22T15:59:03.880Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-hf-convaiinnovations-laya-lear": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-hf-convaiinnovations-laya-lear",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/hf-convaiinnovations-laya-learnings-verification-protocol-empirical-defect-shiel.md",
+      "title": "Verification Protocol: Empirical Defect Shield for hf-convaiinnovations-laya-learnings",
+      "repository": "hf-convaiinnovations-laya-learnings",
+      "source_version": "HEAD",
+      "content_hash": "85f3d2167bfe9a2b9b914def57cd4db54c1cee7229141f7179229d7bc76be8ae",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-22T15:59:04.067Z"
     }
   },
   "ai-builder-brain": {

@@ -12110,3 +12110,5 @@
 | `CYCLE-20261122-8FMU` | `2026-11-22T15:41:31.302Z` | `Comfy-Org/MiniMax-H3` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9942, Rule 9943, Rule 9944` | Yes (`5c92e8cb...`) |
 | `CYCLE-20261122-97CD` | `2026-11-22T15:42:07.213Z` | `astral-sh/ruff` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9945` | Yes (`43a9b971...`) |
 | `CYCLE-2026-11-22-PROJ-EVOLVE` | `2026-11-22T15:42:41.239Z` | `hf-comfy-org-minimax-h3` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-833AC1DF` [Domain H] | Yes (`d76f2bc5...`) |
+| `CYCLE-20261122-QWN6` | `2026-11-22T15:55:53.154Z` | `tokio-rs/tokio` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9946` | Yes (`a5272a22...`) |
+| `CYCLE-20261122-UUL3` | `2026-11-22T15:58:57.111Z` | `convaiinnovations/laya` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9947, Rule 9948, Rule 9949` | Yes (`b896dc97...`) |

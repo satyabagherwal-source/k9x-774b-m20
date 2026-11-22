@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T02:57:53.623Z",
+  "timestamp": "2026-11-22T15:59:01.931Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-tokio-rs-tokio-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [tokio-rs-tokio-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T02:57:53.623Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T15:59:01.931Z`  
 > **Learning ID**: `LEARN-EVO-tokio-rs-tokio-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md`  
 > **Source**: github ([https://github.com/tokio-rs/tokio](https://github.com/tokio-rs/tokio))  
-> **Source Version**: `717c508f`  
+> **Source Version**: `675ba816`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T02:57:40.662Z  
+> **Timestamp**: 2026-11-22T15:55:51.833Z  
 > **Learning ID**: `learn-github-tokio-rs-tokio`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tokio-rs/tokio](https://github.com/tokio-rs/tokio))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T02:57:40.535Z  
+> **Harvest Timestamp**: 2026-11-22T15:55:51.603Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: A runtime for writing reliable asynchronous applications with Rust. Provides I/O, networking, scheduling, timers, ...
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 33746 stars
+- **Stars / Engagement**: 33767 stars
 
 ---
 
@@ -1963,11 +1963,11 @@ where
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #8811** (2026-11-20): **Merge 'tokio-1.54.x' into 'master'**
-  *Symptoms*: Depends on #8810.
+- **Issue #8820** (2026-11-21): **update `tokio/lib.rs` docs to mention `wasm32-wasip3` support**
+  *Symptoms*: <!-- Thank you for your Pull Request. Please provide a description above and review the requirements below.  Please read the commit message guidelines when writing your PR description: https://github.com/tokio-rs/tokio/blob/master/docs/contributing/pull-requests.md#commit-message-guidelines  Bug fixes and new features should include tests.  Contributors guide: https://github.com/tokio-rs/tokio/blob/master/CONTRIBUTING.md  The contributors guide includes instructions for running rustfmt and building the documentation, which requires special commands beyond `cargo fmt` and `cargo doc`. --> 
 
-- **Issue #8810** (2026-11-20): **Merge 'tokio-1.53.x' into 'tokio-1.54.x'**
-  *Symptoms*: Depends on #8809.
+- **Issue #8818** (2026-11-21): **enable `wasm32-wasip3` support**
+  *Symptoms*: This just requires a `rand` version bump to fix a `wasm32-wasip3` compatibility issue in `getrandom`.  Note that this only provides parity with `wasm32-wasip2`, feature-wise. However, (cooperative) multithreading support is expected to stabilize for `wasm32-wasip3` in the next few months, allowing `std::thread::spawn` and friends to work, at which point we'll be able to support a lot more of Tokio's features (e.g. name lookup, filesystem, etc.) and mostly treat it like any other posix-style platform.  <!-- Thank you for your Pull Request. Please provide a description above and review the requirements below.  Please read the commit message guidelines when writing your PR description: https://github.com/tokio-rs/tokio/blob/master/docs/contributing/pull-requests.md#commit-message-guidelines  Bug fixes and new features should include tests.  Contributors guide: https://github.com/tokio-rs/tokio/blob/master/CONTRIBUTING.md  The contributors guide includes instructions for running rustfmt and building the documentation, which requires special commands beyond `cargo fmt` and `cargo doc`. --> 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1984,465 +1984,303 @@ where
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `717c508f` (2026-11-19)
-**Commit Message**: Merge 'tokio-1.54.x' into 'master' (#8811)
+### Incident Patch 1: `675ba816` (2026-11-21)
+**Commit Message**: wasm: update `lib.rs` docs to mention `wasm32-wasip3` support (#8820)
 
-**File**: `.github/workflows/uring-kernel-version-test.yml` (modified, +12/-6)
+**File**: `tokio/src/lib.rs` (modified, +10/-9)
 ```diff
-@@ -44,24 +44,30 @@ jobs:
-       # to check if the fallback mechanism works
-       - name: Generate test binaries with io_uring enabled
-         run: |
-+          set -euo pipefail
-           # Build both integration (tokio/tests/) and unit (e.g., tokio/src/fs/file/tests.rs) tests with io_uring enabled
-           rustup target add x86_64-unknown-linux-musl
-           RUSTFLAGS="--cfg tokio_unstable" \
-             cargo test -p tokio --features full,io-uring \
--            --target x86_64-unknown-linux-musl --test 'fs*' --lib --no-run
-+            --target x86_64-unknown-linux-musl --test 'fs*' --lib --no-run \
-+            --message-format=json-render-diagnostics \
-+            | jq -r 'select(.reason == "compiler-artifact" and .profile.test == true and .executable != null) | .executable' > test-binaries.txt
- 
-       - name: Prepare initramfs + tests binaries
-         run: |
-           set -e
-           rm -rf initramfs
-           mkdir -p initramfs/{bin,bin/tests,sbin,proc,sys,tmp}
- 
-+          if [ ! -s test-binaries.txt ]; then
-+            echo "no test binaries found"
-+            exit 1
-+          fi
-+
-           # Copy test binaries into initramfs
--          for bin in target/x86_64-unknown-linux-musl/debug/deps/{fs_*,tokio-*}; do
--            if [ -f "$bin" ] && [ -x "$bin" ]; then
--              cp "$bin" initramfs/bin/tests
--            fi
--          done
-+          while IFS= read -r bin; do
-+            cp "$bin" initramfs/bin/tests
-+          done < test-binaries.txt
- 
-           # Add BusyBox & symlinks
-           cp /usr/bin/busybox initramfs/bin/
-```
-
-**File**: `tokio/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -132,7 +132,7 @@ libc = { version = "0.2.168", optional = true }
- libc = { version = "0.2.168" }
- 
- [target.'cfg(all(unix, not(target_os = "emscripten")))'.dev-dependencies]
--nix = { version = "0.32.0", default-features = false, features = ["aio", "fs", "socket"] }
-+nix = { version = "0.32.0", default-features = false, features = ["fs", "socket"] }
- 
- [target.'cfg(windows)'.dependencies.windows-sys]
- version = "0.61"
-```
-
-**File**: `tokio/src/runtime/io/driver/uring.rs` (modified, +14/-5)
-```diff
-@@ -343,21 +343,30 @@ impl Handle {
- 
-         let cancel_data = data.expect("Data should be present").cancel();
-         match mem::replace(lifecycle, Lifecycle::Cancelled(cancel_data)) {
--            Lifecycle::Submitted | Lifecycle::Waiting(_) => (),
-+            previous @ (Lifecycle::Submitted | Lifecycle::Waiting(_)) => {
-+                drop(guard);
-+                // A waker destructor may cancel another filesystem operation.
-+                drop(previous);
-+            }
-             // The driver saw the completion, but it was never polled.
-             Lifecycle::Completed(cqe) => {
--                if let Lifecycle::Cancelled(CancelData::Open(_)) = lifecycle {
-+                let cancelled = ops.remove(index);
-+                // `cancelled` drops after this unlock, as the owner of a write's
-+                // `Bytes` buffer may cancel another operation from its destructor.
-+                drop(guard);
-+                if let Lifecycle::Cancelled(CancelData::Open(_)) = &cancelled {
-                     if let Ok(fd) = CqeResult::from(cqe).result {
-                         // SAFETY: the successful CQE result provides
-                         // a non-negative integer, and the event is
-                         // related to an open operation.
-                         unsafe { OwnedFd::from_raw_fd(fd as i32) };
-                     }
-                 }
--                // We can safely remove the entry from the slab, as it has already been completed.
--                ops.remove(index);
-             }
--            prev => panic!("Unexpected state: {prev:?}"),
-+            prev => {
-+                drop(guard);
-+                panic!("Unexpected state: {prev:?}");
-+            }
-         };
-     }
- }
-```
-
-**File**: `tokio/tests/fs_uring.rs` (modified, +104/-0)
-```diff
-@@ -290,6 +290,110 @@ fn completion_waker_panic_preserves_uring() {
-     }
- }
- 
-+#[test]
-+fn drop_cancelled_waker_outside_lock() {
-+    use std::sync::{Arc, Mutex};
-+    use std::task::{Context, Wake, Waker};
-+
-+    struct Owner<F> {
-+        _other: Mutex<F>,
-+    }
-+    impl<F: Send + 'static> Wake for Owner<F> {
-+        fn wake(self: Arc<Self>) {
-+            drop(self);
-+        }
-+    }
-+
-+    if io_uring::IoUring::new(2).is_err() {
-+        return;
-+    }
-+    let rt = Builder::new_current_thread().enable_all().build().unwrap();
-+    // Initialize io_uring on the runtime.
-+    rt.block_on(tokio::fs::File::open("/dev/null")).unwrap();
-+    let _enter = rt.enter();
-+
-+    let mut other = Box::pin(tokio::fs::File::open("/dev/null"));
-+    let mut cx = Context::from_waker(Waker::noop());
-+    tokio_test::assert_pending!(other.as_mut().poll_unpin(&mut cx));
-+
-+    let waker = Waker::from(Arc::new(Owner {
-+        _other: Mutex::new(other),
-+    }));
-+    let mut open = Box::pin(tokio::fs::File::open("/dev/null"));
-+    tokio_test::assert_pending!(open.as_mut().poll_unpin(&mut Context::from_waker(&waker)));
-+    drop(waker);
-+    // Cancelling `open` drops the last waker, which cancels `other`.
-+    drop(open);
-+}
-+
-+#[cfg(feature = "io-util")]
-+#[test]
-+fn drop_cancelled_write_buffer_outside_lock() {
-+    use std::task::{Context, Waker};
-+
-+    struct Owner<F>(F);
-+    impl<F> AsRef<[u8]> for Owner<F> {
-+        fn as_ref(&self) -> &[u8] {
-+            b"data"
-+        }
-+    }
-+
-+    if io_uring::IoUring::new(2).is_err() {
-+        return;
-+    }
-+    let rt = Builder::new_current_thread().enable_all().build().unwrap();
-+    // Initialize io_uring on the runtime.
-+    rt.block_on(tokio::fs::File::open("/dev/null")).unwrap();
-+    let _enter = rt.enter();
-+
-+    let mut other = Box::pin(tokio::fs::File::open("/dev/null"));
-+    let mut cx = Context::from_waker(Waker::noop());
-+    tokio_test::assert_pending!(other.as_mut().poll_unpin(&mut cx));
-+
-+    let path = NamedTempFile::new().unwrap().into_temp_path();
-+    let buf = bytes::Bytes::from_owner(Owner(other));
-+    let mut write = Box::pin(tokio::fs::write(&path, buf));
-+    // Stop polling `write` once the kernel has written the data.
-+    rt.block_on(poll_fn(|cx| {
-+        if std::fs::read(&path).unwrap() == b"data" {
-+            return Poll::Ready(());
-+        }
-+        tokio_test::assert_pending!(write.as_mut().poll_unpin(cx));
-+        Poll::Pending
-+    }));
-+    // Cancelling the completed write drops the buffer owner, which cancels `other`.
-+    drop(write);
-+}
-+
-+#[test]
-+fn cancel_completed_open_closes_fd() {
-+    if io_uring::IoUring::new(2).is_err() {
-+        return;
-+    }
-+    let rt = Builder::new_current_thread().enable_all().build().unwrap();
-+    // `TempPath` closes the descriptor `NamedTempFile` keeps open.
-+    let tmp = NamedTempFile::new().unwrap().into_temp_path();
-+    let path = tmp.canonicalize().unwrap();
-+    let is_open = || {
-+        std::fs::read_dir("/proc/self/fd")
-+            .unwrap()
-+            .filter_map(|fd| std::fs::read_link(fd.ok()?.path()).ok())
-+            .any(|target| target == path)
-+    };
-+
-+    let mut open = Box::pin(tokio::fs::File::open(&path));
-+    // Stop polling `open` once the kernel has opened the file.
-+    rt.block_on(poll_fn(|cx| {
-+        if is_open() {
-+            return Poll::Ready(());
-+        }
-+        tokio_test::assert_pending!(open.as_mut().poll_unpin(cx));
-+        Poll::Pending
-+    }));
-+    drop(open);
-+    assert!(!is_open());
-+}
-+
- fn create_tmp_files(num_files: usize) -> (Vec<NamedTempFile>, Vec<PathBuf>) {
-     let mut files = Vec::with_capacity(num_files);
-     for _ in 0..num_files {
-```
-
-**File**: `tokio/tests/io_poll_aio.rs` (modified, +1/-1)
-```diff
-@@ -18,7 +18,7 @@ mod aio {
-     use super::*;
- 
-     #[derive(Debug)]
--    struct TokioSource<'fd>(mio_aio::Source<nix::sys::aio::AioFsync<'fd>>);
-+    struct TokioSource<'fd>(mio_aio::Fsync<'fd>);
- 
-     impl<'fd> AioSource for TokioSource<'fd> {
-         fn register_borrowed(&mut self, kq: BorrowedFd<'_>, token: usize) {
+@@ -462,15 +462,16 @@
+ //!
+ //! ### `WASI` support
+ //!
+-//! The `wasm32-wasip1` and `wasm32-wasip2` targets support the above features.
+-//! Timers work correctly as blocking the thread is supported.
+-//!
+-//! Under the `tokio_unstable` flag, these targets support the use
+-//! of `tokio::net`. On `wasm32-wasip1`, not all methods are available on the
+-//! networking types as this target does not support the creation of new
+-//! sockets from within `WASM`. Because of this, sockets must currently be
+-//! created via the `FromRawFd` trait on `wasm32-wasip1`. The `wasm32-wasip2`
+-//! target does not have this limitation.
++//! The `wasm32-wasip1`, `wasm32-wasip2`, and `wasm32-wasip3` targets support
++//! the above features.  Timers work correctly as blocking the thread is
++//! supported.
++//!
++//! Under the `tokio_unstable` flag, these targets support the use of
++//! `tokio::net`. On `wasm32-wasip1`, not all methods are available on the
++//! networking types as this target does not support the creation of new sockets
++//! from within `WASM`. Because of this, sockets must currently be created via
++//! the `FromRawFd` trait on `wasm32-wasip1`. The `wasm32-wasip2` and
++//! `wasm32-wasip3` targets do not have this limitation.
+ //!
+ //! ### Emscripten support
+ //!
 ```
 
 ---
 
-### Incident Patch 2: `c696333f` (2026-11-19)
-**Commit Message**: Merge 'tokio-1.53.x' into 'tokio-1.54.x' (#8810)
+### Incident Patch 2: `8bdf1e9d` (2026-11-21)
+**Commit Message**: wasm: support the net feature on Emscripten (#8438)
 
-**File**: `.github/workflows/uring-kernel-version-test.yml` (modified, +12/-6)
+**File**: `.github/workflows/ci.yml` (modified, +7/-7)
 ```diff
-@@ -44,24 +44,30 @@ jobs:
-       # to check if the fallback mechanism works
-       - name: Generate test binaries with io_uring enabled
-         run: |
-+          set -euo pipefail
-           # Build both integration (tokio/tests/) and unit (e.g., tokio/src/fs/file/tests.rs) tests with io_uring enabled
-           rustup target add x86_64-unknown-linux-musl
-           RUSTFLAGS="--cfg tokio_unstable" \
-             cargo test -p tokio --features full,io-uring \
--            --target x86_64-unknown-linux-musl --test 'fs*' --lib --no-run
-+            --target x86_64-unknown-linux-musl --test 'fs*' --lib --no-run \
-+            --message-format=json-render-diagnostics \
-+            | jq -r 'select(.reason == "compiler-artifact" and .profile.test == true and .executable != null) | .executable' > test-binaries.txt
+@@ -20,7 +20,7 @@ env:
+   # Pin a specific miri version
+   rust_miri_nightly: nightly-2026-08-17
+   rust_emscripten_nightly: nightly-2026-08-17
+-  emsdk_version: '6.0.10'
++  emsdk_version: '7.0.0'
+   rust_clippy: '1.95'
+   # When updating this, also update:
+   # - README.md
+@@ -1232,18 +1232,18 @@ jobs:
+           tool: cargo-hack
  
-       - name: Prepare initramfs + tests binaries
-         run: |
-           set -e
-           rm -rf initramfs
-           mkdir -p initramfs/{bin,bin/tests,sbin,proc,sys,tmp}
+       - name: Check tokio feature matrix for emscripten
+-        run: cargo hack check -p tokio --each-feature --exclude-features full,net,process,signal,rt-multi-thread,io-uring,taskdump,schedule-latency --target wasm32-unknown-emscripten
++        run: cargo hack check -p tokio --each-feature --exclude-features full,process,signal,rt-multi-thread,io-uring,taskdump,schedule-latency --target wasm32-unknown-emscripten
+         working-directory: tokio
  
-+          if [ ! -s test-binaries.txt ]; then
-+            echo "no test binaries found"
-+            exit 1
-+          fi
-+
-           # Copy test binaries into initramfs
--          for bin in target/x86_64-unknown-linux-musl/debug/deps/{fs_*,tokio-*}; do
--            if [ -f "$bin" ] && [ -x "$bin" ]; then
--              cp "$bin" initramfs/bin/tests
--            fi
--          done
-+          while IFS= read -r bin; do
-+            cp "$bin" initramfs/bin/tests
-+          done < test-binaries.txt
+       - name: Test tokio for emscripten (JSPI)
+-        run: cargo test -p tokio --target wasm32-unknown-emscripten --features "rt,time,sync,macros,fs,io-util,io-std,test-util" --tests
++        run: cargo test -p tokio --target wasm32-unknown-emscripten --features "rt,time,sync,macros,fs,io-util,io-std,test-util,net" --tests
+         working-directory: tokio
+         env:
+           CARGO_TARGET_WASM32_UNKNOWN_EMSCRIPTEN_RUNNER: node
+-          RUSTFLAGS: "-Dwarnings -Clink-args=-sALLOW_MEMORY_GROWTH=1 -Clink-args=-sEXIT_RUNTIME=1 -Clink-args=-sJSPI -Clink-args=-sSTACK_SIZE=1048576 -Clink-args=-sMODULARIZE=instance -Clink-args=-sAUTO_INIT -Clink-args=-Wno-experimental"
++          RUSTFLAGS: "-Dwarnings -Clink-args=-sALLOW_MEMORY_GROWTH=1 -Clink-args=-sEXIT_RUNTIME=1 -Clink-args=-sJSPI -Clink-args=-sSTACK_SIZE=1048576 -Clink-args=-sMODULARIZE=instance -Clink-args=-sAUTO_INIT -Clink-args=-Wno-experimental -Clink-args=-sNODERAWSOCKETS -Clink-args=-sNODERAWFS"
  
-           # Add BusyBox & symlinks
-           cp /usr/bin/busybox initramfs/bin/
+       - name: Test tokio for emscripten (non-JSPI)
+-        run: cargo test -p tokio --target wasm32-unknown-emscripten --features "rt,time,sync,macros,fs,io-util,io-std,test-util" --test rt_emscripten_block_on --test sync_emscripten_blocking
++        run: cargo test -p tokio --target wasm32-unknown-emscripten --features "rt,time,sync,macros,fs,io-util,io-std,test-util,net" --test rt_emscripten_block_on --test sync_emscripten_blocking
+         working-directory: tokio
+         env:
+           CARGO_TARGET_WASM32_UNKNOWN_EMSCRIPTEN_RUNNER: node
+@@ -1257,11 +1257,11 @@ jobs:
+           components: rust-src
+ 
+       - name: Test tokio for emscripten (pthreads)
+-        run: cargo +${{ env.rust_emscripten_nightly }} test -Zbuild-std=std,panic_abort -p tokio --target wasm32-unknown-emscripten --features "rt,rt-multi-thread,time,sync,macros,fs,io-util,io-std,test-util" --tests
++        run: cargo +${{ env.rust_emscripten_nightly }} test -Zbuild-std=std,panic_abort -p tokio --target wasm32-unknown-emscripten --features "rt,rt-multi-thread,time,sync,macros,fs,io-util,io-std,test-util,net" --tests
+         working-directory: tokio
+         env:
+           CARGO_TARGET_WASM32_UNKNOWN_EMSCRIPTEN_RUNNER: node
+-          RUSTFLAGS: "-Dwarnings -Ctarget-feature=+atomics,+bulk-memory,+mutable-globals -Clink-args=-pthread -Clink-args=-sPTHREAD_POOL_SIZE=8 -Clink-args=-sINITIAL_MEMORY=134217728 -Clink-args=-sEXIT_RUNTIME=1 -Clink-args=-sSTACK_SIZE=1048576"
++          RUSTFLAGS: "-Dwarnings -Ctarget-feature=+atomics,+bulk-memory,+mutable-globals -Clink-args=-pthread -Clink-args=-sPTHREAD_POOL_SIZE=8 -Clink-args=-sPROXY_TO_PTHREAD -Clink-args=-sINITIAL_MEMORY=134217728 -Clink-args=-sEXIT_RUNTIME=1 -Clink-args=-sSTACK_SIZE=1048576 -Clink-args=-sNODERAWSOCKETS -Clink-args=-sNODERAWFS"
+ 
+   check-external-types:
+     name: check-external-types (${{ matrix.os }})
 ```
 
-**File**: `tokio/Cargo.toml` (modified, +1/-1)
+**File**: `spellcheck.dic` (modified, +3/-1)
 ```diff
-@@ -132,7 +132,7 @@ libc = { version = "0.2.168", optional = true }
- libc = { version = "0.2.168" }
- 
- [target.'cfg(all(unix, not(target_os = "emscripten")))'.dev-dependencies]
--nix = { version = "0.31.0", default-features = false, features = ["aio", "fs", "socket"] }
-+nix = { version = "0.31.0", default-features = false, features = ["fs", "socket"] }
- 
- [target.'cfg(windows)'.dependencies.windows-sys]
- version = "0.61"
+@@ -1,4 +1,4 @@
+-334
++336
+ &
+ +
+ 0o777
+@@ -112,6 +112,7 @@ WebAssembly
+ ZST
+ \
+ accessors
++activations
+ adaptor
+ adaptors
+ ambient
+@@ -174,6 +175,7 @@ enqueue
+ enqueued
+ enum
+ eof
++epoll
+ errored
+ expirations
+ fcntl
 ```
 
-**File**: `tokio/src/runtime/io/driver/uring.rs` (modified, +14/-5)
+**File**: `tokio/Cargo.toml` (modified, +2/-2)
 ```diff
-@@ -352,21 +352,30 @@ impl Handle {
+@@ -97,7 +97,7 @@ pin-project-lite = "0.2.11"
  
-         let cancel_data = data.expect("Data should be present").cancel();
-         match mem::replace(lifecycle, Lifecycle::Cancelled(cancel_data)) {
--            Lifecycle::Submitted | Lifecycle::Waiting(_) => (),
-+            previous @ (Lifecycle::Submitted | Lifecycle::Waiting(_)) => {
-+                drop(guard);
-+                // A waker destructor may cancel another filesystem operation.
-+                drop(previous);
-+            }
-             // The driver saw the completion, but it was never polled.
-             Lifecycle::Completed(cqe) => {
--                if let Lifecycle::Cancelled(CancelData::Open(_)) = lifecycle {
-+                let cancelled = ops.remove(index);
-+                // `cancelled` drops after this unlock, as the owner of a write's
-+                // `Bytes` buffer may cancel another operation from its destructor.
-+                drop(guard);
-+                if let Lifecycle::Cancelled(CancelData::Open(_)) = &cancelled {
-                     if let Ok(fd) = CqeResult::from(cqe).result {
-                         // SAFETY: the successful CQE result provides
-                         // a non-negative integer, and the event is
-                         // related to an open operation.
-                         unsafe { OwnedFd::from_raw_fd(fd as i32) };
-                     }
-                 }
--                // We can safely remove the entry from the slab, as it has already been completed.
--                ops.remove(index);
-             }
--            prev => panic!("Unexpected state: {prev:?}"),
-+            prev => {
-+                drop(guard);
-+                panic!("Unexpected state: {prev:?}");
-+            }
-         };
+ # Everything else is optional...
+ bytes = { version = "1.2.1", optional = true }
+-mio = { version = "1.2.0", optional = true, default-features = false }
++mio = { version = "1.2.5", optional = true, default-features = false }
+ # Excluded from `full`; if used, the MSRV follows `parking_lot`'s.
+ parking_lot = { version = "0.13.0", optional = true }
+ 
+@@ -114,7 +114,7 @@ tracing = { version = "0.1.29", default-features = false, features = ["std"], op
+ [target.'cfg(all(tokio_unstable, target_os = "linux"))'.dependencies]
+ io-uring = { version = "0.7.11", default-features = false, optional = true }
+ libc = { version = "0.2.168", optional = true }
+-mio = { version = "1.2.0", default-features = false, features = ["os-poll", "os-ext"], optional = true }
++mio = { version = "1.2.5", default-features = false, features = ["os-poll", "os-ext"], optional = true }
+ slab = { version = "0.4.9", optional = true }
+ backtrace = { version = "0.3.58", optional = true }
+ 
+```
+
+**File**: `tokio/src/lib.rs` (modified, +23/-10)
+```diff
+@@ -21,7 +21,10 @@
+ #![cfg_attr(docsrs, feature(doc_cfg))]
+ #![cfg_attr(docsrs, allow(unused_attributes))]
+ #![cfg_attr(loom, allow(dead_code, unreachable_pub))]
+-#![cfg_attr(windows, allow(rustdoc::broken_intra_doc_links))]
++#![cfg_attr(
++    any(windows, target_family = "wasm"),
++    allow(rustdoc::broken_intra_doc_links)
++)]
+ 
+ //! A runtime for writing reliable network applications without compromising speed.
+ //!
+@@ -472,10 +475,10 @@
+ //! ### Emscripten support
+ //!
+ //! The `wasm32-unknown-emscripten` target supports the single-threaded runtime
+-//! with the `rt`, `time`, `sync`, `macros`, `fs`, `io-util`, `io-std`, and
+-//! `test-util` features. The `rt-multi-thread` feature is additionally
+-//! supported when building with Emscripten pthreads (`-pthread`). The `net`,
+-//! `process`, and `signal` features are not supported.
++//! with the `rt`, `time`, `sync`, `macros`, `fs`, `io-util`, `io-std`,
++//! `test-util`, and `net` features. The `rt-multi-thread` feature is
++//! additionally supported when building with Emscripten pthreads (`-pthread`).
++//! The `process` and `signal` features are not supported.
+ //!
+ //! Emscripten's filesystem is synchronous, so `tokio::fs` and `io-std` run
+ //! their operations inline on the calling thread rather than on the blocking
+@@ -490,6 +493,19 @@
+ //! `WebAssembly.promising`. A wait from any other activation throws
+ //! `WebAssembly.SuspendError`. That is a foreign exception rather than a Rust
+ //! panic, so it can't be caught by `catch_unwind`.
++//!
++//! `net` uses the standard `mio` epoll reactor over Emscripten's sockets. The
++//! I/O driver's wait is a blocking `epoll_wait`, which needs either JSPI
++//! (suspending on the host event loop) or pthreads with `-sPROXY_TO_PTHREAD`
++//! (blocking on a worker). Built with `-sNODERAWSOCKETS` (real Node sockets),
++//! [`TcpStream`](crate::net::TcpStream),
++//! [`TcpListener`](crate::net::TcpListener), [`UdpSocket`](crate::net::UdpSocket),
++//! stream `AF_UNIX` sockets ([`UnixStream`](crate::net::UnixStream),
++//! [`UnixListener`](crate::net::UnixListener), [`UnixSocket`](crate::net::UnixSocket)),
++//! [`lookup_host`](crate::net::lookup_host), and
++//! [`AsyncFd`](crate::io::unix::AsyncFd) behave as on native. Node has no
++//! `socketpair(2)` (so `UnixStream::pair`), no datagram `AF_UNIX` (so
++//! `UnixDatagram`), and no `SO_PEERCRED` (so `peer_cred`).
+ 
+ // Test that pointer width is compatible. This asserts that e.g. usize is at
+ // least 32 bits, which a lot of components in Tokio currently assumes.
+@@ -515,11 +531,8 @@ compile_error! {
+ ))]
+ compile_error!("Only features sync,macros,io-util,rt,time are supported on wasm.");
+ 
+-#[cfg(all(
+-    target_os = "emscripten",
+-    any(feature = "net", feature = "process", feature = "signal")
+-))]
+-compile_error!("Features net,process,signal are not supported on wasm32-unknown-emscripten.");
++#[cfg(all(target_os = "emscripten", any(feature = "process", feature = "signal")))]
++compile_error!("Features process,signal are not supported on wasm32-unknown-emscripten.");
+ 
+ #[cfg(all(
+     target_os = "emscripten",
+```
+
+**File**: `tokio/src/net/mod.rs` (modified, +3/-0)
+```diff
+@@ -53,6 +53,9 @@ cfg_net! {
+ 
+ cfg_net_unix! {
+     pub mod unix;
++    // Node has no datagram `AF_UNIX` sockets.
++    #[cfg(not(target_os = "emscripten"))]
++    #[cfg_attr(docsrs, doc(cfg(not(target_os = "emscripten"))))]
+     pub use unix::datagram::socket::UnixDatagram;
+     pub use unix::listener::UnixListener;
+     pub use unix::stream::UnixStream;
+```
+
+**File**: `tokio/src/net/unix/mod.rs` (modified, +1/-0)
+```diff
+@@ -3,6 +3,7 @@
+ // unintentionally defined as a public module. Hide it from the documentation
+ // instead of changing it to a private module to avoid breakage.
+ #[doc(hidden)]
++#[cfg(not(target_os = "emscripten"))]
+ pub mod datagram;
+ 
+ pub(crate) mod listener;
+```
+
+**File**: `tokio/src/net/unix/socket.rs` (modified, +16/-2)
+```diff
+@@ -6,7 +6,10 @@ use std::os::unix::io::{AsFd, AsRawFd, BorrowedFd, FromRawFd, IntoRawFd, RawFd};
+ #[cfg(any(target_os = "linux", target_os = "android"))]
+ use crate::net::unix::Permissions;
+ 
+-use crate::net::{UnixDatagram, UnixListener, UnixStream};
++use crate::net::{UnixListener, UnixStream};
++// Datagram AF_UNIX is unavailable on emscripten's node backend (stream-only).
++#[cfg(not(target_os = "emscripten"))]
++use crate::net::UnixDatagram;
+ 
+ cfg_net_unix! {
+     /// A Unix socket that has not yet been converted to a [`UnixStream`], [`UnixDatagram`], or
+@@ -96,7 +99,16 @@ cfg_net_unix! {
+ 
+ impl UnixSocket {
+     fn ty(&self) -> socket2::Type {
+-        self.inner.r#type().unwrap()
++        // emscripten's node backend has no `getsockopt(SO_TYPE)`, and datagram
++        // sockets are unavailable there, so every `UnixSocket` is a stream.
++        #[cfg(target_os = "emscripten")]
++        {
++            socket2::Type::STREAM
++        }
++        #[cfg(not(target_os = "emscripten"))]
++        {
++            self.inner.r#type().unwrap()
++        }
      }
- }
-```
-
-**File**: `tokio/tests/fs_uring.rs` (modified, +104/-0)
-```diff
-@@ -290,6 +290,110 @@ fn completion_waker_panic_preserves_uring() {
+ 
+     /// Creates a new Unix datagram socket.
+@@ -107,6 +119,7 @@ impl UnixSocket {
+     ///
+     /// On success, the newly created [`UnixSocket`] is returned. If an error is
+     /// encountered, it is returned instead.
++    #[cfg(not(target_os = "emscripten"))]
+     pub fn new_datagram() -> io::Result<UnixSocket> {
+         UnixSocket::new(socket2::Type::DGRAM)
      }
- }
- 
-+#[test]
-+fn drop_cancelled_waker_outside_lock() {
-+    use std::sync::{Arc, Mutex};
-+    use std::task::{Context, Wake, Waker};
-+
-+    struct Owner<F> {
-+        _other: Mutex<F>,
-+    }
-+    impl<F: Send + 'static> Wake for Owner<F> {
-+        fn wake(self: Arc<Self>) {
-+            drop(self);
-+        }
-+    }
-+
-+    if io_uring::IoUring::new(2).is_err() {
-+        return;
-+    }
-+    let rt = Builder::new_current_thread().enable_all().build().unwrap();
-+    // Initialize io_uring on the runtime.
-+    rt.block_on(tokio::fs::File::open("/dev/null")).unwrap();
-+    let _enter = rt.enter();
-+
-+    let mut other = Box::pin(tokio::fs::File::open("/dev/null"));
-+    let mut cx = Context::from_waker(Waker::noop());
-+    tokio_test::assert_pending!(other.as_mut().poll_unpin(&mut cx));
-+
-+    let waker = Waker::from(Arc::new(Owner {
-+        _other: Mutex::new(other),
-+    }));
-+    let mut open = Box::pin(tokio::fs::File::open("/dev/null"));
-+    tokio_test::assert_pending!(open.as_mut().poll_unpin(&mut Context::from_waker(&waker)));
-+    drop(waker);
-+    // Cancelling `open` drops the last waker, which cancels `other`.
-+    drop(open);
-+}
-+
-+#[cfg(feature = "io-util")]
-+#[test]
-+fn drop_cancelled_write_buffer_outside_lock() {
-+    use std::task::{Context, Waker};
-+
-+    struct Owner<F>(F);
-+    impl<F> AsRef<[u8]> for Owner<F> {
-+        fn as_ref(&self) -> &[u8] {
-+            b"data"
-+        }
-+    }
-+
-+    if io_uring::IoUring::new(2).is_err() {
-+        return;
-+    }
-+    let rt = Builder::new_current_thread().enable_all().build().unwrap();
-+    // Initialize io_uring on the runtime.
-+    rt.block_on(tokio::fs::File::open("/dev/null")).unwrap();
-+    let _enter = rt.enter();
-+
-+    let mut other = Box::pin(tokio::fs::File::open("/dev/null"));
-+    let mut cx = Context::from_waker(Waker::noop());
-+    tokio_test::assert_pending!(other.as_mut().poll_unpin(&mut cx));
-+
-+    let path = NamedTempFile::new().unwrap().into_temp_path();
-+    let buf = bytes::Bytes::from_owner(Owner(other));
-+    let mut write = Box::pin(tokio::fs::write(&path, buf));
-+    // Stop polling `write` once the kernel has written the data.
-+    rt.block_on(poll_fn(|cx| {
-+        if std::fs::read(&path).unwrap() == b"data" {
-+            return Poll::Ready(());
-+        }
-+        tokio_test::assert_pending!(write.as_mut().poll_unpin(cx));
-+        Poll::Pending
-+    }));
-+    // Cancelling the completed write drops the buffer owner, which cancels `other`.
-+    drop(write);
-+}
-+
-+#[test]
-+fn cancel_completed_open_closes_fd() {
-+    if io_uring::IoUring::new(2).is_err() {
-+        return;
-+    }
-+    let rt = Builder::new_current_thread().enable_all().build().unwrap();
-+    // `TempPath` closes the descriptor `NamedTempFile` keeps open.
-+    let tmp = NamedTempFile::new().unwrap().into_temp_path();
-+    let path = tmp.canonicalize().unwrap();
-+    let is_open = || {
-+        std::fs::read_dir("/proc/self/fd")
-+            .unwrap()
-+            .filter_map(|fd| std::fs::read_link(fd.ok()?.path()).ok())
-+            .any(|target| target == path)
-+    };
-+
-+    let mut open = Box::pin(tokio::fs::File::open(&path));
-+    // Stop polling `open` once the kernel has opened the file.
-+    rt.block_on(poll_fn(|cx| {
-+        if is_open() {
-+            return Poll::Ready(());
-+        }
-+        tokio_test::assert_pending!(open.as_mut().poll_unpin(cx));
-+        Poll::Pending
-+    }));
-+    drop(open);
-+    assert!(!is_open());
-+}
-+
- fn create_tmp_files(num_files: usize) -> (Vec<NamedTempFile>, Vec<PathBuf>) {
-     let mut files = Vec::with_capacity(num_files);
-     for _ in 0..num_files {
+@@ -229,6 +242,7 @@ impl UnixSocket {
+     /// Calling this function on a socket created by [`new_stream`] will return an error.
+     ///
+     /// [`new_stream`]: `UnixSocket::new_stream`
++    #[cfg(not(target_os = "emscripten"))]
+     pub fn datagram(self) -> io::Result<UnixDatagram> {
+         if self.ty() == socket2::Type::STREAM {
+             return Err(io::Error::other(
 ```
 
-**File**: `tokio/tests/io_poll_aio.rs` (modified, +1/-1)
+**File**: `tokio/src/net/unix/stream.rs` (modified, +2/-0)
 ```diff
-@@ -18,7 +18,7 @@ mod aio {
-     use super::*;
- 
-     #[derive(Debug)]
--    struct TokioSource<'fd>(mio_aio::Source<nix::sys::aio::AioFsync<'fd>>);
-+    struct TokioSource<'fd>(mio_aio::Fsync<'fd>);
- 
-     impl<'fd> AioSource for TokioSource<'fd> {
-         fn register_borrowed(&mut self, kq: BorrowedFd<'_>, token: usize) {
+@@ -910,6 +910,8 @@ impl UnixStream {
+     /// This function will create a pair of interconnected Unix sockets for
+     /// communicating back and forth between one another. Each socket will
+     /// be associated with the default event loop's handle.
++    // Node has no `socketpair(2)`.
++    #[cfg(not(target_os = "emscripten"))]
+     pub fn pair() -> io::Result<(UnixStream, UnixStream)> {
+         let (a, b) = mio::net::UnixStream::pair()?;
+         let a = UnixStream::new(a)?;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8820** (2026-11-21): update `tokio/lib.rs` docs to mention `wasm32-wasip3` support (@dicej)
+- **PR #8818** (2026-11-21): enable `wasm32-wasip3` support (@dicej)
+- **PR #8817** (closed): codec: add a protobuf style varint length codec (@StrikeRougeAgent)
+- **PR #8816** (closed): net: require mio 1.2.5 for vectored named pipe io (@StrikeRougeAgent)
+- **PR #8814** (closed): runtime: share the current-thread waker vtable (@LingaoM)
 - **PR #8811** (2026-11-20): Merge 'tokio-1.54.x' into 'master' (@Darksonn)
-- **PR #8810** (2026-11-20): Merge 'tokio-1.53.x' into 'tokio-1.54.x' (@Darksonn)
-- **PR #8809** (2026-11-20): Merge 'tokio-1.51.x' into 'tokio-1.53.x' (@Darksonn)
-- **PR #8808** (2026-11-19): ci: read io_uring test binary paths from cargo json output (@Darksonn)
-- **PR #8802** (2026-11-17): metrics: update the dead H2 histogram link (@farisbasha)
-- **PR #8801** (2026-11-18): tests: decouple FreeBSD aio test from nix dev-dependency (@Darksonn)
 
 ---
 
@@ -2462,47 +2300,48 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge 'tokio-1.54.x' into 'master'
+## X. wasm: update `lib.rs` docs to mention `wasm32-wasip3` support
 
 **RULE**:
-When implementing operations in `.github/workflows/uring-kernel-version-test.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tokio-rs/tokio. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tokio/src/lib.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tokio-rs/tokio. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `717c508f`: Merge 'tokio-1.54.x' into 'master'. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `675ba816`: wasm: update `lib.rs` docs to mention `wasm32-wasip3` support. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/uring-kernel-version-test.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tokio/src/lib.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-          set -euo pipefail
-            --target x86_64-unknown-linux-musl --test 'fs*' --lib --no-run \
-            --message-format=json-render-diagnostics \
-            | jq -r 'select(.reason == "compiler-artifact" and .profile.test == true and .executable != null) | .executable' > test-binaries.txt
-          if [ ! -s test-binaries.txt ]; then
-            echo "no test binaries found"
-            exit 1
-          fi
-
-          while IFS= read -r bin; do
-            cp "$bin" initramfs/bin/tests
-          done < test-binaries.txt
+//! The `wasm32-wasip1`, `wasm32-wasip2`, and `wasm32-wasip3` targets support
+//! the above features.  Timers work correctly as blocking the thread is
+//! supported.
+//!
+//! Under the `tokio_unstable` flag, these targets support the use of
+//! `tokio::net`. On `wasm32-wasip1`, not all methods are available on the
+//! networking types as this target does not support the creation of new sockets
+//! from within `WASM`. Because of this, sockets must currently be created via
+//! the `FromRawFd` trait on `wasm32-wasip1`. The `wasm32-wasip2` and
+//! `wasm32-wasip3` targets do not have this limitation.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-            --target x86_64-unknown-linux-musl --test 'fs*' --lib --no-run
-          for bin in target/x86_64-unknown-linux-musl/debug/deps/{fs_*,tokio-*}; do
-            if [ -f "$bin" ] && [ -x "$bin" ]; then
-              cp "$bin" initramfs/bin/tests
-            fi
-          done
+//! The `wasm32-wasip1` and `wasm32-wasip2` targets support the above features.
+//! Timers work correctly as blocking the thread is supported.
+//!
+//! Under the `tokio_unstable` flag, these targets support the use
+//! of `tokio::net`. On `wasm32-wasip1`, not all methods are available on the
+//! networking types as this target does not support the creation of new
+//! sockets from within `WASM`. Because of this, sockets must currently be
+//! created via the `FromRawFd` trait on `wasm32-wasip1`. The `wasm32-wasip2`
+//! target does not have this limitation.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `717c508f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `675ba816` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

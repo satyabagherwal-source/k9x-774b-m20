@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-22T15:42:11.564Z",
+  "updated_at": "2026-11-22T15:59:01.755Z",
   "stats": {
-    "total_discovered": 7564,
-    "approved_pending_harvest": 7163,
+    "total_discovered": 7566,
+    "approved_pending_harvest": 7165,
     "harvested_count": 0,
     "rejected_count": 401,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7138,
+      "COMMUNITY_AND_EXPERT": 7140,
       "OFFICIAL_DOCUMENTATION": 246,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 5,
@@ -163624,6 +163624,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
         "fileName": "astral-sh-ruff-learnings.md"
+      }
+    },
+    "SRC-D878353296A4": {
+      "id": "SRC-D878353296A4",
+      "url": "https://github.com/tokio-rs/tokio/blob/master/docs/contributing/pull-requests.md",
+      "title": "https://github.com/tokio-rs/tokio/blob/master/docs/contributing/pull-requests.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T15:59:01.673Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md",
+        "fileName": "tokio-rs-tokio-learnings.md"
+      }
+    },
+    "SRC-0F83E9A45C12": {
+      "id": "SRC-0F83E9A45C12",
+      "url": "https://github.com/tokio-rs/tokio/blob/master/CONTRIBUTING.md",
+      "title": "https://github.com/tokio-rs/tokio/blob/master/CONTRIBUTING.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T15:59:01.755Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md",
+        "fileName": "tokio-rs-tokio-learnings.md"
       }
     }
   }

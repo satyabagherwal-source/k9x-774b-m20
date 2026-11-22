@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T15:42:07.223Z",
-  "total_cycles_completed": 11514,
-  "total_learnings_persisted": 11514,
-  "total_rules_promoted": 10760,
+  "last_updated": "2026-11-22T15:58:57.122Z",
+  "total_cycles_completed": 11516,
+  "total_learnings_persisted": 11516,
+  "total_rules_promoted": 10764,
   "history": [
-    {
-      "timestamp": "2026-11-21T20:25:05.362Z",
-      "repository": "apache/pinot",
-      "learningId": "learn-github-apache-pinot",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T20:36:27.542Z",
-      "repository": "LiquidAI/LFM3-VL-2B",
-      "learningId": "learn-huggingface-liquidai-lfm3-vl-2b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T20:36:41.718Z",
       "repository": "Mintplex-Labs/anything-llm",
@@ -1403,6 +1389,20 @@
       "repository": "astral-sh/ruff",
       "learningId": "learn-github-astral-sh-ruff",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T15:55:53.166Z",
+      "repository": "tokio-rs/tokio",
+      "learningId": "learn-github-tokio-rs-tokio",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T15:58:57.122Z",
+      "repository": "convaiinnovations/laya",
+      "learningId": "learn-huggingface-convaiinnovations-laya",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

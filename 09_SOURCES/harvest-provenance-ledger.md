@@ -12143,3 +12143,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-comfy-org-minimax-h3` | `https://huggingface.co/Comfy-Org/MiniMax-H3` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-22T15:41:31.306Z |
 | `learn-github-astral-sh-ruff` | `https://github.com/astral-sh/ruff` | `dffb1c01` | Multi-dimensional audit evidence | 2026-11-22T15:42:07.217Z |
 | `learn-dom-h-833ac1df` | `project://hf-comfy-org-minimax-h3` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-learnings.md` | 2026-11-22T15:42:41.239Z |
+| `learn-github-tokio-rs-tokio` | `https://github.com/tokio-rs/tokio` | `675ba816` | Multi-dimensional audit evidence | 2026-11-22T15:55:53.159Z |
+| `learn-huggingface-convaiinnovations-laya` | `https://huggingface.co/convaiinnovations/laya` | `hf-convaii` | Multi-dimensional audit evidence | 2026-11-22T15:58:57.116Z |
