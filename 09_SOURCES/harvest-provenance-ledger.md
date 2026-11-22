@@ -12242,3 +12242,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-unsloth-qwen-image-2-1-gguf` | `https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-22T22:06:18.960Z |
 | `learn-github-falkordb-falkordb` | `https://github.com/FalkorDB/FalkorDB` | `41d2f20c` | Multi-dimensional audit evidence | 2026-11-22T22:06:20.696Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `965d58cd` | Multi-dimensional audit evidence | 2026-11-22T22:06:31.485Z |
+| `learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl` | `https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL` | `hf-xiaomim` | Multi-dimensional audit evidence | 2026-11-22T22:15:02.001Z |

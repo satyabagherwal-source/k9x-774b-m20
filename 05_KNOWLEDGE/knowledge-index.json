@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T22:06:39.094Z",
+  "last_updated": "2026-11-22T22:15:16.083Z",
   "total_verified_learnings": 9075,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "ec7c2a4e8745795b784bd65433d5d8aa935b1254485f5b104d27980b8b1756c9",
+      "content_hash": "171aaf73139286eaec9a4252213f4d2defa31631ff79f8576dc12826b5e18a32",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T21:14:47.872Z"
+      "persisted_at": "2026-11-22T22:15:15.046Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "fef7fa5674f31e790fe7ac03d43ccf8ea1667ec10fc1fee9eb79bbb2521a7b2d",
+      "content_hash": "5f7a16aae53640a550c1798862f3859c098fb3021b500d03e2c999aee0e3377e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T21:14:48.130Z"
+      "persisted_at": "2026-11-22T22:15:15.223Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "c781b7cd7bb22c6ab63e1cdcc92ac769342fd9b6f51b9b6c6999dbe7de79b6dd",
+      "content_hash": "07f808082a0d413dec5ac32251a3dd7fdffdfeb7e921741423e3cf2df2a07b7e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T21:14:48.340Z"
+      "persisted_at": "2026-11-22T22:15:15.365Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -114478,9 +114478,9 @@
       "title": "Research & Knowledge Intelligence: XiaomiMiMo/MiMo-V2.6-Pro-RL Core Invariants",
       "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
       "source_version": "hf-xiaomimimo-mimo-v2.6-pro-rl",
-      "content_hash": "42a5c882dc4e91e016aa74689d03221eb342ce588ee4924c7869e2fa57466929",
+      "content_hash": "cc4e18f4950566c3dc0bfc2d61c0ae83ad0034b9b00fc394c110cb25e82b7fdc",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T15:14:14.046Z"
+      "persisted_at": "2026-11-22T22:15:02.198Z"
     },
     "candidate_directive-dsn-look-up-getparam-keys-by-their-bytes": {
       "item_id": "candidate_directive-dsn-look-up-getparam-keys-by-their-bytes",
@@ -114562,9 +114562,9 @@
       "title": "Research & Knowledge Intelligence: hf-xiaomimimo-mimo-v2.6-pro-rl-learnings Core Invariants",
       "repository": "hf-xiaomimimo-mimo-v2.6-pro-rl-learnings",
       "source_version": "HEAD",
-      "content_hash": "9f2eaa49a9cb428aa9d0e1d3ecd143e3d3a9072ee315c0eba49198cb46aad041",
+      "content_hash": "225e9897fdae97223506dfaf103f4a1614bef6a1253e8080b64c3cf574a6f82d",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T15:14:25.865Z"
+      "persisted_at": "2026-11-22T22:15:14.193Z"
     },
     "domain_intelligence-architecture-intelligence-appwrite-appwrite-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-appwrite-appwrite-learnings-core-invariants",
@@ -218956,13 +218956,13 @@
       "item_id": "candidate_directive-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-LDX9-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-ASE1-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "7b370e26f580edb5b3b490ca604e4717102895a65cc0bfa62a2e5e7665229e4a",
+      "content_hash": "036fd31f79d891a1e9e77dacf65475944dd61204245b31e53221c1260ddaaf8c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T09:47:40.606Z"
+      "persisted_at": "2026-11-22T22:15:15.769Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c",
@@ -218972,9 +218972,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "e54533a4d91f87a8b6476c7efef1a895a5866b5fdd0d1da36ffbc9f3dcea13c0",
+      "content_hash": "d0be0d5d05dff4a6974fd9885822fe6d1bfffd91ac6dd7177610e931b38e3854",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T09:47:40.781Z"
+      "persisted_at": "2026-11-22T22:15:15.924Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -218984,9 +218984,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "fc8d40989184a47e4da3599fbcdfa0443d49fb3cec598ce5e9c7646c3b77a147",
+      "content_hash": "aae8d3cdea2ddd330347fe90968d68a984f81ccc61a284394c81be4a1c5ecc02",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T09:47:40.959Z"
+      "persisted_at": "2026-11-22T22:15:16.083Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -285896,7 +285896,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL",
       "source_version": "hf-xiaomimimo-mimo-v2.6-pro-rl",
-      "content_hash": "09997bb28065bd9c11131cb188e793dfceec98cf03a4e3e9ff8bfefad17141e9",
+      "content_hash": "d5d96dbc8630461968e9c82f723be309195d7062c5a777aa848d22a5177bfcd8",
       "dossier_path": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md",
       "promoted_rules": [],
@@ -285905,7 +285905,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T15:14:13.633Z",
+      "verified_at": "2026-11-22T22:15:01.757Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -309929,13 +309929,13 @@
       "item_id": "candidate_directive-benchmarks-report-gold-coverage-across-retrieval-stages",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-50VL-benchmarks-report-gold-coverage-across-retrieval-stages.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-ARPB-benchmarks-report-gold-coverage-across-retrieval-stages.md",
       "title": "benchmarks): report Gold coverage across retrieval stages",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "d11727ee0aaf405b9484c94103a5dfe9f6a1b9f9ddb107fdeafe728c561da8ec",
+      "content_hash": "65fc37aec00d5dd183804f7ec8e353c201d6bbc77b9d4f05f0cc2ecda5381524",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T21:14:47.620Z"
+      "persisted_at": "2026-11-22T22:15:14.882Z"
     },
     "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it": {
       "item_id": "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it",

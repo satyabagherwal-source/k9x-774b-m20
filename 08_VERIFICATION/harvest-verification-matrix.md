@@ -12209,3 +12209,4 @@
 | `CYCLE-20261122-ZA6I` | `2026-11-22T22:06:18.954Z` | `unsloth/Qwen-Image-2.1-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md` | Yes (`ebe10e83...`) |
 | `CYCLE-20261122-ZBIR` | `2026-11-22T22:06:20.691Z` | `FalkorDB/FalkorDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9999` | Yes (`568d2296...`) |
 | `CYCLE-20261122-ZJUG` | `2026-11-22T22:06:31.480Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING` | Yes (`b33c024c...`) |
+| `CYCLE-20261122-AHRG` | `2026-11-22T22:15:01.996Z` | `XiaomiMiMo/MiMo-V2.6-Pro-RL` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md` | Yes (`d5d96dbc...`) |

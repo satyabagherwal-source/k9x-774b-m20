@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T15:14:25.772Z",
+  "timestamp": "2026-11-22T22:15:14.086Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-xiaomimimo-mimo-v2.6-pro-rl-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-xiaomimimo-mimo-v2.6-pro-rl-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T15:14:25.772Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T22:15:14.086Z`  
 > **Learning ID**: `LEARN-EVO-hf-xiaomimimo-mimo-v2.6-pro-rl-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-xiaomimim`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T15:14:13.379Z  
+> **Timestamp**: 2026-11-22T22:15:01.494Z  
 > **Learning ID**: `learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL](https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T15:14:13.240Z  
+> **Harvest Timestamp**: 2026-11-22T22:15:01.364Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 26174 downloads | 825 likes
+- **Stars / Engagement**: 31483 downloads | 833 likes
 
 ---
 

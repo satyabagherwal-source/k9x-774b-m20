@@ -82,8 +82,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-22T22:06:34.983Z",
-    "lastVerified": "2026-11-22T22:06:34.983Z",
+    "lastChecked": "2026-11-22T22:15:13.845Z",
+    "lastVerified": "2026-11-22T22:15:13.845Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -266,9 +266,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-22T21:41:00.783Z",
+    "lastChecked": "2026-11-22T22:15:13.836Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-22T21:41:00.783Z"
+    "lastVerified": "2026-11-22T22:15:13.836Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -738,8 +738,8 @@
     "officialUrl": "https://github.com/topoteretes/cognee",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-21T22:16:24.624Z",
-    "lastVerified": "2026-11-21T22:16:24.624Z",
+    "lastChecked": "2026-11-22T22:15:11.319Z",
+    "lastVerified": "2026-11-22T22:15:11.319Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-topoteretes-cognee",
@@ -2004,8 +2004,8 @@
     "officialUrl": "https://github.com/projectdiscovery/nuclei",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-22T17:44:36.201Z",
-    "lastVerified": "2026-11-22T17:44:36.201Z",
+    "lastChecked": "2026-11-22T22:15:08.825Z",
+    "lastVerified": "2026-11-22T22:15:08.825Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-projectdiscovery-nuclei",
@@ -2037,9 +2037,9 @@
   "michael-a-kuykendall-shimmy": {
     "name": "shimmy",
     "officialUrl": "https://github.com/Michael-A-Kuykendall/shimmy",
-    "lastChecked": "2026-11-21T14:49:26.879Z",
+    "lastChecked": "2026-11-22T22:14:58.824Z",
     "revisionIdentifier": "9f6d996e",
-    "lastVerified": "2026-11-21T14:49:26.879Z"
+    "lastVerified": "2026-11-22T22:14:58.824Z"
   },
   "hf-fastino-gliner2.5-decide": {
     "name": "fastino/GLiNER2.5-Decide",
@@ -2748,9 +2748,9 @@
   "easegress-io-easegress": {
     "name": "easegress",
     "officialUrl": "https://github.com/easegress-io/easegress",
-    "lastChecked": "2026-11-21T23:25:20.037Z",
+    "lastChecked": "2026-11-22T22:15:06.331Z",
     "revisionIdentifier": "b8d95290",
-    "lastVerified": "2026-11-21T23:25:20.037Z"
+    "lastVerified": "2026-11-22T22:15:06.331Z"
   },
   "giancarloerra-socraticode": {
     "name": "giancarloerra/SocratiCode",
@@ -2913,12 +2913,12 @@
     "officialUrl": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-18T15:14:13.240Z",
-    "lastVerified": "2026-11-18T15:14:13.240Z",
+    "lastChecked": "2026-11-22T22:15:01.364Z",
+    "lastVerified": "2026-11-22T22:15:01.364Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
-    "contentHash": "09997bb28065bd9c11131cb188e793dfceec98cf03a4e3e9ff8bfefad17141e9",
+    "contentHash": "d5d96dbc8630461968e9c82f723be309195d7062c5a777aa848d22a5177bfcd8",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -9329,9 +9329,9 @@
   "igorescodro-alkaa": {
     "name": "alkaa",
     "officialUrl": "https://github.com/igorescodro/alkaa",
-    "lastChecked": "2026-11-19T23:34:37.274Z",
+    "lastChecked": "2026-11-22T22:15:03.923Z",
     "revisionIdentifier": "8524e062",
-    "lastVerified": "2026-11-19T23:34:37.274Z"
+    "lastVerified": "2026-11-22T22:15:03.923Z"
   },
   "sarfrz-novacrawl": {
     "name": "NovaCrawl",

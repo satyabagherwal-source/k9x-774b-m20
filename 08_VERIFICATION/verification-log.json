@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261121-L63G",
-    "timestamp": "2026-11-21T00:11:58.108Z",
-    "repository": "xevrion/hatchzip",
-    "learningId": "learn-github-xevrion-hatchzip",
-    "contentHash": "0ca58031a9391a0673ebe1b9b0a6422af2f0ebd70ea01d71866f512f1b169917",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261121-1F0J",
     "timestamp": "2026-11-21T00:24:36.163Z",
     "repository": "zenbu-labs/terminal-browser",
@@ -7492,6 +7477,21 @@
     "contentHash": "b33c024ca9c4060500b165a35d946b67e0b1348cdc324f824ca0061c622fd919",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-AHRG",
+    "timestamp": "2026-11-22T22:15:01.996Z",
+    "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
+    "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
+    "contentHash": "d5d96dbc8630461968e9c82f723be309195d7062c5a777aa848d22a5177bfcd8",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
