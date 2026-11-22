@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T07:28:23.466Z",
-  "total_cycles_completed": 11451,
-  "total_learnings_persisted": 11451,
-  "total_rules_promoted": 10720,
+  "last_updated": "2026-11-22T07:37:18.175Z",
+  "total_cycles_completed": 11455,
+  "total_learnings_persisted": 11455,
+  "total_rules_promoted": 10723,
   "history": [
-    {
-      "timestamp": "2026-11-21T15:17:38.951Z",
-      "repository": "metalbear-co/mirrord",
-      "learningId": "learn-github-metalbear-co-mirrord",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T15:17:45.799Z",
-      "repository": "prometheus/prometheus",
-      "learningId": "learn-github-prometheus-prometheus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T15:17:53.161Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T15:31:17.721Z",
-      "repository": "unhappychoice/gitlogue",
-      "learningId": "learn-github-unhappychoice-gitlogue",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T15:31:23.077Z",
       "repository": "react-navigation/react-navigation",
@@ -1403,6 +1375,34 @@
       "repository": "Lakonik/pi-H3",
       "learningId": "learn-huggingface-lakonik-pi-h3",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T07:37:03.376Z",
+      "repository": "thinkingmachines/Inkling-2-Small",
+      "learningId": "learn-huggingface-thinkingmachines-inkling-2-small",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T07:37:05.072Z",
+      "repository": "domcyrus/rustnet",
+      "learningId": "learn-github-domcyrus-rustnet",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T07:37:10.551Z",
+      "repository": "kotest/kotest",
+      "learningId": "learn-github-kotest-kotest",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T07:37:18.175Z",
+      "repository": "MaterializeInc/materialize",
+      "learningId": "learn-github-materializeinc-materialize",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

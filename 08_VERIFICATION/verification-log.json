@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261120-7BYX",
-    "timestamp": "2026-11-20T06:45:26.745Z",
-    "repository": "yugabyte/yugabyte-db",
-    "learningId": "learn-github-yugabyte-yugabyte-db",
-    "contentHash": "28e3e2f274128d2c0934a2a6b8cef170ac85b7e28b5a10e4b4bb4bdebd43f248",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-OFSS",
-    "timestamp": "2026-11-20T06:58:44.860Z",
-    "repository": "GreptimeTeam/greptimedb",
-    "learningId": "learn-github-greptimeteam-greptimedb",
-    "contentHash": "c05241ada6a8508ba7992e4fa38a86e63e69eb5834a4e5c4609a8597c2289ce1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-TX74",
-    "timestamp": "2026-11-20T07:03:00.688Z",
-    "repository": "yshrsmz/BuildKonfig",
-    "learningId": "learn-github-yshrsmz-buildkonfig",
-    "contentHash": "dfebc9858d63b20523c514675fdffc4d7e51adcbc205d9fdd46836c5fb4c317f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-UF29",
-    "timestamp": "2026-11-20T07:03:23.841Z",
-    "repository": "juicedata/juicefs",
-    "learningId": "learn-github-juicedata-juicefs",
-    "contentHash": "175b0fe40ecc1977628ba91513aafc510bef15b25f78f5034ebd2d61c105d9dc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261120-97WX",
     "timestamp": "2026-11-20T07:14:54.417Z",
     "repository": "rook/rook",
@@ -7492,6 +7432,66 @@
     "contentHash": "023d0227a5d2691c36f2ebe26a6d2c8e9e92b8e35cf820dd0b9cd8d1737070b9",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-XEO5",
+    "timestamp": "2026-11-22T07:37:03.365Z",
+    "repository": "thinkingmachines/Inkling-2-Small",
+    "learningId": "learn-huggingface-thinkingmachines-inkling-2-small",
+    "contentHash": "5928121396a8bb7d58664fde1fc62374840323a32de3cd2fc1d054b0411a87f5",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-XFZ9",
+    "timestamp": "2026-11-22T07:37:05.061Z",
+    "repository": "domcyrus/rustnet",
+    "learningId": "learn-github-domcyrus-rustnet",
+    "contentHash": "eca52ec64be58abfb84cac843342f6df0ddcb3cd4340a4090cb00c87c2c59e0a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-XK7H",
+    "timestamp": "2026-11-22T07:37:10.541Z",
+    "repository": "kotest/kotest",
+    "learningId": "learn-github-kotest-kotest",
+    "contentHash": "1064a47b0b8284b6912966564a1b5a11c9715cbb5eaf63466795877260f0913f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-XQ38",
+    "timestamp": "2026-11-22T07:37:18.164Z",
+    "repository": "MaterializeInc/materialize",
+    "learningId": "learn-github-materializeinc-materialize",
+    "contentHash": "788ad3dabb650690a5a94f6c3cd7a81b23335956bbeefb34eeaadaa90e6008a9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

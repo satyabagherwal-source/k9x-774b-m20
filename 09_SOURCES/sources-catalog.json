@@ -3923,10 +3923,10 @@
     "repository": "MaterializeInc/materialize",
     "platform": "github",
     "sourceUrl": "https://github.com/MaterializeInc/materialize",
-    "sourceVersion": "5c494ac8",
+    "sourceVersion": "cae35259",
     "license": "NOASSERTION",
-    "contentHash": "23c0699b5341198f75ae032cf94ae27096fa60ef61a9b9b775c053c19b5cf0a9",
-    "lastHarvestedAt": "2026-11-21T03:28:50.572Z",
+    "contentHash": "788ad3dabb650690a5a94f6c3cd7a81b23335956bbeefb34eeaadaa90e6008a9",
+    "lastHarvestedAt": "2026-11-22T07:37:18.169Z",
     "learningId": "learn-github-materializeinc-materialize"
   },
   "react-bootstrap-react-bootstrap": {
@@ -6783,10 +6783,10 @@
     "repository": "kotest/kotest",
     "platform": "github",
     "sourceUrl": "https://github.com/kotest/kotest",
-    "sourceVersion": "9c81ef68",
+    "sourceVersion": "1bdf1431",
     "license": "Apache-2.0",
-    "contentHash": "cf3f01300db041e7ea6d5ac3deb0b6f7a5e13a6df5829d4b2a3731a5b46b1215",
-    "lastHarvestedAt": "2026-11-18T04:29:11.361Z",
+    "contentHash": "1064a47b0b8284b6912966564a1b5a11c9715cbb5eaf63466795877260f0913f",
+    "lastHarvestedAt": "2026-11-22T07:37:10.546Z",
     "learningId": "learn-github-kotest-kotest"
   },
   "projectcontour-contour": {
@@ -6823,10 +6823,10 @@
     "repository": "domcyrus/rustnet",
     "platform": "github",
     "sourceUrl": "https://github.com/domcyrus/rustnet",
-    "sourceVersion": "3bc950fb",
+    "sourceVersion": "535573d8",
     "license": "Apache-2.0",
-    "contentHash": "d661d5b724b3dc0cb6c526a188f893ec3e8e4ba526410bcc653a6a876ff12089",
-    "lastHarvestedAt": "2026-11-20T22:22:57.536Z",
+    "contentHash": "eca52ec64be58abfb84cac843342f6df0ddcb3cd4340a4090cb00c87c2c59e0a",
+    "lastHarvestedAt": "2026-11-22T07:37:05.066Z",
     "learningId": "learn-github-domcyrus-rustnet"
   },
   "futurice-pepperoni-app-kit": {
@@ -12445,8 +12445,8 @@
     "sourceUrl": "https://huggingface.co/thinkingmachines/Inkling-2-Small",
     "sourceVersion": "hf-thinkingmachines-inkling-2-small",
     "license": "Open-Source",
-    "contentHash": "ec9649c39cec40173a1ed59146a2c3f250b376aa413a621364be695fe62449e0",
-    "lastHarvestedAt": "2026-11-17T19:54:06.318Z",
+    "contentHash": "5928121396a8bb7d58664fde1fc62374840323a32de3cd2fc1d054b0411a87f5",
+    "lastHarvestedAt": "2026-11-22T07:37:03.370Z",
     "learningId": "learn-huggingface-thinkingmachines-inkling-2-small"
   },
   "tuist-tuist": {

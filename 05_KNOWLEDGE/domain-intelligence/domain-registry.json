@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T07:29:05.132Z",
+  "last_updated": "2026-11-22T07:37:24.059Z",
   "total_records": 2338,
   "domains": {
     "A": {
@@ -13459,8 +13459,8 @@
       "title": "Product Intelligence: domcyrus/rustnet Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-domcyrus-rustnet-product-intelligence-domcyrus-rustnet-core-invariants.md",
       "repository": "domcyrus/rustnet",
-      "content_hash": "da0b10c3eec16a187c6c4fb1bebb039db8f9241038506c88d5bc2cfe6cc92378",
-      "created_at": "2026-11-20T22:22:58.010Z"
+      "content_hash": "059e4f3608bc3bb9ee8ffb6d4de9d99caf940f0924c7b3d8a29a87d65b2dfcee",
+      "created_at": "2026-11-22T07:37:05.477Z"
     },
     "domain_intelligence-technical-construction-intelligence-aws-amplify-amplify-js-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-aws-amplify-amplify-js-core-invariants",
@@ -13477,8 +13477,8 @@
       "title": "Product Intelligence: domcyrus-rustnet-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-domcyrus-rustnet-learnings-product-intelligence-domcyrus-rustnet-learnings-core-.md",
       "repository": "domcyrus-rustnet-learnings",
-      "content_hash": "0fb8974514521d702da76dfaaad0ed8e9c31f95c482cba8e238d9ff2180c3833",
-      "created_at": "2026-11-20T22:23:08.386Z"
+      "content_hash": "ae2afa4dca899553d193762d589ebddd2066acbefc15680b6b41ee90a83dbbae",
+      "created_at": "2026-11-22T07:37:22.458Z"
     },
     "DOM-D-2D29CC33": {
       "record_id": "DOM-D-2D29CC33",
@@ -14403,8 +14403,8 @@
       "title": "Architecture Intelligence: MaterializeInc/materialize Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-materializeinc-materialize-architecture-intelligence-materializeinc-materialize-.md",
       "repository": "MaterializeInc/materialize",
-      "content_hash": "d9547d3e6588bd315cfe5109988009aa30d80294d7a8f23425fbf8d42d19166e",
-      "created_at": "2026-11-15T20:42:06.346Z"
+      "content_hash": "ef465493ec00939cbc27aafe02570c0f27065791c219fe21c53221764685e1de",
+      "created_at": "2026-11-22T07:37:18.564Z"
     },
     "DOM-K-C3DCBF34": {
       "record_id": "DOM-K-C3DCBF34",
@@ -28961,8 +28961,8 @@
       "title": "Research & Knowledge Intelligence: thinkingmachines/Inkling-2-Small Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-thinkingmachines-inkling-2-small-research-knowledge-intelligence-thinkingmach.md",
       "repository": "thinkingmachines/Inkling-2-Small",
-      "content_hash": "6fbd213b9462d95f0d5b0946f84e0787dd02859aa68260ad36cef5d507142acc",
-      "created_at": "2026-11-17T19:54:06.497Z"
+      "content_hash": "3df6fda5e2ee288d66002da50236516d0c4bdca0ce89d480e1530891555900a3",
+      "created_at": "2026-11-22T07:37:03.583Z"
     },
     "domain_intelligence-technical-construction-intelligence-codewhale-hq-codewhale-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-codewhale-hq-codewhale-core-invariants",
@@ -28988,8 +28988,8 @@
       "title": "Research & Knowledge Intelligence: hf-thinkingmachines-inkling-2-small-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-thinkingmachines-inkling-2-small-learnings-research-knowledge-intelligence-hf.md",
       "repository": "hf-thinkingmachines-inkling-2-small-learnings",
-      "content_hash": "8654ba3f719352535418141afc8c28fb36ccc71652a81b3df4cdda8126f2261a",
-      "created_at": "2026-11-17T19:54:47.618Z"
+      "content_hash": "29ae669bc0b1a06b396c8d20cdb2fa7fbd373d6a6a9f06286d24a302b450feb7",
+      "created_at": "2026-11-22T07:37:23.015Z"
     },
     "domain_intelligence-architecture-intelligence-tanstack-router-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-tanstack-router-core-invariants",
@@ -30008,8 +30008,8 @@
       "title": "Quality & Verification Intelligence: kotest/kotest Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-kotest-kotest-quality-verification-intelligence-kotest-kotest-core-invariants.md",
       "repository": "kotest/kotest",
-      "content_hash": "04ade4416256c5e9e40f8156c61fe857c29afceff08e67bc54946726a7434e96",
-      "created_at": "2026-11-18T04:29:11.725Z"
+      "content_hash": "fc3651653c59894dd5ca34bf13566d81cff5401e28558eb2067c1a9a6c61243a",
+      "created_at": "2026-11-22T07:37:10.917Z"
     },
     "domain_intelligence-technical-construction-intelligence-trailbaseio-trailbase-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-trailbaseio-trailbase-core-invariants",
@@ -30026,8 +30026,8 @@
       "title": "Quality & Verification Intelligence: kotest-kotest-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-kotest-kotest-learnings-quality-verification-intelligence-kotest-kotest-learning.md",
       "repository": "kotest-kotest-learnings",
-      "content_hash": "4f3bc29db19352d9575d921fa869ef3a51b36749dacbb0e3e79b9779ed13efae",
-      "created_at": "2026-11-18T04:29:24.859Z"
+      "content_hash": "3c7a4ca1c21b93b6462d930599e64ebb25fe5daf1da10014a403fb0e744ccb87",
+      "created_at": "2026-11-22T07:37:24.059Z"
     },
     "domain_intelligence-design-intelligence-unhappychoice-gitlogue-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-unhappychoice-gitlogue-core-invariants",

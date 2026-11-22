@@ -12079,3 +12079,7 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `5e0af050` | Multi-dimensional audit evidence | 2026-11-22T07:27:46.519Z |
 | `learn-huggingface-lakonik-pi-h3` | `https://huggingface.co/Lakonik/pi-H3` | `hf-lakonik` | Multi-dimensional audit evidence | 2026-11-22T07:28:23.459Z |
 | `learn-dom-d-1db76912` | `project://hf-lakonik-pi-h3` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-lakonik-pi-h3-learnings.md` | 2026-11-22T07:29:02.967Z |
+| `learn-huggingface-thinkingmachines-inkling-2-small` | `https://huggingface.co/thinkingmachines/Inkling-2-Small` | `hf-thinkin` | Multi-dimensional audit evidence | 2026-11-22T07:37:03.370Z |
+| `learn-github-domcyrus-rustnet` | `https://github.com/domcyrus/rustnet` | `535573d8` | Multi-dimensional audit evidence | 2026-11-22T07:37:05.066Z |
+| `learn-github-kotest-kotest` | `https://github.com/kotest/kotest` | `1bdf1431` | Multi-dimensional audit evidence | 2026-11-22T07:37:10.546Z |
+| `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `cae35259` | Multi-dimensional audit evidence | 2026-11-22T07:37:18.169Z |

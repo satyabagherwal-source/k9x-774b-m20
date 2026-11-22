@@ -12046,3 +12046,7 @@
 | `CYCLE-20261122-LH02` | `2026-11-22T07:27:46.514Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9905` | Yes (`9457b0df...`) |
 | `CYCLE-20261122-M9I6` | `2026-11-22T07:28:23.454Z` | `Lakonik/pi-H3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-lakonik-pi-h3-learnings.md` | Yes (`023d0227...`) |
 | `CYCLE-2026-11-22-PROJ-EVOLVE` | `2026-11-22T07:29:02.967Z` | `hf-lakonik-pi-h3` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-1DB76912` [Domain D] | Yes (`ff0c5c18...`) |
+| `CYCLE-20261122-XEO5` | `2026-11-22T07:37:03.365Z` | `thinkingmachines/Inkling-2-Small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-thinkingmachines-inkling-2-small-learnings.md` | Yes (`59281213...`) |
+| `CYCLE-20261122-XFZ9` | `2026-11-22T07:37:05.061Z` | `domcyrus/rustnet` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9906` | Yes (`eca52ec6...`) |
+| `CYCLE-20261122-XK7H` | `2026-11-22T07:37:10.541Z` | `kotest/kotest` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9907` | Yes (`1064a47b...`) |
+| `CYCLE-20261122-XQ38` | `2026-11-22T07:37:18.164Z` | `MaterializeInc/materialize` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9908` | Yes (`788ad3da...`) |

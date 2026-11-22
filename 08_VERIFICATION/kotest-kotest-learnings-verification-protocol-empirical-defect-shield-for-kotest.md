@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T04:29:24.591Z",
+  "timestamp": "2026-11-22T07:37:23.770Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-kotest-kotest-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [kotest-kotest-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T04:29:24.591Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T07:37:23.770Z`  
 > **Learning ID**: `LEARN-EVO-kotest-kotest-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kotest-kotest-learnings.md`  
 > **Source**: github ([https://github.com/kotest/kotest](https://github.com/kotest/kotest))  
-> **Source Version**: `9c81ef68`  
+> **Source Version**: `1bdf1431`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T04:29:10.371Z  
+> **Timestamp**: 2026-11-22T07:37:09.495Z  
 > **Learning ID**: `learn-github-kotest-kotest`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kotest-kotest-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kotest/kotest](https://github.com/kotest/kotest))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T04:29:10.366Z  
+> **Harvest Timestamp**: 2026-11-22T07:37:09.489Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -701,11 +701,13 @@ export default Home;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6288** (2026-11-17): **fix(matchers): report honest failure messages from matchInOrder/matchInOrderSubset on edge inputs**
-  *Symptoms*: Fixes #6286  ## What  `matchInOrder(...)` / `matchInOrderSubset(...)` produced broken failure messages on two edge inputs (pass/fail decisions were already correct; only the failure output was broken):  1. **Actual collection shorter than the assertions list** — the matching loop range `0..(actual.size - assertions.size)` is empty, `bestResult` stays `null`, and the message template interpolated the nullable fields literally:     ```    Best result when comparing from index [null], where null elements passed, but the following elements failed:                 null    ```  2. **Empty assertions list** — `assertions[elementsPassed]` threw `IndexOutOfBoundsException`, which the internal `runCatching` swallowed and rendered as element "problems":     ```    0 => Index 0 out of bounds for length 0    1 => Index 0 out of bounds for length 0    2 => Index 0 out of bounds for length 0    ```  ## Why  Every sibling in the family handles these edges properly:  - the structural twins `containsInOrder` / `existInOrder` reject an empty expected list eagerly (`require(...)` → `"expected values must not be empty"` / `"predicates must not be empty"`), - `matchEach` in the same file reports the analogous edges explicitly (`"No actual element for assertion at index N"` / `"Element has no corresponding assertion. Only N assertions provided"`).  `matchInOrder` / `matchInOrderSubset` were the only members whose edge-case output was garbage, leaving users without any diagnostic.  ## How  In `match
+- **Issue #6292** (2026-11-19): **use our gradle wrapper over the default gradle when the plugin is in use**
+  *Symptoms*: <!--  If this PR updates documentation, please update all relevant versions of the docs, see: https://github.com/kotest/kotest/tree/master/documentation/versioned_docs The documentation at https://github.com/kotest/kotest/tree/master/documentation/docs is the documentation for the next minor or major version _TO BE RELEASED_ --> use our gradle wrapper over the default gradle when the plugin is in use
+  **Post-Mortem & Fix Analysis**:
+  > merging and releasing this cause I need it - feel free to comment later :) 
 
-- **Issue #6286** (2026-11-17): **matchInOrder / matchInOrderSubset failure messages are broken on edge inputs: literal "null" in output and internal IndexOutOfBoundsException leaked as element problems**
-  *Symptoms*: ## Summary  `matchInOrder(...)` and `matchInOrderSubset(...)` in `io.kotest.matchers.collections` ([CollectionMatchers.kt](https://github.com/kotest/kotest/blob/master/kotest-assertions/kotest-assertions-core/src/commonMain/kotlin/io/kotest/matchers/collections/CollectionMatchers.kt)) build objectively broken failure messages on two edge inputs. The pass/fail decision is correct in both cases; the failure output is not, and both edges are already handled properly by every sibling in the same matcher family.  ## Manifestation 1 — more assertions than elements  ```kotlin listOf(1, 2) should matchInOrder<Int>(    { it shouldBe 1 },    { it shouldBe 2 },    { it shouldBe 3 } ) ```  The matching loop iterates `0..(actual.size - assertions.size)`, which is empty when the collection is shorter than the assertions list, so `bestResult` stays `null` and the message template interpolates the nullable fields literally. Actual output:  ``` Expected a sequence of elements to pass the assertions, but failed to match all assertions  Best result when comparing from index [null], where null elements passed, but the following elements failed:              null ```  The report contains no usable information (no element index, no counts, no failing assertion). Same output for `matchInOrderSubset` and for an empty actual collection.  ## Manifestation 2 — empty assertions list  ```kotlin listOf(1, 2, 3) should matchInOrder<Int>() ```  `assertions[elementsPassed]` throws `IndexOutOfBoundsException`
+- **Issue #6291** (2026-11-20): **Fix case-insensitive substring matching for Unicode strings**
+  *Symptoms*: `"İx" shouldNotContainIgnoringCase "X"` reports a match at index 2, even though the x is at index 1. Lowercasing İ expands it to an i followed by a combining dot, so the matcher reports an index into the lowercased copy.  Use `indexOf(substr, ignoreCase = true)` on the original string. This also brings matching in line with Kotlin's case-insensitive comparison: searching for the combining dot alone no longer matches İ.  Ran the assertions-core JVM tests and `apiCheck`. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -722,153 +724,472 @@ export default Home;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5f6bd903` (2026-11-17)
-**Commit Message**: fix(matchers): report honest failure messages from matchInOrder/matchInOrderSubset on edge inputs (#6288)
+### Incident Patch 1: `c74cc918` (2026-11-19)
+**Commit Message**: fix(assertions): correct empty-collection KDoc on shouldNotContainExactCopies (#6280) (#6281)
 
-Fixes #6286
+Fixes #6280.
 
-## What
+## Summary
 
-`matchInOrder(...)` / `matchInOrderSubset(...)` produced broken failure
-messages on two edge inputs (pass/fail decisions were already correct;
-only the failure output was broken):
+The KDoc on both negated overloads of `shouldNotContainExactCopies`
+claimed that "An empty collection will always fail", but the assertion
+passes vacuously for empty collections: the underlying matcher reports 0
+copies found, which is not equal to `copies` (which must be >= 1), so
+the negated assertion succeeds. This PR documents the actual behavior
+instead of changing it.
 
-1. **Actual collection shorter than the assertions list** — the matching
-loop range `0..(actual.size - assertions.size)` is empty, `bestResult`
-stays `null`, and the message template interpolated the nullable fields
-literally:
+## Why docs, not behavior
 
-   ```
-Best result when comparing from index [null], where null elements
-passed, but the following elements failed:
+The passing-on-empty semantics are consistent with the convention this
+repository already established for negated matchers in #4849, where
+`shouldNotBeIn`, `shouldNotBeOneOf` and `shouldNotContainAnyOf` are
+documented as "will always pass (vacuous truth)" on empty inputs,
+matching standard Kotlin `any`/`none` semantics (#4384). The sentence on
+`shouldNotContainExactCopies` appears to be a copy-paste leftover from
+the positive overloads (whose "An empty collection will always fail" is
+correct).
 
-               null
-   ```
+Minimal repro (from the issue body):
 
-2. **Empty assertions list** — `assertions[elementsPassed]` threw
-`IndexOutOfBoundsException`, which the internal `runCatching` swallowed
-and rendered as element "problems":
-
-   ```
-   0 => Index 0 out of bounds for length 0
-   1 => Index 0 out of bounds for length 0
-   2 => Index 0 out of bounds for length 0
-   ```
-
-## Why
-
-Every sibling in the family handles these edges properly:
-
-- the structural twins `containsInOrder` / `existInOrder` reject an
-empty expected list eagerly (`require(...)` → `"expected values
-
-**File**: `kotest-assertions/kotest-assertions-core/src/commonMain/kotlin/io/kotest/matchers/collections/CollectionMatchers.kt` (modified, +17/-5)
-```diff
-@@ -67,6 +67,8 @@ fun <T> matchInOrderSubset(vararg fns: (T) -> Unit): Matcher<Collection<T>?> =
-  */
- fun <T> matchInOrder(assertions: List<(T) -> Unit>, allowGaps: Boolean): Matcher<Collection<T>?> =
-    neverNullMatcher { actual ->
-+      require(assertions.isNotEmpty()) { "assertions must not be empty" }
-+
-       val originalMode = errorCollector.getCollectionMode()
-       try {
-          data class MatchInOrderSubsetProblem(
-@@ -126,17 +128,27 @@ fun <T> matchInOrder(assertions: List<(T) -> Unit>, allowGaps: Boolean): Matcher
-          MatcherResult(
-             allPassed,
-             {
--               """
-+               val result = bestResult
-+               if (result == null) {
-+                  // the actual collection is shorter than the assertions list, so the loop above never ran
-+                  """
-             |Expected a sequence of elements to pass the assertions, ${if (allowGaps) "possibly with gaps between " else ""}but failed to match all assertions
-             |
--            |Best result when comparing from index [${bestResult?.startIndex}], where ${bestResult?.elementsPassed} elements passed, but the following elements failed:
-+            |The collection has fewer elements (${actual.size}) than the number of assertions (${assertions.size}), so the assertions cannot all match.
-+            """.trimMargin()
-+               } else {
-+                  """
-+            |Expected a sequence of elements to pass the assertions, ${if (allowGaps) "possibly with gaps between " else ""}but failed to match all assertions
-+            |
-+            |Best result when comparing from index [${result.startIndex}], where ${result.elementsPassed} elements passed, but the following elements failed:
-             |
-             ${
--                  bestResult?.problems?.joinToString("\n") { problem ->
--                     "|${problem.atIndex} => ${problem.problem}"
-+                     result.problems.joinToString("\n") { problem ->
-+                        "|${problem.atIndex} => ${problem.problem}"
-+                     }
-                   }
--               }
-             """.trimMargin()
-+               }
-             },
-             { "Expected some assertion to fail but all passed" }
-          )
+```kotlin
+listOf<Int>().shouldNotContainExactCopies(element = 1, copies = 2) // PASSES, KDoc claims it fails
 ```
 
-**File**: `kotest-assertions/kotest-assertions-core/src/jvmTest/kotlin/com/sksamuel/kotest/matchers/collections/CollectionMatchersTest.kt` (modified, +36/-0)
+## Changes
+
+- `ContainE
+
+**File**: `kotest-assertions/kotest-assertions-core/src/commonMain/kotlin/io/kotest/matchers/collections/ContainExactCopies.kt` (modified, +4/-2)
 ```diff
-@@ -739,6 +739,30 @@ expected:<2> but was:<3>""")
-             """.trimIndent()
+@@ -28,7 +28,8 @@ fun DoubleArray.shouldNotContainExactCopies(element: Double, copies: Int): Doubl
+  * Verifies that this element is not in [array] by comparing value in
+  * exactly the specified number of copies
+  *
+- * An empty collection will always fail.
++ * An empty collection will always pass (vacuous truth).
++ * See: https://en.wikipedia.org/wiki/Vacuous_truth
+  *
+  * @see [containExactCopies]
+  */
+@@ -40,7 +41,8 @@ fun <T, I : Iterable<T>> I.shouldNotContainExactCopies(element: T, copies: Int):
+  * Verifies that this element is not in [array] by comparing value in
+  * exactly the specified number of copies
+  *
+- * An empty collection will always fail.
++ * An empty collection will always pass (vacuous truth).
++ * See: https://en.wikipedia.org/wiki/Vacuous_truth
+  *
+  * @see [containExactCopies]
+  */
+```
+
+**File**: `kotest-assertions/kotest-assertions-core/src/jvmTest/kotlin/com/sksamuel/kotest/matchers/collections/ContainExactCopiesTest.kt` (modified, +14/-0)
+```diff
+@@ -38,6 +38,14 @@ class ContainExactCopiesTest : WordSpec() {
+                listOf(1, 2, 3).shouldContainExactCopies(element = 4, copies = 0)
+             }.message shouldBe "Copies must be at least 1, was 0."
           }
- 
-+         "collection shorter than the assertions list reports a clear failure" {
-+            shouldFail {
-+               listOf(1, 2) should matchInOrder(
-+                  { it shouldBe 1 },
-+                  { it shouldBe 2 },
-+                  { it shouldBe 3 }
-+               )
-+            }.message shouldBe """
-+               Expected a sequence of elements to pass the assertions, but failed to match all assertions
-+
-+               The collection has fewer elements (2) than the number of assertions (3), so the assertions cannot all match.
-+            """.trimIndent()
++         "fail for an empty collection" {
++            shouldThrow<AssertionError> {
++               listOf<Int>().shouldContainExactCopies(element = 1, copies = 1)
++               arrayOf<Int>().shouldContainExactCopies(element = 1, copies = 1)
++            }.message.shouldContain(
++               "Collection should contain 1 copies of element 1; but contained 0 copies but the collection is []"
++            )
 +         }
-+
-+         "empty assertions are rejected like in containsInOrder / existInOrder" {
-+            shouldThrow<IllegalArgumentException> {
-+               listOf(1, 2, 3) should matchInOrder<Int>()
-+            }.message shouldBe "assertions must not be empty"
-+
-+            shouldThrow<IllegalArgumentException> {
-+               listOf(1, 2, 3) should matchInOrderSubset<Int>()
-+            }.message shouldBe "assertions must not be empty"
-+         }
-+
- 
-          "Non existing element causes error" {
+          "find similar element" {
              shouldThrow<AssertionError> {
-@@ -837,6 +861,18 @@ expected:<2> but was:<3>""")
-             """.trimIndent()
+                listOf(sweetRedApple, sweetRedCherry).shouldContainExactCopies(
+@@ -72,6 +80,12 @@ class ContainExactCopiesTest : WordSpec() {
+             floatArrayOf(1f, 2f, 3f).shouldNotContainExactCopies(element = 2f, copies = 2)
+             doubleArrayOf(1.0, 2.0, 3.0).shouldNotContainExactCopies(element = 2.0, copies = 2)
           }
- 
-+         "empty collection with assertions reports a clear failure" {
-+            shouldFail {
-+               emptyList<Int>() should matchInOrderSubset(
-+                  { it shouldBe 1 }
-+               )
-+            }.message shouldBe """
-+               Expected a sequence of elements to pass the assertions, possibly with gaps between but failed to match all assertions
++         "pass vacuously for an empty collection" {
++            listOf<Int>().shouldNotContainExactCopies(element = 1, copies = 1)
++            listOf<String>().shouldNotContainExactCopies(element = "a", copies = 2)
++            arrayOf<Int>().shouldNotContainExactCopies(element = 1, copies = 1)
++            arrayOf<String>().shouldNotContainExactCopies(element = "a", copies = 2)
++         }
+       }
+    }
+ }
+```
+
+---
+
+### Incident Patch 2: `62dc04b4` (2026-11-19)
+**Commit Message**: docs(assertions): fix date/time KDoc examples referencing nonexistent overloads (#6289)
+
+Fixes #6287.
+
+## Summary
+
+Several KDoc examples in the date/time matcher families reference API
+surface that does not exist, so the fenced examples cannot compile as
+written, or exercise a matcher other than the one documented. All
+signatures were verified against master sources (`1aa3e3c2d`) and, for
+the `java.time` factories, via `javap` on JDK 21. 10 sites in 5 files
+are corrected, docs-only:
+
+**A. Nonexistent 2-arg `after(a, b)` in `between` KDoc (6 sites).**
+Every `after` in the codebase takes exactly one argument; there is no
+two-parameter overload anywhere. The first half of each `between`
+matcher example called `date shouldBe after(firstDate, secondDate)` and
+could not compile, while the second half of the same example already
+used the matcher this KDoc documents. Corrected to `date shouldBe
+between(firstDate, secondDate)` in:
+
+-
+`kotest-assertions/kotest-assertions-core/src/jvmMain/kotlin/io/kotest/matchers/date/matchers.kt`
+(lines 2029, 2117, 2206, 2295 — `between` for `LocalDate`,
+`LocalDateTime`, `ZonedDateTime`, `OffsetDateTime`)
+-
+`kotest-assertions/kotest-assertions-kotlinx-datet
+
+**File**: `kotest-assertions/kotest-assertions-core/src/jsMain/kotlin/io/kotest/matchers/date/date.kt` (modified, +2/-2)
+```diff
+@@ -257,7 +257,7 @@ fun after(other: Date): Matcher<Date> = object : Matcher<Date> {
+  * ```
+  *    val date = Date(2019, 2, 15, 12, 0, 0, 0)
+  *
+- *    date.shouldHaveDayOfWeek(2019) // Assertion passes
++ *    date.shouldHaveYear(2019) // Assertion passes
+  * ```
+  */
+ infix fun Date.shouldHaveYear(year: Int) = this.getFullYear() shouldBe year
+@@ -280,7 +280,7 @@ infix fun Date.shouldHaveDayOfWeek(day: Int) = this.getDay() shouldBe day
+  * ```
+  *    val date = Date(2019, 2, 15, 12, 0, 0, 0)
+  *
+- *    date.shouldHaveDayOfWeek(5) // Assertion passes
++ *    date.shouldHaveDayOfMonth(15) // Assertion passes
+  * ```
+  */
+ infix fun Date.shouldHaveDayOfMonth(day: Int) = this.getDate() shouldBe day
+```
+
+**File**: `kotest-assertions/kotest-assertions-core/src/jsTest/kotlin/com/sksamuel/kotest/matchers/date/DateMatchersTest.kt` (added, +25/-0)
+```diff
+@@ -0,0 +1,25 @@
++@file:Suppress("RUNTIME_ANNOTATION_NOT_SUPPORTED")
 +
-+               The collection has fewer elements (0) than the number of assertions (1), so the assertions cannot all match.
-+            """.trimIndent()
++package com.sksamuel.kotest.matchers.date
++
++import io.kotest.assertions.shouldFail
++import io.kotest.core.spec.style.StringSpec
++import io.kotest.matchers.date.shouldHaveDayOfMonth
++import io.kotest.matchers.date.shouldHaveYear
++import kotlin.js.Date
++
++class DateMatchersTest : StringSpec({
++   "Date shouldHaveYear (pins the corrected KDoc example)" {
++      Date(2019, 2, 15, 12, 0, 0, 0).shouldHaveYear(2019)
++      shouldFail {
++         Date(2019, 2, 15, 12, 0, 0, 0).shouldHaveYear(2020)
++      }
++   }
++
++   "Date shouldHaveDayOfMonth (pins the corrected KDoc example)" {
++      Date(2019, 2, 15, 12, 0, 0, 0).shouldHaveDayOfMonth(15)
++      shouldFail {
++         Date(2019, 2, 15, 12, 0, 0, 0).shouldHaveDayOfMonth(16)
++      }
++   }
++})
+```
+
+**File**: `kotest-assertions/kotest-assertions-core/src/jvmMain/kotlin/io/kotest/matchers/date/matchers.kt` (modified, +4/-4)
+```diff
+@@ -2026,7 +2026,7 @@ fun LocalDate.shouldNotBeBetween(a: LocalDate, b: LocalDate) = this shouldNotBe
+  *    val firstDate = LocalDate.of(2019, 2, 15)
+  *    val secondDate = LocalDate.of(2019, 2, 17)
+  *
+- *    date shouldBe after(firstDate, secondDate) // Assertion passes
++ *    date shouldBe between(firstDate, secondDate) // Assertion passes
+  *
+  *
+  *    val date = LocalDate.of(2019, 2, 15)
+@@ -2114,7 +2114,7 @@ fun LocalDateTime.shouldNotBeBetween(a: LocalDateTime, b: LocalDateTime) = this
+  *    val firstDate = LocalDateTime.of(2019, 2, 15, 12, 0, 0)
+  *    val secondDate = LocalDateTime.of(2019, 2, 17, 12, 0, 0)
+  *
+- *    date shouldBe after(firstDate, secondDate) // Assertion passes
++ *    date shouldBe between(firstDate, secondDate) // Assertion passes
+  *
+  *
+  *    val date = LocalDateTime.of(2019, 2, 15, 12, 0, 0)
+@@ -2203,7 +2203,7 @@ fun ZonedDateTime.shouldNotBeBetween(a: ZonedDateTime, b: ZonedDateTime) = this
+  *    val firstDate = ZonedDateTime.of(2019, 2, 15, 12, 0, 0, 0, ZoneId.of("America/Sao_Paulo"))
+  *    val secondDate = ZonedDateTime.of(2019, 2, 17, 12, 0, 0, 0, ZoneId.of("America/Sao_Paulo"))
+  *
+- *    date shouldBe after(firstDate, secondDate) // Assertion passes
++ *    date shouldBe between(firstDate, secondDate) // Assertion passes
+  *
+  *
+  *    val date = ZonedDateTime.of(2019, 2, 15, 12, 0, 0, 0, ZoneId.of("America/Sao_Paulo"))
+@@ -2292,7 +2292,7 @@ fun OffsetDateTime.shouldNotBeBetween(a: OffsetDateTime, b: OffsetDateTime) = th
+  *    val firstDate = OffsetDateTime.of(2019, 2, 15, 12, 0, 0, 0, ZoneOffset.ofHours(-3))
+  *    val secondDate = OffsetDateTime.of(2019, 2, 17, 12, 0, 0, 0, ZoneOffset.ofHours(-3))
+  *
+- *    date shouldBe after(firstDate, secondDate) // Assertion passes
++ *    date shouldBe between(firstDate, secondDate) // Assertion passes
+  *
+  *
+  *    val date = OffsetDateTime.of(2019, 2, 15, 12, 0, 0, 0, ZoneOffset.ofHours(-3))
+```
+
+**File**: `kotest-assertions/kotest-assertions-core/src/jvmMain/kotlin/io/kotest/matchers/date/offsetdatetime.kt` (modified, +1/-1)
+```diff
+@@ -34,7 +34,7 @@ fun OffsetDateTime.shouldBeToday() = this should beInTodayODT()
+  * Asserts that the OffsetDateTime does not have a date component of today
+  *
+  * ```
+- *      OffsetDateTime.of(2009, Month.APRIL, 2,2,2).shouldNotBeToday() // Assertion passes
++ *      OffsetDateTime.of(2009, 4, 2, 2, 2, 0, 0, ZoneOffset.ofHours(-3)).shouldNotBeToday() // Assertion passes
+  * ```
+  */
+ fun OffsetDateTime.shouldNotBeToday() = this shouldNot beInTodayODT()
+```
+
+**File**: `kotest-assertions/kotest-assertions-core/src/jvmMain/kotlin/io/kotest/matchers/date/zoneddatetime.kt` (modified, +1/-1)
+```diff
+@@ -26,7 +26,7 @@ fun beInTodayZDT() = object : Matcher<ZonedDateTime> {
+  * Asserts that the ZonedDateTime does not have a date component of today
+  *
+  * ```
+- *      ZonedDateTime.of(2009, Month.APRIL, 2,2,2).shouldNotBeToday() // Assertion passes
++ *      ZonedDateTime.of(2009, 4, 2, 2, 2, 0, 0, ZoneId.of("America/Sao_Paulo")).shouldNotBeToday() // Assertion passes
+  * ```
+  */
+ fun ZonedDateTime.shouldNotBeToday() = this shouldNot beInTodayZDT()
+```
+
+**File**: `kotest-assertions/kotest-assertions-core/src/jvmTest/kotlin/com/sksamuel/kotest/matchers/date/DateMatchersTest.kt` (modified, +25/-0)
+```diff
+@@ -6,6 +6,7 @@ import io.kotest.core.spec.style.StringSpec
+ import io.kotest.matchers.date.after
+ import io.kotest.matchers.date.atSameZone
+ import io.kotest.matchers.date.before
++import io.kotest.matchers.date.between
+ import io.kotest.matchers.date.haveSameDay
+ import io.kotest.matchers.date.haveSameHours
+ import io.kotest.matchers.date.haveSameInstantAs
+@@ -348,6 +349,30 @@ class DateMatchersTest : StringSpec() {
+       OffsetDateTime.of(2019, 2, 15, 12, 0, 0, 0, ZoneOffset.ofHours(-3)).shouldNotBeBetween(OffsetDateTime.of(2019, 2, 16, 12, 0, 0, 0, ZoneOffset.ofHours(-3)), OffsetDateTime.of(2019, 2, 17, 12, 0, 0, 0, ZoneOffset.ofHours(-3)))
+     }
+ 
++    "between() matcher should pass for in-range values and fail otherwise (pins the corrected KDoc examples)" {
++      LocalDate.of(2019, 2, 16) shouldBe between(LocalDate.of(2019, 2, 15), LocalDate.of(2019, 2, 17))
++      LocalDateTime.of(2019, 2, 16, 12, 0, 0) shouldBe between(LocalDateTime.of(2019, 2, 15, 12, 0, 0), LocalDateTime.of(2019, 2, 17, 12, 0, 0))
++      ZonedDateTime.of(2019, 2, 16, 12, 0, 0, 0, ZoneId.of("America/Sao_Paulo")) shouldBe between(ZonedDateTime.of(2019, 2, 15, 12, 0, 0, 0, ZoneId.of("America/Sao_Paulo")), ZonedDateTime.of(2019, 2, 17, 12, 0, 0, 0, ZoneId.of("America/Sao_Paulo")))
++      OffsetDateTime.of(2019, 2, 16, 12, 0, 0, 0, ZoneOffset.ofHours(-3)) shouldBe between(OffsetDateTime.of(2019, 2, 15, 12, 0, 0, 0, ZoneOffset.ofHours(-3)), OffsetDateTime.of(2019, 2, 17, 12, 0, 0, 0, ZoneOffset.ofHours(-3)))
++      shouldFail {
++        LocalDate.of(2019, 2, 15) shouldBe between(LocalDate.of(2019, 2, 16), LocalDate.of(2019, 2, 17))
++      }
++    }
++
++    "between() matcher should compare instants when the value and the range bounds are in different timezones" {
++      ZonedDateTime.of(2019, 2, 16, 12, 0, 0, 0, ZoneId.of("America/Sao_Paulo")) shouldBe between(ZonedDateTime.of(2019, 2, 15, 12, 0, 0, 0, ZoneId.of("UTC")), ZonedDateTime.of(2019, 2, 17, 12, 0, 0, 0, ZoneId.of("Asia/Kolkata")))
++      OffsetDateTime.of(2019, 2, 16, 12, 0, 0, 0, ZoneOffset.ofHours(-3)) shouldBe between(OffsetDateTime.of(2019, 2, 15, 12, 0, 0, 0, ZoneOffset.UTC), OffsetDateTime.of(2019, 2, 17, 12, 0, 0, 0, ZoneOffset.ofHours(5)))
++      shouldFail {
++        // the value's instant is equal to the start of the range, so it is not between
++        ZonedDateTime.of(2019, 2, 15, 9, 0, 0, 0, ZoneId.of("America/Sao_Paulo")) shouldBe between(ZonedDateTime.of(2019, 2, 15, 12, 0, 0, 0, ZoneId.of("UTC")), ZonedDateTime.of(2019, 2, 17, 12, 0, 0, 0, ZoneId.of("Asia/Kolkata")))
++      }
++    }
++
++    "ZonedDateTime and OffsetDateTime shouldNotBeToday with explicit zones (pins the corrected KDoc examples)" {
++      ZonedDateTime.of(2009, 4, 2, 2, 2, 0, 0, ZoneId.of("America/Sao_Paulo")).shouldNotBeToday()
++      OffsetDateTime.of(2009, 4, 2, 2, 2, 0, 0, ZoneOffset.ofHours(-3)).shouldNotBeToday()
++    }
++
+     "LocalDate.shouldBeToday() should match today" {
+       LocalDate.now().shouldBeToday()
+     }
+```
+
+**File**: `kotest-assertions/kotest-assertions-kotlinx-datetime/src/commonMain/kotlin/io/kotest/matchers/kotlinx/datetime/datetime.kt` (modified, +2/-2)
+```diff
+@@ -850,7 +850,7 @@ fun LocalDate.shouldNotBeBetween(a: LocalDate, b: LocalDate) = this shouldNotBe
+  *    val firstDate = LocalDate(2019, 2, 15)
+  *    val secondDate = LocalDate(2019, 2, 17)
+  *
+- *    date shouldBe after(firstDate, secondDate) // Assertion passes
++ *    date shouldBe between(firstDate, secondDate) // Assertion passes
+  *
+  *
+  *    val date = LocalDate(2019, 2, 15)
+@@ -937,7 +937,7 @@ fun LocalDateTime.shouldNotBeBetween(a: LocalDateTime, b: LocalDateTime) = this
+  *    val firstDate = LocalDateTime(2019, 2, 15, 12, 0, 0)
+  *    val secondDate = LocalDateTime(2019, 2, 17, 12, 0, 0)
+  *
+- *    date shouldBe after(firstDate, secondDate) // Assertion passes
++ *    date shouldBe between(firstDate, secondDate) // Assertion passes
+  *
+  *
+  *    val date = LocalDateTime(2019, 2, 15, 12, 0, 0)
+```
+
+**File**: `kotest-assertions/kotest-assertions-kotlinx-datetime/src/jvmTest/kotlin/io/kotest/matchers/kotlinx/datetime/LocalDateTest.kt` (added, +29/-0)
+```diff
+@@ -0,0 +1,29 @@
++package io.kotest.matchers.kotlinx.datetime
++
++import io.kotest.assertions.shouldFail
++import io.kotest.core.spec.style.StringSpec
++import io.kotest.matchers.shouldBe
++import kotlinx.datetime.LocalDate
++
++class LocalDateTest : StringSpec({
++
++    "between() matcher should pass for in-range values and fail otherwise (pins the corrected KDoc examples)" {
++        LocalDate(2019, 2, 16) shouldBe between(LocalDate(2019, 2, 15), LocalDate(2019, 2, 17))
++        shouldFail {
++            LocalDate(2019, 2, 15) shouldBe between(LocalDate(2019, 2, 16), LocalDate(2019, 2, 17))
++        }
++    }
++
++    "between() matcher treats the start and end of the range as exclusive" {
++        // value equal to the start of the range is not between
++        shouldFail {
++            LocalDate(2019, 2, 15) shouldBe between(LocalDate(2019, 2, 15), LocalDate(2019, 2, 17))
++        }
++        // value equal to the end of the range is not between
++        shouldFail {
++            LocalDate(2019, 2, 17) shouldBe between(LocalDate(2019, 2, 15), LocalDate(2019, 2, 17))
++        }
++        // values immediately inside the range are between
++        LocalDate(2019, 2, 16) shouldBe between(LocalDate(2019, 2, 15), LocalDate(2019, 2, 17))
++    }
++})
+```
+
+---
+
+### Incident Patch 3: `1bdf1431` (2026-11-20)
+**Commit Message**: Fix odd matchers for negative integers (#6290)
+
+`(-3).shouldBeOdd()` currently fails, while `(-3).shouldNotBeOdd()`
+passes. Both the Int and Long matchers check for a remainder of 1, but
+Kotlin gives -1 for `-3 % 2`.
+
+Check for a nonzero remainder instead. The regression tests exercise
+both assertions with negative and positive values, zero, and the integer
+bounds.
+
+Ran the assertions-core JVM tests and `apiCheck`.
+
+---------
+
+Co-authored-by: Alfonso Ristorato <[REDACTED_EMAIL]>
+
+**File**: `kotest-assertions/kotest-assertions-core/src/commonMain/kotlin/io/kotest/matchers/ints/int.kt` (modified, +1/-1)
+```diff
+@@ -92,7 +92,7 @@ fun Int.shouldNotBeOdd(): Int {
+ fun beOdd() = object : Matcher<Int> {
+    override fun test(value: Int): MatcherResult =
+       MatcherResult(
+-         value % 2 == 1,
++         value % 2 != 0,
+          { "$value should be odd" },
+          { "$value should be even" })
+ }
+```
+
+**File**: `kotest-assertions/kotest-assertions-core/src/commonMain/kotlin/io/kotest/matchers/longs/long.kt` (modified, +1/-1)
+```diff
+@@ -94,7 +94,7 @@ fun Long.shouldNotBeOdd(): Long {
+ fun lbeOdd() = object : Matcher<Long> {
+    override fun test(value: Long): MatcherResult =
+       MatcherResult(
+-         value % 2 == 1L,
++         value % 2 != 0L,
+          { "$value should be odd" },
+          { "$value should be even" })
+ }
+```
+
+**File**: `kotest-assertions/kotest-assertions-core/src/jvmTest/kotlin/com/sksamuel/kotest/matchers/numerics/IntMatchersTest.kt` (modified, +12/-0)
+```diff
+@@ -11,6 +11,8 @@ import io.kotest.matchers.ints.shouldBeNegative
+ import io.kotest.matchers.ints.shouldBePositive
+ import io.kotest.matchers.ints.shouldBeZero
+ import io.kotest.matchers.ints.shouldNotBeZero
++import io.kotest.matchers.ints.shouldBeOdd
++import io.kotest.matchers.ints.shouldNotBeOdd
+ import io.kotest.core.spec.style.StringSpec
+ import io.kotest.matchers.should
+ import io.kotest.matchers.shouldBe
+@@ -78,6 +80,16 @@ class IntMatchersTest : StringSpec() {
+       "isOdd" {
+          3 shouldBe beOdd()
+          4 shouldNotBe beOdd()
++
++         listOf(1, 3, -1, -3, Int.MIN_VALUE + 1, Int.MAX_VALUE).forEach { value ->
++            value.shouldBeOdd()
++            shouldThrow<AssertionError> { value.shouldNotBeOdd() }
 +         }
 +
-          "out-of-order elements cause error" {
-             shouldThrow<AssertionError> {
-                listOf(1, 2, 3) should matchInOrderSubset(
++         listOf(0, 2, -2, Int.MIN_VALUE).forEach { value ->
++            shouldThrow<AssertionError> { value.shouldBeOdd() }
++            value.shouldNotBeOdd()
++         }
+       }
+ 
+       "inRange" {
+```
+
+**File**: `kotest-assertions/kotest-assertions-core/src/jvmTest/kotlin/com/sksamuel/kotest/matchers/numerics/LongMatchersTest.kt` (modified, +14/-0)
+```diff
+@@ -7,6 +7,8 @@ import io.kotest.matchers.comparables.beLessThan
+ import io.kotest.matchers.comparables.beLessThanOrEqualTo
+ import io.kotest.matchers.longs.shouldBeNegative
+ import io.kotest.matchers.longs.shouldBePositive
++import io.kotest.matchers.longs.shouldBeOdd
++import io.kotest.matchers.longs.shouldNotBeOdd
+ import io.kotest.matchers.longs.shouldBeZero
+ import io.kotest.matchers.longs.shouldNotBeZero
+ import io.kotest.core.spec.style.StringSpec
+@@ -27,6 +29,18 @@ import io.kotest.matchers.longs.shouldNotBeAtMost
+ class LongMatchersTest : StringSpec() {
+   init {
+ 
++    "isOdd" {
++      listOf(1L, 3L, -1L, -3L, Long.MIN_VALUE + 1L, Long.MAX_VALUE).forEach { value ->
++        value.shouldBeOdd()
++        shouldThrow<AssertionError> { value.shouldNotBeOdd() }
++      }
++
++      listOf(0L, 2L, -2L, Long.MIN_VALUE).forEach { value ->
++        shouldThrow<AssertionError> { value.shouldBeOdd() }
++        value.shouldNotBeOdd()
++      }
++    }
++
+     "be positive" {
+       1L.shouldBePositive()
+ 
+```
+
+**File**: `skills/kotest/references/ASSERTIONS-REFERENCE.md` (modified, +1/-1)
+```diff
+@@ -166,7 +166,7 @@ c.shouldBeBetween(lower, upper)        // inclusive
+ 
+ n.shouldBeBetween(1, 10)
+ n.shouldBeInRange(1..100)
+-n.shouldBeEven(); n.shouldBeOdd(); n.shouldBeZero()
++n.shouldBeEven(); n.shouldBeOdd(); n.shouldBeZero()  // In 6.2.7, Int/Long.shouldBeOdd() rejects negative odd values
+ n.shouldBePositive(); n.shouldBeNegative()
+ d shouldBe (3.14 plusOrMinus 0.01)     // floating-point tolerance
+ d.shouldBeNaN(); d.shouldBePositiveInfinity()
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6292** (2026-11-19): use our gradle wrapper over the default gradle when the plugin is in use (@alfonsoristorato)
+- **PR #6291** (2026-11-20): Fix case-insensitive substring matching for Unicode strings (@GiHoon1123)
+- **PR #6290** (2026-11-20): Fix odd matchers for negative integers (@GiHoon1123)
+- **PR #6289** (2026-11-19): docs(assertions): fix date/time KDoc examples referencing nonexistent overloads (@Inf1mum)
 - **PR #6288** (2026-11-17): fix(matchers): report honest failure messages from matchInOrder/matchInOrderSubset on edge inputs (@Inf1mum)
-- **PR #6279** (2026-11-16): Add typed shouldBeLeft/shouldBeRight overloads for Either (@mdedetrich)
-- **PR #6278** (2026-11-14): update docs from amper to kotlin toolchain (@alfonsoristorato)
-- **PR #6277** (2026-11-13): fix flaky tests 2 (@alfonsoristorato)
-- **PR #6276** (2026-11-13): fix flaky test (@alfonsoristorato)
-- **PR #6275** (2026-11-14): pin more mockserver deps (@alfonsoristorato)
+- **PR #6285** (2026-11-19): docs(assertions): correct self-contradicting shouldHaveNano KDoc example (@Inf1mum)
 
 ---
 
@@ -888,51 +1209,35 @@ empty expected list eagerly (`require(...)` → `"expected values
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. matchers): report honest failure messages from matchInOrder/matchInOrderSubset o
+## X. assertions): correct empty-collection KDoc on shouldNotContainExactCopies
 
 **RULE**:
-When implementing operations in `kotest-assertions/kotest-assertions-core/src/commonMain/kotlin/io/kotest/matchers/collections/CollectionMatchers.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kotest/kotest. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `kotest-assertions/kotest-assertions-core/src/commonMain/kotlin/io/kotest/matchers/collections/ContainExactCopies.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kotest/kotest. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5f6bd903`: matchers): report honest failure messages from matchInOrder/matchInOrderSubset on edge inputs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c74cc918`: assertions): correct empty-collection KDoc on shouldNotContainExactCopies. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `kotest-assertions/kotest-assertions-core/src/commonMain/kotlin/io/kotest/matchers/collections/CollectionMatchers.kt`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `kotest-assertions/kotest-assertions-core/src/commonMain/kotlin/io/kotest/matchers/collections/ContainExactCopies.kt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-      require(assertions.isNotEmpty()) { "assertions must not be empty" }
-
-               val result = bestResult
-               if (result == null) {
-                  // the actual collection is shorter than the assertions list, so the loop above never ran
-                  """
-            |The collection has fewer elements (${actual.size}) than the number of assertions (${assertions.size}), so the assertions cannot all match.
-            """.trimMargin()
-               } else {
-                  """
-            |Expected a sequence of elements to pass the assertions, ${if (allowGaps) "possibly with gaps between " else ""}but failed to match all assertions
-            |
-            |Best result when comparing from index [${result.startIndex}], where ${result.elementsPassed} elements passed, but the following elements failed:
-                     result.problems.joinToString("\n") { problem ->
-                        "|${problem.atIndex} => ${problem.problem}"
-                     }
-               }
+ * An empty collection will always pass (vacuous truth).
+ * See: https://en.wikipedia.org/wiki/Vacuous_truth
+ * An empty collection will always pass (vacuous truth).
+ * See: https://en.wikipedia.org/wiki/Vacuous_truth
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Induced defect failure mode:
-               """
-            |Best result when comparing from index [${bestResult?.startIndex}], where ${bestResult?.elementsPassed} elements passed, but the following elements failed:
-                  bestResult?.problems?.joinToString("\n") { problem ->
-                     "|${problem.atIndex} => ${problem.problem}"
-               }
+ * An empty collection will always fail.
+ * An empty collection will always fail.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5f6bd903` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c74cc918` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/materializeinc-materialize-learnings.md`  
 > **Source**: github ([https://github.com/MaterializeInc/materialize](https://github.com/MaterializeInc/materialize))  
-> **Source Version**: `5c494ac8`  
+> **Source Version**: `cae35259`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T03:28:49.532Z  
+> **Timestamp**: 2026-11-22T07:37:17.091Z  
 > **Learning ID**: `learn-github-materializeinc-materialize`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/materializeinc-materialize-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/MaterializeInc/materialize](https://github.com/MaterializeInc/materialize))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T03:28:49.526Z  
+> **Harvest Timestamp**: 2026-11-22T07:37:17.086Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The live data layer for apps and AI agents. Create up-to-the-second views into your business, just using SQL
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 6407 stars
+- **Stars / Engagement**: 6409 stars
 
 ---
 
@@ -1081,11 +1081,11 @@ export function splitWorkerCpuRows(rows: WorkerCpuRow[]) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #40969** (2026-11-20): **[librdkafka agent test] kafka: upgrade librdkafka to v2.16.0**
-  *Symptoms*: **Test run of mz-agents' librdkafka-release-agent; do not merge.** It replays the `v2.16.0` upgrade against MaterializeInc/materialize@`60cc748fd80eef17f9d6b444d4a39217f12db92b` (`2026-10-27T12:09:07-07:00`), seeing only what existed then. The base branch is `main` at `60cc748fd80eef17f9d6b444d4a39217f12db92b`. Review comments are welcome; the agent answers them for eight hours after each daily run.  Linear: [SS-608](https://linear.app/materializeinc/issue/SS-608/librdkafka-bump-fake-test-issue-upgrade-librdkafka-to-v2160) (fake test issue) Depends on: MaterializeInc/rust-rdkafka#39 (pinned to its head `13adee1`)  ### Motivation  Upgrades the vendored librdkafka from upstream v2.12.1 (plus one build fix) to [v2.16.0](https://github.com/confluentinc/librdkafka/releases/tag/v2.16.0), the latest stable release. It brings four releases of fixes, several of which are in code paths we use (re-bootstrap, `ALL_BROKERS_DOWN`, watermark/offset queries on client destroy, lost-assignment commits), plus bundled OpenSSL/libcurl CVE fixes.  ### Changes  * `Cargo.toml` `[patch.crates-io]`: `rdkafka` and `rdkafka-sys` now pin `rev = "13adee1ddd5d2008c205bec6c9c34a917c8e97a8"` (head of MaterializeInc/rust-rdkafka#39) instead of following the fork's default branch. * `Cargo.lock`: only the two rust-rdkafka entries change (`642daa6` → `13adee1`, `rdkafka-sys` `4.3.0+2.5.0` → `4.3.0+2.16.0`). No other crate moved. * `test/cargo-fuzz/Cargo.toml`: the same `rev` pins, because `bin/lint-cargo` requi
+- **Issue #40993** (2026-11-22): **chore(deps): update dependency jquery to v3.8.0**
+  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [jquery](https://jquery.com) ([source](https://redirect.github.com/jquery/jquery)) | `3.5.0` → `3.8.0` | ![age](https://developer.mend.io/api/mc/badges/age/npm/jquery/3.8.0?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/jquery/3.5.0/3.8.0?slim=true) |  ---  > [!WARNING] > Some dependencies could not be looked up. Check the Dependency Dashboard for more information.  ---  ### Release Notes  <details> <summary>jquery/jquery (jquery)</summary>  ### [`v3.8.0`](https://redirect.github.com/jquery/jquery/releases/tag/3.8.0)  [Compare Source](https://redirect.github.com/jquery/jquery/compare/3.7.1...3.8.0)  <https://blog.jquery.com/2026/11/17/jquery-4-1-0-and-3-8-0-released-passing-the-torch/>  #### Ajax  - Support an alternative completeCallback API for transports ([43b8652b](https://redirect.github.com/jquery/jquery/commit/43b8652b020fb26920d250ca917ee2ecc298cd3f))  #### Attributes  - Support the `until-found` value for the `hidden` attribute ([85290c59](https://redirect.github.com/jquery/jquery/commit/85290c59724db69a3967885892d4305d76de058f))  #### Core  - Formally deprecate push/sort/splice ([50d9a8dc](https://redirect.github.com/jquery/jquery/commit/50d9a8dc7fd9e93e09827e4a60772c617d1d5e28)) - Simplify code post browser support reduction ([6fe886
 
-- **Issue #40965** (2026-11-20): **ci: run the claude workflow with the read-only job token**
-  *Symptoms*: The Claude workflow now passes the job's `GITHUB_TOKEN` to `claude-code-action` instead of letting the action mint a Claude GitHub App token. The job token is scoped to `contents: read`, `pull-requests: write` and `actions: read`, so Claude can still read PRs and CI results and post replies, but cannot push branches or merge. The `gh` allowlist is narrowed to `gh pr view`, `gh pr diff` and `gh pr checks`, and `@claude` on plain issues no longer starts the job.  ### Risks  - Replies are posted as `github-actions[bot]` instead of the Claude app. - `@claude` on a plain issue is ignored. - `@claude` in PR reviews on fork PRs gets a read-only token from GitHub. The OAuth secret is already unavailable on those runs. - Rollback is reverting this one file.  ### Tests  actionlint passes. Not exercised end to end: needs an `@claude` comment on a PR after merge.  🤖 Generated with [Claude Code](https://claude.com/claude-code)
+- **Issue #40992** (2026-11-22): **chore(deps): update dependency docker/compose to v5.8.0**
+  *Symptoms*: This PR contains the following updates:  | Package | Update | Change | |---|---|---| | [docker/compose](https://redirect.github.com/docker/compose) | minor | `5.7.1` → `5.8.0` | | [docker/compose](https://redirect.github.com/docker/compose) | minor | `v5.7.1` → `v5.8.0` |  ---  > [!WARNING] > Some dependencies could not be looked up. Check the Dependency Dashboard for more information.  ---  ### Release Notes  <details> <summary>docker/compose</summary>  ### [`v5.8.0`](https://redirect.github.com/docker/compose/releases/tag/v5.8.0)  [Compare Source](https://redirect.github.com/docker/compose/compare/v5.7.2...v5.8.0)  #### What's Changed  > ℹ️ **Scheduled jobs are now supported.** A job is a one-shot unit of work declared in the top-level `jobs:` element of your Compose file, run on demand or on a schedule. > Scheduling needs **Docker Engine 29.10 or later with the jobs extension enabled** (it is off by default: `dockerd --extension-enable org.mobyproject.jobs.v0`). Manual jobs keep working on any engine, and projects that declare no jobs are unaffected.  ```yaml services:   db:     image: postgres jobs:   backup:     image: backup-tool     depends_on: [db]     triggers:       schedule:         - cron: "0 3 * * *" ```  > - `docker compose up` (or `create`) registers the scheduled jobs with the engine, which fires them on its own clock; `docker compose down` removes them. On an engine without jobs support, `up` refuses a project with scheduled jobs before creating anything. > -
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1102,8 +1102,8 @@ export function splitWorkerCpuRows(rows: WorkerCpuRow[]) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `71f8f02e` (2026-11-20)
-**Commit Message**: chore(deps): update dependency @faker-js/faker to v10 [security] (#40860)
+### Incident Patch 1: `7d689771` (2026-11-21)
+**Commit Message**: fix(deps): update dependency @faker-js/faker to v10.6.0 (#40971)
 
 This PR contains the following updates:
 
@@ -1112,11 +1112,12 @@ This PR contains the following updates:
 [Confidence](https://docs.renovatebot.com/merge-confidence/) |
 |---|---|---|---|
 | [@faker-js/faker](https://fakerjs.dev)
-([source](https://redirect.github.com/faker-js/faker)) | `8.4.0` →
-`10.5.0` |
-![age](https://developer.mend.io/api/mc/badges/age/npm/@faker-js%2ffaker/10.5.0?slim=true)
+([source](https://redirect.github.com/faker-js/faker)) | [`10.5.0` →
+`10.6.0`](https://renovatebot.com/diffs/npm/@faker-js%2ffaker/10.5.0/10.6.0)
 |
-![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/@faker-js%2ffaker/8.4.0/10.5.0?slim=true)
+![age](https://developer.mend.io/api/mc/badges/age/npm/@faker-js%2ffaker/10.6.0?slim=true)
+|
+![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/@faker-js%2ffaker/10.5.0/10.6.0?slim=true)
 |
 
 ---
@@ -1127,443 +1128,379 @@ Dashboard for more information.
 
 ---
 
-### Faker: helpers.fake exploitable into arbritary code execution
-[CVE-2026-73231](https://nvd.nist.gov/vuln/detail/CVE-2026-73231) /
-[GHSA-qxc2-j82w-r537](https://redirect.github.com/advisories/GHSA-qxc2-j82w-r537)
+### Release Notes
 
 <details>
-<summary>More information</summary>
+<summary>faker-js/faker (@&#8203;faker-js/faker)</summary>
 
-#### Details
-##### Summary
+###
+[`v10.6.0`](https://redirect.github.com/faker-js/faker/blob/HEAD/CHANGELOG.md#1060-2026-08-14)
 
-`faker.helpers.fake` can be tricked into arbritary code execution.
+[Compare
+Source](https://redirect.github.com/faker-js/faker/compare/v10.5.0...v10.6.0)
 
-##### Details
+##### New Locales
 
-fakeEval.resolveProperty resolves properties on functions itself instead
-of resolving the nested functio
+- **locale:** add 060 Japanese mobile phone number formats
+([#&#8203;3922](https://redirect.github.com/faker-js/faker/iss
 
-**File**: `ci/test/docs-widgets/package-lock.json` (modified, +17/-0)
+**File**: `.github/renovate.json5` (modified, +7/-0)
 ```diff
-@@ -6,6 +6,7 @@
+@@ -261,6 +261,13 @@
+       "additionalBranchPrefix": "docs-cdn-",
+       "groupName": "{{depName}}"
+     },
++    {
++      // ci/test/docs-widgets asserts that a widget's CDN imports match the
++      // versions in its package.json, so both must move in the same PR.
++      "matchManagers": ["custom.regex"],
++      "matchFileNames": ["doc/user/layouts/shortcodes/plugins/**"],
++      "additionalBranchPrefix": "docs-widgets-"
++    },
+     {
+       "matchManagers": ["custom.regex"],
+       "matchPackageNames": ["@docsearch/css", "@docsearch/js"],
+```
+
+**File**: `ci/test/docs-widgets/package-lock.json` (modified, +4/-4)
+```diff
+@@ -6,7 +6,7 @@
      "": {
        "name": "docs-widgets-tests",
        "dependencies": {
-+        "@faker-js/faker": "10.5.0",
+-        "@faker-js/faker": "10.5.0",
++        "@faker-js/faker": "10.6.0",
          "jsdom": "^31.0.0",
          "vitest": "^5.0.0"
        }
-@@ -61,6 +62,22 @@
-         }
+@@ -63,9 +63,9 @@
        }
      },
-+    "node_modules/@faker-js/faker": {
-+      "version": "10.5.0",
-+      "resolved": "https://registry.npmjs.org/@faker-js/faker/-/faker-10.5.0.tgz",
-+      "integrity": "sha512-bsxD8WLS5lIj7aaoCx1YJkktqYj5vlBUE6HWzu2Q51ksrGJ0H737ECCKlFU7Yf8Br45z9t99frBp/J7kzbMPAg==",
-+      "funding": [
-+        {
-+          "type": "opencollective",
-+          "url": "https://opencollective.com/fakerjs"
-+        }
-+      ],
-+      "license": "MIT",
-+      "engines": {
-+        "node": "^20.19.0 || ^22.13.0 || ^23.5.0 || >=24.0.0",
-+        "npm": ">=10"
-+      }
-+    },
-     "node_modules/@jridgewell/resolve-uri": {
-       "version": "3.1.3",
-       "resolved": "https://registry.npmjs.org/@jridgewell/resolve-uri/-/resolve-uri-3.1.3.tgz",
+     "node_modules/@faker-js/faker": {
+-      "version": "10.5.0",
+-      "resolved": "https://registry.npmjs.org/@faker-js/faker/-/faker-10.5.0.tgz",
+-      "integrity": "sha512-bsxD8WLS5lIj7aaoCx1YJkktqYj5vlBUE6HWzu2Q51ksrGJ0H737ECCKlFU7Yf8Br45z9t99frBp/J7kzbMPAg==",
++      "version": "10.6.0",
++      "resolved": "https://registry.npmjs.org/@faker-js/faker/-/faker-10.6.0.tgz",
++      "integrity": "sha512-3RQHgEtvL1Frl/d1cSreo7qhJ3Gk1OdNUai/CtZ8G+wYeRQnJih3s9xJ9/kgYekPQRdwgh0HXRPqMlzWGwivIQ==",
+       "funding": [
+         {
+           "type": "opencollective",
 ```
 
-**File**: `ci/test/docs-widgets/package.json` (modified, +1/-0)
+**File**: `ci/test/docs-widgets/package.json` (modified, +1/-1)
 ```diff
-@@ -5,6 +5,7 @@
+@@ -5,7 +5,7 @@
      "test": "vitest"
    },
    "dependencies": {
-+    "@faker-js/faker": "10.5.0",
+-    "@faker-js/faker": "10.5.0",
++    "@faker-js/faker": "10.6.0",
      "jsdom": "^31.0.0",
      "vitest": "^5.0.0"
    }
 ```
 
-**File**: `ci/test/docs-widgets/webhooks-datagen.test.js` (modified, +156/-137)
+**File**: `doc/user/layouts/shortcodes/plugins/webhooks-datagen.html` (modified, +1/-1)
 ```diff
-@@ -7,163 +7,182 @@
- // the Business Source License, use of this software will be governed
- // by the Apache License, Version 2.0.
- 
--import { beforeEach, describe, it, expect, vi } from "vitest";
-+import { afterEach, beforeEach, describe, it, expect, vi } from "vitest";
-+import { faker } from "@faker-js/faker";
- import { JSDOM } from "jsdom";
- import fs from "fs";
- import path from "path";
- 
--describe("Webhooks Data Generator", async () => {
-+describe("Webhooks Data Generator", () => {
-   let window, document;
--  let isGenerating = false;
-+  const uuid = /^[0-9a-f-]{36}$/;
-+  const fakerVersion = JSON.parse(
-+    fs.readFileSync(path.join(__dirname, "package.json"), "utf-8"),
-+  ).dependencies["@faker-js/faker"];
- 
--  beforeEach(async () => {
-+  beforeEach(() => {
-+    vi.useFakeTimers();
-     const htmlPath = path.join(
-       __dirname,
--      "../../../doc/user/layouts/shortcodes/plugins/webhooks-datagen.html"
-+      "../../../doc/user/layouts/shortcodes/plugins/webhooks-datagen.html",
-     );
--    const htmlContent = fs.readFileSync(htmlPath, "utf-8");
--    const dom = new JSDOM(htmlContent, {
--      runScripts: "dangerously",
--      resources: "usable",
-+    const dom = new JSDOM(fs.readFileSync(htmlPath, "utf-8"), {
-+      runScripts: "outside-only",
-       url: "http://localhost",
-     });
--
-     window = dom.window;
-     document = window.document;
--
--    // Wait for all the scripts and content to load
--    await vi.waitFor(() => {
--      if (document.readyState === "complete") {
--        return true;
--      } else {
--        throw new Error("Document not ready yet");
--      }
--    });
--  });
--
--  it("should initialize the DOM elements correctly", async () => {
--    const webhookURLInput = window.document.getElementById("webhookURL");
--    const authPasswordInput = window.document.getElementById("authPassword");
--    const jsonSchemaTextarea = window.document.getElementById("jsonSchema");
--    const startButton = window.document.getElementById("startButton");
--    const stopButton = window.document.getElementById("stopButton");
--
--    await vi.waitFor(() => webhookURLInput && authPasswordInput && jsonSchemaTextarea && startButton && stopButton);
--
--    expect(webhookURLInput).not.toBeNull();
--    expect(authPasswordInput).not.toBeNull();
--    expect(jsonSchemaTextarea).not.toBeNull();
--    expect(startButton).not.toBeNull();
--    expect(stopButton).not.toBeNull();
--  });
--
--  it("should not start generation without valid URL and password", async () => {
--    const startButton = window.document.getElementById("startButton");
--    const webhookURLInput = window.document.getElementById("webhookURL");
--    const authPasswordInput = window.document.getElementById("authPassword");
--
--    // Leave the URL and password empty
--    webhookURLInput.value = "";
--    authPasswordInput.value = "";
--
--    startButton.click();
--
--    expect(startButton.style.display).not.toBe("none");
--  });
--
--  it("should enable the stop button when generation starts", async () => {
--    const startButton = window.document.getElementById("startButton");
--    const stopButton = window.document.getElementById("stopButton");
--    const webhookURLInput = window.document.getElementById("webhookURL");
--    const authPasswordInput = window.document.getElementById("authPassword");
--
--    webhookURLInput.value = "http://localhost";
--    authPasswordInput.value = "password";
--
--    startButton.click();
--
--    await vi.waitFor(() => !stopButton.disabled);
--
--    expect(stopButton.disabled).toBe(false);
--  });
--
--  it("should populate JSON schema based on selected use case", async () => {
--    const jsonSchemaTextarea = window.document.getElementById("jsonSchema");
--    const useCaseSelect = window.document.getElementById("useCaseSelect");
--
--    // Select a use case
--    useCaseSelect.value = "sensorData";
--    useCaseSelect.dispatchEvent(new window.Event("change"));
--
--    expect(jsonSchemaTextarea.value.trim()).not.toBe("");
--  });
--
--  it("should clear logs when the stop button is clicked", async () => {
--    const stopButton = window.document.getElementById("stopButton");
--    const logOutputDiv = window.document.getElementById("logOutput");
--
--    logOutputDiv.innerHTML = "<p>Log message</p>";
--
--    stopButton.click();
--
--    expect(logOutputDiv.innerHTML).toBe(logOutputDiv.innerHTML);
-+    window.faker = faker;
-+    window.fetch = vi.fn().mockResolvedValue({ ok: true });
-+    window.alert = vi.fn();
-+    window.console.error = vi.fn();
-+
-+    // JSDOM does not execute module scripts, so supply the real Faker instance
-+    // and evaluate the widget without its browser-only CDN import.
-+    const script = document.querySelector('script[type="module"]').textContent;
-+    const importStatement = script.match(
-+      /^\s*import \{ faker \} from 'https:\/\/esm\.sh\/@faker-js\/faker@([^']+)';/m,
-+    );
-+    expect(importStatement?.[1]).toBe(fakerVersion);
-+    window.eval(script.replace(importStatement[0], ""));
-+    document.getElement
-```
-
-**File**: `doc/user/layouts/shortcodes/plugins/webhooks-datagen.html` (modified, +15/-15)
-```diff
-@@ -29,13 +29,13 @@
-     <div class="json">
-       <textarea placeholder="JSON schema" id="jsonSchema" rows="5" cols="30" class="json-textarea">
- {
--  "sensor_id": "faker.datatype.number({ max: 100, min: 1})",
--  "timestamp": "faker.date.between('2020-01-01T00:00:00.000Z', '2030-01-01T00:00:00.000Z')",
-+  "sensor_id": "faker.number.int({ max: 100, min: 1})",
-+  "timestamp": "faker.date.between({ from: '2020-01-01T00:00:00.000Z', to: '2030-01-01T00:00:00.000Z' })",
-   "location": {
--      "latitude": "faker.datatype.number({ max: 90, min: -90})",
--      "longitude": "faker.datatype.number({ max: 180, min: -180})"
-+      "latitude": "faker.number.int({ max: 90, min: -90})",
-+      "longitude": "faker.number.int({ max: 180, min: -180})"
-   },
--  "temperature": "faker.datatype.float({ min: 20, max: 95 })"
-+  "temperature": "faker.number.float({ min: 20, max: 95 })"
- }
-       </textarea>
-       <div id="jsonError" class="error" style="display: none"></div>
 @@ -45,7 +45,7 @@
  </div>
  
  <script type="module">
--  import { faker } from 'https://esm.sh/@faker-js/faker@8.4.0';
-+  import { faker } from 'https://esm.sh/@faker-js/faker@10.5.0';
+-  import { faker } from 'https://esm.sh/@faker-js/faker@10.5.0';
++  import { faker } from 'https://esm.sh/@faker-js/faker@10.6.0';
  
    const webhookURLInput = document.getElementById("webhookURL");
    const authPasswordInput = document.getElementById("authPassword");
-@@ -191,16 +191,16 @@
- 
-   const schemas = {
-     sensorData: `{
--      "sensor_id": "faker.datatype.number({ max: 100, min: 1})",
--      "timestamp": "faker.date.between('2020-01-01T00:00:00.000Z', '2030-01-01T00:00:00.000Z')",
-+      "sensor_id": "faker.number.int({ max: 100, min: 1})",
-+      "timestamp": "faker.date.between({ from: '2020-01-01T00:00:00.000Z', to: '2030-01-01T00:00:00.000Z' })",
-       "location": {
--          "latitude": "faker.datatype.number({ max: 90, min: -90})",
--          "longitude": "faker.datatype.number({ max: 180, min: -180})"
-+          "latitude": "faker.number.int({ max: 90, min: -90})",
-+          "longitude": "faker.number.int({ max: 180, min: -180})"
-       },
--      "temperature": "faker.datatype.float({ min: 20, max: 95 })"
-+      "temperature": "faker.number.float({ min: 20, max: 95 })"
-     }`,
-     userActivity: `{
--      "user_id": "faker.datatype.uuid()",
-+      "user_id": "faker.string.uuid()",
-       "event": "faker.helpers.arrayElement(['page_view', 'click', 'scroll', 'navigation'])",
-       "timestamp": "faker.date.recent()",
-       "page": {
-@@ -209,15 +209,15 @@
-       },
-       "interaction": {
-         "element": "faker.lorem.word()",
--        "time_spent": "faker.datatype.number({ min: 1, max: 120 })"
-+        "time_spent": "faker.number.int({ min: 1, max: 120 })"
-       }
-     }`,
-     ecommerceTransaction: `{
--      "user_id": "faker.datatype.uuid()",
-+      "user_id": "faker.string.uuid()",
-       "event": "faker.helpers.arrayElement(['add_to_cart', 'remove_from_cart', 'purchase', 'view_product'])",
-       "timestamp": "faker.date.recent()",
-       "product": {
--        "id": "faker.datatype.uuid()",
-+        "id": "faker.string.uuid()",
-         "name": "faker.commerce.productName()",
-         "category": "faker.commerce.department()",
-         "price": "faker.commerce.price()"
 ```
 
 ---
 
-### Incident Patch 2: `24463bee` (2026-11-20)
-**Commit Message**: fix(deps): update dependency string-width to v9 (#40753)
+### Incident Patch 2: `8a8f06b1` (2026-11-22)
+**Commit Message**: ci: derive the GitHub repository from the build (#40934)
 
-This PR contains the following updates:
+CI hardcoded MaterializeInc/materialize in GitHub API URLs and remote
+lookups, so builds of the same tree from a differently named repository
+got 404s. Derive the repository from BUILDKITE_REPO, falling back to the
+single MaterializeInc git remote and then to the public repository.
 
-| Package | Change |
-[Age](https://docs.renovatebot.com/merge-confidence/) |
-[Confidence](https://docs.renovatebot.com/merge-confidence/) |
-|---|---|---|---|
-| [string-width](https://redirect.github.com/sindresorhus/string-width)
-| [`^7.2.0` →
-`^9.0.0`](https://renovatebot.com/diffs/npm/string-width/7.2.0/9.0.0) |
-![age](https://developer.mend.io/api/mc/badges/age/npm/string-width/9.0.0?slim=true)
-|
-![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/string-width/7.2.0/9.0.0?slim=true)
-|
+Git fetches inside ci-builder for another repository use a credential
+helper. Builds of the public repository get no helper and keep fetching
+anonymously. The helper and the compare API calls prefer
+GITHUB_CI_ISSUE_REFERENCE_CHECKER_TOKEN, because GITHUB_TOKEN cannot
+read private repositories.
 
----
+ci/license/bump-change-date.sh now pushes to the repository being built.
 
-### Release Notes
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
-<details>
-<summary>sindresorhus/string-width (string-width)</summary>
+Co-authored-by: Claude Fable 5.2 <[REDACTED_EMAIL]>
 
-###
-[`v9.0.0`](https://redirect.github.com/sindresorhus/string-width/releases/tag/v9.0.0)
-
-[Compare
-Source](https://redirect.github.com/sindresorhus/string-width/compare/v8.3.0...v9.0.0)
-
-##### Breaking
-
-- Require Node.js 22
-[`ede59cf`](https://redirect.github.com/sindresorhus/string-width/commit/ede59cf)
-
-##### Improvements
-
-- Improve performance
-[`2a7fa3e`](https://redirect.github.com/sindresorhus/string-width/commit/2a7fa3e)
-[`429619c`](https://redirect.github.com/sindresorhus/string-wid
-
-**File**: `console/package.json` (modified, +1/-1)
+**File**: `bin/ci-builder` (modified, +10/-0)
 ```diff
-@@ -111,7 +111,7 @@
-     "scroll-into-view-if-needed": "^3.1.0",
-     "semver": "^7.8.6",
-     "stream": "^0.0.3",
--    "string-width": "^7.2.0",
-+    "string-width": "^9.0.0",
-     "stripe": "^23.1.0",
-     "style-mod": "^4.1.4",
-     "ts-node": "^10.9.2",
+@@ -382,6 +382,16 @@ case "$cmd" in
+                     --env "SSH_AUTH_SOCK=/tmp/ssh-agent.sock"
+                 )
+             fi
++            # Lets git in the container fetch from a private repository.
++            if [[ "${BUILDKITE:-}" && "$(github_repo)" != "MaterializeInc/materialize" ]]; then
++                # shellcheck disable=SC2016
++                git_credential_helper='!f() { token=${GITHUB_CI_ISSUE_REFERENCE_CHECKER_TOKEN:-$GITHUB_TOKEN}; test "$1" = get && test -n "$token" && printf "username=x-access-token\npassword=%s\n" "$token"; }; f'
++                args+=(
++                    --env GIT_CONFIG_COUNT=1
++                    --env GIT_CONFIG_KEY_0=credential.https://github.com.helper
++                    --env "GIT_CONFIG_VALUE_0=$git_credential_helper"
++                )
++            fi
+         fi
+ 
+         if [[ $detach_container == "true" ]]; then
 ```
 
-**File**: `console/yarn.lock` (modified, +13/-3)
+**File**: `ci/license/bump-change-date.sh` (modified, +3/-1)
 ```diff
-@@ -7590,7 +7590,7 @@ __metadata:
-   languageName: node
-   linkType: hard
+@@ -13,6 +13,8 @@
  
--"get-east-asian-width@npm:^1.0.0, get-east-asian-width@npm:^1.5.0":
-+"get-east-asian-width@npm:^1.0.0, get-east-asian-width@npm:^1.5.0, get-east-asian-width@npm:^1.7.0":
-   version: 1.7.0
-   resolution: "get-east-asian-width@npm:1.7.0"
-   checksum: 10c0/680a5f611a186e4a065291f31821f7e4ad7742625be814e05b8ab5535c6fa53562bc0333a83138fca5f2e1030ed960a561b2fd4629e0cff0dc68b19cf46d7c53
-@@ -9255,7 +9255,7 @@ __metadata:
-     semver: "npm:^7.8.6"
-     storybook: "npm:^10"
-     stream: "npm:^0.0.3"
--    string-width: "npm:^7.2.0"
-+    string-width: "npm:^9.0.0"
-     stripe: "npm:^23.1.0"
-     style-mod: "npm:^4.1.4"
-     terser: "npm:^5.51.2"
-@@ -11809,6 +11809,16 @@ __metadata:
-   languageName: node
-   linkType: hard
+ set -euo pipefail
  
-+"string-width@npm:^9.0.0":
-+  version: 9.0.0
-+  resolution: "string-width@npm:9.0.0"
-+  dependencies:
-+    get-east-asian-width: "npm:^1.7.0"
-+    strip-ansi: "npm:^7.2.0"
-+  checksum: 10c0/fe420883178c224a121e771d81aafc520606bae31be5fdc0f368ff5c3facdb427b659ee3ad85710b67fe6e2a7d4535d0332b61e096326ea0eb92c7b5cafa0b06
-+  languageName: node
-+  linkType: hard
++. misc/shlib/shlib.bash
 +
- "string.prototype.matchall@npm:^4.0.12":
-   version: 4.1.0
-   resolution: "string.prototype.matchall@npm:4.1.0"
-@@ -11888,7 +11898,7 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"strip-ansi@npm:^7.1.0, strip-ansi@npm:^7.1.2":
-+"strip-ansi@npm:^7.1.0, strip-ansi@npm:^7.1.2, strip-ansi@npm:^7.2.0":
-   version: 7.2.0
-   resolution: "strip-ansi@npm:7.2.0"
-   dependencies:
+ git_date=$(date "+%B %d, %Y 00:00:00 UTC")
+ change_date=$(date -d "+4 years" "+%B %d, %Y")
+ version_date=$(date "+%Y%m%d")
+@@ -34,4 +36,4 @@ sed -Ei \
+     LICENSE
+ git add LICENSE
+ git commit -m "LICENSE: update change date"
+-git push "https://materializebot:$GITHUB_TOKEN@github.com/MaterializeInc/materialize.git" main
++git push "https://materializebot:$GITHUB_TOKEN@github.com/$(github_repo).git" main
 ```
 
----
-
-### Incident Patch 3: `c517d7ce` (2026-11-20)
-**Commit Message**: fix(deps): update vscode dependencies (major) (#40756)
-
-This PR contains the following updates:
-
-| Package | Change |
-[Age](https://docs.renovatebot.com/merge-confidence/) |
-[Confidence](https://docs.renovatebot.com/merge-confidence/) |
-|---|---|---|---|
-|
-[@types/node](https://redirect.github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/node)
-([source](https://redirect.github.com/DefinitelyTyped/DefinitelyTyped/tree/HEAD/types/node))
-| [`^22.7.0` →
-`^26.0.0`](https://renovatebot.com/diffs/npm/@types%2fnode/22.20.5/26.6.6)
-|
-![age](https://developer.mend.io/api/mc/badges/age/npm/@types%2fnode/26.6.6?slim=true)
-|
-![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/@types%2fnode/22.20.5/26.6.6?slim=true)
-|
-| [@vscode/vsce](https://code.visualstudio.com)
-([source](https://redirect.github.com/Microsoft/vsce)) | [`^3.9.2` →
-`^4.0.0`](https://renovatebot.com/diffs/npm/@vscode%2fvsce/3.9.2/4.1.1)
-|
-![age](https://developer.mend.io/api/mc/badges/age/npm/@vscode%2fvsce/4.1.1?slim=true)
-|
-![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/@vscode%2fvsce/3.9.2/4.1.1?slim=true)
-|
-| [typescript](https://www.typescriptlang.org/)
-([source](https://redir
-
-**File**: `misc/vscode-ext/package.json` (modified, +4/-4)
+**File**: `ci/mkpipeline.py` (modified, +7/-4)
 ```diff
-@@ -66,13 +66,13 @@
-     ]
-   },
-   "dependencies": {
--    "vscode-languageclient": "^10.1.0"
-+    "vscode-languageclient": "^11.0.0"
-   },
-   "devDependencies": {
--    "@types/node": "^22.7.0",
-+    "@types/node": "^26.0.0",
-     "@types/vscode": "^1.88.0",
--    "@vscode/vsce": "^3.9.2",
-+    "@vscode/vsce": "^4.0.0",
-     "esbuild": "^0.28.1",
--    "typescript": "^5.9.3"
-+    "typescript": "^7.0.0"
-   }
- }
+@@ -39,7 +39,7 @@
+ import requests
+ import yaml
+ 
+-from materialize import mzbuild, spawn, ui
++from materialize import git, mzbuild, spawn, ui
+ from materialize.buildkite_insights.buildkite_api import generic_api
+ from materialize.mz_version import MzVersion
+ from materialize.mzcompose.composition import Composition
+@@ -95,6 +95,9 @@ def post_ci_trigger_status() -> None:
+     """Post a GitHub commit status linking to the CI trigger page for PRs."""
+     if not ui.env_is_truthy("BUILDKITE_PULL_REQUEST"):
+         return
++    # The trigger page resolves PR numbers in this repository only.
++    if git.get_github_repo().lower() != git.DEFAULT_GITHUB_REPO.lower():
++        return
+     pr_number = os.environ["BUILDKITE_PULL_REQUEST"]
+     token = os.getenv("GITHUB_CI_ISSUE_REFERENCE_CHECKER_TOKEN") or os.getenv(
+         "GITHUB_TOKEN"
+@@ -106,7 +109,7 @@ def post_ci_trigger_status() -> None:
+         return
+     try:
+         resp = requests.post(
+-            f"https://api.github.com/repos/MaterializeInc/materialize/statuses/{commit}",
++            f"https://api.github.com/repos/{git.get_github_repo()}/statuses/{commit}",
+             headers={
+                 "Authorization": f"Bearer {token}",
+                 "Accept": "application/vnd.github.v3+json",
+@@ -138,7 +141,7 @@ def get_pull_request_labels() -> set[str]:
+         if token:
+             headers["Authorization"] = f"Bearer {token}"
+         resp = requests.get(
+-            f"https://api.github.com/repos/MaterializeInc/materialize/pulls/{pr}",
++            f"https://api.github.com/repos/{git.get_github_repo()}/pulls/{pr}",
+             headers=headers,
+             timeout=30,
+         )
+@@ -1390,7 +1393,7 @@ def _changed_files_from_main() -> set[str]:
+             headers["Authorization"] = f"Bearer {token}"
+ 
+         resp = requests.get(
+-            f"https://api.github.com/repos/materializeinc/materialize/compare/main...{head}",
++            f"https://api.github.com/repos/{git.get_github_repo()}/compare/main...{head}",
+             headers=headers,
+         )
+         resp.raise_for_status()
+```
+
+**File**: `ci/test/console/vercel-preview.sh` (modified, +1/-1)
+```diff
+@@ -33,7 +33,7 @@ printf "+++ Console preview: \033]1339;url='https://%s'\a\n" "$alias_url"
+ curl -fsSL \
+     -H "Authorization: Bearer $GITHUB_TOKEN" \
+     -H "Accept: application/vnd.github.v3+json" \
+-    "https://api.github.com/repos/MaterializeInc/materialize/statuses/$BUILDKITE_COMMIT" \
++    "https://api.github.com/repos/$(github_repo)/statuses/$BUILDKITE_COMMIT" \
+     --data "{\
+         \"state\": \"success\",\
+         \"description\": \"Console preview ready.\",\
+```
+
+**File**: `ci/test/lint-codeowners.sh` (modified, +3/-1)
+```diff
+@@ -11,13 +11,15 @@
+ 
+ set -euo pipefail
+ 
++. misc/shlib/shlib.bash
++
+ auth=()
+ if [[ "${GITHUB_TOKEN:-}" ]]; then
+     auth=(-H "Authorization: Bearer $GITHUB_TOKEN")
+ fi
+ 
+ errors=$(curl -fsSL "${auth[@]}" \
+-    "https://api.github.com/repos/MaterializeInc/materialize/codeowners/errors?ref=${BUILDKITE_COMMIT:-main}" \
++    "https://api.github.com/repos/$(github_repo)/codeowners/errors?ref=${BUILDKITE_COMMIT:-main}" \
+     | jq -r '.errors[].message')
+ 
+ if [[ "$errors" ]]; then
+```
+
+**File**: `ci/test/preview-docs.sh` (modified, +1/-1)
+```diff
+@@ -45,7 +45,7 @@ hugo deploy --config config.toml,config.deployment.toml --force
+ curl -fsSL \
+     -H "Authorization: Bearer $GITHUB_TOKEN" \
+     -H "Accept: application/vnd.github.v3+json" \
+-    "https://api.github.com/repos/MaterializeInc/materialize/statuses/$BUILDKITE_COMMIT" \
++    "https://api.github.com/repos/$(github_repo)/statuses/$BUILDKITE_COMMIT" \
+     --data "{\
+         \"state\": \"success\",\
+         \"description\": \"Deploy preview ready.\",\
+```
+
+**File**: `misc/python/materialize/buildkite.py` (modified, +1/-1)
+```diff
+@@ -97,7 +97,7 @@ def get_pipeline_default_branch(fallback: str = "main"):
+     return get_var(BuildkiteEnvVar.BUILDKITE_PIPELINE_DEFAULT_BRANCH, fallback)
+ 
+ 
+-def get_merge_base(url: str = "https://github.com/MaterializeInc/materialize") -> str:
++def get_merge_base(url: str | None = None) -> str:
+     base_branch = get_pull_request_base_branch() or get_pipeline_default_branch()
+     merge_base = git.get_common_ancestor_commit(
+         remote=git.get_remote(url), branch=base_branch
+```
+
+**File**: `misc/python/materialize/git.py` (modified, +42/-8)
+```diff
+@@ -24,7 +24,36 @@
+ 
+ VERSION_TYPE = TypeVar("VERSION_TYPE", bound=TypedVersionBase)
+ 
+-MATERIALIZE_REMOTE_URL = "https://github.com/MaterializeInc/materialize"
++DEFAULT_GITHUB_REPO = "MaterializeInc/materialize"
++
++
++@functools.cache
++def get_github_repo() -> str:
++    """The "owner/name" of the GitHub repository this checkout belongs to.
++
++    In Buildkite this is the repository the pipeline builds. Locally it is the
++    one remote in the organization of `DEFAULT_GITHUB_REPO`, so that a fork as
++    `origin` does not win, and otherwise `DEFAULT_GITHUB_REPO`.
++    """
++    urls = os.getenv("BUILDKITE_REPO")
++    if not urls:
++        try:
++            urls = spawn.capture(["git", "remote", "--verbose"])
++        except subprocess.CalledProcessError:
++            urls = ""
++    owner = DEFAULT_GITHUB_REPO.split("/")[0].lower()
++    repos = set()
++    for url in urls.split():
++        # Both git@github.com:owner/name.git and https://github.com/owner/name.
++        repo = url.partition("github.com")[2][1:].removesuffix(".git")
++        if repo.lower().startswith(f"{owner}/"):
++            repos.add(repo)
++    return repos.pop() if len(repos) == 1 else DEFAULT_GITHUB_REPO
++
++
++def get_remote_url() -> str:
++    return f"https://github.com/{get_github_repo()}"
++
+ 
+ fetched_tags_in_remotes: set[str | None] = set()
+ 
+@@ -129,7 +158,7 @@ def get_version_tags(
+     version_type: type[VERSION_TYPE],
+     newest_first: bool = True,
+     fetch: bool = True,
+-    remote_url: str = MATERIALIZE_REMOTE_URL,
++    remote_url: str | None = None,
+ ) -> list[VERSION_TYPE]:
+     """List all the version-like tags in the repo
+ 
+@@ -193,7 +222,9 @@ def is_ancestor(earlier: str, later: str) -> bool:
+     """True if earlier is in an ancestor of later"""
+     try:
+         headers = {"Accept": "application/vnd.github+json"}
+-        if token := os.getenv("GITHUB_TOKEN"):
++        if token := os.getenv("GITHUB_CI_ISSUE_REFERENCE_CHECKER_TOKEN") or os.getenv(
++            "GITHUB_TOKEN"
++        ):
+             headers["Authorization"] = f"Bearer {token}"
+ 
+         # GitHub resolves the ref "HEAD" server-side to the repo's default
+@@ -203,7 +234,7 @@ def is_ancestor(earlier: str, later: str) -> bool:
+         api_later = rev_parse(later) if later == "HEAD" else later
+ 
+         resp = requests.get(
+-            f"https://api.github.com/repos/materializeinc/materialize/compare/{api_earlier}...{api_later}",
++            f"https://api.github.com/repos/{get_github_repo()}/compare/{api_earlier}...{api_later}",
+             headers=headers,
+         )
+         resp.raise_for_status()
+@@ -318,9 +349,10 @@ def try_get_remote_name_by_url(url: str) -> str | None:
+ 
+ 
+ def get_remote(
+-    url: str = MATERIALIZE_REMOTE_URL,
++    url: str | None = None,
+     default_remote_name: str = "origin",
+ ) -> str:
++    url = url or get_remote_url()
+     # Alternative syntax
+     remote = try_get_remote_name_by_url(url) or try_get_remote_name_by_url(
+         url.replace("https://github.com/", "git@github.com:")
+@@ -336,11 +368,13 @@ def get_common_ancestor_commit(remote: str, branch: str) -> str:
+     try:
+         head = spawn.capture(["git", "rev-parse", "HEAD"]).strip()
+         headers = {"Accept": "application/vnd.github+json"}
+-        if token := os.getenv("GITHUB_TOKEN"):
++        if token := os.getenv("GITHUB_CI_ISSUE_REFERENCE_CHECKER_TOKEN") or os.getenv(
++            "GITHUB_TOKEN"
++        ):
+             headers["Authorization"] = f"Bearer {token}"
+ 
+         resp = requests.get(
+-            f"https://api.github.com/repos/materializeinc/materialize/compare/{head}...{branch}",
++            f"https://api.github.com/repos/{get_github_repo()}/compare/{head}...{branch}",
+             headers=headers,
+         )
+         resp.raise_for_status()
+@@ -372,7 +406,7 @@ def is_on_release_version() -> bool:
+ def contains_commit(
+     commit_sha: str,
+     target: str = "HEAD",
+-    remote_url: str = MATERIALIZE_REMOTE_URL,
++    remote_url: str | None = None,
+ ) -> bool:
+     return is_ancestor(commit_sha, target)
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #40969** (closed): [librdkafka agent test] kafka: upgrade librdkafka to v2.16.0 (@bosconi)
-- **PR #40965** (2026-11-20): ci: run the claude workflow with the read-only job token (@jasonhernandez)
-- **PR #40956** (closed): http: Install the connection protocol layer at startup (@def-)
-- **PR #40952** (2026-11-20): storage: Fix dead early return in statistics snapshot (@def-)
-- **PR #40944** (2026-11-20): chore(deps): update dependency sqlalchemy to v2.1.9 (@renovate[bot])
-- **PR #40943** (2026-11-20): release: bump to version v26.53.0-dev.0 and create its doc file (@materialize-bot)
+- **PR #40993** (2026-11-22): chore(deps): update dependency jquery to v3.8.0 (@renovate[bot])
+- **PR #40992** (2026-11-22): chore(deps): update dependency docker/compose to v5.8.0 (@renovate[bot])
+- **PR #40990** (2026-11-22): chore(deps): update dependency cargo-deny to v0.21.0 (@renovate[bot])
+- **PR #40989** (2026-11-22): chore(deps): update confluentinc/cp-kafka docker tag to v8.4.0 (@renovate[bot])
+- **PR #40987** (2026-11-22): chore(deps): update lang-tests simple (@renovate[bot])
+- **PR #40985** (2026-11-22): chore(deps): update dependency style-mod to v4.1.5 (@renovate[bot])
 
 ---
 
@@ -1583,36 +1520,26 @@ This PR contains the following updates:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): update dependency @faker-js/faker to v10 [security]
+## X. deps): update dependency @faker-js/faker to v10.6.0
 
 **RULE**:
-When implementing operations in `ci/test/docs-widgets/package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MaterializeInc/materialize. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/renovate.json5`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MaterializeInc/materialize. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `71f8f02e`: deps): update dependency @faker-js/faker to v10 [security]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7d689771`: deps): update dependency @faker-js/faker to v10.6.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `ci/test/docs-widgets/package-lock.json`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/renovate.json5`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        "@faker-js/faker": "10.5.0",
-    "node_modules/@faker-js/faker": {
-      "version": "10.5.0",
-      "resolved": "https://registry.npmjs.org/@faker-js/faker/-/faker-10.5.0.tgz",
-      "integrity": "sha512-bsxD8WLS5lIj7aaoCx1YJkktqYj5vlBUE6HWzu2Q51ksrGJ0H737ECCKlFU7Yf8Br45z9t99frBp/J7kzbMPAg==",
-      "funding": [
-        {
-          "type": "opencollective",
-          "url": "https://opencollective.com/fakerjs"
-        }
-      ],
-      "license": "MIT",
-      "engines": {
-        "node": "^20.19.0 || ^22.13.0 || ^23.5.0 || >=24.0.0",
-        "npm": ">=10"
-      }
+    {
+      // ci/test/docs-widgets asserts that a widget's CDN imports match the
+      // versions in its package.json, so both must move in the same PR.
+      "matchManagers": ["custom.regex"],
+      "matchFileNames": ["doc/user/layouts/shortcodes/plugins/**"],
+      "additionalBranchPrefix": "docs-widgets-"
     },
 ```
 
@@ -1623,4 +1550,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `71f8f02e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7d689771` are properly handled with clean fallback behavior.

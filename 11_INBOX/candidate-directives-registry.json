@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T07:29:04.884Z",
+  "last_updated": "2026-11-22T07:37:23.888Z",
   "directives": [
     {
       "id": "CD-001",
@@ -45501,6 +45501,61 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-ECEBF8-empirical-invariant-guard-in-dimension-t.md",
       "staged_date": "2026-11-22"
+    },
+    {
+      "id": "CD-XG5V",
+      "directive_title": "remove 2 advisory ignore entries that no longer match Cargo.lock",
+      "source_repo": "domcyrus/rustnet",
+      "source_commit": "535573d8",
+      "staged_file": "11_INBOX/candidate-directives/CD-XG5V-remove-2-advisory-ignore-entries-that-no-longer-match-cargo-lock.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-22",
+      "domain_letter": "B"
+    },
+    {
+      "id": "CD-XKD9",
+      "directive_title": "correct empty-collection KDoc on shouldNotContainExactCopies",
+      "source_repo": "kotest/kotest",
+      "source_commit": "1bdf1431",
+      "staged_file": "11_INBOX/candidate-directives/CD-XKD9-correct-empty-collection-kdoc-on-shouldnotcontainexactcopies.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-22",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-XQ9L",
+      "directive_title": "update dependency @faker-js/faker to v10.6.0",
+      "source_repo": "MaterializeInc/materialize",
+      "source_commit": "cae35259",
+      "staged_file": "11_INBOX/candidate-directives/CD-XQ9L-update-dependency-faker-js-faker-to-v10-6-0.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-22",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-XT9C",
+      "directive_title": "deps): remove 2 advisory ignore entries that no longer match Cargo.lock",
+      "source_repo": "domcyrus-rustnet-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-XT9C-deps-remove-2-advisory-ignore-entries-that-no-longer-match-cargo-lock.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-22",
+      "domain_letter": "B"
+    },
+    {
+      "id": "CD-XUI8",
+      "directive_title": "assertions): correct empty-collection KDoc on shouldNotContainExactCopies",
+      "source_repo": "kotest-kotest-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-XUI8-assertions-correct-empty-collection-kdoc-on-shouldnotcontainexactcopies.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-22",
+      "domain_letter": "K"
     }
   ]
 }

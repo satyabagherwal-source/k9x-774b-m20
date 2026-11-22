@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T07:29:05.383Z",
+  "last_updated": "2026-11-22T07:37:24.234Z",
   "total_verified_learnings": 9070,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23500,
+  "total_items": 23508,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -224202,8 +224202,8 @@
       "slug": "domcyrus-rustnet",
       "platform": "github",
       "source_url": "https://github.com/domcyrus/rustnet",
-      "source_version": "3bc950fb",
-      "content_hash": "d661d5b724b3dc0cb6c526a188f893ec3e8e4ba526410bcc653a6a876ff12089",
+      "source_version": "535573d8",
+      "content_hash": "eca52ec64be58abfb84cac843342f6df0ddcb3cd4340a4090cb00c87c2c59e0a",
       "dossier_path": "07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
       "promoted_rules": [
@@ -224226,6 +224226,11 @@
           "number": 9646,
           "title": "bump the rust-dependencies group with 4 updates",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9906,
+          "title": "remove 2 advisory ignore entries that no longer match Cargo.lock",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -224233,7 +224238,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T22:22:57.284Z",
+      "verified_at": "2026-11-22T07:37:04.827Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -224275,10 +224280,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-domcyrus-rustnet-product-intelligence-domcyrus-rustnet-core-invariants.md",
       "title": "Product Intelligence: domcyrus/rustnet Core Invariants",
       "repository": "domcyrus/rustnet",
-      "source_version": "3bc950fb",
-      "content_hash": "da0b10c3eec16a187c6c4fb1bebb039db8f9241038506c88d5bc2cfe6cc92378",
+      "source_version": "535573d8",
+      "content_hash": "059e4f3608bc3bb9ee8ffb6d4de9d99caf940f0924c7b3d8a29a87d65b2dfcee",
       "domain_letter": "B",
-      "persisted_at": "2026-11-20T22:22:58.010Z"
+      "persisted_at": "2026-11-22T07:37:05.477Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-domcyrus-rustnet": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-domcyrus-rustnet",
@@ -224287,10 +224292,10 @@
       "relative_path": "08_VERIFICATION/domcyrus-rustnet-verification-protocol-empirical-defect-shield-for-domcyrus-rust.md",
       "title": "Verification Protocol: Empirical Defect Shield for domcyrus/rustnet",
       "repository": "domcyrus/rustnet",
-      "source_version": "3bc950fb",
-      "content_hash": "c605787ead29e903dfc873c76e1ee3bc9cd822dab11d19a99d1ec9f382ad4b1d",
+      "source_version": "535573d8",
+      "content_hash": "98929f7a398e13377ed615eb691f4efeb22bbe35e70baceca7d9e1e5336e2894",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T22:22:58.207Z"
+      "persisted_at": "2026-11-22T07:37:05.659Z"
     },
     "learn-github-aws-amplify-amplify-js": {
       "learning_id": "learn-github-aws-amplify-amplify-js",
@@ -224388,9 +224393,9 @@
       "title": "Product Intelligence: domcyrus-rustnet-learnings Core Invariants",
       "repository": "domcyrus-rustnet-learnings",
       "source_version": "HEAD",
-      "content_hash": "0fb8974514521d702da76dfaaad0ed8e9c31f95c482cba8e238d9ff2180c3833",
+      "content_hash": "ae2afa4dca899553d193762d589ebddd2066acbefc15680b6b41ee90a83dbbae",
       "domain_letter": "B",
-      "persisted_at": "2026-11-20T22:23:08.386Z"
+      "persisted_at": "2026-11-22T07:37:22.458Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-domcyrus-rustnet-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-domcyrus-rustnet-learnings",
@@ -224400,9 +224405,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for domcyrus-rustnet-learnings",
       "repository": "domcyrus-rustnet-learnings",
       "source_version": "HEAD",
-      "content_hash": "a633733a714077a2e8097222f66e09c99cb56ec01e84de42134e6d0158bb81b8",
+      "content_hash": "8b54b47d760b78db64d406689cc018e0a712da4db5b3338f066bdb7ac200fb7a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T22:23:08.609Z"
+      "persisted_at": "2026-11-22T07:37:22.638Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-mistralai-mixtral-8x7b-instruct-v0-1-learning": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-mistralai-mixtral-8x7b-instruct-v0-1-learning",
@@ -226986,8 +226991,8 @@
       "slug": "materializeinc-materialize",
       "platform": "github",
       "source_url": "https://github.com/MaterializeInc/materialize",
-      "source_version": "5c494ac8",
-      "content_hash": "23c0699b5341198f75ae032cf94ae27096fa60ef61a9b9b775c053c19b5cf0a9",
+      "source_version": "cae35259",
+      "content_hash": "788ad3dabb650690a5a94f6c3cd7a81b23335956bbeefb34eeaadaa90e6008a9",
       "dossier_path": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "promoted_rules": [
@@ -227025,6 +227030,11 @@
           "number": 9715,
           "title": "update dependency @faker-js/faker to v10 [security]",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9908,
+          "title": "update dependency @faker-js/faker to v10.6.0",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -227032,7 +227042,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T03:28:50.364Z",
+      "verified_at": "2026-11-22T07:37:17.951Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -227074,10 +227084,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-materializeinc-materialize-architecture-intelligence-materializeinc-materialize-.md",
       "title": "Architecture Intelligence: MaterializeInc/materialize Core Invariants",
       "repository": "MaterializeInc/materialize",
-      "source_version": "2026293a",
-      "content_hash": "d9547d3e6588bd315cfe5109988009aa30d80294d7a8f23425fbf8d42d19166e",
+      "source_version": "cae35259",
+      "content_hash": "ef465493ec00939cbc27aafe02570c0f27065791c219fe21c53221764685e1de",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T20:42:06.346Z"
+      "persisted_at": "2026-11-22T07:37:18.564Z"
     },
     "agent_contract-agent-contract-materializeinc-materialize-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-materializeinc-materialize-autonomous-specialist-persona",
@@ -227086,10 +227096,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/materializeinc-materialize-agent-contract-materializeinc-materialize-autonomous-.md",
       "title": "Agent Contract: MaterializeInc/materialize Autonomous Specialist Persona",
       "repository": "MaterializeInc/materialize",
-      "source_version": "5c494ac8",
-      "content_hash": "0f7767943d6d434d6e6519e31b986d5553f9b206280691df208b2a640fe4656c",
-      "domain_letter": "H",
-      "persisted_at": "2026-11-21T03:28:51.092Z"
+      "source_version": "cae35259",
+      "content_hash": "201f7f1d041ad9fb86b43bac0634234bef86220912fd56ea52729d2b170ea152",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-22T07:37:18.739Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-materializeinc-materialize": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-materializeinc-materialize",
@@ -227098,10 +227108,10 @@
       "relative_path": "08_VERIFICATION/materializeinc-materialize-verification-protocol-empirical-defect-shield-for-mat.md",
       "title": "Verification Protocol: Empirical Defect Shield for MaterializeInc/materialize",
       "repository": "MaterializeInc/materialize",
-      "source_version": "5c494ac8",
-      "content_hash": "f4369af05f175be112379c40792bcafabc20ed0aa493f8197a9af3027777a694",
+      "source_version": "cae35259",
+      "content_hash": "ce16229a1e22fde813417f9a15eda37822bac1dad8eda5a3f814db88db6bceae",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T03:28:51.225Z"
+      "persisted_at": "2026-11-22T07:37:18.882Z"
     },
     "candidate_directive-windows-fix-the-unit-test-binary-crashing-at-startup-on-rust-1-100": {
       "item_id": "candidate_directive-windows-fix-the-unit-test-binary-crashing-at-startup-on-rust-1-100",
@@ -238203,8 +238213,8 @@
       "slug": "kotest-kotest",
       "platform": "github",
       "source_url": "https://github.com/kotest/kotest",
-      "source_version": "9c81ef68",
-      "content_hash": "cf3f01300db041e7ea6d5ac3deb0b6f7a5e13a6df5829d4b2a3731a5b46b1215",
+      "source_version": "1bdf1431",
+      "content_hash": "1064a47b0b8284b6912966564a1b5a11c9715cbb5eaf63466795877260f0913f",
       "dossier_path": "07_PROJECT_LEARNING/kotest-kotest-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kotest-kotest-learnings.md",
       "promoted_rules": [
@@ -238217,6 +238227,11 @@
           "number": 9123,
           "title": "report honest failure messages from matchInOrder/matchInOrderSubset o",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9907,
+          "title": "correct empty-collection KDoc on shouldNotContainExactCopies",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -238224,7 +238239,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T04:29:11.171Z",
+      "verified_at": "2026-11-22T07:37:10.334Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -238278,10 +238293,10 @@
       "relative_path": "08_VERIFICATION/kotest-kotest-verification-protocol-empirical-defect-shield-for-kotest-kotest.md",
       "title": "Verification Protocol: Empirical Defect Shield for kotest/kotest",
       "repository": "kotest/kotest",
-      "source_version": "9c81ef68",
-      "content_hash": "bedeae2ba21d8d1e79622210dce60a44319b7ea8c19f66ecbf37c8fb40bcf96e",
+      "source_version": "1bdf1431",
+      "content_hash": "c34790a284fce774c6d5398d003cc414fc3f6a89d386704df3e8ab761ef58575",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T04:29:11.855Z"
+      "persisted_at": "2026-11-22T07:37:11.090Z"
     },
     "rule-8536": {
       "learning_id": "rule-8536",
@@ -238475,9 +238490,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for kotest-kotest-learnings",
       "repository": "kotest-kotest-learnings",
       "source_version": "HEAD",
-      "content_hash": "6c25b8a18418f68c5b092237ef7a5fe07d9e135f9288941a7fa0bb575b1973f1",
+      "content_hash": "14c8af70e61fa6b418657483df158da8c02b96295aa30a8fb1e3c024338a2fb2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T04:29:24.993Z"
+      "persisted_at": "2026-11-22T07:37:24.234Z"
     },
     "learn-huggingface-microsoft-frognano-4b-2609": {
       "learning_id": "learn-huggingface-microsoft-frognano-4b-2609",
@@ -279936,7 +279951,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/thinkingmachines/Inkling-2-Small",
       "source_version": "hf-thinkingmachines-inkling-2-small",
-      "content_hash": "ec9649c39cec40173a1ed59146a2c3f250b376aa413a621364be695fe62449e0",
+      "content_hash": "5928121396a8bb7d58664fde1fc62374840323a32de3cd2fc1d054b0411a87f5",
       "dossier_path": "07_PROJECT_LEARNING/hf-thinkingmachines-inkling-2-small-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-thinkingmachines-inkling-2-small-learnings.md",
       "promoted_rules": [],
@@ -279945,7 +279960,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T19:54:06.147Z",
+      "verified_at": "2026-11-22T07:37:03.133Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -279962,9 +279977,9 @@
       "title": "Research & Knowledge Intelligence: thinkingmachines/Inkling-2-Small Core Invariants",
       "repository": "thinkingmachines/Inkling-2-Small",
       "source_version": "hf-thinkingmachines-inkling-2-small",
-      "content_hash": "6fbd213b9462d95f0d5b0946f84e0787dd02859aa68260ad36cef5d507142acc",
+      "content_hash": "3df6fda5e2ee288d66002da50236516d0c4bdca0ce89d480e1530891555900a3",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T19:54:06.497Z"
+      "persisted_at": "2026-11-22T07:37:03.583Z"
     },
     "rule-9046": {
       "learning_id": "rule-9046",
@@ -280076,9 +280091,9 @@
       "title": "Research & Knowledge Intelligence: hf-thinkingmachines-inkling-2-small-learnings Core Invariants",
       "repository": "hf-thinkingmachines-inkling-2-small-learnings",
       "source_version": "HEAD",
-      "content_hash": "8654ba3f719352535418141afc8c28fb36ccc71652a81b3df4cdda8126f2261a",
+      "content_hash": "29ae669bc0b1a06b396c8d20cdb2fa7fbd373d6a6a9f06286d24a302b450feb7",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T19:54:47.618Z"
+      "persisted_at": "2026-11-22T07:37:23.015Z"
     },
     "rule-9049": {
       "learning_id": "rule-9049",
@@ -284615,10 +284630,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-kotest-kotest-quality-verification-intelligence-kotest-kotest-core-invariants.md",
       "title": "Quality & Verification Intelligence: kotest/kotest Core Invariants",
       "repository": "kotest/kotest",
-      "source_version": "9c81ef68",
-      "content_hash": "04ade4416256c5e9e40f8156c61fe857c29afceff08e67bc54946726a7434e96",
+      "source_version": "1bdf1431",
+      "content_hash": "fc3651653c59894dd5ca34bf13566d81cff5401e28558eb2067c1a9a6c61243a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T04:29:11.725Z"
+      "persisted_at": "2026-11-22T07:37:10.917Z"
     },
     "rule-9124": {
       "learning_id": "rule-9124",
@@ -284745,9 +284760,9 @@
       "title": "Quality & Verification Intelligence: kotest-kotest-learnings Core Invariants",
       "repository": "kotest-kotest-learnings",
       "source_version": "HEAD",
-      "content_hash": "4f3bc29db19352d9575d921fa869ef3a51b36749dacbb0e3e79b9779ed13efae",
+      "content_hash": "3c7a4ca1c21b93b6462d930599e64ebb25fe5daf1da10014a403fb0e744ccb87",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T04:29:24.859Z"
+      "persisted_at": "2026-11-22T07:37:24.059Z"
     },
     "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b": {
       "learning_id": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
@@ -319659,6 +319674,108 @@
       "content_hash": "7977624d287db516b1fda5513d3144bd377efcb3329102bb407c6f4867156665",
       "domain_letter": "I",
       "persisted_at": "2026-11-22T07:29:05.132Z"
+    },
+    "rule-9906": {
+      "learning_id": "rule-9906",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9906,
+      "title": "remove 2 advisory ignore entries that no longer match Cargo.lock",
+      "source_url": "https://github.com/domcyrus/rustnet",
+      "source_version": "535573d8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T07:37:04.827Z"
+    },
+    "candidate_directive-remove-2-advisory-ignore-entries-that-no-longer-match-cargo-lock": {
+      "item_id": "candidate_directive-remove-2-advisory-ignore-entries-that-no-longer-match-cargo-lock",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-XG5V-remove-2-advisory-ignore-entries-that-no-longer-match-cargo-lock.md",
+      "title": "remove 2 advisory ignore entries that no longer match Cargo.lock",
+      "repository": "domcyrus/rustnet",
+      "source_version": "535573d8",
+      "content_hash": "624798fef06054ed3b70a9ad29b01bd808dee006720dd742bf81983d19ced5ea",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-22T07:37:05.302Z"
+    },
+    "rule-9907": {
+      "learning_id": "rule-9907",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9907,
+      "title": "correct empty-collection KDoc on shouldNotContainExactCopies",
+      "source_url": "https://github.com/kotest/kotest",
+      "source_version": "1bdf1431",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T07:37:10.334Z"
+    },
+    "candidate_directive-correct-empty-collection-kdoc-on-shouldnotcontainexactcopies": {
+      "item_id": "candidate_directive-correct-empty-collection-kdoc-on-shouldnotcontainexactcopies",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-XKD9-correct-empty-collection-kdoc-on-shouldnotcontainexactcopies.md",
+      "title": "correct empty-collection KDoc on shouldNotContainExactCopies",
+      "repository": "kotest/kotest",
+      "source_version": "1bdf1431",
+      "content_hash": "8dd98e00c2269d36a359496b91ca13d603f96b2185b33c9183a8ce0bfc138fa4",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-22T07:37:10.750Z"
+    },
+    "rule-9908": {
+      "learning_id": "rule-9908",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9908,
+      "title": "update dependency @faker-js/faker to v10.6.0",
+      "source_url": "https://github.com/MaterializeInc/materialize",
+      "source_version": "cae35259",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T07:37:17.951Z"
+    },
+    "candidate_directive-update-dependency-faker-js-faker-to-v10-6-0": {
+      "item_id": "candidate_directive-update-dependency-faker-js-faker-to-v10-6-0",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-XQ9L-update-dependency-faker-js-faker-to-v10-6-0.md",
+      "title": "update dependency @faker-js/faker to v10.6.0",
+      "repository": "MaterializeInc/materialize",
+      "source_version": "cae35259",
+      "content_hash": "a376081f88a67ec588813d566e19be746bbbb888c162ccd69d48ded5c2d2116c",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-22T07:37:18.394Z"
+    },
+    "candidate_directive-deps-remove-2-advisory-ignore-entries-that-no-longer-match-cargo-lock": {
+      "item_id": "candidate_directive-deps-remove-2-advisory-ignore-entries-that-no-longer-match-cargo-lock",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-XT9C-deps-remove-2-advisory-ignore-entries-that-no-longer-match-cargo-lock.md",
+      "title": "deps): remove 2 advisory ignore entries that no longer match Cargo.lock",
+      "repository": "domcyrus-rustnet-learnings",
+      "source_version": "HEAD",
+      "content_hash": "de35d2815e5e0eb914c3b7eb83cc3a9581d60bc202bac168a73c19e670cb98a2",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-22T07:37:22.276Z"
+    },
+    "candidate_directive-assertions-correct-empty-collection-kdoc-on-shouldnotcontainexactcopies": {
+      "item_id": "candidate_directive-assertions-correct-empty-collection-kdoc-on-shouldnotcontainexactcopies",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-XUI8-assertions-correct-empty-collection-kdoc-on-shouldnotcontainexactcopies.md",
+      "title": "assertions): correct empty-collection KDoc on shouldNotContainExactCopies",
+      "repository": "kotest-kotest-learnings",
+      "source_version": "HEAD",
+      "content_hash": "68d5509e76e28166cbbbb0bbf4e071d0d08e1bbf71d9282c3c6385497b90413f",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-22T07:37:23.888Z"
     }
   },
   "ai-builder-brain": {

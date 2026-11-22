@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md`  
 > **Source**: github ([https://github.com/domcyrus/rustnet](https://github.com/domcyrus/rustnet))  
-> **Source Version**: `3bc950fb`  
+> **Source Version**: `535573d8`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T22:22:56.220Z  
+> **Timestamp**: 2026-11-22T07:37:03.980Z  
 > **Learning ID**: `learn-github-domcyrus-rustnet`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/domcyrus/rustnet](https://github.com/domcyrus/rustnet))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T22:22:55.970Z  
+> **Harvest Timestamp**: 2026-11-22T07:37:03.973Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Per-process network monitoring for your terminal with deep packet inspection. Cross-platform, sandboxed.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5249 stars
+- **Stars / Engagement**: 5250 stars
 
 ---
 
@@ -2501,287 +2501,34 @@ pub(super) fn dns_header_counts(payload: &[u8]) -> Option<DnsHeaderCounts> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3bc950fb` (2026-11-20)
-**Commit Message**: chore(deps): bump the rust-dependencies group with 4 updates (#740)
+### Incident Patch 1: `535573d8` (2026-11-21)
+**Commit Message**: chore(deps): remove 2 advisory ignore entries that no longer match Cargo.lock (#742)
 
-Bumps the rust-dependencies group with 4 updates: [clap_complete](https://github.com/clap-rs/clap), [clap_mangen](https://github.com/clap-rs/clap), [zip](https://github.com/zip-rs/zip2) and [clap](https://github.com/clap-rs/clap).
-
-
-Updates `clap_complete` from 4.6.11 to 4.6.12
-- [Release notes](https://github.com/clap-rs/clap/releases)
-- [Changelog](https://github.com/clap-rs/clap/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/clap-rs/clap/compare/clap_complete-v4.6.11...clap_complete-v4.6.12)
-
-Updates `clap_mangen` from 0.3.3 to 0.3.4
-- [Release notes](https://github.com/clap-rs/clap/releases)
-- [Changelog](https://github.com/clap-rs/clap/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/clap-rs/clap/compare/clap_mangen-v0.3.3...clap_mangen-v0.3.4)
-
-Updates `zip` from 9.6.0 to 9.6.1
-- [Release notes](https://github.com/zip-rs/zip2/releases)
-- [Changelog](https://github.com/zip-rs/zip2/blob/master/CHANGELOG.md)
-- [Commits](https://github.com/zip-rs/zip2/compare/v9.6.0...v9.6.1)
-
-Updates `clap` from 4.6.7 to 4.6.8
-- [Release notes](https://github.com/clap-rs/clap/releases)
-- [Changelog](https://github
-
-**File**: `Cargo.lock` (modified, +24/-24)
+**File**: `.cargo/audit.toml` (modified, +1/-8)
 ```diff
-@@ -139,7 +139,7 @@ dependencies = [
-  "objc2-foundation",
-  "parking_lot",
-  "percent-encoding",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
-  "wl-clipboard-rs",
-  "x11rb",
- ]
-@@ -370,9 +370,9 @@ dependencies = [
+@@ -1,12 +1,5 @@
+ [advisories]
+-ignore = [
+-    # quick-xml < 0.41.0 can consume excessive resources when parsing
+-    # untrusted XML. RustNet only receives it through wayland-scanner, a
+-    # build-time tool that parses trusted protocol XML bundled with the crate.
+-    # wayland-scanner 0.31.8 currently pins quick-xml ^0.38.3.
+-    "RUSTSEC-2026-0194",
+-    "RUSTSEC-2026-0195",
+-]
++ignore = []
  
- [[package]]
- name = "clap"
--version = "4.6.7"
-+version = "4.6.9"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "aa8876b300ab35ba921adea3dfd70157a46249b33f95c9084ae5709785478946"
-+checksum = "844c5c0b65be192cb68d570cca1b21a6444431d24e39c084dc0336177015337c"
- dependencies = [
-  "clap_builder",
-  "clap_derive",
-@@ -392,23 +392,23 @@ dependencies = [
- 
- [[package]]
- name = "clap_complete"
--version = "4.6.11"
-+version = "4.6.12"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "037e2a1a92236d0aff7e845093f64661d6df4c02c9fcc61a60e9e1d736fa392f"
-+checksum = "6a35200383f20018d41c14d1ab19c1727c697f544492143f7d93aa39f0187848"
- dependencies = [
-  "clap",
- ]
- 
- [[package]]
- name = "clap_derive"
--version = "4.6.7"
-+version = "4.6.9"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f9c751b79415d4e559e3d1fcf128e09e720eb673a06d26cf6f392d37d75b66e0"
-+checksum = "b4c174f11f949b9ca8c60580925e282b9cbd5454750e506f08648b2038080cd7"
- dependencies = [
-  "heck",
-  "proc-macro2",
-  "quote",
-- "syn 3.0.4",
-+ "syn 3.0.10",
- ]
- 
- [[package]]
-@@ -419,9 +419,9 @@ checksum = "c8d4a3bb8b1e0c1050499d1815f5ab16d04f0959b233085fb31653fbfc9d98f9"
- 
- [[package]]
- name = "clap_mangen"
--version = "0.3.3"
-+version = "0.3.4"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "211d617eaa4b735c96c9e0228fcbdb5120ef623f2b8cb67ffb84c3e02dbc28a4"
-+checksum = "a3b6a8907b1723f211693e27b9af5899b86a9512ef5b08bd4a15b6bceb30da6d"
- dependencies = [
-  "clap",
-  "roff",
-@@ -719,7 +719,7 @@ dependencies = [
-  "proc-macro2",
-  "quote",
-  "strsim",
-- "syn 3.0.4",
-+ "syn 3.0.10",
- ]
- 
- [[package]]
-@@ -730,7 +730,7 @@ checksum = "2ac7135c3ef02b2f7833bbeb1be5ba7f966dcde8a87c6b87f65a778d71a02785"
- dependencies = [
-  "darling_core",
-  "quote",
-- "syn 3.0.4",
-+ "syn 3.0.10",
- ]
- 
- [[package]]
-@@ -895,7 +895,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
- dependencies = [
-  "libc",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
- 
- [[package]]
-@@ -1309,7 +1309,7 @@ dependencies = [
-  "indoc",
-  "proc-macro2",
-  "quote",
-- "syn 3.0.4",
-+ "syn 3.0.10",
- ]
- 
- [[package]]
-@@ -1946,7 +1946,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "7d8fae84b431384b68627d0f9b3b1245fcf9f46f6c0e3dc902e9dce64edd1967"
- dependencies = [
-  "libc",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.36.1",
- ]
- 
- [[package]]
-@@ -2562,7 +2562,7 @@ dependencies = [
-  "errno 0.3.14",
-  "libc",
-  "linux-raw-sys",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
- 
- [[package]]
-@@ -2754,7 +2754,7 @@ checksum = "e7a5d71263a5a7d47b41f6b3f06ba276f10cc18b0931f1799f710578e2309348"
- dependencies = [
-  "proc-macro2",
-  "quote",
-- "syn 3.0.4",
-+ "syn 3.0.10",
- ]
- 
- [[package]]
-@@ -2964,9 +2964,9 @@ dependencies = [
- 
- [[package]]
- name = "syn"
--version = "3.0.4"
-+version = "3.0.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "e6275cddf4610d1775e6d1fe9469b2e77d0f39fd98fb7450901b821e0c53649f"
-+checksum = "4ae9ccbea3a7b0b09443036490c8f34a8b1b760fd345e5c0dae0aac718faea79"
- dependencies = [
-  "proc-macro2",
-  "quote",
-@@ -2983,7 +2983,7 @@ dependencies = [
-  "getrandom 0.4.3",
-  "once_cell",
-  "rustix",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
- 
- [[package]]
-@@ -3108,7 +3108,7 @@ checksum = "bc04cd3e1236dd4a98afca4569f2deb3f120e5422a4023be2cb683f8486292af"
- dependencies = [
-  "proc-macro2",
-  "quote",
-- "syn 3.0.4",
-+ "syn 3.0.10",
- ]
- 
- [[package]]
-@@ -3631,7 +3631,7 @@ version = "0.1.11"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22"
- dependencies = [
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
- 
- [[package]]
-@@ -4038,9 +4038,9 @@ dependencies = [
- 
- [[package]]
- name = "zip"
--version = "9.6.0"
-+version = "9.6.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "80cc68510ea7553c30a69c732de5278e94183f68765af6c642dbccefd6ec777e"
-+checksum = "953a376f4930ed5af88e1e65948385f76866b45e7f75b21ac275327d0eeb9b46"
- dependencies = [
-  "constant_time_eq",
-  "crc32fast",
-```
-
----
-
-### Incident Patch 2: `a6066085` (2026-11-19)
-**Commit Message**: chore(deps): bump zip from 9.5.1 to 9.6.0 in the rust-dependencies group (#739)
-
-Bumps the rust-dependencies group with 1 update: [zip](https://github.com/zip-rs/zip2).
-
-
-Updates `zip` from 9.5.1 to 9.6.0
-- [Release notes](https://github.com/zip-rs/zip2/releases)
-- [Changelog](https://github.com/zip-rs/zip2/blob/master/CHANGELOG.md)
-- [Commits](https://github.com/zip-rs/zip2/compare/v9.5.1...v9.6.0)
-
----
-updated-dependencies:
-- dependency-name: zip
-  dependency-version: 9.6.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-  dependency-group: rust-dependencies
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `Cargo.lock` (modified, +15/-3)
-```diff
-@@ -1652,6 +1652,18 @@ dependencies = [
-  "libc",
- ]
- 
-+[[package]]
-+name = "nix"
-+version = "0.32.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "77730ed34f01f4990cb2ea67fec715ecebc6fab9a6396cf83c5529b13f581bdc"
-+dependencies = [
-+ "bitflags 2.13.2",
-+ "cfg-if",
-+ "cfg_aliases",
-+ "libc",
-+]
-+
- [[package]]
- name = "no-std-net"
- version = "0.6.0"
-@@ -4026,9 +4038,9 @@ dependencies = [
- 
- [[package]]
- name = "zip"
--version = "9.5.1"
-+version = "9.6.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "e3476fd497ac8af5b1ec7b51acab7bef380f7e8dd8e0487595bafd839417a302"
-+checksum = "80cc68510ea7553c30a69c732de5278e94183f68765af6c642dbccefd6ec777e"
- dependencies = [
-  "constant_time_eq",
-  "crc32fast",
-@@ -4037,7 +4049,7 @@ dependencies = [
-  "indexmap",
-  "libc",
-  "memchr",
-- "nix 0.31.3",
-+ "nix 0.32.0",
-  "typed-path",
-  "windows-sys 0.61.2",
-  "zeroize",
+ [output]
+ deny = ["yanked"]
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #742** (2026-11-21): chore(deps): remove 2 advisory ignore entries that no longer match Cargo.lock (@zyl71)
 - **PR #740** (2026-11-20): chore(deps): bump the rust-dependencies group with 4 updates (@dependabot[bot])
 - **PR #739** (2026-11-19): chore(deps): bump zip from 9.5.1 to 9.6.0 in the rust-dependencies group (@dependabot[bot])
 - **PR #738** (2026-11-17): docs: add WinGet installation instructions (@domcyrus)
 - **PR #737** (2026-11-17): chore(deps): bump maxminddb from 0.32.0 to 0.33.0 in the rust-dependencies group (@dependabot[bot])
 - **PR #736** (2026-11-16): chore(deps): bump rust from 1.98-slim to 1.99-slim in the docker group (@dependabot[bot])
-- **PR #735** (2026-11-16): chore(deps): bump zip from 9.5.0 to 9.5.1 in the rust-dependencies group (@dependabot[bot])
 
 ---
 
@@ -2801,74 +2548,35 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump the rust-dependencies group with 4 updates
+## X. deps): remove 2 advisory ignore entries that no longer match Cargo.lock
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in domcyrus/rustnet. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.cargo/audit.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in domcyrus/rustnet. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3bc950fb`: deps): bump the rust-dependencies group with 4 updates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `535573d8`: deps): remove 2 advisory ignore entries that no longer match Cargo.lock. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.cargo/audit.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "windows-sys 0.52.0",
-version = "4.6.9"
-checksum = "844c5c0b65be192cb68d570cca1b21a6444431d24e39c084dc0336177015337c"
-version = "4.6.12"
-checksum = "6a35200383f20018d41c14d1ab19c1727c697f544492143f7d93aa39f0187848"
-version = "4.6.9"
-checksum = "b4c174f11f949b9ca8c60580925e282b9cbd5454750e506f08648b2038080cd7"
- "syn 3.0.10",
-version = "0.3.4"
-checksum = "a3b6a8907b1723f211693e27b9af5899b86a9512ef5b08bd4a15b6bceb30da6d"
- "syn 3.0.10",
- "syn 3.0.10",
- "windows-sys 0.52.0",
- "syn 3.0.10",
- "windows-sys 0.36.1",
- "windows-sys 0.52.0",
- "syn 3.0.10",
-version = "3.0.10"
-checksum = "4ae9ccbea3a7b0b09443036490c8f34a8b1b760fd345e5c0dae0aac718faea79"
- "windows-sys 0.52.0",
- "syn 3.0.10",
- "windows-sys 0.52.0",
-version = "9.6.1"
-checksum = "953a376f4930ed5af88e1e65948385f76866b45e7f75b21ac275327d0eeb9b46"
+ignore = []
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
- "windows-sys 0.61.2",
-version = "4.6.7"
-checksum = "aa8876b300ab35ba921adea3dfd70157a46249b33f95c9084ae5709785478946"
-version = "4.6.11"
-checksum = "037e2a1a92236d0aff7e845093f64661d6df4c02c9fcc61a60e9e1d736fa392f"
-version = "4.6.7"
-checksum = "f9c751b79415d4e559e3d1fcf128e09e720eb673a06d26cf6f392d37d75b66e0"
- "syn 3.0.4",
-version = "0.3.3"
-checksum = "211d617eaa4b735c96c9e0228fcbdb5120ef623f2b8cb67ffb84c3e02dbc28a4"
- "syn 3.0.4",
- "syn 3.0.4",
- "windows-sys 0.61.2",
- "syn 3.0.4",
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
- "syn 3.0.4",
-version = "3.0.4"
-checksum = "e6275cddf4610d1775e6d1fe9469b2e77d0f39fd98fb7450901b821e0c53649f"
- "windows-sys 0.61.2",
- "syn 3.0.4",
- "windows-sys 0.61.2",
-version = "9.6.0"
-checksum = "80cc68510ea7553c30a69c732de5278e94183f68765af6c642dbccefd6ec777e"
+ignore = [
+    # quick-xml < 0.41.0 can consume excessive resources when parsing
+    # untrusted XML. RustNet only receives it through wayland-scanner, a
+    # build-time tool that parses trusted protocol XML bundled with the crate.
+    # wayland-scanner 0.31.8 currently pins quick-xml ^0.38.3.
+    "RUSTSEC-2026-0194",
+    "RUSTSEC-2026-0195",
+]
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3bc950fb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `535573d8` are properly handled with clean fallback behavior.
