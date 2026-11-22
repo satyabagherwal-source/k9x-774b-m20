@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261120-X4U2",
-    "timestamp": "2026-11-20T22:57:17.498Z",
-    "repository": "scrapinghub/dateparser",
-    "learningId": "learn-github-scrapinghub-dateparser",
-    "contentHash": "15027ec342508d5739229361153c379c1484ecd48a59e2dca2ce9c26d4b984b6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261120-XB2A",
     "timestamp": "2026-11-20T22:57:25.570Z",
     "repository": "aleo-labs-protocol/snarkOS",
@@ -7492,6 +7477,21 @@
     "contentHash": "88b28e538b8c9e42e8e5a6931c7bea19a380cd127d421865b73ccf29181af6c7",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-50GJ",
+    "timestamp": "2026-11-22T20:46:47.443Z",
+    "repository": "TaichuAI/ZDTaichu5.0-9B",
+    "learningId": "learn-huggingface-taichuai-zdtaichu5-0-9b",
+    "contentHash": "bcb3546d1b57878d5bc5a57791fda18eb5ab00555c2a9fbbbdc3a600c7a92978",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

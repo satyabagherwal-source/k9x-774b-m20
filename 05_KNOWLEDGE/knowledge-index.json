@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T20:35:53.041Z",
+  "last_updated": "2026-11-22T20:47:00.830Z",
   "total_verified_learnings": 9075,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "12bfec9015483adf3bf006cc86c15cfab242dfa214643469fb99f7e94f8311ae",
+      "content_hash": "6fe42502632bee55fc5f4cb9984ea34964bd2ef5f35f97c6fae98a85242a50ac",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T19:31:31.216Z"
+      "persisted_at": "2026-11-22T20:47:00.830Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -113386,9 +113386,9 @@
       "title": "Research & Knowledge Intelligence: TaichuAI/ZDTaichu5.0-9B Core Invariants",
       "repository": "TaichuAI/ZDTaichu5.0-9B",
       "source_version": "hf-taichuai-zdtaichu5.0-9b",
-      "content_hash": "d10c3917e2504c96caac2e1bab9741b70c3e3edbd83fde5163d47f7f48953e92",
+      "content_hash": "29d6d1a9610c0a0e61b368c8f48e64bd86fcf96fc60cad724fe2e286362a1d01",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T14:08:08.470Z"
+      "persisted_at": "2026-11-22T20:46:47.720Z"
     },
     "candidate_directive-deps-dev-bump-hono-4574": {
       "item_id": "candidate_directive-deps-dev-bump-hono-4574",
@@ -113446,9 +113446,9 @@
       "title": "Research & Knowledge Intelligence: hf-taichuai-zdtaichu5.0-9b-learnings Core Invariants",
       "repository": "hf-taichuai-zdtaichu5.0-9b-learnings",
       "source_version": "HEAD",
-      "content_hash": "539250d236d018b3f82a6cd9f723280b635ab705e20e1bdf82109156a5ac940e",
+      "content_hash": "75d609b8e60a32b5e731c26e449995bfe9618fcf026ab1c928a8f11925c0dd6d",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T14:08:11.505Z"
+      "persisted_at": "2026-11-22T20:46:58.591Z"
     },
     "domain_intelligence-architecture-intelligence-microsoft-agent-governance-toolkit-learnings-core-inva": {
       "item_id": "domain_intelligence-architecture-intelligence-microsoft-agent-governance-toolkit-learnings-core-inva",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "32794ecb1c54de111b9b9c71f2ece9602302a656598c156fbaba6ff47069e9d1",
+      "content_hash": "49b1725eb60b785a7ff842cdb66b3f831fddded6492f32f704aeeea075756c0f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T20:00:30.716Z"
+      "persisted_at": "2026-11-22T20:46:59.392Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "7443e4e6280c29b127b8e6c8555c184441d83af8d24a1fcb0e7d2354c9fbfec4",
+      "content_hash": "98dfd28a46349ef4f6236506b9cbf3030614c9212e1558b03e660f8f9add9df4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T20:00:30.853Z"
+      "persisted_at": "2026-11-22T20:46:59.606Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -284698,7 +284698,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
       "source_version": "hf-taichuai-zdtaichu5.0-9b",
-      "content_hash": "9cb2ef41af93c6916049f11a48d8bf36f9041b8aa5c628f439581bf8c4be0444",
+      "content_hash": "bcb3546d1b57878d5bc5a57791fda18eb5ab00555c2a9fbbbdc3a600c7a92978",
       "dossier_path": "07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md",
       "promoted_rules": [],
@@ -284707,7 +284707,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T14:08:08.044Z",
+      "verified_at": "2026-11-22T20:46:47.178Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -318655,13 +318655,13 @@
       "item_id": "candidate_directive-test-collab-write-trust-fixtures-with-explicit-0644-permissions",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-HHTI-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-59ID-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "8541e9684ba97abe1b36d4eacd2ff4969b662dbf67f3a81e92621e5259a3e3f4",
+      "content_hash": "f42a36b46cf12368a0174d2a36c7fe23500f9f60c43d0b688f9175f20a5338b7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T20:00:30.587Z"
+      "persisted_at": "2026-11-22T20:46:59.179Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants",

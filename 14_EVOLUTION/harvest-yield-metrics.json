@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T20:35:47.602Z",
-  "total_cycles_completed": 11592,
-  "total_learnings_persisted": 11592,
+  "last_updated": "2026-11-22T20:46:47.455Z",
+  "total_cycles_completed": 11593,
+  "total_learnings_persisted": 11593,
   "total_rules_promoted": 10810,
   "history": [
-    {
-      "timestamp": "2026-11-22T02:29:32.386Z",
-      "repository": "infiniflow/infinity",
-      "learningId": "learn-github-infiniflow-infinity",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-22T02:29:34.107Z",
       "repository": "NucleoidAI/Nucleoid",
@@ -1403,6 +1396,13 @@
       "repository": "freenet/freenet-core",
       "learningId": "learn-github-freenet-freenet-core",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T20:46:47.455Z",
+      "repository": "TaichuAI/ZDTaichu5.0-9B",
+      "learningId": "learn-huggingface-taichuai-zdtaichu5-0-9b",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

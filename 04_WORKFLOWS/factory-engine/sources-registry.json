@@ -82,8 +82,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-22T20:35:50.827Z",
-    "lastVerified": "2026-11-22T20:35:50.827Z",
+    "lastChecked": "2026-11-22T20:46:58.110Z",
+    "lastVerified": "2026-11-22T20:46:58.110Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -266,9 +266,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-22T20:09:08.982Z",
+    "lastChecked": "2026-11-22T20:46:58.097Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-22T20:09:08.982Z"
+    "lastVerified": "2026-11-22T20:46:58.097Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1271,12 +1271,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "sharkdp-bat": {
-    "name": "sharkdp/bat",
+    "name": "bat",
     "officialUrl": "https://github.com/sharkdp/bat",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-21T12:19:36.547Z",
-    "lastVerified": "2026-11-21T12:19:36.547Z",
+    "lastChecked": "2026-11-22T20:46:43.081Z",
+    "lastVerified": "2026-11-22T20:46:43.081Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sharkdp-bat",
@@ -1285,7 +1285,8 @@
     "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "dbc11b69"
   },
   "hf-qwen-qwen-image-2.1": {
     "name": "Qwen/Qwen-Image-2.1",
@@ -1341,9 +1342,9 @@
   "cryfs-cryfs": {
     "name": "cryfs",
     "officialUrl": "https://github.com/cryfs/cryfs",
-    "lastChecked": "2026-11-22T15:55:57.112Z",
+    "lastChecked": "2026-11-22T20:46:53.071Z",
     "revisionIdentifier": "e2da97b1",
-    "lastVerified": "2026-11-22T15:55:57.112Z"
+    "lastVerified": "2026-11-22T20:46:53.071Z"
   },
   "neondatabase-neon": {
     "name": "neon",
@@ -2170,9 +2171,9 @@
   "fission-fission": {
     "name": "fission",
     "officialUrl": "https://github.com/fission/fission",
-    "lastChecked": "2026-11-21T21:57:55.269Z",
+    "lastChecked": "2026-11-22T20:46:50.583Z",
     "revisionIdentifier": "8152c961",
-    "lastVerified": "2026-11-21T21:57:55.269Z"
+    "lastVerified": "2026-11-22T20:46:50.583Z"
   },
   "tailscale-tailscale": {
     "name": "tailscale/tailscale",
@@ -2396,12 +2397,12 @@
     "officialUrl": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-18T14:04:43.781Z",
-    "lastVerified": "2026-11-18T14:04:43.781Z",
+    "lastChecked": "2026-11-22T20:46:45.680Z",
+    "lastVerified": "2026-11-22T20:46:45.680Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-taichuai-zdtaichu5-0-9b",
-    "contentHash": "9cb2ef41af93c6916049f11a48d8bf36f9041b8aa5c628f439581bf8c4be0444",
+    "contentHash": "bcb3546d1b57878d5bc5a57791fda18eb5ab00555c2a9fbbbdc3a600c7a92978",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -7664,12 +7665,12 @@
     "revisionIdentifier": "361377cb"
   },
   "vcaesar-riot": {
-    "name": "vcaesar/riot",
+    "name": "riot",
     "officialUrl": "https://github.com/vcaesar/riot",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-21T20:48:18.329Z",
-    "lastVerified": "2026-11-21T20:48:18.329Z",
+    "lastChecked": "2026-11-22T20:46:55.605Z",
+    "lastVerified": "2026-11-22T20:46:55.605Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-vcaesar-riot",
@@ -7678,7 +7679,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "fd10bdae"
   },
   "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf": {
     "name": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
@@ -9193,9 +9195,9 @@
   "alin23-lunar": {
     "name": "Lunar",
     "officialUrl": "https://github.com/alin23/Lunar",
-    "lastChecked": "2026-11-19T21:23:58.224Z",
+    "lastChecked": "2026-11-22T20:46:48.312Z",
     "revisionIdentifier": "06950e25",
-    "lastVerified": "2026-11-19T21:23:58.224Z"
+    "lastVerified": "2026-11-22T20:46:48.312Z"
   },
   "serpapi-google-search-results-nodejs": {
     "name": "google-search-results-nodejs",

@@ -12223,3 +12223,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-orcarouter-orcasaq-2-27b` | `https://huggingface.co/orcarouter/OrcaSAQ-2-27B` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-11-22T20:35:35.295Z |
 | `learn-github-burntsushi-ripgrep` | `https://github.com/BurntSushi/ripgrep` | `b6744106` | Multi-dimensional audit evidence | 2026-11-22T20:35:36.576Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `dbfadb1c` | Multi-dimensional audit evidence | 2026-11-22T20:35:47.598Z |
+| `learn-huggingface-taichuai-zdtaichu5-0-9b` | `https://huggingface.co/TaichuAI/ZDTaichu5.0-9B` | `hf-taichua` | Multi-dimensional audit evidence | 2026-11-22T20:46:47.448Z |
