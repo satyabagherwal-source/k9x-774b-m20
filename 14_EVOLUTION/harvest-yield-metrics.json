@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T09:26:05.687Z",
-  "total_cycles_completed": 11467,
-  "total_learnings_persisted": 11467,
+  "last_updated": "2026-11-22T09:35:10.050Z",
+  "total_cycles_completed": 11468,
+  "total_learnings_persisted": 11468,
   "total_rules_promoted": 10730,
   "history": [
-    {
-      "timestamp": "2026-11-21T16:31:24.962Z",
-      "repository": "orcarouter/DeepSeek-V4.1-Flash-1017-abliterated-GGUF",
-      "learningId": "learn-huggingface-orcarouter-deepseek-v4-1-flash-1017-abliterated-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T16:40:02.244Z",
       "repository": "HuggingFaceBio/Carbon-X",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-22T09:26:05.687Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T09:35:10.050Z",
+      "repository": "higurashi-ai/Haru-4B",
+      "learningId": "learn-huggingface-higurashi-ai-haru-4b",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

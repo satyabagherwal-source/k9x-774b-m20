@@ -46,8 +46,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-22T08:22:46.522Z",
-    "lastVerified": "2026-11-22T08:22:46.522Z",
+    "lastChecked": "2026-11-22T09:35:21.681Z",
+    "lastVerified": "2026-11-22T09:35:21.681Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-22T09:26:08.891Z",
-    "lastVerified": "2026-11-22T09:26:08.891Z",
+    "lastChecked": "2026-11-22T09:35:21.691Z",
+    "lastVerified": "2026-11-22T09:35:21.691Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -1985,8 +1985,8 @@
     "officialUrl": "https://github.com/projectdiscovery/nuclei",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-22T04:29:08.534Z",
-    "lastVerified": "2026-11-22T04:29:08.534Z",
+    "lastChecked": "2026-11-22T09:35:16.604Z",
+    "lastVerified": "2026-11-22T09:35:16.604Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-projectdiscovery-nuclei",
@@ -4762,9 +4762,9 @@
   "vlcn-io-cr-sqlite": {
     "name": "cr-sqlite",
     "officialUrl": "https://github.com/vlcn-io/cr-sqlite",
-    "lastChecked": "2026-11-21T05:27:56.256Z",
+    "lastChecked": "2026-11-22T09:35:19.073Z",
     "revisionIdentifier": "43ab94ca",
-    "lastVerified": "2026-11-21T05:27:56.256Z"
+    "lastVerified": "2026-11-22T09:35:19.073Z"
   },
   "gitui-org-gitui": {
     "name": "gitui",
@@ -5920,9 +5920,9 @@
   "checkmarx-kics": {
     "name": "kics",
     "officialUrl": "https://github.com/Checkmarx/kics",
-    "lastChecked": "2026-11-21T07:41:57.414Z",
+    "lastChecked": "2026-11-22T09:35:14.228Z",
     "revisionIdentifier": "150910f8",
-    "lastVerified": "2026-11-21T07:41:57.414Z"
+    "lastVerified": "2026-11-22T09:35:14.228Z"
   },
   "starrocks-starrocks": {
     "name": "StarRocks/starrocks",
@@ -7259,9 +7259,9 @@
   "hasaneyldrm-exercises-dataset": {
     "name": "exercises-dataset",
     "officialUrl": "https://github.com/hasaneyldrm/exercises-dataset",
-    "lastChecked": "2026-11-19T07:06:22.252Z",
+    "lastChecked": "2026-11-22T09:35:11.690Z",
     "revisionIdentifier": "7455efae",
-    "lastVerified": "2026-11-19T07:06:22.252Z"
+    "lastVerified": "2026-11-22T09:35:11.690Z"
   },
   "aquasecurity-trivy-operator": {
     "name": "trivy-operator",
@@ -7747,9 +7747,9 @@
   "ouch-org-ouch": {
     "name": "ouch",
     "officialUrl": "https://github.com/ouch-org/ouch",
-    "lastChecked": "2026-11-20T23:29:44.934Z",
+    "lastChecked": "2026-11-22T09:35:06.610Z",
     "revisionIdentifier": "6df14b05",
-    "lastVerified": "2026-11-20T23:29:44.934Z"
+    "lastVerified": "2026-11-22T09:35:06.610Z"
   },
   "hf-conwayresearch-underdog-saluki-27b-1.0": {
     "name": "ConwayResearch/Underdog-Saluki-27B-1.0",
@@ -14097,6 +14097,23 @@
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-v3-2",
     "contentHash": "6551c12b1a5d7da59472ffb897e5c1bd52b40d432f08ab8fee74ec86442e3527",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-higurashi-ai-haru-4b": {
+    "name": "higurashi-ai/Haru-4B",
+    "officialUrl": "https://huggingface.co/higurashi-ai/Haru-4B",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-22T09:35:09.407Z",
+    "lastVerified": "2026-11-22T09:35:09.407Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-higurashi-ai-haru-4b",
+    "contentHash": "2d7f6f7dd5467cf447c92165503f2369b4195295574e8d37784daedbe6e4ef0d",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

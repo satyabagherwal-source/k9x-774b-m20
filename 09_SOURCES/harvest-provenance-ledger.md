@@ -12095,3 +12095,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-adventists-ai-sophon-realtime-v1` | `https://huggingface.co/adventists-ai/Sophon-Realtime-v1` | `hf-adventi` | Multi-dimensional audit evidence | 2026-11-22T09:11:04.913Z |
 | `learn-huggingface-deepseek-ai-deepseek-v3-2` | `https://huggingface.co/deepseek-ai/DeepSeek-V3.2` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-11-22T09:25:49.235Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `564e432f` | Multi-dimensional audit evidence | 2026-11-22T09:26:05.652Z |
+| `learn-huggingface-higurashi-ai-haru-4b` | `https://huggingface.co/higurashi-ai/Haru-4B` | `hf-higuras` | Multi-dimensional audit evidence | 2026-11-22T09:35:10.045Z |

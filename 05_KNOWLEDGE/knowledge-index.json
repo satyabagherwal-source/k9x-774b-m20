@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T09:26:11.286Z",
+  "last_updated": "2026-11-22T09:35:23.643Z",
   "total_verified_learnings": 9070,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "b76b58f207c7cc70a38fa482ff8c0fd4f9222382e81d467fb750cb4b208570bd",
+      "content_hash": "02219eee4b2c23e7ab3145801448e4a10b2f1c884559e9ad6e69ed2b0e45ac79",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T08:23:01.299Z"
+      "persisted_at": "2026-11-22T09:35:23.643Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "f8701e932d55d25ef96facd5c0135ff0382c70f3c7317803e357b4e0b7da6beb",
+      "content_hash": "1360e19c411c96bd4e391cf43a64b6885f1d0610496378b1477e6f50007ebbbb",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T09:11:09.669Z"
+      "persisted_at": "2026-11-22T09:35:22.656Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "3dad6c56d679a64225dd8eac742e524f2e8a28323b432a1b9f4e5e7ec84b1960",
+      "content_hash": "603fb890f07a0814f67ba8c3740541c5bb62fe4277b1ab0eff0658776c403d14",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T09:11:09.845Z"
+      "persisted_at": "2026-11-22T09:35:22.825Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -232078,7 +232078,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/higurashi-ai/Haru-4B",
       "source_version": "hf-higurashi-ai-haru-4b",
-      "content_hash": "acca69643d657c0b2a320b582772a2bfa946d0c2f5c610eba93f0e7b99d61bf0",
+      "content_hash": "2d7f6f7dd5467cf447c92165503f2369b4195295574e8d37784daedbe6e4ef0d",
       "dossier_path": "07_PROJECT_LEARNING/hf-higurashi-ai-haru-4b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-higurashi-ai-haru-4b-learnings.md",
       "promoted_rules": [],
@@ -232087,7 +232087,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T15:08:40.159Z",
+      "verified_at": "2026-11-22T09:35:09.817Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -232104,9 +232104,9 @@
       "title": "Research & Knowledge Intelligence: higurashi-ai/Haru-4B Core Invariants",
       "repository": "higurashi-ai/Haru-4B",
       "source_version": "hf-higurashi-ai-haru-4b",
-      "content_hash": "2f0cc76d5828b30bafc8f2d31e865fa6bc04f98b6aa3603d981596aff9f121ae",
+      "content_hash": "ca9d1a60652f8e6bb7f4a82d90ed08f03a38e476a91f85f681ddccebe1c6ecb7",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T15:08:40.435Z"
+      "persisted_at": "2026-11-22T09:35:10.243Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-higurashi-ai-haru-4b-learnings-core-invariant": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-higurashi-ai-haru-4b-learnings-core-invariant",
@@ -232116,9 +232116,9 @@
       "title": "Research & Knowledge Intelligence: hf-higurashi-ai-haru-4b-learnings Core Invariants",
       "repository": "hf-higurashi-ai-haru-4b-learnings",
       "source_version": "HEAD",
-      "content_hash": "18fee63e7acb539c9af37e1eafb3c17d088f66a1df87a75c477841acd265009d",
+      "content_hash": "abd5c7f12435dbc1a4864fed59fc2dc5f0e4be6a939833a05629edf1e1842776",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T15:09:07.389Z"
+      "persisted_at": "2026-11-22T09:35:22.029Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-bingsu-adetailer-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-bingsu-adetailer-learnings-core-invariants",
@@ -318298,13 +318298,13 @@
       "item_id": "candidate_directive-test-collab-write-trust-fixtures-with-explicit-0644-permissions",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-AF8Z-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-5KDX-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "683f1274b95a17c503b6688a70955dc88304d580c68c93831451130008d0ba5d",
+      "content_hash": "bfbbf91939e144d16985468abe76d18e884343e4f4f8ade3f425722a6a073db0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T09:11:09.494Z"
+      "persisted_at": "2026-11-22T09:35:22.488Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants",

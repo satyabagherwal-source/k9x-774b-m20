@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/higurashi-ai/Haru-4B",
   "source_version": "hf-higurashi-ai-haru-4b",
   "license": "Open-Source",
-  "timestamp": "2026-11-14T15:08:40.435Z",
+  "timestamp": "2026-11-22T09:35:10.242Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-higurashi-ai-haru-4b",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [higurashi-ai/Haru-4B](https://huggingface.co/higurashi-ai/Haru-4B) (Revision: `hf-higuras`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-14T15:08:40.435Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T09:35:10.242Z`  
 > **Learning ID**: `learn-huggingface-higurashi-ai-haru-4b`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-higurashi-ai-haru-4b-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/higurashi-ai/Haru-4B](https://huggingface.co/higurashi-ai/Haru-4B))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T15:03:39.396Z  
+> **Harvest Timestamp**: 2026-11-22T09:35:09.407Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: audio-to-audio
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 1262 downloads | 211 likes
+- **Stars / Engagement**: 8120 downloads | 850 likes
 
 ---
 

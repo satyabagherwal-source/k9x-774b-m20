@@ -12575,8 +12575,8 @@
     "sourceUrl": "https://huggingface.co/higurashi-ai/Haru-4B",
     "sourceVersion": "hf-higurashi-ai-haru-4b",
     "license": "Open-Source",
-    "contentHash": "acca69643d657c0b2a320b582772a2bfa946d0c2f5c610eba93f0e7b99d61bf0",
-    "lastHarvestedAt": "2026-11-14T15:08:40.301Z",
+    "contentHash": "2d7f6f7dd5467cf447c92165503f2369b4195295574e8d37784daedbe6e4ef0d",
+    "lastHarvestedAt": "2026-11-22T09:35:10.045Z",
     "learningId": "learn-huggingface-higurashi-ai-haru-4b"
   },
   "jithin-sabu-purge-app": {
