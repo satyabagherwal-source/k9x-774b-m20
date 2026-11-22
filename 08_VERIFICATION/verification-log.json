@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261120-0ERR",
-    "timestamp": "2026-11-20T07:36:03.015Z",
-    "repository": "open-policy-agent/opa",
-    "learningId": "learn-github-open-policy-agent-opa",
-    "contentHash": "c53b7789c2a08892cd93e03a49711aa448965c031b4d4f92d4b8a4bbb49d1693",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-0DA1",
-    "timestamp": "2026-11-20T08:04:00.697Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "d175b4f59b796fcdf353b7c8de3ffabd461e91d1172c92e4f3d963e0d73b9dc5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-X7OY",
-    "timestamp": "2026-11-20T08:29:33.106Z",
-    "repository": "freenet/freenet-core",
-    "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "b3ff569eedb707d26bcd9128ac4276b8583f5035d861cbaccab9d6352d73afbf",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261120-3UVZ",
     "timestamp": "2026-11-20T08:34:43.103Z",
     "repository": "linkerd/linkerd2",
@@ -7490,6 +7445,51 @@
     "repository": "gocd/gocd",
     "learningId": "learn-github-gocd-gocd",
     "contentHash": "907683a1b31e27aa9eab5909f865dfb112e5585cbb8e9ac454aec2ec7258538a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-2W9F",
+    "timestamp": "2026-11-22T08:09:19.059Z",
+    "repository": "Edge0/Edge0-145B-NVFP4",
+    "learningId": "learn-huggingface-edge0-edge0-145b-nvfp4",
+    "contentHash": "0a2c1ee08df254d97839b07a50c880198635e86960ec5f3bd48b4544eb8cb02d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-30CM",
+    "timestamp": "2026-11-22T08:09:24.358Z",
+    "repository": "restatedev/restate",
+    "learningId": "learn-github-restatedev-restate",
+    "contentHash": "e513d5e0ea43ded0d5cc0f6438ecd9e5689bca3aee86c7fec17dd7ec48439be8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-346Q",
+    "timestamp": "2026-11-22T08:09:29.330Z",
+    "repository": "onejs/one",
+    "learningId": "learn-github-onejs-one",
+    "contentHash": "368bc90fc5d647df624c41dd83323efe6e33c75afb3a7cf39b15b6e535dde37a",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

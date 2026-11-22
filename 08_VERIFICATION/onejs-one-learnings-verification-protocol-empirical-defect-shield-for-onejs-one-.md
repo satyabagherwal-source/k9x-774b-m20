@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T05:24:38.951Z",
+  "timestamp": "2026-11-22T08:09:34.715Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-onejs-one-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [onejs-one-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T05:24:38.951Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T08:09:34.715Z`  
 > **Learning ID**: `LEARN-EVO-onejs-one-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/onejs-one-learnings.md`  
 > **Source**: github ([https://github.com/onejs/one](https://github.com/onejs/one))  
-> **Source Version**: `78627c14`  
+> **Source Version**: `23a33ef5`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T05:24:28.440Z  
+> **Timestamp**: 2026-11-22T08:09:28.138Z  
 > **Learning ID**: `learn-github-onejs-one`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/onejs-one-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/onejs/one](https://github.com/onejs/one))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T05:24:28.434Z  
+> **Harvest Timestamp**: 2026-11-22T08:09:21.969Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: ❶ One lets you target React web and React Native with a single Vite plugin. Everything you need to build great websites and apps with unified routing.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 4644 stars
+- **Stars / Engagement**: 4635 stars
 
 ---
 
@@ -1908,835 +1908,156 @@ class OneBackgroundWorker(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `78627c14` (2026-11-18)
-**Commit Message**: fix(ios): gate camera link group, prune destructured SDK reads, and write Expo link set (#1311)
+### Incident Patch 1: `23a33ef5` (2026-11-21)
+**Commit Message**: fix(macos): break the line on shift or option return in a submitting multiline input (#1316)
 
-Split camera symbols (OneNativeCamera and HybridOneImagePicker camera methods) into a dedicated camera group, add Contacts to the contacts group frameworks, rewrite destructured One namespace reads to direct module imports so unused SDK frameworks like EventKit drop out, and ensure vxrn/expo-plugin writes react-native.config.cjs and ios/one-link-set.json across platforms.
+* fix(macos): break the line on shift or option return in a submitting multiline input
 
-Validation: bun codegen/generate.ts --check; vitest on packages/one (iosLinkSet, oneNativeMembers, prebuild, sdk-imports) and packages/vxrn (expoPlugin, compileNativeDevBytecode); lint, typecheck, and depcheck on packages/one and packages/vxrn.
+* fix(macos): read shift only from a key event and option return by its selector
 
-**File**: `packages/one/ios-link-set.json` (modified, +19/-5)
+**File**: `packages/one/macos/host/OneMacosTextInputHosting.mm` (modified, +4/-1)
 ```diff
-@@ -280,6 +280,7 @@
-     },
-     "contacts": {
-       "frameworks": [
-+        "Contacts",
-         "ContactsUI"
-       ],
-       "components": [],
-@@ -463,25 +464,38 @@
-       "frameworks": [
-         "MediaPlayer"
-       ],
--      "components": [
--        "OneNativeCamera"
--      ],
-+      "components": [],
-       "hybrids": [
-         "OneAudio",
-         "OneSpeechSynthesis"
-       ],
-       "uses": [
-         "Audio",
--        "Camera",
-         "SpeechSynthesis",
--        "CameraView",
-         "useAudioPlayer",
-         "useAudioPlayerStatus"
-       ],
-       "modifiers": [],
-       "slots": [],
-       "values": []
-     },
-+    "camera": {
-+      "frameworks": [],
-+      "components": [
-+        "OneNativeCamera"
-+      ],
-+      "hybrids": [],
-+      "uses": [
-+        "Camera",
-+        "CameraView",
-+        "ImagePicker.launchCamera",
-+        "ImagePicker.getCameraPermissions",
-+        "ImagePicker.requestCameraPermissions"
-+      ],
-+      "modifiers": [],
-+      "slots": [],
-+      "values": []
-+    },
-     "fitness": {
-       "frameworks": [],
-       "components": [],
+@@ -438,7 +438,10 @@ - (BOOL)textView:(NSTextView*)view doCommandBySelector:(SEL)selector {
+   if (selector == @selector(insertBacktab:)) { [view.window selectPreviousKeyView:view]; return YES; }
+   if (selector == @selector(insertNewline:) || selector == @selector(insertNewlineIgnoringFieldEditor:)) {
+     NSString* behavior = _props[@"submitBehavior"];
+-    const BOOL submits = [_props[@"multiline"] boolValue] ? [behavior isEqualToString:@"submit"] || [behavior isEqualToString:@"blurAndSubmit"] : ![behavior isEqualToString:@"newline"];
++    // a multiline input submits on a bare return; shift or option with it breaks the line
++    NSEvent* key = NSApp.currentEvent.type == NSEventTypeKeyDown ? NSApp.currentEvent : nil;
++    const BOOL bare = selector == @selector(insertNewline:) && !(key.modifierFlags & NSEventModifierFlagShift);
++    const BOOL submits = [_props[@"multiline"] boolValue] ? bare && ([behavior isEqualToString:@"submit"] || [behavior isEqualToString:@"blurAndSubmit"]) : ![behavior isEqualToString:@"newline"];
+     if (!submits) return NO;
+     [self emit:@"submitEditing"];
+     if ([behavior isEqualToString:@"blurAndSubmit"]) [view.window makeFirstResponder:nil];
 ```
 
-**File**: `packages/one/ios/Nitro/HybridOneImagePicker.swift` (modified, +26/-0)
+---
+
+### Incident Patch 2: `6888615d` (2026-11-21)
+**Commit Message**: fix(ios): prebuild Live Activity-only extensions (#1312)
+
+Validation: eight focused widget tests passed. Prebuild generated the Live Activity extension from an existing app manifest with no timeline families.
+Team-Machine-Session: r351245
+
+**File**: `packages/utils/src/nativeAppManifest.test.ts` (modified, +1/-1)
 ```diff
-@@ -86,6 +86,7 @@ final class HybridOneImagePicker: HybridOneImagePickerSpec {
- 
-   func launchCamera(options: ResolvedImagePickerOptions) throws -> Promise<ImagePickerNativeResult>
-   {
-+#if ONE_GROUP_CAMERA
-     let promise = Promise<ImagePickerNativeResult>()
-     DispatchQueue.main.async {
-       guard self.takePending("launchCamera", promise) else { return }
-@@ -143,14 +144,30 @@ final class HybridOneImagePicker: HybridOneImagePickerSpec {
-       }
+@@ -214,7 +214,7 @@ describe('native.app manifest', () => {
+         ...app,
+         ios: { ...app.ios, widgets: { ...widgets, families: [] } },
+       })
+-    ).toThrow(/families/)
++    ).not.toThrow()
+     expect(() =>
+       validateNativeApp({
+         ...app,
+```
+
+**File**: `packages/utils/src/nativeAppManifest.ts` (modified, +2/-2)
+```diff
+@@ -265,6 +265,7 @@ export interface NativeAppManifest {
+       displayName: string
+       description: string
+       pushNotifications?: boolean
++      // an empty list generates a Live Activity without a timeline widget.
+       families?: IosWidgetFamily[]
      }
-     return promise
-+#else
-+    return Promise.rejected(
-+      withError: oneNativeError(
-+        Self.failed,
-+        "ImagePicker.launchCamera: camera feature group was compiled out; run one prebuild --platform ios and rebuild"
-+      ))
-+#endif
-   }
- 
-   func getCameraPermissions() throws -> Promise<CameraPermissionResponse> {
-+#if ONE_GROUP_CAMERA
-     // a read, never a prompt; outside the pending slot so it answers during a pick.
-     return Promise.resolved(withResult: Self.cameraPermissionResponse())
-+#else
-+    return Promise.rejected(
-+      withError: oneNativeError(
-+        Self.failed,
-+        "ImagePicker.getCameraPermissions: camera feature group was compiled out; run one prebuild --platform ios and rebuild"
-+      ))
-+#endif
-   }
- 
-   func requestCameraPermissions() throws -> Promise<CameraPermissionResponse> {
-+#if ONE_GROUP_CAMERA
-     if !Self.cameraDeclared {
-       return Promise.rejected(
-         withError: oneNativeError(
-@@ -168,8 +185,16 @@ final class HybridOneImagePicker: HybridOneImagePickerSpec {
-       }
-     }
-     return promise
-+#else
-+    return Promise.rejected(
-+      withError: oneNativeError(
-+        Self.failed,
-+        "ImagePicker.requestCameraPermissions: camera feature group was compiled out; run one prebuild --platform ios and rebuild"
-+      ))
-+#endif
-   }
- 
-+#if ONE_GROUP_CAMERA
-   private static var cameraDeclared: Bool {
-     return Bundle.main.object(forInfoDictionaryKey: "NSCameraUsageDescription") != nil
-   }
-@@ -223,6 +248,7 @@ final class HybridOneImagePicker: HybridOneImagePickerSpec {
-     default: return .typeHigh
-     }
-   }
-+#endif
- 
-   // MARK: library crop UI
- 
-```
-
-**File**: `packages/one/ios/OneNativeCameraComponentView.mm` (modified, +1/-1)
-```diff
-@@ -1,4 +1,4 @@
--#if ONE_GROUP_MEDIA
-+#if ONE_GROUP_CAMERA
- #import "OneNativeCameraComponentView.h"
- #import <React/RCTConversions.h>
- #import "One-Swift.h"
-```
-
-**File**: `packages/one/ios/OneNativeCameraView.swift` (modified, +1/-1)
-```diff
-@@ -1,4 +1,4 @@
--#if ONE_GROUP_MEDIA
-+#if ONE_GROUP_CAMERA
- import AVFoundation
- import UIKit
- 
-```
-
-**File**: `packages/one/src/cli/iosLinkSet.ts` (modified, +25/-6)
-```diff
-@@ -1,5 +1,12 @@
- import { execFileSync } from 'node:child_process'
--import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
-+import {
-+  existsSync,
-+  mkdirSync,
-+  mkdtempSync,
-+  readFileSync,
-+  rmSync,
-+  writeFileSync,
-+} from 'node:fs'
- import { createRequire } from 'node:module'
- import { tmpdir } from 'node:os'
- import { dirname, join } from 'node:path'
-@@ -86,9 +93,22 @@ export function assertLinkSet(
-   )
- }
- 
-+function resolveEntryFile(root: string): string {
-+  const defaultEntry = join(root, 'index.js')
-+  if (existsSync(defaultEntry)) return defaultEntry
-+  const appRequire = createRequire(join(root, 'package.json'))
-+  try {
-+    const expoRequire = createRequire(appRequire.resolve('expo/package.json'))
-+    const { resolveEntryPoint } = expoRequire('@expo/config/paths')
-+    return resolveEntryPoint(root, { platform: 'ios' })
-+  } catch {
-+    return defaultEntry
-+  }
-+}
-+
- // builds the production native bundle the way the xcode bundle phase does and
- // records which groups its module graph uses.
--export function writeIosLinkSet(root: string, entryFile = join(root, 'index.js')) {
-+export function writeIosLinkSet(root: string, entryFile = resolveEntryFile(root)) {
-   const cli = createRequire(join(root, 'package.json')).resolve(
-     createRequire(
-       createRequire(join(root, 'package.json')).resolve('vxrn/package.json')
-@@ -129,10 +149,9 @@ export function writeIosLinkSet(root: string, entryFile = join(root, 'index.js')
-         '[one] the bundler produced no link set report, so a release build links every iOS feature group'
-       )
-     }
--    writeFileSync(
--      join(root, IOS_LINK_SET_FILE),
--      JSON.stringify(selection, null, 2) + '\n'
--    )
-+    const linkSetPath = join(root, IOS_LINK_SET_FILE)
-+    mkdirSync(dirname(linkSetPath), { recursive: true })
-+    writeFileSync(linkSetPath, JSON.stringify(selection, null, 2) + '\n')
-     return selection
-   } finally {
-     rmSync(out, { recursive: true, force: true })
-```
-
-**File**: `packages/one/src/cli/iosLinkSetAnalysis.ts` (modified, +69/-17)
-```diff
-@@ -30,8 +30,8 @@ export type LinkSetUsage = {
- 
- export const emptyUsage = (): LinkSetUsage => ({ names: new Set(), keys: new Set(), all: false })
- 
--// what a binding holds: the exports of a `one` entry point, the One object or a platform namespace
--type Held = 'module' | 'one' | 'platform'
-+// what a binding holds: the exports of a `one` entry point, the One object, a platform namespace, or ImagePicker
-+type Held = 'module' | 'one' | 'platform' | 'imagePicker'
- 
- type Node = { type: string; [key: string]: any }
- 
-@@ -136,9 +136,24 @@ export function analyzeModule(
-   }
- 
-   // the move one read makes: One.iOS/UI/Android enters a platform object, a read of the module's
--  // `One` enters One, and any other name is a feature that is recorded elsewhere
-+  // `One` enters One, ImagePicker enters ImagePicker, and any other name is a feature that is recorded elsewhere
-   const step = (held: Held, name: string): Held | undefined =>
--    held === 'module' && name === 'One' ? 'one' : held === 'one' && ['iOS', 'UI', 'Android'].includes(name) ? 'platform' : undefined
-+    held === 'module' && name === 'One'
-+      ? 'one'
-+      : held === 'one' && ['iOS', 'UI', 'Android'].includes(name)
-+        ? 'platform'
-+        : (held === 'module' || held === 'one') && name === 'ImagePicker'
-+          ? 'imagePicker'
-+          : undefined
-+
-+  const recordRead = (held: Held, name: string) => {
-+    usage.names.add(held === 'imagePicker' ? `ImagePicker.${name}` : name)
-+  }
-+
-+  const escapeHeld = (held: Held) => {
-+    if (held === 'imagePicker') usage.names.add('ImagePicker.launchCamera')
-+    else usage.all = true
-+  }
- 
-   const heldBy = (raw: Node): Held | undefined => {
-     const node = unwrap(raw)
-@@ -191,17 +206,17 @@ export function analyzeModule(
-           if (!property.computed && property.key.type === 'Identifier') name = property.key.name
-           else if (property.key.type === 'Literal') name = String(property.key.value)
-           if (name === undefined) {
--            if (record) usage.all = true
-+            if (record) escapeHeld(held)
-             continue
-           }
--          if (record) usage.names.add(name)
-+          if (record) recordRead(held, name)
-           const next = step(held, name)
-           if (next) bindPattern(property.value, next, record)
-         }
-         return
-       default:
-         // an array pattern or anything else cannot take apart a namespace
--        if (record) usage.all = true
-+        if (record) escapeHeld(held)
-     }
-   }
- 
-@@ -215,7 +230,10 @@ export function analyzeModule(
-         else {
-           const imported = specifier.imported.name ?? String(specifier.imported.value)
-           if (imported === 'One') bindings.set(specifier.local.name, 'one')
--          else usage.names.add(imported)
-+          else {
-+            usage.names.add(imported)
-+            if (imported === 'ImagePicker') bindings.set(specifier.local.name, 'imagePicker')
-+          }
-         }
-       }
-     } else if (
-@@ -265,18 +283,46 @@ export function analyzeModule(
-     (parent.type === 'AssignmentExpression' && key === 'right' && parent.operator === '=' && unwrap(parent.left).type === 'Identifier') ||
-     (parent.type === 'ExpressionStatement' && key === 'expression')
- 
-+  const escapeExportedIds = (pattern: Node) => {
-+    switch (pattern.type) {
-+      case 'Identifier': {
-+        const held = bindings.get(pattern.name)
-+        if (held) escapeHeld(held)
-+        return
-+      }
-+      case 'AssignmentPattern':
-+        escapeExportedIds(pattern.left)
-+        return
-+      case 'RestElement':
-+        escapeExportedIds(pattern.argument)
-+        return
-+      case 'ObjectPattern':
-+        for (const property of pattern.properties)
-+          escapeExportedIds(property.type === 'RestElement' ? property.argument : property.value)
-+        return
-+      case 'ArrayPattern':
-+        for (const element of pattern.elements) if (element) escapeExportedIds(element)
-+        return
-+    }
-+  }
-+
-   const visit = (node: Node, parent: Node | undefined, key: string) => {
-     if (node.type.startsWith('TS') && !valueTs.has(node.type)) return
-     switch (node.type) {
-       case 'ImportDeclaration':
-         return
-       case 'ExportNamedDeclaration':
-         if (node.source) return
-+        if (node.declaration?.type === 'VariableDeclaration') {
-+          for (const declarator of node.declaration.declarations) escapeExportedIds(declarator.id)
-+        }
-         break
--      case 'ExportSpecifier':
-+      case 'ExportSpecifier': {
-         // `export { One }` hands the namespace to whoever imports this module
--        if (bindings.has(node.local.name)) usage.all = true
-+        const held = bindings.get(node.local.name)
-+        if (held) escapeHeld(held)
-         return
-+      }
-       case 'ExportAllDeclaration':
-         return
-       case 'VariableDeclarator': {
-@@ -295,11 +341,13 @@ export function analyzeModule(
-         return
-       }
-       case 'MemberExpression': {
-+   
-```
-
-**File**: `packages/one/src/vite/plugins/oneNativeMembers.ts` (modified, +82/-10)
-```diff
-@@ -411,6 +411,67 @@ export function nativeOneMembers(file: string, platform = 'ios') {
-       node.type === 'TSInterfaceDeclaration' ||
-       node.type === 'TSDeclareFunction' ||
-       (node.type.startsWith('TS') && node.type.endsWith('Type'))
-+    const importMember = (
-+      found: Found,
-+      target: Map<string, { binding: Binding; alias: string }> = added
-+    ) => {
-+      const key = `${found.binding.source}\0${found.binding.imported}`
-+      let alias = added.get(key)?.alias ?? target.get(key)?.alias
-+      if (!alias) {
-+        alias = `__one_member_${added.size + (target === added ? 0 : target.size)}`
-+        while (
-+          new RegExp(`\\b${alias}\\b`).test(source) ||
-+          [...added.values(), ...(target === added ? [] : target.values())].some(
-+            (entry) => entry.alias === alias
-+          )
-+        )
-+          alias += '_'
-+        target.set(key, { binding: found.binding, alias })
-+      }
-+      return found.call
-+        ? `(${alias}())`
-+        : alias + (found.suffix ?? []).map((name) => `.${name}`).join('')
-+    }
-+    const rewritePattern = (
-+      patternNode: Node,
-+      basePath: string[],
-+      staged = new Map<string, { binding: Binding; alias: string }>(),
-+      top = true
-+    ): string | undefined => {
-+      if (patternNode.type !== 'ObjectPattern') return
-+      const entries: string[] = []
-+      for (const property of patternNode.properties) {
-+        if (property.type !== 'Property' || property.computed) return
-+        const propName =
-+          property.key.type === 'Identifier'
-+            ? property.key.name
-+            : property.key.type === 'Literal'
-+              ? String(property.key.value)
-+              : undefined
-+        if (propName === undefined) return
-+        const keyCode =
-+          property.key.type === 'Identifier' ? propName : JSON.stringify(propName)
-+        const nextPath = [...basePath, propName]
-+        const target =
-+          property.value.type === 'AssignmentPattern'
-+            ? property.value.left
-+            : property.value
-+        const found = member(shared, one, nextPath)
-+        if (target.type === 'ObjectPattern') {
-+          const childStaged = new Map(staged)
-+          const nested = rewritePattern(target, nextPath, childStaged, false)
-+          if (nested) {
-+            for (const [k, v] of childStaged) staged.set(k, v)
-+            entries.push(`${keyCode}: ${nested}`)
-+            continue
-+          }
-+        }
-+        if (!found || found.consumed !== nextPath.length) return
-+        entries.push(`${keyCode}: ${importMember(found, staged)}`)
-+      }
-+      if (top) for (const [key, value] of staged) added.set(key, value)
-+      return `{ ${entries.join(', ')} }`
-+    }
-     let rewritten = 0
-     const visit = (node: Node) => {
-       if (node.type === 'ImportDeclaration' || aliases.has(node) || typeOnly(node)) return
-@@ -440,6 +501,26 @@ export function nativeOneMembers(file: string, platform = 'ios') {
-         if (node.type === 'AssignmentExpression') visit(node.right)
-         return
-       }
-+      if (
-+        node.type === 'VariableDeclarator' &&
-+        node.id.type === 'ObjectPattern' &&
-+        node.init
-+      ) {
-+        const { nodes, read, onePath } = chain(node.init)
-+        if (
-+          read &&
-+          onePath &&
-+          nodes.length === read.prefix.length + onePath.length - read.base.length
-+        ) {
-+          const replacement = rewritePattern(node.id, onePath)
-+          if (replacement) {
-+            rewritten++
-+            output.overwrite(node.init.start, node.init.end, replacement)
-+            visit(node.id)
-+            return
-+          }
-+        }
-+      }
-       if (node.type === 'MemberExpression' || node.type === 'JSXMemberExpression') {
-         const { root, nodes, read, onePath } = chain(node)
-         if (read) {
-@@ -454,20 +535,11 @@ export function nativeOneMembers(file: string, platform = 'ios') {
-             kept(root.name, `One.${onePath.join('.')}`)
-             return
-           }
--          const key = `${found.binding.source}\0${found.binding.imported}`
--          let alias = added.get(key)?.alias
--          if (!alias) {
--            alias = `__one_member_${added.size}`
--            while (new RegExp(`\\b${alias}\\b`).test(source)) alias += '_'
--            added.set(key, { binding: found.binding, alias })
--          }
-           rewritten++
-           output.overwrite(
-             root.start,
-             nodes[read.prefix.length + consumed - 1].end,
--            found.call
--              ? `(${alias}())`
--              : alias + (found.suffix ?? []).map((name) => `.${name}`).join('')
-+            importMember(found)
+     // launch handlers for One.BackgroundTasks. define the matching JS
+@@ -796,12 +797,11 @@ export function validateNativeApp(
+       if (widgets.families !== undefined) {
+         if (
+           !Array.isArray(widgets.families) ||
+-          widgets.families.length === 0 ||
+           new Set(widgets.families).size !== widgets.families.length ||
+           widgets.families.some((family) => !IOS_WIDGET_FAMILIES.includes(family))
+         ) {
+           fail(
+-            `ios.widgets.families must be a non-empty list of unique families from ${IOS_WIDGET_FAMILIES.join(', ')}`
++            `ios.widgets.families must be an array of unique families from ${IOS_WIDGET_FAMILIES.join(', ')}`
            )
-           return
          }
+       }
 ```
 
-**File**: `packages/one/tests/iosLinkSet.test.ts` (modified, +105/-23)
+**File**: `packages/vxrn/src/exports/prebuildWithoutExpo.test.ts` (modified, +30/-0)
 ```diff
-@@ -1,52 +1,134 @@
- import { mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
- import { tmpdir } from 'node:os'
--import { join } from 'node:path'
-+import { isAbsolute, join } from 'node:path'
- import { rolldown } from 'rolldown'
- import { expect, it } from 'vitest'
--import { assertLinkSet, IOS_LINK_SET_REPORT_ENV, oneDirectory } from '../src/cli/iosLinkSet'
-+import {
-+  assertLinkSet,
-+  IOS_LINK_SET_REPORT_ENV,
-+  oneDirectory,
-+  readCatalog,
-+} from '../src/cli/iosLinkSet'
- import { iosLinkSetPlugin } from '../src/vite/plugins/iosLinkSetPlugin'
-+import { iosSdkPlugin } from '../src/vite/plugins/iosSdkPlugin'
- import { generation } from '../ios-bindings/manifest.json'
+@@ -2428,6 +2428,36 @@ describe('ios widgets', () => {
+     expect(swift).toContain('systemImageName: "bolt.fill"')
+   }, 180000)
  
--it('selects SDK frameworks from the emitted production graph after unused imports disappear', async () => {
-+async function bundleReport(
-+  files: Record<string, string>,
-+  options: { resolveRealOne?: boolean } = {}
-+): Promise<{ groups: string[]; frameworks: string[] }> {
-   const root = mkdtempSync(join(tmpdir(), 'one-link-set-'))
-   const previous = process.env[IOS_LINK_SET_REPORT_ENV]
-   const report = join(root, 'report.json')
-   process.env[IOS_LINK_SET_REPORT_ENV] = report
-+  const oneDir = oneDirectory()
-   try {
--    const input = join(root, 'app.js')
--    writeFileSync(
--      input,
--      `import { useAudioPlayer, CameraView, Location, One } from 'one'; globalThis.features = [useAudioPlayer, CameraView, Location, One.iOS.MediaViewer]; import { used } from './used.js'; import { unused } from './unused.js'; globalThis.result = used();`
--    )
--    writeFileSync(
--      join(root, 'used.js'),
--      `export function used() { return 'UIKit_${generation}'; }`
--    )
--    writeFileSync(
--      join(root, 'unused.js'),
--      `export function unused() { return 'EventKit_${generation}'; }`
--    )
-+    for (const [name, content] of Object.entries(files)) {
-+      writeFileSync(join(root, name), content)
++  it('generates a Live Activity extension without a timeline widget for empty families', async () => {
++    const workspaceRoot = fileURLToPath(new URL('../../../..', import.meta.url))
++    const output = mkdtempSync(join(tmpdir(), 'vxrn-prebuild-activity-only-'))
++    try {
++      const ios = join(output, 'ios')
++      await generateForPlatform(
++        workspaceRoot,
++        'ios',
++        {
++          ...widgetsApp,
++          ios: {
++            ...widgetsApp.ios,
++            widgets: { ...widgetsApp.ios.widgets, families: [] },
++          },
++        },
++        ios
++      )
++      const rendered = readFileSync(join(ios, 'OneWidgets', 'OneWidget.swift'), 'utf8')
++      expect(rendered).toContain('ActivityConfiguration(for: OneWidgetContract.Attributes.self)')
++      expect(rendered).toContain('OneLiveActivity()')
++      expect(rendered).not.toContain('StaticConfiguration(')
++      expect(rendered).not.toContain('OneWidget()')
++      expect(readFileSync(join(ios, 'MyApp', 'Info.plist'), 'utf8')).toContain(
++        'NSSupportsLiveActivities'
++      )
++    } finally {
++      rmSync(output, { recursive: true, force: true })
 +    }
-     const bundle = await rolldown({
--      input,
--      external: (id) => id === 'one' || id.startsWith(oneDirectory() + '/'),
--      plugins: [iosLinkSetPlugin().api.vxrnNative({ platform: 'ios', dev: false })],
-+      input: join(root, 'app.js'),
-+      resolve: options.resolveRealOne
-+        ? { extensions: ['.ios.js', '.native.js', '.js', '.mjs'] }
-+        : undefined,
-+      external: options.resolveRealOne
-+        ? (id) =>
-+            !id.startsWith('.') &&
-+            !isAbsolute(id) &&
-+            id !== 'one' &&
-+            !id.startsWith('one/')
-+        : (id) => id === 'one' || id.startsWith(oneDir + '/'),
-+      plugins: [
-+        ...(options.resolveRealOne
-+          ? [
-+              {
-+                name: 'resolve-one',
-+                resolveId(source: string) {
-+                  if (source === 'one') return join(oneDir, 'dist/esm/index.native.js')
-+                  if (source === 'one/ios-runtime')
-+                    return join(oneDir, 'dist/esm/ios-runtime.native.js')
-+                },
-+              },
-+              iosSdkPlugin('ios', oneDir),
-+            ]
-+          : []),
-+        iosLinkSetPlugin().api.vxrnNative({ platform: 'ios', dev: false }),
-+      ],
-     })
-     try {
-       await bundle.generate({ format: 'iife', minify: true, globals: { one: 'one' } })
-     } finally {
-       await bundle.close()
-     }
--    expect(JSON.parse(readFileSync(report, 'utf8'))).toEqual({
--      groups: ['preview3d', 'maps', 'media'],
--      frameworks: ['UIKit'],
--    })
-+    return JSON.parse(readFileSync(report, 'utf8'))
-   } finally {
-     if (previous === undefined) delete process.env[IOS_LINK_SET_REPORT_ENV]
-     else process.env[IOS_LINK_SET_REPORT_ENV] = previous
-     rmSync(root, { recursive: true, force: true })
-   }
-+}
++  }, 180000)
 +
-+it('selects SDK frameworks from the emitted production graph after unused imports disappear', async () => {
-+  const report = await bundleReport({
-+    'app.js': `import { useAudioPlayer, CameraView, Location, One } from 'one'; globalThis.features = [useAudioPlayer, CameraView, Location, One.iOS.MediaViewer]; import { used } from './used.js'; import { unused } from './unused.js'; globalThis.result = used();`,
-+    'used.js': `export function used() { return 'UIKit_${generation}'; }`,
-+    'unused.js': `export function unused() { return 'EventKit_${generation}'; }`,
-+  })
-+  expect(report).toEqual({
-+    groups: ['preview3d', 'maps', 'media', 'camera'],
-+    frameworks: ['UIKit'],
-+  })
-+})
-+
-+it('separates camera from media and photo library usage and includes Contacts in contacts group', async () => {
-+  expect(readCatalog().groups.contacts.frameworks).toEqual(['Contacts', 'ContactsUI'])
-+  expect(
-+    await bundleReport({
-+      'app.js': `import { useAudioPlayer, One } from 'one'; globalThis.features = [useAudioPlayer, One.Audio];`,
-+    })
-+  ).toEqual({ groups: ['media'], frameworks: [] })
-+  expect(
-+    await bundleReport({
-+      'app.js': `import { One } from 'one'; globalThis.features = One.ImagePicker.launchLibrary();`,
-+    
+   it('regenerates byte-identical widget projects and adds nothing without the config', async () => {
+     const workspaceRoot = fileURLToPath(new URL('../../../..', import.meta.url))
+     const first = mkdtempSync(join(tmpdir(), 'vxrn-prebuild-widgets-a-'))
 ```
 
----
-
-### Incident Patch 2: `6b5f0d39` (2026-11-18)
-**Commit Message**: Merge pull request #1310 from onejs/oss-fixer/one-20261118
-
-fix(vxrn): ios dev bytecode without pods, windows-safe temp path
-
-**File**: `packages/vxrn/src/utils/compileNativeDevBytecode.test.ts` (modified, +12/-10)
+**File**: `packages/vxrn/src/exports/prebuildWithoutExpo.ts` (modified, +3/-4)
 ```diff
-@@ -102,10 +102,13 @@ it('treats empty HERMESC_PATH as unset', async () => {
-   const root = await mkdtemp(join(tmpdir(), 'vxrn-dev-bytecode-empty-'))
-   process.env.HERMESC_PATH = '   '
-   try {
-+    await mkdir(join(root, 'ios/Pods'), { recursive: true })
-     expect(() => nativeDevBytecodeCompiler(root, 'ios')).toThrow(
-       /hermes-engine\.podspec\.json/
-     )
--    expect(() => nativeDevBytecodeCompiler(root, 'ios')).not.toThrow(/HERMESC_PATH is set/)
-+    expect(() => nativeDevBytecodeCompiler(root, 'ios')).not.toThrow(
-+      /HERMESC_PATH is set/
-+    )
-   } finally {
-     await rm(root, { recursive: true, force: true })
+@@ -1196,7 +1196,7 @@ struct OneWidgetRendered: View {
+     .background { if let fill = oneColor(node.style?.backgroundColor) { fill } }
+     .clipShape(RoundedRectangle(cornerRadius: CGFloat(node.style?.borderRadius ?? 0)))
    }
-@@ -142,15 +145,14 @@ it.runIf(process.platform !== 'win32')(
+-}
++}${supportedFamilies ? `
+ 
+ struct OneWidgetEntry: TimelineEntry {
+   let date: Date
+@@ -1245,7 +1245,7 @@ struct OneWidget: Widget {
+     .description(${JSON.stringify(widgets.description)})
+     .supportedFamilies([${supportedFamilies}])
    }
- )
+-}
++}` : ''}
  
--it('loudly rejects a root without ios/Pods when the override is unset', async () => {
--  const root = await mkdtemp(join(tmpdir(), 'vxrn-dev-bytecode-nopods-'))
--  try {
--    expect(() => nativeDevBytecodeCompiler(root, 'ios')).toThrow(
--      /hermes-engine\.podspec\.json.*HERMESC_PATH/s
--    )
--  } finally {
--    await rm(root, { recursive: true, force: true })
--  }
-+it('compiles ios bytecode with the npm hermesc and keeps the served url', async () => {
-+  const url = 'http://localhost:8081/index.bundle?platform=ios'
-+  const bytes = await nativeDevBytecodeCompiler(join(__dirname, '../..'), 'ios')(
-+    { code: 'globalThis.answer = 42;', map: '' },
-+    url
-+  )
-+  expect(bytes.subarray(0, 8).toString('hex')).toBe('c61fbc03c103191f')
-+  expect(bytes.includes(url)).toBe(true)
- })
- 
- it('loudly rejects a malformed podspec when the override is unset', async () => {
-```
-
-**File**: `packages/vxrn/src/utils/compileNativeDevBytecode.ts` (modified, +25/-13)
-```diff
-@@ -1,9 +1,9 @@
--import { accessSync, constants, readFileSync, statSync } from 'node:fs'
-+import { accessSync, constants, existsSync, readFileSync, statSync } from 'node:fs'
- import { execFile } from 'node:child_process'
- import { createRequire } from 'node:module'
--import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
-+import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
- import { tmpdir } from 'node:os'
--import { dirname, join } from 'node:path'
-+import { join } from 'node:path'
- import { promisify } from 'node:util'
- import type { NativeDevBundle } from './createNativeDevEngine'
- 
-@@ -93,14 +93,22 @@ export function resolveNpmHermesc(root: string): string {
-       : process.platform === 'win32'
-         ? 'win64-bin'
-         : 'linux64-bin'
--  return join(dir, 'hermesc', bin, process.platform === 'win32' ? 'hermesc.exe' : 'hermesc')
-+  return join(
-+    dir,
-+    'hermesc',
-+    bin,
-+    process.platform === 'win32' ? 'hermesc.exe' : 'hermesc'
-+  )
+ struct OneLiveActivity: Widget {
+   var body: some WidgetConfiguration {
+@@ -1320,8 +1320,7 @@ struct OneLiveActivity: Widget {
+ @main
+ struct OneWidgetsBundle: WidgetBundle {
+   var body: some Widget {
+-    OneWidget()
+-    OneLiveActivity()
++    ${supportedFamilies ? 'OneWidget()\n    ' : ''}OneLiveActivity()
+   }
  }
- 
- // compile once per emitted bundle. the device can start a fresh hermes context
- // without compiling every cold route's module closures on its js thread.
- export function nativeDevBytecodeCompiler(root: string, platform: 'ios' | 'macos') {
-   const compiler =
--    useHermescOverride() ?? (platform === 'ios' ? resolvePodHermesc(root) : resolveNpmHermesc(root))
-+    useHermescOverride() ??
-+    (platform === 'ios' && existsSync(join(root, 'ios/Pods'))
-+      ? resolvePodHermesc(root)
-+      : resolveNpmHermesc(root))
-   const compiled = new WeakMap<NativeDevBundle, Map<string, Promise<Buffer>>>()
- 
-   return (bundle: NativeDevBundle, sourceURL: string): Promise<Buffer> => {
-@@ -111,17 +119,21 @@ export function nativeDevBytecodeCompiler(root: string, platform: 'ios' | 'macos
-     const result = (async () => {
-       const directory = await mkdtemp(join(tmpdir(), 'vxrn-dev-hermes-'))
-       try {
--        // hermesc records its input argument as the debug filename. use the
--        // served js url as a relative filename so stacks and devtools retain
--        // the original bundle coordinates without a second source map.
--        const source = join(directory, sourceURL)
--        await mkdir(dirname(source), { recursive: true })
-+        // hermesc takes the debug filename from a trailing sourceURL comment,
-+        // so stacks and devtools keep the served url without a url-shaped path
-+        // (windows forbids ':' and '?' in file names).
-         const output = join(directory, 'index.hbc')
--        await writeFile(source, bundle.code)
-+        await writeFile(
-+          join(directory, 'index.js'),
-+          `${bundle.code}\n//# sourceURL=${sourceURL}`
-+        )
-         await execute(
-           compiler,
--          ['-Og', '-g', '-emit-binary', '-out', output, sourceURL],
--          { cwd: directory, maxBuffer: 16 * 1024 * 1024 }
-+          ['-Og', '-g', '-emit-binary', '-out', output, 'index.js'],
-+          {
-+            cwd: directory,
-+            maxBuffer: 16 * 1024 * 1024,
-+          }
-         )
-         return await readFile(output)
-       } finally {
-```
-
----
-
-### Incident Patch 3: `906e7a1e` (2026-11-18)
-**Commit Message**: fix(vxrn): compile ios dev bytecode without pods and with a windows-safe temp path
-
-Fixes #1308 and #1309: use the npm hermesc when ios/Pods is absent, and carry the served url as a sourceURL comment instead of a url-shaped file path.
-
-**File**: `packages/vxrn/src/utils/compileNativeDevBytecode.test.ts` (modified, +12/-10)
-```diff
-@@ -102,10 +102,13 @@ it('treats empty HERMESC_PATH as unset', async () => {
-   const root = await mkdtemp(join(tmpdir(), 'vxrn-dev-bytecode-empty-'))
-   process.env.HERMESC_PATH = '   '
-   try {
-+    await mkdir(join(root, 'ios/Pods'), { recursive: true })
-     expect(() => nativeDevBytecodeCompiler(root, 'ios')).toThrow(
-       /hermes-engine\.podspec\.json/
-     )
--    expect(() => nativeDevBytecodeCompiler(root, 'ios')).not.toThrow(/HERMESC_PATH is set/)
-+    expect(() => nativeDevBytecodeCompiler(root, 'ios')).not.toThrow(
-+      /HERMESC_PATH is set/
-+    )
-   } finally {
-     await rm(root, { recursive: true, force: true })
-   }
-@@ -142,15 +145,14 @@ it.runIf(process.platform !== 'win32')(
-   }
- )
- 
--it('loudly rejects a root without ios/Pods when the override is unset', async () => {
--  const root = await mkdtemp(join(tmpdir(), 'vxrn-dev-bytecode-nopods-'))
--  try {
--    expect(() => nativeDevBytecodeCompiler(root, 'ios')).toThrow(
--      /hermes-engine\.podspec\.json.*HERMESC_PATH/s
--    )
--  } finally {
--    await rm(root, { recursive: true, force: true })
--  }
-+it('compiles ios bytecode with the npm hermesc and keeps the served url', async () => {
-+  const url = 'http://localhost:8081/index.bundle?platform=ios'
-+  const bytes = await nativeDevBytecodeCompiler(join(__dirname, '../..'), 'ios')(
-+    { code: 'globalThis.answer = 42;', map: '' },
-+    url
-+  )
-+  expect(bytes.subarray(0, 8).toString('hex')).toBe('c61fbc03c103191f')
-+  expect(bytes.includes(url)).toBe(true)
- })
- 
- it('loudly rejects a malformed podspec when the override is unset', async () => {
-```
-
-**File**: `packages/vxrn/src/utils/compileNativeDevBytecode.ts` (modified, +25/-13)
-```diff
-@@ -1,9 +1,9 @@
--import { accessSync, constants, readFileSync, statSync } from 'node:fs'
-+import { accessSync, constants, existsSync, readFileSync, statSync } from 'node:fs'
- import { execFile } from 'node:child_process'
- import { createRequire } from 'node:module'
--import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
-+import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
- import { tmpdir } from 'node:os'
--import { dirname, join } from 'node:path'
-+import { join } from 'node:path'
- import { promisify } from 'node:util'
- import type { NativeDevBundle } from './createNativeDevEngine'
- 
-@@ -93,14 +93,22 @@ export function resolveNpmHermesc(root: string): string {
-       : process.platform === 'win32'
-         ? 'win64-bin'
-         : 'linux64-bin'
--  return join(dir, 'hermesc', bin, process.platform === 'win32' ? 'hermesc.exe' : 'hermesc')
-+  return join(
-+    dir,
-+    'hermesc',
-+    bin,
-+    process.platform === 'win32' ? 'hermesc.exe' : 'hermesc'
-+  )
- }
- 
- // compile once per emitted bundle. the device can start a fresh hermes context
- // without compiling every cold route's module closures on its js thread.
- export function nativeDevBytecodeCompiler(root: string, platform: 'ios' | 'macos') {
-   const compiler =
--    useHermescOverride() ?? (platform === 'ios' ? resolvePodHermesc(root) : resolveNpmHermesc(root))
-+    useHermescOverride() ??
-+    (platform === 'ios' && existsSync(join(root, 'ios/Pods'))
-+      ? resolvePodHermesc(root)
-+      : resolveNpmHermesc(root))
-   const compiled = new WeakMap<NativeDevBundle, Map<string, Promise<Buffer>>>()
- 
-   return (bundle: NativeDevBundle, sourceURL: string): Promise<Buffer> => {
-@@ -111,17 +119,21 @@ export function nativeDevBytecodeCompiler(root: string, platform: 'ios' | 'macos
-     const result = (async () => {
-       const directory = await mkdtemp(join(tmpdir(), 'vxrn-dev-hermes-'))
-       try {
--        // hermesc records its input argument as the debug filename. use the
--        // served js url as a relative filename so stacks and devtools retain
--        // the original bundle coordinates without a second source map.
--        const source = join(directory, sourceURL)
--        await mkdir(dirname(source), { recursive: true })
-+        // hermesc takes the debug filename from a trailing sourceURL comment,
-+        // so stacks and devtools keep the served url without a url-shaped path
-+        // (windows forbids ':' and '?' in file names).
-         const output = join(directory, 'index.hbc')
--        await writeFile(source, bundle.code)
-+        await writeFile(
-+          join(directory, 'index.js'),
-+          `${bundle.code}\n//# sourceURL=${sourceURL}`
-+        )
-         await execute(
-           compiler,
--          ['-Og', '-g', '-emit-binary', '-out', output, sourceURL],
--          { cwd: directory, maxBuffer: 16 * 1024 * 1024 }
-+          ['-Og', '-g', '-emit-binary', '-out', output, 'index.js'],
-+          {
-+            cwd: directory,
-+            maxBuffer: 16 * 1024 * 1024,
-+          }
-         )
-         return await readFile(output)
-       } finally {
+ `
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1316** (2026-11-21): fix(macos): break the line on shift or option return in a submitting multiline input (@natew)
+- **PR #1315** (2026-11-21): Support server updates and links in Live Activities (@natew)
+- **PR #1314** (closed): Encode Live Activity content state on the server (@natew)
+- **PR #1313** (2026-11-21): Encode Live Activity layouts as structured content (@natew)
+- **PR #1312** (2026-11-21): fix(ios): prebuild Live Activity-only extensions (@natew)
 - **PR #1311** (2026-11-18): fix(ios): camera link group, destructured SDK pruning, and Expo link set (@natew)
-- **PR #1310** (2026-11-18): fix(vxrn): ios dev bytecode without pods, windows-safe temp path (@natew)
-- **PR #1307** (2026-11-18): feat(one): useSafeAreaCornerRadius (@natew)
-- **PR #1305** (2026-11-18): fix(one): keep native hosts attached while their screen is covered (@natew)
-- **PR #1304** (2026-11-17): Make Cloudflare and Rozenite opt-in in One (@natew)
-- **PR #1303** (2026-11-17): Remove Biome and Prettier from One (@natew)
 
 ---
 
@@ -2756,53 +2077,34 @@ Fixes #1308 and #1309: use the npm hermesc when ios/Pods is absent, and carry th
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ios): gate camera link group, prune destructured SDK reads, and write Expo link 
+## X. macos): break the line on shift or option return in a submitting multiline input
 
 **RULE**:
-When implementing operations in `packages/one/ios-link-set.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in onejs/one. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/one/macos/host/OneMacosTextInputHosting.mm`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in onejs/one. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `78627c14`: ios): gate camera link group, prune destructured SDK reads, and write Expo link set. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `23a33ef5`: macos): break the line on shift or option return in a submitting multiline input. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/one/ios-link-set.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/one/macos/host/OneMacosTextInputHosting.mm`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-        "Contacts",
-      "components": [],
-    "camera": {
-      "frameworks": [],
-      "components": [
-        "OneNativeCamera"
-      ],
-      "hybrids": [],
-      "uses": [
-        "Camera",
-        "CameraView",
-        "ImagePicker.launchCamera",
-        "ImagePicker.getCameraPermissions",
-        "ImagePicker.requestCameraPermissions"
-      ],
-      "modifiers": [],
-      "slots": [],
-      "values": []
-    },
+    // a multiline input submits on a bare return; shift or option with it breaks the line
+    NSEvent* key = NSApp.currentEvent.type == NSEventTypeKeyDown ? NSApp.currentEvent : nil;
+    const BOOL bare = selector == @selector(insertNewline:) && !(key.modifierFlags & NSEventModifierFlagShift);
+    const BOOL submits = [_props[@"multiline"] boolValue] ? bare && ([behavior isEqualToString:@"submit"] || [behavior isEqualToString:@"blurAndSubmit"]) : ![behavior isEqualToString:@"newline"];
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-      "components": [
-        "OneNativeCamera"
-      ],
-        "Camera",
-        "CameraView",
+    const BOOL submits = [_props[@"multiline"] boolValue] ? [behavior isEqualToString:@"submit"] || [behavior isEqualToString:@"blurAndSubmit"] : ![behavior isEqualToString:@"newline"];
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `78627c14` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `23a33ef5` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

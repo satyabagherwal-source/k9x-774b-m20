@@ -12087,3 +12087,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-chatrlabs-qwen-image-2-1-uncensored-omni-quantized` | `https://huggingface.co/chatrlabs/Qwen-Image-2.1-Uncensored-Omni-Quantized` | `hf-chatrla` | Multi-dimensional audit evidence | 2026-11-22T07:56:33.471Z |
 | `learn-github-medialab-xan` | `https://github.com/medialab/xan` | `cca1cceb` | Multi-dimensional audit evidence | 2026-11-22T07:56:35.041Z |
 | `learn-github-gocd-gocd` | `https://github.com/gocd/gocd` | `6b628d04` | Multi-dimensional audit evidence | 2026-11-22T07:56:43.043Z |
+| `learn-huggingface-edge0-edge0-145b-nvfp4` | `https://huggingface.co/Edge0/Edge0-145B-NVFP4` | `hf-edge0-e` | Multi-dimensional audit evidence | 2026-11-22T08:09:19.064Z |
+| `learn-github-restatedev-restate` | `https://github.com/restatedev/restate` | `2aaabe8c` | Multi-dimensional audit evidence | 2026-11-22T08:09:24.363Z |
+| `learn-github-onejs-one` | `https://github.com/onejs/one` | `23a33ef5` | Multi-dimensional audit evidence | 2026-11-22T08:09:29.335Z |

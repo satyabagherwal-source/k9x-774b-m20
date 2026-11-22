@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T07:56:43.051Z",
+  "last_updated": "2026-11-22T08:09:29.346Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -10446,14 +10446,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-onejs-one",
-      "content_hash": "d5a25b83b790b4f4b1811ecacd5ec192ae62ec848d59512f7b781bee0f382be2",
-      "verified_at": "2026-11-19T05:24:29.385Z",
+      "content_hash": "368bc90fc5d647df624c41dd83323efe6e33c75afb3a7cf39b15b6e535dde37a",
+      "verified_at": "2026-11-22T08:09:29.345Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T05:24:29.385Z"
+      "last_updated": "2026-11-22T08:09:29.345Z"
     },
     "influxdata/influxdb": {
       "repository": "influxdata/influxdb",
@@ -10536,14 +10536,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-restatedev-restate",
-      "content_hash": "d3b520de71649a73406f17f913ea5c99ad5e4a4b2c68962b931469b59ccd4eb9",
-      "verified_at": "2026-11-20T22:49:21.846Z",
+      "content_hash": "e513d5e0ea43ded0d5cc0f6438ecd9e5689bca3aee86c7fec17dd7ec48439be8",
+      "verified_at": "2026-11-22T08:09:24.376Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T22:49:21.846Z"
+      "last_updated": "2026-11-22T08:09:24.376Z"
     },
     "Kong/kubernetes-ingress-controller": {
       "repository": "Kong/kubernetes-ingress-controller",
@@ -18816,14 +18816,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-edge0-edge0-145b-nvfp4",
-      "content_hash": "af57149fde4636dcc6c1d3d5ba0a5c52eae36dfccd23af750459e6c792ebd29b",
-      "verified_at": "2026-11-14T06:56:54.243Z",
+      "content_hash": "0a2c1ee08df254d97839b07a50c880198635e86960ec5f3bd48b4544eb8cb02d",
+      "verified_at": "2026-11-22T08:09:19.075Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T06:56:54.243Z"
+      "last_updated": "2026-11-22T08:09:19.075Z"
     },
     "lingyired/status-trio": {
       "repository": "lingyired/status-trio",

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T07:56:48.102Z",
+  "last_updated": "2026-11-22T08:09:35.052Z",
   "total_records": 2342,
   "domains": {
     "A": {
@@ -13800,8 +13800,8 @@
       "title": "Architecture Intelligence: restatedev/restate Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-restatedev-restate-architecture-intelligence-restatedev-restate-core-invariants.md",
       "repository": "restatedev/restate",
-      "content_hash": "b3cf2433385767da5ae7f09093ee84c0dbc2acd43e50759741e17ee4d56f3dc8",
-      "created_at": "2026-11-20T22:49:22.153Z"
+      "content_hash": "43d039c580e4233c6839c81f05c5a3e2ce5cb4c5bb9ca907ba87696d24b00992",
+      "created_at": "2026-11-22T08:09:24.887Z"
     },
     "DOM-H-948029CF": {
       "record_id": "DOM-H-948029CF",
@@ -13877,8 +13877,8 @@
       "title": "Architecture Intelligence: restatedev-restate-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-restatedev-restate-learnings-architecture-intelligence-restatedev-restate-learni.md",
       "repository": "restatedev-restate-learnings",
-      "content_hash": "bb82af3d1136ee209031acc1c019f3a2a3607cc95e2ce2fa7516481c40a1eb91",
-      "created_at": "2026-11-20T22:49:32.473Z"
+      "content_hash": "0a51e4561a5481dee6cd9632598e5d1bd0350d40160230d19d2b57a781cc0e11",
+      "created_at": "2026-11-22T08:09:33.619Z"
     },
     "DOM-H-C33FF226": {
       "record_id": "DOM-H-C33FF226",
@@ -14251,8 +14251,8 @@
       "title": "Research & Knowledge Intelligence: Edge0/Edge0-145B-NVFP4 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-edge0-edge0-145b-nvfp4-research-knowledge-intelligence-edge0-edge0-145b-nvfp4.md",
       "repository": "Edge0/Edge0-145B-NVFP4",
-      "content_hash": "ec967835a7b058563155f5d7d335caf0b02978e5fc542998754554a440a29cf5",
-      "created_at": "2026-11-14T06:56:54.365Z"
+      "content_hash": "e7a9b30533e9b450e848561a9398a58e3c87d603b5d4650d9a06defc0b8f769d",
+      "created_at": "2026-11-22T08:09:19.350Z"
     },
     "domain_intelligence-technical-construction-intelligence-wcandillon-react-native-skia-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-wcandillon-react-native-skia-core-invariants",
@@ -14311,8 +14311,8 @@
       "title": "Research & Knowledge Intelligence: hf-edge0-edge0-145b-nvfp4-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-edge0-edge0-145b-nvfp4-learnings-research-knowledge-intelligence-hf-edge0-edg.md",
       "repository": "hf-edge0-edge0-145b-nvfp4-learnings",
-      "content_hash": "ef47d271bafb04bc14bc2d80dab9fc55137bd036db5933841e41466849062eab",
-      "created_at": "2026-11-14T06:57:27.002Z"
+      "content_hash": "e7868b3263eefd7aadbb388319ca16d4e35b7fd8f32bb173746916e73a31a352",
+      "created_at": "2026-11-22T08:09:34.306Z"
     },
     "DOM-D-302F93C6": {
       "record_id": "DOM-D-302F93C6",
@@ -18446,8 +18446,8 @@
       "title": "Architecture Intelligence: onejs/one Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-onejs-one-architecture-intelligence-onejs-one-core-invariants.md",
       "repository": "onejs/one",
-      "content_hash": "21596a7c5abd5dd59e23b5a49678f7caad601eb01688a679048b3ab4ac09c953",
-      "created_at": "2026-11-18T04:57:23.374Z"
+      "content_hash": "16a2ce7218b86acf7dd529332a7e33e4e1bef62b9867a454c9b73a2dd33b16ca",
+      "created_at": "2026-11-22T08:09:29.832Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-nerkyor-qwen3-8-27b-coder390-efficientthink-o": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-nerkyor-qwen3-8-27b-coder390-efficientthink-o",
@@ -18506,8 +18506,8 @@
       "title": "Architecture Intelligence: onejs-one-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-onejs-one-learnings-architecture-intelligence-onejs-one-learnings-core-invariant.md",
       "repository": "onejs-one-learnings",
-      "content_hash": "0e0f70710968a360d95422b946935e093e7fc2bf4827092c10e1d6e8f637cccb",
-      "created_at": "2026-11-18T04:57:31.346Z"
+      "content_hash": "0d00acc695df0870af34a72324de9c38029ef6e96bee0434b7b60a737076e264",
+      "created_at": "2026-11-22T08:09:35.052Z"
     },
     "domain_intelligence-architecture-intelligence-duckdb-duckdb-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-duckdb-duckdb-learnings-core-invariants",

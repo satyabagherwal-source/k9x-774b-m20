@@ -12054,3 +12054,6 @@
 | `CYCLE-20261122-MHIZ` | `2026-11-22T07:56:33.467Z` | `chatrlabs/Qwen-Image-2.1-Uncensored-Omni-Quantized` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-chatrlabs-qwen-image-2.1-uncensored-omni-quantized-learnings.md` | Yes (`ddc37c57...`) |
 | `CYCLE-20261122-MIQM` | `2026-11-22T07:56:35.038Z` | `medialab/xan` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9912` | Yes (`6e4f879e...`) |
 | `CYCLE-20261122-MOWV` | `2026-11-22T07:56:43.039Z` | `gocd/gocd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9913` | Yes (`907683a1...`) |
+| `CYCLE-20261122-2W9F` | `2026-11-22T08:09:19.059Z` | `Edge0/Edge0-145B-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-edge0-edge0-145b-nvfp4-learnings.md` | Yes (`0a2c1ee0...`) |
+| `CYCLE-20261122-30CM` | `2026-11-22T08:09:24.358Z` | `restatedev/restate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9914` | Yes (`e513d5e0...`) |
+| `CYCLE-20261122-346Q` | `2026-11-22T08:09:29.330Z` | `onejs/one` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9915` | Yes (`368bc90f...`) |

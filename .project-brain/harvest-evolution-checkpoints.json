@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T07:56:48.395Z",
+  "last_updated": "2026-11-22T08:09:35.444Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-22T06:27:39.447Z",
@@ -238,7 +238,7 @@
       "staged_for_review": 1
     },
     "onejs-one-learnings.md": {
-      "processed_at": "2026-11-19T05:24:38.810Z",
+      "processed_at": "2026-11-22T08:09:34.545Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1273,7 +1273,7 @@
       "staged_for_review": 1
     },
     "restatedev-restate-learnings.md": {
-      "processed_at": "2026-11-20T22:49:31.906Z",
+      "processed_at": "2026-11-22T08:09:32.972Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2448,8 +2448,8 @@
       "staged_for_review": 1
     },
     "hf-edge0-edge0-145b-nvfp4-learnings.md": {
-      "processed_at": "2026-11-14T06:57:26.852Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-22T08:09:34.054Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings.md": {
@@ -3713,7 +3713,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 3063,
+  "total_dossiers_evaluated": 3066,
   "total_canonical_promoted": 473,
-  "total_staged_for_review": 2332
+  "total_staged_for_review": 2334
 }

@@ -4,24 +4,24 @@
 {
   "source_repository": "onejs/one",
   "source_url": "https://github.com/onejs/one",
-  "source_version": "aaba81ee",
+  "source_version": "23a33ef5",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-18T04:57:23.255Z",
+  "timestamp": "2026-11-22T08:09:29.620Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-onejs-one",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [onejs/one](https://github.com/onejs/one) (Revision: `aaba81ee`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-18T04:57:23.255Z`  
+> **Provenance**: Harvested from [onejs/one](https://github.com/onejs/one) (Revision: `23a33ef5`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-22T08:09:29.620Z`  
 > **Learning ID**: `learn-github-onejs-one`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), F (Design Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 67%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 72%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from onejs/one:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/onejs-one-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/onejs/one](https://github.com/onejs/one))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T04:57:22.196Z  
+> **Harvest Timestamp**: 2026-11-22T08:09:21.969Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: ❶ One lets you target React web and React Native with a single Vite plugin. Everything you need to build great websites and apps with unified routing.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 4646 stars
+- **Stars / Engagement**: 4635 stars
 
 ---
 
@@ -1897,400 +1897,156 @@ class OneBackgroundWorker(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `855a28f7` (2026-11-17)
-**Commit Message**: Merge pull request #1291 from onejs/fix/bun-foreign-unprotect
+### Incident Patch 1: `23a33ef5` (2026-11-21)
+**Commit Message**: fix(macos): break the line on shift or option return in a submitting multiline input (#1316)
 
-fix(vxrn): unprotect Bun JSI values only on the JS thread
+* fix(macos): break the line on shift or option return in a submitting multiline input
 
-**File**: `packages/vxrn/ios/OneBunEngine/BunRuntime.cpp` (modified, +60/-23)
+* fix(macos): read shift only from a key event and option return by its selector
+
+**File**: `packages/one/macos/host/OneMacosTextInputHosting.mm` (modified, +4/-1)
 ```diff
-@@ -43,6 +43,7 @@ void bun_embed_grab_locks(void* dropper);
- #include <mutex>
- #include <sstream>
- #include <thread>
-+#include <vector>
- 
- namespace facebook::bun {
- 
-@@ -110,6 +111,42 @@ class ArgsConverter;
- 
- class JSCRuntime;
- 
-+// JSValueUnprotect takes the JS lock, and JSC scans the stack of every thread
-+// that ever took it on each GC. a value dropped on the main thread registers it,
-+// and the main thread later runs hermes (worklets) compiles on a fiber stack
-+// outside its registered bounds, so the scan faults. only the JS thread unprotects.
-+struct Releases {
-+  std::atomic<bool> invalid{false};
-+  // the runtime is created on the JS thread
-+  const std::thread::id owner = std::this_thread::get_id();
-+  std::mutex mutex;
-+  std::vector<JSValueRef> pending;
-+
-+  void release(JSGlobalContextRef ctx, JSValueRef value) {
-+    if (invalid) {
-+      return;
-+    }
-+    if (owner == std::this_thread::get_id()) {
-+      JSValueUnprotect(ctx, value);
-+      return;
-+    }
-+    std::lock_guard<std::mutex> lock(mutex);
-+    pending.push_back(value);
-+  }
-+
-+  // runs on the JS thread outside any GC
-+  void drain(JSGlobalContextRef ctx) {
-+    std::vector<JSValueRef> values;
-+    {
-+      std::lock_guard<std::mutex> lock(mutex);
-+      values.swap(pending);
-+    }
-+    for (JSValueRef value : values) {
-+      JSValueUnprotect(ctx, value);
-+    }
-+  }
-+};
-+
- struct Lock {
-   void lock(const bun::JSCRuntime& /*unused*/) const {}
-   void unlock(const bun::JSCRuntime& /*unused*/) const {}
-@@ -167,19 +204,19 @@ class JSCRuntime : public jsi::Runtime {
- #ifndef NDEBUG
-     JSCSymbolValue(
-         JSGlobalContextRef ctx,
--        const std::atomic<bool>& ctxInvalid,
-+        Releases& releases,
-         JSValueRef sym,
-         std::atomic<intptr_t>& counter);
- #else
-     JSCSymbolValue(
-         JSGlobalContextRef ctx,
--        const std::atomic<bool>& ctxInvalid,
-+        Releases& releases,
-         JSValueRef sym);
- #endif
-     void invalidate() noexcept override;
- 
-     JSGlobalContextRef ctx_;
--    const std::atomic<bool>& ctxInvalid_;
-+    Releases& releases_;
-     // There is no C type in the JSC API to represent Symbol, so this stored
-     // a JSValueRef which contains the Symbol.
-     JSValueRef sym_;
-@@ -209,7 +246,7 @@ class JSCRuntime : public jsi::Runtime {
-   class JSCObjectValue final : public PointerValue {
-     JSCObjectValue(
-         JSGlobalContextRef ctx,
--        const std::atomic<bool>& ctxInvalid,
-+        Releases& releases,
-         JSObjectRef obj
- #ifndef NDEBUG
-         ,
-@@ -220,7 +257,7 @@ class JSCRuntime : public jsi::Runtime {
-     void invalidate() noexcept override;
- 
-     JSGlobalContextRef ctx_;
--    const std::atomic<bool>& ctxInvalid_;
-+    Releases& releases_;
-     JSObjectRef obj_;
- #ifndef NDEBUG
-     std::atomic<intptr_t>& counter_;
-@@ -374,7 +411,7 @@ class JSCRuntime : public jsi::Runtime {
-   void checkException(JSValueRef res, JSValueRef exc, const char* msg);
- 
-   JSGlobalContextRef ctx_;
--  std::atomic<bool> ctxInvalid_;
-+  mutable Releases releases_;
-   std::string desc_;
-   JSValueRef nativeStateSymbol_ = nullptr;
-   JSObjectRef arrayIsArray_ = nullptr;
-@@ -469,8 +506,7 @@ std::string to_string(void* value) {
- } // namespace
- 
- JSCRuntime::JSCRuntime(JSGlobalContextRef ctx)
--    : ctx_(JSGlobalContextRetain(ctx)),
--      ctxInvalid_(false)
-+    : ctx_(JSGlobalContextRetain(ctx))
- #ifndef NDEBUG
-       ,
-       objectCounter_(0),
-@@ -497,7 +533,10 @@ JSCRuntime::~JSCRuntime() {
-   // JSValueUnprotect() can no longer be called.  We use an
-   // atomic<bool> to avoid unsafe unprotects happening after shutdown
-   // has started.
--  ctxInvalid_ = true;
-+  if (releases_.owner == std::this_thread::get_id()) {
-+    releases_.drain(ctx_);
-+  }
-+  releases_.invalid = true;
-   // No need to unprotect nativeStateSymbol_ since the heap is getting torn down
-   // anyway
-   JSGlobalContextRelease(ctx_);
-@@ -529,6 +568,7 @@ jsi::Value JSCRuntime::evaluatePreparedJavaScript(
- jsi::Value JSCRuntime::evaluateJavaScript(
-     const std::shared_ptr<const jsi::Buffer>& buffer,
-     const std::string& sourceURL) {
-+  releases_.drain(ctx_);
-   // the compiled program replaces a bundle that starts with this marker
-   constexpr size_t markerLength = sizeof(kCompiledEntryMarker) - 1;
-   if (buffer->size() >= markerLength &&
-@@ -567,6 +607,7 @@ void JSCRuntime::queueMicrotask(const jsi::Function& callback) {
- }
- 
- bool JSCRuntime::drainMicrotasks(int /*maxMicrotasksHint*/) {
-+  releases_.drain(ctx_);
-   // bun delays JSC's own microtask drain between ticks, so promise jobs run
-   // only when bun ticks; either queue can refill the other.
-   do {
-@@ -598,15 +639,15 @@ bool JSCRuntime::isInspectable() {
- 
- JSCRuntime::JSCSymbolValue::JSCSymbolValue(
-     JSGlobalContextRef ctx,
--    const std::atomic<bool>& ctxInvalid,
-+    Releases& releases,
-     JSValueRef sym
- #ifndef NDEBUG
-     ,
-     std::atomic<intptr_t>& counter
- #endif
-     )
-     : ctx_(ctx),
--      ctxInvalid_(ctxInvalid),
-+  
+@@ -438,7 +438,10 @@ - (BOOL)textView:(NSTextView*)view doCommandBySelector:(SEL)selector {
+   if (selector == @selector(insertBacktab:)) { [view.window selectPreviousKeyView:view]; return YES; }
+   if (selector == @selector(insertNewline:) || selector == @selector(insertNewlineIgnoringFieldEditor:)) {
+     NSString* behavior = _props[@"submitBehavior"];
+-    const BOOL submits = [_props[@"multiline"] boolValue] ? [behavior isEqualToString:@"submit"] || [behavior isEqualToString:@"blurAndSubmit"] : ![behavior isEqualToString:@"newline"];
++    // a multiline input submits on a bare return; shift or option with it breaks the line
++    NSEvent* key = NSApp.currentEvent.type == NSEventTypeKeyDown ? NSApp.currentEvent : nil;
++    const BOOL bare = selector == @selector(insertNewline:) && !(key.modifierFlags & NSEventModifierFlagShift);
++    const BOOL submits = [_props[@"multiline"] boolValue] ? bare && ([behavior isEqualToString:@"submit"] || [behavior isEqualToString:@"blurAndSubmit"]) : ![behavior isEqualToString:@"newline"];
+     if (!submits) return NO;
+     [self emit:@"submitEditing"];
+     if ([behavior isEqualToString:@"blurAndSubmit"]) [view.window makeFirstResponder:nil];
 ```
 
 ---
 
-### Incident Patch 2: `053e4d48` (2026-11-17)
-**Commit Message**: fix(vxrn): unprotect Bun JSI values only on the JS thread
+### Incident Patch 2: `6888615d` (2026-11-21)
+**Commit Message**: fix(ios): prebuild Live Activity-only extensions (#1312)
 
-A value dropped on the main thread took the JS lock and registered the main thread for conservative GC scans, which fault while worklets run Hermes on a fiber stack. Validation: clang -fsyntax-only against RN 0.8x JSI headers.
+Validation: eight focused widget tests passed. Prebuild generated the Live Activity extension from an existing app manifest with no timeline families.
+Team-Machine-Session: r351245
 
-**File**: `packages/vxrn/ios/OneBunEngine/BunRuntime.cpp` (modified, +60/-23)
+**File**: `packages/utils/src/nativeAppManifest.test.ts` (modified, +1/-1)
 ```diff
-@@ -43,6 +43,7 @@ void bun_embed_grab_locks(void* dropper);
- #include <mutex>
- #include <sstream>
- #include <thread>
-+#include <vector>
- 
- namespace facebook::bun {
- 
-@@ -110,6 +111,42 @@ class ArgsConverter;
- 
- class JSCRuntime;
- 
-+// JSValueUnprotect takes the JS lock, and JSC scans the stack of every thread
-+// that ever took it on each GC. a value dropped on the main thread registers it,
-+// and the main thread later runs hermes (worklets) compiles on a fiber stack
-+// outside its registered bounds, so the scan faults. only the JS thread unprotects.
-+struct Releases {
-+  std::atomic<bool> invalid{false};
-+  // the runtime is created on the JS thread
-+  const std::thread::id owner = std::this_thread::get_id();
-+  std::mutex mutex;
-+  std::vector<JSValueRef> pending;
-+
-+  void release(JSGlobalContextRef ctx, JSValueRef value) {
-+    if (invalid) {
-+      return;
-+    }
-+    if (owner == std::this_thread::get_id()) {
-+      JSValueUnprotect(ctx, value);
-+      return;
-+    }
-+    std::lock_guard<std::mutex> lock(mutex);
-+    pending.push_back(value);
-+  }
-+
-+  // runs on the JS thread outside any GC
-+  void drain(JSGlobalContextRef ctx) {
-+    std::vector<JSValueRef> values;
-+    {
-+      std::lock_guard<std::mutex> lock(mutex);
-+      values.swap(pending);
-+    }
-+    for (JSValueRef value : values) {
-+      JSValueUnprotect(ctx, value);
-+    }
-+  }
-+};
-+
- struct Lock {
-   void lock(const bun::JSCRuntime& /*unused*/) const {}
-   void unlock(const bun::JSCRuntime& /*unused*/) const {}
-@@ -167,19 +204,19 @@ class JSCRuntime : public jsi::Runtime {
- #ifndef NDEBUG
-     JSCSymbolValue(
-         JSGlobalContextRef ctx,
--        const std::atomic<bool>& ctxInvalid,
-+        Releases& releases,
-         JSValueRef sym,
-         std::atomic<intptr_t>& counter);
- #else
-     JSCSymbolValue(
-         JSGlobalContextRef ctx,
--        const std::atomic<bool>& ctxInvalid,
-+        Releases& releases,
-         JSValueRef sym);
- #endif
-     void invalidate() noexcept override;
- 
-     JSGlobalContextRef ctx_;
--    const std::atomic<bool>& ctxInvalid_;
-+    Releases& releases_;
-     // There is no C type in the JSC API to represent Symbol, so this stored
-     // a JSValueRef which contains the Symbol.
-     JSValueRef sym_;
-@@ -209,7 +246,7 @@ class JSCRuntime : public jsi::Runtime {
-   class JSCObjectValue final : public PointerValue {
-     JSCObjectValue(
-         JSGlobalContextRef ctx,
--        const std::atomic<bool>& ctxInvalid,
-+        Releases& releases,
-         JSObjectRef obj
- #ifndef NDEBUG
-         ,
-@@ -220,7 +257,7 @@ class JSCRuntime : public jsi::Runtime {
-     void invalidate() noexcept override;
- 
-     JSGlobalContextRef ctx_;
--    const std::atomic<bool>& ctxInvalid_;
-+    Releases& releases_;
-     JSObjectRef obj_;
- #ifndef NDEBUG
-     std::atomic<intptr_t>& counter_;
-@@ -374,7 +411,7 @@ class JSCRuntime : public jsi::Runtime {
-   void checkException(JSValueRef res, JSValueRef exc, const char* msg);
- 
-   JSGlobalContextRef ctx_;
--  std::atomic<bool> ctxInvalid_;
-+  mutable Releases releases_;
-   std::string desc_;
-   JSValueRef nativeStateSymbol_ = nullptr;
-   JSObjectRef arrayIsArray_ = nullptr;
-@@ -469,8 +506,7 @@ std::string to_string(void* value) {
- } // namespace
- 
- JSCRuntime::JSCRuntime(JSGlobalContextRef ctx)
--    : ctx_(JSGlobalContextRetain(ctx)),
--      ctxInvalid_(false)
-+    : ctx_(JSGlobalContextRetain(ctx))
- #ifndef NDEBUG
-       ,
-       objectCounter_(0),
-@@ -497,7 +533,10 @@ JSCRuntime::~JSCRuntime() {
-   // JSValueUnprotect() can no longer be called.  We use an
-   // atomic<bool> to avoid unsafe unprotects happening after shutdown
-   // has started.
--  ctxInvalid_ = true;
-+  if (releases_.owner == std::this_thread::get_id()) {
-+    releases_.drain(ctx_);
-+  }
-+  releases_.invalid = true;
-   // No need to unprotect nativeStateSymbol_ since the heap is getting torn down
-   // anyway
-   JSGlobalContextRelease(ctx_);
-@@ -529,6 +568,7 @@ jsi::Value JSCRuntime::evaluatePreparedJavaScript(
- jsi::Value JSCRuntime::evaluateJavaScript(
-     const std::shared_ptr<const jsi::Buffer>& buffer,
-     const std::string& sourceURL) {
-+  releases_.drain(ctx_);
-   // the compiled program replaces a bundle that starts with this marker
-   constexpr size_t markerLength = sizeof(kCompiledEntryMarker) - 1;
-   if (buffer->size() >= markerLength &&
-@@ -567,6 +607,7 @@ void JSCRuntime::queueMicrotask(const jsi::Function& callback) {
- }
- 
- bool JSCRuntime::drainMicrotasks(int /*maxMicrotasksHint*/) {
-+  releases_.drain(ctx_);
-   // bun delays JSC's own microtask drain between ticks, so promise jobs run
-   // only when bun ticks; either queue can refill the other.
-   do {
-@@ -598,15 +639,15 @@ bool JSCRuntime::isInspectable() {
- 
- JSCRuntime::JSCSymbolValue::JSCSymbolValue(
-     JSGlobalContextRef ctx,
--    const std::atomic<bool>& ctxInvalid,
-+    Releases& releases,
-     JSValueRef sym
- #ifndef NDEBUG
-     ,
-     std::atomic<intptr_t>& counter
- #endif
-     )
-     : ctx_(ctx),
--      ctxInvalid_(ctxInvalid),
-+  
+@@ -214,7 +214,7 @@ describe('native.app manifest', () => {
+         ...app,
+         ios: { ...app.ios, widgets: { ...widgets, families: [] } },
+       })
+-    ).toThrow(/families/)
++    ).not.toThrow()
+     expect(() =>
+       validateNativeApp({
+         ...app,
 ```
 
----
-
-### Incident Patch 3: `ccd0ddf4` (2026-11-17)
-**Commit Message**: fix(one): presentations hosting react native content stop tracking the keyboard (#1296)
-
-* fix(one): presented content ignores the keyboard safe area
-
-SwiftUI kept a dismissed keyboard's inset on a sheet presented while the keyboard was up, sizing the React Native slot to zero until a trait change. React Native content avoids the keyboard itself, as in a Modal.
-
-Team-Machine-Session: m130059
-
-* fix(one): presentations hosting react native content stop tracking the keyboard
-
-A safe area modifier still left the stale inset in place, growing the slot instead. Dropping the keyboard region on the presentation's hosting controller removes the stale state at its source.
-
-Team-Machine-Session: m130059
-
-**File**: `packages/one/ios/OneNativeSlot.swift` (modified, +17/-0)
+**File**: `packages/utils/src/nativeAppManifest.ts` (modified, +2/-2)
 ```diff
-@@ -49,6 +49,12 @@ extension View {
+@@ -265,6 +265,7 @@ export interface NativeAppManifest {
+       displayName: string
+       description: string
+       pushNotifications?: boolean
++      // an empty list generates a Live Activity without a timeline widget.
+       families?: IosWidgetFamily[]
+     }
+     // launch handlers for One.BackgroundTasks. define the matching JS
+@@ -796,12 +797,11 @@ export function validateNativeApp(
+       if (widgets.families !== undefined) {
+         if (
+           !Array.isArray(widgets.families) ||
+-          widgets.families.length === 0 ||
+           new Set(widgets.families).size !== widgets.families.length ||
+           widgets.families.some((family) => !IOS_WIDGET_FAMILIES.includes(family))
+         ) {
+           fail(
+-            `ios.widgets.families must be a non-empty list of unique families from ${IOS_WIDGET_FAMILIES.join(', ')}`
++            `ios.widgets.families must be an array of unique families from ${IOS_WIDGET_FAMILIES.join(', ')}`
+           )
+         }
+       }
+```
+
+**File**: `packages/vxrn/src/exports/prebuildWithoutExpo.test.ts` (modified, +30/-0)
+```diff
+@@ -2428,6 +2428,36 @@ describe('ios widgets', () => {
+     expect(swift).toContain('systemImageName: "bolt.fill"')
+   }, 180000)
+ 
++  it('generates a Live Activity extension without a timeline widget for empty families', async () => {
++    const workspaceRoot = fileURLToPath(new URL('../../../..', import.meta.url))
++    const output = mkdtempSync(join(tmpdir(), 'vxrn-prebuild-activity-only-'))
++    try {
++      const ios = join(output, 'ios')
++      await generateForPlatform(
++        workspaceRoot,
++        'ios',
++        {
++          ...widgetsApp,
++          ios: {
++            ...widgetsApp.ios,
++            widgets: { ...widgetsApp.ios.widgets, families: [] },
++          },
++        },
++        ios
++      )
++      const rendered = readFileSync(join(ios, 'OneWidgets', 'OneWidget.swift'), 'utf8')
++      expect(rendered).toContain('ActivityConfiguration(for: OneWidgetContract.Attributes.self)')
++      expect(rendered).toContain('OneLiveActivity()')
++      expect(rendered).not.toContain('StaticConfiguration(')
++      expect(rendered).not.toContain('OneWidget()')
++      expect(readFileSync(join(ios, 'MyApp', 'Info.plist'), 'utf8')).toContain(
++        'NSSupportsLiveActivities'
++      )
++    } finally {
++      rmSync(output, { recursive: true, force: true })
++    }
++  }, 180000)
++
+   it('regenerates byte-identical widget projects and adds nothing without the config', async () => {
+     const workspaceRoot = fileURLToPath(new URL('../../../..', import.meta.url))
+     const first = mkdtempSync(join(tmpdir(), 'vxrn-prebuild-widgets-a-'))
+```
+
+**File**: `packages/vxrn/src/exports/prebuildWithoutExpo.ts` (modified, +3/-4)
+```diff
+@@ -1196,7 +1196,7 @@ struct OneWidgetRendered: View {
+     .background { if let fill = oneColor(node.style?.backgroundColor) { fill } }
+     .clipShape(RoundedRectangle(cornerRadius: CGFloat(node.style?.borderRadius ?? 0)))
+   }
+-}
++}${supportedFamilies ? `
+ 
+ struct OneWidgetEntry: TimelineEntry {
+   let date: Date
+@@ -1245,7 +1245,7 @@ struct OneWidget: Widget {
+     .description(${JSON.stringify(widgets.description)})
+     .supportedFamilies([${supportedFamilies}])
+   }
+-}
++}` : ''}
+ 
+ struct OneLiveActivity: Widget {
+   var body: some WidgetConfiguration {
+@@ -1320,8 +1320,7 @@ struct OneLiveActivity: Widget {
+ @main
+ struct OneWidgetsBundle: WidgetBundle {
+   var body: some Widget {
+-    OneWidget()
+-    OneLiveActivity()
++    ${supportedFamilies ? 'OneWidget()\n    ' : ''}OneLiveActivity()
    }
  }
- 
-+// any hosting controller, whatever its root view
-+@MainActor private protocol OneNativeSafeAreaRegionsHost: AnyObject {
-+  var safeAreaRegions: SafeAreaRegions { get set }
-+}
-+extension UIHostingController: OneNativeSafeAreaRegionsHost {}
-+
- struct OneNativeSlot: UIViewRepresentable {
-   @Environment(\.oneNativeSlotScrolling) private var scrolling
-   enum Mode { case fill, passive, presented }
-@@ -190,6 +196,16 @@ struct OneNativeSlot: UIViewRepresentable {
-       addSubview(content)
-     }
- 
-+    // react native content avoids the keyboard itself, as in a Modal. swiftui could keep
-+    // the inset of a keyboard that left while the presentation appeared, sizing this
-+    // slot to zero until a trait change, so the presentation never tracks it.
-+    private func dropPresentationKeyboardRegion() {
-+      var responder: UIResponder? = next
-+      while let current = responder, !(current is UIViewController) { responder = current.next }
-+      guard let host = responder as? OneNativeSafeAreaRegionsHost, host.safeAreaRegions != .container else { return }
-+      host.safeAreaRegions = .container
-+    }
-+
-     override func didMoveToWindow() {
-       super.didMoveToWindow()
-       let attached = window != nil
-@@ -205,6 +221,7 @@ struct OneNativeSlot: UIViewRepresentable {
- 
-     override func layoutSubviews() {
-       super.layoutSubviews()
-+      if mode == .presented, window != nil { dropPresentationKeyboardRegion() }
-       guard mode != .passive, window != nil, bounds.width > 0, bounds.height > 0 else { return }
-       content.frame = bounds
-       // scrolling moves existing rows without changing their bounds. publish their
+ `
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1305** (2026-11-18): fix(one): keep native hosts attached while their screen is covered (@natew)
-- **PR #1304** (2026-11-17): Make Cloudflare and Rozenite opt-in in One (@natew)
-- **PR #1303** (2026-11-17): Remove Biome and Prettier from One (@natew)
-- **PR #1302** (2026-11-17): perf(vxrn): drop hermes polyfills from bun ios production bundles (@natew)
-- **PR #1301** (2026-11-17): fix(one): dismiss native controllers with their child alerts (@natew)
-- **PR #1300** (2026-11-17): docs: add a setup recipe for Android bun engine builds (@natew)
+- **PR #1316** (2026-11-21): fix(macos): break the line on shift or option return in a submitting multiline input (@natew)
+- **PR #1315** (2026-11-21): Support server updates and links in Live Activities (@natew)
+- **PR #1314** (closed): Encode Live Activity content state on the server (@natew)
+- **PR #1313** (2026-11-21): Encode Live Activity layouts as structured content (@natew)
+- **PR #1312** (2026-11-21): fix(ios): prebuild Live Activity-only extensions (@natew)
+- **PR #1311** (2026-11-18): fix(ios): camera link group, destructured SDK pruning, and Expo link set (@natew)
 
 ---
 
@@ -2310,80 +2066,34 @@ Team-Machine-Session: m130059
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in BunRuntime.cpp
+## X. macos): break the line on shift or option return in a submitting multiline input
 
 **RULE**:
-When implementing operations in `packages/vxrn/ios/OneBunEngine/BunRuntime.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in onejs/one. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/one/macos/host/OneMacosTextInputHosting.mm`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in onejs/one. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `855a28f7`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `23a33ef5`: macos): break the line on shift or option return in a submitting multiline input. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/vxrn/ios/OneBunEngine/BunRuntime.cpp`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/one/macos/host/OneMacosTextInputHosting.mm`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-#include <vector>
-// JSValueUnprotect takes the JS lock, and JSC scans the stack of every thread
-// that ever took it on each GC. a value dropped on the main thread registers it,
-// and the main thread later runs hermes (worklets) compiles on a fiber stack
-// outside its registered bounds, so the scan faults. only the JS thread unprotects.
-struct Releases {
-  std::atomic<bool> invalid{false};
-  // the runtime is created on the JS thread
-  const std::thread::id owner = std::this_thread::get_id();
-  std::mutex mutex;
-  std::vector<JSValueRef> pending;
-
-  void release(JSGlobalContextRef ctx, JSValueRef value) {
-    if (invalid) {
-      return;
-    }
-    if (owner == std::this_thread::get_id()) {
-      JSValueUnprotect(ctx, value);
-      return;
-    }
-    std::lock_guard<std::mutex> lock(mutex);
-    pending.push_back(value);
-  }
-
-  // runs on the JS thread outside any GC
-  void drain(JSGlobalContextRef ctx) {
-    std::vector<JSValueRef> values;
-    {
-      std::lock_guard<std::mutex> lock(mutex);
-      values.swap(pending);
-    }
-    for (JSValueRef value : values) {
-      JSValueUnprotect(ctx, value);
-    }
-  }
-};
-
-        Releases& releases,
-        Releases& releases,
-    Releases& 
+    // a multiline input submits on a bare return; shift or option with it breaks the line
+    NSEvent* key = NSApp.currentEvent.type == NSEventTypeKeyDown ? NSApp.currentEvent : nil;
+    const BOOL bare = selector == @selector(insertNewline:) && !(key.modifierFlags & NSEventModifierFlagShift);
+    const BOOL submits = [_props[@"multiline"] boolValue] ? bare && ([behavior isEqualToString:@"submit"] || [behavior isEqualToString:@"blurAndSubmit"]) : ![behavior isEqualToString:@"newline"];
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-        const std::atomic<bool>& ctxInvalid,
-        const std::atomic<bool>& ctxInvalid,
-    const std::atomic<bool>& ctxInvalid_;
-        const std::atomic<bool>& ctxInvalid,
-    const std::atomic<bool>& ctxInvalid_;
-  std::atomic<bool> ctxInvalid_;
-    : ctx_(JSGlobalContextRetain(ctx)),
-      ctxInvalid_(false)
-  ctxInvalid_ = true;
-    const std::atomic<bool>& ctxInvalid,
-      ctxInvalid_(ctxInvalid),
+    const BOOL submits = [_props[@"multiline"] boolValue] ? [behavior isEqualToString:@"submit"] || [behavior isEqualToString:@"blurAndSubmit"] : ![behavior isEqualToString:@"newline"];
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `855a28f7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `23a33ef5` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-22T07:56:46.224Z",
-    "lastVerified": "2026-11-22T07:56:46.224Z",
+    "lastChecked": "2026-11-22T08:09:32.784Z",
+    "lastVerified": "2026-11-22T08:09:32.784Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -354,12 +354,12 @@
     "lastVerified": "2026-11-21T21:31:41.682Z"
   },
   "nucleoidai-nucleoid": {
-    "name": "NucleoidAI/Nucleoid",
+    "name": "Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-22T07:27:45.251Z",
-    "lastVerified": "2026-11-22T07:27:45.251Z",
+    "lastChecked": "2026-11-22T08:09:24.837Z",
+    "lastVerified": "2026-11-22T08:09:24.837Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -368,7 +368,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "5e0af050"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1547,9 +1548,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-11-22T03:24:59.647Z",
+    "lastChecked": "2026-11-22T08:09:19.892Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-11-22T03:24:59.647Z"
+    "lastVerified": "2026-11-22T08:09:19.892Z"
   },
   "seaql-sea-orm": {
     "name": "sea-orm",
@@ -4464,8 +4465,8 @@
     "officialUrl": "https://github.com/malisper/pgrust",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-21T03:52:35.416Z",
-    "lastVerified": "2026-11-21T03:52:35.416Z",
+    "lastChecked": "2026-11-22T08:09:22.271Z",
+    "lastVerified": "2026-11-22T08:09:22.271Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-malisper-pgrust",
@@ -5589,9 +5590,9 @@
   "aquasecurity-tfsec": {
     "name": "tfsec",
     "officialUrl": "https://github.com/aquasecurity/tfsec",
-    "lastChecked": "2026-11-21T06:01:25.737Z",
+    "lastChecked": "2026-11-22T08:09:17.197Z",
     "revisionIdentifier": "b692c20b",
-    "lastVerified": "2026-11-21T06:01:25.737Z"
+    "lastVerified": "2026-11-22T08:09:17.197Z"
   },
   "apple-foundationdb": {
     "name": "apple/foundationdb",
@@ -6913,14 +6914,14 @@
     "officialUrl": "https://github.com/onejs/one",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-19T05:24:28.434Z",
-    "lastVerified": "2026-11-19T05:24:28.434Z",
+    "lastChecked": "2026-11-22T08:09:21.969Z",
+    "lastVerified": "2026-11-22T08:09:21.969Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-onejs-one",
-    "contentHash": "d5a25b83b790b4f4b1811ecacd5ec192ae62ec848d59512f7b781bee0f382be2",
+    "contentHash": "368bc90fc5d647df624c41dd83323efe6e33c75afb3a7cf39b15b6e535dde37a",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7408,14 +7409,14 @@
     "officialUrl": "https://github.com/restatedev/restate",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T22:49:20.786Z",
-    "lastVerified": "2026-11-20T22:49:20.786Z",
+    "lastChecked": "2026-11-22T08:09:15.867Z",
+    "lastVerified": "2026-11-22T08:09:15.867Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-restatedev-restate",
-    "contentHash": "d3b520de71649a73406f17f913ea5c99ad5e4a4b2c68962b931469b59ccd4eb9",
+    "contentHash": "e513d5e0ea43ded0d5cc0f6438ecd9e5689bca3aee86c7fec17dd7ec48439be8",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -14009,6 +14010,23 @@
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-chatrlabs-qwen-image-2-1-uncensored-omni-quantized",
     "contentHash": "ddc37c57ebaf4d45a35b003d3c645576b185e44ffa739fad2ddc55123ffbc9ec",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-edge0-edge0-145b-nvfp4": {
+    "name": "Edge0/Edge0-145B-NVFP4",
+    "officialUrl": "https://huggingface.co/Edge0/Edge0-145B-NVFP4",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-22T08:09:12.361Z",
+    "lastVerified": "2026-11-22T08:09:12.361Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-edge0-edge0-145b-nvfp4",
+    "contentHash": "0a2c1ee08df254d97839b07a50c880198635e86960ec5f3bd48b4544eb8cb02d",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T22:49:32.251Z",
+  "timestamp": "2026-11-22T08:09:33.275Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-restatedev-restate-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [restatedev-restate-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T22:49:32.251Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T08:09:33.275Z`  
 > **Learning ID**: `LEARN-EVO-restatedev-restate-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/restatedev-restate-learnings.md`  
 > **Source**: github ([https://github.com/restatedev/restate](https://github.com/restatedev/restate))  
-> **Source Version**: `7b61a76b`  
+> **Source Version**: `2aaabe8c`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T22:49:20.948Z  
+> **Timestamp**: 2026-11-22T08:09:23.129Z  
 > **Learning ID**: `learn-github-restatedev-restate`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/restatedev-restate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/restatedev/restate](https://github.com/restatedev/restate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T22:49:20.786Z  
+> **Harvest Timestamp**: 2026-11-22T08:09:15.867Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Restate is the platform for building resilient applications that tolerate all infrastructure faults w/o the need for a PhD.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4726 stars
+- **Stars / Engagement**: 4730 stars
 
 ---
 
@@ -1409,9 +1409,10 @@ pub struct Describe {
 #[derive(Debug, Deserialize)]
 struct VQueueEntryRow {
     entry_id: String,
-    entry_kind: String,
-    stage: String,
-    status: String,
+    // NULL from Restate 1.8.2 where the server doesn't recognize the value.
+    entry_kind: Option<String>,
+    stage: Option<String>,
+    status: Option<String>,
     has_lock: bool,
     created_at: DateTime<Local>,
     num_attempts: u32,
@@ -1479,9 +1480,9 @@ async fn describe(env: &CliEnv, opts: &Describe) -> Result<()> {
     let rows = entries.iter().map(|entry| {
         [
             Field::new(entry.entry_id.as_str()),
-            Field::new(entry.entry_kind.as_str()),
-            Field::new(entry.stage.as_str()),
-            Field::new(entry.status.as_str()),
+            optional_str(entry.entry_kind.as_deref()),
+            optional_str(entry.stage.as_deref()),
+            optional_str(entry.status.as_deref()),
             Field::new(entry.has_lock),
             Field::new(entry.num_attempts),
             time(entry.created_at),
@@ -1503,7 +1504,10 @@ async fn describe(env: &CliEnv, opts: &Describe) -> Result<()> {
         rows,
         IfEmpty::Say("No entries found."),
     );
-    if let Some(entry) = entries.iter().find(|e| e.entry_kind == "invocation") {
+    if let Some(entry) = entries
+        .iter()
+        .find(|e| e.entry_kind.as_deref() == Some("invocation"))
+    {
         f.next_step(
             &format!("restate invocations describe {}", entry.entry_id),
             "inspect the invocation's status, progress, and journal",
@@ -1659,426 +1663,489 @@ async fn list(env: &CliEnv, opts: &List) -> Result<()> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7d473999` (2026-11-20)
-**Commit Message**: [Worker] Turn vq-lifecycle-refined on once a partition requires v1.8.2 anyway
+### Incident Patch 1: `2aaabe8c` (2026-11-21)
+**Commit Message**: [QueryEngine] Treat `unknown` as a sentinel, never as a value
 
-A partition feature limits rollbacks to the version it requires. Once every
-replica of a partition is already held to that version, enabling it costs
-nothing more. `vq_lifecycle_refined` requires v1.8.2, and it only changes
-what replicas record from then on, so it should ride along on any barrier
-that holds the replicas to v1.8.2, instead of waiting for v1.9.0 or an
-opt-in.
+`Stage`, `Status` and `EntryKind` keep an `Unknown` variant so that decoding
+never fails: a stored number this binary doesn't know decodes as `Unknown`.
+Nothing writes it, and keys refuse it (the stage tables can't hold an unknown
+stage). Yet queries treated it as a value: `stage = 'unknown'` selected such
+entries in V1, and in V2 read the stage tables, which can never hold them, so
+the engines disagreed. The effective status had grown its own `unknown`
+value too.
 
-The stored minimum version can't tell when that is: storage features raise
-it on each replica on its own (the registry fence, storage migrations), so
-a leader's own floor says nothing about the other replicas. The enabled
-partition features can: only barriers enable them, so every replica has
-the same set, and every replica is held to the newest version they require.
+Now `unknown` is a sentinel everywhere, shown but never accepted:
 
-- `PartitionFeatureChange::rides_along`: an exhaustive opt-in per change,
-  true only for `EnableVqLifecycleRefined`. A change that needs a
-  migration, or does more than change what is recorded, decides on its
-  own. A change that rides along must ship in the release its minimum
-  version names, so that every server held to that version knows it.
-- `PartitionFeatures::
+```sql
+SELECT stage, status FROM sys_vqueue_entry_status;
+-- an entry in a stage this version doesn't know:  NULL, NULL
+SELECT * FROM sys_vqueue_entry_status WHERE stage = 'unknown';
+-- nothing: 'unknown' names no stage, like 'queued'
+```
 
-**File**: `crates/types/src/config/common.rs` (modified, +7/-4)
+- Input: the values a query can name leave out the sentinel (`Stage::VALUES`,
+  `Status::VALUES`, `EntryKind::VALUES`, `EffectiveStatus::VALUES`). So
+  `'unknown'` is like any other name a column doesn't have: `=` selects
+  nothing, `IN` ignores it, `!=` keeps every value.
+- Output: rows show the sentinel as NULL, in both engines and the stats tables,
+  so n
+
+**File**: `cli/src/clients/datafusion_helpers/v2.rs` (modified, +4/-3)
 ```diff
-@@ -1215,16 +1215,19 @@ experimental! {
-     /// When enabled, every run of a vqueue entry records `started`, so that a paused or suspended
-     /// entry comes back with its latest attempt's status instead of an earlier one such as
-     /// `backing-off`, and an invocation's entry enters Finished at the invocation's completion
--    /// time instead of the completing record's time. A
--    /// partition turns this on when it next elects a leader with this option enabled. Leaders
--    /// running v1.9.0 or newer turn it on regardless of this option, once every worker node in
--    /// the cluster runs v1.9.0 or newer.
-+    /// time instead of the completing record's time. A partition turns this on when it next
-+    /// elects a leader with this option enabled. Any leader turns it on regardless of this option
-+    /// once the partition requires v1.8.2 anyway, for example for byte offsets, and leaders
-+    /// running v1.9.0 or newer once every worker node in the cluster runs v1.9.0 or newer.
-     ///
-     /// Only enable once all nodes run v1.8.2 or newer. Once a partition has enabled it, it stays
-     /// enabled even if this option is removed.
-     ///
-     /// Once enabled, you **cannot** roll back to a Restate-server version older than v1.8.2.
-     ///
-+    /// TODO(v1.9): Remove this option. From v1.9.0, leaders turn the feature on by themselves once
-+    /// every worker node runs v1.9.0 or newer.
-+    ///
-     /// Since v1.8.2
-     vq_lifecycle_refined,
+@@ -368,16 +368,17 @@ pub async fn invocation_status_filter(
+ #[derive(Deserialize)]
+ struct VqueueEntryStatusRow {
+     entry_id: String,
+-    stage: String,
+-    status: String,
++    // NULL from Restate 1.8.2 where the server doesn't recognize the value.
++    stage: Option<String>,
++    status: Option<String>,
+     next_at: Option<DateTime<Local>>,
+     latest_attempt_at: Option<DateTime<Local>>,
+     retry_count_since_last_stored_command: Option<u64>,
+ }
+ 
+ impl VqueueEntryStatusRow {
+     fn is_backing_off(&self) -> bool {
+-        self.stage == "inbox" && self.status == "backing-off"
++        self.stage.as_deref() == Some("inbox") && self.status.as_deref() == Some("backing-off")
+     }
+ }
  
 ```
 
-**File**: `crates/types/src/partitions/features.rs` (modified, +21/-0)
+**File**: `cli/src/commands/sql_tables.rs` (modified, +6/-6)
 ```diff
-@@ -44,6 +44,7 @@ use crate::{
-     strum::EnumString,
-     strum::IntoStaticStr,
-     strum::Display,
-+    strum::VariantArray,
- )]
- #[strum(ascii_case_insensitive)]
- #[repr(u16)]
-@@ -120,6 +121,26 @@ impl PartitionFeatureChange {
+@@ -134,12 +134,12 @@ pub static SQL_TABLES: &[SqlTableDoc] = &[
+         SqlColumnDoc { name: "partition_key", ty: "UInt64", description: "Internal column that is used for partitioning. Can be ignored." },
+         SqlColumnDoc { name: "entry_id", ty: "Utf8", description: "Resource identifier of the entry: an invocation ID or a state mutation ID, without its sequence number. Use `canonical_id` to distinguish incarnations of the same resource. Due to quirks in DataFusion, this should remain `LargeUtf8` to match `id` in `sys_invocation_status` for dynamic filter pushdown." },
+         SqlColumnDoc { name: "vqueue_id", ty: "Utf8", description: "The VQueue Identifier (vq_...)." },
+-        SqlColumnDoc { name: "stage", ty: "Utf8", description: "The stage this entry currently belongs to. Choices are 'inbox', 'running', 'paused', 'suspended', and 'finished'." },
+-        SqlColumnDoc { name: "status", ty: "Utf8", description: "What the entry is doing now, its effective status, which also tells its stage. In the inbox: `new`, `scheduled`, `backing-off`, `ready` or `yielded`; then `running`, `suspended` or `paused`; once finished, its outcome: `succeeded`, `failed`, `killed` or `cancelled`; `unknown` if the stored stage and status are ones this version doesn't know. Until v1.8.2, this showed the stored status, which can be `started` and doesn't tell the stage." },
++        SqlColumnDoc { name: "stage", ty: "Utf8", description: "The stage this entry currently belongs to. Choices are 'inbox', 'running', 'paused', 'suspended', and 'finished'; NULL for a stage this version doesn't know." },
++        SqlColumnDoc { name: "status", ty: "Utf8", description: "What the entry is doing now, its effective status, which also tells its stage. In the inbox: `new`, `scheduled`, `backing-off`, `ready` or `yielded`; then `running`, `suspended` or `paused`; once finished, its outcome: `succeeded`, `failed`, `killed` or `cancelled`. NULL if this version can't tell from the stored stage and status what the entry is doing; no status name selects such an entry. Until v1.8.2, this showed the stored status, which can be `started` and doesn't tell the stage." },
+         SqlColumnDoc { name: "has_lock", ty: "Boolean", description: "Whether this entry currently holds a lock." },
+         SqlColumnDoc { name: "next_at", ty: "TimestampMillisecond", description: "The next timestamp at which this entry is scheduled for the next transition." },
+         SqlColumnDoc { name: "sequence_number", ty: "UInt64", description: "Sequence number encoded in the entry ordering key." },
+-        SqlColumnDoc { name: "entry_kind", ty: "Utf8", description: "Entry kind (`invocation` or `state-mutation`)." },
++        SqlColumnDoc { name: "entry_kind", ty: "Utf8", description: "Entry kind (`invocation` or `state-mutation`); NULL for a kind this version doesn't know." },
+         SqlColumnDoc { name: "created_at", ty: "TimestampMillisecond", description: "Creation timestamp of the entry." },
+         SqlColumnDoc { name: "transitioned_at", ty: "TimestampMillisecond", description: "Timestamp of the latest stage transition." },
+         SqlColumnDoc { name: "num_attempts", ty: "UInt32", description: "Number of times this entry has been moved to the run queue." },
+@@ -202,13 +202,13 @@ pub static SQL_TABLES: &[SqlTableDoc] = &[
+     SqlTableDoc { name: "sys_vqueues", description: "Entries of each vqueue, by stage. One row per entry in a vqueue stage (inbox, running, paused, suspended or finished).", columns: &[
+         SqlColumnDoc { name: "partition_key", ty: "UInt64", description: "Internal column that is used for partitioning. Can be ignored." },
+         SqlColumnDoc { name: "id", ty: "Utf8", description: "The VQueue Identifier (vq_...)." },
+-        SqlColumnDoc { name: "stage", ty: "Utf8", description: "The stage this entry currently belongs to. Choices are 'inbox', 'running', 'paused', 'suspended', and 'finished'." },
+-        SqlColumnDoc { name: "status", ty: "Utf8", description: "What the entry is doing now, its effective status, which also tells its stage. In the inbox: `new`, `scheduled`, `backing-off`, `ready` or `yielded`; then `running`, `suspended` or `paused`; once finished, its outcome: `succeeded`, `failed`, `killed` or `cancelled`; `unknown` if the stored stage and status are ones this version doesn't know. Until v1.8.2, this showed the stored status, which can be `started` and doesn't tell the stage." },
++        SqlColumnDoc { name: "stage", ty: "Utf8", description: "The stage this entry currently belongs to. Choices are 'inbox', 'running', 'paused', 'suspended', and 'finished'; NULL for a stage this version doesn't know." },
++        SqlColumnDoc { name: "status", ty: "Utf8", description: "What the entry is doing now, its effective status, which also tells its stage. In the inbox: `new`, `scheduled`, `backing-off`, `ready` or `yielded`; then `running`, `suspended` or `paused`; once finished, its outcome: `succeeded`, `failed`, `killed` or `ca
+```
+
+**File**: `cli/src/commands/vqueues/describe.rs` (modified, +11/-7)
+```diff
+@@ -55,9 +55,10 @@ pub struct Describe {
+ #[derive(Debug, Deserialize)]
+ struct VQueueEntryRow {
+     entry_id: String,
+-    entry_kind: String,
+-    stage: String,
+-    status: String,
++    // NULL from Restate 1.8.2 where the server doesn't recognize the value.
++    entry_kind: Option<String>,
++    stage: Option<String>,
++    status: Option<String>,
+     has_lock: bool,
+     created_at: DateTime<Local>,
+     num_attempts: u32,
+@@ -125,9 +126,9 @@ async fn describe(env: &CliEnv, opts: &Describe) -> Result<()> {
+     let rows = entries.iter().map(|entry| {
+         [
+             Field::new(entry.entry_id.as_str()),
+-            Field::new(entry.entry_kind.as_str()),
+-            Field::new(entry.stage.as_str()),
+-            Field::new(entry.status.as_str()),
++            optional_str(entry.entry_kind.as_deref()),
++            optional_str(entry.stage.as_deref()),
++            optional_str(entry.status.as_deref()),
+             Field::new(entry.has_lock),
+             Field::new(entry.num_attempts),
+             time(entry.created_at),
+@@ -149,7 +150,10 @@ async fn describe(env: &CliEnv, opts: &Describe) -> Result<()> {
+         rows,
+         IfEmpty::Say("No entries found."),
+     );
+-    if let Some(entry) = entries.iter().find(|e| e.entry_kind == "invocation") {
++    if let Some(entry) = entries
++        .iter()
++        .find(|e| e.entry_kind.as_deref() == Some("invocation"))
++    {
+         f.next_step(
+             &format!("restate invocations describe {}", entry.entry_id),
+             "inspect the invocation's status, progress, and journal",
+```
+
+**File**: `crates/distributed-datafusion/src/tables/vqueue_entry_status/read.rs` (modified, +1/-2)
+```diff
+@@ -21,7 +21,6 @@ use datafusion::physical_expr::utils::{collect_columns, split_conjunction};
+ use datafusion::physical_plan::PhysicalExpr;
+ use datafusion::physical_plan::metrics::Count;
+ use datafusion::physical_plan::stream::RecordBatchReceiverStream;
+-use strum::VariantArray;
+ 
+ use restate_partition_store::ReadSnapshot;
+ use restate_partition_store::index::RegisteredIndex;
+@@ -265,7 +264,7 @@ impl CompleteIndex for StageIndex {
+         matches!(
+             restriction.stage.to_predicate(),
+             Some(ValuePredicate::In(stages))
+-                if !stages.is_empty() && stages.len() < Stage::VARIANTS.len()
++                if !stages.is_empty() && stages.len() < Stage::VALUES.len()
+         )
+     }
+ }
+```
+
+**File**: `crates/distributed-datafusion/src/tables/vqueue_entry_status/row.rs` (modified, +24/-12)
+```diff
+@@ -110,14 +110,20 @@ pub(crate) fn append_status_key_row(builder: &mut SysVqueueEntryStatusBuilder, k
+     if row.is_sequence_number_defined() {
+         row.sequence_number(key.id.seq().as_u64());
+     }
+-    if row.is_entry_kind_defined() {
+-        row.fmt_entry_kind(id.kind());
++    if row.is_entry_kind_defined()
++        && let Some(name) = id.kind().name()
++    {
++        row.entry_kind(name);
+     }
+-    if row.is_stage_defined() {
+-        row.stage(key.stage.as_str());
++    if row.is_stage_defined()
++        && let Some(name) = key.stage.name()
++    {
++        row.stage(name);
+     }
+-    if row.is_status_defined() {
+-        row.status(EffectiveStatus::new(key.stage, key.status).as_str());
++    if row.is_status_defined()
++        && let Some(name) = EffectiveStatus::new(key.stage, key.status).name()
++    {
++        row.status(name);
+     }
+     if row.is_created_at_defined()
+         && let Some(at) = key.created_at
+@@ -179,8 +185,10 @@ pub(crate) fn append_entry_row(
+     if row.is_vqueue_id_defined() {
+         row.fmt_vqueue_id(place.qid);
+     }
+-    if row.is_stage_defined() {
+-        row.stage(place.stage.as_str());
++    if row.is_stage_defined()
++        && let Some(name) = place.stage.name()
++    {
++        row.stage(name);
+     }
+     if row.is_has_lock_defined() {
+         row.has_lock(place.has_lock);
+@@ -192,8 +200,10 @@ pub(crate) fn append_entry_row(
+         row.sequence_number(place.seq.as_u64());
+     }
+ 
+-    if row.is_entry_kind_defined() {
+-        row.fmt_entry_kind(id.kind());
++    if row.is_entry_kind_defined()
++        && let Some(name) = id.kind().name()
++    {
++        row.entry_kind(name);
+     }
+ 
+     let Some(EntryState {
+@@ -205,8 +215,10 @@ pub(crate) fn append_entry_row(
+         return;
+     };
+ 
+-    if row.is_status_defined() {
+-        row.status(EffectiveStatus::new(place.stage, *status).as_str());
++    if row.is_status_defined()
++        && let Some(name) = EffectiveStatus::new(place.stage, *status).name()
++    {
++        row.status(name);
+     }
+ 
+     if row.is_created_at_defined() {
+```
+
+**File**: `crates/distributed-datafusion/src/tables/vqueue_entry_status/tests.rs` (modified, +22/-15)
+```diff
+@@ -498,17 +498,18 @@ async fn vqueues_view_matches_v1_stage_reads() {
+         );
+         // Each row shows its effective status, in both engines: the stage's own
+         // for running, suspended and paused entries whatever they stored, and
+-        // `unknown` for a Finished entry without an outcome; a status condition
+-        // selects by it.
++        // NULL for a Finished entry without an outcome, the `unknown` sentinel,
++        // which no status name selects; a status condition selects by the rest.
+         for session in [&old, &new] {
+             assert_eq!(
+                 rows(
+                     session.as_ref(),
+-                    "SELECT DISTINCT stage, status FROM sys_vqueues ORDER BY stage"
++                    "SELECT DISTINCT stage, COALESCE(status, 'NULL') FROM sys_vqueues \
++                     ORDER BY stage"
+                 )
+                 .await,
+                 [
+-                    ["finished", "unknown"],
++                    ["finished", "NULL"],
+                     ["inbox", "new"],
+                     ["paused", "paused"],
+                     ["running", "running"],
+@@ -523,7 +524,7 @@ async fn vqueues_view_matches_v1_stage_reads() {
+                      WHERE status IN ('paused', 'yielded', 'unknown')"
+                 )
+                 .await,
+-                [["4"]],
++                [["2"]],
+                 "status_conditions_select_effective_statuses"
+             );
          }
-     }
- 
-+    /// Whether a barrier may carry this change as soon as every replica is held to its
-+    /// [`Self::min_required_version`]: by the changes applied before, or by the barrier that
-+    /// carries it. Such a change only alters what replicas record from then on: it costs no
-+    /// rollback and needs no opt-in. It must ship in the release its minimum version names, so
-+    /// that every server held to that version knows it.
-+    pub fn rides_along(self) -> bool {
-+        match self {
-+            Self::EnableVqLifecycleRefined => true,
-+            // Each needs its own decision: a migration, or an effect beyond what is recorded.
-+            Self::EnableJournalV2
-+            | Self::EnableVqueues
-+            | Self::EnableUniqueRandomSeeds
-+            | Self::EnableVqueuesSkipCompleted
-+            | Self::EnablePreflightInvocationTerminationRetention
-+            | Self::EnableInconsistentStateMutationCleanup
-+            | Self::EnablePreflightSignalRecording
-+            | Self::EnableByteOffsets => false,
-+        }
-+    }
-+
-     /// Apply this change to the persisted feature set. Returns true if the feature
-     /// change had an effect on the state machine features.
-     pub fn apply_to(self, features: &mut PersistedFeatures) -> bool {
+@@ -812,10 +813,6 @@ async fn finished_entries_read_through_the_transition_index_match_the_scan() {
+             "{select} WHERE stage = 'finished' AND status IN ('failed', 'killed') \
+              ORDER BY transitioned_at DESC NULLS LAST LIMIT 5 OFFSET 2"
+         ),
+-        format!(
+-            "{select} WHERE stage = 'finished' AND status = 'unknown' \
+-             ORDER BY transitioned_at DESC NULLS LAST LIMIT 3"
+-        ),
+         format!(
+             "{select} WHERE stage = 'finished' AND transitioned_at < to_timestamp_millis({}) \
+              ORDER BY transitioned_at DESC NULLS LAST LIMIT 4",
+@@ -835,21 +832,28 @@ async fn finished_entries_read_through_the_transition_index_match_the_scan() {
+             "{select} WHERE stage = 'finished' AND num_attempts + 1 = 1 \
+              ORDER BY transitioned_at DESC NULLS LAST LIMIT 5"
+         ),
++        // A status alone: the entries the index doesn't hold, those in a stage
++        // this binary doesn't know, show no status and match none.
++        format!(
++            "{select} WHERE status = 'failed' ORDER BY transitioned_at DESC NULLS LAST LIMIT 5"
++        ),
+         // Two stages: both stages' lanes, merged.
+         format!(
+             "{select} WHERE stage IN ('finished', 'running') \
+              ORDER BY transitioned_at DESC NULLS LAST LIMIT 5"
+         ),
+     ];
+     let scans = [
+-        // Status alone doesn't prove the stage.
+-        format!(
+-            "{select} WHERE status = 'failed' ORDER BY transitioned_at DESC NULLS LAST LIMIT 5"
+-        ),
++        // Alternatives that together restrict neither column.
+         format!(
+             "{select} WHERE stage = 'finished' OR status = 'new' \
+              ORDER BY transitioned_at DESC NULLS LAST LIMIT 5"
+         ),
++        // `unknown` names no status: the query selects nothing before any read.
++        format!(
++            "{select} WHERE stage = 'finished' AND status = 'unknown' \
++             ORDER BY transitioned_at DESC NULLS LAST LIMIT 3"
++        ),
+         // Another order reads the creation index instead.
+         format!("{select} WHERE stage = 'finished' ORDER BY created_at DESC NULLS LAST LIMIT 5"),
+         // An outer join can add NULLs: nothing is asked of the source.
+@@ -1298,11 +1302,14 @@ async fn active_entries_read_through_the_status_index_match_the_scan() {
+         // A stage and a status that rule each other out leave no lane: the
+         // read returns nothing, as the scan does.
+         format!("{select} WHERE stage = 'inbox' AND status = 'paused' {newest} LIMIT 5"),
++        // A status alone: the only entries the index doesn't hold, those in a
++        // stage this binary doesn't know, show no status and match none.
++        format!("{select} WHERE status = 'new' {newest} LIMIT 5"),
+     ];
+     let scans = [
+-        // Status alone doesn't prove the stage.
+-        format!("{select} WHERE status = 'new' {newest} LIMIT 5"),
++        // Alternatives that together restrict neither column.
+         format!("{select} WHERE stage = 'inbox' OR status = 'new' {newest} LIMIT 5"),
++        // `unknown` names no stage: the query selects nothing before any read.
+         format!("{select} WHERE stage = 'unknown' {newest} LIMIT 5"),
+         // The transition index's order.
+         format!("{select} WHERE stage = 'inbox' ORDER BY transitioned_at DESC NULLS LAST LIMIT 5"),
 ```
 
-**File**: `crates/worker-api/src/processor/features.rs` (modified, +93/-0)
+**File**: `crates/partition-store/src/stats/aggregated/logical_scan_tests.rs` (modified, +4/-2)
 ```diff
-@@ -8,6 +8,9 @@
- // the Business Source License, use of this software will be governed
- // by the Apache License, Version 2.0.
- 
-+use strum::VariantArray;
-+
-+use restate_types::SemanticRestateVersion;
- use restate_types::partitions::{PartitionFeatureChange, PersistedFeatures};
- 
- /// Read-only view of the state-machine features currently enabled for a partition.
-@@ -82,6 +85,46 @@ pub trait PartitionFeatures {
-     fn is_vq_lifecycle_refined_enabled(&self) -> bool {
-         self.has_feature(PartitionFeatureChange::EnableVqLifecycleRefined)
-     }
-+
-+    /// The newest Restate version the enabled changes require. Changes are enabled only by
-+    /// version barriers, so every replica of the partition is held to it, unlike the stored
-+    /// minimum version, which storage features raise on each replica on its own.
-+    fn required_version(&self) -> Option<&'static SemanticRestateVersion> {
-+        PartitionFeatureChange::VARIANTS
-+            .iter()
-+            .filter(|change| self.has_feature(**change))
-+            .map(|change| change.min_required_version())
-+            .max()
-+    }
-+
-+    /// The changes that ride along ([`PartitionFeatureChange::rides_along`]) with a barrier
-+    /// proposing `queued`, at least `barrier_version`, or, with neither, on a barrier of their
-+    /// own: those not enabled yet whose minimum version every replica is held to by then.
-+    fn riding_along(
-+        &self,
-+        queued: &[PartitionFeatureChange],
-+        barrier_version: Option<&SemanticRestateVersion>,
-+    ) -> Vec<PartitionFeatureChange> {
-+        let held_to = queued
-+            .iter()
-+            .map(|change| change.min_required_version())
-+            .chain(self.required_version())
-+            .chain(barrier_version)
-+            .max();
-+        let Some(held_to) = held_to else {
-+            return Vec::new();
-+        };
-+        PartitionFeatureChange::VARIANTS
-+            .iter()
-+            .copied()
-+            .filter(|change| {
-+                change.rides_along()
-+                    && !self.has_feature(*change)
-+                    && !queued.contains(change)
-+                    && change.min_required_version() <= held_to
-+            })
-+            .collect()
-+    }
- }
- 
- impl PartitionFeatures for PersistedFeatures {
-@@ -185,3 +228,53 @@ impl<T: PartitionFeatures> PartitionFeatures for &mut T {
-         (**self).is_preflight_invocation_termination_retention_enabled()
-     }
- }
-+
-+#[cfg(test)]
-+mod tests {
-+    use restate_types::{RESTATE_VERSION_1_8_1, RESTATE_VERSION_1_8_2};
-+
-+    use super::*;
-+
-+    /// A change that rides along joins a barrier once every replica is held to its minimum
-+    /// version: by an earlier barrier's changes, by changes queued for this one, or by this
-+    /// barrier's own version, a pure bump included. Below it, or once enabled or queued, it
-+    /// doesn't.
-+    #[test]
-+    fn changes_ride_along_once_replicas_are_held_to_their_version() {
-+        use PartitionFeatureChange::*;
-+
-+        let features = |changes: &[PartitionFeatureChange]| {
-+            PersistedFeatures::from_iter(changes.iter().copied())
-+        };
-+        let before_1_8_2 = features(&[EnableJournalV2, EnableVqueues]);
-+        let with_byte_offsets = features(&[EnableVqueues, EnableByteOffsets]);
-+        assert_eq!(
-+            with_byte_offsets.required_version(),
-+            Some(&*RESTATE_VERSION_1_8_2)
-+        );
-+
-+        // Nothing holds the replicas to v1.8.2 yet.
-+        assert!(before_1_8_2.riding_along(&[], None).is_empty());
-+        assert!(
-+            before_1_8_2
-+                .riding_along(&[], Some(&RESTATE_VERSION_1_8_1))
-+                .is_empty()
-+        );
-+        // An earlier barrier, this barrier's changes, or this barrier's own version.
-+        for riding in [
-+            with_byte_offsets.riding_along(&[], None),
-+            before_1_8_2.riding_along(&[EnableByteOffsets], None),
-+            before_1_8_2.riding_along(&[], Some(&RESTATE_VERSION_1_8_2)),
-+        ] {
-+            assert_eq!(riding, [EnableVqLifecycleRefined]);
-+        }
-+        // Not twice.
-+        assert!(
-+            with_byte_offsets
-+                .riding_along(&[EnableVqLifecycleRefined], None)
-+                .is_empty()
-+        );
-+        let refined = features(&[EnableByteOffsets, EnableVqLifecycleRefined]);
-+        assert!(refined.riding_along(&[], None).is_empty());
-+    }
-+}
+@@ -219,7 +219,8 @@ async fn deployment_and_object_schemas_expand_buckets_before_sql_residuals() {
+         ("ORDER BY num_entries",                                              4),
+         ("WHERE deployment_id = 'dp_a' AND num_entries > 2 ORDER BY num_entries",1),
+         ("WHERE deployment_id LIKE 'dp_%' AND stage = 'running'",              1),
+-        ("WHERE stage = 'unknown' AND status = 'unknown'",                     1),
++        // The `Unknown` sentinels show as NULL and are no value to select by.
++        ("WHERE stage = 'unknown' AND status = 'unknown'",                     0),
+         ("WHERE deployment_id IS NULL",                                       0),
+         ("WHERE stage = 'invalid' OR status = 'invalid'",                      0),
+         ("WHERE stage <> 'inbox' ORDER BY num_entries DESC LIMIT 1",           1),
+@@ -239,7 +240,8 @@ async fn deployment_and_object_schemas_expand_buckets_before_sql_residuals() {
+         ("WHERE scope LIKE '%' ORDER BY num_entries",                          3),
+         ("WHERE partition_key = 22 AND stage = 'finished'",                    1),
+         ("WHERE kind = 'state-mutation'",                                      1),
+-        ("WHERE stage = 'unknown' AND status = 'unknown'",                     1),
++        // The `Unknown` sentinels show as NULL and are no value to select by.
++        ("WHERE stage = 'unknown' AND status = 'unknown'",                     0),
+         ("WHERE scope IS NULL OR (partition_key = 22 AND status = 'running') ORDER BY num_entries",2),
+         ("WHERE kind = 'unknown'",                                             0),
+         ("WHERE handler IS NOT NULL AND num_entries > 2 ORDER BY num_entries LIMIT 1",1),
 ```
 
-**File**: `crates/worker/src/partition/leadership/mod.rs` (modified, +109/-1)
+**File**: `crates/partition-store/src/vqueue_table/entry_index.rs` (modified, +9/-0)
 ```diff
-@@ -636,6 +636,17 @@ where
-                 feature_changes.push(PartitionFeatureChange::EnableVqLifecycleRefined);
-             }
- 
-+            // Changes that cost no rollback ride along once every replica is held to their
-+            // minimum version: by the changes enabled before, or by the barrier this round
-+            // proposes anyway, which also holds the replicas to the partition's current minimum.
-+            let barrier_version = (!feature_changes.is_empty())
-+                .then(|| processor.fsm().min_restate_version().clone());
-+            let riding = processor
-+                .fsm()
-+                .features()
-+                .riding_along(&feature_changes, barrier_version.as_ref());
-+            feature_changes.extend(riding);
-+
-             if !feature_changes.is_empty() {
-                 // Smallest version that supports every listed feature, but never below
-                 // the partition's current min_restate_version.
-@@ -1135,7 +1146,7 @@ mod tests {
-     use restate_types::service_protocol::ServiceProtocolVersion;
-     use restate_types::sharding::KeyRange;
-     use restate_types::{GenerationalNodeId, Version};
--    use restate_wal_protocol::control::AnnounceLeaderCommand;
-+    use restate_wal_protocol::control::{AnnounceLeaderCommand, VersionBarrierCommand};
-     use restate_wal_protocol::invocation::PauseInvocationCommand;
-     use restate_wal_protocol::v2::{CommandKind, Envelope, Raw, commands};
-     use restate_worker_api::invoker::capacity::InvokerCapacity;
-@@ -1285,6 +1296,103 @@ mod tests {
-         Ok(())
-     }
- 
-+    /// A partition that turned byte offsets on already holds every replica to v1.8.2, so its next
-+    /// leader proposes the refined vqueue lifecycle along, which costs no rollback: before taking
-+    /// over, it proposes a barrier carrying exactly that change, at v1.8.2.
-+    #[test(restate_core::test)]
-+    async fn refined_vqueue_lifecycle_rides_along_with_byte_offsets() -> googletest::Result<()> {
-+        let env = TestCoreEnv::create_with_single_node(0, 0).await;
-+
-+        RocksDbManager::init();
-+        let bifrost = Bifrost::init_in_memory(env.metadata_writer).await;
-+        let replica_set_states = PartitionReplicaSetStates::default();
-+        let partition_store_manager = PartitionStoreManager::create(true).await?;
-+        let ingress = IngestionClient::new(
-+            env.networking.clone(),
-+            env.metadata.updateable_partition_table(),
-+            PartitionRouting::new(replica_set_states.clone(), TaskCenter::current()),
-+            NonZeroUsize::new(10 * 1024 * 1024).unwrap(),
-+            SessionOptions::default(),
-+        );
-+        let mut node_ctx = NodeContext::new(
-+            NODE_ID,
-+            Configuration::live(),
-+            replica_set_states,
-+            RuleBookCacheHandle::detached(),
-+            bifrost.clone(),
-+            InvokerCapacity::new_unlimited(),
-+            PartitionLeaderHandlesRegistry::default(),
-+        );
-+        let mut partition_store = partition_store_manager.open(&PARTITION, None).await?;
-+        let mut ctx = ProcessorRawContext::new(
-+            Arc::new(PARTITION),
-+            PersistedFeatures {
-+                vq_lifecycle_refined: false,
-+                ..PersistedFeatures::from_iter([
-+                    PartitionFeatureChange::EnableJournalV2,
-+                    PartitionFeatureChange::EnableVqueues,
-+                    PartitionFeatureChange::EnableUniqueRandomSeeds,
-+                    PartitionFeatureChange::EnablePreflightInvocationTerminationRetention,
-+                    PartitionFeatureChange::EnableInconsistentStateMutationCleanup,
-+                    PartitionFeatureChange::EnablePreflightSignalRecording,
-+                    PartitionFeatureChange::EnableByteOffsets,
-+                ])
-+            },
-+        );
-+        let (leader_query_tx, _leader_query_rx) = restate_worker_api::channel();
-+        let mut state = LeadershipState::new(PARTITION_ID, ingress, leader_query_tx);
-+        state
-+            .run_for_leader(
-+                &mut ctx,
-+                &node_ctx,
-+                Box::new(LeadershipInfo {
-+                    version: Version::MIN,
-+                    leader_epoch: LeaderEpoch::from(1),
-+                    current_config: PartitionConfiguration::default().into(),
-+                    next_config: None,
-+                }),
-+            )
-+            .await?;
-+
-+        let mut reader = bifrost
-+            .create_reader(PARTITION_ID.into(), KeyFilter::Any, Lsn::OLDEST, Lsn::MAX)
-+            .expect("valid reader");
-+        let announce_leader: commands::AnnounceLeaderCommand = reader
-+            .next()
-+            .await
-+            .unwrap()?
-+            .try_decode::<Envelope<Raw>>()
-+            .unwrap()?
-+            .into_typed::<AnnounceLeaderCommand>()
-+            .into_inner()
-+            .unwrap();
-+        state
-+            .on_announce_leader(
-+                &mut node_ctx,
-+    
-```
-
-**File**: `release-notes/unreleased/vq-lifecycle-refined.md` (modified, +3/-1)
-```diff
-@@ -24,7 +24,9 @@ next change.
- 
- ### Enabling it
- 
--Leaders running v1.9.0 or newer turn it on by themselves once every worker node in the cluster runs
-+A partition turns it on by itself as soon as it no longer limits rollbacks: when it already
-+requires v1.8.2, for example because it turned byte offsets on, or when it turns on another feature
-+that does. Leaders running v1.9.0 or newer also turn it on once every worker node in the cluster runs
- v1.9.0 or newer. To turn it on earlier, upgrade all nodes to v1.8.2 or newer, then enable:
- 
- ```toml
+@@ -701,11 +701,20 @@ impl Keyed {
+         stage: impl Fn(&T::Clause) -> Option<&ValuePredicate<Stage>>,
+         status: impl Fn(&T::Clause) -> Option<&ValuePredicate<EffectiveStatus>>,
+     ) -> impl Iterator<Item = (Stage, Status)> {
++        // A condition every value satisfies restricts nothing, as a column
++        // without one comes: it keeps the lanes of entries showing the
++        // `unknown` sentinel, which is no value, and leaves them to the
++        // caller's predicate.
+         let conditions: Vec<_> = match selection {
+             Selection::Predicates(predicates) => predicates
+                 .iter()
+                 .flat_map(|(_, clauses)| clauses.iter())
+                 .filter_map(&status)
++                .filter(|condition| {
++                    !EffectiveStatus::VALUES
++                        .iter()
++                        .all(|value| condition.matches(value))
++                })
+                 .cloned()
+                 .collect(),
+             Selection::All | Selection::Empty => Vec::new(),
 ```
 
 ---
 
-### Incident Patch 2: `e711e896` (2026-11-20)
-**Commit Message**: [CI] Tag images built from non-release git tags with the tag name
+### Incident Patch 2: `4272d581` (2026-11-21)
+**Commit Message**: [PartitionStore] Skip probe keys of pairs no status-index lane reads
 
-Dispatching docker.yml on a git tag that isn't a release tag (e.g.
-`my-build.2`) produced no image tags at all: `type=ref,event=branch`
-only matches branches, and the semver rules skip non-semver tags, so
-the registry push failed. The only way to publish a custom build was
-therefore a branch build, whose image tag moves with every rebuild.
+A status-index read opens one lane per (stage, stored status) pair the query
+can match, and finds which lanes have keys with one probe. The probe pins the
+lanes' stages and statuses as two sets, so it covers every combination of
+them. Until #6000 the lanes were exactly that product. Since the status
+column shows the effective status, a status condition keeps only the pairs
+whose effective status it accepts, and the probe can cover pairs that aren't
+lanes:
 
-Add `type=ref,event=tag` for tags that don't start with `v`, so such
-builds get an immutable image tag named after the git tag. Release tags
-(`v*`, including `vX.Y.Z-hotfix.N`) keep producing only the semver tags.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/docker.yml` (modified, +3/-0)
-```diff
-@@ -275,8 +275,11 @@ jobs:
-           flavor: |
-             latest=${{ (steps.is-latest.outputs.is_latest == 'true') && 'true' || 'false' }}
-             ${{ steps.prefix.outputs.value != '' && format('prefix={0},onlatest=true', steps.prefix.outputs.value) || '' }}
-+          # Non-`v` tags (e.g. custom builds dispatched on `my-build.2`) get their own name as an
-+          # immutable image tag; release tags (`v*`) keep getting only the semver tags below.
-           tags: |
-             type=ref,event=branch
-+            type=ref,event=tag,enable=${{ !startsWith(github.ref, 'refs/tags/v') }}
-             type=semver,pattern={{version}}
-             type=semver,pattern={{version}},suffix=-{{date 'YYYYMMDD'}}
-             type=semver,pattern={{major}}.{{minor}}
+```sql
+SELECT entry_id FROM sys_vqueue_entry_status
+WHERE stage IN ('inbox', 'paused') AND status IN ('new', 'paused')
+ORDER BY created_at DESC LIMIT 5
+-- lanes: (inbox, new) and every (paused, *)
+-- probe: (inbox | paused) x (new | every status), so (inbox, backing-off) too
 ```
 
-**File**: `docs/dev/build-and-ci.md` (modified, +5/-0)
+Finding a key of such a pair failed the read with a data-integrity error. If
+there were more such pairs than lanes, the read fell back to a scan instead.
+
+- The read skips the keys of pairs no lane reads.
+- Discovery is bounded by the pairs the probe covers instead of the lanes.
+
+Tests: the active-entries test reads the query above through the index and
+matches the scan; it failed with
+
+**File**: `crates/distributed-datafusion/src/tables/vqueue_entry_status/tests.rs` (modified, +10/-0)
 ```diff
-@@ -222,6 +222,11 @@ A **reusable workflow** called by this repo and many others in the restatedev or
- 
- `cacheOnly` and `cacheReadOnly` can only be set through `workflow_call`. `workflow_dispatch` is at GitHub's 10-input limit.
- 
-+**Image tags** (non-`release` profiles prefix each tag with `<profile>-`):
-+- Branch builds are tagged with the branch name (`/` becomes `-`). The tag moves with every rebuild of that branch.
-+- Release tags (`vX.Y.Z`) get semver tags (`X.Y.Z`, `X.Y.Z-<date>`, `X.Y`) and, for the newest release, `latest`.
-+- Any other git tag becomes the image tag as is. Use this for a custom build that must stay identifiable: push a tag and dispatch the workflow on it, e.g. `gh workflow run docker.yml --ref my-build.2` publishes `restate:my-build.2`. Such tags must not start with `v` (no image tag would be produced) and must not contain `X.Y.Z`, because that would trigger `release.yml`.
-+
- **Build optimizations:**
- - Uses `sccache` with WarpBuild cache, keyed by Cargo profile and `Cargo.lock`
- - Multi-platform builds via Docker Buildx
+@@ -1288,6 +1288,16 @@ async fn active_entries_read_through_the_status_index_match_the_scan() {
+         ),
+         // The index holds Finished entries too.
+         format!("{select} WHERE stage IN ('inbox', 'finished') {newest} LIMIT 5"),
++        // Lanes that aren't every combination of their stages and statuses:
++        // (inbox, new) and every paused pair. The probe also finds keys of
++        // (inbox, backing-off), which no lane reads.
++        format!(
++            "{select} WHERE stage IN ('inbox', 'paused') AND status IN ('new', 'paused') \
++             {newest} LIMIT 5"
++        ),
++        // A stage and a status that rule each other out leave no lane: the
++        // read returns nothing, as the scan does.
++        format!("{select} WHERE stage = 'inbox' AND status = 'paused' {newest} LIMIT 5"),
+     ];
+     let scans = [
+         // Status alone doesn't prove the stage.
 ```
 
----
-
-### Incident Patch 3: `4548a2b5` (2026-11-20)
-**Commit Message**: [UI] Updating Restate UI to v1.1.8 published at https://github.com/restatedev/restate-web-ui/releases/download/v1.1.8/ui-v1.1.8.tar (#5985)
-
-Co-authored-by: restatedev-web-ui[bot] <350330018+restatedev-web-ui[bot]@users.noreply.github.com>
-
-**File**: `Cargo.lock` (modified, +2/-2)
+**File**: `crates/partition-store/src/status_lanes.rs` (modified, +19/-6)
 ```diff
-@@ -9449,8 +9449,8 @@ dependencies = [
+@@ -54,9 +54,15 @@ const LANE_RUN_FIELDS: usize = 4;
+ const LANE_BUCKET_FIELDS: usize = 3;
  
- [[package]]
- name = "restate-web-ui"
--version = "1.1.7"
--source = "git+https://github.com/restatedev/restate-web-ui-crate?tag=v1.1.7#b41e8227acd6904c38fc409917bbc02dd7b27eeb"
-+version = "1.1.8"
-+source = "git+https://github.com/restatedev/restate-web-ui-crate?tag=v1.1.8#0e3cce8c1d13619f7401681d033cfa102e4286d2"
+ /// The selections of a status index read: each candidate lane's, in key order,
+-/// and a probe of all of them at once.
++/// and a probe of every combination of their stages and statuses at once.
++///
++/// The probe can cover pairs that aren't lanes: the lanes (inbox, new) and
++/// (paused, started) make it cover (inbox, started) and (paused, new) too. The
++/// read skips the keys of those.
+ pub(crate) struct StatusLanes<K> {
+     probe: Arc<KeySelection<K>>,
++    /// How many pairs the probe covers: at most one prefix each.
++    probe_pairs: usize,
+     lanes: Vec<(Stage, Status, Arc<KeySelection<K>>)>,
+ }
  
- [[package]]
- name = "restate-worker"
-```
-
-**File**: `crates/admin/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -40,7 +40,7 @@ restate-util-time = { workspace = true }
- restate-types = { workspace = true }
- restate-util-string = { workspace = true }
- restate-wal-protocol = { workspace = true }
--restate-web-ui = { git = "https://github.com/restatedev/restate-web-ui-crate", optional = true, version = "1.1.7", tag = "v1.1.7" }
-+restate-web-ui = { git = "https://github.com/restatedev/restate-web-ui-crate", optional = true, version = "1.1.8", tag = "v1.1.8" }
+@@ -82,7 +88,11 @@ impl<K> StatusLanes<K> {
+             .into_iter()
+             .map(|(stage, status)| Ok((stage, status, Arc::new(prepare(&[stage], &[status])?))))
+             .collect::<Result<_>>()?;
+-        Ok(Self { probe, lanes })
++        Ok(Self {
++            probe,
++            probe_pairs: stages.len() * statuses.len(),
++            lanes,
++        })
+     }
  
- ahash = { workspace = true }
- anyhow = { workspace = true }
+     /// The bytes it holds: the shared probe and lane selections, each with its
+@@ -138,11 +148,11 @@ where
+         (memory, held): (&SharedMemory, &mut Held),
+         discovered: &mut u64,
+     ) -> Result<Option<Self>> {
+-        // The lanes with keys, in key order, charged while the read holds them.
++        // The pairs with keys, in key order, charged while the read holds them.
+         let Some((prefixes, charged)) = snapshot.distinct_prefixes::<T>(
+             Arc::clone(&prepared.probe),
+             2,
+-            (prepared.lanes.len(), limits.max_discovery_keys),
++            (prepared.probe_pairs, limits.max_discovery_keys),
+             Box::new(memory.clone()),
+             discovered,
+         )?
+@@ -166,11 +176,14 @@ where
+                 .ok_or(StorageError::DataIntegrityError)?;
+             let stage = StageRankCodec::decode_encoded(StageRankCodec::take_encoded(&mut fields)?)?;
+             let status = StatusCodec::decode_encoded(StatusCodec::take_encoded(&mut fields)?)?;
+-            let (.., selection) = prepared
++            // A pair the probe covers but no lane reads.
++            let Some((.., selection)) = prepared
+                 .lanes
+                 .iter()
+                 .find(|(s, t, _)| (*s, *t) == (stage, status))
+-                .ok_or(StorageError::DataIntegrityError)?;
++            else {
++                continue;
++            };
+             let opening = Opening {
+                 runs: available,
+                 examined: discovered,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6008** (2026-11-21): [QueryEngine] Treat `unknown` as a sentinel, never as a value (@AhmedSoliman)
+- **PR #6005** (2026-11-21): [PartitionStore] Skip probe keys of pairs no status-index lane reads (@AhmedSoliman)
+- **PR #6004** (2026-11-21): [QueryEngine] Show canonical_id in sys_invocation (@AhmedSoliman)
+- **PR #6003** (2026-11-21): [QueryEngine] Show the stats tables' effective status (@AhmedSoliman)
 - **PR #6002** (2026-11-20): [Metadata] Add restate.schema.size.bytes gauge (@tillrohrmann)
 - **PR #6001** (2026-11-20): [CI] Tag images built from non-release git tags with the tag name (@tillrohrmann)
-- **PR #6000** (2026-11-20): [QueryEngine] Show vqueue entries' effective status (@AhmedSoliman)
-- **PR #5999** (2026-11-20): [PartitionStore] Retire finished_entry_by_outcome/1 (@AhmedSoliman)
-- **PR #5998** (2026-11-20): [Types] Add the effective status of vqueue entries (@AhmedSoliman)
-- **PR #5997** (2026-11-20): [Types] Move vqueue entries' Stage and Status to restate-types (@AhmedSoliman)
 
 ---
 
@@ -2098,40 +2165,36 @@ Co-authored-by: restatedev-web-ui[bot] <350330018+restatedev-web-ui[bot]@users.n
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [Worker] Turn vq-lifecycle-refined on once a partition requires v1.8.2 anyway
+## X. [QueryEngine] Treat `unknown` as a sentinel, never as a value
 
 **RULE**:
-When implementing operations in `crates/types/src/config/common.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in restatedev/restate. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cli/src/clients/datafusion_helpers/v2.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in restatedev/restate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7d473999`: [Worker] Turn vq-lifecycle-refined on once a partition requires v1.8.2 anyway. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2aaabe8c`: [QueryEngine] Treat `unknown` as a sentinel, never as a value. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/types/src/config/common.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `cli/src/clients/datafusion_helpers/v2.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    /// time instead of the completing record's time. A partition turns this on when it next
-    /// elects a leader with this option enabled. Any leader turns it on regardless of this option
-    /// once the partition requires v1.8.2 anyway, for example for byte offsets, and leaders
-    /// running v1.9.0 or newer once every worker node in the cluster runs v1.9.0 or newer.
-    /// TODO(v1.9): Remove this option. From v1.9.0, leaders turn the feature on by themselves once
-    /// every worker node runs v1.9.0 or newer.
-    ///
+    // NULL from Restate 1.8.2 where the server doesn't recognize the value.
+    stage: Option<String>,
+    status: Option<String>,
+        self.stage.as_deref() == Some("inbox") && self.status.as_deref() == Some("backing-off")
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    /// time instead of the completing record's time. A
-    /// partition turns this on when it next elects a leader with this option enabled. Leaders
-    /// running v1.9.0 or newer turn it on regardless of this option, once every worker node in
-    /// the cluster runs v1.9.0 or newer.
+    stage: String,
+    status: String,
+        self.stage == "inbox" && self.status == "backing-off"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7d473999` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2aaabe8c` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

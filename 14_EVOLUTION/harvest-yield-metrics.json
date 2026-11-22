@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T07:56:43.048Z",
-  "total_cycles_completed": 11459,
-  "total_learnings_persisted": 11459,
-  "total_rules_promoted": 10728,
+  "last_updated": "2026-11-22T08:09:29.341Z",
+  "total_cycles_completed": 11462,
+  "total_learnings_persisted": 11462,
+  "total_rules_promoted": 10730,
   "history": [
-    {
-      "timestamp": "2026-11-21T15:48:58.577Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T15:49:15.195Z",
-      "repository": "fallow-rs/fallow",
-      "learningId": "learn-github-fallow-rs-fallow",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T15:49:15.305Z",
-      "repository": "Comfy-Org/Fibo-2.0",
-      "learningId": "learn-huggingface-comfy-org-fibo-2-0",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T15:59:37.078Z",
       "repository": "KRAFTON/Raon-1-mini-preview",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-22T07:56:43.048Z",
       "repository": "gocd/gocd",
       "learningId": "learn-github-gocd-gocd",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T08:09:19.071Z",
+      "repository": "Edge0/Edge0-145B-NVFP4",
+      "learningId": "learn-huggingface-edge0-edge0-145b-nvfp4",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T08:09:24.371Z",
+      "repository": "restatedev/restate",
+      "learningId": "learn-github-restatedev-restate",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T08:09:29.341Z",
+      "repository": "onejs/one",
+      "learningId": "learn-github-onejs-one",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

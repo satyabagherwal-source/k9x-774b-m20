@@ -3,7 +3,7 @@
 > **Source Version**: `hf-edge0-edg`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T06:56:53.958Z  
+> **Timestamp**: 2026-11-22T08:09:18.459Z  
 > **Learning ID**: `learn-huggingface-edge0-edge0-145b-nvfp4`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-edge0-edge0-145b-nvfp4-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Edge0/Edge0-145B-NVFP4](https://huggingface.co/Edge0/Edge0-145B-NVFP4))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T06:56:49.956Z  
+> **Harvest Timestamp**: 2026-11-22T08:09:12.361Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 14134 downloads | 213 likes
+- **Stars / Engagement**: 88713 downloads | 698 likes
 
 ---
 
