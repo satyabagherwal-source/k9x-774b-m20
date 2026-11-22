@@ -4,24 +4,24 @@
 {
   "source_repository": "xerj-org/xerj",
   "source_url": "https://github.com/xerj-org/xerj",
-  "source_version": "cc6aee8f",
+  "source_version": "34a14c0d",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-19T20:55:53.990Z",
+  "timestamp": "2026-11-22T04:05:07.409Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-xerj-org-xerj",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [xerj-org/xerj](https://github.com/xerj-org/xerj) (Revision: `cc6aee8f`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T20:55:53.990Z`  
+> **Provenance**: Harvested from [xerj-org/xerj](https://github.com/xerj-org/xerj) (Revision: `34a14c0d`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-22T04:05:07.409Z`  
 > **Learning ID**: `learn-github-xerj-org-xerj`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain K (Quality & Verification Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), G (Architecture Intelligence), J (Search & Distribution Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence), C (Market & Business Intelligence), A (Human & Need Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 51%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), J (Search & Distribution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence), C (Market & Business Intelligence), F (Design Intelligence)
+- **Confidence Rating**: 56%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from xerj-org/xerj:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/xerj-org-xerj-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/xerj-org/xerj](https://github.com/xerj-org/xerj))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T20:55:52.779Z  
+> **Harvest Timestamp**: 2026-11-22T04:05:06.081Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: AI search engine and MCP server for bots and agents. One Rust binary indexes code, docs, logs, JSONL/CSV and PDFs for BM25 full-text, vector and hybrid search, code search without grep, agent memory and RAG. Elasticsearch-compatible API; Corpus Hub serves hundreds of reference memory corpora.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 17983 stars
+- **Stars / Engagement**: 19261 stars
 
 ---
 
@@ -141,6 +141,21 @@ if rows:
     json.dump(rows, open(os.path.join(HERE, "out", "summary.json"), "w"), indent=1)
 for r in rows:
     print(f'{r["system"]:<22}{r["config"]:<22} h@1 {r["hit_at_1_pct"]:>5}  h@5 {r["hit_at_5_pct"]:>5}  ex {r["exact_hit5_pct"]:>5} para {r["paraphrase_hit5_pct"]:>5} upd-new {r["update_newest_wins_pct"]:>5} dis {r["distractor_correct_first_pct"]:>5}  w50 {r["write_ms_p50"]:>8} q50 {r["query_ms_p50"]:>8} q95 {r["query_ms_p95"]:>8}')
+
+```
+
+### Core Architecture Module: `benchmarks/agent-search-ranking-2026-11/fixtures/pos/core/src/position.rs`
+```
+pub struct Position {
+    pub symbol: String,
+    pub qty: i64,
+    pub open_price: f64,
+    pub avg_price: f64,
+}
+
+impl Position {
+    pub fn pnl(&self, last: f64) -> f64 { (last - self.avg_price) * self.qty as f64 }
+}
 
 ```
 
@@ -1464,297 +1479,17 @@ impl DecideModel {
             let seq_len = ro
 ```
 
-### Core Architecture Module: `engine/crates/xerj-ai/src/embed.rs`
-```
-//! Embedding proxy — async HTTP client for OpenAI-compatible embedding APIs.
-//!
-//! Supports:
-//! - Batch embedding with configurable model
-//! - Rate limiting (token bucket)
-//! - Retry with exponential backoff
-//! - Configurable timeout
-
-use serde::{Deserialize, Serialize};
-use std::sync::Arc;
-use std::time::Duration;
-use tokio::sync::Semaphore;
-use tokio::time::sleep;
-use tracing::{debug, warn};
-use xerj_common::XerjError;
-
-/// Result alias.
-pub type Result<T> = std::result::Result<T, XerjError>;
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Config
-// ─────────────────────────────────────────────────────────────────────────────
-
-/// Configuration for the embedding proxy.
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct EmbeddingProxyConfig {
-    /// API endpoint URL.
-    ///
-    /// Before [`EmbeddingProxy::new`], this is the configured value
-    /// (`embedding.default_endpoint`). `new` rewrites it to the URL that is
-    /// actually POSTed (#2355). Accepted forms, trailing slash optional:
-    ///
-    /// * a base whose path ends in `/v1` — `/embeddings` is appended
-    ///   (`http://localhost:8000/v1` → `http://localhost:8000/v1/embeddings`)
-    /// * a bare origin (`http://host:port` or `http://host:port/`) —
-    ///   `/embeddings` is appended
-    /// * a path that already ends in `/embeddings` — used unchanged, aside
-    ///   from dropping a trailing slash
-    ///
-    /// Any other path is refused here, before a request is sent. The error
-    /// names the configured URL and suggests `{origin}/v1/embeddings`.
-    pub endpoint: String,
-    /// API key (sent as `Authorization: Bearer <key>`).
-    pub api_key: Option<String>,
-    /// Default embedding model name.
-    pub model: String,
-    /// Request timeout in milliseconds, per HTTP attempt.
-    ///
-    /// Milliseconds, because `embedding.timeout_ms` is: this field used to be
-    /// whole seconds, filled with `timeout_ms / 1000`, so 1500 became a 1 s
-    /// timeout and anything under 1000 became 0 s, which fails every request.
-    #[serde(default = "default_timeout_ms")]
-    pub timeout_ms: u64,
-    /// Maximum concurrent in-flight requests.
-    #[serde(default = "default_max_concurrent")]
-    pub max_concurrent: usize,
-    /// Maximum number of retries on transient failures.
-    #[serde(default = "default_max_retries")]
-    pub max_retries: u32,
-    /// Maximum input texts per request (#1190). Providers cap
-    /// `input` array length (OpenAI: 2048, many self-hosted ones far lower);
-    /// one `_bulk` of N docs used to leave here as a single N-input request.
-    /// Default 64 mirrors `embedding.batch_size`.
-    #[serde(default = "default_batch_size")]
-    pub batch_size: usize,
-}
-
-fn default_timeout_ms() -> u64 {
-    30_000
-}
-fn default_max_concurrent() -> usize {
-    4
-}
-fn default_max_retries() -> u32 {
-    3
-}
-fn default_batch_size() -> usize {
-    64
-}
-
-impl EmbeddingProxyConfig {
-    pub fn new(endpoint: impl Into<String>, model: impl Into<String>) -> Self {
-        Self {
-            endpoint: endpoint.into(),
-            api_key: None,
-            model: model.into(),
-            timeout_ms: default_timeout_ms(),
-            max_concurrent: default_max_concurrent(),
-            max_retries: default_max_retries(),
-            batch_size: default_batch_size(),
-        }
-    }
-
-    pub fn with_api_key(mut self, key: impl Into<String>) -> Self {
-        self.api_key = Some(key.into());
-        self
-    }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Wire types
-// ─────────────────────────────────────────────────────────────────────────────
-
-#[derive(Debug, Serialize)]
-struct EmbedRequest<'a> {
-    input: &'a [String],
-    model: &'a str,
-}
-
-#[derive(Debug, Deserialize)]
-struct EmbedResponse {
-    data: Vec<EmbedDatum>,
-}
-
-#[derive(Debug, Deserialize)]
-struct EmbedDatum {
-    embedding: Vec<f32>,
-    /// Position of this vector in the request's `input`. OpenAI always sends
-    /// it; some OpenAI-compatible routes omit it and return the vectors in
-    /// request order, so a missing `index` falls back to the position.
-    #[serde(default)]
-    index: Option<usize>,
-}
-
-/// Put the vectors back in request order. Every datum carries an `index`
-/// (sorted by it) or none does (kept in the order received); a mix of the two,
-/// or a count that does not match the request, is a contract violation.
-fn order_embeddings(
-    mut data: Vec<EmbedDatum>,
-    expected: usize,
-) -> std::result::Result<Vec<Vec<f32>>, String> {
-    let with_index = data.iter().filter(|d| d.index.is_some()).count();
-    if with_index != 0 && with_index != data.len() {
-        return Err(format!(
-            "{with_index} of {} embeddings carry an index; expected all or none",
-            data.len()
-        ));
-    }
-    if with_index == data.len() {
-        data.sort_by_key(|d| d.index);
-    }
-    if data.len() != expected {
-        return Err(format!(
-            "expected {expected} embeddings, got {}",
-            data.len()
-        ));
-    }
-    Ok(data.into_iter().map(|d| d.embedding).collect())
-}
-
-/// A single embedding attempt's failure, tagged with whether a retry could
-/// plausibly succeed (item 9). Only `retryable` failures are re-attempted by
-/// [`EmbeddingProxy::send_with_retry`]; a permanent failure (4xx client error,
-/// contract violation) returns immediately instead of stalling ~2 min/doc.
-struct EmbedFailure {
-    err: XerjError,
-    retryable: bool,
-}
-
-impl EmbedFailure {
-    fn transient(err: XerjError) -> Self {
-        Self {
-            err,
-            retryable: true,
-        }
-    }
-    fn permanent(err: XerjError) -> Self {
-        Self {
-            err,
-            retryable: false,
-        }
-    }
-}
-
-/// Whether an upstream HTTP status warrants a retry (item 9). Server errors
-/// (5xx), rate-limit (429), and request-timeout (408) are transient; all
-/// other 4xx client errors are permanent (fail fast).
-fn status_is_retryable(code: u16) -> bool {
-    code >= 500 || code == 429 || code == 408
-}
-
-/// `scheme://host[:port]` for `url`, with brackets around an IPv6 host.
-fn endpoint_origin(url: &reqwest::Url) -> String {
-    let host = url.host_str().unwrap_or("");
-    let host = if host.contains(':') {
-        format!("[{host}]")
-    } else {
-        host.to_string()
-    };
-    match url.port() {
-        Some(port) => format!("{}://{host}:{port}", url.scheme()),
-        None => format!("{}://{host}", url.scheme()),
-    }
-}
-
-/// Request URL for one OpenAI-compatible embeddings call (#2355).
-///
-/// `default_endpoint` used to be POSTed verbatim, so the usual client base
-/// `http://host:port/v1` 404'd. A base ending in `/v1` (trailing slash
-/// optional) and a bare origin have `/embeddings` appended. A path that
-/// already ends in `/embeddings` is kept, with a trailing slash removed so
-/// `/v1/embeddings/` and `/v1/embeddings` hit the same route. Query strings
-/// stay. Any other path is refused: appending would guess a route and send
-/// document text there. The error names the configured URL and the full
-/// `{origin}/v1/embeddings` path to set instead.
-fn resolve_embeddings_endpoint(raw: &str) -> Result<String> {
-    let configured = raw.trim();
-    let mut url = reqwest::Url::parse(configured)
-        .map_err(|e| XerjError::embedding(format!("invalid embedding endpoint: {e}")))?;
-    if !matches!(url.scheme(), "http" | "https") {
-        return Err(XerjError::embedding(
-            "embedding endpoint must use http or https",
-        ));
-    }
-    if url.host_str().is_none() {
-        let suggestion = format!("{configured}/v1/embeddings");
-        return Err(XerjError::embedding(format!(
-            "embedding endpoint `{configured}` has no host, so it was not called. \
-             Set embedding.default_endpoint to `{suggestion}`."
-        )));
-    }
-
-    let trimmed = url.path().trim_end_matches('/');
-    let path = if trimmed.is_empty() { "/" } else { trimmed };
-    let resolved = if path == "/" {
-        "/embeddings".to_string()
-    } else if path.ends_with("/embeddings") {
-        path.to_string()
-    } else if path.ends_with("/v1") {
-        format!("{path}/embeddings")
-    } else {
-        let origin = endpoint_origin(&url);
-        let suggestion = format!("{origin}/v1/embeddings");
-        return Err(XerjError::embedding(format!(
-            "embedding endpoint `{configured}` is not an embeddings URL, so it was not called. \
-             A base URL ending in `/v1` or `/v1/` has `/embeddings` appended, and so does a bare \
-             host (`{origin}` or `{origin}/`). Any other path must already end in `/embeddings`. \
-             Set embedding.default_endpoint to `{suggestion}`."
-        )));
-    };
-    url.set_path(&resolved);
-    Ok(url.as_str().to_string())
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// EmbeddingProxy
-// ─────────────────────────────────────────────────────────────────────────────
-
-/// Async HTTP embedding proxy.
-///
-/// Thread-safe — clone-share freely between tasks.
-#[derive(Clone)]
-pub struct EmbeddingProxy {
-    config: EmbeddingProxyConfig,
-    client: reqwest::Client,
-    /// Concurrency limiter.
-    semaphore: Arc<Semaphore>,
-}
-
-impl EmbeddingProxy {
-    /// Create a new proxy with the given config.
-    ///
-    /// Resolves [`EmbeddingProxyConfig::endpoint`] before the client is
-    /// built, so a `/v1` base is completed and an unrecognized path fails
-    /// here — at startup, when `mode = "proxy"` — rather than as a 404 on
-    /// the first document.
-    pub fn new(mut config: EmbeddingProxyConfig) -> Result<Self> {
-        config.endpoint = resolve_embeddings_endpoint(&config.endpoint)?;
-        let client = reqwest::Client::builder()
-            .timeout(Duration::from_millis(config.timeout_ms))
-            .build()
-            .map_err(|e| XerjError::embedding(format!("HTTP client init: {e}")))?;
-
-        let semaphore = Arc::new(Semaphore::new(config.max_concurrent));
-
- 
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2903** (2026-11-04): **tests: debug-profile local_def tests stack-overflow on macOS arm64, and the 127.0.0.2 loopback_proxy test fails on stock macOS without naming the missing alias**
-  *Symptoms*: From field report #2902 (JoyCode, macOS 26.2 arm64, rc.100 / main):  1. Debug-profile `local_def` tests stack-overflow and SIGABRT on clean `main` on this host. Nothing in CONTRIBUTING says to use `--profile ci-test`, so contributors first think their patch broke it. 2. `loopback_proxy::loopback_ignores_an_unreachable_proxy_and_a_proxied_503_names_the_proxy` needs a `127.0.0.2` loopback alias, which stock macOS doesn't have. The failure says "request to http://127.0.0.2:9/... failed" with no hint that the host lacks the alias.  Expected: the debug-profile tests either pass (e.g. larger test thread stack) or CONTRIBUTING documents `--profile ci-test`; the 127.0.0.2 test skips with a clear message (or names the missing alias and the `ifconfig lo0 alias 127.0.0.2` fix) when the alias isn't configured.
+- **Issue #3323** (2026-11-20): **server: a connection mid-request at startup hand-over answers 503 node_starting_exception after the node is ready**
+  *Symptoms*: ## What happens  While the engine opens its data dir, the ES-compat and REST ports answer `503 node_starting_exception` (#2575, `StartingResponder` in `engine/crates/xerj-server/src/main.rs`). A connection that is still sending its request when the engine finishes opening keeps answering that 503 **after** the node is ready and the real router is serving other connections.  ## Repro (on `main`, `cc6aee8f7`)  Data dir with 356 indices (so `Engine::new` takes a few seconds), private port, `--insecure`. A client:  1. polls `GET /_cluster/health` until it gets the starting 503; 2. opens 4 raw TCP connections and sends `GET /_cluster/health HTTP/1.1\r\nHost: x\r\n` without the final blank line; 3. waits for `GET /health/ready` = 200 on a new connection, then 3 more seconds; 4. sends the final `\r\n` on the 4 connections.  Result: **4/4 answered `HTTP/1.1 503 Service Unavailable` with `node_starting_exception`**, 3 s after `/health/ready` returned 200.  What did *not* reproduce (same build, same data dir):  - 16 and 32 keep-alive threads hammering `/_cluster/health`, `/hx/_search`, `/health/ready` and `/` across the ready transition: 0 starting 503s after the first 200 (80k and 165k requests). Each run got 16 and 32 `RemoteDisconnected` at the hand-over: a keep-alive connection from the starting phase is closed under the client. - 32 keep-alive connections that got the starting 503, sat idle, and were reused 3 s after ready: 32/32 `RemoteDisconnected`, no 503.  ## Root cause  `Star
 
-- **Issue #2898** (2026-11-03): **mcp: a tools/call with no id blocks the stdio read loop and still gets a response**
-  *Symptoms*: ### XERJ version  `origin/main` at `4ce1fbb5503beb1f5a1cd8f54d2e34ab7499657f`  ### How did you install / run XERJ?  Other (describe in steps below). Read the dispatch in `engine/crates/xerj-mcp/src/lib.rs` on that commit. No node was started.  ### Operating system & architecture  Windows 11 x86_64. The dispatch is the same on every platform.  ### Steps to reproduce  On `origin/main`, the stdio loop and `handle_message` disagree about what a `tools/call` without a usable id is.  `is_tool_call_request` (`lib.rs` 517-519) is the only path that runs a tool call off the read loop:  ```rust fn is_tool_call_request(msg: &Value) -> bool {     msg.get("method").and_then(Value::as_str) == Some("tools/call")         && msg.get("id").is_some_and(|id| !id.is_null()) } ```  Anything else falls through to the read loop (`lib.rs` 504):  ```rust other => handle_message(&ctx, other).await.into_iter().collect(), ```  `handle_message` (`lib.rs` 606-621) does not treat a missing id as "do not reply" for the methods it knows. A notification is `id.is_none()`, and that flag is consulted only in the unknown-method arm. `tools/call` always awaits `call_tool` and always returns a response:  ```rust "tools/call" => Some(rpc_result(id, call_tool(ctx, &msg).await)), ```  `rpc_result` turns a missing id into JSON `null` (`lib.rs` 726-727).  Send either of these as one stdio line:  ```json {"jsonrpc":"2.0","method":"tools/call","params":{"name":"xerj_search","arguments":{"query":"x"}}} ```  ```json {"jsonr
+- **Issue #3322** (2026-11-20): **highlight: CJK match_phrase / match hits return no highlight fragments**
+  *Symptoms*: ## What happens  A CJK `match_phrase` (or `match`) hit comes back with no `highlight` key, while an English term in the same field is highlighted. Seen on rc.104 and on `main` (`cc6aee8f7`).  ## Repro  ```sh curl -s -XPUT localhost:9200/cjkh -H 'content-type: application/json' \   -d '{"mappings":{"properties":{"body":{"type":"text"},"bcjk":{"type":"text","analyzer":"cjk"}}}}' curl -s -XPOST 'localhost:9200/cjkh/_bulk?refresh=true' -H 'content-type: application/x-ndjson' --data-binary $' {"index":{"_id":"1"}} {"body":"我喜欢北京的天气 and the weather in Beijing","bcjk":"我喜欢北京的天气"} {"index":{"_id":"2"}} {"body":"東京都に住んでいます","bcjk":"東京都に住んでいます"} ' curl -s localhost:9200/cjkh/_search -H 'content-type: application/json' \   -d '{"query":{"match_phrase":{"body":"北京"}},"highlight":{"fields":{"body":{}}}}' ```  Measured on `main` (private port, throwaway data dir):  | query | hits | highlight | |---|---|---| | `match_phrase body 北京` | 1 | none | | `match_phrase bcjk 北京` (cjk analyzer) | 1 | none | | `match body 北京天气` | 2 | none | | `match_phrase body 東京` | 1 | none | | `match_phrase body weather` | 1 | `... the <em>weather</em> in Beijing` |  ## Root cause  The highlighter in `engine/crates/xerj-engine/src/index.rs` (`next_term_match`, added by #1948/#1949 to stop `or` matching inside `for`) only accepts a match whose neighbours are not word characters, and it counts any `char::is_alphanumeric` as a word character. Han, kana and Hangul are alphanumeric, so `北京` inside the unspaced run `我喜欢北
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1771,1424 +1506,1480 @@ impl EmbeddingProxy {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `007863e9` (2026-11-18)
-**Commit Message**: fix(autoindex): stub lockfiles by default, cell-width progress, catalog-commit phase, data-dir hint on an empty map
+### Incident Patch 1: `5c7187b3` (2026-11-21)
+**Commit Message**: fix(engine,storage): searches stop waiting on WAL and snapshot fsyncs under write load
 
-Four autoindex issues from field reports, one lane.
+Motivation (#3324, residual of #3331): under concurrent _bulk load every
+op on an index (match_all, range, terms, cardinality, bool) stalled
+together for seconds, most often ending at the "segment flushed" log
+line, and writes stalled with them.
 
-#2439 lockfiles are stubbed by default
-- Motivation: a 410 KB package-lock.json held phase=index at 10% until a
-  180 s deadline; `--stub package-lock.json` was the reporter's workaround.
-- Root cause 1: order.rs GENERATED_FILES only demoted lockfiles to
-  Band::Vendored (queued last), they were still parsed in full.
-- Root cause 2 (found while verifying): on the generated (--no-graph)
-  route, `prepare_artifact` re-sniffed the sealed blob and ignored the
-  plan's `stub` family, so even an explicit `--stub` file had its
-  content flattened into the index. Plan said `stub`, record carried every
-  JSON field.
-- Fix: `lib.rs::stub_matcher(cfg)` seeds the --stub matcher with
-  GENERATED_FILES (Cargo.lock Gemfile.lock composer.lock go.sum
-  package-lock.json pnpm-lock.yaml poetry.lock yarn.lock, any depth).
-  `--no-default-stubs` is the opt-in to full extraction (listed in --help
-  next to --stub, refused by `remove`, written back by the rebuild argv;
-  the seed stays out of `stub_globs`). `prepare_artifact` keeps a
-  p
+Root cause, from new slow-hold tracing (instrumented build, old code
+order, dd fdatasync neighbour on the same ext4 disk):
 
-**File**: `engine/Cargo.lock` (modified, +1/-0)
+1. The flush finalizer committed its collection-publication guard but
+   kept it alive to the end of the closure, across after_flush_publish
+   (snapshot fsync, WAL checkpoint/rotate/prune). commit() only records
+   the outcome; the bracket stays open until the guard drops. 6 stalls
+   of 0.5-1.7 s in one 60 s run, each "bracket held" line followed by
+   every reader's "search waited" line of the same length.
+2. index_batch_turbo_raw / index_batch_turbo / index_batch_sync_raw
+   opened the bracket, then appended to the WAL. The WAL shard mutex is
+   held by WAL maintenance (4 fsyncs per shard per pass) and by the
+   wal_batch_ms fsync scheduler (fsync under the mutex), so a batch
+   queued on it inside the bracket held every search
+
+**File**: `CHANGELOG.md` (modified, +21/-0)
 ```diff
-@@ -7559,6 +7559,7 @@ dependencies = [
-  "tree-sitter-swift",
-  "tree-sitter-typescript",
-  "tree-sitter-zig",
-+ "unicode-width 0.2.2",
-  "uuid",
-  "walkdir",
-  "xerj-ai",
+@@ -25,6 +25,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ 
+ ### Fixed
+ 
++- **Searches no longer wait on WAL and snapshot fsyncs while bulk writes run
++  (refs #3324 #3331).** Three code paths held the collection-publication
++  bracket (every search on the index waits while it is open) across disk
++  waits. A flush kept its bracket open through post-publish maintenance
++  (snapshot fsync, WAL rotate and prune). `_bulk` opened its bracket before
++  appending to the WAL, so it waited inside the bracket for a WAL shard
++  lock that WAL maintenance and the batched fsync held across fsyncs. The
++  flush bracket now closes when the segment is published, and `_bulk`
++  appends to the WAL before opening the bracket. WAL maintenance and the
++  `wal_batch_ms` fsync now fsync without holding the shard lock: the next
++  generation's file is created and synced first, and only the rename runs
++  under the lock. The same fsyncs still happen, so durability does not
++  change. A WAL write error no longer poisons the index. Measured over 3
++  runs each, 60 s, 300k preload plus a closed-loop 5,000-doc auto-id writer,
++  ext4: p99 over all reads went from 204-265 ms to 40-85 ms (load 25-50).
++  With a `dd` fdatasync neighbour on the same disk it went from 260-305 ms
++  to 45-60 ms, and the longest all-op stall from 2.3-4.2 s to 0.7-1.5 s
++  (load 14-46). Writer throughput went from 34-50k to 53-66k docs/s.
++  Holds and waits of 1 s or more (`XERJ_STALL_TRACE_MS` sets the threshold)
++  are now logged at WARN with the holder's call site.
++
+ - **A collapsed `_search` or `_msearch` whose `collapse.inner_hits` block has
+   no `name` is refused with a 400**, as Elasticsearch 8.13 refuses it
+   (`x_content_parse_exception` caused by `illegal_argument_exception`
 ```
 
-**File**: `engine/crates/xerj-api/tests/autoindex_changed_file_drops_stale_symbols.rs` (modified, +1/-0)
+**File**: `engine/crates/xerj-engine/src/collection_publication.rs` (modified, +14/-0)
 ```diff
-@@ -95,6 +95,7 @@ fn index_cfg(
-         root: root.to_owned(),
-         endpoint_url: None,
-         stub_globs: Vec::new(),
-+        default_stubs: true,
-         url: url.to_owned(),
-         api_key: None,
-         api_key_file: None,
+@@ -43,6 +43,8 @@ pub(crate) struct CollectionPublication {
+ pub(crate) struct CollectionPublicationGuard {
+     state: Arc<CollectionPublication>,
+     outcome: GuardOutcome,
++    opened: std::time::Instant,
++    site: &'static std::panic::Location<'static>,
+ }
+ 
+ #[derive(Clone, Copy, Debug, PartialEq, Eq)]
+@@ -182,6 +184,7 @@ impl CollectionPublication {
+         }
+     }
+ 
++    #[track_caller]
+     pub(crate) fn begin(
+         self: &Arc<Self>,
+     ) -> Result<CollectionPublicationGuard, CollectionPublicationPoisoned> {
+@@ -204,6 +207,8 @@ impl CollectionPublication {
+         Ok(CollectionPublicationGuard {
+             state: Arc::clone(self),
+             outcome: GuardOutcome::Pending,
++            opened: std::time::Instant::now(),
++            site: std::panic::Location::caller(),
+         })
+     }
+ 
+@@ -267,6 +272,15 @@ impl CollectionPublicationGuard {
+ 
+ impl Drop for CollectionPublicationGuard {
+     fn drop(&mut self) {
++        let held = self.opened.elapsed();
++        if xerj_storage::stall_trace::is_slow(held) {
++            tracing::warn!(
++                held_ms = held.as_millis() as u64,
++                site = %self.site,
++                readers_waiting = self.state.readers_waiting.load(Ordering::Acquire),
++                "collection publication bracket held long; searches on this index wait for it"
++            );
++        }
+         if self.outcome == GuardOutcome::Pending {
+             self.state.poisoned.store(true, Ordering::Release);
+         }
 ```
 
-**File**: `engine/crates/xerj-api/tests/autoindex_html_inline_script.rs` (modified, +1/-0)
+**File**: `engine/crates/xerj-engine/src/index.rs` (modified, +282/-14)
 ```diff
-@@ -105,6 +105,7 @@ fn index_cfg(root: &Path, state_dir: &Path, url: &str, prefix: &str) -> IndexCfg
-         root: root.to_owned(),
-         endpoint_url: None,
-         stub_globs: Vec::new(),
-+        default_stubs: true,
-         url: url.to_owned(),
-         api_key: None,
-         api_key_file: None,
+@@ -1764,6 +1764,198 @@ mod collection_publication_fail_closed_tests {
+         assert!(idx.get_document("late").await.unwrap().is_none());
+     }
+ 
++    /// #3324: a bulk batch appends to the WAL before it opens the collection
++    /// publication bracket. WAL maintenance and the batched fsync hold a WAL
++    /// shard lock across disk waits (25 s measured under ext4 journal
++    /// pressure); a batch queued on that lock used to be inside the bracket
++    /// already, so every search on the index waited the same 25 s and came
++    /// back `timed_out` with no hits.
++    #[tokio::test(flavor = "multi_thread", worker_threads = 4)]
++    async fn search_is_not_held_behind_a_bulk_waiting_on_the_wal_lock() {
++        let dir = tempfile::tempdir().unwrap();
++        let mut config = Config::default();
++        config.server.data_dir = dir.path().to_string_lossy().into_owned();
++        let engine = crate::Engine::new(config).unwrap();
++        engine
++            .create_index("wal-lock-readers", text_schema())
++            .unwrap();
++        let idx = engine.get_index("wal-lock-readers").unwrap();
++        idx.index_batch_turbo_raw(vec![(
++            "seed".into(),
++            Arc::<[u8]>::from(br#"{"body":"alpha"}"#.as_slice()),
++        )])
++        .await
++        .unwrap();
++        idx.refresh().await.unwrap();
++
++        let (entered_tx, entered_rx) = std::sync::mpsc::sync_channel(1);
++        let entered_tx = parking_lot::Mutex::new(Some(entered_tx));
++        idx.set_publication_test_hook(Some(Arc::new(move |_, point| {
++            if point == PublicationTestPoint::RawBeforeCollectionBegin {
++                if let Some(tx) = entered_tx.lock().take() {
++                    let _ = tx.send(());
++                }
++            }
++        })));
++        // Stands in for a maintenance pass or fsync that holds the lock.
++        let wal_locks = idx.store.hold_wal_shards_for_test();
++        let writer_idx = Arc::clone(&idx);
++        let writer = tokio::spawn(async move {
++            writer_idx
++                .index_batch_turbo_raw(vec![(
++                    "late".into(),
++                    Arc::<[u8]>::from(br#"{"body":"alpha"}"#.as_slice()),
++                )])
++                .await
++        });
++        tokio::task::spawn_blocking(move || {
++            entered_rx
++                .recv_timeout(std::time::Duration::from_secs(10))
++                .expect("bulk never reached the WAL append")
++        })
++        .await
++        .unwrap();
++        // Let the batch reach the lock and park on it.
++        tokio::time::sleep(std::time::Duration::from_millis(200)).await;
++        assert!(
++            !writer.is_finished(),
++            "the bulk must be parked on the WAL lock"
++        );
++
++        let mut request = xerj_query::parse_request(&json!({
++            "query": {"match": {"body": "alpha"}}, "size": 10
++        }))
++        .unwrap();
++        request.timeout_ms = Some(2_000);
++        let result = tokio::time::timeout(std::time::Duration::from_secs(5), idx.search(&request))
++            .await
++            .expect("search hung")
++            .unwrap();
++        assert!(
++            !result.timed_out,
++            "search waited out its deadline behind a bulk parked on the WAL lock"
++        );
++        assert_eq!(result.hits.len(), 1);
++        assert_eq!(result.hits[0].id, "seed");
++
++        drop(wal_locks);
++        tokio::time::timeout(std::time::Duration::from_secs(10), writer)
++            .await
++            .expect("bulk did not finish after the WAL lock was released")
++            .unwrap()
++            .unwrap();
++        idx.set_publication_test_hook(None);
++        assert!(!idx.collection_publication.state().2);
++        assert!(idx.get_document("late").await.unwrap().is_some());
++    }
++
++    /// #3324: the flush publication bracket closes as soon as the segment is
++    /// published. Its guard used to live to the end of the finalizer, across
++    /// `after_flush_publish` (snapshot fsync, WAL rotate and prune), so
++    /// every search on the index waited out that disk work. Here the WAL
++    /// maintenance is parked on held WAL locks after the publish.
++    #[tokio::test(flavor = "multi_thread", worker_threads = 4)]
++    async fn search_is_not_held_behind_post_flush_wal_maintenance() {
++        let dir = tempfile::tempdir().unwrap();
++        let mut config = Config::default();
++        config.server.data_dir = dir.path().to_string_lossy().into_owned();
++        let engine = crate::Engine::new(config).unwrap();
++        engine
++            .create_index("post-flush-readers", text_schema())
++            .unwrap();
++        let idx = engine.get_index("post-flush-readers").unwrap();
++        idx.index_batch_turbo_raw(vec![(
++            "doc".into(),
++            Arc::<[u8]>::from(br#"{"body":"alpha"}"#.as_slice()),
++        )])
++        .await
++        .unwrap();
++        assert!(idx.store.snapshot().segments.is_empty());
++
++        // The first flush of a store always
 ```
 
-**File**: `engine/crates/xerj-api/tests/memtable_budget_autoindex.rs` (modified, +1/-0)
+**File**: `engine/crates/xerj-storage/src/index_store.rs` (modified, +401/-125)
 ```diff
-@@ -47,6 +47,7 @@ fn index_cfg(root: &Path, state_dir: &Path, url: &str) -> IndexCfg {
-         root: root.to_owned(),
-         endpoint_url: None,
-         stub_globs: Vec::new(),
-+        default_stubs: true,
-         url: url.to_owned(),
-         api_key: None,
-         api_key_file: None,
+@@ -702,6 +702,11 @@ pub struct IndexStore {
+     /// ticks re-check only its remaining unproven `(doc_id, seq)` pairs
+     /// against the version map and prune once the list drains.
+     wal_prune_cache: Mutex<std::collections::HashMap<(usize, u64), WalGenVerdict>>,
++    /// #3324 — serializes WAL maintenance passes on this store. A pass
++    /// holds each shard's WAL mutex only to rotate; this lock keeps two
++    /// passes from working on the same frozen generations at once. Appends
++    /// never take it.
++    wal_maintenance_lock: Mutex<()>,
+     /// Issue #965 — serializes object-store publication sequences
+     /// (pack → bundle PUT → catalog PUT) so a catalog can never be written
+     /// while a snapshot-referenced bundle is still in flight (the flush-tail
+@@ -719,6 +724,10 @@ pub struct IndexStore {
+     snapshot_save_failures_remaining: std::sync::atomic::AtomicUsize,
+     #[cfg(test)]
+     fail_next_wal_maintenance: std::sync::atomic::AtomicBool,
++    /// Parks a WAL maintenance pass after it froze a generation: the pass
++    /// waits on this barrier twice, between the rotation and the fsync.
++    #[cfg(test)]
++    frozen_work_pause: Mutex<Option<Arc<std::sync::Barrier>>>,
+     #[cfg(test)]
+     publication_failpoint: std::sync::atomic::AtomicU8,
+     #[cfg(test)]
+@@ -971,6 +980,7 @@ impl IndexStore {
+             segments_changed_hook: Mutex::new(None),
+             pending_deletes: Mutex::new(std::collections::HashMap::new()),
+             wal_prune_cache: Mutex::new(std::collections::HashMap::new()),
++            wal_maintenance_lock: Mutex::new(()),
+             object_publish_lock: Mutex::new(()),
+             durable_bundles: Mutex::new(durable_bundles),
+             #[cfg(test)]
+@@ -982,6 +992,8 @@ impl IndexStore {
+             #[cfg(test)]
+             fail_next_wal_maintenance: std::sync::atomic::AtomicBool::new(false),
+             #[cfg(test)]
++            frozen_work_pause: Mutex::new(None),
++            #[cfg(test)]
+             publication_failpoint: std::sync::atomic::AtomicU8::new(0),
+             #[cfg(test)]
+             orphan_disarm_fail_after: std::sync::atomic::AtomicUsize::new(usize::MAX),
+@@ -2021,8 +2033,27 @@ impl IndexStore {
+ 
+     /// Lock a specific WAL shard.
+     #[inline]
++    /// Test hook: hold every WAL shard lock, as a maintenance pass or an
++    /// fsync would, so a caller can check what waits behind it (#3324).
++    #[doc(hidden)]
++    pub fn hold_wal_shards_for_test(&self) -> Vec<std::sync::MutexGuard<'_, WalWriter>> {
++        self.wal_shards.iter().map(|s| s.lock().unwrap()).collect()
++    }
++
++    #[track_caller]
+     fn wal_lock_shard(&self, shard: usize) -> std::sync::MutexGuard<'_, WalWriter> {
+-        self.wal_shards[shard].lock().unwrap()
++        let asked = std::time::Instant::now();
++        let guard = self.wal_shards[shard].lock().unwrap();
++        let waited = asked.elapsed();
++        if crate::stall_trace::is_slow(waited) {
++            warn!(
++                shard,
++                waited_ms = waited.as_millis() as u64,
++                site = %std::panic::Location::caller(),
++                "WAL append waited for the WAL shard lock"
++            );
++        }
++        guard
+     }
+ 
+     // ── Write path ────────────────────────────────────────────────────────────
+@@ -2849,6 +2880,7 @@ impl IndexStore {
+             // the save registers it and the prune below can release the
+             // deletes' WAL pins.  Best-effort: on failure the deletes
+             // simply stay WAL-pinned (retention, not loss).
++            let maintenance_started = std::time::Instant::now();
+             if let Err(e) = self.persist_pending_tombstones() {
+                 if self.is_object_store_mode() {
+                     // #965 — the bucket catalog does not carry the
+@@ -2890,10 +2922,23 @@ impl IndexStore {
+             // still rotate + prune on the same 1 s cadence; generations
+             // holding unproven entries are retained (that retention IS the
+             // fix) and reclaimed on a later tick once their docs flush.
++            let snapshot_saved = std::time::Instant::now();
+             let durable_max = self.snapshot.load().max_seq_no;
+             if let Err(error) = self.wal_maintain_all_verified(durable_max) {
+                 warn!(error = %error, segment_id, "WAL maintenance deferred after segment publication");
+             }
++            let total = maintenance_started.elapsed();
++            if crate::stall_trace::is_slow(total) {
++                warn!(
++                    segment_id,
++                    total_ms = total.as_millis() as u64,
++                    tombstones_and_snapshot_ms = snapshot_saved
++                        .duration_since(maintenance_started)
++                        .as_millis() as u64,
++                    wal_ms = snapshot_saved.elapsed().as_millis() as u64,
++                    "post-flush maintenance slow"
++                );
++            }
+         }
+ 
+         info!(segment_id, doc_count
 ```
 
-**File**: `engine/crates/xerj-api/tests/proxy_semantic_autoindex_resumes.rs` (modified, +1/-0)
+**File**: `engine/crates/xerj-storage/src/lib.rs` (modified, +1/-0)
 ```diff
-@@ -152,6 +152,7 @@ fn index_cfg(root: &Path, state_dir: &Path, url: &str, prefix: &str, no_graph: b
-         root: root.to_owned(),
-         endpoint_url: None,
-         stub_globs: Vec::new(),
-+        default_stubs: true,
-         url: url.to_owned(),
-         api_key: None,
-         api_key_file: None,
+@@ -32,6 +32,7 @@ pub mod index_store;
+ pub mod merge;
+ pub mod s3;
+ pub mod segment;
++pub mod stall_trace;
+ pub mod stored_codec;
+ pub mod version_map;
+ pub mod wal;
 ```
 
-**File**: `engine/crates/xerj-autoindex/Cargo.toml` (modified, +5/-0)
+**File**: `engine/crates/xerj-storage/src/stall_trace.rs` (added, +26/-0)
 ```diff
-@@ -35,6 +35,11 @@ walkdir = "2"
- # Licence: Unlicense OR MIT — compatible with XERJ's Apache-2.0.
- ignore = "0.4"
- encoding_rs = "0.8"
-+# Terminal cell width for the progress bar (#3102): a CJK character is two
-+# cells, so counting `char`s overflowed the line. Already in the lock file at
-+# 0.2.2 (via the `console` and `indicatif` crates), so this adds no new package.
-+# Licence: MIT OR Apache-2.0.
-+unicode-width = "0.2"
- # `--watch`: cross-platform filesystem notifications (inotify on Linux,
- # FSEvents on macOS, ReadDirectoryChangesW on Windows), so live reindexing is
- # one code path rather than three.
+@@ -0,0 +1,26 @@
++//! Slow-hold reporting for the locks and brackets a search or a write can
++//! wait behind (#3324). A hold or wait longer than the threshold is logged at
++//! WARN with its call site, so a multi-second stall under write load names
++//! what was blocking instead of only showing up as a slow request.
++//!
++//! The threshold is 1 s, or `XERJ_STALL_TRACE_MS` when set.
++
++use std::sync::OnceLock;
++use std::time::Duration;
++
++/// Holds and waits at or above this duration are reported.
++pub fn threshold() -> Duration {
++    static THRESHOLD: OnceLock<Duration> = OnceLock::new();
++    *THRESHOLD.get_or_init(|| {
++        std::env::var("XERJ_STALL_TRACE_MS")
++            .ok()
++            .and_then(|v| v.trim().parse::<u64>().ok())
++            .map(Duration::from_millis)
++            .unwrap_or(Duration::from_secs(1))
++    })
++}
++
++/// True when `elapsed` should be reported.
++pub fn is_slow(elapsed: Duration) -> bool {
++    elapsed >= threshold()
++}
 ```
 
-**File**: `engine/crates/xerj-autoindex/src/cli.rs` (modified, +35/-5)
+**File**: `engine/crates/xerj-storage/src/wal.rs` (modified, +339/-7)
 ```diff
-@@ -85,6 +85,11 @@ pub struct IndexCfg {
-     /// `--stub <glob>` patterns: matching files are indexed as one
-     /// existence-only name card, contents never opened.
-     pub stub_globs: Vec<String>,
-+    /// Stub the lockfiles in [`crate::order::GENERATED_FILES`] as if each had
-+    /// been passed to `--stub` (#2439). On by default; `--no-default-stubs`
-+    /// clears it so a lockfile is extracted in full. Kept apart from
-+    /// `stub_globs` so the rebuild argv states only what the operator typed.
-+    pub default_stubs: bool,
-     /// `.gitignore` / `.xerjignore` / built-in build-output rules (#276).
-     /// `deep_count` is set from `--dry-run` (and from `--walk-only`, which
-     /// implies it).
-@@ -427,11 +432,13 @@ pub fn help_text_with(feedback: bool) -> String {
-          \x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20refuse anything, because your folder is\n\
-          \x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20already inside it\n\
-          \x20\x20\x20\x20--stub <GLOB>        index matching files as ONE existence-only name\n\
--         \x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20card (title + provenance); contents are never\n\
--         \x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20opened. Repeatable. A pattern without '/'\n\
-+         \x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20card (title, size + provenance); contents are\n\
-+         \x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20never parsed. Repeatable. A pattern without '/'\n\
-          \x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20matches file names anywhere ('*.bvh'); with '/'\n\
-          \x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20it matches the root-relative path\n\
--         \x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20('unity/**/*.csv'). '**' crosses directories\n\
-+         \x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20('unity/**/*.csv'). '**' crosses directories.\n\
-+         \x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20Lockfiles are stubbed by default: {lockfiles}\n\
-+         \x20\x20\x20\x20--no-default-stubs   extract those lockfiles in full instead of stubbing\n\
-          \x20\x20\x20\x20--exclude <GLOB>     leave matching paths out of the index entirely (not\n\\
-          \x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20walked, not counted). Repeatable, same glob syntax\n\\
-          \x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20\x20as --stub ('gen/**', '*.log'). Use it for a tree you do\n\\
-@@ -687,6 +694,11 @@ pub fn help_text_with(feedback: bool) -> String {
-          \x20\x20\x20\x20enforced: paths and other outside text are stripped of control\n\
-          \x20\x20\x20\x20characters and bounded before they reach any line, so a crafted\n\
-          \x20\x20\x20\x20filename cannot forge a record or repaint your terminal.\n\
-+         \x20\x20\x20\x20Every line is UTF-8. A Windows console window shows it as written;\n\
-+         \x20\x20\x20\x20a pipe is decoded by its reader, so a PowerShell capture on a\n\
-+         \x20\x20\x20\x20non-UTF-8 code page (936, 932, ...) turns non-ASCII paths into\n\
-+         \x20\x20\x20\x20mojibake. Run `[Console]::OutputEncoding = [Text.Encoding]::UTF8`\n\
-+         \x20\x20\x20\x20(or `chcp 65001`) first.\n\
-          \x20\x20\x20\x20`pct`/`eta_s` are the literal word `unknown` (JSON null) whenever they\n\
-          \x20\x20\x20\x20cannot be computed honestly, never a filler number — and the drawn\n\
-          \x20\x20\x20\x20bar obeys the same rule: `[????…]` when there is no denominator,\n\
-@@ -699,7 +711,10 @@ pub fn help_text_with(feedback: bool) -> String {
-          \x20\x20\x20\x20\x20\x20\x20\x20finalize-correlate, finalize-histogram, finalize-catalog\n\
-          \x20\x20\x20\x20\x20\x20--no-graph path:      walk, hash, scan, prepare (install mappings),\n\
-          \x20\x20\x20\x20\x20\x20\x20\x20snapshot (seal + extract, bytes), index (sealed bulk bytes, the\n\
--         \x20\x20\x20\x20\x20\x20\x20\x20in-flight file named), finalize-catalog, finalize-refresh (one\n\
-+         \x20\x20\x20\x20\x20\x20\x20\x20in-flight file named), finalize-catalog,\n\
-+         \x20\x20\x20\x20\x20\x20\x20\x20finalize-catalog-readback (catalog ids read back),\n\
-+         \x20\x20\x20\x20\x20\x20\x20\x20finalize-catalog-commit (one item per catalog request, the\n\
-+         \x20\x20\x20\x20\x20\x20\x20\x
+@@ -445,6 +445,15 @@ impl WalWriter {
+     ) -> Result<Self> {
+         let dir = dir.as_ref().to_path_buf();
+         fs::create_dir_all(&dir)?;
++        // A crash between `PreparedGeneration::create` and its rename leaves
++        // a header-only `.wal.next` file that no generation scan reads.
++        if let Ok(entries) = fs::read_dir(&dir) {
++            for entry in entries.flatten() {
++                if entry.file_name().to_string_lossy().ends_with(".wal.next") {
++                    let _ = fs::remove_file(entry.path());
++                }
++            }
++        }
+ 
+         // Find the highest existing generation
+         let (generation, max_seq) = find_latest_generation(&dir)?;
+@@ -1055,6 +1064,45 @@ impl WalWriter {
+         self.dirty
+     }
+ 
++    /// First half of an fsync that does not hold the shard mutex (#3324).
++    ///
++    /// Drains the userspace buffer to the kernel, clears `dirty` and returns
++    /// a second descriptor of the active generation. The caller drops the
++    /// shard mutex and then calls `sync_all` on that descriptor: an fsync
++    /// covers every byte the kernel holds for the inode when it starts, so
++    /// every append made before this call is durable when it returns —
++    /// the same guarantee [`sync`](Self::sync) gives, without making every
++    /// append to the shard wait on the disk. On ext4 an fsync can wait
++    /// seconds for the journal commit (#3324 measured 25 s); with the
++    /// mutex held, each append behind it, and each search waiting on the
++    /// publication bracket that append holds, waited that long too.
++    ///
++    /// Appends that land while the fsync runs set `dirty` and re-arm the
++    /// scheduler, so they get their own fsync. If the fsync fails the
++    /// caller must call [`mark_unsynced`](Self::mark_unsynced).
++    ///
++    /// Returns `None` when there is nothing to make durable.
++    pub fn begin_unlocked_sync(&mut self) -> Result<Option<File>> {
++        if !self.dirty {
++            return Ok(None);
++        }
++        let Some(w) = self.writer.as_mut() else {
++            self.dirty = false;
++            return Ok(None);
++        };
++        w.flush()?;
++        let file = w.get_ref().file().try_clone()?;
++        self.dirty = false;
++        Ok(Some(file))
++    }
++
++    /// An fsync started by [`begin_unlocked_sync`](Self::begin_unlocked_sync)
++    /// failed: the bytes it covered may not be durable, so the shard is
++    /// dirty again and the scheduler retries it.
++    pub fn mark_unsynced(&mut self) {
++        self.mark_dirty();
++    }
++
+     /// Flush the BufWriter to the kernel without a `fsync(2)`.
+     ///
+     /// The buffered bytes are visible to any reader on the same
+@@ -1126,14 +1174,69 @@ impl WalWriter {
+     /// on every append so the on-disk prefix is complete up to
+     /// `current_offset`).
+     pub fn read_generation_entries(&self, gen: u64) -> (Vec<ReplayEntry>, bool) {
+-        let path = wal_path(&self.dir, gen);
+-        if !path.exists() {
+-            return (Vec::new(), true);
++        read_generation_entries_in(&self.dir, gen)
++    }
++
++    /// This writer's directory.
++    pub fn dir(&self) -> &Path {
++        &self.dir
++    }
++
++    /// True when the active generation holds frames, so a maintenance pass
++    /// has something to rotate out.
++    pub fn has_frames(&self) -> bool {
++        self.current_offset > WAL_HEADER_LEN
++    }
++
++    /// Rotate the active generation out WITHOUT any fsync under the shard
++    /// mutex (#3324).
++    ///
++    /// `prepared` is the next generation's file, created and fsynced by
++    /// [`PreparedGeneration::create`] before the caller took the mutex.
++    /// This call drains the buffer, renames that file into place, and
++    /// hands back the generation it froze together with a descriptor of it.
++    /// The caller releases the mutex and only then fsyncs, decodes,
++    /// checkpoints and prunes the frozen generation: nothing appends to it
++    /// any more, so none of that needs the mutex appends wait on.
++    ///
++    /// [`force_rotate`](Self::force_rotate) does the same work with the
++    /// mutex held: an fsync of the active file in `checkpoint`, a second in
++    /// `rotate`, one for the checkpoint file and one for the new
++    /// generation's header — four journal-commit waits per shard per pass.
++    pub fn rotate_detached(
++        &mut self,
++        mut prepared: PreparedGeneration,
++    ) -> Result<DetachedRotation> {
++        if !self.has_frames() {
++            self.release_if_empty();
++            return Ok(DetachedRotation::Empty);
+         }
+-        let results = read_wal_file(path);
+-        let clean = results.iter().all(|r| r.is_ok());
+-        let entries = results.into_iter().filter_map(|r| r.ok()).collect();
+-        (entries, clean)
++        if prepared.generation != self.generation + 1 || prepared.dir != self.dir {
++            return Ok(DetachedRotation::Stale);
++        }
++        let Some(w) = self.writer.as_mut() else {
 ```
 
-**File**: `engine/crates/xerj-autoindex/src/detect/e2e.rs` (modified, +1/-0)
+**File**: `engine/crates/xerj-storage/src/wal_fsync.rs` (modified, +30/-18)
 ```diff
-@@ -422,6 +422,7 @@ pub(super) fn cfg(root: &Path, state_dir: &Path, url: &str) -> IndexCfg {
-         follow_symlinks: false,
-         follow_symlinks_outside_root: false,
-         stub_globs: Vec::new(),
-+        default_stubs: true,
-         ignore: crate::ignore_rules::IgnoreOptions::default(),
-         max_file_bytes: 1 << 30,
-         sample: 50,
+@@ -310,24 +310,36 @@ impl WalFsyncScheduler {
+             let Some(shard) = entry.handle.target.upgrade() else {
+                 continue; // store dropped
+             };
+-            let mut wal = shard.lock().unwrap_or_else(|e| e.into_inner());
+-            if wal.is_dirty() {
+-                match wal.sync() {
+-                    Ok(()) => {
+-                        self.synced.fetch_add(1, Ordering::Relaxed);
+-                    }
+-                    Err(e) => {
+-                        // The shard still holds un-fsynced bytes.  Re-arm so
+-                        // a transient failure (ENOSPC that later frees, EIO
+-                        // on a retryable device) is retried one period later
+-                        // instead of waiting for the next write — the old
+-                        // per-index loop retried on every tick, and dropping
+-                        // that would have been a silent durability
+-                        // regression.
+-                        warn!("wal_batch_ms fsync failed: {e}");
+-                        drop(wal);
+-                        entry.handle.arm();
+-                    }
++            // #3324 — only the buffer drain runs under the shard mutex; the
++            // fsync itself runs after it is released, on a second
++            // descriptor, so appends to this shard do not wait on the disk.
++            let prepared = shard
++                .lock()
++                .unwrap_or_else(|e| e.into_inner())
++                .begin_unlocked_sync();
++            let result = match prepared {
++                Ok(None) => continue,
++                Ok(Some(file)) => file.sync_all().map_err(crate::StorageError::from),
++                Err(e) => Err(e),
++            };
++            match result {
++                Ok(()) => {
++                    self.synced.fetch_add(1, Ordering::Relaxed);
++                }
++                Err(e) => {
++                    // The shard still holds un-fsynced bytes.  Mark it dirty
++                    // and re-arm so a transient failure (ENOSPC that later
++                    // frees, EIO on a retryable device) is retried one
++                    // period later instead of waiting for the next write —
++                    // the old per-index loop retried on every tick, and
++                    // dropping that would have been a silent durability
++                    // regression.
++                    warn!("wal_batch_ms fsync failed: {e}");
++                    shard
++                        .lock()
++                        .unwrap_or_else(|e| e.into_inner())
++                        .mark_unsynced();
++                    entry.handle.arm();
+                 }
+             }
+         }
 ```
 
 ---
 
-### Incident Patch 2: `e6edc756` (2026-11-18)
-**Commit Message**: fix(node): auto-start a stopped local node, xerj --detach, headless first launch, boot memory baseline
+### Incident Patch 2: `d52a99df` (2026-11-21)
+**Commit Message**: Merge main into fix/multi-index-leaf-terms (#2957)
 
-rc.101 field reports, lane L1 (node lifecycle).
+Resolve conflicts with main f22ddd5b2:
+- engine/crates/xerj-api/src/es_compat.rs: main added the composite
+  coordinator (finalize_composite_aggs, #2949) and its tests at the same
+  spot the PR added the leaf-terms coordinator. Keep both blocks; run
+  finalize_leaf_terms_summaries after finalize_composite_aggs in
+  search_impl's post-merge pass.
+- CHANGELOG.md: keep main's Fixed entries and append the PR entry.
 
-#3267 (52 reports: macOS 26, Windows 16, Linux 10). Agents found nothing on
-localhost:9200, did not start a node from a tool call, and grepped for the
-whole session. Causes seen: a node started from an agent terminal got
-SIGTERM when the session ended; `cmd start /B` died with its shell; a node
-on :9280 was never found because every client assumed :9200.
-
-- New `xerj_common::localnode`. The server writes
-  `<data-dir>/node.launch.json` (bound port, flags without --detach, cwd,
-  pid, role) right after binding. A loopback client that finds the port
-  closed starts the node that last served it (`~/.xerj/by-port` pointer +
-  launch record), detached, waits for an HTTP answer other than the 503
-  "starting" reply, then runs the call. Unix: setsid, stdin closed, output
-  to `<data-dir>/node.log`. Windows: DETACHED_PROCESS |
-  CREATE_NEW_PROCESS_GROUP, plus CREATE_BREAKAWAY_FROM_JOB when the job
-  allows it. A live node.lock holder is waited for, not doubled. The child
-  is reaped, so a later death is not a zombie that kill(pid,0) calls 
-
-**File**: `engine/crates/xerj-autoindex/src/def.rs` (modified, +4/-1)
+**File**: `.contributors` (modified, +23/-1)
 ```diff
-@@ -551,8 +551,11 @@ pub fn run_def_cli() -> i32 {
-     let prefix = resolved.prefix;
-     let pattern = resolved.pattern;
-     if url.is_empty() {
--        url = "http://localhost:9200".to_string();
-+        // #3267: the local node's recorded port, not a fixed :9200.
-+        url = xerj_common::localnode::default_url();
-     }
-+    // #3267: a stopped loopback node is started (detached) before the lookup.
-+    xerj_common::localnode::ensure_for_cli("xerj def", &url);
-     if api_key.is_none() && xerj_common::localauth::url_is_loopback(&url) {
-         if let Some(found) =
-             xerj_common::localauth::discover_local_admin_key_for_url_with_origin(&url)
+@@ -102,5 +102,27 @@
+   "badretd",
+   "parijat1222q",
+   "napattan",
+-  "gravion-ux"
++  "gravion-ux",
++  "Irfanwani",
++  "NikhByte",
++  "CalebPiusC",
++  "jaromil",
++  "Galaxy-VN",
++  "oghost2250",
++  "Master-Norna",
++  "TanmayNileshShinde",
++  "Frozican",
++  "Prathamesh51-debug",
++  "igmarin",
++  "shu-chen-dot-ca",
++  "alencarfreire",
++  "YoanWai",
++  "ManeaAl-Shabrain",
++  "l72683876-beep",
++  "ghazy2001",
++  "officialarghya29",
++  "satiricalguru",
++  "codesphere-u",
++  "polarours",
++  "wasabihu"
+ ]
 ```
 
-**File**: `engine/crates/xerj-autoindex/src/lib.rs` (modified, +2/-0)
+**File**: `.github/FUNDING.yml` (modified, +4/-5)
 ```diff
-@@ -14080,6 +14080,8 @@ fn run_map(cfg: MapCfg) -> Result<i32> {
-     if let Some(note) = &cfg.xerj_url_note {
-         eprintln!("autoindex: {note}");
-     }
-+    // #3267: a stopped loopback node is started (detached) before the read.
-+    xerj_common::localnode::ensure_for_cli("autoindex map", &cfg.url);
-     let es = Es::new(&cfg.url, cfg.api_key.clone())?;
-     // The same first-run miss as `xerj search`: nothing is listening, and a
-     // raw `endpoint unreachable` does not say how to start a node.
+@@ -1,7 +1,6 @@
+ # Funding links shown on the repository's "Sponsor" button.
+-# Populate a platform below to enable it (e.g. github: [xerj-org]).
+-# Left commented until an official sponsorship account exists so the
+-# Sponsor button is not shown pointing at a non-existent destination.
++# The project takes donations at https://xerj.org/donate (USDT, TRC20):
++# they buy rented GPU hours for training the XERJ Query-1 model.
++# Add a platform (e.g. github: [xerj-org]) only when that account exists.
+ 
+-# github: [xerj-org]
+-custom: ["https://xerj.org"]
++custom: ["https://xerj.org/donate"]
 ```
 
-**File**: `engine/crates/xerj-autoindex/src/search.rs` (modified, +4/-1)
+**File**: `.github/scripts/functions-get-test.mjs` (modified, +5/-2)
 ```diff
-@@ -1040,8 +1040,11 @@ pub fn run_search_cli() -> i32 {
-     let prefix = resolved.prefix;
-     let pattern = resolved.pattern;
-     if url.is_empty() {
--        url = "http://localhost:9200".to_string();
-+        // #3267: the local node's recorded port, not a fixed :9200.
-+        url = xerj_common::localnode::default_url();
-     }
-+    // #3267: a stopped loopback node is started (detached) before the query.
-+    xerj_common::localnode::ensure_for_cli("xerj search", &url);
-     if api_key.is_none() && xerj_common::localauth::url_is_loopback(&url) {
-         if let Some(found) =
-             xerj_common::localauth::discover_local_admin_key_for_url_with_origin(&url)
+@@ -190,7 +190,7 @@ console.log('── functions/get.js ──');
+     },
+   });
+   Object.defineProperty(r, 'cf', {
+-    value: { country: 'DE', city: 'Berlin', postalCode: '10115', asn: 3320, asOrganization: 'Deutsche Telekom', latitude: '52.52', longitude: '13.40' },
++    value: { country: 'DE', city: 'Berlin', postalCode: '10115', asn: 3320, asOrganization: 'Deutsche Telekom', latitude: '52.5200871', longitude: '13.4049540' },
+   });
+   await call(r, { ASSETS: fakeAssets(), INSTALLS });
+   const stored = [...INSTALLS.store.values()].join('\n');
+@@ -203,7 +203,10 @@ console.log('── functions/get.js ──');
+   ok(!stored.includes('abcdef123456'), 'no cookie stored');
+   ok(!stored.includes('de-DE'), 'no Accept-Language stored');
+   ok(!stored.includes('Berlin') && !stored.includes('10115'), 'no city/postcode from request.cf');
+-  ok(!stored.includes('52.52') && !stored.includes('13.40'), 'no lat/long from request.cf');
++  // Distinctive values: the stored record carries an ISO timestamp, and a
++  // short value like '52.52' matched it whenever the clock read hh:mm:52.52x.
++  ok(!stored.includes('52.5200871') && !stored.includes('13.4049540'), 'no lat/long from request.cf');
++  ok(!('latitude' in row) && !('longitude' in row), 'no latitude/longitude keys stored');
+   ok(!stored.includes('3320') && !stored.includes('Telekom'), 'no ASN/network operator from request.cf');
+   const allowed = new Set(['ts', 'script', 'kind', 'country', 'os', 'arch', 'ua', 'ver']);
+   const unexpected = Object.keys(row).filter((k) => !allowed.has(k));
 ```
 
-**File**: `engine/crates/xerj-autoindex/src/xc.rs` (modified, +12/-5)
+**File**: `.github/scripts/installer-download-failure-test.sh` (added, +212/-0)
 ```diff
-@@ -39,14 +39,17 @@ pub fn code_root() -> PathBuf {
-         .join(".xerj-code")
+@@ -0,0 +1,212 @@
++#!/usr/bin/env bash
++# Behaviour test for landing/get when a download is refused (#2460).
++#
++# Agents running `curl | sh` behind a proxy, a WAF challenge or GitHub's
++# anonymous rate limit get a 4xx from the release download and cannot pass a
++# challenge. The installer must then exit non-zero, install nothing, name the
++# HTTP status, and print a manual install that works as printed and fails
++# closed on a bad digest. This runs the real script under sh against a local
++# stand-in for github.com: shims for curl and wget rewrite the github.com URLs
++# to it and exec the real tool, so the script's own download code is what runs.
++#
++# What this does NOT prove: what xerj.org/get itself answers (that is
++# Cloudflare configuration, not this script), or the macOS / Windows branches
++# (shasum, unzip) of the printed recipe.
++#
++#   bash .github/scripts/installer-download-failure-test.sh
++set -uo pipefail
++
++HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
++REPO="$(cd "$HERE/../.." && pwd)"
++GET="$REPO/landing/get"
++command -v python3 >/dev/null || { echo "::error::python3 is required"; exit 1; }
++command -v curl >/dev/null || { echo "::error::curl is required"; exit 1; }
++
++W="$(mktemp -d)"
++SPID=''
++cleanup() { [ -n "$SPID" ] && kill "$SPID" 2>/dev/null; rm -rf "$W"; }
++trap cleanup EXIT
++
++FAIL=0
++ok()  { echo "ok   - $*"; }
++bad() { echo "::error::FAIL - $*"; FAIL=1; }
++
++# The host's target, as landing/get will compute it (Linux runners only).
++case "$(uname -m)" in x86_64|amd64) cpu=x86_64 ;; aarch64|arm64) cpu=aarch64 ;; *) echo "SKIP: unsupported CPU"; exit 0 ;; esac
++[ "$(uname -s)" = Linux ] || { echo "SKIP: this test runs on Linux"; exit 0; }
++TAG=v1.0.0-rc.0
++STAGE="xerj-${TAG#v}-${cpu}-unknown-linux-musl"
++ASSET="$STAGE.tar.gz"
++
++# A fake release: a shell script that prints a version.
++mkdir -p "$W/srv" "$W/stage/$STAGE" "$W/bin" "$W/binw"
++printf '#!/bin/sh\necho "xerj %s (test stand-in)"\n' "$TAG" > "$W/stage/$STAGE/xerj"
++chmod +x "$W/stage/$STAGE/xerj"
++tar -czf "$W/srv/$ASSET" -C "$W/stage" "$STAGE"
++(cd "$W/srv" && sha256sum "$ASSET" > "$ASSET.sha256")
++
++cat > "$W/server.py" <<PY
++import http.server, os, sys
++SRV, TAG = sys.argv[2], "$TAG"
++class H(http.server.BaseHTTPRequestHandler):
++    def log_message(self, *a): pass
++    def send(self, code, body=b'', extra=None):
++        self.send_response(code)
++        self.send_header('content-length', str(len(body)))
++        for k, v in (extra or {}).items(): self.send_header(k, v)
++        self.end_headers()
++        if self.command != 'HEAD': self.wfile.write(body)
++    def do_HEAD(self): self.do_GET()
++    def do_GET(self):
++        mode, _, p = self.path.lstrip('/').partition('/')
++        p = '/' + p
++        if p.startswith('/api/repos/'):
++            if mode in ('latest403', 'api403'): return self.send(403, b'{"message":"API rate limit exceeded"}')
++            return self.send(200, ('{"tag_name": "%s"}' % TAG).encode())
++        if p.endswith('/releases/latest'):
++            if mode == 'latest403': return self.send(403, b'<html>Just a moment...</html>')
++            return self.send(302, extra={'location': '/%s/xerj-org/xerj/releases/tag/%s' % (mode, TAG)})
++        if '/releases/tag/' in p: return self.send(200, b'release page')
++        if '/releases/download/' in p:
++            name = p.rsplit('/', 1)[1]
++            sha = name.endswith('.sha256')
++            if mode == 'asset403' and not sha: return self.send(403, b'<html>Just a moment...</html>')
++            if mode == 'sha403' and sha: return self.send(403, b'Forbidden')
++            if mode == 'asset404' and not sha: return self.send(404, b'Not Found')
++            if mode == 'badsha' and sha: return self.send(200, ('0' * 64 + '  ' + name[:-7] + '\n').encode())
++            f = os.path.join(SRV, name)
++            if os.path.isfile(f): return self.send(200, open(f, 'rb').read())
++        self.send(404, b'Not Found')
++s = http.server.ThreadingHTTPServer(('127.0.0.1', 0), H)
++open(sys.argv[1], 'w').write(str(s.server_address[1]))
++s.serve_forever()
++PY
++python3 -I "$W/server.py" "$W/port" "$W/srv" & SPID=$!
++for _ in $(seq 50); do [ -s "$W/port" ] && break; sleep 0.1; done
++PORT="$(cat "$W/port")" || { echo "::error::fake server did not start"; exit 1; }
++
++# Shims: send https://github.com/... to http://127.0.0.1:PORT/$MODE/... (and
++# api.github.com to .../$MODE/api/..., so no run touches the network) and
++# exec the real tool. MODE picks the server's behaviour for that run.
++for tool in curl wget; do
++  real="$(command -v "$tool" || true)"
++  [ -n "$real" ] || continue
++  cat > "$W/bin/$tool" <<SH
++#!/bin/sh
++n=\$#; i=0
++while [ \$i -lt \$n ]; do
++  a=\$1; shift
++  case "\$a" in
++    https://github.com/*)     a="http://127.0.0.1:$PORT/\$MODE/\${a#https://github.com/}" ;;
++    https://api.github.com/*) a="http://127.0.0.1:$PORT/\$MODE/api/\${a#https://api.github.com/}" ;;
++  esac
++  set -- "\$@" "\$a"; i=\$((i+1))
++done
++exec "$real" "\$@"
++SH
++  chmod +
+```
+
+**File**: `.github/scripts/release-notes-gate.sh` (modified, +8/-1)
+```diff
+@@ -54,6 +54,8 @@
+ # USAGE
+ #   .github/scripts/release-notes-gate.sh          # gate HEAD (a release branch)
+ #
++#   bash .github/scripts/test_release_notes_gate.sh  # fixture tests, offline
++#
+ #   Replay the rc.18 release PR head (#460) and watch every check fire:
+ #       git fetch origin pull/460/head
+ #       git worktree add /tmp/rc18-replay FETCH_HEAD
+@@ -198,14 +200,19 @@ printf '\n== coverage: merges since the previous tag are all in the notes ==\n'
+ PREV_TAG="$(git describe --tags --abbrev=0 --match 'v*' HEAD 2>/dev/null || true)"
+ if [ -z "$PREV_TAG" ]; then
+   fail "no previous v* tag reachable from HEAD - coverage needs full history (checkout with fetch-depth: 0)"
++elif [ "$(git rev-list --count "$PREV_TAG..HEAD")" -eq 0 ]; then
++  # An empty window is a real state, not a broken parse: HEAD is the tagged
++  # commit itself (a re-run after the tag was pushed) or nothing has landed
++  # since it. No merge can be missing from the notes.
++  pass "no commits in $PREV_TAG..HEAD - nothing merged since $PREV_TAG, nothing to cover"
+ elif [ -n "$SECTION" ]; then
+   exempt="$(printf '%s\n' "$SECTION" | grep -oE '<!--[[:space:]]*notes-exempt:[^>]*' | grep -oE '#[0-9]+' | tr -d '#' | sort -un)"
+   merged_prs="$(git log --first-parent --format='%s' "$PREV_TAG..HEAD" | awk '
+     match($0, /\(#[0-9]+\)$/)          { print substr($0, RSTART + 2, RLENGTH - 3); next }
+     match($0, /^Merge pull request #[0-9]+/) { s = substr($0, RSTART + 20, RLENGTH - 20); print s }
+   ' | sort -un)"
+   if [ -z "$merged_prs" ]; then
+-    fail "found no PR-numbered merges in $PREV_TAG..HEAD - wrong window or the parse broke; fix the gate, do not merge around it"
++    fail "found no PR-numbered merges among the $(git rev-list --count --first-parent "$PREV_TAG..HEAD") commit(s) in $PREV_TAG..HEAD - wrong window or the parse broke; fix the gate, do not merge around it"
+   fi
+   for n in $merged_prs; do
+     # grep reads to EOF (no -q): under `set -o pipefail`, a -q that exits on
+```
+
+**File**: `.github/scripts/test_release_notes_gate.sh` (added, +98/-0)
+```diff
+@@ -0,0 +1,98 @@
++#!/usr/bin/env bash
++# test_release_notes_gate.sh - offline fixture tests for release-notes-gate.sh.
++#
++# Each case builds a throwaway git repo with engine/Cargo.toml, CHANGELOG.md
++# and ROADMAP.md, tags v0.1.0 as the previous release, and runs the gate with
++# a stub `gh` first on PATH (no network, no token). The stub answers the
++# closing-issues GraphQL query with nothing, so an uncited PR stays uncited.
++#
++# The case that motivated this file: a window with NO commits (HEAD is the
++# previous tag itself, e.g. a re-run after the tag was pushed) used to FAIL
++# with "found no PR-numbered merges ... the parse broke". Nothing merged means
++# nothing can be missing from the notes, so it must PASS.
++#
++# USAGE
++#   bash .github/scripts/test_release_notes_gate.sh
++#   GATE=/path/to/other/release-notes-gate.sh bash .github/scripts/test_release_notes_gate.sh
++
++set -uo pipefail
++
++HERE="$(cd "$(dirname "$0")" && pwd)"
++GATE="${GATE:-$HERE/release-notes-gate.sh}"
++WORK="$(mktemp -d)"
++trap 'rm -rf "$WORK"' EXIT
++
++mkdir -p "$WORK/bin"
++cat >"$WORK/bin/gh" <<'EOF'
++#!/bin/sh
++exit 0
++EOF
++chmod +x "$WORK/bin/gh"
++
++failures=0
++ok()  { printf 'ok    %s\n' "$1"; }
++bad() { printf 'FAIL  %s\n' "$1"; failures=$((failures + 1)); }
++
++# fixture <dir> <changelog-body> - repo at v0.1.0, cutting 0.2.0.
++fixture() {
++  local d="$1"
++  mkdir -p "$d/engine"
++  git -C "$d" init -q
++  git -C "$d" config user.email fixture@example.invalid
++  git -C "$d" config user.name fixture
++  git -C "$d" config commit.gpgsign false
++  git -C "$d" config tag.gpgsign false
++  printf '[workspace.package]\nversion = "0.2.0"\n' >"$d/engine/Cargo.toml"
++  printf '# Roadmap\n\n**Open defects** (shortlist)\n\nNone.\n\n## Next\n' >"$d/ROADMAP.md"
++  printf '# Changelog\n\n## [0.2.0]\n\n%s\n\n## [0.1.0]\n\n- first\n' "$2" >"$d/CHANGELOG.md"
++  git -C "$d" add -A
++  git -C "$d" commit -q -m "release: v0.1.0"
++  git -C "$d" tag v0.1.0
++}
++
++# run_gate <dir> - runs the gate in <dir>; sets OUT and RC.
++run_gate() {
++  OUT="$(cd "$1" && PATH="$WORK/bin:$PATH" BASE_REF=v0.1.0 XERJ_REPO=fixture/fixture bash "$GATE" 2>&1)"
++  RC=$?
++}
++
++expect() { # <name> <want-rc> <want-substring>
++  if [ "$RC" -eq "$2" ] && printf '%s\n' "$OUT" | grep -F -- "$3" >/dev/null; then
++    ok "$1"
++  else
++    bad "$1 (rc=$RC, want $2 and \"$3\")"
++    printf '%s\n' "$OUT" | sed 's/^/      /'
++  fi
++}
++
++echo '== case 1: empty window (HEAD is the previous tag) =='
++d="$WORK/empty"; fixture "$d" "- nothing yet"
++run_gate "$d"
++expect "empty window passes" 0 "no commits in v0.1.0..HEAD"
++expect "empty window verdict" 0 "PASS  the [0.2.0] notes match the tree"
++
++echo '== case 2: commits but none PR-numbered (parse or window broke) =='
++d="$WORK/noprs"; fixture "$d" "- nothing yet"
++git -C "$d" commit -q --allow-empty -m "docs: tweak"
++run_gate "$d"
++expect "non-empty window with no PR merges still fails" 1 "found no PR-numbered merges among the 1 commit(s) in v0.1.0..HEAD"
++
++echo '== case 3: one merged PR, cited in the notes =='
++d="$WORK/cited"; fixture "$d" "- fix the thing (#12)"
++git -C "$d" commit -q --allow-empty -m "fix: the thing (#12)"
++run_gate "$d"
++expect "cited PR passes" 0 "PR #12 cited in [0.2.0]"
++
++echo '== case 4: one merged PR, not cited =='
++d="$WORK/uncited"; fixture "$d" "- nothing yet"
++git -C "$d" commit -q --allow-empty -m "fix: other (#13)"
++run_gate "$d"
++expect "uncited PR fails" 1 "PR #13 merged in v0.1.0..HEAD but the [0.2.0] notes never mention it"
++
++printf '\n'
++if [ "$failures" -eq 0 ]; then
++  echo "PASS  release-notes-gate fixtures"
++else
++  echo "FAIL  $failures release-notes-gate fixture check(s)"
++  exit 1
++fi
+```
+
+**File**: `.github/workflows/ci.yml` (modified, +11/-0)
+```diff
+@@ -230,6 +230,11 @@ jobs:
+       - name: Landing page constants agree with the newest release
+         run: bash .github/scripts/landing-constants-guard.sh
+ 
++      # cohere-tools.json is generated from openai-tools.json; a hand edit or a
++      # forgotten regeneration would publish a tool list that disagrees with it.
++      - name: Cohere tool schema is generated from openai-tools.json
++        run: python3 tools/agents/gen_cohere_tools.py --check
++
+   # #770. A job with no `timeout-minutes` runs against GitHub's 360-minute
+   # default, and 22 of this repo's 23 jobs had none. Three of its workflows
+   # serialise on a concurrency group that never auto-cancels
+@@ -299,6 +304,9 @@ jobs:
+           ref: ${{ github.event.pull_request.head.sha }}
+           fetch-depth: 0
+ 
++      - name: Gate's own fixture tests (offline)
++        run: bash .github/scripts/test_release_notes_gate.sh
++
+       - name: Notes vs tree (#474)
+         env:
+           GH_TOKEN: ${{ github.token }}
+@@ -838,6 +846,9 @@ jobs:
+       - name: Installer script lint (landing/get, landing/get.ps1)
+         run: bash .github/scripts/installer-lint.sh
+ 
++      - name: Installer refused-download behaviour (landing/get)
++        run: bash .github/scripts/installer-download-failure-test.sh
++
+       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+         with:
+           node-version: '20'
+```
+
+**File**: `.github/workflows/release.yml` (modified, +34/-0)
+```diff
+@@ -315,6 +315,38 @@ jobs:
+       - name: List artifacts
+         run: ls -la dist/
+ 
++      # #3286: the MCP tool schema of THIS release, read from the binary being
++      # published rather than from main. `mcp-tools.json` on the site follows
++      # main, so an agent on an installed release read a tool list its binary
++      # did not serve. The script names the file from the binary's own
++      # serverInfo.version. When the release cut committed the file, it must
++      # match this binary (a frozen schema never changes); otherwise it is
++      # generated here and still attached, with a warning to commit it.
++      # Ubuntu runners ship jq.
++      - name: MCP tool schema for this release
++        run: |
++          set -euo pipefail
++          VER="${GITHUB_REF_NAME#v}"
++          STAGE="xerj-${VER}-x86_64-unknown-linux-gnu"
++          mkdir -p "${RUNNER_TEMP}/mcp-bin"
++          tar -C "${RUNNER_TEMP}/mcp-bin" -xzf "dist/${STAGE}.tar.gz"
++          export XERJ_BIN="${RUNNER_TEMP}/mcp-bin/${STAGE}/xerj"
++          SCHEMA="landing/docs/agents/schemas/mcp-tools-${VER}.json"
++          if [ -f "${SCHEMA}" ]; then
++            bash scripts/mcp-schema-check.sh --release
++          else
++            bash scripts/mcp-schema-check.sh --release --write
++            echo "::warning::${SCHEMA} was not committed with the release cut; it is attached to the release only. Commit it to main so xerj.org serves it."
++          fi
++          cp "${SCHEMA}" dist/
++          ( cd dist && sha256sum "mcp-tools-${VER}.json" > "mcp-tools-${VER}.json.sha256" )
++
++      # One combined checksum file for mirror installs (#3278). The model
++      # bundle is uploaded separately; `scripts/release-sha256sums.sh --tag`
++      # rebuilds this asset from every *.sha256 on the release afterwards.
++      - name: Build SHA256SUMS
++        run: bash scripts/release-sha256sums.sh --dir dist
++
+       # GitHub anchors auto-generated release notes ("Full Changelog") on the
+       # most recently *published* release. Since the daily pack-rust-vulns-*
+       # corpus-pack releases started, that anchor is a corpus pack, not the
+@@ -378,3 +410,5 @@ jobs:
+             dist/*.zip
+             dist/*.deb
+             dist/*.sha256
++            dist/mcp-tools-*.json
++            dist/SHA256SUMS
+```
+
+---
+
+### Incident Patch 3: `75721077` (2026-11-21)
+**Commit Message**: fix(aggs): bound multi-index leaf terms candidates; keep single-index cap
+
+Maintainer follow-up to #2957 (parijat1222q), which fixes #2935 finding 4:
+a multi-index `terms` agg applied size per index before merging, so
+top-a (1 x10, 3 x9) + top-b (2 x10, 3 x9) at size 1 returned [1, 2]
+instead of 3 x18, and `_key: desc` returned [3, 1, 2]. #2957 merges
+per-index counts and selects once globally. Its coordinator is kept; this
+commit changes two parts of it found in review.
+
+1. Per-index work was unbounded. #2957 rewrote every admitted leaf terms
+   agg to `size: 0` (every term) on each index, so a size-10 request over
+   a high-cardinality field shipped and merged every distinct term. On a
+   release build with hc-b (40,000 distinct keys) + top-a, warm per-index
+   cache, `size: 10`, request_cache=false: #2957 head merged with main
+   44-55 ms per request, this commit 0.5-1.0 ms (10 runs each, load
+   13.8-17.6).
+   Now each index returns `shard_size` candidates (explicit, never below
+   size; default size * 3 / 2 + 10; clamped to search.max_buckets).
+   `size: 0` and a primary `_count: asc` order still fetch every term.
+   When an index cuts terms, the cut documents are added to
+   
+
+**File**: `CHANGELOG.md` (modified, +7/-4)
+```diff
+@@ -869,10 +869,13 @@ all 2,387 evaluation items. Without the flag a node is the node rc.100 was: no
+ - Multi-index composite aggregation pages now use the requested global source
+   order and page size, combine duplicate bucket counts, and set the cursor from
+   the retained page. Internal typed keys preserve formatted-date ordering.
+-- Finalize top-level leaf `terms` buckets across participating indices after
+-  complete bounded counts, preserving requested count/key order and global
+-  minimum/size. Refuse bucket-cap overflow instead of silently dropping terms;
+-  retain private raw term identity until the HTTP response boundary.
++- A top-level `terms` aggregation over several indices now picks its buckets
++  after merging every index's candidates, so a term that wins only in total
++  (9 + 9 = 18 against two local 10s) is no longer lost, and `_key` order is
++  applied globally (#2935). Each index returns `shard_size` candidates
++  (default `size * 1.5 + 10`); when an index cuts terms, the cut documents
++  count in `sum_other_doc_count` and `doc_count_error_upper_bound` reports the
++  bound instead of a false 0.
+ 
+ - A plain debug `cargo test --workspace` no longer aborts on a stack overflow,
+   and the `127.0.0.2` loopback test names the missing macOS alias (#2903). Five
+```
+
+**File**: `engine/crates/xerj-api/src/es_compat.rs` (modified, +256/-12)
+```diff
+@@ -7649,19 +7649,55 @@ fn leaf_terms_params(spec: &Value) -> Option<&Value> {
+     Some(params)
  }
  
--/// `--url` flag > `XERJ_URL` > `http://localhost:9200`. Unlike `autoindex`
--/// (which ignores `XERJ_URL` on purpose for writes), these READ commands
--/// honor it — the scripts always did.
-+/// `--url` flag > `XERJ_URL` > the local node ([`default_url`]: :9200, or the
-+/// port a local node recorded, #3267). Unlike `autoindex` (which ignores
-+/// `XERJ_URL` on purpose for writes), these READ commands honor it — the
-+/// scripts always did.
-+///
-+/// [`default_url`]: xerj_common::localnode::default_url
- fn resolve_url(explicit: Option<&str>) -> String {
-     explicit
-         .map(str::to_string)
-         .or_else(|| std::env::var("XERJ_URL").ok().filter(|u| !u.is_empty()))
--        .unwrap_or_else(|| "http://localhost:9200".to_string())
-+        .unwrap_or_else(xerj_common::localnode::default_url)
++/// How many candidate terms each index returns for a leaf terms agg: the
++/// explicit `shard_size` (never below `size`), else `size * 3 / 2 + 10`.
++/// `0` means every term: `size: 0` asks for all of them, and a primary
++/// `_count: asc` order has no usable error bound once an index cuts its list.
++/// Clamped to the bucket cap, so per-index work is bounded by the request
++/// rather than by field cardinality.
++fn leaf_terms_fetch_size(params: &Value, cap: usize) -> u64 {
++    let size = params.get("size").and_then(Value::as_u64).unwrap_or(10);
++    let count_asc = leaf_terms_orders(params)
++        .and_then(|orders| orders.into_iter().next())
++        .is_some_and(|(key, asc)| key == "_count" && asc);
++    if size == 0 || count_asc {
++        return 0;
++    }
++    let fetch = match params.get("shard_size").and_then(Value::as_u64) {
++        Some(shard_size) => shard_size.max(size),
++        None => size.saturating_mul(3) / 2 + 10,
++    };
++    fetch.min(cap as u64)
++}
++
++/// Union bound for merging one leaf terms agg across indices. Only an
++/// all-terms request (fetch 0) returns the whole union, so only it is refused
++/// past the cap; a bounded request holds at most `indices x fetch` rows and
++/// emits at most `size`.
++fn leaf_terms_union_cap(request: Option<&Value>, name: &str, cap: usize) -> usize {
++    match request
++        .and_then(|r| r.get(name))
++        .and_then(leaf_terms_params)
++    {
++        Some(params) if leaf_terms_fetch_size(params, cap) != 0 => usize::MAX,
++        _ => cap,
++    }
++}
++
+ fn prepare_leaf_terms_summaries(request: &Value) -> (Value, Vec<String>) {
++    let cap = xerj_engine::aggs::max_buckets();
+     let mut rewritten = request.clone();
+     let mut names = Vec::new();
+     if let Some(object) = rewritten.as_object_mut() {
+         for (name, spec) in object {
+-            if leaf_terms_params(spec).is_none() {
++            let Some(fetch) = leaf_terms_params(spec).map(|p| leaf_terms_fetch_size(p, cap)) else {
+                 continue;
+-            }
++            };
+             let params = spec
+                 .get_mut("terms")
+                 .and_then(Value::as_object_mut)
+                 .unwrap();
+-            params.insert("size".into(), json!(0));
++            params.insert("size".into(), json!(fetch));
+             params.remove("shard_size");
+             if params.get("min_doc_count").and_then(Value::as_u64) != Some(0) {
+                 params.insert("min_doc_count".into(), json!(1));
+@@ -7710,6 +7746,37 @@ fn leaf_terms_identity(bucket: &Value) -> String {
+     }
  }
  
- fn build_es(url: &str, api_key: Option<String>) -> Result<Es> {
-@@ -418,6 +421,8 @@ fn code_cli_outcome(args: &[String]) -> CodeCliDone {
-         return bad("xerj code: both <corpus> and \"<query>\" are required".to_string());
++const LEAF_TERMS_OTHER: &str = "__xy_terms_other__";
++const LEAF_TERMS_ERROR: &str = "__xy_terms_error__";
++
++/// Fold one index's own cut-off into private accumulators, once. `other` is
++/// the documents in terms that index cut; `error` is the count of its last
++/// returned term when it cut any (the most an unseen term can have there).
++fn leaf_terms_accumulate(summary: &mut Value) {
++    let Some(object) = summary.as_object_mut() else {
++        return;
++    };
++    if object.contains_key(LEAF_TERMS_OTHER) {
++        return;
++    }
++    let other = object
++        .get("sum_other_doc_count")
++        .and_then(Value::as_u64)
++        .unwrap_or(0);
++    let error = if other > 0 {
++        object
++            .get("buckets")
++            .and_then(Value::as_array)
++            .and_then(|rows| rows.last())
++            .and_then(|b| b["doc_count"].as_u64())
++            .unwrap_or(0)
++    } else {
++        0
++    };
++    object.insert(LEAF_TERMS_OTHER.into(), json!(other));
++    object.insert(LEAF_TERMS_ERROR.into(), json!(error));
++}
++
+ fn merge_leaf_terms_summary(old: &Value, new: &Value, cap: usize) -> Value {
+     if old.get("error").is_some() {
+         return old.clone();
+@@ -7718,6 +7785,17 @@ fn merge_leaf_terms_summary(old: &Value, new: &Value, cap: usize) -> Value {
+         return new.clone();
+     }
+     let mut result = old.clone();
++    if result.get("buckets").and_then(Value::as_array).is_none() {
++        return new.clone();
++    }
++    let mut incoming_summary = new.clone();
++    leaf_terms_accumulate(&mut result);
++    leaf_terms_accumulate(&mut incoming_summary);
++    for key in [LEAF_TERMS_OTHER, LEAF_TERMS_ERROR] {
++        let a = result[key].as_u64().unwrap_or(0);
++        let b = incoming_summary[key].as_u64().unwrap_or(0);
++        result[key] = json!(a.saturating_add(b));
++    }
+     let Some(rows) = result.get_mut("buckets").and_then(Value::as_array_mut) else {
+         return new.clone();
      };
-     let url = resolve_url(url.as_deref());
-+    // #3267: a stopped loopback node is started (detached) before the query.
-+    xerj_common::localnode::ensure_for_cli("xerj code", &url);
-     let es = match build_es(&url, api_key.clone()) {
-         Ok(es) => es,
-         Err(e) => {
-@@ -3993,7 +3998,9 @@ mod tests {
-         assert_eq!(resolve_url(Some("http://a:1")), "http://a:1");
-         // env-dependent branches covered by the e2e; default pinned here.
-         std::env::remove_var("XERJ_URL");
--        assert_eq!(resolve_url(None), "http://localhost:9200");
-+        // #3267: the default is the local node; its port depends on what this
-+        // machine recorded, so only the host is pinned here.
-+        assert!(resolve_url(None).starts_with("http://localhost:"));
+@@ -7729,7 +7807,7 @@ fn merge_leaf_terms_summary(old: &Value, new: &Value, cap: usize) -> Value {
+         .enumerate()
+         .map(|(i, b)| (leaf_terms_identity(b), i))
+         .collect();
+-    if let Some(incoming) = new.get("buckets").and_then(Value::as_array) {
++    if let Some(incoming) = incoming_summary.get("buckets").and_then(Value::as_array) {
+ 
+```
+
+**File**: `engine/crates/xerj-engine/src/aggs.rs` (modified, +3/-43)
+```diff
+@@ -3652,34 +3652,23 @@ fn run_terms(
+     });
+     let mut counts: HashMap<String, u64> = HashMap::new();
+     let bucket_cap = max_buckets();
+-    let too_many_buckets = || {
+-        json!({
+-            "error": format!(
+-                "Trying to create too many buckets. Must be less than or equal to: [{}] but this number of buckets was exceeded. This limit can be set by changing the [search.max_buckets] cluster level setting.",
+-                bucket_cap
+-            ),
+-            "__error_status__": 400u32,
+-        })
+-    };
+     for doc in docs {
+         let weight = doc_count_weight(doc);
+         let vals = terms_agg_bucket_keys(&field_or_script, doc);
+         if vals.is_empty() {
+             if let Some(ph) = &missing_placeholder {
+-                // Never return an apparently exact result after dropping keys.
++                // Bucket cap: skip new keys past the limit, but always
++                // accumulate into existing keys so the cap doesn't bias
++                // counts of buckets that were already seen.
+                 if counts.contains_key(ph) || counts.len() < bucket_cap {
+                     *counts.entry(ph.clone()).or_insert(0) += weight;
+-                } else {
+-                    return too_many_buckets();
+                 }
+             }
+             continue;
+         }
+         for term in vals {
+             if counts.contains_key(&term) || counts.len() < bucket_cap {
+                 *counts.entry(term).or_insert(0) += weight;
+-            } else {
+-                return too_many_buckets();
+             }
+         }
      }
+@@ -3697,8 +3686,6 @@ fn run_terms(
+             for term in terms_agg_bucket_keys(&field_or_script, doc) {
+                 if counts.contains_key(&term) || counts.len() < bucket_cap {
+                     counts.entry(term).or_insert(0);
+-                } else {
+-                    return too_many_buckets();
+                 }
+             }
+         }
+@@ -15859,33 +15846,6 @@ mod tests {
+         assert_eq!(buckets[1]["key"]["n"], json!(10));
+     }
+ 
+-    #[test]
+-    fn leaf_terms_bucket_cap_refuses_incomplete_counts() {
+-        let docs = vec![json!({"k":"a"}), json!({"k":"b"}), json!({"k":"c"})];
+-        let request = json!({"t":{"terms":{"field":"k","size":0}}});
+-        let result = run_aggs_with_limits(&request, &docs, &docs, AggLimits { max_buckets: 2 });
+-        assert_eq!(result["t"]["__error_status__"], 400);
+-        assert!(result["t"]["error"]
+-            .as_str()
+-            .unwrap()
+-            .contains("too many buckets"));
+-        let complete = run_aggs_with_limits(&request, &docs, &docs, AggLimits { max_buckets: 3 });
+-        assert_eq!(complete["t"]["buckets"].as_array().unwrap().len(), 3);
+-    }
+-
+-    #[test]
+-    fn leaf_terms_bucket_cap_covers_missing_and_zero_count_background() {
+-        let docs = vec![json!({"k":"a"}), json!({})];
+-        let missing = json!({"t":{"terms":{"field":"k","size":0,"missing":"z"}}});
+-        let result = run_aggs_with_limits(&missing, &docs, &docs, AggLimits { max_buckets: 1 });
+-        assert_eq!(result["t"]["__error_status__"], 400);
+-        let background = vec![json!({"k":"a"}), json!({"k":"b"})];
+-        let zero = json!({"t":{"terms":{"field":"k","size":0,"min_doc_count":0}}});
+-        let result =
+-            run_aggs_with_limits(&zero, &docs[..1], &background, AggLimits { max_buckets: 1 });
+-        assert_eq!(result["t"]["__error_status__"], 400);
+-    }
+-
+     // ── RC4-W2 item 8: multi_terms raises too_many_buckets past the cap ─
  
      #[test]
 ```
 
-**File**: `engine/crates/xerj-common/src/lib.rs` (modified, +1/-0)
+**File**: `engine/crates/xerj-engine/src/fast_aggs.rs` (modified, +12/-4)
 ```diff
-@@ -60,6 +60,7 @@ pub mod home;
- pub mod hub;
- pub mod hub_evidence;
- pub mod localauth;
-+pub mod localnode;
- pub mod loopback_test;
- pub mod metrics;
- pub mod net;
-```
-
-**File**: `engine/crates/xerj-common/src/localnode.rs` (added, +917/-0)
-```diff
-@@ -0,0 +1,917 @@
-+//! The local node: which port it is on, starting it when it is down, and
-+//! keeping it alive after the terminal that started it closes (#3267).
-+//!
-+//! In 52 rc.101 field reports an agent found nothing listening on
-+//! `localhost:9200`, did not start a node from inside a tool call, and fell
-+//! back to grep for the whole session. Three causes were seen: a node started
-+//! from an agent terminal got SIGTERM when that session ended, a Windows node
-+//! started with `cmd start /B` died with its shell, and a node on :9280 was
-+//! never found because every client assumed :9200.
-+//!
-+//! This module holds the pieces every client shares:
-+//!
-+//! * [`write_launch_record`]: the server records, in its data dir, the port
-+//!   it bound and the flags it was started with (`node.launch.json`).
-+//! * [`default_url`]: with no `XERJ_URL`, the port comes from what the local
-+//!   nodes recorded, not from a constant.
-+//! * [`start_for_url`]: a loopback client that finds the port closed starts
-+//!   the node that last served it, detached, and waits until it answers.
-+//! * [`spawn_detached`]: `setsid` on Unix; `DETACHED_PROCESS |
-+//!   CREATE_NEW_PROCESS_GROUP` (plus `CREATE_BREAKAWAY_FROM_JOB` when the
-+//!   job allows it) on Windows. stdin is closed and both output streams go to
-+//!   a log file, so no terminal, pipe or console is left to take it down.
-+//!
-+//! `XERJ_NO_AUTOSTART=1` turns auto-start off. A non-loopback URL is never
-+//! started.
-+
-+use std::io::{Read, Write};
-+use std::net::{SocketAddr, TcpStream, ToSocketAddrs};
-+use std::path::{Path, PathBuf};
-+use std::process::{Child, Command, Stdio};
-+use std::time::{Duration, Instant};
-+
-+use serde::{Deserialize, Serialize};
-+
-+use crate::nodedir::{self, PidState};
-+
-+/// Set to `1`/`true`/`yes`/`on` to stop clients from starting a node.
-+pub const NO_AUTOSTART_ENV: &str = "XERJ_NO_AUTOSTART";
-+/// Seconds a client waits for a node it started (default 120).
-+pub const AUTOSTART_TIMEOUT_ENV: &str = "XERJ_AUTOSTART_TIMEOUT_SECS";
-+/// Set by a launcher that manages its own node (the hub sets `hub`). Recorded
-+/// so port discovery does not hand a user's client the hub's private node.
-+pub const NODE_ROLE_ENV: &str = "XERJ_NODE_ROLE";
-+/// The launch record, beside `node.lock` in the data dir.
-+pub const LAUNCH_RECORD_FILE: &str = "node.launch.json";
-+/// Where a detached node's stdout and stderr go, in its data dir.
-+pub const NODE_LOG_FILE: &str = "node.log";
-+/// The product default port.
-+pub const DEFAULT_PORT: u16 = 9200;
-+
-+const DEFAULT_START_TIMEOUT: Duration = Duration::from_secs(120);
-+const PROBE_TIMEOUT: Duration = Duration::from_millis(400);
-+const POLL_INTERVAL: Duration = Duration::from_millis(250);
-+
-+/// `true` when `XERJ_NO_AUTOSTART` asks clients not to start a node.
-+pub fn autostart_disabled() -> bool {
-+    env_flag_set(std::env::var(NO_AUTOSTART_ENV).ok().as_deref())
-+}
-+
-+fn env_flag_set(value: Option<&str>) -> bool {
-+    matches!(
-+        value.map(|v| v.trim().to_ascii_lowercase()).as_deref(),
-+        Some("1" | "true" | "yes" | "on")
-+    )
-+}
-+
-+/// How long to wait for a started node: `XERJ_AUTOSTART_TIMEOUT_SECS`, else
-+/// 120 s. Opening a large data dir is the slow part.
-+pub fn start_timeout() -> Duration {
-+    std::env::var(AUTOSTART_TIMEOUT_ENV)
-+        .ok()
-+        .and_then(|v| v.trim().parse::<u64>().ok())
-+        .filter(|secs| *secs > 0)
-+        .map(Duration::from_secs)
-+        .unwrap_or(DEFAULT_START_TIMEOUT)
-+}
-+
-+// ─────────────────────────────── Launch record ──────────────────────────────
-+
-+/// What a node recorded about its own start, so a client can start the same
-+/// node again.
-+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
-+pub struct LaunchRecord {
-+    /// The ES-compatible port the node bound (after `--auto-port`, if any).
-+    pub port: u16,
-+    /// The server flags after the program name, without `--detach`.
-+    pub args: Vec<String>,
-+    /// The working directory, for a relative `--config` path.
-+    #[serde(default)]
-+    pub cwd: Option<PathBuf>,
-+    #[serde(default)]
-+    pub pid: u32,
-+    /// [`NODE_ROLE_ENV`] at start, when set.
-+    #[serde(default)]
-+    pub role: Option<String>,
-+}
-+
-+/// Record this process's start in `data_dir`. Written atomically (temp file
-+/// plus rename), so a reader never sees half a record.
-+pub fn write_launch_record(data_dir: &Path, port: u16) -> std::io::Result<()> {
-+    let args: Vec<String> = std::env::args()
-+        .skip(1)
-+        .filter(|arg| arg != "--detach")
-+        .collect();
-+    let record = LaunchRecord {
-+        port,
-+        args,
-+        cwd: std::env::current_dir().ok(),
-+        pid: std::process::id(),
-+        role: std::env::var(NODE_ROLE_ENV).ok().filter(|r| !r.is_empty()),
-+    };
-+    write_launch_record_value(data_dir, &record)
-+}
-+
-+fn write_launch_record_value(data_dir: &Path, record: &LaunchRecord) -> std::io::Result<()> {
-+    let body = serde_json::to_vec_pretty(rec
-```
-
-**File**: `engine/crates/xerj-common/src/nodedir.rs` (modified, +49/-13)
-```diff
-@@ -43,7 +43,7 @@ fn publish_data_dir_for_port_in(home: &Path, port: u16, data_dir: &Path) -> std:
+@@ -2985,10 +2985,18 @@ impl<'a> FastCtx<'a> {
+         // the exact OOM vector the cap exists to close, honoured on brute and
+         // ignored here.
+         //
+-        // Refuse the columnar route when its distinct-term map would exceed
+-        // the cap. The brute evaluator returns the shared too-many-buckets
+-        // error, never an apparently exact iteration-dependent subset. Keep
+-        // the existing bail route so unsupported fast shapes agree with it.
++        // We do NOT enforce the cap by truncating the map: brute drops the
++        // terms past `max_buckets` in doc-iteration order and reports a
++        // `sum_other_doc_count` computed only over the terms it kept, so the
++        // dropped terms vanish silently (order-dependent, and the total
++        // conceals them). Reproducing that on the fast path would copy the bug,
++        // not the contract. Instead we BAIL to brute the moment the distinct
++        // count would exceed the cap (checked below as the map grows, so the
++        // map is bounded to ~`bucket_cap`): after the bail the request is
++        // answered by the very `run_terms` a test would measure the fast path
++        // against, so the two paths AGREE past the cap by construction — the
++        // same shape as the #104 / #120 bail-to-brute fallbacks. An index whose
++        // distinct count is at or under the cap is served here as before.
+         let bucket_cap = crate::aggs::max_buckets();
  
- /// The data dir that last served `port`, if any. It falls back to the parent
- /// of the admin-key pointer, which nodes before this change wrote when auth was on.
--fn published_data_dir_in(home: &Path, port: u16) -> Option<PathBuf> {
-+pub(crate) fn published_data_dir_in(home: &Path, port: u16) -> Option<PathBuf> {
-     let read = |path: PathBuf| {
-         std::fs::read_to_string(path)
-             .ok()
-@@ -56,6 +56,51 @@ fn published_data_dir_in(home: &Path, port: u16) -> Option<PathBuf> {
-     })
- }
- 
-+/// One `~/.xerj/by-port/<port>.data-dir` pointer and when it was written.
-+#[derive(Debug, Clone, PartialEq, Eq)]
-+pub(crate) struct PortPointer {
-+    pub port: u16,
-+    pub data_dir: PathBuf,
-+    pub written: std::time::SystemTime,
-+}
-+
-+/// Every data-dir pointer under `home`, most recently written first. A node
-+/// rewrites its pointer on every start, so the first entry is the node that
-+/// started last.
-+pub(crate) fn port_pointers_in(home: &Path) -> Vec<PortPointer> {
-+    let Ok(entries) = std::fs::read_dir(home.join(".xerj").join("by-port")) else {
-+        return Vec::new();
-+    };
-+    let mut out: Vec<PortPointer> = entries
-+        .flatten()
-+        .filter_map(|entry| {
-+            let name = entry.file_name();
-+            let port: u16 = name.to_str()?.strip_suffix(".data-dir")?.parse().ok()?;
-+            let written = entry.metadata().ok()?.modified().ok()?;
-+            let data_dir = published_data_dir_in(home, port)?;
-+            Some(PortPointer {
-+                port,
-+                data_dir,
-+                written,
-+            })
-+        })
-+        .collect();
-+    out.sort_by(|a, b| b.written.cmp(&a.written).then(a.port.cmp(&b.port)));
-+    out
-+}
-+
-+/// The PID recorded for `data_dir`'s node: `node.lock`, or the unlocked
-+/// `node.lock.pid` note when a running Windows node holds the lock and hides
-+/// its bytes (#2431). `None` when there is no lock file or no PID in it.
-+pub(crate) fn lock_pid(data_dir: &Path) -> Option<u32> {
-+    let text = match std::fs::read_to_string(data_dir.join("node.lock")) {
-+        Ok(text) => text,
-+        Err(e) if e.kind() == std::io::ErrorKind::NotFound => return None,
-+        Err(_) => std::fs::read_to_string(data_dir.join("node.lock.pid")).ok()?,
-+    };
-+    text.trim().parse().ok()
-+}
-+
- /// Whether a PID names a running process.
- #[derive(Debug, Clone, Copy, PartialEq, Eq)]
- pub enum PidState {
-@@ -172,22 +217,13 @@ pub fn node_lock_hint(
-     } else {
-         format!(" --port {port}")
-     };
--    // A running node on Windows holds `node.lock` under `LockFileEx`, which
--    // hides its bytes from other processes. The engine writes the same PID
--    // to the unlocked `node.lock.pid` beside it (#2431); read that only when
--    // the lock file exists but cannot be read.
--    let text = match std::fs::read_to_string(&lock) {
--        Ok(text) => text,
--        Err(e) if e.kind() == std::io::ErrorKind::NotFound => return None,
--        Err(_) => std::fs::read_to_string(data_dir.join("node.lock.pid")).ok()?,
--    };
--    let pid: u32 = text.trim().parse().ok()?;
-+    let pid = lock_pid(data_dir)?;
-     let dir = data_dir.display();
-     match probe(pid) {
-         PidState::Dead => Some(format!(
-             "The node that last served this port used data dir {dir}; its pid {pid} \
-              (recorded in {}) is no longer running, so it exited or was killed. \
--             Restart it with the same --data-dir: xerj --data-dir {dir}{port_flag} (add \
-+             Restart it with the same --data-dir: xerj --detach --data-dir {dir}{port_flag} (add \
-              --insecure if it ran that way).",
-             lock.display()
-         )),
-@@ -255,7 +291,7 @@ mod tests {
-         .expect("hint");
-         assert!(hint.contains("pid 4242"), "{hint}");
-         assert!(hint.contains("is no longer running"), "{hint}");
--        assert!(hint.contains("xerj --data-dir "), "{hint}");
-+        assert!(hint.contains("xerj --detach --data-dir "), "{hint}");
-         assert!(hint.contains(" --port 9207 "), "{hint}");
-         let canon = std::fs::canonicalize(data.path()).unwrap();
-         assert!(hint.contains(&canon.display().to_string()), "{hint}");
+         let plan = self.plan_subs(sub, true)?;
 ```
 
-**File**: `engine/crates/xerj-common/src/resource.rs` (modified, +6/-1)
+**File**: `engine/crates/xerj-engine/tests/agg_bucket_cap_terms.rs` (modified, +48/-14)
 ```diff
-@@ -106,7 +106,12 @@ pub fn cores() -> usize {
- /// in a server log is a fair price for never losing the message.
- fn warn_once(message: &str) {
-     tracing::warn!("{message}");
--    eprintln!("xerj: {message}");
-+    // Fallible: a node whose stderr cannot be written must not abort over a
-+    // warning (#3276).
-+    let _ = std::io::Write::write_all(
-+        &mut std::io::stderr(),
-+        format!("xerj: {message}\n").as_bytes(),
+@@ -9,11 +9,23 @@
+ //! 37. That is the OOM vector the cap exists to close, honoured on brute and
+ //! ignored on the columnar path.
+ //!
+-//! ## Overflow behavior
++//! ## Why the fix BAILS rather than errors or truncates
+ //!
+-//! exec_terms bails to brute when another distinct key would exceed the cap.
+-//! Brute now returns too_many_buckets instead of silently dropping keys and
+-//! reporting incomplete counts as exact. Both paths must preserve that error.
++//! The two executors must AGREE past the cap. Brute `run_terms` does not error
++//! there: it keeps the first `max_buckets` distinct terms in doc-iteration
++//! order, drops the rest, and reports a `sum_other_doc_count` computed only
++//! over the terms it kept — so the dropped terms vanish silently and the total
++//! conceals them (order-dependent, and a bug in its own right). Reproducing
++//! that on the fast path would copy the bug, not the contract; erroring would
++//! make the fast path disagree with a brute path that still returns a body.
++//!
++//! So `exec_terms` bails to brute the instant its distinct-term count would
++//! exceed the cap. After the bail the request is answered by the very
++//! `run_terms` the fast path would be measured against, so the two AGREE past
++//! the cap by construction. What this test pins is that agreement plus the two
++//! observable consequences of the bail: the fast path stops SERVING the
++//! over-cap agg (`fast_path_aggs_served` no longer ticks) and the answer honours
++//! the cap (exactly `CAP` distinct buckets, not all `NTERMS`).
+ //!
+ //! Which executor answered is read from `aggs::fast_path_aggs_served`; the brute
+ //! leg is forced by keeping an index under the columnar path's own size gate
+@@ -128,15 +140,36 @@ async fn lowered_max_buckets_binds_the_columnar_terms_path_and_the_brute_path_al
+     build_index(&engine, "big-at", BIG_DOCS, CAP).await;
+     build_index(&engine, "small-over", SMALL_DOCS, NTERMS).await;
+ 
+-    // Both over-cap routes must refuse incomplete counts, not quietly keep
+-    // an iteration-dependent subset. This intentional contract correction
+-    // replaces the old assertion that pinned the documented silent-drop bug.
+-    for name in ["big-over", "small-over"] {
+-        let (agg, served) = run_terms(&engine, name).await;
+-        assert_eq!(served, 0, "over-cap terms must fall back to brute");
+-        assert_eq!(agg["__error_status__"], 400, "{name}: {agg}");
+-        assert!(agg["error"].as_str().unwrap().contains("too many buckets"));
+-    }
++    // ── Fast path, cardinality PAST the cap ──────────────────────────────
++    // The regression: before the fix this was served columnarly (served == 1)
++    // and returned all NTERMS buckets. The fix bails to brute, so the fast path
++    // no longer serves it and the brute cap (exactly CAP distinct terms) binds.
++    let (agg, served) = run_terms(&engine, "big-over").await;
++    assert_eq!(
++        served,
++        0,
++        "exec_terms served an over-cap agg columnarly instead of bailing; it \
++         returned {} buckets against max_buckets={CAP}",
++        bucket_count(&agg)
 +    );
++    assert_eq!(
++        bucket_count(&agg),
++        CAP,
++        "over-cap terms agg did not honour max_buckets={CAP}: {}",
++        bucket_count(&agg)
++    );
++
++    // ── Brute path, same over-cap shape below the size gate ──────────────
++    // The path the fast leg bails INTO. It agrees on the cap: exactly CAP
++    // distinct buckets. (The kept terms are order-dependent and the doc counts
++    // differ from the big index, so agreement is on the count, per the issue.)
++    let (agg, served) = run_terms(&engine, "small-over").await;
++    assert_eq!(served, 0, "the small index must not take the fast path");
++    assert_eq!(
++        bucket_count(&agg),
++        CAP,
++        "brute run_terms disagrees with the fast path on the cap"
++    );
+ 
+     // ── Fast path, cardinality exactly AT the cap ────────────────────────
+     // The fix must bail only when the count would EXCEED the cap: an at-cap
+@@ -159,6 +192,7 @@ async fn lowered_max_buckets_binds_the_columnar_terms_path_and_the_brute_path_al
+             .unwrap()
+             .iter()
+             .all(|b| b.get("__xy_terms_key__").is_some()),
+-        "the admitted fast path must retain raw term identity for coordination"
++        "the columnar path must keep the raw term identity the multi-index \
++         coordinator merges on"
+     );
  }
- 
- /// Pure core-count resolution — the tested half of [`cores`].
 ```
 
----
-
-### Incident Patch 3: `10c27cf1` (2026-11-18)
-**Commit Message**: fix(def): re-anchor stale hits, find unindexed defs, add `xerj status`, index asm/GDScript/K&R C
-
-rc.101 field reports: 46 (#3268), 18 (#3270) and 6 (#3271) problem reports
-where `xerj def` gave a wrong line or no definition.
-
-#3268 — stale autoindex
-Root cause: `xerj def` prints the `line` stored at index time. The
-`index_stale` hint (#2345) warned, but nothing corrected the answer, so after
-3 inserted lines def said 138 for a function now on 141, and a function added
-after the build was "no definition found". `xerj status` did not exist.
-Fix (runs only when the staleness check fired, so a fresh tree reads no file
-and prints the same bytes):
-- freshness.rs: a hit whose file is newer than the run stamp is re-read
-  (<= 2 MiB). The declaration line from `code` is found nearest the indexed
-  line; if its text changed, the extractor finds the symbol by name. The hit
-  gets the current line plus `reanchored: true` / `indexed_line`. A removed
-  file or symbol drops the hit. When no hit is an exact-name definition, the
-  extractor runs read-only over changed code files (<= 256 files, 32 MiB,
-  50k stats, 1.5 s) and returns `unindexed: true` hits. `_xerj.freshness`
-  counts what changed. 
-
-**File**: `engine/crates/xerj-autoindex/src/def.rs` (modified, +213/-7)
+**File**: `engine/tests/es-compat-yaml/yaml/aggregations/multi_index_leaf_terms.yml` (modified, +144/-0)
 ```diff
-@@ -206,6 +206,7 @@ pub fn finalize_definition_response(response: &mut Value, query: &str, k: usize)
-         .unwrap_or_default();
-     rerank_def_hits(&mut hits, query);
-     let mut hits = unique_locations(hits);
-+    demote_literal_references(&mut hits, query);
-     hits.truncate(k);
-     if let Some(slot) = response.pointer_mut("/hits/hits") {
-         *slot = Value::Array(hits.clone());
-@@ -481,6 +482,145 @@ pub(crate) fn rerank_def_hits(hits: &mut [Value], query: &str) {
-     xerj_common::xccode::render::demote_sparse_definition_hits(hits, query);
- }
- 
-+/// True when `text` names `name` (as a whole identifier) at least once and
-+/// every such occurrence sits inside a quoted string or a `[...]` list.
-+///
-+/// Quotes are `"`, `` ` `` and, unless `apostrophe_quotes` is false (Rust
-+/// and OCaml use `'` for lifetimes and type variables), `'`. A quote counts
-+/// only when it closes on the same line (backslash escapes honoured), so a
-+/// stray apostrophe opens nothing. Bracket depth carries across lines, so a
-+/// list that spans lines is one list. Comments are not parsed: a name in a
-+/// comment counts as an occurrence outside a literal, which keeps the hit a
-+/// declaration.
-+fn only_in_literals(text: &str, name: &str, apostrophe_quotes: bool) -> bool {
-+    if name.is_empty() {
-+        return false;
-+    }
-+    let word = |b: u8| b.is_ascii_alphanumeric() || b == b'_' || b == b'$';
-+    // The quote at `open` has a matching close later on the same line.
-+    let closes = |bytes: &[u8], open: usize| {
-+        let q = bytes[open];
-+        let mut j = open + 1;
-+        while j < bytes.len() {
-+            match bytes[j] {
-+                b'\\' => j += 2,
-+                b if b == q => return true,
-+                _ => j += 1,
-+            }
-+        }
-+        false
-+    };
-+    let needle = name.as_bytes();
-+    let mut depth = 0usize;
-+    let mut seen = false;
-+    for line in text.lines() {
-+        let bytes = line.as_bytes();
-+        let mut quote: Option<u8> = None;
-+        let mut i = 0;
-+        while i < bytes.len() {
-+            let b = bytes[i];
-+            if let Some(q) = quote {
-+                if b == b'\\' {
-+                    i += 2;
-+                    continue;
-+                }
-+                if b == q {
-+                    quote = None;
-+                }
-+            } else {
-+                match b {
-+                    b'"' | b'`' if closes(bytes, i) => quote = Some(b),
-+                    b'\'' if apostrophe_quotes && closes(bytes, i) => quote = Some(b),
-+                    b'[' => depth += 1,
-+                    b']' => depth = depth.saturating_sub(1),
-+                    _ => {}
-+                }
-+            }
-+            if bytes[i..].starts_with(needle)
-+                && (i == 0 || !word(bytes[i - 1]))
-+                && bytes.get(i + needle.len()).is_none_or(|&n| !word(n))
-+            {
-+                seen = true;
-+                if quote.is_none() && depth == 0 {
-+                    return false;
-+                }
-+                i += needle.len();
-+                continue;
-+            }
-+            i += 1;
-+        }
-+    }
-+    seen
-+}
-+
-+/// #3270: a hit that is not a declaration of `query` and names it only
-+/// inside a string or a list (a helper script's `LABELS = ["foo", ...]`)
-+/// is a reference. References keep their order but sort after every other
-+/// hit, and carry `reference: true`. Only an identifier query is checked;
-+/// a plain-words query has no single name to look for.
-+pub(crate) fn demote_literal_references(hits: &mut Vec<Value>, query: &str) {
-+    let name = query.trim();
-+    if !is_identifier(name) {
-+        return;
-+    }
-+    let mut declarations = Vec::with_capacity(hits.len());
-+    let mut references = Vec::new();
-+    for mut hit in hits.drain(..) {
-+        let src = hit.get("_source").unwrap_or(&Value::Null);
-+        let declares = src.get("name").and_then(Value::as_str) == Some(name);
-+        let text = src
-+            .get("code")
-+            .and_then(Value::as_str)
-+            .map(str::to_string)
-+            .or_else(|| passage_text(&hit));
-+        let apostrophes = !matches!(
-+            src.get("language").and_then(Value::as_str),
-+            Some("rust" | "ocaml" | "ocaml_interface")
-+        );
-+        let reference = !declares && text.is_some_and(|t| only_in_literals(&t, name, apostrophes));
-+        if reference {
-+            if let Some(obj) = hit.as_object_mut() {
-+                obj.insert("reference".into(), Value::Bool(true));
-+            }
-+            references.push(hit);
-+        } else {
-+            declarations.push(hit);
-+        }
-+    }
-+    declarations.extend(references);
-+    *hits = declarations;
-+}
-+
-+/// The bracketed tag after a hit's location: its kind plus what the
-+/// freshness pass (#3268) or the reference check (#3270) said about it.
-+fn hit_tag(hit: &Value) -> String {
-+    let mut tags = Vec::new();
-+    if let Some(kind) = hit
-+        .p
-```
-
-**File**: `engine/crates/xerj-autoindex/src/extract/code.rs` (modified, +242/-5)
-```diff
-@@ -64,10 +64,79 @@ struct LangDef {
-     probe: Option<fn(&str) -> bool>,
- }
- 
--/// Is this extension a language we AST-parse? Cheap check used by the sniffer.
-+/// Is this extension a language we extract definitions from? Cheap check
-+/// used by the sniffer. Covers the tree-sitter rows and the line-scanned
-+/// languages in [`LINE_LANGS`].
- pub fn is_code_ext(ext: &str) -> bool {
-     let e = ext.to_ascii_lowercase();
--    registry().iter().any(|d| d.exts.contains(&e.as_str()))
-+    registry().iter().any(|d| d.exts.contains(&e.as_str())) || line_lang(&e).is_some()
-+}
-+
-+/// A language with no registered tree-sitter grammar whose definitions are
-+/// found by a line scan ([`super::code_regex`]). #3270: assembly labels were
-+/// not definitions at all, so `xerj def <label>` fell back to the same word
-+/// inside string constants of helper scripts. #3271: GDScript was not code.
-+struct LineLang {
-+    name: &'static str,
-+    exts: &'static [&'static str],
-+    scan: fn(&str) -> Vec<super::code_regex::LineSym>,
-+}
-+
-+/// `.inc` is not claimed: PHP, Pascal and C projects use it too, and a
-+/// single-claimant extension is never content-probed. `.S` is matched as
-+/// `s` (extensions are lowercased before lookup).
-+const LINE_LANGS: &[LineLang] = &[
-+    LineLang {
-+        name: "asm",
-+        exts: &["s", "asm"],
-+        scan: super::code_regex::asm_symbols,
-+    },
-+    LineLang {
-+        name: "gdscript",
-+        exts: &["gd"],
-+        scan: super::code_regex::gdscript_symbols,
-+    },
-+];
-+
-+fn line_lang(ext: &str) -> Option<&'static LineLang> {
-+    LINE_LANGS.iter().find(|l| l.exts.contains(&ext))
-+}
-+
-+fn line_symbols(lang: &LineLang, text: &str) -> Vec<Symbol> {
-+    (lang.scan)(text)
-+        .into_iter()
-+        .map(|s| Symbol {
-+            name: s.name,
-+            kind: s.kind.to_string(),
-+            line: s.line,
-+            end_line: s.end_line,
-+            code: s.code,
-+        })
-+        .collect()
-+}
-+
-+/// The language name a file with extension `ext` is extracted as, after the
-+/// same content probe [`extract`] applies to a shared extension. `None` when
-+/// no row claims it.
-+pub fn language_for(ext: &str, text: &str) -> Option<&'static str> {
-+    let ext = ext.to_ascii_lowercase();
-+    if let Some(line) = line_lang(&ext) {
-+        return Some(line.name);
-+    }
-+    let claimants: Vec<&LangDef> = registry()
-+        .iter()
-+        .filter(|d| d.exts.contains(&ext.as_str()))
-+        .collect();
-+    match claimants.as_slice() {
-+        [] => None,
-+        [only] => Some(only.name),
-+        many => Some(
-+            many.iter()
-+                .find(|d| d.probe.map(|p| p(text)).unwrap_or(true))
-+                .unwrap_or(&many[0])
-+                .name,
-+        ),
-+    }
- }
- 
- /// #2732: Vue and Svelte single-file components. No grammar claims the whole
-@@ -134,6 +203,13 @@ pub fn canonical_language(input: &str) -> Option<&'static str> {
-         .find(|d| d.name == wanted)
-         .or_else(|| reg.iter().find(|d| d.exts.contains(&wanted.as_str())))
-         .map(|d| d.name)
-+        .or_else(|| {
-+            LINE_LANGS
-+                .iter()
-+                .find(|l| l.name == wanted)
-+                .or_else(|| line_lang(&wanted))
-+                .map(|l| l.name)
-+        })
- }
- 
- /// The `--lang` value to filter on: the canonical language name when the
-@@ -452,6 +528,17 @@ pub fn extract(path: &Path, sn: &crate::sniff::Sniffed, sink: Sink) -> Result<Ex
-         emit_code_doc(named, &ext, &text, &symbols, &mut stats, sink);
-         return Ok(stats);
-     }
-+    if let Some(line) = line_lang(&ext) {
-+        let Some(bytes) = super::read_whole(path, false, CODE_CAP)? else {
-+            stats.junk += 1;
-+            stats.refusal = Some(code_cap_refusal(path));
-+            return Ok(stats);
-+        };
-+        let (text, _) = crate::sniff::decode_text(&bytes);
-+        let symbols = line_symbols(line, &text);
-+        emit_code_doc(named, line.name, &text, &symbols, &mut stats, sink);
-+        return Ok(stats);
-+    }
-     let claimants: Vec<&LangDef> = registry()
-         .iter()
-         .filter(|d| d.exts.contains(&ext.as_str()))
-@@ -1304,11 +1391,14 @@ pub fn extract_value(lang: &str, decl: &str) -> Option<String> {
- /// contents. Unknown languages yield no records. The declaration text is capped
- /// at 400 chars; constants and macros carry their value ([`extract_value`]).
- pub fn definitions(file_rel: &str, lang: &str, text: &str) -> Vec<xerj_common::hub::DefRecord> {
--    let Some(def) = registry().iter().find(|d| d.name == lang) else {
-+    let symbols = if let Some(line) = LINE_LANGS.iter().find(|l| l.name == lang) {
-+        line_symbols(line, text)
-+    } else if let Some(def) = registry().iter().find(|d| d.name == lang) {
-+        parse_symbols(def, text).unwrap_or_default()
-+    } else {
-         return Vec::new();
-     };
--    parse_symbols(def, text)
--        .unwrap_or_default()
-+    symbols
-         .into_iter()
-         .map(|s| {
- 
-```
-
-**File**: `engine/crates/xerj-autoindex/src/extract/code_regex.rs` (added, +465/-0)
-```diff
-@@ -0,0 +1,465 @@
-+//! Line-based definition extractors for languages with no registered
-+//! tree-sitter grammar (#3270 assembly, #3271 GDScript).
-+//!
-+//! No grammar dependency is added. A multi-dialect assembly grammar does not
-+//! exist in a maintained form, and a GDScript grammar would be a new crate
-+//! whose licence and query surface we have not reviewed. Both languages
-+//! declare their definitions at the start of a line, so a per-line scan finds
-+//! them. A scan cannot see nesting the way an AST can, so it reports only
-+//! what the first tokens of a line say.
-+
-+use std::collections::HashSet;
-+
-+/// One definition found by a line scan. `line` and `end_line` are 1-based.
-+#[derive(Debug, Clone, PartialEq, Eq)]
-+pub(crate) struct LineSym {
-+    pub name: String,
-+    pub kind: &'static str,
-+    pub line: usize,
-+    pub end_line: usize,
-+    pub code: String,
-+}
-+
-+/// Cap on the definitions one file yields, the same as the AST path.
-+const MAX_SYMS: usize = 5000;
-+/// Longest name kept. Anything longer is not a hand-written identifier.
-+const MAX_NAME: usize = 200;
-+/// Longest declaration line kept in `code`.
-+const MAX_CODE: usize = 400;
-+
-+fn ident_start(c: char) -> bool {
-+    c.is_ascii_alphabetic() || c == '_'
-+}
-+
-+fn asm_ident_char(c: char) -> bool {
-+    c.is_ascii_alphanumeric() || matches!(c, '_' | '.' | '$' | '@' | '?')
-+}
-+
-+/// Leading assembler identifier of `s`: `[A-Za-z_.$][\w.$@?]*`.
-+fn asm_ident(s: &str) -> Option<&str> {
-+    let first = s.chars().next()?;
-+    if !(ident_start(first) || first == '.' || first == '$') {
-+        return None;
-+    }
-+    let end = s
-+        .char_indices()
-+        .find(|(_, c)| !asm_ident_char(*c))
-+        .map_or(s.len(), |(i, _)| i);
-+    let name = &s[..end];
-+    (!name.is_empty() && name.len() <= MAX_NAME).then_some(name)
-+}
-+
-+fn word(s: &str) -> Option<&str> {
-+    let first = s.chars().next()?;
-+    if !ident_start(first) {
-+        return None;
-+    }
-+    let end = s
-+        .char_indices()
-+        .find(|(_, c)| !(c.is_ascii_alphanumeric() || *c == '_'))
-+        .map_or(s.len(), |(i, _)| i);
-+    Some(&s[..end]).filter(|n| n.len() <= MAX_NAME)
-+}
-+
-+fn clip(line: &str) -> String {
-+    line.trim().chars().take(MAX_CODE).collect()
-+}
-+
-+/// A local label the assembler does not export: GNU `.L…`, numeric `1:`,
-+/// and MASM `@@:`. These are jump targets inside a routine, not definitions.
-+fn asm_local(name: &str) -> bool {
-+    name.starts_with(".L") || name.starts_with("L$") || name.starts_with("@@")
-+}
-+
-+/// Directives that make a name global. GNU `.globl` / `.global`, NASM
-+/// `global`, MASM `PUBLIC`, and `.type name, @function`.
-+fn asm_exported(lines: &[&str]) -> HashSet<String> {
-+    let mut out = HashSet::new();
-+    for raw in lines {
-+        let line = raw.trim();
-+        let lower = line.to_ascii_lowercase();
-+        let rest = [".globl", ".global", "global", "public"]
-+            .iter()
-+            .find_map(|kw| {
-+                lower
-+                    .strip_prefix(kw)
-+                    .filter(|r| r.starts_with([' ', '\t']))
-+                    .map(|_| line[kw.len()..].trim())
-+            });
-+        if let Some(rest) = rest {
-+            for part in rest.split([',', ' ', '\t']) {
-+                let part = part.trim().trim_end_matches(":function").trim();
-+                if let Some(name) = asm_ident(part) {
-+                    out.insert(name.to_string());
-+                }
-+            }
-+            continue;
-+        }
-+        if let Some(rest) = lower.strip_prefix(".type") {
-+            if rest.contains("function") {
-+                let rest = line[5..].trim();
-+                if let Some(name) = asm_ident(rest.split(',').next().unwrap_or("").trim()) {
-+                    out.insert(name.to_string());
-+                }
-+            }
-+        }
-+    }
-+    out
-+}
-+
-+/// Assembly: GNU as (`.s`, `.S`), NASM/YASM and MASM (`.asm`).
-+///
-+/// - a label at column 0 (`name:`) is a definition; exported names
-+///   (`.globl`, `global`, `PUBLIC`, `.type name, @function`) are `function`,
-+///   the rest `label`. Local labels (`.L…`, numeric) are skipped.
-+/// - MASM `name PROC` is a `function`, `name MACRO` a `macro`.
-+/// - `.macro name` and NASM `%macro name` are `macro`.
-+/// - `.equ name, v`, `.set name, v`, `name EQU v`, `%define name`,
-+///   `#define name` and a column-0 `name = v` are `const`.
-+///
-+/// A routine runs from its label to the line before the next column-0
-+/// definition, which is what `end_line` reports.
-+pub(crate) fn asm_symbols(text: &str) -> Vec<LineSym> {
-+    let lines: Vec<&str> = text.lines().collect();
-+    let exported = asm_exported(&lines);
-+    let mut out: Vec<LineSym> = Vec::new();
-+    for (row, raw) in lines.iter().enumerate() {
-+        if out.len() >= MAX_SYMS {
-+            break;
-+        }
-+        let line_no = row + 1;
-+        let trimmed = raw.trim_start();
-+        let at_col0 = trimmed.len() == raw.len();
-+        let lower = trimme
-```
-
-**File**: `engine/crates/xerj-autoindex/src/extract/mod.rs` (modified, +1/-0)
-```diff
-@@ -4,6 +4,7 @@
- 
- pub mod bvh;
- pub mod code;
-+mod code_regex;
- pub mod csv_x;
- pub mod doc;
- pub mod docx;
-```
-
-**File**: `engine/crates/xerj-autoindex/src/freshness.rs` (added, +655/-0)
-```diff
-@@ -0,0 +1,655 @@
-+//! Correct `xerj def` answers from an index older than its folder (#3268).
-+//!
-+//! The `index_stale` hint (#2345) says a prefix is behind its folder. It did
-+//! not change the answer, so an agent still got the line a function sat on at
-+//! index time (138 when it is now 141) and "no definition found" for a
-+//! function added since. Agents then re-read every hit by hand, and where
-+//! only one owner may rebuild a shared index, they could not fix it.
-+//!
-+//! This module runs only when that hint fired, so a fresh tree reads no file
-+//! and its output is unchanged. It writes nothing to the index.
-+//!
-+//! - **Re-anchor.** A hit whose file is newer than the index stamp is re-read
-+//!   (at most [`crate::extract::code::CODE_CAP`] bytes). Its declaration line
-+//!   is looked up by text, first within [`WINDOW`] lines of the indexed line,
-+//!   then in the whole file; when the line text changed too, the extractor
-+//!   finds the symbol by name. The hit then carries the current line and
-+//!   `reanchored: true` with `indexed_line`. A hit whose file is gone, or
-+//!   whose symbol the extractor no longer finds, is dropped.
-+//! - **Unindexed definitions.** When no hit is an exact-name definition, the
-+//!   extractor runs read-only over the code files changed since the stamp
-+//!   (bounded by [`UNINDEXED_MAX_FILES`], [`UNINDEXED_MAX_BYTES`] and the
-+//!   walk limits) and exact-name matches are returned with `unindexed: true`.
-+
-+use std::fs;
-+use std::io::{ErrorKind, Read};
-+use std::path::{Path, PathBuf};
-+use std::time::{Duration, SystemTime};
-+
-+use serde_json::{json, Value};
-+
-+use crate::staleness::{self, StalenessHint, WalkLimits};
-+
-+/// Lines either side of the indexed line searched before the whole file.
-+pub const WINDOW: usize = 64;
-+/// Changed code files the unindexed pass parses.
-+pub const UNINDEXED_MAX_FILES: usize = 256;
-+/// Total bytes the unindexed pass reads.
-+pub const UNINDEXED_MAX_BYTES: u64 = 32 << 20;
-+/// Walk limits for the unindexed pass: wider than the hint's 100 ms, since
-+/// it runs only on a stale prefix that found no exact definition.
-+pub const UNINDEXED_WALK: WalkLimits = WalkLimits {
-+    stat_cap: 50_000,
-+    wall: Duration::from_millis(1500),
-+    grace: staleness::MTIME_GRACE,
-+};
-+
-+/// The folder an index was built from, and when.
-+#[derive(Debug, Clone)]
-+pub struct IndexedTree {
-+    pub root: PathBuf,
-+    pub indexed_at: SystemTime,
-+    pub grace: Duration,
-+}
-+
-+impl IndexedTree {
-+    /// From a hint the staleness check produced. `None` when its root is not
-+    /// a directory here or its time does not parse.
-+    pub fn from_hint(hint: &StalenessHint) -> Option<Self> {
-+        let root = PathBuf::from(&hint.root);
-+        if !root.is_dir() {
-+            return None;
-+        }
-+        Some(Self {
-+            root,
-+            indexed_at: staleness::parse_time(&hint.indexed_at)?,
-+            grace: staleness::MTIME_GRACE,
-+        })
-+    }
-+
-+    fn changed(&self, mtime: SystemTime) -> bool {
-+        mtime
-+            .duration_since(self.indexed_at)
-+            .is_ok_and(|age| age > self.grace)
-+    }
-+}
-+
-+/// What [`correct_definition_hits`] did, for the CLI's summary line.
-+#[derive(Debug, Default, Clone, PartialEq, Eq)]
-+pub struct Correction {
-+    pub reanchored: usize,
-+    pub dropped: usize,
-+    pub unindexed: usize,
-+}
-+
-+impl Correction {
-+    pub fn is_empty(&self) -> bool {
-+        *self == Self::default()
-+    }
-+
-+    /// One line for `xerj def`, or `None` when nothing changed.
-+    pub fn cli_line(&self) -> Option<String> {
-+        if self.is_empty() {
-+            return None;
-+        }
-+        let mut parts = Vec::new();
-+        if self.reanchored > 0 {
-+            parts.push(format!(
-+                "{} line(s) re-anchored to the file on disk",
-+                self.reanchored
-+            ));
-+        }
-+        if self.dropped > 0 {
-+            parts.push(format!(
-+                "{} hit(s) dropped (file or symbol no longer there)",
-+                self.dropped
-+            ));
-+        }
-+        if self.unindexed > 0 {
-+            parts.push(format!(
-+                "{} definition(s) found in changed files that are not indexed yet",
-+                self.unindexed
-+            ));
-+        }
-+        Some(format!(
-+            "xerj def: corrected against the folder: {}.",
-+            parts.join("; ")
-+        ))
-+    }
-+}
-+
-+/// Record a non-empty correction under `_xerj.freshness`, next to the
-+/// `index_stale` hint. A response that is not a JSON object is left alone.
-+pub fn attach(resp: &mut Value, fixed: &Correction) {
-+    let Some(obj) = resp.as_object_mut() else {
-+        return;
-+    };
-+    let xerj = obj.entry("_xerj").or_insert_with(|| json!({}));
-+    if let Some(xerj) = xerj.as_object_mut() {
-+        xerj.insert(
-+            "freshness".into(),
-+            json!({
-+                "reanchored": fixed.reanchored,
-+                "dropped": fixed.dropped,
-+       
-```
-
-**File**: `engine/crates/xerj-autoindex/src/gitref.rs` (added, +218/-0)
-```diff
-@@ -0,0 +1,218 @@
-+//! Read-only git commit lookup for an indexed folder (#3268).
-+//!
-+//! `xerj status` and `xerj_map` compare the commit a folder was at when it
-+//! was indexed with the commit it is at now. Neither the git binary nor a
-+//! git library is needed: `HEAD`, the ref it names (loose or packed), and
-+//! the HEAD reflog are plain text files. The commit at index time is the
-+//! last HEAD reflog entry written at or before the index stamp. That is the
-+//! commit HEAD pointed at then, as long as the reflog still holds that
-+//! entry (git expires reflog entries after 90 days by default). When it
-+//! does not, the answer is `None`, not a guess.
-+
-+use std::fs;
-+use std::path::{Path, PathBuf};
-+use std::time::{SystemTime, UNIX_EPOCH};
-+
-+/// Largest reflog read. A HEAD reflog is ~150 bytes per checkout/commit.
-+const REFLOG_CAP: u64 = 16 << 20;
-+/// Ancestors walked looking for `.git`.
-+const MAX_ANCESTORS: usize = 64;
-+
-+/// The git directory for `dir`, and the common directory that holds shared
-+/// refs (the same directory outside a linked worktree).
-+#[derive(Debug, Clone, PartialEq, Eq)]
-+pub struct GitDirs {
-+    pub git_dir: PathBuf,
-+    pub common_dir: PathBuf,
-+}
-+
-+/// Find the repository `dir` belongs to: the nearest ancestor with a `.git`
-+/// directory, or a `.git` file naming one (`gitdir: …`, a linked worktree or
-+/// a submodule).
-+pub fn git_dirs(dir: &Path) -> Option<GitDirs> {
-+    let mut cur = Some(dir);
-+    for _ in 0..MAX_ANCESTORS {
-+        let here = cur?;
-+        let dot_git = here.join(".git");
-+        let git_dir = if dot_git.is_dir() {
-+            Some(dot_git)
-+        } else if dot_git.is_file() {
-+            let text = fs::read_to_string(&dot_git).ok()?;
-+            let target = text.lines().find_map(|l| l.strip_prefix("gitdir:"))?.trim();
-+            let target = Path::new(target);
-+            Some(if target.is_absolute() {
-+                target.to_path_buf()
-+            } else {
-+                here.join(target)
-+            })
-+        } else {
-+            None
-+        };
-+        if let Some(git_dir) = git_dir {
-+            let common_dir = fs::read_to_string(git_dir.join("commondir"))
-+                .ok()
-+                .map(|c| {
-+                    let c = Path::new(c.trim());
-+                    if c.is_absolute() {
-+                        c.to_path_buf()
-+                    } else {
-+                        git_dir.join(c)
-+                    }
-+                })
-+                .unwrap_or_else(|| git_dir.clone());
-+            return Some(GitDirs {
-+                git_dir,
-+                common_dir,
-+            });
-+        }
-+        cur = here.parent();
-+    }
-+    None
-+}
-+
-+fn is_sha(s: &str) -> bool {
-+    (s.len() == 40 || s.len() == 64) && s.bytes().all(|b| b.is_ascii_hexdigit())
-+}
-+
-+fn resolve_ref(dirs: &GitDirs, name: &str) -> Option<String> {
-+    for base in [&dirs.git_dir, &dirs.common_dir] {
-+        if let Ok(text) = fs::read_to_string(base.join(name)) {
-+            let text = text.trim();
-+            if is_sha(text) {
-+                return Some(text.to_string());
-+            }
-+        }
-+    }
-+    let packed = fs::read_to_string(dirs.common_dir.join("packed-refs")).ok()?;
-+    packed.lines().find_map(|line| {
-+        let (sha, refname) = line.split_once(' ')?;
-+        (refname.trim() == name && is_sha(sha)).then(|| sha.to_string())
-+    })
-+}
-+
-+/// The commit `HEAD` names now, or `None` outside a repository, on an
-+/// unborn branch, or when the ref cannot be read.
-+pub fn head_now(dir: &Path) -> Option<String> {
-+    let dirs = git_dirs(dir)?;
-+    let head = fs::read_to_string(dirs.git_dir.join("HEAD")).ok()?;
-+    let head = head.trim();
-+    if is_sha(head) {
-+        return Some(head.to_string());
-+    }
-+    let name = head.strip_prefix("ref:")?.trim();
-+    if name.contains("..") {
-+        return None;
-+    }
-+    resolve_ref(&dirs, name)
-+}
-+
-+/// The commit `HEAD` pointed at `when`, from the HEAD reflog. `None` when
-+/// there is no reflog, or its oldest entry is newer than `when`.
-+pub fn head_at(dir: &Path, when: SystemTime) -> Option<String> {
-+    let dirs = git_dirs(dir)?;
-+    let path = dirs.git_dir.join("logs").join("HEAD");
-+    if fs::metadata(&path).ok()?.len() > REFLOG_CAP {
-+        return None;
-+    }
-+    let text = fs::read_to_string(path).ok()?;
-+    let cutoff = when.duration_since(UNIX_EPOCH).ok()?.as_secs();
-+    head_from_reflog(&text, cutoff)
-+}
-+
-+/// Parse a HEAD reflog: `<old> <new> <name> <<email>> <unix> <tz>\t<msg>`.
-+/// Entries are appended in time order, so the last one at or before
-+/// `cutoff` wins.
-+fn head_from_reflog(text: &str, cutoff: u64) -> Option<String> {
-+    let mut found = None;
-+    for line in text.lines() {
-+        let head = line.split('\t').next().unwrap_or(line);
-+        let mut parts = head.split(' ');
-+        let (Some(_old), Some(new)) = (parts.next(), parts.next()) else {
-+            continue;
-+        };
-+        let mut tail 
-```
-
-**File**: `engine/crates/xerj-autoindex/src/lib.rs` (modified, +3/-0)
-```diff
-@@ -21,11 +21,13 @@ pub mod facts_rows;
- mod family_junk;
- pub mod feedback;
- pub mod flood;
-+pub mod freshness;
- pub mod gain;
- pub mod gate;
- mod generation_catalog;
- #[cfg(test)]
- mod generation_catalog_http_tests;
-+pub mod gitref;
- /// `xerj corpus build` — harvested-record corpus packs (recipe → store →
- /// identity → merge → deterministic pack).
- pub mod harvest;
-@@ -63,6 +65,7 @@ pub mod sources;
- mod stage;
- pub mod staleness;
- pub mod state;
-+pub mod status_cli;
- mod sync;
- mod sync_executor;
- #[cfg(test)]
-```
-
-**File**: `engine/crates/xerj-autoindex/src/staleness.rs` (modified, +160/-2)
-```diff
-@@ -274,7 +274,7 @@ fn field_str<'a>(value: &'a Value, key: &str) -> Option<&'a str> {
-         .filter(|s| !s.is_empty())
- }
- 
--fn parse_time(raw: &str) -> Option<SystemTime> {
-+pub fn parse_time(raw: &str) -> Option<SystemTime> {
-     let dt = chrono::DateTime::parse_from_rfc3339(raw).ok()?;
-     let secs = dt.timestamp();
-     if secs < 0 {
-@@ -628,7 +628,7 @@ fn counts_as_indexed(status: Option<&str>) -> bool {
- 
- /// A catalog path that stays inside the root. Absolute paths and `..` are
- /// ignored so a catalog row cannot point the stat at another directory.
--fn safe_rel(rel: &str) -> Option<&str> {
-+pub(crate) fn safe_rel(rel: &str) -> Option<&str> {
-     if rel.is_empty() || rel.len() > 1024 || rel.starts_with('/') || rel.starts_with('\\') {
-         return None;
-     }
-@@ -769,6 +769,123 @@ fn fetch_files(client: &CatalogClient, prefix: &str) -> Option<Vec<CatalogFile>>
-     Some(files)
- }
- 
-+/// The newest run recorded for `prefix` on `url`, or `None` when the node
-+/// has no catalog, no run for it, or did not answer within the catalog
-+/// timeout. `xerj status` (#3268) reads the same stamp the hint does.
-+pub fn load_stamp(url: &str, api_key: Option<&str>, prefix: &str) -> Option<IndexStamp> {
-+    let prefix = prefix.trim();
-+    let url = url.trim().trim_end_matches('/');
-+    if prefix.is_empty() || url.is_empty() {
-+        return None;
-+    }
-+    let client = CatalogClient::new(url, api_key)?;
-+    let runs = fetch_runs(&client, prefix)?;
-+    latest_stamp(&runs, prefix)
-+}
-+
-+/// Files under a root whose mtime is newer than the index stamp (#3268).
-+#[derive(Debug, Default, Clone, PartialEq, Eq)]
-+pub struct ChangedScan {
-+    /// Root-relative, `/`-separated paths, newest directory first, then in
-+    /// directory-listing order sorted by name.
-+    pub files: Vec<String>,
-+    /// False when the stat cap, the wall clock, or `max_files` stopped the
-+    /// scan before it saw every admitted file.
-+    pub complete: bool,
-+    /// Entries stat'd.
-+    pub stats: u64,
-+}
-+
-+/// Every admitted file under `root` (same ignore rules as [`check`]) whose
-+/// mtime is newer than `indexed_at` plus the grace. Stops at `max_files`,
-+/// the stat cap, or the wall clock, and says so in `complete`. Read-only:
-+/// metadata only, no file contents.
-+pub fn changed_files(
-+    root: &Path,
-+    indexed_at: SystemTime,
-+    limits: &WalkLimits,
-+    max_files: usize,
-+) -> ChangedScan {
-+    let started = Instant::now();
-+    let mut scan = ChangedScan {
-+        complete: true,
-+        ..ChangedScan::default()
-+    };
-+    let Ok(root) = root.canonicalize() else {
-+        scan.complete = false;
-+        return scan;
-+    };
-+    if !root.is_dir() {
-+        scan.complete = false;
-+        return scan;
-+    }
-+    let mut stack = IgnoreStack::new(&root, IgnoreOptions::default());
-+    let newer = |mtime: SystemTime| {
-+        mtime
-+            .duration_since(indexed_at)
-+            .is_ok_and(|age| age > limits.grace)
-+    };
-+    // Depth-first, an explicit stack so a deep tree cannot overflow.
-+    let mut pending: Vec<(PathBuf, usize)> = vec![(root.clone(), 0)];
-+    while let Some((dir, depth)) = pending.pop() {
-+        if depth >= MAX_DEPTH {
-+            continue;
-+        }
-+        stack.truncate_to(depth);
-+        stack.enter_dir(&dir, depth);
-+        let Ok(entries) = fs::read_dir(&dir) else {
-+            continue;
-+        };
-+        let mut names: Vec<PathBuf> = entries.filter_map(|e| e.ok().map(|e| e.path())).collect();
-+        names.sort();
-+        let mut subdirs: Vec<(SystemTime, PathBuf)> = Vec::new();
-+        for path in names {
-+            if scan.stats >= limits.stat_cap || started.elapsed() >= limits.wall {
-+                scan.complete = false;
-+                return scan;
-+            }
-+            scan.stats += 1;
-+            let Ok(meta) = fs::symlink_metadata(&path) else {
-+                continue;
-+            };
-+            let Some(name) = path.file_name() else {
-+                continue;
-+            };
-+            if is_hidden_name(name) {
-+                continue;
-+            }
-+            let file_type = meta.file_type();
-+            if file_type.is_symlink() {
-+                continue;
-+            }
-+            let mtime = meta.modified().unwrap_or(SystemTime::UNIX_EPOCH);
-+            if file_type.is_dir() {
-+                if stack.skip_dir(&path).is_some() || marker_generated_dir(&path).is_some() {
-+                    continue;
-+                }
-+                subdirs.push((mtime, path));
-+                continue;
-+            }
-+            if !file_type.is_file() || stack.skip_file(&path).is_some() {
-+                continue;
-+            }
-+            if newer(mtime) {
-+                if scan.files.len() >= max_files {
-+                    scan.complete = false;
-+                    return scan;
-+                }
-+                scan.files.push(rel_of(&root, &path));
-+            }
-+        }
-+        // Newest directory is 
+@@ -128,3 +128,147 @@ setup:
+   - length: { aggregations.t.buckets: 1 }
+   - match: { aggregations.t.buckets.0.key: a }
+   - is_false: aggregations.t.buckets.0.__xy_terms_key__
++---
++"issue 2935 fixture: global 18-count winner and global key order across indices":
++  - do:
++      indices.create:
++        index: issue2935-top-a
++        body:
++          mappings:
++            properties:
++              tag: { type: keyword }
++  - do:
++      indices.create:
++        index: issue2935-top-b
++        body:
++          mappings:
++            properties:
++              tag: { type: keyword }
++  - do:
++      bulk:
++        refresh: true
++        body:
++          - index: { _index: issue2935-top-a, _id: "0" }
++          - { tag: "1" }
++          - index: { _index: issue2935-top-a, _id: "1" }
++          - { tag: "1" }
++          - index: { _index: issue2935-top-a, _id: "2" }
++          - { tag: "1" }
++          - index: { _index: issue2935-top-a, _id: "3" }
++          - { tag: "1" }
++          - index: { _index: issue2935-top-a, _id: "4" }
++          - { tag: "1" }
++          - index: { _index: issue2935-top-a, _id: "5" }
++          - { tag: "1" }
++          - index: { _index: issue2935-top-a, _id: "6" }
++          - { tag: "1" }
++          - index: { _index: issue2935-top-a, _id: "7" }
++          - { tag: "1" }
++          - index: { _index: issue2935-top-a, _id: "8" }
++          - { tag: "1" }
++          - index: { _index: issue2935-top-a, _id: "9" }
++          - { tag: "1" }
++          - index: { _index: issue2935-top-a, _id: "10" }
++          - { tag: "3" }
++          - index: { _index: issue2935-top-a, _id: "11" }
++          - { tag: "3" }
++          - index: { _index: issue2935-top-a, _id: "12" }
++          - { tag: "3" }
++          - index: { _index: issue2935-top-a, _id: "13" }
++          - { tag: "3" }
++          - index: { _index: issue2935-top-a, _id: "14" }
++          - { tag: "3" }
++          - index: { _index: issue2935-top-a, _id: "15" }
++          - { tag: "3" }
++          - index: { _index: issue2935-top-a, _id: "16" }
++          - { tag: "3" }
++          - index: { _index: issue2935-top-a, _id: "17" }
++          - { tag: "3" }
++          - index: { _index: issue2935-top-a, _id: "18" }
++          - { tag: "3" }
++          - index: { _index: issue2935-top-b, _id: "b0" }
++          - { tag: "2" }
++          - index: { _index: issue2935-top-b, _id: "b1" }
++          - { tag: "2" }
++          - index: { _index: issue2935-top-b, _id: "b2" }
++          - { tag: "2" }
++          - index: { _index: issue2935-top-b, _id: "b3" }
++          - { tag: "2" }
++          - index: { _index: issue2935-top-b, _id: "b4" }
++          - { tag: "2" }
++          - index: { _index: issue2935-top-b, _id: "b5" }
++          - { tag: "2" }
++          - index: { _index: issue2935-top-b, _id: "b6" }
++          - { tag: "2" }
++          - index: { _index: issue2935-top-b, _id: "b7" }
++          - { tag: "2" }
++          - index: { _index: issue2935-top-b, _id: "b8" }
++          - { tag: "2" }
++          - index: { _index: issue2935-top-b, _id: "b9" }
++          - { tag: "2" }
++          - index: { _index: issue2935-top-b, _id: "b10" }
++          - { tag: "3" }
++          - index: { _index: issue2935-top-b, _id: "b11" }
++          - { tag: "3" }
++          - index: { _index: issue2935-top-b, _id: "b12" }
++          - { tag: "3" }
++          - index: { _index: issue2935-top-b, _id: "b13" }
++          - { tag: "3" }
++          - index: { _index: issue2935-top-b, _id: "b14" }
++          - { tag: "3" }
++          - index: { _index: issue2935-top-b, _id: "b15" }
++          - { tag: "3" }
++          - index: { _index: issue2935-top-b, _id: "b16" }
++          - { tag: "3" }
++          - index: { _index: issue2935-top-b, _id: "b17" }
++          - { tag: "3" }
++          - index: { _index: issue2935-top-b, _id: "b18" }
++          - { tag: "3" }
++  - do:
++      search:
++        index: issue2935-top-a,issue2935-top-b
++        body:
++          size: 0
++          aggs:
++            top:
++              terms: { field: tag, size: 1 }
++            key_desc:
++              terms: { field: tag, size: 10, order: { _key: desc } }
++  - length: { aggregations.top.buckets: 1 }
++  - match: { aggregations.top.buckets.0.key: "3" }
++  - match: { aggregations.top.buckets.0.doc_count: 18 }
++  - match: { aggregations.top.sum_other_doc_count: 20 }
++  - match: { aggregations.top.doc_count_error_upper_bound: 0 }
++  - length: { aggregations.key_desc.buckets: 3 }
++  - match: { aggregations.key_desc.buckets.0.key: "3" }
++  - match: { aggregations.key_desc.buckets.0.doc_count: 18 }
++  - match: { aggregations.key_desc.buckets.1.key: "2" }
++  - match: { aggregations.key_desc.buckets.1.doc_count: 10 }
++  - match: { aggregations.key_desc.buckets.2.key: "1" }
++  - match: { aggregations.key_desc.buckets.2.doc_count: 10 }
++  - match: { aggregations.key_desc.sum_other_doc_count: 0 }
++  - is_false: aggregations.top.buckets.0.__xy_terms_key__
++  - do:
++      search:
++        index
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3310** (2026-11-19): hub: author-approved contribution candidates (14056 repos) (@xerj-team)
-- **PR #3307** (2026-11-19): hub: move cc-foundry pins to the-coder v1.18.0 (@xobotyi)
-- **PR #3306** (2026-11-19): hub: author-approved contribution candidates (14055 repos) (@xerj-team)
-- **PR #3305** (2026-11-19): hub: author-approved contribution candidates (14054 repos) (@xerj-team)
-- **PR #3303** (2026-11-19): hub: author-approved contribution candidates (14055 repos) (@xerj-team)
-- **PR #3302** (2026-11-19): hub: author-approved contribution candidates (14055 repos) (@xerj-team)
+- **PR #3375** (2026-11-22): hub(audit): withhold lukaszFD/cyber-sentinel, the author withdrew consent (@xerj-team)
+- **PR #3374** (2026-11-22): hub: author-approved contribution candidates (14273 repos) (@xerj-team)
+- **PR #3373** (2026-11-22): hub: apply 20 author-requested page fixes (@xerj-team)
+- **PR #3369** (2026-11-22): hub: author-approved contribution candidates (14255 repos) (@xerj-team)
+- **PR #3368** (2026-11-21): hub: author-approved contribution candidates (14244 repos) (@xerj-team)
+- **PR #3366** (2026-11-22): perf(hybrid): fuse on ids, hydrate only the page (#3018) (@xerj-team)
 
 ---
 
@@ -3208,21 +2999,37 @@ and prints the same bytes):
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. autoindex): stub lockfiles by default, cell-width progress, catalog-commit phase
+## X. engine,storage): searches stop waiting on WAL and snapshot fsyncs under write lo
 
 **RULE**:
-When implementing operations in `engine/Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in xerj-org/xerj. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in xerj-org/xerj. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `007863e9`: autoindex): stub lockfiles by default, cell-width progress, catalog-commit phase, data-dir hint on an empty map. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5c7187b3`: engine,storage): searches stop waiting on WAL and snapshot fsyncs under write load. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `engine/Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "unicode-width 0.2.2",
+- **Searches no longer wait on WAL and snapshot fsyncs while bulk writes run
+  (refs #3324 #3331).** Three code paths held the collection-publication
+  bracket (every search on the index waits while it is open) across disk
+  waits. A flush kept its bracket open through post-publish maintenance
+  (snapshot fsync, WAL rotate and prune). `_bulk` opened its bracket before
+  appending to the WAL, so it waited inside the bracket for a WAL shard
+  lock that WAL maintenance and the batched fsync held across fsyncs. The
+  flush bracket now closes when the segment is published, and `_bulk`
+  appends to the WAL before opening the bracket. WAL maintenance and the
+  `wal_batch_ms` fsync now fsync without holding the shard lock: the next
+  generation's file is created and synced first, and only the rename runs
+  under the lock. The same fsyncs still happen, so durability does not
+  change. A WAL write error no longer poisons the index. Measured over 3
+  runs each, 60 s, 300k preload plus a closed-loop 5,000-doc auto-id writer,
+  ext4: p99 over all reads went from 204-265 ms to 40-85 ms (load 25-50).
+  With a `dd` fdatasync neighbour on the same disk it went from 260-305 ms
+  to 45-60 ms, and the
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3232,7 +3039,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `007863e9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5c7187b3` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

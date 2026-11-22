@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-22T03:46:25.899Z",
+  "updated_at": "2026-11-22T04:05:13.635Z",
   "stats": {
-    "total_discovered": 7414,
-    "approved_pending_harvest": 7015,
+    "total_discovered": 7440,
+    "approved_pending_harvest": 7041,
     "harvested_count": 0,
     "rejected_count": 399,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 6993,
+      "COMMUNITY_AND_EXPERT": 7019,
       "OFFICIAL_DOCUMENTATION": 242,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 5,
@@ -160338,6 +160338,578 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
         "fileName": "ntex-rs-ntex-learnings.md"
+      }
+    },
+    "SRC-4BD02D16A020": {
+      "id": "SRC-4BD02D16A020",
+      "url": "https://agentfield.ai/docs/learn/vs-frameworks?utm_id=github-readme-vs-frameworks",
+      "title": "https://agentfield.ai/docs/learn/vs-frameworks?utm_id=github-readme-vs-frameworks",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T04:05:11.240Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
+        "fileName": "agent-field-agentfield-learnings.md"
+      }
+    },
+    "SRC-B501E82C8689": {
+      "id": "SRC-B501E82C8689",
+      "url": "https://agentfield.ai/compare/agentfield-vs-langgraph?utm_id=github-readme-compare-langgraph",
+      "title": "https://agentfield.ai/compare/agentfield-vs-langgraph?utm_id=github-readme-compare-langgraph",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T04:05:11.296Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
+        "fileName": "agent-field-agentfield-learnings.md"
+      }
+    },
+    "SRC-96A7F7877D7C": {
+      "id": "SRC-96A7F7877D7C",
+      "url": "https://agentfield.ai/compare/agentfield-vs-crewai?utm_id=github-readme-compare-crewai",
+      "title": "https://agentfield.ai/compare/agentfield-vs-crewai?utm_id=github-readme-compare-crewai",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T04:05:11.347Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
+        "fileName": "agent-field-agentfield-learnings.md"
+      }
+    },
+    "SRC-8283DEF0CDAA": {
+      "id": "SRC-8283DEF0CDAA",
+      "url": "https://agentfield.ai/compare/agentfield-vs-temporal?utm_id=github-readme-compare-temporal",
+      "title": "https://agentfield.ai/compare/agentfield-vs-temporal?utm_id=github-readme-compare-temporal",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T04:05:11.399Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
+        "fileName": "agent-field-agentfield-learnings.md"
+      }
+    },
+    "SRC-C0DB585CA97F": {
+      "id": "SRC-C0DB585CA97F",
+      "url": "https://agentfield.ai/compare/agentfield-vs-openai-agents-sdk?utm_id=github-readme-compare-openai-agents-sdk",
+      "title": "https://agentfield.ai/compare/agentfield-vs-openai-agents-sdk?utm_id=github-readme-compare-openai-agents-sdk",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T04:05:11.450Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
+        "fileName": "agent-field-agentfield-learnings.md"
+      }
+    },
+    "SRC-E8D4C8C545B6": {
+      "id": "SRC-E8D4C8C545B6",
+      "url": "https://agentfield.ai/docs/learn,http",
+      "title": "https://agentfield.ai/docs/learn,http",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T04:05:11.501Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
+        "fileName": "agent-field-agentfield-learnings.md"
+      }
+    },
+    "SRC-BF5A4380A9DD": {
+      "id": "SRC-BF5A4380A9DD",
+      "url": "https://agentfield.ai/docs/learn/examples,https://agentfield.ai/docs/learn/examples?utm_id=github-readme-community-examples",
+      "title": "https://agentfield.ai/docs/learn/examples,https://agentfield.ai/docs/learn/examples?utm_id=github-readme-community-examples",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T04:05:11.552Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
+        "fileName": "agent-field-agentfield-learnings.md"
+      }
+    },
+    "SRC-C5D5BB2E7DCB": {
+      "id": "SRC-C5D5BB2E7DCB",
+      "url": "https://agentfield.ai/github/codeaf/,https://agentfield.ai/github/codeaf/?utm_id=github-readme-codeaf-repo",
+      "title": "https://agentfield.ai/github/codeaf/,https://agentfield.ai/github/codeaf/?utm_id=github-readme-codeaf-repo",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T04:05:11.605Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
+        "fileName": "agent-field-agentfield-learnings.md"
+      }
+    },
+    "SRC-62DE4367A33B": {
+      "id": "SRC-62DE4367A33B",
+      "url": "https://agentfield.ai/github/codeaf/,https://agentfield.ai/github/codeaf/?utm_id=github-readme-codeaf-benchmark",
+      "title": "https://agentfield.ai/github/codeaf/,https://agentfield.ai/github/codeaf/?utm_id=github-readme-codeaf-benchmark",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T04:05:11.656Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
+        "fileName": "agent-field-agentfield-learnings.md"
+      }
+    },
+    "SRC-BF509BD9D889": {
+      "id": "SRC-BF509BD9D889",
+      "url": "https://agentfield.ai/compare/agentfield-vs-langgraph,https://agentfield.ai/compare/agentfield-vs-langgraph?utm_id=github-readme-compare-langgraph",
+      "title": "https://agentfield.ai/compare/agentfield-vs-langgraph,https://agentfield.ai/compare/agentfield-vs-langgraph?utm_id=github-readme-compare-langgraph",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T04:05:11.708Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
+        "fileName": "agent-field-agentfield-learnings.md"
+      }
+    },
+    "SRC-7DC9497B7CB3": {
+      "id": "SRC-7DC9497B7CB3",
+      "url": "https://agentfield.ai/compare/agentfield-vs-crewai,https://agentfield.ai/compare/agentfield-vs-crewai?utm_id=github-readme-compare-crewai",
+      "title": "https://agentfield.ai/compare/agentfield-vs-crewai,https://agentfield.ai/compare/agentfield-vs-crewai?utm_id=github-readme-compare-crewai",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T04:05:11.758Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
+        "fileName": "agent-field-agentfield-learnings.md"
+      }
+    },
+    "SRC-DDB4B9865664": {
+      "id": "SRC-DDB4B9865664",
+      "url": "https://agentfield.ai/compare/agentfield-vs-temporal,https://agentfield.ai/compare/agentfield-vs-temporal?utm_id=github-readme-compare-temporal",
+      "title": "https://agentfield.ai/compare/agentfield-vs-temporal,https://agentfield.ai/compare/agentfield-vs-temporal?utm_id=github-readme-compare-temporal",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T04:05:11.823Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
+        "fileName": "agent-field-agentfield-learnings.md"
+      }
+    },
+    "SRC-A834F31522C0": {
+      "id": "SRC-A834F31522C0",
+      "url": "https://agentfield.ai/compare/agentfield-vs-openai-agents-sdk,https://agentfield.ai/compare/agentfield-vs-openai-agents-sdk?utm_id=github-readme-compare-openai-agents-sdk",
+      "title": "https://agentfield.ai/compare/agentfield-vs-openai-agents-sdk,https://agentfield.ai/compare/agentfield-vs-openai-agents-sdk?utm_id=github-readme-compare-openai-agents-sdk",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T04:05:11.872Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
+        "fileName": "agent-field-agentfield-learnings.md"
+      }
+    },
+    "SRC-266B115B9978": {
+      "id": "SRC-266B115B9978",
+      "url": "https://redirect.github.com/go-swagger/go-swagger",
+      "title": "https://redirect.github.com/go-swagger/go-swagger",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T04:05:12.797Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md",
+        "fileName": "cilium-cilium-learnings.md"
+      }
+    },
+    "SRC-E8420A421C15": {
+      "id": "SRC-E8420A421C15",
+      "url": "https://redirect.github.com/go-swagger/go-swagger/releases/tag/v0.36.8",
+      "title": "https://redirect.github.com/go-swagger/go-swagger/releases/tag/v0.36.8",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T04:05:12.850Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md",
+        "fileName": "cilium-cilium-learnings.md"
+      }
+    },
+    "SRC-C344EE8045F9": {
+      "id": "SRC-C344EE8045F9",
+      "url": "https://redirect.github.com/go-swagger/go-swagger/compare/v0.36.7...v0.36.8",
+      "title": "https://redirect.github.com/go-swagger/go-swagger/compare/v0.36.7...v0.36.8",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T04:05:12.902Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md",
+        "fileName": "cilium-cilium-learnings.md"
+      }
+    },
+    "SRC-9D428A4C6415": {
+      "id": "SRC-9D428A4C6415",
+      "url": "https://redirect.github.com/go-swagger/go-swagger/tree/v0.36.8",
+      "title": "https://redirect.github.com/go-swagger/go-swagger/tree/v0.36.8",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T04:05:12.951Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md",
+        "fileName": "cilium-cilium-learnings.md"
+      }
+    },
+    "SRC-5388EF931C19": {
+      "id": "SRC-5388EF931C19",
+      "url": "https://github.com/go-swagger/go-swagger/compare/v0.36.7...v0.36.8",
+      "title": "https://github.com/go-swagger/go-swagger/compare/v0.36.7...v0.36.8",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T04:05:13.002Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md",
+        "fileName": "cilium-cilium-learnings.md"
+      }
+    },
+    "SRC-360D82ABAE1E": {
+      "id": "SRC-360D82ABAE1E",
+      "url": "https://redirect.github.com/jilsnshah",
+      "title": "https://redirect.github.com/jilsnshah",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T04:05:13.050Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md",
+        "fileName": "cilium-cilium-learnings.md"
+      }
+    },
+    "SRC-EE57A283C71B": {
+      "id": "SRC-EE57A283C71B",
+      "url": "https://redirect.github.com/go-swagger/go-swagger/pull/3529",
+      "title": "https://redirect.github.com/go-swagger/go-swagger/pull/3529",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T04:05:13.099Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md",
+        "fileName": "cilium-cilium-learnings.md"
+      }
+    },
+    "SRC-B26C802CE8E6": {
+      "id": "SRC-B26C802CE8E6",
+      "url": "https://redirect.github.com/go-swagger/go-swagger/commit/4cd6fb93897d44ad0bffd29feaf7b7d8eba78f24",
+      "title": "https://redirect.github.com/go-swagger/go-swagger/commit/4cd6fb93897d44ad0bffd29feaf7b7d8eba78f24",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T04:05:13.146Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md",
+        "fileName": "cilium-cilium-learnings.md"
+      }
+    },
+    "SRC-D9D2BBC37E23": {
+      "id": "SRC-D9D2BBC37E23",
+      "url": "https://redirect.github.com/fredbi",
+      "title": "https://redirect.github.com/fredbi",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T04:05:13.195Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md",
+        "fileName": "cilium-cilium-learnings.md"
+      }
+    },
+    "SRC-02A82E5D9CAC": {
+      "id": "SRC-02A82E5D9CAC",
+      "url": "https://redirect.github.com/go-swagger/go-swagger/pull/3530",
+      "title": "https://redirect.github.com/go-swagger/go-swagger/pull/3530",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T04:05:13.242Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md",
+        "fileName": "cilium-cilium-learnings.md"
+      }
+    },
+    "SRC-3DD6F0A053FB": {
+      "id": "SRC-3DD6F0A053FB",
+      "url": "https://redirect.github.com/go-swagger/go-swagger/commit/029320d3c4479d3d9dc1020337c7f72c6e0b69fa",
+      "title": "https://redirect.github.com/go-swagger/go-swagger/commit/029320d3c4479d3d9dc1020337c7f72c6e0b69fa",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T04:05:13.292Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md",
+        "fileName": "cilium-cilium-learnings.md"
+      }
+    },
+    "SRC-21BCAD3FF394": {
+      "id": "SRC-21BCAD3FF394",
+      "url": "https://redirect.github.com/cilium/cilium/issues/49919",
+      "title": "https://redirect.github.com/cilium/cilium/issues/49919",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T04:05:13.585Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md",
+        "fileName": "cilium-cilium-learnings.md"
+      }
+    },
+    "SRC-E3C4C2BD3C65": {
+      "id": "SRC-E3C4C2BD3C65",
+      "url": "https://redirect.github.com/marton",
+      "title": "https://redirect.github.com/marton",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T04:05:13.635Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md",
+        "fileName": "cilium-cilium-learnings.md"
       }
     }
   }

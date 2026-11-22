@@ -2763,10 +2763,10 @@
     "repository": "xerj-org/xerj",
     "platform": "github",
     "sourceUrl": "https://github.com/xerj-org/xerj",
-    "sourceVersion": "4b90a220",
+    "sourceVersion": "34a14c0d",
     "license": "Apache-2.0",
-    "contentHash": "54ec977f51b64578a7729c622b6f59a8d2f9705bd2c7c701113ba185ef851c16",
-    "lastHarvestedAt": "2026-11-20T23:39:56.327Z",
+    "contentHash": "3360cd512888dfb90bec5e7e4ba38f0cd63b4fa1d9f0dabd8d1c3511b984d46d",
+    "lastHarvestedAt": "2026-11-22T04:05:07.194Z",
     "learningId": "learn-github-xerj-org-xerj"
   },
   "markmead-hyperui": {
@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "fb070362",
+    "sourceVersion": "73945d29",
     "license": "Apache-2.0",
-    "contentHash": "412fc6b9a38d1c2b88540e4a7ff7b72d75a7be9bc4dfb90be37e40767ef16606",
-    "lastHarvestedAt": "2026-11-21T00:24:47.776Z",
+    "contentHash": "8791ca9ebd41607d61fdef41322353bd9520919dbba47421856dc2c8ee47bd1b",
+    "lastHarvestedAt": "2026-11-22T04:05:05.144Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -4313,10 +4313,10 @@
     "repository": "Agent-Field/agentfield",
     "platform": "github",
     "sourceUrl": "https://github.com/Agent-Field/agentfield",
-    "sourceVersion": "d81cedf4",
+    "sourceVersion": "4e9fb95b",
     "license": "Apache-2.0",
-    "contentHash": "3a71a19a88fedcdff863138cb65849f0191e4ea1fe8bafc09e3312e914d42169",
-    "lastHarvestedAt": "2026-11-20T00:06:38.544Z",
+    "contentHash": "54347a21b1477fc19caa974e3f9e4a960ed1c2b9c0a7516526e1b46e7537d527",
+    "lastHarvestedAt": "2026-11-22T04:05:01.338Z",
     "learningId": "learn-github-agent-field-agentfield"
   },
   "typedb-typedb": {
@@ -12115,8 +12115,8 @@
     "sourceUrl": "https://huggingface.co/xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic",
     "sourceVersion": "hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic",
     "license": "Open-Source",
-    "contentHash": "568622441e630b7d63b2a7f0a57df5dd7f184462df5895840c3c99e6524f06d1",
-    "lastHarvestedAt": "2026-11-17T00:11:21.145Z",
+    "contentHash": "5d396204dfe8b9debd3a85293b8f4a164895e061dce2346f8fd8626025413783",
+    "lastHarvestedAt": "2026-11-22T04:04:52.798Z",
     "learningId": "learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic"
   },
   "hf-prunaai-p-h3-image": {

@@ -4,27 +4,27 @@
 {
   "source_repository": "xerj-org/xerj",
   "source_url": "https://github.com/xerj-org/xerj",
-  "source_version": "4b90a220",
+  "source_version": "34a14c0d",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-20T23:39:56.602Z",
+  "timestamp": "2026-11-22T04:05:07.412Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-xerj-org-xerj",
   "canonical_classification": "skill_playbook"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [xerj-org/xerj](https://github.com/xerj-org/xerj) (Revision: `4b90a220`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T23:39:56.602Z`  
+> **Provenance**: Harvested from [xerj-org/xerj](https://github.com/xerj-org/xerj) (Revision: `34a14c0d`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-22T04:05:07.412Z`  
 > **Learning ID**: `learn-github-xerj-org-xerj`
 
 
 ## 1. Skill Overview & Purpose
 Procedural playbook defining verified operational and implementation patterns for **xerj-org/xerj**.
-- **Canonical Domain**: Domain H (Technical Construction Intelligence)
+- **Canonical Domain**: Domain K (Quality & Verification Intelligence)
 - **Model Independence**: Universal (Applies across Claude, Gemini, GPT, and Local agents)
 
 ## 2. Prerequisites & Technical Boundary
-- Runtime ecosystem: Verified against xerj-org/xerj revision `4b90a220`.
+- Runtime ecosystem: Verified against xerj-org/xerj revision `34a14c0d`.
 - Required security tier: Sanitized against PII/secrets.
 
 ## 3. Step-by-Step Procedural Workflow
@@ -33,7 +33,7 @@ Procedural playbook defining verified operational and implementation patterns fo
 > **Canonical Artifact**: `07_PROJECT_LEARNING/xerj-org-xerj-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/xerj-org/xerj](https://github.com/xerj-org/xerj))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T23:39:55.095Z  
+> **Harvest Timestamp**: 2026-11-22T04:05:06.081Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -43,7 +43,7 @@ Procedural playbook defining verified operational and implementation patterns fo
 - **Description**: AI search engine and MCP server for bots and agents. One Rust binary indexes code, docs, logs, JSONL/CSV and PDFs for BM25 full-text, vector and hybrid search, code search without grep, agent memory and RAG. Elasticsearch-compatible API; Corpus Hub serves hundreds of reference memory corpora.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 19082 stars
+- **Stars / Engagement**: 19261 stars
 
 ---
 
@@ -143,6 +143,21 @@ if rows:
     json.dump(rows, open(os.path.join(HERE, "out", "summary.json"), "w"), indent=1)
 for r in rows:
     print(f'{r["system"]:<22}{r["config"]:<22} h@1 {r["hit_at_1_pct"]:>5}  h@5 {r["hit_at_5_pct"]:>5}  ex {r["exact_hit5_pct"]:>5} para {r["paraphrase_hit5_pct"]:>5} upd-new {r["update_newest_wins_pct"]:>5} dis {r["distractor_correct_first_pct"]:>5}  w50 {r["write_ms_p50"]:>8} q50 {r["query_ms_p50"]:>8} q95 {r["query_ms_p95"]:>8}')
+
+```
+
+### Core Architecture Module: `benchmarks/agent-search-ranking-2026-11/fixtures/pos/core/src/position.rs`
+```
+pub struct Position {
+    pub symbol: String,
+    pub qty: i64,
+    pub open_price: f64,
+    pub avg_price: f64,
+}
+
+impl Position {
+    pub fn pnl(&self, last: f64) -> f64 { (last - self.avg_price) * self.qty as f64 }
+}
 
 ```
 
@@ -1466,286 +1481,6 @@ impl DecideModel {
             let seq_len = ro
 ```
 
-### Core Architecture Module: `engine/crates/xerj-ai/src/embed.rs`
-```
-//! Embedding proxy — async HTTP client for OpenAI-compatible embedding APIs.
-//!
-//! Supports:
-//! - Batch embedding with configurable model
-//! - Rate limiting (token bucket)
-//! - Retry with exponential backoff
-//! - Configurable timeout
-
-use serde::{Deserialize, Serialize};
-use std::sync::Arc;
-use std::time::Duration;
-use tokio::sync::Semaphore;
-use tokio::time::sleep;
-use tracing::{debug, warn};
-use xerj_common::XerjError;
-
-/// Result alias.
-pub type Result<T> = std::result::Result<T, XerjError>;
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Config
-// ─────────────────────────────────────────────────────────────────────────────
-
-/// Configuration for the embedding proxy.
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct EmbeddingProxyConfig {
-    /// API endpoint URL.
-    ///
-    /// Before [`EmbeddingProxy::new`], this is the configured value
-    /// (`embedding.default_endpoint`). `new` rewrites it to the URL that is
-    /// actually POSTed (#2355). Accepted forms, trailing slash optional:
-    ///
-    /// * a base whose path ends in `/v1` — `/embeddings` is appended
-    ///   (`http://localhost:8000/v1` → `http://localhost:8000/v1/embeddings`)
-    /// * a bare origin (`http://host:port` or `http://host:port/`) —
-    ///   `/embeddings` is appended
-    /// * a path that already ends in `/embeddings` — used unchanged, aside
-    ///   from dropping a trailing slash
-    ///
-    /// Any other path is refused here, before a request is sent. The error
-    /// names the configured URL and suggests `{origin}/v1/embeddings`.
-    pub endpoint: String,
-    /// API key (sent as `Authorization: Bearer <key>`).
-    pub api_key: Option<String>,
-    /// Default embedding model name.
-    pub model: String,
-    /// Request timeout in milliseconds, per HTTP attempt.
-    ///
-    /// Milliseconds, because `embedding.timeout_ms` is: this field used to be
-    /// whole seconds, filled with `timeout_ms / 1000`, so 1500 became a 1 s
-    /// timeout and anything under 1000 became 0 s, which fails every request.
-    #[serde(default = "default_timeout_ms")]
-    pub timeout_ms: u64,
-    /// Maximum concurrent in-flight requests.
-    #[serde(default = "default_max_concurrent")]
-    pub max_concurrent: usize,
-    /// Maximum number of retries on transient failures.
-    #[serde(default = "default_max_retries")]
-    pub max_retries: u32,
-    /// Maximum input texts per request (#1190). Providers cap
-    /// `input` array length (OpenAI: 2048, many self-hosted ones far lower);
-    /// one `_bulk` of N docs used to leave here as a single N-input request.
-    /// Default 64 mirrors `embedding.batch_size`.
-    #[serde(default = "default_batch_size")]
-    pub batch_size: usize,
-}
-
-fn default_timeout_ms() -> u64 {
-    30_000
-}
-fn default_max_concurrent() -> usize {
-    4
-}
-fn default_max_retries() -> u32 {
-    3
-}
-fn default_batch_size() -> usize {
-    64
-}
-
-impl EmbeddingProxyConfig {
-    pub fn new(endpoint: impl Into<String>, model: impl Into<String>) -> Self {
-        Self {
-            endpoint: endpoint.into(),
-            api_key: None,
-            model: model.into(),
-            timeout_ms: default_timeout_ms(),
-            max_concurrent: default_max_concurrent(),
-            max_retries: default_max_retries(),
-            batch_size: default_batch_size(),
-        }
-    }
-
-    pub fn with_api_key(mut self, key: impl Into<String>) -> Self {
-        self.api_key = Some(key.into());
-        self
-    }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Wire types
-// ─────────────────────────────────────────────────────────────────────────────
-
-#[derive(Debug, Serialize)]
-struct EmbedRequest<'a> {
-    input: &'a [String],
-    model: &'a str,
-}
-
-#[derive(Debug, Deserialize)]
-struct EmbedResponse {
-    data: Vec<EmbedDatum>,
-}
-
-#[derive(Debug, Deserialize)]
-struct EmbedDatum {
-    embedding: Vec<f32>,
-    /// Position of this vector in the request's `input`. OpenAI always sends
-    /// it; some OpenAI-compatible routes omit it and return the vectors in
-    /// request order, so a missing `index` falls back to the position.
-    #[serde(default)]
-    index: Option<usize>,
-}
-
-/// Put the vectors back in request order. Every datum carries an `index`
-/// (sorted by it) or none does (kept in the order received); a mix of the two,
-/// or a count that does not match the request, is a contract violation.
-fn order_embeddings(
-    mut data: Vec<EmbedDatum>,
-    expected: usize,
-) -> std::result::Result<Vec<Vec<f32>>, String> {
-    let with_index = data.iter().filter(|d| d.index.is_some()).count();
-    if with_index != 0 && with_index != data.len() {
-        return Err(format!(
-            "{with_index} of {} embeddings carry an index; expected all or none",
-            data.len()
-        ));
-    }
-    if with_index == data.len() {
-        data.sort_by_key(|d| d.index);
-    }
-    if data.len() != expected {
-        return Err(format!(
-            "expected {expected} embeddings, got {}",
-            data.len()
-        ));
-    }
-    Ok(data.into_iter().map(|d| d.embedding).collect())
-}
-
-/// A single embedding attempt's failure, tagged with whether a retry could
-/// plausibly succeed (item 9). Only `retryable` failures are re-attempted by
-/// [`EmbeddingProxy::send_with_retry`]; a permanent failure (4xx client error,
-/// contract violation) returns immediately instead of stalling ~2 min/doc.
-struct EmbedFailure {
-    err: XerjError,
-    retryable: bool,
-}
-
-impl EmbedFailure {
-    fn transient(err: XerjError) -> Self {
-        Self {
-            err,
-            retryable: true,
-        }
-    }
-    fn permanent(err: XerjError) -> Self {
-        Self {
-            err,
-            retryable: false,
-        }
-    }
-}
-
-/// Whether an upstream HTTP status warrants a retry (item 9). Server errors
-/// (5xx), rate-limit (429), and request-timeout (408) are transient; all
-/// other 4xx client errors are permanent (fail fast).
-fn status_is_retryable(code: u16) -> bool {
-    code >= 500 || code == 429 || code == 408
-}
-
-/// `scheme://host[:port]` for `url`, with brackets around an IPv6 host.
-fn endpoint_origin(url: &reqwest::Url) -> String {
-    let host = url.host_str().unwrap_or("");
-    let host = if host.contains(':') {
-        format!("[{host}]")
-    } else {
-        host.to_string()
-    };
-    match url.port() {
-        Some(port) => format!("{}://{host}:{port}", url.scheme()),
-        None => format!("{}://{host}", url.scheme()),
-    }
-}
-
-/// Request URL for one OpenAI-compatible embeddings call (#2355).
-///
-/// `default_endpoint` used to be POSTed verbatim, so the usual client base
-/// `http://host:port/v1` 404'd. A base ending in `/v1` (trailing slash
-/// optional) and a bare origin have `/embeddings` appended. A path that
-/// already ends in `/embeddings` is kept, with a trailing slash removed so
-/// `/v1/embeddings/` and `/v1/embeddings` hit the same route. Query strings
-/// stay. Any other path is refused: appending would guess a route and send
-/// document text there. The error names the configured URL and the full
-/// `{origin}/v1/embeddings` path to set instead.
-fn resolve_embeddings_endpoint(raw: &str) -> Result<String> {
-    let configured = raw.trim();
-    let mut url = reqwest::Url::parse(configured)
-        .map_err(|e| XerjError::embedding(format!("invalid embedding endpoint: {e}")))?;
-    if !matches!(url.scheme(), "http" | "https") {
-        return Err(XerjError::embedding(
-            "embedding endpoint must use http or https",
-        ));
-    }
-    if url.host_str().is_none() {
-        let suggestion = format!("{configured}/v1/embeddings");
-        return Err(XerjError::embedding(format!(
-            "embedding endpoint `{configured}` has no host, so it was not called. \
-             Set embedding.default_endpoint to `{suggestion}`."
-        )));
-    }
-
-    let trimmed = url.path().trim_end_matches('/');
-    let path = if trimmed.is_empty() { "/" } else { trimmed };
-    let resolved = if path == "/" {
-        "/embeddings".to_string()
-    } else if path.ends_with("/embeddings") {
-        path.to_string()
-    } else if path.ends_with("/v1") {
-        format!("{path}/embeddings")
-    } else {
-        let origin = endpoint_origin(&url);
-        let suggestion = format!("{origin}/v1/embeddings");
-        return Err(XerjError::embedding(format!(
-            "embedding endpoint `{configured}` is not an embeddings URL, so it was not called. \
-             A base URL ending in `/v1` or `/v1/` has `/embeddings` appended, and so does a bare \
-             host (`{origin}` or `{origin}/`). Any other path must already end in `/embeddings`. \
-             Set embedding.default_endpoint to `{suggestion}`."
-        )));
-    };
-    url.set_path(&resolved);
-    Ok(url.as_str().to_string())
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// EmbeddingProxy
-// ─────────────────────────────────────────────────────────────────────────────
-
-/// Async HTTP embedding proxy.
-///
-/// Thread-safe — clone-share freely between tasks.
-#[derive(Clone)]
-pub struct EmbeddingProxy {
-    config: EmbeddingProxyConfig,
-    client: reqwest::Client,
-    /// Concurrency limiter.
-    semaphore: Arc<Semaphore>,
-}
-
-impl EmbeddingProxy {
-    /// Create a new proxy with the given config.
-    ///
-    /// Resolves [`EmbeddingProxyConfig::endpoint`] before the client is
-    /// built, so a `/v1` base is completed and an unrecognized path fails
-    /// here — at startup, when `mode = "proxy"` — rather than as a 404 on
-    /// the first document.
-    pub fn new(mut config: EmbeddingProxyConfig) -> Result<Self> {
-        config.endpoint = resolve_embeddings_endpoint(&config.endpoint)?;
-        let client = reqwest::Client::builder()
-            .timeout(Duration::from_millis(config.timeout_ms))
-            .build()
-            .map_err(|e| XerjError::embedding(format!("HTTP client init: {e}")))?;
-
-        let semaphore = Arc::new(Semaphore::new(config.max_concurrent));
-
- 
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1773,581 +1508,1480 @@ impl EmbeddingProxy {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `70e75d4f` (2026-11-20)
-**Commit Message**: fix(server): no "starting" 503 after the node is ready (#3323)
+### Incident Patch 1: `5c7187b3` (2026-11-21)
+**Commit Message**: fix(engine,storage): searches stop waiting on WAL and snapshot fsyncs under write load
 
-While `Engine::new` opens the data dir, the ES-compat and REST ports
-answer 503 `node_starting_exception` (#2575). A connection still
-sending its request at the hand-over kept answering that 503 after
-`/health/ready` was 200 and the real router was serving.
+Motivation (#3324, residual of #3331): under concurrent _bulk load every
+op on an index (match_all, range, terms, cardinality, bool) stalled
+together for seconds, most often ending at the "segment flushed" log
+line, and writes stalled with them.
 
-Root cause: `StartingResponder` served with
-`axum::serve(...).with_graceful_shutdown(...)`. axum 0.7 spawns every
-connection as a detached `tokio::spawn` task. `stop()` waited 2 s for
-the serve future and then aborted it, but aborting the accept loop does
-not reach the detached connections. hyper closes a connection on
-graceful shutdown only when it is idle, and a fresh connection that has
-not finished its first request is not. That connection stayed on the
-starting router, answered 503 once the request completed, and held
-`stop()` for the full 2 s, delaying the real routers.
+Root cause, from new slow-hold tracing (instrumented build, old code
+order, dd fdatasync neighbour on the same ext4 disk):
 
-Fix (engine/crates/xerj-server/src/main.rs):
-- `serve_starting`: own accept loop on hyper-util's auto builder with
-  every connection in a `JoinSet`. On stop it stops accepting, gives
-  connections `STARTING_GRACE` (500 ms; a starting answer is static) and
-  then drops the rest, so no connect
+1. The flush finalizer committed its collection-publication guard but
+   kept it alive to the end of the closure, across after_flush_publish
+   (snapshot fsync, WAL checkpoint/rotate/prune). commit() only records
+   the outcome; the bracket stays open until the guard drops. 6 stalls
+   of 0.5-1.7 s in one 60 s run, each "bracket held" line followed by
+   every reader's "search waited" line of the same length.
+2. index_batch_turbo_raw / index_batch_turbo / index_batch_sync_raw
+   opened the bracket, then appended to the WAL. The WAL shard mutex is
+   held by WAL maintenance (4 fsyncs per shard per pass) and by the
+   wal_batch_ms fsync scheduler (fsync under the mutex), so a batch
+   queued on it inside the bracket held every search
 
-**File**: `engine/Cargo.lock` (modified, +1/-0)
+**File**: `CHANGELOG.md` (modified, +21/-0)
 ```diff
-@@ -7853,6 +7853,7 @@ dependencies = [
-  "chrono",
-  "flate2",
-  "h2",
-+ "hyper-util",
-  "jemalloc_pprof",
-  "libc",
-  "memchr",
+@@ -25,6 +25,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ 
+ ### Fixed
+ 
++- **Searches no longer wait on WAL and snapshot fsyncs while bulk writes run
++  (refs #3324 #3331).** Three code paths held the collection-publication
++  bracket (every search on the index waits while it is open) across disk
++  waits. A flush kept its bracket open through post-publish maintenance
++  (snapshot fsync, WAL rotate and prune). `_bulk` opened its bracket before
++  appending to the WAL, so it waited inside the bracket for a WAL shard
++  lock that WAL maintenance and the batched fsync held across fsyncs. The
++  flush bracket now closes when the segment is published, and `_bulk`
++  appends to the WAL before opening the bracket. WAL maintenance and the
++  `wal_batch_ms` fsync now fsync without holding the shard lock: the next
++  generation's file is created and synced first, and only the rename runs
++  under the lock. The same fsyncs still happen, so durability does not
++  change. A WAL write error no longer poisons the index. Measured over 3
++  runs each, 60 s, 300k preload plus a closed-loop 5,000-doc auto-id writer,
++  ext4: p99 over all reads went from 204-265 ms to 40-85 ms (load 25-50).
++  With a `dd` fdatasync neighbour on the same disk it went from 260-305 ms
++  to 45-60 ms, and the longest all-op stall from 2.3-4.2 s to 0.7-1.5 s
++  (load 14-46). Writer throughput went from 34-50k to 53-66k docs/s.
++  Holds and waits of 1 s or more (`XERJ_STALL_TRACE_MS` sets the threshold)
++  are now logged at WARN with the holder's call site.
++
+ - **A collapsed `_search` or `_msearch` whose `collapse.inner_hits` block has
+   no `name` is refused with a 400**, as Elasticsearch 8.13 refuses it
+   (`x_content_parse_exception` caused by `illegal_argument_exception`
 ```
 
-**File**: `engine/crates/xerj-server/Cargo.toml` (modified, +3/-0)
+**File**: `engine/crates/xerj-engine/src/collection_publication.rs` (modified, +14/-0)
 ```diff
-@@ -41,6 +41,9 @@ axum.workspace = true
- # and cross-compile friendly.
- axum-server = { version = "0.7", default-features = false, features = ["tls-rustls-no-provider"] }
- rustls = { version = "0.23", default-features = false, features = ["ring"] }
-+# The "starting" responder owns its connections so the hand-over can close
-+# them (#2575 follow-up). Same version and features axum-server already uses.
-+hyper-util = { version = "0.1.20", features = ["server-auto", "service", "tokio"] }
- tracing.workspace = true
- tracing-subscriber.workspace = true
- serde.workspace = true
-```
-
-**File**: `engine/crates/xerj-server/src/main.rs` (modified, +143/-18)
-```diff
-@@ -1723,6 +1723,63 @@ mod starting_responder_tests {
-         assert!(after.ends_with("real"), "{after}");
-         server.abort();
-     }
-+
-+    /// A connection still sending its request at the hand-over used to
-+    /// outlive `stop` (axum spawns connections detached) and answer
-+    /// "starting" after the real router was serving. It is closed now, and
-+    /// a "starting" answer tells keep-alive clients to reconnect.
-+    #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
-+    async fn no_starting_answer_after_the_hand_over() {
-+        let listener =
-+            xerj_common::loopback_test::expect_loopback(std::net::TcpListener::bind("127.0.0.1:0"));
-+        listener.set_nonblocking(true).unwrap();
-+        let addr = listener.local_addr().unwrap();
-+        let starting = StartingResponder::start(&[(&listener, "ES-compat")]);
-+
-+        let answer = get(addr, "/_cluster/health").await.to_ascii_lowercase();
-+        assert!(answer.contains("connection: close"), "{answer}");
-+
-+        let mut partial = tokio::net::TcpStream::connect(addr).await.unwrap();
-+        partial
-+            .write_all(b"GET /_cluster/health HTTP/1.1\r\nHost: x\r\n")
-+            .await
-+            .unwrap();
-+        // Let the responder read the partial head, so the connection is
-+        // past version detection and mid-request.
-+        tokio::time::sleep(std::time::Duration::from_millis(200)).await;
-+
-+        let begun = std::time::Instant::now();
-+        starting.stop().await;
-+        let stop_took = begun.elapsed();
-+        assert!(
-+            stop_took < STARTING_GRACE * 3,
-+            "stop took {stop_took:?} with a stalled client"
-+        );
-+
-+        let real =
-+            Router::new().route("/_cluster/health", axum::routing::get(|| async { "green" }));
-+        let server = tokio::spawn(async move {
-+            axum::serve(TcpListener::from_std(listener).unwrap(), real)
-+                .await
-+                .unwrap();
-+        });
-+        assert!(get(addr, "/_cluster/health").await.ends_with("green"));
-+
-+        let _ = partial.write_all(b"\r\n").await;
-+        let mut late = Vec::new();
-+        let _ = tokio::time::timeout(
-+            std::time::Duration::from_secs(5),
-+            partial.read_to_end(&mut late),
-+        )
-+        .await
-+        .expect("the stalled connection is closed, not left open");
-+        let late = String::from_utf8_lossy(&late);
-+        assert!(
-+            !late.contains("503"),
-+            "starting answer after hand-over: {late}"
-+        );
-+        server.abort();
-+    }
+@@ -43,6 +43,8 @@ pub(crate) struct CollectionPublication {
+ pub(crate) struct CollectionPublicationGuard {
+     state: Arc<CollectionPublication>,
+     outcome: GuardOutcome,
++    opened: std::time::Instant,
++    site: &'static std::panic::Location<'static>,
  }
  
- #[cfg(test)]
-@@ -1910,7 +1967,14 @@ const AUTO_PORT_SCAN: u16 = 1000;
- /// opens the data dir (#2575). Every path returns 503 with an ES-shaped
- /// `node_starting_exception` and `Retry-After: 1`, except `/health/live`,
- /// which returns 200 because the process is alive. `/health/ready` gets the
--/// 503 like everything else.
-+/// 503 like everything else. Every answer carries `Connection: close`, so a
-+/// keep-alive client opens a fresh connection for its retry and that one
-+/// lands on the real router.
-+///
-+/// The responder owns its connections. It used `axum::serve`, which spawns
-+/// each connection as a detached task: `stop` aborted the accept loop after
-+/// its grace, but a connection still mid-request kept running and answered
-+/// "starting" after the node was ready.
- struct StartingResponder {
-     stop: tokio::sync::watch::Sender<bool>,
-     tasks: Vec<tokio::task::JoinHandle<()>>,
-@@ -1920,6 +1984,12 @@ const STARTING_REASON: &str = "XERJ is starting: the node is opening the indices
-      directory and will serve requests when that finishes. Retry shortly; GET /health/ready \
-      returns 200 once the node is ready.";
- 
-+/// How long `StartingResponder::stop` lets open connections finish. A
-+/// "starting" answer is static and leaves in microseconds; what is still
-+/// open after this is a client that has not finished sending its request,
-+/// and it would hold the real routers off the port.
-+const STARTING_GRACE: std::time::Duration = std::time::Duration::from_millis(500);
-+
- fn starting_router() -> Router {
-     use axum::http::{header, StatusCode};
-     use axum::routing::get;
-@@ -1929,14 +1999,15 @@ fn starting_router() -> Router {
-             get(|| async {
-                 (
-                     StatusCode::OK,
-+                    [(header::CONNECTION, "close")],
-                     axum::Json(serde_json::json!({"status": "starting"})),
-                 )
-             }),
-         )
-         .fallback(|| async {
-             (
-                 StatusCode::SERVICE_UNAVAILABLE,
--                [(header::RETRY_AFTER, "1")],
-+                [(header::RETRY_AFTER, "1"), (header::CONNECTION, "close")],
-                 axum::Json(serde_json::json!({
-                     "error": {"type": "node_starting_exception", "reason": STARTING_REASON},
-                     "status": 503,
-@@ -1960,33 +2031,27 @@ impl StartingResponder {
-                   
-```
-
----
-
-### Incident Patch 2: `c73bb982` (2026-11-20)
-**Commit Message**: fix(api): refuse a collapse inner_hits block without a name
-
-Motivation
-Elasticsearch 8.13 refuses a search whose collapse.inner_hits object, or
-any entry of an inner_hits array, has no name: a 400
-x_content_parse_exception, "[collapse] failed to parse field
-[inner_hits]", caused by an illegal_argument_exception, "inner_hits must
-have a [name]; set the [name] field in the inner_hits definition". It
-does so while parsing the body, so _msearch, which parses every item body
-before it runs any, refuses the whole request. XERJ answered 200 and
-rendered the group under a made-up "inner_hits" key.
-
-Root cause
-Nothing checked the name. The inner hits renderer falls back to
-"inner_hits" when the key is missing, and no parse step looked at
-collapse.inner_hits.
-
-Fix
-- collapse_has_unnamed_inner_hits: true when the inner_hits object, or
-  any object entry of an inner_hits array, has no "name" key. Only the
-  key's absence counts; an empty name passes, as in ES.
-- The _search body extractor (EsSearchJson) refuses such a body with a
-  new rejection, UnnamedInnerHits, after the typed parse. It runs before
-  the cluster fan-out and the URL-parameter checks, so single-node and
-  cluster _search giv
-
-**File**: `CHANGELOG.md` (modified, +9/-0)
-```diff
-@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- ## [Unreleased]
- 
-+### Fixed
-+
-+- **A collapsed `_search` or `_msearch` whose `collapse.inner_hits` block has
-+  no `name` is refused with a 400**, as Elasticsearch 8.13 refuses it
-+  (`x_content_parse_exception` caused by `illegal_argument_exception`
-+  "inner_hits must have a [name]..."). XERJ ran the search and listed the
-+  group's hits under a made-up `inner_hits` key. Every entry of an
-+  `inner_hits` array is checked; one unnamed block fails a whole `_msearch`.
-+
- ## [1.0.0-rc.104] - 2026-11-18
- 
- **rc.104: rc.103 on every platform.** rc.104 is the rc.103 code with the
-```
-
-**File**: `engine/crates/xerj-api/src/es_compat.rs` (modified, +35/-0)
-```diff
-@@ -5677,6 +5677,31 @@ fn search_context_missing(scroll_id: &str) -> Response {
-         .into_response()
- }
- 
-+/// ES 8.13 refuses a `collapse.inner_hits` object, or any entry of an
-+/// `inner_hits` array, that has no `name` while it parses the body. Only the
-+/// key's absence counts: an empty name passes, as in ES.
-+fn collapse_has_unnamed_inner_hits(collapse: Option<&Value>) -> bool {
-+    let unnamed = |spec: &Value| spec.as_object().is_some_and(|o| !o.contains_key("name"));
-+    match collapse.and_then(|c| c.get("inner_hits")) {
-+        Some(Value::Array(specs)) => specs.iter().any(unnamed),
-+        Some(spec) => unnamed(spec),
-+        None => false,
-+    }
-+}
-+
-+/// The 400 for [`collapse_has_unnamed_inner_hits`]: ES wraps the name
-+/// refusal in the parse error of the `collapse` object.
-+fn unnamed_inner_hits_refusal() -> Response {
-+    es_bad_request(
-+        "x_content_parse_exception",
-+        "[collapse] failed to parse field [inner_hits]",
-+        Some((
-+            "illegal_argument_exception",
-+            "inner_hits must have a [name]; set the [name] field in the inner_hits definition",
-+        )),
-+    )
-+}
-+
- /// Body extractor for `_search` that layers ES 8.13.4's deny-unknown-key
- /// behaviour on top of `OptionalJson<EsSearchBody>` (item 4a): a bogus
- /// top-level key is rejected with the exact ES `parsing_exception` instead of
-@@ -5704,6 +5729,7 @@ pub enum EsSearchJsonRejection {
-         col: usize,
-     },
-     IllegalArgument(String),
-+    UnnamedInnerHits,
- }
- 
- impl IntoResponse for EsSearchJsonRejection {
-@@ -5717,6 +5743,7 @@ impl IntoResponse for EsSearchJsonRejection {
-                 col,
-             } => unknown_search_key_error(&key, token, line, col),
-             EsSearchJsonRejection::IllegalArgument(reason) => illegal_argument(&reason),
-+            EsSearchJsonRejection::UnnamedInnerHits => unnamed_inner_hits_refusal(),
+ #[derive(Clone, Copy, Debug, PartialEq, Eq)]
+@@ -182,6 +184,7 @@ impl CollectionPublication {
          }
      }
- }
-@@ -5789,6 +5816,11 @@ impl<S: Send + Sync> FromRequest<S> for EsSearchJson {
-                 });
-             }
-         };
-+        // Refused here, at parse time as in ES, so the cluster fan-out and
-+        // every URL-parameter check after the extractor never see the body.
-+        if collapse_has_unnamed_inner_hits(value.collapse.as_ref()) {
-+            return Err(EsSearchJsonRejection::UnnamedInnerHits);
-+        }
-         Ok(EsSearchJson(Some(value)))
+ 
++    #[track_caller]
+     pub(crate) fn begin(
+         self: &Arc<Self>,
+     ) -> Result<CollectionPublicationGuard, CollectionPublicationPoisoned> {
+@@ -204,6 +207,8 @@ impl CollectionPublication {
+         Ok(CollectionPublicationGuard {
+             state: Arc::clone(self),
+             outcome: GuardOutcome::Pending,
++            opened: std::time::Instant::now(),
++            site: std::panic::Location::caller(),
+         })
      }
- }
-@@ -32966,6 +32998,9 @@ async fn msearch_impl(
-             if let Some(reason) = xerj_query::track_total_hits_refusal(&item) {
-                 return es_bad_request("illegal_argument_exception", &reason, None);
+ 
+@@ -267,6 +272,15 @@ impl CollectionPublicationGuard {
+ 
+ impl Drop for CollectionPublicationGuard {
+     fn drop(&mut self) {
++        let held = self.opened.elapsed();
++        if xerj_storage::stall_trace::is_slow(held) {
++            tracing::warn!(
++                held_ms = held.as_millis() as u64,
++                site = %self.site,
++                readers_waiting = self.state.readers_waiting.load(Ordering::Acquire),
++                "collection publication bracket held long; searches on this index wait for it"
++            );
++        }
+         if self.outcome == GuardOutcome::Pending {
+             self.state.poisoned.store(true, Ordering::Release);
+         }
+```
+
+**File**: `engine/crates/xerj-engine/src/index.rs` (modified, +282/-14)
+```diff
+@@ -1764,6 +1764,198 @@ mod collection_publication_fail_closed_tests {
+         assert!(idx.get_document("late").await.unwrap().is_none());
+     }
+ 
++    /// #3324: a bulk batch appends to the WAL before it opens the collection
++    /// publication bracket. WAL maintenance and the batched fsync hold a WAL
++    /// shard lock across disk waits (25 s measured under ext4 journal
++    /// pressure); a batch queued on that lock used to be inside the bracket
++    /// already, so every search on the index waited the same 25 s and came
++    /// back `timed_out` with no hits.
++    #[tokio::test(flavor = "multi_thread", worker_threads = 4)]
++    async fn search_is_not_held_behind_a_bulk_waiting_on_the_wal_lock() {
++        let dir = tempfile::tempdir().unwrap();
++        let mut config = Config::default();
++        config.server.data_dir = dir.path().to_string_lossy().into_owned();
++        let engine = crate::Engine::new(config).unwrap();
++        engine
++            .create_index("wal-lock-readers", text_schema())
++            .unwrap();
++        let idx = engine.get_index("wal-lock-readers").unwrap();
++        idx.index_batch_turbo_raw(vec![(
++            "seed".into(),
++            Arc::<[u8]>::from(br#"{"body":"alpha"}"#.as_slice()),
++        )])
++        .await
++        .unwrap();
++        idx.refresh().await.unwrap();
++
++        let (entered_tx, entered_rx) = std::sync::mpsc::sync_channel(1);
++        let entered_tx = parking_lot::Mutex::new(Some(entered_tx));
++        idx.set_publication_test_hook(Some(Arc::new(move |_, point| {
++            if point == PublicationTestPoint::RawBeforeCollectionBegin {
++                if let Some(tx) = entered_tx.lock().take() {
++                    let _ = tx.send(());
++                }
++            }
++        })));
++        // Stands in for a maintenance pass or fsync that holds the lock.
++        let wal_locks = idx.store.hold_wal_shards_for_test();
++        let writer_idx = Arc::clone(&idx);
++        let writer = tokio::spawn(async move {
++            writer_idx
++                .index_batch_turbo_raw(vec![(
++                    "late".into(),
++                    Arc::<[u8]>::from(br#"{"body":"alpha"}"#.as_slice()),
++                )])
++                .await
++        });
++        tokio::task::spawn_blocking(move || {
++            entered_rx
++                .recv_timeout(std::time::Duration::from_secs(10))
++                .expect("bulk never reached the WAL append")
++        })
++        .await
++        .unwrap();
++        // Let the batch reach the lock and park on it.
++        tokio::time::sleep(std::time::Duration::from_millis(200)).await;
++        assert!(
++            !writer.is_finished(),
++            "the bulk must be parked on the WAL lock"
++        );
++
++        let mut request = xerj_query::parse_request(&json!({
++            "query": {"match": {"body": "alpha"}}, "size": 10
++        }))
++        .unwrap();
++        request.timeout_ms = Some(2_000);
++        let result = tokio::time::timeout(std::time::Duration::from_secs(5), idx.search(&request))
++            .await
++            .expect("search hung")
++            .unwrap();
++        assert!(
++            !result.timed_out,
++            "search waited out its deadline behind a bulk parked on the WAL lock"
++        );
++        assert_eq!(result.hits.len(), 1);
++        assert_eq!(result.hits[0].id, "seed");
++
++        drop(wal_locks);
++        tokio::time::timeout(std::time::Duration::from_secs(10), writer)
++            .await
++            .expect("bulk did not finish after the WAL lock was released")
++            .unwrap()
++            .unwrap();
++        idx.set_publication_test_hook(None);
++        assert!(!idx.collection_publication.state().2);
++        assert!(idx.get_document("late").await.unwrap().is_some());
++    }
++
++    /// #3324: the flush publication bracket closes as soon as the segment is
++    /// published. Its guard used to live to the end of the finalizer, across
++    /// `after_flush_publish` (snapshot fsync, WAL rotate and prune), so
++    /// every search on the index waited out that disk work. Here the WAL
++    /// maintenance is parked on held WAL locks after the publish.
++    #[tokio::test(flavor = "multi_thread", worker_threads = 4)]
++    async fn search_is_not_held_behind_post_flush_wal_maintenance() {
++        let dir = tempfile::tempdir().unwrap();
++        let mut config = Config::default();
++        config.server.data_dir = dir.path().to_string_lossy().into_owned();
++        let engine = crate::Engine::new(config).unwrap();
++        engine
++            .create_index("post-flush-readers", text_schema())
++            .unwrap();
++        let idx = engine.get_index("post-flush-readers").unwrap();
++        idx.index_batch_turbo_raw(vec![(
++            "doc".into(),
++            Arc::<[u8]>::from(br#"{"body":"alpha"}"#.as_slice()),
++        )])
++        .await
++        .unwrap();
++        assert!(idx.store.snapshot().segments.is_empty());
++
++        // The first flush of a store always
+```
+
+**File**: `engine/crates/xerj-storage/src/index_store.rs` (modified, +401/-125)
+```diff
+@@ -702,6 +702,11 @@ pub struct IndexStore {
+     /// ticks re-check only its remaining unproven `(doc_id, seq)` pairs
+     /// against the version map and prune once the list drains.
+     wal_prune_cache: Mutex<std::collections::HashMap<(usize, u64), WalGenVerdict>>,
++    /// #3324 — serializes WAL maintenance passes on this store. A pass
++    /// holds each shard's WAL mutex only to rotate; this lock keeps two
++    /// passes from working on the same frozen generations at once. Appends
++    /// never take it.
++    wal_maintenance_lock: Mutex<()>,
+     /// Issue #965 — serializes object-store publication sequences
+     /// (pack → bundle PUT → catalog PUT) so a catalog can never be written
+     /// while a snapshot-referenced bundle is still in flight (the flush-tail
+@@ -719,6 +724,10 @@ pub struct IndexStore {
+     snapshot_save_failures_remaining: std::sync::atomic::AtomicUsize,
+     #[cfg(test)]
+     fail_next_wal_maintenance: std::sync::atomic::AtomicBool,
++    /// Parks a WAL maintenance pass after it froze a generation: the pass
++    /// waits on this barrier twice, between the rotation and the fsync.
++    #[cfg(test)]
++    frozen_work_pause: Mutex<Option<Arc<std::sync::Barrier>>>,
+     #[cfg(test)]
+     publication_failpoint: std::sync::atomic::AtomicU8,
+     #[cfg(test)]
+@@ -971,6 +980,7 @@ impl IndexStore {
+             segments_changed_hook: Mutex::new(None),
+             pending_deletes: Mutex::new(std::collections::HashMap::new()),
+             wal_prune_cache: Mutex::new(std::collections::HashMap::new()),
++            wal_maintenance_lock: Mutex::new(()),
+             object_publish_lock: Mutex::new(()),
+             durable_bundles: Mutex::new(durable_bundles),
+             #[cfg(test)]
+@@ -982,6 +992,8 @@ impl IndexStore {
+             #[cfg(test)]
+             fail_next_wal_maintenance: std::sync::atomic::AtomicBool::new(false),
+             #[cfg(test)]
++            frozen_work_pause: Mutex::new(None),
++            #[cfg(test)]
+             publication_failpoint: std::sync::atomic::AtomicU8::new(0),
+             #[cfg(test)]
+             orphan_disarm_fail_after: std::sync::atomic::AtomicUsize::new(usize::MAX),
+@@ -2021,8 +2033,27 @@ impl IndexStore {
+ 
+     /// Lock a specific WAL shard.
+     #[inline]
++    /// Test hook: hold every WAL shard lock, as a maintenance pass or an
++    /// fsync would, so a caller can check what waits behind it (#3324).
++    #[doc(hidden)]
++    pub fn hold_wal_shards_for_test(&self) -> Vec<std::sync::MutexGuard<'_, WalWriter>> {
++        self.wal_shards.iter().map(|s| s.lock().unwrap()).collect()
++    }
++
++    #[track_caller]
+     fn wal_lock_shard(&self, shard: usize) -> std::sync::MutexGuard<'_, WalWriter> {
+-        self.wal_shards[shard].lock().unwrap()
++        let asked = std::time::Instant::now();
++        let guard = self.wal_shards[shard].lock().unwrap();
++        let waited = asked.elapsed();
++        if crate::stall_trace::is_slow(waited) {
++            warn!(
++                shard,
++                waited_ms = waited.as_millis() as u64,
++                site = %std::panic::Location::caller(),
++                "WAL append waited for the WAL shard lock"
++            );
++        }
++        guard
+     }
+ 
+     // ── Write path ────────────────────────────────────────────────────────────
+@@ -2849,6 +2880,7 @@ impl IndexStore {
+             // the save registers it and the prune below can release the
+             // deletes' WAL pins.  Best-effort: on failure the deletes
+             // simply stay WAL-pinned (retention, not loss).
++            let maintenance_started = std::time::Instant::now();
+             if let Err(e) = self.persist_pending_tombstones() {
+                 if self.is_object_store_mode() {
+                     // #965 — the bucket catalog does not carry the
+@@ -2890,10 +2922,23 @@ impl IndexStore {
+             // still rotate + prune on the same 1 s cadence; generations
+             // holding unproven entries are retained (that retention IS the
+             // fix) and reclaimed on a later tick once their docs flush.
++            let snapshot_saved = std::time::Instant::now();
+             let durable_max = self.snapshot.load().max_seq_no;
+             if let Err(error) = self.wal_maintain_all_verified(durable_max) {
+                 warn!(error = %error, segment_id, "WAL maintenance deferred after segment publication");
              }
-+            if collapse_has_unnamed_inner_hits(item.get("collapse")) {
-+                return unnamed_inner_hits_refusal();
++            let total = maintenance_started.elapsed();
++            if crate::stall_trace::is_slow(total) {
++                warn!(
++                    segment_id,
++                    total_ms = total.as_millis() as u64,
++                    tombstones_and_snapshot_ms = snapshot_saved
++                        .duration_since(maintenance_started)
++                        .as_millis() as u64,
++                    wal_ms = snapshot_saved.elapsed().as_millis() as u64,
++                    "post-flush maintenance slow"
++                );
 +            }
          }
-     }
  
+         info!(segment_id, doc_count
 ```
 
-**File**: `engine/tests/es-compat-yaml/catch-lenient.txt` (modified, +0/-2)
+**File**: `engine/crates/xerj-storage/src/lib.rs` (modified, +1/-0)
 ```diff
-@@ -27,8 +27,6 @@ aggregations/sig_terms.yml · Misspelled fields get "did you mean"
- aggregations/stats_metric_fail_formatting.yml · fail formatting
- aggregations/top_hits.yml · having
- search/110_field_collapsing.yml · field collapsing and scroll
--search/110_field_collapsing.yml · Test collapse with inner_hits and missing name fails
--search/115_multiple_field_collapsing.yml · two levels fields collapsing
- search/150_rewrite_on_coordinator.yml · Ensure that we fetch the document only once
- search/350_point_in_time.yml · msearch
- search/500_date_range.yml · test bad dates in range - future
+@@ -32,6 +32,7 @@ pub mod index_store;
+ pub mod merge;
+ pub mod s3;
+ pub mod segment;
++pub mod stall_trace;
+ pub mod stored_codec;
+ pub mod version_map;
+ pub mod wal;
+```
+
+**File**: `engine/crates/xerj-storage/src/stall_trace.rs` (added, +26/-0)
+```diff
+@@ -0,0 +1,26 @@
++//! Slow-hold reporting for the locks and brackets a search or a write can
++//! wait behind (#3324). A hold or wait longer than the threshold is logged at
++//! WARN with its call site, so a multi-second stall under write load names
++//! what was blocking instead of only showing up as a slow request.
++//!
++//! The threshold is 1 s, or `XERJ_STALL_TRACE_MS` when set.
++
++use std::sync::OnceLock;
++use std::time::Duration;
++
++/// Holds and waits at or above this duration are reported.
++pub fn threshold() -> Duration {
++    static THRESHOLD: OnceLock<Duration> = OnceLock::new();
++    *THRESHOLD.get_or_init(|| {
++        std::env::var("XERJ_STALL_TRACE_MS")
++            .ok()
++            .and_then(|v| v.trim().parse::<u64>().ok())
++            .map(Duration::from_millis)
++            .unwrap_or(Duration::from_secs(1))
++    })
++}
++
++/// True when `elapsed` should be reported.
++pub fn is_slow(elapsed: Duration) -> bool {
++    elapsed >= threshold()
++}
+```
+
+**File**: `engine/crates/xerj-storage/src/wal.rs` (modified, +339/-7)
+```diff
+@@ -445,6 +445,15 @@ impl WalWriter {
+     ) -> Result<Self> {
+         let dir = dir.as_ref().to_path_buf();
+         fs::create_dir_all(&dir)?;
++        // A crash between `PreparedGeneration::create` and its rename leaves
++        // a header-only `.wal.next` file that no generation scan reads.
++        if let Ok(entries) = fs::read_dir(&dir) {
++            for entry in entries.flatten() {
++                if entry.file_name().to_string_lossy().ends_with(".wal.next") {
++                    let _ = fs::remove_file(entry.path());
++                }
++            }
++        }
+ 
+         // Find the highest existing generation
+         let (generation, max_seq) = find_latest_generation(&dir)?;
+@@ -1055,6 +1064,45 @@ impl WalWriter {
+         self.dirty
+     }
+ 
++    /// First half of an fsync that does not hold the shard mutex (#3324).
++    ///
++    /// Drains the userspace buffer to the kernel, clears `dirty` and returns
++    /// a second descriptor of the active generation. The caller drops the
++    /// shard mutex and then calls `sync_all` on that descriptor: an fsync
++    /// covers every byte the kernel holds for the inode when it starts, so
++    /// every append made before this call is durable when it returns —
++    /// the same guarantee [`sync`](Self::sync) gives, without making every
++    /// append to the shard wait on the disk. On ext4 an fsync can wait
++    /// seconds for the journal commit (#3324 measured 25 s); with the
++    /// mutex held, each append behind it, and each search waiting on the
++    /// publication bracket that append holds, waited that long too.
++    ///
++    /// Appends that land while the fsync runs set `dirty` and re-arm the
++    /// scheduler, so they get their own fsync. If the fsync fails the
++    /// caller must call [`mark_unsynced`](Self::mark_unsynced).
++    ///
++    /// Returns `None` when there is nothing to make durable.
++    pub fn begin_unlocked_sync(&mut self) -> Result<Option<File>> {
++        if !self.dirty {
++            return Ok(None);
++        }
++        let Some(w) = self.writer.as_mut() else {
++            self.dirty = false;
++            return Ok(None);
++        };
++        w.flush()?;
++        let file = w.get_ref().file().try_clone()?;
++        self.dirty = false;
++        Ok(Some(file))
++    }
++
++    /// An fsync started by [`begin_unlocked_sync`](Self::begin_unlocked_sync)
++    /// failed: the bytes it covered may not be durable, so the shard is
++    /// dirty again and the scheduler retries it.
++    pub fn mark_unsynced(&mut self) {
++        self.mark_dirty();
++    }
++
+     /// Flush the BufWriter to the kernel without a `fsync(2)`.
+     ///
+     /// The buffered bytes are visible to any reader on the same
+@@ -1126,14 +1174,69 @@ impl WalWriter {
+     /// on every append so the on-disk prefix is complete up to
+     /// `current_offset`).
+     pub fn read_generation_entries(&self, gen: u64) -> (Vec<ReplayEntry>, bool) {
+-        let path = wal_path(&self.dir, gen);
+-        if !path.exists() {
+-            return (Vec::new(), true);
++        read_generation_entries_in(&self.dir, gen)
++    }
++
++    /// This writer's directory.
++    pub fn dir(&self) -> &Path {
++        &self.dir
++    }
++
++    /// True when the active generation holds frames, so a maintenance pass
++    /// has something to rotate out.
++    pub fn has_frames(&self) -> bool {
++        self.current_offset > WAL_HEADER_LEN
++    }
++
++    /// Rotate the active generation out WITHOUT any fsync under the shard
++    /// mutex (#3324).
++    ///
++    /// `prepared` is the next generation's file, created and fsynced by
++    /// [`PreparedGeneration::create`] before the caller took the mutex.
++    /// This call drains the buffer, renames that file into place, and
++    /// hands back the generation it froze together with a descriptor of it.
++    /// The caller releases the mutex and only then fsyncs, decodes,
++    /// checkpoints and prunes the frozen generation: nothing appends to it
++    /// any more, so none of that needs the mutex appends wait on.
++    ///
++    /// [`force_rotate`](Self::force_rotate) does the same work with the
++    /// mutex held: an fsync of the active file in `checkpoint`, a second in
++    /// `rotate`, one for the checkpoint file and one for the new
++    /// generation's header — four journal-commit waits per shard per pass.
++    pub fn rotate_detached(
++        &mut self,
++        mut prepared: PreparedGeneration,
++    ) -> Result<DetachedRotation> {
++        if !self.has_frames() {
++            self.release_if_empty();
++            return Ok(DetachedRotation::Empty);
+         }
+-        let results = read_wal_file(path);
+-        let clean = results.iter().all(|r| r.is_ok());
+-        let entries = results.into_iter().filter_map(|r| r.ok()).collect();
+-        (entries, clean)
++        if prepared.generation != self.generation + 1 || prepared.dir != self.dir {
++            return Ok(DetachedRotation::Stale);
++        }
++        let Some(w) = self.writer.as_mut() else {
+```
+
+**File**: `engine/crates/xerj-storage/src/wal_fsync.rs` (modified, +30/-18)
+```diff
+@@ -310,24 +310,36 @@ impl WalFsyncScheduler {
+             let Some(shard) = entry.handle.target.upgrade() else {
+                 continue; // store dropped
+             };
+-            let mut wal = shard.lock().unwrap_or_else(|e| e.into_inner());
+-            if wal.is_dirty() {
+-                match wal.sync() {
+-                    Ok(()) => {
+-                        self.synced.fetch_add(1, Ordering::Relaxed);
+-                    }
+-                    Err(e) => {
+-                        // The shard still holds un-fsynced bytes.  Re-arm so
+-                        // a transient failure (ENOSPC that later frees, EIO
+-                        // on a retryable device) is retried one period later
+-                        // instead of waiting for the next write — the old
+-                        // per-index loop retried on every tick, and dropping
+-                        // that would have been a silent durability
+-                        // regression.
+-                        warn!("wal_batch_ms fsync failed: {e}");
+-                        drop(wal);
+-                        entry.handle.arm();
+-                    }
++            // #3324 — only the buffer drain runs under the shard mutex; the
++            // fsync itself runs after it is released, on a second
++            // descriptor, so appends to this shard do not wait on the disk.
++            let prepared = shard
++                .lock()
++                .unwrap_or_else(|e| e.into_inner())
++                .begin_unlocked_sync();
++            let result = match prepared {
++                Ok(None) => continue,
++                Ok(Some(file)) => file.sync_all().map_err(crate::StorageError::from),
++                Err(e) => Err(e),
++            };
++            match result {
++                Ok(()) => {
++                    self.synced.fetch_add(1, Ordering::Relaxed);
++                }
++                Err(e) => {
++                    // The shard still holds un-fsynced bytes.  Mark it dirty
++                    // and re-arm so a transient failure (ENOSPC that later
++                    // frees, EIO on a retryable device) is retried one
++                    // period later instead of waiting for the next write —
++                    // the old per-index loop retried on every tick, and
++                    // dropping that would have been a silent durability
++                    // regression.
++                    warn!("wal_batch_ms fsync failed: {e}");
++                    shard
++                        .lock()
++                        .unwrap_or_else(|e| e.into_inner())
++                        .mark_unsynced();
++                    entry.handle.arm();
+                 }
+             }
+         }
 ```
 
 ---
 
-### Incident Patch 3: `6fe3335f` (2026-11-20)
-**Commit Message**: fix(read-budget): admit whole-segment stored-values decodes and vector columns (#2427)
+### Incident Patch 2: `d52a99df` (2026-11-21)
+**Commit Message**: Merge main into fix/multi-index-leaf-terms (#2957)
 
-Motivation
-#2427 is still open for read paths in index.rs that skip budget admission.
-Two of them allocate sizes set by the segment, not by the request:
+Resolve conflicts with main f22ddd5b2:
+- engine/crates/xerj-api/src/es_compat.rs: main added the composite
+  coordinator (finalize_composite_aggs, #2949) and its tests at the same
+  spot the PR added the leaf-terms coordinator. Keep both blocks; run
+  finalize_leaf_terms_summaries after finalize_composite_aggs in
+  search_impl's post-merge pass.
+- CHANGELOG.md: keep main's Fixed entries and append the PR entry.
 
-- the cold stored-values load (`stored_values_for_async`): decompresses the
-  whole stored section and parses every document into a `Value` tree. It
-  serves every exact kNN scan, nested kNN, kNN hydration fallback and
-  corpus assembly for aggregations.
-- the per-query vector column of the exact kNN scan: built from those
-  documents (or from the typed projection) and, when the hydration cache
-  refuses it (always for a column cut short at the deadline), kept by the
-  query with no reservation.
-
-Neither took a `transient_read_permit`, so concurrent cold kNN queries stacked
-whole decoded segments that no budget saw. On a node already near its limit,
-nothing stopped the next one from pushing RSS into the OOM killer.
-
-Root cause
-The stored-slices, doc-values and FTS-reader builds already reserve in the
-read budget (#3266 and earlier). These two paths were written before that and
-were never moved over. A refused load also had no error path: it cam
-
-**File**: `engine/crates/xerj-engine/src/governor.rs` (modified, +55/-0)
+**File**: `.contributors` (modified, +23/-1)
 ```diff
-@@ -1522,6 +1522,29 @@ impl ResourceGovernor {
-         self.memory_limit_bytes.max(watermark)
-     }
- 
-+    /// #2427: admission for one query-time transient the hydration cache
-+    /// refused (a whole-segment stored-values decode, a per-query vector
-+    /// column). The search was admitted under the hard limit, but such a
-+    /// value is sized by the segment, not the request: on a node near its
-+    /// limit it is what carries RSS into the OOM killer. A transient that
-+    /// would cross the limit gets a 429 `circuit_breaking_exception` instead.
-+    /// No-op when no limit is known.
-+    pub fn check_read_transient(&self, bytes: u64, label: &str) -> Result<(), XerjError> {
-+        let limit = self.search_hard_limit_bytes();
-+        let rss = self.search_admission_rss();
-+        if limit != 0 && rss.saturating_add(bytes) > limit {
-+            return Err(XerjError::circuit_breaking(format!(
-+                "[parent] Data too large: data for [{label}] would be [{}/{}], which is larger than the memory limit of [{limit}/{}] (process memory [{rss}/{}], transient read [{bytes}/{}]); search rejected",
-+                rss.saturating_add(bytes),
-+                human_bytes(rss.saturating_add(bytes)),
-+                human_bytes(limit),
-+                human_bytes(rss),
-+                human_bytes(bytes),
-+            )));
-+        }
-+        Ok(())
-+    }
-+
-     fn check_search_hard_limit(&self) -> Result<(), XerjError> {
-         let limit = self.search_hard_limit_bytes();
-         let rss = self.search_admission_rss();
-@@ -3019,6 +3042,20 @@ impl ResourceGovernor {
-         self.rss_bytes.store(live, Ordering::Relaxed);
-     }
- 
-+    /// A standalone governor whose hard search limit is `limit` and whose
-+    /// last RSS sample is `rss` (#2427 read-transient admission tests).
-+    pub(crate) fn with_rss_and_limit_for_test(rss: u64, limit: u64) -> Arc<Self> {
-+        let mut cfg = Config::default();
-+        cfg.limits.max_total_memtable_mb = 0;
-+        let mut governor = build(&cfg);
-+        governor.memory_limit_bytes = limit;
-+        governor
-+            .memory_watermark_bytes
-+            .store(limit, Ordering::Relaxed);
-+        governor.rss_bytes.store(rss, Ordering::Relaxed);
-+        Arc::new(governor)
-+    }
-+
-     /// Bytes currently held by analyze reservations.
-     pub(crate) fn analyze_reserved_for_test(&self) -> u64 {
-         self.analyze_reserved.load(Ordering::Acquire)
-@@ -3945,6 +3982,24 @@ mod tests {
-         );
-     }
- 
-+    /// #2427: a refused read transient that would carry RSS past the hard
-+    /// limit is a 429, not an allocation; one that fits passes; no known
-+    /// limit never rejects.
-+    #[test]
-+    fn read_transient_over_the_hard_limit_is_a_429_2427() {
-+        const MIB: u64 = 1024 * 1024;
-+        let g = ResourceGovernor::with_rss_and_limit_for_test(900 * MIB, 1000 * MIB);
-+        assert!(g.check_read_transient(100 * MIB, "stored-values").is_ok());
-+        let err = g
-+            .check_read_transient(100 * MIB + 1, "stored-values")
-+            .unwrap_err();
-+        assert_eq!(err.http_status(), 429);
-+        assert!(matches!(err, XerjError::CircuitBreaking { .. }));
-+        assert!(format!("{err}").contains("[stored-values]"), "{err}");
-+        let unlimited = ResourceGovernor::with_rss_and_limit_for_test(900 * MIB, 0);
-+        assert!(unlimited.check_read_transient(u64::MAX, "x").is_ok());
-+    }
-+
-     #[test]
-     fn memtable_budget_trips_on_refresh() {
-         let mut cfg = Config::default();
+@@ -102,5 +102,27 @@
+   "badretd",
+   "parijat1222q",
+   "napattan",
+-  "gravion-ux"
++  "gravion-ux",
++  "Irfanwani",
++  "NikhByte",
++  "CalebPiusC",
++  "jaromil",
++  "Galaxy-VN",
++  "oghost2250",
++  "Master-Norna",
++  "TanmayNileshShinde",
++  "Frozican",
++  "Prathamesh51-debug",
++  "igmarin",
++  "shu-chen-dot-ca",
++  "alencarfreire",
++  "YoanWai",
++  "ManeaAl-Shabrain",
++  "l72683876-beep",
++  "ghazy2001",
++  "officialarghya29",
++  "satiricalguru",
++  "codesphere-u",
++  "polarours",
++  "wasabihu"
+ ]
 ```
 
-**File**: `engine/crates/xerj-engine/src/index.rs` (modified, +429/-29)
+**File**: `.github/FUNDING.yml` (modified, +4/-5)
 ```diff
-@@ -78,6 +78,74 @@ fn transient_read_permit(
+@@ -1,7 +1,6 @@
+ # Funding links shown on the repository's "Sponsor" button.
+-# Populate a platform below to enable it (e.g. github: [xerj-org]).
+-# Left commented until an official sponsorship account exists so the
+-# Sponsor button is not shown pointing at a non-existent destination.
++# The project takes donations at https://xerj.org/donate (USDT, TRC20):
++# they buy rented GPU hours for training the XERJ Query-1 model.
++# Add a platform (e.g. github: [xerj-org]) only when that account exists.
+ 
+-# github: [xerj-org]
+-custom: ["https://xerj.org"]
++custom: ["https://xerj.org/donate"]
+```
+
+**File**: `.github/scripts/functions-get-test.mjs` (modified, +5/-2)
+```diff
+@@ -190,7 +190,7 @@ console.log('── functions/get.js ──');
+     },
+   });
+   Object.defineProperty(r, 'cf', {
+-    value: { country: 'DE', city: 'Berlin', postalCode: '10115', asn: 3320, asOrganization: 'Deutsche Telekom', latitude: '52.52', longitude: '13.40' },
++    value: { country: 'DE', city: 'Berlin', postalCode: '10115', asn: 3320, asOrganization: 'Deutsche Telekom', latitude: '52.5200871', longitude: '13.4049540' },
+   });
+   await call(r, { ASSETS: fakeAssets(), INSTALLS });
+   const stored = [...INSTALLS.store.values()].join('\n');
+@@ -203,7 +203,10 @@ console.log('── functions/get.js ──');
+   ok(!stored.includes('abcdef123456'), 'no cookie stored');
+   ok(!stored.includes('de-DE'), 'no Accept-Language stored');
+   ok(!stored.includes('Berlin') && !stored.includes('10115'), 'no city/postcode from request.cf');
+-  ok(!stored.includes('52.52') && !stored.includes('13.40'), 'no lat/long from request.cf');
++  // Distinctive values: the stored record carries an ISO timestamp, and a
++  // short value like '52.52' matched it whenever the clock read hh:mm:52.52x.
++  ok(!stored.includes('52.5200871') && !stored.includes('13.4049540'), 'no lat/long from request.cf');
++  ok(!('latitude' in row) && !('longitude' in row), 'no latitude/longitude keys stored');
+   ok(!stored.includes('3320') && !stored.includes('Telekom'), 'no ASN/network operator from request.cf');
+   const allowed = new Set(['ts', 'script', 'kind', 'country', 'os', 'arch', 'ua', 'ver']);
+   const unexpected = Object.keys(row).filter((k) => !allowed.has(k));
+```
+
+**File**: `.github/scripts/installer-download-failure-test.sh` (added, +212/-0)
+```diff
+@@ -0,0 +1,212 @@
++#!/usr/bin/env bash
++# Behaviour test for landing/get when a download is refused (#2460).
++#
++# Agents running `curl | sh` behind a proxy, a WAF challenge or GitHub's
++# anonymous rate limit get a 4xx from the release download and cannot pass a
++# challenge. The installer must then exit non-zero, install nothing, name the
++# HTTP status, and print a manual install that works as printed and fails
++# closed on a bad digest. This runs the real script under sh against a local
++# stand-in for github.com: shims for curl and wget rewrite the github.com URLs
++# to it and exec the real tool, so the script's own download code is what runs.
++#
++# What this does NOT prove: what xerj.org/get itself answers (that is
++# Cloudflare configuration, not this script), or the macOS / Windows branches
++# (shasum, unzip) of the printed recipe.
++#
++#   bash .github/scripts/installer-download-failure-test.sh
++set -uo pipefail
++
++HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
++REPO="$(cd "$HERE/../.." && pwd)"
++GET="$REPO/landing/get"
++command -v python3 >/dev/null || { echo "::error::python3 is required"; exit 1; }
++command -v curl >/dev/null || { echo "::error::curl is required"; exit 1; }
++
++W="$(mktemp -d)"
++SPID=''
++cleanup() { [ -n "$SPID" ] && kill "$SPID" 2>/dev/null; rm -rf "$W"; }
++trap cleanup EXIT
++
++FAIL=0
++ok()  { echo "ok   - $*"; }
++bad() { echo "::error::FAIL - $*"; FAIL=1; }
++
++# The host's target, as landing/get will compute it (Linux runners only).
++case "$(uname -m)" in x86_64|amd64) cpu=x86_64 ;; aarch64|arm64) cpu=aarch64 ;; *) echo "SKIP: unsupported CPU"; exit 0 ;; esac
++[ "$(uname -s)" = Linux ] || { echo "SKIP: this test runs on Linux"; exit 0; }
++TAG=v1.0.0-rc.0
++STAGE="xerj-${TAG#v}-${cpu}-unknown-linux-musl"
++ASSET="$STAGE.tar.gz"
++
++# A fake release: a shell script that prints a version.
++mkdir -p "$W/srv" "$W/stage/$STAGE" "$W/bin" "$W/binw"
++printf '#!/bin/sh\necho "xerj %s (test stand-in)"\n' "$TAG" > "$W/stage/$STAGE/xerj"
++chmod +x "$W/stage/$STAGE/xerj"
++tar -czf "$W/srv/$ASSET" -C "$W/stage" "$STAGE"
++(cd "$W/srv" && sha256sum "$ASSET" > "$ASSET.sha256")
++
++cat > "$W/server.py" <<PY
++import http.server, os, sys
++SRV, TAG = sys.argv[2], "$TAG"
++class H(http.server.BaseHTTPRequestHandler):
++    def log_message(self, *a): pass
++    def send(self, code, body=b'', extra=None):
++        self.send_response(code)
++        self.send_header('content-length', str(len(body)))
++        for k, v in (extra or {}).items(): self.send_header(k, v)
++        self.end_headers()
++        if self.command != 'HEAD': self.wfile.write(body)
++    def do_HEAD(self): self.do_GET()
++    def do_GET(self):
++        mode, _, p = self.path.lstrip('/').partition('/')
++        p = '/' + p
++        if p.startswith('/api/repos/'):
++            if mode in ('latest403', 'api403'): return self.send(403, b'{"message":"API rate limit exceeded"}')
++            return self.send(200, ('{"tag_name": "%s"}' % TAG).encode())
++        if p.endswith('/releases/latest'):
++            if mode == 'latest403': return self.send(403, b'<html>Just a moment...</html>')
++            return self.send(302, extra={'location': '/%s/xerj-org/xerj/releases/tag/%s' % (mode, TAG)})
++        if '/releases/tag/' in p: return self.send(200, b'release page')
++        if '/releases/download/' in p:
++            name = p.rsplit('/', 1)[1]
++            sha = name.endswith('.sha256')
++            if mode == 'asset403' and not sha: return self.send(403, b'<html>Just a moment...</html>')
++            if mode == 'sha403' and sha: return self.send(403, b'Forbidden')
++            if mode == 'asset404' and not sha: return self.send(404, b'Not Found')
++            if mode == 'badsha' and sha: return self.send(200, ('0' * 64 + '  ' + name[:-7] + '\n').encode())
++            f = os.path.join(SRV, name)
++            if os.path.isfile(f): return self.send(200, open(f, 'rb').read())
++        self.send(404, b'Not Found')
++s = http.server.ThreadingHTTPServer(('127.0.0.1', 0), H)
++open(sys.argv[1], 'w').write(str(s.server_address[1]))
++s.serve_forever()
++PY
++python3 -I "$W/server.py" "$W/port" "$W/srv" & SPID=$!
++for _ in $(seq 50); do [ -s "$W/port" ] && break; sleep 0.1; done
++PORT="$(cat "$W/port")" || { echo "::error::fake server did not start"; exit 1; }
++
++# Shims: send https://github.com/... to http://127.0.0.1:PORT/$MODE/... (and
++# api.github.com to .../$MODE/api/..., so no run touches the network) and
++# exec the real tool. MODE picks the server's behaviour for that run.
++for tool in curl wget; do
++  real="$(command -v "$tool" || true)"
++  [ -n "$real" ] || continue
++  cat > "$W/bin/$tool" <<SH
++#!/bin/sh
++n=\$#; i=0
++while [ \$i -lt \$n ]; do
++  a=\$1; shift
++  case "\$a" in
++    https://github.com/*)     a="http://127.0.0.1:$PORT/\$MODE/\${a#https://github.com/}" ;;
++    https://api.github.com/*) a="http://127.0.0.1:$PORT/\$MODE/api/\${a#https://api.github.com/}" ;;
++  esac
++  set -- "\$@" "\$a"; i=\$((i+1))
++done
++exec "$real" "\$@"
++SH
++  chmod +
+```
+
+**File**: `.github/scripts/release-notes-gate.sh` (modified, +8/-1)
+```diff
+@@ -54,6 +54,8 @@
+ # USAGE
+ #   .github/scripts/release-notes-gate.sh          # gate HEAD (a release branch)
+ #
++#   bash .github/scripts/test_release_notes_gate.sh  # fixture tests, offline
++#
+ #   Replay the rc.18 release PR head (#460) and watch every check fire:
+ #       git fetch origin pull/460/head
+ #       git worktree add /tmp/rc18-replay FETCH_HEAD
+@@ -198,14 +200,19 @@ printf '\n== coverage: merges since the previous tag are all in the notes ==\n'
+ PREV_TAG="$(git describe --tags --abbrev=0 --match 'v*' HEAD 2>/dev/null || true)"
+ if [ -z "$PREV_TAG" ]; then
+   fail "no previous v* tag reachable from HEAD - coverage needs full history (checkout with fetch-depth: 0)"
++elif [ "$(git rev-list --count "$PREV_TAG..HEAD")" -eq 0 ]; then
++  # An empty window is a real state, not a broken parse: HEAD is the tagged
++  # commit itself (a re-run after the tag was pushed) or nothing has landed
++  # since it. No merge can be missing from the notes.
++  pass "no commits in $PREV_TAG..HEAD - nothing merged since $PREV_TAG, nothing to cover"
+ elif [ -n "$SECTION" ]; then
+   exempt="$(printf '%s\n' "$SECTION" | grep -oE '<!--[[:space:]]*notes-exempt:[^>]*' | grep -oE '#[0-9]+' | tr -d '#' | sort -un)"
+   merged_prs="$(git log --first-parent --format='%s' "$PREV_TAG..HEAD" | awk '
+     match($0, /\(#[0-9]+\)$/)          { print substr($0, RSTART + 2, RLENGTH - 3); next }
+     match($0, /^Merge pull request #[0-9]+/) { s = substr($0, RSTART + 20, RLENGTH - 20); print s }
+   ' | sort -un)"
+   if [ -z "$merged_prs" ]; then
+-    fail "found no PR-numbered merges in $PREV_TAG..HEAD - wrong window or the parse broke; fix the gate, do not merge around it"
++    fail "found no PR-numbered merges among the $(git rev-list --count --first-parent "$PREV_TAG..HEAD") commit(s) in $PREV_TAG..HEAD - wrong window or the parse broke; fix the gate, do not merge around it"
+   fi
+   for n in $merged_prs; do
+     # grep reads to EOF (no -q): under `set -o pipefail`, a -q that exits on
+```
+
+**File**: `.github/scripts/test_release_notes_gate.sh` (added, +98/-0)
+```diff
+@@ -0,0 +1,98 @@
++#!/usr/bin/env bash
++# test_release_notes_gate.sh - offline fixture tests for release-notes-gate.sh.
++#
++# Each case builds a throwaway git repo with engine/Cargo.toml, CHANGELOG.md
++# and ROADMAP.md, tags v0.1.0 as the previous release, and runs the gate with
++# a stub `gh` first on PATH (no network, no token). The stub answers the
++# closing-issues GraphQL query with nothing, so an uncited PR stays uncited.
++#
++# The case that motivated this file: a window with NO commits (HEAD is the
++# previous tag itself, e.g. a re-run after the tag was pushed) used to FAIL
++# with "found no PR-numbered merges ... the parse broke". Nothing merged means
++# nothing can be missing from the notes, so it must PASS.
++#
++# USAGE
++#   bash .github/scripts/test_release_notes_gate.sh
++#   GATE=/path/to/other/release-notes-gate.sh bash .github/scripts/test_release_notes_gate.sh
++
++set -uo pipefail
++
++HERE="$(cd "$(dirname "$0")" && pwd)"
++GATE="${GATE:-$HERE/release-notes-gate.sh}"
++WORK="$(mktemp -d)"
++trap 'rm -rf "$WORK"' EXIT
++
++mkdir -p "$WORK/bin"
++cat >"$WORK/bin/gh" <<'EOF'
++#!/bin/sh
++exit 0
++EOF
++chmod +x "$WORK/bin/gh"
++
++failures=0
++ok()  { printf 'ok    %s\n' "$1"; }
++bad() { printf 'FAIL  %s\n' "$1"; failures=$((failures + 1)); }
++
++# fixture <dir> <changelog-body> - repo at v0.1.0, cutting 0.2.0.
++fixture() {
++  local d="$1"
++  mkdir -p "$d/engine"
++  git -C "$d" init -q
++  git -C "$d" config user.email fixture@example.invalid
++  git -C "$d" config user.name fixture
++  git -C "$d" config commit.gpgsign false
++  git -C "$d" config tag.gpgsign false
++  printf '[workspace.package]\nversion = "0.2.0"\n' >"$d/engine/Cargo.toml"
++  printf '# Roadmap\n\n**Open defects** (shortlist)\n\nNone.\n\n## Next\n' >"$d/ROADMAP.md"
++  printf '# Changelog\n\n## [0.2.0]\n\n%s\n\n## [0.1.0]\n\n- first\n' "$2" >"$d/CHANGELOG.md"
++  git -C "$d" add -A
++  git -C "$d" commit -q -m "release: v0.1.0"
++  git -C "$d" tag v0.1.0
++}
++
++# run_gate <dir> - runs the gate in <dir>; sets OUT and RC.
++run_gate() {
++  OUT="$(cd "$1" && PATH="$WORK/bin:$PATH" BASE_REF=v0.1.0 XERJ_REPO=fixture/fixture bash "$GATE" 2>&1)"
++  RC=$?
++}
++
++expect() { # <name> <want-rc> <want-substring>
++  if [ "$RC" -eq "$2" ] && printf '%s\n' "$OUT" | grep -F -- "$3" >/dev/null; then
++    ok "$1"
++  else
++    bad "$1 (rc=$RC, want $2 and \"$3\")"
++    printf '%s\n' "$OUT" | sed 's/^/      /'
++  fi
++}
++
++echo '== case 1: empty window (HEAD is the previous tag) =='
++d="$WORK/empty"; fixture "$d" "- nothing yet"
++run_gate "$d"
++expect "empty window passes" 0 "no commits in v0.1.0..HEAD"
++expect "empty window verdict" 0 "PASS  the [0.2.0] notes match the tree"
++
++echo '== case 2: commits but none PR-numbered (parse or window broke) =='
++d="$WORK/noprs"; fixture "$d" "- nothing yet"
++git -C "$d" commit -q --allow-empty -m "docs: tweak"
++run_gate "$d"
++expect "non-empty window with no PR merges still fails" 1 "found no PR-numbered merges among the 1 commit(s) in v0.1.0..HEAD"
++
++echo '== case 3: one merged PR, cited in the notes =='
++d="$WORK/cited"; fixture "$d" "- fix the thing (#12)"
++git -C "$d" commit -q --allow-empty -m "fix: the thing (#12)"
++run_gate "$d"
++expect "cited PR passes" 0 "PR #12 cited in [0.2.0]"
++
++echo '== case 4: one merged PR, not cited =='
++d="$WORK/uncited"; fixture "$d" "- nothing yet"
++git -C "$d" commit -q --allow-empty -m "fix: other (#13)"
++run_gate "$d"
++expect "uncited PR fails" 1 "PR #13 merged in v0.1.0..HEAD but the [0.2.0] notes never mention it"
++
++printf '\n'
++if [ "$failures" -eq 0 ]; then
++  echo "PASS  release-notes-gate fixtures"
++else
++  echo "FAIL  $failures release-notes-gate fixture check(s)"
++  exit 1
++fi
+```
+
+**File**: `.github/workflows/ci.yml` (modified, +11/-0)
+```diff
+@@ -230,6 +230,11 @@ jobs:
+       - name: Landing page constants agree with the newest release
+         run: bash .github/scripts/landing-constants-guard.sh
+ 
++      # cohere-tools.json is generated from openai-tools.json; a hand edit or a
++      # forgotten regeneration would publish a tool list that disagrees with it.
++      - name: Cohere tool schema is generated from openai-tools.json
++        run: python3 tools/agents/gen_cohere_tools.py --check
++
+   # #770. A job with no `timeout-minutes` runs against GitHub's 360-minute
+   # default, and 22 of this repo's 23 jobs had none. Three of its workflows
+   # serialise on a concurrency group that never auto-cancels
+@@ -299,6 +304,9 @@ jobs:
+           ref: ${{ github.event.pull_request.head.sha }}
+           fetch-depth: 0
+ 
++      - name: Gate's own fixture tests (offline)
++        run: bash .github/scripts/test_release_notes_gate.sh
++
+       - name: Notes vs tree (#474)
+         env:
+           GH_TOKEN: ${{ github.token }}
+@@ -838,6 +846,9 @@ jobs:
+       - name: Installer script lint (landing/get, landing/get.ps1)
+         run: bash .github/scripts/installer-lint.sh
+ 
++      - name: Installer refused-download behaviour (landing/get)
++        run: bash .github/scripts/installer-download-failure-test.sh
++
+       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+         with:
+           node-version: '20'
+```
+
+**File**: `.github/workflows/release.yml` (modified, +34/-0)
+```diff
+@@ -315,6 +315,38 @@ jobs:
+       - name: List artifacts
+         run: ls -la dist/
+ 
++      # #3286: the MCP tool schema of THIS release, read from the binary being
++      # published rather than from main. `mcp-tools.json` on the site follows
++      # main, so an agent on an installed release read a tool list its binary
++      # did not serve. The script names the file from the binary's own
++      # serverInfo.version. When the release cut committed the file, it must
++      # match this binary (a frozen schema never changes); otherwise it is
++      # generated here and still attached, with a warning to commit it.
++      # Ubuntu runners ship jq.
++      - name: MCP tool schema for this release
++        run: |
++          set -euo pipefail
++          VER="${GITHUB_REF_NAME#v}"
++          STAGE="xerj-${VER}-x86_64-unknown-linux-gnu"
++          mkdir -p "${RUNNER_TEMP}/mcp-bin"
++          tar -C "${RUNNER_TEMP}/mcp-bin" -xzf "dist/${STAGE}.tar.gz"
++          export XERJ_BIN="${RUNNER_TEMP}/mcp-bin/${STAGE}/xerj"
++          SCHEMA="landing/docs/agents/schemas/mcp-tools-${VER}.json"
++          if [ -f "${SCHEMA}" ]; then
++            bash scripts/mcp-schema-check.sh --release
++          else
++            bash scripts/mcp-schema-check.sh --release --write
++            echo "::warning::${SCHEMA} was not committed with the release cut; it is attached to the release only. Commit it to main so xerj.org serves it."
++          fi
++          cp "${SCHEMA}" dist/
++          ( cd dist && sha256sum "mcp-tools-${VER}.json" > "mcp-tools-${VER}.json.sha256" )
++
++      # One combined checksum file for mirror installs (#3278). The model
++      # bundle is uploaded separately; `scripts/release-sha256sums.sh --tag`
++      # rebuilds this asset from every *.sha256 on the release afterwards.
++      - name: Build SHA256SUMS
++        run: bash scripts/release-sha256sums.sh --dir dist
++
+       # GitHub anchors auto-generated release notes ("Full Changelog") on the
+       # most recently *published* release. Since the daily pack-rust-vulns-*
+       # corpus-pack releases started, that anchor is a corpus pack, not the
+@@ -378,3 +410,5 @@ jobs:
+             dist/*.zip
+             dist/*.deb
+             dist/*.sha256
++            dist/mcp-tools-*.json
++            dist/SHA256SUMS
+```
+
+---
+
+### Incident Patch 3: `75721077` (2026-11-21)
+**Commit Message**: fix(aggs): bound multi-index leaf terms candidates; keep single-index cap
+
+Maintainer follow-up to #2957 (parijat1222q), which fixes #2935 finding 4:
+a multi-index `terms` agg applied size per index before merging, so
+top-a (1 x10, 3 x9) + top-b (2 x10, 3 x9) at size 1 returned [1, 2]
+instead of 3 x18, and `_key: desc` returned [3, 1, 2]. #2957 merges
+per-index counts and selects once globally. Its coordinator is kept; this
+commit changes two parts of it found in review.
+
+1. Per-index work was unbounded. #2957 rewrote every admitted leaf terms
+   agg to `size: 0` (every term) on each index, so a size-10 request over
+   a high-cardinality field shipped and merged every distinct term. On a
+   release build with hc-b (40,000 distinct keys) + top-a, warm per-index
+   cache, `size: 10`, request_cache=false: #2957 head merged with main
+   44-55 ms per request, this commit 0.5-1.0 ms (10 runs each, load
+   13.8-17.6).
+   Now each index returns `shard_size` candidates (explicit, never below
+   size; default size * 3 / 2 + 10; clamped to search.max_buckets).
+   `size: 0` and a primary `_count: asc` order still fetch every term.
+   When an index cuts terms, the cut documents are added to
+   
+
+**File**: `CHANGELOG.md` (modified, +7/-4)
+```diff
+@@ -869,10 +869,13 @@ all 2,387 evaluation items. Without the flag a node is the node rc.100 was: no
+ - Multi-index composite aggregation pages now use the requested global source
+   order and page size, combine duplicate bucket counts, and set the cursor from
+   the retained page. Internal typed keys preserve formatted-date ordering.
+-- Finalize top-level leaf `terms` buckets across participating indices after
+-  complete bounded counts, preserving requested count/key order and global
+-  minimum/size. Refuse bucket-cap overflow instead of silently dropping terms;
+-  retain private raw term identity until the HTTP response boundary.
++- A top-level `terms` aggregation over several indices now picks its buckets
++  after merging every index's candidates, so a term that wins only in total
++  (9 + 9 = 18 against two local 10s) is no longer lost, and `_key` order is
++  applied globally (#2935). Each index returns `shard_size` candidates
++  (default `size * 1.5 + 10`); when an index cuts terms, the cut documents
++  count in `sum_other_doc_count` and `doc_count_error_upper_bound` reports the
++  bound instead of a false 0.
+ 
+ - A plain debug `cargo test --workspace` no longer aborts on a stack overflow,
+   and the `127.0.0.2` loopback test names the missing macOS alias (#2903). Five
+```
+
+**File**: `engine/crates/xerj-api/src/es_compat.rs` (modified, +256/-12)
+```diff
+@@ -7649,19 +7649,55 @@ fn leaf_terms_params(spec: &Value) -> Option<&Value> {
+     Some(params)
+ }
+ 
++/// How many candidate terms each index returns for a leaf terms agg: the
++/// explicit `shard_size` (never below `size`), else `size * 3 / 2 + 10`.
++/// `0` means every term: `size: 0` asks for all of them, and a primary
++/// `_count: asc` order has no usable error bound once an index cuts its list.
++/// Clamped to the bucket cap, so per-index work is bounded by the request
++/// rather than by field cardinality.
++fn leaf_terms_fetch_size(params: &Value, cap: usize) -> u64 {
++    let size = params.get("size").and_then(Value::as_u64).unwrap_or(10);
++    let count_asc = leaf_terms_orders(params)
++        .and_then(|orders| orders.into_iter().next())
++        .is_some_and(|(key, asc)| key == "_count" && asc);
++    if size == 0 || count_asc {
++        return 0;
++    }
++    let fetch = match params.get("shard_size").and_then(Value::as_u64) {
++        Some(shard_size) => shard_size.max(size),
++        None => size.saturating_mul(3) / 2 + 10,
++    };
++    fetch.min(cap as u64)
++}
++
++/// Union bound for merging one leaf terms agg across indices. Only an
++/// all-terms request (fetch 0) returns the whole union, so only it is refused
++/// past the cap; a bounded request holds at most `indices x fetch` rows and
++/// emits at most `size`.
++fn leaf_terms_union_cap(request: Option<&Value>, name: &str, cap: usize) -> usize {
++    match request
++        .and_then(|r| r.get(name))
++        .and_then(leaf_terms_params)
++    {
++        Some(params) if leaf_terms_fetch_size(params, cap) != 0 => usize::MAX,
++        _ => cap,
++    }
++}
++
+ fn prepare_leaf_terms_summaries(request: &Value) -> (Value, Vec<String>) {
++    let cap = xerj_engine::aggs::max_buckets();
+     let mut rewritten = request.clone();
+     let mut names = Vec::new();
+     if let Some(object) = rewritten.as_object_mut() {
+         for (name, spec) in object {
+-            if leaf_terms_params(spec).is_none() {
++            let Some(fetch) = leaf_terms_params(spec).map(|p| leaf_terms_fetch_size(p, cap)) else {
+                 continue;
+-            }
++            };
+             let params = spec
+                 .get_mut("terms")
+                 .and_then(Value::as_object_mut)
+                 .unwrap();
+-            params.insert("size".into(), json!(0));
++            params.insert("size".into(), json!(fetch));
+             params.remove("shard_size");
+             if params.get("min_doc_count").and_then(Value::as_u64) != Some(0) {
+                 params.insert("min_doc_count".into(), json!(1));
+@@ -7710,6 +7746,37 @@ fn leaf_terms_identity(bucket: &Value) -> String {
      }
  }
  
-+/// #2427: [`transient_read_permit`] for a value sized by its segment rather
-+/// than by the request, where a refusal can be reported: when the cache
-+/// cannot keep it, the parent breaker (`governor`) first refuses with a 429 a
-+/// value that would carry the process past its hard memory limit, then the
-+/// read budget reserves it.
-+fn admit_transient_read(
-+    hydration: &SegmentHydrationBudget,
-+    read_budget: &Arc<ReadTransientBudget>,
-+    governor: Option<&crate::governor::ResourceGovernor>,
-+    bytes: u64,
-+    label: &str,
-+) -> std::result::Result<Option<ReadPermit>, xerj_common::XerjError> {
-+    if hydration.has_headroom(bytes) {
-+        return Ok(None);
++const LEAF_TERMS_OTHER: &str = "__xy_terms_other__";
++const LEAF_TERMS_ERROR: &str = "__xy_terms_error__";
++
++/// Fold one index's own cut-off into private accumulators, once. `other` is
++/// the documents in terms that index cut; `error` is the count of its last
++/// returned term when it cut any (the most an unseen term can have there).
++fn leaf_terms_accumulate(summary: &mut Value) {
++    let Some(object) = summary.as_object_mut() else {
++        return;
++    };
++    if object.contains_key(LEAF_TERMS_OTHER) {
++        return;
 +    }
-+    if let Some(governor) = governor {
-+        governor.check_read_transient(bytes, label)?;
-+    }
-+    Ok(Some(read_budget.acquire(bytes)))
++    let other = object
++        .get("sum_other_doc_count")
++        .and_then(Value::as_u64)
++        .unwrap_or(0);
++    let error = if other > 0 {
++        object
++            .get("buckets")
++            .and_then(Value::as_array)
++            .and_then(|rows| rows.last())
++            .and_then(|b| b["doc_count"].as_u64())
++            .unwrap_or(0)
++    } else {
++        0
++    };
++    object.insert(LEAF_TERMS_OTHER.into(), json!(other));
++    object.insert(LEAF_TERMS_ERROR.into(), json!(error));
 +}
 +
-+/// The budgets one read-side transient is admitted against (#2427). Search
-+/// paths use the process-wide ones; tests pin their own.
-+#[derive(Clone)]
-+struct ReadAdmission {
-+    hydration: Arc<SegmentHydrationBudget>,
-+    read_budget: Arc<ReadTransientBudget>,
-+    governor: Option<Arc<crate::governor::ResourceGovernor>>,
-+}
-+
-+impl ReadAdmission {
-+    fn admit(
-+        &self,
-+        bytes: u64,
-+        label: &str,
-+    ) -> std::result::Result<Option<ReadPermit>, xerj_common::XerjError> {
-+        admit_transient_read(
-+            &self.hydration,
-+            &self.read_budget,
-+            self.governor.as_deref(),
-+            bytes,
-+            label,
-+        )
-+    }
-+}
-+
-+/// Peak of a whole-segment stored-values load over its decompressed size:
-+/// the decompressed bytes and the parsed `Value` tree (a number-heavy row
-+/// parses to ~3.5x its JSON text) are alive together during the parse.
-+const STORED_VALUES_PEAK_FACTOR: u64 = 4;
-+
-+/// Pre-build size of a per-segment vector column (#2427): `docs` pooled
-+/// vectors of `dims` `f32`s plus each document's entry, slot and identity.
-+/// Passage-chunked documents hold more; the reservation is trued up to the
-+/// built column's measured size.
-+fn vector_column_estimate(docs: usize, dims: usize) -> u64 {
-+    const PER_DOC_OVERHEAD: u64 = 112;
-+    (docs as u64).saturating_mul(
-+        (dims as u64)
-+            .saturating_mul(std::mem::size_of::<f32>() as u64)
-+            .saturating_add(PER_DOC_OVERHEAD),
-+    )
-+}
-+
-+/// A cold stored-values load as its single-flight followers see it: the
-+/// parsed section, or the 429 that refused the decode (#2427).
-+type StoredValuesLoad = std::result::Result<Resident<Vec<Value>>, Arc<str>>;
-+
- /// How long a rayon worker polls a segment's stored-decode flight lock
- /// before decoding on its own (#2427).
- const STORED_FLIGHT_WORKER_WAIT: std::time::Duration = std::time::Duration::from_millis(200);
-@@ -2696,6 +2764,203 @@ mod flush_publication_recovery_tests {
-         drop(cached);
+ fn merge_leaf_terms_summary(old: &Value, new: &Value, cap: usize) -> Value {
+     if old.get("error").is_some() {
+         return old.clone();
+@@ -7718,6 +7785,17 @@ fn merge_leaf_terms_summary(old: &Value, new: &Value, cap: usize) -> Value {
+         return new.clone();
      }
+     let mut result = old.clone();
++    if result.get("buckets").and_then(Value::as_array).is_none() {
++        return new.clone();
++    }
++    let mut incoming_summary = new.clone();
++    leaf_terms_accumulate(&mut result);
++    leaf_terms_accumulate(&mut incoming_summary);
++    for key in [LEAF_TERMS_OTHER, LEAF_TERMS_ERROR] {
++        let a = result[key].as_u64().unwrap_or(0);
++        let b = incoming_summary[key].as_u64().unwrap_or(0);
++        result[key] = json!(a.saturating_add(b));
++    }
+     let Some(rows) = result.get_mut("buckets").and_then(Value::as_array_mut) else {
+         return new.clone();
+     };
+@@ -7729,7 +7807,7 @@ fn merge_leaf_terms_summary(old: &Value, new: &Value, cap: usize) -> Value {
+         .enumerate()
+         .map(|(i, b)| (leaf_terms_identity(b), i))
+         .collect();
+-    if let Some(incoming) = new.get("buckets").and_then(Value::as_array) {
++    if let Some(incoming) = incoming_summary.get("buckets").and_then(Value::as_array) {
  
-+    async fn vector_index_2427(engine: &crate::Engine, name: &str, docs: u64) -> Arc<Index> {
-+        engine.create_index(name, Schema::empty()).unwrap();
-+        let idx = engine.get_index(name).unwrap();
-+        idx.abort_background_tasks();
-+        for i in 0..docs {
-+            let x = (i as f32 + 1.0) / docs as f32;
-+            idx.index_document(
-+                Some(format!("doc-{i}")),
-+                json!({"title": format!("title {i}"), "embedding": [x, 1.0 - x, 0.5, 0.25]}),
-+            )
-+            .await
-+            .unwrap();
-+        }
-+        idx.flush().await.unwrap();
-+        idx.release_memory();
-+        idx.stored_value_cache.clear();
-+        idx.vector_column_cache.clear();
-+        idx
-+    }
-+
-+    fn pinned_admission_2427(
-+        hydration: u64,
-+        governor: Option<Arc<crate::governor::ResourceGovernor>>,
-+    ) -> ReadAdmission {
-+        ReadAdmission {
-+            hydration: SegmentHydrationBudget::new(hydration),
-+            read_budget: ReadTransientBudget::new(1 << 30, std::time::Duration::from_secs(5)),
-+            governor,
-+        }
-+    }
-+
-+    /// #2427: a whole-segment stored-values decode the hydration cache
-+    /// refuses reserves its size in the read budget before decoding and holds
-+    /// it until the last reader drops the value; one the cache keeps
-+    /// reserves nothing.
-+    ///
-+    /// Fails before the fix: the cold load decoded and parsed the section
-+    /// with no reservation, so the read budget saw 0 bytes and 0 admissions.
-+    #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
-+    async fn transient_stored_values_hold_a_read_reservation_until_dropped_2427() {
-+        let dir = tempfile::tempdir().unwrap();
-+        let engine = crate::Engine::new(topk_projection_config(dir.path())).unwrap();
-+        let idx = vector_index_2427(&engine, "sv-read-budget", 256).await;
-+        let seg = idx.store.snapshot().segments[0].clone();
-+
-+        let full = pinned_admission_2427(0, None);
-+        let docs = idx
-+            .stored_value
 ```
 
-**File**: `engine/crates/xerj-engine/src/read_budget.rs` (modified, +17/-0)
+**File**: `engine/crates/xerj-engine/src/aggs.rs` (modified, +3/-43)
 ```diff
-@@ -126,6 +126,23 @@ impl ReadTransientBudget {
+@@ -3652,34 +3652,23 @@ fn run_terms(
+     });
+     let mut counts: HashMap<String, u64> = HashMap::new();
+     let bucket_cap = max_buckets();
+-    let too_many_buckets = || {
+-        json!({
+-            "error": format!(
+-                "Trying to create too many buckets. Must be less than or equal to: [{}] but this number of buckets was exceeded. This limit can be set by changing the [search.max_buckets] cluster level setting.",
+-                bucket_cap
+-            ),
+-            "__error_status__": 400u32,
+-        })
+-    };
+     for doc in docs {
+         let weight = doc_count_weight(doc);
+         let vals = terms_agg_bucket_keys(&field_or_script, doc);
+         if vals.is_empty() {
+             if let Some(ph) = &missing_placeholder {
+-                // Never return an apparently exact result after dropping keys.
++                // Bucket cap: skip new keys past the limit, but always
++                // accumulate into existing keys so the cap doesn't bias
++                // counts of buckets that were already seen.
+                 if counts.contains_key(ph) || counts.len() < bucket_cap {
+                     *counts.entry(ph.clone()).or_insert(0) += weight;
+-                } else {
+-                    return too_many_buckets();
+                 }
+             }
+             continue;
+         }
+         for term in vals {
+             if counts.contains_key(&term) || counts.len() < bucket_cap {
+                 *counts.entry(term).or_insert(0) += weight;
+-            } else {
+-                return too_many_buckets();
+             }
          }
      }
+@@ -3697,8 +3686,6 @@ fn run_terms(
+             for term in terms_agg_bucket_keys(&field_or_script, doc) {
+                 if counts.contains_key(&term) || counts.len() < bucket_cap {
+                     counts.entry(term).or_insert(0);
+-                } else {
+-                    return too_many_buckets();
+                 }
+             }
+         }
+@@ -15859,33 +15846,6 @@ mod tests {
+         assert_eq!(buckets[1]["key"]["n"], json!(10));
+     }
  
-+    /// Account `bytes` of a transient value that is already built (#2427),
-+    /// without waiting: the memory is allocated, so a wait would only delay
-+    /// its release. Later reservations see it until the permit drops.
-+    pub fn reserve_built(self: &Arc<Self>, bytes: u64) -> ReadPermit {
-+        let mut used = self.used.lock().unwrap_or_else(|p| p.into_inner());
-+        *used = used.saturating_add(bytes);
-+        self.peak.fetch_max(*used, Ordering::Relaxed);
-+        self.admitted.fetch_add(1, Ordering::Relaxed);
-+        drop(used);
-+        HELD_ON_THREAD.with(|held| held.set(held.get().saturating_add(1)));
-+        ReadPermit {
-+            budget: Arc::clone(self),
-+            bytes,
-+            thread: std::thread::current().id(),
-+        }
-+    }
+-    #[test]
+-    fn leaf_terms_bucket_cap_refuses_incomplete_counts() {
+-        let docs = vec![json!({"k":"a"}), json!({"k":"b"}), json!({"k":"c"})];
+-        let request = json!({"t":{"terms":{"field":"k","size":0}}});
+-        let result = run_aggs_with_limits(&request, &docs, &docs, AggLimits { max_buckets: 2 });
+-        assert_eq!(result["t"]["__error_status__"], 400);
+-        assert!(result["t"]["error"]
+-            .as_str()
+-            .unwrap()
+-            .contains("too many buckets"));
+-        let complete = run_aggs_with_limits(&request, &docs, &docs, AggLimits { max_buckets: 3 });
+-        assert_eq!(complete["t"]["buckets"].as_array().unwrap().len(), 3);
+-    }
+-
+-    #[test]
+-    fn leaf_terms_bucket_cap_covers_missing_and_zero_count_background() {
+-        let docs = vec![json!({"k":"a"}), json!({})];
+-        let missing = json!({"t":{"terms":{"field":"k","size":0,"missing":"z"}}});
+-        let result = run_aggs_with_limits(&missing, &docs, &docs, AggLimits { max_buckets: 1 });
+-        assert_eq!(result["t"]["__error_status__"], 400);
+-        let background = vec![json!({"k":"a"}), json!({"k":"b"})];
+-        let zero = json!({"t":{"terms":{"field":"k","size":0,"min_doc_count":0}}});
+-        let result =
+-            run_aggs_with_limits(&zero, &docs[..1], &background, AggLimits { max_buckets: 1 });
+-        assert_eq!(result["t"]["__error_status__"], 400);
+-    }
+-
+     // ── RC4-W2 item 8: multi_terms raises too_many_buckets past the cap ─
+ 
+     #[test]
+```
+
+**File**: `engine/crates/xerj-engine/src/fast_aggs.rs` (modified, +12/-4)
+```diff
+@@ -2985,10 +2985,18 @@ impl<'a> FastCtx<'a> {
+         // the exact OOM vector the cap exists to close, honoured on brute and
+         // ignored here.
+         //
+-        // Refuse the columnar route when its distinct-term map would exceed
+-        // the cap. The brute evaluator returns the shared too-many-buckets
+-        // error, never an apparently exact iteration-dependent subset. Keep
+-        // the existing bail route so unsupported fast shapes agree with it.
++        // We do NOT enforce the cap by truncating the map: brute drops the
++        // terms past `max_buckets` in doc-iteration order and reports a
++        // `sum_other_doc_count` computed only over the terms it kept, so the
++        // dropped terms vanish silently (order-dependent, and the total
++        // conceals them). Reproducing that on the fast path would copy the bug,
++        // not the contract. Instead we BAIL to brute the moment the distinct
++        // count would exceed the cap (checked below as the map grows, so the
++        // map is bounded to ~`bucket_cap`): after the bail the request is
++        // answered by the very `run_terms` a test would measure the fast path
++        // against, so the two paths AGREE past the cap by construction — the
++        // same shape as the #104 / #120 bail-to-brute fallbacks. An index whose
++        // distinct count is at or under the cap is served here as before.
+         let bucket_cap = crate::aggs::max_buckets();
+ 
+         let plan = self.plan_subs(sub, true)?;
+```
+
+**File**: `engine/crates/xerj-engine/tests/agg_bucket_cap_terms.rs` (modified, +48/-14)
+```diff
+@@ -9,11 +9,23 @@
+ //! 37. That is the OOM vector the cap exists to close, honoured on brute and
+ //! ignored on the columnar path.
+ //!
+-//! ## Overflow behavior
++//! ## Why the fix BAILS rather than errors or truncates
+ //!
+-//! exec_terms bails to brute when another distinct key would exceed the cap.
+-//! Brute now returns too_many_buckets instead of silently dropping keys and
+-//! reporting incomplete counts as exact. Both paths must preserve that error.
++//! The two executors must AGREE past the cap. Brute `run_terms` does not error
++//! there: it keeps the first `max_buckets` distinct terms in doc-iteration
++//! order, drops the rest, and reports a `sum_other_doc_count` computed only
++//! over the terms it kept — so the dropped terms vanish silently and the total
++//! conceals them (order-dependent, and a bug in its own right). Reproducing
++//! that on the fast path would copy the bug, not the contract; erroring would
++//! make the fast path disagree with a brute path that still returns a body.
++//!
++//! So `exec_terms` bails to brute the instant its distinct-term count would
++//! exceed the cap. After the bail the request is answered by the very
++//! `run_terms` the fast path would be measured against, so the two AGREE past
++//! the cap by construction. What this test pins is that agreement plus the two
++//! observable consequences of the bail: the fast path stops SERVING the
++//! over-cap agg (`fast_path_aggs_served` no longer ticks) and the answer honours
++//! the cap (exactly `CAP` distinct buckets, not all `NTERMS`).
+ //!
+ //! Which executor answered is read from `aggs::fast_path_aggs_served`; the brute
+ //! leg is forced by keeping an index under the columnar path's own size gate
+@@ -128,15 +140,36 @@ async fn lowered_max_buckets_binds_the_columnar_terms_path_and_the_brute_path_al
+     build_index(&engine, "big-at", BIG_DOCS, CAP).await;
+     build_index(&engine, "small-over", SMALL_DOCS, NTERMS).await;
+ 
+-    // Both over-cap routes must refuse incomplete counts, not quietly keep
+-    // an iteration-dependent subset. This intentional contract correction
+-    // replaces the old assertion that pinned the documented silent-drop bug.
+-    for name in ["big-over", "small-over"] {
+-        let (agg, served) = run_terms(&engine, name).await;
+-        assert_eq!(served, 0, "over-cap terms must fall back to brute");
+-        assert_eq!(agg["__error_status__"], 400, "{name}: {agg}");
+-        assert!(agg["error"].as_str().unwrap().contains("too many buckets"));
+-    }
++    // ── Fast path, cardinality PAST the cap ──────────────────────────────
++    // The regression: before the fix this was served columnarly (served == 1)
++    // and returned all NTERMS buckets. The fix bails to brute, so the fast path
++    // no longer serves it and the brute cap (exactly CAP distinct terms) binds.
++    let (agg, served) = run_terms(&engine, "big-over").await;
++    assert_eq!(
++        served,
++        0,
++        "exec_terms served an over-cap agg columnarly instead of bailing; it \
++         returned {} buckets against max_buckets={CAP}",
++        bucket_count(&agg)
++    );
++    assert_eq!(
++        bucket_count(&agg),
++        CAP,
++        "over-cap terms agg did not honour max_buckets={CAP}: {}",
++        bucket_count(&agg)
++    );
 +
-     pub fn snapshot(&self) -> ReadTransientBudgetSnapshot {
-         let current = *self.used.lock().unwrap_or_else(|p| p.into_inner());
-         ReadTransientBudgetSnapshot {
++    // ── Brute path, same over-cap shape below the size gate ──────────────
++    // The path the fast leg bails INTO. It agrees on the cap: exactly CAP
++    // distinct buckets. (The kept terms are order-dependent and the doc counts
++    // differ from the big index, so agreement is on the count, per the issue.)
++    let (agg, served) = run_terms(&engine, "small-over").await;
++    assert_eq!(served, 0, "the small index must not take the fast path");
++    assert_eq!(
++        bucket_count(&agg),
++        CAP,
++        "brute run_terms disagrees with the fast path on the cap"
++    );
+ 
+     // ── Fast path, cardinality exactly AT the cap ────────────────────────
+     // The fix must bail only when the count would EXCEED the cap: an at-cap
+@@ -159,6 +192,7 @@ async fn lowered_max_buckets_binds_the_columnar_terms_path_and_the_brute_path_al
+             .unwrap()
+             .iter()
+             .all(|b| b.get("__xy_terms_key__").is_some()),
+-        "the admitted fast path must retain raw term identity for coordination"
++        "the columnar path must keep the raw term identity the multi-index \
++         coordinator merges on"
+     );
+ }
+```
+
+**File**: `engine/tests/es-compat-yaml/yaml/aggregations/multi_index_leaf_terms.yml` (modified, +144/-0)
+```diff
+@@ -128,3 +128,147 @@ setup:
+   - length: { aggregations.t.buckets: 1 }
+   - match: { aggregations.t.buckets.0.key: a }
+   - is_false: aggregations.t.buckets.0.__xy_terms_key__
++---
++"issue 2935 fixture: global 18-count winner and global key order across indices":
++  - do:
++      indices.create:
++        index: issue2935-top-a
++        body:
++          mappings:
++            properties:
++              tag: { type: keyword }
++  - do:
++      indices.create:
++        index: issue2935-top-b
++        body:
++          mappings:
++            properties:
++              tag: { type: keyword }
++  - do:
++      bulk:
++        refresh: true
++        body:
++          - index: { _index: issue2935-top-a, _id: "0" }
++          - { tag: "1" }
++          - index: { _index: issue2935-top-a, _id: "1" }
++          - { tag: "1" }
++          - index: { _index: issue2935-top-a, _id: "2" }
++          - { tag: "1" }
++          - index: { _index: issue2935-top-a, _id: "3" }
++          - { tag: "1" }
++          - index: { _index: issue2935-top-a, _id: "4" }
++          - { tag: "1" }
++          - index: { _index: issue2935-top-a, _id: "5" }
++          - { tag: "1" }
++          - index: { _index: issue2935-top-a, _id: "6" }
++          - { tag: "1" }
++          - index: { _index: issue2935-top-a, _id: "7" }
++          - { tag: "1" }
++          - index: { _index: issue2935-top-a, _id: "8" }
++          - { tag: "1" }
++          - index: { _index: issue2935-top-a, _id: "9" }
++          - { tag: "1" }
++          - index: { _index: issue2935-top-a, _id: "10" }
++          - { tag: "3" }
++          - index: { _index: issue2935-top-a, _id: "11" }
++          - { tag: "3" }
++          - index: { _index: issue2935-top-a, _id: "12" }
++          - { tag: "3" }
++          - index: { _index: issue2935-top-a, _id: "13" }
++          - { tag: "3" }
++          - index: { _index: issue2935-top-a, _id: "14" }
++          - { tag: "3" }
++          - index: { _index: issue2935-top-a, _id: "15" }
++          - { tag: "3" }
++          - index: { _index: issue2935-top-a, _id: "16" }
++          - { tag: "3" }
++          - index: { _index: issue2935-top-a, _id: "17" }
++          - { tag: "3" }
++          - index: { _index: issue2935-top-a, _id: "18" }
++          - { tag: "3" }
++          - index: { _index: issue2935-top-b, _id: "b0" }
++          - { tag: "2" }
++          - index: { _index: issue2935-top-b, _id: "b1" }
++          - { tag: "2" }
++          - index: { _index: issue2935-top-b, _id: "b2" }
++          - { tag: "2" }
++          - index: { _index: issue2935-top-b, _id: "b3" }
++          - { tag: "2" }
++          - index: { _index: issue2935-top-b, _id: "b4" }
++          - { tag: "2" }
++          - index: { _index: issue2935-top-b, _id: "b5" }
++          - { tag: "2" }
++          - index: { _index: issue2935-top-b, _id: "b6" }
++          - { tag: "2" }
++          - index: { _index: issue2935-top-b, _id: "b7" }
++          - { tag: "2" }
++          - index: { _index: issue2935-top-b, _id: "b8" }
++          - { tag: "2" }
++          - index: { _index: issue2935-top-b, _id: "b9" }
++          - { tag: "2" }
++          - index: { _index: issue2935-top-b, _id: "b10" }
++          - { tag: "3" }
++          - index: { _index: issue2935-top-b, _id: "b11" }
++          - { tag: "3" }
++          - index: { _index: issue2935-top-b, _id: "b12" }
++          - { tag: "3" }
++          - index: { _index: issue2935-top-b, _id: "b13" }
++          - { tag: "3" }
++          - index: { _index: issue2935-top-b, _id: "b14" }
++          - { tag: "3" }
++          - index: { _index: issue2935-top-b, _id: "b15" }
++          - { tag: "3" }
++          - index: { _index: issue2935-top-b, _id: "b16" }
++          - { tag: "3" }
++          - index: { _index: issue2935-top-b, _id: "b17" }
++          - { tag: "3" }
++          - index: { _index: issue2935-top-b, _id: "b18" }
++          - { tag: "3" }
++  - do:
++      search:
++        index: issue2935-top-a,issue2935-top-b
++        body:
++          size: 0
++          aggs:
++            top:
++              terms: { field: tag, size: 1 }
++            key_desc:
++              terms: { field: tag, size: 10, order: { _key: desc } }
++  - length: { aggregations.top.buckets: 1 }
++  - match: { aggregations.top.buckets.0.key: "3" }
++  - match: { aggregations.top.buckets.0.doc_count: 18 }
++  - match: { aggregations.top.sum_other_doc_count: 20 }
++  - match: { aggregations.top.doc_count_error_upper_bound: 0 }
++  - length: { aggregations.key_desc.buckets: 3 }
++  - match: { aggregations.key_desc.buckets.0.key: "3" }
++  - match: { aggregations.key_desc.buckets.0.doc_count: 18 }
++  - match: { aggregations.key_desc.buckets.1.key: "2" }
++  - match: { aggregations.key_desc.buckets.1.doc_count: 10 }
++  - match: { aggregations.key_desc.buckets.2.key: "1" }
++  - match: { aggregations.key_desc.buckets.2.doc_count: 10 }
++  - match: { aggregations.key_desc.sum_other_doc_count: 0 }
++  - is_false: aggregations.top.buckets.0.__xy_terms_key__
++  - do:
++      search:
++        index
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3328** (2026-11-20): fix(read-budget): admit whole-segment stored-values decodes and kNN vector columns (#2427) (@xerj-team)
-- **PR #3327** (2026-11-20): fix(api,mcp): bound a whole _msearch batch and report timed-out items (#2497) (@xerj-team)
-- **PR #3326** (2026-11-20): fix: CJK highlight fragments (#3322) and no starting 503 after ready (#3323) (@xerj-team)
-- **PR #3325** (2026-11-20): test health: fix red homepage-prompt test, bar-count flake, ES-YAML runner hiding setup failures as skips (@xerj-team)
-- **PR #3321** (2026-11-20): fix(api): refuse a collapse inner_hits block without a name (@jelbirt)
-- **PR #3319** (2026-11-20): fix(seo): preserve page dates when Git follows renames (@Prathamesh51-debug)
+- **PR #3375** (2026-11-22): hub(audit): withhold lukaszFD/cyber-sentinel, the author withdrew consent (@xerj-team)
+- **PR #3374** (2026-11-22): hub: author-approved contribution candidates (14273 repos) (@xerj-team)
+- **PR #3373** (2026-11-22): hub: apply 20 author-requested page fixes (@xerj-team)
+- **PR #3369** (2026-11-22): hub: author-approved contribution candidates (14255 repos) (@xerj-team)
+- **PR #3368** (2026-11-21): hub: author-approved contribution candidates (14244 repos) (@xerj-team)
+- **PR #3366** (2026-11-22): perf(hybrid): fuse on ids, hydrate only the page (#3018) (@xerj-team)
 
 ---
 
@@ -2367,21 +3001,37 @@ were never moved over. A refused load also had no error path: it cam
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. server): no "starting" 503 after the node is ready
+## X. engine,storage): searches stop waiting on WAL and snapshot fsyncs under write lo
 
 **RULE**:
-When implementing operations in `engine/Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in xerj-org/xerj. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in xerj-org/xerj. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `70e75d4f`: server): no "starting" 503 after the node is ready. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5c7187b3`: engine,storage): searches stop waiting on WAL and snapshot fsyncs under write load. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `engine/Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "hyper-util",
+- **Searches no longer wait on WAL and snapshot fsyncs while bulk writes run
+  (refs #3324 #3331).** Three code paths held the collection-publication
+  bracket (every search on the index waits while it is open) across disk
+  waits. A flush kept its bracket open through post-publish maintenance
+  (snapshot fsync, WAL rotate and prune). `_bulk` opened its bracket before
+  appending to the WAL, so it waited inside the bracket for a WAL shard
+  lock that WAL maintenance and the batched fsync held across fsyncs. The
+  flush bracket now closes when the segment is published, and `_bulk`
+  appends to the WAL before opening the bracket. WAL maintenance and the
+  `wal_batch_ms` fsync now fsync without holding the shard lock: the next
+  generation's file is created and synced first, and only the rename runs
+  under the lock. The same fsyncs still happen, so durability does not
+  change. A WAL write error no longer poisons the index. Measured over 3
+  runs each, 60 s, 300k preload plus a closed-loop 5,000-doc auto-id writer,
+  ext4: p99 over all reads went from 204-265 ms to 40-85 ms (load 25-50).
+  With a `dd` fdatasync neighbour on the same disk it went from 260-305 ms
+  to 45-60 ms, and the
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2391,7 +3041,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `70e75d4f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5c7187b3` are properly handled with clean fallback behavior.
 
 
 ## 4. Empirical Verification & Quality Gate

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T03:54:19.336Z",
+  "last_updated": "2026-11-22T04:05:14.184Z",
   "total_verified_learnings": 9067,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23447,
+  "total_items": 23454,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -111993,10 +111993,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-product-intelligence-cilium-cilium-core-invariants.md",
       "title": "Product Intelligence: cilium/cilium Core Invariants",
       "repository": "cilium/cilium",
-      "source_version": "fb070362",
-      "content_hash": "083afaa0c939f0d71f7c5f7a5338fbada31204eb774b8e930ae8597145792dfa",
+      "source_version": "73945d29",
+      "content_hash": "a56d19c287c1fb3da0a703ea2132947208330d76264803c36e65ac1e109502f7",
       "domain_letter": "B",
-      "persisted_at": "2026-11-21T00:24:48.091Z"
+      "persisted_at": "2026-11-22T04:05:05.524Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium",
@@ -112005,10 +112005,10 @@
       "relative_path": "08_VERIFICATION/cilium-cilium-verification-protocol-empirical-defect-shield-for-cilium-cilium.md",
       "title": "Verification Protocol: Empirical Defect Shield for cilium/cilium",
       "repository": "cilium/cilium",
-      "source_version": "fb070362",
-      "content_hash": "381af7fc3ff3e9b41a438e05989d714dfa321f6cd4d796c6d5e7438a56b4344a",
+      "source_version": "73945d29",
+      "content_hash": "41b4c9ea6af1d9a25a7377740e2c4eb496de992ac9f558bfd9091e5ab26e694d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T00:24:48.234Z"
+      "persisted_at": "2026-11-22T04:05:05.695Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-",
@@ -112030,9 +112030,9 @@
       "title": "Product Intelligence: cilium-cilium-learnings Core Invariants",
       "repository": "cilium-cilium-learnings",
       "source_version": "HEAD",
-      "content_hash": "ca8f7f33d544beace1492a9395350be986e32f187b99106d1fe866adba5d8116",
+      "content_hash": "45db72b20ca1db07b9badbee2946ea800a0eb230fd1c648ae95ca2147c1c16a1",
       "domain_letter": "B",
-      "persisted_at": "2026-11-21T00:24:52.917Z"
+      "persisted_at": "2026-11-22T04:05:14.015Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium-learnings",
@@ -112042,9 +112042,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for cilium-cilium-learnings",
       "repository": "cilium-cilium-learnings",
       "source_version": "HEAD",
-      "content_hash": "8feb17a48a5767bde42815df7021cb11bf56d5e39ccea1744fa3b6400802d03a",
+      "content_hash": "ad2173aea2ea29abe974814724552ac18d1653aeebc7abb8de9e766ed551bf29",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T00:24:53.082Z"
+      "persisted_at": "2026-11-22T04:05:14.184Z"
     },
     "candidate_directive-engine-restore-text-fallback-for-unknown-file-extensions-394": {
       "item_id": "candidate_directive-engine-restore-text-fallback-for-unknown-file-extensions-394",
@@ -214237,8 +214237,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "fb070362",
-      "content_hash": "412fc6b9a38d1c2b88540e4a7ff7b72d75a7be9bc4dfb90be37e40767ef16606",
+      "source_version": "73945d29",
+      "content_hash": "8791ca9ebd41607d61fdef41322353bd9520919dbba47421856dc2c8ee47bd1b",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -214331,6 +214331,11 @@
           "number": 9677,
           "title": "hubble-relay & cilium-dbg: fix reading config from the environment",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9892,
+          "title": "update quay.io/goswagger/swagger docker tag to v0.36.8",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -214338,7 +214343,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T00:24:47.575Z",
+      "verified_at": "2026-11-22T04:05:04.934Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -232920,8 +232925,8 @@
       "slug": "agent-field-agentfield",
       "platform": "github",
       "source_url": "https://github.com/Agent-Field/agentfield",
-      "source_version": "d81cedf4",
-      "content_hash": "3a71a19a88fedcdff863138cb65849f0191e4ea1fe8bafc09e3312e914d42169",
+      "source_version": "4e9fb95b",
+      "content_hash": "54347a21b1477fc19caa974e3f9e4a960ed1c2b9c0a7516526e1b46e7537d527",
       "dossier_path": "07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/agent-field-agentfield-learnings.md",
       "promoted_rules": [
@@ -232966,7 +232971,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T00:06:38.295Z",
+      "verified_at": "2026-11-22T04:05:01.128Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -233008,10 +233013,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-agent-field-agentfield-technical-construction-intelligence-agent-field-agentfiel.md",
       "title": "Technical Construction Intelligence: Agent-Field/agentfield Core Invariants",
       "repository": "Agent-Field/agentfield",
-      "source_version": "161cab6a",
-      "content_hash": "f105b4f6e2d1b54382f371a67be28e869c07bf24e01938cacfb9e5460731140a",
+      "source_version": "4e9fb95b",
+      "content_hash": "4d9e04d62943664f03bd5ea8c438469a4c24ec815aa6b577790288e9463b37e4",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T06:20:39.080Z"
+      "persisted_at": "2026-11-22T04:05:01.762Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-agent-field-agentfield": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-agent-field-agentfield",
@@ -233020,10 +233025,10 @@
       "relative_path": "08_VERIFICATION/agent-field-agentfield-verification-protocol-empirical-defect-shield-for-agent-f.md",
       "title": "Verification Protocol: Empirical Defect Shield for Agent-Field/agentfield",
       "repository": "Agent-Field/agentfield",
-      "source_version": "d81cedf4",
-      "content_hash": "0637b09fd8d6f7936c298b59b67b9f80dfe77348139281a48e2f386e17104f42",
+      "source_version": "4e9fb95b",
+      "content_hash": "a4f459d0adab3c781369243f343c8f7b88d51302294ea50684fa1fbf239def3b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T00:06:39.360Z"
+      "persisted_at": "2026-11-22T04:05:02.115Z"
     },
     "learn-github-trinodb-trino": {
       "learning_id": "learn-github-trinodb-trino",
@@ -233216,9 +233221,9 @@
       "title": "Technical Construction Intelligence: agent-field-agentfield-learnings Core Invariants",
       "repository": "agent-field-agentfield-learnings",
       "source_version": "HEAD",
-      "content_hash": "b503719843cd6d5c51770e5cd71806cb78b67eacea997d9e07e78cc68ec6caf8",
+      "content_hash": "0c63978fcb13013e9122cf81f8d63a6557e67c751c1a5e3f059d50f98cac4366",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T06:20:46.009Z"
+      "persisted_at": "2026-11-22T04:05:12.250Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-agent-field-agentfield-learnin": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-agent-field-agentfield-learnin",
@@ -233228,9 +233233,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for agent-field-agentfield-learnings",
       "repository": "agent-field-agentfield-learnings",
       "source_version": "HEAD",
-      "content_hash": "3daf860e35585f24ade1583ed68436b275857d9c5a31532c41ee8691878e483e",
+      "content_hash": "0f7d73e42a737fb77ad1b95b1cb9e79784608ddbb53188a0874b327c849fee2c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T00:06:49.133Z"
+      "persisted_at": "2026-11-22T04:05:12.567Z"
     },
     "learn-huggingface-mudler-locate-anything-cpp-gguf": {
       "learning_id": "learn-huggingface-mudler-locate-anything-cpp-gguf",
@@ -264318,7 +264323,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic",
       "source_version": "hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic",
-      "content_hash": "568622441e630b7d63b2a7f0a57df5dd7f184462df5895840c3c99e6524f06d1",
+      "content_hash": "5d396204dfe8b9debd3a85293b8f4a164895e061dce2346f8fd8626025413783",
       "dossier_path": "07_PROJECT_LEARNING/hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-learnings.md",
       "promoted_rules": [],
@@ -264327,7 +264332,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T00:11:20.973Z",
+      "verified_at": "2026-11-22T04:04:52.566Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -264344,9 +264349,9 @@
       "title": "Research & Knowledge Intelligence: xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic Core Invariants",
       "repository": "xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic",
       "source_version": "hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic",
-      "content_hash": "e6637b04ede954e6a14953fa698ed7912d92d8fa41cd065f9052d833475dfe11",
+      "content_hash": "54263d8ec1bc401dfc8a4fe7a6264aa58e8b76aab0c9e916deeece0d4674eff6",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T00:11:21.307Z"
+      "persisted_at": "2026-11-22T04:04:53.008Z"
     },
     "domain_intelligence-technical-construction-intelligence-zeronsh-zeron-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zeronsh-zeron-learnings-core-invariants",
@@ -264368,9 +264373,9 @@
       "title": "Research & Knowledge Intelligence: hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-learnings Core Invariants",
       "repository": "hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-learnings",
       "source_version": "HEAD",
-      "content_hash": "fab0be49a6d0b899c9d1a508701ad9fac3dedae8fa8de9f62c4d901b5e644ae3",
+      "content_hash": "e2b0b81ba611f9f5993914b7694533187302e62f81fe54a1e0e417a8adc4808e",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T00:11:24.771Z"
+      "persisted_at": "2026-11-22T04:05:10.924Z"
     },
     "candidate_directive-cmd-add-grpc-max-conn-age-grace": {
       "item_id": "candidate_directive-cmd-add-grpc-max-conn-age-grace",
@@ -269160,10 +269165,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/agent-field-agentfield-agent-contract-agent-field-agentfield-autonomous-speciali.md",
       "title": "Agent Contract: Agent-Field/agentfield Autonomous Specialist Persona",
       "repository": "Agent-Field/agentfield",
-      "source_version": "d81cedf4",
-      "content_hash": "2be22a2afc428f421cb9ad824c86502c53c76d3c55e6a4972ab15689612d0d73",
-      "domain_letter": "G",
-      "persisted_at": "2026-11-20T00:06:39.188Z"
+      "source_version": "4e9fb95b",
+      "content_hash": "bb62257424221c00f2759eabbd158d22b499026592346b3740582a0737cdfdb6",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T04:05:01.943Z"
     },
     "learn-github-vitest-dev-vitest": {
       "learning_id": "learn-github-vitest-dev-vitest",
@@ -269371,9 +269376,9 @@
       "title": "Agent Contract: agent-field-agentfield-learnings Autonomous Specialist Persona",
       "repository": "agent-field-agentfield-learnings",
       "source_version": "HEAD",
-      "content_hash": "11e6f8245ee32a6fcfa84e7dab64db8ae641e688f7c607b033c6c1d4535d9d20",
-      "domain_letter": "G",
-      "persisted_at": "2026-11-20T00:06:48.965Z"
+      "content_hash": "3742ad14154e31af81e1ebcc3931df1306b28cf0bc09ce669b30c89fca8d7b5c",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T04:05:12.420Z"
     },
     "agent_contract-agent-contract-aleo-labs-protocol-snarkos-learnings-autonomous-specialist-person": {
       "item_id": "agent_contract-agent-contract-aleo-labs-protocol-snarkos-learnings-autonomous-specialist-person",
@@ -281646,8 +281651,8 @@
       "slug": "xerj-org-xerj",
       "platform": "github",
       "source_url": "https://github.com/xerj-org/xerj",
-      "source_version": "4b90a220",
-      "content_hash": "54ec977f51b64578a7729c622b6f59a8d2f9705bd2c7c701113ba185ef851c16",
+      "source_version": "34a14c0d",
+      "content_hash": "3360cd512888dfb90bec5e7e4ba38f0cd63b4fa1d9f0dabd8d1c3511b984d46d",
       "dossier_path": "07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
       "promoted_rules": [
@@ -281665,6 +281670,11 @@
           "number": 9664,
           "title": "no \"starting\" 503 after the node is ready",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9893,
+          "title": "engine,storage): searches stop waiting on WAL and snapshot fsyncs under write lo",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -281672,7 +281682,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T23:39:56.081Z",
+      "verified_at": "2026-11-22T04:05:06.974Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -281688,10 +281698,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-xerj-org-xerj-quality-verification-intelligence-xerj-org-xerj-core-invariants.md",
       "title": "Quality & Verification Intelligence: xerj-org/xerj Core Invariants",
       "repository": "xerj-org/xerj",
-      "source_version": "cc6aee8f",
-      "content_hash": "d81b2b84f92bebb7366034a5d70d6ae60e6dae055716d48572b5e8e02e50c807",
+      "source_version": "34a14c0d",
+      "content_hash": "db45ad6871e751b21b2717488db1094be171b0554bacee5be73fc9c5ef8dcce8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T20:55:54.138Z"
+      "persisted_at": "2026-11-22T04:05:07.580Z"
     },
     "skill_playbook-skill-operational-integration-playbook-for-xerj-org-xerj": {
       "item_id": "skill_playbook-skill-operational-integration-playbook-for-xerj-org-xerj",
@@ -281700,10 +281710,10 @@
       "relative_path": "03_SKILLS/xerj-org-xerj-skill-operational-integration-playbook-for-xerj-org-xerj.md",
       "title": "Skill: Operational & Integration Playbook for xerj-org/xerj",
       "repository": "xerj-org/xerj",
-      "source_version": "4b90a220",
-      "content_hash": "5864aeaaeb21389d74722e880ba9af917f47ef92726c16e09f44c3e6d327e420",
-      "domain_letter": "H",
-      "persisted_at": "2026-11-20T23:39:57.000Z"
+      "source_version": "34a14c0d",
+      "content_hash": "06088fd773dcdecfe792372a395dbcfc580fa53a75e80aa27825bde7de0a07a8",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-22T04:05:07.755Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-xerj-org-xerj": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-xerj-org-xerj",
@@ -281712,10 +281722,10 @@
       "relative_path": "08_VERIFICATION/xerj-org-xerj-verification-protocol-empirical-defect-shield-for-xerj-org-xerj.md",
       "title": "Verification Protocol: Empirical Defect Shield for xerj-org/xerj",
       "repository": "xerj-org/xerj",
-      "source_version": "4b90a220",
-      "content_hash": "0fe0e335db7bf22a0c6a015cb130e661379b68ddca36d2a5567047801bf2b279",
+      "source_version": "34a14c0d",
+      "content_hash": "8a3d167976f4190622a960aed5a5e0ed639c5506646bafd81e81aa1f6752a51f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T23:39:57.175Z"
+      "persisted_at": "2026-11-22T04:05:07.902Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-r1-learnings-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-r1-learnings-core-invari",
@@ -318874,6 +318884,94 @@
       "content_hash": "48aa99e1b8602441066e5dc8239befdf360a516ff0e01dbe41216dea51cc5992",
       "domain_letter": "I",
       "persisted_at": "2026-11-22T03:46:26.117Z"
+    },
+    "candidate_directive-add-a-short-comparison-section-to-the-readme": {
+      "item_id": "candidate_directive-add-a-short-comparison-section-to-the-readme",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CQHI-add-a-short-comparison-section-to-the-readme.md",
+      "title": "add a short comparison section to the README",
+      "repository": "Agent-Field/agentfield",
+      "source_version": "4e9fb95b",
+      "content_hash": "209c6fa1061f25619339839b525db940038d55f54f83cdfd9b15ae62b2de5049",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-22T04:05:01.591Z"
+    },
+    "rule-9892": {
+      "learning_id": "rule-9892",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9892,
+      "title": "update quay.io/goswagger/swagger docker tag to v0.36.8",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "73945d29",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T04:05:04.934Z"
+    },
+    "candidate_directive-update-quay-io-goswagger-swagger-docker-tag-to-v0-36-8": {
+      "item_id": "candidate_directive-update-quay-io-goswagger-swagger-docker-tag-to-v0-36-8",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CTE0-update-quay-io-goswagger-swagger-docker-tag-to-v0-36-8.md",
+      "title": "update quay.io/goswagger/swagger docker tag to v0.36.8",
+      "repository": "cilium/cilium",
+      "source_version": "73945d29",
+      "content_hash": "2927ea4b89285407c6890a03cbb3d55a9577db5460b73ec348061cf1648e1e9e",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-22T04:05:05.354Z"
+    },
+    "rule-9893": {
+      "learning_id": "rule-9893",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9893,
+      "title": "engine,storage): searches stop waiting on WAL and snapshot fsyncs under write lo",
+      "source_url": "https://github.com/xerj-org/xerj",
+      "source_version": "34a14c0d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T04:05:06.974Z"
+    },
+    "candidate_directive-engine-storage-searches-stop-waiting-on-wal-and-snapshot-fsyncs-under-write-lo": {
+      "item_id": "candidate_directive-engine-storage-searches-stop-waiting-on-wal-and-snapshot-fsyncs-under-write-lo",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CUZ5-engine-storage-searches-stop-waiting-on-wal-and-snapshot-fsyncs-under-write-lo.md",
+      "title": "engine,storage): searches stop waiting on WAL and snapshot fsyncs under write lo",
+      "repository": "xerj-org/xerj",
+      "source_version": "34a14c0d",
+      "content_hash": "e90c9e4dffc0cd3742bb2c4c9ac8be517c98187dce71d9fa2e5a48a3fea247b5",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-22T04:05:07.413Z"
+    },
+    "candidate_directive-docs-add-a-short-comparison-section-to-the-readme": {
+      "item_id": "candidate_directive-docs-add-a-short-comparison-section-to-the-readme",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CYKX-docs-add-a-short-comparison-section-to-the-readme.md",
+      "title": "docs: add a short comparison section to the README",
+      "repository": "agent-field-agentfield-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4df886d157a3f3657d5a9b8b5925cf8eb19abfef4f1174bd8a75b809bbfc0394",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-22T04:05:12.081Z"
+    },
+    "candidate_directive-deps-update-quay-io-goswagger-swagger-docker-tag-to-v0-36-8": {
+      "item_id": "candidate_directive-deps-update-quay-io-goswagger-swagger-docker-tag-to-v0-36-8",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CZXW-deps-update-quay-io-goswagger-swagger-docker-tag-to-v0-36-8.md",
+      "title": "deps): update quay.io/goswagger/swagger docker tag to v0.36.8",
+      "repository": "cilium-cilium-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d7444343f4753f4492d8bb904c67b5d64726aed04e33848902db64e3281eb101",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-22T04:05:13.844Z"
     }
   },
   "ai-builder-brain": {

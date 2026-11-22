@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T03:54:19.503Z",
+  "last_updated": "2026-11-22T04:05:14.328Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-22T01:59:00.350Z",
@@ -398,7 +398,7 @@
       "staged_for_review": 1
     },
     "cilium-cilium-learnings.md": {
-      "processed_at": "2026-11-21T00:24:52.535Z",
+      "processed_at": "2026-11-22T04:05:12.752Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -878,7 +878,7 @@
       "staged_for_review": 1
     },
     "agent-field-agentfield-learnings.md": {
-      "processed_at": "2026-11-20T00:06:48.258Z",
+      "processed_at": "2026-11-22T04:05:11.121Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -893,7 +893,7 @@
       "staged_for_review": 1
     },
     "hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-learnings.md": {
-      "processed_at": "2026-11-17T00:11:24.621Z",
+      "processed_at": "2026-11-22T04:05:10.717Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3703,7 +3703,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 2994,
+  "total_dossiers_evaluated": 2997,
   "total_canonical_promoted": 469,
-  "total_staged_for_review": 2284
+  "total_staged_for_review": 2287
 }

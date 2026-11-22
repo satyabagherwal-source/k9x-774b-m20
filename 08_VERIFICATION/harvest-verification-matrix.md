@@ -12001,3 +12001,7 @@
 | `CYCLE-20261122-OKJ5` | `2026-11-22T03:46:14.129Z` | `unsloth/Qwen3.8-Flash-Next-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-qwen3.8-flash-next-gguf-learnings.md` | Yes (`0c3aafca...`) |
 | `CYCLE-20261122-OLBM` | `2026-11-22T03:46:15.154Z` | `ntex-rs/ntex` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md` | Yes (`fb3fb9fa...`) |
 | `CYCLE-20261122-YO61` | `2026-11-22T03:54:05.401Z` | `baidu/ERNIE-5.5-Flash-Base` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baidu-ernie-5.5-flash-base-learnings.md` | Yes (`eb5085b7...`) |
+| `CYCLE-20261122-CJP6` | `2026-11-22T04:04:52.794Z` | `xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-learnings.md` | Yes (`5d396204...`) |
+| `CYCLE-20261122-CQAD` | `2026-11-22T04:05:01.333Z` | `Agent-Field/agentfield` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/agent-field-agentfield-learnings.md` | Yes (`54347a21...`) |
+| `CYCLE-20261122-CT83` | `2026-11-22T04:05:05.139Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9892` | Yes (`8791ca9e...`) |
+| `CYCLE-20261122-CUT1` | `2026-11-22T04:05:07.189Z` | `xerj-org/xerj` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9893` | Yes (`3360cd51...`) |

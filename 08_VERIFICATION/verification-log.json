@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261120-01NZ",
-    "timestamp": "2026-11-20T02:27:50.255Z",
-    "repository": "pulumi/pulumi",
-    "learningId": "learn-github-pulumi-pulumi",
-    "contentHash": "a85ab319bce73b0b20234728a8e472874e51164d8d3e370a7ad0f843c6b92260",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-EEAR",
-    "timestamp": "2026-11-20T02:38:59.811Z",
-    "repository": "saltstack/salt",
-    "learningId": "learn-github-saltstack-salt",
-    "contentHash": "fd478bea7e5b3f333ec615cf84cf091175e7a87f92cf39e4c842e50bb63f132d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-EFOS",
-    "timestamp": "2026-11-20T02:39:01.612Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "1cbd04c8e15e938124780e7a44ee82366770f3b7b72e01187e6b8bc70e76d490",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-3GOV",
-    "timestamp": "2026-11-20T02:58:29.311Z",
-    "repository": "jellyfin/Swiftfin",
-    "learningId": "learn-github-jellyfin-swiftfin",
-    "contentHash": "d4c51acd66ca6bfa6c4d6b7ed0dba072f5448eb09867472cdf033768d0496f62",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261120-3J41",
     "timestamp": "2026-11-20T02:58:32.449Z",
     "repository": "aws/aws-cdk",
@@ -7492,6 +7432,66 @@
     "contentHash": "eb5085b738b0bb9de5ade32e96f66b98baa71b36f84bf37fee59069a55794911",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-CJP6",
+    "timestamp": "2026-11-22T04:04:52.794Z",
+    "repository": "xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic",
+    "learningId": "learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic",
+    "contentHash": "5d396204dfe8b9debd3a85293b8f4a164895e061dce2346f8fd8626025413783",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-CQAD",
+    "timestamp": "2026-11-22T04:05:01.333Z",
+    "repository": "Agent-Field/agentfield",
+    "learningId": "learn-github-agent-field-agentfield",
+    "contentHash": "54347a21b1477fc19caa974e3f9e4a960ed1c2b9c0a7516526e1b46e7537d527",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-CT83",
+    "timestamp": "2026-11-22T04:05:05.139Z",
+    "repository": "cilium/cilium",
+    "learningId": "learn-github-cilium-cilium",
+    "contentHash": "8791ca9ebd41607d61fdef41322353bd9520919dbba47421856dc2c8ee47bd1b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-CUT1",
+    "timestamp": "2026-11-22T04:05:07.189Z",
+    "repository": "xerj-org/xerj",
+    "learningId": "learn-github-xerj-org-xerj",
+    "contentHash": "3360cd512888dfb90bec5e7e4ba38f0cd63b4fa1d9f0dabd8d1c3511b984d46d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

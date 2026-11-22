@@ -4,22 +4,22 @@
 {
   "source_repository": "cilium/cilium",
   "source_url": "https://github.com/cilium/cilium",
-  "source_version": "fb070362",
+  "source_version": "73945d29",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-21T00:24:47.964Z",
+  "timestamp": "2026-11-22T04:05:05.353Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-cilium-cilium",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [cilium/cilium](https://github.com/cilium/cilium) (Revision: `fb070362`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-21T00:24:47.964Z`  
+> **Provenance**: Harvested from [cilium/cilium](https://github.com/cilium/cilium) (Revision: `73945d29`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-22T04:05:05.353Z`  
 > **Learning ID**: `learn-github-cilium-cilium`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `cilium/cilium` (Commit: `fb070362`)
+- **Target Repository**: `cilium/cilium` (Commit: `73945d29`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T00:24:46.825Z  
+> **Harvest Timestamp**: 2026-11-22T04:05:04.083Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25877 stars
+- **Stars / Engagement**: 25880 stars
 
 ---
 
@@ -137,8 +137,8 @@ func (m *BgpRoutePolicyStatement) validateMatchFamilies(formats strfmt.Registry)
 	}
 
 	for i := 0; i < len(m.MatchFamilies); i++ {
-		if typeutils.IsZero(m.MatchFamilies[i]) { // not required
-			continue
+		if m.MatchFamilies[i] == nil {
+			return validate.Required("match-families"+"."+strconv.Itoa(i), "body", m.MatchFamilies[i])
 		}
 
 		if m.MatchFamilies[i] != nil {
@@ -1270,16 +1270,11 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #50171** (2026-11-20): **[WIP] Move IP Release to agent**
-  *Symptoms*: 
-  **Post-Mortem & Fix Analysis**:
-  > Commit d226d16c7e690984a8765bcb50a78a09c5cd0557 does not match "(?m)^Signed-off-by:".  Please follow instructions provided in https://docs.cilium.io/en/stable/contributing/development/contributing_guide/#developer-s-certificate-of-origin
+- **Issue #50183** (2026-11-22): **chore(deps): update quay.io/goswagger/swagger docker tag to v0.36.8 (main)**
+  *Symptoms*: This PR contains the following updates:  | Package | Update | Change | |---|---|---| | [quay.io/goswagger/swagger](https://redirect.github.com/go-swagger/go-swagger) | patch | `0.36.7` → `0.36.8` |  ---  ### Release Notes  <details> <summary>go-swagger/go-swagger (quay.io/goswagger/swagger)</summary>  ### [`v0.36.8`](https://redirect.github.com/go-swagger/go-swagger/releases/tag/v0.36.8)  [Compare Source](https://redirect.github.com/go-swagger/go-swagger/compare/v0.36.7...v0.36.8)  go-swagger release 0.36.8  ***  Released on 2026 Nov 20  #### [0.36.8](https://redirect.github.com/go-swagger/go-swagger/tree/v0.36.8) - 2026-11-19  Security patches & more edge case fixes  **Full Changelog**: <https://github.com/go-swagger/go-swagger/compare/v0.36.7...v0.36.8>  13 commits in this release.  ***  ##### <!-- 01 -->Fixed bugs  - fix(codegen): single UnmarshalJSON for objects with a default value and strict additional properties by [@&#8203;jilsnshah](https://redirect.github.com/jilsnshah) in [#&#8203;3529](https://redirect.github.com/go-swagger/go-swagger/pull/3529) [...](https://redirect.github.com/go-swagger/go-swagger/commit/4cd6fb93897d44ad0bffd29feaf7b7d8eba78f24) - fix(generator): reject null array items by default by [@&#8203;fredbi](https://redirect.github.com/fredbi) in [#&#8203;3530](https://redirect.github.com/go-swagger/go-swagger/pull/3530) [...](https://redirect.github.com/go-swagger/go-swagger/commit/029320d3c4479d3d9dc1020337c7f72c6e0b69fa) - fix(generator): generate v
 
-- **Issue #50168** (2026-11-20): **datapath: remove redundant XDP prefiltering macros**
-  *Symptoms*: Whenever `option.Config.EnableXDPPrefilter` is set to true, the `enable_xdp_prefilter` runtime config is set to true, and the filter/prefilter macros (`CIDR4_FILTER`, `CIDR4_LPM_PREFILTER`, `CIDR6_FILTER` and `CIDR6_LPM_PREFILTER`) are defined. `prefilter_v4()` and `prefilter_v6()` code (that is, the only code using the macros) is already guarded by `enable_xdp_prefilter` so the macros are redundant. This PR removes the macros and their usages.  Related: https://github.com/cilium/cilium/issues/42646  AIL: 0
-  **Post-Mortem & Fix Analysis**:
-  > /test
-  > /ci-integration
+- **Issue #50182** (2026-11-22): **chore(deps): update cilium/cilium-cli action to v0.20.3 (main)**
+  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [cilium/cilium-cli](https://redirect.github.com/cilium/cilium-cli) | action | patch | `v0.20.2` → `v0.20.3` |  ---  ### Release Notes  <details> <summary>cilium/cilium-cli</summary>  ### [`v0.20.3`](https://redirect.github.com/cilium/cilium-cli/releases/tag/v0.20.3)  [Compare Source](https://redirect.github.com/cilium/cilium-cli/compare/v0.20.2...v0.20.3)  ## Summary of Changes  **Minor Changes:**  - cilium-cli: Apply standard scheduling params to all connectivity pods ([cilium/cilium#49113](https://redirect.github.com/cilium/cilium/issues/49113), [@&#8203;HadrienPatte](https://redirect.github.com/HadrienPatte)) - helm: move SPIRE chart values under ztunnel ([cilium/cilium#48942](https://redirect.github.com/cilium/cilium/issues/48942), [@&#8203;mhofstetter](https://redirect.github.com/mhofstetter))  **CI Changes:**  - cilium-cli: Fix unschedulable client pod on 2-node clusters ([cilium/cilium#49776](https://redirect.github.com/cilium/cilium/issues/49776), [@&#8203;aanm](https://redirect.github.com/aanm)) - cilium-cli: Ignore restarts of never-started containers ([cilium/cilium#49641](https://redirect.github.com/cilium/cilium/issues/49641), [@&#8203;aanm](https://redirect.github.com/aanm)) - cilium-cli: restore v2alpha1 BGP deprecation log exception ([cilium/cilium#49919](https://redirect.github.com/cilium/cilium/issues/49919), [@&#8203;martonra](https://redirect.github.com/marton
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1296,191 +1291,305 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fb070362` (2026-08-22)
-**Commit Message**: hubble-relay & cilium-dbg: fix reading config from the environment
+### Incident Patch 1: `73945d29` (2026-11-22)
+**Commit Message**: chore(deps): update quay.io/goswagger/swagger docker tag to v0.36.8
 
-hubble-relay & cilium-dbg use Viper to read config including from environment
-variables. Viper derives the environment variable name by uppercasing the
-config key and preserving dashes (-). Environment variables cannot contain
-dashes, so config keys containing a dash could not be set this way.
+Signed-off-by: cilium-renovate[bot] <134692979+cilium-renovate[bot]@users.noreply.github.com>
 
-Replace - with _ when deriving the environment variable, like hubble CLI
-and clustermesh-apiserver.
-
-Signed-off-by: Evan Champion <[REDACTED_EMAIL]>
-
-**File**: `cilium-dbg/cmd/root.go` (modified, +3/-1)
+**File**: `Makefile.defs` (modified, +2/-2)
 ```diff
-@@ -8,6 +8,7 @@ import (
- 	"io"
- 	"log/slog"
- 	"os"
-+	"strings"
+@@ -70,8 +70,8 @@ export CILIUM_CLI ?= cilium
+ export KUBECTL ?= kubectl
  
- 	"github.com/spf13/cobra"
- 	"github.com/spf13/viper"
-@@ -78,7 +79,8 @@ func initConfig() {
- 	vp.SetEnvPrefix("cilium")
- 	vp.SetConfigName(".cilium") // name of config file (without extension)
- 	vp.AddConfigPath("$HOME")   // adding home directory as first search path
--	vp.AutomaticEnv()           // read in environment variables that match
-+	vp.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
-+	vp.AutomaticEnv() // read in environment variables that match
+ # renovate: datasource=docker depName=quay.io/goswagger/swagger
+-SWAGGER_VERSION = 0.36.7
+-SWAGGER_IMAGE_SHA = sha256:5d57e845c1c34ceb5883b0cba8bdf53e56568acdb6b1aef7ae33fe9336974831
++SWAGGER_VERSION = 0.36.8
++SWAGGER_IMAGE_SHA = sha256:5a9b6cdce869273a01186bf0ad911f346c3c445b270f9ce912114c64d150e388
+ SWAGGER := $(CONTAINER_ENGINE) run -u $(shell id -u):$(shell id -g) --rm -v $(ROOT_DIR):$(ROOT_DIR) -w $(ROOT_DIR) --entrypoint swagger quay.io/goswagger/swagger:$(SWAGGER_VERSION)@$(SWAGGER_IMAGE_SHA)
  
- 	// If a config file is found, read it in.
- 	if err := vp.ReadInConfig(); err == nil {
+ # go build/test/clean flags
 ```
 
-**File**: `hubble-relay/cmd/root.go` (modified, +3/-0)
+**File**: `api/v1/health/models/endpoint_status.go` (modified, +3/-2)
 ```diff
-@@ -4,6 +4,8 @@
- package cmd
+@@ -14,6 +14,7 @@ import (
+ 	"github.com/go-openapi/strfmt"
+ 	"github.com/go-openapi/swag/jsonutils"
+ 	"github.com/go-openapi/swag/typeutils"
++	"github.com/go-openapi/validate"
+ )
  
- import (
-+	"strings"
-+
- 	"github.com/spf13/cobra"
- 	"github.com/spf13/viper"
+ // EndpointStatus Connectivity status to host cilium-health endpoints via different paths
+@@ -75,8 +76,8 @@ func (m *EndpointStatus) validateSecondaryAddresses(formats strfmt.Registry) err
+ 	}
  
-@@ -83,6 +85,7 @@ func NewViper() *viper.Viper {
- 	vp := viper.New()
- 	vp.SetEnvPrefix("relay")
- 	vp.SetConfigFile(configFilePath)
-+	vp.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
- 	vp.AutomaticEnv()
- 	return vp
- }
+ 	for i := 0; i < len(m.SecondaryAddresses); i++ {
+-		if typeutils.IsZero(m.SecondaryAddresses[i]) { // not required
+-			continue
++		if m.SecondaryAddresses[i] == nil {
++			return validate.Required("secondary-addresses"+"."+strconv.Itoa(i), "body", m.SecondaryAddresses[i])
+ 		}
+ 
+ 		if m.SecondaryAddresses[i] != nil {
+```
+
+**File**: `api/v1/health/models/health_status_response.go` (modified, +3/-2)
+```diff
+@@ -14,6 +14,7 @@ import (
+ 	"github.com/go-openapi/strfmt"
+ 	"github.com/go-openapi/swag/jsonutils"
+ 	"github.com/go-openapi/swag/typeutils"
++	"github.com/go-openapi/validate"
+ )
+ 
+ // HealthStatusResponse Connectivity status to other daemons
+@@ -81,8 +82,8 @@ func (m *HealthStatusResponse) validateNodes(formats strfmt.Registry) error {
+ 	}
+ 
+ 	for i := 0; i < len(m.Nodes); i++ {
+-		if typeutils.IsZero(m.Nodes[i]) { // not required
+-			continue
++		if m.Nodes[i] == nil {
++			return validate.Required("nodes"+"."+strconv.Itoa(i), "body", m.Nodes[i])
+ 		}
+ 
+ 		if m.Nodes[i] != nil {
+```
+
+**File**: `api/v1/health/models/host_status.go` (modified, +3/-2)
+```diff
+@@ -14,6 +14,7 @@ import (
+ 	"github.com/go-openapi/strfmt"
+ 	"github.com/go-openapi/swag/jsonutils"
+ 	"github.com/go-openapi/swag/typeutils"
++	"github.com/go-openapi/validate"
+ )
+ 
+ // HostStatus Connectivity status to host cilium-health instance via different paths,
+@@ -76,8 +77,8 @@ func (m *HostStatus) validateSecondaryAddresses(formats strfmt.Registry) error {
+ 	}
+ 
+ 	for i := 0; i < len(m.SecondaryAddresses); i++ {
+-		if typeutils.IsZero(m.SecondaryAddresses[i]) { // not required
+-			continue
++		if m.SecondaryAddresses[i] == nil {
++			return validate.Required("secondary-addresses"+"."+strconv.Itoa(i), "body", m.SecondaryAddresses[i])
+ 		}
+ 
+ 		if m.SecondaryAddresses[i] != nil {
+```
+
+**File**: `api/v1/models/b_p_f_map.go` (modified, +3/-2)
+```diff
+@@ -14,6 +14,7 @@ import (
+ 	"github.com/go-openapi/strfmt"
+ 	"github.com/go-openapi/swag/jsonutils"
+ 	"github.com/go-openapi/swag/typeutils"
++	"github.com/go-openapi/validate"
+ )
+ 
+ // BPFMap BPF map definition and content
+@@ -48,8 +49,8 @@ func (m *BPFMap) validateCache(formats strfmt.Registry) error {
+ 	}
+ 
+ 	for i := 0; i < len(m.Cache); i++ {
+-		if typeutils.IsZero(m.Cache[i]) { // not required
+-			continue
++		if m.Cache[i] == nil {
++			return validate.Required("cache"+"."+strconv.Itoa(i), "body", m.Cache[i])
+ 		}
+ 
+ 		if m.Cache[i] != nil {
+```
+
+**File**: `api/v1/models/b_p_f_map_list.go` (modified, +3/-2)
+```diff
+@@ -14,6 +14,7 @@ import (
+ 	"github.com/go-openapi/strfmt"
+ 	"github.com/go-openapi/swag/jsonutils"
+ 	"github.com/go-openapi/swag/typeutils"
++	"github.com/go-openapi/validate"
+ )
+ 
+ // BPFMapList List of BPF Maps
+@@ -45,8 +46,8 @@ func (m *BPFMapList) validateMaps(formats strfmt.Registry) error {
+ 	}
+ 
+ 	for i := 0; i < len(m.Maps); i++ {
+-		if typeutils.IsZero(m.Maps[i]) { // not required
+-			continue
++		if m.Maps[i] == nil {
++			return validate.Required("maps"+"."+strconv.Itoa(i), "body", m.Maps[i])
+ 		}
+ 
+ 		if m.Maps[i] != nil {
+```
+
+**File**: `api/v1/models/b_p_f_map_status.go` (modified, +3/-2)
+```diff
+@@ -14,6 +14,7 @@ import (
+ 	"github.com/go-openapi/strfmt"
+ 	"github.com/go-openapi/swag/jsonutils"
+ 	"github.com/go-openapi/swag/typeutils"
++	"github.com/go-openapi/validate"
+ )
+ 
+ // BPFMapStatus BPF map status
+@@ -50,8 +51,8 @@ func (m *BPFMapStatus) validateMaps(formats strfmt.Registry) error {
+ 	}
+ 
+ 	for i := 0; i < len(m.Maps); i++ {
+-		if typeutils.IsZero(m.Maps[i]) { // not required
+-			continue
++		if m.Maps[i] == nil {
++			return validate.Required("maps"+"."+strconv.Itoa(i), "body", m.Maps[i])
+ 		}
+ 
+ 		if m.Maps[i] != nil {
+```
+
+**File**: `api/v1/models/bgp_path.go` (modified, +3/-2)
+```diff
+@@ -14,6 +14,7 @@ import (
+ 	"github.com/go-openapi/strfmt"
+ 	"github.com/go-openapi/swag/jsonutils"
+ 	"github.com/go-openapi/swag/typeutils"
++	"github.com/go-openapi/validate"
+ )
+ 
+ // BgpPath Single BGP routing Path containing BGP Network Layer Reachability Information (NLRI) and path attributes
+@@ -114,8 +115,8 @@ func (m *BgpPath) validatePathAttributes(formats strfmt.Registry) error {
+ 	}
+ 
+ 	for i := 0; i < len(m.PathAttributes); i++ {
+-		if typeutils.IsZero(m.PathAttributes[i]) { // not required
+-			continue
++		if m.PathAttributes[i] == nil {
++			return validate.Required("path-attributes"+"."+strconv.Itoa(i), "body", m.PathAttributes[i])
+ 		}
+ 
+ 		if m.PathAttributes[i] != nil {
 ```
 
 ---
 
-### Incident Patch 2: `537ad150` (2026-10-08)
-**Commit Message**: Minor spelling fixes
+### Incident Patch 2: `edaa13cc` (2026-11-22)
+**Commit Message**: chore(deps): update cilium/cilium-cli action to v0.20.3
 
-Fix various spelling errors across the project.
+Signed-off-by: cilium-renovate[bot] <134692979+cilium-renovate[bot]@users.noreply.github.com>
 
-Signed-off-by: Ethan Ermovick <[REDACTED_EMAIL]>
-
-**File**: `operator/pkg/bgp/cluster_test.go` (modified, +1/-1)
+**File**: `.github/workflows/conformance-aks.yaml` (modified, +1/-1)
 ```diff
-@@ -1260,7 +1260,7 @@ func TestDisableClusterConfigStatusReport(t *testing.T) {
- 		})
- 	}
+@@ -422,7 +422,7 @@ jobs:
+             --docker-password="${{ secrets.DOCKER_READ_PASSWORD }}"
  
--	// Setup resourses with status
-+	// Setup resources with status
- 	req.NoError(upsertBGPCC(ctx, f, clusterConfig))
+       - name: Install Cilium CLI
+-        uses: cilium/cilium-cli@1ac7fa66909e3730ab3869c8ba7aa7d68f0197fd # v0.20.2
++        uses: cilium/cilium-cli@506c6d8cd165e56a36ce97ed31f67c92d4ae72e1 # v0.20.3
+         with:
+           skip-build: ${{ env.CILIUM_CLI_SKIP_BUILD }}
+           image-repo: ${{ env.CILIUM_CLI_IMAGE_REPO }}
+```
+
+**File**: `.github/workflows/conformance-aws-cni.yaml` (modified, +1/-1)
+```diff
+@@ -366,7 +366,7 @@ jobs:
+             --docker-password="${{ secrets.DOCKER_READ_PASSWORD }}"
  
- 	// Wait for status to be cleared
+       - name: Install Cilium CLI
+-        uses: cilium/cilium-cli@1ac7fa66909e3730ab3869c8ba7aa7d68f0197fd # v0.20.2
++        uses: cilium/cilium-cli@506c6d8cd165e56a36ce97ed31f67c92d4ae72e1 # v0.20.3
+         with:
+           skip-build: ${{ env.CILIUM_CLI_SKIP_BUILD }}
+           image-repo: ${{ env.CILIUM_CLI_IMAGE_REPO }}
 ```
 
-**File**: `operator/pkg/ciliumendpointslice/ceptocesmap.go` (modified, +1/-1)
+**File**: `.github/workflows/conformance-clustermesh.yaml` (modified, +1/-1)
 ```diff
-@@ -43,7 +43,7 @@ type CESToCEPMapping struct {
- 	cesNameToData map[CESName]*CESData
- }
+@@ -515,7 +515,7 @@ jobs:
+           echo flags=${FLAGS} >> $GITHUB_OUTPUT
  
--// Creates and intializes the new CESToCEPMapping
-+// Creates and initializes the new CESToCEPMapping
- func newCESToCEPMapping() *CESToCEPMapping {
- 	return &CESToCEPMapping{
- 		cepNameToCESName: make(map[CEPName]CESName),
+       - name: Install Cilium CLI
+-        uses: cilium/cilium-cli@1ac7fa66909e3730ab3869c8ba7aa7d68f0197fd # v0.20.2
++        uses: cilium/cilium-cli@506c6d8cd165e56a36ce97ed31f67c92d4ae72e1 # v0.20.3
+         with:
+           skip-build: ${{ env.CILIUM_CLI_SKIP_BUILD }}
+           image-repo: ${{ env.CILIUM_CLI_IMAGE_REPO }}
 ```
 
-**File**: `operator/pkg/ciliumendpointslice/cescache.go` (modified, +1/-1)
+**File**: `.github/workflows/conformance-delegated-ipam.yaml` (modified, +1/-1)
 ```diff
-@@ -88,7 +88,7 @@ type CESCache struct {
- 	cidToGidLabels map[CID]Labels
- }
+@@ -283,7 +283,7 @@ jobs:
+           wait: 0
  
--// Creates and intializes the new CESCache
-+// Creates and initializes the new CESCache
- func newCESCache() *CESCache {
- 	return &CESCache{
- 		cepData:                make(map[CEPName]*CEPData),
+       - name: Install Cilium CLI
+-        uses: cilium/cilium-cli@1ac7fa66909e3730ab3869c8ba7aa7d68f0197fd # v0.20.2
++        uses: cilium/cilium-cli@506c6d8cd165e56a36ce97ed31f67c92d4ae72e1 # v0.20.3
+         with:
+           skip-build: ${{ env.CILIUM_CLI_SKIP_BUILD }}
+           image-repo: ${{ env.CILIUM_CLI_IMAGE_REPO }}
 ```
 
-**File**: `operator/pkg/ciliumendpointslice/controller.go` (modified, +1/-1)
+**File**: `.github/workflows/conformance-eks.yaml` (modified, +1/-1)
 ```diff
-@@ -68,7 +68,7 @@ type Controller struct {
- 	emptyBeforeDeleteThreshold int
+@@ -465,7 +465,7 @@ jobs:
+             --docker-password="${{ secrets.DOCKER_READ_PASSWORD }}"
  
- 	// queue is used to sync CESs with the api-server. this will rate-limit the
--	// CES requests going to api-server, ensures a single CES will not be proccessed
-+	// CES requests going to api-server, ensures a single CES will not be processed
- 	// multiple times concurrently, and if CES is added multiple times before it
- 	// can be processed, this will only be processed only once.
- 	// Updates from CEP and CES in namespaces annotated as priority are added with a
+       - name: Install Cilium CLI
+-        uses: cilium/cilium-cli@1ac7fa66909e3730ab3869c8ba7aa7d68f0197fd # v0.20.2
++        uses: cilium/cilium-cli@506c6d8cd165e56a36ce97ed31f67c92d4ae72e1 # v0.20.3
+         with:
+           skip-build: ${{ env.CILIUM_CLI_SKIP_BUILD }}
+           image-repo: ${{ env.CILIUM_CLI_IMAGE_REPO }}
 ```
 
-**File**: `operator/pkg/gateway-api/helpers/backendtlspolicies.go` (modified, +1/-1)
+**File**: `.github/workflows/conformance-gateway-api.yaml` (modified, +1/-1)
 ```diff
-@@ -24,7 +24,7 @@ import (
- // goes, continuing on ties:
- //
- // 1. Oldest BackendTLSPolicy, by creation time
--// 2. First BackendTLSPolicy, lexigraphically sorted.
-+// 2. First BackendTLSPolicy, lexicographically sorted.
- //
- // The BackendTLSPolicyTargetServiceCollection struct holds details
- // about which are the Valid (chosen) policies, and which are Conflicted.
-```
-
-**File**: `operator/pkg/gateway-api/helpers/types.go` (modified, +2/-2)
-```diff
-@@ -144,7 +144,7 @@ func GetConcreteObject(schemaType schema.GroupVersionKind) runtime.Object {
- 	case InferencePoolKind:
- 		return &gateway_inf_ext.InferencePool{}
- 	default:
--		// panic is okay here because this is a progammer error
-+		// panic is okay here because this is a programmer error
- 		panic(fmt.Sprintf("Tried to get a concrete type that is not implemented, %s", schemaType.Kind))
- 	}
- }
-@@ -181,7 +181,7 @@ func GetConcreteListObject(schemaType schema.GroupVersionKind) runtime.Object {
- 		return &gateway_inf_ext.InferencePoolList{}
+@@ -271,7 +271,7 @@ jobs:
+             --docker-password="${{ secrets.DOCKER_READ_PASSWORD }}"
  
- 	default:
--		// panic is okay here because this is a progammer error
-+		// panic is okay here because this is a programmer error
- 		panic(fmt.Sprintf("Tried to get a concrete list type that is not implemented, %s", schemaType.Kind))
- 	}
- }
+       - name: Install Cilium CLI
+-        uses: cilium/cilium-cli@1ac7fa66909e3730ab3869c8ba7aa7d68f0197fd # v0.20.2
++        uses: cilium/cilium-cli@506c6d8cd165e56a36ce97ed31f67c92d4ae72e1 # v0.20.3
+         with:
+           skip-build: ${{ env.CILIUM_CLI_SKIP_BUILD }}
+           image-repo: ${{ env.CILIUM_CLI_IMAGE_REPO }}
 ```
 
-**File**: `operator/pkg/ingress/helpers_test.go` (modified, +1/-1)
+**File**: `.github/workflows/conformance-ginkgo.yaml` (modified, +1/-1)
 ```diff
-@@ -172,7 +172,7 @@ func TestIsCiliumManagedIngress(t *testing.T) {
- 			managed: false,
- 		},
- 		{
--			desc: "Cilium isn't IngressClass (annotation missconfigured) and Ingress has no specific class set",
-+			desc: "Cilium isn't IngressClass (annotation misconfigured) and Ingress has no specific class set",
- 			ingress: networkingv1.Ingress{
- 				ObjectMeta: metav1.ObjectMeta{
- 					Namespace: "test",
+@@ -391,7 +391,7 @@ jobs:
+           path: untrusted
+ 
+       - name: Install cilium-cli
+-        uses: cilium/cilium-cli@1ac7fa66909e3730ab3869c8ba7aa7d68f0197fd # v0.20.2
++        uses: cilium/cilium-cli@506c6d8cd165e56a36ce97ed31f67c92d4ae72e1 # v0.20.3
+         with:
+           skip-build: ${{ env.CILIUM_CLI_SKIP_BUILD }}
+           image-repo: ${{ env.CILIUM_CLI_IMAGE_REPO }}
 ```
 
-**File**: `operator/pkg/model/translation/envoy_cluster_mutator.go` (modified, +1/-1)
+**File**: `.github/workflows/conformance-gke.yaml` (modified, +1/-1)
 ```diff
-@@ -178,7 +178,7 @@ func withTLSOrigination(secretsNamespace string, tls *model.BackendTLSOriginatio
- 							// * SecretSync sees ConfigMap reference
- 							// * SecretSync copies ConfigMap into Secret in the configured secrets namespace
- 							// * This translation references that Secret using the shared sync name
--							// * The Cilium Agent reads the Secret directly and suppies it to Envoy via SDS.
-+							// * The Cilium Agent reads the Secret directly and supplies it to Envoy via SDS.
- 							Name: syncnames.SyncedConfigMapSDSSecretName(secretsNamespace, types.NamespacedName{
- 								Namespace: tls.CACertRef.Namespace,
- 								Name:      tls.CACertRef.Name,
+@@ -493,7 +493,7 @@ jobs:
+             --docker-password="${{ secrets.DOCKER_READ_PASSWORD }}"
+ 
+       - name: Install Cilium CLI
+-        uses: cilium/cilium-cli@1ac7fa66909e3730ab3869c8ba7aa7d68f0197fd # v0.20.2
++        uses: cilium/cilium-cli@506c6d8cd165e56a36ce97ed31f67c92d4ae72e1 # v0.20.3
+         with:
+           skip-build: ${{ env.CILIUM_CLI_SKIP_BUILD }}
+           image-repo: ${{ env.CILIUM_CLI_IMAGE_REPO }}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #50183** (2026-11-22): chore(deps): update quay.io/goswagger/swagger docker tag to v0.36.8 (main) (@cilium-renovate[bot])
+- **PR #50182** (2026-11-22): chore(deps): update cilium/cilium-cli action to v0.20.3 (main) (@cilium-renovate[bot])
 - **PR #50171** (closed): [WIP] Move IP Release to agent (@41ks)
 - **PR #50168** (2026-11-20): datapath: remove redundant XDP prefiltering macros (@ekoops)
 - **PR #50166** (2026-11-20): v1.19: backport 50148 (StateDB bump + early pruning test) (@joamaki)
 - **PR #50165** (2026-11-20): v1.20: backport 50148 (StateDB bump + early pruning test) (@joamaki)
-- **PR #50164** (2026-11-20): loadbalancer: Keep non-Kubernetes services on k8s sync (@aanm)
-- **PR #50162** (2026-11-20): bpf/checkpatch: support running in git worktree (@giorio94)
 
 ---
 
@@ -1500,33 +1609,33 @@ Signed-off-by: Ethan Ermovick <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. hubble-relay & cilium-dbg: fix reading config from the environment
+## X. deps): update quay.io/goswagger/swagger docker tag to v0.36.8
 
 **RULE**:
-When implementing operations in `cilium-dbg/cmd/root.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Makefile.defs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fb070362`: hubble-relay & cilium-dbg: fix reading config from the environment. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `73945d29`: deps): update quay.io/goswagger/swagger docker tag to v0.36.8. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cilium-dbg/cmd/root.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Makefile.defs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"strings"
-	vp.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
-	vp.AutomaticEnv() // read in environment variables that match
+SWAGGER_VERSION = 0.36.8
+SWAGGER_IMAGE_SHA = sha256:5a9b6cdce869273a01186bf0ad911f346c3c445b270f9ce912114c64d150e388
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	vp.AutomaticEnv()           // read in environment variables that match
+SWAGGER_VERSION = 0.36.7
+SWAGGER_IMAGE_SHA = sha256:5d57e845c1c34ceb5883b0cba8bdf53e56568acdb6b1aef7ae33fe9336974831
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fb070362` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `73945d29` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

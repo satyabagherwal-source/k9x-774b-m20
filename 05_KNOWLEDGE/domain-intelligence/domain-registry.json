@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T03:54:19.336Z",
+  "last_updated": "2026-11-22T04:05:14.015Z",
   "total_records": 2322,
   "domains": {
     "A": {
@@ -8065,8 +8065,8 @@
       "title": "Product Intelligence: cilium/cilium Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-product-intelligence-cilium-cilium-core-invariants.md",
       "repository": "cilium/cilium",
-      "content_hash": "083afaa0c939f0d71f7c5f7a5338fbada31204eb774b8e930ae8597145792dfa",
-      "created_at": "2026-11-21T00:24:48.091Z"
+      "content_hash": "a56d19c287c1fb3da0a703ea2132947208330d76264803c36e65ac1e109502f7",
+      "created_at": "2026-11-22T04:05:05.524Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-",
@@ -8083,8 +8083,8 @@
       "title": "Product Intelligence: cilium-cilium-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-learnings-product-intelligence-cilium-cilium-learnings-core-invari.md",
       "repository": "cilium-cilium-learnings",
-      "content_hash": "ca8f7f33d544beace1492a9395350be986e32f187b99106d1fe866adba5d8116",
-      "created_at": "2026-11-21T00:24:52.917Z"
+      "content_hash": "45db72b20ca1db07b9badbee2946ea800a0eb230fd1c648ae95ca2147c1c16a1",
+      "created_at": "2026-11-22T04:05:14.015Z"
     },
     "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
@@ -16571,8 +16571,8 @@
       "title": "Technical Construction Intelligence: Agent-Field/agentfield Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-agent-field-agentfield-technical-construction-intelligence-agent-field-agentfiel.md",
       "repository": "Agent-Field/agentfield",
-      "content_hash": "f105b4f6e2d1b54382f371a67be28e869c07bf24e01938cacfb9e5460731140a",
-      "created_at": "2026-11-17T06:20:39.080Z"
+      "content_hash": "4d9e04d62943664f03bd5ea8c438469a4c24ec815aa6b577790288e9463b37e4",
+      "created_at": "2026-11-22T04:05:01.762Z"
     },
     "domain_intelligence-architecture-intelligence-trinodb-trino-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-trinodb-trino-core-invariants",
@@ -16649,8 +16649,8 @@
       "title": "Technical Construction Intelligence: agent-field-agentfield-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-agent-field-agentfield-learnings-technical-construction-intelligence-agent-field.md",
       "repository": "agent-field-agentfield-learnings",
-      "content_hash": "b503719843cd6d5c51770e5cd71806cb78b67eacea997d9e07e78cc68ec6caf8",
-      "created_at": "2026-11-17T06:20:46.009Z"
+      "content_hash": "0c63978fcb13013e9122cf81f8d63a6557e67c751c1a5e3f059d50f98cac4366",
+      "created_at": "2026-11-22T04:05:12.250Z"
     },
     "domain_intelligence-research-knowledge-intelligence-mudler-locate-anything-cpp-gguf-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-mudler-locate-anything-cpp-gguf-core-invariants",
@@ -25243,8 +25243,8 @@
       "title": "Research & Knowledge Intelligence: xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic-research-knowledge-in.md",
       "repository": "xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic",
-      "content_hash": "e6637b04ede954e6a14953fa698ed7912d92d8fa41cd065f9052d833475dfe11",
-      "created_at": "2026-11-17T00:11:21.307Z"
+      "content_hash": "54263d8ec1bc401dfc8a4fe7a6264aa58e8b76aab0c9e916deeece0d4674eff6",
+      "created_at": "2026-11-22T04:04:53.008Z"
     },
     "domain_intelligence-technical-construction-intelligence-zeronsh-zeron-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-zeronsh-zeron-learnings-core-invariants",
@@ -25261,8 +25261,8 @@
       "title": "Research & Knowledge Intelligence: hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic-learnings-research-kn.md",
       "repository": "hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-learnings",
-      "content_hash": "fab0be49a6d0b899c9d1a508701ad9fac3dedae8fa8de9f62c4d901b5e644ae3",
-      "created_at": "2026-11-17T00:11:24.771Z"
+      "content_hash": "e2b0b81ba611f9f5993914b7694533187302e62f81fe54a1e0e417a8adc4808e",
+      "created_at": "2026-11-22T04:05:10.924Z"
     },
     "domain_intelligence-technical-construction-intelligence-authzed-spicedb-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-authzed-spicedb-learnings-core-invariants",
@@ -29335,8 +29335,8 @@
       "title": "Quality & Verification Intelligence: xerj-org/xerj Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-xerj-org-xerj-quality-verification-intelligence-xerj-org-xerj-core-invariants.md",
       "repository": "xerj-org/xerj",
-      "content_hash": "d81b2b84f92bebb7366034a5d70d6ae60e6dae055716d48572b5e8e02e50c807",
-      "created_at": "2026-11-19T20:55:54.138Z"
+      "content_hash": "db45ad6871e751b21b2717488db1094be171b0554bacee5be73fc9c5ef8dcce8",
+      "created_at": "2026-11-22T04:05:07.580Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-r1-learnings-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-r1-learnings-core-invari",

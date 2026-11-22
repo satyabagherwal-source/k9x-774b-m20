@@ -46,8 +46,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-22T03:25:04.709Z",
-    "lastVerified": "2026-11-22T03:25:04.709Z",
+    "lastChecked": "2026-11-22T04:05:04.111Z",
+    "lastVerified": "2026-11-22T04:05:04.111Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-22T03:54:16.872Z",
-    "lastVerified": "2026-11-22T03:54:16.872Z",
+    "lastChecked": "2026-11-22T04:05:10.577Z",
+    "lastVerified": "2026-11-22T04:05:10.577Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -1897,22 +1897,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "cilium-cilium": {
-    "name": "cilium",
+    "name": "cilium/cilium",
     "officialUrl": "https://github.com/cilium/cilium",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-21T22:48:28.505Z",
-    "lastVerified": "2026-11-21T22:48:28.505Z",
+    "lastChecked": "2026-11-22T04:05:04.083Z",
+    "lastVerified": "2026-11-22T04:05:04.083Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cilium-cilium",
-    "contentHash": "412fc6b9a38d1c2b88540e4a7ff7b72d75a7be9bc4dfb90be37e40767ef16606",
+    "contentHash": "8791ca9ebd41607d61fdef41322353bd9520919dbba47421856dc2c8ee47bd1b",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "fb070362"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "zilliztech-claude-context": {
     "name": "claude-context",
@@ -3055,14 +3054,14 @@
     "officialUrl": "https://github.com/xerj-org/xerj",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T23:39:55.095Z",
-    "lastVerified": "2026-11-20T23:39:55.095Z",
+    "lastChecked": "2026-11-22T04:05:06.081Z",
+    "lastVerified": "2026-11-22T04:05:06.081Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-xerj-org-xerj",
-    "contentHash": "54ec977f51b64578a7729c622b6f59a8d2f9705bd2c7c701113ba185ef851c16",
+    "contentHash": "3360cd512888dfb90bec5e7e4ba38f0cd63b4fa1d9f0dabd8d1c3511b984d46d",
     "promotedRulesCount": 1,
-    "recentFixesCount": 18,
+    "recentFixesCount": 15,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4207,22 +4206,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "agent-field-agentfield": {
-    "name": "agentfield",
+    "name": "Agent-Field/agentfield",
     "officialUrl": "https://github.com/Agent-Field/agentfield",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-21T00:43:45.594Z",
-    "lastVerified": "2026-11-21T00:43:45.594Z",
+    "lastChecked": "2026-11-22T04:05:00.808Z",
+    "lastVerified": "2026-11-22T04:05:00.808Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-agent-field-agentfield",
-    "contentHash": "3a71a19a88fedcdff863138cb65849f0191e4ea1fe8bafc09e3312e914d42169",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "contentHash": "54347a21b1477fc19caa974e3f9e4a960ed1c2b9c0a7516526e1b46e7537d527",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "d81cedf4"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "erikgrinaker-toydb": {
     "name": "toydb",
@@ -5443,9 +5441,9 @@
   "learnapollo-learnapollo": {
     "name": "learnapollo",
     "officialUrl": "https://github.com/learnapollo/learnapollo",
-    "lastChecked": "2026-11-18T23:26:04.530Z",
+    "lastChecked": "2026-11-22T04:04:54.098Z",
     "revisionIdentifier": "dea1677e",
-    "lastVerified": "2026-11-18T23:26:04.530Z"
+    "lastVerified": "2026-11-22T04:04:54.098Z"
   },
   "orange-cyberdefense-goad": {
     "name": "GOAD",
@@ -5880,9 +5878,9 @@
   "gotham-rs-gotham": {
     "name": "gotham",
     "officialUrl": "https://github.com/gotham-rs/gotham",
-    "lastChecked": "2026-11-20T17:45:10.837Z",
+    "lastChecked": "2026-11-22T04:04:48.958Z",
     "revisionIdentifier": "53fe844b",
-    "lastVerified": "2026-11-20T17:45:10.837Z"
+    "lastVerified": "2026-11-22T04:04:48.958Z"
   },
   "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese": {
     "name": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
@@ -13563,6 +13561,23 @@
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-baidu-ernie-5-5-flash-base",
     "contentHash": "eb5085b738b0bb9de5ade32e96f66b98baa71b36f84bf37fee59069a55794911",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic": {
+    "name": "xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic",
+    "officialUrl": "https://huggingface.co/xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-22T04:04:51.910Z",
+    "lastVerified": "2026-11-22T04:04:51.910Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic",
+    "contentHash": "5d396204dfe8b9debd3a85293b8f4a164895e061dce2346f8fd8626025413783",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

@@ -12034,3 +12034,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-unsloth-qwen3-8-flash-next-gguf` | `https://huggingface.co/unsloth/Qwen3.8-Flash-Next-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-22T03:46:14.133Z |
 | `learn-github-ntex-rs-ntex` | `https://github.com/ntex-rs/ntex` | `4adf6cd3` | Multi-dimensional audit evidence | 2026-11-22T03:46:15.158Z |
 | `learn-huggingface-baidu-ernie-5-5-flash-base` | `https://huggingface.co/baidu/ERNIE-5.5-Flash-Base` | `hf-baidu-e` | Multi-dimensional audit evidence | 2026-11-22T03:54:05.405Z |
+| `learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic` | `https://huggingface.co/xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic` | `hf-xtools-` | Multi-dimensional audit evidence | 2026-11-22T04:04:52.798Z |
+| `learn-github-agent-field-agentfield` | `https://github.com/Agent-Field/agentfield` | `4e9fb95b` | Multi-dimensional audit evidence | 2026-11-22T04:05:01.338Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `73945d29` | Multi-dimensional audit evidence | 2026-11-22T04:05:05.144Z |
+| `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `34a14c0d` | Multi-dimensional audit evidence | 2026-11-22T04:05:07.194Z |

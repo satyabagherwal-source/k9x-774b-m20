@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T03:54:05.411Z",
-  "total_cycles_completed": 11410,
-  "total_learnings_persisted": 11410,
-  "total_rules_promoted": 10702,
+  "last_updated": "2026-11-22T04:05:07.199Z",
+  "total_cycles_completed": 11414,
+  "total_learnings_persisted": 11414,
+  "total_rules_promoted": 10704,
   "history": [
-    {
-      "timestamp": "2026-11-21T11:38:41.870Z",
-      "repository": "argoproj/argo-workflows",
-      "learningId": "learn-github-argoproj-argo-workflows",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T11:38:46.722Z",
-      "repository": "arangodb/arangodb",
-      "learningId": "learn-github-arangodb-arangodb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T11:55:18.498Z",
-      "repository": "dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
-      "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T11:55:20.202Z",
-      "repository": "BurntSushi/ripgrep",
-      "learningId": "learn-github-burntsushi-ripgrep",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T11:55:26.649Z",
       "repository": "expo/expo",
@@ -1403,6 +1375,34 @@
       "repository": "baidu/ERNIE-5.5-Flash-Base",
       "learningId": "learn-huggingface-baidu-ernie-5-5-flash-base",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T04:04:52.804Z",
+      "repository": "xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic",
+      "learningId": "learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T04:05:01.373Z",
+      "repository": "Agent-Field/agentfield",
+      "learningId": "learn-github-agent-field-agentfield",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T04:05:05.149Z",
+      "repository": "cilium/cilium",
+      "learningId": "learn-github-cilium-cilium",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T04:05:07.199Z",
+      "repository": "xerj-org/xerj",
+      "learningId": "learn-github-xerj-org-xerj",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

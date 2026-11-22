@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T03:54:05.414Z",
+  "last_updated": "2026-11-22T04:05:07.203Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4281,14 +4281,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-xerj-org-xerj",
-      "content_hash": "54ec977f51b64578a7729c622b6f59a8d2f9705bd2c7c701113ba185ef851c16",
-      "verified_at": "2026-11-20T23:39:56.337Z",
+      "content_hash": "3360cd512888dfb90bec5e7e4ba38f0cd63b4fa1d9f0dabd8d1c3511b984d46d",
+      "verified_at": "2026-11-22T04:05:07.202Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T23:39:56.337Z"
+      "last_updated": "2026-11-22T04:05:07.202Z"
     },
     "markmead/hyperui": {
       "repository": "markmead/hyperui",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "412fc6b9a38d1c2b88540e4a7ff7b72d75a7be9bc4dfb90be37e40767ef16606",
-      "verified_at": "2026-11-21T00:24:47.786Z",
+      "content_hash": "8791ca9ebd41607d61fdef41322353bd9520919dbba47421856dc2c8ee47bd1b",
+      "verified_at": "2026-11-22T04:05:05.152Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T00:24:47.786Z"
+      "last_updated": "2026-11-22T04:05:05.152Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",
@@ -6591,14 +6591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-agent-field-agentfield",
-      "content_hash": "3a71a19a88fedcdff863138cb65849f0191e4ea1fe8bafc09e3312e914d42169",
-      "verified_at": "2026-11-20T00:06:38.555Z",
+      "content_hash": "54347a21b1477fc19caa974e3f9e4a960ed1c2b9c0a7516526e1b46e7537d527",
+      "verified_at": "2026-11-22T04:05:01.376Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T00:06:38.555Z"
+      "last_updated": "2026-11-22T04:05:01.376Z"
     },
     "typedb/typedb": {
       "repository": "typedb/typedb",
@@ -18231,14 +18231,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic",
-      "content_hash": "568622441e630b7d63b2a7f0a57df5dd7f184462df5895840c3c99e6524f06d1",
-      "verified_at": "2026-11-17T00:11:21.153Z",
+      "content_hash": "5d396204dfe8b9debd3a85293b8f4a164895e061dce2346f8fd8626025413783",
+      "verified_at": "2026-11-22T04:04:52.807Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T00:11:21.153Z"
+      "last_updated": "2026-11-22T04:04:52.807Z"
     },
     "PrunaAI/P-H3-Image": {
       "repository": "PrunaAI/P-H3-Image",

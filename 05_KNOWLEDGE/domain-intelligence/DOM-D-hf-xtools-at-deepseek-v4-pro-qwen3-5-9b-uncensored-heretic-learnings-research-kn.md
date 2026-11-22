@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T00:11:24.681Z",
+  "timestamp": "2026-11-22T04:05:10.816Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T00:11:24.681Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T04:05:10.816Z`  
 > **Learning ID**: `LEARN-EVO-hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-xtools-at`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T00:11:20.753Z  
+> **Timestamp**: 2026-11-22T04:04:52.305Z  
 > **Learning ID**: `learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic](https://huggingface.co/xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T00:10:41.324Z  
+> **Harvest Timestamp**: 2026-11-22T04:04:51.910Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 29567 downloads | 8695 likes
+- **Stars / Engagement**: 42676 downloads | 6613 likes
 
 ---
 

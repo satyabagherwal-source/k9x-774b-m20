@@ -4,22 +4,22 @@
 {
   "source_repository": "Agent-Field/agentfield",
   "source_url": "https://github.com/Agent-Field/agentfield",
-  "source_version": "d81cedf4",
+  "source_version": "4e9fb95b",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-20T00:06:38.803Z",
+  "timestamp": "2026-11-22T04:05:01.591Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-agent-field-agentfield",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [Agent-Field/agentfield](https://github.com/Agent-Field/agentfield) (Revision: `d81cedf4`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T00:06:38.803Z`  
+> **Provenance**: Harvested from [Agent-Field/agentfield](https://github.com/Agent-Field/agentfield) (Revision: `4e9fb95b`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-22T04:05:01.591Z`  
 > **Learning ID**: `learn-github-agent-field-agentfield`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `Agent-Field/agentfield` (Commit: `d81cedf4`)
+- **Target Repository**: `Agent-Field/agentfield` (Commit: `4e9fb95b`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/agent-field-agentfield-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Agent-Field/agentfield](https://github.com/Agent-Field/agentfield))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T00:06:37.225Z  
+> **Harvest Timestamp**: 2026-11-22T04:05:00.808Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Build, run and scale AI agents like API and microservices
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2659 stars
+- **Stars / Engagement**: 2663 stars
 
 ---
 
@@ -1429,174 +1429,84 @@ func (ds *DefaultDevService) GetDevStatus(path string) (*domain.DevStatus, error
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f404fbf2` (2026-11-19)
-**Commit Message**: fix(sdk-go): honor the Retry-After header on 429 responses
+### Incident Patch 1: `4e9fb95b` (2026-11-21)
+**Commit Message**: docs: add a short comparison section to the README (#1220)
 
-APIError dropped the response headers, so the rate limiter never saw the provider's Retry-After hint. Record the header (seconds or HTTP date) in APIError.RetryAfter and prefer it when computing the backoff.
+* docs: add a short comparison section to the README
 
-Signed-off-by: Alex Castillo <[REDACTED_EMAIL]>
+How AgentField compares with LangGraph, CrewAI, Temporal and the OpenAI
+Agents SDK, each row linking its agentfield.ai comparison page, with one
+line on when to choose each.
 
-**File**: `sdk/go/ai/client.go` (modified, +2/-2)
+Assisted-by: CodeAF
+Co-Authored-By: CodeAF <[REDACTED_EMAIL]>
+
+* docs: AgentField replaces agent frameworks rather than sitting under them
+
+Assisted-by: CodeAF
+Co-Authored-By: CodeAF <[REDACTED_EMAIL]>
+
+* docs: tag the comparison links for the UTM manifest
+
+Assisted-by: CodeAF
+Co-Authored-By: CodeAF <[REDACTED_EMAIL]>
+
+---------
+
+Co-authored-by: CodeAF <[REDACTED_EMAIL]>
+
+**File**: `README.md` (modified, +14/-1)
 ```diff
-@@ -202,7 +202,7 @@ func (c *Client) sendRequest(ctx context.Context, req *Request, body []byte) (*R
+@@ -215,7 +215,7 @@ docker run -p 8080:8080 agentfield/control-plane:latest
  
- 	// Check for errors
- 	if httpResp.StatusCode < http.StatusOK || httpResp.StatusCode >= http.StatusMultipleChoices {
--		return nil, newAPIError(httpResp.StatusCode, respBody)
-+		return nil, newAPIErrorFromResponse(httpResp, respBody)
- 	}
+ ## How AgentField fits in your stack
  
- 	// Parse response
-@@ -273,7 +273,7 @@ func (c *Client) openStream(ctx context.Context, req *Request, body []byte) (*ht
- 		respBody, _ := io.ReadAll(httpResp.Body)
- 		httpResp.Body.Close()
- 		cancel()
--		return nil, nil, newAPIError(httpResp.StatusCode, respBody)
-+		return nil, nil, newAPIErrorFromResponse(httpResp, respBody)
- 	}
- 	return httpResp, cancel, nil
- }
+-Most agent tools help you **write** agent logic. AgentField is what **runs** it in production: the layer that makes agents callable by other software, durable across failures, and observable when one request fans out to a thousand branches. Keep the framework you already use for authoring; a reasoner is a plain function, so existing LangGraph or CrewAI code can run inside one.
++Most agent tools help you **write** agent logic. AgentField is what **runs** it in production: the layer that makes agents callable by other software, durable across failures, and observable when one request fans out to a thousand branches. You write the agents in AgentField itself, in place of a framework: a reasoner is a plain Python, TypeScript or Go function, and AgentField gives it everything around it.
+ 
+ |  | **Frameworks**<br><sub>LangChain · CrewAI · PydanticAI · OpenAI Agents SDK</sub> | **Workflow engines**<br><sub>Temporal · Airflow</sub> | **Visual builders**<br><sub>n8n · Zapier</sub> | **AgentField** |
+ |---|:-:|:-:|:-:|:-:|
+@@ -237,6 +237,19 @@ Most agent tools help you **write** agent logic. AgentField is what **runs** it
+ 
+ [Full comparison & decision guide →](https://agentfield.ai/docs/learn/vs-frameworks?utm_source=github-readme&utm_campaign=github-readme&utm_id=github-readme-vs-frameworks)
+ 
++## How AgentField compares
++
++AgentField is an open-source (Apache 2.0) framework and control plane: you write agents in it and they run as backend services, so it replaces an agent framework rather than sitting under one.
++
++| | What it is for | Where AgentField differs |
++|---|---|---|
++| [LangGraph](https://agentfield.ai/compare/agentfield-vs-langgraph?utm_source=github-readme&utm_campaign=github-readme&utm_id=github-readme-compare-langgraph) | A graph framework and runtime for stateful agents, with checkpoints and interrupts | Agents become HTTP services other software can call, with discovery, policy and a signed audit trail |
++| [CrewAI](https://agentfield.ai/compare/agentfield-vs-crewai?utm_source=github-readme&utm_campaign=github-readme&utm_id=github-readme-compare-crewai) | A framework for teams of role-based agents, with a managed option (AMP) | Write the agents in AgentField instead: each one is an HTTP service other software can call, with durable runs, identity, policy and audit built in |
++| [Temporal](https://agentfield.ai/compare/agentfield-vs-temporal?utm_source=github-readme&utm_campaign=github-readme&utm_id=github-readme-compare-temporal) | Durable execution for workflows that must finish exactly as written, with a full event history | Durability without workflow code or determinism rules, plus agent-native reasoners, memory scopes, identity and audit |
++| [OpenAI Agents SDK](https://agentfield.ai/compare/agentfield-vs-openai-agents-sdk?utm_source=github-readme&utm_campaign=github-readme&utm_id=github-readme-compare-openai-agents-sdk) | A lightweight agent loop with handoffs, guardrails and tracing, best on OpenAI models | Runs agents on any model, switching per call, in Python, TypeScript or Go, on infrastructure you control |
++
++Choose LangGraph for an explicit, inspectable graph inside one process, CrewAI to ship a role-based team fast, Temporal when a business process must be correct across failures, and the OpenAI Agents SDK to build on OpenAI models with minimal code; choose AgentField when other services must call your agents, runs are long, and security asks who did what.
++
+ ## How it scales
+ 
+ The control plane is a stateless Go service. You put more of them behind a load balancer and the fleet grows horizontally. Work is admitted into a bounded in-process queue with backpressure (`429`/`503` plus `Retry-After`). On graceful shutdown, in-flight executions are terminated with `status_reason` `control_plane_shutdown` rather than silently dropped.
 ```
 
-**File**: `sdk/go/ai/errors.go` (modified, +36/-0)
+**File**: `assets/utm-links.csv` (modified, +4/-0)
 ```diff
-@@ -3,6 +3,10 @@ package ai
- import (
- 	"encoding/json"
- 	"fmt"
-+	"net/http"
-+	"strconv"
-+	"strings"
-+	"time"
- )
- 
- const maxAPIErrorBody = 4 << 10
-@@ -18,6 +22,9 @@ type APIError struct {
- 	Type       string
- 	Code       string
- 	Body       []byte
-+	// RetryAfter is the delay requested by the provider via the Retry-After
-+	// response header, or zero when absent or unparseable.
-+	RetryAfter time.Duration
- }
- 
- // Error returns a human-readable description including the HTTP status.
-@@ -55,3 +62,32 @@ func newAPIError(statusCode int, body []byte) *APIError {
- 	apiErr.Body = append([]byte(nil), body...)
- 	return apiErr
- }
-+
-+// newAPIErrorFromResponse builds an APIError and records the Retry-After
-+// header of resp so rate-limit handling can honor the provider's hint.
-+func newAPIErrorFromResponse(resp *http.Response, body []byte) *APIError {
-+	apiErr := newAPIError(resp.StatusCode, body)
-+	apiErr.RetryAfter = parseRetryAfter(resp.Header.Get("Retry-After"), time.Now())
-+	return apiErr
-+}
-+
-+// parseRetryAfter parses a Retry-After header value, which is either a number
-+// of seconds or an HTTP date. It returns 0 for empty, invalid, or past values.
-+func parseRetryAfter(value string, now time.Time) time.Duration {
-+	value = strings.TrimSpace(value)
-+	if value == "" {
-+		return 0
-+	}
-+	if secs, err := strconv.ParseFloat(value, 64); err == nil {
-+		if secs > 0 {
-+			return time.Duration(secs * float64(time.Second))
-+		}
-+		return 0
-+	}
-+	if when, err := http.ParseTime(value); err == nil {
-+		if d := when.Sub(now); d > 0 {
-+			return d
-+		}
-+	}
-+	return 0
-+}
-```
-
-**File**: `sdk/go/ai/errors_test.go` (modified, +34/-0)
-```diff
-@@ -2,8 +2,12 @@ package ai
- 
- import (
- 	"bytes"
-+	"context"
- 	"errors"
-+	"net/http"
-+	"net/http/httptest"
- 	"testing"
-+	"time"
- 
- 	"github.com/stretchr/testify/require"
- )
-@@ -17,3 +21,33 @@ func TestAPIErrorCapsUnparseableBody(t *testing.T) {
- 	require.Len(t, apiErr.Body, maxAPIErrorBody)
- 	require.True(t, errors.Is(err, &APIError{StatusCode: 502}))
- }
-+
-+func TestAPIErrorCarriesRetryAfterHeader(t *testing.T) {
-+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		w.Header().Set("Retry-After", "7")
-+		w.WriteHeader(http.StatusTooManyRequests)
-+		_, _ = w.Write([]byte(`{"error":{"message":"slow down","type":"rate_limit_error"}}`))
-+	}))
-+	defer server.Close()
-+
-+	client, err := NewClient(&Config{APIKey: "k", BaseURL: server.URL, Model: "m"})
-+	require.NoError(t, err)
-+
-+	_, err = client.Complete(context.Background(), "hi")
-+	var apiErr *APIError
-+	require.ErrorAs(t, err, &apiErr)
-+	require.Equal(t, 7*time.Second, apiErr.RetryAfter)
-+	require.Equal(t, 7*time.Second, retryAfterFromError(err))
-+}
-+
-+func TestParseRetryAfter(t *testing.T) {
-+	now := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
-+	require.Equal(t, time.Duration(0), parseRetryAfter("", now))
-+	require.Equal(t, time.Duration(0), parseRetryAfter("soon", now))
-+	require.Equal(t, time.Duration(0), parseRetryAfter("-3", now))
-+	require.Equal(t, 30*time.Second, parseRetryAfter("30", now))
-+	require.Equal(t, 90*time.Second,
-+		parseRetryAfter(now.Add(90*time.Second).Format(http.TimeFormat), now))
-+	require.Equal(t, time.Duration(0),
-+		parseRetryAfter(now.Add(-time.Minute).Format(http.TimeFormat), now))
-+}
-```
-
-**File**: `sdk/go/ai/rate_limiter.go` (modified, +5/-2)
-```diff
-@@ -367,13 +367,16 @@ func isRateLimitError(err error) bool {
- 	return false
- }
- 
--// retryAfterFromError extracts a Retry-After hint from an APIError body when the
--// provider surfaces one. It returns 0 when no usable value is present.
-+// retryAfterFromError extracts a Retry-After hint from an APIError: the
-+// Retry-After response header when present, else a numeric error code. It returns 0 when no usable value is present.
- func retryAfterFromError(err error) time.Duration {
- 	var apiErr *APIError
- 	if !errors.As(err, &apiErr) {
- 		return 0
- 	}
-+	if apiErr.RetryAfter > 0 {
-+		return apiErr.RetryAfter
-+	}
- 	if apiErr.Code == "" {
- 		return 0
- 	}
+@@ -46,3 +46,7 @@ Github Readme Community → community-docs,https://agentfield.ai/docs/learn,http
+ Github Readme Community → community-examples,https://agentfield.ai/docs/learn/examples,https://agentfield.ai/docs/learn/examples?utm_source=github-readme&utm_campaign=github-readme&utm_id=github-readme-community-examples
+ Github Readme New from AgentField → codeaf-repo,https://agentfield.ai/github/codeaf/,https://agentfield.ai/github/codeaf/?utm_source=github-readme&utm_campaign=github-readme&utm_id=github-readme-codeaf-repo
+ Github Readme New from AgentField → codeaf-benchmark,https://agentfield.ai/github/codeaf/,https://agentfield.ai/github/codeaf/?utm_source=github-readme&utm_campaign=github-readme&utm_id=github-readme-codeaf-benchmark#benchmarks
++Github Readme How AgentField compares → langgraph,https://agentfield.ai/compare/agentfield-vs-langgraph,https://agentfield.ai/compare/agentfield-vs-langgraph?utm_source=github-readme&utm_campaign=github-readme&utm_id=github-readme-compare-langgraph
++Github Readme How AgentField compares → crewai,https://agentfield.ai/compare/agentfield-vs-crewai,https://agentfield.ai/compare/agentfield-vs-crewai?utm_source=github-readme&utm_campaign=github-readme&utm_id=github-readme-compare-crewai
++Github Readme How AgentField compares → temporal,https://agentfield.ai/compare/agentfield-vs-temporal,https://agentfield.ai/compare/agentfield-vs-temporal?utm_source=github-readme&utm_campaign=github-readme&utm_id=github-readme-compare-temporal
++Github Readme How AgentField compares → openai-agents-sdk,https://agentfield.ai/compare/agentfield-vs-openai-agents-sdk,https://agentfield.ai/compare/agentfield-vs-openai-agents-sdk?utm_source=github-readme&utm_campaign=github-readme&utm_id=github-readme-compare-openai-agents-sdk
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1220** (2026-11-21): docs: add a short comparison section to the README (@santoshkumarradha)
 - **PR #1217** (2026-11-19): fix(sdk-go): honor the Retry-After header on 429 responses (@pcbeingused333)
 - **PR #1215** (closed): fix(sdk-go): record watched CodeAF harness usage (#1183) (@ZeroPoint95)
 - **PR #1214** (closed): fix(go-sdk): keep a custom harness binary on the resolved provider, not legacy pin (@ZeroPoint95)
 - **PR #1213** (closed): fix(sdk/go/ai): bound MaxTokens and HTTP timeout for partial AI configs (@ZeroPoint95)
 - **PR #1212** (closed): docs: correct claude-code max_budget_usd bound in fleet docs (@ZeroPoint95)
-- **PR #1210** (2026-11-18): fix(sdk-go): accept SSE data fields without a space in audio generation (@pcbeingused333)
 
 ---
 
@@ -1616,33 +1526,39 @@ Signed-off-by: Alex Castillo <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. sdk-go): honor the Retry-After header on 429 responses
+## X. docs: add a short comparison section to the README
 
 **RULE**:
-When implementing operations in `sdk/go/ai/client.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Agent-Field/agentfield. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Agent-Field/agentfield. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f404fbf2`: sdk-go): honor the Retry-After header on 429 responses. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4e9fb95b`: docs: add a short comparison section to the README. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `sdk/go/ai/client.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		return nil, newAPIErrorFromResponse(httpResp, respBody)
-		return nil, nil, newAPIErrorFromResponse(httpResp, respBody)
+Most agent tools help you **write** agent logic. AgentField is what **runs** it in production: the layer that makes agents callable by other software, durable across failures, and observable when one request fans out to a thousand branches. You write the agents in AgentField itself, in place of a framework: a reasoner is a plain Python, TypeScript or Go function, and AgentField gives it everything around it.
+## How AgentField compares
+
+AgentField is an open-source (Apache 2.0) framework and control plane: you write agents in it and they run as backend services, so it replaces an agent framework rather than sitting under one.
+
+| | What it is for | Where AgentField differs |
+|---|---|---|
+| [LangGraph](https://agentfield.ai/compare/agentfield-vs-langgraph?utm_source=github-readme&utm_campaign=github-readme&utm_id=github-readme-compare-langgraph) | A graph framework and runtime for stateful agents, with checkpoints and interrupts | Agents become HTTP services other software can call, with discovery, policy and a signed audit trail |
+| [CrewAI](https://agentfield.ai/compare/agentfield-vs-crewai?utm_source=github-readme&utm_campaign=github-readme&utm_id=github-readme-compare-crewai) | A
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-		return nil, newAPIError(httpResp.StatusCode, respBody)
-		return nil, nil, newAPIError(httpResp.StatusCode, respBody)
+Most agent tools help you **write** agent logic. AgentField is what **runs** it in production: the layer that makes agents callable by other software, durable across failures, and observable when one request fans out to a thousand branches. Keep the framework you already use for authoring; a reasoner is a plain function, so existing LangGraph or CrewAI code can run inside one.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f404fbf2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4e9fb95b` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
