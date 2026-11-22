@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T10:18:09.076Z",
-  "total_records": 2344,
+  "last_updated": "2026-11-22T10:30:04.030Z",
+  "total_records": 2346,
   "domains": {
     "A": {
       "total": 17,
@@ -1090,7 +1090,7 @@
       ]
     },
     "G": {
-      "total": 388,
+      "total": 390,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1479,7 +1479,9 @@
         "domain_intelligence-architecture-intelligence-tencent-hy-simulmt-30b-a3b-fp8-core-invariants",
         "domain_intelligence-architecture-intelligence-hf-tencent-hy-simulmt-30b-a3b-fp8-learnings-core-invar",
         "domain_intelligence-architecture-intelligence-nativewind-nativewind-core-invariants",
-        "domain_intelligence-architecture-intelligence-nativewind-nativewind-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-nativewind-nativewind-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-xevrion-hatchzip-core-invariants",
+        "domain_intelligence-architecture-intelligence-xevrion-hatchzip-learnings-core-invariants"
       ]
     },
     "H": {
@@ -24142,8 +24144,8 @@
       "title": "Research & Knowledge Intelligence: IFM/PAN2 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ifm-pan2-research-knowledge-intelligence-ifm-pan2-core-invariants.md",
       "repository": "IFM/PAN2",
-      "content_hash": "20f61726883e024e14407ab31249e2463658f109495904f7d77793bc5bb7d66c",
-      "created_at": "2026-11-16T14:34:41.224Z"
+      "content_hash": "6947a27e732f1ba32445b5d888ced7365af7e813e0bdc5bdfdf0fe22f004c4eb",
+      "created_at": "2026-11-22T10:29:45.343Z"
     },
     "domain_intelligence-content-information-intelligence-vectifyai-pageindex-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-vectifyai-pageindex-core-invariants",
@@ -24202,8 +24204,8 @@
       "title": "Research & Knowledge Intelligence: hf-ifm-pan2-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ifm-pan2-learnings-research-knowledge-intelligence-hf-ifm-pan2-learnings-core.md",
       "repository": "hf-ifm-pan2-learnings",
-      "content_hash": "9f6af11699805a76fa410eaa7b31908b8e13cb678c38131204a80f38ed5d17cf",
-      "created_at": "2026-11-16T14:35:30.855Z"
+      "content_hash": "ca676a3407ad58dd186404e7432f8ffdeea07cfb924cbe7ed9e120cbd791a72f",
+      "created_at": "2026-11-22T10:30:03.431Z"
     },
     "domain_intelligence-content-information-intelligence-vectifyai-pageindex-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-vectifyai-pageindex-learnings-core-invariants",
@@ -26315,8 +26317,8 @@
       "title": "Architecture Intelligence: gluesql/gluesql Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-gluesql-gluesql-architecture-intelligence-gluesql-gluesql-core-invariants.md",
       "repository": "gluesql/gluesql",
-      "content_hash": "cbeab920b39c00441629baa8fb296a4cb009aaa50f2c23329207fdf6be308e5f",
-      "created_at": "2026-11-17T06:28:31.635Z"
+      "content_hash": "68e0dd42bc633ac27ac225aeed5071567a92a26c0b4500302d23d11419c0a297",
+      "created_at": "2026-11-22T10:29:59.494Z"
     },
     "domain_intelligence-design-intelligence-cypress-io-cypress-learnings-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-cypress-io-cypress-learnings-core-invariants",
@@ -26333,8 +26335,8 @@
       "title": "Architecture Intelligence: gluesql-gluesql-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-gluesql-gluesql-learnings-architecture-intelligence-gluesql-gluesql-learnings-co.md",
       "repository": "gluesql-gluesql-learnings",
-      "content_hash": "0c9ea87822c46021d2c03000aa3f57829691ba48d28e96f7eaf8eab325da3ae6",
-      "created_at": "2026-11-17T06:28:36.391Z"
+      "content_hash": "735bb9891b49e85a5998d83a9d47e02aba8f29a9316eaad157377548184ac650",
+      "created_at": "2026-11-22T10:30:04.030Z"
     },
     "domain_intelligence-architecture-intelligence-webdriverio-webdriverio-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-webdriverio-webdriverio-core-invariants",
@@ -39528,6 +39530,24 @@
       "repository": "hf-davidau-qwen3.5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf-learnings",
       "content_hash": "0809373e1fe246adc52d81756eaf72d7b74813135546b0b3178f49b8d930008f",
       "created_at": "2026-11-22T08:22:59.673Z"
+    },
+    "domain_intelligence-architecture-intelligence-xevrion-hatchzip-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-xevrion-hatchzip-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: xevrion/hatchzip Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-xevrion-hatchzip-architecture-intelligence-xevrion-hatchzip-core-invariants.md",
+      "repository": "xevrion/hatchzip",
+      "content_hash": "b70f86a6b8dbf160dafa6c1832ee40bcf0f43f84e52a4ede42abc6faa1cbfff3",
+      "created_at": "2026-11-22T10:29:47.566Z"
+    },
+    "domain_intelligence-architecture-intelligence-xevrion-hatchzip-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-xevrion-hatchzip-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: xevrion-hatchzip-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-xevrion-hatchzip-learnings-architecture-intelligence-xevrion-hatchzip-learnings-.md",
+      "repository": "xevrion-hatchzip-learnings",
+      "content_hash": "6472e6eef950379910f1456575169ea0f1e597e94ed863fcf081458fe341522b",
+      "created_at": "2026-11-22T10:30:02.903Z"
     }
   }
 }

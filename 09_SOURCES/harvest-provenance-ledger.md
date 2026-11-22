@@ -12103,3 +12103,6 @@ Every entry in this ledger must capture:
 | `learn-github-slatedb-slatedb` | `https://github.com/slatedb/slatedb` | `864e081b` | Multi-dimensional audit evidence | 2026-11-22T10:03:56.574Z |
 | `learn-huggingface-autotrust-autotrust-decider-pro-vision-27b` | `https://huggingface.co/autotrust/AutoTrust-Decider-Pro-Vision-27B` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-22T10:17:55.625Z |
 | `learn-github-tencent-tds-kuiklyui` | `https://github.com/Tencent-TDS/KuiklyUI` | `d606ca05` | Multi-dimensional audit evidence | 2026-11-22T10:18:02.910Z |
+| `learn-huggingface-ifm-pan2` | `https://huggingface.co/IFM/PAN2` | `hf-ifm-pan` | Multi-dimensional audit evidence | 2026-11-22T10:29:45.140Z |
+| `learn-github-xevrion-hatchzip` | `https://github.com/xevrion/hatchzip` | `2a25c9e6` | Multi-dimensional audit evidence | 2026-11-22T10:29:47.183Z |
+| `learn-github-gluesql-gluesql` | `https://github.com/gluesql/gluesql` | `3635d34e` | Multi-dimensional audit evidence | 2026-11-22T10:29:59.114Z |

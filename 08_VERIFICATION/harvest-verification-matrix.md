@@ -12070,3 +12070,6 @@
 | `CYCLE-20261122-6AZD` | `2026-11-22T10:03:56.569Z` | `slatedb/slatedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9918` | Yes (`2ede2fd8...`) |
 | `CYCLE-20261122-OAED` | `2026-11-22T10:17:55.621Z` | `autotrust/AutoTrust-Decider-Pro-Vision-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-autotrust-decider-pro-vision-27b-learnings.md` | Yes (`0695461a...`) |
 | `CYCLE-20261122-OG0Q` | `2026-11-22T10:18:02.906Z` | `Tencent-TDS/KuiklyUI` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9919` | Yes (`b11d6a74...`) |
+| `CYCLE-20261122-3HV3` | `2026-11-22T10:29:45.135Z` | `IFM/PAN2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ifm-pan2-learnings.md` | Yes (`cb88b108...`) |
+| `CYCLE-20261122-3JFV` | `2026-11-22T10:29:47.179Z` | `xevrion/hatchzip` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9920` | Yes (`972a8dce...`) |
+| `CYCLE-20261122-3SNA` | `2026-11-22T10:29:59.110Z` | `gluesql/gluesql` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9921` | Yes (`83ebdd27...`) |

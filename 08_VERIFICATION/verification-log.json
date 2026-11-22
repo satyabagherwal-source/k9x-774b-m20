@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261120-M1QK",
-    "timestamp": "2026-11-20T11:08:49.868Z",
-    "repository": "Kianuni/Erosion-CN",
-    "learningId": "learn-github-kianuni-erosion-cn",
-    "contentHash": "ee27e1b8eddc1fa87e9521fe0ad563933fb46b89efc342901d8fa15ab068dcc5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-M5S5",
-    "timestamp": "2026-11-20T11:08:55.109Z",
-    "repository": "joreilly/Confetti",
-    "learningId": "learn-github-joreilly-confetti",
-    "contentHash": "eb4cf57c948eb3e66120e55db246fa259825e0494619b5bc2cdaab45b64bd657",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-M7Z1",
-    "timestamp": "2026-11-20T11:08:57.949Z",
-    "repository": "prometheus/prometheus",
-    "learningId": "learn-github-prometheus-prometheus",
-    "contentHash": "92004005a6e474b3ac81c6a36223edfe14809167a3bd9223531f18810fe675eb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261120-MF3S",
     "timestamp": "2026-11-20T11:09:07.192Z",
     "repository": "vespa-engine/vespa",
@@ -7490,6 +7445,51 @@
     "repository": "Tencent-TDS/KuiklyUI",
     "learningId": "learn-github-tencent-tds-kuiklyui",
     "contentHash": "b11d6a749e01e541493b3c8a93d07c2a5e39379a1160a2ba7e8cf356587cd3db",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-3HV3",
+    "timestamp": "2026-11-22T10:29:45.135Z",
+    "repository": "IFM/PAN2",
+    "learningId": "learn-huggingface-ifm-pan2",
+    "contentHash": "cb88b1080596debb8ac25658808b831ab941d1d60443114f8e74e5f73ee22a93",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-3JFV",
+    "timestamp": "2026-11-22T10:29:47.179Z",
+    "repository": "xevrion/hatchzip",
+    "learningId": "learn-github-xevrion-hatchzip",
+    "contentHash": "972a8dceb5f082421baaaac1b0375ce76ff75c4dc24a5735f53cfa83ddd16828",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-3SNA",
+    "timestamp": "2026-11-22T10:29:59.110Z",
+    "repository": "gluesql/gluesql",
+    "learningId": "learn-github-gluesql-gluesql",
+    "contentHash": "83ebdd273de2c04e81a107320703c798b22f9bf5f9d5c18d2b229b186bea93c7",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

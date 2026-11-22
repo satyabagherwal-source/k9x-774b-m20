@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/IFM/PAN2",
   "source_version": "hf-ifm-pan2",
   "license": "Open-Source",
-  "timestamp": "2026-11-16T14:34:41.223Z",
+  "timestamp": "2026-11-22T10:29:45.342Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-ifm-pan2",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [IFM/PAN2](https://huggingface.co/IFM/PAN2) (Revision: `hf-ifm-pan`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-16T14:34:41.223Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T10:29:45.342Z`  
 > **Learning ID**: `learn-huggingface-ifm-pan2`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-ifm-pan2-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/IFM/PAN2](https://huggingface.co/IFM/PAN2))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T14:34:40.484Z  
+> **Harvest Timestamp**: 2026-11-22T10:29:44.469Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-text-to-video
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 374 downloads | 171 likes
+- **Stars / Engagement**: 809 downloads | 327 likes
 
 ---
 

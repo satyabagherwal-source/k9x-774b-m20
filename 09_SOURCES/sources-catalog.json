@@ -4123,10 +4123,10 @@
     "repository": "gluesql/gluesql",
     "platform": "github",
     "sourceUrl": "https://github.com/gluesql/gluesql",
-    "sourceVersion": "bb30d6be",
+    "sourceVersion": "3635d34e",
     "license": "Apache-2.0",
-    "contentHash": "ce1967ee01adea9cd70a51d564ba68eda76deb00c468f2b3ff31f018bbf84551",
-    "lastHarvestedAt": "2026-11-20T04:02:38.607Z",
+    "contentHash": "83ebdd273de2c04e81a107320703c798b22f9bf5f9d5c18d2b229b186bea93c7",
+    "lastHarvestedAt": "2026-11-22T10:29:59.114Z",
     "learningId": "learn-github-gluesql-gluesql"
   },
   "mui-base-ui": {
@@ -12695,8 +12695,8 @@
     "sourceUrl": "https://huggingface.co/IFM/PAN2",
     "sourceVersion": "hf-ifm-pan2",
     "license": "Open-Source",
-    "contentHash": "46281bc9b876236b9be7cb1d3d133f5ce3f422f0a218b6523b8413f4a01adef2",
-    "lastHarvestedAt": "2026-11-16T14:34:41.069Z",
+    "contentHash": "cb88b1080596debb8ac25658808b831ab941d1d60443114f8e74e5f73ee22a93",
+    "lastHarvestedAt": "2026-11-22T10:29:45.140Z",
     "learningId": "learn-huggingface-ifm-pan2"
   },
   "hf-hauhaucs-qwen3.8-27b-uncensored-hauhaucs-aggressive-mtp-gguf": {
@@ -12973,10 +12973,10 @@
     "repository": "xevrion/hatchzip",
     "platform": "github",
     "sourceUrl": "https://github.com/xevrion/hatchzip",
-    "sourceVersion": "2489b928",
+    "sourceVersion": "2a25c9e6",
     "license": "Apache-2.0",
-    "contentHash": "0ca58031a9391a0673ebe1b9b0a6422af2f0ebd70ea01d71866f512f1b169917",
-    "lastHarvestedAt": "2026-11-21T00:11:58.115Z",
+    "contentHash": "972a8dceb5f082421baaaac1b0375ce76ff75c4dc24a5735f53cfa83ddd16828",
+    "lastHarvestedAt": "2026-11-22T10:29:47.183Z",
     "learningId": "learn-github-xevrion-hatchzip"
   },
   "hf-thejagstudio-tessera-small": {

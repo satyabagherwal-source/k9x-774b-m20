@@ -4,22 +4,22 @@
 {
   "source_repository": "gluesql/gluesql",
   "source_url": "https://github.com/gluesql/gluesql",
-  "source_version": "bb30d6be",
+  "source_version": "3635d34e",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-20T04:02:38.875Z",
+  "timestamp": "2026-11-22T10:29:59.328Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-gluesql-gluesql",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [gluesql/gluesql](https://github.com/gluesql/gluesql) (Revision: `bb30d6be`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T04:02:38.875Z`  
+> **Provenance**: Harvested from [gluesql/gluesql](https://github.com/gluesql/gluesql) (Revision: `3635d34e`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-22T10:29:59.328Z`  
 > **Learning ID**: `learn-github-gluesql-gluesql`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `gluesql/gluesql` (Commit: `bb30d6be`)
+- **Target Repository**: `gluesql/gluesql` (Commit: `3635d34e`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gluesql-gluesql-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gluesql/gluesql](https://github.com/gluesql/gluesql))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T04:02:37.418Z  
+> **Harvest Timestamp**: 2026-11-22T10:29:58.071Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: GlueSQL is quite sticky. It sticks to anything.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3140 stars
+- **Stars / Engagement**: 3141 stars
 
 ---
 
@@ -2069,391 +2069,58 @@ impl BigDecimalExt for BigDecimal {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bb30d6be` (2026-11-20)
-**Commit Message**: Align the docs introduction with the README (#2092)
+### Incident Patch 1: `3635d34e` (2026-11-22)
+**Commit Message**: Reject multiple DELETE targets before FROM in the SQL translator (#2094)
 
-Bring the README overview and examples into the docs introduction and
-link readers directly to the relevant guides. Move SQLite after
-MongoDB and Redis in both storage tables to reflect its specific use
-case.
+DELETE translation previously ignored the target list before FROM, so
+`DELETE Foo, Bar FROM Foo WHERE id = 1` was translated as a delete from
+Foo alone.
 
-**File**: `README.md` (modified, +1/-1)
+Reject multiple targets before FROM with
+`UnsupportedDeleteOption(MultipleTables)`, matching the existing error
+for multiple tables in the FROM clause.
+
+**File**: `core/src/translate.rs` (modified, +8/-1)
 ```diff
-@@ -52,9 +52,9 @@ GlueSQL provides reference storage implementations for in-memory data, embedded
- | Use case | Recommended storage |
- | --- | --- |
- | Persistent embedded database | [Redb](https://gluesql.org/docs/dev/storages/supported-storages/redb-storage/) |
--| Using GlueSQL types and functions with SQLite's storage and query engine | [SQLite](https://gluesql.org/docs/dev/storages/supported-storages/sqlite-storage/) |
- | Persistent database on S3 or Cloudflare R2 | [SlateDB](https://gluesql.org/docs/dev/storages/supported-storages/slatedb-storage/) |
- | Existing MongoDB or Redis data | [Mongo](https://gluesql.org/docs/dev/storages/supported-storages/mongo-storage/) or [Redis](https://gluesql.org/docs/dev/storages/supported-storages/redis-storage/) |
-+| Using GlueSQL types and functions with SQLite's storage and query engine | [SQLite](https://gluesql.org/docs/dev/storages/supported-storages/sqlite-storage/) |
- | Temporary data, tests, and prototypes, data across threads | [Memory](https://gluesql.org/docs/dev/storages/supported-storages/memory-storage/), [Shared Memory](https://gluesql.org/docs/dev/storages/supported-storages/shared-memory-storage/) |
- | Querying CSV, JSON, or Parquet files | [CSV](https://gluesql.org/docs/dev/storages/supported-storages/csv-storage/), [JSON](https://gluesql.org/docs/dev/storages/supported-storages/json-storage/), or [Parquet](https://gluesql.org/docs/dev/storages/supported-storages/parquet-storage/) |
- | Lightweight filesystem persistence | [File](https://gluesql.org/docs/dev/storages/supported-storages/file-storage/) |
-```
-
-**File**: `docs/docs/index.md` (modified, +74/-65)
-```diff
-@@ -11,26 +11,75 @@ sidebar_position: 1
- [![Chat](https://img.shields.io/discord/780298017940176946?logo=discord&logoColor=white)](https://discord.gg/C6TDEgzDzY)
- [![Coverage Status](https://coveralls.io/repos/github/gluesql/gluesql/badge.svg?branch=main)](https://coveralls.io/github/gluesql/gluesql?branch=main)
+@@ -147,6 +147,7 @@ pub fn translate_with_params(
+             })
+         }
+         SqlStatement::Delete(SqlDelete {
++            tables,
+             from,
+             using,
+             selection,
+@@ -163,7 +164,9 @@ pub fn translate_with_params(
+                 Some(DeleteOption::OrderBy)
+             } else if limit.is_some() {
+                 Some(DeleteOption::Limit)
+-            } else if matches!(from, SqlFromTable::WithFromKeyword(tables) if tables.len() > 1) {
++            } else if tables.len() > 1
++                || matches!(from, SqlFromTable::WithFromKeyword(tables) if tables.len() > 1)
++            {
+                 Some(DeleteOption::MultipleTables)
+             } else {
+                 None
+@@ -747,6 +750,10 @@ mod tests {
+                 "DELETE FROM Foo, Bar WHERE id = 1",
+                 TranslateError::UnsupportedDeleteOption(DeleteOption::MultipleTables),
+             ),
++            (
++                "DELETE Foo, Bar FROM Foo WHERE id = 1",
++                TranslateError::UnsupportedDeleteOption(DeleteOption::MultipleTables),
++            ),
+         ];
  
--## Multi-Model Database Engine as a Library
--GlueSQL is a Rust library for SQL databases that includes a parser ([sqlparser-rs](https://github.com/sqlparser-rs/sqlparser-rs)), an execution layer, and a variety of storage options, both persistent and non-persistent, all in one package. It is a versatile tool for developers, supporting both SQL and Query Builder. GlueSQL can handle structured and unstructured data, making it suitable for a wide range of use cases. It is portable and can be used with various storage types, including log files and read-write capable storage. GlueSQL is designed to be extensible and supports custom planners, making it a powerful tool for developers who need SQL support for their databases or services.
-+## An Embeddable Multi-Model SQL Engine
- 
--"We offer a service where the GlueSQL team can implement and maintain your custom storage, especially beneficial for NoSQL databases with their own query planner and execution layer. We welcome any services wishing to support SQL and GlueSQL query interfaces. For more details, please refer to [**here**](#gluesql-custom-storage-let-us-handle-it-for-you)."
-+GlueSQL is an embeddable, multi-model SQL database engine written in Rust.
-+It combines SQL with the flexibility to work across different data models and storage environments.
-+It is also available for JavaScript applications in the browser and Node.js.
- 
--If you're interested in learning more about GlueSQL, we recommend the following blog articles for a deeper dive into its capabilities and benefits:
-+## Why GlueSQL?
- 
--1. [Breaking the Boundary between SQL and NoSQL Database](articles/breaking-the-boundary-between-sql-and-nosql.md)
--2. [Revolutionizing Databases by Unifying Query Interfaces](articles/revolutionizing-databases-by-unifying-query-interfaces.md)
--3. [Test-Driven Documentation - Automating User Manual Creation](articles/test-driven-documentation.md)
-+GlueSQL is quite sticky: it brings SQL to your application's storage. Use a provided storage backend or implement a custom adapter to query existing data without moving it into a separate database. GlueSQL handles SQL parsing, planning, and execution.
- 
--## Supporting SQL and Query Builder
--GlueSQL supports both SQL and Query Builder. Unlike ORMs that generate SQL strings, GlueSQL's Query Builder constructs execution-facing statement plans directly while still allowing explicit AST outputs where they are needed. This keeps access to GlueSQL-specific query features without routing every query through SQL text generation.
-+- **Choose a storage backend:** use in-memory storage, embedded databases, local files, object stores, or external databases.
-+- **Work with flexible data:** query schema-defined and schemaless tables together, including MAP and LIST values.
-+- **Choose a query interface:** write SQL or compose queries with the Rust Query Builder, both backed by the same engine.
-+
-+Get started with [Rust](getting-started/rust.md), [JavaScript in the browser](getting-started/javascript-web.md), [Node.js](getting-started/nodejs.md), or the [CLI](getting-started/cli.md).
-+
-+## Installation
-+
-+### Rust
-+
-+```bash
-+cargo add gluesql
-+```
-+
-+### JavaScript
-+
-+```bash
-+npm install gluesql
-+```
-+
-+### Browser (CDN)
-+
-+```js
-+import { gluesql } from 'https://cdn.jsdelivr.net/npm/gluesql/gluesql.js';
-+```
-+
-+For more JS library information, check out the [gluesql-js repository](https://github.com/gluesql/gluesql-js).
-+
-+## Supported Reference Storages
-+
-+GlueSQL provides reference storage implementations for in-memory data, embedded databases, local files, object stores, and external databases. Use the table below to choose a storage for your use case.
-+
-+| Use case | Recommended storage |
-+| --- | --- |
-+| Persistent embedded database | [Redb](storages/supported-storages/redb-storage.md) |
-+| Persistent database on S3 or Cloudflare R2 | [SlateDB](storages/supported-storages/slatedb-storage.md) |
-+| Existing MongoDB or Redis data | [Mongo](storages/supported-storages/mongo-storage.md) or [Redis](storages/supported-storages/redis-storage.md) |
-+| Using GlueSQL types and functions with SQLite's storage and query engine | [SQLite](storages/supported-storages/sqlite-storage.md) |
-+| Temporary data, tests, and prototypes, data across threads | [Memory](storages/supported-storages/memory-storage.md), [Shared Memory](storages/supported-storages/shared-memory-storage.md) |
-+| Querying CSV, JSON, or Parquet files | [CSV](storages/supported-storages/csv-storage.md), [JSON](storages/supported-storages/json-storage.md), or [Parquet](storages/supported-storages/parquet-storage.md) |
-+| Lightweight filesystem persistence | [File](storages/s
-```
-
----
-
-### Incident Patch 2: `2e6fba23` (2026-11-19)
-**Commit Message**: Add SQLite storage with native query planning (#2078)
-
-Add SqliteStorage so applications can use GlueSQL syntax, types, and
-functions with SQLite in memory or on disk. Use SQLite transactions for
-writes and schema changes. For tables created through GlueSQL, store
-logical types and default expressions alongside SQLite STRICT tables so
-GlueSQL can restore the schema when the database is reopened.
-
-Add native query sources and the optional NativeQuery trait so backends
-can execute part of a GlueSQL plan in their own query engine. The SQLite
-planner requests the columns a scan needs and pushes supported WHERE
-conditions into parameterized SQL. SQLite filters rows before GlueSQL
-decodes them, and GlueSQL handles the remaining conditions, joins, and
-aggregates.
-
-**File**: `.github/workflows/rust.yml` (modified, +1/-0)
-```diff
-@@ -65,6 +65,7 @@ jobs:
-           cargo test -p gluesql-parquet-storage --verbose
-           cargo test -p gluesql-file-storage --verbose
-           cargo test -p gluesql-redb-storage --verbose
-+          cargo test -p gluesql-sqlite-storage --verbose
-           cargo test -p gluesql-slatedb-storage --verbose
- 
-   run_mongostorage_tests:
-```
-
-**File**: `Cargo.lock` (modified, +57/-0)
-```diff
-@@ -1044,6 +1044,18 @@ dependencies = [
-  "tokio",
- ]
- 
-+[[package]]
-+name = "fallible-iterator"
-+version = "0.3.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "2acce4a10f12dc2fb14a218589d4f1f62ef011b2d0cc4b3cb1bba8e94da14649"
-+
-+[[package]]
-+name = "fallible-streaming-iterator"
-+version = "0.1.9"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "7360491ce676a36bf9bb3c56c1aa791658183a54d2744120f27285738d90465a"
-+
- [[package]]
- name = "fastant"
- version = "0.1.11"
-@@ -1453,6 +1465,7 @@ dependencies = [
-  "gluesql-redis-storage",
-  "gluesql-shared-memory-storage",
-  "gluesql-slatedb-storage",
-+ "gluesql-sqlite-storage",
-  "gluesql-test-suite",
-  "gluesql_memory_storage",
- ]
-@@ -1672,6 +1685,20 @@ dependencies = [
-  "uuid",
- ]
- 
-+[[package]]
-+name = "gluesql-sqlite-storage"
-+version = "0.20.0"
-+dependencies = [
-+ "gluesql-core",
-+ "gluesql-test-suite",
-+ "ouroboros",
-+ "ron",
-+ "rusqlite",
-+ "rust_decimal",
-+ "tempfile",
-+ "thiserror 2.0.3",
-+]
-+
- [[package]]
- name = "gluesql-test-suite"
- version = "0.20.0"
-@@ -2368,6 +2395,17 @@ dependencies = [
-  "libc",
- ]
- 
-+[[package]]
-+name = "libsqlite3-sys"
-+version = "0.39.1"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "14a5f01b87b92705d07b433c06f96cbc764637d81a0bffb5734ce17cf0f9a2b3"
-+dependencies = [
-+ "cc",
-+ "pkg-config",
-+ "vcpkg",
-+]
-+
- [[package]]
- name = "linked-hash-map"
- version = "0.5.6"
-@@ -3498,6 +3536,19 @@ dependencies = [
-  "serde_derive",
- ]
- 
-+[[package]]
-+name = "rusqlite"
-+version = "0.41.1"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "da9bba6f3506135e120a6586df05be18b48d18896600646a4bec8f993d91a594"
-+dependencies = [
-+ "bitflags 2.13.2",
-+ "fallible-iterator",
-+ "fallible-streaming-iterator",
-+ "libsqlite3-sys",
-+ "smallvec",
-+]
-+
- [[package]]
- name = "rust_decimal"
- version = "1.35.0"
-@@ -4970,6 +5021,12 @@ dependencies = [
-  "wasm-bindgen",
- ]
- 
-+[[package]]
-+name = "vcpkg"
-+version = "0.2.15"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "accd4ea62f7bb7a82fe23066fb0957d48ef677f6eeb8215f372f52e48bb32426"
-+
- [[package]]
- name = "version_check"
- version = "0.9.5"
-```
-
-**File**: `Cargo.toml` (modified, +1/-0)
-```diff
-@@ -33,6 +33,7 @@ test-suite = { package = "gluesql-test-suite", path = "./test-suite", version =
- gluesql_memory_storage = { path = "./storages/memory-storage", version = "0.20.0" }
- gluesql-shared-memory-storage = { path = "./storages/shared-memory-storage", version = "0.20.0" }
- gluesql-redb-storage = { path = "./storages/redb-storage", version = "0.20.0" }
-+gluesql-sqlite-storage = { path = "./storages/sqlite-storage", version = "0.20.0" }
- gluesql-slatedb-storage = { path = "./storages/slatedb-storage", version = "0.20.0" }
- gluesql-json-storage = { path = "./storages/json-storage", version = "0.20.0" }
- gluesql-csv-storage = { path = "./storages/csv-storage", version = "0.20.0" }
-```
-
-**File**: `README.md` (modified, +1/-0)
-```diff
-@@ -52,6 +52,7 @@ GlueSQL provides reference storage implementations for in-memory data, embedded
- | Use case | Recommended storage |
- | --- | --- |
- | Persistent embedded database | [Redb](https://gluesql.org/docs/dev/storages/supported-storages/redb-storage/) |
-+| Using GlueSQL types and functions with SQLite's storage and query engine | [SQLite](https://gluesql.org/docs/dev/storages/supported-storages/sqlite-storage/) |
- | Persistent database on S3 or Cloudflare R2 | [SlateDB](https://gluesql.org/docs/dev/storages/supported-storages/slatedb-storage/) |
- | Existing MongoDB or Redis data | [Mongo](https://gluesql.org/docs/dev/storages/supported-storages/mongo-storage/) or [Redis](https://gluesql.org/docs/dev/storages/supported-storages/redis-storage/) |
- | Temporary data, tests, and prototypes, data across threads | [Memory](https://gluesql.org/docs/dev/storages/supported-storages/memory-storage/), [Shared Memory](https://gluesql.org/docs/dev/storages/supported-storages/shared-memory-storage/) |
-```
-
-**File**: `core/src/ast/expr.rs` (modified, +12/-1)
-```diff
-@@ -219,7 +219,10 @@ impl Expr {
-             Expr::Nested(expr) => format!("({})", expr.to_sql_with(quoted)),
-             Expr::Literal(s) => s.to_sql(),
-             Expr::Value(v) => v.to_sql(),
--            Expr::TypedString { data_type, value } => format!("{data_type} '{value}'"),
-+            Expr::TypedString { data_type, value } => {
-+                let escaped = value.replace('\'', "''");
-+                format!("{data_type} '{escaped}'")
-+            }
-             Expr::Case {
-                 operand,
-                 when_then,
-@@ -418,6 +421,14 @@ mod tests {
-             }
-             .to_sql()
-         );
-+        assert_eq!(
-+            "TEXT 'O''Brien'",
-+            Expr::TypedString {
-+                data_type: DataType::Text,
-+                value: "O'Brien".to_owned()
-+            }
-+            .to_sql()
-+        );
- 
-         assert_eq!(
-             r#"("id")"#,
-```
-
-**File**: `core/src/executor/query/source.rs` (modified, +2/-0)
-```diff
-@@ -1,5 +1,6 @@
- mod derived;
- mod dictionary;
-+mod native;
- mod series;
- mod table;
- 
-@@ -31,6 +32,7 @@ pub(super) fn execute<'a, T: GStore>(
-     source: &'a SourcePlan,
- ) -> Result<PreparedSource<'a>> {
-     match source {
-+        SourcePlan::Native(native) => Ok(native::execute(storage, native)),
-         SourcePlan::Table(table) => table::execute(storage, stmt_context, table),
-         SourcePlan::Derived(derived) => derived::execute(storage, stmt_context, derived),
-         SourcePlan::Series(series) => Ok(series::execute(storage, stmt_context, series)),
-```
-
-**File**: `core/src/executor/query/source/native.rs` (added, +52/-0)
-```diff
-@@ -0,0 +1,52 @@
-+use {
-+    super::{super::SourceColumns, PreparedSource, SourceRows},
-+    crate::{data::Row, plan::NativeSourcePlan, store::NativeQuery},
-+    std::rc::Rc,
-+};
-+
-+pub(super) fn execute<'a>(
-+    storage: &'a impl NativeQuery,
-+    native: &'a NativeSourcePlan,
-+) -> PreparedSource<'a> {
-+    let names = native
-+        .columns
-+        .iter()
-+        .map(|column| column.name.clone())
-+        .collect::<Vec<_>>();
-+    let names: Rc<[String]> = Rc::from(names);
-+
-+    let output_types = native
-+        .columns
-+        .iter()
-+        .map(|column| column.data_type.clone())
-+        .collect::<Vec<_>>();
-+
-+    let output = SourceColumns {
-+        alias: &native.alias,
-+        names: Rc::clone(&names),
-+    };
-+
-+    let rows = Box::new(move |_| {
-+        let native_rows = storage.query_native(&native.query, &native.params, &output_types)?;
-+
-+        let columns = Rc::clone(&names);
-+        let rows = native_rows.map(move |values| {
-+            let values = values?;
-+
-+            Ok(Row {
-+                columns: Rc::clone(&columns),
-+                values,
-+            })
-+        });
-+
-+        Ok(SourceRows {
-+            source: SourceColumns {
-+                alias: &native.alias,
-+                names: Rc::clone(&names),
-+            },
-+            rows: Box::new(rows),
-+        })
-+    });
-+
-+    PreparedSource { output, rows }
-+}
-```
-
-**File**: `core/src/mock.rs` (modified, +3/-2)
-```diff
-@@ -6,8 +6,8 @@ use {
-         },
-         result::{Error, Result},
-         store::{
--            AlterTable, CustomFunction, CustomFunctionMut, Index, IndexMut, Metadata, Planner,
--            RowIter, ScanColumns, Store, StoreMut, Transaction,
-+            AlterTable, CustomFunction, CustomFunctionMut, Index, IndexMut, Metadata, NativeQuery,
-+            Planner, RowIter, ScanColumns, Store, StoreMut, Transaction,
-         },
-     },
-     std::collections::HashMap,
-@@ -149,6 +149,7 @@ impl IndexMut for MockStorage {
- impl Transaction for MockStorage {}
- impl Metadata for MockStorage {}
- impl Planner for MockStorage {}
-+impl NativeQuery for MockStorage {}
- 
- #[cfg(test)]
- mod tests {
+         for (sql, err) in cases {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2094** (2026-11-22): Reject multiple DELETE targets before FROM (@ChobobDev)
 - **PR #2092** (2026-11-20): Align the docs introduction with the README (@panarch)
 - **PR #2091** (2026-11-19): Preserve LIST element types in SQL output (@panarch)
 - **PR #2089** (2026-11-18): Separate adjacent minus signs in SQL expressions (@panarch)
 - **PR #2088** (2026-11-18): Escape double quotes in DDL table names (@panarch)
 - **PR #2083** (2026-11-18): Emit comma-separated coordinates in POINT SQL expressions (@panarch)
-- **PR #2081** (2026-11-16): Isolate JSON storage error fixtures by scenario (@panarch)
 
 ---
 
@@ -2473,31 +2140,38 @@ aggregates.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Align the docs introduction with the README
+## X. Reject multiple DELETE targets before FROM in the SQL translator
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gluesql/gluesql. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/src/translate.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gluesql/gluesql. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bb30d6be`: Align the docs introduction with the README. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3635d34e`: Reject multiple DELETE targets before FROM in the SQL translator. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/src/translate.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| Using GlueSQL types and functions with SQLite's storage and query engine | [SQLite](https://gluesql.org/docs/dev/storages/supported-storages/sqlite-storage/) |
+            tables,
+            } else if tables.len() > 1
+                || matches!(from, SqlFromTable::WithFromKeyword(tables) if tables.len() > 1)
+            {
+            (
+                "DELETE Foo, Bar FROM Foo WHERE id = 1",
+                TranslateError::UnsupportedDeleteOption(DeleteOption::MultipleTables),
+            ),
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-| Using GlueSQL types and functions with SQLite's storage and query engine | [SQLite](https://gluesql.org/docs/dev/storages/supported-storages/sqlite-storage/) |
+            } else if matches!(from, SqlFromTable::WithFromKeyword(tables) if tables.len() > 1) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bb30d6be` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3635d34e` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
