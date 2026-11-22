@@ -12176,3 +12176,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0` | `https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0` | `hf-stabili` | Multi-dimensional audit evidence | 2026-11-22T18:00:17.620Z |
 | `learn-github-darrylmorley-whatcable` | `https://github.com/darrylmorley/whatcable` | `0a49393d` | Multi-dimensional audit evidence | 2026-11-22T18:00:24.473Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `87b3a5ff` | Multi-dimensional audit evidence | 2026-11-22T18:00:29.006Z |
+| `learn-huggingface-meta-llama-llama-3-1-8b-instruct` | `https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-11-22T18:12:22.245Z |

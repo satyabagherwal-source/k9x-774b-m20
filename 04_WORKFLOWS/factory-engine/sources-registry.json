@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-22T18:00:32.097Z",
-    "lastVerified": "2026-11-22T18:00:32.097Z",
+    "lastChecked": "2026-11-22T18:12:33.805Z",
+    "lastVerified": "2026-11-22T18:12:33.805Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -255,9 +255,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-22T17:35:26.538Z",
+    "lastChecked": "2026-11-22T18:12:33.794Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-22T17:35:26.538Z"
+    "lastVerified": "2026-11-22T18:12:33.794Z"
   },
   "herdrdev-herdr": {
     "name": "herdrdev/herdr",
@@ -791,12 +791,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "kube-rs-kube": {
-    "name": "kube-rs/kube",
+    "name": "kube",
     "officialUrl": "https://github.com/kube-rs/kube",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-21T17:49:57.295Z",
-    "lastVerified": "2026-11-21T17:49:57.295Z",
+    "lastChecked": "2026-11-22T18:12:26.294Z",
+    "lastVerified": "2026-11-22T18:12:26.294Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kube-rs-kube",
@@ -805,7 +805,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "6f9fddb2"
   },
   "chrispybacon-dev-dockflare": {
     "name": "DockFlare",
@@ -1081,12 +1082,12 @@
     "officialUrl": "https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-18T11:44:59.665Z",
-    "lastVerified": "2026-11-18T11:44:59.665Z",
+    "lastChecked": "2026-11-22T18:12:21.389Z",
+    "lastVerified": "2026-11-22T18:12:21.389Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-meta-llama-llama-3-1-8b-instruct",
-    "contentHash": "09adff2d5b60d198b13ace486367b7efbfb210a39f126723833e1a6f5e000a18",
+    "contentHash": "fdd861ee8905e334efc5a88e99e6b708f1b1f181020da3c9062b0545c7b9e298",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -2245,8 +2246,8 @@
     "officialUrl": "https://github.com/mitmproxy/mitmproxy",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-22T10:18:01.934Z",
-    "lastVerified": "2026-11-22T10:18:01.934Z",
+    "lastChecked": "2026-11-22T18:12:28.834Z",
+    "lastVerified": "2026-11-22T18:12:28.834Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mitmproxy-mitmproxy",
@@ -6680,9 +6681,9 @@
   "mariadb-server": {
     "name": "server",
     "officialUrl": "https://github.com/MariaDB/server",
-    "lastChecked": "2026-11-21T16:31:15.683Z",
+    "lastChecked": "2026-11-22T18:12:31.313Z",
     "revisionIdentifier": "39281811",
-    "lastVerified": "2026-11-21T16:31:15.683Z"
+    "lastVerified": "2026-11-22T18:12:31.313Z"
   },
   "graphprotocol-graph-node": {
     "name": "graph-node",
@@ -8605,9 +8606,9 @@
   "xcodesorg-xcodesapp": {
     "name": "XcodesApp",
     "officialUrl": "https://github.com/XcodesOrg/XcodesApp",
-    "lastChecked": "2026-11-19T16:40:55.887Z",
+    "lastChecked": "2026-11-22T18:12:23.939Z",
     "revisionIdentifier": "9836fd83",
-    "lastVerified": "2026-11-19T16:40:55.887Z"
+    "lastVerified": "2026-11-22T18:12:23.939Z"
   },
   "pola-rs-polars": {
     "name": "pola-rs/polars",
@@ -8892,8 +8893,8 @@
     "officialUrl": "https://github.com/vercel-labs/agent-desktop",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-21T05:27:43.656Z",
-    "lastVerified": "2026-11-21T05:27:43.656Z",
+    "lastChecked": "2026-11-22T18:12:18.794Z",
+    "lastVerified": "2026-11-22T18:12:18.794Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-vercel-labs-agent-desktop",

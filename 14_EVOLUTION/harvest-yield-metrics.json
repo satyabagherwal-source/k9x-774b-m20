@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T18:00:29.010Z",
-  "total_cycles_completed": 11546,
-  "total_learnings_persisted": 11546,
+  "last_updated": "2026-11-22T18:12:22.252Z",
+  "total_cycles_completed": 11547,
+  "total_learnings_persisted": 11547,
   "total_rules_promoted": 10784,
   "history": [
-    {
-      "timestamp": "2026-11-21T22:48:38.316Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T22:56:41.040Z",
       "repository": "SulphurAI/Sulphur-3",
@@ -1403,6 +1396,13 @@
       "repository": "tailscale/tailscale",
       "learningId": "learn-github-tailscale-tailscale",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T18:12:22.252Z",
+      "repository": "meta-llama/Llama-3.1-8B-Instruct",
+      "learningId": "learn-huggingface-meta-llama-llama-3-1-8b-instruct",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

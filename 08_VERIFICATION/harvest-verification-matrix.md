@@ -12143,3 +12143,4 @@
 | `CYCLE-20261122-6W9D` | `2026-11-22T18:00:17.617Z` | `stabilityai/stable-diffusion-xl-base-1.0` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-xl-base-1.0-learnings.md` | Yes (`584a00c2...`) |
 | `CYCLE-20261122-71JL` | `2026-11-22T18:00:24.465Z` | `darrylmorley/whatcable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9967` | Yes (`702bb03d...`) |
 | `CYCLE-20261122-751N` | `2026-11-22T18:00:29.003Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9968` | Yes (`0121c05d...`) |
+| `CYCLE-20261122-MFDS` | `2026-11-22T18:12:22.240Z` | `meta-llama/Llama-3.1-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-llama-3.1-8b-instruct-learnings.md` | Yes (`fdd861ee...`) |
