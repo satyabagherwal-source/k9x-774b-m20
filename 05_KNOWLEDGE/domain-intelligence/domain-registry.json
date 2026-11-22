@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T05:28:23.475Z",
+  "last_updated": "2026-11-22T05:39:54.603Z",
   "total_records": 2329,
   "domains": {
     "A": {
@@ -8144,8 +8144,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "8561df1c5e4ef20b22d7456dfba1c996db1bff87bbae3b8308138ebf251cfbea",
-      "created_at": "2026-11-22T05:12:44.161Z"
+      "content_hash": "d85563978ab2ffa8e41559690bfe65cb76fcfcf8eb9a289e0b96d9531f53a105",
+      "created_at": "2026-11-22T05:39:54.603Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -9062,8 +9062,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "4f1c8e24ad96165d65c6a9871cbc20c96cfc3314337b54826ac73644a59355f8",
-      "created_at": "2026-11-22T05:12:42.935Z"
+      "content_hash": "4ff9aec30e556721cfb32c60258ae6fe75f8cb69c4725255ddfffb3765bac683",
+      "created_at": "2026-11-22T05:39:53.390Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -20989,8 +20989,8 @@
       "title": "Research & Knowledge Intelligence: tencent/Qwen3.8-27B-DSpine-b16 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-tencent-qwen3-8-27b-dspine-b16-research-knowledge-intelligence-tencent-qwen3-.md",
       "repository": "tencent/Qwen3.8-27B-DSpine-b16",
-      "content_hash": "ab1d4ce7c6f034f0611bb3f51e99128ec5e497a1622de91e6422719202886b99",
-      "created_at": "2026-11-15T10:04:13.270Z"
+      "content_hash": "e9f41a2b36f8721d1dd4e7feb95520b4f0e02ef46c3a63269b45ff4cc982eb4a",
+      "created_at": "2026-11-22T05:39:40.795Z"
     },
     "DOM-D-B5A599C0": {
       "record_id": "DOM-D-B5A599C0",
@@ -21040,8 +21040,8 @@
       "title": "Research & Knowledge Intelligence: hf-tencent-qwen3.8-27b-dspine-b16-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-tencent-qwen3-8-27b-dspine-b16-learnings-research-knowledge-intelligence-hf-t.md",
       "repository": "hf-tencent-qwen3.8-27b-dspine-b16-learnings",
-      "content_hash": "7d5a51786043eceb107c77586f5c600ebc003fc9a3e02a923960b6f053df785b",
-      "created_at": "2026-11-15T10:05:04.103Z"
+      "content_hash": "31bd79a1a09d7b711735718075d0c784cb370f162cb876d8684252d88f418671",
+      "created_at": "2026-11-22T05:39:52.686Z"
     },
     "domain_intelligence-research-knowledge-intelligence-fusioncow-sulphur-3-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-fusioncow-sulphur-3-core-invariants",

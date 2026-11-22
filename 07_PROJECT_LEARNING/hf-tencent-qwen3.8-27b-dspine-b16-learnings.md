@@ -3,7 +3,7 @@
 > **Source Version**: `hf-tencent-q`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T10:04:12.687Z  
+> **Timestamp**: 2026-11-22T05:39:40.035Z  
 > **Learning ID**: `learn-huggingface-tencent-qwen3-8-27b-dspine-b16`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-tencent-qwen3.8-27b-dspine-b16-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/tencent/Qwen3.8-27B-DSpine-b16](https://huggingface.co/tencent/Qwen3.8-27B-DSpine-b16))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T10:04:12.478Z  
+> **Harvest Timestamp**: 2026-11-22T05:39:39.901Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 5590 downloads | 274 likes
+- **Stars / Engagement**: 7396 downloads | 278 likes
 
 ---
 

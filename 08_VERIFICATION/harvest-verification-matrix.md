@@ -12021,3 +12021,4 @@
 | `CYCLE-20261122-BISW` | `2026-11-22T05:28:03.824Z` | `autotrust/Qwen3.8-Flash-Next-E384-FP4-V2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-qwen3.8-flash-next-e384-fp4-v2-learnings.md` | Yes (`b616c138...`) |
 | `CYCLE-20261122-BTGO` | `2026-11-22T05:28:17.640Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING` | Yes (`f44c62df...`) |
 | `CYCLE-20261122-BTLN` | `2026-11-22T05:28:17.819Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9898` | Yes (`3b9dd897...`) |
+| `CYCLE-20261122-QGET` | `2026-11-22T05:39:40.565Z` | `tencent/Qwen3.8-27B-DSpine-b16` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tencent-qwen3.8-27b-dspine-b16-learnings.md` | Yes (`3db6329d...`) |

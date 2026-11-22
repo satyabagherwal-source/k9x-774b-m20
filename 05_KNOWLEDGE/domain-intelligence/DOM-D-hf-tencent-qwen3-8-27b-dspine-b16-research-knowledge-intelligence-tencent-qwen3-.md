@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/tencent/Qwen3.8-27B-DSpine-b16",
   "source_version": "hf-tencent-qwen3.8-27b-dspine-b16",
   "license": "Open-Source",
-  "timestamp": "2026-11-15T10:04:13.269Z",
+  "timestamp": "2026-11-22T05:39:40.794Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-tencent-qwen3-8-27b-dspine-b16",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [tencent/Qwen3.8-27B-DSpine-b16](https://huggingface.co/tencent/Qwen3.8-27B-DSpine-b16) (Revision: `hf-tencent`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-15T10:04:13.269Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T05:39:40.794Z`  
 > **Learning ID**: `learn-huggingface-tencent-qwen3-8-27b-dspine-b16`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-tencent-qwen3.8-27b-dspine-b16-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/tencent/Qwen3.8-27B-DSpine-b16](https://huggingface.co/tencent/Qwen3.8-27B-DSpine-b16))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T10:04:12.478Z  
+> **Harvest Timestamp**: 2026-11-22T05:39:39.901Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 5590 downloads | 274 likes
+- **Stars / Engagement**: 7396 downloads | 278 likes
 
 ---
 

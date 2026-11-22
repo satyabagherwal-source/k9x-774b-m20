@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T05:28:23.806Z",
+  "last_updated": "2026-11-22T05:39:54.783Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-22T05:12:43.304Z",
+      "processed_at": "2026-11-22T05:39:53.753Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-22T05:12:42.446Z",
+      "processed_at": "2026-11-22T05:39:52.903Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2943,8 +2943,8 @@
       "staged_for_review": 1
     },
     "hf-tencent-qwen3.8-27b-dspine-b16-learnings.md": {
-      "processed_at": "2026-11-15T10:05:03.880Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-22T05:39:52.455Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "hf-fusioncow-sulphur-3-learnings.md": {
@@ -3703,7 +3703,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 3018,
+  "total_dossiers_evaluated": 3021,
   "total_canonical_promoted": 470,
-  "total_staged_for_review": 2302
+  "total_staged_for_review": 2304
 }

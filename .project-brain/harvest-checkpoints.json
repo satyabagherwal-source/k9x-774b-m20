@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T05:28:17.834Z",
+  "last_updated": "2026-11-22T05:39:40.579Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -18456,14 +18456,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-tencent-qwen3-8-27b-dspine-b16",
-      "content_hash": "e6194710e86bc75260b9f9c8e0a35e6c2cfea189f173555d4a3118f582e35af2",
-      "verified_at": "2026-11-15T10:04:13.095Z",
+      "content_hash": "3db6329d5209b6d696cf39402d1acbe08c7595e03c0a51a6d5a6f04c5c9e665c",
+      "verified_at": "2026-11-22T05:39:40.578Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T10:04:13.095Z"
+      "last_updated": "2026-11-22T05:39:40.578Z"
     },
     "VideoRebirthAI/hyperflow-h3-flash": {
       "repository": "VideoRebirthAI/hyperflow-h3-flash",
