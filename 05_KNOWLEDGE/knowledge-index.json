@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T03:38:27.429Z",
+  "last_updated": "2026-11-22T03:46:27.830Z",
   "total_verified_learnings": 9067,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23446,
+  "total_items": 23447,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "5a553874ccfef2e833a6217d69b8170b151aec154792535372a0992a5b1f6244",
+      "content_hash": "7654e29148bf551c5a703989b9c81c618ae6024dece5bdfc669595a17a10d9ae",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T03:38:27.068Z"
+      "persisted_at": "2026-11-22T03:46:27.545Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "e6ae360fc394d53c881caf22bc3bde7b6d51def28be4e7850f8042d8d6e872a8",
+      "content_hash": "5401379fcc16b809d35de6de061f34a8aa2f6f7b0301517a827b567c8eb886f0",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T03:38:27.267Z"
+      "persisted_at": "2026-11-22T03:46:27.707Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "1ffcbbcdfd3576bb5fadb0ac684e2082662c9480711bf7d435deadbe2f6279e7",
+      "content_hash": "492c7ff4665ac97e6a8ff5f388786ffe36ff005c3d0ddadc189528dcbe0f6a5e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T03:38:27.429Z"
+      "persisted_at": "2026-11-22T03:46:27.830Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -217358,8 +217358,8 @@
       "slug": "ntex-rs-ntex",
       "platform": "github",
       "source_url": "https://github.com/ntex-rs/ntex",
-      "source_version": "84dbbbf9",
-      "content_hash": "74110263ade45af877a761a9361a897f331f1f07cada15c01621659d7b3da583",
+      "source_version": "4adf6cd3",
+      "content_hash": "fb3fb9fa38f4b1f28d6a33c394bc4ac2c3525a445e2f615c3568ce8bc1d39d6e",
       "dossier_path": "07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md",
       "promoted_rules": [
@@ -217379,7 +217379,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T17:29:06.195Z",
+      "verified_at": "2026-11-22T03:46:14.956Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -217421,10 +217421,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ntex-rs-ntex-architecture-intelligence-ntex-rs-ntex-core-invariants.md",
       "title": "Architecture Intelligence: ntex-rs/ntex Core Invariants",
       "repository": "ntex-rs/ntex",
-      "source_version": "84dbbbf9",
-      "content_hash": "3ce084793cdf7e54e95d321b38fce82f6d199066ff3014f10bfad0640879dfa9",
+      "source_version": "4adf6cd3",
+      "content_hash": "9d5f2795d49a353b4bc9f2dad77d3463dfd5f786ea1238d1410c3e224dac9729",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T17:29:06.775Z"
+      "persisted_at": "2026-11-22T03:46:15.575Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-ntex-rs-ntex": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-ntex-rs-ntex",
@@ -217433,10 +217433,10 @@
       "relative_path": "08_VERIFICATION/ntex-rs-ntex-verification-protocol-empirical-defect-shield-for-ntex-rs-ntex.md",
       "title": "Verification Protocol: Empirical Defect Shield for ntex-rs/ntex",
       "repository": "ntex-rs/ntex",
-      "source_version": "84dbbbf9",
-      "content_hash": "753dbae3ff012f5b5236b327454f5deb45586a2b01f5496b70d541894e85c90e",
+      "source_version": "4adf6cd3",
+      "content_hash": "ae24232a5d945ef2492e59c27e6d58941f29b432b77aea6809a91ce0a867bb31",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T17:29:06.934Z"
+      "persisted_at": "2026-11-22T03:46:15.736Z"
     },
     "learn-github-callstack-react-native-paper": {
       "learning_id": "learn-github-callstack-react-native-paper",
@@ -217688,9 +217688,9 @@
       "title": "Architecture Intelligence: ntex-rs-ntex-learnings Core Invariants",
       "repository": "ntex-rs-ntex-learnings",
       "source_version": "HEAD",
-      "content_hash": "63dec2194ff5d44ada1aa4837c7c94703c9113fa049a20b9dc3252386a474a32",
+      "content_hash": "43dbd4a3a3d6c5b26ae320fd485cd512c1e044159a2512ec667a65d53defeed0",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T17:29:21.544Z"
+      "persisted_at": "2026-11-22T03:46:26.266Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-ntex-rs-ntex-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-ntex-rs-ntex-learnings",
@@ -217700,9 +217700,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for ntex-rs-ntex-learnings",
       "repository": "ntex-rs-ntex-learnings",
       "source_version": "HEAD",
-      "content_hash": "af107eeff6003f9b59fe2276228661f23958c5f9c962cbca34966fd65be232f0",
+      "content_hash": "9a714194cb64eb132758a871eaeee269d18558d30fd1df6327b7382c37f33931",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T17:29:21.689Z"
+      "persisted_at": "2026-11-22T03:46:26.427Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-google-t5-t5-small-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-google-t5-t5-small-learnings-core-invariants",
@@ -253204,7 +253204,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/unsloth/Qwen3.8-Flash-Next-GGUF",
       "source_version": "hf-unsloth-qwen3.8-flash-next-gguf",
-      "content_hash": "55c1c95bd5fd1c68859a1a02813665189f8849cb7301cea9033d1533a538564e",
+      "content_hash": "0c3aafcad38ff3348e774495056a9d7bea3301a78633afe855f8b315ed07a6e4",
       "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-qwen3.8-flash-next-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-qwen3.8-flash-next-gguf-learnings.md",
       "promoted_rules": [],
@@ -253213,7 +253213,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T00:36:38.129Z",
+      "verified_at": "2026-11-22T03:46:13.908Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -253230,9 +253230,9 @@
       "title": "Research & Knowledge Intelligence: unsloth/Qwen3.8-Flash-Next-GGUF Core Invariants",
       "repository": "unsloth/Qwen3.8-Flash-Next-GGUF",
       "source_version": "hf-unsloth-qwen3.8-flash-next-gguf",
-      "content_hash": "5285b71aa94896723f9b292b03fed909500a97c6bc77ff091e203ba220f0c291",
+      "content_hash": "725b54c630fa58e165dc29ce894103b5c7d4a4502a6c8460fa7fd250a8655bdd",
       "domain_letter": "D",
-      "persisted_at": "2026-11-16T00:36:38.454Z"
+      "persisted_at": "2026-11-22T03:46:14.316Z"
     },
     "rule-8675": {
       "learning_id": "rule-8675",
@@ -253294,9 +253294,9 @@
       "title": "Research & Knowledge Intelligence: hf-unsloth-qwen3.8-flash-next-gguf-learnings Core Invariants",
       "repository": "hf-unsloth-qwen3.8-flash-next-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "c2c3d109e43e575c83ea11f96848edd3a7b2d952ef9d0e24c85270c0c7eeb0cb",
+      "content_hash": "2d1d8f51892d7e5a11a353b2692c2104998073810422e044ddf6ba55e946a012",
       "domain_letter": "D",
-      "persisted_at": "2026-11-16T00:36:58.229Z"
+      "persisted_at": "2026-11-22T03:46:26.760Z"
     },
     "learn-github-rainbow-me-rainbow": {
       "learning_id": "learn-github-rainbow-me-rainbow",
@@ -309395,13 +309395,13 @@
       "item_id": "candidate_directive-benchmarks-report-gold-coverage-across-retrieval-stages",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-EK01-benchmarks-report-gold-coverage-across-retrieval-stages.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-OURN-benchmarks-report-gold-coverage-across-retrieval-stages.md",
       "title": "benchmarks): report Gold coverage across retrieval stages",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "de9352e8d604843a2489bf4c41fadfd19fddb31d73637b70e4f486ea838027ef",
+      "content_hash": "26ddfb7f9c00f60ea9800857479b040094f058c0d35531f0495b6f04b4c3b6e1",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T03:38:26.892Z"
+      "persisted_at": "2026-11-22T03:46:27.398Z"
     },
     "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it": {
       "item_id": "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it",
@@ -318862,6 +318862,18 @@
       "content_hash": "db91275f8bb8e3fd930a58fef7375250cdbadc3be42400a16ca1a3a3086bdd91",
       "domain_letter": "K",
       "persisted_at": "2026-11-22T03:38:26.152Z"
+    },
+    "candidate_directive-optimize-copy-slice": {
+      "item_id": "candidate_directive-optimize-copy-slice",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-OTS2-optimize-copy-slice.md",
+      "title": "Optimize copy slice",
+      "repository": "ntex-rs-ntex-learnings",
+      "source_version": "HEAD",
+      "content_hash": "48aa99e1b8602441066e5dc8239befdf360a516ff0e01dbe41216dea51cc5992",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-22T03:46:26.117Z"
     }
   },
   "ai-builder-brain": {

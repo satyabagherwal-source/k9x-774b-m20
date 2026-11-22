@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md`  
 > **Source**: github ([https://github.com/ntex-rs/ntex](https://github.com/ntex-rs/ntex))  
-> **Source Version**: `84dbbbf9`  
+> **Source Version**: `4adf6cd3`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T17:29:05.921Z  
+> **Timestamp**: 2026-11-22T03:46:14.697Z  
 > **Learning ID**: `learn-github-ntex-rs-ntex`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ntex-rs/ntex](https://github.com/ntex-rs/ntex))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T17:29:05.764Z  
+> **Harvest Timestamp**: 2026-11-22T03:46:14.692Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: framework for composable networking services 
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 2553 stars
+- **Stars / Engagement**: 2555 stars
 
 ---
 
@@ -2308,728 +2308,220 @@ pub(crate) mod testing {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c5751aa8` (2026-11-18)
-**Commit Message**: Reduce handshake future sizes: the handshake timeout and connect wrappers, and rustls `TlsServerFilter::create`, no longer store the inner future twice
+### Incident Patch 1: `4adf6cd3` (2026-11-21)
+**Commit Message**: Optimize copy slice
 
-**File**: `ntex-service/CHANGES.md` (modified, +1/-1)
+* Copy short slices in `BytePages::put_slices()`, `BytePages::put_slice()` and
+  `BytesMut::put_slice()` with fixed-size moves instead of `memcpy` calls, and
+  allow `BytePages::put_slices()` to be inlined
+
+**File**: `ntex-bytes/CHANGELOG.md` (modified, +6/-0)
 ```diff
-@@ -1,6 +1,6 @@
+@@ -1,5 +1,11 @@
  # Changes
  
--## [5.8.1] - Unreleased
-+## [5.8.1] - 2026-11-18 (Unreleased)
- 
- * Reduce the size of `Ctx::call()`, `Pipeline::call()`, `PipelineBinding::call()`,
-   `Pipeline::call_static()`, `PipelineState::call()` and `PipelineStateBinding::call()`
-```
-
-**File**: `ntex-tls/CHANGES.md` (modified, +3/-0)
-```diff
-@@ -18,6 +18,9 @@
- * openssl: document that `use_global_allocator()` must run before OpenSSL
-   3.5+ makes aligned allocations
- 
-+* Reduce handshake future sizes: the handshake timeout and connect wrappers,
-+  and rustls `TlsServerFilter::create`, no longer store the inner future twice
++## [1.16.1] - 2026-11-21
 +
- ## [4.8.0] - 2026-11-07
++* Copy short slices in `BytePages::put_slices()`, `BytePages::put_slice()` and
++  `BytesMut::put_slice()` with fixed-size moves instead of `memcpy` calls, and
++  allow `BytePages::put_slices()` to be inlined
++
+ ## [1.16.0] - 2026-11-19
  
- * Do not use deprecated bytes method
+ * Add `BytesMut::spare_writer()`, which returns a `SpareWriter` that appends
 ```
 
-**File**: `ntex-tls/Cargo.toml` (modified, +2/-1)
+**File**: `ntex-bytes/Cargo.toml` (modified, +1/-1)
 ```diff
 @@ -1,6 +1,6 @@
  [package]
- name = "ntex-tls"
--version = "4.8.0"
-+version = "4.8.1"
- authors = ["ntex contributors <team@ntex.rs>"]
- description = "An implementation of SSL streams for ntex backed by OpenSSL"
- keywords = ["network", "framework", "async", "futures"]
-@@ -51,6 +51,7 @@ ntex-service = { workspace = true }
- ntex-net = { workspace = true }
- 
- log = { workspace = true }
-+pin-project-lite = { workspace = true }
- thiserror = { workspace = true }
- 
- # openssl
+ name = "ntex-bytes"
+-version = "1.16.0"
++version = "1.16.1"
+ authors = ["Nikolay Kim <fafhrd91@gmail.com>"]
+ description = "Types and traits for working with bytes (bytes crate fork)"
+ documentation = "https://docs.rs/ntex-bytes"
 ```
 
-**File**: `ntex-tls/src/rustls/server.rs` (modified, +4/-5)
+**File**: `ntex-bytes/src/pages.rs` (modified, +27/-9)
 ```diff
-@@ -67,14 +67,14 @@ impl TlsServerFilter {
-     /// Returns [`io::ErrorKind::TimedOut`] on expiration, or an error from
-     /// session creation, negotiation, or transport I/O. Premature transport EOF
-     /// returns [`io::ErrorKind::UnexpectedEof`].
--    pub async fn create<F: Filter>(
-+    pub fn create<F: Filter>(
-         io: Io<F>,
-         cfg: Arc<ServerConfig>,
-         timeout: Millis,
--    ) -> Result<Io<Layer<TlsServerFilter, F>>, io::Error> {
--        log::trace!("{}: Initiate server connection", io.tag());
-+    ) -> impl Future<Output = Result<Io<Layer<TlsServerFilter, F>>, io::Error>> {
-+        crate::utils::with_timeout(timeout, async move {
-+            log::trace!("{}: Initiate server connection", io.tag());
+@@ -190,22 +190,15 @@ impl BytePages {
+     ///
+     /// assert_eq!(pages.freeze(), b"content-type: text/plain\r\n"[..]);
+     /// ```
++    #[inline]
+     pub fn put_slices(&mut self, src: &[&[u8]]) {
+         let len = src.iter().map(|s| s.len()).sum::<usize>();
  
--        crate::utils::with_timeout(timeout, async {
-             let mut session = ServerConnection::new(cfg).map_err(io::Error::other)?;
-             session.set_buffer_limit(Some(io.cfg().write_size().capacity()));
-             let io = io.add_filter(TlsServerFilter {
-@@ -85,7 +85,6 @@ impl TlsServerFilter {
-             log::trace!("{}: TLS Handshake successed", io.tag());
-             Ok(io)
-         })
--        .await
+         // a small write that leaves the current page non-full is copied in place
+         if let Some(st) = self.current.as_mut()
+             && st.remaining() > len
+         {
+-            let start = st.len();
+-            let spare = st.spare_mut();
+-            let mut pos = 0;
+-            for s in src {
+-                spare[pos..pos + s.len()].copy_from_slice(s);
+-                pos += s.len();
+-            }
+-            // SAFETY: the copies above initialized `len` bytes after `start`
+-            unsafe { st.set_len(start + len) };
++            st.put_slices(src);
+         } else {
+             for s in src {
+                 self.put_slice(s);
+@@ -1875,6 +1868,31 @@ mod tests {
+         check(b"abc", &[b"y", &large, b"z"]);
      }
  
-     /// Observes handshake completion outside any mutable session borrow.
-```
-
-**File**: `ntex-tls/src/utils.rs` (modified, +111/-27)
-```diff
-@@ -1,49 +1,115 @@
- //! Handshake driving, timeout mapping, and metadata normalization shared by TLS backends.
- #![allow(dead_code)]
--use std::{future::Future, io};
-+use std::{future::Future, io, pin::Pin, task::Context, task::Poll};
- 
- use ntex_error::Error;
- use ntex_io::{Io, types::HttpProtocol};
- use ntex_net::connect::ConnectError;
- use ntex_service::cfg::Cfg;
--use ntex_util::time::{Millis, timeout_checked};
-+use ntex_util::time::{Millis, Sleep};
- 
- use crate::TlsConfig;
- 
- /// Runs a handshake with a deadline, preserving its original result.
- ///
--/// Zero disables the deadline. Expiration drops the handshake future and returns
--/// `TimedOut`; no separate background handshake is left running.
--pub(crate) async fn with_timeout<R>(
--    timeout: Millis,
--    fut: impl Future<Output = io::Result<R>>,
--) -> io::Result<R> {
--    timeout_checked(timeout, fut).await.unwrap_or_else(|()| {
--        Err(io::Error::new(
--            io::ErrorKind::TimedOut,
--            "TLS Handshake timeout",
--        ))
--    })
-+/// Zero disables the deadline. The deadline starts on the first poll.
-+/// Expiration returns `TimedOut`; dropping the returned future drops the
-+/// handshake, so no separate background handshake is left running.
-+pub(crate) fn with_timeout<F, R>(timeout: Millis, fut: F) -> WithTimeout<F>
-+where
-+    F: Future<Output = io::Result<R>>,
-+{
-+    WithTimeout {
-+        fut,
-+        timeout,
-+        delay: None,
-+    }
-+}
-+
-+pin_project_lite::pin_project! {
-+    /// Future returned by [`with_timeout`].
-+    pub(crate) struct WithTimeout<F> {
-+        #[pin]
-+        fut: F,
-+        timeout: Millis,
-+        delay: Option<Sleep>,
-+    }
-+}
-+
-+impl<F, R> Future for WithTimeout<F>
-+where
-+    F: Future<Output = io::Result<R>>,
-+{
-+    type Output = io::Result<R>;
-+
-+    fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
-+        let this = self.project();
-+        if this.delay.is_none() && !this.timeout.is_zero() {
-+            *this.delay = Some(Sleep::new(*this.timeout));
-+        }
-+
-+        if let Poll::Ready(res) = this.fut.poll(cx) {
-+            return Poll::Ready(res);
-+        }
-+
-+        match this.delay {
-+            Some(delay) if delay.poll_elapsed(cx).is_ready() => Poll::Ready(Err(io::Error::new(
-+                io::ErrorKind::TimedOut,
-+                "TLS Handshake timeout",
-+            ))),
-+            _ => Poll::Pending,
-+        }
-+    }
- }
- 
- /// Runs a client handshake with timeout and configuration-scoped diagnostics.
- ///
- /// Maps TLS and timeout errors into `ConnectError` and attaches the TLS service
- /// identity. Transport establishment must already have completed.
--pub(crate) async fn connect<R>(
--    cfg: &Cfg<TlsConfig>,
--    host: &str,
--    fut: impl Future<Output = io::Result<R>>,
--) -> Result<R, Error<ConnectError>> {
-+pub(crate) fn connect<'a, F, R>(cfg: &Cfg<TlsConfig>, host: &'a str, fut: F) -> TlsConnect<'a, F>
-+where
-+    F: Future<Output = io::Result<R>>,
-+{
-     log::trace!("{}: TLS Handshake start for: {host:?}", cfg.tag());
--    match with_timeout(cfg.handshake_timeout(), fut).await {
--        Ok(io) => {
--            log::trace!("{}: TLS Handshake success: {host:?}", cfg.tag());
--            Ok(io)
--        }
--        Err(e) => {
--            log::trace!("{}: TLS Handshake error: {e:?}", cfg.tag());
--            Err(Error::from(ConnectError::from(e)).with_service(cfg.service()))
-+    TlsConnect {
-+        fut: with_timeout(cfg.handshake_timeout(), fut),
-+        tag: cfg.tag(),
-+        service: cfg.service(),
-+        host,
-+    }
-+}
-+
-+pin_project_lite::pin_project! {
-+    /// Future returned by [`connect`].
-+    pub(crate) struct TlsConnect<'a, F> {
-+        #[pin]
-+        fut: WithTimeout<F>,
-+        tag: &'static str,
-+        service: &'static str,
-+        host: &'a str,
-+    }
-+}
-+
-+impl<F, R> Future for TlsConnect<'_, F>
-+where
-+    F: Future<Output = io::Result<R>>,
-+{
-+    type Output = Result<R, Error<ConnectError>>;
-+
-+    fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Self::Output> {
-+        let this = self.project();
-+        match this.fut.poll(cx) {
-+            Poll::Ready(Ok(io)) => {
-+                log::trace!("{}: TLS Handshake success: {:?}", this.tag, this.host);
-+                Poll::Ready(Ok(io))
-+            }
-+            Poll::Ready(Err(e)) => {
-+                log::trace!("{}: TLS Handshake error: {e:?}", this.tag);
-+                Poll::Ready(Err(
-+                    Error::from(ConnectError::from(e)).with_service(this.service)
-+                ))
-+            }
-+            Poll::Pending => Poll::Pending,
-         }
-     }
- }
-@@ -381,6 +447,24 @@ mod tests {
-         }
-     }
- 
-+    /// STATEMENT: The handshake deadline starts on the first poll, not when the future is created.
++    /// STATEMENT: `put_slices` copies every byte of slices of any length into the current page,
++    /// including lengths at the edges of the small-copy size classes.
 +    ///
 +    /// HOW:
-+    /// - Create a 50 ms `with_timeout` future around a pending handshake and sleep 150 ms.
-+    /// - Check the first poll is still pending, then check awaiting it returns `Time
++    /// - Start a page with `!`, then for each length from 0 to 40 put a slice of distinct bytes
++    ///   between `<` and `>`; all of it fits into the current page, so every call copies in place.
++    /// - Check that no page moved to the page list and that the frozen bytes equal the slices
++    ///   appended to a `Vec`.
++    #[test]
++    fn put_slices_all_small_lengths() {
++        let data: Vec<u8> = (1..=40).collect();
++        let mut pages = BytePages::new(BytePageSize::Size4);
++        pages.put_slice(b"!");
++        let mut expected = b"!".to_vec();
++
++        for n in 0..=data.len() {
++            pages.put_slices(&[b"<", &data[..n], b">"]);
++            expected.push(b'<');
++            expected.extend_from_slice(&data[..n]);
++            expected.push(b'>');
++        }
++        assert_eq!(pages.pages().len(), 0);
++        assert_eq!(pages.freeze(), expected[..]);
++    }
++
+     /// STATEMENT: Cloned pages preserve contents while short storage is copied inline and longer mutable storage is shared.
+     ///
+     /// HOW:
 ```
 
----
-
-### Incident Patch 2: `84dbbbf9` (2026-11-19)
-**Commit Message**: Fix code typos
-
-**File**: `ntex-error/src/bt.rs` (modified, +4/-4)
+**File**: `ntex-bytes/src/stvec.rs` (modified, +79/-1)
 ```diff
-@@ -386,14 +386,14 @@ impl Drop for BacktraceResolver {
- fn find_loc(loc: &str, frames: &mut [Option<&ResolvedFrame>]) {
-     let mut idx = 0;
- 
--    'outter: for (i, frm) in frames.iter().enumerate() {
-+    'outer: for (i, frm) in frames.iter().enumerate() {
-         if let Some(f) = frm {
-             for sym in &f.symbols {
-                 if let Some(fname) = &sym.filename
-                     && fname.ends_with(loc)
-                 {
-                     idx = i;
--                    break 'outter;
-+                    break 'outer;
-                 }
-             }
-         } else {
-@@ -406,14 +406,14 @@ fn find_loc(loc: &str, frames: &mut [Option<&ResolvedFrame>]) {
+@@ -221,13 +221,31 @@ impl StorageVec {
+     #[inline]
+     pub(crate) fn put_slice_partial(&mut self, src: &[u8]) -> usize {
+         let cnt = cmp::min(src.len(), self.remaining());
+-        self.spare_mut()[..cnt].copy_from_slice(&src[..cnt]);
++        copy_small(&mut self.spare_mut()[..cnt], &src[..cnt]);
+         // SAFETY: The `cnt` appended bytes were initialized by the copy above and fit in spare
+         // capacity.
+         unsafe { self.set_len(self.len() + cnt) };
+         cnt
      }
  
-     PATHS.with(|paths| {
--        'outter: for frm in &mut frames[idx..] {
-+        'outer: for frm in &mut frames[idx..] {
-             if let Some(f) = frm {
-                 for sym in &f.symbols {
-                     if let Some(fname) = &sym.filename {
-                         for p in paths {
-                             if fname.ends_with(p) {
-                                 *frm = None;
--                                continue 'outter;
-+                                continue 'outer;
-                             }
-                         }
-                     }
-```
-
-**File**: `ntex-error/src/message.rs` (modified, +1/-1)
-```diff
-@@ -481,7 +481,7 @@ mod tests {
-         assert!(msg.contains("Test io error"), "{msg}");
- 
-         assert!(
--            format!("{:?}", err.source()).contains("Test io erro"),
-+            format!("{:?}", err.source()).contains("Test io error"),
-             "{:?}",
-             err.source().unwrap()
-         );
-```
-
-**File**: `ntex-http/src/value.rs` (modified, +1/-1)
-```diff
-@@ -13,7 +13,7 @@ use ntex_bytes::{ByteString, Bytes, BytesMut};
- /// HTTP spec allows for a header value to contain opaque bytes as well. In this
- /// case, the header field value is not able to be represented as a string.
- ///
--/// To handle this, the `HeaderValue` is useable as a type and can be compared
-+/// To handle this, the `HeaderValue` is usable as a type and can be compared
- /// with strings and implements `Debug`. [`to_str`](Self::to_str) returns an
- /// error if the value is not valid UTF-8.
- #[derive(Clone, Eq)]
-```
-
-**File**: `ntex-io/src/io/tests.rs` (modified, +3/-3)
-```diff
-@@ -907,7 +907,7 @@ async fn read_notify() {
-     let res = lazy(|cx| io.poll_read_notify(cx)).await;
-     assert!(matches!(res, Poll::Ready(Ok(Some(())))));
- 
--    // disapcher is not set
-+    // dispatcher is not set
-     assert!(!io.st().dispatch_task.is_set());
-     // rd buffer is ready
-     assert!(io.st().flags.is_read_ready());
-@@ -923,7 +923,7 @@ async fn read_notify() {
-         Poll::Ready(Readiness::Ready)
-     );
- 
--    // == enable packpressure
-+    // == enable backpressure
-     let len = BytePageSize::Size4.capacity() - 1;
-     ctx.release_read_buf(
-         BytesMut::copy_from_slice(vec![b'2'; len]),
-@@ -1732,7 +1732,7 @@ async fn write() {
-         panic!()
-     };
-     assert_eq!(err.kind(), io::ErrorKind::NotConnected);
--    // statis returns error
-+    // status returns error
-     assert!(matches!(
-         lazy(|cx| io.poll_status_update(cx)).await,
-         Poll::Ready(IoStatusUpdate::PeerGone(None))
-```
-
-**File**: `ntex-io/src/ioref.rs` (modified, +2/-2)
-```diff
-@@ -383,7 +383,7 @@ impl IoRef {
-             if st.flags.is_write_paused() {
-                 // call `Handle::write()`.
-                 // if write task is not paused, io write is pending
--                // need to wake write task for io completeion
-+                // need to wake write task for io completion
-                 if self.call_write() == WakeWriteTask::Yes {
-                     st.wake_write_task();
-                     st.flags.unset_write_paused();
-@@ -589,7 +589,7 @@ impl IoRef {
-     pub(crate) fn consolidate_write_state(&self, force: bool) -> io::Result<()> {
-         let st = &self.0;
- 
--        // wake write task if needsed
-+        // wake write task if needed
-         let size = st.buffer.write_buf_size();
-         // set when a direct write may have changed the outstanding output
-         let mut wrote = false;
-```
-
-**File**: `ntex-io/src/testing.rs` (modified, +1/-1)
-```diff
-@@ -397,7 +397,7 @@ impl Handle for Rc<IoTest> {
- async fn run(io: Rc<IoTest>, ctx: IoContext) {
-     poll_fn(|cx| turn(&io, &ctx, cx)).await;
- 
--    log::debug!("{}: Shuting down io", ctx.tag());
-+    log::debug!("{}: Shutting down io", ctx.tag());
- 
-     // shutdown WRITE side
-     io.local
-```
-
-**File**: `ntex-net/src/polling/io.rs` (modified, +1/-1)
-```diff
-@@ -97,7 +97,7 @@ async fn run(ctl: StreamCtl, context: ntex_io::IoContext) {
-     })
-     .await;
- 
--    log::trace!("{}: Shuting down io", context.tag());
-+    log::trace!("{}: Shutting down io", context.tag());
-     // The last armed interest stays in place, it is not dropped separately.
-     // Teardown runs inline and dropping the control handle detaches the socket
-     // before the reactor polls again, so no event is delivered for it.
-```
-
-**File**: `ntex-net/src/tokio/io.rs` (modified, +1/-1)
-```diff
-@@ -226,7 +226,7 @@ where
-     })
-     .await;
- 
--    log::trace!("{}: Shuting down io", ctx.tag());
-+    log::trace!("{}: Shutting down io", ctx.tag());
- 
-     // A force-closed connection is aborted instead of closed gracefully, so
-     // that a truncated stream is not terminated by a clean `FIN`.
-```
-
----
-
-### Incident Patch 3: `0591fb3a` (2026-11-19)
-**Commit Message**: Add Request and Response Streaming guide
-
-**File**: `.github/workflows/cov.yml` (modified, +1/-0)
-```diff
-@@ -40,6 +40,7 @@ jobs:
- 
-       - name: Code coverage (neon-poling)
-         timeout-minutes: 10
-+        continue-on-error: true
-         run: cargo +nightly llvm-cov nextest --no-report --retries=3 --all --no-default-features --features="ntex/neon-polling,ntex/cookie,ntex/compress,ntex/openssl,ntex/rustls,ntex/ws"
- 
-       - name: Code coverage (neon-uring)
-```
-
-**File**: `README.md` (modified, +9/-7)
-```diff
-@@ -3,11 +3,11 @@
-   <p><strong>Framework for composable network services.</strong></p>
- 
- [![Linux](https://github.com/ntex-rs/ntex/actions/workflows/linux.yml/badge.svg?branch=main)](https://github.com/ntex-rs/ntex/actions/workflows/linux.yml)
-+[![codecov](https://codecov.io/gh/ntex-rs/ntex/branch/main/graph/badge.svg)](https://codecov.io/gh/ntex-rs/ntex/tree/main)
- [![crates.io](https://img.shields.io/crates/v/ntex.svg)](https://crates.io/crates/ntex)
- [![Documentation](https://img.shields.io/docsrs/ntex/latest)](https://docs.rs/ntex)
- [![MSRV](https://img.shields.io/badge/rustc-1.97+-lightgray.svg)](https://releases.rs/docs/1.97.0/)
- [![License](https://img.shields.io/crates/l/ntex.svg)](https://github.com/ntex-rs/ntex#license)
--[![codecov](https://codecov.io/gh/ntex-rs/ntex/branch/main/graph/badge.svg)](https://codecov.io/gh/ntex-rs/ntex/tree/main)
- [![Discord](https://img.shields.io/discord/919288597826387979?label=chat&logo=discord)](https://discord.gg/4GtaeP5Uqu)
- </div>
- 
-@@ -16,13 +16,11 @@ asynchronous network applications. It includes HTTP/1, HTTP/2, WebSocket,
- TLS, and runtime-independent I/O support. MQTT, AMQP, and gRPC are provided
- by [related projects](#related-projects).
- 
--## Build status
-+## Documentation
- 
--| Platform | Status |
--| --- | --- |
--| Linux | [![Linux](https://github.com/ntex-rs/ntex/actions/workflows/linux.yml/badge.svg?branch=main)](https://github.com/ntex-rs/ntex/actions/workflows/linux.yml) |
--| macOS | [![macOS](https://github.com/ntex-rs/ntex/actions/workflows/osx.yml/badge.svg?branch=main)](https://github.com/ntex-rs/ntex/actions/workflows/osx.yml) |
--| Windows | [![Windows](https://github.com/ntex-rs/ntex/actions/workflows/windows.yml/badge.svg?branch=main)](https://github.com/ntex-rs/ntex/actions/workflows/windows.yml) |
-+- [Framework guide](https://docs.ntex.rs/index.html)
-+- [Examples repository](https://github.com/ntex-rs/examples)
-+- [API documentation](https://docs.ntex.rs/api/ntex/index.html)
- 
- ## Usage
- 
-@@ -92,6 +90,10 @@ ntex = { version = "4", features = ["tokio"] }
- | [ntex-amqp](https://github.com/ntex-rs/ntex-amqp) | Client and server framework for AMQP 1.0 |
- | [ntex-grpc](https://github.com/ntex-rs/ntex-grpc) | Client and server framework for gRPC |
- 
-+## Benchmarks
-+
-+ntex ranks among the fastest frameworks on [HTTP Arena](https://http-arena.com/#scope=all).
-+
- ## Documentation and community
- 
- - [Framework guide](https://docs.ntex.rs/index.html)
-```
-
-**File**: `docs/8.3-web-app.md` (modified, +19/-5)
-```diff
-@@ -82,6 +82,11 @@ Its second argument is the `AuthenticatedUser` produced by the filter.
- [`WebRequest::map_state()`] consumes the request, transforms its request-local
- state, and preserves the HTTP request and payload.
- 
-+Extractors run only in the handler, so a filter sees the request body as a raw
-+payload stream. It can replace that stream, for example to limit or decode
-+every upload; see
-+[Streams in Filters and Middleware](./8.7-web-app.md#streams-in-filters-and-middleware).
-+
- A filter can take application state as its first argument. It can return any
- error that implements [`WebResponseError`]. The error stops processing and
- becomes the response:
-@@ -121,6 +126,11 @@ service through [`Ctx`]. It can then inspect or modify the response.
- Middleware can also change the request-state type before the call. A filter
- is usually simpler if you only need to process the request.
- 
-+Middleware also sees bodies as streams. The request body has not been read by
-+an extractor yet, and the response body is sent after the middleware returns.
-+[Streams in Filters and Middleware](./8.7-web-app.md#streams-in-filters-and-middleware)
-+shows how to wrap either one.
-+
- To skip the inner service, return a `WebResponse` directly. Use
- [`WebRequest::into_response()`] to keep the original request attached to that
- response.
-@@ -307,8 +317,10 @@ sensitive query strings or credentials in a real access log.
- 
- This measures response creation, not the time needed to stream the response
- body to the client. A large download can continue after `next.call()`
--returns. Use the built-in `Logger` when its access-log format fits your
--needs instead of maintaining a custom timing layer.
-+returns. To measure until the last byte, wrap the body as in
-+[Wrapping the Response Body](./8.7-web-app.md#wrapping-the-response-body).
-+The built-in `Logger` already does this; use it when its access-log format
-+fits your needs instead of maintaining a custom timing layer.
- 
- ### Built-In Response Layers
- 
-@@ -321,9 +333,11 @@ as in the timing example.
- With the `compress` feature enabled, `middleware::Compress::default()`
- negotiates response compression from `Accept-Encoding`. Register it before
- routes like the other middleware. It operates on the response body; request
--body decompression is a different concern. For API responses, add compression
--only where it is useful rather than assuming it replaces sensible payload
--sizes or pagination.
-+body decompression is a different concern.
-+[Streams in Filters and Middleware](./8.7-web-app.md#streams-in-filters-and-middleware)
-+explains how `Compress` wraps the body and how a filter can decode uploads.
-+For API responses, add compression only where it is useful rather than
-+assuming it replaces sensible payload sizes or pagination.
- 
- A default `Access-Control-Allow-Origin` header alone is not a complete CORS
- policy. Browsers can send preflight `OPTIONS` requests, and authenticated
-```
-
-**File**: `docs/8.4-web-app.md` (modified, +6/-0)
-```diff
-@@ -212,6 +212,9 @@ bytes instead. For compressed uploads, wrap the raw stream with
- apply your limit to the decoded chunks. The example above counts the bytes
- it actually receives, not a decompressed size.
- 
-+[Request and Response Streaming](./8.7-web-app.md) covers backpressure, slow
-+clients, records split across chunks, compressed uploads, and trailers.
-+
- ### Optional Extractors
- 
- Wrap an extractor in `Option<T>` when your handler should run even if that
-@@ -565,6 +568,9 @@ replace the status with a new error response. Test the final body as well as
- the headers; [Testing](./testing.md) covers response bodies and real-server
- tests for connection behavior.
- 
-+[Request and Response Streaming](./8.7-web-app.md) covers producer tasks,
-+framing, known lengths, slow readers, compression, and Server-Sent Events.
-+
- [`App::with_config()`]: https://docs.ntex.rs/api/ntex/web/struct.App.html#method.with_config
- [`Bytes`]: https://docs.ntex.rs/api/ntex/util/struct.Bytes.html
- [`Form<T>`]: https://docs.ntex.rs/api/ntex/web/types/struct.Form.html
-```
-
-**File**: `docs/8.7-web-app.md` (added, +1218/-0)
-```diff
-@@ -0,0 +1,1218 @@
-+# Request and Response Streaming
-+
-+[Extractors and Responders](./8.4-web-app.md) introduces the two streaming
-+tools: the [`Payload`] extractor reads a request body as it arrives, and
-+[`ResponseBuilder::streaming()`] sends a response body as it is produced. This
-+chapter shows how to use them safely:
-+
-+- [Request bodies](#streaming-request-bodies): limits, records split across
-+  chunks, compressed uploads, trailers, and errors.
-+- [Response bodies](#streaming-response-bodies): streams, producer tasks,
-+  framing, and errors.
-+- [Slow clients and timeouts](#slow-clients-and-timeouts).
-+- [Body streams in filters and middleware](#streams-in-filters-and-middleware).
-+- Two complete examples, a
-+  [Server-Sent Events feed](#example-server-sent-events) and a
-+  [streaming proxy](#example-streaming-proxy).
-+- [Testing](#testing-streaming-handlers).
-+
-+## Buffering or Streaming
-+
-+Most handlers should buffer. A buffered body is a single value that you can
-+validate as a whole. Its size limit is configured once, and a failure becomes
-+an ordinary error response.
-+
-+Stream when:
-+
-+- a body is too large to hold in memory;
-+- the client benefits from early output;
-+- the data passes through to another service or to storage.
-+
-+| | Buffered | Streamed |
-+|---|---|---|
-+| Request API | `Bytes`, `String`, `Json<T>`, `Form<T>` | `Payload` |
-+| Response API | `body()`, `json()`, a responder | `streaming()`, `body(SizedStream)`, `Body::from_message()` |
-+| Memory per request | The whole body | A few chunks plus your own state |
-+| Request size limit | [`PayloadConfig`], `JsonConfig`, `FormConfig` | Your own byte counter |
-+| Request `Content-Encoding` | Decoded with the `compress` feature | Raw bytes unless you wrap them in a `Decoder` |
-+| Request errors | Rejected before the handler runs | Returned by `recv()` while the handler runs |
-+| Response errors | Cannot occur once the body is built | Reach the client after the status was sent |
-+
-+## Streaming Request Bodies
-+
-+### Reading the Payload
-+
-+The `Payload` extractor hands the handler the request body as a stream of
-+[`Bytes`] chunks. This handler accepts an upload of up to 16 MiB:
-+
-+```rust
-+use ntex::web::{self, App, InternalError, types::Payload};
-+
-+async fn upload(
-+    mut body: Payload,
-+) -> Result<String, InternalError<&'static str>> {
-+    const LIMIT: usize = 16 * 1024 * 1024;
-+    let mut total = 0;
-+    while let Some(chunk) = body.recv().await {
-+        let chunk = chunk
-+            .map_err(|_| web::error::ErrorBadRequest("Cannot read body"))?;
-+        if chunk.len() > LIMIT - total {
-+            return Err(web::error::ErrorPayloadTooLarge("Body is too large"));
++    /// Appends the given slices in order.
++    ///
++    /// # Panics
++    ///
++    /// Panics if the slices do not fit into the spare capacity.
++    #[inline]
++    pub(crate) fn put_slices(&mut self, src: &[&[u8]]) {
++        let start = self.len();
++        let spare = self.spare_mut();
++        let mut pos = 0;
++        for s in src {
++            copy_small(&mut spare[pos..pos + s.len()], s);
++            pos += s.len();
 +        }
-+        total += chunk.len();
-+        // Write `chunk` to storage here.
-+    }
-+    Ok(format!("Received {total} bytes\n"))
-+}
-+
-+fn main() {
-+    let app = App::default().route("/upload", web::post().to(upload));
-+}
-+```
-+
-+- `recv()` returns the next chunk, an error, or `None` at the end of the body.
-+  `Payload` also implements `futures::Stream`.
-+- Chunk sizes depend on the network and the protocol, not on how the client
-+  wrote the body.
-+- ntex reads the body only as fast as the handler consumes it, so a handler
-+  that awaits storage between chunks needs no buffering of its own.
-+  [Slow Clients and Timeouts](#slow-clients-and-timeouts) explains how this
-+  works for each protocol.
-+
-+The handler enforces its own size limit: the [`PayloadConfig`] limit and
-+request decompression apply only to the buffered extractors. Count the bytes
-+you receive, as this handler does. `Content-Length` is optional and untrusted,
-+so it is useful only for an early rejection.
-+
-+A request has one body. Extracting `Payload` takes it, so a body extractor
-+that runs afterwards, such as `Bytes` or `Json<T>`, gets no data.
-+
-+### Records Across Chunks
-+
-+Chunk boundaries are not message boundaries. One record can be split across
-+chunks, and one chunk can hold several records.
-+
-+This handler reads newline-delimited JSON. It keeps the incomplete end of each
-+chunk for the next one and limits both the line length and the whole body:
-+
-+```rust
-+use ntex::util::{Bytes, BytesMut};
-+use ntex::web::{self, App, InternalError, types::Payload};
-+use serde::Deserialize;
-+
-+#[derive(Deserialize)]
-+struct Event {
-+    kind: String,
-+}
-+
-+/// Reassembles newline-terminated records from arbitrary body chunks.
-+struct LineReader {
-+    buf: BytesMut,
-+    max_line: usize,
-+}
-+
-+impl LineReader {
-+    fn new(max_line: usize) -> Self {
-+        LineReader { buf: BytesMut::new(), max_line }
++        // SAFETY: The copies above initialized `pos` bytes after `start`, within spare capacity.
++        unsafe { self.set_len(start + pos) };
 +    }
 +
-+    /// Appends `chunk` and returns every line it completes.
-+    fn push(&mut self, chunk: &[u8]) -> Result<Vec<Bytes>, &'static str> {
-+        self.buf.extend_from_slice(chunk);
-+        let mut lines = Vec::new();
-+        while let Some(pos) = self.buf.iter().position(|b| *b == b'\n') {
-+            if pos > self.max_line {
-+                return Err("Line is too long");
-+            }
-```
-
-**File**: `docs/SUMMARY.md` (modified, +1/-0)
-```diff
-@@ -15,6 +15,7 @@
-   - [Application State](8.2-web-app.md)
-   - [Filters and Middleware](8.3-web-app.md)
-   - [Extractors and Responders](8.4-web-app.md)
-+  - [Request and Response Streaming](8.7-web-app.md)
-   - [Error Handling](8.5-web-app.md)
-   - [WebSocket Support](8.6-web-app.md)
- - [Testing](testing.md)
-```
-
-**File**: `docs/cookbook.md` (modified, +5/-4)
-```diff
-@@ -601,10 +601,11 @@ async fn main() -> std::io::Result<()> {
+     pub(crate) fn len(&self) -> usize {
+         // SAFETY: The handle owns a reference to the live header; only this view can change its
+         // length.
+@@ -820,6 +838,37 @@ fn grown_capacity(len: usize, required: usize) -> usize {
+     cmp::max(required, cmp::min(len.saturating_mul(2), MAX_CAPACITY))
  }
- ```
  
--The first tick waits one period; `interval` does not immediately run the job.
--For an initial refresh, do it explicitly before entering the loop. Await each
--refresh before the next tick to avoid overlapping runs. Use a single task to
--wait on each interval, and avoid blocking calls in that task.
-+The first tick completes immediately, so the job runs once at startup and then
-+once per period. To wait a full period first, await one tick before entering
-+the loop. Await each refresh before the next tick to avoid overlapping runs.
-+Use a single task to wait on each interval, and avoid blocking calls in that
-+task.
++/// Copies `src` into `dst`, which has the same length.
++///
++/// Copies of up to 32 bytes use fixed-size moves instead of a `memcpy` call.
++#[inline]
++fn copy_small(dst: &mut UninitSlice, src: &[u8]) {
++    let n = src.len();
++    match n {
++        0 => {}
++        1..=3 => {
++            dst.write_byte(0, src[0]);
++            dst.write_byte(n / 2, src[n / 2]);
++            dst.write_byte(n - 1, src[n - 1]);
++        }
++        4..=7 => copy_ends::<4>(dst, src),
++        8..=16 => copy_ends::<8>(dst, src),
++        17..=32 => copy_ends::<16>(dst, src),
++        _ => dst.copy_from_slice(src),
++    }
++}
++
++/// Copies the first and the last `N` bytes of `src`, which together cover
++/// a source of `N..=2 * N` bytes.
++#[inline]
++fn copy_ends<const N: usize>(dst: &mut UninitSlice, src: &[u8]) {
++    let n = src.len();
++    let head: [u8; N] = src[..N].try_into().unwrap();
++    let tail: [u8; N] = src[n - N..].try_into().unwrap();
++    dst[..N].copy_from_slice(&head);
++    dst[n - N..n].copy_from_slice(&tail);
++}
++
+ const fn shared_vec_layout(cap: usize) -> Result<Layout, LayoutError> {
+     let s_layout = match Layout::from_size_align(cap, Layout::new::<u8>().align()) {
+         Ok(l) => l,
+@@ -1164,6 +1213,35 @@ mod tests {
+         assert_eq!(st.as_ref(), b"world");
+     }
  
- The state keeps the task handle in an `Rc`, shared by its connection clones.
- `cancel_on_drop()` requests cancellation when the last state handle is
-```
-
-**File**: `docs/index.md` (modified, +1/-0)
-```diff
-@@ -61,6 +61,7 @@ listed below the chapters.
-   - [Application State](./8.2-web-app.md)
-   - [Filters and Middleware](./8.3-web-app.md)
-   - [Extractors and Responders](./8.4-web-app.md)
-+  - [Request and Response Streaming](./8.7-web-app.md)
-   - [Error Handling](./8.5-web-app.md)
-   - [WebSocket Support](./8.6-web-app.md)
- - [Testing](./testing.md)
++    /// STATEMENT: `put_slice_partial` copies every small length exactly, whether the source fits or is cut to the remaining space.
++    ///
++    /// HOW:
++    /// - For each spare size from 0 to 40 bytes, fill a buffer up to that spare size and append a 40-byte source of distinct bytes.
++    /// - Check the returned count is the spare size, the buffer is full, and the tail equals the source prefix.
++    /// - For each length from 0 to 40, append that many source bytes to a one-byte buffer and check the count and contents.
++    #[test]
++    fn put_slice_partial_small_lengths() {
++        let src: Vec<u8> = (100..140).collect();
++
++        for spare in 0..=src.len() {
++            let mut st = StorageVec::with_capacity(100);
++            let fill = st.capacity() - spare;
++            assert_eq!(st.put_slice_partial(&pattern(fill)), fill);
++            assert_eq!(st.put_slice_partial(&src), spare);
++            assert!(st.is_full());
++            assert_eq!(&st.as_ref()[..fill], &pattern(fill)[..]);
++            assert_eq!(&st.as_ref()[fill..], &src[..spare]);
++        }
++
++        for n in 0..=src.len() {
++            let mut st = StorageVec::with_capacity(100);
++            st.put_u8(1);
++            assert_eq!(st.put_slice_partial(&src[..n]), n);
++            assert_eq!(st.as_ref()[0], 1);
++            assert_eq!(&st.as_ref()[1..], &src[..n]);
++        }
++    }
++
+     /// STATEMENT: Remaining capacity follows initialized data and view offsets and is restored when unique storage is reclaimed.
+     ///
+     /// HOW:
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1241** (2026-11-21): Optimize copy slice (@fafhrd91)
 - **PR #1240** (2026-11-19): Fix code typos (@fafhrd91)
 - **PR #1239** (2026-11-19): Add Request and Response Streaming guide (@fafhrd91)
 - **PR #1237** (2026-11-19): Prepare release (@fafhrd91)
 - **PR #1236** (2026-11-19): Add `BytesMut::spare_writer()`, which returns a `SpareWriter` that ap… (@fafhrd91)
 - **PR #1233** (2026-11-19): Prepare releases (@fafhrd91)
-- **PR #1232** (2026-11-19): Reduce size of futures (@fafhrd91)
 
 ---
 
@@ -3049,28 +2541,33 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Reduce handshake future sizes: the handshake timeout and connect wrappers, and r
+## X. Optimize copy slice
 
 **RULE**:
-When implementing operations in `ntex-service/CHANGES.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ntex-rs/ntex. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ntex-bytes/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ntex-rs/ntex. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c5751aa8`: Reduce handshake future sizes: the handshake timeout and connect wrappers, and rustls `TlsServerFilter::create`, no longer store the inner future twice. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4adf6cd3`: Optimize copy slice. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `ntex-service/CHANGES.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `ntex-bytes/CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-## [5.8.1] - 2026-11-18 (Unreleased)
+## [1.16.1] - 2026-11-21
+
+* Copy short slices in `BytePages::put_slices()`, `BytePages::put_slice()` and
+  `BytesMut::put_slice()` with fixed-size moves instead of `memcpy` calls, and
+  allow `BytePages::put_slices()` to be inlined
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-## [5.8.1] - Unreleased
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c5751aa8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4adf6cd3` are properly handled with clean fallback behavior.

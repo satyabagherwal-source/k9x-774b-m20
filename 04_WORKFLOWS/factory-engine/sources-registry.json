@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-22T03:37:55.933Z",
-    "lastVerified": "2026-11-22T03:37:55.933Z",
+    "lastChecked": "2026-11-22T03:46:25.623Z",
+    "lastVerified": "2026-11-22T03:46:25.623Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -255,9 +255,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-22T03:03:24.792Z",
+    "lastChecked": "2026-11-22T03:46:25.615Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-22T03:03:24.792Z"
+    "lastVerified": "2026-11-22T03:46:25.615Z"
   },
   "herdrdev-herdr": {
     "name": "herdrdev/herdr",
@@ -1711,8 +1711,8 @@
     "officialUrl": "https://github.com/zama-ai/tfhe-rs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-21T22:29:57.708Z",
-    "lastVerified": "2026-11-21T22:29:57.708Z",
+    "lastChecked": "2026-11-22T03:46:20.647Z",
+    "lastVerified": "2026-11-22T03:46:20.647Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zama-ai-tfhe-rs",
@@ -2920,9 +2920,9 @@
   "pingcap-autoflow": {
     "name": "autoflow",
     "officialUrl": "https://github.com/pingcap/autoflow",
-    "lastChecked": "2026-11-20T23:21:26.379Z",
+    "lastChecked": "2026-11-22T03:46:23.078Z",
     "revisionIdentifier": "01cdf88f",
-    "lastVerified": "2026-11-20T23:21:26.379Z"
+    "lastVerified": "2026-11-22T03:46:23.078Z"
   },
   "orange-opensource-hurl": {
     "name": "Orange-OpenSource/hurl",
@@ -4089,8 +4089,8 @@
     "officialUrl": "https://github.com/krakend/krakend-ce",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-21T00:24:39.636Z",
-    "lastVerified": "2026-11-21T00:24:39.636Z",
+    "lastChecked": "2026-11-22T03:46:18.170Z",
+    "lastVerified": "2026-11-22T03:46:18.170Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-krakend-krakend-ce",
@@ -5321,9 +5321,9 @@
   "apsl-react-native-keyboard-aware-scroll-view": {
     "name": "react-native-keyboard-aware-scroll-view",
     "officialUrl": "https://github.com/APSL/react-native-keyboard-aware-scroll-view",
-    "lastChecked": "2026-11-18T23:10:19.817Z",
+    "lastChecked": "2026-11-22T03:46:15.772Z",
     "revisionIdentifier": "9eee405f",
-    "lastVerified": "2026-11-18T23:10:19.817Z"
+    "lastVerified": "2026-11-22T03:46:15.772Z"
   },
   "meshery-meshery": {
     "name": "meshery/meshery",
@@ -5727,14 +5727,14 @@
     "officialUrl": "https://github.com/ntex-rs/ntex",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T17:29:05.764Z",
-    "lastVerified": "2026-11-20T17:29:05.764Z",
+    "lastChecked": "2026-11-22T03:46:14.692Z",
+    "lastVerified": "2026-11-22T03:46:14.692Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-ntex-rs-ntex",
-    "contentHash": "74110263ade45af877a761a9361a897f331f1f07cada15c01621659d7b3da583",
+    "contentHash": "fb3fb9fa38f4b1f28d6a33c394bc4ac2c3525a445e2f615c3568ce8bc1d39d6e",
     "promotedRulesCount": 0,
-    "recentFixesCount": 3,
+    "recentFixesCount": 0,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -13528,6 +13528,23 @@
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-webai-official-twil-8b",
     "contentHash": "79dc532c3182f3f55b44076b734484e5babf402361f6b847bf57ed5f7fefc01d",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-unsloth-qwen3.8-flash-next-gguf": {
+    "name": "unsloth/Qwen3.8-Flash-Next-GGUF",
+    "officialUrl": "https://huggingface.co/unsloth/Qwen3.8-Flash-Next-GGUF",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-22T03:46:13.443Z",
+    "lastVerified": "2026-11-22T03:46:13.443Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-unsloth-qwen3-8-flash-next-gguf",
+    "contentHash": "0c3aafcad38ff3348e774495056a9d7bea3301a78633afe855f8b315ed07a6e4",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

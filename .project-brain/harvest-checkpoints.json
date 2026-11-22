@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T03:37:50.237Z",
+  "last_updated": "2026-11-22T03:46:15.204Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -8811,14 +8811,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ntex-rs-ntex",
-      "content_hash": "74110263ade45af877a761a9361a897f331f1f07cada15c01621659d7b3da583",
-      "verified_at": "2026-11-20T17:29:06.420Z",
+      "content_hash": "fb3fb9fa38f4b1f28d6a33c394bc4ac2c3525a445e2f615c3568ce8bc1d39d6e",
+      "verified_at": "2026-11-22T03:46:15.203Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T17:29:06.420Z"
+      "last_updated": "2026-11-22T03:46:15.203Z"
     },
     "learnapollo/learnapollo": {
       "repository": "learnapollo/learnapollo",
@@ -18171,14 +18171,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-unsloth-qwen3-8-flash-next-gguf",
-      "content_hash": "55c1c95bd5fd1c68859a1a02813665189f8849cb7301cea9033d1533a538564e",
-      "verified_at": "2026-11-16T00:36:38.298Z",
+      "content_hash": "0c3aafcad38ff3348e774495056a9d7bea3301a78633afe855f8b315ed07a6e4",
+      "verified_at": "2026-11-22T03:46:14.141Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T00:36:38.298Z"
+      "last_updated": "2026-11-22T03:46:14.141Z"
     },
     "baidu/ERNIE-5.5-Flash-Base": {
       "repository": "baidu/ERNIE-5.5-Flash-Base",

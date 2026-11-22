@@ -12031,3 +12031,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-webai-official-twil-8b` | `https://huggingface.co/webAI-Official/TwIL-8B` | `hf-webai-o` | Multi-dimensional audit evidence | 2026-11-22T03:37:44.044Z |
 | `learn-github-lingodotdev-lingo-dev` | `https://github.com/lingodotdev/lingo.dev` | `b3fba7d0` | Multi-dimensional audit evidence | 2026-11-22T03:37:50.228Z |
 | `learn-dom-h-6cf392ae` | `project://lingodotdev-lingo.dev` | `b3fba7d0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lingodotdev-lingo.dev-learnings.md` | 2026-11-22T03:38:25.449Z |
+| `learn-huggingface-unsloth-qwen3-8-flash-next-gguf` | `https://huggingface.co/unsloth/Qwen3.8-Flash-Next-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-22T03:46:14.133Z |
+| `learn-github-ntex-rs-ntex` | `https://github.com/ntex-rs/ntex` | `4adf6cd3` | Multi-dimensional audit evidence | 2026-11-22T03:46:15.158Z |

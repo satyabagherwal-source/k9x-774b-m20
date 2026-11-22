@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T03:37:50.234Z",
-  "total_cycles_completed": 11407,
-  "total_learnings_persisted": 11407,
+  "last_updated": "2026-11-22T03:46:15.201Z",
+  "total_cycles_completed": 11409,
+  "total_learnings_persisted": 11409,
   "total_rules_promoted": 10702,
   "history": [
-    {
-      "timestamp": "2026-11-21T11:16:47.676Z",
-      "repository": "reflection/Beam-1.0-501B-A23B",
-      "learningId": "learn-huggingface-reflection-beam-1-0-501b-a23b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T11:38:34.261Z",
-      "repository": "lodestones/MOSS-Image-SFT-8-steps-dmd",
-      "learningId": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T11:38:38.960Z",
       "repository": "laurent22/joplin",
@@ -1403,6 +1389,20 @@
       "repository": "lingodotdev/lingo.dev",
       "learningId": "learn-github-lingodotdev-lingo-dev",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T03:46:14.138Z",
+      "repository": "unsloth/Qwen3.8-Flash-Next-GGUF",
+      "learningId": "learn-huggingface-unsloth-qwen3-8-flash-next-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T03:46:15.201Z",
+      "repository": "ntex-rs/ntex",
+      "learningId": "learn-github-ntex-rs-ntex",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

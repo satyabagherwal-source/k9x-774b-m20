@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T03:38:27.068Z",
+  "last_updated": "2026-11-22T03:46:27.545Z",
   "total_records": 2322,
   "domains": {
     "A": {
@@ -8092,8 +8092,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "5a553874ccfef2e833a6217d69b8170b151aec154792535372a0992a5b1f6244",
-      "created_at": "2026-11-22T03:38:27.068Z"
+      "content_hash": "7654e29148bf551c5a703989b9c81c618ae6024dece5bdfc669595a17a10d9ae",
+      "created_at": "2026-11-22T03:46:27.545Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -11293,8 +11293,8 @@
       "title": "Architecture Intelligence: ntex-rs/ntex Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ntex-rs-ntex-architecture-intelligence-ntex-rs-ntex-core-invariants.md",
       "repository": "ntex-rs/ntex",
-      "content_hash": "3ce084793cdf7e54e95d321b38fce82f6d199066ff3014f10bfad0640879dfa9",
-      "created_at": "2026-11-20T17:29:06.775Z"
+      "content_hash": "9d5f2795d49a353b4bc9f2dad77d3463dfd5f786ea1238d1410c3e224dac9729",
+      "created_at": "2026-11-22T03:46:15.575Z"
     },
     "domain_intelligence-design-intelligence-callstack-react-native-paper-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-callstack-react-native-paper-core-invariants",
@@ -11329,8 +11329,8 @@
       "title": "Architecture Intelligence: ntex-rs-ntex-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ntex-rs-ntex-learnings-architecture-intelligence-ntex-rs-ntex-learnings-core-inv.md",
       "repository": "ntex-rs-ntex-learnings",
-      "content_hash": "63dec2194ff5d44ada1aa4837c7c94703c9113fa049a20b9dc3252386a474a32",
-      "created_at": "2026-11-20T17:29:21.544Z"
+      "content_hash": "43dbd4a3a3d6c5b26ae320fd485cd512c1e044159a2512ec667a65d53defeed0",
+      "created_at": "2026-11-22T03:46:26.266Z"
     },
     "DOM-D-B528111D": {
       "record_id": "DOM-D-B528111D",
@@ -23208,8 +23208,8 @@
       "title": "Research & Knowledge Intelligence: unsloth/Qwen3.8-Flash-Next-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-unsloth-qwen3-8-flash-next-gguf-research-knowledge-intelligence-unsloth-qwen3.md",
       "repository": "unsloth/Qwen3.8-Flash-Next-GGUF",
-      "content_hash": "5285b71aa94896723f9b292b03fed909500a97c6bc77ff091e203ba220f0c291",
-      "created_at": "2026-11-16T00:36:38.454Z"
+      "content_hash": "725b54c630fa58e165dc29ce894103b5c7d4a4502a6c8460fa7fd250a8655bdd",
+      "created_at": "2026-11-22T03:46:14.316Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-unsloth-qwen3-8-flash-next-gguf-learnings-cor": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-unsloth-qwen3-8-flash-next-gguf-learnings-cor",
@@ -23217,8 +23217,8 @@
       "title": "Research & Knowledge Intelligence: hf-unsloth-qwen3.8-flash-next-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-unsloth-qwen3-8-flash-next-gguf-learnings-research-knowledge-intelligence-hf-.md",
       "repository": "hf-unsloth-qwen3.8-flash-next-gguf-learnings",
-      "content_hash": "c2c3d109e43e575c83ea11f96848edd3a7b2d952ef9d0e24c85270c0c7eeb0cb",
-      "created_at": "2026-11-16T00:36:58.229Z"
+      "content_hash": "2d1d8f51892d7e5a11a353b2692c2104998073810422e044ddf6ba55e946a012",
+      "created_at": "2026-11-22T03:46:26.760Z"
     },
     "domain_intelligence-architecture-intelligence-rainbow-me-rainbow-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-rainbow-me-rainbow-core-invariants",

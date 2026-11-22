@@ -5793,10 +5793,10 @@
     "repository": "ntex-rs/ntex",
     "platform": "github",
     "sourceUrl": "https://github.com/ntex-rs/ntex",
-    "sourceVersion": "84dbbbf9",
+    "sourceVersion": "4adf6cd3",
     "license": "Apache-2.0",
-    "contentHash": "74110263ade45af877a761a9361a897f331f1f07cada15c01621659d7b3da583",
-    "lastHarvestedAt": "2026-11-20T17:29:06.384Z",
+    "contentHash": "fb3fb9fa38f4b1f28d6a33c394bc4ac2c3525a445e2f615c3568ce8bc1d39d6e",
+    "lastHarvestedAt": "2026-11-22T03:46:15.158Z",
     "learningId": "learn-github-ntex-rs-ntex"
   },
   "learnapollo-learnapollo": {
@@ -12075,8 +12075,8 @@
     "sourceUrl": "https://huggingface.co/unsloth/Qwen3.8-Flash-Next-GGUF",
     "sourceVersion": "hf-unsloth-qwen3.8-flash-next-gguf",
     "license": "Open-Source",
-    "contentHash": "55c1c95bd5fd1c68859a1a02813665189f8849cb7301cea9033d1533a538564e",
-    "lastHarvestedAt": "2026-11-16T00:36:38.290Z",
+    "contentHash": "0c3aafcad38ff3348e774495056a9d7bea3301a78633afe855f8b315ed07a6e4",
+    "lastHarvestedAt": "2026-11-22T03:46:14.133Z",
     "learningId": "learn-huggingface-unsloth-qwen3-8-flash-next-gguf"
   },
   "hf-baidu-ernie-5.5-flash-base": {
