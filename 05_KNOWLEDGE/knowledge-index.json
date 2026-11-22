@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T23:25:12.062Z",
+  "last_updated": "2026-11-22T23:33:33.505Z",
   "total_verified_learnings": 9075,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23810,
+  "total_items": 23812,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -214106,7 +214106,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/unsloth/Qwen3.8-27B-GGUF",
       "source_version": "hf-unsloth-qwen3.8-27b-gguf",
-      "content_hash": "afb0b908294a98014d43abc67ec99052e762bb102e3125986b2c9f27f9ef1baf",
+      "content_hash": "4243452edc30f36da1b94137e17a604f16c33229fe6138bc43d7afb828645499",
       "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-qwen3.8-27b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-qwen3.8-27b-gguf-learnings.md",
       "promoted_rules": [],
@@ -214115,7 +214115,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T16:22:14.526Z",
+      "verified_at": "2026-11-22T23:33:16.288Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -214132,9 +214132,9 @@
       "title": "Research & Knowledge Intelligence: unsloth/Qwen3.8-27B-GGUF Core Invariants",
       "repository": "unsloth/Qwen3.8-27B-GGUF",
       "source_version": "hf-unsloth-qwen3.8-27b-gguf",
-      "content_hash": "8e70837f75baaf122f343b1ed9d8dcf9ad43b556797824ad76c3b6d6ac52d21d",
+      "content_hash": "7047be6fb49935851c8c7961ba9961d5de3937a2427756915a2da58722834b1e",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T16:22:14.908Z"
+      "persisted_at": "2026-11-22T23:33:16.735Z"
     },
     "learn-github-open-policy-agent-opa": {
       "learning_id": "learn-github-open-policy-agent-opa",
@@ -214396,8 +214396,8 @@
       "slug": "t8y2-dbx",
       "platform": "github",
       "source_url": "https://github.com/t8y2/dbx",
-      "source_version": "5f5ec9c1",
-      "content_hash": "f693a15a128657ead222c5ab0d43ac6a056dccb6a1e9e283f325d7bfa8b3c96c",
+      "source_version": "0c30c6ea",
+      "content_hash": "5ce3561cec9125fd809643d74560d6554a78a504db8350a479abd8f40b1c5876",
       "dossier_path": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
       "promoted_rules": [
@@ -214440,6 +214440,11 @@
           "number": 9870,
           "title": "allow SQL file execution in passwordless deployments",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10005,
+          "title": "send the hardening headers on every response",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -214447,7 +214452,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T23:47:47.323Z",
+      "verified_at": "2026-11-22T23:33:26.605Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -214489,10 +214494,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-t8y2-dbx-technical-construction-intelligence-t8y2-dbx-core-invariants.md",
       "title": "Technical Construction Intelligence: t8y2/dbx Core Invariants",
       "repository": "t8y2/dbx",
-      "source_version": "5f5ec9c1",
-      "content_hash": "0c63ab8a54450f3e6878d010dac0c508906c6a037952d91910949d9e4d8dbdd1",
+      "source_version": "0c30c6ea",
+      "content_hash": "05bf649f9a210a00b7b36680d506b7fd5809fd4a89c5da22f317c5f5e8cbd636",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T23:47:47.923Z"
+      "persisted_at": "2026-11-22T23:33:27.278Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-t8y2-dbx": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-t8y2-dbx",
@@ -214501,10 +214506,10 @@
       "relative_path": "08_VERIFICATION/t8y2-dbx-verification-protocol-empirical-defect-shield-for-t8y2-dbx.md",
       "title": "Verification Protocol: Empirical Defect Shield for t8y2/dbx",
       "repository": "t8y2/dbx",
-      "source_version": "5f5ec9c1",
-      "content_hash": "89d8aa2f2686dfb6a200c6df70e8921bf5cb445852c65e6d6f99284428305883",
+      "source_version": "0c30c6ea",
+      "content_hash": "df9050eaed32278f73cedc3aea5b32b36a208fd45cf08a48b8339f4f4a288278",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T23:47:48.102Z"
+      "persisted_at": "2026-11-22T23:33:27.458Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-unsloth-qwen3-8-27b-gguf-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-unsloth-qwen3-8-27b-gguf-learnings-core-invar",
@@ -214514,9 +214519,9 @@
       "title": "Research & Knowledge Intelligence: hf-unsloth-qwen3.8-27b-gguf-learnings Core Invariants",
       "repository": "hf-unsloth-qwen3.8-27b-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "617485d2bb6d1804a29f1e8709f8f75a1ea4a5f610088447d4605b59dbb7a26c",
+      "content_hash": "b85953b1d57dbb69acbdc5a48e0fc9554db464d9ab41a333722802250c69dc34",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T16:22:32.102Z"
+      "persisted_at": "2026-11-22T23:33:31.919Z"
     },
     "candidate_directive-ast-fix-negative-number-location-text-for": {
       "item_id": "candidate_directive-ast-fix-negative-number-location-text-for",
@@ -216021,26 +216026,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 8012,
       "title": "Empirical Invariant Guard in Cargo.lock",
-      "source_url": "https://github.com/ProvableHQ/snarkOS",
-      "source_version": "ff15a1de",
+      "source_url": "https://github.com/zeronsh/zeron",
+      "source_version": "b289003b",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-22T02:29:29.898Z"
+      "verified_at": "2026-11-22T23:33:13.476Z"
     },
     "candidate_directive-empirical-invariant-guard-in-cargo-lock": {
       "item_id": "candidate_directive-empirical-invariant-guard-in-cargo-lock",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-Y2D2-empirical-invariant-guard-in-cargo-lock.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-3FDG-empirical-invariant-guard-in-cargo-lock.md",
       "title": "Empirical Invariant Guard in Cargo.lock",
-      "repository": "provablehq-snarkos-learnings",
+      "repository": "zeronsh-zeron-learnings",
       "source_version": "HEAD",
-      "content_hash": "cbf73a5436597f09379b36104a766d1bfe059452edc553f17b7bcfa7010fc695",
+      "content_hash": "a90363ac129dbc3d7d0e01847260a18937962c37ffa8c04ac8b696f049a96d64",
       "domain_letter": "D",
-      "persisted_at": "2026-11-22T02:29:38.297Z"
+      "persisted_at": "2026-11-22T23:33:31.162Z"
     },
     "learn-github-langchain4j-langchain4j": {
       "learning_id": "learn-github-langchain4j-langchain4j",
@@ -220301,13 +220306,13 @@
       "item_id": "candidate_directive-empirical-invariant-guard-in-changelog-md",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-L7EU-empirical-invariant-guard-in-changelog-md.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-3GWJ-empirical-invariant-guard-in-changelog-md.md",
       "title": "Empirical Invariant Guard in CHANGELOG.md",
-      "repository": "sharkdp-bat-learnings",
+      "repository": "maziyarpanahi-openmed-learnings",
       "source_version": "HEAD",
-      "content_hash": "39c50075e3c2374cba8e70bfebf4cec499955ed5f9832635cf549831d16ab58b",
+      "content_hash": "45332e773ada9472798a3f39ffea4eca2fee585707c0bddb6c9a2f809cf68cc7",
       "domain_letter": "D",
-      "persisted_at": "2026-11-21T12:19:49.831Z"
+      "persisted_at": "2026-11-22T23:33:33.144Z"
     },
     "domain_intelligence-architecture-intelligence-yvgude-lean-ctx-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-yvgude-lean-ctx-core-invariants",
@@ -239774,14 +239779,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 8545,
       "title": "Empirical Invariant Guard in CHANGELOG.md",
-      "source_url": "https://github.com/sharkdp/bat",
-      "source_version": "dbc11b69",
+      "source_url": "https://github.com/maziyarpanahi/openmed",
+      "source_version": "3ee61a86",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-21T12:19:37.203Z"
+      "verified_at": "2026-11-22T23:33:17.907Z"
     },
     "domain_intelligence-search-distribution-intelligence-sharkdp-fd-core-invariants": {
       "item_id": "domain_intelligence-search-distribution-intelligence-sharkdp-fd-core-invariants",
@@ -243664,8 +243669,8 @@
       "slug": "zeronsh-zeron",
       "platform": "github",
       "source_url": "https://github.com/zeronsh/zeron",
-      "source_version": "46f18fe4",
-      "content_hash": "828d2cdb2d2ef04a771ea19b2a2707d51edcec11dc62ca100d36827234e1172b",
+      "source_version": "b289003b",
+      "content_hash": "c6c74af33e80abef03196ec466a55eef78f7bd5a0a9218d39fd6a6c405126a43",
       "dossier_path": "07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
       "promoted_rules": [
@@ -243705,7 +243710,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T17:05:46.678Z",
+      "verified_at": "2026-11-22T23:33:13.476Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -243759,10 +243764,10 @@
       "relative_path": "08_VERIFICATION/zeronsh-zeron-verification-protocol-empirical-defect-shield-for-zeronsh-zeron.md",
       "title": "Verification Protocol: Empirical Defect Shield for zeronsh/zeron",
       "repository": "zeronsh/zeron",
-      "source_version": "46f18fe4",
-      "content_hash": "aad5efbe513987086e00824f4f2b22be9679635c5311db90c243da31e9cadeaf",
+      "source_version": "b289003b",
+      "content_hash": "fcf1b5a2b8426167a5cfebd601d05e912b5a72795c73146e6932a04e7a130c9a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T17:05:47.391Z"
+      "persisted_at": "2026-11-22T23:33:14.335Z"
     },
     "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf": {
       "learning_id": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
@@ -243910,9 +243915,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zeronsh-zeron-learnings",
       "repository": "zeronsh-zeron-learnings",
       "source_version": "HEAD",
-      "content_hash": "3abf2efd52f942867a72b7abfc226d252234158356c21aca355d9cdd01f7d9a0",
+      "content_hash": "e9c5d3d7f00cd87b56bd36d9adbd7c7a607528f6493a5a38a4e565fdac818cda",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T17:06:06.050Z"
+      "persisted_at": "2026-11-22T23:33:31.531Z"
     },
     "candidate_directive-chat-template-mutation-via-gguf-metadata-partitioning": {
       "item_id": "candidate_directive-chat-template-mutation-via-gguf-metadata-partitioning",
@@ -251414,8 +251419,8 @@
       "slug": "maziyarpanahi-openmed",
       "platform": "github",
       "source_url": "https://github.com/maziyarpanahi/openmed",
-      "source_version": "e8325586",
-      "content_hash": "6fa1673f97d9a9b965d4da421b5f36afba8ecc8ab61282a4a3e3e5587afab70e",
+      "source_version": "3ee61a86",
+      "content_hash": "53a775f740ba063e652fa984f7ad2ab371f89d2c748636fd7d86271abd5c8a92",
       "dossier_path": "07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md",
       "promoted_rules": [
@@ -251428,6 +251433,11 @@
           "number": null,
           "title": "Asymmetric Safety-Gate Preservation in Regression Ledgers",
           "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": 8545,
+          "title": "Empirical Invariant Guard in CHANGELOG.md",
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 8653,
@@ -251445,7 +251455,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T01:01:05.965Z",
+      "verified_at": "2026-11-22T23:33:17.907Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -251487,10 +251497,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-maziyarpanahi-openmed-technical-construction-intelligence-maziyarpanahi-openmed-.md",
       "title": "Technical Construction Intelligence: maziyarpanahi/openmed Core Invariants",
       "repository": "maziyarpanahi/openmed",
-      "source_version": "e8325586",
-      "content_hash": "60dc685ce3e1e2bcdf73e855f0192d6d282fcee1f52bb1d09ed503440aa4eb2c",
+      "source_version": "3ee61a86",
+      "content_hash": "1148d2bf0ede0771924dad024fe02ff1ab981a25dea2ea77a58b934f5c6018da",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T01:01:06.866Z"
+      "persisted_at": "2026-11-22T23:33:18.600Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-maziyarpanahi-openmed": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-maziyarpanahi-openmed",
@@ -251499,10 +251509,10 @@
       "relative_path": "08_VERIFICATION/maziyarpanahi-openmed-verification-protocol-empirical-defect-shield-for-maziyarp.md",
       "title": "Verification Protocol: Empirical Defect Shield for maziyarpanahi/openmed",
       "repository": "maziyarpanahi/openmed",
-      "source_version": "e8325586",
-      "content_hash": "1929426f409f323010aeb41369f182d1f043af3d08424772cfda1291634994da",
+      "source_version": "3ee61a86",
+      "content_hash": "94d19aaf10f87884fcea44ee0022abf4eb7968bb6debdfd0ea4e87ac87062ffd",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T01:01:07.188Z"
+      "persisted_at": "2026-11-22T23:33:18.820Z"
     },
     "rule-8654": {
       "learning_id": "rule-8654",
@@ -251562,9 +251572,9 @@
       "title": "Technical Construction Intelligence: maziyarpanahi-openmed-learnings Core Invariants",
       "repository": "maziyarpanahi-openmed-learnings",
       "source_version": "HEAD",
-      "content_hash": "bf4fdc609cef6ef08cdb56bfba0dee8aae48695f4da0fb6f97511f97ab3ed759",
+      "content_hash": "736c4e449b8199c42f56ea0d337a9b5bec83d16993c1302dcf19e7711d8e480d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T01:04:01.058Z"
+      "persisted_at": "2026-11-22T23:33:33.325Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-maziyarpanahi-openmed-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-maziyarpanahi-openmed-learning",
@@ -251574,9 +251584,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for maziyarpanahi-openmed-learnings",
       "repository": "maziyarpanahi-openmed-learnings",
       "source_version": "HEAD",
-      "content_hash": "2721f58f3e470fc70f4619cd8d9c75d88ec622960e1940282caa9cff3da4a7df",
+      "content_hash": "25fc46a3a0fcdb8c232469eb3c15a77779be7c9a52a43984349863f4c2f33e65",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T01:04:01.440Z"
+      "persisted_at": "2026-11-22T23:33:33.505Z"
     },
     "learn-huggingface-comfy-org-minimax-h3-image": {
       "learning_id": "learn-huggingface-comfy-org-minimax-h3-image",
@@ -264732,10 +264742,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zeronsh-zeron-technical-construction-intelligence-zeronsh-zeron-core-invariants.md",
       "title": "Technical Construction Intelligence: zeronsh/zeron Core Invariants",
       "repository": "zeronsh/zeron",
-      "source_version": "46f18fe4",
-      "content_hash": "03a1dbac813b25cc7c87ed26116b24c3e37c76fbc38f9bf5fd02c591f42cba90",
+      "source_version": "b289003b",
+      "content_hash": "0c791b9a47e5130722d63a1a71d40fa149a423c033dc43f591fe81c78d008fea",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T17:05:47.235Z"
+      "persisted_at": "2026-11-22T23:33:14.152Z"
     },
     "rule-8821": {
       "learning_id": "rule-8821",
@@ -264848,9 +264858,9 @@
       "title": "Technical Construction Intelligence: zeronsh-zeron-learnings Core Invariants",
       "repository": "zeronsh-zeron-learnings",
       "source_version": "HEAD",
-      "content_hash": "bd96b6fd5c11d71df9e14fc5d9f650fc18bd71841f94f9d0383787d6e99b4a30",
+      "content_hash": "58ea04aedcf14c607412c549308eedfa988eb7625f5b51505bde76045ed733b9",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T17:06:05.895Z"
+      "persisted_at": "2026-11-22T23:33:31.342Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensor": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensor",
@@ -324176,6 +324186,32 @@
       "verified": true,
       "brain_readback": true,
       "verified_at": "2026-11-22T23:15:47.089Z"
+    },
+    "rule-10005": {
+      "learning_id": "rule-10005",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10005,
+      "title": "send the hardening headers on every response",
+      "source_url": "https://github.com/t8y2/dbx",
+      "source_version": "0c30c6ea",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T23:33:26.605Z"
+    },
+    "candidate_directive-send-the-hardening-headers-on-every-response": {
+      "item_id": "candidate_directive-send-the-hardening-headers-on-every-response",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-3C8Q-send-the-hardening-headers-on-every-response.md",
+      "title": "send the hardening headers on every response",
+      "repository": "t8y2/dbx",
+      "source_version": "0c30c6ea",
+      "content_hash": "4847df3dd1aaaa8eb3f4de06a25bbd034797205662e047a6360d1e7899ddf2f0",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T23:33:27.103Z"
     }
   },
   "ai-builder-brain": {

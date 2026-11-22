@@ -4,22 +4,22 @@
 {
   "source_repository": "t8y2/dbx",
   "source_url": "https://github.com/t8y2/dbx",
-  "source_version": "5f5ec9c1",
+  "source_version": "0c30c6ea",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-21T23:47:47.755Z",
+  "timestamp": "2026-11-22T23:33:27.103Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-t8y2-dbx",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [t8y2/dbx](https://github.com/t8y2/dbx) (Revision: `5f5ec9c1`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-21T23:47:47.755Z`  
+> **Provenance**: Harvested from [t8y2/dbx](https://github.com/t8y2/dbx) (Revision: `0c30c6ea`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-22T23:33:27.103Z`  
 > **Learning ID**: `learn-github-t8y2-dbx`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `t8y2/dbx` (Commit: `5f5ec9c1`)
+- **Target Repository**: `t8y2/dbx` (Commit: `0c30c6ea`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T23:47:46.476Z  
+> **Harvest Timestamp**: 2026-11-22T23:33:25.744Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: 25 MB lightweight cross-platform database client for 100+ databases, including MySQL, PostgreSQL, SQLite, Redis, MongoDB, DuckDB, SQL Server, and Dameng. Built-in AI, MCP Server, CLI, desktop and Docker. | 轻量级跨平台数据库管理工具，支持 MySQL、PostgreSQL、SQLite、Redis、MongoDB、达梦等 100+ 数据库，提供桌面端、Docker、CLI、内置 AI 助手和 MCP。
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 31100 stars
+- **Stars / Engagement**: 31144 stars
 
 ---
 
@@ -2039,17 +2039,17 @@ func (b *Binary) GetValues() []byte {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #15391** (2026-11-22): **[Bug] vastbase G100 数据库 GB18030 字符集（server/client）显示乱码**
+  *Symptoms*: ### 数据库类型和版本 / Database type and version  vastbase G100  ### 问题描述 / Problem description  vastbase G100 数据库 GB18030 字符集（server/client）显示乱码  ### 支持信息 / Support information  dbx 0.6.72  ### 优先级（是否紧急） / Priority (urgency)  🔴 P0 紧急 · 下个版本必须修 / Urgent · Must fix next release  ### 补充信息 / Additional information  _No response_
+  **Post-Mortem & Fix Analysis**:
+  > <img width="285" height="305" alt="image" src="https://github.com/user-attachments/assets/ccf8b99c-3d03-4e0d-b2ac-e637fa305c68" />  <img width="225" height="80" alt="image" src="https://github.com/user-attachments/assets/47314061-a5ea-4ee8-a2c7-986240c13397" />  <img width="228" height="122" alt="image" src="https://github.com/user-attachments/assets/221772e6-9e76-42a5-8fcd-61f34a8b4a82" />
+  > /claim
+
 - **Issue #15376** (2026-11-21): **[Bug] 查询结果区纵向滚动条浮动且难以发现，建议改为固定宽度并可悬停加粗**
   *Symptoms*: ### 问题描述 - 查询结果区的纵向滚动条设计不合理：查看结果后需要纵向拉动时，滚动条不易找到，或需要仔细观察才能发现。 - 截图1中，查询结果区的纵向滚动条呈现为浮动/叠加在数据上的样式，影响可发现性和可读性。 - 用户认为查询结果区宽度足够，不应为节省宽度而让滚动条浮动在数据上面或更不要隐藏起来。  ### 截图对照 - 截图1：查询结果区。纵向滚动条浮动在数据上，难以发现，必须先滚动一下。 - 截图2：编辑区。纵向滚动条占用固定宽度，鼠标悬停时加粗，目前宽度刚好；用户认为该方案可以。 - 截图3：转置视图。纵向滚动条为较标准的设计，用户认为也可以。 - 截图中未出现密码、Token 或连接串。  ### 期望行为 - 查询结果区的纵向滚动条应占用固定宽度，像编辑区那么宽。 - 鼠标悬停时滚动条应加粗。 - 不应像截图1那样浮动在数据上，也不应隐形而难以找到。 - 用户偏好方案排序：编辑区方案 优于 转置视图区方案 优于 查询结果区方案。  ### 环境信息 - DBX 版本：v0.6.73-beta.20261120.1 - 运行环境：桌面端 - 操作系统：Windows 11 (10.0.22000.2538) - 系统架构：x86_64 - 数据库类型：Oracle - 数据库版本：未提供  ### 补充信息 - 复现步骤：未提供。 - 日志/错误信息：未提供。 - 其他数据库连接信息：未提供。  ## 附件  ![DBX issue image 1](https://dl.dbxio.com/issue-feedback/2026/11/e69e0df4-3729-40c3-a1e3-4dc000dcc425/1-2f838c3f-867e-455d-a43b-8ec4a5962361.png)  ![DBX issue image 2](https://dl.dbxio.com/issue-feedback/2026/11/e69e0df4-3729-40c3-a1e3-4dc000dcc425/2-30665664-40a6-4cd4-b74e-d2439d539ebb.png)  ![DBX issue image 3](https://dl.dbxio.com/issue-feedback/2026/11/e69e0df4-3729-40c3-a1e3-4dc000dcc425/3-2bfec45f-b317-4af8-99a8-a56194907fad.png)  ---  _此 Issue 通过 DBX 官网匿名反馈入口提交，发布前已由提交者确认。_
   **Post-Mortem & Fix Analysis**:
   > /claim
   > ✅ @ThugKd 已认领 #15376，开始处理吧！
-
-- **Issue #15369** (2026-11-21): **[Bug] 空闲状态持续写入磁盘 200kb/s**
-  *Symptoms*: ### 数据库类型和版本 / Database type and version  Any  ### 问题描述 / Problem description  1. 打开DBX即可复现 2. 每秒持续向database-backups/state.db 的 metadata 表里更新 heartbeat 3. 导致每秒约 200kb的写入 （后台挂一个小时就是2GB的磁盘写入）  DBX 每次访问都重新打开并关闭 SQLite 连接。  最后一个连接关闭时，SQLite 会把 WAL 的更改写回主库，再清理 -wal 和 -shm 文件。 从而导致大量写入   ### 支持信息 / Support information  DBX 版本 / Version: v0.6.72 运行环境 / Runtime: Desktop / Flatpak 操作系统 / OS: Linux 系统架构 / Architecture: x64  ### 优先级（是否紧急） / Priority (urgency)  🟠 P1 重要 · 尽快处理 / Important · Fix soon  ### 补充信息 / Additional information  只更新了一个字段，导致这么大的写入，有可能是因为我使用的是btrfs cow导致的。  当然即使如此也不能这么频繁的写入吧
-  **Post-Mortem & Fix Analysis**:
-  > <img width="1074" height="244" alt="屏幕录像_20261121_114644" src="https://github.com/user-attachments/assets/f91468f6-402a-4651-b1c3-3d8fa3c0837f" />
-  > /claim
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2066,259 +2066,631 @@ func (b *Binary) GetValues() []byte {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0685e9f4` (2026-11-21)
-**Commit Message**: fix(web): allow SQL file execution in passwordless deployments (#14627)
+### Incident Patch 1: `c7c57cd5` (2026-11-22)
+**Commit Message**: fix(web): send the hardening headers on every response (#15451)
 
-With DBX_DISABLE_PASSWORD the auth middleware lets every API request
-through without any login, so the browser never carries a dbx_session
-cookie. The SQL file execute route and the failure-log info/text/download
-routes are the only handlers that also require that cookie for the
-failure-log owner (dbx#11619), which made them always fail with
-"Not authenticated" in passwordless deployments while every other
-feature worked.
+The browser-static build failed a hardening scan because dbx-web answered
+without any of the headers it looks for (#15439). A middleware layered on
+outside every route, nested router and fallback now sets:
 
-Fall back to a shared "web-shared" owner when no session token is
-present, mirroring the desktop runtime's "desktop" owner: with no
-sessions there is nothing to isolate, and authenticated deployments keep
-their per-session isolation unchanged.
+  x-content-type-options: nosniff
+  x-frame-options: SAMEORIGIN
+  referrer-policy: strict-origin-when-cross-origin
+  x-xss-protection: 0
+  x-download-options: noopen
+  x-permitted-cross-domain-policies: none
+  strict-transport-security: max-age=31536000
 
-Fixes #14626
+`Router::layer` wraps the path router, the fallback router and the
+catch-all fallback, so static assets, API and SSE responses, MCP routes
+and 404s all carry them. A comment marks the line so new routes stay
+above it.
 
-**File**: `crates/dbx-web/src/routes/sql_file.rs` (modified, +94/-8)
+`x-xss-protection` is sent as `0` (the current recommendation — the
+legacy filter is off) rather than `1; mode=block`; if the customer's
+scanner insists on a non-zero value that is a one-line change.
+
+Refs: #15439
+
+**File**: `crates/dbx-web/src/main.rs` (modified, +85/-2)
 ```diff
-@@ -160,6 +160,20 @@ pub fn sql_file_upload_max_bytes_from_value(value: Option<&str>) -> usize {
-     mb.clamp(SQL_FILE_UPLOAD_MIN_BYTES, SQL_FILE_UPLOAD_MAX_BYTES_LIMIT)
+@@ -257,6 +257,35 @@ async fn directory_static_cache_policy(request: Request<axum::body::Body>, next:
+     response
  }
  
-+/// Failure-log owner for the Web runtime (dbx#11619): the authenticated
-+/// session token when one exists. Deployments that disable password protection
-+/// (`DBX_DISABLE_PASSWORD`) never log in, so the browser carries no
-+/// `dbx_session` cookie even though the auth middleware lets every API call
-+/// through; without this fallback those deployments could not execute SQL
-+/// files at all ("Not authenticated"), while every other feature worked.
-+/// Anonymous deployments share one owner, exactly how the desktop runtime
-+/// shares "desktop": with no sessions there is nothing to isolate.
-+const ANONYMOUS_FAILURE_LOG_OWNER: &str = "web-shared";
++/// Response headers a security scanner expects on the browser build (#15439).
++///
++/// The bundle is served over whatever TLS the operator terminates in front of
++/// it, so the headers are unconditional: `Strict-Transport-Security` is ignored
++/// by browsers on plain HTTP and takes effect as soon as the client sees HTTPS.
++/// `X-XSS-Protection: 0` is the current recommendation (the legacy auditor is
++/// itself an XSS vector) while still answering scanners that only look for the
++/// header's presence.
++const SECURITY_RESPONSE_HEADERS: [(&str, &str); 7] = [
++    ("x-content-type-options", "nosniff"),
++    ("x-frame-options", "SAMEORIGIN"),
++    ("referrer-policy", "strict-origin-when-cross-origin"),
++    ("x-xss-protection", "0"),
++    ("x-download-options", "noopen"),
++    ("x-permitted-cross-domain-policies", "none"),
++    ("strict-transport-security", "max-age=31536000"),
++];
 +
-+fn web_failure_log_owner(headers: &HeaderMap) -> String {
-+    crate::auth::session_token_from_headers(headers).unwrap_or_else(|| ANONYMOUS_FAILURE_LOG_OWNER.to_string())
++/// Applies [`SECURITY_RESPONSE_HEADERS`] to every response, API and assets alike.
++async fn security_headers(request: Request<axum::body::Body>, next: middleware::Next) -> Response {
++    use axum::http::header::{HeaderName, HeaderValue};
++
++    let mut response = next.run(request).await;
++    for (name, value) in SECURITY_RESPONSE_HEADERS {
++        response.headers_mut().insert(HeaderName::from_static(name), HeaderValue::from_static(value));
++    }
++    response
 +}
 +
- pub fn sql_file_upload_hard_cap_bytes() -> usize {
-     SQL_FILE_UPLOAD_MAX_BYTES_LIMIT.saturating_add(1024 * 1024)
- }
-@@ -331,8 +345,7 @@ pub async fn execute_sql_file(
-     }
-     // The failure log of this run belongs to the session that started it: the
-     // export/copy routes look it up by this owner, never by path (dbx#11619).
--    let log_owner = crate::auth::session_token_from_headers(&headers)
--        .ok_or_else(|| AppError::from("Not authenticated".to_string()))?;
-+    let log_owner = web_failure_log_owner(&headers);
+ fn add_public_base_path_redirect<S>(app: Router<S>, public_base_path: &str) -> Router<S>
+ where
+     S: Clone + Send + Sync + 'static,
+@@ -1636,6 +1665,11 @@ async fn serve() -> Result<(), String> {
+         }
+     };
+     app = mount_static_assets(app, &public_base_path, static_source);
++    // Outermost layer so the scanner-visible headers land on API responses,
++    // static assets and error pages alike (#15439). Keep every route, nested
++    // router and fallback mounted above this line: anything added below would
++    // silently escape the headers.
++    app = app.layer(middleware::from_fn(security_headers));
  
-     let requested_paths = if body.file_paths.is_empty() { vec![req.file_path.clone()] } else { body.file_paths };
-     let file_paths = requested_paths
-@@ -560,8 +573,7 @@ pub async fn sql_file_failure_log_info(
-     AxumPath(execution_id): AxumPath<String>,
-     headers: HeaderMap,
- ) -> Result<Json<Option<serde_json::Value>>, AppError> {
--    let owner = crate::auth::session_token_from_headers(&headers)
--        .ok_or_else(|| AppError::from("Not authenticated".to_string()))?;
-+    let owner = web_failure_log_owner(&headers);
-     let info = state.sql_file_failure_logs.info(&owner, &execution_id);
-     Ok(Json(info.map(|info| {
-         serde_json::json!({
-@@ -586,8 +598,7 @@ pub async fn sql_file_failure_log_download(
-     Query(query): Query<SqlFileFailureLogDownloadQuery>,
-     headers: HeaderMap,
- ) -> Result<Response, AppError> {
--    let owner = crate::auth::session_token_from_headers(&headers)
--        .ok_or_else(|| AppError::from("Not authenticated".to_string()))?;
-+    let owner = web_failure_log_owner(&headers);
-     let format = match query.format.as_deref() {
-         Some(value) => SqlFileFailureLogFormat::parse(value)
-             .ok_or_else(|| AppError::from(format!("Unsupported log format: {value}")))?,
-@@ -644,8 +655,7 @@ pub async fn sql_file_failure_log_text(
-     headers: HeaderMap,
-     Json(body): Json<SqlFileFailureLogTextRequest>,
- ) -> Result<Json<SqlFileFailureLogTextResponse>, AppError> {
--    let owner = crate::auth::session_token_from_headers(&headers)
--        .ok_or_else(|| AppError::from("Not authenticated".to_string()))?;
-+    let owner = web_failure_log_owner(&headers);
-     let format = match body.format.as_deref() {
-         Some(value) => SqlFileFailureLogFormat::parse(value)
-             .ok_or_else(|| AppError::from(format!("Unsupported log format: {value}")))?,
-@@ -975,6 +985,82 @@ mod tests {
-         assert!(state.sql_file_executions.read().await.contains_key("existing-job"));
+     // Bind address
+     let port: u16 = std::env::var("DBX_PORT").ok().and_then(|p| p.parse().ok()).unwrap_or(4224);
+@@ -1753,8 +1787,9 @@ async fn serve() -> Result<(), String> {
+ #[cfg(test)]
+ mod tests {
+     use super::{
+-        mount_static_assets, normalize_public_base_path, password_viewer_enabled_from_env, web_agent_dir_from_env,
+-        web_body_limit_bytes_from_value, web_compression_predicate, StaticSource, XLSX_CONTENT_TYPE,
++        mount_static_assets, normalize_public_base_path, password_viewer_enabled_from_env, security_headers,
++        web_agent_dir_from_env, web_body_limit_bytes_from_value, web_compression_predicate, StaticSource,
++        SECURITY_RESPONSE_HEADERS, XLSX_CONTENT_TYPE,
+     };
+     use crate::routes::table_import;
+     use axum::body::Body;
+@@ -1809,6 +1844,54 @@ mod tests {
+         Response::builder().header(CONTENT_TYPE, content_type).body(Body::from(vec![b'x'; 64])).unwrap()
      }
  
-+    #[test]
-+    fn failure_log_owner_falls_back_to_a_shared_owner_without_a_session_cookie() {
-+        // Deployments with password protection disabled never log in, so the
-+        // browser sends no `dbx_session`; everything must still work.
-+        assert_eq!(web_failure_log_owner(&HeaderMap::new()), ANONYMOUS_FAILURE_LOG_OWNER);
++    /// The header set the browser hardening scan looks for (#15439), kept
++    /// literal so renaming or dropping one fails here instead of only in the
++    /// scanner.
++    const EXPECTED_SECURITY_RESPONSE_HEADERS: [(&str, &str); 7] = [
++        ("x-content-type-options", "nosniff"),
++        ("x-frame-options", "SAMEORIGIN"),
++        ("referrer-policy", "strict-origin-when-cross-origin"),
++        ("x-xss-protection", "0"),
++        ("x-download-options", "noopen"),
++        ("x-permitted-cross-domain-policies", "none"),
++        ("strict-transport-security", "max-age=31536000"),
++    ];
 +
-+        let mut headers = HeaderMap::new();
-+        headers.insert(header::COOKIE, "dbx_session=session-token-1".parse().unwrap());
-+        assert_eq!(web_failure_log_owner(&headers), "session-token-1");
++    #[test]
++    fn security_response_headers_cover_the_reported_set() {
++        use axum::http::header::{HeaderName, HeaderValue};
++
++        assert_eq!(SECURITY_RESPONSE_HEADERS, EXPECTED_SECURITY_RESPONSE_HEADERS);
++        for (name, value) in EXPECTED_SECURITY_RESPONSE_HEADERS {
++            HeaderName::from_static(name);
++            HeaderValue::from_static(value);
++        }
 +    }
 +
 +    #[tokio::test]
-+    async fn anonymous_deployment_executes_sql_files_without_a_session_cookie() {
-+        let directory = tempfile::tempdir().unwrap();
-+        let state = Arc::new(restore_state(directory.path()).await);
-+        let upload_dir = directory.path().join("tmp").join("sql_file");
-+        std::fs::create_dir_all(&upload_dir).unwrap();
-+        let file = upload_dir.join("upload-anon.sql");
-+        std::fs::write(&file, "SELECT 1;").unwrap();
-+        let request = serde_json::from_value(serde_json::json!({
-+            "executionId": "anon-run", "connectionId": "missing", "database": "app",
-+            "filePath": file, "continueOnError": false
-+        }))
-+        .unwrap();
-+        let response = execute_sql_file(
-+            State(state.clone()),
-+            HeaderMap::new(),
-+            Json(SqlFileExecuteWrapper { request, file_paths: vec![] }),
-+        )
-+        .await
-+       
++    async fn security_headers_land_on_every_response() {
++        let router =
++            Router::new().route("/api/ok", get(|| async { "ok" })).layer(axum::middleware::from_fn(security_headers));
++        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
++        let address = listener.local_addr().unwrap();
++        let server = tokio::spawn(async move { axum::serve(listener, router).await.unwrap() });
++        let client = reqwest::Client::new();
++
++        for (path, status) in [("/api/ok", StatusCode::OK), ("/missing", StatusCode::NOT_FOUND)] {
++            let response = client.get(format!("http://{address}{path}")).send().await.unwrap();
++            assert_eq!(response.status(), status, "{path}");
++            for (name, expected) in EXPECTED_SECURITY_RESPONSE_HEADERS {
++                assert_eq!(
++                    response.headers().get(name).and_then(|value| v
 ```
 
 ---
 
-### Incident Patch 2: `0cb073ef` (2026-11-21)
-**Commit Message**: fix(web): report SQL execution errors as 422 instead of 500 (#14309)
+### Incident Patch 2: `e4fc5dfb` (2026-11-22)
+**Commit Message**: fix(grid): append clipboard rows that overflow an existing result (#15440)
 
-Web-mode SQL failures (syntax/execution errors reported by the engine,
-carrying category=sql diagnostics) were surfaced as HTTP 500. That is a
-server-fault status for what is a client-side request problem: gateways
-and monitoring count every such response as a 5xx outage, and the issue
-reporter was left staring at a bare 500.
+* fix(grid): append clipboard rows that overflow an existing result (#15263)
 
-Map BackendError envelopes whose diagnostics category is sql to 422
-Unprocessable Entity in AppError::from_backend_error; the structured
-envelope (code/messageKey/detail) is unchanged, and every non-SQL
-backend error keeps the generic 500. The frontend classifies errors by
-response body only (backendResponseError on !ok), so no client changes
-are needed.
+* chore(i18n): autofill new translations
 
-Fixes #14172
+---------
 
-Co-authored-by: yongqing.cai <[REDACTED_EMAIL]>
+Co-authored-by: dbx-i18n-bot <github-actions[bot]@users.noreply.github.com>
 Co-authored-by: zipg <[REDACTED_EMAIL]>
 
-**File**: `crates/dbx-driver-agent/src/backend_error.rs` (modified, +17/-0)
+**File**: `apps/desktop/src/components/grid/DataGrid.vue` (modified, +63/-6)
 ```diff
-@@ -105,6 +105,12 @@ pub struct BackendErrorDiagnostics {
-     adapter_code: Option<String>,
+@@ -5015,6 +5015,7 @@ const {
+   availableInsertRows,
+   appendPastedRowsToNewRow,
+   appendPastedRowsToNewRowInBatches,
++  appendPastedRowsAsNewRows,
+   appendPastedRowsAsNewRowsInBatches,
+   cloneRow: cloneEditorRow,
+   showDeleteRowConfirm,
+@@ -11103,10 +11104,10 @@ function applyParsedGridPaste(rows: readonly (readonly (string | null)[])[], col
+   }
+   const cellTarget = blankSelectionBatchAppendPasteTarget(rows.length);
+   if (cellTarget) return appendParsedRowsToBlankTarget(cellTarget.rowId, rows, cellTarget.columnIndexes, columnNames, preparation);
+-  return pasteRowsIntoSelection(rows);
++  return pasteRowsIntoSelection(rows, preparation);
  }
  
-+impl BackendErrorDiagnostics {
-+    pub fn category(&self) -> Option<&str> {
-+        self.category.as_deref()
-+    }
-+}
-+
- #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
- #[serde(rename_all = "snake_case")]
- pub enum TransactionOutcome {
-@@ -437,6 +443,17 @@ impl BackendError {
-         self.diagnostics.as_ref()
-     }
+-function pasteRowsIntoSelection(rows: readonly (readonly (string | null)[])[]): boolean {
++function pasteRowsIntoSelection(rows: readonly (readonly (string | null)[])[], preparation?: DataGridRowPreparationOptions): boolean | Promise<boolean> {
+   const allowDraftSelectionValue = selectedRangeTargetsOnlyDraftRow();
  
-+    /// Whether the envelope carries a SQL-category failure (syntax/execution
-+    /// error reported by the engine or driver). HTTP boundaries map this to a
-+    /// 4xx status instead of 500 so user-side SQL mistakes are not counted as
-+    /// server faults by gateways and monitoring.
-+    pub fn is_sql_error(&self) -> bool {
-+        self.diagnostics
-+            .as_ref()
-+            .and_then(|diagnostics| diagnostics.category())
-+            .is_some_and(|category| category == "sql")
-+    }
+   if (rows.length === 1 && rows[0]?.length === 1 && fillSelectionWithValue(rows[0][0], { preserveEmptyString: true })) {
+@@ -11119,10 +11120,38 @@ function pasteRowsIntoSelection(rows: readonly (readonly (string | null)[])[]):
+   const recordIndexes = isTransposeMode.value ? transposeScopeRecordIndexes.value : null;
+   const startPosition = recordIndexes ? recordIndexes.indexOf(start.rowIndex) : start.rowIndex;
+   if (startPosition < 0) return false;
 +
-     pub fn error_position(&self) -> Option<crate::sql_error_position::SqlErrorPosition> {
-         self.error_position
-     }
++  // Split the clipboard into the part that overwrites existing cells and the
++  // part that overflows past the end of the result. Previously the overflow
++  // was silently dropped by planDataGridPaste (issue #15263).
++  const rowSlots = Math.max(0, (recordIndexes?.length ?? displayRowCount.value) - startPosition);
++  const overwriteRows = rows.slice(0, rowSlots);
++  const overflowRows = rows.slice(rowSlots);
++
++  // Only append overflow rows for a plain cell paste onto already-saved rows.
++  // Transpose scope, column selections, draft/new rows and read-only columns
++  // keep their established bounded-overwrite behaviour.
++  const startItem = displayItemAt(start.rowIndex);
++  const insertColumnIndexes = visibleColumnIndexes.value.slice(start.colIndex);
++  const canOverflow =
++    overflowRows.length > 0 &&
++    !recordIndexes &&
++    !hasColumnSelection.value &&
++    !!startItem &&
++    !startItem.isNew &&
++    !startItem.isDraft &&
++    !startItem.isDeleted &&
++    canInsertRows.value &&
++    overflowRows.length <= availableInsertRows.value &&
++    insertColumnIndexes.length > 0 &&
++    insertColumnIndexes.every((col) => canEditColumn(col));
++
+   let applied = false;
+-  beginBatch();
++  // When an append will follow, capture one undo snapshot up front so the
++  // overwrite and the appended rows undo together as a single change.
++  beginBatch({ captureUndo: canOverflow });
+   try {
+-    for (const cell of planDataGridPaste(rows, (recordIndexes?.length ?? displayRowCount.value) - startPosition, visibleColumns.value.length - start.colIndex)) {
++    for (const cell of planDataGridPaste(overwriteRows, rowSlots, visibleColumns.value.length - start.colIndex)) {
+       const rowIndex = recordIndexes ? recordIndexes[startPosition + cell.rowOffset] : start.rowIndex + cell.rowOffset;
+       const item = displayItemAt(rowIndex);
+       if (!item) continue;
+@@ -11134,8 +11163,36 @@ function pasteRowsIntoSelection(rows: readonly (readonly (string | null)[])[]):
+   } finally {
+     commitBatch();
+   }
+-  if (applied) toast(t("grid.pasted"));
+-  return applied;
++
++  const finish = (inserted: boolean) => {
++    if (overflowRows.length > 0 && !inserted) {
++      // Insert was not available; make the dropped rows explicit instead of
++      // silently losing them, even though the in-bounds cells were overwritten.
++      toast(t("grid.pasteRowsTruncated", { applied: overwriteRows.length, dropped: overflowRows.length }), 5000);
++    } else if (applied || inserted) {
++      toast(t("grid.pasted"));
++    }
++    return applied || inserted;
++  };
++
++  if (!canOverflow) return finish(false);
++
++  // Append the overflow as new rows, reusing the existing batch-aware
++  // preparation (capacity checks, generated-column clearing, NULL fidelity)
++  // while skipping its own undo snapshot — beginBatch already captured one.
++  if (preparation) {
++    // The overwrite segment's commitBatch() advanced pendingChangesVersion, so
++    // the caller's isCurrent() (captured before the paste) would now report
++    // stale. Rebuild a preparation that keeps cancellation/progress but relies
++    // on the composable's fresh isCurrent() for state consistency.
++    const appendPreparation: DataGridRowPreparationOptions = {
++      signal: preparation.signal,
++      onProgress: preparation.onProgress,
++      isCurrent: () => !preparation.signal?.aborted && gridClipboardActive,
++    };
++    return appendPastedRowsAsNewRowsInBatches(overflowRows, insertColumnIndexes, undefined, appendPreparation, { skipUndoSnapshot: true }).then((result) 
 ```
 
-**File**: `crates/dbx-web/src/error.rs` (modified, +24/-1)
+**File**: `apps/desktop/src/components/grid/__tests__/DataGridBatchPasteFromCell.spec.ts` (modified, +70/-5)
 ```diff
-@@ -44,7 +44,13 @@ impl AppError {
-     }
+@@ -649,17 +649,82 @@ describe("DataGrid multi-row paste from a blank cell", () => {
+     expect(visibleCellTexts(rows.at(-1)!)[2]).toBe("5");
+   });
  
-     pub fn from_backend_error(error: BackendError) -> Self {
--        Self { message: error.code().to_string(), status: StatusCode::INTERNAL_SERVER_ERROR, error: Box::new(error) }
-+        // SQL failures (syntax/execution errors reported by the engine) are the
-+        // client's request problem, not a server fault: surface them as 422 so
-+        // gateways and monitoring do not count user-side mistakes as 5xx
-+        // outages. Every other backend error keeps the generic 500.
-+        let status =
-+            if error.is_sql_error() { StatusCode::UNPROCESSABLE_ENTITY } else { StatusCode::INTERNAL_SERVER_ERROR };
-+        Self { message: error.code().to_string(), status, error: Box::new(error) }
-     }
- }
+-  it("keeps existing rows on the ordinary bounded paste path", async () => {
+-    const { host } = mountGrid();
++  it("appends clipboard rows that overflow the existing result as new rows (#15263)", async () => {
++    const save = vi.fn<CustomSaveHandler["save"]>().mockResolvedValue();
++    const result = { ...defaultResult(), rows: Array.from({ length: 5 }, (_, i) => [i + 1, null, `seed-${i}`, "x"]) };
++    const { host } = mountGrid({ result, customSaveHandler: { canInsert: true, save } });
+     await settle();
  
-@@ -146,6 +152,7 @@ mod tests {
-         });
+     const [row] = displayRows(host);
+     await selectCell(visibleCells(row!)[2]!);
+-    await paste(host, "first\nsecond");
++    await paste(host, Array.from({ length: 8 }, (_, i) => `v${i + 1}`).join("\n"));
  
-         let response = AppError::from(error).into_response();
-+        assert_eq!(response.status(), StatusCode::UNPROCESSABLE_ENTITY);
-         let body = axum::body::to_bytes(response.into_body(), usize::MAX).await.unwrap();
-         let payload: serde_json::Value = serde_json::from_slice(&body).unwrap();
- 
-@@ -155,6 +162,22 @@ mod tests {
-         assert!(payload["diagnostics"].get("agentSessionId").is_none());
-     }
- 
-+    #[tokio::test]
-+    async fn sql_failures_map_to_422_while_other_backend_errors_stay_500() {
-+        use dbx_core::db::agent_driver::{AgentErrorStage, AgentOperationOutcome};
+     const rows = displayRows(host);
+-    expect(rows).toHaveLength(1);
+-    expect(visibleCellTexts(rows[0]!)[2]).toBe("first");
++    expect(rows).toHaveLength(8);
++    expect(visibleCellTexts(rows[0]!)[2]).toBe("v1");
++    expect(visibleCellTexts(rows[4]!)[2]).toBe("v5");
++    expect(visibleCellTexts(rows[5]!)[2]).toBe("v6");
++    expect(visibleCellTexts(rows[7]!)[2]).toBe("v8");
 +
-+        // Native-driver SQL failure: detail is preserved and the status is 422.
-+        let response =
-+            AppError::from(BackendError::from_sql_detail("ERROR: relation missing does not exist")).into_response();
-+        assert_eq!(response.status(), StatusCode::UNPROCESSABLE_ENTITY);
++    host.querySelector<HTMLElement>("[data-toolbar-action='save']")!.click();
++    await settle();
++    expect(save).toHaveBeenCalledOnce();
++    expect(save.mock.calls[0]![0].dirtyRows.size).toBe(5);
++    expect(save.mock.calls[0]![0].newRows).toHaveLength(3);
++    expect(save.mock.calls[0]![0].newRows[0]![2]).toBe("v6");
++  });
 +
-+        // Non-SQL backend failures keep the generic 500.
-+        let response =
-+            AppError::from(BackendError::from_canceled(AgentErrorStage::Execute, AgentOperationOutcome::Unknown))
-+                .into_response();
-+        assert_eq!(response.status(), StatusCode::INTERNAL_SERVER_ERROR);
-+    }
++  it("undoes the overwrite and appended rows together in one step (#15263)", async () => {
++    const result = { ...defaultResult(), rows: Array.from({ length: 5 }, (_, i) => [i + 1, null, `seed-${i}`, "x"]) };
++    const { host } = mountGrid({ result, customSaveHandler: { canInsert: true, save: vi.fn<CustomSaveHandler["save"]>().mockResolvedValue() } });
++    await settle();
 +
-     #[tokio::test]
-     async fn http_response_preserves_duckdb_native_detail_and_worker_code() {
-         let error = BackendError::from_duckdb_worker_error(
++    await selectCell(visibleCells(displayRows(host)[0]!)[2]!);
++    await paste(host, "v1\nv2\nv3\nv4\nv5\nv6\nv7\nv8");
++    expect(displayRows(host)).toHaveLength(8);
++    expect(visibleCellTexts(displayRows(host)[0]!)[2]).toBe("v1");
++
++    gridRoot(host).dispatchEvent(new KeyboardEvent("keydown", { bubbles: true, cancelable: true, ctrlKey: true, key: "z" }));
++    await settle();
++    expect(displayRows(host)).toHaveLength(5);
++    expect(visibleCellTexts(displayRows(host)[0]!)[2]).toBe("seed-0");
++
++    gridRoot(host).dispatchEvent(new KeyboardEvent("keydown", { bubbles: true, cancelable: true, ctrlKey: true, shiftKey: true, key: "z" }));
++    await settle();
++    expect(displayRows(host)).toHaveLength(8);
++    expect(visibleCellTexts(displayRows(host)[0]!)[2]).toBe("v1");
++  });
++
++  it("appends overflow from a large async paste through preparation (#15263)", async () => {
++    const save = vi.fn<CustomSaveHandler["save"]>().mockResolvedValue();
++    const result = { ...defaultResult(), rows: Array.from({ length: 5 }, (_, i) => [i + 1, null, `seed-${i}`, "x"]) };
++    const { host } = mountGrid({ result, customSaveHandler: { canInsert: true, save } });
++    await settle();
++
++    await selectCell(visibleCells(displayRows(host)[0]!)[2]!);
++    await paste(host, Array.from({ length: 5000 }, (_, i) => `row-${i}`).join("\n"));
++    await vi.waitFor(() => expect(document.querySelector("[data-grid-row-preparation]")).toBeNull(), { timeout: 5000, interval: 10 });
++
++    const rows = displayRows(host);
++    expect(rows).toHaveLength(5000);
++    expect(visibleCellTexts(rows[0]!)[2]).toBe("row-0");
++    expect(visibleCellTexts(rows[4]!)[2]).toBe("row-4");
++    expect(visibleCellTexts(rows[5]!)[2]).toBe("row-5");
++    expect(visibleCellTexts(rows[4999]!)[2]).toBe("row-4999");
++  });
++
++  it("rejects overflow with an explicit toast when insert is not supported (#15263)", async () => {
++    const result = { ...defaultResult(), rows: Array.from({ length: 5 }, (_, i) => [i + 1, null, `seed-${i}`, "x"]) };
++    const customSaveHandler: CustomSaveHandler = { supportsInsert: false, save: vi.fn<CustomSaveHandler["save"]>().mockResolvedValue() };
++    const { host } = mountGrid({ result, databaseType: "mongodb", customSaveHandler });
++    await settle();
++
++    await selectCell(visibleCells(displayRows(host)[0]!)[2]!);
++    await paste(host, "v1\nv2\nv3\nv4\nv5\nv6\nv7\nv8");
++
++    expect(displayRows(host)).toHaveLength(5);
++    expect(visibleCellTexts(displayRows(host)[0]!)[2]).toBe("v1");
++    expect(useToast().message.value).toBe(i18n.global.t("grid.pasteRowsTruncated", { applied: 5, dropped: 3 }));
+   });
+ 
+   it("expands a multi-cell range on a blank new row without losing clipboard rows", async () => {
+```
+
+**File**: `apps/desktop/src/composables/useDataGridEditor.ts` (modified, +39/-10)
+```diff
+@@ -55,6 +55,13 @@ interface ConditionalUpdateExecution {
+ 
+ export type DataGridAppendPastedRowsResult = { ok: true; rowCount: number } | { ok: false; reason: "not-editable" | "invalid-target" | "target-not-empty" | "empty-paste" | "readonly-column" | "no-matching-columns" | "capacity-exceeded" | "cancelled" };
+ 
++// Options for appending pasted rows. `skipUndoSnapshot` lets a caller that has
++// already captured an undo snapshot (e.g. a mixed overwrite + append paste)
++// avoid pushing a second, separate undo entry.
++export interface DataGridPasteAppendOptions {
++  skipUndoSnapshot?: boolean;
++}
++
+ type CommitEditResult =
+   | {
+       changed: false;
+@@ -956,10 +963,13 @@ export function useDataGridEditor(options: UseDataGridEditorOptions) {
+   let batchMutated = false;
+   let batchColumnInfoCache: Map<number, ColumnInfo | undefined> | null = null;
+ 
+-  function beginBatch() {
++  function beginBatch(options: { captureUndo?: boolean } = {}) {
+     if (isBatching) return;
+     isBatching = true;
+-    batchUndoSnapshotPushed = false;
++    // A mixed overwrite + append paste captures one undo snapshot up front so
++    // the subsequent INSERT does not add a second, separate undo entry.
++    batchUndoSnapshotPushed = options.captureUndo === true;
++    if (batchUndoSnapshotPushed) pushUndoSnapshot();
+     batchMutated = false;
+     batchColumnInfoCache = new Map();
+   }
+@@ -1533,30 +1543,49 @@ export function useDataGridEditor(options: UseDataGridEditorOptions) {
+     return row.every((value) => value === null || (typeof value === "string" && value.trim() === ""));
+   }
+ 
+-  function appendPastedRowsAsNewRows(pastedRows: readonly (readonly (string | null)[])[], columnIndexes: readonly number[], columnNames?: readonly string[] | null): DataGridAppendPastedRowsResult {
+-    return finishDataGridRowPreparation(preparePastedRows(null, pastedRows, columnIndexes, columnNames));
++  function appendPastedRowsAsNewRows(pastedRows: readonly (readonly (string | null)[])[], columnIndexes: readonly number[], columnNames?: readonly string[] | null, options: DataGridPasteAppendOptions = {}): DataGridAppendPastedRowsResult {
++    return finishDataGridRowPreparation(preparePastedRows(null, pastedRows, columnIndexes, columnNames, options));
+   }
+ 
+   function appendPastedRowsToNewRow(targetRowId: number, pastedRows: readonly (readonly (string | null)[])[], columnIndexes: readonly number[], columnNames?: readonly string[] | null): DataGridAppendPastedRowsResult {
+     return finishDataGridRowPreparation(preparePastedRows(targetRowId, pastedRows, columnIndexes, columnNames));
+   }
+ 
+-  function appendPastedRowsAsNewRowsInBatches(pastedRows: readonly (readonly (string | null)[])[], columnIndexes: readonly number[], columnNames?: readonly string[] | null, preparation: DataGridRowPreparationOptions = {}): Promise<DataGridAppendPastedRowsResult> {
+-    return appendPastedRowsInBatches(null, pastedRows, columnIndexes, columnNames, preparation);
++  function appendPastedRowsAsNewRowsInBatches(
++    pastedRows: readonly (readonly (string | null)[])[],
++    columnIndexes: readonly number[],
++    columnNames?: readonly string[] | null,
++    preparation: DataGridRowPreparationOptions = {},
++    options: DataGridPasteAppendOptions = {},
++  ): Promise<DataGridAppendPastedRowsResult> {
++    return appendPastedRowsInBatches(null, pastedRows, columnIndexes, columnNames, preparation, options);
+   }
+ 
+   function appendPastedRowsToNewRowInBatches(targetRowId: number, pastedRows: readonly (readonly (string | null)[])[], columnIndexes: readonly number[], columnNames?: readonly string[] | null, preparation: DataGridRowPreparationOptions = {}): Promise<DataGridAppendPastedRowsResult> {
+     return appendPastedRowsInBatches(targetRowId, pastedRows, columnIndexes, columnNames, preparation);
+   }
+ 
+-  function appendPastedRowsInBatches(targetRowId: number | null, pastedRows: readonly (readonly (string | null)[])[], columnIndexes: readonly number[], columnNames: readonly string[] | null | undefined, preparation: DataGridRowPreparationOptions): Promise<DataGridAppendPastedRowsResult> {
++  function appendPastedRowsInBatches(
++    targetRowId: number | null,
++    pastedRows: readonly (readonly (string | null)[])[],
++    columnIndexes: readonly number[],
++    columnNames: readonly string[] | null | undefined,
++    preparation: DataGridRowPreparationOptions,
++    options: DataGridPasteAppendOptions = {},
++  ): Promise<DataGridAppendPastedRowsResult> {
+     const isCurrent = rowPreparationIsCurrent();
+-    return runDataGridRowPreparation(preparePastedRows(targetRowId, pastedRows, columnIndexes, columnNames), { ...preparation, isCurrent: () => isCurrent() && preparation.isCurrent?.() !== false }, { ok: false, reason: "cancelled" });
++    return runDataGridRowPreparation(preparePastedRows(targetRowId, pastedRows, columnIndexes, columnNames, options), { ...preparation, isCurrent: () => isCurrent() && preparation.isCurrent?.() !== false }, { ok: false, reason: "can
+```
+
+**File**: `apps/desktop/src/i18n/locales/en.ts` (modified, +1/-0)
+```diff
+@@ -3733,6 +3733,7 @@ export default {
+     hideIdenticalColumnsCount: "Hide Columns with Identical Values ({count})",
+     showAllColumnsMenu: "Show All Columns",
+     pasted: "Pasted!",
++    pasteRowsTruncated: "Pasted {applied} row(s); {dropped} row(s) were not pasted because new rows cannot be inserted here or the pending-row limit was reached.",
+     batchAppendPasteNotEditable: "This result cannot be edited.",
+     batchAppendPasteInvalidTarget: "Select the row number of an empty new row before pasting.",
+     batchAppendPasteTargetNotEmpty: "The selected new row already contains data.",
+```
+
+**File**: `apps/desktop/src/i18n/locales/es.ts` (modified, +1/-0)
+```diff
+@@ -3900,6 +3900,7 @@ export default withEnglishFallback({
+     foreignKeyPreviewEmpty: "No hay filas en «{table}» que coincidan con este valor.",
+     foreignKeyPreviewFailed: "No se pudieron cargar las filas de referencia: {message}",
+     sortOptions: "Opciones de ordenación",
++    pasteRowsTruncated: "Se pegaron {applied} filas y {dropped} filas no se pegaron: el resultado actual no admite agregar filas o no hay suficientes filas disponibles para agregar.",
+     pasteCellText: "Pegar texto en esta celda",
+     pasteCellTextFailed: "No se puede pegar texto en la celda: {message}",
+   },
+```
+
+**File**: `apps/desktop/src/i18n/locales/it.ts` (modified, +1/-0)
+```diff
+@@ -3762,6 +3762,7 @@ export default withEnglishFallback({
+     foreignKeyPreviewEmpty: "Nessuna riga in «{table}» corrisponde a questo valore.",
+     foreignKeyPreviewFailed: "Impossibile caricare le righe di riferimento: {message}",
+     sortOptions: "Opzioni di ordinamento",
++    pasteRowsTruncated: "Sono state incollate {applied} righe, mentre {dropped} righe non sono state incollate: il risultato corrente non supporta l'aggiunta di righe oppure il numero di righe aggiungibili non è sufficiente.",
+     pasteCellText: "Incolla il testo in questa cella",
+     pasteCellTextFailed: "Impossibile incollare il testo nella cella: {message}",
+   },
+```
+
+**File**: `apps/desktop/src/i18n/locales/ja.ts` (modified, +1/-0)
+```diff
+@@ -3784,6 +3784,7 @@ export default withEnglishFallback({
+     foreignKeyPreviewEmpty: "「{table}」にこの値と一致する行はありません。",
+     foreignKeyPreviewFailed: "参照行を読み込めませんでした：{message}",
+     sortOptions: "並べ替えオプション",
++    pasteRowsTruncated: "{applied} 行を貼り付けました。残りの {dropped} 行は貼り付けられませんでした：現在の結果は行の追加をサポートしていないか、追加できる行数が不足しています。",
+     pasteCellText: "このセルにテキストを貼り付け",
+     pasteCellTextFailed: "セルにテキストを貼り付けできません：{message}",
+   },
+```
+
+**File**: `apps/desktop/src/i18n/locales/ko.ts` (modified, +1/-0)
+```diff
+@@ -3716,6 +3716,7 @@ export default withEnglishFallback({
+     foreignKeyPreviewEmpty: "{table}에 이 값과 일치하는 행이 없습니다.",
+     foreignKeyPreviewFailed: "참조 행을 불러올 수 없습니다: {message}",
+     sortOptions: "정렬 옵션",
++    pasteRowsTruncated: "{applied}개 행을 붙여넣었고, {dropped}개 행은 붙여넣지 못했습니다: 현재 결과에서 행 추가를 지원하지 않거나 추가할 수 있는 행 수가 부족합니다.",
+     pasteCellText: "이 셀에 텍스트 붙여넣기",
+     pasteCellTextFailed: "셀에 텍스트를 붙여넣을 수 없습니다: {message}",
+   },
 ```
 
 ---
 
-### Incident Patch 3: `74cb5989` (2026-11-21)
-**Commit Message**: fix(deps): update dependency com.fasterxml.jackson.core:jackson-databind to v2.23.0 (#15424)
+### Incident Patch 3: `65dc78b8` (2026-11-22)
+**Commit Message**: fix(desktop): hand the java launcher a path without the verbatim prefix (#15318) (#15468)
 
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+* fix(agent): launch the agent through a plain jar path on Windows (#15318)
 
-**File**: `plugins/jdbc/build.gradle` (modified, +1/-1)
+The desktop app derives the driver directory from the data directory, and a
+portable profile canonicalizes that directory to a verbatim path
+(`\\?\D:\...`). The Java launcher cannot resolve a main class from a jar
+addressed that way: the bundled JRE 21 exits 1 with ClassNotFoundException
+and the agent never starts, so the connection fails before the handshake.
+
+Convert the jar path, and the working directory derived from it, to the plain
+spelling when Windows has one: drive and UNC paths within the legacy length
+limit. Volume GUID paths have no plain spelling and paths past the limit need
+the prefix, so both keep it.
+
+The ignored test launches the bundled JRE with a real driver jar end to end;
+run it with DBX_E2E_JAVA and DBX_E2E_AGENT_JAR set.
+
+* fix(agent): preserve Windows JAR path identity when simplifying launch paths
+
+---------
+
+Co-authored-by: zipg <[REDACTED_EMAIL]>
+
+**File**: `crates/dbx-driver-agent/src/agent_driver.rs` (modified, +123/-1)
 ```diff
-@@ -20,7 +20,7 @@ def mavenResolverVersion = '2.0.25'
- def mavenCoreVersion = '4.0.0-rc-7'
+@@ -1281,6 +1281,60 @@ pub struct AgentLaunchSpec {
+     pub env: Vec<(String, String)>,
+ }
  
- dependencies {
--    implementation 'com.fasterxml.jackson.core:jackson-databind:2.22.4'
-+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.23.0'
-     implementation('org.slf4j:slf4j-api') {
-         version {
-             strictly '1.7.36'
++/// The Java launcher cannot open a jar through a verbatim path: `java -jar
++/// \\?\D:\...\agent.jar` exits with "Could not find or load main class"
++/// (#15318). A portable profile hits this because Windows `canonicalize`
++/// answers with such a path and the agent directory is derived from it.
++///
++/// Return the plain spelling when the path has one. A `\\?\Volume{GUID}\...`
++/// path has none, and a path past the legacy limit needs the prefix, so both
++/// come back untouched.
++#[cfg(target_os = "windows")]
++fn java_compatible_path(path: &Path) -> PathBuf {
++    use std::ffi::OsString;
++    use std::os::windows::ffi::{OsStrExt, OsStringExt};
++
++    /// Windows' legacy path limit, without the terminating NUL.
++    const MAX_PLAIN_PATH_LEN: usize = 259;
++    const VERBATIM_PREFIX: &[u16] = &[b'\\' as u16, b'\\' as u16, b'?' as u16, b'\\' as u16];
++    const UNC_PREFIX: &[u16] = &[b'U' as u16, b'N' as u16, b'C' as u16, b'\\' as u16];
++
++    let wide: Vec<u16> = path.as_os_str().encode_wide().collect();
++    let Some(rest) = wide.strip_prefix(VERBATIM_PREFIX) else {
++        return path.to_path_buf();
++    };
++    let plain = if let Some(unc) = rest.strip_prefix(UNC_PREFIX) {
++        // `\\?\UNC\server\share` is the verbatim spelling of `\\server\share`.
++        let mut plain = vec![b'\\' as u16, b'\\' as u16];
++        plain.extend_from_slice(unc);
++        plain
++    } else if is_drive_path(rest) {
++        rest.to_vec()
++    } else {
++        return path.to_path_buf();
++    };
++    // A non-verbatim path can normalize trailing dots and spaces to a
++    // different directory. Preserve the original spelling in that case.
++    let has_ambiguous_component = plain
++        .split(|unit| *unit == u16::from(b'\\'))
++        .any(|component| matches!(component.last(), Some(0x0020 | 0x002e)));
++    if plain.len() > MAX_PLAIN_PATH_LEN || has_ambiguous_component {
++        return path.to_path_buf();
++    }
++    PathBuf::from(OsString::from_wide(&plain))
++}
++
++/// `D:\...`: the only verbatim form besides UNC with a plain equivalent.
++#[cfg(target_os = "windows")]
++fn is_drive_path(wide: &[u16]) -> bool {
++    wide.len() > 2 && matches!(wide[0], 0x41..=0x5A | 0x61..=0x7A) && wide[1] == b':' as u16 && wide[2] == b'\\' as u16
++}
++
++#[cfg(not(target_os = "windows"))]
++fn java_compatible_path(path: &Path) -> PathBuf {
++    path.to_path_buf()
++}
++
+ impl AgentLaunchSpec {
+     pub fn new(program: impl Into<PathBuf>) -> Self {
+         Self { program: program.into(), args: Vec::new(), working_dir: None, env: Vec::new() }
+@@ -1296,9 +1350,10 @@ impl AgentLaunchSpec {
+         extra_java_args: &[String],
+     ) -> Self {
+         let jar_path = jar_path.as_ref();
++        let launch_jar_path = java_compatible_path(jar_path);
+         Self {
+             program: java_path.into(),
+-            args: agent_java_args_with_extra_args(&jar_path.to_string_lossy(), extra_java_args),
++            args: agent_java_args_with_extra_args(&launch_jar_path.to_string_lossy(), extra_java_args),
+             working_dir: jar_path.parent().map(Path::to_path_buf),
+             env: Vec::new(),
+         }
+@@ -4409,6 +4464,8 @@ mod pl_debug_runtime_tests;
+ 
+ #[cfg(test)]
+ mod tests {
++    #[cfg(target_os = "windows")]
++    use super::java_compatible_path;
+     use super::{
+         agent_close_query_session_params, agent_error_from_legacy, agent_handshake_params, agent_java_args,
+         agent_java_args_with_extra, agent_java_args_with_extra_opts, agent_object_source_params,
+@@ -4428,6 +4485,8 @@ mod tests {
+     use crate::agent_recovery::{RecoveryDecision, RecoveryPolicy, RecoveryScope};
+     use std::io::Cursor;
+     use std::io::Write;
++    #[cfg(target_os = "windows")]
++    use std::path::{Path, PathBuf};
+     use std::process::{Command, Stdio};
+     use std::sync::atomic::Ordering;
+     use std::sync::{Arc, Mutex};
+@@ -5072,6 +5131,69 @@ for line in sys.stdin:
+         assert!(args.iter().any(|arg| arg == "-Djavax.security.auth.useSubjectCredsOnly=false"));
+     }
+ 
++    /// A portable profile derives its agent directory from a canonicalized
++    /// data directory, and Windows `canonicalize` answers with `\\?\D:\...`.
++    /// The Java launcher cannot resolve a main class from such a jar (#15318),
++    /// so the launch spec has to carry the plain spelling.
++    #[cfg(target_os = "windows")]
++    #[test]
++    fn java_launch_uses_the_plain_spelling_of_a_verbatim_jar_path() {
++        let spec = AgentLaunchSpec::java_jar("java", r"\\?\D:\DBX\data\agents\drivers\iris\agent.jar");
++        let jar = spec.args.iter().position(|arg| arg == "-jar").expect("agent jar marker should be present");
++
++        assert_eq!(spec.args[jar + 1], r"D:\DBX\data\agents\drivers\iris\agent.jar");
++        assert_eq!(spec.working_dir.as_deref(), Some(Path::new(r"\\?\D:\DBX\data\agents\drivers\iris")));
++    }
++
++    #[cfg(target_os = "windows")]
++    #[test]
++    
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #15424** (2026-11-21): fix(deps): update dependency com.fasterxml.jackson.core:jackson-databind to v2.23.0 (@renovate[bot])
-- **PR #15423** (2026-11-21): chore(deps): update gradle to v9.9.2 (@renovate[bot])
-- **PR #15421** (closed): fix(deps): update mavenresolverversion to v2.0.25 - autoclosed (@renovate[bot])
-- **PR #15420** (2026-11-21): feat(sql-file): create the target database from the Execute SQL File dialog (@x-labb)
-- **PR #15418** (2026-11-21): chore(deps): update taiki-e/install-action action to v2.90.8 (@renovate[bot])
-- **PR #15416** (2026-11-21): fix(deps): update mavenresolverversion to v2.0.25 (@renovate[bot])
+- **PR #15469** (2026-11-22): fix(vastbase): enforce UTF8 client_encoding for GB18030 databases (@Acd-kk)
+- **PR #15468** (2026-11-22): fix(desktop): hand the java launcher a path without the verbatim prefix (#15318) (@xiaou61)
+- **PR #15462** (2026-11-22): fix(sidebar): sync table comments on refresh (@imcman)
+- **PR #15461** (2026-11-22): fix(plugins): wrap plugin center tabs in narrow panes (@ThugKd)
+- **PR #15460** (2026-11-22): fix(mongodb): render structured cells as JSON in details (@ThugKd)
+- **PR #15459** (2026-11-22): fix(export): TDengine 导出 INSERT 转义反斜杠，保证回导字节一致 (@dienaso)
 
 ---
 
@@ -2338,59 +2710,55 @@ Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. web): allow SQL file execution in passwordless deployments
+## X. web): send the hardening headers on every response
 
 **RULE**:
-When implementing operations in `crates/dbx-web/src/routes/sql_file.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/dbx-web/src/main.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0685e9f4`: web): allow SQL file execution in passwordless deployments. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c7c57cd5`: web): send the hardening headers on every response. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/dbx-web/src/routes/sql_file.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/dbx-web/src/main.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// Failure-log owner for the Web runtime (dbx#11619): the authenticated
-/// session token when one exists. Deployments that disable password protection
-/// (`DBX_DISABLE_PASSWORD`) never log in, so the browser carries no
-/// `dbx_session` cookie even though the auth middleware lets every API call
-/// through; without this fallback those deployments could not execute SQL
-/// files at all ("Not authenticated"), while every other feature worked.
-/// Anonymous deployments share one owner, exactly how the desktop runtime
-/// shares "desktop": with no sessions there is nothing to isolate.
-const ANONYMOUS_FAILURE_LOG_OWNER: &str = "web-shared";
+/// Response headers a security scanner expects on the browser build (#15439).
+///
+/// The bundle is served over whatever TLS the operator terminates in front of
+/// it, so the headers are unconditional: `Strict-Transport-Security` is ignored
+/// by browsers on plain HTTP and takes effect as soon as the client sees HTTPS.
+/// `X-XSS-Protection: 0` is the current recommendation (the legacy auditor is
+/// itself an XSS vector) while still answering scanners that only look for the
+/// header's presence.
+const SECURITY_RESPONSE_HEADERS: [(&str, &str); 7] = [
+    ("x-content-type-options", "nosniff"),
+    ("x-frame-options", "SAMEORIGIN"),
+    ("referrer-policy", "strict-origin-when-cross-origin"),
+    ("x-xss-protection", "0"),
+    ("x-download-options", "noopen"),
+    ("x-permitted-cross-domain-policies", "none"),
+    ("strict-transport-security", "max-age=31536000"),
+];
 
-fn web_failure_log_owner(headers: &HeaderMap) -> String {
-    crate::auth::session_token_from_headers(headers).unwrap_or_else(|| ANONYMOUS_FAILURE_LOG_OWNER.to_string())
-}
+/// Applies [`SECURITY_RESPONSE_HEADERS`] to every response, API and assets alike.
+async fn security_headers(request: Request<axum::body::Body>, next: middleware::Next) -> Response {
+    use axum::http::header::{HeaderName, HeaderValue};
 
-    let log_owner = web_failure_log_owner(&headers);
-    let owner = web_failure_log_owner(&headers);
-    let owner = web_failure_log_owner(&headers);
-    let owner = web_failure_log_owner(&headers);
-    #[test]
-    fn failure_log_owner_falls_back_to_a_shared_owner_without_a_session_cookie() {
-        // Deployments with password protection disabled never log in, so the
-      
+    let mut response = next.run(request).await;
+    for (name, value) in SECURI
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    let log_owner = crate::auth::session_token_from_headers(&headers)
-        .ok_or_else(|| AppError::from("Not authenticated".to_string()))?;
-    let owner = crate::auth::session_token_from_headers(&headers)
-        .ok_or_else(|| AppError::from("Not authenticated".to_string()))?;
-    let owner = crate::auth::session_token_from_headers(&headers)
-        .ok_or_else(|| AppError::from("Not authenticated".to_string()))?;
-    let owner = crate::auth::session_token_from_headers(&headers)
-        .ok_or_else(|| AppError::from("Not authenticated".to_string()))?;
+        mount_static_assets, normalize_public_base_path, password_viewer_enabled_from_env, web_agent_dir_from_env,
+        web_body_limit_bytes_from_value, web_compression_predicate, StaticSource, XLSX_CONTENT_TYPE,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0685e9f4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c7c57cd5` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

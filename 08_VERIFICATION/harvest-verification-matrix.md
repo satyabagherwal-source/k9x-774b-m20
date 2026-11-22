@@ -12227,3 +12227,7 @@
 | `CYCLE-20261122-GMHS` | `2026-11-22T23:15:47.296Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9981` | Yes (`cb2622da...`) |
 | `CYCLE-2026-11-22-PROJ-EVOLVE` | `2026-11-22T23:16:24.409Z` | `tursodatabase-turso` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-BBA39C7F` [Domain H] | Yes (`7cf7eb89...`) |
 | `CYCLE-20261122-SF5V` | `2026-11-22T23:24:57.667Z` | `ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings.md` | Yes (`adf1ad4e...`) |
+| `CYCLE-20261122-31X4` | `2026-11-22T23:33:13.720Z` | `zeronsh/zeron` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8012` | Yes (`c6c74af3...`) |
+| `CYCLE-20261122-3423` | `2026-11-22T23:33:16.491Z` | `unsloth/Qwen3.8-27B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-qwen3.8-27b-gguf-learnings.md` | Yes (`4243452e...`) |
+| `CYCLE-20261122-35CQ` | `2026-11-22T23:33:18.170Z` | `maziyarpanahi/openmed` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8545` | Yes (`53a775f7...`) |
+| `CYCLE-20261122-3C1W` | `2026-11-22T23:33:26.852Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10005` | Yes (`5ce3561c...`) |

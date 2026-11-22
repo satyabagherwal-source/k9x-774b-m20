@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zeronsh-zeron-learnings.md`  
 > **Source**: github ([https://github.com/zeronsh/zeron](https://github.com/zeronsh/zeron))  
-> **Source Version**: `46f18fe4`  
+> **Source Version**: `b289003b`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T17:05:45.893Z  
+> **Timestamp**: 2026-11-22T23:33:12.917Z  
 > **Learning ID**: `learn-github-zeronsh-zeron`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zeronsh-zeron-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zeronsh/zeron](https://github.com/zeronsh/zeron))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T17:05:45.785Z  
+> **Harvest Timestamp**: 2026-11-22T23:33:12.731Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A native control plane for Claude Code, Codex, Cursor, Devin and other coding agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3723 stars
+- **Stars / Engagement**: 3732 stars
 
 ---
 
@@ -1533,22 +1533,224 @@ class TranscriptState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `613accb2` (2026-11-21)
-**Commit Message**: fix(zgx): prevent streaming veil from replaying finished and previous blocks (#1554)
+### Incident Patch 1: `dcd4f622` (2026-11-21)
+**Commit Message**: Merge pull request #1562 from zeronsh/zeron/fix-antigravity-cloud-disconnects
 
-Co-authored-by: Wing <[REDACTED_EMAIL]>
+Fix Antigravity cloud disconnects, bump zgx stale scene node fix, and add Zig/Odin highlighting
 
-**File**: `apps/zgx/tests/streaming_veil_replay.rs` (added, +500/-0)
+**File**: `Cargo.lock` (modified, +1/-0)
 ```diff
-@@ -0,0 +1,500 @@
-+//! Diagnostic & regression tests for streaming veil replay bugs:
-+//! when a markdown block finishes (or a later block streams in), neither the
-+//! finished block nor any previous block should replay its fade-in veil.
+@@ -9012,6 +9012,7 @@ dependencies = [
+  "futures",
+  "libc",
+  "reqwest",
++ "rusqlite",
+  "semver",
+  "serde",
+  "serde_json",
+```
+
+**File**: `apps/zgx/Cargo.lock` (modified, +46/-46)
+```diff
+@@ -30,7 +30,7 @@ dependencies = [
+ [[package]]
+ name = "accesskit_atspi_common"
+ version = "0.19.1"
+-source = "git+https://github.com/zeronsh/zgx?rev=b8f298b6b9d1a363adf9e21655334a6e260dc4c7#b8f298b6b9d1a363adf9e21655334a6e260dc4c7"
++source = "git+https://github.com/zeronsh/zgx?rev=e3f35a5462144d07e6dd99af360f28a87c8d1b31#e3f35a5462144d07e6dd99af360f28a87c8d1b31"
+ dependencies = [
+  "accesskit",
+  "accesskit_consumer",
+@@ -43,7 +43,7 @@ dependencies = [
+ [[package]]
+ name = "accesskit_consumer"
+ version = "0.38.0"
+-source = "git+https://github.com/zeronsh/zgx?rev=b8f298b6b9d1a363adf9e21655334a6e260dc4c7#b8f298b6b9d1a363adf9e21655334a6e260dc4c7"
++source = "git+https://github.com/zeronsh/zgx?rev=e3f35a5462144d07e6dd99af360f28a87c8d1b31#e3f35a5462144d07e6dd99af360f28a87c8d1b31"
+ dependencies = [
+  "accesskit",
+  "hashbrown 0.16.1",
+@@ -66,7 +66,7 @@ dependencies = [
+ [[package]]
+ name = "accesskit_macos"
+ version = "0.26.3"
+-source = "git+https://github.com/zeronsh/zgx?rev=b8f298b6b9d1a363adf9e21655334a6e260dc4c7#b8f298b6b9d1a363adf9e21655334a6e260dc4c7"
++source = "git+https://github.com/zeronsh/zgx?rev=e3f35a5462144d07e6dd99af360f28a87c8d1b31#e3f35a5462144d07e6dd99af360f28a87c8d1b31"
+ dependencies = [
+  "accesskit",
+  "accesskit_consumer",
+@@ -79,7 +79,7 @@ dependencies = [
+ [[package]]
+ name = "accesskit_unix"
+ version = "0.22.1"
+-source = "git+https://github.com/zeronsh/zgx?rev=b8f298b6b9d1a363adf9e21655334a6e260dc4c7#b8f298b6b9d1a363adf9e21655334a6e260dc4c7"
++source = "git+https://github.com/zeronsh/zgx?rev=e3f35a5462144d07e6dd99af360f28a87c8d1b31#e3f35a5462144d07e6dd99af360f28a87c8d1b31"
+ dependencies = [
+  "accesskit",
+  "accesskit_atspi_common",
+@@ -96,7 +96,7 @@ dependencies = [
+ [[package]]
+ name = "accesskit_windows"
+ version = "0.34.0"
+-source = "git+https://github.com/zeronsh/zgx?rev=b8f298b6b9d1a363adf9e21655334a6e260dc4c7#b8f298b6b9d1a363adf9e21655334a6e260dc4c7"
++source = "git+https://github.com/zeronsh/zgx?rev=e3f35a5462144d07e6dd99af360f28a87c8d1b31#e3f35a5462144d07e6dd99af360f28a87c8d1b31"
+ dependencies = [
+  "accesskit",
+  "accesskit_consumer",
+@@ -277,26 +277,6 @@ dependencies = [
+  "object",
+ ]
+ 
+-[[package]]
+-name = "arboard"
+-version = "3.7.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "aeb9553e62312c8756a5979254fc6d7da8bbeb5986a1e17037fab932f7037917"
+-dependencies = [
+- "clipboard-win",
+- "image",
+- "log",
+- "objc2 0.6.4",
+- "objc2-app-kit 0.3.2",
+- "objc2-core-foundation",
+- "objc2-core-graphics",
+- "objc2-foundation 0.3.2",
+- "parking_lot",
+- "percent-encoding",
+- "windows-sys 0.61.2",
+- "x11rb",
+-]
+-
+ [[package]]
+ name = "arrayref"
+ version = "0.3.9"
+@@ -6450,7 +6430,7 @@ dependencies = [
+ [[package]]
+ name = "wgpu-hal"
+ version = "29.0.4"
+-source = "git+https://github.com/zeronsh/zgx?rev=b8f298b6b9d1a363adf9e21655334a6e260dc4c7#b8f298b6b9d1a363adf9e21655334a6e260dc4c7"
++source = "git+https://github.com/zeronsh/zgx?rev=e3f35a5462144d07e6dd99af360f28a87c8d1b31#e3f35a5462144d07e6dd99af360f28a87c8d1b31"
+ dependencies = [
+  "android_system_properties",
+  "arrayvec",
+@@ -6888,7 +6868,7 @@ checksum = "d6bbff5f0aada427a1e5a6da5f1f98158182f26556f345ac9e04d36d0ebed650"
+ [[package]]
+ name = "winit"
+ version = "0.30.13"
+-source = "git+https://github.com/zeronsh/zgx?rev=b8f298b6b9d1a363adf9e21655334a6e260dc4c7#b8f298b6b9d1a363adf9e21655334a6e260dc4c7"
++source = "git+https://github.com/zeronsh/zgx?rev=e3f35a5462144d07e6dd99af360f28a87c8d1b31#e3f35a5462144d07e6dd99af360f28a87c8d1b31"
+ dependencies = [
+  "ahash",
+  "android-activity",
+@@ -7456,7 +7436,7 @@ dependencies = [
+ [[package]]
+ name = "zgx"
+ version = "0.1.10"
+-source = "git+https://github.com/zeronsh/zgx?rev=b8f298b6b9d1a363adf9e21655334a6e260dc4c7#b8f298b6b9d1a363adf9e21655334a6e260dc4c7"
++source = "git+https://github.com/zeronsh/zgx?rev=e3f35a5462144d07e6dd99af360f28a87c8d1b31#e3f35a5462144d07e6dd99af360f28a87c8d1b31"
+ dependencies = [
+  "fixed_decimal",
+  "foldhash 0.2.0",
+@@ -7485,7 +7465,7 @@ dependencies = [
+ [[package]]
+ name = "zgx-3d"
+ version = "0.1.10"
+-source = "git+https://github.com/zeronsh/zgx?rev=b8f298b6b9d1a363adf9e21655334a6e260dc4c7#b8f298b6b9d1a363adf9e21655334a6e260dc4c7"
++source = "git+https://github.com/zeronsh/zgx?rev=e3f35a5462144d07e6dd99af360f28a87c8d1b31#e3f35a5462144d07e6dd99af360f28a87c8d1b31"
+ dependencies = [
+  "bytemuck",
+  "zgx",
+@@ -7495,7 +7475,7 @@ dependencies = [
+ [[package]]
+ name = "zgx-alacritty-terminal"
+ version = "0.26.8"
+-source = "git+https://github.com/zeronsh/zgx?rev=b8f298b6b9d1a363adf9e21655334a6e260dc4c7#b8f298b6b9d1a363adf9e21655334a6e260dc4c7"
++source = "git+https://github.com/zeronsh/zgx?rev=e3f35a5462144d07e6dd99af360f28a87c8d1b31#e3f35a5462144d07e6dd99af360f28a87c8d1b31"
+ dependencies = [
+  "base64 0.22.1",
+  "bitflags 2.13.2",
+@@ -7517,18 +7497,37 @@ dependencies = [
+  "zgx-vte",
+ ]
+ 
++[[package]]
++name = "zgx-arboard"
++version = "3.6.2"
++source = "git+https://github.com/zeronsh/zgx?rev=e3f35a5462144d07e6dd99af360f28a87c8d1b31#e3f35a5462144d07e6
+```
+
+**File**: `apps/zgx/Cargo.toml` (modified, +14/-14)
+```diff
+@@ -32,7 +32,7 @@ layout_probe = []
+ 
+ [dependencies]
+ lz4_flex = { version = "0.11", default-features = false, features = ["safe-encode", "safe-decode"] }
+-zgx = { git = "https://github.com/zeronsh/zgx", rev = "b8f298b6b9d1a363adf9e21655334a6e260dc4c7" }
++zgx = { git = "https://github.com/zeronsh/zgx", rev = "e3f35a5462144d07e6dd99af360f28a87c8d1b31" }
+ # `mimalloc`: the program's allocator, in place of the system's. It hands
+ # freed memory back to the system (the system's keeps the most it ever
+ # held), and zgx measures 1-10% less CPU for script, text and layout work.
+@@ -43,26 +43,26 @@ zgx = { git = "https://github.com/zeronsh/zgx", rev = "b8f298b6b9d1a363adf9e2165
+ # none of it, and without it pages are placeholders ("Web view · <url>").
+ # zgx-run turns it on by default, but this app takes zgx-run without its
+ # defaults (below). Nothing on macOS or Windows.
+-zgx-desktop = { git = "https://github.com/zeronsh/zgx", rev = "b8f298b6b9d1a363adf9e21655334a6e260dc4c7", features = ["mimalloc", "terminal", "webkitgtk"] }
++zgx-desktop = { git = "https://github.com/zeronsh/zgx", rev = "e3f35a5462144d07e6dd99af360f28a87c8d1b31", features = ["mimalloc", "terminal", "webkitgtk"] }
+ # `inspect`: devtools for `zgx inspect` (and its MCP server), asked for
+ # with `--inspect`. `i18n`: `ui.t`'s plurals and numbers by each locale's
+ # own rules (ICU4X's data, about 90 KB), for ui/locales' translations.
+ # `scene3d`: `ui.scene3d`, `ui.mesh`, `ui.light`, `ui.group` (zgx-3d on the
+ # wgpu this app already links), for plugins that show 3D: the CAD plugin
+ # hands it its own triangles (`geometry = { positions, indices, … }`). It
+ # asks no grant; a scene draws a frame only when something in it changes.
+-zgx-script = { git = "https://github.com/zeronsh/zgx", rev = "b8f298b6b9d1a363adf9e21655334a6e260dc4c7", features = ["inspect", "i18n", "scene3d"] }
++zgx-script = { git = "https://github.com/zeronsh/zgx", rev = "e3f35a5462144d07e6dd99af360f28a87c8d1b31", features = ["inspect", "i18n", "scene3d"] }
+ # A picture's pixels for the clipboard (src/images.rs): zgx's own decoder,
+ # the formats `ui.image` shows (no features of its own: the ones zgx-desktop
+ # turns on).
+-zgx-gpu = { git = "https://github.com/zeronsh/zgx", rev = "b8f298b6b9d1a363adf9e21655334a6e260dc4c7", default-features = false }
++zgx-gpu = { git = "https://github.com/zeronsh/zgx", rev = "e3f35a5462144d07e6dd99af360f28a87c8d1b31", default-features = false }
+ # Each plugin's own database (`zeron.db`, src/plugins/db.rs): SQLite,
+ # built in; `limits` to keep one from attaching any other file.
+ rusqlite = { version = "0.32", features = ["bundled", "limits", "hooks"] }
+ # `fetch`: zgx's own transport for `ui.fetch` and remote images (HTTP and
+ # HTTPS, rustls), given to every window (src/main.rs): the app's scripts,
+ # and plugins granted "network". Nothing else of the runner.
+-zgx-run = { git = "https://github.com/zeronsh/zgx", rev = "b8f298b6b9d1a363adf9e21655334a6e260dc4c7", default-features = false, features = ["fetch"] }
++zgx-run = { git = "https://github.com/zeronsh/zgx", rev = "e3f35a5462144d07e6dd99af360f28a87c8d1b31", default-features = false, features = ["fetch"] }
+ # `webp`: `ui.image` decodes through this crate, by what its features
+ # allow, so turning WebP on here is all it takes (the member cards' art).
+ # `ico`: sites' favicons (the browser tab's: src/favicons.rs), most of
+@@ -162,7 +162,7 @@ foreign-types = "0.5"
+ # elements, box drawing and Powerline glyphs to the cell; zgx's own renderer
+ # draws them from the font at its text line height, gapped. Builds Ghostty
+ # with Zig 0.16 (cached in ~/Library/Caches/zgx-ghostty).
+-zgx-desktop = { git = "https://github.com/zeronsh/zgx", rev = "b8f298b6b9d1a363adf9e21655334a6e260dc4c7", features = ["ghostty"] }
++zgx-desktop = { git = "https://github.com/zeronsh/zgx", rev = "e3f35a5462144d07e6dd99af360f28a87c8d1b31", features = ["ghostty"] }
+ 
+ # Windows' Transparency effects (src/transparency.rs), read and watched in
+ # the registry, until zgx reports them (zgx-asks/windows-transparency); a
+@@ -173,7 +173,7 @@ zgx-desktop = { git = "https://github.com/zeronsh/zgx", rev = "b8f298b6b9d1a363a
+ # 11 (and with Edge on Windows 10); without it, pages are placeholders.
+ [target.'cfg(windows)'.dependencies]
+ windows-sys = { version = "0.61", features = ["Win32_Foundation", "Win32_Graphics_Gdi", "Win32_Media_Audio", "Win32_Storage_FileSystem", "Win32_System_IO", "Win32_System_Console", "Win32_System_Registry", "Win32_System_Threading", "Win32_System_Time", "Win32_UI_WindowsAndMessaging"] }
+-zgx-desktop = { git = "https://github.com/zeronsh/zgx", rev = "b8f298b6b9d1a363adf9e21655334a6e260dc4c7", features = ["webview2"] }
++zgx-desktop = { git = "https://github.com/zeronsh/zgx", rev = "e3f35a5462144d07e6dd99af360f28a87c8d1b31", features = ["webview2"] }
+ 
+ # zgx's D-Bus (menus, portals) linked in rather than loaded: `zeron` is also
+ # what a headless Linux server and every Cloud machine runs (`zeron
+@@ -185,13 +185,13 @@ li
+```
+
+**File**: `apps/zgx/tests/syntax.rs` (added, +39/-0)
+```diff
+@@ -0,0 +1,39 @@
++//! Syntax highlighting lexing checks (`ui/demos/syntax_tests.luau`), run
++//! headless through the gallery's Syntax highlighting page so every language
++//! (including Zig and Odin) is verified in zgx's Luau runtime.
 +
 +use std::path::PathBuf;
-+use std::time::Duration;
 +
-+use zgx::scene::{Color, NodeId, NodeKind};
 +use zgx_script::{ScriptHost, Value, testing::TestApp};
 +
 +fn ui_dir() -> PathBuf {
@@ -1557,420 +1759,1218 @@ Co-authored-by: Wing <[REDACTED_EMAIL]>
 +        .unwrap_or_else(|| PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("ui"))
 +}
 +
-+fn pieces_under(app: &TestApp, root: NodeId) -> Vec<(String, Color)> {
-+    let scene = app.ui.scene.borrow();
-+    let mut stack = vec![root];
-+    while let Some(id) = stack.pop() {
-+        match scene.kind(id) {
-+            NodeKind::RichText { text } => {
-+                return text
-+                    .runs()
-+                    .iter()
-+                    .map(|run| (text.text()[run.range.clone()].to_owned(), run.color))
-+                    .collect();
-+            }
-+            NodeKind::Text { text, color, .. } => return vec![(text.to_string(), *color)],
-+            _ => stack.extend(scene.children(id).iter().rev().copied()),
++#[test]
++fn syntax_lexing_checks_pass() {
++    let mut gallery = TestApp::new(|runtime| {
++        let host = ScriptHost::new(runtime, ui_dir().join("gallery.luau"));
++        host.action("appearance", |_| {});
++        host.async_action("appearance", |_| async { Ok(Value::Nil) });
++        host
++    });
++    gallery.ui.scene.borrow_mut().resize(1400., 2800.);
++    gallery.frames(30);
++    gallery.click(r#"role:button "Syntax highlighting"[1]"#);
++    gallery.frames(20);
++    assert_eq!(gallery.error(), None, "Syntax highlighting page errored");
++
++    let tree = gallery.tree();
++    for line in tree.lines() {
++        if line.contains("lexing checks") {
++            eprintln!("syntax verdict: {}", line.trim());
 +        }
 +    }
-+    Vec::new()
++    assert!(
++        tree.contains("lexing checks pass") && !tree.contains("lexing checks fail"),
++        "syntax_tests.luau reported failures:\n{tree}"
++    );
++}
+```
+
+**File**: `apps/zgx/ui/demos/syntax_samples.luau` (modified, +64/-0)
+```diff
+@@ -515,6 +515,70 @@ fn fs_main(@location(0) uv: vec2f) -> @location(0) vec4<f32> {
+ }
+ ]==]
+ 
++S.zig = [==[
++//! Relays a device's frames to its peers.
++const std = @import("std");
++
++const MAX_FRAME: usize = 16 * 1024;
++
++pub const FrameError = error{ TooLarge, PeerGone };
++
++pub const Header = packed struct(u24) {
++    version: u4,
++    flags: u4,
++    length: u16,
++};
++
++pub fn send(id: u64, frame: []const u8, @"type": u7) FrameError!void {
++    if (frame.len > MAX_FRAME) return error.TooLarge;
++    const scale: f64 = 0x1.fp+3;
++    const banner =
++        \\a multiline string keeps "quotes" and \n literal
++        \\and // is not a comment
++    ;
++    const tag: u8 = '\n';
++    const n: i24 = @intCast(frame.len);
++    std.debug.print("sent {d} bytes ({c}, {d}, {s}, {d})\n", .{ n, tag, id, banner, @as(f64, scale) + @floatFromInt(@"type") });
++}
++]==]
++
++S.odin = [==[
++package relay
++
++import "core:fmt"
++
++/* Block comments /* nest */ in Odin. */
++MAX_FRAME :: 16 * 1024
++
++Header :: struct #packed {
++	version: u8,
++	length:  u16be,
 +}
 +
-+fn pieces(app: &mut TestApp, words: &str) -> Vec<(String, Color)> {
-+    let node = app
-+        .find(&format!("~\"{words}\""))
-+        .unwrap_or_else(|| panic!("no {words}:\n{}", app.tree()));
-+    pieces_under(app, node)
++Frame_Kind :: enum u8 {
++	Data,
++	Ping,
 +}
 +
-+/// Minimum alpha across non-empty runs whose text overlaps `needle` (or all non-empty runs if `needle` is empty).
-+fn min_alpha(runs: &[(String, Color)], needle: &str) -> u8 {
-+    runs.iter()
-+        .filter(|(t, _)| !t.trim().is_empty() && (needle.is_empty() || t.contains(needle) || needle.contains(t.as_str())))
-+        .map(|(_, c)| c.3)
-+        .min()
-+        .unwrap_or(255)
++Peer_Id :: distinct u64
++
++@(private="file")
++BANNER :: `raw string keeps \n and "quotes"
++over lines`
++
++@(require_results)
++send :: proc(id: Peer_Id, kind: Frame_Kind, frame: []u8, loc := #caller_location) -> bool {
++	if len(frame) > MAX_FRAME {
++		return false
++	}
++	#partial switch kind {
++	case .Data:
++		fmt.printfln("peer %d: %s (%r)\n", id, BANNER, 'x')
++	}
++	return true
++}
++]==]
++
+ S.diff = [==[
+ diff --git a/crates/ui/src/syntax_cache.rs b/crates/ui/src/syntax_cache.rs
+ index 3f1c2a9..8b7afb3 100644
+```
+
+**File**: `apps/zgx/ui/demos/syntax_tests.luau` (modified, +64/-0)
+```diff
+@@ -133,6 +133,57 @@ local CASES: { { any } } = {
+ 	{ "yaml: alias", "yaml", { "  <<: *defaults" }, 1, "*defaults", "label" },
+ 	{ "diff: inserted", "diff", { "+added", "-gone" }, 1, "added", "inserted" },
+ 	{ "diff: deleted", "diff", { "+added", "-gone" }, 2, "gone", "deleted" },
++	{ "zig: builtin", "zig", { [[const std = @import("std");]] }, 1, "@import", "macro" },
++	{ "zig: builtin before dot", "zig", { [[const mem = @import("std").mem;]] }, 1, "mem;", "property" },
++	{ "zig: escaped ident", "zig", { [[const @"type" = u24;]] }, 1, '@"type"', "text" },
++	{ "zig: escaped ident no stray string", "zig", { [[const @"type" = u24;]] }, 1, "u24", "type" },
++	{ "zig: escaped ident fn", "zig", { [[pub fn @"return"(x: i7) void {}]] }, 1, '@"return"', "function" },
++	{ "zig: escaped ident call", "zig", { [[const r = @"my func"(1);]] }, 1, '@"my func"', "function" },
++	{ "zig: escaped ident property", "zig", { [[const v = s.@"while";]] }, 1, '@"while"', "property" },
++	{ "zig: escaped ident quote", "zig", { [[const x = @"a\"b"; const y = 1;]] }, 1, "const y", "keyword" },
++	{ "zig: arbitrary int u0", "zig", { "var z: u0 = 0; var a: u24 = 1; var b: i65535 = 2;" }, 1, "u0", "type" },
++	{ "zig: arbitrary int u24", "zig", { "var a: u24 = 1; var b: i65535 = 2;" }, 1, "u24", "type" },
++	{ "zig: arbitrary int i65535", "zig", { "var a: u24 = 1; var b: i65535 = 2;" }, 1, "i65535", "type" },
++	{ "zig: invalid int width not type", "zig", { "var a: u65536 = 1; var b: i01 = 2;" }, 1, "u65536", "text" },
++	{ "zig: leading zero int not type", "zig", { "var a: u65536 = 1; var b: i01 = 2;" }, 1, "i01", "text" },
++	{ "zig: multiline string", "zig", { [[    \\hello "world" \n // not comment]] }, 1, "hello", "string" },
++	{ "zig: multiline no escape", "zig", { [[    \\hello "world" \n // not comment]] }, 1, "\\n", "string" },
++	{ "zig: multiline no comment", "zig", { [[    \\hello "world" \n // not comment]] }, 1, "// not", "string" },
++	{ "zig: no block comments", "zig", { "/* not a comment */ const x = 1;" }, 1, "not", "text" },
++	{ "zig: hex float", "zig", { "const f = 0x1.fp+3;" }, 1, "fp+3", "number" },
++	{ "zig: hex float no frac", "zig", { "const f = 0x1p-4;" }, 1, "p-4", "number" },
++	{ "rust: hex method not hex float", "rust", { "let a = 0x1.abs();" }, 1, "abs", "function" },
++	{ "rust: hex range not hex float", "rust", { "for i in 0x1..0x10 {}" }, 1, "..", "punctuation" },
++	{ "zig: char unicode escape", "zig", { [[const c = '\u{1F600}';]] }, 1, "\\u{1F600}", "escape" },
++	{ "zig: char escaped quote", "zig", { [[const q = '\''; const z = 1;]] }, 1, "const z", "keyword" },
++	{ "zig: keywords and constants", "zig", { "comptime var x: anytype = undefined;" }, 1, "comptime", "keyword" },
++	{ "zig: constant undefined", "zig", { "comptime var x: anytype = undefined;" }, 1, "undefined", "constant" },
++	{ "markdown: zig fence", "markdown", { "```zig", [[const s = @import("std");]], "```" }, 2, "@import", "macro" },
++	{ "odin: nested block comment", "odin", { "/* a /* b */ still", "comment */ x := 1" }, 1, "still", "comment" },
++	{ "odin: nested comment closes", "odin", { "/* a /* b */ still", "comment */ return nil" }, 2, "return", "keyword" },
++	{ "odin: raw string over lines", "odin", { [[s := `one \n "q"]], [[two`]], "return nil" }, 1, "\\n", "string" },
++	{ "odin: raw string line 2", "odin", { [[s := `one \n "q"]], [[two`]], "return nil" }, 2, "two", "string" },
++	{ "odin: raw string closes", "odin", { [[s := `one \n "q"]], [[two`]], "return nil" }, 3, "return", "keyword" },
++	{ "odin: directive mid-line", "odin", { "Vec3 :: struct #packed { x: f32 }" }, 1, "#packed", "macro" },
++	{ "odin: directive start", "odin", { "#partial switch k {" }, 1, "#partial", "macro" },
++	{ "odin: directive load", "odin", { [[data := #load("a.bin")]] }, 1, "#load", "macro" },
++	{ "odin: decorator attr", "odin", { "@private x := 1" }, 1, "@private", "attribute" },
++	{ "odin: paren attr", "odin", { [[@(private="file") foo :: proc() {}]] }, 1, "private", "attribute" },
++	{ "odin: paren attr string parens", "odin", { [[@(deprecated="use foo() instead") bar :: proc() {}]] }, 1, "bar", "function" },
++	{ "odin: proc decl", "odin", { "main :: proc() {" }, 1, "main", "function" },
++	{ "odin: tight proc decl", "odin", { "main::proc() {" }, 1, "main", "function" },
++	{ "odin: capitalized proc decl", "odin", { "Update :: proc(dt: f32) {" }, 1, "Update", "function" },
++	{ "odin: lowercase struct decl", "odin", { "vec3 :: struct { x: f32 }" }, 1, "vec3", "type" },
++	{ "odin: enum decl", "odin", { "kind :: enum u8 { A }" }, 1, "kind", "type" },
++	{ "odin: union decl", "odin", { "val :: union { int, f32 }" }, 1, "val", "type" },
++	{ "odin: bit_field decl", "odin", { "hdr :: bit_field u32 { a: u8 | 8 }" }, 1, "hdr", "type" },
++	{ "odin: distinct decl", "odin", { "handle :: distinct u64" }, 1, "handle", "type" },
++	{ "odin: bit_set decl", "odin", { "flags :: bit_set[Flag]" }, 1, "flags", "type" },
++	{ "odin: caps constant", "odin", { "MAX_PEERS :: 64" }, 1, "MAX_PEER
+```
+
+**File**: `apps/zgx/ui/ds/syntax/code.luau` (modified, +37/-0)
+```diff
+@@ -275,6 +275,43 @@ local specs: { [string]: { [string]: any } } = {
+ 		caps_type = true,
+ 		decorators = true,
+ 	},
++	zig = {
++		line = SLASHES,
++		strings = { DOUBLE },
++		keywords = set(
++			"addrspace align allowzero and anyframe anytype asm async await break callconv catch comptime const continue defer else enum errdefer error export extern fn for if inline linksection noalias noinline nosuspend or orelse packed pub resume return struct suspend switch test threadlocal try union unreachable usingnamespace var volatile while"
++		),
++		constants = set("true false null undefined"),
++		types = set(
++			"bool void noreturn type anyerror anyopaque comptime_int comptime_float c_char c_short c_ushort c_int c_uint c_long c_ulong c_longlong c_ulonglong c_longdouble f16 f32 f64 f80 f128 usize isize i8 i16 i32 i64 i128 u8 u16 u32 u64 u128"
++		),
++		defs = set("fn"),
++		decls = set("struct enum union error"),
++		caps_type = true,
++		chars = true,
++		zig_multiline = true,
++		zig_builtins = true,
++		zig_int_types = true,
++	},
++	odin = {
++		line = SLASHES,
++		block = BLOCK,
++		nest = true,
++		strings = { DOUBLE, { open = "`", escape = false, multi = true } },
++		keywords = set(
++			"asm auto_cast bit_field bit_set break case cast context continue defer distinct do dynamic else enum fallthrough for foreign if import in map matrix not_in or_break or_continue or_else or_return package proc return struct switch transmute union using when where"
++		),
++		constants = set("true false nil"),
++		types = set(
++			"bool b8 b16 b32 b64 int i8 i16 i32 i64 i128 i16le i32le i64le i128le i16be i32be i64be i128be uint u8 u16 u32 u64 u128 u16le u32le u64le u128le u16be u32be u64be u128be uintptr byte rune f16 f32 f64 f16le f32le f64le f16be f32be f64be complex32 complex64 complex128 quaternion64 quaternion128 quaternion256 string cstring rawptr any typeid"
++		),
++		caps_type = true,
++		chars = true,
++		decorators = true,
++		directives = true,
++		odin_attrs = true,
++		odin_decls = true,
++	},
+ }
+ 
+ local M = {}
+```
+
+**File**: `apps/zgx/ui/ds/syntax/init.luau` (modified, +5/-1)
+```diff
+@@ -100,6 +100,7 @@ local ALIASES: { [string]: string } = {
+ 	less = "css",
+ 	patch = "diff",
+ 	frag = "wgsl",
++	zon = "zig",
+ }
+ 
+ -- Whole file names with a language of their own.
+@@ -150,15 +151,18 @@ local NAMES_SHOWN: { [string]: string } = {
+ 	css = "CSS",
+ 	sql = "SQL",
+ 	wgsl = "WGSL",
++	zig = "Zig",
++	odin = "Odin",
+ 	diff = "Diff",
+ }
+ 
+ local COMMENTS: { [string]: Comment } = {}
+ do
+ 	local slashes: Comment = { line = "//", block = { "/*", "*/" } }
+-	for _, id in { "rust", "typescript", "tsx", "javascript", "jsx", "go", "swift", "kotlin", "java", "csharp", "c", "cpp", "wgsl" } do
++	for _, id in { "rust", "typescript", "tsx", "javascript", "jsx", "go", "swift", "kotlin", "java", "csharp", "c", "cpp", "wgsl", "odin" } do
+ 		COMMENTS[id] = slashes
+ 	end
++	COMMENTS.zig = { line = "//" }
+ 	local hash: Comment = { line = "#" }
+ 	for _, id in { "python", "ruby", "shell", "toml", "yaml" } do
+ 		COMMENTS[id] = hash
+```
+
+---
+
+### Incident Patch 2: `66d025b2` (2026-11-21)
+**Commit Message**: fix(zgx): bump zgx rev to e3f35a546 for stale scene node fixes
+
+**File**: `apps/zgx/Cargo.lock` (modified, +46/-46)
+```diff
+@@ -30,7 +30,7 @@ dependencies = [
+ [[package]]
+ name = "accesskit_atspi_common"
+ version = "0.19.1"
+-source = "git+https://github.com/zeronsh/zgx?rev=b8f298b6b9d1a363adf9e21655334a6e260dc4c7#b8f298b6b9d1a363adf9e21655334a6e260dc4c7"
++source = "git+https://github.com/zeronsh/zgx?rev=e3f35a5462144d07e6dd99af360f28a87c8d1b31#e3f35a5462144d07e6dd99af360f28a87c8d1b31"
+ dependencies = [
+  "accesskit",
+  "accesskit_consumer",
+@@ -43,7 +43,7 @@ dependencies = [
+ [[package]]
+ name = "accesskit_consumer"
+ version = "0.38.0"
+-source = "git+https://github.com/zeronsh/zgx?rev=b8f298b6b9d1a363adf9e21655334a6e260dc4c7#b8f298b6b9d1a363adf9e21655334a6e260dc4c7"
++source = "git+https://github.com/zeronsh/zgx?rev=e3f35a5462144d07e6dd99af360f28a87c8d1b31#e3f35a5462144d07e6dd99af360f28a87c8d1b31"
+ dependencies = [
+  "accesskit",
+  "hashbrown 0.16.1",
+@@ -66,7 +66,7 @@ dependencies = [
+ [[package]]
+ name = "accesskit_macos"
+ version = "0.26.3"
+-source = "git+https://github.com/zeronsh/zgx?rev=b8f298b6b9d1a363adf9e21655334a6e260dc4c7#b8f298b6b9d1a363adf9e21655334a6e260dc4c7"
++source = "git+https://github.com/zeronsh/zgx?rev=e3f35a5462144d07e6dd99af360f28a87c8d1b31#e3f35a5462144d07e6dd99af360f28a87c8d1b31"
+ dependencies = [
+  "accesskit",
+  "accesskit_consumer",
+@@ -79,7 +79,7 @@ dependencies = [
+ [[package]]
+ name = "accesskit_unix"
+ version = "0.22.1"
+-source = "git+https://github.com/zeronsh/zgx?rev=b8f298b6b9d1a363adf9e21655334a6e260dc4c7#b8f298b6b9d1a363adf9e21655334a6e260dc4c7"
++source = "git+https://github.com/zeronsh/zgx?rev=e3f35a5462144d07e6dd99af360f28a87c8d1b31#e3f35a5462144d07e6dd99af360f28a87c8d1b31"
+ dependencies = [
+  "accesskit",
+  "accesskit_atspi_common",
+@@ -96,7 +96,7 @@ dependencies = [
+ [[package]]
+ name = "accesskit_windows"
+ version = "0.34.0"
+-source = "git+https://github.com/zeronsh/zgx?rev=b8f298b6b9d1a363adf9e21655334a6e260dc4c7#b8f298b6b9d1a363adf9e21655334a6e260dc4c7"
++source = "git+https://github.com/zeronsh/zgx?rev=e3f35a5462144d07e6dd99af360f28a87c8d1b31#e3f35a5462144d07e6dd99af360f28a87c8d1b31"
+ dependencies = [
+  "accesskit",
+  "accesskit_consumer",
+@@ -277,26 +277,6 @@ dependencies = [
+  "object",
+ ]
+ 
+-[[package]]
+-name = "arboard"
+-version = "3.7.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "aeb9553e62312c8756a5979254fc6d7da8bbeb5986a1e17037fab932f7037917"
+-dependencies = [
+- "clipboard-win",
+- "image",
+- "log",
+- "objc2 0.6.4",
+- "objc2-app-kit 0.3.2",
+- "objc2-core-foundation",
+- "objc2-core-graphics",
+- "objc2-foundation 0.3.2",
+- "parking_lot",
+- "percent-encoding",
+- "windows-sys 0.61.2",
+- "x11rb",
+-]
+-
+ [[package]]
+ name = "arrayref"
+ version = "0.3.9"
+@@ -6450,7 +6430,7 @@ dependencies = [
+ [[package]]
+ name = "wgpu-hal"
+ version = "29.0.4"
+-source = "git+https://github.com/zeronsh/zgx?rev=b8f298b6b9d1a363adf9e21655334a6e260dc4c7#b8f298b6b9d1a363adf9e21655334a6e260dc4c7"
++source = "git+https://github.com/zeronsh/zgx?rev=e3f35a5462144d07e6dd99af360f28a87c8d1b31#e3f35a5462144d07e6dd99af360f28a87c8d1b31"
+ dependencies = [
+  "android_system_properties",
+  "arrayvec",
+@@ -6888,7 +6868,7 @@ checksum = "d6bbff5f0aada427a1e5a6da5f1f98158182f26556f345ac9e04d36d0ebed650"
+ [[package]]
+ name = "winit"
+ version = "0.30.13"
+-source = "git+https://github.com/zeronsh/zgx?rev=b8f298b6b9d1a363adf9e21655334a6e260dc4c7#b8f298b6b9d1a363adf9e21655334a6e260dc4c7"
++source = "git+https://github.com/zeronsh/zgx?rev=e3f35a5462144d07e6dd99af360f28a87c8d1b31#e3f35a5462144d07e6dd99af360f28a87c8d1b31"
+ dependencies = [
+  "ahash",
+  "android-activity",
+@@ -7456,7 +7436,7 @@ dependencies = [
+ [[package]]
+ name = "zgx"
+ version = "0.1.10"
+-source = "git+https://github.com/zeronsh/zgx?rev=b8f298b6b9d1a363adf9e21655334a6e260dc4c7#b8f298b6b9d1a363adf9e21655334a6e260dc4c7"
++source = "git+https://github.com/zeronsh/zgx?rev=e3f35a5462144d07e6dd99af360f28a87c8d1b31#e3f35a5462144d07e6dd99af360f28a87c8d1b31"
+ dependencies = [
+  "fixed_decimal",
+  "foldhash 0.2.0",
+@@ -7485,7 +7465,7 @@ dependencies = [
+ [[package]]
+ name = "zgx-3d"
+ version = "0.1.10"
+-source = "git+https://github.com/zeronsh/zgx?rev=b8f298b6b9d1a363adf9e21655334a6e260dc4c7#b8f298b6b9d1a363adf9e21655334a6e260dc4c7"
++source = "git+https://github.com/zeronsh/zgx?rev=e3f35a5462144d07e6dd99af360f28a87c8d1b31#e3f35a5462144d07e6dd99af360f28a87c8d1b31"
+ dependencies = [
+  "bytemuck",
+  "zgx",
+@@ -7495,7 +7475,7 @@ dependencies = [
+ [[package]]
+ name = "zgx-alacritty-terminal"
+ version = "0.26.8"
+-source = "git+https://github.com/zeronsh/zgx?rev=b8f298b6b9d1a363adf9e21655334a6e260dc4c7#b8f298b6b9d1a363adf9e21655334a6e260dc4c7"
++source = "git+https://github.com/zeronsh/zgx?rev=e3f35a5462144d07e6dd99af360f28a87c8d1b31#e3f35a5462144d07e6dd99af360f28a87c8d1b31"
+ dependencies = [
+  "base64 0.22.1",
+  "bitflags 2.13.2",
+@@ -7517,18 +7497,37 @@ dependencies = [
+  "zgx-vte",
+ ]
+ 
++[[package]]
++name = "zgx-arboard"
++version = "3.6.2"
++source = "git+https://github.com/zeronsh/zgx?rev=e3f35a5462144d07e6dd99af360f28a87c8d1b31#e3f35a5462144d07e6
+```
+
+**File**: `apps/zgx/Cargo.toml` (modified, +14/-14)
+```diff
+@@ -32,7 +32,7 @@ layout_probe = []
+ 
+ [dependencies]
+ lz4_flex = { version = "0.11", default-features = false, features = ["safe-encode", "safe-decode"] }
+-zgx = { git = "https://github.com/zeronsh/zgx", rev = "b8f298b6b9d1a363adf9e21655334a6e260dc4c7" }
++zgx = { git = "https://github.com/zeronsh/zgx", rev = "e3f35a5462144d07e6dd99af360f28a87c8d1b31" }
+ # `mimalloc`: the program's allocator, in place of the system's. It hands
+ # freed memory back to the system (the system's keeps the most it ever
+ # held), and zgx measures 1-10% less CPU for script, text and layout work.
+@@ -43,26 +43,26 @@ zgx = { git = "https://github.com/zeronsh/zgx", rev = "b8f298b6b9d1a363adf9e2165
+ # none of it, and without it pages are placeholders ("Web view · <url>").
+ # zgx-run turns it on by default, but this app takes zgx-run without its
+ # defaults (below). Nothing on macOS or Windows.
+-zgx-desktop = { git = "https://github.com/zeronsh/zgx", rev = "b8f298b6b9d1a363adf9e21655334a6e260dc4c7", features = ["mimalloc", "terminal", "webkitgtk"] }
++zgx-desktop = { git = "https://github.com/zeronsh/zgx", rev = "e3f35a5462144d07e6dd99af360f28a87c8d1b31", features = ["mimalloc", "terminal", "webkitgtk"] }
+ # `inspect`: devtools for `zgx inspect` (and its MCP server), asked for
+ # with `--inspect`. `i18n`: `ui.t`'s plurals and numbers by each locale's
+ # own rules (ICU4X's data, about 90 KB), for ui/locales' translations.
+ # `scene3d`: `ui.scene3d`, `ui.mesh`, `ui.light`, `ui.group` (zgx-3d on the
+ # wgpu this app already links), for plugins that show 3D: the CAD plugin
+ # hands it its own triangles (`geometry = { positions, indices, … }`). It
+ # asks no grant; a scene draws a frame only when something in it changes.
+-zgx-script = { git = "https://github.com/zeronsh/zgx", rev = "b8f298b6b9d1a363adf9e21655334a6e260dc4c7", features = ["inspect", "i18n", "scene3d"] }
++zgx-script = { git = "https://github.com/zeronsh/zgx", rev = "e3f35a5462144d07e6dd99af360f28a87c8d1b31", features = ["inspect", "i18n", "scene3d"] }
+ # A picture's pixels for the clipboard (src/images.rs): zgx's own decoder,
+ # the formats `ui.image` shows (no features of its own: the ones zgx-desktop
+ # turns on).
+-zgx-gpu = { git = "https://github.com/zeronsh/zgx", rev = "b8f298b6b9d1a363adf9e21655334a6e260dc4c7", default-features = false }
++zgx-gpu = { git = "https://github.com/zeronsh/zgx", rev = "e3f35a5462144d07e6dd99af360f28a87c8d1b31", default-features = false }
+ # Each plugin's own database (`zeron.db`, src/plugins/db.rs): SQLite,
+ # built in; `limits` to keep one from attaching any other file.
+ rusqlite = { version = "0.32", features = ["bundled", "limits", "hooks"] }
+ # `fetch`: zgx's own transport for `ui.fetch` and remote images (HTTP and
+ # HTTPS, rustls), given to every window (src/main.rs): the app's scripts,
+ # and plugins granted "network". Nothing else of the runner.
+-zgx-run = { git = "https://github.com/zeronsh/zgx", rev = "b8f298b6b9d1a363adf9e21655334a6e260dc4c7", default-features = false, features = ["fetch"] }
++zgx-run = { git = "https://github.com/zeronsh/zgx", rev = "e3f35a5462144d07e6dd99af360f28a87c8d1b31", default-features = false, features = ["fetch"] }
+ # `webp`: `ui.image` decodes through this crate, by what its features
+ # allow, so turning WebP on here is all it takes (the member cards' art).
+ # `ico`: sites' favicons (the browser tab's: src/favicons.rs), most of
+@@ -162,7 +162,7 @@ foreign-types = "0.5"
+ # elements, box drawing and Powerline glyphs to the cell; zgx's own renderer
+ # draws them from the font at its text line height, gapped. Builds Ghostty
+ # with Zig 0.16 (cached in ~/Library/Caches/zgx-ghostty).
+-zgx-desktop = { git = "https://github.com/zeronsh/zgx", rev = "b8f298b6b9d1a363adf9e21655334a6e260dc4c7", features = ["ghostty"] }
++zgx-desktop = { git = "https://github.com/zeronsh/zgx", rev = "e3f35a5462144d07e6dd99af360f28a87c8d1b31", features = ["ghostty"] }
+ 
+ # Windows' Transparency effects (src/transparency.rs), read and watched in
+ # the registry, until zgx reports them (zgx-asks/windows-transparency); a
+@@ -173,7 +173,7 @@ zgx-desktop = { git = "https://github.com/zeronsh/zgx", rev = "b8f298b6b9d1a363a
+ # 11 (and with Edge on Windows 10); without it, pages are placeholders.
+ [target.'cfg(windows)'.dependencies]
+ windows-sys = { version = "0.61", features = ["Win32_Foundation", "Win32_Graphics_Gdi", "Win32_Media_Audio", "Win32_Storage_FileSystem", "Win32_System_IO", "Win32_System_Console", "Win32_System_Registry", "Win32_System_Threading", "Win32_System_Time", "Win32_UI_WindowsAndMessaging"] }
+-zgx-desktop = { git = "https://github.com/zeronsh/zgx", rev = "b8f298b6b9d1a363adf9e21655334a6e260dc4c7", features = ["webview2"] }
++zgx-desktop = { git = "https://github.com/zeronsh/zgx", rev = "e3f35a5462144d07e6dd99af360f28a87c8d1b31", features = ["webview2"] }
+ 
+ # zgx's D-Bus (menus, portals) linked in rather than loaded: `zeron` is also
+ # what a headless Linux server and every Cloud machine runs (`zeron
+@@ -185,13 +185,13 @@ li
+```
+
+---
+
+### Incident Patch 3: `e595626b` (2026-11-21)
+**Commit Message**: fix(cloud,harness): prevent Antigravity disconnects in Cloud Runner
+
+**File**: `Cargo.lock` (modified, +1/-0)
+```diff
+@@ -9012,6 +9012,7 @@ dependencies = [
+  "futures",
+  "libc",
+  "reqwest",
++ "rusqlite",
+  "semver",
+  "serde",
+  "serde_json",
+```
+
+**File**: `crates/engine/src/credentials.rs` (modified, +104/-17)
+```diff
+@@ -80,12 +80,13 @@
+ //!     is replaced while more than 75 minutes remain: Hermes would start its
+ //!     own refresh an hour ahead.
+ //!   - Antigravity: on its Google login, `acp_token.json` holding the access
+-//!     token and its expiry (its refresh fields present but empty) and
+-//!     `auth.type = oauth-personal`; it reads the token once per connection,
+-//!     so a run starts on one with 50 minutes left and a session whose token
+-//!     runs low reads as another credential (replaced at its next turn). On
+-//!     the key: `GEMINI_API_KEY`, and `auth.type = gemini-api-key` in its
+-//!     `settings.json` (only when absent or plain JSON).
++//!     token (refresh fields present but empty) and `auth.type = oauth-personal`,
++//!     plus a loopback CCPA reverse proxy (`AGY_ACP_CCPA_BASE_URL`) that injects
++//!     live vault tokens on every CCPA request (and retries once on 401) while
++//!     writing a far-future `expiry` in `acp_token.json` so `agy_acp_server`'s
++//!     in-memory credentials never expire mid-turn. On the key: `GEMINI_API_KEY`,
++//!     and `auth.type = gemini-api-key` in its `settings.json` (only when absent
++//!     or plain JSON).
+ //!   - Muse: its whole `auth.json` document as the vault holds it (refresh
+ //!     tokens empty), with `TBH_CREDENTIAL_BACKEND=file`; a file the broker
+ //!     didn't write (its SHA-256 is kept) is Muse's own and stays.
+@@ -104,6 +105,8 @@
+ //! `not_found`, `needs_reconnect`, revoked, kill switch) means "not connected":
+ //! the cache entry and any file it backed are dropped.
+ 
++mod antigravity_proxy;
++
+ use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet};
+ use std::path::{Path, PathBuf};
+ use std::sync::{Arc, Mutex, MutexGuard, PoisonError, Weak};
+@@ -481,6 +484,10 @@ struct Inner {
+     /// Per account: when its usage was last reported, and what it said
+     /// ([`CredentialBroker::report_usage`]).
+     usage_reported: Mutex<HashMap<String, (Instant, String)>>,
++    /// Lazy loopback CCPA auth reverse proxy for Antigravity vault runs.
++    antigravity_proxy: Mutex<Option<antigravity_proxy::AntigravityProxy>>,
++    /// Serializes lazy startup of [`Self::antigravity_proxy`].
++    antigravity_proxy_init: tokio::sync::Mutex<()>,
+ }
+ 
+ /// An agent's install check: done once it passes; a failed install is
+@@ -538,6 +545,8 @@ impl CredentialBroker {
+                 codex_check: tokio::sync::Mutex::new(CodexCheck::Unchecked),
+                 installs: Mutex::new(HashMap::new()),
+                 usage_reported: Mutex::new(HashMap::new()),
++                antigravity_proxy: Mutex::new(None),
++                antigravity_proxy_init: tokio::sync::Mutex::new(()),
+             }),
+         }
+     }
+@@ -619,6 +628,56 @@ impl CredentialBroker {
+         if let Some(task) = lock(&self.inner.refresher).take() {
+             task.abort();
+         }
++        let _ = lock(&self.inner.antigravity_proxy).take();
++    }
++
++    fn has_antigravity_proxy(&self) -> bool {
++        lock(&self.inner.antigravity_proxy).is_some()
++    }
++
++    async fn ensure_antigravity_proxy(&self, fixed_upstream: Option<String>) -> Option<String> {
++        if let Some(proxy) = lock(&self.inner.antigravity_proxy).as_ref() {
++            return Some(proxy.base_url().to_owned());
++        }
++        let _guard = self.inner.antigravity_proxy_init.lock().await;
++        if let Some(proxy) = lock(&self.inner.antigravity_proxy).as_ref() {
++            return Some(proxy.base_url().to_owned());
++        }
++        match antigravity_proxy::AntigravityProxy::start(
++            Arc::downgrade(&self.inner),
++            fixed_upstream,
++        )
++        .await
++        {
++            Ok(proxy) => {
++                let url = proxy.base_url().to_owned();
++                *lock(&self.inner.antigravity_proxy) = Some(proxy);
++                Some(url)
++            }
++            Err(error) => {
++                tracing::warn!(
++                    %error,
++                    "credentials: failed to start Antigravity CCPA auth proxy; falling back to static token"
++                );
++                None
++            }
++        }
++    }
++
++    /// Fetch a live Antigravity access token for the loopback CCPA proxy.
++    /// Uses [`GRANT_SLACK`] (5m) rather than [`ANTIGRAVITY_MIN_LIFE`] (50m) so
++    /// ongoing requests reuse valid cached tokens and transparently refresh
++    /// ahead of real Google expiry. When `force_refresh` is true (after an
++    /// upstream 401), bypasses the cache once to ask the vault directly.
++    async fn antigravity_proxy_grant(&self, force_refresh: bool) -> GrantOutcome {
++        if !force_refresh {
++            return self
++                .grant_within(VaultProvider::Antigravity, GRANT_SLACK, Some(RUN_REVALIDATE))
++                .await;
++        }
++        let _gate = self.inner.grant_gate.lock().await;
++        let fetched = self.fetch(VaultProvider::Antigravity).await;
++        self.record(VaultProvider::Antigravity, fetched)
+     }
+ 
+     // -- grants
+```
+
+**File**: `crates/engine/src/credentials/antigravity_proxy.rs` (added, +854/-0)
+```diff
+@@ -0,0 +1,854 @@
++//! Loopback CCPA auth reverse proxy for Cloud-managed Antigravity sessions.
++//!
++//! `agy_acp_server` loads `acp_token.json` once at process startup and never
++//! re-reads it from disk. Because Cloud vault grants intentionally omit
++//! `refresh_token`, a long-lived Antigravity turn (> ~50 minutes) used to hit
++//! `Credentials.valid == False`, fall back to interactive browser OAuth, and
++//! terminate with "Antigravity isn't signed in".
++//!
++//! Setting `AGY_ACP_CCPA_BASE_URL=http://127.0.0.1:<port>/<secret>` routes all
++//! post-startup CCPA calls (`streamGenerateContent`, `generateContent`,
++//! `fetchAvailableModels`, `retrieveUserQuotaSummary`, chained cleanly behind
++//! `zeron-harness`'s `ThoughtsProxy`) through this loopback forwarder, which:
++//! 1. Authenticates the caller via a per-broker random path secret and rejects
++//!    browser `Origin` / non-loopback `Host` / non-`v1internal` paths.
++//! 2. Fetches the live vault `antigravity` access token on every request and
++//!    replaces the `Authorization: Bearer` header.
++//! 3. Transparently force-refreshes once from the vault and retries if upstream
++//!    CCPA responds with HTTP 401.
++//! 4. Resolves the upstream CCPA host identically to `agy_acp_server`'s
++//!    `onboard._determine_endpoint` (`cloudcode-pa.googleapis.com` when
++//!    `paidTier.usesGcpTos == true`, else `daily-cloudcode-pa.googleapis.com`),
++//!    re-resolving if the active vault account or project changes.
++//! 5. Streams SSE responses chunk-by-chunk with no full-response buffering.
++
++use std::future::Future;
++use std::net::SocketAddr;
++use std::pin::Pin;
++use std::sync::{Arc, Weak};
++use std::time::Duration;
++
++use base64::Engine as _;
++use ring::rand::{SecureRandom, SystemRandom};
++use serde_json::Value;
++use tokio::io::{AsyncBufReadExt, AsyncReadExt, AsyncWriteExt, BufReader};
++use tokio::net::{TcpListener, TcpStream};
++use tokio::sync::Mutex;
++use tokio_util::sync::CancellationToken;
++
++use super::{CredentialBroker, Grant, GrantOutcome, Inner};
++
++pub(super) const CCPA_BASE_URL_ENV: &str = "AGY_ACP_CCPA_BASE_URL";
++/// Far-future naive UTC expiry written to broker-managed `acp_token.json` when
++/// this proxy is active, so `agy_acp_server`'s in-memory `Credentials.valid`
++/// never flips to `False` mid-turn while fresh vault tokens are injected here.
++pub(super) const PROXIED_TOKEN_EXPIRY: &str = "2099-01-01T00:00:00";
++
++const PROD_CCPA_ENDPOINT: &str = "https://cloudcode-pa.googleapis.com";
++const DAILY_CCPA_ENDPOINT: &str = "https://daily-cloudcode-pa.googleapis.com";
++const MAX_HEADER_BYTES: usize = 64 * 1024;
++const LOAD_CODE_ASSIST_TIMEOUT: Duration = Duration::from_secs(10);
++
++type GrantFuture<'a> = Pin<Box<dyn Future<Output = GrantOutcome> + Send + 'a>>;
++
++trait TokenProvider: Send + Sync + 'static {
++    fn get_grant(&self, force_refresh: bool) -> GrantFuture<'_>;
 +}
 +
-+fn settle(app: &mut TestApp) {
-+    for _ in 0..45 {
-+        app.frames(1);
-+        std::thread::sleep(Duration::from_millis(12));
++struct BrokerTokenProvider {
++    broker: Weak<Inner>,
++}
++
++impl TokenProvider for BrokerTokenProvider {
++    fn get_grant(&self, force_refresh: bool) -> GrantFuture<'_> {
++        let weak = self.broker.clone();
++        Box::pin(async move {
++            let Some(inner) = weak.upgrade() else {
++                return GrantOutcome::Unavailable("credential broker shut down".into());
++            };
++            let broker = CredentialBroker { inner };
++            broker.antigravity_proxy_grant(force_refresh).await
++        })
 +    }
 +}
 +
-+fn setup_streaming_reply() -> TestApp {
-+    let app = TestApp::new(|runtime| ScriptHost::new(runtime, ui_dir().join("chat_fixture.luau")));
-+    app.ui.scene.borrow_mut().resize(900., 700.);
-+    app.frames(2);
-+    assert!(app.host.run_command("go_s2"));
-+    app.frames(20);
-+    std::thread::sleep(Duration::from_millis(320));
-+    assert!(app.host.run_command("start_block_reply"));
-+    app.frames(3);
-+    assert_eq!(app.error(), None);
-+    app
++/// Running loopback CCPA auth proxy owned by [`CredentialBroker`].
++pub(super) struct AntigravityProxy {
++    base_url: String,
++    shutdown: CancellationToken,
 +}
 +
-+fn push_draft(app: &mut TestApp, text: &str) {
-+    let words = Value::from(text);
-+    app.host.shared("chat.draft", Value::Nil).set(Value::record([
-+        ("id", Value::from("live")),
-+        ("text", words.clone()),
-+        ("part", Value::from("t")),
-+        ("part_text", words),
-+    ]));
-+    app.frames(2);
-+    assert_eq!(app.error(), None);
-+}
++impl AntigravityProxy {
++    pub(super) fn base_url(&self) -> &str {
++        &self.base_url
++    }
 +
-+fn check_no_replay(label: &str, before: &[(String, Color)], after: &[(String, Color)], needle: &str) {
-+    let was = min_alpha(before, needle);
-+    let now = min_alpha(after, needle);
-+    assert!(
-+        now >= was,
-+        "REPLAY BUG ({label}): alpha dropped from {was} to {now}!\n  before: {before:?}\n  after:  {after:?}"
-+    );
-+}
++    pub(super) async fn start(
++        broker: Weak<Inner>,
++        fixed_upstream: Option<String>,
++    ) -> std::io::Result<Self> {
++        Self::start_with_provider(
++            Arc::new(BrokerTokenProvider { broker }),
++            fixed_upstream,
++            PROD_CCPA_ENDPOINT.to_owned(),
++        )
++        .await
++    }
 +
-+#[test]
-+fn probe_01_list_with_file_link() {
-+    let mut app = setup_streaming_reply();
-+    push_draft(&mut app, "- Check [chat.rs](apps/zgx/src/chat.rs) first");
-+    settle(&mut app);
-+    let before = pieces(&mut app, "Check ");
-+
-+    push_draft(&mut app, "- Check [chat.rs](apps/zgx/src/chat.rs) first\n- Then plain item two");
-+    let after = pieces(&mut app, "Check ");
-+    check_no_replay("list item 1 with file link when item 2 arrives", &before, &after, "Check");
-+}
-+
-+#[test]
-+fn probe_02_paragraph_with_link_then_next_paragraph() {
-+    let mut app = setup_streaming_reply();
-+    push_draft(&mut app, "See [chat.rs](apps/zgx/src/chat.rs) for details");
-+    settle(&mut app);
-+    let before = pieces(&mut app, "for details");
-+
-+    push_draft(&mut app, "See [chat.rs](apps/zgx/src/chat.rs) for details.\n\nSecond paragraph starts here.");
-+    let after = pieces(&mut app, "for details");
-+    check_no_replay("p1 with file link when p2 starts", &before, &after, "See");
-+}
-+
-+#[test]
-+fn probe_03_table_with_link_rows_and_next_paragraph() {
-+    let mut app = setup_streaming_reply();
-+    push_draft(&mut app, "| File | Role |\n|---|---|\n| [chat.rs](apps/zgx/src/chat.rs) | host |");
-+    settle(&mut app);
-+    let h_before = pieces(&mut app, "File");
-+    let r1_before = pieces(&mut app, "host");
-+
-+    push_draft(&mut app, "| File | Role |\n|---|---|\n| [chat.rs](apps/zgx/src/chat.rs) | host |\n| plain.rs | helper |");
-+    let h_after = pieces(&mut app, "File");
-+    let r1_after = pieces(&mut app, "host");
-+    check_no_replay("table header when row2 arrives", &h_before, &h_after, "File");
-+    check_no_replay("table row1 when row2 arrives", &r1_before, &r1_after, "host");
-+
-+    settle(&mut app);
-+    let r2_before = pieces(&mut app, "helper");
-+    
++    async fn start_with_provider(
++        tokens: Arc<dyn TokenProvider>,
++        fixed_upstream: Option<String>,
++        load_code_assist_base: String,
++    ) -> std::io::Result<Self> {
++        let listener = TcpListener::bind("127.0.0.1:0").await?;
++        let addr: SocketAddr = listener.local_addr()?;
++        let secret = generate_secret()?;
++        let base_url = format!("http://{addr}/{secret}");
++        let shutdown = CancellationToken::new();
++        // Dedicated client with NO overall request timeout so long streaming
++        // `streamGenerateContent?alt=sse` turns are never cut short.
++        let client = reqwest::Client::builder()
++            .connect_timeout(Duration::from_secs(30))
++            .build()
++            .map_err(std::io::Error::other)?;
++        let state = Arc::new(ProxyState {
++            client,
++            tokens,
++            secret,
++            fixed_upstream: fixed_upstream.map(|u| u.trim
 ```
 
-**File**: `apps/zgx/ui/ds/markdown.luau` (modified, +222/-118)
+**File**: `crates/engine/tests/cloud_runner.rs` (modified, +107/-0)
 ```diff
-@@ -144,27 +144,32 @@ type VeilChunk = { from: number, to: number, started: number, ms: number, boost:
- type VeilElem = { text: string, chunks: { VeilChunk }, ema: number, last: number? }
- type Veil = {
- 	elems: { [string]: VeilElem },
--	block: number,
--	n: number,
- 	seeding: boolean,
- 	tick: State<number>?,
- 	ticking: any,
- 	clocks: number?,
- 	ends: number?,
+@@ -2485,3 +2485,110 @@ async fn background_refresh_replaces_logins_agents_would_refresh_themselves() {
+     assert_eq!(read(&token)["token"], "ya29.2");
+     assert_eq!(read(&pi)["anthropic"]["access"], "claude-2");
  }
--local VEILS: { [string]: Veil } = {}
-+local VEIL_MOST = 400
-+local veils_now: { [string]: Veil } = {}
-+local veils_old: { [string]: Veil } = {}
- local veil_count = 0
- local function veil_of(key: string, seeding: boolean): Veil
--	local v = VEILS[key]
-+	local v = veils_now[key]
-+	if v then
-+		return v
-+	end
-+	v = veils_old[key]
- 	if not v then
--		-- (A reply's blocks a chat at a time; forgotten in a lump now and then.)
--		veil_count += 1
--		if veil_count > 400 then
--			VEILS, veil_count = {}, 1
--		end
--		v = { elems = {}, block = 0, n = 0, seeding = seeding, ticking = nil } :: any
--		VEILS[key] = v
-+		v = { elems = {}, seeding = seeding, ticking = nil } :: any
- 	end
-+	-- (Two generations, as `kept`: active streaming keys are promoted and never
-+	-- wiped in a lump when the cache fills.)
-+	if veil_count >= VEIL_MOST then
-+		veils_now, veils_old, veil_count = {}, veils_now, 0
-+	end
-+	veil_count += 1
-+	veils_now[key] = v
- 	return v
- end
- -- The veil's clock (`v.tick`) run until its fades have ended (`v.ends`). The
-@@ -199,13 +204,60 @@ local function veil_tick(v: Veil)
- 		end,
- 	})
- end
-+-- Inline markdown delimiter bytes that streaming mending (`zgx`'s Mender) may
-+-- add or drop in place as a block settles (`*`, `_`, `~`, `` ` ``, `[`, `]`, `\`).
-+local function is_md_syntax(b: number): boolean
-+	return b == 42 or b == 95 or b == 126 or b == 96 or b == 91 or b == 93 or b == 92
-+end
-+-- When `new` diverges from `old` before `#old` only because unclosed inline
-+-- markdown markers (like `2**3` or `[INFO`) appeared or vanished as a block
-+-- settled, return the byte index in `new` up to which `old` was already shown.
-+local function syntax_covered(old: string, new: string, p: number): number?
-+	local i, j = p + 1, p + 1
-+	local olen, nlen = #old, #new
-+	while i <= olen and j <= nlen do
-+		if string.byte(old, i) == string.byte(new, j) then
-+			i += 1
-+			j += 1
-+		else
-+			local skipped = 0
-+			while skipped < 4 and j + skipped <= nlen and is_md_syntax(string.byte(new, j + skipped)) do
-+				skipped += 1
-+			end
-+			if skipped > 0 and (j + skipped > nlen or string.byte(old, i) == string.byte(new, j + skipped)) then
-+				j += skipped
-+			else
-+				local removed = 0
-+				while removed < 4 and i + removed <= olen and is_md_syntax(string.byte(old, i + removed)) do
-+					removed += 1
-+				end
-+				if removed > 0 and (i + removed > olen or string.byte(old, i + removed) == string.byte(new, j)) then
-+					i += removed
-+				else
-+					return nil
-+				end
-+			end
-+		end
-+	end
-+	while i <= olen and is_md_syntax(string.byte(old, i)) do
-+		i += 1
-+	end
-+	if i <= olen then
-+		return nil
-+	end
-+	local covered = j - 1
-+	while covered > 0 and covered < nlen and bit32.band(string.byte(new, covered + 1), 0xC0) == 0x80 do
-+		covered -= 1
-+	end
-+	return covered
-+end
- -- What of `text` is still fading, after what's newly arrived is added.
--local function veil_chunks(v: Veil, text: string): { VeilChunk }
--	v.n += 1
--	local id = `{v.block}:{v.n}`
-+-- `id` identifies the element by its stable tree path, independent of deferred
-+-- mount order (`ui.presence`, `TableBlock`).
-+local function veil_chunks(v: Veil, id: string, text: string, seed: boolean?): { VeilChunk }
- 	local e = v.elems[id]
- 	if not e then
--		e = { text = if v.seeding then text else "", chunks = {}, ema = VEIL_EMA_SEED, last = nil } :: any
-+		e = { text = if v.seeding or seed then text else "", chunks = {}, ema = VEIL_EMA_SEED, last = nil } :: any
- 		v.elems[id] = e
- 	end
- 	local now = ui.now()
-@@ -219,36 +271,71 @@ local function veil_chunks(v: Veil, text: string): { VeilChunk }
- 		while p > 0 and p < #text and bit32.band(string.byte(text, p + 1), 0xC0) == 0x80 do
- 			p -= 1
- 		end
-+		local covered = p
-+		local shifted = false
-+		if p < #e.text then
-+			local repaired = syntax_covered(e.text, text, p)
-+			if repaired then
-+				covered = repaired
-+				shifted = true
-+			end
-+		end
- 		local kept: { VeilChunk } = {}
--		for _, c in e.chunks do
--			if c.from < p then
--				c.to = math.min(c.to, p)
--				table.insert(kept, c)
-+		if shifted then
-+			local delta = covered - #e.text
-+			for _, c in e.chunks do
-+				if c.to <= p then
-+					table.insert(kept, c)
-+				elseif c.from < p then
-+					c.to = math.clamp(c.to + delta, p, covered)
-+					if c.from < c.to then
-+						table.insert(kept, c)
-+					end
-+				else
-+					c.from = math.clamp(c.from + delta, p, covered)
-+					c.to = math.clamp(c.to + delta, p, covered)
-+					if c.from < c.to then
-+						table.insert(kept, c)
-+					end
-+				end
-+			end
-+		else
-+			for _, c in e.chunks do
-+				if c.from < p then
-+					c.to = math.min(c.to, p)
-+					table.insert(kept, c)
-+				end
- 		
-```
-
-**File**: `apps/zgx/ui/ds/transcript.luau` (modified, +5/-4)
-```diff
-@@ -906,11 +906,12 @@ local function blocks_of(list: () -> { Block }, m: Message, now: () -> Message,
- 			end
- 			return brow:get().text or ""
- 		end
-+		local streaming = now().streaming == true
- 		return Markdown {
- 			text = words,
- 			-- Parsed incrementally only while it can grow.
--			key = if m.streaming then `reply:{m.id}:{b.id}` else nil,
--			veil = m.streaming == true,
-+			key = if streaming then `reply:{m.id}:{b.id}` else nil,
-+			veil = streaming,
- 			veil_seed = ui.now() - opened_at < 300,
- 			track = track(m.id),
- 			window = if view
-@@ -1269,8 +1270,8 @@ local function reply(
- 		if m.blocks ~= nil or m.runs ~= nil then nil else Markdown {
- 			text = text,
- 			-- Parsed incrementally only while it can grow.
--			key = if m.streaming then `reply:{m.id}` else nil,
--			veil = m.streaming == true,
-+			key = if row:peek().streaming == true then `reply:{m.id}` else nil,
-+			veil = row:peek().streaming == true,
- 			veil_seed = ui.now() - opened_at < 300,
- 			pictures = if view then view.pictures else nil,
- 			open = if view then view.open else nil,
-```
-
----
-
-### Incident Patch 2: `46f18fe4` (2026-11-21)
-**Commit Message**: Cloud: a program the kernel kills for memory dies alone (OOMPolicy=continue) (#1557)
-
-Wing's Cloud machine kept "dying": a test the agent ran grew to ~15 GB on
-16 GB and the kernel's OOM killer took it (three times in 20 minutes).
-systemd's default OOMPolicy=stop then stopped zeron-cloud.service, so the
-engine, and every chat on the machine, restarted with it each time. The unit
-now says OOMPolicy=continue: the runaway program dies and the engine carries
-on. Machines set up before it get the same as a drop-in on their next wake
-(beside the repair drop-in; one daemon-reload for both).
-
-Co-authored-by: Wing <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `edge/src/cloud/install-script.ts` (modified, +10/-2)
-```diff
-@@ -95,11 +95,15 @@ echo "zeron cloud: put back zeron-engine for $ver"
-  */
- export const ENSURE_REPAIR =
-   `{ h="\${ZERON_CLOUD_HOME:-$HOME}"; r="$h/.zeron/repair-engine"; ` +
--  `dd="\${ZERON_CLOUD_UNIT_DIR:-/etc/systemd/system}/${CLOUD_UNIT_NAME}.d"; ` +
-+  `dd="\${ZERON_CLOUD_UNIT_DIR:-/etc/systemd/system}/${CLOUD_UNIT_NAME}.d"; c=0; ` +
-   `t="$(mktemp)" && printf %s '${btoa(REPAIR_ENGINE_SCRIPT)}' | base64 -d >"$t" && ` +
-   `{ cmp -s "$t" "$r" || install -m 0700 "$t" "$r"; } && ` +
-   `printf '[Service]\\nExecStartPre=-%s\\n' "$r" >"$t" && ` +
--  `{ cmp -s "$t" "$dd/repair-engine.conf" || { sudo mkdir -p "$dd" && sudo install -m 0644 "$t" "$dd/repair-engine.conf" && sudo systemctl daemon-reload; }; }; ` +
-+  `{ cmp -s "$t" "$dd/repair-engine.conf" || { sudo mkdir -p "$dd" && sudo install -m 0644 "$t" "$dd/repair-engine.conf" && c=1; }; } && ` +
-+  // A unit written before OOMPolicy=continue was in it gets it as a drop-in.
-+  `printf '[Service]\\nOOMPolicy=continue\\n' >"$t" && ` +
-+  `{ cmp -s "$t" "$dd/oom-policy.conf" || { sudo mkdir -p "$dd" && sudo install -m 0644 "$t" "$dd/oom-policy.conf" && c=1; }; } && ` +
-+  `{ [ "$c" = 0 ] || sudo systemctl daemon-reload; }; ` +
-   `rm -f "$t"; } >/dev/null 2>&1 || true`;
- 
- export const CLOUD_INSTALL_SCRIPT = `#!/bin/sh
-@@ -204,6 +208,10 @@ EnvironmentFile=$data/env
- ExecStart=$app/current/zeron headless
- Restart=always
- RestartSec=1
-+# A program an agent runs that the kernel kills for memory dies alone: the
-+# engine (and every chat on the machine) carries on. systemd's default stops
-+# the whole unit, so one runaway build or test restarted the engine.
-+OOMPolicy=continue
- 
- [Install]
- WantedBy=multi-user.target
-```
-
-**File**: `edge/test/unit/install-script.test.ts` (modified, +8/-0)
-```diff
-@@ -120,6 +120,9 @@ describe("cloud install script", { timeout: 60_000 }, () => {
-     expect(readFileSync(join(units, "zeron-cloud.service.d", "repair-engine.conf"), "utf8")).toBe(
-       `[Service]\nExecStartPre=-${join(data, "repair-engine")}\n`
-     );
-+    // A runaway program an agent runs dies alone when the kernel kills it for
-+    // memory; the engine's unit carries on.
-+    expect(readFileSync(join(units, "zeron-cloud.service"), "utf8")).toContain("\nOOMPolicy=continue\n");
-     const envFile = join(data, "env");
-     expect(statSync(envFile).mode & 0o777).toBe(0o600);
-     expect(readFileSync(envFile, "utf8")).toBe(
-@@ -297,6 +300,11 @@ describe("cloud install script", { timeout: 60_000 }, () => {
-     expect(calls()).toEqual(["systemctl daemon-reload", "systemctl start --no-block zeron-cloud.service"]);
-     expect(readFileSync(join(home, ".zeron", "repair-engine"), "utf8")).toBe(REPAIR_ENGINE_SCRIPT);
-     expect(readFileSync(join(units, "zeron-cloud.service.d", "repair-engine.conf"), "utf8")).toContain("ExecStartPre=-");
-+    // And its unit, written before OOMPolicy=continue, gets it as a drop-in
-+    // (with the repair's, one daemon-reload).
-+    expect(readFileSync(join(units, "zeron-cloud.service.d", "oom-policy.conf"), "utf8")).toBe(
-+      "[Service]\nOOMPolicy=continue\n"
++
++#[tokio::test]
++async fn antigravity_ccpa_proxy_rotates_vault_tokens_mid_turn() {
++    use tokio::io::{AsyncReadExt, AsyncWriteExt};
++
++    let rig = Rig::new().await;
++    let identity = rig.enrolled().await;
++    let google = |token: &str, secs: i64, generation: i64| {
++        json!({"provider": "antigravity", "accessToken": token, "expiresAt": in_ms(secs), "generation": generation,
++               "settings": {"client_id": "1071.apps.googleusercontent.com", "project_id": "proj",
++                            "scopes": "https://www.googleapis.com/auth/cloud-platform"}})
++    };
++    rig.grant("antigravity", 200, google("ya29.initial", 3600, 1));
++
++    // Mock upstream CCPA server that rejects `ya29.initial` with 401 and
++    // accepts `ya29.rotated` with streamed SSE chunks.
++    let seen_auth = std::sync::Arc::new(std::sync::Mutex::new(Vec::<String>::new()));
++    let seen_auth_clone = seen_auth.clone();
++    let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
++    let upstream_addr = listener.local_addr().unwrap();
++    let upstream_task = tokio::spawn(async move {
++        loop {
++            let Ok((mut stream, _)) = listener.accept().await else {
++                break;
++            };
++            let seen = seen_auth_clone.clone();
++            tokio::spawn(async move {
++                let mut buf = vec![0u8; 8192];
++                let n = stream.read(&mut buf).await.unwrap_or(0);
++                let text = String::from_utf8_lossy(&buf[..n]);
++                let auth = text
++                    .lines()
++                    .find_map(|line| {
++                        let (k, v) = line.split_once(':')?;
++                        k.eq_ignore_ascii_case("authorization")
++                            .then(|| v.trim().to_owned())
++                    })
++                    .unwrap_or_default();
++                seen.lock().unwrap().push(auth.clone());
++                let (status_line, ct, body) = if auth == "Bearer ya29.rotated" {
++                    ("200 OK", "text/event-stream", "data: {\"ok\":true}\n\n")
++                } else {
++                    ("401 Unauthorized", "application/json", "{\"error\":\"expired\"}")
++                };
++                let resp = format!(
++                    "HTTP/1.1 {status_line}\r\nContent-Type: {ct}\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{body}",
++                    body.len()
++                );
++                let _ = stream.write_all(resp.as_bytes()).await;
++                let _ = stream.flush().await;
++            });
++        }
++    });
++
++    let broker = rig.broker(identity, "http://127.0.0.1:9");
++    let mut request = run_request();
++    request.env.insert(
++        "AGY_ACP_CCPA_BASE_URL".into(),
++        format!("http://{upstream_addr}"),
 +    );
-     clearCalls();
-     start();
-     expect(calls()).toEqual(["systemctl start --no-block zeron-cloud.service"]);
++    broker
++        .prepare(HarnessId::Antigravity, &mut request)
++        .await
++        .unwrap();
++
++    // `prepare` wrote a far-future expiry so `agy_acp_server`'s in-memory
++    // credentials never trip mid-turn, and pointed `AGY_ACP_CCPA_BASE_URL` at
++    // the broker's loopback auth proxy.
++    let token_doc = read(&rig.home.join(".gemini/antigravity-acp/acp_token.json"));
++    assert_eq!(token_doc["token"], "ya29.initial");
++    assert_eq!(token_doc["refresh_token"], "");
++    assert_eq!(token_doc["expiry"], "2099-01-01T00:00:00");
++    let proxy_url = request
++        .env
++        .get("AGY_ACP_CCPA_BASE_URL")
++        .expect("broker sets AGY_ACP_CCPA_BASE_URL")
++        .clone();
++    assert!(
++        proxy_url.starts_with("http://127.0.0.1:") && proxy_url != format!("http://{upstream_addr}"),
++        "expected loopback proxy URL, got {proxy_url}"
++    );
++
++    // Simulate >50m into a single turn: the vault now issues `ya29.rotated`
++    // while the running `agy_acp_server` still sends its stale startup token.
++    rig.grant("antigravity", 200, google("ya29.rotated", 3600, 2));
++
++    let client = reqwest::Client::new();
++    let resp = client
++        .post(format!(
++            "{proxy_url}/v1internal:streamGenerateContent?alt=sse"
++        ))
++        .header("authorization", "Bearer ya29.initial")
++        .header("content-type", "application/json")
++        .body(r#"{"model":"gemini-4-neon"}"#)
++        .send()
++        .await
++        .unwrap();
++    assert_eq!(resp.status(), reqwest::StatusCode::OK);
++    assert_eq!(resp.text().await.unwrap(), "data: {\"ok\":true}\n\n");
++    assert_eq!(
++        *seen_auth.lock().unwrap(),
++        vec!["Bearer ya29.initial", "Bearer ya29.rotated"]
++    );
++
++    broker.shutdown();
++    upstream_task.abort();
++}
 ```
 
----
-
-### Incident Patch 3: `865308ff` (2026-11-20)
-**Commit Message**: fix(voice): omit ort copy-dylibs to fix Windows build on Rust 1.100 (#1553)
-
-Co-authored-by: Wing <[REDACTED_EMAIL]>
-
-**File**: `crates/voice/Cargo.toml` (modified, +6/-2)
+**File**: `crates/harness/Cargo.toml` (modified, +1/-0)
 ```diff
-@@ -7,9 +7,13 @@ publish.workspace = true
- 
- [dependencies]
+@@ -35,6 +35,7 @@ serde.workspace = true
+ serde_json.workspace = true
+ deser-hjson.workspace = true
+ serde_yaml_ng = "0.10"
++rusqlite.workspace = true
  anyhow.workspace = true
--parakeet-rs = "=0.3.8"
-+parakeet-rs = { version = "=0.3.8", default-features = false, features = ["cpu", "api-28"] }
- # Keep the nested ZGX workspace on the same native runtime as ZUI.
--ort = "=2.0.0-rc.13"
-+# Omit ort's default `copy-dylibs` feature: ort-sys 2.0.0-rc.13 assumes the
-+# pre-Rust-1.100 `target/<profile>/build/<pkg>-<hash>/out` layout and panics on
-+# Windows under Cargo 1.100's `build/<pkg>/<hash>/out` layout. Windows links the
-+# system DirectML/DX12 libraries and does not bundle ort dylibs.
-+ort = { version = "=2.0.0-rc.13", default-features = false, features = ["std", "ndarray", "tracing", "download-binaries", "tls-native", "api-27"] }
- ort-sys = "=2.0.0-rc.13"
- cpal = "=0.17.3"
- rubato = "=0.16.2"
+ thiserror.workspace = true
+ tracing.workspace = true
+```
+
+**File**: `crates/harness/src/acp/ccpa_thoughts.rs` (modified, +31/-4)
+```diff
+@@ -26,7 +26,7 @@ use std::time::Duration;
+ use serde_json::{Map, Value};
+ use tokio::io::{AsyncBufReadExt, AsyncReadExt, AsyncWriteExt, BufReader};
+ use tokio::net::{TcpListener, TcpStream};
+-use tokio::sync::Mutex;
++use tokio::sync::{Mutex, watch};
+ use tokio_util::sync::CancellationToken;
+ 
+ const PROD_CCPA_ENDPOINT: &str = "https://cloudcode-pa.googleapis.com";
+@@ -41,13 +41,20 @@ const DISABLE_PROXY_ENV: &str = "ZERON_ANTIGRAVITY_THOUGHTS_PROXY";
+ pub(crate) struct ThoughtsProxy {
+     base_url: String,
+     shutdown: CancellationToken,
++    activity: watch::Receiver<u64>,
+ }
+ 
+ impl ThoughtsProxy {
+     pub(crate) fn base_url(&self) -> &str {
+         &self.base_url
+     }
+ 
++    /// Subscribe to monotonic CCPA HTTP liveness ticks (incremented on every
++    /// proxied request start and streaming response chunk).
++    pub(crate) fn subscribe_activity(&self) -> watch::Receiver<u64> {
++        self.activity.clone()
++    }
++
+     /// Start the loopback proxy unless disabled via `ZERON_ANTIGRAVITY_THOUGHTS_PROXY=0`.
+     pub(crate) async fn start(
+         run_env: &BTreeMap<String, String>,
+@@ -66,6 +73,7 @@ impl ThoughtsProxy {
+         let addr: SocketAddr = listener.local_addr()?;
+         let base_url = format!("http://{addr}");
+         let shutdown = CancellationToken::new();
++        let (activity_tx, activity_rx) = watch::channel(0u64);
+         let client = reqwest::Client::builder()
+             .connect_timeout(Duration::from_secs(30))
+             .build()
+@@ -75,6 +83,7 @@ impl ThoughtsProxy {
+             fixed_upstream: fixed_upstream.map(|u| u.trim_end_matches('/').to_owned()),
+             resolved_upstream: Mutex::new(None),
+             skip_models: Mutex::new(HashSet::new()),
++            activity: activity_tx,
+         });
+         let cancel = shutdown.clone();
+         tokio::spawn(async move {
+@@ -105,7 +114,11 @@ impl ThoughtsProxy {
+                 }
+             }
+         });
+-        Ok(Self { base_url, shutdown })
++        Ok(Self {
++            base_url,
++            shutdown,
++            activity: activity_rx,
++        })
+     }
+ }
+ 
+@@ -120,6 +133,13 @@ struct ProxyState {
+     fixed_upstream: Option<String>,
+     resolved_upstream: Mutex<Option<String>>,
+     skip_models: Mutex<HashSet<String>>,
++    activity: watch::Sender<u64>,
++}
++
++impl ProxyState {
++    fn note_activity(&self) {
++        self.activity.send_modify(|n| *n = n.wrapping_add(1));
++    }
+ }
+ 
+ fn is_disabled(run_env: &BTreeMap<String, String>) -> bool {
+@@ -476,7 +496,9 @@ async fn write_buffered_response(
+ async fn stream_chunked_response(
+     stream: &mut TcpStream,
+     mut resp: reqwest::Response,
++    state: &ProxyState,
+ ) -> std::io::Result<()> {
++    state.note_activity();
+     let status = resp.status();
+     let reason = status.canonical_reason().unwrap_or("OK");
+     let mut head = format!("HTTP/1.1 {} {}\r\n", status.as_u16(), reason);
+@@ -500,6 +522,7 @@ async fn stream_chunked_response(
+         if chunk.is_empty() {
+             continue;
+         }
++        state.note_activity();
+         let size_hdr = format!("{:x}\r\n", chunk.len());
+         stream.write_all(size_hdr.as_bytes()).await?;
+         stream.write_all(&chunk).await?;
+@@ -514,6 +537,7 @@ async fn handle_connection(mut stream: TcpStream, state: Arc<ProxyState>) -> std
+     let Some(req) = read_http_request(&mut stream).await? else {
+         return Ok(());
+     };
++    state.note_activity();
+     let upstream_base = resolve_upstream(&state, &req.headers).await;
+     let target = if req.target.starts_with('/') {
+         req.target.as_str()
+@@ -561,18 +585,21 @@ async fn handle_connection(mut stream: TcpStream, state: Arc<ProxyState>) -> std
+                 state.skip_models.lock().await.insert(model);
+             }
+             match send_upstream(&state.client, &req.method, &url, &req.headers, req.body).await {
+-                Ok(retry_resp) => return stream_chunked_response(&mut stream, retry_resp).await,
++                Ok(retry_resp) => {
++                    return stream_chunked_response(&mut stream, retry_resp, &state).await;
++                }
+                 Err(err) => {
+                     let msg = format!("upstream CCPA retry failed: {err}");
+                     let _ = write_error_response(&mut stream, 502, "Bad Gateway", &msg).await;
+                     return Ok(());
+                 }
+             }
+         }
++        state.note_activity();
+         return write_buffered_response(&mut stream, status, &headers, &err_body).await;
+     }
+ 
+-    stream_chunked_response(&mut stream, resp).await
++    stream_chunked_response(&mut stream, resp, &state).await
+ }
+ 
+ #[cfg(test)]
+```
+
+**File**: `crates/harness/src/acp/mod.rs` (modified, +101/-5)
+```diff
+@@ -1315,6 +1315,63 @@ pub fn antigravity_saved_auth_method(home: &Path) -> Option<String> {
+         .map(|method| method.canonical)
+ }
+ 
++/// Whether Antigravity's local conversation SQLite DB currently records an
++/// active (`PENDING` = 1 or `RUNNING` = 2) background task step (such as a
++/// `schedule` timer/cron or background command, all of which populate
++/// `task_details` and emit no open ACP `tool_call` frame while sleeping).
++///
++/// Checked only on the rare occasion that Antigravity's prompt-stall deadline
++/// elapses with zero wire or CCPA activity; missing DBs or schema differences
++/// fail closed (`false`) so genuinely wedged runs still settle.
++async fn antigravity_has_active_background_task(
++    run_env: &std::collections::BTreeMap<String, String>,
++    session_id: &str,
++) -> bool {
++    if session_id.is_empty()
++        || session_id.contains('/')
++        || session_id.contains('\\')
++        || session_id.contains("..")
++    {
++        return false;
++    }
++    let home = run_env
++        .get("GEMINI_HOME")
++        .filter(|v| !v.is_empty())
++        .map(PathBuf::from)
++        .or_else(|| antigravity_home().ok());
++    let Some(home) = home else {
++        return false;
++    };
++    let db_path = home
++        .join("antigravity-acp")
++        .join("conversations")
++        .join(format!("{session_id}.db"));
++    tokio::task::spawn_blocking(move || antigravity_db_has_active_background_task(&db_path))
++        .await
++        .unwrap_or(false)
++}
++
++fn antigravity_db_has_active_background_task(db_path: &Path) -> bool {
++    if !db_path.is_file() {
++        return false;
++    }
++    let flags = rusqlite::OpenFlags::SQLITE_OPEN_READ_ONLY
++        | rusqlite::OpenFlags::SQLITE_OPEN_NO_MUTEX;
++    let Ok(conn) = rusqlite::Connection::open_with_flags(db_path, flags) else {
++        return false;
++    };
++    let _ = conn.busy_timeout(Duration::from_millis(200));
++    // CortexStepStatus::PENDING (1) / RUNNING (2) on steps that carry
++    // background `task_details` (timers, crons, background commands).
++    conn.query_row(
++        "SELECT 1 FROM steps WHERE status IN (1, 2) \
++         AND task_details IS NOT NULL AND length(task_details) > 0 LIMIT 1",
++        [],
++        |_| Ok(()),
++    )
++    .is_ok()
++}
++
+ fn sign_in_auth_method(
+     initialized: &Value,
+     default_method: &str,
+@@ -1932,7 +1989,7 @@ struct WarmAgent {
+ /// Per-child resources whose lifetimes match the spawned ACP subprocess.
+ struct ChildGuards {
+     _scratch: Option<ScratchDir>,
+-    _thoughts_proxy: Option<ccpa_thoughts::ThoughtsProxy>,
++    thoughts_proxy: Option<ccpa_thoughts::ThoughtsProxy>,
+ }
+ 
+ /// What `spawn_agent` hands a run.
+@@ -3002,7 +3059,7 @@ impl AcpHarness {
+         }
+         let guards = ChildGuards {
+             _scratch: scratch,
+-            _thoughts_proxy: thoughts_proxy,
++            thoughts_proxy,
+         };
+         Ok((guards, child, stderr_tail, sign_in_prompted))
+     }
+@@ -5904,7 +5961,7 @@ async fn select_session_config(
+ async fn run_session(session: Session) {
+     let Session {
+         // Locals drop in reverse binding order: reap the child before cleanup.
+-        guards: _guards,
++        guards,
+         mut child,
+         client,
+         mut incoming,
+@@ -6203,6 +6260,10 @@ async fn run_session(session: Session) {
+     };
+     let mut prompt_stall_deadline: Option<tokio::time::Instant> =
+         prompt_stall.map(|d| tokio::time::Instant::now() + d);
++    let mut ccpa_activity = guards
++        .thoughts_proxy
++        .as_ref()
++        .map(ccpa_thoughts::ThoughtsProxy::subscribe_activity);
+     // The prompt in flight (re-sent by a preempt when the agent drops an
+     // unstarted cancelled prompt). When an unrestorable resumed session fell
+     // back to a fresh one, send the host's transcript-wrapped recovery prompt.
+@@ -7340,10 +7401,33 @@ async fn run_session(session: Session) {
+                 }
+             },
+ 
++            // Antigravity CCPA liveness heartbeat: any LLM request start or
++            // streaming SSE chunk through the loopback thoughts proxy (including
++            // subagents, workflows, and post-timer wakeups) proves the server is
++            // actively working even while ACP stdout is quiet.
++            changed = async {
++                match ccpa_activity.as_mut() {
++                    Some(rx) => rx.changed().await,
++                    None => std::future::pending().await,
++                }
++            }, if ccpa_activity.is_some() => {
++                if changed.is_err() {
++                    ccpa_activity = None;
++                } else if harness == HarnessId::Antigravity
++                    && turn.is_some()
++                    && open_tools.is_empty()
++                    && questions.is_empty()
++                {
++                    prompt_stall_deadline =
++                        prompt_stall.map(|d| tokio::time::Instant::now() + d);
++                }
++            },
++
+             // Prompt-stall wat
+```
+
+**File**: `crates/harness/tests/acp_stall.rs` (modified, +252/-0)
+```diff
+@@ -206,4 +206,256 @@ for raw in sys.stdin:
+             ..
+         })
+     ));
++
++    // Antigravity background timer (`schedule`): no ACP wire frames for longer
++    // than the stall budget while `conversations/<session_id>.db` holds a
++    // RUNNING (status = 2) step with non-empty `task_details` must NOT fire the
++    // stall watchdog.
++    let timer_home = tempfile::tempdir().unwrap();
++    let timer_script = dir.path().join("fake-agy-timer.py");
++    std::fs::write(
++        &timer_script,
++        r#"#!/usr/bin/env python3
++import json, os, sqlite3, sys, time
++
++def send(obj):
++    sys.stdout.write(json.dumps(obj) + "\n")
++    sys.stdout.flush()
++
++home = os.environ["GEMINI_HOME"]
++conv_dir = os.path.join(home, "antigravity-acp", "conversations")
++os.makedirs(conv_dir, exist_ok=True)
++db_path = os.path.join(conv_dir, "agy-timer.db")
++
++for raw in sys.stdin:
++    msg = json.loads(raw)
++    mid = msg.get("id")
++    method = msg.get("method")
++    if method == "initialize":
++        send({"jsonrpc": "2.0", "id": mid, "result": {"protocolVersion": 1, "agentCapabilities": {}}})
++    elif method == "session/new":
++        send({"jsonrpc": "2.0", "id": mid, "result": {"sessionId": "agy-timer"}})
++    elif method == "session/prompt":
++        conn = sqlite3.connect(db_path)
++        conn.execute("CREATE TABLE IF NOT EXISTS steps (idx INTEGER PRIMARY KEY, step_type INTEGER, status INTEGER, task_details BLOB)")
++        conn.execute("INSERT OR REPLACE INTO steps VALUES (1, 132, 2, ?)", (b"timer-5m",))
++        conn.commit()
++        send({"jsonrpc": "2.0", "method": "session/update", "params": {
++            "sessionId": "agy-timer",
++            "update": {"sessionUpdate": "agent_message_chunk", "content": {"type": "text", "text": "Standing by."}}
++        }})
++        # Sleep past the 700ms stall budget with zero ACP frames while timer is RUNNING.
++        time.sleep(1.2)
++        conn.execute("UPDATE steps SET status = 3 WHERE idx = 1")
++        conn.commit()
++        conn.close()
++        send({"jsonrpc": "2.0", "method": "session/update", "params": {
++            "sessionId": "agy-timer",
++            "update": {"sessionUpdate": "agent_message_chunk", "content": {"type": "text", "text": " Timer fired."}}
++        }})
++        send({"jsonrpc": "2.0", "id": mid, "result": {"stopReason": "end_turn"}})
++"#,
++    )
++    .unwrap();
++    std::fs::set_permissions(&timer_script, std::fs::Permissions::from_mode(0o755)).unwrap();
++
++    let (steer_tx, steer_rx) = mpsc::channel(8);
++    drop(steer_tx);
++    let token = CancellationToken::new();
++    let timer_controls = RunControls {
++        realtime: None,
++        execution_lease: None,
++        request_input: Box::new(move |_| {
++            let (tx, rx) = oneshot::channel();
++            let _ = tx.send(Vec::new());
++            rx
++        }),
++        steering: steer_rx,
++        interrupt: token,
++        turn: Default::default(),
++    };
++    let mut timer_env = std::collections::BTreeMap::new();
++    timer_env.insert(
++        "GEMINI_HOME".to_owned(),
++        timer_home.path().to_string_lossy().into_owned(),
++    );
++    let timer_req = RunRequest {
++        mcp: None,
++        prompt: "wait on schedule timer".into(),
++        harness: None,
++        model: None,
++        reasoning: None,
++        model_options: serde_json::Map::new(),
++        cwd: String::new(),
++        sandbox: SandboxLevel::DangerFullAccess,
++        auto_approve: true,
++        access: Default::default(),
++        plan: false,
++        code_mode: false,
++        attachments: Vec::new(),
++        worktree: None,
++        resume: None,
++        env: timer_env,
++        extra_mcp: Vec::new(),
++    };
++    let agy_timer = AcpHarness::antigravity()
++        .with_executable(&timer_script)
++        .with_graces(Duration::from_millis(100), Duration::from_millis(200));
++    let timer_stream = agy_timer
++        .run(timer_req, timer_controls)
++        .await
++        .expect("agy timer run starts");
++    let timer_events = tokio::time::timeout(
++        Duration::from_secs(10),
++        timer_stream.map(|r| r.expect("timer event")).collect::<Vec<_>>(),
++    )
++    .await
++    .expect("antigravity timer run finished cleanly");
++    assert!(
++        !timer_events
++            .iter()
++            .any(|e| matches!(e, AgentEvent::Error { .. })),
++        "watchdog false-positived while schedule timer was active: {timer_events:?}"
++    );
++    assert!(matches!(
++        timer_events.last(),
++        Some(AgentEvent::Done {
++            status: DoneStatus::Completed,
++            ..
++        })
++    ));
++
++    // Antigravity CCPA HTTP liveness (subagents / post-timer wakeups):
++    // silent ACP stdout while making CCPA calls through `ThoughtsProxy` must
++    // keep resetting the stall watchdog.
++    let mock_ccpa = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
++    let mock_ccpa_addr = mock_ccpa.local_addr().unwrap();
++    let mock_ccpa_task = tokio::spawn(async move {
++   
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1563** (2026-11-21): Zeron 0.3.15 (@wingleeio)
+- **PR #1562** (2026-11-21): Fix Antigravity cloud disconnects, bump zgx stale scene node fix, and add Zig/Odin highlighting (@wingleeio)
 - **PR #1557** (2026-11-21): Cloud: a program the kernel kills for memory dies alone (OOMPolicy=continue) (@wingleeio)
 - **PR #1555** (2026-11-21): Zeron 0.3.14 (@wingleeio)
 - **PR #1554** (2026-11-21): fix(zgx): prevent streaming veil from replaying finished and previous blocks (@wingleeio)
 - **PR #1553** (2026-11-20): fix(voice): omit ort copy-dylibs for Rust 1.100 Windows builds (@wingleeio)
-- **PR #1552** (2026-11-20): Zeron 0.3.13 (@wingleeio)
-- **PR #1551** (2026-11-20): Antigravity dynamic updates & opt-in Code Mode for Codex and Muse (@wingleeio)
 
 ---
 
@@ -1990,52 +2990,21 @@ Co-authored-by: Wing <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. zgx): prevent streaming veil from replaying finished and previous blocks
+## X. Empirical Invariant Guard in Cargo.lock
 
 **RULE**:
-When implementing operations in `apps/zgx/tests/streaming_veil_replay.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeronsh/zeron. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeronsh/zeron. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `613accb2`: zgx): prevent streaming veil from replaying finished and previous blocks. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dcd4f622`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/zgx/tests/streaming_veil_replay.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-//! Diagnostic & regression tests for streaming veil replay bugs:
-//! when a markdown block finishes (or a later block streams in), neither the
-//! finished block nor any previous block should replay its fade-in veil.
-
-use std::path::PathBuf;
-use std::time::Duration;
-
-use zgx::scene::{Color, NodeId, NodeKind};
-use zgx_script::{ScriptHost, Value, testing::TestApp};
-
-fn ui_dir() -> PathBuf {
-    std::env::var_os("ZERON_ZGX_TEST_UI")
-        .map(PathBuf::from)
-        .unwrap_or_else(|| PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("ui"))
-}
-
-fn pieces_under(app: &TestApp, root: NodeId) -> Vec<(String, Color)> {
-    let scene = app.ui.scene.borrow();
-    let mut stack = vec![root];
-    while let Some(id) = stack.pop() {
-        match scene.kind(id) {
-            NodeKind::RichText { text } => {
-                return text
-                    .runs()
-                    .iter()
-                    .map(|run| (text.text()[run.range.clone()].to_owned(), run.color))
-                    .collect();
-            }
-            NodeKind::Text { text, color, .. } => return vec![(text.to_string(), *color)],
-            _ => stack.extend(scene.children(id).iter().rev().copied()),
-        }
-    }
+ "rusqlite",
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2045,4 +3014,4 @@ fn pieces_under(app: &TestApp, root: NodeId) -> Vec<(String, Color)> {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `613accb2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dcd4f622` are properly handled with clean fallback behavior.

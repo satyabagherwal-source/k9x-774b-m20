@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-22T23:16:24.705Z",
+  "updated_at": "2026-11-22T23:33:32.903Z",
   "stats": {
-    "total_discovered": 7695,
-    "approved_pending_harvest": 7289,
+    "total_discovered": 7714,
+    "approved_pending_harvest": 7306,
     "harvested_count": 0,
-    "rejected_count": 406,
+    "rejected_count": 408,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7269,
+      "COMMUNITY_AND_EXPERT": 7288,
       "OFFICIAL_DOCUMENTATION": 246,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 5,
@@ -166471,6 +166471,410 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
         "fileName": "tursodatabase-turso-learnings.md"
+      }
+    },
+    "SRC-4973ECCB3ECE": {
+      "id": "SRC-4973ECCB3ECE",
+      "url": "https://github.com/zeronsh/zgx?rev=e3f35a5462144d07e6dd99af360f28a87c8d1b31",
+      "title": "https://github.com/zeronsh/zgx?rev=e3f35a5462144d07e6dd99af360f28a87c8d1b31",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T23:33:30.490Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
+        "fileName": "zeronsh-zeron-learnings.md"
+      }
+    },
+    "SRC-3737DC386DBD": {
+      "id": "SRC-3737DC386DBD",
+      "url": "https://cloudcode-pa.googleapis.com/",
+      "title": "https://cloudcode-pa.googleapis.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T23:33:30.628Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
+        "fileName": "zeronsh-zeron-learnings.md"
+      }
+    },
+    "SRC-C89024A5E23A": {
+      "id": "SRC-C89024A5E23A",
+      "url": "https://daily-cloudcode-pa.googleapis.com/",
+      "title": "https://daily-cloudcode-pa.googleapis.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T23:33:30.687Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
+        "fileName": "zeronsh-zeron-learnings.md"
+      }
+    },
+    "SRC-A143C13D33EB": {
+      "id": "SRC-A143C13D33EB",
+      "url": "https://www.googleapis.com/auth/cloud-platform",
+      "title": "https://www.googleapis.com/auth/cloud-platform",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T23:33:30.780Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
+        "fileName": "zeronsh-zeron-learnings.md"
+      }
+    },
+    "SRC-0AAAC99222EB": {
+      "id": "SRC-0AAAC99222EB",
+      "url": "http://127.0.0.1:9/",
+      "title": "http://127.0.0.1:9/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-22T23:33:30.841Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
+        "fileName": "zeronsh-zeron-learnings.md"
+      }
+    },
+    "SRC-6EB97A889236": {
+      "id": "SRC-6EB97A889236",
+      "url": "http://{upstream_addr/",
+      "title": "http://{upstream_addr/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-22T23:33:30.897Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
+        "fileName": "zeronsh-zeron-learnings.md"
+      }
+    },
+    "SRC-C586AAB984D1": {
+      "id": "SRC-C586AAB984D1",
+      "url": "https://github.com/mlmed/torchxrayvision/blob/master/LICENSE",
+      "title": "https://github.com/mlmed/torchxrayvision/blob/master/LICENSE",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T23:33:32.256Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md",
+        "fileName": "maziyarpanahi-openmed-learnings.md"
+      }
+    },
+    "SRC-ACD3BF034DAA": {
+      "id": "SRC-ACD3BF034DAA",
+      "url": "https://github.com/mlmed/torchxrayvision/blob/master/README.md",
+      "title": "https://github.com/mlmed/torchxrayvision/blob/master/README.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T23:33:32.307Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md",
+        "fileName": "maziyarpanahi-openmed-learnings.md"
+      }
+    },
+    "SRC-27C3BDE054D4": {
+      "id": "SRC-27C3BDE054D4",
+      "url": "https://physionet.org/content/mimic-cxr/2.1.0",
+      "title": "https://physionet.org/content/mimic-cxr/2.1.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T23:33:32.364Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md",
+        "fileName": "maziyarpanahi-openmed-learnings.md"
+      }
+    },
+    "SRC-BE52151F703E": {
+      "id": "SRC-BE52151F703E",
+      "url": "https://aimi.stanford.edu/datasets/chexpert-chest-x-rays",
+      "title": "https://aimi.stanford.edu/datasets/chexpert-chest-x-rays",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T23:33:32.413Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md",
+        "fileName": "maziyarpanahi-openmed-learnings.md"
+      }
+    },
+    "SRC-5C0B3207832C": {
+      "id": "SRC-5C0B3207832C",
+      "url": "https://aimi.stanford.edu/datasets-commercial-use",
+      "title": "https://aimi.stanford.edu/datasets-commercial-use",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T23:33:32.466Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md",
+        "fileName": "maziyarpanahi-openmed-learnings.md"
+      }
+    },
+    "SRC-B56FECC4392D": {
+      "id": "SRC-B56FECC4392D",
+      "url": "https://github.com/tensorflow/models/blob/master/LICENSE",
+      "title": "https://github.com/tensorflow/models/blob/master/LICENSE",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T23:33:32.516Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md",
+        "fileName": "maziyarpanahi-openmed-learnings.md"
+      }
+    },
+    "SRC-727F27452475": {
+      "id": "SRC-727F27452475",
+      "url": "https://groups.google.com/g/audioset-users/c/Ly4guQnlv_o",
+      "title": "https://groups.google.com/g/audioset-users/c/Ly4guQnlv_o",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T23:33:32.569Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md",
+        "fileName": "maziyarpanahi-openmed-learnings.md"
+      }
+    },
+    "SRC-275FBEDE5D6D": {
+      "id": "SRC-275FBEDE5D6D",
+      "url": "https://github.com/tensorflow/models/blob/master/research/audioset/yamnet/README.md",
+      "title": "https://github.com/tensorflow/models/blob/master/research/audioset/yamnet/README.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T23:33:32.618Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md",
+        "fileName": "maziyarpanahi-openmed-learnings.md"
+      }
+    },
+    "SRC-F2A0ECD37B3E": {
+      "id": "SRC-F2A0ECD37B3E",
+      "url": "https://research.google.com/audioset/download.html",
+      "title": "https://research.google.com/audioset/download.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T23:33:32.686Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md",
+        "fileName": "maziyarpanahi-openmed-learnings.md"
+      }
+    },
+    "SRC-3191C2F0FB72": {
+      "id": "SRC-3191C2F0FB72",
+      "url": "https://github.com/audioset/ontology/blob/master/README.md",
+      "title": "https://github.com/audioset/ontology/blob/master/README.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T23:33:32.749Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md",
+        "fileName": "maziyarpanahi-openmed-learnings.md"
+      }
+    },
+    "SRC-BC317D09718E": {
+      "id": "SRC-BC317D09718E",
+      "url": "https://github.com/tensorflow/tfhub.dev/blob/master/assets/docs/google/models/yamnet/1.md",
+      "title": "https://github.com/tensorflow/tfhub.dev/blob/master/assets/docs/google/models/yamnet/1.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T23:33:32.800Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md",
+        "fileName": "maziyarpanahi-openmed-learnings.md"
+      }
+    },
+    "SRC-6139F95640C2": {
+      "id": "SRC-6139F95640C2",
+      "url": "https://github.com/google-ai-edge/mediapipe/blob/master/LICENSE",
+      "title": "https://github.com/google-ai-edge/mediapipe/blob/master/LICENSE",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T23:33:32.854Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md",
+        "fileName": "maziyarpanahi-openmed-learnings.md"
+      }
+    },
+    "SRC-080B1A6DCFB9": {
+      "id": "SRC-080B1A6DCFB9",
+      "url": "https://storage.googleapis.com/mediapipe-assets/Model%20Card%20BlazePose%20GHUM%203D.pdf",
+      "title": "https://storage.googleapis.com/mediapipe-assets/Model%20Card%20BlazePose%20GHUM%203D.pdf",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T23:33:32.903Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md",
+        "fileName": "maziyarpanahi-openmed-learnings.md"
       }
     }
   }

@@ -12260,3 +12260,7 @@ Every entry in this ledger must capture:
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `4468e50b` | Multi-dimensional audit evidence | 2026-11-22T23:15:47.300Z |
 | `learn-dom-h-bba39c7f` | `project://tursodatabase-turso` | `4468e50b` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tursodatabase-turso-learnings.md` | 2026-11-22T23:16:24.409Z |
 | `learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-11-22T23:24:57.672Z |
+| `learn-github-zeronsh-zeron` | `https://github.com/zeronsh/zeron` | `b289003b` | Multi-dimensional audit evidence | 2026-11-22T23:33:13.724Z |
+| `learn-huggingface-unsloth-qwen3-8-27b-gguf` | `https://huggingface.co/unsloth/Qwen3.8-27B-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-22T23:33:16.495Z |
+| `learn-github-maziyarpanahi-openmed` | `https://github.com/maziyarpanahi/openmed` | `3ee61a86` | Multi-dimensional audit evidence | 2026-11-22T23:33:18.175Z |
+| `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `0c30c6ea` | Multi-dimensional audit evidence | 2026-11-22T23:33:26.856Z |

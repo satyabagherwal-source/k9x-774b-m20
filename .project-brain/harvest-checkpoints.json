@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T23:24:57.680Z",
+  "last_updated": "2026-11-22T23:33:26.866Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -785,14 +785,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
-      "content_hash": "afb0b908294a98014d43abc67ec99052e762bb102e3125986b2c9f27f9ef1baf",
-      "verified_at": "2026-11-18T16:22:14.742Z",
+      "content_hash": "4243452edc30f36da1b94137e17a604f16c33229fe6138bc43d7afb828645499",
+      "verified_at": "2026-11-22T23:33:16.504Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T16:22:14.742Z"
+      "last_updated": "2026-11-22T23:33:16.504Z"
     },
     "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF": {
       "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
@@ -5271,14 +5271,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zeronsh-zeron",
-      "content_hash": "828d2cdb2d2ef04a771ea19b2a2707d51edcec11dc62ca100d36827234e1172b",
-      "verified_at": "2026-11-21T17:05:46.885Z",
+      "content_hash": "c6c74af33e80abef03196ec466a55eef78f7bd5a0a9218d39fd6a6c405126a43",
+      "verified_at": "2026-11-22T23:33:13.733Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T17:05:46.885Z"
+      "last_updated": "2026-11-22T23:33:13.733Z"
     },
     "welldone-software/why-did-you-render": {
       "repository": "welldone-software/why-did-you-render",
@@ -10791,14 +10791,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-t8y2-dbx",
-      "content_hash": "f693a15a128657ead222c5ab0d43ac6a056dccb6a1e9e283f325d7bfa8b3c96c",
-      "verified_at": "2026-11-21T23:47:47.544Z",
+      "content_hash": "5ce3561cec9125fd809643d74560d6554a78a504db8350a479abd8f40b1c5876",
+      "verified_at": "2026-11-22T23:33:26.865Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T23:47:47.544Z"
+      "last_updated": "2026-11-22T23:33:26.865Z"
     },
     "ouch-org/ouch": {
       "repository": "ouch-org/ouch",
@@ -12381,14 +12381,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-maziyarpanahi-openmed",
-      "content_hash": "6fa1673f97d9a9b965d4da421b5f36afba8ecc8ab61282a4a3e3e5587afab70e",
-      "verified_at": "2026-11-20T01:01:06.209Z",
+      "content_hash": "53a775f740ba063e652fa984f7ad2ab371f89d2c748636fd7d86271abd5c8a92",
+      "verified_at": "2026-11-22T23:33:18.184Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T01:01:06.209Z"
+      "last_updated": "2026-11-22T23:33:18.184Z"
     },
     "bernaferrari/FigmaToCode": {
       "repository": "bernaferrari/FigmaToCode",

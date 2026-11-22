@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T23:25:11.746Z",
+  "last_updated": "2026-11-22T23:33:33.325Z",
   "total_records": 2386,
   "domains": {
     "A": {
@@ -10409,8 +10409,8 @@
       "title": "Research & Knowledge Intelligence: unsloth/Qwen3.8-27B-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-unsloth-qwen3-8-27b-gguf-research-knowledge-intelligence-unsloth-qwen3-8-27b-.md",
       "repository": "unsloth/Qwen3.8-27B-GGUF",
-      "content_hash": "8e70837f75baaf122f343b1ed9d8dcf9ad43b556797824ad76c3b6d6ac52d21d",
-      "created_at": "2026-11-18T16:22:14.908Z"
+      "content_hash": "7047be6fb49935851c8c7961ba9961d5de3937a2427756915a2da58722834b1e",
+      "created_at": "2026-11-22T23:33:16.735Z"
     },
     "domain_intelligence-technical-construction-intelligence-open-policy-agent-opa-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-open-policy-agent-opa-core-invariants",
@@ -10427,8 +10427,8 @@
       "title": "Technical Construction Intelligence: t8y2/dbx Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-t8y2-dbx-technical-construction-intelligence-t8y2-dbx-core-invariants.md",
       "repository": "t8y2/dbx",
-      "content_hash": "0c63ab8a54450f3e6878d010dac0c508906c6a037952d91910949d9e4d8dbdd1",
-      "created_at": "2026-11-21T23:47:47.923Z"
+      "content_hash": "05bf649f9a210a00b7b36680d506b7fd5809fd4a89c5da22f317c5f5e8cbd636",
+      "created_at": "2026-11-22T23:33:27.278Z"
     },
     "DOM-D-218A5260": {
       "record_id": "DOM-D-218A5260",
@@ -10478,8 +10478,8 @@
       "title": "Research & Knowledge Intelligence: hf-unsloth-qwen3.8-27b-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-unsloth-qwen3-8-27b-gguf-learnings-research-knowledge-intelligence-hf-unsloth.md",
       "repository": "hf-unsloth-qwen3.8-27b-gguf-learnings",
-      "content_hash": "617485d2bb6d1804a29f1e8709f8f75a1ea4a5f610088447d4605b59dbb7a26c",
-      "created_at": "2026-11-18T16:22:32.102Z"
+      "content_hash": "b85953b1d57dbb69acbdc5a48e0fc9554db464d9ab41a333722802250c69dc34",
+      "created_at": "2026-11-22T23:33:31.919Z"
     },
     "domain_intelligence-technical-construction-intelligence-open-policy-agent-opa-learnings-core-invaria": {
       "record_id": "domain_intelligence-technical-construction-intelligence-open-policy-agent-opa-learnings-core-invaria",
@@ -22514,8 +22514,8 @@
       "title": "Technical Construction Intelligence: maziyarpanahi/openmed Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-maziyarpanahi-openmed-technical-construction-intelligence-maziyarpanahi-openmed-.md",
       "repository": "maziyarpanahi/openmed",
-      "content_hash": "60dc685ce3e1e2bcdf73e855f0192d6d282fcee1f52bb1d09ed503440aa4eb2c",
-      "created_at": "2026-11-20T01:01:06.866Z"
+      "content_hash": "1148d2bf0ede0771924dad024fe02ff1ab981a25dea2ea77a58b934f5c6018da",
+      "created_at": "2026-11-22T23:33:18.600Z"
     },
     "DOM-D-37D23F0D": {
       "record_id": "DOM-D-37D23F0D",
@@ -22574,8 +22574,8 @@
       "title": "Technical Construction Intelligence: maziyarpanahi-openmed-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-maziyarpanahi-openmed-learnings-technical-construction-intelligence-maziyarpanah.md",
       "repository": "maziyarpanahi-openmed-learnings",
-      "content_hash": "bf4fdc609cef6ef08cdb56bfba0dee8aae48695f4da0fb6f97511f97ab3ed759",
-      "created_at": "2026-11-20T01:04:01.058Z"
+      "content_hash": "736c4e449b8199c42f56ea0d337a9b5bec83d16993c1302dcf19e7711d8e480d",
+      "created_at": "2026-11-22T23:33:33.325Z"
     },
     "domain_intelligence-research-knowledge-intelligence-comfy-org-minimax-h3-image-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-comfy-org-minimax-h3-image-core-invariants",
@@ -25289,8 +25289,8 @@
       "title": "Technical Construction Intelligence: zeronsh/zeron Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zeronsh-zeron-technical-construction-intelligence-zeronsh-zeron-core-invariants.md",
       "repository": "zeronsh/zeron",
-      "content_hash": "03a1dbac813b25cc7c87ed26116b24c3e37c76fbc38f9bf5fd02c591f42cba90",
-      "created_at": "2026-11-21T17:05:47.235Z"
+      "content_hash": "0c791b9a47e5130722d63a1a71d40fa149a423c033dc43f591fe81c78d008fea",
+      "created_at": "2026-11-22T23:33:14.152Z"
     },
     "domain_intelligence-technical-construction-intelligence-authzed-spicedb-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-authzed-spicedb-core-invariants",
@@ -25316,8 +25316,8 @@
       "title": "Technical Construction Intelligence: zeronsh-zeron-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zeronsh-zeron-learnings-technical-construction-intelligence-zeronsh-zeron-learni.md",
       "repository": "zeronsh-zeron-learnings",
-      "content_hash": "bd96b6fd5c11d71df9e14fc5d9f650fc18bd71841f94f9d0383787d6e99b4a30",
-      "created_at": "2026-11-21T17:06:05.895Z"
+      "content_hash": "58ea04aedcf14c607412c549308eedfa988eb7625f5b51505bde76045ed733b9",
+      "created_at": "2026-11-22T23:33:31.342Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensor": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensor",

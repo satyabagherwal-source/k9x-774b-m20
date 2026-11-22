@@ -635,8 +635,8 @@
     "sourceUrl": "https://huggingface.co/unsloth/Qwen3.8-27B-GGUF",
     "sourceVersion": "hf-unsloth-qwen3.8-27b-gguf",
     "license": "Open-Source",
-    "contentHash": "afb0b908294a98014d43abc67ec99052e762bb102e3125986b2c9f27f9ef1baf",
-    "lastHarvestedAt": "2026-11-18T16:22:14.734Z",
+    "contentHash": "4243452edc30f36da1b94137e17a604f16c33229fe6138bc43d7afb828645499",
+    "lastHarvestedAt": "2026-11-22T23:33:16.495Z",
     "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf"
   },
   "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf": {
@@ -3433,10 +3433,10 @@
     "repository": "zeronsh/zeron",
     "platform": "github",
     "sourceUrl": "https://github.com/zeronsh/zeron",
-    "sourceVersion": "46f18fe4",
+    "sourceVersion": "b289003b",
     "license": "MIT",
-    "contentHash": "828d2cdb2d2ef04a771ea19b2a2707d51edcec11dc62ca100d36827234e1172b",
-    "lastHarvestedAt": "2026-11-21T17:05:46.877Z",
+    "contentHash": "c6c74af33e80abef03196ec466a55eef78f7bd5a0a9218d39fd6a6c405126a43",
+    "lastHarvestedAt": "2026-11-22T23:33:13.724Z",
     "learningId": "learn-github-zeronsh-zeron"
   },
   "welldone-software-why-did-you-render": {
@@ -7163,10 +7163,10 @@
     "repository": "t8y2/dbx",
     "platform": "github",
     "sourceUrl": "https://github.com/t8y2/dbx",
-    "sourceVersion": "5f5ec9c1",
+    "sourceVersion": "0c30c6ea",
     "license": "Apache-2.0",
-    "contentHash": "f693a15a128657ead222c5ab0d43ac6a056dccb6a1e9e283f325d7bfa8b3c96c",
-    "lastHarvestedAt": "2026-11-21T23:47:47.536Z",
+    "contentHash": "5ce3561cec9125fd809643d74560d6554a78a504db8350a479abd8f40b1c5876",
+    "lastHarvestedAt": "2026-11-22T23:33:26.856Z",
     "learningId": "learn-github-t8y2-dbx"
   },
   "ouch-org-ouch": {
@@ -8233,10 +8233,10 @@
     "repository": "maziyarpanahi/openmed",
     "platform": "github",
     "sourceUrl": "https://github.com/maziyarpanahi/openmed",
-    "sourceVersion": "e8325586",
+    "sourceVersion": "3ee61a86",
     "license": "Apache-2.0",
-    "contentHash": "6fa1673f97d9a9b965d4da421b5f36afba8ecc8ab61282a4a3e3e5587afab70e",
-    "lastHarvestedAt": "2026-11-20T01:01:06.174Z",
+    "contentHash": "53a775f740ba063e652fa984f7ad2ab371f89d2c748636fd7d86271abd5c8a92",
+    "lastHarvestedAt": "2026-11-22T23:33:18.175Z",
     "learningId": "learn-github-maziyarpanahi-openmed"
   },
   "bernaferrari-figmatocode": {
