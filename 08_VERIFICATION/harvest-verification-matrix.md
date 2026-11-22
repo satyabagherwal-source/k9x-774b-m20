@@ -12226,3 +12226,4 @@
 | `CYCLE-20261122-GBUN` | `2026-11-22T23:15:33.503Z` | `ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf-learnings.md` | Yes (`4cc42b89...`) |
 | `CYCLE-20261122-GMHS` | `2026-11-22T23:15:47.296Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9981` | Yes (`cb2622da...`) |
 | `CYCLE-2026-11-22-PROJ-EVOLVE` | `2026-11-22T23:16:24.409Z` | `tursodatabase-turso` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-BBA39C7F` [Domain H] | Yes (`7cf7eb89...`) |
+| `CYCLE-20261122-SF5V` | `2026-11-22T23:24:57.667Z` | `ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings.md` | Yes (`adf1ad4e...`) |

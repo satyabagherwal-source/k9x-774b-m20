@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
   "source_version": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T16:14:15.659Z",
+  "timestamp": "2026-11-22T23:24:57.876Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF](https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF) (Revision: `hf-ista-da`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T16:14:15.659Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T23:24:57.876Z`  
 > **Learning ID**: `learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF](https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T16:14:13.215Z  
+> **Harvest Timestamp**: 2026-11-22T23:24:57.077Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 7298936 downloads | 1305 likes
+- **Stars / Engagement**: 7533868 downloads | 1327 likes
 
 ---
 

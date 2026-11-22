@@ -82,8 +82,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-22T23:15:50.625Z",
-    "lastVerified": "2026-11-22T23:15:50.625Z",
+    "lastChecked": "2026-11-22T23:25:09.572Z",
+    "lastVerified": "2026-11-22T23:25:09.572Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -177,8 +177,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-22T22:49:36.953Z",
-    "lastVerified": "2026-11-22T22:49:36.953Z",
+    "lastChecked": "2026-11-22T23:25:09.562Z",
+    "lastVerified": "2026-11-22T23:25:09.562Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -243,8 +243,8 @@
     "officialUrl": "https://github.com/microsoft/agent-governance-toolkit",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-22T18:52:43.384Z",
-    "lastVerified": "2026-11-22T18:52:43.384Z",
+    "lastChecked": "2026-11-22T23:25:04.542Z",
+    "lastVerified": "2026-11-22T23:25:04.542Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
@@ -1351,9 +1351,9 @@
   "neondatabase-neon": {
     "name": "neon",
     "officialUrl": "https://github.com/neondatabase/neon",
-    "lastChecked": "2026-11-21T23:39:46.754Z",
+    "lastChecked": "2026-11-22T23:25:07.092Z",
     "revisionIdentifier": "fa504217",
-    "lastVerified": "2026-11-21T23:39:46.754Z"
+    "lastVerified": "2026-11-22T23:25:07.092Z"
   },
   "sharkdp-fd": {
     "name": "fd",
@@ -2578,12 +2578,12 @@
     "lastVerified": "2026-11-22T02:40:16.196Z"
   },
   "kuddev-pebrel": {
-    "name": "Kuddev/pebrel",
+    "name": "pebrel",
     "officialUrl": "https://github.com/Kuddev/pebrel",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-21T16:40:02.978Z",
-    "lastVerified": "2026-11-21T16:40:02.978Z",
+    "lastChecked": "2026-11-22T23:24:54.549Z",
+    "lastVerified": "2026-11-22T23:24:54.549Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kuddev-pebrel",
@@ -2592,7 +2592,8 @@
     "recentFixesCount": 9,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "76f74be1"
   },
   "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b": {
     "name": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
@@ -3180,9 +3181,9 @@
   "sorintlab-stolon": {
     "name": "stolon",
     "officialUrl": "https://github.com/sorintlab/stolon",
-    "lastChecked": "2026-11-22T00:53:48.932Z",
+    "lastChecked": "2026-11-22T23:25:02.054Z",
     "revisionIdentifier": "bcea7a75",
-    "lastVerified": "2026-11-22T00:53:48.932Z"
+    "lastVerified": "2026-11-22T23:25:02.054Z"
   },
   "lioensky-vcptoolbox": {
     "name": "lioensky/VCPToolBox",
@@ -3268,12 +3269,12 @@
     "officialUrl": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-18T16:14:13.215Z",
-    "lastVerified": "2026-11-18T16:14:13.215Z",
+    "lastChecked": "2026-11-22T23:24:57.077Z",
+    "lastVerified": "2026-11-22T23:24:57.077Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
-    "contentHash": "af3ea9ca00f8ec42d0142f86959ff4353322d8ce65541aa11ae0980b7d2a4b31",
+    "contentHash": "adf1ad4e0a5cdaa40084eb81a27152d63ab9da02eab74e611fc4f3ca7fb410d3",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -9462,9 +9463,9 @@
   "jinxiansen-swiftui": {
     "name": "SwiftUI",
     "officialUrl": "https://github.com/Jinxiansen/SwiftUI",
-    "lastChecked": "2026-11-20T00:43:08.056Z",
+    "lastChecked": "2026-11-22T23:24:59.654Z",
     "revisionIdentifier": "d8192c12",
-    "lastVerified": "2026-11-20T00:43:08.056Z"
+    "lastVerified": "2026-11-22T23:24:59.654Z"
   },
   "seobserver-crawlobserver": {
     "name": "crawlobserver",

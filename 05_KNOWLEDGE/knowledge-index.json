@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T23:16:26.974Z",
+  "last_updated": "2026-11-22T23:25:12.062Z",
   "total_verified_learnings": 9075,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "ee0b2dbba2191e6298a686c97597280719400434322aba52ad8d7bdc2df42690",
+      "content_hash": "876d57cadd7d2488f49a996a723bf667afd6265bff1b6f64835c7ffb88217d2b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T23:16:26.572Z"
+      "persisted_at": "2026-11-22T23:25:11.746Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "38029204a2d927404e2e27269e9a4d9792a4c618bd7438b267c5c11fa0133b0d",
+      "content_hash": "68ced311ab27a974fc50127c794d1b6969f4a1aa8ba431278d978dbac3714563",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T23:16:26.788Z"
+      "persisted_at": "2026-11-22T23:25:11.926Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "3ffcca1dd4ba40d6c983c76bb39a8cfbf77e68d37864e7b94f880a01d8ad2b9c",
+      "content_hash": "f965244f21b1aaaf8245f3d02571d66332535981e67c1a76069ed2c8931ea239",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T23:16:26.974Z"
+      "persisted_at": "2026-11-22T23:25:12.062Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "d2b01a31991970ea109f8691e243b7e847141fba7b52f9481fdee102f0f82097",
+      "content_hash": "3d01aab3d2ed021d1c929839a3b005192e22c1c6c8996b98371542e688789f64",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T22:58:23.303Z"
+      "persisted_at": "2026-11-22T23:25:10.870Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -213204,7 +213204,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
       "source_version": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf",
-      "content_hash": "af3ea9ca00f8ec42d0142f86959ff4353322d8ce65541aa11ae0980b7d2a4b31",
+      "content_hash": "adf1ad4e0a5cdaa40084eb81a27152d63ab9da02eab74e611fc4f3ca7fb410d3",
       "dossier_path": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings.md",
       "promoted_rules": [
@@ -213224,7 +213224,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T16:14:15.249Z",
+      "verified_at": "2026-11-22T23:24:57.442Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -213241,9 +213241,9 @@
       "title": "Research & Knowledge Intelligence: ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF Core Invariants",
       "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
       "source_version": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf",
-      "content_hash": "02c64d78d5b608de5aa7b6b1340af9cc2fd4ba1b3e0d2b7323a78b4b9a212082",
+      "content_hash": "148559fca2db933f02dc24cabc58bc8745c2fbd45bc7e7a26237efe292ad1668",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T16:14:15.660Z"
+      "persisted_at": "2026-11-22T23:24:57.877Z"
     },
     "learn-github-nervjs-taro": {
       "learning_id": "learn-github-nervjs-taro",
@@ -213742,9 +213742,9 @@
       "title": "Research & Knowledge Intelligence: hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings Core Invariants",
       "repository": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "2c95ab231c54892e009bc1ac75fa54aacb55c4f190d7f6c29159e9eda788c518",
+      "content_hash": "037cf43b325841a3433ad1844d8152761041be007d4dc7bd948b09c6f4a517e3",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T16:14:26.028Z"
+      "persisted_at": "2026-11-22T23:25:09.922Z"
     },
     "candidate_directive-taro-components-advanced-avoid-updating-state-while-virtualwaterfall-virtualli": {
       "item_id": "candidate_directive-taro-components-advanced-avoid-updating-state-while-virtualwaterfall-virtualli",
@@ -309959,13 +309959,13 @@
       "item_id": "candidate_directive-benchmarks-report-gold-coverage-across-retrieval-stages",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-HGMH-benchmarks-report-gold-coverage-across-retrieval-stages.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-SPW7-benchmarks-report-gold-coverage-across-retrieval-stages.md",
       "title": "benchmarks): report Gold coverage across retrieval stages",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "535229b8108499cf40c99f100bbfb4f4759fab5750c765dd9fb4b33eb642cdab",
+      "content_hash": "cff295c0875be1f6b81c105cc8e9ff66e3b6f928f23c073d51dbd31426eee9c4",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T23:16:26.360Z"
+      "persisted_at": "2026-11-22T23:25:11.578Z"
     },
     "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it": {
       "item_id": "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it",
