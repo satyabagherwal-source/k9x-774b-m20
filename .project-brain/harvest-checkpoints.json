@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T13:59:15.191Z",
+  "last_updated": "2026-11-22T14:17:27.533Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4041,14 +4041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-codewhale-hq-codewhale",
-      "content_hash": "18275a11a81b54d76ee74bc37e36fdc497ae34384a1cf12bef3ecf2cd9446034",
-      "verified_at": "2026-11-21T12:37:57.321Z",
+      "content_hash": "fc3e2e777f9d8a0aac84d8f2df3d0c0d8d9fad2421a3fdae906164e2e1253424",
+      "verified_at": "2026-11-22T14:17:17.259Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T12:37:57.321Z"
+      "last_updated": "2026-11-22T14:17:17.259Z"
     },
     "zulip/zulip": {
       "repository": "zulip/zulip",
@@ -19311,14 +19311,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-moonmath-ai-deepseek-v4-1-flash-1017-uncensored",
-      "content_hash": "c0e790dd9f2b8f83b1b3ab17d80f10d146249b19ed131bf6c9eac91da2909810",
-      "verified_at": "2026-11-17T18:35:22.283Z",
+      "content_hash": "066950ea53d8f62cddaa0059d4b4132bb13587485674501ed8faf5c30f6d0731",
+      "verified_at": "2026-11-22T14:17:27.532Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T18:35:22.283Z"
+      "last_updated": "2026-11-22T14:17:27.532Z"
     },
     "harness-hub/Qwen3.8-27B-pi-adapted": {
       "repository": "harness-hub/Qwen3.8-27B-pi-adapted",

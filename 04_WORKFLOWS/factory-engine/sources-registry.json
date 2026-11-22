@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-22T13:59:18.651Z",
-    "lastVerified": "2026-11-22T13:59:18.651Z",
+    "lastChecked": "2026-11-22T14:17:30.438Z",
+    "lastVerified": "2026-11-22T14:17:30.438Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -255,9 +255,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-22T12:37:30.331Z",
+    "lastChecked": "2026-11-22T14:17:25.988Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-22T12:37:30.331Z"
+    "lastVerified": "2026-11-22T14:17:25.988Z"
   },
   "herdrdev-herdr": {
     "name": "herdrdev/herdr",
@@ -888,9 +888,9 @@
   "bee-san-ciphey": {
     "name": "Ciphey",
     "officialUrl": "https://github.com/bee-san/Ciphey",
-    "lastChecked": "2026-11-22T06:49:25.781Z",
+    "lastChecked": "2026-11-22T14:17:20.951Z",
     "revisionIdentifier": "c500baff",
-    "lastVerified": "2026-11-22T06:49:25.781Z"
+    "lastVerified": "2026-11-22T14:17:20.951Z"
   },
   "weaviate-weaviate": {
     "name": "weaviate",
@@ -5660,12 +5660,12 @@
     "lastVerified": "2026-11-22T08:22:39.077Z"
   },
   "arangodb-arangodb": {
-    "name": "arangodb/arangodb",
+    "name": "arangodb",
     "officialUrl": "https://github.com/arangodb/arangodb",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-21T11:38:45.522Z",
-    "lastVerified": "2026-11-21T11:38:45.522Z",
+    "lastChecked": "2026-11-22T14:17:23.522Z",
+    "lastVerified": "2026-11-22T14:17:23.522Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-arangodb-arangodb",
@@ -5674,7 +5674,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "6276e6f3"
   },
   "cloudwego-volo": {
     "name": "volo",
@@ -6788,12 +6789,12 @@
     "lastVerified": "2026-11-22T07:45:15.950Z"
   },
   "linkerd-linkerd2": {
-    "name": "linkerd/linkerd2",
+    "name": "linkerd2",
     "officialUrl": "https://github.com/linkerd/linkerd2",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-21T13:05:24.976Z",
-    "lastVerified": "2026-11-21T13:05:24.976Z",
+    "lastChecked": "2026-11-22T14:17:18.601Z",
+    "lastVerified": "2026-11-22T14:17:18.601Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-linkerd-linkerd2",
@@ -6802,7 +6803,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "e64ff8dd"
   },
   "postgresml-postgresml": {
     "name": "postgresml",
@@ -7909,12 +7911,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "crosspaste-crosspaste-desktop": {
-    "name": "CrossPaste/crosspaste-desktop",
+    "name": "crosspaste-desktop",
     "officialUrl": "https://github.com/CrossPaste/crosspaste-desktop",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-19T13:03:02.371Z",
-    "lastVerified": "2026-11-19T13:03:02.371Z",
+    "lastChecked": "2026-11-22T14:17:16.018Z",
+    "lastVerified": "2026-11-22T14:17:16.018Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-crosspaste-crosspaste-desktop",
@@ -7923,7 +7925,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "5023ba50"
   },
   "xevrion-hatchzip": {
     "name": "xevrion/hatchzip",
@@ -8236,14 +8239,14 @@
     "officialUrl": "https://github.com/codewhale-hq/Codewhale",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-21T01:43:40.481Z",
-    "lastVerified": "2026-11-21T01:43:40.481Z",
+    "lastChecked": "2026-11-22T14:17:14.137Z",
+    "lastVerified": "2026-11-22T14:17:14.137Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-codewhale-hq-codewhale",
-    "contentHash": "e5474569b167416bb11d5e5269d4d6b9c6a7e62f289b38eeef9fa6863a5f5e8b",
+    "contentHash": "fc3e2e777f9d8a0aac84d8f2df3d0c0d8d9fad2421a3fdae906164e2e1253424",
     "promotedRulesCount": 1,
-    "recentFixesCount": 11,
+    "recentFixesCount": 9,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -14376,6 +14379,23 @@
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-sensenova-sensenova-loop-9b",
     "contentHash": "a60b99ba0b8e6da729877a812e737911451263b4e16bf2201c90b2f2d7aef380",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-moonmath-ai-deepseek-v4.1-flash-1017-uncensored": {
+    "name": "MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored",
+    "officialUrl": "https://huggingface.co/MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-22T14:17:13.574Z",
+    "lastVerified": "2026-11-22T14:17:13.574Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-moonmath-ai-deepseek-v4-1-flash-1017-uncensored",
+    "contentHash": "066950ea53d8f62cddaa0059d4b4132bb13587485674501ed8faf5c30f6d0731",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

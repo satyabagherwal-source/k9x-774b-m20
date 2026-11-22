@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T13:59:21.709Z",
+  "last_updated": "2026-11-22T14:17:32.629Z",
   "total_records": 2354,
   "domains": {
     "A": {
@@ -8169,8 +8169,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "d0ec583f7fe37aefd4da352aa4ba321ae0feb41bbe311ec59185a279904c9cee",
-      "created_at": "2026-11-22T13:20:40.313Z"
+      "content_hash": "b264eb20274ea1655b3296b4f06532003faf536807e141c348009cdccf9c651b",
+      "created_at": "2026-11-22T14:17:32.629Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -16193,10 +16193,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: codewhale-hq/Codewhale Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hmbown-codewhale-architecture-intelligence-codewhale-hq-codewhale-core-invariant.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-codewhale-hq-codewhale-architecture-intelligence-codewhale-hq-codewhale-core-inv.md",
       "repository": "codewhale-hq/Codewhale",
-      "content_hash": "7c7be3007594367851365b653a7354a9455d8121d6d6fd193b88e0e9bc35e3a4",
-      "created_at": "2026-11-21T12:37:57.679Z"
+      "content_hash": "4d103cb65c6325ac8efa9b08e75ab05640437f5a826865917ce93fe6c2dda4f0",
+      "created_at": "2026-11-22T14:17:17.656Z"
     },
     "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-learnings-core-invariants",
@@ -16204,8 +16204,8 @@
       "title": "Architecture Intelligence: codewhale-hq-codewhale-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-codewhale-hq-codewhale-learnings-architecture-intelligence-codewhale-hq-codewhal.md",
       "repository": "codewhale-hq-codewhale-learnings",
-      "content_hash": "fce713fb3f9bc815c1f4a5e8e772d064cae59f22c5db6680f4b493040f39a954",
-      "created_at": "2026-11-21T01:43:52.426Z"
+      "content_hash": "f179b641650671fac218f7a98b064eddcca51f62062c746de6b0600fe680a6b3",
+      "created_at": "2026-11-22T14:17:31.026Z"
     },
     "domain_intelligence-research-knowledge-intelligence-bingsu-adetailer-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-bingsu-adetailer-core-invariants",
@@ -28700,8 +28700,8 @@
       "title": "Research & Knowledge Intelligence: MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-moonmath-ai-deepseek-v4-1-flash-1017-uncensored-research-knowledge-intelligen.md",
       "repository": "MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored",
-      "content_hash": "791a40d6297e5365f872100fe17e38d945b9680f16e6cd74f355ecd2f6ffc695",
-      "created_at": "2026-11-17T18:35:22.512Z"
+      "content_hash": "2d2e01c50df0573b1b2dabe00ad4d55a8dd2deaf5793a2afb725452b1104f660",
+      "created_at": "2026-11-22T14:17:27.740Z"
     },
     "domain_intelligence-research-knowledge-intelligence-huggingfacebio-carbon-x-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-huggingfacebio-carbon-x-core-invariants",
@@ -28727,8 +28727,8 @@
       "title": "Research & Knowledge Intelligence: hf-moonmath-ai-deepseek-v4.1-flash-1017-uncensored-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-moonmath-ai-deepseek-v4-1-flash-1017-uncensored-learnings-research-knowledge-.md",
       "repository": "hf-moonmath-ai-deepseek-v4.1-flash-1017-uncensored-learnings",
-      "content_hash": "3c513d266d26c434c0314a50d456ce0ac78aa28fc39313766b7e3da67044d43e",
-      "created_at": "2026-11-17T18:35:39.432Z"
+      "content_hash": "8104b0acbf905aba8dea31f24ea064901fd7849737f5bbdc77e8621503b446bf",
+      "created_at": "2026-11-22T14:17:31.691Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-huggingfacebio-carbon-x-learnings-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-huggingfacebio-carbon-x-learnings-core-invari",

@@ -7803,10 +7803,10 @@
     "repository": "codewhale-hq/Codewhale",
     "platform": "github",
     "sourceUrl": "https://github.com/codewhale-hq/Codewhale",
-    "sourceVersion": "7af7535b",
+    "sourceVersion": "bc58781b",
     "license": "MIT",
-    "contentHash": "e5474569b167416bb11d5e5269d4d6b9c6a7e62f289b38eeef9fa6863a5f5e8b",
-    "lastHarvestedAt": "2026-11-21T01:43:41.619Z",
+    "contentHash": "fc3e2e777f9d8a0aac84d8f2df3d0c0d8d9fad2421a3fdae906164e2e1253424",
+    "lastHarvestedAt": "2026-11-22T14:17:17.251Z",
     "learningId": "learn-github-codewhale-hq-codewhale"
   },
   "meshtastic-meshtastic-android": {
@@ -12815,8 +12815,8 @@
     "sourceUrl": "https://huggingface.co/MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored",
     "sourceVersion": "hf-moonmath-ai-deepseek-v4.1-flash-1017-uncensored",
     "license": "Open-Source",
-    "contentHash": "c0e790dd9f2b8f83b1b3ab17d80f10d146249b19ed131bf6c9eac91da2909810",
-    "lastHarvestedAt": "2026-11-17T18:35:22.272Z",
+    "contentHash": "066950ea53d8f62cddaa0059d4b4132bb13587485674501ed8faf5c30f6d0731",
+    "lastHarvestedAt": "2026-11-22T14:17:27.524Z",
     "learningId": "learn-huggingface-moonmath-ai-deepseek-v4-1-flash-1017-uncensored"
   },
   "hf-harness-hub-qwen3.8-27b-pi-adapted": {

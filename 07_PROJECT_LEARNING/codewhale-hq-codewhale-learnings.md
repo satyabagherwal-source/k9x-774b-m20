@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md`  
 > **Source**: github ([https://github.com/codewhale-hq/Codewhale](https://github.com/codewhale-hq/Codewhale))  
-> **Source Version**: `7af7535b`  
+> **Source Version**: `bc58781b`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T01:43:40.599Z  
+> **Timestamp**: 2026-11-22T14:17:16.194Z  
 > **Learning ID**: `learn-github-codewhale-hq-codewhale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/codewhale-hq/Codewhale](https://github.com/codewhale-hq/Codewhale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T01:43:40.481Z  
+> **Harvest Timestamp**: 2026-11-22T14:17:14.137Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An open-source coding agent for your terminal, written in Rust. It works with any model, can split one task across several agents, and every line of it is yours to read.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 41191 stars
+- **Stars / Engagement**: 41196 stars
 
 ---
 
@@ -1966,11 +1966,11 @@ pub use codewhale_protocol::request::*;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #7449** (2026-11-21): **fix(engine): compact diagnostic late-usage receipts at the ledger bound (#6842)**
+  *Symptoms*: ## What and why  The `.late-usage/<id>.json` ledger keeps a 1 MiB bound and refused the whole write when adding a record would cross it. Diagnostic-only receipts — the route-decision evidence written by `persist_late_decision_receipt` — carry no spend, but they count toward that bound and can fill it on their own.  This makes the write compact instead of refusing: when a candidate would exceed 1 MiB, drop the oldest diagnostic-only records until it fits, and keep every spend-bearing record (settled or unresolved) unchanged. Replay still dedupes by `source_fingerprint`, so no spend is forgotten or double-counted.  ## Where this came from  Refs #6842. This is the sidecar half of the issue; bounding the unordered replay index (`usage_source_fingerprints`) and the retained journal archive policy remain open there.  ## How I tested it  - `cargo test -p codewhale-engine --lib oversized_ledger_compacts_diagnostic_receipts_before_failing` — 1 passed (the new fixture builds a ledger over 1 MiB with diagnostic + spend records; after the write, all spend records survive, the diagnostic count shrinks, and the file is within the bound) - The existing bound tests still pass: a ledger made only of spend-bearing records still returns `InvalidData` rather than silently truncating a receipt. - `cargo fmt --all -- --check` — passed - The `Behaviour:` line is in the commit body; `scripts/check-behaviour-line.py` arrives with #7445 and is not on this branch yet.  ## Checklist  - [x] One focused c
+
 - **Issue #7431** (2026-11-21): **fix(engine): classify local read-only deferred tools as Safe in get_tool_category**
   *Symptoms*: ## What and why  `crates/engine/src/core/authority.rs` `get_tool_category()` still left a number of registered `ToolCapability::ReadOnly` local tools, canonical read-action targets, and legacy `tool_search` spellings unclassified, so they fell through to `ToolCategory::Unknown` and Auto-Review routed every call to `AskUser` (`auto_review.rs:1582`).  Each candidate tool from #7407 was audited individually against its implementation and capabilities before classifying:  ### Classified as `ToolCategory::Safe`  | Tool / Target | Rationale | | --- | --- | | `is_tool_search_tool(name)` (`tool_search`, `tool_search_tool_regex`, `tool_search_tool_bm25`) | Replaces the literal `"tool_search"` arm with the shared `codewhale_tools::names::is_tool_search_tool` helper so legacy dispatchable spellings (`turn_loop.rs:1136-1146`, `:2238`) also classify as `Safe`. | | `context_archive_get`, `context_archive_search` | `ReadOnly` / `Auto`. Bounded, secret-scrubbed in-process reads of the current session's compaction archive. | | `session_get`, `session_search` | `ReadOnly` / `Auto`. Bounded, workspace-scoped in-process reads of prior session metadata/tails. | | `memory_get`, `memory_search` | `ReadOnly` / `Auto`. Bounded, workspace-scoped in-process reads of `NativeMemoryStore`. | | `project_map` | `ReadOnly`, `Sandboxable` / `Auto`. In-process directory walk (`"project"` was already in `Safe`, while the registered tool name is `"project_map"`). | | `validate_data` | `ReadOnly`, `Sandboxable` /
-
-- **Issue #7430** (2026-11-21): **fix(execpolicy): scan static awk and sed program payloads**
-  *Symptoms*: ## What and why  `awk 'BEGIN{system("rm x")}'` and `sed 's/a/rm x/e'` execute deny-listed commands from inside static program text that `crates/execpolicy/src/shell_expand.rs` previously treated as opaque. Under `AskForApproval::Never` with a `rm` deny rule, those commands were allowed through.  This change adds static program scanners for both families in `shell_expand.rs`: - **`awk` / `gawk` / `mawk` / `nawk` / `goawk`**: extracts program text from positional operands, `-e`, `--source`, and `-W source=`, tokenizes awk code (handling strings with octal/hex escapes, `#` comments, and regex vs. division `/` disambiguation), and emits command payloads from `system(...)`, `expr | getline` / `|& getline`, and `print`/`printf ... | expr` / `|& expr` through `code_payload`. Non-literal command expressions (e.g. `system(cmd)`, `print "a" | c`), dynamic script operands (`awk $PROG`), and stdin/fd script files (`-f -`, `-f /dev/stdin`) fail closed by marking `Expansion::dynamic`. - **`sed` / `gsed` / `ssed`**: extracts scripts from positional operands (including BSD `sed -i ''` / `-i .bak` forms), `-e`, and `--expression`, parses addresses and commands (respecting alternate delimiters, regex character classes, `a`/`i`/`c` text blocks, `y///`, labels, and `s///w` filenames), and emits payloads from `s/.../.../e` and standalone `e <cmd>` through `code_payload`. Bare `e`, `s///e` forms that can execute runtime pattern space, dynamic script operands, and stdin/fd script files mark `Expans
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1987,503 +1987,424 @@ pub use codewhale_protocol::request::*;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `88357eb4` (2026-11-20)
-**Commit Message**: fix(execpolicy): preserve command stdin under group redirection (CW-8303)
+### Incident Patch 1: `6c211938` (2026-11-21)
+**Commit Message**: Sync the packaged TUI changelog for the notice correction
 
-Treat group stdin as inherited input and preserve the stdin metadata of a command-owned heredoc. Keep deny target collection and command-side redirections unchanged.
+Regenerated the existing release-note projection with scripts/sync-changelog.sh. The version drift check now passes locally with 40 feature issue references.
 
-Checks: 1 focused shell parser test passed, 0 failed using rustc with pinned shlex source; rustfmt, git diff --check, and release-version checks passed.
-
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `crates/tui/CHANGELOG.md` (modified, +2/-0)
 ```diff
-@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  
  ## [Unreleased]
  
-+- **Shell groups preserve command-owned input:** policy evaluation keeps each command's explicit stdin source when a redirection supplies default input to its enclosing group. (CW-8303)
- ## [0.10.3] - 2026-11-18
++- Native release bundles, the Windows installer, npm packages and published crates include the Codewhale license and both third-party notice documents.
++
+ - Stopping an external agent while it waits for approval now records the turn as interrupted even when the agent replies that it finished. (CW-7965)
  
- Codewhale v0.10.3 brings a unified Plugins surface with Creator mode (`[features] plugin_creator`) and unmodified DeepSeek Harness (`@deepseek-ai/dsh-*`) plugin compatibility, an upgraded Auto-Review guardian with workspace boundaries, soft rules, sub-agent return review, and one-use retry approvals, and a single `Shift+Tab` permission dial defaulting to Accept Edits (`Ask → Accept Edits → Plan → Auto-Review → Full Access`). It moves the ACP server and external-agent sessions (including Qwen Code and GitHub Copilot CLI) onto the official Agent Client Protocol SDK, publishes native signed HarmonyOS ARM64 release assets, adds a verified signed model-and-provider registry channel alongside unified model-ID resolution and managed `/v1/models` pricing, updates design tokens to `5.4.0` with a docked single-line approval strip, folded turn activity, live working-row light sweeps and 13 hex-lattice dot-whale forms, adds `claude-org` billing auth, `show_data` transcript charts, `codewhale sessions migrate`, DeepSeek Chatbot web search and speech tools, receipted self-updates and `codewhale uninstall`, and lands reliability, CJK/Unicode, Windows, and sandbox security fixes.
+ - The Simplified Chinese telemetry guide now explains which files each process keeps, how much disk space they use and when old files are removed. (CW-7987)
 ```
 
-**File**: `crates/execpolicy/src/shell_expand.rs` (modified, +29/-3)
+---
+
+### Incident Patch 2: `30ca06be` (2026-11-21)
+**Commit Message**: fix(release): preserve remaining ownership during partial command restore
+
+Keep validated ownership for untouched aliases when one restored command changes. Record the installed replacement digest when displacing a command so undo can distinguish its own unclaimed replacement from a later user edit. Historical four-column recovery manifests still work. All five release recovery tests passed locally, including partial restore and modified-command undo.
+
+**File**: `CHANGELOG.md` (modified, +1/-1)
 ```diff
-@@ -1462,6 +1462,12 @@ struct Line {
-     stdin_piped: bool,
+@@ -282,7 +282,7 @@ Codewhale v0.10.3 brings a unified Plugins surface with Creator mode (`[features
+ - **MCP catalogs stay fresh:** a server's tools, resources, prompts and skills are rediscovered on their own connection when an advertised `ttlMs` expires or the server sends a list-changed notice. A tool resolved against the old catalog is refused with "retry the call", a removed tool cannot run, and a failed refresh reconnects instead of serving stale entries. Catalogs are never shared across servers, credentials or reconnects.
+ - **MCP Skills extension:** servers that advertise the published Skills extension have their skills listed in `list_mcp_resources`. Listing never activates a skill, and reading a skill file is refused unless its size and sha256 digest match the listing. MCP skills do not yet join `/skills`.
+ - **Updates install themselves:** release-binary installs check for a new release every 6 hours (was 1), download and checksum-verify it in the background, and apply it the next time `codewhale` starts, never during a session. One line says `Updated to v… · What's new: … · Undo: codewhale update --rollback`. Until releases are signed, the download waits for your OK (one `[y/N]` question at the next start, or `/update install`); a release with a valid Ed25519 manifest signature applies on its own. `codewhale update --rollback` puts back the version the last update replaced and keeps the rolled-back version from returning automatically. Turn it down with `codewhale config set update.mode notify` (or `off`, or `CODEWHALE_UPDATE_MODE`); an organization's root-owned `policy.toml` overrides both. Offline and rate-limited checks retry about an hour later instead of on every launch. Package-manager and desktop-app copies only get their manager's command. Builds with the release key refuse a missing or invalid signature, and re-check the staged binary against the signed manifest at start. The checksum manifest now always comes from GitHub Releases; on Linux x64 the CNB mirror can still serve the binary, but only bytes that GitHub's manifest lists.
+-- **One view of every Codewhale on the machine:** `codewhale doctor` has an Installations section and `codewhale doctor --installs` (`--json`, `--brief`) lists every `codewhale`, `codew`, `codewhale-tui`, `deepseek` and `deepseek-tui` with its owner: install receipt, package manager (with its exact removal command), the desktop app, a backup, or not ours. Nothing found is ever run. `codewhale doctor --fix` adds one plan to tidy them: old backups move to `~/.codewhale/recovery/<stamp>/` (kept 30 days, then deleted by a later `--fix`), an unreceipted `codew` is brought in line with `codewhale`, and the directory gets an install receipt; each move prints its undo and `codewhale doctor --restore <stamp>` reverses the lot. Package-managed, desktop-app, symlinked and foreign files are never touched, and neither is user data. `codewhale uninstall` now lists other copies with the same classification. Restoring an older command set now keeps its ownership receipt consistent and preserves the displaced receipt for undo.
++- **One view of every Codewhale on the machine:** `codewhale doctor` has an Installations section and `codewhale doctor --installs` (`--json`, `--brief`) lists every `codewhale`, `codew`, `codewhale-tui`, `deepseek` and `deepseek-tui` with its owner: install receipt, package manager (with its exact removal command), the desktop app, a backup, or not ours. Nothing found is ever run. `codewhale doctor --fix` adds one plan to tidy them: old backups move to `~/.codewhale/recovery/<stamp>/` (kept 30 days, then deleted by a later `--fix`), an unreceipted `codew` is brought in line with `codewhale`, and the directory gets an install receipt; each move prints its undo and `codewhale doctor --restore <stamp>` reverses the lot. Package-managed, desktop-app, symlinked and foreign files are never touched, and neither is user data. `codewhale uninstall` now lists other copies with the same classification. Restoring an older command set now keeps its ownership receipt consistent and preserves the displaced receipt for undo. A partial restore retains ownership of unchanged commands.
+ - **Uninstall guidance on every install route:** `codewhale uninstall` previews receipt-owned release files and `--yes` removes only checked files, with the running command last. Both Unix installers and the Windows archive installer record command ownership; self-update renews existing receipts on both. On Windows the running `codewhale.exe` is renamed, then a hidden PowerShell process deletes it after the command exits. Package-managed copies are left alone, and the command prints their exact removal command: npm with its prefix, Cargo with its root, the Homebrew formula, `scoop uninstall codewhale`, `winget uninstall --id HunterBown.CodeWhale`, or the Windows setup's `Uninstall.exe`. Every other `codewhale`/`codew` still on PATH is listed. User data is kept unless you add `--purge-da
+```
+
+**File**: `crates/release/src/installs.rs` (modified, +73/-10)
+```diff
+@@ -794,6 +794,10 @@ impl RecoveryBatch {
+     }
+ 
+     pub fn move_in(&mut self, path: &Path) -> Result<RecoveryMove> {
++        self.move_in_replaced(path, None)
++    }
++
++    fn move_in_replaced(&mut self, path: &Path, replacement: Option<&str>) -> Result<RecoveryMove> {
+         let original = path.to_string_lossy();
+         if original.contains(['\t', '\n', '\r']) {
+             bail!(
+@@ -842,7 +846,10 @@ impl RecoveryBatch {
+                 format!("failed to move {} to {}", path.display(), to.display())
+             })?;
+         }
+-        let line = format!("{original}\t{}\t{digest}\t{bytes}\n", to.display());
++        let suffix = replacement
++            .map(|digest| format!("\t{digest}"))
++            .unwrap_or_default();
++        let line = format!("{original}\t{}\t{digest}\t{bytes}{suffix}\n", to.display());
+         let mut manifest = fs::OpenOptions::new()
+             .create(true)
+             .append(true)
+@@ -889,6 +896,7 @@ pub struct RecoveryRecord {
+     pub stored: PathBuf,
+     pub sha256: Option<String>,
+     pub bytes: u64,
++    pub replacement_sha256: Option<String>,
  }
  
-+fn inherit_group_stdin(commands: &mut [Line]) {
-+    for command in commands.iter_mut().filter(|command| !command.heredoc) {
-+        command.stdin_piped = true;
-+    }
+ #[derive(Debug, Clone)]
+@@ -957,6 +965,7 @@ fn read_manifest(dir: &Path) -> Vec<RecoveryRecord> {
+                 stored,
+                 sha256,
+                 bytes,
++                replacement_sha256: fields.next().map(str::to_string),
+             })
+         })
+         .collect()
+@@ -1023,11 +1032,16 @@ fn verified_recovery_file(
+     Ok(meta)
+ }
+ 
++struct DisplacedReceipt {
++    path: PathBuf,
++    retained: Vec<(String, String)>,
 +}
 +
- /// How a shell invocation receives its script.
- enum ShellInput {
-     /// `-c` / `--command`: the word at each offset may be the command line.
-@@ -1761,9 +1767,7 @@ impl Expander {
-                         line.stdin_piped = true;
-                         line.heredoc = false;
-                         if let Some(start) = last_closed_group {
--                            for cmd in &mut commands[start..] {
--                                cmd.stdin_piped = true;
--                            }
-+                            inherit_group_stdin(&mut commands[start..]);
-                         }
-                     }
-                     i += redirection_len(&chars[i..]);
-@@ -4471,6 +4475,28 @@ fn shell_input(shell: &str, tokens: &[String], dynamic: &[bool]) -> ShellInput {
- mod tests {
-     use super::*;
- 
-+    #[test]
-+    fn group_input_preserves_command_owned_stdin() {
-+        let mut commands = [
-+            Line::default(),
-+            Line {
-+                stdin_piped: true,
-+                ..Line::default()
-+            },
-+            Line {
-+                heredoc: true,
-+                ..Line::default()
-+            },
-+        ];
-+
-+        inherit_group_stdin(&mut commands);
-+
-+        assert_eq!(
-+            commands.map(|command| (command.stdin_piped, command.heredoc)),
-+            [(true, false), (true, false), (false, true)]
-+        );
-+    }
-+
-     fn expand(command: &str) -> Vec<String> {
-         // Exercise the POSIX grammar consistently on every test host.
-         expanded_commands_for_platform(command, false)
-```
-
-**File**: `crates/tui/CHANGELOG.md` (modified, +1/-0)
-```diff
-@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- ## [Unreleased]
- 
-+- **Shell groups preserve command-owned input:** policy evaluation keeps each command's explicit stdin source when a redirection supplies default input to its enclosing group. (CW-8303)
- ## [0.10.3] - 2026-11-18
- 
- Codewhale v0.10.3 brings a unified Plugins surface with Creator mode (`[features] plugin_creator`) and unmodified DeepSeek Harness (`@deepseek-ai/dsh-*`) plugin compatibility, an upgraded Auto-Review guardian with workspace boundaries, soft rules, sub-agent return review, and one-use retry approvals, and a single `Shift+Tab` permission dial defaulting to Accept Edits (`Ask → Accept Edits → Plan → Auto-Review → Full Access`). It moves the ACP server and external-agent sessions (including Qwen Code and GitHub Copilot CLI) onto the official Agent Client Protocol SDK, publishes native signed HarmonyOS ARM64 release assets, adds a verified signed model-and-provider registry channel alongside unified model-ID resolution and managed `/v1/models` pricing, updates design tokens to `5.4.0` with a docked single-line approval strip, folded turn activity, live working-row light sweeps and 13 hex-lattice dot-whale forms, adds `claude-org` billing auth, `show_data` transcript charts, `codewhale sessions migrate`, DeepSeek Chatbot web search and speech tools, receipted self-updates and `codewhale uninstall`, and lands reliability, CJK/Unicode, Windows, and sandbox security fixes.
-```
-
----
-
-### Incident Patch 2: `7b543aec` (2026-11-20)
-**Commit Message**: fix(engine): classify local read-only deferred tools as Safe in get_tool_category
-
-Follow-up to #7372 / e8b51b39 (#7407).
-
-get_tool_category left local read-only tools, read-action canonical
-targets, and legacy tool_search spellings unclassified, so they fell
-through to ToolCategory::Unknown and Auto-Review routed every call to
-AskUser.
-
-Classified as ToolCategory::Safe:
-- is_tool_search_tool(name): covers tool_search and legacy dispatchable
-  spellings tool_search_tool_regex / tool_search_tool_bm25.
-- Local read-only stores and inspection/presentation tools (all declared
-  ToolCapability::ReadOnly with ApprovalRequirement::Auto):
-  context_archive_get, context_archive_search, session_get,
-  session_search, memory_get, memory_search, project_map, validate_data,
-  tui_help, notify, show_data, present, lsp, git_merge_tree,
-  agents/list, agents/wait.
-- Canonical read-action targets for tasks and automation:
-  task_list, task_read, pr_attempt_list, pr_attempt_read,
-  automation_list, automation_read.
-
-Intentionally left as ToolCategory::Unknown (held for explicit review):
-- External-process / network-capable or non-ReadOnly tools: image_ocr
-  (external OCR binaries + DeepSeek OCR netw
-
-**File**: `crates/engine/src/core/authority.rs` (modified, +155/-2)
-```diff
-@@ -20,6 +20,7 @@ use codewhale_config::AppMode;
- use codewhale_execpolicy::ApprovalMode;
- use codewhale_execpolicy::canonical_action::canonical_action_alias;
- use codewhale_sandbox::SandboxPolicy;
-+use codewhale_tools::names::is_tool_search_tool;
- use serde_json::Value;
- 
- use super::ops::UserInputProvenance;
-@@ -1226,14 +1227,36 @@ pub fn get_tool_category(name: &str) -> ToolCategory {
-             | "git_show"
-             | "git_blame"
-             | "git_commit_plan"
-+            | "git_merge_tree"
-             | "git_review_scope"
-             | "project"
-+            | "project_map"
-             | "diagnostics"
-+            | "lsp"
-             | "load_skill"
--            | "tool_search"
-             | "handle_read"
-             | "retrieve_tool_result"
--    ) || name.starts_with("read_")
-+            | "context_archive_get"
-+            | "context_archive_search"
-+            | "session_get"
-+            | "session_search"
-+            | "memory_get"
-+            | "memory_search"
-+            | "validate_data"
-+            | "tui_help"
-+            | "notify"
-+            | "show_data"
-+            | "present"
-+            | "agents/list"
-+            | "agents/wait"
-+            | "task_list"
-+            | "task_read"
-+            | "pr_attempt_list"
-+            | "pr_attempt_read"
-+            | "automation_list"
-+            | "automation_read"
-+    ) || is_tool_search_tool(name)
-+        || name.starts_with("read_")
-         || name.starts_with("list_")
-         || name.starts_with("get_")
-     {
-@@ -2066,13 +2089,143 @@ mod tests {
- 
-     #[test]
-     fn tool_category_keeps_deferred_read_only_tools_safe() {
-+        let policy = auto_review::AutoReviewPolicy::default();
-+        let empty = serde_json::json!({});
-+
-         for name in [
-             "load_skill",
-             "tool_search",
-+            "tool_search_tool_regex",
-+            "tool_search_tool_bm25",
-             "handle_read",
-             "retrieve_tool_result",
-+            "lsp",
-+            "context_archive_get",
-+            "context_archive_search",
-+            "session_get",
-+            "session_search",
-+            "memory_get",
-+            "memory_search",
-+            "project_map",
-+            "validate_data",
-+            "tui_help",
-+            "notify",
-+            "show_data",
-+            "present",
-+            "agents/list",
-+            "agents/wait",
-+            "git_merge_tree",
-+            "task_list",
-+            "task_read",
-+            "pr_attempt_list",
-+            "pr_attempt_read",
-+            "automation_list",
-+            "automation_read",
-         ] {
-             assert_eq!(get_tool_category(name), ToolCategory::Safe, "{name}");
-+            let ctx = auto_review::AutoReviewContext::from_tool_call(
-+                name,
-+                &empty,
-+                RunOrigin::Background,
-+                ApprovalMode::Auto,
-+                true,
-+                None,
-+            );
-+            assert_eq!(
-+                policy.evaluate(&ctx).action,
-+                auto_review::AutoReviewAction::Allow,
-+                "{name}"
-+            );
-+        }
-+
-+        for (family, action) in [
-+            ("Git", "merge_tree"),
-+            ("tasks", "list"),
-+            ("tasks", "read"),
-+            ("tasks", "pr_attempt_list"),
-+            ("tasks", "pr_attempt_read"),
-+            ("automation", "list"),
-+            ("automation", "read"),
-+        ] {
-+            let params = serde_json::json!({ "action": action });
-+            assert_eq!(
-+                get_tool_category_for_call(family, &params),
-+                ToolCategory::Safe,
-+                "{family}.{action}"
-+            );
-+            let ctx = auto_review::AutoReviewContext::from_tool_call(
-+                family,
-+                &params,
-+                RunOrigin::Background,
-+                ApprovalMode::Auto,
-+                true,
-+                None,
-+            );
-+            assert_eq!(
-+                policy.evaluate(&ctx).action,
-+                auto_review::AutoReviewAction::Allow,
-+                "{family}.{action}"
-+            );
-+        }
-+
-+        for name in [
-+            "image_ocr",
-+            "image_analyze",
-+            "pandoc_convert",
-+            "finance",
-+            "verify",
-+            "review",
-+            "github_issue_context",
-+            "github_pr_context",
-+            "github_report_read",
-+            "pr_attempt_preflight",
-+        ] {
-+            assert_eq!(get_tool_category(name), ToolCategory::Unknown, "{name}");
-+            let ctx = auto_review::AutoReviewContext::from_tool_call(
-+                name,
-+                &empty,
-+                RunOrigin::Background,
-+                ApprovalMode::Auto,
-+                true,
-+                None,
-+            );
-+            assert_eq!(
-+                policy.evaluate(&ctx).action,
-+                auto_review::AutoReviewAction::AskUser,
-+                "{name}"
-+            )
-```
-
----
-
-### Incident Patch 3: `e1871d57` (2026-11-20)
-**Commit Message**: fix(execpolicy): scan static awk and sed program payloads
-
-Scan static awk/gawk/mawk/nawk/goawk program text (positional operand,
--e, --source, and -W source=) for system(...) calls and | / |& pipe and
-coprocess commands (both expr | getline and print/printf ... | expr).
-Literal command strings (including concatenated string literals and
-octal/hex escapes) are emitted through code_payload; non-literal command
-expressions, dynamic script operands, and stdin/fd script files fail
-closed by marking Expansion::dynamic.
-
-Scan static sed/gsed/ssed scripts (positional operand, BSD -i suffix
-forms, -e, and --expression) for the e flag on s/// (any delimiter,
-respecting regex character classes and w-flag filenames) and standalone
-e commands. Command payloads flow through code_payload; bare e and
-s///e forms that can execute runtime pattern space mark dynamic.
-
-Verified with cargo test -p codewhale-execpolicy (271 passed, 0 failed),
-cargo clippy -p codewhale-execpolicy --all-targets -- -D warnings, and
-cargo fmt --all -- --check.
-
-Closes #7413
-
-Change-Id: Ic97127173f5d2bed56e349176a2b7c4c59d5951d
-
-**File**: `crates/execpolicy/src/shell_expand.rs` (modified, +1265/-109)
-```diff
-@@ -1982,6 +1982,12 @@ impl Expander {
-                     }
-                 }
-                 "powershell" | "pwsh" => self.record_powershell(tokens, head, &dynamic, depth),
-+                "awk" | "gawk" | "mawk" | "nawk" | "goawk" => {
-+                    self.record_awk_program(tokens, head, &dynamic, depth);
-+                }
-+                "sed" | "gsed" | "ssed" => {
-+                    self.record_sed_program(tokens, head, &dynamic, depth);
-+                }
-                 _ if SHELL_NAMES.contains(&name.as_str()) => {
-                     match shell_input(&name, &tokens[head..], &dynamic[head..]) {
-                         ShellInput::Command(offsets) => {
-@@ -2280,124 +2286,1138 @@ impl Expander {
-                         found = Some((tokens[i + 1].clone(), i + 1));
-                         i += 1;
-                     }
--                }
--            } else if let Some(flags) = token.strip_prefix('-') {
--                for (at, ch) in flags.char_indices() {
--                    if short_flags.contains(&ch) {
--                        let rest = &flags[at + ch.len_utf8()..];
--                        if !rest.is_empty() {
--                            found = Some((rest.to_string(), i));
--                        } else if i + 1 < opt_end {
--                            found = Some((tokens[i + 1].clone(), i + 1));
--                            i += 1;
-+                }
-+            } else if let Some(flags) = token.strip_prefix('-') {
-+                for (at, ch) in flags.char_indices() {
-+                    if short_flags.contains(&ch) {
-+                        let rest = &flags[at + ch.len_utf8()..];
-+                        if !rest.is_empty() {
-+                            found = Some((rest.to_string(), i));
-+                        } else if i + 1 < opt_end {
-+                            found = Some((tokens[i + 1].clone(), i + 1));
-+                            i += 1;
-+                        }
-+                        break;
-+                    }
-+                }
-+            }
-+            i += 1;
-+        }
-+        if let Some((prog, prog_idx)) = found
-+            && !prog.is_empty()
-+        {
-+            let combined = build_prefixed_line(&prog, prog_idx, line, args_start);
-+            self.record(&combined, depth + 1);
-+        }
-+    }
-+
-+    /// Code handed to another command as a string: parse it as a command line.
-+    fn code_payload(&mut self, payload: &str, dynamic: bool, depth: usize) {
-+        self.dynamic |= dynamic;
-+        self.expand(payload, depth + 1);
-+    }
-+
-+    /// `powershell` / `pwsh`: `-Command` (or any prefix of it) takes the rest
-+    /// of the line as code, `-EncodedCommand` cannot be read statically, and
-+    /// a bare operand may start code too (Windows PowerShell's default).
-+    /// PowerShell syntax is only approximated by the POSIX parser, which is
-+    /// enough to find the command words a deny rule names.
-+    fn record_powershell(
-+        &mut self,
-+        tokens: &[String],
-+        head: usize,
-+        dynamic: &[bool],
-+        depth: usize,
-+    ) {
-+        let rest = |at: usize| {
-+            (
-+                tokens[at..].join(" "),
-+                dynamic[at..].iter().any(|dynamic| *dynamic),
-+            )
-+        };
-+        let mut positional_seen = false;
-+        for at in head + 1..tokens.len() {
-+            let Some(option) = tokens[at].strip_prefix(['-', '/']) else {
-+                if !positional_seen {
-+                    positional_seen = true;
-+                    let (payload, payload_dynamic) = rest(at);
-+                    self.code_payload(&payload, payload_dynamic, depth);
-+                }
+ fn command_receipt_to_displace(
+     directory: &Path,
+     records: &BTreeMap<&Path, &RecoveryRecord>,
+     owner: Option<u64>,
+-) -> Result<Option<PathBuf>> {
++) -> Result<Option<DisplacedReceipt>> {
+     let receipt = directory.join(RECEIPT_FILE);
+     let meta = match fs::symlink_metadata(&receipt) {
+         Ok(meta) => meta,
+@@ -1045,17 +1059,19 @@ fn command_receipt_to_displace(
+     }
+     let claims = parse_command_receipt(&read_small(&receipt, 512)?)?;
+     let mut changes_owned_bytes = false;
++    let mut retained = Vec::new();
+     for name in RECEIPT_COMMANDS {
+         let command = directory.join(name);
+-        if records.contains_key(command.as_path())
++        if let Some(record) = records.get(command.as_path())
++            && record.replacement_sha256.is_none()
+             && !claims.contains_key(*name)
+             && fs::symlink_metadata(&command).is_ok()
+         {
+             bail!("preserved unclaimed command {}", command.display());
+         }
+     }
+     for (name, expected) in claims {
+-        let path = directory.join(name);
++        let path = directory.join(&name);
+         match fs::symlink_metadata(&path) {
+             Ok(current)
+                 if current.is_file()
+@@ -1067,13 +1083,25 @@ fn command_receipt_to_displace(
+             _ => bail!("preserved modified command {}", path.display()),
+         }
+         if let Some(record) = records.get(path.as_path()) {
+-            changes_owned_bytes |= match &record.sha256 {
++            let changes = match &record.sha256 {
+                 Some(digest) => digest != &expected,
+                 None => file_sha256(&record.stored)? != expected,
+             };
++            if changes {
++                changes_owned_bytes = true;
 +                continue;
++            }
+         }
++        retained.push((name, expected));
++    }
++    let saved = records.contains_key(receipt.as_path());
++    if saved {
++        retained.clear();
+     }
+-    Ok((changes_owned_bytes || records.contains_key(receipt.as_path())).then_some(receipt))
++    Ok((changes_owned_bytes || saved).then_some(DisplacedReceipt {
++        path: receipt,
++        retained,
++    }))
+ }
+ 
+ fn validate_saved_command_receipt(
+@@ -1134,6 +1162,21 @@ pub fn restore(home: &Path, stamp: Option<&str>) -> Result<(String, RestoreRepor
+             })
+         })
+         .collect();
++    for record in records.values() {
++        if let Some(expected) = &record.replacement_sha256 {
++            let current = match fs::symlink_metadata(&record.original) {
++                Ok(meta) => meta,
++                Err(error) if error.kind() == std::io::ErrorKind::NotFound => continue,
++                Err(error) => return Err(error.into()),
 +            };
-+            let option = option.to_ascii_lowercase();
-+            if option.is_empty() {
-+                continue;
-+            }
-+            if "command".starts_with(option.as_str()) {
-+                if at + 1 >= tokens.len() || tokens[at + 1] == "-" {
-+                    // The code arrives on stdin.
-+                    self.dynamic = true;
-+                } else {
-+                    let (payload, payload_dynamic) = rest(at + 1);
-+                    self.code_payload(&payload, payload_dynamic, depth);
-+                }
-+                return;
-+            }
-+            if option == "ec" || "encodedcommand".starts_with(option.as_str()) {
-+                self.dynamic = true;
-+                return;
-+            }
-+            if "file".starts_with(option.as_str()) {
-+                // A script file is opaque, as it is for every other shell.
-+                return;
++            if !current.is_file()
++                || !owned_by(&current, owner_id(home))
++                || file_sha256(&record.original)? != *expected
++            {
++                bail!("preserved modified command {}", record.original.display());
 +            }
 +        }
 +    }
-+
-+    /// `find … -exec CMD … ;` runs `CMD` for every match.
-+    fn record_find_exec(&mut self, line: &Line, head: usize, depth: usize) {
-+        let tokens = &line.words;
-+        let mut index = head + 1;
-+        while index < tokens.len() {
-+            if matches!(
-+                tokens[index].as_str(),
-+                "-exec" | "-execd
+     let mut receipts = Vec::new();
+     for dir in directories {
+         let receipt = dir.join(RECEIPT_FILE);
+@@ -1163,7 +1206,15 @@ pub fn restore(home: &Path, stamp: Option<&str>) -> Result<(String, RestoreRepor
+     if !receipts.is_empty() {
+         let mut batch = RecoveryBatch::open(home)?;
+         for receipt in receipts {
+-            batch.move_in(&receipt)?;
++            batch.move_in(&rec
 ```
 
-**File**: `crates/execpolicy/tests/shell_parse_policy.rs` (modified, +45/-0)
+**File**: `crates/release/tests/recovery_records.rs` (modified, +44/-0)
 ```diff
-@@ -256,6 +256,35 @@ const HIDDEN_RM: &[&str] = &[
-     "at -f script.sh now",
-     "at -f script.sh -l",
-     "at -l -f script.sh",
-+    "awk 'BEGIN{system(\"rm x\")}'",
-+    "awk 'BEGIN{\"rm x\" | getline}'",
-+    "awk 'BEGIN{\"rm x\" |& getline}'",
-+    "awk 'BEGIN{print \"x\" | \"rm y\"}'",
-+    "awk 'BEGIN{print \"x\" |& \"rm y\"}'",
-+    "awk 'BEGIN{c=\"rm x\"; system(c)}'",
-+    "awk 'BEGIN{system(\"r\" \"m\" \" x\")}'",
-+    r#"awk 'BEGIN{system("\162\155 x")}'"#,
-+    "awk '{x = a / b; system(\"rm x\"); y = c / d}'",
-+    "gawk -e 'BEGIN{system(\"rm x\")}'",
-+    "gawk --source='BEGIN{system(\"rm x\")}'",
-+    "awk $PROG file",
-+    "sed 's/a/rm x/e'",
-+    "sed 's#a#rm x#ge'",
-+    "sed 's|a|rm x|2ep'",
-+    "sed 's/.*/rm x/e'",
-+    "sed 's/a/rm x/ew /tmp/out'",
-+    "sed 's/^//e'",
-+    "sed 'e rm x'",
-+    "sed '1e rm x'",
-+    "sed '/foo/e rm x'",
-+    "sed 'e'",
-+    "sed '1{e}'",
-+    "sed 's/foo/bar/g; e rm x'",
-+    "sed -e 's/a/b/' -e 's/c/rm x/e'",
-+    "sed --expression='e rm x'",
-+    "sed -i '' 's/a/rm x/e' file.txt",
-+    "sed -i .bak 's/a/rm x/e' file.txt",
-+    "sed $PROG file",
- ];
+@@ -164,3 +164,47 @@ fn command_restore_preserves_ownership_and_undo() {
+         assert_eq!(fs::read(unrelated).unwrap(), b"keep me");
+     }
+ }
++
++#[test]
++fn partial_restore_keeps_other_claims_and_only_undoes_its_own_replacement() {
++    use codewhale_release::installs::{
++        RECEIPT_COMMANDS, RECEIPT_FILE, parse_command_receipt, sha256_hex,
++    };
++    let home = tempfile::tempdir().unwrap();
++    let dir = home.path();
++    let prior = dir.join(RECEIPT_COMMANDS[0]);
++    let untouched = dir.join(RECEIPT_COMMANDS[1]);
++    let receipt = dir.join(RECEIPT_FILE);
++    let original_claims = [RECEIPT_COMMANDS[0], RECEIPT_COMMANDS[1]]
++        .map(|name| format!("{}  {name}\n", sha256_hex(b"new")))
++        .concat();
++    fs::write(&prior, b"old").unwrap();
++    let mut batch = RecoveryBatch::open(dir).unwrap();
++    let stamp = batch.stamp.clone();
++    batch.move_in(&prior).unwrap();
++    batch.finish();
++    fs::write(&prior, b"new").unwrap();
++    fs::write(&untouched, b"new").unwrap();
++    fs::write(&receipt, &original_claims).unwrap();
++    let (_, report) = restore(dir, Some(&stamp)).unwrap();
++    assert!(report.skipped.is_empty());
++    let retained = parse_command_receipt(&fs::read_to_string(&receipt).unwrap()).unwrap();
++    assert_eq!(retained.len(), 1);
++    assert_eq!(retained[RECEIPT_COMMANDS[1]], sha256_hex(b"new"));
++    assert_eq!(fs::read(&prior).unwrap(), b"old");
++    assert_eq!(fs::read(&untouched).unwrap(), b"new");
++    let undo = report.displaced.unwrap();
++    fs::write(&prior, b"my changes").unwrap();
++    assert!(restore(dir, Some(&undo)).is_err());
++    assert_eq!(fs::read(&prior).unwrap(), b"my changes");
++    assert_eq!(
++        retained,
++        parse_command_receipt(&fs::read_to_string(&receipt).unwrap()).unwrap()
++    );
++    fs::write(&prior, b"old").unwrap();
++    let (_, report) = restore(dir, Some(&undo)).unwrap();
++    assert!(report.skipped.is_empty());
++    assert_eq!(fs::read(&prior).unwrap(), b"new");
++    assert_eq!(fs::read(&untouched).unwrap(), b"new");
++    assert_eq!(fs::read_to_string(&receipt).unwrap(), original_claims);
++}
+```
+
+**File**: `crates/tui/CHANGELOG.md` (modified, +1/-1)
+```diff
+@@ -282,7 +282,7 @@ Codewhale v0.10.3 brings a unified Plugins surface with Creator mode (`[features
+ - **MCP catalogs stay fresh:** a server's tools, resources, prompts and skills are rediscovered on their own connection when an advertised `ttlMs` expires or the server sends a list-changed notice. A tool resolved against the old catalog is refused with "retry the call", a removed tool cannot run, and a failed refresh reconnects instead of serving stale entries. Catalogs are never shared across servers, credentials or reconnects.
+ - **MCP Skills extension:** servers that advertise the published Skills extension have their skills listed in `list_mcp_resources`. Listing never activates a skill, and reading a skill file is refused unless its size and sha256 digest match the listing. MCP skills do not yet join `/skills`.
+ - **Updates install themselves:** release-binary installs check for a new release every 6 hours (was 1), download and checksum-verify it in the background, and apply it the next time `codewhale` starts, never during a session. One line says `Updated to v… · What's new: … · Undo: codewhale update --rollback`. Until releases are signed, the download waits for your OK (one `[y/N]` question at the next start, or `/update install`); a release with a valid Ed25519 manifest signature applies on its own. `codewhale update --rollback` puts back the version the last update replaced and keeps the rolled-back version from returning automatically. Turn it down with `codewhale config set update.mode notify` (or `off`, or `CODEWHALE_UPDATE_MODE`); an organization's root-owned `policy.toml` overrides both. Offline and rate-limited checks retry about an hour later instead of on every launch. Package-manager and desktop-app copies only get their manager's command. Builds with the release key refuse a missing or invalid signature, and re-check the staged binary against the signed manifest at start. The checksum manifest now always comes from GitHub Releases; on Linux x64 the CNB mirror can still serve the binary, but only bytes that GitHub's manifest lists.
+-- **One view of every Codewhale on the machine:** `codewhale doctor` has an Installations section and `codewhale doctor --installs` (`--json`, `--brief`) lists every `codewhale`, `codew`, `codewhale-tui`, `deepseek` and `deepseek-tui` with its owner: install receipt, package manager (with its exact removal command), the desktop app, a backup, or not ours. Nothing found is ever run. `codewhale doctor --fix` adds one plan to tidy them: old backups move to `~/.codewhale/recovery/<stamp>/` (kept 30 days, then deleted by a later `--fix`), an unreceipted `codew` is brought in line with `codewhale`, and the directory gets an install receipt; each move prints its undo and `codewhale doctor --restore <stamp>` reverses the lot. Package-managed, desktop-app, symlinked and foreign files are never touched, and neither is user data. `codewhale uninstall` now lists other copies with the same classification. Restoring an older command set now keeps its ownership receipt consistent and preserves the displaced receipt for undo.
++- **One view of every Codewhale on the machine:** `codewhale doctor` has an Installations section and `codewhale doctor --installs` (`--json`, `--brief`) lists every `codewhale`, `codew`, `codewhale-tui`, `deepseek` and `deepseek-tui` with its owner: install receipt, package manager (with its exact removal command), the desktop app, a backup, or not ours. Nothing found is ever run. `codewhale doctor --fix` adds one plan to tidy them: old backups move to `~/.codewhale/recovery/<stamp>/` (kept 30 days, then deleted by a later `--fix`), an unreceipted `codew` is brought in line with `codewhale`, and the directory gets an install receipt; each move prints its undo and `codewhale doctor --restore <stamp>` reverses the lot. Package-managed, desktop-app, symlinked and foreign files are never touched, and neither is user data. `codewhale uninstall` now lists other copies with the same classification. Restoring an older command set now keeps its ownership receipt consistent and preserves the displaced receipt for undo. A partial restore retains ownership of unchanged commands.
+ - **Uninstall guidance on every install route:** `codewhale uninstall` previews receipt-owned release files and `--yes` removes only checked files, with the running command last. Both Unix installers and the Windows archive installer record command ownership; self-update renews existing receipts on both. On Windows the running `codewhale.exe` is renamed, then a hidden PowerShell process deletes it after the command exits. Package-managed copies are left alone, and the command prints their exact removal command: npm with its prefix, Cargo with its root, the Homebrew formula, `scoop uninstall codewhale`, `winget uninstall --id HunterBown.CodeWhale`, or the Windows setup's `Uninstall.exe`. Every other `codewhale`/`codew` still on PATH is listed. User data is kept unless you add `--purge-da
+```
+
+---
+
+### Incident Patch 3: `b0d4ae89` (2026-11-21)
+**Commit Message**: fix(engine): preserve child tool authority when connectors refresh
+
+Rebuild the child connector catalog from its current authority and the connected operations at every refresh. Use the child-bound schema and the per-turn allow and deny policy for boot, discovery and connection changes.
+
+Checked formatting, git diff, and 4096 in-memory connected/admitted catalog combinations. Added connected and disconnected assertions to the existing delegation fixture.
+
+**File**: `CHANGELOG.md` (modified, +1/-1)
+```diff
+@@ -19,7 +19,7 @@ Codewhale v0.10.3 brings a unified Plugins surface with Creator mode (`[features
+ - **Exact route inventory:** model lists separate metadata, observed roster evidence and readiness; optional session selections reject changed account or endpoint bindings, and the terminal shows the catalog status from that same route inventory, including on bundled fallback rows. A new Runtime thread can commit an exact selection before it becomes visible. Empty discovery no longer masquerades as a failed refresh. (CW-8311)
  
- /// Literal spellings that were already denied and must stay denied.
-@@ -403,6 +432,22 @@ fn ordinary_commands_stay_allowed_next_to_a_deny_rule() {
-             "at -d 3",
-             "at -c 3",
-             "batch -l",
-+            "awk '{print}'",
-+            "awk '{print $1}'",
-+            "awk -F: '{print $1}' /etc/passwd",
-+            "awk '/foo|bar/ {print}' file.txt",
-+            "awk '$1 == \"a\" || $2 == \"b\" {print}' file.txt",
-+            "awk '{print $1 / 2}' file.txt",
-+            "awk '{print \"system(\\\"rm x\\\")\"}'",
-+            "sed -n '/x/p'",
-+            "sed 's/foo/bar/g'",
-+            "sed -e 's/echo/echoed/g'",
-+            "sed 's/e/x/g'",
-+            "sed 's/a/b/w readme.txt'",
-+            "sed 'y/abcde/ABCDE/'",
-+            "sed ':end; s/a/b/; t end'",
-+            "sed -i 's/foo/bar/' file.txt",
-+            "sed -i '' 's/foo/bar/g' file.txt",
-         ] {
-             let decision = engine
-                 .check(context(command, AskForApproval::Never))
+ - **DSH reviewed client module map:** CommonJS client activation uses the installer’s admitted import edges for relative modules, JSON, cycles and contained package exports. Undeclared requests fail closed, and prior compatibility receipts require review again. Installed Engine/App qualification remains pending (CW-8288, CW-8014, CW-8019).
+-- An explicitly scoped child can request a read from an operator-declared static HTTP connector with a matching account binding, schema and approved arguments.
++- An explicitly scoped child can request a read from an operator-declared static HTTP connector with a matching account binding, schema and approved arguments. Connector refreshes preserve the child’s authorized tool catalog.
+ - **SearchApi web search provider:** `web_search` now supports SearchApi (`[search] provider = "searchapi"`, `SEARCHAPI_API_KEY` or `[search] api_key`) for Google organic results with `hl`, `gl`, and `time_period` filtering. Thanks [@gabsferreira](https://github.com/gabsferreira) (#7410).
+ - **Crisper 980-dot whale and activity forms in `/pet`:** the terminal pet's 980 dots now compile from perimeter-anchored hexagonal-lattice silhouettes with rorqual throat illumination at rest and cleaner edges across all thirteen running, waiting and done forms, while keeping zero motion under Hold still and Reduce motion. (CW-6453)
+ - **Terminal and website design tokens updated to 5.4.0:** vendored `codewhale-design` `5.4.0` and `codewhale-ratatui` `5.4.0` roles (`Subagent` and `LivePeak`), exported the updated `5.4.0` CSS custom properties to the website (`web/app/tokens.css`), fixed `adapt_fg_for_depth` ANSI-16 appearance awareness (bright 9–14 on dark, dark 1–6 on light) so warnings and status lines stay legible on light 16-color terminals, and preserved green/red hues (`22`/`52` dark, `158`/`224` light) on 256-color diff line backgrounds. (CW-8264)
+```
+
+**File**: `crates/engine/src/core/engine/turn_loop.rs` (modified, +21/-29)
+```diff
+@@ -1079,12 +1079,12 @@ impl Engine {
+         policy: &ToolSurfacePolicy,
+         catalog: &mut Vec<Tool>,
+         active: &mut std::collections::HashSet<String>,
+-    ) {
++    ) -> bool {
+         if !self.config.features.enabled(Feature::Mcp) {
+-            return;
++            return false;
+         }
+         let Some(pool) = self.mcp_pool.as_ref() else {
+-            return;
++            return false;
+         };
+         let (universe, mut refreshed) = {
+             let pool = pool.lock().await;
+@@ -1094,13 +1094,14 @@ impl Engine {
+         // A config/authority change during handshake can remove a server;
+         // `replace_runtime_mcp_tools` owns every MCP name already in the
+         // catalog, so its previous names leave this turn's catalog too.
+-        refreshed.retain(|tool| {
+-            policy.passes_allow_list(&tool.name)
+-                && !policy.denies_tool(&tool.name)
+-                && (self.child_host.is_none() || policy.registry.contains(&tool.name))
+-        });
++        if let Some(child) = &self.child_host {
++            refreshed = child
++                .authority
++                .connected_mcp_tools_for_model(&policy.registry, refreshed);
++        }
++        refreshed.retain(|tool| policy.allows_tool(&tool.name));
+         let always_load = self.effective_tools_always_load();
+-        if replace_runtime_mcp_tools(
++        let changed = replace_runtime_mcp_tools(
+             catalog,
+             active,
+             &universe,
+@@ -1109,9 +1110,11 @@ impl Engine {
+             &always_load,
+             self.turn_tool_surface_budget
+                 .unwrap_or(crate::model_profile::ToolSurfaceBudget::Standard),
+-        ) {
++        );
++        if changed {
+             self.session.pending_prefix_change_reason = Some("mcp-session-boot".to_string());
+         }
++        changed
+     }
+ 
+     /// A gated MCP-focused search is explicit discovery of already configured
+@@ -5719,25 +5722,14 @@ impl Engine {
+                         .and_then(|metadata| metadata.get("mcp_catalog_changed"))
+                         .and_then(serde_json::Value::as_bool)
+                         .unwrap_or(false);
+-                    if mcp_catalog_changed && let Some(pool) = self.mcp_pool.as_ref().cloned() {
+-                        let (universe, refreshed) = {
+-                            let pool = pool.lock().await;
+-                            let refreshed = pool.to_api_tools();
+-                            (pool.model_tool_names(&refreshed), refreshed)
+-                        };
+-                        let surface_budget = self
+-                            .turn_tool_surface_budget
+-                            .unwrap_or(crate::model_profile::ToolSurfaceBudget::Standard);
+-                        let always_load = self.effective_tools_always_load();
+-                        tool_surface_changed |= replace_runtime_mcp_tools(
+-                            tool_catalog,
+-                            active_tool_names,
+-                            &universe,
+-                            refreshed,
+-                            self.current_mode,
+-                            &always_load,
+-                            surface_budget,
+-                        );
++                    if mcp_catalog_changed {
++                        tool_surface_changed |= self
++                            .refresh_current_mcp_catalog(
++                                tool_policy,
++                                tool_catalog,
++                                active_tool_names,
++                            )
++                            .await;
+                     }
+                     // Any of the legitimate mid-turn tool-surface changes above
+                     // re-pin the header under a declared `change:tool_surface`
+```
+
+**File**: `crates/engine/src/mcp/tests.rs` (modified, +16/-0)
+```diff
+@@ -10892,6 +10892,22 @@ async fn delegated_read_binds_the_approved_payload_to_one_live_operation() -> Re
+     assert!(names.contains(&name.to_owned()), "{names:?}");
+     assert!(!names.contains(&"mcp_books_delete".to_owned()));
+     assert!(!names.contains(&"mcp_other_read".to_owned()));
++    let mut connected = shared.lock().await.to_api_tools();
++    assert!(connected.iter().any(|tool| tool.name == "mcp_books_delete"));
++    let refreshed = authority.connected_mcp_tools_for_model(&registry, connected.clone());
++    assert_eq!(
++        refreshed
++            .iter()
++            .map(|tool| tool.name.as_str())
++            .collect::<Vec<_>>(),
++        [name]
++    );
++    connected.retain(|tool| tool.name != name);
++    assert!(
++        authority
++            .connected_mcp_tools_for_model(&registry, connected)
++            .is_empty()
++    );
+     authority.validate(&registry, name, &allowed)?;
+     assert!(
+         authority
+```
+
+**File**: `crates/engine/src/tools/subagent/engine.rs` (modified, +12/-0)
+```diff
+@@ -872,6 +872,18 @@ impl ChildAuthority {
+             .collect()
+     }
+ 
++    pub(crate) fn connected_mcp_tools_for_model(
++        &self,
++        registry: &ToolRegistry,
++        connected: Vec<Tool>,
++    ) -> Vec<Tool> {
++        let connected: HashSet<_> = connected.into_iter().map(|tool| tool.name).collect();
++        self.tools_for_model(registry, &self.agent_type)
++            .into_iter()
++            .filter(|tool| connected.contains(&tool.name))
++            .collect()
++    }
++
+     pub fn tools_for_model(&self, registry: &ToolRegistry, agent_type: &FleetRole) -> Vec<Tool> {
+         // Filter the full registry in deny-first order. These catalog filters
+         // reduce accidental exposure, but are never the authority boundary:
+```
+
+**File**: `crates/tui/CHANGELOG.md` (modified, +1/-1)
+```diff
+@@ -19,7 +19,7 @@ Codewhale v0.10.3 brings a unified Plugins surface with Creator mode (`[features
+ - **Exact route inventory:** model lists separate metadata, observed roster evidence and readiness; optional session selections reject changed account or endpoint bindings, and the terminal shows the catalog status from that same route inventory, including on bundled fallback rows. A new Runtime thread can commit an exact selection before it becomes visible. Empty discovery no longer masquerades as a failed refresh. (CW-8311)
+ 
+ - **DSH reviewed client module map:** CommonJS client activation uses the installer’s admitted import edges for relative modules, JSON, cycles and contained package exports. Undeclared requests fail closed, and prior compatibility receipts require review again. Installed Engine/App qualification remains pending (CW-8288, CW-8014, CW-8019).
+-- An explicitly scoped child can request a read from an operator-declared static HTTP connector with a matching account binding, schema and approved arguments.
++- An explicitly scoped child can request a read from an operator-declared static HTTP connector with a matching account binding, schema and approved arguments. Connector refreshes preserve the child’s authorized tool catalog.
+ - **SearchApi web search provider:** `web_search` now supports SearchApi (`[search] provider = "searchapi"`, `SEARCHAPI_API_KEY` or `[search] api_key`) for Google organic results with `hl`, `gl`, and `time_period` filtering. Thanks [@gabsferreira](https://github.com/gabsferreira) (#7410).
+ - **Crisper 980-dot whale and activity forms in `/pet`:** the terminal pet's 980 dots now compile from perimeter-anchored hexagonal-lattice silhouettes with rorqual throat illumination at rest and cleaner edges across all thirteen running, waiting and done forms, while keeping zero motion under Hold still and Reduce motion. (CW-6453)
+ - **Terminal and website design tokens updated to 5.4.0:** vendored `codewhale-design` `5.4.0` and `codewhale-ratatui` `5.4.0` roles (`Subagent` and `LivePeak`), exported the updated `5.4.0` CSS custom properties to the website (`web/app/tokens.css`), fixed `adapt_fg_for_depth` ANSI-16 appearance awareness (bright 9–14 on dark, dark 1–6 on light) so warnings and status lines stay legible on light 16-color terminals, and preserved green/red hues (`22`/`52` dark, `158`/`224` light) on 256-color diff line backgrounds. (CW-8264)
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7450** (2026-11-21): feat: add LLMTR as an OpenAI-compatible provider (@knowhycodata)
+- **PR #7449** (2026-11-21): fix(engine): compact diagnostic late-usage receipts at the ledger bound (#6842) (@donglovejava)
+- **PR #7448** (2026-11-21): Show request transmission on provider errors (@deosiree)
+- **PR #7444** (2026-11-21): test(tui): guard all four paste-burst chunk-flush sites (@donglovejava)
 - **PR #7431** (2026-11-21): fix(engine): classify local read-only deferred tools as Safe in get_tool_category (@NieZhuZhu)
 - **PR #7430** (2026-11-21): fix(execpolicy): scan static awk and sed program payloads (@NieZhuZhu)
-- **PR #7429** (2026-11-21): fix(execpolicy): tighten stdin_piped propagation and numactl --strict (@NieZhuZhu)
-- **PR #7426** (closed): fix(execpolicy): bound repeated '--' deny-target expansion (@NieZhuZhu)
-- **PR #7423** (2026-11-20): fix(engine): distinguish missing tool-call fallback ids from literal call ids (@donglovejava)
-- **PR #7422** (2026-11-20): test(tui): prove raw and bracketed pastes stay lossless past 64 KiB (@donglovejava)
 
 ---
 
@@ -2503,21 +2424,22 @@ Change-Id: Ic97127173f5d2bed56e349176a2b7c4c59d5951d
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. execpolicy): preserve command stdin under group redirection (CW-8303)
+## X. Sync the packaged TUI changelog for the notice correction
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/tui/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `88357eb4`: execpolicy): preserve command stdin under group redirection (CW-8303). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6c211938`: Sync the packaged TUI changelog for the notice correction. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/tui/CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **Shell groups preserve command-owned input:** policy evaluation keeps each command's explicit stdin source when a redirection supplies default input to its enclosing group. (CW-8303)
+- Native release bundles, the Windows installer, npm packages and published crates include the Codewhale license and both third-party notice documents.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2527,4 +2449,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `88357eb4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6c211938` are properly handled with clean fallback behavior.

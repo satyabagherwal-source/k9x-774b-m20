@@ -3,7 +3,7 @@
 > **Source Version**: `hf-moonmath-`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T18:35:21.712Z  
+> **Timestamp**: 2026-11-22T14:17:27.019Z  
 > **Learning ID**: `learn-huggingface-moonmath-ai-deepseek-v4-1-flash-1017-uncensored`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-moonmath-ai-deepseek-v4.1-flash-1017-uncensored-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored](https://huggingface.co/MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T18:35:21.534Z  
+> **Harvest Timestamp**: 2026-11-22T14:17:13.574Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 1683 downloads | 143 likes
+- **Stars / Engagement**: 2770 downloads | 170 likes
 
 ---
 

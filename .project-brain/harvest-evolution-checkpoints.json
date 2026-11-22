@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T13:59:22.140Z",
+  "last_updated": "2026-11-22T14:17:32.801Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-22T13:20:39.311Z",
+      "processed_at": "2026-11-22T14:17:31.887Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -48,7 +48,7 @@
       "staged_for_review": 1
     },
     "codewhale-hq-codewhale-learnings.md": {
-      "processed_at": "2026-11-21T01:43:52.045Z",
+      "processed_at": "2026-11-22T14:17:30.575Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3348,7 +3348,7 @@
       "staged_for_review": 1
     },
     "hf-moonmath-ai-deepseek-v4.1-flash-1017-uncensored-learnings.md": {
-      "processed_at": "2026-11-17T18:35:39.185Z",
+      "processed_at": "2026-11-22T14:17:31.495Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3718,7 +3718,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3120,
+  "total_dossiers_evaluated": 3123,
   "total_canonical_promoted": 473,
-  "total_staged_for_review": 2372
+  "total_staged_for_review": 2375
 }

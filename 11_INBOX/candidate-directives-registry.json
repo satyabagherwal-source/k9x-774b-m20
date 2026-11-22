@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T13:59:21.495Z",
+  "last_updated": "2026-11-22T14:17:31.880Z",
   "directives": [
     {
       "id": "CD-001",
@@ -46261,6 +46261,44 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-22",
       "domain_letter": "K"
+    },
+    {
+      "id": "CD-8EEG",
+      "directive_title": "Sync the packaged TUI changelog for the notice correction",
+      "source_repo": "codewhale-hq-codewhale-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-8EEG-sync-the-packaged-tui-changelog-for-the-notice-correction.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-22",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-1CA02F",
+      "directive_title": "Sync the packaged TUI changelog for the notice correction",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "codewhale-hq-codewhale",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-1CA02F-sync-the-packaged-tui-changelog-for-the-.md",
+      "staged_date": "2026-11-22"
+    },
+    {
+      "id": "CD-REV-862EFF",
+      "directive_title": "Forensic Learning Record (Deep Inspection): MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hf-moonmath-ai-deepseek-v4.1-flash-1017-uncensored",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-862EFF-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-22"
+    },
+    {
+      "id": "CD-REV-0D6AE9",
+      "directive_title": "Forensic Learning Record (Deep Inspection): zulip/zulip",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "A",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0D6AE9-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-22"
     }
   ]
 }

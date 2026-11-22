@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261120-J5DS",
-    "timestamp": "2026-11-20T13:26:32.704Z",
-    "repository": "microsoft/Aion-1.0-Instruct-2.3B",
-    "learningId": "learn-huggingface-microsoft-aion-1-0-instruct-2-3b",
-    "contentHash": "d9cd20bd3fe9389b573f560c54e0ffbd868081e8d6507e1eb66be747bf2a1e69",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-JC9E",
-    "timestamp": "2026-11-20T13:26:41.618Z",
-    "repository": "nginx/kubernetes-ingress",
-    "learningId": "learn-github-nginx-kubernetes-ingress",
-    "contentHash": "f90b37eb9dc9fab6f46d7052f786c25f86d0b997e63336d63dfb876bec994bda",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261120-0W6E",
     "timestamp": "2026-11-20T13:40:20.582Z",
     "repository": "aleo-labs-protocol/snarkOS",
@@ -7492,6 +7462,36 @@
     "contentHash": "7c79b813caaf32ed7cf3fb86975eceb454b3ba8bdcdcbaa7fec7e38152f42212",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-83WF",
+    "timestamp": "2026-11-22T14:17:17.247Z",
+    "repository": "codewhale-hq/Codewhale",
+    "learningId": "learn-github-codewhale-hq-codewhale",
+    "contentHash": "fc3e2e777f9d8a0aac84d8f2df3d0c0d8d9fad2421a3fdae906164e2e1253424",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-8BTR",
+    "timestamp": "2026-11-22T14:17:27.519Z",
+    "repository": "MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored",
+    "learningId": "learn-huggingface-moonmath-ai-deepseek-v4-1-flash-1017-uncensored",
+    "contentHash": "066950ea53d8f62cddaa0059d4b4132bb13587485674501ed8faf5c30f6d0731",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

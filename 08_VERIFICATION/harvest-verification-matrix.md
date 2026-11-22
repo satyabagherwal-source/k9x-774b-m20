@@ -12094,3 +12094,5 @@
 | `CYCLE-20261122-KLNV` | `2026-11-22T13:59:00.523Z` | `sensenova/SenseNova-Loop-9B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sensenova-sensenova-loop-9b-learnings.md` | Yes (`a60b99ba...`) |
 | `CYCLE-20261122-KRK2` | `2026-11-22T13:59:08.162Z` | `microsoft/react-native-windows` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9932` | Yes (`21204bd2...`) |
 | `CYCLE-20261122-KWYV` | `2026-11-22T13:59:15.175Z` | `apple/foundationdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9933` | Yes (`7c79b813...`) |
+| `CYCLE-20261122-83WF` | `2026-11-22T14:17:17.247Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9934` | Yes (`fc3e2e77...`) |
+| `CYCLE-20261122-8BTR` | `2026-11-22T14:17:27.519Z` | `MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-moonmath-ai-deepseek-v4.1-flash-1017-uncensored-learnings.md` | Yes (`066950ea...`) |

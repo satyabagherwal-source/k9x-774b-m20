@@ -12127,3 +12127,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-sensenova-sensenova-loop-9b` | `https://huggingface.co/sensenova/SenseNova-Loop-9B` | `hf-senseno` | Multi-dimensional audit evidence | 2026-11-22T13:59:00.528Z |
 | `learn-github-microsoft-react-native-windows` | `https://github.com/microsoft/react-native-windows` | `aea3f3ad` | Multi-dimensional audit evidence | 2026-11-22T13:59:08.167Z |
 | `learn-github-apple-foundationdb` | `https://github.com/apple/foundationdb` | `c06497f3` | Multi-dimensional audit evidence | 2026-11-22T13:59:15.180Z |
+| `learn-github-codewhale-hq-codewhale` | `https://github.com/codewhale-hq/Codewhale` | `bc58781b` | Multi-dimensional audit evidence | 2026-11-22T14:17:17.251Z |
+| `learn-huggingface-moonmath-ai-deepseek-v4-1-flash-1017-uncensored` | `https://huggingface.co/MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored` | `hf-moonmat` | Multi-dimensional audit evidence | 2026-11-22T14:17:27.524Z |
