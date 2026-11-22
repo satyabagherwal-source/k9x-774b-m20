@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261120-0UYW",
-    "timestamp": "2026-11-20T05:16:25.928Z",
-    "repository": "apache/shardingsphere",
-    "learningId": "learn-github-apache-shardingsphere",
-    "contentHash": "44ffd2ec9fdd630497d1ed6820e7b2233010b35f1c93e46d4742768c6a4279dc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261120-6XCM",
     "timestamp": "2026-11-20T05:21:08.950Z",
     "repository": "aleo-labs-protocol/snarkOS",
@@ -7492,6 +7477,21 @@
     "contentHash": "720f80e64f9037edd2c02c102fbc2366019117f86ade462b9584629e7bddcc4b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-L4XM",
+    "timestamp": "2026-11-22T06:03:32.026Z",
+    "repository": "MiniMaxAI/MiniMax-H3-Image",
+    "learningId": "learn-huggingface-minimaxai-minimax-h3-image",
+    "contentHash": "d3c4fc0f3bcbe921623fe840d02a87d6b9c247f72b5e47456938a4f32e868d12",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

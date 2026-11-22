@@ -12315,8 +12315,8 @@
     "sourceUrl": "https://huggingface.co/MiniMaxAI/MiniMax-H3-Image",
     "sourceVersion": "hf-minimaxai-minimax-h3-image",
     "license": "Open-Source",
-    "contentHash": "3970d2dc96d79a81175727bb28da98cece2efcb292bbb9a7da0508fc0e7cf544",
-    "lastHarvestedAt": "2026-11-15T21:15:33.351Z",
+    "contentHash": "d3c4fc0f3bcbe921623fe840d02a87d6b9c247f72b5e47456938a4f32e868d12",
+    "lastHarvestedAt": "2026-11-22T06:03:32.030Z",
     "learningId": "learn-huggingface-minimaxai-minimax-h3-image"
   },
   "marker-inc-korea-autorag": {

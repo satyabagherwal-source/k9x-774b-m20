@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T05:50:27.180Z",
+  "last_updated": "2026-11-22T06:03:32.038Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -18531,14 +18531,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-minimaxai-minimax-h3-image",
-      "content_hash": "3970d2dc96d79a81175727bb28da98cece2efcb292bbb9a7da0508fc0e7cf544",
-      "verified_at": "2026-11-15T21:15:33.360Z",
+      "content_hash": "d3c4fc0f3bcbe921623fe840d02a87d6b9c247f72b5e47456938a4f32e868d12",
+      "verified_at": "2026-11-22T06:03:32.038Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T21:15:33.360Z"
+      "last_updated": "2026-11-22T06:03:32.038Z"
     },
     "Marker-Inc-Korea/AutoRAG": {
       "repository": "Marker-Inc-Korea/AutoRAG",

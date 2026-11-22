@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T05:51:02.299Z",
+  "last_updated": "2026-11-22T06:03:37.350Z",
   "total_verified_learnings": 9068,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "5b2cbb144a03667f3c8522090d9878a46c483fa37178daeb1d29e6bac36659f9",
+      "content_hash": "cf0a6080444bb97ded35ac589f94d712214d0dc91f529accc9152980f86707d7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T05:04:42.787Z"
+      "persisted_at": "2026-11-22T06:03:37.029Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "ec2740fcc97c95fb8603c3e041a4ae4d653517024a9d80384377b967648e717d",
+      "content_hash": "a9f65d09fad7447846e007eb57e3121050189b4dafd43f696c6133712a770704",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T05:04:43.018Z"
+      "persisted_at": "2026-11-22T06:03:37.197Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "fa85b36427936cda25c8328c280c8de16037ba406888667a3c8a431f1195b6b3",
+      "content_hash": "bf093021df45ce605e363a3874ebe7ca19c9927b95e80b97856278c8e3e648cb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T05:04:43.218Z"
+      "persisted_at": "2026-11-22T06:03:37.350Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "478a12a888683d1863bba4c8032b08ebdd3e1649b786fc64cbcfb6c704039e06",
+      "content_hash": "3f5ce5aab74987348e386bbed5888efdff496dd4dcd31ffd3b743d9cb317714c",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T05:51:02.299Z"
+      "persisted_at": "2026-11-22T06:03:36.202Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -250948,7 +250948,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/MiniMaxAI/MiniMax-H3-Image",
       "source_version": "hf-minimaxai-minimax-h3-image",
-      "content_hash": "3970d2dc96d79a81175727bb28da98cece2efcb292bbb9a7da0508fc0e7cf544",
+      "content_hash": "d3c4fc0f3bcbe921623fe840d02a87d6b9c247f72b5e47456938a4f32e868d12",
       "dossier_path": "07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-image-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-image-learnings.md",
       "promoted_rules": [],
@@ -250957,7 +250957,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T21:15:33.173Z",
+      "verified_at": "2026-11-22T06:03:31.794Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -250974,9 +250974,9 @@
       "title": "Research & Knowledge Intelligence: MiniMaxAI/MiniMax-H3-Image Core Invariants",
       "repository": "MiniMaxAI/MiniMax-H3-Image",
       "source_version": "hf-minimaxai-minimax-h3-image",
-      "content_hash": "9e96e5550959b9fb843c42940c568d44b1f52a3399ff97209ef55d5560f1aac0",
+      "content_hash": "003d56d40a48783cefdbc0fc39f5a80c02e1ee47b40e975793809889a3f31e25",
       "domain_letter": "D",
-      "persisted_at": "2026-11-15T21:15:33.517Z"
+      "persisted_at": "2026-11-22T06:03:32.229Z"
     },
     "rule-8652": {
       "learning_id": "rule-8652",
@@ -251148,9 +251148,9 @@
       "title": "Research & Knowledge Intelligence: hf-minimaxai-minimax-h3-image-learnings Core Invariants",
       "repository": "hf-minimaxai-minimax-h3-image-learnings",
       "source_version": "HEAD",
-      "content_hash": "10ab9e8a596f891064565ee8604cb3bb494ea4f871f077b1a51e07411b2577b8",
+      "content_hash": "119099ca65185b585dde4f0e04ea6cc4ec2f652006cb3b39e55532d1c8b65193",
       "domain_letter": "D",
-      "persisted_at": "2026-11-15T21:16:17.670Z"
+      "persisted_at": "2026-11-22T06:03:35.283Z"
     },
     "domain_intelligence-technical-construction-intelligence-maziyarpanahi-openmed-learnings-core-invaria": {
       "item_id": "domain_intelligence-technical-construction-intelligence-maziyarpanahi-openmed-learnings-core-invaria",
@@ -309440,13 +309440,13 @@
       "item_id": "candidate_directive-benchmarks-report-gold-coverage-across-retrieval-stages",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-HHKT-benchmarks-report-gold-coverage-across-retrieval-stages.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-L8NW-benchmarks-report-gold-coverage-across-retrieval-stages.md",
       "title": "benchmarks): report Gold coverage across retrieval stages",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "cc106da4537d651d7f5f34c1ba8df15432f4fdb314178b159d2f1e18866e62fe",
+      "content_hash": "b3af7864be8b631fa02d7aa29e24cfd37bd6e972761e1239858b6463b07acb8d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T05:04:42.561Z"
+      "persisted_at": "2026-11-22T06:03:36.863Z"
     },
     "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it": {
       "item_id": "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it",
