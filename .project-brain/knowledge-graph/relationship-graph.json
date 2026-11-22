@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-22T07:29:02.964Z",
+  "updated_at": "2026-11-22T15:42:41.236Z",
   "statistics": {
-    "total_nodes": 471,
+    "total_nodes": 472,
     "total_edges": 202,
     "domain_distribution": {
       "D": 289,
       "M": 1,
-      "H": 81,
+      "H": 82,
       "J": 22,
       "K": 29,
       "L": 8,
@@ -10526,6 +10526,28 @@
       ],
       "created_at": "2026-11-22T07:29:02.964Z",
       "updated_at": "2026-11-22T07:29:02.964Z"
+    },
+    "DOM-H-833AC1DF": {
+      "id": "DOM-H-833AC1DF",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "CUDA 13.0 Dynamic Symbol Crash on `int8_convrot` Weights (BUG-MMH3-01)",
+      "summary": "The `convrot` quantization scheme applies an orthogonal rotation matrix (Hadamard/random orthogonal transformation) to weights and activatio -> High-performance quant kernels must have runtime gating and automated path substitution rather than delegating configuration decisions to en",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-comfy-org-minimax-h3/hf-comfy-org-minimax-h3-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-22T15:42:12.349Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-comfy-org-minimax-h3)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-22T15:42:41.236Z",
+      "updated_at": "2026-11-22T15:42:41.236Z"
     }
   },
   "edges": [

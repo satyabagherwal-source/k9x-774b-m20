@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T15:09:15.233Z",
-  "total_cycles_completed": 11510,
-  "total_learnings_persisted": 11510,
-  "total_rules_promoted": 10755,
+  "last_updated": "2026-11-22T15:42:07.223Z",
+  "total_cycles_completed": 11514,
+  "total_learnings_persisted": 11514,
+  "total_rules_promoted": 10760,
   "history": [
-    {
-      "timestamp": "2026-11-21T20:10:56.170Z",
-      "repository": "volcengine/OpenViking",
-      "learningId": "learn-github-volcengine-openviking",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T20:24:50.020Z",
-      "repository": "LiquidAI/LFM3-Omni-2B",
-      "learningId": "learn-huggingface-liquidai-lfm3-omni-2b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T20:24:53.058Z",
-      "repository": "GitoxideLabs/gitoxide",
-      "learningId": "learn-github-gitoxidelabs-gitoxide",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T20:24:58.040Z",
-      "repository": "software-mansion/react-native-reanimated",
-      "learningId": "learn-github-software-mansion-react-native-reanimated",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T20:25:05.362Z",
       "repository": "apache/pinot",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-22T15:09:15.233Z",
       "repository": "envoyproxy/envoy",
       "learningId": "learn-github-envoyproxy-envoy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T15:37:15.775Z",
+      "repository": "freenet/freenet-core",
+      "learningId": "learn-github-freenet-freenet-core",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T15:37:17.765Z",
+      "repository": "StarRocks/starrocks",
+      "learningId": "learn-github-starrocks-starrocks",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T15:41:31.312Z",
+      "repository": "Comfy-Org/MiniMax-H3",
+      "learningId": "learn-huggingface-comfy-org-minimax-h3",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T15:42:07.223Z",
+      "repository": "astral-sh/ruff",
+      "learningId": "learn-github-astral-sh-ruff",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

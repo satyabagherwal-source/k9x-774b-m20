@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-22T15:09:18.761Z",
+  "updated_at": "2026-11-22T15:42:11.564Z",
   "stats": {
-    "total_discovered": 7555,
-    "approved_pending_harvest": 7154,
+    "total_discovered": 7564,
+    "approved_pending_harvest": 7163,
     "harvested_count": 0,
     "rejected_count": 401,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7129,
+      "COMMUNITY_AND_EXPERT": 7138,
       "OFFICIAL_DOCUMENTATION": 246,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 5,
@@ -163426,6 +163426,204 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
         "fileName": "zed-industries-zed-learnings.md"
+      }
+    },
+    "SRC-25EC37DFCDB8": {
+      "id": "SRC-25EC37DFCDB8",
+      "url": "https://github.com/Baekalfen/PyBoy/blob/350e96fff43ae8bff076c0f90a364b410cb4b930/pyboy/core/opcodes.py",
+      "title": "https://github.com/Baekalfen/PyBoy/blob/350e96fff43ae8bff076c0f90a364b410cb4b930/pyboy/core/opcodes.py",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T15:42:11.082Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
+        "fileName": "astral-sh-ruff-learnings.md"
+      }
+    },
+    "SRC-4ADB15C722CD": {
+      "id": "SRC-4ADB15C722CD",
+      "url": "https://github.com/astral-sh/ruff/commit/943f623f55c9aa625b0b1b21af731e451819accc",
+      "title": "https://github.com/astral-sh/ruff/commit/943f623f55c9aa625b0b1b21af731e451819accc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T15:42:11.143Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
+        "fileName": "astral-sh-ruff-learnings.md"
+      }
+    },
+    "SRC-2A99D1F56C50": {
+      "id": "SRC-2A99D1F56C50",
+      "url": "https://github.com/astral-sh/ruff/commit/1c84cd75a51d6a8f32ffed8898f82ae2c638bead",
+      "title": "https://github.com/astral-sh/ruff/commit/1c84cd75a51d6a8f32ffed8898f82ae2c638bead",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T15:42:11.199Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
+        "fileName": "astral-sh-ruff-learnings.md"
+      }
+    },
+    "SRC-A79AFD8F787F": {
+      "id": "SRC-A79AFD8F787F",
+      "url": "https://github.com/pygments/pygments/blob/cfca62e6e95136e48a255e8cbffb0bbe1d98456c/pygments/lexers/_mapping.py",
+      "title": "https://github.com/pygments/pygments/blob/cfca62e6e95136e48a255e8cbffb0bbe1d98456c/pygments/lexers/_mapping.py",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T15:42:11.259Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
+        "fileName": "astral-sh-ruff-learnings.md"
+      }
+    },
+    "SRC-E4790170E5EA": {
+      "id": "SRC-E4790170E5EA",
+      "url": "https://pypi.org/project/Telethon/1.42.0",
+      "title": "https://pypi.org/project/Telethon/1.42.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T15:42:11.333Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
+        "fileName": "astral-sh-ruff-learnings.md"
+      }
+    },
+    "SRC-B37F383556FE": {
+      "id": "SRC-B37F383556FE",
+      "url": "https://pypi.org/project/Telethon/1.45.0",
+      "title": "https://pypi.org/project/Telethon/1.45.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T15:42:11.385Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
+        "fileName": "astral-sh-ruff-learnings.md"
+      }
+    },
+    "SRC-98C67CFFA270": {
+      "id": "SRC-98C67CFFA270",
+      "url": "https://github.com/astral-sh/ruff/commit/7be385f21d0848e58668b75cd90d0927637c84b6",
+      "title": "https://github.com/astral-sh/ruff/commit/7be385f21d0848e58668b75cd90d0927637c84b6",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T15:42:11.447Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
+        "fileName": "astral-sh-ruff-learnings.md"
+      }
+    },
+    "SRC-CE329A47EEF4": {
+      "id": "SRC-CE329A47EEF4",
+      "url": "https://github.com/astral-sh/ruff/commit/29585dbc87405c80820f70920558a07fde597aae",
+      "title": "https://github.com/astral-sh/ruff/commit/29585dbc87405c80820f70920558a07fde597aae",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T15:42:11.503Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
+        "fileName": "astral-sh-ruff-learnings.md"
+      }
+    },
+    "SRC-B283FF90F0A9": {
+      "id": "SRC-B283FF90F0A9",
+      "url": "https://github.com/psf/black/tree/55996d1fb8342",
+      "title": "https://github.com/psf/black/tree/55996d1fb8342",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T15:42:11.564Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
+        "fileName": "astral-sh-ruff-learnings.md"
       }
     }
   }

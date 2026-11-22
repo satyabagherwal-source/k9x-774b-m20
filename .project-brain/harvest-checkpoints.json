@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T15:09:15.237Z",
+  "last_updated": "2026-11-22T15:42:07.227Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -995,14 +995,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-comfy-org-minimax-h3",
-      "content_hash": "854536773ccaa81553701dd10e2a055f59ff4fc219451cd86984a40bb985a057",
-      "verified_at": "2026-11-18T09:19:39.605Z",
+      "content_hash": "5c92e8cba428d6e871dbe88d72c09d1021d03929e251adb1ba4f56c858becf38",
+      "verified_at": "2026-11-22T15:41:31.315Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T09:19:39.605Z"
+      "last_updated": "2026-11-22T15:41:31.315Z"
     },
     "timm/mobilenetv3_small_100.lamb_in1k": {
       "repository": "timm/mobilenetv3_small_100.lamb_in1k",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "0cda0857631848867ec9438ded6730d1d7c75ce53c0aa8ac2f6b7fc010099c0b",
-      "verified_at": "2026-11-20T23:05:35.747Z",
+      "content_hash": "0145ea19275db4eea15a973c6bad065c8cf68f389b9e4c12766b2744d544037f",
+      "verified_at": "2026-11-22T15:37:15.778Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T23:05:35.747Z"
+      "last_updated": "2026-11-22T15:37:15.778Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -7956,14 +7956,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-starrocks-starrocks",
-      "content_hash": "b5bed4e6738fc4be9e449bb16450621d872536f1d40b81ff81e84a609661d578",
-      "verified_at": "2026-11-21T12:38:09.516Z",
+      "content_hash": "093eef45311ad4dcc6d6611dca2648a5f578d4231f55e0e7fd0a1aa1fe1da789",
+      "verified_at": "2026-11-22T15:37:17.767Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T12:38:09.516Z"
+      "last_updated": "2026-11-22T15:37:17.767Z"
     },
     "lobehub/lobe-ui": {
       "repository": "lobehub/lobe-ui",
@@ -11481,14 +11481,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-astral-sh-ruff",
-      "content_hash": "dfca462edb741fbc370ac9c6a77a6dba9b57f9c2e3af2a35d1d68d4aedfb2323",
-      "verified_at": "2026-11-21T02:29:56.899Z",
+      "content_hash": "43a9b971d8b1081f51738b4d358a6b6c1957b6d046b004b471f09f3206a92512",
+      "verified_at": "2026-11-22T15:42:07.226Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T02:29:56.899Z"
+      "last_updated": "2026-11-22T15:42:07.226Z"
     },
     "touchlab/KaMPKit": {
       "repository": "touchlab/KaMPKit",

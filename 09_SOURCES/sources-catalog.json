@@ -765,8 +765,8 @@
     "sourceUrl": "https://huggingface.co/Comfy-Org/MiniMax-H3",
     "sourceVersion": "hf-comfy-org-minimax-h3",
     "license": "Open-Source",
-    "contentHash": "854536773ccaa81553701dd10e2a055f59ff4fc219451cd86984a40bb985a057",
-    "lastHarvestedAt": "2026-11-18T09:19:39.597Z",
+    "contentHash": "5c92e8cba428d6e871dbe88d72c09d1021d03929e251adb1ba4f56c858becf38",
+    "lastHarvestedAt": "2026-11-22T15:41:31.306Z",
     "learningId": "learn-huggingface-comfy-org-minimax-h3"
   },
   "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf": {
@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "32cd9498",
+    "sourceVersion": "52922483",
     "license": "NOASSERTION",
-    "contentHash": "0cda0857631848867ec9438ded6730d1d7c75ce53c0aa8ac2f6b7fc010099c0b",
-    "lastHarvestedAt": "2026-11-20T23:05:35.739Z",
+    "contentHash": "0145ea19275db4eea15a973c6bad065c8cf68f389b9e4c12766b2744d544037f",
+    "lastHarvestedAt": "2026-11-22T15:37:15.769Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -5223,10 +5223,10 @@
     "repository": "StarRocks/starrocks",
     "platform": "github",
     "sourceUrl": "https://github.com/StarRocks/starrocks",
-    "sourceVersion": "a9a9fd73",
+    "sourceVersion": "0f1ce94b",
     "license": "Apache-2.0",
-    "contentHash": "b5bed4e6738fc4be9e449bb16450621d872536f1d40b81ff81e84a609661d578",
-    "lastHarvestedAt": "2026-11-21T12:38:09.509Z",
+    "contentHash": "093eef45311ad4dcc6d6611dca2648a5f578d4231f55e0e7fd0a1aa1fe1da789",
+    "lastHarvestedAt": "2026-11-22T15:37:17.729Z",
     "learningId": "learn-github-starrocks-starrocks"
   },
   "lobehub-lobe-ui": {
@@ -7623,10 +7623,10 @@
     "repository": "astral-sh/ruff",
     "platform": "github",
     "sourceUrl": "https://github.com/astral-sh/ruff",
-    "sourceVersion": "cd2d9732",
+    "sourceVersion": "dffb1c01",
     "license": "MIT",
-    "contentHash": "dfca462edb741fbc370ac9c6a77a6dba9b57f9c2e3af2a35d1d68d4aedfb2323",
-    "lastHarvestedAt": "2026-11-21T02:29:56.869Z",
+    "contentHash": "43a9b971d8b1081f51738b4d358a6b6c1957b6d046b004b471f09f3206a92512",
+    "lastHarvestedAt": "2026-11-22T15:42:07.217Z",
     "learningId": "learn-github-astral-sh-ruff"
   },
   "touchlab-kampkit": {

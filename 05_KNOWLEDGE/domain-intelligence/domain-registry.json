@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T15:09:20.319Z",
-  "total_records": 2354,
+  "last_updated": "2026-11-22T15:42:42.890Z",
+  "total_records": 2357,
   "domains": {
     "A": {
       "total": 19,
@@ -1491,7 +1491,7 @@
       ]
     },
     "H": {
-      "total": 566,
+      "total": 569,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -2058,7 +2058,10 @@
         "domain_intelligence-technical-construction-intelligence-apache-maka-core-invariants",
         "domain_intelligence-technical-construction-intelligence-apache-maka-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-nativescript-nativescript-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-nativescript-nativescript-learnings-core-inv"
+        "domain_intelligence-technical-construction-intelligence-nativescript-nativescript-learnings-core-inv",
+        "domain_intelligence-technical-construction-intelligence-comfy-org-minimax-h3-core-invariants",
+        "DOM-H-833AC1DF",
+        "domain_intelligence-technical-construction-intelligence-hf-comfy-org-minimax-h3-learnings-core-invar"
       ]
     },
     "I": {
@@ -9720,8 +9723,8 @@
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "repository": "freenet/freenet-core",
-      "content_hash": "ab0e6c178691b8d0473aa6628d83d471dbfcee0ff7dc90697d1d26af67b637cf",
-      "created_at": "2026-11-20T23:05:36.109Z"
+      "content_hash": "87ed43b185be2bf84a8ac9d44595a89b7a6b29accd3f8953dec9ce53ae17bc8e",
+      "created_at": "2026-11-22T15:37:16.186Z"
     },
     "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants",
@@ -9798,8 +9801,8 @@
       "title": "Technical Construction Intelligence: freenet-freenet-core-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-learnings-technical-construction-intelligence-freenet-freen.md",
       "repository": "freenet-freenet-core-learnings",
-      "content_hash": "374ade08b0361b8022e3de2e05c178d07d334394dafec29046e7445986b5e7f5",
-      "created_at": "2026-11-20T23:05:41.135Z"
+      "content_hash": "2d66bf126dcfb51afffd84f86a84465a1332110cfaf60f98787560ebfab8ce73",
+      "created_at": "2026-11-22T15:42:42.890Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
@@ -16915,8 +16918,8 @@
       "title": "Technical Construction Intelligence: StarRocks/starrocks Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-starrocks-starrocks-technical-construction-intelligence-starrocks-starrocks-core.md",
       "repository": "StarRocks/starrocks",
-      "content_hash": "dab0485ebb8924bcb00749e56df45490c9b635efe8347c228aa75061fa5e4d89",
-      "created_at": "2026-11-21T12:38:09.844Z"
+      "content_hash": "94830764667aa86bbf88d8f759c8e15c1b3e27bd5b4904cca9f4966fe2f0600c",
+      "created_at": "2026-11-22T15:37:18.218Z"
     },
     "domain_intelligence-research-knowledge-intelligence-autotrust-autotrust-decider-pro-vision-27b-core-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-autotrust-autotrust-decider-pro-vision-27b-core-",
@@ -24053,8 +24056,8 @@
       "title": "Technical Construction Intelligence: astral-sh/ruff Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-astral-sh-ruff-technical-construction-intelligence-astral-sh-ruff-core-invariant.md",
       "repository": "astral-sh/ruff",
-      "content_hash": "04f858a99478205d7de259f42e7fe281f2ade484151044f3e3e3dce926bdf507",
-      "created_at": "2026-11-21T02:29:57.259Z"
+      "content_hash": "56339681ea55cb62e327bc23b2e21eba4b51ebec526e3b9b83effb319816c799",
+      "created_at": "2026-11-22T15:42:07.660Z"
     },
     "domain_intelligence-technical-construction-intelligence-astral-sh-ruff-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-astral-sh-ruff-learnings-core-invariants",
@@ -24062,8 +24065,8 @@
       "title": "Technical Construction Intelligence: astral-sh-ruff-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-astral-sh-ruff-learnings-technical-construction-intelligence-astral-sh-ruff-lear.md",
       "repository": "astral-sh-ruff-learnings",
-      "content_hash": "afa73cca7130f9bfcf23445c26e7921d037623862b33d17cc9b1af016c4bee9e",
-      "created_at": "2026-11-21T02:30:01.094Z"
+      "content_hash": "6124f0194f238f6031a543ae5afc62ceb036c2c26df61ee1e1c85c16a5f549dc",
+      "created_at": "2026-11-22T15:42:12.013Z"
     },
     "domain_intelligence-research-knowledge-intelligence-unsloth-deepseek-v4-1-flash-1017-gguf-core-invar": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-unsloth-deepseek-v4-1-flash-1017-gguf-core-invar",
@@ -39628,6 +39631,58 @@
       "repository": "nativescript-nativescript-learnings",
       "content_hash": "ab8d9ffce57118703c9f38fa838e2d4cc597e56e6ced4fdcbfbc8d103e451068",
       "created_at": "2026-11-22T12:37:38.669Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-comfy-org-minimax-h3-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-comfy-org-minimax-h3-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: Comfy-Org/MiniMax-H3 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-comfy-org-minimax-h3-technical-construction-intelligence-comfy-org-minimax-h3.md",
+      "repository": "Comfy-Org/MiniMax-H3",
+      "content_hash": "3b48370e95767c61fec55f11ddfcbab639bc655dca6e55fac795470680a5898e",
+      "created_at": "2026-11-22T15:41:31.885Z"
+    },
+    "DOM-H-833AC1DF": {
+      "record_id": "DOM-H-833AC1DF",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [],
+      "title": "CUDA 13.0 Dynamic Symbol Crash on `int8_convrot` Weights (BUG-MMH3-01)",
+      "content": "High-performance quant kernels must have runtime gating and automated path substitution rather than delegating configuration decisions to end-user trial-and-error.",
+      "content_hash": "d76f2bc5580b0caa6faa6faca3e20c77f79fb54ea1a03e2a188d76cea50516d4",
+      "summary": "The `convrot` quantization scheme applies an orthogonal rotation matrix (Hadamard/random orthogonal transformation) to weights and activatio -> High-performance quant kernels must have runtime gating and automated path substitution rather than delegating configuration decisions to en",
+      "provenance": {
+        "source_uri": "project://hf-comfy-org-minimax-h3/hf-comfy-org-minimax-h3-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-22T15:42:12.349Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-comfy-org-minimax-h3)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "`README.md`: *\"For diffusion models prefer `int8_convrot` if you are able to use pytorch with cu130. `fp8_scaled` should only be used if you cannot use `int8_convrot`.\"*"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-22T15:42:41.205Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-hf-comfy-org-minimax-h3-learnings-core-invar": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-hf-comfy-org-minimax-h3-learnings-core-invar",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: hf-comfy-org-minimax-h3-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-comfy-org-minimax-h3-learnings-technical-construction-intelligence-hf-comfy-o.md",
+      "repository": "hf-comfy-org-minimax-h3-learnings",
+      "content_hash": "30040caeec0feaa530f796b308f3a7360abba30e4df9d8a24d86705656d14364",
+      "created_at": "2026-11-22T15:42:42.071Z"
     }
   }
 }

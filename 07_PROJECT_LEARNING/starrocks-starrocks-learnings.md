@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/starrocks-starrocks-learnings.md`  
 > **Source**: github ([https://github.com/StarRocks/starrocks](https://github.com/StarRocks/starrocks))  
-> **Source Version**: `a9a9fd73`  
+> **Source Version**: `0f1ce94b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T12:38:08.541Z  
+> **Timestamp**: 2026-11-22T15:37:17.210Z  
 > **Learning ID**: `learn-github-starrocks-starrocks`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/starrocks-starrocks-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/StarRocks/starrocks](https://github.com/StarRocks/starrocks))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T12:38:08.535Z  
+> **Harvest Timestamp**: 2026-11-22T15:37:17.204Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The world's fastest open query engine for sub-second analytics both on and off the data lakehouse. With the flexibility to support nearly any scenario, StarRocks provides best-in-class performance for multi-dimensional analytics, real-time analytics, and ad-hoc queries. A Linux Foundation project.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 12278 stars
+- **Stars / Engagement**: 12279 stars
 
 ---
 
@@ -1818,556 +1818,547 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `87ba5c08` (2026-11-20)
-**Commit Message**: [BugFix] Count group roles and security-integration users in SHOW GRANTS FOR ROLE, SHOW AUTHENTICATION and the HTTP admin check (#83211)
+### Incident Patch 1: `83f27a03` (2026-11-22)
+**Commit Message**: [Enhancement] Support LDAP and JWT security integrations on one authentication_chain over MySQL (#83215)
 
 Signed-off-by: Planck Li <[REDACTED_EMAIL]>
+Co-authored-by: Planck Li <[REDACTED_EMAIL]>
 
-**File**: `docs/en/sql-reference/sql-statements/account-management/SHOW_AUTHENTICATION.md` (modified, +15/-2)
+**File**: `docs/en/administration/configuration/FE_parameters/log_server_meta.md` (modified, +9/-0)
 ```diff
-@@ -12,6 +12,8 @@ SHOW AUTHENTICATION displays the authentication information of the current user
- All users have the privilege to view their own authentication information. Only users with the `user_admin` role can view the authentication information of all users or the authentication information of specified users.
+@@ -1031,6 +1031,15 @@ This topic introduces the following types of FE configurations:
+ - Description: Master switch for Bearer-token authentication on the non-MySQL channels (HTTP, Arrow Flight, and BE-direct Stream Load). When set to `false`, these channels reject any `Authorization: Bearer ...` request with HTTP 401 and fall back to the behavior where only the MySQL protocol supports token authentication; Basic authentication and existing Arrow Flight UUID session tokens are unaffected. MySQL protocol authentication is never gated by this switch.
+ - Introduced in: v4.2
+ 
++### `authentication_chain_accept_jwt_as_password`
++
++- Default: false
++- Type: Boolean
++- Unit: -
++- Is mutable: Yes
++- Description: Whether a security-integration user may present a JWT as the password of a MySQL login (the `mysql_clear_password` plugin). When set to `true` and such a password has the shape of a JWT, StarRocks first offers it as a token to the JWT and OAuth 2.0 security integrations on `authentication_chain`, and only if none accepts it tries it as a password against the LDAP security integrations. This lets a MySQL client without the `authentication_openid_connect_client` plugin log in through a JWT security integration that shares `authentication_chain` with an LDAP one. When set to `false`, such a password goes straight to the LDAP security integrations. This item applies to the MySQL protocol only: HTTP and Arrow Flight carry a token as `Bearer`, and their `Basic` passwords are never read as tokens. A password that merely looks like a token costs one refused token verification before the password path; the login is counted in the authentication metrics by its final outcome only.
++- Introduced in: -
++
+ ### `http_web_page_display_hardware`
+ 
+ - Default: true
+```
+
+**File**: `docs/en/administration/user_privs/authentication/jwt_authentication.md` (modified, +1/-1)
+```diff
+@@ -17,7 +17,7 @@ This topic describes how to manually create and authenticate users using JWT in
+ 
+ ## Prerequisites
+ 
+-If you want to connect to StarRocks from a MySQL client, the MySQL client version must be 9.2 or later.
++If you want to connect to StarRocks from a MySQL client, the MySQL client version must be 9.1 or later. From 9.1, the `authentication_openid_connect_client` plugin ships with all MySQL client distributions, community distributions included.
+ 
+ ## Create a user with JWT
+ 
+```
+
+**File**: `docs/en/administration/user_privs/authentication/security_integration.md` (modified, +35/-1)
+```diff
+@@ -365,6 +365,7 @@ ADMIN SET FRONTEND CONFIG (
+ :::note
+ - StarRocks prioritizes native authentication for local users. If a local user with the same username does not exist, authentication is performed in the order configured by `authentication_chain`. If login fails using the native authentication method, the cluster will try the next authentication method in the specified order.
+ - You can specify multiple security integrations in `authentication_chain` except for OAuth 2.0 security integration. You cannot specify multiple OAuth 2.0 security integrations or one with other security integrations.
++- `authentication_chain` can hold both LDAP and JWT security integrations, but over the MySQL protocol this is only partially supported. See [Mix LDAP and JWT security integrations](#mix-ldap-and-jwt-security-integrations).
  :::
  
-+A user that logs in through a security integration is not created in StarRocks: StarRocks creates a virtual user for its session. Such a user can view its own authentication information with `SHOW AUTHENTICATION` without `FOR`. It cannot be specified in `FOR USERNAME`, which accepts only users created in StarRocks, and it is not returned by `SHOW ALL AUTHENTICATION`.
-+
- ## Syntax
- 
- ```SQL
-@@ -36,8 +38,8 @@ SHOW [ALL] AUTHENTICATION [FOR USERNAME]
- | **Field**         | **Description**                                              |
- | ----------------- | ------------------------------------------------------------ |
- | UserIdentity      | The user identity.                                           |
--| Password          | Whether a password is used to log in to the StarRocks cluster.<ul><li>`Yes`: A password is used.</li><li>`No`: No password is used.</li></ul> |
--| AuthPlugin        | The interface that is used for authentication. Valid values: `MYSQL_NATIVE_PASSWORD` and `AUTHENTICATION_LDAP_SIMPLE`. If no interface is used, `NULL` is returned. |
-+| Password          | Whether a password is used to log in to the StarRocks cluster.<ul><li>`Yes`: A password is used.</li><li>`No`: No password is used.</li></ul>For a user that logs in through a security integration, `No` is returned, because StarRocks does not store its password. |
-+| AuthPlugin        | The interface that is used for authentication. Valid values: `MYSQL_NATIVE_PASSWORD` and `AUTHENTICATION_LDAP_SIMPLE`. If no interface is used, `NULL` is returned. For a user that logs in through a security integration, the name of that security integration is returned. |
- | UserForAuthPlugin | The name of the user using the LDAP or Kerberos authentication. If no authentication is used, `NULL` is returned. |
- 
- ## Examples
-@@ -75,3 +77,14 @@ SHOW AUTHENTICATION FOR root;
- | 'root'@'%'   | Yes      | NULL       | NULL              |
- +--------------+----------+------------+-------------------+
+ You can check the value of `authentication_chain` using the following statement:
+@@ -373,6 +374,39 @@ You can check the value of `authentication_chain` using the following statement:
+ ADMIN SHOW FRONTEND CONFIG LIKE 'authentication_chain';
  ```
+ 
++### Mix LDAP and JWT security integrations
 +
-+Example 4: Display the authentication information of the current user, who logs in through the security integration `ldap_si`.
++Over HTTP and Arrow Flight, LDAP and JWT security integrations on one `authentication_chain` work side by side, because the credential itself says what it is: `Basic` (user name and password) is tried against the LDAP security integrations, and `Bearer` (a token) against the JWT and OAuth 2.0 security integrations. See [Connect over HTTP and Arrow Flight](#connect-over-http-and-arrow-flight).
 +
-+```Plain
-+SHOW AUTHENTICATION;
-++------------------------+----------+------------+-------------------+
-+| UserIdentity           | Password | AuthPlugin | UserForAuthPlugin |
-++------------------------+----------+------------+-------------------+
-+| 'alice'@'192.168.1.10' | No       | ldap_si    | NULL              |
-++------------------------+----------+------------+-------------------+
++Over the MySQL protocol the support is partial. StarRocks has to choose one client authentication plugin for a connection before it sees any credential, and the two kinds of security integration need different plugins: `mysql_clear_password` for LDAP and `authentication_openid_connect_client` for JWT. StarRocks chooses by the plugin the client declares in its handshake:
++
++| The client declares | Security integration used |
++| --- | --- |
++| `authentication_openid_connect_client` | The first JWT security integration on the chain |
++| `mysql_clear_password` | The first LDAP security integration on the chain |
++| Neither (most clients send `mysql_native_password` by default) | The first security integration on the chain |
++
++Therefore:
++
++- Put first the security integration that most of your clients use without any extra setting.
++- Clients of the other kind must declare their plugin: `--default-auth=<plugin>` with the MySQL client, `defaultAuthenticationPlugin=<plugin>` with MySQL Connector/J. The MySQL client includes `authentication_openid_connect_client` from version 9.1, community distributions included. Older MySQL clients and the MariaDB client do not have this plugin.
++- A client that cannot declare a plugin, such as PyMySQL, always gets the first security integration on the chain.
++
++```Bash
++# A JWT security integration user, with the LDAP security integration first on the chain
++mysql -h <fe_host> -P <query_port> --default-auth=authentication_openid_connect_client \
++    --authentication-openid-connect-client-id-token-file=<path_to_token_file> -u <username>
++
++# An LDAP security integration user, with the JWT security integration first on the chain
++mysql -h <fe_host> -P <query_port> --default-auth=mysql_clear_password --enable-cleartext-plugin -u <username> -p
 +```
++
++If your JWT clients cannot load the OpenID Connect plugin, set the FE configuration item `authentication_chain_accept_jwt_as_password` to `true` and put the LDAP security integration first. A JWT client then passes its token as the password: when the password of a MySQL login has the shape of a JWT, StarRocks first verifies it against the JWT and OAuth 2.0 security integrations, and only if none accepts it tries it as a password against the LDAP security integrations. The token travels like a clear-text password, so use an SSL connection. This item applies to the MySQL protocol only; over HTTP and Arrow Flight, send the token as `Bearer`.
++
++```Bash
++mysql -h <fe_host> -P <query_port> --ssl-mode=REQUIRED --enable-cleartext-plugin -u <username> -p"$(cat <path_to_token_file>)"
++```
++
+ ## Connect over HTTP and Arrow Flight
+ 
+ A user of a security integration on `authentication_chain` can log in over every StarRocks entry point, not only the MySQL protocol: the HTTP SQL API, Stream Load (through an FE or directly against a BE), the FE Web UI, and Arrow Flight SQL. The credential the client sends depends on the type of the integration.
+@@ -402,7 +436,7 @@ Note the following points:
+ - Privileges for security-integration users come from [Group Provider](../group_provider.md) and `GRANT ... TO EXTERNAL GROUP` only; the groups a user is resolved into apply on every entry point.
+ - On Arrow Flight SQL, a JWT is authenticated exactly like a user name and password: the server answers with its own session token, which the client uses for the rest of the connection. The session cannot outlive the JWT; once the token's `exp` passes, the connect
 ```
 
-**File**: `docs/ja/sql-reference/sql-statements/account-management/SHOW_AUTHENTICATION.md` (modified, +16/-3)
+**File**: `docs/ja/administration/configuration/FE_parameters/log_server_meta.md` (modified, +9/-0)
 ```diff
-@@ -14,6 +14,8 @@ products: [oss, enterprise, cloud, anywhere]
- すべてのユーザーは自分自身の認証情報を表示する権限を持っています。`user_admin` ロールを持つユーザーのみが、すべてのユーザーまたは指定されたユーザーの認証情報を表示できます。
- :::
+@@ -1022,6 +1022,15 @@ ADMIN SET FRONTEND CONFIG ("key" = "value");
+ - 説明：MySQL 以外のチャネル（HTTP、Arrow Flight、BE 直結の Stream Load）における Bearer トークン認証のマスタースイッチ。`false` に設定すると、これらのチャネルは `Authorization: Bearer ...` を含むリクエストをすべて HTTP 401 で拒否し、「トークン認証は MySQL プロトコルのみ」という以前の動作に戻ります。Basic 認証と既存の Arrow Flight UUID セッショントークンは影響を受けません。MySQL プロトコルの認証がこのスイッチで制限されることはありません。
+ - 導入時期：v4.2
  
-+security integration を通じてログインするユーザーは StarRocks 内に作成されません。StarRocks はそのセッション用に仮想ユーザーを作成します。このようなユーザーは、`FOR` を指定しない `SHOW AUTHENTICATION` で自分の認証情報を表示できます。`FOR USERNAME` には StarRocks 内に作成されたユーザーのみ指定できるため、このようなユーザーは指定できず、`SHOW ALL AUTHENTICATION` でも返されません。
++### `authentication_chain_accept_jwt_as_password`
 +
- ## 構文
++- デフォルト：false
++- タイプ：Boolean
++- 単位：-
++- 変更可能：Yes
++- 説明：セキュリティインテグレーションのユーザーが、MySQL ログインのパスワード（`mysql_clear_password` プラグイン）として JWT を渡せるようにするかどうか。`true` に設定すると、そのパスワードが JWT の形をしている場合、StarRocks はまずそれをトークンとして `authentication_chain` 上の JWT および OAuth 2.0 セキュリティインテグレーションに渡し、どれも受け入れなかった場合にのみパスワードとして LDAP セキュリティインテグレーションに渡します。これにより、`authentication_openid_connect_client` プラグインを持たない MySQL クライアントでも、LDAP セキュリティインテグレーションと `authentication_chain` を共有する JWT セキュリティインテグレーションでログインできます。`false` の場合、そのようなパスワードはそのまま LDAP セキュリティインテグレーションに渡されます。この設定項目は MySQL プロトコルにのみ適用されます。HTTP と Arrow Flight はトークンを `Bearer` で運ぶため、`Basic` のパスワードがトークンとして扱われることはありません。たまたまトークンの形をしたパスワードは、パスワードの経路に入る前にトークン検証が 1 回拒否されるだけのコストがかかります。認証メトリクスにはそのログインの最終結果だけが計上されます。
++- 導入時期：-
++
+ ### `http_web_page_display_hardware`
  
- ```SQL
-@@ -38,8 +40,8 @@ SHOW [ALL] AUTHENTICATION [FOR USERNAME]
- | **フィールド**       | **説明**                                                                 |
- | -------------------- | ------------------------------------------------------------------------ |
- | UserIdentity         | ユーザーの識別情報。                                                     |
--| Password             | StarRocks クラスターにログインするためにパスワードが使用されているかどうか。<ul><li>`Yes`: パスワードが使用されています。</li><li>`No`: パスワードは使用されていません。</li></ul> |
--| AuthPlugin           | 認証に使用されるインターフェース。 有効な値は `MYSQL_NATIVE_PASSWORD` と `AUTHENTICATION_LDAP_SIMPLE` です。インターフェースが使用されていない場合、`NULL` が返されます。 |
-+| Password             | StarRocks クラスターにログインするためにパスワードが使用されているかどうか。<ul><li>`Yes`: パスワードが使用されています。</li><li>`No`: パスワードは使用されていません。</li></ul>security integration を通じてログインするユーザーの場合、StarRocks はそのパスワードを保存しないため `No` が返されます。 |
-+| AuthPlugin           | 認証に使用されるインターフェース。 有効な値は `MYSQL_NATIVE_PASSWORD` と `AUTHENTICATION_LDAP_SIMPLE` です。インターフェースが使用されていない場合、`NULL` が返されます。security integration を通じてログインするユーザーの場合、その security integration の名前が返されます。 |
- | UserForAuthPlugin    | LDAP または Kerberos 認証を使用しているユーザーの名前。認証が使用されていない場合、`NULL` が返されます。 |
- 
- ## 例
-@@ -76,4 +78,15 @@ SHOW AUTHENTICATION FOR root;
- +--------------+----------+------------+-------------------+
- | 'root'@'%'   | Yes      | NULL       | NULL              |
- +--------------+----------+------------+-------------------+
--```
-\ No newline at end of file
-+```
-+
-+例 4: security integration `ldap_si` を通じてログインした現在のユーザーの認証情報を表示します。
-+
-+```Plain
-+SHOW AUTHENTICATION;
-++------------------------+----------+------------+-------------------+
-+| UserIdentity           | Password | AuthPlugin | UserForAuthPlugin |
-++------------------------+----------+------------+-------------------+
-+| 'alice'@'192.168.1.10' | No       | ldap_si    | NULL              |
-++------------------------+----------+------------+-------------------+
-+```
+ - デフォルト：true
 ```
 
-**File**: `docs/zh/sql-reference/sql-statements/account-management/SHOW_AUTHENTICATION.md` (modified, +15/-2)
+**File**: `docs/ja/administration/user_privs/authentication/jwt_authentication.md` (modified, +1/-1)
 ```diff
-@@ -16,6 +16,8 @@ products: [oss, enterprise, cloud, anywhere]
+@@ -17,7 +17,7 @@ JSON Web Token（JWT）は、当事者間で情報をJSONオブジェクトと
  
+ ## 前提条件
+ 
+-MySQL クライアントから StarRocks に接続する場合、MySQL クライアントのバージョンは 9.2 以降である必要があります。
++MySQL クライアントから StarRocks に接続する場合、MySQL クライアントのバージョンは 9.1 以降である必要があります。9.1 以降、`authentication_openid_connect_client` プラグインはコミュニティ版を含むすべての MySQL クライアントのディストリビューションに同梱されています。
+ 
+ ## JWT でユーザーを作成する
+ 
+```
+
+**File**: `docs/ja/administration/user_privs/authentication/security_integration.md` (modified, +35/-1)
+```diff
+@@ -365,6 +365,7 @@ ADMIN SET FRONTEND CONFIG (
+ :::note
+ - StarRocks はローカルユーザーのネイティブ認証を優先します。同じユーザー名を持つローカルユーザーが存在しない場合、`authentication_chain` で設定した順序で認証が行われます。ネイティブ認証方式でログインに失敗した場合、クラスタは指定された順序で次の認証方式を試行します。
+ - OAuth 2.0 セキュリティインテグレーションを除いて、`authentication_chain` に複数のセキュリティインテグレーションを指定できます。複数の OAuth 2.0 セキュリティインテグレーションを指定することや、他のセキュリティインテグレーションと一緒に指定することはできません。
++- `authentication_chain` には LDAP と JWT のセキュリティインテグレーションを同時に含められますが、MySQL プロトコルでは部分的なサポートにとどまります。[LDAP と JWT のセキュリティインテグレーションを混在させる](#ldap-と-jwt-のセキュリティインテグレーションを混在させる)を参照してください。
  :::
  
-+通过安全集成登录的用户不会在 StarRocks 中创建：StarRocks 只在会话中为其创建一个虚拟用户。这类用户可以用不带 `FOR` 的 `SHOW AUTHENTICATION` 查看自己的认证信息，但不能在 `FOR USERNAME` 中指定（它只接受在 StarRocks 中创建的用户），`SHOW ALL AUTHENTICATION` 也不会返回这类用户。
-+
- ## 语法
- 
- ```SQL
-@@ -40,8 +42,8 @@ SHOW [ALL] AUTHENTICATION [FOR USERNAME]
- | **字段**          | **说明**                                                     |
- | ----------------- | ------------------------------------------------------------ |
- | UserIdentity      | 用户标识。                                                   |
--| Password          | 是否使用密码登录到 StarRocks 集群。<ul><li>`Yes`：使用密码登录。</li><li>`No`：不使用密码登录。</li></ul> |
--| AuthPlugin        | 使用的认证接口，包括 `MYSQL_NATIVE_PASSWORD` 和 `AUTHENTICATION_LDAP_SIMPLE`。如未使用认证接口，则返回 `NULL`。 |
-+| Password          | 是否使用密码登录到 StarRocks 集群。<ul><li>`Yes`：使用密码登录。</li><li>`No`：不使用密码登录。</li></ul>通过安全集成登录的用户返回 `No`，因为 StarRocks 不保存其密码。 |
-+| AuthPlugin        | 使用的认证接口，包括 `MYSQL_NATIVE_PASSWORD` 和 `AUTHENTICATION_LDAP_SIMPLE`。如未使用认证接口，则返回 `NULL`。通过安全集成登录的用户返回该安全集成的名称。 |
- | UserForAuthPlugin | 使用 LDAP 或 Kerberos 认证的用户名称。如未使用认证，则返回 `NULL`。 |
- 
- ## 示例
-@@ -79,3 +81,14 @@ SHOW AUTHENTICATION FOR root;
- | 'root'@'%'   | Yes      | NULL       | NULL              |
- +--------------+----------+------------+-------------------+
+ `authentication_chain` の値を確認するには、次のステートメントを使用します:
+@@ -373,6 +374,39 @@ ADMIN SET FRONTEND CONFIG (
+ ADMIN SHOW FRONTEND CONFIG LIKE 'authentication_chain';
  ```
+ 
++### LDAP と JWT のセキュリティインテグレーションを混在させる
 +
-+示例四：当前用户通过安全集成 `ldap_si` 登录，查看其认证信息。
++HTTP と Arrow Flight では、同じ `authentication_chain` 上の LDAP と JWT のセキュリティインテグレーションは並存できます。認証情報そのものが種類を示すためです。`Basic`（ユーザー名とパスワード）は LDAP セキュリティインテグレーションで、`Bearer`（トークン）は JWT と OAuth 2.0 セキュリティインテグレーションで検証されます。[HTTP と Arrow Flight から接続する](#http-と-arrow-flight-から接続する)を参照してください。
 +
-+```Plain
-+SHOW AUTHENTICATION;
-++------------------------+----------+------------+-------------------+
-+| UserIdentity           | Password | AuthPlugin | UserForAuthPlugin |
-++------------------------+----------+------------+-------------------+
-+| 'alice'@'192.168.1.10' | No       | ldap_si    | NULL              |
-++------------------------+----------+------------+-------------------+
++MySQL プロトコルでは部分的なサポートにとどまります。StarRocks は認証情報を受け取る前に接続のクライアント認証プラグインを 1 つ決めなければならず、2 種類のセキュリティインテグレーションは異なるプラグインを必要とします。LDAP は `mysql_clear_password`、JWT は `authentication_openid_connect_client` です。StarRocks はクライアントがハンドシェイクで宣言したプラグインによって選びます。
++
++| クライアントが宣言するプラグイン | 使われるセキュリティインテグレーション |
++| --- | --- |
++| `authentication_openid_connect_client` | チェーン上の最初の JWT セキュリティインテグレーション |
++| `mysql_clear_password` | チェーン上の最初の LDAP セキュリティインテグレーション |
++| どちらも宣言しない（多くのクライアントはデフォルトで `mysql_native_password` を送る） | チェーン上の最初のセキュリティインテグレーション |
++
++したがって:
++
++- 追加の設定なしで大多数のクライアントが使うセキュリティインテグレーションを先頭に置いてください。
++- もう一方の種類のクライアントはプラグインを宣言する必要があります。MySQL クライアントでは `--default-auth=<plugin>`、MySQL Connector/J では `defaultAuthenticationPlugin=<plugin>` を使います。MySQL クライアントはバージョン 9.1 から `authentication_openid_connect_client` を同梱しており、コミュニティ版にも含まれます。それより古い MySQL クライアントと MariaDB クライアントにはこのプラグインがありません。
++- プラグインを宣言できないクライアント（PyMySQL など）は、常にチェーン上の最初のセキュリティインテグレーションを使います。
++
++```Bash
++# JWT セキュリティインテグレーションのユーザー（チェーンの先頭は LDAP セキュリティインテグレーション）
++mysql -h <fe_host> -P <query_port> --default-auth=authentication_openid_connect_client \
++    --authentication-openid-connect-client-id-token-file=<path_to_token_file> -u <username>
++
++# LDAP セキュリティインテグレーションのユーザー（チェーンの先頭は JWT セキュリティインテグレーション）
++mysql -h <fe_host> -P <query_port> --default-auth=mysql_clear_password --enable-cleartext-plugin -u <username> -p
 +```
++
++JWT クライアントが OpenID Connect プラグインを読み込めない場合は、FE の設定項目 `authentication_chain_accept_jwt_as_password` を `true` にし、LDAP セキュリティインテグレーションを先頭に置いてください。JWT クライアントはトークンをパスワードとして渡します。MySQL ログインのパスワードが JWT の形をしている場合、StarRocks はまず JWT と OAuth 2.0 セキュリティインテグレーションで検証し、どれも受け入れなかった場合にのみパスワードとして LDAP セキュリティインテグレーションに渡します。トークンは平文パスワードと同じように送られるため、SSL 接続を使ってください。この設定項目は MySQL プロトコルにのみ適用されます。HTTP と Arrow Flight ではトークンを `Bearer` で送ってください。
++
++```Bash
++mysql -h <fe_host> -P <query_port> --ssl-mode=REQUIRED --enable-cleartext-plugin -u <username> -p"$(cat <path_to_token_file>)"
++```
++
+ ## HTTP と Arrow Flight から接続する
+ 
+ `authentication_chain` に登録したセキュリティインテグレーションのユーザーは、MySQL プロトコルだけでなく StarRocks のすべてのエントリポイントからログインできます: HTTP SQL API、Stream Load（FE 経由または BE に直接）、FE Web UI、Arrow Flight SQL。クライアントが送る認証情報はインテグレーションのタイプによって決まります。
+@@ -402,7 +436,7 @@ curl -H "Authorization: Bearer ${TOKEN}" -H "label:load_1" -H "column_separator:
+ - セキュリティインテグレーションのユーザーの権限は [Group Provider](../group_provider.md) と `GRANT ... TO EXTERNAL GROUP` からのみ付与されます。ユーザーが解決されたグループはすべてのエントリポイントで有効です。
+ - Arrow Flight SQL では、JWT はユーザー名とパスワードとまったく同じ方法で認証されます。サーバーは自身が発行するセッショントークンを返し、クライアントは接続の残りの間それを使います。セッションは JWT より長く生きられません。トークンの `exp` を過ぎると接続は拒否され、クライアントは新しい JWT で再認証する必要があります。
+ - FE の設定項目 `enable_rest_bearer_authentication`（デフォルト `true`）は、HTTP と Arrow Flight エントリポイントの Bearer 認証を無効にします。MySQL プロトコルには影響せず、MySQL プロトコルのトークンログインは引き続き `authentication_openid_connect_client` と `authentication_oauth2_client` プラグインを使います。
+-- MySQL プロトコルはクライアントに一度に 1 種類のトークンプラグインしか提示できず、`authentication_chain` で最初に現れる JWT または OAuth 2.0 インテグレーションがそれを決めます。HTTP と Arrow Flight にはこの制限はありません。トークン自体が issuer と audience でルーティングされるためです。
++- MySQL プロトコルはクライアントに一度に 1 つのプラグインしか提示できません。クライアントが宣言したプラグインが対応するセキュリティインテグレーションを選び、何も宣言しないクライアントは `authentication_chain` の最初のセキュリティインテグレーションを使います（[LDAP と JWT のセキュリティインテグレーションを混在させる](#ldap-と-jwt-のセキュリティインテグレーションを混在させる)を参照）。HTTP と Arrow Flight にはこの制限はありません。トークン自体が issuer と audience でルーティングされるためです。
+ - HTTP 認証の失敗はすべて `401` を返し、`WWW-Authenticate` に `Basic` と `Bearer` の両方のチャレンジを含み、どのインテグレーションがなぜ拒否したかは示しません。原因の調査には FE のメトリクス `authentication_failure_total` と `authentication_failure_reason_total` を使ってください。
+ 
+ ## セキュリティインテグレーションを管理する
 ```
 
-**File**: `fe/fe-core/src/main/java/com/starrocks/authorization/AuthorizationMgr.java` (modified, +48/-8)
+**File**: `docs/zh/administration/configuration/FE_parameters/log_server_meta.md` (modified, +9/-0)
 ```diff
-@@ -2057,13 +2057,14 @@ public Set<Long> getAllRoleIds(UserIdentity user) throws PrivilegeException {
+@@ -1030,6 +1030,15 @@ ADMIN SET FRONTEND CONFIG ("key" = "value");
+ - 描述: 非 MySQL 通道（HTTP、Arrow Flight、直连 BE 的 Stream Load）上 Bearer token 认证的总开关。设为 `false` 后，这些通道收到 `Authorization: Bearer ...` 一律返回 HTTP 401，回退到"只有 MySQL 协议支持 token 认证"的行为；Basic 认证与既有的 Arrow Flight UUID session token 不受影响。MySQL 协议的认证任何情况下都不受此开关控制。
+ - 引入版本: v4.2
+ 
++### `authentication_chain_accept_jwt_as_password`
++
++- 默认值: false
++- 类型: Boolean
++- 单位: -
++- 是否可变: Yes
++- 描述: 是否允许安全集成用户把 JWT 当作 MySQL 登录的口令提交（`mysql_clear_password` 插件）。设为 `true` 后，这样的口令形状像一个 JWT 时，StarRocks 先把它当 token 交给 `authentication_chain` 中的 JWT 和 OAuth 2.0 安全集成验证，没有任何一个接受时才把它当口令交给 LDAP 安全集成。这样没有 `authentication_openid_connect_client` 插件的 MySQL 客户端也能通过与 LDAP 安全集成同在 `authentication_chain` 中的 JWT 安全集成登录。设为 `false` 时，这样的口令直接交给 LDAP 安全集成。该配置项只作用于 MySQL 协议：HTTP 和 Arrow Flight 以 `Bearer` 携带 token，它们的 `Basic` 口令不会被当作 token。一个碰巧长得像 token 的口令会在走口令路径之前多经历一次被拒绝的 token 校验；认证指标只按这次登录的最终结果计数。
++- 引入版本: -
++
+ ### `http_web_page_display_hardware`
+ 
+ - 默认值: true
+```
+
+**File**: `docs/zh/administration/user_privs/authentication/jwt_authentication.md` (modified, +1/-1)
+```diff
+@@ -17,7 +17,7 @@ JSON Web Token（JWT）是一项开放标准（RFC 7519），它定义了一种
+ 
+ ## 前提条件
+ 
+-如果您想从 MySQL 客户端连接到 StarRocks，MySQL 客户端版本必须是 9.2 或更高版本。
++如果您想从 MySQL 客户端连接到 StarRocks，MySQL 客户端版本必须是 9.1 或更高版本。从 9.1 起，所有发行版（包括社区版）的 MySQL 客户端都自带 `authentication_openid_connect_client` 插件。
+ 
+ ## 使用 JWT 认证创建用户
+ 
+```
+
+---
+
+### Incident Patch 2: `0f1ce94b` (2026-11-22)
+**Commit Message**: [BugFix] Do not queue a query-triggered analyze from the authorization check's optimization (#83236)
+
+Signed-off-by: Planck Li <[REDACTED_EMAIL]>
+Co-authored-by: Planck Li <[REDACTED_EMAIL]>
+
+**File**: `fe/fe-core/src/main/java/com/starrocks/authorization/ColumnPrivilege.java` (modified, +3/-0)
+```diff
+@@ -124,6 +124,9 @@ public static void check(ConnectContext context, QueryStatement stmt, List<Table
+             // with no column to check, and so with no SELECT check at all. Keep such scans here.
+             optimizerOptions.disableRule(RuleType.TF_CAST_TO_EMPTY);
+             optimizerOptions.disableRule(RuleType.TF_ELIMINATE_LIMIT_ZERO);
++            // The statement is not authorized yet: looking up statistics here must not queue an analyze for
++            // its tables. The planning that follows a passed check queues it as usual.
++            optimizerOptions.setQueryTriggerAnalyzeEnabled(false);
+             // Prune without the IVM rewrite: it needs the MV state-column bindings only InsertPlanner sets up, and it
+             // changes how an IVM refresh scans its base tables, not which of their columns it reads. The optimizer also
+             // detaches the query MV context, which carries what the statement's own planning still has to read.
+```
+
+**File**: `fe/fe-core/src/main/java/com/starrocks/server/MetadataMgr.java` (modified, +9/-6)
+```diff
+@@ -716,7 +716,8 @@ public List<String> listPartitionNamesByValue(String catalogName, String dbName,
+         return ImmutableList.copyOf(partitionNames.build());
      }
  
-     /**
--     * The roles a caller can use: the roles granted to the user, plus the roles granted to its groups, which the
--     * privilege collection always adds. An ephemeral user, one authenticated through a security integration, owns
--     * no roles: its roles are the ones its session activated. They are taken from the caller, not looked up, as
--     * the lookup reads the session of the current thread, and the RPC threads calling this have none.
-+     * The ids of the roles a caller can use: the roles granted to the user, plus the roles granted to its groups,
-+     * which the privilege collection always adds. An ephemeral user, one authenticated through a security
-+     * integration, owns no roles: its roles are the ones its session activated. They are taken from the caller, not
-+     * looked up, as the lookup reads the session of the current thread, and the RPC threads calling this have none.
-+     * Roles that no longer exist are left out. The roles these inherit from are not added.
-      */
--    public List<RolePrivilegeCollectionV2> getApplicableRoles(UserIdentity user, Set<String> groups,
--                                                              Set<Long> activatedRoleIds) throws PrivilegeException {
-+    public Set<Long> getApplicableRoleIds(UserIdentity user, Set<String> groups, Set<Long> activatedRoleIds)
-+            throws PrivilegeException {
-         Set<Long> roleIds = new HashSet<>();
-         if (user.isEphemeral()) {
-             // The activated set is the only place some of these roles live: an LDAP security integration with a
-@@ -2076,7 +2077,6 @@ public List<RolePrivilegeCollectionV2> getApplicableRoles(UserIdentity user, Set
-             roleIds.addAll(getRoleIdsByUser(user));
-         }
+-    public Statistics getTableStatisticsFromInternalStatistics(Table table, Map<ColumnRefOperator, Column> columns) {
++    public Statistics getTableStatisticsFromInternalStatistics(Table table, Map<ColumnRefOperator, Column> columns,
++                                                               boolean queryTriggerAnalyzeEnabled) {
+         Statistics.Builder statistics = Statistics.builder();
  
--        List<RolePrivilegeCollectionV2> applicableRoles = new ArrayList<>();
-         roleReadLock();
-         try {
-             // Under the lock: getRoleIdListByGroup can return the live set, which GRANT and REVOKE change in place.
-@@ -2085,9 +2085,49 @@ public List<RolePrivilegeCollectionV2> getApplicableRoles(UserIdentity user, Set
-                     roleIds.addAll(getRoleIdListByGroup(group));
+         List<ColumnRefOperator> requiredColumnRefs = new ArrayList<>();
+@@ -730,8 +731,8 @@ public Statistics getTableStatisticsFromInternalStatistics(Table table, Map<Colu
+ 
+         List<String> columnNames = requiredColumnRefs.stream().map(col -> columns.get(col).getName()).collect(
+                 Collectors.toList());
+-        List<ConnectorTableColumnStats> columnStatisticList =
+-                GlobalStateMgr.getCurrentState().getStatisticStorage().getConnectorTableStatistics(table, columnNames);
++        List<ConnectorTableColumnStats> columnStatisticList = GlobalStateMgr.getCurrentState().getStatisticStorage()
++                .getConnectorTableStatistics(table, columnNames, queryTriggerAnalyzeEnabled);
+ 
+         Map<String, Histogram> histogramStatistics =
+                 GlobalStateMgr.getCurrentState().getStatisticStorage().getConnectorHistogramStatistics(table, columnNames);
+@@ -773,8 +774,9 @@ private void captureAnalyzedColumnRowCountsToDump(OptimizerContext session, Stri
+                 .filter(ref -> !FeNameFormat.FORBIDDEN_COLUMN_NAMES.contains(ref.getName()))
+                 .collect(Collectors.toList());
+         List<String> columnNames = refs.stream().map(ref -> columns.get(ref).getName()).collect(Collectors.toList());
+-        List<ConnectorTableColumnStats> stats =
+-                GlobalStateMgr.getCurrentState().getStatisticStorage().getConnectorTableStatistics(table, columnNames);
++        List<ConnectorTableColumnStats> stats = GlobalStateMgr.getCurrentState().getStatisticStorage()
++                .getConnectorTableStatistics(table, columnNames,
++                        session.getOptimizerOptions().isQueryTriggerAnalyzeEnabled());
+         for (int i = 0; i < refs.size() && i < stats.size(); i++) {
+             if (!stats.get(i).isUnknown()) {
+                 session.getDumpInfo().addExternalColumnRowCount(table, refs.get(i).getName(),
+@@ -865,7 +867,8 @@ private Statistics computeTableStatistics(OptimizerContext session,
+         // FIXME: In testing env, `_statistics_.external_column_statistics` is not created, ignore query columns stats from it.
+         // Get basic/histogram stats from internal statistics.
+         Statistics internalStatistics = FeConstants.runningUnitTest ? null :
+-                getTableStatisticsFromInternalStatistics(table, columns);
++                getTableStatisticsFromInternalStatistics(table, columns,
++                        session.getOptimizerOptions().isQueryTriggerAnalyzeEnabled());
+         if (internalStatistics == null ||
+                 internalStatistics.getColumnStatistics().values().stream().allMatch(ColumnStatistic::isUnknown)) {
+             // Get basic stats from connector metadata.
+```
+
+**File**: `fe/fe-core/src/main/java/com/starrocks/sql/optimizer/OptimizerOptions.java` (modified, +13/-0)
+```diff
+@@ -40,6 +40,11 @@ public enum OptimizerStrategy {
+ 
+     private final BitSet ruleSwitches;
+ 
++    // Whether looking up an external table's column statistics during this run may queue a query-triggered
++    // analyze for the table. Off for the column pruning a column-level authorization check runs before the
++    // statement is authorized: that plan is thrown away, and the statement may still be denied.
++    private boolean queryTriggerAnalyzeEnabled = true;
++
+     public OptimizerOptions() {
+         this(OptimizerStrategy.COST_BASED);
+     }
+@@ -62,6 +67,14 @@ public boolean isBaselinePlan() {
+         return optimizerStrategy.equals(OptimizerStrategy.BASELINE_PLAN);
+     }
+ 
++    public boolean isQueryTriggerAnalyzeEnabled() {
++        return queryTriggerAnalyzeEnabled;
++    }
++
++    public void setQueryTriggerAnalyzeEnabled(boolean queryTriggerAnalyzeEnabled) {
++        this.queryTriggerAnalyzeEnabled = queryTriggerAnalyzeEnabled;
++    }
++
+     public void disableRule(RuleType ruleType) {
+         ruleSwitches.clear(ruleType.ordinal());
+     }
+```
+
+**File**: `fe/fe-core/src/main/java/com/starrocks/sql/optimizer/statistics/CachedStatisticStorage.java` (modified, +10/-1)
+```diff
+@@ -219,6 +219,12 @@ public void refreshHistogramStatistics(Table table, List<String> columns, boolea
+ 
+     @Override
+     public List<ConnectorTableColumnStats> getConnectorTableStatistics(Table table, List<String> columns) {
++        return getConnectorTableStatistics(table, columns, true);
++    }
++
++    @Override
++    public List<ConnectorTableColumnStats> getConnectorTableStatistics(Table table, List<String> columns,
++                                                                       boolean queryTriggerAnalyzeEnabled) {
+         Preconditions.checkState(table != null);
+ 
+         // get Statistics Table column info, just return default column statistics
+@@ -242,13 +248,16 @@ public List<ConnectorTableColumnStats> getConnectorTableStatistics(Table table,
+             SessionVariable sessionVariable = ConnectContext.get() == null ?
+                     GlobalStateMgr.getCurrentState().getVariableMgr().newSessionVariable() :
+                     ConnectContext.get().getSessionVariable();
++            // Decided here, on the query's thread: the callback runs on the refresher's, which has no
++            // ConnectContext, and possibly after the statement has moved on to its next optimization.
++            boolean triggerAnalyze = queryTriggerAnalyzeEnabled && sessionVariable.isEnableQueryTriggerAnalyze();
+             result.whenCompleteAsync((res, e) -> {
+                 if (e != null) {
+                     LOG.warn("Get connector table column statistics filed, exception: ", e);
+                     return;
                  }
-             }
-+            roleIds.removeIf(roleId -> !roleIdToPrivilegeCollection.containsKey(roleId));
-+        } finally {
-+            roleReadUnlock();
-+        }
-+        return roleIds;
-+    }
-+
-+    /**
-+     * The roles of {@link #getApplicableRoleIds} together with every role they inherit from. Roles
-+     * that no longer exist are left out.
-+     */
-+    public Set<Long> getApplicableRoleIdsWithPredecessors(UserIdentity user, Set<String> groups,
-+                                                          Set<Long> activatedRoleIds) throws PrivilegeException {
-+        // Hold both locks across the lookup and the expansion, as getEffectiveRoleIds does with the
-+        // user lock: otherwise a role revoked from the user or its group and then granted db_admin
-+        // in between would be expanded against the new inheritance graph and count as held. The
-+        // lookup takes the same read locks again, which they allow.
-+        userReadLock();
-+        try {
-+            roleReadLock();
-+            try {
-+                Set<Long> roleIds = getApplicableRoleIds(user, groups, activatedRoleIds);
-+                return getAllPredecessorRoleIdsUnlocked(roleIds);
-+            } finally {
-+                roleReadUnlock();
-+            }
-+        } finally {
-+            userReadUnlock();
-+        }
-+    }
-+
-+    /**
-+     * The roles of {@link #getApplicableRoleIds}, for listing them.
-+     */
-+    public List<RolePrivilegeCollectionV2> getApplicableRoles(UserIdentity user, Set<String> groups,
-+                                                              Set<Long> activatedRoleIds) throws PrivilegeException {
-+        Set<Long> roleIds = getApplicableRoleIds(user, groups, activatedRoleIds);
-+        List<RolePrivilegeCollectionV2> applicableRoles = new ArrayList<>();
-+        roleReadLock();
-+        try {
-             for (Long roleId : roleIds) {
-                 RolePrivilegeCollectionV2 rolePrivilegeCollection = roleIdToPrivilegeCollection.get(roleId);
--                if (rolePrivilegeCollection != null) {
-+                if (rolePrivilegeCollection != null) { // null when the role was dropped meanwhile
-                     applicableRoles.add(rolePrivilegeCollection);
+                 // Followers too: the manager forwards their requests to the leader, which runs the analyze.
+-                if (sessionVariable.isEnableQueryTriggerAnalyze()) {
++                if (triggerAnalyze) {
+                     GlobalStateMgr.getCurrentState().getConnectorTableTriggerAnalyzeMgr().checkAndUpdateTableStats(res);
                  }
-             }
+             }, statsCacheRefresherExecutor);
 ```
 
-**File**: `fe/fe-core/src/main/java/com/starrocks/http/BaseAction.java` (modified, +26/-28)
+**File**: `fe/fe-core/src/main/java/com/starrocks/sql/optimizer/statistics/StatisticStorage.java` (modified, +10/-0)
 ```diff
-@@ -368,22 +368,6 @@ protected void writeCookies(BaseResponse response, HttpResponse responseObj) {
-         }
+@@ -70,6 +70,16 @@ default List<ConnectorTableColumnStats> getConnectorTableStatistics(Table table,
+                 map(col -> ConnectorTableColumnStats.unknown()).collect(Collectors.toList());
      }
  
--    // We check whether user owns db_admin and user_admin role in new RBAC privilege framework for
--    // operation which checks `PrivPredicate.ADMIN` in global table in old Auth framework.
--    protected void checkUserOwnsAdminRole(UserIdentity currentUser) throws AccessDeniedException {
--        try {
--            Set<Long> userOwnedRoles = AuthorizationMgr.getOwnedRolesByUser(currentUser);
--            if (!(currentUser.equals(UserIdentity.ROOT) ||
--                    userOwnedRoles.contains(PrivilegeBuiltinConstants.ROOT_ROLE_ID) ||
--                    (userOwnedRoles.contains(PrivilegeBuiltinConstants.DB_ADMIN_ROLE_ID) &&
--                            userOwnedRoles.contains(PrivilegeBuiltinConstants.USER_ADMIN_ROLE_ID)))) {
--                throw new AccessDeniedException();
--            }
--        } catch (PrivilegeException e) {
--            throw new AccessDeniedException();
--        }
--    }
--
-     /**
-      * Parse the {@code Authorization} header into a protocol-neutral {@link AuthCredentials},
-      * supporting both Basic (plaintext password) and Bearer (token). Returns {@code null} when the
-@@ -471,22 +455,36 @@ public static void checkCredential(ConnectContext ctx, AuthCredentials cred) thr
-     }
- 
-     /**
--     * The admin check of {@link #checkUserOwnsAdminRole} on the roles the context actually carries.
--     * A user from a security integration owns no roles of its own: everything it has arrives through
--     * its groups and sits on the context authentication wrote to, so that is what is looked at
--     * first; the user-owned lookup is the fallback for users the role table knows directly.
-+     * The roles the user of {@code ctx} holds, granted to it or to one of its groups (for an
-+     * ephemeral user, the roles of its session), together with their predecessors, the roles they
-+     * inherit from. Whether a role is activated does not matter: a request to these endpoints
-+     * cannot run SET ROLE, and a role granted to the user has always counted.
-      */
-+    protected static Set<Long> getHeldRoleIdsWithPredecessors(ConnectContext ctx) throws PrivilegeException {
-+        AuthorizationMgr authorizationMgr = GlobalStateMgr.getCurrentState().getAuthorizationMgr();
-+        return authorizationMgr.getApplicableRoleIdsWithPredecessors(
-+                ctx.getCurrentUserIdentity(), ctx.getGroups(), ctx.getCurrentRoleIds());
++    /**
++     * As {@link #getConnectorTableStatistics(Table, List)}, except that with {@code queryTriggerAnalyzeEnabled}
++     * false the lookup must not queue a query-triggered analyze for the table
++     * (see {@link com.starrocks.sql.optimizer.OptimizerOptions#isQueryTriggerAnalyzeEnabled()}).
++     */
++    default List<ConnectorTableColumnStats> getConnectorTableStatistics(Table table, List<String> columns,
++                                                                        boolean queryTriggerAnalyzeEnabled) {
++        return getConnectorTableStatistics(table, columns);
 +    }
 +
-+    // We check whether user owns db_admin and user_admin role in new RBAC privilege framework for
-+    // operation which checks `PrivPredicate.ADMIN` in global table in old Auth framework. The roles
-+    // are those of getHeldRoleIdsWithPredecessors.
-     protected void checkAdminRole(ConnectContext ctx) throws AccessDeniedException {
-         UserIdentity currentUser = ctx.getCurrentUserIdentity();
--        Set<Long> roleIds = ctx.getCurrentRoleIds();
--        if (currentUser != null && roleIds != null
--                && (currentUser.equals(UserIdentity.ROOT)
--                || roleIds.contains(PrivilegeBuiltinConstants.ROOT_ROLE_ID)
--                || (roleIds.contains(PrivilegeBuiltinConstants.DB_ADMIN_ROLE_ID)
--                && roleIds.contains(PrivilegeBuiltinConstants.USER_ADMIN_ROLE_ID)))) {
--            return;
-+        if (currentUser == null) {
-+            throw new AccessDeniedException();
-+        }
-+        try {
-+            Set<Long> heldRoles = getHeldRoleIdsWithPredecessors(ctx);
-+            if (!(currentUser.equals(UserIdentity.ROOT) ||
-+                    heldRoles.contains(PrivilegeBuiltinConstants.ROOT_ROLE_ID) ||
-+                    (heldRoles.contains(PrivilegeBuiltinConstants.DB_ADMIN_ROLE_ID) &&
-+                            heldRoles.contains(PrivilegeBuiltinConstants.USER_ADMIN_ROLE_ID)))) {
-+                throw new AccessDeniedException();
-+            }
-+        } catch (PrivilegeException e) {
-+            throw new AccessDeniedException();
-         }
--        checkUserOwnsAdminRole(currentUser);
+     default List<ConnectorTableColumnStats> getConnectorTableStatisticsSync(Table table, List<String> columns) {
+         return getConnectorTableStatistics(table, columns);
      }
- 
-     protected int checkIntParam(String strParam) {
 ```
 
-**File**: `fe/fe-core/src/main/java/com/starrocks/http/HttpAuthManager.java` (modified, +6/-6)
+**File**: `fe/fe-core/src/main/java/com/starrocks/sql/optimizer/statistics/StatisticsCalculator.java` (modified, +2/-1)
 ```diff
-@@ -19,20 +19,20 @@
- 
- import com.google.common.cache.Cache;
- import com.google.common.cache.CacheBuilder;
--import com.starrocks.catalog.UserIdentity;
+@@ -361,7 +361,8 @@ private void addSubFiledStatistics(Operator node, Map<ColumnRefOperator, Subfiel
+                     columnNames);
+         } else {
+             columnStatisticList = GlobalStateMgr.getCurrentState().getStatisticStorage().getConnectorTableStatistics(table,
+-                    columnNames).stream().map(ConnectorTableColumnStats::getColumnStatistic).collect(Collectors.toList());
++                    columnNames, optimizerContext.getOptimizerOptions().isQueryTriggerAnalyzeEnabled()).stream()
++                    .map(ConnectorTableColumnStats::getColumnStatistic).collect(Collectors.toList());
+             histogramStatistics = GlobalStateMgr.getCurrentState().getStatisticStorage().
+                     getConnectorHistogramStatistics(table, columnNames);
+         }
+```
+
+**File**: `fe/fe-core/src/test/java/com/starrocks/authorization/ColumnPrivilegeTriggerAnalyzeTest.java` (added, +125/-0)
+```diff
+@@ -0,0 +1,125 @@
++// Copyright 2021-present StarRocks, Inc. All rights reserved.
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     https://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package com.starrocks.authorization;
++
++import com.starrocks.catalog.Table;
++import com.starrocks.catalog.TableName;
++import com.starrocks.common.FeConstants;
++import com.starrocks.connector.statistics.ConnectorTableColumnStats;
 +import com.starrocks.qe.ConnectContext;
- 
- import java.util.concurrent.TimeUnit;
- 
- // We simulate a simplified session here: only store user-name of clients who already logged in,
- // and we only have a default admin user for now.
- public final class HttpAuthManager {
--    private static long SESSION_EXPIRE_TIME = 2; // hour
--    private static long SESSION_MAX_SIZE = 100; // avoid to store too many
-+    private static final long SESSION_EXPIRE_TIME = 2; // hour
-+    private static final long SESSION_MAX_SIZE = 100; // avoid to store too many
- 
--    private static HttpAuthManager instance = new HttpAuthManager();
-+    private static final HttpAuthManager INSTANCE = new HttpAuthManager();
- 
-     public static class SessionValue {
--        public UserIdentity currentUser;
-+        public ConnectContext connectContext;
-     }
- 
-     // session_id => session value
-@@ -46,7 +46,7 @@ private HttpAuthManager() {
-     }
- 
-     public static HttpAuthManager getInstance() {
--        return instance;
-+        return INSTANCE;
-     }
- 
-     public SessionValue getSessionValue(String sessionId) {
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/http/action/WebBaseAction.java` (modified, +14/-21)
-```diff
-@@ -37,7 +37,6 @@
- import com.google.common.base.Strings;
- import com.starrocks.authorization.AccessDeniedException;
- import com.starrocks.authorization.PrivilegeType;
--import com.starrocks.catalog.UserIdentity;
- import com.starrocks.common.AnalysisException;
- import com.starrocks.common.Config;
- import com.starrocks.common.proc.ProcNodeInterface;
-@@ -174,30 +173,25 @@ private boolean checkAuthWithCookie(BaseRequest request, BaseResponse response)
- 
-         // cookie is invalid.
-         try {
--            // Only the authenticated UserIdentity is used below: the session keeps just that
--            // identity, and the NODE check runs on a context holding the user's own roles. A NODE
--            // privilege that comes only from a role an LDAP or security-integration group maps
--            // to is therefore not honored for the Web UI.
-+            // Authenticate onto the context the NODE check below uses, so the roles an LDAP or
-+            // security-integration group maps to are present on it. Authenticating onto a throwaway
-+            // context and copying only the UserIdentity across would leave that check looking at
-+            // user-owned roles alone, and deny a user whose NODE privilege comes from a group.
-             ConnectContext ctx = new ConnectContext(null);
-             ctx.setGlobalStateMgr(GlobalStateMgr.getCurrentState());
-             ctx.setRemoteIP(request.getHostString());
-             checkCredential(ctx, parseAuthCredentials(request));
--            UserIdentity currentUser = ctx.getCurrentUserIdentity();
- 
-             if (needAdmin()) {
-                 try {
--                    ConnectContext context = new ConnectContext();
--                    context.setCurrentUserIdentity(currentUser);
--                    context.setCurrentRoleIds(currentUser);
--
--                    Authorizer.checkSystemAction(context, PrivilegeType.NODE);
-+                    Authorizer.checkSystemAction(ctx, PrivilegeType.NODE);
-                 } catch (AccessDeniedException e) {
--                    checkUserOwnsAdminRole(currentUser);
-+                    checkAdminRole(ctx);
-                 }
-             }
-             request.setAuthorized(true);
-             SessionValue value = new SessionValue();
--            value.currentUser = currentUser;
-+            value.connectContext = ctx;
-             addSession(request, response, value);
- 
-             ctx.setQueryId(UUIDUtil.genUUID());
-@@ -224,12 +218,9 @@ private boolean checkCookie(BaseRequest request, BaseResponse response) {
- 
-             try {
-                 try {
--                    ConnectContext context = new ConnectContext();
--                    context.setCurrentUserIdentity(sessionValue.currentUser);
--                    context.setCurrentRoleIds(sessionValue.currentUser);
--                    Authorizer.checkSystemAction(context, PrivilegeType.NODE);
-+                    Authorizer.checkSystemAction(sessionValue.connectContext, PrivilegeType.NODE);
-                 } catch (AccessDeniedException e) {
--                    checkUserOwnsAdminRole(sessionValue.currentUser);
-+                    checkAdminRole(sessionValue.connectContext);
-                 }
-                 authorized = true;
-             } catch (AccessDeniedException e) {
-@@ -241,12 +232,14 @@ private boolean checkCookie(BaseRequest request, BaseResponse response) {
-                 request.setAuthorized(true);
- 
-                 ConnectContext ctx = new ConnectContext(null);
--                ctx.setQualifiedUser(sessionValue.currentUser.getUser());
-+                ctx.setQualifiedUser(sessionValue.connectContext.getCurrentUserIdentity().getUser());
-                 ctx.setQueryId(UUIDUtil.genUUID());
-                 ctx.setRemoteIP(request.getHostString());
--                ctx.setCurrentUserIdentity(sessionValue.currentUser);
-+                ctx.setCurrentUserIdentity(sessionValue.connectContext.getCurrentUserIdentity());
-                 ctx.setGlobalStateMgr(GlobalStateMgr.getCurrentState());
--                ctx.setCurrentRoleIds(sessionValue.currentUser);
-+                ctx.setCurrentRoleIds(sessionValue.connectContext.getCurrentRoleIds());
-+                // Group-mapped roles and Ranger evaluate the groups; the stored context already resolved them.
-+                ctx.setGroups(sessionValue.connectContext.getGroups());
- 
-                 ctx.setThreadLocalInfo();
-                 return true;
-```
-
-**File**: `fe/fe-core/src/main/java/com/starrocks/http/meta/ColocateMetaService.java` (modified, +1/-3)
-```diff
-@@ -44,7 +44,6 @@
- import com.starrocks.catalog.ColocateTableIndex.GroupId;
- import com.starrocks.catalog.Database;
- import com.starrocks.catalog.OlapTable;
--import com.starrocks.catalog.UserIdentity;
- import com.starrocks.common.DdlException;
- import com.starrocks.common.util.concurrent.lock.LockType;
- import com.starrocks.common.util.concurrent.lock.Locker;
-@@ -114,8 +113,7 @@ public void executeWithoutPassword(BaseRequest request, BaseResponse response)
-             if (redirectToLeader(request, response)) {
-                 return;
-             }
--            UserIdentity currentUser = ConnectContext.get().getCurrentUserIdentity();
--            checkUserOwnsAdminRole(currentUser);
-+            checkAdminRole(ConnectContext.get());
-             executeInLeaderWithAdmin(request, response);
-         }
- 
-```
-
----
-
-### Incident Patch 2: `56a6aff2` (2026-11-20)
-**Commit Message**: [BugFix][CVE] Bump pprof to release/20261120 (#84059)
-
-Signed-off-by: Kevin Cai <[REDACTED_EMAIL]>
-Co-authored-by: Kevin Cai <[REDACTED_EMAIL]>
-
-**File**: `thirdparty/vars-aarch64.sh` (modified, +2/-2)
-```diff
-@@ -57,7 +57,7 @@ STARCACHE_SOURCE="starcache"
- STARCACHE_MD5SUM="8baa474b87313f0e9c64e013b1bb435b"
- 
- # pprof
--PPROF_DOWNLOAD="https://github.com/StarRocks/pprof/releases/download/release%2F20261022/pprof-linux-arm64"
-+PPROF_DOWNLOAD="https://github.com/StarRocks/pprof/releases/download/release%2F20261120/pprof-linux-arm64"
- PPROF_NAME="pprof"
- PPROF_SOURCE="pprof"
--PPROF_MD5SUM="a6c7aa092c1e0f73b92786d308c3a550"
-+PPROF_MD5SUM="53b9f01bfb02348d501590331e052643"
-```
-
-**File**: `thirdparty/vars-x86_64.sh` (modified, +2/-2)
-```diff
-@@ -52,7 +52,7 @@ STARCACHE_SOURCE="starcache"
- STARCACHE_MD5SUM="ef647eb27cbb4b0038f73a14daf9b6b8"
- 
- # pprof
--PPROF_DOWNLOAD="https://github.com/StarRocks/pprof/releases/download/release%2F20261022/pprof-linux-amd64"
-+PPROF_DOWNLOAD="https://github.com/StarRocks/pprof/releases/download/release%2F20261120/pprof-linux-amd64"
- PPROF_NAME="pprof"
- PPROF_SOURCE="pprof"
--PPROF_MD5SUM="4a1533413af73e01ba44d5c0d8dc17e8"
-+PPROF_MD5SUM="3a5d99f3efe82a2a1e83824701888ed4"
-```
-
----
-
-### Incident Patch 3: `4931995f` (2026-11-20)
-**Commit Message**: [UT] Add a failpoint for PK merge index rebuild validation (#84016)
-
-Co-authored-by: Yixin Luo <[REDACTED_EMAIL]>
-Co-authored-by: code-factory <[REDACTED_EMAIL]>
-
-**File**: `be/src/storage/lake/lake_persistent_index.cpp` (modified, +1/-0)
-```diff
-@@ -1119,6 +1119,7 @@ Status LakePersistentIndex::load_dels(const RowsetPtr& rowset, const Schema& pke
-         // segment never needs it; after a tablet merge, which orders the rowsets of a version by uid, a rowset
-         // with a larger id may have been replayed first.
-         if ((_memtable->max_rss_rowid() >> 32) > too_old) {
-+            TRACE_COUNTER_INCREMENT("soak_pk_merge_delete_lookup_cnt", 1);
-             // Never join here: load_one and these lookups share the PK execution pool.
-             return parallel_get(&get_runner, out->keys.size(), out->keys.data(), too_old, &out->filter_words);
-         }
-```
-
-**File**: `be/src/storage/lake/tablet_merger.cpp` (modified, +8/-0)
-```diff
-@@ -45,6 +45,7 @@
- namespace starrocks::lake {
- 
- DEFINE_FAIL_POINT(skip_lake_pk_index_merge_source_flush);
-+DEFINE_FAIL_POINT(soak_pk_merge_force_index_rebuild);
- DEFINE_FAIL_POINT(tablet_merge_after_write_delvec);
- 
- namespace {
-@@ -1544,6 +1545,13 @@ Status merge_sstables(TabletManager* tablet_manager, MergePlan* plan) {
-         drop_source_sstables(plan->sources, target);
-         return Status::OK();
-     }
-+    FAIL_POINT_TRIGGER_EXECUTE(soak_pk_merge_force_index_rebuild, {
-+        LOG(INFO) << describe_index_rebuild(target->id(), plan->sources.front()->id(),
-+                                            SstFallback{"", "forced by soak_pk_merge_force_index_rebuild"},
-+                                            /*flushed=*/false);
-+        drop_source_sstables(plan->sources, target);
-+        return Status::OK();
-+    });
-     std::vector<TabletMetadataPtr> flushed = plan->sources;
-     for (auto& source : flushed) {
-         bool skip_source_flush = false;
-```
-
-**File**: `be/test/storage/lake/tablet_merger_test.cpp` (modified, +21/-0)
-```diff
-@@ -6711,6 +6711,27 @@ TEST_F(LakeTabletMergerTest, test_tablet_merging_affine_modern_source_live_reuse
-     EXPECT_EQ(static_cast<uint64_t>(1) << 32, modern->max_rss_rowid());
- }
- 
-+TEST_F(LakeTabletMergerTest, test_tablet_merging_force_index_rebuild_failpoint) {
-+    constexpr char kFailpoint[] = "soak_pk_merge_force_index_rebuild";
-+    const int64_t rebuild_before = merge_index_rebuild_total();
-+    ScopedLogCapture log;
-+    set_failpoint_mode(kFailpoint, FailPointTriggerModeType::ENABLE);
-+    DeferOp disable([&] { set_failpoint_mode(kFailpoint, FailPointTriggerModeType::DISABLE); });
++import com.starrocks.server.GlobalStateMgr;
++import com.starrocks.sql.StatementPlanner;
++import com.starrocks.sql.analyzer.Authorizer;
++import com.starrocks.sql.ast.StatementBase;
++import com.starrocks.sql.optimizer.statistics.CachedStatisticStorage;
++import com.starrocks.sql.optimizer.statistics.StatisticStorage;
++import com.starrocks.sql.plan.ConnectorPlanTestBase;
++import com.starrocks.utframe.UtFrameUtils;
++import org.junit.jupiter.api.Assertions;
++import org.junit.jupiter.api.Test;
 +
-+    ASSIGN_OR_ABORT(auto result, publish_metadata_only_merge_fixture(MetadataOnlyMergeShape::kPrivate));
-+    ASSERT_EQ(2, result.source_sst_filenames.size());
-+    EXPECT_EQ(rebuild_before + 1, merge_index_rebuild_total());
-+    expect_affine_sst_fallback_orphans(result);
-+    for (const auto& orphan : result.published.at(result.target_tablet_id).orphan_files()) {
-+        if (result.source_sst_filenames.contains(orphan.name())) {
-+            EXPECT_TRUE(orphan.shared()) << orphan.name();
++import java.util.ArrayList;
++import java.util.List;
++import java.util.stream.Collectors;
++
++/**
++ * The column pruning {@link ColumnPrivilege} runs for a Ranger-style catalog happens before the statement is
++ * authorized, and its plan is thrown away. A statement the check then denies must leave no trace behind: the
++ * statistics it looked up on the way must not have queued a collection for the table.
++ */
++public class ColumnPrivilegeTriggerAnalyzeTest extends ConnectorPlanTestBase {
++
++    private static final String HIVE_CATALOG = "hive0";
++    private static final String SQL =
++            "SELECT l_orderkey FROM hive0.partitioned_db.lineitem_par WHERE l_partkey > 10";
++
++    /** Every lookup of connector statistics, as whether it was allowed to queue a collection. */
++    private static final class RecordingStatisticStorage extends CachedStatisticStorage {
++        final List<Boolean> lookups = new ArrayList<>();
++
++        @Override
++        public List<ConnectorTableColumnStats> getConnectorTableStatistics(Table table, List<String> columns,
++                                                                           boolean queryTriggerAnalyzeEnabled) {
++            lookups.add(queryTriggerAnalyzeEnabled);
++            return columns.stream().map(c -> ConnectorTableColumnStats.unknown()).collect(Collectors.toList());
 +        }
 +    }
-+    EXPECT_TRUE(log.contains(
-+            fmt::format("tablet merge into {} rebuilds the primary key index:", result.target_tablet_id), kFailpoint));
-+    expect_metadata_merge_lifecycle(result, {{10, 100}, {60, 600}}, {{10, 1010}}, {60});
-+}
 +
- // The first source's modern SST has watermark 2 while the source references RSSID 1 only, which the SST owns. The
- // merge carries it with owner 1 translated and the watermark lowered to RSSID 1, every row of it covered.
- TEST_F(LakeTabletMergerTest, test_tablet_merging_affine_modern_watermark_above_the_run_is_lowered) {
++    /** Installing any ExternalAccessController is what makes ColumnPrivilege run the optimization. */
++    private static ExternalAccessController controller(boolean denyColumns) {
++        return new ExternalAccessController() {
++            @Override
++            public void checkTableAction(ConnectContext context, TableName tableName, PrivilegeType privilegeType) {
++            }
++
++            @Override
++            public void checkColumnAction(ConnectContext context, TableName tableName, String column,
++                                          PrivilegeType privilegeType) throws AccessDeniedException {
++                if (denyColumns) {
++                    throw new AccessDeniedException();
++                }
++            }
++
++            @Override
++            public void checkMaterializedViewAction(ConnectContext context, TableName tableName,
++                                                    PrivilegeType privilegeType) {
++            }
++        };
++    }
++
++    /**
++     * Plans with the given controller on the hive catalog and returns the statistics lookups planning made. The
++     * internal-statistics lookup is skipped in unit tests, so it is switched back on for the planning only.
++     */
++    private List<Boolean> lookupsWhilePlanning(boolean denyColumns) throws Exception {
++        GlobalStateMgr state = connectContext.getGlobalStateMgr();
++        AccessControlProvider provider = Authorizer.getInstance();
++        StatisticStorage previousStorage = state.getStatisticStorage();
++        RecordingStatisticStorage storage = new RecordingStatisticStorage();
++        state.setStatisticStorage(storage);
++        provider.setAccessControl(HIVE_CATALOG, controller(denyColumns));
++        FeConstants.runningUnitTest = false;
++        try {
++            StatementBase stmt = UtFrameUtils.parseStmtWithNewParserNotIncludeAnalyzer(SQL, connectContext);
++            if (denyColumns) {
++                Assertions.assertThrows(Exception.class, () -> StatementPlanner.plan(stmt, connectContext));
++            } else {
++                StatementPlanner.plan(stmt, connectContext);
++            }
++        } finally {
++            FeConstants.runningUnitTest = true;
++    
+```
+
+**File**: `fe/fe-core/src/test/java/com/starrocks/server/MetadataMgrWidenColumnRangesTest.java` (modified, +4/-1)
+```diff
+@@ -21,6 +21,7 @@
+ import com.starrocks.common.tvr.TvrTableSnapshot;
+ import com.starrocks.connector.ConnectorMetadata;
+ import com.starrocks.sql.optimizer.OptimizerContext;
++import com.starrocks.sql.optimizer.OptimizerOptions;
+ import com.starrocks.sql.optimizer.operator.scalar.ColumnRefOperator;
+ import com.starrocks.sql.optimizer.statistics.ColumnStatistic;
+ import com.starrocks.sql.optimizer.statistics.Statistics;
+@@ -36,6 +37,7 @@
+ import static org.junit.jupiter.api.Assertions.assertSame;
+ import static org.junit.jupiter.api.Assertions.assertTrue;
+ import static org.mockito.ArgumentMatchers.any;
++import static org.mockito.ArgumentMatchers.anyBoolean;
+ import static org.mockito.Mockito.doReturn;
+ import static org.mockito.Mockito.mock;
+ import static org.mockito.Mockito.spy;
+@@ -95,12 +97,13 @@ public void testAnalyzeBranchWidensWithConnectorRanges() {
+         Statistics analyzed = Statistics.builder().setOutputRowCount(1000)
+                 .addColumnStatistic(ts, stat(100, 200))
+                 .setStatsSource(Statistics.StatsSource.ANALYZE).build();
+-        doReturn(analyzed).when(metadataMgr).getTableStatisticsFromInternalStatistics(any(), any());
++        doReturn(analyzed).when(metadataMgr).getTableStatisticsFromInternalStatistics(any(), any(), anyBoolean());
+         ConnectorMetadata connector = mock(ConnectorMetadata.class);
+         TvrTableSnapshot version = TvrTableSnapshot.of(7L);
+         when(connector.getPartitionSourceColumnRanges(table, version)).thenReturn(Map.of("ts", Pair.create(50.0, 300.0)));
+         doReturn(Optional.of(connector)).when(metadataMgr).getOptionalMetadata("iceberg_catalog");
+         OptimizerContext session = mock(OptimizerContext.class);
++        when(session.getOptimizerOptions()).thenReturn(new OptimizerOptions());
+ 
+         boolean runningUnitTest = FeConstants.runningUnitTest;
+         FeConstants.runningUnitTest = false;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #84135** (2026-11-22): [Enhancement] Look up partitions instead of scanning partition lists per partition (backport #83853) (@mergify[bot])
+- **PR #84134** (closed): [BugFix] Reset ORC compression state when suppressing PRESENT streams (@starrocks-bot[bot])
+- **PR #84123** (closed): [BugFix] Reset ORC compression state when suppressing PRESENT streams (@starrocks-bot[bot])
 - **PR #84116** (2026-11-21): [BugFix] Stop pushing aggregations below joins when they cannot reduce rows (backport #84115) (@mergify[bot])
 - **PR #84115** (2026-11-21): [BugFix] Stop pushing aggregations below joins when they cannot reduce rows (@starrocks-bot[bot])
 - **PR #84112** (closed): [BugFix] Reset ORC compression state when suppressing PRESENT streams (@starrocks-bot[bot])
-- **PR #84111** (2026-11-21): [Refactor] Persist the GEO descriptor through GeoType (backport #83841) (backport #83877) (@mergify[bot])
-- **PR #84110** (2026-11-21): [Refactor] Make GeoTypeDescriptor a class instead of a record (backport #83852) (backport #83870) (@mergify[bot])
-- **PR #84109** (2026-11-21): [Refactor] Move the GEO descriptor from ScalarType into GeoType (backport #83795) (backport #83839) (@mergify[bot])
 
 ---
 
@@ -2387,39 +2378,36 @@ Co-authored-by: code-factory <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [BugFix] Count group roles and security-integration users in SHOW GRANTS FOR ROL
+## X. [Enhancement] Support LDAP and JWT security integrations on one authentication_c
 
 **RULE**:
-When implementing operations in `docs/en/sql-reference/sql-statements/account-management/SHOW_AUTHENTICATION.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarRocks/starrocks. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/en/administration/configuration/FE_parameters/log_server_meta.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in StarRocks/starrocks. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `87ba5c08`: [BugFix] Count group roles and security-integration users in SHOW GRANTS FOR ROLE, SHOW AUTHENTICATION and the HTTP admin check. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `83f27a03`: [Enhancement] Support LDAP and JWT security integrations on one authentication_chain over MySQL. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/en/sql-reference/sql-statements/account-management/SHOW_AUTHENTICATION.md`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/en/administration/configuration/FE_parameters/log_server_meta.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-A user that logs in through a security integration is not created in StarRocks: StarRocks creates a virtual user for its session. Such a user can view its own authentication information with `SHOW AUTHENTICATION` without `FOR`. It cannot be specified in `FOR USERNAME`, which accepts only users created in StarRocks, and it is not returned by `SHOW ALL AUTHENTICATION`.
+### `authentication_chain_accept_jwt_as_password`
 
-| Password          | Whether a password is used to log in to the StarRocks cluster.<ul><li>`Yes`: A password is used.</li><li>`No`: No password is used.</li></ul>For a user that logs in through a security integration, `No` is returned, because StarRocks does not store its password. |
-| AuthPlugin        | The interface that is used for authentication. Valid values: `MYSQL_NATIVE_PASSWORD` and `AUTHENTICATION_LDAP_SIMPLE`. If no interface is used, `NULL` is returned. For a user that logs in through a security integration, the name of that security integration is returned. |
+- Default: false
+- Type: Boolean
+- Unit: -
+- Is mutable: Yes
+- Description: Whether a security-integration user may present a JWT as the password of a MySQL login (the `mysql_clear_password` plugin). When set to `true` and such a password has the shape of a JWT, StarRocks first offers it as a token to the JWT and OAuth 2.0 security integrations on `authentication_chain`, and only if none accepts it tries it as a password against the LDAP security integrations. This lets a MySQL client without the `authentication_openid_connect_client` plugin log in through a JWT security integration that shares `authentication_chain` with an LDAP one. When set to `false`, such a password goes straight to the LDAP security integrations. This item applies to the MySQL protocol only: HTTP and Arrow Flight carry a token as `Bearer`, and their `Basic` passwords are never read as tokens. A password that merely looks like a token costs one refused token verification before the password path; the login is counted in the authentication metrics by its final outcome only.
+- Introduced in: -
 
-Example 4: Display the authentication information of the current user, who logs in through the security integration `ldap_si`.
-
-```Plain
-SHOW AUTHENTICATION;
-+------------------------+----------+------------+-------------------+
-| UserIdentity    
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-| Password          | Whether a password is used to log in to the StarRocks cluster.<ul><li>`Yes`: A password is used.</li><li>`No`: No password is used.</li></ul> |
-| AuthPlugin        | The interface that is used for authentication. Valid values: `MYSQL_NATIVE_PASSWORD` and `AUTHENTICATION_LDAP_SIMPLE`. If no interface is used, `NULL` is returned. |
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `87ba5c08` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `83f27a03` are properly handled with clean fallback behavior.

@@ -12138,3 +12138,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-tencent-hy4-flash` | `https://huggingface.co/tencent/Hy4-flash` | `hf-tencent` | Multi-dimensional audit evidence | 2026-11-22T15:09:04.854Z |
 | `learn-github-zed-industries-zed` | `https://github.com/zed-industries/zed` | `d31d1074` | Multi-dimensional audit evidence | 2026-11-22T15:09:07.393Z |
 | `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `a8595edc` | Multi-dimensional audit evidence | 2026-11-22T15:09:15.228Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `52922483` | Multi-dimensional audit evidence | 2026-11-22T15:37:15.769Z |
+| `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `0f1ce94b` | Multi-dimensional audit evidence | 2026-11-22T15:37:17.729Z |
+| `learn-huggingface-comfy-org-minimax-h3` | `https://huggingface.co/Comfy-Org/MiniMax-H3` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-22T15:41:31.306Z |
+| `learn-github-astral-sh-ruff` | `https://github.com/astral-sh/ruff` | `dffb1c01` | Multi-dimensional audit evidence | 2026-11-22T15:42:07.217Z |
+| `learn-dom-h-833ac1df` | `project://hf-comfy-org-minimax-h3` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-learnings.md` | 2026-11-22T15:42:41.239Z |

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T15:09:20.497Z",
+  "last_updated": "2026-11-22T15:42:43.074Z",
   "total_verified_learnings": 9071,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23606,
+  "total_items": 23621,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -114657,10 +114657,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "repository": "freenet/freenet-core",
-      "source_version": "32cd9498",
-      "content_hash": "ab0e6c178691b8d0473aa6628d83d471dbfcee0ff7dc90697d1d26af67b637cf",
+      "source_version": "52922483",
+      "content_hash": "87ed43b185be2bf84a8ac9d44595a89b7a6b29accd3f8953dec9ce53ae17bc8e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T23:05:36.109Z"
+      "persisted_at": "2026-11-22T15:37:16.186Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core",
@@ -114669,10 +114669,10 @@
       "relative_path": "08_VERIFICATION/freenet-freenet-core-verification-protocol-empirical-defect-shield-for-freenet-f.md",
       "title": "Verification Protocol: Empirical Defect Shield for freenet/freenet-core",
       "repository": "freenet/freenet-core",
-      "source_version": "32cd9498",
-      "content_hash": "d027a8aa666992ee631b5e23f719b55f2e06a61ce7ce259496118671c402488b",
+      "source_version": "52922483",
+      "content_hash": "cacaca2364e377e45316d2842978750247feba7a9be55efbdb99174116c8cbcd",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T23:05:36.266Z"
+      "persisted_at": "2026-11-22T15:37:16.370Z"
     },
     "candidate_directive-update-remove-stored-files-no-document-points-at-sdk-1541-6674": {
       "item_id": "candidate_directive-update-remove-stored-files-no-document-points-at-sdk-1541-6674",
@@ -114754,9 +114754,9 @@
       "title": "Technical Construction Intelligence: freenet-freenet-core-learnings Core Invariants",
       "repository": "freenet-freenet-core-learnings",
       "source_version": "HEAD",
-      "content_hash": "374ade08b0361b8022e3de2e05c178d07d334394dafec29046e7445986b5e7f5",
+      "content_hash": "2d66bf126dcfb51afffd84f86a84465a1332110cfaf60f98787560ebfab8ce73",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T23:05:41.135Z"
+      "persisted_at": "2026-11-22T15:42:42.890Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core-learnings",
@@ -114766,9 +114766,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for freenet-freenet-core-learnings",
       "repository": "freenet-freenet-core-learnings",
       "source_version": "HEAD",
-      "content_hash": "91f87089d514af1c4514334cf3cdf0e214e0c2bb78e328bdbae5fe00cf05580f",
+      "content_hash": "1ccb643b965eb269dd03fbc9605b6aebe8a38766bc3427ae1896024e18bedabc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T23:05:41.286Z"
+      "persisted_at": "2026-11-22T15:42:43.074Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
@@ -218126,16 +218126,32 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Comfy-Org/MiniMax-H3",
       "source_version": "hf-comfy-org-minimax-h3",
-      "content_hash": "854536773ccaa81553701dd10e2a055f59ff4fc219451cd86984a40bb985a057",
+      "content_hash": "5c92e8cba428d6e871dbe88d72c09d1021d03929e251adb1ba4f56c858becf38",
       "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 9942,
+          "title": "Heterogeneous Subsystem Precision Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9943,
+          "title": "Runtime Capability Introspection Before Kernel Dispatch",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9944,
+          "title": "Canonical Namespace Decoupling for Compositional Embeddings",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T09:19:39.393Z",
+      "verified_at": "2026-11-22T15:41:31.040Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -220400,8 +220416,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "32cd9498",
-      "content_hash": "0cda0857631848867ec9438ded6730d1d7c75ce53c0aa8ac2f6b7fc010099c0b",
+      "source_version": "52922483",
+      "content_hash": "0145ea19275db4eea15a973c6bad065c8cf68f389b9e4c12766b2744d544037f",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -220499,6 +220515,11 @@
           "number": 9656,
           "title": "release 0.2.162",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9941,
+          "title": "name the refused request in hosted rate-limit rejections; raise burst to 500",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -220506,7 +220527,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T23:05:35.537Z",
+      "verified_at": "2026-11-22T15:37:15.531Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -233610,8 +233631,8 @@
       "slug": "astral-sh-ruff",
       "platform": "github",
       "source_url": "https://github.com/astral-sh/ruff",
-      "source_version": "cd2d9732",
-      "content_hash": "dfca462edb741fbc370ac9c6a77a6dba9b57f9c2e3af2a35d1d68d4aedfb2323",
+      "source_version": "dffb1c01",
+      "content_hash": "43a9b971d8b1081f51738b4d358a6b6c1957b6d046b004b471f09f3206a92512",
       "dossier_path": "07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/astral-sh-ruff-learnings.md",
       "promoted_rules": [
@@ -233629,6 +233650,11 @@
           "number": 9060,
           "title": "[ty] Fix stack overflow checking a generic base initializer",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9945,
+          "title": "[ty] Defer rebuilding intersections during equality narrowing",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -233636,7 +233662,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T02:29:56.636Z",
+      "verified_at": "2026-11-22T15:42:06.943Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -233690,10 +233716,10 @@
       "relative_path": "08_VERIFICATION/astral-sh-ruff-verification-protocol-empirical-defect-shield-for-astral-sh-ruff.md",
       "title": "Verification Protocol: Empirical Defect Shield for astral-sh/ruff",
       "repository": "astral-sh/ruff",
-      "source_version": "cd2d9732",
-      "content_hash": "eb83a23b4ff4e508951696090ca0a9377fb5d8af5d4f09561faef9fd146a8129",
+      "source_version": "dffb1c01",
+      "content_hash": "4cce5e6103e30d8445b62fd080fac0e6dfe91af68f2c98421846583c7853f7e1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T02:29:57.414Z"
+      "persisted_at": "2026-11-22T15:42:07.833Z"
     },
     "learn-github-react-native-webrtc-react-native-webrtc": {
       "learning_id": "learn-github-react-native-webrtc-react-native-webrtc",
@@ -233798,9 +233824,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for astral-sh-ruff-learnings",
       "repository": "astral-sh-ruff-learnings",
       "source_version": "HEAD",
-      "content_hash": "316b7d78fd8dd37fe43671e0f98829dd77ad9ab38323a29032d20232ce32138d",
+      "content_hash": "6aac0df6904995c8993b28c8ce696ac8fd9b5bf29757435802fee0774eaa2338",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T02:30:01.252Z"
+      "persisted_at": "2026-11-22T15:42:12.197Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-jialinyyzz-humanizer-learnings-core-invariant": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-jialinyyzz-humanizer-learnings-core-invariant",
@@ -233944,8 +233970,8 @@
       "slug": "starrocks-starrocks",
       "platform": "github",
       "source_url": "https://github.com/StarRocks/starrocks",
-      "source_version": "a9a9fd73",
-      "content_hash": "b5bed4e6738fc4be9e449bb16450621d872536f1d40b81ff81e84a609661d578",
+      "source_version": "0f1ce94b",
+      "content_hash": "093eef45311ad4dcc6d6611dca2648a5f578d4231f55e0e7fd0a1aa1fe1da789",
       "dossier_path": "07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
       "promoted_rules": [
@@ -234005,7 +234031,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T12:38:09.323Z",
+      "verified_at": "2026-11-22T15:37:17.494Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -234047,10 +234073,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-starrocks-starrocks-technical-construction-intelligence-starrocks-starrocks-core.md",
       "title": "Technical Construction Intelligence: StarRocks/starrocks Core Invariants",
       "repository": "StarRocks/starrocks",
-      "source_version": "a9a9fd73",
-      "content_hash": "dab0485ebb8924bcb00749e56df45490c9b635efe8347c228aa75061fa5e4d89",
+      "source_version": "0f1ce94b",
+      "content_hash": "94830764667aa86bbf88d8f759c8e15c1b3e27bd5b4904cca9f4966fe2f0600c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T12:38:09.844Z"
+      "persisted_at": "2026-11-22T15:37:18.218Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-starrocks-starrocks": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-starrocks-starrocks",
@@ -234059,10 +234085,10 @@
       "relative_path": "08_VERIFICATION/starrocks-starrocks-verification-protocol-empirical-defect-shield-for-starrocks-.md",
       "title": "Verification Protocol: Empirical Defect Shield for StarRocks/starrocks",
       "repository": "StarRocks/starrocks",
-      "source_version": "a9a9fd73",
-      "content_hash": "4e84aee3dab8398caac9cd59024526acb76c51ecde8a46edd87ddf6e832748f1",
+      "source_version": "0f1ce94b",
+      "content_hash": "8759ca8491e8dc49a50333c96f62198cc04269ba66fab1a8ce2b404a342651a2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T12:38:09.986Z"
+      "persisted_at": "2026-11-22T15:37:18.387Z"
     },
     "learn-huggingface-autotrust-jev-27b-vl": {
       "learning_id": "learn-huggingface-autotrust-jev-27b-vl",
@@ -257390,10 +257416,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-astral-sh-ruff-technical-construction-intelligence-astral-sh-ruff-core-invariant.md",
       "title": "Technical Construction Intelligence: astral-sh/ruff Core Invariants",
       "repository": "astral-sh/ruff",
-      "source_version": "cd2d9732",
-      "content_hash": "04f858a99478205d7de259f42e7fe281f2ade484151044f3e3e3dce926bdf507",
+      "source_version": "dffb1c01",
+      "content_hash": "56339681ea55cb62e327bc23b2e21eba4b51ebec526e3b9b83effb319816c799",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T02:29:57.259Z"
+      "persisted_at": "2026-11-22T15:42:07.660Z"
     },
     "domain_intelligence-technical-construction-intelligence-astral-sh-ruff-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-astral-sh-ruff-learnings-core-invariants",
@@ -257403,9 +257429,9 @@
       "title": "Technical Construction Intelligence: astral-sh-ruff-learnings Core Invariants",
       "repository": "astral-sh-ruff-learnings",
       "source_version": "HEAD",
-      "content_hash": "afa73cca7130f9bfcf23445c26e7921d037623862b33d17cc9b1af016c4bee9e",
+      "content_hash": "6124f0194f238f6031a543ae5afc62ceb036c2c26df61ee1e1c85c16a5f549dc",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T02:30:01.094Z"
+      "persisted_at": "2026-11-22T15:42:12.013Z"
     },
     "rule-8730": {
       "learning_id": "rule-8730",
@@ -321193,6 +321219,196 @@
       "content_hash": "230b5e0617b06bdc42abe11659f0a2fe51f007d3c913e326d30a274aec9a24c6",
       "domain_letter": "H",
       "persisted_at": "2026-11-22T15:09:20.152Z"
+    },
+    "rule-9941": {
+      "learning_id": "rule-9941",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9941,
+      "title": "name the refused request in hosted rate-limit rejections; raise burst to 500",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "52922483",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T15:37:15.531Z"
+    },
+    "candidate_directive-name-the-refused-request-in-hosted-rate-limit-rejections-raise-burst-to-500": {
+      "item_id": "candidate_directive-name-the-refused-request-in-hosted-rate-limit-rejections-raise-burst-to-500",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-9YQ0-name-the-refused-request-in-hosted-rate-limit-rejections-raise-burst-to-500.md",
+      "title": "name the refused request in hosted rate-limit rejections; raise burst to 500",
+      "repository": "freenet-freenet-core-learnings",
+      "source_version": "HEAD",
+      "content_hash": "103e6ea7369031723bc34b4ad04deae5cedbd861c4d764dbee673a31938a0880",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T15:42:42.702Z"
+    },
+    "candidate_directive-enhancement-support-ldap-and-jwt-security-integrations-on-one-authentication_c": {
+      "item_id": "candidate_directive-enhancement-support-ldap-and-jwt-security-integrations-on-one-authentication_c",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-3076-enhancement-support-ldap-and-jwt-security-integrations-on-one-authentication_c.md",
+      "title": "[Enhancement] Support LDAP and JWT security integrations on one authentication_c",
+      "repository": "StarRocks/starrocks",
+      "source_version": "0f1ce94b",
+      "content_hash": "08527fed7a58fde6a89872d461a97ed66d9e7b9736f3127a3f9278676d80a257",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T15:37:18.022Z"
+    },
+    "rule-9942": {
+      "learning_id": "rule-9942",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9942,
+      "title": "Heterogeneous Subsystem Precision Invariant",
+      "source_url": "https://huggingface.co/Comfy-Org/MiniMax-H3",
+      "source_version": "hf-comfy-org-minimax-h3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T15:41:31.040Z"
+    },
+    "rule-9943": {
+      "learning_id": "rule-9943",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9943,
+      "title": "Runtime Capability Introspection Before Kernel Dispatch",
+      "source_url": "https://huggingface.co/Comfy-Org/MiniMax-H3",
+      "source_version": "hf-comfy-org-minimax-h3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T15:41:31.040Z"
+    },
+    "rule-9944": {
+      "learning_id": "rule-9944",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9944,
+      "title": "Canonical Namespace Decoupling for Compositional Embeddings",
+      "source_url": "https://huggingface.co/Comfy-Org/MiniMax-H3",
+      "source_version": "hf-comfy-org-minimax-h3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T15:41:31.040Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-comfy-org-minimax-h3-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-comfy-org-minimax-h3-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-comfy-org-minimax-h3-technical-construction-intelligence-comfy-org-minimax-h3.md",
+      "title": "Technical Construction Intelligence: Comfy-Org/MiniMax-H3 Core Invariants",
+      "repository": "Comfy-Org/MiniMax-H3",
+      "source_version": "hf-comfy-org-minimax-h3",
+      "content_hash": "3b48370e95767c61fec55f11ddfcbab639bc655dca6e55fac795470680a5898e",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T15:41:31.885Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-comfy-org-minimax-h3": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-comfy-org-minimax-h3",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/hf-comfy-org-minimax-h3-verification-protocol-empirical-defect-shield-for-comfy-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for Comfy-Org/MiniMax-H3",
+      "repository": "Comfy-Org/MiniMax-H3",
+      "source_version": "hf-comfy-org-minimax-h3",
+      "content_hash": "4980325c871358f4c6af497bb62c123520c82cf528295fbbdce20b61396a5d2e",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-22T15:41:32.096Z"
+    },
+    "rule-9945": {
+      "learning_id": "rule-9945",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9945,
+      "title": "[ty] Defer rebuilding intersections during equality narrowing",
+      "source_url": "https://github.com/astral-sh/ruff",
+      "source_version": "dffb1c01",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T15:42:06.943Z"
+    },
+    "candidate_directive-ty-defer-rebuilding-intersections-during-equality-narrowing": {
+      "item_id": "candidate_directive-ty-defer-rebuilding-intersections-during-equality-narrowing",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-9AWP-ty-defer-rebuilding-intersections-during-equality-narrowing.md",
+      "title": "[ty] Defer rebuilding intersections during equality narrowing",
+      "repository": "astral-sh-ruff-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8cc169b3912acb85be2f05215ddf7469c34c2bf0f83a2e76d2d4d8c8c697c9f1",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T15:42:11.837Z"
+    },
+    "candidate_directive-heterogeneous-subsystem-precision-invariant": {
+      "item_id": "candidate_directive-heterogeneous-subsystem-precision-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-9XSL-heterogeneous-subsystem-precision-invariant.md",
+      "title": "Heterogeneous Subsystem Precision Invariant",
+      "repository": "hf-comfy-org-minimax-h3-learnings",
+      "source_version": "HEAD",
+      "content_hash": "12c5de8294d12bd2eacf5e24e9e94dab0d0074b02e66b75cdd1e06c6e4865f69",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-22T15:42:41.494Z"
+    },
+    "candidate_directive-runtime-capability-introspection-before-kernel-dispatch": {
+      "item_id": "candidate_directive-runtime-capability-introspection-before-kernel-dispatch",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-9XSL-runtime-capability-introspection-before-kernel-dispatch.md",
+      "title": "Runtime Capability Introspection Before Kernel Dispatch",
+      "repository": "hf-comfy-org-minimax-h3-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b66e05ce5cacc9612b574ee91202bc714e078df97f265ab9d536ca811fb2bd5d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T15:42:41.711Z"
+    },
+    "candidate_directive-canonical-namespace-decoupling-for-compositional-embeddings": {
+      "item_id": "candidate_directive-canonical-namespace-decoupling-for-compositional-embeddings",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-9XSM-canonical-namespace-decoupling-for-compositional-embeddings.md",
+      "title": "Canonical Namespace Decoupling for Compositional Embeddings",
+      "repository": "hf-comfy-org-minimax-h3-learnings",
+      "source_version": "HEAD",
+      "content_hash": "bc7f8787599fd5681903b62a05384501459506644c9fc023122841a8ea18406f",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-22T15:42:41.893Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-hf-comfy-org-minimax-h3-learnings-core-invar": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-hf-comfy-org-minimax-h3-learnings-core-invar",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-comfy-org-minimax-h3-learnings-technical-construction-intelligence-hf-comfy-o.md",
+      "title": "Technical Construction Intelligence: hf-comfy-org-minimax-h3-learnings Core Invariants",
+      "repository": "hf-comfy-org-minimax-h3-learnings",
+      "source_version": "HEAD",
+      "content_hash": "30040caeec0feaa530f796b308f3a7360abba30e4df9d8a24d86705656d14364",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T15:42:42.071Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-hf-comfy-org-minimax-h3-learni": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-hf-comfy-org-minimax-h3-learni",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/hf-comfy-org-minimax-h3-learnings-verification-protocol-empirical-defect-shield-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for hf-comfy-org-minimax-h3-learnings",
+      "repository": "hf-comfy-org-minimax-h3-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3c6f4117bbf2547f57b8159809f453413f0dad5d47c75fead860db75d5d8921c",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-22T15:42:42.267Z"
     }
   },
   "ai-builder-brain": {
