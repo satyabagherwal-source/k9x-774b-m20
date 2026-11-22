@@ -12199,3 +12199,5 @@
 | `CYCLE-2026-11-22-PROJ-EVOLVE` | `2026-11-22T21:14:45.153Z` | `hf-akhilaaa3-jev-omni` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-7A8AC6A4` [Domain H] | Yes (`f5d7f8b5...`) |
 | `CYCLE-20261122-R3P6` | `2026-11-22T21:31:57.690Z` | `XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings.md` | Yes (`441eebfe...`) |
 | `CYCLE-20261122-R4CP` | `2026-11-22T21:31:58.537Z` | `ajeetdsouza/zoxide` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9995` | Yes (`00895328...`) |
+| `CYCLE-20261122-2HKV` | `2026-11-22T21:40:48.895Z` | `inclusionAI/Ming-Image-0.1-Design` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.1-design-learnings.md` | Yes (`67f1055c...`) |
+| `CYCLE-20261122-2SEA` | `2026-11-22T21:41:02.914Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9996` | Yes (`b20e55d6...`) |

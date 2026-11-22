@@ -12232,3 +12232,5 @@ Every entry in this ledger must capture:
 | `learn-dom-h-7a8ac6a4` | `project://hf-akhilaaa3-jev-omni` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-akhilaaa3-jev-omni-learnings.md` | 2026-11-22T21:14:45.153Z |
 | `learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b` | `https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B` | `hf-xiaomim` | Multi-dimensional audit evidence | 2026-11-22T21:31:57.696Z |
 | `learn-github-ajeetdsouza-zoxide` | `https://github.com/ajeetdsouza/zoxide` | `daf56a37` | Multi-dimensional audit evidence | 2026-11-22T21:31:58.543Z |
+| `learn-huggingface-inclusionai-ming-image-0-1-design` | `https://huggingface.co/inclusionAI/Ming-Image-0.1-Design` | `hf-inclusi` | Multi-dimensional audit evidence | 2026-11-22T21:40:48.899Z |
+| `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `09c8c207` | Multi-dimensional audit evidence | 2026-11-22T21:41:02.918Z |

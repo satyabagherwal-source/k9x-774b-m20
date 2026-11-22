@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T21:32:11.813Z",
+  "last_updated": "2026-11-22T21:41:08.129Z",
   "total_records": 2384,
   "domains": {
     "A": {
@@ -8199,8 +8199,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "6fe42502632bee55fc5f4cb9984ea34964bd2ef5f35f97c6fae98a85242a50ac",
-      "created_at": "2026-11-22T20:47:00.830Z"
+      "content_hash": "ce8b13e4c912b8049d64c4271ab800f2b7e225a40e0462619df5082676ce54a8",
+      "created_at": "2026-11-22T21:41:08.129Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -9222,8 +9222,8 @@
       "title": "Research & Knowledge Intelligence: inclusionAI/Ming-Image-0.1-Design Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-inclusionai-ming-image-0-1-design-research-knowledge-intelligence-inclusionai.md",
       "repository": "inclusionAI/Ming-Image-0.1-Design",
-      "content_hash": "4df7cd538f3bc75ac6a3f7ee50ccd779c657fa22e57b978c9ce3eca22453c897",
-      "created_at": "2026-11-18T14:40:28.985Z"
+      "content_hash": "6eed78375da4fc14026ca54467435b2a4d67bc78a5214c412c2a3b3bb5958e4a",
+      "created_at": "2026-11-22T21:40:49.094Z"
     },
     "domain_intelligence-product-intelligence-pimalaya-himalaya-core-invariants": {
       "record_id": "domain_intelligence-product-intelligence-pimalaya-himalaya-core-invariants",
@@ -9306,8 +9306,8 @@
       "title": "Research & Knowledge Intelligence: hf-inclusionai-ming-image-0.1-design-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-inclusionai-ming-image-0-1-design-learnings-research-knowledge-intelligence-h.md",
       "repository": "hf-inclusionai-ming-image-0.1-design-learnings",
-      "content_hash": "2e04405621275b0129332db30dfc89caf26d681b4742c109201661c8aa477741",
-      "created_at": "2026-11-18T14:40:49.786Z"
+      "content_hash": "3e41b90ef3dcb58f67fd14da9912726c9003c44317e17dd9e979d42cb8dab88c",
+      "created_at": "2026-11-22T21:41:06.445Z"
     },
     "domain_intelligence-architecture-intelligence-mixelpixx-kicad-mcp-server-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-mixelpixx-kicad-mcp-server-core-invariants",
@@ -9411,8 +9411,8 @@
       "title": "Technical Construction Intelligence: milvus-io/milvus Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-milvus-io-milvus-technical-construction-intelligence-milvus-io-milvus-core-invar.md",
       "repository": "milvus-io/milvus",
-      "content_hash": "ee087994459fd98535dd7dad2880f46c043c3e112ea4a05c3af41086d00c7be9",
-      "created_at": "2026-11-21T21:40:29.106Z"
+      "content_hash": "d0c5bf9d90e1d3b9dd49acb8ef35eea038dd360a7af104eba4b7d2b1c38d5c78",
+      "created_at": "2026-11-22T21:41:03.285Z"
     },
     "DOM-D-E7346FF5": {
       "record_id": "DOM-D-E7346FF5",
@@ -9471,8 +9471,8 @@
       "title": "Technical Construction Intelligence: milvus-io-milvus-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-milvus-io-milvus-learnings-technical-construction-intelligence-milvus-io-milvus-.md",
       "repository": "milvus-io-milvus-learnings",
-      "content_hash": "54ed1502bcfe202799cca16a00d812b06bff529c6937a2887cc60f9ecf95c1b6",
-      "created_at": "2026-11-18T10:08:58.459Z"
+      "content_hash": "6820c04798e300078274c741209cb03136efced3c80d1afaa58637526de2b171",
+      "created_at": "2026-11-22T21:41:07.162Z"
     },
     "domain_intelligence-research-knowledge-intelligence-akatz-ai-minimax-h3-character-swap-lora-core-inv": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-akatz-ai-minimax-h3-character-swap-lora-core-inv",

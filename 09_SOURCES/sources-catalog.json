@@ -505,8 +505,8 @@
     "sourceUrl": "https://huggingface.co/inclusionAI/Ming-Image-0.1-Design",
     "sourceVersion": "hf-inclusionai-ming-image-0.1-design",
     "license": "Open-Source",
-    "contentHash": "c312ae80df8ccbc05eee897404571ff1c4d2eddd9a84e19af2d0e1c872219b0b",
-    "lastHarvestedAt": "2026-11-18T14:40:28.744Z",
+    "contentHash": "67f1055c029ea5288f1b46a511fa09b8a9249f1ff56cb5e9e9c30674d65fc397",
+    "lastHarvestedAt": "2026-11-22T21:40:48.899Z",
     "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design"
   },
   "hf-deepseek-ai-deepseek-v4.1-flash": {
@@ -6673,10 +6673,10 @@
     "repository": "milvus-io/milvus",
     "platform": "github",
     "sourceUrl": "https://github.com/milvus-io/milvus",
-    "sourceVersion": "8bcbb077",
+    "sourceVersion": "09c8c207",
     "license": "Apache-2.0",
-    "contentHash": "197886a287ce2801e107fa34dee9769adb901de224b29faaf3f0c91c834f057f",
-    "lastHarvestedAt": "2026-11-21T21:40:28.741Z",
+    "contentHash": "b20e55d6dc6771b47b2ac207ee1e3a4bc4400894bc4670b0b08dd5656dcccd67",
+    "lastHarvestedAt": "2026-11-22T21:41:02.918Z",
     "learningId": "learn-github-milvus-io-milvus"
   },
   "ynqa-jnv": {

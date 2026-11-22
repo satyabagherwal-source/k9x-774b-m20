@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261120-S1CX",
-    "timestamp": "2026-11-20T23:21:19.329Z",
-    "repository": "zvec-ai/zvec-grep",
-    "learningId": "learn-github-zvec-ai-zvec-grep",
-    "contentHash": "c341c2348112e098a2d012da0b958524f492efe09c8689eb3138e4e81c326238",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-S3KF",
-    "timestamp": "2026-11-20T23:21:22.191Z",
-    "repository": "solidjs/solid",
-    "learningId": "learn-github-solidjs-solid",
-    "contentHash": "017ff61b810542e7bbc8f70c0c9e63f56a1efe399732fee78abd35860c1f2c7d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261120-S70J",
     "timestamp": "2026-11-20T23:21:26.659Z",
     "repository": "dosco/graphjin",
@@ -7490,6 +7460,36 @@
     "repository": "ajeetdsouza/zoxide",
     "learningId": "learn-github-ajeetdsouza-zoxide",
     "contentHash": "00895328165f1e2fe51797237bb518a7cae52dff30edcf17bc80670d9dc4873b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-2HKV",
+    "timestamp": "2026-11-22T21:40:48.895Z",
+    "repository": "inclusionAI/Ming-Image-0.1-Design",
+    "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design",
+    "contentHash": "67f1055c029ea5288f1b46a511fa09b8a9249f1ff56cb5e9e9c30674d65fc397",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-2SEA",
+    "timestamp": "2026-11-22T21:41:02.914Z",
+    "repository": "milvus-io/milvus",
+    "learningId": "learn-github-milvus-io-milvus",
+    "contentHash": "b20e55d6dc6771b47b2ac207ee1e3a4bc4400894bc4670b0b08dd5656dcccd67",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

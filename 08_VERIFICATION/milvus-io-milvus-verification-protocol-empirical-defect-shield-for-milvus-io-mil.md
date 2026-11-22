@@ -4,22 +4,22 @@
 {
   "source_repository": "milvus-io/milvus",
   "source_url": "https://github.com/milvus-io/milvus",
-  "source_version": "8bcbb077",
+  "source_version": "09c8c207",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-21T21:40:28.954Z",
+  "timestamp": "2026-11-22T21:41:03.129Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-milvus-io-milvus",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [milvus-io/milvus](https://github.com/milvus-io/milvus) (Revision: `8bcbb077`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-21T21:40:28.954Z`  
+> **Provenance**: Harvested from [milvus-io/milvus](https://github.com/milvus-io/milvus) (Revision: `09c8c207`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-22T21:41:03.129Z`  
 > **Learning ID**: `learn-github-milvus-io-milvus`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `milvus-io/milvus` (Commit: `8bcbb077`)
+- **Target Repository**: `milvus-io/milvus` (Commit: `09c8c207`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/milvus-io-milvus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/milvus-io/milvus](https://github.com/milvus-io/milvus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T21:40:27.740Z  
+> **Harvest Timestamp**: 2026-11-22T21:41:01.947Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Milvus is a high-performance, cloud-native vector database built for scalable vector ANN search
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 46713 stars
+- **Stars / Engagement**: 46718 stars
 
 ---
 
@@ -1558,17 +1558,14 @@ RunDataset(const Dataset& d) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #55814** (2026-11-22): **fix: Clear HasMoreResult for empty retrieve results**
+  *Symptoms*: issue: #55795  Takes over #55796, whose fix commit by sijie-ni-0214 is kept as is. The second commit adjusts a unit test that depended on the bug, which was failing #55796's C++ unit tests.  ## Problem  A resumed query iterator can return an empty page and stop early (`test_query_iterator_normal`, `assert 2000 == 4000`).  - `RetrieveResult::has_more_result` defaults to `true`. When execution produces no rows, the empty-result branch of `ExecPlanNodeVisitor::setupRetrieveResult` returns without clearing it. A growing segment with no rows visible at the snapshot timestamp returns 0 rows with `has_more_result=true`. - The QueryNode reduce ORs the flag of every segment result, the empty ones included. A worker whose segments are all empty returns 0 rows with `HasMoreResult=true`. - The ordered streaming reduce (`proxy.queryView.enableReduceStream`, on by default) ends the page at a drained child that reports more results, so it does not skip that child's later rows. For a child with no rows the page is empty, and the client stops iterating. - The batch reduce drops empty results before merging, so it is not affected.  The test inserts rows after saving the checkpoint, so the resumed query always sees a growing segment with no visible rows. It fails only when that segment is the only one on its worker, which depends on placement and flush timing.  ## Fix  Set `has_more_result=false` in the empty-result branch. A result with no rows is not truncated, so the flag was wrong; the stre
+
 - **Issue #55791** (2026-11-21): **fix: [cp3.0] bump brotli to v1.2.7 in tests/go_client**
   *Symptoms*: issue: #55002 pr: #55003  #55004 bumped `github.com/andybalholm/brotli` to v1.2.7 in the root `go.mod` on 3.0 but left `tests/go_client` at v1.1.0. `tests/go_client` replaces `github.com/milvus-io/milvus` with the repo root, so its `go.mod` has to select the same version. Without that, golangci-lint cannot load the module (`no go files to analyze: running go mod tidy may solve the problem`), and the static-check step of Code-Check fails on every 3.0 PR.  This applies the `tests/go_client` part of #55003. Only `tests/go_client/go.mod` and `go.sum` change.  ### Validation On this branch, in `tests/go_client`: - `GOFLAGS=-mod=readonly go list -tags L0,L1,L2,test ./...` succeeds. - `golangci-lint run --build-tags L0,L1,L2,test --config .golangci.yml` (v2.11.3, the CI version) reports `0 issues`. With the current 3.0 `tests/go_client` it fails with the error above.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
   **Post-Mortem & Fix Analysis**:
   > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"5eb0ed25563fe772c6341aea81b23e2fa31c3c69","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-21T02:57:29.051777Z">2026-11-21T02:57:29.051777Z</relative-time> | `5eb0ed2` | PR opened |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Comm
   > [APPROVALNOTIFIER] This PR is **NOT APPROVED**  This pull-request has been approved by: To complete the [pull request process](https://git.k8s.io/community/contributors/guide/owners.md#the-code-review-process), please ask for approval from **xiaofan-luan** after the PR has been reviewed.  The full list of commands accepted by this bot can be found [here](https://go.k8s.io/bot-commands?repo=milvus-io%2Fmilvus).  <details open> Needs approval from an approver in each of these files:  - **[tests/OWNERS](https://github.com/milvus-io/milvus/blob/3.0/tests/OWNERS)**  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":["xiaofan-luan"]} -->
-
-- **Issue #55785** (2026-11-21): **enhance: [cp3.0] Leave the test-only plan parser libraries out of release artifacts**
-  *Symptoms*: issue: #55783 pr: #55784  Cherry-pick of #55784 to 3.0.  ## What changed  `libmilvus-planparser.so` and `libmilvus-planparser-cpp.so` no longer reach the release artifacts. They are still built.  - **`scripts/install_milvus.sh`** removes `libmilvus-planparser*` from the runtime library directory after copying `internal/core/output/lib/*.so*`. This also clears copies left there by an older installer. The Docker images (`COPY ./lib/ /milvus/lib/`) and the deb package (`cp -d milvus/lib/*`) take their libraries from that directory, so they need no change. - **`build/rpm/milvus.spec`** no longer lists the two libraries.  ## Why  The two libraries wrap the Go plan parser behind a C interface for the C++ unit tests. Nothing at runtime uses them:  - only `all_tests` and `test_json_uint64` link `milvus-planparser-cpp`; - under `internal/core/src`, only `*Test.cpp` files call `planparserv2::PlanParser`; - no Go package imports `internal/parser/planparserv2/cwrapper`, and `libmilvus_core` does not link it.  `libmilvus-planparser.so` is a second Go binary with its own runtime and crypto, so every release has to account for it. #55522 came from exactly that. This PR removes the library from the artifacts instead of rebuilding it with BoringCrypto (#55524 on this branch).  ## Not changed  The `plan-parser-lib` target and `scripts/build_plan_parser.sh`. The unit tests link the libraries from `internal/core/output/lib` (`run_cpp_unittest.sh` adds that directory to `LD_LIBRARY_PATH`, and `al
-  **Post-Mortem & Fix Analysis**:
-  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"fcdd4998484bc19eac14a45c1576763b6768bb17","has_any_findings":true,"has_unresolved_findings":true,"status":"failed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  <details> <summary><strong>Codex Review Summary</strong>: ❌ Failed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ❌ **Failed** <relative-time datetime="2026-11-20T18:14:40.281314Z">2026-11-20T18:14:40.281314Z</relative-time><br/>We couldn’t complete this review. Comment `@codex review` to try again. | `fcdd499` | PR opened |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when yo
-  > You have reached your Codex usage limits for code reviews. You can see your limits in the [Codex usage dashboard](https://chatgpt.com/codex/cloud/settings/usage). To continue using code reviews, add credits to your account and enable them for code reviews in your [settings](https://chatgpt.com/settings/code-review).
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1585,855 +1582,70 @@ RunDataset(const Dataset& d) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a3d538e9` (2026-11-21)
-**Commit Message**: fix: bump andybalholm/brotli to v1.2.7 (CVE-2026-111497 Go port) (#55003)
+### Incident Patch 1: `09c8c207` (2026-11-22)
+**Commit Message**: fix: Clear HasMoreResult for empty retrieve results (#55814)
 
-issue: #55002
+issue: #55795
 
-`github.com/andybalholm/brotli` (indirect, via
-`apache/arrow/go/v17/parquet/compress`) is bumped from v1.1.0 to v1.2.7.
+Takes over #55796, whose fix commit by sijie-ni-0214 is kept as is. The
+second commit adjusts a unit test that depended on the bug, which was
+failing #55796's C++ unit tests.
 
-The Go port shipped the same flaw as google/brotli CVE-2026-111497: an
-invalid block switch is treated as "need more input" instead of a fatal
-stream error, so decoding continues in an invalid state. In Go that is
-an index-out-of-range panic rather than memory corruption
-(andybalholm/brotli#82, fixed in v1.2.7).
+## Problem
 
-Milvus decodes user-supplied parquet during bulk import; a
-brotli-compressed parquet file with a crafted stream panics inside the
-import task, and because the import exec pool does not conceal panics
-the DataNode process exits. With v1.2.7 the decoder returns an error and
-the import job fails cleanly.
+A resumed query iterator can return an empty page and stop early
+(`test_query_iterator_normal`, `assert 2000 == 4000`).
 
-No code change; `go.mod`/`go.sum` only. `tests/go_client` replaces
-`github.com/milvus-io/milvus` with the repo root, so its
-`go.mod`/`go.sum` get the same bump; without it golangci-lint in that
-module fails to load packages ("no go files to analyze").
+- `RetrieveResult::has_more_result` defaults to `true`. When execution
+produces no rows, the empty-result branch of
+`ExecPlanNodeVisitor::setupRetrieveResult` returns without clearing it.
+A growing segment with no rows visible at the snapshot timestamp returns
+0 rows with `has_more_result=true`.
+- The QueryNode reduce ORs the flag of every segment result, the empty
+ones included. A worker whose segments are all empty returns 0 rows with
+`HasMoreResult=true`.
+- The ordered streaming reduce (`proxy.queryView.enableReduceStream`, on
+by default) ends the page at a drained child that reports more results,
+so it does not skip that child's later rows. For a child with no rows
+the page is empty, and the client stops iterating.
+- The batch reduce drops empty results before merging, so it is not
+affected.
 
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
+The te
 
-Signed-off-by: xiaofanluan <[REDACTED_EMAIL]>
-Co-aut
-
-**File**: `go.mod` (modified, +1/-1)
+**File**: `internal/core/src/query/ExecPlanNodeVisitor.cpp` (modified, +1/-0)
 ```diff
-@@ -132,7 +132,7 @@ require (
- 	github.com/StackExchange/wmi v0.0.0-20190523213315-cbe66965904d // indirect
- 	github.com/alibabacloud-go/debug v0.0.0-20190504072949-9472017b5c68 // indirect
- 	github.com/alibabacloud-go/tea v1.1.8 // indirect
--	github.com/andybalholm/brotli v1.1.0 // indirect
-+	github.com/andybalholm/brotli v1.2.7 // indirect
- 	github.com/apache/thrift v0.24.0 // indirect
- 	github.com/ardielle/ardielle-go v1.5.2 // indirect
- 	github.com/armon/go-metrics v0.4.1 // indirect
+@@ -322,6 +322,7 @@ ExecPlanNodeVisitor::setupRetrieveResult(
+                 tmp_retrieve_result.field_data_[i] = std::move(data_array);
+             }
+         }
++        tmp_retrieve_result.has_more_result = false;
+         retrieve_result_opt_ = std::move(tmp_retrieve_result);
+         return;
+     }
 ```
 
-**File**: `go.sum` (modified, +2/-0)
+**File**: `internal/core/src/segcore/RetrieveCandidatesTest.cpp` (modified, +0/-3)
 ```diff
-@@ -135,6 +135,8 @@ github.com/andybalholm/brotli v1.0.0/go.mod h1:loMXtMfwqflxFJPmdbJO0a3KNoPuLBgiu
- github.com/andybalholm/brotli v1.0.2/go.mod h1:loMXtMfwqflxFJPmdbJO0a3KNoPuLBgiu3qAvBg8x/Y=
- github.com/andybalholm/brotli v1.1.0 h1:eLKJA0d02Lf0mVpIDgYnqXcUn0GqVmEFny3VuID1U3M=
- github.com/andybalholm/brotli v1.1.0/go.mod h1:sms7XGricyQI9K10gOSf56VKKWS4oLer58Q+mhRPtnY=
-+github.com/andybalholm/brotli v1.2.7 h1:UgafRPGMam5ySHfRkhthMqOFA6IFoeF3D7mWIDLjG5A=
-+github.com/andybalholm/brotli v1.2.7/go.mod h1:rzTDkvFWvIrjDXZHkuS16NPggd91W3kUSvPlQ1pLaKY=
- github.com/antihax/optional v1.0.0/go.mod h1:uupD/76wgC+ih3iEmQUL+0Ugr19nfwCT1kdvxnR2qWY=
- github.com/antlr4-go/antlr/v4 v4.13.1 h1:SqQKkuVZ+zWkMMNkjy5FZe5mr5WURWnlpmOuzYWrPrQ=
- github.com/antlr4-go/antlr/v4 v4.13.1/go.mod h1:GKmUxMtwp6ZgGwZSva4eWPC5mS6vUAmOABFgjdkM7Nw=
-```
-
-**File**: `tests/go_client/go.mod` (modified, +1/-1)
-```diff
-@@ -28,7 +28,7 @@ replace github.com/milvus-io/milvus => ../..
- require (
- 	github.com/JohnCGriffin/overflow v0.0.0-20211019200055-46fa312c352c // indirect
- 	github.com/RoaringBitmap/roaring/v2 v2.8.0 // indirect
--	github.com/andybalholm/brotli v1.1.0 // indirect
-+	github.com/andybalholm/brotli v1.2.7 // indirect
- 	github.com/apache/thrift v0.24.0 // indirect
- 	github.com/beorn7/perks v1.0.1 // indirect
- 	github.com/bits-and-blooms/bitset v1.12.0 // indirect
-```
-
-**File**: `tests/go_client/go.sum` (modified, +2/-2)
-```diff
-@@ -16,8 +16,8 @@ github.com/alecthomas/assert/v2 v2.10.0 h1:jjRCHsj6hBJhkmhznrCzoNpbA3zqy0fYiUcYZ
- github.com/alecthomas/assert/v2 v2.10.0/go.mod h1:Bze95FyfUr7x34QZrjL+XP+0qgp/zg8yS+TtBj1WA3k=
- github.com/alecthomas/repr v0.4.0 h1:GhI2A8MACjfegCPVq9f1FLvIBS+DrQ2KQBFZP1iFzXc=
- github.com/alecthomas/repr v0.4.0/go.mod h1:Fr0507jx4eOXV7AlPV6AVZLYrLIuIeSOWtW57eE/O/4=
--github.com/andybalholm/brotli v1.1.0 h1:eLKJA0d02Lf0mVpIDgYnqXcUn0GqVmEFny3VuID1U3M=
--github.com/andybalholm/brotli v1.1.0/go.mod h1:sms7XGricyQI9K10gOSf56VKKWS4oLer58Q+mhRPtnY=
-+github.com/andybalholm/brotli v1.2.7 h1:UgafRPGMam5ySHfRkhthMqOFA6IFoeF3D7mWIDLjG5A=
-+github.com/andybalholm/brotli v1.2.7/go.mod h1:rzTDkvFWvIrjDXZHkuS16NPggd91W3kUSvPlQ1pLaKY=
- github.com/apache/arrow/go/v17 v17.0.0 h1:RRR2bdqKcdbss9Gxy2NS/hK8i4LDMh23L6BbkN5+F54=
- github.com/apache/arrow/go/v17 v17.0.0/go.mod h1:jR7QHkODl15PfYyjM2nU+yTLScZ/qfj7OSUZmJ8putc=
- github.com/apache/thrift v0.24.0 h1:zy31L1a49QTNB2bG1BBfMXol3yJrTH975G3pPubQVLQ=
-```
-
----
-
-### Incident Patch 2: `b798c5f4` (2026-11-20)
-**Commit Message**: test: use unary QueryView RPCs in Proxy auto-load retry fixtures (#55779)
-
-## Summary
-
-Move the unary QueryView configuration into the shared Proxy auto-load
-retry fixture. The fixture serves unary RPCs and both DML and DQL retry
-tests now select that path and restore the previous setting at cleanup.
-
-After #55219 enabled streaming reduce,
-`TestDMLReadLoadsUnloadedCollection` could call `QueryOnViewStream` on
-the fixture's nil embedded interface. This panics during the Go unit
-test stage of unrelated master PRs, including #55768 and #55771.
-
-## Validation
-
-- Reproduced the nil pointer on `upstream/master` before the change by
-running `TestDMLReadLoadsUnloadedCollection`.
-- All 17 selected Proxy DML and DQL auto-load retry tests passed after
-the change, including the original reproducer.
-- Scoped `golangci-lint`, Go formatting, and `git diff --check` passed.
-
-Signed-off-by: sijie-ni-0214 <[REDACTED_EMAIL]>
-
-**File**: `internal/proxy/search_auto_load_test.go` (modified, +6/-6)
-```diff
-@@ -595,6 +595,12 @@ func autoLoadTestRow() []*schemapb.FieldData {
- // reports the server's load state.
- func newDQLRetryProxy(t *testing.T, phase string) (*Proxy, *dqlRetryClient) {
- 	t.Helper()
-+	// The retry fixture only implements the unary QueryView RPCs.
-+	params := paramtable.Get()
-+	key, old := params.ProxyCfg.EnableReduceStream.Key, params.ProxyCfg.EnableReduceStream.GetValue()
-+	t.Cleanup(func() { require.NoError(t, params.Save(key, old)) })
-+	require.NoError(t, params.Save(key, "false"))
-+
- 	node, coordinator := newAutoLoadSchedulingProxy(t)
- 	oldRateCol := rateCol
- 	require.NoError(t, node.initRateCollector())
-@@ -633,12 +639,6 @@ func (c *dqlRetryClient) expectAutoLoad(t *testing.T) {
- // shard retries, gRPC error transport, EnsureCollectionReady RPC and full DQL retries.
- // Parsing/reducing results and coordinator storage are replaced by test doubles.
- func TestDQLAutoLoadRetryThroughTaskAndGRPC(t *testing.T) {
--	// This test's gRPC client only implements the unary QueryView RPCs.
--	params := paramtable.Get()
--	key, old := params.ProxyCfg.EnableReduceStream.Key, params.ProxyCfg.EnableReduceStream.GetValue()
--	t.Cleanup(func() { require.NoError(t, params.Save(key, old)) })
--	require.NoError(t, params.Save(key, "false"))
--
- 	for _, test := range []struct{ method, phase string }{
- 		{"Search", "plan"},
- 		{"Search", "search"},
-```
-
----
-
-### Incident Patch 3: `8bcbb077` (2026-11-21)
-**Commit Message**: enhance: place DataNode tasks on cpu and memory instead of a scalar slot (#52561)
-
-issue: #52180
-3.0 counterpart: #52982.
-
-Design: [DataNode task placement on CPU and
-memory](https://github.com/milvus-io/milvus/blob/bfecb65458c5a739ea938f427c2535b6cb3d7f7a/docs/design-docs/design_docs/20260827-datanode-cpu-memory-slots.md).
-
-Scalar slots can leave workers underused despite available memory. This
-PR estimates DataNode tasks in CPU and memory, uses memory for placement
-and CPU to rank fitting workers, and passes the selected node's charged
-resource unchanged through CreateTask.
-
-- Keep head-of-queue priority. If ordinary placement cannot fit the
-head, an explicitly idle worker can run that one task exclusively;
-otherwise the round stops. Available memory always reflects measured
-free memory, even on idle workers.
-- Index/stats/analyze and import V3 admit execution by their own memory
-usage. There is no cross-scheduler shared budget or local scalar
-fallback. Preserve existing vector build and executor concurrency
-limits.
-- Classify coordinator-only index/stats completion from cached metadata
-and persist asynchronously with a timeout on the existing execution
-pool. Full-pool backpressu
-
-**File**: `docs/design-docs/design_docs/20260827-datanode-cpu-memory-slots.md` (added, +193/-0)
-```diff
-@@ -0,0 +1,193 @@
-+# DataNode task placement on CPU and memory
-+
-+Date: 2026-08-27; revised 2026-11-17.
-+Issue: #52180. Master PR #52561; 3.0 PR #52982.
-+
-+## Goal and responsibilities
-+
-+DataCoord estimates task CPU and memory and selects a worker. Memory constrains
-+placement; CPU ranks suitable workers. A blocked head task retains its priority.
-+If no worker has enough available memory, an idle worker may execute that one
-+task exclusively, even if its estimate exceeds the worker's total capacity.
-+This guarantees scheduling progress; it does not promise the task fits physical RAM.
-+
-+DataNode executes the price supplied by CreateTask. Index/stats/analyze and
-+import V3 each apply memory admission within their own scheduler. They do not
-+share an execution budget or acquire locks in other schedulers. Overall task
-+placement belongs to DataCoord. Existing vector build concurrency, backend
-+build reservations, compaction pools and import pools remain.
-+
-+## Request and response contract
-+
-+Every task implements `GetTaskResource() taskcommon.Resource`. Exactness is an
-+internal concern of `taskresource.Cache`; it is not part of the Task interface.
-+A cached estimate avoids repeated metadata walks; unresolved estimates are
-+recomputed on subsequent scheduling rounds.
-+
-+The picker returns both the selected node and its charged Resource. The global
-+scheduler passes that same value to `CreateTaskOnWorker(nodeID, cluster, resource)`;
-+the request builder does not reprice it. Session Create* methods encode it in
-+CreateTask properties `task_cpu` and `task_memory`, alongside `task_slot`,
-+`task_type` and `collection_id`. DataNode parses the properties once and passes
-+them to the executor. It neither estimates the task nor reapplies import caps.
-+
-+QuerySlotResponse adds:
-+
-+| Tag | Field | Meaning |
-+|---|---|---|
-+| 6 | total_cpu | Worker task capacity in whole cores |
-+| 7 | available_cpu | Capacity minus booked task CPU, negative when overcommitted |
-+| 8 | total_memory | Worker task capacity in bytes |
-+| 9 | available_memory | Worker task capacity minus booked task memory, floored at zero |
-+| 10 | idle | No accepted background-task CPU or memory is booked |
-+
-+Master uses tag 4 for shared-index copies and reserves the retired tag 5.
-+3.0 reserves both tags for wire compatibility. Both branches use
-+the same new field numbers. An absent idle report is not evidence of idleness.
-+
-+In cluster mode total memory is the worker's cgroup-aware hardware capacity.
-+Standalone discounts CPU and memory with `dataNode.standaloneSlotFactor`,
-+clamped to [0,1]. Both dimensions have a positive floor. Scheduling assumes a worker dedicated
-+to DataCoord tasks. QuerySlot subtracts accepted task bookings from this
-+budget, including tasks that are still queued.
-+
-+Old workers that do not report total_memory still use the scalar heap. The
-+active task-creation path is CreateTask; direct historical CreateJob/CreateJobV2
-+RPCs are not a reason to retain scalar-to-memory conversion in local schedulers.
-+For an old coordinator using CreateTask without resource properties, its positive
-+task_slot is converted once at that actual RPC boundary to a proportional share
-+of node capacity. Explicit coordinator prices pass through unchanged.
-+Malformed or negative resource properties are rejected at the request boundary.
-+
-+## Placement
-+
-+A picker is built from QuerySlot once per round and charged after every choice.
-+Among workers with sufficient available memory, it combines free-memory score
-+(weight 0.6), remaining CPU fraction (0.25), and balanced remaining proportions (0.15).
-+The CPU fraction can be negative: booking an extra half of a worker's CPU capacity
-+reduces its score by 0.125. The balance term treats exhausted CPU as zero.
-+CPU or scalar slot exhaustion does not reject an otherwise memory-fitting task.
-+Legacy workers can serve through the existing scalar-slot heap.
-+
-+If ordinary placement fails, the picker chooses an explicitly idle worker,
-+charges the selected estimate and marks the worker exclusive for the remainder
-+of the round. A worker becomes non-idle after any placement in that round.
-+If no placement is possible,
-+worker dispatch stops at that task. Later tasks that can finish on the coordinator
-+may still complete locally. Tasks in failure backoff give way.
-+
-+Import tasks backed by the shared import allocator implement NodeMemoryBounded.
-+Their selected price is min(estimate, machine memory x task share). Cluster
-+workers expose the full machine capacity; standalone derives the machine size
-+locally because coordinator and worker share a process. Plain preimport and L0
-+import are not allocator-bounded. The bound includes importMemoryFactor for
-+import's buffers and asynchronous copies; it remains an estimate.
-+
-+## Coordinator-only completion
-+
-+Index and stats tasks can identify obsolete or no-work cases from cached
-+metadata. Classification in schedule performs no remote lookup or persistence.
-+Actual lo
-```
-
-**File**: `docs/design-docs/design_docs/20260921-import-v3-reshard-design.md` (modified, +25/-21)
-```diff
-@@ -400,27 +400,31 @@ job, and committed vchannels are never rolled back.
- 
- ## DataNode Worker Scheduling
- 
--- **Slot scheduler** (`internal/datanode/importv3/scheduler.go`) owns both the
--  admission policy and the run registry, so `Submit`/`Query`/`Drop` and the
--  DataCoord-facing answers all read one place. Admission is pure: a submitted
--  task queues until `used + slot <= capacity`; queued slots count as used in
--  `QuerySlot` so DataCoord stops water-filling the node. A queued task answers
--  `Pending` (never "not found"), so DataCoord waits for its slot instead of
--  retrying elsewhere. A task whose own slot exceeds capacity runs alone once the
--  node is otherwise idle.
--- The registry holds every run in one insertion-ordered map keyed by
--  `(task_id, run_id)` and fences by `run_id`: same run ⇒ idempotent; older run ⇒
--  stale no-op; newer run ⇒ cancel/replace (the superseded run stays in the
--  registry, hidden from `Query`, until its closure exits, so its slot keeps
--  charging). Worker errors map to `Retry` (ctx canceled or non-terminal) or
--  `Failed` (terminal denylist `common.IsTerminalImportV3Err`), classified once
--  at the worker; DataCoord trusts the state and never reinterprets `reason`.
--- An admission pass takes one lock: it reads the used slots, picks the pending
--  runs that fit (in Submit order), marks them running and computes the
--  queue/state gauges under that lock, then hands them to the executor pool
--  outside it, so a full pool never stalls the loop. The loop is level-triggered
--  (a one-second ticker plus a coalescing wakeup), so a missed or duplicated
--  wakeup cannot corrupt the outcome.
-+- The scheduler (`internal/datanode/importv3/scheduler.go`) owns its run registry
-+  and memory admission independently of index/stats/analyze. It captures the
-+  supplied Resource at Submit, charges its memory when admitted, and releases
-+  execution memory only when the pool closure exits. Pending resources remain
-+  visible in QuerySlot but do not consume execution memory, so queued work
-+  cannot prevent its own execution. CreateTask converts older coordinators'
-+  scalar slots at RPC ingress; local admission uses memory only.
-+- DataCoord owns overall worker placement. If no worker has enough available
-+  memory, the head task can run exclusively on an explicitly idle worker,
-+  including when its estimate exceeds every worker's total memory. If no worker
-+  is eligible, it blocks subsequent dispatches. This guarantees scheduling
-+  progress, not that an oversized task fits physical RAM.
-+- The registry holds runs in an insertion-ordered map keyed by `(task_id, run_id)`.
-+  A duplicate current run is idempotent; a stale run is a no-op; a newer run
-+  cancels/replaces the current run. A completed Retry attempt with the same run
-+  ID can be submitted again. Superseded runs remain hidden from Query but keep
-+  their resource booking until their closures exit. Worker errors are classified
-+  once at the worker; DataCoord trusts the state and never reinterprets `reason`.
-+- An admission pass takes the registry lock, sums memory of admitted unfinished
-+  runs, and scans pending runs in Submit order. It admits runs that fit and can
-+  admit one oversized run when no execution memory is in use. It updates state
-+  and queue gauges under the lock, then submits to the executor pool outside it,
-+  so pool backpressure does not hold up registry RPCs. The executor pool retains
-+  its concurrency limit. A one-second ticker and coalescing wakeup trigger the
-+  loop; a missed or duplicated wakeup cannot corrupt the outcome.
- 
- ## Failure, Retry and Recovery
- 
-```
-
-**File**: `go.mod` (modified, +1/-1)
-```diff
-@@ -20,7 +20,7 @@ require (
- 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
- 	github.com/klauspost/compress v1.20.2
- 	github.com/minio/minio-go/v7 v7.0.73
--	github.com/panjf2000/ants/v2 v2.11.3 // indirect
-+	github.com/panjf2000/ants/v2 v2.11.3
- 	github.com/pingcap/log v1.1.1-0.20221110025148-ca232912c9f3 // indirect
- 	github.com/prometheus/client_golang v1.23.2
- 	github.com/prometheus/client_model v0.6.2
-```
-
-**File**: `internal/compaction/merge_sort.go` (added, +50/-0)
-```diff
-@@ -0,0 +1,50 @@
-+// Licensed to the LF AI & Data foundation under one
-+// or more contributor license agreements. See the NOTICE file
-+// distributed with this work for additional information
-+// regarding copyright ownership. The ASF licenses this file
-+// to you under the Apache License, Version 2.0 (the
-+// "License"); you may not use this file except in compliance
-+// with the License. You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package compaction
-+
-+import "github.com/milvus-io/milvus/pkg/v3/proto/datapb"
-+
-+// CanMergeSort reports whether this plan is eligible for storage.MergeSort,
-+// which merges without sorting and so requires every input to already be
-+// ordered by the plan's merge key. A plan that is not eligible falls back to
-+// mergeSplit, which does not assume ordering.
-+func CanMergeSort(plan *datapb.CompactionPlan, params Params) bool {
-+	if !params.UseMergeSort {
-+		return false
-+	}
-+	// The two sorted flags record which order the compactors that write sorted
-+	// output used. datanode/services.go derives this plan's merge key from the
-+	// same EnableNamespace setting -- [pk], or [partitionKey, pk] -- so the flag
-+	// that must be set is the matching one, not either one. It also rejects the
-+	// plan outright when a namespace-enabled collection has no partition key
-+	// (namespace.mode=partition), which is why reading the setting is enough
-+	// here rather than inspecting the merge key itself.
-+	namespaceEnabled := plan.GetSchema().GetEnableNamespace()
-+	for _, segment := range plan.GetSegmentBinlogs() {
-+		sortedByMergeKey := segment.GetIsSorted()
-+		if namespaceEnabled {
-+			sortedByMergeKey = segment.GetIsSortedByNamespace()
-+		}
-+		if !sortedByMergeKey {
-+			return false
-+		}
-+	}
-+	// Each reader holds a live record, so memory grows with the reader count. A
-+	// single segment is allowed: merge sort keeps the output flagged sorted,
-+	// whereas mergeSplit emits it unsorted and needs a follow-up sort compaction.
-+	return len(plan.GetSegmentBinlogs()) <= params.MaxSegmentMergeSort
-+}
-```
-
-**File**: `internal/compaction/merge_sort_test.go` (added, +132/-0)
-```diff
-@@ -0,0 +1,132 @@
-+// Licensed to the LF AI & Data foundation under one
-+// or more contributor license agreements. See the NOTICE file
-+// distributed with this work for additional information
-+// regarding copyright ownership. The ASF licenses this file
-+// to you under the Apache License, Version 2.0 (the
-+// "License"); you may not use this file except in compliance
-+// with the License. You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package compaction
-+
-+import (
-+	"testing"
-+
-+	"github.com/stretchr/testify/assert"
-+
-+	"github.com/milvus-io/milvus-proto/go-api/v3/schemapb"
-+	"github.com/milvus-io/milvus/pkg/v3/proto/datapb"
-+)
-+
-+func TestCanMergeSort(t *testing.T) {
-+	params := Params{UseMergeSort: true, MaxSegmentMergeSort: 30}
-+	// EnableNamespace is false here, so the merge key is [pk] and IsSorted is
-+	// the flag canMergeSort requires. TestCanMergeSortMatchesMergeKey covers
-+	// the namespace-enabled half.
-+	namespaceDisabledSchema := &schemapb.CollectionSchema{}
-+
-+	t.Run("disabled by param", func(t *testing.T) {
-+		plan := &datapb.CompactionPlan{
-+			Schema:         namespaceDisabledSchema,
-+			SegmentBinlogs: []*datapb.CompactionSegmentBinlogs{{SegmentID: 1, IsSorted: true}},
-+		}
-+		assert.False(t, CanMergeSort(plan, Params{UseMergeSort: false, MaxSegmentMergeSort: 30}))
-+	})
-+
-+	t.Run("unsorted segment rejected", func(t *testing.T) {
-+		plan := &datapb.CompactionPlan{
-+			Schema:         namespaceDisabledSchema,
-+			SegmentBinlogs: []*datapb.CompactionSegmentBinlogs{{SegmentID: 1}},
-+		}
-+		assert.False(t, CanMergeSort(plan, params))
-+	})
-+
-+	t.Run("single sorted segment allowed", func(t *testing.T) {
-+		plan := &datapb.CompactionPlan{
-+			Schema:         namespaceDisabledSchema,
-+			SegmentBinlogs: []*datapb.CompactionSegmentBinlogs{{SegmentID: 1, IsSorted: true}},
-+		}
-+		assert.True(t, CanMergeSort(plan, params))
-+	})
-+
-+	t.Run("too many segments rejected", func(t *testing.T) {
-+		segs := make([]*datapb.CompactionSegmentBinlogs, params.MaxSegmentMergeSort+1)
-+		for i := range segs {
-+			segs[i] = &datapb.CompactionSegmentBinlogs{SegmentID: int64(i), IsSorted: true}
-+		}
-+		plan := &datapb.CompactionPlan{Schema: namespaceDisabledSchema, SegmentBinlogs: segs}
-+		assert.False(t, CanMergeSort(plan, params))
-+	})
-+
-+	t.Run("exactly max segments allowed", func(t *testing.T) {
-+		segs := make([]*datapb.CompactionSegmentBinlogs, params.MaxSegmentMergeSort)
-+		for i := range segs {
-+			segs[i] = &datapb.CompactionSegmentBinlogs{SegmentID: int64(i), IsSorted: true}
-+		}
-+		plan := &datapb.CompactionPlan{Schema: namespaceDisabledSchema, SegmentBinlogs: segs}
-+		assert.True(t, CanMergeSort(plan, params))
-+	})
-+
-+	t.Run("later unsorted segment rejected", func(t *testing.T) {
-+		plan := &datapb.CompactionPlan{
-+			Schema: namespaceDisabledSchema,
-+			SegmentBinlogs: []*datapb.CompactionSegmentBinlogs{
-+				{SegmentID: 1, IsSorted: true},
-+				{SegmentID: 2},
-+			},
-+		}
-+		assert.False(t, CanMergeSort(plan, params))
-+	})
-+}
-+
-+func TestCanMergeSortMatchesMergeKey(t *testing.T) {
-+	params := Params{UseMergeSort: true, MaxSegmentMergeSort: 30}
-+
-+	t.Run("namespace enabled rejects pk-only sorted segment", func(t *testing.T) {
-+		plan := &datapb.CompactionPlan{
-+			Schema: &schemapb.CollectionSchema{EnableNamespace: true},
-+			SegmentBinlogs: []*datapb.CompactionSegmentBinlogs{
-+				{SegmentID: 1, IsSorted: true, IsSortedByNamespace: false},
-+			},
-+		}
-+		assert.False(t, CanMergeSort(plan, params))
-+	})
-+
-+	t.Run("namespace enabled accepts namespace-sorted segment", func(t *testing.T) {
-+		plan := &datapb.CompactionPlan{
-+			Schema: &schemapb.CollectionSchema{EnableNamespace: true},
-+			SegmentBinlogs: []*datapb.CompactionSegmentBinlogs{
-+				{SegmentID: 1, IsSorted: false, IsSortedByNamespace: true},
-+			},
-+		}
-+		assert.True(t, CanMergeSort(plan, params))
-+	})
-+
-+	t.Run("namespace disabled rejects namespace-sorted segment", func(t *testing.T) {
-+		plan := &datapb.CompactionPlan{
-+			Schema: &schemapb.CollectionSchema{EnableNamespace: false},
-+			SegmentBinlogs: []*datapb.CompactionSegmentBinlogs{
-+				{SegmentID: 1, IsSorted: false, IsSortedByNamespace: true},
-+			},
-+		}
-+		assert.False(t, CanMergeSort(plan, params))
-+	})
-+
-+	t.Run("mixed flags rejected when one does not match", func(t *testing.T) {
-+		plan := &datapb.CompactionPlan{
-+			Schema: &schemapb.CollectionSchema{EnableNamespace: true},
-+			SegmentBinlogs: []*datapb.CompactionSegmentBinlogs{
-+				{SegmentID: 1, IsSortedByNamespace: true},
-+				{SegmentID: 2, IsSorted: true},
-+			},
-+		}
-+		assert.False(t, CanMergeSort(plan, params))
-+	})
-+}
-```
-
-**File**: `internal/datacoord/analyze/task.go` (modified, +50/-3)
-```diff
-@@ -29,6 +29,7 @@ import (
- 	"github.com/milvus-io/milvus/internal/datacoord/meta"
- 	"github.com/milvus-io/milvus/internal/datacoord/session"
- 	globalTask "github.com/milvus-io/milvus/internal/datacoord/task"
-+	"github.com/milvus-io/milvus/internal/datacoord/taskresource"
- 	"github.com/milvus-io/milvus/internal/storage"
- 	"github.com/milvus-io/milvus/pkg/v3/mlog"
- 	"github.com/milvus-io/milvus/pkg/v3/proto/indexpb"
-@@ -38,6 +39,7 @@ import (
- )
- 
- type analyzeTaskMeta interface {
-+	GetHealthySegment(context.Context, UniqueID) *meta.SegmentInfo
- 	GetCollection(UniqueID) *meta.CollectionInfo
- 	SelectSegments(context.Context, ...meta.SegmentFilter) []*meta.SegmentInfo
- }
-@@ -50,6 +52,8 @@ type analyzeTask struct {
- 	schema      *schemapb.CollectionSchema
- 	meta        analyzeTaskMeta
- 	analyzeMeta *AnalyzeMeta
-+
-+	resource taskresource.Cache
- }
- 
- var _ globalTask.Task = (*analyzeTask)(nil)
-@@ -89,6 +93,50 @@ func (at *analyzeTask) GetTaskState() taskcommon.State {
- 	return at.State
- }
- 
-+// GetTaskResource prices the analyze by the vectors it trains on: the size of
-+// the clustering-key field in every input segment, by the one field-size rule
-+// every family uses (taskresource.EstimateFieldSize -- meta's binlog size
-+// first, the schema bound as the fallback, capped at the segment).
-+//
-+// Going through that rule rather than rows x dim x element width is what gives
-+// every vector type an answer. A sparse or array-of-vector clustering key has no
-+// dim to multiply, and the closed form answered 0 for it; that answer was never
-+// cached, so every scheduling round re-walked all of the task's input segments
-+// for as long as it was pending.
-+func (at *analyzeTask) GetTaskResource() taskcommon.Resource {
-+	return at.resource.Get(func() (taskcommon.Resource, bool) {
-+		// NewAnalyzeTask snapshots the schema, and the snapshot is empty when
-+		// the collection was not cached yet. Resolve it again here, or a task
-+		// built before the cache was warmed would be priced without its field
-+		// for its whole life.
-+		//
-+		// The result is deliberately not written back to at.schema: other code
-+		// reads that field without synchronization.
-+		schema := at.schema
-+		if schema == nil {
-+			if coll := at.meta.GetCollection(at.GetCollectionID()); coll != nil {
-+				schema = coll.Schema
-+			}
-+		}
-+		var fieldSize int64
-+		for _, segID := range at.GetSegmentIDs() {
-+			segment := at.meta.GetHealthySegment(context.TODO(), segID)
-+			if segment == nil {
-+				// The input is gone for good. CreateTaskOnWorker retires the
-+				// task, so its price only has to let it get there.
-+				return taskresource.Default(), false
-+			}
-+			fieldSize += taskresource.EstimateFieldSize(segment, schema, at.GetFieldID())
-+		}
-+		// Without the field in the schema the rule has answered with meta's
-+		// binlog size or the whole segment -- an upper bound, safe to place on.
-+		// It is not cached: the schema may not be warmed yet, and once it is the
-+		// field's own size replaces the bound.
-+		cacheable := typeutil.GetFieldByID(schema, at.GetFieldID()) != nil
-+		return taskresource.Analyze(fieldSize), cacheable
-+	})
-+}
-+
- func (at *analyzeTask) GetTaskSlot() int64 {
- 	return Params.DataCoordCfg.AnalyzeTaskSlotUsage.GetAsInt64()
- }
-@@ -134,7 +182,7 @@ func (at *analyzeTask) dropAndResetTaskOnWorker(cluster session.Cluster, reason
- 	at.resetTask(reason)
- }
- 
--func (at *analyzeTask) CreateTaskOnWorker(nodeID int64, cluster session.Cluster) {
-+func (at *analyzeTask) CreateTaskOnWorker(nodeID int64, cluster session.Cluster, resource taskcommon.Resource) {
- 	ctx := context.TODO()
- 	log := mlog.With(mlog.FieldTaskID(at.GetTaskID()))
- 
-@@ -252,8 +300,7 @@ func (at *analyzeTask) CreateTaskOnWorker(nodeID int64, cluster session.Cluster)
- 			at.tryDropTaskOnWorker(cluster)
- 		}
- 	}()
--
--	err = cluster.CreateAnalyze(nodeID, req)
-+	err = cluster.CreateAnalyze(nodeID, req, resource)
- 	if err != nil {
- 		log.Warn(context.TODO(), "assign analyze task to worker failed", mlog.Err(err))
- 		return
-```
-
-**File**: `internal/datacoord/analyze/task_resource_test.go` (added, +151/-0)
-```diff
-@@ -0,0 +1,151 @@
-+// Licensed to the LF AI & Data foundation under one
-+// or more contributor license agreements. See the NOTICE file
-+// distributed with this work for additional information
-+// regarding copyright ownership. The ASF licenses this file
-+// to you under the Apache License, Version 2.0 (the
-+// "License"); you may not use this file except in compliance
-+// with the License. You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package analyze
-+
-+import (
-+	"testing"
-+
-+	"github.com/stretchr/testify/assert"
-+
-+	"github.com/milvus-io/milvus-proto/go-api/v3/commonpb"
-+	"github.com/milvus-io/milvus-proto/go-api/v3/schemapb"
-+	"github.com/milvus-io/milvus/internal/datacoord/taskresource"
-+	"github.com/milvus-io/milvus/pkg/v3/proto/datapb"
-+	"github.com/milvus-io/milvus/pkg/v3/proto/indexpb"
-+	"github.com/milvus-io/milvus/pkg/v3/util/paramtable"
-+)
-+
-+func TestTaskResource_Analyze(t *testing.T) {
-+	paramtable.Init()
-+	mt := taskresource.NewFixtureMeta(false)
-+	at := NewAnalyzeTask(&indexpb.AnalyzeTask{CollectionID: 1, TaskID: 9, FieldID: 101, FieldType: schemapb.DataType_FloatVector, SegmentIDs: []int64{3}}, mt, nil)
-+	assert.Equal(t, taskresource.Analyze(1000*128*4), at.GetTaskResource())
-+	assert.Equal(t, taskresource.Analyze(1000*128*4), at.GetTaskResource()) // cached
-+
-+	missing := NewAnalyzeTask(&indexpb.AnalyzeTask{CollectionID: 1, TaskID: 10, FieldID: 101, FieldType: schemapb.DataType_FloatVector, SegmentIDs: []int64{999}}, mt, nil)
-+	assert.Equal(t, taskresource.Default(), missing.GetTaskResource())
-+	assert.Equal(t, taskresource.Default(), missing.GetTaskResource())
-+}
-+
-+// TestTaskResource_AnalyzeSchemaCacheMiss is the analyze counterpart of
-+// the index family's schema-cache-miss test. NewAnalyzeTask snapshots the schema at
-+// construction, so a task built before the collection is cached would keep a nil
-+// schema forever: priced at the floor on every round, and re-walking every input
-+// segment each time because the floor is never cached. Resolving the schema
-+// lazily lets it repair itself.
-+func TestTaskResource_AnalyzeSchemaCacheMiss(t *testing.T) {
-+	paramtable.Init()
-+	mt := taskresource.NewFixtureMeta(true)
-+	// Exactly the state before the collection cache is warmed.
-+	taskresource.DropFixtureSchema(mt)
-+
-+	priced := taskresource.Analyze(taskresource.BigFixtureRows * 128 * 4)
-+	assert.NotEqual(t, taskresource.Default(), priced, "the bug this test guards must be observable")
-+	// Without the schema the field cannot be told apart, so the task is bounded
-+	// by its whole input instead of by the floor.
-+	bound := taskresource.Analyze(taskresource.BigFixtureSegmentSize)
-+
-+	at := NewAnalyzeTask(&indexpb.AnalyzeTask{
-+		CollectionID: 1, TaskID: 13, FieldID: 101,
-+		FieldType: schemapb.DataType_FloatVector, SegmentIDs: []int64{3},
-+	}, mt, nil)
-+	assert.Nil(t, at.schema, "the snapshot must be empty, or the test proves nothing")
-+	assert.Equal(t, bound, at.GetTaskResource())
-+	assert.Equal(t, bound, at.GetTaskResource())
-+	assert.Greater(t, bound.Memory, priced.Memory, "the fallback must err high, never low")
-+
-+	// The schema arriving repairs the price on the very next call, without the
-+	// task being rebuilt.
-+	taskresource.PutFixtureSchema(mt, taskresource.FixtureSchema())
-+	assert.Equal(t, priced, at.GetTaskResource())
-+
-+	// And that answer is cached: dropping the input segment does not change it.
-+	mt.Segments.DropSegment(3)
-+	assert.Equal(t, priced, at.GetTaskResource())
-+}
-+
-+// TestTaskResource_AnalyzeUnknownField covers a clustering key that is not in
-+// the cached schema, and a field the vector estimator cannot size. Neither can
-+// be sized exactly, so both are bounded by the whole input.
-+func TestTaskResource_AnalyzeUnknownField(t *testing.T) {
-+	paramtable.Init()
-+	mt := taskresource.NewFixtureMeta(false)
-+	bound := taskresource.Analyze(taskresource.FixtureSegmentSize)
-+
-+	unknown := NewAnalyzeTask(&indexpb.AnalyzeTask{CollectionID: 1, TaskID: 11, FieldID: 999, SegmentIDs: []int64{3}}, mt, nil)
-+	assert.Equal(t, bound, unknown.GetTaskResource())
-+
-+	// A field the schema knows is priced by the field-size rule like every other
-+	// family: here no binlogs in meta, so the int64 schema bound.
-+	scalar := NewAnalyzeTask(&indexpb.AnalyzeTask{CollectionID: 1, TaskID: 12, FieldID: 100, SegmentIDs: []int64{3}}, mt, nil)
-+	assert.Equal(t, taskresource.Analyze(1000*8), scalar.GetTaskResource())
-+}
-+
-+// TestTaskResource_AnalyzeSparseKeyIsCached: a sparse (or array-of-vector)
-+// clustering key has no dim to multiply. The closed form answered 0 for it and
-+// that answer was never cached, so every schedu
-```
-
-**File**: `internal/datacoord/analyze/task_test.go` (modified, +23/-15)
-```diff
-@@ -177,7 +177,7 @@ func (s *analyzeTaskSuite) TestCreateTaskOnWorker() {
- 		// Remove task from meta
- 		originalTask := s.am.Tasks[s.taskID]
- 		delete(s.am.Tasks, s.taskID)
--		at.CreateTaskOnWorker(1, session.NewMockCluster(s.T()))
-+		at.CreateTaskOnWorker(1, session.NewMockCluster(s.T()), at.GetTaskResource())
- 		s.Equal(indexpb.JobState_JobStateNone, at.GetState())
- 
- 		// Restore task
-@@ -186,14 +186,14 @@ func (s *analyzeTaskSuite) TestCreateTaskOnWorker() {
- 
- 	s.Run("successful creation", func() {
- 		cluster := session.NewMockCluster(s.T())
--		cluster.EXPECT().CreateAnalyze(mock.Anything, mock.Anything).Return(nil)
-+		cluster.EXPECT().CreateAnalyze(mock.Anything, mock.Anything, mock.Anything).Return(nil)
- 
- 		// Mock the UpdateVersion function
- 		catalog := catalogmocks.NewDataCoordCatalog(s.T())
- 		catalog.On("SaveAnalyzeTask", mock.Anything, mock.Anything).Return(nil)
- 		s.am.Catalog = catalog
- 
--		at.CreateTaskOnWorker(1, cluster)
-+		at.CreateTaskOnWorker(1, cluster, at.GetTaskResource())
- 		s.Equal(indexpb.JobState_JobStateInProgress, at.GetState())
- 	})
- }
-@@ -241,7 +241,7 @@ func (s *analyzeTaskSuite) TestCreateTaskOnWorker_SegmentNil() {
- 	s.am.Catalog = catalog
- 	defer s.restoreMetaTask(s.am.Tasks[s.taskID])
- 
--	at.CreateTaskOnWorker(1, session.NewMockCluster(s.T()))
-+	at.CreateTaskOnWorker(1, session.NewMockCluster(s.T()), at.GetTaskResource())
- 	s.Equal(indexpb.JobState_JobStateFailed, at.GetState())
- 	s.Contains(at.GetFailReason(), "102")
- 	// The terminal state must be persisted, not only set on the scheduler-owned copy.
-@@ -277,7 +277,7 @@ func (s *analyzeTaskSuite) TestCreateTaskOnWorker_DimExtractionError() {
- 	catalog.On("SaveAnalyzeTask", mock.Anything, mock.Anything).Return(nil)
- 	s.am.Catalog = catalog
- 
--	at.CreateTaskOnWorker(1, session.NewMockCluster(s.T()))
-+	at.CreateTaskOnWorker(1, session.NewMockCluster(s.T()), at.GetTaskResource())
- 	// Should reset to Init state on dim error
- 	s.Equal(indexpb.JobState_JobStateInit, at.GetState())
- }
-@@ -293,7 +293,7 @@ func (s *analyzeTaskSuite) TestCreateTaskOnWorker_DataTooSmall() {
- 	s.am.Catalog = catalog
- 	defer s.restoreMetaTask(s.am.Tasks[s.taskID])
- 
--	at.CreateTaskOnWorker(1, session.NewMockCluster(s.T()))
-+	at.CreateTaskOnWorker(1, session.NewMockCluster(s.T()), at.GetTaskResource())
- 	// data too small → skip → mark as finished
- 	s.Equal(indexpb.JobState_JobStateFinished, at.GetState())
- 	// Persisting Finished is what lets the GC recycle the task's analyze stats files.
-@@ -316,7 +316,7 @@ func (s *analyzeTaskSuite) TestCreateTaskOnWorker_TerminalStateNotPersisted() {
- 	defer s.restoreMetaTask(s.am.Tasks[s.taskID])
- 	stateBefore := s.am.GetTask(s.taskID).GetState()
- 
--	at.CreateTaskOnWorker(1, session.NewMockCluster(s.T()))
-+	at.CreateTaskOnWorker(1, session.NewMockCluster(s.T()), at.GetTaskResource())
- 	// A failed persistence leaves the task at Init so the scheduler re-enqueues it,
- 	// rather than dropping it on an in-memory-only terminal state.
- 	s.Equal(indexpb.JobState_JobStateInit, at.GetState())
-@@ -337,13 +337,21 @@ func (s *analyzeTaskSuite) TestCreateTaskOnWorker_NumClustersCapped() {
- 	catalog.On("SaveAnalyzeTask", mock.Anything, mock.Anything).Return(nil)
- 	s.am.Catalog = catalog
- 
-+	charged := taskcommon.Resource{CPU: 3, Memory: 123 << 20}
-+	var placed taskcommon.Resource
- 	cluster := session.NewMockCluster(s.T())
- 	cluster.EXPECT().CreateAnalyze(mock.Anything, mock.MatchedBy(func(req *workerpb.AnalyzeRequest) bool {
- 		return req.NumClusters == 1 // capped at MaxCentroidsNum=1
--	})).Return(nil)
-+	}), mock.Anything).RunAndReturn(
-+		func(_ int64, _ *workerpb.AnalyzeRequest, resource taskcommon.Resource) error {
-+			placed = resource
-+			return nil
-+		})
- 
--	at.CreateTaskOnWorker(1, cluster)
-+	at.CreateTaskOnWorker(1, cluster, charged)
- 	s.Equal(indexpb.JobState_JobStateInProgress, at.GetState())
-+	// The dispatch ships exactly what the scheduler placed the task on.
-+	s.Equal(charged, placed)
- }
- 
- func (s *analyzeTaskSuite) TestCreateTaskOnWorker_CreateAnalyzeError() {
-@@ -357,10 +365,10 @@ func (s *analyzeTaskSuite) TestCreateTaskOnWorker_CreateAnalyzeError() {
- 	s.am.Catalog = catalog
- 
- 	cluster := session.NewMockCluster(s.T())
--	cluster.EXPECT().CreateAnalyze(mock.Anything, mock.Anything).Return(fmt.Errorf("node down"))
-+	cluster.EXPECT().CreateAnalyze(mock.Anything, mock.Anything, mock.Anything).Return(fmt.Errorf("node down"))
- 	cluster.EXPECT().DropAnalyze(mock.Anything, mock.Anything).Return(nil)
- 
--	at.CreateTaskOnWorker(1, cluster)
-+	at.CreateTaskOnWorker(1, cluster, at.GetTaskResource())
- 	// Should NOT be InProgress since CreateAnalyze failed
- 	s.NotEqual(indexpb.JobState_JobStateInProgress, at.GetState())
- }
-@@ -403,9 +411,9 @@ func (s *analyzeTaskSuite) TestCreateTaskOnWorker_SegmentStatsPopulated() {
- 			return false
- 		}
- 		return true
--	})).Return(nil)
-+	}), mock.Anything).Return(nil)
- 
--	at.CreateTaskOnWorker(1, cluster)
-+	at.CreateTaskOnWorker(1, cluster, at.GetTaskResource())
- 	s.Equal(indexpb.Jo
+@@ -296,9 +296,6 @@ TEST_P(RetrieveCandidatesTest, BudgetsAndCancellation) {
+     auto offsets_only =
+         segment->Retrieve(nullptr, plan.get(), 100, kRows * 8, false);
+     EXPECT_EQ(offsets_only->offset_size(), kRows);
+-    // No visible rows: the offsets fit, but serialized metadata exceeds budget.
+-    ExpectCode([&] { segment->Retrieve(nullptr, plan.get(), 1, 1, false); },
+-               InvalidParameter);
+     ExpectCode([&] { segment->Retrieve(nullptr, plan.get(), 100, 0, false); },
+                UnexpectedError);
+     folly::CancellationSource cancellation;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #55814** (2026-11-22): fix: Clear HasMoreResult for empty retrieve results (@xiaofan-luan)
 - **PR #55791** (2026-11-21): fix: [cp3.0] bump brotli to v1.2.7 in tests/go_client (@xiaofan-luan)
 - **PR #55785** (2026-11-21): enhance: [cp3.0] Leave the test-only plan parser libraries out of release artifacts (@xiaofan-luan)
 - **PR #55784** (2026-11-21): enhance: Leave the test-only plan parser libraries out of release artifacts (@xiaofan-luan)
 - **PR #55779** (2026-11-20): test: use unary QueryView RPCs in Proxy auto-load retry fixtures (@sijie-ni-0214)
 - **PR #55763** (2026-11-21): test: fix exact-distance controls in Paimon HNSW refresh test (@zhuwenxing)
-- **PR #55758** (2026-11-20): fix: [cp3.0] read external refresh task state from response properties (@xiaocai2333)
 
 ---
 
@@ -2453,31 +1665,31 @@ pool. Full-pool backpressu
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. bump andybalholm/brotli to v1.2.7 (CVE-2026-111497 Go port)
+## X. Clear HasMoreResult for empty retrieve results
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/core/src/query/ExecPlanNodeVisitor.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a3d538e9`: bump andybalholm/brotli to v1.2.7 (CVE-2026-111497 Go port). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `09c8c207`: Clear HasMoreResult for empty retrieve results. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/core/src/query/ExecPlanNodeVisitor.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/andybalholm/brotli v1.2.7 // indirect
+        tmp_retrieve_result.has_more_result = false;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	github.com/andybalholm/brotli v1.1.0 // indirect
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a3d538e9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `09c8c207` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

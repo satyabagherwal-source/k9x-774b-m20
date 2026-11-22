@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T21:31:58.551Z",
-  "total_cycles_completed": 11599,
-  "total_learnings_persisted": 11599,
-  "total_rules_promoted": 10816,
+  "last_updated": "2026-11-22T21:41:02.923Z",
+  "total_cycles_completed": 11601,
+  "total_learnings_persisted": 11601,
+  "total_rules_promoted": 10817,
   "history": [
-    {
-      "timestamp": "2026-11-22T03:03:27.427Z",
-      "repository": "Ontos-AI/knowhere",
-      "learningId": "learn-github-ontos-ai-knowhere",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T03:11:24.694Z",
-      "repository": "ccore/Qwen3.5-4B-GLB-3D-Coder",
-      "learningId": "learn-huggingface-ccore-qwen3-5-4b-glb-3d-coder",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-22T03:11:25.786Z",
       "repository": "NVIDIA/cuda-rust",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-22T21:31:58.551Z",
       "repository": "ajeetdsouza/zoxide",
       "learningId": "learn-github-ajeetdsouza-zoxide",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T21:40:48.904Z",
+      "repository": "inclusionAI/Ming-Image-0.1-Design",
+      "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T21:41:02.923Z",
+      "repository": "milvus-io/milvus",
+      "learningId": "learn-github-milvus-io-milvus",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

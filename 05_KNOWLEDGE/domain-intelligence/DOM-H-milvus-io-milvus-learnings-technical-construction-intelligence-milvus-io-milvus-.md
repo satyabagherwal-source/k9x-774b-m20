@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T10:08:58.202Z",
+  "timestamp": "2026-11-22T21:41:06.908Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-milvus-io-milvus-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [milvus-io-milvus-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T10:08:58.202Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T21:41:06.908Z`  
 > **Learning ID**: `LEARN-EVO-milvus-io-milvus-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 60%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 64%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from milvus-io-milvus-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/milvus-io-milvus-learnings.md`  
 > **Source**: github ([https://github.com/milvus-io/milvus](https://github.com/milvus-io/milvus))  
-> **Source Version**: `2d0d14cb`  
+> **Source Version**: `09c8c207`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T10:08:52.945Z  
+> **Timestamp**: 2026-11-22T21:41:01.952Z  
 > **Learning ID**: `learn-github-milvus-io-milvus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/milvus-io-milvus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/milvus-io/milvus](https://github.com/milvus-io/milvus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T10:08:52.939Z  
+> **Harvest Timestamp**: 2026-11-22T21:41:01.947Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Milvus is a high-performance, cloud-native vector database built for scalable vector ANN search
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 46687 stars
+- **Stars / Engagement**: 46718 stars
 
 ---
 
@@ -1266,7 +1266,7 @@ func IsReplicationRemovedByAlterReplicateConfigMessage(msg message.ImmutableMess
 
 ```
 
-### Core Architecture Module: `internal/core/benchmark/BitmapRangeBenchmark.cpp`
+### Core Architecture Module: `internal/core/benchmark/BitSlicedIndexBenchmark.cpp`
 ```
 // Licensed to the LF AI & Data foundation under one
 // or more contributor license agreements. See the NOTICE file
@@ -1284,91 +1284,289 @@ func IsReplicationRemovedByAlterReplicateConfigMessage(msg message.ImmutableMess
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Times BitmapIndexReader::Range over heap Roaring postings. Built with the
-// unit tests; run before and after a change to compare.
+// Standalone component benchmark for the Int32 bit-sliced index kernel
+// (issue #53831). Reports build time, index size and query latency, and
+// compares each query with the path Milvus uses for an unindexed int32 field,
+// ANDed with the validity bitmap:
+// - comparisons and ranges: a SIMD scan of the raw column
+//   (TargetBitmap::inplace_compare_val / inplace_within_range_val, as in
+//   UnaryExpr / BinaryRangeExpr);
+// - IN / NOT IN: the dispatch of TermExpr::ExecVisitorImplForData, which runs
+//   the SIMD batch filter (exec::simdFilterChunk, as SimdBatchElement) for
+//   lists of at most simdLaneCount<int32_t>() * 8 keys and a per-row
+//   ankerl::unordered_dense set probe (as SetElement) for longer lists. The
+//   limit depends on the CPU, so the CSV says which one ran.
+// Every query result is checked against that baseline before it is timed; a
+// mismatch aborts the run. Index and scan are timed in interleaved trials,
+// median of 7 each.
+//
+// Usage: bit_sliced_index_benchmark [--rows=N] [--quick]
+//   default rows: 1048576 and 8388608; --quick: 65536 only.
+// Output: CSV on stdout, one row per (dataset, query).
+
 #include <algorithm>
+#include <chrono>
 #include <cstddef>
 #include <cstdint>
+#include <cstdlib>
+#include <cstring>
+#include <functional>
+#include <iostream>
+#include <limits>
 #include <memory>
 #include <random>
+#include <span>
+#include <string>
 #include <utility>
 #include <vector>
 
-#include <benchmark/benchmark.h>
-#include <roaring/roaring.hh>
-
+#include "ankerl/unordered_dense.h"
 #include "common/Types.h"
-#include "index/contracts/query/IScalarPredicateReader.h"
-#include "index/scalar/bitmap/BitmapIndexReader.h"
+#include "common/ValidityView.h"
+#include "exec/expression/SimdFilter.h"
+#include "index/contracts/build/ScalarBuildInput.h"
+#include "index/scalar/bsi/BitSlicedIndex.h"
 
-namespace milvus::index {
 namespace {
 
-constexpr size_t kRows = 1'000'000;
-constexpr size_t kNullEvery = 10;
+using milvus::TargetBitmap;
+using milvus::index::BitSlicedIndexInt32;
+using milvus::index::CompareOp;
+using milvus::index::ScalarBuildBatch;
+using milvus::index::ScalarBuildInput;
+using Clock = std::chrono::steady_clock;
 
-struct Fixture {
-    std::unique_ptr<BitmapIndexReader<int64_t>> reader;
-    // Values of the valid rows, sorted, for selectivity thresholds.
-    std::vector<int64_t> sorted;
+volatile size_t sink = 0;
+
+// Mean time per call over one trial of at least 30 ms.
+template <typename F>
+double
+TrialMicros(F& fn) {
+    const auto start = Clock::now();
+    size_t calls = 0;
+    double elapsed_us = 0;
+    do {
+        sink = sink + fn().size();
+        ++calls;
+        elapsed_us =
+            std::chrono::duration<double, std::micro>(Clock::now() - start)
+                .count();
+    } while (elapsed_us < 30000);
+    return elapsed_us / static_cast<double>(calls);
+}
+
+// Times the index and the scan for one query with interleaved trials
+// (index, scan, index, scan, ...), so a transient slowdown of the machine
+// lands on both sides rather than on one, and returns the median of 7 trials
+// per side. Each side is warmed up with one call first.
+template <typename A, typename B>
+std::pair<double, double>
+InterleavedMedianMicros(A index_fn, B scan_fn) {
+    sink = sink + index_fn().size() + scan_fn().size();
+    std::vector<double> index_us, scan_us;
+    for (int t = 0; t < 7; ++t) {
+        index_us.push_back(TrialMicros(index_fn));
+        scan_us.push_back(TrialMicros(scan_fn));
+    }
+    std::sort(index_us.begin(), index_us.end());
+    std::sort(scan_us.begin(), scan_us.end());
+    return {index_us[index_us.size() / 2], scan_us[scan_us.size() / 2]};
+}
+
+struct Dataset {
+    std::string name;
+    std::vector<int32_t> values;
+    std::unique_ptr<bool[]> valid;
+    size_t rows = 0;
+    double null_rate = 0;
 };
 
-// distribution 0: uniform keys. 1: rows concentrated on the high keys, so
-// `<` ranges start in sparse postings and reach the heavy ones only when broad.
-Fixture
-MakeFixture(int64_t keys, int64_t distribution) {
-    std::mt19937_64 rng(42);
-    std::uniform_real_distribution<double> unit(0.0, 1.0);
-    BitmapRoaringPostingMap<int64_t> postings;
-    TargetBitmap valid(kRows, true);
-    Fixture fixture;
-    fixture.sorted.reserve(kRows);
-    for (size_t row = 0; row < kRows; ++row) {
-        if (row % kNullEvery == 0) {
-            valid.reset(row);
-            continue;
+Dataset
+MakeDataset(const std::string& shape,
+            size_t rows,
+            double null_rate,
+            uint64_t seed) {
+    Dataset d;
+    d.name = shape;
+    d.rows = rows;
+    d.null_rate = null_rate;
+    d.values.resize(rows);
+    d.valid = std::make_unique<bool[]>(rows);
+    std::mt19937_64 rng(seed);
+    std::bernoulli_distribution is_null(null_rate);
+    for (size_t i = 0; i < rows; ++i) {
+        if (shape == "narrow") {
+            // 1000 distinct values -> 10 slices.
+            d.values[i] = static_cast<int32_t>(rng() % 1000);
+        } else {
+            // Full int32 range -> 32 slices.
+            d.values[i] = static_cast<int32_t>(static_cast<uint32_t>(rng()));
         }
-        const double u = unit(rng);
-        const auto bucket =
-            std::min(static_cast<int64_t>((distribution == 0 ? u : u * u) *
-                                          static_cast<double>(keys)),
-                     keys - 1);
-        const auto key = distribution == 0 ? bucket : keys - 1 - bucket;
-        postings[key].add(static_cast<uint32_t>(row));
-        fixture.sorted.push_back(key);
+        d.valid[i] = !is_null(rng);
     }
-    std::sort(fixture.sorted.begin(), fixture.sorted.end());
-    fixture.reader = CreateBitmapIndexReader<int64_t>(
-        std::move(postings),
-        BitmapStorageOptions{.valid_bitset = std::move(valid),
-                             .total_num_rows = kRows});
-    return fixture;
+    return d;
 }
 
-// Arguments: distinct keys, distribution, percent of valid rows matched.
+TargetBitmap
+ValidBitmap(const Dataset& d) {
+    TargetBitmap valid(d.rows, false);
+    for (size_t i = 0; i < d.rows; ++i) {
+        if (d.valid[i]) {
+            valid.set(i);
+        }
+    }
+    return valid;
+}
+
+// Baselines: the unindexed raw-column paths.
+TargetBitmap
+ScanCompare(const Dataset& d,
+            const TargetBitmap& valid,
+            int32_t c,
+            milvus::bitset::CompareOpType op) {
+    TargetBitmap res(d.rows, false);
+    res.inplace_compare_val(d.values.data(), d.rows, c, op);
+    res &= valid;
+    return res;
+}
+
+TargetBitmap
+ScanRange(const Dataset& d, const TargetBitmap& valid, int32_t lo, int32_t hi) {
+    TargetBitmap res(d.rows, false);
+    res.inplace_within_range_val(
+        lo, hi, d.values.data(), d.rows, milvus::bitset::RangeType::IncInc);
+    res &= valid;
+    return res;
+}
+
+// IN baseline. TermExpr::ExecVisitorImplForData evaluates a numeric IN list
+// with the SIMD batch filter (SimdBatchElement) when it has at most
+// simdLaneCount<T>() * 8 keys, and with a per-row hash set probe (SetElement,
+// load factor 0.5) otherwise. Milvus sorts and deduplicates the keys and
+// builds the set once per plan, so that preparation happens in the
+// constructor, outside the timed call.
+class InBaseline {
+ public:
+    explicit InBaseline(std::vector<int32_t> keys) : keys_(std::move(keys)) {
+        std::sort(keys_.begin(), keys_.end());
+        keys_.erase(std::unique(keys_.begin(), keys_.end()), keys_.end());
+        if (!UsesSimd()) {
+            set_.max_load_factor(0.5f);
+            set_.insert(keys_.begin(), keys_.end());
+        }
+    }
+
+    static size_t
+    SimdKeyLimit() {
+        return static_cast<size_t>(milvus::exec::simdLaneCount<int32_t>()) * 8;
+    }
+
+    bool
+    UsesSimd() const {
+        return keys_.size() <= SimdKeyLimit();
+    }
+
+    const char*
+    Name() const {
+        return UsesSimd() ? "simd" : "hash";
+    }
+
+    // Sorted and unique, as the Go rewriter hands them to TermExpr.
+    const std::vector<int32_t>&
+    Keys() const {
+        return keys_;
+    }
+
+    // Valid rows whose value is in the key list, or not in it when `negate`.
+    TargetBitmap
+    Run(const Dataset& d, const TargetBitmap& valid, bool negate) const {
+        TargetBitmap res(d.rows, false);
+        if (UsesSimd()) {
+            // ORs the matching rows into a byte-aligned bitmap; a fresh
+            // TargetBitmap starts on a word boundary.
+            milvus::exec::simdFilterChunk<int32_t>(
+                d.values.data(),
+                static_cast<int>(d.rows),
+                reinterpret_cast<uint8_t*>(res.data()),
+                keys_.data(),
+                static_cast<int>(keys_.size()));
+        } else {
+            for (size_t i = 0; i < d.rows; ++i) {
+                res[i] = set_.contains(d.values[i]);
+            }
+        }
+        if (negate) {
+            res.flip();
+        }
+        res &= valid;
+        return res;
+    }
+
+ private:
+    std::vector<int32_t> keys_;
+    ankerl::unordered_dense::set<int32_t> set_;
+};
+
 void
-RangeLessThan(benchmark::State& state) {
-    const auto fixture = MakeFixture(state.range(0), state.range(1));
-    const auto percent = static_cast<size_t>(state.range(2));
-    const auto threshold =
-        fixture.sorted[fixture.sorted.size() * percent / 100];
-    state.counters["matched"] = static_cast<double>(
-        fixture.reader->Range(threshold, CompareOp::LessThan).count());
-    for (auto _ : state) {
-        auto result = fixture.reader->Range(threshold, CompareOp::LessThan);
-        benchmark::DoNotOptimize(result);
+Verify(const std::string& what, TargetBitmap a, TargetBitmap b) {
+    if (a.size() != b.size() || !(a == b)) {
+        std::cerr << "MISMATCH between index and scan for " << what << '\n';
+        std::exit(1);
     }
 }
 
-}  // namespace
-}  // namespace milvus::index
+void
+RunDataset(const Dataset& d) {
+    const ScalarBuildBatch<int32_t> batch{
+        std::span<const int32_t>(d.values),
+        d.null_rate > 0 ? milvus::ValidityView::FromExpanded(d.valid.get())
+                        : milvus::ValidityView{}};
+    const ScalarBuildInput<int32_t> input{
+        std::span<const ScalarBuildBatch<int32_t>>(&batch, 1)};
 
-BENCHMARK(milvus::index::RangeLessThan)
-    ->ArgsProduct({{1000, 10000, 100000}, {0, 1}, {1, 10, 50, 90, 99}})
-    ->Unit(benchmark::kMicrosecond);
+    // Build time: median of 5 builds.
+    std::vector<double> build_ms;
+    for (int t = 0; t < 5; ++t) {
+        const auto start = Clock::now();
+        BitSlicedIndexInt32 tmp(input);
+        build_ms.push_back(
+            std::chrono::duration<double, std::milli>(Clock::now() - start)
+                .count());
+        sink = sink + tmp.Count();
+    }
+    std::sort(build_ms.begin(), build_ms.end());
+    const BitSlicedIndexInt32 index(input);
+    const auto valid = ValidBitmap(d);
 
-BENCHMARK_MAIN();
+    // Query constants from percentiles of the valid values.
+    std::vector<int32_t> sorted;
+    for (size_t i = 0; i < d.rows; ++i) {
+        if (d.valid[i]) {
+            sorted.push_back(d.values[i]);
+        }
+    }
+    std::sort(sorted.begin(), sorted.end());
+    if (sorted.empty()) {
+        std::cerr << "skipping dataset " << d.name << " with " << d.rows
+                  << " rows: no valid values\n";
+        return;
+    }
+    const auto pct = [&](double p) {
+        return sorted[std::min(sorted.size() - 1,
+                               static_cast<size_t>(p * sorted.size()))];
+    };
+    // n keys spread evenly over the value distribution (scattered runs).
+    const auto spread_keys = [&](int n) {
+        std::vector<int32_t> keys;
+        for (int i = 0; i < n; ++i) {
+            keys.push_back(pct((i + 0.5) / n));
+        }
+        return keys;
+    };
+    const InBaseline in8(spread_keys(8)), in32(spread_keys(32)),
+        in128(spread_keys(128)), in512(spread_keys(512));
 
+    struc
 ```
 
 
@@ -1377,11 +1575,14 @@ BENCHMARK_MAIN();
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #55669** (2026-11-18): **fix: publish local chunk manager writes atomically by rename**
-  *Symptoms*: LocalChunkManager.Write truncated the target in place. An interrupted overwrite destroyed the previous content and left a partial file. Callers are written against object store PUT semantics, where a reader sees either the old object or the complete new one. walsummary relies on this when it rewrites its per-term manifest. A torn manifest fails its checksum, Restore returns ErrStoreCorrupted, and WAL recovery of the pchannel fails.  issue: #55668  This PR is independent of #54667 (fsync of local writes) and based on master.  Changes: - New `localstorage.WriteFileAtomic` writes to a `.milvus-tmp-<random>` file in the target directory (O_EXCL, perm subject to the umask). It fsyncs and closes the file, then renames it onto the target. A failed write leaves the previous content in place and removes its temporary file. The temporary file is created in the directory the kernel resolves for the target, which is not always the lexically cleaned one when the path contains symlinks and `..`. - `LocalChunkManager.Write` uses it. Readers that already opened or mapped the previous file keep its inode. - `LocalChunkManager.WalkWithPrefix` skips temporary files in both recursive and non-recursive mode, as object stores do not list in-progress uploads. This also keeps a concurrent write from failing a walk: its temporary file can be renamed away between readdir and stat. walsummary's `ListManifestTerms` already ignores names it cannot parse.  Crash behavior: after a crash, the target holds t
+- **Issue #55814** (2026-11-22): **fix: Clear HasMoreResult for empty retrieve results**
+  *Symptoms*: issue: #55795  Takes over #55796, whose fix commit by sijie-ni-0214 is kept as is. The second commit adjusts a unit test that depended on the bug, which was failing #55796's C++ unit tests.  ## Problem  A resumed query iterator can return an empty page and stop early (`test_query_iterator_normal`, `assert 2000 == 4000`).  - `RetrieveResult::has_more_result` defaults to `true`. When execution produces no rows, the empty-result branch of `ExecPlanNodeVisitor::setupRetrieveResult` returns without clearing it. A growing segment with no rows visible at the snapshot timestamp returns 0 rows with `has_more_result=true`. - The QueryNode reduce ORs the flag of every segment result, the empty ones included. A worker whose segments are all empty returns 0 rows with `HasMoreResult=true`. - The ordered streaming reduce (`proxy.queryView.enableReduceStream`, on by default) ends the page at a drained child that reports more results, so it does not skip that child's later rows. For a child with no rows the page is empty, and the client stops iterating. - The batch reduce drops empty results before merging, so it is not affected.  The test inserts rows after saving the checkpoint, so the resumed query always sees a growing segment with no visible rows. It fails only when that segment is the only one on its worker, which depends on placement and flush timing.  ## Fix  Set `has_more_result=false` in the empty-result branch. A result with no rows is not truncated, so the flag was wrong; the stre
 
-- **Issue #55668** (2026-11-18): **[Bug]: interrupted local overwrite leaves a torn WAL summary manifest and fails WAL recovery**
-  *Symptoms*: ### Problem  With local storage, `LocalChunkManager.Write` truncates the target in place. If the process crashes, the machine loses power or the disk fills up mid-overwrite, the previous content is already gone and only a partial or 0-byte file remains.  Callers of `ChunkManager` are written against object store PUT semantics. On MinIO, S3, GCS or Azure, a PUT replaces the object atomically, so a reader sees either the old object or the complete new one. The local implementation does not provide this.  ### Impact  The streaming node's WAL summary depends on this. It rewrites its per-term manifest `.../manifest/{term:020d}` in place on every publish, and the manifest is the only index into the summary chunk set. After an interrupted rewrite:  1. The node reopens with a new term. `Restore` lists manifests and reads the newest term, which is the torn one. 2. `unmarshalManifest` fails the length or sha256 check and returns `ErrStoreCorrupted`. That error is terminal. 3. `restore pchannel summary` fails in `recovery_persisted.go`, so the WAL of the pchannel cannot open, and every collection on it becomes unavailable.  There is no fallback. Older-term manifests are deleted after a new one is published, and `Restore` reads only the newest one.  This is case 2 of #54436. Fsyncing completed writes (#54667) does not fix it: the truncation destroys the previous content before the new content is written, let alone synced.  Remote storage is not affected.  ### Proposed fix  Make `LocalChu
+- **Issue #55791** (2026-11-21): **fix: [cp3.0] bump brotli to v1.2.7 in tests/go_client**
+  *Symptoms*: issue: #55002 pr: #55003  #55004 bumped `github.com/andybalholm/brotli` to v1.2.7 in the root `go.mod` on 3.0 but left `tests/go_client` at v1.1.0. `tests/go_client` replaces `github.com/milvus-io/milvus` with the repo root, so its `go.mod` has to select the same version. Without that, golangci-lint cannot load the module (`no go files to analyze: running go mod tidy may solve the problem`), and the static-check step of Code-Check fails on every 3.0 PR.  This applies the `tests/go_client` part of #55003. Only `tests/go_client/go.mod` and `go.sum` change.  ### Validation On this branch, in `tests/go_client`: - `GOFLAGS=-mod=readonly go list -tags L0,L1,L2,test ./...` succeeds. - `golangci-lint run --build-tags L0,L1,L2,test --config .golangci.yml` (v2.11.3, the CI version) reports `0 issues`. With the current 3.0 `tests/go_client` it fails with the error above.  🤖 Generated with [Claude Code](https://claude.com/claude-code) 
+  **Post-Mortem & Fix Analysis**:
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"5eb0ed25563fe772c6341aea81b23e2fa31c3c69","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-21T02:57:29.051777Z">2026-11-21T02:57:29.051777Z</relative-time> | `5eb0ed2` | PR opened |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Comm
+  > [APPROVALNOTIFIER] This PR is **NOT APPROVED**  This pull-request has been approved by: To complete the [pull request process](https://git.k8s.io/community/contributors/guide/owners.md#the-code-review-process), please ask for approval from **xiaofan-luan** after the PR has been reviewed.  The full list of commands accepted by this bot can be found [here](https://go.k8s.io/bot-commands?repo=milvus-io%2Fmilvus).  <details open> Needs approval from an approver in each of these files:  - **[tests/OWNERS](https://github.com/milvus-io/milvus/blob/3.0/tests/OWNERS)**  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":["xiaofan-luan"]} -->
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1398,620 +1599,70 @@ BENCHMARK_MAIN();
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `519cc7d0` (2026-11-18)
-**Commit Message**: test: fix CDC concurrent checker teardown (#55666)
+### Incident Patch 1: `09c8c207` (2026-11-22)
+**Commit Message**: fix: Clear HasMoreResult for empty retrieve results (#55814)
 
-## Summary
+issue: #55795
 
-Use the shared chaos monitor context manager in the CDC concurrent
-workload so the checker threads are stopped and joined at scope exit.
-Keep the workload duration, readiness wait and success-rate assertions.
-Aggregate request statistics after the monitor threads have drained.
+Takes over #55796, whose fix commit by sijie-ni-0214 is kept as is. The
+second commit adjusts a unit test that depended on the bug, which was
+failing #55796's C++ unit tests.
 
-## Evidence
+## Problem
 
-In CDC Chaos build 135, the concurrent test printed `1 passed, 1
-warning`, then the process aborted after `terminate called without an
-active exception`. The warnings show a background Import 2PC writer was
-still handling MinIO connection failures. The concurrent test started
-daemon checkers and did not wait for their exit. The native abort's
-exact stack was unavailable.
+A resumed query iterator can return an empty page and stop early
+(`test_query_iterator_normal`, `assert 2000 == 4000`).
 
-## Validation
+- `RetrieveResult::has_more_result` defaults to `true`. When execution
+produces no rows, the empty-result branch of
+`ExecPlanNodeVisitor::setupRetrieveResult` returns without clearing it.
+A growing segment with no rows visible at the snapshot timestamp returns
+0 rows with `has_more_result=true`.
+- The QueryNode reduce ORs the flag of every segment result, the empty
+ones included. A worker whose segments are all empty returns 0 rows with
+`HasMoreResult=true`.
+- The ordered streaming reduce (`proxy.queryView.enableReduceStream`, on
+by default) ends the page at a drained child that reports more results,
+so it does not skip that child's later rows. For a child with no rows
+the page is empty, and the client stops iterating.
+- The batch reduce drops empty results before merging, so it is not
+affected.
 
-- A focused harness executed the original and changed test methods
-against the actual shared monitor helpers with real checker threads. It
-reproduced the live thread after the original method returned, verified
-the patched method drains it, and verified that a forced workload error
-and a failed success-rate assertion still propagate.
-- Ruff 0.15.11 check and format, Ruff configuration smoke, Python
-compilation and `git diff --check` passed. The repos
+The te
 
-**File**: `tests/python_client/cdc/stablity/test_concurrent_operation.py` (modified, +13/-13)
+**File**: `internal/core/src/query/ExecPlanNodeVisitor.cpp` (modified, +1/-0)
 ```diff
-@@ -176,19 +176,19 @@ def test_operations(self, request_duration, is_check, collection_name):
-         # event_records.insert("init_health_checkers", "start")
-         self.init_health_checkers(collection_name=c_name)
-         # event_records.insert("init_health_checkers", "finished")
--        cc.start_monitor_threads(self.health_checkers)
--        log.info("*********************Load Start**********************")
--        request_duration = request_duration.replace("h", "*3600+").replace("m", "*60+").replace("s", "")
--        if request_duration[-1] == "+":
--            request_duration = request_duration[:-1]
--        request_duration = eval(request_duration)
--        for i in range(10):
--            sleep(request_duration // 10)
--            for k, v in self.health_checkers.items():
--                v.check_result()
--                # log.info(v.check_result())
--        wait_pods_ready(self.milvus_ns, f"app.kubernetes.io/instance={self.release_name}")
--        time.sleep(60)
-+        with cc.monitor_threads(self.health_checkers):
-+            log.info("*********************Load Start**********************")
-+            request_duration = request_duration.replace("h", "*3600+").replace("m", "*60+").replace("s", "")
-+            if request_duration[-1] == "+":
-+                request_duration = request_duration[:-1]
-+            request_duration = eval(request_duration)
-+            for i in range(10):
-+                sleep(request_duration // 10)
-+                for k, v in self.health_checkers.items():
-+                    v.check_result()
-+                    # log.info(v.check_result())
-+            wait_pods_ready(self.milvus_ns, f"app.kubernetes.io/instance={self.release_name}")
-+            time.sleep(60)
-         ra = ResultAnalyzer()
-         ra.get_stage_success_rate()
-         if is_check:
+@@ -322,6 +322,7 @@ ExecPlanNodeVisitor::setupRetrieveResult(
+                 tmp_retrieve_result.field_data_[i] = std::move(data_array);
+             }
+         }
++        tmp_retrieve_result.has_more_result = false;
+         retrieve_result_opt_ = std::move(tmp_retrieve_result);
+         return;
+     }
 ```
 
----
-
-### Incident Patch 2: `042464c8` (2026-11-18)
-**Commit Message**: fix: avoid holding the IDF lock during obsolete stats cleanup (#54853)
-
-issue: #54840
-
-### Problem and behavior
-
-In the legacy delegator IDF oracle, obsolete sealed BM25 statistics were
-removed while holding the oracle write lock. Waiting for local
-statistics readers and deleting their directories could block online
-`BuildIDF` readers during target synchronization.
-
-Detach obsolete entries while publishing the target, then remove their
-files after releasing the oracle lock. Each entry now owns a unique
-local directory. A replacement for the same segment ID uses a different
-directory, so delayed cleanup of the old entry cannot delete replacement
-files.
-
-Reopen downloads missing fields into its own temporary directory under
-the same oracle root. Under the existing oracle and entry locks, it
-validates the observed entry, installs complete field directories, and
-then publishes the field list, aggregate statistics and disk accounting.
-A partial install is rolled back; a retry also removes unpublished
-destination directories left by unsuccessful cleanup. Stale or already
-removed entries return the existing retryable `ServiceUnavailable` error
-so the caller can resample readability.
-
-This
-
-**File**: `docs/agent_guides/storage/path_contract.md` (modified, +13/-0)
+**File**: `internal/core/src/segcore/RetrieveCandidatesTest.cpp` (modified, +0/-3)
 ```diff
-@@ -55,6 +55,19 @@ storage; explicitly authenticated external sources use their own object
- permissions. All output writes retain the cluster chunk manager and layout.
- See [source storage design](../../design-docs/design_docs/20261110-external-import-storage.md).
- 
-+## Delegator BM25 local cache
-+
-+The legacy delegator IDF oracle creates a unique directory per sealed-statistics
-+entry under its channel-local BM25 root. Readers use the entry's `localDir`;
-+cleanup must delete that exact directory, never reconstruct it from segment ID.
-+These directories are downloaded caches, not recovery metadata.
-+Reopen downloads missing fields into a separate unique directory under the same
-+root, then installs complete field directories under the oracle and entry locks.
-+Only after installation succeeds are fields, aggregate statistics and disk
-+accounting published. An obsolete entry can be detached under the oracle lock
-+and physically removed after unlocking without waiting for a replacement's
-+remote download. The sync still waits for that entry's local readers and removal.
-+
- ## Manifest index artifacts
- 
- When `dataCoord.index.writeSegmentIndexToManifest` is enabled, new StorageV3
-```
-
-**File**: `internal/querynodev2/delegator/idf_oracle.go` (modified, +87/-37)
-```diff
-@@ -577,15 +577,18 @@ func (o *idfOracle) DirPath() string {
- 	return o.dirPath
- }
- 
--func (o *idfOracle) preloadSealed(segmentID int64, stats *sealedBm25Stats, memoryStats bm25Stats) {
-+func (o *idfOracle) registerSealedStats(segmentID int64, stats *sealedBm25Stats, memoryStats bm25Stats) {
- 	// Read lock only, so loads of different segments merge into current in parallel.
- 	// SyncDistribution sets the target version under the write lock, so the check below
- 	// and the merge are atomic with respect to it.
- 	o.RLock()
- 	defer o.RUnlock()
- 
--	// skip preload if first target was loaded.
--	if o.targetVersion.Load() != 0 {
-+	// Publish the disk charge with the entry: sync may detach and remove it as
-+	// soon as this read lock is released, without waiting for the loader.
-+	o.sealedDiskSize.Add(stats.diskSize)
-+	// Skip preload if disabled or the first target was already loaded.
-+	if memoryStats == nil || o.targetVersion.Load() != 0 {
- 		o.sealed.Insert(segmentID, stats)
- 		return
- 	}
-@@ -626,6 +629,9 @@ func observeForReopen(seg *sealedBm25Stats, activateIfReadable bool) (reopenView
- 	}
- 	seg.RLock()
- 	defer seg.RUnlock()
-+	if seg.removed {
-+		return reopenView{}, errReopenStateChanged(seg.segmentID)
-+	}
- 	view := reopenView{seg: seg, version: seg.version, active: seg.activate.Load()}
- 	if activateIfReadable && !view.active {
- 		existing, err := seg.fetchFieldsLocked(seg.fieldList)
-@@ -652,13 +658,13 @@ func (o *idfOracle) activateExistingSealedStats(segmentID int64, view reopenView
- 
- 	segStats, existed := o.sealed.Get(segmentID)
- 	if !existed {
--		return false, nil
-+		return false, errReopenStateChanged(segmentID)
- 	}
- 
- 	segStats.Lock()
- 	defer segStats.Unlock()
- 	if segStats.removed {
--		return false, merr.WrapErrServiceInternalMsg("sealed bm25 stats for segment %d already removed", segmentID)
-+		return false, errReopenStateChanged(segmentID)
- 	}
- 	if !view.stillHolds(segStats, existed) {
- 		return false, errReopenStateChanged(segmentID)
-@@ -713,7 +719,7 @@ func (o *idfOracle) SyncFunctions(functions []*schemapb.FunctionSchema) error {
- // Idempotent: skips if segment already loaded.
- func (o *idfOracle) LoadSealed(ctx context.Context, segmentID int64, loadInfo *querypb.SegmentLoadInfo, cm storage.ChunkManager) error {
- 	_, err, _ := o.sf.Do(fmt.Sprintf("load_sealed_%d", segmentID), func() (any, error) {
--		if o.sealed.Contain(segmentID) {
-+		if _, loaded := o.sealed.Get(segmentID); loaded {
- 			return nil, nil
- 		}
- 
-@@ -734,11 +740,6 @@ func (o *idfOracle) LoadSealed(ctx context.Context, segmentID int64, loadInfo *q
- 
- 		result, err := o.streamLoad(ctx, segmentID, logpaths, cm, needParse)
- 		if err != nil {
--			// cleanup on failure
--			cleanupPath := path.Join(o.dirPath, fmt.Sprintf("%d", segmentID))
--			if rmErr := os.RemoveAll(cleanupPath); rmErr != nil {
--				mlog.Warn(ctx, "failed to cleanup bm25 stats dir on load failure", mlog.Err(rmErr), mlog.String("path", cleanupPath))
--			}
- 			return nil, err
- 		}
- 
-@@ -751,12 +752,7 @@ func (o *idfOracle) LoadSealed(ctx context.Context, segmentID int64, loadInfo *q
- 			diskSize:  result.diskSize,
- 		}
- 
--		if needParse && result.stats != nil {
--			o.preloadSealed(segmentID, segStats, result.stats)
--		} else {
--			o.sealed.Insert(segmentID, segStats)
--		}
--		o.sealedDiskSize.Add(result.diskSize)
-+		o.registerSealedStats(segmentID, segStats, result.stats)
- 
- 		o.syncResource()
- 		return nil, nil
-@@ -814,24 +810,20 @@ func (o *idfOracle) LoadSealedForReopen(ctx context.Context, segmentID int64, lo
- 			return nil, nil
- 		}
- 
--		installed := false
--		cleanup := func() {
--			if installed {
--				return
--			}
--			for fieldID := range missingPaths {
--				cleanupPath := path.Join(o.dirPath, fmt.Sprintf("%d", segmentID), fmt.Sprintf("%d", fieldID))
--				if rmErr := os.RemoveAll(cleanupPath); rmErr != nil {
--					logger.Warn(ctx, "failed to cleanup reopened bm25 stats field dir", mlog.Err(rmErr), mlog.String("path", cleanupPath))
--				}
--			}
--		}
--		defer cleanup()
--
- 		result, err := o.streamLoad(ctx, segmentID, missingPaths, cm, true)
- 		if err != nil {
- 			return nil, err
- 		}
-+		installed := false
-+		defer func() {
-+			// An existing entry adopts the fields, not the staging directory.
-+			// A new entry takes ownership of the whole directory on success.
-+			if !installed || existedBeforeLoad {
-+				if err := os.RemoveAll(result.localDir); err != nil {
-+					logger.Warn(ctx, "failed to cleanup reopened bm25 stats staging dir", mlog.Err(err), mlog.String("path", result.localDir))
-+				}
-+			}
-+		}()
- 
- 		var observed *sealedBm25Stats
- 		if existedBeforeLoad {
-@@ -858,7 +850,7 @@ func (o *idfOracle) LoadSealedForReopen(ctx context.Context, segmentID int64, lo
- 		}
- 		if existed && segStats.removed {
- 			unlock()
--			return nil, merr.WrapErrServiceInternalMsg("sealed bm25 stats for segment %d already removed", segmentID)
-+			return nil, errReopenStateChanged(segmentID)
- 		}
- 		if !view.stillHolds(segStats, existed) {
- 			unlock()
-@@ -882,6 +874,10 @@ func (o *idfOracl
-```
-
-**File**: `internal/querynodev2/delegator/idf_oracle_cleanup_test.go` (added, +361/-0)
-```diff
-@@ -0,0 +1,361 @@
-+// Licensed to the LF AI & Data foundation under one
-+// or more contributor license agreements. See the NOTICE file
-+// distributed with this work for additional information
-+// regarding copyright ownership. The ASF licenses this file
-+// to you under the Apache License, Version 2.0 (the
-+// "License"); you may not use this file except in compliance
-+// with the License. You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package delegator
-+
-+import (
-+	"bytes"
-+	"context"
-+	"os"
-+	"path"
-+	"sync"
-+	"testing"
-+	"time"
-+
-+	"github.com/bytedance/mockey"
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/mock"
-+	"github.com/stretchr/testify/require"
-+
-+	"github.com/milvus-io/milvus-proto/go-api/v3/schemapb"
-+	"github.com/milvus-io/milvus/internal/mocks"
-+	"github.com/milvus-io/milvus/internal/storage"
-+	"github.com/milvus-io/milvus/pkg/v3/proto/querypb"
-+	"github.com/milvus-io/milvus/pkg/v3/util/merr"
-+)
-+
-+type idfCleanupCall struct {
-+	done chan struct{}
-+	err  error
-+}
-+
-+func runIDFCleanupCall(fn func() error) *idfCleanupCall {
-+	c := &idfCleanupCall{done: make(chan struct{})}
-+	go func() {
-+		c.err = fn()
-+		close(c.done)
-+	}()
-+	return c
-+}
-+
-+func (c *idfCleanupCall) result(t *testing.T) error {
-+	t.Helper()
-+	select {
-+	case <-c.done:
-+		return c.err
-+	case <-time.After(5 * time.Second):
-+		t.Fatal("IDF operation did not complete")
-+		return nil
-+	}
-+}
-+
-+// Keep a statistics reader alive so physical removal cannot finish. Publication
-+// must still complete; cleanup and accounting are joined separately by the test.
-+func blockIDFCleanup(t *testing.T, o *idfOracle, id int64, target *snapshot) (*sealedBm25Stats, func(), *idfCleanupCall) {
-+	t.Helper()
-+	old, ok := o.sealed.Get(id)
-+	require.True(t, ok)
-+	old.RLock()
-+	var once sync.Once
-+	release := func() { once.Do(old.RUnlock) }
-+	o.next.SetSnapshot(target)
-+	call := runIDFCleanupCall(o.SyncDistribution)
-+	t.Cleanup(func() {
-+		release()
-+		require.NoError(t, call.result(t))
-+	})
-+	require.Eventually(t, func() bool { return o.TargetVersion() == target.targetVersion }, 5*time.Second, time.Millisecond)
-+	return old, release, call
-+}
-+
-+func TestIDFCleanupDoesNotBlockReadersOrSchemaSync(t *testing.T) {
-+	o := newSyncTestOracle(t, 102)
-+	o.targetVersion.Store(1)
-+	dropped := newSyncTestSegment(t, 1, genBM25StatsForField(102, 1, 4))
-+	kept := newSyncTestSegment(t, 2, genBM25StatsForField(102, 10, 15))
-+	dropped.load(t, o, 102)
-+	kept.load(t, o, 102)
-+	// Keep the obsolete entry inactive: this isolates physical cleanup from
-+	// the separate activation-state reconciliation performed under the lock.
-+	syncWithHook(t, o, syncTestSnapshotUnreadable(2, []int64{2}, 1), func() {})
-+	diskBefore := o.diskSize()
-+	old, release, cleanup := blockIDFCleanup(t, o, 1, syncTestSnapshot(3, 2))
-+
-+	assert.False(t, o.sealed.Contain(1))
-+	assert.DirExists(t, old.localDir)
-+	assert.Equal(t, diskBefore, o.diskSize(), "pending physical cleanup is still charged")
-+
-+	reader := runIDFCleanupCall(func() error {
-+		_, _, err := o.BuildIDF(102, &schemapb.SparseFloatArray{})
-+		return err
-+	})
-+	t.Cleanup(func() { release(); require.NoError(t, reader.result(t)) })
-+	require.NoError(t, reader.result(t))
-+	assertCurrentField(t, o, 102, kept.stats[102])
-+
-+	// Leaving the detached entry in sealed would make SyncFunctions wait for
-+	// its statistics lock while holding the global oracle lock again.
-+	schema := runIDFCleanupCall(func() error { return o.SyncFunctions(syncTestFunctions(102)) })
-+	t.Cleanup(func() { release(); require.NoError(t, schema.result(t)) })
-+	require.NoError(t, schema.result(t))
-+	assertCurrentField(t, o, 102, kept.stats[102])
-+
-+	release()
-+	require.NoError(t, cleanup.result(t))
-+	assert.NoDirExists(t, old.localDir)
-+	keptEntry, ok := o.sealed.Get(2)
-+	require.True(t, ok)
-+	assert.Equal(t, keptEntry.diskSize, o.diskSize())
-+}
-+
-+// The replacement owns different files and must not wait for an old local reader.
-+func TestIDFReloadDoesNotWaitForCleanup(t *testing.T) {
-+	for _, reopen := range []bool{false, true} {
-+		name := "load"
-+		if reopen {
-+			name = "reopen"
-+		}
-+		t.Run(name, func(t *testing.T) {
-+			o := newSyncTestOracle(t, 102)
-+			o.targetVersion.Store(1)
-+			oldSegment := newSyncTestSegment(t, 1, genBM25StatsForField(102, 1, 4))
-+			oldSegment.load(t, o, 102)
-+			old, release, cleanup := blockIDFCleanup(t, o, 1, syncTestSnapshot(2))
-+			fresh := newSyncTestSegment(t, 1, genBM25StatsForField(102, 10, 15))
-+			load := runIDFCleanupCall(func() error {
-+				if reopen {
-+					return o.LoadSealedForReopen(context.Background(), 1, fresh.loadInfo(102), 
-```
-
-**File**: `internal/querynodev2/delegator/idf_oracle_sync_test.go` (modified, +8/-2)
-```diff
-@@ -382,7 +382,9 @@ func TestSyncDistributionFetchFailureChangesNothing(t *testing.T) {
- 	o.LazyRemoveGrowings(2, 3)
- 	broken := newSyncTestSegment(t, 2, map[int64]*storage.BM25Stats{102: randomSyncTestStats(r, 3)})
- 	broken.load(t, o, 102)
--	require.NoError(t, os.RemoveAll(path.Join(o.dirPath, "2", "102")))
-+	brokenEntry, loaded := o.sealed.Get(2)
-+	require.True(t, loaded)
-+	require.NoError(t, os.RemoveAll(path.Join(brokenEntry.localDir, "102")))
- 
- 	o.next.SetSnapshot(syncTestSnapshot(2, 1, 2))
- 	assert.Error(t, o.SyncDistribution())
-@@ -524,7 +526,11 @@ func TestReopenAddsFieldToSegmentRemovedDuringDownload(t *testing.T) {
- 	seg.load(t, o, 102) // inactive
- 
- 	reopenWithRetry(t, o, seg, func() bool { return false }, func() {
--		syncWithHook(t, o, syncTestSnapshot(2), func() {})
-+		// The staging directory is independent: the entire sync, including
-+		// physical cleanup, finishes before the reopen tries to install.
-+		o.next.SetSnapshot(syncTestSnapshot(2))
-+		require.NoError(t, o.SyncDistribution())
-+		require.Equal(t, int64(2), o.TargetVersion())
- 		require.False(t, o.sealed.Contain(1))
- 	}, 102, 104)
- 
-```
-
-**File**: `internal/querynodev2/delegator/idf_oracle_test.go` (modified, +20/-6)
-```diff
-@@ -90,6 +90,11 @@ func (suite *IDFOracleSuite) TearDownTest() {
- func (s *IDFOracleSuite) waitTargetVersion(targetVersion int64) {
- 	for {
- 		if s.idfOracle.TargetVersion() >= targetVersion {
-+			// Publication no longer waits for physical cleanup. Join the sync
-+			// before tests inspect files or disk-resource accounting.
-+			s.idfOracle.syncMu.Lock()
-+			s.GreaterOrEqual(s.idfOracle.diskSize(), int64(0))
-+			s.idfOracle.syncMu.Unlock()
- 			return
- 		}
- 		time.Sleep(time.Millisecond * 100)
-@@ -461,7 +466,9 @@ func (suite *IDFOracleSuite) TestLoadSealedNoParse() {
- 	suite.Equal(int64(0), suite.idfOracle.current.NumRow())
- 
- 	// disk file should exist
--	segDir := path.Join(suite.idfOracle.dirPath, "1", "102")
-+	sealedEntry, loaded := suite.idfOracle.sealed.Get(1)
-+	suite.Require().True(loaded)
-+	segDir := path.Join(sealedEntry.localDir, "102")
- 	entries, err := os.ReadDir(segDir)
- 	suite.NoError(err)
- 	suite.NotEmpty(entries)
-@@ -491,9 +498,9 @@ func (suite *IDFOracleSuite) TestLoadSealedFailureCleanup() {
- 	suite.Equal(int64(0), suite.idfOracle.sealedDiskSize.Load())
- 
- 	// disk directory should be cleaned up
--	segDir := path.Join(suite.idfOracle.dirPath, "1")
--	_, statErr := os.Stat(segDir)
--	suite.True(os.IsNotExist(statErr))
-+	dirs, statErr := os.ReadDir(suite.idfOracle.dirPath)
-+	suite.Require().NoError(statErr)
-+	suite.Empty(dirs, "failed download must remove its actual unique directory")
- }
- 
- // setFieldForTest replaces the stats of one field.
-@@ -702,6 +709,7 @@ func TestLoadSealedForReopenIdempotentAfterSuccess(t *testing.T) {
- 		fieldList: []int64{102},
- 		diskSize:  7,
- 	}
-+	require.NoError(t, os.MkdirAll(sealedStats.localDir, 0o700))
- 	idfOracle.sealed.Insert(1, sealedStats)
- 	idfOracle.sealedDiskSize.Store(7)
- 
-@@ -833,8 +841,13 @@ func TestLoadSealedForReopenFailureCleanupPreservesExistingFields(t *testing.T)
- 	assert.Equal(t, int64(4), idfOracle.sealedDiskSize.Load())
- 	_, err = os.Stat(oldFieldDir)
- 	assert.NoError(t, err)
--	_, err = os.Stat(path.Join(idfOracle.dirPath, "1", "104"))
--	assert.True(t, os.IsNotExist(err))
-+	dirs, err := os.ReadDir(idfOracle.dirPath)
-+	require.NoError(t, err)
-+	require.Len(t, dirs, 1, "failed reopen must remove its staging directory")
-+	fields, err := os.ReadDir(sealedStats.localDir)
-+	require.NoError(t, err)
-+	require.Len(t, fields, 1)
-+	assert.Equal(t, "102", fields[0].Name())
- }
- 
- func TestActiveReopenBM25MergesNewFieldStats(t *testing.T) {
-@@ -859,6 +872,7 @@ func TestActiveReopenBM25MergesNewFieldStats(t *testing.T) {
- 		fieldList: []int64{102},
- 		diskSize:  7,
- 	}
-+	require.NoError(t, os.MkdirAll(sealedStats.localDir, 0o700))
- 	idfOracle.sealed.Insert(1, sealedStats)
- 	idfOracle.sealedDiskSize.Store(7)
- 
-```
-
----
-
-### Incident Patch 3: `11dcaf00` (2026-11-17)
-**Commit Message**: fix: sync RocksDB WAL writes before acknowledging metadata and RocksMQ produce (#55641)
-
-RocksdbKV and RocksMQ Produce write with default WriteOptions, so a
-successful write can still be in the OS page cache. After a machine
-failure, acknowledged RocksMQ messages and RocksDB metadata writes can
-be lost.
-
-issue: #54436
-
-Changes:
-- RocksdbKV sets `WriteOptions.SetSync(true)`, so every metadata write
-persists the WAL before it returns.
-- RocksMQ Produce writes its message batch with a synchronous WAL write
-before acknowledging.
-- Retention deletes stay asynchronous: they are idempotent and are
-redone after a crash.
-- Tests: TestRocksmq_Throughout produces 1,000 messages instead of
-100,000, because each Produce now waits for a sync.
-TestRmqRetention_PageSizeExpire consumes in batches of 1,000, so it
-still covers the >1 MiB retention case without one synchronous page-ack
-update per message.
-
-Cost: each RocksMQ Produce now waits for two synchronous WAL commits
-under the topic lock, one for the message store and one for the
-page-info meta KV. The meta-KV sync only protects retention bookkeeping.
-
-This is split out of #54667, which keeps the local file durability
-changes.
-
-Validation (loca
-
-**File**: `pkg/kv/rocksdb/rocksdb_kv.go` (modified, +2/-0)
-```diff
-@@ -76,6 +76,8 @@ func NewRocksdbKV(name string) (*RocksdbKV, error) {
- func NewRocksdbKVWithOpts(name string, opts *gorocksdb.Options) (*RocksdbKV, error) {
- 	ro := gorocksdb.NewDefaultReadOptions()
- 	wo := gorocksdb.NewDefaultWriteOptions()
-+	// Persist the WAL before reporting a successful metadata write.
-+	wo.SetSync(true)
- 
- 	// only has one columnn families
- 	db, err := gorocksdb.OpenDb(opts, name)
-```
-
-**File**: `pkg/mq/mqimpl/rocksmq/server/rocksmq_impl.go` (modified, +2/-0)
-```diff
-@@ -746,6 +746,8 @@ func (rmq *rocksmq) Produce(topicName string, messages []ProducerMessage) ([]Uni
- 
- 	opts := gorocksdb.NewDefaultWriteOptions()
- 	defer opts.Destroy()
-+	// Persist messages to the WAL before acknowledging the produce.
-+	opts.SetSync(true)
- 	err = rmq.store.Write(opts, batch)
- 	if err != nil {
- 		return []UniqueID{}, err
-```
-
-**File**: `pkg/mq/mqimpl/rocksmq/server/rocksmq_impl_test.go` (modified, +5/-1)
-```diff
-@@ -489,7 +489,11 @@ func TestRocksmq_Throughout(t *testing.T) {
- 	assert.NoError(t, err)
- 	defer rmq.DestroyTopic(channelName)
- 
--	entityNum := 100000
-+	// Each Produce now waits for WAL synchronization. Keep the unit test
-+	// bounded on disks with expensive syncs while still exercising individual
-+	// message acknowledgements and consumption; bulk throughput belongs in a
-+	// benchmark using batched Produce calls.
-+	entityNum := 1000
- 
- 	pt0 := time.Now().UnixNano() / int64(time.Millisecond)
- 	for i := 0; i < entityNum; i++ {
-```
-
-**File**: `pkg/mq/mqimpl/rocksmq/server/rocksmq_retention_test.go` (modified, +9/-5)
-```diff
-@@ -19,6 +19,7 @@ import (
- 	"time"
- 
- 	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
- 
- 	"github.com/milvus-io/milvus/pkg/v3/mlog"
- 	"github.com/milvus-io/milvus/pkg/v3/util/paramtable"
-@@ -619,11 +620,14 @@ func TestRmqRetention_PageSizeExpire(t *testing.T) {
- 	rmq.RegisterConsumer(consumer)
- 
- 	assert.NoError(t, err)
--	cMsgs := make([]ConsumerMessage, 0)
--	for i := 0; i < msgNum; i++ {
--		cMsg, err := rmq.Consume(topicName, groupName, 1)
--		assert.NoError(t, err)
--		cMsgs = append(cMsgs, cMsg[0])
-+	// Preserve the >1 MiB retention case while amortizing durable page-ack
-+	// updates. Single-message consumption is covered by the basic tests.
-+	cMsgs := make([]ConsumerMessage, 0, msgNum)
-+	for len(cMsgs) < msgNum {
-+		cMsg, err := rmq.Consume(topicName, groupName, 1000)
-+		require.NoError(t, err)
-+		require.NotEmpty(t, cMsg)
-+		cMsgs = append(cMsgs, cMsg...)
- 	}
- 	assert.Equal(t, len(cMsgs), msgNum)
- 	mlog.Debug(context.TODO(), "Already consumed, wait for message cleaned by retention")
+@@ -296,9 +296,6 @@ TEST_P(RetrieveCandidatesTest, BudgetsAndCancellation) {
+     auto offsets_only =
+         segment->Retrieve(nullptr, plan.get(), 100, kRows * 8, false);
+     EXPECT_EQ(offsets_only->offset_size(), kRows);
+-    // No visible rows: the offsets fit, but serialized metadata exceeds budget.
+-    ExpectCode([&] { segment->Retrieve(nullptr, plan.get(), 1, 1, false); },
+-               InvalidParameter);
+     ExpectCode([&] { segment->Retrieve(nullptr, plan.get(), 100, 0, false); },
+                UnexpectedError);
+     folly::CancellationSource cancellation;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #55669** (2026-11-18): fix: publish local chunk manager writes atomically by rename (@xiaofan-luan)
-- **PR #55666** (2026-11-18): test: fix CDC concurrent checker teardown (@zhuwenxing)
-- **PR #55663** (2026-11-18): test: fix bulkimport test build after ValidateSnapshotImportPlan rename (@czs007)
-- **PR #55648** (2026-11-18): enhance: reduce QueryView balancer allocation churn (@chyezh)
-- **PR #55647** (2026-11-18): test: [cp3.0] add FMINDEX CMEK integration coverage (@yanliang567)
-- **PR #55646** (2026-11-18): test: [cp3.0] add FMINDEX E2E coverage (@yanliang567)
+- **PR #55814** (2026-11-22): fix: Clear HasMoreResult for empty retrieve results (@xiaofan-luan)
+- **PR #55791** (2026-11-21): fix: [cp3.0] bump brotli to v1.2.7 in tests/go_client (@xiaofan-luan)
+- **PR #55785** (2026-11-21): enhance: [cp3.0] Leave the test-only plan parser libraries out of release artifacts (@xiaofan-luan)
+- **PR #55784** (2026-11-21): enhance: Leave the test-only plan parser libraries out of release artifacts (@xiaofan-luan)
+- **PR #55779** (2026-11-20): test: use unary QueryView RPCs in Proxy auto-load retry fixtures (@sijie-ni-0214)
+- **PR #55763** (2026-11-21): test: fix exact-distance controls in Paimon HNSW refresh test (@zhuwenxing)
 
 ---
 
@@ -2031,55 +1682,31 @@ Validation (loca
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test: fix CDC concurrent checker teardown
+## X. Clear HasMoreResult for empty retrieve results
 
 **RULE**:
-When implementing operations in `tests/python_client/cdc/stablity/test_concurrent_operation.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/core/src/query/ExecPlanNodeVisitor.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `519cc7d0`: test: fix CDC concurrent checker teardown. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `09c8c207`: Clear HasMoreResult for empty retrieve results. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/python_client/cdc/stablity/test_concurrent_operation.py`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/core/src/query/ExecPlanNodeVisitor.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        with cc.monitor_threads(self.health_checkers):
-            log.info("*********************Load Start**********************")
-            request_duration = request_duration.replace("h", "*3600+").replace("m", "*60+").replace("s", "")
-            if request_duration[-1] == "+":
-                request_duration = request_duration[:-1]
-            request_duration = eval(request_duration)
-            for i in range(10):
-                sleep(request_duration // 10)
-                for k, v in self.health_checkers.items():
-                    v.check_result()
-                    # log.info(v.check_result())
-            wait_pods_ready(self.milvus_ns, f"app.kubernetes.io/instance={self.release_name}")
-            time.sleep(60)
+        tmp_retrieve_result.has_more_result = false;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-        cc.start_monitor_threads(self.health_checkers)
-        log.info("*********************Load Start**********************")
-        request_duration = request_duration.replace("h", "*3600+").replace("m", "*60+").replace("s", "")
-        if request_duration[-1] == "+":
-            request_duration = request_duration[:-1]
-        request_duration = eval(request_duration)
-        for i in range(10):
-            sleep(request_duration // 10)
-            for k, v in self.health_checkers.items():
-                v.check_result()
-                # log.info(v.check_result())
-        wait_pods_ready(self.milvus_ns, f"app.kubernetes.io/instance={self.release_name}")
-        time.sleep(60)
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `519cc7d0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `09c8c207` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction
