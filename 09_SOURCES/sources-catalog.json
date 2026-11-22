@@ -145,8 +145,8 @@
     "sourceUrl": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2",
     "sourceVersion": "hf-sentence-transformers-all-minilm-l6-v2",
     "license": "Open-Source",
-    "contentHash": "c31d38ca2f2865f20e4c49f3278fba49ca581f7d8bfc3a18f6632794f691064c",
-    "lastHarvestedAt": "2026-11-18T10:08:39.221Z",
+    "contentHash": "06fa42f092d2c4156d71359ceb716c0d0e8174231564b7cfeb1a6036cb458252",
+    "lastHarvestedAt": "2026-11-22T16:48:06.868Z",
     "learningId": "learn-huggingface-sentence-transformers-all-minilm-l6-v2"
   },
   "hf-cross-encoder-ms-marco-minilm-l6-v2": {
@@ -5423,10 +5423,10 @@
     "repository": "ydb-platform/ydb",
     "platform": "github",
     "sourceUrl": "https://github.com/ydb-platform/ydb",
-    "sourceVersion": "88defe33",
+    "sourceVersion": "ac73d368",
     "license": "Apache-2.0",
-    "contentHash": "ae476937641039d2295bbcf52484dbd0345eb0a7133e631a30aea0103212a146",
-    "lastHarvestedAt": "2026-11-21T13:53:45.472Z",
+    "contentHash": "c0fa42e35dd52f03a6f2ec6c6a901f8225557c7131f7845d72473dcf42fa7304",
+    "lastHarvestedAt": "2026-11-22T16:48:20.946Z",
     "learningId": "learn-github-ydb-platform-ydb"
   },
   "arco-design-arco-design-vue": {
@@ -7743,20 +7743,20 @@
     "repository": "pola-rs/polars",
     "platform": "github",
     "sourceUrl": "https://github.com/pola-rs/polars",
-    "sourceVersion": "34f40615",
+    "sourceVersion": "7ff0ffa2",
     "license": "MIT",
-    "contentHash": "8bc5a4317998f3c31d8a2085b54a9174480e76de174a1ddeecfeaa8feb136b0d",
-    "lastHarvestedAt": "2026-11-21T03:36:38.116Z",
+    "contentHash": "47824c59f914792b04338567c854e3fec244e58dbc546ab9ba226b268f6590f0",
+    "lastHarvestedAt": "2026-11-22T16:48:07.387Z",
     "learningId": "learn-github-pola-rs-polars"
   },
   "mrkai77-loop": {
     "repository": "mrkai77/Loop",
     "platform": "github",
     "sourceUrl": "https://github.com/mrkai77/Loop",
-    "sourceVersion": "1bba20ec",
+    "sourceVersion": "5cc7551c",
     "license": "GPL-3.0",
-    "contentHash": "2427e3a4acd630071aaea416fcafbabb68263eea593a1fa9a5ed9d32bbdd4ae3",
-    "lastHarvestedAt": "2026-11-19T15:16:35.179Z",
+    "contentHash": "710bf06b77dbefe8c3bb7d636aa533183bc30df880029d9cc9cb8cbdf21ba9f8",
+    "lastHarvestedAt": "2026-11-22T16:48:11.682Z",
     "learningId": "learn-github-mrkai77-loop"
   },
   "tokio-rs-tokio": {

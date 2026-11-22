@@ -12119,3 +12119,7 @@
 | `CYCLE-20261122-WSAX` | `2026-11-22T16:28:27.081Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9953` | Yes (`702c971e...`) |
 | `CYCLE-20261122-XIUE` | `2026-11-22T16:29:01.478Z` | `abenzerps/Qwen-Image-2.1-Turbo-Quantized` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md` | Yes (`6b3ff9c8...`) |
 | `CYCLE-2026-11-22-PROJ-EVOLVE` | `2026-11-22T16:29:43.747Z` | `dathere-qsv` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-17797BC1` [Domain H] | Yes (`e7eabd2a...`) |
+| `CYCLE-20261122-M2MN` | `2026-11-22T16:48:06.863Z` | `sentence-transformers/all-MiniLM-L6-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-all-minilm-l6-v2-learnings.md` | Yes (`06fa42f0...`) |
+| `CYCLE-20261122-M312` | `2026-11-22T16:48:07.382Z` | `pola-rs/polars` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9954` | Yes (`47824c59...`) |
+| `CYCLE-20261122-M6CD` | `2026-11-22T16:48:11.677Z` | `mrkai77/Loop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9955` | Yes (`710bf06b...`) |
+| `CYCLE-20261122-MDHP` | `2026-11-22T16:48:20.941Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9956` | Yes (`c0fa42e3...`) |

@@ -4,24 +4,24 @@
 {
   "source_repository": "ydb-platform/ydb",
   "source_url": "https://github.com/ydb-platform/ydb",
-  "source_version": "88defe33",
+  "source_version": "ac73d368",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-21T13:53:45.680Z",
+  "timestamp": "2026-11-22T16:48:21.155Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-ydb-platform-ydb",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [ydb-platform/ydb](https://github.com/ydb-platform/ydb) (Revision: `88defe33`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-21T13:53:45.680Z`  
+> **Provenance**: Harvested from [ydb-platform/ydb](https://github.com/ydb-platform/ydb) (Revision: `ac73d368`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-22T16:48:21.155Z`  
 > **Learning ID**: `learn-github-ydb-platform-ydb`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 61%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), B (Product Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 51%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from ydb-platform/ydb:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ydb-platform-ydb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ydb-platform/ydb](https://github.com/ydb-platform/ydb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T13:53:44.457Z  
+> **Harvest Timestamp**: 2026-11-22T16:48:19.931Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2079,582 +2079,578 @@ impl Remappable for noncontiguous::NFA {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e58fb031` (2026-11-20)
-**Commit Message**: YDB-59537 Fix race between snapshot registration and cleanup (#59825)
+### Incident Patch 1: `3820fc09` (2026-11-22)
+**Commit Message**: [Disable PG] Opt the replication writer PostgreSQL fixture into compatibility (#60311)
 
-**File**: `ydb/core/kqp/ut/olap/scan_cleanup_ut.cpp` (modified, +165/-0)
+**File**: `ydb/core/tx/replication/service/table_writer_ut.cpp` (modified, +1/-0)
 ```diff
-@@ -2,10 +2,16 @@
- #include <ydb/core/kqp/ut/common/kqp_ut_common.h>
- #include <ydb/core/protos/long_tx_service_config.pb.h>
- #include <ydb/core/testlib/actors/block_events.h>
-+#include <ydb/core/tx/columnshard/columnshard_impl.h>
- #include <ydb/core/tx/columnshard/columnshard_private_events.h>
- #include <ydb/core/tx/columnshard/data_accessor/cache_policy/policy.h>
-+#include <ydb/core/tx/columnshard/engines/changes/cleanup_portions.h>
-+#include <ydb/core/tx/columnshard/engines/changes/compaction.h>
- #include <ydb/core/tx/columnshard/hooks/testing/controller.h>
- #include <ydb/core/tx/general_cache/usage/service.h>
-+#include <ydb/core/tx/long_tx_service/public/events.h>
-+#include <ydb/core/tx/long_tx_service/public/snapshot_registry.h>
-+#include <ydb/core/tx/tx.h>
+@@ -80,6 +80,7 @@ Y_UNIT_TEST_SUITE(LocalTableWriter) {
+         TEnv env(TFeatureFlags()
+             .SetEnableTableDatetime64(true)
+             .SetEnableTablePgTypes(true)
++            .SetDisablePgCompatibility(false)
+             .SetEnableParameterizedDecimal(true));
+         env.GetRuntime().SetLogPriority(NKikimrServices::REPLICATION_SERVICE, NLog::PRI_DEBUG);
  
- #include <library/cpp/testing/unittest/registar.h>
+```
+
+---
+
+### Incident Patch 2: `66cd1770` (2026-11-22)
+**Commit Message**: Fix S3 reader CPU quota leaks on early exit and cancellation while waiting for admission (#59849)
+
+**File**: `ydb/core/kqp/compute_actor/kqp_compute_actor.cpp` (modified, +3/-1)
+```diff
+@@ -195,7 +195,9 @@ NYql::NDq::IDqAsyncIoFactory::TPtr CreateKqpAsyncIoFactory(
  
-@@ -32,9 +38,168 @@ void SleepUntil(TTestActorRuntime& runtime, const TInstant deadline) {
-     }
- }
+     if (federatedQuerySetup) {
+         auto s3HttpRetryPolicy = NYql::GetFqHTTPRetryPolicy();
+-        s3ActorsFactory->RegisterS3ReadActorFactory(*factory, federatedQuerySetup->CredentialsFactory, federatedQuerySetup->HttpGateway, s3HttpRetryPolicy, federatedQuerySetup->S3ReadActorFactoryConfig, nullptr, federatedQuerySetup->S3GatewayConfig.GetAllowLocalFiles());
++        s3ActorsFactory->RegisterS3ReadActorFactory(*factory, federatedQuerySetup->CredentialsFactory, federatedQuerySetup->HttpGateway,
++            s3HttpRetryPolicy, federatedQuerySetup->S3ReadActorFactoryConfig, nullptr, federatedQuerySetup->S3GatewayConfig.GetAllowLocalFiles(),
++            counters->GetKqpCounters()->GetSubgroup("subsystem", "S3ReadActor"));
+         s3ActorsFactory->RegisterS3WriteActorFactory(*factory,  federatedQuerySetup->CredentialsFactory, federatedQuerySetup->HttpGateway, s3HttpRetryPolicy);
  
-+class TDelayedSnapshotCleanupController: public NYDBTest::NColumnShard::TController {
-+public:
-+    ui64 TargetTabletId = 0;
-+    NOlap::TSnapshot DelayedSnapshot = NOlap::TSnapshot::Zero();
-+    std::optional<NOlap::TSnapshot> ReplacementSnapshot;
-+    bool HistoricalPortionErased = false;
+         if (federatedQuerySetup->ConnectorClient) {
+```
+
+**File**: `ydb/library/yql/dq/actors/compute/dq_compute_actor_async_io.h` (modified, +4/-0)
+```diff
+@@ -116,6 +116,10 @@ struct IDqComputeActorAsyncInput {
+ 
+     virtual const TDqAsyncStats& GetIngressStats() const = 0;
+ 
++    // Plain text for monitoring, called from the compute actor's mailbox.
++    // Do not access state owned by actors in other mailboxes.
++    virtual TString GetDebugInfo() const { return {}; }
 +
-+protected:
-+    bool DoOnWriteIndexComplete(const NOlap::TColumnEngineChanges& changes, const NColumnShard::TColumnShard& shard) override {
-+        const bool result = TController::DoOnWriteIndexComplete(changes, shard);
-+        if (shard.TabletID() != TargetTabletId || changes.IsAborted()) {
-+            return result;
-+        }
-+        if (const auto* compaction = dynamic_cast<const NOlap::TCompactColumnEngineChanges*>(&changes)) {
-+            for (const auto& portion : compaction->GetSwitchedPortions()) {
-+                if (!ReplacementSnapshot || *ReplacementSnapshot < portion->RecordSnapshotMax()) {
-+                    ReplacementSnapshot = portion->RecordSnapshotMax();
+     // Gets data and returns space used by filled data batch.
+     // Watermark will be returned if source watermark was moved forward. Watermark should be handled AFTER data.
+     // Method should be called under bound mkql allocator.
+```
+
+**File**: `ydb/library/yql/dq/actors/compute/dq_compute_actor_impl.h` (modified, +11/-0)
+```diff
+@@ -1803,6 +1803,17 @@ class TDqComputeActorBase : public NActors::TActorBootstrapped<TDerived>
+                 }
+                 ExtraMonitoringInfo(str, cgi);
+ 
++                for (const auto& [id, source] : SourcesMap) {
++                    if (source.AsyncInput) {
++                        const auto debugInfo = source.AsyncInput->GetDebugInfo();
++                        if (!debugInfo.empty()) {
++                            str << Endl << "  Source Id: " << id
++                                << " Type: " << NHtml::EscapeText(source.Type) << Endl
++                                << NHtml::EscapeText(debugInfo);
++                        }
++                    }
 +                }
-+            }
-+        }
-+        if (const auto* cleanup = dynamic_cast<const NOlap::TCleanupPortionsColumnEngineChanges*>(&changes)) {
-+            for (const auto& portion : cleanup->GetPortionsToDrop()) {
-+                HistoricalPortionErased |= portion->IsVisible(DelayedSnapshot);
-+            }
-+        }
-+        return result;
++
+                 COLLAPSED_BUTTON_CONTENT("ProcessOutputsState", TStringBuilder() << "ProcessOutputsState: " << ProcessOutputsState.LastRunTime << ' ' << ProcessOutputsState.LastRunStatus) {
+                     str << "  Inflight: " << ProcessOutputsState.Inflight << Endl;
+                     str << "  ChannelsReady: " << ProcessOutputsState.ChannelsReady << Endl;
+```
+
+**File**: `ydb/library/yql/providers/s3/actors/ut/ya.make` (modified, +1/-0)
+```diff
+@@ -4,6 +4,7 @@ UNITTEST_FOR(ydb/library/yql/providers/s3/actors)
+ 
+ SRCS(
+     yql_arrow_push_down_ut.cpp
++    yql_s3_actor_stats_ut.cpp
+ )
+ 
+ PEERDIR(
+```
+
+**File**: `ydb/library/yql/providers/s3/actors/ut/yql_s3_actor_stats_ut.cpp` (added, +204/-0)
+```diff
+@@ -0,0 +1,204 @@
++#include <ydb/library/yql/providers/s3/actors/yql_s3_actor_stats.h>
++
++#include <library/cpp/testing/unittest/registar.h>
++
++#include <atomic>
++#include <thread>
++
++namespace NYql::NDq {
++namespace {
++
++class TWork: public IDqSchedulableWork {
++public:
++    std::optional<TDuration> TryStartExecution(TMonotonic) override {
++        UNIT_FAIL("Metrics must not acquire quota");
++        return {};
++    }
++
++    void StopExecution() override {
++        UNIT_FAIL("Metrics must not release quota");
++    }
++
++    void NotifyResumed(bool) override {
++    }
++
++    void RegisterForResume(const NActors::TActorId &) override {
++    }
++
++    TWorkScope GetWorkScope() const override {
++        return { "/Root", "test" };
 +    }
 +};
 +
- }   // namespace
- 
- Y_UNIT_TEST_SUITE(KqpOlapScanCleanup) {
-+    // YDB-59537: acquiring a version and publishing its retention are separate operations.
-+    Y_UNIT_TEST(DelayedSnapshotAcquisitionKeepsFirstTableReadConsistent) {
-+        auto csController = NYDBTest::TControllers::RegisterCSControllerGuard<TDelayedSnapshotCleanupController>();
-+        csController->DisableBackground(NYDBTest::ICSController::EBackground::Compaction);
-+        csController->DisableBackground(NYDBTest::ICSController::EBackground::Cleanup);
-+        csController->SetOverridePeriodicWakeupActivationPeriod(TDuration::Seconds(1));
++struct TFixture {
++    TWork Work;
++    ::NMonitoring::TDynamicCounterPtr Counters = MakeIntrusive<::NMonitoring::TDynamicCounters>();
++    const TMonotonic Start = TMonotonic::Now();
 +
-+        auto settings = TKikimrSettings().SetWithSampleTables(false).SetUseRealThreads(false);
-+        settings.AppConfig.MutableFeatureFlags()->SetEnableSnapshotsLocking(true);
-+        auto& longTxConfig = *settings.AppConfig.MutableLongTxServiceConfig();
-+        longTxConfig.SetLocalSnapshotPromotionTimeSeconds(1);
-+        longTxConfig.SetMaxClockSkewMs(1000);
-+        longTxConfig.SetSnapshotsRegistryUpdateIntervalSeconds(1);
-+        longTxConfig.SetSnapshotsExchangeIntervalSeconds(1);
-+        longTxConfig.SetPrefillTimeoutSeconds(1);
-+        TKikimrRunner kikimr(settings);
-+        auto& runtime = *kikimr.GetTestServer().GetRuntime();
-+        runtime.GetAppData(0).LongTxServiceConfig = longTxConfig;
++    ui64 Value(const TString &name, const TString &kind = "reader") const {
++        const bool derivative = name == "S3CpuAdmissionWaitUs" || name == "S3CpuUnfinishedOnExit";
++        return Counters->GetSubgroup("db", "/Root")->GetSubgroup("pool", "test")->GetSubgroup("kind", kind)->GetCounter(name, derivative)->Val();
++    }
++};
 +
-+        kikimr.RunCall([&] {
-+            auto session = kikimr.GetTableClient().CreateSession().GetValueSync().GetSession();
-+            const auto result = session.ExecuteSchemeQuery(R"(
-+                CREATE TABLE `/Root/ColumnTable` (
-+                    Key Uint64 NOT NULL,
-+                    Value String,
-+                    PRIMARY KEY (Key)
-+                )
-+                WITH (STORE = COLUMN, PARTITION_COUNT = 1);
-+            )").GetValueSync();
-+            UNIT_ASSERT_C(result.IsSuccess(), result.GetIssues().ToString());
-+            return true;
-+        });
++}   // namespace
 +
-+        using namespace NYdb::NQuery;
-+        auto queryClient = kikimr.GetQueryClient();
-+        auto writeSession = kikimr.RunCall([&] { return queryClient.GetSession().GetValueSync().GetSession(); });
-+        const auto upsert = [&](const TString& value) {
-+            const auto result = kikimr.RunCall([&] {
-+                return writeSession.ExecuteQuery(
-+                    TStringBuilder() << "UPSERT INTO `/Root/ColumnTable` (Key, Value) VALUES (1u, \"" << value << "\");",
-+                    TTxControl::BeginTx().CommitTx()).ExtractValueSync();
-+            });
-+            UNIT_ASSERT_C(result.IsSuccess(), result.GetIssues().ToString());
-+        };
-+        upsert("old");
-+        runtime.WaitFor("the target ColumnShard is ready", [&] {
-+      
-```
-
-**File**: `ydb/core/tx/datashard/datashard_ut_snapshot_retention.cpp` (modified, +76/-0)
-```diff
-@@ -992,6 +992,82 @@ Y_UNIT_TEST_SUITE(DataShardSnapshotRetentionTransfer) {
- }
- 
- Y_UNIT_TEST_SUITE(DataShardSnapshotRetentionIntegration) {
-+    Y_UNIT_TEST(KqpDelayedSnapshotAcquisitionKeepsFirstRemoteReadConsistent) {
-+        TSnapshotRetentionTest test(true, 2);
-+        auto& runtime = test.GetRuntime();
-+        using TService = NLongTxService::TEvLongTxService;
-+        test.WriteVersion(1);
-+
-+        TActorId snapshotManager, acquireActor;
-+        TRowVersion acquiredSnapshot = TRowVersion::Min();
-+        bool acquiredWithHandle = false;
-+        auto requestObserver = runtime.AddObserver<TService::TEvAcquireReadSnapshot>([&](auto& ev) {
-+            if (!snapshotManager && !ev->Get()->Snapshot && ev->Get()->TableIds.empty()) {
-+                snapshotManager = ev->Sender;
-+            }
-+        });
-+        auto stepObserver = runtime.AddObserver<TEvTxProxy::TEvAcquireReadStep>([&](auto& ev) {
-+            if (snapshotManager && !acquireActor) {
-+                acquireActor = ev->Sender;
-+            }
-+        });
-+        TBlockEvents<TEvTxProxy::TEvAcquireReadStepResult> delayed(runtime, [&](const auto& ev) {
-+            return acquireActor && ev->GetRecipientRewrite() == acquireActor;
-+        });
-+        auto resultObserver = runtime.AddObserver<TService::TEvAcquireReadSnapshotResult>([&](auto& ev) {
-+            if (ev->GetRecipientRewrite() == snapshotManager && ev->Get()->Status == Ydb::StatusIds::SUCCESS) {
-+                acquiredSnapshot = ev->Get()->Snapshot;
-+                acquiredWithHandle = bool(ev->Get()->SnapshotHandle);
-+            }
-+        });
-+
-+        const TString sessionId = NKqpHelpers::CreateSessionRPC(runtime);
-+        auto request = NKqpHelpers::MakeSimpleRequestRPC(
-+            "SELECT key, value FROM `/Root/table-a` ORDER BY key;", sessionId, {}, false);
-+        request.mutable_tx_control()->mutable_begin_tx()->mutable_snapshot_read_only();
-+        auto pending = NKqpHelpers::SendRequest(runtime, std::move(request));
-+        runtime.WaitFor("the original coordinator reply is delayed", [&] {
-+            return !delayed.empty();
-+        }, TDuration::Seconds(30));
-+        const TRowVersion delayedSnapshot(delayed.front()->Get()->Record.GetStep(), Max<ui64>());
-+
-+        // No retention handle exists yet. The target may legitimately remove
-+        // history at this version while the coordinator reply is in transit.
-+        runtime.SimulateSleep(TDuration::Seconds(1));
-+        ExecSQL(test.Server, test.Sender,
-+            "UPSERT INTO `/Root/table-b` (key, value) VALUES (1, 2);");
-+        test.RunCleanup();
-+        test.RunCleanup();
-+        UNIT_ASSERT(test.IsRemoved(test.ShardB, delayedSnapshot));
-+        UNIT_ASSERT(!acquiredSnapshot);
-+
-+        delayed.Stop().Unblock();
-+        TString txId;
-+        UNIT_ASSERT_VALUES_EQUAL(NKqpHelpers::KqpSimpleBeginWait(runtime, txId, std::move(pending)),
-+            "{ items { uint32_value: 1 } items { uint32_value: 1 } }");
-+        UNIT_ASSERT(acquiredWithHandle);
-+        UNIT_ASSERT(delayedSnapshot < acquiredSnapshot);
-+        UNIT_ASSERT(!test.IsRemoved(test.ShardB, acquiredSnapshot));
-+
-+        runtime.SimulateSleep(TDuration::Seconds(1));
-+        ExecSQL(test.Server, test.Sender,
-+            "UPSERT INTO `/Root/table-b` (key, value) VALUES (1, 3);");
-+        runtime.WaitFor("the replacement snapshot is published to the remote node", [&] {
-+            const auto registry = runtime.GetAppData(1).SnapshotRegistryHolder->Get();
-+            return registry && registry->HasSnapshot(test.TableB, acquiredSnapshot);
-+        }, TDuration::Seconds(30));
-+        test.RunCleanup();
-+        UNIT_ASSERT(acquiredSnapshot < test.GetCleanupBoundary(test.ShardB));
-+        UNIT_ASSERT(!test.IsRemoved(test.ShardB, acquiredSnapshot));
-+
-+        // The transaction first visits the target after its MVCC window has
-+        // expired, using the safely reacquired version rather than the removed one.
-+        UNIT_ASSERT_VALUES_EQUAL(NKqpHelpers::KqpSimpleContinue(runtime, sessionId, txId,
-+            "SELECT key, value FROM `/Root/table-b` ORDER BY key;"),
-+            "{ items { uint32_value: 1 } items { uint32_value: 2 } }");
-+        NKqpHelpers::CloseSession(runtime, sessionId);
++Y_UNIT_TEST_SUITE(TS3ActorStatsTest) {
++    Y_UNIT_TEST(RetriesCountOneWaitAndItsFullDuration) {
++        TFixture f;
++        TS3ActorStats metrics(f.Counters, &f.Work, "reader");
++        metrics.OnRejected(f.Start);
++        metrics.OnRejected(f.Start + TDuration::MicroSeconds(10));
++        UNIT_ASSERT_VALUES_EQUAL(f.Value("S3CpuWaiting"), 1);
++        UNIT_ASSERT_VALUES_EQUAL(f.Value("S3CpuActive"), 0);
++        metrics.OnAllowed(f.Start + TDuration::MicroSeconds(30));
++        UNIT_ASSERT_VALUES_EQUAL(f.Value("S3CpuWaiting"), 0);
++        UNIT_ASSERT_VALUES_EQUAL(f.Value("S3CpuActive"), 1);
++        UNIT_ASSERT_VALUES_EQUAL(f.Value("S3CpuAdmissionWaitUs"), 30);
++        metrics.OnStop(f.Start + TDuration::MicroSeconds(40));
++        metrics.OnRejected(f.Start + TDuration::MicroSeconds(50));
++        metrics.OnAllowed(f.Start + TDuration::MicroSeconds(55));
++        metrics.OnStop(f.Start + TDuration::MicroSeconds(60));
++        metrics.OnExit(f.Start + TDuration::MicroSeconds(70));
++        UNIT_ASSERT_VALUES_EQUAL(f.Value("S3CpuAdmissionWaitUs"), 35);
++        UNIT_ASSERT_VALUES_EQUAL(f.Value("S3CpuActive"), 0);
++        UNIT_ASSERT_VALUES_EQUAL(f.Value("S3CpuUnfinishedOnExit"), 0);
 +    }
 +
-     Y_UNIT_TEST(ExplicitSnapshotSurvivesDelayedPublication) {
-         TSnapshotRetentionTest test(true, 2);
-         auto& runtime = test.GetRuntime();
-```
-
-**File**: `ydb/core/tx/long_tx_service/acquire_snapshot_impl.cpp` (modified, +6/-1)
-```diff
-@@ -213,14 +213,19 @@ namespace NLongTxService {
-         req.DatabaseName = databaseName;
-         req.UserRequests.swap(state.PendingUserRequests);
-         req.BeginTxRequests.swap(state.PendingBeginTxRequests);
--        Register(new TAcquireSnapshotActor(SelfId(), reqId, databaseName));
-         state.ActiveRequests.insert(reqId);
-+        StartAcquireSnapshotAttempt(reqId, databaseName);
- 
-+        // Count the batch once, including any freshness retries it needs.
-         if (Settings.Counters) {
-             Settings.Counters->AcquireReadSnapshotOutRequests->Inc();
-             Settings.Counters->AcquireReadSnapshotOutInFlight->Inc();
-         }
-     }
- 
-+    void TLongTxServiceActor::StartAcquireSnapshotAttempt(ui64 requestId, const TString& databaseName) {
-+        Register(new TAcquireSnapshotActor(SelfId(), requestId, databaseName));
++    Y_UNIT_TEST(ExitWhileWaitingRecordsOnceAndBalancesGauge) {
++        TFixture f;
++        {
++            TS3ActorStats metrics(f.Counters, &f.Work, "reader");
++            metrics.OnRejected(f.Start);
++            metrics.OnExit(f.Start + TDuration::MicroSeconds(25));
++            metrics.OnExit(f.Start + TDuration::MicroSeconds(30));
++            UNIT_ASSERT_VALUES_EQUAL(f.Value("S3CpuWaiting"), 0);
++        }
++        UNIT_ASSERT_VALUES_EQUAL(f.Value("S3CpuAdmissionWaitUs"), 25);
++        UNIT_ASSERT_VALUES_EQUAL(f.Value("S3CpuUnfinishedOnExit"), 1);
 +    }
 +
- } // namespace NLongTxService
- } // namespace NKikimr
++    Y_UNIT_TEST(DestructionWhileActivePreservesOtherLiveWork) {
++        TFixture f;
++        TS3ActorStats live(f.Counters, &f.Work, "reader");
++        live.OnAllowed(f.Start);
++        {
++            TS3ActorStats exiting(f.Counters, &f.Work, "reader");
++            exiting.OnAllowed(f.Start);
++            UNIT_ASSERT_VALUES_EQUAL(f.Value("S3CpuActive"), 2);
++        }
++        UNIT_ASSERT_VALUES_EQUAL(f.Value("S3CpuActive"), 1);
++        UNIT_ASSERT_VALUES_EQUAL(f.Value("S3CpuUnfinishedOnExit"), 1);
++        live.OnStop(f.Start);
++    }
++
++    Y_UNIT_TEST(ReadersHaveIndependentSnapshotsAndSharedCounters) {
++        TFixture f;
++        TS3ActorStats reader(f.Counters, &f.Work);
++        TS3ActorStats waiting(f.Counters, &f.Work);
++        reader.OnAllowed(f.Start);
++        waiting.OnRejected(f.Start);
++        waiting.SetState(IS3ActorStats::EState::WaitingCpu, f.Start);
++        UNIT_ASSERT(reader.GetSnapshot().CpuHeld);
++        UNIT_ASSERT(!waiting.GetSnapshot().CpuHeld);
++        UNIT_ASSERT(waiting.GetSnapshot().State == IS3ActorStats::EState::WaitingCpu);
++        UNIT_ASSERT_VALUES_EQUAL(f.Value("S3CpuActive"), 1);
++        UNIT_ASSERT_VALUES_EQUAL(f.Value("S3CpuWaiting"), 1);
++        reader.OnStop(f.Start);
++        waiting.OnStop(f.Start);
++    }
++
++    Y_UNIT_TEST(ExplicitStatesWithoutCounters) {
++        TFixture f;
++        TS3ActorStats stats(nullptr, &f.Work);
++        using EState = IS3ActorStats::EState;
++        UNIT_ASSERT(stats.GetSnapshot().State == EState::Initializing);
++        stats.SetState(EState::Processing, f.Start);
++        stats.OnAllowed(f.Start);
++        // A phase must not conceal an erroneously held slot.
++        stats.SetState(EState::WaitingHttp, f.Start);
++        UNIT_ASSERT(stats.GetSnapshot().CpuHeld);
++        stats.OnStop(f.Start);
++        stats.SetState(EState::WaitingCpu, f.Start + TDuration::MicroSeconds(10));
++        stats.OnR
 ```
 
-**File**: `ydb/core/tx/long_tx_service/long_tx_service_impl.cpp` (modified, +61/-22)
+**File**: `ydb/library/yql/providers/s3/actors/ut/yql_s3_read_actor_ut.cpp` (modified, +290/-6)
 ```diff
-@@ -23,6 +23,8 @@ namespace NLongTxService {
+@@ -11,6 +11,7 @@
+ #include <contrib/libs/apache/arrow/cpp/src/parquet/arrow/writer.h>
+ #include <contrib/libs/apache/arrow/cpp/src/parquet/file_reader.h>
+ #include <contrib/libs/apache/arrow/cpp/src/parquet/metadata.h>
++#include <google/protobuf/text_format.h>
+ #include <library/cpp/testing/unittest/registar.h>
+ #include <util/generic/size_literals.h>
+ #include <util/stream/str.h>
+@@ -182,6 +183,82 @@ struct TReadResult {
+ };
  
- static constexpr size_t MaxAcquireSnapshotInFlight = 4;
- static constexpr TDuration AcquireSnapshotBatchDelay = TDuration::MicroSeconds(100);
-+static constexpr ui32 MaxAcquireSnapshotFreshnessRetries = 3;
-+static constexpr TDuration AcquireSnapshotRetryDelay = TDuration::MilliSeconds(100);
- static constexpr TDuration RemoteLockTimeout = TDuration::Seconds(15);
- static constexpr bool InterconnectUndeliveryBroken = true;
- 
-@@ -450,9 +452,7 @@ void TLongTxServiceActor::RegisterRequestedSnapshot(
-                              std::move(msg->Orbit)), 0, ev->Cookie);
-         return;
-     }
--    const auto promotionTime =
--        TDuration::Seconds(AppData()->LongTxServiceConfig.GetLocalSnapshotPromotionTimeSeconds());
--    const ui64 oldestAllowedStep = PromotionCutoffStep(AppData()->TimeProvider->Now(), promotionTime);
-+    const ui64 oldestAllowedStep = GetOldestAllowedSnapshotStep();
-     // Older versions may already have been absent from a collection that
-     // authorized cleanup. Young versions are protected until publication by
-     // the registry freshness floor and its promotion/clock-skew margin.
-@@ -480,6 +480,12 @@ void TLongTxServiceActor::RegisterRequestedSnapshot(
-     return;
- }
- 
-+ui64 TLongTxServiceActor::GetOldestAllowedSnapshotStep() const {
-+    const auto promotionTime =
-+        TDuration::Seconds(AppData()->LongTxServiceConfig.GetLocalSnapshotPromotionTimeSeconds());
-+    return PromotionCutoffStep(AppData()->TimeProvider->Now(), promotionTime);
-+}
+ // All callbacks and observations run on the simulated actor runtime's single thread.
++class TCountingWorkFactory: public IDqSchedulableWorkFactory {
++public:
++    ui64 Starts = 0;
++    ui64 Stops = 0;
++    ui64 Unfinished = 0;
++    ui64 Attempts = 0;
++    ui64 Waiting = 0;
++    bool Throttle = false;
++    TActorId WorkActorId;
 +
- void TLongTxServiceActor::ScheduleAcquireSnapshot(const TString& databaseName, TDatabaseSnapshotState& state) {
-     Y_ABORT_UNLESS(state.PendingUserRequests || state.PendingBeginTxRequests);
- 
-@@ -508,6 +514,13 @@ void TLongTxServiceActor::Handle(TEvPrivate::TEvAcquireSnapshotFlush::TPtr& ev)
-     StartAcquireSnapshotActor(msg->DatabaseName, state);
- }
- 
-+void TLongTxServiceActor::Handle(TEvPrivate::TEvAcquireSnapshotRetry::TPtr& ev) {
-+    const auto requestId = ev->Get()->RequestId;
-+    const auto* req = AcquireSnapshotInFlight.FindPtr(requestId);
-+    Y_ABORT_UNLESS(req, "Unexpected retry for request that is not inflight");
-+    StartAcquireSnapshotAttempt(requestId, req->DatabaseName);
-+}
-+
- void TLongTxServiceActor::Handle(TEvPrivate::TEvAcquireSnapshotFinished::TPtr& ev) {
-     const auto* msg = ev->Get();
-     YDB_LOG_DEBUG("Received TEvAcquireSnapshotFinished,",
-@@ -521,24 +534,33 @@ void TLongTxServiceActor::Handle(TEvPrivate::TEvAcquireSnapshotFinished::TPtr& e
-     auto* state = DatabaseSnapshots.FindPtr(databaseName);
-     Y_ABORT_UNLESS(state && state->ActiveRequests.contains(ev->Cookie), "Unexpected database snapshot state");
- 
--    if (msg->Status == Ydb::StatusIds::SUCCESS) {
--        for (auto& userReq : req->UserRequests) {
--            NKqp::TSnapshotHandle snapshotHandle;
--            if (AppData()->FeatureFlags.GetEnableSnapshotsLocking()) {
--                TLocalSnapshotInfo snapshotInfo(msg->Snapshot, userReq.Sender, std::move(userReq.TableIds));
--                snapshotHandle = NKqp::TSnapshotHandle(snapshotInfo.AliveFlag);
--                if (!LocalSnapshotsStorage->Insert(std::move(snapshotInfo))) {
--                    LWTRACK(AcquireReadSnapshotFailure, userReq.Orbit, int(Ydb::StatusIds::BAD_REQUEST));
--                    Send(userReq.Sender, new TEvLongTxService::TEvAcquireReadSnapshotResult(Ydb::StatusIds::BAD_REQUEST,
--                                             NYql::TIssues{ NYql::TIssue("Snapshot already registered by this actor") },
--                                             std::move(userReq.Orbit)), 0, userReq.Cookie);
--                    continue;
--                }
-+    auto status = msg->Status;
-+    NYql::TIssues issues = msg->Issues;
-+    const bool snapshotsLockingEnabled = AppData()->FeatureFlags.GetEnableSnapshotsLocking();
-+    if (status == Ydb::StatusIds::SUCCESS && snapshotsLockingEnabled) {
-+        const ui64 oldestAllowedStep = GetOldestAllowedSnapshotStep();
-+        // Validate in the parent before replying or registering retention:
-+        // even a fresh coordinator result may become unsafe while delayed.
-+        if (msg->Snapshot.Step < oldestAllowedStep) {
-+            YDB_LOG_DEBUG("Acquired snapshot is outside the safe registration window,",
-+                {"logPrefix", LogPrefix},
-+                {"snapshot", msg->Snapshot},
-+                {"minimumStep", oldestAllowedStep},
-+                {"freshnessRetries", req->FreshnessRetries});
-+            if (req->FreshnessRetries < MaxAcquireSnapshotFreshnessRetries) {
-+                ++req->FreshnessRetries;
-+                Schedule(AcquireSnapshotRetryDelay, new TEvPrivate::TEvAcquireSnapshotRetry(ev->Cookie));
-+                return;
-             }
--
--            LWTRACK(AcquireReadSnapshotSuccess, userReq.Orbit, msg->Snapshot.Step, msg->Snapshot.TxId);
--            Send(userReq.Sender, new TEvLongTxService::TEvAcquireReadSnapshotResult(databaseName, msg->Snapsh
-```
-
-**File**: `ydb/core/tx/long_tx_service/long_tx_service_impl.h` (modified, +14/-0)
-```diff
-@@ -187,6 +187,7 @@ namespace NLongTxService {
-             TString DatabaseName;
-             TVector<TAcquireSnapshotUserRequest> UserRequests;
-             TVector<TAcquireSnapshotBeginTxRequest> BeginTxRequests;
-+            ui32 FreshnessRetries = 0;
-         };
- 
-         struct TDatabaseSnapshotState {
-@@ -320,6 +321,7 @@ namespace NLongTxService {
-                 EvReconnect,
-                 EvSnapshotMaintenance,
-                 EvRunDeadlockDetection,
-+                EvAcquireSnapshotRetry,
-             };
- 
-             struct TEvCommitFinished : public TEventLocal<TEvCommitFinished, EvCommitFinished> {
-@@ -363,6 +365,14 @@ namespace NLongTxService {
-                 { }
-             };
- 
-+            struct TEvAcquireSnapshotRetry : public TEventLocal<TEvAcquireSnapshotRetry, EvAcquireSnapshotRetry> {
-+                const ui64 RequestId;
-+
-+                explicit TEvAcquireSnapshotRetry(ui64 requestId)
-+                    : RequestId(requestId)
-+                { }
-+            };
-+
-             struct TEvReconnect : public TEventLocal<TEvReconnect, EvReconnect> {
-                 const ui32 NodeId;
- 
-@@ -459,6 +469,7 @@ namespace NLongTxService {
-                 hFunc(TEvLongTxService::TEvAcquireReadSnapshot, Handle);
-                 hFunc(TEvPrivate::TEvAcquireSnapshotFlush, Handle);
-                 hFunc(TEvPrivate::TEvAcquireSnapshotFinished, Handle);
-+                hFunc(TEvPrivate::TEvAcquireSnapshotRetry, Handle);
-                 hFunc(TEvLongTxService::TEvRegisterLock, Handle);
-                 hFunc(TEvLongTxService::TEvUnregisterLock, Handle);
-                 hFunc(TEvLongTxService::TEvSubscribeLock, Handle);
-@@ -489,8 +500,10 @@ namespace NLongTxService {
-         void Handle(TEvLongTxService::TEvAttachColumnShardWritesResult::TPtr& ev);
-         void Handle(TEvLongTxService::TEvAcquireReadSnapshot::TPtr& ev);
-         void RegisterRequestedSnapshot(TEvLongTxService::TEvAcquireReadSnapshot::TPtr& ev, const TString& databaseName);
-+        ui64 GetOldestAllowedSnapshotStep() const;
-         void Handle(TEvPrivate::TEvAcquireSnapshotFlush::TPtr& ev);
-         void Handle(TEvPrivate::TEvAcquireSnapshotFinished::TPtr& ev);
-+        void Handle(TEvPrivate::TEvAcquireSnapshotRetry::TPtr& ev);
-         void Handle(TEvLongTxService::TEvRegisterLock::TPtr& ev);
-         void Handle(TEvLongTxService::TEvUnregisterLock::TPtr& ev);
-         void Handle(TEvLongTxService::TEvSubscribeLock::TPtr& ev);
-@@ -531,6 +544,7 @@ namespace NLongTxService {
-         void StartCommitActor(TTransaction& tx);
-         void ScheduleAcquireSnapshot(const TString& databaseName, TDatabaseSnapshotState& state);
-         void StartAcquireSnapshotActor(const TString& databaseName, TDatabaseSnapshotState& state);
-+        void StartAcquireSnapshotAttempt(ui64 requestId, const TString& databaseName);
- 
-     private:
-         const TString& GetDatabaseNameOrLegacyDefault(const TString& databaseName);
-```
-
-**File**: `ydb/core/tx/long_tx_service/long_tx_service_ut.cpp` (modified, +327/-0)
-```diff
-@@ -7,7 +7,9 @@
- #include <ydb/core/tx/long_tx_service/public/lock_handle.h>
- #include <ydb/core/tx/long_tx_service/public/snapshot_registry.h>
- #include <ydb/core/tx/scheme_board/cache.h>
-+#include <ydb/core/tx/tx.h>
- 
-+#include <ydb/core/testlib/actors/block_events.h>
- #include <ydb/core/testlib/tablet_helpers.h>
- #include <ydb/core/testlib/tenant_runtime.h>
- 
-@@ -72,6 +74,132 @@ namespace NLongTxService {
-             runtime.GrabEdgeEventRethrow<TEvents::TEvWakeup>(sender);
-         }
- 
-+        NKikimrConfig::TAppConfig MakeSnapshotRegistrationTestConfig(bool locking = true) {
-+            NKikimrConfig::TAppConfig config;
-+            config.MutableFeatureFlags()->SetEnableSnapshotsLocking(locking);
-+            auto& service = *config.MutableLongTxServiceConfig();
-+            service.SetLocalSnapshotPromotionTimeSeconds(5);
-+            service.SetSnapshotsExchangeIntervalSeconds(1);
-+            service.SetSnapshotsRegistryUpdateIntervalSeconds(1);
-+            service.SetPrefillTimeoutSeconds(1);
-+            return config;
++    class TWork: public IDqSchedulableWork {
++    public:
++        explicit TWork(TCountingWorkFactory& owner)
++            : Owner(owner)
++        {
 +        }
 +
-+        void CheckAutomaticSnapshotRegistrationWindow(ui64 ageMs, bool locking) {
-+            TTenantTestRuntime runtime(MakeTenantTestConfig(false, 1), MakeSnapshotRegistrationTestConfig(locking));
-+            StartSchemeCache(runtime);
-+            SimulateSleep(runtime, TDuration::Seconds(10));
-+            const auto service = MakeLongTxServiceID(runtime.GetNodeId(0));
-+            const auto sender = runtime.AllocateEdgeActor();
-+            TActorId serviceActor, firstAcquireActor;
-+            TRowVersion original;
-+            ui32 attempts = 0;
++        ~TWork() override {
++            Owner.Unfinished += Active || Throttled;
++        }
 +
-+            auto requestObserver = runtime.AddObserver<TEvLongTxService::TEvAcquireReadSnapshot>([&](auto& ev) {
-+                if (ev->Sender == sender) {
-+                    serviceActor = ev->GetRecipientRewrite();
++        std::optional<TDuration> TryStartExecution(TMonotonic) override {
++            UNIT_ASSERT(!Active);
++            ++Owner.Attempts;
++            if (Owner.Throttle) {
++                if (!Throttled) {
++                    Throttled = true;
++                    ++Owner.Waiting;
 +                }
-+            });
-+            auto stepObserver = runtime.AddObserver<TEvTxProxy::TEvAcquireReadStep>([&](auto& ev) {
-+                if (++attempts == 1) {
-+                    firstAcquireActor = ev->Sender;
-+                }
-+            });
-+            auto replyObserver = runtime.AddObserver<TEvTxProxy::TEvAcquireReadStepResult>([&](auto& ev) {
-+                // Control coordinator output independently of its planning activity.
-+                ev->Get()->Record.SetStep(runtime.GetCurrentTime().MilliSeconds());
-+                if (ev->GetRecipientRewrite() == firstAcquireActor) {
-+                    original = TRowVersion(ev->Get()->Record.GetStep(), Max<ui64>());
-+                }
-+            });
-+            auto completionObserver = runtime.AddObserver<>([&](auto& ev) {
-+                if (firstAcquireActor && ev->Sender == firstAcquireActor && ev->GetRecipientRewrite() == serviceActor) {
-+                    // The child has already accepted a fresh coordinator reply. Make it
-+                    // reach the registration boundary only in the parent's mailbox.
-+                    runtime.UpdateCurrentTime(TInstant::MilliSeconds(original.Step + ageMs));
-+                }
-+            });
-+
-+            runtime.Send(new IEventHandle(
-+                             service, sender, new TEvLongTxService::TEvAcquireReadSnapshot("/dc-1"), 0, 123), 0, true);
-+            const auto response = runtime.GrabEdgeEventRethrow<TEvLongTxService::TEvAcquireReadSnapshotResult>(sender);
-+            const auto& result = *response->Get();
-+            UNIT_ASSERT_VALUES_EQUAL_C(result.Status, Ydb::StatusIds::SUCCESS, result.Issues.ToString());
-+            UNIT_ASSERT_VALUES_EQUAL(response->Cookie, 123);
-+            UNIT_ASSERT_VALUES_EQUAL(bool(result.SnapshotHandle), locking);
-+            const bool retry = locking && ageMs > 5000;
-+            UNIT_ASSERT_VALUES_EQUAL(attempts, retry ? 2 : 1);
-+            if (retry) {
-+                UNIT_ASSERT(result.Snapshot > original);
-+            } else {
-+                UNIT_ASSERT_VALUES_EQUAL(result.Snapshot, original);
++                return TDuration::Seconds(1);
 +            }
++            if (Throttled) {
++                Throttled = false;
++                --Owner.Waiting;
++            }
++            Active = true;
++            ++Owner.Starts;
++            return {};
 +        }
 +
-+        void CheckBeginTransactionSnapshotFreshness(ui64 ageMs, bool locking, bool writable) {
-+            TTenantTestRuntime runtime(MakeTenantTestConfig(false, 1), MakeSnapshotRegistrationTestConfig(locking));
-+            StartSchemeCache(runtime);
-+            SimulateSleep(runtime, TDuration::Seconds(10));
-+            const auto service = MakeLongTxServiceID(runtime.GetNodeId(0));
-+            const auto sender = runtime.AllocateEdgeActor();
-+            TActorId serviceActor, firstAcquireActor;
-+            TRowVersion original, retried;
-+            ui32 attempts = 0;
++        void StopExecution() override {
++            UNIT_ASSERT(Active || Throttled);
++            if (Throttled) {
++                Throttled = false;
++                --Owner.Waiting;
++            }
++            Active = false;
++            ++Owner.Stops;
++        }
 +
-+            auto requestObserver = runtime.AddObserver<TEvLongTxService::TEvBeginTx>([&](auto& ev) {
-+                if (ev->Sender == sender) {
-+                    serviceActor = ev->GetRecipientRewrite();
-+                }
-+            });
-+            auto stepObserver = runtime.AddObserver<TEvTxProxy::TEvAcquireReadStep>([&](auto& ev) {
-+                if (++attempts == 1) {
-+                  
-```
-
-**File**: `ydb/core/tx/long_tx_service/public/events.h` (modified, +3/-0)
-```diff
-@@ -57,6 +57,9 @@ namespace NLongTxService {
-         static_assert(EvEnd < EventSpaceEnd(TKikimrEvents::ES_LONG_TX_SERVICE),
-                       "expect EvEnd < EventSpaceEnd(TKikimrEvents::ES_LONG_TX_SERVICE)");
- 
-+        // With snapshot locking enabled, readable modes receive a snapshot
-+        // checked for freshness before the reply. BeginTx does not retain it:
-+        // later reads may fail once its history is cleaned up.
-         struct TEvBeginTx
-             : TEventPB<TEvBeginTx, NKikimrLongTxService::TEvBeginTx, EvBeginTx>
-         {
-```
-
-**File**: `ydb/tests/functional/snapshot_retention_with_load/test_workload.py` (modified, +0/-1)
-```diff
-@@ -23,7 +23,6 @@
- class TestSnapshotRetentionWorkload(unittest.TestCase):
-     read_kinds = ("point", "range", "index")
- 
--    # YDB-59537: muted in CI because snapshot registration may race with history cleanup.
-     def test_concurrent_writes_and_retained_reads(self):
-         self._start_workload()
-         readers = 4
-```
-
----
-
-### Incident Patch 2: `9f0a267d` (2026-11-21)
-**Commit Message**: Fix RBO reachability and secret CLI test cluster setup (#60249)
-
-Co-authored-by: iddqdex <[REDACTED_EMAIL]>
-
-**File**: `ydb/core/kqp/opt/rbo/ya.make` (modified, +4/-0)
-```diff
-@@ -69,6 +69,10 @@ PEERDIR(
- 
- END()
- 
-+RECURSE(
-+    eval
-+)
++        void NotifyResumed(bool) override {
++        }
 +
- RECURSE_FOR_TESTS(
-     ut
-     explain/ut
++        void RegisterForResume(const TActorId& actorId) override {
++            Owner.WorkActorId = actorId;
++        }
++
++        TWorkScope GetWorkScope() const override {
++            return Owner.GetWorkScope();
++        }
++
++    private:
++        TCountingWorkFactory& Owner;
++        bool Active = false;
++        bool Throttled = false;
++    };
++
++    std::unique_ptr<IDqSchedulableWork> CreateSchedulableWork() override {
++        return std::make_unique<TWork>(*this);
++    }
++
++    TWorkScope GetWorkScope() const override {
++        return { "/Root", "test" };
++    }
++};
++
+ class TParquetReader {
+ public:
+     TReadResult Result;
+@@ -219,7 +296,8 @@ class TParquetReader {
+     }
+ 
+     void Start(std::shared_ptr<TParquetGateway> gateway, NS3::TSource source, ui64 dataInflight = 200_MB, bool batched = true,
+-        ui64 batchDecodeTargetBytes = 16_MB)
++        ui64 batchDecodeTargetBytes = 16_MB, IDqSchedulableWorkFactoryPtr workFactory = nullptr,
++        ::NMonitoring::TDynamicCounterPtr cpuCounters = nullptr)
+     {
+         NS3::TRange range;
+         auto* path = range.AddPaths();
+@@ -233,31 +311,47 @@ class TParquetReader {
+             config.DataInflight = dataInflight;
+             config.BatchedRowGroupDecode = batched;
+             config.BatchDecodeTargetBytes = batchDecodeTargetBytes;
+-            auto [input, inputActor] =
+-                CreateS3ReadActor(actor.TypeEnv, actor.HolderFactory, std::shared_ptr<TScopedAlloc>(&actor.Alloc, [](TScopedAlloc*) {
++            auto [input, inputActor] = CreateS3ReadActor(actor.TypeEnv, actor.HolderFactory,
++                std::shared_ptr<TScopedAlloc>(&actor.Alloc, [](TScopedAlloc*) {
+                 }), gateway, std::move(source), 0, TCollectStatsLevel::None,
+-                    TTxId{}, {}, {}, { encodedRange.Str() }, FakeActorId, CreateStructuredTokenCredentialsFactory(), GetHTTPDefaultRetryPolicy(),
+-                    config, nullptr, nullptr, std::make_shared<TGuaranteeQuotaManager>(dataInflight, dataInflight), false);
++                TTxId{}, {}, {}, { encodedRange.Str() }, FakeActorId, CreateStructuredTokenCredentialsFactory(), GetHTTPDefaultRetryPolicy(),
++                config, nullptr, nullptr, std::make_shared<TGuaranteeQuotaManager>(dataInflight, dataInflight), false, workFactory, cpuCounters);
+             actor.InitAsyncInput(input, inputActor);
+         });
+     }
+ 
+-    void Pump() {
++    void Dispatch() {
+         Runtime.SimulateSleep(TDuration::MilliSeconds(1));
++    }
++
++    void Pump() {
++        Dispatch();
+         Execute([&](TFakeActor& actor) {
+             TMaybe<TInstant> watermark;
+             TUnboxedValueBatch buffer;
+             actor.DqAsyncInput->GetAsyncInputData(buffer, watermark, Result.Finished, 1_MB);
+         });
+     }
+ 
++    TString DebugInfo() {
++        TString result;
++        Execute([&](TFakeActor& actor) {
++            result = actor.DqAsyncInput->GetDebugInfo();
++        });
++        return result;
++    }
++
+     void ReadToEnd() {
+         for (ui32 step = 0; step < 100 && !Result.Finished &&
 ```
 
-**File**: `ydb/tests/functional/ydb_cli/test_ydb_scheme.py` (modified, +1/-7)
+**File**: `ydb/library/yql/providers/s3/actors/ya.make` (modified, +3/-0)
 ```diff
-@@ -7,7 +7,7 @@
- 
- CLUSTER_CONFIG = dict(
-     extra_feature_flags=["enable_views", "enable_external_data_sources"],
--    extra_grpc_services=["view"],
-+    extra_grpc_services=["view", "secret"],
-     query_service_config=dict(available_external_data_sources=["ObjectStorage"]),
+@@ -15,6 +15,8 @@ SRCS(
+     yql_s3_write_actor.cpp
  )
  
-@@ -252,12 +252,6 @@ def _assert_scheme_describe_secret_proto_json_base64(
-                 f"actual version: {description.get('version')!r}"
-             )
- 
--    @pytest.fixture(scope="module")
--    def ydb_cluster_configuration(self, request):
--        return dict(
--            extra_grpc_services=["secret"],
--        )
--
-     def test_describe_secret_format_default(self, ydb_cluster, ydb_database, ydb_client_session):
-         secret_name = "cli_scheme_describe_secret"
-         session_pool = ydb_client_session(ydb_database)
++GENERATE_ENUM_SERIALIZATION(yql_s3_actor_stats_interface.h)
++
+ PEERDIR(
+     contrib/libs/apache/arrow
+     contrib/libs/fmt
+@@ -23,6 +25,7 @@ PEERDIR(
+     library/cpp/protobuf/util
+     library/cpp/string_utils/base64
+     library/cpp/string_utils/quote
++    library/cpp/time_provider
+     library/cpp/xml/document
+     ydb/core/fq/libs/events
+     ydb/core/util
+```
+
+**File**: `ydb/library/yql/providers/s3/actors/yql_s3_actor_stats.h` (added, +145/-0)
+```diff
+@@ -0,0 +1,145 @@
++#pragma once
++
++#include "yql_s3_actor_stats_interface.h"
++
++#include <ydb/library/yql/dq/actors/compute/dq_schedulable.h>
++
++#include <library/cpp/monlib/dynamic_counters/counters.h>
++#include <util/system/guard.h>
++#include <util/system/spinlock.h>
++
++namespace NYql::NDq {
++
++// Observes the caller's scheduler state without changing quota accounting.
++// Gauges count live work; unfinished exits are retained in a cumulative
++// counter.
++class TS3ActorStats final: public IS3ActorStats {
++private:
++    enum class ECpuState {
++        Idle,
++        Waiting,
++        Active
++    };
++
++public:
++    TS3ActorStats(const ::NMonitoring::TDynamicCounterPtr &counters, const IDqSchedulableWork *work, const TString &kind = "reader")
++        : SchedulerEnabled(work != nullptr)
++    {
++        if (!counters || !work) {
++            return;
++        }
++        const auto scope = work->GetWorkScope();
++        const auto group = counters->GetSubgroup("db", scope.Namespace)->GetSubgroup("pool", scope.Name)->GetSubgroup("kind", kind);
++        Active = group->GetCounter("S3CpuActive");
++        Waiting = group->GetCounter("S3CpuWaiting");
++        AdmissionWaitUs = group->GetCounter("S3CpuAdmissionWaitUs", true);
++        UnfinishedOnExit = group->GetCounter("S3CpuUnfinishedOnExit", true);
++    }
++
++    TS3ActorStats(const TS3ActorStats &) = delete;
++    TS3ActorStats &operator=(const TS3ActorStats &) = delete;
++
++    ~TS3ActorStats() {
++        OnExit(TMonotonic::Now());
++    }
++
++    TSnapshot GetSnapshot() const override {
++        const auto guard = Guard(Lock);
++        return { Phase, StateSince, CpuState == ECpuState::Active };
++    }
++
++    void SetState(EState state, TMonotonic now = TMonotonic::Now()) {
++        const auto guard = Guard(Lock);
++        SetStateLocked(state, now);
++    }
++
++    void OnAllowed(TMonotonic now) {
++        const auto guard = Guard(Lock);
++        if (!SchedulerEnabled) {
++            return;
++        }
++        FinishWaiting(now);
++        if (CpuState != ECpuState::Active) {
++            if (Active) {
++                Active->Inc();
++            }
++            CpuState = ECpuState::Active;
++        }
++    }
++
++    void OnRejected(TMonotonic now) {
++        const auto guard = Guard(Lock);
++        if (!SchedulerEnabled) {
++            return;
++        }
++        if (CpuState == ECpuState::Idle) {
++            if (Waiting) {
++                Waiting->Inc();
++            }
++            WaitStarted = now;
++            CpuState = ECpuState::Waiting;
++        }
++    }
++
++    void OnStop(TMonotonic now) {
++        const auto guard = Guard(Lock);
++        StopLocked(now);
++    }
++
++    // Observes unfinished work before diagnostic cleanup. Does not release quota.
++    // Explicitly called on Run() exit because the source may retain this object.
++    void OnExit(TMonotonic now) {
++        const auto guard = Guard(Lock);
++        if (CpuState != ECpuState::Idle) {
++            if (UnfinishedOnExit) {
++                UnfinishedOnExit->Inc();
++            }
++            StopLocked(now);
++        }
++        SetStateLocked(EState::Finished, now);
++    }
++
++private:
++    void SetStateLocked(EState state, TMonotonic now) {
++        if (Phase != state) {
++            Phase = state;
++            StateSince = now;
++        }
++    }
++
++    void StopLocked(TMonotonic now) {
++        if (CpuState == ECpuState::Active) {
++            if (Active) {
++                Active->Dec();
++            }
++        } else {
++            FinishWaiting(now);
++        }
++        CpuState = ECpuState::Idle;
++    }
++
++    void FinishWaiting(TMonotonic now) {
++        if (CpuState == ECpuState::Waiting) {
++            if (Waiting) {
++                Waiting->Dec();
++            }
++            if (AdmissionWaitUs) {
++                AdmissionWaitUs->Add((now - WaitStarted).MicroSeconds());
++            }
++        }
++    }
++
++private:
++    mutable TAdaptiveLock Lock;
++    const bool SchedulerEnabled;
++    EState Phase = EState::Initializing;
++    TMonotonic StateSince = TMonotonic::Now();
++    ECpuState CpuState = ECpuState::Idle;
++    TMonotonic WaitStarted;
++    ::NMonitoring::TDynamicCounters::TCounterPtr Active;
++    ::NMonitoring::TDynamicCounters::TCounterPtr Waiting;
++    ::NMonitoring::TDynamicCounters::TCounterPtr AdmissionWaitUs;
++    ::NMonitoring::TDynamicCounters::TCounterPtr UnfinishedOnExit;
++};
++
++}   // namespace NYql::NDq
 ```
 
 ---
 
-### Incident Patch 3: `7ebef9fe` (2026-11-20)
-**Commit Message**: Fix JSON index compatibility predicates (#60141)
+### Incident Patch 3: `0cd64345` (2026-11-21)
+**Commit Message**: Revert zstd debug section compression for Linux release builds
 
-**File**: `ydb/tests/compatibility/indexes/test_json_index.py` (modified, +2/-2)
+Reverts https://nda.ya.ru/t/z0_YjmzG7x57Kq (rXXXXXX) and restores the release exclusions for the compiler and linker flags.
+
+During stack trace symbolization, libbacktrace decompresses DWARF sections into anonymous memory and retains them for subsequent lookups. On the same userver benchmark ELF, zstd-compressed sections raised anonymous memory after the first lookup from 30.3 MiB to 114.1 MiB.
+
+Tests: CI tested
+commit_hash:b88dd831dddc1d9a84622eb7f19b350fbd490cac
+
+**File**: `build/ymake_conf.py` (modified, +4/-2)
 ```diff
-@@ -85,7 +85,7 @@ def _get_queries(self, mode):
-     def _get_queries_for(self, table_name, index_name, json_type, mode):
-         queries = []
-         for query_idx in range(self.query_count):
--            predicate = json.get_random_predicate(mode=mode)
-+            predicate = json.get_random_predicate(mode=mode, explicit_index=True)
-             logger.debug(f"Query {query_idx + 1}/{self.query_count} for {table_name} ({mode}): predicate=`{predicate}`")
+@@ -1560,7 +1560,8 @@ def __init__(self, tc, build):
+             '-g',
+         ]
  
-             queries.append(f"""
-@@ -129,7 +129,7 @@ def _assert_legacy_indexes_match_primary(self, mode):
-             for json_type in ['Json', 'JsonDocument']:
-                 table_name = f"table_{json_type.lower()}"
-                 index_name = f"idx_{json_type.lower()}"
--                predicate = json.get_random_predicate(mode=mode)
-+                predicate = json.get_random_predicate(mode=mode, explicit_index=True)
+-        if self.target.is_linux:
++        if not self.build.is_release and self.target.is_linux:
++            # TAXICOMMON-8548: deal with runtime env issues and enable in release builds too
+             self.debug_info_flags.append('-gz=zstd')
+         if self.tc.is_clang and self.tc.version_at_least(14):
+             # DTCC-1231: Clang 14 has switched to DWARFv5 by default
+@@ -1933,7 +1934,8 @@ def __init__(self, tc, build):
+             self.ld_flags.append('--ld-path={}/esp-clang/bin/ld.lld'.format(self.tc.name_marker))
+             if is_positive('NO_CXX_RTTI'):
+                 self.ld_flags.append('-fno-rtti')
+-        if target.is_linux:
++        if not self.build.is_release and target.is_linux:
++            # TAXICOMMON-8548: deal with runtime env issues and enable in release builds too
+             self.ld_flags.extend(['-Wl,--compress-debug-sections=zstd'])
  
-                 def select(view):
-                     result = session_pool.execute_with_retries(f"""
+         if self.musl.value:
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #60252** (2026-11-21): Update muted_ya (release-asan) in main (@ydbot)
-- **PR #60249** (2026-11-21): Fix RBO reachability and secret CLI test cluster setup (@iddqdex)
-- **PR #60248** (2026-11-21): Update muted_ya (release-asan) in main (@ydbot)
-- **PR #60247** (2026-11-21): Update muted_ya (release-asan) in stable-26-4-1 (@ydbot)
-- **PR #60246** (2026-11-21): Update muted_ya (relwithdebinfo) in stable-26-3-1 (@ydbot)
-- **PR #60245** (2026-11-21): Update muted_ya (release-asan) in stable-26-4-1 (@ydbot)
+- **PR #60418** (2026-11-22): Update muted_ya (release-asan) in main (@ydbot)
+- **PR #60415** (2026-11-22): Update muted_ya (release-asan) in main (@ydbot)
+- **PR #60393** (2026-11-22): actualize ROADMAP.md (@fomichev3000)
+- **PR #60381** (2026-11-22): Update muted_ya (relwithdebinfo) in main (@ydbot)
+- **PR #60363** (2026-11-22): Update muted_ya (relwithdebinfo) in stable-26-4-1 (@ydbot)
+- **PR #60362** (2026-11-22): Update muted_ya (relwithdebinfo) in stable-26-3-1 (@ydbot)
 
 ---
 
@@ -2674,42 +2670,21 @@ Co-authored-by: iddqdex <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. YDB-59537 Fix race between snapshot registration and cleanup
+## X. [Disable PG] Opt the replication writer PostgreSQL fixture into compatibility
 
 **RULE**:
-When implementing operations in `ydb/core/kqp/ut/olap/scan_cleanup_ut.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ydb-platform/ydb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ydb/core/tx/replication/service/table_writer_ut.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ydb-platform/ydb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e58fb031`: YDB-59537 Fix race between snapshot registration and cleanup. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3820fc09`: [Disable PG] Opt the replication writer PostgreSQL fixture into compatibility. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ydb/core/kqp/ut/olap/scan_cleanup_ut.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ydb/core/tx/replication/service/table_writer_ut.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-#include <ydb/core/tx/columnshard/columnshard_impl.h>
-#include <ydb/core/tx/columnshard/engines/changes/cleanup_portions.h>
-#include <ydb/core/tx/columnshard/engines/changes/compaction.h>
-#include <ydb/core/tx/long_tx_service/public/events.h>
-#include <ydb/core/tx/long_tx_service/public/snapshot_registry.h>
-#include <ydb/core/tx/tx.h>
-class TDelayedSnapshotCleanupController: public NYDBTest::NColumnShard::TController {
-public:
-    ui64 TargetTabletId = 0;
-    NOlap::TSnapshot DelayedSnapshot = NOlap::TSnapshot::Zero();
-    std::optional<NOlap::TSnapshot> ReplacementSnapshot;
-    bool HistoricalPortionErased = false;
-
-protected:
-    bool DoOnWriteIndexComplete(const NOlap::TColumnEngineChanges& changes, const NColumnShard::TColumnShard& shard) override {
-        const bool result = TController::DoOnWriteIndexComplete(changes, shard);
-        if (shard.TabletID() != TargetTabletId || changes.IsAborted()) {
-            return result;
-        }
-        if (const auto* compaction = dynamic_cast<const NOlap::TCompactColumnEngineChanges*>(&changes)) {
-            for (const auto& portion : compaction->GetSwitchedPortions()) {
-                if (!ReplacementSnapshot || *ReplacementSnapsho
+            .SetDisablePgCompatibility(false)
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2719,7 +2694,7 @@ protected:
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e58fb031` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3820fc09` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T16:29:44.730Z",
+  "last_updated": "2026-11-22T16:48:25.781Z",
   "directives": [
     {
       "id": "CD-001",
@@ -46625,6 +46625,59 @@
       "source_repo": "astral-sh-uv",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-3D902F-skip-distribution-selection-for-packages.md",
+      "staged_date": "2026-11-22"
+    },
+    {
+      "id": "CD-M37G",
+      "directive_title": "Give the polars-cli query thread the stack of the main thread",
+      "source_repo": "pola-rs/polars",
+      "source_commit": "7ff0ffa2",
+      "staged_file": "11_INBOX/candidate-directives/CD-M37G-give-the-polars-cli-query-thread-the-stack-of-the-main-thread.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-22",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-MH82",
+      "directive_title": "🐞 Shrink a window before moving it to a smaller frame",
+      "source_repo": "mrkai77-loop-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-MH82-shrink-a-window-before-moving-it-to-a-smaller-frame.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-22",
+      "domain_letter": "F"
+    },
+    {
+      "id": "CD-MDNN",
+      "directive_title": "[Disable PG] Opt the replication writer PostgreSQL fixture into compatibility",
+      "source_repo": "ydb-platform/ydb",
+      "source_commit": "ac73d368",
+      "staged_file": "11_INBOX/candidate-directives/CD-MDNN-disable-pg-opt-the-replication-writer-postgresql-fixture-into-compatibility.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-22",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-MGAF",
+      "directive_title": "rust): Give the polars-cli query thread the stack of the main thread",
+      "source_repo": "pola-rs-polars-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-MGAF-rust-give-the-polars-cli-query-thread-the-stack-of-the-main-thread.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-22",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-9F1EF6",
+      "directive_title": "🐞 Shrink a window before moving it to a smaller frame",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "mrkai77-loop",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-9F1EF6--shrink-a-window-before-moving-it-to-a-s.md",
       "staged_date": "2026-11-22"
     }
   ]

@@ -12152,3 +12152,7 @@ Every entry in this ledger must capture:
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `a129ffd9` | Multi-dimensional audit evidence | 2026-11-22T16:28:27.086Z |
 | `learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-11-22T16:29:01.483Z |
 | `learn-dom-h-17797bc1` | `project://dathere-qsv` | `a129ffd9` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md` | 2026-11-22T16:29:43.747Z |
+| `learn-huggingface-sentence-transformers-all-minilm-l6-v2` | `https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-11-22T16:48:06.868Z |
+| `learn-github-pola-rs-polars` | `https://github.com/pola-rs/polars` | `7ff0ffa2` | Multi-dimensional audit evidence | 2026-11-22T16:48:07.387Z |
+| `learn-github-mrkai77-loop` | `https://github.com/mrkai77/Loop` | `5cc7551c` | Multi-dimensional audit evidence | 2026-11-22T16:48:11.682Z |
+| `learn-github-ydb-platform-ydb` | `https://github.com/ydb-platform/ydb` | `ac73d368` | Multi-dimensional audit evidence | 2026-11-22T16:48:20.946Z |

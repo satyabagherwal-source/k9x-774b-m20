@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T16:29:01.494Z",
+  "last_updated": "2026-11-22T16:48:20.954Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -81,14 +81,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
-      "content_hash": "c31d38ca2f2865f20e4c49f3278fba49ca581f7d8bfc3a18f6632794f691064c",
-      "verified_at": "2026-11-18T10:08:39.229Z",
+      "content_hash": "06fa42f092d2c4156d71359ceb716c0d0e8174231564b7cfeb1a6036cb458252",
+      "verified_at": "2026-11-22T16:48:06.876Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T10:08:39.229Z"
+      "last_updated": "2026-11-22T16:48:06.876Z"
     },
     "cross-encoder/ms-marco-MiniLM-L6-v2": {
       "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
@@ -8256,14 +8256,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ydb-platform-ydb",
-      "content_hash": "ae476937641039d2295bbcf52484dbd0345eb0a7133e631a30aea0103212a146",
-      "verified_at": "2026-11-21T13:53:45.480Z",
+      "content_hash": "c0fa42e35dd52f03a6f2ec6c6a901f8225557c7131f7845d72473dcf42fa7304",
+      "verified_at": "2026-11-22T16:48:20.954Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T13:53:45.480Z"
+      "last_updated": "2026-11-22T16:48:20.954Z"
     },
     "arco-design/arco-design-vue": {
       "repository": "arco-design/arco-design-vue",
@@ -11661,14 +11661,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pola-rs-polars",
-      "content_hash": "8bc5a4317998f3c31d8a2085b54a9174480e76de174a1ddeecfeaa8feb136b0d",
-      "verified_at": "2026-11-21T03:36:38.124Z",
+      "content_hash": "47824c59f914792b04338567c854e3fec244e58dbc546ab9ba226b268f6590f0",
+      "verified_at": "2026-11-22T16:48:07.395Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T03:36:38.124Z"
+      "last_updated": "2026-11-22T16:48:07.395Z"
     },
     "mrkai77/Loop": {
       "repository": "mrkai77/Loop",
@@ -11676,14 +11676,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mrkai77-loop",
-      "content_hash": "2427e3a4acd630071aaea416fcafbabb68263eea593a1fa9a5ed9d32bbdd4ae3",
-      "verified_at": "2026-11-19T15:16:35.187Z",
+      "content_hash": "710bf06b77dbefe8c3bb7d636aa533183bc30df880029d9cc9cb8cbdf21ba9f8",
+      "verified_at": "2026-11-22T16:48:11.690Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T15:16:35.187Z"
+      "last_updated": "2026-11-22T16:48:11.690Z"
     },
     "tokio-rs/tokio": {
       "repository": "tokio-rs/tokio",

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T15:21:32.167Z",
+  "timestamp": "2026-11-22T16:48:25.665Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-mrkai77-loop-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [mrkai77-loop-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T15:21:32.167Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T16:48:25.665Z`  
 > **Learning ID**: `LEARN-EVO-mrkai77-loop-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mrkai77-loop-learnings.md`  
 > **Source**: github ([https://github.com/mrkai77/Loop](https://github.com/mrkai77/Loop))  
-> **Source Version**: `1bba20ec`  
+> **Source Version**: `5cc7551c`  
 > **License**: GPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T15:16:34.112Z  
+> **Timestamp**: 2026-11-22T16:48:10.653Z  
 > **Learning ID**: `learn-github-mrkai77-loop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mrkai77-loop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mrkai77/Loop](https://github.com/mrkai77/Loop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T15:16:33.926Z  
+> **Harvest Timestamp**: 2026-11-22T16:48:10.646Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Window management made elegant.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 11988 stars
+- **Stars / Engagement**: 12009 stars
 
 ---
 
@@ -1409,203 +1409,663 @@ extension LoopManager {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1bba20ec` (2026-11-17)
-**Commit Message**: 🐞 Fix window focus within frontmost app + gesture rebuild fixes (#1211)
+### Incident Patch 1: `5cc7551c` (2026-11-22)
+**Commit Message**: 🐞 Shrink a window before moving it to a smaller frame (#1190)
 
-* 🐞 Keep gesture recognizers listening when gestures change
+* 🐞 Shrink a window before moving it to a smaller frame
 
-* 🐞 Fix window focus within frontmost app
+A same-screen snap moved the window at its old width first, so the frame hung off the display. Finder and TextEdit then shrink. iTerm2 keeps that frame, and AppKit latches it as the minimum size.
 
-* 🐞 Skip the activation switch for standard windows
+Co-authored-by: Cursor <[REDACTED_EMAIL]>
 
-**File**: `Loop/Core/LoopManager.swift` (modified, +1/-1)
+* 🐞 Shrink in place before a move, even when the other axis grows
+
+setFrame now reduces any shrinking side before it changes the origin, so a caller that forgets sizeFirst cannot slide the old frame off the display. Growth on the other axis happens after the move. A screen change that only grows still sets the full size first.
+
+Co-authored-by: Cursor <[REDACTED_EMAIL]>
+
+* 🐞 Fix window resize order and skip redundant frame writes
+
+---------
+
+Co-authored-by: Kai Azim <[REDACTED_EMAIL]>
+
+**File**: `Loop/Core/WindowDragManager.swift` (modified, +3/-1)
 ```diff
-@@ -634,7 +634,7 @@ extension LoopManager {
- 
-                         originatingContext.commitWindowTarget(preparedTarget)
-                         log.info("Focusing window: \(newTargetWindow)")
--                        newTargetWindow.focus()
-+                        await newTargetWindow.focus()
-                     }
-                 } else if !Defaults[.previewVisibility] {
-                     _ = try? await WindowActionEngine.shared.apply(context: originatingContext)
-```
-
-**File**: `Loop/Core/Multitouch/MultitouchTrigger.swift` (modified, +3/-1)
-```diff
-@@ -126,14 +126,16 @@ final class MultitouchTrigger {
-     }
- 
-     private func rebuildRecognizers() {
--        stopGestureMonitors()
-         #if DEBUG
-             closeDebugOverlay(force: true)
-         #endif
-         handleStopResults(recognizerRegistry.rebuild(with: Defaults[.gestures]))
-+        // Stopping the monitor finishes the contact streams of recognizers the rebuild keeps.
-         if recognizerRegistry.hasRecognizers {
-             gestureMonitor.start()
-             gestureBlocker.start()
-+        } else {
-+            stopGestureMonitors()
+@@ -240,7 +240,9 @@ final class WindowDragManager {
+             newWindowFrame = newWindowFrame.pushInside(screen.displayBounds)
+             await window.setFrame(newWindowFrame)
+         } else {
+-            window.setSize(initialFrame.size)
++            window.performFrameAdjustment { writer in
++                writer.setSize(initialFrame.size)
++            }
          }
-         updateSystemGestureFilter()
-     }
+ 
+         // If the window doesn't contain the cursor, keep the original maxX
 ```
 
-**File**: `Loop/Private APIs/SkyLightToolBelt.swift` (modified, +63/-1)
+**File**: `Loop/Window Management/Window Manipulation/WindowEngine.swift` (modified, +78/-5)
 ```diff
-@@ -124,7 +124,7 @@ enum SkyLightToolBelt {
+@@ -193,12 +193,13 @@ enum WindowEngine {
+             try await window.setFrameAnimated(targetFrame, bounds: bounds, resolvedProperties: resolvedProperties)
+             actualFrame = window.frame
+         } else {
+-            await window.setFrame(targetFrame, sizeFirst: willChangeScreens, resolvedProperties: resolvedProperties)
++            let placement = Window.FramePlacement(bounds: bounds, willChangeScreens: willChangeScreens)
++            await window.setFrame(targetFrame, placement: placement, resolvedProperties: resolvedProperties)
+             try Task.checkCancellation()
  
-     /// Makes a window key within its owning process by posting a synthetic left-mouse-down event.
-     ///
--    /// Uses a private API. Derived from Hammerspoon / yabai / AltTab
-+    /// Derived from Hammerspoon / yabai / AltTab
-     /// (https://github.com/Hammerspoon/hammerspoon/issues/370#issuecomment-545545468,
-     /// https://github.com/lwouis/alt-tab-macos/commit/ec30bb13084e68cb3cde32ec415fdba1fd92876e).
-     ///
-@@ -168,6 +168,68 @@ enum SkyLightToolBelt {
-         return true
+             var frameAfterResize = window.frame
+             if !frameAfterResize.approximatelyEqual(to: targetFrame) {
+-                await window.setFrame(targetFrame, resolvedProperties: resolvedProperties)
++                await window.setFrame(targetFrame, placement: placement, resolvedProperties: resolvedProperties)
+                 try Task.checkCancellation()
+                 frameAfterResize = window.frame
+             }
+@@ -209,7 +210,8 @@ enum WindowEngine {
+             window: window,
+             actualFrame: actualFrame,
+             targetFrame: targetFrame,
+-            bounds: bounds
++            bounds: bounds,
++            resolvedProperties: resolvedProperties
+         )
      }
  
-+    /// Byte layout for the `CGSEventRecord` posted by `setWindowActive`.
-+    private enum WindowActivationEvent {
-+        static let bufferSize = MakeKeyWindowEvent.bufferSize
-+        static let lengthOffset = MakeKeyWindowEvent.lengthOffset
-+        static let recordLength = MakeKeyWindowEvent.recordLength
-+        static let eventTypeOffset = MakeKeyWindowEvent.eventTypeOffset
-+        /// Window activation event type, as used by yabai.
-+        static let windowActivation: UInt8 = 0x0D
-+        static let windowIdOffset = MakeKeyWindowEvent.windowIdOffset
-+        /// `0x01` activates the window, `0x02` deactivates it.
-+        static let activationStateOffset = 0x8A
-+        static let activate: UInt8 = 0x01
-+        static let deactivate: UInt8 = 0x02
-+    }
+@@ -219,7 +221,8 @@ enum WindowEngine {
+         window: Window,
+         actualFrame: CGRect,
+         targetFrame: CGRect,
+-        bounds: CGRect
++        bounds: CGRect,
++        resolvedProperties: Window.ResolvedProperties?
+     ) -> CGRect {
+         guard !window.isOwnWindow, bounds != .zero else {
+             return actualFrame
+@@ -244,10 +247,80 @@ enum WindowEngine {
+             return actualFrame
+         }
+ 
+-        window.setPosition(correctedFrame.origin)
++        window.performFrameAdjustment(resolvedProperties: resolvedProperties) { writer in
++            writer.setPosition(correctedFrame.origin)
++        }
+         return correctedFrame
+     }
+ 
++    /// Whether to resize before moving, picking whichever order keeps more of the window on screen in between.
++    /// Based on Rectangle's `ImmediateFrameOrder` located here :)
++    ///  https://github.com/rxhanson/Rectangle/blob/adbc8a0560367a6c0a56b2e8ae6f39a24740ab14/Rectangle/WindowMover/StandardWindowMover.swift#L38-L52
++    static func shouldSizeFirst(
++        from current: CGRect,
++        to target: CGRect,
++        within bounds: CGRect,
++        willChangeScreens: Bool
++    ) -> Bool {
++        // Moving at the old size can resize the window against the Dock or the new screen's edge
++        if willChangeScreens {
++            return true
++        }
 +
-+    /// Tells a window that it gained or lost activation within its owning process.
-+    ///
-+    /// When a window's app is already frontmost, `makeFrontProcess` and `makeKeyWindow` alone may not make it key
-+    /// (for example, Finder's Quick Look panel after clicking the Finder window behind it). Deactivating the current
-+    /// key window and then activating the target first lets them take effect.
-+    /// Derived from yabai's `window_manager_focus_window_without_raise`:
-+    /// https://github.com/koekeishiya/yabai/blob/b2dc8b4c892d74738a6e865d73048ed2dc3c9ed1/src/window_manager.c#L1293-L1322
-+    ///
-+    /// - Parameters:
-+    ///   - windowID: The `CGWindowID` of the window to activate or deactivate.
-+    ///   - pid: The PID of the window's owner process.
-+    ///   - isActive: Whether the window should become active.
-+    /// - Returns: Whether this operation was successful.
-+    @discardableResult
-+    static func setWindowActive(windowID: CGWindowID, pid: pid_t, isActive: Bool) -> Bool {
-+        guard let SLPSPostEventRecordTo = SkyLightSymbolLoader.SLPSPostEventRecordTo else {
-+            log.error("Failed to load SkyLight symbols in \(#function)")
++        guard !current.size.approximatelyEqual(to: target.size, tolerance: 1) else {
 +            return false
 +        }
 +
-+        var wid = windowID
-+        var psn = ProcessSerialNumber()
-+        let status = GetProcessForPID(pid, &psn)
-+
-+        guard status == noErr else {
-+            log.error("Failed to get PSN: \(status)")
++        guard bounds.size.area > 0 else {
 +            return false
 +        }
 +
-+        var bytes = [UInt8](repeating: 0, count: WindowActivationEvent.bufferSize)
-+        bytes[WindowActivationEvent.lengthOffset] = WindowActivationEvent.recordLength
-+        bytes[WindowActivationEvent.eventTypeOffset] = WindowActivationEvent.windowActivation
-+        bytes[WindowActivationEvent.activationStateOffset] = isActive ? WindowActivationEvent.activate : WindowActivationEvent.deactivate
-+        memcpy(&bytes[WindowActivationEvent.windowIdOffset], &wid, MemoryLayout<CGWindowID>.size)
-+
-+        let cgStatus = bytes.withUnsafeMutableBufferPointer { pointer in
-+            SLPSPostEventRecordTo(&psn, &pointer.baseAddress!.pointee)
++        // Same for a window that's already partly off screen
++        if !bounds.insetBy(dx: -1, dy: -1).contains(current) {
++            return true
 +        }
 +
-+        guard cgStatus == .success else {
-+            log.error("Failed to post window activation event with status: \(cgStatus.rawValue)")
-+            return false
++        let sizedFirst = overflow(of: CGRect(origin: current.origin, size: target.size), outside: bounds)
++        let movedFirst = overflow(of: CGRect(origin: target.origin, size: current.size), outside: bounds)
++        if abs(sizedFirst - movedFirst) > 1 {
++            return sizedFirst < movedFirst
 +        }
 +
 +        return true
 +    }
 +
-     /// Sets the background blur radius of a window.
-     /// - Parameters:
-     ///   - windowID: The `CGWindowID` of the window to manipulate.
-```
-
-**File**: `Loop/Stashing/StashManager.swift` (modified, +2/-2)
-```diff
-@@ -309,7 +309,7 @@ private extension StashManager {
- 
-         if shiftFocusWhenStashed {
-             Task { @MainActor in
--                window.window.focus()
-+                await window.window.focus()
-             }
-         }
- 
-@@ -413,7 +413,7 @@ private extension StashManager {
-         if let focusWindow {
-             log.info("Focusing another window on the same screen: \(focusWindow).")
-             Task { @MainActor in
--                focusWindow.focus()
-+                await focusWindow.focus()
-             }
-         }
-     }
-```
-
-**File**: `Loop/Window Management/Window Manipulation/WindowActionEngine.swift` (modified, +1/-1)
-```diff
-@@ -151,7 +151,7 @@ final class WindowActionEngine {
-         if let newTargetWindow {
-             Task { @MainActor in
-                 log.info("Focusing window: \(newTargetWindow)")
--                newTargetWindow.focus()
-+                await newTargetWindow.focus()
-             }
-         }
- 
-```
-
-**File**: `Loop/Window Management/Window/Window.swift` (modified, +24/-1)
-```diff
-@@ -265,9 +265,32 @@ final class Window {
-         }
-     }
- 
-+    /// The `CGWindowID` of the window currently focused within this window's app.
-+    private var focusedWindowIDInApp: CGWindowID? {
-+        let app = AXUIElementCreateApplication(pid)
-+        guard let focusedWindow: AXUIElement = try? app.getValue(.focusedWindow) else {
-+            return nil
++    /// The origin to move to after sizing first, anchored to the size the app accepted.
++    /// A smaller size may only be the old position clamping it, so that's left to `handleSizeConstrainedWindow`.
++    static func origin(
++        afterAccepting acceptedSize: CGSize,
++        for targetFrame: CGRect,
++        within bounds: CGRect
++    ) -> CGPoint {
++        let placedSize = CGSize(
++            width: max(acceptedSize.width, targetFrame.width),
++            height: max(acceptedSize.height, targetFrame.height)
++        )
++
++        guard !placedSize.approximatelyEqual(to: targetFrame.size, tolerance: 2),
++              placedSize.width <= bounds.width,
++              placedSize.height <= bounds.height
++        else {
++            return targetFrame.origin
 +        }
-+        return try? focusedWindow.getWindowID()
++
++        return anchoredFrame(
++            for: placedSize,
++            within: targetFrame,
++            targetEdges: targetFrame.getEdgesTouchingBounds(bounds),
++            bounds: bounds
++        ).origin
 +    }
 +
-     /// Focus the window.
-     @MainActor
--    func focus() {
-+    func focus() async {
-+        // When the app is already frontmost, the steps below alone may not move focus from its key window to
-+        // one of its non-standard windows (such as Finder's Quick Look panel), so hand activation over first.
-+        // Standard windows don't need this, and skipping it avoids a visible flicker.
-+        if NSWorkspace.shared.frontmostApplication?.processIdentifier == pid,
-+           subrole != .standardWindow,
-+           let focusedWindowID = focusedWindowIDInApp,
-+           focusedWindowID != cgWindowID {
-+            SkyLightToolBelt.setWindowActive(windowID: focusedWindowID, pid: pid, isActive: false)
-+            // Some apps get confused when both events arrive at once:
-+            // https://github.com/koekeishiya/yabai/blob/b2dc8b4c892d74738a6e865d73048ed2dc3c9ed1/src/window_manager.c#L1305-L1313
-+            try? await Task.sleep(for: .milliseconds(40))
-+            SkyLightToolBelt.setWindowActive(windowID: cgWindowID, pid: pid, isActive: true)
++    private static func overflow(of frame: CGRect, outside bounds: CGRect) -> CGFloat {
++        max(0, bounds.minX - frame.minX) + max(0, frame.maxX - bounds.maxX)
++            + max(0, bounds.minY - frame.minY) + max(0, frame.maxY - bounds.maxY)
++    }
++
+     static func anchoredFrame(
+         for actualSize: CGSize,
+         within requestedFrame: CGRect,
+```
+
+**File**: `Loop/Window Management/Window Manipulation/WindowTransformAnimation.swift` (modified, +7/-4)
+```diff
+@@ -27,6 +27,7 @@ final class WindowTransformAnimation: NSAnimation {
+     private var targetFrame: CGRect
+     private let originalFrame: CGRect
+     private let window: Window
++    private let writer: FrameWriter
+     private let bounds: CGRect
+     private let shouldSetSize: Bool
+     private let targetEdges: Edge.Set
+@@ -44,6 +45,7 @@ final class WindowTransformAnimation: NSAnimation {
+     init(
+         _ newRect: CGRect,
+         window: Window,
++        writer: FrameWriter,
+         bounds: CGRect,
+         shouldSetSize: Bool,
+         completionHandler: @escaping (Error?) -> ()
+@@ -52,6 +54,7 @@ final class WindowTransformAnimation: NSAnimation {
+         self.targetFrame = newRect
+         self.originalFrame = originalFrame
+         self.window = window
++        self.writer = writer
+         self.bounds = bounds
+         self.shouldSetSize = shouldSetSize
+         self.targetEdges = newRect.getEdgesTouchingBounds(bounds)
+@@ -140,7 +143,7 @@ final class WindowTransformAnimation: NSAnimation {
+                 sizeToSet: sizeToSet
+             ) {
+                 if !lastWindowFrame.origin.approximatelyEqual(to: preResizeOrigin, tolerance: 1) {
+-                    window.setPosition(preResizeOrigin)
++                    writer.setPosition(preResizeOrigin)
+                     currentOrigin = preResizeOrigin
+                 }
+             } else if growsHorizontally || growsVertically {
+@@ -152,12 +155,12 @@ final class WindowTransformAnimation: NSAnimation {
+                     preResizeOrigin.y = requestedFrame.origin.y
+                 }
+                 if !lastWindowFrame.origin.approximatelyEqual(to: preResizeOrigin, tolerance: 1) {
+-                    window.setPosition(preResizeOrigin)
++                    writer.setPosition(preResizeOrigin)
+                     currentOrigin = preResizeOrigin
+                 }
+             }
+ 
+-            window.setSize(sizeToSet)
++            writer.setSize(sizeToSet)
+             if bounds != .zero {
+                 let actualFrame = window.frame
+                 updateConstraint(actualFrame: actualFrame, requestedFrame: requestedFrame, tolerance: resizeTolerance)
+@@ -190,7 +193,7 @@ final class WindowTransformAnimation: NSAnimation {
+         }
+ 
+         if !currentOrigin.approximatelyEqual(to: newFrame.origin, tolerance: 1) {
+-            window.setPosition(newFrame.origin)
++            writer.setPosition(newFrame.origin)
+         }
+ 
+         lastWindowFrame = window.frame
+```
+
+**File**: `Loop/Window Management/Window/Window.swift` (modified, +72/-32)
+```diff
+@@ -426,7 +426,7 @@ final class Window {
+         }
+     }
+ 
+-    func setPosition(_ point: CGPoint) {
++    fileprivate func setPosition(_ point: CGPoint) {
+         if isOwnWindow {
+             Task { @MainActor in
+                 guard let win = ownNSWindow() else { return }
+@@ -453,7 +453,7 @@ final class Window {
+         }
+     }
+ 
+-    func setSize(_ size: CGSize) {
++    fileprivate func setSize(_ size: CGSize) {
+         if isOwnWindow {
+             Task { @MainActor in
+                 guard let win = ownNSWindow() else { return }
+@@ -535,66 +535,87 @@ final class Window {
+         return true
+     }
+ 
++    /// The screen a frame is placed on, used to choose whether to resize or move first.
++    struct FramePlacement {
++        let bounds: CGRect
++        let willChangeScreens: Bool
++    }
++
++    /// - Parameter placement: When `nil`, the window is moved, then resized.
+     func setFrame(
+         _ rect: CGRect,
+-        sizeFirst: Bool = false,
++        placement: FramePlacement? = nil,
+         resolvedProperties: ResolvedProperties? = nil
+     ) async {
+         guard await !MainActor.run(resultType: Bool.self, body: { applyOwnWindowFrame(rect) }) else {
+             return
+         }
+ 
+-        let enhancedUI = resolvedProperties?.isEnhancedUserInterface ?? enhancedUserInterface
+         let shouldSetSize = resolvedProperties?.isResizable ?? true
+ 
+-        if enhancedUI {
+-            let appName = nsRunningApplication?.localizedName
+-            log.info("\(appName ?? "This app")'s enhanced UI will be temporarily disabled while resizing.")
+-            enhancedUserInterface = false
++        performFrameAdjustment(resolvedProperties: resolvedProperties) {
++            writeChangedFrame(rect, with: $0, placement: placement, shouldSetSize: shouldSetSize)
+         }
++    }
+ 
+-        if sizeFirst, shouldSetSize {
+-            setSize(rect.size)
++    func setFrameSynchronously(
++        _ rect: CGRect,
++        resolvedProperties: ResolvedProperties? = nil
++    ) {
++        guard !applyOwnWindowFrameSynchronously(rect) else {
++            return
+         }
+ 
+-        setPosition(rect.origin)
+-
+-        if shouldSetSize {
+-            setSize(rect.size)
+-        }
++        let shouldSetSize = resolvedProperties?.isResizable ?? true
+ 
+-        if enhancedUI {
+-            enhancedUserInterface = true
++        performFrameAdjustment(resolvedProperties: resolvedProperties) {
++            writeChangedFrame(rect, with: $0, placement: nil, shouldSetSize: shouldSetSize)
+         }
+     }
+ 
+-    func setFrameSynchronously(
++    /// Only writes the parts of `rect` that differ from the current frame, as each write can make the app redraw.
++    private func writeChangedFrame(
+         _ rect: CGRect,
+-        sizeFirst: Bool = false,
+-        resolvedProperties: ResolvedProperties? = nil
++        with writer: FrameWriter,
++        placement: FramePlacement?,
++        shouldSetSize: Bool
+     ) {
+-        guard !applyOwnWindowFrameSynchronously(rect) else {
+-            return
++        var current = frame
++        var origin = rect.origin
++
++        let sizeFirst = placement.map {
++            WindowEngine.shouldSizeFirst(from: current, to: rect, within: $0.bounds, willChangeScreens: $0.willChangeScreens)
++        } ?? false
++
++        if sizeFirst, shouldSetSize, !current.size.approximatelyEqual(to: rect.size, tolerance: 1) {
++            writer.setSize(rect.size)
++            current = frame
++            if let placement {
++                origin = WindowEngine.origin(afterAccepting: current.size, for: rect, within: placement.bounds)
++            }
 +        }
 +
-         let fronted = SkyLightToolBelt.makeFrontProcess(
-             windowID: cgWindowID,
-             pid: pid
++        if !current.origin.approximatelyEqual(to: origin, tolerance: 1) {
++            writer.setPosition(origin)
++        }
++
++        // Set again in case the old position clamped the size
++        if shouldSetSize, !current.size.approximatelyEqual(to: rect.size, tolerance: 1) {
++            writer.setSize(rect.size)
+         }
++    }
+ 
++    /// Runs frame writes with enhanced UI disabled, as some apps animate or ignore frame changes while it's on.
++    func performFrameAdjustment(resolvedProperties: ResolvedProperties? = nil, _ adjustment: (FrameWriter) -> ()) {
+         let enhancedUI = resolvedProperties?.isEnhancedUserInterface ?? enhancedUserInterface
+-        let shouldSetSize = resolvedProperties?.isResizable ?? true
+ 
+         if enhancedUI {
+             let appName = nsRunningApplication?.localizedName
+             log.info("\(appName ?? "This app")'s enhanced UI will be temporarily disabled while resizing.")
+             enhancedUserInterface = false
+         }
+ 
+-        if sizeFirst, shouldSetSize {
+-            setSize(rect.size)
+-        }
+-
+-        setPosition(rect.origin)
+-
+-        if shouldSetSize {
+-            setSize(rect.size)
+-        }
++        adjustment(FrameWriter(self))
+ 
+         if enhancedUI {
+             enhancedUserInterface = true
+@@ -631,6 +652,7 @@ final class Window {
+             let animation = WindowTra
+```
+
+**File**: `LoopTests/WindowEngineSizeFirstTests.swift` (added, +68/-0)
+```diff
+@@ -0,0 +1,68 @@
++//
++//  WindowEngineSizeFirstTests.swift
++//  LoopTests
++//
++
++import CoreGraphics
++@testable import Loop
++import Testing
++
++struct WindowEngineSizeFirstTests {
++    private let screen = CGRect(x: 0, y: 0, width: 1920, height: 1080)
++
++    private func sizesFirst(from current: CGRect, to target: CGRect) -> Bool {
++        WindowEngine.shouldSizeFirst(from: current, to: target, within: screen, willChangeScreens: false)
++    }
++
++    @Test func shrinkingTowardTheFarEdgeSizesFirst() {
++        // Moving first would slide the full-width window 1280 points off the right edge
++        #expect(sizesFirst(
++            from: CGRect(x: 0, y: 0, width: 1920, height: 1080),
++            to: CGRect(x: 1280, y: 0, width: 640, height: 1080)
++        ))
++    }
++
++    @Test func growingFromTheFarEdgeMovesFirst() {
++        // Sizing first would grow the right third 1280 points off the right edge
++        #expect(!sizesFirst(
++            from: CGRect(x: 1280, y: 0, width: 640, height: 1080),
++            to: CGRect(x: 0, y: 0, width: 1920, height: 1080)
++        ))
++    }
++
++    @Test func mixedResizePicksTheOrderThatSticksOutLess() {
++        // Sizing first hangs 600 points off the bottom, moving first 1080 points off the right
++        #expect(sizesFirst(
++            from: CGRect(x: 0, y: 600, width: 1900, height: 400),
++            to: CGRect(x: 1100, y: 0, width: 800, height: 1080)
++        ))
++    }
++
++    @Test func eitherOrderOnScreenSizesFirst() {
++        #expect(sizesFirst(
++            from: CGRect(x: 0, y: 0, width: 640, height: 1080),
++            to: CGRect(x: 960, y: 0, width: 960, height: 1080)
++        ))
++    }
++
++    @Test func partlyOffScreenWindowSizesFirst() {
++        #expect(sizesFirst(
++            from: CGRect(x: 1500, y: 0, width: 960, height: 1080),
++            to: CGRect(x: 0, y: 0, width: 1920, height: 1080)
++        ))
++    }
++
++    @Test func largerAcceptedSizeStaysAnchoredToTheTargetEdge() {
++        // A window with an 800-point minimum width snapped to the right third keeps its right edge on the screen's
++        let target = CGRect(x: 1280, y: 0, width: 640, height: 1080)
++        let origin = WindowEngine.origin(afterAccepting: CGSize(width: 800, height: 1080), for: target, within: screen)
++        #expect(origin == CGPoint(x: 1120, y: 0))
++    }
++
++    @Test func smallerAcceptedSizeIsPlacedAtTheTargetSize() {
++        // May only be the old position clamping it, so it's corrected after the move instead
++        let target = CGRect(x: 1280, y: 0, width: 640, height: 1080)
++        let origin = WindowEngine.origin(afterAccepting: CGSize(width: 640, height: 500), for: target, within: screen)
++        #expect(origin == target.origin)
++    }
++}
+```
+
+---
+
+### Incident Patch 2: `56a96f7f` (2026-11-22)
+**Commit Message**: 🐞 Replace SkyLight window blur with an in-window backdrop blur
+
+SkyLight's window background blur unfortunately broke on macOS 27.2 on newer rounded-screen MacBooks when a window approached a screen corner.
+
+**File**: `Loop/Private APIs/SkyLightToolBelt.swift` (modified, +8/-0)
+```diff
+@@ -231,6 +231,14 @@ enum SkyLightToolBelt {
+     }
+ 
+     /// Sets the background blur radius of a window.
++    ///
++    /// You may need to call something like:
++    /// ```swift
++    /// window.backgroundColor = .white.withAlphaComponent(0.001)
++    /// window.ignoresMouseEvents = false
++    /// ```
++    /// to restore pointer interaction with the window.
++    ///
+     /// - Parameters:
+     ///   - windowID: The `CGWindowID` of the window to manipulate.
+     ///   - radius: The desired blur radius.
+```
+
+**File**: `Loop/Settings Window/SettingsContentView.swift` (modified, +3/-1)
+```diff
+@@ -42,7 +42,6 @@ struct SettingsContentView: View {
+             }
+             .frame(width: 230)
+             .padding(.top, titleBarHeight)
+-            .luminareBackground()
+ 
+             LuminarePane {
+                 model.currentTab.view()
+@@ -107,6 +106,9 @@ struct SettingsContentView: View {
+                 .animation(animation, value: [showRadialMenu, showPreview])
+                 .padding(12)
+                 .frame(width: 520)
++                .background {
++                    BackdropBlurView(radius: 6)
++                }
+             }
+         }
+         .luminareTint(overridingWith: accentColorController.color1)
+```
+
+**File**: `Loop/Settings Window/SettingsWindowManager.swift` (modified, +0/-8)
+```diff
+@@ -83,14 +83,6 @@ final class SettingsWindowManager: ObservableObject {
+                     .frame(height: 620)
+             }
+ 
+-            SkyLightToolBelt.setBackgroundBlur(
+-                windowID: CGWindowID(window.windowNumber),
+-                radius: 20
+-            )
+-
+-            window.backgroundColor = .white.withAlphaComponent(0.001)
+-            window.ignoresMouseEvents = false
+-
+             controller = NSWindowController(window: window)
+         }
+ 
+```
+
+**File**: `Loop/Updater/Updater.swift` (modified, +1/-1)
+```diff
+@@ -253,7 +253,7 @@ final class Updater: ObservableObject {
+         guard updateState == .available else { return }
+ 
+         if windowController?.window == nil {
+-            windowController = .init(window: LuminareWindow(cornerRadius: 20) { UpdateView() })
++            windowController = .init(window: LuminareCustomCornerRadiusWindow(cornerRadius: 20) { UpdateView() })
+         }
+         windowController?.window?.makeKeyAndOrderFront(self)
+         windowController?.window?.orderFrontRegardless()
+```
+
+**File**: `Loop/Updater/Views/UpdateView.swift` (modified, +0/-1)
+```diff
+@@ -68,7 +68,6 @@ struct UpdateView: View {
+         }
+         .frame(width: 500, height: 480)
+         .padding(.top, 38) // titlebar
+-        .luminareBackground()
+     }
+ 
+     private func theLoopTimesView() -> some View {
+```
+
+**File**: `Loop/Utilities/BackdropBlurView.swift` (added, +128/-0)
+```diff
+@@ -0,0 +1,128 @@
++//
++//  BackdropBlurView.swift
++//  Loop
++//
++//  Created by Kai Azim on 2026-11-21.
++//
++
++import SwiftUI
++
++/// A pass-through Gaussian blur of everything behind the window.
++struct BackdropBlurView: NSViewRepresentable {
++    let radius: CGFloat
++
++    func makeNSView(context _: Context) -> BackdropBlurNSView {
++        BackdropBlurNSView(radius: radius)
++    }
++
++    func updateNSView(_ view: BackdropBlurNSView, context _: Context) {
++        view.radius = radius
++    }
++}
++
++final class BackdropBlurNSView: NSVisualEffectView {
++    var radius: CGFloat {
++        didSet {
++            guard radius != oldValue else { return }
++            reduceToBlur()
++        }
++    }
++
++    init(radius: CGFloat) {
++        self.radius = radius
++        super.init(frame: .zero)
++
++        // A behind-window visual effect view is what makes AppKit sample the content behind the window,
++        // so this works without making the window transparent. Its material is then reduced to just a blur.
++        material = .menu
++        blendingMode = .behindWindow
++        state = .active
++    }
++
++    @available(*, unavailable)
++    required init?(coder _: NSCoder) {
++        fatalError("init(coder:) has not been implemented")
++    }
++
++    /// The blur is purely visual
++    override func hitTest(_: NSPoint) -> NSView? {
++        nil
++    }
++
++    // AppKit rebuilds the material's layers on these occasions (such as appearance changes),
++    // so the blur is reapplied after each one. Reapplying is a no-op when nothing has changed.
++
++    override func layout() {
++        super.layout()
++        reduceToBlur()
++    }
++
++    override func updateLayer() {
++        super.updateLayer()
++        reduceToBlur()
++    }
++
++    override func viewDidChangeEffectiveAppearance() {
++        super.viewDidChangeEffectiveAppearance()
++        reduceToBlur()
++    }
++
++    override func viewDidMoveToWindow() {
++        super.viewDidMoveToWindow()
++        reduceToBlur()
++    }
++
++    /// Reduces AppKit's material to a plain Gaussian blur of the given radius.
++    private func reduceToBlur() {
++        guard
++            let layer,
++            let backdropLayer = Self.findBackdropLayer(in: layer),
++            let filters = backdropLayer.filters as? [NSObject]
++        else {
++            return
++        }
++
++        // Keep only the blur (and SDR normalization), dropping the material's saturation boost
++        let keptFilters = filters.filter { filter in
++            let type = Self.filterType(of: filter)
++            return type == "gaussianBlur" || type == "sdrNormalize"
++        }
++
++        guard let blurFilter = keptFilters.first(where: { Self.filterType(of: $0) == "gaussianBlur" }) else {
++            return
++        }
++
++        let radiusChanged = (blurFilter.value(forKey: "inputRadius") as? CGFloat) != radius
++        if radiusChanged {
++            blurFilter.setValue(radius, forKey: "inputRadius")
++        }
++
++        // Filters are only applied when reassigned, so reassign them only when something changed
++        if radiusChanged || keptFilters.count != filters.count {
++            backdropLayer.filters = keptFilters
++        }
++
++        // Hide the material's tint layers, which sit beside the backdrop layer
++        for sibling in backdropLayer.superlayer?.sublayers ?? [] where sibling !== backdropLayer && !sibling.isHidden {
++            sibling.isHidden = true
++        }
++    }
++
++    private static func filterType(of filter: NSObject) -> String? {
++        filter.value(forKey: "type") as? String
++    }
++
++    private static func findBackdropLayer(in layer: CALayer) -> CALayer? {
++        if String(describing: type(of: layer)) == "CABackdropLayer" {
++            return layer
++        }
++
++        for sublayer in layer.sublayers ?? [] {
++            if let backdropLayer = findBackdropLayer(in: sublayer) {
++                return backdropLayer
++            }
++        }
++
++        return nil
++    }
++}
 ```
 
 #### Recent Merged Pull Requests:
@@ -1634,31 +2094,33 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. 🐞 Fix window focus within frontmost app + gesture rebuild fixes
+## X. 🐞 Shrink a window before moving it to a smaller frame
 
 **RULE**:
-When implementing operations in `Loop/Core/LoopManager.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mrkai77/Loop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Loop/Core/WindowDragManager.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mrkai77/Loop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1bba20ec`: 🐞 Fix window focus within frontmost app + gesture rebuild fixes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5cc7551c`: 🐞 Shrink a window before moving it to a smaller frame. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Loop/Core/LoopManager.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Loop/Core/WindowDragManager.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-                        await newTargetWindow.focus()
+            window.performFrameAdjustment { writer in
+                writer.setSize(initialFrame.size)
+            }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Induced defect failure mode:
-                        newTargetWindow.focus()
+            window.setSize(initialFrame.size)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1bba20ec` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5cc7551c` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261120-HF0E",
-    "timestamp": "2026-11-20T16:13:09.566Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "d1290f7ead957efee84884e64f07f745d977a3ac753d673baa003b79253fb0fd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-IG60",
-    "timestamp": "2026-11-20T16:13:57.720Z",
-    "repository": "RevenueCat/purchases-ios",
-    "learningId": "learn-github-revenuecat-purchases-ios",
-    "contentHash": "a482853479dda930de02970da1c44c72fbfea515b332004977c8e5110c5c7a51",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-IHUZ",
-    "timestamp": "2026-11-20T16:13:59.915Z",
-    "repository": "AngelSlim/Hy4-flash-GGUF",
-    "learningId": "learn-huggingface-angelslim-hy4-flash-gguf",
-    "contentHash": "9605a5b4cc1edb37f43d288f8fe159c5f08c0d09d7b1ed2e5525a20fce37827e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-1278",
-    "timestamp": "2026-11-20T16:28:26.084Z",
-    "repository": "lxml/lxml",
-    "learningId": "learn-github-lxml-lxml",
-    "contentHash": "a8f6f1c2e26aa8e367954fe09fe6f53cf9ed67225cd61abeccfbe0cdf9e095c8",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261120-17J6",
     "timestamp": "2026-11-20T16:28:32.994Z",
     "repository": "pingcap/tidb",
@@ -7492,6 +7432,66 @@
     "contentHash": "6b3ff9c82f2b218919a9b7bd7b0e20fce3b1bdb974a3a53bc882811ec4fa61e6",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-M2MN",
+    "timestamp": "2026-11-22T16:48:06.863Z",
+    "repository": "sentence-transformers/all-MiniLM-L6-v2",
+    "learningId": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
+    "contentHash": "06fa42f092d2c4156d71359ceb716c0d0e8174231564b7cfeb1a6036cb458252",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-M312",
+    "timestamp": "2026-11-22T16:48:07.382Z",
+    "repository": "pola-rs/polars",
+    "learningId": "learn-github-pola-rs-polars",
+    "contentHash": "47824c59f914792b04338567c854e3fec244e58dbc546ab9ba226b268f6590f0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-M6CD",
+    "timestamp": "2026-11-22T16:48:11.677Z",
+    "repository": "mrkai77/Loop",
+    "learningId": "learn-github-mrkai77-loop",
+    "contentHash": "710bf06b77dbefe8c3bb7d636aa533183bc30df880029d9cc9cb8cbdf21ba9f8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-MDHP",
+    "timestamp": "2026-11-22T16:48:20.941Z",
+    "repository": "ydb-platform/ydb",
+    "learningId": "learn-github-ydb-platform-ydb",
+    "contentHash": "c0fa42e35dd52f03a6f2ec6c6a901f8225557c7131f7845d72473dcf42fa7304",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

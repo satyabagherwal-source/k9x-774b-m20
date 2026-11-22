@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T16:29:45.489Z",
+  "last_updated": "2026-11-22T16:48:26.249Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-22T14:17:31.887Z",
@@ -108,7 +108,7 @@
       "staged_for_review": 1
     },
     "pola-rs-polars-learnings.md": {
-      "processed_at": "2026-11-21T03:36:53.576Z",
+      "processed_at": "2026-11-22T16:48:24.295Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -553,7 +553,7 @@
       "staged_for_review": 1
     },
     "mrkai77-loop-learnings.md": {
-      "processed_at": "2026-11-19T15:21:31.865Z",
+      "processed_at": "2026-11-22T16:48:25.453Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1728,7 +1728,7 @@
       "staged_for_review": 0
     },
     "hf-sentence-transformers-all-minilm-l6-v2-learnings.md": {
-      "processed_at": "2026-11-18T10:08:57.120Z",
+      "processed_at": "2026-11-22T16:48:25.058Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3718,7 +3718,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3144,
+  "total_dossiers_evaluated": 3147,
   "total_canonical_promoted": 475,
-  "total_staged_for_review": 2388
+  "total_staged_for_review": 2390
 }

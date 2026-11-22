@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T16:29:45.005Z",
+  "last_updated": "2026-11-22T16:48:25.942Z",
   "total_records": 2362,
   "domains": {
     "A": {
@@ -17244,8 +17244,8 @@
       "title": "Architecture Intelligence: pola-rs/polars Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-pola-rs-polars-architecture-intelligence-pola-rs-polars-core-invariants.md",
       "repository": "pola-rs/polars",
-      "content_hash": "a45209289d774828f91a3c9132aa9f10a8c08479f165ff9aae12e52806de93bd",
-      "created_at": "2026-11-21T03:36:38.466Z"
+      "content_hash": "92327028bcff3fa320c4c191a951d20343ade35ef2102af4b496063bf48c8e7b",
+      "created_at": "2026-11-22T16:48:07.784Z"
     },
     "domain_intelligence-content-information-intelligence-yugabyte-yugabyte-db-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-yugabyte-yugabyte-db-core-invariants",
@@ -17262,8 +17262,8 @@
       "title": "Architecture Intelligence: pola-rs-polars-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-pola-rs-polars-learnings-architecture-intelligence-pola-rs-polars-learnings-core.md",
       "repository": "pola-rs-polars-learnings",
-      "content_hash": "c483f87b366f3c92621cce1fdb1a04b0a50a75ca2bcd455150c18754f20a386f",
-      "created_at": "2026-11-21T03:36:53.993Z"
+      "content_hash": "8df79279492c4d757f641f77650b6c1030096b3a7cc2169f6532bb4ca256f3dd",
+      "created_at": "2026-11-22T16:48:24.733Z"
     },
     "DOM-D-A6170DB1": {
       "record_id": "DOM-D-A6170DB1",
@@ -17454,8 +17454,8 @@
       "title": "Technical Construction Intelligence: ydb-platform/ydb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ydb-platform-ydb-technical-construction-intelligence-ydb-platform-ydb-core-invar.md",
       "repository": "ydb-platform/ydb",
-      "content_hash": "3a096e04a4b8e43054a5b546d653fa0b5be53dd8f8a12cc77cb69c20ff930ae5",
-      "created_at": "2026-11-21T13:53:45.835Z"
+      "content_hash": "ecf0fc654641cce67da6ecc21946c9b991ba588fa0f109957177452017b06a8b",
+      "created_at": "2026-11-22T16:48:21.320Z"
     },
     "domain_intelligence-architecture-intelligence-facebook-folly-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-facebook-folly-learnings-core-invariants",
@@ -29102,8 +29102,8 @@
       "title": "Research & Knowledge Intelligence: sentence-transformers/all-MiniLM-L6-v2 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sentence-transformers-all-minilm-l6-v2-research-knowledge-intelligence-senten.md",
       "repository": "sentence-transformers/all-MiniLM-L6-v2",
-      "content_hash": "0ae4d99db93a13cc086ac96f227a01268acea9e5ee6ffbbe4306132c78b11f4a",
-      "created_at": "2026-11-18T10:08:39.404Z"
+      "content_hash": "1c825535cf0d6d5c01a68d128bb459ddc742a7ff0f32a932f96c3fbea52430be",
+      "created_at": "2026-11-22T16:48:07.082Z"
     },
     "domain_intelligence-technical-construction-intelligence-kubeedge-kubeedge-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-kubeedge-kubeedge-core-invariants",
@@ -29120,8 +29120,8 @@
       "title": "Research & Knowledge Intelligence: hf-sentence-transformers-all-minilm-l6-v2-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sentence-transformers-all-minilm-l6-v2-learnings-research-knowledge-intellige.md",
       "repository": "hf-sentence-transformers-all-minilm-l6-v2-learnings",
-      "content_hash": "e7bfac092fc2d551010045ce8c222fd5fe25fc3912ee0962d069a6ae694b2adc",
-      "created_at": "2026-11-18T10:08:57.302Z"
+      "content_hash": "6452dc642a8f2ec6b5109c6d7f6e56f0ff26d4b0cc400f2d7460d993a0907ab0",
+      "created_at": "2026-11-22T16:48:25.258Z"
     },
     "domain_intelligence-technical-construction-intelligence-kubeedge-kubeedge-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-kubeedge-kubeedge-learnings-core-invariants",
@@ -33642,8 +33642,8 @@
       "title": "Design Intelligence: mrkai77/Loop Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-mrkai77-loop-design-intelligence-mrkai77-loop-core-invariants.md",
       "repository": "mrkai77/Loop",
-      "content_hash": "e4adca422e874283ca93946aedf0d3157d9200a1109ad7768d859cc0d742784a",
-      "created_at": "2026-11-19T15:16:35.537Z"
+      "content_hash": "6af727fce58e756afbdd47a3e6c1bfc27f2afafa1a0d06cdf6c33fdbf6465692",
+      "created_at": "2026-11-22T16:48:12.048Z"
     },
     "domain_intelligence-design-intelligence-mrkai77-loop-learnings-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-mrkai77-loop-learnings-core-invariants",
@@ -33651,8 +33651,8 @@
       "title": "Design Intelligence: mrkai77-loop-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-mrkai77-loop-learnings-design-intelligence-mrkai77-loop-learnings-core-invariant.md",
       "repository": "mrkai77-loop-learnings",
-      "content_hash": "3522c30caf81357ed73741c9c407cbe9f82b6d07a1528d4b308fea8a3f8c8bb6",
-      "created_at": "2026-11-19T15:21:32.430Z"
+      "content_hash": "e64a38d991f5ee0f443656da049e3d37d1ea0f29d1011f516064f7202a119c79",
+      "created_at": "2026-11-22T16:48:25.942Z"
     },
     "domain_intelligence-technical-construction-intelligence-simonschubert-linuxcommandlibrary-core-invar": {
       "record_id": "domain_intelligence-technical-construction-intelligence-simonschubert-linuxcommandlibrary-core-invar",
