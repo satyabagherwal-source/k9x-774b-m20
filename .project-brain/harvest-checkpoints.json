@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T18:35:18.205Z",
+  "last_updated": "2026-11-22T18:44:06.324Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -365,14 +365,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen-image-2-1",
-      "content_hash": "7edb1bada23fe9ca3af9355de46152aef6226eb9835af0cc2c57689c51b0a8e5",
-      "verified_at": "2026-11-18T12:03:18.798Z",
+      "content_hash": "62f5458d8defdfdd1c7e26706a3e06af9d7ab568cebbeebabf729024a68820c2",
+      "verified_at": "2026-11-22T18:44:02.737Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T12:03:18.798Z"
+      "last_updated": "2026-11-22T18:44:02.737Z"
     },
     "Contrastive-LM/CLM-v0.1-8B": {
       "repository": "Contrastive-LM/CLM-v0.1-8B",
@@ -18741,14 +18741,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tuist-tuist",
-      "content_hash": "ed4b03f14a6f2bb479e134c46aa1c54c1c0d5322e9a4aeda2cb38dee8f083f8a",
-      "verified_at": "2026-11-21T06:27:54.248Z",
+      "content_hash": "635b355e61a407692ae661adbaa26aff03631c408d293d9be0d69ddca6b7a382",
+      "verified_at": "2026-11-22T18:44:06.323Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T06:27:54.248Z"
+      "last_updated": "2026-11-22T18:44:06.323Z"
     },
     "mixelpixx/KiCAD-MCP-Server": {
       "repository": "mixelpixx/KiCAD-MCP-Server",

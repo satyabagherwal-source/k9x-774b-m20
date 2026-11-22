@@ -315,8 +315,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen-Image-2.1",
     "sourceVersion": "hf-qwen-qwen-image-2.1",
     "license": "Open-Source",
-    "contentHash": "7edb1bada23fe9ca3af9355de46152aef6226eb9835af0cc2c57689c51b0a8e5",
-    "lastHarvestedAt": "2026-11-18T12:03:18.792Z",
+    "contentHash": "62f5458d8defdfdd1c7e26706a3e06af9d7ab568cebbeebabf729024a68820c2",
+    "lastHarvestedAt": "2026-11-22T18:44:02.726Z",
     "learningId": "learn-huggingface-qwen-qwen-image-2-1"
   },
   "hf-contrastive-lm-clm-v0.1-8b": {
@@ -12453,10 +12453,10 @@
     "repository": "tuist/tuist",
     "platform": "github",
     "sourceUrl": "https://github.com/tuist/tuist",
-    "sourceVersion": "45d39123",
+    "sourceVersion": "d7dac153",
     "license": "NOASSERTION",
-    "contentHash": "ed4b03f14a6f2bb479e134c46aa1c54c1c0d5322e9a4aeda2cb38dee8f083f8a",
-    "lastHarvestedAt": "2026-11-21T06:27:54.240Z",
+    "contentHash": "635b355e61a407692ae661adbaa26aff03631c408d293d9be0d69ddca6b7a382",
+    "lastHarvestedAt": "2026-11-22T18:44:06.313Z",
     "learningId": "learn-github-tuist-tuist"
   },
   "mixelpixx-kicad-mcp-server": {

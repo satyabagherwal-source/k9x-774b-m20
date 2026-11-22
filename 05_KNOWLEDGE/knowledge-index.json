@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T18:35:30.653Z",
+  "last_updated": "2026-11-22T18:44:17.582Z",
   "total_verified_learnings": 9072,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23705,
+  "total_items": 23708,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "0e44a5a39afa2906f124ea4f6ee4863b7eb72f05f2a92c23cc6c5358ae7c13e2",
+      "content_hash": "18a646dff1ee108de5621b8b052f5682f53182182c2c3d0f633eb62486f7df2e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T18:12:35.533Z"
+      "persisted_at": "2026-11-22T18:44:17.189Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "a0649d19cbc5ee3ef7dbbb64d1ee20637cdba625568ba8c040d9bee8fa12826b",
+      "content_hash": "a0494d75a76bff442bd123897de9995ddc7bb60cc9dc761d790b574a9f419256",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T18:12:35.835Z"
+      "persisted_at": "2026-11-22T18:44:17.401Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "a89e5f852d2fb0b9d9d242b65f79cca0c66951ccee6755eebf701de7e3f3bd0a",
+      "content_hash": "4e310794a9db7dee34374ce30228dc68a154b2c3f4d7bd939de5d26f245c7c78",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T18:12:36.080Z"
+      "persisted_at": "2026-11-22T18:44:17.582Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -245543,8 +245543,8 @@
       "slug": "tuist-tuist",
       "platform": "github",
       "source_url": "https://github.com/tuist/tuist",
-      "source_version": "45d39123",
-      "content_hash": "ed4b03f14a6f2bb479e134c46aa1c54c1c0d5322e9a4aeda2cb38dee8f083f8a",
+      "source_version": "d7dac153",
+      "content_hash": "635b355e61a407692ae661adbaa26aff03631c408d293d9be0d69ddca6b7a382",
       "dossier_path": "07_PROJECT_LEARNING/tuist-tuist-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tuist-tuist-learnings.md",
       "promoted_rules": [
@@ -245572,6 +245572,11 @@
           "number": 9736,
           "title": "install a site's first edge without an archive (hotfix)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9973,
+          "title": "stop failed macOS sandbox creates from holding their host",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -245579,7 +245584,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T06:27:54.055Z",
+      "verified_at": "2026-11-22T18:44:06.048Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -245621,10 +245626,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tuist-tuist-architecture-intelligence-tuist-tuist-core-invariants.md",
       "title": "Architecture Intelligence: tuist/tuist Core Invariants",
       "repository": "tuist/tuist",
-      "source_version": "45d39123",
-      "content_hash": "84279eb037730cb254d547db853b4da50c25d5aaf04032837b05e30152fe4edb",
+      "source_version": "d7dac153",
+      "content_hash": "067454663c6ac97f88c020fe2f34104d83f42c23bbd8a011d2439d46ddd8b4cf",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T06:27:54.555Z"
+      "persisted_at": "2026-11-22T18:44:06.836Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tuist-tuist": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tuist-tuist",
@@ -245633,10 +245638,10 @@
       "relative_path": "08_VERIFICATION/tuist-tuist-verification-protocol-empirical-defect-shield-for-tuist-tuist.md",
       "title": "Verification Protocol: Empirical Defect Shield for tuist/tuist",
       "repository": "tuist/tuist",
-      "source_version": "45d39123",
-      "content_hash": "113602b3a34b389bf8c40bab6a32fc0e1961dd0deb0b2fe84babbffb1cf5992e",
+      "source_version": "d7dac153",
+      "content_hash": "5736230c3acc0ad68b490c10fe18c946774cf02725bee3884ba04cae409894d0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T06:27:54.820Z"
+      "persisted_at": "2026-11-22T18:44:07.263Z"
     },
     "learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated": {
       "learning_id": "learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated",
@@ -245934,9 +245939,9 @@
       "title": "Architecture Intelligence: tuist-tuist-learnings Core Invariants",
       "repository": "tuist-tuist-learnings",
       "source_version": "HEAD",
-      "content_hash": "60d3f6a94164579e47be491ff4e7e0ecfb61d62dd1670c90f5655c35f5a244af",
+      "content_hash": "530d8fea49f849afee5d2b9067cd1264b36e950d35fbb39e8c4475999f234e93",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T06:28:09.836Z"
+      "persisted_at": "2026-11-22T18:44:15.197Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tuist-tuist-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tuist-tuist-learnings",
@@ -245946,9 +245951,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tuist-tuist-learnings",
       "repository": "tuist-tuist-learnings",
       "source_version": "HEAD",
-      "content_hash": "9c0ca333d33e1fe41caf8230bef8f44a90a6af433bfb79ce7984d1de26e3c662",
+      "content_hash": "032574ea9a93d5ce983a38742334c93e24c78b7b71108795210d24e55c684aa4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T06:28:10.105Z"
+      "persisted_at": "2026-11-22T18:44:15.598Z"
     },
     "candidate_directive-orthogonal-weight-projection-invariant-for-activation-ablation": {
       "item_id": "candidate_directive-orthogonal-weight-projection-invariant-for-activation-ablation",
@@ -282687,7 +282692,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen-Image-2.1",
       "source_version": "hf-qwen-qwen-image-2.1",
-      "content_hash": "7edb1bada23fe9ca3af9355de46152aef6226eb9835af0cc2c57689c51b0a8e5",
+      "content_hash": "62f5458d8defdfdd1c7e26706a3e06af9d7ab568cebbeebabf729024a68820c2",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-learnings.md",
       "promoted_rules": [
@@ -282712,7 +282717,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T12:03:18.604Z",
+      "verified_at": "2026-11-22T18:44:02.453Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -289638,9 +289643,9 @@
       "title": "Research & Knowledge Intelligence: Qwen/Qwen-Image-2.1 Core Invariants",
       "repository": "Qwen/Qwen-Image-2.1",
       "source_version": "hf-qwen-qwen-image-2.1",
-      "content_hash": "d3c3554300ad28853ea8fa8e358255a4b659ce14cf3e1a23e696d429c322116c",
+      "content_hash": "98469e76146e4f211039ba8090bbe0f0267f960e0d6239b22081410906362691",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T12:03:18.965Z"
+      "persisted_at": "2026-11-22T18:44:03.009Z"
     },
     "rule-9214": {
       "learning_id": "rule-9214",
@@ -289676,9 +289681,9 @@
       "title": "Research & Knowledge Intelligence: hf-qwen-qwen-image-2.1-learnings Core Invariants",
       "repository": "hf-qwen-qwen-image-2.1-learnings",
       "source_version": "HEAD",
-      "content_hash": "01d761995191910707f0dc8a6cf4f36cc30462eb7f8f1e9119cfa4c36e3128d9",
+      "content_hash": "6fa5e775c2c2a04087674717b2bcfaba3181118761f7acdc0b3dda2c3bdc40ba",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T12:03:32.700Z"
+      "persisted_at": "2026-11-22T18:44:16.068Z"
     },
     "candidate_directive-br-fix-cdc-changefeed-conflicts-error-message": {
       "item_id": "candidate_directive-br-fix-cdc-changefeed-conflicts-error-message",
@@ -299273,10 +299278,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/tuist-tuist-agent-contract-tuist-tuist-autonomous-specialist-persona.md",
       "title": "Agent Contract: tuist/tuist Autonomous Specialist Persona",
       "repository": "tuist/tuist",
-      "source_version": "45d39123",
-      "content_hash": "0bc53cc3de1ff3dcd532d67e25e23127b85a7be330816722a1d393688ad41219",
+      "source_version": "d7dac153",
+      "content_hash": "6ca4c1f568d300112c2bd10e6f34e2d0fc14eb140945980f9b020ce90d2e93aa",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T06:27:54.700Z"
+      "persisted_at": "2026-11-22T18:44:07.047Z"
     },
     "candidate_directive-add-introspection-benchmarks": {
       "item_id": "candidate_directive-add-introspection-benchmarks",
@@ -299322,9 +299327,9 @@
       "title": "Agent Contract: tuist-tuist-learnings Autonomous Specialist Persona",
       "repository": "tuist-tuist-learnings",
       "source_version": "HEAD",
-      "content_hash": "74b8f007954500f30810325edfa7ccf15a7eff8b83acaa92d8e27fd5563879ea",
+      "content_hash": "c9648a5c66a121edbfbe6d5f802a4acd0b440ff11548947f5763cb9d5c621525",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T06:28:09.985Z"
+      "persisted_at": "2026-11-22T18:44:15.423Z"
     },
     "candidate_directive-docs-add-latest-release-badge-to-readme": {
       "item_id": "candidate_directive-docs-add-latest-release-badge-to-readme",
@@ -309793,13 +309798,13 @@
       "item_id": "candidate_directive-benchmarks-report-gold-coverage-across-retrieval-stages",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-MPGG-benchmarks-report-gold-coverage-across-retrieval-stages.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-RGSR-benchmarks-report-gold-coverage-across-retrieval-stages.md",
       "title": "benchmarks): report Gold coverage across retrieval stages",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "35c775141bc7aa8d1844d6fe470d30ac07e0de49183f56382b8c636218604334",
+      "content_hash": "0f0027e0e846c4323d2df465584ab2089c39beb28d48f5240a95282b8fb99ea4",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T18:12:35.299Z"
+      "persisted_at": "2026-11-22T18:44:16.976Z"
     },
     "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it": {
       "item_id": "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it",
@@ -322623,6 +322628,44 @@
       "content_hash": "7bed343a77cec59cedbdaff754229f309dbc3affbbac6fb46dd8f89f4dcfa25b",
       "domain_letter": "H",
       "persisted_at": "2026-11-22T18:35:29.250Z"
+    },
+    "rule-9973": {
+      "learning_id": "rule-9973",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9973,
+      "title": "stop failed macOS sandbox creates from holding their host",
+      "source_url": "https://github.com/tuist/tuist",
+      "source_version": "d7dac153",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T18:44:06.048Z"
+    },
+    "candidate_directive-stop-failed-macos-sandbox-creates-from-holding-their-host": {
+      "item_id": "candidate_directive-stop-failed-macos-sandbox-creates-from-holding-their-host",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-R8T1-stop-failed-macos-sandbox-creates-from-holding-their-host.md",
+      "title": "stop failed macOS sandbox creates from holding their host",
+      "repository": "tuist/tuist",
+      "source_version": "d7dac153",
+      "content_hash": "630cb6bd91b2e4c3c40f074eab522026ea77f413aabf1c1fe26f67e6cf5867df",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-22T18:44:06.614Z"
+    },
+    "candidate_directive-server-stop-failed-macos-sandbox-creates-from-holding-their-host": {
+      "item_id": "candidate_directive-server-stop-failed-macos-sandbox-creates-from-holding-their-host",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-RF9I-server-stop-failed-macos-sandbox-creates-from-holding-their-host.md",
+      "title": "server): stop failed macOS sandbox creates from holding their host",
+      "repository": "tuist-tuist-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6182b27f48d83905d057daa807dbbb60c7908bfbc65356b9de156f1023cef54c",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-22T18:44:14.983Z"
     }
   },
   "ai-builder-brain": {

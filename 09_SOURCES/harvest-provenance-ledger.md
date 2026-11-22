@@ -12184,3 +12184,5 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `4c1f0dba` | Multi-dimensional audit evidence | 2026-11-22T18:21:34.086Z |
 | `learn-huggingface-xingchen-agi-teleocr` | `https://huggingface.co/XingChen-AGI/TeleOCR` | `hf-xingche` | Multi-dimensional audit evidence | 2026-11-22T18:35:17.051Z |
 | `learn-github-yyjeqhc-webcodex` | `https://github.com/yyjeqhc/webcodex` | `8779794b` | Multi-dimensional audit evidence | 2026-11-22T18:35:18.197Z |
+| `learn-huggingface-qwen-qwen-image-2-1` | `https://huggingface.co/Qwen/Qwen-Image-2.1` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-22T18:44:02.726Z |
+| `learn-github-tuist-tuist` | `https://github.com/tuist/tuist` | `d7dac153` | Multi-dimensional audit evidence | 2026-11-22T18:44:06.313Z |

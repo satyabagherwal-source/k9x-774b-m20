@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-22T18:21:39.220Z",
+  "updated_at": "2026-11-22T18:44:14.676Z",
   "stats": {
-    "total_discovered": 7604,
-    "approved_pending_harvest": 7201,
+    "total_discovered": 7607,
+    "approved_pending_harvest": 7204,
     "harvested_count": 0,
     "rejected_count": 403,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7178,
+      "COMMUNITY_AND_EXPERT": 7181,
       "OFFICIAL_DOCUMENTATION": 246,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 5,
@@ -164490,6 +164490,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
         "fileName": "aleo-labs-protocol-snarkos-learnings.md"
+      }
+    },
+    "SRC-E8624745C85F": {
+      "id": "SRC-E8624745C85F",
+      "url": "https://ampcode.com/threads/T-01a1fe45-0",
+      "title": "https://ampcode.com/threads/T-01a1fe45-0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T18:44:14.545Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tuist-tuist-learnings.md",
+        "fileName": "tuist-tuist-learnings.md"
+      }
+    },
+    "SRC-EA3D08D69FCA": {
+      "id": "SRC-EA3D08D69FCA",
+      "url": "https://ampcode.com/threads/T-01a1feb4-81b2-742b-9e6b-66fc025745b3",
+      "title": "https://ampcode.com/threads/T-01a1feb4-81b2-742b-9e6b-66fc025745b3",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T18:44:14.611Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tuist-tuist-learnings.md",
+        "fileName": "tuist-tuist-learnings.md"
+      }
+    },
+    "SRC-15D9CEE98A08": {
+      "id": "SRC-15D9CEE98A08",
+      "url": "https://ampcode.com/threads/T-01a1ef10-0711-724d-a8e9-08ca9104cead",
+      "title": "https://ampcode.com/threads/T-01a1ef10-0711-724d-a8e9-08ca9104cead",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T18:44:14.676Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tuist-tuist-learnings.md",
+        "fileName": "tuist-tuist-learnings.md"
       }
     }
   }

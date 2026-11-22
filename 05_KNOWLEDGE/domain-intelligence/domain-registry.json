@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T18:35:30.494Z",
+  "last_updated": "2026-11-22T18:44:17.189Z",
   "total_records": 2370,
   "domains": {
     "A": {
@@ -8140,8 +8140,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "0e44a5a39afa2906f124ea4f6ee4863b7eb72f05f2a92c23cc6c5358ae7c13e2",
-      "created_at": "2026-11-22T18:12:35.533Z"
+      "content_hash": "18a646dff1ee108de5621b8b052f5682f53182182c2c3d0f633eb62486f7df2e",
+      "created_at": "2026-11-22T18:44:17.189Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -20706,8 +20706,8 @@
       "title": "Architecture Intelligence: tuist/tuist Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tuist-tuist-architecture-intelligence-tuist-tuist-core-invariants.md",
       "repository": "tuist/tuist",
-      "content_hash": "84279eb037730cb254d547db853b4da50c25d5aaf04032837b05e30152fe4edb",
-      "created_at": "2026-11-21T06:27:54.555Z"
+      "content_hash": "067454663c6ac97f88c020fe2f34104d83f42c23bbd8a011d2439d46ddd8b4cf",
+      "created_at": "2026-11-22T18:44:06.836Z"
     },
     "domain_intelligence-quality-verification-intelligence-obliteratus-deepseek-v4-1-flash-1017-obliterat": {
       "record_id": "domain_intelligence-quality-verification-intelligence-obliteratus-deepseek-v4-1-flash-1017-obliterat",
@@ -20733,8 +20733,8 @@
       "title": "Architecture Intelligence: tuist-tuist-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tuist-tuist-learnings-architecture-intelligence-tuist-tuist-learnings-core-invar.md",
       "repository": "tuist-tuist-learnings",
-      "content_hash": "60d3f6a94164579e47be491ff4e7e0ecfb61d62dd1670c90f5655c35f5a244af",
-      "created_at": "2026-11-21T06:28:09.836Z"
+      "content_hash": "530d8fea49f849afee5d2b9067cd1264b36e950d35fbb39e8c4475999f234e93",
+      "created_at": "2026-11-22T18:44:15.197Z"
     },
     "domain_intelligence-quality-verification-intelligence-hf-obliteratus-deepseek-v4-1-flash-1017-oblite": {
       "record_id": "domain_intelligence-quality-verification-intelligence-hf-obliteratus-deepseek-v4-1-flash-1017-oblite",
@@ -31403,8 +31403,8 @@
       "title": "Research & Knowledge Intelligence: Qwen/Qwen-Image-2.1 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen-image-2-1-research-knowledge-intelligence-qwen-qwen-image-2-1-core-.md",
       "repository": "Qwen/Qwen-Image-2.1",
-      "content_hash": "d3c3554300ad28853ea8fa8e358255a4b659ce14cf3e1a23e696d429c322116c",
-      "created_at": "2026-11-18T12:03:18.965Z"
+      "content_hash": "98469e76146e4f211039ba8090bbe0f0267f960e0d6239b22081410906362691",
+      "created_at": "2026-11-22T18:44:03.009Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen-image-2-1-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen-image-2-1-learnings-core-invariants",
@@ -31412,8 +31412,8 @@
       "title": "Research & Knowledge Intelligence: hf-qwen-qwen-image-2.1-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen-image-2-1-learnings-research-knowledge-intelligence-hf-qwen-qwen-im.md",
       "repository": "hf-qwen-qwen-image-2.1-learnings",
-      "content_hash": "01d761995191910707f0dc8a6cf4f36cc30462eb7f8f1e9119cfa4c36e3128d9",
-      "created_at": "2026-11-18T12:03:32.700Z"
+      "content_hash": "6fa5e775c2c2a04087674717b2bcfaba3181118761f7acdc0b3dda2c3bdc40ba",
+      "created_at": "2026-11-22T18:44:16.068Z"
     },
     "domain_intelligence-quality-verification-intelligence-sharkdp-fd-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-sharkdp-fd-core-invariants",

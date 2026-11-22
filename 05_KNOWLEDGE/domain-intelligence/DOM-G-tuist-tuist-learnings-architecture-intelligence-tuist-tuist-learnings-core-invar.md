@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T06:28:09.591Z",
+  "timestamp": "2026-11-22T18:44:14.847Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-tuist-tuist-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [tuist-tuist-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T06:28:09.591Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T18:44:14.847Z`  
 > **Learning ID**: `LEARN-EVO-tuist-tuist-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), F (Design Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 77%
+- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), H (Technical Construction Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 61%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from tuist-tuist-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tuist-tuist-learnings.md`  
 > **Source**: github ([https://github.com/tuist/tuist](https://github.com/tuist/tuist))  
-> **Source Version**: `45d39123`  
+> **Source Version**: `d7dac153`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T06:27:53.310Z  
+> **Timestamp**: 2026-11-22T18:44:05.073Z  
 > **Learning ID**: `learn-github-tuist-tuist`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tuist-tuist-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tuist/tuist](https://github.com/tuist/tuist))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T06:27:53.137Z  
+> **Harvest Timestamp**: 2026-11-22T18:44:05.066Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Tuist builds infrastructure for faster, more reliable build and test workflows across developers, CI, and coding agents. Shared cache, tests, and insights that sit alongside your existing CI.
 - **Primary Language / Ecosystem**: Elixir
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 5868 stars
+- **Stars / Engagement**: 5870 stars
 
 ---
 
@@ -486,361 +486,648 @@ struct PreviewsEmptyStateView: View {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a182e968` (2026-11-20)
-**Commit Message**: fix(infra): install a site's first edge without an archive (hotfix)
+### Incident Patch 1: `9c6c3a84` (2026-11-21)
+**Commit Message**: fix(server): stop failed macOS sandbox creates from holding their host
 
-larch-edge-a's install failed at subiquity's package step: iputils-arping, added for the first-boot WAN in #14765, is not on the Ubuntu image, and the first edge of a site installs with no route to an archive (its WAN comes up only at first boot), so apt exited 100 and the install stopped. The first-boot WAN now uses the installer's own busybox arping, copied onto the edge in a late-command, as the resident installer already does, and the install brings no package the image lacks. Subiquity treats a failed security-updates run as non-fatal, so that step does not block the install.
+A macOS create that failed kept its row in `error` with the host
+reservation it was placed with: `resident` held CPU, memory and a VM slot
+(only an error report cleared it, which a host that already deleted the
+VM never sends), and an errored VM the host still listed held its disk
+budget, both until the 14-day retention. Enough of them refused every
+macOS create on the fleet.
 
-Bumps larch-edge-a's reinstallGeneration so the operator publishes the fixed seed.
+A failed create never ran, so the server now deletes it from its host at
+once and keeps the row in `error` without a node, the form a create
+refused for room has. A host that cannot be reached deletes it when it
+next reports it in `error`. A report that no longer lists an errored
+macOS row clears its `resident` and releases a failed create's node,
+which also frees rows already stuck this way.
 
-Amp-Thread-ID: https://ampcode.com/threads/T-01a1c0f5-6c72-77c0-9cd8-2fdf847232d3
-Co-authored-by: Marek Fort <[REDACTED_EMAIL]>
+Managed Agents and Claude Code sessions now replace an errored Mac
+without a node instead of answering `sandbox_recovery_required`, as Amp
+Orbs already did. The row stays as the failure's record, and `failed`
+sandbox events now keep the error, node and template so the failure
+outlives the row.
 
-**File**: `infra/cluster-api-provider-tuist/internal/rackinstall/seed.go` (modified, +11/-6)
+Amp-Thread-ID: https://ampcode.com/threads/T-01a1fe45-0
+
+**File**: `infra/tart-kubelet/macos-sandboxes.md` (modified, +6/-0)
 ```diff
-@@ -261,7 +261,6 @@ autoinstall:
-     - jq
-     - ethtool
-     - lvm2
--    - iputils-arping
-   updates: security
-   shutdown: reboot
-   early-commands:
-@@ -397,6 +396,10 @@ func edgeResolvers(e *EdgeNetwork) string {
- const (
- 	EdgeFirstWANPath  = "/usr/local/sbin/tuist-edge-first-wan"
- 	EdgeFirstWANState = "/run/rack-edge/first-wan"
-+	// EdgeFirstWANBusybox is the installer's busybox, copied onto the edge for
-+	// its arping: the first edge of a site installs with no route to an
-+	// archive, so the install can bring no package the image lacks.
-+	EdgeFirstWANBusybox = "/usr/local/sbin/tuist-busybox"
- 	// EdgeFirstWANMetric is the metric of its default route, below the route
- 	// through the other edge (EdgeVRRPMetric).
- 	EdgeFirstWANMetric = 50
-@@ -423,6 +426,7 @@ func edgeFirstWAN(e *EdgeNetwork) string {
- 		"@GATEWAY@", e.WAN.Gateway,
- 		"@STATE@", EdgeFirstWANState,
- 		"@METRIC@", fmt.Sprint(EdgeFirstWANMetric),
-+		"@BUSYBOX@", EdgeFirstWANBusybox,
- 	).Replace(`#!/usr/bin/env bash
- set -u
- uplinks='@UPLINKS@' vlan=@VLAN@ address='@ADDRESS@' gateway='@GATEWAY@'
-@@ -455,8 +459,8 @@ wan_bond() {
- take() {
-   dev=$1
-   pod && return 1
--  if arping -D -q -c 2 -w 3 -I "$dev" "${address%/*}" && ip addr add "$address" dev "$dev"; then
--    if arping -q -c 2 -w 3 -I "$dev" "$gateway" && ip route add default via "$gateway" dev "$dev" metric "$metric"; then
-+  if @BUSYBOX@ arping -D -q -c 2 -w 3 -I "$dev" "${address%/*}" && ip addr add "$address" dev "$dev"; then
-+    if @BUSYBOX@ arping -q -c 2 -w 3 -I "$dev" "$gateway" && ip route add default via "$gateway" dev "$dev" metric "$metric"; then
-       echo "$dev" >"$state"
-       log "took the site's WAN $address on $dev, through $gateway"
-       return 0
-@@ -482,7 +486,7 @@ misses=0
- while ! pod; do
-   if [ -s "$state" ]; then
-     read -r dev <"$state"
--    if arping -q -c 2 -w 3 -I "$dev" "$gateway"; then
-+    if @BUSYBOX@ arping -q -c 2 -w 3 -I "$dev" "$gateway"; then
-       misses=0
-     elif [ $((misses += 1)) -ge 3 ]; then
-       release
-@@ -507,10 +511,11 @@ RestartSec=20
- [Install]
- WantedBy=multi-user.target
- `
--	return fmt.Sprintf("    - |\n      cat > /target%s <<'TUIST_EOF'\n%s      TUIST_EOF\n      chmod 755 /target%s\n"+
-+	return fmt.Sprintf("    - install -D -m 0755 \"$(command -v busybox)\" /target%s\n"+
-+		"    - |\n      cat > /target%s <<'TUIST_EOF'\n%s      TUIST_EOF\n      chmod 755 /target%s\n"+
- 		"    - |\n      cat > /target/etc/systemd/system/tuist-edge-first-wan.service <<'TUIST_EOF'\n%s      TUIST_EOF\n"+
- 		"    - curtin in-target --target=/target -- systemctl enable tuist-edge-first-wan.service\n",
--		EdgeFirstWANPath, indent(script, "      "), EdgeFirstWANPath, indent(unit, "      "))
-+		EdgeFirstWANBusybox, EdgeFirstWANPath, indent(script, "      "), EdgeFirstWANPath, indent(unit, "      "))
- }
+@@ -198,6 +198,12 @@ its reservation. No capacity is released merely because a save was requested.
+ A VM the runtime proves lost (its process gone with no checkpoint, or its VM
+ missing) holds no CPU or memory and never cold-boots, so it releases its
+ reservation once and stays in `error`, with its disk, until the server deletes it.
++A create that failed never ran, so the server deletes it from the host as soon
++as the create fails, or when the host next reports it in `error`, and keeps its
++row in `error` without a node. The host also deletes a create or claim still
++journaled as failed by itself; a report that no longer lists an errored VM
++clears the row's `resident`, so it stops holding CPU, memory and a slot
++(`server/lib/tuist/sandboxes/AGENTS.md`, Invariants).
+ Node hello/report frames always include the resident boolean, including false
+ after eviction, so the server releases its reservation after the host's fence.
  
- // sshStartLimit takes sshd out of systemd's start rate limit (internal/sshd)
 ```
 
-**File**: `infra/cluster-api-provider-tuist/internal/rackinstall/seed_test.go` (modified, +11/-3)
+**File**: `server/data-export.md` (modified, +1/-1)
 ```diff
-@@ -640,7 +640,7 @@ func TestUserDataGivesAnEdgeTheSitesStaticWANWhileNoPodRuns(t *testing.T) {
- 		"uplinks='enp2s0f1np1 enp2s0f0np0' vlan=4001 address='149.6.170.31/31' gateway='149.6.170.30'",
- 		"state=" + EdgeFirstWANState + " metric=50",
- 		"compgen -G '/etc/kubernetes/manifests/rack-edge-*.yaml'",
--		`arping -D -q -c 2 -w 3 -I "$dev" "${address%/*}"`,
-+		EdgeFirstWANBusybox + ` arping -D -q -c 2 -w 3 -I "$dev" "${address%/*}"`,
- 	} {
- 		if !strings.Contains(script, want) {
- 			t.Errorf("the first-boot WAN lacks %q:\n%s", want, script)
-@@ -663,8 +663,16 @@ func TestUserDataGivesAnEdgeTheSitesStaticWANWhileNoPodRuns(t *testing.T) {
- 	if strings.Contains(fmt.Sprint(seed.Autoinstall.Network), "149.6.170.31") {
- 		t.Errorf("netplan carries the WAN: %+v", seed.Autoinstall.Network)
- 	}
--	if !strings.Contains(out, "    - iputils-arping\n") {
--		t.Errorf("the install does not bring arping")
-+	// The first edge installs with no route to an archive, so its arping is
-+	// the installer's busybox, not a package the image lacks.
-+	if strings.Contains(out, "iputils-arping") {
-+		t.Errorf("the install needs a package from the archive for arping")
-+	}
-+	if !strings.Contains(late, `install -D -m 0755 "$(command -v busybox)" /target`+EdgeFirstWANBusybox) {
-+		t.Errorf("late-commands do not copy the installer's busybox:\n%s", late)
-+	}
-+	if !strings.Contains(script, EdgeFirstWANBusybox+` arping -q -c 2 -w 3 -I "$dev" "$gateway"`) {
-+		t.Errorf("the first-boot WAN does not use the copied busybox's arping:\n%s", script)
- 	}
+@@ -657,7 +657,7 @@ Successful server pauses atomically clear the sandbox's residency. Node reports
  
- 	_, seed = renderEdgeNetwork(t, ber1EdgeB())
+ - **Sandbox uploads** (object storage: `sandbox-uploads/<account_id>/<sandbox_id>/<uuid>` in the account's storage): one object per `POST /api/accounts/:account_handle/sandboxes/:sandbox_id/uploads`, a file a client puts there through a presigned URL for a command in the sandbox to download, such as the compressed worktree files `tuist sandbox sync` sends, or one the server writes for a Tuist thread's sandbox: an uncompressed tar of a one-commit bare Git repository with a thread's repository at its base commit, which the server fetched from GitHub with the account's GitHub App installation (`Tuist.Threads.Checkout`; the server's temporary copy is removed when the upload ends). It is customer content. Its URLs expire after an hour and `Tuist.Sandboxes.Workers.DeleteUploadWorker` deletes it five minutes later, whether or not it was used. There is nothing to export: a used upload's content is in the sandbox.
+ - **Sandbox commands** (Postgres `sandbox_commands`): one row per command started through `POST /api/accounts/:account_handle/sandboxes/:sandbox_id/commands`, or by a Thread run's agent tools (`Tuist.Threads.Sandbox`: a `Bash` command, a dev-server service or a terminal), keyed by UUID. A Thread command's UUID is derived from its Condukt process id (the session and tool call ids), its `command` is the agent-authored shell script, and its row is deleted when the run stops the process; a row the run never stopped, as when the run crashed or its session went away while the command was parked, follows the retention below. While such a command is parked, one Oban job per command (`oban_jobs`, worker `Tuist.Threads.ExitWatchWorker`) waits for its end; its `args` hold the sandbox, account and command ids, the Condukt session id, the signal module name, and the wake key (the tool call id). It completes once the end is delivered and is pruned with other Oban jobs. Columns: `id` (PK), `sandbox_id`, `account_id`, `command` (the customer-authored shell script, or the program and arguments quoted as one), `cwd`, `stdin` (whether stdin was kept open), `status` (`running | exited | timed_out | cancelled | lost`), `exit_code`, `deadline_at`, `finished_at`, `inserted_at`, and `updated_at`. The command's environment is never stored. Its output and stdin live only in the guest under `$HOME/.cache/tuist/commands/<id>/` as VM content and follow the sandbox VM export procedure above. Finished rows are deleted seven days after they finished, the next time a command starts in the sandbox, and rows are deleted with their sandbox or account. Export by filtering `sandbox_commands.account_id`.
+-- **Sandbox lifecycle events** (ClickHouse `sandbox_events`): one row per sandbox state change, written when a sandbox is created, starts running (on boot, resume or restore), is paused, is archived, fails, or is deleted. Columns: `id` (UUIDv7), `account_id`, `sandbox_id`, `event` (`created | started | paused | archived | failed | deleted | setup`), `source` (`amp`, `claude` or `api`), the sandbox's `vcpus`, `memory_mb` and `workspace_gb` at the time, `guaranteed_cpu_milli` (the CPU it was guaranteed, in millicores; 0 on rows from before it was recorded), `boot_source` (on the `started` row of a boot: `template`, `disk_snapshot` or `archive`), `duration_ms` (how long that boot took, or how long an Amp Orb's `.agents/setup` ran on a `setup` row, which the server reads from the times of the setup log in the guest, never its contents) and `inserted_at`. Rows hold no names, prompts or VM content; they feed the sandboxes dashboard's counts, session durations, setup, time to start and peak vCPU and memory charts, and the vCPU-hours and memory GiB-hours on the Usage page. They outlive the `sandboxes` row and expire after 730 days. Export by filtering `sandbox_events.account_id`.
++- **Sandbox lifecycle events** (ClickHouse `sandbox_events`): one row per sandbox state change, written when a sandbox is created, starts running (on boot, resume or restore), is paused, is archived, fails, or is deleted. Columns: `id` (UUIDv7), `account_id`, `sandbox_id`, `event` (`created | started | paused | archived | failed | deleted | setup`), `source` (`amp`, `claude` or `api`), the sandbox's `vcpus`, `memory_mb` and `workspace_gb` at the time, `guaranteed_cpu_milli` (the CPU it was guaranteed, in millicores; 0 on rows from before it was recorded), `boot_source` (on the `started` row of a boot: `template`, `disk_snapshot` or `archive`), `duration_ms` (how long that boot took, or how long an Amp Orb's `.agents/setup` ran on a `setup` row, which the server reads from the times of the setup log in the guest, never its contents), on a `failed` row what the sandbox failed with (`error_message`, the server's or the node's error text, such as a guest provisioning command's exit status; empty on other rows and on rows from before it was recorded), the cluster `node_name` it
 ```
 
-**File**: `infra/helm/tuist/values-managed-production.yaml` (modified, +3/-0)
+**File**: `server/lib/tuist/sandboxes.ex` (modified, +105/-7)
 ```diff
-@@ -1920,6 +1920,9 @@ rackLinuxFleet:
-       role: edge
-       site: larch
-       tpmCheckCode: 921d-3fe4-7a7b-a3ea
-+      # 1: its first install (20 Nov) failed fetching iputils-arping with no
-+      # route to an archive; this publishes the fixed seed.
-+      reinstallGeneration: 1
-   authorizedKeys:
-     - "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIB/Y8pQ/HHZ1BKE+DILq/gE7cd8tSiGHcT8pj5wR2f4W marek@tuist.dev"
-   preinstall:
+@@ -616,6 +616,8 @@ defmodule Tuist.Sandboxes do
+   crashes in the analytics. Its row is still kept in `error` like any failed
+   create, since callers such as Amp Orbs and threads replace it on their
+   next attempt, and `Tuist.Runners.MacosSandboxWarmPools` counts it as demand.
++  A macOS create that fails otherwise is deleted from its host at once and
++  keeps its row the same way, without a node (`release_failed_create/1`).
+   """
+   def create_sandbox(%Account{id: account_id}, attrs \\ %{}, opts \\ []) when is_map(attrs) do
+     attrs = Map.drop(attrs, [:purpose, "purpose"])
+@@ -760,13 +762,66 @@ defmodule Tuist.Sandboxes do
+ 
+         {:error, :no_capacity}
+ 
++      # Reloaded for the node placement recorded, which the `failed` event
++      # keeps with the error.
+       {:error, reason} ->
+         Logger.warning("sandboxes: sandbox creation failed", sandbox_id: sandbox.id, reason: inspect(reason))
+-        {:ok, _} = update_sandbox(sandbox, %{state: :error, hostname: hostname, error_message: error_message(reason)})
++
++        {:ok, failed} =
++          sandbox
++          |> Repo.reload!()
++          |> update_sandbox(%{state: :error, hostname: hostname, error_message: error_message(reason)})
++
++        release_failed_create(failed)
+         {:error, reason}
+     end
+   end
+ 
++  # A macOS create that failed never ran, so nothing on its host is worth
++  # keeping, while its reservation (CPU, memory and a VM slot while
++  # `resident`, its disk while the host lists it) refuses every create
++  # after it. Its host deletes the VM at once and the row keeps no node:
++  # an `error` row without one holds nothing, and Amp Orbs, Claude Code
++  # sessions and Managed Agents sessions replace it with a fresh create.
++  # The row stays as the failure's record, with its error, shape, template
++  # and account, until a retry or the retention removes it; its `failed`
++  # event also names the host. A host that cannot delete it now does it
++  # when it reports the sandbox (`reconcile_reported/3`).
++  defp release_failed_create(
++         %Sandbox{platform: :darwin, state: :error, last_active_at: nil, node_name: node_name} = sandbox
++       )
++       when is_binary(node_name) do
++    case node_call(sandbox, "delete", %{sandbox_id: sandbox.id}, []) do
++      {:ok, _data} ->
++        Logger.info("sandboxes: deleted a failed macOS create from its host", sandbox_id: sandbox.id, node: node_name)
++        release_failed_row(sandbox)
++
++      {:error, reason} ->
++        Logger.warning("sandboxes: failed to delete a failed macOS create from its host",
++          sandbox_id: sandbox.id,
++          node: node_name,
++          reason: inspect(reason)
++        )
++    end
++
++    :ok
++  end
++
++  defp release_failed_create(_sandbox), do: :ok
++
++  # `updated_at` stays the failure's time, which the retention counts from.
++  defp release_failed_row(%Sandbox{} = sandbox) do
++    Repo.update_all(
++      from(s in Sandbox,
++        where:
++          s.id == ^sandbox.id and s.state == :error and s.node_name == ^sandbox.node_name and is_nil(s.last_active_at)
++      ),
++      set: [node_name: nil, node_uid: nil, resident: false]
++    )
++
++    :ok
++  end
++
+   # Places and boots the sandbox, placing it again every few seconds while
+   # every node refuses it for room, until `deadline`. A refused placement
+   # holds no node (a refusing macOS host is released before the next is
+@@ -2150,7 +2205,8 @@ defmodule Tuist.Sandboxes do
+             inc: [residency_epoch: 1]
+           )
+ 
+-        if released == 1 and sandbox.state != :error, do: Events.record(sandbox, "failed")
++        if released == 1 and sandbox.state != :error,
++          do: Events.record(sandbox, "failed", %{error_message: "node left the cluster"})
+       end
+     end)
+   end
+@@ -2178,9 +2234,41 @@ defmodule Tuist.Sandboxes do
+       end
+     end)
+ 
+-    :ok
++    release_unlisted_macos_errors(node_name, reported_ids, generation, settled_before)
++  end
++
++  # An errored macOS VM its host no longer lists holds nothing there: the
++  # host deleted it (it deletes a create that did not finish by itself) or
++  # lost it. `resident` is only cleared by an error report, which such a
++  # host never sends, so it is cleared here, and a failed create that never
++  # ran also gives up its node, as `release_failed_create/1` does.
++  defp release_unlisted_macos_errors(node_name, reported_ids, generation, settled_before) when is_binary(generation) do
++    Sandbox
++    |> where(node_name: ^node_name, node_uid: ^generation, platform: :darwin, state: :error)
++    |> where(
++      [s],
++      s.id not in ^reported_ids and s.updated_at < ^settled_before and (s.resident or is_nil(s.last_active_at))
++    )
++    |> Repo.all()
++    |> Enum.each(fn sandbox ->
++      Logger.info("sandboxes: releasing an errored macOS sandbox its host no longer lists",
++        sandbox_id: sandbox.id,
++        node: node_name
++      )
++
++      if is_nil(sandbox.last_active_at) do
++        release_failed_row(sandbox)
++    
+```
+
+**File**: `server/lib/tuist/sandboxes/AGENTS.md` (modified, +22/-1)
+```diff
+@@ -571,7 +571,8 @@ See [the rollout and recovery contract](../../../../infra/sandbox-image/remote-e
+   is paused.
+ - `Tuist.Sandboxes.Workers.RetentionWorker`: daily cron (shared crons in
+   `Tuist.Oban.RuntimeConfig`) that deletes sandboxes paused, or errored,
+-  for longer than 14 days (both still hold their disk), falling back to
++  for longer than 14 days (both may still hold their disk; a failed macOS
++  create no longer does, see Invariants), falling back to
+   the row's last update when the node paused the sandbox without the
+   server recording `paused_at`.
+ - Idle pauses: a create, a resume or an exec that leaves a sandbox
+@@ -675,6 +676,26 @@ socket, the poller and the caller share a replica:
+   `failed` for a row that had started running and drops its
+   `loading_since`. An error report from a node the row is not on is a
+   stale copy: only that node's jail is deleted, never the row changed.
++- A failed macOS create holds nothing. It never ran (`last_active_at` is
++  nil), so `boot/5` deletes it from its host at once and the row keeps
++  `error` and its `error_message` with no node, `node_uid` or `resident`:
++  the form a create refused for room has, which Amp Orbs, Claude Code
++  sessions, Managed Agents sessions (`Router.find_or_create_sandbox/3`,
++  `MacosCapacity.admission/2`) replace with a fresh create, while a placed
++  errored Mac still answers `:sandbox_recovery_required`. A host that
++  cannot delete it then does when it next reports it in `error`. A report
++  that no longer lists an errored macOS row clears its `resident` (only an
++  error report did, and a host lists none for a VM it deleted, so the row
++  held CPU, memory and a slot for the 14-day retention) and releases a
++  failed create's node. In production (2026-11-21) such rows, resident
++  ones and ones on the disk budget of hosts that still listed them,
++  refused every macOS create on a whole rack. We kept
++  the row rather than deleting it: it is the failure's record, the API,
++  the dashboard and `Tuist.Runners.MacosSandboxWarmPools` (refused and
++  failed creates are demand) read it, and the retention removes it like
++  any errored row, counting from the failure. Every `failed` event keeps
++  the error, node and template (`Events.record/3`), so the failure
++  outlives the row when a retry, a delete or the retention removes it.
+ - A node that left the cluster never reports again. Every minute
+   `ReleaseRemovedNodesWorker` (`Sandboxes.release_removed_nodes/0`) errors
+   the Linux agent rows of a node that is not connected and whose Kubernetes
+```
+
+**File**: `server/lib/tuist/sandboxes/claude_code_runners.ex` (modified, +2/-1)
+```diff
+@@ -56,7 +56,8 @@ defmodule Tuist.Sandboxes.ClaudeCodeRunners do
+           %Sandbox{residency_work_id: work_id} when is_binary(work_id) ->
+             {:ok, :running}
+ 
+-          %Sandbox{platform: :darwin, state: :error} ->
++          # As in `Router.find_or_create_sandbox/3`: only a placed one.
++          %Sandbox{platform: :darwin, state: :error, node_name: node_name} when is_binary(node_name) ->
+             {:error, :sandbox_recovery_required}
+ 
+           _sandbox ->
+```
+
+**File**: `server/lib/tuist/sandboxes/events.ex` (modified, +9/-1)
+```diff
+@@ -17,9 +17,14 @@ defmodule Tuist.Sandboxes.Events do
+   @doc """
+   Records `event` for the sandbox now. `:boot_source` and `:duration_ms`
+   describe a boot on its `started` event, and `:inserted_at` dates an event
+-  that happened before it was observed.
++  that happened before it was observed. A `failed` row also keeps what the
++  sandbox failed with (the row's `error_message`, or `:error_message`), its
++  node and its template, so the failure outlives the row, which a caller's
++  retry or a delete removes.
+   """
+   def record(%Sandbox{} = sandbox, event, extra \\ %{}) when event in @events do
++    failed? = event == "failed"
++
+     SandboxEvent.Buffer.insert(%{
+       id: UUIDv7.generate(),
+       account_id: sandbox.account_id,
+@@ -32,6 +37,9 @@ defmodule Tuist.Sandboxes.Events do
+       boot_source: Map.get(extra, :boot_source, ""),
+       duration_ms: Map.get(extra, :duration_ms, 0),
+       guaranteed_cpu_milli: Sandbox.guaranteed_cpu_milli(sandbox),
++      error_message: (failed? && Map.get(extra, :error_message, sandbox.error_message)) || "",
++      node_name: (failed? && sandbox.node_name) || "",
++      template: (failed? && sandbox.template) || "",
+       inserted_at: Map.get_lazy(extra, :inserted_at, &NaiveDateTime.utc_now/0)
+     })
+ 
+```
+
+**File**: `server/lib/tuist/sandboxes/macos_capacity.ex` (modified, +4/-2)
+```diff
+@@ -136,10 +136,12 @@ defmodule Tuist.Sandboxes.MacosCapacity do
+       %Sandbox{state: :archived} = sandbox ->
+         with :ok <- quota(sandbox), do: placement(environment)
+ 
+-      %Sandbox{} = sandbox ->
++      %Sandbox{state: state, node_name: node_name} = sandbox when state != :error or is_binary(node_name) ->
+         with :ok <- quota(sandbox), do: host_admission(sandbox)
+ 
+-      nil ->
++      # Nothing, or an errored one without a node, which is replaced
++      # (`Router.find_or_create_sandbox/3`).
++      _new ->
+         with :ok <- Capacity.quota(environment.account_id, environment), do: placement(environment)
+     end
+   end
+```
+
+**File**: `server/lib/tuist/sandboxes/router.ex` (modified, +4/-1)
+```diff
+@@ -212,7 +212,10 @@ defmodule Tuist.Sandboxes.Router do
+       %Sandbox{state: state} = sandbox when state in [:running, :paused, :creating, :resuming, :archived] ->
+         {:ok, sandbox, false}
+ 
+-      %Sandbox{platform: :darwin, state: :error} ->
++      # A placed macOS sandbox keeps its disk for recovery. One without a
++      # node (a create refused for room, or a failed create whose host
++      # deleted it) holds nothing and is replaced below.
++      %Sandbox{platform: :darwin, state: :error, node_name: node_name} when is_binary(node_name) ->
+         {:error, :sandbox_recovery_required}
+ 
+       # A sandbox that died or was deleted from under us cannot be
 ```
 
 ---
 
-### Incident Patch 2: `9fe46225` (2026-11-21)
-**Commit Message**: fix(tuist-ex): explain a pending coverage complete and link the coverage pages
+### Incident Patch 2: `cb5add2b` (2026-11-22)
+**Commit Message**: fix(infra): roll rack edges one at a time for real
 
-When no run of the signalled commit has reported coverage yet,
-mix tuist.coverage.complete now says where the commit came from (the
-checkout's HEAD, or GIT_COMMIT, when --commit is omitted), that this is
-expected while runs are still being processed, and how to signal another
-commit with --commit <sha>. The pending output links the project's coverage
-commits list, since the commit's own page is a 404 until one of its runs is
-processed; the complete output links the commit's coverage page. Ports the
-command line tool's change.
+The rack-edge DaemonSet rolls one edge at a time, each held 90 s, but the
+ConfigMap its installers read is updated in place: the kubelet refreshes it
+in every installer pod, the old ones too, within a minute of helm changing
+it. Each old installer then copied the new static pod manifest onto its
+node, so every edge restarted at once, and an edge whose turn had not come
+lost its static pod until its new installer created the configuration
+directory the manifest names.
 
-Amp-Thread-ID: https://ampcode.com/threads/T-01a1f798-bad2-7074-b38e-5de8b04c8013
+On 2026-11-21 that restarted both of larch's edges within a second at
+08:46:39, and larch-edge-a ran no static pod until 08:50:51; its new
+installer, at 08:49, found the manifest already installed.
+
+An installer now installs only when the ConfigMap's static pod carries the
+hash it was rolled out with. The static pod and the edge files render
+unchanged, so this deploy restarts no edge.
+
+Amp-Thread-ID: https://ampcode.com/threads/T-01a1feb4-81b2-742b-9e6b-66fc025745b3
+Co-authored-by: Marek Fort <[REDACTED_EMAIL]>
+
+**File**: `infra/helm/rack-edge/templates/daemonset.yaml` (modified, +10/-1)
+```diff
+@@ -88,7 +88,16 @@ spec:
+                 fi
+               }
+               while :; do
+-                install
++                # Only the configuration this pod was rolled out with. The
++                # kubelet refreshes the mounted ConfigMap in every installer
++                # as soon as helm changes it, the old ones too, so without
++                # this each edge's old installer put the new static pod in
++                # at once (2026-11-21: both of larch's edges within a second,
++                # edge-a's static pod then gone four minutes for want of its
++                # configuration directory), and minReadySeconds held nothing back.
++                if grep -qF "tuist.dev/rack-edge-hash: \"$RACK_EDGE_HASH\"" /config/rack-edge.yaml; then
++                  install
++                fi
+                 if [ "$(cat /host/run/rack-edge/started 2>/dev/null)" = "$RACK_EDGE_HASH" ]; then
+                   for d in /host/etc/rack-edge/*; do
+                     case "$d" in
+```
+
+---
+
+### Incident Patch 3: `bcb31a38` (2026-11-22)
+**Commit Message**: fix(server): carry targets skipped by hash across tracked-file changes
+
+A commit that changed a tracked file (Package.resolved, a manifest, an
+xcconfig, a test plan) carried no coverage at all, and a target skipped by
+its selective-testing hash was refused at later commits whenever its source
+predated such a change. A branch that tests selectively therefore stayed
+partial after every dependency bump until a full run measured it again.
+
+The hash covers the target's whole graph, its dependencies' revisions and
+the compiler version, and selective testing already trusts it to skip the
+target, so coverage now trusts it the same way: a target skipped by hash
+carries from its source whatever tracked files changed. Tests carried one by
+one keep the full tracked-file check, and on a commit that changed a tracked
+file they are gaps without their evidence being read.
+
+Amp-Thread-ID: https://ampcode.com/threads/T-01a1ef10-0711-724d-a8e9-08ca9104cead
 Co-authored-by: Eduardo Nunes <[REDACTED_EMAIL]>
 
-**File**: `tuist_ex/lib/mix/tasks/tuist.coverage.complete.ex` (modified, +27/-3)
+**File**: `server/docs/code-coverage.md` (modified, +3/-3)
 ```diff
-@@ -15,6 +15,7 @@ defmodule Mix.Tasks.Tuist.Coverage.Complete do
+@@ -87,10 +87,10 @@ A commit's figure is folded again whenever more of its data lands: another run,
+ 1. **Store and merge.** Each report is stored per run and shard (`coverage_run_files`, `coverage_runs`), each file's version (blob, executable lines, functions) once a week (`coverage_file_layouts`). The fold merges every clean run of the commit: a line is covered when any run covered it, and a file counts once however many schemes compiled it.
+ 2. **Find what was skipped.** Only runs set up to collect coverage are read (`coverage_enabled` isn't `false`). What they skipped is the targets selective testing hit, with their hashes; the tests the runs' skip identifiers name (`--skip-test-targets`, `-skip-testing`, but not quarantine: see [What was skipped](#what-was-skipped)); the tests their coverage-based test selection skipped, which the client leaves out without naming; and whether the caller narrowed a scheme's runs (`only_test_identifiers`). A target a run of the same scheme executed, or a named test any run executed, among the runs that measured the commit, is dropped first, before anything below is decided, so it is never carried nor a gap (`tracked_file_changed`, `test_list_changed`, `target_without_history`); a target counts only when that run's `-only-testing` doesn't name it, and a `Module` or `Module/Suite` identifier only when none of that run's identifiers name the target. A skipped target's tests come from the run recorded under its hash (`coverage_target_sources`), whatever branch it ran on, since the same hash means the same tests. Otherwise they come from the commit's **baseline**: a baseline run of the scheme that skipped the target, or, when none of those ran it, another scheme's baseline run that did, as long as none of the target's test files changed since the baseline and none was added beside them. If one did, the target is a gap (`test_list_changed`). Without both commits' listings, the baseline's tests are taken as they were. If the baseline didn't run the target, it's `target_without_history`. An identifier naming a test (`Module/Suite/test`) resolves to that test directly. Tests that ran at the commit anyway aren't skipped. See [What was skipped](#what-was-skipped).
+ 3. **Measured?** If nothing was skipped, no scheme was narrowed, and no run reused uninstrumented code (`uninstrumented_code`), the figure is `measured` and the fold stops here. `Commits` then makes a `measured` figure `partial` when every run of one of its schemes is partial, for example a run still missing a shard with no complete run of the scheme beside it.
+-4. **Tracked files changed?** If the commit's tracked files differ from every parent's, nothing is carried. They're the project's build system's build inputs (`Tuist.GitHistory` `tracked_file_globs`): Xcode's are `Package.resolved`, `Project.swift`, `*.xcconfig` and the like, Mix's are `mix.exs`, `mix.lock` and `config/**` (see [Mix](#mix)), Cargo's are `Cargo.toml`, `Cargo.lock` and `build.rs` (see [Cargo](#cargo)), and a build system without its own list uses Xcode's. Another toolchain's build files in the same repository aren't tracked. Every earlier run's evidence predates the change, so the figure is `partial` (`tracked_file_changed`) and no evidence is read. In the code this check runs right after step 2 drops what another run executed, before any skipped target's tests are looked up: when anything is left, none of it is resolved, so such a commit reports no skipped tests (`skipped_tests_count` 0). A merge whose tracked files match one parent's still carries from that side. A commit with no repository or no ancestor carries nothing either (`no_ancestor`).
++4. **Tracked files changed?** If the commit's tracked files differ from every parent's, nothing is carried. They're the project's build system's build inputs (`Tuist.GitHistory` `tracked_file_globs`): Xcode's are `Package.resolved`, `Project.swift`, `*.xcconfig` and the like, Mix's are `mix.exs`, `mix.lock` and `config/**` (see [Mix](#mix)), Cargo's are `Cargo.toml`, `Cargo.lock` and `build.rs` (see [Cargo](#cargo)), and a build system without its own list uses Xcode's. Another toolchain's build files in the same repository aren't tracked. Every earlier run's evidence predates the change, so the figure is `partial` (`tracked_file_changed`) and no evidence is read. In the code this check runs right after step 2 drops what another run executed, before any skipped target's tests are looked up: when anything is left, none of it is resolved, so such a commit reports no skipped tests (`skipped_tests_count` 0). The exception is a target skipped by its selective-testing hash, which is trusted for every build input: when the commit skipped targets by hash, the skipped tests are resolved, those targets go on to step 5, and every other skipped test is a `tracked_file_changed` gap without its evidence being read. A merge whose tracked files match one parent's still carries from that side. A commit with no repository 
+```
+
+**File**: `server/docs/coverage-test-selection.md` (modified, +1/-1)
+```diff
+@@ -122,7 +122,7 @@ Each candidate map (`Tuist.TestImpactAnalysis.Candidate`) gives each test the re
  
-   use Mix.Task
+ The baseline isn't a rule: it's resolved first, and a run without one records the reason there's none. `diff_too_large` isn't a rule either: `Runs` checks the count before reading any map.
  
-+  alias TuistEx.Analytics.Config
-   alias TuistEx.Analytics.Env
-   alias TuistEx.Analytics.HTTP
+-**Tracked files are the coverage carry list.** The check reads the setting coverage carry already stops at, so a test selection skips gets carried coverage, and a commit where carry stops makes selection fall back. A narrower list would skip tests whose coverage then shows as unknown; a wider one would fall back for no reason. The list is the project's build system's (`GitHistory.settings/1` picks it by `build_system`, with no per-project override), so a monorepo commit that only touches another toolchain's build files doesn't make selection fall back. Xcode's is under [Rule inputs on Xcode](#rule-inputs-on-xcode).
++**Tracked files are the coverage carry list.** The check reads the setting coverage carry already stops at, so a test selection skips gets carried coverage, and a commit where carry stops makes selection fall back. A narrower list would skip tests whose coverage then shows as unknown; a wider one would fall back for no reason. The list is the project's build system's (`GitHistory.settings/1` picks it by `build_system`, with no per-project override), so a monorepo commit that only touches another toolchain's build files doesn't make selection fall back. Carry doesn't stop at them for a target skipped by its hash, which it trusts for every build input ([Code coverage](code-coverage.md#the-pipeline), step 5), so a fallback's modules that hashing skipped still carry. Xcode's is under [Rule inputs on Xcode](#rule-inputs-on-xcode).
  
-@@ -37,13 +38,22 @@ defmodule Mix.Tasks.Tuist.Coverage.Complete do
-     case HTTP.project_request(:post, "/tests/coverage/commits/#{sha}/complete", %{}, options) do
-       {:ok, %{"coverage" => coverage}} ->
-         Mix.shell().info(
--          "Coverage of commit #{String.slice(sha, 0, 7)} is complete: #{coverage}%."
-+          "Coverage of commit #{String.slice(sha, 0, 7)} is complete: #{coverage}%.\n" <>
-+            "  See the commit's coverage at #{commits_url(options)}/#{sha}"
-         )
+ **`affected_modules` come from the client's graph.** For each changed file the client lists the test modules that depend, directly or not, on the module that owns it. An empty list means no module owns the file (a README, CI configuration); absent (`nil`) means the graph can't attribute it to one module, and such files belong on the tracked list instead.
  
-       {:ok, _pending} ->
-+        # Usually the runs are still being processed, but a signal kept for a
-+        # commit the runs didn't report never applies, so name the commit and
-+        # how to signal another. The commit's own page is a 404 until one of
-+        # its runs is processed, so the commits list is linked instead.
-         Mix.shell().info(
--          "No run of commit #{String.slice(sha, 0, 7)} has reported coverage yet. " <>
--            "Its coverage is marked complete once one does."
-+          "No run of commit #{String.slice(sha, 0, 7)}#{origin(options)} has reported coverage yet. " <>
-+            "That's expected while its runs are still being processed: the signal is kept, " <>
-+            "and the commit's coverage is marked complete once one is.\n" <>
-+            "  If your test runs reported another commit, signal that one with " <>
-+            "`mix tuist.coverage.complete --commit <sha>`\n" <>
-+            "  See the commits your runs reported coverage for at #{commits_url(options)}"
-         )
+```
+
+**File**: `server/lib/tuist/test_impact_analysis/carry.ex` (modified, +30/-13)
+```diff
+@@ -28,8 +28,9 @@ defmodule Tuist.TestImpactAnalysis.Carry do
+   that overlay when its files are unchanged since that run.
  
-       {:error, reason} ->
-@@ -52,4 +62,18 @@ defmodule Mix.Tasks.Tuist.Coverage.Complete do
-         )
+   Both keep `Reported`'s guards: the test passed there, the tracked files
+-  are the same (`context.validity`), and the evidence holds lines for every
+-  file that counts.
++  are the same (`context.validity`; a module carried by hash isn't checked,
++  since the hash covers its build inputs), and the evidence holds lines for
++  every file that counts.
+   """
+   import Ecto.Query
+ 
+@@ -57,8 +58,9 @@ defmodule Tuist.TestImpactAnalysis.Carry do
+   `Tuist.Tests.Coverage.ExcludedPaths` pattern), `blobs` (the blob of every
+   file the commit's runs reported), `run_blobs` and `blobs_now`, functions
+   from run ids to the blobs those runs reported and from paths to their
+-  blobs at the commit, and `validity`, a function from a commit to `:ok` or
+-  why its evidence doesn't hold here.
++  blobs at the commit, `validity`, a function from a commit to `:ok` or
++  why its evidence doesn't hold here, and `only_hashed`, true when the commit's own tracked-file change leaves only
++  modules carried by their hash to carry.
+   """
+   def units(%{repository_id: repository_id}, _skipped) when repository_id in [nil, 0], do: {[], %{}}
+ 
+@@ -68,7 +70,7 @@ defmodule Tuist.TestImpactAnalysis.Carry do
+     {target_units, target_reasons} = in_hits |> Enum.group_by(& &1.module_name) |> target_units(context, hashes)
+     carried_modules = MapSet.new(target_units, & &1.module)
+     rest = others ++ Enum.reject(in_hits, &MapSet.member?(carried_modules, &1.module_name))
+-    {test_units, test_reasons} = test_units(rest, context)
++    {test_units, test_reasons} = test_units(rest, context, target_reasons)
+     {target_units ++ test_units, Map.merge(target_reasons, test_reasons)}
+   end
+ 
+@@ -275,7 +277,8 @@ defmodule Tuist.TestImpactAnalysis.Carry do
+ 
+     failed = failed_modules(context.project.id, units)
+     {failing, units} = Enum.split_with(units, &MapSet.member?(failed, {&1.snapshot_id, &1.module}))
+-    {kept, reasons} = guard(units, context)
++    # The hash is trusted for every build input, so no tracked file is compared.
++    {kept, reasons} = guard(units, context, fn _sha -> :ok end)
+     {kept, Map.merge(Map.new(failing, &{&1.key, :test_failed}), reasons)}
+   end
+ 
+@@ -357,9 +360,22 @@ defmodule Tuist.TestImpactAnalysis.Carry do
+ 
+   # Tests
+ 
+-  defp test_units([], _context), do: {[], %{}}
++  defp test_units([], _context, _target_reasons), do: {[], %{}}
++
++  # The commit changed a tracked file and only targets skipped by their hash
++  # carry: every test's evidence predates the change, so none is read, and a test is a gap
++  # for its target's reason, or for the change.
++  defp test_units(tests, %{only_hashed: true}, target_reasons) do
++    {[],
++     for(
++       test <- tests,
++       !Map.has_key?(target_reasons, {:module, test.module_name}),
++       into: %{},
++       do: {test.test_case_id, :tracked_file_changed}
++     )}
++  end
+ 
+-  defp test_units(tests, context) do
++  defp test_units(tests, context, _target_reasons) do
+     baseline = baseline_results(tests, context)
+     from_overlays = baseline |> Enum.reject(&match?({_test, {{:ok, _unit}, _ran_at}}, &1)) |> overlay_results(context)
+ 
+@@ -372,7 +388,7 @@ defmodule Tuist.TestImpactAnalysis.Carry do
+         end
+       end)
+ 
+-    {kept, guard_reasons} = guard(units, context)
++    {kept, guard_reasons} = guard(units, context, context.validity)
+     {kept, Map.merge(reasons, guard_reasons)}
+   end
+ 
+@@ -572,11 +588,12 @@ defmodule Tuist.TestImpactAnalysis.Carry do
+   end
+ 
+   # The units whose source still applies: its tracked files are the same as
+-  # the commit's, and its evidence holds lines for every file that counts.
+-  defp guard([], _context), do: {[], %{}}
++  # the commit's as far as `validity` compares them, and its evidence holds
++  # lines for every file that counts.
++  defp guard([], _context, _validity), do: {[], %{}}
+ 
+-  defp guard(units, context) do
+-    validity = units |> Enum.map(& &1.source.sha) |> Enum.uniq() |> Map.new(&{&1, context.validity.(&1)})
++  defp guard(units, context, validity) do
++    validity = units |> Enum.map(& &1.source.sha) |> Enum.uniq() |> Map.new(&{&1, validity.(&1)})
+     unlined = unlined(context, units)
+ 
+     Enum.reduce(units, {[], %{}}, fn unit, {kept, reasons} ->
+```
+
+**File**: `server/lib/tuist/tests/coverage/reported.ex` (modified, +41/-19)
+```diff
+@@ -39,9 +39,11 @@ defmodule Tuist.Tests.Coverage.Reported do
+   processes' lines in the snapshot of the run that hashed the target the
+   same way the commit's run did: the same inputs, so the same tests over
+   the same code. The guards above apply to it as to a test, but for the
+-  blobs, which the hash covers. It needs no observer scope per test, so it
+-  covers Swift Testing without the attribution trait and tests that ran in
+-  parallel.
++  blobs and the tracked files: the hash is trusted for every build input,
++  so a commit that changes a tracked file still carries its targets skipped
++  by hash, and nothing else.
++  It needs no observer scope per test, so it covers Swift Testing without
++  the attribution trait and tests that ran in parallel.
+ 
+   A skipped test that fails any of these is a **gap**: nothing is carried for
+   it and the figure is a lower bound, which `kind` says (`partial`), and
+@@ -199,7 +201,8 @@ defmodule Tuist.Tests.Coverage.Reported do
+       blobs: run_blobs(project.id, run_ids),
+       excluded: ExcludedPaths.compile(excluded),
+       baseline: skipping.baseline,
+-      impact_run_ids: skipping.impact_run_ids
++      impact_run_ids: skipping.impact_run_ids,
++      only_hashed: Map.get(skipping, :only_hashed, false)
+     }
+ 
+     {units, reasons, plan} = carry_units(context, skipped)
+@@ -238,18 +241,28 @@ defmodule Tuist.Tests.Coverage.Reported do
+     {units, reasons, Carry.plan(units)}
+   end
+ 
+-  # A commit whose tracked files differ from every parent's carries nothing:
+-  # every ancestor's evidence predates the change, so it is decided before
+-  # any of it is read. Only an ancestor from before a change this commit
+-  # undoes would still qualify, which is not worth carrying for. A merge
+-  # whose tracked files match one parent's can still carry from that side.
+-  # Without the listings, each source is checked as usual.
+-  defp changes_tracked_files?(%{repository_id: repository_id}) when repository_id in [nil, 0], do: false
+-
+-  defp changes_tracked_files?(context) do
++  # Which of the skipped tests a commit's own tracked-file change leaves
++  # carriable: `:all` when its tracked files match some parent's, and
++  # otherwise `:hashed` when targets were skipped by their hash, which is
++  # trusted for every build input, or `:none`. Every ancestor's evidence
++  # predates such a change, so it is decided before any of it is read. Only
++  # an ancestor from before a change this commit undoes would still qualify,
++  # which is not worth carrying for. A merge whose tracked files match one
++  # parent's can still carry from that side. Without the listings, each
++  # source is checked as usual.
++  defp carriable(%{repository_id: repository_id}, _hits) when repository_id in [nil, 0], do: :all
++
++  defp carriable(context, hits) do
+     case GitHistory.parents(context.repository_id, context.sha) do
+-      [] -> false
+-      parents -> Enum.all?(parents, &(validity(context, &1) == :tracked_file_changed))
++      [] ->
++        :all
++
++      parents ->
++        cond do
++          not Enum.all?(parents, &(validity(context, &1) == :tracked_file_changed)) -> :all
++          hits != [] -> :hashed
++          true -> :none
++        end
      end
    end
+ 
+@@ -502,10 +515,19 @@ defmodule Tuist.Tests.Coverage.Reported do
+   defp tuist_skipped(_context, {_runs, [], [], _clean}, []), do: %{skipped: [], gaps: [], baseline: [], indexed: %{}}
+ 
+   defp tuist_skipped(%{project: project, repository_id: repository_id, sha: sha} = context, runs, impact_skipped) do
+-    # A commit that changes a tracked file carries nothing.
+-    if changes_tracked_files?(context),
+-      do: %{skipped: [], gaps: [:tracked_file_changed], baseline: [], indexed: %{}},
+-      else: skipped_tests(project, repository_id, sha, runs, impact_skipped)
++    {_runs, hits, _skips, _clean} = runs
 +
-+  defp origin(options) do
-+    cond do
-+      options[:commit] -> ""
-+      System.get_env("GIT_COMMIT") -> ", from GIT_COMMIT,"
-+      true -> ", the checkout's HEAD,"
++    # A commit that changes a tracked file carries nothing, but for the
++    # targets skipped by their hash.
++    case carriable(context, hits) do
++      :none ->
++        %{skipped: [], gaps: [:tracked_file_changed], baseline: [], indexed: %{}}
++
++      carriable ->
++        project
++        |> skipped_tests(repository_id, sha, runs, impact_skipped)
++        |> Map.put(:only_hashed, carriable == :hashed)
++    end
+   end
+ 
+   defp skipped_tests(_project, repository_id, _sha, _runs, _impact_skipped) when repository_id in [nil, 0],
+```
+
+**File**: `server/test/tuist/tests/coverage/reported_test.exs` (modified, +59/-0)
+```diff
+@@ -1511,6 +1511,65 @@ defmodule Tuist.Tests.Coverage.ReportedTest do
+     end
+   end
+ 
++  # A target's selective-testing hash is trusted for every build input, so a
++  # tracked-file change never stops carrying a target skipped by its hash.
++  test "carries a target skipped by hash across a commit that changes any tracked file", %{
++    project: project,
++    account: account
++  } do
++    track_default_files()
++    target_only_runs(project, account)
++    sources = Map.new(["Sources/Math.swift", "Sources/Text.swift", "Tests/AppTests.swift"], &{&1, "blob-" <> &1})
++
++    for input <- ["Package.resolved", "App.xcodeproj/project.pbxproj", "App.xctestplan", "Podfile.lock"] do
++      record_build_inputs(account, Map.put(sources, input, "one"), Map.put(sources, input, "two"))
++
++      assert %{kind: "reported", skipped_tests_count: 1, carried_tests_count: 1} =
++               reported = Reported.compute(project, "head")
++
++      assert reasons(reported) == []
 +    end
 +  end
 +
-+  # The request that just succeeded resolved the same configuration.
-+  defp commits_url(options) do
-+    {:ok, %{url: url, project_handle: handle}} = Config.resolve(options)
-+    "#{url}/#{handle.account}/#{handle.project}/tests/coverage/commits"
-+  end
- end
-```
-
-**File**: `tuist_ex/test/mix/tasks/tuist.coverage.complete_test.exs` (modified, +66/-9)
-```diff
-@@ -5,32 +5,89 @@ defmodule Mix.Tasks.Tuist.Coverage.CompleteTest do
-   alias Mix.Tasks.Tuist.Coverage.Complete
-   alias TuistEx.Analytics.HTTP
- 
-+  @environment %{
-+    "TUIST_URL" => "https://tuist.dev",
-+    "TUIST_PROJECT" => nil,
-+    "GIT_COMMIT" => nil
-+  }
++  test "carries a target skipped by hash from a source that predates a build-input change its hash covers", %{
++    project: project,
++    account: account
++  } do
++    track_default_files()
++    target_only_runs(project, account, head: :none)
 +
-   setup do
-     Mix.shell(Mix.Shell.Process)
--    on_exit(fn -> Mix.shell(Mix.Shell.IO) end)
-+    previous = Map.new(@environment, fn {name, _} -> {name, System.get_env(name)} end)
-+    put_env(@environment)
++    CoverageFixtures.seed_history(account, [
++      CoverageFixtures.commit("bump", ["base"], 2),
++      CoverageFixtures.commit("tip", ["bump"], 3)
++    ])
 +
-+    on_exit(fn ->
-+      Mix.shell(Mix.Shell.IO)
-+      put_env(previous)
-+    end)
-+  end
++    tip =
++      CoverageFixtures.run_with_coverage(project, account, head_files(), %{
++        git_commit_sha: "tip",
++        partial: true,
++        test_modules: modules([test_case("testAdd()", "MathTests")])
++      })
 +
-+  defp put_env(variables) do
-+    Enum.each(variables, fn
-+      {name, nil} -> System.delete_env(name)
-+      {name, value} -> System.put_env(name, value)
-+    end)
-   end
- 
--  test "signals the commit's coverage complete" do
-+  test "signals the commit's coverage complete and links its coverage page" do
-     expect(HTTP, :project_request, fn :post,
-                                       "/tests/coverage/commits/abcdef123/complete",
-                                       %{},
-                                       options ->
--      assert options[:project] == "tuist/server"
-+      assert options[:project] == "acme/app"
-       {:ok, %{"coverage" => 81.5}}
-     end)
- 
--    Complete.run(["--commit", "abcdef123", "--project", "tuist/server"])
-+    Complete.run(["--commit", "abcdef123", "--project", "acme/app"])
++    selective_testing(project, tip, [{"AppTests", :miss, "app-changed"}, {"TextKitTests", :local, "text"}])
 +
-+    assert_received {:mix_shell, :info, [message]}
++    repository_id = CoverageFixtures.repository_id(account)
++    sources = Enum.map(["Sources/Math.swift", "Sources/Text.swift", "Tests/AppTests.swift"], &{&1, "blob-" <> &1})
 +
-+    assert message ==
-+             "Coverage of commit abcdef1 is complete: 81.5%.\n" <>
-+               "  See the commit's coverage at https://tuist.dev/acme/app/tests/coverage/commits/abcdef123"
++    for {sha, resolved} <- [{"base", "one"}, {"bump", "two"}, {"tip", "two"}] do
++      listing =
++        Enum.map([{"Package.resolved", resolved} | sources], fn {path, blob} ->
++          %{path: path, git_blob_id: blob, mode: 0o100644}
++        end)
++
++      GitHistory.record_listing(repository_id, sha, listing, files_count: length(listing))
++    end
++
++    assert %{kind: "reported", carried_tests_count: 1, carried_from: ["base"]} =
++             reported = Reported.compute(project, "tip")
++
++    assert reasons(reported) == []
 +  end
 +
-+  test "says when no run reported coverage yet, how to signal another commit, and where the commits are" do
-+    stub(HTTP, :project_request, fn :post, _, %{}, _ -> {:ok, %{"message" => "pending"}} end)
-+
-+    Complete.run(["--commit", "abcdef123", "--project", "acme/app"])
-+
-+    assert_received {:mix_shell, :info, [message]}
-+    assert message =~ "No run of commit abcdef1 has reported coverage yet."
-+    assert message =~ "expected while its runs are still being processed"
-+    assert message =~ "`mix tuist.coverage.complete --commit <sha>`"
-+
-+    assert String.ends_with?(
-+             message,
-+             "See the commits your runs reported coverage for at https://tuist.dev/acme/app/tests/coverage/commits"
-+           )
-+  end
-+
-+  test "names the checkout's HEAD when no commit is passed" do
-+    {head, 0} = System.cmd("git", ["rev-parse", "HEAD"])
-+    head = String.trim(head)
-+
-+    expect(HTTP, :project_request, fn :post, path, %{}, _ ->
-+      assert path == "/tests/coverage/commits/#{head}/complete"
-+      {:ok, %{"message" => "pending"}}
-+    end)
-+
-+    Complete.run(["--project", "acme/app"])
-+
-+    assert_received {:mix_shell, :info, [message]}
+   defp record_build_inputs(account, base, head) do
+     repository_id = CoverageFixtures.repository_id(account)
  
--    assert_received {:mix_shell, :info, ["Coverage of commit abcdef1 is complete: 81.5%."]}
-+    assert message =~
-+             "No run of commit #{String.slice(head, 0, 7)}, the checkout's HEAD, has reported coverage yet."
-   end
- 
--  test "says when no run reported coverage yet" do
-+  test "names GIT_COMMIT when it sets the commit" do
-+    System.put_env("GIT_COMMIT", "fedcba987")
-     stub(HTTP, :project_request, fn :post, _, %{}, _ -> {:ok, %{"message" => "pending"}} end)
- 
--    Complete.run(["--commit", "abcdef123"])
-+    Complete.run(["--project", "acme/app"])
- 
--    assert_received {:mix_shell, :info,
--                     ["No run of commit abcdef1 has reported coverage yet." <> _]}
-+    assert_received {:mix_shell, :info, [message]}
-+    assert message =~ "No run of commit fedcba9, from GIT_COMMIT, has reported coverage yet."
-   end
- 
-   test "fails when the server refuses" do
-```
-
----
-
-### Incident Patch 3: `7167faf0` (2026-11-20)
-**Commit Message**: fix(infra): change larch-tor-b before larch-tor-a again
-
-larch-tor-b is adopted and converged, so the bring-up swap is no longer
-needed: put the switch without the live internet port back first.
-
-Amp-Thread-ID: https://ampcode.com/threads/T-01a1c0f5-6c72-77c0-9cd8-2fdf847232d3
-Co-authored-by: Marek Fort <[REDACTED_EMAIL]>
-
-**File**: `infra/rack-switch-fleet/k8s/larch/larch-tor-a.yaml` (modified, +1/-1)
-```diff
-@@ -12,7 +12,7 @@ spec:
-   mac: 64:9d:99:d9:81:0e
-   managedBy: controller
-   managementAddress: 192.168.61.2
--  applyOrder: 1
-+  applyOrder: 2
-   applyNote: Carries the live internet port, so a bad change takes the site off the internet. Changed only after the same change has been applied to larch-tor-b and the rack is still up.
-   credentialItem: rack-switch-controller picos admin
-   configRevision: 8f0ae806def44545
-```
-
-**File**: `infra/rack-switch-fleet/k8s/larch/larch-tor-b.yaml` (modified, +1/-1)
-```diff
-@@ -12,7 +12,7 @@ spec:
-   mac: 64:9d:99:d9:81:0b
-   managedBy: controller
-   managementAddress: 192.168.61.6
--  applyOrder: 2
-+  applyOrder: 1
-   applyNote: Its port 27 holds the spare internet optic and nothing live (the site has one Cogent port, on larch-tor-a), so a bad change costs half the minis and none of the site's connectivity. Always the first switch changed.
-   credentialItem: rack-switch-controller picos admin
-   configRevision: f659540c07895cd7
-```
-
-**File**: `infra/rack-switch-fleet/sites/larch.json` (modified, +2/-2)
-```diff
-@@ -153,7 +153,7 @@
-       "mgmt_address": "192.168.61.6",
-       "credential_item": "rack-switch-controller picos admin",
-       "console_baud": 115200,
--      "apply_order": 2,
-+      "apply_order": 1,
-       "apply_note": "Its port 27 holds the spare internet optic and nothing live (the site has one Cogent port, on larch-tor-a), so a bad change costs half the minis and none of the site's connectivity. Always the first switch changed.",
-       "mac": "64:9d:99:d9:81:0b",
-       "adopted": true,
-@@ -203,7 +203,7 @@
-       "mac": "64:9d:99:d9:81:0e",
-       "credential_item": "rack-switch-controller picos admin",
-       "console_baud": 115200,
--      "apply_order": 1,
-+      "apply_order": 2,
-       "apply_note": "Carries the live internet port, so a bad change takes the site off the internet. Changed only after the same change has been applied to larch-tor-b and the rack is still up.",
-       "adopted": true,
-       "feeds": [
 ```
 
 #### Recent Merged Pull Requests:
@@ -869,46 +1156,36 @@ Co-authored-by: Marek Fort <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. infra): install a site's first edge without an archive (hotfix)
+## X. server): stop failed macOS sandbox creates from holding their host
 
 **RULE**:
-When implementing operations in `infra/cluster-api-provider-tuist/internal/rackinstall/seed.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tuist/tuist. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `infra/tart-kubelet/macos-sandboxes.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tuist/tuist. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a182e968`: infra): install a site's first edge without an archive (hotfix). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9c6c3a84`: server): stop failed macOS sandbox creates from holding their host. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Elixir data structures, boundary deserialization, API parsing, or resource lifecycles matching `infra/cluster-api-provider-tuist/internal/rackinstall/seed.go`.
+Subsystems managing Elixir data structures, boundary deserialization, API parsing, or resource lifecycles matching `infra/tart-kubelet/macos-sandboxes.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```elixir
 // Verified production-grade fix pattern:
-	// EdgeFirstWANBusybox is the installer's busybox, copied onto the edge for
-	// its arping: the first edge of a site installs with no route to an
-	// archive, so the install can bring no package the image lacks.
-	EdgeFirstWANBusybox = "/usr/local/sbin/tuist-busybox"
-		"@BUSYBOX@", EdgeFirstWANBusybox,
-  if @BUSYBOX@ arping -D -q -c 2 -w 3 -I "$dev" "${address%/*}" && ip addr add "$address" dev "$dev"; then
-    if @BUSYBOX@ arping -q -c 2 -w 3 -I "$dev" "$gateway" && ip route add default via "$gateway" dev "$dev" metric "$metric"; then
-    if @BUSYBOX@ arping -q -c 2 -w 3 -I "$dev" "$gateway"; then
-	return fmt.Sprintf("    - install -D -m 0755 \"$(command -v busybox)\" /target%s\n"+
-		"    - |\n      cat > /target%s <<'TUIST_EOF'\n%s      TUIST_EOF\n      chmod 755 /target%s\n"+
-		EdgeFirstWANBusybox, EdgeFirstWANPath, indent(script, "      "), EdgeFirstWANPath, indent(unit, "      "))
+A create that failed never ran, so the server deletes it from the host as soon
+as the create fails, or when the host next reports it in `error`, and keeps its
+row in `error` without a node. The host also deletes a create or claim still
+journaled as failed by itself; a report that no longer lists an errored VM
+clears the row's `resident`, so it stops holding CPU, memory and a slot
+(`server/lib/tuist/sandboxes/AGENTS.md`, Invariants).
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```elixir
 // Induced defect failure mode:
-    - iputils-arping
-  if arping -D -q -c 2 -w 3 -I "$dev" "${address%/*}" && ip addr add "$address" dev "$dev"; then
-    if arping -q -c 2 -w 3 -I "$dev" "$gateway" && ip route add default via "$gateway" dev "$dev" metric "$metric"; then
-    if arping -q -c 2 -w 3 -I "$dev" "$gateway"; then
-	return fmt.Sprintf("    - |\n      cat > /target%s <<'TUIST_EOF'\n%s      TUIST_EOF\n      chmod 755 /target%s\n"+
-		EdgeFirstWANPath, indent(script, "      "), EdgeFirstWANPath, indent(unit, "      "))
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a182e968` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9c6c3a84` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

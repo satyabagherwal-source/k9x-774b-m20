@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261120-SHPP",
-    "timestamp": "2026-11-20T18:41:44.365Z",
-    "repository": "clockworklabs/SpacetimeDB",
-    "learningId": "learn-github-clockworklabs-spacetimedb",
-    "contentHash": "363075429255bbcc149c9650485bfb333ae8c0d626cc029414863da7ac7e0621",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-OHMZ",
-    "timestamp": "2026-11-20T19:06:37.259Z",
-    "repository": "golutra/golutra",
-    "learningId": "learn-github-golutra-golutra",
-    "contentHash": "4f6253298da678a73e6bd10b47ed0a67ba0a91a1156ee6900b8f659ac31281c8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261120-OTE4",
     "timestamp": "2026-11-20T19:06:52.492Z",
     "repository": "kubeedge/kubeedge",
@@ -7490,6 +7460,36 @@
     "repository": "yyjeqhc/webcodex",
     "learningId": "learn-github-yyjeqhc-webcodex",
     "contentHash": "03e3f96af1c343e5e469a6b349a59725ba0f00b6cde705e216102a21d3a459e6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-R5SY",
+    "timestamp": "2026-11-22T18:44:02.722Z",
+    "repository": "Qwen/Qwen-Image-2.1",
+    "learningId": "learn-huggingface-qwen-qwen-image-2-1",
+    "contentHash": "62f5458d8defdfdd1c7e26706a3e06af9d7ab568cebbeebabf729024a68820c2",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-R8KK",
+    "timestamp": "2026-11-22T18:44:06.308Z",
+    "repository": "tuist/tuist",
+    "learningId": "learn-github-tuist-tuist",
+    "contentHash": "635b355e61a407692ae661adbaa26aff03631c408d293d9be0d69ddca6b7a382",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

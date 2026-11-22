@@ -12151,3 +12151,5 @@
 | `CYCLE-20261122-Y96P` | `2026-11-22T18:21:34.081Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9971` | Yes (`3247dc84...`) |
 | `CYCLE-20261122-FW6V` | `2026-11-22T18:35:17.047Z` | `XingChen-AGI/TeleOCR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md` | Yes (`79bd4873...`) |
 | `CYCLE-20261122-FX2O` | `2026-11-22T18:35:18.192Z` | `yyjeqhc/webcodex` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9972` | Yes (`03e3f96a...`) |
+| `CYCLE-20261122-R5SY` | `2026-11-22T18:44:02.722Z` | `Qwen/Qwen-Image-2.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-learnings.md` | Yes (`62f5458d...`) |
+| `CYCLE-20261122-R8KK` | `2026-11-22T18:44:06.308Z` | `tuist/tuist` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9973` | Yes (`635b355e...`) |

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T18:35:18.202Z",
-  "total_cycles_completed": 11554,
-  "total_learnings_persisted": 11554,
-  "total_rules_promoted": 10789,
+  "last_updated": "2026-11-22T18:44:06.320Z",
+  "total_cycles_completed": 11556,
+  "total_learnings_persisted": 11556,
+  "total_rules_promoted": 10790,
   "history": [
-    {
-      "timestamp": "2026-11-21T23:26:46.918Z",
-      "repository": "tailscale/tailscale",
-      "learningId": "learn-github-tailscale-tailscale",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T23:27:03.289Z",
-      "repository": "Edge0/Audio8-TTS-Realistic-Air",
-      "learningId": "learn-huggingface-edge0-audio8-tts-realistic-air",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T23:27:18.744Z",
       "repository": "pimalaya/himalaya",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-22T18:35:18.202Z",
       "repository": "yyjeqhc/webcodex",
       "learningId": "learn-github-yyjeqhc-webcodex",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T18:44:02.733Z",
+      "repository": "Qwen/Qwen-Image-2.1",
+      "learningId": "learn-huggingface-qwen-qwen-image-2-1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T18:44:06.320Z",
+      "repository": "tuist/tuist",
+      "learningId": "learn-github-tuist-tuist",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
