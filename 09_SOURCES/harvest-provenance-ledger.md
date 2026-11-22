@@ -12069,3 +12069,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-comfy-org-relayvsr` | `https://huggingface.co/Comfy-Org/RelayVSR` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-22T06:49:19.251Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `b4f4fbdd` | Multi-dimensional audit evidence | 2026-11-22T06:49:35.334Z |
 | `learn-dom-d-22d0fbf8` | `project://nucleoidai-nucleoid` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | 2026-11-22T06:50:06.498Z |
+| `learn-huggingface-zyphra-zonos3-mini` | `https://huggingface.co/Zyphra/ZONOS3-Mini` | `hf-zyphra-` | Multi-dimensional audit evidence | 2026-11-22T06:57:51.696Z |
+| `learn-github-pixeltable-pixeltable` | `https://github.com/pixeltable/pixeltable` | `056c7016` | Multi-dimensional audit evidence | 2026-11-22T06:58:06.153Z |

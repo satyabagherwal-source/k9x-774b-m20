@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261120-YSDA",
-    "timestamp": "2026-11-20T06:10:48.478Z",
-    "repository": "fujiapple852/trippy",
-    "learningId": "learn-github-fujiapple852-trippy",
-    "contentHash": "db0e91ae253fc6073a41982f642ca851421ee773a582bb7dec1b1cafee97c8fb",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-YY8M",
-    "timestamp": "2026-11-20T06:10:56.086Z",
-    "repository": "ShiftHackZ/SDAI-KMP",
-    "learningId": "learn-github-shifthackz-sdai-kmp",
-    "contentHash": "aed8459abce934d5e4d70cab0c0befa6d0abeea4e262becec984e9e9d0f30ef9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261120-9UMQ",
     "timestamp": "2026-11-20T06:19:24.626Z",
     "repository": "erkamyaman/rust-anything",
@@ -7492,6 +7462,36 @@
     "contentHash": "df5086930e094dd17c09a3b7ff89f6bab276ea1791c22ca3f376e39e8a80898d",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-J03W",
+    "timestamp": "2026-11-22T06:57:51.692Z",
+    "repository": "Zyphra/ZONOS3-Mini",
+    "learningId": "learn-huggingface-zyphra-zonos3-mini",
+    "contentHash": "00b690f4494282ac277f3b201df9e7ec524a9076d9e4498ddd160abdf4dc185c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-JB9H",
+    "timestamp": "2026-11-22T06:58:06.149Z",
+    "repository": "pixeltable/pixeltable",
+    "learningId": "learn-github-pixeltable-pixeltable",
+    "contentHash": "170aee8eaa5d4377de00bf868c0963ff748965d9dd676f49b84efc73f33008e0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -46,8 +46,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-22T06:19:33.344Z",
-    "lastVerified": "2026-11-22T06:19:33.344Z",
+    "lastChecked": "2026-11-22T06:58:03.226Z",
+    "lastVerified": "2026-11-22T06:58:03.226Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-22T06:49:38.235Z",
-    "lastVerified": "2026-11-22T06:49:38.235Z",
+    "lastChecked": "2026-11-22T06:58:09.495Z",
+    "lastVerified": "2026-11-22T06:58:09.495Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -953,8 +953,8 @@
     "officialUrl": "https://github.com/rustls/rustls",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-22T02:09:08.882Z",
-    "lastVerified": "2026-11-22T02:09:08.882Z",
+    "lastChecked": "2026-11-22T06:57:58.282Z",
+    "lastVerified": "2026-11-22T06:57:58.282Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustls-rustls",
@@ -4033,14 +4033,14 @@
     "officialUrl": "https://github.com/pixeltable/pixeltable",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-21T02:08:43.273Z",
-    "lastVerified": "2026-11-21T02:08:43.273Z",
+    "lastChecked": "2026-11-22T06:58:05.151Z",
+    "lastVerified": "2026-11-22T06:58:05.151Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pixeltable-pixeltable",
-    "contentHash": "d2e2cbd8797d672e56baddc81282b09461467cff376455a35e553d64f0445c7a",
+    "contentHash": "170aee8eaa5d4377de00bf868c0963ff748965d9dd676f49b84efc73f33008e0",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -5143,12 +5143,12 @@
     "lastVerified": "2026-11-22T03:11:26.843Z"
   },
   "infracost-infracost": {
-    "name": "infracost/infracost",
+    "name": "infracost",
     "officialUrl": "https://github.com/infracost/infracost",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-21T03:44:41.763Z",
-    "lastVerified": "2026-11-21T03:44:41.763Z",
+    "lastChecked": "2026-11-22T06:57:55.773Z",
+    "lastVerified": "2026-11-22T06:57:55.773Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-infracost-infracost",
@@ -5157,7 +5157,8 @@
     "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "b8c2bd6e"
   },
   "skytable-skytable": {
     "name": "skytable",
@@ -6456,9 +6457,9 @@
   "insertkoinio-koin": {
     "name": "koin",
     "officialUrl": "https://github.com/InsertKoinIO/koin",
-    "lastChecked": "2026-11-19T03:09:39.541Z",
+    "lastChecked": "2026-11-22T06:57:53.410Z",
     "revisionIdentifier": "d486a5e8",
-    "lastVerified": "2026-11-19T03:09:39.541Z"
+    "lastVerified": "2026-11-22T06:57:53.410Z"
   },
   "juicedata-juicefs": {
     "name": "juicefs",
@@ -7011,9 +7012,9 @@
   "pauljuliusmartinez-jless": {
     "name": "jless",
     "officialUrl": "https://github.com/PaulJuliusMartinez/jless",
-    "lastChecked": "2026-11-20T21:46:52.665Z",
+    "lastChecked": "2026-11-22T06:57:48.376Z",
     "revisionIdentifier": "e6cdef71",
-    "lastVerified": "2026-11-20T21:46:52.665Z"
+    "lastVerified": "2026-11-22T06:57:48.376Z"
   },
   "hf-jialinyyzz-humanizer": {
     "name": "jialinyyzz/humanizer",
@@ -13840,6 +13841,23 @@
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-comfy-org-relayvsr",
     "contentHash": "c518870b1fe1f8ed567fdebf1927ade100d4917bd1f004bea9e7fdb91c69b713",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-zyphra-zonos3-mini": {
+    "name": "Zyphra/ZONOS3-Mini",
+    "officialUrl": "https://huggingface.co/Zyphra/ZONOS3-Mini",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-22T06:57:51.109Z",
+    "lastVerified": "2026-11-22T06:57:51.109Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-zyphra-zonos3-mini",
+    "contentHash": "00b690f4494282ac277f3b201df9e7ec524a9076d9e4498ddd160abdf4dc185c",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

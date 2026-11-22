@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-16T16:00:21.914Z",
+  "timestamp": "2026-11-22T06:58:09.727Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-zyphra-zonos3-mini-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-zyphra-zonos3-mini-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-16T16:00:21.914Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T06:58:09.727Z`  
 > **Learning ID**: `LEARN-EVO-hf-zyphra-zonos3-mini-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-zyphra-zo`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T16:00:18.415Z  
+> **Timestamp**: 2026-11-22T06:57:51.237Z  
 > **Learning ID**: `learn-huggingface-zyphra-zonos3-mini`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-zyphra-zonos3-mini-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Zyphra/ZONOS3-Mini](https://huggingface.co/Zyphra/ZONOS3-Mini))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T15:59:59.277Z  
+> **Harvest Timestamp**: 2026-11-22T06:57:51.109Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-to-speech
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 69946 downloads | 431 likes
+- **Stars / Engagement**: 154251 downloads | 573 likes
 
 ---
 

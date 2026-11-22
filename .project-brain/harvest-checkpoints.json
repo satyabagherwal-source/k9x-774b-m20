@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T06:49:35.342Z",
+  "last_updated": "2026-11-22T06:58:06.161Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5691,14 +5691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pixeltable-pixeltable",
-      "content_hash": "d2e2cbd8797d672e56baddc81282b09461467cff376455a35e553d64f0445c7a",
-      "verified_at": "2026-11-21T02:08:44.149Z",
+      "content_hash": "170aee8eaa5d4377de00bf868c0963ff748965d9dd676f49b84efc73f33008e0",
+      "verified_at": "2026-11-22T06:58:06.161Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T02:08:44.149Z"
+      "last_updated": "2026-11-22T06:58:06.161Z"
     },
     "honojs/hono": {
       "repository": "honojs/hono",
@@ -18621,14 +18621,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-zyphra-zonos3-mini",
-      "content_hash": "a961c1385219e6e5c5dcd25e583b9cff39e55fc643d8b4f730b30672f695c093",
-      "verified_at": "2026-11-16T16:00:18.863Z",
+      "content_hash": "00b690f4494282ac277f3b201df9e7ec524a9076d9e4498ddd160abdf4dc185c",
+      "verified_at": "2026-11-22T06:57:51.704Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T16:00:18.863Z"
+      "last_updated": "2026-11-22T06:57:51.704Z"
     },
     "unovue/reka-ui": {
       "repository": "unovue/reka-ui",

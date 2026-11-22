@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T06:50:07.932Z",
+  "last_updated": "2026-11-22T06:58:11.502Z",
   "total_verified_learnings": 9068,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23481,
+  "total_items": 23484,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -218925,13 +218925,13 @@
       "item_id": "candidate_directive-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-91YM-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-JF5F-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "ca0591e8ebc05bb6ba54d7b92be85981ba228a991be2d705eb0b99a25b09e05d",
+      "content_hash": "f13c03e9f72fb1ba8479997f5e4507b56e0f4ea478f64d329a2d80cd29c3a20d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T06:50:07.534Z"
+      "persisted_at": "2026-11-22T06:58:11.187Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c",
@@ -218941,9 +218941,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "ed240beea6f49c1ea0f361e90dc6436179e45a6b08bd646933793005ff403d1f",
+      "content_hash": "048b34abbad3d6609a0e6d86f885ae7f86882d5798418fa1facfb9d3a16dda0b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T06:50:07.737Z"
+      "persisted_at": "2026-11-22T06:58:11.346Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -218953,9 +218953,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "f363bbb6fc3ad67f3e6db53c66c0c999732066457f9161d9d13cc11838e5cf4b",
+      "content_hash": "eaba6ef3aa74ddf52f1df6d6897b67a181b56c1f51684a14b9ebfa7ffb5d3fd7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T06:50:07.932Z"
+      "persisted_at": "2026-11-22T06:58:11.502Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -225702,8 +225702,8 @@
       "slug": "pixeltable-pixeltable",
       "platform": "github",
       "source_url": "https://github.com/pixeltable/pixeltable",
-      "source_version": "e66ed540",
-      "content_hash": "d2e2cbd8797d672e56baddc81282b09461467cff376455a35e553d64f0445c7a",
+      "source_version": "056c7016",
+      "content_hash": "170aee8eaa5d4377de00bf868c0963ff748965d9dd676f49b84efc73f33008e0",
       "dossier_path": "07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
       "promoted_rules": [
@@ -225751,6 +225751,11 @@
           "number": 9699,
           "title": "Keep component view local values when the base changes view membership",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9902,
+          "title": "reject lossy float-to-int coercion in import_pandas",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -225758,7 +225763,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T02:08:43.934Z",
+      "verified_at": "2026-11-22T06:58:05.960Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -225812,10 +225817,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/pixeltable-pixeltable-agent-contract-pixeltable-pixeltable-autonomous-specialist.md",
       "title": "Agent Contract: pixeltable/pixeltable Autonomous Specialist Persona",
       "repository": "pixeltable/pixeltable",
-      "source_version": "e66ed540",
-      "content_hash": "902f17c535dbaddaef58c33611fda38201760d8181bd648ef118643c9ceedd7d",
+      "source_version": "056c7016",
+      "content_hash": "8b31c5ce93310eb0decb1c2a82e182ef130bd682d5f6e3fbe2123fb5a06aa2ba",
       "domain_letter": "I",
-      "persisted_at": "2026-11-21T02:08:44.586Z"
+      "persisted_at": "2026-11-22T06:58:06.690Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pixeltable-pixeltable": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pixeltable-pixeltable",
@@ -225824,10 +225829,10 @@
       "relative_path": "08_VERIFICATION/pixeltable-pixeltable-verification-protocol-empirical-defect-shield-for-pixeltab.md",
       "title": "Verification Protocol: Empirical Defect Shield for pixeltable/pixeltable",
       "repository": "pixeltable/pixeltable",
-      "source_version": "e66ed540",
-      "content_hash": "8d4987e921215b43c700a55ef3b123519ec23b12359ccae746c252a11852f4fc",
+      "source_version": "056c7016",
+      "content_hash": "5d3f1ae17929574cf53a0546a2a047da494f72e02455f1c50c69ad25b03a80be",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T02:08:44.695Z"
+      "persisted_at": "2026-11-22T06:58:06.840Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-aleph-alpha-kolibri-1-learnings-core-invarian": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-aleph-alpha-kolibri-1-learnings-core-invarian",
@@ -225885,9 +225890,9 @@
       "title": "Agent Contract: pixeltable-pixeltable-learnings Autonomous Specialist Persona",
       "repository": "pixeltable-pixeltable-learnings",
       "source_version": "HEAD",
-      "content_hash": "2f8d33bceeef95c3b7dc3e6ba50364eae7d9e5ced62dbbea42557038790a69c6",
+      "content_hash": "a6323828b6964d107f4ba4f76abc8e8800e97963d119369be79d0b528b22e420",
       "domain_letter": "I",
-      "persisted_at": "2026-11-21T02:13:41.511Z"
+      "persisted_at": "2026-11-22T06:58:10.673Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pixeltable-pixeltable-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pixeltable-pixeltable-learning",
@@ -225897,9 +225902,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for pixeltable-pixeltable-learnings",
       "repository": "pixeltable-pixeltable-learnings",
       "source_version": "HEAD",
-      "content_hash": "8b1eacd3ce0ed5b90b88cc673cdc30ac3f4082c6771b71a3b17b940726d4f7f0",
+      "content_hash": "140f8ad0e51673109830d7035d1fbd8a7ac9a17cdf78d5d4b5486df20714f9d1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T02:13:41.651Z"
+      "persisted_at": "2026-11-22T06:58:10.811Z"
     },
     "learn-huggingface-fermionresearch-phonon-2": {
       "learning_id": "learn-huggingface-fermionresearch-phonon-2",
@@ -250251,10 +250256,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pixeltable-pixeltable-content-information-intelligence-pixeltable-pixeltable-cor.md",
       "title": "Content & Information Intelligence: pixeltable/pixeltable Core Invariants",
       "repository": "pixeltable/pixeltable",
-      "source_version": "e66ed540",
-      "content_hash": "25a868b6e40926256c3b447167d5441326578a6ee6cfe1188babdffcd224daca",
+      "source_version": "056c7016",
+      "content_hash": "080c15068ee3e6a2bccc3140bfe7af75f2ff7ef938d89bd8c53f96a54aff431f",
       "domain_letter": "I",
-      "persisted_at": "2026-11-21T02:08:44.448Z"
+      "persisted_at": "2026-11-22T06:58:06.529Z"
     },
     "domain_intelligence-content-information-intelligence-pixeltable-pixeltable-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-pixeltable-pixeltable-learnings-core-invariants",
@@ -250264,9 +250269,9 @@
       "title": "Content & Information Intelligence: pixeltable-pixeltable-learnings Core Invariants",
       "repository": "pixeltable-pixeltable-learnings",
       "source_version": "HEAD",
-      "content_hash": "e016c4906c703a4b6f0f758e2d35a8133b7c7f2c187462ebcbd98b20e2007731",
+      "content_hash": "002b702d660cbca0f382cc9ec58638eaf277bb7d3e35916f0b9ebf37a422cbcf",
       "domain_letter": "I",
-      "persisted_at": "2026-11-21T02:13:41.363Z"
+      "persisted_at": "2026-11-22T06:58:10.511Z"
     },
     "learn-huggingface-atomicchat-deepseek-v4-1-flash-1017-uncensored-gsq-rco-gguf": {
       "learning_id": "learn-huggingface-atomicchat-deepseek-v4-1-flash-1017-uncensored-gsq-rco-gguf",
@@ -259228,7 +259233,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Zyphra/ZONOS3-Mini",
       "source_version": "hf-zyphra-zonos3-mini",
-      "content_hash": "a961c1385219e6e5c5dcd25e583b9cff39e55fc643d8b4f730b30672f695c093",
+      "content_hash": "00b690f4494282ac277f3b201df9e7ec524a9076d9e4498ddd160abdf4dc185c",
       "dossier_path": "07_PROJECT_LEARNING/hf-zyphra-zonos3-mini-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-zyphra-zonos3-mini-learnings.md",
       "promoted_rules": [],
@@ -259237,7 +259242,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T16:00:18.653Z",
+      "verified_at": "2026-11-22T06:57:51.480Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -259254,9 +259259,9 @@
       "title": "Research & Knowledge Intelligence: Zyphra/ZONOS3-Mini Core Invariants",
       "repository": "Zyphra/ZONOS3-Mini",
       "source_version": "hf-zyphra-zonos3-mini",
-      "content_hash": "57d0acc39dc5bd471e66d3b914faad31d405fff354c159ac826243de864611b9",
+      "content_hash": "ced48bd967b194438325aecac525e454165306aa90170b6fc58a109475ece63a",
       "domain_letter": "D",
-      "persisted_at": "2026-11-16T16:00:19.037Z"
+      "persisted_at": "2026-11-22T06:57:51.887Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-zyphra-zonos3-mini-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-zyphra-zonos3-mini-learnings-core-invariants",
@@ -259266,9 +259271,9 @@
       "title": "Research & Knowledge Intelligence: hf-zyphra-zonos3-mini-learnings Core Invariants",
       "repository": "hf-zyphra-zonos3-mini-learnings",
       "source_version": "HEAD",
-      "content_hash": "28d5434929194a44815de4b7a3cf434f9e302ecdb58b43a89773a178e855ac09",
+      "content_hash": "77bf98867ed2dab3c0571d7803a40a41aea8eeae754e6bcf3075bf92672eab33",
       "domain_letter": "D",
-      "persisted_at": "2026-11-16T16:00:22.001Z"
+      "persisted_at": "2026-11-22T06:58:09.827Z"
     },
     "domain_intelligence-architecture-intelligence-louis-cfm-coucou-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-louis-cfm-coucou-learnings-core-invariants",
@@ -319372,6 +319377,44 @@
       "content_hash": "ce771f7401e68a379706fd8228ea7760497dd57c0e758e64e69a0909776e5a81",
       "domain_letter": "G",
       "persisted_at": "2026-11-22T06:41:12.114Z"
+    },
+    "rule-9902": {
+      "learning_id": "rule-9902",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9902,
+      "title": "reject lossy float-to-int coercion in import_pandas",
+      "source_url": "https://github.com/pixeltable/pixeltable",
+      "source_version": "056c7016",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T06:58:05.960Z"
+    },
+    "candidate_directive-reject-lossy-float-to-int-coercion-in-import_pandas": {
+      "item_id": "candidate_directive-reject-lossy-float-to-int-coercion-in-import_pandas",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-JBFM-reject-lossy-float-to-int-coercion-in-import_pandas.md",
+      "title": "reject lossy float-to-int coercion in import_pandas",
+      "repository": "pixeltable/pixeltable",
+      "source_version": "056c7016",
+      "content_hash": "5ebe4e552841acaf35de2819898b7197ac9c8b492b7200f9b366f75a0f1454f2",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-22T06:58:06.371Z"
+    },
+    "candidate_directive-io-reject-lossy-float-to-int-coercion-in-import_pandas": {
+      "item_id": "candidate_directive-io-reject-lossy-float-to-int-coercion-in-import_pandas",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-JEI1-io-reject-lossy-float-to-int-coercion-in-import_pandas.md",
+      "title": "io): reject lossy float-to-int coercion in import_pandas",
+      "repository": "pixeltable-pixeltable-learnings",
+      "source_version": "HEAD",
+      "content_hash": "48442972191f37c69ee91ef4a58f9f14a410c29d097254ad0400bae228506cd8",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-22T06:58:10.346Z"
     }
   },
   "ai-builder-brain": {

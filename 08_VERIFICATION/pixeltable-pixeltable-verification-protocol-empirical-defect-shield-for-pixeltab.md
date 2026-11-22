@@ -4,22 +4,22 @@
 {
   "source_repository": "pixeltable/pixeltable",
   "source_url": "https://github.com/pixeltable/pixeltable",
-  "source_version": "e66ed540",
+  "source_version": "056c7016",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-21T02:08:44.324Z",
+  "timestamp": "2026-11-22T06:58:06.370Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-pixeltable-pixeltable",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [pixeltable/pixeltable](https://github.com/pixeltable/pixeltable) (Revision: `e66ed540`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-21T02:08:44.324Z`  
+> **Provenance**: Harvested from [pixeltable/pixeltable](https://github.com/pixeltable/pixeltable) (Revision: `056c7016`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-22T06:58:06.370Z`  
 > **Learning ID**: `learn-github-pixeltable-pixeltable`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `pixeltable/pixeltable` (Commit: `e66ed540`)
+- **Target Repository**: `pixeltable/pixeltable` (Commit: `056c7016`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pixeltable/pixeltable](https://github.com/pixeltable/pixeltable))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T02:08:43.273Z  
+> **Harvest Timestamp**: 2026-11-22T06:58:05.151Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: The backend agents build with - Multimodal database, orchestration, and serving in one file
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 1663 stars
+- **Stars / Engagement**: 1664 stars
 
 ---
 
@@ -1169,8 +1169,8 @@ def check_udf_references(bases: list[model.TableModelMeta]) -> list[str]:
   > <a href="https://app.reviewnb.com/pixeltable/pixeltable/pull/2035"><img alt="Review Notebooks" height="32" src="https://raw.githubusercontent.com/ReviewNB/support/master/images/button_review_notebooks.png"></a>  **Notebooks changed:**  - <picture><img alt="" title="Lines added and removed" src="https://raw.githubusercontent.com/ReviewNB/support/master/images/diff-pmn.svg"></picture> [`working-with-fal.ipynb`](https://app.reviewnb.com/pixeltable/pixeltable/pull/2035/files/?expand=docs%2Frelease%2Fhowto%2Fproviders%2Fworking-with-fal.ipynb) in *`docs/release/howto/providers`*  Review visual diffs and comment on any notebook cell. All comments sync back to this PR.  ---   <i>Powered by <a href='https://www.reviewnb.com/?utm_source=gh'>ReviewNB</a></i>
   > agents review
 
-- **Issue #2030** (2026-11-20): **[PXT-1428] Truncate exception text and input values in row error messages**
-  *Symptoms*: When a computed column raises, the error message prints the failing expression and every input value of it in full. A UDF over a long document turns the error (and the HTTP error body in hosted and proxy modes) into a wall of text that buries the useful part: which row, which expression and which exception.  Before (UDF `boom(t.body)` over a 10,000-character `body`): a 10,092-character message, almost all of it the `body` value.  After: the same error is under 400 characters, and the value is cut after its first 256 characters: ``` In row 0 the expression boom(body) encountered exception RuntimeError: nope with 'body' = 'xxxx<first 256 characters>... [9746 more characters] ```  ## Change  `raise_from_expr_eval_err()` in `pixeltable/exceptions.py` now passes each printed input value through a new `_truncate()` helper, capped at 256 characters, and the exception text at 1,024 characters. A truncated value ends with `... [N more characters]`, so the reader knows it was cut and by how much. The stack trace on `err.detail` is unchanged.  The expression text is capped at 1,024 characters as well, and each dependency label at 256. A constant argument appears in the expression text, so `f(t.x, LONG_PROMPT)` used to print the prompt in full twice: once in the expression and once as a `Literal` dependency in the `with ...` list. `Literal` dependencies are now left out of that list, since the expression already shows them.  Truncation is local to this error path. `ColumnType.print_value
+- **Issue #2033** (2026-11-21): **Replace retired fal-ai/fast-sdxl with fal-ai/flux/schnell**
+  *Symptoms*: Scheduled `tests` run on `main`: https://github.com/pixeltable/pixeltable/actions/runs/44653753220  ## Cause  fal.ai retired `fal-ai/fast-sdxl`. The queue result request now returns `410 Gone` / `FalClientHTTPError: This endpoint is deprecated and no longer available.` That failed:  - `tests/functions/test_fal.py::TestFal::test_fast_sdxl` (`standard+, ubuntu-26.04, 3.11`) - `working-with-fal.ipynb` (`notebooks+, ubuntu-26.04, 3.11`)  In the same run, `fal-ai/flux/schnell` passed in `test_text_to_image`, `test_text_to_image_with_url` and `test_multiple_images`.  ## Change  - `test_fast_sdxl` is now `test_image_size_and_steps`. It sends the same `image_size: square_hd` input to `fal-ai/flux/schnell`, with `num_inference_steps` set to 8 because Schnell accepts 1 to 12, and still checks for a 1024x1024 image. - The second `run()` example in the `fal.run()` docstring now uses `fal-ai/flux/schnell`. - In the notebook, the "Fast SDXL" section now shows the same `image_size` and `num_inference_steps` parameters with FLUX Schnell. `negative_prompt` is gone because Schnell does not support it. The model list and tips no longer mention `fast-sdxl`. - I cleared the image output of the results cell because it contained SDXL images. The notebook needs a re-run with a fal.ai key to refill that output.  ## Checks  - `tool/check_notebooks.py docs/release` passes. `py_compile` passes on both changed Python files. - Not run here: Ruff, mypy and nbqa are not installed in this environment, and th
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1187,440 +1187,100 @@ def check_udf_references(bases: list[model.TableModelMeta]) -> list[str]:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e66ed540` (2026-11-20)
-**Commit Message**: Keep component view local values when the base changes view membership (#1938)
+### Incident Patch 1: `6acecbd1` (2026-11-21)
+**Commit Message**: fix(io): reject lossy float-to-int coercion in import_pandas (#1922)
 
-**Problem.** A base table update that changes a component view's
-membership reset the view's non-computed columns to `None`, even for
-rows that stayed in the view:
+Fixes #1886
 
-```python
-v = pxt.create_view('v', t.where(t.flag == True), iterator=string_splitter(t.text, 'sentence'))
-v.add_column(annotation=pxt.Int | None)
-v.update({'annotation': 42})
-t.update({'flag': True, 'other': 1})  # annotation is now None for every component row
+## Summary
+
+`import_pandas()` (and the CSV/Excel importers built on it) silently
+truncated non-integral floats with `int(val)` when a float-dtype column
+was declared as an int type, e.g. through `schema_overrides={'pk':
+pxt.Int}`. The import reported `0 errors` and the truncated value became
+the stored value (and the row identity when the column is the primary
+key).
+
+## Root cause
+
+`df_infer_schema()` accepts the declared override without a dtype check,
+and `_df_row_to_pxt_row` then takes the int branch and calls `int(val)`,
+which truncates toward zero. The pandas path does not go through
+`ColumnType.create_literal`, so nothing else rejects the value; the
+row/dict insert path does reject it.
+
+## Fix
+
+In the int branch of `_df_row_to_pxt_row`, a float that is not integral
+now raises `RequestError(INVALID_TYPE)` naming the column and value,
+matching the dict insert path. Integral floats (`1.0`) still convert
+losslessly, and NaN is still mapped to `None` before this branch.
+
+## Tests
+
+New `test_import_pandas_lossy_float_to_int` checks that `[1.9, 2.1]`
+declared as `pxt.Int` raises, and that `[1.0, 2.0]`
+
+**File**: `pixeltable/io/pandas.py` (modified, +7/-2)
+```diff
+@@ -215,16 +215,21 @@ def _df_prepare_column(data: pd.Series, col_type: ts.ColumnType) -> Iterable[Any
+             # Preserve scalar conversion for datetime cases a pandas column operation cannot handle.
+             pass
+ 
+-    return [_df_convert_value(val, col_type) for val in data]
++    return [_df_convert_value(val, col_type, str(data.name)) for val in data]
+ 
+ 
+-def _df_convert_value(val: Any, col_type: ts.ColumnType) -> Any:
++def _df_convert_value(val: Any, col_type: ts.ColumnType, col_name: str) -> Any:
+     if col_type.is_float_type():
+         return float(val)
+     if isinstance(val, float) and np.isnan(val):
+         # Float NaN remains a float value; in other column types it represents a missing cell.
+         return None
+     if col_type.is_int_type():
++        if isinstance(val, (float, np.floating)) and not float(val).is_integer():
++            raise excs.RequestError(
++                excs.ErrorCode.INVALID_TYPE,
++                f'Value {val!r} in column `{col_name}` cannot be converted to int without loss of precision',
++            )
+         return int(val)
+     if col_type.is_bool_type():
+         return bool(val)
 ```
 
-**Cause.** In `_propagate_update()`, a component view with a membership
-change (an update touched a predicate column, or the base gained rows)
-took the full-reload branch. `create_view_load_plan()` does not carry
-over stored non-computed view columns, and it reruns the iterator for
-every changed base row.
-
-**Fix.** Component views now go through the same branch as other
-filtered views: an update plan copies rows that stay, and a load plan
-with `exclude_existing_rows=True` adds rows that enter. The full reload
-remains only when an iterator input is recomputed, because then the
-components themselves can change.
-
-The load plan's exclusion join asserted that the view and the base hav
-
-**File**: `pixeltable/catalog/table_version.py` (modified, +5/-6)
+**File**: `tests/io/test_pandas.py` (modified, +14/-0)
 ```diff
-@@ -1696,16 +1696,15 @@ def _propagate_update(
-         if cascade:
-             base_versions = [None if len(plans) == 0 else self.version, *base_versions]  # don't update in place
-             changed_qids = {c.qid for c in modified_cols} | {c.qid for c in recomputed_view_cols}
-+            changed_dependents = self.get_dependent_columns(modified_cols)
- 
-             # propagate to views
-             for view in self.mutable_views:
-                 view_tv = view.get()
-                 recomputed_cols = [col for col in recomputed_view_cols if col.get_tbl().id == view.id]
-                 # any and all are equivalent since all iterator columns share the same input columns meaning
-                 # if one is recomputed they all are. However any is more efficient since it can short circuit.
--                needs_iterator_reload = view_tv.is_component_view and any(
--                    view_tv.is_iterator_column(col) for col in recomputed_cols
--                )
-+                needs_iterator_reload = any(view_tv.is_iterator_column(col) for col in changed_dependents)
- 
-                 membership_change = base_membership_change or (
-                     # an update can move a row in or out of a filtered view, but only if it changed one of the columns
-@@ -1718,7 +1717,7 @@ def _propagate_update(
-                 assert len(updated_bases) > 0  # the table where the update started always has a plan
- 
-                 view_plans: list[exec.ExecNode] = []
--                if needs_iterator_reload or (membership_change and view_tv.is_component_view):
-+                if needs_iterator_reload:
-                     view_plans.append(
-                         Planner.create_view_load_plan(view_tv.path, created_at_current_version=updated_bases)
-                     )
-@@ -2124,8 +2123,8 @@ def display_str(self) -> str:
-         return f'{"Table" if self.is_insertable else "View"} {self.name!r}'
- 
-     def is_iterator_column(self, col: Column) -> bool:
--        """Returns True if col is produced by an iterator (including the pos column)"""
--        return col.is_iterator_col
-+        """Returns True if col is produced by this table's iterator (including the pos column)"""
-+        return col.get_tbl().id == self.id and col.is_iterator_col
- 
-     def iterator_columns(self) -> list[Column]:
-         """Return all iterator-produced columns (including the pos column)"""
-```
-
-**File**: `pixeltable/exec/sql_node.py` (modified, +1/-1)
-```diff
-@@ -405,7 +405,7 @@ def create_from_clause(
-             excluded_tv = exclude_deleted_at_current_version.get()
-             excluded_rowid_cols = excluded_tv.store_tbl.rowid_columns()
-             path_rowid_cols = tbl.tbl_version.get().store_tbl.rowid_columns()
--            assert len(excluded_rowid_cols) == len(path_rowid_cols)
-+            assert len(excluded_rowid_cols) >= len(path_rowid_cols)
-             on_clause = sql.and_(
-                 *[c1 == c2 for c1, c2 in zip(excluded_rowid_cols, path_rowid_cols)],
-                 excluded_tv.store_tbl.v_max_col == excluded_tv.version,
-```
-
-**File**: `pixeltable/plan.py` (modified, +5/-7)
-```diff
-@@ -1044,26 +1044,24 @@ def create_view_update_plan(
-         target = view.tbl_version.get()
-         recomputed_cols = set(recompute_targets)
- 
--        eval_cols, eval_exprs, identity_cols = cls._build_update_columns(
-+        eval_cols, select_list, identity_cols = cls._build_update_columns(
-             target, set(), recomputed_cols, return_rows=False
-         )
--        # Identity columns are all other stored columns that aren't being recomputed
--        # and go through select_list as ColumnRefs (no separate columns= path) unlike other update plans
--        evaluated_cols: list[Column] = identity_cols + eval_cols
--        select_list: list[exprs.Expr] = [exprs.ColumnRef(c.column_version_md()) for c in identity_cols] + eval_exprs
--
-         # Read the just-expired rows (v_max == current_version) to copy stored column values
-         plan = cls.create_query_plan(
-             FromClause(tbls=[view]),
-             select_list,
-+            columns=identity_cols,
-             where_clause=target.predicate,
-             ignore_errors=True,
-             created_at_current_version=created_at_current_version,
-             deleted_at_current_version=[view.tbl_version],
-         )
-         # Register output columns with the row builder
-         plan.row_builder.set_table_output(
--            target, expr_cols=[(col, select_list[i].slot_idx) for i, col in enumerate(evaluated_cols)]
-+            target,
-+            identity_cols=identity_cols,
-+            expr_cols=[(col, select_list[i].slot_idx) for i, col in enumerate(eval_cols)],
-         )
-         plan = cls._add_cell_materialization_node(plan)
-         plan = cls._add_save_node(plan)
-```
-
-**File**: `tests/test_component_view.py` (modified, +192/-0)
-```diff
-@@ -100,6 +100,32 @@ def seek(self, pos: int, **kwargs: Any) -> None:
-         self.i = pos
- 
- 
-+class CounterRow(TypedDict):
-+    i: int
-+
-+
-+@pxt.iterator(unstored_cols=['i'])
-+class unstored_counter(pxt.PxtIterator):
-+    """Emits n rows, none of whose columns are stored."""
-+
-+    def __init__(self, n: int):
-+        self.n = n
-+        self.i = 0
-+
-+    def __next__(self) -> CounterRow:
-+        if self.i >= self.n:
-+            raise StopIteration
-+        row: CounterRow = {'i': self.i}
-+        self.i += 1
-+        return row
-+
-+    def close(self) -> None:
-+        pass
-+
-+    def seek(self, pos: int, **kwargs: Any) -> None:
-+        self.i = pos
-+
-+
- class MixedCaseRow(TypedDict):
-     MyOutput: int
-     Frame: int
-@@ -676,6 +702,172 @@ def test_update_changes_view_membership(self, db_root: DatabaseRoot) -> None:
-         t.update({'n': 1}, where=t.n == 3)
-         assert len(v.collect()) == 4
- 
-+    def test_membership_change_keeps_view_local_values(self, db_root: DatabaseRoot) -> None:
-+        """A base table update that changes a component view's membership keeps the non-computed values of view rows
-+        that stay."""
-+        p = db_root.make_catalog_path
-+        t = pxt.create_table(p('tbl'), {'id': pxt.Int, 'flag': pxt.Bool, 'n': pxt.Int, 'other': pxt.Int | None})
-+        t.insert(
-+            [
-+                {'id': 1, 'flag': True, 'n': 2},
-+                {'id': 2, 'flag': True, 'n': 3},
-+                {'id': 3, 'flag': False, 'n': 2},
-+                {'id': 4, 'flag': True, 'n': 0},
-+            ]
-+        )
-+        v = pxt.create_view(p('view'), t.where(t.flag == True), iterator=simple_iterator(t.n))
-+        v.add_computed_column(icol2=v.icol * 2)
-+        v.add_column(annotation=pxt.Int | None)
-+        v2 = pxt.create_view(p('view2'), v)
-+        v2.add_column(note=pxt.String | None)
-+        v.update({'annotation': 42})
-+        v2.update({'note': 'x'})
-+
-+        def v_rows() -> dict[tuple[int, int], tuple[int, int | None]]:
-+            rows = v.select(v.id, v.pos, v.icol2, v.annotation).order_by(v.id, v.pos).collect()
-+            return {(r['id'], r['pos']): (r['icol2'], r['annotation']) for r in rows}
-+
-+        def v2_rows() -> dict[tuple[int, int], str | None]:
-+            rows = v2.select(v2.id, v2.pos, v2.note).order_by(v2.id, v2.pos).collect()
-+            return {(r['id'], r['pos']): r['note'] for r in rows}
-+
-+        assert v_rows() == {
-+            (1, 0): (0, 42),
-+            (1, 1): (2, 42),
-+            (2, 0): (0, 42),
-+            (2, 1): (2, 42),
-+            (2, 2): (4, 42),
-+        }  # fmt: skip
-+        assert v2_rows() == {
-+            (1, 0): 'x',
-+            (1, 1): 'x',
-+            (2, 0): 'x',
-+            (2, 1): 'x',
-+            (2, 2): 'x',
-+        }  # fmt: skip
-+
-+        t.update({'flag': True, 'other': 1})
-+        assert v_rows() == {
-+            (1, 0): (0, 42),
-+            (1, 1): (2, 42),
-+            (2, 0): (0, 42),
-+            (2, 1): (2, 42),
-+            (2, 2): (4, 42),
-+            (3, 0): (0, None),
-+            (3, 1): (2, None),
-+        }
-+        assert v2_rows() == {
-+            (1, 0): 'x',
-+            (1, 1): 'x',
-+            (2, 0): 'x',
-+            (2, 1): 'x',
-+            (2, 2): 'x',
-+            (3, 0): None,
-+            (3, 1): None,
-+        }
-+
-+        t.update({'flag': False}, where=t.id == 1)
-+        assert v_rows() == {
-+            (2, 0): (0, 42),
-+            (2, 1): (2, 42),
-+            (2, 2): (4, 42),
-+            (3, 0): (0, None),
-+            (3, 1): (2, None),
-+        }  # fmt: skip
-+        assert v2_rows() == {
-+            (2, 0): 'x',
-+            (2, 1): 'x',
-+            (2, 2): 'x',
-+            (3, 0): None,
-+            (3, 1): None,
-+        }  # fmt: skip
-+
-+        t.update({'flag': True}, where=t.id == 1)
-+        assert v_rows() == {
-+            (1, 0): (0, None),
-+            (1, 1): (2, None),
-+            (2, 0): (0, 42),
-+            (2, 1): (2, 42),
-+            (2, 2): (4, 42),
-+            (3, 0): (0, None),
-+            (3, 1): (2, None),
-+        }
-+        assert v2_rows() == {
-+            (1, 0): None,
-+            (1, 1): None,
-+            (2, 0): 'x',
-+            (2, 1): 'x',
-+            (2, 2): 'x',
-+            (3, 0): None,
-+            (3, 1): None,
-+        }
-+
-+        t.insert([{'id': 5, 'flag': True, 'n': 2}])
-+        assert v_rows() == {
-+            (1, 0): (0, None),
-+            (1, 1): (2, None),
-+            (2, 0): (0, 42),
-+            (2, 1): (2, 42),
-+            (2, 2): (4, 42),
-+            (3, 0): (0, None),
-+            (3, 1): (2, None),
-+            (5, 0): (0, None),
-+            (5, 1): (2, None),
-+        }
-+        assert v2_rows() == {
-+            (1, 0): None,
-+            (1, 1): None,
-+            (2, 0): 'x',
-+            (2, 1): 'x',
-+            (2, 2): 'x',
-+            (3, 0): None,
-+            (3, 1): None,
-+            (5, 0): None,
-+            (5, 1): None,
-+        }
-+
-+    def test_update_unstor
-```
-
----
-
-### Incident Patch 2: `1eeb1d36` (2026-11-20)
-**Commit Message**: [PXT-1239] Make document_splitter honor image_dpi for PDF page images (#2028)
-
-`document_splitter(..., elements=['image'])` documents `image_dpi`
-(default 300) and `image_format` (default `'png'`), but neither had any
-effect. Since the switch from pymupdf to pypdfium2, `_pdf_sections()`
-calls `page.render()` with no scale, so PDF page images always render at
-72 dpi.
-
-Before: `image_dpi=144` and `image_dpi=300` both produce 612x792 images
-for a US Letter page; `image_dpi=0` is accepted.
-After: `image_dpi=144` produces 1224x1584 images; `image_dpi=0` fails at
-view creation with `INVALID_ARGUMENT`.
-
-## Change
-
-- `pixeltable/functions/document.py`
-- `_pdf_sections()` renders with `scale=image_dpi /
-_PDF_POINTS_PER_INCH`. PDF measures pages in points, 72 to the inch (the
-default user space unit in the PDF spec), and pypdfium2 renders one
-pixel per point at `scale=1`, so the scale converts dpi to pixels per
-point.
-- pypdfium2 sizes the bitmap as `ceil(page_points * scale)`, and `dpi /
-72` is often not exact in binary, so some DPIs give one extra pixel in a
-dimension (a US Letter page at 300 dpi is 2550x3301; pdfium stretches
-the page to fill it). This is left as is: the 0.03% stretch is 
-
-**File**: `pixeltable/functions/document.py` (modified, +9/-7)
-```diff
-@@ -137,6 +137,7 @@ def _parse_elements(elements: list[Literal['text', 'image']] | None) -> list[Ele
- 
- 
- _HTML_HEADINGS = {'h1', 'h2', 'h3', 'h4', 'h5', 'h6'}
-+_PDF_POINTS_PER_INCH = 72
- 
- 
- class DocumentChunk(TypedDict, total=False):
-@@ -205,8 +206,8 @@ class document_splitter(pxt.PxtIterator):
-         tiktoken_target_model: Name of the target model to use when counting tokens with tiktoken. If specified,
-             this parameter overrides `tiktoken_encoding`. This parameter is ignored unless the `'token_limit'`
-             separator is specified.
--        image_dpi: DPI to use when extracting images from PDFs. Defaults to 300.
--        image_format: format to use when extracting images from PDFs. Defaults to 'png'.
-+        image_dpi: Resolution at which PDF pages are rendered when `elements` includes `'image'`. Must be a
-+            positive integer. Defaults to 72, which renders one pixel per PDF point.
- 
-     Examples:
-         All these examples assume an existing table `tbl` with a column `doc` of type `pxt.Document`.
-@@ -244,7 +245,6 @@ class document_splitter(pxt.PxtIterator):
-     _tiktoken_encoding: str | None
-     _tiktoken_target_model: str | None
-     _image_dpi: int
--    _image_format: str
- 
-     _sections: Iterator[DocumentSection]
- 
-@@ -261,8 +261,7 @@ def __init__(
-         spacy_model: str = 'en_core_web_sm',
-         tiktoken_encoding: str | None = 'cl100k_base',
-         tiktoken_target_model: str | None = None,
--        image_dpi: int = 300,
--        image_format: str = 'png',
-+        image_dpi: int = _PDF_POINTS_PER_INCH,
-     ) -> None:
-         if skip_tags is None:
-             skip_tags = ['nav']
-@@ -285,7 +284,6 @@ def __init__(
-         self._tiktoken_encoding = tiktoken_encoding
-         self._tiktoken_target_model = tiktoken_target_model
-         self._image_dpi = image_dpi
--        self._image_format = image_format
- 
-         # set up processing pipeline
-         if self._doc_handle.format == ts.DocumentType.DocumentFormat.HTML:
-@@ -491,7 +489,7 @@ def _emit_text() -> str:
-             with closing(page):
-                 img: PIL.Image.Image | None = None
-                 if Element.IMAGE in self._elements:
--                    with closing(page.render()) as bitmap:
-+                    with closing(page.render(scale=self._image_dpi / _PDF_POINTS_PER_INCH)) as bitmap:
-                         img = bitmap.to_pil().copy()
-                 with closing(page.get_textpage()) as textpage:
-                     text = textpage.get_text_bounded()
-@@ -587,6 +585,10 @@ def validate(cls, bound_args: dict[str, Any]) -> None:
-         limit = bound_args.get('limit')
-         overlap = bound_args.get('overlap')
- 
-+        image_dpi = bound_args.get('image_dpi')
-+        if image_dpi is not None and image_dpi <= 0:
-+            raise excs.RequestError(excs.ErrorCode.INVALID_ARGUMENT, "'image_dpi' must be a positive integer")
-+
-         if Element.IMAGE in elements and separators != [Separator.PAGE]:
-             raise excs.RequestError(
-                 excs.ErrorCode.UNSUPPORTED_OPERATION,
-```
-
-**File**: `tests/test_document.py` (modified, +28/-0)
-```diff
-@@ -167,6 +167,11 @@ def test_doc_splitter_errors(self, uses_db: None) -> None:
-                 'chunks', t, iterator=document_splitter(document=t.doc, separators='char_limit, token_limit', limit=10)
+@@ -383,6 +383,20 @@ def test_pandas_errors(self, db_root: DatabaseRoot) -> None:
              )
+         assert 'Primary key column `ts_n` cannot contain null values.' in str(exc_info.value)
  
-+        with pxt_raises(pxt.ErrorCode.INVALID_ARGUMENT, match="'image_dpi' must be a positive integer"):
-+            _ = pxt.create_view(
-+                'chunks', t, iterator=document_splitter(t.doc, separators='page', elements=['image'], image_dpi=-1)
-+            )
++    def test_import_pandas_lossy_float_to_int(self, db_root: DatabaseRoot) -> None:
++        p = db_root.make_catalog_path
 +
-         # test that limit is required for char_limit and token_limit
-         with pxt_raises(pxt.ErrorCode.MISSING_REQUIRED, match='limit'):
-             _ = pxt.create_view('chunks', t, iterator=document_splitter(document=t.doc, separators='char_limit'))
-@@ -547,3 +552,26 @@ def test_doc_splitter_images(self, uses_db: None) -> None:
++        # a non-integral float must not be silently truncated when the column is declared as an int
++        df = pd.DataFrame({'pk': [1.9, 2.1], 'v': ['a', 'b']})
++        with pxt_raises(pxt.ErrorCode.INVALID_TYPE) as exc_info:
++            _ = pxt.io.import_pandas(p('lossy'), df, schema_overrides={'pk': ts.IntType()}, primary_key='pk')
++        assert 'cannot be converted to int without loss' in str(exc_info.value)
++
++        # integral floats are still converted losslessly
++        df = pd.DataFrame({'pk': [1.0, 2.0], 'v': ['a', 'b']})
++        t = pxt.io.import_pandas(p('lossless'), df, schema_overrides={'pk': ts.IntType()}, primary_key='pk')
++        assert sorted(r['pk'] for r in t.collect()) == [1, 2]
++
  
-         res = chunks.collect()
-         assert all(isinstance(r['image'], PIL.Image.Image) for r in res)
-+
-+    def test_doc_splitter_image_dpi(self, uses_db: None) -> None:
-+        pdf_file = next(p for p in get_documents() if p.endswith('1706.03762.pdf'))
-+        t = pxt.create_table('docs', {'doc': pxt.Document | None})
-+        dpi_kwargs: dict[str, dict[str, Any]] = {
-+            'default': {},
-+            'dpi72': {'image_dpi': 72},
-+            'dpi144': {'image_dpi': 144},
-+        }
-+        views = {
-+            name: pxt.create_view(
-+                f'pages_{name}', t, iterator=document_splitter(t.doc, separators='page', elements=['image'], **kwargs)
-+            )
-+            for name, kwargs in dpi_kwargs.items()
-+        }
-+        status = t.insert(doc=pdf_file)
-+        assert status.num_excs == 0
-+
-+        sizes = {name: [img.size for img in v.order_by(v.pos).collect()['image']] for name, v in views.items()}
-+        assert len(sizes['dpi72']) == 15
-+        assert sizes['dpi72'][0] == (612, 792)
-+        assert sizes['default'] == sizes['dpi72']
-+        assert sizes['dpi144'] == [(2 * w, 2 * h) for w, h in sizes['dpi72']]
+ def _assert_equals_with_nans(a: list[float], b: list[float]) -> bool:
+     assert len(a) == len(b)
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #2035** (2026-11-20): Replace the retired fal-ai/fast-sdxl model in the fal test, docstring and notebook (@sergey-mkhitaryan)
+- **PR #2033** (closed): Replace retired fal-ai/fast-sdxl with fal-ai/flux/schnell (@claude[bot])
+- **PR #2032** (2026-11-22): [PXT-1737] Validate video_splitter segment_times and mode (@sergey-mkhitaryan)
+- **PR #2031** (2026-11-21): [PXT-1399] Document PDF separator support in document_splitter (@sergey-mkhitaryan)
 - **PR #2030** (2026-11-20): [PXT-1428] Truncate exception text and input values in row error messages (@sergey-mkhitaryan)
-- **PR #2028** (2026-11-21): [PXT-1239] Make document_splitter honor image_dpi for PDF page images (@sergey-mkhitaryan)
-- **PR #2027** (2026-11-20): [PXT-1797] Use the Gemini Developer API when a Gemini API key is configured (@sergey-mkhitaryan)
-- **PR #2025** (2026-11-20): [PXT-1555] Clamp top_k to the label count in Hugging Face classification UDFs (@sergey-mkhitaryan)
-- **PR #2021** (2026-11-20): [PXT-1257] Accept a Path source in create_table(), insert() and the io import functions (@sergey-mkhitaryan)
+- **PR #2029** (2026-11-21): [PXT-1832] Add if_exists to export_parquet() (@sergey-mkhitaryan)
 
 ---
 
@@ -1640,40 +1300,38 @@ the page to fill it). This is left as is: the 0.03% stretch is
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Keep component view local values when the base changes view membership
+## X. io): reject lossy float-to-int coercion in import_pandas
 
 **RULE**:
-When implementing operations in `pixeltable/catalog/table_version.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pixeltable/pixeltable. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pixeltable/io/pandas.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pixeltable/pixeltable. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e66ed540`: Keep component view local values when the base changes view membership. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6acecbd1`: io): reject lossy float-to-int coercion in import_pandas. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pixeltable/catalog/table_version.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pixeltable/io/pandas.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-            changed_dependents = self.get_dependent_columns(modified_cols)
-                needs_iterator_reload = any(view_tv.is_iterator_column(col) for col in changed_dependents)
-                if needs_iterator_reload:
-        """Returns True if col is produced by this table's iterator (including the pos column)"""
-        return col.get_tbl().id == self.id and col.is_iterator_col
+    return [_df_convert_value(val, col_type, str(data.name)) for val in data]
+def _df_convert_value(val: Any, col_type: ts.ColumnType, col_name: str) -> Any:
+        if isinstance(val, (float, np.floating)) and not float(val).is_integer():
+            raise excs.RequestError(
+                excs.ErrorCode.INVALID_TYPE,
+                f'Value {val!r} in column `{col_name}` cannot be converted to int without loss of precision',
+            )
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-                needs_iterator_reload = view_tv.is_component_view and any(
-                    view_tv.is_iterator_column(col) for col in recomputed_cols
-                )
-                if needs_iterator_reload or (membership_change and view_tv.is_component_view):
-        """Returns True if col is produced by an iterator (including the pos column)"""
-        return col.is_iterator_col
+    return [_df_convert_value(val, col_type) for val in data]
+def _df_convert_value(val: Any, col_type: ts.ColumnType) -> Any:
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e66ed540` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6acecbd1` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

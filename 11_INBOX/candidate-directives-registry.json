@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T06:50:07.534Z",
+  "last_updated": "2026-11-22T06:58:11.187Z",
   "directives": [
     {
       "id": "CD-001",
@@ -5336,11 +5336,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-91YM",
+      "id": "CD-JF5F",
       "directive_title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "source_repo": "zoontek-react-native-permissions-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-91YM-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-JF5F-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-22",
@@ -45382,6 +45382,37 @@
       "source_repo": "zoontek-react-native-permissions",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-684A09-android-skip-explicit-kotlin-plugin-when.md",
+      "staged_date": "2026-11-22"
+    },
+    {
+      "id": "CD-JBFM",
+      "directive_title": "reject lossy float-to-int coercion in import_pandas",
+      "source_repo": "pixeltable/pixeltable",
+      "source_commit": "056c7016",
+      "staged_file": "11_INBOX/candidate-directives/CD-JBFM-reject-lossy-float-to-int-coercion-in-import_pandas.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-22",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-JEI1",
+      "directive_title": "io): reject lossy float-to-int coercion in import_pandas",
+      "source_repo": "pixeltable-pixeltable-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-JEI1-io-reject-lossy-float-to-int-coercion-in-import_pandas.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-22",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-REV-1045EF",
+      "directive_title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-permissions",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-1045EF-android-skip-explicit-kotlin-plugin-when.md",
       "staged_date": "2026-11-22"
     }
   ]

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T06:49:35.339Z",
-  "total_cycles_completed": 11442,
-  "total_learnings_persisted": 11442,
-  "total_rules_promoted": 10716,
+  "last_updated": "2026-11-22T06:58:06.158Z",
+  "total_cycles_completed": 11444,
+  "total_learnings_persisted": 11444,
+  "total_rules_promoted": 10717,
   "history": [
-    {
-      "timestamp": "2026-11-21T13:53:36.593Z",
-      "repository": "karakeep-app/karakeep",
-      "learningId": "learn-github-karakeep-app-karakeep",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T13:53:39.590Z",
-      "repository": "temporalio/temporal",
-      "learningId": "learn-github-temporalio-temporal",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T13:53:45.477Z",
       "repository": "ydb-platform/ydb",
@@ -1403,6 +1389,20 @@
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T06:57:51.702Z",
+      "repository": "Zyphra/ZONOS3-Mini",
+      "learningId": "learn-huggingface-zyphra-zonos3-mini",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T06:58:06.158Z",
+      "repository": "pixeltable/pixeltable",
+      "learningId": "learn-github-pixeltable-pixeltable",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
