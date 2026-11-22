@@ -12051,3 +12051,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic-i1-gguf` | `https://huggingface.co/mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF` | `hf-mraderm` | Multi-dimensional audit evidence | 2026-11-22T05:12:30.121Z |
 | `learn-huggingface-scantist-glm-5-3-slim-gguf` | `https://huggingface.co/Scantist/GLM-5.3-SLIM-GGUF` | `hf-scantis` | Multi-dimensional audit evidence | 2026-11-22T05:19:49.587Z |
 | `learn-github-callstack-agent-device` | `https://github.com/callstack/agent-device` | `d6767e09` | Multi-dimensional audit evidence | 2026-11-22T05:19:57.118Z |
+| `learn-huggingface-autotrust-qwen3-8-flash-next-e384-fp4-v2` | `https://huggingface.co/autotrust/Qwen3.8-Flash-Next-E384-FP4-V2` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-22T05:28:03.828Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `0fe54a78` | Multi-dimensional audit evidence | 2026-11-22T05:28:17.644Z |
+| `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `7431a275` | Multi-dimensional audit evidence | 2026-11-22T05:28:17.823Z |

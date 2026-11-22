@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T05:19:57.125Z",
+  "last_updated": "2026-11-22T05:28:17.834Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "eff88fc1735fc20bb861873fcac9234039aff78d2e338f4b9c6ee1e0c80d3576",
-      "verified_at": "2026-11-22T03:11:40.108Z",
+      "content_hash": "f44c62df0260eb9cb5414d2104e0cff30855f9913bf3eb6336952581e5b85cec",
+      "verified_at": "2026-11-22T05:28:17.654Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T03:11:40.108Z"
+      "last_updated": "2026-11-22T05:28:17.654Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -4881,14 +4881,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-matrixorigin-matrixone",
-      "content_hash": "17293a15106faaf6e0b90d98da003edd26f161b1851fa889fe7edb1d68c50852",
-      "verified_at": "2026-11-21T00:52:08.927Z",
+      "content_hash": "3b9dd89750f15c36550ff6b7eaa312a73314d434be95d21bd1bddd1ca92dca6d",
+      "verified_at": "2026-11-22T05:28:17.833Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T00:52:08.927Z"
+      "last_updated": "2026-11-22T05:28:17.833Z"
     },
     "fallow-rs/fallow": {
       "repository": "fallow-rs/fallow",
@@ -18426,14 +18426,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-autotrust-qwen3-8-flash-next-e384-fp4-v2",
-      "content_hash": "740893104f1e788717e8a44ad8dc0f59e5208c788688d2e96e87869a4b37d703",
-      "verified_at": "2026-11-14T20:52:01.021Z",
+      "content_hash": "b616c1389d81ea2913e42276bf9e3aebc51612ebd7718ec21566d78d2bad5cb5",
+      "verified_at": "2026-11-22T05:28:03.838Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T20:52:01.021Z"
+      "last_updated": "2026-11-22T05:28:03.838Z"
     },
     "sceneview/sceneview": {
       "repository": "sceneview/sceneview",

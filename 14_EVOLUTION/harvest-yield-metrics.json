@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T05:19:57.122Z",
-  "total_cycles_completed": 11426,
-  "total_learnings_persisted": 11426,
-  "total_rules_promoted": 10710,
+  "last_updated": "2026-11-22T05:28:17.830Z",
+  "total_cycles_completed": 11429,
+  "total_learnings_persisted": 11429,
+  "total_rules_promoted": 10712,
   "history": [
-    {
-      "timestamp": "2026-11-21T12:38:02.858Z",
-      "repository": "open-policy-agent/opa",
-      "learningId": "learn-github-open-policy-agent-opa",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T12:38:09.514Z",
-      "repository": "StarRocks/starrocks",
-      "learningId": "learn-github-starrocks-starrocks",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T12:48:40.864Z",
-      "repository": "RecursiveSI/flint",
-      "learningId": "learn-huggingface-recursivesi-flint",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T12:48:47.668Z",
       "repository": "mattermost/mattermost",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-22T05:19:57.122Z",
       "repository": "callstack/agent-device",
       "learningId": "learn-github-callstack-agent-device",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T05:28:03.834Z",
+      "repository": "autotrust/Qwen3.8-Flash-Next-E384-FP4-V2",
+      "learningId": "learn-huggingface-autotrust-qwen3-8-flash-next-e384-fp4-v2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T05:28:17.650Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T05:28:17.830Z",
+      "repository": "matrixorigin/matrixone",
+      "learningId": "learn-github-matrixorigin-matrixone",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

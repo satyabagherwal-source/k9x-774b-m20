@@ -4,22 +4,22 @@
 {
   "source_repository": "NucleoidAI/Nucleoid",
   "source_url": "https://github.com/NucleoidAI/Nucleoid",
-  "source_version": "2ae49a2e",
+  "source_version": "0fe54a78",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-22T02:29:34.321Z",
+  "timestamp": "2026-11-22T05:28:17.912Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nucleoidai-nucleoid",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `2ae49a2e`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-22T02:29:34.321Z`  
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `0fe54a78`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-22T05:28:17.912Z`  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `NucleoidAI/Nucleoid` (Commit: `2ae49a2e`)
+- **Target Repository**: `NucleoidAI/Nucleoid` (Commit: `0fe54a78`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T02:29:33.031Z  
+> **Harvest Timestamp**: 2026-11-22T05:28:16.825Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1581,117 +1581,139 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `eec6a55b` (2026-11-22)
-**Commit Message**: Draft NUC 130 Loop-Local Iterator Exits
+### Incident Patch 1: `4d36a82b` (2026-11-22)
+**Commit Message**: NUC 130 Loop-Local Iterator Exits
 
-Allocate one bounded Runtime features proposal: return for ends the
-nearest enclosing iterator without returning from its enclosing
-function. Ordinary returns, names, scopes, exceptions, finally and
-transactions remain protected.
+Rejected under the continuous automatic-acceptance rule: hard criterion 2
+fails. The existing programs_without_spreads_file_no_entry_observations
+test at tests/object_spread_entries.rs:305 expects 1,246 programs but the
+frozen candidate observes 1,252 after six new document cases.
 
-Continuous mode; the live eligible registry's unbiased draw selected
-index 1 of 5, Runtime features. No stale allocated Draft was available.
-Runtime applicability is new_feature: loop-local non-function exit is
-not an accepted execution primitive. Required behavior, compatibility
-and development checks remain; this branch skips token comparison.
+Fresh independent evaluation reports overall Rejected, although the core
+reports Accepted. Actual full cargo test --no-fail-fast exits 101:
+3,867 passed, one failed, and 25 unchanged ignored. All 3,852 accepted
+identity occurrences remain; all 41 new tests pass. The core passes
+1,257 accepted-source replays and 1,263 candidate cases.
 
-The accepted parser rejects the concrete gap probe with
-SyntaxError("Unexpected keyword 'for'") at line 6, column 16.
-This allocation changes only this Draft and its two index rows.
-Preparation, independent evaluation and the caller outcome are pending.
+Build all targets, warning-denied Clippy, formatting, accepted-language
+compatibility, export checks and warning-denied rustdoc pass. Runtime
+new_feature token comparison is entirely skipped, not a passing gate.
+Usefulness is unscored (missing_rubric); learning is not_configured.
 
-Co-authored-by: Copilot <[REDACTED_EMAIL]>
+Record only the final rejected proposal and its two index entries.
+Rejected code, executable documents, tests, grammar, data and exports
+remain isolated and unchanged. No candidate repair or version change.
 
-**File**: `docs/nuc-0000.md` (modified, +2/-0)
+Frozen proposal: 06e8b49644b3e071d06092ed1290aa9ce13f0e
+
+**File**: `docs/nuc-0000.md` (modified, +2/-2)
 ```diff
-@@ -100,6 +100,7 @@ Created: 31-Jul-2026
+@@ -100,7 +100,7 @@ Created: 31-Jul-2026
  | [115](nuc-0115.md) | Count-Controlled Repeat Loops | Accepted |
  | [119](nuc-0119.md) | Finally Clauses for Try Statements | Accepted |
  | [126](nuc-0126.md) | Exit-Controlled Repeat-Until Loops | Accepted |
-+| [130](nuc-0130.md) | Loop-Local Iterator Exits | Draft |
+-| [130](nuc-0130.md) | Loop-Local Iterator Exits | Draft |
++| [130](nuc-0130.md) | Loop-Local Iterator Exits | Rejected: existing corpus-count test fails (1,246 expected; 1,252 actual) |
  
  ### Utility enhancement
  
-@@ -313,6 +314,7 @@ Created: 31-Jul-2026
+@@ -315,7 +315,7 @@ Created: 31-Jul-2026
  | [127](nuc-0127.md) | Colon-Free Implicit Iterator Suites | Standards Track | Syntax enhancement | Accepted |
  | [128](nuc-0128.md) | Origins and Outcomes of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
- | [129](nuc-0129.md) | List and Population Zipping | Standards Track | Utility enhancement | Draft |
-+| [130](nuc-0130.md) | Loop-Local Iterator Exits | Standards Track | Runtime features | Draft |
+ | [129](nuc-0129.md) | List and Population Zipping | Standards Track | Utility enhancement | Accepted |
+-| [130](nuc-0130.md) | Loop-Local Iterator Exits | Standards Track | Runtime features | Draft |
++| [130](nuc-0130.md) | Loop-Local Iterator Exits | Standards Track | Runtime features | Rejected: existing corpus-count test fails (1,246 expected; 1,252 actual) |
+ | [131](nuc-0131.md) | Reversal Method Aliases | Standards Track | Language compatibility | Draft |
  
  ## Copyright
- 
 ```
 
-**File**: `docs/nuc-0130.md` (added, +67/-0)
+**File**: `docs/nuc-0130.md` (modified, +205/-5)
 ```diff
-@@ -0,0 +1,67 @@
-+# NUC 130 -- Loop-Local Iterator Exits
-+
-+```
-+NUC: 130
-+Title: Loop-Local Iterator Exits
-+Author: Copilot <223556219+Copilot@users.noreply.github.com>
-+Status: Draft
-+Type: Standards Track
-+Category: Runtime features
-+Created: 21-Nov-2026
-+Requires: 8, 31, 51, 72, 119
-+```
-+
-+## Abstract
-+
-+- Add `return for`, a value-less statement that ends the nearest enclosing
-+  iterator loop without returning from its enclosing function or program.
-+  It applies to explicit `for ... of/in`, implicit named iterators and
-+  two-name entry loops; ordinary `return` keeps its accepted meaning.
-+- The statement crosses nested blocks and conditionals, not function,
-+  callback or constructor boundaries. Preserve ordered snapshots, frame and
-+  receiver restoration, transactions, exceptions, `finally` and resource
-+  bounds. No loop label, loop value, `break` or `continue` keyword is added.
-+- Use exactly the two existing reserved keywords. The accepted parser rejects
-+  `return for` with `SyntaxError("Unexpected keyword 'for'")`; accepted names,
-+  source forms, diagnostics and runtime results remain protected.
-+- This continuous cycle selected Runtime features by one unbiased draw,
-+  index 1 of the five live eligible categories. Runtime applicability is
-+  `new_feature`: a loop-local non-function exit is not an accepted execution
-+  primitive. Token comparison is skipped for that branch, not passed;
-+  independent behavior, compatibility and every hard criterion remain required.
-+
-+## Motivation
-+
-+- A one-shot iterator currently visits its whole snapshot unless an error is
-+  thrown or the enclosing function returns. Neither exit lets a loop body
-+  finish its traversal early while continuing that same function normally.
-+- A dedicated iterator exit can stop after finding a matching object, while
-+  preserving the enclosing scope and the statements following the loop.
-+  Existing function returns and throws are not reinterpreted.
-+- The accepted-revision probe iterates `"abc"` and tries `return for` after
-+  seeing `"b"`. It fails to parse at line 6, column 16, before any execution.
-+  This proposal adds that formerly invalid statement rather than reserving
-+  the currently valid names `break` or `continue`.
-+
-+## Rationale
-+
-+Preparation pending in an isolated candidate after this Draft allocation.
-+
-+## Specification
-+
-+Preparation pending.
-+
-+## Errors
-+
-+Preparation pending.
-+
-+## Reference Implementation
-+
-+Preparation and independent evaluation pending. No outcome is recorded.
-+
-+## Copyright
-+
-+Copyright 2020 Nucleoid
-+
-+This document is licensed under the Apache License, Version 2.0. See
-+[LICENSE](../LICENSE) for the full text.
+@@ -4,7 +4,7 @@
+ NUC: 130
+ Title: Loop-Local Iterator Exits
+ Author: Copilot <223556219+Copilot@users.noreply.github.com>
+-Status: Draft
++Status: Rejected
+ Type: Standards Track
+ Category: Runtime features
+ Created: 21-Nov-2026
+@@ -13,6 +13,9 @@ Requires: 8, 31, 51, 72, 119
+ 
+ ## Abstract
+ 
++- Rejected: the mandatory existing corpus-count test fails, expecting 1,246
++  programs but observing 1,252 in the frozen candidate. No implementation,
++  executable document, test, grammar, dataset or export is integrated.
+ - Add `return for`, a value-less statement that ends the nearest enclosing
+   iterator loop without returning from its enclosing function or program.
+   It applies to explicit `for ... of/in`, implicit named iterators and
+@@ -45,19 +48,216 @@ Requires: 8, 31, 51, 72, 119
+ 
+ ## Rationale
+ 
+-Preparation pending in an isolated candidate after this Draft allocation.
++- An iterator exit is new control flow, not a spelling of a function return
++  or an exception. A function return leaves the enclosing function; a throw
++  takes an exceptional path and may roll back its effects. Neither continues
++  that same function normally immediately after its traversal.
++- Reuse `return` with the existing reserved `for` token rather than reserving
++  the accepted names `break` or `continue`. The two-token statement has no
++  value, label, index, option or alternate target.
++- Keep the target lexical and local. An intervening block, conditional,
++  exception suite, hypothesis or noniterator loop inherits it; a function,
++  callback or constructor never inherits a caller's target.
++- Reuse the existing source snapshots, scope stack, imperative execution,
++  tracking, propagation and rollback helpers. Carry control in a private
++  exhaustive completion enum instead of a sentinel string, user `Value`,
++  fake `Flow::Return` payload, global flag or caught exception.
++- Preserve normal cleanup precedence: `finally` runs while unwinding and
++  can replace a pending completion, just as its return or error already can.
++  Consuming an exit in a cleanup's own inner iterator is normal completion
++  of that cleanup, not a replacement of the outer pending exit.
++- The confirmed category is Runtime features because the primary change is
++  execution control. This randomly selected continuous proposal has no
++  user-requested or ARC-requested acceptance basis. The caller's live-registry
++  draw, index 1 of 5, is retained without a category or strategy redraw.
++- Runtime applicability is `new_feature`, supported by the accepted gap
++  program and its `Unexpected keyword 'for'` diagnostic, not by missing
++  comparison data. Token comparison is skipped entirely for this branch;
++  no before-count, measured-case list or passing token verdict is claimed.
++- No hint, frozen usefulness rubric or strategy configuration was supplied.
++  Usefulness is unscored (`missing_rubric`); learning is `not_configured` and
++  this revision is unattributed. The offline gap probe is not a strategy
++  selection receipt or a normative accepted counterpart.
+ 
+ ## Specification
+ 
+-Preparation pending.
++- These are the rejected candidate's proposed semantics, not accepted
++  language behavior. The authoritative `nucleoid.spec.md` remains unchanged;
++  its proposed section and executable cases stay in the isolated candidate.
++- Recognize `return for` only when adjacent `Keyword::Return` and
++  `Keyword::For` tokens share the same source line. Do not skip a newline,
++  semicolon or comment-induced linebreak; physical newlines cannot qualify
++  even where parentheses or brackets suppress layout. Only a terminator
++  (`Newline`, `Semicolon`, `Dedent`, `RightBrace` or `Eof`) may follow the pair.
++- Construct `Stmt::ReturnFor` and render it as `return for`. Preserve the
++  existing ASTs and renderings of ordinary `return` and return values.
++- A `for` body establishes eligibility for its explicit `of`/`in`, implicit
++  named-source or two-name object-entry traversal. Its source expression
++  does not establish that traversal's eligibility. Blocks, conditionals,
++  `try`/`catch`/`finally`, hypotheses and `while`, `repeat` and repeat-until
++  bodies inherit the surrounding eligibility, without becoming targets.
++- Function declarations, literals, arrows, lambdas, methods and constructor
++  bodies reset lexical eligibility. A `for` inside one of them establishes
++  its own local target. Direct AST execution uses fresh call/constructor and
++  deferred-rule scopes, enforcing the same boundary even without parsing.
++- Stop remaining items of the nearest active traversal; after restoring its
++  frame and imperative mode, execute following statements in the same scope.
++  Exiting an inner iterator does not exit an outer one. Intervening
++  noniterator loops stop and do not test their conditions again.
++- Snapshot source membership once, preserving existing order, duplicates,
++  registered-instance filtering, Unicode scalar iteration and captured entry
++  values. Exit neith
 ```
 
 #### Recent Merged Pull Requests:
@@ -1720,13 +1742,13 @@ Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Draft NUC 130 Loop-Local Iterator Exits
+## X. NUC 130 Loop-Local Iterator Exits
 
 **RULE**:
 When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `eec6a55b`: Draft NUC 130 Loop-Local Iterator Exits. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4d36a82b`: NUC 130 Loop-Local Iterator Exits. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
@@ -1734,18 +1756,19 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| [130](nuc-0130.md) | Loop-Local Iterator Exits | Draft |
-| [130](nuc-0130.md) | Loop-Local Iterator Exits | Standards Track | Runtime features | Draft |
+| [130](nuc-0130.md) | Loop-Local Iterator Exits | Rejected: existing corpus-count test fails (1,246 expected; 1,252 actual) |
+| [130](nuc-0130.md) | Loop-Local Iterator Exits | Standards Track | Runtime features | Rejected: existing corpus-count test fails (1,246 expected; 1,252 actual) |
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+| [130](nuc-0130.md) | Loop-Local Iterator Exits | Draft |
+| [130](nuc-0130.md) | Loop-Local Iterator Exits | Standards Track | Runtime features | Draft |
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `eec6a55b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4d36a82b` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

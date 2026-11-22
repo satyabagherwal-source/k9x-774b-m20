@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/autotrust/Qwen3.8-Flash-Next-E384-FP4-V2",
   "source_version": "hf-autotrust-qwen3.8-flash-next-e384-fp4-v2",
   "license": "Open-Source",
-  "timestamp": "2026-11-14T20:52:01.227Z",
+  "timestamp": "2026-11-22T05:28:04.074Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-autotrust-qwen3-8-flash-next-e384-fp4-v2",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [autotrust/Qwen3.8-Flash-Next-E384-FP4-V2](https://huggingface.co/autotrust/Qwen3.8-Flash-Next-E384-FP4-V2) (Revision: `hf-autotru`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-14T20:52:01.227Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T05:28:04.074Z`  
 > **Learning ID**: `learn-huggingface-autotrust-qwen3-8-flash-next-e384-fp4-v2`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-autotrust-qwen3.8-flash-next-e384-fp4-v2-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/autotrust/Qwen3.8-Flash-Next-E384-FP4-V2](https://huggingface.co/autotrust/Qwen3.8-Flash-Next-E384-FP4-V2))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T20:52:00.458Z  
+> **Harvest Timestamp**: 2026-11-22T05:28:00.264Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 62685 downloads | 2440 likes
+- **Stars / Engagement**: 72973 downloads | 1443 likes
 
 ---
 

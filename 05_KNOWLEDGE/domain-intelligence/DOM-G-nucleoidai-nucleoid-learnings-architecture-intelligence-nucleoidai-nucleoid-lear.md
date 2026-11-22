@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T01:44:42.271Z",
+  "timestamp": "2026-11-22T05:28:23.184Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-nucleoidai-nucleoid-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nucleoidai-nucleoid-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T01:44:42.271Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T05:28:23.184Z`  
 > **Learning ID**: `LEARN-EVO-nucleoidai-nucleoid-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 57%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 63%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from nucleoidai-nucleoid-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `fbdb7e41`  
+> **Source Version**: `0fe54a78`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T01:44:08.356Z  
+> **Timestamp**: 2026-11-22T05:28:16.831Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T01:44:08.350Z  
+> **Harvest Timestamp**: 2026-11-22T05:28:16.825Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1598,332 +1598,139 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fbdb7e41` (2026-11-22)
-**Commit Message**: NUC 127 Colon-Free Implicit Iterator Suites
+### Incident Patch 1: `4d36a82b` (2026-11-22)
+**Commit Message**: NUC 130 Loop-Local Iterator Exits
 
-Accepted under the automatic acceptance rule in continuous Syntax
-enhancement mode. The independent core and overall policy decisions
-were Accepted, with no findings or blockers. Required lexer-token
-comparison ran: 6 less, 1244 same, 0 more across 1250 paired cases.
+Rejected under the continuous automatic-acceptance rule: hard criterion 2
+fails. The existing programs_without_spreads_file_no_entry_observations
+test at tests/object_spread_entries.rs:305 expects 1,246 programs but the
+frozen candidate observes 1,252 after six new document cases.
 
-All three hard criteria passed independently and on the integrated tree:
-all-target build, warning-denied Clippy and formatting; the full suite
-with 3790 passed, 0 failed and 25 unchanged ignored; and backward
-compatibility with all 1250 original sources, protected assertions,
-expected returns and executed coverage. All 3802 existing test
-occurrences remain present and unweakened; all 13 additions passed.
-The 40 contextual/ordinary-name pairs include origins and outcomes.
-Integrated private-library rustdoc and export checks also passed.
+Fresh independent evaluation reports overall Rejected, although the core
+reports Accepted. Actual full cargo test --no-fail-fast exits 101:
+3,867 passed, one failed, and 25 unchanged ignored. All 3,852 accepted
+identity occurrences remain; all 41 new tests pass. The core passes
+1,257 accepted-source replays and 1,263 candidate cases.
 
-Accepted claim: 5195a171879982752448d9cd651bb61f45bdbb08
-Frozen proposal: f388a47aba593f4cd5c754216cf7a63e369f2a59
-Independent core: 611028f49e4b99ab79dd39291ca4dfc84647c61f
-Independent outcome: 5e8a67baed18c81ab28284d24ee7bc34e6c73a51
-Integrated check log: d8c577cfae4190bcb1ccc7663c898df25a9db73a
-Final metadata-bound caller core: 1e3585d8b
+Build all targets, warning-denied Clippy, formatting, accepted-language
+compatibility, export checks and warning-denied rustdoc pass. Runtime
+new_feature token comparison is entirely skipped, not a passing gate.
+Usefulness is unscored (missing_rubric); learning is not_configured.
 
-**File**: `README.md` (modified, +28/-3)
-```diff
-@@ -636,11 +636,15 @@ assert(task.done, true)
-   standing rule. A named noniterable source raises the existing TypeError.
- - The [NUC 51 candidate](docs/nuc-0051.md) additionally accepts String sources
-   as scalar snapshots, without changing that object-only List policy.
--- Require the immediate identifier/colon header, then a newline or indent and
--  a real indent after only normal newline/semicolon layout. No `:;`,
-+- The [NUC 127 draft](docs/nuc-0127.md) also permits `for NAME` without its
-+  colon before that same genuinely indented body. `NAME` is exactly one Rust
-+  `Identifier`, including contextual names such as `while`, `enum` and `model`.
-+- Require the immediate identifier and optional colon, then a newline or indent
-+  and a real indent after only normal newline/semicolon layout. No header-line `;` or `:;`,
-   inline/braced/missing-indent or expression-source shorthand is added.
- - Explicit `for variable of expression` and `for variable in expression`
--  remain valid with their existing arbitrary expressions and suite forms.
-+  remain valid with their existing arbitrary expressions and colon-required suite forms.
-+  Two-name entry loops also keep their colon.
-   Nested scopes, receivers, returns, snapshots, graphs and rollback are unchanged.
- 
- Reasoning stays live too: `why b` explains its dependencies, and `affects a`
-@@ -2897,6 +2901,27 @@ assert(every h in Human: h.mortal, true)
-   variable named `every` work as before. See the
-   [root contract](nucleoid.spec.md#every-quantifiers-class-references-and-predicate-sentences).
- 
-+## Colon-free implicit iterator suites
-+
-+**Named iterator suites use indentation without a colon**
-+
-+```nuc
-+class Parcel(weight):
-+    this.weight = weight
-+light = Parcel(4)
-+heavy = Parcel(7)
-+total = 0
-+for Parcel
-+    total += it.weight
-+assert(total, 11)
-+```
-+
-+- `for Parcel` uses the same one-shot population snapshot, local `it` and
-+  imperative suite as `for Parcel:`. The optional colon never replaces the
-+  accepted spelling or broadens the source expression.
-+- See [NUC 127](docs/nuc-0127.md) and the
-+  [root contract](nucleoid.spec.md#implicit-iterator-indented-loops).
-+
- ## Benchmark
- 
- This is the comparation our sample order app in Nucleoid IDE against MySQL and Postgres with using Express.js and Sequelize libraries.
-```
+Record only the final rejected proposal and its two index entries.
+Rejected code, executable documents, tests, grammar, data and exports
+remain isolated and unchanged. No candidate repair or version change.
 
-**File**: `dataset/nucleoid.spec.jsonl` (modified, +3/-0)
-```diff
-@@ -838,3 +838,6 @@
- {"id":"spec-0838","description":"Nucleoid quantifies with every as with all","code":"class Check\nready = every check in Check: check.passed\nassert(ready, true)\nfirst = Check()\nfirst.passed = true\nsecond = Check()\nassert(ready, false)\nsecond.passed = true\nassert(ready, true)\nscores = [3, 4]\nassert(every score in scores: score > 2, all score in scores: score > 2)\nassert(every score in scores: score > 3, false)\nassert((every score in scores: score > 2) ? \"pass\" : \"fail\", \"pass\")\nready","return":"true"}
- {"id":"spec-0839","description":"Nucleoid keeps every an ordinary name where no name follows it","code":"every = [1, 2]\ntotal = every.length\nassert(total, 2)\nassert(every.every(v => v > 0), true)\npairs = {every: 3, other: every[0]}\nassert(pairs, {every: 3, other: 1})\ndef count(every) => every + 1\nassert(count(4), 5)\nevery is [5]\nassert(total, 1)\nassert(every n in every: n > 4, true)\nevery","return":"[5]"}
- {"id":"spec-0840","description":"Nucleoid keeps other is statements on a class reference","code":"class Order(total):\n    this.total = total\norder = Order(20)\n$Order.size is big\nassert(order.size, \"big\")\ntry:\n    $Order is 5\ncatch error:\n    assert(error, ReferenceError(\"is is not defined\"))\nassert(order.big, null)\n$Order is big\nassert(order.big, true)\norder.size","return":"\"big\""}
-+{"id":"spec-0841","description":"Nucleoid omits colons from implicit instance iterator suites","code":"class Entry(amount):\n    this.amount = amount\nfirst = Entry(2)\nsecond = Entry(5)\nvalues = [first, 99, second, null, {amount: 9}]\nseen = []\ntotal = 0\nfor values\n    seen.push(it.amount)\n    total += it.amount\nassert(seen, [2, 5])\nassert(total, 7)\nempty = []\nfor empty\n    total += 100\nassert(total, 7)","return":null}
-+{"id":"spec-0842","description":"Nucleoid nests colon free implicit iterator scopes","code":"it = \"ab\"\ninner = \"xy\"\nseen = []\nfor it\n    for inner\n        seen.push(it)\nassert(seen, [\"x\", \"y\", \"x\", \"y\"])\nassert(it, \"ab\")","return":null}
-+{"id":"spec-0843","description":"Nucleoid propagates returns and rollback through colon free implicit iterators","code":"def first(text):\n    for text\n        return it\n    return \"empty\"\nassert(first(\"ab\"), \"a\")\nassert(first(\"\"), \"empty\")\ntext = \"ab\"\nvalue = 7\nfailure = null\ntry:\n    for text\n        value = 99\n        throw \"stop\"\ncatch error:\n    failure = error\nassert(value, 7)\nassert(failure, \"stop\")\nfor text\n    value += 1\nassert(value, 9)\nvalue","return":"9"}
-```
-
-**File**: `dataset/nucleoid.synth.31.jsonl` (modified, +1/-0)
-```diff
-@@ -2,3 +2,4 @@
- {"id":"synth-31-0002","description":"A mutated string property cannot extend a one-shot scalar snapshot","code":"holder = {text: \"ab\"}\nseen = []\nfor character in holder.text:\n    seen.push(character)\n    holder.text = \"xyz\"\nassert(seen, [\"a\", \"b\"])\nassert(holder.text, \"xyz\")\nholder.text = \"cd\"\nassert(seen, [\"a\", \"b\"])\nfor character of holder.text:\n    seen.push(character)\nassert(seen, [\"a\", \"b\", \"c\", \"d\"])\nseen","return":"[\"a\",\"b\",\"c\",\"d\"]"}
- {"id":"synth-31-0003","description":"Nested named string loops restore their outer implicit iterator binding","code":"it = \"outside\"\nletters = \"xy\"\ndigits = \"12\"\nseen = []\nfor letters:\n    seen.push(it)\n    for digits:\n        seen.push(it)\n    seen.push(it)\nassert(seen, [\"x\", \"1\", \"2\", \"x\", \"y\", \"1\", \"2\", \"y\"])\nassert(it, \"outside\")\nempty = \"\"\nfor empty:\n    throw \"UNREACHABLE\"\nassert(it, \"outside\")\nseen","return":"[\"x\",\"1\",\"2\",\"x\",\"y\",\"1\",\"2\",\"y\"]"}
- {"id":"synth-31-0004","description":"A failed scalar traversal rolls back its effects and permits a later successful loop","code":"it = \"outside\"\nseen = [\"saved\"]\ntry:\n    for it of \"abc\":\n        seen.push(it)\n        if it == \"b\":\n            throw \"CANCEL_TEXT\"\ncatch error:\n    assert(error, \"CANCEL_TEXT\")\nassert(seen, [\"saved\"])\nassert(it, \"outside\")\nfor it in \"ok\":\n    seen.push(it)\nassert(seen, [\"saved\", \"o\", \"k\"])\nassert(it, \"outside\")\nseen","return":"[\"saved\",\"o\",\"k\"]"}
-+{"id":"synth-31-0005","description":"Colon-free named string suites preserve scalar order and restore an outer iterator","code":"it = \"outside\"\ntext = \"é🙂é\"\nseen = []\nfor text\n    seen.push(it)\nassert(seen, [\"é\", \"🙂\", \"e\", \"́\"])\nassert(seen.join(\"\"), text)\nassert(it, \"outside\")\nseen","return":"[\"é\",\"🙂\",\"e\",\"́\"]"}
-```
-
-**File**: `docs/README.md` (modified, +21/-2)
-```diff
-@@ -1837,9 +1837,13 @@ for question of Question:
- - Accepted [NUC 31](nuc-0031.md) specifies `for NAME:` with a genuine indented
-   body as exactly `for it of NAME:` with that same body; `NAME` is one ordinary
-   identifier source, not the iteration variable.
--- Require the immediate identifier and colon, an immediate newline or indent,
-+- The [NUC 127 draft](nuc-0127.md) permits that colon to be omitted before
-+  the same genuinely indented suite. The source is exactly one Rust
-+  `Identifier`; contextual spellings such as `while`, `enum`, `model`,
-+  `repeat` and `until` remain names and qualify with or without the colon.
-+- Require the immediate identifier and optional colon, an immediate newline or indent,
-   then a real indent after only existing newline/semicolon layout. Do not skip
--  header separators; `:;`, inline/braced/missing-indent shorthand and
-+  header separators; a header-line `;` or `:;`, inline/braced/missing-indent shorthand and
-   property/index/call/literal/class-reference/parenthesized shorthand sources
-   are not added.
- - Source lookup precedes binding local `it`, so `for it:` reads the outer
-@@ -1859,6 +1863,21 @@ for Task:
-     it.done = true
- ```
- 
-+- Named String sources keep the same scalar snapshot and local `it`.
-+  The colon-bearing form remains accepted with identical behavior.
-+
-+```
-+text = "cab"
-+letters = []
-+for text
-+    letters.push(it)
-+assert(letters, ["c", "a", "b"])
-+assert(letters.join(""), text)
-+```
-+
-+- Explicit `for item of SOURCE:`, `for item in SOURCE:` and two-name entry
-+  loops retain their required colons and all accepted suite forms.
-+
- - [NUC 72](nuc-0072.md) adds two-name loops over an object's entries:
-   `for key, value of source:` and `for key, value in source:`. A header is a
-   two-name header exactly when `for` is followed by a name, a comma, a name and
-```
-
-**File**: `docs/examples.md` (modified, +31/-2)
-```diff
-@@ -1866,12 +1866,16 @@ assert(second.scaled, 15)
-   Noniterable sources retain their existing errors, without auto-invocation.
- - The [NUC 51 candidate](nuc-0051.md) also accepts String snapshots without
-   changing List filtering; see [string iteration](#string-iteration).
--- Require the immediate colon followed by newline/indent and a real indent
--  after only normal newline/semicolon layout; `:;` never qualifies. No
-+- The [NUC 127 draft](nuc-0127.md) also permits `for Reading` before the
-+  same genuine indented suite. Contextual Rust identifiers such as `while`,
-+  `enum` and `model` qualify too; no keyword or token is added.
-+- Require the identifier and optional colon followed by newline/indent and a real indent
-+  after only normal newline/semicolon layout; a header-line `;` or `:;` never qualifies. No
-   inline/braced/missing-indent, parenthesized or expression-source shorthand
-   is added.
- - Nested `it` shadowing/restoration, receivers, return propagation, body
-   control flow, graph dependencies, rollback and resource limits are unchanged.
-+- Explicit single-name and two-name entry loops retain their required colon.
- - Full grammar and exact diagnostics are in the authoritative
-   [implicit iterator loop section](../nucleoid.spec.md#implicit-iterator-indented-loops).
- 
-@@ -4410,6 +4414,31 @@ safe = every truck in Truck: not truck.overloaded
-   and makes the fleet safe. See [NUC 98](nuc-0098.md) and the
-   [root contract](../nucleoid.spec.md#every-quantifiers-class-references-and-predicate-sentences).
- 
-+## Colon-free implicit iterator suites
-+
-+**Colon-free implicit iterators keep population walks one shot**
-+
-+```nuc
-+class Counter(amount):
-+    this.amount = amount
-+first = Counter(2)
-+second = Counter(3)
-+total = 0
-+for Counter
-+    total += it.amount
-+first.amount = 9
-+Counter(4)
-+assert(total, 5)
-+total
-+# return: 5
-+```
-+
-+- The genuine indented suite runs exactly as `for Counter:` would.
-+  Later instance updates or population growth do not rerun the completed
-+  body, and the loop retains the accepted scopes and transaction behavior.
-+- See [NUC 127](nuc-0127.md) and the
-+  [root contract](../nucleoid.spec.md#implicit-iterator-indented-loops).
-+
- ## Copyright
- 
- Copyright 2020 Nucleoid
-```
+Frozen proposal: 06e8b49644b3e071d06092ed1290aa9ce13f0e
 
 **File**: `docs/nuc-0000.md` (modified, +2/-2)
 ```diff
-@@ -69,7 +69,7 @@ Created: 31-Jul-2026
- | [109](nuc-0109.md) | Operator Section Arguments | Accepted |
- | [113](nuc-0113.md) | Implicit Receivers in Method Bodies | Accepted |
- | [125](nuc-0125.md) | Stepped Slices | Accepted |
--| [127](nuc-0127.md) | Colon-Free Implicit Iterator Suites | Draft |
-+| [127](nuc-0127.md) | Colon-Free Implicit Iterator Suites | Accepted |
+@@ -100,7 +100,7 @@ Created: 31-Jul-2026
+ | [115](nuc-0115.md) | Count-Controlled Repeat Loops | Accepted |
+ | [119](nuc-0119.md) | Finally Clauses for Try Statements | Accepted |
+ | [126](nuc-0126.md) | Exit-Controlled Repeat-Until Loops | Accepted |
+-| [130](nuc-0130.md) | Loop-Local Iterator Exits | Draft |
++| [130](nuc-0130.md) | Loop-Local Iterator Exits | Rejected: existing corpus-count test fails (1,246 expected; 1,252 actual) |
  
- ### Runtime features
+ ### Utility enhancement
  
-@@ -310,7 +310,7 @@ Created: 31-Jul-2026
- | [124](nuc-0124.md) | List and Population Quantiles | Standards Track | Utility enhancement | Accepted |
- | [125](nuc-0125.md) | Stepped Slices | Standards Track | Syntax enhancement | Accepted |
- | [126](nuc-0126.md) | Exit-Controlled Repeat-Until Loops | Standards Track | Runtime features | Accepted |
--| [127](nuc-0127.md) | Colon-Free Implicit Iterator Suites | Standards Track | Syntax enhancement | Draft |
-+| [127](nuc-0127.md) | Colon-Free Implicit Iterator Suites | Standards Track | Syntax enhancement | Accepted |
+@@ -315,7 +315,7 @@ Created: 31-Jul-2026
+ | [127](nuc-0127.md) | Colon-Free Implicit Iterator Suites | Standards Track | Syntax enhancement | Accepted |
  | [128](nuc-0128.md) | Origins and Outcomes of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
- | [129](nuc-0129.md) | List and Population Zipping | Standards Track | Utility enhancement | Draft |
+ | [129](nuc-0129.md) | List and Population Zipping | Standards Track | Utility enhancement | Accepted |
+-| [130](nuc-0130.md) | Loop-Local Iterator Exits | Standards Track | Runtime features | Draft |
++| [130](nuc-0130.md) | Loop-Local Iterator Exits | Standards Track | Runtime features | Rejected: existing corpus-count test fails (1,246 expected; 1,252 actual) |
+ | [131](nuc-0131.md) | Reversal Method Aliases | Standards Track | Language compatibility | Draft |
  
+ ## Copyright
 ```
 
-**File**: `docs/nuc-0127.md` (modified, +340/-7)
+**File**: `docs/nuc-0130.md` (modified, +205/-5)
 ```diff
 @@ -4,7 +4,7 @@
- NUC: 127
- Title: Colon-Free Implicit Iterator Suites
+ NUC: 130
+ Title: Loop-Local Iterator Exits
  Author: Copilot <223556219+Copilot@users.noreply.github.com>
 -Status: Draft
-+Status: Accepted
++Status: Rejected
  Type: Standards Track
- Category: Syntax enhancement
+ Category: Runtime features
  Created: 21-Nov-2026
-@@ -15,8 +15,9 @@ Requires: 31, 49, 51
+@@ -13,6 +13,9 @@ Requires: 8, 31, 51, 72, 119
  
- - An implicit iterator loop may omit its colon before a genuine indented
-   suite: `for NAME` followed by its indented body has the same meaning as
--  `for NAME:`. `NAME` remains exactly one ordinary identifier, and the
--  loop binds the existing local iterator `it`.
-+  `for NAME:`. `NAME` remains exactly one Rust `Identifier` token,
-+  including accepted contextual-name spellings such as `while`, `enum`
-+  and `model`, and the loop binds the existing local iterator `it`.
- - Reuse the accepted loop, source expression and suite parsers, with the
-   existing non-consuming genuine-indentation guard. Preserve the syntax
-   tree, canonical rendering, source positions, one-shot snapshot semantics,
-@@ -43,19 +44,351 @@ Requires: 31, 49, 51
+ ## Abstract
+ 
++- Rejected: the mandatory existing corpus-count test fails, expecting 1,246
++  programs but observing 1,252 in the frozen candidate. No implementation,
++  executable document, test, grammar, dataset or export is integrated.
+ - Add `return for`, a value-less statement that ends the nearest enclosing
+   iterator loop without returning from its enclosing function or program.
+   It applies to explicit `for ... of/in`, implicit named iterators and
+@@ -45,19 +48,216 @@ Requires: 8, 31, 51, 72, 119
  
  ## Rationale
  
--- Pending: the proposer completes this section.
-+- Use the accepted source and suite parsers and their non-consuming
-+  real-indentation guard. Add no speculative parse, token, keyword, AST
-+  variant, public API, dependency or runtime implementation.
-+- Keep exactly one named source. Property, index, call, literal,
-+  class-reference, parenthesized and wider expression shorthand remain
-+  outside this proposal.
-+- Keep explicit single-name and two-name loops on their existing
-+  colon-required parser paths, including their pinned diagnostics.
-+- Only genuine indentation supplies the optional delimiter. Inline,
-+  braced, missing, unindented and header-line-semicolon bodies do not
-+  qualify.
-+- Preserve accepted contextual identifiers through the grammar's existing
-+  `name`/`enumName` normalization. ANTLR's dedicated contextual token names
-+  do not make those spellings reserved keywords in the Rust lexer.
-+- This fresh revision-r4 ports the same bounded feature after Accepted
-+  NUC 128 advanced the shared runtime and corpus before r3 could reach
-+  primary. It is not an in-place repair or rebase of frozen r3. Preserve
-+  every accepted NUC 126 `repeat:`/`until` and NUC 128 `origins`/`outcomes`
-+  parser, AST, runtime, grammar, corpus and test behavior.
-+- Retain the caller's original uniform draw, index 0 of the five live
-+  eligible categories: Syntax enhancement, Runtime features, Utility
-+  enhancement, Reasoning enhancement and Language compatibility. No
-+  category is redrawn or reassigned.
+-Preparation pending in an isolated candidate after this Draft allocation.
++- An iterator exit is new control flow, not a spelling of a function return
++  or an exception. A function return leaves the enclosing function; a throw
++  takes an exceptional path and may roll back its effects. Neither continues
++  that same function normally immediately after its traversal.
++- Reuse `return` with the existing reserved `for` token rather than reserving
++  the accepted names `break` or `continue`. The two-token statement has no
++  value, label, index, option or alternate target.
++- Keep the target lexical and local. An intervening block, conditional,
++  exception suite, hypothesis or noniterator loop inherits it; a function,
++  callback or constructor never inherits a caller's target.
++- Reuse the existing source snapshots, scope stack, imperative execution,
++  tracking, propagation and rollback helpers. Carry control in a private
++  exhaustive completion enum instead of a sentinel string, user `Value`,
++  fake `Flow::Return` payload, global flag or caught exception.
++- Preserve normal cleanup precedence: `finally` runs while unwinding and
++  can replace a pending completion, just as its return or error already can.
++  Consuming an exit in a cleanup's own inner iterator is normal completion
++  of that cleanup, not a replacement of the outer pending exit.
++- The confirmed category is Runtime features because the primary change is
++  execution control. This randomly selected continuous proposal has no
++  user-requested or ARC-requested acceptance basis. The caller's live-registry
++  draw, index 1 of 5, is retained without a category or strategy redraw.
++- Runtime applicability is `new_feature`, supported by the accepted gap
++  program and its `Unexpected keyword 'for'` diagnostic, not by missing
++  comparison data. Token comparison is skipped entirely for this branch;
++  no before-count, measured-case list or passing token verdict is claimed.
++- No hint, frozen usefulness rubric or strategy configuration was supplied.
++  Usefulness is unscored (`missing_rubric`); learning is `not_configured` and
++  this revision is unattributed. The offline gap probe is not a strategy
++  selection receipt or a normative accepted counterpart.
  
  ## Specification
  
--- Pending: the proposer completes this section.
-+- After `for`, qualify exactly one Rust `Identifier` followed immediately
-+  by a colon and genuine indented layout, or by that layout directly.
-+  Contextual names, including `while`, `enum`, `model`, `repeat` and
-+  `until`, qualify in both spellings.
-+- Genuine layout begins with `Newline` or `Indent` and reaches a real
-+  `Indent` after only the accepted `Newline`/`Semicolon` layout. A
-+  header-line semicolon, including `:;`, never qualifies. Comments,
-+  blank lines, tabs and line endings keep their accepted layout rules.
-+- Leave the source to `clause_expression()`. A qualified implicit loop
-+  uses the accepted `clause_suite()`: a present colon selects unchanged
-+  `suite()`, while omission selects that same `suite_body()`.
-+- Construct the existing
-+  `Stmt::For { variable: "it", iterable: Identifier(NAME), body }`.
-+  Canonical rendering, graph keys, statement positions and source
-+  evaluation before the local `it` binding are unchanged.
-+- Classes supply their ordered population snapshots; lists retain
-+  registered-instance filtering, order and duplicates; Strings retain
-+  Unicode-scalar snapshots. Empty traversal, scopes, receiver restoration,
-+  imperative writes, returns, transactions, rollback and resource bounds
-+  are those of the accepted colon-bearing form.
-+- Explicit `for item of SOURCE:` and `for item in SOURCE:` keep their
-+  arbitrary accepted source expressions and colon-required suites.
-+  Two-name entry loops keep their required colon, parser and diagnostics.
-+- Native continuation and terminal indentation recognize exactly the
-+  lexical header `For Identifier`. Explicit or wider headers gain no
-+  colon-free opener; blank-line commit, EOF and recovery still invoke the
-+  real parser and its genuine-body requirements.
-+- The authoritative contract is
-+  [implicit iterator indented loops](../nucleoid.spec.md#implicit-iterator-indented-loops).
-+  Its three appended entries are
-+  `Nucleoid omits colons from implicit instance iterator suites`,
-+  `Nucleoid nests colon free implicit iterator scopes` and
-+  `Nucleoid propagates returns and rollback through colon free implicit iterators`.
-+- The reference, README and examples append the other three caller-owned
-+  paired cases. Across all six, only qualifying implicit-header colons are
-+  removed from the supplied accepted sources; all 14 cano
-```
-
-**File**: `docs/nucleoid.g4` (modified, +7/-1)
-```diff
-@@ -292,9 +292,15 @@ directCondition
-     : clauseExpression COLON? indentedBlock elseClause?
-     ;
- 
-+// The implicit alternative requires exactly one Rust Identifier and a real
-+// indented body, with or without its colon. Contextual spellings such as
-+// WHILE, ENUM, MODEL, REPEAT and UNTIL normalize through name/enumName.
-+// Only NEWLINE or INDENT may immediately follow that name or its colon;
-+// a header-line ';', inline/braced body or wider source never qualifies.
-+// Both explicit alternatives retain their colon-required suite.
- forStmt
-     : FOR name COMMA name (OF | IN) clauseExpression suite  // Stmt::ForEntries
--    | FOR name COLON indentedBlock                          // Stmt::For, item "it"
-+    | FOR name COLON? indentedBlock                         // Stmt::For, item "it"
-     | FOR name (OF | IN) clauseExpression suite             // Stmt::For
-     ;
- 
+-Preparation pending.
++- These are the rejected candidate's proposed semantics, not accepted
++  language behavior. The authoritative `nucleoid.spec.md` remains unchanged;
++  its proposed section and executable cases stay in the isolated candidate.
++- Recognize `return for` only when adjacent `Keyword::Return` and
++  `Keyword::For` tokens share the same source line. Do not skip a newline,
++  semicolon or comment-induced linebreak; physical newlines cannot qualify
++  even where parentheses or brackets suppress layout. Only a terminator
++  (`Newline`, `Semicolon`, `Dedent`, `RightBrace` or `Eof`) may follow the pair.
++- Construct `Stmt::ReturnFor` and render it as `return for`. Preserve the
++  existing ASTs and renderings of ordinary `return` and return values.
++- A `for` body establishes eligibility for its explicit `of`/`in`, implicit
++  named-source or two-name object-entry traversal. Its source expression
++  does not establish that traversal's eligibility. Blocks, conditionals,
++  `try`/`catch`/`finally`, hypotheses and `while`, `repeat` and repeat-until
++  bodies inherit the surrounding eligibility, without becoming targets.
++- Function declarations, literals, arrows, lambdas, methods and constructor
++  bodies reset lexical eligibility. A `for` inside one of them establishes
++  its own local target. Direct AST execution uses fresh call/constructor and
++  deferred-rule scopes, enforcing the same boundary even without parsing.
++- Stop remaining items of the nearest active traversal; after restoring its
++  frame and imperative mode, execute following statements in the same scope.
++  Exiting an inner iterator does not exit an outer one. Intervening
++  noniterator loops stop and do not test their conditions again.
++- Snapshot source membership once, preserving existing order, duplicates,
++  registered-instance filtering, Unicode scalar iteration and captured entry
++  values. Exit neith
 ```
 
 #### Recent Merged Pull Requests:
@@ -1952,60 +1759,33 @@ Final metadata-bound caller core: 1e3585d8b
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. NUC 127 Colon-Free Implicit Iterator Suites
+## X. NUC 130 Loop-Local Iterator Exits
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fbdb7e41`: NUC 127 Colon-Free Implicit Iterator Suites. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4d36a82b`: NUC 130 Loop-Local Iterator Exits. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- The [NUC 127 draft](docs/nuc-0127.md) also permits `for NAME` without its
-  colon before that same genuinely indented body. `NAME` is exactly one Rust
-  `Identifier`, including contextual names such as `while`, `enum` and `model`.
-- Require the immediate identifier and optional colon, then a newline or indent
-  and a real indent after only normal newline/semicolon layout. No header-line `;` or `:;`,
-  remain valid with their existing arbitrary expressions and colon-required suite forms.
-  Two-name entry loops also keep their colon.
-## Colon-free implicit iterator suites
-
-**Named iterator suites use indentation without a colon**
-
-```nuc
-class Parcel(weight):
-    this.weight = weight
-light = Parcel(4)
-heavy = Parcel(7)
-total = 0
-for Parcel
-    total += it.weight
-assert(total, 11)
-```
-
-- `for Parcel` uses the same one-shot population snapshot, local `it` and
-  imperative suite as `for Parcel:`. The optional colon never replaces the
-  accepted spelling or broadens the source expression.
-- See [NUC 127](docs/nuc-0127.md) and the
-  [root contract](nucleoid.spec.md#implicit-iterator-indented-loops).
-
+| [130](nuc-0130.md) | Loop-Local Iterator Exits | Rejected: existing corpus-count test fails (1,246 expected; 1,252 actual) |
+| [130](nuc-0130.md) | Loop-Local Iterator Exits | Standards Track | Runtime features | Rejected: existing corpus-count test fails (1,246 expected; 1,252 actual) |
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-- Require the immediate identifier/colon header, then a newline or indent and
-  a real indent after only normal newline/semicolon layout. No `:;`,
-  remain valid with their existing arbitrary expressions and suite forms.
+| [130](nuc-0130.md) | Loop-Local Iterator Exits | Draft |
+| [130](nuc-0130.md) | Loop-Local Iterator Exits | Standards Track | Runtime features | Draft |
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fbdb7e41` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4d36a82b` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

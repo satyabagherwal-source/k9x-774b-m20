@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T05:20:03.113Z",
+  "last_updated": "2026-11-22T05:28:23.475Z",
   "total_records": 2329,
   "domains": {
     "A": {
@@ -15408,8 +15408,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "f234adf462e345adfa205600e90834034a20705df557fd5d3c417830969050d2",
-      "created_at": "2026-11-22T03:11:40.321Z"
+      "content_hash": "568491dd3316ec8440715df16d1811c0cb1ef863ba3f912f0cc11977a0101300",
+      "created_at": "2026-11-22T05:28:18.111Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -15858,8 +15858,8 @@
       "title": "Architecture Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-learnings-architecture-intelligence-nucleoidai-nucleoid-lear.md",
       "repository": "nucleoidai-nucleoid-learnings",
-      "content_hash": "8d0676a6cd0de93d57e0773f3db8fe2a2160ec7c0646994828e348d03b0cec0d",
-      "created_at": "2026-11-22T01:44:42.576Z"
+      "content_hash": "aa59ee77847a646e270f5c713c0bc0d1a6f4d10bdcfa6169dfb9b8a9cd3e676d",
+      "created_at": "2026-11-22T05:28:23.475Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants",
@@ -18094,8 +18094,8 @@
       "title": "Research & Knowledge Intelligence: autotrust/Qwen3.8-Flash-Next-E384-FP4-V2 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-qwen3-8-flash-next-e384-fp4-v2-research-knowledge-intelligence-auto.md",
       "repository": "autotrust/Qwen3.8-Flash-Next-E384-FP4-V2",
-      "content_hash": "3feff2aedb42645409380da58f6ed917cd8f6561fd99b76af6a2e1df87c86e33",
-      "created_at": "2026-11-14T20:52:01.228Z"
+      "content_hash": "1b45024ca09d02c0d25b2c1c2ae4243211ebe252b50300d528588f57671c40a4",
+      "created_at": "2026-11-22T05:28:04.075Z"
     },
     "domain_intelligence-architecture-intelligence-iii-hq-iii-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-iii-hq-iii-core-invariants",
@@ -18163,8 +18163,8 @@
       "title": "Research & Knowledge Intelligence: hf-autotrust-qwen3.8-flash-next-e384-fp4-v2-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-qwen3-8-flash-next-e384-fp4-v2-learnings-research-knowledge-intelli.md",
       "repository": "hf-autotrust-qwen3.8-flash-next-e384-fp4-v2-learnings",
-      "content_hash": "24bac4e5d2b26ba662f9aeaef7d5449008ce22847782d39903031ceaf102f77c",
-      "created_at": "2026-11-14T20:52:48.328Z"
+      "content_hash": "e8afd89a08136abc090651f5db8b7080dfb7b53199af66291b1f152bc3e7fe23",
+      "created_at": "2026-11-22T05:28:21.638Z"
     },
     "domain_intelligence-research-knowledge-intelligence-phocinae-phocinae-largha-150m-v1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-phocinae-phocinae-largha-150m-v1-core-invariants",
@@ -21899,8 +21899,8 @@
       "title": "Quality & Verification Intelligence: matrixorigin/matrixone Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-matrixorigin-matrixone-quality-verification-intelligence-matrixorigin-matrixone-.md",
       "repository": "matrixorigin/matrixone",
-      "content_hash": "6d234a6b0a9a8cdc736b0e27b4732cc6895de89e29ffb011e9b4da06db12b966",
-      "created_at": "2026-11-21T00:52:09.324Z"
+      "content_hash": "71ff12b99188be6fd2e22fcb3b584ccf8a232c174a8b17c9ab752dbc75f85257",
+      "created_at": "2026-11-22T05:28:18.361Z"
     },
     "domain_intelligence-quality-verification-intelligence-matrixorigin-matrixone-learnings-core-invarian": {
       "record_id": "domain_intelligence-quality-verification-intelligence-matrixorigin-matrixone-learnings-core-invarian",
@@ -21908,8 +21908,8 @@
       "title": "Quality & Verification Intelligence: matrixorigin-matrixone-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-matrixorigin-matrixone-learnings-quality-verification-intelligence-matrixorigin-.md",
       "repository": "matrixorigin-matrixone-learnings",
-      "content_hash": "779c866fe49da206873e5cb942bcee71ac1c81b9f77813a7316ed7d4bdeac52f",
-      "created_at": "2026-11-19T22:36:23.516Z"
+      "content_hash": "67480aab6b7f8862047ec67341e945071d05b710ab65db3da8bd7b7027e1dfc3",
+      "created_at": "2026-11-22T05:28:22.434Z"
     },
     "domain_intelligence-research-knowledge-intelligence-mistralai-mistral-large-4-1t-a52b-core-invariant": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-mistralai-mistral-large-4-1t-a52b-core-invariant",
