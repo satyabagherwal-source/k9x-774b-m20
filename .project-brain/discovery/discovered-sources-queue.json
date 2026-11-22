@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-22T15:01:17.938Z",
+  "updated_at": "2026-11-22T15:09:18.761Z",
   "stats": {
-    "total_discovered": 7554,
-    "approved_pending_harvest": 7153,
+    "total_discovered": 7555,
+    "approved_pending_harvest": 7154,
     "harvested_count": 0,
     "rejected_count": 401,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7128,
+      "COMMUNITY_AND_EXPERT": 7129,
       "OFFICIAL_DOCUMENTATION": 246,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 5,
@@ -163404,6 +163404,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
         "fileName": "oxc-project-oxc-learnings.md"
+      }
+    },
+    "SRC-48A1360DE139": {
+      "id": "SRC-48A1360DE139",
+      "url": "https://github.com/user-attachments/assets/e18828ab-8c91-4e8a-aef8-171a6ccbaa2b",
+      "title": "https://github.com/user-attachments/assets/e18828ab-8c91-4e8a-aef8-171a6ccbaa2b",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T15:09:18.761Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
+        "fileName": "zed-industries-zed-learnings.md"
       }
     }
   }

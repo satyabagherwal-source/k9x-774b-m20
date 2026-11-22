@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T15:01:13.753Z",
-  "total_cycles_completed": 11507,
-  "total_learnings_persisted": 11507,
-  "total_rules_promoted": 10753,
+  "last_updated": "2026-11-22T15:09:15.233Z",
+  "total_cycles_completed": 11510,
+  "total_learnings_persisted": 11510,
+  "total_rules_promoted": 10755,
   "history": [
-    {
-      "timestamp": "2026-11-21T19:47:26.757Z",
-      "repository": "openbmb/MiniCPM-OCR-1.0",
-      "learningId": "learn-huggingface-openbmb-minicpm-ocr-1-0",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T20:10:41.209Z",
-      "repository": "nvidia/NVIDIA-Nemotron-3.5-Transcribe-30B-A4B",
-      "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T20:10:42.898Z",
-      "repository": "o2sh/onefetch",
-      "learningId": "learn-github-o2sh-onefetch",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T20:10:56.170Z",
       "repository": "volcengine/OpenViking",
@@ -1403,6 +1382,27 @@
       "repository": "apple/FastFrames-L",
       "learningId": "learn-huggingface-apple-fastframes-l",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T15:09:04.859Z",
+      "repository": "tencent/Hy4-flash",
+      "learningId": "learn-huggingface-tencent-hy4-flash",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T15:09:07.398Z",
+      "repository": "zed-industries/zed",
+      "learningId": "learn-github-zed-industries-zed",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T15:09:15.233Z",
+      "repository": "envoyproxy/envoy",
+      "learningId": "learn-github-envoyproxy-envoy",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

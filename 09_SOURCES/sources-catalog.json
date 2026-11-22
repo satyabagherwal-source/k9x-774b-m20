@@ -6253,10 +6253,10 @@
     "repository": "envoyproxy/envoy",
     "platform": "github",
     "sourceUrl": "https://github.com/envoyproxy/envoy",
-    "sourceVersion": "a50230f0",
+    "sourceVersion": "a8595edc",
     "license": "Apache-2.0",
-    "contentHash": "8835edd0012966868e3013839da3a218cdb00de9107a2a15cda6e180af8c1507",
-    "lastHarvestedAt": "2026-11-21T14:27:48.346Z",
+    "contentHash": "5b2ff43489c0ce5ad6431acdff408c91b21bccd61eafbebd24e9d77010b80056",
+    "lastHarvestedAt": "2026-11-22T15:09:15.228Z",
     "learningId": "learn-github-envoyproxy-envoy"
   },
   "tursodatabase-limbo": {
@@ -7783,10 +7783,10 @@
     "repository": "zed-industries/zed",
     "platform": "github",
     "sourceUrl": "https://github.com/zed-industries/zed",
-    "sourceVersion": "2f808b3c",
+    "sourceVersion": "d31d1074",
     "license": "NOASSERTION",
-    "contentHash": "87d781620d2b9fea54f02dd7431e038ebb12803640c2054eeb1f7412985623bf",
-    "lastHarvestedAt": "2026-11-21T02:11:54.205Z",
+    "contentHash": "52f32e94ae5e69a670b50c3db3014a5d167540483d06231e787c0d47b1cabf23",
+    "lastHarvestedAt": "2026-11-22T15:09:07.393Z",
     "learningId": "learn-github-zed-industries-zed"
   },
   "mohamedrejeb-compose-rich-editor": {
@@ -12855,8 +12855,8 @@
     "sourceUrl": "https://huggingface.co/tencent/Hy4-flash",
     "sourceVersion": "hf-tencent-hy4-flash",
     "license": "Open-Source",
-    "contentHash": "bd9b7ab0567c463c614ca3507bd021c78a271a82057c1d563770ab42ec01a419",
-    "lastHarvestedAt": "2026-11-18T07:38:51.621Z",
+    "contentHash": "2f2be2c1dfdfefb8f0c5681740be21f5e8a530d7031cbe2dd66fb4b6c6f053ff",
+    "lastHarvestedAt": "2026-11-22T15:09:04.854Z",
     "learningId": "learn-huggingface-tencent-hy4-flash"
   },
   "eclipse-theia-theia": {

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261120-ZT5S",
-    "timestamp": "2026-11-20T14:07:29.632Z",
-    "repository": "Sentinel7/h3",
-    "learningId": "learn-huggingface-sentinel7-h3",
-    "contentHash": "6df8bdba548e4e4a652f923d08b793caf630ae0df1f3c9f8392a8bef44f1b522",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-M0WP",
-    "timestamp": "2026-11-20T14:52:45.721Z",
-    "repository": "gardener/gardener",
-    "learningId": "learn-github-gardener-gardener",
-    "contentHash": "e86e61ce3824a54d21b76d8dc6cdb6fea08f438ddf97877432116c3874bba166",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-M3GR",
-    "timestamp": "2026-11-20T14:52:49.035Z",
-    "repository": "volcengine/OpenViking",
-    "learningId": "learn-github-volcengine-openviking",
-    "contentHash": "d5709c374661e38847f53506bcd1d7c7774dbbd52a8cb4f78f1b0ec85f93e276",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261120-M5PG",
     "timestamp": "2026-11-20T14:52:51.940Z",
     "repository": "NucleoidAI/Nucleoid",
@@ -7492,6 +7447,51 @@
     "contentHash": "6afa59671dbef263914e01b42be9846d2e7b17af747763cca85cd40373ecf66b",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-2PQP",
+    "timestamp": "2026-11-22T15:09:04.849Z",
+    "repository": "tencent/Hy4-flash",
+    "learningId": "learn-huggingface-tencent-hy4-flash",
+    "contentHash": "2f2be2c1dfdfefb8f0c5681740be21f5e8a530d7031cbe2dd66fb4b6c6f053ff",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-2RP8",
+    "timestamp": "2026-11-22T15:09:07.388Z",
+    "repository": "zed-industries/zed",
+    "learningId": "learn-github-zed-industries-zed",
+    "contentHash": "52f32e94ae5e69a670b50c3db3014a5d167540483d06231e787c0d47b1cabf23",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-2XQW",
+    "timestamp": "2026-11-22T15:09:15.224Z",
+    "repository": "envoyproxy/envoy",
+    "learningId": "learn-github-envoyproxy-envoy",
+    "contentHash": "5b2ff43489c0ce5ad6431acdff408c91b21bccd61eafbebd24e9d77010b80056",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

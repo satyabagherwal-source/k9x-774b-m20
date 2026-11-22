@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T15:01:13.758Z",
+  "last_updated": "2026-11-22T15:09:15.237Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9501,14 +9501,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-envoyproxy-envoy",
-      "content_hash": "8835edd0012966868e3013839da3a218cdb00de9107a2a15cda6e180af8c1507",
-      "verified_at": "2026-11-21T14:27:48.356Z",
+      "content_hash": "5b2ff43489c0ce5ad6431acdff408c91b21bccd61eafbebd24e9d77010b80056",
+      "verified_at": "2026-11-22T15:09:15.236Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T14:27:48.356Z"
+      "last_updated": "2026-11-22T15:09:15.236Z"
     },
     "tursodatabase/turso": {
       "repository": "tursodatabase/turso",
@@ -11721,14 +11721,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zed-industries-zed",
-      "content_hash": "87d781620d2b9fea54f02dd7431e038ebb12803640c2054eeb1f7412985623bf",
-      "verified_at": "2026-11-21T02:11:54.212Z",
+      "content_hash": "52f32e94ae5e69a670b50c3db3014a5d167540483d06231e787c0d47b1cabf23",
+      "verified_at": "2026-11-22T15:09:07.401Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T02:11:54.212Z"
+      "last_updated": "2026-11-22T15:09:07.401Z"
     },
     "MohamedRejeb/compose-rich-editor": {
       "repository": "MohamedRejeb/compose-rich-editor",
@@ -19371,14 +19371,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-tencent-hy4-flash",
-      "content_hash": "bd9b7ab0567c463c614ca3507bd021c78a271a82057c1d563770ab42ec01a419",
-      "verified_at": "2026-11-18T07:38:51.632Z",
+      "content_hash": "2f2be2c1dfdfefb8f0c5681740be21f5e8a530d7031cbe2dd66fb4b6c6f053ff",
+      "verified_at": "2026-11-22T15:09:04.862Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T07:38:51.632Z"
+      "last_updated": "2026-11-22T15:09:04.862Z"
     },
     "eclipse-theia/theia": {
       "repository": "eclipse-theia/theia",

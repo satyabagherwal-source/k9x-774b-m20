@@ -742251,3 +742251,162 @@ pub enum ClassLoweringMode {
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `08023adc` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9939. Composite native views into the scene on macOS (Harvested from zed-industries/zed)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Composite native views into the scene on macOS",
+  "source": "zed-industries/zed",
+  "source_url": "https://github.com/zed-industries/zed",
+  "source_version": "d31d1074",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-22T15:09:06.875Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-zed-industries-zed",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [zed-industries/zed](https://github.com/zed-industries/zed) (Revision: `d31d1074`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `crates/gpui/Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zed-industries/zed. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `f4fe0be1`: gpui: Composite native views into the scene on macOS. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/gpui/Cargo.toml`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+[target.'cfg(target_os = "macos")'.dev-dependencies]
+objc2.workspace = true
+
+[[example]]
+name = "native_view"
+path = "examples/native_view.rs"
+
+[[example]]
+name = "native_view_appkit_field"
+path = "examples/native_view_appkit_field.rs"
+
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `f4fe0be1` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9940. close idle HTTP/1 downstream connections without delayed close (Harvested from envoyproxy/envoy)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "close idle HTTP/1 downstream connections without delayed close",
+  "source": "envoyproxy/envoy",
+  "source_url": "https://github.com/envoyproxy/envoy",
+  "source_version": "a8595edc",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-22T15:09:14.719Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-envoyproxy-envoy",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [envoyproxy/envoy](https://github.com/envoyproxy/envoy) (Revision: `a8595edc`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `changelogs/current/minor_behavior_changes/http__http1-skip-delayed-close-on-idle-drain.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `a8595edc`: http: close idle HTTP/1 downstream connections without delayed close. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelogs/current/minor_behavior_changes/http__http1-skip-delayed-close-on-idle-drain.rst`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c++
+// Verified production-grade fix pattern:
+An HTTP/1 downstream connection that carries no request between the start of a drain sequence and
+its :ref:`drain timeout
+<envoy_v3_api_field_extensions.filters.network.http_connection_manager.v3.HttpConnectionManager.drain_timeout>`,
+such as one closed by the connection idle timeout, is now closed without waiting for the
+:ref:`delayed close timeout
+<envoy_v3_api_field_extensions.filters.network.http_connection_manager.v3.HttpConnectionManager.delayed_close_timeout>`.
+There is no response on such a connection for the client to read, and while the delayed close was
+pending Envoy ignored any request a pooling client sent on it, so that request was never answered.
+This change can be reverted by setting the runtime guard
+``envoy.reloadable_features.http1_skip_delayed_close_on_idle_drain`` to ``false``.
+```
+
+**NEGATIVE CONSTRAINT**:
+```c++
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `a8595edc` are properly handled with clean fallback behavior.

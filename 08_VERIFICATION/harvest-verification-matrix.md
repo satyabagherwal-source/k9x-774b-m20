@@ -12102,3 +12102,6 @@
 | `CYCLE-20261122-8HU2` | `2026-11-22T14:45:34.922Z` | `harness-hub/Qwen3.8-27B-pi-adapted` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-harness-hub-qwen3.8-27b-pi-adapted-learnings.md` | Yes (`7ded80e0...`) |
 | `CYCLE-20261122-MB7Z` | `2026-11-22T14:56:19.535Z` | `oxc-project/oxc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9938` | Yes (`92ad7b55...`) |
 | `CYCLE-20261122-SM8B` | `2026-11-22T15:01:13.739Z` | `apple/FastFrames-L` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-apple-fastframes-l-learnings.md` | Yes (`6afa5967...`) |
+| `CYCLE-20261122-2PQP` | `2026-11-22T15:09:04.849Z` | `tencent/Hy4-flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tencent-hy4-flash-learnings.md` | Yes (`2f2be2c1...`) |
+| `CYCLE-20261122-2RP8` | `2026-11-22T15:09:07.388Z` | `zed-industries/zed` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9939` | Yes (`52f32e94...`) |
+| `CYCLE-20261122-2XQW` | `2026-11-22T15:09:15.224Z` | `envoyproxy/envoy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9940` | Yes (`5b2ff434...`) |

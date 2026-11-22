@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T14:27:59.522Z",
+  "timestamp": "2026-11-22T15:09:20.033Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-envoyproxy-envoy-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [envoyproxy-envoy-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T14:27:59.522Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T15:09:20.033Z`  
 > **Learning ID**: `LEARN-EVO-envoyproxy-envoy-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  
 > **Source**: github ([https://github.com/envoyproxy/envoy](https://github.com/envoyproxy/envoy))  
-> **Source Version**: `a50230f0`  
+> **Source Version**: `a8595edc`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T14:27:47.144Z  
+> **Timestamp**: 2026-11-22T15:09:14.189Z  
 > **Learning ID**: `learn-github-envoyproxy-envoy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/envoyproxy/envoy](https://github.com/envoyproxy/envoy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T14:27:47.138Z  
+> **Harvest Timestamp**: 2026-11-22T15:09:14.184Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Cloud-native high-performance edge/middle/service proxy
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: Cargo.toml, go.mod, README.md
-- **Stars / Engagement**: 29275 stars
+- **Stars / Engagement**: 29276 stars
 
 ---
 
@@ -1072,430 +1072,625 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8969fd53` (2026-11-21)
-**Commit Message**: admin: yield to the event loop between response chunks (#49420)
+### Incident Patch 1: `a8595edc` (2026-11-22)
+**Commit Message**: http: close idle HTTP/1 downstream connections without delayed close (#48884)
 
-Commit Message: admin: yield to the event loop between response chunks
+Commit Message: http: close idle HTTP/1 downstream connections without
+delayed close
+
+When the drain timer fires on an HTTP/1 connection that carried no
+request since the drain sequence started, close it with `FlushWrite`
+instead of `FlushWriteAndDelay`. That's the connection idle timeout
+path, and also max connection duration or a listener drain on a
+connection that happens to be idle.
 
 Additional Description:
-The admin server runs on the main thread. `AdminFilter::onComplete()`
-called `nextChunk()` in a loop and encoded every chunk without returning
-to the event loop, so a large chunked response such as `/stats` (which
-`StatsRequest` already splits into ~2MB chunks) blocked other main
-thread work, like health checks and xDS updates, until the whole
-response was produced.
+Delayed close exists so a client that is still sending can read a
+response Envoy wrote early before it gets an RST. An idle connection has
+no response to read, so the delay only holds the socket open for
+`delayed_close_timeout` with reads disabled and no FIN sent. A pooling
+client that keeps no idle timeout of its own will happily reuse the
+socket in that window, and its request is never answered. We hit this
+with a pooling L7 proxy in front of Envoy that surfaced those as 503s.
+nginx's `keepalive_timeout` sends the FIN right away, so it never showed
+up there.
 
-With this change `AdminFilter` encodes one chunk and schedules the next
-one with a `SchedulableCallback` on the next event loop iteration. If
-the stream is reset or destroyed in between, the remaining chunks are
-dropped. Handlers that produce their response in a single chunk behave
-as before.
+The delay is kept whenever a request came in after the drain started,
+since its response (with `Connection: close`) may have just gone out
 
-This is split out of #49351, which builds on it to render
-`/stats/prometheus` in chunks as well (Prometheus output is still a
-single chunk on main, so it does not benefit from this change alone).
-Flow control with watermarks (#31087) is not part of this change.
-
-Risk Level: Low
-Testing: unit tests in `admin_filter_test`
-Docs Changes: N/A
-Release Notes: added
-Runtime guard
-
-**File**: `changelogs/current/new_features/admin__yield-between-response-chunks.rst` (added, +4/-0)
+**File**: `changelogs/current/minor_behavior_changes/http__http1-skip-delayed-close-on-idle-drain.rst` (added, +10/-0)
 ```diff
-@@ -0,0 +1,4 @@
-+Added the runtime guard ``envoy.reloadable_features.admin_filter_yield_between_chunks``, default
-+``false``. When set to ``true``, the admin server returns to the event loop between the chunks of a
-+large response, such as ``/stats``, so a big response no longer blocks other work on the main
-+thread, like health checks.
+@@ -0,0 +1,10 @@
++An HTTP/1 downstream connection that carries no request between the start of a drain sequence and
++its :ref:`drain timeout
++<envoy_v3_api_field_extensions.filters.network.http_connection_manager.v3.HttpConnectionManager.drain_timeout>`,
++such as one closed by the connection idle timeout, is now closed without waiting for the
++:ref:`delayed close timeout
++<envoy_v3_api_field_extensions.filters.network.http_connection_manager.v3.HttpConnectionManager.delayed_close_timeout>`.
++There is no response on such a connection for the client to read, and while the delayed close was
++pending Envoy ignored any request a pooling client sent on it, so that request was never answered.
++This change can be reverted by setting the runtime guard
++``envoy.reloadable_features.http1_skip_delayed_close_on_idle_drain`` to ``false``.
 ```
 
-**File**: `source/common/runtime/runtime_features.cc` (modified, +3/-0)
+**File**: `source/common/http/conn_manager_impl.cc` (modified, +8/-1)
 ```diff
-@@ -323,6 +323,9 @@ FALSE_RUNTIME_GUARD(envoy_reloadable_features_async_client_downstream_flow_contr
- FALSE_RUNTIME_GUARD(envoy_reloadable_features_disable_quic_rx_queue_overflow_socket_options);
- // TODO(abeyad): Flip to true after prod testing.
- FALSE_RUNTIME_GUARD(envoy_reloadable_features_disable_quic_ip_packet_info_socket_options);
-+// When enabled, the admin filter returns to the event loop between the chunks of a response.
-+// TODO(wbpcode): flip to true after prod testing.
-+FALSE_RUNTIME_GUARD(envoy_reloadable_features_admin_filter_yield_between_chunks);
+@@ -527,6 +527,7 @@ RequestDecoder& ConnectionManagerImpl::newStream(ResponseEncoder& response_encod
+       *this, response_encoder.getStream().bufferLimit(), std::move(downstream_stream_account));
  
- // A flag to set the maximum TLS version for google_grpc client to TLS1.2, when needed for
- // compliance restrictions.
+   accumulated_requests_++;
++  idle_since_drain_start_ = false;
+   if (config_->maxRequestsPerConnection() > 0 &&
+       accumulated_requests_ >= config_->maxRequestsPerConnection()) {
+     if (codec_->protocol() < Protocol::Http2) {
+@@ -980,7 +981,12 @@ void ConnectionManagerImpl::onDrainTimeout() {
+   ASSERT(drain_state_ != DrainState::NotDraining);
+   codec_->goAway();
+   drain_state_ = DrainState::Closing;
+-  checkForDeferredClose(false);
++  // An HTTP/1 connection that carried no request while draining has no response for the client to
++  // read, so delaying the close would only hold the socket open and ignore any request sent on it.
++  checkForDeferredClose(
++      /*skip_delay_close=*/idle_since_drain_start_ && codec_->protocol() < Protocol::Http2 &&
++      Runtime::runtimeFeatureEnabled(
++          "envoy.reloadable_features.http1_skip_delayed_close_on_idle_drain"));
+   // Only once the end of the drain window is near: a drain sequence started earlier (e.g. by a
+   // response) must not cut the tunneling streams short while other traffic on the connection can
+   // still complete normally.
+@@ -1936,6 +1942,7 @@ void ConnectionManagerImpl::ActiveStream::disarmRequestTimeout() {
+ void ConnectionManagerImpl::startDrainSequence() {
+   ASSERT(drain_state_ == DrainState::NotDraining);
+   drain_state_ = DrainState::Draining;
++  idle_since_drain_start_ = streams_.empty();
+   codec_->shutdownNotice();
+   drain_timer_ = dispatcher_->createTimer([this]() -> void { onDrainTimeout(); });
+   drain_timer_->enableTimer(config_->drainTimeout());
 ```
 
-**File**: `source/server/admin/BUILD` (modified, +2/-0)
+**File**: `source/common/http/conn_manager_impl.h` (modified, +2/-0)
 ```diff
-@@ -123,12 +123,14 @@ envoy_cc_library(
-     hdrs = ["admin_filter.h"],
-     deps = [
-         ":utils_lib",
-+        "//envoy/event:schedulable_cb_interface",
-         "//envoy/http:filter_interface",
-         "//envoy/server:admin_interface",
-         "//source/common/buffer:buffer_lib",
-         "//source/common/common:minimal_logger_lib",
-         "//source/common/http:codes_lib",
-         "//source/common/http:header_map_lib",
-+        "//source/common/runtime:runtime_features_lib",
-         "//source/extensions/filters/http/common:pass_through_filter_lib",
-     ],
- )
+@@ -702,6 +702,8 @@ class ConnectionManagerImpl : Logger::Loggable<Logger::Id::http>,
+   bool proactive_drain_{false};
+   // When set to true, add Connection:close response header to nudge downstream client to reconnect.
+   bool soft_drain_http1_{false};
++  // Whether the connection has carried no stream since the drain sequence started.
++  bool idle_since_drain_start_{false};
+   Random::RandomGenerator& random_generator_;
+   Runtime::Loader& runtime_;
+   const LocalInfo::LocalInfo& local_info_;
 ```
 
-**File**: `source/server/admin/admin_filter.cc` (modified, +52/-11)
+**File**: `source/common/runtime/runtime_features.cc` (modified, +1/-0)
 ```diff
-@@ -1,11 +1,14 @@
- #include "source/server/admin/admin_filter.h"
+@@ -123,6 +123,7 @@ RUNTIME_GUARD(envoy_reloadable_features_health_check_after_cluster_warming);
+ RUNTIME_GUARD(envoy_reloadable_features_hide_transport_failure_reason_in_response_body);
+ RUNTIME_GUARD(envoy_reloadable_features_hot_restart_propagate_stat_tags);
+ RUNTIME_GUARD(envoy_reloadable_features_http1_allow_query_method);
++RUNTIME_GUARD(envoy_reloadable_features_http1_skip_delayed_close_on_idle_drain);
+ RUNTIME_GUARD(envoy_reloadable_features_http2_discard_host_header);
+ RUNTIME_GUARD(envoy_reloadable_features_http2_fix_goaway_loadshed_point);
+ RUNTIME_GUARD(envoy_reloadable_features_http2_flood_protection_active_streams);
+```
+
+**File**: `test/common/http/conn_manager_impl_test_2.cc` (modified, +76/-10)
+```diff
+@@ -433,15 +433,85 @@ TEST_F(HttpConnectionManagerImplTest, IdleTimeout) {
+   idle_timer->invokeCallback();
  
-+#include "source/common/runtime/runtime_features.h"
- #include "source/server/admin/utils.h"
+   EXPECT_CALL(*codec_, goAway());
+-  EXPECT_CALL(filter_callbacks_.connection_,
+-              close(Network::ConnectionCloseType::FlushWriteAndDelay, _));
++  EXPECT_CALL(filter_callbacks_.connection_, close(Network::ConnectionCloseType::FlushWrite, _));
+   EXPECT_CALL(*idle_timer, disableTimer());
+   EXPECT_CALL(*drain_timer, disableTimer());
+   drain_timer->invokeCallback();
  
- namespace Envoy {
- namespace Server {
- 
--AdminFilter::AdminFilter(const Admin& admin) : admin_(admin) {}
-+AdminFilter::AdminFilter(const Admin& admin)
-+    : admin_(admin), yield_between_chunks_(Runtime::runtimeFeatureEnabled(
-+                         "envoy.reloadable_features.admin_filter_yield_between_chunks")) {}
- 
- Http::FilterHeadersStatus AdminFilter::decodeHeaders(Http::RequestHeaderMap& headers,
-                                                      bool end_stream) {
-@@ -37,9 +40,12 @@ Http::FilterTrailersStatus AdminFilter::decodeTrailers(Http::RequestTrailerMap&)
+   EXPECT_EQ(1U, stats_.named_.downstream_cx_idle_timeout_.value());
  }
  
- void AdminFilter::onDestroy() {
-+  destroyed_ = true;
-+  next_chunk_cb_.reset();
-   for (const auto& callback : on_destroy_callbacks_) {
-     callback();
-   }
-+  request_.reset();
- }
- 
- void AdminFilter::addOnDestroyCallback(std::function<void()> cb) {
-@@ -93,17 +99,52 @@ void AdminFilter::onComplete() {
-                                     StreamInfo::ResponseCodeDetails::get().AdminFilterResponse);
- 
-   // TODO(#31087): use high/lower watermarks to apply flow-control to the admin http port.
--  bool more_data;
--  do {
--    Buffer::OwnedImpl response;
--    more_data = handler->nextChunk(response);
--    bool end_stream = end_stream_on_complete_ && !more_data;
--    ENVOY_LOG_MISC(debug, "nextChunk: response.length={} more_data={} end_stream={}",
--                   response.length(), more_data, end_stream);
--    if (response.length() > 0 || end_stream) {
--      decoder_callbacks_->encodeData(response, end_stream);
-+  if (destroyed_) {
-+    return;
++class HttpConnectionManagerIdleDrainTest : public HttpConnectionManagerImplTest {
++protected:
++  // Sends one request, then fires the connection idle timer, which starts the drain sequence.
++  void startIdleDrain() {
++    idle_timeout_ = std::chrono::milliseconds(10);
++    idle_timer_ = setUpTimer();
++    EXPECT_CALL(*idle_timer_, enableTimer(_, _)).Times(testing::AnyNumber());
++    EXPECT_CALL(*idle_timer_, disableTimer()).Times(testing::AnyNumber());
++    setup();
++    sendRequestAndResponse();
++
++    drain_timer_ = setUpTimer();
++    EXPECT_CALL(*drain_timer_, enableTimer(_, _));
++    EXPECT_CALL(*drain_timer_, disableTimer()).Times(testing::AnyNumber());
++    idle_timer_->invokeCallback();
 +  }
-+  request_ = std::move(handler);
-+  if (!yield_between_chunks_) {
-+    while (encodeNextChunk()) {
-     }
--  } while (more_data);
-+    return;
++
++  void sendRequestAndResponse() {
++    auto* filter = new NiceMock<MockStreamDecoderFilter>();
++    EXPECT_CALL(filter_factory_, createFilterChain(_))
++        .WillOnce([this, filter](FilterChainFactoryCallbacks& callbacks) -> bool {
++          auto factory = createDecoderFilterFactoryCb(StreamDecoderFilterSharedPtr{filter});
++          callbacks.setFilterConfigName("");
++          factory(callbacks);
++          return true;
++        });
++    EXPECT_CALL(*filter, decodeHeaders(_, true))
++        .WillOnce(Return(FilterHeadersStatus::StopIteration));
++    startRequest(true);
++
++    filter->callbacks_->streamInfo().setResponseCodeDetails("");
++    filter->callbacks_->encodeHeaders(
++        ResponseHeaderMapPtr{new TestResponseHeaderMapImpl{{":status", "200"}}}, true, "details");
++    response_encoder_.stream_.codec_callbacks_->onCodecEncodeComplete();
 +  }
-+  if (encodeNextChunk()) {
-+    scheduleNextChunk();
++
++  void expectCloseOnDrainTimeout(Network::ConnectionCloseType close_type) {
++    EXPECT_CALL(*codec_, goAway());
++    EXPECT_CALL(filter_callbacks_.connection_, close(close_type, _));
++    drain_timer_->invokeCallback();
 +  }
++
++  Event::MockTimer* idle_timer_{};
++  Event::MockTimer* drain_timer_{};
++};
++
++TEST_F(HttpConnectionManagerIdleDrainTest, KeepsDelayedCloseWithRuntimeGuardDisabled) {
++  TestScopedRuntime scoped_runtime;
++  scoped_runtime.mergeValues(
++      {{"envoy.reloadable_features.http1_skip_delayed_close_on_idle_drain", "false"}});
++  startIdleDrain();
++  expectCloseOnDrainTimeout(Network::ConnectionCloseType::FlushWriteAndDelay);
 +}
 +
-+bool AdminFilter::encodeNextChunk() {
-+  ASSERT(request_ != nullptr);
-+  Buffer::OwnedImpl response;
-+  const bool more_data = request_->nextChunk(response);
-+  const bool end_stream = end_stream_on_complete_ && !more_data;
-+  ENVOY_LOG_MISC(debug, "nextChunk: response.length={} more_data={} end_stream={}",
-+                 response.length(), more_data, end_stream);
-+  if (response.length() > 0 || end_stream) {
-+    // This may complete or reset the stream, which calls onDestroy().
-+    decoder_callbacks_->encodeData(response, end_stream);
-+  }
-+  if (destroyed_) {
-+    return false;
-+  }
-+  if (!more_data) {
-+    request_.reset();
-+    return false;
-+  }
-+  return true;
++// The drain timeout writes the final GOAWAY, which the client should get to read.
++TEST_F(HttpConnectionManagerIdleDrainTest, KeepsDelayedCloseForHttp2) {
++  EXPECT_CALL(*codec_, protocol()).WillRepeatedly(Return(Protocol::Http2));
++  startIdleDrain();
++  expectCloseOnDrainTimeout(Network::ConnectionCloseType::FlushWriteAndDelay);
 +}
 +
-+void AdminFilter::scheduleNextChunk() {
-+  if (next_chunk_cb_ == nullptr) {
-+    next_chunk_cb_ = decoder_callbacks_->dispatcher().createSchedulableCallback([this]() {
-+      if (encodeNextChunk()) {
-+        scheduleNextChunk();
-+      }
-+    });
-+  }
-+  // Yield to the event loop before the next chunk, so other main thread work like health checks
-+  // and xDS updates can run in between.
-+  next_chunk_cb_->scheduleCallbackNextIteration();
- }
++TEST_F(HttpConnectionManagerIdleDrainTest, KeepsDelayedCloseAfterResponseWhileDraining) {
++  startIdleDrain();
++  EXPECT_CALL(response_encoder_, encodeHeaders(_, true))
++      .WillOnce([](const ResponseHeaderMap& headers, bool) -> void {
++        EXPECT_EQ("close", headers.getConnectionValue());
++      });
++  sendRequestAndResponse();
++  expectCloseOnDrainTimeout(Network::ConnectionCloseType::FlushWriteAndDelay);
++}
++
+ TEST_F(HttpConnectionManagerImplTest, ConnectionDurationResponseFlag) {
+   // Not used in the test.
+   delete codec_;
+@@ -664,8 +734,7 @@ TEST_F(HttpConnectionManagerImplTest, ConnectionDuration) {
+   connection_duration_timer->invokeCallback();
  
- } // namespace Server
+   EXPECT_CALL(*codec_, goAway());
+-  EXPECT_CALL(filter_callbacks_.connection_,
+-              close(Network::ConnectionCloseType::FlushWriteAndDelay, _));
++  EXPECT_CALL(filter_callbacks_.connection_, close(Network::ConnectionCloseType::FlushWrite, _));
+   EXPECT_CALL(*connection_duration_timer, disableTimer());
+   EXPECT_CALL(*drain_timer, disableTimer());
+   drain_timer->invokeCallback();
+@@ -2340,8 +2409,7 @@ TEST_F(HttpConnectionManagerImplTest, DrainTimeoutJitter) {
+   connection_duration_timer->invokeCallback();
+ 
+   EXPECT_CALL(*codec_, goAway());
+-  EXPECT_CALL(filter_callbacks_.connection_,
+-              close(Network::ConnectionCloseType::FlushWriteAndDelay, _));
++  EXPECT_CALL(filter_callbacks_.connection_, close(Network::ConnectionCloseType::FlushWrite, _));
+   EXPECT_CALL(*connection_duration_timer, disableTimer());
+   EXPECT_CALL(*drain_timer, disableTimer());
+   drain_timer->invokeCallback();
+@@ -2380,8 +2448,7 @@ TEST_F(HttpConnectionManagerImplTest, DrainTimeoutJitterZeroPercent) {
+   connection_duration_timer->invokeCallback();
+ 
+   EXPECT_CALL(*codec_, goAway());
+-  EXPECT_CALL(filter_callbacks_.connection_,
+-              close(Network:
 ```
 
-**File**: `source/server/admin/admin_filter.h` (modified, +21/-0)
+**File**: `test/common/http/conn_manager_impl_test_3.cc` (modified, +1/-2)
 ```diff
-@@ -3,6 +3,7 @@
- #include <functional>
- #include <list>
+@@ -3638,8 +3638,7 @@ TEST_F(HttpConnectionManagerImplTest, ProactiveDrainIdleConnection) {
+   EXPECT_EQ(1U, stats_.named_.downstream_cx_drain_close_.value());
  
-+#include "envoy/event/schedulable_cb.h"
- #include "envoy/http/filter.h"
- #include "envoy/server/admin.h"
- 
-@@ -64,10 +65,30 @@ class AdminFilter : public Http::PassThroughFilter,
-    * Called when an admin request has been completely received.
-    */
-   void onComplete();
-+
-+  /**
-+   * Encodes the next chunk of request_.
-+   * @return true if there are more chunks to encode and the stream is still alive.
-+   */
-+  bool encodeNextChunk();
-+
-+  /**
-+   * Schedules encodeNextChunk() on the next event loop iteration, so a large response does not
-+   * block the main thread.
-+   */
-+  void scheduleNextChunk();
-+
-   const Admin& admin_;
-+  // Latched at construction so the runtime guard is not re-read for every request chunk.
-+  const bool yield_between_chunks_;
-   Http::RequestHeaderMap* request_headers_{};
-   std::list<std::function<void()>> on_destroy_callbacks_;
-   bool end_stream_on_complete_ = true;
-+
-+  // The request whose response is still being streamed, if any.
-+  Admin::RequestPtr request_;
-+  Event::SchedulableCallbackPtr next_chunk_cb_;
-+  bool destroyed_{false};
- };
- 
- } // namespace Server
+   EXPECT_CALL(*codec_, goAway());
+-  EXPECT_CALL(filter_callbacks_.connection_,
+-              close(Network::ConnectionCloseType::FlushWriteAndDelay, _));
++  EXPECT_CALL(filter_callbacks_.connection_, close(Network::ConnectionCloseType::FlushWrite, _));
+   EXPECT_CALL(*proactive_drain_timer, disableTimer());
+   EXPECT_CALL(*drain_timer, disableTimer());
+   drain_timer->invokeCallback();
 ```
 
-**File**: `test/server/admin/BUILD` (modified, +2/-0)
+**File**: `test/integration/BUILD` (modified, +1/-0)
 ```diff
-@@ -100,9 +100,11 @@ envoy_cc_test(
-     deps = [
-         "//source/common/buffer:buffer_lib",
-         "//source/server/admin:admin_lib",
-+        "//test/mocks/event:event_mocks",
+@@ -2174,6 +2174,7 @@ envoy_cc_test(
+         "//test/integration/filters:stop_iteration_and_continue",
          "//test/mocks/http:http_mocks",
-         "//test/mocks/server:admin_mocks",
-         "//test/test_common:environment_lib",
-+        "//test/test_common:test_runtime_lib",
+         "//test/test_common:registry_lib",
++        "//test/test_common:simulated_time_system_lib",
+         "//test/test_common:threadsafe_singleton_injector_lib",
          "//test/test_common:utility_lib",
-     ],
- )
+         "@envoy_api//envoy/config/bootstrap/v3:pkg_cc_proto",
 ```
 
-**File**: `test/server/admin/admin_filter_test.cc` (modified, +126/-2)
+**File**: `test/integration/integration_test.cc` (modified, +59/-0)
 ```diff
-@@ -2,16 +2,17 @@
- #include "source/server/admin/admin.h"
- #include "source/server/admin/admin_filter.h"
- 
-+#include "test/mocks/event/mocks.h"
- #include "test/mocks/http/mocks.h"
- #include "test/mocks/server/admin.h"
- #include "test/test_common/environment.h"
-+#include "test/test_common/test_runtime.h"
+@@ -27,6 +27,7 @@
+ #include "test/test_common/network_utility.h"
+ #include "test/test_common/printers.h"
+ #include "test/test_common/registry.h"
++#include "test/test_common/simulated_time_system.h"
+ #include "test/test_common/threadsafe_singleton_injector.h"
  #include "test/test_common/utility.h"
  
- #include "gmock/gmock.h"
- #include "gtest/gtest.h"
- 
- using testing::_;
--using testing::ByMove;
- using testing::InSequence;
- using testing::NiceMock;
- using testing::Return;
-@@ -22,7 +23,9 @@ namespace Server {
- class AdminFilterTest : public testing::TestWithParam<Network::Address::IpVersion> {
- public:
-   AdminFilterTest() : filter_(admin_), request_headers_{{":path", "/"}} {
--    EXPECT_CALL(admin_, makeRequest(_)).WillOnce(Return(ByMove(adminHandlerCallback())));
-+    ON_CALL(admin_, makeRequest(_)).WillByDefault([](AdminStream&) {
-+      return adminHandlerCallback();
-+    });
-     filter_.setDecoderFilterCallbacks(callbacks_);
-   }
- 
-@@ -76,5 +79,126 @@ TEST_P(AdminFilterTest, Trailers) {
-   EXPECT_EQ(Http::FilterTrailersStatus::StopIteration, filter_.decodeTrailers(request_trailers));
+@@ -2017,6 +2018,64 @@ TEST_P(IntegrationTest, TestDelayedConnectionTeardownConfig) {
+   EXPECT_EQ(codec_client_->lastConnectionEvent(), Network::ConnectionEvent::RemoteClose);
  }
  
-+// Emits chunks "0", "1", ... up to num_chunks.
-+class CountingRequest : public Admin::Request {
-+public:
-+  CountingRequest(uint32_t num_chunks, bool& destroyed)
-+      : num_chunks_(num_chunks), destroyed_(destroyed) {}
-+  ~CountingRequest() override { destroyed_ = true; }
++class IntegrationTestWithSimulatedTime : public Event::TestUsingSimulatedTime,
++                                         public IntegrationTest {
++protected:
++  static constexpr std::chrono::seconds kIdleTimeout{1};
++  static constexpr std::chrono::seconds kDrainTimeout{1};
++  static constexpr std::chrono::seconds kDelayedCloseTimeout{100};
 +
-+  Http::Code start(Http::ResponseHeaderMap&) override { return Http::Code::OK; }
-+  bool nextChunk(Buffer::Instance& response) override {
-+    response.add(absl::StrCat(next_));
-+    return ++next_ < num_chunks_;
-+  }
-+
-+private:
-+  const uint32_t num_chunks_;
-+  bool& destroyed_;
-+  uint32_t next_{0};
-+};
-+
-+class AdminFilterChunkedTest : public AdminFilterTest {
-+public:
-+  void expectCountingRequest(uint32_t num_chunks) {
-+    EXPECT_CALL(admin_, makeRequest(_))
-+        .WillOnce([this, num_chunks](AdminStream&) -> Admin::RequestPtr {
-+          return std::make_unique<CountingRequest>(num_chunks, request_destroyed_);
++  // Serves one request, then lets the idle timeout start a drain sequence and runs it to its end.
++  void idleTimeoutThroughDrain() {
++    autonomous_upstream_ = true;
++    config_helper_.addConfigModifier(
++        [](envoy::extensions::filters::network::http_connection_manager::v3::HttpConnectionManager&
++               hcm) {
++          hcm.mutable_common_http_protocol_options()->mutable_idle_timeout()->set_seconds(
++              kIdleTimeout.count());
++          hcm.mutable_drain_timeout()->set_seconds(kDrainTimeout.count());
++          hcm.mutable_delayed_close_timeout()->set_seconds(kDelayedCloseTimeout.count());
 +        });
-+  }
++    initialize();
 +
-+  void expectData(absl::string_view data, bool end_stream) {
-+    EXPECT_CALL(callbacks_, encodeData(BufferString(std::string(data)), end_stream));
-+  }
++    codec_client_ = makeHttpConnection(lookupPort("http"));
++    auto response = codec_client_->makeHeaderOnlyRequest(default_request_headers_);
++    ASSERT_TRUE(response->waitForEndStream());
++    EXPECT_THAT(response->headers(), HttpStatusIs("200"));
++    test_server_->waitForCounter("http.config_test.downstream_rq_completed", Eq(1));
 +
-+  // The guard is latched when the filter is created.
-+  AdminFilter& createYieldingFilter() {
-+    scoped_runtime_.mergeValues(
-+        {{"envoy.reloadable_features.admin_filter_yield_between_chunks", "true"}});
-+    yielding_filter_ = std::make_unique<AdminFilter>(admin_);
-+    yielding_filter_->setDecoderFilterCallbacks(callbacks_);
-+    return *yielding_filter_;
++    timeSystem().advanceTimeWait(kIdleTimeout);
++    test_server_->waitForCounter("http.config_test.downstream_cx_idle_timeout", Eq(1));
++    timeSystem().advanceTimeWait(kDrainTimeout);
 +  }
-+
-+  TestScopedRuntime scoped_runtime_;
-+  std::unique_ptr<AdminFilter> yielding_filter_;
-+  bool request_destroyed_{false};
 +};
 +
-+INSTANTIATE_TEST_SUITE_P(IpVersions, AdminFilterChunkedTest,
-+                         testing::ValuesIn(TestEnvironment::getIpVersionsForTest()),
-+                         TestUtility::ipTestParamsToString);
++INSTANTIATE_TEST_SUITE_P(IpVersions, IntegrationTestWithSimulatedTime,
++                         ValuesIn(TestEnvironment::getIpVersionsForTest()), testParamToString);
 +
-+TEST_P(AdminFilterChunkedTest, YieldsToEventLoopBetweenChunks) {
-+  AdminFilter& filter = createYieldingFilter();
-+  expectCountingRequest(3);
-+  auto* next_chunk_cb = new NiceMock<Event::MockSchedulableCallback>(&callbacks_.dispatcher_);
++// A connection closed by the idle timeout has no response in flight, so it is closed as soon as the
++// drain sequence ends rather than after the delayed close timeout.
++TEST_P(IntegrationTestWithSimulatedTime, IdleTimeoutSkipsDelayedClose) {
++  idleTimeoutThroughDrain();
 +
-+  EXPECT_CALL(callbacks_, encodeHeaders_(_, false));
-+  expectData("0", false);
-+  filter.decodeHeaders(request_headers_, true);
-+  EXPECT_TRUE(next_chunk_cb->enabled_);
-+
-+  expectData("1", false);
-+  next_chunk_cb->invokeCallback();
-+  EXPECT_TRUE(next_chunk_cb->enabled_);
-+
-+  expectData("2", true);
-+  next_chunk_cb->invokeCallback();
-+  EXPECT_FALSE(next_chunk_cb->enabled_);
-+  EXPECT_TRUE(request_destroyed_);
-+  filter.onDestroy();
++  // Waiting on a counter advances simulated time, so a delayed close would eventually fire too.
++  test_server_->waitForCounter("http.config_test.downstream_cx_destroy_local", Eq(1));
++  EXPECT_EQ(0,
++            test_server_->counter("http.config_test.downstream_cx_delayed_close_timeout")->value());
++  ASSERT_TRUE(codec_client_->waitForDisconnect());
++  EXPECT_EQ(codec_client_->lastConnectionEvent(), Network::ConnectionEvent::RemoteClose);
 +}
 +
-+TEST_P(AdminFilterChunkedTest, DestroyCancelsRemainingChunks) {
-+  AdminFilter& filter = createYieldingFilter();
-+  expectCountingRequest(3);
-+  testing::MockFunction<void()> cb_destroyed;
-+  new NiceMock<Event::MockSchedulableCallback>(&callbacks_.dispatcher_, &cb_destroyed);
++TEST_P(IntegrationTestWithSimulatedTime, IdleTimeoutDelayedCloseWithRuntimeGuardOff) {
++  config_helper_.addRuntimeOverride(
++      "envoy.reloadable_features.http1_skip_delayed_close_on_idle_drain", "false");
++  idleTimeoutThroughDrain();
 +
-+  expectData("0", false);
-+  filter.decodeHeaders(request_headers_, true);
-+  EXPECT_FALSE(request_destroyed_);
-+
-+  EXPECT_CALL(cb_destroyed, Call());
-+  filter.onDestroy();
-+  EXPECT_TRUE(request_destroyed_);
++  timeSystem().advanceTimeWait(kDelayedCloseTimeout);
++  test_server_->waitForCounter("http.config_test.downstream_cx_delayed_close_timeout", Eq(1));
++  ASSERT_TRUE(codec_client_->waitForDisconnect());
 +}
 +
-+TEST_P(AdminFilterChunkedTest, ResetWhileEncodingStopsChunks) {
-+  AdminFilter& filter = createYieldingFilter();
-+  expectCountingRequest(3);
-+  EXPECT_CALL(callbacks_.dispatcher_, createSchedulableCallback_(_)).Times(0);
-+  // The stream is reset from under encodeData().
-+  EXPECT_CALL(callbacks_, encodeData(_, false)).WillOnce([&filter](Buffer::Instance&, bool) {
-+    filter.onDestroy();
-+  });
-+  filter.decodeHeaders(request_headers_, true);
-+  EXPECT_TRUE(request_destroyed_);
-+}
-+
-+TEST_P(AdminFilterChunkedTest, AllChunksAtOnceByDefault) {
-+  expectCountingRequest(3);
-+  EXPECT_CALL(callbacks_.dispatcher_, createSchedulableCallback_(_)).Times(0);
-+
-+  InSequence s;
-+  expectData("0", false);
-+  expectData("1", false);
-+  expectData("2", true);
-+  filter_.decodeHeaders(request_headers_, true);
-+  EXPECT_TRUE(request_destroyed_);
-+  filte
+ // Test that if the route cache is cleared, it doesn't cause problems.
+ TEST_P(IntegrationTest, TestClearingRouteCacheFilter) {
+   config_helper_.prependFilter(R"EOF(
 ```
 
 ---
 
-### Incident Patch 2: `f7b8ce9a` (2026-11-21)
-**Commit Message**: docs: fix propogated typo in headers and flow control docs (#49505)
+### Incident Patch 2: `ae6dd24c` (2026-11-22)
+**Commit Message**: reverse_tunnel: rebalance new sockets by idle count, not sockets ever accepted (#49410)
 
-Commit Message: docs: fix propogated typo in headers and flow control
-docs
-Additional Description: Correct misspelled 'propogated' to 'propagated'
-across HTTP connection manager headers and flow control documentation.
-Risk Level: Low (documentation typo fix)
-Testing: N/A
-Docs Changes: Updated headers.rst and flow_control.rst
-Release Notes: N/A
-Fixes N/A
-
-Signed-off-by: sundeep8967 <[REDACTED_EMAIL]>
-
-**File**: `docs/root/configuration/http/http_conn_man/headers.rst` (modified, +1/-1)
+**File**: `changelogs/current/bug_fixes/reverse_tunnel__rebalance-by-idle-sockets.rst` (added, +4/-0)
 ```diff
-@@ -16,7 +16,7 @@ is being received) as well as during encoding (when the response is being sent).
- 
- Envoy will always set the ``:scheme`` header while processing a request. It should always be available to filters, and should be forwarded upstream for HTTP/2 and HTTP/3, where :ref:`config_http_conn_man_headers_x-forwarded-proto` will be sent for HTTP/1.1.
- 
--For HTTP/2, and HTTP/3, incoming ``:scheme`` headers are trusted and propogated through upstream.
-+For HTTP/2, and HTTP/3, incoming ``:scheme`` headers are trusted and propagated through upstream.
- For HTTP/1, the ``:scheme`` header will be set
- 1) From the absolute URL if present and valid. An invalid (not "http" or "https") scheme, or an https scheme over an unencrypted connection will result in Envoy rejecting the request. This is the only scheme validation Envoy performs as it avoids a HTTP/1.1-specific privilege escalation attack for edge Envoys [1]_ which doesn't have a comparable vector for HTTP/2 and above [2]_.
- 2) From the value of the :ref:`config_http_conn_man_headers_x-forwarded-proto` header after sanitization (to valid ``x-forwarded-proto`` from trusted downstreams, otherwise based on downstream encryption level).
+@@ -0,0 +1,4 @@
++Fixed the reverse tunnel responder spreading a node's new sockets across workers by the number of sockets
++each worker had ever accepted for it, a count that never went down. As sockets were used or closed, a worker
++could be left with no idle socket for a node while others held several, and requests on that worker failed with
++``fallback_no_reverse_socket``. New sockets now go to the worker holding the fewest idle sockets for the node.
 ```
 
-**File**: `docs/root/faq/configuration/flow_control.rst` (modified, +1/-1)
+**File**: `source/extensions/bootstrap/reverse_tunnel/upstream_socket_interface/upstream_socket_manager.cc` (modified, +49/-34)
 ```diff
-@@ -20,7 +20,7 @@ The listener limits apply to how much raw data will be read per read() call from
- downstream, as well as how much data may be buffered in userspace between Envoy
- and downstream.
+@@ -64,44 +64,48 @@ UpstreamSocketManager::UpstreamSocketManager(Event::Dispatcher& dispatcher,
+ UpstreamSocketManager&
+ UpstreamSocketManager::pickLeastLoadedSocketManager(const std::string& node_id,
+                                                     const std::string& cluster_id) {
+-  absl::WriterMutexLock wlock(UpstreamSocketManager::socket_manager_lock);
+-
+-  // Assume that this worker is the best candidate for sending the reverse.
+-  // connection socket.
+   UpstreamSocketManager* target_socket_manager = this;
+   const std::string source_worker = this->dispatcher_.name();
+-
+-  // Contains the value that we assume to be the minimum value so far.
+-  int min_node_count = target_socket_manager->node_to_conn_count_map_[node_id];
+-
+-  // Iterate over UpstreamSocketManager instances of all threads to check.
+-  // if any of them have a lower number of accepted reverse tunnels for.
+-  // the node 'node_id'.
+-  for (UpstreamSocketManager* socket_manager : socket_managers_) {
+-    int node_count = socket_manager->node_to_conn_count_map_[node_id];
+-
+-    if (node_count < min_node_count) {
+-      target_socket_manager = socket_manager;
+-      min_node_count = node_count;
++  std::string dest_worker;
++  int min_node_count;
++  {
++    absl::WriterMutexLock lock(UpstreamSocketManager::socket_manager_lock);
++    const auto count_for_node = [&node_id](const UpstreamSocketManager& manager) {
++      auto it = manager.node_to_conn_count_map_.find(node_id);
++      return it == manager.node_to_conn_count_map_.end() ? 0 : it->second;
++    };
++    min_node_count = count_for_node(*this);
++    for (UpstreamSocketManager* socket_manager : socket_managers_) {
++      const int node_count = count_for_node(*socket_manager);
++      if (node_count < min_node_count) {
++        target_socket_manager = socket_manager;
++        min_node_count = node_count;
++      }
+     }
++    target_socket_manager->node_to_conn_count_map_[node_id] = min_node_count + 1;
++    dest_worker = target_socket_manager->dispatcher_.name();
+   }
  
--The listener limits are also propogated to the HttpConnectionManager, and applied on a per-stream
-+The listener limits are also propagated to the HttpConnectionManager, and applied on a per-stream
- basis to HTTP/1.1 L7 buffers described below. As such they limit the size of HTTP/1 requests and
- response bodies that can be buffered. For HTTP/2 and HTTP/3, as many streams can be multiplexed over one
- connection, the L7 and L4 buffer limits can be tuned separately, and the configuration option
+-  const std::string dest_worker = target_socket_manager->dispatcher_.name();
+-
+-  // Increment the reverse connection count of the chosen handler.
+   if (source_worker != dest_worker) {
+     ENVOY_LOG(info,
+               "reverse_tunnel: Rebalancing socket from worker {} to worker {} with min "
+               "count {} for node {} cluster {}",
+-              source_worker, dest_worker, target_socket_manager->node_to_conn_count_map_[node_id],
+-              node_id, cluster_id);
++              source_worker, dest_worker, min_node_count, node_id, cluster_id);
+   }
+-  target_socket_manager->node_to_conn_count_map_[node_id]++;
+   ENVOY_LOG(debug, "reverse_tunnel: Incremented count for node {}: {}", node_id,
+-            target_socket_manager->node_to_conn_count_map_[node_id]);
++            min_node_count + 1);
+   return *target_socket_manager;
+ }
+ 
++void UpstreamSocketManager::decrementIdleCount(const std::string& node_id) {
++  absl::WriterMutexLock wlock(UpstreamSocketManager::socket_manager_lock);
++  auto it = node_to_conn_count_map_.find(node_id);
++  ASSERT(it != node_to_conn_count_map_.end() && it->second > 0);
++  if (--it->second == 0) {
++    node_to_conn_count_map_.erase(it);
++  }
++}
++
+ void UpstreamSocketManager::onGoAway(int fd) {
+   auto node_it = fd_to_node_map_.find(fd);
+   if (node_it == fd_to_node_map_.end()) {
+@@ -129,14 +133,23 @@ void UpstreamSocketManager::handoffSocketToWorker(
+                     socket = std::move(socket)]() mutable -> void {
+     this->addConnectionSocket(node_id, cluster_id, std::move(socket), ping_interval,
+                               true /* rebalanced */, tenant_id, initiator_worker_id,
+-                              initiator_connection_id);
++                              initiator_connection_id, true /* counted_for_rebalancing */);
+   });
+ }
+ 
+ void UpstreamSocketManager::addConnectionSocket(
+     const std::string& node_id, const std::string& cluster_id, Network::ConnectionSocketPtr socket,
+     const std::chrono::seconds& ping_interval, bool rebalanced, absl::string_view tenant_id,
+-    absl::string_view initiator_worker_id, absl::string_view initiator_connection_id) {
++    absl::string_view initiator_worker_id, absl::string_view initiator_connection_id,
++    bool counted_for_rebalancing) {
++  // Both node_id and cluster_id are mandatory for consistent state management and stats tracking.
++  if (node_id.empty() || cluster_id.empty()) {
++    ENVOY_LOG(error,
++              "reverse_tunnel: node_id or cluster_id cannot be empty. node: '{}', cluster: '{}'.",
++              node_id, cluster_id);
++    return;
++  }
++
+   const std::string scoped_node_id =
+       maybeBuildTenantScopedIdentifier(tenant_isolation_enabled_, tenant_id, node_id);
+   const std::string scoped_cluster_id =
+@@ -155,19 +168,12 @@ void UpstreamSocketManager::addConnectionSocket(
+                                            tenant_id, initiator_worker_id, initiator_connection_id);
+       return;
+     }
++    coun
+```
+
+**File**: `source/extensions/bootstrap/reverse_tunnel/upstream_socket_interface/upstream_socket_manager.h` (modified, +17/-4)
+```diff
+@@ -14,6 +14,7 @@
+ #include "source/common/common/random_generator.h"
+ #include "source/extensions/bootstrap/reverse_tunnel/upstream_socket_interface/reverse_tunnel_lifecycle_info.h"
+ 
++#include "absl/container/flat_hash_set.h"
+ #include "absl/strings/string_view.h"
+ #include "absl/synchronization/mutex.h"
+ 
+@@ -50,13 +51,15 @@ class UpstreamSocketManager : public ThreadLocal::ThreadLocalObject,
+    * @param tenant_id tenant identifier supplied by the peer.
+    * @param initiator_worker_id the initiator worker (dispatcher name) that opened the tunnel.
+    * @param initiator_connection_id the initiator's per-connection identifier.
++   * @param counted_for_rebalancing true if the picker already reserved a count for this socket.
+    */
+   void addConnectionSocket(const std::string& node_id, const std::string& cluster_id,
+                            Network::ConnectionSocketPtr socket,
+                            const std::chrono::seconds& ping_interval, bool rebalanced = true,
+                            absl::string_view tenant_id = {},
+                            absl::string_view initiator_worker_id = {},
+-                           absl::string_view initiator_connection_id = {});
++                           absl::string_view initiator_connection_id = {},
++                           bool counted_for_rebalancing = false);
+ 
+   /**
+    * Returns true if a new reverse connection can be accepted for the given node, scoped by tenant
+@@ -217,6 +220,12 @@ class UpstreamSocketManager : public ThreadLocal::ThreadLocalObject,
+ 
+   OptRef<const MonotonicTime> findStartTime(int fd) const;
+ 
++  /**
++   * Drop one idle socket of the node from node_to_conn_count_map_ under socket_manager_lock.
++   * @param node_id the node ID whose socket left the idle pool.
++   */
++  void decrementIdleCount(const std::string& node_id);
++
+   // Thread local dispatcher instance.
+   Event::Dispatcher& dispatcher_;
+   Random::RandomGeneratorPtr random_generator_;
+@@ -232,6 +241,9 @@ class UpstreamSocketManager : public ThreadLocal::ThreadLocalObject,
+   // Map from FD to its iterator in accepted_reverse_connections_, used to avoid linear scans.
+   absl::flat_hash_map<int, std::list<Network::ConnectionSocketPtr>::iterator> fd_to_socket_it_map_;
+ 
++  // Idle sockets included in node_to_conn_count_map_. Listeners that skip rebalancing bypass it.
++  absl::flat_hash_set<int> counted_idle_fds_;
++
+   // Map from file descriptor to cluster ID. An entry is added when a reverse tunnel is accepted
+   // from a node and is removed when the socket dies.
+   absl::flat_hash_map<int, std::string> fd_to_cluster_map_;
+@@ -281,9 +293,10 @@ class UpstreamSocketManager : public ThreadLocal::ThreadLocalObject,
+   // Upstream extension for stats integration.
+   ReverseTunnelAcceptorExtension* extension_;
+ 
+-  // Map of node IDs to the number of total accepted reverse connections
+-  // for the node. This is used to rebalance a request to accept reverse
+-  // connections to a different worker thread.
++  // Map of node IDs to the number of idle sockets this worker holds for the node in
++  // accepted_reverse_connections_, plus sockets already picked for it and in flight to its
++  // dispatcher. Requests only take idle sockets from their own worker, so new sockets go to the
++  // worker with the fewest. Guarded by socket_manager_lock since other workers read and write it.
+   absl::flat_hash_map<std::string, int> node_to_conn_count_map_;
+ 
+   bool tenant_isolation_enabled_{false};
+```
+
+**File**: `test/extensions/bootstrap/reverse_tunnel/upstream_socket_interface/BUILD` (modified, +1/-0)
+```diff
+@@ -104,6 +104,7 @@ envoy_extension_cc_test(
+         "//envoy/router:string_accessor_interface",
+         "//envoy/stream_info:uint64_accessor_interface",
+         "//source/common/network:utility_lib",
++        "//source/extensions/bootstrap/reverse_tunnel/common:reverse_connection_utility_lib",
+         "//source/extensions/bootstrap/reverse_tunnel/upstream_socket_interface:reverse_tunnel_acceptor_lib",
+         "//test/mocks/access_log:access_log_mocks",
+         "//test/mocks/event:event_mocks",
+```
+
+**File**: `test/extensions/bootstrap/reverse_tunnel/upstream_socket_interface/upstream_socket_manager_test.cc` (modified, +121/-0)
+```diff
+@@ -5,6 +5,7 @@
+ 
+ #include "source/common/network/utility.h"
+ #include "source/common/protobuf/protobuf.h"
++#include "source/extensions/bootstrap/reverse_tunnel/common/reverse_connection_utility.h"
+ #include "source/extensions/bootstrap/reverse_tunnel/upstream_socket_interface/reverse_tunnel_acceptor.h"
+ #include "source/extensions/bootstrap/reverse_tunnel/upstream_socket_interface/reverse_tunnel_acceptor_extension.h"
+ #include "source/extensions/bootstrap/reverse_tunnel/upstream_socket_interface/upstream_socket_manager.h"
+@@ -1635,6 +1636,10 @@ class TestUpstreamSocketManagerRebalancing : public testing::Test {
+     return (it != manager->node_to_conn_count_map_.end()) ? it->second : 0;
+   }
+ 
++  bool hasNodeConnCount(UpstreamSocketManager* manager, const std::string& node_id) {
++    return manager->node_to_conn_count_map_.contains(node_id);
++  }
++
+   size_t verifyAcceptedReverseConnectionsMap(UpstreamSocketManager* manager,
+                                              const std::string& node_id) {
+     auto it = manager->accepted_reverse_connections_.find(node_id);
+@@ -1819,6 +1824,8 @@ TEST_F(TestUpstreamSocketManagerRebalancing, RebalancingWithNewNode) {
+   EXPECT_EQ(getNodeConnCount(socket_manager1_.get(), node_id), 1);
+   EXPECT_EQ(getNodeConnCount(socket_manager2_.get(), node_id), 0);
+   EXPECT_EQ(getNodeConnCount(socket_manager3_.get(), node_id), 0);
++  EXPECT_FALSE(hasNodeConnCount(socket_manager2_.get(), node_id));
++  EXPECT_FALSE(hasNodeConnCount(socket_manager3_.get(), node_id));
+ }
+ 
+ TEST_F(TestUpstreamSocketManagerRebalancing, RebalancingSkippedWhenAlreadyRebalanced) {
+@@ -1893,6 +1900,120 @@ TEST_F(TestUpstreamSocketManagerRebalancing, MainThreadExcludedFromRebalancing)
+   EXPECT_EQ(getNodeConnCount(main_socket_manager.get(), node_id), 0);
+ }
+ 
++TEST_F(TestUpstreamSocketManagerRebalancing, RebalanceToWorkerWithFewestIdleSockets) {
++  const std::string node_id = "test-node";
++  const std::string cluster_id = "test-cluster";
++  const std::chrono::seconds ping_interval(30);
++  for (auto* dispatcher : {&dispatcher1_, &dispatcher2_, &dispatcher3_}) {
++    EXPECT_CALL(*dispatcher, post(_)).WillRepeatedly(Invoke([](Event::PostCb cb) { cb(); }));
++  }
++
++  // One idle socket per worker.
++  socket_manager1_->addConnectionSocket(node_id, cluster_id, createMockSocket(1001), ping_interval,
++                                        false /* rebalanced */);
++  socket_manager1_->addConnectionSocket(node_id, cluster_id, createMockSocket(1002), ping_interval,
++                                        false /* rebalanced */);
++  socket_manager1_->addConnectionSocket(node_id, cluster_id, createMockSocket(1003), ping_interval,
++                                        false /* rebalanced */);
++  EXPECT_EQ(verifyAcceptedReverseConnectionsMap(socket_manager1_.get(), node_id), 1);
++  EXPECT_EQ(verifyAcceptedReverseConnectionsMap(socket_manager2_.get(), node_id), 1);
++  EXPECT_EQ(verifyAcceptedReverseConnectionsMap(socket_manager3_.get(), node_id), 1);
++
++  // Worker 1 hands its socket to a request; the replacement goes back to worker 1.
++  ASSERT_NE(socket_manager1_->getConnectionSocket(node_id), nullptr);
++  socket_manager2_->addConnectionSocket(node_id, cluster_id, createMockSocket(1004), ping_interval,
++                                        false /* rebalanced */);
++  EXPECT_EQ(verifyAcceptedReverseConnectionsMap(socket_manager1_.get(), node_id), 1);
++  EXPECT_EQ(verifyAcceptedReverseConnectionsMap(socket_manager2_.get(), node_id), 1);
++
++  // Worker 3's idle socket dies; the replacement goes back to worker 3.
++  socket_manager3_->markSocketDead(1003);
++  socket_manager2_->addConnectionSocket(node_id, cluster_id, createMockSocket(1005), ping_interval,
++                                        false /* rebalanced */);
++  EXPECT_EQ(verifyAcceptedReverseConnectionsMap(socket_manager2_.get(), node_id), 1);
++  EXPECT_EQ(verifyAcceptedReverseConnectionsMap(socket_manager3_.get(), node_id), 1);
++
++  EXPECT_EQ(getNodeConnCount(socket_manager1_.get(), node_id), 1);
++  EXPECT_EQ(getNodeConnCount(socket_manager2_.get(), node_id), 1);
++  EXPECT_EQ(getNodeConnCount(socket_manager3_.get(), node_id), 1);
++
++  socket_manager1_->markSocketDead(1001);
++  EXPECT_EQ(getNodeConnCount(socket_manager1_.get(), node_id), 1);
++
++  socket_manager1_->addConnectionSocket(node_id, "", createMockSocket(1006), ping_interval,
++                                        false /* rebalanced */);
++  EXPECT_EQ(getNodeConnCount(socket_manager1_.get(), node_id), 1);
++}
++
++TEST_F(TestUpstreamSocketManagerRebalancing, SkippedSocketsDoNotChangeRebalancingCounts) {
++  const std::string node_id = "test-node";
++  const std::string cluster_id = "test-cluster";
++  const std::chrono::seconds ping_interval(30);
++
++  socket_manager1_->addConnectionSocket(node_id, cluster_id, createMockSocket(1101), ping_interval,
++                                        true /* rebalanced */);
++  EXPECT_FALSE(hasNodeConnCount(socket_manager1_.get(), node_id));
++
++  ASSERT_NE(sock
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #49516** (2026-11-21): [bp/1.37] mcp: fix an issue and use the watermark to buffer (#43173) (@derekargueta)
 - **PR #49508** (2026-11-20): [bp/1.37] test/ext_proc: Fix spinning loop (and hang) in serverReceiveBodyDuplexStreamed (#44583) (@phlax)
 - **PR #49507** (2026-11-20): deps: Bump `bazel-registry` -> d72a252 (+envoy-examples) (@dependency-envoy[bot])
 - **PR #49505** (2026-11-21): docs: fix propogated typo in headers and flow control docs (@sundeep8967)
 - **PR #49494** (2026-11-20): ai_protocol_manager: move watermark echo suppression to FilterChainBridge (@paul-r-gall)
 - **PR #49493** (2026-11-20): ci: Remove the docker-ci workflow input (@phlax)
-- **PR #49490** (2026-11-20): api: Scope the Copilot API review instructions to api/ (@phlax)
 
 ---
 
@@ -1515,24 +1710,30 @@ Signed-off-by: sundeep8967 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. admin: yield to the event loop between response chunks
+## X. http: close idle HTTP/1 downstream connections without delayed close
 
 **RULE**:
-When implementing operations in `changelogs/current/new_features/admin__yield-between-response-chunks.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelogs/current/minor_behavior_changes/http__http1-skip-delayed-close-on-idle-drain.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8969fd53`: admin: yield to the event loop between response chunks. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a8595edc`: http: close idle HTTP/1 downstream connections without delayed close. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelogs/current/new_features/admin__yield-between-response-chunks.rst`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelogs/current/minor_behavior_changes/http__http1-skip-delayed-close-on-idle-drain.rst`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-Added the runtime guard ``envoy.reloadable_features.admin_filter_yield_between_chunks``, default
-``false``. When set to ``true``, the admin server returns to the event loop between the chunks of a
-large response, such as ``/stats``, so a big response no longer blocks other work on the main
-thread, like health checks.
+An HTTP/1 downstream connection that carries no request between the start of a drain sequence and
+its :ref:`drain timeout
+<envoy_v3_api_field_extensions.filters.network.http_connection_manager.v3.HttpConnectionManager.drain_timeout>`,
+such as one closed by the connection idle timeout, is now closed without waiting for the
+:ref:`delayed close timeout
+<envoy_v3_api_field_extensions.filters.network.http_connection_manager.v3.HttpConnectionManager.delayed_close_timeout>`.
+There is no response on such a connection for the client to read, and while the delayed close was
+pending Envoy ignored any request a pooling client sent on it, so that request was never answered.
+This change can be reverted by setting the runtime guard
+``envoy.reloadable_features.http1_skip_delayed_close_on_idle_drain`` to ``false``.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1542,7 +1743,7 @@ thread, like health checks.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8969fd53` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a8595edc` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -12135,3 +12135,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-harness-hub-qwen3-8-27b-pi-adapted` | `https://huggingface.co/harness-hub/Qwen3.8-27B-pi-adapted` | `hf-harness` | Multi-dimensional audit evidence | 2026-11-22T14:45:34.926Z |
 | `learn-github-oxc-project-oxc` | `https://github.com/oxc-project/oxc` | `f9e90dec` | Multi-dimensional audit evidence | 2026-11-22T14:56:19.541Z |
 | `learn-huggingface-apple-fastframes-l` | `https://huggingface.co/apple/FastFrames-L` | `hf-apple-f` | Multi-dimensional audit evidence | 2026-11-22T15:01:13.745Z |
+| `learn-huggingface-tencent-hy4-flash` | `https://huggingface.co/tencent/Hy4-flash` | `hf-tencent` | Multi-dimensional audit evidence | 2026-11-22T15:09:04.854Z |
+| `learn-github-zed-industries-zed` | `https://github.com/zed-industries/zed` | `d31d1074` | Multi-dimensional audit evidence | 2026-11-22T15:09:07.393Z |
+| `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `a8595edc` | Multi-dimensional audit evidence | 2026-11-22T15:09:15.228Z |

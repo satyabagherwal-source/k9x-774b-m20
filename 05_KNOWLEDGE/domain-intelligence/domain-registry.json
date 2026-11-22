@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T15:01:20.111Z",
+  "last_updated": "2026-11-22T15:09:20.319Z",
   "total_records": 2354,
   "domains": {
     "A": {
@@ -10806,8 +10806,8 @@
       "title": "Technical Construction Intelligence: envoyproxy/envoy Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-envoyproxy-envoy-technical-construction-intelligence-envoyproxy-envoy-core-invar.md",
       "repository": "envoyproxy/envoy",
-      "content_hash": "1c00bf56faa04f73a3d4274fe74a5c4883f893a6945cd8f47da9ee8426cd5a54",
-      "created_at": "2026-11-21T14:27:48.809Z"
+      "content_hash": "3a53f1df6a09521fd9fa0ef25be6a8ba3b4b966c3b03a30fb6749dee5b86650c",
+      "created_at": "2026-11-22T15:09:15.623Z"
     },
     "domain_intelligence-technical-construction-intelligence-langchain4j-langchain4j-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-langchain4j-langchain4j-core-invariants",
@@ -10926,8 +10926,8 @@
       "title": "Technical Construction Intelligence: envoyproxy-envoy-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-envoyproxy-envoy-learnings-technical-construction-intelligence-envoyproxy-envoy-.md",
       "repository": "envoyproxy-envoy-learnings",
-      "content_hash": "53e563ac3731ee9d3a1edc0f88eb1e5e66941d5f38c846a96fb45a780a277766",
-      "created_at": "2026-11-21T14:27:59.877Z"
+      "content_hash": "04f14007a26f868f07fafdd68e61ae341cd4acd4da0855fa717d583a80c7cd83",
+      "created_at": "2026-11-22T15:09:20.319Z"
     },
     "domain_intelligence-research-knowledge-intelligence-google-bert-bert-base-uncased-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-google-bert-bert-base-uncased-core-invariants",
@@ -16699,8 +16699,8 @@
       "title": "Content & Information Intelligence: zed-industries/zed Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zed-industries-zed-content-information-intelligence-zed-industries-zed-core-inva.md",
       "repository": "zed-industries/zed",
-      "content_hash": "68069d65474ba321ca254b0c7939ef694f9ac1f2bd3b3aa6a06e572b6ee4d9b2",
-      "created_at": "2026-11-19T16:07:13.680Z"
+      "content_hash": "697fa98ceae1692331e9d22571235b9aad4ca2367913d002bd24c6f2d9e0138f",
+      "created_at": "2026-11-22T15:09:07.787Z"
     },
     "domain_intelligence-content-information-intelligence-zed-industries-zed-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-zed-industries-zed-learnings-core-invariants",
@@ -16708,8 +16708,8 @@
       "title": "Content & Information Intelligence: zed-industries-zed-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zed-industries-zed-learnings-content-information-intelligence-zed-industries-zed.md",
       "repository": "zed-industries-zed-learnings",
-      "content_hash": "3cc22c588df9839d733c81dc7ad01ab07fd278889522a7e6343b681a1bb39b78",
-      "created_at": "2026-11-19T16:07:56.947Z"
+      "content_hash": "9212ffeb92ca3cd26bc5aed23b383843831a925875d581f49a6e99f75ecf831e",
+      "created_at": "2026-11-22T15:09:19.171Z"
     },
     "DOM-D-C9202D2F": {
       "record_id": "DOM-D-C9202D2F",
@@ -30478,8 +30478,8 @@
       "title": "Research & Knowledge Intelligence: tencent/Hy4-flash Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-tencent-hy4-flash-research-knowledge-intelligence-tencent-hy4-flash-core-inva.md",
       "repository": "tencent/Hy4-flash",
-      "content_hash": "9d0c999dce5a56a9871bc74a36e3c6c94734e928e026dd8a6fce72c03c344495",
-      "created_at": "2026-11-18T07:38:51.856Z"
+      "content_hash": "0b94879d7d2ce2745772fe7b64bd962d05b261a12ef20389cd4dc603d7aa8320",
+      "created_at": "2026-11-22T15:09:05.056Z"
     },
     "DOM-D-C631C795": {
       "record_id": "DOM-D-C631C795",
@@ -30529,8 +30529,8 @@
       "title": "Research & Knowledge Intelligence: hf-tencent-hy4-flash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-tencent-hy4-flash-learnings-research-knowledge-intelligence-hf-tencent-hy4-fl.md",
       "repository": "hf-tencent-hy4-flash-learnings",
-      "content_hash": "5ade99399b31165df0d47caf9097d90f98ea6969169f56c6471ba74f0822553b",
-      "created_at": "2026-11-18T07:39:47.479Z"
+      "content_hash": "7e368df68fb3ab739da450ad3a66978a65aed55832b9b389ee80812bd607e1b6",
+      "created_at": "2026-11-22T15:09:19.708Z"
     },
     "domain_intelligence-design-intelligence-o2sh-onefetch-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-o2sh-onefetch-core-invariants",

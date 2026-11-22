@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T15:01:20.356Z",
+  "last_updated": "2026-11-22T15:09:20.497Z",
   "total_verified_learnings": 9071,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23600,
+  "total_items": 23606,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -215773,8 +215773,8 @@
       "slug": "envoyproxy-envoy",
       "platform": "github",
       "source_url": "https://github.com/envoyproxy/envoy",
-      "source_version": "a50230f0",
-      "content_hash": "8835edd0012966868e3013839da3a218cdb00de9107a2a15cda6e180af8c1507",
+      "source_version": "a8595edc",
+      "content_hash": "5b2ff43489c0ce5ad6431acdff408c91b21bccd61eafbebd24e9d77010b80056",
       "dossier_path": "07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
       "promoted_rules": [
@@ -215807,6 +215807,11 @@
           "number": 9792,
           "title": "yield to the event loop between response chunks",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9940,
+          "title": "close idle HTTP/1 downstream connections without delayed close",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -215814,7 +215819,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T14:27:48.100Z",
+      "verified_at": "2026-11-22T15:09:15.023Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -215856,10 +215861,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-envoyproxy-envoy-technical-construction-intelligence-envoyproxy-envoy-core-invar.md",
       "title": "Technical Construction Intelligence: envoyproxy/envoy Core Invariants",
       "repository": "envoyproxy/envoy",
-      "source_version": "a50230f0",
-      "content_hash": "1c00bf56faa04f73a3d4274fe74a5c4883f893a6945cd8f47da9ee8426cd5a54",
+      "source_version": "a8595edc",
+      "content_hash": "3a53f1df6a09521fd9fa0ef25be6a8ba3b4b966c3b03a30fb6749dee5b86650c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T14:27:48.809Z"
+      "persisted_at": "2026-11-22T15:09:15.623Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-envoyproxy-envoy": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-envoyproxy-envoy",
@@ -215868,10 +215873,10 @@
       "relative_path": "08_VERIFICATION/envoyproxy-envoy-verification-protocol-empirical-defect-shield-for-envoyproxy-en.md",
       "title": "Verification Protocol: Empirical Defect Shield for envoyproxy/envoy",
       "repository": "envoyproxy/envoy",
-      "source_version": "a50230f0",
-      "content_hash": "1c523d88a08955c969329b37a37dd79797749df95de415b241fde38f4e4fd7aa",
+      "source_version": "a8595edc",
+      "content_hash": "e84b14197698154da9e04751c5d944a664ca55e542f2168f1edc50adae0f3d9b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T14:27:49.012Z"
+      "persisted_at": "2026-11-22T15:09:15.793Z"
     },
     "learn-github-aleo-labs-protocol-snarkos": {
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
@@ -216162,9 +216167,9 @@
       "title": "Technical Construction Intelligence: envoyproxy-envoy-learnings Core Invariants",
       "repository": "envoyproxy-envoy-learnings",
       "source_version": "HEAD",
-      "content_hash": "53e563ac3731ee9d3a1edc0f88eb1e5e66941d5f38c846a96fb45a780a277766",
+      "content_hash": "04f14007a26f868f07fafdd68e61ae341cd4acd4da0855fa717d583a80c7cd83",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T14:27:59.877Z"
+      "persisted_at": "2026-11-22T15:09:20.319Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-envoyproxy-envoy-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-envoyproxy-envoy-learnings",
@@ -216174,9 +216179,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for envoyproxy-envoy-learnings",
       "repository": "envoyproxy-envoy-learnings",
       "source_version": "HEAD",
-      "content_hash": "e6c66d58f7746e9a8ea23768c3e7811aced1280c6f22a0acb42d20db1a6e2d77",
+      "content_hash": "f9c824b1fc300a4b5104667e1ba96895c81746bcdff2f3d039045a991dafa299",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T14:28:00.085Z"
+      "persisted_at": "2026-11-22T15:09:20.497Z"
     },
     "learn-huggingface-google-bert-bert-base-uncased": {
       "learning_id": "learn-huggingface-google-bert-bert-base-uncased",
@@ -233405,8 +233410,8 @@
       "slug": "zed-industries-zed",
       "platform": "github",
       "source_url": "https://github.com/zed-industries/zed",
-      "source_version": "2f808b3c",
-      "content_hash": "87d781620d2b9fea54f02dd7431e038ebb12803640c2054eeb1f7412985623bf",
+      "source_version": "d31d1074",
+      "content_hash": "52f32e94ae5e69a670b50c3db3014a5d167540483d06231e787c0d47b1cabf23",
       "dossier_path": "07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zed-industries-zed-learnings.md",
       "promoted_rules": [
@@ -233439,6 +233444,11 @@
           "number": 9702,
           "title": "Tree-Sitter Highlighting Specificity & Grammar Disambiguation Order",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9939,
+          "title": "Composite native views into the scene on macOS",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -233446,7 +233456,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T02:11:54.027Z",
+      "verified_at": "2026-11-22T15:09:07.178Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -233488,10 +233498,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-zed-industries-zed-content-information-intelligence-zed-industries-zed-core-inva.md",
       "title": "Content & Information Intelligence: zed-industries/zed Core Invariants",
       "repository": "zed-industries/zed",
-      "source_version": "6ae76a6a",
-      "content_hash": "68069d65474ba321ca254b0c7939ef694f9ac1f2bd3b3aa6a06e572b6ee4d9b2",
+      "source_version": "d31d1074",
+      "content_hash": "697fa98ceae1692331e9d22571235b9aad4ca2367913d002bd24c6f2d9e0138f",
       "domain_letter": "I",
-      "persisted_at": "2026-11-19T16:07:13.680Z"
+      "persisted_at": "2026-11-22T15:09:07.787Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zed-industries-zed": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zed-industries-zed",
@@ -233500,10 +233510,10 @@
       "relative_path": "08_VERIFICATION/zed-industries-zed-verification-protocol-empirical-defect-shield-for-zed-industr.md",
       "title": "Verification Protocol: Empirical Defect Shield for zed-industries/zed",
       "repository": "zed-industries/zed",
-      "source_version": "2f808b3c",
-      "content_hash": "de76f2d04c091ff4ea5c96afc1181b8619726718431af75970288d10f437f9b2",
+      "source_version": "d31d1074",
+      "content_hash": "36c85ed1ce9555ba4623bac5ad75a8da088d80212b0fdc766952691d63936336",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T02:11:54.998Z"
+      "persisted_at": "2026-11-22T15:09:07.965Z"
     },
     "candidate_directive-gpui_web-fix-safe-area-insets-under-a-strict-style-csp": {
       "item_id": "candidate_directive-gpui_web-fix-safe-area-insets-under-a-strict-style-csp",
@@ -233525,9 +233535,9 @@
       "title": "Content & Information Intelligence: zed-industries-zed-learnings Core Invariants",
       "repository": "zed-industries-zed-learnings",
       "source_version": "HEAD",
-      "content_hash": "3cc22c588df9839d733c81dc7ad01ab07fd278889522a7e6343b681a1bb39b78",
+      "content_hash": "9212ffeb92ca3cd26bc5aed23b383843831a925875d581f49a6e99f75ecf831e",
       "domain_letter": "I",
-      "persisted_at": "2026-11-19T16:07:56.947Z"
+      "persisted_at": "2026-11-22T15:09:19.171Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zed-industries-zed-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zed-industries-zed-learnings",
@@ -233537,9 +233547,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zed-industries-zed-learnings",
       "repository": "zed-industries-zed-learnings",
       "source_version": "HEAD",
-      "content_hash": "d26827a8e514f8b5981356e3b6e7c183b2d2398fc5f758da43dc8c1d03d04f08",
+      "content_hash": "d1401fb62835dd185b7efb177cc96238e032e525a0731f20ddbc65cc734b6a5b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T02:12:58.788Z"
+      "persisted_at": "2026-11-22T15:09:19.353Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-mudler-locate-anything-cpp-gguf-learnings-cor": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-mudler-locate-anything-cpp-gguf-learnings-cor",
@@ -286894,7 +286904,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/tencent/Hy4-flash",
       "source_version": "hf-tencent-hy4-flash",
-      "content_hash": "bd9b7ab0567c463c614ca3507bd021c78a271a82057c1d563770ab42ec01a419",
+      "content_hash": "2f2be2c1dfdfefb8f0c5681740be21f5e8a530d7031cbe2dd66fb4b6c6f053ff",
       "dossier_path": "07_PROJECT_LEARNING/hf-tencent-hy4-flash-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-tencent-hy4-flash-learnings.md",
       "promoted_rules": [],
@@ -286903,7 +286913,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T07:38:51.373Z",
+      "verified_at": "2026-11-22T15:09:04.602Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -286920,9 +286930,9 @@
       "title": "Research & Knowledge Intelligence: tencent/Hy4-flash Core Invariants",
       "repository": "tencent/Hy4-flash",
       "source_version": "hf-tencent-hy4-flash",
-      "content_hash": "9d0c999dce5a56a9871bc74a36e3c6c94734e928e026dd8a6fce72c03c344495",
+      "content_hash": "0b94879d7d2ce2745772fe7b64bd962d05b261a12ef20389cd4dc603d7aa8320",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T07:38:51.856Z"
+      "persisted_at": "2026-11-22T15:09:05.056Z"
     },
     "rule-9157": {
       "learning_id": "rule-9157",
@@ -286970,9 +286980,9 @@
       "title": "Research & Knowledge Intelligence: hf-tencent-hy4-flash-learnings Core Invariants",
       "repository": "hf-tencent-hy4-flash-learnings",
       "source_version": "HEAD",
-      "content_hash": "5ade99399b31165df0d47caf9097d90f98ea6969169f56c6471ba74f0822553b",
+      "content_hash": "7e368df68fb3ab739da450ad3a66978a65aed55832b9b389ee80812bd607e1b6",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T07:39:47.479Z"
+      "persisted_at": "2026-11-22T15:09:19.708Z"
     },
     "learn-github-o2sh-onefetch": {
       "learning_id": "learn-github-o2sh-onefetch",
@@ -321107,6 +321117,82 @@
       "content_hash": "40671b392cafa623de16a86557444b36ca133e03e9f8afe36fc3e36bcb3b4766",
       "domain_letter": "H",
       "persisted_at": "2026-11-22T15:01:18.263Z"
+    },
+    "rule-9939": {
+      "learning_id": "rule-9939",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9939,
+      "title": "Composite native views into the scene on macOS",
+      "source_url": "https://github.com/zed-industries/zed",
+      "source_version": "d31d1074",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T15:09:07.178Z"
+    },
+    "candidate_directive-composite-native-views-into-the-scene-on-macos": {
+      "item_id": "candidate_directive-composite-native-views-into-the-scene-on-macos",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-2RVD-composite-native-views-into-the-scene-on-macos.md",
+      "title": "Composite native views into the scene on macOS",
+      "repository": "zed-industries/zed",
+      "source_version": "d31d1074",
+      "content_hash": "f9b68ae2ce4d3ec189b5e3a2d462f387b35bc39521d16f947fed160803eeab21",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-22T15:09:07.613Z"
+    },
+    "rule-9940": {
+      "learning_id": "rule-9940",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9940,
+      "title": "close idle HTTP/1 downstream connections without delayed close",
+      "source_url": "https://github.com/envoyproxy/envoy",
+      "source_version": "a8595edc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T15:09:15.023Z"
+    },
+    "candidate_directive-close-idle-http-1-downstream-connections-without-delayed-close": {
+      "item_id": "candidate_directive-close-idle-http-1-downstream-connections-without-delayed-close",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-2XXA-close-idle-http-1-downstream-connections-without-delayed-close.md",
+      "title": "close idle HTTP/1 downstream connections without delayed close",
+      "repository": "envoyproxy/envoy",
+      "source_version": "a8595edc",
+      "content_hash": "e5ce5db9bc6873877a88a18710bb57df77b5e34b8d5210b055e3b0c7710c1390",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T15:09:15.458Z"
+    },
+    "candidate_directive-gpui-composite-native-views-into-the-scene-on-macos": {
+      "item_id": "candidate_directive-gpui-composite-native-views-into-the-scene-on-macos",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-30NR-gpui-composite-native-views-into-the-scene-on-macos.md",
+      "title": "gpui: Composite native views into the scene on macOS",
+      "repository": "zed-industries-zed-learnings",
+      "source_version": "HEAD",
+      "content_hash": "28da2f87d2bff692d74b3dbc2b1749e1a343ef3aad1f0c792d7569061ac032d3",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-22T15:09:19.004Z"
+    },
+    "candidate_directive-http-close-idle-http-1-downstream-connections-without-delayed-close": {
+      "item_id": "candidate_directive-http-close-idle-http-1-downstream-connections-without-delayed-close",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-31JP-http-close-idle-http-1-downstream-connections-without-delayed-close.md",
+      "title": "http: close idle HTTP/1 downstream connections without delayed close",
+      "repository": "envoyproxy-envoy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "230b5e0617b06bdc42abe11659f0a2fe51f007d3c913e326d30a274aec9a24c6",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T15:09:20.152Z"
     }
   },
   "ai-builder-brain": {

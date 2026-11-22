@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T15:01:19.872Z",
+  "last_updated": "2026-11-22T15:09:20.152Z",
   "directives": [
     {
       "id": "CD-001",
@@ -46383,6 +46383,50 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-40F082-test-collab-write-trust-fixtures-with-ex.md",
       "staged_date": "2026-11-22"
+    },
+    {
+      "id": "CD-2RVD",
+      "directive_title": "Composite native views into the scene on macOS",
+      "source_repo": "zed-industries/zed",
+      "source_commit": "d31d1074",
+      "staged_file": "11_INBOX/candidate-directives/CD-2RVD-composite-native-views-into-the-scene-on-macos.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-22",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-2XXA",
+      "directive_title": "close idle HTTP/1 downstream connections without delayed close",
+      "source_repo": "envoyproxy/envoy",
+      "source_commit": "a8595edc",
+      "staged_file": "11_INBOX/candidate-directives/CD-2XXA-close-idle-http-1-downstream-connections-without-delayed-close.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-22",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-30NR",
+      "directive_title": "gpui: Composite native views into the scene on macOS",
+      "source_repo": "zed-industries-zed-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-30NR-gpui-composite-native-views-into-the-scene-on-macos.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-22",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-31JP",
+      "directive_title": "http: close idle HTTP/1 downstream connections without delayed close",
+      "source_repo": "envoyproxy-envoy-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-31JP-http-close-idle-http-1-downstream-connections-without-delayed-close.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-22",
+      "domain_letter": "H"
     }
   ]
 }
