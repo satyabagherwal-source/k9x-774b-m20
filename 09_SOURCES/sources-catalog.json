@@ -12795,8 +12795,8 @@
     "sourceUrl": "https://huggingface.co/xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic",
     "sourceVersion": "hf-xtools-at-deepseek-v4-pro-qwen3.5-4b-uncensored-heretic",
     "license": "Open-Source",
-    "contentHash": "977b6dc83e944d84500297c4da4e31b0ade7fe4b109693a7fb517145b76bf2f6",
-    "lastHarvestedAt": "2026-11-17T14:15:11.812Z",
+    "contentHash": "c8d1872087756fdbc713843e308aa86a5e99e25960432ba31b11501c14131330",
+    "lastHarvestedAt": "2026-11-22T13:20:26.067Z",
     "learningId": "learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-4b-uncensored-heretic"
   },
   "hf-sensenova-sensenova-loop-9b": {

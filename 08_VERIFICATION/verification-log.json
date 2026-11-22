@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261120-VZW3",
-    "timestamp": "2026-11-20T13:08:32.499Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "f49b734d138436ee8e823f56148ee9589ba29635af1aa32e47580354c75dc91b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261120-VZXN",
     "timestamp": "2026-11-20T13:08:32.555Z",
     "repository": "ClickHouse/ClickHouse",
@@ -7490,6 +7475,21 @@
     "repository": "internlm/Sage-S2.1-Flash",
     "learningId": "learn-huggingface-internlm-sage-s2-1-flash",
     "contentHash": "22a5bf26c0202a0ed659fd7cd290afad2791a19b17768ed602ca81a0ce1f9a62",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-6ZTA",
+    "timestamp": "2026-11-22T13:20:26.062Z",
+    "repository": "xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic",
+    "learningId": "learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-4b-uncensored-heretic",
+    "contentHash": "c8d1872087756fdbc713843e308aa86a5e99e25960432ba31b11501c14131330",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

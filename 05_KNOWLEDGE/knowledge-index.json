@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T13:01:55.733Z",
+  "last_updated": "2026-11-22T13:20:40.313Z",
   "total_verified_learnings": 9071,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "7f50a8d1ead5cf9c59724395dad91f24c4c0cab91212e8e662f74bd410b9951f",
+      "content_hash": "d0ec583f7fe37aefd4da352aa4ba321ae0feb41bbe311ec59185a279904c9cee",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T11:14:29.462Z"
+      "persisted_at": "2026-11-22T13:20:40.313Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "96470cdaa9c3baad7033c2626bb988f0a4bb93f78adff6cebb6e7e706381249c",
+      "content_hash": "31ea91588a4124f38a44e081b86bdb531850d594e6e31453bfa4af9a60cb65d0",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T12:37:39.384Z"
+      "persisted_at": "2026-11-22T13:20:38.882Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "224affae1ea9a6a499619e477bf3466d7b71346b6accf38ad9994701c74c3e4a",
+      "content_hash": "4e06e61e1271ebdf2024d062ec4e01a8772cac707033996ed2a11c6550268918",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T12:37:39.540Z"
+      "persisted_at": "2026-11-22T13:20:39.103Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -274719,7 +274719,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic",
       "source_version": "hf-xtools-at-deepseek-v4-pro-qwen3.5-4b-uncensored-heretic",
-      "content_hash": "977b6dc83e944d84500297c4da4e31b0ade7fe4b109693a7fb517145b76bf2f6",
+      "content_hash": "c8d1872087756fdbc713843e308aa86a5e99e25960432ba31b11501c14131330",
       "dossier_path": "07_PROJECT_LEARNING/hf-xtools-at-deepseek-v4-pro-qwen3.5-4b-uncensored-heretic-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xtools-at-deepseek-v4-pro-qwen3.5-4b-uncensored-heretic-learnings.md",
       "promoted_rules": [],
@@ -274728,7 +274728,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T14:15:11.618Z",
+      "verified_at": "2026-11-22T13:20:25.777Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -274745,9 +274745,9 @@
       "title": "Research & Knowledge Intelligence: xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic Core Invariants",
       "repository": "xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic",
       "source_version": "hf-xtools-at-deepseek-v4-pro-qwen3.5-4b-uncensored-heretic",
-      "content_hash": "4c57bb0c67fa200c351f10bb6c52fc68aeaf3f1b6fc32ed57a2f4c762024b9a8",
+      "content_hash": "f36f2e2b55e3c832aee4a0baa36cbeca5c5f18ba694f5b59c1d67e6808408aad",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T14:15:11.988Z"
+      "persisted_at": "2026-11-22T13:20:26.344Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xtools-at-deepseek-v4-pro-qwen3-5-4b-uncensor": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xtools-at-deepseek-v4-pro-qwen3-5-4b-uncensor",
@@ -274757,9 +274757,9 @@
       "title": "Research & Knowledge Intelligence: hf-xtools-at-deepseek-v4-pro-qwen3.5-4b-uncensored-heretic-learnings Core Invariants",
       "repository": "hf-xtools-at-deepseek-v4-pro-qwen3.5-4b-uncensored-heretic-learnings",
       "source_version": "HEAD",
-      "content_hash": "6f188097cfb8cd585448ced9aeff55c8afacdeb89375b7586d78da4f95ca4828",
+      "content_hash": "fa2b691caabd1cdc09dc110847546deabe5a9646950e0d5add5a2221de9de96c",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T14:15:19.048Z"
+      "persisted_at": "2026-11-22T13:20:38.081Z"
     },
     "learn-github-meta-docusaurus": {
       "learning_id": "learn-github-meta-docusaurus",
@@ -318373,13 +318373,13 @@
       "item_id": "candidate_directive-test-collab-write-trust-fixtures-with-explicit-0644-permissions",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-NZ82-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-79J8-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "3183b0b3c137ac56046f477d086a1eaa0e65f67da1642c71db296a9f43f5dba7",
+      "content_hash": "f5d6683ddfac4aad8f9a3b5fcf512a401a7d9a6c5f19e240198a8679dbc13b8c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T12:37:39.222Z"
+      "persisted_at": "2026-11-22T13:20:38.666Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants",

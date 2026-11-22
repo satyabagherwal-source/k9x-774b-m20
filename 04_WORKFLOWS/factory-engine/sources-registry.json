@@ -46,8 +46,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-22T11:47:54.670Z",
-    "lastVerified": "2026-11-22T11:47:54.670Z",
+    "lastChecked": "2026-11-22T13:20:37.620Z",
+    "lastVerified": "2026-11-22T13:20:37.620Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-22T13:01:53.655Z",
-    "lastVerified": "2026-11-22T13:01:53.655Z",
+    "lastChecked": "2026-11-22T13:20:37.635Z",
+    "lastVerified": "2026-11-22T13:20:37.635Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -704,8 +704,8 @@
     "officialUrl": "https://github.com/DefGuard/defguard",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-22T06:27:32.610Z",
-    "lastVerified": "2026-11-22T06:27:32.610Z",
+    "lastChecked": "2026-11-22T13:20:32.628Z",
+    "lastVerified": "2026-11-22T13:20:32.628Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-defguard-defguard",
@@ -5532,8 +5532,8 @@
     "officialUrl": "https://github.com/rqlite/rqlite",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-21T10:37:41.604Z",
-    "lastVerified": "2026-11-21T10:37:41.604Z",
+    "lastChecked": "2026-11-22T13:20:35.108Z",
+    "lastVerified": "2026-11-22T13:20:35.108Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rqlite-rqlite",
@@ -6656,12 +6656,12 @@
     "lastVerified": "2026-11-22T07:27:31.071Z"
   },
   "open-policy-agent-opa": {
-    "name": "open-policy-agent/opa",
+    "name": "opa",
     "officialUrl": "https://github.com/open-policy-agent/opa",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-21T12:38:02.345Z",
-    "lastVerified": "2026-11-21T12:38:02.345Z",
+    "lastChecked": "2026-11-22T13:20:30.160Z",
+    "lastVerified": "2026-11-22T13:20:30.160Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-open-policy-agent-opa",
@@ -6670,7 +6670,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "e4f652d8"
   },
   "mariadb-server": {
     "name": "server",
@@ -7845,9 +7846,9 @@
   "oblador-react-native-vector-icons": {
     "name": "react-native-vector-icons",
     "officialUrl": "https://github.com/oblador/react-native-vector-icons",
-    "lastChecked": "2026-11-19T12:15:09.433Z",
+    "lastChecked": "2026-11-22T13:20:27.788Z",
     "revisionIdentifier": "666a7437",
-    "lastVerified": "2026-11-19T12:15:09.433Z"
+    "lastVerified": "2026-11-22T13:20:27.788Z"
   },
   "railwayapp-nixpacks": {
     "name": "nixpacks",
@@ -8151,9 +8152,9 @@
   "imsnif-diskonaut": {
     "name": "diskonaut",
     "officialUrl": "https://github.com/imsnif/diskonaut",
-    "lastChecked": "2026-11-21T01:24:49.776Z",
+    "lastChecked": "2026-11-22T13:20:22.618Z",
     "revisionIdentifier": "65cd8290",
-    "lastVerified": "2026-11-21T01:24:49.776Z"
+    "lastVerified": "2026-11-22T13:20:22.618Z"
   },
   "hf-openbmb-minicpm-v-4.7-35b-a3b": {
     "name": "openbmb/MiniCPM-V-4.7-35B-A3B",
@@ -14331,6 +14332,23 @@
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-internlm-sage-s2-1-flash",
     "contentHash": "22a5bf26c0202a0ed659fd7cd290afad2791a19b17768ed602ca81a0ce1f9a62",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-xtools-at-deepseek-v4-pro-qwen3.5-4b-uncensored-heretic": {
+    "name": "xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic",
+    "officialUrl": "https://huggingface.co/xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-22T13:20:25.304Z",
+    "lastVerified": "2026-11-22T13:20:25.304Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-4b-uncensored-heretic",
+    "contentHash": "c8d1872087756fdbc713843e308aa86a5e99e25960432ba31b11501c14131330",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

@@ -12090,3 +12090,4 @@
 | `CYCLE-20261122-CWQ0` | `2026-11-22T12:57:02.376Z` | `apache/shardingsphere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9930` | Yes (`530b88ec...`) |
 | `CYCLE-20261122-CY2F` | `2026-11-22T12:57:04.119Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9931` | Yes (`bcaae78f...`) |
 | `CYCLE-20261122-J38W` | `2026-11-22T13:01:50.768Z` | `internlm/Sage-S2.1-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-internlm-sage-s2.1-flash-learnings.md` | Yes (`22a5bf26...`) |
+| `CYCLE-20261122-6ZTA` | `2026-11-22T13:20:26.062Z` | `xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xtools-at-deepseek-v4-pro-qwen3.5-4b-uncensored-heretic-learnings.md` | Yes (`c8d18720...`) |

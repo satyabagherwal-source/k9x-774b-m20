@@ -12123,3 +12123,4 @@ Every entry in this ledger must capture:
 | `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `2436670d` | Multi-dimensional audit evidence | 2026-11-22T12:57:02.380Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `bda125f2` | Multi-dimensional audit evidence | 2026-11-22T12:57:04.123Z |
 | `learn-huggingface-internlm-sage-s2-1-flash` | `https://huggingface.co/internlm/Sage-S2.1-Flash` | `hf-internl` | Multi-dimensional audit evidence | 2026-11-22T13:01:50.772Z |
+| `learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-4b-uncensored-heretic` | `https://huggingface.co/xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic` | `hf-xtools-` | Multi-dimensional audit evidence | 2026-11-22T13:20:26.067Z |

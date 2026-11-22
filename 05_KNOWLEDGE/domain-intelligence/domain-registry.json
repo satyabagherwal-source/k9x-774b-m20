@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T13:01:55.556Z",
+  "last_updated": "2026-11-22T13:20:40.313Z",
   "total_records": 2354,
   "domains": {
     "A": {
@@ -8169,8 +8169,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "7f50a8d1ead5cf9c59724395dad91f24c4c0cab91212e8e662f74bd410b9951f",
-      "created_at": "2026-11-22T11:14:29.462Z"
+      "content_hash": "d0ec583f7fe37aefd4da352aa4ba321ae0feb41bbe311ec59185a279904c9cee",
+      "created_at": "2026-11-22T13:20:40.313Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -9087,8 +9087,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "96470cdaa9c3baad7033c2626bb988f0a4bb93f78adff6cebb6e7e706381249c",
-      "created_at": "2026-11-22T12:37:39.384Z"
+      "content_hash": "31ea91588a4124f38a44e081b86bdb531850d594e6e31453bfa4af9a60cb65d0",
+      "created_at": "2026-11-22T13:20:38.882Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -27860,8 +27860,8 @@
       "title": "Research & Knowledge Intelligence: xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xtools-at-deepseek-v4-pro-qwen3-5-4b-uncensored-heretic-research-knowledge-in.md",
       "repository": "xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic",
-      "content_hash": "4c57bb0c67fa200c351f10bb6c52fc68aeaf3f1b6fc32ed57a2f4c762024b9a8",
-      "created_at": "2026-11-17T14:15:11.988Z"
+      "content_hash": "f36f2e2b55e3c832aee4a0baa36cbeca5c5f18ba694f5b59c1d67e6808408aad",
+      "created_at": "2026-11-22T13:20:26.344Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xtools-at-deepseek-v4-pro-qwen3-5-4b-uncensor": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-xtools-at-deepseek-v4-pro-qwen3-5-4b-uncensor",
@@ -27869,8 +27869,8 @@
       "title": "Research & Knowledge Intelligence: hf-xtools-at-deepseek-v4-pro-qwen3.5-4b-uncensored-heretic-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xtools-at-deepseek-v4-pro-qwen3-5-4b-uncensored-heretic-learnings-research-kn.md",
       "repository": "hf-xtools-at-deepseek-v4-pro-qwen3.5-4b-uncensored-heretic-learnings",
-      "content_hash": "6f188097cfb8cd585448ced9aeff55c8afacdeb89375b7586d78da4f95ca4828",
-      "created_at": "2026-11-17T14:15:19.048Z"
+      "content_hash": "fa2b691caabd1cdc09dc110847546deabe5a9646950e0d5add5a2221de9de96c",
+      "created_at": "2026-11-22T13:20:38.081Z"
     },
     "domain_intelligence-technical-construction-intelligence-meta-docusaurus-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-meta-docusaurus-core-invariants",
