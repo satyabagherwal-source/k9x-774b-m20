@@ -12063,3 +12063,5 @@
 | `CYCLE-20261122-TA26` | `2026-11-22T09:25:49.230Z` | `deepseek-ai/DeepSeek-V3.2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v3.2-learnings.md` | Yes (`6551c12b...`) |
 | `CYCLE-20261122-TMQ8` | `2026-11-22T09:26:05.648Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`1b9f227e...`) |
 | `CYCLE-20261122-5AS9` | `2026-11-22T09:35:10.041Z` | `higurashi-ai/Haru-4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-higurashi-ai-haru-4b-learnings.md` | Yes (`2d7f6f7d...`) |
+| `CYCLE-20261122-L3SM` | `2026-11-22T09:47:27.478Z` | `ConceptCountry/qwen-concept-27b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-conceptcountry-qwen-concept-27b-learnings.md` | Yes (`ed6d992f...`) |
+| `CYCLE-20261122-L8BU` | `2026-11-22T09:47:33.354Z` | `necolas/react-native-web` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9916` | Yes (`9ae4ebfe...`) |

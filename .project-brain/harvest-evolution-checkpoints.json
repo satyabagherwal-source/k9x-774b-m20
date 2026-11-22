@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T09:35:23.800Z",
+  "last_updated": "2026-11-22T09:47:41.124Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-22T09:35:22.969Z",
@@ -43,7 +43,7 @@
       "staged_for_review": 0
     },
     "zoontek-react-native-permissions-learnings.md": {
-      "processed_at": "2026-11-22T09:11:08.394Z",
+      "processed_at": "2026-11-22T09:47:40.316Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -308,9 +308,9 @@
       "staged_for_review": 1
     },
     "necolas-react-native-web-learnings.md": {
-      "processed_at": "2026-11-19T07:14:26.565Z",
+      "processed_at": "2026-11-22T09:47:39.508Z",
       "promoted_canonical": 0,
-      "staged_for_review": 1
+      "staged_for_review": 0
     },
     "burntsushi-ripgrep-learnings.md": {
       "processed_at": "2026-11-21T11:55:38.498Z",
@@ -2803,8 +2803,8 @@
       "staged_for_review": 1
     },
     "hf-conceptcountry-qwen-concept-27b-learnings.md": {
-      "processed_at": "2026-11-15T00:06:03.825Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-22T09:47:39.085Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "hf-autotrust-jev-35b-learnings.md": {
@@ -3713,7 +3713,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 3081,
+  "total_dossiers_evaluated": 3084,
   "total_canonical_promoted": 473,
-  "total_staged_for_review": 2345
+  "total_staged_for_review": 2346
 }

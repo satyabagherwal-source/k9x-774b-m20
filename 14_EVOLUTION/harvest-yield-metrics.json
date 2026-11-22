@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T09:35:10.050Z",
-  "total_cycles_completed": 11468,
-  "total_learnings_persisted": 11468,
-  "total_rules_promoted": 10730,
+  "last_updated": "2026-11-22T09:47:33.364Z",
+  "total_cycles_completed": 11470,
+  "total_learnings_persisted": 11470,
+  "total_rules_promoted": 10731,
   "history": [
-    {
-      "timestamp": "2026-11-21T16:40:02.244Z",
-      "repository": "HuggingFaceBio/Carbon-X",
-      "learningId": "learn-huggingface-huggingfacebio-carbon-x",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T16:40:03.959Z",
-      "repository": "Kuddev/pebrel",
-      "learningId": "learn-github-kuddev-pebrel",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T16:40:10.544Z",
       "repository": "callstack/react-native-paper",
@@ -1403,6 +1389,20 @@
       "repository": "higurashi-ai/Haru-4B",
       "learningId": "learn-huggingface-higurashi-ai-haru-4b",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T09:47:27.488Z",
+      "repository": "ConceptCountry/qwen-concept-27b",
+      "learningId": "learn-huggingface-conceptcountry-qwen-concept-27b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T09:47:33.364Z",
+      "repository": "necolas/react-native-web",
+      "learningId": "learn-github-necolas-react-native-web",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

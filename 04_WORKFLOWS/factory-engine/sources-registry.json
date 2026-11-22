@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-22T09:35:21.691Z",
-    "lastVerified": "2026-11-22T09:35:21.691Z",
+    "lastChecked": "2026-11-22T09:47:38.939Z",
+    "lastVerified": "2026-11-22T09:47:38.939Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -176,8 +176,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-22T08:36:08.932Z",
-    "lastVerified": "2026-11-22T08:36:08.932Z",
+    "lastChecked": "2026-11-22T09:47:38.929Z",
+    "lastVerified": "2026-11-22T09:47:38.929Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -2079,8 +2079,8 @@
     "officialUrl": "https://github.com/trufflesecurity/trufflehog",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-22T04:38:56.117Z",
-    "lastVerified": "2026-11-22T04:38:56.117Z",
+    "lastChecked": "2026-11-22T09:47:34.007Z",
+    "lastVerified": "2026-11-22T09:47:34.007Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trufflesecurity-trufflehog",
@@ -4828,9 +4828,9 @@
   "amrdeveloper-gql": {
     "name": "GQL",
     "officialUrl": "https://github.com/AmrDeveloper/GQL",
-    "lastChecked": "2026-11-21T06:01:30.712Z",
+    "lastChecked": "2026-11-22T09:47:36.429Z",
     "revisionIdentifier": "3a76cfee",
-    "lastVerified": "2026-11-21T06:01:30.712Z"
+    "lastVerified": "2026-11-22T09:47:36.429Z"
   },
   "transact-rs-sqlx": {
     "name": "sqlx",
@@ -5985,9 +5985,9 @@
   "snyk-driftctl": {
     "name": "driftctl",
     "officialUrl": "https://github.com/snyk/driftctl",
-    "lastChecked": "2026-11-21T07:58:44.171Z",
+    "lastChecked": "2026-11-22T09:47:31.319Z",
     "revisionIdentifier": "724f896a",
-    "lastVerified": "2026-11-21T07:58:44.171Z"
+    "lastVerified": "2026-11-22T09:47:31.319Z"
   },
   "pingcap-talent-plan": {
     "name": "talent-plan",
@@ -7315,13 +7315,13 @@
     "name": "necolas/react-native-web",
     "officialUrl": "https://github.com/necolas/react-native-web",
     "sourceType": "github",
-    "technology": "JavaScript",
-    "lastChecked": "2026-11-19T07:14:18.114Z",
-    "lastVerified": "2026-11-19T07:14:18.114Z",
+    "technology": "TypeScript",
+    "lastChecked": "2026-11-22T09:47:32.239Z",
+    "lastVerified": "2026-11-22T09:47:32.239Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-necolas-react-native-web",
-    "contentHash": "2c16a124dbf22b246b97684e9dafc3242c2ef659d2ac172681624f5258f743d2",
+    "contentHash": "9ae4ebfe744ca8de8bc6f7c5028c645ac2ff25622c0869f45ff18f86d4eaaca2",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
@@ -7778,9 +7778,9 @@
   "bgreenwell-doxx": {
     "name": "doxx",
     "officialUrl": "https://github.com/bgreenwell/doxx",
-    "lastChecked": "2026-11-20T23:39:37.612Z",
+    "lastChecked": "2026-11-22T09:47:23.945Z",
     "revisionIdentifier": "062819a1",
-    "lastVerified": "2026-11-20T23:39:37.612Z"
+    "lastVerified": "2026-11-22T09:47:23.945Z"
   },
   "hf-qwen-qwen-image-2.1-turbo": {
     "name": "Qwen/Qwen-Image-2.1-Turbo",
@@ -14114,6 +14114,23 @@
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-higurashi-ai-haru-4b",
     "contentHash": "2d7f6f7dd5467cf447c92165503f2369b4195295574e8d37784daedbe6e4ef0d",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-conceptcountry-qwen-concept-27b": {
+    "name": "ConceptCountry/qwen-concept-27b",
+    "officialUrl": "https://huggingface.co/ConceptCountry/qwen-concept-27b",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-22T09:47:26.803Z",
+    "lastVerified": "2026-11-22T09:47:26.803Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-conceptcountry-qwen-concept-27b",
+    "contentHash": "ed6d992f03f5357c408e622bbd573043bd9c8a33a17ae3fb1ad5b0c4edce0fb4",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

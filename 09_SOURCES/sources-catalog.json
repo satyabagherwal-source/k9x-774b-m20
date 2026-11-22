@@ -7123,10 +7123,10 @@
     "repository": "necolas/react-native-web",
     "platform": "github",
     "sourceUrl": "https://github.com/necolas/react-native-web",
-    "sourceVersion": "68858292",
+    "sourceVersion": "0e0a4202",
     "license": "MIT",
-    "contentHash": "2c16a124dbf22b246b97684e9dafc3242c2ef659d2ac172681624f5258f743d2",
-    "lastHarvestedAt": "2026-11-19T07:14:19.137Z",
+    "contentHash": "9ae4ebfe744ca8de8bc6f7c5028c645ac2ff25622c0869f45ff18f86d4eaaca2",
+    "lastHarvestedAt": "2026-11-22T09:47:33.358Z",
     "learningId": "learn-github-necolas-react-native-web"
   },
   "zvec-ai-zvec-grep": {
@@ -12595,8 +12595,8 @@
     "sourceUrl": "https://huggingface.co/ConceptCountry/qwen-concept-27b",
     "sourceVersion": "hf-conceptcountry-qwen-concept-27b",
     "license": "Open-Source",
-    "contentHash": "ae94b3e76a9776789459b18f1d7dbebecbca20c1185ffb0f4945ef536c7766fd",
-    "lastHarvestedAt": "2026-11-15T00:05:27.873Z",
+    "contentHash": "ed6d992f03f5357c408e622bbd573043bd9c8a33a17ae3fb1ad5b0c4edce0fb4",
+    "lastHarvestedAt": "2026-11-22T09:47:27.482Z",
     "learningId": "learn-huggingface-conceptcountry-qwen-concept-27b"
   },
   "hf-abiray-minimax-h3-image-gguf": {
