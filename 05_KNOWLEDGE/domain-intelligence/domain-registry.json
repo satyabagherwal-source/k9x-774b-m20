@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T23:41:29.072Z",
+  "last_updated": "2026-11-22T23:49:28.235Z",
   "total_records": 2386,
   "domains": {
     "A": {
@@ -8156,8 +8156,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "876d57cadd7d2488f49a996a723bf667afd6265bff1b6f64835c7ffb88217d2b",
-      "created_at": "2026-11-22T23:25:11.746Z"
+      "content_hash": "8cce9ce0aeb89cfc843f0aa708787e428b932cf692175ce66749651ed537d418",
+      "created_at": "2026-11-22T23:49:28.235Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -10496,8 +10496,8 @@
       "title": "Research & Knowledge Intelligence: DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-co.md",
       "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
-      "content_hash": "2b592139179f8c5a545d29a1c5ebb804d262e7124563eba633e45405bbed0b03",
-      "created_at": "2026-11-18T16:31:29.636Z"
+      "content_hash": "899b69d1bd6e941199e0d843fa5b10c0c37c53d07013dd160e585d4d71c44692",
+      "created_at": "2026-11-22T23:49:14.671Z"
     },
     "domain_intelligence-technical-construction-intelligence-karakeep-app-karakeep-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-karakeep-app-karakeep-core-invariants",
@@ -10514,8 +10514,8 @@
       "title": "Research & Knowledge Intelligence: hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-co.md",
       "repository": "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-learnings",
-      "content_hash": "6a99074fdc608b8f3297f467dba8f432fdf2918d119a8388710f4c3b526b5388",
-      "created_at": "2026-11-18T16:32:23.316Z"
+      "content_hash": "57dbd2fa4d1566bd99c50a5f6ecc065e773554053148e32e2cbc449f3e9be1f6",
+      "created_at": "2026-11-22T23:49:27.406Z"
     },
     "domain_intelligence-technical-construction-intelligence-karakeep-app-karakeep-learnings-core-invaria": {
       "record_id": "domain_intelligence-technical-construction-intelligence-karakeep-app-karakeep-learnings-core-invaria",
@@ -25370,8 +25370,8 @@
       "title": "Architecture Intelligence: ratatui/ratatui Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ratatui-ratatui-architecture-intelligence-ratatui-ratatui-core-invariants.md",
       "repository": "ratatui/ratatui",
-      "content_hash": "6f599d9091f24633b6bdc7febf544a2df8352653c21305175ec97e5a1a78aca0",
-      "created_at": "2026-11-21T17:41:50.071Z"
+      "content_hash": "18b0a6788faabf09577c04483707c1847eaa0e39cee5ddf202d4e8c5d3e69bfc",
+      "created_at": "2026-11-22T23:49:17.582Z"
     },
     "domain_intelligence-architecture-intelligence-ratatui-ratatui-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-ratatui-ratatui-learnings-core-invariants",
@@ -25379,8 +25379,8 @@
       "title": "Architecture Intelligence: ratatui-ratatui-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ratatui-ratatui-learnings-architecture-intelligence-ratatui-ratatui-learnings-co.md",
       "repository": "ratatui-ratatui-learnings",
-      "content_hash": "a636acca72b782663552c434db5e679062086a2eebeb2eafd9e37a22516338fa",
-      "created_at": "2026-11-21T17:42:05.431Z"
+      "content_hash": "72ac7a4161fe13b2fee18bd179814b2e02741e9346c149705790e0a4e5094219",
+      "created_at": "2026-11-22T23:49:26.879Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-prunaai-p-h3-image-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-prunaai-p-h3-image-learnings-core-invariants",

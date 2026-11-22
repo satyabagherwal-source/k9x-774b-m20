@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T23:41:15.214Z",
+  "last_updated": "2026-11-22T23:49:17.192Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -800,14 +800,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
-      "content_hash": "a3619a143602689e56e5775e8fe793e43c2cb78e19e9068b5980170fd04f1321",
-      "verified_at": "2026-11-18T16:31:29.414Z",
+      "content_hash": "0480b1a59483970fe456929c5be1984450ea7c0cf17d54384712875b2fb784a6",
+      "verified_at": "2026-11-22T23:49:14.464Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T16:31:29.414Z"
+      "last_updated": "2026-11-22T23:49:14.464Z"
     },
     "canberkkkkkk/ema-lightning": {
       "repository": "canberkkkkkk/ema-lightning",
@@ -5451,14 +5451,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ratatui-ratatui",
-      "content_hash": "1beefc20d35f382c419fe9ee720dcf237c67cb20b2c3bcc777bd8fb5ad6a55ca",
-      "verified_at": "2026-11-21T17:41:49.691Z",
+      "content_hash": "452af68dcdefb3ace24dafaadb6c103a689201514e01efe766087c84e9e0efb9",
+      "verified_at": "2026-11-22T23:49:17.191Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T17:41:49.691Z"
+      "last_updated": "2026-11-22T23:49:17.191Z"
     },
     "invertase/react-native-firebase": {
       "repository": "invertase/react-native-firebase",

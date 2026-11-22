@@ -12232,3 +12232,5 @@
 | `CYCLE-20261122-35CQ` | `2026-11-22T23:33:18.170Z` | `maziyarpanahi/openmed` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8545` | Yes (`53a775f7...`) |
 | `CYCLE-20261122-3C1W` | `2026-11-22T23:33:26.852Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10005` | Yes (`5ce3561c...`) |
 | `CYCLE-20261122-DDFK` | `2026-11-22T23:41:15.200Z` | `HuggingFaceTB/SmolVLM2-256M-Video-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-huggingfacetb-smolvlm2-256m-video-instruct-learnings.md` | Yes (`4cf01de3...`) |
+| `CYCLE-20261122-NN84` | `2026-11-22T23:49:14.452Z` | `DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-learnings.md` | Yes (`0480b1a5...`) |
+| `CYCLE-20261122-NPBV` | `2026-11-22T23:49:17.179Z` | `ratatui/ratatui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10006` | Yes (`452af68d...`) |

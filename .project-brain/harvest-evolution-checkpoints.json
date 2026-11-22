@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T23:41:29.247Z",
+  "last_updated": "2026-11-22T23:49:28.696Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-22T23:41:28.283Z",
@@ -8,7 +8,7 @@
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-22T23:25:11.070Z",
+      "processed_at": "2026-11-22T23:49:27.595Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1778,7 +1778,7 @@
       "staged_for_review": 0
     },
     "ratatui-ratatui-learnings.md": {
-      "processed_at": "2026-11-21T17:42:04.815Z",
+      "processed_at": "2026-11-22T23:49:26.114Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2123,7 +2123,7 @@
       "staged_for_review": 0
     },
     "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-learnings.md": {
-      "processed_at": "2026-11-18T16:32:23.036Z",
+      "processed_at": "2026-11-22T23:49:27.202Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3733,7 +3733,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3270,
+  "total_dossiers_evaluated": 3273,
   "total_canonical_promoted": 480,
-  "total_staged_for_review": 2470
+  "total_staged_for_review": 2473
 }

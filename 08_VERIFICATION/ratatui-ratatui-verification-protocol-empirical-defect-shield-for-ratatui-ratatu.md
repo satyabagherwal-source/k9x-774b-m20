@@ -4,22 +4,22 @@
 {
   "source_repository": "ratatui/ratatui",
   "source_url": "https://github.com/ratatui/ratatui",
-  "source_version": "29196825",
+  "source_version": "5a28bec1",
   "license": "MIT",
-  "timestamp": "2026-11-21T17:41:49.904Z",
+  "timestamp": "2026-11-22T23:49:17.410Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-ratatui-ratatui",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [ratatui/ratatui](https://github.com/ratatui/ratatui) (Revision: `29196825`).  
-> **License**: MIT | **Timestamp**: `2026-11-21T17:41:49.904Z`  
+> **Provenance**: Harvested from [ratatui/ratatui](https://github.com/ratatui/ratatui) (Revision: `5a28bec1`).  
+> **License**: MIT | **Timestamp**: `2026-11-22T23:49:17.410Z`  
 > **Learning ID**: `learn-github-ratatui-ratatui`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `ratatui/ratatui` (Commit: `29196825`)
+- **Target Repository**: `ratatui/ratatui` (Commit: `5a28bec1`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ratatui-ratatui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ratatui/ratatui](https://github.com/ratatui/ratatui))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T17:41:48.598Z  
+> **Harvest Timestamp**: 2026-11-22T23:49:16.123Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: A Rust crate for cooking up terminal user interfaces (TUIs) 👨‍🍳🐀 https://ratatui.rs
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 23380 stars
+- **Stars / Engagement**: 23394 stars
 
 ---
 
@@ -951,13 +951,15 @@ impl StatefulWidget for CounterWidget {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2940** (2026-11-21): **refactor(widget): move string widget impls into their own modules**
-  *Symptoms*: Prep for #2883. Moves the `Widget` impls for `&str`, `String`, `&String`, and `Cow<str>` into `ratatui-core/src/widgets/widget_string.rs`, and the matching `WidgetRef` impls into `ratatui/src/widgets/widget_ref_string.rs`, along with their tests. The trait modules keep the traits, the blanket impls, and the `Option` impls.  This is a move only, with no change in behavior. The only new lines are the module declarations, imports, and the `buf` test fixture in each new test module. #2883 then adds sibling `widget_wrapper.rs` and `widget_ref_wrapper.rs` modules for the generic `Cow`, `Box`, `Rc`, and `Arc` impls. 
-
-- **Issue #2939** (2026-11-21): **fix(scrollbar): reach the end of the track when content is fully scrolled**
-  *Symptoms*: Make the scrollbar thumb reach the end when the last page is fully visible. With 100 items, 22 visible, and scroll position 78:  ```text Before: <--------------####----> After:  <------------------####> ```  `ScrollbarState::next()`, `last()`, and `is_at_end()` now use the same boundary when a viewport length is set. An unset viewport keeps the previous helper behavior.  Closes #1681 Closes #2791 (can't push to the PR - so opening a new one) 
+- **Issue #2948** (2026-11-22): **refactor(table): take slices in render_row_cells**
+  *Symptoms*: Small cleanup: `Table::render_row_cells` took `Vec<&Rect>` and `&Vec<Cell>`, so every header, footer and body row collected the column widths into a new `Vec`. It now takes `&[Rect]` and `&[Cell]`, and callers pass the column widths directly. No behavior change.  Follow-up from the review of #2903. 
   **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/ratatui/ratatui/pull/2939?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=ratatui) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 93.4%. Comparing base ([`63e3c75`](https://app.codecov.io/gh/ratatui/ratatui/commit/63e3c75a8a6286fda679925a8f953cc31a782fa6?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=ratatui)) to head ([`d78b5b9`](https://app.codecov.io/gh/ratatui/ratatui/commit/d78b5b92392dacac625bad5c0a727cbc58e11b8c?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=ratatui)). :warning: Report is 2 commits behind head on main.  <details><summary>Additional details and impacted files</summary>    ```diff @@          Coverage Diff           @@ ##            main   #
+  > ## [Codecov](https://app.codecov.io/gh/ratatui/ratatui/pull/2948?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=ratatui) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 94.0%. Comparing base ([`529f654`](https://app.codecov.io/gh/ratatui/ratatui/commit/529f654838fc3732f4fdb675a3acf7e9d003921d?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=ratatui)) to head ([`6b8369a`](https://app.codecov.io/gh/ratatui/ratatui/commit/6b8369a6dbec9e622570edfb92863e46485d0570?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=ratatui)).  <details><summary>Additional details and impacted files</summary>    ```diff @@          Coverage Diff          @@ ##            main   #2948   +/-   ## ====================================
+
+- **Issue #2946** (2026-11-22): **ci: only create the release-plz PR on manual dispatch**
+  *Symptoms*: The release PR job ran on every push to `main`, so a release PR stayed open and churned between releases. We cut releases on demand, so this changes the `release-plz-pr` job to run only from `workflow_dispatch`.  - `release-plz-release` still runs on every push to `main`. It only publishes versions not yet on crates.io, so it publishes once a release PR is merged. - `RELEASE.md` now says to run the Release-plz workflow manually (`gh workflow run release-plz.yml --ref main`) to open or refresh the release PR.  The stale release PR #2609 is being closed; the next manual run recreates it. 
+  **Post-Mortem & Fix Analysis**:
+  > ## [Codecov](https://app.codecov.io/gh/ratatui/ratatui/pull/2946?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=ratatui) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 93.6%. Comparing base ([`7c6a326`](https://app.codecov.io/gh/ratatui/ratatui/commit/7c6a326c1a470874ee17ef54b7da09fd6c8eaa23?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=ratatui)) to head ([`caae6f2`](https://app.codecov.io/gh/ratatui/ratatui/commit/caae6f2f8fbf76803626e5978e73f0275543ac27?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=ratatui)). :warning: Report is 3 commits behind head on main.  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##            main   
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -974,647 +976,360 @@ impl StatefulWidget for CounterWidget {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6d208e68` (2026-11-21)
-**Commit Message**: fix(barchart): split horizontal value text by display width (#2629)
+### Incident Patch 1: `27c7483c` (2026-11-22)
+**Commit Message**: fix(paragraph): account for block borders and padding in line_count (#2824)
 
-Fix gaps, missing text, and panics in horizontal `BarChart` Unicode labels.
+`Paragraph::line_count` wrapped text at the outer width, ignoring the
+horizontal space taken by the block's borders and padding. Bordered or
+padded paragraphs could need more rows than it returned, so sizing an
+area from it clipped the last lines.
 
-For `🍎🍎🍎`, each apple takes two cells:
+Wrap at the width left inside the block. When the block leaves no
+inner width, return only its vertical space, since no text rows are
+rendered.
 
-```text
-1. Draw bar    2. First apple
-┌──────┐       ┌──────┐
-│██    │       │🍎    │
-└──────┘       └──────┘
+Document that the width includes the block and that the result can
+size the render area, and run the examples as doctests.
 
-3. Before     4. After
-┌──────┐       ┌──────┐
-│🍎  🍎│       │🍎🍎🍎│
-└──────┘       └──────┘
-```
+Fixes #2823
 
-Overflow now starts at the correct cell and style changes keep joined
-emoji such as 👨‍👩‍👧‍👦 intact.
-
----------
-
-Signed-off-by: Sebastien Tardif <[REDACTED_EMAIL]>
-Co-authored-by: Orhun Parmaksız <[REDACTED_EMAIL]>
-Co-authored-by: Orhun Parmaksız <[REDACTED_EMAIL]>
-
-**File**: `ratatui-widgets/src/barchart.rs` (modified, +146/-0)
+**File**: `ratatui-widgets/src/paragraph.rs` (modified, +287/-15)
 ```diff
-@@ -737,6 +737,8 @@ impl Styled for BarChart<'_> {
- 
- #[cfg(test)]
- mod tests {
-+    use alloc::format;
-+
-     use itertools::iproduct;
-     use ratatui_core::layout::Alignment;
-     use ratatui_core::style::{Color, Modifier, Stylize};
-@@ -1578,6 +1580,150 @@ mod tests {
-         widget.render(buffer.area, &mut buffer);
-         assert_eq!(buffer, Buffer::with_lines(["████████", "██中文██"]));
+@@ -326,41 +326,84 @@ impl<'a> Paragraph<'a> {
+         self.alignment(Alignment::Right)
      }
-+
-+    /// Empty `text_value` skips value painting and leaves only the bar fill.
-+    #[test]
-+    fn horizontal_empty_text_value_skips_value_paint() {
-+        let chart = BarChart::default()
-+            .direction(Direction::Horizontal)
-+            .bar_gap(0)
-+            .data(BarGroup::default().bars(&[Bar::default().value(5).text_value("")]));
-+        let mut buffer = Buffer::empty(Rect::new(0, 0, 5, 1));
-+        chart.render(buffer.area, &mut buffer);
-+        assert_eq!(buffer, Buffer::with_lines(["█████"]));
-+    }
-+
-+    /// Multi-byte single-width characters must be split by display width on
-+    /// horizontal bars, not by UTF-8 byte length.
+ 
+-    /// Calculates the number of lines needed to fully render.
++    /// Calculates the height needed to render this paragraph at the given width.
+     ///
+-    /// Given a max line width, this method calculates the number of lines that a paragraph will
+-    /// need in order to be fully rendered. For paragraphs that do not use wrapping, this count is
+-    /// simply the number of lines present in the paragraph.
++    /// The `width` includes the [`Block`]'s borders and padding, if set through [`Self::block`].
+     ///
+-    /// This method will also account for the [`Block`] if one is set through [`Self::block`].
++    /// Returns `0` if `width` is zero. If the block's borders and padding consume all available
++    /// width, no text rows are rendered, but the returned height still includes the block's
++    /// vertical borders and padding.
 +    ///
-+    /// `"α"` is two bytes and one cell. With `bar_length == 3` the value
-+    /// `"ααααα"` must paint all five cells; the first three use `value_style`
-+    /// and the rest use the bar style. Splitting on byte indices leaves a
-+    /// filled-block cell in the middle and styles the overflow incorrectly.
-+    #[test]
-+    fn horizontal_multibyte_text_value_split_by_display_width() {
-+        let bar = Bar::default()
-+            .value(3)
-+            .text_value("ααααα")
-+            .value_style(Style::default().red());
-+        let chart = BarChart::default()
-+            .data(BarGroup::default().bars(&[bar, Bar::default().value(5)]))
-+            .direction(Direction::Horizontal)
-+            .bar_style(Style::default().yellow())
-+            .value_style(Style::default().italic())
-+            .bar_gap(0);
-+
-+        let mut buffer = Buffer::empty(Rect::new(0, 0, 5, 2));
-+        chart.render(buffer.area, &mut buffer);
-+
-+        let mut expected = Buffer::with_lines(["ααααα", "5████"]);
-+        for x in 0..3 {
-+            let cell = &mut expected[(x, 0)];
-+            cell.set_fg(Color::Red);
-+            cell.modifier.insert(Modifier::ITALIC);
-+        }
-+        for x in 3..5 {
-+            expected[(x, 0)].set_fg(Color::Yellow);
-+        }
-+        expected[(0, 1)].modifier.insert(Modifier::ITALIC);
-+        for x in 0..5 {
-+            expected[(x, 1)].set_fg(Color::Yellow);
-+        }
-+        assert_eq!(buffer, expected);
-+    }
-+
-+    #[rstest]
-+    #[case::joined_emoji("👨‍👩‍👧‍👦", 2)]
-+    #[case::flag("🇹🇷", 2)]
-+    #[case::emoji_presentation("❤️", 2)]
-+    #[case::combining_mark("e\u{301}", 1)]
-+    #[case::halfwidth_kana("ｶﾞ", 2)]
-+    #[case::halfwidth_sound_mark("ﾞ", 1)]
-+    fn horizontal_text_value_preserves_graphemes(#[case] grapheme: &str, #[case] width: u16) {
-+        let bar = Bar::new(u64::from(width))
-+            .text_value(format!("{grapheme}x"))
-+            .value_style(Style::new().red());
-+        let chart = BarChart::new([bar])
-+            .max(u64::from(width + 1))
-+            .direction(Direction::Horizontal)
-+            .bar_style(Style::new().yellow());
-+        let mut buffer = Buffer::empty(Rect::new(0, 0, width + 1, 1));
-+
-+        chart.render(buffer.area, &mut buffer);
-+
-+        assert_eq!(buffer[(0, 0)].symbol(), grapheme);
-+        assert_eq!(buffer[(0, 0)].fg, Color::Red);
-+        assert_eq!(buffer[(width, 0)].symbol(), "x");
-+        assert_eq!(buffer[(width, 0)].fg, Color::Yellow);
-+    }
-+
-+    #[rstest]
-+    #[case::empty_bar(0, Color::Yellow, Color::Yellow)]
-+    #[case::inside_wide_grapheme(1, Color::Yellow, Color::Yellow)]
-+    #[case::after_wide_grapheme(2, Color::Red, Color::Yellow)]
-+    #[case::full_bar(3, Color::Red, Color::Red)]
-+    fn horizontal_joined_emoji_at_style_boundary(
-+        #[case] value: u64,
-+        #[case] emoji_color: Color,
-+        #[case] suffix_color: Color,
-+    ) {
-+        let bar = Bar::new(value)
-+            .text_value("👨‍👩‍👧‍👦x")
-+            .value_style(Style::new().red());
-+        let chart = BarChart::new([bar])
-+            .max(3)
-+            .direction(Direction::Horizontal)
-+            .bar_style(Style::new().yellow());
-+        let mut buffer = Buffer::empty(Rect::new(2, 1, 3, 1));
-+
-+        chart.render(buffer.area, &mut buffer);
-+
-+        let mut expected = Buffer::with_lines(["👨‍👩‍👧‍👦x"]);
-+        expected[(0, 0)].set_fg(emoji_color);
-+        expected[(2, 0)].set_fg(suffix_color);
-+        expected.area = buffer.area;
-+        assert_eq!(buffer, expected);
-+    }
-+
-+    #[rstest]
-+    #[case::control("a\nb")]
-+    #[case::carriage_return_line_feed("a\r\nb")]
-+    #[case::zero_width("\u{200b}ab")]
-+    fn horizontal_text_value_skips_nonprinting_graphemes(#[case] text: &str) {
-+        let bar = Bar::new(1).text_value(text).value_style(Style::new().red());
-+        let chart = BarChart::new([bar])
-+            .max(2)
-+
-```
-
-**File**: `ratatui-widgets/src/barchart/bar.rs` (modified, +37/-23)
-```diff
-@@ -1,10 +1,11 @@
- use alloc::string::{String, ToString};
- 
--use ratatui_core::buffer::Buffer;
-+use ratatui_core::buffer::{Buffer, CellWidth};
- use ratatui_core::layout::Rect;
- use ratatui_core::style::{Style, Styled};
- use ratatui_core::text::Line;
- use ratatui_core::widgets::Widget;
-+use unicode_segmentation::UnicodeSegmentation;
- use unicode_width::UnicodeWidthStr;
- 
- /// A bar to be shown by the [`BarChart`](super::BarChart) widget.
-@@ -209,32 +210,45 @@ impl<'a> Bar<'a> {
-         let value = self.value.to_string();
-         let text = self.text_value.as_ref().unwrap_or(&value);
- 
--        if !text.is_empty() {
--            let style = default_value_style.patch(self.value_style);
--            // Since the value may be longer than the bar itself, we need to use 2 different styles
--            // while rendering. Render the first part with the default value style
--            buf.set_stringn(area.x, area.y, text, bar_length, style);
--            // render the second part with the bar_style
--            if text.len() > bar_length {
--                // Find the last character boundary at or before bar_length
--                let bar_length = text
--                    .char_indices()
--                    .take_while(|(i, _)| *i < bar_length)
--                    .last()
--                    .map_or(0, |(i, c)| i + c.len_utf8());
-+        if text.is_empty() {
-+            return;
-+        }
- 
--                let (first, second) = text.split_at(bar_length);
-+        let style = default_value_style.patch(self.value_style);
-+        // Since the value may be longer than the bar itself, we need to use 2 different styles
-+        // while rendering. Render the first part with the default value style
-+        buf.set_stringn(area.x, area.y, text, bar_length, style);
- 
--                let style = bar_style.patch(self.style);
--                buf.set_stringn(
--                    area.x + first.len() as u16,
--                    area.y,
--                    second,
--                    area.width as usize - first.len(),
--                    style,
--                );
-+        // Match `Buffer::set_stringn`: measure whole graphemes in terminal cells and skip controls.
-+        let mut used_width = 0usize;
-+        let mut split_byte = text.len();
-+        for (i, grapheme) in text
-+            .grapheme_indices(true)
-+            .filter(|(_, grapheme)| !grapheme.contains(char::is_control))
-+        {
-+            let width = usize::from(grapheme.cell_width());
-+            if used_width.saturating_add(width) > bar_length {
-+                split_byte = i;
-+                break;
-             }
-+            used_width = used_width.saturating_add(width);
-+        }
-+        if split_byte == text.len() {
-+            return;
++    /// Text is wrapped according to [`Wrap`] if set through [`Self::wrap`]. Without wrapping, text
++    /// exceeding the available width is horizontally clipped, and the returned height is the number
++    /// of text lines plus the block's vertical borders and padding.
+     ///
+     /// Note: The design for text wrapping is not stable and might affect this API.
+     ///
+-    /// # Example
++    /// # Examples
+     ///
+-    /// ```ignore
+-    /// use ratatui::{widgets::{Paragraph, Wrap}};
++    /// ```
++    /// # #[cfg(feature = "unstable-rendered-line-info")] {
++    /// use ratatui::widgets::{Paragraph, Wrap};
+     ///
+-    /// let paragraph = Paragraph::new("Hello World")
+-    ///     .wrap(Wrap { trim: false });
++    /// let paragraph = Paragraph::new("Hello World").wrap(Wrap { trim: false });
+     /// assert_eq!(paragraph.line_count(20), 1);
+     /// assert_eq!(paragraph.line_count(10), 2);
++    /// # }
++    /// ```
++    ///
++    /// ## Determining Rendered Height
++    ///
++    /// The returned height can be used to size the render area for the given width.
++    ///
++    /// ```
++    /// # #[cfg(feature = "unstable-rendered-line-info")] {
++    /// use ratatui::buffer::Buffer;
++    /// use ratatui::layout::Rect;
++    /// use ratatui::widgets::{Block, Paragraph, Widget, Wrap};
++    ///
++    /// let paragraph = Paragraph::new("Hello World")
++    ///     .block(Block::bordered())
++    ///     .wrap(Wrap { trim: false });
++    ///
++    /// let width = 10;
++    /// let height = paragraph.line_count(width) as u16;
++    /// assert_eq!(height, 4);
++    ///
++    /// let area = Rect::new(0, 0, width, height);
++    /// let mut buffer = Buffer::empty(area);
++    /// paragraph.render(area, &mut buffer);
++    /// assert_eq!(
++    ///     buffer,
++    ///     Buffer::with_lines([
++    ///         "┌────────┐",
++    ///         "│Hello   │",
++    ///         "│World   │",
++    ///         "└────────┘",
++    ///     ]),
++    /// );
++    /// # }
+     /// ```
+     #[instability::unstable(
+         feature = "rendered-line-info",
+         issue = "https://github.com/ratatui/ratatui/issues/293"
+     )]
+     pub fn line_count(&self, width: u16) -> usize {
+-        if width < 1 {
++        if width == 0 {
+             return 0;
          }
+ 
+-        let (top, bottom) = self
++        let ((left, right), (top, bottom)) = self
+             .block
+             .as_ref()
+-            .map(Block::vertical_space)
++            .map(|block| (block.horizontal_space(), block.vertical_space()))
+             .unwrap_or_default();
+ 
++        let text_width = width.saturating_sub(left).saturating_sub(right);
++        if text_width == 0 {
++            return (top as usize).saturating_add(bottom as usize);
++        }
 +
-+        let style = bar_style.patch(self.style);
-+        let remaining = (area.width as usize).saturating_sub(used_width);
-+        // `split_byte` comes from `grapheme_indices`, so it is always a grapheme boundary.
-+        #[allow(clippy::string_slice)]
-+        let second = &text[split_byte..];
-+        buf.set_stringn(
-+            area.x.saturating_add(used_width as u16),
-+            area.y,
-+            second,
-+            remaining,
-+            style,
-+        );
+         let count = if let Some(Wrap { trim }) = self.wrap {
+             let styled = self.text.iter().map(|line| {
+                 let graphemes = line
+@@ -370,7 +413,7 @@ impl<'a> Paragraph<'a> {
+                 let alignment = line.alignment.unwrap_or(self.alignment);
+                 (graphemes, alignment)
+             });
+-            let mut line_composer = WordWrapper::new(styled, width, trim);
++            let mut line_composer = WordWrapper::new(styled, text_width, trim);
+             let mut count = 0;
+             while line_composer.next_line().is_some() {
+                 count += 1;
+@@ -527,7 +570,7 @@ mod tests {
+     use rstest::rstest;
+ 
+     use super::*;
+-    use crate::block::TitlePosition;
++    use crate::block::{Padding, TitlePosition};
+     use crate::borders::Borders;
+ 
+     /// Tests the [`Paragraph`] widget against the expected [`Buffer`] by rendering it onto an equal
+@@ -1214,6 +1257,235 @@ mod tests {
+         assert_eq!(paragraph.line_count(6), 1);
      }
  
-     pub(super) fn render_value(
++    #[test]
++    fn line_count_bordered() {
++        let paragraph = Paragraph::new("The quick brown fox jumps over the lazy dog")
++            .wrap(Wrap { trim: false })
++            .block(Block::bordered());
++        let mut buf = Buffer::empty(Rect::new(0, 0, 24, paragraph.line_count(24) as u16));
++
 ```
 
 ---
 
-### Incident Patch 2: `83e452a7` (2026-11-20)
-**Commit Message**: fix(paragraph): keep wrapped lines within bounds (#2680)
+### Incident Patch 2: `89b8c776` (2026-11-22)
+**Commit Message**: fix(crossterm): handle NormalIntensity in FromCrossterm<ContentStyle> (#2931)
 
-Fixes #2679.
+Fixes #2920.
 
-Word wrapping could emit lines wider than the paragraph when a wide
-grapheme did not fit the remaining cells. A leading zero-width grapheme
-could also make a widthless pending line appear non-empty and delay
-wrapping.
+Converting a crossterm ContentStyle with Attribute::NormalIntensity used
+to drop the reset completely, so the resulting ratatui Style came back
+as a plain default instead of removing bold and dim. This adds
+NormalIntensity to the sub_modifier handling, removing both BOLD and
+DIM, which lines up with the reverse direction, where removing either
+one produces NormalIntensity.
 
-Use measured cell width when checking pending content and include the
-current grapheme in the overflow calculation. Regression tests cover
-mixed-width words and leading combining marks with trimmed and untrimmed
-wrapping.
+Added a case to the from_crossterm_content_style tests covering a
+NormalIntensity-only ContentStyle. It failed before the fix and passes
+now. cargo test -p ratatui-crossterm is green (109 passed), and clippy
+and fmt checks pass too.
 
----------
+Note on process: I used an AI assistant to help draft this small fix,
+and I reviewed the change and ran the tests myself.
 
-Co-authored-by: Orhun Parmaksız <[REDACTED_EMAIL]>
-
-**File**: `ratatui-widgets/src/paragraph.rs` (modified, +48/-0)
+**File**: `ratatui-crossterm/src/lib.rs` (modified, +10/-0)
 ```diff
-@@ -759,6 +759,54 @@ mod tests {
-         );
-     }
- 
-+    #[test]
-+    fn wrapped_cjk_glyphs_do_not_leave_stale_cells_outside_the_area() {
-+        use ratatui::Terminal;
-+        use ratatui::backend::TestBackend;
-+
-+        let text = concat!(
-+            "\u{2502} \u{6784}\u{5efa} \u{2502} \u{7f16}\u{8bd1}\u{6574}\u{4e2a}\u{5de5}",
-+            "\u{4f5c}\u{533a}\u{5e76}\u{8fd0}\u{884c}\u{5168}\u{90e8}\u{6d4b}\u{8bd5}",
-+            "\u{7528}\u{4f8b} \u{2502} \u{30d3}\u{30eb}\u{30c9} \u{2502} ",
-+            "\u{30ef}\u{30fc}\u{30af}\u{30b9}\u{30da}\u{30fc}\u{30b9}\u{5168}",
-+            "\u{4f53}\u{3092}\u{30c6}\u{30b9}\u{30c8}\u{3059}\u{308b} \u{2502} ",
-+            "\u{be4c}\u{b4dc} \u{2502} \u{c791}\u{c5c5} \u{acf5}\u{ac04} ",
-+            "\u{c804}\u{ccb4}\u{b97c} \u{d14c}\u{c2a4}\u{d2b8}\u{d569}\u{b2c8}\u{b2e4}"
-+        );
-+        let height = 40;
-+
-+        for width in 8..=56 {
-+            let mut terminal = Terminal::new(TestBackend::new(width + 4, height)).unwrap();
-+
-+            // Seed the cells just outside the paragraph so a wide glyph that spills out
-+            // can cause the buffer diff to skip clearing them on the next frame.
-+            terminal
-+                .draw(|frame| {
-+                    for y in 0..height {
-+                        frame.render_widget(Paragraph::new("X"), Rect::new(width, y, 1, 1));
-+                    }
-+                })
-+                .unwrap();
-+
-+            terminal
-+                .draw(|frame| {
-+                    frame.render_widget(
-+                        Paragraph::new(text).wrap(Wrap { trim: false }),
-+                        Rect::new(0, 0, width, height),
-+                    );
-+                })
-+                .unwrap();
-+
-+            for y in 0..height {
-+                assert_eq!(
-+                    terminal.backend().buffer()[(width, y)].symbol(),
-+                    " ",
-+                    "stale cell outside paragraph at ({width}, {y})"
-+                );
-+            }
+@@ -718,6 +718,9 @@ impl FromCrossterm<ContentStyle> for Style {
+         if value.attributes.has(CrosstermAttribute::NoBold) {
+             sub_modifier |= Modifier::BOLD;
+         }
++        if value.attributes.has(CrosstermAttribute::NormalIntensity) {
++            sub_modifier |= Modifier::BOLD | Modifier::DIM;
 +        }
-+    }
-+
-     #[test]
-     fn test_render_wrapped_paragraph_with_whitespace_only_line() {
-         let text: Text = ["A", "  ", "B", "  a", "C"]
-```
-
-**File**: `ratatui-widgets/src/reflow.rs` (modified, +84/-12)
-```diff
-@@ -51,6 +51,17 @@ where
-     pending_line_pool: Vec<Vec<StyledGrapheme<'a>>>,
- }
- 
-+fn width_overflow(max_width: u16, widths: &[u16]) -> bool {
-+    let mut remaining_width = max_width;
-+    for &width in widths {
-+        if width > remaining_width {
-+            return true;
-+        }
-+        remaining_width = remaining_width.saturating_sub(width);
-+    }
-+    false
-+}
-+
- impl<'a, O, I> WordWrapper<'a, O, I>
- where
-     O: Iterator<Item = (I, Alignment)>,
-@@ -95,22 +106,26 @@ where
-             }
- 
-             let word_found = non_whitespace_previous && is_whitespace;
-+            let line_has_no_width = line_width == 0;
-             // current word would overflow after removing whitespace
--            let trimmed_overflow = pending_line.is_empty()
-+            let trimmed_overflow = line_has_no_width
-                 && self.trim
--                && word_width + symbol_width > self.max_line_width;
-+                && width_overflow(self.max_line_width, &[word_width, symbol_width]);
-             // separated whitespace would overflow on its own
--            let whitespace_overflow = pending_line.is_empty()
-+            let whitespace_overflow = line_has_no_width
-                 && self.trim
--                && whitespace_width + symbol_width > self.max_line_width;
-+                && width_overflow(self.max_line_width, &[whitespace_width, symbol_width]);
-             // current full word (including whitespace) would overflow
--            let untrimmed_overflow = pending_line.is_empty()
-+            let untrimmed_overflow = line_has_no_width
-                 && !self.trim
--                && word_width + whitespace_width + symbol_width > self.max_line_width;
-+                && width_overflow(
-+                    self.max_line_width,
-+                    &[word_width, whitespace_width, symbol_width],
-+                );
- 
-             // append finished segment to current line
-             if word_found || trimmed_overflow || whitespace_overflow || untrimmed_overflow {
--                if !pending_line.is_empty() || !self.trim {
-+                if !line_has_no_width || !self.trim {
-                     pending_line.extend(self.pending_whitespace.drain(..));
-                     line_width += whitespace_width;
-                 }
-@@ -125,12 +140,15 @@ where
- 
-             // pending line fills up limit
-             let line_full = line_width >= self.max_line_width;
--            // pending word would overflow line limit
--            let pending_word_overflow = symbol_width > 0
--                && line_width + whitespace_width + word_width >= self.max_line_width;
-+            // pending content and current symbol would overflow line limit
-+            let pending_content_overflow = symbol_width > 0
-+                && width_overflow(
-+                    self.max_line_width,
-+                    &[line_width, whitespace_width, word_width, symbol_width],
-+                );
- 
-             // add finished wrapped line to remaining lines
--            if line_full || pending_word_overflow {
-+            if line_full || pending_content_overflow {
-                 let mut remaining_width = u16::saturating_sub(self.max_line_width, line_width);
- 
-                 self.wrapped_lines.push_back(mem::take(&mut pending_line));
-@@ -298,7 +316,8 @@ where
-                     continue;
-                 }
- 
--                if current_line_width + symbol.cell_width() > self.max_line_width {
-+                let symbol_width = symbol.cell_width();
-+                if width_overflow(self.max_line_width, &[current_line_width, symbol_width]) {
-                     // Truncate line
-                     break;
-                 }
-@@ -561,6 +580,59 @@ mod tests {
-         assert_eq!(word_wrapper_width, [width, width, width, width, 4]);
-     }
- 
-+    #[test]
-+    fn line_composer_mixed_width_word() {
-+        for trim in [false, true] {
-+            let (word_wrapper, word_wrapper_width, _) =
-+                run_composer(Composer::WordWrapper { trim }, "a🌞b", 2);
-+            assert_eq!(word_wrapper, ["a", "🌞", "b"]);
-+            assert_eq!(word_wrapper_width, [1, 2, 1]);
-+        }
-+    }
-+
-+    #[test]
-+    fn line_composer_leading_combining_mark() {
-+        let text = "\u{0301} 🌞日日日🌞🌞a";
-+        let (untrimmed, untrimmed_widths, _) =
-+            run_composer(Composer::WordWrapper { trim: false }, text, 8);
-+        assert_eq!(untrimmed, ["\u{0301} 🌞日日", "日🌞🌞a"]);
-+        assert_eq!(untrimmed_widths, [7, 7]);
-+
-+        let (trimmed, trimmed_widths, _) =
-+            run_composer(Composer::WordWrapper { trim: true }, text, 8);
-+        assert_eq!(trimmed, ["\u{0301}", "🌞日日日", "🌞🌞a"]);
-+        assert_eq!(trimmed_widths, [0, 8, 5]);
-+    }
-+
-+    #[test]
-+    fn line_composer_max_width_untrimmed_does_not_overflow() {
-+        let width = u16::MAX;
-+        let mut text = "a".repeat(usize::from(width) - 1);
-+        text.push_str(" b");
-+
-+        let (_, widths, _) = run_composer(Composer::WordWrapper { trim: f
+         if value.attributes.has(CrosstermAttribute::NoItalic) {
+             sub_modifier |= Modifier::ITALIC;
+         }
+@@ -1141,6 +1144,13 @@ mod tests {
+         },
+         Style::default().remove_modifier(Modifier::BOLD)
+     )]
++    #[case(
++        ContentStyle {
++            attributes: CrosstermAttributes::from(CrosstermAttribute::NormalIntensity),
++            ..Default::default()
++        },
++        Style::default().remove_modifier(Modifier::BOLD | Modifier::DIM)
++    )]
+     #[case(
+         ContentStyle {
+             attributes: CrosstermAttributes::from(CrosstermAttribute::Italic),
 ```
 
 ---
 
-### Incident Patch 3: `7b2665e0` (2026-11-21)
-**Commit Message**: perf(ratatui-core): add `buffer::diff` benchmarks to get a performance baseline (#2276)
+### Incident Patch 3: `4a91af17` (2026-11-22)
+**Commit Message**: docs(chart): fix default axis and legend constraint docs (#2902)
 
-I've been taking a look at the buffer diff implementation while
-investigating potential performance improvements for
-[tv](https://github.com/alexpasmantier/television).
+The `Chart::x_axis` and `Chart::y_axis` docs said the default axis
+draws a line. The line is only drawn once the axis has labels, and the
+default axis has none.
 
-The `buffer::diff` function is used by ratatui to compute the minimal
-amount of cells it needs to update to render the new frame which aims to
-minimizes terminal IO while flushing the buffer.
+`Chart::hidden_legend_constraints` said `Constraint::Min` always shows
+the legend. Both constraints are checked together, so a legend taller
+than the height constraint is still hidden. The docs now say the
+constraints are measured against the graph area (inside the block,
+without the axis lines and labels), and the "show whenever it fits"
+example uses `(Constraint::Fill(1), Constraint::Fill(1))`.
 
-This PR adds benchmarks for that method for various typical cases:
-- no changes between current and new buffer
-- full change (every cell changed)
-- partial change (10%, which I figured is an ok estimate of real world
-behavior)
-- special cases (multi-width characters, emojis, which exercise specific
-paths of the code)
+Render tests cover each documented behaviour.
 
-I'll be opening other PR(s) on the subject if this one makes it through.
-
-<details>
-<summary>benchmark baseline</summary>
-
-```
-buffer/diff_no_change/16
-                        time:   [2.3110 µs 2.3139 µs 2.3170 µs]
-Found 3 outliers among 100 measurements (3.00%)
-  1 (1.00%) low mild
-  2 (2.00%) high mild
-buffer/diff_no_change/64
-                        time:   [36.982 µs 37.062 µs 37.158 µs]
-Found 2 outliers among 100 measu
-
-**File**: `ratatui/benches/main/buffer.rs` (modified, +145/-10)
+**File**: `ratatui-widgets/src/chart.rs` (modified, +193/-9)
 ```diff
-@@ -2,19 +2,29 @@ use std::hint::black_box;
+@@ -608,7 +608,8 @@ impl<'a> Chart<'a> {
  
- use criterion::{BenchmarkId, Criterion};
- use ratatui::buffer::{Buffer, Cell};
--use ratatui::layout::Rect;
-+use ratatui::layout::Size;
-+use ratatui::style::Style;
- use ratatui::text::Line;
+     /// Sets the X [`Axis`]
+     ///
+-    /// The default is an empty [`Axis`], i.e. only a line.
++    /// The default is an empty [`Axis`], which draws no axis line: the line is only drawn once
++    /// the axis has labels.
+     ///
+     /// This is a fluent setter method which must be chained or used as it consumes self
+     ///
+@@ -632,7 +633,8 @@ impl<'a> Chart<'a> {
  
--criterion::criterion_group!(benches, empty, filled, with_lines);
-+criterion::criterion_group!(
-+    benches,
-+    empty,
-+    filled,
-+    with_lines,
-+    diff_no_change,
-+    diff_full_change,
-+    diff_partial_change,
-+    diff_multi_width,
-+    diff_emoji
-+);
- 
--const fn rect(size: u16) -> Rect {
--    Rect::new(0, 0, size, size)
--}
-+/// A reasonable terminal size, and a size that's probably too big to be useful
-+const SIZES: [Size; 2] = [Size::new(200, 50), Size::new(1000, 250)];
- 
- fn empty(c: &mut Criterion) {
-     let mut group = c.benchmark_group("buffer/empty");
--    for size in [16, 64, 255] {
--        let area = rect(size);
-+    for size in SIZES {
-+        let area = size.into();
-         group.bench_with_input(BenchmarkId::from_parameter(size), &area, |b, &area| {
-             b.iter(|| {
-                 let _buffer = Buffer::empty(black_box(area));
-@@ -28,8 +38,8 @@ fn empty(c: &mut Criterion) {
- /// and to catch any potential performance regressions.
- fn filled(c: &mut Criterion) {
-     let mut group = c.benchmark_group("buffer/filled");
--    for size in [16, 64, 255] {
--        let area = rect(size);
-+    for size in SIZES {
-+        let area = size.into();
-         let cell = Cell::new("AAAA"); // simulate a multi-byte character
-         group.bench_with_input(
-             BenchmarkId::from_parameter(size),
-@@ -46,7 +56,7 @@ fn filled(c: &mut Criterion) {
- 
- fn with_lines(c: &mut Criterion) {
-     let mut group = c.benchmark_group("buffer/with_lines");
--    for size in [16, 64, 255] {
-+    for size in SIZES {
-         let word_count = 50;
-         let lines = fakeit::words::sentence(word_count);
-         let lines = lines.lines().map(Line::from);
-@@ -58,3 +68,128 @@ fn with_lines(c: &mut Criterion) {
+     /// Sets the Y [`Axis`]
+     ///
+-    /// The default is an empty [`Axis`], i.e. only a line.
++    /// The default is an empty [`Axis`], which draws no axis line: the line is only drawn once
++    /// the axis has labels.
+     ///
+     /// This is a fluent setter method which must be chained or used as it consumes self
+     ///
+@@ -658,17 +660,19 @@ impl<'a> Chart<'a> {
+     ///
+     /// The tuple's first constraint is used for the width and the second for the height. If the
+     /// legend takes more space than what is allowed by any constraint, the legend is hidden.
+-    /// [`Constraint::Min`] is an exception and will always show the legend.
++    ///
++    /// Both constraints are applied to the graph area: the chart inside its block, without the axis
++    /// lines and labels.
+     ///
+     /// If this is not set, the default behavior is to hide the legend if it is greater than 25% of
+-    /// the chart, either horizontally or vertically.
++    /// the graph area, either horizontally or vertically.
+     ///
+     /// This is a fluent setter method which must be chained or used as it consumes self
+     ///
+     /// # Examples
+     ///
+-    /// Hide the legend when either its width is greater than 33% of the total widget width or if
+-    /// its height is greater than 25% of the total widget height.
++    /// Hide the legend when either its width is greater than 33% of the graph area width or if its
++    /// height is greater than 25% of the graph area height.
+     ///
+     /// ```
+     /// use ratatui::layout::Constraint;
+@@ -678,14 +682,14 @@ impl<'a> Chart<'a> {
+     /// let chart = Chart::new(vec![]).hidden_legend_constraints(constraints);
+     /// ```
+     ///
+-    /// Always show the legend, note the second constraint doesn't matter in this case since the
+-    /// first one is always true.
++    /// Show the legend whenever it fits in the graph area. It is still hidden if it does not fit,
++    /// counting one row for each axis title that is displayed.
+     ///
+     /// ```
+     /// use ratatui::layout::Constraint;
+     /// use ratatui::widgets::Chart;
+     ///
+-    /// let constraints = (Constraint::Min(0), Constraint::Ratio(1, 4));
++    /// let constraints = (Constraint::Fill(1), Constraint::Fill(1));
+     /// let chart = Chart::new(vec![]).hidden_legend_constraints(constraints);
+     /// ```
+     ///
+@@ -1513,6 +1517,186 @@ mod tests {
+         }
      }
-     group.finish();
- }
+ 
++    const DIAGONAL: &[(f64, f64)] = &[(0.0, 0.0), (5.0, 5.0), (10.0, 10.0)];
 +
-+fn diff_no_change(c: &mut Criterion) {
-+    let mut group = c.benchmark_group("buffer/diff_no_change");
-+    for size in SIZES {
-+        let buffer = Buffer::filled(size.into(), Cell::new("x"));
-+        group.bench_with_input(BenchmarkId::from_parameter(size), &buffer, |b, buffer| {
-+            b.iter(|| {
-+                let diff = black_box(buffer).diff(black_box(buffer));
-+                black_box(diff);
-+            });
-+        });
++    fn axis() -> Axis<'static> {
++        Axis::default().bounds([0.0, 10.0])
 +    }
-+    group.finish();
-+}
 +
-+/// This tests maximum update cost with every cell needing an update
-+fn diff_full_change(c: &mut Criterion) {
-+    let mut group = c.benchmark_group("buffer/diff_full_change");
-+    for size in SIZES {
-+        let area = size.into();
-+        let prev = Buffer::filled(area, Cell::new("a"));
-+        let next = Buffer::filled(area, Cell::new("b"));
-+        group.bench_with_input(
-+            BenchmarkId::from_parameter(size),
-+            &(prev, next),
-+            |b, (prev, next)| {
-+                b.iter(|| {
-+                    let diff = black_box(prev).diff(black_box(next));
-+                    black_box(diff);
-+                });
-+            },
-+        );
++    /// A chart with a 5 row high legend in the top right corner.
++    fn chart_with_three_named_datasets() -> Chart<'static> {
++        let datasets = ["aaa", "bbb", "ccc"]
++            .map(|name| Dataset::default().name(name).data(DIAGONAL))
++            .to_vec();
++        Chart::new(datasets)
++            .legend_position(Some(LegendPosition::TopRight))
++            .x_axis(axis())
++            .y_axis(axis())
 +    }
-+    group.finish();
-+}
 +
-+/// This simulates typical incremental updates in a TUI
-+fn diff_partial_change(c: &mut Criterion) {
-+    let mut group = c.benchmark_group("buffer/diff_partial_change");
-+    for size in SIZES {
-+        let area = size.into();
-+        let prev = Buffer::filled(area, Cell::new("a"));
-+        let mut next = Buffer::filled(area, Cell::new("a"));
-+
-+        let total_cells = (size.width as usize) * (size.height as usize);
-+        for i in (0..total_cells).step_by(10) {
-+            if i < next.content.len() {
-+                next.content[i].set_symbol("b");
-+            }
-+        }
-+
-+        group.bench_with_input(
-+            BenchmarkId::from_parameter(size),
-+            &(prev, next),
-+            |b, (prev, next)| {
-+                b.iter(|| {
-+                    let diff = black_box(prev).diff(black_box(next));
-+                    black_box(diff);
-+                });
-+            },
-+        );
++    #[test]
++    fn default_axis_draws_no_line() {
++        let chart = Chart::new(vec![Dataset::default().data(DIAGONAL)])
++            .x_axis(axis())
++            .y_axis(axis());
++        let mut buffer = Buffer::empty(Rect::new(0, 0, 12, 6));
++        chart.render(buffer.area, &mut buffer);
++        #[rustfmt::skip]
++        let expected = Buffer::with_lines([
++            "           •",
++            "            ",
++            "            ",
++            "      •     ",
++            "            ",
++            "•           ",
++        ]);
++        assert_eq!(buffer, expected);
 +    }
-+    group.finish();
-+}
 +
-+fn diff_multi_width(c: &mut Criterion) {
-+    let mut group = c.benchmark_group("buffer/diff_multi_width");
-+    for size in SIZES {
-+        let area = size.into();
-+        let prev = Buffer::with_lines(vec!["a".repeat(size.width as usize); size.height as usize]);
-+        let mut next = Buffer::filled(area, Cell::new(" "));
++    #[test]
++    fn axis_with_labels_draws_line() {
++        let chart = Chart::new(vec![Dataset::default().data(DIAGONAL)])
++            .x_axis(axis().labels(["0", "10"]))
++            .y_axis(axis().labels(["0", "10"]));
++        let mut buffer = Buffer::empty(Rect::new(0, 0, 12, 6));
++        chart.render(buffer.area, &mut buffer);
++        #[rustfmt::skip]
++        let expected = Buffer::with_lines([
++            "10│        •",
++            "  │         ",
++            "  │    •    ",
++            "0 │•        ",
++            "  └─────────",
++            "  0       10",
++        ]);
++        assert_eq!(buffer, expected);
++    }
 +
-+        for y in 0..size.height {
-+            next.set_string(
-+                0,
-+                y,
-+                "日本語中文한국어".repeat(size.width as usize / 6),
-+                Style::default(),
-+            );
-+        }
-+
-+        group.bench_with_input(
-+            BenchmarkId::from_parameter(size),
-+            &(prev, next),
-+            |b, (prev, next)| {
-+                b.iter(|| {
-+                    let diff = black_box(prev).diff(black_box(next));
-+                    bl
++    #[test]
++    fn min_width_constraint_does_not_force_legend_to_show() {
++        let chart = chart_with_three_named_datasets()
++            .hidden_legend_constraints((Constraint::Min(0), Constraint::Ratio(1, 4)));
++        let mut buffer = Buffer::empty(Rect::new(0, 0, 20, 10));
++        chart.render(buffer.area, &mut b
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2948** (2026-11-22): refactor(table): take slices in render_row_cells (@joshka)
+- **PR #2946** (2026-11-22): ci: only create the release-plz PR on manual dispatch (@joshka)
+- **PR #2941** (2026-11-22): refactor(bench): flatten buffer benchmarks and make with_lines scale with size (@joshka)
 - **PR #2940** (2026-11-21): refactor(widget): move string widget impls into their own modules (@joshka)
 - **PR #2939** (2026-11-21): fix(scrollbar): reach the end of the track when content is fully scrolled (@orhun)
 - **PR #2937** (2026-11-20): style(docs): fix formatting (@orhun)
-- **PR #2935** (closed): fix(buffer): repaint the half of a wide glyph orphaned by a wide glyph (@lulu-berlin)
-- **PR #2930** (2026-11-18): docs: fix broken and mismatched documentation links (@joshka)
-- **PR #2929** (2026-11-18): docs(text): explain why ANSI escape sequences are not interpreted (@joshka)
 
 ---
 
@@ -1634,58 +1349,69 @@ Found 2 outliers among 100 measu
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. barchart): split horizontal value text by display width
+## X. paragraph): account for block borders and padding in line_count
 
 **RULE**:
-When implementing operations in `ratatui-widgets/src/barchart.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ratatui/ratatui. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ratatui-widgets/src/paragraph.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ratatui/ratatui. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6d208e68`: barchart): split horizontal value text by display width. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `27c7483c`: paragraph): account for block borders and padding in line_count. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `ratatui-widgets/src/barchart.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `ratatui-widgets/src/paragraph.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    use alloc::format;
-
-
-    /// Empty `text_value` skips value painting and leaves only the bar fill.
-    #[test]
-    fn horizontal_empty_text_value_skips_value_paint() {
-        let chart = BarChart::default()
-            .direction(Direction::Horizontal)
-            .bar_gap(0)
-            .data(BarGroup::default().bars(&[Bar::default().value(5).text_value("")]));
-        let mut buffer = Buffer::empty(Rect::new(0, 0, 5, 1));
-        chart.render(buffer.area, &mut buffer);
-        assert_eq!(buffer, Buffer::with_lines(["█████"]));
-    }
-
-    /// Multi-byte single-width characters must be split by display width on
-    /// horizontal bars, not by UTF-8 byte length.
+    /// Calculates the height needed to render this paragraph at the given width.
+    /// The `width` includes the [`Block`]'s borders and padding, if set through [`Self::block`].
+    /// Returns `0` if `width` is zero. If the block's borders and padding consume all available
+    /// width, no text rows are rendered, but the returned height still includes the block's
+    /// vertical borders and padding.
     ///
-    /// `"α"` is two bytes and one cell. With `bar_length == 3` the value
-    /// `"ααααα"` must paint all five cells; the first three use `value_style`
-    /// and the rest use the bar style. Splitting on byte indices leaves a
-    /// filled-block cell in the middle and styles the overflow incorrectly.
-    #[test]
-    fn horizontal_multibyte_text_value_split_by_display_width() {
-        let bar = Bar::default()
-            .value(3)
-            .text_value("ααααα")
-            .value_style(Style::default().red(
+    /// Text is wrapped according to [`Wrap`] if set through [`Self::wrap`]. Without wrapping, text
+    /// exceeding the available width is horizontally clipped, and the returned height is the number
+    /// of text lines plus the block's vertical borders and padding.
+    /// # Examples
+    /// ```
+    /// # #[cfg(feature = "unstable-rendered-line-info")] {
+    /// use ratatui::widgets::{Paragraph, Wrap};
+    /// let paragraph = Paragraph::new("Hello World").wrap(Wrap { trim: false });
+    /// # }
+    /// ```
+    ///
+    /// ## Determining Rendered Height
+    ///
+    /// The returned height can be used to size the render area for the given width.
+    ///
+    /// ```
+    /// # #[cfg(feature = "unstable-rendered-line-info")] {
+    /// use ratatui::buffer::Buffer;
+    /// use
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+    /// Calculates the number of lines needed to fully render.
+    /// Given a max line width, this method calculates the number of lines that a paragraph will
+    /// need in order to be fully rendered. For paragraphs that do not use wrapping, this count is
+    /// simply the number of lines present in the paragraph.
+    /// This method will also account for the [`Block`] if one is set through [`Self::block`].
+    /// # Example
+    /// ```ignore
+    /// use ratatui::{widgets::{Paragraph, Wrap}};
+    /// let paragraph = Paragraph::new("Hello World")
+    ///     .wrap(Wrap { trim: false });
+        if width < 1 {
+        let (top, bottom) = self
+            .map(Block::vertical_space)
+            let mut line_composer = WordWrapper::new(styled, width, trim);
+    use crate::block::TitlePosition;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6d208e68` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `27c7483c` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

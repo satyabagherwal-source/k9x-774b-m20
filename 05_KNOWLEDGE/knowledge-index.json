@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T23:41:29.072Z",
+  "last_updated": "2026-11-22T23:49:28.540Z",
   "total_verified_learnings": 9075,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23812,
+  "total_items": 23815,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "876d57cadd7d2488f49a996a723bf667afd6265bff1b6f64835c7ffb88217d2b",
+      "content_hash": "8cce9ce0aeb89cfc843f0aa708787e428b932cf692175ce66749651ed537d418",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T23:25:11.746Z"
+      "persisted_at": "2026-11-22T23:49:28.235Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "68ced311ab27a974fc50127c794d1b6969f4a1aa8ba431278d978dbac3714563",
+      "content_hash": "e5034039230d1f5c402f57be268f7731521fe377b1d4a0f8db9a55cdbf50af26",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T23:25:11.926Z"
+      "persisted_at": "2026-11-22T23:49:28.400Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "f965244f21b1aaaf8245f3d02571d66332535981e67c1a76069ed2c8931ea239",
+      "content_hash": "0876232fdc8e486fa3c64bc1a7f980e7280f3a479483dd7166d5dc94c91a939e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T23:25:12.062Z"
+      "persisted_at": "2026-11-22T23:49:28.540Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -214568,7 +214568,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
       "source_version": "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
-      "content_hash": "a3619a143602689e56e5775e8fe793e43c2cb78e19e9068b5980170fd04f1321",
+      "content_hash": "0480b1a59483970fe456929c5be1984450ea7c0cf17d54384712875b2fb784a6",
       "dossier_path": "07_PROJECT_LEARNING/hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-learnings.md",
       "promoted_rules": [],
@@ -214577,7 +214577,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T16:31:29.098Z",
+      "verified_at": "2026-11-22T23:49:14.224Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -214594,9 +214594,9 @@
       "title": "Research & Knowledge Intelligence: DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF Core Invariants",
       "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
       "source_version": "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
-      "content_hash": "2b592139179f8c5a545d29a1c5ebb804d262e7124563eba633e45405bbed0b03",
+      "content_hash": "899b69d1bd6e941199e0d843fa5b10c0c37c53d07013dd160e585d4d71c44692",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T16:31:29.636Z"
+      "persisted_at": "2026-11-22T23:49:14.671Z"
     },
     "learn-github-karakeep-app-karakeep": {
       "learning_id": "learn-github-karakeep-app-karakeep",
@@ -214699,9 +214699,9 @@
       "title": "Research & Knowledge Intelligence: hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-learnings Core Invariants",
       "repository": "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "6a99074fdc608b8f3297f467dba8f432fdf2918d119a8388710f4c3b526b5388",
+      "content_hash": "57dbd2fa4d1566bd99c50a5f6ecc065e773554053148e32e2cbc449f3e9be1f6",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T16:32:23.316Z"
+      "persisted_at": "2026-11-22T23:49:27.406Z"
     },
     "candidate_directive-docker-pin-node-js-to-24-22-3-for-the-november-2026-security-release": {
       "item_id": "candidate_directive-docker-pin-node-js-to-24-22-3-for-the-november-2026-security-release",
@@ -265034,8 +265034,8 @@
       "slug": "ratatui-ratatui",
       "platform": "github",
       "source_url": "https://github.com/ratatui/ratatui",
-      "source_version": "29196825",
-      "content_hash": "1beefc20d35f382c419fe9ee720dcf237c67cb20b2c3bcc777bd8fb5ad6a55ca",
+      "source_version": "5a28bec1",
+      "content_hash": "452af68dcdefb3ace24dafaadb6c103a689201514e01efe766087c84e9e0efb9",
       "dossier_path": "07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
       "promoted_rules": [
@@ -265048,6 +265048,11 @@
           "number": 9811,
           "title": "split horizontal value text by display width",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10006,
+          "title": "account for block borders and padding in line_count",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -265055,7 +265060,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T17:41:49.458Z",
+      "verified_at": "2026-11-22T23:49:16.972Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -265097,10 +265102,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ratatui-ratatui-architecture-intelligence-ratatui-ratatui-core-invariants.md",
       "title": "Architecture Intelligence: ratatui/ratatui Core Invariants",
       "repository": "ratatui/ratatui",
-      "source_version": "29196825",
-      "content_hash": "6f599d9091f24633b6bdc7febf544a2df8352653c21305175ec97e5a1a78aca0",
+      "source_version": "5a28bec1",
+      "content_hash": "18b0a6788faabf09577c04483707c1847eaa0e39cee5ddf202d4e8c5d3e69bfc",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T17:41:50.071Z"
+      "persisted_at": "2026-11-22T23:49:17.582Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-ratatui-ratatui": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-ratatui-ratatui",
@@ -265109,10 +265114,10 @@
       "relative_path": "08_VERIFICATION/ratatui-ratatui-verification-protocol-empirical-defect-shield-for-ratatui-ratatu.md",
       "title": "Verification Protocol: Empirical Defect Shield for ratatui/ratatui",
       "repository": "ratatui/ratatui",
-      "source_version": "29196825",
-      "content_hash": "9f21f9b95ed6cf49e00f8abd2512dc93b60b993a6c90fc588b50ba5e5aa2b455",
+      "source_version": "5a28bec1",
+      "content_hash": "353edeff01316127bd8dcb4864e473bf734efde4f21b6e91335fd57661bfaa42",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T17:41:50.245Z"
+      "persisted_at": "2026-11-22T23:49:17.751Z"
     },
     "rule-8825": {
       "learning_id": "rule-8825",
@@ -265186,9 +265191,9 @@
       "title": "Architecture Intelligence: ratatui-ratatui-learnings Core Invariants",
       "repository": "ratatui-ratatui-learnings",
       "source_version": "HEAD",
-      "content_hash": "a636acca72b782663552c434db5e679062086a2eebeb2eafd9e37a22516338fa",
+      "content_hash": "72ac7a4161fe13b2fee18bd179814b2e02741e9346c149705790e0a4e5094219",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T17:42:05.431Z"
+      "persisted_at": "2026-11-22T23:49:26.879Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-ratatui-ratatui-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-ratatui-ratatui-learnings",
@@ -265198,9 +265203,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for ratatui-ratatui-learnings",
       "repository": "ratatui-ratatui-learnings",
       "source_version": "HEAD",
-      "content_hash": "67ae8faf7c5d20c57a8f421cb255d1345350d20c85c5a4e76e1a7e3429fa7e9e",
+      "content_hash": "593450b545212464a3bd3ee320b1344a60cc837b4b83fbe83fdd5f0581c4f885",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T17:42:05.597Z"
+      "persisted_at": "2026-11-22T23:49:27.047Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-prunaai-p-h3-image-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-prunaai-p-h3-image-learnings-core-invariants",
@@ -309969,13 +309974,13 @@
       "item_id": "candidate_directive-benchmarks-report-gold-coverage-across-retrieval-stages",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-SPW7-benchmarks-report-gold-coverage-across-retrieval-stages.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-NXQ3-benchmarks-report-gold-coverage-across-retrieval-stages.md",
       "title": "benchmarks): report Gold coverage across retrieval stages",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "cff295c0875be1f6b81c105cc8e9ff66e3b6f928f23c073d51dbd31426eee9c4",
+      "content_hash": "af530bb38edece2ce37bab7a37d103dcf3bf12c542004d62cc5944d3fff23811",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T23:25:11.578Z"
+      "persisted_at": "2026-11-22T23:49:28.062Z"
     },
     "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it": {
       "item_id": "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it",
@@ -324212,6 +324217,44 @@
       "content_hash": "4847df3dd1aaaa8eb3f4de06a25bbd034797205662e047a6360d1e7899ddf2f0",
       "domain_letter": "H",
       "persisted_at": "2026-11-22T23:33:27.103Z"
+    },
+    "rule-10006": {
+      "learning_id": "rule-10006",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10006,
+      "title": "account for block borders and padding in line_count",
+      "source_url": "https://github.com/ratatui/ratatui",
+      "source_version": "5a28bec1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T23:49:16.972Z"
+    },
+    "candidate_directive-account-for-block-borders-and-padding-in-line_count": {
+      "item_id": "candidate_directive-account-for-block-borders-and-padding-in-line_count",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-NPI9-account-for-block-borders-and-padding-in-line_count.md",
+      "title": "account for block borders and padding in line_count",
+      "repository": "ratatui/ratatui",
+      "source_version": "5a28bec1",
+      "content_hash": "99d1bef78f7012ed8a5bd844d7484938745a6b6f8d65f61fd6a94816b304b7cd",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-22T23:49:17.411Z"
+    },
+    "candidate_directive-paragraph-account-for-block-borders-and-padding-in-line_count": {
+      "item_id": "candidate_directive-paragraph-account-for-block-borders-and-padding-in-line_count",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-NWOO-paragraph-account-for-block-borders-and-padding-in-line_count.md",
+      "title": "paragraph): account for block borders and padding in line_count",
+      "repository": "ratatui-ratatui-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0c782256894308de65d6a285967877091fa0e853bc1f548ba85db1739bbc971d",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-22T23:49:26.713Z"
     }
   },
   "ai-builder-brain": {

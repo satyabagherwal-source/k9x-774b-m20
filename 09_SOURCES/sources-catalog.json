@@ -645,8 +645,8 @@
     "sourceUrl": "https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
     "sourceVersion": "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
     "license": "Open-Source",
-    "contentHash": "a3619a143602689e56e5775e8fe793e43c2cb78e19e9068b5980170fd04f1321",
-    "lastHarvestedAt": "2026-11-18T16:31:29.403Z",
+    "contentHash": "0480b1a59483970fe456929c5be1984450ea7c0cf17d54384712875b2fb784a6",
+    "lastHarvestedAt": "2026-11-22T23:49:14.456Z",
     "learningId": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf"
   },
   "hf-canberkkkkkk-ema-lightning": {
@@ -3553,10 +3553,10 @@
     "repository": "ratatui/ratatui",
     "platform": "github",
     "sourceUrl": "https://github.com/ratatui/ratatui",
-    "sourceVersion": "29196825",
+    "sourceVersion": "5a28bec1",
     "license": "MIT",
-    "contentHash": "1beefc20d35f382c419fe9ee720dcf237c67cb20b2c3bcc777bd8fb5ad6a55ca",
-    "lastHarvestedAt": "2026-11-21T17:41:49.682Z",
+    "contentHash": "452af68dcdefb3ace24dafaadb6c103a689201514e01efe766087c84e9e0efb9",
+    "lastHarvestedAt": "2026-11-22T23:49:17.183Z",
     "learningId": "learn-github-ratatui-ratatui"
   },
   "invertase-react-native-firebase": {

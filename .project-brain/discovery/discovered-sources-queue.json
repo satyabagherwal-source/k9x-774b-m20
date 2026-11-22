@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-22T23:33:32.903Z",
+  "updated_at": "2026-11-22T23:49:26.496Z",
   "stats": {
-    "total_discovered": 7714,
-    "approved_pending_harvest": 7306,
+    "total_discovered": 7721,
+    "approved_pending_harvest": 7313,
     "harvested_count": 0,
     "rejected_count": 408,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7288,
+      "COMMUNITY_AND_EXPERT": 7295,
       "OFFICIAL_DOCUMENTATION": 246,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 5,
@@ -166875,6 +166875,160 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/maziyarpanahi-openmed-learnings.md",
         "fileName": "maziyarpanahi-openmed-learnings.md"
+      }
+    },
+    "SRC-CD66B97217EC": {
+      "id": "SRC-CD66B97217EC",
+      "url": "https://app.codecov.io/gh/ratatui/ratatui/pull/2948?dropdown=coverage&src=pr&el=h1",
+      "title": "https://app.codecov.io/gh/ratatui/ratatui/pull/2948?dropdown=coverage&src=pr&el=h1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T23:49:26.206Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-1686AE230CC5": {
+      "id": "SRC-1686AE230CC5",
+      "url": "https://app.codecov.io/gh/ratatui/ratatui/commit/529f654838fc3732f4fdb675a3acf7e9d003921d?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/ratatui/ratatui/commit/529f654838fc3732f4fdb675a3acf7e9d003921d?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T23:49:26.257Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-C639528C5798": {
+      "id": "SRC-C639528C5798",
+      "url": "https://app.codecov.io/gh/ratatui/ratatui/commit/6b8369a6dbec9e622570edfb92863e46485d0570?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/ratatui/ratatui/commit/6b8369a6dbec9e622570edfb92863e46485d0570?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T23:49:26.305Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-74470CDC74FE": {
+      "id": "SRC-74470CDC74FE",
+      "url": "https://app.codecov.io/gh/ratatui/ratatui/pull/2946?dropdown=coverage&src=pr&el=h1",
+      "title": "https://app.codecov.io/gh/ratatui/ratatui/pull/2946?dropdown=coverage&src=pr&el=h1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T23:49:26.352Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-3961865139CF": {
+      "id": "SRC-3961865139CF",
+      "url": "https://app.codecov.io/gh/ratatui/ratatui/commit/7c6a326c1a470874ee17ef54b7da09fd6c8eaa23?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/ratatui/ratatui/commit/7c6a326c1a470874ee17ef54b7da09fd6c8eaa23?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T23:49:26.403Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-C56E48C4EBFE": {
+      "id": "SRC-C56E48C4EBFE",
+      "url": "https://app.codecov.io/gh/ratatui/ratatui/commit/caae6f2f8fbf76803626e5978e73f0275543ac27?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/ratatui/ratatui/commit/caae6f2f8fbf76803626e5978e73f0275543ac27?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T23:49:26.449Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-63B0D1CB2286": {
+      "id": "SRC-63B0D1CB2286",
+      "url": "https://github.com/ratatui/ratatui/issues/293",
+      "title": "https://github.com/ratatui/ratatui/issues/293",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T23:49:26.496Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
       }
     }
   }

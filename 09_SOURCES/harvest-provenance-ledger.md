@@ -12265,3 +12265,5 @@ Every entry in this ledger must capture:
 | `learn-github-maziyarpanahi-openmed` | `https://github.com/maziyarpanahi/openmed` | `3ee61a86` | Multi-dimensional audit evidence | 2026-11-22T23:33:18.175Z |
 | `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `0c30c6ea` | Multi-dimensional audit evidence | 2026-11-22T23:33:26.856Z |
 | `learn-huggingface-huggingfacetb-smolvlm2-256m-video-instruct` | `https://huggingface.co/HuggingFaceTB/SmolVLM2-256M-Video-Instruct` | `hf-hugging` | Multi-dimensional audit evidence | 2026-11-22T23:41:15.205Z |
+| `learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf` | `https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF` | `hf-davidau` | Multi-dimensional audit evidence | 2026-11-22T23:49:14.456Z |
+| `learn-github-ratatui-ratatui` | `https://github.com/ratatui/ratatui` | `5a28bec1` | Multi-dimensional audit evidence | 2026-11-22T23:49:17.183Z |
