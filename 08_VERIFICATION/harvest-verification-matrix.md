@@ -12059,3 +12059,4 @@
 | `CYCLE-20261122-346Q` | `2026-11-22T08:09:29.330Z` | `onejs/one` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9915` | Yes (`368bc90f...`) |
 | `CYCLE-20261122-KEY8` | `2026-11-22T08:22:56.432Z` | `DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-davidau-qwen3.5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf-learnings.md` | Yes (`34dd1484...`) |
 | `CYCLE-20261122-7NZE` | `2026-11-22T08:41:01.226Z` | `laion/clap-htsat-fused` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-laion-clap-htsat-fused-learnings.md` | Yes (`d6f0b51a...`) |
+| `CYCLE-20261122-ABPO` | `2026-11-22T09:11:04.908Z` | `adventists-ai/Sophon-Realtime-v1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-adventists-ai-sophon-realtime-v1-learnings.md` | Yes (`cd80a5ed...`) |

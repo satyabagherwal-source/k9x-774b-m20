@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T08:41:06.457Z",
+  "last_updated": "2026-11-22T09:11:09.845Z",
   "total_verified_learnings": 9070,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "12b140acfc6ded004782cfdc26f14597a72c4fceeb0f24d64eccd08def72668a",
+      "content_hash": "f8701e932d55d25ef96facd5c0135ff0382c70f3c7317803e357b4e0b7da6beb",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T08:23:00.272Z"
+      "persisted_at": "2026-11-22T09:11:09.669Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "de45b0dc880864d09777f708fc6f2e16bfe6eef384972d6527f531a00baaceb0",
+      "content_hash": "3dad6c56d679a64225dd8eac742e524f2e8a28323b432a1b9f4e5e7ec84b1960",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T08:23:00.435Z"
+      "persisted_at": "2026-11-22T09:11:09.845Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -218925,13 +218925,13 @@
       "item_id": "candidate_directive-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-3T25-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-AEM3-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "42694838b1649e4dfba1cf99087b7f9306139feec7a3398051ef709bdd165923",
+      "content_hash": "1c0685c8dca193d4f65abbeeb71490b5156c9e66cb26fd84e7eccb2c8fc71380",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T07:14:02.334Z"
+      "persisted_at": "2026-11-22T09:11:08.667Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c",
@@ -218941,9 +218941,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "9fcb578ac9ad177917ad82aee83899d4b2de4052ed348b2f47aad5764e273797",
+      "content_hash": "bdafc9562ef0eb33b397ca6201d22961bd92fc44a8e0e6300fa33bf1011f546e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T07:14:02.508Z"
+      "persisted_at": "2026-11-22T09:11:08.851Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -218953,9 +218953,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "265f1275ff7a205c52caf706a5a4c51c384fb99b15b686a067d97c7c4ca0a663",
+      "content_hash": "88d3d318dd313e53d7ec8730e6b4b391611383b5be2c406f18f15a4759035eb8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T07:14:02.682Z"
+      "persisted_at": "2026-11-22T09:11:09.035Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -228822,7 +228822,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/adventists-ai/Sophon-Realtime-v1",
       "source_version": "hf-adventists-ai-sophon-realtime-v1",
-      "content_hash": "b341513ce2f8c9a693175b7f06d075bede692503bbef50ff19bfa9137a133469",
+      "content_hash": "cd80a5ed28b446d6e04b91429b618cb485ef23cc1184df0dbdee4f64820bccd7",
       "dossier_path": "07_PROJECT_LEARNING/hf-adventists-ai-sophon-realtime-v1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-adventists-ai-sophon-realtime-v1-learnings.md",
       "promoted_rules": [],
@@ -228831,7 +228831,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T10:16:31.160Z",
+      "verified_at": "2026-11-22T09:11:04.660Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -228848,9 +228848,9 @@
       "title": "Research & Knowledge Intelligence: adventists-ai/Sophon-Realtime-v1 Core Invariants",
       "repository": "adventists-ai/Sophon-Realtime-v1",
       "source_version": "hf-adventists-ai-sophon-realtime-v1",
-      "content_hash": "5d5e4ab85e59b22d880eba7a1f9a5cf60261b80b558d6716c1195f5ab0d7b153",
+      "content_hash": "db55694535c9b37200149c2ac6d276b04d910b48192234a06a7269332a86beb7",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T10:16:31.546Z"
+      "persisted_at": "2026-11-22T09:11:05.121Z"
     },
     "learn-github-software-mansion-react-native-gesture-handler": {
       "learning_id": "learn-github-software-mansion-react-native-gesture-handler",
@@ -229032,9 +229032,9 @@
       "title": "Research & Knowledge Intelligence: hf-adventists-ai-sophon-realtime-v1-learnings Core Invariants",
       "repository": "hf-adventists-ai-sophon-realtime-v1-learnings",
       "source_version": "HEAD",
-      "content_hash": "5699e4be69ac3250fd30e55e5d7b322b1a14447cce173169451f7473851325cf",
+      "content_hash": "a654c4aa3c370190cfc40dad20fe2c92171f02a78a53551f1e5228bbdb44ddc7",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T10:17:19.633Z"
+      "persisted_at": "2026-11-22T09:11:08.194Z"
     },
     "domain_intelligence-architecture-intelligence-software-mansion-react-native-gesture-handler-learning": {
       "item_id": "domain_intelligence-architecture-intelligence-software-mansion-react-native-gesture-handler-learning",
@@ -318298,13 +318298,13 @@
       "item_id": "candidate_directive-test-collab-write-trust-fixtures-with-explicit-0644-permissions",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-KHSE-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-AF8Z-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "b500e9d4a7492b4933947eddd4d0d6a2d97881a6dd0c9840d320adfe6ae065cd",
+      "content_hash": "683f1274b95a17c503b6688a70955dc88304d580c68c93831451130008d0ba5d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T08:23:00.113Z"
+      "persisted_at": "2026-11-22T09:11:09.494Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants",

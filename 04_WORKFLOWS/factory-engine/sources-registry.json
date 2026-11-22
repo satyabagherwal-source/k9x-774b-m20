@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-22T08:41:04.114Z",
-    "lastVerified": "2026-11-22T08:41:04.114Z",
+    "lastChecked": "2026-11-22T09:11:07.821Z",
+    "lastVerified": "2026-11-22T09:11:07.821Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -255,9 +255,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-22T07:56:45.121Z",
+    "lastChecked": "2026-11-22T09:04:38.596Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-22T07:56:45.121Z"
+    "lastVerified": "2026-11-22T09:04:38.596Z"
   },
   "herdrdev-herdr": {
     "name": "herdrdev/herdr",
@@ -1808,8 +1808,8 @@
     "officialUrl": "https://github.com/sigstore/cosign",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-22T03:54:11.932Z",
-    "lastVerified": "2026-11-22T03:54:11.932Z",
+    "lastChecked": "2026-11-22T09:04:33.666Z",
+    "lastVerified": "2026-11-22T09:04:33.666Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sigstore-cosign",
@@ -4642,9 +4642,9 @@
   "skyzh-mini-lsm": {
     "name": "mini-lsm",
     "officialUrl": "https://github.com/skyzh/mini-lsm",
-    "lastChecked": "2026-11-21T04:48:33.367Z",
+    "lastChecked": "2026-11-22T09:04:36.025Z",
     "revisionIdentifier": "df2120d7",
-    "lastVerified": "2026-11-21T04:48:33.367Z"
+    "lastVerified": "2026-11-22T09:04:36.026Z"
   },
   "kucherenko-jscpd": {
     "name": "kucherenko/jscpd",
@@ -5776,9 +5776,9 @@
   "decodingai-magazine-llm-twin-course": {
     "name": "llm-twin-course",
     "officialUrl": "https://github.com/decodingai-magazine/llm-twin-course",
-    "lastChecked": "2026-11-21T06:42:16.874Z",
+    "lastChecked": "2026-11-22T09:04:31.084Z",
     "revisionIdentifier": "04e12f37",
-    "lastVerified": "2026-11-21T06:42:16.874Z"
+    "lastVerified": "2026-11-22T09:04:31.084Z"
   },
   "apache-zookeeper": {
     "name": "zookeeper",
@@ -7119,9 +7119,9 @@
   "apollographql-apollo-kotlin": {
     "name": "apollo-kotlin",
     "officialUrl": "https://github.com/apollographql/apollo-kotlin",
-    "lastChecked": "2026-11-19T06:30:04.064Z",
+    "lastChecked": "2026-11-22T09:04:28.606Z",
     "revisionIdentifier": "257ec5f0",
-    "lastVerified": "2026-11-19T06:30:04.064Z"
+    "lastVerified": "2026-11-22T09:04:28.606Z"
   },
   "prometheus-prometheus": {
     "name": "prometheus/prometheus",
@@ -7572,9 +7572,9 @@
   "arxanas-git-branchless": {
     "name": "git-branchless",
     "officialUrl": "https://github.com/arxanas/git-branchless",
-    "lastChecked": "2026-11-20T23:13:20.650Z",
+    "lastChecked": "2026-11-22T09:04:23.610Z",
     "revisionIdentifier": "d0eceb7e",
-    "lastVerified": "2026-11-20T23:13:20.650Z"
+    "lastVerified": "2026-11-22T09:04:23.610Z"
   },
   "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf": {
     "name": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
@@ -14062,6 +14062,23 @@
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-laion-clap-htsat-fused",
     "contentHash": "d6f0b51a8f715ff982ac2ad4d10b96e3291dcdb283907631341671decc2f1910",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-adventists-ai-sophon-realtime-v1": {
+    "name": "adventists-ai/Sophon-Realtime-v1",
+    "officialUrl": "https://huggingface.co/adventists-ai/Sophon-Realtime-v1",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-22T09:04:26.471Z",
+    "lastVerified": "2026-11-22T09:04:26.471Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-adventists-ai-sophon-realtime-v1",
+    "contentHash": "cd80a5ed28b446d6e04b91429b618cb485ef23cc1184df0dbdee4f64820bccd7",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

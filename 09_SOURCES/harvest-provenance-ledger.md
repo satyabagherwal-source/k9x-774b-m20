@@ -12092,3 +12092,4 @@ Every entry in this ledger must capture:
 | `learn-github-onejs-one` | `https://github.com/onejs/one` | `23a33ef5` | Multi-dimensional audit evidence | 2026-11-22T08:09:29.335Z |
 | `learn-huggingface-davidau-qwen3-5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf` | `https://huggingface.co/DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF` | `hf-davidau` | Multi-dimensional audit evidence | 2026-11-22T08:22:56.436Z |
 | `learn-huggingface-laion-clap-htsat-fused` | `https://huggingface.co/laion/clap-htsat-fused` | `hf-laion-c` | Multi-dimensional audit evidence | 2026-11-22T08:41:01.230Z |
+| `learn-huggingface-adventists-ai-sophon-realtime-v1` | `https://huggingface.co/adventists-ai/Sophon-Realtime-v1` | `hf-adventi` | Multi-dimensional audit evidence | 2026-11-22T09:11:04.913Z |

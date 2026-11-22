@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261120-DB64",
-    "timestamp": "2026-11-20T09:10:03.724Z",
-    "repository": "opentofu/opentofu",
-    "learningId": "learn-github-opentofu-opentofu",
-    "contentHash": "533fff1cc0f287cd15f6f1938d8c8b6e0f94b5ba1dec57d288ce50c9fefea8a2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261120-E0CG",
     "timestamp": "2026-11-20T09:10:36.352Z",
     "repository": "NucleoidAI/Nucleoid",
@@ -7490,6 +7475,21 @@
     "repository": "laion/clap-htsat-fused",
     "learningId": "learn-huggingface-laion-clap-htsat-fused",
     "contentHash": "d6f0b51a8f715ff982ac2ad4d10b96e3291dcdb283907631341671decc2f1910",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-ABPO",
+    "timestamp": "2026-11-22T09:11:04.908Z",
+    "repository": "adventists-ai/Sophon-Realtime-v1",
+    "learningId": "learn-huggingface-adventists-ai-sophon-realtime-v1",
+    "contentHash": "cd80a5ed28b446d6e04b91429b618cb485ef23cc1184df0dbdee4f64820bccd7",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

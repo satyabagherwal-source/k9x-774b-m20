@@ -12555,8 +12555,8 @@
     "sourceUrl": "https://huggingface.co/adventists-ai/Sophon-Realtime-v1",
     "sourceVersion": "hf-adventists-ai-sophon-realtime-v1",
     "license": "Open-Source",
-    "contentHash": "b341513ce2f8c9a693175b7f06d075bede692503bbef50ff19bfa9137a133469",
-    "lastHarvestedAt": "2026-11-14T10:16:31.342Z",
+    "contentHash": "cd80a5ed28b446d6e04b91429b618cb485ef23cc1184df0dbdee4f64820bccd7",
+    "lastHarvestedAt": "2026-11-22T09:11:04.913Z",
     "learningId": "learn-huggingface-adventists-ai-sophon-realtime-v1"
   },
   "hf-deepseek-ai-deepseek-v3.2": {

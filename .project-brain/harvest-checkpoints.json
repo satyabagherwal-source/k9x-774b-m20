@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T08:41:01.238Z",
+  "last_updated": "2026-11-22T09:11:04.922Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -18891,14 +18891,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-adventists-ai-sophon-realtime-v1",
-      "content_hash": "b341513ce2f8c9a693175b7f06d075bede692503bbef50ff19bfa9137a133469",
-      "verified_at": "2026-11-14T10:16:31.352Z",
+      "content_hash": "cd80a5ed28b446d6e04b91429b618cb485ef23cc1184df0dbdee4f64820bccd7",
+      "verified_at": "2026-11-22T09:11:04.921Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T10:16:31.352Z"
+      "last_updated": "2026-11-22T09:11:04.921Z"
     },
     "deepseek-ai/DeepSeek-V3.2": {
       "repository": "deepseek-ai/DeepSeek-V3.2",

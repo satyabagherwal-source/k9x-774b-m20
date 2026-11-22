@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/adventists-ai/Sophon-Realtime-v1",
   "source_version": "hf-adventists-ai-sophon-realtime-v1",
   "license": "Open-Source",
-  "timestamp": "2026-11-14T10:16:31.545Z",
+  "timestamp": "2026-11-22T09:11:05.120Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-adventists-ai-sophon-realtime-v1",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [adventists-ai/Sophon-Realtime-v1](https://huggingface.co/adventists-ai/Sophon-Realtime-v1) (Revision: `hf-adventi`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-14T10:16:31.545Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T09:11:05.120Z`  
 > **Learning ID**: `learn-huggingface-adventists-ai-sophon-realtime-v1`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-adventists-ai-sophon-realtime-v1-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/adventists-ai/Sophon-Realtime-v1](https://huggingface.co/adventists-ai/Sophon-Realtime-v1))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T10:16:30.913Z  
+> **Harvest Timestamp**: 2026-11-22T09:04:26.471Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: any-to-any
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 0 downloads | 253 likes
+- **Stars / Engagement**: 0 downloads | 255 likes
 
 ---
 
