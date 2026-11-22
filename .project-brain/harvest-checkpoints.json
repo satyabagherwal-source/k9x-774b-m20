@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T19:01:47.565Z",
+  "last_updated": "2026-11-22T19:10:00.002Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -410,14 +410,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-lightricks-ltx-2-5",
-      "content_hash": "78ef199998c215421e97e52e21efc5f0ae2f999be5265c560549a4c14f85e5f3",
-      "verified_at": "2026-11-18T12:33:02.575Z",
+      "content_hash": "41b047a71d8688399cb1a27565939c8f8d11742863465e0d45ba84790e02efcf",
+      "verified_at": "2026-11-22T19:09:43.083Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T12:33:02.575Z"
+      "last_updated": "2026-11-22T19:09:43.083Z"
     },
     "prism-ml/Ternary-Bonsai-2-27B-gguf": {
       "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
@@ -3591,14 +3591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "content_hash": "639d0dcf56ad0e78636af32e2143928c23aed9fd6fc72ccb2daa772728596161",
-      "verified_at": "2026-11-19T20:55:55.821Z",
+      "content_hash": "781dd525fb5bd6abce22a089c0435c4b68c51a12e93d5d7a19683acb163dcfb1",
+      "verified_at": "2026-11-22T19:10:00.001Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T20:55:55.822Z"
+      "last_updated": "2026-11-22T19:10:00.001Z"
     },
     "adobe/react-spectrum": {
       "repository": "adobe/react-spectrum",
@@ -10701,14 +10701,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pingcap-tidb",
-      "content_hash": "bb2605ce97a9def31b229a55786029388f8d2550dd951956b6aa74932ba450b0",
-      "verified_at": "2026-11-21T19:44:56.556Z",
+      "content_hash": "c47b4a2bae09b05efb93ad44d0421844c5223fa2a60b92b72e34ca6da2154a58",
+      "verified_at": "2026-11-22T19:09:52.450Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T19:44:56.556Z"
+      "last_updated": "2026-11-22T19:09:52.450Z"
     },
     "neondatabase/neon": {
       "repository": "neondatabase/neon",
@@ -11826,14 +11826,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sxyazi-yazi",
-      "content_hash": "fe63c50f1962d6b6a21be4c84c66a3913f469d60b79943934756c16da89d6efd",
-      "verified_at": "2026-11-13T05:23:42.748Z",
+      "content_hash": "a0607ecbbe04356a940683ebd36818e0485257fe1d28df995344eb06fc6bca9e",
+      "verified_at": "2026-11-22T19:09:44.571Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T05:23:42.748Z"
+      "last_updated": "2026-11-22T19:09:44.571Z"
     },
     "ronitsingh10/FineTune": {
       "repository": "ronitsingh10/FineTune",

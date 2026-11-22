@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T19:01:53.254Z",
+  "last_updated": "2026-11-22T19:10:04.910Z",
   "directives": [
     {
       "id": "CD-001",
@@ -47149,6 +47149,57 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-22",
       "domain_letter": "A"
+    },
+    {
+      "id": "CD-OM7T",
+      "directive_title": "block `paste --force`, `link --force`, and `hardlink --force` onto the same file",
+      "source_repo": "sxyazi-yazi-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-OM7T-block-paste-force-link-force-and-hardlink-force-onto-the-same-file.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-22",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-ON6Z",
+      "directive_title": "*: add issue discovery source section to bug report template",
+      "source_repo": "pingcap-tidb-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-ON6Z-add-issue-discovery-source-section-to-bug-report-template.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-22",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-OJKG",
+      "directive_title": "retry one-shot completions with thinking between_tools when a model rej",
+      "source_repo": "Bitterbot-AI/bitterbot-desktop",
+      "source_commit": "2db04dd3",
+      "staged_file": "11_INBOX/candidate-directives/CD-OJKG-retry-one-shot-completions-with-thinking-between_tools-when-a-model-rej.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-22",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-5A4E93",
+      "directive_title": "block `paste --force`, `link --force`, and `hardlink --force` onto the same file",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "sxyazi-yazi",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-5A4E93-block-paste-force-link-force-and-hardlin.md",
+      "staged_date": "2026-11-22"
+    },
+    {
+      "id": "CD-REV-4239CF",
+      "directive_title": "*: add issue discovery source section to bug report template",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "pingcap-tidb",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-4239CF--add-issue-discovery-source-section-to-b.md",
+      "staged_date": "2026-11-22"
     }
   ]
 }

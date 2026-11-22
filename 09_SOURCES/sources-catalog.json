@@ -345,8 +345,8 @@
     "sourceUrl": "https://huggingface.co/Lightricks/LTX-2.5",
     "sourceVersion": "hf-lightricks-ltx-2.5",
     "license": "Open-Source",
-    "contentHash": "78ef199998c215421e97e52e21efc5f0ae2f999be5265c560549a4c14f85e5f3",
-    "lastHarvestedAt": "2026-11-18T12:33:02.565Z",
+    "contentHash": "41b047a71d8688399cb1a27565939c8f8d11742863465e0d45ba84790e02efcf",
+    "lastHarvestedAt": "2026-11-22T19:09:43.075Z",
     "learningId": "learn-huggingface-lightricks-ltx-2-5"
   },
   "hf-prism-ml-ternary-bonsai-2-27b-gguf": {
@@ -2303,10 +2303,10 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "sourceVersion": "12f3d096",
+    "sourceVersion": "2db04dd3",
     "license": "MIT",
-    "contentHash": "639d0dcf56ad0e78636af32e2143928c23aed9fd6fc72ccb2daa772728596161",
-    "lastHarvestedAt": "2026-11-19T20:55:55.790Z",
+    "contentHash": "781dd525fb5bd6abce22a089c0435c4b68c51a12e93d5d7a19683acb163dcfb1",
+    "lastHarvestedAt": "2026-11-22T19:09:59.993Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   },
   "adobe-react-spectrum": {
@@ -7103,10 +7103,10 @@
     "repository": "pingcap/tidb",
     "platform": "github",
     "sourceUrl": "https://github.com/pingcap/tidb",
-    "sourceVersion": "bf712cf6",
+    "sourceVersion": "bca43971",
     "license": "Apache-2.0",
-    "contentHash": "bb2605ce97a9def31b229a55786029388f8d2550dd951956b6aa74932ba450b0",
-    "lastHarvestedAt": "2026-11-21T19:44:56.549Z",
+    "contentHash": "c47b4a2bae09b05efb93ad44d0421844c5223fa2a60b92b72e34ca6da2154a58",
+    "lastHarvestedAt": "2026-11-22T19:09:52.420Z",
     "learningId": "learn-github-pingcap-tidb"
   },
   "neondatabase-neon": {
@@ -7863,10 +7863,10 @@
     "repository": "sxyazi/yazi",
     "platform": "github",
     "sourceUrl": "https://github.com/sxyazi/yazi",
-    "sourceVersion": "d5e4beb6",
+    "sourceVersion": "af685064",
     "license": "MIT",
-    "contentHash": "fe63c50f1962d6b6a21be4c84c66a3913f469d60b79943934756c16da89d6efd",
-    "lastHarvestedAt": "2026-11-13T05:23:42.728Z",
+    "contentHash": "a0607ecbbe04356a940683ebd36818e0485257fe1d28df995344eb06fc6bca9e",
+    "lastHarvestedAt": "2026-11-22T19:09:44.563Z",
     "learningId": "learn-github-sxyazi-yazi"
   },
   "ronitsingh10-finetune": {

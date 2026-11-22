@@ -12159,3 +12159,7 @@
 | `CYCLE-20261122-DP2A` | `2026-11-22T19:01:34.114Z` | `nvidia/Nemotron-3-Diarization` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nemotron-3-diarization-learnings.md` | Yes (`d2729c57...`) |
 | `CYCLE-20261122-DQ4S` | `2026-11-22T19:01:35.500Z` | `rtk-ai/rtk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7938` | Yes (`e144b1b4...`) |
 | `CYCLE-20261122-DZFG` | `2026-11-22T19:01:47.548Z` | `dragonflydb/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9976` | Yes (`cfcf0f4b...`) |
+| `CYCLE-20261122-O6CF` | `2026-11-22T19:09:43.071Z` | `Lightricks/LTX-2.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-lightricks-ltx-2.5-learnings.md` | Yes (`41b047a7...`) |
+| `CYCLE-20261122-O7HR` | `2026-11-22T19:09:44.559Z` | `sxyazi/yazi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9977` | Yes (`a0607ecb...`) |
+| `CYCLE-20261122-ODK0` | `2026-11-22T19:09:52.416Z` | `pingcap/tidb` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/pingcap-tidb-learnings.md` | Yes (`c47b4a2b...`) |
+| `CYCLE-20261122-OJED` | `2026-11-22T19:09:59.989Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9978` | Yes (`781dd525...`) |

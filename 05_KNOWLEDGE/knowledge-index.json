@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T19:01:53.698Z",
-  "total_verified_learnings": 9072,
+  "last_updated": "2026-11-22T19:10:05.285Z",
+  "total_verified_learnings": 9073,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23715,
+  "total_items": 23725,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -218608,8 +218608,8 @@
       "slug": "bitterbot-ai-bitterbot-desktop",
       "platform": "github",
       "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-      "source_version": "12f3d096",
-      "content_hash": "639d0dcf56ad0e78636af32e2143928c23aed9fd6fc72ccb2daa772728596161",
+      "source_version": "2db04dd3",
+      "content_hash": "781dd525fb5bd6abce22a089c0435c4b68c51a12e93d5d7a19683acb163dcfb1",
       "dossier_path": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "promoted_rules": [
@@ -218647,6 +218647,11 @@
           "number": 9278,
           "title": "ship a sidecar that carries the package topic, and fail loudly without",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9978,
+          "title": "retry one-shot completions with thinking between_tools when a model rej",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -218654,7 +218659,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T20:55:55.605Z",
+      "verified_at": "2026-11-22T19:09:59.782Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -218708,10 +218713,10 @@
       "relative_path": "08_VERIFICATION/bitterbot-ai-bitterbot-desktop-verification-protocol-empirical-defect-shield-for.md",
       "title": "Verification Protocol: Empirical Defect Shield for Bitterbot-AI/bitterbot-desktop",
       "repository": "Bitterbot-AI/bitterbot-desktop",
-      "source_version": "12f3d096",
-      "content_hash": "2601026c01b187e5f8a5b360c39c911bf8aa1b95b8e18be9c7113e7c8a135e57",
+      "source_version": "2db04dd3",
+      "content_hash": "f32cbc657f7fece551bc3f4a51ddce8eb66b7bfdcfdf4081b18ec6a490e61406",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T20:55:56.314Z"
+      "persisted_at": "2026-11-22T19:10:00.548Z"
     },
     "domain_intelligence-architecture-intelligence-infiniflow-infinity-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-infiniflow-infinity-learnings-core-invariants",
@@ -220943,8 +220948,8 @@
       "slug": "pingcap-tidb",
       "platform": "github",
       "source_url": "https://github.com/pingcap/tidb",
-      "source_version": "bf712cf6",
-      "content_hash": "bb2605ce97a9def31b229a55786029388f8d2550dd951956b6aa74932ba450b0",
+      "source_version": "bca43971",
+      "content_hash": "c47b4a2bae09b05efb93ad44d0421844c5223fa2a60b92b72e34ca6da2154a58",
       "dossier_path": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "promoted_rules": [
@@ -220994,7 +220999,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T19:44:56.390Z",
+      "verified_at": "2026-11-22T19:09:52.182Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -221036,10 +221041,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pingcap-tidb-content-information-intelligence-pingcap-tidb-core-invariants.md",
       "title": "Content & Information Intelligence: pingcap/tidb Core Invariants",
       "repository": "pingcap/tidb",
-      "source_version": "bf712cf6",
-      "content_hash": "6e61d434da1c06ed7328ec593db8526c746247f51d1449856f1d384d9ab4a241",
+      "source_version": "bca43971",
+      "content_hash": "efbad2f484cfe502f9b55baa689e09dc1f7167fac9b2b0f0c5c53949b0da4a3e",
       "domain_letter": "I",
-      "persisted_at": "2026-11-21T19:44:56.852Z"
+      "persisted_at": "2026-11-22T19:09:52.834Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pingcap-tidb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pingcap-tidb",
@@ -221048,10 +221053,10 @@
       "relative_path": "08_VERIFICATION/pingcap-tidb-verification-protocol-empirical-defect-shield-for-pingcap-tidb.md",
       "title": "Verification Protocol: Empirical Defect Shield for pingcap/tidb",
       "repository": "pingcap/tidb",
-      "source_version": "bf712cf6",
-      "content_hash": "d1f5044746aab20ea19cd53c61ec64381aebb3da43ffb06bee8715c6395c3bb9",
+      "source_version": "bca43971",
+      "content_hash": "45e93dafe74e299e767344a251d5f408c256d146de6349bf1e98352a9d0582b9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T19:44:56.982Z"
+      "persisted_at": "2026-11-22T19:09:53.003Z"
     },
     "rule-8415": {
       "learning_id": "rule-8415",
@@ -221123,9 +221128,9 @@
       "title": "Content & Information Intelligence: pingcap-tidb-learnings Core Invariants",
       "repository": "pingcap-tidb-learnings",
       "source_version": "HEAD",
-      "content_hash": "5e42546726f6a2adfa107dab5003906ab9ee0dc713bf4585d44b62884afce024",
+      "content_hash": "b13c0bd54f9f11309a7025bb7f8f36fc3786d1947cd12fe9fdbeb30cae036326",
       "domain_letter": "I",
-      "persisted_at": "2026-11-21T19:47:53.400Z"
+      "persisted_at": "2026-11-22T19:10:05.086Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pingcap-tidb-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pingcap-tidb-learnings",
@@ -221135,9 +221140,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for pingcap-tidb-learnings",
       "repository": "pingcap-tidb-learnings",
       "source_version": "HEAD",
-      "content_hash": "c6e4329dc89ec3127ec460001a83a7627be5866c8d7c57b497e7fd93935c1959",
+      "content_hash": "a1ca1adf28b3fcd94654f3393ae599fff766f927c336a69d008608b77241889b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T19:47:53.545Z"
+      "persisted_at": "2026-11-22T19:10:05.285Z"
     },
     "candidate_directive-deps-bump-lock-file": {
       "item_id": "candidate_directive-deps-bump-lock-file",
@@ -239853,10 +239858,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-bitterbot-ai-bitterbot-desktop-architecture-intelligence-bitterbot-ai-bitterbot-.md",
       "title": "Architecture Intelligence: Bitterbot-AI/bitterbot-desktop Core Invariants",
       "repository": "Bitterbot-AI/bitterbot-desktop",
-      "source_version": "9ef0e544",
-      "content_hash": "96e2a8ad7d935ba4ad3e41d35836d41df7427bb52f48a504d57281d5b9a11133",
+      "source_version": "2db04dd3",
+      "content_hash": "40620c18fc1b114f6599118bc0daf2bcdf486271637873ec8c2cd429fa5c43f1",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T20:14:32.499Z"
+      "persisted_at": "2026-11-22T19:10:00.378Z"
     },
     "domain_intelligence-search-distribution-intelligence-sharkdp-fd-learnings-core-invariants": {
       "item_id": "domain_intelligence-search-distribution-intelligence-sharkdp-fd-learnings-core-invariants",
@@ -283430,7 +283435,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Lightricks/LTX-2.5",
       "source_version": "hf-lightricks-ltx-2.5",
-      "content_hash": "78ef199998c215421e97e52e21efc5f0ae2f999be5265c560549a4c14f85e5f3",
+      "content_hash": "41b047a71d8688399cb1a27565939c8f8d11742863465e0d45ba84790e02efcf",
       "dossier_path": "07_PROJECT_LEARNING/hf-lightricks-ltx-2.5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-lightricks-ltx-2.5-learnings.md",
       "promoted_rules": [],
@@ -283439,7 +283444,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T12:33:02.303Z",
+      "verified_at": "2026-11-22T19:09:42.838Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -283456,9 +283461,9 @@
       "title": "Research & Knowledge Intelligence: Lightricks/LTX-2.5 Core Invariants",
       "repository": "Lightricks/LTX-2.5",
       "source_version": "hf-lightricks-ltx-2.5",
-      "content_hash": "95a52b776390656ec308f3e843104b7c5aad727b4e114e353fbd1cd9cd1ce02b",
+      "content_hash": "09c03976f6f099af7cd3bfa91cfb87c1055f7a82e3d1e7a7f6ff36d42f8c9eb3",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T12:33:02.811Z"
+      "persisted_at": "2026-11-22T19:09:43.282Z"
     },
     "rule-9101": {
       "learning_id": "rule-9101",
@@ -283532,9 +283537,9 @@
       "title": "Research & Knowledge Intelligence: hf-lightricks-ltx-2.5-learnings Core Invariants",
       "repository": "hf-lightricks-ltx-2.5-learnings",
       "source_version": "HEAD",
-      "content_hash": "2ae7c938b2b628da93eb66b4533bd261406fd1ed9b6cd6d9ccf7ee3ad7a7cecc",
+      "content_hash": "d4d8012a0a552af0a8806155aacfddb665009b3d719d808ef90b6a08c1e373c3",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T12:33:33.931Z"
+      "persisted_at": "2026-11-22T19:10:04.361Z"
     },
     "rule-9103": {
       "learning_id": "rule-9103",
@@ -322776,6 +322781,151 @@
       "content_hash": "080865ace1f3c8a63457384a73143449c148ded428bdb5435629d0cefd7b0838",
       "domain_letter": "A",
       "persisted_at": "2026-11-22T19:01:53.254Z"
+    },
+    "learn-github-sxyazi-yazi": {
+      "learning_id": "learn-github-sxyazi-yazi",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "sxyazi/yazi",
+      "repository": "sxyazi/yazi",
+      "slug": "sxyazi-yazi",
+      "platform": "github",
+      "source_url": "https://github.com/sxyazi/yazi",
+      "source_version": "af685064",
+      "content_hash": "a0607ecbbe04356a940683ebd36818e0485257fe1d28df995344eb06fc6bca9e",
+      "dossier_path": "07_PROJECT_LEARNING/sxyazi-yazi-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/sxyazi-yazi-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 9977,
+          "title": "block `paste --force`, `link --force`, and `hardlink --force` onto the same file",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-22T19:09:44.336Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-9977": {
+      "learning_id": "rule-9977",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9977,
+      "title": "block `paste --force`, `link --force`, and `hardlink --force` onto the same file",
+      "source_url": "https://github.com/sxyazi/yazi",
+      "source_version": "af685064",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T19:09:44.336Z"
+    },
+    "candidate_directive-block-paste-force-link-force-and-hardlink-force-onto-the-same-file": {
+      "item_id": "candidate_directive-block-paste-force-link-force-and-hardlink-force-onto-the-same-file",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-OM7T-block-paste-force-link-force-and-hardlink-force-onto-the-same-file.md",
+      "title": "block `paste --force`, `link --force`, and `hardlink --force` onto the same file",
+      "repository": "sxyazi-yazi-learnings",
+      "source_version": "HEAD",
+      "content_hash": "24edda38a60d9b63e3f280ca5271ad769c4fecb2671fe1b8eae4a1d575159d91",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-22T19:10:03.642Z"
+    },
+    "domain_intelligence-architecture-intelligence-sxyazi-yazi-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-sxyazi-yazi-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-sxyazi-yazi-architecture-intelligence-sxyazi-yazi-core-invariants.md",
+      "title": "Architecture Intelligence: sxyazi/yazi Core Invariants",
+      "repository": "sxyazi/yazi",
+      "source_version": "af685064",
+      "content_hash": "62653c887ecec6819c103826bf8ed6ff4d8f7977c351756b188f455ce71fdb93",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-22T19:09:44.968Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-sxyazi-yazi": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-sxyazi-yazi",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/sxyazi-yazi-verification-protocol-empirical-defect-shield-for-sxyazi-yazi.md",
+      "title": "Verification Protocol: Empirical Defect Shield for sxyazi/yazi",
+      "repository": "sxyazi/yazi",
+      "source_version": "af685064",
+      "content_hash": "858060d1e3bc9410ee1240d7588f39efc7c16c609352e88b5d440868a9b511dc",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-22T19:09:45.148Z"
+    },
+    "candidate_directive-add-issue-discovery-source-section-to-bug-report-template": {
+      "item_id": "candidate_directive-add-issue-discovery-source-section-to-bug-report-template",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ON6Z-add-issue-discovery-source-section-to-bug-report-template.md",
+      "title": "*: add issue discovery source section to bug report template",
+      "repository": "pingcap-tidb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "055fe01f53a954ad9e2ceb7379c10b9a5f8a965fe44d9d270178eedc9d1279b7",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-22T19:10:04.910Z"
+    },
+    "rule-9978": {
+      "learning_id": "rule-9978",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9978,
+      "title": "retry one-shot completions with thinking between_tools when a model rej",
+      "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
+      "source_version": "2db04dd3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T19:09:59.782Z"
+    },
+    "candidate_directive-retry-one-shot-completions-with-thinking-between_tools-when-a-model-rej": {
+      "item_id": "candidate_directive-retry-one-shot-completions-with-thinking-between_tools-when-a-model-rej",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-OJKG-retry-one-shot-completions-with-thinking-between_tools-when-a-model-rej.md",
+      "title": "retry one-shot completions with thinking between_tools when a model rej",
+      "repository": "Bitterbot-AI/bitterbot-desktop",
+      "source_version": "2db04dd3",
+      "content_hash": "d67f6c1514c7b47aabb9f30aa6bd232e040e8d9741609e960d9b0adf74b1c0ba",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-22T19:10:00.212Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-sxyazi-yazi-learnings-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-sxyazi-yazi-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-sxyazi-yazi-learnings-research-knowledge-intelligence-sxyazi-yazi-learnings-core.md",
+      "title": "Research & Knowledge Intelligence: sxyazi-yazi-learnings Core Invariants",
+      "repository": "sxyazi-yazi-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3cf931df5d9d4e5ab67d8ecf370db66d1a035195c49846e0dc0f24cf21b8b4ec",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-22T19:10:03.816Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-sxyazi-yazi-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-sxyazi-yazi-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/sxyazi-yazi-learnings-verification-protocol-empirical-defect-shield-for-sxyazi-y.md",
+      "title": "Verification Protocol: Empirical Defect Shield for sxyazi-yazi-learnings",
+      "repository": "sxyazi-yazi-learnings",
+      "source_version": "HEAD",
+      "content_hash": "09692e613e9d4cd58f29ada642fb4c05844a0f7f51ce7cbc7ad30b1566b0ab25",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-22T19:10:03.996Z"
     }
   },
   "ai-builder-brain": {

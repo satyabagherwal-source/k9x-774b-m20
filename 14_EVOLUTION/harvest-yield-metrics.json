@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T19:01:47.560Z",
-  "total_cycles_completed": 11562,
-  "total_learnings_persisted": 11562,
-  "total_rules_promoted": 10794,
+  "last_updated": "2026-11-22T19:09:59.998Z",
+  "total_cycles_completed": 11566,
+  "total_learnings_persisted": 11566,
+  "total_rules_promoted": 10796,
   "history": [
-    {
-      "timestamp": "2026-11-21T23:55:31.811Z",
-      "repository": "SulphurAI/Sulphur-3",
-      "learningId": "learn-huggingface-fusioncow-sulphur-3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T23:55:47.396Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T00:09:47.071Z",
-      "repository": "xiaomi-research/Xiaomi-OCR-0",
-      "learningId": "learn-huggingface-xiaomi-research-xiaomi-ocr-0",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T00:09:53.073Z",
-      "repository": "nativewind/nativewind",
-      "learningId": "learn-github-nativewind-nativewind",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-22T00:24:35.058Z",
       "repository": "sensenova/SenseNova-Loop-9B-Preview",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-22T19:01:47.560Z",
       "repository": "dragonflydb/dragonfly",
       "learningId": "learn-github-dragonflydb-dragonfly",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T19:09:43.080Z",
+      "repository": "Lightricks/LTX-2.5",
+      "learningId": "learn-huggingface-lightricks-ltx-2-5",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T19:09:44.568Z",
+      "repository": "sxyazi/yazi",
+      "learningId": "learn-github-sxyazi-yazi",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T19:09:52.447Z",
+      "repository": "pingcap/tidb",
+      "learningId": "learn-github-pingcap-tidb",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T19:09:59.998Z",
+      "repository": "Bitterbot-AI/bitterbot-desktop",
+      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

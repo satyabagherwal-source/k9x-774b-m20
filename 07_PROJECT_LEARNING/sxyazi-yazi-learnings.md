@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sxyazi-yazi-learnings.md`  
 > **Source**: github ([https://github.com/sxyazi/yazi](https://github.com/sxyazi/yazi))  
-> **Source Version**: `d5e4beb6`  
+> **Source Version**: `af685064`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T05:23:33.020Z  
+> **Timestamp**: 2026-11-22T19:09:43.456Z  
 > **Learning ID**: `learn-github-sxyazi-yazi`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sxyazi-yazi-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sxyazi/yazi](https://github.com/sxyazi/yazi))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T05:23:33.013Z  
+> **Harvest Timestamp**: 2026-11-22T19:09:43.451Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 💥 Blazing fast terminal file manager written in Rust, based on async I/O.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 43397 stars
+- **Stars / Engagement**: 43593 stars
 
 ---
 
@@ -402,11 +402,11 @@ pub struct Confirm {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4456** (2026-11-01): **Drag and drop: a finish event without `y` is dropped, and yazi then refuses every drop until restarted**
-  *Symptoms*: ### What system are you running Yazi on?  Linux Wayland  ### What terminal are you running Yazi in?  kitty 0.49.2 for the manual runs; a bare PTY driven by a Python script for the reproducer.  ### `ya env` output  ```Shell Yazi     Version: 26.9.1 (ec4ce8f 2026-10-28)     Debug  : false     Triple : x86_64-unknown-linux-gnu (linux-x86_64)     Rustc  : 1.99.1 (58cf8f9c 2026-10-13)     Backtrace: None  Ya     Version: 26.9.1 (ec4ce8f 2026-10-28)     Debug  : false     Triple : x86_64-unknown-linux-gnu (linux-x86_64)     Rustc  : 1.99.1 (58cf8f9c 2026-10-13)  Config     Init             : $XDG_CONFIG_HOME/yazi/init.lua (No such file or directory (os error 2))     Yazi             : $XDG_CONFIG_HOME/yazi/yazi.toml (No such file or directory (os error 2))     Keymap           : $XDG_CONFIG_HOME/yazi/keymap.toml (No such file or directory (os error 2))     Theme            : $XDG_CONFIG_HOME/yazi/theme.toml (No such file or directory (os error 2))     VFS              : $XDG_CONFIG_HOME/yazi/vfs.toml (No such file or directory (os error 2))     Package          : $XDG_CONFIG_HOME/yazi/package.toml (No such file or directory (os error 2))     Dark/light flavor: ArcSwapAny("") / ArcSwapAny("")  Emulator     TERM                : Some("xterm-kitty")     TERM_PROGRAM        : None     TERM_PROGRAM_VERSION: None     Brand.from_env      : Some(Kitty)     Emulator.probe      : Emulator { brand: Kitty, version: ArcSwapAny(""), csi_u: None, kgp: false, kgp_shm: false, sixel: false, backgrou
+- **Issue #4509** (2026-11-18): **SFTP: copying a file to a Win32-OpenSSH server fails with "other error" and leaves a zero-padded file (setstat sends uid/gid 0)**
+  *Symptoms*: ### What system are you running Yazi on?  Windows  ### What terminal are you running Yazi in?   Windows Terminal  pwsh 7.6.3  ### `ya env` output  ```Shell Yazi     Version: 26.9.1 (8dd895c 2026-09-01)     Debug  : false     Triple : x86_64-pc-windows-msvc (windows-x86_64)     Rustc  : 1.98.0 (88d9e12a 2026-08-18)     Backtrace: None  Ya     Version: 26.9.1 (8dd895c 2026-09-01)     Debug  : false     Triple : x86_64-pc-windows-msvc (windows-x86_64)     Rustc  : 1.98.0 (88d9e12a 2026-08-18)  Config     Init             : C:\Users\me\AppData\Roaming\yazi\config\init.lua (976 chars)     Yazi             : C:\Users\me\AppData\Roaming\yazi\config\yazi.toml (1865 chars)     Keymap           : C:\Users\me\AppData\Roaming\yazi\config\keymap.toml (1497 chars)     Theme            : C:\Users\me\AppData\Roaming\yazi\config\theme.toml (3081 chars)     VFS              : C:\Users\me\AppData\Roaming\yazi\config\vfs.toml (458 chars)     Package          : C:\Users\me\AppData\Roaming\yazi\config\package.toml (122 chars)     Dark/light flavor: ArcSwapAny("") / ArcSwapAny("")  Emulator     TERM                : Some("xterm-256color")     TERM_PROGRAM        : None     TERM_PROGRAM_VERSION: None     Brand.from_env      : Some(Microsoft)     Emulator.probe      : Emulator { brand: Microsoft, version: ArcSwapAny(""), csi_u: None, kgp: false, kgp_shm: false, sixel: false, background: None, color_scheme: None, csi_16t: (0, 0), force_16t: false, osc_5522: false, cursor_blink: true, cursor_shape: Non
 
-- **Issue #4455** (2026-11-01): **Drag and drop: a move without the MIME list is taken as a rejection**
-  *Symptoms*: ### What system are you running Yazi on?  Linux Wayland  ### What terminal are you running Yazi in?  kitty 0.49.2 for the manual runs; a bare PTY driven by a Python script for the reproducer.  ### `ya env` output  ```Shell Yazi     Version: 26.9.1 (ec4ce8f 2026-10-28)     Debug  : false     Triple : x86_64-unknown-linux-gnu (linux-x86_64)     Rustc  : 1.99.1 (58cf8f9c 2026-10-13)     Backtrace: None  Ya     Version: 26.9.1 (ec4ce8f 2026-10-28)     Debug  : false     Triple : x86_64-unknown-linux-gnu (linux-x86_64)     Rustc  : 1.99.1 (58cf8f9c 2026-10-13)  Config     Init             : $XDG_CONFIG_HOME/yazi/init.lua (No such file or directory (os error 2))     Yazi             : $XDG_CONFIG_HOME/yazi/yazi.toml (No such file or directory (os error 2))     Keymap           : $XDG_CONFIG_HOME/yazi/keymap.toml (No such file or directory (os error 2))     Theme            : $XDG_CONFIG_HOME/yazi/theme.toml (No such file or directory (os error 2))     VFS              : $XDG_CONFIG_HOME/yazi/vfs.toml (No such file or directory (os error 2))     Package          : $XDG_CONFIG_HOME/yazi/package.toml (No such file or directory (os error 2))     Dark/light flavor: ArcSwapAny("") / ArcSwapAny("")  Emulator     TERM                : Some("xterm-kitty")     TERM_PROGRAM        : None     TERM_PROGRAM_VERSION: None     Brand.from_env      : Some(Kitty)     Emulator.probe      : Emulator { brand: Kitty, version: ArcSwapAny(""), csi_u: None, kgp: false, kgp_shm: false, sixel: false, backgrou
+- **Issue #4508** (2026-11-20): **Preview broken in kitty when inside tmux**
+  *Symptoms*: ### What system are you running Yazi on?  Linux X11  ### What terminal are you running Yazi in?  0.44.0  ### `ya env` output  ```Shell Yazi     Version: 26.9.1 (v26.9.1 2026-10-05)     Debug  : false     Triple : x86_64-unknown-linux-gnu (linux-x86_64)     Rustc  : 1.98.1 (48a229ce 2026-09-01)     Backtrace: None  Ya     Version: 26.9.1 (v26.9.1 2026-10-05)     Debug  : false     Triple : x86_64-unknown-linux-gnu (linux-x86_64)     Rustc  : 1.98.1 (48a229ce 2026-09-01)  Config     Init             : /home/acampove/.config/yazi/init.lua (26 chars)     Yazi             : /home/acampove/.config/yazi/yazi.toml (792 chars)     Keymap           : /home/acampove/.config/yazi/keymap.toml (3157 chars)     Theme            : /home/acampove/.config/yazi/theme.toml (81 chars)     VFS              : /home/acampove/.config/yazi/vfs.toml (No such file or directory (os error 2))     Package          : /home/acampove/.config/yazi/package.toml (546 chars)     Dark/light flavor: ArcSwapAny("catppuccin-mocha") / ArcSwapAny("catppuccin-latte")  Emulator     TERM                : Some("tmux-256color")     TERM_PROGRAM        : Some("xterm-kitty")     TERM_PROGRAM_VERSION: Some("3.8")     Brand.from_env      : Some(Kitty)     Emulator.probe      : Emulator { brand: Unknown, version: ArcSwapAny(""), csi_u: None, kgp: false, kgp_shm: false, sixel: false, background: Some([6682, 6939, 9766]), color_scheme: Some(false), csi_16t: (14, 30), force_16t: false, osc_5522: false, cursor_blink: false, cursor_s
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -423,482 +423,440 @@ pub struct Confirm {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d5e4beb6` (2026-11-12)
-**Commit Message**: feat: expose mouse modifiers to Lua (#4495)
+### Incident Patch 1: `3e32fa66` (2026-11-22)
+**Commit Message**: fix: block `paste --force`, `link --force`, and `hardlink --force` onto the same file under an aliased parent (#4515)
 
-**File**: `yazi-config/src/keymap/key.rs` (modified, +1/-1)
+**File**: `Cargo.lock` (modified, +197/-143)
 ```diff
-@@ -59,7 +59,7 @@ impl TryFrom<KeyEvent> for Key {
- 		Ok(Self {
- 			code,
- 			shift,
--			ctrl: value.modifiers.contains(Modifiers::CONTROL),
-+			ctrl: value.modifiers.contains(Modifiers::CTRL),
- 			alt: value.modifiers.contains(Modifiers::ALT),
- 			super_: value.modifiers.contains(Modifiers::SUPER),
- 		})
-```
-
-**File**: `yazi-term/src/event/lua.rs` (modified, +1/-0)
-```diff
-@@ -52,6 +52,7 @@ impl UserData for MouseEvent {
- 		fields.add_field("type", "legacy");
- 		fields.add_field_method_get("x", |_, me| Ok(me.column));
- 		fields.add_field_method_get("y", |_, me| Ok(me.row));
-+		fields.add_cached_field("modifiers", |_, me| Ok(me.modifiers));
- 		fields.add_field_method_get("is_left", |_, me| {
- 			use MouseEventKind as K;
- 			Ok(matches!(me.kind, K::Down(b) | K::Up(b) | K::Drag(b) if b == MouseButton::Left))
-```
-
-**File**: `yazi-term/src/event/modifiers.rs` (modified, +14/-1)
-```diff
-@@ -1,12 +1,14 @@
- use bitflags::bitflags;
-+use mlua::{IntoLua, Lua, Value};
- use serde::Serialize;
-+use yazi_shim::CompactString;
+@@ -369,19 +369,19 @@ dependencies = [
  
- bitflags! {
- 	#[derive(Clone, Copy, Debug, Default, Eq, Hash, PartialEq, Serialize)]
- 	pub struct Modifiers: u8 {
- 		const SHIFT   = 1;
- 		const ALT     = 2;
--		const CONTROL = 4;
-+		const CTRL    = 4;
- 		const SUPER   = 8;
- 		const HYPER   = 16;
- 		const META    = 32;
-@@ -20,3 +22,14 @@ impl Modifiers {
- 		if c.is_uppercase() { Self::SHIFT } else { Self::empty() }
+ [[package]]
+ name = "bstr"
+-version = "1.13.1"
++version = "1.14.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "6bb31b46c14244e20ee9984b11bf5c992b91fb6939fea616e3512c8baecdbe5f"
++checksum = "a680398c10c7bc0488067c4612226ea905a85f607134b69f3068d505d58c4214"
+ dependencies = [
+  "memchr",
+  "serde_core",
+ ]
+ 
+ [[package]]
+ name = "bumpalo"
+-version = "3.20.3"
++version = "3.20.4"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "72f5acc6cb2ba439de613abc23857ec3d78374d8ed5ac84e9d11336e87da8649"
++checksum = "87a0cf66fd1eb2fb7b822cb78370d82303750809bc6ba855f3f58e517d3238db"
+ 
+ [[package]]
+ name = "by_address"
+@@ -423,9 +423,9 @@ checksum = "8f1fe948ff07f4bd06c30984e69f5b4899c516a3ef74f34df92a2df2ab535495"
+ 
+ [[package]]
+ name = "bytes"
+-version = "1.12.1"
++version = "1.12.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "fc652a48c352aef3ea3aed32080501cf3ef6ed5da78602a020c991775b0aff04"
++checksum = "776dfebd015e2d8732c684a2c71003674ccb49457b539b9e82151ba38e96dd7c"
+ 
+ [[package]]
+ name = "castaway"
+@@ -447,9 +447,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "cc"
+-version = "1.11.1"
++version = "1.11.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "4ff2a8126fff0f8c839080d619675a585e61720bb12d2baceae45769fd66f155"
++checksum = "02f0e023adb368345ce0ca6cdfc0f24a06554468d0e8503e14a0841de79bfa69"
+ dependencies = [
+  "find-msvc-tools",
+  "shlex",
+@@ -508,9 +508,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "clap"
+-version = "4.6.7"
++version = "4.6.9"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "aa8876b300ab35ba921adea3dfd70157a46249b33f95c9084ae5709785478946"
++checksum = "844c5c0b65be192cb68d570cca1b21a6444431d24e39c084dc0336177015337c"
+ dependencies = [
+  "clap_builder",
+  "clap_derive",
+@@ -530,9 +530,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "clap_complete"
+-version = "4.6.11"
++version = "4.6.12"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "037e2a1a92236d0aff7e845093f64661d6df4c02c9fcc61a60e9e1d736fa392f"
++checksum = "6a35200383f20018d41c14d1ab19c1727c697f544492143f7d93aa39f0187848"
+ dependencies = [
+  "clap",
+  "clap_lex",
+@@ -542,9 +542,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "clap_derive"
+-version = "4.6.7"
++version = "4.6.9"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "f9c751b79415d4e559e3d1fcf128e09e720eb673a06d26cf6f392d37d75b66e0"
++checksum = "b4c174f11f949b9ca8c60580925e282b9cbd5454750e506f08648b2038080cd7"
+ dependencies = [
+  "heck",
+  "proc-macro2",
+@@ -554,9 +554,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "clap_lex"
+-version = "1.1.1"
++version = "1.1.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "1c133bc6a41be0d194c306b5506d15e6feeea7b1d6604bd3f8310dfb2ca96486"
++checksum = "e0921b3876b3a1df8a1c9f912e7f94342458022c2e84288015893d83c4d62a79"
+ 
+ [[package]]
+ name = "clipboard-win"
+@@ -885,6 +885,7 @@ dependencies = [
+  "const-oid",
+  "crypto-common",
+  "ctutils",
++ "zeroize",
+ ]
+ 
+ [[package]]
+@@ -1166,9 +1167,9 @@ checksum = "77ce24cb58228fbb8aa041425bb1050850ac19177686ea6e0f41a70416f56fdb"
+ 
+ [[package]]
+ name = "form_urlencoded"
+-version = "1.2.2"
++version = "1.2.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf"
++checksum = "afa489199eaffb1211795df1c6236ce1ad0d41a6fa45250add73e3b02420f06e"
+ dependencies = [
+  "percent-encoding",
+ ]
+@@ -1267,16 +1268,6 @@ dependencies = [
+  "slab",
+ ]
+ 
+-[[package]]
+-name = "generic-array"
+-version = "1.4.5"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "337d46834ee672ab3e48caca2cb0c78cc174fb12b3a68d0d88f99a0519a5e36e"
+-dependencies = [
+- "rustversion",
+- "typenum",
+-]
+-
+ [[package]]
+ name = "getrandom"
+ version = "0.2.17"
+@@ -1365,9 +1356,9 @@ checksum = "8a9ee70c43aaf417c914396645a0fa852624801b24ebb7ae78fe8272889ac888"
+ 
+ [[package]]
+ name = "hashbrown"
+-version = "0.17.1"
++version = "0.17.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ed5909b6e89a2db4456e54cd5f673791d7eca6732202bbf2a9cc504fe2f9b84a"
++checksum = "735eaa21a6a5ffb2e84362faaeb90c05ba8e19797ca30428478cb6ea3a4921bc"
+ dependencies = [
+  "allocator-api2",
+  "equivalent",
+@@ -1704,7 +1695,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "cc4e190f5d26ca7051642629da2c52fc03bde85a03197c99408dcd291734c855"
+ dependencies = [
+  "equivalent",
+- "hashbrown 0.17.1",
++ "hashbrown 0.17.2",
+  "serde",
+  "serde_core",
+ ]
+@@ -1817,13 +1808,29 @@ checksum = "3bd1574e617a9a6c1f8f8181bd7e841e1f20e4277607ef28945765188d6284d4"
+ 
+ [[package]]
+ name = "jiff"
+-version = "0.2.43"
++version = "0.2.46"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "175dc66334db3b9ab9985bf8b61cfed50dc16d20964bb47f9e479adcae984
+```
+
+**File**: `Cargo.toml` (modified, +12/-12)
+```diff
+@@ -43,25 +43,25 @@ arc-swap               = { version = "1.9.5", features = [ "serde" ] }
+ base64                 = "0.23.1"
+ bitflags               = { version = "2.13.2", features = [ "serde" ] }
+ chrono                 = { version = "0.4.45", features = [ "serde" ] }
+-clap                   = { version = "4.6.7", features = [ "derive" ] }
+-clap_complete          = { version = "4.6.11", features = [ "unstable-dynamic" ] }
++clap                   = { version = "4.6.9", features = [ "derive" ] }
++clap_complete          = { version = "4.6.12", features = [ "unstable-dynamic" ] }
+ compact_str            = { version = "0.10.0", features = [ "serde" ] }
+ data-encoding          = "2.11.1"
+ dirs                   = "7.0.0"
+ dispatch2              = { version = "0.3.1", default-features = false, features = [ "std" ] }
+ dyn-clone              = "1.0.20"
+ either                 = { version = "1.19.0" }
+ foldhash               = "0.2.0"
+-form_urlencoded        = "1.2.2"
++form_urlencoded        = "1.2.3"
+ futures                = "0.3.34"
+ globset                = "0.4.21"
+-hashbrown              = { version = "0.17.1", features = [ "serde" ] }
++hashbrown              = { version = "0.17.2", features = [ "serde" ] }
+ image                  = { version = "0.25.10", default-features = false, features = [ "bmp", "dds", "exr", "ff", "gif", "hdr", "ico", "jpeg", "png", "pnm", "qoi", "tga", "tiff", "webp" ] }
+ indexmap               = { version = "2.14.2", features = [ "serde" ] }
+ inventory              = "0.3.25"
+ libc                   = "0.2.191"
+ log                    = { version = "0.4.35", features = [ "release_max_level_off" ] }
+-lru                    = "0.19.0"
++lru                    = "0.19.1"
+ mlua                   = { version = "0.12.2", features = [ "anyhow", "async", "error-send", "lua55", "macros", "serde", "userdata-wrappers" ] }
+ objc2                  = "0.6.5"
+ objc2-core-foundation  = { version = "0.3.2", default-features = false, features = [ "std", "CFDictionary", "CFNumber", "CFString", "CFURL" ] }
+@@ -71,27 +71,27 @@ ordered-float          = { version = "5.5.1", features = [ "serde" ] }
+ parking_lot            = "0.13.0"
+ paste                  = "1.0.15"
+ percent-encoding       = "2.3.2"
+-pin-project            = "1.1.13"
+-rand                   = { version = "0.10.3", default-features = false, features = [ "std", "sys_rng" ] }
++pin-project            = "1.2.0"
++rand                   = { version = "0.10.4", default-features = false, features = [ "std", "sys_rng" ] }
+ ratatui-core           = { version = "0.1.2", default-features = false, features = [ "std", "layout-cache", "serde", "underline-color" ] }
+ ratatui-widgets        = { version = "0.3.2", default-features = false, features = [ "std", "unstable-rendered-line-info" ] }
+-regex                  = "1.13.1"
+-regex-syntax           = "0.8.11"
++regex                  = "1.13.2"
++regex-syntax           = "0.8.12"
+ reqwest                = { version = "0.13.5", default-features = false, features = [ "rustls-no-provider", "stream", "multipart" ] }
+ rustls                 = { version = "0.23.46", default-features = false, features = [ "ring", "std" ] }
+ rustix                 = { version = "1.1.6", default-features = false, features = [ "std", "fs", "mm", "shm", "stdio", "termios", "event", "process", "system", "net" ] }
+-russh                  = { version = "0.65.1", default-features = false, features = [ "ring", "rsa" ] }
++russh                  = { version = "0.65.4", default-features = false, features = [ "ring", "rsa" ] }
+ scopeguard             = "1.2.0"
+ serde                  = { version = "1.0.229", features = [ "derive" ] }
+ serde_json             = "1.0.154"
+-serde_with             = "3.24.0"
++serde_with             = "3.25.0"
+ strum                  = { version = "0.28.0", features = [ "derive" ] }
+ syntect                = { version = "5.3.0", default-features = false, features = [ "parsing", "plist-load", "regex-onig" ] }
+ thiserror              = "2.0.21"
+ tokio                  = { version = "1.54.1", features = [ "full" ] }
+ tokio-stream           = "0.1.19"
+ tokio-util             = "0.7.20"
+-toml                   = { version = "1.2.1" }
++toml                   = { version = "1.2.2" }
+ tracing                = { version = "0.1.44", features = [ "max_level_debug", "release_max_level_off" ] }
+ tracing-core           = "0.1.36"
+ twox-hash              = { version = "2.1.5", default-features = false, features = [ "std", "random", "xxhash3_128" ] }
+```
+
+**File**: `yazi-actor/src/mgr/bulk_rename.rs` (modified, +1/-1)
+```diff
+@@ -124,7 +124,7 @@ impl BulkRename {
+ 				continue;
+ 			};
+ 
+-			if maybe_exists(&new).await && !engine::must_identical(&old, &new).await {
++			if maybe_exists(&new).await && !engine::same_entry(&old, &new).await.unwrap_or(false) {
+ 				failed.push((o, n, anyhow!("Destination already exists")));
+ 				continue;
+ 			}
+```
+
+**File**: `yazi-actor/src/mgr/hardlink.rs` (modified, +1/-1)
+```diff
+@@ -18,7 +18,7 @@ impl Actor for Hardlink {
+ 		let tab = &mgr.tabs[cx.tab];
+ 
+ 		if !mgr.yanked.cut {
+-			cx.core.tasks.file_hardlink(&mgr.yanked, tab.cwd(), form.force, form.follow);
++			cx.core.tasks.file_hardlink(&mgr.yanked, tab.cwd(), form.follow, form.force);
+ 		}
+ 
+ 		succ!();
+```
+
+**File**: `yazi-actor/src/mgr/link.rs` (modified, +1/-1)
+```diff
+@@ -18,7 +18,7 @@ impl Actor for Link {
+ 		let tab = &mgr.tabs[cx.tab];
+ 
+ 		if !mgr.yanked.cut {
+-			cx.core.tasks.file_link(&mgr.yanked, tab.cwd(), form.relative, form.force, form.follow);
++			cx.core.tasks.file_link(&mgr.yanked, tab.cwd(), form.relative, form.follow, form.force);
+ 		}
+ 
+ 		succ!();
+```
+
+**File**: `yazi-actor/src/mgr/paste.rs` (modified, +1/-1)
+```diff
+@@ -24,7 +24,7 @@ impl Actor for Paste {
+ 			mgr.tabs.iter_mut().for_each(|t| _ = t.selected.remove_many(mgr.yanked.urls()));
+ 			act!(mgr:unyank, cx)
+ 		} else {
+-			succ!(cx.core.tasks.file_copy(&mgr.yanked, dest, form.force, form.follow));
++			succ!(cx.core.tasks.file_copy(&mgr.yanked, dest, form.follow, form.force));
+ 		}
  	}
  }
-+
-+impl IntoLua for Modifiers {
-+	fn into_lua(self, lua: &Lua) -> mlua::Result<Value> {
-+		let t = lua.create_table_with_capacity(0, self.bits().count_ones() as usize)?;
-+		for (name, _) in self.iter_names() {
-+			t.raw_set(CompactString::from(name).into_ascii_lowercase(), true)?;
-+		}
-+
-+		t.into_lua(lua)
-+	}
-+}
 ```
 
-**File**: `yazi-term/src/event/mouse.rs` (modified, +1/-1)
+**File**: `yazi-actor/src/mgr/rename.rs` (modified, +1/-1)
 ```diff
-@@ -62,7 +62,7 @@ impl MouseEventKind {
- 			modifiers |= Modifiers::ALT;
- 		}
- 		if cb & 0b0001_0000 == 0b0001_0000 {
--			modifiers |= Modifiers::CONTROL;
-+			modifiers |= Modifiers::CTRL;
- 		}
+@@ -104,7 +104,7 @@ impl Rename {
+ 		};
  
- 		Ok((kind, modifiers))
+ 		Ok(
+-			engine::must_identical(old, new).await
++			engine::same_entry(old, new).await.unwrap_or(false)
+ 				|| ConfirmProxy::show(ConfirmCfg::overwrite(&file)).await,
+ 		)
+ 	}
 ```
 
-**File**: `yazi-term/src/parser/ground.rs` (modified, +3/-3)
+**File**: `yazi-core/src/tasks/file.rs` (modified, +7/-23)
 ```diff
-@@ -8,12 +8,12 @@ impl Parser {
- 			b'\r' => Some(KeyCode::Enter.into()),
- 			b'\t' => Some(KeyCode::Tab.into()),
- 			b'\x7F' => Some(KeyCode::Backspace.into()),
--			b'\0' => Some(KeyEvent::new(KeyCode::Char(' '), Modifiers::CONTROL)),
-+			b'\0' => Some(KeyEvent::new(KeyCode::Char(' '), Modifiers::CTRL)),
- 			c @ b'\x01'..=b'\x1A' => {
--				Some(KeyEvent::new(KeyCode::Char((c - 0x1 + b'a') as char), Modifiers::CONTROL))
-+				Some(KeyEvent::new(KeyCode::Char((c - 0x1 + b'a') as char), Modifiers::CTRL))
- 			}
- 			c @ b'\x1C'..=b'\x1F' => {
--				Some(KeyEvent::new(KeyCode::Char((c - 0x1c + b'4') as char), Modifiers::CONTROL))
-+				Some(KeyEvent::new(KeyCode::Char((c - 0x1c + b'4') as char), Modifiers::CTRL))
- 			}
- 			b'\x20'..=b'\x7E' => {
- 				Some(KeyEvent::new(KeyCode::Char(b as char), Modifiers::for_char(b as char)))
+@@ -15,15 +15,11 @@ impl Tasks {
+ 				debug!("file_move: cannot join {u} with {dest}");
+ 				continue;
+ 			};
+-			if force && u == to {
+-				debug!("file_move: same file, skip {to}");
+-			} else {
+-				self.scheduler.file_move(FileInMove::new(u.clone(), to, force));
+-			}
++			self.scheduler.file_move(FileInMove::new(u.clone(), to, force));
+ 		}
+ 	}
+ 
+-	pub fn file_copy(&self, src: &Yanked, dest: impl AsUrl, force: bool, follow: bool) {
++	pub fn file_copy(&self, src: &Yanked, dest: impl AsUrl, follow: bool, force: bool) {
+ 		let dest = dest.as_url();
+ 		self.scheduler.behavior.reset();
+ 
+@@ -32,11 +28,7 @@ impl Tasks {
+ 				debug!("file_copy: cannot join {u} with {dest}");
+ 				continue;
+ 			};
+-			if force && u == to {
+-				debug!("file_copy: same file, skip {to}");
+-			} else {
+-				self.scheduler.file_copy(FileInCopy::new(u.clone(), to, force, follow));
+-			}
++			self.scheduler.file_copy(FileInCopy::new(u.clone(), to, follow, force));
+ 		}
+ 	}
+ 
+@@ -45,8 +37,8 @@ impl Tasks {
+ 		src: &Yanked,
+ 		dest: impl AsUrl,
+ 		relative: bool,
+-		force: bool,
+ 		follow: bool,
++		force: bool,
+ 	) {
+ 		let dest = dest.as_url();
+ 		self.scheduler.behavior.reset();
+@@ -56,15 +48,11 @@ impl Tasks {
+ 				debug!("file_link: cannot join {u} with {dest}");
+ 				continue;
+ 			};
+-			if force && u == to {
+-				debug!("file_link: same file, skip {to}");
+-			} else {
+-				self.scheduler.file_link(FileInLink::new(u.clone(), to, relative, force, follow));
+-			}
++			self.scheduler.file_link(FileInLink::new(u.clone(), to, relative, follow, force));
+ 		}
+ 	}
+ 
+-	pub fn file_hardlink(&self, src: &Yanked, dest: impl AsUrl, force: bool, follow: bool) {
++	pub fn file_hardlink(&self, src: &Yanked, dest: impl AsUrl, follow: bool, force: bool) {
+ 		let dest = dest.as_url();
+ 		self.scheduler.behavior.reset();
+ 
+@@ -73,11 +61,7 @@ impl Tasks {
+ 				debug!("file_hardlink: cannot join {u} with {dest}");
+ 				continue;
+ 			};
+-			if force && u == to {
+-				debug!("file_hardlink: same file, skip {to}");
+-			} else {
+-				self.scheduler.file_hardlink(u.clone(), to, force, follow);
+-			}
++			self.scheduler.file_hardlink(u.clone(), to, follow, force);
+ 		}
+ 	}
+ 
 ```
 
 ---
 
-### Incident Patch 2: `781c0dc1` (2026-11-12)
-**Commit Message**: feat: make selected and yanked states indexable (#4494)
+### Incident Patch 2: `af685064` (2026-11-22)
+**Commit Message**: fix(nix): add `pkg-config` to `yazi-unwrapped` build deps (#4502)
 
-**File**: `CHANGELOG.md` (modified, +2/-0)
-```diff
-@@ -45,6 +45,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/):
- 
- - Deprecate `fs.cha()` and `File.cha` in favor of `fs.stat()` and `File.stat` to align with OS terminology ([#4359])
- - Deprecate `fs.unique()`, `fs.create()`, `fs.remove()`, and `fs.read_dir()` V1 ([#4483])
-+- Deprecate `__pairs()` metamethod of `mgr::Yanked`, `tab::Selected`, and `@yank` DDS event ([#4494])
- - Deprecate `ui.Border:type()` in favor of `ui.Border:set()` ([#4439])
- 
- ### Fixed
-@@ -1932,3 +1933,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/):
- [#4477]: https://github.com/sxyazi/yazi/pull/4477
- [#4483]: https://github.com/sxyazi/yazi/pull/4483
- [#4484]: https://github.com/sxyazi/yazi/pull/4484
-+[#4494]: https://github.com/sxyazi/yazi/pull/4494
-```
+Co-authored-by: 三咲雅 misaki masa <[REDACTED_EMAIL]>
 
-**File**: `Cargo.lock` (modified, +17/-17)
+**File**: `nix/yazi-unwrapped.nix` (modified, +5/-1)
 ```diff
-@@ -272,9 +272,9 @@ dependencies = [
+@@ -10,6 +10,8 @@
+   fetchFromGitHub,
+   rust-jemalloc-sys,
  
- [[package]]
- name = "bit_field"
--version = "0.10.3"
-+version = "0.10.4"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "1e4b40c7323adcfc0a41c4b88143ed58346ff65a288fc144329c5c45e05d70c6"
-+checksum = "cb2907cc03d08cdb1c6724ad0670ce67c4a71e1c45a6d7635224011714cfc4b1"
++  pkg-config,
++  oniguruma,
+   imagemagick,
+ }:
+ let
+@@ -37,15 +39,18 @@ rustPlatform.buildRustPackage (finalAttrs: {
+     VERGEN_GIT_SHA = rev;
+     VERGEN_BUILD_DATE = builtins.concatStringsSep "-" (builtins.match "(.{4})(.{2})(.{2}).*" date);
+     CARGO_NET_OFFLINE = "true";
++    RUSTONIG_SYSTEM_LIBONIG = "1";
+   };
  
- [[package]]
- name = "bitflags"
-@@ -620,9 +620,9 @@ dependencies = [
+   nativeBuildInputs = [
+     installShellFiles
++    pkg-config
+     imagemagick
+   ];
  
- [[package]]
- name = "const-oid"
--version = "0.10.2"
-+version = "0.10.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "a6ef517f0926dd24a1582492c791b6a4818a4d94e789a334894aa15b0d12f55c"
-+checksum = "be95d4a884358a21a199689323c29e9256b4a1b315e22f183d155422041d3a9a"
+   buildInputs = [
+     rust-jemalloc-sys
++    oniguruma
+   ];
  
- [[package]]
- name = "core-foundation"
-@@ -1048,9 +1048,9 @@ dependencies = [
+   buildPhase = ''
+@@ -87,7 +92,6 @@ rustPlatform.buildRustPackage (finalAttrs: {
+     };
+   };
  
- [[package]]
- name = "errno"
--version = "0.3.14"
-+version = "0.3.15"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
-+checksum = "e35d6e78f4cebb90e51d543db8fe41528851d6deeef6ef21ebd4bfdc1e784776"
- dependencies = [
-  "libc",
-  "windows-sys 0.61.2",
-@@ -1817,9 +1817,9 @@ checksum = "3bd1574e617a9a6c1f8f8181bd7e841e1f20e4277607ef28945765188d6284d4"
- 
- [[package]]
- name = "jiff"
--version = "0.2.42"
-+version = "0.2.43"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "fefca06093eeaed707a905795e68206da0edca4edef23d2a3997a3ddbee462aa"
-+checksum = "26699905cc795a23e3949585cc7ba3ee8ade090872a27e4316304a777297894a"
- dependencies = [
-  "jiff-core",
-  "jiff-static",
-@@ -1833,18 +1833,18 @@ dependencies = [
- 
- [[package]]
- name = "jiff-core"
--version = "0.1.4"
-+version = "0.1.5"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "77a24020db0ee88d1c681d677681bd31f9f4ea189a455425223d52ce4f1508aa"
-+checksum = "ffe6854081f5ac0a3046a9b223729ccd7a20b1e0e8277e44dc0660eedf67dfe2"
- dependencies = [
-  "log",
- ]
- 
- [[package]]
- name = "jiff-static"
--version = "0.2.42"
-+version = "0.2.43"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "41d3213549742662eea1a18e6c5af9be5dfbabeb7611ab71356a54928ec398f0"
-+checksum = "4b4ff49b2887190c760b86207b55cdcaabbdecaf7a0660d68aa2ed6f652abf0a"
- dependencies = [
-  "jiff-core",
-  "proc-macro2",
-@@ -3360,9 +3360,9 @@ dependencies = [
- 
- [[package]]
- name = "rustls-pki-types"
--version = "1.15.1"
-+version = "1.16.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "2f4925028c7eb5d1fcdaf196971378ed9d2c1c4efc7dc5d011256f76c99c0a96"
-+checksum = "102f35f7de7b06d8c61f1cff6592f5253e0dea431c74867aad5dfd70f44663fb"
- dependencies = [
-  "zeroize",
- ]
-@@ -4712,9 +4712,9 @@ dependencies = [
- 
- [[package]]
- name = "webpki-root-certs"
--version = "1.0.11"
-+version = "1.0.12"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "e49d0e65abc00c142e8f9428da991da9f1a250c39be97459901eb12b9b49f62a"
-+checksum = "293198dcebfb821155b5092ab94b5a82ff180eddd7241df3bd6e66a4ffd1a585"
- dependencies = [
-  "rustls-pki-types",
- ]
-@@ -5215,6 +5215,7 @@ dependencies = [
-  "anyhow",
-  "foldhash",
-  "hashbrown 0.17.1",
-+ "inventory",
-  "mlua",
-  "parking_lot 0.13.0",
-  "paste",
-@@ -5224,7 +5225,6 @@ dependencies = [
-  "tokio",
-  "tokio-stream",
-  "uds_windows",
-- "yazi-binding",
-  "yazi-boot",
-  "yazi-fs",
-  "yazi-macro",
-```
-
-**File**: `yazi-actor/src/lives/ptr.rs` (modified, +0/-3)
-```diff
-@@ -31,7 +31,4 @@ impl<T> Hash for PtrCell<T> {
- impl<T> PtrCell<T> {
- 	#[inline]
- 	pub(super) fn cast<U>(self) -> PtrCell<U> { PtrCell(self.0.cast()) }
 -
--	#[inline]
--	pub(super) fn as_static(&self) -> &'static T { unsafe { &*self.0 } }
- }
-```
-
-**File**: `yazi-actor/src/lives/selected.rs` (modified, +60/-5)
-```diff
-@@ -1,14 +1,69 @@
--use mlua::AnyUserData;
-+use std::ops::Deref;
-+
-+use hashbrown::{HashMap, hash_map::Entry};
-+use mlua::{AnyUserData, ExternalError, IntoLuaMulti, MetaMethod, UserData, UserDataMethods, UserDataRef};
-+use yazi_fs::{file::File, files::{FileSource, FilesInventory}};
- 
- use super::{Lives, PtrCell};
- 
--#[derive(Clone, Copy)]
--pub(super) struct Selected;
-+pub(super) struct Selected {
-+	inner: PtrCell<yazi_core::tab::Selected>,
-+	cache: HashMap<usize, AnyUserData>,
-+}
-+
-+impl Deref for Selected {
-+	type Target = yazi_core::tab::Selected;
-+
-+	fn deref(&self) -> &Self::Target { &self.inner }
-+}
- 
- impl Selected {
- 	pub(super) fn make(inner: &yazi_core::tab::Selected) -> mlua::Result<AnyUserData> {
--		let inner = PtrCell::from(inner);
-+		Lives::scoped_userdata(Self { inner: inner.into(), cache: HashMap::new() })
-+	}
-+}
-+
-+impl FileSource for Selected {
-+	fn len(&self) -> usize { self.inner.len() }
- 
--		Lives::scoped_userdata(yazi_binding::Iter::new(inner.as_static().files().cloned(), inner.len()))
-+	fn borrow(
-+		&self,
-+		idx: usize,
-+		visit: &mut dyn FnMut(&File) -> mlua::Result<()>,
-+	) -> mlua::Result<()> {
-+		visit(self.file_at(idx).ok_or_else(|| "file index out of bounds".into_lua_err())?)
- 	}
- }
-+
-+impl UserData for Selected {
-+	fn add_methods<M: UserDataMethods<Self>>(methods: &mut M) {
-+		methods.add_meta_method(MetaMethod::Len, |_, me, ()| Ok(me.len()));
-+
-+		methods.add_meta_method_mut(MetaMethod::Index, |lua, me, idx: usize| {
-+			let Some(file) = idx.checked_sub(1).and_then(|i| me.inner.file_at(i)) else {
-+				return Ok(None);
-+			};
-+
-+			let cached = match me.cache.entry(idx) {
-+				Entry::Occupied(oe) => oe.into_mut(),
-+				Entry::Vacant(ve) => ve.insert(lua.create_userdata(file.clone())?),
-+			};
-+			Ok(Some(cached.clone()))
-+		});
-+
-+		// TODO: remove
-+		methods.add_meta_function(MetaMethod::Pairs, |lua, ud: AnyUserData| {
-+			let next = lua.create_function(|lua, (me, idx): (UserDataRef<Self>, usize)| {
-+				match me.file_at(idx) {
-+					Some(file) => (idx + 1, file.clone()).into_lua_multi(lua),
-+					None => ().into_lua_multi(lua),
-+				}
-+			})?;
-+			Ok((next, ud, 0))
-+		});
-+	}
-+}
-+
-+inventory::submit! {
-+	FilesInventory::new::<Selected>()
-+}
-```
-
-**File**: `yazi-actor/src/lives/tab.rs` (modified, +1/-1)
-```diff
-@@ -47,7 +47,7 @@ impl UserData for Tab {
- 
- 	fn add_methods<M: UserDataMethods<Self>>(methods: &mut M) {
- 		methods.add_method("history", |_, me, url: UrlRef| {
--			me.history.get(url.as_ref()).map(|f| Folder::make(f.offset, f, *me)).transpose()
-+			me.history.get(&*url).map(|f| Folder::make(f.offset, f, *me)).transpose()
- 		});
- 	}
- }
-```
-
-**File**: `yazi-actor/src/lives/yanked.rs` (modified, +42/-17)
-```diff
-@@ -1,15 +1,14 @@
- use std::ops::Deref;
- 
--use mlua::{AnyUserData, MetaMethod, MultiValue, ObjectLike, UserData, UserDataFields, UserDataMethods};
--use yazi_binding::Iter;
--use yazi_fs::file::File;
--use yazi_shim::mlua::get_metatable;
-+use hashbrown::{HashMap, hash_map::Entry};
-+use mlua::{AnyUserData, ExternalError, IntoLuaMulti, MetaMethod, UserData, UserDataFields, UserDataMethods, UserDataRef};
-+use yazi_fs::{file::File, files::{FileSource, FilesInventory}};
- 
- use super::{Lives, PtrCell};
- 
- pub(super) struct Yanked {
- 	inner: PtrCell<yazi_core::mgr::Yanked>,
--	iter:  AnyUserData,
-+	cache: HashMap<usize, AnyUserData>,
- }
- 
- impl Deref for Yanked {
-@@ -20,15 +19,19 @@ impl Deref for Yanked {
- 
- impl Yanked {
- 	pub(super) fn make(inner: &yazi_core::mgr::Yanked) -> mlua::Result<AnyUserData> {
--		let inner = PtrCell::from(inner);
--
--		Lives::scoped_userdata(Self {
--			inner,
--			iter: Lives::scoped_userdata(Iter::new(
--				inner.as_static().iter().map(File::from),
--				inner.len(),
--			))?,
--		})
-+		Lives::scoped_userdata(Self { inner: inner.into(), cache: HashMap::new() })
-+	}
-+}
-+
-+impl FileSource for Yanked {
-+	fn len(&self) -> usize { self.inner.len() }
-+
-+	fn borrow(
-+		&self,
-+		idx: usize,
-+		visit: &mut dyn FnMut(&File) -> mlua::Result<()>,
-+	) -> mlua::Result<()> {
-+		visit(&self.get_index(idx).ok_or_else(|| "file index out of bounds".into_lua_err())?.0)
- 	}
- }
- 
-@@ -40,9 +43,31 @@ impl UserData for Yanked {
- 	fn add_methods<M: UserDataMethods<Self>>(methods: &mut M) {
- 		methods.add_meta_method(MetaMethod::Len, |_, me, ()| Ok(me.len()));
- 
--		methods.add_meta_method(MetaMethod::Pairs, |lua, me, ()| {
--			get_metatable(lua, &me.iter)?
--				.call_function::<MultiValue>(MetaMethod::Pairs.name(), me.iter.clone())
-+		methods.add_meta_method_mut(MetaMethod::Index, |lua, me, idx: usize| {
-+			let Some(file) = idx.checked_sub(1).and_then(|i| me.inner.get_index(i)) else {
-+				return Ok(None);
-+			};
-+
-+			let cached = match me.cache.entry(idx) {
-+				Entry::Occupied(oe) => oe.into_mut(),
-+				Entry::Vacant(ve) => ve.insert(lua.create_userdata(file.0.clone())?),
-+			};
-+			Ok(Some(cached.clone()))
-+		});
-+
-+		// TODO: remove
-+		methods.add_meta_function(MetaMethod::Pairs, |lua, ud: AnyUserData| {
-+			let next = lua.create_function(|lua, (me, idx): (UserDataRef<Self>, usize)| {
-+				match me.get_index(idx) {
-+					Some(file) => (idx + 1, file.0.clone()).into_lua_multi(lua),
-+					None => ().into_lua_multi(lua),
-+				}
-+			})?;
-+			Ok((next, ud, 0))
- 		});
- 	}
- }
-+
-+inventory::submit! {
-+	FilesInventory::new::<Yanked>()
-+}
-```
-
-**File**: `yazi-actor/src/mgr/bulk_create.rs` (modified, +2/-2)
-```diff
-@@ -6,7 +6,7 @@ use yazi_binding::Permit;
- use yazi_config::{YAZI, opener::OpenerRuleArc};
- use yazi_core::Ctx;
- use yazi_dds::Pubsub;
--use yazi_fs::{Splatter, engine::{Engine, RwFile, local::Local}, file::Files, op::FilesOp};
-+use yazi_fs::{engine::{Engine, RwFile, local::Local}, files::Files, op::FilesOp, splatter::Splatter};
- use yazi_macro::{log_if_err, succ, writef};
- use yazi_parser::VoidForm;
- use yazi_proxy::TasksProxy;
-@@ -44,7 +44,7 @@ impl Actor for BulkCreate {
- 
- 			TasksProxy::process_exec(ShellOpt {
- 				cwd:    cwd.clone(),
--				cmd:    Splatter::new(&[file]).splat(&opener.run),
-+				cmd:    Splatter::new(&[file]).splat(&opener.run)?,
- 				block:  opener.block,
- 				orphan: opener.orphan,
- 			})
-```
-
-**File**: `yazi-actor/src/mgr/bulk_rename.rs` (modified, +2/-2)
-```diff
-@@ -8,7 +8,7 @@ use yazi_binding::Permit;
- use yazi_config::{YAZI, opener::OpenerRuleArc};
- use yazi_core::Ctx;
- use yazi_dds::Pubsub;
--use yazi_fs::{Splatter, engine::{Engine, RwFile, local::Local}, max_common_root, op::FilesOp, path::skip_url};
-+use yazi_fs::{engine::{Engine, RwFile, local::Local}, max_common_root, op::FilesOp, path::skip_url, splatter::Splatter};
- use yazi_macro::{log_if_err, succ, writef};
- use yazi_parser::VoidForm;
- use yazi_proxy::TasksProxy;
-@@ -61,7 +61,7 @@ impl Actor for BulkRename {
- 			batcher.prime(&tmp);
- 			TasksProxy::process_exec(ShellOpt {
- 				cwd,
--				cmd: Splatter::new(&[rw.into_file().await?]).splat(&opener.run),
-+				cmd: Splatter::new(&[rw.into_file().await?]).splat(&opener.run)?,
- 				block: opener.block,
- 				orphan: opener.orphan,
- 			})
+   meta = {
+     description = "Blazing fast terminal file manager written in Rust, based on async I/O";
+     homepage = "https://github.com/sxyazi/yazi";
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4495** (2026-11-12): feat: expose mouse modifiers to Lua (@sxyazi)
-- **PR #4494** (2026-11-12): feat: make selected and yanked states indexable (@sxyazi)
-- **PR #4484** (2026-11-10): feat: new `create` and `bulk-create` DDS events for file creations (@sxyazi)
-- **PR #4483** (2026-11-09): feat: rework filesystem APIs (@sxyazi)
-- **PR #4481** (closed): fix: read backing files when copying from trash (@nihitdev)
-- **PR #4477** (2026-11-04): feat: compress files (@sxyazi)
+- **PR #4515** (2026-11-22): fix: block `paste --force`, `link --force`, and `hardlink --force` onto the same file under an aliased parent (@sxyazi)
+- **PR #4514** (2026-11-22): feat!: support copy/move/rename/create/symlink/etc. capabilities for the trash VFS (@sxyazi)
+- **PR #4513** (2026-11-22): ci: pin sccache to v0.16.0 on Windows (@sxyazi)
+- **PR #4512** (closed): Edit commands (@DaylightHu)
+- **PR #4506** (closed): fix: paste alias guard for issue #4505 (@sail3r)
+- **PR #4502** (2026-11-22): fix(nix): add `pkg-config` to `yazi-unwrapped` build deps (@mnpqraven)
 
 ---
 
@@ -918,28 +876,81 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. expose mouse modifiers to Lua (#4495)
+## X. block `paste --force`, `link --force`, and `hardlink --force` onto the same file
 
 **RULE**:
-When implementing operations in `yazi-config/src/keymap/key.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sxyazi/yazi. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sxyazi/yazi. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d5e4beb6`: expose mouse modifiers to Lua (#4495). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3e32fa66`: block `paste --force`, `link --force`, and `hardlink --force` onto the same file under an aliased parent. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `yazi-config/src/keymap/key.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-			ctrl: value.modifiers.contains(Modifiers::CTRL),
+version = "1.14.0"
+checksum = "a680398c10c7bc0488067c4612226ea905a85f607134b69f3068d505d58c4214"
+version = "3.20.4"
+checksum = "87a0cf66fd1eb2fb7b822cb78370d82303750809bc6ba855f3f58e517d3238db"
+version = "1.12.2"
+checksum = "776dfebd015e2d8732c684a2c71003674ccb49457b539b9e82151ba38e96dd7c"
+version = "1.11.3"
+checksum = "02f0e023adb368345ce0ca6cdfc0f24a06554468d0e8503e14a0841de79bfa69"
+version = "4.6.9"
+checksum = "844c5c0b65be192cb68d570cca1b21a6444431d24e39c084dc0336177015337c"
+version = "4.6.12"
+checksum = "6a35200383f20018d41c14d1ab19c1727c697f544492143f7d93aa39f0187848"
+version = "4.6.9"
+checksum = "b4c174f11f949b9ca8c60580925e282b9cbd5454750e506f08648b2038080cd7"
+version = "1.1.2"
+checksum = "e0921b3876b3a1df8a1c9f912e7f94342458022c2e84288015893d83c4d62a79"
+ "zeroize",
+version = "1.2.3"
+checksum = "afa489199eaffb1211795df1c6236ce1ad0d41a6fa45250add73e3b02420f06e"
+version = "0.17.2"
+checksum = "735eaa21a6a5ffb2e84362faaeb90c05ba8e19797ca30428478cb6ea3a4921bc"
+ "hashbrown 0.17.2",
+version = "0.2.46"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "175dc66334db3b9ab9985bf8b61cfed50dc16d20964bb47f9e479adcae984
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-			ctrl: value.modifiers.contains(Modifiers::CONTROL),
+// Induced defect failure mode:
+version = "1.13.1"
+checksum = "6bb31b46c14244e20ee9984b11bf5c992b91fb6939fea616e3512c8baecdbe5f"
+version = "3.20.3"
+checksum = "72f5acc6cb2ba439de613abc23857ec3d78374d8ed5ac84e9d11336e87da8649"
+version = "1.12.1"
+checksum = "fc652a48c352aef3ea3aed32080501cf3ef6ed5da78602a020c991775b0aff04"
+version = "1.11.1"
+checksum = "4ff2a8126fff0f8c839080d619675a585e61720bb12d2baceae45769fd66f155"
+version = "4.6.7"
+checksum = "aa8876b300ab35ba921adea3dfd70157a46249b33f95c9084ae5709785478946"
+version = "4.6.11"
+checksum = "037e2a1a92236d0aff7e845093f64661d6df4c02c9fcc61a60e9e1d736fa392f"
+version = "4.6.7"
+checksum = "f9c751b79415d4e559e3d1fcf128e09e720eb673a06d26cf6f392d37d75b66e0"
+version = "1.1.1"
+checksum = "1c133bc6a41be0d194c306b5506d15e6feeea7b1d6604bd3f8310dfb2ca96486"
+version = "1.2.2"
+checksum = "cb4cb245038516f5f85277875cdaa4f7d2c9a0fa0468de06ed190163b1581fcf"
+[[package]]
+name = "generic-array"
+version = "1.4.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "337d46834ee672ab3e48caca2cb0c78cc174fb12b3a68d0d88f99a0519a5e36e"
+dependencies = [
+ "rustversion",
+ "typenum",
+]
+
+version = "0.17.1"
+checksum = "ed5909b6e89a2db4456e54cd5f673791d7eca6732202bbf2a9cc504f
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d5e4beb6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3e32fa66` are properly handled with clean fallback behavior.

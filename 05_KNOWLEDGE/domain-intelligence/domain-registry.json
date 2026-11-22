@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T19:01:53.472Z",
-  "total_records": 2370,
+  "last_updated": "2026-11-22T19:10:05.086Z",
+  "total_records": 2372,
   "domains": {
     "A": {
       "total": 19,
@@ -64,7 +64,7 @@
       ]
     },
     "D": {
-      "total": 922,
+      "total": 923,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -987,7 +987,8 @@
         "domain_intelligence-research-knowledge-intelligence-hf-lakonik-pi-h3-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-davidau-qwen3-5-9b-the-defiant-fable-uncensored-",
         "domain_intelligence-research-knowledge-intelligence-hf-davidau-qwen3-5-9b-the-defiant-fable-uncensor",
-        "domain_intelligence-research-knowledge-intelligence-sfu-db-connector-x-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-sfu-db-connector-x-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-sxyazi-yazi-learnings-core-invariants"
       ]
     },
     "E": {
@@ -1099,7 +1100,7 @@
       ]
     },
     "G": {
-      "total": 397,
+      "total": 398,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1497,7 +1498,8 @@
         "domain_intelligence-architecture-intelligence-google-tcmalloc-core-invariants",
         "domain_intelligence-architecture-intelligence-google-tcmalloc-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-baarai-artex-core-invariants",
-        "domain_intelligence-architecture-intelligence-baarai-artex-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-baarai-artex-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-sxyazi-yazi-core-invariants"
       ]
     },
     "H": {
@@ -12418,8 +12420,8 @@
       "title": "Content & Information Intelligence: pingcap/tidb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pingcap-tidb-content-information-intelligence-pingcap-tidb-core-invariants.md",
       "repository": "pingcap/tidb",
-      "content_hash": "6e61d434da1c06ed7328ec593db8526c746247f51d1449856f1d384d9ab4a241",
-      "created_at": "2026-11-21T19:44:56.852Z"
+      "content_hash": "efbad2f484cfe502f9b55baa689e09dc1f7167fac9b2b0f0c5c53949b0da4a3e",
+      "created_at": "2026-11-22T19:09:52.834Z"
     },
     "domain_intelligence-architecture-intelligence-dathere-qsv-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-dathere-qsv-core-invariants",
@@ -12487,8 +12489,8 @@
       "title": "Content & Information Intelligence: pingcap-tidb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pingcap-tidb-learnings-content-information-intelligence-pingcap-tidb-learnings-c.md",
       "repository": "pingcap-tidb-learnings",
-      "content_hash": "5e42546726f6a2adfa107dab5003906ab9ee0dc713bf4585d44b62884afce024",
-      "created_at": "2026-11-21T19:47:53.400Z"
+      "content_hash": "b13c0bd54f9f11309a7025bb7f8f36fc3786d1947cd12fe9fdbeb30cae036326",
+      "created_at": "2026-11-22T19:10:05.086Z"
     },
     "domain_intelligence-architecture-intelligence-dathere-qsv-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-dathere-qsv-learnings-core-invariants",
@@ -18648,8 +18650,8 @@
       "title": "Architecture Intelligence: Bitterbot-AI/bitterbot-desktop Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-bitterbot-ai-bitterbot-desktop-architecture-intelligence-bitterbot-ai-bitterbot-.md",
       "repository": "Bitterbot-AI/bitterbot-desktop",
-      "content_hash": "96e2a8ad7d935ba4ad3e41d35836d41df7427bb52f48a504d57281d5b9a11133",
-      "created_at": "2026-11-18T20:14:32.499Z"
+      "content_hash": "40620c18fc1b114f6599118bc0daf2bcdf486271637873ec8c2cd429fa5c43f1",
+      "created_at": "2026-11-22T19:10:00.378Z"
     },
     "domain_intelligence-search-distribution-intelligence-sharkdp-fd-learnings-core-invariants": {
       "record_id": "domain_intelligence-search-distribution-intelligence-sharkdp-fd-learnings-core-invariants",
@@ -29794,8 +29796,8 @@
       "title": "Research & Knowledge Intelligence: Lightricks/LTX-2.5 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-lightricks-ltx-2-5-research-knowledge-intelligence-lightricks-ltx-2-5-core-in.md",
       "repository": "Lightricks/LTX-2.5",
-      "content_hash": "95a52b776390656ec308f3e843104b7c5aad727b4e114e353fbd1cd9cd1ce02b",
-      "created_at": "2026-11-18T12:33:02.811Z"
+      "content_hash": "09c03976f6f099af7cd3bfa91cfb87c1055f7a82e3d1e7a7f6ff36d42f8c9eb3",
+      "created_at": "2026-11-22T19:09:43.282Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-lightricks-ltx-2-5-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-lightricks-ltx-2-5-learnings-core-invariants",
@@ -29803,8 +29805,8 @@
       "title": "Research & Knowledge Intelligence: hf-lightricks-ltx-2.5-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-lightricks-ltx-2-5-learnings-research-knowledge-intelligence-hf-lightricks-lt.md",
       "repository": "hf-lightricks-ltx-2.5-learnings",
-      "content_hash": "2ae7c938b2b628da93eb66b4533bd261406fd1ed9b6cd6d9ccf7ee3ad7a7cecc",
-      "created_at": "2026-11-18T12:33:33.931Z"
+      "content_hash": "d4d8012a0a552af0a8806155aacfddb665009b3d719d808ef90b6a08c1e373c3",
+      "created_at": "2026-11-22T19:10:04.361Z"
     },
     "DOM-D-B990E946": {
       "record_id": "DOM-D-B990E946",
@@ -39846,6 +39848,24 @@
       "repository": "baarai-artex-learnings",
       "content_hash": "0324e0e5c5972823642bf8b5db54b6cda12bd25aef1ef73789453dcaf7c9cf9f",
       "created_at": "2026-11-22T18:00:32.614Z"
+    },
+    "domain_intelligence-architecture-intelligence-sxyazi-yazi-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-sxyazi-yazi-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: sxyazi/yazi Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-sxyazi-yazi-architecture-intelligence-sxyazi-yazi-core-invariants.md",
+      "repository": "sxyazi/yazi",
+      "content_hash": "62653c887ecec6819c103826bf8ed6ff4d8f7977c351756b188f455ce71fdb93",
+      "created_at": "2026-11-22T19:09:44.968Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-sxyazi-yazi-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-sxyazi-yazi-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: sxyazi-yazi-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-sxyazi-yazi-learnings-research-knowledge-intelligence-sxyazi-yazi-learnings-core.md",
+      "repository": "sxyazi-yazi-learnings",
+      "content_hash": "3cf931df5d9d4e5ab67d8ecf370db66d1a035195c49846e0dc0f24cf21b8b4ec",
+      "created_at": "2026-11-22T19:10:03.816Z"
     }
   }
 }

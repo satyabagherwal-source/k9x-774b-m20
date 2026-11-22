@@ -4,24 +4,24 @@
 {
   "source_repository": "Bitterbot-AI/bitterbot-desktop",
   "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-  "source_version": "9ef0e544",
+  "source_version": "2db04dd3",
   "license": "MIT",
-  "timestamp": "2026-11-18T20:14:32.357Z",
+  "timestamp": "2026-11-22T19:10:00.208Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop) (Revision: `9ef0e544`).  
-> **License**: MIT | **Timestamp**: `2026-11-18T20:14:32.357Z`  
+> **Provenance**: Harvested from [Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop) (Revision: `2db04dd3`).  
+> **License**: MIT | **Timestamp**: `2026-11-22T19:10:00.208Z`  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 65%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), B (Product Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 63%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from Bitterbot-AI/bitterbot-desktop:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T20:14:31.223Z  
+> **Harvest Timestamp**: 2026-11-22T19:09:58.931Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Bitterbot - a mesh of agents that turns shared experience into collective capability.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 2487 stars
+- **Stars / Engagement**: 2480 stars
 
 ---
 
@@ -1584,207 +1584,261 @@ def main():
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3ea732a8` (2026-11-18)
-**Commit Message**: fix(skills): ship a sidecar that carries the package topic, and fail loudly without one (#379)
+### Incident Patch 1: `c1e92670` (2026-11-22)
+**Commit Message**: fix(agents): retry one-shot completions with thinking between_tools when a model rejects disabled (#389)
 
-* fix(skills): ship a sidecar that carries the package topic, and fail loudly without one
+One-shot completions (deep_recall, judges, extraction) go through
+completeAttributed, which sends thinking: {type: "disabled"} for reasoning
+models when no reasoning is requested. Claude Opus 4.8 rejects that value
+with a 400 that names "between_tools" as the accepted one, so deep_recall
+failed on its first call whenever the agent's main model was Opus 4.8.
 
-Releases up to 1.14.0 bundle orchestrator 0.2.4, which predates the package
-topic added in #376 and refuses it with an ok:false reply. The gateway
-ignored that reply, so complete packages and skill cards were silently dead
-on every released install. Found by running two 1.14.0 nodes on loopback.
+completeAttributed now recognises that specific rejection, retries once
+with between_tools, and remembers the model for the life of the process so
+later calls skip the rejected request. No model list is hardcoded.
 
-- orchestrator 0.2.5: the first sidecar release with the package topic
-- the package mesh checks the subscribe and publish replies; a refusal now
-  surfaces as the existing 'Complete package mesh unavailable' warning
-- sim-mesh: wrapper is executable; README covers installed releases and cards
-- docs state the sidecar requirement
+Co-authored-by: Claude Fable 5.2 <[REDACTED_EMAIL]>
 
-Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
-
-* ci(orchestrator): build macOS sidecars on macos-15
-
-GitHub no longer serves the macos-14 arm64 image ('configuration
-macos-14-arm64-us-default is not supported'), so both darwin builds of
-orchestrator-v0.2.5 were cancelled before starting. release-tarball.yml
-already builds on macos-15.
-
-Co-Authored-By: Claude Fable 5.2 <[RED
-
-**File**: `.github/workflows/orchestrator-release.yml` (modified, +2/-2)
+**File**: `src/agents/complete-attributed.thinking-off.test.ts` (added, +137/-0)
 ```diff
-@@ -45,12 +45,12 @@ jobs:
-             bin: bitterbot-orchestrator
-             asset: bitterbot-orchestrator-linux-arm64
-           - target: darwin-x64
--            os: macos-14
-+            os: macos-15
-             rust-target: x86_64-apple-darwin
-             bin: bitterbot-orchestrator
-             asset: bitterbot-orchestrator-darwin-x64
-           - target: darwin-arm64
--            os: macos-14
-+            os: macos-15
-             rust-target: aarch64-apple-darwin
-             bin: bitterbot-orchestrator
-             asset: bitterbot-orchestrator-darwin-arm64
-```
-
-**File**: `docs/agents/collective-learning.md` (modified, +1/-1)
-```diff
-@@ -39,7 +39,7 @@ Only an operator with `operator.approvals` can create or change automation grant
- 
- Circle membership, visibility, package hash, policy and budget are checked at execution and object retrieval. Revoking a grant stops subsequent authorized work; already sent requests or copies cannot be erased. Public publication requires a separate public grant and `publicMesh`; Circle permission never authorizes it. Generated research briefs retain their draft/review flow.
- 
--Public package discovery and object transfer also require a sidecar built from the new package-protocol source. The published orchestrator v0.2.4 predates that protocol. Until a signed companion sidecar release is published and pinned, leave `publicMesh` disabled; use the private authenticated RPC transport or offline import/export. An older peer cannot receive a partial package through a legacy fallback.
-+Public package discovery and object transfer also require a sidecar built from the new package-protocol source. Orchestrator 0.2.5 is the first sidecar with that protocol; v0.2.4, bundled with application releases up to and including 1.14.0, refuses the package topic. On those releases leave `publicMesh` disabled and use the private authenticated RPC transport or offline import/export. A gateway paired with an older sidecar logs `Complete package mesh unavailable` at start and neither sends nor receives packages or skill cards. An older peer cannot receive a partial package through a legacy fallback.
- 
- Structured peer evidence is stored separately from conversational memory. It may guide bounded proposals but cannot qualify a package locally. Start synthesis in `shadow` when explicitly permitted; `off` stops new proposals. Every proposed update returns through the same execution gate. Hermes imports likewise enter quarantine and local validation; external traces remain observations unless independently verified by a trusted host.
- 
-```
-
-**File**: `docs/gateway/configuration-reference.md` (modified, +2/-1)
-```diff
-@@ -1907,7 +1907,8 @@ See [Local Models](/gateway/local-models). TL;DR: run MiniMax M2.1 via LM Studio
-   bundles are signed outcome counts keyed by skill content hash (no names,
-   no text) and are exchanged only over the public package mesh, so nothing
-   is sent or received unless `collective.enabled` and
--  `collective.publicMesh` are both set; with the mesh on, the node also
-+  `collective.publicMesh` are both set and the sidecar is orchestrator
-+  0.2.5 or newer (bundled from the release after 1.14.0); with the mesh on, the node also
-   announces its own verified counts. A node records verified outcomes only
-   with `prior.writer: "on"`. Received bundles are kept in `prior.peersPath`
-   (default `CONFIG_DIR/skill-cards-peers.json`), one per origin, at most 64
-```
-
-**File**: `docs/memory/skills-pipeline.md` (modified, +5/-2)
-```diff
-@@ -601,7 +601,10 @@ the next turn. Consequences the rest of this document depends on:
-   carries no skill name and no text, so a record can only ever apply to a
-   skill whose bytes the recipient already holds. Bundles travel on the
-   public package mesh as `type: "cards"` announcements, which exist only
--  when `skills.collective.enabled` and `publicMesh` are set; a node on the
-+  when `skills.collective.enabled` and `publicMesh` are set and the
-+  sidecar is orchestrator 0.2.5 or newer (the 0.2.4 sidecar bundled up to
-+  release 1.14.0 refuses the topic, and the gateway then logs `Complete
-+  package mesh unavailable` at start); a node on the
-   mesh announces its own bundle shortly after start, hourly when it has
-   changed and every six hours otherwise. A node with the writer in shadow
-   has no verified counts and announces nothing. A content hash of a
-@@ -1375,7 +1378,7 @@ bitterbot-orchestrator/<crate version>/edge
- bitterbot-orchestrator/<crate version>/management
- ```
- 
--The version segment is the orchestrator crate's own version (0.2.4 at the
-+The version segment is the orchestrator crate's own version (0.2.5 at the
- time of writing), not a protocol version.
- 
- When a peer identifies as `management`, the receiving node:
-```
-
-**File**: `orchestrator/Cargo.lock` (modified, +1/-1)
-```diff
-@@ -462,7 +462,7 @@ checksum = "843867be96c8daad0d758b57df9392b6d8d271134fce549de6ce169ff98a92af"
- 
- [[package]]
- name = "bitterbot-orchestrator"
--version = "0.2.4"
-+version = "0.2.5"
- dependencies = [
-  "axum",
-  "base64 0.23.1",
-```
-
-**File**: `orchestrator/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "bitterbot-orchestrator"
--version = "0.2.4"
-+version = "0.2.5"
- edition = "2021"
- description = "P2P orchestrator daemon for Bitterbot skill propagation network"
- 
-```
-
-**File**: `scripts/sim-mesh/README.md` (modified, +13/-1)
-```diff
-@@ -23,7 +23,19 @@ them as soon as the run is done.
- ## Run
- 
- Build first (`pnpm build`) so `dist/entry.js` is current. All paths below
--are relative to the repository root. Replace `$A`/`$B` with the state dirs.
-+are relative to the repository root.
+@@ -0,0 +1,137 @@
++import { beforeEach, describe, expect, it, vi } from "vitest";
 +
-+To test an installed release instead of the checkout, start each node with
-+`~/.bitterbot/app/<version>/bin/bitterbot gateway` in place of
-+`node dist/entry.js gateway`, and set `SIM_MESH_ORCHESTRATOR` to the sidecar
-+to run (the release's own `bin/bitterbot-orchestrator`, or a build from
-+`orchestrator/target`). The wrapper defaults to
-+`orchestrator/target/release/bitterbot-orchestrator`.
++const completeSimple = vi.fn();
 +
-+Skill cards and complete packages need `skills.collective.enabled` and
-+`publicMesh` in each node's config and a sidecar of 0.2.5 or newer. Start
-+the receiving node first: a node announces its cards two minutes after
-+start and retries only hourly. Replace `$A`/`$B` with the state dirs.
- 
- ```bash
- A=~/bitterbot-sim/a; B=~/bitterbot-sim/b
-```
-
-**File**: `src/agents/skills/collective/mesh-cards.test.ts` (modified, +20/-1)
-```diff
-@@ -31,7 +31,7 @@ function gossip() {
-   const sent: string[] = [];
-   const bridge = (id: string) =>
-     ({
--      subscribeCircleTopic: async () => undefined,
-+      subscribeCircleTopic: async () => ({ ok: true }),
-       unsubscribeCircleTopic: async () => undefined,
-       onCircleTopicMessage: (fn: Listener) => {
-         listeners.push({ id, fn });
-@@ -46,6 +46,7 @@ function gossip() {
-             l.fn({ topic, from_peer_id: id, data_b64 });
-           }
-         }
-+        return { ok: true };
-       },
-     }) as unknown as OrchestratorBridge;
-   return { bridge, sent };
-@@ -146,6 +147,24 @@ describe("skill cards over the package mesh", () => {
-     expect(await mesh(net.bridge("peer-off"), false).publishCards()).toBe(false);
-   });
- 
-+  it("fails loudly when the sidecar refuses the package topic or a publish", async () => {
-+    const refused = {
-+      subscribeCircleTopic: async () => ({
-+        ok: false,
-+        error: "only exact Compute or valid blinded circle topics allowed",
-+      }),
-+      unsubscribeCircleTopic: async () => undefined,
-+      onCircleTopicMessage: () => () => undefined,
-+      publishCircleTopic: async () => ({ ok: false, error: "publish failed" }),
-+    } as unknown as OrchestratorBridge;
-+    await expect(mesh(refused).start()).rejects.toThrow(/orchestrator 0\.2\.5 or newer/);
++vi.mock("@mariozechner/pi-ai", () => ({
++  completeSimple: (...a: unknown[]) => completeSimple(...a),
++}));
++vi.mock("./embedded-runner/model.js", () => ({
++  resolveModel: (provider: string, modelId: string) => ({
++    model: {
++      id: modelId,
++      provider,
++      api: "anthropic-messages",
++      baseUrl: "https://api.anthropic.com",
++      headers: undefined,
++    },
++  }),
++}));
++vi.mock("./model-auth.js", () => ({
++  getApiKeyForModel: async () => ({ apiKey: "sk-test", mode: "api-key", source: "env" }),
++  requireApiKey: (auth: { apiKey?: string }) => auth.apiKey,
++}));
++vi.mock("./embedded-runner/extra-params.js", () => ({ resolveCacheTtlLabel: () => "5m" }));
 +
-+    const a = node("a", generateKeyPair());
-+    use(a);
-+    learn(a, 1);
-+    await expect(mesh(refused).publishCards(Date.now())).rejects.toThrow(/publish refused/);
++import {
++  completeAttributed,
++  isThinkingDisabledRejection,
++  resetThinkingOffCacheForTest,
++  rewriteThinkingOff,
++} from "./complete-attributed.js";
++
++const REJECTION =
++  '400 {"type":"error","error":{"type":"invalid_request_error","message":"To turn thinking off on this model, send \\"thinking\\": {\\"type\\": \\"between_tools\\"} instead of {\\"type\\": \\"disabled\\"}."}}';
++
++const usage = {
++  input: 10,
++  output: 5,
++  cacheRead: 0,
++  cacheWrite: 0,
++  totalTokens: 15,
++  cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 },
++};
++const ok = (text: string) => ({
++  role: "assistant",
++  content: [{ type: "text", text }],
++  api: "anthropic-messages",
++  provider: "anthropic",
++  model: "claude-test",
++  usage,
++  stopReason: "stop",
++  timestamp: Date.now(),
++});
++const rejected = () => ({ ...ok(""), content: [], stopReason: "error", errorMessage: REJECTION });
++
++type Options = { onPayload: (payload: unknown) => unknown };
++const sentThinking = (callIndex: number): unknown => {
++  const options = completeSimple.mock.calls[callIndex]![2] as Options;
++  const payload = { model: "claude-test", thinking: { type: "disabled" } };
++  const next = (options.onPayload(payload) ?? payload) as { thinking: unknown };
++  return next.thinking;
++};
++
++const run = (modelId = "claude-test") =>
++  completeAttributed({
++    provider: "anthropic",
++    modelId,
++    prompt: "hi",
++    feature: "rlm/deep-recall",
++    ignoreBudget: true,
++    batch: false,
 +  });
 +
-   it("ignores forged cards and cards when peer evidence is off", async () => {
-     const net = gossip();
-     const b = node("b", generateKeyPair());
++describe("completeAttributed thinking-off handling", () => {
++  beforeEach(() => {
++    completeSimple.mockReset();
++    resetThinkingOffCacheForTest();
++  });
++
++  it("leaves the payload alone when the model accepts disabled", async () => {
++    completeSimple.mockResolvedValueOnce(ok("fine"));
++    const result = await run();
++    expect(result.text).toBe("fine");
++    expect(completeSimple).toHaveBeenCalledTimes(1);
++    expect(sentThinking(0)).toEqual({ type: "disabled" });
++  });
++
++  it("retries once with between_tools when the provider rejects disabled", async () => {
++    completeSimple.mockResolvedValueOnce(rejected()).mockResolvedValueOnce(ok("recovered"));
++    const result = await run();
++    expect(result.text).toBe("recovered");
++    expect(completeSimple).toHaveBeenCalledTimes(2);
++    expect(sentThinking(0)).toEqual({ type: "disabled" });
++    expect(sentThinking(1)).toEqual({ type: "between_tools" });
++  });
++
++  it("remembers the model so later calls skip the rejected request", async () => {
++    completeSimple.mockResolvedValueOnce(rejected()).mockResolvedValue(ok("again"));
++    await run();
++    completeSimple.mockClear();
++    await run();
++    expect(completeSimple).toHaveBeenCalledTimes(1);
++    expect(sentThinking(0)).toEqual({ type: "between_tools" });
++  });
++
++  it("keeps the memory per model", async () => {
++    completeSimple.mockResolvedValueOnce(rejected()).mockResolvedValue(ok("x"));
++    await run("claude-a");
++    completeSimple.mockClear();
++    await run("claude-b");
++    expect(sentThinking(0)).toEqual({ type: "disabled" });
++  });
++
++  it("does not retry on unrelated errors", async () => {
++    completeSimple.mockResolvedValueOnce({
++      ...rejected(),
++      errorMessage: "529 overloaded",
++    });
++    await expect(run()).rejects.toThrow();
++    expect(completeSimple).toHaveBeenCalledTimes(1);
++  });
++
++  it("rewrites only a disabled thinking field", () => {
++    expect(rewriteThinkingOff({ thinking: { type: "adaptive" } }, "between_tools")).toBeUndefined();
++    expect(rewriteThinkingOff({ model: "m" }, "between_tools")).toBeUndefined();
++    expect(rewriteThinkingOff({ thinking: { type: "disabled" } }, "disabled")).toBeUndefined();
++    expect(rewriteThinkingOff({ a: 1, thinking: { type: "disabled" } }, "between_tools")).toEqual({
++      a: 1,
++      thinking: { type: "between_tools" },
++    });
++  });
++
++  it("recognises only the specific rejection", () => {
++    expect(isThinkingDisabledRejection(rejected())).toBe(true);
++    expect(isThinkingDisabledRejection(ok("between_tools disabled"))).toBe(false);
++    expect(isThinkingDisabledRejection(null)).toBe(false);
++  });
++});
+```
+
+**File**: `src/agents/complete-attributed.ts` (modified, +60/-12)
+```diff
+@@ -159,6 +159,41 @@ export function extractAssistantText(message: AssistantMessage): string {
+   );
+ }
+ 
++type ThinkingOffMode = "disabled" | "between_tools";
++
++/**
++ * Models that reject `thinking: {type: "disabled"}` and name `between_tools` as the way to turn
++ * thinking off. Learned from the provider's own 400 rather than a hardcoded model list, so a
++ * new model id needs no code change.
++ */
++const modelsNeedingBetweenTools = new Set<string>();
++
++/** Test hook: forget which models were learned to need `between_tools`. */
++export function resetThinkingOffCacheForTest(): void {
++  modelsNeedingBetweenTools.clear();
++}
++
++/** `onPayload` hook: swap an outgoing `thinking: disabled` for `between_tools` when asked. */
++export function rewriteThinkingOff(payload: unknown, mode: ThinkingOffMode): unknown {
++  if (mode !== "between_tools" || !payload || typeof payload !== "object") {
++    return undefined;
++  }
++  const thinking = (payload as { thinking?: { type?: unknown } }).thinking;
++  if (!thinking || thinking.type !== "disabled") {
++    return undefined;
++  }
++  return { ...(payload as Record<string, unknown>), thinking: { type: "between_tools" } };
++}
++
++/** True for the provider 400 that says `disabled` is not accepted and `between_tools` is. */
++export function isThinkingDisabledRejection(message: unknown): boolean {
++  const m = message as { stopReason?: unknown; errorMessage?: unknown } | null | undefined;
++  if (!m || m.stopReason !== "error" || typeof m.errorMessage !== "string") {
++    return false;
++  }
++  return m.errorMessage.includes("between_tools") && m.errorMessage.includes("disabled");
++}
++
+ export async function completeAttributed(
+   params: CompleteAttributedParams,
+ ): Promise<CompleteAttributedResult> {
+@@ -288,19 +323,32 @@ export async function completeAttributed(
+   }
+ 
+   const startedAt = Date.now();
+-  const message = await completeSimple(
+-    resolved.model,
+-    { messages },
+-    {
+-      apiKey,
+-      // Dreams, extraction, curator, judges on OpenRouter count toward the app too.
+-      headers: withOpenRouterAttribution(resolved.model),
+-      maxTokens: params.maxTokens ?? 2048,
+-      // No sampling params: current Anthropic models 400 on temperature, and completeSimple
+-      // embeds that error in the response instead of throwing.
+-      signal: params.signal,
+-    },
++  const modelKey = `${providerName}/${resolved.model.id}`;
++  const callLive = (thinkingOff: ThinkingOffMode) =>
++    completeSimple(
++      resolved.model!,
++      { messages },
++      {
++        apiKey,
++        // Dreams, extraction, curator, judges on OpenRouter count toward the app too.
++        headers: withOpenRouterAttribution(resolved.model!),
++        maxTokens: params.maxTokens ?? 2048,
++        // No sampling params: current Anthropic models 400 on temperature, and completeSimple
++        // embeds that error in the response instead of throwing.
++        signal: params.signal,
++        onPayload: (payload) => rewriteThinkingOff(payload, thinkingOff),
++      },
++    );
++  let message = await callLive(
++    modelsNeedingBetweenTools.has(modelKey) ? "between_tools" : "disabled",
+   );
++  if (!modelsNeedingBetweenTools.has(modelKey) && isThinkingDisabledRejection(message)) {
++    // The provider names the accepted value in the error; remember it for this model so only
++    // the first call in a process pays for the rejected request.
++    modelsNeedingBetweenTools.add(modelKey);
++    log.info(`${modelKey} rejects thinking "disabled"; retrying with "between_tools"`);
++    message = await callLive("between_tools");
++  }
+ 
+   const failure = message as { stopReason?: string; errorMessage?: string };
+   // pi-ai does not surface Anthropic's per-TTL cache_creation split, so the TTL on the row is the
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #380** (2026-11-18): chore(main): release 1.14.1 (@github-actions[bot])
-- **PR #379** (2026-11-18): fix(skills): ship a sidecar that carries the package topic, and fail loudly without one (@VGIL77)
-- **PR #378** (2026-11-17): test(installer): do not require a signature check on runners with no verifier (@VGIL77)
-- **PR #377** (2026-11-17): feat(skills): cross-agent evidence cards with quorum and guard, replicated and integrated (@VGIL77)
-- **PR #376** (2026-11-14): feat(skills): add verified collective learning and reproducible pilot evidence (@VGIL77)
-- **PR #373** (2026-11-13): fix(wallet): stop @coinbase/agentkit sending analytics to Coinbase (@VGIL77)
+- **PR #389** (2026-11-22): fix(agents): retry one-shot completions with thinking between_tools when a model rejects disabled (@VGIL77)
+- **PR #388** (2026-11-19): chore(main): release 1.14.2 (@github-actions[bot])
+- **PR #387** (2026-11-19): fix(security): run the deep_recall sandbox in a locked-down process and close vm escapes (@VGIL77)
+- **PR #386** (2026-11-22): chore(deps): bump the native group with 2 updates (@dependabot[bot])
+- **PR #385** (2026-11-22): chore(deps-dev): bump vite from 8.3.7 to 8.3.8 in the build-tooling group (@dependabot[bot])
+- **PR #383** (2026-11-22): chore(deps): bump rand from 0.10.3 to 0.10.4 in /orchestrator in the cargo-minor-patch group (@dependabot[bot])
 
 ---
 
@@ -1804,33 +1858,68 @@ Co-Authored-By: Claude Fable 5.2 <[RED
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. skills): ship a sidecar that carries the package topic, and fail loudly without 
+## X. agents): retry one-shot completions with thinking between_tools when a model rej
 
 **RULE**:
-When implementing operations in `.github/workflows/orchestrator-release.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/agents/complete-attributed.thinking-off.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3ea732a8`: skills): ship a sidecar that carries the package topic, and fail loudly without one. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c1e92670`: agents): retry one-shot completions with thinking between_tools when a model rejects disabled. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/orchestrator-release.yml`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/agents/complete-attributed.thinking-off.test.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-            os: macos-15
-            os: macos-15
+import { beforeEach, describe, expect, it, vi } from "vitest";
+
+const completeSimple = vi.fn();
+
+vi.mock("@mariozechner/pi-ai", () => ({
+  completeSimple: (...a: unknown[]) => completeSimple(...a),
+}));
+vi.mock("./embedded-runner/model.js", () => ({
+  resolveModel: (provider: string, modelId: string) => ({
+    model: {
+      id: modelId,
+      provider,
+      api: "anthropic-messages",
+      baseUrl: "https://api.anthropic.com",
+      headers: undefined,
+    },
+  }),
+}));
+vi.mock("./model-auth.js", () => ({
+  getApiKeyForModel: async () => ({ apiKey: "sk-test", mode: "api-key", source: "env" }),
+  requireApiKey: (auth: { apiKey?: string }) => auth.apiKey,
+}));
+vi.mock("./embedded-runner/extra-params.js", () => ({ resolveCacheTtlLabel: () => "5m" }));
+
+import {
+  completeAttributed,
+  isThinkingDisabledRejection,
+  resetThinkingOffCacheForTest,
+  rewriteThinkingOff,
+} from "./complete-attributed.js";
+
+const REJECTION =
+  '400 {"type":"error","error":{"type":"invalid_request_error","message":"To turn thinking off on this model, send \\"thinking\\": {\\"type\\": \\"between_tools\\"} instead of {\\"type\\": \\"disabled\\"}."}}';
+
+const usage = {
+  input: 10,
+  output: 5,
+  cacheRead: 0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-            os: macos-14
-            os: macos-14
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3ea732a8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c1e92670` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

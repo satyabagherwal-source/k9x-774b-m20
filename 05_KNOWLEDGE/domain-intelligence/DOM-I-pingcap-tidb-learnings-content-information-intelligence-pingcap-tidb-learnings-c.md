@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-21T19:47:53.172Z",
+  "timestamp": "2026-11-22T19:10:04.794Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-pingcap-tidb-learnings",
@@ -14,13 +14,13 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [pingcap-tidb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-21T19:47:53.172Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T19:10:04.794Z`  
 > **Learning ID**: `LEARN-EVO-pingcap-tidb-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain I (Content & Information Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence)
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), G (Architecture Intelligence), J (Search & Distribution Intelligence), D (Research & Knowledge Intelligence), H (Technical Construction Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence)
 - **Confidence Rating**: 66%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -28,10 +28,10 @@ The following architectural invariants have been empirically discovered and reco
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pingcap-tidb-learnings.md`  
 > **Source**: github ([https://github.com/pingcap/tidb](https://github.com/pingcap/tidb))  
-> **Source Version**: `bf712cf6`  
+> **Source Version**: `bca43971`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T19:44:55.767Z  
+> **Timestamp**: 2026-11-22T19:09:51.920Z  
 > **Learning ID**: `learn-github-pingcap-tidb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pingcap-tidb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pingcap/tidb](https://github.com/pingcap/tidb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T19:44:55.597Z  
+> **Harvest Timestamp**: 2026-11-22T19:09:51.914Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: TiDB is built for agentic workloads that grow unpredictably, with ACID guarantees and native support for transactions, analytics, and vector search. No data silos. No noisy neighbors. No infrastructure ceiling.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 40760 stars
+- **Stars / Engagement**: 40765 stars
 
 ---
 
@@ -1944,11 +1944,11 @@ func SearchPlacementRule(tableID int64, placementRules []pdtypes.Rule, role pdty
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #73546** (2026-11-22): ***: add issue discovery source section to bug report template**
+  *Symptoms*: <!--  Thank you for contributing to TiDB!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: none  Problem Summary:  The current bug report issue template does not ask where the issue was discovered (e.g., production, PoC, fuzz testing, CI, etc.), which makes triage and prioritization harder.  ### What changed and how does it work?  Added section `### 5. Where was this issue found? (Required)` to `.github/ISSUE_TEMPLATE/bug-report.md` with a checkbox list covering common discovery environments and sources:  - Production environment - Staging / Test environment - PoC / Evaluation environment - Local development / Manual testing - CI / Automated testing (e.g., unit, integration, or E2E tests) - Fuzz testing (e.g., SQLancer, SQLsmith, randgen) - Benchmark / Stress / Chaos testing - Code review / Static analysis - Other (please specify)  Sections 1–4 remain unchanged to preserve existing structure and numbering.  ### Check List  Tests <!-- At least one of them must be included. -->  - [ ] Unit test - [ ] Integration test - [ ] Manual test (add detailed scripts or steps below) - [x] No need to test 
+
 - **Issue #73543** (2026-11-20): **br: fix PITR index repair for foreign keys with quoted column names**
   *Symptoms*: Fixes #73534  PITR index repair failed to recreate foreign keys on quoted column names such as `order` and `parent id`, leaving the restored tables writable without their foreign keys; retrying with the same checkpoint failed again because the same broken statement was replayed.  ## Root cause  In `generateRepairIngestIndexSQLs` (`br/pkg/restore/indexrepair/index_repair.go`), `colsToStr()` interpolated foreign-key column names raw (`col.O`) into the generated `ALTER TABLE ... ADD FOREIGN KEY (...) REFERENCES ... (...)` DDL, while schema/table/FK names already went through `%n` identifier arguments. A reserved word (`order`), a space (`parent id`), a backtick, or a `%` therefore produced invalid SQL (e.g. `[parser:1064] ... near "order) REFERENCES \`test\`.\`parent\` (id) ON DELETE CASCADE ..."`), so the FK was never recreated.  ## Change  `colsToStr` now emits `%n` placeholders and returns the column names as arguments; the caller interleaves child-column args after the FK name and parent-column args after the referenced table, matching `alterTableAddForeignKeyFormat`. Minimal change, scoped to the FK DDL builder.  ## Verification  - New regression test `TestRepairForeignKeyQuotedColumns` (`br/pkg/restore/indexrepair/index_repair_test.go`): 6 cases x 3 repair attempts each — `plain` (`pid`), `reserved_word` (`order` child), `parent_reserved_word` (`order` parent), `space` (`parent id`), `backtick` (`` parent`id ``), `percent` (`parent%n`). Each attempt runs `RepairIndexes` ag
-
-- **Issue #73535** (2026-11-20): **planner: don't discount blocking ordered IndexMerge candidates with LIMIT**
-  *Symptoms*: Fixes #73514  For an ordered union IndexMerge, `fetchLoopUnionWithOrderBy` must consume all partial-scan inputs, deduplicate handles, maintain a global heap, and materialize the sorted handle list before dispatching any table lookups. Without an embedded `PushedLimit`, that blocking phase does all of the index-side work before returning a single row. But the partial index scan estimates were still reduced using the LIMIT-derived `ExpectedCnt`, and the IndexMerge table-side row estimate was scaled too, so the blocking ordered IndexMerge could look far cheaper than its actual work and be selected over an ordered IndexLookUp that can stop incrementally after finding enough qualifying rows (in the regression case, 1,000 candidates were discounted to 1.10 rows by LIMIT 1).  ## Change  In `convertToIndexMergeScan`, when the ordered union matches the required ordering but the LIMIT cannot be embedded (root task, or the path has `TableFilters`), the partial-scan property is cloned with `ExpectedCnt` set to `math.MaxFloat64`, so the blocking index side keeps its full candidate estimate. Table-side lookups still use the original property's LIMIT scaling and can stop early. No cost factor was retuned.  ## Verification  - New regression test `TestOrderedIndexMergeLimitCost` (cost versions v1/v2 x asc/desc, plus table-side early-stop, incremental ordered IndexLookUp, SQL result equivalence, embeddable-LIMIT control, and unordered-union early-stop cases): all 4 sub-cases FAIL before the fi
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1965,314 +1965,38 @@ func SearchPlacementRule(tableID int64, placementRules []pdtypes.Rule, role pdty
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bf712cf6` (2026-11-21)
-**Commit Message**: ddl: support database-level read-only mode (#72912)
+### Incident Patch 1: `bca43971` (2026-11-22)
+**Commit Message**: *: add issue discovery source section to bug report template (#73546)
 
-ref pingcap/tidb#62122
-
-**File**: `br/pkg/restore/internal/prealloc_db/BUILD.bazel` (modified, +1/-0)
+**File**: `.github/ISSUE_TEMPLATE/bug-report.md` (modified, +14/-0)
 ```diff
-@@ -16,6 +16,7 @@ go_library(
-         "//pkg/kv",
-         "//pkg/meta/model",
-         "//pkg/parser/ast",
-+        "//pkg/privilege",
-         "//pkg/sessionctx/variable",
-         "@com_github_pingcap_errors//:errors",
-         "@com_github_pingcap_log//:log",
-```
-
-**File**: `br/pkg/restore/internal/prealloc_db/db.go` (modified, +13/-0)
-```diff
-@@ -19,6 +19,7 @@ import (
- 	"github.com/pingcap/tidb/pkg/kv"
- 	"github.com/pingcap/tidb/pkg/meta/model"
- 	"github.com/pingcap/tidb/pkg/parser/ast"
-+	"github.com/pingcap/tidb/pkg/privilege"
- 	"github.com/pingcap/tidb/pkg/sessionctx/variable"
- 	"go.uber.org/zap"
- )
-@@ -116,6 +117,15 @@ func (db *DB) ExecDDL(ctx context.Context, ddlJob *model.Job) error {
- 			return errors.Trace(err)
- 		}
- 	}
-+	if sctx := db.se.GetSessionCtx(); sctx != nil {
-+		databases := make([]string, 0, len(ddlJob.GetInvolvingSchemaInfo()))
-+		for _, target := range ddlJob.GetInvolvingSchemaInfo() {
-+			if target.Mode == model.ExclusiveInvolving && target.Database != model.InvolvingNone && target.Database != model.InvolvingAll {
-+				databases = append(databases, ast.NewCIStr(target.Database).L)
-+			}
-+		}
-+		defer privilege.WithInternalSchemaReadOnlyBypass(sctx, databases...)()
-+	}
- 	err = db.se.Execute(ctx, ddlJob.Query)
- 	if err != nil {
- 		log.Error("execute ddl query failed",
-@@ -222,6 +232,9 @@ func (db *DB) restoreSequence(ctx context.Context, table *metautil.Table) error
- }
+@@ -20,3 +20,17 @@ Please answer these questions before submitting your issue. Thanks!
  
- func (db *DB) CreateTablePostRestore(ctx context.Context, table *metautil.Table, toBeCorrectedTables map[restore.UniqueTableName]bool) error {
-+	if sctx := db.se.GetSessionCtx(); sctx != nil {
-+		defer privilege.WithInternalSchemaReadOnlyBypass(sctx, table.DB.Name.L)()
-+	}
- 	var restoreMetaSQL string
- 	var err error
- 	switch {
-```
-
-**File**: `br/pkg/restore/internal/prealloc_db/db_test.go` (modified, +39/-1)
-```diff
-@@ -614,10 +614,48 @@ func TestDB_ExecDDL2(t *testing.T) {
- 	db, _, err := preallocdb.NewDB(gluetidb.New(), s.Mock.Storage, "STRICT")
- 	require.NoError(t, err)
+ <!-- Paste the output of SELECT tidb_version() -->
  
--	for _, ddlJob := range ddlJobs {
-+	defer db.Close()
-+	dom := domain.GetDomain(db.Session().GetSessionCtx())
-+	publishReadOnly := func(name string) {
-+		info, ok := dom.InfoSchema().SchemaByName(ast.NewCIStr(name))
-+		require.True(t, ok)
-+		info = info.Clone()
-+		info.ReadOnly = true
-+		txn, err := s.Mock.Storage.Begin()
-+		require.NoError(t, err)
-+		m := meta.NewMutator(txn)
-+		require.NoError(t, m.UpdateDatabase(info))
-+		version, err := m.GenSchemaVersion()
-+		require.NoError(t, err)
-+		require.NoError(t, m.SetSchemaDiff(&model.SchemaDiff{Version: version, Type: model.ActionModifySchemaReadOnly, SchemaID: info.ID}))
-+		require.NoError(t, txn.Commit(ctx))
-+		require.NoError(t, dom.Reload())
-+		info, ok = dom.InfoSchema().SchemaByName(info.Name)
-+		require.True(t, ok)
-+		require.True(t, info.ReadOnly)
-+	}
-+	for i, ddlJob := range ddlJobs {
-+		if i == 2 {
-+			publishReadOnly("test_db")
-+		}
++### 5. Where was this issue found? (Required)
 +
- 		err = db.ExecDDL(ctx, ddlJob)
- 		assert.NoError(t, err)
- 	}
-+	require.ErrorContains(t, db.Session().Execute(ctx, "alter table test_db.t1 add column forbidden int"), "read only mode")
-+	require.NoError(t, db.Session().Execute(ctx, "create database other"))
-+	publishReadOnly("other")
-+	require.NoError(t, db.ExecDDL(ctx, &model.Job{
-+		Type: model.ActionRenameTables, SchemaName: "test_db", Query: "rename table test_db.t1 to other.t1",
-+		BinlogInfo:          &model.HistoryInfo{TableInfo: &model.TableInfo{}},
-+		InvolvingSchemaInfo: []model.InvolvingSchemaInfo{{Database: "test_db", Table: "t1"}, {Database: "other", Table: "t1"}},
-+	}))
-+	require.ErrorContains(t, db.ExecDDL(ctx, &model.Job{
-+		Type: model.ActionAddColumn, SchemaName: "other", Query: "alter table other.t1 add column forbidden int",
-+		BinlogInfo:          &model.HistoryInfo{TableInfo: &model.TableInfo{}},
-+		InvolvingSchemaInfo: []model.InvolvingSchemaInfo{{Database: "other", Table: "t1", Mode: model.SharedInvolving}},
-+	}), "read only mode")
-+	require.ErrorContains(t, db.Session().Execute(ctx, "alter table other.t1 add column forbidden int"), "read only mode")
- }
- 
- func TestCreateTableConsistent(t *testing.T) {
-```
-
-**File**: `br/pkg/restore/snap_client/client_test.go` (modified, +34/-2)
-```diff
-@@ -48,6 +48,7 @@ import (
- 	"github.com/pingcap/tidb/pkg/parser/ast"
- 	"github.com/pingcap/tidb/pkg/parser/mysql"
- 	"github.com/pingcap/tidb/pkg/tablecodec"
-+	"github.com/pingcap/tidb/pkg/testkit"
- 	"github.com/pingcap/tidb/pkg/types"
- 	tidbutil "github.com/pingcap/tidb/pkg/util"
- 	"github.com/pkg/errors"
-@@ -128,8 +129,9 @@ func TestCreateTablesWithPlanPreservesSourceMetadata(t *testing.T) {
- 	ctx := context.Background()
- 
- 	sourceDB := &metautil.Database{Info: &model.DBInfo{
--		ID:   100,
--		Name: ast.NewCIStr("route_source"),
-+		ID:       100,
-+		Name:     ast.NewCIStr("route_source"),
-+		ReadOnly: true,
- 	}}
- 	targetDB := sourceDB.Info.Clone()
- 	targetDB.Name = ast.NewCIStr("route_target")
-@@ -138,6 +140,10 @@ func TestCreateTablesWithPlanPreservesSourceMetadata(t *testing.T) {
- 		Target: targetDB,
- 	}}))
- 
-+	createdDB, ok := m.Domain.InfoSchema().SchemaByName(targetDB.Name)
-+	require.True(t, ok)
-+	require.True(t, createdDB.ReadOnly, "restore must preserve the source database read-only state")
++<!-- Check all that apply, or specify the environment/source where this issue was discovered. -->
 +
- 	timestampField := types.NewFieldType(mysql.TypeTimestamp)
- 	source := &metautil.Table{
- 		DB: sourceDB.Info,
-@@ -182,6 +188,32 @@ func TestCreateTablesWithPlanPreservesSourceMetadata(t *testing.T) {
- 	require.Equal(t, "source_table", source.Info.Name.O)
- 	require.True(t, source.Info.TTLInfo.Enable)
- 	require.True(t, targetInfo.TTLInfo.Enable)
-+	sourceSequence := &metautil.Table{DB: sourceDB.Info, Info: &model.TableInfo{
-+		ID: 102, Name: ast.NewCIStr("source_sequence"), State: model.StatePublic,
-+		Sequence: &model.SequenceInfo{Start: 1, MinValue: 1, MaxValue: 1000, Increment: 1}, AutoIncID: 41,
-+	}}
-+	targetSequence := sourceSequence.Info.Clone()
-+	targetSequence.Name = ast.NewCIStr("target_sequence")
-+	_, err = client.AllocTableIDs(ctx, []*metautil.Table{sourceSequence}, false, false, nil)
-+	require.NoError(t, err)
-+	_, err = client.CreateTablesWithPlan(ctx, []*restoreutils.TableRestorePlan{{Source: sourceSequence, TargetDB: targetDB, TargetInfo: targetSequence}}, 0)
-+	require.NoError(t, err)
-+	reader := testkit.NewTestKit(t, m.Storage)
-+	reader.MustGetErrCode("insert into route_target.target_table values (now())", 3989)
-+	require.ErrorContains(t, reader.QueryToErr("select nextval(route_target.target_sequence)"), "read only mode")
-+	restoreSession, err := gluetidb.New().CreateSession(m.Storage)
-+	require.NoError(t, err)
-+	defer restoreSession.Close()
-+	// Internal sessions do not inherit a restore operation's scoped authorization.
-+	internalCtx := kv.WithInternalSourceType(ctx, kv.InternalTxnBR)
-+	rs, err := restoreSession.GetSessionCtx().GetSQLExecutor().ExecuteInternal(internalCtx, "do setval(route_target.target_sequence, 99)")
-+	if err == nil && rs != nil {
-+		err = rs.Next(internalCtx, rs.NewChunk(nil))
-+		require.NoError(t, rs.Close())
-+	}
-+	require.ErrorContains(t, err, "read only mode")
-+	reader.MustExec("alter database route_target read only = 0")
-+	reader.MustQuery("select nextval(route_target.target_sequence)").Check(testkit.Rows("42"))
- }
- 
- func getStartedMockedCluster(t *testing.T) *mock.Cluster {
-```
-
-**File**: `docs/agents/ddl/README.md` (modified, +23/-0)
-```diff
-@@ -90,6 +90,29 @@ sequenceDiagram
-   E-->>S: return result
- ```
- 
-+## Database read-only restore exception
++- [ ] Production environment
++- [ ] Staging / Test environment
++- [ ] PoC / Evaluation environment
++- [ ] Local development / Manual testing
++- [ ] CI / Automated testing (e.g., unit, integration, or E2E tests)
++- [ ] Fuzz testing (e.g., SQLancer, SQLsmith, randgen)
++- [ ] Benchmark / Stress / Chaos testing
++- [ ] Code review / Static analysis
++- [ ] Other (please specify):
 +
-+Ordinary SQL and unauthenticated internal sessions do not gain a read-only write
-+bypass from SUPER or from internal-SQL execution. An explicit
-+`RESTRICTED_REPLICA_WRITER_ADMIN` grant permits ordinary writes.
-+
-+Trusted BR restore is a separate exception: SQL RESTORE first uses its existing
-+SUPER/RESTORE_ADMIN authorization, while standalone BR uses its trusted restore
-+entrypoint. Restore can recreate tables, replay incremental DDL, and restore
-+sequence state after the source database's ReadOnly flag has been restored.
-+Incremental DDL authorization covers its recorded write dependencies; other
-+restore operations authorize their current target database. The previous session
-+state is restored before return or reuse, without granting later SQL writes.
-+Releasing existing table locks is exempt from the read-only job check; acquiring
-+new locks retains that check.
-+
-+The contract is implemented by `pkg/privilege/privilege.go`,
-+`pkg/executor/brie_utils.go`, and
-+`br/pkg/restore/internal/prealloc_db/db.go`. Boundary coverage lives in
-+`TestBRIECreateTable/TrustedRestoreReadOnlyBoundary` and
-+`TestCreateTablesWithPlanPreservesSourceMetadata`. Incremental DDL replay and
-+cross-database authorization boundaries are covered by `TestDB_ExecDDL2`.
-+
- ## Diagnostic schema loading
- 
- Diagnostic mode continues to use the ordinary Etcd schema syncer. The Domain
-```
-
-**File**: `docs/agents/import-into/README.md` (modified, +9/-2)
-```diff
-@@ -74,8 +74,15 @@ when only reading one package at a time.
- - Classic kernel behavior:
-   - Attempts to switch table mode back to normal.
-   - Ignores `infoschema.ErrTableNotExists` during cleanup.
-+- Database read-only mode is checked at IMPORT INTO statement entry. Enabling
-+  read-only does not fence or cancel a physical import already in progress;
-+  ingestion may keep writing after the read-only transition succeeds. Classic
-+  FROM SELECT does not register a separate read-only draining transaction.
-+  Classic completion and cancellation can still reset table mode to Normal in a
-+  read-only database, and explicit replica-writer authorization is propagated to
-+  the internal mode claim.
- - Global-sort artifact cleanup:
--  - Deletes task-scoped files via `external.CleanUpFiles(..., <task-id>)`.
-+  - Deletes task-scoped files via `globalsort.CleanUpFiles(..., <task-id>)`.
-   - Does not delete `conflicted-rows/...` files by design.
- - Nextgen metering:
-   - On succeed state, cleanup tries to send metering data based on post-process
-@@ -107,4 +114,4 @@ when only reading one package at a time.
- - `pkg/dxf/importinto/collect_conflicts_test.go`
- - `pkg/dxf/importinto/task_executor_test.go`
- - `pkg/dxf/importinto/scheduler_test.go`
--- `pkg/dxf/importinto/job_testkit_test.go`
-+- `pkg/dxf/importinto/scheduler_testkit_test.go`
-```
-
-**File**: `errors.toml` (modified, +10/-0)
-```diff
-@@ -1261,6 +1261,11 @@ error = '''
- A primary key index cannot be invisible
- '''
- 
-+["ddl:3552"]
-+error = '''
-+Access to system schema '%s' is rejected.
-+'''
-+
- ["ddl:3593"]
- error = '''
- You cannot use the window function '%s' in this context.'
-@@ -3056,6 +3061,11 @@ error = '''
- Duplicate check constraint name '%s'.
- '''
- 
-+["schema:3989"]
-+error = '''
-+Schema '%s' is in read only mode.
-+'''
-+
- ["schema:4139"]
- error = '''
- Unknown SEQUENCE: '%-.300s'
-```
-
-**File**: `pkg/ddl/BUILD.bazel` (modified, +4/-0)
-```diff
-@@ -322,6 +322,7 @@ go_test(
-         "rollingback_internal_test.go",
-         "rollingback_test.go",
-         "schema_internal_test.go",
-+        "schema_read_only_test.go",
-         "schema_test.go",
-         "schema_version_test.go",
-         "sequence_test.go",
-@@ -409,12 +410,14 @@ go_test(
-         "//pkg/parser/terror",
-         "//pkg/parser/types",
-         "//pkg/planner/util",
-+        "//pkg/privilege",
-         "//pkg/resourcegroup",
-         "//pkg/resourcemanager/pool/workerpool",
-         "//pkg/server",
-         "//pkg/session",
-         "//pkg/session/sessionapi",
-         "//pkg/session/sessmgr",
-+        "//pkg/session/syssession",
-         "//pkg/sessionctx",
-         "//pkg/sessionctx/stmtctx",
-         "//pkg/sessionctx/vardef",
-@@ -432,6 +435,7 @@ go_test(
-         "//pkg/testkit/testfailpoint",
-         "//pkg/testkit/testsetup",
-         "//pkg/testkit/testutil",
-+        "//pkg/ttl/session",
-         "//pkg/types",
-         "//pkg/util",
-         "//pkg/util/chunk",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #73546** (2026-11-22): *: add issue discovery source section to bug report template (@winoros)
 - **PR #73543** (closed): br: fix PITR index repair for foreign keys with quoted column names (@zhengdaodeguL)
 - **PR #73535** (closed): planner: don't discount blocking ordered IndexMerge candidates with LIMIT (@zhengdaodeguL)
 - **PR #73533** (closed): planner: account for range request and merge overhead in keep-order IndexReader cost (@zhengdaodeguL)
 - **PR #73531** (closed): planner: keep outer equality on inner access path for nested EXISTS decorrelation (@zhengdaodeguL)
 - **PR #73530** (closed): dumpling: fix success summary overcount when S3 close fails (@zhengdaodeguL)
-- **PR #73521** (2026-11-20): executor: validate EXCHANGE PARTITION after generated column and auto_increment evaluation (@wjhuang2016)
 
 ---
 
@@ -2292,21 +2016,34 @@ ref pingcap/tidb#62122
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ddl: support database-level read-only mode
+## X. *: add issue discovery source section to bug report template
 
 **RULE**:
-When implementing operations in `br/pkg/restore/internal/prealloc_db/BUILD.bazel`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/tidb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/ISSUE_TEMPLATE/bug-report.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/tidb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bf712cf6`: ddl: support database-level read-only mode. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bca43971`: *: add issue discovery source section to bug report template. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `br/pkg/restore/internal/prealloc_db/BUILD.bazel`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/ISSUE_TEMPLATE/bug-report.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        "//pkg/privilege",
+### 5. Where was this issue found? (Required)
+
+<!-- Check all that apply, or specify the environment/source where this issue was discovered. -->
+
+- [ ] Production environment
+- [ ] Staging / Test environment
+- [ ] PoC / Evaluation environment
+- [ ] Local development / Manual testing
+- [ ] CI / Automated testing (e.g., unit, integration, or E2E tests)
+- [ ] Fuzz testing (e.g., SQLancer, SQLsmith, randgen)
+- [ ] Benchmark / Stress / Chaos testing
+- [ ] Code review / Static analysis
+- [ ] Other (please specify):
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2316,7 +2053,7 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bf712cf6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bca43971` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -12192,3 +12192,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-nvidia-nemotron-3-diarization` | `https://huggingface.co/nvidia/Nemotron-3-Diarization` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-22T19:01:34.119Z |
 | `learn-github-rtk-ai-rtk` | `https://github.com/rtk-ai/rtk` | `762708cd` | Multi-dimensional audit evidence | 2026-11-22T19:01:35.505Z |
 | `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `24104b84` | Multi-dimensional audit evidence | 2026-11-22T19:01:47.553Z |
+| `learn-huggingface-lightricks-ltx-2-5` | `https://huggingface.co/Lightricks/LTX-2.5` | `hf-lightri` | Multi-dimensional audit evidence | 2026-11-22T19:09:43.075Z |
+| `learn-github-sxyazi-yazi` | `https://github.com/sxyazi/yazi` | `af685064` | Multi-dimensional audit evidence | 2026-11-22T19:09:44.563Z |
+| `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `bca43971` | Multi-dimensional audit evidence | 2026-11-22T19:09:52.420Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `2db04dd3` | Multi-dimensional audit evidence | 2026-11-22T19:09:59.993Z |

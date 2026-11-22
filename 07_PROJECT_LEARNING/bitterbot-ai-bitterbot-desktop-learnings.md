@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source**: github ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
-> **Source Version**: `12f3d096`  
+> **Source Version**: `2db04dd3`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T20:55:55.336Z  
+> **Timestamp**: 2026-11-22T19:09:58.937Z  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T20:55:55.330Z  
+> **Harvest Timestamp**: 2026-11-22T19:09:58.931Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1570,553 +1570,261 @@ def main():
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ac9552c9` (2026-11-19)
-**Commit Message**: fix(security): run the deep_recall sandbox in a locked-down process and close vm escapes (#387)
+### Incident Patch 1: `c1e92670` (2026-11-22)
+**Commit Message**: fix(agents): retry one-shot completions with thinking between_tools when a model rejects disabled (#389)
 
-* fix(security): run the deep_recall sandbox in a locked-down process and close vm escapes
+One-shot completions (deep_recall, judges, extraction) go through
+completeAttributed, which sends thinking: {type: "disabled"} for reasoning
+models when no reasoning is requested. Claude Opus 4.8 rejects that value
+with a 400 that names "between_tools" as the accepted one, so deep_recall
+failed on its first call whenever the agent's main model was Opus 4.8.
 
-The deep_recall RLM sandbox ran sub-LLM-written code in a node:vm context
-inside the gateway and seeded that context with host-realm objects, so
-`Error.constructor("return process")()` returned the gateway's `process`:
-code execution on the host, reachable from a non-owner channel sender by
-prompt injection. Reported by Aleksandr Tynianov.
+completeAttributed now recognises that specific rejection, retries once
+with between_tools, and remembers the model for the life of the process so
+later calls skip the rejected request. No model list is hardcoded.
 
-- deep_recall code now runs in a separate node process: empty environment,
-  Node permission model (no fs, no child processes, no workers), 512 MB heap
-  cap, killed on deadline. A hang or memory blow-up in sandbox code no longer
-  stalls or kills the gateway. The gateway reads a JSON store snapshot and
-  never calls into sandbox code.
-- Inside that process the vm realm is hardened: null-prototype global, code
-  generation off, every helper defined in the realm, string-only bridge.
-- Node's own host callbacks leaked host-realm errors into vm realms (stack
-  formatting, dynamic import). Stack capture is pinned off and the `import`
-  keyword is refused. This als
+Co-authored-by: Claude Fable 5.2 <[REDACTED_EMAIL]>
 
-**File**: `docs/memory/deep-recall.md` (modified, +28/-0)
+**File**: `src/agents/complete-attributed.thinking-off.test.ts` (added, +137/-0)
 ```diff
-@@ -184,6 +184,8 @@ When `deep_recall` returns no useful answer, the failed query is registered as a
- | `recent_sessions` | The 10 most recent transcripts of this agent (dialogue only)                            | Owner senders only; others are downgraded to `current_session` |
- | `all_sessions`    | Every transcript of this agent, including `.reset.*` archives (dialogue only)           | Owner senders only; others are downgraded to `current_session` |
- 
-+`deep_recall` is an owner-only tool, like `code_interpreter`: a non-owner sender's turn does not get it at all, because it runs sub-LLM-written code on the gateway host (see [Sandbox isolation](#sandbox-isolation)). A non-owner turn still has `recall_range` for exact lookups in its own conversation. The scope downgrade below stays in place as a second layer.
+@@ -0,0 +1,137 @@
++import { beforeEach, describe, expect, it, vi } from "vitest";
 +
- Cross-session scopes read other conversations, and tool results carry file reads and command output that the memory indexer deliberately does not index. A non-owner sender (a group member, another DM) therefore gets `current_session` whatever it asks for, and the result carries a `scopeNote` saying so. "Owner" has the same meaning as for `code_interpreter`: the sender matched the channel's owner allowlist. Subagents and inbound A2A tasks cannot call `deep_recall` at all (for subagents it is on the deny list in `agent-tools.policy.ts`, together with `recall_range` and `expand_message`).
- 
- The owner flag also decides what a recall records and sees. Every search the tool issues (the smart shortcut, the somatic-marker assessment, the live `search()` API, the bootstrap snapshot's seed queries) passes `observe: senderIsOwner` and the agent `sessionKey`, so a retrieval-evidence row is written for owner recalls only and guest recalls leave no trace in the evidence ledger; the snapshot builder takes the same switch as `observeEvidence`. The same flag enables `tagSuperseded`, which ranks results the canonical ledger has superseded last and tags them with the current value; guests get untagged results.
-@@ -232,3 +234,29 @@ The owner flag also decides what a recall records and sees. Every search the too
- - [Curiosity & Search](./curiosity-and-search.md) — search infrastructure deep recall builds on
- - [User Knowledge](./user-knowledge.md) — session extraction for long-term facts
- - [recall_range](../tools/recall-range.md) — the deterministic transcript reader for exact text and tool outputs
++const completeSimple = vi.fn();
 +
-+## Sandbox isolation
-+
-+The REPL code is written by a model that reads transcripts, memory and tool output, so it is treated as hostile. Two independent layers contain it.
-+
-+**A separate process.** The code never runs inside the gateway. Each sandbox is its own `node` process, started with:
-+
-+- an empty environment (no API keys or tokens),
-+- the Node permission model: no filesystem access, no child processes, no worker threads, no native addons,
-+- a 512 MB heap cap.
-+
-+The gateway talks to it over an IPC channel that carries JSON. The only things the process can ask for are the calls sandbox code is allowed anyway (`llm_query`, `llm_query_parallel`, `search`, `loadTranscript`, `listSessions`), only while a code block is running, and at most 500 per block. A block that overruns its deadline, including one that loops forever after an `await`, gets its process killed; a block that exhausts memory only ends its own process. Either way the gateway keeps running and the call returns an error to the model.
-+
-+**A hardened realm inside that process.** The code runs in a `node:vm` context from which no object of the surrounding process is reachable:
-+
-+- The global object has a null prototype, and `eval` / `Function(string)` / WebAssembly compilation are disabled.
-+- `print`, `console`, the text helpers, `store` / `get` / `has` and `FINAL` are defined inside the sandbox realm.
-+- Bridged calls cross as strings only (JSON text in, JSON text out).
-+- Stack traces are switched off (`.stack` is `undefined`), code containing the word `import` is refused, and `FinalizationRegistry` is not available, because the errors Node raises from those paths belong to the surrounding process.
-+
-+Consequences for sandbox code:
-+
-+- `store()` is the only state that is guaranteed to last. The sandbox process is stopped after two idle minutes and after a timeout, and the next block starts a fresh one from the stored values. Plain global variables do not survive that.
-+- Stored values are kept as JSON. Functions, `Map` / `Set` and cyclic values are not carried between processes.
-+
-+Two limits remain. Node 22's permission model does not restrict outbound network access, so code that defeated the realm hardening could open a socket from the sandbox process; it would have the loaded context to send and nothing else. And the tool spends money on sub-LLM calls. Both are reasons it stays owner-only.
-```
-
-**File**: `docs/tools/recall-range.md` (modified, +1/-1)
-```diff
-@@ -51,7 +51,7 @@ The tool reads the current conversation only, by default. Tool outputs carry fil
- - Subagents cannot call `recall_range`, `deep_recall` or `expand_message` at any depth.
- - Inbound A2A tasks cannot call them either (always-deny floor).
- 
--The same posture applies to `deep_recall`: its `recent_sessions` and `all_sessions` scopes are owner-only, and non-owner senders are downgraded to `current_session`.
-+`deep_recall` is stricter: the whole tool is owner-only, so a non-owner sender does not get it (see [Deep Recall](../memory/deep-recall.md#sandbox-isolation)).
- 
- ## Hot set
- 
-```
-
-**File**: `src/agents/bitterbot-tools.ts` (modified, +2/-1)
-```diff
-@@ -78,7 +78,8 @@ import { resolveWorkspaceRoot } from "./workspace-dir.js";
-  * Tools that read or change what the agent has made of the owner's life:
-  * dream insights, emotional anchors, curiosity about their knowledge. A
-  * guest turn (PLAN-53 G2) gets a refusal instead. The memory_* tools filter
-- * rather than refuse, and deep_recall / recall_range scope by sender.
-+ * rather than refuse, and recall_range scopes by sender. deep_recall is
-+ * owner-only (tool-policy.ts) and scopes by sender as a second layer.
-  */
- const GUEST_REFUSED_TOOLS = new Set([
-   "dream_search",
-```
-
-**File**: `src/agents/rlm/sandbox-child-source.ts` (added, +578/-0)
-```diff
-@@ -0,0 +1,578 @@
-+/**
-+ * Source of the RLM sandbox child process (see sandbox.ts for the design).
-+ *
-+ * This file only holds JavaScript TEXT. The gateway never evaluates it: it is
-+ * piped to a separate `node` process on stdin. Two layers live in it:
-+ *
-+ *   - BOOTSTRAP_SOURCE runs inside the vm realm and defines every helper the
-+ *     model-written code can see.
-+ *   - CHILD_MAIN_SOURCE is the child's own (trusted) code: it owns the vm
-+ *     context and relays the bridge over the IPC channel.
-+ */
-+
-+import { IMPORT_REFUSAL_MESSAGE, REALM_LOCKDOWN_SOURCE } from "../vm-realm-hardening.js";
-+
-+/**
-+ * Evaluated once per vm context. Strict mode matters: it removes
-+ * `fn.caller` / `fn.arguments`, the only way sandbox code could otherwise walk
-+ * from its own frame to the closure that holds the two host functions.
-+ *
-+ * Invariants to keep when editing this:
-+ *   - `hostSync` / `hostAsync` are only ever CALLED directly. Never store them
-+ *     on an object, never pass them as an argument, never return them.
-+ *   - Every host call sits in a try/catch that discards the caught value (a
-+ *     host-realm error, e.g. a stack overflow raised inside the host frame,
-+ *     must not reach sandbox code).
-+ *   - Anything received from the host is used only if it is a string.
-+ *   - Intrinsics used on the bridge path are captured up front, so sandbox
-+ *     code that patches a prototype only breaks its own helpers.
-+ */
-+export const BOOTSTRAP_SOURCE = String.raw`"use strict";
-+(function (hostSync, hostAsync, liveApiNames) {
-+  const G = globalThis;
-+  const Err = Error;
-+  const Str = String;
-+  const P = Promise;
-+  const apply = Reflect.apply;
-+  const pResolve = Promise.resolve;
-+  const pThen = Promise.prototype.then;
-+  const jsonStringify = JSON.stringify;
-+  const jsonParse = JSON.parse;
-+  const isArray = Array.isArray;
-+  const defineProperty = Object.defineProperty;
-+  const objectKeys = Object.keys;
-+  const storeMap = new Map();
-+  const mapGet = Map.prototype.get;
-+  const mapSet = Map.prototype.set;
-+  const mapHas = Map.prototype.has;
-+  const mapClear = Map.prototype.clear;
-+  const mapForEach = Map.prototype.forEach;
-+
-+  function callSync(op, a, b) {
-+    try {
-+      hostSync(op, a, b);
-+    } catch (_hostError) {
-+      throw new Err("sandbox bridge failure");
-+    }
-+  }
-+
-+  // Returns a realm Promise for the JSON text the host answers with.
-+  function callAsync(op, payload) {
-+    const settled = new P(function (resolve) {
-+      try {
-+        hostAsync(op, payload, function (error, result) {
-+          resolve([
-+            typeof error === "string" ? error : null,
-+            typeof result === "string" ? result : null,
-+          ]);
-+        });
-+      } catch (_hostError) {
-+        resolve(["sandbox bridge failure", null]);
-+      }
-+    });
-+    // The Error is created in this microtask, not under the host's frame.
-+    return apply(pThen, settled, [
-+      function (pair) {
-+        if (pair[0] !== null) {
-+          throw new Err(pair[0]);
-+        }
-+        return pair[1] === null ? undefined : jsonParse(pair[1]);
-+      },
-+    ]);
-+  }
-+
-+  function describeError(e) {
-+    try {
-+      if (e !== null && typeof e === "object" && typeof e.message === "string") {
-+        const name = typeof e.name === "string" && e.name !== "Error" ? e.name + ": " : "";
-+        return name + e.message;
-+      }
-+      return Str(e);
-+    } catch (_e) {
-+      return "error";
-+    }
-+  }
-+
-+  function joinArgs(args) {
-+    let out = "";
-+    for (let i = 0; i < args.length; i++) {
-+      out += (i === 0 ? "" : " ") + Str(args[i]);
-+    }
-+    return out;
-+  }
-+
-+  function define(name, value) {
-+    defineProperty(G, name, { value: value, writable: true, configurable: true, enumerable: false });
-+  }
-+
-+  // --- Output capture ---
-+  define("print", function (...args) {
-+    callSync("print", joinArgs(args));
-+  });
-+  define("console", {
-+    log: function (...args) {
-+      callSync("print", joinArgs(args));
++vi.mock("@mariozechner/pi-ai", () => ({
++  completeSimple: (...a: unknown[]) => completeSimple(...a),
++}));
++vi.mock("./embedded-runner/model.js", () => ({
++  resolveModel: (provider: string, modelId: string) => ({
++    model: {
++      id: modelId,
++      provider,
++      api: "anthropic-messages",
++      baseUrl: "https://api.anthropic.com",
++      headers: undefined,
 +    },
-+    info: function (...args) {
-+      callSync("print", joinArgs(args));
-+    },
-+    error: function (...args) {
-+      callSync("print", "ERROR: " + joinArgs(args));
-+    },
-+    warn: function (...args) {
-+      callSync("print", "WARN: " + joinArgs(args));
-+    },
-+  });
++  }),
++}));
++vi.mock("./model-auth.js", () => ({
++  getApiKeyForModel: async () => ({ apiKey: "sk-test", mode: "api-key", source: "env" }),
++  requireApiKey: (auth: { apiKey?: string }) => auth.apiKey,
++}));
++vi.mock("./embedded-runner/extra-params.js", () => ({ resolveCacheTtlLabel: () => "5m" }));
 +
-+  // --- LLM recursive sub-calls ---
-+  function optionalText(value) {
-+    return value === undefined || value === null ? undefined : Str(value);
-+  }
-+  define("llm_query", function (prompt, subContext) {
-+    return callAsync(
-+      "llm_query",
-+      jsonStringify({ prompt: Str(prompt), context: optionalText(subContext) }),
-+    );
-+  });
-+  define("llm_query_parallel", function (queries) {
-+    if (!isArray(queries)) {
-+      return apply(pResolve, P, [undefined]).then(function () {
-+        throw new TypeError("llm_query_parallel expects an array of { prompt, context }");
-+      });
-+    }
-+    const normalized = [];
-+    for (let i = 0; i < queries.length; i++) {
-+      const q = q
-```
-
-**File**: `src/agents/rlm/sandbox.escape.test.ts` (added, +579/-0)
-```diff
-@@ -0,0 +1,579 @@
-+/**
-+ * The RLM sandbox runs code written by a sub-LLM that reads attacker-influenced
-+ * text. Before 2026-11-19 it was seeded with host-realm objects, so
-+ * `Error.constructor("return process")()` returned the gateway's `process`
-+ * (security report, same class as the code_interpreter escape of 2026-09-20).
-+ *
-+ * Every probe below tries to reach the HOST realm. `typeof process` evaluated
-+ * through a host Function is "object"; anything else means the probe failed.
-+ * A probe passes the test when it cannot produce "object".
-+ */
-+import { afterEach, describe, expect, it } from "vitest";
-+import { applyOwnerOnlyToolPolicy, isOwnerOnlyToolName } from "../tool-policy.js";
-+import { RLMSandbox, sandboxPermissionFlagForTest } from "./sandbox.js";
++import {
++  completeAttributed,
++  isThinkingDisabledRejection,
++  resetThinkingOffCacheForTest,
++  rewriteThinkingOff,
++} from "./complete-attributed.js";
 +
-+const sandboxes: RLMSandbox[] = [];
++const REJECTION =
++  '400 {"type":"error","error":{"type":"invalid_request_error","message":"To turn thinking off on this model, send \\"thinking\\": {\\"type\\": \\"between_tools\\"} instead of {\\"type\\": \\"disabled\\"}."}}';
 +
-+function sandbox(): RLMSandbox {
-+  const sb = new RLMSandbox({
-+    context: "some context",
-+    timeout: 3000,
-+    onLLMQuery: async (prompt) => `echo:${prompt}`,
-+    onLLMQueryParallel: async (queries) => queries.map((q) => `echo:${q.prompt}`),
-+    liveApis: {
-+      search: async (query) => [{ snippet: `hit ${query}`, score: 1, source: "memory" }],
-+      loadTranscript: async () => "[t] USER: hi",
-+      listSessions: async () => {
-+        throw new Error("db locked");
-+      },
-+    },
-+  });
-+  sandboxes.push(sb);
-+  return sb;
-+}
-+
-+/** JS (sandbox side) that tries to turn `expr` into the host process. */
-+function probe(expr: string): string {
-+  return `
-+    let verdict = "no-escape";
-+    try {
-+      const target = ${expr};
-+      const F = target.constructor.constructor;
-+      const proc = F("return typeof process")();
-+      verdict = "ESCAPED:" + proc;
-+    } catch (e) {
-+      verdict = "blocked";
-+    }
-+    print(verdict);
-+  `;
-+}
-+
-+afterEach(() => {
-+  for (const sb of sandboxes.splice(0)) {
-+    sb.dispose();
-+  }
++const usage = {
++  input: 10,
++  output: 5,
++  cacheRead: 0,
++  cacheWrite: 0,
++  totalTokens: 15,
++  cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, total: 0 },
++};
++const ok = (text: string) => ({
++  role: "assistant",
++  content: [{ type: "text", text }],
++  api: "anthropic-messages",
++  provider: "anthropic",
++  model: "claude-test",
++  usage,
++  stopReason: "stop",
++  timestamp: Date.now(),
 +});
++const rejected = () => ({ ...ok(""), content: [], stopReason: "error", errorMessage: REJECTION });
 +
-+describe("RLM sandbox: no host realm reachable", () => {
-+  it("blocks the reported primitive", async () => {
-+    const result = await sandbox().execute(
-+      `let v = "blocked"; try { v = "ESCAPED:" + typeof Error.constructor("return process")(); } catch (e) {} print(v);`,
-+    );
-+    expect(result.output).toBe("blocked");
++type Options = { onPayload: (payload: unknown) => unknown };
++const sentThinking = (callIndex: number): unknown => {
++  const options = completeSimple.mock.calls[callIndex]![2] as Options;
++  const payload = { model: "claude-test", thinking: { type: "disabled" } };
++  const next = (options.onPayload(payload) ?? payload) as { thinking: unknown };
++  return next.thinking;
++};
++
++const run = (modelId = "claude-test") =>
++  completeAttributed({
++    provider: "anthropic",
++    modelId,
++    prompt: "hi",
++    feature: "rlm/deep-recall",
++    ignoreBudget: true,
++    batch: false,
 +  });
 +
-+  // Each of these was a host-realm object (or returned one) before the fix.
-+  const targets: Array<[string, string]> = [
-+    ["an intrinsic", "JSON"],
-+    ["a class", "Promise"],
-+    ["print", "print"],
-+    ["console.log", "console.log"],
-+    ["a text helper", "grep"],
-+    ["store", "store"],
-+    ["FINAL", "FINAL"],
-+    ["llm_query", "llm_query"],
-+    ["the llm_query promise", 'llm_query("x")'],
-+    ["the llm_query result", 'await llm_query("x")'],
-+    ["the llm_query_parallel result", 'await llm_query_parallel([{ prompt: "a" }])'],
-+    ["the search promise", 'search("q")'],
-+    ["the search result array", 'await search("q")'],
-+    ["a search result row", '(await search("q"))[0]'],
-+    ["the listSessions error row", "(await listSessions())[0]"],
-+    ["the run driver", "__rlm_run"],
-+    ["the global", "globalThis"],
-+    ["this", "this"],
-+    ["a helper's return value", 'chunk("abcdef", 2)'],
-+    ["textStats output", 'textStats("a b")'],
-+    ["a regexp match list", 'extractAll("a b", "a")'],
-+  ];
-+  for (const [label, expr] of targets) {
-+    it(`cannot pivot through ${label}`, async () => {
-+      const result = await sandbox().execute(probe(expr));
-+      expect(result.output).not.toContain("ESCAPED");
-+      expect(result.output).toBe("blocked");
++describe("completeAttributed thinking-off handling", () => {
++  beforeEach(() => {
++    completeSimple.mockReset();
++    resetThinkingOffCacheForTest();
++  });
++
++  it("leaves the payload alone when the model accepts disabled", async () => {
++    completeSimple.mockResolvedValueOnce(ok("fine"));
++    const result = await run();
++    expect(result.text).toBe("fine");
++    expect(completeSimple).toHaveBeenCalledTimes(1);
++    expect(sentThinking(0)).toEqual({ type: "disabled" });
++  });
++
++  it("retries once with between_tools when the provider rejects disabled", async () => {
++    completeSimple.mockResolvedValueOnce(rejected()).mockResolvedValueOnce(ok("recovered"));
++    const result = await run();
++    expect(result.text).toBe("recovered");
++    expect(completeSimple).toHaveBeenCalledTimes(2);
++    expect(sentThinking(0)).toEqual({ type: "disabled" });
++    expect(sentThinking(1)).toEqual({ type: "between_tools" });
++  });
++
++  it("remembers the model so later calls skip the rejected request", async () => {
++    completeSimple.mockResolvedValueOnce(rejected()).mockResolvedValue(ok("again"));
++    await run();
++    completeSimple.mockClear();
++    await run();
++    expect(completeSimple).toHaveBeenCalledTimes(1);
++    expect(sentThinking(0)).toEqual({ type: "between_tools" });
++  });
++
++  it("keeps the memory per model", async () => {
++    completeSimple.mockResolvedValueOnce(rejected()).mockResolvedValue(ok("x"));
++    await run("claude-a");
++    completeSimple.mockClear();
++    await run("claude-b");
++    expect(sentThinking(0)).toEqual({ type: "disabled" });
++  });
++
++  it("does not retry on unrelated errors", async () => {
++    completeSimple.mockResolvedValueOnce({
++      ...rejected(),
++      errorMessage: "529 overloaded",
 +    });
-+  }
-+
-+  it("has no host constructor or host global on the global", async () => {
-+    const sb = sandbox();
-+    const result = await sb.execute(
-+      `print(typeof process, typeof require, typeof Buffer, typeof setTimeout);`,
-+    );
-+    expect(result.output).toBe("undefined undefined undefined undefined");
-+    // A bare `constructor` resolves to the realm's own Object, never the host's.
-+    expect((await sb.execute(probe("constructor"))).output).toBe("blocked");
-+    expect((await sb.execute(probe("{ constructor }"))).output).toBe("blocked");
++    await expect(run()).rejects.toThrow();
++    expect(completeSimple).toHaveBeenCalledTimes(1);
 +  });
 +
-+  it("disables eval and Function(string) in the realm", async () => {
-+    const result = await sandbox().execute(`
-+      const out = [];
-+      try { eval("1"); out.push("eval-ran"); } catch (e) { out.push("eval-blocked"); }
-+      try { (function(){}).constructor("return 1")(); out.push("fn-ran"); } catch (e) { out.push("fn-blocked"); }
-+      try { (async function(){}).constructor("return 1"); out.push("afn-ran"); } catch (e) { out.push("afn-blocked"); }
-+      print(out.join(","));
-+    `);
-+    expect(result.output).toBe("eval-blocked,fn-blocked,afn-blocked");
++  it("rewrites only a disabled thinking field", () => {
++    expect(rewriteThinkingOff({ thinking: { type: "adaptive" } }, "between_tools")).toBeUndefined();
++    expect(rewriteThinkingOff({ model: "m" }, "between_tools")).toBeUndefined();
++    expect(rewriteThinkingOff({ thinking: { type: "disabled" } }, "disabled")).toBeUndefined();
++    expect(rewriteThinkingOff({ a: 1, thinking: { type: "disabled" } }, "between_tools")).toEqual({
++      a: 1,
++      thinking: { type: "between_tools" },
++    });
 +  });
 +
-+  it("values imported into the store are realm objects", async () => {
-+    const sb = sandbox();
-+    sb.importStore({ planted: { nested: [1, 2, 3] } });
-+    const result = await sb.execute(
-+      `{${probe('get("planted")')}} {${probe('get("planted").nested')}} print(get("planted").nested[2]);`,
-+    );
-+    expect(
++  it("recognises only the specific rejection", () => {
++    expect(isThinkingDisabledRejection(rejected())).toBe(true);
++    expect(isThinkingDisabledRejection(ok("between_tools disabled"))).toBe(false);
++    expect(isThinkingDisabledRejection(null)).toBe(false);
++  });
++});
 ```
 
-**File**: `src/agents/rlm/sandbox.ts` (modified, +535/-241)
+**File**: `src/agents/complete-attributed.ts` (modified, +60/-12)
 ```diff
-@@ -1,15 +1,60 @@
- /**
-- * RLM Sandbox — Secure JavaScript execution environment using Node.js vm module.
-+ * RLM Sandbox — runs LLM-written JavaScript that explores a loaded context
-+ * string. No filesystem, network API, or require access is offered to it.
-  *
-- * The sandbox provides a minimal, isolated REPL where LLM-generated code can
-- * explore a loaded context string. No filesystem, network, or require access.
-+ * SECURITY (report by Aleksandr Tynianov, 2026-11-19: deep_recall RLM sandbox
-+ * escape -> host RCE). The code that runs here is written by a sub-LLM that
-+ * reads attacker-influenced text, so it is treated as hostile. The previous
-+ * implementation ran it in a node:vm context inside the gateway and seeded
-+ * that context with host-realm objects; one constructor-chain hop
-+ * (`Error.constructor("return process")()`) reached the gateway's `process`.
-+ *
-+ * There are now two independent layers.
-+ *
-+ * Layer 1, process isolation (this file). The vm lives in a separate `node`
-+ * process, never in the gateway:
-+ *
-+ *   - started with an EMPTY environment (no API keys, no tokens);
-+ *   - under the Node permission model: no filesystem, no child processes, no
-+ *     worker threads, no native addons (the program arrives on stdin, so not
-+ *     even its own script needs to be readable);
-+ *   - with a capped heap, so runaway allocation kills the child, not the
-+ *     gateway;
-+ *   - killed outright when a run overruns its deadline, which is what stops a
-+ *     loop that spins after an `await` (the vm timeout only bounds synchronous
-+ *     code).
-+ *
-+ *   The gateway talks to it over an IPC channel carrying JSON. Every message
-+ *   from the child is untrusted and type-checked; the only things it can ask
-+ *   for are the same bridged calls sandbox code may make anyway (llm_query,
-+ *   search, loadTranscript, listSessions), and only while a run is in flight.
-+ *   The gateway never evaluates anything the child sends.
-+ *
-+ * Layer 2, realm hardening (sandbox-child-source.ts, vm-realm-hardening.ts).
-+ * Inside the child, no object of the child's own main realm is reachable from
-+ * sandbox code: null-prototype global, code generation off, every helper
-+ * defined inside the realm, a two-function string-only bridge, stack capture
-+ * pinned off, the `import` keyword refused. An escape from layer 2 lands in a
-+ * process that holds no secrets and may not touch the disk or spawn anything.
-+ *
-+ * Not covered: the permission model of Node 22 does not restrict outbound
-+ * network access, so code that defeats layer 2 could still open a socket from
-+ * the child. It would have only the context string to send.
-+ *
-+ * State model: the store is the durable state. After every run the child
-+ * returns a JSON snapshot of it, and the synchronous accessors below
-+ * (exportStore, getVariable, resolveFinalAnswer) read that snapshot, so the
-+ * gateway never calls into sandbox code. The child is disposable: it is
-+ * stopped when idle and after a timeout, and the next run starts a fresh one
-+ * from the snapshot. Realm globals do not survive that; store() does.
-  *
-  * Based on: "Recursive Language Models" (Zhang, Kraska, Khattab, 2026)
-  * Paper: https://arxiv.org/abs/2512.24601
-  * Reference: hampton-io/RLM (TypeScript)
-  */
+@@ -159,6 +159,41 @@ export function extractAssistantText(message: AssistantMessage): string {
+   );
+ }
  
--import { createContext, Script, type Context } from "node:vm";
-+import { spawn, type ChildProcess } from "node:child_process";
-+import { SANDBOX_CHILD_SOURCE } from "./sandbox-child-source.js";
- import type { RLMLiveApis, SandboxExecutionResult } from "./types.js";
- 
- export type SandboxOptions = {
-@@ -27,14 +72,108 @@ export type SandboxOptions = {
- 
- /** Cap live-API return payloads so a single call can't blow the REPL loop. */
- const LIVE_API_MAX_CHARS = 400_000;
-+/** V8 old-space cap for the sandbox process. */
-+const CHILD_HEAP_MB = 512;
-+/** How long a new sandbox process may take to report ready. */
-+const CHILD_READY_TIMEOUT_MS = 15_000;
-+/** An idle sandbox process is stopped after this long; the store snapshot stays. */
-+const CHILD_IDLE_MS = 120_000;
-+/** Grace on top of the vm timeout before the process is killed. */
-+const HARD_TIMEOUT_GRACE_MS = 5_000;
-+/** Output accepted from one run (the child stops sending at 1M chars). */
-+const MAX_OUTPUT_CHARS = 1_100_000;
-+/** Bridged calls (llm_query, search, ...) accepted per run. */
-+const MAX_BRIDGE_CALLS_PER_RUN = 500;
++type ThinkingOffMode = "disabled" | "between_tools";
 +
 +/**
-+ * Whether this runtime accepts a permission-model flag. Set to null once a
-+ * spawn shows it does not (the child is then still a separate process with an
-+ * empty environment and a capped heap).
++ * Models that reject `thinking: {type: "disabled"}` and name `between_tools` as the way to turn
++ * thinking off. Learned from the provider's own 400 rather than a hardcoded model list, so a
++ * new model id needs no code change.
 + */
-+let permissionFlag: string | null | undefined;
++const modelsNeedingBetweenTools = new Set<string>();
 +
-+function resolvePermissionFlag(): string | null {
-+  if (permissionFlag === undefined) {
-+    const flags = process.allowedNodeEnvironmentFlags;
-+    permissionFlag = flags.has("--permission")
-+      ? "--permission"
-+      : flags.has("--experimental-permission")
-+        ? "--experimental-permission"
-+        : null;
++/** Test hook: forget which models were learned to need `between_tools`. */
++export function resetThinkingOffCacheForTest(): void {
++  modelsNeedingBetweenTools.clear();
++}
++
++/** `onPayload` hook: swap an outgoing `thinking: disabled` for `between_tools` when asked. */
++export function rewriteThinkingOff(payload: unknown, mode: ThinkingOffMode): unknown {
++  if (mode !== "between_tools" || !payload || typeof payload !== "object") {
++    return undefined;
 +  }
-+  return permissi
-```
-
-**File**: `src/agents/tool-policy.ts` (modified, +6/-0)
-```diff
-@@ -78,6 +78,12 @@ const OWNER_ONLY_TOOL_NAMES = new Set<string>([
-   "code_interpreter",
-   "computer_use",
-   "browser",
-+  // deep_recall runs code written by a sub-LLM that reads attacker-influenced
-+  // text (src/agents/rlm/sandbox.ts). It runs in a locked-down child process,
-+  // but it is still code execution on the host and it spends money on sub-LLM
-+  // calls, so no non-owner sender may drive it (security report 2026-11-19).
-+  // recall_range covers a guest's current-session lookups.
-+  "deep_recall",
-   // Card purchases from the owner's Link account (PLAN-53 C1).
-   "purchase",
-   // Money. The wallet sends USDC and pays x402 resources with numeric caps as
-```
-
-**File**: `src/agents/tools/code-interpreter-tool.sandbox.test.ts` (modified, +37/-0)
-```diff
-@@ -31,6 +31,43 @@ describe("code_interpreter JS sandbox hardening (security/code-interpreter-vm-es
-     });
++  const thinking = (payload as { thinking?: { type?: unknown } }).thinking;
++  if (!thinking || thinking.type !== "disabled") {
++    return undefined;
++  }
++  return { ...(payload as Record<string, unknown>), thinking: { type: "between_tools" } };
++}
++
++/** True for the provider 400 that says `disabled` is not accepted and `between_tools` is. */
++export function isThinkingDisabledRejection(message: unknown): boolean {
++  const m = message as { stopReason?: unknown; errorMessage?: unknown } | null | undefined;
++  if (!m || m.stopReason !== "error" || typeof m.errorMessage !== "string") {
++    return false;
++  }
++  return m.errorMessage.includes("between_tools") && m.errorMessage.includes("disabled");
++}
++
+ export async function completeAttributed(
+   params: CompleteAttributedParams,
+ ): Promise<CompleteAttributedResult> {
+@@ -288,19 +323,32 @@ export async function completeAttributed(
    }
  
-+  // Node host callbacks reachable from plain JS (red-team pass, 2026-11-19):
-+  // the errors they throw are host-realm objects, so the payloads below use
-+  // only property access, which disabling code generation does not stop.
-+  const SHOW = `try { return "ESCAPED:" + typeof e.constructor.constructor("return process")(); } catch (x) { return "blocked"; }`;
-+  const hostCallbackPayloads: Array<[string, string]> = [
-+    [
-+      "stack formatter, symbol name",
-+      `const err = new Error("x"); err.name = Symbol(); try { return typeof err.stack; } catch (e) { ${SHOW} }`,
-+    ],
-+    [
-+      "captureStackTrace on a plain object",
-+      `const o = { name: Symbol() }; try { Error.captureStackTrace(o); return typeof o.stack; } catch (e) { ${SHOW} }`,
-+    ],
-+    [
-+      "re-enabled stack capture",
-+      `try { Error.stackTraceLimit = 10; } catch (_) {} const err = new TypeError("x"); err.name = Symbol(); try { return typeof err.stack; } catch (e) { ${SHOW} }`,
-+    ],
-+  ];
-+  for (const [label, payload] of hostCallbackPayloads) {
-+    it(`gets no host error from the ${label}`, async () => {
-+      const r = await executeJavaScript(payload, freshSession());
-+      expect(r.error).toBeNull();
-+      expect(r.returnValue).toBe("undefined");
-+    });
-+  }
-+
-+  it("refuses dynamic import (its rejection is a host error)", async () => {
-+    const r = await executeJavaScript(
-+      `try { await import("x"); } catch (e) { ${SHOW} }`,
-+      freshSession(),
+   const startedAt = Date.now();
+-  const message = await completeSimple(
+-    resolved.model,
+-    { messages },
+-    {
+-      apiKey,
+-      // Dreams, extraction, curator, judges on OpenRouter count toward the app too.
+-      headers: withOpenRouterAttribution(resolved.model),
+-      maxTokens: params.maxTokens ?? 2048,
+-      // No sampling params: current Anthropic models 400 on temperature, and completeSimple
+-      // embeds that error in the response instead of throwing.
+-      signal: params.signal,
+-    },
++  const modelKey = `${providerName}/${resolved.model.id}`;
++  const callLive = (thinkingOff: ThinkingOffMode) =>
++    completeSimple(
++      resolved.model!,
++      { messages },
++      {
++        apiKey,
++        // Dreams, extraction, curator, judges on OpenRouter count toward the app too.
++        headers: withOpenRouterAttribution(resolved.model!),
++        maxTokens: params.maxTokens ?? 2048,
++        // No sampling params: current Anthropic models 400 on temperature, and completeSimple
++        // embeds that error in the response instead of throwing.
++        signal: params.signal,
++        onPayload: (payload) => rewriteThinkingOff(payload, thinkingOff),
++      },
 +    );
-+    expect(String(r.error)).toMatch(/"import" cannot appear/);
-+    expect(r.returnValue).toBeNull();
-+    const ok = await executeJavaScript(`return "important"`, freshSession());
-+    expect(ok.returnValue).toBe("important");
-+  });
-+
-   it("blocks eval() directly", async () => {
-     const r = await executeJavaScript(`return eval('1+1')`, freshSession());
-     expect(r.error).toBeTruthy();
++  let message = await callLive(
++    modelsNeedingBetweenTools.has(modelKey) ? "between_tools" : "disabled",
+   );
++  if (!modelsNeedingBetweenTools.has(modelKey) && isThinkingDisabledRejection(message)) {
++    // The provider names the accepted value in the error; remember it for this model so only
++    // the first call in a process pays for the rejected request.
++    modelsNeedingBetweenTools.add(modelKey);
++    log.info(`${modelKey} rejects thinking "disabled"; retrying with "between_tools"`);
++    message = await callLive("between_tools");
++  }
+ 
+   const failure = message as { stopReason?: string; errorMessage?: string };
+   // pi-ai does not surface Anthropic's per-TTL cache_creation split, so the TTL on the row is the
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #389** (2026-11-22): fix(agents): retry one-shot completions with thinking between_tools when a model rejects disabled (@VGIL77)
 - **PR #388** (2026-11-19): chore(main): release 1.14.2 (@github-actions[bot])
 - **PR #387** (2026-11-19): fix(security): run the deep_recall sandbox in a locked-down process and close vm escapes (@VGIL77)
-- **PR #380** (2026-11-18): chore(main): release 1.14.1 (@github-actions[bot])
-- **PR #379** (2026-11-18): fix(skills): ship a sidecar that carries the package topic, and fail loudly without one (@VGIL77)
-- **PR #378** (2026-11-17): test(installer): do not require a signature check on runners with no verifier (@VGIL77)
-- **PR #377** (2026-11-17): feat(skills): cross-agent evidence cards with quorum and guard, replicated and integrated (@VGIL77)
+- **PR #386** (2026-11-22): chore(deps): bump the native group with 2 updates (@dependabot[bot])
+- **PR #385** (2026-11-22): chore(deps-dev): bump vite from 8.3.7 to 8.3.8 in the build-tooling group (@dependabot[bot])
+- **PR #383** (2026-11-22): chore(deps): bump rand from 0.10.3 to 0.10.4 in /orchestrator in the cargo-minor-patch group (@dependabot[bot])
 
 ---
 
@@ -2136,34 +1844,58 @@ prompt injection. Reported by Aleksandr Tynianov.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. security): run the deep_recall sandbox in a locked-down process and close vm esc
+## X. agents): retry one-shot completions with thinking between_tools when a model rej
 
 **RULE**:
-When implementing operations in `docs/memory/deep-recall.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/agents/complete-attributed.thinking-off.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ac9552c9`: security): run the deep_recall sandbox in a locked-down process and close vm escapes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c1e92670`: agents): retry one-shot completions with thinking between_tools when a model rejects disabled. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/memory/deep-recall.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/agents/complete-attributed.thinking-off.test.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-`deep_recall` is an owner-only tool, like `code_interpreter`: a non-owner sender's turn does not get it at all, because it runs sub-LLM-written code on the gateway host (see [Sandbox isolation](#sandbox-isolation)). A non-owner turn still has `recall_range` for exact lookups in its own conversation. The scope downgrade below stays in place as a second layer.
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
+const completeSimple = vi.fn();
 
-## Sandbox isolation
+vi.mock("@mariozechner/pi-ai", () => ({
+  completeSimple: (...a: unknown[]) => completeSimple(...a),
+}));
+vi.mock("./embedded-runner/model.js", () => ({
+  resolveModel: (provider: string, modelId: string) => ({
+    model: {
+      id: modelId,
+      provider,
+      api: "anthropic-messages",
+      baseUrl: "https://api.anthropic.com",
+      headers: undefined,
+    },
+  }),
+}));
+vi.mock("./model-auth.js", () => ({
+  getApiKeyForModel: async () => ({ apiKey: "sk-test", mode: "api-key", source: "env" }),
+  requireApiKey: (auth: { apiKey?: string }) => auth.apiKey,
+}));
+vi.mock("./embedded-runner/extra-params.js", () => ({ resolveCacheTtlLabel: () => "5m" }));
 
-The REPL code is written by a model that reads transcripts, memory and tool output, so it is treated as hostile. Two independent layers contain it.
+import {
+  completeAttributed,
+  isThinkingDisabledRejection,
+  resetThinkingOffCacheForTest,
+  rewriteThinkingOff,
+} from "./complete-attributed.js";
 
-**A separate process.** The code never runs inside the gateway. Each sandbox is its own `node` process, started with:
+const REJECTION =
+  '400 {"type":"error","error":{"type":"invalid_request_error","message":"To turn thinking off on this model, send \\"thinking\\": {\\"type\\": \\"between_tools\\"} instead of {\\"type\\": \\"disabled\\"}."}}';
 
-- an empty environment (no API keys or tokens),
-- the Node permission model: no filesystem access, no child processes, no worker threads, no native addons,
-- a 512 MB heap cap.
-
-The gateway talks to it over an IPC channel that carries JSON. The only things the process can ask for are the calls sandbox code is allowed anyway (`llm_query`, `llm_query_parallel`, `search`, `loadTranscript`, `listSessions`), only while a code block is running, and at most 500 per block. A block that overruns its deadline, including one that loops forever after an
+const usage = {
+  input: 10,
+  output: 5,
+  cacheRead: 0
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2173,4 +1905,4 @@ The gateway talks to it over an IPC channel that carries JSON. The only things t
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ac9552c9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c1e92670` are properly handled with clean fallback behavior.
