@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T01:44:42.576Z",
+  "last_updated": "2026-11-22T01:59:01.202Z",
   "total_records": 2308,
   "domains": {
     "A": {
@@ -8123,8 +8123,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "1d89fd6edd01cfd0ab80eb20cf2929b005e761e8179359f07d27f975564f303d",
-      "created_at": "2026-11-22T01:32:35.619Z"
+      "content_hash": "8d82ccccd9a39a2da4a487a87904de367250af5f6d8b787d92e858f61d0c726d",
+      "created_at": "2026-11-22T01:59:01.202Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -11297,8 +11297,8 @@
       "title": "Technical Construction Intelligence: databendlabs/databend Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-databendlabs-databend-technical-construction-intelligence-databendlabs-databend-.md",
       "repository": "databendlabs/databend",
-      "content_hash": "e738b62f9389f323795c28ce99d791aaebda6b568eabaa22dc187f1c4f98f55d",
-      "created_at": "2026-11-19T17:23:31.340Z"
+      "content_hash": "60cdcd90b03c9d4cbc54a354f8f7168516f509e5d8bb01ccc73832fbc374b275",
+      "created_at": "2026-11-22T01:58:55.953Z"
     },
     "domain_intelligence-research-knowledge-intelligence-google-t5-t5-small-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-google-t5-t5-small-core-invariants",
@@ -21088,8 +21088,8 @@
       "title": "Technical Construction Intelligence: databendlabs-databend-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-databendlabs-databend-learnings-technical-construction-intelligence-databendlabs.md",
       "repository": "databendlabs-databend-learnings",
-      "content_hash": "97ad1f6bbf414ddbe93623ee6a32089329e04dc42469dff8365ba62e94292d53",
-      "created_at": "2026-11-19T17:23:36.870Z"
+      "content_hash": "30221df11c2835664a10eb0087e5b4e1b60bd3ca55908530215af89a3bacd6ff",
+      "created_at": "2026-11-22T01:58:59.958Z"
     },
     "domain_intelligence-research-knowledge-intelligence-abiray-minimax-h3-image-gguf-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-abiray-minimax-h3-image-gguf-core-invariants",
@@ -26552,8 +26552,8 @@
       "title": "Research & Knowledge Intelligence: Qwen/Qwen3-Embedding-0.6B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-embedding-0-6b-research-knowledge-intelligence-qwen-qwen3-embeddin.md",
       "repository": "Qwen/Qwen3-Embedding-0.6B",
-      "content_hash": "c43186d01d451fa960c98bc3e0e9556f1424b7d6a5f1cbc2caf645b4085b818d",
-      "created_at": "2026-11-17T07:55:43.895Z"
+      "content_hash": "0f98e699a9098857260445b610871015bbdd8b09e765137bb39bb78aae9a0852",
+      "created_at": "2026-11-22T01:58:41.926Z"
     },
     "domain_intelligence-technical-construction-intelligence-apache-shardingsphere-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-apache-shardingsphere-core-invariants",
@@ -26588,8 +26588,8 @@
       "title": "Research & Knowledge Intelligence: hf-qwen-qwen3-embedding-0.6b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-embedding-0-6b-learnings-research-knowledge-intelligence-hf-qwen-q.md",
       "repository": "hf-qwen-qwen3-embedding-0.6b-learnings",
-      "content_hash": "6e5b6294aa1a53f4e78934c7c8f30ddbbba2ff96f75186cdf049209df1fe41eb",
-      "created_at": "2026-11-17T08:00:00.078Z"
+      "content_hash": "52c376a1793fce83f8f11484daa803fc534f4e87b0184b1dbda55c96be3faa8e",
+      "created_at": "2026-11-22T01:58:59.230Z"
     },
     "domain_intelligence-technical-construction-intelligence-rqlite-rqlite-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-rqlite-rqlite-core-invariants",

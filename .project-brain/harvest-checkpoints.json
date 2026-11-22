@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T01:44:08.865Z",
+  "last_updated": "2026-11-22T01:58:55.543Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -11286,14 +11286,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-databendlabs-databend",
-      "content_hash": "54610216c35a5b780cf5a6f66e04fb5a17e3d08f9abd9cb1c4335e432a22914c",
-      "verified_at": "2026-11-20T21:47:12.135Z",
+      "content_hash": "c337eb061506532f3246b1da538da9acc41c5d201149ae05cd3b0ab32f478a25",
+      "verified_at": "2026-11-22T01:58:55.542Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-20T21:47:12.135Z"
+      "last_updated": "2026-11-22T01:58:55.542Z"
     },
     "atanunq/viu": {
       "repository": "atanunq/viu",
@@ -17856,14 +17856,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen3-embedding-0-6b",
-      "content_hash": "7a13aacdd3b7d03446dcb66b88728e210f2414530d8db92ca566a8bdcacccbad",
-      "verified_at": "2026-11-17T07:55:43.740Z",
+      "content_hash": "d27eb2ba6fed3be8d5ee172422cdb8bb77f1c4aec1890283fe3294e308ba6354",
+      "verified_at": "2026-11-22T01:58:41.697Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T07:55:43.740Z"
+      "last_updated": "2026-11-22T01:58:41.697Z"
     },
     "feder-cr/Jobs_Applier_AI_Agent_AIHawk": {
       "repository": "feder-cr/Jobs_Applier_AI_Agent_AIHawk",

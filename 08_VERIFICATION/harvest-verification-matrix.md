@@ -11970,3 +11970,5 @@
 | `CYCLE-20261122-BF2C` | `2026-11-22T01:44:02.052Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9877` | Yes (`2e27572b...`) |
 | `CYCLE-20261122-BKAH` | `2026-11-22T01:44:08.825Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`22284158...`) |
 | `CYCLE-2026-11-22-PROJ-EVOLVE` | `2026-11-22T01:44:40.946Z` | `skyhook-io-radar` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-8AB33BAA` [Domain K] | Yes (`aef740a0...`) |
+| `CYCLE-20261122-U9SI` | `2026-11-22T01:58:41.682Z` | `Qwen/Qwen3-Embedding-0.6B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-embedding-0.6b-learnings.md` | Yes (`d27eb2ba...`) |
+| `CYCLE-20261122-UKH5` | `2026-11-22T01:58:55.529Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9878` | Yes (`c337eb06...`) |

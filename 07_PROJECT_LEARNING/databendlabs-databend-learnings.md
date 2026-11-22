@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/databendlabs-databend-learnings.md`  
 > **Source**: github ([https://github.com/databendlabs/databend](https://github.com/databendlabs/databend))  
-> **Source Version**: `77137bc2`  
+> **Source Version**: `f469c616`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T21:47:11.185Z  
+> **Timestamp**: 2026-11-22T01:58:54.409Z  
 > **Learning ID**: `learn-github-databendlabs-databend`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/databendlabs-databend-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/databendlabs/databend](https://github.com/databendlabs/databend))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T21:47:10.993Z  
+> **Harvest Timestamp**: 2026-11-22T01:58:54.403Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Data Agent Ready Warehouse : One for  Analytics, Search, AI, Python Sandbox.  — rebuilt from scratch. Unified architecture on your S3.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9501 stars
+- **Stars / Engagement**: 9502 stars
 
 ---
 
@@ -1196,11 +1196,11 @@ unsafe impl<T: BitChunk> TrustedLen for BitChunks<'_, T> {}
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #21146** (2026-11-20): **chore(meta): use server v260629.11.0 and client v260205.13.7**
-  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  Use Meta server and test harness `v260629.11.0` with maintenance client `v260205.13.7`. Both resolve crates.io OpenRaft `0.10.1`; the server no longer needs a Git source for OpenRaft. Keep the runtime bridge between the two Meta sources. Server-side credentials import `databend_meta::Secret` without a direct `databend-meta-raft-config` dependency. The semaphore codec uses `codeq 0.6.3` with the same wire format. Databend’s separate Hickory dependencies are outside this change.  The maintenance client retains the `1.2.770` minimum Meta server version. Keep `watch_on_leader()` until all watch-serving endpoints have upgraded through normal rollout and a deployed probe confirms stale-stream closure, reconnect to the new leader, and resumed updates.  Validation: Clippy and 111 focused tests passed for query config, Meta CLI config, control, store, cache, and semaphore. The `metactl` Raft TLS suite also passed locally, including follower reads, snapshot catch-up, and leader transfer.  <!-- x-pr-ship target=main old-base-oid=a85e50302ceeb3fd46c3582409745f0d551a0eee predecessor=none -->  ## Tests  - [x] Unit Test - [ ] Logic Test - [ ] Benchmark Test - [ ] No Test - _Explain why_  ## Type of change  - [ ] Bug Fix (non-breaking change which fixes an issue) - [ ] New Feature (non-breaking change which adds functionality) - [x] Breaking Change (fix or feature that could cause ex
+- **Issue #21157** (2026-11-21): **fix: task: watch the task messages again when the stream ends**
+  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  Since databend-meta v260629.9.0, which databend uses since #21146, only the meta leader serves watches: every watch stream of every query node ends when the meta leader changes. `TaskService` watched its task messages once. When that stream ended, `TaskService::work` returned, and the query node handled no task message until it restarted, so one leader change stopped scheduled tasks on every query node. An error while handling one message ended it too. Now it watches again, keeps the schedules it runs, and logs a message it fails to handle instead of stopping.  Tests: `test_subscribe_again`, in the new `src/query/service/src/task/subscription.rs`, checks that the subscription subscribes again when subscribing fails and when the stream errors or ends. `test_scheduled_task_runs_message`, in `src/query/service/src/task/service.rs`, checks which schedule is kept when a new watch brings a `ScheduleTask` message again. No test restarts a meta node under a running task service yet.  The first commit only moves the body of the message loop into `TaskService::handle_message`; it reads best with whitespace ignored.  ##### refactor: task: handle each message in `TaskService::handle_message` # Summary  `TaskService::work` passes each message of the watch stream to the new `TaskService::handle_message`, which holds the former body of its loop.  # Details  No behavior change: an er
 
-- **Issue #21141** (2026-11-20): **fix(query): probe the partition built in each hash join spill round**
-  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  The legacy hash join can silently return wrong results when it spills. CI hit this in [`linux / sqllogic / cluster (tpcds, 4c)`](https://github.com/databendlabs/databend/actions/runs/44673294220/job/136092536425): TPC-DS Q69 in `tpcds_spill_3.test` returned one extra row. Correct runs in the same job had identical row counts for every operator up to the `NOT EXISTS` left mark join on `web_sales`. That join's output differed on one node, and on that node the join spilled into 16 rounds.  **Root cause.** Spilled partitions are restored one per round. At the end of a round, the last probe processor releases the build side (`continue_build_watcher.send(true)`) and only afterwards reads the partition to restore from `HashJoinState::partition_id`. Once the build side finishes the next round, its `finalize_done` already stores the partition of the round after that in the same slot. A probe thread delayed between the release and the read (for example, preempted for about the 1 ms a small round takes) restores the following partition. It probes that partition against the wrong table, and its buffered rows of both partitions are never joined:  - inner and semi joins lose rows; - `NOT EXISTS` / left mark joins return extra rows; - no error is raised.  This has existed since the round protocol was introduced. It affects every join that runs on the legacy implementatio
+- **Issue #21154** (2026-11-21): **bug: planner can mix tables from the old and new database after DROP/CREATE**
+  *Symptoms*: If database `d` is dropped and recreated while a query is being planned, the planner can take `d.a` from the old database and `d.b` from the new one.  **Repro (Catalog integration test)** 1. In one `QueryContext`, look up `d.a` (database ID `6`, table ID `11`). 2. In a separate context, drop `d`, recreate it under the same name (ID `18`), and create `d.b`. 3. In the **original** context, look up `d.b`, then `d.a` again.  **Actual:** `d.b` resolves in database `18`, but `d.a` still returns table `11` from database `6`. **Expected:** Reject the `d.b` lookup with `DatabaseVersionMismatched` rather than mixing two databases in one plan.  Reproduced on both `a85e50302c` (base) and `d345a9043a` (#21145): both retained table `11`; the base resolved `d` to `18` by name, and the PR recorded `18` in the query context. This predates the PR. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1217,908 +1217,468 @@ unsafe impl<T: BitChunk> TrustedLen for BitChunks<'_, T> {}
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f3fe9792` (2026-11-20)
-**Commit Message**: fix(query): read spilled byte columns with the writer's arrow types (#21053)
+### Incident Patch 1: `f469c616` (2026-11-22)
+**Commit Message**: refactor(query): output in-memory final aggregate results a block at a time (#21144)
 
-* fix(query): read spilled byte columns with the writer's arrow types
+* refactor(query): output in-memory final aggregate results a block at a time
 
-Spill files are written with LargeBinary/Utf8View byte columns, but
-SpillsDataReader built its field levels from the row group's parquet
-schema without the footer's embedded arrow schema, so byte columns were
-decoded as Binary/Utf8 with i32 offsets. A row group is decoded as one
-batch, so a byte column above 2 GiB failed with "index overflow decoding
-byte array".
+The final aggregate turned all the groups of its hash table into blocks in one
+`process` call before pushing the first one, so the blocks of all the groups
+were held at once while the downstream waited. It now builds one block per
+`process`, and the next one only after the previous one was pushed.
 
-Pass the arrow schema derived from the reader's data schema, the same
-conversion the writer uses, as the decoding hint.
+The output blocks are coalesced by `BlockConcatStream`, which appends columns,
+instead of a one-partition `BlockPartitionStream`, which built partition indices
+for every block and copied the columns by them.
 
-* fix(query): name spill read hint fields after the file's columns
+The top N, spilled-bucket and memory-pressure outputs still output at once.
 
-Parquet matches hint fields by name. The writer names top-level columns after the block (col_N), while callers pass their own data schema (for example agg_0/group_0, or 0/1 for partial top-n), so the hint failed with 'incompatible arrow schema'. Take the top-level names from the file and keep the types inferred from the data schema.
+* fix(query): reserve one row per group for final aggregate results
 
-**File**: `src/query/service/src/spillers/async_buffer.rs` (modified, +211/-6)
+`merge_flushed_states` reserved four times the rows of a batch for each aggregate
+result column: the capacity of `ColumnBuilder::with_capacity` is in rows.
+
+* refactor(query): output the first block of a spilled final aggregate task at once
+
+Finishing a task of spilled states returned right after `finish`, so when its
+groups fitted in memory the first block waited for another `
+
+**File**: `src/query/expression/src/aggregate/payload.rs` (modified, +2/-1)
 ```diff
-@@ -25,6 +25,8 @@ use std::sync::atomic::Ordering;
- use std::time::Duration;
- use std::time::Instant;
- 
-+use arrow_array::RecordBatch;
-+use arrow_schema::Fields;
- use arrow_schema::Schema;
- use bytes::Bytes;
- use bytes::BytesMut;
-@@ -583,10 +585,23 @@ impl SpillsDataReader {
-             ));
-         }
- 
-+        // Read back the arrow types the writer used. Without them, byte columns are
-+        // inferred as Binary/Utf8, whose i32 offsets overflow once a column of the
-+        // row group, which is decoded as one batch, holds more than 2 GiB.
-+        // Hint fields must carry the names in the file, which the writer takes
-+        // from the block rather than from `data_schema`.
-+        let schema_descr = row_groups[0].schema_descr();
-+        let arrow_schema = Schema::from(infer_table_schema(&data_schema)?.as_ref());
-+        let hint = arrow_schema
-+            .fields()
-+            .iter()
-+            .zip(schema_descr.root_schema().get_fields())
-+            .map(|(field, column)| field.as_ref().clone().with_name(column.name()))
-+            .collect::<Vec<_>>();
-         let field_levels = parquet_to_arrow_field_levels(
--            row_groups[0].schema_descr(),
-+            schema_descr,
-             ProjectionMask::all(),
--            None,
-+            Some(&Fields::from(hint)),
-         )?;
- 
-         let (tx, rx) = async_channel::bounded(1);
-@@ -613,6 +628,16 @@ impl SpillsDataReader {
-     }
- 
-     pub fn read(&mut self) -> Result<Option<DataBlock>> {
-+        let Some(batch) = self.read_record_batch()? else {
-+            return Ok(None);
-+        };
-+        Ok(Some(DataBlock::from_record_batch_keep_null_const(
-+            &self.data_schema,
-+            &batch,
-+        )?))
-+    }
-+
-+    fn read_record_batch(&mut self) -> Result<Option<RecordBatch>> {
-         let start = Instant::now();
- 
-         let fetched = match self.receiver.recv_blocking() {
-@@ -641,10 +666,7 @@ impl SpillsDataReader {
-         };
-         debug_assert!(reader.next().is_none());
-         record_read_profile(self.target, start.elapsed(), fetched.read_bytes);
--        Ok(Some(DataBlock::from_record_batch_keep_null_const(
--            &self.data_schema,
--            &batch,
--        )?))
-+        Ok(Some(batch))
-     }
- }
- 
-@@ -868,9 +890,22 @@ mod tests {
-     use std::sync::atomic::AtomicUsize;
-     use std::sync::atomic::Ordering;
- 
-+    use arrow_schema::DataType as ArrowDataType;
-     use databend_common_base::runtime::spawn;
-+    use databend_common_expression::Column;
-+    use databend_common_expression::DataField;
-+    use databend_common_expression::DataSchema;
-     use databend_common_expression::FromData;
-+    use databend_common_expression::block_debug::pretty_format_blocks;
-+    use databend_common_expression::types::BinaryType;
-+    use databend_common_expression::types::BooleanType;
-+    use databend_common_expression::types::DataType;
-+    use databend_common_expression::types::DecimalSize;
-     use databend_common_expression::types::Int32Type;
-+    use databend_common_expression::types::Int64Type;
-+    use databend_common_expression::types::NumberDataType;
-+    use databend_common_expression::types::StringType;
-+    use databend_common_expression::types::VariantType;
-     use opendal::Operator;
- 
-     use super::*;
-@@ -1081,6 +1116,176 @@ mod tests {
-         );
-     }
- 
-+    #[tokio::test(flavor = "multi_thread")]
-+    async fn test_spill_reads_byte_columns_with_writer_types() {
-+        let pool = SpillsBufferPool::create(1).unwrap();
-+        let operator = create_test_operator().unwrap();
-+        let path = "spill_byte_column_types".to_string();
-+
-+        let variants = || {
-+            ["[1,\"a\"]", "{\"k\":null}"]
-+                .iter()
-+                .map(|json| jsonb::parse_value(json.as_bytes()).unwrap().to_vec())
-+                .collect::<Vec<_>>()
-+        };
-+        // The last column has the shape of an arg_max state: (has_value, key, value).
-+        let block = DataBlock::new_from_columns(vec![
-+            StringType::from_data(vec!["a", "bc"]),
-+            StringType::from_opt_data(vec![Some("d"), None]),
-+            BinaryType::from_data(vec![b"ef".as_slice(), b"".as_slice()]),
-+            VariantType::from_data(variants()),
-+            Column::Tuple(vec![
-+                BooleanType::from_data(vec![true, false]),
-+                Int64Type::from_data(vec![1, 2]),
-+                VariantType::from_data(variants()),
-+            ]),
-+            // Types whose hinted arrow type also differs from the parquet default.
-+            Column::random(
-+                &DataType::Decimal(DecimalSize::new(10, 2).unwrap()),
-+                2,
-+                None,
-+            ),
-+            Column::random(
-+                &DataType::Array(Box::new(DataType::Number(NumberDataType::Int32))),
-+                2,
-+                None,
-+            ),
-+            Column::random(
-+                &DataType::Nullable(Box::new(DataType::Tuple(vec![
-+                    Da
-```
-
----
-
-### Incident Patch 2: `532835a7` (2026-11-20)
-**Commit Message**: fix(query): reject out-of-range to_decimal parameters (#21128)
-
-* fix(query): reject out-of-range to_decimal parameters (#21107)
-
-* refactor(query): name the target type in decimal cast overflow errors
-
-The overflow errors of integer, float and decimal casts to decimal
-quoted the source line that raised them, which only told the cast
-paths apart and changed with every edit of the file. They now name the
-decimal type the value does not fit; a NaN or infinite float says so,
-under the same 'Decimal overflow' prefix that tests match. The evaluator
-already shows the function and the value.
-
-(cherry picked from commit 84479b615116d7602f1394992dfbe25d57da208a)
-
-* fix(query): reject NULL Decimal type arguments
-
-**File**: `src/query/expression/src/types/decimal.rs` (modified, +35/-19)
-```diff
-@@ -52,6 +52,7 @@ use super::AccessType;
- use super::AnyType;
- use super::DataType;
- use super::F64;
-+use super::NumberScalar;
- use super::NumberType;
- use super::SimpleDomain;
- use super::SimpleType;
-@@ -518,28 +519,43 @@ impl DecimalSize {
-     }
- 
-     pub fn new(precision: u8, scale: u8) -> Result<DecimalSize> {
--        let size = DecimalSize { precision, scale };
--        size.validate()?;
--
--        Ok(size)
-+        Self::from_checked_params(Some(precision), Some(scale))
-+    }
-+
-+    pub fn try_from_scalars(precision: &Scalar, scale: &Scalar) -> Result<Self> {
-+        let to_u8 = |value: &Scalar, name: &str| -> Result<Option<u8>> {
-+            crate::with_integer_mapped_type!(|NUM_TYPE| match value.as_number() {
-+                Some(NumberScalar::NUM_TYPE(value)) => Ok(value.to_u8()),
-+                _ => Err(ErrorCode::IllegalDataType(format!(
-+                    "Decimal {name} must be an integer, got {}",
-+                    value.as_ref().infer_data_type()
-+                ))),
-+            })
-+        };
-+        Self::from_checked_params(to_u8(precision, "precision")?, to_u8(scale, "scale")?)
-     }
- 
-     pub fn validate(&self) -> Result<()> {
--        if self.precision < 1 || self.precision > i256::MAX_PRECISION {
--            return Err(ErrorCode::Overflow(format!(
--                "Decimal precision must be between 1 and {}",
--                i256::MAX_PRECISION
--            )));
--        }
--
--        if self.scale > self.precision {
--            return Err(ErrorCode::Overflow(format!(
--                "Decimal scale must be between 0 and precision {}",
--                self.precision
--            )));
--        }
--
--        Ok(())
-+        Self::new(self.precision, self.scale).map(|_| ())
-+    }
-+
-+    fn from_checked_params(precision: Option<u8>, scale: Option<u8>) -> Result<Self> {
-+        let precision = precision
-+            .filter(|p| (1..=i256::MAX_PRECISION).contains(p))
-+            .ok_or_else(|| {
-+                ErrorCode::Overflow(format!(
-+                    "Decimal precision must be between 1 and {}",
-+                    i256::MAX_PRECISION
-+                ))
-+            })?;
-+        let scale = scale
-+            .filter(|s| (0..=precision).contains(s))
-+            .ok_or_else(|| {
-+                ErrorCode::Overflow(format!(
-+                    "Decimal scale must be between 0 and precision {precision}"
-+                ))
-+            })?;
-+        Ok(Self::new_unchecked(precision, scale))
-     }
- 
-     pub fn default_128() -> DecimalSize {
-```
-
-**File**: `src/query/functions/src/scalars/decimal/src/cast.rs` (modified, +43/-19)
-```diff
-@@ -118,8 +118,7 @@ pub fn register_to_decimal(registry: &mut FunctionRegistry) {
-             _ => return None,
-         };
- 
--        let decimal_size =
--            DecimalSize::new(params[0].get_i64()? as _, params[1].get_i64()? as _).ok()?;
-+        let decimal_size = DecimalSize::try_from_scalars(&params[0], &params[1]).ok()?;
- 
-         let is_variant = from_type == DataType::Variant;
-         let return_type = if is_variant {
-@@ -565,7 +564,7 @@ where
-                 skip_inactive_with_builder_1_arg::<BooleanType, DecimalType<T>>(
-                     |a, out: &mut Vec<T>, ctx| {
-                         if a {
--                            ctx.set_error(out.len(), "Decimal overflow");
-+                            ctx.set_error(out.len(), DecimalOverflow(size));
-                             out.push(T::one());
-                         } else {
-                             out.push(T::zero());
-@@ -758,7 +757,7 @@ where
-             from, ctx,
-         )
-     } else {
--        let overflow = concat!("Decimal overflow at line : ", line!());
-+        let overflow = DecimalOverflow(size);
-         if let Value::Scalar(value) = &from {
-             let x = S::to_scalar_ref(value);
-             if let Some(x) = T::from_i128(x).and_then(|x| x.checked_mul(multiplier))
-@@ -797,13 +796,15 @@ where
- {
-     let f = |x: S::ScalarRef<'_>, builder: &mut Vec<T>, ctx: &mut EvalContext| {
-         let rounding_mode = ctx.func_ctx.rounding_mode;
--        match T::from_float(x.as_(), size, rounding_mode) {
-+        let x: f64 = x.as_();
-+        match T::from_float(x, size, rounding_mode) {
-             Some(x) => builder.push(x),
-+            None if !x.is_finite() => {
-+                ctx.set_error(builder.len(), NonFiniteDecimal(x));
-+                builder.push(T::one());
-+            }
-             None => {
--                ctx.set_error(
--                    builder.len(),
--                    concat!("Decimal overflow at line : ", line!()),
--                );
-+                ctx.set_error(builder.len(), DecimalOverflow(size));
-                 builder.push(T::one());
+@@ -751,7 +751,8 @@ pub(super) fn merge_flushed_states(
+     if let Some(states_layout) = row_layout.states_layout.as_ref() {
+         for (aggr, loc) in aggrs.iter().zip(states_layout.states_loc.iter().cloned()) {
+             let return_type = aggr.signature().return_type.clone();
+-            let mut builder = ColumnBuilder::with_capacity(&return_type, row_count * 4);
++            // The capacity is in rows: one result per row.
++            let mut builder = ColumnBuilder::with_capacity(&return_type, row_count);
+             for place in &flush_state.state_places.as_slice()[0..row_count] {
+                 aggr.merge_result(AggrState::new(*place, &loc), &mut builder)?;
              }
-         }
-@@ -843,28 +844,29 @@ where
-     let min = W::min_for_precision(dest.precision());
-     let max = W::max_for_precision(dest.precision());
-     match dest.scale().cmp(&from.scale()) {
--        Ordering::Equal => {
--            rescale::<F, W, T>(value, ctx, move |x, _| (x >= min && x <= max).then_some(x))
--        }
-+        Ordering::Equal => rescale::<F, W, T>(value, ctx, dest, move |x, _| {
-+            (x >= min && x <= max).then_some(x)
-+        }),
-         Ordering::Greater => {
-             let factor = W::e(dest.scale() - from.scale());
--            rescale::<F, W, T>(value, ctx, move |x, _| {
-+            rescale::<F, W, T>(value, ctx, dest, move |x, _| {
-                 x.checked_mul(factor).filter(|x| *x >= min && *x <= max)
-             })
-         }
-         Ordering::Less => {
-             let reduction = ScaleReduction::<W>::new(from.scale() - dest.scale(), dest.precision());
--            rescale::<F, W, T>(value, ctx, move |x, rounding_mode| {
-+            rescale::<F, W, T>(value, ctx, dest, move |x, rounding_mode| {
-                 reduction.reduce(x, rounding_mode)
-             })
-         }
-     }
- }
- 
--// Rows the rescaling rejects do not fit the target precision.
-+// Rows the rescaling rejects do not fit `dest`.
- fn rescale<F, W, T>(
-     value: Value<DecimalType<F>>,
-     ctx: &mut EvalContext,
-+    dest: DecimalSize,
-     rescale: impl Fn(W, bool) -> Option<W> + Copy + Send + Sync,
- ) -> Value<DecimalType<T>>
- where
-@@ -879,16 +881,38 @@ where
-         ) {
-             Some(y) => builder.push(y.as_decimal::<T>()),
-             None => {
--                ctx.set_error(
--                    builder.len(),
--                    concat!("Decimal overflow at line : ", line!()),
--                );
-+                ctx.set_error(builder.len(), DecimalOverflow(dest));
-                 builder.push(T::one());
-             }
-         },
-     )(value, ctx)
- }
- 
-+/// The error of a value that a decimal of `size` cannot hold. The evaluator
-+/// adds the function and its arguments to it, which show the value.
-+#[derive(Clone, Copy)]
-+struct DecimalOverflow(DecimalSize);
-+
-+impl std::fmt::Display for DecimalOverflow {
-+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-+        write!(
-+            f,
-+            "Decimal overflow: the value does not fit {}",
-+            DataType::Decimal(self.0)
-+        )
-+    }
-+}
-+
-+/// The error of a NaN or infinite float cast to a decimal.
-+#[derive(Clone, Copy)]
-+struct NonFiniteDecimal(f64);
-+
-+impl std::fmt::Display for NonFiniteDecimal {
-+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-+        write!(f, "Decimal overflow: {} has no decimal value", self.0)
-+    }
-+}
-+
- /// Drops `shift >= 1` fractional digits, truncating or rounding half away
- /// from zero, then checks the target range.
- ///
 ```
 
-**File**: `src/query/functions/tests/it/scalars/cast.rs` (modified, +2/-0)
+**File**: `src/query/service/src/pipelines/processors/transforms/aggregator/transform_aggregate_final.rs` (modified, +137/-13)
 ```diff
-@@ -1267,6 +1267,8 @@ fn test_decimal_cast_precision_and_partial_errors() {
-     let columns = [("a", Int64Type::from_data(vec![-10, -9, 0, 9, 10]))];
-     run_ast(file, "CAST(a AS DECIMAL(1,0))", &columns);
-     run_ast(file, "TRY_CAST(a AS DECIMAL(1,0))", &columns);
-+    let columns = [("f", Float64Type::from_data(vec![1.5, f64::NAN]))];
-+    run_ast(file, "CAST(f AS DECIMAL(38,10))", &columns);
-     let columns = [("active", BooleanType::from_data(vec![false, true, false]))];
-     run_ast(
-         file,
-```
-
-**File**: `src/query/functions/tests/it/scalars/testdata/decimal_cast_precision.txt` (modified, +18/-10)
-```diff
-@@ -11,31 +11,31 @@ error:
-   --> SQL:1:1
-   |
- 1 | CAST(10::Int64 AS DECIMAL(1,0))
--  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 761 while evaluating function `to_decimal(1, 0)(10)` in expr `CAST(CAST(10 AS Int64) AS Decimal(1, 0))`
-+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(1, 0) while evaluating function `to_decimal(1, 0)(10)` in expr `CAST(CAST(10 AS Int64) AS Decimal(1, 0))`
- 
- 
- 
- error: 
-   --> SQL:1:1
-   |
- 1 | CAST(-10::Int64 AS DECIMAL(1,0))
--  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 761 while evaluating function `to_decimal(1, 0)(-10)` in expr `CAST(- CAST(10 AS Int64) AS Decimal(1, 0))`
-+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(1, 0) while evaluating function `to_decimal(1, 0)(-10)` in expr `CAST(- CAST(10 AS Int64) AS Decimal(1, 0))`
- 
- 
- 
- error: 
-   --> SQL:1:1
-   |
- 1 | CAST(9223372036854775807::Int64 AS DECIMAL(1,0))
--  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 761 while evaluating function `to_decimal(1, 0)(9223372036854775807)` in expr `CAST(CAST(9223372036854775807 AS Int64) AS Decimal(1, 0))`
-+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(1, 0) while evaluating function `to_decimal(1, 0)(9223372036854775807)` in expr `CAST(CAST(9223372036854775807 AS Int64) AS Decimal(1, 0))`
- 
- 
- 
- error: 
-   --> SQL:1:1
-   |
- 1 | CAST(18446744073709551615::UInt64 AS DECIMAL(1,0))
--  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 761 while evaluating function `to_decimal(1, 0)(18446744073709551615)` in expr `CAST(18446744073709551615 AS Decimal(1, 0))`
-+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(1, 0) while evaluating function `to_decimal(1, 0)(18446744073709551615)` in expr `CAST(18446744073709551615 AS Decimal(1, 0))`
- 
- 
- 
-@@ -70,7 +70,7 @@ error:
-   --> SQL:1:1
-   |
- 1 | CAST(TRUE AS DECIMAL(1,1))
--  | ^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow while evaluating function `to_decimal(1, 1)(true)` in expr `CAST(true AS Decimal(1, 1))`
-+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(1, 1) while evaluating function `to_decimal(1, 1)(true)` in expr `CAST(true AS Decimal(1, 1))`
- 
- 
- 
-@@ -135,7 +135,7 @@ error:
-   --> SQL:1:1
-   |
- 1 | CAST(a AS DECIMAL(1,0))
--  | ^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 761 while evaluating function `to_decimal(1, 0)(-10)` in expr `CAST(a AS Decimal(1, 0))`
-+  | ^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(1, 0) while evaluating function `to_decimal(1, 0)(-10)` in expr `CAST(a AS Decimal(1, 0))`
- 
- 
- 
-@@ -163,11 +163,19 @@ evaluation (internal):
- +--------+--------------------------------------------------------------------------------+
- 
- 
-+error: 
-+  --> SQL:1:1
-+  |
-+1 | CAST(f AS DECIMAL(38,10))
-+  | ^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: NaN has no decimal value while evaluating function `to_decimal(38, 10)(NaN)` in expr `CAST(f AS Decimal(38, 10))`
-+
-+
-+
- error: 
-   --> SQL:1:12
-   |
- 1 | if(active, CAST(10::Int64 AS DECIMAL(1,0)), NULL)
--  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 761 while evaluating function `to_decimal(1, 0)(10)` in expr `CAST(CAST(10 AS Int64) AS Decimal(1, 0))`, during run expr: `if(CAST(active AS Boolean NULL), CAST(CAST(CAST(10 AS Int64) AS Decimal(1, 0)) AS Decimal(1, 0) NULL), CAST(NULL AS Decimal(1, 0) NULL))`
-+  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(1, 0) while evaluating function `to_decimal(1, 0)(10)` in expr `CAST(CAST(10 AS Int64) AS Decimal(1, 0))`, during run expr: `if(CAST(active AS Boolean NULL), CAST(CAST(CAST(10 AS Int64) AS Decimal(1, 0)) AS Decimal(1, 0) NULL), CAST(NULL AS Decimal(1, 0) NULL))`
- 
- 
- 
-@@ -198,7 +206,7 @@ error:
-   --> SQL:1:12
-   |
- 1 | if(active, CAST(1e30::Float64 AS DECIMAL(1,0)), NULL)
--  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 805 while evaluating function `to_decimal(1, 0)(1000000000000000000000000000000)` in expr `CAST(CAST(1000000000000000000000000000000 AS Float64) AS Decimal(1, 0))`, during run expr: `if(CAST(active AS Boolean NULL), CAST(CAST(CAST(1000000000000000000000000000000 AS Float64) AS Decimal(1, 0)) AS Decimal(1, 0) NULL), CAST(NULL AS Decimal(1, 0) NULL))`
-+  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(1, 0) while evaluating function `to_decimal(1, 0)(1000000000000000000000000000000)` in expr `CAST(CAST(1000000000000000000000000000000 AS Float64) AS Decimal(1, 0))`, during run expr: `if(CAST(active AS Boolean NULL), CAST(CAST(CAST(1000000000000000000000000000000 AS Float64) AS Decimal(1, 0)) AS Decimal(1, 0) NULL), CAST(NULL AS Decimal(1, 0) NULL))`
- 
- 
- 
-@@ -214,15 +222,15 @@ error:
-   --> SQL:1:12
-   |
- 1 | if(active, CAST(10::DE
-```
-
-**File**: `src/query/functions/tests/it/scalars/testdata/decimal_to_decimal_cast.txt` (modified, +10/-10)
-```diff
-@@ -67,15 +67,15 @@ error:
-   --> SQL:1:1
-   |
- 1 | CAST(123.45::DECIMAL(5,2) AS DECIMAL(5,4))
--  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 884 while evaluating function `to_decimal(5, 4)(123.45)` in expr `CAST(123.45 AS Decimal(5, 4))`
-+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(5, 4) while evaluating function `to_decimal(5, 4)(123.45)` in expr `CAST(123.45 AS Decimal(5, 4))`
- 
- 
- 
- error: 
-   --> SQL:1:1
-   |
- 1 | CAST(123::DECIMAL(3,0) AS DECIMAL(3,2))
--  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 884 while evaluating function `to_decimal(3, 2)(123)` in expr `CAST(CAST(123 AS Decimal(3, 0)) AS Decimal(3, 2))`
-+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(3, 2) while evaluating function `to_decimal(3, 2)(123)` in expr `CAST(CAST(123 AS Decimal(3, 0)) AS Decimal(3, 2))`
- 
- 
- 
-@@ -449,23 +449,23 @@ error:
-   --> SQL:1:1
-   |
- 1 | CAST(12345.67::DECIMAL(7,2) AS DECIMAL(5,2))
--  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 884 while evaluating function `to_decimal(5, 2)(12345.67)` in expr `CAST(12345.67 AS Decimal(5, 2))`
-+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(5, 2) while evaluating function `to_decimal(5, 2)(12345.67)` in expr `CAST(12345.67 AS Decimal(5, 2))`
- 
- 
- 
- error: 
-   --> SQL:1:1
-   |
- 1 | CAST(999.99::DECIMAL(5,2) AS DECIMAL(4,2))
--  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 884 while evaluating function `to_decimal(4, 2)(999.99)` in expr `CAST(999.99 AS Decimal(4, 2))`
-+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(4, 2) while evaluating function `to_decimal(4, 2)(999.99)` in expr `CAST(999.99 AS Decimal(4, 2))`
- 
- 
- 
- error: 
-   --> SQL:1:1
-   |
- 1 | CAST(99.9::DECIMAL(3,1) AS DECIMAL(2,1))
--  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 884 while evaluating function `to_decimal(2, 1)(99.9)` in expr `CAST(99.9 AS Decimal(2, 1))`
-+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(2, 1) while evaluating function `to_decimal(2, 1)(99.9)` in expr `CAST(99.9 AS Decimal(2, 1))`
- 
- 
- 
-@@ -482,23 +482,23 @@ error:
-   --> SQL:1:1
-   |
- 1 | CAST(-123.45::DECIMAL(5,2) AS DECIMAL(4,2))
--  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 884 while evaluating function `to_decimal(4, 2)(-123.45)` in expr `CAST(- 123.45 AS Decimal(4, 2))`
-+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(4, 2) while evaluating function `to_decimal(4, 2)(-123.45)` in expr `CAST(- 123.45 AS Decimal(4, 2))`
- 
- 
- 
- error: 
-   --> SQL:1:1
-   |
- 1 | CAST(99.99::DECIMAL(4,2) AS DECIMAL(3,2))
--  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 884 while evaluating function `to_decimal(3, 2)(99.99)` in expr `CAST(99.99 AS Decimal(3, 2))`
-+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(3, 2) while evaluating function `to_decimal(3, 2)(99.99)` in expr `CAST(99.99 AS Decimal(3, 2))`
- 
- 
- 
- error: 
-   --> SQL:1:1
-   |
- 1 | CAST(9.99::DECIMAL(3,2) AS DECIMAL(2,2))
--  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 884 while evaluating function `to_decimal(2, 2)(9.99)` in expr `CAST(9.99 AS Decimal(2, 2))`
-+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(2, 2) while evaluating function `to_decimal(2, 2)(9.99)` in expr `CAST(9.99 AS Decimal(2, 2))`
- 
- 
- 
-@@ -524,7 +524,7 @@ error:
-   --> SQL:1:1
-   |
- 1 | CAST(12345678901234567890.123456789::DECIMAL(38,9) AS DECIMAL(18,4))
--  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 884 while evaluating function `to_decimal(18, 4)(12345678901234567890.123456789)` in expr `CAST(CAST(12345678901234567890.123456789 AS Decimal(38, 9)) AS Decimal(18, 4))`
-+  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(18, 4) while evaluating function `to_decimal(18, 4)(12345678901234567890.123456789)` in expr `CAST(CAST(12345678901234567890.123456789 AS Decimal(38, 9)) AS Decimal(18, 4))`
- 
- 
- 
-@@ -650,7 +650,7 @@ error:
-   --> SQL:1:1
-   |
- 1 | CAST(a AS DECIMAL(5,1))
--  | ^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow at line : 884 while evaluating function `to_decimal(5, 1)(1234567.89)` in expr `CAST(a AS Decimal(5, 1))`
-+  | ^^^^^^^^^^^^^^^^^^^^^^^ Decimal overflow: the value does not fit Decimal(5, 1) while evaluating function `to_decimal(5, 1)(1234567.89)` in expr `CAST(a AS Decimal(5, 1))`
- 
- 
- 
-```
-
-**File**: `src/query/sql/src/planner/semantic/type_check.rs` (modified, +2/-2)
-```diff
-@@ -52,8 +52,8 @@ use crate::planner::expression::UDFValidator;
- use crate::planner::expression::UdfValidationConfig;
- use crate::plans::DictGetFunctionArgument;
- 
--const DEFAULT_DECIMAL_PRECISION: i64 = 38;
--const DEFAULT_DECIMAL_SCALE: i64 = 0;
-+const DEFAULT_DECIMAL_PRECISION: u8 = 38;
-+const DEFAULT_DECIMAL_SCALE: u8 = 0;
- 
- mod adapter;
- mod aggregate;
-```
-
-**File**: `src/query/sql/src/planner/semantic/type_check/scalar_function.rs` (modified, +32/-44)
-```diff
-@@ -598,63 +598,51 @@ where A: TypeCheckAdapter
-                     }
-                 }
-             }
--        } else if (func_name.eq_ignore_ascii_case("to_number")
-+        } else if func_name.eq_ignore_ascii_case("to_number")
-             || func_name.eq_ignore_ascii_case("to_numeric")
-             || func_name.eq_ignore_ascii_case("to_decimal")
-             || func_name.eq_ignore_ascii_case("try_to_number")
-             || func_name.eq_ignore_ascii_case("try_to_numeric")
--            || func_name.eq_ignore_ascii_case("try_to_decimal"))
--            && params.is_empty()
-+            || func_name.eq_ignore_ascii_case("try_to_decimal")
-         {
--            if args.is_empty() || args.len() > 4 {
-+            if args.is_empty() || args.len() > 4 || (!params.is_empty() && params.len() != 2) {
-                 return Err(ErrorCode::SemanticError(format!(
-                     "Invalid arguments for `{func_name}`, get {} params and {} arguments",
-                     params.len(),
-                     args.len()
-                 )));
-             }
--            let arg_fn = |args: &[BoundScalar],
--                          index: usize,
--                          arg_name: &str,
--                          default: i64|
--             -> Result<i64> {
--                Ok(args
--                    .get(index)
--                    .map(|arg| match self.bound_constant_value(&arg.scalar, &arg.facts) {
--                        Some((value, _)) => Ok(value.get_i64()),
--                        None => Err(ErrorCode::SemanticError(format!(
--                            "Invalid arguments for `{func_name}`, {arg_name} is only allowed to be a constant"
--                        ))),
--                    })
--                    .transpose()?
--                    .flatten()
--                    .unwrap_or(default))
--            };
--
--            let (precision_index, scale_index) =
--                if args.len() > 1 && args[1].scalar.data_type().remove_nullable().is_string() {
--                    (2, 3)
--                } else {
--                    (1, 2)
-+            let size = if let [precision, scale] = params.as_slice() {
-+                DecimalSize::try_from_scalars(precision, scale)
-+            } else {
-+                let arg_fn = |index: usize, name: &str, default: u8| -> Result<Scalar> {
-+                    let Some(arg) = args.get(index) else {
-+                        return Ok(Scalar::Number(NumberScalar::UInt8(default)));
-+                    };
-+                    self.bound_constant_value(&arg.scalar, &arg.facts)
-+                        .map(|(value, _)| value)
-+                        .ok_or_else(|| ErrorCode::SemanticError(format!(
-+                            "Invalid arguments for `{func_name}`, {name} is only allowed to be a constant"
-+                        )))
-                 };
--            let precision = arg_fn(
--                &args,
--                precision_index,
--                "precision",
--                DEFAULT_DECIMAL_PRECISION,
--            )?;
--            let scale = arg_fn(&args, scale_index, "scale", DEFAULT_DECIMAL_SCALE)?;
--
--            if let Err(err) = DecimalSize::new(precision as u8, scale as u8) {
--                return Err(ErrorCode::SemanticError(format!(
--                    "Invalid arguments for `{func_name}`, {}",
--                    err,
--                )));
-+                let precision_index =
-+                    if args.len() > 1 && args[1].scalar.data_type().remove_nullable().is_string() {
-+                        2
-+                    } else {
-+                        1
-+                    };
-+                let precision = arg_fn(precision_index, "precision", DEFAULT_DECIMAL_PRECISION)?;
-+                let scale = arg_fn(precision_index + 1, "scale", DEFAULT_DECIMAL_SCALE)?;
-+                DecimalSize::try_from_scalars(&precision, &scale)
-+            };
-+            let size = size.map_err(|err| {
-+                ErrorCode::SemanticError(format!("Invalid arguments for `{func_name}`, {err}"))
-+            })?;
-+            if params.is_empty() {
-+                // Typed as literal params are, e.g. `to_decimal(10, 2)(x)`.
-+                params.push(Scalar::Number(NumberScalar::UInt8(size.precision())));
-+                params.push(Scalar::Number(NumberScalar::UInt8(size.scale())));
-             }
--
--            // Typed as literal params are, e.g. `to_decimal(10, 2)(x)`.
--            params.push(Scalar::Number(NumberScalar::UInt8(precision as _)));
--            params.push(Scalar::Number(NumberScalar::UInt8(scale as _)));
-         }
- 
-         let placeholders = args
-```
-
-**File**: `tests/sqllogictests/suites/base/11_data_type/11_0006_data_type_decimal.test` (modified, +48/-0)
-```diff
-@@ -1348,6 +1348,54 @@ SELECT try_to_decimal(123456, 6, 0);
- ----
- 123456
- 
-+# Decimal parameters must not wrap when converted to UInt8 (#21107).
-+query IRR
-+SELECT to_decimal(1, 1, 0), to_decimal(76, 0)(1), to_decimal(0, 3, 3);
-+----
-+1 1 0.000
-+
-+statement error Decimal precision must be between 1 and 76
-+SELECT to_decimal(3, 259, 0)
-+
-+statement error Decimal scale must be between 0 and precision 3
-+SELECT to_decimal(3, 3, 257)
-+
-+statement error Decimal scale must be between 0 and precision 3
-+SELECT to_number(3, 3, -255)
-+
-+statement error Decimal scale must be between 0 and precision 6
-+SELECT try_to_decimal(123456, 6, 256)
-+
-+statement error Decimal scale must be between 0 and precision 3
-+SELECT to_decimal('2.5', '9D9', 3, 257)
-+
-+statement error Decimal scale must be between 0 and precision 3
-+SELECT to_decimal(3, 257)(3)
-+
-+statement error Decimal precision must be between 1 and 76
-+SELECT try_to_numeric(4294967299, 1)(3)
-+
-+statement error Decimal precision must be between 1 and 76
-+SELECT to_decimal(3, 9223372036854775808, 0)
-+
-+# NULL is allowed as the value, not as an explicit Decimal type parameter.
-+query ?
-+SELECT to_decimal(CAST(NULL AS INT64 NULL), 3, 0);
-+----
-+NULL
-+
-+statement error Decimal scale must be an integer, got NULL
-+SELECT to_decimal(3, 3, NULL)
-+
-+statement error Decimal precision must be an integer, got NULL
-+SELECT to_decimal(3, NULL, 2)
-+
-+statement error Decimal scale must be an integer, got NULL
-+SELECT try_to_numeric(3, 3, CAST(NULL AS INT64))
-+
-+statement error Decimal scale must be an integer, got NULL
-+SELECT to_decimal(3, NULL)(3)
-+
- query I
- SELECT TO_DECIMAL('123456789', 9);
- ----
-```
-
----
-
-### Incident Patch 3: `4cfb5200` (2026-11-20)
-**Commit Message**: fix(storage): skip reversed ranges in clustering diagnostics (#21131)
-
-* fix(storage): skip reversed ranges in clustering diagnostics
-
-Normalize float endpoints to OrderedFloat semantics before row encoding. Exclude both endpoints of reversed blocks from overlap and depth statistics while preserving the original block counts.
-
-* fix review comments
-
-**File**: `Cargo.lock` (modified, +0/-2)
-```diff
-@@ -3383,10 +3383,8 @@ dependencies = [
-  "databend-common-timezone",
-  "databend_educe",
-  "divan",
-- "either",
-  "enum-as-inner",
-  "ethnum",
-- "fastrace",
-  "futures",
-  "geo",
-  "geozero",
-```
-
-**File**: `src/query/expression/Cargo.toml` (modified, +0/-2)
-```diff
-@@ -36,10 +36,8 @@ databend-common-metrics = { workspace = true }
- databend-common-statistics = { workspace = true }
- databend-common-timezone = { workspace = true }
- educe = { workspace = true }
--either = { workspace = true }
- enum-as-inner = { workspace = true }
- ethnum = { workspace = true }
--fastrace = { workspace = true }
- futures = { workspace = true }
- geo = { workspace = true }
- geozero = { workspace = true }
-```
-
-**File**: `src/query/storages/fuse/src/table_functions/clustering_information.rs` (modified, +247/-105)
-```diff
-@@ -21,6 +21,7 @@ use databend_common_base::runtime::JoinHandle;
- use databend_common_base::runtime::Runtime;
- use databend_common_catalog::plan::DataSourcePlan;
- use databend_common_catalog::table_args::TableArgs;
-+use databend_common_column::bitmap::Bitmap;
+@@ -25,10 +25,11 @@ use databend_common_base::base::WatchNotify;
  use databend_common_exception::ErrorCode;
  use databend_common_exception::Result;
- use databend_common_expression::BlockEntry;
-@@ -38,6 +39,7 @@ use databend_common_expression::types::DataType;
- use databend_common_expression::types::StringType;
- use databend_common_expression::types::TimestampType;
- use databend_common_expression::types::VariantType;
-+use databend_common_expression::types::number::NumberColumnBuilder;
- use databend_common_pipeline_transforms::sorts::core::RowConverter;
- use databend_common_pipeline_transforms::sorts::core::VariableRowConverter;
- use databend_common_sql::NameResolutionContext;
-@@ -441,69 +443,31 @@ impl ClusteringInformationImpl<'_> {
-     ) -> Result<ClusteringInformationResponse> {
-         let cluster_type = key.cluster_type();
-         let calculation_start = Instant::now();
--        let CollectedMetadata {
--            key_types,
--            endpoint_builders,
--            block_count,
--            constant_block_count,
--        } = metadata;
--        let aggregate = match endpoint_builders {
-+        let statistics = match metadata.endpoint_builders {
-             Some(builders) => {
-                 let max_threads = self.ctx.get_settings().get_max_threads()? as usize;
-                 with_request_pool(max_threads, move |_| {
--                    let sorted = sort_endpoints(builders, &key_types)?;
--                    sweep_exact_statistics(&sorted.keys, &sorted.order)
-+                    summarize_linear_ranges(builders, &metadata.key_types)
-                 })?
+ use databend_common_expression::AggregateHashTable;
++use databend_common_expression::BlockConcatStream;
+ use databend_common_expression::BlockMetaInfoDowncast;
+-use databend_common_expression::BlockPartitionStream;
+ use databend_common_expression::DataBlock;
+ use databend_common_expression::HashTableConfig;
++use databend_common_expression::Payload;
+ use databend_common_expression::PayloadFlushState;
+ use databend_common_expression::ProjectedBlock;
+ use databend_common_expression::SortColumnDescription;
+@@ -76,12 +77,18 @@ pub struct FinalAggregateTask {
+     tx: Sender<FinalAggregateTask>,
+ }
+ 
++struct PendingOutput {
++    payloads: VecDeque<Payload>,
++    stream: BlockConcatStream,
++}
++
+ pub struct TransformFinalAggregate {
+     input: Arc<InputPort>,
+     output: Arc<OutputPort>,
+     input_data: Option<FinalInput>,
+     channel_data: Option<FinalAggregateTask>,
+     output_data: VecDeque<DataBlock>,
++    pending_output: Option<PendingOutput>,
+     should_finish: bool,
+     /// Held while reading the input: the input finishes by taking it, see `finish`, after which
+     /// the processor reads the tasks of the channel.
+@@ -144,6 +151,7 @@ impl TransformFinalAggregate {
+             input_data: None,
+             channel_data: None,
+             output_data: VecDeque::new(),
++            pending_output: None,
+             should_finish: false,
+             tx: Some(tx),
+             rx,
+@@ -324,8 +332,8 @@ impl TransformFinalAggregate {
+     }
+ 
+     /// Coalesces the output blocks of one hash table to the block size of the aggregate.
+-    fn output_stream(&self) -> BlockPartitionStream {
+-        BlockPartitionStream::create(self.params.max_block_rows, self.params.max_block_bytes, 1)
++    fn output_stream(&self) -> BlockConcatStream {
++        BlockConcatStream::create(self.params.max_block_rows, self.params.max_block_bytes)
+     }
+ 
+     fn handle_input(&mut self, input: FinalInput, need_check_spill: bool) -> Result<()> {
+@@ -403,7 +411,7 @@ impl TransformFinalAggregate {
+             (0, 0, FinalAggregateFinishMode::Spilled)
+         } else {
+             let output_stream = self.output_stream();
+-            let (output_rows, hash_index_resizes) = self.output_hashtable(Some(output_stream))?;
++            let (output_rows, hash_index_resizes) = self.start_streaming_output(output_stream)?;
+             (
+                 output_rows,
+                 hash_index_resizes,
+@@ -425,7 +433,7 @@ impl TransformFinalAggregate {
+ 
+     fn output_hashtable(
+         &mut self,
+-        mut output_stream: Option<BlockPartitionStream>,
++        mut output_stream: Option<BlockConcatStream>,
+     ) -> Result<(usize, usize)> {
+         // No hash table means nothing was aggregated, so there is nothing to output.
+         let Some(hashtable) = self.hashtable.take() else {
+@@ -453,10 +461,9 @@ impl TransformFinalAggregate {
+                         top_n_blocks = vec![sort_blocks(&top_n_blocks, order_by, *limit)?];
+                     }
+                 } else if let Some(output_stream) = output_stream.as_mut() {
+-                    let num_rows = block.num_rows();
+-                    let ready = output_stream.partition(vec![0; num_rows], block, true);
+-                    self.output_data
+-                        .extend(ready.into_iter().map(|(_, block)| block));
++                    if let Some(block) = output_stream.push(block) {
++                        self.output_data.push_back(block);
++                    }
+                 } else {
+                     self.output_data.push_back(block);
+                 }
+@@ -468,12 +475,56 @@ impl TransformFinalAggregate {
+             self.output_data
+                 .push_back(sort_blocks(&top_n_blocks, order_by, *limit)?);
+         }
+-        if let Some(block) = output_stream.and_then(|mut stream| stream.finalize_partition(0)) {
++        if let Some(block) = output_stream.and_then(|mut stream| stream.finish()) {
+             self.output_data.push_back(block);
+         }
+         Ok((output_rows, hash_index_resizes))
+     }
+ 
++    fn start_streaming_output(&mut self, stream: BlockConcatStream) -> Result<(usize, usize)> {
++        if self.params.top_n.is_some() {
++            return self.output_hashtable(Some(stream));
++        }
++        // No hash table means nothing was aggregated, so there is nothing to output.
++        let Some(hashtable) = self.hashtable.take() else {
++            return Ok((0, 0));
++        };
++        let output_rows = hashtable.payload.len();
++        let hash_index_resizes = hashtable.hash_index_resize_count();
++        self.flush_state.clear();
++        // Consuming the hash table drops its index before result materialization.
++        self.pending_output = Some(PendingOutput {
++            payloads: hashtable.into_payloads().into(),
++            stream,
++        });
++        Ok((output_rows, hash_
+```
+
+---
+
+### Incident Patch 2: `9276ae63` (2026-11-21)
+**Commit Message**: fix: task: watch the task messages again when the stream ends (#21157)
+
+* refactor: task: handle each message in `TaskService::handle_message`
+
+# Summary
+
+`TaskService::work` passes each message of the watch stream to the new
+`TaskService::handle_message`, which holds the former body of its loop.
+
+# Details
+
+No behavior change: an error from `handle_message` still ends `work`,
+and each `continue` of the loop is now a `return Ok(())`. The fixes
+that follow need the handling of one message as a unit, to log its
+error and go on with the next message.
+
+* refactor: task: record the message that started each schedule
+
+# Summary
+
+Each schedule of `TaskService` now records the seq of the
+`ScheduleTask` message that started it and the handle of its task.
+When the same message comes again while that schedule still runs,
+`TaskService::handle_message` keeps the schedule instead of starting
+it again.
+
+# Details
+
+No node accepts a `ScheduleTask` message: it stays stored until its
+task is dropped, so every new watch of the task messages brings it
+again. Starting the schedule again would reset its timer, and an
+interval schedule waits a full interval before its next run. A
+schedule that has stoppe
+
+**File**: `src/query/service/src/task/mod.rs` (modified, +1/-0)
+```diff
+@@ -15,5 +15,6 @@
+ mod meta;
+ pub mod service;
+ mod session;
++mod subscription;
+ 
+ pub use service::TaskService;
+```
+
+**File**: `src/query/service/src/task/service.rs` (modified, +431/-333)
+```diff
+@@ -18,7 +18,6 @@ databend_common_tracing::register_module_tag!("[PRIVATE-TASKS]");
+ use std::collections::BTreeMap;
+ use std::collections::HashMap;
+ use std::fmt::Write;
+-use std::ops::Deref;
+ use std::str::FromStr;
+ use std::sync::Arc;
+ use std::sync::atomic::AtomicBool;
+@@ -41,6 +40,7 @@ use databend_common_config::InnerConfig;
+ use databend_common_exception::ErrorCode;
+ use databend_common_exception::Result;
+ use databend_common_expression::DataBlock;
++use databend_common_management::task::TaskMgr;
+ use databend_common_meta_api::kv_pb_api::decode_seqv;
+ use databend_common_meta_app::principal::ScheduleType;
+ use databend_common_meta_app::principal::State;
+@@ -64,13 +64,15 @@ use databend_common_users::BUILTIN_ROLE_ACCOUNT_ADMIN;
+ use databend_common_users::UserApiProvider;
+ use databend_common_version::BUILD_INFO;
+ use databend_meta_client::kvapi::StructKey;
++use databend_meta_client::types::SeqV;
+ use databend_meta_client::types::protobuf::WatchRequest;
+ use databend_meta_client::types::protobuf::WatchResponse;
+ use futures::Stream;
+ use futures_util::TryStreamExt;
+ use futures_util::stream::BoxStream;
+ use itertools::Itertools;
+ use log::error;
++use tokio::task::JoinHandle;
+ use tokio::time::sleep;
+ use tokio_stream::StreamExt;
+ use tokio_util::sync::CancellationToken;
+@@ -88,13 +90,36 @@ use crate::sessions::TableContextSettings;
+ use crate::task::meta::TaskMetaHandle;
+ use crate::task::session::create_session;
+ use crate::task::session::get_task_user;
++use crate::task::subscription::Subscription;
+ 
+-pub type TaskMessageStream = BoxStream<'static, Result<(String, TaskMessage)>>;
++pub type TaskMessageStream = BoxStream<'static, Result<(String, SeqV<TaskMessage>)>>;
+ 
+ const OVERLAPPING_EXECUTION: &str = "OVERLAPPING_EXECUTION";
+ const WHEN_CONDITION_EVALUATION_ERROR: &str = "WHEN_CONDITION_EVALUATION_ERROR";
+ const WHEN_CONDITION_FALSE: &str = "WHEN_CONDITION_FALSE";
+ 
++/// The delays before watching the task messages again: from the min, doubled up to the max.
++const WATCH_AGAIN_MIN_DELAY: Duration = Duration::from_secs(1);
++const WATCH_AGAIN_MAX_DELAY: Duration = Duration::from_secs(30);
++
++/// A schedule that this node runs for a task.
++struct ScheduledTask {
++    task_id: u64,
++    /// The seq of the `ScheduleTask` message that started this schedule.
++    message_seq: u64,
++    /// Cancelled to stop this schedule.
++    token: CancellationToken,
++    handle: JoinHandle<()>,
++}
++
++impl ScheduledTask {
++    /// Whether the `ScheduleTask` message of `message_seq` started this schedule, and it still
++    /// runs.
++    fn runs_message(&self, message_seq: u64) -> bool {
++        self.message_seq == message_seq && !self.handle.is_finished()
++    }
++}
++
+ /// Currently, query uses the watch in meta to imitate channel to obtain tasks. When task messages are sent to channels, they are stored in meta using TaskMessage::key.
+ /// TaskMessage::key is divided into only 4 types of keys that will overwrite each other to avoid repeated storage and repeated processing.
+ /// Whenever a new key is inserted for overwriting, each query will receive the corresponding key change and process it, thus realizing the channel
+@@ -201,367 +226,398 @@ impl TaskService {
+             if let Err(err) = task_service.prepare().await {
+                 error!("prepare failed due to {}", err);
              }
--            None => LinearClusteringStatistics {
--                block_count,
--                depth_counts: if block_count == 0 {
--                    BTreeMap::new()
--                } else {
--                    BTreeMap::from([(0, block_count as u64)])
--                },
-+            None if total_block_count != 0 => LinearClusterStatistics {
-+                block_depth_histogram: BTreeMap::from([("00000".into(), total_block_count)]),
-                 ..Default::default()
-             },
-+            None => LinearClusterStatistics::default(),
-         };
+-            if let Err(err) = task_service.work(&tenant, runtime).await {
+-                error!("prepare failed due to {}", err);
+-            }
++            task_service.work(&tenant, runtime).await;
+         });
+         Ok(())
+     }
+ 
+-    async fn work(&self, tenant: &Tenant, runtime: Arc<Runtime>) -> Result<()> {
+-        let mut scheduled_tasks: HashMap<String, (u64, CancellationToken)> = HashMap::new();
++    /// Handle the task messages as they come, for as long as the process runs.
++    ///
++    /// The watch of the task messages ends when the connection to the meta-service breaks, and
++    /// when the meta-service leader changes: watch again, and keep the schedules this node runs.
++    /// An error while handling one message is logged, and the next message is handled.
++    async fn work(&self, tenant: &Tenant, runtime: Arc<Runtime>) {
++        let mut scheduled_tasks: HashMap<String, ScheduledTask> = HashMap::new();
+         let task_mgr = UserApiProvider::instance().task_api(tenant);
+ 
+-        let mut steam = self.subscribe().await?;
 -
--        let info = if aggregate.block_count == 0 {
--            LinearClusterStatistics {
--                total_block_count,
--                ..Default::default()
--            }
--        } else {
--            LinearClusterStatistics {
--                total_block_count,
--                constant_block_count,
--                average_overlaps: rounded_average(aggregate.sum_overlap, aggregate.block_count),
--                average_depth: rounded_average(aggregate.sum_depth, aggregate.block_count),
--                max_depth: aggregate
--                    .depth_counts
--                    .last_key_value()
--                    .map_or(0, |(&depth, _)| depth),
--                p95_depth: percentile_depth(&aggregate.depth_counts, aggregate.block_count, 95),
--                p99_depth: percentile_depth(&aggregate.depth_counts, aggregate.block_count, 99),
--                block_depth_histogram: {
--                    let mut histogram = BTreeMap::new();
--                    for (depth, count) in &aggregate.depth_counts {
--                        let depth = *depth as u32;
--                        let bucket = if depth <= 16 || depth.is_power_of_two() {
--                            depth
--                        } else {
--                            depth.next_power_of_two()
--                        };
--                        *histogram.entry(format!("{:05}", bucket)).or_insert(0) += count;
--                    }
--                    histogram
--                },
--            }
-+        let info = LinearClusterStatistics {
-+            total_block_count,
-+            constant_block_count: metadata.constant_block_count,
-+            ..statistics
-         };
-         info!(
--            "clustering_information: finished table={} cluster_type={} blocks={} constant_blocks={} average_overlaps={} average_depth={} max_depth={} p95_depth={} p99_depth={} calculation_elapsed={:?} total_elapsed={:?}",
-+            "clustering_information: finished table={} cluster_type={} blocks={} constant_blocks={} invalid_blocks={} average_overlaps={} average_depth={} max_depth={} p95_depth={} p99_depth={} calculation_elapsed={:?} total_elapsed={:?}",
-             self.table.table_info.desc,
-             cluster_type,
-             info.total_block_count,
-             info.constant_block_count,
-+            info.invalid_block_count.unwrap_or_default(),
-             info.average_overlaps,
-             info.average_depth,
-             info.max_depth,
-@@ -666,10 +630,9 @@ fn push_endpoint(builders: &mut [ColumnBuilder], endpoint: &[Scalar]) {
- // `sum_overlap` counts both directions for each overlapping b
+-        while let Some(result) = steam.next().await {
+-            let (_, task_message) = result?;
+-            let task_key = TaskMessageIdent::new(tenant, task_message.key());
++        let mut messages = Subscription::new(
++            || self.subscribe(),
++            WATCH_AGAIN_MIN_DELAY,
++            WATCH_AGAIN_MAX_DELAY,
++        );
++        loop {
++            let (key, message) = messages.next().await;
++            if let Err(err) = self
++                .handle_message(tenant, &runtime, &task_mgr, &mut scheduled_tasks, message)
++                .await
++            {
++   
+```
+
+**File**: `src/query/service/src/task/subscription.rs` (added, +143/-0)
+```diff
+@@ -0,0 +1,143 @@
++// Copyright 2021 Datafuse Labs
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++// Logs from this module will show up as "[PRIVATE-TASKS] ...".
++databend_common_tracing::register_module_tag!("[PRIVATE-TASKS]");
++
++use std::future::Future;
++use std::time::Duration;
++
++use backon::BackoffBuilder;
++use backon::ExponentialBackoff;
++use backon::ExponentialBuilder;
++use databend_common_exception::Result;
++use futures_util::StreamExt;
++use futures_util::stream::BoxStream;
++use log::warn;
++use tokio::time::sleep;
++
++/// A subscription that subscribes again, after a delay, whenever subscribing fails or the
++/// subscribed stream errors or ends.
++///
++/// A meta-service watch ends when its connection breaks, and when the meta-service leader
++/// changes, since only the leader serves watches.
++pub(crate) struct Subscription<S, T> {
++    subscribe: S,
++    stream: Option<BoxStream<'static, Result<T>>>,
++    backoff: ExponentialBuilder,
++    /// The delays before the next subscriptions, built anew by `backoff` once one succeeds.
++    delays: ExponentialBackoff,
++}
++
++impl<S, F, T> Subscription<S, T>
++where
++    S: FnMut() -> F,
++    F: Future<Output = Result<BoxStream<'static, Result<T>>>>,
++{
++    /// Each delay before subscribing again doubles, with jitter, from `min_delay` up to
++    /// `max_delay`, and starts again from `min_delay` once a subscription succeeds.
++    pub(crate) fn new(subscribe: S, min_delay: Duration, max_delay: Duration) -> Self {
++        let backoff = ExponentialBuilder::new()
++            .with_min_delay(min_delay)
++            .with_max_delay(max_delay)
++            .with_jitter()
++            .without_max_times();
++        Self {
++            subscribe,
++            stream: None,
++            backoff,
++            delays: backoff.build(),
++        }
++    }
++
++    /// Return the next item of the subscribed stream, subscribing again as often as it takes.
++    pub(crate) async fn next(&mut self) -> T {
++        loop {
++            let mut stream = match self.stream.take() {
++                Some(stream) => stream,
++                None => match (self.subscribe)().await {
++                    Ok(stream) => {
++                        self.delays = self.backoff.build();
++                        stream
++                    }
++                    Err(err) => {
++                        let delay = self.next_delay();
++                        warn!(
++                            "failed to subscribe: {}; subscribe again in {:?}",
++                            err, delay
++                        );
++                        sleep(delay).await;
++                        continue;
++                    }
++                },
++            };
++
++            let lost = match stream.next().await {
++                Some(Ok(item)) => {
++                    self.stream = Some(stream);
++                    return item;
++                }
++                Some(Err(err)) => err.to_string(),
++                None => "the stream ended".to_string(),
++            };
++            let delay = self.next_delay();
++            warn!(
++                "subscription lost: {}; subscribe again in {:?}",
++                lost, delay
++            );
++            sleep(delay).await;
++        }
++    }
++
++    fn next_delay(&mut self) -> Duration {
++        // Built without a maximum of retries: there is always a next delay.
++        self.delays.next().unwrap_or_default()
++    }
++}
++
++#[cfg(test)]
++mod tests {
++    use std::collections::VecDeque;
++    use std::time::Duration;
++
++    use databend_common_exception::ErrorCode;
++    use databend_common_exception::Result;
++    use futures_util::StreamExt;
++    use futures_util::stream;
++    use futures_util::stream::BoxStream;
++
++    use super::Subscription;
++
++    /// The subscription subscribes again when subscribing fails, and when the stream errors or
++    /// ends. After an error, it drops the rest of the stream.
++    #[tokio::test]
++    async fn test_subscribe_again() {
++        let mut attempts: VecDeque<Result<BoxStream<'static, Result<u64>>>> = VecDeque::from([
++            Ok(stream::iter([Ok(1), Ok(2)]).boxed()),
++            Err(ErrorCode::MetaServiceError("refused")),
++            Ok(stream::iter([Ok(3), Err(ErrorCode::MetaServiceError("closed")), Ok(10)]).boxed()),
++            Ok(stream::iter([Ok(4)]).chain(stream::pending()).boxed()),
++        ]);
++        let subscribe = move || {
++            let attempt = attempts.pop_front().expect("no subscr
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #21157** (2026-11-21): fix: task: watch the task messages again when the stream ends (@drmingdrmer)
 - **PR #21146** (2026-11-20): chore(meta): use server v260629.11.0 and client v260205.13.7 (@drmingdrmer)
+- **PR #21145** (2026-11-21): refactor(query): drop duplicate meta reads when planning a SELECT (@bohutang)
+- **PR #21144** (2026-11-22): refactor(query): output in-memory final aggregate results a block at a time (@KKould)
 - **PR #21141** (2026-11-20): fix(query): probe the partition built in each hash join spill round (@dqhl76)
 - **PR #21136** (2026-11-20): fix: meta: move the cache off a leader that refuses its watch (@drmingdrmer)
-- **PR #21135** (closed): fix(fuse): accept strings without a bounded statistics maximum (@youngsofun)
-- **PR #21132** (2026-11-20): fix(query): preserve RBAC upgrade compatibility and audit access (@TCeason)
-- **PR #21131** (2026-11-20): fix(storage): skip reversed ranges in clustering diagnostics (@zhyass)
 
 ---
 
@@ -2138,60 +1698,29 @@ Normalize float endpoints to OrderedFloat semantics before row encoding. Exclude
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. query): read spilled byte columns with the writer's arrow types
+## X. query): output in-memory final aggregate results a block at a time
 
 **RULE**:
-When implementing operations in `src/query/service/src/spillers/async_buffer.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/query/expression/src/aggregate/payload.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f3fe9792`: query): read spilled byte columns with the writer's arrow types. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f469c616`: query): output in-memory final aggregate results a block at a time. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/query/service/src/spillers/async_buffer.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/query/expression/src/aggregate/payload.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use arrow_array::RecordBatch;
-use arrow_schema::Fields;
-        // Read back the arrow types the writer used. Without them, byte columns are
-        // inferred as Binary/Utf8, whose i32 offsets overflow once a column of the
-        // row group, which is decoded as one batch, holds more than 2 GiB.
-        // Hint fields must carry the names in the file, which the writer takes
-        // from the block rather than from `data_schema`.
-        let schema_descr = row_groups[0].schema_descr();
-        let arrow_schema = Schema::from(infer_table_schema(&data_schema)?.as_ref());
-        let hint = arrow_schema
-            .fields()
-            .iter()
-            .zip(schema_descr.root_schema().get_fields())
-            .map(|(field, column)| field.as_ref().clone().with_name(column.name()))
-            .collect::<Vec<_>>();
-            schema_descr,
-            Some(&Fields::from(hint)),
-        let Some(batch) = self.read_record_batch()? else {
-            return Ok(None);
-        };
-        Ok(Some(DataBlock::from_record_batch_keep_null_const(
-            &self.data_schema,
-            &batch,
-        )?))
-    }
-
-    fn read_record_batch(&mut self) -> Result<Option<RecordBatch>> {
-   
+            // The capacity is in rows: one result per row.
+            let mut builder = ColumnBuilder::with_capacity(&return_type, row_count);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-            row_groups[0].schema_descr(),
-            None,
-        Ok(Some(DataBlock::from_record_batch_keep_null_const(
-            &self.data_schema,
-            &batch,
-        )?))
+            let mut builder = ColumnBuilder::with_capacity(&return_type, row_count * 4);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f3fe9792` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f469c616` are properly handled with clean fallback behavior.

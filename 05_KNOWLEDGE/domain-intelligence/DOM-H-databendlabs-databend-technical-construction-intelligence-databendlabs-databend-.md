@@ -4,24 +4,24 @@
 {
   "source_repository": "databendlabs/databend",
   "source_url": "https://github.com/databendlabs/databend",
-  "source_version": "a83eaead",
+  "source_version": "f469c616",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-19T17:23:31.142Z",
+  "timestamp": "2026-11-22T01:58:55.775Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-databendlabs-databend",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [databendlabs/databend](https://github.com/databendlabs/databend) (Revision: `a83eaead`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T17:23:31.142Z`  
+> **Provenance**: Harvested from [databendlabs/databend](https://github.com/databendlabs/databend) (Revision: `f469c616`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-22T01:58:55.775Z`  
 > **Learning ID**: `learn-github-databendlabs-databend`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 59%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 74%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from databendlabs/databend:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/databendlabs-databend-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/databendlabs/databend](https://github.com/databendlabs/databend))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T17:23:29.696Z  
+> **Harvest Timestamp**: 2026-11-22T01:58:54.403Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Data Agent Ready Warehouse : One for  Analytics, Search, AI, Python Sandbox.  — rebuilt from scratch. Unified architecture on your S3.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9501 stars
+- **Stars / Engagement**: 9502 stars
 
 ---
 
@@ -1210,14 +1210,11 @@ unsafe impl<T: BitChunk> TrustedLen for BitChunks<'_, T> {}
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #21126** (2026-11-19): **fix(query): enforce stage WRITE on HTTP uploads**
-  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  The HTTP stage upload handler now requires the same stage `WRITE` permission as SQL writes, before initializing storage or reading the upload body. Permission denials return HTTP 403. Uploads to the authenticated user's own `~` stage and both stage-name header formats remain supported.  Stateless regression `18_0027_http_stage_write` checks HTTP 403 without `WRITE`, successful uploads via role grants or ownership, and the user's own `~` stage. The targeted test passed twice against a local server with the fix; shell syntax and formatting checks passed.  Fixes #21094.  <!-- Briefly describe what this PR aims to solve. Include background context that will help reviewers understand the purpose of the PR.  Write for humans, in your own words: the concrete problem, why it matters, how you validated it. Do NOT paste model transcripts, long logs, or stack traces here - link a gist or use <details>. The automated PR Assistant checks reject bloated, repetitive, or template-placeholder descriptions.  - fixes: #[Link the issue here] -->  ## Tests  - [ ] Unit Test - [x] Logic Test - [ ] Benchmark Test - [ ] No Test - _Explain why_  ## Type of change  - [x] Bug Fix (non-breaking change which fixes an issue) - [ ] New Feature (non-breaking change which adds functionality) - [ ] Breaking Change (fix or feature that could cause existing functionality not to work as expected) - [ ] Do
+- **Issue #21157** (2026-11-21): **fix: task: watch the task messages again when the stream ends**
+  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  Since databend-meta v260629.9.0, which databend uses since #21146, only the meta leader serves watches: every watch stream of every query node ends when the meta leader changes. `TaskService` watched its task messages once. When that stream ended, `TaskService::work` returned, and the query node handled no task message until it restarted, so one leader change stopped scheduled tasks on every query node. An error while handling one message ended it too. Now it watches again, keeps the schedules it runs, and logs a message it fails to handle instead of stopping.  Tests: `test_subscribe_again`, in the new `src/query/service/src/task/subscription.rs`, checks that the subscription subscribes again when subscribing fails and when the stream errors or ends. `test_scheduled_task_runs_message`, in `src/query/service/src/task/service.rs`, checks which schedule is kept when a new watch brings a `ScheduleTask` message again. No test restarts a meta node under a running task service yet.  The first commit only moves the body of the message loop into `TaskService::handle_message`; it reads best with whitespace ignored.  ##### refactor: task: handle each message in `TaskService::handle_message` # Summary  `TaskService::work` passes each message of the watch stream to the new `TaskService::handle_message`, which holds the former body of its loop.  # Details  No behavior change: an er
 
-- **Issue #21125** (2026-11-19): **refactor: query: read the ownership and access caches without a lock**
-  *Symptoms*:   I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  ##### refactor: query: read the ownership and access caches without a lock # Summary  The ownership, network rule and external access integration caches are no longer behind a tokio `Mutex`: `RoleMgr` and `UserApiProvider` hold them as `Arc<Cache>` and `Cache`, since the sub-cache reads take `&self`.  # Details  Concurrent `RoleMgr::list_ownerships` calls no longer queue on the lock: they share the copy, and each still waits while it initializes or reconnects. `UserApiProvider::external_access_values` no longer needs `try_lock` to avoid that queue, since `Cache::try_get_ready` never waits. The test of busy caches uses caches that cannot answer instead of holding their locks.  ## Tests  - [x] Unit Test - [ ] Logic Test - [ ] Benchmark Test - [ ] No Test  - _Explain why_  ## Type of change  - [x] Refactoring  ## AI assistance  - AI usage: An AI coding agent generated code and wrote tests; I reviewed and confirmed every line before committing it. - Responsible human: @drmingdrmer - [x] The responsible human has read every line of this diff and can explain each change  ## Related Issues  <!-- Reviewable:start --> - - - This change is [<img src="https://reviewable.io/review_button.svg" height="34" align="absmiddle" alt="Reviewable"/>](https://reviewable.io/reviews/databendlabs/databend/21125) <!-- Reviewable:end --> 
-  **Post-Mortem & Fix Analysis**:
-  > ## ⏱ CI timing · Dev  ### [run 44318988933](https://github.com/databendlabs/databend/actions/runs/44318988933) · **37.5 min** (main p50 47.3 min, **−9.8 min**)  | stage | this run | main p50 | Δ | |---|--:|--:|--:| | **total** | 37.5 min | 47.3 min | **−9.8 min** | | **build (aarch64, ci profile)** | 21.8 min | 33.6 min | **−11.8 min** | | ├ deps + crates (parallel) | 4.9 min | — | — | | ├ databend-query codegen | 2.8 min | — | — | | ├ databend-binaries link | 12.0 min | — | — | | └ sccache hit rate | 97.5 % | — | — | | **test_unit** | 15.9 min | 15.1 min | +0.8 min | | mac_check | — | 14.0 min | — | | **tests after build (52 jobs)** | 14.5 min | 11.6 min | **+2.9 min** | | ├ queue p50 / max | 4.4 min / 11.1 min | 1.8 min / 4.5 min | **+2.7 min** | | ├ sqllogic standalone (8 jobs, max) | 5.4 min | 5.2 min | +0.2 min | | ├ sqllogic cluster (8 jobs, max) | 9.7 min | 9.1 min | +0.6 min | | ├ sqllogic stage (2 jobs, max) | 6.7 min | 6.3 min | +0.3 min | | ├ sqllogic other (13 jobs, max) | 
-  > Folded into #21124, whose branch now carries this commit on top of its own, as 3917502b8e.  <!-- x-pr-ship -->
+- **Issue #21154** (2026-11-21): **bug: planner can mix tables from the old and new database after DROP/CREATE**
+  *Symptoms*: If database `d` is dropped and recreated while a query is being planned, the planner can take `d.a` from the old database and `d.b` from the new one.  **Repro (Catalog integration test)** 1. In one `QueryContext`, look up `d.a` (database ID `6`, table ID `11`). 2. In a separate context, drop `d`, recreate it under the same name (ID `18`), and create `d.b`. 3. In the **original** context, look up `d.b`, then `d.a` again.  **Actual:** `d.b` resolves in database `18`, but `d.a` still returns table `11` from database `6`. **Expected:** Reject the `d.b` lookup with `DatabaseVersionMismatched` rather than mixing two databases in one plan.  Reproduced on both `a85e50302c` (base) and `d345a9043a` (#21145): both retained table `11`; the base resolved `d` to `18` by name, and the PR recorded `18` in the query context. This predates the PR. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1234,385 +1231,326 @@ unsafe impl<T: BitChunk> TrustedLen for BitChunks<'_, T> {}
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dea33860` (2026-11-19)
-**Commit Message**: fix(query): batch small blocks before the window partition exchange (#21112)
+### Incident Patch 1: `f469c616` (2026-11-22)
+**Commit Message**: refactor(query): output in-memory final aggregate results a block at a time (#21144)
 
-* fix(query): batch small blocks before the window partition exchange
+* refactor(query): output in-memory final aggregate results a block at a time
 
-The window partition exchange scatters every input block into
-`window_num_partitions` pieces. When the blocks that reach it are small,
-for example after a selective filter or after the per-block top-n
-truncation of `row_number`/`rank`, each piece holds one or two rows but
-still a full set of allocations per column. Those allocations take far
-more memory than the rows, are not counted by `memory_size`, so the
-window buffer never reaches its spill threshold.
+The final aggregate turned all the groups of its hash table into blocks in one
+`process` call before pushing the first one, so the blocks of all the groups
+were held at once while the downstream waited. It now builds one block per
+`process`, and the next one only after the previous one was pushed.
 
-Add `TransformWindowPartitionBatch` before the exchange of every
-partitioned window. Blocks that would give fewer than 64 rows and less
-than 1 KiB per column to each partition on average are buffered until
-they are not small together and then concatenated; other blocks pass
-through untouched. The top-n truncation moves from
-`WindowPartitionTopNExchange` into this transform, so top-n windows now
-use the plain `WindowPartitionExchange`.
+The output blocks are coalesced by `BlockConcatStream`, which appends columns,
+instead of a one-partition `BlockPartitionStream`, which built partition indices
+for every block and copied the columns by them.
 
-* fix(query): send large window blocks without concatenation and keep partition ids above 255
+The top N, spilled-bucket and memory-pressure outputs still output at once.
 
-* fix(query): copy small window blocks into the batch 
+* fix(query): reserve one row per group for final aggregate results
 
-**File**: `src/query/expression/src/kernels/stream_partition.rs` (modified, +135/-12)
+`merge_flushed_states` reserved four times the rows of a batch for each aggregate
+result column: the capacity of `ColumnBuilder::with_capacity` is in rows.
+
+* refactor(query): output the first block of a spilled final aggregate task at once
+
+Finishing a task of spilled states returned right after `finish`, so when its
+groups fitted in memory the first block waited for another `
+
+**File**: `src/query/expression/src/aggregate/payload.rs` (modified, +2/-1)
 ```diff
-@@ -136,6 +136,33 @@ impl PendingColumn {
-         copy_column(indices, column, self.builder(indices.len()));
-     }
- 
-+    /// Add every row of `column`, in order.
-+    fn append_column(&mut self, column: &Column) {
-+        let builder = self.builder(column.len());
-+        if builder.data_type() == column.data_type() {
-+            builder.append_column(column);
-+        } else {
-+            // Such as an `Array` column into an `EmptyArray` builder, which
-+            // only `copy_column` turns into an `Array` builder.
-+            let indices = (0..column.len() as u32).collect::<Vec<_>>();
-+            copy_column(&indices, column, builder);
-+        }
-+    }
-+
-+    /// Add `rows` of a constant, kept a constant when it can be.
-+    fn append_const(
-+        &mut self,
-+        scalar: &Scalar,
-+        data_type: &DataType,
-+        rows: usize,
-+        size: &mut impl FnMut() -> ExpandedSize,
-+    ) {
-+        if !self.try_push_const(scalar, data_type, rows, size) {
-+            let column = ColumnBuilder::repeat(&scalar.as_ref(), rows, data_type).build();
-+            self.append_column(&column);
-+        }
-+    }
-+
-     /// Turn the pending rows into a builder with room for `additional` more.
-     fn builder(&mut self, additional: usize) -> &mut ColumnBuilder {
-         match self {
-@@ -215,6 +242,21 @@ fn copy_const(scalar: &Scalar, data_type: &DataType, rows: usize, to: &mut Colum
-     copy_column(&indices, &column, to);
- }
- 
-+/// The expanded size of the last constant seen in a column.
-+type ConstSize = Option<(Scalar, DataType, ExpandedSize)>;
-+
-+fn cached_const_size(cache: &mut ConstSize, scalar: &Scalar, data_type: &DataType) -> ExpandedSize {
-+    if let Some((s, t, size)) = cache.as_ref()
-+        && s == scalar
-+        && t == data_type
-+    {
-+        return *size;
-+    }
-+    let size = ExpandedSize::measure(scalar, data_type);
-+    *cache = Some((scalar.clone(), data_type.clone(), size));
-+    size
-+}
-+
- struct PartitionBlockBuilder {
-     num_rows: usize,
-     columns: Vec<PendingColumn>,
-@@ -244,7 +286,7 @@ pub struct BlockPartitionStream {
-     partitions: Vec<PartitionBlockBuilder>,
-     // The expanded size of the last constant seen in each column, as the same
-     // constant usually comes in every block.
--    const_sizes: Vec<Option<(Scalar, DataType, ExpandedSize)>>,
-+    const_sizes: Vec<ConstSize>,
- }
- 
- impl BlockPartitionStream {
-@@ -313,17 +355,7 @@ impl BlockPartitionStream {
-             match entry {
-                 BlockEntry::Const(scalar, data_type, num_rows) => {
-                     let const_size = &mut self.const_sizes[column_idx];
--                    let mut size = || {
--                        if let Some((s, t, size)) = const_size.as_ref()
--                            && *s == scalar
--                            && *t == data_type
--                        {
--                            return *size;
--                        }
--                        let size = ExpandedSize::measure(&scalar, &data_type);
--                        *const_size = Some((scalar.clone(), data_type.clone(), size));
--                        size
--                    };
-+                    let mut size = || cached_const_size(const_size, &scalar, &data_type);
-                     // Expanded once for the partitions that already hold other
-                     // rows, as every block used to be.
-                     let mut expanded = None;
-@@ -435,6 +467,97 @@ impl BlockPartitionStream {
-     }
- }
- 
-+/// Concatenates blocks into blocks of `rows_threshold` rows or
-+/// `bytes_threshold` bytes, whichever is reached first: a
-+/// `BlockPartitionStream` with one partition, without row indices.
-+///
-+/// The rows of each block are appended to the column builders as it arrives,
-+/// so the block, which can be a slice of a larger one, is not kept. A column
-+/// that has been the same constant in every block so far stays a constant,
-+/// counted as if expanded. Once a block is sent, the builders of the next one
-+/// reserve as many rows.
-+pub struct BlockConcatStream {
-+    rows_threshold: usize,
-+    bytes_threshold: usize,
-+    pending: PartitionBlockBuilder,
-+    const_sizes: Vec<ConstSize>,
-+}
-+
-+impl BlockConcatStream {
-+    pub fn create(rows_threshold: usize, bytes_threshold: usize) -> BlockConcatStream {
-+        BlockConcatStream {
-+            rows_threshold: if rows_threshold == 0 {
-+                usize::MAX
-+            } else {
-+                rows_threshold
-+            },
-+            bytes_threshold: if bytes_threshold == 0 {
-+                usize::MAX
-+            } else {
-+                bytes_threshold
-+            },
-+            pending: PartitionBlockBuilder {
-+                num_rows: 0,
-+                columns: vec![],
-+            },
-+            const_sizes: vec![],
-+        }
-+    }
-+
-+    /// Appends the rows of `block`, and returns the concatenated block once
-+    /// it reaches a threshold.
-+    pub fn push(&mut self, block: DataBlock) -> Option<DataBlock
+@@ -751,7 +751,8 @@ pub(super) fn merge_flushed_states(
+     if let Some(states_layout) = row_layout.states_layout.as_ref() {
+         for (aggr, loc) in aggrs.iter().zip(states_layout.states_loc.iter().cloned()) {
+             let return_type = aggr.signature().return_type.clone();
+-            let mut builder = ColumnBuilder::with_capacity(&return_type, row_count * 4);
++            // The capacity is in rows: one result per row.
++            let mut builder = ColumnBuilder::with_capacity(&return_type, row_count);
+             for place in &flush_state.state_places.as_slice()[0..row_count] {
+                 aggr.merge_result(AggrState::new(*place, &loc), &mut builder)?;
+             }
 ```
 
-**File**: `src/query/expression/tests/it/stream_partition.rs` (modified, +57/-0)
+**File**: `src/query/service/src/pipelines/processors/transforms/aggregator/transform_aggregate_final.rs` (modified, +137/-13)
 ```diff
-@@ -14,6 +14,7 @@
- 
- use std::collections::HashSet;
- 
+@@ -25,10 +25,11 @@ use databend_common_base::base::WatchNotify;
+ use databend_common_exception::ErrorCode;
+ use databend_common_exception::Result;
+ use databend_common_expression::AggregateHashTable;
 +use databend_common_expression::BlockConcatStream;
- use databend_common_expression::BlockEntry;
- use databend_common_expression::BlockPartitionStream;
+ use databend_common_expression::BlockMetaInfoDowncast;
+-use databend_common_expression::BlockPartitionStream;
  use databend_common_expression::DataBlock;
-@@ -107,6 +108,62 @@ fn assert_same_as_expanded(
-     output
+ use databend_common_expression::HashTableConfig;
++use databend_common_expression::Payload;
+ use databend_common_expression::PayloadFlushState;
+ use databend_common_expression::ProjectedBlock;
+ use databend_common_expression::SortColumnDescription;
+@@ -76,12 +77,18 @@ pub struct FinalAggregateTask {
+     tx: Sender<FinalAggregateTask>,
  }
  
-+#[test]
-+fn test_concat_stream_cuts_as_one_partition() {
-+    // Columns, runs of one constant, a new constant and a slice, cut at 10
-+    // rows as a `BlockPartitionStream` with one partition cuts them.
-+    let blocks = [
-+        column_block(5, 0),
-+        const_block(4, 5, "a"),
-+        const_block(3, 9, "a"),
-+        column_block(8, 10).slice(2..6),
-+        const_block(2, 20, "b"),
-+        column_block(7, 30),
-+        const_block(1, 40, "b"),
-+    ];
-+    let mut stream = BlockConcatStream::create(10, 0);
-+    let mut reference = BlockPartitionStream::create(10, 0, 1);
-+    for block in &blocks {
-+        let actual = stream.push(block.clone());
-+        let mut expected = reference.partition(vec![0; block.num_rows()], block.clone(), true);
-+        assert_eq!(actual.is_some(), expected.len() == 1);
-+        if let (Some(a), Some((_, e))) = (&actual, expected.pop()) {
-+            assert_same_values(a, &e);
-+        }
-+    }
-+    let actual = stream.finish();
-+    let expected = reference.finalize_partition(0);
-+    assert_eq!(actual.is_some(), expected.is_some());
-+    if let (Some(a), Some(e)) = (&actual, &expected) {
-+        assert_same_values(a, e);
-+    }
-+    assert!(stream.finish().is_none());
++struct PendingOutput {
++    payloads: VecDeque<Payload>,
++    stream: BlockConcatStream,
 +}
 +
-+#[test]
-+fn test_concat_stream_keeps_one_constant() {
-+    let mut stream = BlockConcatStream::create(0, 0);
-+    assert!(stream.push(const_block(3, 0, "a")).is_none());
-+    assert!(stream.push(const_block(4, 3, "a")).is_none());
-+    assert_eq!(stream.num_rows(), 7);
-+
-+    let block = stream.finish().unwrap();
-+    assert_eq!(block.num_rows(), 7);
-+    assert_eq!(block.get_by_offset(1).as_scalar(), Some(&Scalar::Null));
-+    assert_eq!(
-+        block.get_by_offset(2).as_scalar(),
-+        Some(&Scalar::String("a".to_string()))
-+    );
-+    assert_same_values(
-+        &block,
-+        &DataBlock::concat(&[
-+            expanded(&const_block(3, 0, "a")),
-+            expanded(&const_block(4, 3, "a")),
-+        ])
-+        .unwrap(),
-+    );
-+}
-+
- #[test]
- fn test_partition_preserves_timezone_representations() {
-     use databend_common_column::types::timestamp_tz;
-```
-
-**File**: `src/query/service/src/physical_plans/physical_window.rs` (modified, +16/-18)
-```diff
-@@ -32,6 +32,7 @@ use databend_common_functions::BUILTIN_FUNCTIONS;
- use databend_common_pipeline::core::Processor;
- use databend_common_pipeline::core::ProcessorPtr;
- use databend_common_pipeline_transforms::MemorySettings;
-+use databend_common_pipeline_transforms::TransformPipelineHelper;
- use databend_common_sql::ColumnSet;
- use databend_common_sql::ScalarExpr;
- use databend_common_sql::Symbol;
-@@ -68,10 +69,10 @@ use crate::pipelines::memory_settings::MemorySettingsExt;
- use crate::pipelines::processors::transforms::FrameBound;
- use crate::pipelines::processors::transforms::SortStrategy;
- use crate::pipelines::processors::transforms::TransformWindow;
-+use crate::pipelines::processors::transforms::TransformWindowPartitionBatch;
- use crate::pipelines::processors::transforms::TransformWindowPartitionCollect;
- use crate::pipelines::processors::transforms::WindowFunctionInfo;
- use crate::pipelines::processors::transforms::WindowPartitionExchange;
--use crate::pipelines::processors::transforms::WindowPartitionTopNExchange;
- use crate::pipelines::processors::transforms::WindowSortDesc;
+ pub struct TransformFinalAggregate {
+     input: Arc<InputPort>,
+     output: Arc<OutputPort>,
+     input_data: Option<FinalInput>,
+     channel_data: Option<FinalAggregateTask>,
+     output_data: VecDeque<DataBlock>,
++    pending_output: Option<PendingOutput>,
+     should_finish: bool,
+     /// Held while reading the input: the input finishes by taking it, see `finish`, after which
+     /// the processor reads the tasks of the channel.
+@@ -144,6 +151,7 @@ impl TransformFinalAggregate {
+             input_data: None,
+             channel_data: None,
+             output_data: VecDeque::new(),
++            pending_output: None,
+             should_finish: false,
+             tx: Some(tx),
+             rx,
+@@ -324,8 +332,8 @@ impl TransformFinalAggregate {
+     }
  
- #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-@@ -449,23 +450,20 @@ fn apply_window_partition(
-         .map(|index| input_schema.index_of(&index.to_string()))
-         .collect::<Result<Vec<_>>>()?;
+     /// Coalesces the output blocks of one hash table to the block size of the aggregate.
+-    fn output_stream(&self) -> BlockPartitionStream {
+-        BlockPartitionStream::create(self.params.max_block_rows, self.params.max_block_bytes, 1)
++    fn output_stream(&self) -> BlockConcatStream {
++        BlockConcatStream::create(self.params.max_block_rows, self.params.max_block_bytes)
+     }
  
--    if let Some((top, func)) = window_top_n(window) {
--        builder.main_pipeline.exchange(
--            num_processors,
--            WindowPartitionTopNExchange::create(
--                partition_by.clone(),
--                sort_desc.clone(),
--                top,
--                func,
--                num_partitions as u64,
--            ),
--        )?;
--    } else {
--        builder.main_pipeline.exchange(
--            num_processors,
--            WindowPartitionExchange::create(partition_by.clone(), num_partitions),
--        )?;
--    }
-+    let top_n = window_top_n(window);
-+    builder.main_pipeline.add_accumulating_transformer(|| {
-+        let transform = TransformWindowPartitionBatch::create(num_partitions);
-+        match top_n {
-+            Some((top, func)) => {
-+                transform.with_top_n(partition_by.clone(), sort_desc.clone(), top, func)
-+            }
-+            None => transform,
+     fn handle_input(&mut self, input: FinalInput, need_check_spill: bool) -> Result<()> {
+@@ -403,7 +411,7 @@ impl TransformFinalAggregate {
+             (0, 0, FinalAggregateFinishMode::Spilled)
+         } else {
+             let output_stream = self.output_stream();
+-            let (output_rows, hash_index_resizes) = self.output_hashtable(Some(output_stream))?;
++            let (output_rows, hash_index_resizes) = self.start_streaming_output(output_stream)?;
+             (
+                 output_rows,
+                 hash_index_resizes,
+@@ -425,7 +433,7 @@ impl TransformFinalAggregate {
+ 
+     fn output_hashtable(
+         &mut self,
+-        mut output_stream: Option<BlockPartitionStream>,
++        mut output_stream: Option<BlockConcatStream>,
+     ) -> Result<(usize, usize)> {
+         // No hash table means nothing was aggregated, so there is nothing to output.
+         let Some(hashtable) = self.hashtable.take() else {
+@@ -453,10 +461,9 @@ impl TransformFinalAggregate {
+                         top_n_blocks = vec![sort_blocks(&top_n_blocks, order_by, *limit)?];
+                     }
+                 } else if let Some(output_stream) = output_stream.as_mut() {
+-                    let num_rows = block.num_rows();
+-                    let ready = output_stream.partition(vec![0; num_rows], block, true);
+-                    self.output_data
+-                        .extend(ready.into_iter().map(|(_, block)| block));
++                    if let Some(block) = output_stream.push(block) {
++                        self.output_data.push_back(block);
++                    }
+                 } else {
+                     self.output_data.push_back(block);
+                 }
+@@ -468,12 +475,56 @@ impl TransformFinalAggregate {
+             self.output_data
+                 .push_back(sort_blocks(&top_n_blocks, order_by, *limit)?);
+         }
+-        if let Some(block) = output_stream.and_then(|mut stream| stream.finalize_partition(0)) {
++        if let Some(block) = output_stream.and_then(|mut stream| stream.finish()) {
+             self.output_data.push_back(block);
+         }
+         Ok((output_rows, hash_index_resizes))
+     }
+ 
++    fn start_streaming_output(&mut self, stream: BlockConcatStream) -> Result<(usize, usize)> {
++        if self.params.top_n.is_some() {
++            return self.output_hashtable(Some(stream));
 +        }
-+    });
-+    builder.main_pipeline.exchange(
-+        num_processors,
-+        WindowPartitionExchange::create(partition_by.clone(), num_partitions),
-+    )?;
- 
-     let window_spill_settings = MemorySettings::from_window_settings(&builder.ctx)?;
-     let plan_schema = DataSchemaRefExt::create(input_schema.fields().clone());
-```
-
-**File**: `src/query/service/src/physical_plans/physical_window_partition.rs` (modified, +14/-15)
-```diff
-@@ -21,6 +21,7 @@ use databend_common_exception::Result;
- use databend_common_expression::SortColumnDescription;
- use databend_common_pipeline::core::ProcessorPtr;
- use databend_common_pipeline_transforms::MemorySettings;
-+use databend_common_pipeline_transforms::TransformPipelineHelper;
- use databend_common_sql::Symbol;
- use databend_common_sql::executor::physical_plans::SortDesc;
- 
-@@ -33,9 +34,9 @@ use crate::physical_plans::physical_plan::PhysicalPlanMeta;
- use crate::pipelines::PipelineBuilder;
- use crate::pipelines::memory_settings::MemorySettingsExt;
- use crate::pipelines::processors::transforms::SortStrategy;
-+use crate::pipelines::processors::transforms::TransformWindowPartitionBatch;
- use crate::pipelines::processors::transforms::TransformWindowPartitionCollect;
- use crate::pipelines::processors::transforms::WindowPartitionExchange;
--use crate::pipelines::processors::transforms::WindowPartitionTopNExchange;
- 
- #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
- pub struct WindowPartition {
-@@ -121,25 +122,23 @@ impl IPhysicalPlan for WindowPartition {
-             })
-             .collect::<Result<Vec<_>>>()?;
- 
--        if let Some(top_n) = &self.top_n
--            && top_n.top < 10000
--        {
--            builder.main_pipeline.exchange(
--                num_processors,
--                WindowPartitionTopNExchange::create(
-+        let top_n = self.top_n.as_ref().filter(|top_n| top_n.top < 10000);
-+        builder.main_pipeline.add_accumulating_transformer(|| {
-+            let transform = TransformWindowPartitionBatch::create(num_partitions);
-+            match top_n {
-+                Some(top_n) => transform.with_top_n(
-                     partition_by.clone(),
-                     sort_desc.clone(),
-                     top_n.top,
-                     top_n.func,
--                    num_partitions as u64,
-                 ),
--            )?;
--        } else {
--            builder.main_pipeline.exchange(
--                num_processors,
--                WindowPartitionExchange::create(partition_by.clone(), num_partitions),
--            )?;
--        }
-+                None => transform,
-+            }
++        // No hash table means nothing was aggregated, so there is nothing to output.
++        let Some(hashtable) = self.hashtable.take() else {
++            return Ok((0, 0));
++        };
++        let output_rows = hashtable.payload.len();
++        let hash_index_resizes = hashtable.hash_index_resize_count();
++        self.flush_state.clear();
++        // Consuming the hash table drops its index before result materialization.
++        self.pending_output = Some(PendingOutput {
++            payloads: hashtable.into_payloads().into(),
++            stream,
 +        });
-+        builder.main_pipeline.exchange(
-+            num_processors,
-+            WindowPartitionExchange::create(partition_by.clone(), num_partitions),
-+        )?;
- 
-         let window_spill_settings = MemorySettings::from_window_settings(&builder.ctx)?;
- 
++        Ok((output_rows, hash_
 ```
 
-**File**: `src/query/service/src/pipelines/processors/transforms/window/partition/mod.rs` (modified, +2/-2)
+---
+
+### Incident Patch 2: `9276ae63` (2026-11-21)
+**Commit Message**: fix: task: watch the task messages again when the stream ends (#21157)
+
+* refactor: task: handle each message in `TaskService::handle_message`
+
+# Summary
+
+`TaskService::work` passes each message of the watch stream to the new
+`TaskService::handle_message`, which holds the former body of its loop.
+
+# Details
+
+No behavior change: an error from `handle_message` still ends `work`,
+and each `continue` of the loop is now a `return Ok(())`. The fixes
+that follow need the handling of one message as a unit, to log its
+error and go on with the next message.
+
+* refactor: task: record the message that started each schedule
+
+# Summary
+
+Each schedule of `TaskService` now records the seq of the
+`ScheduleTask` message that started it and the handle of its task.
+When the same message comes again while that schedule still runs,
+`TaskService::handle_message` keeps the schedule instead of starting
+it again.
+
+# Details
+
+No node accepts a `ScheduleTask` message: it stays stored until its
+task is dropped, so every new watch of the task messages brings it
+again. Starting the schedule again would reset its timer, and an
+interval schedule waits a full interval before its next run. A
+schedule that has stoppe
+
+**File**: `src/query/service/src/task/mod.rs` (modified, +1/-0)
 ```diff
-@@ -13,14 +13,14 @@
- // limitations under the License.
+@@ -15,5 +15,6 @@
+ mod meta;
+ pub mod service;
+ mod session;
++mod subscription;
  
- mod data_processor_strategy;
-+mod transform_window_partition_batch;
- mod transform_window_partition_collect;
- mod window_partition_buffer;
- mod window_partition_exchange;
- mod window_partition_meta;
--mod window_partition_partial_top_n_exchange;
- 
- pub use data_processor_strategy::*;
-+pub use transform_window_partition_batch::*;
- pub use transform_window_partition_collect::*;
- pub use window_partition_exchange::*;
- pub use window_partition_meta::*;
--pub use window_partition_partial_top_n_exchange::*;
+ pub use service::TaskService;
 ```
 
-**File**: `src/query/service/src/pipelines/processors/transforms/window/partition/transform_window_partition_batch.rs` (added, +518/-0)
+**File**: `src/query/service/src/task/service.rs` (modified, +431/-333)
 ```diff
-@@ -0,0 +1,518 @@
+@@ -18,7 +18,6 @@ databend_common_tracing::register_module_tag!("[PRIVATE-TASKS]");
+ use std::collections::BTreeMap;
+ use std::collections::HashMap;
+ use std::fmt::Write;
+-use std::ops::Deref;
+ use std::str::FromStr;
+ use std::sync::Arc;
+ use std::sync::atomic::AtomicBool;
+@@ -41,6 +40,7 @@ use databend_common_config::InnerConfig;
+ use databend_common_exception::ErrorCode;
+ use databend_common_exception::Result;
+ use databend_common_expression::DataBlock;
++use databend_common_management::task::TaskMgr;
+ use databend_common_meta_api::kv_pb_api::decode_seqv;
+ use databend_common_meta_app::principal::ScheduleType;
+ use databend_common_meta_app::principal::State;
+@@ -64,13 +64,15 @@ use databend_common_users::BUILTIN_ROLE_ACCOUNT_ADMIN;
+ use databend_common_users::UserApiProvider;
+ use databend_common_version::BUILD_INFO;
+ use databend_meta_client::kvapi::StructKey;
++use databend_meta_client::types::SeqV;
+ use databend_meta_client::types::protobuf::WatchRequest;
+ use databend_meta_client::types::protobuf::WatchResponse;
+ use futures::Stream;
+ use futures_util::TryStreamExt;
+ use futures_util::stream::BoxStream;
+ use itertools::Itertools;
+ use log::error;
++use tokio::task::JoinHandle;
+ use tokio::time::sleep;
+ use tokio_stream::StreamExt;
+ use tokio_util::sync::CancellationToken;
+@@ -88,13 +90,36 @@ use crate::sessions::TableContextSettings;
+ use crate::task::meta::TaskMetaHandle;
+ use crate::task::session::create_session;
+ use crate::task::session::get_task_user;
++use crate::task::subscription::Subscription;
+ 
+-pub type TaskMessageStream = BoxStream<'static, Result<(String, TaskMessage)>>;
++pub type TaskMessageStream = BoxStream<'static, Result<(String, SeqV<TaskMessage>)>>;
+ 
+ const OVERLAPPING_EXECUTION: &str = "OVERLAPPING_EXECUTION";
+ const WHEN_CONDITION_EVALUATION_ERROR: &str = "WHEN_CONDITION_EVALUATION_ERROR";
+ const WHEN_CONDITION_FALSE: &str = "WHEN_CONDITION_FALSE";
+ 
++/// The delays before watching the task messages again: from the min, doubled up to the max.
++const WATCH_AGAIN_MIN_DELAY: Duration = Duration::from_secs(1);
++const WATCH_AGAIN_MAX_DELAY: Duration = Duration::from_secs(30);
++
++/// A schedule that this node runs for a task.
++struct ScheduledTask {
++    task_id: u64,
++    /// The seq of the `ScheduleTask` message that started this schedule.
++    message_seq: u64,
++    /// Cancelled to stop this schedule.
++    token: CancellationToken,
++    handle: JoinHandle<()>,
++}
++
++impl ScheduledTask {
++    /// Whether the `ScheduleTask` message of `message_seq` started this schedule, and it still
++    /// runs.
++    fn runs_message(&self, message_seq: u64) -> bool {
++        self.message_seq == message_seq && !self.handle.is_finished()
++    }
++}
++
+ /// Currently, query uses the watch in meta to imitate channel to obtain tasks. When task messages are sent to channels, they are stored in meta using TaskMessage::key.
+ /// TaskMessage::key is divided into only 4 types of keys that will overwrite each other to avoid repeated storage and repeated processing.
+ /// Whenever a new key is inserted for overwriting, each query will receive the corresponding key change and process it, thus realizing the channel
+@@ -201,367 +226,398 @@ impl TaskService {
+             if let Err(err) = task_service.prepare().await {
+                 error!("prepare failed due to {}", err);
+             }
+-            if let Err(err) = task_service.work(&tenant, runtime).await {
+-                error!("prepare failed due to {}", err);
+-            }
++            task_service.work(&tenant, runtime).await;
+         });
+         Ok(())
+     }
+ 
+-    async fn work(&self, tenant: &Tenant, runtime: Arc<Runtime>) -> Result<()> {
+-        let mut scheduled_tasks: HashMap<String, (u64, CancellationToken)> = HashMap::new();
++    /// Handle the task messages as they come, for as long as the process runs.
++    ///
++    /// The watch of the task messages ends when the connection to the meta-service breaks, and
++    /// when the meta-service leader changes: watch again, and keep the schedules this node runs.
++    /// An error while handling one message is logged, and the next message is handled.
++    async fn work(&self, tenant: &Tenant, runtime: Arc<Runtime>) {
++        let mut scheduled_tasks: HashMap<String, ScheduledTask> = HashMap::new();
+         let task_mgr = UserApiProvider::instance().task_api(tenant);
+ 
+-        let mut steam = self.subscribe().await?;
+-
+-        while let Some(result) = steam.next().await {
+-            let (_, task_message) = result?;
+-            let task_key = TaskMessageIdent::new(tenant, task_message.key());
++        let mut messages = Subscription::new(
++            || self.subscribe(),
++            WATCH_AGAIN_MIN_DELAY,
++            WATCH_AGAIN_MAX_DELAY,
++        );
++        loop {
++            let (key, message) = messages.next().await;
++            if let Err(err) = self
++                .handle_message(tenant, &runtime, &task_mgr, &mut scheduled_tasks, message)
++                .await
++            {
++   
+```
+
+**File**: `src/query/service/src/task/subscription.rs` (added, +143/-0)
+```diff
+@@ -0,0 +1,143 @@
 +// Copyright 2021 Datafuse Labs
 +//
 +// Licensed under the Apache License, Version 2.0 (the "License");
@@ -1627,515 +1565,134 @@ use the plain `WindowPartitionExchange`.
 +// See the License for the specific language governing permissions and
 +// limitations under the License.
 +
++// Logs from this module will show up as "[PRIVATE-TASKS] ...".
++databend_common_tracing::register_module_tag!("[PRIVATE-TASKS]");
++
++use std::future::Future;
++use std::time::Duration;
++
++use backon::BackoffBuilder;
++use backon::ExponentialBackoff;
++use backon::ExponentialBuilder;
 +use databend_common_exception::Result;
-+use databend_common_expression::BlockConcatStream;
-+use databend_common_expression::DataBlock;
-+use databend_common_expression::FromData;
-+use databend_common_expression::ProjectedBlock;
-+use databend_common_expression::SortColumnDescription;
-+use databend_common_expression::SortCompare;
-+use databend_common_expression::Value;
-+use databend_common_expression::group_hash_entries;
-+use databend_common_expression::types::UInt64Type;
-+use databend_common_expression::visitor::ValueVisitor;
-+use databend_common_pipeline_transforms::AccumulatingTransform;
++use futures_util::StreamExt;
++use futures_util::stream::BoxStream;
++use log::warn;
++use tokio::time::sleep;
 +
-+use crate::physical_plans::WindowPartitionTopNFunc;
-+
-+/// A block is small when, scattered into the window partitions, each piece
-+/// gets fewer rows than this on average and fewer bytes than
-+/// `MIN_PIECE_BYTES_PER_COLUMN` per column. A constant column counts with its
-+/// value repeated for every row, the size it can take once buffered.
-+const MIN_PIECE_ROWS: usize = 64;
-+
-+const MIN_PIECE_BYTES_PER_COLUMN: usize = 1024;
-+
-+/// Prepares the input blocks of the window exchange, which scatters each
-+/// block into `window_num_partitions` pieces.
++/// A subscription that subscribes again, after a delay, whenever subscribing fails or the
++/// subscribed stream errors or ends.
 +///
-+/// A small block, such as the output of a selective filter, would be cut into
-+/// pieces of one or two rows. Each piece holds its own allocations per
-+/// column, which take more memory than its rows, and the window buffers the
-+/// pieces until all input arrives. So small blocks go to a
-+/// `BlockConcatStream`: their rows are appended as they arrive, so a small
-+/// slice does not keep its source block, and they are sent as one block once
-+/// they are not small together. Other blocks are sent as they are.
-+///
-+/// There is one buffer for each input stream, not one per window partition:
-+/// the exchange scatters the batch into the window partitions afterwards.
-+///
-+/// With a top-n window function, the rows of each block that cannot rank
-+/// within `top` of their partition are dropped first.
-+pub struct TransformWindowPartitionBatch {
-+    top_n: Option<PartitionTopN>,
-+
-+    min_rows: usize,
-+    min_bytes_per_column: usize,
-+    // Created by the first small block, as its threshold in bytes depends on
-+    // the number of columns.
-+    stream: Option<BlockConcatStream>,
++/// A meta-service watch ends when its connection breaks, and when the meta-service leader
++/// changes, since only the leader serves watches.
++pub(crate) struct Subscription<S, T> {
++    subscribe: S,
++    stream: Option<BoxStream<'static, Result<T>>>,
++    backoff: ExponentialBuilder,
++    /// The delays before the next subscriptions, built anew by `backoff` once one succeeds.
++    delays: ExponentialBackoff,
 +}
 +
-+impl TransformWindowPartitionBatch {
-+    pub fn create(num_partitions: usize) -> TransformWindowPartitionBatch {
-+        TransformWindowPartitionBatch {
-+            top_n: None,
-+            min_rows: num_partitions * MIN_PIECE_ROWS,
-+            min_bytes_per_column: num_partitions * MIN_PIECE_BYTES_PER_COLUMN,
++impl<S, F, T> Subscription<S, T>
++where
++    S: FnMut() -> F,
++    F: Future<Output = Result<BoxStream<'static, Result<T>>>>,
++{
++    /// Each delay before subscribing again doubles, with jitter, from `min_delay` up to
++    /// `max_delay`, and starts again from `min_delay` once a subscription succeeds.
++    pub(crate) fn new(subscribe: S, min_delay: Duration, max_delay: Duration) -> Self {
++        let backoff = ExponentialBuilder::new()
++            .with_min_delay(min_delay)
++            .with_max_delay(max_delay)
++            .with_jitter()
++            .without_max_times();
++        Self {
++            subscribe,
 +            stream: None,
++            backoff,
++            delays: backoff.build(),
 +        }
 +    }
 +
-+    pub fn with_top_n(
-+        mut self,
-+        partition_indices: Vec<usize>,
-+        order_by: Vec<SortColumnDescription>,
-+        top: usize,
-+        func: WindowPartitionTopNFunc,
-+    ) -> TransformWindowPartitionBatch {
-+        self.top_n = Some(PartitionTopN::new(partition_indices, order_by, top, func));
-+        self
++    /// Return the next item of the subscribed stream, subscribing again as often as it takes.
++    pub(crate) async fn next(&mut self) -> T {
++        loop {
++            let mut stream = match self.stream.take() {
++                Some(stream) => stream,
++                None => match (self.subscribe)().await {
++                    Ok(stream) => {
++                        self.delays = self.backoff.build();
++                        stream
++                    }
++                    Err(err) => {
++                        let delay = self.next_delay();
++                        warn!(
++                            "failed to subscribe: {}; subscribe again in {:?}",
++                            err, delay
++                        );
++                        sleep(delay).await;
++                        continue;
++                    }
++                },
++            };
++
++            let lost = match stream.next().await {
++                Some(Ok(item)) => {
++                    self.stream = Some(stream);
++                    return item;
++                }
++                Some(Err(err)) => err.to_string(),
++                None => "the stream ended".to_string(),
++            };
++            let delay = self.next_delay();
++            warn!(
++                "subscription lost: {}; subscribe again in {:?}",
++                lost, delay
++            );
++            sleep(delay).await;
++        }
 +    }
 +
-+    fn is_small(&self, rows: usize, bytes: usize, columns: usize) -> bool {
-+        rows < self.min_rows && bytes < columns * self.min_bytes_per_column
++    fn next_delay(&mut self) -> Duration {
++        // Built without a maximum of retries: there is always a next delay.
++        self.delays.next().unwrap_or_default()
 +    }
 +}
-+
-+impl AccumulatingTransform for TransformWindowPartitionBatch {
-+    const NAME: &'static str = "TransformWindowPartitionBatch";
-+
-+    fn transform(&mut self, block: DataBlock) -> Result<Vec<DataBlock>> {
-+        if block.is_empty() {
-+            return Ok(vec![]);
-+        }
-+
-+        let block = match &self.top_n {
-+            Some(top_n) => top_n.truncate(block)?,
-+            None => block,
-+        };
-+
-+        let rows = block.num_rows();
-+        let columns = block.num_columns();
-+        let bytes = block.estimate_block_size(columns);
-+        // A block that is not small is sent as it is, even when small blocks
-+        // are buffered: buffering it would copy all its rows. The window
-+        // sorts each partition later, so the order of the blocks does not
-+        // matter.
-+        if !self.is_small(rows, bytes, columns) {
-+            return Ok(vec![block]);
-+        }
-+
-+        // The stream sends the buffered rows once they reach either
-+        // threshold, which is when they are no longer small.
-+        let (min_rows, min_bytes) = (self.min_rows, columns * self.min_bytes_per_column);
-+        let stream = self
-+            .stream
-+            .get_or_insert_with(|| BlockConcatStream::crea
-```
-
-**File**: `src/query/service/src/pipelines/processors/transforms/window/partition/window_partition_exchange.rs` (modified, +38/-1)
-```diff
-@@ -51,7 +51,7 @@ impl Exchange for WindowPartitionExchange {
-         // Scatter the data block to different partitions.
-         let indices = hashes
-             .iter()
--            .map(|&hash| (hash % self.num_partitions as u64) as u8)
-+            .map(|&hash| (hash % self.num_partitions as u64) as u32)
-             .collect::<Vec<_>>();
-         let scatter_blocks = DataBlock::scatter(&data_block, &indices, self.num_partitions)?;
- 
-@@ -69,3 +69,40 @@ impl Exchange for WindowPartitionExchange {
-             .collect())
-     }
- }
 +
 +#[cfg(test)]
 +mod tests {
-+    use databend_common_expression::BlockMetaInfoDowncast;
-+    use databend_common_expression::FromData;
-+    use databend_common_expression::types::Int32Type;
++    use std::collections::VecDeque;
++    use std::time::Duration;
 +
-+    use super::*;
++    use databend_common_exception::ErrorCode;
++    use databend_common_exception::Result;
++    use futures_util::StreamExt;
++    use futures_util::stream;
++    use futures_util::stream::BoxStream;
 +
-+    #[test]
-+    fn test_more_than_256_partitions() -> Result<()> {
-+        let exchange = WindowPartitionExchange::create(vec![0], 512);
-+        let block =
-+            DataBlock::new_from_columns(vec![Int32Type::from_data((0..4096).collect::<Vec<_>>())]);
++    use super::Subscription;
 +
-+        let mut outputs = exchange.partition(block, 1)?;
-+        assert_eq!(outputs.len(), 1);
-+        let meta = outputs
-+            .pop()
-+            .and_then(|block| block.get_owned_meta())
-+            .and_then(WindowPartitionMeta::downcast_from)
-+            .unwrap();
-+
-+        let rows = meta
-+            .partitioned_data
-+            .iter()
-+            .map(|(_, block)| block.num_rows())
-+            .sum::<usize>();
-+        assert_eq!(rows, 4096);
-+        assert!(
-+            meta.partitioned_data
-+                .iter()
-+                .any(|(id, block)| *id >= 256 && !block.is_empty())
-+        );
-+        Ok(())
-+    }
-+}
-```
-
-**File**: `src/query/service/src/pipelines/processors/transforms/window/partition/window_partition_partial_top_n_exchange.rs` (removed, +0/-309)
-```diff
-@@ -1,309 +0,0 @@
--// Copyright 2021 Datafuse Labs
--//
--// Licensed under the Apache License, Version 2.0 (the "License");
--// you may not use this file except in compliance with the License.
--// You may obtain a copy of the License at
--//
--//     http://www.apache.org/licenses/LICENSE-2.0
--//
--// Unless required by applicable law or agreed to in writing, software
--// distributed under the License is distributed on an "AS IS" BASIS,
--// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
--// See the License for the specific language governing permissions and
--// limitations under the License.
--
--use std::sync::Arc;
--
--use databend_common_exception::Result;
--use databend_common_expression::DataBlock;
--use databend_common_expression::SortColumnDescription;
--use databend_common_expression::SortCompare;
--use databend_common_expression::group_hash_value_spread;
--use databend_common_expression::visitor::ValueVisitor;
--use databend_common_pipeline::basic::Exchange;
--
--use super::WindowPartitionMeta;
--use crate::physical_plans::WindowPartitionTopNFunc;
--
--pub struct WindowPartitionTopNExchange {
--    partition_indices: Box<[usize]>,
--    top: usize,
--    func: WindowPartitionTopNFunc,
--
--    sort_desc: Box<[SortColumnDescription]>,
--    num_partitions: u64,
--}
--
--impl WindowPartitionTopNExchange {
--    pub fn create(
--        partition_indices: Vec<usize>,
--        order_by: Vec<SortColumnDescription>,
--        top: usize,
--        func: WindowPartitionTopNFunc,
--        num_partitions: u64,
--    ) -> Arc<WindowPartitionTopNExchange> {
--        assert!(top > 0);
--        let partition_indices = partition_indices.into_boxed_slice();
--        let sort_desc = partition_indices
--            .iter()
--            .map(|&offset| SortColumnDescription {
--                offset,
--                asc: true,
--                nulls_first: false,
--            })
--            .chain(order_by)
--            .collect::<Vec<_>>()
--            .into();
--
--        Arc::new(WindowPartitionTopNExchange {
--            num_partitions,
--            partition_indices,
--            top,
--            func,
--            sort_desc,
--        })
--    }
--}
--
--impl Exchange for WindowPartitionTopNExchange {
--    const NAME: &'static str = "WindowTopN";
--    const SKIP_EMPTY_DATA_BLOCK: bool = true;
--
--    fn partition(&self, block: DataBlock, n: usize) -> Result<Vec<DataBlock>> {
--        let partition_permutation = self.partition_permutation(&block);
--
--        // Partition the data blocks to different processors.
--        let mut output_data_blocks = vec![vec![]; n];
--        for (partition_id, indices) in partition_permutation.into_iter().enumerate() {
--            output_data_blocks[partition_id % n]
--                .push((partition_id, block.take(indices.as_slice())?));
--        }
--
--        // Union data blocks for each processor.
--        Ok(output_data_blocks
--            .into_iter()
--            .map(WindowPartitionMeta::create)
--            .map(DataBlock::empty_with_meta)
--            .collect())
--    }
--}
--
--impl WindowPartitionTopNExchange {
--    fn partition_permutation(&self, block: &DataBlock) -> Vec<Vec<u32>> {
--        let rows = block.num_rows();
--        let mut sort_compare = SortCompare::with_force_equality(self.sort_desc.to_vec(), rows);
--
--        for &offset in &self.partition_indices {
--            let array = block.get_by_offset(offset).value();
--            sort_compare.visit_value(array).unwrap();
--            sort_compare.increment_column_index();
--        }
--
--        let partition_equality = sort_compare.equality_index().to_vec();
--
--        for desc in self.sort_desc.iter().skip(self.partition_indices.len()) {
--            let array = block.get_by_offset(desc.offset).value();
--            sort_compare.visit_value(array).unwrap();
--            sort_compare.increment_column_index();
--        }
--
--        let full_equality = sort_compare.equality_index().to_vec();
--        let permutation = sort_compare.take_permutation();
--
--        let hash_indices = std::iter::once(permutation[0])
--            .chain(
--                partition_equality
--                    .iter()
--                    .enumerate()
--                    .filter_map(|(i, &eq)| if eq == 0 { Some(permutation[i]) } else { None }),
--            )
--            .collect::<Vec<_>>();
--
--        let mut hashes = vec![0u64; rows];
--        for (i, &offset) in self.partition_indices.iter().enumerate() {
--            let entry = block.get_by_offset(offset);
--            group_hash_value_spread(&hash_indices, entry.value(), i == 0, &mut hashes).unwrap();
--        }
--
--        let mut partition_permutation = vec![Vec::new(); self.num_partitions as usize];
--
--        let mut start = 0;
--        let mut cur = 0;
--        while cur < rows {
--            let partition = &mut partition_permutation
--                [(hashes[permutation[start] as usize] % self.num_partitions) as usize];
--            partition.push(permutation[start]);
--
--          
-```
-
----
-
-### Incident Patch 2: `76caf9e8` (2026-11-19)
-**Commit Message**: fix(query): enforce stage WRITE on HTTP uploads (#21126)
-
-* fix(query): enforce stage WRITE on HTTP uploads (#21094)
-
-* test(query): cover HTTP stage WRITE in the stateless suite
-
-**File**: `src/query/service/src/interpreters/access/mod.rs` (modified, +1/-0)
-```diff
-@@ -22,3 +22,4 @@ pub use management_mode_access::ManagementModeAccess;
- pub use privilege_access::PrivilegeAccess;
- pub(crate) use privilege_access::validate_share_management_for_connection;
- pub(crate) use privilege_access::validate_share_object_by_id;
-+pub(crate) use privilege_access::validate_stage_write_access;
-```
-
-**File**: `src/query/service/src/interpreters/access/privilege_access.rs` (modified, +9/-0)
-```diff
-@@ -275,6 +275,15 @@ enum ObjectId {
- // table functions that need `Super` privilege
- const SYSTEM_TABLE_FUNCTIONS: [&str; 3] = ["fuse_amend", "set_cache_capacity", "send_notification"];
- 
-+pub(crate) async fn validate_stage_write_access(
-+    ctx: Arc<QueryContext>,
-+    stage: &StageInfo,
-+) -> Result<()> {
-+    PrivilegeAccess::new(ctx)
-+        .validate_stage_access(stage, UserPrivilegeType::Write)
-+        .await
-+}
-+
- pub(crate) async fn validate_share_management_for_connection(
-     ctx: Arc<QueryContext>,
-     connection: Option<&str>,
-```
-
-**File**: `src/query/service/src/interpreters/mod.rs` (modified, +1/-0)
-```diff
-@@ -233,6 +233,7 @@ mod interpreter_virtual_column_vacuum;
- pub(crate) mod util;
- 
- pub use access::ManagementModeAccess;
-+pub(crate) use access::validate_stage_write_access;
- pub use common::InterpreterQueryLog;
- pub use common::QueryFinishHooks;
- pub use hook::HookOperator;
-```
-
-**File**: `src/query/service/src/servers/http/v1/stage.rs` (modified, +10/-0)
-```diff
-@@ -14,6 +14,7 @@
- 
- use async_compat::CompatExt;
- use databend_common_catalog::session_type::SessionType;
-+use databend_common_exception::ErrorCode;
- use databend_common_meta_app::principal::StageInfo;
- use databend_common_sql::binder::validate_stage_path_traversal_policy;
- use databend_common_storage::init_stage_operator;
-@@ -22,6 +23,7 @@ use futures_util::AsyncWriteExt;
- use futures_util::io;
- use http::StatusCode;
- use poem::Request;
-+use poem::error::Forbidden;
- use poem::error::InternalServerError;
- use poem::error::Result as PoemResult;
- use poem::web::Json;
-@@ -31,6 +33,7 @@ use serde::Serialize;
- 
- use super::HttpQueryContext;
- use super::require_upload_filename;
-+use crate::interpreters::validate_stage_write_access;
- use crate::sessions::TableContextAuthorization;
- use crate::sessions::TableContextTableAccess;
- 
-@@ -114,6 +117,13 @@ pub async fn upload_to_stage(
-             .map_err(InternalServerError)?
-     };
- 
-+    validate_stage_write_access(context, &stage)
-+        .await
-+        .map_err(|e| match e.code() {
-+            ErrorCode::PERMISSION_DENIED => Forbidden(e),
-+            _ => InternalServerError(e),
-+        })?;
-+
-     let op = init_stage_operator(&stage).map_err(InternalServerError)?;
-     let path_traversal_policy = databend_common_config::GlobalConfig::instance()
-         .storage
-```
-
-**File**: `tests/suites/0_stateless/18_rbac/18_0027_http_stage_write.result` (added, +10/-0)
-```diff
-@@ -0,0 +1,10 @@
-+Without a stage grant: 403
-+With READ only: 403
-+Named stage file count before authorization: 0
-+With WRITE: SUCCESS
-+With ownership (legacy header): SUCCESS
-+Named stage file sizes:
-+2
-+2
-+Own user stage: SUCCESS
-+Own user stage file size: 2
-```
-
-**File**: `tests/suites/0_stateless/18_rbac/18_0027_http_stage_write.sh` (added, +87/-0)
-```diff
-@@ -0,0 +1,87 @@
-+#!/usr/bin/env bash
-+
-+set -euo pipefail
-+
-+CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-+. "$CURDIR"/../../../shell_env.sh
-+
-+url="http://${QUERY_MYSQL_HANDLER_HOST}:${QUERY_HTTP_HANDLER_PORT}/v1/upload_to_stage"
-+user=stage_write_user_0027
-+password=stage_write_test_password
-+role=stage_write_role_0027
-+stage=stage_write_0027
-+owned_stage=stage_owned_0027
-+file=stage_write_0027.csv
-+clean_user_stage=false
-+
-+cleanup() {
-+	local status=0
-+	if "$clean_user_stage"; then
-+		bendsql_connect_user "$user" "$password" --output null --query="REMOVE @~/$file" || status=$?
-+	fi
-+	bendsql_connect_root_null --query="
-+DROP STAGE IF EXISTS $stage;
-+DROP STAGE IF EXISTS $owned_stage;
-+DROP USER IF EXISTS $user;
-+DROP ROLE IF EXISTS $role;
-+"
-+	return "$status"
-+}
-+
-+expect_denied() {
-+	# No file part: check authorization without attempting to write data.
-+	printf -- '--stage-test--\r\n' |
-+		curl --silent --show-error --user "$user:$password" --request PUT \
-+			--header "x-databend-stage-name: $stage" \
-+			--header 'Content-Type: multipart/form-data; boundary=stage-test' \
-+			--data-binary @- --output /dev/null --write-out '%{http_code}\n' "$url"
-+}
-+
-+expect_allowed() {
-+	printf '1\n' |
-+		curl --fail --silent --show-error --user "$user:$password" --request PUT \
-+			--header "$1: $2" --form "upload=@-;filename=$file" "$url" |
-+		jq -er --arg stage "$2" --arg file "$file" \
-+			'select(.stage_name == $stage and .state == "SUCCESS" and .files == [$file]) | .state'
-+}
-+
-+cleanup
-+trap cleanup EXIT
-+bendsql_connect_root_null --query="
-+CREATE USER $user IDENTIFIED BY '$password';
-+CREATE ROLE $role;
-+GRANT ROLE $role TO USER $user;
-+CREATE STAGE $stage;
-+CREATE STAGE $owned_stage;
-+GRANT OWNERSHIP ON STAGE $owned_stage TO ROLE $role;
-+"
-+
-+printf 'Without a stage grant: '
-+expect_denied
-+
-+bendsql_connect_root_null --query="GRANT READ ON STAGE $stage TO ROLE $role"
-+printf 'With READ only: '
-+expect_denied
-+
-+printf 'Named stage file count before authorization: '
-+bendsql_connect_root --output tsv --query="SELECT count(*) FROM list_stage(location => '@$stage')"
-+
-+bendsql_connect_root_null --query="GRANT WRITE ON STAGE $stage TO ROLE $role"
-+printf 'With WRITE: '
-+expect_allowed x-databend-stage-name "$stage"
-+
-+printf 'With ownership (legacy header): '
-+expect_allowed stage_name "$owned_stage"
-+
-+printf 'Named stage file sizes:\n'
-+bendsql_connect_root --output tsv --query="
-+SELECT size FROM list_stage(location => '@$stage/$file');
-+SELECT size FROM list_stage(location => '@$owned_stage/$file');
-+"
-+
-+clean_user_stage=true
-+printf 'Own user stage: '
-+expect_allowed x-databend-stage-name '~'
-+printf 'Own user stage file size: '
-+bendsql_connect_user "$user" "$password" --output tsv \
-+	--query="SELECT size FROM list_stage(location => '@~/$file')"
++    /// The subscription subscribes again when subscribing fails, and when the stream errors or
++    /// ends. After an error, it drops the rest of the stream.
++    #[tokio::test]
++    async fn test_subscribe_again() {
++        let mut attempts: VecDeque<Result<BoxStream<'static, Result<u64>>>> = VecDeque::from([
++            Ok(stream::iter([Ok(1), Ok(2)]).boxed()),
++            Err(ErrorCode::MetaServiceError("refused")),
++            Ok(stream::iter([Ok(3), Err(ErrorCode::MetaServiceError("closed")), Ok(10)]).boxed()),
++            Ok(stream::iter([Ok(4)]).chain(stream::pending()).boxed()),
++        ]);
++        let subscribe = move || {
++            let attempt = attempts.pop_front().expect("no subscr
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #21126** (2026-11-19): fix(query): enforce stage WRITE on HTTP uploads (@youngsofun)
-- **PR #21125** (closed): refactor: query: read the ownership and access caches without a lock (@drmingdrmer)
-- **PR #21124** (2026-11-19): feat: config: add `ownership` to `cache.meta_service_caches` (@drmingdrmer)
-- **PR #21123** (2026-11-18): chore: meta: use sub-cache 0.4.1, which stops a dropped cache's watch (@drmingdrmer)
-- **PR #21121** (2026-11-18): refactor(query): remove dead code and leftovers of the aggregate rewrites (@dqhl76)
-- **PR #21118** (2026-11-18): fix(query): abbreviate large SQL constants in INFO logs (@bohutang)
+- **PR #21157** (2026-11-21): fix: task: watch the task messages again when the stream ends (@drmingdrmer)
+- **PR #21146** (2026-11-20): chore(meta): use server v260629.11.0 and client v260205.13.7 (@drmingdrmer)
+- **PR #21145** (2026-11-21): refactor(query): drop duplicate meta reads when planning a SELECT (@bohutang)
+- **PR #21144** (2026-11-22): refactor(query): output in-memory final aggregate results a block at a time (@KKould)
+- **PR #21141** (2026-11-20): fix(query): probe the partition built in each hash join spill round (@dqhl76)
+- **PR #21136** (2026-11-20): fix: meta: move the cache off a leader that refuses its watch (@drmingdrmer)
 
 ---
 
@@ -2155,72 +1712,32 @@ use the plain `WindowPartitionExchange`.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. query): batch small blocks before the window partition exchange
+## X. query): output in-memory final aggregate results a block at a time
 
 **RULE**:
-When implementing operations in `src/query/expression/src/kernels/stream_partition.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/query/expression/src/aggregate/payload.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dea33860`: query): batch small blocks before the window partition exchange. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f469c616`: query): output in-memory final aggregate results a block at a time. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/query/expression/src/kernels/stream_partition.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/query/expression/src/aggregate/payload.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    /// Add every row of `column`, in order.
-    fn append_column(&mut self, column: &Column) {
-        let builder = self.builder(column.len());
-        if builder.data_type() == column.data_type() {
-            builder.append_column(column);
-        } else {
-            // Such as an `Array` column into an `EmptyArray` builder, which
-            // only `copy_column` turns into an `Array` builder.
-            let indices = (0..column.len() as u32).collect::<Vec<_>>();
-            copy_column(&indices, column, builder);
-        }
-    }
-
-    /// Add `rows` of a constant, kept a constant when it can be.
-    fn append_const(
-        &mut self,
-        scalar: &Scalar,
-        data_type: &DataType,
-        rows: usize,
-        size: &mut impl FnMut() -> ExpandedSize,
-    ) {
-        if !self.try_push_const(scalar, data_type, rows, size) {
-            let column = ColumnBuilder::repeat(&scalar.as_ref(), rows, data_type).build();
-            self.append_column(&column);
-        }
-    }
-
-/// The expanded size of the last constant seen in a column.
-type ConstSize = Option<(Scalar, DataType, ExpandedSize)>;
-
-fn cached_const_size(cache: &mut ConstSize, scalar: &Scalar, data_type: &DataType)
+            // The capacity is in rows: one result per row.
+            let mut builder = ColumnBuilder::with_capacity(&return_type, row_count);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    const_sizes: Vec<Option<(Scalar, DataType, ExpandedSize)>>,
-                    let mut size = || {
-                        if let Some((s, t, size)) = const_size.as_ref()
-                            && *s == scalar
-                            && *t == data_type
-                        {
-                            return *size;
-                        }
-                        let size = ExpandedSize::measure(&scalar, &data_type);
-                        *const_size = Some((scalar.clone(), data_type.clone(), size));
-                        size
-                    };
+            let mut builder = ColumnBuilder::with_capacity(&return_type, row_count * 4);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dea33860` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f469c616` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

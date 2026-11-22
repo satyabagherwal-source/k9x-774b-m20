@@ -46,8 +46,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-22T01:07:38.378Z",
-    "lastVerified": "2026-11-22T01:07:38.378Z",
+    "lastChecked": "2026-11-22T01:58:53.387Z",
+    "lastVerified": "2026-11-22T01:58:53.387Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-22T01:44:12.152Z",
-    "lastVerified": "2026-11-22T01:44:12.152Z",
+    "lastChecked": "2026-11-22T01:58:58.836Z",
+    "lastVerified": "2026-11-22T01:58:58.836Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -888,9 +888,9 @@
   "bee-san-ciphey": {
     "name": "Ciphey",
     "officialUrl": "https://github.com/bee-san/Ciphey",
-    "lastChecked": "2026-11-21T20:36:33.728Z",
+    "lastChecked": "2026-11-22T01:58:48.374Z",
     "revisionIdentifier": "c500baff",
-    "lastVerified": "2026-11-21T20:36:33.728Z"
+    "lastVerified": "2026-11-22T01:58:48.374Z"
   },
   "weaviate-weaviate": {
     "name": "weaviate",
@@ -2259,14 +2259,14 @@
     "officialUrl": "https://github.com/databendlabs/databend",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T21:47:10.993Z",
-    "lastVerified": "2026-11-20T21:47:10.993Z",
+    "lastChecked": "2026-11-22T01:58:54.403Z",
+    "lastVerified": "2026-11-22T01:58:54.403Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-databendlabs-databend",
-    "contentHash": "54610216c35a5b780cf5a6f66e04fb5a17e3d08f9abd9cb1c4335e432a22914c",
+    "contentHash": "c337eb061506532f3246b1da538da9acc41c5d201149ae05cd3b0ab32f478a25",
     "promotedRulesCount": 1,
-    "recentFixesCount": 8,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3460,12 +3460,12 @@
     "lastVerified": "2026-11-21T21:57:52.874Z"
   },
   "okteto-okteto": {
-    "name": "okteto/okteto",
+    "name": "okteto",
     "officialUrl": "https://github.com/okteto/okteto",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-20T22:49:27.793Z",
-    "lastVerified": "2026-11-20T22:49:27.793Z",
+    "lastChecked": "2026-11-22T01:58:45.932Z",
+    "lastVerified": "2026-11-22T01:58:45.932Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-okteto-okteto",
@@ -3474,7 +3474,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "112af098"
   },
   "matrixorigin-matrixone": {
     "name": "matrixorigin/matrixone",
@@ -4666,9 +4667,9 @@
   "ivpusic-react-native-image-crop-picker": {
     "name": "react-native-image-crop-picker",
     "officialUrl": "https://github.com/ivpusic/react-native-image-crop-picker",
-    "lastChecked": "2026-11-18T21:01:58.972Z",
+    "lastChecked": "2026-11-22T01:58:43.489Z",
     "revisionIdentifier": "a18a50d4",
-    "lastVerified": "2026-11-18T21:01:58.972Z"
+    "lastVerified": "2026-11-22T01:58:43.489Z"
   },
   "vinceanalytics-vince": {
     "name": "vince",
@@ -5080,9 +5081,9 @@
   "webrtc-rs-webrtc": {
     "name": "webrtc",
     "officialUrl": "https://github.com/webrtc-rs/webrtc",
-    "lastChecked": "2026-11-20T13:48:05.270Z",
+    "lastChecked": "2026-11-22T01:58:38.395Z",
     "revisionIdentifier": "3c4584ae",
-    "lastVerified": "2026-11-20T13:48:05.270Z"
+    "lastVerified": "2026-11-22T01:58:38.395Z"
   },
   "hf-meta-llama-llama-2-7b": {
     "name": "meta-llama/Llama-2-7b",
@@ -13317,6 +13318,23 @@
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-microsoft-mage-vl-cowork",
     "contentHash": "3529f62cfbc060b8aaec6ac1b7302ec7cb04a5f1d3e08e576a33a65ac3172091",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-qwen-qwen3-embedding-0.6b": {
+    "name": "Qwen/Qwen3-Embedding-0.6B",
+    "officialUrl": "https://huggingface.co/Qwen/Qwen3-Embedding-0.6B",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-22T01:58:40.995Z",
+    "lastVerified": "2026-11-22T01:58:40.995Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-qwen-qwen3-embedding-0-6b",
+    "contentHash": "d27eb2ba6fed3be8d5ee172422cdb8bb77f1c4aec1890283fe3294e308ba6354",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

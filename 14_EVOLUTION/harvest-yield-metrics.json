@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T01:44:08.862Z",
-  "total_cycles_completed": 11382,
-  "total_learnings_persisted": 11382,
-  "total_rules_promoted": 10687,
+  "last_updated": "2026-11-22T01:58:55.539Z",
+  "total_cycles_completed": 11384,
+  "total_learnings_persisted": 11384,
+  "total_rules_promoted": 10688,
   "history": [
-    {
-      "timestamp": "2026-11-21T07:05:13.154Z",
-      "repository": "jithin-sabu/purge-app",
-      "learningId": "learn-github-jithin-sabu-purge-app",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T07:10:31.566Z",
-      "repository": "rtk-ai/rtk",
-      "learningId": "learn-github-rtk-ai-rtk",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T07:42:00.881Z",
       "repository": "meta/docusaurus",
@@ -1403,6 +1389,20 @@
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T01:58:41.693Z",
+      "repository": "Qwen/Qwen3-Embedding-0.6B",
+      "learningId": "learn-huggingface-qwen-qwen3-embedding-0-6b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T01:58:55.539Z",
+      "repository": "databendlabs/databend",
+      "learningId": "learn-github-databendlabs-databend",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

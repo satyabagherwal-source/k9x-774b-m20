@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261119-NH77",
-    "timestamp": "2026-11-19T23:02:06.547Z",
-    "repository": "cilium/cilium",
-    "learningId": "learn-github-cilium-cilium",
-    "contentHash": "015eb68ce81b83e375ddb9b0cc32b83545ee57743e93f3821db15ad53e87fbc8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261119-4ZA0",
-    "timestamp": "2026-11-19T23:15:43.128Z",
-    "repository": "projectdiscovery/nuclei",
-    "learningId": "learn-github-projectdiscovery-nuclei",
-    "contentHash": "047d377ecf27b8975c2ff6c69e72210a092c6648ae646f4b0670a5b973038fbb",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261119-51XJ",
     "timestamp": "2026-11-19T23:15:46.567Z",
     "repository": "doobidoo/mcp-memory-service",
@@ -7492,6 +7462,36 @@
     "contentHash": "22284158552a865e79073f4e5c35c24313d631f807c7bcbb858f7c8ebe201356",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-U9SI",
+    "timestamp": "2026-11-22T01:58:41.682Z",
+    "repository": "Qwen/Qwen3-Embedding-0.6B",
+    "learningId": "learn-huggingface-qwen-qwen3-embedding-0-6b",
+    "contentHash": "d27eb2ba6fed3be8d5ee172422cdb8bb77f1c4aec1890283fe3294e308ba6354",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-UKH5",
+    "timestamp": "2026-11-22T01:58:55.529Z",
+    "repository": "databendlabs/databend",
+    "learningId": "learn-github-databendlabs-databend",
+    "contentHash": "c337eb061506532f3246b1da538da9acc41c5d201149ae05cd3b0ab32f478a25",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

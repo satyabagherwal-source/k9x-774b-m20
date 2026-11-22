@@ -12003,3 +12003,5 @@ Every entry in this ledger must capture:
 | `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `c0f594ca` | Multi-dimensional audit evidence | 2026-11-22T01:44:02.056Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `fbdb7e41` | Multi-dimensional audit evidence | 2026-11-22T01:44:08.829Z |
 | `learn-dom-k-8ab33baa` | `project://skyhook-io-radar` | `c0f594ca` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/skyhook-io-radar-learnings.md` | 2026-11-22T01:44:40.946Z |
+| `learn-huggingface-qwen-qwen3-embedding-0-6b` | `https://huggingface.co/Qwen/Qwen3-Embedding-0.6B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-22T01:58:41.687Z |
+| `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `f469c616` | Multi-dimensional audit evidence | 2026-11-22T01:58:55.533Z |

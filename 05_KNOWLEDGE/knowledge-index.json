@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T01:44:42.916Z",
+  "last_updated": "2026-11-22T01:59:01.202Z",
   "total_verified_learnings": 9064,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23389,
+  "total_items": 23392,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "1d89fd6edd01cfd0ab80eb20cf2929b005e761e8179359f07d27f975564f303d",
+      "content_hash": "8d82ccccd9a39a2da4a487a87904de367250af5f6d8b787d92e858f61d0c726d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T01:32:35.619Z"
+      "persisted_at": "2026-11-22T01:59:01.202Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -217504,8 +217504,8 @@
       "slug": "databendlabs-databend",
       "platform": "github",
       "source_url": "https://github.com/databendlabs/databend",
-      "source_version": "77137bc2",
-      "content_hash": "54610216c35a5b780cf5a6f66e04fb5a17e3d08f9abd9cb1c4335e432a22914c",
+      "source_version": "f469c616",
+      "content_hash": "c337eb061506532f3246b1da538da9acc41c5d201149ae05cd3b0ab32f478a25",
       "dossier_path": "07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
       "promoted_rules": [
@@ -217543,6 +217543,11 @@
           "number": 9644,
           "title": "read spilled byte columns with the writer's arrow types",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9878,
+          "title": "output in-memory final aggregate results a block at a time",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -217550,7 +217555,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T21:47:11.930Z",
+      "verified_at": "2026-11-22T01:58:55.244Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -217592,10 +217597,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-databendlabs-databend-technical-construction-intelligence-databendlabs-databend-.md",
       "title": "Technical Construction Intelligence: databendlabs/databend Core Invariants",
       "repository": "databendlabs/databend",
-      "source_version": "a83eaead",
-      "content_hash": "e738b62f9389f323795c28ce99d791aaebda6b568eabaa22dc187f1c4f98f55d",
+      "source_version": "f469c616",
+      "content_hash": "60cdcd90b03c9d4cbc54a354f8f7168516f509e5d8bb01ccc73832fbc374b275",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T17:23:31.340Z"
+      "persisted_at": "2026-11-22T01:58:55.953Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-databendlabs-databend": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-databendlabs-databend",
@@ -217604,10 +217609,10 @@
       "relative_path": "08_VERIFICATION/databendlabs-databend-verification-protocol-empirical-defect-shield-for-databend.md",
       "title": "Verification Protocol: Empirical Defect Shield for databendlabs/databend",
       "repository": "databendlabs/databend",
-      "source_version": "77137bc2",
-      "content_hash": "063218b62f949d1c235bbbc283e547a94e6c936242cf53fe80ddf889dce7a3a7",
+      "source_version": "f469c616",
+      "content_hash": "060f606fa209513b22a78ea1793c71d4c203e042153df4bced3668befa85add0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T21:47:12.611Z"
+      "persisted_at": "2026-11-22T01:58:56.130Z"
     },
     "learn-huggingface-google-t5-t5-small": {
       "learning_id": "learn-huggingface-google-t5-t5-small",
@@ -246786,9 +246791,9 @@
       "title": "Technical Construction Intelligence: databendlabs-databend-learnings Core Invariants",
       "repository": "databendlabs-databend-learnings",
       "source_version": "HEAD",
-      "content_hash": "97ad1f6bbf414ddbe93623ee6a32089329e04dc42469dff8365ba62e94292d53",
+      "content_hash": "30221df11c2835664a10eb0087e5b4e1b60bd3ca55908530215af89a3bacd6ff",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T17:23:36.870Z"
+      "persisted_at": "2026-11-22T01:58:59.958Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-databendlabs-databend-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-databendlabs-databend-learning",
@@ -246798,9 +246803,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for databendlabs-databend-learnings",
       "repository": "databendlabs-databend-learnings",
       "source_version": "HEAD",
-      "content_hash": "f7fe2788aecefa1ec44e17b57f10e8a7cba68141ab47479e643237f07264b7f9",
+      "content_hash": "144f5011ce440fc3e6ffd57eeb7ded3e3a7bfc11c3090bdc4ff0988bc2edc869",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T21:47:16.009Z"
+      "persisted_at": "2026-11-22T01:59:00.137Z"
     },
     "learn-huggingface-abiray-minimax-h3-image-gguf": {
       "learning_id": "learn-huggingface-abiray-minimax-h3-image-gguf",
@@ -270762,7 +270767,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3-Embedding-0.6B",
       "source_version": "hf-qwen-qwen3-embedding-0.6b",
-      "content_hash": "7a13aacdd3b7d03446dcb66b88728e210f2414530d8db92ca566a8bdcacccbad",
+      "content_hash": "d27eb2ba6fed3be8d5ee172422cdb8bb77f1c4aec1890283fe3294e308ba6354",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3-embedding-0.6b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3-embedding-0.6b-learnings.md",
       "promoted_rules": [],
@@ -270771,7 +270776,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T07:55:43.569Z",
+      "verified_at": "2026-11-22T01:58:41.449Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -270788,9 +270793,9 @@
       "title": "Research & Knowledge Intelligence: Qwen/Qwen3-Embedding-0.6B Core Invariants",
       "repository": "Qwen/Qwen3-Embedding-0.6B",
       "source_version": "hf-qwen-qwen3-embedding-0.6b",
-      "content_hash": "c43186d01d451fa960c98bc3e0e9556f1424b7d6a5f1cbc2caf645b4085b818d",
+      "content_hash": "0f98e699a9098857260445b610871015bbdd8b09e765137bb39bb78aae9a0852",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T07:55:43.895Z"
+      "persisted_at": "2026-11-22T01:58:41.926Z"
     },
     "learn-github-laurent22-joplin": {
       "learning_id": "learn-github-laurent22-joplin",
@@ -271014,9 +271019,9 @@
       "title": "Research & Knowledge Intelligence: hf-qwen-qwen3-embedding-0.6b-learnings Core Invariants",
       "repository": "hf-qwen-qwen3-embedding-0.6b-learnings",
       "source_version": "HEAD",
-      "content_hash": "6e5b6294aa1a53f4e78934c7c8f30ddbbba2ff96f75186cdf049209df1fe41eb",
+      "content_hash": "52c376a1793fce83f8f11484daa803fc534f4e87b0184b1dbda55c96be3faa8e",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T08:00:00.078Z"
+      "persisted_at": "2026-11-22T01:58:59.230Z"
     },
     "candidate_directive-doc-update-security-threat-model": {
       "item_id": "candidate_directive-doc-update-security-threat-model",
@@ -318031,6 +318036,44 @@
       "content_hash": "4b62975525cfffb6ea800b64ab316fb80efb9ba8b48c6e6266374a819d9f9dfa",
       "domain_letter": "G",
       "persisted_at": "2026-11-22T01:44:42.762Z"
+    },
+    "rule-9878": {
+      "learning_id": "rule-9878",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9878,
+      "title": "output in-memory final aggregate results a block at a time",
+      "source_url": "https://github.com/databendlabs/databend",
+      "source_version": "f469c616",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T01:58:55.244Z"
+    },
+    "candidate_directive-output-in-memory-final-aggregate-results-a-block-at-a-time": {
+      "item_id": "candidate_directive-output-in-memory-final-aggregate-results-a-block-at-a-time",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-UKNY-output-in-memory-final-aggregate-results-a-block-at-a-time.md",
+      "title": "output in-memory final aggregate results a block at a time",
+      "repository": "databendlabs/databend",
+      "source_version": "f469c616",
+      "content_hash": "b49da79191d78efe3d0009cea938aec1e996456b66642bf51aa13109038ce442",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T01:58:55.775Z"
+    },
+    "candidate_directive-query-output-in-memory-final-aggregate-results-a-block-at-a-time": {
+      "item_id": "candidate_directive-query-output-in-memory-final-aggregate-results-a-block-at-a-time",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-UNR7-query-output-in-memory-final-aggregate-results-a-block-at-a-time.md",
+      "title": "query): output in-memory final aggregate results a block at a time",
+      "repository": "databendlabs-databend-learnings",
+      "source_version": "HEAD",
+      "content_hash": "bae6cbe90b1638961237710284ca8fd531cbb518379a7c0ee35c9f6241810ea0",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T01:58:59.783Z"
     }
   },
   "ai-builder-brain": {
