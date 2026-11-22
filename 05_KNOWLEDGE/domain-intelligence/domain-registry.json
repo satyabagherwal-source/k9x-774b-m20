@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T17:22:16.293Z",
-  "total_records": 2366,
+  "last_updated": "2026-11-22T17:35:40.355Z",
+  "total_records": 2368,
   "domains": {
     "A": {
       "total": 19,
@@ -999,7 +999,7 @@
       ]
     },
     "F": {
-      "total": 93,
+      "total": 95,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -1093,7 +1093,9 @@
         "domain_intelligence-design-intelligence-medialab-xan-core-invariants",
         "domain_intelligence-design-intelligence-medialab-xan-learnings-core-invariants",
         "domain_intelligence-design-intelligence-abue-ammar-tinycast-core-invariants",
-        "domain_intelligence-design-intelligence-abue-ammar-tinycast-learnings-core-invariants"
+        "domain_intelligence-design-intelligence-abue-ammar-tinycast-learnings-core-invariants",
+        "domain_intelligence-design-intelligence-thaw-app-thaw-core-invariants",
+        "domain_intelligence-design-intelligence-thaw-app-thaw-learnings-core-invariants"
       ]
     },
     "G": {
@@ -8109,8 +8111,8 @@
       "title": "Product Intelligence: cilium/cilium Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-product-intelligence-cilium-cilium-core-invariants.md",
       "repository": "cilium/cilium",
-      "content_hash": "a56d19c287c1fb3da0a703ea2132947208330d76264803c36e65ac1e109502f7",
-      "created_at": "2026-11-22T04:05:05.524Z"
+      "content_hash": "9ad6673057122a42454b7e6f2c472ca69770f18d421d904d42278288cd3b570e",
+      "created_at": "2026-11-22T17:35:29.081Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-",
@@ -8127,8 +8129,8 @@
       "title": "Product Intelligence: cilium-cilium-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-learnings-product-intelligence-cilium-cilium-learnings-core-invari.md",
       "repository": "cilium-cilium-learnings",
-      "content_hash": "45db72b20ca1db07b9badbee2946ea800a0eb230fd1c648ae95ca2147c1c16a1",
-      "created_at": "2026-11-22T04:05:14.015Z"
+      "content_hash": "875aa7b4c8cedd0804980caef7a2f4f568a08e1efb619e90da5ed76b5ba5f0e9",
+      "created_at": "2026-11-22T17:35:40.355Z"
     },
     "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
@@ -23625,8 +23627,8 @@
       "title": "Technical Construction Intelligence: ytsaurus/ytsaurus Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ytsaurus-ytsaurus-technical-construction-intelligence-ytsaurus-ytsaurus-core-inv.md",
       "repository": "ytsaurus/ytsaurus",
-      "content_hash": "c62dae0dab95a4c4cb9bd495b033ef47cc1545b63e7d02faec0a5ed720a94bf8",
-      "created_at": "2026-11-20T08:38:43.810Z"
+      "content_hash": "73c67b96bd11480ef9cd4bc29d3f9fd61d386a061a8692e08279e589377aaccb",
+      "created_at": "2026-11-22T17:35:34.727Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-baidu-ernie-5-5-flash-base-learnings-core-inv": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-baidu-ernie-5-5-flash-base-learnings-core-inv",
@@ -29352,8 +29354,8 @@
       "title": "Research & Knowledge Intelligence: black-forest-labs/FLUX.1-dev Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-black-forest-labs-flux-1-dev-research-knowledge-intelligence-black-forest-lab.md",
       "repository": "black-forest-labs/FLUX.1-dev",
-      "content_hash": "719e3e9c5598c9f3f741bb4f91d153a174a964519b83cfa5006e891b5410d6f5",
-      "created_at": "2026-11-18T10:55:08.353Z"
+      "content_hash": "72b2e7d3861fa3c3413bd492de231d950bdb7b2bd6947d7145c0189543fc0da1",
+      "created_at": "2026-11-22T17:35:15.073Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-1-dev-learnings-core-i": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-1-dev-learnings-core-i",
@@ -29361,8 +29363,8 @@
       "title": "Research & Knowledge Intelligence: hf-black-forest-labs-flux.1-dev-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-black-forest-labs-flux-1-dev-learnings-research-knowledge-intelligence-hf-bla.md",
       "repository": "hf-black-forest-labs-flux.1-dev-learnings",
-      "content_hash": "87c4ca23eb130dcb67109d7b595d34210a8b217502eedece79d9549c963ee173",
-      "created_at": "2026-11-18T10:55:20.682Z"
+      "content_hash": "b979c8caecfbd517d1b71b3231a7f65ebafea1ac405494a59f02c005890a32bf",
+      "created_at": "2026-11-22T17:35:38.023Z"
     },
     "domain_intelligence-research-knowledge-intelligence-deepseek-ai-deepseek-r1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-deepseek-ai-deepseek-r1-core-invariants",
@@ -39806,6 +39808,24 @@
       "repository": "meshtastic-meshtastic-android-learnings",
       "content_hash": "33d5538c9d8358c8232758d13948ec3e5858203741d3c8b9c11551c0a9243f6c",
       "created_at": "2026-11-22T17:22:16.293Z"
+    },
+    "domain_intelligence-design-intelligence-thaw-app-thaw-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-thaw-app-thaw-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: thaw-app/Thaw Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-thaw-app-thaw-design-intelligence-thaw-app-thaw-core-invariants.md",
+      "repository": "thaw-app/Thaw",
+      "content_hash": "b36d14438ad4715538900f0534703fce4a35642b95cf82f75714d194f567c025",
+      "created_at": "2026-11-22T17:35:23.837Z"
+    },
+    "domain_intelligence-design-intelligence-thaw-app-thaw-learnings-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-thaw-app-thaw-learnings-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: thaw-app-thaw-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-thaw-app-thaw-learnings-design-intelligence-thaw-app-thaw-learnings-core-invaria.md",
+      "repository": "thaw-app-thaw-learnings",
+      "content_hash": "087d186fb1904e1317b3caa68647429edde3afbd982e49e5dedf55b195b2cbd4",
+      "created_at": "2026-11-22T17:35:38.919Z"
     }
   }
 }

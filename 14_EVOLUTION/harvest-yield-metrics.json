@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T17:22:08.243Z",
-  "total_cycles_completed": 11535,
-  "total_learnings_persisted": 11535,
-  "total_rules_promoted": 10777,
+  "last_updated": "2026-11-22T17:35:34.290Z",
+  "total_cycles_completed": 11539,
+  "total_learnings_persisted": 11539,
+  "total_rules_promoted": 10780,
   "history": [
-    {
-      "timestamp": "2026-11-21T22:06:21.041Z",
-      "repository": "LiquidAI/LFM3-1.7B-GGUF",
-      "learningId": "learn-huggingface-liquidai-lfm3-1-7b-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T22:06:30.801Z",
-      "repository": "chaos-mesh/chaos-mesh",
-      "learningId": "learn-github-chaos-mesh-chaos-mesh",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T22:16:15.220Z",
-      "repository": "speridlabs/idol",
-      "learningId": "learn-huggingface-speridlabs-idol",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T22:16:16.338Z",
-      "repository": "erkamyaman/rust-anything",
-      "learningId": "learn-github-erkamyaman-rust-anything",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T22:16:22.034Z",
       "repository": "berty/berty",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-22T17:22:08.243Z",
       "repository": "meshtastic/Meshtastic-Android",
       "learningId": "learn-github-meshtastic-meshtastic-android",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T17:35:14.839Z",
+      "repository": "black-forest-labs/FLUX.1-dev",
+      "learningId": "learn-huggingface-black-forest-labs-flux-1-dev",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T17:35:23.380Z",
+      "repository": "thaw-app/Thaw",
+      "learningId": "learn-github-thaw-app-thaw",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T17:35:28.662Z",
+      "repository": "cilium/cilium",
+      "learningId": "learn-github-cilium-cilium",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T17:35:34.290Z",
+      "repository": "ytsaurus/ytsaurus",
+      "learningId": "learn-github-ytsaurus-ytsaurus",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

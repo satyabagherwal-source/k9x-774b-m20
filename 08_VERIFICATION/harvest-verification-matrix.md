@@ -12132,3 +12132,7 @@
 | `CYCLE-20261122-TOH2` | `2026-11-22T17:22:01.382Z` | `Qwen/Qwen3.8-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3.8-27b-learnings.md` | Yes (`ab711e34...`) |
 | `CYCLE-20261122-TP8Q` | `2026-11-22T17:22:02.378Z` | `google/tcmalloc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9961` | Yes (`b320cb38...`) |
 | `CYCLE-20261122-TTRD` | `2026-11-22T17:22:08.233Z` | `meshtastic/Meshtastic-Android` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9962` | Yes (`f0df1bc0...`) |
+| `CYCLE-20261122-AOP9` | `2026-11-22T17:35:14.829Z` | `black-forest-labs/FLUX.1-dev` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-dev-learnings.md` | Yes (`63c4c2bc...`) |
+| `CYCLE-20261122-AVAH` | `2026-11-22T17:35:23.369Z` | `thaw-app/Thaw` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9963` | Yes (`e7a5095d...`) |
+| `CYCLE-20261122-AZD7` | `2026-11-22T17:35:28.651Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING` | Yes (`69da9d65...`) |
+| `CYCLE-20261122-B3PI` | `2026-11-22T17:35:34.278Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9964` | Yes (`bd6fdaed...`) |

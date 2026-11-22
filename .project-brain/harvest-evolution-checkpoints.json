@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T17:22:16.635Z",
+  "last_updated": "2026-11-22T17:35:40.704Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-22T14:17:31.887Z",
@@ -398,7 +398,7 @@
       "staged_for_review": 1
     },
     "cilium-cilium-learnings.md": {
-      "processed_at": "2026-11-22T04:05:12.752Z",
+      "processed_at": "2026-11-22T17:35:39.318Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -588,7 +588,7 @@
       "staged_for_review": 1
     },
     "thaw-app-thaw-learnings.md": {
-      "processed_at": "2026-11-19T16:08:33.459Z",
+      "processed_at": "2026-11-22T17:35:38.230Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1773,7 +1773,7 @@
       "staged_for_review": 0
     },
     "hf-black-forest-labs-flux.1-dev-learnings.md": {
-      "processed_at": "2026-11-18T10:55:20.517Z",
+      "processed_at": "2026-11-22T17:35:37.770Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3718,7 +3718,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3156,
+  "total_dossiers_evaluated": 3159,
   "total_canonical_promoted": 475,
-  "total_staged_for_review": 2396
+  "total_staged_for_review": 2398
 }

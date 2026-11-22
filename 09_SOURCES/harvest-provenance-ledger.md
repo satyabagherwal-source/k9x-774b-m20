@@ -12165,3 +12165,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-qwen-qwen3-8-27b` | `https://huggingface.co/Qwen/Qwen3.8-27B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-22T17:22:01.386Z |
 | `learn-github-google-tcmalloc` | `https://github.com/google/tcmalloc` | `6aebbb38` | Multi-dimensional audit evidence | 2026-11-22T17:22:02.383Z |
 | `learn-github-meshtastic-meshtastic-android` | `https://github.com/meshtastic/Meshtastic-Android` | `836e48f7` | Multi-dimensional audit evidence | 2026-11-22T17:22:08.237Z |
+| `learn-huggingface-black-forest-labs-flux-1-dev` | `https://huggingface.co/black-forest-labs/FLUX.1-dev` | `hf-black-f` | Multi-dimensional audit evidence | 2026-11-22T17:35:14.833Z |
+| `learn-github-thaw-app-thaw` | `https://github.com/thaw-app/Thaw` | `50b2558d` | Multi-dimensional audit evidence | 2026-11-22T17:35:23.373Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `b613df15` | Multi-dimensional audit evidence | 2026-11-22T17:35:28.656Z |
+| `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `0a2b3145` | Multi-dimensional audit evidence | 2026-11-22T17:35:34.283Z |

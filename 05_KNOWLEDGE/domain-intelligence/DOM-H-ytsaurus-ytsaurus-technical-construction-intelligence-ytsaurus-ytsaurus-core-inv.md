@@ -4,24 +4,24 @@
 {
   "source_repository": "ytsaurus/ytsaurus",
   "source_url": "https://github.com/ytsaurus/ytsaurus",
-  "source_version": "1b712cf0",
+  "source_version": "0a2b3145",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-20T08:38:43.660Z",
+  "timestamp": "2026-11-22T17:35:34.536Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-ytsaurus-ytsaurus",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus) (Revision: `1b712cf0`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-20T08:38:43.660Z`  
+> **Provenance**: Harvested from [ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus) (Revision: `0a2b3145`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-22T17:35:34.536Z`  
 > **Learning ID**: `learn-github-ytsaurus-ytsaurus`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 52%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 63%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from ytsaurus/ytsaurus:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T08:28:41.227Z  
+> **Harvest Timestamp**: 2026-11-22T17:35:33.193Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: YTsaurus is a scalable and fault-tolerant open-source big data platform.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 2324 stars
+- **Stars / Engagement**: 2325 stars
 
 ---
 
@@ -1209,247 +1209,425 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `07c18a10` (2026-11-19)
-**Commit Message**: Fixes from babenko's review of merged shuffle, chunk format, chunk session pool and thread PRs
+### Incident Patch 1: `0a2b3145` (2026-11-22)
+**Commit Message**: YT-28925: Add reason tags to global update tablet stores throttler
+commit_hash:a1a16b6af0d898486206cd29506a82a690418dcb
 
-Fixes for babenko's review issues on merged pull requests outside periscope:
-- `FinalizeWithoutSessionsCompletesImmediately` asserts the future is set before dereferencing it, so a failure no longer crashes the test.
-- The shuffle codec mismatch error says only what went wrong; the cause stays in the `ValidateShuffleHandleCodec` doc comment.
-- The signal stack comment keeps only the constraint.
-
-Fixes issues on:
-- https://nda.ya.ru/t/rrsbgl677wuFBJ
-- https://nda.ya.ru/t/Y9pR93YN7rPF8K
-- https://nda.ya.ru/t/VDY0Zyvr7wuFBM
-commit_hash:6ceca6c1b2938418d2b0e22219769bfc7d07ec00
-
-**File**: `yt/yt/client/api/shuffle_client.cpp` (modified, +1/-3)
+**File**: `yt/yt/server/node/tablet_node/global_stores_update_throttler.cpp` (modified, +8/-4)
 ```diff
-@@ -37,9 +37,7 @@ void ValidateShuffleHandleCodec(
-     auto handle = ConvertTo<TShuffleHandlePtr>(TYsonStringBuf(signedHandle.Underlying()->Payload()));
-     THROW_ERROR_EXCEPTION_IF(
-         handle->Codec != requestedCodec,
--        "Shuffle handle has codec %Qlv instead of the requested %Qlv; the coordinator or proxy is "
--        "too old to support the codec option; the shuffle has already been started and will be "
--        "released when the parent transaction ends",
-+        "Shuffle handle has codec %Qlv instead of the requested %Qlv",
-         handle->Codec,
-         requestedCodec);
- }
-```
-
-**File**: `yt/yt/client/api/shuffle_client.h` (modified, +1/-0)
-```diff
-@@ -27,6 +27,7 @@ struct TShuffleHandle
-     //! pull-based it may be null (schemaless) for backward compatibility, but a
-     //! schema will eventually be required there too.
-     NTableClient::TTableSchemaPtr Schema;
-+
-     //! Writers compress with it; push-based readers decompress with it, while pull-based
-     //! readers take it from the chunk meta.
-     NCompression::ECodec Codec;
-```
-
-**File**: `yt/yt/core/threading/thread.cpp` (modified, +1/-2)
-```diff
-@@ -90,8 +90,7 @@ class TSignalHandlerStackGuard
- private:
-     TExecutionStack Stack_;
+@@ -153,7 +153,7 @@ std::vector<bool> TGlobalStoresUpdateThrottler::Throttle(
+         acceptedRequestCount = std::clamp<i64>(acceptedRequestCount, 0, requestCount);
  
--    // Symbolizing deeply inlined frames overflowed 32 KB; pages are committed on first
--    // touch, so the extra size costs address space only.
-+    // Symbolizing deeply inlined frames overflows 32 KB.
-     static constexpr size_t SignalHandlerStackSize = 256_KB;
- #endif
+         if (acceptedRequestCount < requestCount) {
+-            GetOrCreateThrottledCounter(cellTag).Increment();
++            GetOrCreateThrottledCounter(cellTag, updateReason).Increment();
+         }
+ 
+         for (i64 subrequestIndex = 0; subrequestIndex < acceptedRequestCount; ++subrequestIndex) {
+@@ -164,20 +164,24 @@ std::vector<bool> TGlobalStoresUpdateThrottler::Throttle(
+     return responses;
+ }
+ 
+-TCounter& TGlobalStoresUpdateThrottler::GetOrCreateThrottledCounter(TCellTag cellTag)
++TCounter& TGlobalStoresUpdateThrottler::GetOrCreateThrottledCounter(
++    TCellTag cellTag,
++    ETabletStoresUpdateReason updateReason)
+ {
+     auto guard = Guard(CounterLock_);
+ 
+-    if (auto it = ThrottledRequestCounters_.find(cellTag); it != ThrottledRequestCounters_.end()) {
++    auto key = std::pair(cellTag, updateReason);
++    if (auto it = ThrottledRequestCounters_.find(key); it != ThrottledRequestCounters_.end()) {
+         return it->second;
+     }
+ 
+     return EmplaceOrCrash(
+         ThrottledRequestCounters_,
+-        cellTag,
++        key,
+         Profiler_
+             .WithSparse()
+             .WithTag("cell_tag", ToString(cellTag))
++            .WithTag("reason", FormatEnum(updateReason))
+             .Counter("/throttled_update_tablet_stores"))->second;
+ }
+ 
+```
+
+**File**: `yt/yt/server/node/tablet_node/global_stores_update_throttler.h` (modified, +7/-2)
+```diff
+@@ -42,7 +42,10 @@ class TGlobalStoresUpdateThrottler final
+     const NProfiling::TCounter FailedThrottleRequestCounter_;
+ 
+     YT_DECLARE_SPIN_LOCK(TSpinLock, CounterLock_);
+-    THashMap<NObjectClient::TCellTag, NProfiling::TCounter> ThrottledRequestCounters_;
++    THashMap<
++        std::pair<NObjectClient::TCellTag, NTabletClient::ETabletStoresUpdateReason>,
++        NProfiling::TCounter
++    > ThrottledRequestCounters_;
+ 
+     //! NB: Refers to a master cell, not to a tablet cell.
+     struct TCellStatus
+@@ -61,7 +64,9 @@ class TGlobalStoresUpdateThrottler final
+         NObjectClient::TCellTag cellTag,
+         NTabletClient::ETabletStoresUpdateReason updateReason);
+ 
+-    NProfiling::TCounter& GetOrCreateThrottledCounter(NObjectClient::TCellTag cellTag);
++    NProfiling::TCounter& GetOrCreateThrottledCounter(
++        NObjectClient::TCellTag cellTag,
++        NTabletClient::ETabletStoresUpdateReason updateReason);
  };
-```
-
-**File**: `yt/yt/ytlib/unittests/distributed_chunk_session_pool_ut.cpp` (modified, +1/-1)
-```diff
-@@ -1325,7 +1325,7 @@ TEST(TDistributedChunkSessionPoolTest, FinalizeWithoutSessionsCompletesImmediate
-     auto finalized = pool->Finalize();
-     harness.DrainInvoker();
  
--    EXPECT_TRUE(finalized.IsSet());
-+    ASSERT_TRUE(finalized.IsSet());
-     EXPECT_TRUE(finalized.TryGet()->IsOK());
- }
- 
+ DEFINE_REFCOUNTED_TYPE(TGlobalStoresUpdateThrottler)
 ```
 
 ---
 
-### Incident Patch 2: `5750d71f` (2026-11-20)
-**Commit Message**: feat build: enable zstd debug symbols compression in Linux release builds
+### Incident Patch 2: `13c06ea3` (2026-11-22)
+**Commit Message**: TypeScript builder и recipes в общем bundle nots
 
-Remove the release-only exclusions so compilation uses `-gz=zstd` and linking uses `--compress-debug-sections=zstd` for Linux release configurations as well.
+Этот PR переключает сборки TypeScript в Аркадии на общий bundle nots. Публичный CLI, builder и рецепты yatest берутся из одного ресурса и запускаются на Node.js 26.(https://nda.ya.ru/t/K0zcsZTo7x6QsJ
 
-- Wall time drops down up to 40% (drops down on a half time of linking)
-- Overall CPU time stays the same
-- File sizes: the service ELF (without SBOM) **shrank by 62.51%, `libyt-yt-client.a` by 48.51%, and individual objects by 49.13–64.38%**.
-- Linking: mean wall time **decreased by 45.01% (36.194 → 19.901 s)** in 16 paired relinks. Cache/swap and run-order effects limit this result to this series; linker CPU time increased by 65.52%.
-- Compilation: no general speedup was demonstrated across seven objects. **The confidence intervals include zero: neither a speedup nor a slowdown can be distinguished from noise.**
+Из исходной ревизии `89e7f55d` собран nots `v0.421.1`. Коммит `6d60bbd6` одновременно обновляет общий [ресурс nots 14327707707](https://nda.ya.ru/t/xqxSDbTg7x6QsM и четыре резервных Python-бинарника. SHA-256 общего архива `6e7f8ea059e10afe4884ab8fed858052eacf93f33a2ff28b0ef3c323594a8435` совпал на Linux, macOS и при скачивании из Sandbox. Для Python закреплены darwin `sbr:14327705374`, darwin-arm64 `sbr:14327705382`, linux `sbr:14327704946`, linux-aarch64 `sbr:14327705372`.
 
-### Local release rebuild of `drive-billing-exports`
+- По умолчанию используется prebuilt. При `-DTS_USE_PREBUILT_NOTS_TOOL=no` предыдущая закреплённая версия собирает текущие исходники, после чего граф использует результат для целей и рецептов. При использовании prebuilt обычные TS-цели не зависят от манифестов исходного CLI. CLI и его workspace-зависимости перечислены в `_NOTS_BOOTSTRAP_MODULES` в `build/conf/ts/ts.conf`. При сборке из исходников проверка CI сверяет инструмент у каждого узла сборки и подготовки в г
 
-We warmed both builds, then ran two pairs of full local `ya make -r -j4 --link-threads=1 --lld-threads=1 --stat` rebuilds, reversing the order for the second pair. Each pair used the same fresh string literal in `dependencies.cpp`. All four builds compiled that file and relinked the servi
-
-**File**: `build/ymake_conf.py` (modified, +2/-4)
+**File**: `build/conf/ts/node_modules.conf` (modified, +1/-0)
 ```diff
-@@ -1560,8 +1560,7 @@ def __init__(self, tc, build):
+@@ -77,6 +77,7 @@ module _PREPARE_DEPS_BASE: _BARE_UNIT {
+ 
+     SET_APPEND(_MAKEFILE_INCLUDE_LIKE_DEPS ${ARCADIA_ROOT}/$T0_SETTINGS_PATH ${ARCADIA_ROOT}/$NODEJS_CATALOG_PATH)
+ 
++    _NOTS_TOOL_CONFIGURE()
+     _PEERDIR_TS_RESOURCE(nodejs $PM_TYPE)
+     _PREPARE_DEPS_CONFIGURE()
+ }
+```
+
+**File**: `build/conf/ts/nots_runner.conf` (added, +33/-0)
+```diff
+@@ -0,0 +1,33 @@
++# Both modes share the same JS bundle. The runtime is a separate pinned host resource.
++_NOTS_RUNNER_INPUT=
++_NOTS_RUNNER_LIBATOMIC_PEER=
++_NOTS_RUNNER_LIBATOMIC_ARGS=
++_NOTS_RUNNER_LIBATOMIC_ENV=
++when ($HOST_OS_LINUX) {
++    _NOTS_RUNNER_LIBATOMIC_PEER=build/platform/nodejs/libatomic
++    _NOTS_RUNNER_LIBATOMIC_ARGS=--libatomic ${LIBATOMIC_1_2_0_RESOURCE_GLOBAL}/libatomic.so.1 --runtime-libatomic ${output:"libatomic.so.1"}
++    _NOTS_RUNNER_LIBATOMIC_ENV=${env:"LD_LIBRARY_PATH=$LIBATOMIC_1_2_0_RESOURCE_GLOBAL"}
++}
++_NOTS_RUNNER_CMD=${NODEJS_26_RESOURCE_GLOBAL}/node -- \
++    ${input:"devtools/frontend_build_platform/nots/builder/stage-runner.mjs"} \
++    --node ${NODEJS_26_RESOURCE_GLOBAL}/node $_NOTS_RUNNER_INPUT $_NOTS_RUNNER_LIBATOMIC_ARGS \
++    --bsdtar ${BSDTAR_RESOURCE_GLOBAL}/bsdtar \
++    --archiver ${output:"nots-bsdtar"} \
++    --rsync ${NOTS_RSYNC_RESOURCE_GLOBAL}/bin/rsync \
++    --synchronizer ${output:"nots-rsync"} \
++    --builder ${TARGET} \
++    --recipe ${output:"nots-recipe"} \
++    --runtime ${output:"nots-node"} \
++    --module ${output:"nots.mjs"} \
++    $_NOTS_RUNNER_LIBATOMIC_ENV ${hide:PEERS} ${hide;kv:"p NOTS"}
++
++module NOTS_BUNDLE_RUNNER: PREBUILT_PROGRAM {
++    .CMD=$_NOTS_RUNNER_CMD
++    .NODE_TYPE=Bundle
++    .PEERDIR_POLICY=as_build_from
++    .USE_PEERS_LATE_OUTS=yes
++    SET(PEERDIR_TAGS TS RESOURCE_LIB)
++    PEERDIR(build/platform/nodejs/v26 build/external_resources/rsync devtools/frontend_build_platform/nots/bsdtar $_NOTS_RUNNER_LIBATOMIC_PEER)
++    # Released trace collectors recognize the builder executable by basename.
++    SET(REALPRJNAME builder)
++}
+```
+
+**File**: `build/conf/ts/ts.conf` (modified, +21/-1)
+```diff
+@@ -1,5 +1,9 @@
+ TS_USE_PREBUILT_NOTS_TOOL=yes
+-# Compute the defaults separately so explicit -D and per-target overrides take precedence.
++TS_NOTS_BUILDER_IMPL=typescript
++_NOTS_BOOTSTRAP_TYPESCRIPT=yes
++_NOTS_RECIPE=devtools/frontend_build_platform/nots/builder/builder
++_NOTS_RECIPE_DEPENDS=devtools/frontend_build_platform/nots/builder
++# Compute defaults separately so explicit and per-target overrides take precedence.
+ _TS_HERMETIC_NODE_MODULES_DEFAULT=no
+ _TS_LOCAL_CLI_DEFAULT=yes
+ when ($AUTOCHECK == "yes") {
+@@ -12,6 +16,19 @@ TS_LOCAL_CLI=$_TS_LOCAL_CLI_DEFAULT
+ TS_FAKEID=${FAKEID}.2026-08-08.01
+ NOTS_TOOL=${tool:"devtools/frontend_build_platform/nots/builder"} ${hide:TS_FAKEID} ${hide;input:T0_SETTINGS_PATH}
+ 
++# The pinned builder builds the CLI and these workspace dependencies in source mode.
++_NOTS_BOOTSTRAP_MODULES= \
++    devtools/frontend_build_platform/libraries/subprocess \
++    devtools/frontend_build_platform/libraries/ts-yamake-utils \
++    devtools/frontend_build_platform/nots/cli \
++    devtools/frontend_build_platform/nots/tier0-settings \
++    devtools/frontend_build_platform/nots/trace-collector \
++    library/typescript/ci-reporter \
++    library/typescript/test-reporters/knip \
++    library/typescript/test-reporters/node-test \
++    library/typescript/test-reporters/tsc \
++    library/typescript/test-reporters/vitest
++
+ WITH_NODEJS_ROOT=
+ NODEJS_ROOT=
+ NODEJS_BIN=$NODEJS_ROOT/node
+@@ -163,6 +180,7 @@ module _TS_BASE_UNIT: _BARE_UNIT {
+     SET_APPEND(_MAKEFILE_INCLUDE_LIKE_DEPS ${ARCADIA_ROOT}/$T0_SETTINGS_PATH)
+ 
+     # Select Node.js from engines.node and use default package manager resources
++    _NOTS_TOOL_CONFIGURE()
+     _PEERDIR_TS_RESOURCE(nodejs $PM_TYPE)
+ }
+ 
+@@ -241,3 +259,5 @@ macro TS_USE_BUN() {
+ 
+ @import "${CONF_ROOT}/conf/ts/ts_library.conf"
+ @import "${CONF_ROOT}/conf/ts/ts_check.conf"
++
++@import "${CONF_ROOT}/conf/ts/nots_runner.conf"
+```
+
+**File**: `build/conf/ts/ts_check.conf` (modified, +12/-8)
+```diff
+@@ -27,7 +27,7 @@ multimodule TS_TEST_FOR {
+         ENABLE(_SUPPORTS_HERMETIC_NODE_MODULES)
+ 
+         # for multimodule peers we should choose TS
+-        SET(PEERDIR_TAGS TS TS_PROTO TS_PROTO_FROM_SCHEMA)
++        SET(PEERDIR_TAGS TS TS_PROTO TS_PROTO_FROM_SCHEMA RESOURCE_LIB)
+         # We read tool resources and Tier 0 settings during configuration; track them in the cache key.
+         SET_APPEND(_MAKEFILE_INCLUDE_LIKE_DEPS ${ARCADIA_ROOT}/$ERM_PACKAGES_PATH ${ARCADIA_ROOT}/$NODEJS_CATALOG_PATH)
+         SET_APPEND(_MAKEFILE_INCLUDE_LIKE_DEPS ${ARCADIA_ROOT}/$T0_SETTINGS_PATH)
+@@ -60,7 +60,7 @@ multimodule TS_TEST_FOR {
+         SET(MODULE_LANG TS)
+         ENABLE(_SUPPORTS_HERMETIC_NODE_MODULES)
+         # what modules it can PEERDIR to
+-        SET(PEERDIR_TAGS TS_PREPARE_DEPS)
++        SET(PEERDIR_TAGS TS_PREPARE_DEPS RESOURCE_LIB)
+         # do not include it into "results" of graph
+         DISABLE(START_TARGET)
+         # parse module args
+@@ -100,19 +100,23 @@ macro _TS_TEST_FOR_ARGS(FOR_MOD, RELATIVE?"${CURDIR}":"${ARCADIA_ROOT}") {
+ }
+ 
+ macro _SETUP_EXTRACT_NODE_MODULES_LAYER_RECIPE(FOR_PATH) {
+-    USE_RECIPE(devtools/frontend_build_platform/nots/builder/builder extract-node-modules $FOR_PATH node_modules.layer $_SQUASHFS_TOOLS_RECIPE_ARG)
+-    DEPENDS(devtools/frontend_build_platform/nots/builder)
++    _NOTS_TOOL_CONFIGURE()
++    USE_RECIPE($_NOTS_RECIPE extract-node-modules $FOR_PATH node_modules.layer $_SQUASHFS_TOOLS_RECIPE_ARG)
++    DEPENDS($_NOTS_RECIPE_DEPENDS)
+ }
+ 
+ macro _SETUP_EXTRACT_OUTPUT_TARS_RECIPE(FOR_PATH) {
+-    USE_RECIPE(devtools/frontend_build_platform/nots/builder/builder extract-output-tars $FOR_PATH)
+-    DEPENDS(devtools/frontend_build_platform/nots/builder)
++    _NOTS_TOOL_CONFIGURE()
++    USE_RECIPE($_NOTS_RECIPE extract-output-tars $FOR_PATH)
++    DEPENDS($_NOTS_RECIPE_DEPENDS)
+ }
+ 
+ macro _SETUP_INSTALL_NODE_MODULES_RECIPE(FOR_PATH) {
+     DATA(arcadia/$T0_SETTINGS_PATH)
+-    USE_RECIPE(devtools/frontend_build_platform/nots/builder/builder install-node-modules $NOTS_TOOL_BASE_ARGS --nm-bundle no --for-path $FOR_PATH)
+-    DEPENDS(devtools/frontend_build_platform/nots/builder)
++    DATA(arcadia/devtools/frontend_build_platform/nots/tier0-settings/src/settings.schema.json)
++    _NOTS_TOOL_CONFIGURE()
++    USE_RECIPE($_NOTS_RECIPE install-node-modules $NOTS_TOOL_BASE_ARGS --nm-bundle no --for-path $FOR_PATH)
++    DEPENDS($_NOTS_RECIPE_DEPENDS)
+ }
+ 
+ _TS_TEST_DEPENDS_ON_BUILD=
+```
+
+**File**: `build/conf/ts/ts_library.conf` (modified, +2/-1)
+```diff
+@@ -88,14 +88,15 @@ module TS_LIBRARY_FOR: _BARE_UNIT {
+     SET(MODULE_TYPE LIBRARY)
+     SET(MODULE_TAG TS)
+     SET(MODULE_LANG TS)
+-    SET(PEERDIR_TAGS TS_PREPARE_DEPS)
++    SET(PEERDIR_TAGS TS_PREPARE_DEPS RESOURCE_LIB)
+     SET(REALPRJNAME output.tar)
+     SET(_TS_MOD_NAME TS_LIBRARY_FOR)
+     DISABLE(TS_CONFIG_DEDUCE_OUT)
+     ENABLE(_SUPPORTS_HERMETIC_NODE_MODULES)
+     _TS_LIBRARY_FOR_INIT($MODULE_ARGS_RAW)
+     SET(_NOTS_MODDIR_ARGS $_TS_LIBRARY_FOR_BASE_ARGS)
+     SET_APPEND(_MAKEFILE_INCLUDE_LIKE_DEPS ${ARCADIA_ROOT}/$ERM_PACKAGES_PATH ${ARCADIA_ROOT}/$T0_SETTINGS_PATH ${ARCADIA_ROOT}/$NODEJS_CATALOG_PATH)
++    _NOTS_TOOL_CONFIGURE()
+     _PEERDIR_TS_RESOURCE(nodejs $PM_TYPE)
+ }
+ 
+```
+
+**File**: `build/external_resources/nots/nots.sbr.json` (added, +7/-0)
+```diff
+@@ -0,0 +1,7 @@
++{
++  "by_platform": {
++    "any": {
++      "uri": "sbr:14327707707"
++    }
++  }
++}
+```
+
+**File**: `build/external_resources/rsync/resources.json` (added, +19/-0)
+```diff
+@@ -0,0 +1,19 @@
++{
++    "by_platform": {
++        "linux-x86_64": {
++            "uri": "sbr:149347273"
++        },
++        "linux-aarch64": {
++            "uri": "sbr:14098603722"
++        },
++        "darwin-x86_64": {
++            "uri": "sbr:149347258"
++        },
++        "darwin-arm64": {
++            "uri": "sbr:14098603754"
++        },
++        "win32-x86_64": {
++            "uri": "sbr:14098603610"
++        }
++    }
++}
+```
+
+**File**: `build/external_resources/rsync/ya.make` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++RESOURCES_LIBRARY()
++
++DECLARE_EXTERNAL_HOST_RESOURCES_BUNDLE_BY_JSON(NOTS_RSYNC resources.json)
++
++END()
+```
+
+---
+
+### Incident Patch 3: `2a4e1372` (2026-11-21)
+**Commit Message**: Revert zstd debug section compression for Linux release builds
+
+Reverts https://nda.ya.ru/t/z0_YjmzG7x57Kq (rXXXXXX) and restores the release exclusions for the compiler and linker flags.
+
+During stack trace symbolization, libbacktrace decompresses DWARF sections into anonymous memory and retains them for subsequent lookups. On the same userver benchmark ELF, zstd-compressed sections raised anonymous memory after the first lookup from 30.3 MiB to 114.1 MiB.
+
+Tests: CI tested
+commit_hash:b88dd831dddc1d9a84622eb7f19b350fbd490cac
+
+**File**: `build/ymake_conf.py` (modified, +4/-2)
+```diff
+@@ -1560,7 +1560,8 @@ def __init__(self, tc, build):
              '-g',
          ]
  
--        if not self.build.is_release and self.target.is_linux:
--            # TAXICOMMON-8548: deal with runtime env issues and enable in release builds too
-+        if self.target.is_linux:
+-        if self.target.is_linux:
++        if not self.build.is_release and self.target.is_linux:
++            # TAXICOMMON-8548: deal with runtime env issues and enable in release builds too
              self.debug_info_flags.append('-gz=zstd')
          if self.tc.is_clang and self.tc.version_at_least(14):
              # DTCC-1231: Clang 14 has switched to DWARFv5 by default
-@@ -1934,8 +1933,7 @@ def __init__(self, tc, build):
+@@ -1933,7 +1934,8 @@ def __init__(self, tc, build):
              self.ld_flags.append('--ld-path={}/esp-clang/bin/ld.lld'.format(self.tc.name_marker))
              if is_positive('NO_CXX_RTTI'):
                  self.ld_flags.append('-fno-rtti')
--        if not self.build.is_release and target.is_linux:
--            # TAXICOMMON-8548: deal with runtime env issues and enable in release builds too
-+        if target.is_linux:
+-        if target.is_linux:
++        if not self.build.is_release and target.is_linux:
++            # TAXICOMMON-8548: deal with runtime env issues and enable in release builds too
              self.ld_flags.extend(['-Wl,--compress-debug-sections=zstd'])
  
          if self.musl.value:
 ```
 
-**File**: `contrib/libs/flatbuffers/flatc/CMakeLists.linux-aarch64.txt` (modified, +1/-0)
+**File**: `contrib/libs/flatbuffers/flatc/CMakeLists.linux-aarch64.txt` (modified, +0/-1)
 ```diff
-@@ -38,6 +38,7 @@ target_allocator(flatc
+@@ -38,7 +38,6 @@ target_allocator(flatc
  )
  
  target_link_options(flatc PRIVATE
-+  -Wl,--compress-debug-sections=zstd
+-  -Wl,--compress-debug-sections=zstd
    -ldl
    -lrt
    -Wl,--no-as-needed
 ```
 
-**File**: `contrib/libs/flatbuffers/flatc/CMakeLists.linux-x86_64.txt` (modified, +1/-0)
+**File**: `contrib/libs/flatbuffers/flatc/CMakeLists.linux-x86_64.txt` (modified, +0/-1)
 ```diff
-@@ -39,6 +39,7 @@ target_allocator(flatc
+@@ -39,7 +39,6 @@ target_allocator(flatc
  )
  
  target_link_options(flatc PRIVATE
-+  -Wl,--compress-debug-sections=zstd
+-  -Wl,--compress-debug-sections=zstd
    -ldl
    -lrt
    -Wl,--no-as-needed
 ```
 
-**File**: `contrib/libs/llvm18/utils/TableGen/CMakeLists.linux-aarch64.txt` (modified, +1/-0)
+**File**: `contrib/libs/llvm18/utils/TableGen/CMakeLists.linux-aarch64.txt` (modified, +0/-1)
 ```diff
-@@ -44,6 +44,7 @@ target_allocator(llvm-tblgen
+@@ -44,7 +44,6 @@ target_allocator(llvm-tblgen
  )
  
  target_link_options(llvm-tblgen PRIVATE
-+  -Wl,--compress-debug-sections=zstd
+-  -Wl,--compress-debug-sections=zstd
    -ldl
    -lrt
    -Wl,--no-as-needed
 ```
 
-**File**: `contrib/libs/llvm18/utils/TableGen/CMakeLists.linux-x86_64.txt` (modified, +1/-0)
+**File**: `contrib/libs/llvm18/utils/TableGen/CMakeLists.linux-x86_64.txt` (modified, +0/-1)
 ```diff
-@@ -45,6 +45,7 @@ target_allocator(llvm-tblgen
+@@ -45,7 +45,6 @@ target_allocator(llvm-tblgen
  )
  
  target_link_options(llvm-tblgen PRIVATE
-+  -Wl,--compress-debug-sections=zstd
+-  -Wl,--compress-debug-sections=zstd
    -ldl
    -lrt
    -Wl,--no-as-needed
 ```
 
-**File**: `contrib/tools/protoc/bin/CMakeLists.linux-aarch64.txt` (modified, +1/-0)
+**File**: `contrib/tools/protoc/bin/CMakeLists.linux-aarch64.txt` (modified, +0/-1)
 ```diff
-@@ -34,6 +34,7 @@ target_allocator(protoc
+@@ -34,7 +34,6 @@ target_allocator(protoc
  )
  
  target_link_options(protoc PRIVATE
-+  -Wl,--compress-debug-sections=zstd
+-  -Wl,--compress-debug-sections=zstd
    -ldl
    -lrt
    -Wl,--no-as-needed
 ```
 
-**File**: `contrib/tools/protoc/bin/CMakeLists.linux-x86_64.txt` (modified, +1/-0)
+**File**: `contrib/tools/protoc/bin/CMakeLists.linux-x86_64.txt` (modified, +0/-1)
 ```diff
-@@ -36,6 +36,7 @@ target_allocator(protoc
+@@ -36,7 +36,6 @@ target_allocator(protoc
  )
  
  target_link_options(protoc PRIVATE
-+  -Wl,--compress-debug-sections=zstd
+-  -Wl,--compress-debug-sections=zstd
    -ldl
    -lrt
    -Wl,--no-as-needed
 ```
 
-**File**: `contrib/tools/protoc/plugins/cpp_styleguide/CMakeLists.linux-aarch64.txt` (modified, +1/-0)
+**File**: `contrib/tools/protoc/plugins/cpp_styleguide/CMakeLists.linux-aarch64.txt` (modified, +0/-1)
 ```diff
-@@ -34,6 +34,7 @@ target_allocator(cpp_styleguide
+@@ -34,7 +34,6 @@ target_allocator(cpp_styleguide
  )
  
  target_link_options(cpp_styleguide PRIVATE
-+  -Wl,--compress-debug-sections=zstd
+-  -Wl,--compress-debug-sections=zstd
    -ldl
    -lrt
    -Wl,--no-as-needed
-```
-
----
-
-### Incident Patch 3: `d630b639` (2026-11-20)
-**Commit Message**: YT-30480: Use memory tracker for NBD block caches.
-commit_hash:8119e62de2f3387bf6e497761769672cb12b03d3
-
-**File**: `yt/yt/server/node/exec_node/bootstrap.cpp` (modified, +4/-2)
-```diff
-@@ -45,6 +45,8 @@
- 
- #include <yt/yt/ytlib/node_tracker_client/node_directory_synchronizer.h>
- 
-+#include <yt/yt/ytlib/misc/memory_usage_tracker.h>
-+
- #include <yt/yt/ytlib/scheduler/cluster_name.h>
- 
- #include <yt/yt/client/signature/generator.h>
-@@ -247,7 +249,7 @@ class TBootstrap
-             auto layerBlockCache = CreateClientBlockCache(
-                 blockCacheConfig,
-                 EBlockType::CompressedData,
--                GetNullMemoryUsageTracker(),
-+                GetNodeMemoryUsageTracker()->WithCategory(EMemoryCategory::NbdLayerCache),
-                 ExecNodeProfiler().WithPrefix("/layer_block_cache"));
- 
-             LayerReaderHost_ = New<TChunkReaderHost>(
-@@ -263,7 +265,7 @@ class TBootstrap
-             auto fileBlockCache = CreateClientBlockCache(
-                 std::move(blockCacheConfig),
-                 EBlockType::CompressedData,
--                GetNullMemoryUsageTracker());
-+                GetNodeMemoryUsageTracker()->WithCategory(EMemoryCategory::NbdFileCache));
- 
-             FileReaderHost_ = New<TChunkReaderHost>(
-                 client,
-```
-
-**File**: `yt/yt/ytlib/misc/public.h` (modified, +2/-0)
-```diff
-@@ -55,6 +55,8 @@ DEFINE_ENUM(EMemoryCategory,
-     ((TabletFootprint)            (38))
-     ((TabletRowMerger)            (39))
-     ((ReadDynamicStore)           (40))
-+    ((NbdLayerCache)              (41))
-+    ((NbdFileCache)               (42))
- );
- 
- DEFINE_ENUM_UNKNOWN_VALUE(EMemoryCategory, Unrecognized);
 ```
 
 #### Recent Merged Pull Requests:
@@ -1478,33 +1656,41 @@ commit_hash:8119e62de2f3387bf6e497761769672cb12b03d3
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Fixes from babenko's review of merged shuffle, chunk format, chunk session pool 
+## X. YT-28925: Add reason tags to global update tablet stores throttler
 
 **RULE**:
-When implementing operations in `yt/yt/client/api/shuffle_client.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `yt/yt/server/node/tablet_node/global_stores_update_throttler.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `07c18a10`: Fixes from babenko's review of merged shuffle, chunk format, chunk session pool and thread PRs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0a2b3145`: YT-28925: Add reason tags to global update tablet stores throttler. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yt/yt/client/api/shuffle_client.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yt/yt/server/node/tablet_node/global_stores_update_throttler.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-        "Shuffle handle has codec %Qlv instead of the requested %Qlv",
+            GetOrCreateThrottledCounter(cellTag, updateReason).Increment();
+TCounter& TGlobalStoresUpdateThrottler::GetOrCreateThrottledCounter(
+    TCellTag cellTag,
+    ETabletStoresUpdateReason updateReason)
+    auto key = std::pair(cellTag, updateReason);
+    if (auto it = ThrottledRequestCounters_.find(key); it != ThrottledRequestCounters_.end()) {
+        key,
+            .WithTag("reason", FormatEnum(updateReason))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-        "Shuffle handle has codec %Qlv instead of the requested %Qlv; the coordinator or proxy is "
-        "too old to support the codec option; the shuffle has already been started and will be "
-        "released when the parent transaction ends",
+            GetOrCreateThrottledCounter(cellTag).Increment();
+TCounter& TGlobalStoresUpdateThrottler::GetOrCreateThrottledCounter(TCellTag cellTag)
+    if (auto it = ThrottledRequestCounters_.find(cellTag); it != ThrottledRequestCounters_.end()) {
+        cellTag,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `07c18a10` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0a2b3145` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

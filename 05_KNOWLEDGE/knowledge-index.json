@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T17:22:16.470Z",
+  "last_updated": "2026-11-22T17:35:40.554Z",
   "total_verified_learnings": 9071,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23674,
+  "total_items": 23682,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -111993,10 +111993,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-product-intelligence-cilium-cilium-core-invariants.md",
       "title": "Product Intelligence: cilium/cilium Core Invariants",
       "repository": "cilium/cilium",
-      "source_version": "73945d29",
-      "content_hash": "a56d19c287c1fb3da0a703ea2132947208330d76264803c36e65ac1e109502f7",
+      "source_version": "b613df15",
+      "content_hash": "9ad6673057122a42454b7e6f2c472ca69770f18d421d904d42278288cd3b570e",
       "domain_letter": "B",
-      "persisted_at": "2026-11-22T04:05:05.524Z"
+      "persisted_at": "2026-11-22T17:35:29.081Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium",
@@ -112005,10 +112005,10 @@
       "relative_path": "08_VERIFICATION/cilium-cilium-verification-protocol-empirical-defect-shield-for-cilium-cilium.md",
       "title": "Verification Protocol: Empirical Defect Shield for cilium/cilium",
       "repository": "cilium/cilium",
-      "source_version": "73945d29",
-      "content_hash": "41b4c9ea6af1d9a25a7377740e2c4eb496de992ac9f558bfd9091e5ab26e694d",
+      "source_version": "b613df15",
+      "content_hash": "e5ac6e21c0065cd498350751cc2de68b5d78685e82923a4d8f4bedadee3f5566",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T04:05:05.695Z"
+      "persisted_at": "2026-11-22T17:35:29.296Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-",
@@ -112030,9 +112030,9 @@
       "title": "Product Intelligence: cilium-cilium-learnings Core Invariants",
       "repository": "cilium-cilium-learnings",
       "source_version": "HEAD",
-      "content_hash": "45db72b20ca1db07b9badbee2946ea800a0eb230fd1c648ae95ca2147c1c16a1",
+      "content_hash": "875aa7b4c8cedd0804980caef7a2f4f568a08e1efb619e90da5ed76b5ba5f0e9",
       "domain_letter": "B",
-      "persisted_at": "2026-11-22T04:05:14.015Z"
+      "persisted_at": "2026-11-22T17:35:40.355Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium-learnings",
@@ -112042,9 +112042,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for cilium-cilium-learnings",
       "repository": "cilium-cilium-learnings",
       "source_version": "HEAD",
-      "content_hash": "ad2173aea2ea29abe974814724552ac18d1653aeebc7abb8de9e766ed551bf29",
+      "content_hash": "e0990f4f7ba8dfa630ccf640c22d9ed4f7cefd23a0ea71b89b638bea96bb62d2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T04:05:14.184Z"
+      "persisted_at": "2026-11-22T17:35:40.554Z"
     },
     "candidate_directive-engine-restore-text-fallback-for-unknown-file-extensions-394": {
       "item_id": "candidate_directive-engine-restore-text-fallback-for-unknown-file-extensions-394",
@@ -214237,8 +214237,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "73945d29",
-      "content_hash": "8791ca9ebd41607d61fdef41322353bd9520919dbba47421856dc2c8ee47bd1b",
+      "source_version": "b613df15",
+      "content_hash": "69da9d65e79afc90757b43ffa8ea60d10c32e9cd9ee65ce8d50df032ebce12d5",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -214343,7 +214343,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T04:05:04.934Z",
+      "verified_at": "2026-11-22T17:35:28.436Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -236929,8 +236929,8 @@
       "slug": "ytsaurus-ytsaurus",
       "platform": "github",
       "source_url": "https://github.com/ytsaurus/ytsaurus",
-      "source_version": "847a2b36",
-      "content_hash": "f1720c8b05d50df51968f166eaf4f55110432579a5c2cc5df0811d4efcfbaadb",
+      "source_version": "0a2b3145",
+      "content_hash": "bd6fdaedc0c3c11fe18250d9fc8cefb0588b369becd5a11d33c855b77bfb80f1",
       "dossier_path": "07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
       "promoted_rules": [
@@ -236963,6 +236963,11 @@
           "number": 9799,
           "title": "Increase timeout at test_replicated_table_backup",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9964,
+          "title": "Add reason tags to global update tablet stores throttler",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -236970,7 +236975,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T15:31:35.507Z",
+      "verified_at": "2026-11-22T17:35:34.033Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -237024,10 +237029,10 @@
       "relative_path": "08_VERIFICATION/ytsaurus-ytsaurus-verification-protocol-empirical-defect-shield-for-ytsaurus-yts.md",
       "title": "Verification Protocol: Empirical Defect Shield for ytsaurus/ytsaurus",
       "repository": "ytsaurus/ytsaurus",
-      "source_version": "847a2b36",
-      "content_hash": "cd1e9d505aa5ae0e61b37726d24cec4414c8cc2a963c0c1c72750e82fbc797ff",
+      "source_version": "0a2b3145",
+      "content_hash": "7b8c0feb9da2ba17b7ae1e112a427f9f9986084924c60457be217610b6f9d25a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T15:31:36.168Z"
+      "persisted_at": "2026-11-22T17:35:34.913Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-autotrust-gev-26b-decide-nvfp4-learnings-core": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-autotrust-gev-26b-decide-nvfp4-learnings-core",
@@ -246641,8 +246646,8 @@
       "slug": "thaw-app-thaw",
       "platform": "github",
       "source_url": "https://github.com/thaw-app/Thaw",
-      "source_version": "8b34c731",
-      "content_hash": "ee0645a674c6575caf6bdc1bb40cb6fcc802da98b7f23c2b1c5cfd4d1fe69efa",
+      "source_version": "50b2558d",
+      "content_hash": "e7a5095d378208d53740cc41a335c6585950aff994393a41fffdd7376eac9a53",
       "dossier_path": "07_PROJECT_LEARNING/thaw-app-thaw-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/thaw-app-thaw-learnings.md",
       "promoted_rules": [
@@ -246655,6 +246660,11 @@
           "number": 9401,
           "title": "update pictures of hidden items when their icons change",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9963,
+          "title": "stop the closed section dividers from leaving a gap in the menu bar",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -246662,7 +246672,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T16:07:19.387Z",
+      "verified_at": "2026-11-22T17:35:23.113Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -246716,10 +246726,10 @@
       "relative_path": "08_VERIFICATION/thaw-app-thaw-verification-protocol-empirical-defect-shield-for-thaw-app-thaw.md",
       "title": "Verification Protocol: Empirical Defect Shield for thaw-app/Thaw",
       "repository": "thaw-app/Thaw",
-      "source_version": "8b34c731",
-      "content_hash": "a62f7311e3b4a33484acff09a48d9e63c70d322878be9655550f2db6f6f92a23",
+      "source_version": "50b2558d",
+      "content_hash": "2474b49db6730bc0eba870a40df88211f5cd1ffca68d7bdb6b31f1d09a41c9c2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T16:07:20.123Z"
+      "persisted_at": "2026-11-22T17:35:24.038Z"
     },
     "learn-github-open-policy-agent-gatekeeper": {
       "learning_id": "learn-github-open-policy-agent-gatekeeper",
@@ -246917,9 +246927,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for thaw-app-thaw-learnings",
       "repository": "thaw-app-thaw-learnings",
       "source_version": "HEAD",
-      "content_hash": "586c8430446996cd97d99ebf9ef77035df78d024833da3121b3b84530d3e1c78",
+      "content_hash": "fe1708f1e9fb9e2ba0a81f31ae02e437af6af15aac55649b17648881bcb27073",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T16:08:34.148Z"
+      "persisted_at": "2026-11-22T17:35:39.113Z"
     },
     "domain_intelligence-quality-verification-intelligence-open-policy-agent-gatekeeper-learnings-core-in": {
       "item_id": "domain_intelligence-quality-verification-intelligence-open-policy-agent-gatekeeper-learnings-core-in",
@@ -255493,10 +255503,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ytsaurus-ytsaurus-technical-construction-intelligence-ytsaurus-ytsaurus-core-inv.md",
       "title": "Technical Construction Intelligence: ytsaurus/ytsaurus Core Invariants",
       "repository": "ytsaurus/ytsaurus",
-      "source_version": "1b712cf0",
-      "content_hash": "c62dae0dab95a4c4cb9bd495b033ef47cc1545b63e7d02faec0a5ed720a94bf8",
+      "source_version": "0a2b3145",
+      "content_hash": "73c67b96bd11480ef9cd4bc29d3f9fd61d386a061a8692e08279e589377aaccb",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T08:38:43.810Z"
+      "persisted_at": "2026-11-22T17:35:34.727Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-baidu-ernie-5-5-flash-base-learnings-core-inv": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-baidu-ernie-5-5-flash-base-learnings-core-inv",
@@ -259218,13 +259228,13 @@
       "item_id": "candidate_directive-update-cilium-runtime-builder",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-XSB5-update-cilium-runtime-builder.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-AZK1-update-cilium-runtime-builder.md",
       "title": "update cilium-{runtime,builder}",
       "repository": "cilium/cilium",
-      "source_version": "f7254f67",
-      "content_hash": "da7b3f7599c21d27650d7285a3fe6495b2fe142806110a04ecbaa64acf2c8785",
+      "source_version": "b613df15",
+      "content_hash": "4cbc45c26fe1b46205e8114812155b8174d639bd926cd85fbd88fb8a133a1200",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T15:51:12.786Z"
+      "persisted_at": "2026-11-22T17:35:28.898Z"
     },
     "learn-github-weaviate-weaviate": {
       "learning_id": "learn-github-weaviate-weaviate",
@@ -281864,7 +281874,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-dev",
       "source_version": "hf-black-forest-labs-flux.1-dev",
-      "content_hash": "b73a827b7343ea08d77b40bdbd703275ec8efd217da7ca94c6388e5e752a9251",
+      "content_hash": "63c4c2bca01029b0db41fc70066fe24367a8eb0e101c6befd72efbed8d2df0ef",
       "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-dev-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-dev-learnings.md",
       "promoted_rules": [],
@@ -281873,7 +281883,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T10:55:08.002Z",
+      "verified_at": "2026-11-22T17:35:14.594Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -281890,9 +281900,9 @@
       "title": "Research & Knowledge Intelligence: black-forest-labs/FLUX.1-dev Core Invariants",
       "repository": "black-forest-labs/FLUX.1-dev",
       "source_version": "hf-black-forest-labs-flux.1-dev",
-      "content_hash": "719e3e9c5598c9f3f741bb4f91d153a174a964519b83cfa5006e891b5410d6f5",
+      "content_hash": "72b2e7d3861fa3c3413bd492de231d950bdb7b2bd6947d7145c0189543fc0da1",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T10:55:08.353Z"
+      "persisted_at": "2026-11-22T17:35:15.073Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-1-dev-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-1-dev-learnings-core-i",
@@ -281902,9 +281912,9 @@
       "title": "Research & Knowledge Intelligence: hf-black-forest-labs-flux.1-dev-learnings Core Invariants",
       "repository": "hf-black-forest-labs-flux.1-dev-learnings",
       "source_version": "HEAD",
-      "content_hash": "87c4ca23eb130dcb67109d7b595d34210a8b217502eedece79d9549c963ee173",
+      "content_hash": "b979c8caecfbd517d1b71b3231a7f65ebafea1ac405494a59f02c005890a32bf",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T10:55:20.682Z"
+      "persisted_at": "2026-11-22T17:35:38.023Z"
     },
     "learn-huggingface-deepseek-ai-deepseek-r1": {
       "learning_id": "learn-huggingface-deepseek-ai-deepseek-r1",
@@ -322165,6 +322175,106 @@
       "content_hash": "33d5538c9d8358c8232758d13948ec3e5858203741d3c8b9c11551c0a9243f6c",
       "domain_letter": "B",
       "persisted_at": "2026-11-22T17:22:16.293Z"
+    },
+    "rule-9963": {
+      "learning_id": "rule-9963",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9963,
+      "title": "stop the closed section dividers from leaving a gap in the menu bar",
+      "source_url": "https://github.com/thaw-app/Thaw",
+      "source_version": "50b2558d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T17:35:23.113Z"
+    },
+    "candidate_directive-stop-the-closed-section-dividers-from-leaving-a-gap-in-the-menu-bar": {
+      "item_id": "candidate_directive-stop-the-closed-section-dividers-from-leaving-a-gap-in-the-menu-bar",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-AVI4-stop-the-closed-section-dividers-from-leaving-a-gap-in-the-menu-bar.md",
+      "title": "stop the closed section dividers from leaving a gap in the menu bar",
+      "repository": "thaw-app/Thaw",
+      "source_version": "50b2558d",
+      "content_hash": "cf241a741e571e60451fad3e862a67bb82c0cf8cff7c0e3da4c35f9bf05afbe8",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-22T17:35:23.649Z"
+    },
+    "domain_intelligence-design-intelligence-thaw-app-thaw-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-thaw-app-thaw-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-thaw-app-thaw-design-intelligence-thaw-app-thaw-core-invariants.md",
+      "title": "Design Intelligence: thaw-app/Thaw Core Invariants",
+      "repository": "thaw-app/Thaw",
+      "source_version": "50b2558d",
+      "content_hash": "b36d14438ad4715538900f0534703fce4a35642b95cf82f75714d194f567c025",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-22T17:35:23.837Z"
+    },
+    "rule-9964": {
+      "learning_id": "rule-9964",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9964,
+      "title": "Add reason tags to global update tablet stores throttler",
+      "source_url": "https://github.com/ytsaurus/ytsaurus",
+      "source_version": "0a2b3145",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T17:35:34.033Z"
+    },
+    "candidate_directive-add-reason-tags-to-global-update-tablet-stores-throttler": {
+      "item_id": "candidate_directive-add-reason-tags-to-global-update-tablet-stores-throttler",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-B3WO-add-reason-tags-to-global-update-tablet-stores-throttler.md",
+      "title": "Add reason tags to global update tablet stores throttler",
+      "repository": "ytsaurus/ytsaurus",
+      "source_version": "0a2b3145",
+      "content_hash": "8f8418358f4b9fed3eedadab0a93ddd9098e4739c90b87a7bfc97f81fc8e77bd",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T17:35:34.537Z"
+    },
+    "candidate_directive-menubar-stop-the-closed-section-dividers-from-leaving-a-gap-in-the-menu-bar": {
+      "item_id": "candidate_directive-menubar-stop-the-closed-section-dividers-from-leaving-a-gap-in-the-menu-bar",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-B758-menubar-stop-the-closed-section-dividers-from-leaving-a-gap-in-the-menu-bar.md",
+      "title": "menubar): stop the closed section dividers from leaving a gap in the menu bar",
+      "repository": "thaw-app-thaw-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4d74044be644ee0a2abe43aed83884f0d52c60c52f268ff3fb364c53969eb719",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-22T17:35:38.737Z"
+    },
+    "domain_intelligence-design-intelligence-thaw-app-thaw-learnings-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-thaw-app-thaw-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-thaw-app-thaw-learnings-design-intelligence-thaw-app-thaw-learnings-core-invaria.md",
+      "title": "Design Intelligence: thaw-app-thaw-learnings Core Invariants",
+      "repository": "thaw-app-thaw-learnings",
+      "source_version": "HEAD",
+      "content_hash": "087d186fb1904e1317b3caa68647429edde3afbd982e49e5dedf55b195b2cbd4",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-22T17:35:38.919Z"
+    },
+    "candidate_directive-images-update-cilium-runtime-builder": {
+      "item_id": "candidate_directive-images-update-cilium-runtime-builder",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-B892-images-update-cilium-runtime-builder.md",
+      "title": "images: update cilium-{runtime,builder}",
+      "repository": "cilium-cilium-learnings",
+      "source_version": "HEAD",
+      "content_hash": "023140bbb323ba6c8d17182976c84b999bc7100eed3c65f80f8ed267bc3b909a",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T17:35:40.167Z"
     }
   },
   "ai-builder-brain": {

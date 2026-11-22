@@ -215,8 +215,8 @@
     "sourceUrl": "https://huggingface.co/black-forest-labs/FLUX.1-dev",
     "sourceVersion": "hf-black-forest-labs-flux.1-dev",
     "license": "Open-Source",
-    "contentHash": "b73a827b7343ea08d77b40bdbd703275ec8efd217da7ca94c6388e5e752a9251",
-    "lastHarvestedAt": "2026-11-18T10:55:08.194Z",
+    "contentHash": "63c4c2bca01029b0db41fc70066fe24367a8eb0e101c6befd72efbed8d2df0ef",
+    "lastHarvestedAt": "2026-11-22T17:35:14.833Z",
     "learningId": "learn-huggingface-black-forest-labs-flux-1-dev"
   },
   "hf-francisring-prism": {
@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "73945d29",
+    "sourceVersion": "b613df15",
     "license": "Apache-2.0",
-    "contentHash": "8791ca9ebd41607d61fdef41322353bd9520919dbba47421856dc2c8ee47bd1b",
-    "lastHarvestedAt": "2026-11-22T04:05:05.144Z",
+    "contentHash": "69da9d65e79afc90757b43ffa8ea60d10c32e9cd9ee65ce8d50df032ebce12d5",
+    "lastHarvestedAt": "2026-11-22T17:35:28.656Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -5623,10 +5623,10 @@
     "repository": "ytsaurus/ytsaurus",
     "platform": "github",
     "sourceUrl": "https://github.com/ytsaurus/ytsaurus",
-    "sourceVersion": "847a2b36",
+    "sourceVersion": "0a2b3145",
     "license": "Apache-2.0",
-    "contentHash": "f1720c8b05d50df51968f166eaf4f55110432579a5c2cc5df0811d4efcfbaadb",
-    "lastHarvestedAt": "2026-11-21T15:31:35.696Z",
+    "contentHash": "bd6fdaedc0c3c11fe18250d9fc8cefb0588b369becd5a11d33c855b77bfb80f1",
+    "lastHarvestedAt": "2026-11-22T17:35:34.283Z",
     "learningId": "learn-github-ytsaurus-ytsaurus"
   },
   "franken-ui-ui": {
@@ -7833,10 +7833,10 @@
     "repository": "thaw-app/Thaw",
     "platform": "github",
     "sourceUrl": "https://github.com/thaw-app/Thaw",
-    "sourceVersion": "8b34c731",
+    "sourceVersion": "50b2558d",
     "license": "GPL-3.0",
-    "contentHash": "ee0645a674c6575caf6bdc1bb40cb6fcc802da98b7f23c2b1c5cfd4d1fe69efa",
-    "lastHarvestedAt": "2026-11-19T16:07:19.593Z",
+    "contentHash": "e7a5095d378208d53740cc41a335c6585950aff994393a41fffdd7376eac9a53",
+    "lastHarvestedAt": "2026-11-22T17:35:23.373Z",
     "learningId": "learn-github-thaw-app-thaw"
   },
   "rtk-ai-rtk": {

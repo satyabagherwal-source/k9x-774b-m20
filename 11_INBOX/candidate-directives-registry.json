@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T17:22:16.120Z",
+  "last_updated": "2026-11-22T17:35:40.167Z",
   "directives": [
     {
       "id": "CD-001",
@@ -19268,14 +19268,14 @@
       "domain_letter": "H"
     },
     {
-      "id": "CD-XSB5",
+      "id": "CD-AZK1",
       "directive_title": "update cilium-{runtime,builder}",
       "source_repo": "cilium/cilium",
-      "source_commit": "f7254f67",
-      "staged_file": "11_INBOX/candidate-directives/CD-XSB5-update-cilium-runtime-builder.md",
+      "source_commit": "b613df15",
+      "staged_file": "11_INBOX/candidate-directives/CD-AZK1-update-cilium-runtime-builder.md",
       "status": "STAGED_FOR_REVIEW",
       "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
-      "date_staged": "2026-11-16",
+      "date_staged": "2026-11-22",
       "domain_letter": "H"
     },
     {
@@ -46803,6 +46803,50 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-22",
       "domain_letter": "B"
+    },
+    {
+      "id": "CD-AVI4",
+      "directive_title": "stop the closed section dividers from leaving a gap in the menu bar",
+      "source_repo": "thaw-app/Thaw",
+      "source_commit": "50b2558d",
+      "staged_file": "11_INBOX/candidate-directives/CD-AVI4-stop-the-closed-section-dividers-from-leaving-a-gap-in-the-menu-bar.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-22",
+      "domain_letter": "F"
+    },
+    {
+      "id": "CD-B3WO",
+      "directive_title": "Add reason tags to global update tablet stores throttler",
+      "source_repo": "ytsaurus/ytsaurus",
+      "source_commit": "0a2b3145",
+      "staged_file": "11_INBOX/candidate-directives/CD-B3WO-add-reason-tags-to-global-update-tablet-stores-throttler.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-22",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-B758",
+      "directive_title": "menubar): stop the closed section dividers from leaving a gap in the menu bar",
+      "source_repo": "thaw-app-thaw-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-B758-menubar-stop-the-closed-section-dividers-from-leaving-a-gap-in-the-menu-bar.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-22",
+      "domain_letter": "F"
+    },
+    {
+      "id": "CD-B892",
+      "directive_title": "images: update cilium-{runtime,builder}",
+      "source_repo": "cilium-cilium-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-B892-images-update-cilium-runtime-builder.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-22",
+      "domain_letter": "H"
     }
   ]
 }

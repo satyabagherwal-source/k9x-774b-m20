@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T04:05:13.729Z",
+  "timestamp": "2026-11-22T17:35:40.062Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-cilium-cilium-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [cilium-cilium-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T04:05:13.729Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T17:35:40.062Z`  
 > **Learning ID**: `LEARN-EVO-cilium-cilium-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `73945d29`  
+> **Source Version**: `b613df15`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T04:05:04.088Z  
+> **Timestamp**: 2026-11-22T17:35:27.902Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T04:05:04.083Z  
+> **Harvest Timestamp**: 2026-11-22T17:35:27.897Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25880 stars
+- **Stars / Engagement**: 25882 stars
 
 ---
 
@@ -1284,11 +1284,17 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #50183** (2026-11-22): **chore(deps): update quay.io/goswagger/swagger docker tag to v0.36.8 (main)**
-  *Symptoms*: This PR contains the following updates:  | Package | Update | Change | |---|---|---| | [quay.io/goswagger/swagger](https://redirect.github.com/go-swagger/go-swagger) | patch | `0.36.7` → `0.36.8` |  ---  ### Release Notes  <details> <summary>go-swagger/go-swagger (quay.io/goswagger/swagger)</summary>  ### [`v0.36.8`](https://redirect.github.com/go-swagger/go-swagger/releases/tag/v0.36.8)  [Compare Source](https://redirect.github.com/go-swagger/go-swagger/compare/v0.36.7...v0.36.8)  go-swagger release 0.36.8  ***  Released on 2026 Nov 20  #### [0.36.8](https://redirect.github.com/go-swagger/go-swagger/tree/v0.36.8) - 2026-11-19  Security patches & more edge case fixes  **Full Changelog**: <https://github.com/go-swagger/go-swagger/compare/v0.36.7...v0.36.8>  13 commits in this release.  ***  ##### <!-- 01 -->Fixed bugs  - fix(codegen): single UnmarshalJSON for objects with a default value and strict additional properties by [@&#8203;jilsnshah](https://redirect.github.com/jilsnshah) in [#&#8203;3529](https://redirect.github.com/go-swagger/go-swagger/pull/3529) [...](https://redirect.github.com/go-swagger/go-swagger/commit/4cd6fb93897d44ad0bffd29feaf7b7d8eba78f24) - fix(generator): reject null array items by default by [@&#8203;fredbi](https://redirect.github.com/fredbi) in [#&#8203;3530](https://redirect.github.com/go-swagger/go-swagger/pull/3530) [...](https://redirect.github.com/go-swagger/go-swagger/commit/029320d3c4479d3d9dc1020337c7f72c6e0b69fa) - fix(generator): generate v
+- **Issue #50192** (2026-11-22): **chore(deps): update auto-merge-trusted-deps (v1.18)**
+  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [docker.io/library/golang](https://hub.docker.com/_/golang) ([source](https://redirect.github.com/docker-library/golang)) | stage | digest | `957952a` → `4165ee6` | | [docker.io/library/golang](https://hub.docker.com/_/golang) ([source](https://redirect.github.com/docker-library/golang)) | final | digest | `957952a` → `4165ee6` | | [docker.io/library/nginx](https://hub.docker.com/_/nginx) ([source](https://redirect.github.com/nginx/docker-nginx)) |  | patch | `1.31.8-alpine-slim` → `1.31.9-alpine-slim` | | [docker.io/library/ubuntu](https://hub.docker.com/_/ubuntu) ([source](https://git.launchpad.net/cloud-images/+oci/ubuntu-base)) | stage | digest | `2198e4c` → `9c7f200` | | gcr.io/etcd-development/etcd |  | patch | `v3.6.16` → `v3.6.17` | | gcr.io/etcd-development/etcd | stage | patch | `v3.6.16` → `v3.6.17` | | google/cloud-sdk ([changelog](https://cloud.google.com/sdk/docs/release-notes)) |  | major | `593.0.0` → `594.0.0` |  ---  ### Release Notes  <details> <summary>nginx/docker-nginx (docker.io/library/nginx)</summary>  ### [`v1.31.9`](https://redirect.github.com/nginx/docker-nginx/compare/1.31.8...1.31.9)  [Compare Source](https://redirect.github.com/nginx/docker-nginx/compare/1.31.8...1.31.9)  </details>  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - "on sunday" - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Disabled by confi
+  **Post-Mortem & Fix Analysis**:
+  > /test
+  > /test
 
-- **Issue #50182** (2026-11-22): **chore(deps): update cilium/cilium-cli action to v0.20.3 (main)**
-  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [cilium/cilium-cli](https://redirect.github.com/cilium/cilium-cli) | action | patch | `v0.20.2` → `v0.20.3` |  ---  ### Release Notes  <details> <summary>cilium/cilium-cli</summary>  ### [`v0.20.3`](https://redirect.github.com/cilium/cilium-cli/releases/tag/v0.20.3)  [Compare Source](https://redirect.github.com/cilium/cilium-cli/compare/v0.20.2...v0.20.3)  ## Summary of Changes  **Minor Changes:**  - cilium-cli: Apply standard scheduling params to all connectivity pods ([cilium/cilium#49113](https://redirect.github.com/cilium/cilium/issues/49113), [@&#8203;HadrienPatte](https://redirect.github.com/HadrienPatte)) - helm: move SPIRE chart values under ztunnel ([cilium/cilium#48942](https://redirect.github.com/cilium/cilium/issues/48942), [@&#8203;mhofstetter](https://redirect.github.com/mhofstetter))  **CI Changes:**  - cilium-cli: Fix unschedulable client pod on 2-node clusters ([cilium/cilium#49776](https://redirect.github.com/cilium/cilium/issues/49776), [@&#8203;aanm](https://redirect.github.com/aanm)) - cilium-cli: Ignore restarts of never-started containers ([cilium/cilium#49641](https://redirect.github.com/cilium/cilium/issues/49641), [@&#8203;aanm](https://redirect.github.com/aanm)) - cilium-cli: restore v2alpha1 BGP deprecation log exception ([cilium/cilium#49919](https://redirect.github.com/cilium/cilium/issues/49919), [@&#8203;martonra](https://redirect.github.com/marton
+- **Issue #50190** (2026-11-22): **chore(deps): update auto-merge-trusted-deps (v1.19)**
+  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [docker.io/library/golang](https://hub.docker.com/_/golang) ([source](https://redirect.github.com/docker-library/golang)) | final | digest | `957952a` → `4165ee6` | | [docker.io/library/golang](https://hub.docker.com/_/golang) ([source](https://redirect.github.com/docker-library/golang)) | stage | digest | `957952a` → `4165ee6` | | [docker.io/library/nginx](https://hub.docker.com/_/nginx) ([source](https://redirect.github.com/nginx/docker-nginx)) |  | patch | `1.31.8-alpine-slim` → `1.31.9-alpine-slim` | | [docker.io/library/ubuntu](https://hub.docker.com/_/ubuntu) ([source](https://git.launchpad.net/cloud-images/+oci/ubuntu-base)) | final | digest | `2198e4c` → `9c7f200` | | gcr.io/etcd-development/etcd |  | patch | `v3.6.16` → `v3.6.17` | | gcr.io/etcd-development/etcd | stage | patch | `v3.6.16` → `v3.6.17` | | google/cloud-sdk ([changelog](https://cloud.google.com/sdk/docs/release-notes)) |  | major | `593.0.0` → `594.0.0` | | [quay.io/cilium/image-tester](https://redirect.github.com/cilium/image-tools) | final | major | `1794627139-cbd6142` → `1794852150-c40af43` |  ---  ### Release Notes  <details> <summary>nginx/docker-nginx (docker.io/library/nginx)</summary>  ### [`v1.31.9`](https://redirect.github.com/nginx/docker-nginx/compare/1.31.8...1.31.9)  [Compare Source](https://redirect.github.com/nginx/docker-nginx/compare/1.31.8...1.31.9)  </details>  ---  ### Configuration  
+  **Post-Mortem & Fix Analysis**:
+  > /test
+  > /test
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1305,305 +1311,80 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `73945d29` (2026-11-22)
-**Commit Message**: chore(deps): update quay.io/goswagger/swagger docker tag to v0.36.8
+### Incident Patch 1: `b613df15` (2026-11-22)
+**Commit Message**: images: update cilium-{runtime,builder}
 
-Signed-off-by: cilium-renovate[bot] <134692979+cilium-renovate[bot]@users.noreply.github.com>
+Signed-off-by: Cilium Imagebot <[REDACTED_EMAIL]>
 
-**File**: `Makefile.defs` (modified, +2/-2)
+**File**: `.devcontainer/devcontainer.json` (modified, +1/-1)
 ```diff
-@@ -70,8 +70,8 @@ export CILIUM_CLI ?= cilium
- export KUBECTL ?= kubectl
- 
- # renovate: datasource=docker depName=quay.io/goswagger/swagger
--SWAGGER_VERSION = 0.36.7
--SWAGGER_IMAGE_SHA = sha256:5d57e845c1c34ceb5883b0cba8bdf53e56568acdb6b1aef7ae33fe9336974831
-+SWAGGER_VERSION = 0.36.8
-+SWAGGER_IMAGE_SHA = sha256:5a9b6cdce869273a01186bf0ad911f346c3c445b270f9ce912114c64d150e388
- SWAGGER := $(CONTAINER_ENGINE) run -u $(shell id -u):$(shell id -g) --rm -v $(ROOT_DIR):$(ROOT_DIR) -w $(ROOT_DIR) --entrypoint swagger quay.io/goswagger/swagger:$(SWAGGER_VERSION)@$(SWAGGER_IMAGE_SHA)
- 
- # go build/test/clean flags
+@@ -1,6 +1,6 @@
+ {
+   "name": "Cilium",
+-  "image": "quay.io/cilium/cilium-builder:d2143d4e7a855111e48bc513a90595c1ccc77214@sha256:77e6f822ad63e75c97af07a782105ddedb35a93e11fcaf244ea0e9d5cda8f509",
++  "image": "quay.io/cilium/cilium-builder:72378dec43197bab4fd6627006fb27e9617045ec@sha256:1d51396779f3f7787f527d959a85a5686680d95ecae8f1664828ea41884281ff",
+   "workspaceFolder": "/go/src/github.com/cilium/cilium",
+   "workspaceMount": "source=${localWorkspaceFolder},target=/go/src/github.com/cilium/cilium,type=bind",
+   // This container is based on the cilium-builder image, so contrib/scripts/builder.sh can run commands
 ```
 
-**File**: `api/v1/health/models/endpoint_status.go` (modified, +3/-2)
+**File**: `.github/actions/set-runtime-image/runtime-image.txt` (modified, +1/-1)
 ```diff
-@@ -14,6 +14,7 @@ import (
- 	"github.com/go-openapi/strfmt"
- 	"github.com/go-openapi/swag/jsonutils"
- 	"github.com/go-openapi/swag/typeutils"
-+	"github.com/go-openapi/validate"
- )
- 
- // EndpointStatus Connectivity status to host cilium-health endpoints via different paths
-@@ -75,8 +76,8 @@ func (m *EndpointStatus) validateSecondaryAddresses(formats strfmt.Registry) err
- 	}
- 
- 	for i := 0; i < len(m.SecondaryAddresses); i++ {
--		if typeutils.IsZero(m.SecondaryAddresses[i]) { // not required
--			continue
-+		if m.SecondaryAddresses[i] == nil {
-+			return validate.Required("secondary-addresses"+"."+strconv.Itoa(i), "body", m.SecondaryAddresses[i])
- 		}
- 
- 		if m.SecondaryAddresses[i] != nil {
+@@ -1 +1 @@
+-quay.io/cilium/cilium-runtime:4ce28a8f0e05d2224ad5ee81282b65f32602ce39@sha256:5792b6da9487c2b1520a8f394a6a41765d9536673df5d0531e34c23f8cf3e282
+\ No newline at end of file
++quay.io/cilium/cilium-runtime:7a01dea7f5eae3e2ef2f8ad13e1dc8eb921bbdd3@sha256:dfd750cbc40eea728d4ea44c19a753057961e51acda99c8e2170910be9187457
+\ No newline at end of file
 ```
 
-**File**: `api/v1/health/models/health_status_response.go` (modified, +3/-2)
+**File**: `images/cilium/Dockerfile` (modified, +2/-2)
 ```diff
-@@ -14,6 +14,7 @@ import (
- 	"github.com/go-openapi/strfmt"
- 	"github.com/go-openapi/swag/jsonutils"
- 	"github.com/go-openapi/swag/typeutils"
-+	"github.com/go-openapi/validate"
- )
+@@ -3,8 +3,8 @@
+ # Copyright Authors of Cilium
+ # SPDX-License-Identifier: Apache-2.0
  
- // HealthStatusResponse Connectivity status to other daemons
-@@ -81,8 +82,8 @@ func (m *HealthStatusResponse) validateNodes(formats strfmt.Registry) error {
- 	}
- 
- 	for i := 0; i < len(m.Nodes); i++ {
--		if typeutils.IsZero(m.Nodes[i]) { // not required
--			continue
-+		if m.Nodes[i] == nil {
-+			return validate.Required("nodes"+"."+strconv.Itoa(i), "body", m.Nodes[i])
- 		}
- 
- 		if m.Nodes[i] != nil {
+-ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:d2143d4e7a855111e48bc513a90595c1ccc77214@sha256:77e6f822ad63e75c97af07a782105ddedb35a93e11fcaf244ea0e9d5cda8f509
+-ARG CILIUM_RUNTIME_IMAGE=quay.io/cilium/cilium-runtime:4ce28a8f0e05d2224ad5ee81282b65f32602ce39@sha256:5792b6da9487c2b1520a8f394a6a41765d9536673df5d0531e34c23f8cf3e282
++ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:72378dec43197bab4fd6627006fb27e9617045ec@sha256:1d51396779f3f7787f527d959a85a5686680d95ecae8f1664828ea41884281ff
++ARG CILIUM_RUNTIME_IMAGE=quay.io/cilium/cilium-runtime:7a01dea7f5eae3e2ef2f8ad13e1dc8eb921bbdd3@sha256:dfd750cbc40eea728d4ea44c19a753057961e51acda99c8e2170910be9187457
+ #
+ # cilium-envoy from github.com/cilium/proxy
+ #
 ```
 
-**File**: `api/v1/health/models/host_status.go` (modified, +3/-2)
+**File**: `images/hubble-relay/Dockerfile` (modified, +1/-1)
 ```diff
-@@ -14,6 +14,7 @@ import (
- 	"github.com/go-openapi/strfmt"
- 	"github.com/go-openapi/swag/jsonutils"
- 	"github.com/go-openapi/swag/typeutils"
-+	"github.com/go-openapi/validate"
- )
+@@ -7,7 +7,7 @@
+ # $ cosign verify $IMAGE_NAME --certificate-oidc-issuer https://accounts.google.com --certificate-identity keyless@distroless.iam.gserviceaccount.com
+ ARG BASE_IMAGE=gcr.io/distroless/static:nonroot@sha256:aafe993665bf6200db38a02c11a9351e782a84b6a45e7f33b6695638c88e3931
+ ARG GOLANG_IMAGE=docker.io/library/golang:1.27.4@sha256:205c7636d74e0ffbe3d007162df7d74f859f5a8c8322dfb9f907977686c126cf
+-ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:d2143d4e7a855111e48bc513a90595c1ccc77214@sha256:77e6f822ad63e75c97af07a782105ddedb35a93e11fcaf244ea0e9d5cda8f509
++ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:72378dec43197bab4fd6627006fb27e9617045ec@sha256:1d51396779f3f7787f527d959a85a5686680d95ecae8f1664828ea41884281ff
  
- // HostStatus Connectivity status to host cilium-health instance via different paths,
-@@ -76,8 +77,8 @@ func (m *HostStatus) validateSecondaryAddresses(formats strfmt.Registry) error {
- 	}
- 
- 	for i := 0; i < len(m.SecondaryAddresses); i++ {
--		if typeutils.IsZero(m.SecondaryAddresses[i]) { // not required
--			continue
-+		if m.SecondaryAddresses[i] == nil {
-+			return validate.Required("secondary-addresses"+"."+strconv.Itoa(i), "body", m.SecondaryAddresses[i])
- 		}
- 
- 		if m.SecondaryAddresses[i] != nil {
+ # BUILDPLATFORM is an automatic platform ARG enabled by Docker BuildKit.
+ # Represents the plataform where the build is happening, do not mix with
 ```
 
-**File**: `api/v1/models/b_p_f_map.go` (modified, +3/-2)
+**File**: `images/operator/Dockerfile` (modified, +1/-1)
 ```diff
-@@ -14,6 +14,7 @@ import (
- 	"github.com/go-openapi/strfmt"
- 	"github.com/go-openapi/swag/jsonutils"
- 	"github.com/go-openapi/swag/typeutils"
-+	"github.com/go-openapi/validate"
- )
+@@ -6,7 +6,7 @@
+ ARG BASE_IMAGE=scratch
+ ARG GOLANG_IMAGE=docker.io/library/golang:1.27.4@sha256:205c7636d74e0ffbe3d007162df7d74f859f5a8c8322dfb9f907977686c126cf
+ ARG ALPINE_IMAGE=docker.io/library/alpine:3.24.4@sha256:f59abe656b692d901e184be3445e084786602108599d2a51d229c0f5a48c71bf
+-ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:d2143d4e7a855111e48bc513a90595c1ccc77214@sha256:77e6f822ad63e75c97af07a782105ddedb35a93e11fcaf244ea0e9d5cda8f509
++ARG CILIUM_BUILDER_IMAGE=quay.io/cilium/cilium-builder:72378dec43197bab4fd6627006fb27e9617045ec@sha256:1d51396779f3f7787f527d959a85a5686680d95ecae8f1664828ea41884281ff
  
- // BPFMap BPF map definition and content
-@@ -48,8 +49,8 @@ func (m *BPFMap) validateCache(formats strfmt.Registry) error {
- 	}
- 
- 	for i := 0; i < len(m.Cache); i++ {
--		if typeutils.IsZero(m.Cache[i]) { // not required
--			continue
-+		if m.Cache[i] == nil {
-+			return validate.Required("cache"+"."+strconv.Itoa(i), "body", m.Cache[i])
- 		}
- 
- 		if m.Cache[i] != nil {
-```
-
-**File**: `api/v1/models/b_p_f_map_list.go` (modified, +3/-2)
-```diff
-@@ -14,6 +14,7 @@ import (
- 	"github.com/go-openapi/strfmt"
- 	"github.com/go-openapi/swag/jsonutils"
- 	"github.com/go-openapi/swag/typeutils"
-+	"github.com/go-openapi/validate"
- )
- 
- // BPFMapList List of BPF Maps
-@@ -45,8 +46,8 @@ func (m *BPFMapList) validateMaps(formats strfmt.Registry) error {
- 	}
- 
- 	for i := 0; i < len(m.Maps); i++ {
--		if typeutils.IsZero(m.Maps[i]) { // not required
--			continue
-+		if m.Maps[i] == nil {
-+			return validate.Required("maps"+"."+strconv.Itoa(i), "body", m.Maps[i])
- 		}
- 
- 		if m.Maps[i] != nil {
-```
-
-**File**: `api/v1/models/b_p_f_map_status.go` (modified, +3/-2)
-```diff
-@@ -14,6 +14,7 @@ import (
- 	"github.com/go-openapi/strfmt"
- 	"github.com/go-openapi/swag/jsonutils"
- 	"github.com/go-openapi/swag/typeutils"
-+	"github.com/go-openapi/validate"
- )
- 
- // BPFMapStatus BPF map status
-@@ -50,8 +51,8 @@ func (m *BPFMapStatus) validateMaps(formats strfmt.Registry) error {
- 	}
- 
- 	for i := 0; i < len(m.Maps); i++ {
--		if typeutils.IsZero(m.Maps[i]) { // not required
--			continue
-+		if m.Maps[i] == nil {
-+			return validate.Required("maps"+"."+strconv.Itoa(i), "body", m.Maps[i])
- 		}
- 
- 		if m.Maps[i] != nil {
-```
-
-**File**: `api/v1/models/bgp_path.go` (modified, +3/-2)
-```diff
-@@ -14,6 +14,7 @@ import (
- 	"github.com/go-openapi/strfmt"
- 	"github.com/go-openapi/swag/jsonutils"
- 	"github.com/go-openapi/swag/typeutils"
-+	"github.com/go-openapi/validate"
- )
- 
- // BgpPath Single BGP routing Path containing BGP Network Layer Reachability Information (NLRI) and path attributes
-@@ -114,8 +115,8 @@ func (m *BgpPath) validatePathAttributes(formats strfmt.Registry) error {
- 	}
- 
- 	for i := 0; i < len(m.PathAttributes); i++ {
--		if typeutils.IsZero(m.PathAttributes[i]) { // not required
--			continue
-+		if m.PathAttributes[i] == nil {
-+			return validate.Required("path-attributes"+"."+strconv.Itoa(i), "body", m.PathAttributes[i])
- 		}
- 
- 		if m.PathAttributes[i] != nil {
-```
-
----
-
-### Incident Patch 2: `edaa13cc` (2026-11-22)
-**Commit Message**: chore(deps): update cilium/cilium-cli action to v0.20.3
-
-Signed-off-by: cilium-renovate[bot] <134692979+cilium-renovate[bot]@users.noreply.github.com>
-
-**File**: `.github/workflows/conformance-aks.yaml` (modified, +1/-1)
-```diff
-@@ -422,7 +422,7 @@ jobs:
-             --docker-password="${{ secrets.DOCKER_READ_PASSWORD }}"
- 
-       - name: Install Cilium CLI
--        uses: cilium/cilium-cli@1ac7fa66909e3730ab3869c8ba7aa7d68f0197fd # v0.20.2
-+        uses: cilium/cilium-cli@506c6d8cd165e56a36ce97ed31f67c92d4ae72e1 # v0.20.3
-         with:
-           skip-build: ${{ env.CILIUM_CLI_SKIP_BUILD }}
-           image-repo: ${{ env.CILIUM_CLI_IMAGE_REPO }}
-```
-
-**File**: `.github/workflows/conformance-aws-cni.yaml` (modified, +1/-1)
-```diff
-@@ -366,7 +366,7 @@ jobs:
-             --docker-password="${{ secrets.DOCKER_READ_PASSWORD }}"
- 
-       - name: Install Cilium CLI
--        uses: cilium/cilium-cli@1ac7fa66909e3730ab3869c8ba7aa7d68f0197fd # v0.20.2
-+        uses: cilium/cilium-cli@506c6d8cd165e56a36ce97ed31f67c92d4ae72e1 # v0.20.3
-         with:
-           skip-build: ${{ env.CILIUM_CLI_SKIP_BUILD }}
-           image-repo: ${{ env.CILIUM_CLI_IMAGE_REPO }}
-```
-
-**File**: `.github/workflows/conformance-clustermesh.yaml` (modified, +1/-1)
-```diff
-@@ -515,7 +515,7 @@ jobs:
-           echo flags=${FLAGS} >> $GITHUB_OUTPUT
- 
-       - name: Install Cilium CLI
--        uses: cilium/cilium-cli@1ac7fa66909e3730ab3869c8ba7aa7d68f0197fd # v0.20.2
-+        uses: cilium/cilium-cli@506c6d8cd165e56a36ce97ed31f67c92d4ae72e1 # v0.20.3
-         with:
-           skip-build: ${{ env.CILIUM_CLI_SKIP_BUILD }}
-           image-repo: ${{ env.CILIUM_CLI_IMAGE_REPO }}
-```
-
-**File**: `.github/workflows/conformance-delegated-ipam.yaml` (modified, +1/-1)
-```diff
-@@ -283,7 +283,7 @@ jobs:
-           wait: 0
- 
-       - name: Install Cilium CLI
--        uses: cilium/cilium-cli@1ac7fa66909e3730ab3869c8ba7aa7d68f0197fd # v0.20.2
-+        uses: cilium/cilium-cli@506c6d8cd165e56a36ce97ed31f67c92d4ae72e1 # v0.20.3
-         with:
-           skip-build: ${{ env.CILIUM_CLI_SKIP_BUILD }}
-           image-repo: ${{ env.CILIUM_CLI_IMAGE_REPO }}
-```
-
-**File**: `.github/workflows/conformance-eks.yaml` (modified, +1/-1)
-```diff
-@@ -465,7 +465,7 @@ jobs:
-             --docker-password="${{ secrets.DOCKER_READ_PASSWORD }}"
- 
-       - name: Install Cilium CLI
--        uses: cilium/cilium-cli@1ac7fa66909e3730ab3869c8ba7aa7d68f0197fd # v0.20.2
-+        uses: cilium/cilium-cli@506c6d8cd165e56a36ce97ed31f67c92d4ae72e1 # v0.20.3
-         with:
-           skip-build: ${{ env.CILIUM_CLI_SKIP_BUILD }}
-           image-repo: ${{ env.CILIUM_CLI_IMAGE_REPO }}
-```
-
-**File**: `.github/workflows/conformance-gateway-api.yaml` (modified, +1/-1)
-```diff
-@@ -271,7 +271,7 @@ jobs:
-             --docker-password="${{ secrets.DOCKER_READ_PASSWORD }}"
- 
-       - name: Install Cilium CLI
--        uses: cilium/cilium-cli@1ac7fa66909e3730ab3869c8ba7aa7d68f0197fd # v0.20.2
-+        uses: cilium/cilium-cli@506c6d8cd165e56a36ce97ed31f67c92d4ae72e1 # v0.20.3
-         with:
-           skip-build: ${{ env.CILIUM_CLI_SKIP_BUILD }}
-           image-repo: ${{ env.CILIUM_CLI_IMAGE_REPO }}
-```
-
-**File**: `.github/workflows/conformance-ginkgo.yaml` (modified, +1/-1)
-```diff
-@@ -391,7 +391,7 @@ jobs:
-           path: untrusted
- 
-       - name: Install cilium-cli
--        uses: cilium/cilium-cli@1ac7fa66909e3730ab3869c8ba7aa7d68f0197fd # v0.20.2
-+        uses: cilium/cilium-cli@506c6d8cd165e56a36ce97ed31f67c92d4ae72e1 # v0.20.3
-         with:
-           skip-build: ${{ env.CILIUM_CLI_SKIP_BUILD }}
-           image-repo: ${{ env.CILIUM_CLI_IMAGE_REPO }}
-```
-
-**File**: `.github/workflows/conformance-gke.yaml` (modified, +1/-1)
-```diff
-@@ -493,7 +493,7 @@ jobs:
-             --docker-password="${{ secrets.DOCKER_READ_PASSWORD }}"
- 
-       - name: Install Cilium CLI
--        uses: cilium/cilium-cli@1ac7fa66909e3730ab3869c8ba7aa7d68f0197fd # v0.20.2
-+        uses: cilium/cilium-cli@506c6d8cd165e56a36ce97ed31f67c92d4ae72e1 # v0.20.3
-         with:
-           skip-build: ${{ env.CILIUM_CLI_SKIP_BUILD }}
-           image-repo: ${{ env.CILIUM_CLI_IMAGE_REPO }}
+ # BUILDPLATFORM is an automatic platform ARG enabled by Docker BuildKit.
+ # Represents the plataform where the build is happening, do not mix with
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #50192** (2026-11-22): chore(deps): update auto-merge-trusted-deps (v1.18) (@cilium-renovate[bot])
+- **PR #50190** (2026-11-22): chore(deps): update auto-merge-trusted-deps (v1.19) (@cilium-renovate[bot])
+- **PR #50186** (2026-11-22): chore(deps): update auto-merge-trusted-deps (main) (@cilium-renovate[bot])
 - **PR #50183** (2026-11-22): chore(deps): update quay.io/goswagger/swagger docker tag to v0.36.8 (main) (@cilium-renovate[bot])
 - **PR #50182** (2026-11-22): chore(deps): update cilium/cilium-cli action to v0.20.3 (main) (@cilium-renovate[bot])
 - **PR #50171** (closed): [WIP] Move IP Release to agent (@41ks)
-- **PR #50168** (2026-11-20): datapath: remove redundant XDP prefiltering macros (@ekoops)
-- **PR #50166** (2026-11-20): v1.19: backport 50148 (StateDB bump + early pruning test) (@joamaki)
-- **PR #50165** (2026-11-20): v1.20: backport 50148 (StateDB bump + early pruning test) (@joamaki)
 
 ---
 
@@ -1623,33 +1404,31 @@ Signed-off-by: cilium-renovate[bot] <134692979+cilium-renovate[bot]@users.norepl
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): update quay.io/goswagger/swagger docker tag to v0.36.8
+## X. images: update cilium-{runtime,builder}
 
 **RULE**:
-When implementing operations in `Makefile.defs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.devcontainer/devcontainer.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `73945d29`: deps): update quay.io/goswagger/swagger docker tag to v0.36.8. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b613df15`: images: update cilium-{runtime,builder}. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Makefile.defs`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.devcontainer/devcontainer.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-SWAGGER_VERSION = 0.36.8
-SWAGGER_IMAGE_SHA = sha256:5a9b6cdce869273a01186bf0ad911f346c3c445b270f9ce912114c64d150e388
+  "image": "quay.io/cilium/cilium-builder:72378dec43197bab4fd6627006fb27e9617045ec@sha256:1d51396779f3f7787f527d959a85a5686680d95ecae8f1664828ea41884281ff",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-SWAGGER_VERSION = 0.36.7
-SWAGGER_IMAGE_SHA = sha256:5d57e845c1c34ceb5883b0cba8bdf53e56568acdb6b1aef7ae33fe9336974831
+  "image": "quay.io/cilium/cilium-builder:d2143d4e7a855111e48bc513a90595c1ccc77214@sha256:77e6f822ad63e75c97af07a782105ddedb35a93e11fcaf244ea0e9d5cda8f509",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `73945d29` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b613df15` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

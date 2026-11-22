@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T17:22:08.246Z",
+  "last_updated": "2026-11-22T17:35:34.294Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -230,14 +230,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-black-forest-labs-flux-1-dev",
-      "content_hash": "b73a827b7343ea08d77b40bdbd703275ec8efd217da7ca94c6388e5e752a9251",
-      "verified_at": "2026-11-18T10:55:08.202Z",
+      "content_hash": "63c4c2bca01029b0db41fc70066fe24367a8eb0e101c6befd72efbed8d2df0ef",
+      "verified_at": "2026-11-22T17:35:14.843Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T10:55:08.202Z"
+      "last_updated": "2026-11-22T17:35:14.843Z"
     },
     "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF": {
       "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "8791ca9ebd41607d61fdef41322353bd9520919dbba47421856dc2c8ee47bd1b",
-      "verified_at": "2026-11-22T04:05:05.152Z",
+      "content_hash": "69da9d65e79afc90757b43ffa8ea60d10c32e9cd9ee65ce8d50df032ebce12d5",
+      "verified_at": "2026-11-22T17:35:28.666Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T04:05:05.152Z"
+      "last_updated": "2026-11-22T17:35:28.666Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",
@@ -8556,14 +8556,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ytsaurus-ytsaurus",
-      "content_hash": "f1720c8b05d50df51968f166eaf4f55110432579a5c2cc5df0811d4efcfbaadb",
-      "verified_at": "2026-11-21T15:31:35.703Z",
+      "content_hash": "bd6fdaedc0c3c11fe18250d9fc8cefb0588b369becd5a11d33c855b77bfb80f1",
+      "verified_at": "2026-11-22T17:35:34.293Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T15:31:35.703Z"
+      "last_updated": "2026-11-22T17:35:34.293Z"
     },
     "franken-ui/ui": {
       "repository": "franken-ui/ui",
@@ -11781,14 +11781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-thaw-app-thaw",
-      "content_hash": "ee0645a674c6575caf6bdc1bb40cb6fcc802da98b7f23c2b1c5cfd4d1fe69efa",
-      "verified_at": "2026-11-19T16:07:19.603Z",
+      "content_hash": "e7a5095d378208d53740cc41a335c6585950aff994393a41fffdd7376eac9a53",
+      "verified_at": "2026-11-22T17:35:23.383Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T16:07:19.603Z"
+      "last_updated": "2026-11-22T17:35:23.383Z"
     },
     "rtk-ai/rtk": {
       "repository": "rtk-ai/rtk",

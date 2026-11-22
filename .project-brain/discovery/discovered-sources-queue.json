@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-22T17:22:15.896Z",
+  "updated_at": "2026-11-22T17:35:39.793Z",
   "stats": {
-    "total_discovered": 7588,
-    "approved_pending_harvest": 7185,
+    "total_discovered": 7599,
+    "approved_pending_harvest": 7196,
     "harvested_count": 0,
     "rejected_count": 403,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 7162,
+      "COMMUNITY_AND_EXPERT": 7173,
       "OFFICIAL_DOCUMENTATION": 246,
       "STANDARDS_AND_SPECIFICATIONS": 123,
       "ENGINEERING_BLOGS": 5,
@@ -164138,6 +164138,248 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/meshtastic-meshtastic-android-learnings.md",
         "fileName": "meshtastic-meshtastic-android-learnings.md"
+      }
+    },
+    "SRC-B5BA201DFC55": {
+      "id": "SRC-B5BA201DFC55",
+      "url": "https://github.com/thaw-app/Thaw/issues/1356",
+      "title": "https://github.com/thaw-app/Thaw/issues/1356",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T17:35:38.331Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/thaw-app-thaw-learnings.md",
+        "fileName": "thaw-app-thaw-learnings.md"
+      }
+    },
+    "SRC-09D97954F462": {
+      "id": "SRC-09D97954F462",
+      "url": "https://github.com/thaw-app/Thaw/issues/1617",
+      "title": "https://github.com/thaw-app/Thaw/issues/1617",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T17:35:38.385Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/thaw-app-thaw-learnings.md",
+        "fileName": "thaw-app-thaw-learnings.md"
+      }
+    },
+    "SRC-47848B3A9048": {
+      "id": "SRC-47848B3A9048",
+      "url": "https://github.com/thaw-app/Thaw/issues/1662",
+      "title": "https://github.com/thaw-app/Thaw/issues/1662",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T17:35:38.440Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/thaw-app-thaw-learnings.md",
+        "fileName": "thaw-app-thaw-learnings.md"
+      }
+    },
+    "SRC-ACE24F004779": {
+      "id": "SRC-ACE24F004779",
+      "url": "https://github.com/thaw-app/Thaw/issues/1596",
+      "title": "https://github.com/thaw-app/Thaw/issues/1596",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T17:35:38.497Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/thaw-app-thaw-learnings.md",
+        "fileName": "thaw-app-thaw-learnings.md"
+      }
+    },
+    "SRC-7BBB3964C712": {
+      "id": "SRC-7BBB3964C712",
+      "url": "https://hub.docker.com/_/golang",
+      "title": "https://hub.docker.com/_/golang",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T17:35:39.372Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md",
+        "fileName": "cilium-cilium-learnings.md"
+      }
+    },
+    "SRC-23651F75196A": {
+      "id": "SRC-23651F75196A",
+      "url": "https://redirect.github.com/docker-library/golang",
+      "title": "https://redirect.github.com/docker-library/golang",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T17:35:39.433Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md",
+        "fileName": "cilium-cilium-learnings.md"
+      }
+    },
+    "SRC-B2984CECD524": {
+      "id": "SRC-B2984CECD524",
+      "url": "https://hub.docker.com/_/ubuntu",
+      "title": "https://hub.docker.com/_/ubuntu",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T17:35:39.546Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md",
+        "fileName": "cilium-cilium-learnings.md"
+      }
+    },
+    "SRC-82875F90276D": {
+      "id": "SRC-82875F90276D",
+      "url": "https://git.launchpad.net/cloud-images/+oci/ubuntu-base",
+      "title": "https://git.launchpad.net/cloud-images/+oci/ubuntu-base",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T17:35:39.598Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md",
+        "fileName": "cilium-cilium-learnings.md"
+      }
+    },
+    "SRC-996A2481547B": {
+      "id": "SRC-996A2481547B",
+      "url": "https://cloud.google.com/sdk/docs/release-notes",
+      "title": "https://cloud.google.com/sdk/docs/release-notes",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T17:35:39.658Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md",
+        "fileName": "cilium-cilium-learnings.md"
+      }
+    },
+    "SRC-C8494A090779": {
+      "id": "SRC-C8494A090779",
+      "url": "https://redirect.github.com/cilium/image-tools",
+      "title": "https://redirect.github.com/cilium/image-tools",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T17:35:39.740Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md",
+        "fileName": "cilium-cilium-learnings.md"
+      }
+    },
+    "SRC-BD5F579C6B65": {
+      "id": "SRC-BD5F579C6B65",
+      "url": "https://accounts.google.com/",
+      "title": "https://accounts.google.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-22T17:35:39.793Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md",
+        "fileName": "cilium-cilium-learnings.md"
       }
     }
   }
