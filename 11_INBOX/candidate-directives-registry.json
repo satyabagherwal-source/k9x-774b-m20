@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T07:14:03.135Z",
+  "last_updated": "2026-11-22T07:29:04.884Z",
   "directives": [
     {
       "id": "CD-001",
@@ -45460,6 +45460,46 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-66D751-test-collab-write-trust-fixtures-with-ex.md",
+      "staged_date": "2026-11-22"
+    },
+    {
+      "id": "CD-N5H0",
+      "directive_title": "Empirical Invariant Guard in dimension.test.tsx",
+      "source_repo": "meshery-meshery-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-N5H0-empirical-invariant-guard-in-dimension-test-tsx.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-22",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-LH8D",
+      "directive_title": "Group ARC output and manage build cache space",
+      "source_repo": "NucleoidAI/Nucleoid",
+      "source_commit": "5e0af050",
+      "staged_file": "11_INBOX/candidate-directives/CD-LH8D-group-arc-output-and-manage-build-cache-space.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-22",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-8BE685",
+      "directive_title": "Forensic Learning Record (Deep Inspection): huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hf-huihui-ai-huihui-qwen3.8-27b-abliterated-gguf",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-8BE685-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-22"
+    },
+    {
+      "id": "CD-REV-ECEBF8",
+      "directive_title": "Empirical Invariant Guard in dimension.test.tsx",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "meshery-meshery",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-ECEBF8-empirical-invariant-guard-in-dimension-t.md",
       "staged_date": "2026-11-22"
     }
   ]

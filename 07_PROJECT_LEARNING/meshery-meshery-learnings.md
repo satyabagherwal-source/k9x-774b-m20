@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source**: github ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
-> **Source Version**: `5f96e08e`  
+> **Source Version**: `03883b4b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T04:39:08.092Z  
+> **Timestamp**: 2026-11-22T07:27:38.574Z  
 > **Learning ID**: `learn-github-meshery-meshery`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T04:39:08.086Z  
+> **Harvest Timestamp**: 2026-11-22T07:27:38.568Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Meshery, the cloud native manager
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 12270 stars
+- **Stars / Engagement**: 12285 stars
 
 ---
 
@@ -804,14 +804,11 @@ if __name__ == "__main__":
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #24070** (2026-11-21): **[Server] Check selector model in Rego mutator-based relationship identification.**
-  *Symptoms*: This PR fixes #24006  The identify rule in eval_rules.rego paired components to selectors by kind only, so two components of the same kind from different models could be wrongly identified as related through edge non-binding relationships. This adds a model check mirroring the feasibility check in feasibility_evaluation.rego: a selector with no model or a wildcard model still matches any model, otherwise the model names must match.  Changes - models/meshery-core/0.7.2/v1.0.0/policies/eval_rules.rego: new selector_model_matches helper and two model checks in identify_relationships_based_on_matching_mutator_and_mutated_fields - models/meshery-core/0.7.2/v1.0.0/policies/tests/eval_rules_test.rego: four regression tests (cross-model no match, same-model match, wildcard selector model match, selector without model match)  Tests - go test ./server/policies/ -run TestRegoPolicy: 115 passed, 0 failed - The cross-model test fails on the unfixed code and passes with the fix.  Note: the Go twin of this gap is issue 23865, still open and unassigned. This PR covers the Rego engine only.  Yes, I signed my commits.  <!-- This is an auto-generated comment: release notes by coderabbit.ai -->  <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **Bug Fixes**   * Relationship matching now checks component model names as well as kinds, so components from different models are no longer treated as matches solely because they share a kind.   * Selectors with a specific model name match
+- **Issue #24119** (2026-11-22): **[Docs] Add language tags to untagged code fences**
+  *Symptoms*: **Notes for Reviewers**  - This PR fixes #24118  This PR adds explicit language tags to previously untagged code fence openers (```) across two documentation files without altering content or closing fences: 1. `docs/content/en/project/contributing/contributing-gitflow.md`: Added `sh` tag to 12 git command fences. 2. `docs/content/en/project/contributing/contributing-docs/docs.md`: Added `yaml` tag to the YAML front-matter example fence at line 439.  **[Signed commits](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#signing-off-on-commits-developer-certificate-of-origin)** - [x] Yes, I signed my commits.  <!-- Thank you for contributing to Meshery!   Contributing Conventions:  1. Include descriptive PR titles with [<component-name>] prepended. 2. Build and test your changes before submitting a PR.  3. Sign your commits. 4. Include before and after screenshots/terminal output.  By following the community's contribution conventions upfront, the review process will  be accelerated and your PR merged more quickly. -->  <!-- This is an auto-generated comment: release notes by coderabbit.ai -->  <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **Documentation**   * Added syntax highlighting to YAML and shell command examples in the contributing guides.  <!-- end of auto-generated comment: release notes by coderabbit.ai -->
 
-- **Issue #24064** (2026-11-20): **[Docs] Add newcomer introduction for T.S. Phala**
-  *Symptoms*: **Notes for Reviewers** - Added my introduction file (`TS-Phala.md`) under `docs/meetings/2026/week-of-11-19-2026/` for the Meshery Newcomers' Meeting.  **[Signed commits](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#signing-off-on-commits-developer-certificate-of-origin)** - [x] Yes, I signed my commits.  <!-- Thank you for contributing to Meshery!   Contributing Conventions:  1. Include descriptive PR titles with [<component-name>] prepended. 2. Build and test your changes before submitting a PR.  3. Sign your commits. 4. Include before and after screenshots/terminal output.  By following the community's contribution conventions upfront, the review process will  be accelerated and your PR merged more quickly. -->   <!-- This is an auto-generated comment: release notes by coderabbit.ai --> <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **Documentation**   * Updated the meeting document with a heading for T.S. Phala, a brief introduction, and a link to their LinkedIn profile. The document now includes these details alongside the meeting information. <!-- end of auto-generated comment: release notes by coderabbit.ai -->
-  **Post-Mortem & Fix Analysis**:
-  > 👋 **Welcome to Meshery, @unchained-angel!**  Thank you for opening your first pull request — this is a big moment and we're excited to review your contribution! 🚀  Here are a few things that will help your PR get merged smoothly:  - ✅ **DCO sign-off** — make sure every commit is signed off (`git commit -s`) as required by our [Developer Certificate of Origin](https://docs.meshery.io/project/contributing). - 🧪 **Tests** — if your change affects functionality, please include or update tests. - 📝 **Description** — a clear PR description helps reviewers understand your intent quickly.  ---  📅 **Join our Weekly Community Meeting** We hold a public development meeting every week. It's a great place to walk through your PR with a maintainer or ask any questions you have. 👉 **[Add to calendar & join at meet.meshery.io](https://meet.meshery.io)**  💬 **Join the Meshery Community Slack** Connect with other contributors and get real-time help from the community. 👉 **[Join Slack at slack.me
-  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/meshery/meshery/pull/24064?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change.svg"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change.svg" alt="Explain Change →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- recent_review_status_start -->  No actionable comments were generated in the recent review.  <!-- recent_review_status_end --> <!-- walkthrough_start -->  <details> <summary><stro
+- **Issue #24118** (2026-11-22): **[Docs]Add language tags to untagged code fences in contributing-gitflow.md and contributing-docs/docs.md**
+  *Symptoms*: Title: [Docs] Add language tags to untagged code fences in contributing-gitflow.md and contributing-docs/docs.md  ### Current State Several code fences have no language tag, so they render without syntax highlighting: - docs/content/en/project/contributing/contributing-gitflow.md: 12 fences containing git shell commands (git clone, git remote, git fetch, git checkout, ...) - docs/content/en/project/contributing/contributing-docs/docs.md (~line 439): a fence containing YAML front matter  ### Desired State Tag the shell fences with `sh` and the front matter example with `yaml`. No content changes. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -828,960 +825,615 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c2b54aba` (2026-11-20)
-**Commit Message**: Merge pull request #24031 from nishant-devv/fix/planner-panic-starvation-deadlock
+### Incident Patch 1: `87be8689` (2026-11-21)
+**Commit Message**: Merge pull request #24103 from madhavzanwar/fix/ui-dimension-ssr-guards
 
-[Server] Recover from planner parallel process panics to prevent channel starvation deadlocks
+[UI] Guard getWindowDimensions against undefined window in SSR and clean up resize timeout
 
-**File**: `docs/data/errorindex/meshery-server_errors_index.json` (modified, +17/-0)
+**File**: `ui/utils/__tests__/dimension.test.tsx` (modified, +30/-0)
 ```diff
-@@ -7673,6 +7673,23 @@
-       "suggestedRemediation": [
-         "Set the design file's version to a semver string such as 0.0.1 and save again"
-       ]
-+    },
-+    {
-+      "code": "meshery-server-1497",
-+      "moniker": "ErrProvisionPanicCode",
-+      "component": {
-+        "name": "meshery-server",
-+        "type": "component"
-+      },
-+      "numericCode": "1497",
-+      "severity": "alert",
-+      "shortDescription": "Component panicked during provisioning",
-+      "probableCause": [
-+        "Runtime fault occurred in component visitor execution"
-+      ],
-+      "suggestedRemediation": [
-+        "Inspect component configuration and provider logs for runtime failures"
-+      ]
-     }
-   ],
-   "schemaVersion": 2
+@@ -51,6 +51,17 @@ describe('getWindowDimensions', () => {
+ 
+     expect(getWindowDimensions()).toEqual({ width: 320, height: 480 });
+   });
++
++  it('returns { width: 0, height: 0 } when window is undefined in SSR', () => {
++    const originalWindow = globalThis.window;
++    // @ts-expect-error simulating SSR environment
++    delete globalThis.window;
++    try {
++      expect(getWindowDimensions()).toEqual({ width: 0, height: 0 });
++    } finally {
++      globalThis.window = originalWindow;
++    }
++  });
+ });
+ 
+ describe('useWindowDimensions', () => {
+@@ -132,4 +143,23 @@ describe('useWindowDimensions', () => {
+     expect(removeListenerSpy.mock.calls.some(([eventName]) => eventName === 'resize')).toBe(true);
+     removeListenerSpy.mockRestore();
+   });
++
++  it('cleans up pending searchTimeout on unmount', () => {
++    const setTimeoutSpy = vi.spyOn(globalThis, 'setTimeout');
++    const clearTimeoutSpy = vi.spyOn(globalThis, 'clearTimeout');
++    const { unmount } = render(<Probe onRender={() => {}} />);
++
++    act(() => {
++      window.dispatchEvent(new Event('resize'));
++    });
++
++    const pendingTimeout = setTimeoutSpy.mock.results.at(-1)?.value;
++
++    // Unmount before the 500ms debounce timer fires
++    unmount();
++
++    expect(clearTimeoutSpy).toHaveBeenCalledWith(pendingTimeout);
++    clearTimeoutSpy.mockRestore();
++    setTimeoutSpy.mockRestore();
++  });
+ });
 ```
 
-**File**: `docs/data/errorref/meshery-server_errors_export.json` (modified, +9/-0)
+**File**: `ui/utils/dimension.ts` (modified, +12/-1)
 ```diff
-@@ -4372,6 +4372,15 @@
-         "short_description": "Invalid design version",
-         "probable_cause": "The design file's version is not semver, so a next version cannot be computed from it\nOlder tooling wrote arbitrary version strings into design files",
-         "suggested_remediation": "Set the design file's version to a semver string such as 0.0.1 and save again"
-+      },
-+      "1497": {
-+        "name": "ErrProvisionPanicCode",
-+        "code": "1497",
-+        "severity": "Alert",
-+        "long_description": "",
-+        "short_description": "Component panicked during provisioning",
-+        "probable_cause": "Runtime fault occurred in component visitor execution",
-+        "suggested_remediation": "Inspect component configuration and provider logs for runtime failures"
-       }
+@@ -5,6 +5,12 @@ import { useState, useEffect } from 'react';
+  * @returns {object} {width, height}
+  */
+ export function getWindowDimensions() {
++  if (typeof window === 'undefined') {
++    return {
++      width: 0,
++      height: 0,
++    };
++  }
+   const { innerWidth: width, innerHeight: height } = window;
+   return {
+     width,
+@@ -45,7 +51,12 @@ export function useWindowDimensions() {
      }
-   }
+ 
+     window.addEventListener('resize', handleResize);
+-    return () => window.removeEventListener('resize', handleResize);
++    return () => {
++      if (searchTimeout) {
++        clearTimeout(searchTimeout);
++      }
++      window.removeEventListener('resize', handleResize);
++    };
+   }, []);
+ 
+   return windowDimensions;
 ```
 
-**File**: `server/helpers/component_info.json` (modified, +1/-1)
+---
+
+### Incident Patch 2: `44fb193c` (2026-11-21)
+**Commit Message**: Merge pull request #24115 from Hpsingh26/fix/docs-broken-image-references
+
+[Docs] Fix broken image references and shortcode paths in documentation
+
+**File**: `docs/CONTRIBUTING-gitflow.md` (modified, +2/-2)
 ```diff
-@@ -1,5 +1,5 @@
- {
-   "name": "meshery-server",
-   "type": "component",
--  "next_error_code": 1497
-+  "next_error_code": 1498
+@@ -8,11 +8,11 @@
+ <ul>
+ <li><h3> Fork the Repository of Project</h3></li><br>
+ 
+-<p><img src="/.github/assets/images/fork.png" align="center"></p>
++<p><img src="../.github/assets/images/fork.png" align="center"></p>
+ 
+ ( You will see this on Top Right of Github Repository !)<br><br>
+ <li><h3>Clone your fork to your local machine</h3></li><br>
+-<img width="50%" align="center"  src="/.github/assets/images/clone.png"><br>
++<img width="50%" align="center"  src="../.github/assets/images/clone.png"><br>
+ ( Click on the Green Code button and Copy the link `https://github.com/........` )<br><br>
+ <li><h3>Open Git bash where you want to clone the project ( Avoid On Desktop )</h3></li>
+ 
+```
+
+**File**: `docs/content/en/concepts/logical/relationships/index.md` (modified, +1/-1)
+```diff
+@@ -5,7 +5,7 @@ aliases:
+ - /concepts/relationships/
+ ---
+ 
+-Meshery Relationships characterize how [components]({{< ref "components.md" >}}) are connected and interact with each other. Relationships are defined within [models]({{< ref "models/index.md" >}}) to aid in structuring the interrelationships between one or more components in a [design]({{< ref "designs.md" >}}) to further in comprehending the overall structure and dependencies within managed systems.
++Meshery Relationships characterize how [components]({{< ref "concepts/logical/components.md" >}}) are connected and interact with each other. Relationships are defined within [models]({{< ref "concepts/logical/models/index.md" >}}) to aid in structuring the interrelationships between one or more components in a [design]({{< ref "concepts/logical/designs.md" >}}) to aid in comprehending the overall structure and dependencies within managed systems.
+ 
+ Meshery recognizes that relationships exist in various forms and that the existence of a relationship might be interdependent upon the existence (or absence) of another relationship. To support this complexity, Meshery relationships are highly expressive, characterizing the nature of interaction of interconnected components no matter their genealogy.
+ 
+```
+
+**File**: `docs/content/en/guides/configuration-management/creating-a-meshery-design/index.md` (renamed, +1/-1)
+```diff
+@@ -61,7 +61,7 @@ The YAML editor sits next to the component forms. To write or paste a design by
+ 
+ Instead of starting from nothing, import a design from the [Meshery Catalog](https://meshery.io/catalog), from a URL, or from a Kubernetes manifest, Helm chart, or Docker Compose file. See [Importing and Exporting Designs]({{< ref "guides/configuration-management/import-export-designs.md" >}}).
+ 
+-<img src="../images/pattern-import.png" width="60%" alt="Importing a design in Meshery UI" />
++<img src="images/pattern-import.png" width="60%" alt="Importing a design in Meshery UI" />
+ 
+ <!-- tab -->
+ mesheryctl | fa fa-terminal
+```
+
+**File**: `docs/content/en/installation/quick-start/index.md` (modified, +1/-1)
+```diff
+@@ -116,6 +116,6 @@ You can now design and manage any infrastructure that Meshery supports. For the
+ 
+ ## Additional Resources
+ 
+-- [Troubleshooting Meshery Installations]({{< ref "guides/troubleshooting/installation.md" >}})
++- [Troubleshooting Meshery Installations]({{< ref "guides/troubleshooting/installation/index.md" >}})
+ - [Meshery Error Code Reference]({{< ref "reference/error-codes.md" >}})
+ - [mesheryctl system check]({{< ref "reference/mesheryctl/system/check.md" >}})
+```
+
+**File**: `docs/content/en/project/contributing/cli/cli.md` (modified, +1/-1)
+```diff
+@@ -58,7 +58,7 @@ Annotations: linkScreenshot,
+ Also, if the screenshot is present in the command, an `Annotation` macro variable (of `map[string]string` type) containing the `link` and the `caption` has to be added at the bottom of the `Examples` field in the command file. The image file has to be included in the `docs/content/en/reference/images` folder in **PNG** format. The screenshot field is given for reference below
+ 
+ {{< code code=`var linkDocPatternApply = map[string]string{
+- "link":    "![pattern-apply-usage](../../../images/patternApply.png)",
++ "link":    "![pattern-apply-usage](../../images/patternApply.png)",
+  "caption": "Usage of mesheryctl design apply",
  }
-\ No newline at end of file
+ ...
 ```
 
-**File**: `server/models/pattern/planner/parallel_process.go` (modified, +26/-11)
+**File**: `docs/content/en/project/contributing/cli/tests/index.md` (renamed, +1/-1)
 ```diff
-@@ -96,7 +96,30 @@ func (g *ParallelProcessGraph) Traverse(fn VisitFn, withheld WithheldFn, log log
- // Process starts an internal loop which listens for the signals on the channels
- // and operate accordingly
- func (v *ParallelProcessGraphNode) Process(deps []*ParallelProcessGraphNode, wg *sync.WaitGroup, fn VisitFn, withheld WithheldFn, log logger.Handler) {
--	defer wg.Done()
-+	signaled := make(map[*ParallelProcessGraphNode]bool, len(deps))
-+	sendSignals := func(ok bool) {
-+		for _, dep := range deps {
-+			if !signaled[dep] {
-+				signaled[dep] = true
-+				func() {
-+					defer func() {
-+						if r := recover(); r != nil {
-+							log.Errorf("panic sending signal to dependent %s: %v", dep.Name, r)
-+						}
-+					}()
-+					sendSignalToDep(dep, ok, v.Name, log)
-+				}()
+@@ -257,7 +257,7 @@ To filter and view only CLI-related test cases using the Sheet Views feature:
+ 1. In the top menu bar, click Data → Change view
+ 2. Choose the pre-defined view labeled "CLI"
+ 
+-![Meshery Test Plan Screenshot](../../images/meshery-test-plan-v0.8.0-ui.png)
++![Meshery Test Plan Screenshot](images/meshery-test-plan-v0.8.0-ui.png)
+ 
+ ## Development
+ 
+```
+
+**File**: `docs/content/en/project/contributing/contributing-docs/docs.md` (modified, +3/-1)
+```diff
+@@ -240,9 +240,11 @@ If the code snippet has special characters then use backtick delimiters:
+ Don't use `code` shortcode when the snippet is in between an ordered list, this breaks the order and next item in the list will start numbering from 1. Instead, use `<pre class="codeblock-pre">...</pre>` method described above.
+ 
+ **A full block:**
++````markdown
+ ```
+-```code snippet```
++code snippet
+ ```
++````
+ 
+ **Inline formatting:**
+ 
+```
+
+**File**: `docs/content/en/project/contributing/contributing-relationships-best-practices.md` (modified, +3/-3)
+```diff
+@@ -6,11 +6,11 @@ categories: [contributing]
+ 
+ # Relationship Testing and Best Practices
+ 
+-This guide complements the [Contributing to Model Relationships](/project/contributing/contributing-relationships) documentation by focusing on **practical testing and debugging techniques** for relationship definitions.
++This guide complements the [Contributing to Model Relationships](/project/contributing/models/relationships) documentation by focusing on **practical testing and debugging techniques** for relationship definitions.
+ 
+ ## Before You Start
+ 
+-Make sure you've read the [Contributing to Model Relationships](/project/contributing/contributing-relationships) guide to understand relationship structure, schema, and components.
++Make sure you've read the [Contributing to Model Relationships](/project/contributing/models/relationships) guide to understand relationship structure, schema, and components.
+ 
+ ## 1. Validate JSON Syntax
+ 
+@@ -394,7 +394,7 @@ Once validated and tested:
+ 
+ ## Resources
+ 
+-- [Contributing to Model Relationships](/project/contributing/contributing-relationships)
++- [Contributing to Model Relationships](/project/contributing/models/relationships)
+ - [Meshery Relationship Schema](https://github.com/meshery/schemas/tree/master/schemas/constructs/v1alpha3/relationship)
+ - [Existing Relationships](https://github.com/meshery/meshery/tree/master/models)
+ - [OPA Policies](https://github.com/meshery/meshery/tree/master/models/meshery-core)
+```
+
+---
+
+### Incident Patch 3: `01fe4256` (2026-11-21)
+**Commit Message**: Merge branch 'master' into fix/docs-broken-image-references
+
+**File**: `docs/content/en/reference/mesheryctl/model/build.md` (modified, +2/-0)
+```diff
+@@ -17,6 +17,8 @@ Create an OCI-compliant package from the model files
+ Create an OCI-compliant package from the model files.
+ Model files are taken from [path]/[model-name]/[model-version] folder.
+ Expects input to be in the format scaffolded by the model init command.
++When only [model-name] is provided, the model directory must contain exactly one version directory.
++Root-level files such as README.md, .gitignore, and LICENSE do not affect this validation.
+ 
+ <pre class='codeblock-pre'>
+ <div class='codeblock'>
+```
+
+**File**: `mesheryctl/internal/cli/pkg/flags/validator.go` (modified, +6/-1)
+```diff
+@@ -51,8 +51,13 @@ func (fv *FlagValidator) Validate(s interface{}) error {
+ 	return nil
+ }
+ 
++// IsSemver returns true if the string matches Meshery's supported model-version format (^vMAJOR.MINOR.PATCH...).
++func IsSemver(version string) bool {
++	return vSemverRegex.MatchString(version)
++}
++
+ func isSemver(fl validator.FieldLevel) bool {
+-	return vSemverRegex.MatchString(fl.Field().String())
++	return IsSemver(fl.Field().String())
+ }
+ 
+ func isRelativePath(fl validator.FieldLevel) bool {
+```
+
+**File**: `mesheryctl/internal/cli/pkg/flags/validator_test.go` (modified, +3/-0)
+```diff
+@@ -67,6 +67,9 @@ func TestValidateSemver(t *testing.T) {
+ 
+ 	for _, tt := range tests {
+ 		t.Run(tt.name, func(t *testing.T) {
++			if got := IsSemver(tt.version); got != !tt.wantErr {
++				t.Errorf("IsSemver(%q) = %v, want %v", tt.version, got, !tt.wantErr)
++			}
+ 			type testStruct struct {
+ 				Version string `validate:"semver"`
+ 			}
+```
+
+**File**: `mesheryctl/internal/cli/root/model/build.go` (modified, +244/-5)
+```diff
+@@ -1,7 +1,10 @@
+ package model
+ 
+ import (
++	"errors"
+ 	"fmt"
++	"io"
++	"io/fs"
+ 	"os"
+ 	"path/filepath"
+ 	"strings"
+@@ -24,6 +27,8 @@ var buildModelCmd = &cobra.Command{
+ 	Long: `Create an OCI-compliant package from the model files.
+ Model files are taken from [path]/[model-name]/[model-version] folder.
+ Expects input to be in the format scaffolded by the model init command.
++When only [model-name] is provided, the model directory must contain exactly one version directory.
++Root-level files such as README.md, .gitignore, and LICENSE do not affect this validation.
+ Find more information at: https://docs.meshery.io/reference/mesheryctl/model/build`,
+ 	Example: `
+ // Create an OCI-compliant package from the model files
+@@ -91,11 +96,8 @@ mesheryctl model build [model-name]/[model-version]
+ 
+ 				count := 0
+ 				for _, entry := range entries {
+-					if entry.IsDir() {
++					if entry.IsDir() && mesheryctlflags.IsSemver(entry.Name()) {
+ 						count++
+-					} else {
+-						// If there is a file, it's not exactly one subfolder
+-						return false
+ 					}
+ 				}
+ 
+@@ -120,7 +122,16 @@ mesheryctl model build [model-name]/[model-version]
+ 		folder := buildModelCompileFolderName(cmdModelBuildFlagsProvided.Path, name, version)
+ 
+ 		utils.Log.Infof("Building meshery model from path %s", folder)
+-		img, errBuildImage := meshkitOci.BuildImage(folder)
++
++		buildSource, cleanup, err := prepareModelBuildSource(folder)
++		if err != nil {
++			err = ErrModelBuild(err)
++			utils.Log.Error(err)
++			return err
++		}
++		defer cleanup()
++
++		img, errBuildImage := meshkitOci.BuildImage(buildSource)
+ 		if errBuildImage != nil {
+ 			return ErrModelBuild(errBuildImage)
+ 		}
+@@ -179,3 +190,231 @@ func buildModelCompileImageName(name string, version string, extension string) s
+ 		extension,
+ 	)
+ }
++
++// hasGitMetadata checks whether .git exists anywhere within src (as a file or directory).
++func hasGitMetadata(src string) (bool, error) {
++	hasGit := false
++	err := filepath.WalkDir(src, func(path string, d fs.DirEntry, err error) error {
++		if err != nil {
++			return err
++		}
++		if d.Name() == ".git" {
++			hasGit = true
++			if d.IsDir() {
++				return fs.SkipDir
++			}
++		}
++		return nil
++	})
++	return hasGit, err
++}
++
++// prepareModelBuildSource prepares a build source directory that excludes any Git repository metadata (.git).
++// If no .git metadata is present, it returns the original folder with a no-op cleanup to avoid copying overhead.
++// If .git metadata is present, it stages a clean copy into an isolated temporary directory outside the source tree.
++func prepareModelBuildSource(folder string) (string, func(), error) {
++	cleanFolder := filepath.Clean(folder)
++	hasGit, err := hasGitMetadata(cleanFolder)
++	if err != nil {
++		return "", func() {}, err
++	}
++	if !hasGit {
++		return cleanFolder, func() {}, nil
++	}
++
++	tmpDir, err := os.MkdirTemp("", "meshery-model-build-*")
++	if err != nil {
++		return "", func() {}, err
++	}
++	cleanup := func() {
++		_ = filepath.WalkDir(tmpDir, func(p string, d fs.DirEntry, err error) error {
++			if err == nil && d.IsDir() {
++				_ = os.Chmod(p, 0700)
++			}
++			return nil
++		})
++		_ = os.RemoveAll(tmpDir)
++	}
++
++	if err := copyModelExcludingGit(cleanFolder, tmpDir); err != nil {
++		cleanup()
++		return "", func() {}, err
++	}
++
++	return tmpDir, cleanup, nil
++}
++
++type dirPerm struct {
++	path string
++	perm os.FileMode
++}
++
++func isSubpathOrEqual(p, target string) bool {
++	cleanTarget := filepath.Clean(target)
++	cleanP := filepath.Clean(p)
++	if cleanP == cleanTarget {
++		return true
++	}
++	if cleanTarget == string(filepath.Separator) {
++		return true
++	}
++	return strings.HasPrefix(cleanP, cleanTarget+string(filepath.Separator))
++}
++
++// copyModelExcludingGit recursively copies src into dst while omitting any .git file or directory.
++func copyModelExcludingGit(src, dst string) error {
++	srcInfo, err := os.Stat(src)
++	if err != nil {
++		return err
++	}
++	if !srcInfo.IsDir() {
++		return fmt.Errorf("source path is not a directory: %s", src)
++	}
++
++	absDst, err := filepath.Abs(dst)
++	if err != nil {
++		return err
++	}
++	realDst, err := filepath.EvalSymlinks(absDst)
++	if err != nil {
++		realDst = absDst
++	}
++
++	var dirsToRestore []dirPerm
++
++	err = filepath.WalkDir(src, func(path string, d fs.DirEntry, err error) error {
++		if err != nil {
++			return err
++		}
++
++		absPath, err := filepath.Abs(path)
++		if err != nil {
++			return err
++		}
++		// Prevent recursion if destination is inside source (e.g. TMPDIR set inside model source)
++		if isSubpathOrEqual(absPath, absDst) || isSubpathOrEqual(absPath, realDst) {
++			if d.IsDir() {
++				return fs.SkipDir
++			}
++			return nil
++		}
++		if realPath, err := filepath.EvalSymlinks(absPath); err == nil {
++			if isSubpathOrEqual(realPath, absDst) || isSubpathOrEqual(realPath, realDst) {
++				if d.IsDir() {
++					return fs.SkipDir
++				}
++				return nil
++			}
++		}
++
++		if d.Name() == ".git" {
++			if d.IsDir() {
++				return fs.SkipDir
++			}
++			return nil
++		}
++
++		relPath, err := filepa
+```
+
+**File**: `mesheryctl/internal/cli/root/model/build_test.go` (modified, +845/-0)
+```diff
+@@ -1,14 +1,20 @@
+ package model
+ 
+ import (
++	archiveTar "archive/tar"
+ 	"fmt"
++	"io"
++	"io/fs"
+ 	"os"
+ 	"path/filepath"
+ 	"runtime"
++	"strings"
+ 	"testing"
+ 
++	"github.com/google/go-containerregistry/pkg/v1/tarball"
+ 	mesheryctlflags "github.com/meshery/meshery/mesheryctl/internal/cli/pkg/flags"
+ 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
++	meshkitOci "github.com/meshery/meshkit/models/oci"
+ 	"github.com/spf13/cobra"
+ 	"github.com/spf13/pflag"
+ 	"github.com/stretchr/testify/assert"
+@@ -28,6 +34,8 @@ func TestModelBuild(t *testing.T) {
+ 		buildTestDynamoController    = "test-case-model-build-aws-dynamodb-controller"
+ 		buildTestDynamoControllerGbx = "test-case-model-build-aws-dynamodb-controller-gbxter34"
+ 		buildTestEC2Controller       = "aws-ec2-controller"
++		buildTestNoVersionDir        = "test-case-model-build-no-versions"
++		buildTestTwoVersions         = "test-case-model-build-two-versions"
+ 		buildTestVersion             = "v0.1.0"
+ 		buildTestNonExistentFolder   = "not_existing_folder"
+ 	)
+@@ -36,6 +44,8 @@ func TestModelBuild(t *testing.T) {
+ 	cleanupDirs := []string{
+ 		buildTestDynamoController,
+ 		buildTestDynamoControllerGbx,
++		buildTestNoVersionDir,
++		buildTestTwoVersions,
+ 	}
+ 	// Clean up all test artifacts from previous runs
+ 	cleanupTestArtifacts(cleanupDirs)
+@@ -113,6 +123,26 @@ func TestModelBuild(t *testing.T) {
+ 			t.Log("removed created dirs and files")
+ 		}
+ 	}
++	setupHookCreateRootFiles := func(modelDir string, files ...string) func() {
++		return func() {
++			for _, file := range files {
++				filePath := filepath.Join(modelDir, file)
++				if err := os.WriteFile(filePath, []byte("sample content"), 0o644); err != nil {
++					t.Fatal(err)
++				}
 +			}
 +		}
 +	}
-+
-+	defer func() {
-+		if r := recover(); r != nil {
-+			log.Errorf("panic in parallel process node %s: %v", v.Name, r)
-+			sendSignals(false)
++	setupHookCreateRootDirectories := func(modelDir string, dirs ...string) func() {
++		return func() {
++			for _, dir := range dirs {
++				dirPath := filepath.Join(modelDir, dir)
++				if err := os.MkdirAll(dirPath, 0o755); err != nil {
++					t.Fatal(err)
++				}
++			}
 +		}
-+		wg.Done()
-+	}()
- 
- 	log.Debug("started with:", v.Name, v.DepCount)
- 
-@@ -129,8 +152,7 @@ func (v *ParallelProcessGraphNode) Process(deps []*ParallelProcessGraphNode, wg
- 			withheld(v.Name, v.Data.Data, failedDep)
- 		}
- 
--		sendSignalToDeps(deps, false, v.Name, log)
--
-+		sendSignals(false)
- 		return
- 	}
- 
-@@ -140,14 +162,7 @@ func (v *ParallelProcessGraphNode) Process(deps []*ParallelProcessGraphNode, wg
- 	log.Debug("RESPONSE GOT FOR", v.Name, ":", ok)
- 
- 	// Send the appropriate signal
--	sendSignalToDeps(deps, ok, v.Name, log)
--}
--
--// sendSignalToDeps sends signal on the channel
--func sendSignalToDeps(deps []*ParallelProcessGraphNode, ok bool, from string, log logger.Handler) {
--	for _, dep := range deps {
--		sendSignalToDep(dep, ok, from, log)
--	}
-+	sendSignals(ok)
- }
- 
- // sendSignalToDep sends signal either on the DepUpdateChannel or DepCancelChannel
-```
-
-**File**: `server/models/pattern/planner/parallel_process_test.go` (modified, +446/-0)
-```diff
-@@ -312,3 +312,449 @@ func TestParallelProcess_MixedOutcomesWithManyPrereqs(t *testing.T) {
- 	}
- }
- 
-+// TestParallelProcess_PanicInPrerequisiteDoesNotDeadlockDependents verifies that when
-+// a prerequisite node panics during visitor execution, downstream dependents are
-+// not permanently starved on channel reads, and the plan execution does not deadlock.
-+func TestParallelProcess_PanicInPrerequisiteDoesNotDeadlockDependents(t *testing.T) {
-+	prereq := newComponent("prereq")
-+	dependent := newComponent("dependent", "prereq")
-+
-+	design := newDesign("panic-recovery", prereq, dependent)
-+	plan, err := CreatePlan(design, nil, false)
-+	if err != nil {
-+		t.Fatalf("CreatePlan() returned unexpected error: %v", err)
 +	}
-+
-+	var (
-+		mu                sync.Mutex
-+		dependentVisited  bool
-+		dependentWithheld bool
-+		reportedDep       string
-+	)
-+
-+	done := make(chan struct{})
-+	go func() {
-+		defer close(done)
-+		defer func() {
-+			_ = recover()
-+		}()
-+		_ = plan.Execute(
-+			func(id string, comp component.ComponentDefinition) bool {
-+				if comp.DisplayName == "prereq" {
-+					panic("simulated fatal panic in component visitor")
-+				}
-+				mu.Lock()
-+				if comp.DisplayName == "dependent" {
-+					dependentVisited = true
-+				}
-+				mu.Unlock()
-+				return true
+ 
+ 	tests := []struct {
+ 		Name             string
+@@ -179,6 +209,214 @@ func TestModelBuild(t *testing.T) {
+ 				),
+ 			},
+ 		},
++		{
++			Name:             "given name only with README.md when model build then model is built",
++			Args:             []string{"build", buildTestDynamoController},
++			ExpectError:      false,
++			ExpectedResponse: "model.build.from-model-name-only.golden",
++			ExpectedFiles: []string{
++				buildTestDynamoController + ".tar",
 +			},
-+			func(id string, comp component.ComponentDefinition, failedDep string) {
-+				mu.Lock()
-+				if comp.DisplayName == "dependent" {
-+					dependentWithheld = true
-+					reportedDep = failedDep
-+				}
-+				mu.Unlock()
++			SetupHooks: []func(){
++				setupHookModelInit("init", buildTestDynamoController, "--version", buildTestVersion),
++				setupHookCreateRootFiles(buildTestDynamoController, "README.md"),
 +			},
-+			testLogger(t),
-+		)
-+	}()
-+
-+	select {
-+	case <-done:
-+		// Plan execution completed without deadlocking
-+	case <-time.After(2 * time.Second):
-+		t.Fatal("Plan.Execute() deadlocked; prerequisite panic bypassed signal propagation, permanently wedging dependent channel reads")
-+	}
-+
-+	mu.Lock()
-+	defer mu.Unlock()
-+
-+	if dependentVisited {
-+		t.Error("dependent node was visited despite prerequisite panic")
-+	}
-+	if !dependentWithheld {
-+		t.Error("dependent node was not marked as withheld following prerequisite panic")
-+	}
-+	if reportedDep != prereq.ID.String() {
-+		t.Errorf("dependent reported failed dependency %q, want %q", reportedDep, prereq.ID.String())
-+	}
-+}
-+
-+// TestParallelProcess_PanicInMiddleOfDeepChainPropagatesWithholding verifies that when
-+// a middle node in a multi-hop dependency chain panics (A -> B -> C -> D, B panics),
-+// subsequent nodes C and D are sequentially withheld without deadlock or starvation.
-+func TestParallelProcess_PanicInMiddleOfDeepChainPropagatesWithholding(t *testing.T) {
-+	nodeA := newComponent("nodeA")
-+	nodeB := newComponent("nodeB", "nodeA")
-+	nodeC := newComponent("nodeC", "nodeB")
-+	nodeD := newComponent("nodeD", "nodeC")
-+
-+	design := newDesign("deep-chain-panic", nodeA, nodeB, nodeC, nodeD)
-+	plan, err := CreatePlan(design, nil, false)
-+	if err != nil {
-+		t.Fatalf("CreatePlan() returned unexpected error: %v", err)
-+	}
-+
-+	var (
-+		mu         sync.Mutex
-+		aVisited   bool
-+		cVisited   bool
-+		dVisited   bool
-+		cWithheld  bool
-+		dWithheld  bool
-+		cFailedDep string
-+		dFailedDep string
-+	)
-+
-+	done := make(chan struct{})
-+	go func() {
-+		defer close(done)
-+		defer func() {
-+			_ = recover()
-+		}()
-+		_ = plan.Execute(
-+			func(id string, comp component.ComponentDefinition) bool {
-+				mu.Lock()
-+				defer mu.Unlock()
-+				switch comp.DisplayName {
-+				case "nodeA":
-+					aVisited = true
-+					return true
-+				case "nodeB":
-+					panic("simulated fatal panic in nodeB")
-+				case "nodeC":
-+					cVisited = true
-+					return true
-+				case "nodeD":
-+					dVisited = true
-+					return true
-+				}
-+				return true
-+			},
-+			func(id string, comp component.ComponentDefinition, failedDep string) {
-+				mu.Lock()
-+				defer mu.Unlock()
-+				switch comp.DisplayName {
-+				case "nodeC":
-+					cWithheld = true
-+					cFailedDep = failedDep
-+				case "nodeD":
-+					dWithheld = true
-+					dFailedDep = failedDep
-+				}
-+			},
-+			testLogger(t),
-+		)
-+	}()
-+
-+	select {
-+	case <-done:
-+	case <-time.After(3 * time.Second):
-+		t.Fatal("Plan.Execute() deadlocked; panic in middle of deep chain hung downstream nodes")
-+	}
-+
-+	mu.Lock()
-+	defer mu.Unlock()
-+
-+	if !aVisited {
-+		t.Error("nodeA was not visited, want it visited before nodeB")
-+	}
-+	if cVisited {
-+		t.Error("nodeC was visited, want it withheld because nodeB panicked")
-+	}
-+	if dVisited {
-+		t.Error("nodeD was visited, want it withheld because nodeC was withheld")
-+	}
-+	if !cWithheld || cFailedDep != nodeB.ID.String() {
-+		t.Errorf("nodeC withheld=%v, failedDep=%q, want true and %q", cWithheld, cFailedDep, nodeB.ID.String())
-+	}
-+	if !dWithheld || dFailedDep != nodeC.ID.String() {
-+		t.Errorf("nodeD withheld=%v, failedDep=%q, want true and %q", dWithheld, dFailedDep, nodeC.ID.String())
-+	}
-+}
-+
-+// TestParallelProcess_DiamondTopologyPanicOneBranchWithholdsSink verifies that in a diamond
-+// DAG (Root -> BranchA, BranchB -> Sink), when BranchA panics while BranchB succeeds,
-+// the Sink receives both signals, correctly determines it cannot
-```
-
-**File**: `server/models/pattern/stages/error.go` (modified, +13/-0)
-```diff
-@@ -11,8 +11,21 @@ const (
- 	ErrResolveReferenceCode       = "meshery-server-1361"
- 	ErrYAMLUnmarshalCode          = "meshery-server-1436"
- 	ErrDependencyNotSatisfiedCode = "meshery-server-1480"
-+	ErrProvisionPanicCode         = "meshery-server-1497"
- )
- 
-+// ErrProvisionPanic reports a component that panicked during provisioning execution.
-+func ErrProvisionPanic(component string, r interface{}) error {
-+	return errors.New(
-+		ErrProvisionPanicCode,
-+		errors.Alert,
-+		[]string{"Component panicked during provisioning"},
-+		[]string{fmt.Sprintf("A panic occurred while provisioning component %q: %v", component, r)},
-+		[]string{"Runtime fault occurred in component visitor execution"},
-+		[]string{"Inspect component configuration and provider logs for runtime failures"},
-+	)
-+}
-+
- // ErrDependencyNotSatisfied reports a component that was not acted on because a
- // component it declared a dependency on did not succeed.
- //
-```
-
-**File**: `server/models/pattern/stages/provision.go` (modified, +12/-1)
-```diff
-@@ -67,7 +67,18 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.H
- 		}
- 
- 		// Execute the plan
--		err = plan.Execute(func(name string, component component.ComponentDefinition) bool {
-+		err = plan.Execute(func(name string, component component.ComponentDefinition) (ok bool) {
-+			defer func() {
-+				if r := recover(); r != nil {
-+					log.Errorf("panic during component provisioning for %s (%s): %v", component.DisplayName, name, r)
-+					panicErr := ErrProvisionPanic(component.DisplayName, r)
-+					data.Lock.Lock()
-+					data.Other[fmt.Sprintf("%s%s", name, ProvisionSuffixKey)] = dispatchFailureMessage(component, panicErr, data.Pattern.Name, prov.IsDelete())
-+					data.Lock.Unlock()
-+					ok = false
-+				}
-+			}()
-+
- 			ccp := CompConfigPair{}
- 
- 			// meshkit's orchestration.EnrichComponentWithMesheryMetadata operates
-```
-
-**File**: `server/models/pattern/stages/provision_test.go` (modified, +114/-0)
-```diff
-@@ -49,6 +49,7 @@ type stubActionProvider struct {
- 	dispatchFailures     map[string]bool
- 	noOutcomes           map[string]bool
- 	prerequisiteFailures map[string]bool
-+	panics               map[string]bool
- 
- 	mx         sync.Mutex
- 	dispatched []string
-@@ -77,8 +78,13 @@ func (s *stubActionProvider) Provision(ccp CompConfigPair) ([]patterns.Deploymen
- 
- 	s.mx.Lock()
- 	s.dispatched = append(s.dispatched, name)
-+	shouldPanic := s.panics[name]
- 	s.mx.Unlock()
- 
-+	if shouldPanic {
-+		panic(fmt.Sprintf("simulated failure in act.Provision for %s", name))
-+	}
-+
- 	if s.dispatchFailures[name] {
- 		return nil, errors.New("meshery-server-test", errors.Alert, []string{"dispatch failed"}, []string{"dispatch failed"}, []string{}, []string{})
- 	}
-@@ -299,6 +305,114 @@ func TestProvisionWithholdsDependentsOfAComponentThatFailedToApply(t *testing.T)
- 	}
- }
- 
-+func TestProvisionHandlesPanicInActProvision(t *testing.T) {
-+	act := newStubActionProvider(t)
-+	act.panics = map[string]bool{"a": true}
-+
-+	compA := newDesignComponent("a")
-+	compB := newDesignComponent("b", "a")
-+	compC := newDesignComponent("c")
-+	components := []*component.ComponentDefinition{compA, compB, compC}
-+
-+	design := pattern.PatternFile{
-+		ID:         uuid.Must(uuid.NewV4()),
-+		Name:       "provision-test",
-+		Version:    "1.0.0",
-+		Components: components,
-+	}
-+
-+	names := map[string]string{}
-+	mapping := map[core.Uuid]component.ComponentDefinition{}
-+	for _, comp := range components {
-+		names[comp.ID.String()] = comp.DisplayName
-+		mapping[comp.ID] = *comp
-+	}
-+
-+	data := &Data{
-+		Pattern:                       &design,
-+		Other:                         map[string]interface{}{},
-+		DeclartionToDefinitionMapping: mapping,
-+	}
-+
-+	var nextErr error
-+	nextCalled := false
-+	next := func(d *Data, err error) {
-+		nextCalled = true
-+		nextErr = err
-+	}
-+
-+	testLog, err := logger.New("provision-test", logger.Options{})
-+	if err != nil {
-+		t.Fatalf("failed to build a logger: %v", err)
-+	}
-+
-+	Provision(&stubInfoProvider{}, act, testLog)(data, nil, next)
-+
-+	if !nextCalled {
-+		t.Fatal("next was not called")
-+	}
-+
-+	if nextErr != nil {
-+		t.Errorf("next called with error %v, want nil so deployment summary is preserved in HTTP response", nextErr)
-+	}
-+
-+	reported := map[string][]patterns.DeploymentMessagePerContext{}
-+	data.Lock.Lock()
-+	for key, value := range data.Other {
-+		id := key[:len(key)-len(ProvisionSuffixKey)]
-+		msgs, ok := value.([]patterns.DeploymentMessagePerContext)
-+		if !ok {
-+			t.Fatalf("data.Other[%q] holds %T, want []patterns.DeploymentMessagePerContext", key, value)
-+		}
-+		reported[names[id]] = msgs
-+	}
-+	data.Lock.Unlock()
-+
-+	order := act.order()
-+
-+	if !dispatched(order, "a") {
-+		t.Errorf("dispatched %v, want \"a\" dispatched", order)
-+	}
-+
-+	if dispatched(order, "b") {
-+		t.Errorf("dispatched %v, want \"b\" withheld because \"a\" panicked", order)
-+	}
-+
-+	if !dispatched(order, "c") {
-+		t.Errorf("dispatched %v, want \"c\" dispatched", order)
-+	}
-+
-+	msgA, reportedA := reported["a"]
-+	if !reportedA {
-+		t.Fatal("\"a\" produced no deployment message in data.Other, want failure recorded")
-+	}
-+
-+	if succeeded(msgA) {
-+		t.Error("\"a\" was reported as successful, want it reported as failed")
-+	}
-+
-+	if got := errors.GetCode(msgA[0].Summary[0].Error); got != ErrProvisionPanicCode {
-+		t.Errorf("\"a\" was reported with error code %s, want %s", got, ErrProvisionPanicCode)
-+	}
-+
-+	withheldB, reportedB := reported["b"]
-+	if !reportedB {
-+		t.Fatal("\"b\" produced no deployment message, want it reported as withheld")
-+	}
-+
-+	if succeeded(withheldB) {
-+		t.Error("\"b\" was reported as successful, want it reported as withheld")
-+	}
-+
-+	if got := errors.GetCode(withheldB[0].Summary[0].Error); got != ErrDependencyNotSatisfiedCode {
-+		t.Errorf("\"b\" was reported with error code %s, want %s", got, ErrDependencyNotSatisfiedCode)
-+	}
-+
-+	if !succeeded(reported["c"]) {
-+		t.Error("\"c\" was not reported as successful")
-+	}
-+}
-+
- // A component deployed to several clusters at once that fails on one of them is
- // treated as failed outright, so its dependents are withheld everywhere rather
- // than only on the cluster where it failed.
-```
-
----
-
-### Incident Patch 2: `5f96e08e` (2026-11-21)
-**Commit Message**: Merge pull request #23947 from madhavzanwar/fix/environment-list-nil-description-guards
-
-[mesheryctl] Guard nil environment page and fallback empty description in environment list
-
-**File**: `mesheryctl/internal/cli/root/environments/list.go` (modified, +10/-1)
-```diff
-@@ -16,6 +16,7 @@ package environments
- 
- import (
- 	"fmt"
-+	"strings"
- 
- 	"github.com/meshery/meshery/mesheryctl/internal/cli/pkg/display"
- 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-@@ -89,9 +90,17 @@ mesheryctl environment list --orgId [orgId] --pagesize [pagesize]
- }
- 
- func processEnvironmentData(environmentResponse *environment.EnvironmentPage) ([][]string, int64) {
-+	if environmentResponse == nil {
-+		return [][]string{}, 0
-+	}
-+
- 	rows := [][]string{}
- 	for _, environment := range environmentResponse.Environments {
--		row := []string{environment.ID.String(), environment.Name, environment.OrganizationID.String(), environment.Description, environment.CreatedAt.String(), environment.UpdatedAt.String()}
-+		description := "N/A"
-+		if strings.TrimSpace(environment.Description) != "" {
-+			description = environment.Description
-+		}
-+		row := []string{environment.ID.String(), environment.Name, environment.OrganizationID.String(), description, environment.CreatedAt.String(), environment.UpdatedAt.String()}
- 		rows = append(rows, row)
- 	}
- 	return rows, int64(environmentResponse.TotalCount)
-```
-
-**File**: `mesheryctl/internal/cli/root/environments/list_test.go` (modified, +47/-0)
-```diff
-@@ -7,6 +7,7 @@ import (
- 	"testing"
- 
- 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
-+	"github.com/meshery/schemas/models/v1beta1/environment"
- 	"github.com/pkg/errors"
- )
- 
-@@ -59,3 +60,49 @@ func TestListEnvironment(t *testing.T) {
- 
- 	utils.InvokeMesheryctlTestListCommand(t, update, EnvironmentCmd, tests, currDir, "environments")
- }
-+
-+func TestProcessEnvironmentData_NilResponse(t *testing.T) {
-+	rows, total := processEnvironmentData(nil)
-+	if len(rows) != 0 {
-+		t.Fatalf("expected 0 rows on nil response, got %d", len(rows))
-+	}
-+	if total != 0 {
-+		t.Fatalf("expected 0 total on nil response, got %d", total)
-+	}
-+}
-+
-+func TestProcessEnvironmentData_EmptyDescriptionFallback(t *testing.T) {
-+	envPage := &environment.EnvironmentPage{
-+		TotalCount: 3,
-+		Environments: []environment.Environment{
-+			{
-+				Name:        "empty-desc-env",
-+				Description: "",
-+			},
-+			{
-+				Name:        "whitespace-desc-env",
-+				Description: "   \t\n  ",
-+			},
-+			{
-+				Name:        "valid-desc-env",
-+				Description: "Production Environment",
++			CleanupHooks: []func(){
++				cleanUpHookRemoveDirsAndFiles(
++					buildTestDynamoController,
++					buildTestDynamoController+".tar",
++				),
 +			},
 +		},
-+	}
-+	rows, total := processEnvironmentData(envPage)
-+	if total != 3 {
-+		t.Fatalf("expected total 3, got %d", total)
-+	}
-+	if len(rows) != 3 {
-+		t.Fatalf("expected 3 rows, got %d", len(rows))
-+	}
-+	if rows[0][3] != "N/A" {
-+		t.Fatalf("expected empty description 'N/A', got %q", rows[0][3])
-+	}
-+	if rows[1][3] != "N/A" {
-+		t.Fatalf("expected whitespace-only description 'N/A', got %q", rows[1][3])
-+	}
-+	if rows[2][3] != "Production Environment" {
-+		t.Fatalf("expected preserved description 'Production Environment', got %q", rows[2][3])
-+	}
-+}
-```
-
----
-
-### Incident Patch 3: `f94f3d99` (2026-11-21)
-**Commit Message**: Merge branch 'master' into fix/environment-list-nil-description-guards
-
-**File**: `docs/data/openapi.yml` (modified, +140/-9)
-```diff
-@@ -67207,6 +67207,7 @@ paths:
-         expose: true
-         title: Get the current user profile
-         scope: account:read
-+        description: Read-only. Returns the profile of the signed-in user. An `X-Current-Orgid` that is not a UUID answers 400.
-       summary: Get current user profile
-       description: |
-         Returns the profile of the signed-in user. An `X-Current-Orgid` that is not a UUID answers 400.
-@@ -67218,7 +67219,12 @@ paths:
-             Organization the call acts in, by ID (a UUID). When present, the server resolves the session organization
-             from it instead of the caller's selected organization, and runs its membership and permission checks there.
-             A caller who is not a live member of the named organization receives the same 404 as an unknown resource.
--            Omitted, the caller's selected organization applies.
-+            Omitted, a path or query `orgId` the operation takes names the organization when sent; otherwise the
-+            caller's selected organization applies when it is not nil; otherwise the server defaults among the caller's
-+            live organizations, using the only one when exactly one qualifies. When the call needs an acting
-+            organization and several qualify, an operation that declares the OrganizationSelectionRequired response
-+            answers 409 `organization_selection_required`. The resolution order is in docs/mcp-operation-contract.md,
-+            the organization selector.
-           schema:
-             type: string
-             minLength: 36
-@@ -67860,6 +67866,61 @@ paths:
-             text/plain:
-               schema:
-                 type: string
-+        '409':
-+          description: >-
-+            Conflict - the call needs an organization, none was named, and more than one of the caller's organizations
-+            qualifies. Pass one of `choices[].id` as `X-Current-Orgid` (the `organizationId` tool argument). The body's
-+            `code` is `organization_selection_required`.
-+          content:
-+            application/json:
-+              schema:
-+                type: object
-+                description: >-
-+                  The call needs an acting organization, the caller named none, and more than one of the caller's live
-+                  organizations qualifies. Nothing was done by this request. Repeat it naming one of `choices` as
-+                  `X-Current-Orgid` (the `organizationId` tool argument).
-+                required:
-+                  - code
-+                  - message
-+                  - choices
-+                additionalProperties: false
-+                properties:
-+                  code:
-+                    type: string
-+                    description: Machine-readable reason. Always `organization_selection_required` for this body.
-+                    enum:
-+                      - organization_selection_required
-+                  message:
-+                    type: string
-+                    minLength: 1
-+                    description: The sentence the caller is shown.
-+                  choices:
-+                    type: array
-+                    minItems: 2
-+                    description: The caller's own live organizations the call could act in. Pass one `id` as `X-Current-Orgid`.
-+                    items:
-+                      type: object
-+                      description: An organization the call could act in. Same fields as AvailableOrganization.
-+                      required:
-+                        - id
-+                        - name
-+                        - description
-+                      additionalProperties: false
-+                      properties:
-+                        id:
-+                          type: string
-+                          format: uuid
-+                          x-go-type: uuid.UUID
-+                          x-go-type-import:
-+                            path: github.com/gofrs/uuid
-+                          description: Organization ID.
-+                          x-go-name: ID
-+                        name:
-+                          type: string
-+                          description: Name of the organization.
-+                        description:
-+                          type: string
-+                          description: Description of the organization.
-         '500':
-           description: Internal server error
-           content:
-@@ -68038,13 +68099,19 @@ paths:
-         expose: true
-         title: Get connections
-         scope: connections:read
-+        description: >-
-+          Read-only. Returns a paginated list of connections for the authenticated user with filtering, sorting and
-+          pagination support. When `X-Current-Orgid` is also sent, it must name the same organization as the `orgId`
-+          query; a mismatch is refused with a 400 (the organization selector in docs/mcp-operation-contract.md). When
-+          `X-Current-Orgid` is omitted, a sent `orgId` query names the ac
-```
-
-**File**: `docs/meetings/2026/week-of-11-19-2026/JayitaLakhmani.md` (added, +12/-0)
-```diff
-@@ -0,0 +1,12 @@
-+# Hi, I'm Jayita Lakhmani!!! 👋
-+
-+I am an Electronics and Communication Engineering graduate with an interest in Software Development and Cloud-Native Technologies.
-+
-+I have a background in Full-Stack Development and am currently exploring areas like Cloud Computing, DevOps, Kubernetes, Docker, Distributed Systems, and Open Source Development.
-+
-+I'm excited to begin my open-source journey with **Meshery**, learn from the community, and contribute to building and improving cloud-native infrastructure. Looking forward to collaborating, learning, and growing along the way!
-+
-+## Here are my profiles
-+
-+- **LinkedIn:** [Jayita Lakhmani](https://www.linkedin.com/in/jayita-lakhmani/)
-+- **GitHub:** [JayitaL](https://github.com/JayitaL)
-```
-
-**File**: `docs/meetings/2026/week-of-11-19-2026/TS-Phala.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+# T.S. Phala
-+
-+Hey everyone! I'm T.S. Phala, I'm looking forward to working beside you all!
-+
-+We can connect through LinkedIn: https://www.linkedin.com/in/thulaganyo-phala-sehuhula-68a61a373/
-```
-
-**File**: `models/chaos/21.3.390/v1.0.0/components/AWSChaos.json` (added, +209/-0)
-```diff
-@@ -0,0 +1,209 @@
-+{
-+  "id": "00000000-0000-0000-0000-000000000000",
-+  "schemaVersion": "components.meshery.io/v1beta2",
-+  "version": "v1.0.0",
-+  "displayName": "AWS Chaos",
-+  "description": "",
-+  "format": "JSON",
-+  "model": {
-+    "id": "00000000-0000-0000-0000-000000000000",
-+    "schemaVersion": "models.meshery.io/v1beta2",
-+    "version": "v1.0.0",
-+    "name": "chaos",
-+    "displayName": "Chaos",
-+    "status": "enabled",
-+    "registrant": {
-+      "id": "00000000-0000-0000-0000-000000000000",
-+      "name": "Artifact Hub",
-+      "type": "registry",
-+      "subType": "",
-+      "kind": "artifacthub",
-+      "status": "discovered",
-+      "created_at": "0001-01-01T00:00:00Z",
-+      "updated_at": "0001-01-01T00:00:00Z",
-+      "deleted_at": null,
-+      "schemaVersion": ""
-+    },
-+    "connection_id": "00000000-0000-0000-0000-000000000000",
-+    "category": {
-+      "id": "00000000-0000-0000-0000-000000000000",
-+      "name": "App Definition and Development"
-+    },
-+    "subCategory": "Continuous Integration \u0026 Delivery",
-+    "metadata": {
-+      "isAnnotation": false,
-+      "primaryColor": "#00B39F",
-+      "secondaryColor": "#00D3A9",
-+      "shape": "circle",
-+      "source_uri": "https://sx-helm-repository-prod.s3.eu-west-3.amazonaws.com/stable/chaos-21.3.390.tgz",
-+      "styleOverrides": "",
-+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 60 40\" fill=\"none\"\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" clip-path=\"url(#clip0_27224_10242)\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M59.7518 0.292419L50.4322 7.60754L43.5508 1.86349L48.854 9.04349L44.1195 15.4913L50.4323 10.8989L59.3186 18.7899L52.2949 9.47025L59.7518 0.292419Z\" fill=\"#000E44\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M16.6266 32.37C25.318 32.37 32.3636 25.3243 32.3636 16.633C32.3636 7.94169 25.318 0.895996 16.6266 0.895996C7.93534 0.895996 0.889648 7.94169 0.889648 16.633C0.889648 25.3243 7.93534 32.37 16.6266 32.37Z\" stroke=\"#6D4013\" stroke-width=\"1.5\" stroke-miterlimit=\"2.5\"\u003e\u003c/path\u003e\n\u003cmask xmlns=\"http://www.w3.org/2000/svg\" id=\"mask0_27224_10242\" style=\"mask-type:luminance\" maskUnits=\"userSpaceOnUse\" x=\"-5\" y=\"25\" width=\"45\" height=\"23\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M-4.80078 47.5563H39.0409V25.1863H-4.80078V47.5563Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003c/mask\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" mask=\"url(#mask0_27224_10242)\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M25.9877 28.2204C26.739 27.6944 28.4711 28.8719 29.8565 30.8506C31.242 32.8292 31.7561 34.8596 31.0048 35.3857C30.2536 35.9117 28.5214 34.7342 27.136 32.7555C25.7505 30.7769 25.2364 28.7465 25.9877 28.2204Z\" fill=\"#6D4013\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M8.08853 28.2205C7.33726 27.6944 5.60513 28.8719 4.21967 30.8506C2.83421 32.8292 2.32012 34.8596 3.07137 35.3857C3.82264 35.9117 5.55477 34.7342 6.94022 32.7555C8.32568 30.7769 8.83978 28.7465 8.08853 28.2205Z\" fill=\"#6D4013\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M17.0298 31.3186C16.1127 31.3186 15.3692 33.2767 15.3692 35.6921C15.3692 38.1076 16.1127 40.0657 17.0298 40.0657C17.947 40.0657 18.6904 38.1076 18.6904 35.6921C18.6904 33.2767 17.9469 31.3186 17.0298 31.3186Z\" fill=\"#6D4013\"\u003e\u003c/path\u003e\n\u003c/g\u003e\n\u003cmask xmlns=\"http://www.w3.org/2000/svg\" id=\"mask1_27224_10242\" style=\"mask-type:luminance\" maskUnits=\"userSpaceOnUse\" x=\"-5\" y=\"25\" width=\"45\" height=\"23\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M-4.80078 47.5563H39.0409V25.1863H-4.80078V47.5563Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003c/mask\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" mask=\"url(#mask1_27224_10242)\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M29.6667 24.2904C26.9918 28.7344 22.1445 31.7039 16.6089 31.7039C11.2246 31.7039 6.49166 28.8947 3.77539 24.6518\" stroke=\"#6D4013\" stroke-width=\"2.64447\"\u003e\u003c/path\u003e\n\u003c/g\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M28.983 18.905C29.9651 17.2039 29.9144 17.2969 30.7265 15.8903C31.0051 15.3919 31.2542 14.9522 31.5182 14.4978C30.6385 12.9733 29.7445 11.4342 28.8502 9.89509H25.4056C24.8193 8.89832 24.2182 7.90159 23.6173 6.87549H20.1873C19.601 5.89339 19.0293 4.89659 18.3842 3.82659C18.3696 3.82659 18.355 3.82659 18.3404 3.81193C18.0325 4.31031 17.7687 4.7354 17.4756 5.20443C17.1824 4.72071 16.9185 4.29562 16.6253 3
-```
-
-**File**: `models/chaos/21.3.390/v1.0.0/components/AzureChaos.json` (added, +209/-0)
-```diff
-@@ -0,0 +1,209 @@
-+{
-+  "id": "00000000-0000-0000-0000-000000000000",
-+  "schemaVersion": "components.meshery.io/v1beta2",
-+  "version": "v1.0.0",
-+  "displayName": "Azure Chaos",
-+  "description": "",
-+  "format": "JSON",
-+  "model": {
-+    "id": "00000000-0000-0000-0000-000000000000",
-+    "schemaVersion": "models.meshery.io/v1beta2",
-+    "version": "v1.0.0",
-+    "name": "chaos",
-+    "displayName": "Chaos",
-+    "status": "enabled",
-+    "registrant": {
-+      "id": "00000000-0000-0000-0000-000000000000",
-+      "name": "Artifact Hub",
-+      "type": "registry",
-+      "subType": "",
-+      "kind": "artifacthub",
-+      "status": "discovered",
-+      "created_at": "0001-01-01T00:00:00Z",
-+      "updated_at": "0001-01-01T00:00:00Z",
-+      "deleted_at": null,
-+      "schemaVersion": ""
-+    },
-+    "connection_id": "00000000-0000-0000-0000-000000000000",
-+    "category": {
-+      "id": "00000000-0000-0000-0000-000000000000",
-+      "name": "App Definition and Development"
-+    },
-+    "subCategory": "Continuous Integration \u0026 Delivery",
-+    "metadata": {
-+      "isAnnotation": false,
-+      "primaryColor": "#00B39F",
-+      "secondaryColor": "#00D3A9",
-+      "shape": "circle",
-+      "source_uri": "https://sx-helm-repository-prod.s3.eu-west-3.amazonaws.com/stable/chaos-21.3.390.tgz",
-+      "styleOverrides": "",
-+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 60 40\" fill=\"none\"\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" clip-path=\"url(#clip0_27224_10242)\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M59.7518 0.292419L50.4322 7.60754L43.5508 1.86349L48.854 9.04349L44.1195 15.4913L50.4323 10.8989L59.3186 18.7899L52.2949 9.47025L59.7518 0.292419Z\" fill=\"#000E44\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M16.6266 32.37C25.318 32.37 32.3636 25.3243 32.3636 16.633C32.3636 7.94169 25.318 0.895996 16.6266 0.895996C7.93534 0.895996 0.889648 7.94169 0.889648 16.633C0.889648 25.3243 7.93534 32.37 16.6266 32.37Z\" stroke=\"#6D4013\" stroke-width=\"1.5\" stroke-miterlimit=\"2.5\"\u003e\u003c/path\u003e\n\u003cmask xmlns=\"http://www.w3.org/2000/svg\" id=\"mask0_27224_10242\" style=\"mask-type:luminance\" maskUnits=\"userSpaceOnUse\" x=\"-5\" y=\"25\" width=\"45\" height=\"23\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M-4.80078 47.5563H39.0409V25.1863H-4.80078V47.5563Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003c/mask\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" mask=\"url(#mask0_27224_10242)\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M25.9877 28.2204C26.739 27.6944 28.4711 28.8719 29.8565 30.8506C31.242 32.8292 31.7561 34.8596 31.0048 35.3857C30.2536 35.9117 28.5214 34.7342 27.136 32.7555C25.7505 30.7769 25.2364 28.7465 25.9877 28.2204Z\" fill=\"#6D4013\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M8.08853 28.2205C7.33726 27.6944 5.60513 28.8719 4.21967 30.8506C2.83421 32.8292 2.32012 34.8596 3.07137 35.3857C3.82264 35.9117 5.55477 34.7342 6.94022 32.7555C8.32568 30.7769 8.83978 28.7465 8.08853 28.2205Z\" fill=\"#6D4013\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M17.0298 31.3186C16.1127 31.3186 15.3692 33.2767 15.3692 35.6921C15.3692 38.1076 16.1127 40.0657 17.0298 40.0657C17.947 40.0657 18.6904 38.1076 18.6904 35.6921C18.6904 33.2767 17.9469 31.3186 17.0298 31.3186Z\" fill=\"#6D4013\"\u003e\u003c/path\u003e\n\u003c/g\u003e\n\u003cmask xmlns=\"http://www.w3.org/2000/svg\" id=\"mask1_27224_10242\" style=\"mask-type:luminance\" maskUnits=\"userSpaceOnUse\" x=\"-5\" y=\"25\" width=\"45\" height=\"23\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M-4.80078 47.5563H39.0409V25.1863H-4.80078V47.5563Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003c/mask\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" mask=\"url(#mask1_27224_10242)\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M29.6667 24.2904C26.9918 28.7344 22.1445 31.7039 16.6089 31.7039C11.2246 31.7039 6.49166 28.8947 3.77539 24.6518\" stroke=\"#6D4013\" stroke-width=\"2.64447\"\u003e\u003c/path\u003e\n\u003c/g\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M28.983 18.905C29.9651 17.2039 29.9144 17.2969 30.7265 15.8903C31.0051 15.3919 31.2542 14.9522 31.5182 14.4978C30.6385 12.9733 29.7445 11.4342 28.8502 9.89509H25.4056C24.8193 8.89832 24.2182 7.90159 23.6173 6.87549H20.1873C19.601 5.89339 19.0293 4.89659 18.3842 3.82659C18.3696 3.82659 18.355 3.82659 18.3404 3.81193C18.0325 4.31031 17.7687 4.7354 17.4756 5.20443C17.1824 4.72071 16.9185 4.29562 16.6253
-```
-
-**File**: `models/chaos/21.3.390/v1.0.0/components/BlockChaos.json` (added, +209/-0)
-```diff
-@@ -0,0 +1,209 @@
-+{
-+  "id": "00000000-0000-0000-0000-000000000000",
-+  "schemaVersion": "components.meshery.io/v1beta2",
-+  "version": "v1.0.0",
-+  "displayName": "Block Chaos",
-+  "description": "",
-+  "format": "JSON",
-+  "model": {
-+    "id": "00000000-0000-0000-0000-000000000000",
-+    "schemaVersion": "models.meshery.io/v1beta2",
-+    "version": "v1.0.0",
-+    "name": "chaos",
-+    "displayName": "Chaos",
-+    "status": "enabled",
-+    "registrant": {
-+      "id": "00000000-0000-0000-0000-000000000000",
-+      "name": "Artifact Hub",
-+      "type": "registry",
-+      "subType": "",
-+      "kind": "artifacthub",
-+      "status": "discovered",
-+      "created_at": "0001-01-01T00:00:00Z",
-+      "updated_at": "0001-01-01T00:00:00Z",
-+      "deleted_at": null,
-+      "schemaVersion": ""
-+    },
-+    "connection_id": "00000000-0000-0000-0000-000000000000",
-+    "category": {
-+      "id": "00000000-0000-0000-0000-000000000000",
-+      "name": "App Definition and Development"
-+    },
-+    "subCategory": "Continuous Integration \u0026 Delivery",
-+    "metadata": {
-+      "isAnnotation": false,
-+      "primaryColor": "#00B39F",
-+      "secondaryColor": "#00D3A9",
-+      "shape": "circle",
-+      "source_uri": "https://sx-helm-repository-prod.s3.eu-west-3.amazonaws.com/stable/chaos-21.3.390.tgz",
-+      "styleOverrides": "",
-+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 60 40\" fill=\"none\"\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" clip-path=\"url(#clip0_27224_10242)\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M59.7518 0.292419L50.4322 7.60754L43.5508 1.86349L48.854 9.04349L44.1195 15.4913L50.4323 10.8989L59.3186 18.7899L52.2949 9.47025L59.7518 0.292419Z\" fill=\"#000E44\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M16.6266 32.37C25.318 32.37 32.3636 25.3243 32.3636 16.633C32.3636 7.94169 25.318 0.895996 16.6266 0.895996C7.93534 0.895996 0.889648 7.94169 0.889648 16.633C0.889648 25.3243 7.93534 32.37 16.6266 32.37Z\" stroke=\"#6D4013\" stroke-width=\"1.5\" stroke-miterlimit=\"2.5\"\u003e\u003c/path\u003e\n\u003cmask xmlns=\"http://www.w3.org/2000/svg\" id=\"mask0_27224_10242\" style=\"mask-type:luminance\" maskUnits=\"userSpaceOnUse\" x=\"-5\" y=\"25\" width=\"45\" height=\"23\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M-4.80078 47.5563H39.0409V25.1863H-4.80078V47.5563Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003c/mask\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" mask=\"url(#mask0_27224_10242)\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M25.9877 28.2204C26.739 27.6944 28.4711 28.8719 29.8565 30.8506C31.242 32.8292 31.7561 34.8596 31.0048 35.3857C30.2536 35.9117 28.5214 34.7342 27.136 32.7555C25.7505 30.7769 25.2364 28.7465 25.9877 28.2204Z\" fill=\"#6D4013\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M8.08853 28.2205C7.33726 27.6944 5.60513 28.8719 4.21967 30.8506C2.83421 32.8292 2.32012 34.8596 3.07137 35.3857C3.82264 35.9117 5.55477 34.7342 6.94022 32.7555C8.32568 30.7769 8.83978 28.7465 8.08853 28.2205Z\" fill=\"#6D4013\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M17.0298 31.3186C16.1127 31.3186 15.3692 33.2767 15.3692 35.6921C15.3692 38.1076 16.1127 40.0657 17.0298 40.0657C17.947 40.0657 18.6904 38.1076 18.6904 35.6921C18.6904 33.2767 17.9469 31.3186 17.0298 31.3186Z\" fill=\"#6D4013\"\u003e\u003c/path\u003e\n\u003c/g\u003e\n\u003cmask xmlns=\"http://www.w3.org/2000/svg\" id=\"mask1_27224_10242\" style=\"mask-type:luminance\" maskUnits=\"userSpaceOnUse\" x=\"-5\" y=\"25\" width=\"45\" height=\"23\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M-4.80078 47.5563H39.0409V25.1863H-4.80078V47.5563Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003c/mask\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" mask=\"url(#mask1_27224_10242)\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M29.6667 24.2904C26.9918 28.7344 22.1445 31.7039 16.6089 31.7039C11.2246 31.7039 6.49166 28.8947 3.77539 24.6518\" stroke=\"#6D4013\" stroke-width=\"2.64447\"\u003e\u003c/path\u003e\n\u003c/g\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M28.983 18.905C29.9651 17.2039 29.9144 17.2969 30.7265 15.8903C31.0051 15.3919 31.2542 14.9522 31.5182 14.4978C30.6385 12.9733 29.7445 11.4342 28.8502 9.89509H25.4056C24.8193 8.89832 24.2182 7.90159 23.6173 6.87549H20.1873C19.601 5.89339 19.0293 4.89659 18.3842 3.82659C18.3696 3.82659 18.355 3.82659 18.3404 3.81193C18.0325 4.31031 17.7687 4.7354 17.4756 5.20443C17.1824 4.72071 16.9185 4.29562 16.6253
-```
-
-**File**: `models/chaos/21.3.390/v1.0.0/components/DNSChaos.json` (added, +209/-0)
-```diff
-@@ -0,0 +1,209 @@
-+{
-+  "id": "00000000-0000-0000-0000-000000000000",
-+  "schemaVersion": "components.meshery.io/v1beta2",
-+  "version": "v1.0.0",
-+  "displayName": "DNS Chaos",
-+  "description": "",
-+  "format": "JSON",
-+  "model": {
-+    "id": "00000000-0000-0000-0000-000000000000",
-+    "schemaVersion": "models.meshery.io/v1beta2",
-+    "version": "v1.0.0",
-+    "name": "chaos",
-+    "displayName": "Chaos",
-+    "status": "enabled",
-+    "registrant": {
-+      "id": "00000000-0000-0000-0000-000000000000",
-+      "name": "Artifact Hub",
-+      "type": "registry",
-+      "subType": "",
-+      "kind": "artifacthub",
-+      "status": "discovered",
-+      "created_at": "0001-01-01T00:00:00Z",
-+      "updated_at": "0001-01-01T00:00:00Z",
-+      "deleted_at": null,
-+      "schemaVersion": ""
-+    },
-+    "connection_id": "00000000-0000-0000-0000-000000000000",
-+    "category": {
-+      "id": "00000000-0000-0000-0000-000000000000",
-+      "name": "App Definition and Development"
-+    },
-+    "subCategory": "Continuous Integration \u0026 Delivery",
-+    "metadata": {
-+      "isAnnotation": false,
-+      "primaryColor": "#00B39F",
-+      "secondaryColor": "#00D3A9",
-+      "shape": "circle",
-+      "source_uri": "https://sx-helm-repository-prod.s3.eu-west-3.amazonaws.com/stable/chaos-21.3.390.tgz",
-+      "styleOverrides": "",
-+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 60 40\" fill=\"none\"\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" clip-path=\"url(#clip0_27224_10242)\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M59.7518 0.292419L50.4322 7.60754L43.5508 1.86349L48.854 9.04349L44.1195 15.4913L50.4323 10.8989L59.3186 18.7899L52.2949 9.47025L59.7518 0.292419Z\" fill=\"#000E44\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M16.6266 32.37C25.318 32.37 32.3636 25.3243 32.3636 16.633C32.3636 7.94169 25.318 0.895996 16.6266 0.895996C7.93534 0.895996 0.889648 7.94169 0.889648 16.633C0.889648 25.3243 7.93534 32.37 16.6266 32.37Z\" stroke=\"#6D4013\" stroke-width=\"1.5\" stroke-miterlimit=\"2.5\"\u003e\u003c/path\u003e\n\u003cmask xmlns=\"http://www.w3.org/2000/svg\" id=\"mask0_27224_10242\" style=\"mask-type:luminance\" maskUnits=\"userSpaceOnUse\" x=\"-5\" y=\"25\" width=\"45\" height=\"23\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M-4.80078 47.5563H39.0409V25.1863H-4.80078V47.5563Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003c/mask\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" mask=\"url(#mask0_27224_10242)\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M25.9877 28.2204C26.739 27.6944 28.4711 28.8719 29.8565 30.8506C31.242 32.8292 31.7561 34.8596 31.0048 35.3857C30.2536 35.9117 28.5214 34.7342 27.136 32.7555C25.7505 30.7769 25.2364 28.7465 25.9877 28.2204Z\" fill=\"#6D4013\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M8.08853 28.2205C7.33726 27.6944 5.60513 28.8719 4.21967 30.8506C2.83421 32.8292 2.32012 34.8596 3.07137 35.3857C3.82264 35.9117 5.55477 34.7342 6.94022 32.7555C8.32568 30.7769 8.83978 28.7465 8.08853 28.2205Z\" fill=\"#6D4013\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M17.0298 31.3186C16.1127 31.3186 15.3692 33.2767 15.3692 35.6921C15.3692 38.1076 16.1127 40.0657 17.0298 40.0657C17.947 40.0657 18.6904 38.1076 18.6904 35.6921C18.6904 33.2767 17.9469 31.3186 17.0298 31.3186Z\" fill=\"#6D4013\"\u003e\u003c/path\u003e\n\u003c/g\u003e\n\u003cmask xmlns=\"http://www.w3.org/2000/svg\" id=\"mask1_27224_10242\" style=\"mask-type:luminance\" maskUnits=\"userSpaceOnUse\" x=\"-5\" y=\"25\" width=\"45\" height=\"23\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M-4.80078 47.5563H39.0409V25.1863H-4.80078V47.5563Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003c/mask\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" mask=\"url(#mask1_27224_10242)\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M29.6667 24.2904C26.9918 28.7344 22.1445 31.7039 16.6089 31.7039C11.2246 31.7039 6.49166 28.8947 3.77539 24.6518\" stroke=\"#6D4013\" stroke-width=\"2.64447\"\u003e\u003c/path\u003e\n\u003c/g\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M28.983 18.905C29.9651 17.2039 29.9144 17.2969 30.7265 15.8903C31.0051 15.3919 31.2542 14.9522 31.5182 14.4978C30.6385 12.9733 29.7445 11.4342 28.8502 9.89509H25.4056C24.8193 8.89832 24.2182 7.90159 23.6173 6.87549H20.1873C19.601 5.89339 19.0293 4.89659 18.3842 3.82659C18.3696 3.82659 18.355 3.82659 18.3404 3.81193C18.0325 4.31031 17.7687 4.7354 17.4756 5.20443C17.1824 4.72071 16.9185 4.29562 16.6253 3
-```
-
-**File**: `models/chaos/21.3.390/v1.0.0/components/GCPChaos.json` (added, +209/-0)
-```diff
-@@ -0,0 +1,209 @@
-+{
-+  "id": "00000000-0000-0000-0000-000000000000",
-+  "schemaVersion": "components.meshery.io/v1beta2",
-+  "version": "v1.0.0",
-+  "displayName": "GCP Chaos",
-+  "description": "",
-+  "format": "JSON",
-+  "model": {
-+    "id": "00000000-0000-0000-0000-000000000000",
-+    "schemaVersion": "models.meshery.io/v1beta2",
-+    "version": "v1.0.0",
-+    "name": "chaos",
-+    "displayName": "Chaos",
-+    "status": "enabled",
-+    "registrant": {
-+      "id": "00000000-0000-0000-0000-000000000000",
-+      "name": "Artifact Hub",
-+      "type": "registry",
-+      "subType": "",
-+      "kind": "artifacthub",
-+      "status": "discovered",
-+      "created_at": "0001-01-01T00:00:00Z",
-+      "updated_at": "0001-01-01T00:00:00Z",
-+      "deleted_at": null,
-+      "schemaVersion": ""
-+    },
-+    "connection_id": "00000000-0000-0000-0000-000000000000",
-+    "category": {
-+      "id": "00000000-0000-0000-0000-000000000000",
-+      "name": "App Definition and Development"
-+    },
-+    "subCategory": "Continuous Integration \u0026 Delivery",
-+    "metadata": {
-+      "isAnnotation": false,
-+      "primaryColor": "#00B39F",
-+      "secondaryColor": "#00D3A9",
-+      "shape": "circle",
-+      "source_uri": "https://sx-helm-repository-prod.s3.eu-west-3.amazonaws.com/stable/chaos-21.3.390.tgz",
-+      "styleOverrides": "",
-+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 60 40\" fill=\"none\"\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" clip-path=\"url(#clip0_27224_10242)\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M59.7518 0.292419L50.4322 7.60754L43.5508 1.86349L48.854 9.04349L44.1195 15.4913L50.4323 10.8989L59.3186 18.7899L52.2949 9.47025L59.7518 0.292419Z\" fill=\"#000E44\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M16.6266 32.37C25.318 32.37 32.3636 25.3243 32.3636 16.633C32.3636 7.94169 25.318 0.895996 16.6266 0.895996C7.93534 0.895996 0.889648 7.94169 0.889648 16.633C0.889648 25.3243 7.93534 32.37 16.6266 32.37Z\" stroke=\"#6D4013\" stroke-width=\"1.5\" stroke-miterlimit=\"2.5\"\u003e\u003c/path\u003e\n\u003cmask xmlns=\"http://www.w3.org/2000/svg\" id=\"mask0_27224_10242\" style=\"mask-type:luminance\" maskUnits=\"userSpaceOnUse\" x=\"-5\" y=\"25\" width=\"45\" height=\"23\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M-4.80078 47.5563H39.0409V25.1863H-4.80078V47.5563Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003c/mask\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" mask=\"url(#mask0_27224_10242)\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M25.9877 28.2204C26.739 27.6944 28.4711 28.8719 29.8565 30.8506C31.242 32.8292 31.7561 34.8596 31.0048 35.3857C30.2536 35.9117 28.5214 34.7342 27.136 32.7555C25.7505 30.7769 25.2364 28.7465 25.9877 28.2204Z\" fill=\"#6D4013\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M8.08853 28.2205C7.33726 27.6944 5.60513 28.8719 4.21967 30.8506C2.83421 32.8292 2.32012 34.8596 3.07137 35.3857C3.82264 35.9117 5.55477 34.7342 6.94022 32.7555C8.32568 30.7769 8.83978 28.7465 8.08853 28.2205Z\" fill=\"#6D4013\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M17.0298 31.3186C16.1127 31.3186 15.3692 33.2767 15.3692 35.6921C15.3692 38.1076 16.1127 40.0657 17.0298 40.0657C17.947 40.0657 18.6904 38.1076 18.6904 35.6921C18.6904 33.2767 17.9469 31.3186 17.0298 31.3186Z\" fill=\"#6D4013\"\u003e\u003c/path\u003e\n\u003c/g\u003e\n\u003cmask xmlns=\"http://www.w3.org/2000/svg\" id=\"mask1_27224_10242\" style=\"mask-type:luminance\" maskUnits=\"userSpaceOnUse\" x=\"-5\" y=\"25\" width=\"45\" height=\"23\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M-4.80078 47.5563H39.0409V25.1863H-4.80078V47.5563Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003c/mask\u003e\n\u003cg xmlns=\"http://www.w3.org/2000/svg\" mask=\"url(#mask1_27224_10242)\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M29.6667 24.2904C26.9918 28.7344 22.1445 31.7039 16.6089 31.7039C11.2246 31.7039 6.49166 28.8947 3.77539 24.6518\" stroke=\"#6D4013\" stroke-width=\"2.64447\"\u003e\u003c/path\u003e\n\u003c/g\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M28.983 18.905C29.9651 17.2039 29.9144 17.2969 30.7265 15.8903C31.0051 15.3919 31.2542 14.9522 31.5182 14.4978C30.6385 12.9733 29.7445 11.4342 28.8502 9.89509H25.4056C24.8193 8.89832 24.2182 7.90159 23.6173 6.87549H20.1873C19.601 5.89339 19.0293 4.89659 18.3842 3.82659C18.3696 3.82659 18.355 3.82659 18.3404 3.81193C18.0325 4.31031 17.7687 4.7354 17.4756 5.20443C17.1824 4.72071 16.9185 4.29562 16.6253 3
++		{
++			Name:             "given name only with .gitignore when model build then model is built",
++			Args:             []string{"build", buildTestDynamoController},
++			ExpectError:      false,
++			ExpectedResponse: "model.build.from-model-name-only.golden",
++			ExpectedFiles: []string{
++				buildTestDynamoController + ".tar",
++			},
++			SetupHooks: []func(){
++				setupHookModelInit("init", buildTestDynamoController, "--version", buildTestVersion),
++				setupHookCreateRootFiles(buildTestDynamoController, ".gitignore"),
++			},
++			CleanupHooks: []func(){
++				cleanUpHookRemoveDirsAndFiles(
++					buildTestDynamoController,
++					buildTestDynamoController+".tar",
++				),
++			},
++		},
++		{
++			Name:             "given name only with README.md and .gitignore when model build then model is built",
++			Args:             []string{"build", buildTestDynamoController},
++			ExpectError:      false,
++			ExpectedResponse: "model.build.from-model-name-only.golden",
++			ExpectedFiles: []string{
++				buildTestDynamoController + ".tar",
++			},
++			SetupHooks: []func(){
++				setupHookModelInit("init", buildTestDynamoController, "--version", buildTestVersion),
++				setupHookCreateRootFiles(buildTestDynamoController, "README.md", ".gitignore"),
++			},
++			CleanupHooks: []func(){
++				cleanUpHookRemoveDirsAndFiles(
++					buildTestDynamoController,
++					buildTestDynamoController+".tar",
++				),
++			},
++		},
++		{
++			Name:             "given name only with LICENSE when model build then model is built",
++			Args:             []string{"build", buildTestDynamoController},
++			ExpectError:      false,
++			ExpectedResponse: "model.build.from-model-name-only.golden",
++			ExpectedFiles: []string{
++				buildTestDynamoController + ".tar",
++			},
++			SetupHooks: []func(){
++				setupHookModelInit("init", buildTestDynamoController, "--version", buildTestVersion),
++				setupHookCreateRootFiles(buildTestDynamoController, "LICENSE"),
++			},
++			CleanupHooks: []func(){
++				cleanUpHookRemoveDirsAndFiles(
++					buildTestDynamoController,
++					buildTestDynamoController+".tar",
++				),
++			},
++		},
++		{
++			Name:             "given name only with .git directory when model build the
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #24070** (closed): [Server] Check selector model in Rego mutator-based relationship identification. (@dropps07)
-- **PR #24064** (2026-11-20): [Docs] Add newcomer introduction for T.S. Phala (@unchained-angel)
-- **PR #24062** (2026-11-20): [Docs] fix: remove trailing dot from meeting notes filename (@rrehhamm)
-- **PR #24060** (2026-11-20): Add JayitaLakhmani.md with introduction (@JayitaL)
-- **PR #24058** (2026-11-20): [Docs] Rename meeting minutes file to remove trailing dot (@abhinavkdeval08-design)
-- **PR #24049** (2026-11-20): [UI] Guard ProviderUiAccessControl against non-iterable walker arguments and undefined extension navigators (@madhavzanwar)
+- **PR #24119** (2026-11-22): [Docs] Add language tags to untagged code fences (@ItsAbir005)
+- **PR #24115** (2026-11-21): [Docs] Fix broken image references and shortcode paths in documentation (@Hpsingh26)
+- **PR #24110** (2026-11-21): fix(server): compare core semver so kanvas builds are not flagged outdated (@leecalcote)
+- **PR #24103** (2026-11-21): [UI] Guard getWindowDimensions against undefined window in SSR and clean up resize timeout (@madhavzanwar)
+- **PR #24097** (2026-11-21): [mesheryctl] Migrate live WriteTokenFile tests and remove orphaned legacy files (@abhinavkdeval08-design)
+- **PR #24096** (2026-11-21): [mesheryctl] Fix model build validation with root-level files (@BHAUMIK0711)
 
 ---
 
@@ -1801,37 +1453,50 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in meshery-server_errors_index.json
+## X. Empirical Invariant Guard in dimension.test.tsx
 
 **RULE**:
-When implementing operations in `docs/data/errorindex/meshery-server_errors_index.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ui/utils/__tests__/dimension.test.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c2b54aba`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `87be8689`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/data/errorindex/meshery-server_errors_index.json`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `ui/utils/__tests__/dimension.test.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-    },
-    {
-      "code": "meshery-server-1497",
-      "moniker": "ErrProvisionPanicCode",
-      "component": {
-        "name": "meshery-server",
-        "type": "component"
-      },
-      "numericCode": "1497",
-      "severity": "alert",
-      "shortDescription": "Component panicked during provisioning",
-      "probableCause": [
-        "Runtime fault occurred in component visitor execution"
-      ],
-      "suggestedRemediation": [
-        "Inspect component configuration and provider logs for runtime failures"
-      ]
+
+  it('returns { width: 0, height: 0 } when window is undefined in SSR', () => {
+    const originalWindow = globalThis.window;
+    // @ts-expect-error simulating SSR environment
+    delete globalThis.window;
+    try {
+      expect(getWindowDimensions()).toEqual({ width: 0, height: 0 });
+    } finally {
+      globalThis.window = originalWindow;
+    }
+  });
+
+  it('cleans up pending searchTimeout on unmount', () => {
+    const setTimeoutSpy = vi.spyOn(globalThis, 'setTimeout');
+    const clearTimeoutSpy = vi.spyOn(globalThis, 'clearTimeout');
+    const { unmount } = render(<Probe onRender={() => {}} />);
+
+    act(() => {
+      window.dispatchEvent(new Event('resize'));
+    });
+
+    const pendingTimeout = setTimeoutSpy.mock.results.at(-1)?.value;
+
+    // Unmount before the 500ms debounce timer fires
+    unmount();
+
+    expect(clearTimeoutSpy).toHaveBeenCalledWith(pendingTimeout);
+    clearTimeoutSpy.mockRestore();
+    setTimeoutSpy.mockRestore();
+  });
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1841,4 +1506,4 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c2b54aba` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `87be8689` are properly handled with clean fallback behavior.

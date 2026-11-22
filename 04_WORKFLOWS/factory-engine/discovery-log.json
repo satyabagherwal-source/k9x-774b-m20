@@ -21904,5 +21904,17 @@
     "qualityScore": 4522,
     "verifiedOrg": true,
     "discoveredAt": "2026-11-22T07:03:14.703Z"
+  },
+  {
+    "name": "Lakonik/pi-H3",
+    "fullName": "Lakonik/pi-H3",
+    "url": "https://huggingface.co/Lakonik/pi-H3",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: Lakonik/pi-H3 (105 likes, 0 downloads)",
+    "likes": 105,
+    "downloads": 0,
+    "qualityScore": 1050,
+    "discoveredAt": "2026-11-22T07:25:12.019Z"
   }
 ]

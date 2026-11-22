@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `b4f4fbdd`  
+> **Source Version**: `5e0af050`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T06:49:34.859Z  
+> **Timestamp**: 2026-11-22T07:27:45.258Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T06:49:34.854Z  
+> **Harvest Timestamp**: 2026-11-22T07:27:45.251Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1464,6 +1464,8 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
     result_matrix = Matrix.merge(result_matrix, output_instance_matrix);
   }
 
+  milestone.test_output_composed({ instances: input_instances });
+
   result_matrix = Matrix.canvas(result_matrix, output_canvas);
 
   milestone.comparison({ test_output_matrix, result_matrix });
@@ -1570,24 +1572,271 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b4f4fbdd` (2026-11-22)
-**Commit Message**: Resume NUC 132 Rust String Boundary Method Aliases
+### Incident Patch 1: `51d61f14` (2026-11-22)
+**Commit Message**: Group ARC output and manage build cache space
 
-Preserve the active invocation's Draft allocation
-0fe54a781d7cbab378adc3614b7c580fa8b886f6 after concurrently accepted
-NUC 131 Reversal Method Aliases at
-28eb973f38e3b88eb972db0180c046a2f7373858 and Draft NUC 133.
+Display related ARC grids and states in shared side-by-side panels. Add disk-space checks and Cargo cache cleanup rules for repeated agent workflows.
 
-The completed r1 preparation remains isolated and unchanged, with no
-Rust improvement pass, final evaluation, integration or outcome.
-Pin this empty claim for a fresh preserving r2 baseline and candidate
-with a fresh proposer/evaluator pair. Keep the original request, title,
-Language compatibility category, continuous mode and unbiased draw.
-This is the current owner's preserving revision, not a stale takeover.
+**File**: `.claude/CLAUDE.md` (modified, +2/-1)
+```diff
+@@ -11,14 +11,15 @@ not a replacement for the policies it links to.
+ | File | Policy |
+ | --- | --- |
+ | [project.instructions.md](rules/project.instructions.md) | Language goals, reference documents, and runtime architecture |
+-| [arc.instructions.md](rules/arc.instructions.md) | ARC puzzle proposals and their `arc/docs` progress records, the minimal dataset grammar `arc/nucleoid.ebnf`, JSON-only LLM exchanges, and no automated ARC tests |
++| [arc.instructions.md](rules/arc.instructions.md) | ARC puzzle proposals and their `arc/docs` progress records, the minimal dataset grammar `arc/nucleoid.ebnf`, JSON-only LLM exchanges, grouped side-by-side terminal output, and no automated ARC tests |
+ | [rust.instructions.md](rules/rust.instructions.md) | Concrete runtime types, dependencies, and Rust community conventions |
+ | [power-of-ten.instructions.md](rules/power-of-ten.instructions.md) | NASA's Power of 10 rules adapted to the Rust crate: the lints, runtime limits, 500-line file limit and policy test that enforce them, and the known runtime-value recursion gap |
+ | [rust-guidelines.instructions.md](rules/rust-guidelines.instructions.md) | The Rust API Guidelines, Google's Rust Style Guide, Microsoft's Pragmatic Rust Guidelines and Clippy, always followed under the Power of 10 adaptation: their precedence, a digest for the crate, comment-free Rust source, deliberate divergences and known gaps |
+ | [documents.instructions.md](rules/documents.instructions.md) | Authoritative specification, executable documents, and dataset synchronization |
+ | [versions.instructions.md](rules/versions.instructions.md) | Human-owned version numbers; no AI version changes |
+ | [proposals.instructions.md](rules/proposals.instructions.md) | Independent NUC proposal preparation and evaluation, the token policy, automatic acceptance on the hard criteria (no compile errors, every test passing, backward compatibility) with the `Automatic-Accepted` status, ARC- and user-requested bases, the pushed `Draft NUC <number> <Title>` allocation of each new NUC before its details, after a pull that claims the next free number or skips a concept already proposed, continuous cycles that first pick up allocated Drafts idle for 24 hours under a pushed `Resume NUC <number> <Title>` claim, and `NUC <number> <Title>` outcome commit messages |
+ | [rust-improvement.instructions.md](rules/rust-improvement.instructions.md) | Focused Rust improvements and the required post-change agent |
++| [disk-space.instructions.md](rules/disk-space.instructions.md) | Before every round of a continuous or repeated task, check free disk space and, below 50 GB, clear the machine's finished Cargo build caches (`CACHEDIR.TAG` targets and `incremental` folders) before starting; clear your own finished rounds' targets every round, keep anything in use, in progress or not build output, and pause when space stays low |
+ | [git.instructions.md](rules/git.instructions.md) | Only `/nuc-proposal` (NUC allocations, claims and outcomes) and `/arc-purposal` (its own ARC changes, when it is done) commit and push; every agent pulls before it starts (fast-forward only, except those callers before a commit or push), pull before commit/push, push after every commit, resolve conflicts and push |
+ 
+ All instruction files use `applyTo: "**"` to preserve their repository-wide scope.
+```
 
-Co-authored-by: Copilot <[REDACTED_EMAIL]>
+**File**: `.claude/rules/arc.instructions.md` (modified, +17/-0)
+```diff
+@@ -145,3 +145,20 @@ Do not read or expose credentials, make paid LLM calls without authorization,
+ or alter provider/model settings merely to manufacture a passing result. An
+ `/arc-purposal` invocation authorizes its one `bun start <puzzle-id>` run and
+ nothing more.
++
++## Grouped, side-by-side terminal output
++
++The solver's terminal always displays by group and side by side:
++
++- Results that belong together share one box, one column per panel, each
++  under its own numbered title: one object's input, output and state, every
++  object that one step separates, segments or composes, or the expected and
++  predicted grids. Milestones in `arc/src/lib/milestone.ts` build these boxes
++  with `terminal.panels`, which moves panels onto further rows of the same
++  box only when the window is too narrow.
++- Never print related results as a run of separate boxes, one after another,
++  and never print a result on its own before a later group shows it: it
++  appears once, in its group. A result that no later group shows, such as a
++  rejected synthesized instance, gets its own group where it happens.
++- One-line progress steps, model reasoning and usage lines, alerts and the
++  failure box stay outside the groups.
+```
 
+**File**: `.claude/rules/disk-space.instructions.md` (added, +55/-0)
+```diff
+@@ -0,0 +1,55 @@
++---
++applyTo: "**"
++---
++
++# Disk space: clear build caches before the next round
++
++These rules apply to every agent that works in rounds: the `/nuc-proposal`
++caller in continuous mode, including cycles coordinated through
++`/nuc-evaluate`, and any other agent that repeats a task, such as a `/loop`
++session or a batch of `/arc-purposal` puzzles. Cargo build directories are the
++cache that fills this machine's drive: a NUC worktree's `target` reaches about
++14 GB, and a round builds several, for its candidate, baselines, evaluation
++and integration.
++
++## Check before every round
++
++- Before every round, the first one included, and before its first pull,
++  check the free space of the drive that holds the repository, its worktrees
++  and the agent workspaces, for example with `Get-PSDrive C` or `df -h /c`.
++- Free space is low below 50 GB. Then clear the caches below on the whole
++  machine before the round starts, and check again.
++- If less than 50 GB is still free after clearing, do not start the round.
++  The disk is a resource limit: pause and report what was cleared and what
++  still holds the space.
++- Report what was cleared, with paths and sizes, in the round's report.
++
++## What to clear
++
++Clear only Cargo build output: a directory that holds a `CACHEDIR.TAG` file,
++which Cargo writes at the root of every target directory, or the
++`incremental` folder of a target.
++
++- **Your own finished rounds:** once a round's outcome is recorded, its
++  candidate, baseline, integration, probe and audit targets are no longer
++  needed. Clear them at the end of every round, whether or not space is low.
++- **Other sessions' finished work:** build directories in
++  `.copilot/session-state`, in other agents' scratchpads and in their
++  worktrees, when the NUC that the directory's path names has an outcome on
++  `main`, or when nothing has written to the directory for more than 24
++  hours.
++- **The primary checkout:** `target/debug/incremental`.
++
++## What to keep
++
++- A build directory that anything wrote to in the last hour, and every build
++  directory of a NUC that is still in progress, since another session may be
++  using it.
++- The primary checkout's built binaries and compiled dependencies, such as
++  `target/debug/nucleoid.exe`, which the REPL and the ARC solver use.
++- Everything that is not build output: worktrees and their sources,
++  uncommitted candidates, baselines, reports, receipts, checkpoints, and the
++  logs and artifacts that a NUC or ARC record cites, `arc/` data and
++  `node_modules`, the Cargo registry and the toolchains. Never remove another
++  session's worktree; clear only the build directories inside it.
++- Never read `.env` files while measuring or clearing.
+```
 
+**File**: `.claude/rules/proposals.instructions.md` (modified, +6/-3)
+```diff
+@@ -494,9 +494,12 @@ In continuous mode, after finalizing and committing an `Accepted`,
+ `Automatic-Accepted` or `Rejected` outcome for a new NUC, the caller
+ immediately starts a distinct new proposal under
+ the [continuous-cycle rule](../skills/nuc-proposal/SKILL.md#continue-with-the-next-nuc-caller-only).
+-Each cycle, the first one included, first
+-[picks up a stale Draft](#pick-up-stale-drafts-first-caller-only) when one
+-exists. Run cycles sequentially with fresh agents, baselines, candidate
++Before every cycle, the first one included, the caller clears the finished
++cycle's build directories and checks free disk space under the
++[disk-space policy](disk-space.instructions.md), clearing the machine's
++finished build caches when space is low. Each cycle, the first one included,
++first [picks up a stale Draft](#pick-up-stale-drafts-first-caller-only) when
++one exists. Run cycles sequentially with fresh agents, baselines, candidate
+ worktrees and reports, preserving the selection, compatibility and acceptance
+ requirements.
+ Only the caller continues; workers stop at their handoffs. This does not
+```
+
+**File**: `.claude/skills/nuc-evaluate/SKILL.md` (modified, +3/-1)
+```diff
+@@ -352,7 +352,9 @@ unstaged work. Baselines and reports remain in the session workspace.
+ 
+ After recording the outcome, follow the
+ [continuous-cycle rule](../nuc-proposal/SKILL.md#continue-with-the-next-nuc-caller-only)
+-without requesting confirmation to record outcomes or continue. For uncertain
++without requesting confirmation to record outcomes or continue, clearing
++build caches before the next cycle under the
++[disk-space policy](../../rules/disk-space.instructions.md). For uncertain
+ category additions, selections, updates, or assignments, workers return the
+ question to the caller, who asks the user for confirmation under the proposal skill's
+ [classification rule](../nuc-proposal/SKILL.md#classify-every-proposal).
+```
+
+**File**: `.claude/skills/nuc-proposal/SKILL.md` (modified, +8/-2)
+```diff
+@@ -19,7 +19,10 @@ Work on exactly one proposal revision in the caller's isolated candidate.
+ Every `/nuc-proposal` task runs in this order, and every continuous cycle
+ repeats it:
+ 
+-1. **Pull.** As always before starting a task, pull the primary checkout with
++1. **Pull.** In continuous mode, first check free disk space and, when it is
++   low, clear the machine's finished build caches under the
++   [disk-space policy](../../rules/disk-space.instructions.md). Then, as
++   always before starting a task, pull the primary checkout with
+    `git pull --no-rebase --autostash` under the
+    [git synchronization policy](../../rules/git.instructions.md#pull-first),
+    so the task runs against the most current remote state. Report the commits
+@@ -540,10 +543,13 @@ next cycle:
+ - **Rejected:** record and commit only rejection documentation and index/outcome
+   metadata; leave rejected language changes isolated.
+ 
++Then clear the finished cycle's own build directories and check free disk
++space under the [disk-space policy](../../rules/disk-space.instructions.md),
++clearing the machine's finished build caches when less than 50 GB is free.
+ Immediately start another fresh "purpose a NUC" cycle without waiting for a
+ new user prompt. Repeat sequentially in the active agent session until the
+ user stops, pauses or redirects the work, the session ends, or a resource limit
+-is reached. A `Blocked` decision, failed outcome recording, or missing required
++is reached; space that stays low after clearing is such a limit. A `Blocked` decision, failed outcome recording, or missing required
+ input pauses continuation; report the blocker instead of bypassing it.
+ 
+ Continuous cycles do not ask for confirmation before recording an outcome or
+```
+
+**File**: `arc/README.md` (modified, +56/-44)
+```diff
+@@ -172,9 +172,11 @@ Panels expand up to 120 terminal columns, shrinking to fit narrower windows.
+ 
+ Immediately after the header, a puzzle preview shows the training input/output
+ pairs side by side, with the test input below. Narrow windows wrap complete
+-pairs onto additional rows; oversized pairs use the existing column-split matrix
+-panels instead of dropping cells. The opening preview never receives or displays
+-the expected test output. The final Expected/Result comparison remains unchanged.
++pairs onto additional rows; an oversized pair shows its `Input` and `Output`
++panels in one box titled `Train <n>`, splitting wide grids into column
++sections instead of dropping cells. The opening preview never receives or
++displays the expected test output, which appears only in the final
++Expected/Result comparison.
+ 
+ Numbered analysis/visualization stages, boxed declarations and object states,
+ and color-coded ARC grids with row/column coordinates keep the run readable.
+@@ -185,46 +187,55 @@ such as `1.3.1` and `1.3.2` for training-object segmentation. Continued grid
+ panels keep the same full number. The declarations header includes the
+ output canvas instead of adding a separate milestone.
+ 
+-Related panels sit side by side in one box, one column per panel, each under
+-its own numbered title; a box for one instance names the instance once, in a
+-title row above the columns. Each training pair's segmented objects share one
+-box with a row per object, its `Input` beside its `Output`, such as
+-`1.4.1 Input` and `1.5.1 Output`; segmented-object panels use `Input` and
+-`Output` without object-number labels. Each constructed instance shows its
+-`Input crop`, `Output crop`, `Implementation` and `Input state` side by side,
+-`1.8.1` through `1.11.1` for the first one. After the `Analysis · State`
+-table, a `Synthesizing training pairs` step precedes the synthesis call. Each
+-synthesized instance's output is then composed as a test object's is, from its
+-`Composing the output object · <instance>` step to its `Placed output`. When
+-validation rejects the instance, because its `Output state` and the measured
+-`Placed output` disagree on `x`, `y`, `width`, `height` or `volume`, a red `✗`
+-step follows at once, such as
+-`1.18.1 Rejected <instance> · Output state ≠ Placed output · volume 5 ≠ 4`,
+-naming each disagreeing property with the state's value first. A
+-`<count> training pairs synthesized` step (`pair` for one) follows, with one
+-box per synthesized instance that passed validation, titled
+-`Synthesized <n> · <instance>`, where `<n>` numbers its synthesized pair: its
+-full-size `Input` and `Output` matrices side by side, then its `Output state`.
+-Model token usage remains attached to its active milestone. Instance-specific
+-steps, and the headers of instance panels shown on their own, include the
+-instance name. In the visualization, the segmented test objects' `Input`
+-panels sit side by side (`2.4.1`, `2.4.2`, …). Each test object's
+-`Executing the object transformation` step, such as `2.7.1`, is followed by
+-one box with its `Input crop`, `Implementation` and `Input state` side by
+-side, `2.5.1`, `2.6.1` and `2.8.1`; if that execution fails, the crop and
+-implementation still print before the error. Its composition shows the same
+-`Input crop` again before its `Output crop`, under its own number, such as
+-`2.11.1`, rather than continuing the synthesis count, and an `Output state`
+-panel right after the `Output crop`: the object's row of the
+-`Visualization · State` table, before its `Placed output`.
+-The visualization's output-crop header also shows the object's output
+-orientation as an arrow emoji and its degrees, such as
+-`2.12.1 Output crop · <instance> · ➡️ 90°`, and every input- and
+-output-state header, in both stages, shows the orientation of the state it
+-displays the same way, such as `2.8.1 Input state · ⬆️ 0°` under its
+-instance's title row. An orientation that is not a multiple of 45 degrees
+-shows `🧭` instead of an arrow, and an object without a numeric
+-`orientation` adds nothing to the header.
++The terminal always displays by group and side by side. Related panels share
++one box, one column per panel, each under its own numbered title, rather than
++following one another as separate boxes, and a result appears once, in its
++group, rather than on its own before a later box repeats it. A box for one
++instance names the instance once, in a title row above the columns. Each
++training pair's segmented objects share one box with a row per object, its
++`Input` beside its `Output`, such as `1.4.1 Input` and `1.5.1 Output`;
++segmented-object panels use `Input` and `Output` without object-number labels.
++Each constructed instance shows its `Input crop`, `Output crop`,
++`Implementation` and `Input state` side by side, `1.8.1` through `1.11.1` for
++the first one. After the `Analysis · State` table, a
++`Synthesizing training pairs` step precedes the synthesis call. Each
++synthesized instance's output is th
+```
+
+**File**: `arc/src/app.ts` (modified, +2/-0)
+```diff
+@@ -121,6 +121,8 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
+     result_matrix = Matrix.merge(result_matrix, output_instance_matrix);
+   }
+ 
++  milestone.test_output_composed({ instances: input_instances });
++
+   result_matrix = Matrix.canvas(result_matrix, output_canvas);
+ 
+   milestone.comparison({ test_output_matrix, result_matrix });
+```
 
 #### Recent Merged Pull Requests:
 - **PR #72** (closed): Bump the npm_and_yarn group with 2 updates (@dependabot[bot])
@@ -1609,3 +1858,35 @@ Co-authored-by: Copilot <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. Group ARC output and manage build cache space
+
+**RULE**:
+When implementing operations in `.claude/CLAUDE.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `51d61f14`: Group ARC output and manage build cache space. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/CLAUDE.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+| [arc.instructions.md](rules/arc.instructions.md) | ARC puzzle proposals and their `arc/docs` progress records, the minimal dataset grammar `arc/nucleoid.ebnf`, JSON-only LLM exchanges, grouped side-by-side terminal output, and no automated ARC tests |
+| [disk-space.instructions.md](rules/disk-space.instructions.md) | Before every round of a continuous or repeated task, check free disk space and, below 50 GB, clear the machine's finished Cargo build caches (`CACHEDIR.TAG` targets and `incremental` folders) before starting; clear your own finished rounds' targets every round, keep anything in use, in progress or not build output, and pause when space stays low |
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+| [arc.instructions.md](rules/arc.instructions.md) | ARC puzzle proposals and their `arc/docs` progress records, the minimal dataset grammar `arc/nucleoid.ebnf`, JSON-only LLM exchanges, and no automated ARC tests |
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `51d61f14` are properly handled with clean fallback behavior.

@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261120-X01M",
-    "timestamp": "2026-11-20T06:37:24.730Z",
-    "repository": "tmolavi/siteprobe",
-    "learningId": "learn-github-tmolavi-siteprobe",
-    "contentHash": "1779af1382ab516421ec78f6c1b69af510edbd3097d87519a85dfcd83a0d0918",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-6UTB",
-    "timestamp": "2026-11-20T06:45:04.511Z",
-    "repository": "thejagstudio/tessera-small",
-    "learningId": "learn-huggingface-thejagstudio-tessera-small",
-    "contentHash": "4c1244eafd21d11eed0c3ea3938ed9e0d9b13b35919f16881c0db516375a2e1f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-71QJ",
-    "timestamp": "2026-11-20T06:45:13.483Z",
-    "repository": "prof18/feed-flow",
-    "learningId": "learn-github-prof18-feed-flow",
-    "contentHash": "060ec8bd30d2eb6ba5a357d6df1b69341a2e4b6aee4d49b409986e7c8f7be75d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-74TY",
-    "timestamp": "2026-11-20T06:45:17.494Z",
-    "repository": "argoproj/argo-workflows",
-    "learningId": "learn-github-argoproj-argo-workflows",
-    "contentHash": "da195534629cdcee6c732017d8081af8cb24fd8c6eb0d8828efc35eba1cac2b9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261120-7BYX",
     "timestamp": "2026-11-20T06:45:26.745Z",
     "repository": "yugabyte/yugabyte-db",
@@ -7490,6 +7430,66 @@
     "repository": "facebook/sam-3d-body-dinov3",
     "learningId": "learn-huggingface-facebook-sam-3d-body-dinov3",
     "contentHash": "2990c1017af31c9fb18a80e470b5aed2fa83f8a0163db70eb1887167a2ac6766",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-L3U1",
+    "timestamp": "2026-11-22T07:27:29.449Z",
+    "repository": "huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF",
+    "learningId": "learn-huggingface-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf",
+    "contentHash": "10a80b008abd7b6e46e340dd52612c31ed040068f5b494296e3597ec612dd5a4",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-LBTF",
+    "timestamp": "2026-11-22T07:27:39.795Z",
+    "repository": "meshery/meshery",
+    "learningId": "learn-github-meshery-meshery",
+    "contentHash": "f1de2338abf50f17ee9e10cdf7082513ffed85d51c4798cb27e54e7c4b21fa39",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-LH02",
+    "timestamp": "2026-11-22T07:27:46.514Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "9457b0dfecc7c5fddd268c3cc11c737f5566885c49e719d4aaa698571a0cea6a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-M9I6",
+    "timestamp": "2026-11-22T07:28:23.454Z",
+    "repository": "Lakonik/pi-H3",
+    "learningId": "learn-huggingface-lakonik-pi-h3",
+    "contentHash": "023d0227a5d2691c36f2ebe26a6d2c8e9e92b8e35cf820dd0b9cd8d1737070b9",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

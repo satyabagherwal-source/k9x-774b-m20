@@ -12074,3 +12074,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-facebook-dinov3-vitl16-pretrain-lvd1689m` | `https://huggingface.co/facebook/dinov3-vitl16-pretrain-lvd1689m` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-11-22T07:05:57.690Z |
 | `learn-github-apache-maka` | `https://github.com/apache/maka` | `ac52d482` | Multi-dimensional audit evidence | 2026-11-22T07:06:00.460Z |
 | `learn-huggingface-facebook-sam-3d-body-dinov3` | `https://huggingface.co/facebook/sam-3d-body-dinov3` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-11-22T07:13:49.937Z |
+| `learn-huggingface-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf` | `https://huggingface.co/huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF` | `hf-huihui-` | Multi-dimensional audit evidence | 2026-11-22T07:27:29.455Z |
+| `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `03883b4b` | Multi-dimensional audit evidence | 2026-11-22T07:27:39.800Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `5e0af050` | Multi-dimensional audit evidence | 2026-11-22T07:27:46.519Z |
+| `learn-huggingface-lakonik-pi-h3` | `https://huggingface.co/Lakonik/pi-H3` | `hf-lakonik` | Multi-dimensional audit evidence | 2026-11-22T07:28:23.459Z |
+| `learn-dom-d-1db76912` | `project://hf-lakonik-pi-h3` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-lakonik-pi-h3-learnings.md` | 2026-11-22T07:29:02.967Z |

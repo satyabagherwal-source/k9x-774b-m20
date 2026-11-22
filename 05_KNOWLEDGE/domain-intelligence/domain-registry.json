@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T07:14:03.301Z",
-  "total_records": 2333,
+  "last_updated": "2026-11-22T07:29:05.132Z",
+  "total_records": 2338,
   "domains": {
     "A": {
       "total": 17,
@@ -60,7 +60,7 @@
       ]
     },
     "D": {
-      "total": 916,
+      "total": 919,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -977,7 +977,10 @@
         "domain_intelligence-research-knowledge-intelligence-dosco-deeporg-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensor",
         "domain_intelligence-research-knowledge-intelligence-hf-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncen",
-        "DOM-D-22D0FBF8"
+        "DOM-D-22D0FBF8",
+        "domain_intelligence-research-knowledge-intelligence-lakonik-pi-h3-core-invariants",
+        "DOM-D-1DB76912",
+        "domain_intelligence-research-knowledge-intelligence-hf-lakonik-pi-h3-learnings-core-invariants"
       ]
     },
     "E": {
@@ -2043,7 +2046,7 @@
       ]
     },
     "I": {
-      "total": 127,
+      "total": 129,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -2171,7 +2174,9 @@
         "domain_intelligence-content-information-intelligence-kube-rs-kube-core-invariants",
         "domain_intelligence-content-information-intelligence-open-source-legal-opencontracts-core-invariants",
         "domain_intelligence-content-information-intelligence-open-source-legal-opencontracts-learnings-core-",
-        "DOM-I-DBBC4693"
+        "DOM-I-DBBC4693",
+        "domain_intelligence-content-information-intelligence-meshery-meshery-core-invariants",
+        "domain_intelligence-content-information-intelligence-meshery-meshery-learnings-core-invariants"
       ]
     },
     "J": {
@@ -15412,8 +15417,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "481efaf92d557c3c3b33e65d1118fdb1e1345ca81cce38999ae1d43381166370",
-      "created_at": "2026-11-22T06:49:35.546Z"
+      "content_hash": "cb99095a59d5e30f5d03c5051ef94910527a201ba85e2d8d105ca393b751ae00",
+      "created_at": "2026-11-22T07:27:47.033Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -28661,8 +28666,8 @@
       "title": "Research & Knowledge Intelligence: huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf-research-knowledge-intelligence.md",
       "repository": "huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF",
-      "content_hash": "229eea3536dba991195f0edb098e57bbbb2054ae7737d8dd4f685a75b38374d0",
-      "created_at": "2026-11-17T18:26:24.338Z"
+      "content_hash": "73612e9b9671a5f6a1fa935c2fd65859a31924105f8c75163d5e85e204d2d0e9",
+      "created_at": "2026-11-22T07:27:29.744Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf",
@@ -28670,8 +28675,8 @@
       "title": "Research & Knowledge Intelligence: hf-huihui-ai-huihui-qwen3.8-27b-abliterated-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf-learnings-research-knowledge-in.md",
       "repository": "hf-huihui-ai-huihui-qwen3.8-27b-abliterated-gguf-learnings",
-      "content_hash": "1c10c057fd0447be37b5bfd0c3b39e389fbdc8a9d9605dd383cf8630c0cb9e17",
-      "created_at": "2026-11-17T18:26:43.558Z"
+      "content_hash": "8589ded81c22181233e72306f62e01d7e34c0789a531b2e6f4d43542eacb739a",
+      "created_at": "2026-11-22T07:29:03.871Z"
     },
     "domain_intelligence-research-knowledge-intelligence-moonmath-ai-deepseek-v4-1-flash-1017-uncensored-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-moonmath-ai-deepseek-v4-1-flash-1017-uncensored-",
@@ -39385,6 +39390,84 @@
       "repository": "apache-maka-learnings",
       "content_hash": "a00a2e12b4440dab672bd1a5ef1fed038508733f3f9415dced4ceb4ee78cf12e",
       "created_at": "2026-11-22T07:06:10.120Z"
+    },
+    "domain_intelligence-content-information-intelligence-meshery-meshery-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-meshery-meshery-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: meshery/meshery Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-meshery-meshery-content-information-intelligence-meshery-meshery-core-invariants.md",
+      "repository": "meshery/meshery",
+      "content_hash": "931dad4725c6cd41ba4bc3b19ecc44fd8f3532a68440f34030deadd36167321f",
+      "created_at": "2026-11-22T07:27:40.301Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-lakonik-pi-h3-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-lakonik-pi-h3-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: Lakonik/pi-H3 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-lakonik-pi-h3-research-knowledge-intelligence-lakonik-pi-h3-core-invariants.md",
+      "repository": "Lakonik/pi-H3",
+      "content_hash": "d014606a672b45f98bd93e6eec1e5199e07adb0b22e100efbe102f5df995dc70",
+      "created_at": "2026-11-22T07:28:23.730Z"
+    },
+    "DOM-D-1DB76912": {
+      "record_id": "DOM-D-1DB76912",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): Lakonik/pi-H3",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-lakonik-pi-h3-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/Lakonik/pi-H3](https://huggingface.co/Lakonik/pi-H3))  \n> **Source Version**: `hf-lakonik-p`  \n> **License**: Open-Source  \n> **Synthesized By**: zero-clone-str",
+      "content_hash": "ff0c5c180b397a77bd7ff260fd41e915547750db8dd2acdad2b7df073bceeb59",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-lakonik-pi-h3-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/ -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-lakonik-pi-h3-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/",
+      "provenance": {
+        "source_uri": "project://hf-lakonik-pi-h3/hf-lakonik-pi-h3-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-22T07:28:26.668Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-lakonik-pi-h3)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-lakonik-pi-h3"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-22T07:29:02.933Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-lakonik-pi-h3-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-lakonik-pi-h3-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-lakonik-pi-h3-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-lakonik-pi-h3-learnings-research-knowledge-intelligence-hf-lakonik-pi-h3-lear.md",
+      "repository": "hf-lakonik-pi-h3-learnings",
+      "content_hash": "968f1d9e7d25ce3300ac1a4fccb5ac2387464fbf5c515ce1fc3aa7fe4bed5424",
+      "created_at": "2026-11-22T07:29:03.310Z"
+    },
+    "domain_intelligence-content-information-intelligence-meshery-meshery-learnings-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-meshery-meshery-learnings-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: meshery-meshery-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-meshery-meshery-learnings-content-information-intelligence-meshery-meshery-learn.md",
+      "repository": "meshery-meshery-learnings",
+      "content_hash": "7977624d287db516b1fda5513d3144bd377efcb3329102bb407c6f4867156665",
+      "created_at": "2026-11-22T07:29:05.132Z"
     }
   }
 }

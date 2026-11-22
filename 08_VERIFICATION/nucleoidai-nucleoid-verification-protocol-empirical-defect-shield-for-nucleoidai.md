@@ -4,22 +4,22 @@
 {
   "source_repository": "NucleoidAI/Nucleoid",
   "source_url": "https://github.com/NucleoidAI/Nucleoid",
-  "source_version": "008cc5b3",
+  "source_version": "5e0af050",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-22T06:11:32.441Z",
+  "timestamp": "2026-11-22T07:27:46.819Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nucleoidai-nucleoid",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `008cc5b3`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-22T06:11:32.441Z`  
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `5e0af050`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-22T07:27:46.819Z`  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `NucleoidAI/Nucleoid` (Commit: `008cc5b3`)
+- **Target Repository**: `NucleoidAI/Nucleoid` (Commit: `5e0af050`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T06:11:31.195Z  
+> **Harvest Timestamp**: 2026-11-22T07:27:45.251Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1475,6 +1475,8 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
     result_matrix = Matrix.merge(result_matrix, output_instance_matrix);
   }
 
+  milestone.test_output_composed({ instances: input_instances });
+
   result_matrix = Matrix.canvas(result_matrix, output_canvas);
 
   milestone.comparison({ test_output_matrix, result_matrix });
@@ -1581,473 +1583,270 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `008cc5b3` (2026-11-22)
-**Commit Message**: Draft NUC 133 Edge Lists of Reasoning Selections
+### Incident Patch 1: `51d61f14` (2026-11-22)
+**Commit Message**: Group ARC output and manage build cache space
 
-Category: Reasoning enhancement, drawn uniformly at random (index 3 of
-the five eligible categories in NUC 1's registry, p = 1/5, no redraw)
-for a continuous /nuc-proposal cycle, so the token non-regression gate
-is required.
+Display related ARC grids and states in shared side-by-side panels. Add disk-space checks and Cargo cache cleanup rules for repeated agent workflows.
 
-Requested change: a reasoning pipeline gains the final stage
-SELECTION |> edges, which lists the dependency edges that the steps of
-SELECTION record: for each step in the selection's order, and for each
-name in its from list in that order, the two-item list [INPUT, NODE] of
-the input's name and the step's node name. It joins NUC 112's |> nodes
-and NUC 121's |> holds as a projection of the step records, of the from
-field both left out; a declaration that holds it is a reasoning
-observer and follows the graph. At the accepted revision |> edges
-raises TypeError("edges is not an operation") while the program is
-parsed, and only those programs change; variables, functions,
-properties and keys named edges keep their readings. Accepted programs
-cannot spell the list directly, because a callback cannot read the
-parameter of the callback around it; the working spelling pairs each
-input with its node through a string det
-
-**File**: `docs/nuc-0000.md` (modified, +2/-0)
+**File**: `.claude/CLAUDE.md` (modified, +2/-1)
 ```diff
-@@ -157,6 +157,7 @@ Created: 31-Jul-2026
- | [120](nuc-0120.md) | Union Reasoning Selections | Accepted |
- | [121](nuc-0121.md) | Held Values of Reasoning Selections | Accepted |
- | [128](nuc-0128.md) | Origins and Outcomes of Reasoning Selections | Accepted |
-+| [133](nuc-0133.md) | Edge Lists of Reasoning Selections | Draft |
+@@ -11,14 +11,15 @@ not a replacement for the policies it links to.
+ | File | Policy |
+ | --- | --- |
+ | [project.instructions.md](rules/project.instructions.md) | Language goals, reference documents, and runtime architecture |
+-| [arc.instructions.md](rules/arc.instructions.md) | ARC puzzle proposals and their `arc/docs` progress records, the minimal dataset grammar `arc/nucleoid.ebnf`, JSON-only LLM exchanges, and no automated ARC tests |
++| [arc.instructions.md](rules/arc.instructions.md) | ARC puzzle proposals and their `arc/docs` progress records, the minimal dataset grammar `arc/nucleoid.ebnf`, JSON-only LLM exchanges, grouped side-by-side terminal output, and no automated ARC tests |
+ | [rust.instructions.md](rules/rust.instructions.md) | Concrete runtime types, dependencies, and Rust community conventions |
+ | [power-of-ten.instructions.md](rules/power-of-ten.instructions.md) | NASA's Power of 10 rules adapted to the Rust crate: the lints, runtime limits, 500-line file limit and policy test that enforce them, and the known runtime-value recursion gap |
+ | [rust-guidelines.instructions.md](rules/rust-guidelines.instructions.md) | The Rust API Guidelines, Google's Rust Style Guide, Microsoft's Pragmatic Rust Guidelines and Clippy, always followed under the Power of 10 adaptation: their precedence, a digest for the crate, comment-free Rust source, deliberate divergences and known gaps |
+ | [documents.instructions.md](rules/documents.instructions.md) | Authoritative specification, executable documents, and dataset synchronization |
+ | [versions.instructions.md](rules/versions.instructions.md) | Human-owned version numbers; no AI version changes |
+ | [proposals.instructions.md](rules/proposals.instructions.md) | Independent NUC proposal preparation and evaluation, the token policy, automatic acceptance on the hard criteria (no compile errors, every test passing, backward compatibility) with the `Automatic-Accepted` status, ARC- and user-requested bases, the pushed `Draft NUC <number> <Title>` allocation of each new NUC before its details, after a pull that claims the next free number or skips a concept already proposed, continuous cycles that first pick up allocated Drafts idle for 24 hours under a pushed `Resume NUC <number> <Title>` claim, and `NUC <number> <Title>` outcome commit messages |
+ | [rust-improvement.instructions.md](rules/rust-improvement.instructions.md) | Focused Rust improvements and the required post-change agent |
++| [disk-space.instructions.md](rules/disk-space.instructions.md) | Before every round of a continuous or repeated task, check free disk space and, below 50 GB, clear the machine's finished Cargo build caches (`CACHEDIR.TAG` targets and `incremental` folders) before starting; clear your own finished rounds' targets every round, keep anything in use, in progress or not build output, and pause when space stays low |
+ | [git.instructions.md](rules/git.instructions.md) | Only `/nuc-proposal` (NUC allocations, claims and outcomes) and `/arc-purposal` (its own ARC changes, when it is done) commit and push; every agent pulls before it starts (fast-forward only, except those callers before a commit or push), pull before commit/push, push after every commit, resolve conflicts and push |
  
- ### Language compatibility
- 
-@@ -319,6 +320,7 @@ Created: 31-Jul-2026
- | [130](nuc-0130.md) | Loop-Local Iterator Exits | Standards Track | Runtime features | Rejected: existing corpus-count test fails (1,246 expected; 1,252 actual) |
- | [131](nuc-0131.md) | Reversal Method Aliases | Standards Track | Language compatibility | Accepted |
- | [132](nuc-0132.md) | Rust String Boundary Method Aliases | Standards Track | Language compatibility | Draft |
-+| [133](nuc-0133.md) | Edge Lists of Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
- 
- ## Copyright
- 
+ All instruction files use `applyTo: "**"` to preserve their repository-wide scope.
 ```
 
-**File**: `docs/nuc-0133.md` (added, +74/-0)
+**File**: `.claude/rules/arc.instructions.md` (modified, +17/-0)
 ```diff
-@@ -0,0 +1,74 @@
-+# NUC 133 -- Edge Lists of Reasoning Selections
+@@ -145,3 +145,20 @@ Do not read or expose credentials, make paid LLM calls without authorization,
+ or alter provider/model settings merely to manufacture a passing result. An
+ `/arc-purposal` invocation authorizes its one `bun start <puzzle-id>` run and
+ nothing more.
 +
-+```
-+NUC: 133
-+Title: Edge Lists of Reasoning Selections
-+Author: Can Mingir <canmingir@gmail.com>
-+Status: Draft
-+Type: Standards Track
-+Category: Reasoning enhancement
-+Created: 22-Nov-2026
-+Requires: 112, 121
-+```
++## Grouped, side-by-side terminal output
 +
-+## Abstract
++The solver's terminal always displays by group and side by side:
 +
-+- A reasoning pipeline gains the final stage `SELECTION |> edges`. It lists
-+  the dependency edges that the steps of `SELECTION` record: for each step,
-+  in the selection's order, and for each name in its `from` list, in that
-+  order, the two-item list `[INPUT, NODE]` of the input's name and the
-+  step's node name. After `subtotal = price * quantity`,
-+  `tax = subtotal * rate` and `total = subtotal + tax`,
-+  `total |> why |> edges` gives `[["subtotal", "total"], ["tax", "total"],
-+  ["price", "subtotal"], ["quantity", "subtotal"], ["subtotal", "tax"],
-+  ["rate", "tax"]]`.
-+- It joins [NUC 112](nuc-0112.md)'s `|> nodes` and
-+  [NUC 121](nuc-0121.md)'s `|> holds` as a projection of the step records,
-+  this time of the `from` field that both left out. A declaration that holds
-+  it is a reasoning observer and follows the graph: redefining `tax` with a
-+  new input adds that input's edge.
-+- At the accepted revision `|> edges` raises
-+  `TypeError("edges is not an operation")` while the program is parsed, and
-+  only those programs change. Variables, functions, properties and keys named
-+  `edges` keep their readings.
-+
-+## Motivation
-+
-+- A world model that explains a conclusion often needs the structure of the
-+  explanation, not only its nodes and values: which inputs feed which
-+  results, to render the explanation as a graph, to check which rule reads
-+  which fact, or to hand the graph to another tool. The step records hold
-+  it in their `from` fields, and no stage projects it.
-+- Accepted programs cannot spell the edge list directly. The natural
-+  `(total |> why).flatMap(s -> s.from.map(f -> [f, s.node]))` raises
-+  `ReferenceError("s is not defined")`, because a callback cannot read the
-+  parameter of the callback around it, and comprehensions take one `for`
-+  clause. What works today pairs each input with its node by a detour over
-+  strings, `(total |> why).flatMap(s -> s.from.zip((s.node + "|").repeat(s.from.length).split("|")))`,
-+  which holds only while no node name contains the separator, or keeps the
-+  per-step adjacency `(total |> why).map(s -> [s.node, s.from])`, which is
-+  another shape. `total |> why |> edges` states the question in the
-+  pipeline that asks it.
-+
-+## Rationale
-+
-+- Pending: the proposer completes this section.
-+
-+## Specification
-+
-+- Pending: the proposer completes this section.
-+
-+## Errors
-+
-+- Pending: the proposer completes this section.
-+
-+## Reference Implementation
-+
-+- Pending: the proposer completes this section.
-+
-+## Copyright
-+
-+Copyright 2020 Nucleoid
-+
-+This document is licensed under the Apache License, Version 2.0. See
-+[LICENSE](../LICENSE) for the full text.
++- Results that belong together share one box, one column per panel, each
++  under its own numbered title: one object's input, output and state, every
++  object that one step separates, segments or composes, or the expected and
++  predicted grids. Milestones in `arc/src/lib/milestone.ts` build these boxes
++  with `terminal.panels`, which moves panels onto further rows of the same
++  box only when the window is too narrow.
++- Never print related results as a run of separate boxes, one after another,
++  and never print a result on its own before a later group shows it: it
++  appears once, in its group. A result that no later group shows, such as a
++  rejected synthesized instance, gets its own group where it happens.
++- One-line progress steps, model reasoning and usage lines, alerts and the
++  failure box stay outside the groups.
 ```
 
----
-
-### Incident Patch 2: `28eb973f` (2026-11-22)
-**Commit Message**: NUC 131 Reversal Method Aliases
-
-Accepted under the automatic acceptance rule, in a continuous
-/nuc-proposal cycle (Language compatibility, token comparison skipped
-categorically): the frozen candidate meets every hard criterion and
-passes every policy check. The cycle found no stale Draft, drew
-Language compatibility uniformly from the five eligible categories,
-allocated NUC 131 in 2ae49a2e, and completed it with a fresh baseline,
-candidate, proposer, Rust improvement pass and evaluator.
-
-On lists and class populations, reversed(), as Kotlin and Swift spell
-it, and toReversed(), as JavaScript spells it since ES2023, are exactly
-the accepted read-only reverse(): a new list of the same items in
-reverse order, the receiver unchanged, arguments evaluated and ignored,
-live and rolled back as the accepted spelling. On strings, reversed(),
-as Kotlin spells it, and reverse(), as Ruby spells it, are exactly the
-character reversal TEXT[::-1] of NUC 125, by Unicode scalar value. Only
-calls that raised TypeError("<receiver>.<name> is not a function")
-change, including caught ones and a standing reverse() whose list
-receiver a later write replaces with a string. No token, keyword,
-error messag
-
-**File**: `README.md` (modified, +24/-0)
+**File**: `.claude/rules/disk-space.instructions.md` (added, +55/-0)
 ```diff
-@@ -2852,6 +2852,30 @@ assert(gpa, 3.0833333333333335)
-   sequence, so a grade waiting for its credits counts once they arrive. See
-   the [root contract](nucleoid.spec.md#list-and-population-zipping).
- 
-+## Reversal method aliases
+@@ -0,0 +1,55 @@
++---
++applyTo: "**"
++---
 +
-+**Reversal methods keep an undo history newest first**
++# Disk space: clear build caches before the next round
 +
-+```nuc
-+edits = ["draft", "trim intro"]
-+undo = edits.reversed()
-+top = edits.toReversed()[0]
-+assert([undo, top], [["trim intro", "draft"], "trim intro"])
-+edits.push("fix typo")
-+assert([undo, top, edits.length], [["fix typo", "trim intro", "draft"], "fix typo", 3])
-+```
++These rules apply to every agent that works in rounds: the `/nuc-proposal`
++caller in continuous mode, including cycles coordinated through
++`/nuc-evaluate`, and any other agent that repeats a task, such as a `/loop`
++session or a batch of `/arc-purposal` puzzles. Cargo build directories are the
++cache that fills this machine's drive: a NUC worktree's `target` reaches about
++14 GB, and a round builds several, for its candidate, baselines, evaluation
++and integration.
 +
-+- [NUC 131](docs/nuc-0131.md) adds `reversed()`, as Kotlin and Swift write
-+  it, and `toReversed()`, as JavaScript writes it, to lists and class
-+  instance lists, and `reversed()` and `reverse()`, as Kotlin and Ruby write
-+  them, to strings. On a list they are exactly the accepted `reverse()`,
-+  which returns a new list and leaves its receiver unchanged, and on a string
-+  exactly `text[::-1]`, which reverses its characters.
-+- `undo` and `top` are live declarations over the history, so the newest edit
-+  comes first after every push, while `edits` keeps the order the edits were
-+  made in. See the
-+  [root contract](nucleoid.spec.md#reversal-method-aliases).
++## Check before every round
 +
- ## Reactive list flattening
- 
- **Flat turns nested lists into one live list**
++- Before every round, the first one included, and before its first pull,
++  check the free space of the drive that holds the repository, its worktrees
++  and the agent workspaces, for example with `Get-PSDrive C` or `df -h /c`.
++- Free space is low below 50 GB. Then clear the caches below on the whole
++  machine before the round starts, and check again.
++- If less than 50 GB is still free after clearing, do not start the round.
++  The disk is a resource limit: pause and report what was cleared and what
++  still holds the space.
++- Report what was cleared, with paths and sizes, in the round's report.
++
++## What to clear
++
++Clear only Cargo build output: a directory that holds a `CACHEDIR.TAG` file,
++which Cargo writes at the root of every target directory, or the
++`incremental` folder of a target.
++
++- **Your own finished rounds:** once a round's outcome is recorded, its
++  candidate, baseline, integration, probe and audit targets are no longer
++  needed. Clear them at the end of every round, whether or not space is low.
++- **Other sessions' finished work:** build directories in
++  `.copilot/session-state`, in other agents' scratchpads and in their
++  worktrees, when the NUC that the directory's path names has an outcome on
++  `main`, or when nothing has written to the directory for more than 24
++  hours.
++- **The primary checkout:** `target/debug/incremental`.
++
++## What to keep
++
++- A build directory that anything wrote to in the last hour, and every build
++  directory of a NUC that is still in progress, since another session may be
++  using it.
++- The primary checkout's built binaries and compiled dependencies, such as
++  `target/debug/nucleoid.exe`, which the REPL and the ARC solver use.
++- Everything that is not build output: worktrees and their sources,
++  uncommitted candidates, baselines, reports, receipts, checkpoints, and the
++  logs and artifacts that a NUC or ARC record cites, `arc/` data and
++  `node_modules`, the Cargo registry and the toolchains. Never remove another
++  session's worktree; clear only the build directories inside it.
++- Never read `.env` files while measuring or clearing.
 ```
 
-**File**: `dataset/nucleoid.spec.jsonl` (modified, +23/-19)
+**File**: `.claude/rules/proposals.instructions.md` (modified, +6/-3)
 ```diff
-@@ -826,22 +826,26 @@
- {"id":"spec-0826","description":"Nucleoid pairs the instances of two classes in population order with zip","code":"class Driver(name):\n    this.name = name\nclass Truck(plate):\n    this.plate = plate\nada = Driver(\"Ada\")\nDriver(\"Bo\")\nTruck(\"T-1\")\ncrews = Driver.zip(Truck)\nassert([crews.length, crews[0][0], crews[0][1].plate], [1, ada, \"T-1\"])\nTruck(\"T-2\")\nTruck(\"T-3\")\nassert(crews.map(crew -> crew[0].name + \":\" + crew[1].plate), [\"Ada:T-1\", \"Bo:T-2\"])\nDriver(\"Cy\")\ncrews.map(crew -> crew[1].plate)","return":"[\"T-1\",\"T-2\",\"T-3\"]"}
- {"id":"spec-0827","description":"Nucleoid combines the items of two lists with a function in zip","code":"prices = [4, 4, 2]\nquantities = [3, 1, 3]\ndiscount = 0\ntotal = prices.zip(quantities, (price, quantity) -> (price - discount) * quantity).sum()\nassert(total, 22)\nprices.push(5)\nassert(total, 22)\nquantities.push(2)\nquantities.push(9)\nassert(total, 32)\ndiscount = 1\ntotal","return":"23"}
- {"id":"spec-0828","description":"Nucleoid rolls back failed zip updates","code":"def gap(load, limit):\n    if load > limit:\n        throw \"OVERLOAD\"\n    return limit - load\nlimits = [4, 8, 6]\nloads = [3, 5]\nspare = loads.zip(limits, gap)\nfailure = \"\"\ntry:\n    loads.push(9)\ncatch error:\n    failure = error\nassert([failure, loads, spare], [\"OVERLOAD\", [3, 5], [1, 3]])\ntry:\n    loads.push(2)\n    assert(spare, [1, 3, 4])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert([loads, spare], [[3, 5], [1, 3]])\nclass Bay(load): this.load = load\nBay(1)\nBay(7)\nroom = Bay.zip(limits, (bay, limit) -> gap(bay.load, limit))\nfailure = \"\"\ntry:\n    Bay(8)\ncatch error:\n    failure = error\nassert([failure, Bay.length, room], [\"OVERLOAD\", 2, [3, 1]])\nBay(6)\nBay(5)\nroom","return":"[3,1,0]"}
--{"id":"spec-0829","description":"Nucleoid flattens nested lists by one level","code":"nested = [[1, 2], 2, [[3, [4]]], [], \"ab\"]\nonce = nested.flat()\ntwice = once.flat(1)\nassert(once, [1, 2, 2, [3, [4]], \"ab\"])\nassert(twice, [1, 2, 2, 3, [4], \"ab\"])\nassert(nested, [[1, 2], 2, [[3, [4]]], [], \"ab\"])\nnested.push([[5]], 6)\nassert(once, [1, 2, 2, [3, [4]], \"ab\", [5], 6])\nassert(twice, [1, 2, 2, 3, [4], \"ab\", 5, 6])\ntwice.length","return":"8"}
--{"id":"spec-0830","description":"Nucleoid flattens lists to a given depth","code":"deep = [1, [2, [3, [4, [5]]]], [[6]]]\ntwo = deep.flat(2)\nthree = deep.flat(3)\nsame = deep.flat(0)\nassert(two, [1, 2, 3, [4, [5]], 6])\nassert(three, [1, 2, 3, 4, [5], 6])\nassert(same, [1, [2, [3, [4, [5]]]], [[6]]])\ndeep.push([[7, [8]]])\nassert(two, [1, 2, 3, [4, [5]], 6, 7, [8]])\nassert(three, [1, 2, 3, 4, [5], 6, 7, 8])\nassert(same, deep)\nthree.length","return":"8"}
--{"id":"spec-0831","description":"Nucleoid keeps flattened lists live","code":"shifts = [[\"ana\", \"bo\"], [\"cy\"]]\nstaff = shifts.flat()\nsize = staff.length\nassert([staff, size], [[\"ana\", \"bo\", \"cy\"], 3])\nshifts.push([\"di\"])\nassert([staff, size], [[\"ana\", \"bo\", \"cy\", \"di\"], 4])\nshifts = [[\"eve\"], [], [\"fay\", \"gus\"]]\nassert([staff, size], [[\"eve\", \"fay\", \"gus\"], 3])\nshifts.shift()\nassert([staff, size], [[\"fay\", \"gus\"], 2])\nsize","return":"2"}
--{"id":"spec-0832","description":"Nucleoid flattens lists in class level rules","code":"class Team(squads):\n    this.squads = squads\n$Team.members = $Team.squads.flat()\nred = Team([[\"ana\", \"bo\"], [\"cy\"]])\nblue = Team([[\"di\"]])\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\"], [\"di\"]])\nred.squads.push([\"ed\"])\nblue.squads = [[\"fay\"], [\"gus\", \"hal\"]]\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\", \"ed\"], [\"fay\", \"gus\", \"hal\"]])\nred.members.length","return":"4"}
--{"id":"spec-0833","description":"Nucleoid queries the cells of flattened grids","code":"grid = [[1, 0, 2], [0, 3, 2]]\ncells = grid.flat()\ntotal = cells.sum()\ncolors = cells.distinct()\nfilled = cells.count(cell => cell > 0)\nassert([total, colors, filled], [8, [1, 0, 2, 3], 4])\ngrid.push([5, 0, 0])\nassert([total, colors, filled], [13, [1, 0, 2, 3, 5], 5])\ngrid = [[4, 4], [0]]\n[total, colors, filled]","return":"[8,[4,0],2]"}
--{"id":"spec-0834","description":"Nucleoid rolls back failed flattening updates","code":"rows = [[1, [2]], [3]]\ncells = rows.flat()\ntry:\n    rows.push([4])\n    assert(cells, [1, [2], 3, 4])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert([rows, cells], [[[1, [2]], [3]], [1, [2], 3]])\ntry:\n    cells = rows.flat(2)\n    assert(cells, [1, 2, 3])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nrows.push([[5]])\ncells","return":"[1,[2],3,[5]]"}
--{"id":"spec-0835","description":"Nucleoid tests membership with in and not in","code":"tags = [\"red\", \"blue\"]\nassert(\"red\" in tags, true)\nassert(\"green\" in tags, false)\nassert(\"green\" not in tags, true)\nassert(\"red\" not in tags, false)\nassert([1, 2] in [[1, 2], [3]], true)
+@@ -494,9 +494,12 @@ In continuous mode, after finalizing and committing an `Accepted`,
+ `Automatic-Accepted` or `Rejected` outcome for a new NUC, the caller
+ immediately starts a distinct new proposal under
+ the [continuous-cycle rule](../skills/nuc-proposal/SKILL.md#continue-with-the-next-nuc-caller-only).
+-Each cycle, the first one included, first
+-[picks up a stale Draft](#pick-up-stale-drafts-first-caller-only) when one
+-exists. Run cycles sequentially with fresh agents, baselines, candidate
++Before every cycle, the first one included, the caller clears the finished
++cycle's build directories and checks free disk space under the
++[disk-space policy](disk-space.instructions.md), clearing the machine's
++finished build caches when space is low. Each cycle, the first one included,
++first [picks up a stale Draft](#pick-up-stale-drafts-first-caller-only) when
++one exists. Run cycles sequentially with fresh agents, baselines, candidate
+ worktrees and reports, preserving the selection, compatibility and acceptance
+ requirements.
+ Only the caller continues; workers stop at their handoffs. This does not
 ```
 
-**File**: `dataset/nucleoid.synth.93.jsonl` (added, +16/-0)
+**File**: `.claude/skills/nuc-evaluate/SKILL.md` (modified, +3/-1)
 ```diff
-@@ -0,0 +1,16 @@
-+{"id":"synth-93-0001","description":"Reverses a list of readings with Kotlin's reversed","code":"readings = [18, 21, 19]\nreadings.reversed()","return":"[19,21,18]"}
-+{"id":"synth-93-0002","description":"JavaScript's toReversed returns a copy and leaves the list in order","code":"steps = [\"wake\", \"wash\", \"dress\"]\nback = steps.toReversed()\n[back, steps]","return":"[[\"dress\",\"wash\",\"wake\"],[\"wake\",\"wash\",\"dress\"]]"}
-+{"id":"synth-93-0003","description":"An undo history reads the newest edit first as edits arrive","code":"edits = [\"draft\", \"trim\"]\nundo = edits.reversed()\nedits.push(\"fix\")\nundo","return":"[\"fix\",\"trim\",\"draft\"]"}
-+{"id":"synth-93-0004","description":"A class population reversed lists the latest instance first","code":"class Visit(room):\n    this.room = room\nVisit(\"lab\")\nVisit(\"hall\")\nrecent = Visit.reversed()\nVisit(\"roof\")\nrecent.map(visit -> visit.room)","return":"[\"roof\",\"hall\",\"lab\"]"}
-+{"id":"synth-93-0005","description":"Each train lists its cars from the rear in a class-level rule","code":"class Train(cars):\n    this.cars = cars\n$Train.fromRear = $Train.cars.toReversed()\nlocal = Train([\"engine\", \"coach\"])\nlocal.cars.push(\"caboose\")\nlocal.fromRear","return":"[\"caboose\",\"coach\",\"engine\"]"}
-+{"id":"synth-93-0006","description":"Reverses a word with accents character by character","code":"\"crème brûlée\".reversed()","return":"\"eélûrb emèrc\""}
-+{"id":"synth-93-0007","description":"Ruby's reverse keeps an emoji whole in a string","code":"\"go 🚀 now\".reverse()","return":"\"won 🚀 og\""}
-+{"id":"synth-93-0008","description":"A class-level rule flags the palindromes among words","code":"class Word(text):\n    this.text = text\n$Word.palindrome = $Word.text.toLowerCase().reversed() == $Word.text.toLowerCase()\nwords = [Word(\"Level\"), Word(\"kayaks\"), Word(\"Anna\")]\nwords.map(word -> word.palindrome)","return":"[true,false,true]"}
-+{"id":"synth-93-0009","description":"Nested lists keep their own order when the outer list is reversed","code":"[[1, 2], [3, 4], 5].reversed()","return":"[5,[3,4],[1,2]]"}
-+{"id":"synth-93-0010","description":"Empty lists and empty strings reverse to empty values","code":"[[].reversed(), [].toReversed(), \"\".reversed(), \"\".reverse()]","return":"[[],[],\"\",\"\"]"}
-+{"id":"synth-93-0011","description":"Arguments are evaluated and ignored as the accepted reverse ignores them","code":"log = []\nback = [1, 2, 3].toReversed(log.push(\"called\"))\n[back, log]","return":"[[3,2,1],[\"called\"]]"}
-+{"id":"synth-93-0012","description":"A list read from a state version reverses without writing history","code":"queue = [\"a\", \"b\"]\nqueue.push(\"c\")\nqueue@first.reversed()","return":"[\"b\",\"a\"]"}
-+{"id":"synth-93-0013","description":"A value snapshot reversed stays frozen as the list grows","code":"levels = [1, 2]\nfrozen = levels.value.reversed()\nlevels.push(3)\nfrozen","return":"[2,1]"}
-+{"id":"synth-93-0014","description":"A try that caught the former error now receives the reversed list","code":"result = \"\"\ntry:\n    result = [1, 2].reversed()\ncatch error:\n    result = \"caught\"\nresult","return":"[2,1]"}
-+{"id":"synth-93-0015","description":"On a class name the population alias wins over an instance method","code":"class Team(name):\n    this.name = name\n    def reversed(): return this.name + \"!\"\nred = Team(\"red\")\nTeam(\"blue\")\n[red.reversed(), Team.reversed().map(team -> team.name)]","return":"[\"red!\",[\"blue\",\"red\"]]"}
-+{"id":"synth-93-0016","description":"A failing reader of a reversed list rolls back the push","code":"def latest(log):\n    if log.length > 2:\n        throw \"FULL\"\n    return log\nentries = [\"boot\", \"sync\"]\nrecent = latest(entries.reversed())\nfailure = \"\"\ntry:\n    entries.push(\"scan\")\ncatch error:\n    failure = error\n[failure, entries, recent]","return":"[\"FULL\",[\"boot\",\"sync\"],[\"sync\",\"boot\"]]"}
-```
-
-**File**: `docs/README.md` (modified, +57/-2)
-```diff
-@@ -2809,9 +2809,9 @@ Full detail: [NUC 9](nuc-0009.md), [NUC 46](nuc-0046.md), [NUC 119](nuc-0119.md)
- | `Boolean` | `Boolean(value)` |
- | `Number` | `Number.MAX_INTEGER` |
- | `Math` | `pow`, `sqrt`, `floor`, `round`, `max`, `min`, `clamp` ([NUC 21](nuc-0021.md)), `lerp` ([NUC 22](nuc-0022.md)), `saturate` ([NUC 23](nuc-0023.md)), `smoothstep(lower, upper, value)` (accepted [NUC 33](nuc-0033.md)), `smootherstep(lower, upper, value)` (accepted [NUC 35](nuc-0035.md)), `remap(start, end, targetStart, targetEnd, value)` (accepted [NUC 39](nuc-0039.md)) |
--| `String` | `String.fromCharCode`; instance `charAt`, `length`, `lower`, `replace`, `replaceAll` (accepted [NUC 42](nuc-0042.md)), `repeat`, `split`, `padStart` and `padEnd` ([NUC 111](nuc-0111.md)), Python's `startswith`, `endswith` and `join(items)`, with the separator as the receiver ([NUC 110](nuc-0110.md)), the size and emptiness methods `length()`, `size()`, `len()`, `isEmpty()`, `is_empty()` and `isNotEmpty()` ([NUC 116](nuc-0116.md)), and the case conversion aliases `uppercase()`, `to_uppercase()` and `uppercased()` of `toUpperCase()`, and `lowercase()`, `to_lowercase()` and `lowercased()` of `toLowerCase()` ([NUC 118](nuc-0118.md)) |
-+| `String` | `String.fromCharCode`; instance `charAt`, `length`, `lower`, `replace`, `replaceAll` (accepted [NUC 42](nuc-0042.md)), `repeat`, `split`, `padStart` and `padEnd` ([NUC 111](nuc-0111.md)), Python's `startswith`, `endswith` and `join(items)`, with the separator as the receiver ([NUC 110](nuc-0110.md)), the size and emptiness methods `length()`, `size()`, `len()`, `isEmpty()`, `is_empty()` and `isNotEmpty()` ([NUC 116](nuc-0116.md)), the case conversion aliases `uppercase()`, `to_uppercase()` and `uppercased()` of `toUpperCase()`, and `lowercase()`, `to_lowercase()` and `lowercased()` of `toLowerCase()` ([NUC 118](nuc-0118.md)), and the reversals `reverse()` and `reversed()`, exactly `text[::-1]` ([NUC 131](nuc-0131.md)) |
- | `Date` | `Date()`, `Date(string)`, `Date(number)`, `Date.now()`, `Date.parse()`; instance `getTime`, `getYear`, `toDateString` |
--| `List` | `push`, `pop`, `filter`, `map`, `flatMap` (accepted [NUC 41](nuc-0041.md)), `flat` ([NUC 103](nuc-0103.md)), `reduce`, `find`, `some`, `every`, `slice`, `sort` (in place, [NUC 58](nuc-0058.md)), `join`, `length`, and the queries `at`, `includes`, `indexOf`, `lastIndexOf`, `findIndex`, `findLast`, `findLastIndex` and `concat` ([NUC 61](nuc-0061.md)), `sum` ([NUC 68](nuc-0068.md)), `max` and `min` ([NUC 69](nuc-0069.md)), `distinct` ([NUC 71](nuc-0071.md)), `count(predicate)` ([NUC 73](nuc-0073.md)), `mode` ([NUC 75](nuc-0075.md)), `maxBy` and `minBy` ([NUC 77](nuc-0077.md)), `average` ([NUC 80](nuc-0080.md)), `median` ([NUC 84](nuc-0084.md)), `sortBy` ([NUC 105](nuc-0105.md)), `partition` ([NUC 108](nuc-0108.md)), `product` ([NUC 114](nuc-0114.md)), `variance` and `stdev` ([NUC 123](nuc-0123.md)), `quantile` ([NUC 124](nuc-0124.md)), `zip(other)` and `zip(other, combine)` ([NUC 129](nuc-0129.md)), the size and emptiness aliases `size()`, `len()`, `isEmpty()`, `is_empty()` and `isNotEmpty()` ([NUC 116](nuc-0116.md)), and the first and last element aliases `first()`, `last()`, `first(predicate)` and `last(predicate)` ([NUC 117](nuc-0117.md)); `sum`, `max`, `min` and `mode` also read as `sum of list` ([NUC 75](nuc-0075.md) revision 2) |
-+| `List` | `push`, `pop`, `filter`, `map`, `flatMap` (accepted [NUC 41](nuc-0041.md)), `flat` ([NUC 103](nuc-0103.md)), `reduce`, `find`, `some`, `every`, `slice`, `reverse` (a new list in reverse order), `sort` (in place, [NUC 58](nuc-0058.md)), `join`, `length`, and the queries `at`, `includes`, `indexOf`, `lastIndexOf`, `findIndex`, `findLast`, `findLastIndex` and `concat` ([NUC 61](nuc-0061.md)), `sum` ([NUC 68](nuc-0068.md)), `max` and `min` ([NUC 69](nuc-0069.md)), `distinct` ([NUC 71](nuc-0071.md)), `count(predicate)` ([NUC 73](nuc-0073.md)), `mode` ([NUC 75](nuc-0075.md)), `maxBy` and `minBy` ([NUC 77](nuc-0077.md)), `average` ([NUC 80](nuc-0080.md)), `median` ([NUC 84](nuc-0084.md)), `sortBy` ([NUC 105](nuc-0105.md)), `partition` ([NUC 108](nuc-0108.md)), `product` ([NUC 114](nuc-0114.md)), `variance` and `stdev` ([NUC 123](nuc-0123.md)), `quantile` ([NUC 124](nuc-0124.md)), `zip(other)` and `zip(other, combine)` ([NUC 129](nuc-0129.md)), the size and emptiness aliases `size()`, `len()`, `isEmpty()`, `is_empty()` and `isNotEmpty()` ([NUC 116](nuc-0116.md)), the first and last element aliases `first()`, `last()`, `first(predicate)` and `last(predicate)` ([NUC 117](nuc-0117.md)), and the reversal aliases `reversed()` and `toReversed()` of `reverse()` ([NUC 131](nuc-0131.md)); `sum`, `max`, `min` and `mode` also read as `sum of list` ([NUC 75](nuc-0075.md) revision 2) |
- | `Class` | the global list of declared types; `Class.length` |
+@@ -352,7 +352,9 @@ unstaged work. Baselines and reports remain in the session workspace.
  
- ```
-@@ -3067,6 +3067,59 @@ assert([ada.handle, inbox, shown], ["ada king", "countess@example.org", "ADA KIN
-   [root section](../nucleoid.spec.md#case-conversion-method-aliases) an
+ After recording the outcome, follow the
+ [continuous-cycle rule](../nuc-proposal/SKILL.md#continue-with-the-next-nuc-caller-only)
+-without requesting confirmation to record outcomes or continue. For uncertain
++without requesting confirmation to record outcomes or continue, clearing
++build caches before the next cycle under the
++[disk-space policy](../../rules/disk-space.instructions.md). For uncertain
+ category additions, selections, updates, or assignments, workers return the
+ question to the caller, who asks the user for confirmation under the proposal skill's
+ [classification rule](../nuc-proposal/SKILL.md#classify-every-proposal).
 ```
 
-**File**: `docs/examples.md` (modified, +27/-0)
+**File**: `.claude/skills/nuc-proposal/SKILL.md` (modified, +8/-2)
 ```diff
-@@ -4356,6 +4356,33 @@ dale.heights.push(200)
-   the same height climb `0` between them. See [NUC 129](nuc-0129.md) and the
-   [root contract](../nucleoid.spec.md#list-and-population-zipping).
+@@ -19,7 +19,10 @@ Work on exactly one proposal revision in the caller's isolated candidate.
+ Every `/nuc-proposal` task runs in this order, and every continuous cycle
+ repeats it:
  
-+## Reversal method aliases
+-1. **Pull.** As always before starting a task, pull the primary checkout with
++1. **Pull.** In continuous mode, first check free disk space and, when it is
++   low, clear the machine's finished build caches under the
++   [disk-space policy](../../rules/disk-space.instructions.md). Then, as
++   always before starting a task, pull the primary checkout with
+    `git pull --no-rebase --autostash` under the
+    [git synchronization policy](../../rules/git.instructions.md#pull-first),
+    so the task runs against the most current remote state. Report the commits
+@@ -540,10 +543,13 @@ next cycle:
+ - **Rejected:** record and commit only rejection documentation and index/outcome
+   metadata; leave rejected language changes isolated.
+ 
++Then clear the finished cycle's own build directories and check free disk
++space under the [disk-space policy](../../rules/disk-space.instructions.md),
++clearing the machine's finished build caches when less than 50 GB is free.
+ Immediately start another fresh "purpose a NUC" cycle without waiting for a
+ new user prompt. Repeat sequentially in the active agent session until the
+ user stops, pauses or redirects the work, the session ends, or a resource limit
+-is reached. A `Blocked` decision, failed outcome recording, or missing required
++is reached; space that stays low after clearing is such a limit. A `Blocked` decision, failed outcome recording, or missing required
+ input pauses continuation; report the blocker instead of bypassing it.
+ 
+ Continuous cycles do not ask for confirmation before recording an outcome or
+```
+
+**File**: `arc/README.md` (modified, +56/-44)
+```diff
+@@ -172,9 +172,11 @@ Panels expand up to 120 terminal columns, shrinking to fit narrower windows.
+ 
+ Immediately after the header, a puzzle preview shows the training input/output
+ pairs side by side, with the test input below. Narrow windows wrap complete
+-pairs onto additional rows; oversized pairs use the existing column-split matrix
+-panels instead of dropping cells. The opening preview never receives or displays
+-the expected test output. The final Expected/Result comparison remains unchanged.
++pairs onto additional rows; an oversized pair shows its `Input` and `Output`
++panels in one box titled `Train <n>`, splitting wide grids into column
++sections instead of dropping cells. The opening preview never receives or
++displays the expected test output, which appears only in the final
++Expected/Result comparison.
+ 
+ Numbered analysis/visualization stages, boxed declarations and object states,
+ and color-coded ARC grids with row/column coordinates keep the run readable.
+@@ -185,46 +187,55 @@ such as `1.3.1` and `1.3.2` for training-object segmentation. Continued grid
+ panels keep the same full number. The declarations header includes the
+ output canvas instead of adding a separate milestone.
+ 
+-Related panels sit side by side in one box, one column per panel, each under
+-its own numbered title; a box for one instance names the instance once, in a
+-title row above the columns. Each training pair's segmented objects share one
+-box with a row per object, its `Input` beside its `Output`, such as
+-`1.4.1 Input` and `1.5.1 Output`; segmented-object panels use `Input` and
+-`Output` without object-number labels. Each constructed instance shows its
+-`Input crop`, `Output crop`, `Implementation` and `Input state` side by side,
+-`1.8.1` through `1.11.1` for the first one. After the `Analysis · State`
+-table, a `Synthesizing training pairs` step precedes the synthesis call. Each
+-synthesized instance's output is then composed as a test object's is, from its
+-`Composing the output object · <instance>` step to its `Placed output`. When
+-validation rejects the instance, because its `Output state` and the measured
+-`Placed output` disagree on `x`, `y`, `width`, `height` or `volume`, a red `✗`
+-step follows at once, such as
+-`1.18.1 Rejected <instance> · Output state ≠ Placed output · volume 5 ≠ 4`,
+-naming each disagreeing property with the state's value first. A
+-`<count> training pairs synthesized` step (`pair` for one) follows, with one
+-box per synthesized instance that passed validation, titled
+-`Synthesized <n> · <instance>`, where `<n>` numbers its synthesized pair: its
+-full-size `Input` and `Output` matrices side by side, then its `Output state`.
+-Model token usage remains attached to its active milestone. Instance-specific
+-steps, and the headers of instance panels shown on their own, include the
+-instance name. In the visualization, the segmented test objects' `Input`
+-panels sit side by side (`2.4.1`, `2.4.2`, …). Each test object's
+-`Executing the object transformation` step, such as `2.7.1`, is followed by
+-one box with its `Input crop`, `Implementation` and `Input state` side by
+-side, `2.5.1`, `2.6.1` and `2.8.1`; if that execution fails, the crop and
+-implementation still print before the error. Its composition shows the same
+-`Input crop` again before its `Output crop`, under its own number, such as
+-`2.11.1`, rather than continuing the synthesis count, and an `Output state`
+-panel right after the `Output crop`: the object's row of the
+-`Visualization · State` table, before its `Placed output`.
+-The visualization's output-crop header also shows the object's output
+-orientation as an arrow emoji and its degrees, such as
+-`2.12.1 Output crop · <instance> · ➡️ 90°`, and every input- and
+-output-state header, in both stages, shows the orientation of the state it
+-displays the same way, such as `2.8.1 Input state · ⬆️ 0°` under its
+-instance's title row. An orientation that is not a multiple of 45 degrees
+-shows `🧭` instead of an arrow, and an object without a numeric
+-`orientation` adds nothing to the header.
++The terminal always displays by group and side by side. Related panels share
++one box, one column per panel, each under its own numbered title, rather than
++following one another as separate boxes, and a result appears once, in its
++group, rather than on its own before a later box repeats it. A box for one
++instance names the instance once, in a title row above the columns. Each
++training pair's segmented objects share one box with a row per object, its
++`Input` beside its `Output`, such as `1.4.1 Input` and `1.5.1 Output`;
++segmented-object panels use `Input` and `Output` without object-number labels.
++Each constructed instance shows its `Input crop`, `Output crop`,
++`Implementation` and `Input state` side by side, `1.8.1` through `1.11.1` for
++the first one. After the `Analysis · State` table, a
++`Synthesizing training pairs` step precedes the synthesis call. Each
++synthesized instance's output is th
+```
+
+**File**: `arc/src/app.ts` (modified, +2/-0)
+```diff
+@@ -121,6 +121,8 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
+     result_matrix = Matrix.merge(result_matrix, output_instance_matrix);
+   }
+ 
++  milestone.test_output_composed({ instances: input_instances });
 +
-+**Reversal methods trace every delivery route back to its depot**
-+
-+```nuc
-+class Route(stops):
-+    this.stops = stops
-+$Route.back = $Route.stops.reversed()
-+$Route.sign = $Route.stops.toReversed().join(" < ")
-+north = Route(["depot", "mill", "harbor"])
-+south = Route(["depot", "farm"])
-+assert([north.back, south.sign], [["harbor", "mill", "depot"], "farm < depot"])
-+north.stops.push("lighthouse")
-+south.stops.push("orchard")
-+[north.back[0], south.sign]
-+# return: ["lighthouse","orchard < farm < depot"]
-+```
-+
-+- Each route keeps its way back in class-level rules: `reversed()` lists its
-+  stops from the last one to the depot, and the sign a driver follows home
-+  joins the stops that `toReversed()` gives. Both are exactly the accepted
-+  `reverse()`, which copies the stops and never reorders the route itself.
-+- Both rules follow every stop: the lighthouse at the end of the north route
-+  becomes the first stop on its way back, and the orchard heads the south
-+  route's sign. See [NUC 131](nuc-0131.md) and the
-+  [root contract](../nucleoid.spec.md#reversal-method-aliases).
-+
- ## Reactive list flattening
+   result_matrix = Matrix.canvas(result_matrix, output_canvas);
  
- **Flattening keeps the dirty tiles of every room counted**
-```
-
-**File**: `docs/nuc-0000.md` (modified, +2/-2)
-```diff
-@@ -174,7 +174,7 @@ Created: 31-Jul-2026
- | [117](nuc-0117.md) | First and Last Element Methods | Accepted |
- | [118](nuc-0118.md) | Case Conversion Method Aliases | Accepted |
- | [122](nuc-0122.md) | Python-Style Except Clauses | Accepted |
--| [131](nuc-0131.md) | Reversal Method Aliases | Draft |
-+| [131](nuc-0131.md) | Reversal Method Aliases | Accepted |
- | [132](nuc-0132.md) | Rust String Boundary Method Aliases | Draft |
- 
- ### Documentation
-@@ -317,7 +317,7 @@ Created: 31-Jul-2026
- | [128](nuc-0128.md) | Origins and Outcomes of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
- | [129](nuc-0129.md) | List and Population Zipping | Standards Track | Utility enhancement | Accepted |
- | [130](nuc-0130.md) | Loop-Local Iterator Exits | Standards Track | Runtime features | Rejected: existing corpus-count test fails (1,246 expected; 1,252 actual) |
--| [131](nuc-0131.md) | Reversal Method Aliases | Standards Track | Language compatibility | Draft |
-+| [131](nuc-0131.md) | Reversal Method Aliases | Standards Track | Language compatibility | Accepted |
- | [132](nuc-0132.md) | Rust String Boundary Method Aliases | Standards Track | Language compatibility | Draft |
- 
- ## Copyright
-```
-
-**File**: `docs/nuc-0131.md` (modified, +1305/-15)
-```diff
-@@ -4,7 +4,7 @@
- NUC: 131
- Title: Reversal Method Aliases
- Author: Can Mingir <canmingir@gmail.com>
--Status: Draft
-+Status: Accepted
- Type: Standards Track
- Category: Language compatibility
- Created: 21-Nov-2026
-@@ -17,19 +17,31 @@ Requires: 61, 125
-   spell it, and `toReversed()`, as JavaScript spells it since ES2023, as
-   exact aliases of the accepted read-only `reverse()`: `[1, 2, 3].reversed()`
-   and `[1, 2, 3].toReversed()` give `[3, 2, 1]`, `Truck.reversed()` gives the
--  instances in reverse population order, and the receiver is never written.
-+  instances in reverse population order, the latest created first, and the
-+  receiver is never written.
- - Strings gain `reversed()`, as Kotlin spells it, and `reverse()`, as Ruby
-   spells it, as exact aliases of the accepted character reversal
--  `STRING[::-1]` of [NUC 125](nuc-0125.md): `"café".reversed()` gives
--  `"éfac"`.
-+  `TEXT[::-1]` of [NUC 125](nuc-0125.md): `"café".reversed()` gives
-+  `"éfac"`, reversing Unicode scalar values.
- - Like the aliases of [NUC 116](nuc-0116.md) to [NUC 118](nuc-0118.md), they
--  read what their accepted spellings read and stay live. At the accepted
--  revision each of these calls raises
--  `TypeError("<receiver>.<name> is not a function")`, and only those inputs
--  change. `reverse()` on lists and populations, functions, properties,
--  methods and variables named `reversed`, `toReversed` or `reverse`, and
--  every other receiver keep their readings. No syntax, keyword or token is
--  added.
-+  read what their accepted spellings read and stay live, and further
-+  arguments are evaluated and ignored. The equivalence holds per evaluation
-+  of the receiver: when a later write turns a held receiver into another
-+  kind of value, the call reads its name on that value, as every method name
-+  is read.
-+- At the accepted revision each of these calls raises
-+  `TypeError("<receiver>.<name> is not a function")`, unless an argument
-+  raises first. Only those calls change, along with the programs that
-+  caught that error and the standing `reverse()` calls whose list receiver a
-+  later write replaced with a string, which raised
-+  `TypeError("<text>.reverse is not a function")` at that write.
-+  `reverse()` on lists and populations, a string's `toReversed()`,
-+  functions, properties, methods and variables named `reversed`,
-+  `toReversed` or `reverse`, and every other receiver keep their readings.
-+- No token, keyword, syntax-tree node, error type or message format,
-+  dependency or public item is added.
-+- The authoritative contract is
-+  [Reversal method aliases](../nucleoid.spec.md#reversal-method-aliases).
- 
- ## Motivation
- 
-@@ -44,26 +56,1304 @@ Requires: 61, 125
-   copying names `reversed` and `toReversed` describe it exactly. Accepting
-   them moves Nucleoid toward the superset of familiar forms that its goals
-   name, without changing any accepted reading.
-+- World models read ordered histories backward: an undo history newest
-+  first, the stops of a route on the way home, the latest readings first, a
-+  class's instances from the latest created, and a word against its own
-+  reversal to tell a palindrome. These readings are standing, so they must
-+  follow every push, new instance and write, which `reverse()` and `[::-1]`
-+  already do and the aliases inherit.
-+- The aliases advance the language-superset aspiration of the Language
-+  compatibility category, as the accepted `this`/`self`, `=>`/`->`,
-+  `append`, `contains`, `lower`, `upper`, `strip`, NUC 110's `startswith`,
-+  `endswith` and `join`, NUC 116's size and emptiness methods, NUC 117's
-+  `first` and `last` and NUC 118's case conversions do: an equivalent
-+  familiar spelling beside the canonical one, with no change to any
-+  accepted program.
-+- Kotlin's `Iterable.reversed()` and `String.reversed()`, Swift's
-+  `Sequence.reversed()`, Java 21's `SequencedCollection.reversed()`,
-+  JavaScript's `Array.prototype.toReversed()` and Ruby's `String#reverse`
-+  and `Array#reverse` are the prior art.
- - Sorting copies stay out of scope. The accepted `sort()` orders by
-   JavaScript string comparison, so `[10, 9, 1, 2].sort()` gives
-   `[1, 10, 2, 9]`, while Kotlin's and Swift's `sorted()` order numbers by
-   value; a `sorted()` alias would mislead.
- 
- ## Rationale
- 
--- Pending: the proposer completes this section.
-+- **Category and mode.** The allocating continuous cycle drew Language
-+  compatibility with one tool-backed uniform draw over the five categories
-+  that NUC 1's registry marks eligible for automatic selection, index 4
-+  with probability 1/5 and no redraw, at 21:17:07 on 21-Nov-2026, and
-+  recorded the requested change in the allocation commit `2ae49a2e`, which
-+  this revision pins. Token comparison is therefore skipped as
-+  `language_compatibility`. The skip is categorical; it is neither a
-+  measured comparison nor a passing token gate. Runtime applicability does
-+  not apply to this category.
-+- **Selection.** Among the open Language compatibil
-```
-
-**File**: `nucleoid.spec.md` (modified, +202/-0)
-```diff
-@@ -612,6 +612,117 @@ operator-chain diagnostics and source positions are preserved.
-   specify the executable behavior. `tests/case_conversion_aliases.rs`
-   executes the rest.
- 
-+## Reversal method aliases
-+
-+- [NUC 131](docs/nuc-0131.md) adds the reversal methods that Kotlin, Swift,
-+  JavaScript and Ruby write, as aliases of the accepted `reverse()` on lists
-+  and class populations and of the character reversal `TEXT[::-1]` of
-+  [Stepped slices](#stepped-slices) on strings. They join the accepted
-+  aliases `append`, `contains`, `size`, `len`, `isEmpty`, `is_empty`,
-+  `isNotEmpty`, `first` and `last` of lists and populations, and `lower`,
-+  `upper`, `strip`, `startswith`, `endswith` and the case conversion aliases
-+  of strings. No token, keyword, syntax tree node, error type or message
-+  format is added.
-+- The accepted `RECEIVER.reverse()`, on a list or a class population,
-+  returns a new list of the same items in reverse order and leaves the
-+  receiver as it is, unlike JavaScript's in-place `reverse()`: after
-+  `xs = [1, 2, 3]`, `[xs.reverse(), xs]` is `[[3, 2, 1], [1, 2, 3]]`. On a
-+  class it gives the instances in reverse population order, the latest
-+  created first. An empty list or a class without instances gives `[]`. The
-+  items are the receiver's own, so the instances and objects of a reversed
-+  list are those of the receiver, and a nested list keeps its own order.
-+  Supplied arguments are evaluated and ignored, and a declaration that calls
-+  `reverse()` follows its receiver.
-+- `RECEIVER.reversed()` and `RECEIVER.toReversed()` are `RECEIVER.reverse()`
-+  on a list or a class population. `TEXT.reversed()` and `TEXT.reverse()` are
-+  `TEXT[::-1]` on a string: a new string of its characters, Unicode scalar
-+  values, in reverse order, so `"café".reversed()` is `"éfac"`,
-+  `"a😀b".reverse()` is `"b😀a"` and `"".reversed()` is `""`. A combining mark
-+  is a character of its own, so it changes sides: `e`, a combining acute
-+  accent and `x` reverse to `x`, the accent and `e`, which shows the accent on
-+  the `x`. Supplied arguments are evaluated and ignored.
-+- **Receivers.** A list however it is reached, including a literal, a name, a
-+  property, an index or a slice, a call or query result, a `.value` snapshot
-+  and a list read from a state version; a declared class's instances, named
-+  by the class, by a variable or parameter that holds it, or by `$Name`
-+  outside a class-level rule or conditional, and the ranges and `Name.list()`
-+  lists of them; and a string however it is reached, including a template
-+  and the empty string.
-+- **Evaluation.** The receiver is read first, a population's instances
-+  included, then every argument once, left to right, as for every call. An
-+  argument's error, such as `ReferenceError("missing is not defined")`,
-+  propagates before the alias runs.
-+- **Live.** A declaration or class-level rule that calls an alias depends on
-+  what its accepted spelling depends on: `undo = history.reversed()` follows
-+  pushes, pops, shifts, sorts and replacements of `history`,
-+  `home = Stop.reversed()` follows new and deleted instances,
-+  `mirror = word.reversed()` follows writes of `word`, and
-+  `$Train.fromRear = $Train.cars.reversed()` follows each train's cars.
-+  Errors roll back through the existing transaction.
-+- **Per evaluation.** The receiver decides the reading each time a call is
-+  evaluated. When a later write replaces a held receiver with another kind of
-+  value, the re-evaluated call reads its name on that value, as it reads any
-+  other method name. After `ys = xs.reversed()` over a list, writing
-+  `xs = "abc"` makes `ys` the string `"cba"`, where `xs.toReversed()` raises
-+  `TypeError("abc.toReversed is not a function")` and rolls back; writing
-+  `xs = 5` raises `TypeError("number.reversed is not a function")` and rolls
-+  back, where `reverse()` names `reverse`; and an object whose `reversed` is a
-+  function runs it. After `t = s.reversed()` over a string, writing a list
-+  makes `t` the reversed list, as `s[::-1]` does, while a number, boolean,
-+  date or function raises that receiver's `TypeError` and rolls back, where
-+  `s[::-1]` gives undefined.
-+- **Rendering.** Statements, `why`, `affects`, `--graph` and graph keys show
-+  the call as written. Its dependencies are those of the accepted spelling,
-+  so `why undo` after `undo = history.reversed()` shows `undo` read from
-+  `history`, as after `undo = history.reverse()`.
-+- **Unchanged.** Only calls of `reversed` and `toReversed` on a list or
-+  population receiver, and of `reversed` and `reverse` on a string receiver,
-+  change; each raised `TypeError("<receiver>.<name> is not a function")`, or
-+  an argument's error first, which stays. A standing `reverse()` call whose
-+  list receiver a later write replaces with a string raised
-+  `TypeError("<text>.reverse is not a function")` at that write, which rolled
-+  back, and now reverses the string.
-+  - A string's `toReversed()` k
+   milestone.comparison({ test_output_matrix, result_matrix });
 ```
 
 #### Recent Merged Pull Requests:
@@ -2076,32 +1875,32 @@ error messag
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Draft NUC 133 Edge Lists of Reasoning Selections
+## X. Group ARC output and manage build cache space
 
 **RULE**:
-When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/CLAUDE.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `008cc5b3`: Draft NUC 133 Edge Lists of Reasoning Selections. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `51d61f14`: Group ARC output and manage build cache space. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/CLAUDE.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| [133](nuc-0133.md) | Edge Lists of Reasoning Selections | Draft |
-| [133](nuc-0133.md) | Edge Lists of Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
+| [arc.instructions.md](rules/arc.instructions.md) | ARC puzzle proposals and their `arc/docs` progress records, the minimal dataset grammar `arc/nucleoid.ebnf`, JSON-only LLM exchanges, grouped side-by-side terminal output, and no automated ARC tests |
+| [disk-space.instructions.md](rules/disk-space.instructions.md) | Before every round of a continuous or repeated task, check free disk space and, below 50 GB, clear the machine's finished Cargo build caches (`CACHEDIR.TAG` targets and `incremental` folders) before starting; clear your own finished rounds' targets every round, keep anything in use, in progress or not build output, and pause when space stays low |
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+| [arc.instructions.md](rules/arc.instructions.md) | ARC puzzle proposals and their `arc/docs` progress records, the minimal dataset grammar `arc/nucleoid.ebnf`, JSON-only LLM exchanges, and no automated ARC tests |
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `008cc5b3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `51d61f14` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

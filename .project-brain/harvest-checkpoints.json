@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T07:13:49.946Z",
+  "last_updated": "2026-11-22T07:28:23.470Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "df5086930e094dd17c09a3b7ff89f6bab276ea1791c22ca3f376e39e8a80898d",
-      "verified_at": "2026-11-22T06:49:35.341Z",
+      "content_hash": "9457b0dfecc7c5fddd268c3cc11c737f5566885c49e719d4aaa698571a0cea6a",
+      "verified_at": "2026-11-22T07:27:46.531Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T06:49:35.341Z"
+      "last_updated": "2026-11-22T07:27:46.531Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -7626,14 +7626,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-meshery-meshery",
-      "content_hash": "4f7926ad58a2c6941460678dfb74d869aeb5c7e074b39e04820e6a7bf66f2203",
-      "verified_at": "2026-11-21T04:39:08.808Z",
+      "content_hash": "f1de2338abf50f17ee9e10cdf7082513ffed85d51c4798cb27e54e7c4b21fa39",
+      "verified_at": "2026-11-22T07:27:39.811Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T04:39:08.808Z"
+      "last_updated": "2026-11-22T07:27:39.811Z"
     },
     "arangodb/arangodb": {
       "repository": "arangodb/arangodb",
@@ -18711,14 +18711,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf",
-      "content_hash": "d36045fa50543c752f05f8c52f226c0a38dc43f4168ad20ee70b8976a6d1dede",
-      "verified_at": "2026-11-17T18:26:24.179Z",
+      "content_hash": "10a80b008abd7b6e46e340dd52612c31ed040068f5b494296e3597ec612dd5a4",
+      "verified_at": "2026-11-22T07:27:29.466Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T18:26:24.179Z"
+      "last_updated": "2026-11-22T07:27:29.466Z"
     },
     "thinkingmachines/Inkling-2-Small": {
       "repository": "thinkingmachines/Inkling-2-Small",
@@ -19874,6 +19874,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-22T07:06:00.467Z"
+    },
+    "Lakonik/pi-H3": {
+      "repository": "Lakonik/pi-H3",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-lakonik-pi-h3",
+      "content_hash": "023d0227a5d2691c36f2ebe26a6d2c8e9e92b8e35cf820dd0b9cd8d1737070b9",
+      "verified_at": "2026-11-22T07:28:23.470Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-22T07:28:23.470Z"
     }
   },
   "repos": {

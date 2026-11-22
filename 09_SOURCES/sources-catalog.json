@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "b4f4fbdd",
+    "sourceVersion": "5e0af050",
     "license": "Apache-2.0",
-    "contentHash": "df5086930e094dd17c09a3b7ff89f6bab276ea1791c22ca3f376e39e8a80898d",
-    "lastHarvestedAt": "2026-11-22T06:49:35.334Z",
+    "contentHash": "9457b0dfecc7c5fddd268c3cc11c737f5566885c49e719d4aaa698571a0cea6a",
+    "lastHarvestedAt": "2026-11-22T07:27:46.519Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -5003,10 +5003,10 @@
     "repository": "meshery/meshery",
     "platform": "github",
     "sourceUrl": "https://github.com/meshery/meshery",
-    "sourceVersion": "5f96e08e",
+    "sourceVersion": "03883b4b",
     "license": "Apache-2.0",
-    "contentHash": "4f7926ad58a2c6941460678dfb74d869aeb5c7e074b39e04820e6a7bf66f2203",
-    "lastHarvestedAt": "2026-11-21T04:39:08.799Z",
+    "contentHash": "f1de2338abf50f17ee9e10cdf7082513ffed85d51c4798cb27e54e7c4b21fa39",
+    "lastHarvestedAt": "2026-11-22T07:27:39.800Z",
     "learningId": "learn-github-meshery-meshery"
   },
   "arangodb-arangodb": {
@@ -12435,8 +12435,8 @@
     "sourceUrl": "https://huggingface.co/huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF",
     "sourceVersion": "hf-huihui-ai-huihui-qwen3.8-27b-abliterated-gguf",
     "license": "Open-Source",
-    "contentHash": "d36045fa50543c752f05f8c52f226c0a38dc43f4168ad20ee70b8976a6d1dede",
-    "lastHarvestedAt": "2026-11-17T18:26:24.172Z",
+    "contentHash": "10a80b008abd7b6e46e340dd52612c31ed040068f5b494296e3597ec612dd5a4",
+    "lastHarvestedAt": "2026-11-22T07:27:29.455Z",
     "learningId": "learn-huggingface-huihui-ai-huihui-qwen3-8-27b-abliterated-gguf"
   },
   "hf-thinkingmachines-inkling-2-small": {
@@ -13168,5 +13168,15 @@
     "contentHash": "1c9471c729359c0a65dd981063d7602780d76f3b93d7d0f2e9467d4d294862a7",
     "lastHarvestedAt": "2026-11-22T07:06:00.460Z",
     "learningId": "learn-github-apache-maka"
+  },
+  "hf-lakonik-pi-h3": {
+    "repository": "Lakonik/pi-H3",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/Lakonik/pi-H3",
+    "sourceVersion": "hf-lakonik-pi-h3",
+    "license": "Open-Source",
+    "contentHash": "023d0227a5d2691c36f2ebe26a6d2c8e9e92b8e35cf820dd0b9cd8d1737070b9",
+    "lastHarvestedAt": "2026-11-22T07:28:23.459Z",
+    "learningId": "learn-huggingface-lakonik-pi-h3"
   }
 }

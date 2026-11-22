@@ -12041,3 +12041,8 @@
 | `CYCLE-20261122-TF3Q` | `2026-11-22T07:05:57.686Z` | `facebook/dinov3-vitl16-pretrain-lvd1689m` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-facebook-dinov3-vitl16-pretrain-lvd1689m-learnings.md` | Yes (`c7bb55d0...`) |
 | `CYCLE-20261122-TH8O` | `2026-11-22T07:06:00.456Z` | `apache/maka` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9903` | Yes (`1c9471c7...`) |
 | `CYCLE-20261122-3JHO` | `2026-11-22T07:13:49.932Z` | `facebook/sam-3d-body-dinov3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-facebook-sam-3d-body-dinov3-learnings.md` | Yes (`2990c101...`) |
+| `CYCLE-20261122-L3U1` | `2026-11-22T07:27:29.449Z` | `huihui-ai/Huihui-Qwen3.8-27B-abliterated-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-huihui-ai-huihui-qwen3.8-27b-abliterated-gguf-learnings.md` | Yes (`10a80b00...`) |
+| `CYCLE-20261122-LBTF` | `2026-11-22T07:27:39.795Z` | `meshery/meshery` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9904` | Yes (`f1de2338...`) |
+| `CYCLE-20261122-LH02` | `2026-11-22T07:27:46.514Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9905` | Yes (`9457b0df...`) |
+| `CYCLE-20261122-M9I6` | `2026-11-22T07:28:23.454Z` | `Lakonik/pi-H3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-lakonik-pi-h3-learnings.md` | Yes (`023d0227...`) |
+| `CYCLE-2026-11-22-PROJ-EVOLVE` | `2026-11-22T07:29:02.967Z` | `hf-lakonik-pi-h3` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-1DB76912` [Domain D] | Yes (`ff0c5c18...`) |

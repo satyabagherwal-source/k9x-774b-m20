@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-22T06:50:06.495Z",
+  "updated_at": "2026-11-22T07:29:02.964Z",
   "statistics": {
-    "total_nodes": 470,
-    "total_edges": 201,
+    "total_nodes": 471,
+    "total_edges": 202,
     "domain_distribution": {
-      "D": 288,
+      "D": 289,
       "M": 1,
       "H": 81,
       "J": 22,
@@ -20,7 +20,7 @@
       "I": 9
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 198,
+      "CONSTRAINED_BY_ARCHITECTURE": 199,
       "VERIFIED_BY_TEST": 2,
       "STYLED_BY_DESIGN": 1
     }
@@ -10503,6 +10503,29 @@
       ],
       "created_at": "2026-11-22T06:50:06.495Z",
       "updated_at": "2026-11-22T06:50:06.495Z"
+    },
+    "DOM-D-1DB76912": {
+      "id": "DOM-D-1DB76912",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): Lakonik/pi-H3",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-lakonik-pi-h3-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/ -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-lakonik-pi-h3-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-lakonik-pi-h3/hf-lakonik-pi-h3-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-22T07:28:26.668Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-lakonik-pi-h3)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-22T07:29:02.964Z",
+      "updated_at": "2026-11-22T07:29:02.964Z"
     }
   },
   "edges": [
@@ -12515,6 +12538,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-03750A38 [D] with Domain M",
       "created_at": "2026-11-22T04:39:42.426Z"
+    },
+    {
+      "id": "EDGE-63BA0FBD9FD3",
+      "sourceId": "DOM-D-1DB76912",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-1DB76912 [D] with Domain M",
+      "created_at": "2026-11-22T07:29:02.964Z"
     }
   ]
 }
