@@ -3,7 +3,7 @@
 > **Source Version**: `hf-autotrust`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T17:03:46.534Z  
+> **Timestamp**: 2026-11-22T10:17:55.082Z  
 > **Learning ID**: `learn-huggingface-autotrust-autotrust-decider-pro-vision-27b`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-autotrust-autotrust-decider-pro-vision-27b-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/autotrust/AutoTrust-Decider-Pro-Vision-27B](https://huggingface.co/autotrust/AutoTrust-Decider-Pro-Vision-27B))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T17:03:46.390Z  
+> **Harvest Timestamp**: 2026-11-22T10:17:54.859Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 1411039 downloads | 5072 likes
+- **Stars / Engagement**: 694752 downloads | 6199 likes
 
 ---
 

@@ -12068,3 +12068,5 @@
 | `CYCLE-20261122-5ZKG` | `2026-11-22T10:03:41.776Z` | `Abiray/MiniMax-H3-Image-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-abiray-minimax-h3-image-gguf-learnings.md` | Yes (`3a7c0567...`) |
 | `CYCLE-20261122-68JB` | `2026-11-22T10:03:53.399Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9917` | Yes (`f6a3d751...`) |
 | `CYCLE-20261122-6AZD` | `2026-11-22T10:03:56.569Z` | `slatedb/slatedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9918` | Yes (`2ede2fd8...`) |
+| `CYCLE-20261122-OAED` | `2026-11-22T10:17:55.621Z` | `autotrust/AutoTrust-Decider-Pro-Vision-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-autotrust-decider-pro-vision-27b-learnings.md` | Yes (`0695461a...`) |
+| `CYCLE-20261122-OG0Q` | `2026-11-22T10:18:02.906Z` | `Tencent-TDS/KuiklyUI` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9919` | Yes (`b11d6a74...`) |

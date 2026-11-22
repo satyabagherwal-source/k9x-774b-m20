@@ -7233,10 +7233,10 @@
     "repository": "Tencent-TDS/KuiklyUI",
     "platform": "github",
     "sourceUrl": "https://github.com/Tencent-TDS/KuiklyUI",
-    "sourceVersion": "2ac8003f",
+    "sourceVersion": "d606ca05",
     "license": "NOASSERTION",
-    "contentHash": "a6e8791994d1daafdfe9d16b8e75c858774f51abd71e0f440e56072e6f4c05b2",
-    "lastHarvestedAt": "2026-11-19T07:51:10.373Z",
+    "contentHash": "b11d6a749e01e541493b3c8a93d07c2a5e39379a1160a2ba7e8cf356587cd3db",
+    "lastHarvestedAt": "2026-11-22T10:18:02.910Z",
     "learningId": "learn-github-tencent-tds-kuiklyui"
   },
   "seaql-sea-orm": {
@@ -12635,8 +12635,8 @@
     "sourceUrl": "https://huggingface.co/autotrust/AutoTrust-Decider-Pro-Vision-27B",
     "sourceVersion": "hf-autotrust-autotrust-decider-pro-vision-27b",
     "license": "Open-Source",
-    "contentHash": "6f41447e0ad2272a92818e9d23efb3a72b8df211149c4d6de3e4b5bebbbd2c45",
-    "lastHarvestedAt": "2026-11-15T17:03:46.999Z",
+    "contentHash": "0695461a09fbf4caf98fe5293ffa519a561ab7ae2718b067feb9fb02dc95a6f4",
+    "lastHarvestedAt": "2026-11-22T10:17:55.625Z",
     "learningId": "learn-huggingface-autotrust-autotrust-decider-pro-vision-27b"
   },
   "chocoford-excalidrawz": {

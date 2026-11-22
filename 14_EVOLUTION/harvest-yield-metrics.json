@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T10:03:56.580Z",
-  "total_cycles_completed": 11473,
-  "total_learnings_persisted": 11473,
-  "total_rules_promoted": 10733,
+  "last_updated": "2026-11-22T10:18:02.916Z",
+  "total_cycles_completed": 11475,
+  "total_learnings_persisted": 11475,
+  "total_rules_promoted": 10734,
   "history": [
-    {
-      "timestamp": "2026-11-21T17:05:51.451Z",
-      "repository": "FaridSafi/react-native-gifted-chat",
-      "learningId": "learn-github-faridsafi-react-native-gifted-chat",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T17:05:54.314Z",
-      "repository": "nginx/kubernetes-ingress",
-      "learningId": "learn-github-nginx-kubernetes-ingress",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T17:06:02.485Z",
       "repository": "Nanbeige/Nanbeige4.3-33B",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-22T10:03:56.580Z",
       "repository": "slatedb/slatedb",
       "learningId": "learn-github-slatedb-slatedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T10:17:55.631Z",
+      "repository": "autotrust/AutoTrust-Decider-Pro-Vision-27B",
+      "learningId": "learn-huggingface-autotrust-autotrust-decider-pro-vision-27b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T10:18:02.916Z",
+      "repository": "Tencent-TDS/KuiklyUI",
+      "learningId": "learn-github-tencent-tds-kuiklyui",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

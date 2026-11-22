@@ -12101,3 +12101,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-abiray-minimax-h3-image-gguf` | `https://huggingface.co/Abiray/MiniMax-H3-Image-GGUF` | `hf-abiray-` | Multi-dimensional audit evidence | 2026-11-22T10:03:41.781Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `a3309793` | Multi-dimensional audit evidence | 2026-11-22T10:03:53.403Z |
 | `learn-github-slatedb-slatedb` | `https://github.com/slatedb/slatedb` | `864e081b` | Multi-dimensional audit evidence | 2026-11-22T10:03:56.574Z |
+| `learn-huggingface-autotrust-autotrust-decider-pro-vision-27b` | `https://huggingface.co/autotrust/AutoTrust-Decider-Pro-Vision-27B` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-22T10:17:55.625Z |
+| `learn-github-tencent-tds-kuiklyui` | `https://github.com/Tencent-TDS/KuiklyUI` | `d606ca05` | Multi-dimensional audit evidence | 2026-11-22T10:18:02.910Z |

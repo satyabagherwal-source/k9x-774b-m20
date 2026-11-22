@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261120-DRHO",
-    "timestamp": "2026-11-20T10:34:23.724Z",
-    "repository": "k3s-io/k3s",
-    "learningId": "learn-github-k3s-io-k3s",
-    "contentHash": "4e8dcc25f0f9f15647e070410e5bdc32ae8c0f1df273a9adc2665668dda4c10f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-QH4K",
-    "timestamp": "2026-11-20T10:44:16.820Z",
-    "repository": "kucherenko/jscpd",
-    "learningId": "learn-github-kucherenko-jscpd",
-    "contentHash": "a326537dc530934a6a24b442de2ef16d885530a668528970fb03ed7976cb8990",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261120-M1QK",
     "timestamp": "2026-11-20T11:08:49.868Z",
     "repository": "Kianuni/Erosion-CN",
@@ -7490,6 +7460,36 @@
     "repository": "slatedb/slatedb",
     "learningId": "learn-github-slatedb-slatedb",
     "contentHash": "2ede2fd8407f597ffdb893e599dc335d4bf698a62fcb30fb0eba7f7b8b86fa46",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-OAED",
+    "timestamp": "2026-11-22T10:17:55.621Z",
+    "repository": "autotrust/AutoTrust-Decider-Pro-Vision-27B",
+    "learningId": "learn-huggingface-autotrust-autotrust-decider-pro-vision-27b",
+    "contentHash": "0695461a09fbf4caf98fe5293ffa519a561ab7ae2718b067feb9fb02dc95a6f4",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-OG0Q",
+    "timestamp": "2026-11-22T10:18:02.906Z",
+    "repository": "Tencent-TDS/KuiklyUI",
+    "learningId": "learn-github-tencent-tds-kuiklyui",
+    "contentHash": "b11d6a749e01e541493b3c8a93d07c2a5e39379a1160a2ba7e8cf356587cd3db",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

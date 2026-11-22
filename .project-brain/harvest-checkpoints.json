@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T10:03:56.584Z",
+  "last_updated": "2026-11-22T10:18:02.920Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -10896,14 +10896,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tencent-tds-kuiklyui",
-      "content_hash": "a6e8791994d1daafdfe9d16b8e75c858774f51abd71e0f440e56072e6f4c05b2",
-      "verified_at": "2026-11-19T07:51:10.381Z",
+      "content_hash": "b11d6a749e01e541493b3c8a93d07c2a5e39379a1160a2ba7e8cf356587cd3db",
+      "verified_at": "2026-11-22T10:18:02.919Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T07:51:10.381Z"
+      "last_updated": "2026-11-22T10:18:02.919Z"
     },
     "SeaQL/sea-orm": {
       "repository": "SeaQL/sea-orm",
@@ -18950,15 +18950,15 @@
       "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-autotrust-jev-27b-vl",
-      "content_hash": "61c889413ad5d0b4ff1852d264671acc1154712698d4cf65a91a360409b7831c",
-      "verified_at": "2026-11-19T06:33:00.331Z",
+      "learning_id": "learn-huggingface-autotrust-autotrust-decider-pro-vision-27b",
+      "content_hash": "0695461a09fbf4caf98fe5293ffa519a561ab7ae2718b067feb9fb02dc95a6f4",
+      "verified_at": "2026-11-22T10:17:55.635Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T06:33:00.331Z"
+      "last_updated": "2026-11-22T10:17:55.635Z"
     },
     "autotrust/AutoTrust-Decider-Pro-35B": {
       "repository": "autotrust/AutoTrust-Decider-Pro-35B",

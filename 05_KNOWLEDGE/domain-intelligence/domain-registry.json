@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T10:04:02.488Z",
+  "last_updated": "2026-11-22T10:18:09.076Z",
   "total_records": 2344,
   "domains": {
     "A": {
@@ -8159,8 +8159,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "02219eee4b2c23e7ab3145801448e4a10b2f1c884559e9ad6e69ed2b0e45ac79",
-      "created_at": "2026-11-22T09:35:23.643Z"
+      "content_hash": "75a5f3bf920f28153601230eb92afd0ae58bbc8c2f10913c05d719771979a1fe",
+      "created_at": "2026-11-22T10:18:09.076Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -16914,8 +16914,8 @@
       "title": "Research & Knowledge Intelligence: autotrust/AutoTrust-Decider-Pro-Vision-27B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-autotrust-decider-pro-vision-27b-research-knowledge-intelligence-au.md",
       "repository": "autotrust/AutoTrust-Decider-Pro-Vision-27B",
-      "content_hash": "372389035b918036d3d6e58cbc9f28c8bea7959dcee1c52b37cf7a5bd63bc7e0",
-      "created_at": "2026-11-15T17:03:47.211Z"
+      "content_hash": "8c85fccfe535b2fb95d059cc659f6f26968d9548c9c7ee2cc6ee8f7dd48d8fe9",
+      "created_at": "2026-11-22T10:17:55.860Z"
     },
     "domain_intelligence-technical-construction-intelligence-tokio-rs-tokio-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-tokio-rs-tokio-learnings-core-invariants",
@@ -21887,8 +21887,8 @@
       "title": "Research & Knowledge Intelligence: hf-autotrust-autotrust-decider-pro-vision-27b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-autotrust-decider-pro-vision-27b-learnings-research-knowledge-intel.md",
       "repository": "hf-autotrust-autotrust-decider-pro-vision-27b-learnings",
-      "content_hash": "89019f6a7a0fb67e10fc58546ccdf25acc603441b8dcb8445651c871ae1d8997",
-      "created_at": "2026-11-15T17:04:41.565Z"
+      "content_hash": "39b9bf20744dafb496ee23b09b5856f582bcc6f51f141e531f7bf6007abf307b",
+      "created_at": "2026-11-22T10:18:07.217Z"
     },
     "domain_intelligence-technical-construction-intelligence-chocoford-excalidrawz-learnings-core-invaria": {
       "record_id": "domain_intelligence-technical-construction-intelligence-chocoford-excalidrawz-learnings-core-invaria",
@@ -30231,8 +30231,8 @@
       "title": "Architecture Intelligence: Tencent-TDS/KuiklyUI Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tencent-tds-kuiklyui-architecture-intelligence-tencent-tds-kuiklyui-core-invaria.md",
       "repository": "Tencent-TDS/KuiklyUI",
-      "content_hash": "e31bec04ac7fae4d1c4d0625c4fc851f09a70cf7b84c60940ab83becd7f5d2be",
-      "created_at": "2026-11-19T07:51:10.712Z"
+      "content_hash": "274cfa183458cf7623f56fac8df7168d402f95a9250c95adf2c1bd8ecac2c6df",
+      "created_at": "2026-11-22T10:18:03.329Z"
     },
     "domain_intelligence-architecture-intelligence-tencent-tds-kuiklyui-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-tencent-tds-kuiklyui-learnings-core-invariants",
@@ -30240,8 +30240,8 @@
       "title": "Architecture Intelligence: tencent-tds-kuiklyui-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tencent-tds-kuiklyui-learnings-architecture-intelligence-tencent-tds-kuiklyui-le.md",
       "repository": "tencent-tds-kuiklyui-learnings",
-      "content_hash": "767f47ff450400bbd9d510d1b1b054b3bb8433a8bc4bad10b6c504e0947c9a50",
-      "created_at": "2026-11-19T07:51:15.229Z"
+      "content_hash": "e50f212a0026eb849edb6d308c210c534f1bc4a11e66087928d46bd307147890",
+      "created_at": "2026-11-22T10:18:07.909Z"
     },
     "domain_intelligence-architecture-intelligence-1jehuang-jcode-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-1jehuang-jcode-core-invariants",

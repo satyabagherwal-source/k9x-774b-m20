@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-19T07:51:14.983Z",
+  "timestamp": "2026-11-22T10:18:07.594Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-tencent-tds-kuiklyui-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [tencent-tds-kuiklyui-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-19T07:51:14.983Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T10:18:07.594Z`  
 > **Learning ID**: `LEARN-EVO-tencent-tds-kuiklyui-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tencent-tds-kuiklyui-learnings.md`  
 > **Source**: github ([https://github.com/Tencent-TDS/KuiklyUI](https://github.com/Tencent-TDS/KuiklyUI))  
-> **Source Version**: `2ac8003f`  
+> **Source Version**: `d606ca05`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T07:51:09.422Z  
+> **Timestamp**: 2026-11-22T10:18:01.857Z  
 > **Learning ID**: `learn-github-tencent-tds-kuiklyui`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tencent-tds-kuiklyui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Tencent-TDS/KuiklyUI](https://github.com/Tencent-TDS/KuiklyUI))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T07:51:09.417Z  
+> **Harvest Timestamp**: 2026-11-22T10:18:01.852Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: A Kotlin Multiplatform UI framework from Tencent TDS — high-performance, one codebase for six platforms, with dynamic delivery.
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3640 stars
+- **Stars / Engagement**: 3644 stars
 
 ---
 
@@ -781,11 +781,13 @@ class Animatable<T, V : AnimationVector>(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1913** (2026-11-19): **fix(text-area): align placeholder with input text line height**
+  *Symptoms*: 
+  **Post-Mortem & Fix Analysis**:
+  > lgtm
+
 - **Issue #1912** (2026-11-19): **fix(core): stop clearPlaceholder from adding a placeholder prop to images without one**
   *Symptoms*: - Compose-side network images never call placeholderSrc, yet the ImageEvent.loadSuccess wrapper unconditionally invokes clearPlaceholder, appending a placeholder="" attr to the node once loading finishes  - the attr set of an image node therefore depends on its loading state: a TurboDisplay cache snapshot saved after loading (10 props) no longer matches the real tree at takeover while still loading (9 props), failing canReuseNode and forcing remove+create — observed as background image flicker on the task center page  - track placeholderPropSet on ImageView so only images that actually set a placeholderSrc emit the clear prop; images without a placeholder keep a stable attr set, and the legacy DSL behavior (placeholder value cleared after load) is unchanged
-
-- **Issue #1911** (2026-11-18): **fix(gradle): skip dependencyResolutionManagement on Gradle older than 6.8**
-  *Symptoms*: The 1.3.10 publish job runs Gradle 5.4.1, which has no such Settings property and fails while loading the Maven mirror init script.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -802,279 +804,209 @@ class Animatable<T, V : AnimationVector>(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2ac8003f` (2026-11-19)
-**Commit Message**: fix(core): stop clearPlaceholder from adding a placeholder prop to images without one (#1912)
+### Incident Patch 1: `d606ca05` (2026-11-19)
+**Commit Message**: fix(build): align OHOS target matrix and Android release publication (#1902)
 
-* fix(core): stop clearPlaceholder from adding a placeholder prop to images without one
+Drop macOS targets from :core-wx OHOS Gradle scripts so commonMain's :core dependency matches Kotlin 2.2+ KMP resolution checks; configure singleVariant("release") for core-render-android on AGP 8.6.
 
-- Compose-side network images never call placeholderSrc, yet the ImageEvent.loadSuccess wrapper unconditionally invokes clearPlaceholder, appending a placeholder="" attr once loading finishes
+Co-authored-by: Cursor <[REDACTED_EMAIL]>
 
-- the attr set of an image node therefore depends on its loading state: a TurboDisplay cache snapshot saved after loading (10 props) no longer matches the real tree at takeover while still loading (9 props), failing canReuseNode and forcing remove+create — observed as background image flicker on the task center page
-
-- guard clearPlaceholder with a getProp check so only images that actually emitted a placeholder prop get cleared; images without a placeholder keep a stable attr set and the legacy DSL behavior (placeholder value cleared after load) is unchanged
-
-- setClearPlaceholderHandler registers an empty loadSuccess handler: the ImageEvent.loadSuccess wrapper already invokes clearPlaceholder, so the handler body no longer repeats it
-
-* fix(core): update attr with getViewAttr()
-
-Signed-off-by: valoxbwang <[RED
-
-**File**: `core/src/commonMain/kotlin/com/tencent/kuikly/core/views/ImageView.kt` (modified, +5/-3)
+**File**: `core-render-android/build.2.4.21.ohos.gradle.kts` (modified, +3/-0)
 ```diff
-@@ -298,14 +298,16 @@ class ImageView : DeclarativeBaseView<ImageAttr, ImageEvent>() {
+@@ -68,6 +68,9 @@ android {
+         sourceCompatibility = JavaVersion.VERSION_1_8
+         targetCompatibility = JavaVersion.VERSION_1_8
      }
- 
-     internal fun clearPlaceholder() {
-+        // 仅当节点下发过占位图属性时才清空：Compose 链路的网络图不调用 placeholderSrc，
-+        // 属性表中无 placeholder，无条件清空会在加载成功后凭空新增该属性，使节点属性集合
-+        // 随加载状态漂移，TurboDisplay 接管 Diff 因属性数量不一致判定节点不可复用。
-+        if (getViewAttr().getProp(ImageConst.PLACEHOLDER) == null) return
-         didSetProp(ImageConst.PLACEHOLDER, "")
-     }
- 
-     internal fun setClearPlaceholderHandler() {
-         if (getViewEvent().handlerWithEventName(ImageEvent.LOAD_SUCCESS) == null) {
--            getViewEvent().loadSuccess {
--                clearPlaceholder()
--            }
-+            getViewEvent().loadSuccess {}
-         }
-     }
++    publishing {
++        singleVariant("release")
++    }
  }
+ 
+ kotlin {
+```
+
+**File**: `core-wx/build.2.0.ohos.gradle.kts` (modified, +1/-4)
+```diff
+@@ -33,7 +33,7 @@ publishing {
+ 
+ // core-wx: Kuikly WeChat MiniProgram bindings (views + modules).
+ //
+-// Target matrix aligned with :core — publishes android/iOS/macOS/js(IR)/ohosArm64.
++// Target matrix aligned with :core — publishes android/iOS/js(IR)/ohosArm64.
+ // Rationale: business apps may share cross-platform pages in commonMain and
+ // conditionally use WXButton / registerWXModules() only on MiniProgram runtime.
+ // The wrappers themselves are pure Kotlin (no js() macros / no wx.* access —
+@@ -61,9 +61,6 @@ kotlin {
+     iosX64()
+     iosArm64()
+ 
+-    macosX64()
+-    macosArm64()
+-
+     js(IR) {
+         moduleName = "KuiklyCore-core-wx"
+         browser {
+```
+
+**File**: `core-wx/build.2.4.21.ohos.gradle.kts` (modified, +1/-4)
+```diff
+@@ -48,7 +48,7 @@ publishing {
+ 
+ // core-wx: Kuikly WeChat MiniProgram bindings (views + modules).
+ //
+-// Target matrix aligned with :core — publishes android/iOS/macOS/js/ohosArm64.
++// Target matrix aligned with :core — publishes android/iOS/js/ohosArm64.
+ // The wrappers themselves are pure Kotlin (no js() macros / no wx.* access —
+ // all `wx.*` calls live in core-render-web), so it is safe to compile on every
+ // target. On non-MiniProgram runtime, WX views degrade to a plain view and
+@@ -67,9 +67,6 @@ kotlin {
+     iosX64()
+     iosArm64()
+ 
+-    macosX64()
+-    macosArm64()
+-
+     js {
+         outputModuleName.set("KuiklyCore-core-wx")
+         browser {
 ```
 
 ---
 
-### Incident Patch 2: `b3587156` (2026-11-18)
-**Commit Message**: fix(compose): pin-aware sticky header native position cache (#1909)
+### Incident Patch 2: `8be8afff` (2026-11-19)
+**Commit Message**: fix(text-area): align placeholder with input text line height (#1913)
 
-#481 cached the first HoverView document y forever. Refresh cache on every
-placement while the header is in document flow; lock the anchor only when
-measure reports it as pinned (stickingItemKeys).
-
-- LazyListMeasure: export stickingItemKeys; sync stickyPinnedItemKeys after measure
-- StickyHeaderCacheManager: flow refresh vs pinned lock; clear() on scroll view reset
-- KNode: pass isPinnedSticky into cache lookup for HoverView frames
-- Add BugReproStickyHeaderCachePage and StickyHeaderCacheManagerTest
-
-Avoid measure-time cache invalidation (race with stickyPinnedItemKeys updates).
-
-Co-authored-by: zenipchen <[REDACTED_EMAIL]>
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
-**File**: `compose/src/commonMain/kotlin/com/tencent/kuikly/compose/foundation/lazy/LazyList.kt` (modified, +2/-1)
+**File**: `core-render-android/src/main/java/com/tencent/kuikly/core/render/android/expand/component/KRTextFieldView.kt` (modified, +17/-0)
 ```diff
-@@ -413,7 +413,8 @@ private fun rememberLazyListMeasurePolicy(
+@@ -516,9 +516,25 @@ open class KRTextFieldView(context: Context, private val softInputMode: Int?) :
  
-         // Update sticky item key to kuiklyInfo
-         state.kuiklyInfo.stickyItemKey = measureResult.stickyItem?.key
--        
-+        state.kuiklyInfo.stickyPinnedItemKeys = measureResult.stickingItemKeys
-+
-         state.applyMeasureResult(measureResult, isLookingAhead)
-         measureResult
+     private fun setPlaceHolder(propValue: Any): Boolean {
+         hint = propValue as String
++        applyPlaceHolderLineHeight()
+         return true
      }
-```
-
-**File**: `compose/src/commonMain/kotlin/com/tencent/kuikly/compose/foundation/lazy/LazyListMeasure.kt` (modified, +2/-0)
-```diff
-@@ -397,13 +397,15 @@ internal fun measureLazyList(
-             measuredItemProvider.getAndMeasure(it)
-         }
-         val headerItem = stickingItems.lastOrNull()
-+        val stickingItemKeys = stickingItems.mapTo(hashSetOf()) { it.key }
- 
-         return LazyListMeasureResult(
-             firstVisibleItem = firstItem,
-             firstVisibleItemScrollOffset = currentFirstItemScrollOffset,
-             canScrollForward = index < itemsCount || currentMainAxisOffset > maxOffset,
-             consumedScroll = consumedScroll,
-             stickyItem = headerItem,
-+            stickingItemKeys = stickingItemKeys,
-             measureResult = layout(layoutWidth, layoutHeight) {
-                 positionedItems.fastForEach {
-                     if (it.key != headerItem?.key) {
-```
-
-**File**: `compose/src/commonMain/kotlin/com/tencent/kuikly/compose/foundation/lazy/LazyListMeasureResult.kt` (modified, +2/-0)
-```diff
-@@ -50,6 +50,8 @@ internal class LazyListMeasureResult(
-     /** Constraints used to measure children. */
-     val childConstraints: Constraints,
-     val stickyItem: LazyListItemInfo? = null,
-+    /** Keys of all sticky items in pinned placement for this measure pass. */
-+    val stickingItemKeys: Set<Any> = emptySet(),
-     // properties representing the info needed for LazyListLayoutInfo:
-     /** see [LazyListLayoutInfo.visibleItemsInfo] */
-     val positionedItems: List<LazyListMeasuredItem>,
-```
-
-**File**: `compose/src/commonMain/kotlin/com/tencent/kuikly/compose/gestures/KuiklyScrollInfo.kt` (modified, +7/-0)
-```diff
-@@ -134,6 +134,11 @@ class KuiklyScrollInfo {
-      */
-     var stickyItemKey: Any? = null
  
 +    /**
-+     * Keys of sticky headers currently placed in pinned (sticking) state after the last measure.
++     * TextView 为 hint 和输入文字分别排版，text 上的行高样式不会作用于 hint。
++     * 这里给 hint 设置相同行高，让未输入时的提示文字与输入文字保持在同一垂直位置。
 +     */
-+    var stickyPinnedItemKeys: Set<Any> = emptySet()
-+
-     /**
-      * Flag indicating whether the current list uses PullToRefresh
-      * When PullToRefresh is used, the isAtTop judgment logic needs to be adjusted
-@@ -215,6 +220,8 @@ class KuiklyScrollInfo {
-         // Clear list items and pagination caches
-         itemMainSpaceCache.clear()
-         stickyItemKey = null
-+        stickyPinnedItemKeys = emptySet()
-+        stickyHeaderCacheManager.clear()
-         cachedTotalItems = 0
-         pullToRefreshTopInsetPx = 0
-     }
-```
-
-**File**: `compose/src/commonMain/kotlin/com/tencent/kuikly/compose/ui/node/KNode.kt` (modified, +7/-5)
-```diff
-@@ -87,10 +87,12 @@ internal class KNode<T : DeclarativeBaseView<*, *>>(
-     private fun getCachedStickyPosition(currentPos: Offset): Offset {
-         val currentItemKey = (foldedParent as? KNode<*>)?.lazyItemKey ?: return currentPos
- 
--        // Get bound cache manager
--        val cacheManager = getCacheManager()
--
--        return cacheManager?.getCachedStickyPosition(currentItemKey, currentPos) ?: currentPos
-+        val cacheManager = getCacheManager() ?: return currentPos
-+        val scrollNode = parent as? KNode<*>
-+        val kuiklyInfo = (scrollNode?.view?.renderProperties as? RenderProperties)?.kuiklyScrollInfo
-+            ?: return currentPos
-+        val isPinnedSticky = currentItemKey in kuiklyInfo.stickyPinnedItemKeys
-+        return cacheManager.getCachedStickyPosition(currentItemKey, currentPos, isPinnedSticky)
-     }
- 
-     /**
-@@ -104,7 +106,6 @@ internal class KNode<T : DeclarativeBaseView<*, *>>(
-         return kuiklyInfo?.stickyHeaderCacheManager
-     }
- 
--
-     /**
-      * The key of the Lazy item that this KNode represents
-      * This is used to identify which item this node corresponds to
-@@ -728,4 +729,5 @@ internal class KNode<T : DeclarativeBaseView<*, *>>(
-             )
-         }
-     }
-+
- }
-\ No newline at end of file
-```
-
-**File**: `compose/src/commonMain/kotlin/com/tencent/kuikly/compose/ui/node/StickyHeaderCacheManager.kt` (modified, +12/-6)
-```diff
-@@ -36,16 +36,22 @@ class StickyHeaderCacheManager {
-      */
-     private val stickyHeaderCacheMap = mutableMapOf<Any, StickyHeaderCache>()
- 
-+    fun clear() {
-+        stickyHeaderCacheMap.clear()
-+    }
-+
-     /**
--     * Get cached position for sticky header
--     * Cache position when sticky header first appears, reuse cached position subsequently
--     * Supports multiple sticky headers, distinguished by lazyItemKey
-+     * Get cached position for sticky header.
-+     * When not pinned, [currentPos] is always written so layout drift above the header is absorbed.
-+     * When pinned, reuse the first cached document-flow anchor (#481).
-      */
--    fun getCachedStickyPosition(itemKey: Any, currentPos: Offset): Offset {
-+    fun getCachedStickyPosition(itemKey: Any, currentPos: Offset, isPinnedSticky: Boolean): Offset {
-+        if (!isPinnedSticky) {
-+            stickyHeaderCacheMap[itemKey] = StickyHeaderCache(currentPos)
-+            return currentPos
++    private fun applyPlaceHolderLineHeight() {
++        val span = lineHeightSpan ?: return
++        val raw = hint?.toString().orEmpty()
++        if (raw.isEmpty()) {
++            return
 +        }
-         val cachedData = stickyHeaderCacheMap[itemKey]
--
-         return if (cachedData == null) {
--            // Cache current position when first appears and is in sticky state
-             stickyHeaderCacheMap[itemKey] = StickyHeaderCache(currentPos)
-             currentPos
-         } else {
++        hint = SpannableString(raw).apply {
++            setSpan(span, 0, raw.length, Spanned.SPAN_EXCLUSIVE_INCLUSIVE)
++        }
++    }
++
+     private fun setPlaceHolderColor(propValue: Any): Boolean {
+         setHintTextColor((propValue as String).toColor())
+         return true
+@@ -1061,6 +1077,7 @@ open class KRTextFieldView(context: Context, private val softInputMode: Int?) :
+         }
+         lineHeightSpan = HRLineHeightSpan(pxLineHeight)
+         ensureLineHeightSpan(text)
++        applyPlaceHolderLineHeight()
+         observeTextWatcher()
+         return true
+     }
 ```
 
-**File**: `compose/src/commonTest/kotlin/com/tencent/kuikly/compose/ui/node/StickyHeaderCacheManagerTest.kt` (added, +63/-0)
+**File**: `core-render-ios/Extension/Components/KRTextAreaView.m` (modified, +31/-1)
 ```diff
-@@ -0,0 +1,63 @@
-+/*
-+ * Tencent is pleased to support the open source community by making KuiklyUI
-+ * available.
-+ * Copyright (C) 2026 Tencent. All rights reserved.
-+ * Licensed under the License of KuiklyUI;
-+ * you may not use this file except in compliance with the License.
-+ * You may obtain a copy of the License at
-+ * https://github.com/Tencent-TDS/KuiklyUI/blob/main/LICENSE
-+ * Unless required by applicable law or agreed to in writing, software
-+ * distributed under the License is distributed on an "AS IS" BASIS,
-+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+ * See the License for the specific language governing permissions and
-+ * limitations under the License.
-+ */
-+
-+package com.tencent.kuikly.compose.ui.node
-+
-+import com.tencent.kuikly.compose.ui.geometry.Offset
-+import kotlin.test.Test
-+import kotlin.test.assertEquals
-+
-+class StickyHeaderCacheManagerTest {
-+
-+    @Test
-+    fun flowRefreshesWithCurrentPosition() {
-+        val manager = StickyHeaderCacheManager()
-+        val key = "header"
-+        assertEquals(
-+            Offset(0f, 100f),
-+            manager.getCachedStickyPosition(key, Offset(0f, 100f), isPinnedSticky = false),
-+        )
-+        assertEquals(
-+            Offset(0f, 200f),
-+            manager.getCachedStickyPosition(key, Offset(0f, 200f), isPinnedSticky = false),
-+        )
+@@ -198,6 +198,7 @@ - (void)setCss_lineHeight:(NSNumber *)css_lineHeight {
+     if (_css_lineHeight != css_lineHeight) {
+         _css_lineHeight = css_lineHeight;
+         [self updateLineHeightIfApplicable];
++        [self p_applyLineHeightToPlaceholder];
+     }
+ }
+ 
+@@ -346,7 +347,7 @@ - (void)setCss_fontWeight:(NSString *)css_fontWeight {
+ 
+ - (void)setCss_placeholder:(NSString *)css_placeholder {
+     _css_placeholder = css_placeholder;
+-    self.placeholderTextView.text = css_placeholder;
++    [self p_applyLineHeightToPlaceholder];
+     [self p_updatePlaceholder];
+ }
+ 
+@@ -988,6 +989,9 @@ - (void)setFrame:(CGRect)frame {
+ - (void)setFont:(UIFont *)font {
+     [super setFont:font];
+     _placeholderTextView.font = font;
++    if (_placeholderTextView) {
++        [self p_applyLineHeightToPlaceholder];
 +    }
-+
-+    @Test
-+    fun pinnedLocksFirstDocumentPosition() {
-+        val manager = StickyHeaderCacheManager()
-+        val key = "header"
-+        assertEquals(
-+            Offset(0f, 500f),
-+            manager.getCachedStickyPosition(key, Offset(0f, 500f), isPinnedSticky = true),
-+        )
-+        assertEquals(
-+            Offset(0f, 500f),
-+            manager.getCachedStickyPosition(key, Offset(0f, 120f), isPinnedSticky = true),
-+        )
+ }
+ 
+ - (void)setTextAlignment:(NSTextAlignment)textAlignment {
+@@ -1034,6 +1038,32 @@ - (void)p_addKeyboardNotificationIfNeed {
+ #endif // macOS]
+ }
+ 
++/// 提示文字显示在单独的 UITextView 上，不会继承主视图的段落样式和基线偏移。
++/// 这里同步相同的行高，让提示文字与输入文字保持在同一垂直位置。
++- (void)p_applyLineHeightToPlaceholder {
++    NSString *text = _css_placeholder ?: @"";
++    if (text.length == 0) {
++        if (_placeholderTextView) {
++            self.placeholderTextView.text = @"";
++        }
++        return;
 +    }
-+
-+    @Test
-+    fun clearDropsAllEntries() {
-+        val manager = StickyHeaderCacheManager()
-+        val key = "header"
-+        manager.getCachedStickyPosition(key, Offset(0f, 10f), isPinnedSticky = true)
-+        manager.clear()
-+        assertEquals(
-+            Offset(0f, 20f),
-+            manager.getCachedStickyPosition(key, Offset(0f, 20f), isPinnedSticky = true),
-+        )
++    UITextView *placeholderTextView = self.placeholderTextView;
++    if (_css_lineHeight.floatValue <= FLT_EPSILON) {
++        placeholderTextView.text = text;
++        return;
 +    }
++    UIFont *font = self.font ?: [UIFont systemFontOfSize:16];
++    NSMutableAttributedString *attrStr = [[NSMutableAttributedString alloc] initWithString:text];
++    NSRange range = NSMakeRange(0, attrStr.length);
++    CGFloat baselineOffset = ([_css_lineHeight floatValue] - font.pointSize) / 2;
++    [attrStr addAttribute:NSFontAttributeName value:font range:range];
++    [attrStr addAttribute:NSParagraphStyleAttributeName value:[self p_buildCurrentParagraphStyle] range:range];
++    [attrStr addAttribute:NSBaselineOffsetAttributeName value:@(baselineOffset) range:range];
++    placeholderTextView.attributedText = attrStr;
++    placeholderTextView.font = font;
 +}
-\ No newline at end of file
++
+ - (void)p_updatePlaceholder {
+     _placeholderTextView.hidden = self.text.length > 0 || self.attributedText.length > 0;
+     if (self.markedTextRange) { // 输入中
 ```
 
-**File**: `demo/src/commonMain/kotlin/com/tencent/kuikly/demo/pages/debug/BugReproStickyHeaderCachePage.kt` (added, +193/-0)
+**File**: `core-render-web/base/src/jsMain/kotlin/com/tencent/kuikly/core/render/web/expand/components/KRTextAreaView.kt` (modified, +8/-0)
 ```diff
-@@ -0,0 +1,193 @@
+@@ -139,6 +139,13 @@ class KRTextAreaView : IKuiklyRenderViewExport {
+                 true
+             }
+ 
++            LINE_HEIGHT -> {
++                // textarea 的提示文字继承元素自身的 line-height；
++                // 设置在元素上，提示文字与输入文字就会保持在同一垂直位置。
++                ele.style.lineHeight = propValue.toNumberFloat().toPxF()
++                true
++            }
++
+             MAX_TEXT_LENGTH -> {
+                 val maxTextLength = propValue.unsafeCast<Int>()
+                 if (maxTextLength <= 0) {
+@@ -615,6 +622,7 @@ class KRTextAreaView : IKuiklyRenderViewExport {
+         private const val TEXT_ALIGN = "textAlign"
+         private const val FONT_SIZE = "fontSize"
+         private const val FONT_WEIGHT = "fontWeight"
++        private const val LINE_HEIGHT = "lineHeight"
+         private const val TINT_COLOR = "tintColor"
+         private const val SELECTION_COLOR = "selectionColor"
+         private const val MAX_TEXT_LENGTH = "maxTextLength"
+```
+
+**File**: `demo/src/commonMain/kotlin/com/tencent/kuikly/demo/pages/debug/BugReproTextAreaPlaceholderCenterPage.kt` (added, +224/-0)
+```diff
+@@ -0,0 +1,224 @@
 +/*
 + * Tencent is pleased to support the open source community by making KuiklyUI
 + * available.
@@ -1089,161 +1021,139 @@ Co-authored-by: Cursor <[REDACTED_EMAIL]>
 + * See the License for the specific language governing permissions and
 + * limitations under the License.
 + */
-+
-+@file:OptIn(
-+    com.tencent.kuikly.compose.foundation.ExperimentalFoundationApi::class,
-+)
 +
 +package com.tencent.kuikly.demo.pages.debug
 +
-+import androidx.compose.runtime.Composable
-+import androidx.compose.runtime.LaunchedEffect
-+import androidx.compose.runtime.getValue
-+import androidx.compose.runtime.mutableStateOf
-+import androidx.compose.runtime.remember
-+import androidx.compose.runtime.setValue
-+import com.tencent.kuikly.compose.ComposeContainer
-+import com.tencent.kuikly.compose.foundation.background
-+import com.tencent.kuikly.compose.foundation.clickable
-+import com.tencent.kuikly.compose.foundation.layout.Box
-+import com.tencent.kuikly.compose.foundation.layout.Column
-+import com.tencent.kuikly.compose.foundation.layout.Row
-+import com.tencent.kuikly.compose.foundation.layout.fillMaxSize
-+import com.tencent.kuikly.compose.foundation.layout.fillMaxWidth
-+import com.tencent.kuikly.compose.foundation.layout.height
-+import com.tencent.kuikly.compose.foundation.layout.padding
-+import com.tencent.kuikly.compose.foundation.lazy.LazyColumn
-+import com.tencent.kuikly.compose.foundation.lazy.items
-+import com.tencent.kuikly.compose.foundation.lazy.rememberLazyListState
-+import com.tencent.kuikly.compose.material3.Text
-+import com.tencent.kuikly.compose.setContent
-+import com.tencent.kuikly.compose.ui.Alignment
-+import com.tencent.kuikly.compose.ui.Modifier
-+import com.tencent.kuikly.compose.ui.graphics.Color
-+import com.tencent.kuikly.compose.ui.unit.dp
-+import com.tencent.kuikly.compose.ui.unit.sp
 +import com.tencent.kuikly.core.annotations.Page
-+import kotlinx.coroutines.delay
-+
-+private enum class ReproCase(val label: String) {
-+    InsertAfterIdle("A: 首帧缓存后再插顶栏"),
-+    InsertAfterSticky("B: 先滚到吸顶再插顶栏"),
-+}
++import com.tencent.kuikly.core.base.Color
++import com.tencent.kuikly.core.base.ViewBuilder
++import com.tencent.kuikly.core.base.ViewContainer
++import com.tencent.kuikly.core.reactive.handler.observable
++import com.tencent.kuikly.core.views.Text
++import com.tencent.kuikly.core.views.TextArea
++import com.tencent.kuikly.core.views.View
++import com.tencent.kuikly.demo.pages.base.BasePager
++import com.tencent.kuikly.demo.pages.demo.base.NavBar
 +
 +/**
-+ * StickyHeader cache 失效策略验证页。
++ * Android TextArea 提示文字位置偏上的复现页，也用于修复后的回归检查。
++ *
++ * 黄块是 TextArea，蓝块是同样字号和行高的普通 Text，作为位置对照。
++ * ①~④ 是原始复现与对照；⑤~⑨ 检查属性设置顺序、不设 minHeight、多行文字、
++ * 右对齐和空提示文字；底部按钮切换提示文字与行高，检查运行时更新。
++ * 打开方式：adb shell am start ... --es pageName BugReproTextAreaPlaceholderCenterPage
 + */
-+@Page("BugReproStickyHeaderCachePage")
-+internal class BugReproStickyHeaderCachePage : ComposeContainer() {
++@Page("BugReproTextAreaPlaceholderCenterPage")
++internal class BugReproTextAreaPlaceholderCenterPage : BasePager() {
 +
-+    override fun willInit() {
-+        super.willInit()
-+        setContent {
-+            BugReproStickyHeaderCacheContent()
-+        }
-+    }
-+}
++    var step by observable(0)
++    var dynamicHint by observable("动态提示文字")
++    var dynamicLineHeight by observable(24f)
++    var dynamicHintColor by observable(Color(0x80111111))
 +
-+private const val TOP_INSERT_HEIGHT_DP = 120
-+
-+@Composable
-+private fun BugReproStickyHeaderCacheContent() {
-+    var reproCase by remember { mutableStateOf(ReproCase.InsertAfterIdle) }
-+    var topBlockInserted by remember { mutableStateOf(false) }
-+    val listState = rememberLazyListState()
-+
-+    LaunchedEffect(reproCase) {
-+        topBlockInserted = false
-+        listState.scrollToItem(0)
-+        when (reproCase) {
-+            ReproCase.InsertAfterIdle -> {
-+                delay(800)
-+                topBlockInserted = true
++    override fun body(): ViewBuilder {
++        val ctx = this
++        return {
++            attr {
++                backgroundColor(Color.WHITE)
 +            }
-+            ReproCase.InsertAfterSticky -> {
-+                delay(800)
-+                listState.scrollToItem(10)
-+                delay(800)
-+                topBlockInserted = true
++            NavBar {
++                attr {
++                    title = "TextArea placeholder 居中/边界回归"
++                }
 +            }
-+        }
-+    }
-+
-+    Column(modifier = Modifier.fillMaxSize().background(Color(0xFFF2F2F2))) {
-+        Column(
-+            modifier = Modifier
-+                .fillMaxWidth()
-+                .background(Color(0xFFFFF3E0))
-+                .padding(12.dp),
-+        ) {
-+            Text("StickyHeader cache 验证", fontSize = 14.sp)
-+            Text(
-+                text = "用例 ${reproCase.label}",
-+                fontSize = 12.sp,
-+                modifier = Modifier.padding(top = 4.dp),
-+            )
-+            Text(
-+                text = if (topBlockInserted) {
-+                    "顶栏 ${TOP_INSERT_HEIGHT_DP}dp 已插入"
-+                } else {
-+                    "等待自动流程…"
-+                },
-+                fontSize = 12.sp,
-+                modifier = Modifier.padding(top = 4.dp),
-+            )
-+            Row(modifier = Modifier.padding(top = 8.dp)) {
-+                ReproCase.entries.forEach { case ->
-+                    Box(
-+                        modifier = Modifier
-+                            .padding(end = 8.dp)
-+                            .clickable { reproCase = case }
-+                            .background(
-+                                if (case == reproCase) Color(0xFF1976D2) else Color(0xFFBDBDBD),
-+                            )
-+                            .padding(horizontal = 8.dp, vertical = 4.dp),
-+                        contentAlignment = Alignment.Center,
-+                    ) {
-+                    
++            View {
++                attr {
++                    flex(1f)
++                    padding(12f)
++                }
++                Text {
++                    attr {
++                        text("黄块是 TextArea，蓝块是同样字号和行高的普通 Text，作为位置对照")
++                        fontSize(12f)
++                        color(Color.BLACK)
++                        marginBottom(10f)
++                    }
++                }
++                cases.forEach { reproRow(it) }
++                View {
++                    attr {
++                        flexDirectionRow()
++                        alignItemsCenter()
++                        height(48f)
++                        marginBottom(8f)
++                    }
++                    Text {
++                        attr {
++                            width(96f)
++                            text("⑩ 动态属性")
++                            fontSize(11f)
++                            color(Color.BLACK)
++                        }
++                    }
++                    TextArea {
++                        attr {
++                            overflow(true)
++                            flex(1f)
++                            height(48f)
++                            fontSize(12f)
++                            lineHeight(ctx.dynamicLineHeight)
++                            placeholder(ctx.dynamicHint)
++                            placeholderColor(ctx.dynamicHintColor)
++                            color(Color.BLACK)
++                            backgroundColor(Color.YELLOW.opacity(0.3f))
++                        }
++                    }
++                }
++                View {
++                    attr {
++                        height(36f)
++                        allCenter()
++                        backgroundColor(Color(0xFF3C6CBDL))
++                    }
++                    event {
++                        click {
++                            ctx.step += 1
++                            when (ctx.step % 3) {
++                                0 -> {
++                                    ctx.dynamicHint = "动态提示文字"
++                                    ctx.dynamicLineHeight = 24f
++                                    ctx.dynamicHintColor = Color(0x80111111)
++                                }
++                                1 -> {
++                                    ctx.dynamicHint = "加长的提示文字"
++                                    ctx.dynamicLineHeight = 32f
++                                    ctx.dynamicHintColor = Color(0x80FF0000)
++                                }
++                                else -> {
++                                    ctx.dynamicHint = ""
++                                    ctx.dynamicLineHeight = 20f
++                                    ctx.dynamicHintColor = Color(0x800000FF)
++                                }
++                            }
++           
 ```
 
----
-
-### Incident Patch 3: `0e6e3d68` (2026-11-18)
-**Commit Message**: fix(gradle): skip dependencyResolutionManagement on Gradle older than 6.8 (#1911)
-
-The 1.3.10 publish job runs Gradle 5.4.1, which has no such Settings property and fails while loading the Maven mirror init script.
-
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
-**File**: `gradle/maven-mirror.init.gradle` (modified, +6/-1)
+**File**: `docs/API/components/text-area.md` (modified, +2/-0)
 ```diff
-@@ -1,3 +1,5 @@
-+import org.gradle.util.GradleVersion
-+
- def GRADLE_PLUGINS = "https://mirrors.tencent.com/nexus/repository/gradle-plugins/"
- def MAVEN_PUBLIC = "https://mirrors.tencent.com/nexus/repository/maven-public/"
- 
-@@ -16,7 +18,10 @@ def rewrite = { repo ->
- 
- settingsEvaluated { settings ->
-     settings.pluginManagement.repositories.each { rewrite(it) }
--    settings.dependencyResolutionManagement.repositories.each { rewrite(it) }
-+    // Added in Gradle 6.8. Gradle 5.4.1 used by the 1.3.10 publish job does not have it.
-+    if (GradleVersion.current() >= GradleVersion.version("6.8")) {
-+        settings.dependencyResolutionManagement.repositories.each { rewrite(it) }
-+    }
+@@ -54,6 +54,8 @@ TextArea {
  }
+ ```
  
- gradle.beforeProject { project ->
++> **提示**：2.33.0 之前，`TextArea` 的 placeholder 位置偏上；自 2.33.0 起已修复，与输入文字对齐。
++
+ ### textInputState方法 <Badge text="2.15+" type="info"/>
+ 
+ 原子化设置输入框的 raw text、selection、composition 状态。具体说明请参考 [Input#textInputState](input.md#textinputstate方法)。
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1913** (2026-11-19): fix(text-area): align placeholder with input text line height (@iPel)
 - **PR #1912** (2026-11-19): fix(core): stop clearPlaceholder from adding a placeholder prop to images without one (@RoeKun)
 - **PR #1911** (2026-11-18): fix(gradle): skip dependencyResolutionManagement on Gradle older than 6.8 (@ruifanyuan)
 - **PR #1910** (2026-11-18): fix(gradle): resolve Maven Central and the plugin portal from Tencent mirrors (@ruifanyuan)
 - **PR #1909** (2026-11-18): fix(compose): smart sticky header position cache with auto-invalidation (@zenipchen)
 - **PR #1907** (2026-11-18): fix(ios): resolve custom font handler before font name lookup (@RoeKun)
-- **PR #1906** (2026-11-17): Revert: fix(ohos): commit avoid draw-time typography relayout corruption (#1835) (@ruifanyuan)
 
 ---
 
@@ -1263,37 +1173,33 @@ Co-authored-by: Cursor <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. core): stop clearPlaceholder from adding a placeholder prop to images without on
+## X. build): align OHOS target matrix and Android release publication
 
 **RULE**:
-When implementing operations in `core/src/commonMain/kotlin/com/tencent/kuikly/core/views/ImageView.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Tencent-TDS/KuiklyUI. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core-render-android/build.2.4.21.ohos.gradle.kts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Tencent-TDS/KuiklyUI. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2ac8003f`: core): stop clearPlaceholder from adding a placeholder prop to images without one. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d606ca05`: build): align OHOS target matrix and Android release publication. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/src/commonMain/kotlin/com/tencent/kuikly/core/views/ImageView.kt`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `core-render-android/build.2.4.21.ohos.gradle.kts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-        // 仅当节点下发过占位图属性时才清空：Compose 链路的网络图不调用 placeholderSrc，
-        // 属性表中无 placeholder，无条件清空会在加载成功后凭空新增该属性，使节点属性集合
-        // 随加载状态漂移，TurboDisplay 接管 Diff 因属性数量不一致判定节点不可复用。
-        if (getViewAttr().getProp(ImageConst.PLACEHOLDER) == null) return
-            getViewEvent().loadSuccess {}
+    publishing {
+        singleVariant("release")
+    }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Induced defect failure mode:
-            getViewEvent().loadSuccess {
-                clearPlaceholder()
-            }
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2ac8003f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d606ca05` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

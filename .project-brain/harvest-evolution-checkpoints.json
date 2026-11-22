@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T10:04:02.917Z",
+  "last_updated": "2026-11-22T10:18:09.310Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-22T09:35:22.969Z",
+      "processed_at": "2026-11-22T10:18:08.254Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -328,7 +328,7 @@
       "staged_for_review": 1
     },
     "tencent-tds-kuiklyui-learnings.md": {
-      "processed_at": "2026-11-19T07:51:14.801Z",
+      "processed_at": "2026-11-22T10:18:07.419Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3018,8 +3018,8 @@
       "staged_for_review": 1
     },
     "hf-autotrust-autotrust-decider-pro-vision-27b-learnings.md": {
-      "processed_at": "2026-11-15T17:04:41.313Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-22T10:18:06.985Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "chocoford-excalidrawz-learnings.md": {
@@ -3713,7 +3713,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 3087,
+  "total_dossiers_evaluated": 3090,
   "total_canonical_promoted": 473,
-  "total_staged_for_review": 2348
+  "total_staged_for_review": 2350
 }
