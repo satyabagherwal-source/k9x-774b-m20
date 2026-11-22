@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T02:29:34.107Z",
-  "total_cycles_completed": 11394,
-  "total_learnings_persisted": 11394,
-  "total_rules_promoted": 10694,
+  "last_updated": "2026-11-22T02:42:05.503Z",
+  "total_cycles_completed": 11396,
+  "total_learnings_persisted": 11396,
+  "total_rules_promoted": 10697,
   "history": [
-    {
-      "timestamp": "2026-11-21T08:52:48.410Z",
-      "repository": "etcd-io/etcd",
-      "learningId": "learn-github-etcd-io-etcd",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T08:52:53.142Z",
-      "repository": "react/react-native",
-      "learningId": "learn-github-react-react-native",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T08:54:38.945Z",
       "repository": "Comfy-Org/Z-Image-Turbo",
@@ -1403,6 +1389,20 @@
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T02:40:18.511Z",
+      "repository": "dosco/deeporg",
+      "learningId": "learn-github-dosco-deeporg",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T02:42:05.503Z",
+      "repository": "PrunaAI/P-Image-OSS-Comfy",
+      "learningId": "learn-huggingface-prunaai-p-h3-image-comfy",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

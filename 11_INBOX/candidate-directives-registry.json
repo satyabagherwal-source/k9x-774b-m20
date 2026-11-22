@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T02:29:39.134Z",
+  "last_updated": "2026-11-22T02:42:34.202Z",
   "directives": [
     {
       "id": "CD-001",
@@ -44573,11 +44573,11 @@
       "staged_date": "2026-11-22"
     },
     {
-      "id": "CD-7YLR",
+      "id": "CD-EP1O",
       "directive_title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-7YLR-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-EP1O-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-22",
@@ -44682,6 +44682,59 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-22",
       "domain_letter": "H"
+    },
+    {
+      "id": "CD-BSIC",
+      "directive_title": "stop two replicas colliding on revision bumps and metric ticks",
+      "source_repo": "dosco/deeporg",
+      "source_commit": "85c58cdb",
+      "staged_file": "11_INBOX/candidate-directives/CD-BSIC-stop-two-replicas-colliding-on-revision-bumps-and-metric-ticks.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-22",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-ENN7",
+      "directive_title": "Zero-Allocation In-Place LoRA Application Over Quantized Tensors",
+      "source_repo": "hf-prunaai-p-h3-image-comfy-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-ENN7-zero-allocation-in-place-lora-application-over-quantized-tensors.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-22",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-ENN8",
+      "directive_title": "Strict Memory-Mapped SafeTensors Key Deserialization Invariant",
+      "source_repo": "hf-prunaai-p-h3-image-comfy-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-ENN8-strict-memory-mapped-safetensors-key-deserialization-invariant.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-22",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-EOHC",
+      "directive_title": "serv): stop two replicas colliding on revision bumps and metric ticks",
+      "source_repo": "dosco-graphjin-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-EOHC-serv-stop-two-replicas-colliding-on-revision-bumps-and-metric-ticks.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-22",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-REV-262FD7",
+      "directive_title": "test(collab): write trust fixtures with explicit 0644 permissions",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-262FD7-test-collab-write-trust-fixtures-with-ex.md",
+      "staged_date": "2026-11-22"
     }
   ]
 }

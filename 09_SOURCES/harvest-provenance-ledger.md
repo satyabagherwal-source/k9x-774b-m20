@@ -12016,3 +12016,6 @@ Every entry in this ledger must capture:
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `ff15a1de` | Multi-dimensional audit evidence | 2026-11-22T02:29:30.104Z |
 | `learn-github-infiniflow-infinity` | `https://github.com/infiniflow/infinity` | `07c5af63` | Multi-dimensional audit evidence | 2026-11-22T02:29:32.380Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `2ae49a2e` | Multi-dimensional audit evidence | 2026-11-22T02:29:34.102Z |
+| `learn-github-dosco-deeporg` | `https://github.com/dosco/graphjin` | `85c58cdb` | Multi-dimensional audit evidence | 2026-11-22T02:40:18.506Z |
+| `learn-huggingface-prunaai-p-h3-image-comfy` | `https://huggingface.co/PrunaAI/P-H3-Image-Comfy` | `hf-prunaai` | Multi-dimensional audit evidence | 2026-11-22T02:42:05.499Z |
+| `learn-dom-h-f5caa699` | `project://hf-prunaai-p-h3-image-comfy` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-prunaai-p-h3-image-comfy-learnings.md` | 2026-11-22T02:42:32.154Z |

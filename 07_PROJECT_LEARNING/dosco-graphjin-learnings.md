@@ -1,10 +1,10 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dosco-graphjin-learnings.md`  
 > **Source**: github ([https://github.com/dosco/graphjin](https://github.com/dosco/graphjin))  
-> **Source Version**: `ba272634`  
+> **Source Version**: `85c58cdb`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T23:21:25.627Z  
-> **Learning ID**: `learn-github-dosco-graphjin`  
+> **Timestamp**: 2026-11-22T02:40:17.641Z  
+> **Learning ID**: `learn-github-dosco-deeporg`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -12,22 +12,22 @@
 
 ---
 
-# Forensic Learning Record (Deep Inspection): dosco/graphjin
+# Forensic Learning Record (Deep Inspection): dosco/deeporg
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dosco-graphjin-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dosco/graphjin](https://github.com/dosco/graphjin))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T23:21:25.621Z  
+> **Harvest Timestamp**: 2026-11-22T02:40:17.439Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
 
 ## 1. Context & Architectural Overview
-- **Repository / Resource**: `dosco/graphjin`
+- **Repository / Resource**: `dosco/deeporg`
 - **Description**: DeepORG (formerly GraphJin) — one AI agent for your whole organization: databases, APIs, files, and code over MCP
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3237 stars
+- **Stars / Engagement**: 3239 stars
 
 ---
 
@@ -528,14 +528,14 @@ type RunManifest struct {
 func (m RunManifest) Complete() bool { return m.Status == RunStatusComplete }
 
 func (m RunManifest) ResumeCommand() string {
-	args := []string{"graphjin", "eval", string(m.Intent)}
+	args := []string{"deeporg", "eval", string(m.Intent)}
 	args = append(args, m.InvocationArgs...)
 	args = append(args, "--resume", m.RunID, "--yes")
 	return strings.Join(args, " ")
 }
 
 func (m RunManifest) RestartCommand() string {
-	args := []string{"graphjin", "eval", string(m.Intent)}
+	args := []string{"deeporg", "eval", string(m.Intent)}
 	args = append(args, m.InvocationArgs...)
 	args = append(args, "--restart", "--yes")
 	return strings.Join(args, " ")
@@ -745,7 +745,7 @@ func manifestCompatibilityMismatches(have, want RunManifest) []string {
 	check(have.EpisodeSchemaVersion == want.EpisodeSchemaVersion, "episode_schema_version")
 	check(have.ReportSchemaVersion == want.ReportSchemaVersion, "report_schema_version")
 	check(have.RewardVersion == want.RewardVersion, "reward_version")
-	check(have.
+	check(have.Ge
 ```
 
 ### Core Architecture Module: `agent/stated_change.go`
@@ -1194,7 +1194,7 @@ func renderWorldReadme(world worldSpec) string {
 	var out strings.Builder
 	fmt.Fprintf(&out, "# %s\n\nA generated GraphJin world: domain %s, seed %d.\n\n",
 		world.Name, world.Domain, world.Seed)
-	out.WriteString("Regenerate exactly:\n\n```bash\ngraphjin env new-world " +
+	out.WriteString("Regenerate exactly:\n\n```bash\ndeeporg env new-world " +
 		worldRegenerateFlags(world) + fmt.Sprintf(" --tables %d", len(world.Tables)))
 	if len(world.Applied) != 0 {
 		out.WriteString(" --pathologies " + strings.Join(world.Applied, ","))
@@ -1215,7 +1215,7 @@ func renderWorldReadme(world worldSpec) string {
 			fmt.Fprintf(&out, "- **%s** — %s\n", name, pathologyDescription(name))
 		}
 	}
-	out.WriteString("\n## Use\n\n```bash\ngraphjin eval create --path . --writable --scale 300 --composition coverage\ngraphjin env serve --path . --suite eval/suite.yml --pool 4\n```\n")
+	out.WriteString("\n## Use\n\n```bash\ndeeporg eval create --path . --writable --scale 300 --composition coverage\ndeeporg env serve --path . --suite eval/suite.yml --pool 4\n```\n")
 	return out.String()
 }
 
@@ -1226,13 +1226,13 @@ func pathologyDescription(name string) string {
 	case PathologySynonymCollision:
 		return "one word meaning two things in one schema, with nothing marking which is which"
 	case PathologyLegacyColumns:
-		return "a column that looks authoritative and is stale, so answering from it is
+		return "a column that looks authoritative and is stale, so answering from it is wr
 ```
 
 ### Core Architecture Module: `core/api.go`
 ```
 // Package core provides an API to include and use the GraphJin compiler with your own code.
-// For detailed documentation visit https://graphjin.com
+// For detailed documentation visit https://deeporg.io
 package core
 
 import (
@@ -1548,7 +1548,7 @@ func (g *GraphJin) getEngine() (*graphjinEngine, error) {
 	return gj, nil
 }
 
-// FilesystemBackend returns the backend ins
+// FilesystemBackend returns the backend insta
 ```
 
 ### Core Architecture Module: `core/args.go`
@@ -2552,215 +2552,799 @@ func ShouldCacheQuery(opName, apqKey string) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ba272634` (2026-11-20)
-**Commit Message**: feat(site): give the homepage Watch section a plain heading
+### Incident Patch 1: `73d7188e` (2026-11-21)
+**Commit Message**: fix(serv): stop two replicas colliding on revision bumps and metric ticks
 
-"Nothing happened. That was the problem." needed the section read to make
-sense of it. The homepage heading now says what the section is: "Leave a
-question running. It tells you when something changes." The old line stays
-as the /watch/ page's own headline.
+Two races between replicas that share one control store. Both showed up
+as intermittent failures of TestWatchScheduleTwoRunnersFireOncePerTick
+and TestMetricWatchFiresOnceOnCrossingAcrossReplicas.
 
-The two sentences each sit on their own lines, so the heading no longer
-breaks mid-sentence.
+Revision bump. bumpArtifactRevision read the revision and wrote it back.
+Two replicas bumping a domain that had no row yet both inserted it, and
+the second failed on the primary key (UNIQUE constraint failed:
+_graphjin_revisions.domain). A slow replica could also write an older
+number over a newer one. The bump is now a single
+UPDATE ... SET revision = revision + 1, with an INSERT only when the
+domain has no row, and the UPDATE again when that INSERT loses to
+another replica.
 
-Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
+Metric watch reading. A tick's reading was saved on its own, before the
+clock moved. A replica that read the row in between saw the new state
+with the tick still due and folded the same tick in a second time. The
+reading is now stored by the statement that moves the clock
+(claimWatchScheduleTick), so one replica's reading is kept per tick. A
+replica that reported a breach but lost the clock to one that saw none
+still records its breach, so a
 
-**File**: `website/content/_index.md` (modified, +1/-1)
+**File**: `serv/artifacts.go` (modified, +47/-10)
 ```diff
-@@ -17,7 +17,7 @@ description: "DeepORG is one AI agent for your whole organization. It answers qu
- 
- <section id="environment" class="dx-value dx-value--flip"><div class="dx-value-copy"><p class="dx-kicker"><b>03</b><i></i><span>Your organization as a training environment</span></p><h2>Turn your own systems into the test and the training ground.</h2><p>The checks behind that score work on your systems too. The database marks every answer, so a fluent, confident, wrong answer earns nothing.</p><ul class="dx-points"><li><strong>Start with ours.</strong> A demo company and <a href="/environment/quickstart/">{{< env-task-count >}} checked tasks</a>, ready to run.</li><li><strong>Or your own schema, without your data.</strong> It copies the shape of your systems, never your rows.</li><li><strong>Or your own questions, as the tests.</strong> <a href="/experience/">What your people already asked</a> becomes the test.</li></ul><div class="dx-links"><a class="dx-more" href="/why/training-environment/">Turn your organization into an environment</a><a href="/environment/overview/">Environment docs</a></div></div><div class="dx-value-art">{{< ascii scene="env" label="Animated diagram of one episode: reset, task, the agent works, it answers, a hidden query checks the answer in the same database, and the reward comes back." caption="reset / act / the database marks it" >}}</div></section>
- 
--<section id="watch-automation" class="dx-value"><div class="dx-value-copy"><p class="dx-kicker"><b>04</b><i></i><span>It speaks first</span></p><h2>Nothing happened. That was the problem.</h2><p>Leave a question running and DeepORG keeps answering it against live data. It speaks up when the answer changes, or when something you expected never arrives.</p><div class="dx-links"><a class="dx-more" href="/watch/">What a standing question can do</a></div></div><div class="dx-value-art">{{< ascii scene="watch" label="Animated diagram: a question left running is checked every hour. When no rows have arrived for four hours, DeepORG says so without being asked." caption="a question left running" >}}</div></section>
-+<section id="watch-automation" class="dx-value"><div class="dx-value-copy"><p class="dx-kicker"><b>04</b><i></i><span>It speaks first</span></p><h2><span class="dx-line">Leave a question running.</span> <span class="dx-line">It tells you when something changes.</span></h2><p>DeepORG keeps answering that question against live data. It speaks up when the answer changes, or when something you expected never arrives.</p><div class="dx-links"><a class="dx-more" href="/watch/">What a standing question can do</a></div></div><div class="dx-value-art">{{< ascii scene="watch" label="Animated diagram: a question left running is checked every hour. When no rows have arrived for four hours, DeepORG says so without being asked." caption="a question left running" >}}</div></section>
- 
- <section id="reasons" class="dx-pillars" aria-labelledby="reasons-title"><div class="dx-pillars-head"><div><p class="dx-kicker"><b>05</b><i></i><span>to 08</span></p><h2 id="reasons-title">Four more reasons it holds up in a real company.</h2></div><p>Each one has a page of its own that says how it works and where its limits are.</p></div><div class="dx-pillar-grid dx-pillar-grid--four"><a id="no-tools" class="dx-pillar" href="/why/no-hand-built-tools/"><span>05</span><h3>A map of everything, not a tool for each thing.</h3><p>The agent reads a searchable map of everything you connect and writes its own queries. Nobody maintains a tool for each question.</p><em>No hand-built tools</em></a><a id="evidence" class="dx-pillar" href="/why/answers-with-evidence/"><span>06</span><h3>The model made up an answer. The ledger caught it.</h3><p>Every answer is backed by evidence from the run that produced it. A claim with nothing behind it is blocked.</p><em>Answers with the data behind them</em></a><a id="rules" class="dx-pillar" href="/why/your-rules/"><span>07</span><h3>It sees only what you allow. A change waits for your yes.</h3><p>Your roles, row filters and column lists apply to every query the agent writes. A change is rehearsed, shown to you and held until you approve it.</p><em>Your rules, your approval</em></a><a id="systems" class="dx-pillar" href="/why/every-system/"><span>08</span><h3>Databases, warehouses, APIs, files and source code.</h3><p>All behind one agent, and one question can draw on several of them. Adding a system is a few lines of config.</p><em>Every system you run</em></a></div></section>
- 
-```
-
-**File**: `website/scripts/check-site.mjs` (modified, +4/-1)
-```diff
-@@ -469,8 +469,11 @@ if (await exists(path.join(publicRoot, 'index.html'))) {
-   }
-   // The homepage carries the watch teaser; the full story lives on /watch/,
-   // which is asserted separately below so the copy cannot be lost in the move.
-+  // The homepage heading says what the section is; "Nothing happened. That was
-+  // the problem." is the /watch/ page's own headline and is pinned there.
-   for (const required of [
--    'Nothing happened. That was the problem.',
-+    'Leave a question running.',
-+    'It tells you when something changes.',
-     'It speaks up when the answer changes',
-     'database polls, not model calls',
-   ]) {
-```
-
-**File**: `website/static/css/site.css` (modified, +5/-0)
-```diff
-@@ -5857,6 +5857,11 @@ h3 {
-   display: block;
+@@ -1064,29 +1064,66 @@ func artifactStatus(status string) string {
+ 	return status
  }
  
-+/* A two-sentence heading breaks between its sentences, not inside one. */
-+.dx-line {
-+  display: block;
++// bumpArtifactRevision moves a domain's revision on by one.
++//
++// Several replicas bump the same domain at the same moment, so the increment
++// is one statement that the database applies atomically. Direct SQL for the
++// same reason as claimTaskVerification: the internal GraphQL mutation API
++// cannot add to a column or report the affected-row count. Reading the
++// revision and writing it back let two replicas both insert a domain's first
++// row, and the second failed on the primary key; it also let a slow replica
++// write an older number over a newer one.
+ func (s *graphjinService) bumpArtifactRevision(ctx context.Context, domain string) error {
+ 	if s == nil {
+ 		return nil
+ 	}
+-	if _, _, _, ok := s.artifactDB(); !ok {
++	db, dbType, _, ok := s.artifactDB()
++	if !ok {
+ 		return nil
+ 	}
+ 	domain = strings.TrimSpace(domain)
+ 	if domain == "" {
+ 		domain = "artifacts"
+ 	}
+-	now := time.Now().UTC().Format(time.RFC3339)
+-	current, err := s.artifactRevision(ctx, domain)
+-	if err != nil {
+-		return err
++	revisions := artifactTableName(dbType, s.conf.Core.EffectiveArtifactsConfig().Schema, "revisions")
++	domainCol := quoteStoreIdent(dbType, "domain")
++	revisionCol := quoteStoreIdent(dbType, "revision")
++	updatedAtCol := quoteStoreIdent(dbType, "updated_at")
++	now := time.Now().UTC()
++	var updatedAt any = now.Format(time.RFC3339)
++	if dbType == "postgres" || dbType == "" {
++		updatedAt = now
++	}
++	increment := func() (bool, error) {
++		res, err := s.internalStoreExec(ctx, db, dbType,
++			fmt.Sprintf("UPDATE %s SET %s = %s + 1, %s = %s WHERE %s = %s",
++				revisions, revisionCol, revisionCol,
++				updatedAtCol, taskVerifySQLPlaceholder(dbType, 1),
++				domainCol, taskVerifySQLPlaceholder(dbType, 2)),
++			updatedAt, domain)
++		if err != nil {
++			return false, err
++		}
++		affected, err := res.RowsAffected()
++		return affected > 0, err
+ 	}
+-	input := map[string]any{"domain": domain, "revision": current + 1, "updated_at": now}
+-	if current == 0 {
+-		_, err = s.internalStoreMutationRows(ctx, "revisions", `insert: $input`, revisionStoreFields, map[string]any{"input": input})
++	if done, err := increment(); err != nil || done {
+ 		return err
+ 	}
+-	_, err = s.internalStoreMutationRows(ctx, "revisions", `where: { domain: { eq: $domain } }, update: $input`, revisionStoreFields, map[string]any{"domain": domain, "input": map[string]any{"revision": current + 1, "updated_at": now}})
+-	return err
++	// The domain has no row yet. If another replica inserts it first, this
++	// insert fails on the primary key and the increment applies after all.
++	_, insertErr := s.internalStoreExec(ctx, db, dbType,
++		fmt.Sprintf("INSERT INTO %s (%s, %s, %s) VALUES (%s, 1, %s)",
++			revisions, domainCol, revisionCol, updatedAtCol,
++			taskVerifySQLPlaceholder(dbType, 1), taskVerifySQLPlaceholder(dbType, 2)),
++		domain, updatedAt)
++	if insertErr == nil {
++		return nil
++	}
++	if done, err := increment(); err == nil && done {
++		return nil
++	}
++	return insertErr
+ }
+ 
+ func identityVarString(ctx context.Context, name string) (string, bool) {
+```
+
+**File**: `serv/control_store_internal.go` (modified, +23/-0)
+```diff
+@@ -2,6 +2,7 @@ package serv
+ 
+ import (
+ 	"context"
++	"database/sql"
+ 	"encoding/json"
+ 	"fmt"
+ 	"strings"
+@@ -273,6 +274,28 @@ func (s *graphjinService) internalStoreGraphQL(ctx context.Context, query string
+ 	return nil, fmt.Errorf("internal store SQLite retry exhausted")
+ }
+ 
++// internalStoreExec runs one direct SQL statement against the control store
++// with the SQLite busy retry internalStoreGraphQL applies, so a statement that
++// needs direct SQL (an atomic increment, an affected-row count) is no more
++// likely to fail under write contention than the GraphQL write it replaces.
++// The statement must be safe to run again after a busy error, which every
++// single autocommit statement is: a busy statement wrote nothing.
++func (s *graphjinService) internalStoreExec(ctx context.Context, db *sql.DB, dbType, query string, args ...any) (sql.Result, error) {
++	attempts := 1
++	if dbType == "sqlite" {
++		attempts = internalStoreSQLiteBusyMaxAttempts
++	}
++	for attempt := 0; ; attempt++ {
++		res, err := db.ExecContext(ctx, query, args...)
++		if err == nil || !isInternalStoreSQLiteBusyError(err) || attempt == attempts-1 {
++			return res, err
++		}
++		if err := waitInternalStoreSQLiteRetry(ctx, internalStoreSQLiteBusyDelay(attempt)); err != nil {
++			return nil, err
++		}
++	}
 +}
 +
- .home-benchmark {
-   margin-top: clamp(2rem, 4.5vw, 3.2rem);
+ func (s *graphjinService) internalStoreGraphQLOnce(ctx context.Context, query string, raw json.RawMessage) (map[string]json.RawMessage, error) {
+ 	res, err := s.gj.GraphQL(s.internalStoreContext(ctx), query, raw, nil)
+ 	if err != nil {
+```
+
+**File**: `serv/metric_watch.go` (modified, +4/-0)
+```diff
+@@ -618,6 +618,10 @@ func (s *graphjinService) evaluateWatchMetricTick(
+ 	return state, crossings, nil
  }
+ 
++// saveWatchMetricState stores a metric state whatever the schedule's clock
++// says. A tick's reading normally goes in with the clock, through
++// claimWatchScheduleTick; this is only for the replica that reported a breach
++// and then found the clock already moved.
+ func (s *graphjinService) saveWatchMetricState(ctx context.Context, id string, state watchMetricState, evalErr error) error {
+ 	lastError := ""
+ 	if evalErr != nil {
+```
+
+**File**: `serv/metric_watch_test.go` (modified, +87/-0)
+```diff
+@@ -417,6 +417,93 @@ func TestMetricWatchRecoversFromCrashBeforeStateSave(t *testing.T) {
+ 	}
+ }
+ 
++// staleMetricTick returns a metric watch with one tick due, and the row as a
++// replica read it before any replica handled that tick.
++func staleMetricTick(t *testing.T, db *sql.DB, svc *graphjinService, ctx context.Context, name string) (id string, stale map[string]any, due time.Time) {
++	t.Helper()
++	setOpenOrders(t, db, 1)
++	row, err := insertMetricWatch(t, svc, ctx, name, nil)
++	if err != nil {
++		t.Fatal(err)
++	}
++	id = stringFromAny(row["id"])
++	due = time.Now().UTC().Truncate(5 * time.Minute)
++	setWatchNextFire(t, db, id, due)
++	stale, err = svc.internalWatchStoreRow(ctx, id)
++	if err != nil || stale == nil {
++		t.Fatalf("read watch %s: %v", id, err)
++	}
++	return id, stale, due
++}
++
++// One reading is kept per tick: a replica that read the watch before another
++// replica finished the tick must not store its own reading over it.
++func TestMetricWatchLateReplicaDoesNotOverwriteClaimedTick(t *testing.T) {
++	db, replicas := newScheduleWatchReplicas(t, 2)
++	first, late := replicas[0], replicas[1]
++	ctx := artifactUserCtx("user_1")
++	id, stale, due := staleMetricTick(t, db, late, ctx, "late_replica")
++	sched := mustWatchSchedule(t, "*/5 * * * *", "UTC")
++	now := due.Add(2 * time.Second)
++
++	setOpenOrders(t, db, 3)
++	if sweep, err := first.sweepWatchSchedules(ctx, now); err != nil || sweep.Fired != 1 {
++		t.Fatalf("first replica fired=%d err=%v", sweep.Fired, err)
++	}
++
++	// The number moves again before the late replica runs its query.
++	setOpenOrders(t, db, 0)
++	fired, _, err := late.fireWatchSchedule(ctx, stale, sched, stringMapValue(stale, "next_fire_at"), due, now)
++	if err != nil || fired {
++		t.Fatalf("late replica fired=%v err=%v", fired, err)
++	}
++	st := metricWatchState(t, late, ctx, id)
++	if st.LastValue != 3.0 || !st.Breached {
++		t.Fatalf("the claimed tick's reading was overwritten: %+v", st)
++	}
++	if len(st.History) != 2 {
++		t.Fatalf("history = %+v, want the probe plus one point for the tick", st.History)
++	}
++	if ids := watchEventIDs(t, db); len(ids) != 1 {
++		t.Fatalf("events = %v, want 1", ids)
++	}
++}
++
++// The replica that reports a breach keeps it on record even when another
++// replica, reading a moment earlier, moved the clock without seeing it.
++// Otherwise a value that stays over the threshold fires again on the next tick.
++func TestMetricWatchBreachStaysRecordedWhenAnotherReplicaClaimsTheTick(t *testing.T) {
++	db, replicas := newScheduleWatchReplicas(t, 2)
++	first, late := replicas[0], replicas[1]
++	ctx := artifactUserCtx("user_1")
++	id, stale, due := staleMetricTick(t, db, late, ctx, "late_breach")
++	sched := mustWatchSchedule(t, "*/5 * * * *", "UTC")
++	now := due.Add(2 * time.Second)
++
++	if sweep, err := first.sweepWatchSchedules(ctx, now); err != nil || sweep.Fired != 0 {
++		t.Fatalf("first replica fired=%d err=%v", sweep.Fired, err)
++	}
++
++	setOpenOrders(t, db, 3)
++	fired, _, err := late.fireWatchSchedule(ctx, stale, sched, stringMapValue(stale, "next_fire_at"), due, now)
++	if err != nil || !fired {
++		t.Fatalf("late replica fired=%v err=%v, want the crossing reported", fired, err)
++	}
++	st := metricWatchState(t, first, ctx, id)
++	if st.LastValue != 3.0 || !st.Breached {
++		t.Fatalf("the reported breach is not on record: %+v", st)
++	}
++	if len(st.History) != 2 {
++		t.Fatalf("history = %+v, want the probe plus one point for the tick", st.History)
++	}
++	if sweep, err := first.sweepWatchSchedules(ctx, due.Add(5*time.Minute+2*time.Second)); err != nil || sweep.Fired != 0 {
++		t.Fatalf("next tick fired=%d err=%v; the breach was already reported", sweep.Fired, err)
++	}
++	if ids := watchEventIDs(t, db); len(ids) != 1 {
++		t.Fatalf("events = %v, want 1", ids)
++	}
++}
++
+ // A failing query records the error and keeps the schedule moving.
+ func TestMetricWatchQueryErrorKeepsSchedule(t *testing.T) {
+ 	db, replicas := newScheduleWatchReplicas(t, 1)
+```
+
+**File**: `serv/revision_signal_test.go` (modified, +34/-0)
+```diff
+@@ -4,6 +4,7 @@ import (
+ 	"context"
+ 	"encoding/json"
+ 	"strings"
++	"sync"
+ 	"testing"
+ 	"time"
+ 
+@@ -89,6 +90,39 @@ func TestRevisionSignalReadsPastGraphQLDefaultLimit(t *testing.T) {
+ 	}
+ }
+ 
++// Replicas bump a domain at the same moment, including the first bump, when the
++// domain has no row yet. Every bump succeeds and every bump counts.
++func TestBumpArtifactRevisionIsAtomicAcrossReplicas(t *testing.T) {
++	_, replicas := newScheduleWatchReplicas(t, 2)
++	ctx := context.Background()
++	const perReplica = 4
++	for _, domain := range []string{"watch_events", "tasks", "notifications", "first_bump"} {
++		if base, err := replicas[0].artifactRevision(ctx, domain); err != nil || base != 0 {
++			t.Fatalf("%s revision before any bump = %d err=%v, want 0", domain, base, err)
++		}
++		var wg sync.WaitGroup
++		start := make(chan struct{})
++		for _, svc := range replicas {
++			for range perReplica {
++				wg.Add(1)
++				go func() {
++					defer wg.Done()
++					<-start
++					if err := svc.bumpArtifactRevision(ctx, domain); err != nil {
++						t.Errorf("bump %s: %v", domain, err)
++					}
++				}()
++			}
++		}
++		close(start)
++		wg.Wait()
++		want := int64(len(replicas) * perReplica)
++		if got, err := replicas[0].artifactRevision(ctx, domain); err != nil || got != want {
++			t.Fatalf("%s revision = %d err=%v, want %d", domain, got, err, want)
++		}
++	}
++}
++
+ func TestRevisionSignalSubscriptionMembersAreIsolated(t *testing.T) {
+ 	svc := newRevisionSignalTestService(t)
+ 	ctx, cancel := context.WithCancel(context.Background())
+```
+
+**File**: `serv/schedule_runner.go` (modified, +72/-29)
+```diff
+@@ -300,6 +300,9 @@ func (s *graphjinService) sweepWatchSchedules(ctx context.Context, now time.Time
+ // leaves the tick due with its event already written; the next sweep, on any
+ // replica, finds the event and only moves the clock on. A tick is neither lost
+ // nor doubled, and no step holds a lock or needs Redis.
++//
++// The returned bool reports whether this call wrote the tick's event, also
++// when a later step failed.
+ func (s *graphjinService) fireWatchSchedule(
+ 	ctx context.Context,
+ 	row map[string]any,
+@@ -328,43 +331,51 @@ func (s *graphjinService) fireWatchSchedule(
+ 	// shutdown from cutting the follow-up bookkeeping (enrichment, wake-ups)
+ 	// short once the event exists.
+ 	ctx = context.WithoutCancel(ctx)
++	next := sched.next(now)
+ 	var metricEvent map[string]any
+-	var metricState *watchMetricState
++	var reading *watchMetricReading
+ 	if metric, metered := parseWatchMetricJSON(jsonMapString(row, "metric_json")); metered {
+ 		// A metric watch fires only when its number crosses. The event still
+ 		// goes in before the state and the clock move, so a replica that dies
+ 		// part-way re-reads the tick and the event id stops a second fire.
++		//
++		// The reading is stored by the statement that moves the clock, so one
++		// replica's reading is kept per tick. Stored on its own, ahead of the
++		// clock, it was visible to a replica that read the row in between
++		// with the tick still due, and that replica folded the same tick into
++		// the state a second time.
+ 		state, crossings, evalErr := s.evaluateWatchMetricTick(ownerCtx, row, def, metric, sched, now)
++		reading = &watchMetricReading{State: state, Err: evalErr}
+ 		if evalErr != nil || len(crossings) == 0 {
+-			if err := s.saveWatchMetricState(ctx, def.ID, state, evalErr); err != nil {
+-				return false, time.Time{}, err
+-			}
+-			next := sched.next(now)
+-			if _, err := s.advanceWatchSchedule(ctx, def.ID, raw, due, next); err != nil {
++			if _, err := s.claimWatchScheduleTick(ctx, def.ID, raw, due, next, reading); err != nil {
+ 				return false, time.Time{}, err
+ 			}
+ 			return false, next, nil
+ 		}
+ 		metricEvent = watchMetricEventPayload(metric, state, crossings)
+-		metricState = &state
+ 	}
+ 	inserted, err := s.insertWatchScheduleEvent(ctx, &def, proposal, sched, due, now, metricEvent)
+ 	if err != nil {
+-		// Nothing has moved: the tick stays due and the next sweep retries it.
+-		return false, time.Time{}, err
+-	}
+-	if metricState != nil {
+-		// Saved before the clock moves: a later tick must see this breach, or
+-		// a value that stays over the threshold would fire again.
+-		if err := s.saveWatchMetricState(ctx, def.ID, *metricState, nil); err != nil {
+-			return inserted, time.Time{}, err
+-		}
++		// The clock has not moved: the tick stays due and the next sweep
++		// retries it. inserted is true when the event went in and only its
++		// follow-up failed; the retry then finds the event and finishes.
++		return inserted, time.Time{}, err
+ 	}
+-	next := sched.next(now)
+-	advanced, err := s.advanceWatchSchedule(ctx, def.ID, raw, due, next)
++	// For a metric watch the breach is stored as the clock moves: a later
++	// tick must see it, or a value that stays over the threshold would fire
++	// again.
++	advanced, err := s.claimWatchScheduleTick(ctx, def.ID, raw, due, next, reading)
+ 	if err != nil {
+ 		return inserted, time.Time{}, err
+ 	}
++	if inserted && !advanced && reading != nil {
++		// Another replica moved the clock first and stored its own reading,
++		// which need not show a breach when the number changed between the
++		// two reads. This replica reported the breach, so its reading stands.
++		if err := s.saveWatchMetricState(ctx, def.ID, reading.State, nil); err != nil {
++			return inserted, next, err
++		}
++	}
+ 	if !inserted && !advanced {
+ 		// Another replica recorded this tick and moved the clock.
+ 		return false, next, nil
+@@ -395,6 +406,22 @@ func (s *graphjinService) fireWatchSchedule(
+ // reports whether this call made the move; of several replicas advancing the
+ // same tick, exactly one does.
+ func (s *graphjinService) advanceWatchSchedule(ctx context.Context, id, raw string, prev, next time.Time) (bool, error) {
++	return s.claimWatchScheduleTick(ctx, id, raw, prev, next, nil)
++}
++
++// watchMetricReading is what one replica read for a metric watch's tick: the
++// state to store, and the query or path error when the read failed.
++type watchMetricReading struct {
++	State watchMetricState
++	Err   error
++}
++
++// claimWatchScheduleTick is advanceWatchSchedule that also stores a metric
++// watch's reading, in the same statement. The reading and the clock move
++// together or not at all, so the replica that claims a tick is the only one
++// whose reading is kept, and no replica can read the new state with the tick
++// still due.
++func (s *graphjinService) claimWatchScheduleTick(ctx context.Context, id, raw string, prev, next time.Time, reading *watchMetricReading) (bool, error) {
+ 	db, dbType, watches, _, ok := s.watchDB()
+ 	if !ok 
 ```
 
 ---
 
-### Incident Patch 2: `e03aa56b` (2026-11-20)
-**Commit Message**: chore: bump version to v3.21.21 [skip-release] [skip ci]
+### Incident Patch 2: `85c58cdb` (2026-11-22)
+**Commit Message**: ci: run each test suite as its own job, skip database suites when nothing they compile changed [skip-release]
 
-**File**: `agent/go.mod` (modified, +1/-1)
+Build was one job: the twelve database suites ran two at a time in batches
+that each waited for their slowest suite (39 min), then the package tests
+ran after all of them (15 min, almost all cmd/v3). Runs took ~57 minutes.
+
+Now there is a Build job, a Package tests job, and one job per database,
+all side by side, so a run takes as long as its slowest job.
+
+The database jobs run only when a module the tests/ suite compiles in
+changes (core, conf, serv, agent, auth, codesql, plugin, the drivers,
+tests itself) or the test plumbing does. tests/ imports serv/v3, so
+gating them on core alone would let a serv change break them unseen.
+PRs that only touch website/** no longer run Build at all, matching push.
+
+setup-go now reads the Go version from go.work: the pinned 1.23.1 made
+every run download 1.25.5 anyway, and the extra actions/cache step
+collided with setup-go's own module cache ("tar: File exists").
+
+New make targets: test-packages and test-db DB=<name>. A single-suite
+run of scripts/test-parallel.sh streams its output instead of holding it
+back unless it fails.
+
+Co-Author
+
+**File**: `.github/workflows/build.yml` (modified, +115/-14)
 ```diff
-@@ -5,7 +5,7 @@ go 1.25.0
- require (
- 	github.com/ax-llm/ax/packages/go v0.0.0-20261118171305-8dbb33d64629
- 	github.com/dop251/goja v0.0.0-20260219130522-0ba9a5494a59
--	github.com/dosco/graphjin/core/v3 v3.21.20
-+	github.com/dosco/graphjin/core/v3 v3.21.21
- 	github.com/gofrs/flock v0.13.0
- )
+@@ -3,38 +3,139 @@ name: Build
+ on:
+   pull_request:
+     branches: [master]
+-    paths-ignore: ["**.md", "docs/**"]
++    paths-ignore:
++      - "**.md"
++      - "docs/**"
++      - "website/**"
+   push:
+     branches: [master]
+     paths-ignore:
+       - "**.md"
+       - "docs/**"
+       - ".github/workflows/**"
+       - "website/**"
++  # Runs every job, whatever changed. Pushes that only touch workflows don't
++  # trigger Build, so this is how a workflow change gets its first run.
++  # Auto Release only follows push runs, so a manual run never releases.
++  workflow_dispatch:
++
++# Every suite is its own job so they run side by side. As one job the database
++# suites ran two at a time and the package tests waited for all of them: ~57
++# minutes. Now the run takes as long as its slowest job.
++#
++# Auto Release waits for this whole workflow to succeed, so every job here
++# gates a release. A job skipped because nothing it tests changed counts as
++# success.
+ 
+ jobs:
+-  lint-and-test:
+-    name: Lint and Test
++  changes:
++    name: Detect changes
+     runs-on: ubuntu-latest
++    timeout-minutes: 5
++    permissions:
++      contents: read
++      pull-requests: read
++    outputs:
++      db: ${{ steps.filter.outputs.db }}
+     steps:
+       - name: Checkout
+         uses: actions/checkout@v4
+ 
+-      - name: Set up Go
+-        uses: actions/setup-go@v4
++      - name: Filter paths
++        id: filter
++        uses: dorny/paths-filter@v3
+         with:
+-          go-version: "1.23.1"
++          filters: |
++            # Everything the tests/ module compiles in. Regenerate with:
++            #   go list -deps -test -tags "mysql mariadb mssql sqlite fts5" ./tests | grep dosco/graphjin
++            # tests/ imports serv/v3, which pulls in agent, auth and codesql,
++            # so a change to any of them can break a database suite.
++            db:
++              - "core/**"
++              - "conf/**"
++              - "serv/**"
++              - "agent/**"
++              - "auth/**"
++              - "codesql/**"
++              - "plugin/**"
++              - "mongodriver/**"
++              - "bigquerydriver/**"
++              - "cassandradriver/**"
++              - "clickhousedriver/**"
++              - "tests/**"
++              - "go.work"
++              - "go.work.sum"
++              - "Makefile"
++              - "scripts/test-*.sh"
++              - ".github/workflows/build.yml"
+ 
+-      - name: Cache Go modules
+-        uses: actions/cache@v3
++  build:
++    name: Build
++    runs-on: ubuntu-latest
++    timeout-minutes: 20
++    steps:
++      - name: Checkout
++        uses: actions/checkout@v4
++
++      - name: Set up Go
++        uses: actions/setup-go@v5
+         with:
+-          path: ~/go/pkg/mod
+-          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+-          restore-keys: |
+-            ${{ runner.os }}-go-
++          go-version-file: go.work
++          cache-dependency-path: "**/go.sum"
+ 
+       - name: Build
+         run: make build
+ 
+-      - name: Run Tests
+-        run: make test
++  packages:
++    name: Package tests
++    runs-on: ubuntu-latest
++    timeout-minutes: 45
++    steps:
++      - name: Checkout
++        uses: actions/checkout@v4
++
++      - name: Set up Go
++        uses: actions/setup-go@v5
++        with:
++          go-version-file: go.work
++          cache-dependency-path: "**/go.sum"
++
++      - name: Run package tests
++        run: make test-packages
++
++  database:
++    name: DB ${{ matrix.db }}
++    needs: changes
++    if: github.event_name == 'workflow_dispatch' || needs.changes.outputs.db == 'true'
++    runs-on: ubuntu-latest
++    timeout-minutes: 45
++    strategy:
++      # One failing database must not cancel the others' results.
++      fail-fast: false
++      matrix:
++        # Keep in step with ALL_DBS in scripts/test-parallel.sh.
++        db:
++          - postgres
++          - mysql
++          - mariadb
++          - sqlite
++          - oracle
++          - mssql
++          - mongodb
++          - cassandra
++          - clickhouse
++          - snowflake
++          - bigquery
++          - redshift
++    steps:
++      - name: Checkout
++        uses: actions/checkout@v4
++
++      - name: Set up Go
++        uses: actions/setup-go@v5
++        with:
++          go-version-file: go.work
++          cache-dependency-path: "**/go.sum"
++
++      - name: Run ${{ matrix.db }} tests
++        run: make test-db DB=${{ matrix.db }}
+```
+
+**File**: `Makefile` (modified, +10/-1)
+```diff
+@@ -16,7 +16,7 @@ endif
+ # Build-time Go variables
+ BUILD_FLAGS ?= -ldflags '-s -w -X "main.version=${BUILD_VERSION}" -X "main.commit=${BUILD}" -X "main.date=${BUILD_DATE}" -X "github.com/dosco/graphjin/serv/v3.version=${BUILD_VERSION}"'
+ 
+-.PHONY: all download-tools build wasm-build gen config-schema agent-openapi clean tidy test test-parallel-dbs test-sequential test-norace run demo demo-agent demo-smoke demo-agent-smoke smoke-all smoke-default env-image env-image-smoke run-github-actions lint changlog release version help test-mongodb test-cassandra test-clickhouse $(PLATFORMS)
++.PHONY: all download-tools build wasm-build gen config-schema agent-openapi clean tidy test test-parallel-dbs test-packages test-db test-sequential test-norace run demo demo-agent demo-smoke demo-agent-smoke smoke-all smoke-default env-image env-image-smoke run-github-actions lint changlog release version help test-mongodb test-cassandra test-clickhouse $(PLATFORMS)
+ 
+ tidy:
+ 	@find . -name "go.mod" -execdir go mod tidy \;
+@@ -33,6 +33,15 @@ test: test-parallel-dbs
+ test-parallel-dbs:
+ 	@bash scripts/test-parallel.sh
+ 
++# The two halves of `make test`, run as separate jobs in CI (.github/workflows/build.yml).
++test-packages:
++	@go test -v -race -timeout $(GO_TEST_TIMEOUT) $(PACKAGES)
++
++# One database suite, e.g. `make test-db DB=postgres`.
++test-db:
++	@test -n "$(DB)" || { echo "usage: make test-db DB=<postgres|mysql|...>"; exit 2; }
++	@PARALLEL_DBS="$(DB)" bash scripts/test-parallel.sh
++
+ test-sequential: test-postgres test-mysql test-mariadb test-sqlite test-oracle test-mssql test-mongodb test-cassandra test-clickhouse
+ 	@go test -v -race -timeout $(GO_TEST_TIMEOUT) $(PACKAGES)
  
 ```
 
-**File**: `auth/go.mod` (modified, +1/-1)
+**File**: `scripts/test-parallel.sh` (modified, +10/-1)
 ```diff
-@@ -3,7 +3,7 @@ module github.com/dosco/graphjin/auth/v3
- go 1.25.0
+@@ -17,7 +17,7 @@ ALL_DBS="postgres mysql mariadb sqlite oracle mssql mongodb cassandra clickhouse
+ # Allow caller to select a subset via env var
+ DBS="${PARALLEL_DBS:-$ALL_DBS}"
  
- require (
--	github.com/dosco/graphjin/core/v3 v3.21.20
-+	github.com/dosco/graphjin/core/v3 v3.21.21
- 	github.com/golang-jwt/jwt/v5 v5.3.1
- 	github.com/lestrrat-go/jwx v1.2.31
- 	github.com/stretchr/testify v1.11.1
-```
-
-**File**: `cmd/go.mod` (modified, +5/-5)
-```diff
-@@ -5,13 +5,13 @@ go 1.25.5
- require (
- 	github.com/brianvoe/gofakeit/v6 v6.28.0
- 	github.com/dop251/goja v0.0.0-20260219130522-0ba9a5494a59
--	github.com/dosco/graphjin/agent/v3 v3.21.20
--	github.com/dosco/graphjin/auth/v3 v3.21.20
--	github.com/dosco/graphjin/core/v3 v3.21.20
-+	github.com/dosco/graphjin/agent/v3 v3.21.21
-+	github.com/dosco/graphjin/auth/v3 v3.21.21
-+	github.com/dosco/graphjin/core/v3 v3.21.21
- 	github.com/dosco/graphjin/examples v0.0.0
- 	github.com/dosco/graphjin/hostedemu v0.0.0
- 	github.com/dosco/graphjin/mongodriver v0.0.0
--	github.com/dosco/graphjin/serv/v3 v3.21.20
-+	github.com/dosco/graphjin/serv/v3 v3.21.21
- 	github.com/gosimple/slug v1.15.0
- 	github.com/jackc/pgx/v5 v5.7.6
- 	github.com/jvatic/goja-babel v0.0.0-20250906111304-06c40d6b931b
-@@ -111,7 +111,7 @@ require (
- 	github.com/docker/docker v28.5.2+incompatible // indirect
- 	github.com/docker/go-connections v0.6.0 // indirect
- 	github.com/docker/go-units v0.5.0 // indirect
--	github.com/dosco/graphjin/plugin/otel/v3 v3.21.20 // indirect
-+	github.com/dosco/graphjin/plugin/otel/v3 v3.21.21 // indirect
- 	github.com/duckdb/duckdb-go-bindings v0.10502.0 // indirect
- 	github.com/duckdb/duckdb-go-bindings/lib/darwin-amd64 v0.10502.0 // indirect
- 	github.com/duckdb/duckdb-go-bindings/lib/darwin-arm64 v0.10502.0 // indirect
-```
-
-**File**: `conf/go.mod` (modified, +1/-1)
-```diff
-@@ -3,7 +3,7 @@ module github.com/dosco/graphjin/conf/v3
- go 1.25.0
+-# Max number of suites to run concurrently (default 4)
++# Max number of suites to run concurrently (default 2)
+ MAX_PARALLEL="${MAX_PARALLEL:-2}"
  
- require (
--	github.com/dosco/graphjin/core/v3 v3.21.20
-+	github.com/dosco/graphjin/core/v3 v3.21.21
- 	gopkg.in/yaml.v3 v3.0.1
- )
+ # Temp directory for per-suite output
+@@ -75,6 +75,15 @@ db_test_cmd() {
+ DB_ARRAY=($DBS)
+ DB_COUNT=${#DB_ARRAY[@]}
  
++# A single suite (one CI job per database) runs in the foreground so its
++# output streams live instead of being held back unless it fails.
++if [ "$DB_COUNT" -eq 1 ]; then
++    cmd=$(db_test_cmd "${DB_ARRAY[0]}")
++    echo "==> Running ${DB_ARRAY[0]}: $cmd"
++    eval "$cmd"
++    exit $?
++fi
++
+ echo "==> Starting parallel DB test suites: $DBS"
+ echo "==> Concurrency limit: $MAX_PARALLEL (total suites: $DB_COUNT)"
+ echo ""
 ```
 
-**File**: `package-lock.json` (modified, +2/-2)
+---
+
+### Incident Patch 3: `dcaf384f` (2026-11-22)
+**Commit Message**: fix(core): refuse bulk update rows that set different fields
+
+The columns of a bulk update come from the first row, so a later row
+that left a field out set that column to NULL, and a field only a later
+row set was dropped. Both changed data the caller never asked to change.
+
+A bulk update now requires every row to be an object that sets the same
+fields as the first row, and names the row and the field when one does
+not. The whole update is refused, so no row changes. To clear a column,
+set it to null explicitly.
+
+The docs also note that the response returns at most default_limit rows.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `core/internal/qcode/bulk_update_test.go` (modified, +18/-0)
 ```diff
-@@ -1,12 +1,12 @@
- {
-   "name": "graphjin",
--  "version": "3.21.20",
-+  "version": "3.21.21",
-   "lockfileVersion": 3,
-   "requires": true,
-   "packages": {
-     "": {
-       "name": "graphjin",
--      "version": "3.21.20",
-+      "version": "3.21.21",
-       "hasInstallScript": true,
-       "license": "Apache-2.0",
-       "dependencies": {
+@@ -104,6 +104,24 @@ func TestBulkUpdateRejectsUnmatchableRows(t *testing.T) {
+ 			data: `[]`,
+ 			want: "the list of rows is empty",
+ 		},
++		{
++			name: "later row leaves out a field",
++			gql:  `mutation { products(update: $data) { id } }`,
++			data: `[{"id": 1, "name": "a", "price": 5}, {"id": 2, "price": 6}]`,
++			want: `row 2 does not set "name", which the first row sets`,
++		},
++		{
++			name: "later row sets an extra field",
++			gql:  `mutation { products(update: $data) { id } }`,
++			data: `[{"id": 1, "name": "a"}, {"id": 2, "name": "b"}, {"id": 3, "name": "c", "price": 6}]`,
++			want: `row 3 sets "price", which the first row does not`,
++		},
++		{
++			name: "row is not an object",
++			gql:  `mutation { products(update: $data) { id } }`,
++			data: `[{"id": 1, "name": "a"}, 2]`,
++			want: "row 2 is not an object",
++		},
+ 		{
+ 			name: "nested mutation",
+ 			gql:  `mutation { products(update: $data) { id } }`,
 ```
 
-**File**: `package.json` (modified, +1/-1)
+**File**: `core/internal/qcode/mutate.go` (modified, +31/-0)
 ```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "graphjin",
--  "version": "3.21.20",
-+  "version": "3.21.21",
-   "description": "GraphJin — one governed graph for AI agents: GraphQL + MCP over your databases, files, APIs, and code",
-   "bin": {
-     "graphjin": "bin/graphjin.js"
-```
-
-**File**: `plugin/otel/go.mod` (modified, +1/-1)
-```diff
-@@ -3,7 +3,7 @@ module github.com/dosco/graphjin/plugin/otel/v3
- go 1.25.0
+@@ -303,9 +303,40 @@ func (co *Compiler) checkBulkUpdateData(m Mutate) (withoutWhere bool, err error)
+ 	if len(m.Ti.PrimaryCols) == 0 {
+ 		return false, fmt.Errorf("bulk update: table %q has no primary key to match rows on", m.Ti.Name)
+ 	}
++	if err := checkBulkUpdateRowFields(m.Data.Children); err != nil {
++		return false, err
++	}
+ 	return withoutWhere, nil
+ }
  
- require (
--	github.com/dosco/graphjin/core/v3 v3.21.20
-+	github.com/dosco/graphjin/core/v3 v3.21.21
- 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.67.0
- 	go.opentelemetry.io/otel v1.43.0
- 	go.opentelemetry.io/otel/trace v1.43.0
++// checkBulkUpdateRowFields requires every row of a bulk update to set the
++// same fields as the first row. The columns to update come from the first
++// row, so a later row that leaves a field out would set that column to NULL
++// and a field only a later row sets would be dropped; both lose data the
++// caller never meant to change.
++func checkBulkUpdateRowFields(rows []*graph.Node) error {
++	first := rows[0]
++	for i, row := range rows {
++		if row.Type != graph.NodeObj {
++			return fmt.Errorf("bulk update: row %d is not an object", i+1)
++		}
++		if i == 0 {
++			continue
++		}
++		for _, f := range first.Children {
++			if _, ok := row.CMap[f.Name]; !ok {
++				return fmt.Errorf("bulk update: row %d does not set %q, which the first row sets; every row must set the same fields", i+1, f.Name)
++			}
++		}
++		for _, f := range row.Children {
++			if _, ok := first.CMap[f.Name]; !ok {
++				return fmt.Errorf("bulk update: row %d sets %q, which the first row does not; every row must set the same fields", i+1, f.Name)
++			}
++		}
++	}
++	return nil
++}
++
+ // checkBulkUpdateMutates verifies that each root bulk update carries the
+ // primary key it is matched on and does not nest mutations of related tables.
+ func checkBulkUpdateMutates(qc *QCode) error {
 ```
 
-**File**: `serv/go.mod` (modified, +4/-4)
+**File**: `tests/update_test.go` (modified, +11/-0)
 ```diff
-@@ -8,15 +8,15 @@ require (
- 	github.com/ax-llm/ax/packages/go v0.0.0-20261118171305-8dbb33d64629
- 	github.com/coder/websocket v1.8.15
- 	github.com/dop251/goja v0.0.0-20260219130522-0ba9a5494a59
--	github.com/dosco/graphjin/agent/v3 v3.21.20
--	github.com/dosco/graphjin/auth/v3 v3.21.20
-+	github.com/dosco/graphjin/agent/v3 v3.21.21
-+	github.com/dosco/graphjin/auth/v3 v3.21.21
- 	github.com/dosco/graphjin/bigquerydriver v0.0.0
- 	github.com/dosco/graphjin/cassandradriver v0.0.0
- 	github.com/dosco/graphjin/clickhousedriver v0.0.0
- 	github.com/dosco/graphjin/codesql v0.0.0
--	github.com/dosco/graphjin/core/v3 v3.21.20
-+	github.com/dosco/graphjin/core/v3 v3.21.21
- 	github.com/dosco/graphjin/mongodriver v0.0.0
--	github.com/dosco/graphjin/plugin/otel/v3 v3.21.20
-+	github.com/dosco/graphjin/plugin/otel/v3 v3.21.21
- 	github.com/fsnotify/fsnotify v1.9.0
- 	github.com/go-http-utils/headers v0.0.0-20181008091004-fed159eddc2a
- 	github.com/go-pkgz/expirable-cache v1.0.0
+@@ -560,4 +560,15 @@ func TestBulkUpdateMatchesRowsByPrimaryKey(t *testing.T) {
+ 		products(update: $data) { id }
+ 	}`, json.RawMessage(`{ "data": [{ "name": "No Key" }] }`), nil)
+ 	require.ErrorContains(t, err, `primary key "id"`)
++
++	// A row that leaves out a field the first row sets would set that column
++	// to NULL, so the whole update is refused and no row changes.
++	_, err = gj.GraphQL(ctx, `mutation {
++		products(update: $data) { id }
++	}`, json.RawMessage(`{ "data": [
++		{ "id": 91, "name": "Partial Product 91", "price": 5 },
++		{ "id": 92, "price": 6 }
++	] }`), nil)
++	require.ErrorContains(t, err, `row 2 does not set "name"`)
++	require.Equal(t, map[float64]string{91: "Filtered Product 91", 92: "Bulk Product 92"}, stored())
+ }
+```
+
+**File**: `website/content/core/mutations.md` (modified, +1/-1)
+```diff
+@@ -146,7 +146,7 @@ mutation {
+ 
+ GraphJin joins each row to the table row with the same primary key. Because the list scopes the update, the `where` clause is optional on PostgreSQL, MySQL, MariaDB, and SQLite. A `where` clause, when given, further limits which listed rows may change. Snowflake also matches rows by primary key but still requires a `where` clause.
+ 
+-Every row must include the full primary key, and every row should carry the same fields: the columns to update come from the first row, and a field missing from a later row sets that column to `NULL` for that row. Rows whose key matches no table row are skipped. A bulk update must use a variable, not an inline list, and cannot nest writes to related tables. Other databases, including SQL Server, Oracle, and MongoDB, reject list updates.
++Every row must include the full primary key and set the same fields as the first row. A row that leaves out a field, or adds one, is refused with an error that names the row and the field, and no row changes. To clear a column, set it to `null` explicitly. Rows whose key matches no table row are skipped. The response returns at most `default_limit` rows (20 unless configured), even when more rows were updated. A bulk update must use a variable, not an inline list, and cannot nest writes to related tables. Other databases, including SQL Server, Oracle, and MongoDB, reject list updates.
+ 
+ {{< verified by="TestBulkUpdateMatchesRowsByPrimaryKey" file="tests/update_test.go" line="490" >}}
+ {{< verified by="TestBulkUpdateRejectsUnmatchableRows" file="core/internal/qcode/bulk_update_test.go" line="84" >}}
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #695** (closed): Update the homepage testimonial to use DeepORG (@dosco)
+- **PR #694** (2026-11-22): feat(core): update a list of rows in one mutation, matched by primary key (@officialasishkumar)
 - **PR #693** (2026-11-13): fix(introspection): expose columns of Postgres functions returning table rows (@officialasishkumar)
 - **PR #692** (2026-10-31): fix(discovery): aggregate SQLite index statistics per table (@rudycelekli)
 - **PR #691** (2026-11-06): fix(openapi): discover fields inherited through allOf response schemas (@rudycelekli)
 - **PR #690** (2026-10-31): fix(graph): require complete standalone argument values (@rudycelekli)
-- **PR #689** (2026-11-06): fix(graph): resolve fragments independently of definition order (@rudycelekli)
 
 ---
 
@@ -2780,28 +3364,61 @@ Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. site): give the homepage Watch section a plain heading
+## X. serv): stop two replicas colliding on revision bumps and metric ticks
 
 **RULE**:
-When implementing operations in `website/content/_index.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dosco/graphjin. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `serv/artifacts.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dosco/deeporg. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ba272634`: site): give the homepage Watch section a plain heading. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `73d7188e`: serv): stop two replicas colliding on revision bumps and metric ticks. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `website/content/_index.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `serv/artifacts.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-<section id="watch-automation" class="dx-value"><div class="dx-value-copy"><p class="dx-kicker"><b>04</b><i></i><span>It speaks first</span></p><h2><span class="dx-line">Leave a question running.</span> <span class="dx-line">It tells you when something changes.</span></h2><p>DeepORG keeps answering that question against live data. It speaks up when the answer changes, or when something you expected never arrives.</p><div class="dx-links"><a class="dx-more" href="/watch/">What a standing question can do</a></div></div><div class="dx-value-art">{{< ascii scene="watch" label="Animated diagram: a question left running is checked every hour. When no rows have arrived for four hours, DeepORG says so without being asked." caption="a question left running" >}}</div></section>
+// bumpArtifactRevision moves a domain's revision on by one.
+//
+// Several replicas bump the same domain at the same moment, so the increment
+// is one statement that the database applies atomically. Direct SQL for the
+// same reason as claimTaskVerification: the internal GraphQL mutation API
+// cannot add to a column or report the affected-row count. Reading the
+// revision and writing it back let two replicas both insert a domain's first
+// row, and the second failed on the primary key; it also let a slow replica
+// write an older number over a newer one.
+	db, dbType, _, ok := s.artifactDB()
+	if !ok {
+	revisions := artifactTableName(dbType, s.conf.Core.EffectiveArtifactsConfig().Schema, "revisions")
+	domainCol := quoteStoreIdent(dbType, "domain")
+	revisionCol := quoteStoreIdent(dbType, "revision")
+	updatedAtCol := quoteStoreIdent(dbType, "updated_at")
+	now := time.Now().UTC()
+	var updatedAt any = now.Format(time.RFC3339)
+	if dbType == "postgres" || dbType == "" {
+		updatedAt = now
+	}
+	increment := func() (bool, error) {
+		res, err := s.internalStoreExec(ctx, db, dbType,
+			fmt.Sprintf("UPDATE %s SET %s = %s + 1, %s = %s WHERE %s = %s",
+				revisions, revisionCol, revisionCol,
+			
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-<section id="watch-automation" class="dx-value"><div class="dx-value-copy"><p class="dx-kicker"><b>04</b><i></i><span>It speaks first</span></p><h2>Nothing happened. That was the problem.</h2><p>Leave a question running and DeepORG keeps answering it against live data. It speaks up when the answer changes, or when something you expected never arrives.</p><div class="dx-links"><a class="dx-more" href="/watch/">What a standing question can do</a></div></div><div class="dx-value-art">{{< ascii scene="watch" label="Animated diagram: a question left running is checked every hour. When no rows have arrived for four hours, DeepORG says so without being asked." caption="a question left running" >}}</div></section>
+	if _, _, _, ok := s.artifactDB(); !ok {
+	now := time.Now().UTC().Format(time.RFC3339)
+	current, err := s.artifactRevision(ctx, domain)
+	if err != nil {
+		return err
+	input := map[string]any{"domain": domain, "revision": current + 1, "updated_at": now}
+	if current == 0 {
+		_, err = s.internalStoreMutationRows(ctx, "revisions", `insert: $input`, revisionStoreFields, map[string]any{"input": input})
+	_, err = s.internalStoreMutationRows(ctx, "revisions", `where: { domain: { eq: $domain } }, update: $input`, revisionStoreFields, map[string]any{"domain": domain, "input": map[string]any{"revision": current + 1, "updated_at": now}})
+	return err
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ba272634` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `73d7188e` are properly handled with clean fallback behavior.

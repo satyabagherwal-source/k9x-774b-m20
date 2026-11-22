@@ -11983,3 +11983,6 @@
 | `CYCLE-20261122-XW1F` | `2026-11-22T02:29:30.099Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8012` | Yes (`9809a2d2...`) |
 | `CYCLE-20261122-XXSO` | `2026-11-22T02:29:32.376Z` | `infiniflow/infinity` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9882` | Yes (`609b8975...`) |
 | `CYCLE-20261122-XZ4I` | `2026-11-22T02:29:34.098Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9883` | Yes (`3b7d4e0f...`) |
+| `CYCLE-20261122-BSCN` | `2026-11-22T02:40:18.503Z` | `dosco/deeporg` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9884` | Yes (`ae71d15a...`) |
+| `CYCLE-20261122-E2WO` | `2026-11-22T02:42:05.496Z` | `PrunaAI/P-Image-OSS-Comfy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9885, Rule 9886` | Yes (`85823549...`) |
+| `CYCLE-2026-11-22-PROJ-EVOLVE` | `2026-11-22T02:42:32.154Z` | `hf-prunaai-p-h3-image-comfy` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-F5CAA699` [Domain H] | Yes (`0da41542...`) |

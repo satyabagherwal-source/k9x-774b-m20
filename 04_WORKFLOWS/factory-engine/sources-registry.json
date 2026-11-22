@@ -46,8 +46,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-22T01:58:53.387Z",
-    "lastVerified": "2026-11-22T01:58:53.387Z",
+    "lastChecked": "2026-11-22T02:40:18.733Z",
+    "lastVerified": "2026-11-22T02:40:18.733Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-22T02:29:37.341Z",
-    "lastVerified": "2026-11-22T02:29:37.341Z",
+    "lastChecked": "2026-11-22T02:42:08.918Z",
+    "lastVerified": "2026-11-22T02:42:08.918Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -1223,8 +1223,8 @@
     "officialUrl": "https://github.com/freenet/freenet-core",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-21T21:31:39.126Z",
-    "lastVerified": "2026-11-21T21:31:39.126Z",
+    "lastChecked": "2026-11-22T02:40:13.813Z",
+    "lastVerified": "2026-11-22T02:40:13.813Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-freenet-freenet-core",
@@ -2547,9 +2547,9 @@
   "caviraoss-longmemory": {
     "name": "LongMemory",
     "officialUrl": "https://github.com/CaviraOSS/LongMemory",
-    "lastChecked": "2026-11-20T22:30:57.862Z",
+    "lastChecked": "2026-11-22T02:40:16.196Z",
     "revisionIdentifier": "aec98ced",
-    "lastVerified": "2026-11-20T22:30:57.862Z"
+    "lastVerified": "2026-11-22T02:40:16.196Z"
   },
   "kuddev-pebrel": {
     "name": "Kuddev/pebrel",
@@ -3723,18 +3723,18 @@
     "lastVerified": "2026-11-21T22:40:05.904Z"
   },
   "dosco-graphjin": {
-    "name": "dosco/graphjin",
+    "name": "dosco/deeporg",
     "officialUrl": "https://github.com/dosco/graphjin",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-20T23:21:25.621Z",
-    "lastVerified": "2026-11-20T23:21:25.621Z",
+    "lastChecked": "2026-11-22T02:40:17.439Z",
+    "lastVerified": "2026-11-22T02:40:17.439Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
-    "learningId": "learn-github-dosco-graphjin",
-    "contentHash": "4fa73f756952120a75fe9e26a97954c4fa536a93217ab9216030095912a05382",
+    "learningId": "learn-github-dosco-deeporg",
+    "contentHash": "ae71d15abe0fffbdd14fa89a05b457a62f40fc28fbe1e66328c7c5ca4df1016a",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -4929,9 +4929,9 @@
   "crazycodeboy-react-native-splash-screen": {
     "name": "react-native-splash-screen",
     "officialUrl": "https://github.com/crazycodeboy/react-native-splash-screen",
-    "lastChecked": "2026-11-18T21:50:08.300Z",
+    "lastChecked": "2026-11-22T02:40:08.699Z",
     "revisionIdentifier": "b4719762",
-    "lastVerified": "2026-11-18T21:50:08.300Z"
+    "lastVerified": "2026-11-22T02:40:08.699Z"
   },
   "pulumi-pulumi": {
     "name": "pulumi/pulumi",
@@ -5343,9 +5343,9 @@
   "ekzhang-rustpad": {
     "name": "rustpad",
     "officialUrl": "https://github.com/ekzhang/rustpad",
-    "lastChecked": "2026-11-20T15:35:01.424Z",
+    "lastChecked": "2026-11-22T02:40:03.705Z",
     "revisionIdentifier": "54e4a938",
-    "lastVerified": "2026-11-20T15:35:01.424Z"
+    "lastVerified": "2026-11-22T02:40:03.705Z"
   },
   "hf-fermionresearch-phonon-2": {
     "name": "FermionResearch/Phonon-2",
@@ -13408,6 +13408,23 @@
     "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-coder-gguf",
     "contentHash": "baaaa5725ffc1e692bc41b0ccf3334944f1d0873b22a0c0d52d3a626a06045cf",
     "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-prunaai-p-h3-image-comfy": {
+    "name": "PrunaAI/P-Image-OSS-Comfy",
+    "officialUrl": "https://huggingface.co/PrunaAI/P-H3-Image-Comfy",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-22T02:40:06.681Z",
+    "lastVerified": "2026-11-22T02:40:06.681Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-prunaai-p-h3-image-comfy",
+    "contentHash": "85823549651172920a845ad97bde0d3f6ffdd99d326535c4ae80766081eb0999",
+    "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

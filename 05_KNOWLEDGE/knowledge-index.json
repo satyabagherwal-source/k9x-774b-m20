@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T02:29:39.459Z",
+  "last_updated": "2026-11-22T02:42:34.521Z",
   "total_verified_learnings": 9065,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23407,
+  "total_items": 23421,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "f42633de40065e2846a315b06b44b2759feb4fd9d7fa122078501b1d0f9490c0",
+      "content_hash": "b9ef20ac9ff195550ca2efde3ee6f7fee4584c224817f199336a377db1d8c57a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T02:09:20.492Z"
+      "persisted_at": "2026-11-22T02:42:34.353Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "672ac1e66726b314dbe3e54c098005f6afe8cbed91b36c0c15959ca4e1d9dfea",
+      "content_hash": "e21deca53093bdebaf75670ba83249a5bfcdef2318b60d9df288824bccd354d5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T02:09:20.636Z"
+      "persisted_at": "2026-11-22T02:42:34.521Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -213870,22 +213870,33 @@
     "learn-huggingface-prunaai-p-h3-image-comfy": {
       "learning_id": "learn-huggingface-prunaai-p-h3-image-comfy",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "source": "PrunaAI/P-H3-Image-Comfy",
-      "repository": "PrunaAI/P-H3-Image-Comfy",
+      "source": "PrunaAI/P-Image-OSS-Comfy",
+      "repository": "PrunaAI/P-Image-OSS-Comfy",
       "slug": "hf-prunaai-p-h3-image-comfy",
       "platform": "huggingface",
       "source_url": "https://huggingface.co/PrunaAI/P-H3-Image-Comfy",
       "source_version": "hf-prunaai-p-h3-image-comfy",
-      "content_hash": "1f4edf17be8a79403fb24dde54bcb375624c127b45e8e803a13c352c59a76d93",
+      "content_hash": "85823549651172920a845ad97bde0d3f6ffdd99d326535c4ae80766081eb0999",
       "dossier_path": "07_PROJECT_LEARNING/hf-prunaai-p-h3-image-comfy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-prunaai-p-h3-image-comfy-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 9885,
+          "title": "Zero-Allocation In-Place LoRA Application Over Quantized Tensors",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9886,
+          "title": "Strict Memory-Mapped SafeTensors Key Deserialization Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T06:57:41.354Z",
+      "verified_at": "2026-11-22T02:42:05.292Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -231092,9 +231103,9 @@
       "title": "Research & Knowledge Intelligence: dosco-graphjin-learnings Core Invariants",
       "repository": "dosco-graphjin-learnings",
       "source_version": "HEAD",
-      "content_hash": "9d86a42883e2a5f763efac7d3fe26b6fb25a7c110122ac17c6d313f1478de565",
+      "content_hash": "064b738d009e0ece24c27dedb2b1978468dd420686577013250b2120299ec254",
       "domain_letter": "D",
-      "persisted_at": "2026-11-20T23:22:01.298Z"
+      "persisted_at": "2026-11-22T02:42:33.614Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-dosco-graphjin-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dosco-graphjin-learnings",
@@ -231104,9 +231115,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dosco-graphjin-learnings",
       "repository": "dosco-graphjin-learnings",
       "source_version": "HEAD",
-      "content_hash": "06664bce872165ae153ada6366d5af0047ae57ccddfda7bed7f69aafcbc6ff68",
+      "content_hash": "8a55ac2b9ce9dfd340c5707f21613180917fcfe78c27a46f4fee9a8d2a6aab48",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T23:22:01.459Z"
+      "persisted_at": "2026-11-22T02:42:33.787Z"
     },
     "learn-github-react-metro": {
       "learning_id": "learn-github-react-metro",
@@ -310492,18 +310503,23 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "dosco/deeporg",
       "repository": "dosco/deeporg",
-      "slug": "dosco-deeporg",
+      "slug": "dosco-graphjin",
       "platform": "github",
-      "source_url": "https://github.com/dosco/deeporg",
-      "source_version": "e828492b",
-      "content_hash": "606f180bf7b9fbae8b0c9b29251e8275dcb4da1e67e2597a83f2a1c94c6abd72",
-      "dossier_path": "07_PROJECT_LEARNING/dosco-deeporg-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/dosco-deeporg-learnings.md",
+      "source_url": "https://github.com/dosco/graphjin",
+      "source_version": "85c58cdb",
+      "content_hash": "ae71d15abe0fffbdd14fa89a05b457a62f40fc28fbe1e66328c7c5ca4df1016a",
+      "dossier_path": "07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
       "promoted_rules": [
         {
           "number": 8489,
           "title": "expose columns of Postgres functions returning table rows",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 9884,
+          "title": "stop two replicas colliding on revision bumps and metric ticks",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -310511,7 +310527,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T01:08:18.890Z",
+      "verified_at": "2026-11-22T02:40:18.336Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -310536,13 +310552,13 @@
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dosco-deeporg",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/dosco-deeporg-verification-protocol-empirical-defect-shield-for-dosco-deeporg.md",
+      "relative_path": "08_VERIFICATION/dosco-graphjin-verification-protocol-empirical-defect-shield-for-dosco-deeporg.md",
       "title": "Verification Protocol: Empirical Defect Shield for dosco/deeporg",
       "repository": "dosco/deeporg",
-      "source_version": "e828492b",
-      "content_hash": "edf6bee4774019fce62c13aba27c27e4c9f230a3d38ed2519884cbece71e0f66",
+      "source_version": "85c58cdb",
+      "content_hash": "0e63be7d1317d067d05e8f6d05fda07e64f8249df1d4ffdb84e9c186f9f211d8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T01:08:19.620Z"
+      "persisted_at": "2026-11-22T02:40:18.981Z"
     },
     "rule-9688": {
       "learning_id": "rule-9688",
@@ -318146,13 +318162,13 @@
       "item_id": "candidate_directive-test-collab-write-trust-fixtures-with-explicit-0644-permissions",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-7YLR-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-EP1O-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "86dbd7ea62c190bcdb29c5f462d5ca1e11692de346ef7abf087e09c2635c7085",
+      "content_hash": "4ac121e962f041f1e4bf27d87a239ffbb19a9fb2d56d2a2b87a9bf9776eb39cb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T02:09:20.372Z"
+      "persisted_at": "2026-11-22T02:42:34.202Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants",
@@ -318305,6 +318321,180 @@
       "content_hash": "a621099bcbdec9a009ec13681bb17b5b386c5132491026f7dad67af4226b9895",
       "domain_letter": "H",
       "persisted_at": "2026-11-22T02:29:39.291Z"
+    },
+    "rule-9884": {
+      "learning_id": "rule-9884",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9884,
+      "title": "stop two replicas colliding on revision bumps and metric ticks",
+      "source_url": "https://github.com/dosco/graphjin",
+      "source_version": "85c58cdb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T02:40:18.336Z"
+    },
+    "candidate_directive-stop-two-replicas-colliding-on-revision-bumps-and-metric-ticks": {
+      "item_id": "candidate_directive-stop-two-replicas-colliding-on-revision-bumps-and-metric-ticks",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-BSIC-stop-two-replicas-colliding-on-revision-bumps-and-metric-ticks.md",
+      "title": "stop two replicas colliding on revision bumps and metric ticks",
+      "repository": "dosco/deeporg",
+      "source_version": "85c58cdb",
+      "content_hash": "6a4c9dd006c8b9a809ed164dcba5d3256d6cbdcf929c128e7a742b1204fef31c",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-22T02:40:18.714Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-dosco-deeporg-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-dosco-deeporg-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dosco-graphjin-research-knowledge-intelligence-dosco-deeporg-core-invariants.md",
+      "title": "Research & Knowledge Intelligence: dosco/deeporg Core Invariants",
+      "repository": "dosco/deeporg",
+      "source_version": "85c58cdb",
+      "content_hash": "43908bc3457316f1c0297db2da9f7e2eb4c678da6906a01cd75555c1fa3f95e6",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-22T02:40:18.844Z"
+    },
+    "rule-9885": {
+      "learning_id": "rule-9885",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9885,
+      "title": "Zero-Allocation In-Place LoRA Application Over Quantized Tensors",
+      "source_url": "https://huggingface.co/PrunaAI/P-H3-Image-Comfy",
+      "source_version": "hf-prunaai-p-h3-image-comfy",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T02:42:05.292Z"
+    },
+    "rule-9886": {
+      "learning_id": "rule-9886",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9886,
+      "title": "Strict Memory-Mapped SafeTensors Key Deserialization Invariant",
+      "source_url": "https://huggingface.co/PrunaAI/P-H3-Image-Comfy",
+      "source_version": "hf-prunaai-p-h3-image-comfy",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T02:42:05.292Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-prunaai-p-image-oss-comfy-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-prunaai-p-image-oss-comfy-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-prunaai-p-h3-image-comfy-technical-construction-intelligence-prunaai-p-image-.md",
+      "title": "Technical Construction Intelligence: PrunaAI/P-Image-OSS-Comfy Core Invariants",
+      "repository": "PrunaAI/P-Image-OSS-Comfy",
+      "source_version": "hf-prunaai-p-h3-image-comfy",
+      "content_hash": "d63c427cec74f636978aecf1e7a642aa1f59cee59d888d27051a5f3153544e8e",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T02:42:05.823Z"
+    },
+    "agent_contract-agent-contract-prunaai-p-image-oss-comfy-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-prunaai-p-image-oss-comfy-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/hf-prunaai-p-h3-image-comfy-agent-contract-prunaai-p-image-oss-comfy-autonomous-.md",
+      "title": "Agent Contract: PrunaAI/P-Image-OSS-Comfy Autonomous Specialist Persona",
+      "repository": "PrunaAI/P-Image-OSS-Comfy",
+      "source_version": "hf-prunaai-p-h3-image-comfy",
+      "content_hash": "211c61c6f5feacd28296d7e7b8dc06db664f91fcbff2eb8984288a238d2229b6",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T02:42:05.970Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-prunaai-p-image-oss-comfy": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-prunaai-p-image-oss-comfy",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/hf-prunaai-p-h3-image-comfy-verification-protocol-empirical-defect-shield-for-pr.md",
+      "title": "Verification Protocol: Empirical Defect Shield for PrunaAI/P-Image-OSS-Comfy",
+      "repository": "PrunaAI/P-Image-OSS-Comfy",
+      "source_version": "hf-prunaai-p-h3-image-comfy",
+      "content_hash": "83120258835be4d8818d7bea4801e0c1fd4229b07153c0e305b63d5bd9ee5717",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-22T02:42:06.089Z"
+    },
+    "candidate_directive-zero-allocation-in-place-lora-application-over-quantized-tensors": {
+      "item_id": "candidate_directive-zero-allocation-in-place-lora-application-over-quantized-tensors",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ENN7-zero-allocation-in-place-lora-application-over-quantized-tensors.md",
+      "title": "Zero-Allocation In-Place LoRA Application Over Quantized Tensors",
+      "repository": "hf-prunaai-p-h3-image-comfy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0133a8bcd1dc63121570d0c6181a51ef3fb8edb99a5c4fa0f772dcbdf4254946",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T02:42:32.373Z"
+    },
+    "candidate_directive-strict-memory-mapped-safetensors-key-deserialization-invariant": {
+      "item_id": "candidate_directive-strict-memory-mapped-safetensors-key-deserialization-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ENN8-strict-memory-mapped-safetensors-key-deserialization-invariant.md",
+      "title": "Strict Memory-Mapped SafeTensors Key Deserialization Invariant",
+      "repository": "hf-prunaai-p-h3-image-comfy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5c41e393d27f61544292b6bdb9f013355708e6b248bba6e417d5567c1124cd06",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-22T02:42:32.569Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-hf-prunaai-p-h3-image-comfy-learnings-core-i": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-hf-prunaai-p-h3-image-comfy-learnings-core-i",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-prunaai-p-h3-image-comfy-learnings-technical-construction-intelligence-hf-pru.md",
+      "title": "Technical Construction Intelligence: hf-prunaai-p-h3-image-comfy-learnings Core Invariants",
+      "repository": "hf-prunaai-p-h3-image-comfy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "700ce8faad50d86a09e599ce51273c00da163d04c099a37bcf1ff4fc3abb99b9",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T02:42:32.725Z"
+    },
+    "agent_contract-agent-contract-hf-prunaai-p-h3-image-comfy-learnings-autonomous-specialist-perso": {
+      "item_id": "agent_contract-agent-contract-hf-prunaai-p-h3-image-comfy-learnings-autonomous-specialist-perso",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/hf-prunaai-p-h3-image-comfy-learnings-agent-contract-hf-prunaai-p-h3-image-comfy.md",
+      "title": "Agent Contract: hf-prunaai-p-h3-image-comfy-learnings Autonomous Specialist Persona",
+      "repository": "hf-prunaai-p-h3-image-comfy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f6bbe54907231d00f7733fa281114ee85b83410b7dbd383df84a9aaaf19b7969",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T02:42:32.896Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-hf-prunaai-p-h3-image-comfy-le": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-hf-prunaai-p-h3-image-comfy-le",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/hf-prunaai-p-h3-image-comfy-learnings-verification-protocol-empirical-defect-shi.md",
+      "title": "Verification Protocol: Empirical Defect Shield for hf-prunaai-p-h3-image-comfy-learnings",
+      "repository": "hf-prunaai-p-h3-image-comfy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5d955fb9a23ab7c4189294b613a1d2e48ce034f26cd67b157a7ef3f542477a2d",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-22T02:42:33.025Z"
+    },
+    "candidate_directive-serv-stop-two-replicas-colliding-on-revision-bumps-and-metric-ticks": {
+      "item_id": "candidate_directive-serv-stop-two-replicas-colliding-on-revision-bumps-and-metric-ticks",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-EOHC-serv-stop-two-replicas-colliding-on-revision-bumps-and-metric-ticks.md",
+      "title": "serv): stop two replicas colliding on revision bumps and metric ticks",
+      "repository": "dosco-graphjin-learnings",
+      "source_version": "HEAD",
+      "content_hash": "17e8225dc916669bf756f9b781a3d194846039424dec8e3a0a992893ed50db0c",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-22T02:42:33.469Z"
     }
   },
   "ai-builder-brain": {

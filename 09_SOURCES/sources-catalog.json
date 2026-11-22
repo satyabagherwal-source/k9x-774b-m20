@@ -3690,14 +3690,14 @@
     "learningId": "learn-github-nozbe-watermelondb"
   },
   "dosco-graphjin": {
-    "repository": "dosco/graphjin",
+    "repository": "dosco/deeporg",
     "platform": "github",
     "sourceUrl": "https://github.com/dosco/graphjin",
-    "sourceVersion": "ba272634",
+    "sourceVersion": "85c58cdb",
     "license": "Apache-2.0",
-    "contentHash": "4fa73f756952120a75fe9e26a97954c4fa536a93217ab9216030095912a05382",
-    "lastHarvestedAt": "2026-11-20T23:21:26.663Z",
-    "learningId": "learn-github-dosco-graphjin"
+    "contentHash": "ae71d15abe0fffbdd14fa89a05b457a62f40fc28fbe1e66328c7c5ca4df1016a",
+    "lastHarvestedAt": "2026-11-22T02:40:18.506Z",
+    "learningId": "learn-github-dosco-deeporg"
   },
   "gravitl-netmaker": {
     "repository": "gravitl/netmaker",
@@ -11920,13 +11920,13 @@
     "learningId": "learn-github-matthart1983-netwatch"
   },
   "hf-prunaai-p-h3-image-comfy": {
-    "repository": "PrunaAI/P-H3-Image-Comfy",
+    "repository": "PrunaAI/P-Image-OSS-Comfy",
     "platform": "huggingface",
     "sourceUrl": "https://huggingface.co/PrunaAI/P-H3-Image-Comfy",
     "sourceVersion": "hf-prunaai-p-h3-image-comfy",
     "license": "Open-Source",
-    "contentHash": "1f4edf17be8a79403fb24dde54bcb375624c127b45e8e803a13c352c59a76d93",
-    "lastHarvestedAt": "2026-11-18T06:57:41.556Z",
+    "contentHash": "85823549651172920a845ad97bde0d3f6ffdd99d326535c4ae80766081eb0999",
+    "lastHarvestedAt": "2026-11-22T02:42:05.499Z",
     "learningId": "learn-huggingface-prunaai-p-h3-image-comfy"
   },
   "jarvis322-macos-sysdata": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T02:29:34.110Z",
+  "last_updated": "2026-11-22T02:42:05.506Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -19776,14 +19776,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dosco-deeporg",
-      "content_hash": "606f180bf7b9fbae8b0c9b29251e8275dcb4da1e67e2597a83f2a1c94c6abd72",
-      "verified_at": "2026-11-21T01:08:19.101Z",
+      "content_hash": "ae71d15abe0fffbdd14fa89a05b457a62f40fc28fbe1e66328c7c5ca4df1016a",
+      "verified_at": "2026-11-22T02:40:18.514Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T01:08:19.101Z"
+      "last_updated": "2026-11-22T02:40:18.514Z"
     },
     "openai/clip-vit-large-patch14": {
       "repository": "openai/clip-vit-large-patch14",
@@ -19829,6 +19829,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-21T23:55:31.814Z"
+    },
+    "PrunaAI/P-Image-OSS-Comfy": {
+      "repository": "PrunaAI/P-Image-OSS-Comfy",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-prunaai-p-h3-image-comfy",
+      "content_hash": "85823549651172920a845ad97bde0d3f6ffdd99d326535c4ae80766081eb0999",
+      "verified_at": "2026-11-22T02:42:05.506Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-22T02:42:05.506Z"
     }
   },
   "repos": {
