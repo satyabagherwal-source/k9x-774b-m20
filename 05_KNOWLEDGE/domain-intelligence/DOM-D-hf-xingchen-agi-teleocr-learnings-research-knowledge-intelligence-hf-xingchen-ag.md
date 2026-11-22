@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T11:55:42.333Z",
+  "timestamp": "2026-11-22T18:35:29.804Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-xingchen-agi-teleocr-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-xingchen-agi-teleocr-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T11:55:42.333Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T18:35:29.804Z`  
 > **Learning ID**: `LEARN-EVO-hf-xingchen-agi-teleocr-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-xingchen-`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T11:54:52.388Z  
+> **Timestamp**: 2026-11-22T18:35:16.578Z  
 > **Learning ID**: `learn-huggingface-xingchen-agi-teleocr`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/XingChen-AGI/TeleOCR](https://huggingface.co/XingChen-AGI/TeleOCR))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T11:54:52.384Z  
+> **Harvest Timestamp**: 2026-11-22T18:35:16.446Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 18961 downloads | 1319 likes
+- **Stars / Engagement**: 16150 downloads | 1321 likes
 
 ---
 

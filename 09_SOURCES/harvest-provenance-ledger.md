@@ -12182,3 +12182,5 @@ Every entry in this ledger must capture:
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `165a8ee8` | Multi-dimensional audit evidence | 2026-11-22T18:21:28.907Z |
 | `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `318183b5` | Multi-dimensional audit evidence | 2026-11-22T18:21:32.476Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `4c1f0dba` | Multi-dimensional audit evidence | 2026-11-22T18:21:34.086Z |
+| `learn-huggingface-xingchen-agi-teleocr` | `https://huggingface.co/XingChen-AGI/TeleOCR` | `hf-xingche` | Multi-dimensional audit evidence | 2026-11-22T18:35:17.051Z |
+| `learn-github-yyjeqhc-webcodex` | `https://github.com/yyjeqhc/webcodex` | `8779794b` | Multi-dimensional audit evidence | 2026-11-22T18:35:18.197Z |

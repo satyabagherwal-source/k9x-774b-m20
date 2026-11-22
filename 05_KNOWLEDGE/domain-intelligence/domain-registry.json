@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T18:21:39.631Z",
+  "last_updated": "2026-11-22T18:35:30.494Z",
   "total_records": 2370,
   "domains": {
     "A": {
@@ -9103,8 +9103,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "b49ada535a629dc591808705a14fd1c9df1278565325129b675b092bfcdb7de5",
-      "created_at": "2026-11-22T15:01:20.111Z"
+      "content_hash": "3205a426536e6fbbd0d1cb591332d79ede2fa5b1e398a8c50cf57c6bd82cc428",
+      "created_at": "2026-11-22T18:35:30.494Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -24024,8 +24024,8 @@
       "title": "Technical Construction Intelligence: yyjeqhc/webcodex Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-yyjeqhc-webcodex-technical-construction-intelligence-yyjeqhc-webcodex-core-invar.md",
       "repository": "yyjeqhc/webcodex",
-      "content_hash": "e994a5820f79f0fc7d811201e9d8662e16735fc254b9cd1f1d2117786edc02d5",
-      "created_at": "2026-11-17T19:27:23.608Z"
+      "content_hash": "d08092bf84d27844c1b6aef31e5499de05a6c06d69b9d4f6d84a731273703290",
+      "created_at": "2026-11-22T18:35:18.596Z"
     },
     "domain_intelligence-technical-construction-intelligence-yyjeqhc-webcodex-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-yyjeqhc-webcodex-learnings-core-invariants",
@@ -24033,8 +24033,8 @@
       "title": "Technical Construction Intelligence: yyjeqhc-webcodex-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-yyjeqhc-webcodex-learnings-technical-construction-intelligence-yyjeqhc-webcodex-.md",
       "repository": "yyjeqhc-webcodex-learnings",
-      "content_hash": "56cb4b36eecc2de0d030a9a63578d237263cc97c8fc6244900bba80cf6fee975",
-      "created_at": "2026-11-17T19:27:39.620Z"
+      "content_hash": "c690cae8184898aaa35cfe100ea3903975d83b00f314b142274818c2c990298a",
+      "created_at": "2026-11-22T18:35:29.409Z"
     },
     "domain_intelligence-technical-construction-intelligence-tursodatabase-limbo-learnings-core-invariant": {
       "record_id": "domain_intelligence-technical-construction-intelligence-tursodatabase-limbo-learnings-core-invariant",
@@ -29541,8 +29541,8 @@
       "title": "Research & Knowledge Intelligence: XingChen-AGI/TeleOCR Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xingchen-agi-teleocr-research-knowledge-intelligence-xingchen-agi-teleocr-cor.md",
       "repository": "XingChen-AGI/TeleOCR",
-      "content_hash": "46211f6943a96f67c9edfb1b2a09f1730120ed24435e647e0be4dbd5fa8613d0",
-      "created_at": "2026-11-18T11:54:52.998Z"
+      "content_hash": "6ec3c50059a634e411f42e0941566cb6b5f394102a0e76ad3b3b3ba0a1fc2fd9",
+      "created_at": "2026-11-22T18:35:17.267Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-teleocr-learnings-core-invariant": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-teleocr-learnings-core-invariant",
@@ -29550,8 +29550,8 @@
       "title": "Research & Knowledge Intelligence: hf-xingchen-agi-teleocr-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xingchen-agi-teleocr-learnings-research-knowledge-intelligence-hf-xingchen-ag.md",
       "repository": "hf-xingchen-agi-teleocr-learnings",
-      "content_hash": "24a0e50922d7b01760af6f43b3452a843eb09ffca202287e29af1d9dd0f2b750",
-      "created_at": "2026-11-18T11:55:42.430Z"
+      "content_hash": "93fcc35ed28a15b76724a44c3b3cde9ca930e8402d98f9f51ad5dc5be41f86ec",
+      "created_at": "2026-11-22T18:35:29.904Z"
     },
     "domain_intelligence-design-intelligence-qwen-qwen-image-2-1-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-qwen-qwen-image-2-1-core-invariants",

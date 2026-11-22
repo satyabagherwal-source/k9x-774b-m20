@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T18:21:39.980Z",
+  "last_updated": "2026-11-22T18:35:30.653Z",
   "total_verified_learnings": 9072,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23702,
+  "total_items": 23705,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "b49ada535a629dc591808705a14fd1c9df1278565325129b675b092bfcdb7de5",
+      "content_hash": "3205a426536e6fbbd0d1cb591332d79ede2fa5b1e398a8c50cf57c6bd82cc428",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T15:01:20.111Z"
+      "persisted_at": "2026-11-22T18:35:30.494Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "d19b5a2d903b89ae66dce9d2505aaa335e481659864d76b2d6340e1ae6739c72",
+      "content_hash": "ddcb21b6a8f90c997f97fbafd5fbb64c8a6cf91a79db33f2ffb1ca5d4ef4a551",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T15:01:20.356Z"
+      "persisted_at": "2026-11-22T18:35:30.653Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -257111,8 +257111,8 @@
       "slug": "yyjeqhc-webcodex",
       "platform": "github",
       "source_url": "https://github.com/yyjeqhc/webcodex",
-      "source_version": "ea81bd89",
-      "content_hash": "262f70187b726a8dd0e7aa03923f3f4154ecb4bfc5366c3e912bca3e8c921f86",
+      "source_version": "8779794b",
+      "content_hash": "03e3f96af1c343e5e469a6b349a59725ba0f00b6cde705e216102a21d3a459e6",
       "dossier_path": "07_PROJECT_LEARNING/yyjeqhc-webcodex-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/yyjeqhc-webcodex-learnings.md",
       "promoted_rules": [
@@ -257125,6 +257125,11 @@
           "number": 9037,
           "title": "update rustls, quinn and h2 for RustSec advisories",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9972,
+          "title": "unify structured error diagnostics, state-error lifecycle, and safe re",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -257132,7 +257137,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T19:27:23.086Z",
+      "verified_at": "2026-11-22T18:35:17.987Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -257174,10 +257179,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-yyjeqhc-webcodex-technical-construction-intelligence-yyjeqhc-webcodex-core-invar.md",
       "title": "Technical Construction Intelligence: yyjeqhc/webcodex Core Invariants",
       "repository": "yyjeqhc/webcodex",
-      "source_version": "ea81bd89",
-      "content_hash": "e994a5820f79f0fc7d811201e9d8662e16735fc254b9cd1f1d2117786edc02d5",
+      "source_version": "8779794b",
+      "content_hash": "d08092bf84d27844c1b6aef31e5499de05a6c06d69b9d4f6d84a731273703290",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T19:27:23.608Z"
+      "persisted_at": "2026-11-22T18:35:18.596Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-yyjeqhc-webcodex": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-yyjeqhc-webcodex",
@@ -257186,10 +257191,10 @@
       "relative_path": "08_VERIFICATION/yyjeqhc-webcodex-verification-protocol-empirical-defect-shield-for-yyjeqhc-webco.md",
       "title": "Verification Protocol: Empirical Defect Shield for yyjeqhc/webcodex",
       "repository": "yyjeqhc/webcodex",
-      "source_version": "ea81bd89",
-      "content_hash": "1e0d2d9e600d953aad426ed9cfbb6b121ffd1612ca3fd2e6dbcf85c25e6e04b1",
+      "source_version": "8779794b",
+      "content_hash": "cca0cc8615c42343c45562ef2c58c839f2e7009ca8671d80c87c4eb3d8579366",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T19:27:23.752Z"
+      "persisted_at": "2026-11-22T18:35:18.775Z"
     },
     "rule-8722": {
       "learning_id": "rule-8722",
@@ -257225,9 +257230,9 @@
       "title": "Technical Construction Intelligence: yyjeqhc-webcodex-learnings Core Invariants",
       "repository": "yyjeqhc-webcodex-learnings",
       "source_version": "HEAD",
-      "content_hash": "56cb4b36eecc2de0d030a9a63578d237263cc97c8fc6244900bba80cf6fee975",
+      "content_hash": "c690cae8184898aaa35cfe100ea3903975d83b00f314b142274818c2c990298a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T19:27:39.620Z"
+      "persisted_at": "2026-11-22T18:35:29.409Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-yyjeqhc-webcodex-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-yyjeqhc-webcodex-learnings",
@@ -257237,9 +257242,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for yyjeqhc-webcodex-learnings",
       "repository": "yyjeqhc-webcodex-learnings",
       "source_version": "HEAD",
-      "content_hash": "fb3d5bcc0cd9886582e741f6ac32c39e9543a2a8756783f163d075a8e890068b",
+      "content_hash": "3c6d5a9b63998b271202cee0fb49ef4b0f909be558bda3f3a06c47978af8d7e8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T19:27:39.769Z"
+      "persisted_at": "2026-11-22T18:35:29.571Z"
     },
     "rule-8723": {
       "learning_id": "rule-8723",
@@ -282515,7 +282520,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XingChen-AGI/TeleOCR",
       "source_version": "hf-xingchen-agi-teleocr",
-      "content_hash": "37627c9579d7107501dcca0806e021fa28db6a00ac70f12c40f17ec08e7d5d84",
+      "content_hash": "79bd4873ed6d6ef660f478683436cd2d2480c3271f8fd74293d0e3a993a9fc98",
       "dossier_path": "07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md",
       "promoted_rules": [],
@@ -282524,7 +282529,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T11:54:52.613Z",
+      "verified_at": "2026-11-22T18:35:16.831Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -282541,9 +282546,9 @@
       "title": "Research & Knowledge Intelligence: XingChen-AGI/TeleOCR Core Invariants",
       "repository": "XingChen-AGI/TeleOCR",
       "source_version": "hf-xingchen-agi-teleocr",
-      "content_hash": "46211f6943a96f67c9edfb1b2a09f1730120ed24435e647e0be4dbd5fa8613d0",
+      "content_hash": "6ec3c50059a634e411f42e0941566cb6b5f394102a0e76ad3b3b3ba0a1fc2fd9",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T11:54:52.998Z"
+      "persisted_at": "2026-11-22T18:35:17.267Z"
     },
     "rule-9085": {
       "learning_id": "rule-9085",
@@ -282631,9 +282636,9 @@
       "title": "Research & Knowledge Intelligence: hf-xingchen-agi-teleocr-learnings Core Invariants",
       "repository": "hf-xingchen-agi-teleocr-learnings",
       "source_version": "HEAD",
-      "content_hash": "24a0e50922d7b01760af6f43b3452a843eb09ffca202287e29af1d9dd0f2b750",
+      "content_hash": "93fcc35ed28a15b76724a44c3b3cde9ca930e8402d98f9f51ad5dc5be41f86ec",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T11:55:42.430Z"
+      "persisted_at": "2026-11-22T18:35:29.904Z"
     },
     "candidate_directive-cli-clean-up-full-uninstall-and-verify-installer-release-identity": {
       "item_id": "candidate_directive-cli-clean-up-full-uninstall-and-verify-installer-release-identity",
@@ -318570,13 +318575,13 @@
       "item_id": "candidate_directive-test-collab-write-trust-fixtures-with-explicit-0644-permissions",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-SQYK-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-G6FT-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "42de8945178b6b271fcab1f6835b57633d0b241e21eec54c3fac007353257545",
+      "content_hash": "53aa631cc5e223e09e48ba8f8d8e4f8d88bf6068034a12ce7c1a6f8559034aaf",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T15:01:19.872Z"
+      "persisted_at": "2026-11-22T18:35:30.332Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants",
@@ -322580,6 +322585,44 @@
       "content_hash": "579e32a088d33af62f0ce5e0da3c532ad209ebacaacdd9bf76391f252074f05d",
       "domain_letter": "D",
       "persisted_at": "2026-11-22T18:21:37.916Z"
+    },
+    "rule-9972": {
+      "learning_id": "rule-9972",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9972,
+      "title": "unify structured error diagnostics, state-error lifecycle, and safe re",
+      "source_url": "https://github.com/yyjeqhc/webcodex",
+      "source_version": "8779794b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T18:35:17.987Z"
+    },
+    "candidate_directive-unify-structured-error-diagnostics-state-error-lifecycle-and-safe-re": {
+      "item_id": "candidate_directive-unify-structured-error-diagnostics-state-error-lifecycle-and-safe-re",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-FX90-unify-structured-error-diagnostics-state-error-lifecycle-and-safe-re.md",
+      "title": "unify structured error diagnostics, state-error lifecycle, and safe re",
+      "repository": "yyjeqhc/webcodex",
+      "source_version": "8779794b",
+      "content_hash": "bbf57b537b7ae2c6c970dfc1e21a33fd128e80e7409e4344021f662177eaae6a",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T18:35:18.423Z"
+    },
+    "candidate_directive-desktop-unify-structured-error-diagnostics-state-error-lifecycle-and-safe-re": {
+      "item_id": "candidate_directive-desktop-unify-structured-error-diagnostics-state-error-lifecycle-and-safe-re",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-G5LQ-desktop-unify-structured-error-diagnostics-state-error-lifecycle-and-safe-re.md",
+      "title": "desktop): unify structured error diagnostics, state-error lifecycle, and safe re",
+      "repository": "yyjeqhc-webcodex-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7bed343a77cec59cedbdaff754229f309dbc3affbbac6fb46dd8f89f4dcfa25b",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T18:35:29.250Z"
     }
   },
   "ai-builder-brain": {

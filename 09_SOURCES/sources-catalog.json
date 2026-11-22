@@ -305,8 +305,8 @@
     "sourceUrl": "https://huggingface.co/XingChen-AGI/TeleOCR",
     "sourceVersion": "hf-xingchen-agi-teleocr",
     "license": "Open-Source",
-    "contentHash": "37627c9579d7107501dcca0806e021fa28db6a00ac70f12c40f17ec08e7d5d84",
-    "lastHarvestedAt": "2026-11-18T11:54:52.817Z",
+    "contentHash": "79bd4873ed6d6ef660f478683436cd2d2480c3271f8fd74293d0e3a993a9fc98",
+    "lastHarvestedAt": "2026-11-22T18:35:17.051Z",
     "learningId": "learn-huggingface-xingchen-agi-teleocr"
   },
   "hf-qwen-qwen-image-2.1": {
@@ -12303,10 +12303,10 @@
     "repository": "yyjeqhc/webcodex",
     "platform": "github",
     "sourceUrl": "https://github.com/yyjeqhc/webcodex",
-    "sourceVersion": "ea81bd89",
+    "sourceVersion": "8779794b",
     "license": "Apache-2.0",
-    "contentHash": "262f70187b726a8dd0e7aa03923f3f4154ecb4bfc5366c3e912bca3e8c921f86",
-    "lastHarvestedAt": "2026-11-17T19:27:23.278Z",
+    "contentHash": "03e3f96af1c343e5e469a6b349a59725ba0f00b6cde705e216102a21d3a459e6",
+    "lastHarvestedAt": "2026-11-22T18:35:18.197Z",
     "learningId": "learn-github-yyjeqhc-webcodex"
   },
   "hf-minimaxai-minimax-h3-image": {

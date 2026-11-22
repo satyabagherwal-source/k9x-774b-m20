@@ -20,9 +20,9 @@
   "gravitl-netmaker": {
     "name": "netmaker",
     "officialUrl": "https://github.com/gravitl/netmaker",
-    "lastChecked": "2026-11-22T10:54:56.252Z",
+    "lastChecked": "2026-11-22T18:35:23.850Z",
     "revisionIdentifier": "098d26a7",
-    "lastVerified": "2026-11-22T10:54:56.252Z"
+    "lastVerified": "2026-11-22T18:35:23.850Z"
   },
   "mintplex-labs-anything-llm": {
     "name": "Mintplex-Labs/anything-llm",
@@ -46,8 +46,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-22T17:53:16.633Z",
-    "lastVerified": "2026-11-22T17:53:16.633Z",
+    "lastChecked": "2026-11-22T18:35:28.848Z",
+    "lastVerified": "2026-11-22T18:35:28.848Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-22T18:21:37.370Z",
-    "lastVerified": "2026-11-22T18:21:37.370Z",
+    "lastChecked": "2026-11-22T18:35:28.856Z",
+    "lastVerified": "2026-11-22T18:35:28.856Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -949,9 +949,9 @@
   "devspace-sh-devspace": {
     "name": "devspace",
     "officialUrl": "https://github.com/devspace-sh/devspace",
-    "lastChecked": "2026-11-21T18:44:21.642Z",
+    "lastChecked": "2026-11-22T18:35:21.451Z",
     "revisionIdentifier": "8ff62607",
-    "lastVerified": "2026-11-21T18:44:21.642Z"
+    "lastVerified": "2026-11-22T18:35:21.451Z"
   },
   "rustls-rustls": {
     "name": "rustls/rustls",
@@ -1187,12 +1187,12 @@
     "officialUrl": "https://huggingface.co/XingChen-AGI/TeleOCR",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-18T11:54:52.384Z",
-    "lastVerified": "2026-11-18T11:54:52.384Z",
+    "lastChecked": "2026-11-22T18:35:16.446Z",
+    "lastVerified": "2026-11-22T18:35:16.446Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-xingchen-agi-teleocr",
-    "contentHash": "37627c9579d7107501dcca0806e021fa28db6a00ac70f12c40f17ec08e7d5d84",
+    "contentHash": "79bd4873ed6d6ef660f478683436cd2d2480c3271f8fd74293d0e3a993a9fc98",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -6812,9 +6812,9 @@
   "postgresml-postgresml": {
     "name": "postgresml",
     "officialUrl": "https://github.com/postgresml/postgresml",
-    "lastChecked": "2026-11-21T17:05:55.311Z",
+    "lastChecked": "2026-11-22T18:35:26.336Z",
     "revisionIdentifier": "caf2b6cc",
-    "lastVerified": "2026-11-21T17:05:55.311Z"
+    "lastVerified": "2026-11-22T18:35:26.336Z"
   },
   "alexpasmantier-television": {
     "name": "television",
@@ -8687,9 +8687,9 @@
   "swiftuix-swiftuix": {
     "name": "SwiftUIX",
     "officialUrl": "https://github.com/SwiftUIX/SwiftUIX",
-    "lastChecked": "2026-11-19T17:23:15.318Z",
+    "lastChecked": "2026-11-22T18:35:19.123Z",
     "revisionIdentifier": "3a99044b",
-    "lastVerified": "2026-11-19T17:23:15.318Z"
+    "lastVerified": "2026-11-22T18:35:19.123Z"
   },
   "facebook-folly": {
     "name": "meta/folly",
@@ -8981,11 +8981,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "yyjeqhc-webcodex": {
-    "name": "webcodex",
+    "name": "yyjeqhc/webcodex",
     "officialUrl": "https://github.com/yyjeqhc/webcodex",
-    "lastChecked": "2026-11-21T06:13:43.691Z",
-    "revisionIdentifier": "ea81bd89",
-    "lastVerified": "2026-11-21T06:13:43.691Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-22T18:35:17.159Z",
+    "lastVerified": "2026-11-22T18:35:17.159Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-yyjeqhc-webcodex",
+    "contentHash": "03e3f96af1c343e5e469a6b349a59725ba0f00b6cde705e216102a21d3a459e6",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "addy0-com-free-open-technical-seo-crawler": {
     "name": "free-open-technical-SEO-crawler",

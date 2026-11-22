@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/yyjeqhc-webcodex-learnings.md`  
 > **Source**: github ([https://github.com/yyjeqhc/webcodex](https://github.com/yyjeqhc/webcodex))  
-> **Source Version**: `ea81bd89`  
+> **Source Version**: `8779794b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T19:27:22.267Z  
+> **Timestamp**: 2026-11-22T18:35:17.164Z  
 > **Learning ID**: `learn-github-yyjeqhc-webcodex`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/yyjeqhc-webcodex-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/yyjeqhc/webcodex](https://github.com/yyjeqhc/webcodex))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T19:27:22.259Z  
+> **Harvest Timestamp**: 2026-11-22T18:35:17.159Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Give cloud AI agents a real development environment on your own machines.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2513 stars
+- **Stars / Engagement**: 2518 stars
 
 ---
 
@@ -809,6 +809,7 @@ pub struct AppState {
     supervisor: SharedSupervisor,
     activity: ActivityLog,
     operations: OperationController,
+    refresh_lock: tokio::sync::Mutex<()>,
     shutdown_signal: CancellationSignal,
     shutdown_started: AtomicBool,
     shutdown_complete: CancellationSignal,
@@ -866,6 +867,7 @@ impl AppState {
             supervisor,
             connections,
             operations: OperationController::new(activity.clone()),
+            refresh_lock: tokio::sync::Mutex::new(()),
             activity,
             shutdown_signal: CancellationSignal::new(),
             shutdown_started: AtomicBool::new(false),
@@ -975,102 +977,94 @@ impl AppState {
     }
 
     pub async fn refresh_runtime_status(&self) -> DesktopResult<DesktopStateSnapshot> {
-        let (operation, cancellation, mut core, baseline) = self
-            .begin_operation(DesktopOperationKind::RuntimeRefresh, true)
-            .await?;
-        let result = core.refresh_runtime_status(&cancellation).await;
-        self.finish_operation(operation, cancellation, core, baseline, result)
-            .await
-    }
-
-    pub async fn observe_chatgpt_activity(&self) -> DesktopResult<DesktopStateSnapshot> {
         if self.shutdown_signal.is_cancelled() {
             return Err(cancelled_error());
         }
-        if self.operations.current().is_some() {
+        if let Some(current) = self.operations.current() {
+            return Err(DesktopError::new(
+                "desktop_operation_busy",
+                "Another Desktop operation is still running",
+                "Wait for the current operation to finish or stop it before starting another one.",
+            )
+            .with_details(serde_json::json!({
+                "operation_id": current.id,
+                "operation_kind": current.kind.as_str(),
+            }))
+            .with_operation_context(Some(&current.id), None, None, None));
+        }
+        if self.get_state().configuration_issue.is_some() {
+            return Err(DesktopError::new(
+                "configuration_migration_failed",
+                "Configuration could not be migrated",
+                "Open Diagnostics or explicitly restore the previous known-good configuration.",
+            ));
+        }
+
+        let before_generation = self.get_state().state_generation;
+        let _refresh_guard = self.refresh_lock.lock().await;
+        if self.shutdown_signal.is_cancelled() {
+            return Err(cancelled_error());
+        }
+        if let Some(current) = self.operations.current() {
+            return Err(DesktopError::new(
+                "desktop_operation_busy",
+                "Another Desktop operation is still running",
+                "Wait for the current operation to finish or stop it before starting another one.",
+            )
+            .with_details(serde_json::json!({
+                "operation_id": current.id,
+                "operation_kind": current.kind.as_str(),
+            }))
+            .with_operation_context(Some(&current.id), None, None, None));
+        }
+        // Coalesce overlapping background refreshes: if another refresh already
+        // published a fresher snapshot while we waited, return it directly.
+        if self.get_state().state_generation != before_generation {
             return Ok(self.get_state());
         }
+
         let cancellation =
             CancellationContext::new(CancellationSignal::new(), self.shutdown_signal.clone());
-        let probe = {
+        let start_op_generation = self.operations.generation();
+
+        enum RefreshPlan {
+            Persistent {
+                environment_id: String,
+            },
+            QuickShare,
+            Unconfigured,
+            NonPersistent {
+                adapter: WebCodexAdapter,
+                identity: RunnerRuntimeIdentity,
+                server_env_file: Option<PathBuf>,
+                project_identity: Option<ProjectRuntimeIdentity>,
+                has_project: bool,
+                autostart: bool,
+            },
+        }
+
+        let plan = {
             let slot = self.core.lock().await;
             let Some(core) = slot.as_ref() else {
-                return Ok(self.get_state());
+                return Err(DesktopError::new(
+                    "desktop_operation_busy",
+                    "Desktop mutation state is already in use",
+                    "Wait for the current operation to finish.",
+                ));
             };
-            let Some(probe) = core.chatgpt_activity_probe() else {
-                return Ok(self.get_state());
-            };
-            probe
-        };
-        let observation = WebCodexAdapter::chatgpt_activity_with_binary(
-            &probe.webcodex,
-            &probe.identity,
-            &cancellation,
-        )
-        .await;
-        cancellation.check()?;
-        let Ok(last_meaningful_activity_at_ms) = observation else {
-            return Ok(self.get_state());
-        };
-        if self.operations.current().is_some() {
-            return Ok(self.get_state());
-        }
-        let mut slot = self.core.lock().await;
-        let Some(core) = slot.as_mut() else {
-            return Ok(self.get_state());
-        };
-        core.apply_chatgpt_activity_observation(&probe.identity, last_meaningful_activity_at_ms)
-    }
-
-    pub async fn resume_saved_runtime(&self) -> DesktopResult<DesktopStateSnapshot> {
-        let (operation, cancellation, mut core, baseline) = self
-            .begin_operation(DesktopOperationKind::RuntimeResume, true)
-            .await?;
-        let result = core.resume_saved_runtime(&cancellation).await;
-        self.finish_operation(operation, cancellation, core, baseline, result)
-            .await
-    }
-
-    pub async fn update_tunnel_config(
-        &self,
-        request: TunnelConfigRequest,
-    ) -> DesktopResult<DesktopStateSnapshot> {
-        let (operation, cancellation, mut core, baseline) = self
-            .begin_operation(DesktopOperationKind::TunnelConfigUpdate, false)
-            .await?;
-        let result = async {
-            cancellation.check()?;
-            let previous = core.tunnel_config.clone();
-            core.mutate_tunnel_config(move |config, path| config.update(path, request))
-                .await?;
-            let id = crate::connection_id::TunnelProfileId::DEFAULT;
-            let active =
-                process_is_active(core.process_snapshot(ProcessKey::RegularTunnel(id)).await);
-            if active && !core.tunnel_config.same_launch_as(&previous, id) {
-                core.stop_connection_process(id)
-                    .await
-                    .map_err(tunnel_apply_error)?;
-                core.start_connection_process(id, &cancellation)
-                    .await
-                    .map_err(tunnel_apply_error)?;
-            }
-            core.get_state().await
-        }
-        .await;
-        self.finish_operation(operation, cancellation, core, baseline, result)
-            .await
-    }
-
-    pub async fn update_tunnel_proxy(
-        &self,
-        mode: TunnelProxyMode,
-        custom_url: Option<&str>,
-    ) -> DesktopResult<DesktopStateSnapshot> {
-        let (operation, cancellation, mut core, baseline) = self
-            .begin_operation(DesktopOperationKind::TunnelProxyUpdate, false)
-            .await?;
-        let result = core
-            .update_tunnel
+            if let Some(environment_id) = core.config.persistent_environment.clone() {
+                RefreshPlan::Persistent { environment_id }
+            } else if core.snapshot.quick_share.is_some() {
+                RefreshPlan::QuickShare
+            } else if let Some(identity) = runner_identity_from_config(&core.config) {
+                RefreshPlan::NonPersistent {
+                    adapter: core.adapter.clone(),
+                    identity,
+                    server_env_file: core
+                        .config
+                        .runtime
+                        .as_ref()
+                        .and_then(|runti
 ```
 
 ### Core Architecture Module: `apps/desktop/src-tauri/src/state/cloudflare_connections.rs`
@@ -1116,6 +1110,15 @@ impl CloudflareConnectionRequest {
             | Self::ConfigureOauth { profile_id, .. } => profile_id,
         }
     }
+
+    fn stage(&self) -> &'static str {
+        match self {
+            Self::Status { .. } => "cloudflare_status",
+            Self::Start { .. } => "cloudflare_start",
+            Self::Stop { .. } => "cloudflare_stop",
+            Self::ConfigureOauth { .. } => "cloudflare_oauth",
+        }
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -1127,10 +1130,25 @@ pub struct CloudflareConnectionStatus {
     pub public_origin: Option<String>,
     pub oauth_configured: bool,
     pub observed_authorization: bool,
+    #[serde(default)]
+    pub registration_available: bool,
+    #[serde(default)]
+    pub observed_tool_call: bool,
     pub configured_revision: u64,
     pub applied_revision: Option<u64>,
     pub local_target: String,
     pub reason_code: Option<String>,
+}
+
+impl CloudflareConnectionStatus {
+    fn check_materialized_revision(&mut self, revision: u64) {
+        // Windows Server reads protected materializations. Preserve the observed
+        // generation for Stop while the user applies the newer catalog revision.
+        if cfg!(windows) && self.configured_revision < revision {
+            self.reason_code = Some("cloudflare_restart_server_required".into());
+            self.registration_available = false;
+        }
+    }
 }
 
 #[derive(Serialize)]
@@ -1162,6 +1180,28 @@ fn unavailable() -> DesktopError {
         "The selected Cloudflare connection could not be controlled",
         "Check the local Server and refresh this connection before retrying.",
     )
+    .with_component(crate::error::ErrorComponent::Tunnel)
+}
+fn unavailable_for(stage: &str, profile_id: &str, reason_code: Option<&str>) -> DesktopError {
+    let mut error =
+        unavailable()
+            .with_stage(stage)
+            .with_operation_context(None, None, Some(profile_id), None);
+    if let Some(reason) = reason_code {
+        error = error.with_reason_code(reason);
+    }
+    error
+}
+fn stale_revision(stage: &str, profile_id: &str) -> DesktopError {
+    DesktopError::new(
+        "cloudflare_revision_stale",
+        "This Cloudflare connection changed before the control request completed",
+        "Refresh the connection status to review the current configuration before retrying.",
+    )
+    .with_component(crate::error::ErrorComponent::Tunnel)
+    .with_stage(stage)
+    .with_reason_code("stale_fence")
+    .with_operation_context(None, None, Some(profile_id), None)
 }
 fn requires_environment() -> DesktopError {
     DesktopError::new(
@@ -1169,6 +1209,8 @@ fn requires_environment() -> DesktopError {
         "Cloudflare needs a persistent local Environment",
         "Use Runtime setup or repair to adopt the existing local Server first.",
     )
+    .with_component(crate::error::ErrorComponent::Tunnel)
+    .with_stage("cloudflare_preflight")
 }
 
 impl AppState {
@@ -1254,8 +1296,14 @@ impl AppState {
                     &status_request,
                 )
                 .await?;
-                let observed: CloudflareConnectionStatus =
-                    serde_json::from_slice(&observed).map_err(|_| unavailable())?;
+                let observed: CloudflareConnectionStatus = serde_json::from_slice(&observed)
+                    .map_err(|_| {
+                        unavailable_for(
+                            request.stage(),
+                            &profile.profile_id,
+                            Some("invalid_response"),
+                        )
+                    })?;
                 if observed.profile_id != profile.profile_id
                     || observed.server_instance_id != expected_instance
                     || expected_revision.is_some_and(|revision| {
@@ -1264,7 +1312,7 @@ impl AppState {
                     || expected_generation
                         .is_some_and(|generation| generation != observed.process_generation)
                 {
-                    return Err(unavailable());
+                    return Err(stale_revision(request.stage(), &profile.profile_id));
                 }
                 // A standalone service is durable Environment startup intent. Its
                 // new run performs its own fenced Server prepare handshake; Desktop
@@ -1284,69 +1332,7 @@ impl AppState {
             } else {
                 control_response(&client, &endpoint, &profile.bootstrap_token, &request).await?
             };
-        if matches!(request, CloudflareConnectionRequest::ConfigureOauth { .. }) {
-            #[derive(Deserialize)]
-            #[serde(deny_unknown_fields)]
-            struct WireHandoff {
-                client_id: String,
-                client_secret: Option<String>,
-                #[serde(default)]
-                already_configured: bool,
-            }
-            let handoff: WireHandoff = serde_json::from_slice(&bytes).map_err(|_| unavailable())?;
-            if handoff.client_id.is_empty()
-                || handoff.client_id.len() > 256
-                || handoff
-                    .client_secret
-                    .as_ref()
-                    .is_some_and(|secret| secret.len() > 8192)
-            {
-                return Err(unavailable());
-            }
-            return Ok(CloudflareConnectionResponse::OAuth(
-                CloudflareOAuthHandoff {
-                    client_id: handoff.client_id,
-                    already_configured: handoff.already_configured,
-                    client_secret: handoff.client_secret.map(Secret::new),
-                },
-            ));
-        }
-        let status: CloudflareConnectionStatus =
-            serde_json::from_slice(&bytes).map_err(|_| unavailable())?;
-        if status.profile_id != request.profile_id()
-            || !matches!(
-                status.lifecycle.as_str(),
-                "stopped" | "starting" | "running" | "disconnected" | "error"
-            )
-        {
-            return Err(unavailable());
-        }
-        Ok(CloudflareConnectionResponse::Status(status))
-    }
-}
-
-async fn control_response(
-    client: &reqwest::Client,
-    endpoint: &str,
-    token: &Secret,
-    request: &CloudflareConnectionRequest,
-) -> DesktopResult<Vec<u8>> {
-    let mut response = client
-        .post(endpoint)
-        .bearer_auth(token.expose())
-        .json(request)
-        .send()
-        .await
-        .map_err(|_| unavailable())?;
-    let status = response.status();
-    if response
-        .content_length()
-        .is_some_and(|length| length > 32 * 1024)
-    {
-        return Err(unavailable());
-    }
-    let mut bytes = Vec::new();
-    while let Some(chunk) = re
+        if matc
 ```
 
 ### Core Architecture Module: `apps/desktop/src-tauri/src/state/coding_agents.rs`
@@ -1909,6 +1895,9 @@ impl DesktopCore {
                 .configure_cloudflare_tunnel_profile(
                     &store,
                     &webcodex_environment::CloudflareTunnelProfileRequest {
+                        expected_target: request.expected_target.as_ref(),
+                        oauth_dynamic_registration_enabled: request
+                            .oauth_dynamic_registration_enabled,
                         profile_id: &profile_id,
                         name: Some(&request.name),
                         host_mode: request.host_mode,
@@ -1918,13 +1907,7 @@ impl DesktopCore {
                         token: token.as_ref(),
                         ingress_port: None,
                     },
-                )
-                .await
-                .map_err(super::environment::desktop_error)?;
-            return cancellation.check();
-        }
-        if request.cloudflare_token.is_some() {
-        
+  
 ```
 
 ### Core Architecture Module: `apps/desktop/src-tauri/src/state/desktop_core.rs`
@@ -2191,336 +2174,509 @@ impl DesktopCore {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ea81bd89` (2026-11-17)
-**Commit Message**: chore(deps): update rustls, quinn and h2 for RustSec advisories (#1426)
+### Incident Patch 1: `7a8c3b28` (2026-11-22)
+**Commit Message**: fix(desktop): unify structured error diagnostics, state-error lifecycle, and safe recovery (#1434)
 
-**File**: `Cargo.lock` (modified, +80/-281)
+**File**: `apps/desktop/src-tauri/src/diagnostics.rs` (modified, +13/-2)
 ```diff
-@@ -281,24 +281,25 @@ checksum = "f2032f911046de80f0a198e0901378627c33f59ea0ac00e363d481118bd70a53"
- 
- [[package]]
- name = "aws-lc-rs"
--version = "1.17.0"
-+version = "1.18.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "5ec2f1fc3ec205783a5da9a7e6c1509cc69dedf09a1949e412c1e18469326d00"
-+checksum = "ce2b2dcc879c3bae0d371e77c99f2238400ef24ec001394befa67b6e543add9e"
- dependencies = [
-  "aws-lc-sys",
-  "zeroize",
- ]
- 
- [[package]]
- name = "aws-lc-sys"
--version = "0.41.0"
-+version = "0.44.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "1a2f9779ce85b93ab6170dd940ad0169b5766ff848247aff13bb788b832fe3f4"
-+checksum = "f09fae7be8bb3174e05c6afdb34199e6dc0c7c04ba9fa237b1967adfbde27483"
- dependencies = [
-  "cc",
-  "cmake",
-  "dunce",
-  "fs_extra",
-+ "pkg-config",
- ]
- 
- [[package]]
-@@ -482,12 +483,6 @@ dependencies = [
-  "shlex",
- ]
- 
--[[package]]
--name = "cesu8"
--version = "1.1.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "6d43a04d8753f35258c91f8ec639f792891f748a1edbd759cf1dcea3382ad83c"
--
- [[package]]
- name = "cexpr"
- version = "0.6.0"
-@@ -911,7 +906,7 @@ version = "1.0.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "10d60334b3b2e7c9d91ef8150abfb6fa4c1c39ebbcf4a81c2e346aad939fee3e"
- dependencies = [
-- "thiserror 2.0.18",
-+ "thiserror",
- ]
- 
- [[package]]
-@@ -1228,7 +1223,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
- dependencies = [
-  "libc",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
- 
- [[package]]
-@@ -1275,13 +1270,13 @@ checksum = "7360491ce676a36bf9bb3c56c1aa791658183a54d2744120f27285738d90465a"
- 
- [[package]]
- name = "fastbloom"
--version = "0.14.1"
-+version = "0.17.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "4e7f34442dbe69c60fe8eaf58a8cafff81a1f278816d8ab4db255b3bef4ac3c4"
-+checksum = "ef975e30683b2d965054bb0a836f8973857c4ebf6acf274fe46617cd285060d8"
- dependencies = [
-- "getrandom 0.3.4",
-+ "foldhash 0.2.0",
-  "libm",
-- "rand 0.9.4",
-+ "portable-atomic",
-  "siphasher",
- ]
- 
-@@ -1497,11 +1492,9 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "899def5c37c4fd7b2664648c28120ecec138e4d395b459e5ca34f9cce2dd77fd"
- dependencies = [
-  "cfg-if",
-- "js-sys",
-  "libc",
-  "r-efi 5.3.0",
-  "wasip2",
-- "wasm-bindgen",
- ]
- 
- [[package]]
-@@ -1511,11 +1504,13 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "0de51e6874e94e7bf76d726fc5d13ba782deca734ff60d5bb2fb2607c7406555"
- dependencies = [
-  "cfg-if",
-+ "js-sys",
-  "libc",
-  "r-efi 6.0.0",
-  "rand_core 0.10.1",
-  "wasip2",
-  "wasip3",
-+ "wasm-bindgen",
- ]
- 
- [[package]]
-@@ -1577,9 +1572,9 @@ dependencies = [
- 
- [[package]]
- name = "h2"
--version = "0.4.14"
-+version = "0.4.16"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "171fefbc92fe4a4de27e0698d6a5b392d6a0e333506bc49133760b3bcf948733"
-+checksum = "a9f37a958b41b3b19ee2707c06439c0e9e547e847223eb791ecb0cb821c65e27"
- dependencies = [
-  "atomic-waker",
-  "bytes",
-@@ -1782,7 +1777,7 @@ dependencies = [
-  "tokio",
-  "tokio-rustls",
-  "tower-service",
-- "webpki-roots 1.0.7",
-+ "webpki-roots 1.0.10",
- ]
- 
- [[package]]
-@@ -2153,22 +2148,6 @@ dependencies = [
-  "jiff-tzdb",
- ]
- 
--[[package]]
--name = "jni"
--version = "0.21.1"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "1a87aa2bb7d2af34197c04845522473242e1aa17c12f4935d5856491a7fb8c97"
--dependencies = [
-- "cesu8",
-- "cfg-if",
-- "combine",
-- "jni-sys 0.3.1",
-- "log",
-- "thiserror 1.0.69",
-- "walkdir",
-- "windows-sys 0.45.0",
--]
--
- [[package]]
- name = "jni"
- version = "0.22.4"
-@@ -2178,10 +2157,10 @@ dependencies = [
-  "cfg-if",
-  "combine",
-  "jni-macros",
-- "jni-sys 0.4.1",
-+ "jni-sys",
-  "log",
-  "simd_cesu8",
-- "thiserror 2.0.18",
-+ "thiserror",
-  "walkdir",
-  "windows-link",
- ]
-@@ -2199,15 +2178,6 @@ dependencies = [
-  "syn 2.0.117",
- ]
- 
--[[package]]
--name = "jni-sys"
--version = "0.3.1"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "41a652e1f9b6e0275df1f15b32661cf0d4b78d4d87ddec5e0c3c20f097433258"
--dependencies = [
-- "jni-sys 0.4.1",
--]
--
- [[package]]
- name = "jni-sys"
- version = "0.4.1"
-@@ -2257,7 +2227,7 @@ checksum = "bde5057d6143cc94e861d90f591b9303d6716c6b9602309150bd068853c10899"
- dependencies = [
-  "hashbrown 0.16.1",
-  "portable-atomic",
-- "thiserror 2.0.18",
-+ "thiserror",
- ]
- 
- [[package]]
-@@ -2370,7 +2340,7 @@ dependencies = [
-  "khronos-egl",
-  "memmap2",
-  "rustix 1.1.4",
-- "thiserror 2.0.18",
-+ "thiserror",
-  "tracing",
-  "wayland-backend",
-  "wayland-client",
-@@ -2630,7 +2600,7 @@ dependencies = [
-  "log",
-  "netlink-packet-core",
-  "netlink-sys",
-- "thiserror 2.0.18",
-+ "thiserror",
- ]
- 
- [[package]]
-@@ -3052,7 +3022,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "7d8fae84b431384b68627d0f9b3b1245fcf9f
-```
-
----
-
-### Incident Patch 2: `90c0e11a` (2026-11-16)
-**Commit Message**: chore(tests): remove the warnings of the workspace test build (#1424)
-
-**File**: `crates/webcodex-runner-registry/src/tests/job_receipts.rs` (modified, +1/-1)
-```diff
-@@ -30,7 +30,7 @@ impl JobReceiptStore for MemoryReceipts {
-         if self.fail
-             || self
-                 .failures_remaining
--                .fetch_update(
-+                .try_update(
-                     std::sync::atomic::Ordering::SeqCst,
-                     std::sync::atomic::Ordering::SeqCst,
-                     |n| n.checked_sub(1),
-```
-
-**File**: `crates/webcodex-store/src/db_tests.rs` (modified, +3/-7)
-```diff
-@@ -2269,7 +2269,7 @@ fn batched_purge_is_bounded_per_table_and_never_touches_live_rows() {
-             revoked_at,
-             last_used_at: None,
-         };
--    let api_key = |id: &str, hash: &str, revoked_at: Option<i64>| ApiKeyRecord {
-+    let api_key = |id: &str, revoked_at: Option<i64>| ApiKeyRecord {
-         id: id.to_string(),
-         user_id: "u-batch".to_string(),
-         name: id.to_string(),
-@@ -2293,15 +2293,11 @@ fn batched_purge_is_bounded_per_table_and_never_touches_live_rows() {
-         ))
-         .unwrap();
+@@ -498,7 +498,16 @@ pub fn report(
+         );
      }
--    db.insert_api_key(&api_key("k-live", "hash-live", None), "hash-live")
-+    db.insert_api_key(&api_key("k-live", None), "hash-live")
-         .unwrap();
-     for index in 0..2 {
-         db.insert_api_key(
--            &api_key(
--                &format!("k-rev-{index}"),
--                &format!("hash-rev-{index}"),
--                Some(now - 1),
--            ),
-+            &api_key(&format!("k-rev-{index}"), Some(now - 1)),
-             &format!("hash-rev-{index}"),
-         )
-         .unwrap();
+     let safe_activity:Vec<_>=activity.iter().rev().take(25).map(|entry| json!({"sequence":entry.sequence,"timestamp_ms":entry.timestamp_ms,"level":entry.level,"event_kind":entry.event_kind})).collect();
+-    let connection_health:Vec<_>=snapshot.connections.profiles.iter().take(16).map(|p|json!({"lifecycle":p.runtime.lifecycle,"health":p.runtime.health,"ready":p.runtime.ready,"error_code":p.runtime.last_error})).collect();
++    let connection_health:Vec<_>=snapshot.connections.profiles.iter().take(16).map(|p|json!({"lifecycle":p.runtime.lifecycle,"health":p.runtime.health,"ready":p.runtime.ready,"error_code":p.runtime.last_error,"failure_stage":p.runtime.failure_stage.as_deref().and_then(crate::error::sanitize_safe_identifier),"reason_code":p.runtime.reason_code.as_deref().and_then(crate::error::sanitize_safe_identifier)})).collect();
++    let active_error = snapshot
++        .runtime_error
++        .as_ref()
++        .map(DesktopError::safe_summary_value);
++    let component_errors: serde_json::Map<String, Value> = snapshot
++        .component_errors
++        .iter()
++        .map(|(component, error)| (component.as_str().to_string(), error.safe_summary_value()))
++        .collect();
+     let mut desktop = webcodex_build_info::machine_build_info("webcodex-desktop");
+     desktop.version = env!("CARGO_PKG_VERSION").into();
+     json!({"schema_version":1,"desktop":safe_build(&desktop),
+@@ -509,11 +518,13 @@ pub fn report(
+             "build_alignment":selected.map(|s|s.build_alignment),"runner_build_alignment":runner.and_then(|r|bounded_code(r.get("build_alignment")))},
+         "runtime_health":{"server":snapshot.readiness.server,"runner":snapshot.readiness.runner,"project":snapshot.readiness.project,
+             "connection":snapshot.readiness.exposure,"runtime_ready":snapshot.readiness.runtime_ready,
++            "state_generation":snapshot.state_generation,
+             "connections_running":snapshot.connections.running,"connections_needing_attention":snapshot.connections.needs_attention,
+             "connections":connection_health,"last_observed_chatgpt_activity_at_ms":snapshot.chatgpt_activity.as_ref().and_then(|a|a.last_meaningful_activity_at_ms)},
+         "diagnostics":{"trace_mode":trace.configured_mode,"effective_trace_mode":trace.effective_mode,"restart_required":trace.restart_required,
+             "current_operation":snapshot.current_operation.as_ref().map(|o|o.kind),
+-            "configuration_issue":snapshot.configuration_issue,"runtime_issue":runtime.unavailable_code},
++            "configuration_issue":snapshot.configuration_issue,"runtime_issue":runtime.unavailable_code,
++            "active_error":active_error,"component_errors":component_errors},
+         "computer_use":{"desktop_permissions":permissions,"runner_advertised_capabilities":cu},
+         "last_webcodex_call":last_call,"activity":safe_activity,
+         "excluded":["credentials","environment contents","Runner config contents","project files","tool input/result payloads","clipboard","raw stdout/stderr"]})
 ```
 
-**File**: `src/mcp_tests/computer_post_observation.rs` (modified, +0/-16)
+**File**: `apps/desktop/src-tauri/src/diagnostics/tests.rs` (modified, +61/-0)
 ```diff
-@@ -82,22 +82,6 @@ async fn poll(runtime: &ToolRuntime) -> Option<crate::runner_protocol::RunnerReq
-         .unwrap()
+@@ -219,6 +219,67 @@ fn report_and_bundle_include_only_explicit_safe_projections() {
+     );
  }
  
--/// Admission happens after the asynchronous auth hop, so the runner's first
--/// poll may legitimately race it. Wait (bounded) for the single admitted
--/// action instead of assuming it is queued synchronously.
--async fn wait_for_admitted_action(runtime: &ToolRuntime) -> crate::runner_protocol::RunnerRequest {
--    tokio::time::timeout(std::time::Duration::from_secs(5), async {
--        loop {
--            if let Some(request) = poll(runtime).await {
--                return request;
--            }
--            tokio::time::sleep(std::time::Duration::from_millis(5)).await;
--        }
--    })
--    .await
--    .expect("timed out waiting for the admitted computer action")
--}
--
- async fn finish_action(runtime: &ToolRuntime, action: &str, request_id: String) {
-     let mut output = json!({"platform":"windows","surface_id":"surface_test",
-         "element_id":"element_test","success":true});
++#[test]
++fn report_includes_safe_failed_stage_and_http_status_without_raw_message_secrets() {
++    let mut snapshot = crate::models::DesktopStateSnapshot::default();
++    let active = DesktopError::new(
++        "server_request_failed",
++        "Local user creation failed: Bearer wc_pat_canary_in_message (HTTP 400)",
++        "Check inputs at C:\\private\\secret",
++    )
++    .with_stage("user_create")
++    .with_http_status(400)
++    .with_operation_context(Some("desktop-operation-7"), Some(3), None, Some(12));
++    snapshot
++        .component_errors
++        .insert(active.component(), active.clone());
++    snapshot.runtime_error = Some(active);
++    let runtime = RuntimeSettings {
++        source: Default::default(),
++        selection_revision: 0,
++        desktop_contract: webcodex_core::desktop_runtime_contract::DESKTOP_RUNTIME_CONTRACT,
++        selected: None,
++        candidate: None,
++        previous_source: None,
++        last_switch: None,
++        unavailable_code: None,
++        active_jobs: None,
++        can_switch: false,
++        switch_unavailable_reason: None,
++    };
++    let trace = TraceSettings {
++        configured_mode: Some(TraceMode::Off),
++        effective_mode: None,
++        revision: "fence".into(),
++        can_edit: true,
++        restart_required: false,
++        can_restart: false,
++        error_code: None,
++    };
++    let value = report(
++        &snapshot,
++        &runtime,
++        None,
++        None,
++        &trace,
++        &[],
++        json!({"supported":false}),
++    );
++    assert_eq!(
++        value["diagnostics"]["active_error"]["code"],
++        "server_request_failed"
++    );
++    assert_eq!(value["diagnostics"]["active_error"]["stage"], "user_create");
++    assert_eq!(value["diagnostics"]["active_error"]["http_status"], 400);
++    assert_eq!(
++        value["diagnostics"]["active_error"]["operation_id"],
++        "desktop-operation-7"
++    );
++    let encoded = serde_json::to_string(&value).unwrap();
++    assert!(!encoded.contains("wc_pat_canary_in_message"));
++    assert!(!encoded.contains("C:\\private\\secret"));
++}
++
+ #[test]
+ fn support_export_never_overwrites_existing_files() {
+     let path = env_fixture("original").with_file_name("report.zip");
 ```
 
-**File**: `src/runner_http/mod_tests.rs` (modified, +1/-3)
+**File**: `apps/desktop/src-tauri/src/error.rs` (modified, +782/-2)
 ```diff
-@@ -1,7 +1,5 @@
- use super::*;
--use crate::runner_protocol::{
--    RunnerCapabilities, RunnerPollRequest, RunnerProjectSummary, RunnerRegisterRequest,
--};
-+use crate::runner_protocol::{RunnerCapabilities, RunnerProjectSummary, RunnerRegisterRequest};
- use crate::runner_protocol::{
-     RUNNER_ENVELOPE_MAX_BYTES, RUNNER_PROTOCOL_GENERATION_V2,
-     RUNNER_PROTOCOL_GENERATION_V2_BASELINE_CAPABILITY_NAMES,
+@@ -1,14 +1,475 @@
+ use serde::{Deserialize, Serialize};
+-use serde_json::Value;
++use serde_json::{json, Value};
+ use std::fmt::{Display, Formatter};
+ 
++#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash)]
++#[serde(rename_all = "snake_case")]
++pub enum ErrorComponent {
++    Runtime,
++    Server,
++    Runner,
++    Service,
++    Tunnel,
++    Auth,
++    Project,
++    Environment,
++    Migration,
++    Config,
++    Desktop,
++    Unknown,
++}
++
++impl ErrorComponent {
++    pub fn as_str(self) -> &'static str {
++        match self {
++            Self::Runtime => "runtime",
++            Self::Server => "server",
++            Self::Runner => "runner",
++            Self::Service => "service",
++            Self::Tunnel => "tunnel",
++            Self::Auth => "auth",
++            Self::Project => "project",
++            Self::Environment => "environment",
++            Self::Migration => "migration",
++            Self::Config => "config",
++            Self::Desktop => "desktop",
++            Self::Unknown => "unknown",
++        }
++    }
++
++    pub fn parse_safe(value: &str) -> Option<Self> {
++        match value.trim().to_ascii_lowercase().as_str() {
++            "runtime" => Some(Self::Runtime),
++            "server" => Some(Self::Server),
++            "runner" => Some(Self::Runner),
++            "service" => Some(Self::Service),
++            "tunnel" => Some(Self::Tunnel),
++            "auth" => Some(Self::Auth),
++            "project" => Some(Self::Project),
++            "environment" => Some(Self::Environment),
++            "migration" => Some(Self::Migration),
++            "config" => Some(Self::Config),
++            "desktop" => Some(Self::Desktop),
++            "unknown" => Some(Self::Unknown),
++            _ => None,
++        }
++    }
++}
++
++#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
++#[serde(rename_all = "snake_case")]
++pub enum RecoveryKind {
++    AutoRecovering,
++    UserAction,
++    ManualCheck,
++    ConfirmationRequired,
++}
++
++#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
++#[serde(rename_all = "snake_case")]
++#[allow(dead_code)]
++pub enum SafeRecoveryAction {
++    WaitAutoRecovery,
++    Retry,
++    RefreshState,
++    StartRuntime,
++    StartServer,
++    RestartServer,
++    StartRunner,
++    RestartRunner,
++    RepairRunnerCredential,
++    RepairUserCredential,
++    CheckConnection,
++    OpenNetworkSettings,
++    OpenRuntimeSettings,
++    OpenDiagnostics,
++    OpenActivity,
++    OpenProjects,
++    OpenSetup,
++    InspectServiceOwnership,
++    ResolveMigration,
++    ObserveBeforeRetry,
++    RestoreConfiguration,
++    ManageProviders,
++    #[serde(rename = "none")]
++    NoAction,
++}
++
++#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
++pub struct ErrorDiagnostic {
++    pub component: ErrorComponent,
++    #[serde(default, skip_serializing_if = "Option::is_none")]
++    pub stage: Option<String>,
++    #[serde(default, skip_serializing_if = "Option::is_none")]
++    pub reason_code: Option<String>,
++    pub recovery_kind: RecoveryKind,
++    pub safe_action: SafeRecoveryAction,
++    pub retry_allowed: bool,
++    #[serde(default, skip_serializing_if = "Option::is_none")]
++    pub http_status: Option<u16>,
++    #[serde(default, skip_serializing_if = "Option::is_none")]
++    pub exit_code: Option<i32>,
++    #[serde(default, skip_serializing_if = "Option::is_none")]
++    pub operation_id: Option<String>,
++    #[serde(default, skip_serializing_if = "Option::is_none")]
++    pub generation: Option<u64>,
++    #[serde(default, skip_serializing_if = "Option::is_none")]
++    pub resource_id: Option<String>,
++    #[serde(default, skip_serializing_if = "Option::is_none")]
++    pub activity_sequence: Option<u64>,
++}
++
++impl ErrorDiagnostic {
++    pub fn classify(code: &str) -> Self {
++        use ErrorComponent::*;
++        use RecoveryKind::*;
++        use SafeRecoveryAction::*;
++
++        let (component, recovery_kind, safe_action, retry_allowed) = match code {
++            // 1. Environment & runtime dependency missing / incompatible
++            "binaries_missing"
++            | "binary_missing"
++            | "runtime_unavailable"
++            | "runtime_incompatible"
++            | "runtime_missing"
++            | "runtime_binary_missing"
++            | "runtime_binary_invalid"
++            | "runtime_binary_unexecutable"
++            | "runtime_directory_invalid"
++            | "runtime_directory_missing"
++            | "runtime_probe_failed"
++            | "runtime_protocol_incompatible"
++            | "selected_runtime_not_active"
++            | "webcodex_command_start_failed"
++            | "service_missingprerequisite"
++            | "upgrade_package_flavor"
++            | "installer_package_target"
++            | "upgrade_package_ownership" => (Runtime, UserAction, OpenRuntimeSettings, false),
++
++            // 2 & 3. Server start failure, exit, unreachable, port occupied
++            "server_port_in_use"
++            | "
 ```
 
-**File**: `src/runtime_console_http.rs` (modified, +3/-6)
+**File**: `apps/desktop/src-tauri/src/models.rs` (modified, +7/-0)
 ```diff
-@@ -839,12 +839,9 @@ struct RuntimeConsoleProject {
- #[derive(Debug, Clone, Serialize)]
- #[serde(tag = "kind", rename_all = "snake_case")]
- enum RuntimeConsoleProjectLineage {
--    #[cfg_attr(
--        not(test),
--        expect(
--            dead_code,
--            reason = "Retained Console wire variant; the current inventory projection omits lineage"
--        )
-+    #[expect(
-+        dead_code,
-+        reason = "Retained Console wire variant; the current inventory projection omits lineage"
-     )]
-     ManagedWorktreeSource {
-         source_project_id: String,
+@@ -427,6 +427,11 @@ pub struct DesktopStateSnapshot {
+     pub readiness: ReadinessSnapshot,
+     #[serde(default, skip_serializing_if = "Option::is_none")]
+     pub runtime_error: Option<crate::error::DesktopError>,
++    #[serde(default, skip_serializing_if = "std::collections::BTreeMap::is_empty")]
++    pub component_errors:
++        std::collections::BTreeMap<crate::error::ErrorComponent, crate::error::DesktopError>,
++    #[serde(default)]
++    pub state_generation: u64,
+     pub project: Option<ProjectSelection>,
+     pub binaries: Option<BinaryInfo>,
+     #[serde(default, skip_serializing_if = "Option::is_none")]
+@@ -463,6 +468,8 @@ impl Default for DesktopStateSnapshot {
+             topology: None,
+             readiness: ReadinessSnapshot::default(),
+             runtime_error: None,
++            component_errors: std::collections::BTreeMap::new(),
++            state_generation: 0,
+             project: None,
+             binaries: None,
+             powershell_runtime: None,
+```
+
+**File**: `apps/desktop/src-tauri/src/process/startup.rs` (modified, +24/-3)
+```diff
+@@ -1,4 +1,4 @@
+-use crate::error::DesktopError;
++use crate::error::{DesktopError, ErrorComponent, RecoveryKind, SafeRecoveryAction};
+ use std::collections::VecDeque;
+ use std::net::SocketAddr;
+ use std::sync::{Arc, Mutex};
+@@ -13,6 +13,7 @@ pub(crate) fn server_start_error(
+     if let Some(code) = exit_code {
+         message.push_str(&format!(" (exit code {code})"));
+     }
++    let mut listener_bind_failed = false;
+     if let Some(diagnostics) = diagnostics {
+         let logs = diagnostics
+             .0
+@@ -22,15 +23,35 @@ pub(crate) fn server_start_error(
+         // after the activity log's prefix-based redaction. Only reconstruct the
+         // known listener failure from a validated socket address and OS code.
+         if let Some(summary) = logs.iter().rev().find_map(|line| listener_failure(line)) {
++            listener_bind_failed = true;
+             message.push_str(". ");
+             message.push_str(&summary);
+         }
+     }
+-    DesktopError::new(
++    let mut error = DesktopError::new(
+         "server_start_failed",
+         message,
+-        "Review the error details and Activity, then retry.",
++        if listener_bind_failed {
++            "Check whether another program is already using the local Server port, then retry."
++        } else {
++            "Review the error details and Activity, then retry."
++        },
+     )
++    .with_component(ErrorComponent::Server)
++    .with_stage("server_start");
++    if let Some(code) = exit_code {
++        error = error.with_exit_code(code);
++    }
++    if listener_bind_failed {
++        error = error
++            .with_reason_code("local_port_unavailable")
++            .with_recovery(
++                RecoveryKind::UserAction,
++                SafeRecoveryAction::OpenDiagnostics,
++                false,
++            );
++    }
++    error
+ }
+ 
+ fn listener_failure(line: &str) -> Option<String> {
+```
+
+**File**: `apps/desktop/src-tauri/src/process/tests/startup.rs` (modified, +6/-0)
+```diff
+@@ -18,6 +18,12 @@ fn startup_failure_preserves_final_unterminated_bind_error() {
+     assert!(error
+         .message
+         .contains("failed to bind HTTP listener 127.0.0.1:54611 (os error 10013)"));
++    let diag = error.diagnostic_ref().unwrap();
++    assert_eq!(diag.component, crate::error::ErrorComponent::Server);
++    assert_eq!(diag.stage.as_deref(), Some("server_start"));
++    assert_eq!(diag.reason_code.as_deref(), Some("local_port_unavailable"));
++    assert_eq!(diag.exit_code, Some(1));
++    assert!(!diag.retry_allowed);
+ }
+ 
+ #[test]
+```
+
+**File**: `apps/desktop/src-tauri/src/state.rs` (modified, +1/-0)
+```diff
+@@ -96,6 +96,7 @@ pub struct AppState {
+     supervisor: SharedSupervisor,
+     activity: ActivityLog,
+     operations: OperationController,
++    refresh_lock: tokio::sync::Mutex<()>,
+     shutdown_signal: CancellationSignal,
+     shutdown_started: AtomicBool,
+     shutdown_complete: CancellationSignal,
+```
+
+**File**: `apps/desktop/src-tauri/src/state/app_state.rs` (modified, +278/-11)
+```diff
+@@ -32,6 +32,7 @@ impl AppState {
+             supervisor,
+             connections,
+             operations: OperationController::new(activity.clone()),
++            refresh_lock: tokio::sync::Mutex::new(()),
+             activity,
+             shutdown_signal: CancellationSignal::new(),
+             shutdown_started: AtomicBool::new(false),
+@@ -141,12 +142,271 @@ impl AppState {
+     }
+ 
+     pub async fn refresh_runtime_status(&self) -> DesktopResult<DesktopStateSnapshot> {
+-        let (operation, cancellation, mut core, baseline) = self
+-            .begin_operation(DesktopOperationKind::RuntimeRefresh, true)
+-            .await?;
+-        let result = core.refresh_runtime_status(&cancellation).await;
+-        self.finish_operation(operation, cancellation, core, baseline, result)
+-            .await
++        if self.shutdown_signal.is_cancelled() {
++            return Err(cancelled_error());
++        }
++        if let Some(current) = self.operations.current() {
++            return Err(DesktopError::new(
++                "desktop_operation_busy",
++                "Another Desktop operation is still running",
++                "Wait for the current operation to finish or stop it before starting another one.",
++            )
++            .with_details(serde_json::json!({
++                "operation_id": current.id,
++                "operation_kind": current.kind.as_str(),
++            }))
++            .with_operation_context(Some(&current.id), None, None, None));
++        }
++        if self.get_state().configuration_issue.is_some() {
++            return Err(DesktopError::new(
++                "configuration_migration_failed",
++                "Configuration could not be migrated",
++                "Open Diagnostics or explicitly restore the previous known-good configuration.",
++            ));
++        }
++
++        let before_generation = self.get_state().state_generation;
++        let _refresh_guard = self.refresh_lock.lock().await;
++        if self.shutdown_signal.is_cancelled() {
++            return Err(cancelled_error());
++        }
++        if let Some(current) = self.operations.current() {
++            return Err(DesktopError::new(
++                "desktop_operation_busy",
++                "Another Desktop operation is still running",
++                "Wait for the current operation to finish or stop it before starting another one.",
++            )
++            .with_details(serde_json::json!({
++                "operation_id": current.id,
++                "operation_kind": current.kind.as_str(),
++            }))
++            .with_operation_context(Some(&current.id), None, None, None));
++        }
++        // Coalesce overlapping background refreshes: if another refresh already
++        // published a fresher snapshot while we waited, return it directly.
++        if self.get_state().state_generation != before_generation {
++            return Ok(self.get_state());
++        }
++
++        let cancellation =
++            CancellationContext::new(CancellationSignal::new(), self.shutdown_signal.clone());
++        let start_op_generation = self.operations.generation();
++
++        enum RefreshPlan {
++            Persistent {
++                environment_id: String,
++            },
++            QuickShare,
++            Unconfigured,
++            NonPersistent {
++                adapter: WebCodexAdapter,
++                identity: RunnerRuntimeIdentity,
++                server_env_file: Option<PathBuf>,
++                project_identity: Option<ProjectRuntimeIdentity>,
++                has_project: bool,
++                autostart: bool,
++            },
++        }
++
++        let plan = {
++            let slot = self.core.lock().await;
++            let Some(core) = slot.as_ref() else {
++                return Err(DesktopError::new(
++                    "desktop_operation_busy",
++                    "Desktop mutation state is already in use",
++                    "Wait for the current operation to finish.",
++                ));
++            };
++            if let Some(environment_id) = core.config.persistent_environment.clone() {
++                RefreshPlan::Persistent { environment_id }
++            } else if core.snapshot.quick_share.is_some() {
++                RefreshPlan::QuickShare
++            } else if let Some(identity) = runner_identity_from_config(&core.config) {
++                RefreshPlan::NonPersistent {
++                    adapter: core.adapter.clone(),
++                    identity,
++                    server_env_file: core
++                        .config
++                        .runtime
++                        .as_ref()
++                        .and_then(|runtime| runtime.server_env_file.clone()),
++                    project_identity: identity_from_config(&core.config),
++                    has_project: core.config.project.is_some(),
++                    autostart: runtime_autostart(&core.config),
++                }
++            } else {
++                RefreshPlan::Unconfigured
++      
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1426** (2026-11-17): chore(deps): update rustls, quinn and h2 for RustSec advisories (@HarpeLm)
-- **PR #1424** (2026-11-16): chore(tests): remove the warnings of the workspace test build (@HarpeLm)
-- **PR #1423** (2026-11-16): test(cli): use the canonical temp root in the tunnel provider mismatch test (@HarpeLm)
-- **PR #1422** (2026-11-16): test(environment): use the canonical temp root in update view tests (@HarpeLm)
-- **PR #1421** (2026-11-15): test(ci): support Cargo 1.100 build-script output layout (@swjnxyf)
-- **PR #1418** (2026-11-11): fix(import): support opt-in loopback proxy for OpenAI host-file downloads (@mo-lin-yuan)
+- **PR #1434** (2026-11-22): fix(desktop): unify structured error diagnostics, state-error lifecycle, and safe recovery (@yyjeqhc)
+- **PR #1433** (2026-11-22): Prepare Gemini web connections from WebCodex Desktop (@yyjeqhc)
+- **PR #1432** (2026-11-22): Support OAuth dynamic registration on Desktop Cloudflare ingress (@yyjeqhc)
+- **PR #1431** (2026-11-21): Adapt MCP tool result text per Gemini request (@yyjeqhc)
+- **PR #1430** (2026-11-21): Support OAuth dynamic client registration for Gemini web and other MCP hosts (@yyjeqhc)
+- **PR #1427** (closed): feat(service): configurable macOS service logs, private log files, lower metric noise (@tongsh6)
 
 ---
 
@@ -2540,91 +2696,41 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): update rustls, quinn and h2 for RustSec advisories
+## X. desktop): unify structured error diagnostics, state-error lifecycle, and safe re
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yyjeqhc/webcodex. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/desktop/src-tauri/src/diagnostics.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yyjeqhc/webcodex. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ea81bd89`: deps): update rustls, quinn and h2 for RustSec advisories. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7a8c3b28`: desktop): unify structured error diagnostics, state-error lifecycle, and safe recovery. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/desktop/src-tauri/src/diagnostics.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "1.18.0"
-checksum = "ce2b2dcc879c3bae0d371e77c99f2238400ef24ec001394befa67b6e543add9e"
-version = "0.44.0"
-checksum = "f09fae7be8bb3174e05c6afdb34199e6dc0c7c04ba9fa237b1967adfbde27483"
- "pkg-config",
- "thiserror",
- "windows-sys 0.52.0",
-version = "0.17.0"
-checksum = "ef975e30683b2d965054bb0a836f8973857c4ebf6acf274fe46617cd285060d8"
- "foldhash 0.2.0",
- "portable-atomic",
- "js-sys",
- "wasm-bindgen",
-version = "0.4.16"
-checksum = "a9f37a958b41b3b19ee2707c06439c0e9e547e847223eb791ecb0cb821c65e27"
- "webpki-roots 1.0.10",
- "jni-sys",
- "thiserror",
- "thiserror",
- "thiserror",
- "thiserror",
+    let connection_health:Vec<_>=snapshot.connections.profiles.iter().take(16).map(|p|json!({"lifecycle":p.runtime.lifecycle,"health":p.runtime.health,"ready":p.runtime.ready,"error_code":p.runtime.last_error,"failure_stage":p.runtime.failure_stage.as_deref().and_then(crate::error::sanitize_safe_identifier),"reason_code":p.runtime.reason_code.as_deref().and_then(crate::error::sanitize_safe_identifier)})).collect();
+    let active_error = snapshot
+        .runtime_error
+        .as_ref()
+        .map(DesktopError::safe_summary_value);
+    let component_errors: serde_json::Map<String, Value> = snapshot
+        .component_errors
+        .iter()
+        .map(|(component, error)| (component.as_str().to_string(), error.safe_summary_value()))
+        .collect();
+            "state_generation":snapshot.state_generation,
+            "configuration_issue":snapshot.configuration_issue,"runtime_issue":runtime.unavailable_code,
+            "active_error":active_error,"component_errors":component_errors},
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-version = "1.17.0"
-checksum = "5ec2f1fc3ec205783a5da9a7e6c1509cc69dedf09a1949e412c1e18469326d00"
-version = "0.41.0"
-checksum = "1a2f9779ce85b93ab6170dd940ad0169b5766ff848247aff13bb788b832fe3f4"
-[[package]]
-name = "cesu8"
-version = "1.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6d43a04d8753f35258c91f8ec639f792891f748a1edbd759cf1dcea3382ad83c"
-
- "thiserror 2.0.18",
- "windows-sys 0.61.2",
-version = "0.14.1"
-checksum = "4e7f34442dbe69c60fe8eaf58a8cafff81a1f278816d8ab4db255b3bef4ac3c4"
- "getrandom 0.3.4",
- "rand 0.9.4",
- "js-sys",
- "wasm-bindgen",
-version = "0.4.14"
-checksum = "171fefbc92fe4a4de27e0698d6a5b392d6a0e333506bc49133760b3bcf948733"
- "webpki-roots 1.0.7",
-[[package]]
-name = "jni"
-version = "0.21.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1a87aa2bb7d2af34197c04845522473242e1aa17c12f4935d5856491a7fb8c97"
-dependencies = [
- "cesu8",
- "cfg-if",
- "combine",
- "jni-sys 0.3.1",
- "log",
- "thiserror 1.0.69",
- "walkdir",
- "windows-sys 0.45.0",
-]
-
- "jni-sys 0.4.1",
- "thiserror 2.0.18",
-[[package]]
-name = "jni-sys"
-version = "0.3.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "41a652e1
+    let connection_health:Vec<_>=snapshot.connections.profiles.iter().take(16).map(|p|json!({"lifecycle":p.runtime.lifecycle,"health":p.runtime.health,"ready":p.runtime.ready,"error_code":p.runtime.last_error})).collect();
+            "configuration_issue":snapshot.configuration_issue,"runtime_issue":runtime.unavailable_code},
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ea81bd89` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7a8c3b28` are properly handled with clean fallback behavior.

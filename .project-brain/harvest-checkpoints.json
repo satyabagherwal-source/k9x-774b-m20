@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T18:21:34.096Z",
+  "last_updated": "2026-11-22T18:35:18.205Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -350,14 +350,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-xingchen-agi-teleocr",
-      "content_hash": "37627c9579d7107501dcca0806e021fa28db6a00ac70f12c40f17ec08e7d5d84",
-      "verified_at": "2026-11-18T11:54:52.825Z",
+      "content_hash": "79bd4873ed6d6ef660f478683436cd2d2480c3271f8fd74293d0e3a993a9fc98",
+      "verified_at": "2026-11-22T18:35:17.059Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T11:54:52.825Z"
+      "last_updated": "2026-11-22T18:35:17.059Z"
     },
     "Qwen/Qwen-Image-2.1": {
       "repository": "Qwen/Qwen-Image-2.1",
@@ -18516,14 +18516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-yyjeqhc-webcodex",
-      "content_hash": "262f70187b726a8dd0e7aa03923f3f4154ecb4bfc5366c3e912bca3e8c921f86",
-      "verified_at": "2026-11-17T19:27:23.286Z",
+      "content_hash": "03e3f96af1c343e5e469a6b349a59725ba0f00b6cde705e216102a21d3a459e6",
+      "verified_at": "2026-11-22T18:35:18.205Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T19:27:23.286Z"
+      "last_updated": "2026-11-22T18:35:18.205Z"
     },
     "MiniMaxAI/MiniMax-H3-Image": {
       "repository": "MiniMaxAI/MiniMax-H3-Image",
