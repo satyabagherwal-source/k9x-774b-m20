@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T01:23:58.924Z",
-  "total_cycles_completed": 11377,
-  "total_learnings_persisted": 11377,
-  "total_rules_promoted": 10685,
+  "last_updated": "2026-11-22T01:32:23.543Z",
+  "total_cycles_completed": 11379,
+  "total_learnings_persisted": 11379,
+  "total_rules_promoted": 10686,
   "history": [
-    {
-      "timestamp": "2026-11-21T06:27:54.245Z",
-      "repository": "tuist/tuist",
-      "learningId": "learn-github-tuist-tuist",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T06:27:57.549Z",
-      "repository": "sceneview/sceneview",
-      "learningId": "learn-github-sceneview-sceneview",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T06:28:05.966Z",
       "repository": "NucleoidAI/Nucleoid",
@@ -1403,6 +1389,20 @@
       "repository": "lancedb/lancedb",
       "learningId": "learn-github-lancedb-lancedb",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T01:32:21.703Z",
+      "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
+      "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-turbo-quantized",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T01:32:23.543Z",
+      "repository": "embassy-rs/embassy",
+      "learningId": "learn-github-embassy-rs-embassy",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

@@ -11997,3 +11997,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-divagr1925-qwen3-5-4b-qwenputer` | `https://huggingface.co/divagr1925/Qwen3.5-4B-Qwenputer` | `hf-divagr1` | Multi-dimensional audit evidence | 2026-11-22T01:23:45.616Z |
 | `learn-github-grpc-grpc-rust` | `https://github.com/grpc/grpc-rust` | `831ba3d9` | Multi-dimensional audit evidence | 2026-11-22T01:23:47.037Z |
 | `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `2b1b2a29` | Multi-dimensional audit evidence | 2026-11-22T01:23:58.879Z |
+| `learn-huggingface-abenzerps-qwen-image-2-1-turbo-quantized` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Turbo-Quantized` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-11-22T01:32:21.697Z |
+| `learn-github-embassy-rs-embassy` | `https://github.com/embassy-rs/embassy` | `1c5f29e0` | Multi-dimensional audit evidence | 2026-11-22T01:32:23.538Z |

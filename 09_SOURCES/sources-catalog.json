@@ -5343,10 +5343,10 @@
     "repository": "embassy-rs/embassy",
     "platform": "github",
     "sourceUrl": "https://github.com/embassy-rs/embassy",
-    "sourceVersion": "0bf016d3",
+    "sourceVersion": "1c5f29e0",
     "license": "Apache-2.0",
-    "contentHash": "3aeebfc7d3635449d655fe54e84fa0f1130a6f5dfeeec9f97cfb61908c83f76c",
-    "lastHarvestedAt": "2026-11-20T13:13:19.039Z",
+    "contentHash": "16e41f55a35454187bcffc944b75952f64a261bbe3f202aac855eaa34b864177",
+    "lastHarvestedAt": "2026-11-22T01:32:23.538Z",
     "learningId": "learn-github-embassy-rs-embassy"
   },
   "jpush-aurora-imui": {
@@ -11835,8 +11835,8 @@
     "sourceUrl": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Turbo-Quantized",
     "sourceVersion": "hf-abenzerps-qwen-image-2.1-turbo-quantized",
     "license": "Open-Source",
-    "contentHash": "f07ddcfaffe6826adac9bd400d2f80d49a11d1c205c1b1be15e47560c47ab25e",
-    "lastHarvestedAt": "2026-11-16T23:03:35.911Z",
+    "contentHash": "6752605f5144c89c790b26c8d3c016ca79bdbf9035cd711fa1739c4550c01ca4",
+    "lastHarvestedAt": "2026-11-22T01:32:21.697Z",
     "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-turbo-quantized"
   },
   "agentlas-ai-agentlas-os": {

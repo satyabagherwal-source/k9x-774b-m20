@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T01:24:04.663Z",
+  "last_updated": "2026-11-22T01:32:35.619Z",
   "total_verified_learnings": 9064,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23382,
+  "total_items": 23384,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "b7f18f1a9aa8b69185438ae7b82a50744de381f72727132030797abd3d0856da",
+      "content_hash": "1d89fd6edd01cfd0ab80eb20cf2929b005e761e8179359f07d27f975564f303d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T01:07:40.377Z"
+      "persisted_at": "2026-11-22T01:32:35.619Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -213080,8 +213080,8 @@
       "slug": "embassy-rs-embassy",
       "platform": "github",
       "source_url": "https://github.com/embassy-rs/embassy",
-      "source_version": "0bf016d3",
-      "content_hash": "3aeebfc7d3635449d655fe54e84fa0f1130a6f5dfeeec9f97cfb61908c83f76c",
+      "source_version": "1c5f29e0",
+      "content_hash": "16e41f55a35454187bcffc944b75952f64a261bbe3f202aac855eaa34b864177",
       "dossier_path": "07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md",
       "promoted_rules": [
@@ -213119,6 +213119,11 @@
           "number": 9574,
           "title": "Empirical Invariant Guard in bd.rs",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9876,
+          "title": "stm32/hsem: fix interrupt handler livelock; stm32/atomic: fix MMIO RMW",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -213126,7 +213131,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T13:13:18.842Z",
+      "verified_at": "2026-11-22T01:32:23.314Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -213168,10 +213173,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-embassy-rs-embassy-architecture-intelligence-embassy-rs-embassy-core-invariants.md",
       "title": "Architecture Intelligence: embassy-rs/embassy Core Invariants",
       "repository": "embassy-rs/embassy",
-      "source_version": "0bf016d3",
-      "content_hash": "3f952f3aadfab5d306fb04f6921dbebf099ec429942afeafa019261e71119deb",
+      "source_version": "1c5f29e0",
+      "content_hash": "9eae6b1693aa8efacfb09c4ca655dc096e505f2b27315613f672d675a6b6f4a3",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T13:13:19.405Z"
+      "persisted_at": "2026-11-22T01:32:23.937Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-embassy-rs-embassy": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-embassy-rs-embassy",
@@ -213180,10 +213185,10 @@
       "relative_path": "08_VERIFICATION/embassy-rs-embassy-verification-protocol-empirical-defect-shield-for-embassy-rs-.md",
       "title": "Verification Protocol: Empirical Defect Shield for embassy-rs/embassy",
       "repository": "embassy-rs/embassy",
-      "source_version": "0bf016d3",
-      "content_hash": "3a6792c5c9ed2f8c17da0dca763dfff796abd1d5d652ed30d2398b45b8f6825d",
+      "source_version": "1c5f29e0",
+      "content_hash": "6a4f65fa18d78024a99ac5d23eb96cb4516f748d34fa59463dde3a611ac6ef00",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T13:13:19.565Z"
+      "persisted_at": "2026-11-22T01:32:24.105Z"
     },
     "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf": {
       "learning_id": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
@@ -213703,9 +213708,9 @@
       "title": "Architecture Intelligence: embassy-rs-embassy-learnings Core Invariants",
       "repository": "embassy-rs-embassy-learnings",
       "source_version": "HEAD",
-      "content_hash": "2337461b893cb63f3648e71088638e32fe07e9d6ebcf43e802b96349030e8686",
+      "content_hash": "97c0272ef74e371feede81854c4ccaa31e9f042d7ec505014c74b6a398ef96db",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T13:13:22.715Z"
+      "persisted_at": "2026-11-22T01:32:34.131Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-embassy-rs-embassy-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-embassy-rs-embassy-learnings",
@@ -213715,9 +213720,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for embassy-rs-embassy-learnings",
       "repository": "embassy-rs-embassy-learnings",
       "source_version": "HEAD",
-      "content_hash": "e330ee579f67d16532b561cc7af45e9595c2b08e0b08a6c3b7c935b590080661",
+      "content_hash": "e415e6dd74ebe52d3ef66fc3ea7275c725920fc0e3f8a13891824f1c037fef82",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T13:13:22.886Z"
+      "persisted_at": "2026-11-22T01:32:34.315Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-l": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-l",
@@ -239893,13 +239898,13 @@
       "item_id": "domain_intelligence-research-knowledge-intelligence-abenzerps-qwen-image-2-1-turbo-quantized-core-in",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-abenzerps-qwen-image-2-1-uncensored-quantized-research-knowledge-intelligence.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-abenzerps-qwen-image-2-1-turbo-quantized-research-knowledge-intelligence-aben.md",
       "title": "Research & Knowledge Intelligence: abenzerps/Qwen-Image-2.1-Turbo-Quantized Core Invariants",
       "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
-      "source_version": "hf-abenzerps-qwen-image-2.1-uncensored-quantized",
-      "content_hash": "d26929ad4c531d6875efcc300da7c7548d662e25e6aeb9aa57e0bab87d963808",
+      "source_version": "hf-abenzerps-qwen-image-2.1-turbo-quantized",
+      "content_hash": "270c793de3ba3c34805908dd7ebac04dfc298ff887e0ee04c5a0d08a318cfdf7",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T14:28:20.311Z"
+      "persisted_at": "2026-11-22T01:32:21.897Z"
     },
     "learn-github-dnscontrol-dnscontrol": {
       "learning_id": "learn-github-dnscontrol-dnscontrol",
@@ -262927,7 +262932,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Turbo-Quantized",
       "source_version": "hf-abenzerps-qwen-image-2.1-turbo-quantized",
-      "content_hash": "f07ddcfaffe6826adac9bd400d2f80d49a11d1c205c1b1be15e47560c47ab25e",
+      "content_hash": "6752605f5144c89c790b26c8d3c016ca79bdbf9035cd711fa1739c4550c01ca4",
       "dossier_path": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-turbo-quantized-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-turbo-quantized-learnings.md",
       "promoted_rules": [],
@@ -262936,7 +262941,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T23:03:35.696Z",
+      "verified_at": "2026-11-22T01:32:21.473Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -263110,9 +263115,9 @@
       "title": "Research & Knowledge Intelligence: hf-abenzerps-qwen-image-2.1-turbo-quantized-learnings Core Invariants",
       "repository": "hf-abenzerps-qwen-image-2.1-turbo-quantized-learnings",
       "source_version": "HEAD",
-      "content_hash": "a3c7bfe97f0013109c7b8254c7007e8bec05949e560abfc274c2045e6ad0e940",
+      "content_hash": "d87e4b5cef929316ca1fc9e46accbc447656e7862e0f097f8dc38231605cc800",
       "domain_letter": "D",
-      "persisted_at": "2026-11-16T23:03:51.704Z"
+      "persisted_at": "2026-11-22T01:32:34.668Z"
     },
     "candidate_directive-queue-make-native-up-next-injection-work-in-localized-uis-and-with-stale-queue": {
       "item_id": "candidate_directive-queue-make-native-up-next-injection-work-in-localized-uis-and-with-stale-queue",
@@ -317933,6 +317938,32 @@
       "content_hash": "04bd85986d3691de97b2d1aed09034ed200aad50812071aac48ea0ead5d09c68",
       "domain_letter": "G",
       "persisted_at": "2026-11-22T01:24:02.789Z"
+    },
+    "rule-9876": {
+      "learning_id": "rule-9876",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9876,
+      "title": "stm32/hsem: fix interrupt handler livelock; stm32/atomic: fix MMIO RMW",
+      "source_url": "https://github.com/embassy-rs/embassy",
+      "source_version": "1c5f29e0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T01:32:23.314Z"
+    },
+    "candidate_directive-stm32-hsem-fix-interrupt-handler-livelock-stm32-atomic-fix-mmio-rmw": {
+      "item_id": "candidate_directive-stm32-hsem-fix-interrupt-handler-livelock-stm32-atomic-fix-mmio-rmw",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-WO4P-stm32-hsem-fix-interrupt-handler-livelock-stm32-atomic-fix-mmio-rmw.md",
+      "title": "stm32/hsem: fix interrupt handler livelock; stm32/atomic: fix MMIO RMW",
+      "repository": "embassy-rs-embassy-learnings",
+      "source_version": "HEAD",
+      "content_hash": "863fee6b85c04afd32f8c5f5012b684795f334f74f8a4ab9e418c9bcb16af93c",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-22T01:32:33.965Z"
     }
   },
   "ai-builder-brain": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T01:24:04.440Z",
+  "last_updated": "2026-11-22T01:32:35.619Z",
   "total_records": 2307,
   "domains": {
     "A": {
@@ -8122,8 +8122,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "b7f18f1a9aa8b69185438ae7b82a50744de381f72727132030797abd3d0856da",
-      "created_at": "2026-11-22T01:07:40.377Z"
+      "content_hash": "1d89fd6edd01cfd0ab80eb20cf2929b005e761e8179359f07d27f975564f303d",
+      "created_at": "2026-11-22T01:32:35.619Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -10120,8 +10120,8 @@
       "title": "Architecture Intelligence: embassy-rs/embassy Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-embassy-rs-embassy-architecture-intelligence-embassy-rs-embassy-core-invariants.md",
       "repository": "embassy-rs/embassy",
-      "content_hash": "3f952f3aadfab5d306fb04f6921dbebf099ec429942afeafa019261e71119deb",
-      "created_at": "2026-11-20T13:13:19.405Z"
+      "content_hash": "9eae6b1693aa8efacfb09c4ca655dc096e505f2b27315613f672d675a6b6f4a3",
+      "created_at": "2026-11-22T01:32:23.937Z"
     },
     "domain_intelligence-research-knowledge-intelligence-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-core": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-core",
@@ -10165,8 +10165,8 @@
       "title": "Architecture Intelligence: embassy-rs-embassy-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-embassy-rs-embassy-learnings-architecture-intelligence-embassy-rs-embassy-learni.md",
       "repository": "embassy-rs-embassy-learnings",
-      "content_hash": "2337461b893cb63f3648e71088638e32fe07e9d6ebcf43e802b96349030e8686",
-      "created_at": "2026-11-20T13:13:22.715Z"
+      "content_hash": "97c0272ef74e371feede81854c4ccaa31e9f042d7ec505014c74b6a398ef96db",
+      "created_at": "2026-11-22T01:32:34.131Z"
     },
     "DOM-D-4AA06C1E": {
       "record_id": "DOM-D-4AA06C1E",
@@ -18706,10 +18706,10 @@
       "record_id": "domain_intelligence-research-knowledge-intelligence-abenzerps-qwen-image-2-1-turbo-quantized-core-in",
       "domain_letter": "D",
       "title": "Research & Knowledge Intelligence: abenzerps/Qwen-Image-2.1-Turbo-Quantized Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-abenzerps-qwen-image-2-1-uncensored-quantized-research-knowledge-intelligence.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-abenzerps-qwen-image-2-1-turbo-quantized-research-knowledge-intelligence-aben.md",
       "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
-      "content_hash": "d26929ad4c531d6875efcc300da7c7548d662e25e6aeb9aa57e0bab87d963808",
-      "created_at": "2026-11-19T14:28:20.311Z"
+      "content_hash": "270c793de3ba3c34805908dd7ebac04dfc298ff887e0ee04c5a0d08a318cfdf7",
+      "created_at": "2026-11-22T01:32:21.897Z"
     },
     "domain_intelligence-architecture-intelligence-dnscontrol-dnscontrol-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-dnscontrol-dnscontrol-core-invariants",
@@ -25066,8 +25066,8 @@
       "title": "Research & Knowledge Intelligence: hf-abenzerps-qwen-image-2.1-turbo-quantized-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-abenzerps-qwen-image-2-1-turbo-quantized-learnings-research-knowledge-intelli.md",
       "repository": "hf-abenzerps-qwen-image-2.1-turbo-quantized-learnings",
-      "content_hash": "a3c7bfe97f0013109c7b8254c7007e8bec05949e560abfc274c2045e6ad0e940",
-      "created_at": "2026-11-16T23:03:51.704Z"
+      "content_hash": "d87e4b5cef929316ca1fc9e46accbc447656e7862e0f097f8dc38231605cc800",
+      "created_at": "2026-11-22T01:32:34.668Z"
     },
     "domain_intelligence-content-information-intelligence-sozercan-kaset-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-sozercan-kaset-learnings-core-invariants",

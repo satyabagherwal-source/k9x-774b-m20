@@ -11964,3 +11964,5 @@
 | `CYCLE-20261122-LCGC` | `2026-11-22T01:23:45.612Z` | `divagr1925/Qwen3.5-4B-Qwenputer` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-divagr1925-qwen3.5-4b-qwenputer-learnings.md` | Yes (`34e99b3a...`) |
 | `CYCLE-20261122-LDJS` | `2026-11-22T01:23:47.032Z` | `grpc/grpc-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9875` | Yes (`62fc8613...`) |
 | `CYCLE-20261122-LMOR` | `2026-11-22T01:23:58.875Z` | `lancedb/lancedb` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md` | Yes (`0f2d5d00...`) |
+| `CYCLE-20261122-WENX` | `2026-11-22T01:32:21.693Z` | `abenzerps/Qwen-Image-2.1-Turbo-Quantized` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-turbo-quantized-learnings.md` | Yes (`6752605f...`) |
+| `CYCLE-20261122-WG31` | `2026-11-22T01:32:23.533Z` | `embassy-rs/embassy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9876` | Yes (`16e41f55...`) |

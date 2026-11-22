@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T01:24:04.240Z",
+  "last_updated": "2026-11-22T01:32:34.848Z",
   "directives": [
     {
       "id": "CD-001",
@@ -44479,6 +44479,35 @@
       "source_repo": "lancedb-lancedb",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-8032FA-expose-function-metadata-in-sdk-job-list.md",
+      "staged_date": "2026-11-22"
+    },
+    {
+      "id": "CD-WO4P",
+      "directive_title": "stm32/hsem: fix interrupt handler livelock; stm32/atomic: fix MMIO RMW",
+      "source_repo": "embassy-rs-embassy-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-WO4P-stm32-hsem-fix-interrupt-handler-livelock-stm32-atomic-fix-mmio-rmw.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-22",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-A26101",
+      "directive_title": "stm32/hsem: fix interrupt handler livelock; stm32/atomic: fix MMIO RMW",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "embassy-rs-embassy",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-A26101-stm32-hsem-fix-interrupt-handler-liveloc.md",
+      "staged_date": "2026-11-22"
+    },
+    {
+      "id": "CD-REV-93219E",
+      "directive_title": "Forensic Learning Record (Deep Inspection): zulip/zulip",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "A",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-93219E-forensic-learning-record-deep-inspection.md",
       "staged_date": "2026-11-22"
     }
   ]
