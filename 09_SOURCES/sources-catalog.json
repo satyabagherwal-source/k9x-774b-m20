@@ -685,8 +685,8 @@
     "sourceUrl": "https://huggingface.co/Cloudflare/clef",
     "sourceVersion": "hf-cloudflare-clef",
     "license": "Open-Source",
-    "contentHash": "52f949f9a0d5bd7fab607fad80bf7dccf1cd8e5031d72c4c2d324d0f56f77ad3",
-    "lastHarvestedAt": "2026-11-18T16:40:59.087Z",
+    "contentHash": "8b4f07cad2645d5d8a2e46b2fc0765002db63f5fcdb04f568d1c042a9c667d82",
+    "lastHarvestedAt": "2026-11-22T23:57:15.907Z",
     "learningId": "learn-huggingface-cloudflare-clef"
   },
   "hf-cloudflare-clef-flash": {
@@ -3393,10 +3393,10 @@
     "repository": "skyhook-io/radar",
     "platform": "github",
     "sourceUrl": "https://github.com/skyhook-io/radar",
-    "sourceVersion": "c0f594ca",
+    "sourceVersion": "50316b9e",
     "license": "Apache-2.0",
-    "contentHash": "2e27572ba134b7b72d066eeae291fad2024ccdcc0fc52c2d1aebec22fed99bbb",
-    "lastHarvestedAt": "2026-11-22T01:44:02.056Z",
+    "contentHash": "1dc7db1d00e57f448a1520a67c2dc5dbc9885667140aaa825973555a074faa13",
+    "lastHarvestedAt": "2026-11-22T23:57:25.522Z",
     "learningId": "learn-github-skyhook-io-radar"
   },
   "mitmproxy-mitmproxy": {
@@ -3613,10 +3613,10 @@
     "repository": "1jehuang/jcode",
     "platform": "github",
     "sourceUrl": "https://github.com/1jehuang/jcode",
-    "sourceVersion": "b33d94f0",
+    "sourceVersion": "9991542c",
     "license": "MIT",
-    "contentHash": "90c2f4a4054d5ad260687dc1b8e5352a49c0d38733a35585eb339df16f9f65b9",
-    "lastHarvestedAt": "2026-11-21T17:49:50.689Z",
+    "contentHash": "58fabdff44e5f97cd807108d1c9fb6616e95383631be3af360d818d8ad793a5f",
+    "lastHarvestedAt": "2026-11-22T23:57:17.723Z",
     "learningId": "learn-github-1jehuang-jcode"
   },
   "wix-detox": {
@@ -8253,10 +8253,10 @@
     "repository": "buresdv/Cork",
     "platform": "github",
     "sourceUrl": "https://github.com/buresdv/Cork",
-    "sourceVersion": "649a6f63",
+    "sourceVersion": "aee5584a",
     "license": "NOASSERTION",
-    "contentHash": "a12df921033e3399b063613336a3440d4b5dcc6a1531daeb7a661409f51a589c",
-    "lastHarvestedAt": "2026-11-12T09:55:17.691Z",
+    "contentHash": "102b491610b5b90827dd06e1dd53cf64ea26836f1d5676ade88a2a1efcc36211",
+    "lastHarvestedAt": "2026-11-22T23:57:22.920Z",
     "learningId": "learn-github-buresdv-cork"
   },
   "productdevbook-port-killer": {

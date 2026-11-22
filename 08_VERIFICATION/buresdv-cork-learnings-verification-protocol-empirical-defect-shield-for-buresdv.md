@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:34:07.743Z",
+  "timestamp": "2026-11-22T23:57:30.612Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-buresdv-cork-learnings",
+  "learning_id": "LEARN-EVO-buresdv-cork-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [buresdv-cork-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:34:07.743Z`  
-> **Learning ID**: `LEARN-REEXTRACT-buresdv-cork-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-22T23:57:30.612Z`  
+> **Learning ID**: `LEARN-EVO-buresdv-cork-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/buresdv-cork-learnings.md`  
 > **Source**: github ([https://github.com/buresdv/Cork](https://github.com/buresdv/Cork))  
-> **Source Version**: `649a6f63`  
+> **Source Version**: `aee5584a`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T09:55:00.048Z  
+> **Timestamp**: 2026-11-22T23:57:21.814Z  
 > **Learning ID**: `learn-github-buresdv-cork`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/buresdv-cork-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/buresdv/Cork](https://github.com/buresdv/Cork))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T09:55:00.042Z  
+> **Harvest Timestamp**: 2026-11-22T23:57:21.808Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: [NO AI] Fast GUI for Homebrew written in SwiftUI
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 4731 stars
+- **Stars / Engagement**: 4733 stars
 
 ---
 
@@ -1273,249 +1273,290 @@ extension ServicesFatalError
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `649a6f63` (2026-11-11)
-**Commit Message**: Merge branch 'main.appearance-override'
+### Incident Patch 1: `aee5584a` (2026-11-22)
+**Commit Message**: Merge branch 'main.changed-cask-icon'
 
-# Conflicts:
-#	Cork/Localizable.xcstrings
-
-
-
----
-
-### Incident Patch 2: `9af762f8` (2026-11-11)
-**Commit Message**: + Appearance override
-
-**File**: `Cork/CorkApp.swift` (modified, +11/-0)
+**File**: `Modules/Packages/PackagesModels/Models/Brew Package.swift` (modified, +1/-1)
 ```diff
-@@ -39,6 +39,8 @@ struct CorkApp: App
- 
-     @Default(.demoActivatedAt) var demoActivatedAt: Date?
-     @Default(.hasValidatedEmail) var hasValidatedEmail: Bool
-+    
-+    @Default(.appearance) var appearance: Appearance
- 
-     @Default(.hasFinishedOnboarding) var hasFinishedOnboarding: Bool
- 
-@@ -77,6 +79,7 @@ struct CorkApp: App
-         Window("Main Window", id: .mainWindowID)
-         {
-             ContentView()
-+                .preferredColorScheme(appearance.setting)
-                 .sheet(isPresented: !$hasFinishedOnboarding, onDismiss: {
-                     hasFinishedOnboarding = true
-                 }, content: {
-@@ -280,12 +283,14 @@ struct CorkApp: App
-         Window("window.services", id: .servicesWindowID)
-         {
-             HomebrewServicesView()
-+                .preferredColorScheme(appearance.setting)
-         }
-         .windowToolbarStyle(.unifiedCompact)
- 
-         Window("window.about", id: .aboutWindowID)
-         {
-             AboutView()
-+                .preferredColorScheme(appearance.setting)
-         }
-         .windowResizability(.contentSize)
-         .defaultPosition(.center)
-@@ -298,6 +303,7 @@ struct CorkApp: App
-             PackagePreview(packageToPreview: convertedMinimalPackage)
-                 .navigationTitle(packageToPreview?.name(withPrecision: .precise) ?? "")
-                 .environment(brewPackagesTracker)
-+                .preferredColorScheme(appearance.setting)
-         }
-         .windowResizability(.contentSize)
-         .windowToolbarStyle(.unifiedCompact)
-@@ -307,6 +313,7 @@ struct CorkApp: App
-             if let errorToInspect
-             {
-                 ErrorInspector(errorText: errorToInspect)
-+                    .preferredColorScheme(appearance.setting)
+@@ -137,7 +137,7 @@ public struct BrewPackage: Identifiable, Equatable, Hashable, Codable, Sendable,
+             case .formula:
+                 return .init(systemName: "apple.terminal")
+             case .cask:
+-                return .init(systemName: "pointer.arrow.click.2")
++                return .init(systemName: "cursor.rays")
              }
          }
-         .windowToolbarStyle(.unifiedCompact)
-@@ -316,6 +323,7 @@ struct CorkApp: App
-             if let fullPackageList
-             {
-                 FullPackageList(packages: fullPackageList)
-+                    .preferredColorScheme(appearance.setting)
-             }
-         }
-         .windowToolbarStyle(.unifiedCompact)
-@@ -325,17 +333,20 @@ struct CorkApp: App
-             if let environmentVariables
-             {
-                 EnvironmentVariablesPreview(environmentVariablesToPreview: environmentVariables.sorted(by: { $0.key > $1.key }))
-+                    .preferredColorScheme(appearance.setting)
-             }
-         }
- 
-         Window("window.downgrade", id: .corkDowngradeWindowID)
-         {
-             DowngradeCorkView()
-+                .preferredColorScheme(appearance.setting)
-         }
- 
-         Settings
-         {
-             SettingsView()
-+                .preferredColorScheme(appearance.setting)
-         }
-         .windowResizability(.contentSize)
  
 ```
 
-**File**: `Cork/Localizable.xcstrings` (modified, +40/-0)
+---
+
+### Incident Patch 2: `06106fec` (2026-11-22)
+**Commit Message**: Merge branch 'main.outdated-package-list-expansion'
+
+**File**: `Cork/Localizable.xcstrings` (modified, +10/-0)
 ```diff
-@@ -93543,6 +93543,46 @@
+@@ -98546,6 +98546,16 @@
          }
        }
      },
-+    "settings.general.appearance" : {
++    "settings.install-uninstall.expand-outdated-packages-list-by-default.toggle" : {
 +      "localizations" : {
 +        "en" : {
 +          "stringUnit" : {
 +            "state" : "translated",
-+            "value" : "Appearance:"
++            "value" : "Expand list of outdated packages by default"
 +          }
 +        }
 +      }
 +    },
-+    "settings.general.appearance.forced-dark" : {
-+      "localizations" : {
-+        "en" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Dark"
-+          }
-+        }
-+      }
-+    },
-+    "settings.general.appearance.forced-light" : {
-+      "localizations" : {
-+        "en" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "Light"
-+          }
-+        }
-+      }
-+    },
-+    "settings.general.appearance.system" : {
-+      "localizations" : {
-+        "en" : {
-+          "stringUnit" : {
-+            "state" : "translated",
-+            "value" : "System"
-+          }
-+        }
-+      }
-+    },
-     "settings.general.backup-date-format" : {
+     "settings.install-uninstall.include-greedy-packages.toggle" : {
        "localizations" : {
          "cs" : {
 ```
 
-**File**: `Cork/Views/Settings/Panes/General Pane.swift` (modified, +18/-0)
+**File**: `Cork/Views/Settings/Panes/Installation Pane.swift` (modified, +10/-2)
 ```diff
-@@ -30,6 +30,8 @@ struct GeneralPane: View
-     @Default(.showSearchFieldForDependenciesInPackageDetails) var showSearchFieldForDependenciesInPackageDetails: Bool
-     @Default(.showInMenuBar) var showInMenuBar: Bool
-     @Default(.startWithoutWindow) var startWithoutWindow: Bool
-+    
-+    @Default(.appearance) var appearance: Appearance
+@@ -19,6 +19,7 @@ struct InstallationAndUninstallationPane: View
+     
+     @Default(.showCompatibilityWarning) var showCompatibilityWarning: Bool
+     @Default(.includeGreedyOutdatedPackages) var includeGreedyOutdatedPackages: Bool
++    @Default(.automaticallyExpandOutdatedPackageList) var automaticallyExpandOutdatedPackageList: Bool
  
-     @AppStorage("defaultBackupDateFormat") var defaultBackupDateFormat: Date.FormatStyle.DateStyle = .numeric
+     @Default(.showRealTimeTerminalOutputOfOperations) var showRealTimeTerminalOutputOfOperations: Bool
+     @Default(.openRealTimeTerminalOutputByDefault) var openRealTimeTerminalOutputByDefault: Bool
+@@ -68,9 +69,16 @@ struct InstallationAndUninstallationPane: View
  
-@@ -228,6 +230,22 @@ struct GeneralPane: View
-                 } label: {
-                     Text("settings.general.backup-date-format")
-                 }
-+                
-+                LabeledContent
-+                {
-+                    Picker(selection: $appearance) {
-+                        ForEach(Appearance.allCases)
-+                        { appearanceSetting in
-+                            Text(appearanceSetting.description)
+                 LabeledContent
+                 {
+-                    Defaults.Toggle(key: .includeGreedyOutdatedPackages)
++                    VStack(alignment: .leading)
+                     {
+-                        Text("settings.install-uninstall.include-greedy-packages.toggle")
++                        Defaults.Toggle(key: .includeGreedyOutdatedPackages)
++                        {
++                            Text("settings.install-uninstall.include-greedy-packages.toggle")
 +                        }
-+                    } label: {
-+                        Text("settings.general.appearance")
-+                    }
-+                    .labelsHidden()
++                        
++                        Defaults.Toggle(key: .automaticallyExpandOutdatedPackageList) {
++                            Text("settings.install-uninstall.expand-outdated-packages-list-by-default.toggle")
++                        }
+                     }
+                 } label: {
+                     Text("settings.general.outdated-packages.info-amount")
+```
+
+**File**: `Cork/Views/Start Page/Sub-Views/Outdated Packages/Outdated Package List Box.swift` (modified, +4/-45)
+```diff
+@@ -16,6 +16,8 @@ struct OutdatedPackageListBox: View
+     @Default(.displayOnlyIntentionallyInstalledPackagesByDefault) var displayOnlyIntentionallyInstalledPackagesByDefault: Bool
+ 
+     @Default(.outdatedPackageInfoDisplayAmount) var outdatedPackageInfoDisplayAmount: OutdatedPackageInfoAmount
++    
++    @Default(.automaticallyExpandOutdatedPackageList) var automaticallyExpandOutdatedPackageList: Bool
+ 
+     @InjectedObservable(\.appState) var appState: AppState
+     @InjectedObservable(\.outdatedPackagesTracker) var outdatedPackagesTracker: OutdatedPackagesTracker
+@@ -37,7 +39,7 @@ struct OutdatedPackageListBox: View
+             {
+                 VStack(alignment: .leading)
+                 {
+-                    GroupBoxHeadlineGroupWithArbitraryContent(image: outdatedPackagesTracker.allDisplayableOutdatedPackages.count == 1 ? .init(systemName: "square.and.arrow.down") : .init(systemName:"square.and.arrow.down.on.square"))
++                    GroupBoxHeadlineGroupWithArbitraryContent(image: outdatedPackagesTracker.allDisplayableOutdatedPackages.count == 1 ? .init(systemName: "square.and.arrow.down") : .init(systemName: "square.and.arrow.down.on.square"))
+                     {
+                         VStack(alignment: .leading, spacing: 5)
+                         {
+@@ -57,50 +59,7 @@ struct OutdatedPackageListBox: View
+                                 }
+                             }
+ 
+-                            DisclosureGroup(isExpanded: $isDropdownExpanded)
+-                            {
+-                                OutdatedPackagesList()
+-                                /*
+-                                 switch outdatedPackageListBoxType
+-                                 {
+-                                 case .managedOnly:
+-                                     outdatedPackageListComplex(packagesToShow: packagesManagedByHomebrew)
+-                                 case .unmanagedOnly:
+-                                     outdatedPackageListComplex(packagesToShow: packagesThatUpdateThemselves)
+-                                 case .bothManagedAndUnmanaged:
+-                                     outdatedPackageListComplex(packagesToShow: packagesManagedByHomebrew)
+-
+-                                     if !packagesThatUpdateThemselves.isEmpty
+-                                     {
+-                                         DisclosureGroup(isExpanded: $isSelfUpdatingSectionExpanded)
+-                                         {
+-                                             outdatedPackageListComplex(packagesToShow: packagesThatUpdateThemselves)
+-                                         } label: {
+-                                             Text("start-page.updates.self-updating.\(packagesThatUpdateThemselves.count).list")
+-                                                 .font(.subheadline)
+-                                         }
+-                                     }
+-                                 }
+-                                 */
+-                            } label: {
+-                                // TODO: Fix this
+-                                /*
+-                                 Group
+-                                 {
+-                                     if outdatedPackageListBoxType == .unmanagedOnly
+-                                     {
+-                                         Text("start-page.updates.unmanaged-only.list")
+-                                     }
+-                                     else
+-                                     {
+-                                         Text("start-page.updates.list")
+-                                     }
+-                                 }
+-                                  */
+-
+-                                Text("start-page.updates.list")
+-                            }
+-                            .betterDisclosureGroupStyle()
++                            OutdatedPackagesList()
+                         }
+                     }
+                 }
+```
+
+**File**: `Cork/Views/Start Page/Sub-Views/Outdated Packages/Outdated Packages List/Outdated Packages List Type/Outdated Packages List - Table.swift` (modified, +0/-1)
+```diff
+@@ -123,7 +123,6 @@ struct OutdatedPackagesList_Table: View
+                     )
+                 }
+         
+-
+                 TableColumn("start-page.updates.installed-version")
+                 { outdatedPackage in
+                     Text(outdatedPackage.installedVersions.formatted(.list(type: .and)))
+```
+
+**File**: `Cork/Views/Start Page/Sub-Views/Outdated Packages/Outdated Packages List/Outdated Packages List.swift` (modified, +58/-33)
+```diff
+@@ -16,6 +16,11 @@ struct OutdatedPackagesList: View
+     @Default(.outdatedPackageInfoDisplayAmount) var outdatedPackageInfoDisplayAmount
+ 
+     @InjectedObservable(\.outdatedPackagesTracker) var outdatedPackagesTracker: OutdatedPackagesTracker
++    
++    @Default(.automaticallyExpandOutdatedPackageList) var automaticallyExpandOutdatedPackageList: Bool
++    
++    @State private var isManagedUpdatesDropdownExpanded: Bool = false
++    @State private var isUnmanagedUpdatesDropdownExpanded: Bool = false
+ 
+     var areThereAnyHomebrewManagedUpdatesAvailable: Bool
+     {
+@@ -34,45 +39,65 @@ struct OutdatedPackagesList: View
+     
+     var body: some View
+     {
+-        switch outdatedPackageInfoDisplayAmount
++        Group
+         {
+-        case .none, .versionOnly:
+-            
+-            if areThereAnyHomebrewManagedUpdatesAvailable
+-            {
+-                OutdatedPackagesList_List(packageUpdatingType: .homebrew)
+-            }
+-            else
++            DisclosureGroup(isExpanded: $isManagedUpdatesDropdownExpanded)
+             {
+-                noManagedUpdatesAvailableMessage
+-            }
+-            
+-            if areThereAnySelfManagedUpdatesAvailable
+-            {
+-                DisclosureGroup("start-page.updates.unmanaged-only.list")
++                switch outdatedPackageInfoDisplayAmount
+                 {
+-                    OutdatedPackagesList_List(packageUpdatingType: .selfUpdating)
++                case .none, .versionOnly:
 +                    
-+                } label: {
-+                    Text("settings.general.appearance")
-+                }
++                    if areThereAnyHomebrewManagedUpdatesAvailable
++                    {
++                        OutdatedPackagesList_List(packageUpdatingType: .homebrew)
++                    }
++                    else
++                    {
++                        noManagedUpdatesAvailableMessage
++                    }
++                    
++                    if areThereAnySelfManagedUpdatesAvailable
++                    {
++                        DisclosureGroup(isExpanded: $isUnmanagedUpdatesDropdownExpanded)
++                        {
++                            OutdatedPackagesList_List(packageUpdatingType: .selfUpdating)
++                        } label: {
++                            Text("start-page.updates.unmanaged-only.list")
++                        }
++                        .betterDisclosureGroupStyle()
++                    }
++                case .all:
++                    
++                    if areThereAnyHomebrewManagedUpdatesAvailable
++                    {
++                        OutdatedPackagesList_Table(packageUpdatingType: .homebrew)
++                    }
++                    else
++                    {
++                        noManagedUpdatesAvailableMessage
++                    }
++                    
++                    if areThereAnySelfManagedUpdatesAvailable
++                    {
++                        DisclosureGroup(isExpanded: $isUnmanagedUpdatesDropdownExpanded)
++                        {
++                            OutdatedPackagesList_Table(packageUpdatingType: .selfUpdating)
++                        } label: {
++                            Text("start-page.updates.unmanaged-only.list")
++                        }
++                        .betterDisclosureGroupStyle()
++                    }
+                 }
+-                .betterDisclosureGroupStyle()
+-            }
+-        case .all:
+-            
+-            if areThereAnyHomebrewManagedUpdatesAvailable
+-            {
+-                OutdatedPackagesList_Table(packageUpdatingType: .homebrew)
+-            }
+-            else
+-            {
+-                noManagedUpdatesAvailableMessage
++            } label: {
++                Text("start-page.updates.list")
+             }
+-            
+-            if areThereAnySelfManagedUpdatesAvailable
++        }
++        .onAppear
++        {
++            if automaticallyExpandOutdatedPackageList
+             {
+-                DisclosureGroup("start-page.updates.unmanaged-only.list")
+-                {
+-                    OutdatedPackagesList_Table(packageUpdatingType: .selfUpdating)
+-                }
+-                .betterDisclosureGroupStyle()
++                isManagedUpdatesDropdownExpanded = true
++                isUnmanagedUpdatesDropdownExpanded = true
              }
          }
      }
 ```
 
-**File**: `Modules/Shared/Defaults/Settings/General Settings.swift` (modified, +3/-0)
+**File**: `Modules/Shared/Defaults/Settings/Packages Settings.swift` (modified, +1/-0)
 ```diff
-@@ -57,4 +57,7 @@ public extension Defaults.Keys
-     /// Whether the app should start without its window
-     /// Not implemented at the moment
-     static let startWithoutWindow: Key<Bool> = .init("startWithoutWindow", default: false)
-+    
-+    // MARK: - Appearance
-+    static let appearance: Key<Appearance> = .init("forcedColorScheme", default: .system)
- }
-```
-
-**File**: `Modules/Shared/Models/Appearance.swift` (added, +47/-0)
-```diff
-@@ -0,0 +1,47 @@
-+//
-+//  Appearance.swift
-+//  CorkShared
-+//
-+//  Created by David Bureš - P on 11.11.2026.
-+//
-+
-+import Foundation
-+import Defaults
-+import SwiftUI
-+
-+public enum Appearance: String, Identifiable, CaseIterable, Defaults.Serializable
-+{
-+    public var id: Self
-+    {
-+        return self
-+    }
-+    
-+    case system
-+    case forcedLight
-+    case foredDark
-+    
-+    public var description: String
-+    {
-+        switch self
-+        {
-+        case .system:
-+            return String(localized: "settings.general.appearance.system")
-+        case .forcedLight:
-+            return String(localized: "settings.general.appearance.forced-light")
-+        case .foredDark:
-+            return String(localized: "settings.general.appearance.forced-dark")
-+        }
-+    }
-+    
-+    public var setting: ColorScheme?
-+    {
-+        switch self {
-+        case .system:
-+            return nil
-+        case .forcedLight:
-+            return .light
-+        case .foredDark:
-+            return .dark
-+        }
-+    }
-+}
+@@ -17,6 +17,7 @@ public extension Defaults.Keys
+     // MARK: - Outdated packages
+     /// Whether to show `--greedy` packages
+     static let includeGreedyOutdatedPackages: Key<Bool> = .init("includeGreedyOutdatedPackages", default: false)
++    static let automaticallyExpandOutdatedPackageList: Key<Bool> = .init("automaticallyExpandOutdatedPackageList", default: false)
+     
+     // MARK: - Compatibility
+     /// Whether to warn about packages incompatible with the user's system
 ```
 
 #### Recent Merged Pull Requests:
@@ -1544,41 +1585,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. + Appearance override
+## X. Merge branch 'main.changed-cask-icon'
 
 **RULE**:
-When implementing operations in `Cork/CorkApp.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in buresdv/Cork. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Modules/Packages/PackagesModels/Models/Brew Package.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in buresdv/Cork. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9af762f8`: + Appearance override. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `aee5584a`: Merge branch 'main.changed-cask-icon'. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cork/CorkApp.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Modules/Packages/PackagesModels/Models/Brew Package.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-    
-    @Default(.appearance) var appearance: Appearance
-                .preferredColorScheme(appearance.setting)
-                .preferredColorScheme(appearance.setting)
-                .preferredColorScheme(appearance.setting)
-                .preferredColorScheme(appearance.setting)
-                    .preferredColorScheme(appearance.setting)
-                    .preferredColorScheme(appearance.setting)
-                    .preferredColorScheme(appearance.setting)
-                .preferredColorScheme(appearance.setting)
-                .preferredColorScheme(appearance.setting)
+                return .init(systemName: "cursor.rays")
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+                return .init(systemName: "pointer.arrow.click.2")
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9af762f8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `aee5584a` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T23:49:28.540Z",
-  "total_verified_learnings": 9075,
+  "last_updated": "2026-11-22T23:57:31.103Z",
+  "total_verified_learnings": 9076,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23815,
+  "total_items": 23828,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -214748,7 +214748,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Cloudflare/clef",
       "source_version": "hf-cloudflare-clef",
-      "content_hash": "52f949f9a0d5bd7fab607fad80bf7dccf1cd8e5031d72c4c2d324d0f56f77ad3",
+      "content_hash": "8b4f07cad2645d5d8a2e46b2fc0765002db63f5fcdb04f568d1c042a9c667d82",
       "dossier_path": "07_PROJECT_LEARNING/hf-cloudflare-clef-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-cloudflare-clef-learnings.md",
       "promoted_rules": [],
@@ -214757,7 +214757,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T16:40:58.877Z",
+      "verified_at": "2026-11-22T23:57:15.633Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -214774,9 +214774,9 @@
       "title": "Research & Knowledge Intelligence: Cloudflare/clef Core Invariants",
       "repository": "Cloudflare/clef",
       "source_version": "hf-cloudflare-clef",
-      "content_hash": "03998326f6fdf01131a211482e82be93b628dba4433499858c980eb82d1274d1",
+      "content_hash": "c7a8598a4b8eb87dd7fc411de497d00ab0921fe1a5f35fbd1ba820183f04e153",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T16:40:59.273Z"
+      "persisted_at": "2026-11-22T23:57:16.143Z"
     },
     "learn-github-linkerd-linkerd2": {
       "learning_id": "learn-github-linkerd-linkerd2",
@@ -214884,9 +214884,9 @@
       "title": "Research & Knowledge Intelligence: hf-cloudflare-clef-learnings Core Invariants",
       "repository": "hf-cloudflare-clef-learnings",
       "source_version": "HEAD",
-      "content_hash": "d0e7b511ed05d7cba5196efee719d67e15fd0ece48733e3070da9b82a8859365",
+      "content_hash": "0fd2e3b99f5335c9b1e9cf0d9641aaa105e9309ba7b4a72058da5ac0edc36ac9",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T16:41:26.109Z"
+      "persisted_at": "2026-11-22T23:57:30.266Z"
     },
     "candidate_directive-proxy-v2-374-0": {
       "item_id": "candidate_directive-proxy-v2-374-0",
@@ -229220,8 +229220,8 @@
       "slug": "skyhook-io-radar",
       "platform": "github",
       "source_url": "https://github.com/skyhook-io/radar",
-      "source_version": "c0f594ca",
-      "content_hash": "2e27572ba134b7b72d066eeae291fad2024ccdcc0fc52c2d1aebec22fed99bbb",
+      "source_version": "50316b9e",
+      "content_hash": "1dc7db1d00e57f448a1520a67c2dc5dbc9885667140aaa825973555a074faa13",
       "dossier_path": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
       "promoted_rules": [
@@ -229254,6 +229254,11 @@
           "number": 9877,
           "title": "Faster local test loop: DWARF-free test binaries, incremental tsc, Node 24",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10009,
+          "title": "Keep serving built-in resources when API discovery outlasts its budget",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -229261,7 +229266,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T01:44:01.856Z",
+      "verified_at": "2026-11-22T23:57:25.313Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -229315,10 +229320,10 @@
       "relative_path": "08_VERIFICATION/skyhook-io-radar-verification-protocol-empirical-defect-shield-for-skyhook-io-ra.md",
       "title": "Verification Protocol: Empirical Defect Shield for skyhook-io/radar",
       "repository": "skyhook-io/radar",
-      "source_version": "c0f594ca",
-      "content_hash": "bce1b95b1b4227d5c942033679911df974a967870d6665c7491da62f0ceb1b3b",
+      "source_version": "50316b9e",
+      "content_hash": "cb720cf33dee1263b7fe65064859b614cc7ab21a12a8dd314a3ad7d0ed1f07ec",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T01:44:02.596Z"
+      "persisted_at": "2026-11-22T23:57:26.124Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-v3-2-learnings-core-inva": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-v3-2-learnings-core-inva",
@@ -244357,8 +244362,8 @@
       "slug": "1jehuang-jcode",
       "platform": "github",
       "source_url": "https://github.com/1jehuang/jcode",
-      "source_version": "b33d94f0",
-      "content_hash": "90c2f4a4054d5ad260687dc1b8e5352a49c0d38733a35585eb339df16f9f65b9",
+      "source_version": "9991542c",
+      "content_hash": "58fabdff44e5f97cd807108d1c9fb6616e95383631be3af360d818d8ad793a5f",
       "dossier_path": "07_PROJECT_LEARNING/1jehuang-jcode-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/1jehuang-jcode-learnings.md",
       "promoted_rules": [
@@ -244386,6 +244391,11 @@
           "number": 9813,
           "title": "Render trusted Jarvis requests as speech, with structured detail and original pa",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10007,
+          "title": "update url to 2.5.9 for RUSTSEC-2026-0592",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -244393,7 +244403,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T17:49:50.478Z",
+      "verified_at": "2026-11-22T23:57:17.501Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -244447,10 +244457,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/1jehuang-jcode-agent-contract-1jehuang-jcode-autonomous-specialist-persona.md",
       "title": "Agent Contract: 1jehuang/jcode Autonomous Specialist Persona",
       "repository": "1jehuang/jcode",
-      "source_version": "b33d94f0",
-      "content_hash": "96a5e356f8f71e5405364091ad30fdf2fc0622c295fdec27d2ef9befb34ca967",
+      "source_version": "9991542c",
+      "content_hash": "3445491c0ffc8e7b7b08f9fad6de418385053488541967cb611fdf7e55e3ca13",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T17:49:51.243Z"
+      "persisted_at": "2026-11-22T23:57:18.332Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-1jehuang-jcode": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-1jehuang-jcode",
@@ -244459,10 +244469,10 @@
       "relative_path": "08_VERIFICATION/1jehuang-jcode-verification-protocol-empirical-defect-shield-for-1jehuang-jcode.md",
       "title": "Verification Protocol: Empirical Defect Shield for 1jehuang/jcode",
       "repository": "1jehuang/jcode",
-      "source_version": "b33d94f0",
-      "content_hash": "313c50bcf7b2e1650f2a9f54c8d3dcd7bb2c35e2d2ace12816e54b4b1c77bf95",
+      "source_version": "9991542c",
+      "content_hash": "f931708adbae0490015fb2159e8c81714c2f6df2a3dac22769a67ae2315e95dc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T17:49:51.379Z"
+      "persisted_at": "2026-11-22T23:57:18.484Z"
     },
     "candidate_directive-update-all-go-dependencies-main": {
       "item_id": "candidate_directive-update-all-go-dependencies-main",
@@ -244547,9 +244557,9 @@
       "title": "Agent Contract: 1jehuang-jcode-learnings Autonomous Specialist Persona",
       "repository": "1jehuang-jcode-learnings",
       "source_version": "HEAD",
-      "content_hash": "908085708054e5a0f6d4220c1fa954d61de539a19d9a9054cc74cecaf363258f",
+      "content_hash": "9b67374a9da5a3967c914a74c6ff36802a07e734fb8b9e3be93ff24daeeca97c",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T17:50:08.226Z"
+      "persisted_at": "2026-11-22T23:57:29.711Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-1jehuang-jcode-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-1jehuang-jcode-learnings",
@@ -244559,9 +244569,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for 1jehuang-jcode-learnings",
       "repository": "1jehuang-jcode-learnings",
       "source_version": "HEAD",
-      "content_hash": "7959be99e9fa0b851120711906e5e9ca665b27e5f2f66be684529e73e90993dc",
+      "content_hash": "5a2fff39facd875ec68b1b6aae09cc84ddfcc9adff4308203f5f0fbfcc7193b0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T17:50:08.369Z"
+      "persisted_at": "2026-11-22T23:57:29.874Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-openmoss-team-moss-image-sft-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-openmoss-team-moss-image-sft-learnings-core-i",
@@ -286402,10 +286412,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-1jehuang-jcode-architecture-intelligence-1jehuang-jcode-core-invariants.md",
       "title": "Architecture Intelligence: 1jehuang/jcode Core Invariants",
       "repository": "1jehuang/jcode",
-      "source_version": "b33d94f0",
-      "content_hash": "dbd6f23a6258efeddf40a30c145d93a41fa94357c495de925749c4ed1938bccb",
+      "source_version": "9991542c",
+      "content_hash": "6d02bc290c365529716cb3f74c49281c74adca72e3791897df0bf9bea1a1d67f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T17:49:51.083Z"
+      "persisted_at": "2026-11-22T23:57:18.152Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-1jehuang-jcode": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-1jehuang-jcode",
@@ -286427,9 +286437,9 @@
       "title": "Architecture Intelligence: 1jehuang-jcode-learnings Core Invariants",
       "repository": "1jehuang-jcode-learnings",
       "source_version": "HEAD",
-      "content_hash": "21154dbce82c362856a8724c894255e08205f2cb53d260da849b5a3d9e86be8c",
+      "content_hash": "f56cc69536877bf9c52b09bb7249e088e88a9c1a57c755eaaadf1a5025707b67",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T17:50:08.046Z"
+      "persisted_at": "2026-11-22T23:57:29.529Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-1jehuang-jcode-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-1jehuang-jcode-learnings",
@@ -324255,6 +324265,189 @@
       "content_hash": "0c782256894308de65d6a285967877091fa0e853bc1f548ba85db1739bbc971d",
       "domain_letter": "G",
       "persisted_at": "2026-11-22T23:49:26.713Z"
+    },
+    "rule-10007": {
+      "learning_id": "rule-10007",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10007,
+      "title": "update url to 2.5.9 for RUSTSEC-2026-0592",
+      "source_url": "https://github.com/1jehuang/jcode",
+      "source_version": "9991542c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T23:57:17.501Z"
+    },
+    "candidate_directive-update-url-to-2-5-9-for-rustsec-2026-0592": {
+      "item_id": "candidate_directive-update-url-to-2-5-9-for-rustsec-2026-0592",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-Y0B4-update-url-to-2-5-9-for-rustsec-2026-0592.md",
+      "title": "update url to 2.5.9 for RUSTSEC-2026-0592",
+      "repository": "1jehuang/jcode",
+      "source_version": "9991542c",
+      "content_hash": "2ca3025834db12538f2741911fa038b50e4b324d9eb883917a5f436c9aae77c9",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-22T23:57:17.974Z"
+    },
+    "learn-github-buresdv-cork": {
+      "learning_id": "learn-github-buresdv-cork",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "buresdv/Cork",
+      "repository": "buresdv/Cork",
+      "slug": "buresdv-cork",
+      "platform": "github",
+      "source_url": "https://github.com/buresdv/Cork",
+      "source_version": "aee5584a",
+      "content_hash": "102b491610b5b90827dd06e1dd53cf64ea26836f1d5676ade88a2a1efcc36211",
+      "dossier_path": "07_PROJECT_LEARNING/buresdv-cork-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/buresdv-cork-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 10008,
+          "title": "Merge branch 'main.changed-cask-icon'",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-22T23:57:22.707Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-10008": {
+      "learning_id": "rule-10008",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10008,
+      "title": "Merge branch 'main.changed-cask-icon'",
+      "source_url": "https://github.com/buresdv/Cork",
+      "source_version": "aee5584a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T23:57:22.707Z"
+    },
+    "candidate_directive-merge-branch-main-changed-cask-icon": {
+      "item_id": "candidate_directive-merge-branch-main-changed-cask-icon",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-YA56-merge-branch-main-changed-cask-icon.md",
+      "title": "Merge branch 'main.changed-cask-icon'",
+      "repository": "buresdv-cork-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7628bd1fdcec3fc2499324a6cf0de485c23953ba6b9a38b8ca01de30931f0d5b",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-22T23:57:30.715Z"
+    },
+    "domain_intelligence-architecture-intelligence-buresdv-cork-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-buresdv-cork-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-buresdv-cork-architecture-intelligence-buresdv-cork-core-invariants.md",
+      "title": "Architecture Intelligence: buresdv/Cork Core Invariants",
+      "repository": "buresdv/Cork",
+      "source_version": "aee5584a",
+      "content_hash": "cdc62a79c3174269fcba097b62adab20b85b27dbe22f4cb84971622ac657ad55",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-22T23:57:23.335Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-buresdv-cork": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-buresdv-cork",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/buresdv-cork-verification-protocol-empirical-defect-shield-for-buresdv-cork.md",
+      "title": "Verification Protocol: Empirical Defect Shield for buresdv/Cork",
+      "repository": "buresdv/Cork",
+      "source_version": "aee5584a",
+      "content_hash": "9432e1bbf35e73668bdd0b54bcd5b05005f3debaea9cc36eadd7e733490eb66c",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-22T23:57:23.519Z"
+    },
+    "rule-10009": {
+      "learning_id": "rule-10009",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10009,
+      "title": "Keep serving built-in resources when API discovery outlasts its budget",
+      "source_url": "https://github.com/skyhook-io/radar",
+      "source_version": "50316b9e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T23:57:25.313Z"
+    },
+    "candidate_directive-keep-serving-built-in-resources-when-api-discovery-outlasts-its-budget": {
+      "item_id": "candidate_directive-keep-serving-built-in-resources-when-api-discovery-outlasts-its-budget",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-Y6BP-keep-serving-built-in-resources-when-api-discovery-outlasts-its-budget.md",
+      "title": "Keep serving built-in resources when API discovery outlasts its budget",
+      "repository": "skyhook-io/radar",
+      "source_version": "50316b9e",
+      "content_hash": "5ebae7c3580df676a0e48e98178077477bfdabc23120b6925513e92a33410703",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-22T23:57:25.771Z"
+    },
+    "domain_intelligence-human-need-intelligence-skyhook-io-radar-core-invariants": {
+      "item_id": "domain_intelligence-human-need-intelligence-skyhook-io-radar-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-skyhook-io-radar-human-need-intelligence-skyhook-io-radar-core-invariants.md",
+      "title": "Human & Need Intelligence: skyhook-io/radar Core Invariants",
+      "repository": "skyhook-io/radar",
+      "source_version": "50316b9e",
+      "content_hash": "babf48beffa83d22f93e976297eb62347a869ce9dffe8c62a0fe3afa8afc08a2",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-22T23:57:25.945Z"
+    },
+    "candidate_directive-deps-update-url-to-2-5-9-for-rustsec-2026-0592": {
+      "item_id": "candidate_directive-deps-update-url-to-2-5-9-for-rustsec-2026-0592",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-Y935-deps-update-url-to-2-5-9-for-rustsec-2026-0592.md",
+      "title": "deps): update url to 2.5.9 for RUSTSEC-2026-0592",
+      "repository": "1jehuang-jcode-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e569ba00404db81286f1d50347b4a54b5755d6b3aac55d6b220b359ab9128d8d",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-22T23:57:29.351Z"
+    },
+    "domain_intelligence-architecture-intelligence-buresdv-cork-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-buresdv-cork-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-buresdv-cork-learnings-architecture-intelligence-buresdv-cork-learnings-core-inv.md",
+      "title": "Architecture Intelligence: buresdv-cork-learnings Core Invariants",
+      "repository": "buresdv-cork-learnings",
+      "source_version": "HEAD",
+      "content_hash": "da81872a4cd2d666801cd6f6d6e3aabff53378596d2ab1bbe9a47f0ba58e0994",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-22T23:57:30.894Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-buresdv-cork-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-buresdv-cork-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/buresdv-cork-learnings-verification-protocol-empirical-defect-shield-for-buresdv.md",
+      "title": "Verification Protocol: Empirical Defect Shield for buresdv-cork-learnings",
+      "repository": "buresdv-cork-learnings",
+      "source_version": "HEAD",
+      "content_hash": "593b093dd35788ac08fdcf2ebcfda92b5e68b63f5a95e44e12b6911c05f0070f",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-22T23:57:31.103Z"
     }
   },
   "ai-builder-brain": {

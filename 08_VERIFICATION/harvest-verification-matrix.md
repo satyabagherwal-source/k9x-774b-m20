@@ -12234,3 +12234,7 @@
 | `CYCLE-20261122-DDFK` | `2026-11-22T23:41:15.200Z` | `HuggingFaceTB/SmolVLM2-256M-Video-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-huggingfacetb-smolvlm2-256m-video-instruct-learnings.md` | Yes (`4cf01de3...`) |
 | `CYCLE-20261122-NN84` | `2026-11-22T23:49:14.452Z` | `DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-learnings.md` | Yes (`0480b1a5...`) |
 | `CYCLE-20261122-NPBV` | `2026-11-22T23:49:17.179Z` | `ratatui/ratatui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10006` | Yes (`452af68d...`) |
+| `CYCLE-20261122-XYPQ` | `2026-11-22T23:57:15.902Z` | `Cloudflare/clef` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cloudflare-clef-learnings.md` | Yes (`8b4f07ca...`) |
+| `CYCLE-20261122-Y046` | `2026-11-22T23:57:17.718Z` | `1jehuang/jcode` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10007` | Yes (`58fabdff...`) |
+| `CYCLE-20261122-Y44K` | `2026-11-22T23:57:22.916Z` | `buresdv/Cork` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10008` | Yes (`102b4916...`) |
+| `CYCLE-20261122-Y64U` | `2026-11-22T23:57:25.518Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10009` | Yes (`1dc7db1d...`) |

@@ -4,22 +4,22 @@
 {
   "source_repository": "skyhook-io/radar",
   "source_url": "https://github.com/skyhook-io/radar",
-  "source_version": "c0f594ca",
+  "source_version": "50316b9e",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-22T01:44:02.275Z",
+  "timestamp": "2026-11-22T23:57:25.770Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-skyhook-io-radar",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [skyhook-io/radar](https://github.com/skyhook-io/radar) (Revision: `c0f594ca`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-22T01:44:02.275Z`  
+> **Provenance**: Harvested from [skyhook-io/radar](https://github.com/skyhook-io/radar) (Revision: `50316b9e`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-22T23:57:25.770Z`  
 > **Learning ID**: `learn-github-skyhook-io-radar`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `skyhook-io/radar` (Commit: `c0f594ca`)
+- **Target Repository**: `skyhook-io/radar` (Commit: `50316b9e`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T01:44:01.011Z  
+> **Harvest Timestamp**: 2026-11-22T23:57:24.432Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: The missing open-source Kubernetes UI with a built-in MCP server for AI agents. See what's broken, why, and what changed. Issues, Topology, event timeline, Helm, GitOps, live service traffic, and cluster audits - all in one Go binary.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 4183 stars
+- **Stars / Engagement**: 4201 stars
 
 ---
 
@@ -1148,9 +1148,11 @@ package k8s
 
 import (
 	"context"
+	"crypto/rand"
 	"crypto/x509"
 	"errors"
 	"net"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -1181,6 +1183,58 @@ type ConnectionStatus struct {
 	// so the UI can say how long the cluster has been down. Set by
 	// SetConnectionStatus; callers leave it empty.
 	DisconnectedAt string `json:"disconnectedAt,omitempty"`
+
+	// ConnectionID names the admitted connection Radar is serving: one
+	// admission of one cluster, unique for this process and across restarts.
+	// Empty while nothing is serving. Set by the publisher; callers leave it empty.
+	ConnectionID string `json:"connectionId,omitempty"`
+}
+
+var (
+	bootNonce = rand.Text()[:10]
+
+	// Guarded by connectionStatusMu.
+	servingConnectionID  string
+	connectionAdmissions uint64
+	admissionsClosed     bool
+)
+
+// ServingConnectionID returns the admitted connection Radar is serving, or ""
+// while nothing is serving (a switch, rescope or rebuild is between its point
+// of no return and its admission).
+func ServingConnectionID() string {
+	connectionStatusMu.RLock()
+	defer connectionStatusMu.RUnlock()
+	return servingConnectionID
+}
+
+// RetireServingConnection is the point of no return: called before any
+// destructive teardown, it clears the serving ID so no request can be admitted
+// against a half-retired connection. A connected status becomes connecting.
+func RetireServingConnection() {
+	connectionStatusMu.Lock()
+	if servingConnectionID == "" {
+		connectionStatusMu.Unlock()
+		return
+	}
+	servingConnectionID = ""
+	status := connectionStatus
+	if status.State == StateConnected {
+		status.State = StateConnecting
+	}
+	status.ConnectionID = ""
+	connectionStatus = status
+	connectionStatusMu.Unlock()
+	notifyConnectionChange(status)
+}
+
+// CloseConnectionAdmissions retires the serving connection for good: after it,
+// no publication can admit a new one. Shutdown calls it before tearing down.
+func CloseConnectionAdmissions() {
+	connectionStatusMu.Lock()
+	admissionsClosed = true
+	connectionStatusMu.Unlock()
+	RetireServingConnection()
 }
 
 // outageStart carries DisconnectedAt from one status to the next: it starts
@@ -1231,6 +1285,15 @@ func SetConnectionStatusIfCurrent(operation context.Context, status ConnectionSt
 		return false
 	}
 	status.DisconnectedAt = outageStart(connectionStatus, status, time.Now())
+	if status.State == StateConnected && servingConnectionID == "" {
+		if admissionsClosed {
+			connectionStatusMu.Unlock()
+			return false
+		}
+		connectionAdmissions++
+		servingConnectionID = bootNonce + "-" + strconv.FormatUint(connectionAdmissions, 10)
+	}
+	status.ConnectionID = servingConnectionID
 	if connectionStatus == status {
 		connectionStatusMu.Unlock()
 		return true
@@ -1384,79 +1447,7 @@ func isTransportConnectivityError(lower string) bool {
 func isTransportNetworkMessage(lower string) bool {
 	transportMarkers := []string{
 		"connection refused",
-		"no such host",
-		"dial tcp",
-		"dial udp",
-		"no route to host",
-		"connection reset by peer",
-		"network is unreachable",
-	}
-	for _, marker := range transportMarkers {
-		if strings.Contains(lower, marker) {
-			return true
-		}
-	}
-	return false
-}
-
-func isTransportTimeoutMessage(lower string) bool {
-	timeoutMarkers := []string{
-		"i/o timeout",
-		"context deadline exceeded",
-		"tls handshake timeout",
-		"timed out",
-		"timeout",
-	}
-	for _, marker := range timeoutMarkers {
-		if strings.Contains(lower, marker) {
-			return true
-		}
-	}
-	return false
-}
-
-// isAuthErrorMessage matches client-side credential acquisition failures (exec
-// plugins, SSO sessions) — no request reached the API server, and
-// re-authenticating locally is the fix.
-func isAuthErrorMessage(lower string) bool {
-	authMarkers := []string{
-		"token has expired",
-		"expired token",
-		"sso session",
-		"sso token",
-		"ssoproviderinvalidtoken",
-		"aws sso login",
-		"getting credentials",
-		"credentials expired",
-		"credential plugin",
-		"exec credential",
-		"exec plugin",
-		"gke-gcloud-auth-plugin",
-		// client-go's in-tree oidc auth provider returns refresh failures RAW
-		// from RoundTrip (no "getting credentials:" wrapper) — Keycloak/Dex/
-		// IBM IKS kubeconfigs die here. "invalid_grant" is the RFC 6749 code
-		// every IdP emits for an expired/revoked refresh token.
-		"failed to refresh token",
-		"invalid_grant",
-		"cannot refresh without refresh-token",
-		// The exec plugin's TLS client-certificate path (e.g. tsh) fails
-		// without the "getting credentials:" wrapper; this phrasing is
-		// produced only by client-go's exec plugin runner.
-		"exec: executable ",
-		"failed to read token file",
-		"read empty token from file",
-	}
-	for _, marker := range authMarkers {
-		if strings.Contains(lower, marker) {
-			return true
-		}
-	}
-	return false
-}
-
-// isAuthRejectedMessage matches HTTP 401 responses: the request reached the API
-// server but could not be authenticated. Checked only after isAuthErrorMessage
-// so exec-p
+		"no s
 ```
 
 ### Core Architecture Module: `internal/k8s/restart_loop.go`
@@ -2448,365 +2439,809 @@ func (s *Server) refreshAIEngine(ctx context.Context) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3419650d` (2026-11-21)
-**Commit Message**: Faster local test loop: DWARF-free test binaries, incremental tsc, Node 24 (#2832)
+### Incident Patch 1: `50316b9e` (2026-11-22)
+**Commit Message**: Keep serving built-in resources when API discovery outlasts its budget (#2840)
 
-## Summary
+Follow-up to #2826 (the last item of its first step in the connection
+lifecycle plan).
 
-Speeds up the local fast loop (`make test-changed`) and the local full
-run (`make test`), and pins the Node version CI uses. CI is unaffected.
+**Problem.** After a switch's typed cache is ready, Radar waits for
+Kubernetes API discovery up to the first-paint backstop (5 minutes by
+default). If discovery is still running then, the switch fails — after
+teardown, so nothing is serving and the user lands on an error even
+though the cluster's built-in resources were ready.
 
-## What changed
+**Change.** When that wait expires (and the switch wasn't cancelled),
+the connection proceeds to Connected with the typed cache. While
+discovery is pending, cluster info and topology report CRD discovery as
+`discovering`, so the UI's existing "custom resources loading" state
+applies. When discovery finishes, the dynamic cache and the usual CRD
+warmup start, but only if the same typed cache and operation are still
+current; a replaced or cancelled connection installs nothing. A
+discovery that returns an error, and cancelling during the wait, behave
+as before. The dynamic cache pointer is now atomic, since it can arrive
+while readers are active.
 
-- **Go test binaries are linked without DWARF** (`-ldflags=-w`) in
-`scripts/test-changed.sh` and `make test`. Linking `internal/server`'s
-test binary drops from about 26 s to about 8.5 s, measured three times
-with a forced relink each time. It's paid whenever anything that package
-depends on changes. The linker also needs far less memory.
-  - Stack traces, `t.Log` positions and pprof profiles are unaffected.
-- Only stepping through these binaries in a debugger is lost; `dlv test`
-builds its own binary.
-- **`tsc` is incremental** in `web` and `packages/k8s-ui`. The build
-info goes to `node_modules/.cache/tsc/`, which is ignored.
-- An unchanged re-check of `web` drops from about 4 s to under 1 s, and
-a re-check after an edit only re-checks what the edit affects.
-- The settings are ignored by Vite, by esbuild and by anything consuming
-the packages. `web` publishes only `src`.
-- **`.nvmrc`** pins Node 24, the version CI uses. Node 25
+`pkg/topology` gains no exported API: the builder 
 
-**File**: `.nvmrc` (added, +1/-0)
+**File**: `docs/configuration.md` (modified, +1/-1)
 ```diff
-@@ -0,0 +1 @@
-+24
-```
-
-**File**: `Makefile` (modified, +2/-2)
-```diff
-@@ -155,8 +155,8 @@ clean:
+@@ -53,7 +53,7 @@ installed version. Several flags also take a persistent default from `~/.radar/c
  
- # Run tests
- test:
--	go test -v ./...
--	cd pkg && go test -v ./...
-+	go test -v -ldflags=-w ./...
-+	cd pkg && go test -v -ldflags=-w ./...
+ In the local cluster picker, Radar checks the target before closing sessions on a connected cluster. You can cancel during that check. Once the switch starts replacing caches, dismissing the progress display or refreshing the tab lets the switch continue. The picker reports its progress. Selecting a cluster during a local reconnect stops that retry. If the retry already closed its connection, cancelling the new selection leaves the picker available.
  
- # Fast dev loop: vet/test only the changed Go packages, tsc, and `vitest related`
- # for changed frontend files. BASE defaults to origin/main. Not a completion check.
-```
-
-**File**: `packages/k8s-ui/tsconfig.json` (modified, +2/-0)
-```diff
-@@ -8,6 +8,8 @@
-     "resolveJsonModule": true,
-     "isolatedModules": true,
-     "noEmit": true,
-+    "incremental": true,
-+    "tsBuildInfoFile": "../../node_modules/.cache/tsc/k8s-ui.tsbuildinfo",
-     "jsx": "react-jsx",
-     "types": ["node"],
-     "strict": true,
-```
-
-**File**: `scripts/test-changed.sh` (modified, +5/-1)
-```diff
-@@ -52,7 +52,11 @@ while IFS= read -r f; do
- done <<< "$changed"
- dedup() { tr ' ' '\n' <<< "$1" | sed '/^$/d' | sort -u | tr '\n' ' '; }
- pkg_pkgs=$(dedup "$pkg_pkgs"); root_pkgs=$(dedup "$root_pkgs")
--run_flag=(); [ -n "${GO_TEST_RUN:-}" ] && run_flag=(-run "$GO_TEST_RUN")
-+# Test binaries are linked without DWARF: internal/server's links in about a
-+# third of the time. Nothing debugs through this script; dlv test builds its
-+# own binary.
-+run_flag=(-ldflags=-w)
-+[ -n "${GO_TEST_RUN:-}" ] && run_flag+=(-run "$GO_TEST_RUN")
- [ -n "${GO_TEST_FRESH:-}" ] && run_flag+=(-count=1)
+-The local picker and local kubeconfig retries (manual or automatic) give the critical informers their own first-paint budget. Once those informers are ready, pending API discovery gets a fresh wait of the same duration. A discovery timeout names this stage in the error.
++When you switch clusters in the local picker or retry a kubeconfig connection, Radar first waits for the core resource cache to be ready. If Kubernetes API discovery is still running, Radar waits up to another five minutes by default (set by `--first-paint-backstop`). Once that wait expires, the cluster shows as connected and you can browse built-in resources such as Pods and Deployments. Radar continues discovering custom resources in the background and loads them if you are still on that connection.
  
- # Node 25 exposes a localStorage global that breaks jsdom's.
+ The defaults (5 s connectivity check, or 11 s with exec credentials, 5 m
+ first-paint backstop, 5 s namespace LIST, and 20 scope candidates) are tuned for healthy clusters reached
 ```
 
-**File**: `web/tsconfig.json` (modified, +2/-0)
+**File**: `internal/audit/runner.go` (modified, +3/-0)
 ```diff
-@@ -10,6 +10,8 @@
-     "resolveJsonModule": true,
-     "isolatedModules": true,
-     "noEmit": true,
-+    "incremental": true,
-+    "tsBuildInfoFile": "../node_modules/.cache/tsc/web.tsbuildinfo",
-     "jsx": "react-jsx",
-     "strict": true,
-     "noUnusedLocals": true,
+@@ -104,6 +104,9 @@ func RunFromCache(cache *k8s.ResourceCache, namespaces []string, opts *RunOption
+ 	input.PDPlacement = collectPDPlacement(cache, namespaces, scope)
+ 
+ 	results := bp.RunChecks(input)
++	if cache.CustomResourcesPending() {
++		results.MissingInputs = append(results.MissingInputs, "custom resources")
++	}
+ 	if !hasCompleteSecretInput(cache, namespaces, scope) && !slices.Contains(results.MissingInputs, "secrets") {
+ 		results.MissingInputs = append(results.MissingInputs, "secrets")
+ 	}
+```
+
+**File**: `internal/issues/unchecked.go` (modified, +4/-1)
+```diff
+@@ -207,9 +207,12 @@ type dynamicReadinessProvider interface {
+ // and discovery only begin once the deferred typed informers finish, and until
+ // then no custom resource kind is watched.
+ func (p *CacheProvider) crdDiscoveryPending() bool {
+-	if p == nil || p.dynamic == nil {
++	if p == nil {
+ 		return false
+ 	}
++	if p.dynamic == nil {
++		return p.cache.CustomResourcesPending()
++	}
+ 	return p.dynamic.GetDiscoveryStatus() != k8score.CRDDiscoveryComplete
+ }
+ 
+```
+
+**File**: `internal/k8s/cache.go` (modified, +9/-3)
+```diff
+@@ -127,9 +127,10 @@ type ResourceChange = k8score.ResourceChange
+ // status, pod workload lookup, timeline integration).
+ type ResourceCache struct {
+ 	*k8score.ResourceCache
+-	lastClusterInfo  atomic.Pointer[clusterInfoObservation]
+-	permissionResult *PermissionCheckResult
+-	secretsEnabled   bool // Whether secrets informer is running (requires RBAC)
++	lastClusterInfo     atomic.Pointer[clusterInfoObservation]
++	apiDiscoveryPending atomic.Bool
++	permissionResult    *PermissionCheckResult
++	secretsEnabled      bool // Whether secrets informer is running (requires RBAC)
+ 	// argoDrift tracks how long each manual-sync ArgoCD Application has been
+ 	// continuously OutOfSync. Lives here so its lifecycle is the cache's:
+ 	// recreated per cluster, dropped on a kubeconfig context switch.
+@@ -637,6 +638,11 @@ func GetResourceCache() *ResourceCache {
+ 	return resourceCache.Load()
+ }
+ 
++// CustomResourcesPending reports the typed-only window after the API discovery wait expires.
++func (c *ResourceCache) CustomResourcesPending() bool {
++	return c != nil && c.apiDiscoveryPending.Load() && GetDynamicResourceCache() == nil
++}
++
+ // KindReadiness re-exports the k8score readiness vocabulary for handler use.
+ type KindReadiness = k8score.KindReadiness
+ 
+```
+
+**File**: `internal/k8s/cluster_detection.go` (modified, +2/-0)
+```diff
+@@ -194,6 +194,8 @@ func GetClusterInfo(ctx context.Context) (*ClusterInfo, error) {
+ 	dynamicCache := GetDynamicResourceCache()
+ 	if dynamicCache != nil {
+ 		info.CRDDiscoveryStatus = string(dynamicCache.GetDiscoveryStatus())
++	} else if cache.CustomResourcesPending() {
++		info.CRDDiscoveryStatus = string(k8score.CRDDiscoveryInProgress)
+ 	}
+ 
+ 	// The version is cached and the counts come from informers, so a read
+```
+
+**File**: `internal/k8s/detect.go` (modified, +2/-0)
+```diff
+@@ -2420,6 +2420,8 @@ func scaledToZeroBackingWorkload(cache *ResourceCache, svc *corev1.Service) (sca
+ 				sawUnknownMatching = true
+ 			}
+ 		}
++	case errors.Is(err, ErrDynamicNotReady) && cache.CustomResourcesPending():
++		rolloutListOutcome = rolloutLookupTransient
+ 	case errors.Is(err, ErrUnknownDynamicKind) || errors.Is(err, ErrDynamicNotReady):
+ 		// Absent CRD or dynamic support not wired = a clean no-match (Rollouts
+ 		// genuinely aren't in play).
+```
+
+**File**: `internal/k8s/detect_traefik_refs.go` (modified, +3/-0)
+```diff
+@@ -622,6 +622,9 @@ func addTraefikIngressRouteTLSReferences(idx *tlsServingIndex) {
+ 	dynamicCache := GetDynamicResourceCache()
+ 	discovery := GetResourceDiscovery()
+ 	if dynamicCache == nil || discovery == nil {
++		if GetResourceCache().CustomResourcesPending() {
++			idx.uncertain[traefikIngressController] = true
++		}
+ 		return
+ 	}
+ 	gvr, ok := discovery.GetGVRWithGroup("IngressRoute", traefikGroup)
+```
+
+**File**: `internal/k8s/discovery.go` (modified, +19/-0)
+```diff
+@@ -248,6 +248,25 @@ func (d *ResourceDiscovery) LookupRefreshingOnMiss(lookup func(*ResourceDiscover
+ 	return lookup(d)
+ }
+ 
++// RetryFailedRefresh refreshes discovery in the background when its last
++// refresh returned nothing usable, at most once per
++// discoveryMissRefreshInterval, so a catalog that came back empty fills in
++// without waiting for the cache TTL.
++func (d *ResourceDiscovery) RetryFailedRefresh() {
++	if d == nil || d.ResourceDiscovery == nil || !d.LastRefreshFailed() {
++		return
++	}
++	if !d.backgroundRefresh.CompareAndSwap(false, true) {
++		return
++	}
++	go func() {
++		defer d.backgroundRefresh.Store(false)
++		d.LookupRefreshingOnMiss(func(*ResourceDiscovery) (schema.GroupVersionResource, bool) {
++			return schema.GroupVersionResource{}, false
++		})
++	}()
++}
++
+ // SupportsWatchGVR checks if a GVR supports list and watch verbs.
+ func (d *ResourceDiscovery) SupportsWatchGVR(gvr schema.GroupVersionResource) bool {
+ 	if d == nil || d.ResourceDiscovery == nil {
 ```
 
 ---
 
-### Incident Patch 2: `667da45a` (2026-11-21)
-**Commit Message**: CI: give each Go job its own build cache, refreshed from main (#2836)
+### Incident Patch 2: `a8da0740` (2026-11-22)
+**Commit Message**: Don't crash when a Helm install or rollback stream's browser disconnects (#2841)
 
-## Summary
+**Problem.** `handleInstallStream` and `handleRollbackStream` used
+`defer close(progressCh)`, while the goroutine running the Helm action
+keeps sending progress on that channel. When the browser disconnects
+(tab closed mid-install, navigation), the handler returns on
+`r.Context().Done()`, the deferred close runs, and the action's next
+progress send panics: a send on a closed channel panics even inside
+`select` with `default`. The panic is in a goroutine, so it takes down
+the Radar process. The upgrade stream already avoided this ("the
+receiver must not close the producer's channel").
 
-CI's Go build cache was one `setup-go` entry per `go.sum`, shared by
-every root-module job.
-- **Arbitrary contents:** whichever job finished first decided what the
-cache held. The `pkg` job already had to get its own key for this
-reason.
-- **Never refreshed:** the entry was saved once and not updated until
-`go.sum` changed, so every later commit recompiled whatever had changed
-since.
+**Fix.** The install and rollback handlers no longer close the channel;
+it's collected when both sides are done. The rollback stream's loop is
+extracted (`streamRollback`) so a test can pause the action.
 
-Now each Go job restores the newest build cache `main` saved for that
-job, so PR runs compile only what they change.
+**Testing.** `TestRollbackProgressAfterStreamDisconnect` cancels the
+request while the rollback is paused, lets the stream return, then
+resumes the action and sends progress through the production sender.
+With the old deferred close it fails with `send on closed channel`; with
+the fix it passes (20 repeated runs here, 1
 
-## What changed
-
-- **`.github/actions/go-cache-restore`:**
-  - restores the module cache, keyed by `go.sum` and shared by all jobs;
-- restores this job's newest build cache. Keys are
-`gobuild-<os>-<job>-sha-<commit>`; the `-sha-` separator keeps one job's
-fallback prefix (`backend`) from matching another job's keys
-(`backend-server`).
-- Then it backdates every restored entry. Go re-stamps an entry when it
-uses one more than an hour old, so whatever is still backdated at the
-end went unused. Writing `trim.txt` keeps Go's own five-day trim from
-deleting the backdated entries mid-job.
-- **`.github/actions/g
-
-**File**: `.github/actions/go-cache-restore/action.yml` (added, +38/-0)
+**File**: `internal/helm/handlers.go` (modified, +14/-9)
 ```diff
-@@ -0,0 +1,38 @@
-+name: Restore Go caches
-+description: >
-+  Restores the module cache (keyed by go.sum) and this job's build cache (the
-+  newest one main saved for this job), then backdates the build cache so that
-+  go-cache-save can keep only what this run used.
-+runs:
-+  using: composite
-+  steps:
-+    - name: Restore module cache
-+      uses: actions/cache@v6
-+      with:
-+        path: ~/go/pkg/mod
-+        key: gomod-${{ runner.os }}-${{ hashFiles('go.sum', 'pkg/go.sum') }}
-+        restore-keys: gomod-${{ runner.os }}-
+@@ -783,17 +783,22 @@ func (h *Handlers) handleRollbackStream(w http.ResponseWriter, r *http.Request)
+ 		return
+ 	}
+ 
+-	progressCh := make(chan InstallProgress, 10)
+-	defer close(progressCh)
+-
+ 	auth.AuditLog(r, namespace, name)
+-	resultCh := make(chan error, 1)
+-	go func() {
++	streamRollback(w, r, flusher, func(progressCh chan<- InstallProgress) error {
+ 		cfg, err := client.actionConfigForWrite(r.Context(), namespace)
+-		if err == nil {
+-			err = client.rollbackWithProgressUsing(cfg, name, revision, progressCh)
++		if err != nil {
++			return err
+ 		}
+-		resultCh <- err
++		return client.rollbackWithProgressUsing(cfg, name, revision, progressCh)
++	})
++}
 +
-+    - name: Restore build cache
-+      uses: actions/cache/restore@v6
-+      with:
-+        path: ~/.cache/go-build
-+        # "-sha-" ends the job name, so one job's prefix (backend) can't match
-+        # another job's keys (backend-server).
-+        key: gobuild-${{ runner.os }}-${{ github.job }}-sha-${{ github.sha }}
-+        restore-keys: gobuild-${{ runner.os }}-${{ github.job }}-sha-
-+
-+    # Go re-stamps a cache entry when it uses one more than an hour old, so
-+    # after backdating every entry, the ones still backdated when the job ends
-+    # are the ones it didn't use. trim.txt records the last trim: writing now
-+    # keeps Go's own trim, which drops entries unused for five days, from
-+    # deleting the backdated entries mid-job.
-+    - name: Backdate the build cache
-+      shell: bash
-+      run: |
-+        cache=$(go env GOCACHE)
-+        mkdir -p "$cache"
-+        find "$cache" -type f -exec touch -t 200001010000 {} +
-+        date +%s > "$cache/trim.txt"
-+        touch "$RUNNER_TEMP/go-cache-start"
-+        echo "restored build cache: $(du -sh "$cache" | cut -f1)"
++func streamRollback(w http.ResponseWriter, r *http.Request, flusher http.Flusher, rollback func(chan<- InstallProgress) error) {
++	progressCh := make(chan InstallProgress, 10)
++	// The action can outlive a disconnected client; the receiver must not close the producer's channel.
++	resultCh := make(chan error, 1)
++	go func() {
++		resultCh <- rollback(progressCh)
+ 	}()
+ 
+ 	for {
+@@ -1442,7 +1447,7 @@ func (h *Handlers) handleInstallStream(w http.ResponseWriter, r *http.Request) {
+ 
+ 	// Create progress channel
+ 	progressCh := make(chan InstallProgress, 10)
+-	defer close(progressCh)
++	// The action can outlive a disconnected client; the receiver must not close the producer's channel.
+ 
+ 	// Start install in goroutine
+ 	auth.AuditLog(r, req.Namespace, req.ReleaseName)
 ```
 
-**File**: `.github/actions/go-cache-save/action.yml` (added, +21/-0)
+**File**: `internal/helm/handlers_cancel_test.go` (modified, +28/-0)
 ```diff
-@@ -0,0 +1,21 @@
-+name: Save Go build cache
-+description: >
-+  Saves this job's build cache, pruned to the entries this run used, under a
-+  key for this commit. Pair with go-cache-restore; call it as the job's last
-+  step.
-+runs:
-+  using: composite
-+  steps:
-+    - name: Prune entries this run didn't use
-+      shell: bash
-+      run: |
-+        cache=$(go env GOCACHE)
-+        before=$(du -sh "$cache" | cut -f1)
-+        find "$cache" -type f ! -newer "$RUNNER_TEMP/go-cache-start" -delete
-+        echo "build cache: $before before pruning, $(du -sh "$cache" | cut -f1) after"
+@@ -7,6 +7,7 @@ import (
+ 	"net/http/httptest"
+ 	"strings"
+ 	"testing"
++	"testing/synctest"
+ 	"time"
+ 
+ 	"github.com/skyhook-io/radar/internal/errorlog"
+@@ -15,6 +16,33 @@ import (
+ 	"k8s.io/client-go/rest"
+ )
+ 
++func TestRollbackProgressAfterStreamDisconnect(t *testing.T) {
++	synctest.Test(t, func(t *testing.T) {
++		ctx, cancel := context.WithCancel(t.Context())
++		defer cancel()
++		req := httptest.NewRequestWithContext(ctx, http.MethodPost, "/", nil)
++		rec := httptest.NewRecorder()
++		resume := make(chan struct{})
 +
-+    - name: Save build cache
-+      uses: actions/cache/save@v6
-+      with:
-+        path: ~/.cache/go-build
-+        key: gobuild-${{ runner.os }}-${{ github.job }}-sha-${{ github.sha }}
++		streamRollback(rec, req, rec, func(progress chan<- InstallProgress) error {
++			cancel()
++			<-resume
++			defer func() {
++				if p := recover(); p != nil {
++					t.Errorf("rollback progress after disconnect panicked: %v", p)
++				}
++			}()
++			progressSender(progress)("complete", "Rollback complete", "")
++			return nil
++		})
++		if ctx.Err() == nil {
++			t.Error("rollback stream returned before disconnect")
++		}
++		close(resume)
++		synctest.Wait()
++	})
++}
++
+ // A caller that leaves while Helm storage is still being read is not a Helm
+ // error. Recording it as one fills the diagnostics error log with failures
+ // that never happened, and a 5xx Helm error is also what can mark the
 ```
 
-**File**: `.github/workflows/ci.yml` (modified, +50/-18)
+---
+
+### Incident Patch 3: `9cbc2281` (2026-11-22)
+**Commit Message**: Build Helm writes from the admitted connection (#2839)
+
+Stacked on #2833.
+
+**Problem.** #2833 binds Helm's write routes to the tab's connection,
+but Helm builds its action configuration from Radar's globals
+(`k8s.GetConfig()` / `GetContextName()`) when an action starts. #2833
+narrowed that with a re-check right before each Helm call; a switch
+completing after the re-check, or during repository association's
+download, could still redirect the write.
+
+**Change.** Bound Helm writes (install, upgrade incl. source and values,
+rollback, uninstall, source association, and the streaming variants)
+build their action configuration from the REST config captured at
+admission (`BoundConnection.Config`), keeping the caller's
+impersonation. Unbound callers keep the shared client's path. The
+re-check remains only at the permission preflight, which reads the
+serving cluster's capabilities. The per-user entry points the handlers
+no longer call are removed.
+
+**Testing.** New test: admit on A, switch to B, build the action
+configuration; it targets A's host, for an anonymous caller and an
+impersonated user with groups. `internal/helm` and the server binding
+tests pass.
+
+**File**: `docs/connection-lifecycle.md` (modified, +2/-1)
 ```diff
-@@ -16,6 +16,9 @@ concurrency:
- # earlier run; PRs keep the cache. Go applies -count only to go test.
- env:
-   GOFLAGS: ${{ github.event_name == 'push' && '-count=1' || '' }}
-+  # Go jobs save their build cache only from main, pruned to what the run used
-+  # (.github/actions/go-cache-save); PRs restore the newest one.
-+  GO_CACHE_SAVE: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
- # go test runs below pass -ldflags=-w: test binaries without DWARF link in
- # about a third of the time; nothing debugs them here.
+@@ -10,6 +10,8 @@ Bound writes are the routes wrapped with `bindWrite` in `internal/server/server.
+ - **Drain** keeps running on the connection it was admitted to, even if Radar switches meanwhile. Exec and port-forward sessions end when Radar switches.
+ - **Code that only has a context** (MCP tools, reachability) gets its clients from `k8s.ClientFromContext` / `DynamicClientFromContext`, which return the bound connection's clients when the request was admitted with one.
+ - **CloudNativePG** captures its clients and caches in one step and checks there that the connection is still the bound one (`k8s.StillBound`).
++- **Helm** install, upgrade (including source upgrades and values edits), rollback, uninstall and source association, streaming variants included, use the REST config captured at admission. The permission preflight checks that the admitted connection is still serving, because it reads shared capabilities; after that, Helm stays on the admitted cluster even if Radar switches while a repository downloads.
++- **CAPI connect** takes its client snapshot, then checks that the admitted connection is still serving: a switch before the check is refused, and one after it can't change the snapshot.
+ - **Velero** checks the Velero server's state in the shared cache, which a switch completing mid-request could replace; the write itself stays on the admitted connection.
+ - **Diagnose** (the in-product agent) is fenced by its runs: every switch marks all runs stale (`RunManager.OnContextSwitch`), and a stale run takes no further turns, so an investigation of one cluster can't continue, or apply a fix, on another.
  
-@@ -123,9 +126,10 @@ jobs:
-         uses: actions/setup-go@v7
-         with:
-           go-version: '1.26'
--          # Its own build cache: sharing the root module's key let this job,
--          # which finishes first, save a cache holding only pkg's packages.
--          cache-dependency-path: pkg/go.sum
-+          cache: false
+@@ -85,7 +87,6 @@ Also accepted:
+ - **A write arriving during shutdown** still runs on the connection the tab is on; admissions are closed first so nothing new is admitted.
+ - **Reads aren't bound.** A stale tab can display data from the new cluster before it resets; it can't write with it, since it still sends the old ID.
+ - **A context repointed to another cluster in the kubeconfig, then Retry,** keeps the same context name, so views refetch rather than reset; writes name the new connection from then on.
+-- **Writes that build clients after admission.** Helm builds its action clients, and CAPI connect reads the management cluster, from the serving connection rather than the captured one. Both re-check that the admitted connection is still serving right before that point (`stillAdmitted` in the helm handlers, `k8s.StillBound` in CAPI connect; repository association re-checks after its download), so only the moment between that check and the client build remains.
+ - **A host QueryClient that retries mutations** (Radar's own doesn't) could resend a refused restart after the tab adopted the new ID.
+ 
+ ## Scenario checklist
+```
+
+**File**: `internal/helm/chart_sources.go` (modified, +3/-10)
+```diff
+@@ -1,6 +1,7 @@
+ package helm
+ 
+ import (
++	"context"
+ 	"crypto/sha256"
+ 	"encoding/base32"
+ 	"errors"
+@@ -656,16 +657,8 @@ func releaseChanging(status release.Status) bool {
+ 	return status.IsPending() || status == release.StatusUninstalling
+ }
+ 
+-func (c *Client) SetSource(namespace, name string, selected ChartSourceCandidate) error {
+-	cfg, err := c.getActionConfig(namespace)
+-	if err != nil {
+-		return err
+-	}
+-	return c.setSourceWith(cfg, name, selected)
+-}
+-
+-func (c *Client) SetSourceAsUser(namespace, name string, selected ChartSourceCandidate, user *pkgauth.User) error {
+-	cfg, err := c.getActionConfigForUser(namespace, user)
++func (c *Client) setSourceForWrite(ctx context.Context, namespace, name string, selected ChartSourceCandidate) error {
++	cfg, err := c.actionConfigForWrite(ctx, namespace)
+ 	if err != nil {
+ 		return err
+ 	}
+```
+
+**File**: `internal/helm/client.go` (modified, +16/-85)
+```diff
+@@ -228,13 +228,27 @@ func (c *Client) buildActionConfig(namespace string, user *pkgauth.User) (*actio
+ 	c.mu.RLock()
+ 	defer c.mu.RUnlock()
+ 
+-	actionConfig := new(action.Configuration)
+-
+ 	getter, err := c.restClientGetter(namespace, user)
+ 	if err != nil {
+ 		return nil, fmt.Errorf("failed to build helm RESTClientGetter: %w", err)
+ 	}
+ 
++	return initActionConfig(getter, namespace, user)
++}
 +
-+      - name: Restore Go caches
-+        uses: ./.github/actions/go-cache-restore
- 
-       - name: Download dependencies
-         run: go mod download
-@@ -144,6 +148,10 @@ jobs:
-       - name: Build
-         run: go build ./...
- 
-+      - name: Save Go build cache
-+        if: env.GO_CACHE_SAVE == 'true'
-+        uses: ./.github/actions/go-cache-save
++func (c *Client) actionConfigForWrite(ctx context.Context, namespace string) (*action.Configuration, error) {
++	user := pkgauth.UserFromContext(ctx)
++	if bound, ok := k8s.BoundConnectionFrom(ctx); ok {
++		if bound.Config == nil {
++			return nil, fmt.Errorf("helm: admitted connection has no REST config")
++		}
++		return initActionConfig(newRESTConfigGetter(bound.Config, namespace, user), namespace, user)
++	}
++	return c.getActionConfigForUser(namespace, user)
++}
 +
-   backend:
-     name: Backend
-     needs: changes
-@@ -170,9 +178,10 @@ jobs:
-         uses: actions/setup-go@v7
-         with:
-           go-version: '1.26'
--          cache-dependency-path: |
--            go.sum
--            pkg/go.sum
-+          cache: false
-+
-+      - name: Restore Go caches
-+        uses: ./.github/actions/go-cache-restore
++func initActionConfig(getter genericclioptions.RESTClientGetter, namespace string, user *pkgauth.User) (*action.Configuration, error) {
++	actionConfig := new(action.Configuration)
+ 	if err := actionConfig.Init(getter, namespace, "secrets", log.Printf); err != nil {
+ 		if user != nil {
+ 			return nil, fmt.Errorf("failed to initialize helm action config for user %s: %w", user.Username, err)
+@@ -2451,30 +2465,6 @@ func compareVersions(v1, v2 string) int {
+ 	return 0
+ }
  
-       - name: Download dependencies
-         run: go mod download
-@@ -202,6 +211,10 @@ jobs:
+-// Rollback rolls back a release to a previous revision
+-func (c *Client) Rollback(namespace, name string, revision int) error {
+-	return c.RollbackWithProgress(namespace, name, revision, nil)
+-}
+-
+-// RollbackWithProgress rolls back a release with progress reporting via a channel.
+-// If progressCh is nil, progress messages are silently discarded.
+-func (c *Client) RollbackWithProgress(namespace, name string, revision int, progressCh chan<- InstallProgress) error {
+-	actionConfig, err := c.getActionConfig(namespace)
+-	if err != nil {
+-		return err
+-	}
+-	return c.rollbackWithProgressUsing(actionConfig, name, revision, progressCh)
+-}
+-
+-// RollbackWithProgressAsUser is RollbackWithProgress with K8s impersonation.
+-func (c *Client) RollbackWithProgressAsUser(namespace, name string, revision int, user *pkgauth.User, progressCh chan<- InstallProgress) error {
+-	actionConfig, err := c.getActionConfigForUser(namespace, user)
+-	if err != nil {
+-		return err
+-	}
+-	return c.rollbackWithProgressUsing(actionConfig, name, revision, progressCh)
+-}
+-
+ func (c *Client) rollbackWithProgressUsing(actionConfig *action.Configuration, name string, revision int, progressCh chan<- InstallProgress) error {
+ 	sendProgress := progressSender(progressCh)
+ 	sendProgress("preparing", fmt.Sprintf("Preparing rollback of %s to revision %d...", name, revision), "")
+@@ -2486,11 +2476,6 @@ func (c *Client) rollbackWithProgressUsing(actionConfig *action.Configuration, n
+ 	return nil
+ }
  
-   # gofmt and vet in their own job, so they run alongside the tests instead of
-   # before them in the slowest job.
-+
-+      - name: Save Go build cache
-+        if: env.GO_CACHE_SAVE == 'true'
-+        uses: ./.github/actions/go-cache-save
-   backend-vet:
-     name: Backend (vet)
-     needs: changes
-@@ -214,9 +227,10 @@ jobs:
-         uses: actions/setup-go@v7
-         with:
-           go-version: '1.26'
--          cache-dependency-path: |
--            go.sum
--            pkg/go.sum
-+          cache: false
-+
-+      - name: Restore Go caches
-+        uses: ./.github/actions/go-cache-restore
+-// RollbackAsUser performs a rollback with K8s impersonation.
+-func (c *Client) RollbackAsUser(namespace, name string, revision int, user *pkgauth.User) error {
+-	return c.RollbackWithProgressAsUser(namespace, name, revision, user, nil)
+-}
+-
+ func useReleaseTargetNamespace(cfg *action.Configuration, name string) error {
+ 	rel, err := cfg.Releases.Last(name)
+ 	if err != nil {
+@@ -2519,15 +2504,6 @@ func (c *Client) rollbackWith(actionConfig *action.Configuration, name string, r
+ 	return nil
+ }
  
-       - name: Download dependencies
-         run: go mod download
-@@ -235,6 +249,10 @@ jobs:
-       - name: Vet
-         run: go vet ./...
+-// Uninstall removes a release
+-func (c *Client) Uninstall(namespace, name string) error {
+-	actionConfig, err := c.getActionConfig(namespace)
+-	if err != nil {
+-		return err
+-	}
+-	return c.uninstallWith(actionConfig, name)
+-}
+-
+ // UninstallAsUser removes a release with K8s impersonation.
+ func (c *Client) UninstallAsUser(namespace, name string, user *pkgauth.User) error {
+ 	actionConfig, err := c.getActionConfigForUser(namespace, user)
+@@ -3306,24 +3282,6 @@ func (c *Client) previewValuesChangeWith(actionConfig *action.Configuration, nam
+ 	}, nil
+ }
  
-+      - name: Save Go build cache
-+        if: env.GO_CACHE_SAVE == 'true'
-+        uses: ./.github/actions/go-cache-save
-+
-   backend-server:
-     name: Backend (internal/server)
-     needs: changes
-@@ -247,9 +265,10 @@ jobs:
-         uses: actions/setup-go@v7
-         with:
-           go-version: '1.26'
--          cache-dependency-path: |
--            go.sum
--            pkg/go.sum
-+          cache: false
-+
-+      - name: Restore Go caches
-+        uses: ./.github/actions/go-cache-restore
+-// ApplyValues upgrades a release with new values (same chart version)
+-func (c *Client) ApplyValues(namespace, name string, newValues map[string]any) error {
+-	actionConfig, err := c.getActionConfig(namespace)
+-	if err != nil {
+-		return err
+-	}
+-	return c.applyValuesWith(actionConfig, name, newValues)
+-}
+-
+-// ApplyValuesAsUser applies values with K8s impersonation.
+-func (c *Client) ApplyValuesAsUser(namespace, name string, newValues map[string]any, user *pkgauth.User) error {
+-	actionConfig, err := c.getActionConfigForUser(namespace, user)
+-	if err != nil {
+-		return err
+-	}
+-	return c.applyValuesWith(actionConfig, name, newValues)
+-}
+-
+ func (c *Client) applyValuesWith(actionConfig *action.Configuration, name string, newValues map[string]any) error {
+ 	// Get the current release and reconstruct its exact installed chart when
+ 	// Helm storage omitted vendored dependency bodies.
+@@ -3693,15 +3651,6 @@ func (c *Client) Install(req *InstallRequest) (*HelmRelease, error) {
+ 	return c.installWith(actionConfig, req)
+ }
  
-       - name: Download dependencies
-         run: go mod download
-@@ -259,6 +278,10 @@ jobs:
+-// InstallAsUser installs a new Helm release with K8s impersonation.
+-func (c *Clie
+```
+
+**File**: `internal/helm/handlers.go` (modified, +37/-101)
+```diff
+@@ -119,14 +119,12 @@ type Handlers struct {
+ 	// them unwrapped.
+ 	BindWrite func(http.HandlerFunc) http.HandlerFunc
+ 	// AdmitWrite is BindWrite's check for a handler that learns from the body
+-	// whether it writes to the cluster; it answers the refusal itself. The
+-	// returned func reports whether the admitted connection is still serving.
+-	AdmitWrite func(http.ResponseWriter, *http.Request) (stillAdmitted func() bool, ok bool)
++	// whether it writes to the cluster. It answers the refusal itself.
++	AdmitWrite func(http.ResponseWriter, *http.Request) (k8s.BoundConnection, bool)
+ }
  
-   # TestNoEffortNotesReferencedFromSource scans the whole repo (.ts, .md, .sh,
-   # .yaml, ...), not only Go code. When Backend is skipped, run it alone.
-+
-+      - name: Save Go build cache
-+        if: env.GO_CACHE_SAVE == 'true'
-+        uses: ./.github/actions/go-cache-save
-   repo-hygiene:
-     name: Repo hygiene
-     needs: changes
-@@ -271,13 +294,18 @@ jobs:
-         uses: actions/setup-go@v7
-         with:
-           go-version: '1.26'
--          cache-dependency-path: |
--            go.sum
--            pkg/go.sum
-+          cache: false
-+
-+      - name: Restore Go caches
-+        uses: ./.github/actions/go-cache-restore
+-// stillAdmitted is checked right before a bound write calls Helm: Helm builds
+-// its clients from the serving connection when the action starts, so a switch
+-// since admission is refused here instead of landing on the new cluster.
++// The permission preflight reads capabilities from the serving cluster. Its
++// result can authorize a chart download only if it checked the admitted one.
+ func stillAdmitted(w http.ResponseWriter, r *http.Request) bool {
+ 	if k8s.StillBound(r.Context()) {
+ 		return true
+@@ -266,16 +264,7 @@ func (h *Handlers) handleSetSource(w http.ResponseWriter, r *http.Request) {
+ 	}
+ 	namespace, name := chi.URLParam(r, "namespace"), chi.URLParam(r, "name")
+ 	selected := ChartSourceCandidate{Type: req.Type, Reference: req.Reference, URL: req.URL}
+-	if !stillAdmitted(w, r) {
+-		return
+-	}
+-	var err error
+-	if user := auth.UserFromContext(r.Context()); user != nil {
+-		err = client.SetSourceAsUser(namespace, name, selected, user)
+-	} else {
+-		err = client.SetSource(namespace, name, selected)
+-	}
+-	if err != nil {
++	if err := client.setSourceForWrite(r.Context(), namespace, name, selected); err != nil {
+ 		writeChartSourceOperationError(w, err, "associate-source", namespace, name)
+ 		return
+ 	}
+@@ -738,17 +727,12 @@ func (h *Handlers) handleRollback(w http.ResponseWriter, r *http.Request) {
+ 		return
+ 	}
  
-       - name: Check for effort-note paths
-         run: go test -ldflags=-w ./internal/server -run '^TestNoEffortNotesReferencedFromSource$'
+-	if !stillAdmitted(w, r) {
+-		return
+-	}
+ 	auth.AuditLog(r, namespace, name)
+-	var rollbackErr error
+-	if user := auth.UserFromContext(r.Context()); user != nil {
+-		rollbackErr = client.RollbackAsUser(namespace, name, revision, user)
+-	} else {
+-		rollbackErr = client.Rollback(namespace, name, revision)
++	cfg, err := client.actionConfigForWrite(r.Context(), namespace)
++	if err == nil {
++		err = client.rollbackWith(cfg, name, revision)
+ 	}
+-	if err := rollbackErr; err != nil {
++	if err != nil {
+ 		if IsForbiddenError(err) {
+ 			writeError(w, http.StatusForbidden, "insufficient permissions to rollback Helm release")
+ 			return
+@@ -802,18 +786,14 @@ func (h *Handlers) handleRollbackStream(w http.ResponseWriter, r *http.Request)
+ 	progressCh := make(chan InstallProgress, 10)
+ 	defer close(progressCh)
  
-+      - name: Save Go build cache
-+        if: env.GO_CACHE_SAVE == 'true'
-+        uses: ./.github/actions/go-cache-save
-+
-   frontend:
-     name: Frontend
-     needs: changes
-@@ -330,9 +358,9 @@ jobs:
-       - uses: actions/setup-go@v7
-         with:
-           go-version: '1.26'
--          cache-dependency-path: |
--            go.sum
--            pkg/go.sum
-+          cache: false
-+      - name: Restore Go caches
-+        uses: ./.github/actions/go-cache-restore
-       - uses: actions/setup-node@v6
-         with:
-           node-version: '24'
-@@ -354,6 +382,10 @@ jobs:
-       - run: npm run test:e2e:settings
-         working-directory: web
+-	if !stillAdmitted(w, r) {
+-		return
+-	}
+ 	auth.AuditLog(r, namespace, name)
+-	user := auth.UserFromContext(r.Context())
+ 	resultCh := make(chan error, 1)
+ 	go func() {
+-		if user != nil {
+-			resultCh <- client.RollbackWithProgressAsUser(namespace, name, revision, user, progressCh)
+-			return
++		cfg, err := client.actionConfigForWrite(r.Context(), namespace)
++		if err == nil {
++			err = client.rollbackWithProgressUsing(cfg, name, revision, progressCh)
+ 		}
+-		resultCh <- client.RollbackWithProgress(namespace, name, revision, progressCh)
++		resultCh <- err
+ 	}()
  
-+      - name: Save Go build cache
-+        if: env.GO_CACHE_SAVE == 'true'
-+        uses: ./.github/actions/go-cache-save
+ 	for {
+@@ -874,17 +854,12 @@ func (h *Handlers) handleUninstall(w http.ResponseWriter, r *http.Request) {
+ 	namespace := chi.URLParam(r, "namespace")
+ 	name := chi.URLParam(r, "name")
+ 
+-	if !stillAdmitted(w, r) {
+-		return
+-	}
+ 	auth.AuditLog(r, namespace, name)
+-	var uninstallErr error
+-	if user := auth.UserFromContext(r.Context()); user != nil {
+-		uninstallErr = client.UninstallAsUser(namespace, name, user)
+-	} else {
+-		uninstallErr = client.Uninstall(namespace, name)
++	cfg, err := client.actionConfigForWrite(r.Context(), namespace)
++	if err == nil {
++		err = client.uninstallWith(cfg, name)
+ 	}
+-	if err := uninstallErr; err != nil {
++	if err != nil {
+ 		if IsForbiddenError(err) {
+ 			writeError(w, http.StatusForbidden, "insufficient permissions to uninstall Helm release")
+ 			return
+@@ -926,11 +901,8 @@ func (h *Handlers) handleUpgrade(w http.ResponseWriter, r *http.Request) {
+ 	if !validSourceUpgradeRoute(w, r, req) {
+ 		return
+ 	}
+-	if !stillAdmitted(w, r) {
+-		return
+-	}
+ 	auth.AuditLog(r, namespace, name)
+-	upgradeErr := client.upgradeRequestAsUser(namespace, name, version, repositoryName, req, userCreds(r), func(string, string, string) {})
++	upgradeErr := client.upgradeRequest(r.Context(), namespace, name, version, repositoryName, req, func(string, string, string) {})
+ 	if err := upgradeErr; err != nil {
+ 		if IsForbiddenError(err) {
+ 			writeError(w, http.StatusForbidden, "insufficient permissions to upgrade Helm release")
+@@ -989,13 +961,10 @@ func (h *Handlers) handleUpgradeStream(w http.ResponseWriter, r *http.Request) {
+ 	progressCh := make(chan InstallProgress, 10)
+ 	// An upgrade may finish after the client disconnects; the receiv
+```
+
+**File**: `internal/helm/rollback_impersonation_test.go` (modified, +7/-2)
+```diff
+@@ -14,7 +14,7 @@ import (
+ 
+ // The streaming rollback is a cluster write; when a user is attached it must
+ // reach the API server as that user, never as Radar's ServiceAccount.
+-func TestRollbackWithProgressAsUser_Impersonates(t *testing.T) {
++func TestRollbackImpersonatesTheCaller(t *testing.T) {
+ 	var mu sync.Mutex
+ 	var seen []string
+ 	var groups [][]string
+@@ -28,7 +28,12 @@ func TestRollbackWithProgressAsUser_Impersonates(t *testing.T) {
+ 	defer srv.Close()
+ 
+ 	c := &Client{settings: cli.New(), restConfig: &rest.Config{Host: srv.URL}}
+-	if err := c.RollbackWithProgressAsUser("team-a", "web", 1, &pkgauth.User{Username: "alice", Groups: []string{"radar:idp:team-a"}}, nil); err == nil {
++	ctx := pkgauth.ContextWithUser(t.Context(), &pkgauth.User{Username: "alice", Groups: []string{"radar:idp:team-a"}})
++	cfg, err := c.actionConfigForWrite(ctx, "team-a")
++	if err != nil {
++		t.Fatal(err)
++	}
++	if err := c.rollbackWithProgressUsing(cfg, "web", 1, nil); err == nil {
+ 		t.Fatal("rollback succeeded against a server that forbids everything")
+ 	}
+ 
+```
+
+**File**: `internal/helm/source_handlers.go` (modified, +3/-4)
+```diff
+@@ -1,6 +1,7 @@
+ package helm
+ 
+ import (
++	"context"
+ 	"encoding/json"
+ 	"errors"
+ 	"io"
+@@ -9,8 +10,6 @@ import (
+ 
+ 	"github.com/go-chi/chi/v5"
+ 	"helm.sh/helm/v3/pkg/action"
+-
+-	pkgauth "github.com/skyhook-io/radar/pkg/auth"
+ )
+ 
+ func validSourceUpgradeRoute(w http.ResponseWriter, r *http.Request, req ApplyValuesRequest) bool {
+@@ -48,8 +47,8 @@ func decodeUpgradeRequest(body io.Reader) (ApplyValuesRequest, error) {
+ 	return req, err
+ }
+ 
+-func (c *Client) upgradeRequestAsUser(namespace, name, version, repository string, req ApplyValuesRequest, user *pkgauth.User, progress func(string, string, string)) error {
+-	cfg, err := c.getActionConfigForUser(namespace, user)
++func (c *Client) upgradeRequest(ctx context.Context, namespace, name, version, repository string, req ApplyValuesRequest, progress func(string, string, string)) error {
++	cfg, err := c.actionConfigForWrite(ctx, namespace)
+ 	if err != nil {
+ 		return err
+ 	}
+```
+
+**File**: `internal/helm/still_admitted_test.go` (modified, +84/-3)
+```diff
+@@ -3,15 +3,20 @@ package helm
+ import (
+ 	"net/http"
+ 	"net/http/httptest"
++	"os"
++	"path/filepath"
++	"slices"
+ 	"strings"
+ 	"testing"
+ 
++	"k8s.io/client-go/kubernetes/fake"
++	"k8s.io/client-go/rest"
 +
-   k8s-ui:
-     name: k8s-ui (shared UI)
-     needs: changes
+ 	"github.com/skyhook-io/radar/internal/k8s"
++	pkgauth "github.com/skyhook-io/radar/pkg/auth"
+ )
+ 
+-// A Helm write admitted on one connection is refused if another connection
+-// is serving by the time it calls Helm, which builds its clients from the
+-// serving connection.
++// The permission preflight uses the serving cluster's capabilities.
+ func TestStillAdmittedRefusesAWriteAfterTheConnectionChanged(t *testing.T) {
+ 	t.Cleanup(k8s.SnapshotTestConnection())
+ 	k8s.RetireServingConnection()
+@@ -38,3 +43,79 @@ func TestStillAdmittedRefusesAWriteAfterTheConnectionChanged(t *testing.T) {
+ 		t.Fatalf("an unbound request was refused: %d", rec.Code)
+ 	}
+ }
++
++func TestBoundHelmActionConfigStaysOnAdmittedConnectionAcrossSwitch(t *testing.T) {
++	t.Cleanup(k8s.SnapshotTestConnection())
++	discovery := fake.NewSimpleClientset().Discovery()
++	if _, err := k8s.InstallTestServingConnection("a", &rest.Config{Host: "https://a"}, nil, discovery); err != nil {
++		t.Fatal(err)
++	}
++	admitted, err := k8s.CaptureBoundConnection()
++	if err != nil {
++		t.Fatal(err)
++	}
++	ctx := k8s.WithBoundConnection(t.Context(), admitted)
++	if _, err := k8s.InstallTestServingConnection("b", &rest.Config{Host: "https://b"}, nil, discovery); err != nil {
++		t.Fatal(err)
++	}
++
++	client := &Client{}
++	for _, username := range []string{"", "alice"} {
++		requestCtx := ctx
++		var groups []string
++		if username != "" {
++			groups = []string{"team-a"}
++			requestCtx = pkgauth.ContextWithUser(ctx, &pkgauth.User{Username: username, Groups: groups})
++		}
++		action, err := client.actionConfigForWrite(requestCtx, "default")
++		if err != nil {
++			t.Fatal(err)
++		}
++		cfg, err := action.RESTClientGetter.ToRESTConfig()
++		if err != nil {
++			t.Fatal(err)
++		}
++		if cfg.Host != "https://a" || cfg.Impersonate.UserName != username || !slices.Equal(cfg.Impersonate.Groups, groups) {
++			t.Errorf("host %q, impersonated user %q, groups %v; want https://a, %q, %v", cfg.Host, cfg.Impersonate.UserName, cfg.Impersonate.Groups, username, groups)
++		}
++	}
++}
++
++// With a single kubeconfig file, unbound Helm reads the file on every action,
++// so an edit that points the context at another server retargets it. A bound
++// write keeps the config Radar admitted.
++func TestBoundHelmActionConfigIgnoresAnEditedKubeconfig(t *testing.T) {
++	t.Cleanup(k8s.SnapshotTestConnection())
++	path := filepath.Join(t.TempDir(), "config")
++	edited := "apiVersion: v1\nkind: Config\ncurrent-context: a\n" +
++		"clusters: [{name: a, cluster: {server: \"https://b\"}}]\n" +
++		"users: [{name: a, user: {token: t}}]\n" +
++		"contexts: [{name: a, context: {cluster: a, user: a}}]\n"
++	if err := os.WriteFile(path, []byte(edited), 0o600); err != nil {
++		t.Fatal(err)
++	}
++	if _, err := k8s.InstallTestServingConnection("a", &rest.Config{Host: "https://a"}, nil, fake.NewSimpleClientset().Discovery()); err != nil {
++		t.Fatal(err)
++	}
++	admitted, err := k8s.CaptureBoundConnection()
++	if err != nil {
++		t.Fatal(err)
++	}
++	client := &Client{kubeconfig: path}
++
++	unbound, err := client.actionConfigForWrite(t.Context(), "default")
++	if err != nil {
++		t.Fatal(err)
++	}
++	if cfg, err := unbound.RESTClientGetter.ToRESTConfig(); err != nil || cfg.Host != "https://b" {
++		t.Fatalf("unbound Helm should follow the file (the case this guards): host %v, err %v", cfg, err)
++	}
++
++	bound, err := client.actionConfigForWrite(k8s.WithBoundConnection(t.Context(), admitted), "default")
++	if err != nil {
++		t.Fatal(err)
++	}
++	if cfg, err := bound.RESTClientGetter.ToRESTConfig(); err != nil || cfg.Host != "https://a" {
++		t.Fatalf("bound write: host %v, err %v; want https://a", cfg, err)
++	}
++}
+```
+
+**File**: `internal/server/server.go` (modified, +1/-4)
+```diff
+@@ -866,10 +866,7 @@ func (s *Server) setupAppRoutes(r chi.Router) {
+ 			helmHandlers.ObjectScope = s.helmObjectScope
+ 			helmHandlers.ResolveStorageNamespaces = s.resolveHelmStorageScope
+ 			helmHandlers.BindWrite = s.bindWrite
+-			helmHandlers.AdmitWrite = func(w http.ResponseWriter, r *http.Request) (func() bool, bool) {
+-				bound, ok := s.admitWrite(w, r)
+-				return func() bool { return k8s.ServingConnectionID() == bound.ID }, ok
+-			}
++			helmHandlers.AdmitWrite = s.admitWrite
+ 			helmHandlers.RegisterRoutes(r)
+ 
+ 			// Image inspection routes
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2836** (2026-11-21): CI: give each Go job its own build cache, refreshed from main (@nadaverell)
-- **PR #2835** (2026-11-21): CI: run vet in its own job and link test binaries without DWARF (@nadaverell)
-- **PR #2834** (2026-11-21): Cache the dev image's Docker layers in the registry, not the Actions cache (@nadaverell)
-- **PR #2832** (2026-11-21): Faster local test loop: DWARF-free test binaries, incremental tsc, Node 24 (@nadaverell)
-- **PR #2826** (2026-11-21): Keep cluster switches running through slow cache sync and browser refreshes (@nadaverell)
-- **PR #2823** (2026-11-21): Keep diagnostics available when cluster inspection stalls (@nadaverell)
+- **PR #2847** (2026-11-22): Read connection refusals in action dialogs; ignore stale polls' connection ID (@nadaverell)
+- **PR #2843** (2026-11-22): Stop six server tests sitting through the 2 s object-read wait (@nadaverell)
+- **PR #2842** (closed): Reconnect the previous cluster when a switch fails after teardown (@nadaverell)
+- **PR #2841** (2026-11-22): Don't crash when a Helm install or rollback stream's browser disconnects (@nadaverell)
+- **PR #2840** (2026-11-22): Keep serving built-in resources when API discovery outlasts its budget (@nadaverell)
+- **PR #2839** (2026-11-22): Build Helm writes from the admitted connection (@nadaverell)
 
 ---
 
@@ -2826,33 +3261,31 @@ deleting the backdated entries mid-job.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Faster local test loop: DWARF-free test binaries, incremental tsc, Node 24
+## X. Keep serving built-in resources when API discovery outlasts its budget
 
 **RULE**:
-When implementing operations in `Makefile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/configuration.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3419650d`: Faster local test loop: DWARF-free test binaries, incremental tsc, Node 24. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `50316b9e`: Keep serving built-in resources when API discovery outlasts its budget. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Makefile`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/configuration.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	go test -v -ldflags=-w ./...
-	cd pkg && go test -v -ldflags=-w ./...
+When you switch clusters in the local picker or retry a kubeconfig connection, Radar first waits for the core resource cache to be ready. If Kubernetes API discovery is still running, Radar waits up to another five minutes by default (set by `--first-paint-backstop`). Once that wait expires, the cluster shows as connected and you can browse built-in resources such as Pods and Deployments. Radar continues discovering custom resources in the background and loads them if you are still on that connection.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	go test -v ./...
-	cd pkg && go test -v ./...
+The local picker and local kubeconfig retries (manual or automatic) give the critical informers their own first-paint budget. Once those informers are ready, pending API discovery gets a fresh wait of the same duration. A discovery timeout names this stage in the error.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3419650d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `50316b9e` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

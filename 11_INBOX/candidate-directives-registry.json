@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T23:49:28.062Z",
+  "last_updated": "2026-11-22T23:57:30.715Z",
   "directives": [
     {
       "id": "CD-001",
@@ -48075,6 +48075,59 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-F5C28E-benchmarks-report-gold-coverage-across-r.md",
+      "staged_date": "2026-11-22"
+    },
+    {
+      "id": "CD-Y0B4",
+      "directive_title": "update url to 2.5.9 for RUSTSEC-2026-0592",
+      "source_repo": "1jehuang/jcode",
+      "source_commit": "9991542c",
+      "staged_file": "11_INBOX/candidate-directives/CD-Y0B4-update-url-to-2-5-9-for-rustsec-2026-0592.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-22",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-YA56",
+      "directive_title": "Merge branch 'main.changed-cask-icon'",
+      "source_repo": "buresdv-cork-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-YA56-merge-branch-main-changed-cask-icon.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-22",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-Y6BP",
+      "directive_title": "Keep serving built-in resources when API discovery outlasts its budget",
+      "source_repo": "skyhook-io/radar",
+      "source_commit": "50316b9e",
+      "staged_file": "11_INBOX/candidate-directives/CD-Y6BP-keep-serving-built-in-resources-when-api-discovery-outlasts-its-budget.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-22",
+      "domain_letter": "A"
+    },
+    {
+      "id": "CD-Y935",
+      "directive_title": "deps): update url to 2.5.9 for RUSTSEC-2026-0592",
+      "source_repo": "1jehuang-jcode-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-Y935-deps-update-url-to-2-5-9-for-rustsec-2026-0592.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-22",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-1C90BB",
+      "directive_title": "Merge branch 'main.changed-cask-icon'",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "buresdv-cork",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-1C90BB-merge-branch-main-changed-cask-icon-.md",
       "staged_date": "2026-11-22"
     }
   ]

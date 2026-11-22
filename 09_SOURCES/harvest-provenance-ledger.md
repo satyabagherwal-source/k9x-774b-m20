@@ -12267,3 +12267,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-huggingfacetb-smolvlm2-256m-video-instruct` | `https://huggingface.co/HuggingFaceTB/SmolVLM2-256M-Video-Instruct` | `hf-hugging` | Multi-dimensional audit evidence | 2026-11-22T23:41:15.205Z |
 | `learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf` | `https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF` | `hf-davidau` | Multi-dimensional audit evidence | 2026-11-22T23:49:14.456Z |
 | `learn-github-ratatui-ratatui` | `https://github.com/ratatui/ratatui` | `5a28bec1` | Multi-dimensional audit evidence | 2026-11-22T23:49:17.183Z |
+| `learn-huggingface-cloudflare-clef` | `https://huggingface.co/Cloudflare/clef` | `hf-cloudfl` | Multi-dimensional audit evidence | 2026-11-22T23:57:15.907Z |
+| `learn-github-1jehuang-jcode` | `https://github.com/1jehuang/jcode` | `9991542c` | Multi-dimensional audit evidence | 2026-11-22T23:57:17.723Z |
+| `learn-github-buresdv-cork` | `https://github.com/buresdv/Cork` | `aee5584a` | Multi-dimensional audit evidence | 2026-11-22T23:57:22.920Z |
+| `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `50316b9e` | Multi-dimensional audit evidence | 2026-11-22T23:57:25.522Z |

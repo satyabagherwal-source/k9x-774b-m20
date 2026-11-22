@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T23:49:28.235Z",
-  "total_records": 2386,
+  "last_updated": "2026-11-22T23:57:30.894Z",
+  "total_records": 2389,
   "domains": {
     "A": {
-      "total": 19,
+      "total": 20,
       "record_ids": [
         "DOM-A-DD59FA01",
         "domain_intelligence-human-need-intelligence-foreactlabs-openexecutive-core-invariants",
@@ -25,7 +25,8 @@
         "domain_intelligence-human-need-intelligence-koderover-zadig-core-invariants",
         "domain_intelligence-human-need-intelligence-koderover-zadig-learnings-core-invariants",
         "domain_intelligence-human-need-intelligence-tw93-mole-core-invariants",
-        "domain_intelligence-human-need-intelligence-tw93-mole-learnings-core-invariants"
+        "domain_intelligence-human-need-intelligence-tw93-mole-learnings-core-invariants",
+        "domain_intelligence-human-need-intelligence-skyhook-io-radar-core-invariants"
       ]
     },
     "B": {
@@ -1104,7 +1105,7 @@
       ]
     },
     "G": {
-      "total": 404,
+      "total": 406,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1509,7 +1510,9 @@
         "domain_intelligence-architecture-intelligence-twostraws-controlroom-core-invariants",
         "domain_intelligence-architecture-intelligence-apache-pinot-core-invariants",
         "domain_intelligence-architecture-intelligence-twostraws-controlroom-learnings-core-invariants",
-        "domain_intelligence-architecture-intelligence-hf-akhilaaa3-jev-omni-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-hf-akhilaaa3-jev-omni-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-buresdv-cork-core-invariants",
+        "domain_intelligence-architecture-intelligence-buresdv-cork-learnings-core-invariants"
       ]
     },
     "H": {
@@ -10532,8 +10535,8 @@
       "title": "Research & Knowledge Intelligence: Cloudflare/clef Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-cloudflare-clef-research-knowledge-intelligence-cloudflare-clef-core-invarian.md",
       "repository": "Cloudflare/clef",
-      "content_hash": "03998326f6fdf01131a211482e82be93b628dba4433499858c980eb82d1274d1",
-      "created_at": "2026-11-18T16:40:59.273Z"
+      "content_hash": "c7a8598a4b8eb87dd7fc411de497d00ab0921fe1a5f35fbd1ba820183f04e153",
+      "created_at": "2026-11-22T23:57:16.143Z"
     },
     "domain_intelligence-research-knowledge-intelligence-trufflesecurity-trufflehog-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-trufflesecurity-trufflehog-core-invariants",
@@ -10601,8 +10604,8 @@
       "title": "Research & Knowledge Intelligence: hf-cloudflare-clef-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-cloudflare-clef-learnings-research-knowledge-intelligence-hf-cloudflare-clef-.md",
       "repository": "hf-cloudflare-clef-learnings",
-      "content_hash": "d0e7b511ed05d7cba5196efee719d67e15fd0ece48733e3070da9b82a8859365",
-      "created_at": "2026-11-18T16:41:26.109Z"
+      "content_hash": "0fd2e3b99f5335c9b1e9cf0d9641aaa105e9309ba7b4a72058da5ac0edc36ac9",
+      "created_at": "2026-11-22T23:57:30.266Z"
     },
     "domain_intelligence-architecture-intelligence-linkerd-linkerd2-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-linkerd-linkerd2-learnings-core-invariants",
@@ -30291,8 +30294,8 @@
       "title": "Architecture Intelligence: 1jehuang/jcode Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-1jehuang-jcode-architecture-intelligence-1jehuang-jcode-core-invariants.md",
       "repository": "1jehuang/jcode",
-      "content_hash": "dbd6f23a6258efeddf40a30c145d93a41fa94357c495de925749c4ed1938bccb",
-      "created_at": "2026-11-21T17:49:51.083Z"
+      "content_hash": "6d02bc290c365529716cb3f74c49281c74adca72e3791897df0bf9bea1a1d67f",
+      "created_at": "2026-11-22T23:57:18.152Z"
     },
     "domain_intelligence-architecture-intelligence-1jehuang-jcode-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-1jehuang-jcode-learnings-core-invariants",
@@ -30300,8 +30303,8 @@
       "title": "Architecture Intelligence: 1jehuang-jcode-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-1jehuang-jcode-learnings-architecture-intelligence-1jehuang-jcode-learnings-core.md",
       "repository": "1jehuang-jcode-learnings",
-      "content_hash": "21154dbce82c362856a8724c894255e08205f2cb53d260da849b5a3d9e86be8c",
-      "created_at": "2026-11-21T17:50:08.046Z"
+      "content_hash": "f56cc69536877bf9c52b09bb7249e088e88a9c1a57c755eaaadf1a5025707b67",
+      "created_at": "2026-11-22T23:57:29.529Z"
     },
     "domain_intelligence-architecture-intelligence-sqlpage-sqlpage-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-sqlpage-sqlpage-core-invariants",
@@ -40155,6 +40158,33 @@
       "confidence": 0.75,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-22T23:16:24.368Z"
+    },
+    "domain_intelligence-architecture-intelligence-buresdv-cork-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-buresdv-cork-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: buresdv/Cork Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-buresdv-cork-architecture-intelligence-buresdv-cork-core-invariants.md",
+      "repository": "buresdv/Cork",
+      "content_hash": "cdc62a79c3174269fcba097b62adab20b85b27dbe22f4cb84971622ac657ad55",
+      "created_at": "2026-11-22T23:57:23.335Z"
+    },
+    "domain_intelligence-human-need-intelligence-skyhook-io-radar-core-invariants": {
+      "record_id": "domain_intelligence-human-need-intelligence-skyhook-io-radar-core-invariants",
+      "domain_letter": "A",
+      "title": "Human & Need Intelligence: skyhook-io/radar Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-skyhook-io-radar-human-need-intelligence-skyhook-io-radar-core-invariants.md",
+      "repository": "skyhook-io/radar",
+      "content_hash": "babf48beffa83d22f93e976297eb62347a869ce9dffe8c62a0fe3afa8afc08a2",
+      "created_at": "2026-11-22T23:57:25.945Z"
+    },
+    "domain_intelligence-architecture-intelligence-buresdv-cork-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-buresdv-cork-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: buresdv-cork-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-buresdv-cork-learnings-architecture-intelligence-buresdv-cork-learnings-core-inv.md",
+      "repository": "buresdv-cork-learnings",
+      "content_hash": "da81872a4cd2d666801cd6f6d6e3aabff53378596d2ab1bbe9a47f0ba58e0994",
+      "created_at": "2026-11-22T23:57:30.894Z"
     }
   }
 }
