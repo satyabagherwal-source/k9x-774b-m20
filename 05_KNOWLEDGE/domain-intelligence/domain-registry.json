@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T19:44:12.117Z",
+  "last_updated": "2026-11-22T19:52:32.645Z",
   "total_records": 2375,
   "domains": {
     "A": {
@@ -8199,8 +8199,8 @@
       "title": "Research & Knowledge Intelligence: SupersonicLabs/Julia-1 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-supersoniclabs-julia-1-research-knowledge-intelligence-supersoniclabs-julia-1.md",
       "repository": "SupersonicLabs/Julia-1",
-      "content_hash": "e70e9181721561cabeb4dc333e3dc957be2b563adbe755ac9d96262ec1bf71b2",
-      "created_at": "2026-11-18T13:08:50.534Z"
+      "content_hash": "51bc391ac0f7b1fffe72894f3c903b912473b9c8e88aeb6d416483123eb1faec",
+      "created_at": "2026-11-22T19:52:11.177Z"
     },
     "domain_intelligence-technical-construction-intelligence-dragonflydb-dragonfly-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-dragonflydb-dragonfly-core-invariants",
@@ -8217,8 +8217,8 @@
       "title": "Research & Knowledge Intelligence: hf-supersoniclabs-julia-1-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-supersoniclabs-julia-1-learnings-research-knowledge-intelligence-hf-supersoni.md",
       "repository": "hf-supersoniclabs-julia-1-learnings",
-      "content_hash": "3a702576ef11df0faa3d8c3e1195bdce49f522a35fbf886a2ecbdfd816a8d16e",
-      "created_at": "2026-11-18T13:09:08.543Z"
+      "content_hash": "10f066d0418c6934beb5cd0dc8b0e390028061f6323e95ba8b2c15d9e6026903",
+      "created_at": "2026-11-22T19:52:31.167Z"
     },
     "domain_intelligence-technical-construction-intelligence-dragonflydb-dragonfly-learnings-core-invaria": {
       "record_id": "domain_intelligence-technical-construction-intelligence-dragonflydb-dragonfly-learnings-core-invaria",
@@ -9108,8 +9108,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "07cb945f0c95a008aaffef5966234aa3a3f620397d9cac9c15086446d3d5e737",
-      "created_at": "2026-11-22T19:18:53.831Z"
+      "content_hash": "1ebb1dfd298888c202b334dbe604fcf5d6ed4762069c36660e7b5e605f60fc7c",
+      "created_at": "2026-11-22T19:52:32.645Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -18653,8 +18653,8 @@
       "title": "Architecture Intelligence: Bitterbot-AI/bitterbot-desktop Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-bitterbot-ai-bitterbot-desktop-architecture-intelligence-bitterbot-ai-bitterbot-.md",
       "repository": "Bitterbot-AI/bitterbot-desktop",
-      "content_hash": "40620c18fc1b114f6599118bc0daf2bcdf486271637873ec8c2cd429fa5c43f1",
-      "created_at": "2026-11-22T19:10:00.378Z"
+      "content_hash": "21c52881b40b7c71842d35a29961f5b74f18762e41dddb1a3f345e70d876ffbc",
+      "created_at": "2026-11-22T19:52:27.951Z"
     },
     "domain_intelligence-search-distribution-intelligence-sharkdp-fd-learnings-core-invariants": {
       "record_id": "domain_intelligence-search-distribution-intelligence-sharkdp-fd-learnings-core-invariants",
@@ -28265,8 +28265,8 @@
       "title": "Architecture Intelligence: bitterbot-ai-bitterbot-desktop-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-bitterbot-ai-bitterbot-desktop-learnings-architecture-intelligence-bitterbot-ai-.md",
       "repository": "bitterbot-ai-bitterbot-desktop-learnings",
-      "content_hash": "d4c3e64b7ee58ed85355f72cf29143ed1e50d3be669ff09cb1803212ebc47a8b",
-      "created_at": "2026-11-18T20:14:36.893Z"
+      "content_hash": "d12e72439f80cbb9e3823a97310b1484fca71e4087fb56f6a76354f6e039b2d0",
+      "created_at": "2026-11-22T19:52:31.866Z"
     },
     "domain_intelligence-research-knowledge-intelligence-lodestones-kromoss-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-lodestones-kromoss-core-invariants",

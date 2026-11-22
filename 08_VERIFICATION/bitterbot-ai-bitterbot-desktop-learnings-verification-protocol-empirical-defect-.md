@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T20:14:36.648Z",
+  "timestamp": "2026-11-22T19:52:31.566Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-bitterbot-ai-bitterbot-desktop-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [bitterbot-ai-bitterbot-desktop-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T20:14:36.648Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T19:52:31.566Z`  
 > **Learning ID**: `LEARN-EVO-bitterbot-ai-bitterbot-desktop-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source**: github ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
-> **Source Version**: `9ef0e544`  
+> **Source Version**: `420cea3a`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T20:14:31.228Z  
+> **Timestamp**: 2026-11-22T19:52:26.500Z  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T20:14:31.223Z  
+> **Harvest Timestamp**: 2026-11-22T19:52:26.494Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Bitterbot - a mesh of agents that turns shared experience into collective capability.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md, Dockerfile
-- **Stars / Engagement**: 2487 stars
+- **Stars / Engagement**: 2480 stars
 
 ---
 
@@ -1595,207 +1595,202 @@ def main():
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3ea732a8` (2026-11-18)
-**Commit Message**: fix(skills): ship a sidecar that carries the package topic, and fail loudly without one (#379)
+### Incident Patch 1: `0ff923a7` (2026-11-22)
+**Commit Message**: fix(deps): ship tar 7.5.22 and undici 7.30.2 to pick up security fixes (#393)
 
-* fix(skills): ship a sidecar that carries the package topic, and fail loudly without one
+package.json has asked for tar 7.5.22 for some time, but the override in
+pnpm-workspace.yaml still pinned 7.5.9, so releases shipped 7.5.9. That
+version has known path traversal and denial of service advisories (fixed
+by 7.5.19), and tar unpacks downloaded skills, plugins and hooks.
 
-Releases up to 1.14.0 bundle orchestrator 0.2.4, which predates the package
-topic added in #376 and refuses it with an ok:false reply. The gateway
-ignored that reply, so complete packages and skill cards were silently dead
-on every released install. Found by running two 1.14.0 nodes on loopback.
+undici moves from 7.22.0 to 7.30.2 for three WebSocket client advisories
+fixed in 7.24.0.
 
-- orchestrator 0.2.5: the first sidecar release with the package topic
-- the package mesh checks the subscribe and publish replies; a refusal now
-  surfaces as the existing 'Complete package mesh unavailable' warning
-- sim-mesh: wrapper is executable; README covers installed releases and cards
-- docs state the sidecar requirement
+Co-authored-by: Claude Fable 5.2 <[REDACTED_EMAIL]>
 
-Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
-
-* ci(orchestrator): build macOS sidecars on macos-15
-
-GitHub no longer serves the macos-14 arm64 image ('configuration
-macos-14-arm64-us-default is not supported'), so both darwin builds of
-orchestrator-v0.2.5 were cancelled before starting. release-tarball.yml
-already builds on macos-15.
-
-Co-Authored-By: Claude Fable 5.2 <[RED
-
-**File**: `.github/workflows/orchestrator-release.yml` (modified, +2/-2)
+**File**: `package.json` (modified, +1/-1)
 ```diff
-@@ -45,12 +45,12 @@ jobs:
-             bin: bitterbot-orchestrator
-             asset: bitterbot-orchestrator-linux-arm64
-           - target: darwin-x64
--            os: macos-14
-+            os: macos-15
-             rust-target: x86_64-apple-darwin
-             bin: bitterbot-orchestrator
-             asset: bitterbot-orchestrator-darwin-x64
-           - target: darwin-arm64
--            os: macos-14
-+            os: macos-15
-             rust-target: aarch64-apple-darwin
-             bin: bitterbot-orchestrator
-             asset: bitterbot-orchestrator-darwin-arm64
+@@ -223,7 +223,7 @@
+     "stripe": "^20.4.1",
+     "tar": "7.5.22",
+     "tslog": "^4.10.2",
+-    "undici": "^7.22.0",
++    "undici": "^7.24.0",
+     "viem": "^2.57.3",
+     "ws": "^8.22.0",
+     "yaml": "^2.9.1",
 ```
 
-**File**: `docs/agents/collective-learning.md` (modified, +1/-1)
+**File**: `pnpm-lock.yaml` (modified, +17/-27)
 ```diff
-@@ -39,7 +39,7 @@ Only an operator with `operator.approvals` can create or change automation grant
+@@ -9,7 +9,7 @@ overrides:
+   form-data: 2.5.4
+   qs: 6.14.2
+   '@sinclair/typebox': 0.34.48
+-  tar: 7.5.9
++  tar: 7.5.22
+   tough-cookie: 4.1.3
  
- Circle membership, visibility, package hash, policy and budget are checked at execution and object retrieval. Revoking a grant stops subsequent authorized work; already sent requests or copies cannot be erased. Public publication requires a separate public grant and `publicMesh`; Circle permission never authorizes it. Generated research briefs retain their draft/review flow.
+ patchedDependencies:
+@@ -214,14 +214,14 @@ importers:
+         specifier: ^20.4.1
+         version: 20.4.1(@types/node@26.6.5)
+       tar:
+-        specifier: 7.5.9
+-        version: 7.5.9
++        specifier: 7.5.22
++        version: 7.5.22
+       tslog:
+         specifier: ^4.10.2
+         version: 4.10.2
+       undici:
+-        specifier: ^7.22.0
+-        version: 7.22.0
++        specifier: ^7.24.0
++        version: 7.30.2
+       viem:
+         specifier: ^2.57.3
+         version: 2.57.12(bufferutil@4.1.0)(typescript@5.9.3)(utf-8-validate@5.0.10)(zod@4.6.7)
+@@ -9251,8 +9251,8 @@ packages:
+     resolution: {integrity: sha512-uxc/zpqFg6x7C8vOE7lh6Lbda8eEL9zmVm/PLeTPBRhh1xCgdWaQ+J1CUieGpIfm2HdtsUpRv+HshiasBMcc6A==}
+     engines: {node: '>=6'}
  
--Public package discovery and object transfer also require a sidecar built from the new package-protocol source. The published orchestrator v0.2.4 predates that protocol. Until a signed companion sidecar release is published and pinned, leave `publicMesh` disabled; use the private authenticated RPC transport or offline import/export. An older peer cannot receive a partial package through a legacy fallback.
-+Public package discovery and object transfer also require a sidecar built from the new package-protocol source. Orchestrator 0.2.5 is the first sidecar with that protocol; v0.2.4, bundled with application releases up to and including 1.14.0, refuses the package topic. On those releases leave `publicMesh` disabled and use the private authenticated RPC transport or offline import/export. A gateway paired with an older sidecar logs `Complete package mesh unavailable` at start and neither sends nor receives packages or skill cards. An older peer cannot receive a partial package through a legacy fallback.
+-  tar@7.5.9:
+-    resolution: {integrity: sha512-BTLcK0xsDh2+PUe9F6c2TlRp4zOOBMTkoQHQIWSIzI0R7KG46uEwq4OPk2W7bZcprBMsuaeFsqwYr7pjh6CuHg==}
++  tar@7.5.22:
++    resolution: {integrity: sha512-MFO/QzvtAOmJbkhOaCTvbGcFN9L9b+JunIsDwaKljSOdcLMea3NJ1k9Usz/rjdfSXTq4dfzfeS7W4p4YOAAHeA==}
+     engines: {node: '>=18'}
  
- Structured peer evidence is stored separately from conversational memory. It may guide bounded proposals but cannot qualify a package locally. Start synthesis in `shadow` when explicitly permitted; `off` stops new proposals. Every proposed update returns through the same execution gate. Hermes imports likewise enter quarantine and local validation; external traces remain observations unless independently verified by a trusted host.
+   text-encoding-utf-8@1.0.2:
+@@ -9494,8 +9494,8 @@ packages:
+   undici-types@8.9.0:
+     resolution: {integrity: sha512-KTDyRTYX8sWmKXAikPHHSyc63CRPETMctyjKFupcC6OBLXT3xsN0e9aF7m+mIXutFWpUXuedtowG7iLOzp0kQg==}
  
+-  undici@7.22.0:
+-    resolution: {integrity: sha512-RqslV2Us5BrllB+JeiZnK4peryVTndy9Dnqq62S3yYRRTj0tFQCwEniUy2167skdGOy3vqRzEvl1Dm4sV2ReDg==}
++  undici@7.30.2:
++    resolution: {integrity: sha512-mLyPQnHwUxaM/rideoK/+KL8DaAJLRl4aBCfmX444aCSLnIaomqPLtNRe2jdCYcsk5wZzXrDIQC8ZeYNRAYyIA==}
+     engines: {node: '>=20.18.1'}
+ 
+   unified@11.0.5:
+@@ -11632,7 +11632,7 @@ snapshots:
+       partial-json: 0.1.7
+       proxy-agent: 6.5.0
+       typebox: 1.3.34
+-      undici: 7.22.0
++      undici: 7.30.2
+       zod-to-json-schema: 3.25.2(zod@4.6.7)
+     transitivePeerDependencies:
+       - '@modelcontextprotocol/sdk'
+@@ -11676,15 +11676,15 @@ snapshots:
+   '@metamask/json-rpc-engine@8.0.2':
+     dependencies:
+       '@metamask/rpc-errors': 6.4.0
+-      '@metamask/safe-event-emitter': 3.1.2
++      '@metamask/safe-event-emitter': 3.1.3
+       '@metamask/utils': 8.5.0
+     transitivePeerDependencies:
+       - supports-color
+ 
+   '@metamask/json-rpc-middleware-stream@7.0.2':
+     dependencies:
+       '@metamask/json-rpc-engine': 8.0.2
+-      '@metamask/safe-event-emitter': 3.1.2
++      '@metamask/safe-event-emitter': 3.1.3
+       '@metamask/utils': 8.5.0
+       readable-stream: 3.6.2
+     transitivePeerDependencies:
+@@ -13887,7 +13887,7 @@ snapshots:
+       '@slack/types': 2.20.0
+       '@slack/web-api': 7.14.1
+       '@types/express': 5.0.6
+-      axios: 1.13.5
++      axios: 1.13.5(debug@4.4.3)
+       express: 5.3.0
+       path-to-regexp: 8.3.0
+       raw-body: 3.0.2
+@@ -13933,7 +13933,7 @@ snapshots:
+       '@slack/types': 2.20.0
+       '@types/node': 26.6.5
+       '@types/retry': 0.12.0
+-      axios: 1.13.5
++      axios: 1.13.5(debug@4.4.3)
+       eventemitter3: 5.0.4
+       form-data: 2.5.4
+       is-electron: 2.2.2
+@@ -16694,14 +16694,6 @@ snapshots:
+       axios: 1.21.0
+       is-retry-allowed: 2.2.0
+ 
+-  axios@1.13.5:
+-    dependencies:
+-      follow-redirects: 1.15.11
+-      form-data: 2.5.4
+-      proxy-from-env: 1.1.0
+-    transitivePeerDependencies:
+-      - debug
+-
+   axios@1.13.5(debug@4.4.3):
+     dependencies:
+       follow-redirects: 1.15.11(debug@4.4.3)
+@@ -17023,7 +17015,7 @@ snapshots:
+       npmlog: 6.0.2
+       rc: 1.2.8
+       semver: 7.7.4
+-      tar: 7.5.9
++      tar: 7.5.22
+       url-join: 4.0.1
+       which: 2.0.2
+       yargs: 17.7.2
+@@ -17930,8 +17922,6 @@ snapshots:
+       locate-path: 5.0.0
+       path-exists: 4.0.0
+ 
+-  follow-redirects@1.15.11: {}
+-
+   follow-redirects@1.15.11(debug@4.4.3):
+     optionalDependencies:
+       debug: 4.4.3
+@@ -20948,7 +20938,7 @@ snapshots:
+ 
+   tapable@2.3.3: {}
+ 
+-  tar@7.5.9:
++  tar@7.5.22:
+     dependencies:
+       '@isaacs/fs-minipass': 4.0.1
+       chownr: 3.0.0
+@@ -21144,7 +21134,7 @@ snapshots:
+ 
+   undici-types@8.9.0: {}
+ 
+-  undici@7.22.0: {}
++  undici@7.30.2: {}
+ 
+   unified@11.0.5:
+     dependencies:
 ```
 
-**File**: `docs/gateway/configuration-reference.md` (modified, +2/-1)
+**File**: `pnpm-workspace.yaml` (modified, +1/-1)
 ```diff
-@@ -1907,7 +1907,8 @@ See [Local Models](/gateway/local-models). TL;DR: run MiniMax M2.1 via LM Studio
-   bundles are signed outcome counts keyed by skill content hash (no names,
-   no text) and are exchanged only over the public package mesh, so nothing
-   is sent or received unless `collective.enabled` and
--  `collective.publicMesh` are both set; with the mesh on, the node also
-+  `collective.publicMesh` are both set and the sidecar is orchestrator
-+  0.2.5 or newer (bundled from the release after 1.14.0); with the mesh on, the node also
-   announces its own verified counts. A node records verified outcomes only
-   with `prior.writer: "on"`. Received bundles are kept in `prior.peersPath`
-   (default `CONFIG_DIR/skill-cards-peers.json`), one per origin, at most 64
-```
-
-**File**: `docs/memory/skills-pipeline.md` (modified, +5/-2)
-```diff
-@@ -601,7 +601,10 @@ the next turn. Consequences the rest of this document depends on:
-   carries no skill name and no text, so a record can only ever apply to a
-   skill whose bytes the recipient already holds. Bundles travel on the
-   public package mesh as `type: "cards"` announcements, which exist only
--  when `skills.collective.enabled` and `publicMesh` are set; a node on the
-+  when `skills.collective.enabled` and `publicMesh` are set and the
-+  sidecar is orchestrator 0.2.5 or newer (the 0.2.4 sidecar bundled up to
-+  release 1.14.0 refuses the topic, and the gateway then logs `Complete
-+  package mesh unavailable` at start); a node on the
-   mesh announces its own bundle shortly after start, hourly when it has
-   changed and every six hours otherwise. A node with the writer in shadow
-   has no verified counts and announces nothing. A content hash of a
-@@ -1375,7 +1378,7 @@ bitterbot-orchestrator/<crate version>/edge
- bitterbot-orchestrator/<crate version>/management
- ```
+@@ -14,7 +14,7 @@ overrides:
+   form-data: 2.5.4
+   qs: 6.14.2
+   "@sinclair/typebox": 0.34.48
+-  tar: 7.5.9
++  tar: 7.5.22
+   tough-cookie: 4.1.3
  
--The version segment is the orchestrator crate's own version (0.2.4 at the
-+The version segment is the orchestrator crate's own version (0.2.5 at the
- time of writing), not a protocol version.
- 
- When a peer identifies as `management`, the receiving node:
-```
-
-**File**: `orchestrator/Cargo.lock` (modified, +1/-1)
-```diff
-@@ -462,7 +462,7 @@ checksum = "843867be96c8daad0d758b57df9392b6d8d271134fce549de6ce169ff98a92af"
- 
- [[package]]
- name = "bitterbot-orchestrator"
--version = "0.2.4"
-+version = "0.2.5"
- dependencies = [
-  "axum",
-  "base64 0.23.1",
-```
-
-**File**: `orchestrator/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "bitterbot-orchestrator"
--version = "0.2.4"
-+version = "0.2.5"
- edition = "2021"
- description = "P2P orchestrator daemon for Bitterbot skill propagation network"
- 
-```
-
-**File**: `scripts/sim-mesh/README.md` (modified, +13/-1)
-```diff
-@@ -23,7 +23,19 @@ them as soon as the run is done.
- ## Run
- 
- Build first (`pnpm build`) so `dist/entry.js` is current. All paths below
--are relative to the repository root. Replace `$A`/`$B` with the state dirs.
-+are relative to the repository root.
-+
-+To test an installed release instead of the checkout, start each node with
-+`~/.bitterbot/app/<version>/bin/bitterbot gateway` in place of
-+`node dist/entry.js gateway`, and set `SIM_MESH_ORCHESTRATOR` to the sidecar
-+to run (the release's own `bin/bitterbot-orchestrator`, or a build from
-+`orchestrator/target`). The wrapper defaults to
-+`orchestrator/target/release/bitterbot-orchestrator`.
-+
-+Skill cards and complete packages need `skills.collective.enabled` and
-+`publicMesh` in each node's config and a sidecar of 0.2.5 or newer. Start
-+the receiving node first: a node announces its cards two minutes after
-+start and retries only hourly. Replace `$A`/`$B` with the state dirs.
- 
- ```bash
- A=~/bitterbot-sim/a; B=~/bitterbot-sim/b
-```
-
-**File**: `src/agents/skills/collective/mesh-cards.test.ts` (modified, +20/-1)
-```diff
-@@ -31,7 +31,7 @@ function gossip() {
-   const sent: string[] = [];
-   const bridge = (id: string) =>
-     ({
--      subscribeCircleTopic: async () => undefined,
-+      subscribeCircleTopic: async () => ({ ok: true }),
-       unsubscribeCircleTopic: async () => undefined,
-       onCircleTopicMessage: (fn: Listener) => {
-         listeners.push({ id, fn });
-@@ -46,6 +46,7 @@ function gossip() {
-             l.fn({ topic, from_peer_id: id, data_b64 });
-           }
-         }
-+        return { ok: true };
-       },
-     }) as unknown as OrchestratorBridge;
-   return { bridge, sent };
-@@ -146,6 +147,24 @@ describe("skill cards over the package mesh", () => {
-     expect(await mesh(net.bridge("peer-off"), false).publishCards()).toBe(false);
-   });
- 
-+  it("fails loudly when the sidecar refuses the package topic or a publish", async () => {
-+    const refused = {
-+      subscribeCircleTopic: async () => ({
-+        ok: false,
-+        error: "only exact Compute or valid blinded circle topics allowed",
-+      }),
-+      unsubscribeCircleTopic: async () => undefined,
-+      onCircleTopicMessage: () => () => undefined,
-+      publishCircleTopic: async () => ({ ok: false, error: "publish failed" }),
-+    } as unknown as OrchestratorBridge;
-+    await expect(mesh(refused).start()).rejects.toThrow(/orchestrator 0\.2\.5 or newer/);
-+
-+    const a = node("a", generateKeyPair());
-+    use(a);
-+    learn(a, 1);
-+    await expect(mesh(refused).publishCards(Date.now())).rejects.toThrow(/publish refused/);
-+  });
-+
-   it("ignores forged cards and cards when peer evidence is off", async () => {
-     const net = gossip();
-     const b = node("b", generateKeyPair());
+ # @coinbase/agentkit posts the wallet address, network and every wallet action
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #380** (2026-11-18): chore(main): release 1.14.1 (@github-actions[bot])
-- **PR #379** (2026-11-18): fix(skills): ship a sidecar that carries the package topic, and fail loudly without one (@VGIL77)
-- **PR #378** (2026-11-17): test(installer): do not require a signature check on runners with no verifier (@VGIL77)
-- **PR #377** (2026-11-17): feat(skills): cross-agent evidence cards with quorum and guard, replicated and integrated (@VGIL77)
-- **PR #376** (2026-11-14): feat(skills): add verified collective learning and reproducible pilot evidence (@VGIL77)
-- **PR #373** (2026-11-13): fix(wallet): stop @coinbase/agentkit sending analytics to Coinbase (@VGIL77)
+- **PR #393** (2026-11-22): fix(deps): ship tar 7.5.22 and undici 7.30.2 to pick up security fixes (@VGIL77)
+- **PR #392** (2026-11-22): chore(main): release 1.14.3 (@github-actions[bot])
+- **PR #389** (2026-11-22): fix(agents): retry one-shot completions with thinking between_tools when a model rejects disabled (@VGIL77)
+- **PR #388** (2026-11-19): chore(main): release 1.14.2 (@github-actions[bot])
+- **PR #387** (2026-11-19): fix(security): run the deep_recall sandbox in a locked-down process and close vm escapes (@VGIL77)
+- **PR #386** (2026-11-22): chore(deps): bump the native group with 2 updates (@dependabot[bot])
 
 ---
 
@@ -1815,33 +1810,31 @@ Co-Authored-By: Claude Fable 5.2 <[RED
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. skills): ship a sidecar that carries the package topic, and fail loudly without 
+## X. deps): ship tar 7.5.22 and undici 7.30.2 to pick up security fixes
 
 **RULE**:
-When implementing operations in `.github/workflows/orchestrator-release.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3ea732a8`: skills): ship a sidecar that carries the package topic, and fail loudly without one. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0ff923a7`: deps): ship tar 7.5.22 and undici 7.30.2 to pick up security fixes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/orchestrator-release.yml`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-            os: macos-15
-            os: macos-15
+    "undici": "^7.24.0",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-            os: macos-14
-            os: macos-14
+    "undici": "^7.22.0",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3ea732a8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0ff923a7` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

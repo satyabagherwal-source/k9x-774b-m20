@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T19:43:28.008Z",
+  "last_updated": "2026-11-22T19:52:27.569Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -470,14 +470,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-supersoniclabs-julia-1",
-      "content_hash": "651e895331e0cbca5331a9294a6dc103e6f0aabbd05960d85477a62d873f7e1b",
-      "verified_at": "2026-11-18T13:08:50.313Z",
+      "content_hash": "2ea052d2401442783da8407e75360c186033fb007a6e04137f0c7451b2669bee",
+      "verified_at": "2026-11-22T19:52:10.970Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T13:08:50.313Z"
+      "last_updated": "2026-11-22T19:52:10.970Z"
     },
     "apple/LensVLM-9B": {
       "repository": "apple/LensVLM-9B",
@@ -3591,14 +3591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "content_hash": "781dd525fb5bd6abce22a089c0435c4b68c51a12e93d5d7a19683acb163dcfb1",
-      "verified_at": "2026-11-22T19:10:00.001Z",
+      "content_hash": "4dbbc6619ac97ea700a7eca9d19b6cd9af3bd6928653c16a4e2370e45291bc4f",
+      "verified_at": "2026-11-22T19:52:27.569Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T19:10:00.001Z"
+      "last_updated": "2026-11-22T19:52:27.569Z"
     },
     "adobe/react-spectrum": {
       "repository": "adobe/react-spectrum",

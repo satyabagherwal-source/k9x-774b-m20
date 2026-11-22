@@ -46,12 +46,12 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-22T19:09:58.931Z",
-    "lastVerified": "2026-11-22T19:09:58.931Z",
+    "lastChecked": "2026-11-22T19:52:26.494Z",
+    "lastVerified": "2026-11-22T19:52:26.494Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "781dd525fb5bd6abce22a089c0435c4b68c51a12e93d5d7a19683acb163dcfb1",
+    "contentHash": "4dbbc6619ac97ea700a7eca9d19b6cd9af3bd6928653c16a4e2370e45291bc4f",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-22T19:43:31.539Z",
-    "lastVerified": "2026-11-22T19:43:31.539Z",
+    "lastChecked": "2026-11-22T19:52:30.800Z",
+    "lastVerified": "2026-11-22T19:52:30.800Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -478,9 +478,9 @@
   "tabbyml-tabby": {
     "name": "tabby",
     "officialUrl": "https://github.com/TabbyML/tabby",
-    "lastChecked": "2026-11-21T09:23:39.235Z",
+    "lastChecked": "2026-11-22T19:52:07.550Z",
     "revisionIdentifier": "21b29048",
-    "lastVerified": "2026-11-21T09:23:39.235Z"
+    "lastVerified": "2026-11-22T19:52:07.550Z"
   },
   "hf-cross-encoder-ms-marco-minilm-l6-v2": {
     "name": "cross-encoder/ms-marco-MiniLM-L6-v2",
@@ -820,9 +820,9 @@
   "chrispybacon-dev-dockflare": {
     "name": "DockFlare",
     "officialUrl": "https://github.com/ChrispyBacon-dev/DockFlare",
-    "lastChecked": "2026-11-22T13:59:06.985Z",
+    "lastChecked": "2026-11-22T19:52:17.442Z",
     "revisionIdentifier": "9c7bed82",
-    "lastVerified": "2026-11-22T13:59:06.985Z"
+    "lastVerified": "2026-11-22T19:52:17.442Z"
   },
   "nirdiamant-rag_techniques": {
     "name": "RAG_Techniques",
@@ -1646,8 +1646,8 @@
     "officialUrl": "https://github.com/nats-io/nats-server",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-21T20:48:09.804Z",
-    "lastVerified": "2026-11-21T20:48:09.804Z",
+    "lastChecked": "2026-11-22T19:52:14.995Z",
+    "lastVerified": "2026-11-22T19:52:14.995Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nats-io-nats-server",
@@ -1874,12 +1874,12 @@
     "officialUrl": "https://huggingface.co/SupersonicLabs/Julia-1",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-18T13:08:49.518Z",
-    "lastVerified": "2026-11-18T13:08:49.518Z",
+    "lastChecked": "2026-11-22T19:52:10.237Z",
+    "lastVerified": "2026-11-22T19:52:10.237Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-supersoniclabs-julia-1",
-    "contentHash": "651e895331e0cbca5331a9294a6dc103e6f0aabbd05960d85477a62d873f7e1b",
+    "contentHash": "2ea052d2401442783da8407e75360c186033fb007a6e04137f0c7451b2669bee",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -7352,12 +7352,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "open-source-legal-opencontracts": {
-    "name": "Open-Source-Legal/OpenContracts",
+    "name": "OpenContracts",
     "officialUrl": "https://github.com/Open-Source-Legal/OpenContracts",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-21T19:07:43.954Z",
-    "lastVerified": "2026-11-21T19:07:43.954Z",
+    "lastChecked": "2026-11-22T19:52:19.920Z",
+    "lastVerified": "2026-11-22T19:52:19.920Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-open-source-legal-opencontracts",
@@ -7366,7 +7366,8 @@
     "recentFixesCount": 27,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "98286cab"
   },
   "medialab-xan": {
     "name": "medialab/xan",
@@ -9019,9 +9020,9 @@
   "nalexn-clean-architecture-swiftui": {
     "name": "clean-architecture-swiftui",
     "officialUrl": "https://github.com/nalexn/clean-architecture-swiftui",
-    "lastChecked": "2026-11-19T19:31:02.765Z",
+    "lastChecked": "2026-11-22T19:52:12.494Z",
     "revisionIdentifier": "9eca97b8",
-    "lastVerified": "2026-11-19T19:31:02.765Z"
+    "lastVerified": "2026-11-22T19:52:12.494Z"
   },
   "tuist-tuist": {
     "name": "tuist/tuist",

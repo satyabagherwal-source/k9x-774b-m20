@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261120-NL04",
-    "timestamp": "2026-11-20T20:57:53.428Z",
-    "repository": "kgateway-dev/kgateway",
-    "learningId": "learn-github-kgateway-dev-kgateway",
-    "contentHash": "a0550e5efb0d916bbee6db06b5d2e4753f35c8a8bd4ddeac07051df4f35baf7b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261120-YL66",
-    "timestamp": "2026-11-20T21:06:26.862Z",
-    "repository": "lancedb/lancedb",
-    "learningId": "learn-github-lancedb-lancedb",
-    "contentHash": "930310ebb278215e07459257d75a38983d53de9644d3bbb754e6e0190ac7e0fa",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261120-NE8W",
     "timestamp": "2026-11-20T21:25:44.288Z",
     "repository": "iPlug2/iPlug2",
@@ -7490,6 +7460,36 @@
     "repository": "tursodatabase/turso",
     "learningId": "learn-github-tursodatabase-turso",
     "contentHash": "baf3dd4f013eeec0dbceea61c6d811237671a613d681a5793d62f5b21c54e9d2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-6SB1",
+    "timestamp": "2026-11-22T19:52:10.957Z",
+    "repository": "SupersonicLabs/Julia-1",
+    "learningId": "learn-huggingface-supersoniclabs-julia-1",
+    "contentHash": "2ea052d2401442783da8407e75360c186033fb007a6e04137f0c7451b2669bee",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-7545",
+    "timestamp": "2026-11-22T19:52:27.557Z",
+    "repository": "Bitterbot-AI/bitterbot-desktop",
+    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+    "contentHash": "4dbbc6619ac97ea700a7eca9d19b6cd9af3bd6928653c16a4e2370e45291bc4f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

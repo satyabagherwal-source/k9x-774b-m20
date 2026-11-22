@@ -12172,3 +12172,5 @@
 | `CYCLE-20261122-VK7R` | `2026-11-22T19:43:27.255Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`8cfaba65...`) |
 | `CYCLE-20261122-VKS7` | `2026-11-22T19:43:27.991Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9981` | Yes (`baf3dd4f...`) |
 | `CYCLE-2026-11-22-PROJ-EVOLVE` | `2026-11-22T19:44:11.727Z` | `momenbasel-puremac` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-9C50727D` [Domain D] | Yes (`3de85290...`) |
+| `CYCLE-20261122-6SB1` | `2026-11-22T19:52:10.957Z` | `SupersonicLabs/Julia-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-supersoniclabs-julia-1-learnings.md` | Yes (`2ea052d2...`) |
+| `CYCLE-20261122-7545` | `2026-11-22T19:52:27.557Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9982` | Yes (`4dbbc661...`) |

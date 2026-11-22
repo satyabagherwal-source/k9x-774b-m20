@@ -395,8 +395,8 @@
     "sourceUrl": "https://huggingface.co/SupersonicLabs/Julia-1",
     "sourceVersion": "hf-supersoniclabs-julia-1",
     "license": "Open-Source",
-    "contentHash": "651e895331e0cbca5331a9294a6dc103e6f0aabbd05960d85477a62d873f7e1b",
-    "lastHarvestedAt": "2026-11-18T13:08:50.302Z",
+    "contentHash": "2ea052d2401442783da8407e75360c186033fb007a6e04137f0c7451b2669bee",
+    "lastHarvestedAt": "2026-11-22T19:52:10.962Z",
     "learningId": "learn-huggingface-supersoniclabs-julia-1"
   },
   "hf-apple-lensvlm-9b": {
@@ -2303,10 +2303,10 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "sourceVersion": "2db04dd3",
+    "sourceVersion": "420cea3a",
     "license": "MIT",
-    "contentHash": "781dd525fb5bd6abce22a089c0435c4b68c51a12e93d5d7a19683acb163dcfb1",
-    "lastHarvestedAt": "2026-11-22T19:09:59.993Z",
+    "contentHash": "4dbbc6619ac97ea700a7eca9d19b6cd9af3bd6928653c16a4e2370e45291bc4f",
+    "lastHarvestedAt": "2026-11-22T19:52:27.561Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   },
   "adobe-react-spectrum": {
