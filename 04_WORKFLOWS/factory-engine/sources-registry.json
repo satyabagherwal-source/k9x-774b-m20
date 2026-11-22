@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-22T00:32:48.031Z",
-    "lastVerified": "2026-11-22T00:32:48.031Z",
+    "lastChecked": "2026-11-22T00:54:04.743Z",
+    "lastVerified": "2026-11-22T00:54:04.743Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -357,14 +357,14 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-21T23:55:46.877Z",
-    "lastVerified": "2026-11-21T23:55:46.877Z",
+    "lastChecked": "2026-11-22T00:54:01.083Z",
+    "lastVerified": "2026-11-22T00:54:01.083Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "b0c6615f858f3b5aaa9b069eb32b9aaa014182d266f7bf0a8e010bb64bb529a0",
+    "contentHash": "c5eb54ed89b105037b0f540a5a3895075d68d9a1eb159c317cfb15f1360cef40",
     "promotedRulesCount": 0,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -433,8 +433,8 @@
     "officialUrl": "https://github.com/smallstep/cli",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-21T19:07:37.341Z",
-    "lastVerified": "2026-11-21T19:07:37.341Z",
+    "lastChecked": "2026-11-22T00:53:51.486Z",
+    "lastVerified": "2026-11-22T00:53:51.486Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-smallstep-cli",
@@ -1818,12 +1818,12 @@
     "revisionIdentifier": "b612e741"
   },
   "langchain4j-langchain4j": {
-    "name": "langchain4j/langchain4j",
+    "name": "langchain4j",
     "officialUrl": "https://github.com/langchain4j/langchain4j",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-20T20:49:45.112Z",
-    "lastVerified": "2026-11-20T20:49:45.112Z",
+    "lastChecked": "2026-11-22T00:53:54.045Z",
+    "lastVerified": "2026-11-22T00:53:54.045Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-langchain4j-langchain4j",
@@ -1832,7 +1832,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "9445e92f"
   },
   "watchexec-watchexec": {
     "name": "watchexec/watchexec",
@@ -3144,9 +3145,9 @@
   "sorintlab-stolon": {
     "name": "stolon",
     "officialUrl": "https://github.com/sorintlab/stolon",
-    "lastChecked": "2026-11-20T21:55:05.270Z",
+    "lastChecked": "2026-11-22T00:53:48.932Z",
     "revisionIdentifier": "bcea7a75",
-    "lastVerified": "2026-11-20T21:55:05.270Z"
+    "lastVerified": "2026-11-22T00:53:48.932Z"
   },
   "lioensky-vcptoolbox": {
     "name": "lioensky/VCPToolBox",
@@ -4363,9 +4364,9 @@
   "wix-react-native-ui-lib": {
     "name": "react-native-ui-lib",
     "officialUrl": "https://github.com/wix/react-native-ui-lib",
-    "lastChecked": "2026-11-18T19:51:57.995Z",
+    "lastChecked": "2026-11-22T00:53:46.678Z",
     "revisionIdentifier": "d9ab2e6a",
-    "lastVerified": "2026-11-18T19:51:57.995Z"
+    "lastVerified": "2026-11-22T00:53:46.678Z"
   },
   "sealerio-sealer": {
     "name": "sealer",
@@ -4739,9 +4740,9 @@
   "gitui-org-gitui": {
     "name": "gitui",
     "officialUrl": "https://github.com/gitui-org/gitui",
-    "lastChecked": "2026-11-20T12:07:07.991Z",
+    "lastChecked": "2026-11-22T00:53:41.502Z",
     "revisionIdentifier": "d7214ecc",
-    "lastVerified": "2026-11-20T12:07:07.991Z"
+    "lastVerified": "2026-11-22T00:53:41.502Z"
   },
   "hf-openai-gpt-oss-20b": {
     "name": "openai/gpt-oss-20b",
@@ -13228,6 +13229,23 @@
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-pyannote-speaker-diarization-3-1",
     "contentHash": "5ecbc2f1ce49d7673d007f5ea6c2aff3a8ffec128b2ed20392a39484fe31443f",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-atomicchat-deepseek-v4.1-flash-1017-uncensored-gsq-rco-gguf": {
+    "name": "AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF",
+    "officialUrl": "https://huggingface.co/AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-22T00:53:44.196Z",
+    "lastVerified": "2026-11-22T00:53:44.196Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-atomicchat-deepseek-v4-1-flash-1017-uncensored-gsq-rco-gguf",
+    "contentHash": "5b69bbbd645391a6565eb9ae03c5c3258354f634f0768757dd817a0192859758",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

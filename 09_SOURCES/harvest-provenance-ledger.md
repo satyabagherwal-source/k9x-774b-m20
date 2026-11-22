@@ -11990,3 +11990,6 @@ Every entry in this ledger must capture:
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `598cce81` | Multi-dimensional audit evidence | 2026-11-22T00:24:51.631Z |
 | `learn-huggingface-pyannote-speaker-diarization-3-1` | `https://huggingface.co/pyannote/speaker-diarization-3.1` | `hf-pyannot` | Multi-dimensional audit evidence | 2026-11-22T00:32:36.496Z |
 | `learn-github-actix-actix-web` | `https://github.com/actix/actix-web` | `0581ada7` | Multi-dimensional audit evidence | 2026-11-22T00:32:38.935Z |
+| `learn-huggingface-atomicchat-deepseek-v4-1-flash-1017-uncensored-gsq-rco-gguf` | `https://huggingface.co/AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF` | `hf-atomicc` | Multi-dimensional audit evidence | 2026-11-22T00:53:45.076Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `5195a171` | Multi-dimensional audit evidence | 2026-11-22T00:54:01.726Z |
+| `learn-dom-d-7f03ec79` | `project://nucleoidai-nucleoid` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | 2026-11-22T00:54:39.541Z |

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T00:32:38.940Z",
-  "total_cycles_completed": 11371,
-  "total_learnings_persisted": 11371,
+  "last_updated": "2026-11-22T00:54:01.732Z",
+  "total_cycles_completed": 11373,
+  "total_learnings_persisted": 11373,
   "total_rules_promoted": 10684,
   "history": [
-    {
-      "timestamp": "2026-11-21T05:27:53.625Z",
-      "repository": "a2ui-project/a2ui",
-      "learningId": "learn-github-a2ui-project-a2ui",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T05:27:56.174Z",
-      "repository": "gocd/gocd",
-      "learningId": "learn-github-gocd-gocd",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T06:01:27.199Z",
       "repository": "ShiftHackZ/SDAI-KMP",
@@ -1403,6 +1389,20 @@
       "repository": "actix/actix-web",
       "learningId": "learn-github-actix-actix-web",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T00:53:45.082Z",
+      "repository": "AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF",
+      "learningId": "learn-huggingface-atomicchat-deepseek-v4-1-flash-1017-uncensored-gsq-rco-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T00:54:01.732Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

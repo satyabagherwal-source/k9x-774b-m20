@@ -11957,3 +11957,6 @@
 | `CYCLE-20261122-HLM4` | `2026-11-22T00:24:51.628Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9873` | Yes (`dff9a277...`) |
 | `CYCLE-20261122-RKB0` | `2026-11-22T00:32:36.492Z` | `pyannote/speaker-diarization-3.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-pyannote-speaker-diarization-3.1-learnings.md` | Yes (`5ecbc2f1...`) |
 | `CYCLE-20261122-RM6Q` | `2026-11-22T00:32:38.930Z` | `actix/actix-web` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9874` | Yes (`4009d31a...`) |
+| `CYCLE-20261122-IR5B` | `2026-11-22T00:53:45.071Z` | `AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-atomicchat-deepseek-v4.1-flash-1017-uncensored-gsq-rco-gguf-learnings.md` | Yes (`5b69bbbd...`) |
+| `CYCLE-20261122-J3ZU` | `2026-11-22T00:54:01.722Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`c5eb54ed...`) |
+| `CYCLE-2026-11-22-PROJ-EVOLVE` | `2026-11-22T00:54:39.541Z` | `nucleoidai-nucleoid` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-7F03EC79` [Domain D] | Yes (`5a150d1a...`) |

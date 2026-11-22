@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T00:32:49.980Z",
-  "total_records": 2306,
+  "last_updated": "2026-11-22T00:54:41.416Z",
+  "total_records": 2307,
   "domains": {
     "A": {
       "total": 17,
@@ -60,7 +60,7 @@
       ]
     },
     "D": {
-      "total": 907,
+      "total": 908,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -968,7 +968,8 @@
         "domain_intelligence-research-knowledge-intelligence-hf-edge0-audio8-tts-realistic-0-6b-learnings-cor",
         "domain_intelligence-research-knowledge-intelligence-obliteratus-deepseek-v4-1-flash-1017-obliterated",
         "domain_intelligence-research-knowledge-intelligence-hf-obliteratus-deepseek-v4-1-flash-1017-oblitera",
-        "DOM-D-6EECDBA7"
+        "DOM-D-6EECDBA7",
+        "DOM-D-7F03EC79"
       ]
     },
     "E": {
@@ -9039,8 +9040,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "cb3f8ad723bbc972a5c9538e6aff3ff266141b8cebd14ea6eaffa863458af337",
-      "created_at": "2026-11-22T00:32:49.980Z"
+      "content_hash": "e1e83e10d746763ee5b3f48316c0e5b0485cd028f5d3bf2904d6dbf944820194",
+      "created_at": "2026-11-22T00:54:41.416Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -15385,8 +15386,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "761ca2234ee0e447f63d91f9715d17cfd1baf4902655d16d4145e5d5b274494c",
-      "created_at": "2026-11-21T23:55:47.766Z"
+      "content_hash": "bcb60e3be6fc6e0d5f773bd46fa38981d87c5fb17f4847f3dfb4376bb3046a60",
+      "created_at": "2026-11-22T00:54:02.010Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -15835,8 +15836,8 @@
       "title": "Architecture Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-learnings-architecture-intelligence-nucleoidai-nucleoid-lear.md",
       "repository": "nucleoidai-nucleoid-learnings",
-      "content_hash": "af5269f0963f06d33e0231572e81370885d457b3d3b3d49c55dd59c62e94f693",
-      "created_at": "2026-11-21T23:56:18.758Z"
+      "content_hash": "b02f1a01ac4cad96d38b5a8e1a6388270c548f4391010e2e4eae4b1f5fb618ec",
+      "created_at": "2026-11-22T00:54:40.209Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants",
@@ -22233,8 +22234,8 @@
       "title": "Research & Knowledge Intelligence: AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-atomicchat-deepseek-v4-1-flash-1017-uncensored-gsq-rco-gguf-research-knowledg.md",
       "repository": "AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF",
-      "content_hash": "01daf1641e0dac78936a489c4c86742cbc1d27a65dd2d2c349e48bcf43bef7ad",
-      "created_at": "2026-11-15T19:45:25.433Z"
+      "content_hash": "45b578858a2e994c8df600b28940d0bac36e4b3bef3dc0c62e5b15d929ec58e8",
+      "created_at": "2026-11-22T00:53:45.341Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-atomicchat-deepseek-v4-1-flash-1017-uncensore": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-atomicchat-deepseek-v4-1-flash-1017-uncensore",
@@ -22242,8 +22243,8 @@
       "title": "Research & Knowledge Intelligence: hf-atomicchat-deepseek-v4.1-flash-1017-uncensored-gsq-rco-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-atomicchat-deepseek-v4-1-flash-1017-uncensored-gsq-rco-gguf-learnings-researc.md",
       "repository": "hf-atomicchat-deepseek-v4.1-flash-1017-uncensored-gsq-rco-gguf-learnings",
-      "content_hash": "93dcb395c238ef11e1fdaeb9c0a3544426ade063640ee8be7b839519c5c27cc1",
-      "created_at": "2026-11-15T19:45:48.823Z"
+      "content_hash": "059f6bc2a5ca4eab273d3d1cfb4fded938482cc5c101350d18039f69b12221aa",
+      "created_at": "2026-11-22T00:54:05.205Z"
     },
     "domain_intelligence-technical-construction-intelligence-dathere-qsv-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-dathere-qsv-learnings-core-invariants",
@@ -38859,6 +38860,48 @@
       "repository": "nativewind-nativewind-learnings",
       "content_hash": "682de2f7fc5b3b823c3d24a9ddd41d06aabdb3b928d7fdaf41b04db3b0b98ccf",
       "created_at": "2026-11-22T00:10:00.006Z"
+    },
+    "DOM-D-7F03EC79": {
+      "record_id": "DOM-D-7F03EC79",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): NucleoidAI/Nucleoid",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  \n> **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  \n> **Source Version**: `5195a171`  \n> **License**: Apache-2.0  \n> **Synthesized By**: zero-clone-struct",
+      "content_hash": "5a150d1ac4815cc4a51ce22ceb3064378b1ccf2a99f3eb4b02f8b15b94497fd8",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  \n> **Source**: github ([https://github.com/Nucleo -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  \n> **Source**: github ([https://github.com/Nucleo",
+      "provenance": {
+        "source_uri": "project://nucleoidai-nucleoid/nucleoidai-nucleoid-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-22T00:54:05.421Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (nucleoidai-nucleoid)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of nucleoidai-nucleoid"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-22T00:54:39.504Z"
     }
   }
 }

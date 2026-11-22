@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T00:32:50.303Z",
+  "last_updated": "2026-11-22T00:54:41.829Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-22T00:10:00.333Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-22T00:32:49.329Z",
+      "processed_at": "2026-11-22T00:54:40.458Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -773,9 +773,9 @@
       "staged_for_review": 1
     },
     "nucleoidai-nucleoid-learnings.md": {
-      "processed_at": "2026-11-21T23:56:18.079Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-22T00:54:39.541Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "tableproapp-tablepro-learnings.md": {
       "processed_at": "2026-11-19T20:34:30.303Z",
@@ -3053,7 +3053,7 @@
       "staged_for_review": 0
     },
     "hf-atomicchat-deepseek-v4.1-flash-1017-uncensored-gsq-rco-gguf-learnings.md": {
-      "processed_at": "2026-11-15T19:45:48.579Z",
+      "processed_at": "2026-11-22T00:54:04.935Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3693,7 +3693,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2943,
-  "total_canonical_promoted": 464,
-  "total_staged_for_review": 2252
+  "total_dossiers_evaluated": 2946,
+  "total_canonical_promoted": 465,
+  "total_staged_for_review": 2254
 }

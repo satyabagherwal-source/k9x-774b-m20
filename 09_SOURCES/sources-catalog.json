@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "9d6d6ac4",
+    "sourceVersion": "5195a171",
     "license": "Apache-2.0",
-    "contentHash": "b0c6615f858f3b5aaa9b069eb32b9aaa014182d266f7bf0a8e010bb64bb529a0",
-    "lastHarvestedAt": "2026-11-21T23:55:47.361Z",
+    "contentHash": "c5eb54ed89b105037b0f540a5a3895075d68d9a1eb159c317cfb15f1360cef40",
+    "lastHarvestedAt": "2026-11-22T00:54:01.726Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -11765,8 +11765,8 @@
     "sourceUrl": "https://huggingface.co/AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF",
     "sourceVersion": "hf-atomicchat-deepseek-v4.1-flash-1017-uncensored-gsq-rco-gguf",
     "license": "Open-Source",
-    "contentHash": "0082134c7974e2c2366eb87f99511a49c16e0b0fb32814be350acfe9443cf00f",
-    "lastHarvestedAt": "2026-11-15T19:45:25.216Z",
+    "contentHash": "5b69bbbd645391a6565eb9ae03c5c3258354f634f0768757dd817a0192859758",
+    "lastHarvestedAt": "2026-11-22T00:53:45.076Z",
     "learningId": "learn-huggingface-atomicchat-deepseek-v4-1-flash-1017-uncensored-gsq-rco-gguf"
   },
   "alfa546-crawler": {

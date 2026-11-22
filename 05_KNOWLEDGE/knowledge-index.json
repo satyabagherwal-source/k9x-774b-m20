@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T00:32:50.145Z",
+  "last_updated": "2026-11-22T00:54:41.642Z",
   "total_verified_learnings": 9064,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -113706,13 +113706,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-RULA-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-JYGA-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "1623a00dedbbdcce1003d507410b704a90975562cde6bb440046b4cba226bb73",
+      "content_hash": "1540ca12d7174cfdbab3c5fdbeeca7833b36e38186b0c4072edf14ceffccb8ae",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T00:32:49.824Z"
+      "persisted_at": "2026-11-22T00:54:41.204Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "cb3f8ad723bbc972a5c9538e6aff3ff266141b8cebd14ea6eaffa863458af337",
+      "content_hash": "e1e83e10d746763ee5b3f48316c0e5b0485cd028f5d3bf2904d6dbf944820194",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T00:32:49.980Z"
+      "persisted_at": "2026-11-22T00:54:41.416Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "5c668f0242af4c3b5afa15090d3fc05dad30780272126e2d03d91b93d64ca62e",
+      "content_hash": "6eb28bc30cf8c7c9abfa6f9572ff4d6752723a8d3a03f9f8a17df062d7db55a9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T00:32:50.145Z"
+      "persisted_at": "2026-11-22T00:54:41.642Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -229526,8 +229526,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "9d6d6ac4",
-      "content_hash": "b0c6615f858f3b5aaa9b069eb32b9aaa014182d266f7bf0a8e010bb64bb529a0",
+      "source_version": "5195a171",
+      "content_hash": "c5eb54ed89b105037b0f540a5a3895075d68d9a1eb159c317cfb15f1360cef40",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -229732,7 +229732,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T23:55:47.167Z",
+      "verified_at": "2026-11-22T00:54:01.476Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -229774,10 +229774,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "9d6d6ac4",
-      "content_hash": "761ca2234ee0e447f63d91f9715d17cfd1baf4902655d16d4145e5d5b274494c",
+      "source_version": "5195a171",
+      "content_hash": "bcb60e3be6fc6e0d5f773bd46fa38981d87c5fb17f4847f3dfb4376bb3046a60",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T23:55:47.766Z"
+      "persisted_at": "2026-11-22T00:54:02.010Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid",
@@ -230872,9 +230872,9 @@
       "title": "Architecture Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "af5269f0963f06d33e0231572e81370885d457b3d3b3d49c55dd59c62e94f693",
+      "content_hash": "b02f1a01ac4cad96d38b5a8e1a6388270c548f4391010e2e4eae4b1f5fb618ec",
       "domain_letter": "G",
-      "persisted_at": "2026-11-21T23:56:18.758Z"
+      "persisted_at": "2026-11-22T00:54:40.209Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid-learnings",
@@ -250176,7 +250176,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF",
       "source_version": "hf-atomicchat-deepseek-v4.1-flash-1017-uncensored-gsq-rco-gguf",
-      "content_hash": "0082134c7974e2c2366eb87f99511a49c16e0b0fb32814be350acfe9443cf00f",
+      "content_hash": "5b69bbbd645391a6565eb9ae03c5c3258354f634f0768757dd817a0192859758",
       "dossier_path": "07_PROJECT_LEARNING/hf-atomicchat-deepseek-v4.1-flash-1017-uncensored-gsq-rco-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-atomicchat-deepseek-v4.1-flash-1017-uncensored-gsq-rco-gguf-learnings.md",
       "promoted_rules": [],
@@ -250185,7 +250185,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T19:45:25.007Z",
+      "verified_at": "2026-11-22T00:53:44.788Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -250202,9 +250202,9 @@
       "title": "Research & Knowledge Intelligence: AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF Core Invariants",
       "repository": "AtomicChat/DeepSeek-V4.1-Flash-1017-Uncensored-GSQ-RCO-GGUF",
       "source_version": "hf-atomicchat-deepseek-v4.1-flash-1017-uncensored-gsq-rco-gguf",
-      "content_hash": "01daf1641e0dac78936a489c4c86742cbc1d27a65dd2d2c349e48bcf43bef7ad",
+      "content_hash": "45b578858a2e994c8df600b28940d0bac36e4b3bef3dc0c62e5b15d929ec58e8",
       "domain_letter": "D",
-      "persisted_at": "2026-11-15T19:45:25.433Z"
+      "persisted_at": "2026-11-22T00:53:45.341Z"
     },
     "candidate_directive-docs-changelog-29-0-0-performance-section-from-the-benchmark-run": {
       "item_id": "candidate_directive-docs-changelog-29-0-0-performance-section-from-the-benchmark-run",
@@ -250226,9 +250226,9 @@
       "title": "Research & Knowledge Intelligence: hf-atomicchat-deepseek-v4.1-flash-1017-uncensored-gsq-rco-gguf-learnings Core Invariants",
       "repository": "hf-atomicchat-deepseek-v4.1-flash-1017-uncensored-gsq-rco-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "93dcb395c238ef11e1fdaeb9c0a3544426ade063640ee8be7b839519c5c27cc1",
+      "content_hash": "059f6bc2a5ca4eab273d3d1cfb4fded938482cc5c101350d18039f69b12221aa",
       "domain_letter": "D",
-      "persisted_at": "2026-11-15T19:45:48.823Z"
+      "persisted_at": "2026-11-22T00:54:05.205Z"
     },
     "domain_intelligence-technical-construction-intelligence-dathere-qsv-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-dathere-qsv-learnings-core-invariants",
