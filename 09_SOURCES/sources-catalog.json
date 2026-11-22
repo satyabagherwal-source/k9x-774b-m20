@@ -4763,10 +4763,10 @@
     "repository": "saltstack/salt",
     "platform": "github",
     "sourceUrl": "https://github.com/saltstack/salt",
-    "sourceVersion": "22149587",
+    "sourceVersion": "c955ae49",
     "license": "Apache-2.0",
-    "contentHash": "fd478bea7e5b3f333ec615cf84cf091175e7a87f92cf39e4c842e50bb63f132d",
-    "lastHarvestedAt": "2026-11-20T02:38:59.815Z",
+    "contentHash": "b66a05d572cb77a2d36e34dc10f1aad3696f9bcb65e9cf7b853799eff7190ae0",
+    "lastHarvestedAt": "2026-11-22T06:36:17.197Z",
     "learningId": "learn-github-saltstack-salt"
   },
   "etcd-io-etcd": {
@@ -12335,8 +12335,8 @@
     "sourceUrl": "https://huggingface.co/Cactus-Compute/mirage",
     "sourceVersion": "hf-cactus-compute-mirage",
     "license": "Open-Source",
-    "contentHash": "02eb66aba41c2fdd756da7f626c30bdca676b0383d23f56f52d78de2295b7c7b",
-    "lastHarvestedAt": "2026-11-15T22:24:37.552Z",
+    "contentHash": "47200bb90b24d57ec9c706507203b3f32f812efbfbb582501b53fd01dbed0cf8",
+    "lastHarvestedAt": "2026-11-22T06:41:07.840Z",
     "learningId": "learn-huggingface-cactus-compute-mirage"
   },
   "hf-conwayresearch-underdog-woof": {

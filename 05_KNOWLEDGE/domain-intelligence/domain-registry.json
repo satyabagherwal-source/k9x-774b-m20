@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T06:27:40.085Z",
+  "last_updated": "2026-11-22T06:41:13.699Z",
   "total_records": 2330,
   "domains": {
     "A": {
@@ -8100,8 +8100,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "aab37f7f7ea6fc63b4f3762640915b6c65e342aaaf6c3d63e175c4b0641a432b",
-      "created_at": "2026-11-22T06:19:34.525Z"
+      "content_hash": "300ec79de8bc4696ab6e6d6d3048f827062c6c391dd05f840c814e99f5b0bb35",
+      "created_at": "2026-11-22T06:41:13.699Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -22743,8 +22743,8 @@
       "title": "Research & Knowledge Intelligence: Cactus-Compute/mirage Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-cactus-compute-mirage-research-knowledge-intelligence-cactus-compute-mirage-c.md",
       "repository": "Cactus-Compute/mirage",
-      "content_hash": "af2d321e4d273fd308a260085b016d3e7573dec3e6c2c4469db2ec8705886b87",
-      "created_at": "2026-11-15T22:24:37.686Z"
+      "content_hash": "7fbc497819b8784a7f53421f3d9ade72079f4592c9011f09d63f85fe336a0ea3",
+      "created_at": "2026-11-22T06:41:08.114Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-cactus-compute-mirage-learnings-core-invarian": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-cactus-compute-mirage-learnings-core-invarian",
@@ -22752,8 +22752,8 @@
       "title": "Research & Knowledge Intelligence: hf-cactus-compute-mirage-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-cactus-compute-mirage-learnings-research-knowledge-intelligence-hf-cactus-com.md",
       "repository": "hf-cactus-compute-mirage-learnings",
-      "content_hash": "1c5c669d82fa555fdf89c8e0de1ee02bf844ae100c1e185e2fc6d133661d6869",
-      "created_at": "2026-11-15T22:24:49.782Z"
+      "content_hash": "168f048ca377fcc9c3f9f6cfcbaf889760810956c27568bf51695a29abafbad2",
+      "created_at": "2026-11-22T06:41:11.387Z"
     },
     "domain_intelligence-architecture-intelligence-dicklesworthstone-destructive_command_guard-core-invar": {
       "record_id": "domain_intelligence-architecture-intelligence-dicklesworthstone-destructive_command_guard-core-invar",
@@ -23405,8 +23405,8 @@
       "title": "Architecture Intelligence: saltstack/salt Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-saltstack-salt-architecture-intelligence-saltstack-salt-core-invariants.md",
       "repository": "saltstack/salt",
-      "content_hash": "d2957b2f70dcad7a774d563f192f7bf5bd94fe2fe56403725730ffe7db5cb776",
-      "created_at": "2026-11-20T02:39:00.183Z"
+      "content_hash": "822f5f7573d3671dd2b60afee4934d2d924cfff1d9b72f0d2be218c8731f881d",
+      "created_at": "2026-11-22T06:36:17.740Z"
     },
     "domain_intelligence-product-intelligence-crate-ci-typos-learnings-core-invariants": {
       "record_id": "domain_intelligence-product-intelligence-crate-ci-typos-learnings-core-invariants",
@@ -23474,8 +23474,8 @@
       "title": "Architecture Intelligence: saltstack-salt-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-saltstack-salt-learnings-architecture-intelligence-saltstack-salt-learnings-core.md",
       "repository": "saltstack-salt-learnings",
-      "content_hash": "3d79536196448127b65c2323c79558526b691663877afec5c66d02fdbb877f73",
-      "created_at": "2026-11-20T02:39:05.459Z"
+      "content_hash": "540bba48b78058693d0f359addd32c2191a40912042702eaf984b732310ce629",
+      "created_at": "2026-11-22T06:41:12.338Z"
     },
     "domain_intelligence-technical-construction-intelligence-ydb-platform-ydb-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-ydb-platform-ydb-learnings-core-invariants",

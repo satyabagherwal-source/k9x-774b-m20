@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T06:27:40.085Z",
+  "last_updated": "2026-11-22T06:41:14.124Z",
   "total_verified_learnings": 9068,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23479,
+  "total_items": 23481,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "aab37f7f7ea6fc63b4f3762640915b6c65e342aaaf6c3d63e175c4b0641a432b",
+      "content_hash": "300ec79de8bc4696ab6e6d6d3048f827062c6c391dd05f840c814e99f5b0bb35",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T06:19:34.525Z"
+      "persisted_at": "2026-11-22T06:41:13.699Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "1c164626534116c9759de62887a995d09d02eba9f2ebd25697c47b58873bc105",
+      "content_hash": "3ba9611a15a914238caf6064e629c971ddd913b1f0609730142479e75670a365",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T06:19:34.694Z"
+      "persisted_at": "2026-11-22T06:41:13.934Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "943bb31ea1a7c7ddf54ab52f1ca1c210cb18b77d65d1cc05de976c2e24bc9654",
+      "content_hash": "121c90e63801e78125a28e42abe7d6560312bcce1cb20bdc6d8b16f091f243d8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T06:19:34.834Z"
+      "persisted_at": "2026-11-22T06:41:14.124Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -251617,7 +251617,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Cactus-Compute/mirage",
       "source_version": "hf-cactus-compute-mirage",
-      "content_hash": "02eb66aba41c2fdd756da7f626c30bdca676b0383d23f56f52d78de2295b7c7b",
+      "content_hash": "47200bb90b24d57ec9c706507203b3f32f812efbfbb582501b53fd01dbed0cf8",
       "dossier_path": "07_PROJECT_LEARNING/hf-cactus-compute-mirage-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-cactus-compute-mirage-learnings.md",
       "promoted_rules": [],
@@ -251626,7 +251626,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T22:24:37.433Z",
+      "verified_at": "2026-11-22T06:41:07.529Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -251643,9 +251643,9 @@
       "title": "Research & Knowledge Intelligence: Cactus-Compute/mirage Core Invariants",
       "repository": "Cactus-Compute/mirage",
       "source_version": "hf-cactus-compute-mirage",
-      "content_hash": "af2d321e4d273fd308a260085b016d3e7573dec3e6c2c4469db2ec8705886b87",
+      "content_hash": "7fbc497819b8784a7f53421f3d9ade72079f4592c9011f09d63f85fe336a0ea3",
       "domain_letter": "D",
-      "persisted_at": "2026-11-15T22:24:37.686Z"
+      "persisted_at": "2026-11-22T06:41:08.114Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-cactus-compute-mirage-learnings-core-invarian": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-cactus-compute-mirage-learnings-core-invarian",
@@ -251655,9 +251655,9 @@
       "title": "Research & Knowledge Intelligence: hf-cactus-compute-mirage-learnings Core Invariants",
       "repository": "hf-cactus-compute-mirage-learnings",
       "source_version": "HEAD",
-      "content_hash": "1c5c669d82fa555fdf89c8e0de1ee02bf844ae100c1e185e2fc6d133661d6869",
+      "content_hash": "168f048ca377fcc9c3f9f6cfcbaf889760810956c27568bf51695a29abafbad2",
       "domain_letter": "D",
-      "persisted_at": "2026-11-15T22:24:49.782Z"
+      "persisted_at": "2026-11-22T06:41:11.387Z"
     },
     "learn-github-dicklesworthstone-destructive_command_guard": {
       "learning_id": "learn-github-dicklesworthstone-destructive_command_guard",
@@ -254542,14 +254542,19 @@
       "slug": "saltstack-salt",
       "platform": "github",
       "source_url": "https://github.com/saltstack/salt",
-      "source_version": "22149587",
-      "content_hash": "fd478bea7e5b3f333ec615cf84cf091175e7a87f92cf39e4c842e50bb63f132d",
+      "source_version": "c955ae49",
+      "content_hash": "b66a05d572cb77a2d36e34dc10f1aad3696f9bcb65e9cf7b853799eff7190ae0",
       "dossier_path": "07_PROJECT_LEARNING/saltstack-salt-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/saltstack-salt-learnings.md",
       "promoted_rules": [
         {
           "number": 9498,
           "title": "cluster cache replication defaults",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9901,
+          "title": "Replace Expand-Archive in install_nsis.ps1 to fix Windows CI builds",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -254558,7 +254563,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-20T02:38:59.621Z",
+      "verified_at": "2026-11-22T06:36:16.920Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -254574,10 +254579,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-saltstack-salt-architecture-intelligence-saltstack-salt-core-invariants.md",
       "title": "Architecture Intelligence: saltstack/salt Core Invariants",
       "repository": "saltstack/salt",
-      "source_version": "22149587",
-      "content_hash": "d2957b2f70dcad7a774d563f192f7bf5bd94fe2fe56403725730ffe7db5cb776",
+      "source_version": "c955ae49",
+      "content_hash": "822f5f7573d3671dd2b60afee4934d2d924cfff1d9b72f0d2be218c8731f881d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T02:39:00.183Z"
+      "persisted_at": "2026-11-22T06:36:17.740Z"
     },
     "rule-8693": {
       "learning_id": "rule-8693",
@@ -254673,9 +254678,9 @@
       "title": "Architecture Intelligence: saltstack-salt-learnings Core Invariants",
       "repository": "saltstack-salt-learnings",
       "source_version": "HEAD",
-      "content_hash": "3d79536196448127b65c2323c79558526b691663877afec5c66d02fdbb877f73",
+      "content_hash": "540bba48b78058693d0f359addd32c2191a40912042702eaf984b732310ce629",
       "domain_letter": "G",
-      "persisted_at": "2026-11-20T02:39:05.459Z"
+      "persisted_at": "2026-11-22T06:41:12.338Z"
     },
     "candidate_directive-document-extended-dates-and-decimal-precision-for-hibernate-and-liquibase": {
       "item_id": "candidate_directive-document-extended-dates-and-decimal-precision-for-hibernate-and-liquibase",
@@ -301676,10 +301681,10 @@
       "relative_path": "08_VERIFICATION/saltstack-salt-verification-protocol-empirical-defect-shield-for-saltstack-salt.md",
       "title": "Verification Protocol: Empirical Defect Shield for saltstack/salt",
       "repository": "saltstack/salt",
-      "source_version": "22149587",
-      "content_hash": "cbc5271df82fba973f04b878da9f868403434975e5894b8e49f7b85a5694ac25",
+      "source_version": "c955ae49",
+      "content_hash": "a7361bd4f61d610036a27834f1d5402c3d195b5c609a841a3a9dad754a9cf436",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T02:39:00.327Z"
+      "persisted_at": "2026-11-22T06:36:17.988Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-saltstack-salt-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-saltstack-salt-learnings",
@@ -301689,9 +301694,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for saltstack-salt-learnings",
       "repository": "saltstack-salt-learnings",
       "source_version": "HEAD",
-      "content_hash": "495fdbb7d66ca2c6e5db0ba69fd26e8369cfeeda0db37372ffef34f9e09c4f44",
+      "content_hash": "f76eb251431fcfd9ccb9ae787685d6e46bfba83b45bab7537aafcf21a75840c3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T02:39:05.622Z"
+      "persisted_at": "2026-11-22T06:41:12.563Z"
     },
     "rule-9499": {
       "learning_id": "rule-9499",
@@ -309445,13 +309450,13 @@
       "item_id": "candidate_directive-benchmarks-report-gold-coverage-across-retrieval-stages",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-5RH8-benchmarks-report-gold-coverage-across-retrieval-stages.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-XLVM-benchmarks-report-gold-coverage-across-retrieval-stages.md",
       "title": "benchmarks): report Gold coverage across retrieval stages",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "400a32e1263637e6e5c408cf8f3f5b606d6af9f92ad79f3c2a7d584b005549c9",
+      "content_hash": "181ccddbcb082b75adf2f544b4963fabd3ec1717b4ef55c676943ca53d6d7e0a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T06:19:34.367Z"
+      "persisted_at": "2026-11-22T06:41:13.480Z"
     },
     "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it": {
       "item_id": "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it",
@@ -319341,6 +319346,32 @@
       "content_hash": "11255645ba6613435b5f218d62cafacf07817dc3a45022735d8b214ae605edc7",
       "domain_letter": "H",
       "persisted_at": "2026-11-22T06:11:36.416Z"
+    },
+    "rule-9901": {
+      "learning_id": "rule-9901",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9901,
+      "title": "Replace Expand-Archive in install_nsis.ps1 to fix Windows CI builds",
+      "source_url": "https://github.com/saltstack/salt",
+      "source_version": "c955ae49",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T06:36:16.920Z"
+    },
+    "candidate_directive-replace-expand-archive-in-install_nsis-ps1-to-fix-windows-ci-builds": {
+      "item_id": "candidate_directive-replace-expand-archive-in-install_nsis-ps1-to-fix-windows-ci-builds",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-XKTO-replace-expand-archive-in-install_nsis-ps1-to-fix-windows-ci-builds.md",
+      "title": "Replace Expand-Archive in install_nsis.ps1 to fix Windows CI builds",
+      "repository": "saltstack-salt-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ce771f7401e68a379706fd8228ea7760497dd57c0e758e64e69a0909776e5a81",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-22T06:41:12.114Z"
     }
   },
   "ai-builder-brain": {

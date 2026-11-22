@@ -12031,3 +12031,5 @@
 | `CYCLE-20261122-5HRK` | `2026-11-22T06:19:21.776Z` | `mradermacher/gemma-4-31B-it-ARA-heretic-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf-learnings.md` | Yes (`7b048fea...`) |
 | `CYCLE-20261122-FWNJ` | `2026-11-22T06:27:27.631Z` | `ConwayResearch/Underdog-Woof` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-conwayresearch-underdog-woof-learnings.md` | Yes (`e09e6f57...`) |
 | `CYCLE-20261122-G1ZO` | `2026-11-22T06:27:34.548Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING` | Yes (`75357683...`) |
+| `CYCLE-20261122-R99J` | `2026-11-22T06:36:17.191Z` | `saltstack/salt` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9901` | Yes (`b66a05d5...`) |
+| `CYCLE-20261122-XHIZ` | `2026-11-22T06:41:07.835Z` | `Cactus-Compute/mirage` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cactus-compute-mirage-learnings.md` | Yes (`47200bb9...`) |

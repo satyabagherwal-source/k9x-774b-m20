@@ -12064,3 +12064,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-mradermacher-gemma-4-31b-it-ara-heretic-gguf` | `https://huggingface.co/mradermacher/gemma-4-31B-it-ARA-heretic-GGUF` | `hf-mraderm` | Multi-dimensional audit evidence | 2026-11-22T06:19:21.780Z |
 | `learn-huggingface-conwayresearch-underdog-woof` | `https://huggingface.co/ConwayResearch/Underdog-Woof` | `hf-conwayr` | Multi-dimensional audit evidence | 2026-11-22T06:27:27.635Z |
 | `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `5efdf449` | Multi-dimensional audit evidence | 2026-11-22T06:27:34.551Z |
+| `learn-github-saltstack-salt` | `https://github.com/saltstack/salt` | `c955ae49` | Multi-dimensional audit evidence | 2026-11-22T06:36:17.197Z |
+| `learn-huggingface-cactus-compute-mirage` | `https://huggingface.co/Cactus-Compute/mirage` | `hf-cactus-` | Multi-dimensional audit evidence | 2026-11-22T06:41:07.840Z |

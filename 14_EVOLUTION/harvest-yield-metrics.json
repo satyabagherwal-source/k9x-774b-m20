@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T06:27:34.556Z",
-  "total_cycles_completed": 11438,
-  "total_learnings_persisted": 11438,
-  "total_rules_promoted": 10715,
+  "last_updated": "2026-11-22T06:41:07.847Z",
+  "total_cycles_completed": 11440,
+  "total_learnings_persisted": 11440,
+  "total_rules_promoted": 10716,
   "history": [
-    {
-      "timestamp": "2026-11-21T13:30:42.982Z",
-      "repository": "GreptimeTeam/greptimedb",
-      "learningId": "learn-github-greptimeteam-greptimedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-21T13:30:43.058Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T13:53:30.288Z",
       "repository": "Qwen/Qwen3-14B",
@@ -1403,6 +1389,20 @@
       "repository": "pulumi/pulumi",
       "learningId": "learn-github-pulumi-pulumi",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T06:36:17.204Z",
+      "repository": "saltstack/salt",
+      "learningId": "learn-github-saltstack-salt",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T06:41:07.847Z",
+      "repository": "Cactus-Compute/mirage",
+      "learningId": "learn-huggingface-cactus-compute-mirage",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

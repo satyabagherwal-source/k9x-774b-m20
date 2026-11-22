@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-22T06:27:37.738Z",
-    "lastVerified": "2026-11-22T06:27:37.738Z",
+    "lastChecked": "2026-11-22T06:41:10.882Z",
+    "lastVerified": "2026-11-22T06:41:10.882Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -255,9 +255,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-22T05:59:44.435Z",
+    "lastChecked": "2026-11-22T06:36:18.638Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-22T05:59:44.435Z"
+    "lastVerified": "2026-11-22T06:36:18.638Z"
   },
   "herdrdev-herdr": {
     "name": "herdrdev/herdr",
@@ -806,9 +806,9 @@
   "chrispybacon-dev-dockflare": {
     "name": "DockFlare",
     "officialUrl": "https://github.com/ChrispyBacon-dev/DockFlare",
-    "lastChecked": "2026-11-22T01:43:59.195Z",
+    "lastChecked": "2026-11-22T06:36:13.344Z",
     "revisionIdentifier": "9c7bed82",
-    "lastVerified": "2026-11-22T01:43:59.195Z"
+    "lastVerified": "2026-11-22T06:36:13.344Z"
   },
   "nirdiamant-rag_techniques": {
     "name": "RAG_Techniques",
@@ -3920,9 +3920,9 @@
   "dingodb-dingo": {
     "name": "dingo",
     "officialUrl": "https://github.com/dingodb/dingo",
-    "lastChecked": "2026-11-21T01:51:37.365Z",
+    "lastChecked": "2026-11-22T06:36:15.877Z",
     "revisionIdentifier": "bb96a741",
-    "lastVerified": "2026-11-21T01:51:37.365Z"
+    "lastVerified": "2026-11-22T06:36:15.877Z"
   },
   "pemistahl-grex": {
     "name": "grex",
@@ -5011,22 +5011,21 @@
     "lastVerified": "2026-11-22T02:53:13.212Z"
   },
   "saltstack-salt": {
-    "name": "salt",
+    "name": "saltstack/salt",
     "officialUrl": "https://github.com/saltstack/salt",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-21T03:28:38.834Z",
-    "lastVerified": "2026-11-21T03:28:38.834Z",
+    "lastChecked": "2026-11-22T06:36:15.573Z",
+    "lastVerified": "2026-11-22T06:36:15.573Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-saltstack-salt",
-    "contentHash": "fd478bea7e5b3f333ec615cf84cf091175e7a87f92cf39e4c842e50bb63f132d",
+    "contentHash": "b66a05d572cb77a2d36e34dc10f1aad3696f9bcb65e9cf7b853799eff7190ae0",
     "promotedRulesCount": 1,
-    "recentFixesCount": 17,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "22149587"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "gluesql-gluesql": {
     "name": "gluesql",
@@ -6346,9 +6345,9 @@
   "resocoder-flutter-tdd-clean-architecture-course": {
     "name": "flutter-tdd-clean-architecture-course",
     "officialUrl": "https://github.com/ResoCoder/flutter-tdd-clean-architecture-course",
-    "lastChecked": "2026-11-19T02:11:23.479Z",
+    "lastChecked": "2026-11-22T06:36:08.381Z",
     "revisionIdentifier": "6c515614",
-    "lastVerified": "2026-11-19T02:11:23.479Z"
+    "lastVerified": "2026-11-22T06:36:08.381Z"
   },
   "camptocamp-terraboard": {
     "name": "terraboard",
@@ -6857,12 +6856,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dalance-procs": {
-    "name": "dalance/procs",
+    "name": "procs",
     "officialUrl": "https://github.com/dalance/procs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-20T21:25:37.074Z",
-    "lastVerified": "2026-11-20T21:25:37.074Z",
+    "lastChecked": "2026-11-22T06:36:03.368Z",
+    "lastVerified": "2026-11-22T06:36:03.368Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dalance-procs",
@@ -6871,7 +6870,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "05000c71"
   },
   "hf-zai-org-glm-5.3": {
     "name": "zai-org/GLM-5.3",
@@ -13805,6 +13805,23 @@
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-conwayresearch-underdog-woof",
     "contentHash": "e09e6f57912a0b62d4a34c3c07551691269c085b41c7f413318e5937f59f18d5",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-cactus-compute-mirage": {
+    "name": "Cactus-Compute/mirage",
+    "officialUrl": "https://huggingface.co/Cactus-Compute/mirage",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-22T06:36:06.147Z",
+    "lastVerified": "2026-11-22T06:36:06.147Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-cactus-compute-mirage",
+    "contentHash": "47200bb90b24d57ec9c706507203b3f32f812efbfbb582501b53fd01dbed0cf8",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

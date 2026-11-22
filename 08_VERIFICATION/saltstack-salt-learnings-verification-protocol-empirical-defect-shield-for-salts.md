@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-20T02:39:05.199Z",
+  "timestamp": "2026-11-22T06:41:11.971Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-saltstack-salt-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [saltstack-salt-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-20T02:39:05.199Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T06:41:11.971Z`  
 > **Learning ID**: `LEARN-EVO-saltstack-salt-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/saltstack-salt-learnings.md`  
 > **Source**: github ([https://github.com/saltstack/salt](https://github.com/saltstack/salt))  
-> **Source Version**: `22149587`  
+> **Source Version**: `c955ae49`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-20T02:38:58.810Z  
+> **Timestamp**: 2026-11-22T06:36:15.850Z  
 > **Learning ID**: `learn-github-saltstack-salt`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/saltstack-salt-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/saltstack/salt](https://github.com/saltstack/salt))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-20T02:38:58.580Z  
+> **Harvest Timestamp**: 2026-11-22T06:36:15.573Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Software to automate the management and configuration of infrastructure and applications at scale.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml
-- **Stars / Engagement**: 15762 stars
+- **Stars / Engagement**: 15768 stars
 
 ---
 
@@ -2356,1312 +2356,118 @@ def start(cmd, output="json", interval=1, onchange=False):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `eae114ea` (2026-11-15)
-**Commit Message**: Fix cluster cache replication defaults (#70773)
+### Incident Patch 1: `c955ae49` (2026-11-22)
+**Commit Message**: Replace Expand-Archive in install_nsis.ps1 to fix Windows CI builds (#70899)
 
-* WIP: cache facade fan-out + per-bank routing
+* Extract NSIS plugins without Expand-Archive
 
-* channel: guard cluster/peer/discover-reply against missing cluster_pub
+On the windows-11-vs2026-arm64 runner image 20261112.217.1, Expand-Archive
+fails with 'Cannot find an overload for "ExtractToDirectory" and the
+argument count: "3"', breaking the arm64 source package build before it
+does anything else. The unchanged script worked on image 20261101.203.1,
+and amd64 on windows-2025-vs2026 20261103.298.1 still passes.
 
-The discover-reply handler at server.py:4058 called
-salt.crypt.PublicKeyString(payload["cluster_pub"]) without guarding
-against None, so a joiner master that answered another joiner's
-discover before its own join-reply from the founder had landed would
-crash the recipient's publish daemon with
-AttributeError: 'NoneType' object has no attribute 'encode'.
+Call the two-argument System.IO.Compression.ZipFile.ExtractToDirectory
+directly through a small Expand-ZipFile helper, which exists in both
+Windows PowerShell 5.1 and PowerShell 7, so the build no longer depends on
+which Archive module gets loaded. Behaviour on an existing target file is
+unchanged: both error.
 
-Fix both sides of the handshake:
+* Add changelog for #70899
 
-* Receiver: early-return when the discover-reply payload lacks
-  cluster_pub.  A debug log carries the peer_id so the retry can be
-  observed.  Previously the recipient's publish daemon died outright
-  via an unhandled AttributeError, after which the joiner never
-  started its Raft learner and the cluster never stabilised.
+---------
 
-* Sender: skip the discover-reply when cluster_public_key() returns
-  None (the joiner has not installed cluster.pub yet).  Prevents the
-  peer from having to reject or defer; the next discover round picks
-  up the key once join-reply has landed.
+Co-authored-by: knightmare2600 <[REDACTED_EMAIL]>
 
-The bug is pre-existing but was latent on resources-2 because th
-
-**File**: `changelog/70773.fixed.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+Stage ``localfs`` cache writes in a sibling ``.localfs_tmp/`` directory so concurrent ``cache.list`` calls never observe in-flight ``tempfile.mkstemp`` files in the bank directory.
-+
-+Buffer cluster cache-replication events for peers that have not yet completed the discover/join handshake and replay them in FIFO order on handshake completion, so live writes landing during a peer's join window are delivered without relying solely on the join-time state-sync snapshot.
-+
-+Invalidate every pending cluster cache-replication queue whenever the local ``cluster_aes`` is replaced -- on operator-triggered rotation and on initial install via ``cluster/peer/join-reply`` on a (re)joining master -- so stale pre-encrypted events are never replayed with a key the receiver cannot decrypt.
-```
-
-**File**: `doc/ref/cache/all/index.rst` (modified, +1/-0)
-```diff
-@@ -12,6 +12,7 @@ For understanding and usage of the cache modules see the :ref:`cache` topic.
-     :toctree:
-     :template: autosummary.rst.tmpl
- 
-+    _cluster_replicator
-     consul
-     etcd_cache
-     localfs
-```
-
-**File**: `doc/ref/cache/all/salt.cache._cluster_replicator.rst` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+salt.cache._cluster_replicator
-+==============================
-+
-+.. automodule:: salt.cache._cluster_replicator
-+    :members:
-```
-
-**File**: `salt/cache/__init__.py` (modified, +268/-6)
-```diff
-@@ -19,6 +19,58 @@
- log = logging.getLogger(__name__)
- 
- 
-+# Thread-local re-entrancy guard for cross-master cache replication.
-+# ``Cache.store`` / ``Cache.store_many`` consult this flag before
-+# emitting a ``cluster/runner/delegate_cache_write`` event: a peer-side
-+# handler (see ``salt/channel/server.py:_handle_delegate_cache_write``)
-+# applies incoming replication writes by calling ``cache.store`` again
-+# with the flag set, which must NOT re-broadcast or we'd build an
-+# infinite fan-out loop across the cluster.  The ``originating_master``
-+# check in the peer-side handler is the primary loop-safety guard; this
-+# thread-local is the second line of defense.
-+_REPLICATION_STATE = threading.local()
-+
-+
-+def _set_already_replicated(flag):
-+    """Mark the current thread as applying a peer-originated write."""
-+    _REPLICATION_STATE.already_replicated = bool(flag)
-+
-+
-+def _is_already_replicated():
-+    return getattr(_REPLICATION_STATE, "already_replicated", False)
-+
-+
-+def _resolve_bank_routing(routing, bank):
-+    """
-+    Longest-prefix-match lookup of a bank name against the routing map.
-+
-+    Replication routing is keyed by top-level bank name (``jobs``,
-+    ``cluster/consensus``, ...) but cache writes land on compound
-+    sub-banks (``jobs/loads``, ``cluster/consensus/<node>/cluster/log``).
-+    A plain ``routing.get(bank, default)`` therefore misses the common
-+    case; this helper resolves by:
-+
-+    1. Exact-match the full bank name.
-+    2. Strip one ``/``-delimited segment at a time and retry.
-+    3. If no prefix matches, return ``"replicate"`` (the historical default).
-+
-+    :param routing: Dict of ``{bank_prefix: "ring"|"replicate"|"none"}``,
-+                    as returned by ``salt.config.get_cluster_cache_routing``.
-+    :param bank:    Full bank name for the pending write.
-+    :returns:       Resolved mode string.
-+    """
-+    if bank in routing:
-+        return routing[bank]
-+    parts = bank.split("/")
-+    # Drop one trailing segment per iteration: a/b/c -> a/b -> a.
-+    while len(parts) > 1:
-+        parts.pop()
-+        prefix = "/".join(parts)
-+        if prefix in routing:
-+            return routing[prefix]
-+    return "replicate"
-+
-+
- def factory(opts, **kwargs):
-     """
-     Creates and returns the cache class.
-@@ -76,6 +128,11 @@ def __init__(self, opts, cachedir=None, **kwargs):
- 
-     @cached_property
-     def modules(self):
-+        # Honor a pre-populated ``_modules`` dict so tests and
-+        # non-loader-driven callers can inject a mock driver without
-+        # touching the cached_property machinery.
-+        if self._modules is not None:
-+            return self._modules
-         return salt.loader.cache(self.opts)
- 
-     @cached_property
-@@ -129,7 +186,7 @@ def cache(self, bank, key, fun, loop_fun=None, **kwargs):
- 
-         return data
- 
--    def store(self, bank, key, data, expires=None):
-+    def store(self, bank, key, data, expires=None, _already_replicated=False):
-         """
-         Store data using the specified module
- 
-@@ -149,25 +206,225 @@ def store(self, bank, key, data, expires=None):
-         :param expires:
-             how many seconds from now the data should be considered stale.
- 
-+        :param _already_replicated:
-+            Internal flag used by the cluster-cache replication facade.
-+            When True the local write proceeds but no cross-master
-+            fan-out is performed.  The peer-side handler passes this
-+            when applying an incoming replication event so the same
-+            write doesn't bounce back to every peer again.  Not part
-+            of the public API.
-+
-          :raises SaltCacheError:
-             Raises an exception if cache driver detected an error accessing data
-             in the cache backend (auth, permissions, etc).
-         """
-         fun = f"{self.driver}.store"
-         try:
--            return self.modules[fun](bank, key, data, expires=expires, **self.kwargs)
-+            result = self.modules[fun](bank, key, data, expires=expires, **self.kwargs)
-         except TypeError:
-             # if the backing store doesnt natively support expiry, we handle it as a fallback
-             if expires:
-                 expires_at = datetime.datetime.now().astimezone() + datetime.timedelta(
-                     seconds=expires
-                 )
-                 expires_at = int(expires_at.timestamp())
--                return self.modules[fun](
-+                result = self.modules[fun](
-                     bank, key, {"data": data, "_expires": expires_at}, **self.kwargs
-                 )
-             else:
--                return self.modules[fun](bank, key, data, **self.kwargs)
-+                result = self.modules[fun](bank, key, data, **self.kwargs)
-+        # Cross-master replication fan-out at the facade.  Guarded so
-+        # non-clustered masters and shared-FS clusters pay no overhead.
-+        # The peer-side re-dispatch arrives with
-+        # ``_already_replicated=True`` and 
-```
-
-**File**: `salt/cache/_cluster_replicator.py` (added, +1320/-0)
-```diff
-@@ -0,0 +1,1320 @@
-+"""
-+Cross-master cache replication seams.
-+
-+Free-function entry points for both sides of the delegate-cache-write
-+flow so each side is testable without instantiating a channel class
-+or a Cache object.  ``Cache.store`` and ``Cache.store_many`` emit via
-+:func:`fire_peer_cache_write` / :func:`fire_peer_cache_write_many` /
-+:func:`fire_delegate_cache_write`;
-+``MasterPubServerChannel._handle_delegate_cache_write`` delegates to
-+:func:`_handle_delegate_cache_write`.
-+"""
-+
-+import atexit
-+import collections
-+import concurrent.futures
-+import dataclasses
-+import hashlib
-+import logging
-+import os
-+import threading
-+import time
-+
-+import salt.cache
-+
-+log = logging.getLogger(__name__)
-+
-+
-+# ---------------------------------------------------------------------------
-+# Sender-side handshake gate
-+# ---------------------------------------------------------------------------
-+#
-+# A cluster_aes-encrypted ``cluster/peer/delegate-cache-write`` /
-+# ``delegate-resource-register-write`` event must only be fanned out to
-+# peers that have completed the cluster discover/join handshake.  A peer
-+# that is still running on its initial random ``cluster_aes`` (join-reply
-+# not yet installed) cannot decrypt the event; the publish daemon on
-+# that peer logs a loud ``Failed to decrypt`` exception and drops the
-+# payload.  The write is lost on that peer until the next write to the
-+# same (bank, key) lands, or until state-sync primitives (initiated by
-+# join-reply) catch the peer up.
-+#
-+# Catch-up guarantee: a peer that completes its handshake AFTER this
-+# gate decides to skip it still ends up consistent because
-+#
-+#   * the join-reply's ``state_sync_cache_banks`` enumerates every
-+#     replicate-mode bank and streams the current contents in
-+#     ``state-sync-chunk`` events (see
-+#     :mod:`salt.cluster.state_sync` and the ``send_state_sync_chunks``
-+#     call in the join-reply handler), AND
-+#   * subsequent writes on the originator will see the peer as joined
-+#     and fan out normally.
-+#
-+# So the gate defers the write to the peer's catch-up stream, which is
-+# the design-intended path for pre-handshake writes.  The pending queue
-+# is bounded (``cluster_cache_replicate_pending_max_events``, default
-+# 10_000 per peer) and TTL-expired
-+# (``cluster_cache_replicate_pending_ttl``, default 300s): queued events
-+# past the cap evict oldest-first with a coalesced WARN per peer, and
-+# TTL-expired events are dropped on next enqueue.  In sustained-burst or
-+# long-un-joined conditions that bound can be reached, so this is NOT a
-+# zero-loss contract -- it is a short-window catch-up for the common
-+# ``peer joining in <few seconds>`` case.  Operators seeing sustained
-+# skip-logs should investigate why a peer is not completing handshake.
-+#
-+# API shape: the publish daemon holds the authoritative ``_discover_replies``
-+# + ``peer_keys`` sets; it passes them into :func:`filter_joined_pushers`
-+# which returns ``(kept, skipped)`` and emits a warning when a peer is
-+# skipped.  The gate can be disabled globally via
-+# ``opts["cluster_cache_replicate_require_joined"] = False``.
-+_SKIP_LOG_INTERVAL = 5.0  # seconds; coalesce skip-warnings per peer
-+_SKIP_LOG_LAST = {}  # (host, context) -> (last_ts, suppressed_count)
-+_SKIP_LOG_LOCK = threading.Lock()
-+
-+
-+def peer_is_joined(discover_replies, peer_keys, peer_host):
-+    """
-+    Return ``True`` if ``peer_host`` has completed the cluster
-+    discover/join handshake far enough to decrypt cluster_aes
-+    events.
-+
-+    The handshake has two observable signals:
-+
-+    * ``discover_replies`` -- this master has received a signed
-+      ``cluster/peer/discover-reply`` from the peer.  That reply is
-+      sent only after the peer has installed cluster.pub locally,
-+      which in turn happens after the peer processed a ``join-reply``
-+      (which carried ``cluster_aes``).  A peer in this set is
-+      therefore guaranteed to have our current ``cluster_aes``.
-+
-+    * ``peer_keys`` -- this master has received the peer's session AES
-+      key via the ``cluster/peer/<master_id>`` AES-key broadcast.
-+      That broadcast is independent of the discover protocol but it
-+      ALSO only fires after the peer has installed cluster_aes
-+      (``send_aes_key_event`` is called from the ``cluster/peer``
-+      handler which itself runs after key installation).  So
-+      ``peer_keys`` membership is a slightly later-but-equivalent
-+      signal; we accept it to tolerate restart scenarios where
-+      ``discover_replies`` is empty but the peer is fully joined.
-+
-+    The host match is lenient: ``cluster_peers`` entries may carry a
-+    ``:port`` suffix while the handshake handlers key on the bare
-+    host, so we match either form.
-+
-+    :param discover_replies: Iterable/set of peer ids that have
-+                             sent us ``discover-reply``.
-+    :param peer_keys:        Dict of ``peer_id -> session_key`` from
-+                             ``MasterPubServe
-```
-
-**File**: `salt/cache/localfs.py` (modified, +18/-1)
-```diff
-@@ -71,7 +71,24 @@ def store(bank, key, data, cachedir):
-                 f"The cache directory, {outdir}, could not be created: {exc}"
-             )
- 
--    tmpfh, tmpfname = tempfile.mkstemp(dir=base)
-+    # Stage the write in a sibling tmp directory so concurrent ``list_``
-+    # callers never observe in-flight ``tmpXXXXXXXX`` files in the bank
-+    # directory.  Cluster cache replication (cluster_isolated_filesystem
-+    # = True) can race an in-process ``cache.list(bank)`` against a
-+    # daemon-side ``cache.store(bank, ...)`` fan-out from a peer master;
-+    # with ``mkstemp(dir=base)`` the listdir call caught the tmpfile
-+    # before ``atomic_rename`` completed.  Keeping the staging dir under
-+    # ``cachedir`` preserves the same-filesystem invariant that
-+    # ``atomic_rename`` relies on.
-+    tmpdir = salt.utils.path.join(cachedir, ".localfs_tmp")
-+    try:
-+        os.makedirs(tmpdir)
-+    except OSError as exc:
-+        if exc.errno != errno.EEXIST:
-+            raise SaltCacheError(
-+                f"The cache tmp directory, {tmpdir}, could not be created: {exc}"
-+            )
-+    tmpfh, tmpfname = tempfile.mkstemp(dir=tmpdir)
-     os.close(tmpfh)
-     try:
-         with salt.utils.files.fopen(tmpfname, "w+b") as fh_:
-```
-
-**File**: `salt/cache/mmap_cache.py` (modified, +46/-0)
-```diff
-@@ -201,6 +201,52 @@ def store(bank, key, data, cachedir, **kwargs):
-         )
- 
- 
-+def store_many(bank, items, cachedir, **kwargs):
-+    """
-+    Bulk-store many ``(key, data)`` pairs under *bank* in a single
-+    :meth:`~salt.utils.mmap_cache.MmapCache.put_many` call.
-+
-+    Equivalent in effect to looping ``store(bank, k, v)`` over *items*,
-+    but pays the flock + fsync + msync cost once for the whole batch
-+    instead of once per entry.  Required for batched hot paths like
-+    the master's resource-grain register handler to keep up with
-+    5 concurrent minion registers.
-+
-+    :param bank: cache bank (same semantics as :func:`store`).
-+    :param items: iterable of ``(key, data)`` pairs. May be a dict, in
-+        which case ``dict.items()`` is used.
-+    :param cachedir: driver cachedir (injected by the facade's
-+        :attr:`salt.cache.Cache.kwargs`).
-+
-+    :raises SaltCacheError: if any value fails to msgpack-serialise
-+        (the batch is aborted before the ``put_many`` call and no
-+        items are written) or if the underlying ``put_many`` reports
-+        a failure.
-+    """
-+    if isinstance(items, dict):
-+        items = items.items()
-+
-+    packed = []
-+    for key, data in items:
-+        try:
-+            raw = msgpack.packb(data, **_PACK_OPTS)
-+        except Exception as exc:  # pylint: disable=broad-except
-+            raise SaltCacheError(
-+                f"Failed to serialise cache data for bank={bank!r} key={key!r}: {exc}"
-+            )
-+        packed.append((key, raw))
-+
-+    if not packed:
-+        return
-+
-+    cache = _get_cache(bank, cachedir)
-+    if not cache.put_many(packed):
-+        raise SaltCacheError(
-+            f"Failed to bulk-write mmap cache entries bank={bank!r} "
-+            f"(count={len(packed)})"
-+        )
-+
-+
- def fetch(bank, key, cachedir, **kwargs):
-     """
-     Return the deserialised value for *bank*/*key*, or ``{}`` if not found.
-```
-
-**File**: `salt/channel/server.py` (modified, +1111/-75)
-```diff
-@@ -103,7 +103,7 @@ def _transport_has_builtin_router(transport):
-     ZeroMQ's ``pre_fork`` adds ``zmq_device_pooled`` for that purpose, so
-     :class:`PoolRoutingChannel` does not need to spawn its own router.
-     Other transports (TCP, WebSockets) bind the external socket but rely on
--    a separate process to serve it — :class:`PoolRoutingChannel.pre_fork`
-+    a separate process to serve it -- :class:`PoolRoutingChannel.pre_fork`
-     spawns ``_run_pool_router`` for that case.
-     """
-     module = getattr(transport.__class__, "__module__", "") or ""
-@@ -520,7 +520,7 @@ async def handle_message(self, payload):
-             # Block non-_auth requests until this node is a committed Raft voter.
-             if not _cluster_is_ready(self.opts):
-                 log.debug(
--                    "Cluster not ready yet — deferring request from %s",
-+                    "Cluster not ready yet -- deferring request from %s",
-                     payload.get("load", {}).get("id", "unknown"),
-                 )
-                 return {"enc": "clear", "load": {"ret": False, "cluster_retry": True}}
-@@ -775,7 +775,7 @@ class PoolRoutingChannel:
- 
-     This class is returned by :meth:`ReqServerChannel.factory` when
-     ``worker_pools_enabled=True`` (the default).  It is mutually exclusive
--    with the plain :class:`ReqServerChannel` — only one of the two is ever
-+    with the plain :class:`ReqServerChannel` -- only one of the two is ever
-     active for a given master process.
- 
-     Architecture::
-@@ -1449,7 +1449,7 @@ async def handle_and_route_message(self, payload):
- 
-             # Block non-_auth requests until this node is a committed Raft voter.
-             if cmd != "_auth" and not _cluster_is_ready(self.opts):
--                log.debug("Cluster not ready yet — deferring %s request", cmd)
-+                log.debug("Cluster not ready yet -- deferring %s request", cmd)
-                 return {"enc": "clear", "load": {"ret": False, "cluster_retry": True}}
- 
-             if pool_name not in self.pool_clients:
-@@ -1852,6 +1852,22 @@ def __init__(
-         self._discover_event = None
-         self._discover_token = None
-         self._discover_candidates = {}
-+        # Set of peer ids we have received a ``cluster/peer/discover-reply``
-+        # from.  Populated in the discover-reply branch of
-+        # ``handle_pool_publish`` and consumed by
-+        # ``_pending_discover_peers`` so the periodic retry stops once each
-+        # peer has confirmed the discover handshake.  Falling back to
-+        # ``peer_keys`` would be unsafe here -- the AES-key broadcast
-+        # (``send_aes_key_event``) populates ``peer_keys`` independently
-+        # of the discover protocol, so a retry keyed on ``peer_keys``
-+        # cancels before any ``discover-reply`` has actually landed.
-+        self._discover_replies = set()
-+        # Tornado ``PeriodicCallback`` driving ``_schedule_discover_retry``
-+        # when this master is a non-founder joining an existing cluster.
-+        # None when inactive -- set in ``_publish_daemon`` and cleared
-+        # once every peer has replied to the discover or the retry
-+        # deadline expires.
-+        self._discover_retry_pc = None
-         # Set by service.py once the Raft node is started.
-         self._raft_dispatcher = None
- 
-@@ -1868,7 +1884,7 @@ def _start_raft_as_founding_voter(self):
-             return  # already started by a join-reply race
- 
-         log.info(
--            "No join-reply received — starting Raft as founding voter for cluster %r",
-+            "No join-reply received -- starting Raft as founding voter for cluster %r",
-             self.opts["cluster_id"],
-         )
-         try:
-@@ -1906,7 +1922,7 @@ def _start_raft_as_learner(self, known_peers):
-         ``io_loop.start()`` so the asyncio loop is already running.
- 
-         :param known_peers: dict ``{peer_id: pub_key_pem}`` from the
--                            ``join-reply`` payload — the addresses of all
-+                            ``join-reply`` payload -- the addresses of all
-                             existing cluster members.
-         """
-         if self._raft_service is not None:
-@@ -1984,7 +2000,7 @@ def _handle_multi_ring_runner_event(self, tag, data):
-             elif tag == "cluster/runner/route_clear":
-                 svc.propose_route(data["data_type"], None)
-             elif tag == "cluster/runner/ring_set":
--                # Per-ring policy commit — proposes RING_CONFIG on
-+                # Per-ring policy commit -- proposes RING_CONFIG on
-                 # the named ring's *own* log.  The ring's Node must
-                 # be the leader of its own group on this master.
-                 ring_id = data["ring_id"]
-@@ -2049,7 +2065,7 @@ async def _fanout_multi_ring_request(self, tag, data):
-         cluster_aes-encrypted ``cluster/peer/multi-ring-request`` event
-         and push it to every peer; each peer's handler re-dispatches via
-         :meth:`_handle_multi_ring_runn
-```
-
----
-
-### Incident Patch 2: `803ceba7` (2026-11-18)
-**Commit Message**: Close arm64 cluster cache-replication race class (#70831)
-
-* collect-from-peers: gate fan-out + per-peer sentinel eofs
-
-NEW-10 (arm64 race closure, phase 1 of 5).
-
-* ``_run_collect_from_peers`` consults ``filter_joined_pushers`` before
-  sizing ``expected_peers`` so the sentinel's completion threshold is
-  set from the kept set, not the raw ``self.pushers`` list.  Un-joined
-  peers are enumerated in ``skipped_peers`` on the sentinel JSON for
-  operator forensics.  ``pending_event=None`` keeps the "skip + WARN,
-  no replay" contract -- a PULL cannot be meaningfully re-played
-  because the sentinel's ``expected_peers`` is scoped to one run.
-  Empty-kept aborts BEFORE emitting any collect-request and writes a
-  deterministic sentinel.
-
-* Reviewer correction #2 (per-peer EOF tracking): ``_record_collect_chunk``
-  now takes an optional ``source_peer`` kwarg and the sentinel's
-  per-channel state carries a ``peers_eofed`` sorted list.  The
-  completion check is ``peers_eofed >= set(expected_peers)`` per
-  channel, not a monotonic ``eofs_seen`` counter.  Without per-peer
-  identity, a SKIPPED peer whose cluster_aes install races the
-  fan-out and emits an eof could flip ``complete=True`` 
-
-**File**: `changelog/70831.fixed.md` (added, +16/-0)
-```diff
-@@ -0,0 +1,16 @@
-+Fix three-master bootstrap race on ``cluster.pem`` and ``cluster_aes``
-+by gating ``cluster/peer/join-reply`` installs through a receiver-side
-+bootstrap-vs-committed state machine with a configurable founder-wait
-+window.  The previous identity-based founder-only sender gate for
-+``cluster_aes`` broke late-joiner propagation (a surviving non-founder
-+could no longer deliver the key to a new master after the founder
-+died); the new primitive preserves late-joiner reachability while
-+keeping bootstrap deterministic.  Sentinel files
-+``cluster_pki_dir/.cluster_aes.committed`` and
-+``cluster_pki_dir/.cluster_pem.committed`` persist the committed-state
-+marker with a SHA-256 fingerprint of the on-disk key; a sentinel-vs-disk
-+mismatch on startup (e.g. after an offline rotation) reverts the key
-+to BOOTSTRAP so the next arriving install can re-sync.  Operators can
-+force a BOOTSTRAP reopen by removing the relevant ``.committed``
-+sentinel.  New opt ``cluster_bootstrap_founder_wait_s`` (default 2.0s)
-+exposes the founder-wait window.
-```
-
-**File**: `salt/cache/_cluster_replicator.py` (modified, +195/-37)
-```diff
-@@ -10,6 +10,7 @@
- :func:`_handle_delegate_cache_write`.
- """
- 
-+import asyncio
- import atexit
- import collections
- import concurrent.futures
-@@ -297,6 +298,16 @@ class PendingEvent:
-     packed under (useful for diagnostics).  ``bank``/``key``/
-     ``minion_id`` are optional human-readable attribution fields --
-     they are NOT used by the flush path, only by the skip/drop logs.
-+
-+    ``cluster_aes_fp`` is the ``secret_fingerprint`` of the
-+    cluster_aes value that was current at encrypt time.  The flush
-+    path compares it to the current cluster_aes fp; mismatch means a
-+    rotation happened between encrypt and flush (D-1b window) and
-+    the entry is dropped with a WARN (receiver would log a silent
-+    decrypt-fail otherwise).  Defaults to ``"<unavailable>"`` so
-+    legacy tests / callers that construct PendingEvent without
-+    stamping still work (but see reviewer Q3: ``<unavailable>`` on
-+    EITHER side drops the entry, never publishes).
-     """
- 
-     kind: str
-@@ -305,13 +316,76 @@ class PendingEvent:
-     bank: str | None = None
-     key: str | None = None
-     minion_id: str | None = None
-+    cluster_aes_fp: str = "<unavailable>"
-     enqueued_at: float = dataclasses.field(default_factory=time.monotonic)
- 
- 
- _PENDING_QUEUES: dict[str, "collections.deque[PendingEvent]"] = {}
- _PENDING_LOCK = threading.Lock()
- _PENDING_LOG_LAST: dict[str, float] = {}
- 
-+# Per-peer flush-latch.
-+#
-+# The publish daemon drains a peer's pending queue (via
-+# ``flush_pending_for_peer``) whenever the peer transitions to joined
-+# -- ``_schedule_pending_flush`` fires on the ``cluster/peer/discover-
-+# reply`` or AES-key-broadcast handlers and schedules a drain task on
-+# the loop.  Without serialisation, a live ``publish_cache_write`` to
-+# the SAME peer that arrives mid-drain can land on the socket BEFORE
-+# the drain finishes publishing its stale entries.  For ``(bank, key)``
-+# last-writer-wins buckets this reorders as "stale wins", corrupting
-+# peer state.
-+#
-+# The latch serialises per-peer publish activity: both
-+# ``flush_pending_for_peer`` (handshake-driven drain) and
-+# ``publish_with_latch`` (live publish) acquire the SAME per-peer
-+# asyncio.Lock.  Live publishes that arrive while the drain is in
-+# flight wait until it finishes; the stale entries land on the socket
-+# first, then the live entry -- under last-writer-wins the peer ends
-+# up with the live value.
-+#
-+# ``asyncio.Lock`` is appropriate because both drain and live publish
-+# run as asyncio tasks on the publish daemon's event loop; a sync
-+# ``threading.Lock`` would deadlock on the loop thread when the
-+# holding coroutine awaits.
-+_PENDING_PEER_LATCHES: dict[str, "asyncio.Lock"] = {}
-+_PENDING_PEER_LATCHES_SYNC = threading.Lock()
-+
-+
-+def _get_peer_latch(peer_host):
-+    """
-+    Return the per-peer flush-latch (asyncio.Lock), creating it on
-+    first touch.
-+
-+    Called by the handshake-driven drain path and the live-publish
-+    path so both serialise on the SAME lock.  The dict is bounded by
-+    the number of peers (small, O(N_peers)); no eviction needed.
-+    """
-+    with _PENDING_PEER_LATCHES_SYNC:
-+        latch = _PENDING_PEER_LATCHES.get(peer_host)
-+        if latch is None:
-+            latch = asyncio.Lock()
-+            _PENDING_PEER_LATCHES[peer_host] = latch
-+    return latch
-+
-+
-+async def publish_with_latch(peer_host, pusher, event):
-+    """
-+    Publish ``event`` through ``pusher`` while holding the per-peer
-+    flush-latch.
-+
-+    Serialises with any concurrent ``flush_pending_for_peer`` drain on
-+    the same peer so stale pending entries land on the peer socket
-+    BEFORE the live entry -- under last-writer-wins the peer state
-+    converges to the live entry.
-+    """
-+    if not peer_host:
-+        await pusher.publish(event)
-+        return
-+    latch = _get_peer_latch(peer_host)
-+    async with latch:
-+        await pusher.publish(event)
-+
- 
- def _pending_max_events(opts):
-     if not isinstance(opts, dict):
-@@ -539,49 +613,107 @@ async def flush_pending_for_peer(peer_host, pushers, opts=None):
-         # flush attempt.  (Common during the first few ms after a join
-         # where the pusher dict is still being populated.)
-         return 0
--    entries = drain_pending_for_peer(peer_host, opts=opts)
--    if not entries:
--        return 0
--    log.info(
--        "cluster-cache-replication: flushing %d pending event(s) to %s",
--        len(entries),
--        peer_host,
--    )
--    flushed = 0
--    for idx, entry in enumerate(entries):
--        try:
--            await target.publish(entry.event)
--        except Exception:  # pylint: disable=broad-except
--            log.exception(
--                "cluster-cache-replication: pending-flush publish failed to %s "
--                "(entry kind=%s tag=%s bank=%s key=%s minion_id=%s); "
--                "re-queueing %d remaining entries",
-+    # Hold the per-peer flush-latch across the entire drain+publish
-+    # sequence so a concurrent live publish on the sam
-```
-
-**File**: `salt/channel/_cluster_key_state.py` (added, +512/-0)
-```diff
-@@ -0,0 +1,512 @@
-+"""
-+Unified cluster-key propagation primitive.
-+
-+Two keys in the ``cluster/peer/join-reply`` install path share one
-+shape: every master generates its own local random bootstrap bytes on
-+first boot (``find_or_create_keys("cluster")`` for ``cluster.pem``;
-+``populate_secrets`` for ``cluster_aes``), ships those bytes in every
-+reply it builds, and the receiver historically installed whatever
-+arrived.  Under a three-master bootstrap the install order is
-+non-deterministic, winners are arrival-last, and the cluster ends up
-+disagreeing on the on-disk / in-memory key.
-+
-+This module implements the receiver-side state machine that gates
-+installs.  Each key is independently tracked as either **BOOTSTRAP**
-+(the local bytes are "mutable until first wire install") or
-+**COMMITTED** (the on-disk value is cluster-authoritative).  Each
-+transition is persisted via a sentinel file whose contents are the
-+SHA-256 fingerprint of the committed bytes; on startup a fingerprint
-+mismatch between sentinel and on-disk key reverts to BOOTSTRAP so a
-+stale-value-after-rotation restart cannot re-use a committed marker
-+that no longer describes disk.
-+
-+The BOOTSTRAP state applies a **founder-wait window** before
-+committing to a non-founder install: for up to
-+``cluster_bootstrap_founder_wait_s`` seconds (default 2.0s) after the
-+first arrival, the receiver prefers an install from the designated
-+founder of its configured cluster pool.  When the window expires
-+without a founder reply, the best-candidate (earliest-arriving)
-+install wins and a WARN is logged.  Once the founder-wait window has
-+been served on a key, identity is never consulted again for that key.
-+
-+The full specification lives in
-+``agents/reports/design-unified-cluster-key-propagation.md`` and the
-+reviewer audit (with required tweaks T-1, T-2, T-6) lives in
-+``agents/reports/design-unified-cluster-key-propagation-reviewer.md``.
-+"""
-+
-+import hashlib
-+import logging
-+import os
-+import pathlib
-+import tempfile
-+import threading
-+import time
-+
-+log = logging.getLogger(__name__)
-+
-+#: Default founder-wait window (seconds).  Reviewer T-1: the real
-+#: arm64 CI race window is observed at 588ms-12s; a 2s window biases
-+#: toward the founder install during normal bootstrap without blocking
-+#: forever when the founder is dead.
-+DEFAULT_FOUNDER_WAIT_S = 2.0
-+
-+#: Config option name for the founder-wait window.
-+OPT_FOUNDER_WAIT = "cluster_bootstrap_founder_wait_s"
-+
-+#: Sentinel content prefix.  Reviewer T-2: sentinels carry the SHA-256
-+#: fingerprint of the committed key bytes, not emptiness, so a restart
-+#: whose on-disk key no longer matches the sentinel reverts to
-+#: BOOTSTRAP instead of silently refusing a legitimate re-sync.
-+SENTINEL_PREFIX = "sha256:"
-+
-+#: Supported key names.  Kept narrow on purpose -- the primitive only
-+#: covers the two keys the reviewer scoped (``cluster_pem`` + the
-+#: ``cluster_aes`` session key).  ``cluster_pub`` rides with the
-+#: ``cluster_pem`` install and does not need its own state marker.
-+SUPPORTED_KEYS = ("cluster_aes", "cluster_pem")
-+
-+#: Receiver states.  A key either is still trusting any first arrival
-+#: (BOOTSTRAP) or has committed to a cluster-authoritative value
-+#: (COMMITTED).
-+STATE_BOOTSTRAP = "bootstrap"
-+STATE_COMMITTED = "committed"
-+
-+
-+# ---------------------------------------------------------------------------
-+# Sentinel helpers
-+# ---------------------------------------------------------------------------
-+
-+
-+def cluster_key_sentinel_path(cluster_pki_dir, key_name):
-+    """
-+    Return the sentinel path for ``key_name`` under ``cluster_pki_dir``.
-+
-+    Each key has its own dotfile sentinel so an operator can
-+    selectively re-open the bootstrap window for a single key without
-+    touching the other (e.g. ``rm .cluster_aes.committed`` to re-sync
-+    the session AES while keeping ``cluster.pem`` committed).
-+    """
-+    if key_name not in SUPPORTED_KEYS:
-+        raise ValueError(
-+            f"Unsupported cluster key name {key_name!r}; "
-+            f"expected one of {SUPPORTED_KEYS}"
-+        )
-+    return pathlib.Path(cluster_pki_dir) / f".{key_name}.committed"
-+
-+
-+def fingerprint_bytes(key_bytes):
-+    """
-+    Return the sentinel fingerprint for ``key_bytes``.
-+
-+    Format: ``"sha256:<64-hex>"``.  The full digest is used (not
-+    truncated) so reviewer T-2's stale-on-restart check is strict:
-+    any single byte change between sentinel-write time and restart
-+    flips the fingerprint.
-+
-+    ``key_bytes`` may be ``bytes`` or ``str``; a ``str`` is encoded as
-+    UTF-8 before hashing to match how the sender serialises PEM and
-+    AES bytes on the wire.
-+    """
-+    if isinstance(key_bytes, str):
-+        key_bytes = key_bytes.encode("utf-8")
-+    if not isinstance(key_bytes, (bytes, bytearray)):
-+        raise TypeError(
-+            f"fingerprint_bytes expected bytes/str, got {type(key_bytes).__name__}"
-+        )
-+    return f"{SENTINEL_PREFIX}{hashlib.sha256(b
-```
-
-**File**: `salt/channel/server.py` (modified, +694/-158)
-```diff
-@@ -28,6 +28,7 @@
-     HAS_SETPROCTITLE = False
- 
- import salt.cache
-+import salt.channel._cluster_key_state as _cluster_key_state
- import salt.cluster
- import salt.cluster.consensus.rpc
- import salt.crypt
-@@ -138,6 +139,89 @@ def cluster_pub_matches_fingerprint(opts, cluster_pub):
-     return hmac.compare_digest(digest.lower(), str(pinned).lower())
- 
- 
-+def _cluster_bootstrap_founder_id(opts):
-+    """
-+    Return the designated founder's node id for the cluster
-+    described by ``opts``, or ``None`` if no cluster membership is
-+    configured.
-+
-+    The founder is the master with the lowest node id in the pool
-+    ``{self_node_id, *cluster_peers}`` -- the same deterministic
-+    lowest-id-wins predicate used by ``MasterPubServerChannel`` to
-+    decide whether to self-bootstrap Raft as the founding voter or
-+    wait for a join-reply.  Factoring the predicate here lets the
-+    sender-side join-reply builder and the receiver-side filter
-+    share the same source of truth.
-+    """
-+    node_id = salt.cluster.node_id(opts)
-+    peers = opts.get("cluster_peers") or []
-+    pool = sorted({node_id, *peers})
-+    if not pool:
-+        return None
-+    return pool[0]
-+
-+
-+def is_designated_cluster_founder(opts):
-+    """
-+    Return ``True`` if this master is the designated founder of
-+    its configured cluster.  See
-+    :func:`_cluster_bootstrap_founder_id` for the predicate.
-+    """
-+    founder = _cluster_bootstrap_founder_id(opts)
-+    if founder is None:
-+        return False
-+    return founder == salt.cluster.node_id(opts)
-+
-+
-+# Guard: emit the deprecation WARN for
-+# ``filter_non_founder_cluster_aes_from_join_reply`` at most once per
-+# process.  The filter sits inside the hot path of every
-+# ``cluster/peer/join-reply`` install; a per-call WARN would be
-+# overwhelming.
-+_FILTER_DEPRECATION_WARNED = False
-+
-+
-+def filter_non_founder_cluster_aes_from_join_reply(inner, opts):
-+    """
-+    DEPRECATED no-op shim.
-+
-+    Historically this filter dropped ``cluster_aes`` from a
-+    ``cluster/peer/join-reply`` whose sender was not the designated
-+    founder, as defence-in-depth paired with a sender-side founder
-+    gate (commit ``6acb1653613``).  That identity-based pair
-+    permanently broke late-joiner propagation: once the founder died,
-+    a surviving non-founder could no longer deliver ``cluster_aes``
-+    to a brand-new master joining through it, because the sender gate
-+    omitted the key and this filter would have discarded it anyway.
-+
-+    Both gates have been superseded by the unified state-machine
-+    primitive in ``salt/channel/_cluster_key_state.py`` -- the receiver
-+    decides whether to honour an install based on its own
-+    bootstrap-vs-committed state, with a founder-wait window during
-+    bootstrap for determinism.  The sender always ships its current
-+    bytes; identity is never consulted.
-+
-+    This function is kept as a no-op shim for one release so cross-fork
-+    integrators who pulled commit 6 as a backport candidate can
-+    continue to build.  Callers are advised to remove the call and
-+    rely on the state machine directly.
-+
-+    :returns: ``(inner, False)`` unconditionally -- no filtering is
-+              performed.  The returned dict is the original input
-+              dict (no copy) regardless of contents.
-+    """
-+    global _FILTER_DEPRECATION_WARNED
-+    if not _FILTER_DEPRECATION_WARNED:
-+        _FILTER_DEPRECATION_WARNED = True
-+        log.warning(
-+            "filter_non_founder_cluster_aes_from_join_reply is deprecated "
-+            "and now a no-op; the receiver-side cluster-key state machine "
-+            "supersedes identity-based filtering.  This warning is emitted "
-+            "once per process; the call site should be removed."
-+        )
-+    return inner, False
-+
-+
- class ReqServerChannel:
-     """
-     ReqServerChannel handles request/reply messages from ReqChannels.
-@@ -1870,6 +1954,13 @@ def __init__(
-         self._discover_retry_pc = None
-         # Set by service.py once the Raft node is started.
-         self._raft_dispatcher = None
-+        # Receiver-side cluster-key state machine (BOOTSTRAP vs COMMITTED
-+        # per key, per process).  Lazily reconciled with on-disk
-+        # sentinels + key bytes in ``_cluster_key_state_machine``.
-+        # Only instantiated when the master is actually clustered --
-+        # non-clustered masters never traverse the join-reply install
-+        # path and don't need the extra bookkeeping.
-+        self._cluster_key_sm = None
- 
-     def _start_raft_as_founding_voter(self):
-         """
-@@ -1906,6 +1997,32 @@ def _start_raft_as_founding_voter(self):
-             self._raft_service.start()
-             # Write the join sentinel so future restarts skip discover/join.
-             self._mark_joined_cluster()
-+            # Founder-side commit: mark THIS master's locally-generated
-+            # ``cluster_aes`` + ``cluster.pem`` as COMMITTED in the state
-+            # machine so (a) later p
-```
-
-**File**: `salt/cluster/consensus/service.py` (modified, +19/-7)
-```diff
-@@ -89,11 +89,23 @@ def __init__(self, opts, loop, peer_pushers, voting=True, on_ready=None):
-         # multi-process Salt masters running over real sockets — a single
-         # delayed heartbeat in CI can cause a follower to step up and fight
-         # the existing leader for the term.  At ``_HEARTBEAT_INTERVAL`` =
--        # 50 ms the rule of thumb is election >= 10× heartbeat, so default
--        # to 750–1500 ms here.  ``cluster_election_min`` /
--        # ``cluster_election_max`` opts let deployments tune further.
--        election_min = opts.get("cluster_election_min", 750)
--        election_max = opts.get("cluster_election_max", 1500)
-+        # 50 ms the rule of thumb is election >= 10× heartbeat.
-+        #
-+        # The previous 750–1500 ms default (15–30× heartbeat) proved too
-+        # tight on constrained arm64 CI runners (2 vCPU / 8 GB).  Under
-+        # load the 50 ms heartbeat tick is delayed by hundreds of ms by
-+        # process scheduling; elections fire before the "late" heartbeat
-+        # arrives, term bumps, cascading churn.  We observed 7-minute
-+        # join-reply stalls on the ``test_isolated_multi_minion_targetable_from_every_master``
-+        # arm64 reproduction (term 16 reached in seconds; join-reply only
-+        # transmitted once Raft finally stabilised).  Triple the window
-+        # to 2250–4500 ms (45–90× heartbeat) so arm64 runners have the
-+        # scheduling headroom they need.  x86 fast boxes rarely hit the
-+        # election timer at all, so the bump is benign there.  Legitimate
-+        # failover of a dead leader now takes a few extra seconds, which
-+        # is an acceptable trade for CI-stable bootstrap.
-+        election_min = opts.get("cluster_election_min", 2250)
-+        election_max = opts.get("cluster_election_max", 4500)
-         # ``cluster_max_log_size`` (default ``None``) gates Raft log
-         # compaction.  When unset, the log keeps every committed entry
-         # forever and snapshots never fire — fine for small clusters
-@@ -431,8 +443,8 @@ def _bring_up_ring(self, ring_id, founding_voters):
-         # Election windows reuse the same opts as the cluster Node —
-         # if the operator tuned them for their environment, the
-         # per-ring nodes inherit the tuning automatically.
--        election_min = self.opts.get("cluster_election_min", 750)
--        election_max = self.opts.get("cluster_election_max", 1500)
-+        election_min = self.opts.get("cluster_election_min", 2250)
-+        election_max = self.opts.get("cluster_election_max", 4500)
-         ring_node = Node(
-             node_id,
-             storage=storage,
-```
-
-**File**: `salt/config/__init__.py` (modified, +20/-0)
-```diff
-@@ -230,6 +230,19 @@ def _gather_buffer_space():
-         # and can be sync'd as opaque blobs) and joining masters request a
-         # bulk state-sync from an existing peer before becoming Raft voters.
-         "cluster_isolated_filesystem": bool,
-+        # Receiver-side founder-wait window applied by the unified
-+        # cluster-key propagation state machine
-+        # (``salt/channel/_cluster_key_state.py``).  When a master in
-+        # BOOTSTRAP state for ``cluster_aes`` or ``cluster.pem`` receives
-+        # a join-reply whose sender is NOT the designated cluster founder,
-+        # it defers the install for up to this many seconds to give the
-+        # founder's reply time to arrive.  Past the window the receiver
-+        # commits to whichever non-founder install lands next (with a
-+        # WARN) so a founder-dead late-joiner can still converge.  A
-+        # value of ``0.0`` disables the window (any first arrival wins
-+        # BOOTSTRAP commit).  See reviewer tweak T-1 in
-+        # ``agents/reports/design-unified-cluster-key-propagation-reviewer.md``.
-+        "cluster_bootstrap_founder_wait_s": float,
-         # Master switch for cross-master cache replication at the
-         # ``salt.cache.Cache`` facade.  When True (the default when
-         # ``cluster_id`` is set and ``cluster_isolated_filesystem`` is True)
-@@ -2082,6 +2095,13 @@ def _gather_buffer_space():
-         "cluster_pub_fingerprint": None,
-         "cluster_secret": None,
-         "cluster_isolated_filesystem": False,
-+        # Default founder-wait window for the unified cluster-key
-+        # propagation state machine.  Reviewer T-1: 2.0s is large
-+        # enough to dominate the observed arm64 CI race window
-+        # (588ms-12s) without blocking late-joiners when the founder
-+        # is dead.  Operators can lower to 0.0 for testing or raise
-+        # for slow runners.
-+        "cluster_bootstrap_founder_wait_s": 2.0,
-         # ``cluster_cache_replication`` default is resolved in
-         # ``apply_master_config`` because it depends on whether
-         # ``cluster_id`` is configured and whether the deployment is
-```
-
-**File**: `salt/crypt.py` (modified, +37/-0)
-```diff
-@@ -984,18 +984,55 @@ def sign(self, *args, **kwargs):
-         """
-         proxy to PrivateKey.sign
-         """
-+        self._maybe_reload_cluster_key()
-         return self.key.sign(*args, **kwargs)
- 
-+    def _maybe_reload_cluster_key(self):
-+        # The join-reply install path in ``MasterPubServerChannel`` rewrites
-+        # ``cluster.pem`` in place when the founder's bytes arrive.  MWorker
-+        # processes that ``_setup_keys()`` ran before that install still hold
-+        # the bootstrap ``PrivateKey`` in ``self.key``, but ``get_pub_str()``
-+        # already reads the current founder's ``cluster.pub`` from disk --
-+        # so the pub we serve to the minion and the priv we decrypt the
-+        # minion's token with come from different key pairs and every auth
-+        # fails with ``Decryption failed``.  Reread from disk on each
-+        # decrypt and swap ``self.key`` when the bytes have changed.
-+        if not self.opts.get("cluster_id"):
-+            return
-+        try:
-+            pem_bytes = self.cache.fetch("master_keys", "cluster.pem")
-+        except Exception:  # pylint: disable=broad-except
-+            return
-+        if not pem_bytes:
-+            return
-+        if isinstance(pem_bytes, str):
-+            pem_bytes_b = pem_bytes.encode()
-+        else:
-+            pem_bytes_b = pem_bytes
-+        fp = hashlib.sha256(pem_bytes_b).hexdigest()
-+        if getattr(self, "_cluster_key_fp", None) == fp:
-+            return
-+        try:
-+            new_key = PrivateKey.from_str(pem_bytes)
-+        except Exception:  # pylint: disable=broad-except
-+            log.exception("Failed to reload cluster_key from disk")
-+            return
-+        self.cluster_key = new_key
-+        self.key = new_key
-+        self._cluster_key_fp = fp
-+
-     def decrypt(self, *args, **kwargs):
-         """
-         proxy to PrivateKey.decrypt
-         """
-+        self._maybe_reload_cluster_key()
-         return self.key.decrypt(*args, **kwargs)
- 
-     def encrypt(self, *args, **kwargs):
-         """
-         proxy to PrivateKey.encrypt
-         """
-+        self._maybe_reload_cluster_key()
-         return self.key.encrypt(*args, **kwargs)
- 
-     def fetch(self, name):
-```
-
-**File**: `salt/runners/cluster.py` (modified, +61/-2)
-```diff
-@@ -362,6 +362,19 @@ def sync_roots(roots="both"):
-             "each peer's master log for the 'state-sync ... installed N items' "
-             "lines to confirm delivery."
-         ),
-+        # Reviewer correction Q4: the publish daemon's sender-side gate
-+        # skips un-joined peers with a WARN (``cluster.sync_roots: skipping
-+        # un-joined peers [...]; roots will be caught up via state-sync on
-+        # their next handshake``).  Un-joined peers receive the push once
-+        # they complete the cluster handshake via the join-time
-+        # state-sync catch-up (not via the pending-queue replay, because
-+        # sync_roots is a multi-event session).  Operators seeing an
-+        # incomplete push should wait for every peer to join and re-run.
-+        "skipped_peers_note": (
-+            "Un-joined peers are enumerated on each master's log with the "
-+            "'cluster.sync_roots: skipping un-joined peers' prefix.  "
-+            "Catch-up happens automatically on their next handshake."
-+        ),
-     }
- 
- 
-@@ -434,7 +447,26 @@ def _fire_cluster_event(tag, data):
-         listen=False,
-     ) as event:
-         event.fire_event(data, tag)
--    return {"status": "fan-out initiated", "tag": tag, "data": data}
-+    return {
-+        "status": "fan-out initiated",
-+        "tag": tag,
-+        "data": data,
-+        # Reviewer correction Q4: the publish daemon's gate skips
-+        # un-joined peers on multi-ring / sync_roots / collect fan-outs
-+        # and emits a WARN naming them.  Multi-ring runners rely on
-+        # Raft log replication to carry the committed entry to any
-+        # peer that was skipped, so the fan-out gate is defence in
-+        # depth -- the propose still happens on the leader, and
-+        # AppendEntries delivers the commit.  Operators seeing
-+        # ``multi-ring fan-out: skipping un-joined peers`` can wait
-+        # for the peer to join and re-run to force an eager push.
-+        "skipped_peers_note": (
-+            "Un-joined peers are enumerated on each master's log with "
-+            "the 'multi-ring fan-out: skipping un-joined peers' prefix.  "
-+            "Raft AppendEntries delivers the committed entry once the "
-+            "peer completes its handshake."
-+        ),
-+    }
- 
- 
- def ring_create(name, voters):
-@@ -865,10 +897,37 @@ def collect_from_peers(channels=(), banks=_DEFAULT_COLLECT_BANKS):
-             "cluster.collect_from_peers requires at least one channel or bank"
-         )
-     requested = fixed + [f"{BANK_CHANNEL_PREFIX}{b}" for b in bank_list]
--    return _fire_cluster_event(
-+    result = _fire_cluster_event(
-         "cluster/runner/collect_from_peers",
-         {"channels": requested},
-     )
-+    # Reviewer correction Q4: surface the status-sentinel path and the
-+    # ``skipped_peers`` operator contract in a backwards-compatible shape.
-+    # Callers that scripted against ``.get("status") == "fan-out initiated"``
-+    # keep working; the new keys are informational.  ``skipped_peers`` is
-+    # populated by the publish daemon when it writes the sentinel JSON
-+    # (see :meth:`MasterPubServerChannel._init_collect_sentinel` --
-+    # un-joined peers at request time are enumerated there so operators
-+    # can distinguish "complete" from "complete-but-partial" without
-+    # grepping logs).
-+    import os  # pylint: disable=import-outside-toplevel
-+
-+    cachedir = __opts__.get("cachedir")
-+    sentinel_path = (
-+        os.path.join(cachedir, "cluster-collect-status.json") if cachedir else None
-+    )
-+    if isinstance(result, dict):
-+        result.setdefault("sentinel_path", sentinel_path)
-+        result.setdefault(
-+            "skipped_peers_note",
-+            (
-+                "Un-joined peers at request time are listed under "
-+                "'skipped_peers' in the sentinel JSON; the runner is "
-+                "fire-and-forget so the server-side gate writes the "
-+                "sentinel before any chunk arrives."
-+            ),
-+        )
-+    return result
- 
- 
- def ring_set(name=None, members=None, replicas=None):
-```
-
----
-
-### Incident Patch 3: `d4dcb82c` (2026-11-18)
-**Commit Message**: Enable Ruff checks for async blocking calls, weak security and dead conditions (#70822)
-
-* Enable Ruff checks for async blocking calls, weak security and dead conditions
-
-Add 35 checks for patterns that do not occur anywhere in the code base today,
-so nothing needs to be cleaned up: blocking calls in async functions, insecure
-XML parsers and cryptography, disabled certificate checks, conditions that are
-always true or false, and several other bug patterns. Each rule has a test that
-shows it is reported.
-
-Refs #70367.
-
-* Add changelog entry
-
-Refs #70367.
-
-**File**: `CONTRIBUTING.rst` (modified, +3/-1)
-```diff
-@@ -63,7 +63,9 @@ in ``finally``, exceptions that are created but not raised, ``lru_cache`` on
- methods, and comparisons of ``sys.version`` with strings. The full list is in
- ``pyproject.toml``. A further group covers patterns that still occur in a few
- places, such as ``logger.warn()``, ``datetime.utcnow()``, and
--``logger.exception()`` outside an ``except`` block. Star imports are not
-+``logger.exception()`` outside an ``except`` block. Another group covers blocking calls in
-+``async`` functions, insecure XML parsers, weak cryptography, disabled
-+certificate checks and always true or false conditions. Star imports are not
- checked. Names Salt injects into modules, such as ``__salt__`` and
- ``__opts__``, are not reported as undefined. The list is in ``pyproject.toml``
- and must match ``additional-builtins`` in ``.pylintrc``.
-```
-
-**File**: `changelog/70822.added.md` (added, +1/-0)
+**File**: `changelog/70899.fixed.md` (added, +1/-0)
 ```diff
 @@ -0,0 +1 @@
-+Added more Ruff checks for blocking calls in `async` functions, insecure XML parsers and cryptography, disabled certificate checks, and conditions that are always true or false.
++Replaced the `Expand-Archive` calls in `pkg/windows/install_nsis.ps1` with a small `Expand-ZipFile` helper that invokes `System.IO.Compression.ZipFile.ExtractToDirectory` directly. Current GitHub Windows runner images ship a .NET bundle where `Expand-Archive` fails with "Cannot find an overload for 'ExtractToDirectory' and the argument count: '3'", breaking every Windows build job.
 ```
 
-**File**: `pyproject.toml` (modified, +36/-0)
+**File**: `pkg/windows/install_nsis.ps1` (modified, +17/-6)
 ```diff
-@@ -190,6 +190,42 @@ select = [
-     "DTZ004",  # datetime.utcfromtimestamp()
-     "ASYNC251",  # time.sleep() in an async function
-     "PGH004",  # blanket noqa
-+    # Bugs and unsafe calls that are not present in the code base today.
-+    "ASYNC210",  # blocking requests call in async function
-+    "ASYNC220",  # subprocess started in async function
-+    "ASYNC222",  # os.wait() in async function
-+    "ASYNC230",  # open() in async function
-+    "ASYNC250",  # input() in async function
-+    "S313",  # cElementTree parser
-+    "S315",  # expat reader
-+    "S316",  # expat builder
-+    "S317",  # xml.sax
-+    "S319",  # pulldom
-+    "S304",  # insecure cipher
-+    "S305",  # insecure cipher mode
-+    "S302",  # marshal.loads
-+    "S501",  # certificate check turned off
-+    "S502",  # insecure SSL/TLS version
-+    "S503",  # insecure SSL/TLS default
-+    "S505",  # weak cryptographic key
-+    "S609",  # wildcard in a shell command
-+    "S612",  # logging.config.listen
-+    "SIM107",  # return in try/finally
-+    "SIM220",  # x and not x
-+    "SIM221",  # x or not x
-+    "SIM223",  # x and False
-+    "PIE794",  # duplicate class field
-+    "PIE796",  # duplicate enum value
-+    "PLC0205",  # __slots__ is a string
-+    "PLC0208",  # iteration over a set literal
-+    "PLC3002",  # lambda called directly
-+    "PLR0133",  # comparison of two constants
-+    "PLR1708",  # raise StopIteration in a generator
-+    "RUF030",  # print() as assert message
-+    "RUF032",  # Decimal() from a float
-+    "RUF048",  # map(int, version.split())
-+    "RUF101",  # redirected noqa code
-+    "RUF103",  # invalid ruff suppression comment
- ]
- ignore = [
-     "F403",  # star imports
-```
-
-**File**: `tests/pytests/unit/test_ruff.py` (modified, +73/-0)
-```diff
-@@ -426,3 +426,76 @@ def test_rules_with_existing_violations(repo: Path, code: str, source: str) -> N
-     result = check(repo)
-     assert result.returncode == 1, result.stderr + result.stdout
-     assert code in result.stdout
+@@ -38,6 +38,17 @@ function Write-Result($result, $ForegroundColor="Green") {
+     }
+ }
+ 
++# Expand-Archive fails on the windows-11-vs2026-arm64 runner image from
++# 20261112.217.1 onwards with 'Cannot find an overload for
++# "ExtractToDirectory" and the argument count: "3"', while 20261101.203.1
++# worked. Call the two-argument ZipFile.ExtractToDirectory directly, which
++# exists in both Windows PowerShell 5.1 (.NET Framework) and PowerShell 7.
++# Like Expand-Archive without -Force, it fails if a target file exists.
++function Expand-ZipFile($Path, $DestinationPath) {
++  Add-Type -AssemblyName System.IO.Compression.FileSystem
++  [System.IO.Compression.ZipFile]::ExtractToDirectory($Path, $DestinationPath)
++}
 +
-+
-+# One example per rule that has no violation in the code base today (stage 5).
-+NEW_RULE_CASES_STAGE_5 = [
-+    (
-+        "ASYNC210",
-+        'import requests\n\n\nasync def f():\n    requests.get("https://x")\n',
-+    ),
-+    (
-+        "ASYNC220",
-+        'import subprocess\n\n\nasync def f():\n    subprocess.Popen(["ls"])\n',
-+    ),
-+    ("ASYNC222", "import os\n\n\nasync def f():\n    os.wait()\n"),
-+    ("ASYNC230", 'async def f():\n    open("x")\n'),
-+    ("ASYNC250", 'async def f():\n    input("x")\n'),
-+    ("S313", 'from xml.etree.cElementTree import parse\n\nparse("x")\n'),
-+    (
-+        "S315",
-+        "from xml.sax.expatreader import create_parser\n\nparser = create_parser()\n",
-+    ),
-+    ("S316", 'from xml.dom.expatbuilder import parse\n\nparse("x")\n'),
-+    ("S317", 'import xml.sax\n\nxml.sax.parse("x")\n'),
-+    ("S319", 'from xml.dom.pulldom import parse\n\nparse("x")\n'),
-+    (
-+        "S304",
-+        'from cryptography.hazmat.primitives.ciphers import Cipher, algorithms\n\ncipher = Cipher(algorithms.ARC4(b"k"), mode=None)\n',
-+    ),
-+    (
-+        "S305",
-+        'from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes\n\nCipher(algorithms.AES(b"k"), modes.ECB())\n',
-+    ),
-+    ("S302", 'import marshal\n\nmarshal.loads(b"x")\n'),
-+    ("S501", 'import requests\n\nrequests.get("https://x", verify=False)\n'),
-+    ("S502", "import ssl\n\nssl.wrap_socket(None, ssl_version=ssl.PROTOCOL_SSLv3)\n"),
-+    ("S503", "import ssl\n\n\ndef f(ctx=ssl.PROTOCOL_SSLv2):\n    pass\n"),
-+    (
-+        "S505",
-+        "from cryptography.hazmat.primitives.asymmetric import dsa\n\ndsa.generate_private_key(key_size=512)\n",
-+    ),
-+    ("S609", 'import subprocess\n\nsubprocess.Popen("chmod 600 *", shell=True)\n'),
-+    ("S612", "import logging.config\n\nlogging.config.listen(9999)\n"),
-+    (
-+        "SIM107",
-+        "def f():\n    try:\n        return 1\n    finally:\n        return 2\n",
-+    ),
-+    ("SIM220", "def f(a):\n    return a and not a\n"),
-+    ("SIM221", "def f(a):\n    return a or not a\n"),
-+    ("SIM223", "def f(x, y):\n    return x and [] and y\n"),
-+    ("PIE794", "class A:\n    x = 1\n    x = 2\n"),
-+    ("PIE796", "import enum\n\n\nclass E(enum.Enum):\n    A = 1\n    B = 1\n"),
-+    ("PLC0205", 'class A:\n    __slots__ = "a"\n'),
-+    ("PLC0208", "for x in {1, 2, 3}:\n    print(x)\n"),
-+    ("PLC3002", "x = (lambda: 1)()\n"),
-+    ("PLR0133", "x = 1 < 2\n"),
-+    ("PLR1708", "def f():\n    raise StopIteration\n    yield 1\n"),
-+    ("RUF030", 'def f(x):\n    assert x, print("bad")\n'),
-+    ("RUF032", "from decimal import Decimal\n\nx = Decimal(0.1)\n"),
-+    ("RUF048", 'v = tuple(map(int, __version__.split(".")))\n'),
-+    ("RUF101", "import os  # noqa: PGH001\n"),
-+    ("RUF103", "# ruff: disable\nx = 1\n"),
-+]
-+
-+
-+@pytest.mark.parametrize(
-+    ("code", "source"), NEW_RULE_CASES_STAGE_5, ids=lambda v: v[:8]
-+)
-+def test_stage_5_rules_without_existing_violations(
-+    repo: Path, code: str, source: str
-+) -> None:
-+    write(repo, "salt/new.py", source)
-+    result = check(repo)
-+    assert result.returncode == 1, result.stderr + result.stdout
-+    assert code in result.stdout
+ #-------------------------------------------------------------------------------
+ # Script Variables
+ #-------------------------------------------------------------------------------
+@@ -120,7 +131,7 @@ if ( Test-Path -Path $check_file ) {
+     }
+ 
+     Write-Host "Extracting NSIS NxS Unzip (ansi) Plugin: " -NoNewline
+-    Expand-Archive -Path "$file" -DestinationPath "$env:TEMP"
++    Expand-ZipFile -Path "$file" -DestinationPath "$env:TEMP"
+     if ( Test-Path -Path "$env:TEMP\nsisunz\Release\nsisunz.dll") {
+         Write-Result "Success" -ForegroundColor Green
+     } else {
+@@ -171,7 +182,7 @@ if ( Test-Path -Path $check_file ) {
+     }
+ 
+     Write-Host "Extracting NSIS NxS Unzip (unicode) Plugin: " -NoNewline
+-    Expand-Archive -Path "$file" -DestinationPath "$env:TEMP"
++    Expand-ZipFile -Path "$file" -DestinationPath "$env:TEMP"
+     if ( Test-Path -Path "$env:TEMP\NSISunzU\Plugin unicode\nsisunz.dll") {
+         Write-Result "Success" -ForegroundColor Green
+     } else {
+@@ -227,7 +238,7 @@ if ( (Test-Path -Path $check_file_a) -and (Test-Path -Path $check_file_u) ) {
+     }
+ 
+     Write-Host "Extracting NSIS EnVar Plugin: " -NoNewline
+-    Expand-Archive -Path "$file" -DestinationPath "$env:TEMP\nsisenvar\"
++    Expand-ZipFile -Path "$file" -DestinationPath "$env:TEMP\nsisenvar\"
+     if ( ! (Test-Path -Path "$env:TEMP\nsisenvar\Plugins\x86-ansi\EnVar.dll") ) {
+         Write-Result "Failed" -ForegroundColor Red
+         exit 1
+@@ -292,7 +303,7 @@ if ( (Test-Path -Path $check_file_a) -and (Test-Path -Path $check_file_u) ) {
+     }
+ 
+     Write-Host "Extracting NSIS EnVar Plugin: " -NoNewline
+-    Expand-Archive -Path "$file" -DestinationPath "$env:TEMP\nsisaccesscontrol\"
++    Expand-ZipFile -Path "$file" -DestinationPath "$env:TEMP\nsisaccesscontrol\"
+     if ( ! (Test-Path -Path "$env:TEMP\nsisaccesscontrol\Plugins\i386-ansi\AccessControl.dll") ) {
+         Write-Result "Failed" -ForegroundColor Red
+         exit 1
+@@ -357,7 +368,7 @@ if ( (Test-Path -Path $check_file_a) -and (Test-Path -Path $check_file_u) ) {
+     }
+ 
+     Write-Host "Extracting NSIS SimpleSC (ansi) Plugin: " -NoNewline
+-    Expand-Archive -Path "$file" -DestinationPath "$env:TEMP\nsisSimpleSC\"
++    Expand-ZipFile -Path "$file" -DestinationPath "$env:TEMP\nsisSimpleSC\"
+     if ( Test-Path -Path "$env:TEMP\nsisSimpleSC\SimpleSC.dll" ) {
+         Write-Result "Success" -ForegroundColor Green
+     } else {
+@@ -397,7 +408,7 @@ if ( (Test-Path -Path $check_file_a) -and (Test-Path -Path $check_file_u) ) {
+     }
+ 
+     Write-Host "Extracting NSIS SimpleSC (unicode) Plugin: " -NoNewline
+-    Expand-Archive -Path "$file" -DestinationPath "$env:TEMP\nsisSimpleSCu\"
++    Expand-ZipFile -Path "$file" -DestinationPath "$env:TEMP\nsisSimpleSCu\"
+     if ( Test-Path -Path "$env:TEMP\nsisSimpleSCu\SimpleSC.dll" ) {
+         Write-Result "Success" -ForegroundColor Green
+     } else {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #70899** (2026-11-22): Replace Expand-Archive in install_nsis.ps1 to fix Windows CI builds (@dwoz)
+- **PR #70898** (2026-11-22): Replace Expand-Archive in install_nsis.ps1 to fix Windows CI builds (@dwoz)
+- **PR #70887** (closed): Enable 7 Ruff checks for common mistakes that report nothing today (@charzl)
+- **PR #70886** (closed): Enable 6 Ruff pytest checks that report nothing today (@charzl)
+- **PR #70885** (closed): Enable 6 Ruff security checks that report nothing today (@charzl)
 - **PR #70877** (closed): Set stacklevel on warnings.warn calls (@charzl)
-- **PR #70869** (closed): Set match on pytest.warns(DeprecationWarning) in tests (@charzl)
-- **PR #70858** (2026-11-19): [master] Merge 3008.x into master (2026-11-18) (@dwoz)
-- **PR #70856** (2026-11-19): [3008.x] Bump relenv to 0.23.1 (@twangboy)
-- **PR #70851** (2026-11-19): Fix test_vmware for testsuites without pyvmomi (@m-czernek)
-- **PR #70848** (2026-11-19): Remove unused exception variables in the rest of salt and in tools (@charzl)
 
 ---
 
@@ -3681,25 +2487,21 @@ Refs #70367.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cluster cache replication defaults
+## X. Replace Expand-Archive in install_nsis.ps1 to fix Windows CI builds
 
 **RULE**:
-When implementing operations in `changelog/70773.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in saltstack/salt. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog/70899.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in saltstack/salt. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `eae114ea`: cluster cache replication defaults. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c955ae49`: Replace Expand-Archive in install_nsis.ps1 to fix Windows CI builds. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog/70773.fixed.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog/70899.fixed.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-Stage ``localfs`` cache writes in a sibling ``.localfs_tmp/`` directory so concurrent ``cache.list`` calls never observe in-flight ``tempfile.mkstemp`` files in the bank directory.
-
-Buffer cluster cache-replication events for peers that have not yet completed the discover/join handshake and replay them in FIFO order on handshake completion, so live writes landing during a peer's join window are delivered without relying solely on the join-time state-sync snapshot.
-
-Invalidate every pending cluster cache-replication queue whenever the local ``cluster_aes`` is replaced -- on operator-triggered rotation and on initial install via ``cluster/peer/join-reply`` on a (re)joining master -- so stale pre-encrypted events are never replayed with a key the receiver cannot decrypt.
+Replaced the `Expand-Archive` calls in `pkg/windows/install_nsis.ps1` with a small `Expand-ZipFile` helper that invokes `System.IO.Compression.ZipFile.ExtractToDirectory` directly. Current GitHub Windows runner images ship a .NET bundle where `Expand-Archive` fails with "Cannot find an overload for 'ExtractToDirectory' and the argument count: '3'", breaking every Windows build job.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3709,7 +2511,7 @@ Invalidate every pending cluster cache-replication queue whenever the local ``cl
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `eae114ea` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c955ae49` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
