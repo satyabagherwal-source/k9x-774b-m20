@@ -12083,3 +12083,4 @@ Every entry in this ledger must capture:
 | `learn-github-domcyrus-rustnet` | `https://github.com/domcyrus/rustnet` | `535573d8` | Multi-dimensional audit evidence | 2026-11-22T07:37:05.066Z |
 | `learn-github-kotest-kotest` | `https://github.com/kotest/kotest` | `1bdf1431` | Multi-dimensional audit evidence | 2026-11-22T07:37:10.546Z |
 | `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `cae35259` | Multi-dimensional audit evidence | 2026-11-22T07:37:18.169Z |
+| `learn-huggingface-meituan-longcat-longcat-2-5` | `https://huggingface.co/meituan-longcat/LongCat-2.5` | `hf-meituan` | Multi-dimensional audit evidence | 2026-11-22T07:48:34.559Z |

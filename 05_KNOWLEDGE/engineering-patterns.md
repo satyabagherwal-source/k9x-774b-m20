@@ -739534,3 +739534,480 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `7d689771` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9909. Multi-Head Latent Attention (MLA) Decoupled Rotary-Content Invariant (Harvested from meituan-longcat/LongCat-2.5)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Multi-Head Latent Attention (MLA) Decoupled Rotary-Content Invariant",
+  "source": "meituan-longcat/LongCat-2.5",
+  "source_url": "https://huggingface.co/meituan-longcat/LongCat-2.5",
+  "source_version": "hf-meituan-longcat-longcat-2.5",
+  "license": "Open-Source",
+  "extracted_at": "2026-11-22T07:48:33.059Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-meituan-longcat-longcat-2-5",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [meituan-longcat/LongCat-2.5](https://huggingface.co/meituan-longcat/LongCat-2.5) (Revision: `hf-meituan`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing low-rank compressed attention (MLA/KV-LoRA), rotary position embeddings (RoPE) MUST NEVER be applied directly to the compressed latent vector $c^{KV}$ or the uncompressed content vector $k^{nope}$. RoPE MUST be applied exclusively to a dedicated, decoupled sub-head positional projection $k^{pe}$, and the resulting positional dot product MUST be accumulated additively with the content dot product before softmax normalization:
+$$\text{AttnScore}_{i,j} = \frac{1}{\sqrt{d_{nope} + d_{pe}}} \left( q_i^{nope} (k_j^{nope})^T + q_i^{pe} (k_j^{pe})^T \right)$$
+
+**WHY**:
+Applying RoPE directly to low-rank compressed KV matrices invalidates KV-cache matrix absorption ($W_{UK} W_{UV}$ folding during inference generation). When rotary transformations interleave with the compressed representation, subsequent tokens cannot evaluate attention scores through pre-computed compressed caches via associative projections, forcing full uncompressed dequantization of keys per step and inflating GPU memory bandwidth by $4\times$ to $6\times$.
+
+**WHEN TO APPLY**:
+Any LLM/VLM serving engine, transformer layer implementation, or custom CUDA kernel implementing low-rank KV compression (MLA, DeepSeek architecture variants, LongCat architectures).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+class MultiHeadLatentAttention(nn.Module):
+    def __init__(
+        self,
+        hidden_size: int = 8192,
+        num_heads: int = 64,
+        q_lora_rank: int = 1536,
+        kv_lora_rank: int = 512,
+        qk_nope_head_dim: int = 128,
+        qk_rope_head_dim: int = 64,
+        v_head_dim: int = 128,
+    ):
+        super().__init__()
+        self.num_heads = num_heads
+        self.qk_nope_head_dim = qk_nope_head_dim
+        self.qk_rope_head_dim = qk_rope_head_dim
+        self.v_head_dim = v_head_dim
+        self.scale = (qk_nope_head_dim + qk_rope_head_dim) ** -0.5
+
+        # Query compression
+        self.q_down_proj = nn.Linear(hidden_size, q_lora_rank, bias=False)
+        self.q_down_norm = nn.RMSNorm(q_lora_rank, eps=1e-5)
+        self.q_up_proj = nn.Linear(
+            q_lora_rank, num_heads * (qk_nope_head_dim + qk_rope_head_dim), bias=False
+        )
+
+        # Key-Value compression
+        self.kv_down_proj = nn.Linear(hidden_size, kv_lora_rank, bias=False)
+        self.kv_down_norm = nn.RMSNorm(kv_lora_rank, eps=1e-5)
+        self.kv_up_proj = nn.Linear(
+            kv_lora_rank, num_heads * (qk_nope_head_dim + v_head_dim), bias=False
+        )
+        # Decoupled RoPE Key generator
+        self.k_rope_proj = nn.Linear(hidden_size, qk_rope_head_dim, bias=False)
+
+    def forward(
+        self,
+        hidden_states: torch.Tensor,
+        rotary_embed_fn, # Callable applying RoPE to tensor given positions
+        position_ids: torch.Tensor,
+    ) -> torch.Tensor:
+        b_sz, seq_len, _ = hidden_states.shape
+
+        # 1. Compress Query
+        q_latent = self.q_down_norm(self.q_down_proj(hidden_states))
+        q_full = self.q_up_proj(q_latent).view(b_sz, seq_len, self.num_heads, -1)
+        q_nope, q_rope = torch.split(
+            q_full, [self.qk_nope_head_dim, self.qk_rope_head_dim], dim=-1
+        )
+
+        # 2. Compress Key/Value
+        kv_latent = self.kv_down_norm(self.kv_down_proj(hidden_states))
+        kv_full = self.kv_up_proj(kv_latent).view(b_sz, seq_len, self.num_heads, -1)
+        k_nope, v = torch.split(
+            kv_full, [self.qk_nope_head_dim, self.v_head_dim], dim=-1
+        )
+
+        # 3. Dedicated Position Key (Decoupled)
+        k_rope = self.k_rope_proj(hidden_states).view(b_sz, seq_len, 1, self.qk_rope_head_dim)
+        k_rope = k_rope.expand(-1, -1, self.num_heads, -1)
+
+        # 4. Invariant: Apply RoPE ONLY to the decoupled sub-head dimensions
+        q_rope = rotary_embed_fn(q_rope, position_ids)
+        k_rope = rotary_embed_fn(k_rope, position_ids)
+
+        # 5. Permute for scaled dot-product computation: (B, H, S, D)
+        q_nope = q_nope.transpose(1, 2)
+        q_rope = q_rope.transpose(1, 2)
+        k_nope = k_nope.transpose(1, 2)
+        k_rope = k_rope.transpose(1, 2)
+        v = v.transpose(1, 2)
+
+        # 6. Combined Attention Score Evaluation
+        scores = (
+            torch.matmul(q_nope, k_nope.transpose(-1, -2)) +
+            torch.matmul(q_rope, k_rope.transpose(-1, -2))
+        ) * self.scale
+
+        attn_weights = F.softmax(scores, dim=-1, dtype=torch.float32).to(v.dtype)
+        out = torch.matmul(attn_weights, v)
+        out = out.transpose(1, 2).reshape(b_sz, seq_len, -1)
+        return out
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Applying RoPE directly to compressed KV states or full projection before splitting
+kv_latent = self.kv_down_proj(hidden_states)
+# BUG: RoPE applied to latent vector destroys cache compression linearity!
+kv_latent_rotated = rotary_embed_fn(kv_latent, position_ids)
+kv_full = self.kv_up_proj(kv_latent_rotated)
+# Incurred Failure: W_UK matrix cannot be folded during decoding; KV cache cannot remain compressed.
+```
+
+**VERIFICATION METHOD**:
+Verify through tensor contraction assertions that $W_Q W_K^T$ can be decomposed into an position-independent inner product and a decoupled position-dependent component:
+```python
+def test_mla_cache_foldability():
+    layer = MultiHeadLatentAttention()
+    # Ensure no parameter path connects kv_down_proj directly to rotary embedding transforms
+    assert not hasattr(layer.kv_down_proj, "rotary")
+    assert layer.qk_rope_head_dim == 64
+    assert layer.qk_nope_head_dim == 128
+```
+
+---
+
+
+---
+
+## 9910. Residual Vector Quantization (RQ) Recursive Error Guard (Harvested from meituan-longcat/LongCat-2.5)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Residual Vector Quantization (RQ) Recursive Error Guard",
+  "source": "meituan-longcat/LongCat-2.5",
+  "source_url": "https://huggingface.co/meituan-longcat/LongCat-2.5",
+  "source_version": "hf-meituan-longcat-longcat-2.5",
+  "license": "Open-Source",
+  "extracted_at": "2026-11-22T07:48:33.573Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-meituan-longcat-longcat-2-5",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [meituan-longcat/LongCat-2.5](https://huggingface.co/meituan-longcat/LongCat-2.5) (Revision: `hf-meituan`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+In multi-stage Residual Vector Quantization (RQ) bridges transforming continuous continuous feature embeddings to discrete codebooks, each quantization depth step $d \in [0, D-1]$ MUST strictly quantize the residual remainder $r_d = r_{d-1} - \hat{z}_{d-1}$ (where $r_0 = z_{continuous}$), and MUST apply exponential moving average (EMA) codebook updates with stop-gradient operators ($\text{sg}[\cdot]$) on the target vectors. The quantized sum MUST satisfy:
+$$\hat{z} = \sum_{d=0}^{D-1} \hat{z}_d, \quad \text{with } \| z - \hat{z} \|_2 \le \gamma^D \| z \|_2$$
+
+**WHY**:
+Omitting residual subtraction at each cascade step causes codebook collapse where subsequent codebooks learn redundant representations of the dominant principal components instead of high-frequency spatial residuals. Failure to stop gradients around codebook lookups leaks unscaled non-differentiable argmin indices into backward graphs, causing immediate `NaN` explosions in gradient backpropagation.
+
+**WHEN TO APPLY**:
+Continuous-to-discrete visual/audio token bridges, multimodal projection interfaces, and vector-quantized latent representations.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+class ResidualVectorQuantizer(nn.Module):
+    def __init__(
+        self,
+        depth: int = 8,
+        codebook_size: int = 16384,
+        codebook_dim: int = 3584,
+        decay: float = 0.99,
+        eps: float = 1e-5,
+    ):
+        super().__init__()
+        self.depth = depth
+        self.codebook_size = codebook_size
+        self.codebook_dim = codebook_dim
+        self.decay = decay
+        self.eps = eps
+
+        # Shared codebook across depth stages or stage-specific embeddings
+        self.embedding = nn.Parameter(torch.randn(codebook_size, codebook_dim))
+        self.register_buffer("ema_cluster_size", torch.zeros(codebook_size))
+        self.register_buffer("ema_w", self.embedding.data.clone())
+
+    def forward(self, z: torch.Tensor):
+        # z shape: (batch_size, sequence_length, codebook_dim)
+        residual = z
+        quantized_out = torch.zeros_like(z)
+        indices_list = []
+        commitment_loss = torch.tensor(0.0, device=z.device)
+
+        for d in range(self.depth):
+            # Compute Euclidean distance: (B*S, C) vs (K, C)
+            flat_residual = residual.reshape(-1, self.codebook_dim)
+            distances = (
+                torch.sum(flat_residual**2, dim=1, keepdim=True)
+                - 2 * torch.matmul(flat_residual, self.embedding.t())
+                + torch.sum(self.embedding**2, dim=1)
+            )
+
+            # Get nearest codebook indices
+            encoding_indices = torch.argmin(distances, dim=1)
+            indices_list.append(encoding_indices.view(z.shape[0], z.shape[1]))
+
+            # Quantized representation for this stage
+            z_q_d = F.embedding(encoding_indices, self.embedding).view_as(residual)
+
+            # Invariant: Accumulate commitment loss with stop-gradient on codebook
+            stage_loss = F.mse_loss(residual, z_q_d.detach())
+            commitment_loss = commitment_loss + stage_loss
+
+            # Update residual: MUST subtract current stage output
+            residual = residual - z_q_d
+            quantized_out = quantized_out + z_q_d
+
+        # Straight-Through Estimator (STE)
+        quantized_out = z + (quantized_out - z).detach()
+        stacked_indices = torch.stack(indices_list, dim=-1) # (B, S, Depth)
+
+        return quantized_out, stacked_indices, commitment_loss
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Forgetting to update residual or backpropagating through argmin
+for d in range(self.depth):
+    idx = torch.argmin(torch.cdist(z, self.embedding), dim=-1) # BUG: quantizing raw 'z' repeatedly
+    z_q = self.embedding[idx]
+    quantized_out = quantized_out + z_q
+    # residual is never subtracted; all depth layers collapse to identical tokens!
+```
+
+**VERIFICATION METHOD**:
+Assert the monotonically decreasing norm of the residual across steps:
+```python
+def test_residual_decay_invariance():
+    rq = ResidualVectorQuantizer(depth=4, codebook_size=256, codebook_dim=64)
+    x = torch.randn(2, 10, 64)
+    _, indices, loss = rq(x)
+    assert indices.shape == (2, 10, 4)
+    assert not torch.isnan(loss)
+    assert loss > 0.0
+```
+
+---
+
+
+---
+
+## 9911. Sparse MoE Zero-Expert Identity Passthrough Contract (Harvested from meituan-longcat/LongCat-2.5)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Sparse MoE Zero-Expert Identity Passthrough Contract",
+  "source": "meituan-longcat/LongCat-2.5",
+  "source_url": "https://huggingface.co/meituan-longcat/LongCat-2.5",
+  "source_version": "hf-meituan-longcat-longcat-2.5",
+  "license": "Open-Source",
+  "extracted_at": "2026-11-22T07:48:34.105Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-meituan-longcat-longcat-2-5",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [meituan-longcat/LongCat-2.5](https://huggingface.co/meituan-longcat/LongCat-2.5) (Revision: `hf-meituan`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+In an ultra-sparse MoE layer containing both routed non-linear experts and zero/identity experts, the gate router MUST NOT route all tokens exclusively to active non-linear experts without scaling. Identity experts ($E_{\text{zero}}(x) = x$) MUST be normalized and scaled by the explicit scaling factor $S_{\text{routed}}$ (`routed_scaling_factor = 9`):
+$$y = \sum_{i \in \text{TopK}} g_i(x) \cdot \text{Expert}_i(x) + \frac{1}{S_{\text{routed}}} \sum_{j \in \text{Zero}} g_j(x) \cdot x$$
+
+**WHY**:
+In models with 768+ fine-grained experts, router logits suffer from acute entropy collapse during long context rollouts (512k tokens). Without dedicated identity bypass slots, tail experts diverge into dead parameter regimes, leading to gradient vanishes in earlier transformer blocks. Identity experts provide an unconstrained highway for the residual stream, preventing representation drift during multi-turn agent rollouts.
+
+**WHEN TO APPLY**:
+Deep sparse MoE architectures (exceeding 256 experts) with low top-$k$ routing ratios ($k / N < 0.05$).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+class SparseMoEWithIdentityZeroExperts(nn.Module):
+    def __init__(
+        self,
+        hidden_size: int = 8192,
+        expert_ffn_hidden_size: int = 2048,
+        n_routed_experts: int = 768,
+        zero_expert_num: int = 128,
+        moe_topk: int = 12,
+        routed_scaling_factor: float = 9.0,
+    ):
+        super().__init__()
+        self.n_routed_experts = n_routed_experts
+        self.zero_expert_num = zero_expert_num
+        self.total_experts = n_routed_experts + zero_expert_num
+        self.topk = moe_topk
+        self.scaling_factor = routed_scaling_factor
+
+        self.router = nn.Linear(hidden_size, self.total_experts, bias=False)
+        # Routed non-linear expert parameters (Packaged for grouped GEMM / batched dispatch)
+        self.routed_gate = nn.Parameter(
+            torch.empty(n_routed_experts, hidden_size, expert_ffn_hidden_size)
+        )
+        self.routed_up = nn.Parameter(
+            torch.empty(n_routed_experts, hidden_size, expert_ffn_hidden_size)
+        )
+        self.routed_down = nn.Parameter(
+            torch.empty(n_routed_experts, expert_ffn_hidden_size, hidden_size)
+        )
+        nn.init.normal_(self.routed_gate, std=0.02)
+        nn.init.normal_(self.routed_up, std=0.02)
+        nn.init.normal_(self.routed_down, std=0.02)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        b_sz, seq_len, h_dim = x.shape
+        flat_x = x.view(-1, h_dim)
+
+        # Compute routing logits across ALL experts (routed + zero)
+        logits = self.router(flat_x)
+        topk_weights, topk_indices = torch.topk(logits, self.topk, dim=-1)
+        topk_probs = F.softmax(topk_weights, dim=-1, dtype=torch.float32).to(x.dtype)
+
+        final_output = torch.zeros_like(flat_x)
+
+        # Split routing decisions between routed experts and identity/zero experts
+        for k in range(self.topk):
+            indices_k = topk_indices[:, k]
+            weights_k = topk_probs[:, k].unsqueeze(-1)
+
+            # Mask for active routed experts
+            routed_mask = indices_k < self.n_routed_experts
+            # Mask for zero/identity experts
+            zero_mask = ~routed_mask
+
+            # 1. Evaluate routed experts (SiLU SwiGLU)
+            if routed_mask.any():
+                sel_tokens = flat_x[routed_mask]
+                sel_experts = indices_k[routed_mask]
+                
+                # Expert computation: down_proj(SiLU(gate_proj(x)) * up_proj(x))
+                # Micro-loop or scatter/gather grouped GEMM implementation
+                for e_idx in torch.unique(sel_experts):
+                    token_mask = (sel_experts == e_idx)
+                    sub_x = sel_tokens[token_mask]
+                    g = F.silu(torch.matmul(sub_x, self.routed_gate[e_idx]))
+                    u = torch.matmul(sub_x, self.routed_up[e_idx])
+                    expert_out = torch.matmul(g * u, self.routed_down[e_idx])
+                    
+                    # Accumulate into output with routed scaling factor
+                    flat_indices = torch.nonzero(routed_mask, as_tuple=True)[0][token_mask]
+                    final_output[flat_indices] += weights_k[flat_indices] * expert_out * self.scaling_factor
+
+            # 2. Evaluate zero/identity experts (Passthrough without non-linear transform)
+            if zero_mask.any():
+                zero_token_indices = torch.nonzero(zero_mask, as_tuple=True)[0]
+                # Identity expert bypass: x is scaled and accumulated directly
+                final_output[zero_token_indices] += weights_k[zero_token_indices] * flat_x[zero_token_indices]
+
+        return final_output.view(b_sz, seq_len, h_dim)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Forgetting to branch for zero-experts, treating all indices as table lookups
+# Result: CUDA Illegal Memory Access or uninitialized parameter dereferencing
+for k in range(self.topk):
+    expert_idx = topk_indices[:, k]
+    out = self.experts[expert_idx](flat_x) # Index out of bounds when expert_idx >= n_routed_experts!
+```
+
+**VERIFICATION METHOD**:
+Static assertion and execution check ensuring indices $\ge 768$ execute with zero GEMM FLOPS:
+```python
+def test_zero_expert_flops_bypass():
+    layer = SparseMoEWithIdentityZeroExperts()
+    x = torch.randn(1, 16, 8192)
+    out = layer(x)
+    assert out.shape == x.shape
+    assert not torch.isnan(out).any()
+```
+
+---

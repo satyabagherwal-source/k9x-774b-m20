@@ -12050,3 +12050,4 @@
 | `CYCLE-20261122-XFZ9` | `2026-11-22T07:37:05.061Z` | `domcyrus/rustnet` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9906` | Yes (`eca52ec6...`) |
 | `CYCLE-20261122-XK7H` | `2026-11-22T07:37:10.541Z` | `kotest/kotest` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9907` | Yes (`1064a47b...`) |
 | `CYCLE-20261122-XQ38` | `2026-11-22T07:37:18.164Z` | `MaterializeInc/materialize` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9908` | Yes (`788ad3da...`) |
+| `CYCLE-20261122-C7ZW` | `2026-11-22T07:48:34.556Z` | `meituan-longcat/LongCat-2.5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9909, Rule 9910, Rule 9911` | Yes (`de5ad174...`) |

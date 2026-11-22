@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T07:37:23.888Z",
+  "last_updated": "2026-11-22T07:48:40.176Z",
   "directives": [
     {
       "id": "CD-001",
@@ -39760,11 +39760,11 @@
       "domain_letter": "D"
     },
     {
-      "id": "CD-XLVM",
+      "id": "CD-CBW3",
       "directive_title": "benchmarks): report Gold coverage across retrieval stages",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-XLVM-benchmarks-report-gold-coverage-across-retrieval-stages.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-CBW3-benchmarks-report-gold-coverage-across-retrieval-stages.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-22",
@@ -45556,6 +45556,55 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-22",
       "domain_letter": "K"
+    },
+    {
+      "id": "CD-REV-6C92FD",
+      "directive_title": "Project Learning Record (Full-Spectrum Forensic Harvest): meituan-longcat/LongCat-2.5",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hf-meituan-longcat-longcat-2.5",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-6C92FD-project-learning-record-full-spectrum-fo.md",
+      "staged_date": "2026-11-22"
+    },
+    {
+      "id": "CD-CAZ5",
+      "directive_title": "Multi-Head Latent Attention (MLA) Decoupled Rotary-Content Invariant",
+      "source_repo": "hf-meituan-longcat-longcat-2.5-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-CAZ5-multi-head-latent-attention-mla-decoupled-rotary-content-invariant.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-22",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-CAZ6",
+      "directive_title": "Sparse MoE Zero-Expert Identity Passthrough Contract",
+      "source_repo": "hf-meituan-longcat-longcat-2.5-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-CAZ6-sparse-moe-zero-expert-identity-passthrough-contract.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-22",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-3D1063",
+      "directive_title": "benchmarks): report Gold coverage across retrieval stages",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-3D1063-benchmarks-report-gold-coverage-across-r.md",
+      "staged_date": "2026-11-22"
+    },
+    {
+      "id": "CD-REV-AC4ABD",
+      "directive_title": "Forensic Learning Record (Deep Inspection): Zleap-AI/SAG",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zleap-ai-sag",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-AC4ABD-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-22"
     }
   ]
 }

@@ -81,8 +81,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-22T07:37:21.559Z",
-    "lastVerified": "2026-11-22T07:37:21.559Z",
+    "lastChecked": "2026-11-22T07:48:38.054Z",
+    "lastVerified": "2026-11-22T07:48:38.054Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -176,8 +176,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-22T07:06:09.527Z",
-    "lastVerified": "2026-11-22T07:06:09.527Z",
+    "lastChecked": "2026-11-22T07:45:25.934Z",
+    "lastVerified": "2026-11-22T07:45:25.934Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1400,8 +1400,8 @@
     "officialUrl": "https://github.com/RustCrypto/hashes",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-22T03:03:19.857Z",
-    "lastVerified": "2026-11-22T03:03:19.857Z",
+    "lastChecked": "2026-11-22T07:45:20.936Z",
+    "lastVerified": "2026-11-22T07:45:20.936Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustcrypto-hashes",
@@ -4327,12 +4327,12 @@
     "lastVerified": "2026-11-22T04:38:53.576Z"
   },
   "helixdb-helix-db": {
-    "name": "HelixDB/helix-db",
+    "name": "helix-db",
     "officialUrl": "https://github.com/HelixDB/helix-db",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-21T03:36:49.270Z",
-    "lastVerified": "2026-11-21T03:36:49.270Z",
+    "lastChecked": "2026-11-22T07:45:23.440Z",
+    "lastVerified": "2026-11-22T07:45:23.440Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-helixdb-helix-db",
@@ -4341,7 +4341,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "a29a8d49"
   },
   "pimalaya-himalaya": {
     "name": "pimalaya/himalaya",
@@ -5456,9 +5457,9 @@
   "orange-cyberdefense-goad": {
     "name": "GOAD",
     "officialUrl": "https://github.com/Orange-Cyberdefense/GOAD",
-    "lastChecked": "2026-11-21T05:01:21.778Z",
+    "lastChecked": "2026-11-22T07:45:18.438Z",
     "revisionIdentifier": "74af01eb",
-    "lastVerified": "2026-11-21T05:01:21.778Z"
+    "lastVerified": "2026-11-22T07:45:18.438Z"
   },
   "apache-shardingsphere": {
     "name": "apache/shardingsphere",
@@ -6778,9 +6779,9 @@
   "futurice-pepperoni-app-kit": {
     "name": "pepperoni-app-kit",
     "officialUrl": "https://github.com/futurice/pepperoni-app-kit",
-    "lastChecked": "2026-11-19T04:44:05.343Z",
+    "lastChecked": "2026-11-22T07:45:15.950Z",
     "revisionIdentifier": "f58c1410",
-    "lastVerified": "2026-11-19T04:44:05.343Z"
+    "lastVerified": "2026-11-22T07:45:15.950Z"
   },
   "linkerd-linkerd2": {
     "name": "linkerd/linkerd2",
@@ -7287,9 +7288,9 @@
   "topgrade-rs-topgrade": {
     "name": "topgrade",
     "officialUrl": "https://github.com/topgrade-rs/topgrade",
-    "lastChecked": "2026-11-20T22:30:45.305Z",
+    "lastChecked": "2026-11-22T07:45:10.947Z",
     "revisionIdentifier": "e8fbc3b9",
-    "lastVerified": "2026-11-20T22:30:45.305Z"
+    "lastVerified": "2026-11-22T07:45:10.947Z"
   },
   "hf-canberkkkkkk-ema-lightning": {
     "name": "canberkkkkkk/ema-lightning",
@@ -13975,6 +13976,23 @@
     "learningId": "learn-huggingface-thinkingmachines-inkling-2-small",
     "contentHash": "5928121396a8bb7d58664fde1fc62374840323a32de3cd2fc1d054b0411a87f5",
     "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-meituan-longcat-longcat-2.5": {
+    "name": "meituan-longcat/LongCat-2.5",
+    "officialUrl": "https://huggingface.co/meituan-longcat/LongCat-2.5",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-22T07:45:13.485Z",
+    "lastVerified": "2026-11-22T07:45:13.485Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-meituan-longcat-longcat-2-5",
+    "contentHash": "de5ad174984dc58f9690e13d47ab6e649a469805c0ab4f84ab6fec8309900709",
+    "promotedRulesCount": 3,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T07:37:24.059Z",
-  "total_records": 2338,
+  "last_updated": "2026-11-22T07:48:40.866Z",
+  "total_records": 2340,
   "domains": {
     "A": {
       "total": 17,
@@ -992,7 +992,7 @@
       ]
     },
     "F": {
-      "total": 87,
+      "total": 89,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -1080,7 +1080,9 @@
         "DOM-F-E350EAD5",
         "domain_intelligence-design-intelligence-hf-openbmb-minicpm-ocr-1-0-learnings-core-invariants",
         "domain_intelligence-design-intelligence-diffuspace-clover-35b-a3b-preview-core-invariants",
-        "domain_intelligence-design-intelligence-hf-diffuspace-clover-35b-a3b-preview-learnings-core-invarian"
+        "domain_intelligence-design-intelligence-hf-diffuspace-clover-35b-a3b-preview-learnings-core-invarian",
+        "domain_intelligence-design-intelligence-meituan-longcat-longcat-2-5-core-invariants",
+        "domain_intelligence-design-intelligence-hf-meituan-longcat-longcat-2-5-learnings-core-invariants"
       ]
     },
     "G": {
@@ -8108,8 +8110,8 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zvec-ai-zvec-grep-learnings-technical-construction-intelligence-zvec-ai-zvec-gre.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "300ec79de8bc4696ab6e6d6d3048f827062c6c391dd05f840c814e99f5b0bb35",
-      "created_at": "2026-11-22T06:41:13.699Z"
+      "content_hash": "60de60a3798c36caa8fd61298b04f1f337aeedada51d276bc9a40656125d3edf",
+      "created_at": "2026-11-22T07:48:39.757Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -17988,8 +17990,8 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zleap-ai-sag-learnings-technical-construction-intelligence-zleap-ai-sag-learning.md",
       "repository": "zleap-ai-sag-learnings",
-      "content_hash": "3bde3174ed10206f929ab061a83794f842e1d946fe97f558393a6a91cabb2f6a",
-      "created_at": "2026-11-22T06:19:35.742Z"
+      "content_hash": "bbca6da242e144361663d7541cebdd678fc2cb5ada4f5ab0b4c97ede5ec2d297",
+      "created_at": "2026-11-22T07:48:40.866Z"
     },
     "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co",
@@ -39468,6 +39470,24 @@
       "repository": "meshery-meshery-learnings",
       "content_hash": "7977624d287db516b1fda5513d3144bd377efcb3329102bb407c6f4867156665",
       "created_at": "2026-11-22T07:29:05.132Z"
+    },
+    "domain_intelligence-design-intelligence-meituan-longcat-longcat-2-5-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-meituan-longcat-longcat-2-5-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: meituan-longcat/LongCat-2.5 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-hf-meituan-longcat-longcat-2-5-design-intelligence-meituan-longcat-longcat-2-5-c.md",
+      "repository": "meituan-longcat/LongCat-2.5",
+      "content_hash": "3a999acffe30a964109f65eca6db13090c248eb3ff4fe8808a529573289b3cc9",
+      "created_at": "2026-11-22T07:48:34.988Z"
+    },
+    "domain_intelligence-design-intelligence-hf-meituan-longcat-longcat-2-5-learnings-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-hf-meituan-longcat-longcat-2-5-learnings-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: hf-meituan-longcat-longcat-2.5-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-hf-meituan-longcat-longcat-2-5-learnings-design-intelligence-hf-meituan-longcat-.md",
+      "repository": "hf-meituan-longcat-longcat-2.5-learnings",
+      "content_hash": "6092c00fc33d6db275d34711cecbda56e9a1d62950875ba34f52a87fd31dc05c",
+      "created_at": "2026-11-22T07:48:38.858Z"
     }
   }
 }

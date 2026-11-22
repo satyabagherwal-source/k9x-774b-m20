@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261120-97WX",
-    "timestamp": "2026-11-20T07:14:54.417Z",
-    "repository": "rook/rook",
-    "learningId": "learn-github-rook-rook",
-    "contentHash": "c36b19d8f89199a69dbc5c9ca931300d9faa6cc9cb830778432e517ff0e8c645",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261120-9CS7",
     "timestamp": "2026-11-20T07:15:00.727Z",
     "repository": "ydb-platform/ydb",
@@ -7492,6 +7477,21 @@
     "contentHash": "788ad3dabb650690a5a94f6c3cd7a81b23335956bbeefb34eeaadaa90e6008a9",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-C7ZW",
+    "timestamp": "2026-11-22T07:48:34.556Z",
+    "repository": "meituan-longcat/LongCat-2.5",
+    "learningId": "learn-huggingface-meituan-longcat-longcat-2-5",
+    "contentHash": "de5ad174984dc58f9690e13d47ab6e649a469805c0ab4f84ab6fec8309900709",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

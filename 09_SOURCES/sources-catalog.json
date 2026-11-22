@@ -12485,8 +12485,8 @@
     "sourceUrl": "https://huggingface.co/meituan-longcat/LongCat-2.5",
     "sourceVersion": "hf-meituan-longcat-longcat-2.5",
     "license": "Open-Source",
-    "contentHash": "469fe2c8df64e94fb0df84f2ede759b0802c80101f5167fdd2df554f8991bf96",
-    "lastHarvestedAt": "2026-11-14T02:36:55.741Z",
+    "contentHash": "de5ad174984dc58f9690e13d47ab6e649a469805c0ab4f84ab6fec8309900709",
+    "lastHarvestedAt": "2026-11-22T07:48:34.559Z",
     "learningId": "learn-huggingface-meituan-longcat-longcat-2-5"
   },
   "hf-chatrlabs-qwen-image-2.1-uncensored-omni-quantized": {

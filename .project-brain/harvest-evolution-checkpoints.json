@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T07:37:24.381Z",
+  "last_updated": "2026-11-22T07:48:41.010Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-22T06:27:39.447Z",
@@ -8,12 +8,12 @@
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-22T06:41:12.780Z",
+      "processed_at": "2026-11-22T07:48:39.145Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
     "zleap-ai-sag-learnings.md": {
-      "processed_at": "2026-11-22T06:19:35.009Z",
+      "processed_at": "2026-11-22T07:48:40.182Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2328,9 +2328,9 @@
       "staged_for_review": 0
     },
     "hf-meituan-longcat-longcat-2.5-learnings.md": {
-      "processed_at": "2026-11-14T02:37:44.784Z",
-      "promoted_canonical": 1,
-      "staged_for_review": 0
+      "processed_at": "2026-11-22T07:48:38.200Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "hf-openai-gpt-oss-120b-learnings.md": {
       "processed_at": "2026-11-18T20:54:17.930Z",
@@ -3713,7 +3713,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 3057,
+  "total_dossiers_evaluated": 3060,
   "total_canonical_promoted": 473,
-  "total_staged_for_review": 2326
+  "total_staged_for_review": 2329
 }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T07:37:18.178Z",
+  "last_updated": "2026-11-22T07:48:34.567Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -18786,14 +18786,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-meituan-longcat-longcat-2-5",
-      "content_hash": "469fe2c8df64e94fb0df84f2ede759b0802c80101f5167fdd2df554f8991bf96",
-      "verified_at": "2026-11-14T02:36:55.750Z",
+      "content_hash": "de5ad174984dc58f9690e13d47ab6e649a469805c0ab4f84ab6fec8309900709",
+      "verified_at": "2026-11-22T07:48:34.566Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T02:36:55.750Z"
+      "last_updated": "2026-11-22T07:48:34.566Z"
     },
     "chatrlabs/Qwen-Image-2.1-Uncensored-Omni-Quantized": {
       "repository": "chatrlabs/Qwen-Image-2.1-Uncensored-Omni-Quantized",
