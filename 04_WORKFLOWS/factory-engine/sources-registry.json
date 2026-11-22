@@ -47,8 +47,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-22T21:57:07.552Z",
-    "lastVerified": "2026-11-22T21:57:07.552Z",
+    "lastChecked": "2026-11-22T22:37:29.291Z",
+    "lastVerified": "2026-11-22T22:37:29.291Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -82,8 +82,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-22T22:28:19.510Z",
-    "lastVerified": "2026-11-22T22:28:19.510Z",
+    "lastChecked": "2026-11-22T22:37:29.303Z",
+    "lastVerified": "2026-11-22T22:37:29.303Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -915,8 +915,8 @@
     "officialUrl": "https://github.com/weaviate/weaviate",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-21T22:40:13.399Z",
-    "lastVerified": "2026-11-21T22:40:13.399Z",
+    "lastChecked": "2026-11-22T22:37:26.829Z",
+    "lastVerified": "2026-11-22T22:37:26.829Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-weaviate-weaviate",
@@ -2177,12 +2177,12 @@
     "lastVerified": "2026-11-22T20:46:50.583Z"
   },
   "tailscale-tailscale": {
-    "name": "tailscale/tailscale",
+    "name": "tailscale",
     "officialUrl": "https://github.com/tailscale/tailscale",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-22T18:00:28.202Z",
-    "lastVerified": "2026-11-22T18:00:28.202Z",
+    "lastChecked": "2026-11-22T22:37:24.301Z",
+    "lastVerified": "2026-11-22T22:37:24.301Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tailscale-tailscale",
@@ -2191,7 +2191,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "87b3a5ff"
   },
   "oceanbase-oceanbase": {
     "name": "oceanbase",
@@ -2201,12 +2202,12 @@
     "lastVerified": "2026-11-22T01:44:01.592Z"
   },
   "unhappychoice-gitlogue": {
-    "name": "unhappychoice/gitlogue",
+    "name": "gitlogue",
     "officialUrl": "https://github.com/unhappychoice/gitlogue",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-21T15:31:16.927Z",
-    "lastVerified": "2026-11-21T15:31:16.927Z",
+    "lastChecked": "2026-11-22T22:37:14.272Z",
+    "lastVerified": "2026-11-22T22:37:14.272Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-unhappychoice-gitlogue",
@@ -2215,7 +2216,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "8d02655f"
   },
   "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf": {
     "name": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -2881,8 +2883,8 @@
     "officialUrl": "https://github.com/kgateway-dev/kgateway",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-21T23:47:36.664Z",
-    "lastVerified": "2026-11-21T23:47:36.664Z",
+    "lastChecked": "2026-11-22T22:37:21.815Z",
+    "lastVerified": "2026-11-22T22:37:21.815Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kgateway-dev-kgateway",
@@ -3034,12 +3036,12 @@
     "officialUrl": "https://huggingface.co/Alissonerdx/BFS-Best-Face-Swap",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-18T15:34:57.268Z",
-    "lastVerified": "2026-11-18T15:34:57.268Z",
+    "lastChecked": "2026-11-22T22:37:16.852Z",
+    "lastVerified": "2026-11-22T22:37:16.852Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-alissonerdx-bfs-best-face-swap",
-    "contentHash": "66ef68a8f65b3c97530ac6982c806f4caafc9b7cd24a67fb12e5a1d5db061a24",
+    "contentHash": "5977c9c00cd82e436f39735613eade89c6804c7911a2579179ee0857f6fbf519",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -9357,9 +9359,9 @@
   "zacharee-bifrost": {
     "name": "Bifrost",
     "officialUrl": "https://github.com/zacharee/Bifrost",
-    "lastChecked": "2026-11-19T23:54:13.411Z",
+    "lastChecked": "2026-11-22T22:37:19.402Z",
     "revisionIdentifier": "ed73a034",
-    "lastVerified": "2026-11-19T23:54:13.411Z"
+    "lastVerified": "2026-11-22T22:37:19.402Z"
   },
   "booltools-booltools-seo-crawler": {
     "name": "booltools-seo-crawler",

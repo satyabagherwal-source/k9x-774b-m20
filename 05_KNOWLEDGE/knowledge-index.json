@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T22:28:21.756Z",
+  "last_updated": "2026-11-22T22:37:32.317Z",
   "total_verified_learnings": 9075,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112066,9 +112066,9 @@
       "title": "Technical Construction Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "171aaf73139286eaec9a4252213f4d2defa31631ff79f8576dc12826b5e18a32",
+      "content_hash": "06621e1c2e4c4ef3e8f4058c669d7c8d09a0da9ccbd96b221f93edbe366839b5",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T22:15:15.046Z"
+      "persisted_at": "2026-11-22T22:37:30.919Z"
     },
     "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-zvec-ai-zvec-grep-learnings-autonomous-specialist-persona",
@@ -112078,9 +112078,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "5f7a16aae53640a550c1798862f3859c098fb3021b500d03e2c999aee0e3377e",
+      "content_hash": "dd0882a99a9df2cee8fec9a9611da80e13ec2fc361aec2c42983ed342071ec1b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T22:15:15.223Z"
+      "persisted_at": "2026-11-22T22:37:31.142Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112090,9 +112090,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "07f808082a0d413dec5ac32251a3dd7fdffdfeb7e921741423e3cf2df2a07b7e",
+      "content_hash": "d59d6d6426bbb0b091334b75f760888b91162fa497106d858cf4180fabb9eb04",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T22:15:15.365Z"
+      "persisted_at": "2026-11-22T22:37:31.322Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "7636ebddf40bd7535bba67a2ee91c140588c21fe2c0da7a57cfd12b1415bc486",
+      "content_hash": "694bc362c53ff3fd3a4b51b529b9051cb4ffdc2184723593f62be01179e25cde",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T21:57:12.986Z"
+      "persisted_at": "2026-11-22T22:37:32.098Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "1ee2447642a884b29557e2b94ae882ee2ba5a380e2077b67921edf241a93d8c1",
+      "content_hash": "26c8e5d4e2bbb2019e80d04ea0f059c6553b8a315760ed76c82c677f7909fdbb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T21:57:13.154Z"
+      "persisted_at": "2026-11-22T22:37:32.317Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -114922,9 +114922,9 @@
       "title": "Research & Knowledge Intelligence: Alissonerdx/BFS-Best-Face-Swap Core Invariants",
       "repository": "Alissonerdx/BFS-Best-Face-Swap",
       "source_version": "hf-alissonerdx-bfs-best-face-swap",
-      "content_hash": "e02be345ab88ba6856d57e7765b525b4f6bec14df0f87568d6c30444d866dec4",
+      "content_hash": "a001d63406b68031d4533583707c4b3841f8dd8a55f7697d6c842a7cd0c3655b",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T15:34:58.086Z"
+      "persisted_at": "2026-11-22T22:37:17.874Z"
     },
     "candidate_directive-test-replace-actix-test-attributes-with-tokio-local-tests-4417": {
       "item_id": "candidate_directive-test-replace-actix-test-attributes-with-tokio-local-tests-4417",
@@ -286089,7 +286089,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Alissonerdx/BFS-Best-Face-Swap",
       "source_version": "hf-alissonerdx-bfs-best-face-swap",
-      "content_hash": "66ef68a8f65b3c97530ac6982c806f4caafc9b7cd24a67fb12e5a1d5db061a24",
+      "content_hash": "5977c9c00cd82e436f39735613eade89c6804c7911a2579179ee0857f6fbf519",
       "dossier_path": "07_PROJECT_LEARNING/hf-alissonerdx-bfs-best-face-swap-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-alissonerdx-bfs-best-face-swap-learnings.md",
       "promoted_rules": [],
@@ -286098,7 +286098,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T15:34:57.696Z",
+      "verified_at": "2026-11-22T22:37:17.315Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -286179,9 +286179,9 @@
       "title": "Research & Knowledge Intelligence: hf-alissonerdx-bfs-best-face-swap-learnings Core Invariants",
       "repository": "hf-alissonerdx-bfs-best-face-swap-learnings",
       "source_version": "HEAD",
-      "content_hash": "44716707b834e5e121e0adccc7056248a47cee397971d4747dc419fa0e7b8f6b",
+      "content_hash": "03ae801f11fccd72d617edbbf0bd2bd414be316332e42cfe1fcc0ba1bb90acb1",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T15:35:19.849Z"
+      "persisted_at": "2026-11-22T22:37:29.760Z"
     },
     "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf": {
       "learning_id": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
@@ -309939,13 +309939,13 @@
       "item_id": "candidate_directive-benchmarks-report-gold-coverage-across-retrieval-stages",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-ARPB-benchmarks-report-gold-coverage-across-retrieval-stages.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-3EFF-benchmarks-report-gold-coverage-across-retrieval-stages.md",
       "title": "benchmarks): report Gold coverage across retrieval stages",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "65fc37aec00d5dd183804f7ec8e353c201d6bbc77b9d4f05f0cc2ecda5381524",
+      "content_hash": "c4fe72a0b68c6251e1d7cde1e717245d1bc5dabe75aca786fd092a233f05e9c5",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T22:15:14.882Z"
+      "persisted_at": "2026-11-22T22:37:30.705Z"
     },
     "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it": {
       "item_id": "candidate_directive-solid-a-server-projection-over-a-pending-async-store-waits-for-it",
@@ -318721,13 +318721,13 @@
       "item_id": "candidate_directive-test-collab-write-trust-fixtures-with-explicit-0644-permissions",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-NKS6-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-3FC7-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "34f03a71087c2ded98d7ea0dae76916011cc7ff177eb4e931aee226eee224aab",
+      "content_hash": "93aacf3b5560bf6cbcf34f59309f697f0a310d7e5fc1943007904a04f9dcea1f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T21:57:12.825Z"
+      "persisted_at": "2026-11-22T22:37:31.885Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants",
