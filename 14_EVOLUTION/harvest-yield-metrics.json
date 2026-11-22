@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T19:09:59.998Z",
-  "total_cycles_completed": 11566,
-  "total_learnings_persisted": 11566,
-  "total_rules_promoted": 10796,
+  "last_updated": "2026-11-22T19:18:47.880Z",
+  "total_cycles_completed": 11568,
+  "total_learnings_persisted": 11568,
+  "total_rules_promoted": 10797,
   "history": [
-    {
-      "timestamp": "2026-11-22T00:24:35.058Z",
-      "repository": "sensenova/SenseNova-Loop-9B-Preview",
-      "learningId": "learn-huggingface-sensenova-sensenova-loop-9b-preview",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-22T00:24:36.505Z",
-      "repository": "kucherenko/jscpd",
-      "learningId": "learn-github-kucherenko-jscpd",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-22T00:24:51.636Z",
       "repository": "dathere/qsv",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-22T19:09:59.998Z",
       "repository": "Bitterbot-AI/bitterbot-desktop",
       "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T19:18:32.431Z",
+      "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
+      "learningId": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T19:18:47.880Z",
+      "repository": "ClickHouse/ClickHouse",
+      "learningId": "learn-github-clickhouse-clickhouse",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

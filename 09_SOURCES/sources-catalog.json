@@ -355,8 +355,8 @@
     "sourceUrl": "https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf",
     "sourceVersion": "hf-prism-ml-ternary-bonsai-2-27b-gguf",
     "license": "Open-Source",
-    "contentHash": "022f5de1c0e20818b725aaa60462c14d28aa273a6e6bb51171185dacaeefaa21",
-    "lastHarvestedAt": "2026-11-18T12:43:14.797Z",
+    "contentHash": "973b3e4f0fee62b61f4996428b4bd3e0da509a1cf75821ef0bd76b5343d56d2a",
+    "lastHarvestedAt": "2026-11-22T19:18:32.422Z",
     "learningId": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf"
   },
   "hf-viggle-qwen-image-2.1-viggle-turbo": {
@@ -6073,10 +6073,10 @@
     "repository": "ClickHouse/ClickHouse",
     "platform": "github",
     "sourceUrl": "https://github.com/ClickHouse/ClickHouse",
-    "sourceVersion": "a2126dbc",
+    "sourceVersion": "841a49be",
     "license": "Apache-2.0",
-    "contentHash": "2c8a5b5e90132b903a11c5026b22df38b1e3a2f8f6071cd36673778b5efacf91",
-    "lastHarvestedAt": "2026-11-21T18:23:05.555Z",
+    "contentHash": "efdc12aa23992a09445e6518907c5c419848754ce086b38e9de41b0cada3424d",
+    "lastHarvestedAt": "2026-11-22T19:18:47.873Z",
     "learningId": "learn-github-clickhouse-clickhouse"
   },
   "dockview-dockview": {

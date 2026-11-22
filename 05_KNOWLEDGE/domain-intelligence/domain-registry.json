@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T19:10:05.086Z",
+  "last_updated": "2026-11-22T19:18:53.831Z",
   "total_records": 2372,
   "domains": {
     "A": {
@@ -8373,8 +8373,8 @@
       "title": "Technical Construction Intelligence: ClickHouse/ClickHouse Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-clickhouse-clickhouse-technical-construction-intelligence-clickhouse-clickhouse-.md",
       "repository": "ClickHouse/ClickHouse",
-      "content_hash": "345e2fc10afb5d0a519c288749f650d1d83860735a38828ddf6001935de0d58a",
-      "created_at": "2026-11-21T18:23:05.983Z"
+      "content_hash": "416ad9ae42cb08c5789fe539847e5b0609ff2a39b898a82851750424cdd4fe0b",
+      "created_at": "2026-11-22T19:18:48.368Z"
     },
     "DOM-D-303E5CE5": {
       "record_id": "DOM-D-303E5CE5",
@@ -9105,8 +9105,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "3205a426536e6fbbd0d1cb591332d79ede2fa5b1e398a8c50cf57c6bd82cc428",
-      "created_at": "2026-11-22T18:35:30.494Z"
+      "content_hash": "07cb945f0c95a008aaffef5966234aa3a3f620397d9cac9c15086446d3d5e737",
+      "created_at": "2026-11-22T19:18:53.831Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -18614,8 +18614,8 @@
       "title": "Technical Construction Intelligence: clickhouse-clickhouse-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-clickhouse-clickhouse-learnings-technical-construction-intelligence-clickhouse-c.md",
       "repository": "clickhouse-clickhouse-learnings",
-      "content_hash": "7a1e0206b341cdc8dfa11a4f66ea23fff8df080af78cb8f511132f4054b00e96",
-      "created_at": "2026-11-21T18:23:11.895Z"
+      "content_hash": "e4fed8eb828a3dc93b399815778a7a6e435e6f5420b8301d0ccda844fe01bfa2",
+      "created_at": "2026-11-22T19:18:52.865Z"
     },
     "domain_intelligence-research-knowledge-intelligence-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-",
@@ -29856,8 +29856,8 @@
       "title": "Research & Knowledge Intelligence: prism-ml/Ternary-Bonsai-2-27B-gguf Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-prism-ml-ternary-bonsai-2-27b-gguf-research-knowledge-intelligence-prism-ml-t.md",
       "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
-      "content_hash": "2394ed7343fb6c2792dde1f29191c7c52b3003764f3a57b3d107ba04cf41ee6b",
-      "created_at": "2026-11-18T12:43:14.968Z"
+      "content_hash": "064a491ef0e776ccf4073bf27fe6b6a9e8140468d0e2642cfe96557b8118b283",
+      "created_at": "2026-11-22T19:18:32.739Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings-",
@@ -29865,8 +29865,8 @@
       "title": "Research & Knowledge Intelligence: hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings-research-knowledge-intelligence-.md",
       "repository": "hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings",
-      "content_hash": "5645c1805b99f8bd60ef53a3193c2fcdb67a8196b91b06250a325a6cd8031cf9",
-      "created_at": "2026-11-18T12:43:18.662Z"
+      "content_hash": "30c5f3422960a9e8f53b4380a6db69e373f9451091738f9c2ea22cac3986fac5",
+      "created_at": "2026-11-22T19:18:51.802Z"
     },
     "domain_intelligence-quality-verification-intelligence-okteto-okteto-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-okteto-okteto-core-invariants",

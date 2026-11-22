@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T19:10:05.285Z",
+  "last_updated": "2026-11-22T19:18:54.084Z",
   "total_verified_learnings": 9073,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23725,
+  "total_items": 23727,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112653,10 +112653,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-clickhouse-clickhouse-technical-construction-intelligence-clickhouse-clickhouse-.md",
       "title": "Technical Construction Intelligence: ClickHouse/ClickHouse Core Invariants",
       "repository": "ClickHouse/ClickHouse",
-      "source_version": "9c89de48",
-      "content_hash": "37f86b065798b48133594bcd596f046c08438ce662865a10816ee11c89e55550",
+      "source_version": "841a49be",
+      "content_hash": "416ad9ae42cb08c5789fe539847e5b0609ff2a39b898a82851750424cdd4fe0b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-20T13:08:32.949Z"
+      "persisted_at": "2026-11-22T19:18:48.368Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-clickhouse-clickhouse": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-clickhouse-clickhouse",
@@ -112665,10 +112665,10 @@
       "relative_path": "08_VERIFICATION/clickhouse-clickhouse-verification-protocol-empirical-defect-shield-for-clickhou.md",
       "title": "Verification Protocol: Empirical Defect Shield for ClickHouse/ClickHouse",
       "repository": "ClickHouse/ClickHouse",
-      "source_version": "9c89de48",
-      "content_hash": "63bd782a006ccbf75174a3d0d774b7e957f36beddbddc895c5e5f921041fedfd",
+      "source_version": "841a49be",
+      "content_hash": "7fc573301e76c5df9a6bfbe596296b1f0407d3407f71d05bb958ebab233a2e7c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-20T13:08:33.098Z"
+      "persisted_at": "2026-11-22T19:18:48.587Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-apple-lensvlm-9b-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-apple-lensvlm-9b-learnings-core-invariants",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "3205a426536e6fbbd0d1cb591332d79ede2fa5b1e398a8c50cf57c6bd82cc428",
+      "content_hash": "07cb945f0c95a008aaffef5966234aa3a3f620397d9cac9c15086446d3d5e737",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T18:35:30.494Z"
+      "persisted_at": "2026-11-22T19:18:53.831Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "ddcb21b6a8f90c997f97fbafd5fbb64c8a6cf91a79db33f2ffb1ca5d4ef4a551",
+      "content_hash": "0a71baac301aac5ed6e4a513547ecacadfb8ab18cdf60b5c2d389e6961957dae",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T18:35:30.653Z"
+      "persisted_at": "2026-11-22T19:18:54.084Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -239471,8 +239471,8 @@
       "slug": "clickhouse-clickhouse",
       "platform": "github",
       "source_url": "https://github.com/ClickHouse/ClickHouse",
-      "source_version": "a2126dbc",
-      "content_hash": "2c8a5b5e90132b903a11c5026b22df38b1e3a2f8f6071cd36673778b5efacf91",
+      "source_version": "841a49be",
+      "content_hash": "efdc12aa23992a09445e6518907c5c419848754ce086b38e9de41b0cada3424d",
       "dossier_path": "07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
       "promoted_rules": [
@@ -239505,6 +239505,11 @@
           "number": 9818,
           "title": "flaky test IOTestAwsS3Client.AssumeRoleRefreshInConcurrentFibers",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9979,
+          "title": "Address review: check the sum of file counts of an Iceberg manifest list entry f",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -239512,7 +239517,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T18:23:05.344Z",
+      "verified_at": "2026-11-22T19:18:47.613Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -239606,9 +239611,9 @@
       "title": "Technical Construction Intelligence: clickhouse-clickhouse-learnings Core Invariants",
       "repository": "clickhouse-clickhouse-learnings",
       "source_version": "HEAD",
-      "content_hash": "7a1e0206b341cdc8dfa11a4f66ea23fff8df080af78cb8f511132f4054b00e96",
+      "content_hash": "e4fed8eb828a3dc93b399815778a7a6e435e6f5420b8301d0ccda844fe01bfa2",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T18:23:11.895Z"
+      "persisted_at": "2026-11-22T19:18:52.865Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-clickhouse-clickhouse-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-clickhouse-clickhouse-learning",
@@ -239618,9 +239623,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for clickhouse-clickhouse-learnings",
       "repository": "clickhouse-clickhouse-learnings",
       "source_version": "HEAD",
-      "content_hash": "ae4c4926253ca54b5f949242dcd5e89d6c871eabde8127e7e7e9629865f22830",
+      "content_hash": "fb0b2c3e8c4021bacb88267d0f66d5e0b1b858092db8a5d103cbe581e7e28ba4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T18:23:12.075Z"
+      "persisted_at": "2026-11-22T19:18:53.083Z"
     },
     "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf": {
       "learning_id": "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf",
@@ -283576,7 +283581,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf",
       "source_version": "hf-prism-ml-ternary-bonsai-2-27b-gguf",
-      "content_hash": "022f5de1c0e20818b725aaa60462c14d28aa273a6e6bb51171185dacaeefaa21",
+      "content_hash": "973b3e4f0fee62b61f4996428b4bd3e0da509a1cf75821ef0bd76b5343d56d2a",
       "dossier_path": "07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings.md",
       "promoted_rules": [],
@@ -283585,7 +283590,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T12:43:14.610Z",
+      "verified_at": "2026-11-22T19:18:32.094Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -283602,9 +283607,9 @@
       "title": "Research & Knowledge Intelligence: prism-ml/Ternary-Bonsai-2-27B-gguf Core Invariants",
       "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
       "source_version": "hf-prism-ml-ternary-bonsai-2-27b-gguf",
-      "content_hash": "2394ed7343fb6c2792dde1f29191c7c52b3003764f3a57b3d107ba04cf41ee6b",
+      "content_hash": "064a491ef0e776ccf4073bf27fe6b6a9e8140468d0e2642cfe96557b8118b283",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T12:43:14.968Z"
+      "persisted_at": "2026-11-22T19:18:32.739Z"
     },
     "rule-9104": {
       "learning_id": "rule-9104",
@@ -283652,9 +283657,9 @@
       "title": "Research & Knowledge Intelligence: hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings Core Invariants",
       "repository": "hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "5645c1805b99f8bd60ef53a3193c2fcdb67a8196b91b06250a325a6cd8031cf9",
+      "content_hash": "30c5f3422960a9e8f53b4380a6db69e373f9451091738f9c2ea22cac3986fac5",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T12:43:18.662Z"
+      "persisted_at": "2026-11-22T19:18:51.802Z"
     },
     "agent_contract-agent-contract-skyhook-io-radar-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-skyhook-io-radar-learnings-autonomous-specialist-persona",
@@ -318605,13 +318610,13 @@
       "item_id": "candidate_directive-test-collab-write-trust-fixtures-with-explicit-0644-permissions",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-G6FT-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZZ58-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "53aa631cc5e223e09e48ba8f8d8e4f8d88bf6068034a12ce7c1a6f8559034aaf",
+      "content_hash": "1e88e6419c6784cb787b65ead2c6603714af4753b376f47d1c509ea6ecd6a6a4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T18:35:30.332Z"
+      "persisted_at": "2026-11-22T19:18:53.618Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants",
@@ -322926,6 +322931,32 @@
       "content_hash": "09692e613e9d4cd58f29ada642fb4c05844a0f7f51ce7cbc7ad30b1566b0ab25",
       "domain_letter": "K",
       "persisted_at": "2026-11-22T19:10:03.996Z"
+    },
+    "rule-9979": {
+      "learning_id": "rule-9979",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9979,
+      "title": "Address review: check the sum of file counts of an Iceberg manifest list entry f",
+      "source_url": "https://github.com/ClickHouse/ClickHouse",
+      "source_version": "841a49be",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T19:18:47.613Z"
+    },
+    "candidate_directive-address-review-check-the-sum-of-file-counts-of-an-iceberg-manifest-list-entry-f": {
+      "item_id": "candidate_directive-address-review-check-the-sum-of-file-counts-of-an-iceberg-manifest-list-entry-f",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZYE3-address-review-check-the-sum-of-file-counts-of-an-iceberg-manifest-list-entry-f.md",
+      "title": "Address review: check the sum of file counts of an Iceberg manifest list entry f",
+      "repository": "clickhouse-clickhouse-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b9fef0f58d5c3686b675fb06d88d3dbbc9227dcfb6d23f9df3389ae8ecb3fe64",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-22T19:18:52.636Z"
     }
   },
   "ai-builder-brain": {

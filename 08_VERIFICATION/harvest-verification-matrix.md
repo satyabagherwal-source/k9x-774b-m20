@@ -12163,3 +12163,5 @@
 | `CYCLE-20261122-O7HR` | `2026-11-22T19:09:44.559Z` | `sxyazi/yazi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9977` | Yes (`a0607ecb...`) |
 | `CYCLE-20261122-ODK0` | `2026-11-22T19:09:52.416Z` | `pingcap/tidb` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/pingcap-tidb-learnings.md` | Yes (`c47b4a2b...`) |
 | `CYCLE-20261122-OJED` | `2026-11-22T19:09:59.989Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9978` | Yes (`781dd525...`) |
+| `CYCLE-20261122-ZISG` | `2026-11-22T19:18:32.416Z` | `prism-ml/Ternary-Bonsai-2-27B-gguf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings.md` | Yes (`973b3e4f...`) |
+| `CYCLE-20261122-ZUPO` | `2026-11-22T19:18:47.868Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9979` | Yes (`efdc12aa...`) |

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T19:10:05.434Z",
+  "last_updated": "2026-11-22T19:18:54.263Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-22T17:53:17.348Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-22T18:35:30.087Z",
+      "processed_at": "2026-11-22T19:18:53.290Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -993,7 +993,7 @@
       "staged_for_review": 1
     },
     "clickhouse-clickhouse-learnings.md": {
-      "processed_at": "2026-11-21T18:23:11.096Z",
+      "processed_at": "2026-11-22T19:18:52.039Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1868,7 +1868,7 @@
       "staged_for_review": 1
     },
     "hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings.md": {
-      "processed_at": "2026-11-18T12:43:18.491Z",
+      "processed_at": "2026-11-22T19:18:51.522Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3723,7 +3723,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3189,
+  "total_dossiers_evaluated": 3192,
   "total_canonical_promoted": 475,
-  "total_staged_for_review": 2418
+  "total_staged_for_review": 2420
 }

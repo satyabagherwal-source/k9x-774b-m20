@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T19:10:00.002Z",
+  "last_updated": "2026-11-22T19:18:47.885Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -425,14 +425,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf",
-      "content_hash": "022f5de1c0e20818b725aaa60462c14d28aa273a6e6bb51171185dacaeefaa21",
-      "verified_at": "2026-11-18T12:43:14.804Z",
+      "content_hash": "973b3e4f0fee62b61f4996428b4bd3e0da509a1cf75821ef0bd76b5343d56d2a",
+      "verified_at": "2026-11-22T19:18:32.437Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T12:43:14.804Z"
+      "last_updated": "2026-11-22T19:18:32.437Z"
     },
     "Viggle/Qwen-Image-2.1-viggle-turbo": {
       "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
@@ -9231,14 +9231,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clickhouse-clickhouse",
-      "content_hash": "2c8a5b5e90132b903a11c5026b22df38b1e3a2f8f6071cd36673778b5efacf91",
-      "verified_at": "2026-11-21T18:23:05.564Z",
+      "content_hash": "efdc12aa23992a09445e6518907c5c419848754ce086b38e9de41b0cada3424d",
+      "verified_at": "2026-11-22T19:18:47.884Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T18:23:05.564Z"
+      "last_updated": "2026-11-22T19:18:47.884Z"
     },
     "dockview/dockview": {
       "repository": "dockview/dockview",

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T19:10:04.910Z",
+  "last_updated": "2026-11-22T19:18:53.618Z",
   "directives": [
     {
       "id": "CD-001",
@@ -44573,11 +44573,11 @@
       "staged_date": "2026-11-22"
     },
     {
-      "id": "CD-G6FT",
+      "id": "CD-ZZ58",
       "directive_title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-G6FT-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-ZZ58-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-22",
@@ -47199,6 +47199,35 @@
       "source_repo": "pingcap-tidb",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-4239CF--add-issue-discovery-source-section-to-b.md",
+      "staged_date": "2026-11-22"
+    },
+    {
+      "id": "CD-ZYE3",
+      "directive_title": "Address review: check the sum of file counts of an Iceberg manifest list entry f",
+      "source_repo": "clickhouse-clickhouse-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-ZYE3-address-review-check-the-sum-of-file-counts-of-an-iceberg-manifest-list-entry-f.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-22",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-18E1EF",
+      "directive_title": "Address review: check the sum of file counts of an Iceberg manifest list entry f",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "clickhouse-clickhouse",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-18E1EF-address-review-check-the-sum-of-file-cou.md",
+      "staged_date": "2026-11-22"
+    },
+    {
+      "id": "CD-REV-1D4E0D",
+      "directive_title": "test(collab): write trust fixtures with explicit 0644 permissions",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-1D4E0D-test-collab-write-trust-fixtures-with-ex.md",
       "staged_date": "2026-11-22"
     }
   ]

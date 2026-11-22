@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md`  
 > **Source**: github ([https://github.com/ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse))  
-> **Source Version**: `a2126dbc`  
+> **Source Version**: `841a49be`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-21T18:23:04.509Z  
+> **Timestamp**: 2026-11-22T19:18:46.619Z  
 > **Learning ID**: `learn-github-clickhouse-clickhouse`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-21T18:23:04.504Z  
+> **Harvest Timestamp**: 2026-11-22T19:18:46.612Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ClickHouse® is a real-time analytics database management system
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 51055 stars
+- **Stars / Engagement**: 51063 stars
 
 ---
 
@@ -1338,280 +1338,392 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b9d4d482` (2026-11-21)
-**Commit Message**: Fix flaky test IOTestAwsS3Client.AssumeRoleRefreshInConcurrentFibers
+### Incident Patch 1: `657a223e` (2026-11-22)
+**Commit Message**: Address review: check the sum of file counts of an Iceberg manifest list entry for overflow
 
-The data-plane mock of the test had the default 16 server threads for
-4 * hardware_concurrency + 1 concurrent GET requests (129 on a 32-CPU CI
-host). Poco's TCPServerDispatcher::enqueue does not queue a connection
-when no dispatcher thread waits on the queue and fewer than maxThreads
-dispatcher threads run: it asks the pool for a new thread, and when the
-pool has no idle PooledThread (a dispatcher thread that has just left
-run() is not idle yet) it closes the connection unread and counts it in
-refusedConnections(). Both attempts a GetObject gets in this test
-(s3_slow_all_threads_after_retryable_error -> SDK max_retries = 1,
-max_single_read_retries = 1) can be refused about 1 ms apart, so the
-fiber fails with "No message received" / "Connection reset by peer",
-returns EIO (5) from FiberContext::main, and its request is never
-counted: the CI failure "futures[i].wait() Which is: 5" and
-"127 vs 129", with exactly one AssumeRole and no request signed with
-other credentials.
+The types of `added_files_count` and `existing_files_count` are taken from
+the schema of the manifest list, so a malformed manifest list can have
+arbitrary `long` values in them, and their sum in `getManifestList` could
+overflow, which is undefined behaviour. The sum is now calculated with
+`common::addOverflow`, and `ICEBERG_SPECIFICATION_VIOLATION` is thrown on
+overflow.
 
-Give the mock a thread per fiber, as the sibling test
-RequestsFromConcurrentFibersDoNotBlockSchedulerThreads already does:
-with as many pool thre
-
-**File**: `src/IO/S3/tests/gtest_aws_s3_client.cpp` (modified, +4/-3)
-```diff
-@@ -1940,7 +1940,7 @@ class FunctionHTTPServer
- public:
-     explicit FunctionHTTPServer(HTTPHandlerFunction handler, int max_threads = 16)
-         : thread_pool(std::make_unique<Poco::ThreadPool>(/* minCapacity = */ 2, max_threads))
--        , server_socket(std::make_unique<Poco::Net::ServerSocket>(0))
-+        , server_socket(std::make_unique<Poco::Net::ServerSocket>(/* port = */ 0, /* backlog = */ std::max(64, max_threads)))
-         , server(std::make_unique<Poco::Net::HTTPServer>(
-               new Factory(std::move(handler)), *thread_pool, *server_socket, makeServerParams(max_threads)))
-     {
-@@ -2532,16 +2532,18 @@ TEST(IOTestAwsS3Client, AssumeRoleRefreshInConcurrentFibers)
-         MockStsRequestHandler(request_info, role_access_key, "role_secret_key").handleRequest(request, response);
-     });
- 
-+    const size_t fiber_count = getFiberCountAboveSchedulerThreads();
-     std::atomic<size_t> requests_signed_with_refreshed_credentials = 0;
-     std::atomic<size_t> other_requests = 0;
-+    /// A thread per fiber: the server closes, instead of queueing, a connection that finds no idle thread in its pool.
-     FunctionHTTPServer http([&](Poco::Net::HTTPServerRequest & request, Poco::Net::HTTPServerResponse & response)
-     {
-         if (getCredentialString(request).starts_with("Credential=refreshed_role_access_key/"))
-             ++requests_signed_with_refreshed_credentials;
-         else
-             ++other_requests;
-         sendHTTPBody(response, Poco::Net::HTTPResponse::HTTP_OK, "");
--    });
-+    }, /* max_threads = */ static_cast<int>(fiber_count));
- 
-     const DB::S3::URI uri(http.getUrl() + "/IOTestAwsS3ClientAssumeRoleRefreshInConcurrentFibers/test.txt");
-     /// The role is unique, so the provider is not shared with other tests through the credentials cache.
-@@ -2561,7 +2563,6 @@ TEST(IOTestAwsS3Client, AssumeRoleRefreshInConcurrentFibers)
-     release.reset();
-     const size_t sts_requests_before = sts_requests;
- 
--    const size_t fiber_count = getFiberCountAboveSchedulerThreads();
-     runFibersAndReleaseWhenAllStarted(fiber_count, release, [&](size_t) { doReadRequest(client, uri); });
- 
-     EXPECT_EQ(sts_requests, sts_requests_before + 1);
-```
-
----
-
-### Incident Patch 2: `d01926b3` (2026-11-21)
-**Commit Message**: Address review: introspection does not reveal the memory layout
-
-The "Multi-user scenarios" section of the `clickhouse-local` documentation
-said that the introspection functions reveal the memory layout of the process.
-This is wrong: `StackTrace::resolveAddressForStorage` stores the addresses of
-stack traces as offsets inside the executable, and `addressToSymbol` and
-`addressToLine` accept only such offsets, in `clickhouse-local` as well.
-
-Say what is exposed instead: the stack traces of the process, such as the ones
-in `system.stack_trace`, can be resolved to symbol names and source locations.
-
-Checked on a running `clickhouse-local`: the values in `system.stack_trace` are
-below the runtime base of the executable, `addressToSymbol` returns an empty
-string for a runtime address, and both functions resolve the stored offsets.
-
-Review: https://github.com/ClickHouse/ClickHouse/pull/133407#pullrequestreview-6006243429
-Related: https://github.com/ClickHouse/ClickHouse/pull/133407
+The test manifest list is the manifest list of
+`void_partition_dropped_column` with these fields of the type `long` and
+the values 9223372036854775807 and 1 in the first entry.
 
 Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
 
-**File**: `docs/concepts/features/tools-and-utilities/clickhouse-local.mdx` (modified, +1/-1)
+**File**: `src/Storages/ObjectStorage/DataLakes/Iceberg/StatelessMetadataFileGetter.cpp` (modified, +11/-2)
 ```diff
-@@ -451,7 +451,7 @@ The listeners of `clickhouse-local` are meant for a single user: the one who sta
- - **Run commands.** `clickhouse-server` accepts dictionaries with the [`EXECUTABLE`](/reference/statements/create/dictionary/sources/executable-file) and [`EXECUTABLE_POOL`](/reference/statements/create/dictionary/sources/executable-pool) sources only from the configuration files written by the administrator, and refuses to create them with a query. `clickhouse-local` allows `CREATE DICTIONARY ... SOURCE(EXECUTABLE(COMMAND '...'))`, and the command is run by the shell, so a query can run an arbitrary program.
- - **Act as the administrator.** Unless users are configured with `users_config`, the only user is `default`: it has no password, is allowed to connect from any address, and has the privileges of an administrator, including access management. Every connection can read, change, and delete all the data of the instance, change any setting (there are no settings constraints or quotas), see the queries of other sessions in `system.processes` and kill them, close the listeners, and terminate the process with `SYSTEM SHUTDOWN`. It can also create users, which are saved in the data directory, when it is persistent, and remain after a restart.
- - **Connect to any host.** The [`remote_url_allow_hosts`](/reference/settings/server-settings/settings/remote#remote_url_allow_hosts) restriction is not applied in `clickhouse-local`, so the table functions and engines for external sources, such as `url`, `s3`, `remote`, `mysql`, and `postgresql`, can send requests from your machine to any address, including the services on the loopback interface and in the internal network.
--- **Inspect the process.** The [introspection functions](/reference/functions/regular-functions/introspection) are enabled by default (see [`allow_introspection_functions`](/reference/settings/session-settings/allow#allow_introspection_functions)), which reveals the stack traces and the memory layout of the process.
-+- **Use the introspection functions.** The [introspection functions](/reference/functions/regular-functions/introspection) are enabled by default (see [`allow_introspection_functions`](/reference/settings/session-settings/allow#allow_introspection_functions)), so a client can resolve the stack traces of the process, such as the ones in `system.stack_trace`, to symbol names and source locations.
+@@ -11,6 +11,7 @@
+ #include <Poco/JSON/Object.h>
+ #include <Poco/JSON/Stringifier.h>
+ #include <Common/Exception.h>
++#include <base/arithmeticOverflow.h>
+ #include <Common/FailPoint.h>
  
- Configuring users with passwords and limited privileges adds authentication, but does not bring these restrictions back. A user granted the access to files (`READ` and `WRITE` on `FILE`) gets the whole filesystem instead of a dedicated directory and, together with the `CREATE DICTIONARY` grant, the ability to run commands. The `file` function does not check the grants at all, so even a user without any grant on files can read every file.
  
+@@ -335,8 +336,16 @@ ManifestFileCacheKeys getManifestList(
+                 if (!manifest_list_deserializer.hasPath(count_field))
+                     continue;
+                 auto count = manifest_list_deserializer.getValueFromRowByName(i, count_field);
+-                if (!count.isNull())
+-                    live_files_count += std::max<Int64>(0, count.safeGet<Int64>());
++                if (count.isNull())
++                    continue;
++                /// The counts are `int` in the specification, but the type is taken from the schema of the file,
++                /// so the values can be arbitrary `long`s and their sum can overflow.
++                if (common::addOverflow(live_files_count, std::max<Int64>(0, count.safeGet<Int64>()), live_files_count))
++                    throw Exception(
++                        ErrorCodes::ICEBERG_SPECIFICATION_VIOLATION,
++                        "Manifest list entry at index {} has too large value of the field '{}'",
++                        i,
++                        count_field);
+             }
+ 
+             std::optional<UInt64> first_row_id;
+```
+
+**File**: `tests/queries/0_stateless/05843_iceberg_manifest_list_files_count_overflow.reference` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++ICEBERG_SPECIFICATION_VIOLATION
+```
+
+**File**: `tests/queries/0_stateless/05843_iceberg_manifest_list_files_count_overflow.sh` (added, +24/-0)
+```diff
+@@ -0,0 +1,24 @@
++#!/usr/bin/env bash
++# Tags: no-fasttest
++# Tag no-fasttest: `icebergLocal` needs the USE_AVRO build option.
++
++# The file counts of a manifest in an Iceberg manifest list are `int` in the specification, but their type is taken
++# from the schema of the manifest list, so a malformed manifest list can have arbitrary `long` values in them.
++# The sum of `added_files_count` and `existing_files_count` must be checked for overflow instead of being undefined behaviour.
++# The manifest list in `data_iceberg/void_partition_malformed_manifest_list` is the manifest list of
++# `void_partition_dropped_column` with these fields of the type `long` and the values 9223372036854775807 and 1 in the first entry.
++
++CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
++# shellcheck source=../shell_config.sh
++. "$CUR_DIR"/../shell_config.sh
++
++SRC="$CUR_DIR/data_iceberg/void_partition_dropped_column"
++BAD="$CUR_DIR/data_iceberg/void_partition_malformed_manifest_list"
++MANIFEST_LIST="snap-2011348865913312671-1-6a6f19d7-4d29-4fe1-9f6f-4cbaf3a20785.avro"
++
++T="${CLICKHOUSE_TMP}/${CLICKHOUSE_DATABASE}_files_count_overflow"
++rm -rf "$T"
++cp -r "$SRC" "$T"
++cp "$BAD/files_count_overflow.avro" "$T/metadata/$MANIFEST_LIST"
++$CLICKHOUSE_LOCAL --query "SELECT id FROM icebergLocal('$T') ORDER BY id" 2>&1 | grep -o -m1 'ICEBERG_SPECIFICATION_VIOLATION'
++rm -rf "$T"
 ```
 
 ---
 
-### Incident Patch 3: `1baff789` (2026-11-21)
-**Commit Message**: Merge pull request #132720 from Algunenano/read-by-layers-prefix-columns
+### Incident Patch 2: `841a49be` (2026-11-22)
+**Commit Message**: Merge pull request #133482 from groeneai/build-hash-section-in-place
 
-Read only the used sorting key prefix in a read split into layers
+Write the binary hash of official builds in place instead of rewriting `clickhouse` with `llvm-objcopy`
 
-**File**: `src/Processors/QueryPlan/ReadFromMergeTree.cpp` (modified, +24/-28)
+**File**: `CMakeLists.txt` (modified, +1/-3)
 ```diff
-@@ -39,11 +39,9 @@
- #include <Interpreters/DatabaseCatalog.h>
- #include <Storages/StorageProxy.h>
- #include <Interpreters/ExpressionActions.h>
--#include <Interpreters/ExpressionAnalyzer.h>
- #include <Interpreters/extractStringValueFilters.h>
- #include <Interpreters/InterpreterSelectQuery.h>
- #include <Interpreters/PredicateStatisticsLog.h>
--#include <Interpreters/TreeRewriter.h>
- #include <Interpreters/ClusterProxy/executeQuery.h>
- #include <Parsers/ASTFunction.h>
- #include <Parsers/ASTIdentifier.h>
-@@ -1461,6 +1459,19 @@ struct PartRangesReadInfo
+@@ -271,9 +271,7 @@ if (LINKER_NAME MATCHES "lld" AND NOT LINKER_NAME MATCHES "ld64")
+     set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--build-id=sha1")
+ endif ()
  
+-# Add a section with the hash of the compiled machine code for integrity checks.
+-# Only for official builds, because adding a section can be time consuming (rewrite of several GB).
+-# And cross compiled binaries are not supported (since you cannot execute clickhouse hash-binary)
++# Add a section with the hash of the compiled machine code for integrity checks. Only for official builds.
+ if (CLICKHOUSE_OFFICIAL_BUILD AND OS_LINUX AND (ARCH_AMD64 OR ARCH_AARCH64) AND NOT ENABLE_CLANG_TIDY)
+     message(STATUS "Official build: A checksum hash will be added to the clickhouse executable")
+     set (USE_BINARY_HASH 1 CACHE STRING "Calculate binary hash and store it in the separate section")
+```
+
+**File**: `programs/CMakeLists.txt` (modified, +4/-6)
+```diff
+@@ -229,6 +229,8 @@ add_custom_target (clickhouse-bundle ALL DEPENDS ${CLICKHOUSE_BUNDLE})
+ 
+ if (USE_BINARY_HASH)
+     add_dependencies(clickhouse hash-binary)
++    # The section for the hash is reserved at link time and filled in place by `hash-binary --write-section`.
++    target_sources(clickhouse PRIVATE binary_hash_section.S)
+ 
+     # When cross-compiling, use the native-built hash-binary; otherwise use the regular build output
+     if (CMAKE_CROSSCOMPILING)
+@@ -238,8 +240,8 @@ if (USE_BINARY_HASH)
+     endif()
+ 
+     add_custom_command(TARGET clickhouse POST_BUILD
+-        COMMAND ${HASH_BINARY_PATH} clickhouse > hash 2> /dev/null
+-        COMMENT "Computing hash of clickhouse binary" VERBATIM)
++        COMMAND ${HASH_BINARY_PATH} --write-section clickhouse > hash 2> /dev/null
++        COMMENT "Writing hash of clickhouse binary to section '.clickhouse.hash'" VERBATIM)
+ 
+     if (NOT CMAKE_CROSSCOMPILING)
+         add_custom_command(TARGET clickhouse POST_BUILD
+@@ -248,10 +250,6 @@ if (USE_BINARY_HASH)
+             COMMAND ${CMAKE_COMMAND} -E rm hash.verify
+             COMMENT "Verifying hash-binary output matches clickhouse hash-binary" VERBATIM)
+     endif()
+-
+-    add_custom_command(TARGET clickhouse POST_BUILD
+-        COMMAND ${OBJCOPY_PATH} --add-section .clickhouse.hash=hash clickhouse
+-        COMMENT "Adding section '.clickhouse.hash' to clickhouse binary" VERBATIM)
+ endif()
+ 
+ if (CHECK_LARGE_OBJECT_SIZES)
+```
+
+**File**: `programs/binary_hash_section.S` (added, +4/-0)
+```diff
+@@ -0,0 +1,4 @@
++/* The section for the hash of the executable segments (USE_BINARY_HASH), filled in place by `hash-binary --write-section`.
++   It is not allocated, so it is not a part of the hashed segments. */
++.section .clickhouse.hash,"",%progbits
++.fill 32, 1, 0x30
+```
+
+**File**: `utils/hash-binary/hash-binary.cpp` (modified, +124/-7)
+```diff
+@@ -1,5 +1,6 @@
+ /// Tool to compute the same hash as ClickHouse's getHashOfLoadedBinary() from a file.
+ /// Useful for cross-compilation when you can't execute the target binary.
++/// With --write-section, also writes the hash in place into the section '.clickhouse.hash' reserved at link time.
+ ///
+ /// NOTE: This file is intentionally standalone with no ClickHouse dependencies.
+ /// We cannot reuse src/Common/SipHash.h because it depends on ClickHouse-specific
+@@ -13,10 +14,14 @@
+ #include <fstream>
+ #include <iomanip>
+ #include <iostream>
++#include <sstream>
+ #include <stdexcept>
++#include <string>
+ #include <vector>
+ 
+ #include <elf.h>
++#include <fcntl.h>
++#include <unistd.h>
+ 
+ 
+ namespace
+@@ -195,6 +200,80 @@ bool hashExecutableSegments(std::istream & in, SipHash & hash)
  }
  
-+/// The expression of the first `prefix_size` sorting key columns. It keeps its input columns.
-+/// It is cut from the analyzed sorting key, whose column names the sort descriptions use: analyzing the key again in
-+/// the query context can name them differently, e.g. `nullIn` instead of `in` with `transform_null_in`.
-+static ExpressionActionsPtr getSortingKeyPrefixExpression(const StorageMetadataPtr & metadata, size_t prefix_size)
+ 
++/// Writes `value` into the existing non-allocated section `name` of the same size, without changing anything else in the file.
++template <typename Ehdr, typename Shdr>
++bool writeSectionInPlace(std::fstream & file, const std::string & name, const std::string & value)
 +{
-+    const auto & sorting_key = metadata->getSortingKey();
-+    auto dag = sorting_key.expression->getActionsDAG().clone();
-+    dag.removeUnusedActions(Names(sorting_key.column_names.begin(), sorting_key.column_names.begin() + prefix_size));
-+    for (const auto * input : dag.getInputs())
-+        dag.addOrReplaceInOutputs(*input);
-+    return std::make_shared<ExpressionActions>(std::move(dag), sorting_key.expression->getSettings());
++    Ehdr ehdr;
++    file.seekg(0);
++    if (!file.read(reinterpret_cast<char *>(&ehdr), sizeof(ehdr)) || ehdr.e_shoff == 0 || ehdr.e_shentsize != sizeof(Shdr))
++    {
++        std::cerr << "Failed to read section headers\n";
++        return false;
++    }
++
++    auto read_section_header = [&](uint64_t index, Shdr & shdr)
++    {
++        file.seekg(static_cast<std::streamoff>(ehdr.e_shoff + index * sizeof(Shdr)));
++        return static_cast<bool>(file.read(reinterpret_cast<char *>(&shdr), sizeof(shdr)));
++    };
++
++    /// With 0xff00 sections or more, the counts are stored in the first section header.
++    Shdr first;
++    if (!read_section_header(0, first))
++    {
++        std::cerr << "Failed to read section headers\n";
++        return false;
++    }
++    const uint64_t section_count = ehdr.e_shnum ? ehdr.e_shnum : first.sh_size;
++    const uint64_t names_index = ehdr.e_shstrndx == SHN_XINDEX ? first.sh_link : ehdr.e_shstrndx;
++
++    Shdr names_header;
++    if (names_index >= section_count || !read_section_header(names_index, names_header))
++    {
++        std::cerr << "Failed to read section names\n";
++        return false;
++    }
++    std::string names(names_header.sh_size, '\0');
++    file.seekg(static_cast<std::streamoff>(names_header.sh_offset));
++    if (!file.read(names.data(), static_cast<std::streamsize>(names.size())))
++    {
++        std::cerr << "Failed to read section names\n";
++        return false;
++    }
++
++    for (uint64_t i = 0; i < section_count; ++i)
++    {
++        Shdr shdr;
++        if (!read_section_header(i, shdr))
++        {
++            std::cerr << "Failed to read section header\n";
++            return false;
++        }
++        if (shdr.sh_name >= names.size() || std::strcmp(names.c_str() + shdr.sh_name, name.c_str()) != 0)
++            continue;
++
++        /// The hash covers only the executable segments: a non-allocated section is not part of any segment.
++        if (shdr.sh_type != SHT_PROGBITS || (shdr.sh_flags & SHF_ALLOC) || shdr.sh_size != value.size())
++        {
++            std::cerr << "Section " << name << " must be non-allocated PROGBITS of " << value.size() << " bytes\n";
++            return false;
++        }
++
++        file.seekp(static_cast<std::streamoff>(shdr.sh_offset));
++        if (!file.write(value.data(), static_cast<std::streamsize>(value.size())) || !file.flush())
++        {
++            std::cerr << "Failed to write section " << name << "\n";
++            return false;
++        }
++        return true;
++    }
++
++    std::cerr << "Section " << name << " not found\n";
++    return false;
 +}
 +
- Pipe ReadFromMergeTree::readByLayers(
-     const RangesInDataParts & parts_with_ranges,
-     SplitPartsByRanges split_parts,
-@@ -1482,38 +1493,29 @@ Pipe ReadFromMergeTree::readByLayers(
- 
-     if (reader_settings.read_in_order)
-     {
-+        /// Only the prefix of the sorting key that the streams of a layer are merged by and the layers are filtered by
-+        /// is computed, so that the other sorting key columns are not read.
-+        size_t prefix_size = input_order_info->used_prefix_of_sorting_key_size;
-+        for (const auto & border : split_parts.borders)
-+            prefix_size = std::max(prefix_size, border.size());
-+        auto sorting_expr = getSortingKeyPrefixExpression(storage_snapshot->metadata, prefix_size);
-+        const auto sorting_key_prefix_columns = sorting_expr->getRequiredColumns();
 +
-         /// `PREWHERE` runs before the sorting expression added below and may have removed an input
-         /// column that the sorting key needs. Prohibit removing those inputs; the sorting expression
-         /// keeps them, and they are dropped when the pipe header is converted to the step header.
-         /// Same reasoning as in `spreadMarkRangesAmongStreamsWithOrder`.
-         if (query_info.prewhere_info || query_info.row_level_filter)
+ bool hashElfFile(std::istream & in, SipHash & hash)
+ {
+     unsigned char e_ident[EI_NIDENT];
+@@ -223,18 +302,28 @@ int main(int argc, char ** argv)
+ {
+     try
+     {
+-        if (argc != 2)
++        const bool write_section = argc == 3 && std::string(argv[1]) == "--write-section";
++        if (argc != 2 && !write_section)
          {
--            NameSet sorting_key_columns;
--            for (const auto & column : storage_snapshot->metadata->getSortingKey().expression->getRequiredColumnsWithTypes())
--                sorting_key_columns.insert(column.name);
--
-+            NameSet sorting_key_columns(sorting_key_prefix_columns.begin(), sorting_key_prefix_columns.end());
-             restorePrewhereInputs(query_info.row_level_filter.get(), query_info.prewhere_info.get(), sorting_key_columns);
+-            std::cerr << "Usage: " << argv[0] << " <elf-file>\n"
++            std::cerr << "Usage: " << argv[0] << " [--write-section] <elf-file>\n"
+                       << "\nComputes the same hash as 'clickhouse hash-binary' but from a file.\n"
+-                      << "Useful for cross-compilation when you can't execute the target binary.\n";
++                      << "Useful for cross-compilation when you can't execute the target binary.\n"
++                      << "--write-section also writes the hash into the section '.clickhouse.hash' of the file, in place.\n";
+             return 1;
          }
++        const char * path = argv[argc - 1];
  
-         NameSet column_names_set(column_names.begin(), column_names.end());
-         in_order_column_names_to_read = column_names;
- 
--        /// Only the prefix of the sorting key that the merge of a layer and the range filters of the layers use
--        /// has to be computed: reading the rest of the key would read and decode columns the query does not need.
--        size_t sorting_key_prefix_size = input_order_info->used_prefix_of_sorting_key_size;
--        if (!split_parts.borders.empty())
--            sorting_key_prefix_size = std::max(sorting_key_prefix_size, split_parts.borders.front().size());
--
--        auto sorting_key_prefix_ast = storage_snapshot->metadata->getSortingKey().expression_list_ast->clone();
--        sorting_key_prefix_ast->children.resize(sorting_key_prefix_size);
--        auto syntax_result = TreeRewriter(context).analyze(
--            sorting_key_prefix_ast,
--            storage_snapshot->metadata->getColumns().get(GetColumnsOptions(GetColumnsOptions::AllPhysical).withSubcolumns()));
--        auto sorting_expr = std::make_shared<ExpressionActions>(
--            ExpressionAnalyzer(sorting_key_prefix_ast, syntax_result, context).getActionsDAG(false));
--
-         /// Add columns needed to calculate the sorting expression
--        for (const auto & column_name : sorting_expr->getRequiredColumns())
-+        for (const auto & column_name : sorting_key_prefix_columns)
-         {
-             if (column_names_set.contains(column_name))
-                 continue;
-@@ -2511,11 +2513,7 @@ Pipe ReadFromMergeTree::spreadMarkRangesAmongStreamsWithOrder(
-     if (need_preliminary_merge || output_each_partition_through_separate_port)
-     {
-         size_t prefix_size = input_order_info->used_prefix_of_sorting_key_size;
--        auto order_key_prefix
+-        std::ifstream file(argv[1], std::ios::binary);
++        /// With stdout or stderr closed, the file could get that descriptor, and the output would be written into the file.
++        if (fcntl(STDOUT_FILENO, F_GETFD) == -1 || fcntl(STDERR_FILENO, F_GETFD) == -1)
++        {
++            std::cerr << "stdout and stderr must be ope
 ```
 
-**File**: `tests/queries/0_stateless/05829_read_by_layers_reads_only_key_prefix.reference` (added, +10/-0)
+---
+
+### Incident Patch 3: `1afd2c94` (2026-11-22)
+**Commit Message**: Merge pull request #133523 from siddharthapal8240/fix/external-limit-pushdown-int64
+
+Do not push down a `LIMIT` above the signed 64-bit range to `PostgreSQL` and `SQLite` tables
+
+**File**: `src/Storages/transformQueryForExternalDatabase.cpp` (modified, +6/-1)
 ```diff
-@@ -0,0 +1,10 @@
-+1
-+100000
-+1
-+400000
-+05829_join	1
-+05829_uniq_exact	1
-+500
-+500
-+0	40
-+0
+@@ -31,6 +31,7 @@
+ #include <Storages/transformQueryForExternalDatabaseAnalyzer.h>
+ 
+ #include <cmath>
++#include <limits>
+ #include <queue>
+ 
+ 
+@@ -1189,7 +1190,11 @@ String transformQueryForExternalDatabaseImpl(
+         }
+     }
+ 
+-    if (limit)
++    /// A `LIMIT` in ClickHouse is any `UInt64` (for example MySQL's "all rows" idiom,
++    /// `LIMIT 18446744073709551615`), while PostgreSQL and SQLite accept only a signed 64-bit value and
++    /// fail on a larger one (`bigint out of range`, `datatype mismatch`). A limit that large does not
++    /// cut off the rows of any table, so it is not sent to the external database at all.
++    if (limit && *limit <= static_cast<UInt64>(std::numeric_limits<Int64>::max()))
+         select->setExpression(ASTSelectQuery::Expression::LIMIT_LENGTH, make_intrusive<ASTLiteral>(*limit));
+ 
+     ASTPtr select_ptr = select;
 ```
 
-**File**: `tests/queries/0_stateless/05829_read_by_layers_reads_only_key_prefix.sql` (added, +50/-0)
+**File**: `tests/integration/test_storage_postgresql/test.py` (modified, +9/-0)
 ```diff
-@@ -0,0 +1,50 @@
-+-- A read in order split into layers by a prefix of the sorting key reads only the columns of that prefix and of the query,
-+-- not the other columns of the sorting key.
+@@ -969,6 +969,15 @@ def run(query, **settings):
+     assert result == "99"
+     assert len(queries) == 1 and "LIMIT" not in queries[0]
+ 
++    # A `LIMIT` above the signed 64-bit range is valid in ClickHouse, while the `LIMIT` of PostgreSQL
++    # is a `bigint`. Such a limit cuts off nothing, so it is not sent, instead of failing the query
++    # with `bigint out of range`.
++    result, queries = run(
++        "SELECT count() FROM (SELECT * FROM pg_limit_pushdown LIMIT 9223372036854775808)"
++    )
++    assert result == "100"
++    assert len(queries) == 1 and "LIMIT" not in queries[0]
 +
-+DROP TABLE IF EXISTS t_layers_prefix;
-+CREATE TABLE t_layers_prefix (k UInt32 CODEC(Delta, LZ4), s String) ENGINE = MergeTree ORDER BY (k, s)
-+SETTINGS index_granularity = 1024, min_bytes_for_wide_part = 0;
+     # A real `LIMIT 0` returns nothing and never asks PostgreSQL for a single row.
+     result, _ = run("SELECT count() FROM (SELECT * FROM pg_limit_pushdown LIMIT 0)")
+     assert result == "0"
+```
+
+**File**: `tests/queries/0_stateless/05843_external_table_limit_above_int64.reference` (added, +6/-0)
+```diff
+@@ -0,0 +1,6 @@
++3
++3
++2
++2
++3
++2
+```
+
+**File**: `tests/queries/0_stateless/05843_external_table_limit_above_int64.sh` (added, +33/-0)
+```diff
+@@ -0,0 +1,33 @@
++#!/usr/bin/env bash
++# Tags: no-fasttest
++# Tag no-fasttest: needs the `sqlite` table function and the `sqlite3` tool
 +
-+SYSTEM STOP MERGES t_layers_prefix;
-+INSERT INTO t_layers_prefix SELECT number, hex(sipHash128(toString(number))) FROM numbers(100000);
-+INSERT INTO t_layers_prefix SELECT number, hex(sipHash128(toString(number + 1000000))) FROM numbers(100000);
++# A `LIMIT` of a query is pushed down to an external database, where it is safe. A `LIMIT` in ClickHouse
++# is any `UInt64`, while SQLite (and PostgreSQL) accept only a signed 64-bit value, so a `LIMIT` above
++# that range - such as `LIMIT 18446744073709551615`, MySQL's idiom for "all rows" - made the query fail
++# with `datatype mismatch`. Such a limit does not cut off anything and is not sent.
 +
-+-- Without the caches that skip the read of compressed data, which `ReadCompressedBytes` counts.
-+SET max_threads = 4, enable_parallel_replicas = 0, use_uncompressed_cache = 0, use_columns_cache = 0;
++CUR_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
++# shellcheck source=../shell_config.sh
++. "$CUR_DIR"/../shell_config.sh
 +
-+-- A single `uniqExact` of the first sorting key column, counted in order.
-+SET optimize_aggregation_in_order = 1;
-+SELECT count() > 0 FROM (EXPLAIN PIPELINE SELECT count(DISTINCT k) FROM t_layers_prefix) WHERE explain LIKE '%FilterSortedStreamByRange%';
-+SELECT count(DISTINCT k) FROM t_layers_prefix SETTINGS log_comment = '05829_uniq_exact';
++DB_PATH="${USER_FILES_PATH}/${CLICKHOUSE_DATABASE}_limit_above_int64.db"
++rm -f "${DB_PATH}"
 +
-+-- A merge join of reads in order, joined by ranges of the primary key.
-+SET join_algorithm = 'full_sorting_merge', query_plan_join_shard_by_pk_ranges = 1, optimize_read_in_order = 1;
-+SELECT count() > 0 FROM (EXPLAIN PIPELINE SELECT count() FROM t_layers_prefix AS l JOIN t_layers_prefix AS r ON l.k = r.k) WHERE explain LIKE '%FilterSortedStreamByRange%';
-+SELECT count() FROM t_layers_prefix AS l JOIN t_layers_prefix AS r ON l.k = r.k SETTINGS log_comment = '05829_join';
++sqlite3 "${DB_PATH}" 'CREATE TABLE t (id INTEGER); INSERT INTO t VALUES (1), (2), (3);'
++chmod ugo+r "${DB_PATH}"
 +
-+SYSTEM FLUSH LOGS query_log;
-+SELECT log_comment, ProfileEvents['ReadCompressedBytes'] < (SELECT data_compressed_bytes FROM system.columns WHERE database = currentDatabase() AND table = 't_layers_prefix' AND name = 's') / 10
-+FROM system.query_log
-+WHERE current_database = currentDatabase() AND log_comment IN ('05829_uniq_exact', '05829_join') AND type = 'QueryFinish' AND event_date >= yesterday()
-+ORDER BY log_comment;
++SOURCE="sqlite('${DB_PATH}', 't')"
 +
-+DROP TABLE t_layers_prefix;
++${CLICKHOUSE_CLIENT} --query "
++SELECT count() FROM (SELECT id FROM ${SOURCE} LIMIT 9223372036854775808);
++SELECT count() FROM (SELECT id FROM ${SOURCE} LIMIT 18446744073709551615);
++SELECT count() FROM (SELECT id FROM ${SOURCE} LIMIT 9223372036854775807 OFFSET 1);
++SELECT count() FROM (SELECT id FROM ${SOURCE} WHERE id > 1 LIMIT 18446744073709551615);
 +
-+-- The sorting key keeps its own names when the query settings would name its expressions differently: `IN` is `nullIn`
-+-- with `transform_null_in`. The first key column is fixed by the condition, so the read is in order of `k`, in layers
-+-- with several threads and by merging the parts with one.
-+DROP TABLE IF EXISTS t_layers_prefix_in;
-+CREATE TABLE t_layers_prefix_in (a UInt32, k UInt32, s String) ENGINE = MergeTree ORDER BY (a IN (1, 2), k, s)
-+SETTINGS index_granularity = 128;
++-- The largest limit that SQLite accepts, and an ordinary one.
++SELECT count() FROM (SELECT id FROM ${SOURCE} LIMIT 9223372036854775807);
++SELECT count() FROM (SELECT id FROM ${SOURCE} LIMIT 2);
++"
 +
-+SYSTEM STOP MERGES t_layers_prefix_in;
-+INSERT INTO t_layers_prefix_in SELECT 1, number % 500, toString(number) FROM numbers(10000);
-+INSERT INTO t_layers_prefix_in SELECT 1, number % 500, toString(number) FROM numbers(10000);
-+
-+SET transform_null_in = 1, read_in_order_two_level_merge_threshold = 1;
-+SELECT uniqExact(k) FROM t_layers_prefix_in WHERE a = 1 SETTINGS max_threads = 4;
-+SELECT uniqExact(k) FROM t_layers_prefix_in WHERE a = 1 SETTINGS max_threads = 1;
-+SELECT k, count() FROM t_layers_prefix_in WHERE a = 1 GROUP BY k ORDER BY k LIMIT 1 SETTINGS max_threads = 1;
-+SELECT k FROM t_layers_prefix_in WHERE a = 1 ORDER BY k LIMIT 1 SETTINGS max_threads = 1;
-+
-+DROP TABLE t_layers_prefix_in;
++rm -f "${DB_PATH}"
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #133407** (2026-11-21): Document that `clickhouse-local` is not for multi-user scenarios (@alexey-milovidov)
-- **PR #133396** (2026-11-21): Do not install the Rust documentation in the fasttest image (@groeneai)
-- **PR #133389** (2026-11-21): Fix flaky test IOTestAwsS3Client.AssumeRoleRefreshInConcurrentFibers (@groeneai)
-- **PR #133386** (2026-11-21): Docs: regenerate reference documentation from source (@clickhouse-gh[bot])
-- **PR #133352** (2026-11-21): Backport #113397 to 26.3: Fix a table permanently stuck in the drop queue after a failed materialized-CTE query (@robot-ch-test-poll)
-- **PR #133328** (2026-11-21): Fix flaky test 05045_query_plan_json_in_query_log (@groeneai)
+- **PR #133562** (2026-11-22): Backport #131636 to 26.9: Skip a setting value from the server's Hello that this version rejects instead of failing the connection (@robot-ch-test-poll)
+- **PR #133561** (2026-11-22): Backport #131636 to 26.8: Skip a setting value from the server's Hello that this version rejects instead of failing the connection (@robot-ch-test-poll)
+- **PR #133555** (2026-11-22): Backport #131636 to 26.10: Skip a setting value from the server's Hello that this version rejects instead of failing the connection (@robot-ch-test-poll2)
+- **PR #133550** (2026-11-22): Backport #130143 to 26.10: Fix `LOGICAL_ERROR` on `INSERT` into a table whose projection has a subquery in its `SELECT` list or `GROUP BY` (@robot-ch-test-poll2)
+- **PR #133548** (2026-11-22): Backport #133464 to 26.11: Remove the background cleanup of unused directories in `store/` (@robot-ch-test-poll2)
+- **PR #133543** (2026-11-22): Backport #133506 to 26.11: Fix JSON schema inference applying the mark of a freed type to an unrelated value (@robot-ch-test-poll2)
 
 ---
 
@@ -1631,33 +1743,39 @@ Read only the used sorting key prefix in a read split into layers
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. flaky test IOTestAwsS3Client.AssumeRoleRefreshInConcurrentFibers
+## X. Address review: check the sum of file counts of an Iceberg manifest list entry f
 
 **RULE**:
-When implementing operations in `src/IO/S3/tests/gtest_aws_s3_client.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/Storages/ObjectStorage/DataLakes/Iceberg/StatelessMetadataFileGetter.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b9d4d482`: flaky test IOTestAwsS3Client.AssumeRoleRefreshInConcurrentFibers. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `657a223e`: Address review: check the sum of file counts of an Iceberg manifest list entry for overflow. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/IO/S3/tests/gtest_aws_s3_client.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/Storages/ObjectStorage/DataLakes/Iceberg/StatelessMetadataFileGetter.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-        , server_socket(std::make_unique<Poco::Net::ServerSocket>(/* port = */ 0, /* backlog = */ std::max(64, max_threads)))
-    const size_t fiber_count = getFiberCountAboveSchedulerThreads();
-    /// A thread per fiber: the server closes, instead of queueing, a connection that finds no idle thread in its pool.
-    }, /* max_threads = */ static_cast<int>(fiber_count));
+#include <base/arithmeticOverflow.h>
+                if (count.isNull())
+                    continue;
+                /// The counts are `int` in the specification, but the type is taken from the schema of the file,
+                /// so the values can be arbitrary `long`s and their sum can overflow.
+                if (common::addOverflow(live_files_count, std::max<Int64>(0, count.safeGet<Int64>()), live_files_count))
+                    throw Exception(
+                        ErrorCodes::ICEBERG_SPECIFICATION_VIOLATION,
+                        "Manifest list entry at index {} has too large value of the field '{}'",
+                        i,
+                        count_field);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-        , server_socket(std::make_unique<Poco::Net::ServerSocket>(0))
-    });
-    const size_t fiber_count = getFiberCountAboveSchedulerThreads();
+                if (!count.isNull())
+                    live_files_count += std::max<Int64>(0, count.safeGet<Int64>());
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b9d4d482` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `657a223e` are properly handled with clean fallback behavior.
