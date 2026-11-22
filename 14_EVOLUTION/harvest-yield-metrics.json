@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T08:09:29.341Z",
-  "total_cycles_completed": 11462,
-  "total_learnings_persisted": 11462,
+  "last_updated": "2026-11-22T08:22:56.441Z",
+  "total_cycles_completed": 11463,
+  "total_learnings_persisted": 11463,
   "total_rules_promoted": 10730,
   "history": [
-    {
-      "timestamp": "2026-11-21T15:59:37.078Z",
-      "repository": "KRAFTON/Raon-1-mini-preview",
-      "learningId": "learn-huggingface-krafton-raon-1-mini-preview",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-21T15:59:50.042Z",
       "repository": "StarTrail-org/LEANN",
@@ -1403,6 +1396,13 @@
       "repository": "onejs/one",
       "learningId": "learn-github-onejs-one",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-22T08:22:56.441Z",
+      "repository": "DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF",
+      "learningId": "learn-huggingface-davidau-qwen3-5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

@@ -12090,3 +12090,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-edge0-edge0-145b-nvfp4` | `https://huggingface.co/Edge0/Edge0-145B-NVFP4` | `hf-edge0-e` | Multi-dimensional audit evidence | 2026-11-22T08:09:19.064Z |
 | `learn-github-restatedev-restate` | `https://github.com/restatedev/restate` | `2aaabe8c` | Multi-dimensional audit evidence | 2026-11-22T08:09:24.363Z |
 | `learn-github-onejs-one` | `https://github.com/onejs/one` | `23a33ef5` | Multi-dimensional audit evidence | 2026-11-22T08:09:29.335Z |
+| `learn-huggingface-davidau-qwen3-5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf` | `https://huggingface.co/DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF` | `hf-davidau` | Multi-dimensional audit evidence | 2026-11-22T08:22:56.436Z |

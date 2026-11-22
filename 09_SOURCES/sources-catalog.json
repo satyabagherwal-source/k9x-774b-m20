@@ -12525,8 +12525,8 @@
     "sourceUrl": "https://huggingface.co/DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF",
     "sourceVersion": "hf-davidau-qwen3.5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf",
     "license": "Open-Source",
-    "contentHash": "527aa9603848b11eafabb7aa0d3fef0a19bbf7934d9bbee197d6b0346e1f8ac0",
-    "lastHarvestedAt": "2026-11-14T08:53:30.555Z",
+    "contentHash": "34dd1484ce823da74ab227d14d2f0aea41fc63c1ada6b407f422edab52c3cdc7",
+    "lastHarvestedAt": "2026-11-22T08:22:56.436Z",
     "learningId": "learn-huggingface-davidau-qwen3-5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf"
   },
   "hf-laion-clap-htsat-fused": {

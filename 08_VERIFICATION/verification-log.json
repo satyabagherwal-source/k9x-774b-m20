@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261120-3UVZ",
-    "timestamp": "2026-11-20T08:34:43.103Z",
-    "repository": "linkerd/linkerd2",
-    "learningId": "learn-github-linkerd-linkerd2",
-    "contentHash": "388429359f82f08dff903cee43f83698748e47908281741958fda2295ef9f961",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261120-90CG",
     "timestamp": "2026-11-20T08:38:43.456Z",
     "repository": "ytsaurus/ytsaurus",
@@ -7492,6 +7477,21 @@
     "contentHash": "368bc90fc5d647df624c41dd83323efe6e33c75afb3a7cf39b15b6e535dde37a",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261122-KEY8",
+    "timestamp": "2026-11-22T08:22:56.432Z",
+    "repository": "DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF",
+    "learningId": "learn-huggingface-davidau-qwen3-5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf",
+    "contentHash": "34dd1484ce823da74ab227d14d2f0aea41fc63c1ada6b407f422edab52c3cdc7",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

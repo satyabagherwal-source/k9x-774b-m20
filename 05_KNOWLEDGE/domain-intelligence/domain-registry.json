@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T08:09:35.052Z",
-  "total_records": 2342,
+  "last_updated": "2026-11-22T08:23:01.299Z",
+  "total_records": 2344,
   "domains": {
     "A": {
       "total": 17,
@@ -60,7 +60,7 @@
       ]
     },
     "D": {
-      "total": 919,
+      "total": 921,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -980,7 +980,9 @@
         "DOM-D-22D0FBF8",
         "domain_intelligence-research-knowledge-intelligence-lakonik-pi-h3-core-invariants",
         "DOM-D-1DB76912",
-        "domain_intelligence-research-knowledge-intelligence-hf-lakonik-pi-h3-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-hf-lakonik-pi-h3-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-davidau-qwen3-5-9b-the-defiant-fable-uncensored-",
+        "domain_intelligence-research-knowledge-intelligence-hf-davidau-qwen3-5-9b-the-defiant-fable-uncensor"
       ]
     },
     "E": {
@@ -8157,8 +8159,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "091e8f54d574906027c9a29293be0272211956c22c8d14e0d71b445818919c6d",
-      "created_at": "2026-11-22T06:27:40.085Z"
+      "content_hash": "b76b58f207c7cc70a38fa482ff8c0fd4f9222382e81d467fb750cb4b208570bd",
+      "created_at": "2026-11-22T08:23:01.299Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -9075,8 +9077,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "98039e73a9352804e18ec3493584caf6c297bf976a8e9df2c93990c1dd5cb5d7",
-      "created_at": "2026-11-22T07:14:03.301Z"
+      "content_hash": "12b140acfc6ded004782cfdc26f14597a72c4fceeb0f24d64eccd08def72668a",
+      "created_at": "2026-11-22T08:23:00.272Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -39508,6 +39510,24 @@
       "repository": "medialab-xan-learnings",
       "content_hash": "f68df0bccd6025c364b8a5d4f6d05b635c243b17d59967ef33b4e8118c16264f",
       "created_at": "2026-11-22T07:56:46.779Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-davidau-qwen3-5-9b-the-defiant-fable-uncensored-": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-davidau-qwen3-5-9b-the-defiant-fable-uncensored-",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-davidau-qwen3-5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-g.md",
+      "repository": "DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF",
+      "content_hash": "50ce32fff0455f38e7d2c8f08ce52c86bcb0ed1e6227473cc76af194917e36b1",
+      "created_at": "2026-11-22T08:22:56.645Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-davidau-qwen3-5-9b-the-defiant-fable-uncensor": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-davidau-qwen3-5-9b-the-defiant-fable-uncensor",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-davidau-qwen3.5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-davidau-qwen3-5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-g.md",
+      "repository": "hf-davidau-qwen3.5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf-learnings",
+      "content_hash": "0809373e1fe246adc52d81756eaf72d7b74813135546b0b3178f49b8d930008f",
+      "created_at": "2026-11-22T08:22:59.673Z"
     }
   }
 }

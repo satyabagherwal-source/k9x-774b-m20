@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T08:09:35.265Z",
+  "last_updated": "2026-11-22T08:23:01.299Z",
   "total_verified_learnings": 9070,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23529,
+  "total_items": 23531,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112198,9 +112198,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "091e8f54d574906027c9a29293be0272211956c22c8d14e0d71b445818919c6d",
+      "content_hash": "b76b58f207c7cc70a38fa482ff8c0fd4f9222382e81d467fb750cb4b208570bd",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T06:27:40.085Z"
+      "persisted_at": "2026-11-22T08:23:01.299Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -113722,9 +113722,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "98039e73a9352804e18ec3493584caf6c297bf976a8e9df2c93990c1dd5cb5d7",
+      "content_hash": "12b140acfc6ded004782cfdc26f14597a72c4fceeb0f24d64eccd08def72668a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-22T07:14:03.301Z"
+      "persisted_at": "2026-11-22T08:23:00.272Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113734,9 +113734,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "e07d6ef9e4aef82a316b0fa92600f3ece5b481b6948370a6d9a19eb18e86a64a",
+      "content_hash": "de45b0dc880864d09777f708fc6f2e16bfe6eef384972d6527f531a00baaceb0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T07:14:03.470Z"
+      "persisted_at": "2026-11-22T08:23:00.435Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -228285,7 +228285,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF",
       "source_version": "hf-davidau-qwen3.5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf",
-      "content_hash": "527aa9603848b11eafabb7aa0d3fef0a19bbf7934d9bbee197d6b0346e1f8ac0",
+      "content_hash": "34dd1484ce823da74ab227d14d2f0aea41fc63c1ada6b407f422edab52c3cdc7",
       "dossier_path": "07_PROJECT_LEARNING/hf-davidau-qwen3.5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-davidau-qwen3.5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf-learnings.md",
       "promoted_rules": [
@@ -228310,7 +228310,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T08:53:30.419Z",
+      "verified_at": "2026-11-22T08:22:56.240Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -318298,13 +318298,13 @@
       "item_id": "candidate_directive-test-collab-write-trust-fixtures-with-explicit-0644-permissions",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-3TOC-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-KHSE-test-collab-write-trust-fixtures-with-explicit-0644-permissions.md",
       "title": "test(collab): write trust fixtures with explicit 0644 permissions",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "e6b930965f9c4df30f7fa2e31f277acc1ceca1069982a0c21ab921b61b5b2e83",
+      "content_hash": "b500e9d4a7492b4933947eddd4d0d6a2d97881a6dd0c9840d320adfe6ae065cd",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T07:14:03.135Z"
+      "persisted_at": "2026-11-22T08:23:00.113Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-core-invariants",
@@ -320078,6 +320078,30 @@
       "content_hash": "3a9c91204846ab71caff1eee6c0cd8ed72b79da58173dc6bb8be1dc649f77b59",
       "domain_letter": "G",
       "persisted_at": "2026-11-22T08:09:34.844Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-davidau-qwen3-5-9b-the-defiant-fable-uncensored-": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-davidau-qwen3-5-9b-the-defiant-fable-uncensored-",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-davidau-qwen3-5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-g.md",
+      "title": "Research & Knowledge Intelligence: DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF Core Invariants",
+      "repository": "DavidAU/Qwen3.5-9B-The-Defiant-Fable-Uncensored-Heretic-NEO-IMATRIX-MAX-MTP-GGUF",
+      "source_version": "hf-davidau-qwen3.5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf",
+      "content_hash": "50ce32fff0455f38e7d2c8f08ce52c86bcb0ed1e6227473cc76af194917e36b1",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-22T08:22:56.645Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-davidau-qwen3-5-9b-the-defiant-fable-uncensor": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-davidau-qwen3-5-9b-the-defiant-fable-uncensor",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-davidau-qwen3-5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-g.md",
+      "title": "Research & Knowledge Intelligence: hf-davidau-qwen3.5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf-learnings Core Invariants",
+      "repository": "hf-davidau-qwen3.5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0809373e1fe246adc52d81756eaf72d7b74813135546b0b3178f49b8d930008f",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-22T08:22:59.673Z"
     }
   },
   "ai-builder-brain": {

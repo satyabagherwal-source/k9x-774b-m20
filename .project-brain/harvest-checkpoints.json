@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T08:09:29.346Z",
+  "last_updated": "2026-11-22T08:22:56.445Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -18846,14 +18846,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-davidau-qwen3-5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf",
-      "content_hash": "527aa9603848b11eafabb7aa0d3fef0a19bbf7934d9bbee197d6b0346e1f8ac0",
-      "verified_at": "2026-11-14T08:53:30.563Z",
+      "content_hash": "34dd1484ce823da74ab227d14d2f0aea41fc63c1ada6b407f422edab52c3cdc7",
+      "verified_at": "2026-11-22T08:22:56.444Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T08:53:30.563Z"
+      "last_updated": "2026-11-22T08:22:56.444Z"
     },
     "laion/clap-htsat-fused": {
       "repository": "laion/clap-htsat-fused",
