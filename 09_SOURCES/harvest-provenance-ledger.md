@@ -12243,3 +12243,6 @@ Every entry in this ledger must capture:
 | `learn-github-falkordb-falkordb` | `https://github.com/FalkorDB/FalkorDB` | `41d2f20c` | Multi-dimensional audit evidence | 2026-11-22T22:06:20.696Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `965d58cd` | Multi-dimensional audit evidence | 2026-11-22T22:06:31.485Z |
 | `learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl` | `https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL` | `hf-xiaomim` | Multi-dimensional audit evidence | 2026-11-22T22:15:02.001Z |
+| `learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf` | `https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-11-22T22:27:59.547Z |
+| `learn-github-metalbear-co-mirrord` | `https://github.com/metalbear-co/mirrord` | `a3009132` | Multi-dimensional audit evidence | 2026-11-22T22:28:01.860Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `ee76a797` | Multi-dimensional audit evidence | 2026-11-22T22:28:16.264Z |

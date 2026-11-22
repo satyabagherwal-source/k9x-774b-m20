@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-22T21:49:14.954Z",
+  "timestamp": "2026-11-22T22:28:21.300Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-nucleoidai-nucleoid-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nucleoidai-nucleoid-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-22T21:49:14.954Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-22T22:28:21.300Z`  
 > **Learning ID**: `LEARN-EVO-nucleoidai-nucleoid-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `920ad6aa`  
+> **Source Version**: `ee76a797`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-22T21:49:09.249Z  
+> **Timestamp**: 2026-11-22T22:28:15.209Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-22T21:49:09.242Z  
+> **Harvest Timestamp**: 2026-11-22T22:28:15.204Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1606,505 +1606,99 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `920ad6aa` (2026-11-22)
-**Commit Message**: NUC 134 Ruby Collection Method Aliases
+### Incident Patch 1: `ee76a797` (2026-11-22)
+**Commit Message**: Draft NUC 137 Floating-Point Absolute Value Alias
 
-Accepted under the automatic acceptance rule; independent and core r2 decisions Accepted.
+Category: Language compatibility. Automatically selected continuous cycle: one unbiased index-4 draw over five eligible live NUC 1 categories, without a preference redraw; no stale allocated Draft was eligible.
 
-Frozen preserving revision at e0086dfb66fc5ff3bbbd0bf8d1587bb4d24b3667. Lists and class populations gain collect/map and select/filter aliases through the existing helpers. Accepted NUC 133 and its sealed split 95 remain unchanged; the two new records use split 134.
+Request: Math.fabs(value) is exactly Math.abs(value) through the existing unary dispatcher. Preserve intrinsic numeric coercion, omitted NaN, signed-zero/non-finite behavior, eager arguments and ignored extras, the any-Undefined gate, dependencies, rollback, ordinary names, property reads, namespace shadowing and other receivers. No lexer/parser changes, new global function, flags, dependencies or version changes.
 
-All hard criteria passed independently and on the unchanged integrated tree: cargo build --all-targets; warning-denied Clippy; cargo fmt --check; full cargo test (3,918 passing, 0 failing, 25 pre-existing ignored); all 1,276 accepted programs replayed; all 3,933 accepted scoped identities retained plus ten passing additions. Required Rust improvement pass completed without changes.
+This allocation records no outcome and changes only this Draft and its two index rows. Continuous Language compatibility categorically skips token comparison, retaining all independent behavior, compatibility, development and automatic-acceptance hard criteria. Strategy learning is not configured; no hint or usefulness rubric was supplied.
 
-Continuous Language compatibility: token comparison categorically skipped, not a passing token gate. All policy checks passed. Usefulness unscored (missing_rubric); strategy learning not_configured. Caller executable-lock and empty-optional-path wrapper interruptions were corrected without source/baseline edits and retained in the outcome evidence.
-
-Independent report: 03b7059bcd2678f5a357e2fa57c5c2e67fb9d13a.
-I
-
-**File**: `dataset/nucleoid.spec.jsonl` (modified, +3/-0)
-```diff
-@@ -855,3 +855,6 @@
- {"id":"spec-0855","description":"Nucleoid propagates returns and rollback through colon free implicit iterators","code":"def first(text):\n    for text\n        return it\n    return \"empty\"\nassert(first(\"ab\"), \"a\")\nassert(first(\"\"), \"empty\")\ntext = \"ab\"\nvalue = 7\nfailure = null\ntry:\n    for text\n        value = 99\n        throw \"stop\"\ncatch error:\n    failure = error\nassert(value, 7)\nassert(failure, \"stop\")\nfor text\n    value += 1\nassert(value, 9)\nvalue","return":"9"}
- {"id":"spec-0856","description":"Nucleoid tests string boundaries with Rust spellings","code":"text = \"café.csv\"\nassert([text.starts_with(\"café\"), text.ends_with(\".csv\")], [true, true])\nassert([text.starts_with(\"Café\"), text.ends_with(\"CSV\")], [false, false])\nassert([\"\".starts_with(\"\"), \"\".ends_with(\"\")], [true, true])\nassert([\"é\".starts_with(\"é\"), \"é\".ends_with(\"é\")], [false, false])\nassert([\"12 notes\".starts_with(12), \"flagtrue\".ends_with(true), \"null notes\".starts_with(null)], [true, true, true])\nassert([\"undefined notes\".starts_with(), \"notesundefined\".ends_with()], [true, true])\nassert([\"notes.csv\".ends_with([\".csv\", \".txt\"]), \"notes.csv,.txt\".ends_with([\".csv\", \".txt\"])], [false, true])\nassert([\"abc\".starts_with(\"b\", 1), \"abc\".ends_with(\"b\", 0, 2)], [false, false])\n[text.starts_with(\"café\"), text.ends_with(\".csv\")]","return":"[true,true]"}
- {"id":"spec-0857","description":"Nucleoid keeps Rust boundary rules live and rolls back failed receiver updates","code":"class File(name):\n    this.name = name\nprefix = \"draft_\"\nsuffix = \".csv\"\n$File.draft = $File.name.starts_with(prefix)\n$File.table = $File.name.ends_with(suffix)\nreport = File(\"draft_report.csv\")\nnotes = File(\"notes.txt\")\nselected = File.filter(file -> file.draft and file.table).map(file -> file.name)\nassert([report.draft, report.table, notes.draft, notes.table], [true, true, false, false])\nnotes.name = \"draft_notes.csv\"\nassert(selected, [\"draft_report.csv\", \"draft_notes.csv\"])\nprefix = \"draft_notes\"\nassert([report.draft, notes.draft, selected], [false, true, [\"draft_notes.csv\"]])\nfailure = \"\"\ntry:\n    notes.name = 5\ncatch error:\n    failure = error\nassert(failure, TypeError(\"number.starts_with is not a function\"))\nassert([notes.name, notes.draft, notes.table, selected], [\"draft_notes.csv\", true, true, [\"draft_notes.csv\"]])\nsuffix = \".txt\"\nassert([report.table, notes.table, selected], [false, false, []])\n[notes.name, notes.draft, notes.table]","return":"[\"draft_notes.csv\",true,false]"}
-+{"id":"spec-0858","description":"Nucleoid collects and selects lists with Ruby method names","code":"values = [1, 2, 3]\nfactor = 2\nthreshold = 1\ndef project(value) => [value, value * factor]\ncollected = values.collect(project)\nselected = values.select(value -> value > threshold)\nsnapshot = collected.value\nassert(collected, values.map(project))\nassert(selected, values.filter(value -> value > threshold))\nassert(collected, [[1, 2], [2, 4], [3, 6]])\nassert(selected, [2, 3])\nvalues.push(4)\nfactor = 3\nthreshold = 2\nassert(collected, [[1, 3], [2, 6], [3, 9], [4, 12]])\nassert(selected, [3, 4])\nassert(snapshot, [[1, 2], [2, 4], [3, 6]])\ndef project(value) => value + factor\nassert(collected, [4, 5, 6, 7])\nassert(values, [1, 2, 3, 4])\nassert([].collect(value -> missing), [])\nassert([].select(value -> missing), [])\nmixed = [\"\", 0, false, \"yes\", 7, []]\nassert(mixed.select(value -> value), [\"yes\", 7, []])\n[collected, selected]","return":"[[4,5,6,7],[3,4]]"}
-+{"id":"spec-0859","description":"Nucleoid collects and selects live class populations","code":"class Item(name, score):\n    this.name = name\n    this.score = score\nlimit = 5\nnames = Item.collect(item -> item.name)\nchosen = Item.select(item -> item.score >= limit)\nassert([names, chosen], [[], []])\nfirst = Item(\"one\", 4)\nsecond = Item(\"two\", 8)\nassert(names, [\"one\", \"two\"])\nassert(chosen, [second])\nfirst.score = 9\nlimit = 8\nassert(chosen, [first, second])\nthird = Item(\"three\", 2)\nassert(names, [\"one\", \"two\", \"three\"])\nassert(Item.collect(item -> item.score), Item.map(item -> item.score))\nassert(Item.select(item -> item.score), Item.filter(item -> item.score))\ndelete third.name\ndelete third.score\ndelete third\nassert(names, [\"one\", \"two\"])\nassert(chosen, [first, second])\nclass Group(items):\n    this.items = items\n$Group.names = $Group.items.select(item -> item.score >= limit).collect(item -> item.name)\ngroup = Group([first, second])\nassert(group.names, [\"one\", \"two\"])\nsecond.score = 1\nassert([chosen, group.names], [[first], [\"one\"]])\nnames","return":"[\"one\",\"two\"]"}
-+{"id":"spec-0860","description":"Nucleoid preserves collection alias errors and rollback","code":"failure = \"\"\ntry:\n    [].collect()\ncatch error:\n    failure = error\nassert(failure, TypeError(\"map expects a function\"))\nclass Em
-```
-
-**File**: `dataset/nucleoid.synth.134.jsonl` (added, +2/-0)
-```diff
-@@ -0,0 +1,2 @@
-+{"id":"synth-134-0001","description":"Nucleoid collects and selects live lists with Ruby spellings","code":"prices = [2, 4, 6]\nrate = 2\nlimit = 3\nscaled = prices.collect(price -> price * rate)\nkept = prices.select(price -> price > limit)\nassert([scaled, kept], [[4, 8, 12], [4, 6]])\nprices.push(8)\nrate = 3\nlimit = 5\nassert([scaled, kept], [[6, 12, 18, 24], [6, 8]])\nassert(scaled, prices.map(price -> price * rate))\nassert(kept, prices.filter(price -> price > limit))\n[scaled, kept]","return":"[[6,12,18,24],[6,8]]"}
-+{"id":"synth-134-0002","description":"Nucleoid collects selected class members with Ruby spellings","code":"class Bid(who, amount):\n    this.who = who\n    this.amount = amount\nlimit = 50\nnames = Bid.select(bid -> bid.amount > limit).collect(bid -> bid.who)\nada = Bid(\"ada\", 40)\nbo = Bid(\"bo\", 65)\nassert(names, [\"bo\"])\nada.amount = 70\nassert(names, [\"ada\", \"bo\"])\nlimit = 60\nassert(names, Bid.filter(bid -> bid.amount > limit).map(bid -> bid.who))\nnames","return":"[\"ada\",\"bo\"]"}
-```
-
-**File**: `docs/README.md` (modified, +50/-1)
-```diff
-@@ -2811,7 +2811,7 @@ Full detail: [NUC 9](nuc-0009.md), [NUC 46](nuc-0046.md), [NUC 119](nuc-0119.md)
- | `Math` | `pow`, `sqrt`, `floor`, `round`, `max`, `min`, `clamp` ([NUC 21](nuc-0021.md)), `lerp` ([NUC 22](nuc-0022.md)), `saturate` ([NUC 23](nuc-0023.md)), `smoothstep(lower, upper, value)` (accepted [NUC 33](nuc-0033.md)), `smootherstep(lower, upper, value)` (accepted [NUC 35](nuc-0035.md)), `remap(start, end, targetStart, targetEnd, value)` (accepted [NUC 39](nuc-0039.md)) |
- | `String` | `String.fromCharCode`; instance `charAt`, `length`, `lower`, `replace`, `replaceAll` (accepted [NUC 42](nuc-0042.md)), `repeat`, `split`, `padStart` and `padEnd` ([NUC 111](nuc-0111.md)), Python's `startswith`, `endswith` and `join(items)`, with the separator as the receiver ([NUC 110](nuc-0110.md)), Rust's `starts_with(prefix)` and `ends_with(suffix)` ([NUC 132](nuc-0132.md)), the size and emptiness methods `length()`, `size()`, `len()`, `isEmpty()`, `is_empty()` and `isNotEmpty()` ([NUC 116](nuc-0116.md)), the case conversion aliases `uppercase()`, `to_uppercase()` and `uppercased()` of `toUpperCase()`, and `lowercase()`, `to_lowercase()` and `lowercased()` of `toLowerCase()` ([NUC 118](nuc-0118.md)), and the reversals `reverse()` and `reversed()`, exactly `text[::-1]` ([NUC 131](nuc-0131.md)) |
- | `Date` | `Date()`, `Date(string)`, `Date(number)`, `Date.now()`, `Date.parse()`; instance `getTime`, `getYear`, `toDateString` |
--| `List` | `push`, `pop`, `filter`, `map`, `flatMap` (accepted [NUC 41](nuc-0041.md)), `flat` ([NUC 103](nuc-0103.md)), `reduce`, `find`, `some`, `every`, `slice`, `reverse` (a new list in reverse order), `sort` (in place, [NUC 58](nuc-0058.md)), `join`, `length`, and the queries `at`, `includes`, `indexOf`, `lastIndexOf`, `findIndex`, `findLast`, `findLastIndex` and `concat` ([NUC 61](nuc-0061.md)), `sum` ([NUC 68](nuc-0068.md)), `max` and `min` ([NUC 69](nuc-0069.md)), `distinct` ([NUC 71](nuc-0071.md)), `count(predicate)` ([NUC 73](nuc-0073.md)), `mode` ([NUC 75](nuc-0075.md)), `maxBy` and `minBy` ([NUC 77](nuc-0077.md)), `average` ([NUC 80](nuc-0080.md)), `median` ([NUC 84](nuc-0084.md)), `sortBy` ([NUC 105](nuc-0105.md)), `partition` ([NUC 108](nuc-0108.md)), `product` ([NUC 114](nuc-0114.md)), `variance` and `stdev` ([NUC 123](nuc-0123.md)), `quantile` ([NUC 124](nuc-0124.md)), `zip(other)` and `zip(other, combine)` ([NUC 129](nuc-0129.md)), the size and emptiness aliases `size()`, `len()`, `isEmpty()`, `is_empty()` and `isNotEmpty()` ([NUC 116](nuc-0116.md)), the first and last element aliases `first()`, `last()`, `first(predicate)` and `last(predicate)` ([NUC 117](nuc-0117.md)), and the reversal aliases `reversed()` and `toReversed()` of `reverse()` ([NUC 131](nuc-0131.md)); `sum`, `max`, `min` and `mode` also read as `sum of list` ([NUC 75](nuc-0075.md) revision 2) |
-+| `List` | `push`, `pop`, `filter`, `map`, their Ruby aliases `select` and `collect` ([NUC 134](nuc-0134.md)), `flatMap` (accepted [NUC 41](nuc-0041.md)), `flat` ([NUC 103](nuc-0103.md)), `reduce`, `find`, `some`, `every`, `slice`, `reverse` (a new list in reverse order), `sort` (in place, [NUC 58](nuc-0058.md)), `join`, `length`, and the queries `at`, `includes`, `indexOf`, `lastIndexOf`, `findIndex`, `findLast`, `findLastIndex` and `concat` ([NUC 61](nuc-0061.md)), `sum` ([NUC 68](nuc-0068.md)), `max` and `min` ([NUC 69](nuc-0069.md)), `distinct` ([NUC 71](nuc-0071.md)), `count(predicate)` ([NUC 73](nuc-0073.md)), `mode` ([NUC 75](nuc-0075.md)), `maxBy` and `minBy` ([NUC 77](nuc-0077.md)), `average` ([NUC 80](nuc-0080.md)), `median` ([NUC 84](nuc-0084.md)), `sortBy` ([NUC 105](nuc-0105.md)), `partition` ([NUC 108](nuc-0108.md)), `product` ([NUC 114](nuc-0114.md)), `variance` and `stdev` ([NUC 123](nuc-0123.md)), `quantile` ([NUC 124](nuc-0124.md)), `zip(other)` and `zip(other, combine)` ([NUC 129](nuc-0129.md)), the size and emptiness aliases `size()`, `len()`, `isEmpty()`, `is_empty()` and `isNotEmpty()` ([NUC 116](nuc-0116.md)), the first and last element aliases `first()`, `last()`, `first(predicate)` and `last(predicate)` ([NUC 117](nuc-0117.md)), and the reversal aliases `reversed()` and `toReversed()` of `reverse()` ([NUC 131](nuc-0131.md)); `sum`, `max`, `min` and `mode` also read as `sum of list` ([NUC 75](nuc-0075.md) revision 2) |
- | `Class` | the global list of declared types; `Class.length` |
- 
- ```
-@@ -3643,6 +3643,55 @@ assert(mapped, 80)
- 
- ---
- 
-+### Ruby collection method aliases
-+
-+```
-+numbers = [1, 2, 3]
-+limit = 1
-+doubled = numbers.collect(number -> number * 2)
-+picked = numbers.select(number -> number > limit)
-+assert([doubled, picked], [[2, 4, 6], [2, 3]])
-+numbers.push(4)
-+limit = 2
-+assert([doubled, picked], [[2, 4, 6, 8], [3, 4]])
-+class Ticket(name, open):
-+    this.name = name
-+    this.open = open
-+board = Ticket.select(ticket -> ticket.open).collect(ticket -> ticket.name)
-+ada = Ticket("ada", true)
-+bo = Ticket("bo", false)
-+assert(board, ["ada"])
-+bo.open = true
-+assert(board, ["ada", "
-```
-
-**File**: `docs/nuc-0000.md` (modified, +2/-2)
-```diff
-@@ -178,7 +178,7 @@ Created: 31-Jul-2026
- | [122](nuc-0122.md) | Python-Style Except Clauses | Accepted |
- | [131](nuc-0131.md) | Reversal Method Aliases | Accepted |
- | [132](nuc-0132.md) | Rust String Boundary Method Aliases | Accepted |
--| [134](nuc-0134.md) | Ruby Collection Method Aliases | Draft |
-+| [134](nuc-0134.md) | Ruby Collection Method Aliases | Accepted |
- | [135](nuc-0135.md) | Kotlin Negated Membership Operator | Draft |
- 
- ### Documentation
-@@ -324,7 +324,7 @@ Created: 31-Jul-2026
- | [131](nuc-0131.md) | Reversal Method Aliases | Standards Track | Language compatibility | Accepted |
- | [132](nuc-0132.md) | Rust String Boundary Method Aliases | Standards Track | Language compatibility | Accepted |
- | [133](nuc-0133.md) | Edge Lists of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
--| [134](nuc-0134.md) | Ruby Collection Method Aliases | Standards Track | Language compatibility | Draft |
-+| [134](nuc-0134.md) | Ruby Collection Method Aliases | Standards Track | Language compatibility | Accepted |
- | [135](nuc-0135.md) | Kotlin Negated Membership Operator | Standards Track | Language compatibility | Draft |
- | [136](nuc-0136.md) | Unknown Constructor Arguments as Properties | Standards Track | Runtime features | Draft |
- 
-```
-
-**File**: `docs/nuc-0134.md` (modified, +174/-7)
-```diff
-@@ -4,7 +4,7 @@
- NUC: 134
- Title: Ruby Collection Method Aliases
- Author: Copilot <223556219+Copilot@users.noreply.github.com>
--Status: Draft
-+Status: Accepted
- Type: Standards Track
- Category: Language compatibility
- Created: 22-Nov-2026
-@@ -24,33 +24,200 @@ Requires: 8, 61
- - This open-ended invocation uses continuous mode. One unbiased draw from
-   NUC 1's live registry selected Language compatibility, index 4 among five
-   eligible categories; its token comparison is categorically skipped.
-+- Accepted under the automatic acceptance rule: the independent r2
-+  evaluation returned Accepted with every hard criterion satisfied. The
-+  caller's integrated-tree rechecks also passed with the unchanged frozen
-+  implementation.
- 
- ## Motivation
- 
- - Ruby programmers and language models use `items.collect(callback)` and
-   `items.select(callback)` to transform and filter collections. Nucleoid
--  already implements both operations under `map` and `filter`, but these
--  familiar names currently raise a method-call `TypeError`.
-+  already implements both operations under `map` and `filter`; at the pinned
-+  accepted revision these familiar names raised a method-call `TypeError`.
- - Exact aliases advance the language-superset aspiration without reserving
-   identifiers, changing existing operations or introducing another callback
-   implementation. This is a bounded spelling addition, not full Ruby
-   compatibility.
- 
- ## Rationale
- 
--- Pending: the proposer completes this section.
-+- Use Ruby's familiar `collect` and `select` names only at the existing
-+  collection-call dispatch point; reuse `map` and `filter` rather than add
-+  another callback implementation.
-+- Keep the canonical callback-error labels. An alias does not acquire a
-+  different arity, validation rule, dependency model or transaction boundary.
-+- Preserve the written method name in the AST, graph statements and rendered
-+  source. Aliases have equivalent behavior, not identical source trees.
-+- Keep ordinary identifiers, property reads, callable object properties and
-+  instance methods named `collect` or `select` outside this dispatch change.
-+- Do not infer Ruby blocks, lazy enumerators, index arguments, closure capture,
-+  bang methods or support for additional receiver kinds from these two names.
-+- Language compatibility is the caller-confirmed category: this is an
-+  optional familiar-name addition, not a new collection operation.
- 
- ## Specification
- 
--- Pending: the proposer completes this section.
-+- On every list or class instance population that supports `map(callback)`,
-+  `collect(callback)` performs that exact operation. On the same receivers,
-+  `select(callback)` performs `filter(callback)`.
-+- Snapshot the receiver before evaluating arguments. Evaluate all supplied
-+  argument expressions once, left to right, including unused extras, then
-+  validate the first supplied value as a function, even on empty collections.
-+- Invoke that callback once per snapshotted item, in order, with only the
-+  item argument. Existing callback spellings and invocation semantics apply;
-+  additional parameters remain `null`.
-+- `collect` preserves each callback result as one list item, including nested
-+  lists; it does not flatten. `select` retains the original items whose
-+  callback results are truthy. Preserve order, duplicates and object identity.
-+- The query itself does not mutate its receiver. Argument and callback
-+  effects, null/undefined tracking and callable snapshots keep their accepted
-+  behavior.
-+- Reads, list mutations, population creation/deletion, member updates,
-+  named-callback redefinitions, obsolete dependencies, rollback and recovery
-+  use the existing `map`/`filter` machinery.
-+- Null and undefined receivers keep their existing deferred call routing,
-+  including skipping argument evaluation. All other receivers keep their
-+  current dispatch and diagnostics.
-+- `collect` and `select` remain ordinary names, not keywords or first-class
-+  bound native methods. No lexer, parser, AST lowering, public Rust type,
-+  dependency, configuration, version or MSRV changes are introduced.
-+- Only formerly failing collection calls using these two names change,
-+  including programs that catch their old unknown-method errors. Existing
-+  successful calls and every `map`/`filter` form remain unchanged.
-+- The authoritative [Ruby collection method aliases
-+  section](../nucleoid.spec.md#ruby-collection-method-aliases) and its three
-+  executable entries define list equivalence/liveness, population and
-+  class-rule liveness, canonical errors and rollback.
- 
- ## Errors
- 
--- Pending: the proposer completes this section.
-+- A missing or non-function first argument to `collect` raises exactly
-+  `TypeError("map expects a function")`, including on empty receivers.
-+- A missing or non-function first argument to `select` raises exactly
-+  `TypeError("filter expects a function")`, including on empty receivers.
-+- Argument errors precede callback
-```
-
-**File**: `nucleoid.spec.md` (modified, +131/-0)
-```diff
-@@ -2076,6 +2076,39 @@ statement positions; caught values and transaction recovery are unchanged.
-   Inherited noncapture, parameter-dependent-local, Windows debug stack and
-   old whole-suite Gitless discovery limitations are not repaired.
- 
-+## Ruby collection method aliases
-+
-+- `collect(callback)` is exactly `map(callback)` on lists and class instance
-+  populations; `select(callback)` is exactly `filter(callback)` on those
-+  receivers. These are optional Ruby method names, not full Ruby semantics.
-+- Snapshot the receiver before evaluating arguments. Evaluate every supplied
-+  argument expression once, left to right, including unused extras, before
-+  validating the first value as a function, even for an empty collection.
-+- A missing or non-function callback raises
-+  `TypeError("map expects a function")` for `collect`, or
-+  `TypeError("filter expects a function")` for `select`.
-+- Invoke the callback once per snapshotted item, in order, with only that
-+  item. Preserve existing invocation, null/undefined tracking, callable
-+  snapshots and noncapturing behavior; additional parameters remain `null`.
-+- `collect` keeps each callback result as one item without flattening.
-+  `select` keeps the original items whose callback results are truthy.
-+  Preserve result order, duplicates and identities without writing the
-+  receiver; callbacks and arguments retain their ordinary effects.
-+- Reads, list and population changes, member updates, class rules,
-+  named-function redefinitions, obsolete dependencies, errors, rollback and
-+  recovery use the unchanged `map`/`filter` implementation.
-+- Preserve the written call name in the AST, graph and rendered statements.
-+  `collect` and `select` remain ordinary identifiers; property reads, callable
-+  object properties, user-defined instance methods and all other receiver
-+  dispatch remain unchanged. Native methods do not become bound properties.
-+- Null and undefined receivers still skip argument evaluation and use their
-+  existing deferred call routing. Only formerly failing collection alias
-+  calls change, including catches of their former unknown-method errors.
-+- Keep every `map`/`filter` form. Add no implicit blocks, enumerators, bang
-+  variants, receiver kinds, keywords, parser normalization or dependencies.
-+- The three appended executable entries cover live list equivalence, live
-+  populations/class rules, canonical callback errors and failed-update rollback.
-+
- ## Reactive flat mapping
- 
- - `list.flatMap(callback)` is a read-only ordered zero/one/many projection.
-@@ -28756,4 +28789,102 @@ suffix = ".txt"
- assert([report.table, notes.table, selected], [false, false, []])
- [notes.name, notes.draft, notes.table]
- # return: ["draft_notes.csv",true,false]
-+
-+---
-+
-+# Nucleoid collects and selects lists with Ruby method names
-+
-+values = [1, 2, 3]
-+factor = 2
-+threshold = 1
-+def project(value) => [value, value * factor]
-+collected = values.collect(project)
-+selected = values.select(value -> value > threshold)
-+snapshot = collected.value
-+assert(collected, values.map(project))
-+assert(selected, values.filter(value -> value > threshold))
-+assert(collected, [[1, 2], [2, 4], [3, 6]])
-+assert(selected, [2, 3])
-+values.push(4)
-+factor = 3
-+threshold = 2
-+assert(collected, [[1, 3], [2, 6], [3, 9], [4, 12]])
-+assert(selected, [3, 4])
-+assert(snapshot, [[1, 2], [2, 4], [3, 6]])
-+def project(value) => value + factor
-+assert(collected, [4, 5, 6, 7])
-+assert(values, [1, 2, 3, 4])
-+assert([].collect(value -> missing), [])
-+assert([].select(value -> missing), [])
-+mixed = ["", 0, false, "yes", 7, []]
-+assert(mixed.select(value -> value), ["yes", 7, []])
-+[collected, selected]
-+# return: [[4,5,6,7],[3,4]]
-+
-+---
-+
-+# Nucleoid collects and selects live class populations
-+
-+class Item(name, score):
-+    this.name = name
-+    this.score = score
-+limit = 5
-+names = Item.collect(item -> item.name)
-+chosen = Item.select(item -> item.score >= limit)
-+assert([names, chosen], [[], []])
-+first = Item("one", 4)
-+second = Item("two", 8)
-+assert(names, ["one", "two"])
-+assert(chosen, [second])
-+first.score = 9
-+limit = 8
-+assert(chosen, [first, second])
-+third = Item("three", 2)
-+assert(names, ["one", "two", "three"])
-+assert(Item.collect(item -> item.score), Item.map(item -> item.score))
-+assert(Item.select(item -> item.score), Item.filter(item -> item.score))
-+delete third.name
-+delete third.score
-+delete third
-+assert(names, ["one", "two"])
-+assert(chosen, [first, second])
-+class Group(items):
-+    this.items = items
-+$Group.names = $Group.items.select(item -> item.score >= limit).collect(item -> item.name)
-+group = Group([first, second])
-+assert(group.names, ["one", "two"])
-+second.score = 1
-+assert([chosen, group.names], [[first], ["one"]])
-+names
-+# return: ["one","two"]
-+
-+---
-+
-+# Nucleoid preserves collection alias errors and rollback
-+
-+failure = ""
-+try:
-+    [].collect()
-+catch error:
-+    failure = error
-+assert(failure, TypeError("map expects a function"))
-+class Empty
-```
-
-**File**: `src/lang/ast/array/query.rs` (modified, +2/-2)
-```diff
-@@ -54,10 +54,10 @@ impl Runtime {
-             // A class's instance list as a list value. A list already is one,
-             // so plain lists keep raising `<list>.list is not a function`.
-             "list" | "all" if source == ListSource::Population => Ok(Value::List(items)),
--            "filter" => self.filter_items(items, &expect_function(predicate, "filter")?),
-+            "filter" | "select" => self.filter_items(items, &expect_function(predicate, "filter")?),
-             "count" => self.count_items(&items, &expect_function(predicate, "count")?),
-             "partition" => self.partition_items(items, &expect_function(predicate, "partition")?),
--            "map" => self.map_items(items, &expect_function(predicate, "map")?, false),
-+            "map" | "collect" => self.map_items(items, &expect_function(predicate, "map")?, false),
-             "flatMap" => self.map_items(items, &expect_function(predicate, "flatMap")?, true),
-             "flat" => Ok(Value::List(self.flatten_items(items, arguments.first()))),
-             "includes" | "contains" | "indexOf" | "lastIndexOf" => {
-```
-
-**File**: `tests/case_conversion_aliases.rs` (modified, +6/-2)
-```diff
-@@ -370,7 +370,7 @@ fn only_the_appended_cases_call_the_aliases_and_they_run_every_assertion() {
-         }
-     }
-     assert_eq!(assertions, 23);
--    assert_eq!(cases, 1276);
-+    assert_eq!(cases, 1280);
- }
- 
- #[test]
-@@ -440,7 +440,11 @@ fn the_appended_cases_stand_after_nuc_117_and_before_nuc_103() {
-         ),
-     ] {
-         let index = cases.iter().position(|case| case.title == title).unwrap();
--        assert_eq!(index, cases.len() - 18, "{title}");
-+        assert_eq!(
-+            index,
-+            cases.len() - 18 - usize::from(title == REFERENCE_TITLE),
-+            "{title}"
-+        );
-         assert_eq!(cases[index - 1].title, previous);
-         assert_eq!(cases[index + 13].title, following);
-     }
-```
-
----
-
-### Incident Patch 2: `870bc76b` (2026-11-22)
-**Commit Message**: Draft NUC 136 Unknown Constructor Arguments as Properties
-
-Category: Runtime features, for the user's explicit single-proposal
-request (data modeling: construction with named arguments, the
-feature of NUC 47), so the token comparison is skipped. Runtime
-applicability is existing_comparable: every instance an unknown label
-builds has an accepted spelling that declares the label as a
-parameter and assigns it after the constructor's statements.
-
-Requested change: "Automatically accept unknown argument in
-constructor in all constructor types", so that
-Shape(type='SQUARE', color='RED') on class Shape(type) with the body
-this.type = type acts like class Shape(type, color) with the body
-this.type = type and this.color = color. A label that names no
-parameter of the effective constructor no longer raises
-TypeError("Unknown constructor argument '<name>' for <class>"); it is
-bound like one more parameter and assigned to the instance's property
-of that name after the constructor's statements, on every constructor
-route, super(...) included. Repeated labels, positional arguments
-after labels and labels naming a rest parameter keep their errors.
-
-The user accepted in advance this one compatibil
+Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
 **File**: `docs/nuc-0000.md` (modified, +2/-0)
 ```diff
-@@ -101,6 +101,7 @@ Created: 31-Jul-2026
- | [119](nuc-0119.md) | Finally Clauses for Try Statements | Accepted |
- | [126](nuc-0126.md) | Exit-Controlled Repeat-Until Loops | Accepted |
- | [130](nuc-0130.md) | Loop-Local Iterator Exits | Rejected: existing corpus-count test fails (1,246 expected; 1,252 actual) |
-+| [136](nuc-0136.md) | Unknown Constructor Arguments as Properties | Draft |
+@@ -180,6 +180,7 @@ Created: 31-Jul-2026
+ | [132](nuc-0132.md) | Rust String Boundary Method Aliases | Accepted |
+ | [134](nuc-0134.md) | Ruby Collection Method Aliases | Accepted |
+ | [135](nuc-0135.md) | Kotlin Negated Membership Operator | Draft |
++| [137](nuc-0137.md) | Floating-Point Absolute Value Alias | Draft |
  
- ### Utility enhancement
+ ### Documentation
  
-@@ -325,6 +326,7 @@ Created: 31-Jul-2026
- | [133](nuc-0133.md) | Edge Lists of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
- | [134](nuc-0134.md) | Ruby Collection Method Aliases | Standards Track | Language compatibility | Draft |
+@@ -327,6 +328,7 @@ Created: 31-Jul-2026
+ | [134](nuc-0134.md) | Ruby Collection Method Aliases | Standards Track | Language compatibility | Accepted |
  | [135](nuc-0135.md) | Kotlin Negated Membership Operator | Standards Track | Language compatibility | Draft |
-+| [136](nuc-0136.md) | Unknown Constructor Arguments as Properties | Standards Track | Runtime features | Draft |
+ | [136](nuc-0136.md) | Unknown Constructor Arguments as Properties | Standards Track | Runtime features | Draft |
++| [137](nuc-0137.md) | Floating-Point Absolute Value Alias | Standards Track | Language compatibility | Draft |
  
  ## Copyright
  
 ```
 
-**File**: `docs/nuc-0136.md` (added, +100/-0)
+**File**: `docs/nuc-0137.md` (added, +66/-0)
 ```diff
-@@ -0,0 +1,100 @@
-+# NUC 136 -- Unknown Constructor Arguments as Properties
+@@ -0,0 +1,66 @@
++# NUC 137 -- Floating-Point Absolute Value Alias
 +
 +```
-+NUC: 136
-+Title: Unknown Constructor Arguments as Properties
-+Author: Can Mingir <canmingir@gmail.com>
++NUC: 137
++Title: Floating-Point Absolute Value Alias
++Author: Copilot <223556219+Copilot@users.noreply.github.com>
 +Status: Draft
 +Type: Standards Track
-+Category: Runtime features
++Category: Language compatibility
 +Created: 22-Nov-2026
-+Requires: 14, 47, 54, 74, 78, 87, 107
 +```
 +
 +## Abstract
 +
-+- A label in a constructor call that names no parameter of the effective
-+  constructor no longer raises
-+  `TypeError("Unknown constructor argument '<name>' for <class>")`. The
-+  call acts as if that constructor declared the name as one more parameter
-+  and its statements were followed by `this.<name> = <name>`. After
-+  `class Shape(type):` with the body `this.type = type`,
-+  `shape1 = Shape(type='SQUARE', color='RED')` builds the instance that
-+  `class Shape(type, color):` with the body `this.type = type` and
-+  `this.color = color` builds:
-+  `{"id": "shape1", "type": "SQUARE", "color": "RED"}`.
-+- Every constructor route takes unknown labels: class headers with or
-+  without a body or a parameter list, a parent named after a colon or with
-+  `extends` ([NUC 78](nuc-0078.md)), inherited constructors, adopted
-+  `def init(...)` and `def __init__(self, ...)` ([NUC 107](nuc-0107.md)),
-+  initializing `this.` parameters ([NUC 87](nuc-0087.md)), literal
-+  defaults ([NUC 54](nuc-0054.md)) and final rest parameters
-+  ([NUC 74](nuc-0074.md)), `new`, assignment-named, expression and nested
-+  instances, shared class rules, `is` assignments, and `super(...)`, which
-+  assigns them on the same instance after the parent constructor's
-+  statements.
-+- Declared labels, positional binding and the other binding errors are
-+  unchanged: surplus positional values are still evaluated and ignored, and
-+  a repeated label, a positional argument after a label and a label naming
-+  a rest parameter keep their `TypeError`s. Function, method, built-in and
-+  direct `init` calls keep their assignment-expression arguments.
-+- **Compatibility break accepted in advance.** The user accepted this one
-+  break on 22-Nov-2026: a constructor call with an unknown label, which
-+  raised that `TypeError` before evaluating any argument, now evaluates its
-+  values once in source order and builds the instance. The 14 existing
-+  assertions that pin exactly that error move to the new reading, keeping
-+  their case identities, and this NUC lists each one: the specification
-+  case `Nucleoid validates constructor names without caller assignments`
-+  and assertions in `tests/named_constructors.rs`, with its CLI fixture
-+  `tests/fixtures/named-constructors-invalid.nuc`,
-+  `tests/initializing_parameters.rs`, `tests/self_parameters.rs`,
-+  `tests/rest_parameters.rs`, `tests/literal_parameter_defaults.rs` and
-+  `tests/item_words.rs`. That break alone fails no hard criterion; any
-+  other break or test edit still does.
++- Add `Math.fabs(value)` as an exact alias of the accepted `Math.abs(value)`,
++  using the familiar floating-point absolute-value spelling from C, C++ and
++  Python without introducing another numerical implementation.
++- Preserve intrinsic coercion, omitted-argument `NaN`, non-finite values,
++  signed-zero bits, eager argument evaluation, ignored extras, the existing
++  any-`Undefined` gate, dependencies, rollback and every accepted spelling.
++- Keep ordinary names, property reads, namespace shadowing and other receiver
++  routing unchanged. Introduce no global `fabs`, additional receiver kinds,
++  first-class native methods, parser changes, flags or dependencies.
++- This automatically selected cycle uses continuous mode. One unbiased draw
++  from the live NUC 1 registry selected Language compatibility, index 4 among
++  five eligible categories. Token comparison is categorically skipped, not
++  passed; all behavior, compatibility and development checks remain mandatory.
 +
 +## Motivation
 +
-+- The user requested this change directly: "Automatically accept unknown
-+  argument in constructor in all constructor types", so that
-+  `Shape(type='SQUARE', color='RED')` on `class Shape(type):` with the body
-+  `this.type = type` acts like `class Shape(type, color):` with the body
-+  `this.type = type` and `this.color = color`.
-+- A world model's instances often carry more attributes than their
-+  constructor needs to reason about. Today a class must list every one of
-+  them in its header and repeat it in a body assignment, and one label it
-+  does not list stops the whole construction. The ARC datasets build every
-+  instance with labels, such as `Obj(x=0, y=0, width=2, height=2, ...)`, so
-+  a model that adds an attribute the class leaves out, such as `color=3`,
-+  loses the instance to that `TypeError`.
-+- With unknown labels as properties a class declares only the parameters
-+  its constructor uses, and callers name the rest where they create the
-+  instance, as Python's `types.SimpleNamespace(type='SQUARE', color='RED')`
-+  and its `self.__dict__.update(kwargs)` idiom, JavaScript's
-+  `Object.assign(this, options)` and Ruby's
-+  `OpenStruct.new(type: 'SQUARE', color: 'RED')` do.
-+- The price is [NUC 47](nuc-0047.md)'s check for misspelled labels:
-+  `Student(nmae="Can", age=20)` now builds a student whose `name` is `null`
-+  and whose `nmae` is `"Can"`. That is the break the user accepted.
++- C and C++ expose `fabs`, and Python exposes `math.fabs`, for floating-point
++  absolute values. That spelling is familiar to programmers and language
++  models, while Nucleoid already provides the required operation as
++  `Math.abs`.
++- The accepted native runtime returns `3` for `Math.abs(-3)` but raises
++  `TypeError("Math.fabs is not a function")` for the resolved
++  `Math.fabs(-3)` call. The existing undefined-argument gate remains a
++  separate accepted behavior and must not be broadened or bypassed.
++- An alias in the existing unary math dispatcher advances source familiarity
++  without reserving a word or adding another absolute-value implementation.
++  It retains Nucleoid's accepted numeric model and is not a claim of complete
++  C, C++ or Python call compatibility.
 +
 +## Rationale
 +
-+- Pending: the proposer completes this section.
++Pending fresh isolated preparation after this Draft allocation is pushed.
 +
 +## Specification
 +
-+- Pending: the proposer completes this section.
++Pending fresh isolated preparation against the pinned accepted revision.
 +
 +## Errors
 +
-+- Pending: the proposer completes this section.
++Pending fresh isolated preparation.
 +
 +## Reference Implementation
 +
-+- Pending: the proposer completes this section.
++Pending the independent proposal preparation, Rust improvement pass and
++separate frozen-candidate evaluation. No outcome is recorded by this allocation.
 +
 +## Copyright
 +
@@ -2140,22 +1734,22 @@ The user accepted in advance this one compatibil
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. NUC 134 Ruby Collection Method Aliases
+## X. Draft NUC 137 Floating-Point Absolute Value Alias
 
 **RULE**:
-When implementing operations in `dataset/nucleoid.spec.jsonl`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `920ad6aa`: NUC 134 Ruby Collection Method Aliases. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ee76a797`: Draft NUC 137 Floating-Point Absolute Value Alias. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `dataset/nucleoid.spec.jsonl`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-{"id":"spec-0858","description":"Nucleoid collects and selects lists with Ruby method names","code":"values = [1, 2, 3]\nfactor = 2\nthreshold = 1\ndef project(value) => [value, value * factor]\ncollected = values.collect(project)\nselected = values.select(value -> value > threshold)\nsnapshot = collected.value\nassert(collected, values.map(project))\nassert(selected, values.filter(value -> value > threshold))\nassert(collected, [[1, 2], [2, 4], [3, 6]])\nassert(selected, [2, 3])\nvalues.push(4)\nfactor = 3\nthreshold = 2\nassert(collected, [[1, 3], [2, 6], [3, 9], [4, 12]])\nassert(selected, [3, 4])\nassert(snapshot, [[1, 2], [2, 4], [3, 6]])\ndef project(value) => value + factor\nassert(collected, [4, 5, 6, 7])\nassert(values, [1, 2, 3, 4])\nassert([].collect(value -> missing), [])\nassert([].select(value -> missing), [])\nmixed = [\"\", 0, false, \"yes\", 7, []]\nassert(mixed.select(value -> value), [\"yes\", 7, []])\n[collected, selected]","return":"[[4,5,6,7],[3,4]]"}
-{"id":"spec-0859","description":"Nucleoid collects and selects live class populations","code":"class Item(name, score):\n    this.name = name\n    this.score = score\nlimit = 5\nnames = Item.collect(item -> item.
+| [137](nuc-0137.md) | Floating-Point Absolute Value Alias | Draft |
+| [137](nuc-0137.md) | Floating-Point Absolute Value Alias | Standards Track | Language compatibility | Draft |
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2165,7 +1759,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `920ad6aa` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ee76a797` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

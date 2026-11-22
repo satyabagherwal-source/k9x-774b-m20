@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-22T22:15:02.009Z",
+  "last_updated": "2026-11-22T22:28:16.273Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -695,14 +695,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
-      "content_hash": "6bf2d6beaf579bc86a809500bdb48c1fa72c096ab1251daedb9308b4fc7ccbcf",
-      "verified_at": "2026-11-18T15:22:08.776Z",
+      "content_hash": "803e258110bde37597b5e80a6d41bee8447fe5053e9f6ff52cfb2587ad9ae655",
+      "verified_at": "2026-11-22T22:27:59.555Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T15:22:08.776Z"
+      "last_updated": "2026-11-22T22:27:59.555Z"
     },
     "Alissonerdx/BFS-Best-Face-Swap": {
       "repository": "Alissonerdx/BFS-Best-Face-Swap",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "f56b473a036a880fc27b016e06036d27524852eeb6c659917a04182e5595ce03",
-      "verified_at": "2026-11-22T21:49:09.982Z",
+      "content_hash": "c025b312199987b5c80ff3bb5c3ff9693d9e0719152c96e1db16982461c2005b",
+      "verified_at": "2026-11-22T22:28:16.272Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-22T21:49:09.982Z"
+      "last_updated": "2026-11-22T22:28:16.272Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -4641,14 +4641,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-metalbear-co-mirrord",
-      "content_hash": "e6a25db44bef3579de93ccb76226c09487517bee6e077d617aec6441397a3a94",
-      "verified_at": "2026-11-21T15:17:38.955Z",
+      "content_hash": "eb60ad8c113b452d4de3b3d3c6f5cdedaacadfb22069ac6aaf762e10743439c2",
+      "verified_at": "2026-11-22T22:28:01.868Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-21T15:17:38.955Z"
+      "last_updated": "2026-11-22T22:28:01.868Z"
     },
     "openkruise/kruise": {
       "repository": "openkruise/kruise",

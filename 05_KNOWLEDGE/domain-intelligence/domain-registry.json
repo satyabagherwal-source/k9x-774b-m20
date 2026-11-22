@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-22T22:15:15.924Z",
+  "last_updated": "2026-11-22T22:28:21.583Z",
   "total_records": 2384,
   "domains": {
     "A": {
@@ -9837,8 +9837,8 @@
       "title": "Research & Knowledge Intelligence: orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-research-knowledge-intelligenc.md",
       "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
-      "content_hash": "70b689740c3ba605d10acaecbd0c58b0633aa8e7a10ff93b966f8a558f0a9edb",
-      "created_at": "2026-11-18T15:22:08.949Z"
+      "content_hash": "e57c0bd003d4d5024e50d5657d5da5bd9b0ebbfde6d69940f4a4e3b9e819ede8",
+      "created_at": "2026-11-22T22:27:59.758Z"
     },
     "domain_intelligence-technical-construction-intelligence-kucherenko-jscpd-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-kucherenko-jscpd-core-invariants",
@@ -9873,8 +9873,8 @@
       "title": "Research & Knowledge Intelligence: hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings-research-knowledge-i.md",
       "repository": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings",
-      "content_hash": "dcc58e3341f34976efacbb5a9a6b45e360eee20eb8d3758a3ff79aaee509ad61",
-      "created_at": "2026-11-18T15:22:21.076Z"
+      "content_hash": "6c45b273cb422d86ff604009f2f9e5f14817961d4378abdcb136c0916fd74130",
+      "created_at": "2026-11-22T22:28:20.777Z"
     },
     "domain_intelligence-technical-construction-intelligence-expo-expo-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-expo-expo-learnings-core-invariants",
@@ -15463,8 +15463,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "ed7c0982f32a4185a555ef51cbfe48f6896d8ad539cc9ef1f54bdfb07c36172b",
-      "created_at": "2026-11-22T21:49:10.373Z"
+      "content_hash": "5c0f284a39ec539a2cdb4b9fec344b1f8a0060d0b99944657728215a5d509ae6",
+      "created_at": "2026-11-22T22:28:16.661Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -15913,8 +15913,8 @@
       "title": "Architecture Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-learnings-architecture-intelligence-nucleoidai-nucleoid-lear.md",
       "repository": "nucleoidai-nucleoid-learnings",
-      "content_hash": "2e77fb11ba4d877af3da7fe3c6f1055ae6c4319aca756bae1c0bcdcffe815b28",
-      "created_at": "2026-11-22T21:49:15.240Z"
+      "content_hash": "19f88b9e79181a1c52fabd28f5708ba4a850b9a0dbca0d4e6505d9d9d33b7b4e",
+      "created_at": "2026-11-22T22:28:21.583Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants",
@@ -19373,8 +19373,8 @@
       "title": "Technical Construction Intelligence: metalbear-co/mirrord Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-metalbear-co-mirrord-technical-construction-intelligence-metalbear-co-mirrord-co.md",
       "repository": "metalbear-co/mirrord",
-      "content_hash": "2d0c0b08a6f5063cb438755c4901dfa214e9d6f951bfe8edbe5727a212cbee0f",
-      "created_at": "2026-11-21T15:17:39.416Z"
+      "content_hash": "d120af4079a7651a295e921122070229b0ba0e3af4742cfcc75c5f1bb40525f4",
+      "created_at": "2026-11-22T22:28:02.255Z"
     },
     "domain_intelligence-technical-construction-intelligence-run-llama-llama_index-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-run-llama-llama_index-core-invariants",
@@ -19400,8 +19400,8 @@
       "title": "Technical Construction Intelligence: metalbear-co-mirrord-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-metalbear-co-mirrord-learnings-technical-construction-intelligence-metalbear-co-.md",
       "repository": "metalbear-co-mirrord-learnings",
-      "content_hash": "88f9a0e977281b2af418cfb83c35e79663f67fbd98b97c29888c03763d2f56ef",
-      "created_at": "2026-11-21T15:17:57.972Z"
+      "content_hash": "8b954bc7f6f9bf7d361cc6c6eb953dc62bba20345412a04e58dadcb5f6daf1ce",
+      "created_at": "2026-11-22T22:28:20.226Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-dealignai-deepseek-v4-1-flash-uncensored-fp8-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-dealignai-deepseek-v4-1-flash-uncensored-fp8-",

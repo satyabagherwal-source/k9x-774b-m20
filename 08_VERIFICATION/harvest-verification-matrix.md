@@ -12210,3 +12210,6 @@
 | `CYCLE-20261122-ZBIR` | `2026-11-22T22:06:20.691Z` | `FalkorDB/FalkorDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9999` | Yes (`568d2296...`) |
 | `CYCLE-20261122-ZJUG` | `2026-11-22T22:06:31.480Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING` | Yes (`b33c024c...`) |
 | `CYCLE-20261122-AHRG` | `2026-11-22T22:15:01.996Z` | `XiaomiMiMo/MiMo-V2.6-Pro-RL` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md` | Yes (`d5d96dbc...`) |
+| `CYCLE-20261122-R5PY` | `2026-11-22T22:27:59.542Z` | `orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings.md` | Yes (`803e2581...`) |
+| `CYCLE-20261122-R7I7` | `2026-11-22T22:28:01.855Z` | `metalbear-co/mirrord` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10000` | Yes (`eb60ad8c...`) |
+| `CYCLE-20261122-RIMB` | `2026-11-22T22:28:16.259Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 10001` | Yes (`c025b312...`) |

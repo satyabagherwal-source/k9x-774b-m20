@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-22T22:15:16.218Z",
+  "last_updated": "2026-11-22T22:28:21.897Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-22T21:41:07.464Z",
@@ -428,7 +428,7 @@
       "staged_for_review": 1
     },
     "metalbear-co-mirrord-learnings.md": {
-      "processed_at": "2026-11-21T15:17:56.912Z",
+      "processed_at": "2026-11-22T22:28:19.660Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -773,7 +773,7 @@
       "staged_for_review": 1
     },
     "nucleoidai-nucleoid-learnings.md": {
-      "processed_at": "2026-11-22T21:49:14.633Z",
+      "processed_at": "2026-11-22T22:28:20.970Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2073,7 +2073,7 @@
       "staged_for_review": 1
     },
     "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings.md": {
-      "processed_at": "2026-11-18T15:22:20.900Z",
+      "processed_at": "2026-11-22T22:28:20.572Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3733,7 +3733,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 3243,
+  "total_dossiers_evaluated": 3246,
   "total_canonical_promoted": 478,
-  "total_staged_for_review": 2452
+  "total_staged_for_review": 2455
 }

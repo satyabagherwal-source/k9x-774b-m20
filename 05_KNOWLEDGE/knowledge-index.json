@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-22T22:15:16.083Z",
+  "last_updated": "2026-11-22T22:28:21.756Z",
   "total_verified_learnings": 9075,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 23797,
+  "total_items": 23801,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -114778,9 +114778,9 @@
       "title": "Research & Knowledge Intelligence: orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF Core Invariants",
       "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
       "source_version": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
-      "content_hash": "70b689740c3ba605d10acaecbd0c58b0633aa8e7a10ff93b966f8a558f0a9edb",
+      "content_hash": "e57c0bd003d4d5024e50d5657d5da5bd9b0ebbfde6d69940f4a4e3b9e819ede8",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T15:22:08.949Z"
+      "persisted_at": "2026-11-22T22:27:59.758Z"
     },
     "candidate_directive-deps-bump-rustix-to-1-1-6-for-rustsec-2026-0486": {
       "item_id": "candidate_directive-deps-bump-rustix-to-1-1-6-for-rustsec-2026-0486",
@@ -114886,9 +114886,9 @@
       "title": "Research & Knowledge Intelligence: hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings Core Invariants",
       "repository": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "dcc58e3341f34976efacbb5a9a6b45e360eee20eb8d3758a3ff79aaee509ad61",
+      "content_hash": "6c45b273cb422d86ff604009f2f9e5f14817961d4378abdcb136c0916fd74130",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T15:22:21.076Z"
+      "persisted_at": "2026-11-22T22:28:20.777Z"
     },
     "domain_intelligence-technical-construction-intelligence-expo-expo-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-expo-expo-learnings-core-invariants",
@@ -229709,8 +229709,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "920ad6aa",
-      "content_hash": "f56b473a036a880fc27b016e06036d27524852eeb6c659917a04182e5595ce03",
+      "source_version": "ee76a797",
+      "content_hash": "c025b312199987b5c80ff3bb5c3ff9693d9e0719152c96e1db16982461c2005b",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -229953,6 +229953,11 @@
           "number": "EXISTING",
           "title": "NUC 134 Ruby Collection Method Aliases",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 10001,
+          "title": "Draft NUC 137 Floating-Point Absolute Value Alias",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -229960,7 +229965,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-22T21:49:09.777Z",
+      "verified_at": "2026-11-22T22:28:16.051Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -230002,10 +230007,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "920ad6aa",
-      "content_hash": "ed7c0982f32a4185a555ef51cbfe48f6896d8ad539cc9ef1f54bdfb07c36172b",
+      "source_version": "ee76a797",
+      "content_hash": "5c0f284a39ec539a2cdb4b9fec344b1f8a0060d0b99944657728215a5d509ae6",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T21:49:10.373Z"
+      "persisted_at": "2026-11-22T22:28:16.661Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid",
@@ -230014,10 +230019,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "920ad6aa",
-      "content_hash": "593a692954407ac8ee17f482510c124b28f7619d4a7911fa6fa7750e81b00878",
+      "source_version": "ee76a797",
+      "content_hash": "264bb87316622e85cbeb8a114ee6616bf415e4565934e46f8d492d0a427dd33c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T21:49:10.548Z"
+      "persisted_at": "2026-11-22T22:28:16.832Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -231110,9 +231115,9 @@
       "title": "Architecture Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "2e77fb11ba4d877af3da7fe3c6f1055ae6c4319aca756bae1c0bcdcffe815b28",
+      "content_hash": "19f88b9e79181a1c52fabd28f5708ba4a850b9a0dbca0d4e6505d9d9d33b7b4e",
       "domain_letter": "G",
-      "persisted_at": "2026-11-22T21:49:15.240Z"
+      "persisted_at": "2026-11-22T22:28:21.583Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid-learnings",
@@ -231122,9 +231127,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nucleoidai-nucleoid-learnings",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "6d4f896693d8cd33094d6d8ea3a42032d1895581de1d4cabd88c3c58744ddc4c",
+      "content_hash": "955e4532c38665e28d08af37ab73a4e624fc8dd5982a4bf5f0aa8f3c2e473efd",
       "domain_letter": "K",
-      "persisted_at": "2026-11-22T21:49:15.415Z"
+      "persisted_at": "2026-11-22T22:28:21.756Z"
     },
     "learn-huggingface-qwen-qwen3-8b": {
       "learning_id": "learn-huggingface-qwen-qwen3-8b",
@@ -241959,8 +241964,8 @@
       "slug": "metalbear-co-mirrord",
       "platform": "github",
       "source_url": "https://github.com/metalbear-co/mirrord",
-      "source_version": "7f23826a",
-      "content_hash": "e6a25db44bef3579de93ccb76226c09487517bee6e077d617aec6441397a3a94",
+      "source_version": "a3009132",
+      "content_hash": "eb60ad8c113b452d4de3b3d3c6f5cdedaacadfb22069ac6aaf762e10743439c2",
       "dossier_path": "07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
       "promoted_rules": [
@@ -241993,6 +241998,11 @@
           "number": 9794,
           "title": "Publish the docs and guides on every release",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 10000,
+          "title": "Say DynamoDB branches need `connection`",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -242000,7 +242010,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-21T15:17:38.696Z",
+      "verified_at": "2026-11-22T22:28:01.642Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -242042,10 +242052,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-metalbear-co-mirrord-technical-construction-intelligence-metalbear-co-mirrord-co.md",
       "title": "Technical Construction Intelligence: metalbear-co/mirrord Core Invariants",
       "repository": "metalbear-co/mirrord",
-      "source_version": "7f23826a",
-      "content_hash": "2d0c0b08a6f5063cb438755c4901dfa214e9d6f951bfe8edbe5727a212cbee0f",
+      "source_version": "a3009132",
+      "content_hash": "d120af4079a7651a295e921122070229b0ba0e3af4742cfcc75c5f1bb40525f4",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T15:17:39.416Z"
+      "persisted_at": "2026-11-22T22:28:02.255Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-metalbear-co-mirrord": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-metalbear-co-mirrord",
@@ -242054,10 +242064,10 @@
       "relative_path": "08_VERIFICATION/metalbear-co-mirrord-verification-protocol-empirical-defect-shield-for-metalbear.md",
       "title": "Verification Protocol: Empirical Defect Shield for metalbear-co/mirrord",
       "repository": "metalbear-co/mirrord",
-      "source_version": "7f23826a",
-      "content_hash": "a36c1acada791bd012f523e0be12c9c1b229b6860808e04689cf3c6a759b4324",
+      "source_version": "a3009132",
+      "content_hash": "a4de238f4877c3fa9046c3ec06924ab58ddc222f726e1f3f5d8a22ad5c396d61",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T15:17:39.613Z"
+      "persisted_at": "2026-11-22T22:28:02.429Z"
     },
     "learn-github-run-llama-llama_index": {
       "learning_id": "learn-github-run-llama-llama_index",
@@ -242213,9 +242223,9 @@
       "title": "Technical Construction Intelligence: metalbear-co-mirrord-learnings Core Invariants",
       "repository": "metalbear-co-mirrord-learnings",
       "source_version": "HEAD",
-      "content_hash": "88f9a0e977281b2af418cfb83c35e79663f67fbd98b97c29888c03763d2f56ef",
+      "content_hash": "8b954bc7f6f9bf7d361cc6c6eb953dc62bba20345412a04e58dadcb5f6daf1ce",
       "domain_letter": "H",
-      "persisted_at": "2026-11-21T15:17:57.972Z"
+      "persisted_at": "2026-11-22T22:28:20.226Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-metalbear-co-mirrord-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-metalbear-co-mirrord-learnings",
@@ -242225,9 +242235,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for metalbear-co-mirrord-learnings",
       "repository": "metalbear-co-mirrord-learnings",
       "source_version": "HEAD",
-      "content_hash": "9e1cf84634d0486fc1b1a90a9dc1d10633fce720020d1e02606c97f62dbe06fb",
+      "content_hash": "5c766d7bc99b264edaaa3e251d53e057cd4d92ab0eed79253390dee686156daa",
       "domain_letter": "K",
-      "persisted_at": "2026-11-21T15:17:58.181Z"
+      "persisted_at": "2026-11-22T22:28:20.404Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-dealignai-deepseek-v4-1-flash-uncensored-fp8-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-dealignai-deepseek-v4-1-flash-uncensored-fp8-",
@@ -286040,7 +286050,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
       "source_version": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
-      "content_hash": "6bf2d6beaf579bc86a809500bdb48c1fa72c096ab1251daedb9308b4fc7ccbcf",
+      "content_hash": "803e258110bde37597b5e80a6d41bee8447fe5053e9f6ff52cfb2587ad9ae655",
       "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings.md",
       "promoted_rules": [],
@@ -286049,7 +286059,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T15:22:08.579Z",
+      "verified_at": "2026-11-22T22:27:59.310Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -323978,6 +323988,58 @@
       "content_hash": "e3089f7ef75e8ac2adb32335cdea63ce1d616d06c3fe94bca6f0e4601656c7b4",
       "domain_letter": "H",
       "persisted_at": "2026-11-22T22:06:35.558Z"
+    },
+    "rule-10000": {
+      "learning_id": "rule-10000",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10000,
+      "title": "Say DynamoDB branches need `connection`",
+      "source_url": "https://github.com/metalbear-co/mirrord",
+      "source_version": "a3009132",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T22:28:01.642Z"
+    },
+    "candidate_directive-say-dynamodb-branches-need-connection": {
+      "item_id": "candidate_directive-say-dynamodb-branches-need-connection",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-RLJG-say-dynamodb-branches-need-connection.md",
+      "title": "Say DynamoDB branches need `connection`",
+      "repository": "metalbear-co-mirrord-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b120a5666f373569e3876f0bc987806707c09e54cb4781b4207a4b3921296b5c",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-22T22:28:20.048Z"
+    },
+    "rule-10001": {
+      "learning_id": "rule-10001",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 10001,
+      "title": "Draft NUC 137 Floating-Point Absolute Value Alias",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "ee76a797",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-22T22:28:16.051Z"
+    },
+    "candidate_directive-draft-nuc-137-floating-point-absolute-value-alias": {
+      "item_id": "candidate_directive-draft-nuc-137-floating-point-absolute-value-alias",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-RMLJ-draft-nuc-137-floating-point-absolute-value-alias.md",
+      "title": "Draft NUC 137 Floating-Point Absolute Value Alias",
+      "repository": "nucleoidai-nucleoid-learnings",
+      "source_version": "HEAD",
+      "content_hash": "bf3fc43b1d938a45b84e4ac1be93e09f7f7ef6a6a3e0005ccce1d7bd3e8aec0d",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-22T22:28:21.415Z"
     }
   },
   "ai-builder-brain": {
